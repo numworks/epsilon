@@ -93,6 +93,22 @@ class TypeBlock : public Block {
 #include "types.h"
 #undef RANGE1
 
+  // Add casts to custom node structs
+#define CAST_(F, T)                            \
+  F* to##F() {                                 \
+    assert(type() == Type::T);                 \
+    return reinterpret_cast<F*>(next());       \
+  }                                            \
+  const F* to##F() const {                     \
+    assert(type() == Type::T);                 \
+    return reinterpret_cast<const F*>(next()); \
+  }
+#define CAST(F, T) CAST_(F, T)
+#define NODE_DECL(F, S) CAST(NODE_NAME(F), SCOPED_NODE(F))
+#include "types.h"
+#undef CAST_
+#undef CAST
+
   constexpr static bool IsOfType(Type thisType,
                                  std::initializer_list<Type> types) {
     for (Type t : types) {

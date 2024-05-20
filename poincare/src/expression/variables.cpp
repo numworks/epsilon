@@ -145,7 +145,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
-/* TODO_PCJ : This could be factorized with other methods, such as Replace,
+/* TODO: This could be factorized with other methods, such as Replace,
  * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
 bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                       const Tree* replacement) {

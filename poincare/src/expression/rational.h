@@ -22,9 +22,9 @@ class Rational final {
   static IntegerHandler Numerator(const Tree* node);
   static IntegerHandler Denominator(const Tree* node);
   static Internal::Sign Sign(const Tree* node) {
-    StrictSign s = Numerator(node).strictSign();
-    return Internal::Sign(s == StrictSign::Null, s == StrictSign::Positive,
-                          s == StrictSign::Negative, !node->isInteger());
+    return Internal::Sign(node->isZero(), node->isRationalStrictlyPositive(),
+                          node->isRationalStrictlyNegative(),
+                          !node->isInteger());
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 

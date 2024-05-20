@@ -305,7 +305,10 @@ class Integer {
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return OMG::BitHelper::getByteAtIndex(value, index);
   }
-  static NonStrictSign Sign(Tree* tree) { return Handler(tree).sign(); }
+  static NonStrictSign Sign(Tree* tree) {
+    return tree->isIntegerPositive() ? NonStrictSign::Positive
+                                     : NonStrictSign::Negative;
+  }
   static void SetSign(Tree* tree, NonStrictSign sign);
 };
 

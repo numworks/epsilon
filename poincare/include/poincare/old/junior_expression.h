@@ -144,9 +144,7 @@ class JuniorExpression : public OExpression {
                                     bool* reductionFailure = nullptr) const;
   JuniorExpression cloneAndReduce(ReductionContext reductionContext) const;
 
-  // This also reduces the expression. Approximation is in double.
-  JuniorExpression cloneAndApproximateKeepingSymbols(
-      ReductionContext reductionContext) const;
+  JuniorExpression deepBeautify(const ReductionContext& reductionContext);
 
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ

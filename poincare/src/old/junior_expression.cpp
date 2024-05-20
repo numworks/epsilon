@@ -8,6 +8,7 @@
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/conversion.h>
@@ -391,23 +392,22 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
 JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
     ReductionContext* reductionContext, bool* reduceFailure,
     bool approximateDuringReduction) const {
-  Internal::Strategy initialStrategy =
-      approximateDuringReduction ? Internal::Strategy::ApproximateToFloat
-                                 : Internal::Strategy::Default;
   Internal::ProjectionContext context = {
-    .m_complexFormat = reductionContext->complexFormat(),
-    .m_angleUnit = reductionContext->angleUnit(),
-#if 1
-    .m_strategy = initialStrategy,
-#endif
-    .m_unitFormat = reductionContext->unitFormat(),
-    .m_symbolic = reductionContext->symbolicComputation(),
-    .m_context = reductionContext->context()
-  };
+      .m_complexFormat = reductionContext->complexFormat(),
+      .m_angleUnit = reductionContext->angleUnit(),
+      .m_strategy = approximateDuringReduction
+                        ? Internal::Strategy::ApproximateToFloat
+                        : Internal::Strategy::Default,
+      .m_unitFormat = reductionContext->unitFormat(),
+      .m_symbolic = reductionContext->symbolicComputation(),
+      .m_context = reductionContext->context()};
   Internal::Tree* e = tree()->clone();
-  // TODO_PCJ: Do not beautify !! Decide if a projection is needed.
-  Internal::Simplification::SimplifyWithAdaptiveStrategy(e, &context);
-  *reduceFailure = context.m_strategy != initialStrategy;
+  // TODO_PCJ: Decide if a projection is needed or not
+  Internal::Simplification::ToSystem(e, &context);
+  Internal::Simplification::SimplifySystem(e, true);
+  Internal::Simplification::TryApproximationStrategyAgain(e, context);
+  // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
+  *reduceFailure = false;
   JuniorExpression simplifiedExpression = Builder(e);
 #if 0
   if (approximateDuringReduction) {
@@ -476,6 +476,21 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
   /* TODO_PCJ: Beautify since cloneAndDeepReduceWithSystemCheckpoint isn't
    * supposed to. */
   return e.deepBeautify(reductionContext);
+}
+
+JuniorExpression JuniorExpression::deepBeautify(
+    const ReductionContext& reductionContext) {
+  Internal::ProjectionContext context = {
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
+      .m_unitFormat = reductionContext.unitFormat(),
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
+  Internal::Tree* e = tree()->clone();
+  Internal::Beautification::DeepBeautify(e, context);
+  JuniorExpression beautifiedExpression = Builder(e);
+  replaceWithInPlace(beautifiedExpression);
+  return beautifiedExpression;
 }
 
 bool JuniorExpression::derivate(const ReductionContext& reductionContext,

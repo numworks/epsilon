@@ -1,25 +1,36 @@
 NODE(Rack, NARY16)
-NODE(VerticalOffset, 1, 1)
+NODE(VerticalOffset, 1, {
+  bool isSubscript : 1;
+  bool isPrefix : 1;
+})
 
 NODE(OperatorSeparator)
 NODE(ThousandSeparator)
 
 RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandSeparatorLayout)
 
-NODE(AsciiCodePoint, 0, 1)
-NODE(UnicodeCodePoint, 0, sizeof(CodePoint))
+NODE(AsciiCodePoint, 0, { char codePoint; })
+NODE(UnicodeCodePoint, 0, { CodePoint codePoint; })
 
 RANGE(CodePointLayout, AsciiCodePointLayout, UnicodeCodePointLayout)
 
-NODE(CombinedCodePoints, 0, 2 * sizeof(CodePoint))
-// TODO Do we need a StringLayout ?
+NODE(CombinedCodePoints, 0, {
+  CodePoint codePoint;
+  CodePoint combinedCodePoint;
+})
 
 NODE(Abs, 1)
 NODE(Ceil, 1)
 NODE(Floor, 1)
 NODE(VectorNorm, 1)
-NODE(Parenthesis, 1, 1)
-NODE(CurlyBrace, 1, 1)
+NODE(Parenthesis, 1, {
+  bool leftIsTemporary : 1;
+  bool rightIsTemporary : 1;
+})
+NODE(CurlyBrace, 1, {
+  bool leftIsTemporary : 1;
+  bool rightIsTemporary : 1;
+})
 
 RANGE(SquareBracketPair, AbsLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesisLayout, CurlyBraceLayout)
@@ -30,10 +41,13 @@ RANGE(Pair, AbsLayout, CurlyBraceLayout)
 NODE(CondensedSum, 3)
 
 // Diff(Symbol, SymbolValue, Derivand)
-NODE(Diff, 3, 1)
+NODE(Diff, 3, { bool cursorIsOnTheLeft; })
 
 // Diff(Symbol, SymbolValue, Derivand, Order)
-NODE(NthDiff, 4, 1)
+NODE(NthDiff, 4, {
+  bool cursorIsOnTheLeft : 1;
+  bool cursorIsOnTheBottom : 1;
+})
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
 NODE(Integral, 4)

@@ -23,9 +23,25 @@ namespace Poincare::Internal {
 
 // Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro
 #define GET4TH(A, B, C, D, ...) D
-#define NODE1(F) NODE3(F, 0, 0)
-#define NODE2(F, N) NODE3(F, N, 0)
+/* TODO { char dummy[] } is a workaround to have a 0 sized-struct, we should
+ * skip the definition and sizeof completely instead */
+#define NODE1(F) NODE3(F, 0, { char dummy[]; })
+#define NODE2(F, N) NODE3(F, N, { char dummy[]; })
 #define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
+
+#define RANGE(...)
+
+// Helper to return struct names such as AbsLayoutNode
+#define NODE_NAME__(F) F##Node
+#define NODE_NAME_(F) NODE_NAME__(F)
+#define NODE_NAME(F) NODE_NAME_(SCOPED_NODE(F))
+
+// Declarations of custom node structs
+#define NODE3(F, N, S) struct NODE_NAME(F) S;
+
+#include "types.h"
+#undef NODE3
+#undef RANGE
 
 enum class Type : uint8_t {
 // Add all the types to the enum
@@ -136,7 +152,7 @@ class TypeBlock : public Block {
 #define RANGE(...)
 #define NODE3(F, N, S)       \
   case Type::SCOPED_NODE(F): \
-    return DefaultNumberOfMetaBlocks(N) + S;
+    return DefaultNumberOfMetaBlocks(N) + sizeof(NODE_NAME(F));
 #include "types.h"
       default:
         return 1;

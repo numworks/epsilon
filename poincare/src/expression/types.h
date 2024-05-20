@@ -7,33 +7,37 @@
 
 // 1.1.a - Negative rationals
 
-/* - Rational(Pos/Neg)Big RB
- * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
- * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | */
-NODE(RationalNegBig, 0, 2)
+NODE(RationalNegBig, 0, {
+  uint8_t numberOfNumeratorDigits;
+  uint8_t numberOfDenominatorDigits;
+  uint8_t digits[];  // most significant digit last
+})
 
-/* - RationalShort
- * | RS TAG | UINT8 ABSOLUTE NUMERATOR | UINT8 DENOMINATOR | */
-NODE(RationalNegShort, 0, 2)
+NODE(RationalNegShort, 0, {
+  uint8_t absNumerator;
+  uint8_t denominator;
+})
 
 // 1.2 - Integers
 
-/* - Integer(Pos/Neg)Big IB: most significant digit last
- * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */
-NODE(IntegerNegBig, 0, 1)
+NODE(IntegerNegBig, 0, {
+  uint8_t numberOfDigits;
+  uint8_t digits[];  // most significant digit last
+})
 
-/* - Integer(Pos/Neg)Short IS
- * | IS TAG | DIGIT0 | */
-NODE(IntegerNegShort, 0, 1)
+NODE(IntegerNegShort, 0, { uint8_t absValue; })
 
 NODE(MinusOne)
 NODE(Zero)
 NODE(One)
 NODE(Two)
 
-NODE(IntegerPosShort, 0, 1)
+NODE(IntegerPosShort, 0, { uint8_t value; })
 
-NODE(IntegerPosBig, 0, 1)
+NODE(IntegerPosBig, 0, {
+  uint8_t numberOfDigits;
+  uint8_t digits[];  // most significant digit last
+})
 
 RANGE(NegativeInteger, IntegerNegBig, Zero)
 RANGE(PositiveInteger, Zero, IntegerPosBig)
@@ -44,8 +48,15 @@ RANGE(Integer, IntegerNegBig, IntegerPosBig)
 // 1.1.b - Positive rationals
 
 NODE(Half)  // Not in mathematical order
-NODE(RationalPosShort, 0, 2)
-NODE(RationalPosBig, 0, 2)
+NODE(RationalPosShort, 0, {
+  uint8_t numerator;
+  uint8_t denominator;
+})
+NODE(RationalPosBig, 0, {
+  uint8_t numberOfNumeratorDigits;
+  uint8_t numberOfDenominatorDigits;
+  uint8_t digits[];  // most significant digit last
+})
 
 RANGE(NegativeRational, RationalNegBig, Zero)
 RANGE(PositiveRational, Zero, RationalPosBig)
@@ -55,13 +66,8 @@ RANGE(Rational, RationalNegBig, RationalPosBig)
 
 // 1.3 - Floats
 
-/* - Float F
- * | F TAG | VALUE (4 bytes) | */
-NODE(SingleFloat, 0, sizeof(float))
-
-/* - Double D
- * | D TAG | VALUE (8 bytes) | */
-NODE(DoubleFloat, 0, sizeof(double))
+NODE(SingleFloat, 0, { float value; })
+NODE(DoubleFloat, 0, { double value; })
 
 RANGE(Float, SingleFloat, DoubleFloat)
 
@@ -76,30 +82,35 @@ RANGE(Number, RationalNegBig, Pi)
 
 // 2 - Order dependant expressions
 
-/* - Multiplication M (same for Addition, Set, List)
- * | M TAG | NUMBER OF CHILDREN | */
 NODE(Mult, NARY)
 
-/* - Power P (same for Factorial, Subtraction, Division) | P TAG | */
+/* - Power P (same for Factorial, Subtraction, Division) */
 NODE(Pow, 2)
 
 NODE(Add, NARY)
 
 RANGE(Algebraic, RationalNegBig, Add)
 
-/* - UserSymbol US, CHARN must be 0.
- * | US TAG | SIGN | NUMBER CHARS | CHAR0 | ... | CHARN | */
-NODE(UserSymbol, 0, 2)
-/* - UserFunction UF (same for UserSequence) CHARN must be 0.
- * | UF TAG | NUMBER CHARS | CHAR0 | ... | CHARN | */
-NODE(UserFunction, 1, 1)
-NODE(UserSequence, 1, 1)
+NODE(UserSymbol, 0, {
+  uint8_t sign;
+  uint8_t size;
+  char name[];
+})
+NODE(UserFunction, 1, {
+  uint8_t size;
+  char name[];
+})
+NODE(UserSequence, 1, {
+  uint8_t size;
+  char name[];
+})
 
 RANGE(UserNamed, UserSymbol, UserSequence)
 
-/* - Variable V
- * | V TAG | ID | Sign | */
-NODE(Var, 0, 2)
+NODE(Var, 0, {
+  uint8_t id;
+  uint8_t sign;
+})
 NODE(Inf)
 
 // 3 - Other expressions in Alphabetic order
@@ -121,14 +132,11 @@ NODE(Conj, 1)
 NODE(Csc, 1)
 NODE(Cos, 1)
 NODE(Cot, 1)
-
-/* - Decimal DC
- * | DC TAG | NUMBER DIGITS AFTER ZERO | */
-NODE(Decimal, 1, 1)
-
-/* - Distribution DS
- * | DS TAG | Distribution::Type | DistributionMethod::Type | */
-NODE(Distribution, NARY, 2)
+NODE(Decimal, 1, { uint8_t digitsAfterZero; })
+NODE(Distribution, NARY, {
+  uint8_t distributionId;
+  uint8_t methodId;
+})
 NODE(Div, 2)
 NODE(Exp, 1)
 NODE(Fact, 1)
@@ -171,11 +179,9 @@ NODE(Polynomial, NARY)
 NODE(PowReal, 2)
 NODE(Quo, 2)
 
-/* - RandomNode RN
- * | RN TAG | LOCAL RANDOM SEED | */
-NODE(Random, 0, 1)
-NODE(RandInt, 2, 1)
-NODE(RandIntNoRep, 3, 1)
+NODE(Random, 0, { uint8_t seed; })
+NODE(RandInt, 2, { uint8_t seed; })
+NODE(RandIntNoRep, 3, { uint8_t seed; })
 
 RANGE(RandomNode, Random, RandIntNoRep)
 
@@ -231,7 +237,7 @@ NODE(Transpose, 1)
 NODE(PowMatrix, 2)
 
 /* - Matrix M
- * | M TAG | NUMBER OF ROWS | NUMBER OF COLUMNS |
+ * | Number of rows | Number of columns |
  * Children are ordered the row-major way */
 NODE(Matrix, NARY2D)
 
@@ -292,12 +298,11 @@ RANGE(Comparison, Equal, InferiorEqual)
 
 // 8 - Units
 
-/* - Unit U
- * | U TAG | REPRESENTATIVE ID | PREFIX ID | */
-NODE(Unit, 0, 2)
-/* - Physical constant PC
- * | PC TAG | CONSTANT INDEX | */
-NODE(PhysicalConstant, 0, 1)
+NODE(Unit, 0, {
+  uint8_t representativeId;
+  uint8_t prefixId;
+})
+NODE(PhysicalConstant, 0, { uint8_t constantId; })
 
 // 9 - Order dependant expressions
 
@@ -306,7 +311,7 @@ NODE(Piecewise, NARY)
 // Used in dependencies only, shall never be systematic simplified.
 NODE(Set, NARY)
 NODE(Parenthesis, 1)
-NODE(Empty)  // TODO_PCJ temporary
+NODE(Empty)
 
 // 10 - Undefined expressions
 /* When an expression has multiple undefined children, we bubble up the
@@ -333,15 +338,12 @@ NODE(UnitConversion, 2)
 
 RANGE(Expression, RationalNegBig, UnitConversion)
 
-/* - PointOfInterest PI
- * | PI TAG | ABSCISSA | ORDINATE | DATA | INTEREST | INVERTED | SUBCURVEINDEX |
- */
-NODE(PointOfInterest, 0,
-     sizeof(double) + sizeof(double) + sizeof(uint32_t) + sizeof(uint8_t) +
-         sizeof(bool) + sizeof(uint8_t))
-
-/* TODO:
- * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.
- * Choosing n = 4 and aligning the node could be useful?
- * - aligning all nodes on 4 bytes might speed up every computation
- */
+// TODO: should this really be here ?
+NODE(PointOfInterest, 0, {
+  double abscissa;
+  double ordinate;
+  uint32_t data;
+  uint8_t interest;
+  bool inverted;
+  uint8_t subCurveIndex;
+})

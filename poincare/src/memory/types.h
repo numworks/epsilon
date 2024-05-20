@@ -16,9 +16,7 @@
 
 #define SCOPED_NODE(F) F
 
-/* - Placeholder P
- * | P TAG | ID | */
-NODE(Placeholder, 0, 1)
+NODE(Placeholder, 0, { uint8_t id; })
 #if ASSERTIONS
 NODE(TreeBorder)
 #endif

@@ -29,9 +29,16 @@ ComplexSign Symbol::GetComplexSign(const Tree* node) {
                               : ComplexSign::Unknown();
 }
 
-void Symbol::SetComplexSign(Tree* userSymbol, ComplexSign sign) {
+bool Symbol::SetComplexSign(Tree* userSymbol, ComplexFormat format) {
   assert(userSymbol->isUserSymbol());
+  ComplexSign sign = (format == ComplexFormat::Real ? ComplexSign::RealUnknown()
+                                                    : ComplexSign::Unknown());
+
+  if (userSymbol->nodeValue(0) == sign.getValue()) {
+    return false;
+  }
   userSymbol->setNodeValue(0, sign.getValue());
+  return true;
 }
 
 }  // namespace Poincare::Internal

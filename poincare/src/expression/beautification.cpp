@@ -12,7 +12,6 @@
 #include "float.h"
 #include "number.h"
 #include "rational.h"
-#include "sign.h"
 #include "simplification.h"
 #include "symbol.h"
 #include "variables.h"
@@ -322,11 +321,9 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     }
   }
 
-  if (e->isUserSymbol() &&
-      Symbol::GetComplexSign(e) != ComplexSign::Unknown()) {
+  if (e->isUserSymbol()) {
     // Reset symbol sign to default.
-    Symbol::SetComplexSign(e, ComplexSign::Unknown());
-    return true;
+    return Symbol::ResetComplexSign(e);
   }
 
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&

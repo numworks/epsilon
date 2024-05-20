@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SYMBOL_H
 #define POINCARE_EXPRESSION_SYMBOL_H
 
+#include "context.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {
@@ -37,7 +38,11 @@ class Symbol final {
 
   static ComplexSign GetComplexSign(const Tree* node);
   // Only userSymbols have a complexSign in their node.
-  static void SetComplexSign(Tree* userSymbol, ComplexSign sign);
+  static bool SetComplexSign(Tree* userSymbol, ComplexFormat format);
+  // Default ComplexSign is Unknown
+  static bool ResetComplexSign(Tree* userSymbol) {
+    return SetComplexSign(userSymbol, ComplexFormat::Cartesian);
+  }
 
  private:
   constexpr static uint8_t NameSizeValueIndex(Type type) {

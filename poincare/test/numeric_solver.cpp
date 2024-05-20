@@ -4,6 +4,8 @@
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
 
 #include "float_helper.h"
 #include "old/helper.h"
@@ -21,9 +23,15 @@ void assert_next_solution_is(const char* expression, Context* context,
                              AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
+  ProjectionContext projCtx = {.m_context = context,
+                               .m_strategy = Strategy::ApproximateToFloat,
+                               .m_angleUnit = angleUnit,
+                               .m_complexFormat = ComplexFormat::Real};
+
   Tree* e = parse_expression(expression, context, false);
-  Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-      e, "x", angleUnit, ComplexFormat::Real);
+  Simplification::ToSystem(e, &projCtx);
+  Approximation::PrepareFunctionForApproximation(e, "x",
+                                                 projCtx.m_complexFormat);
 
   Poincare::Coordinate2D<double> observed;
   switch (interest) {
@@ -40,8 +48,9 @@ void assert_next_solution_is(const char* expression, Context* context,
       assert(interest == Interest::Intersection);
       assert(otherExpression);
       Tree* e2 = parse_expression(otherExpression, context, false);
-      Poincare::Internal::Approximation::PrepareFunctionForApproximation(
-          e2, "x", angleUnit, ComplexFormat::Cartesian);
+      Simplification::ToSystem(e2, &projCtx);
+      Approximation::PrepareFunctionForApproximation(e2, "x",
+                                                     projCtx.m_complexFormat);
       observed = solver->nextIntersection(e, e2);
   }
 

@@ -25,9 +25,8 @@ struct Dimension;
 
 class Approximation final {
  public:
-  // Optimize function for efficient approximations
+  // Optimize a projected function for efficient approximations
   static void PrepareFunctionForApproximation(Tree* expr, const char* variable,
-                                              AngleUnit angleUnit,
                                               ComplexFormat complexFormat);
 
   template <typename T>
@@ -85,6 +84,7 @@ class Approximation final {
   // Approximate expression at KVarX/K = x
   template <typename T>
   static T To(const Tree* node, T x) {
+    assert(s_context);
     s_context->setLocalValue(x);
     std::complex<T> value = ToComplex<T>(node);
     return value.imag() == 0 ? value.real() : NAN;

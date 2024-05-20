@@ -19,17 +19,13 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
 }
 
 void Approximation::PrepareFunctionForApproximation(
-    Tree* expr, const char* variable, AngleUnit angleUnit,
-    ComplexFormat complexFormat) {
-  ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = angleUnit,
-  };
-  Variables::ReplaceSymbol(expr, variable, 0, ComplexSign::RealUnknown());
-  Simplification::ToSystem(expr, &projectionContext);
-  assert(!projectionContext.m_dimension.isUnit());
-  // TODO: Simplification with NumbersToScalar if preparing function
+    Tree* expr, const char* variable, ComplexFormat complexFormat) {
+  Variables::ReplaceSymbol(expr, variable, 0,
+                           complexFormat == ComplexFormat::Real
+                               ? ComplexSign::RealUnknown()
+                               : ComplexSign::Unknown());
   Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation);
+  ApproximateAndReplaceEveryScalar(expr);
   // TODO: factor common sub-expressions
   // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
 }

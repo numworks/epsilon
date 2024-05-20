@@ -2,7 +2,6 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
-#include <apps/graph/list/list_controller.h>
 #include <apps/shared/app_with_store_menu.h>
 #include <apps/shared/sequence.h>
 #include <assert.h>

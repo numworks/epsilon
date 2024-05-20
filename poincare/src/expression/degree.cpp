@@ -9,11 +9,11 @@
 using namespace Poincare::Internal;
 
 // By default, degree is -1 unless all children have a 0 degree.
-int privateDegree(const Tree* t, const Tree* variable) {
+int privateDegree(const Tree* t, const Tree* symbol) {
   switch (t->type()) {
     case Type::UserSymbol:
       // Ignore UserSymbol's sign
-      return strcmp(Symbol::GetName(t), Symbol::GetName(variable)) == 0 ? 1 : 0;
+      return strcmp(Symbol::GetName(t), Symbol::GetName(symbol)) == 0 ? 1 : 0;
     case Type::Matrix:
     case Type::Store:
     case Type::UnitConversion:
@@ -29,7 +29,7 @@ int privateDegree(const Tree* t, const Tree* variable) {
   }
   int degree = 0;
   for (uint8_t i = 0; const Tree* child : t->children()) {
-    int childDegree = privateDegree(child, variable);
+    int childDegree = privateDegree(child, symbol);
     if (childDegree == -1) {
       return childDegree;
     }
@@ -69,9 +69,9 @@ int privateDegree(const Tree* t, const Tree* variable) {
   return degree;
 }
 
-int Degree::Get(const Tree* t, const Tree* variable,
+int Degree::Get(const Tree* t, const Tree* symbol,
                 ProjectionContext projectionContext) {
-  assert(variable->isUserSymbol());
+  assert(symbol->isUserSymbol());
   if (t->isStore() || t->isUnitConversion()) {
     return -1;
   }
@@ -80,7 +80,7 @@ int Degree::Get(const Tree* t, const Tree* variable,
   Simplification::ToSystem(clone, &projectionContext);
   Simplification::SimplifySystem(clone, false);
   AdvancedSimplification::DeepExpand(clone);
-  int degree = privateDegree(clone, variable);
+  int degree = privateDegree(clone, symbol);
   clone->removeTree();
   return degree;
 }

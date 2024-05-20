@@ -9,8 +9,8 @@ namespace Poincare::Internal {
 
 class Degree {
  public:
-  // Return polynomial degree of any un projected expression on given variable.
-  static int Get(const Tree* tree, const Tree* variable,
+  // Return polynomial degree of any un projected expression on given symbol.
+  static int Get(const Tree* tree, const Tree* symbol,
                  ProjectionContext projectionContext);
 };
 

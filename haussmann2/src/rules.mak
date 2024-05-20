@@ -41,4 +41,4 @@ $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
 $(eval $(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal))
 
 # Platform-specific rules
--include $(PATH_haussmann)/src/rules.$(PLATFORM).mak
+-include $(PATH_haussmann)/src/rules/$(PLATFORM).mak

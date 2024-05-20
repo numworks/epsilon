@@ -1,7 +1,6 @@
 BinomialDistribution = "Loi binomiale"
 ChiSquareDistribution = "Loi du Khi-2"
 ChooseDistribution = "Choisir le type de loi"
-DefineParameters = "Définir les paramètres"
 D1FisherDefinition = "Degrés de liberté du numérateur"
 D2FisherDefinition = "Degrés de liberté du dénominateur"
 DegreesOfFreedomDefinition = "Degrés de liberté"

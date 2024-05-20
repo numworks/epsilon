@@ -1,7 +1,6 @@
 BinomialDistribution = "Binomialverteilung"
 ChiSquareDistribution = "Chi-Quadrat-Verteilung"
 ChooseDistribution = "Wählen Sie eine Verteilung"
-DefineParameters = "Parameter auswählen"
 D1FisherDefinition = "Freiheitsgrade des Zählers"
 D2FisherDefinition = "Freiheitsgrade des Nenners"
 DegreesOfFreedomDefinition = "Anzahl der Freiheitsgrade"

@@ -1,7 +1,6 @@
 BinomialDistribution = "Binomiale verdeling"
 ChiSquareDistribution = "Chi-kwadraatverdeling"
 ChooseDistribution = "Kies de kansverdeling"
-DefineParameters = "Bepaal de parameters"
 D1FisherDefinition = "Vrijheidsgraden in de teller"
 D2FisherDefinition = "Vrijheidsgraden in de noemer"
 DegreesOfFreedomDefinition = "Vrijheidsgraden"

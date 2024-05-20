@@ -1,7 +1,6 @@
 BinomialDistribution = "Distribuzione binomiale"
 ChiSquareDistribution = "Distribuzione Chi-quadrato"
 ChooseDistribution = "Scegliere il tipo di distribuzione"
-DefineParameters = "Definire i parametri"
 D1FisherDefinition = "Gradi di libertà del numeratore"
 D2FisherDefinition = "Gradi di libertà del denominatore"
 DegreesOfFreedomDefinition = "Gradi di libertà"

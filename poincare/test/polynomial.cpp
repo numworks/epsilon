@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
+#include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/projection.h>
@@ -142,7 +143,7 @@ void assert_polynomial_degree_is(ProjectionContext projectionContext,
                                  const char* symbolName = "x") {
   Tree* expression = TextToTree(input, projectionContext.m_context);
   Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
-  int degree = Polynomial::Degree(expression, symbol, projectionContext);
+  int degree = Degree::Get(expression, symbol, projectionContext);
   quiz_assert(degree == expectedDegree);
   symbol->removeTree();
   expression->removeTree();

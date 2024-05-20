@@ -41,7 +41,7 @@ endef
 # $1 might contain an arch, hence the $(dir $1).
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.
 define libraries_for_flavored_goal
-$(addprefix $(OUTPUT_DIRECTORY)/$(dir $1),\
+$(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
 	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
 	$(MODULES_$(call name_for_flavored_target,$(notdir $1)))))
 endef

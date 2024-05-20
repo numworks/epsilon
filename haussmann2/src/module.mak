@@ -65,7 +65,7 @@ endef
 # objects_for_flavored_module, <dot-separated flavored module>
 # $1 might be prefixed with an arch's directory.
 define objects_for_flavored_module
-$(call objects_for_sources,$(dir $1),$(call flavor_filter,\
+$(call objects_for_sources,$(subst ./,,$(dir $1)),$(call flavor_filter,\
 	$(SOURCES_$(call name_for_flavored_target,$(notdir $1))),\
 	$(call flavors_for_flavored_target,$(notdir $1))))
 endef

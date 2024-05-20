@@ -5,6 +5,10 @@
 #include <omg/bit_helper.h>
 #include <stdint.h>
 
+#if POINCARE_TREE_LOG
+#include <iostream>
+#endif
+
 namespace Poincare::Internal {
 class Tree;
 
@@ -103,7 +107,10 @@ class Sign {
   static Sign Get(const Tree* t);
 
 #if POINCARE_TREE_LOG
-  void log(bool endOfLine = true) const;
+  __attribute__((__used__)) void log(bool endOfLine = true) const {
+    log(std::cout, endOfLine);
+  }
+  void log(std::ostream& stream, bool endOfLine = true) const;
 #endif
 
  private:
@@ -179,7 +186,10 @@ class ComplexSign {
   static ComplexSign SignOfDifference(const Tree* a, const Tree* b);
 
 #if POINCARE_TREE_LOG
-  void log() const;
+  __attribute__((__used__)) void log(bool endOfLine = true) const {
+    log(std::cout, endOfLine);
+  }
+  void log(std::ostream& stream, bool endOfLine = true) const;
 #endif
 
  private:

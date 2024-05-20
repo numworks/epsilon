@@ -9,10 +9,6 @@
 #include "symbol.h"
 #include "variables.h"
 
-#if POINCARE_TREE_LOG
-#include <iostream>
-#endif
-
 namespace Poincare::Internal {
 
 /* Must at least handle Additions, Multiplications, Numbers and Real/Imaginary
@@ -84,28 +80,28 @@ Sign Sign::Get(const Tree* t) {
 }
 
 #if POINCARE_TREE_LOG
-void Sign::log(bool endOfLine) const {
+void Sign::log(std::ostream& stream, bool endOfLine) const {
   if (isZero()) {
-    std::cout << "Zero";
+    stream << "Zero";
   } else {
     if (!m_canBeNonInteger) {
-      std::cout << "Integer and ";
+      stream << "Integer and ";
     }
     if (isUnknown()) {
-      std::cout << "Unknown";
+      stream << "Unknown";
     } else {
       if (m_canBeStriclyPositive && m_canBeStriclyNegative) {
-        std::cout << "Non Null";
+        stream << "Non Null";
       } else {
         if (!m_canBeNull) {
-          std::cout << "Strictly ";
+          stream << "Strictly ";
         }
-        std::cout << (m_canBeStriclyNegative ? "Negative" : "Positive");
+        stream << (m_canBeStriclyNegative ? "Negative" : "Positive");
       }
     }
   }
   if (endOfLine) {
-    std::cout << "\n";
+    stream << "\n";
   }
 }
 #endif
@@ -337,12 +333,15 @@ ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
 }
 
 #if POINCARE_TREE_LOG
-void ComplexSign::log() const {
-  std::cout << "(";
-  realSign().log(false);
-  std::cout << ") + i*(";
-  imagSign().log(false);
-  std::cout << ")\n";
+void ComplexSign::log(std::ostream& stream, bool endOfLine) const {
+  stream << "(";
+  realSign().log(stream, false);
+  stream << ") + i*(";
+  imagSign().log(stream, false);
+  stream << ")";
+  if (endOfLine) {
+    stream << "\n";
+  }
 }
 #endif
 

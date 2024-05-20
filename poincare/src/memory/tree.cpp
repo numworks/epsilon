@@ -99,42 +99,41 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
   if (isNumber()) {
     stream << " value=\"" << Approximation::To<float>(this) << "\"";
-    return;
+  }
+  if (isVar()) {
+    stream << " id=" << static_cast<int>(Variables::Id(this));
   }
   if (isUserNamed()) {
     stream << " value=\"" << Symbol::GetName(this) << "\"";
-    return;
+  }
+  if (isVar() || isUserNamed()) {
+    ComplexSign sign = isVar() ? Variables::GetComplexSign(this)
+                               : Symbol::GetComplexSign(this);
+    stream << " sign=\"";
+    sign.log(stream, false);
+    stream << "\"";
   }
   if (isCodePointLayout()) {
     char buffer[64];
     CodePointLayout::CopyName(this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
-    return;
-  }
-  if (isVar()) {
-    stream << " id=" << static_cast<int>(Variables::Id(this));
-    return;
   }
   if (isPlaceholder()) {
     stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
     stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
-    return;
   }
   if (isRandomNode()) {
     stream << " seed=" << static_cast<int>(Random::GetSeed(this));
-    return;
   }
   if (isUnit()) {
     stream << " representativeId=" << static_cast<int>(nodeValue(0));
     stream << " prefixId=" << static_cast<int>(nodeValue(1));
-    return;
   }
   if (isAutocompletedPair()) {
     stream << " leftIsTemporary="
            << AutocompletedPair::IsTemporary(this, Side::Left);
     stream << " rightIsTemporary="
            << AutocompletedPair::IsTemporary(this, Side::Right);
-    return;
   }
 }
 

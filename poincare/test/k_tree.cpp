@@ -53,6 +53,40 @@ QUIZ_CASE(pcj_k_tree_integer) {
   quiz_assert(Integer::Handler(-123456789_e).to<double>() == -123456789.0);
 }
 
+QUIZ_CASE(pcj_k_tree_rational_ranges) {
+  quiz_assert((0_e)->isIntegerNegative());
+  quiz_assert((0_e)->isIntegerPositive());
+  quiz_assert(!(0_e)->isIntegerStrictlyNegative());
+  quiz_assert(!(0_e)->isIntegerStrictlyPositive());
+
+  quiz_assert(!(12_e)->isIntegerNegative());
+  quiz_assert((12_e)->isIntegerPositive());
+
+  quiz_assert(!(1234_e)->isIntegerNegative());
+  quiz_assert((1234_e)->isIntegerPositive());
+
+  quiz_assert((-12_e)->isIntegerNegative());
+  quiz_assert(!(-12_e)->isIntegerPositive());
+
+  quiz_assert((-1234_e)->isIntegerNegative());
+  quiz_assert(!(-1234_e)->isIntegerPositive());
+
+  quiz_assert((0_e)->isRationalNegative());
+  quiz_assert((0_e)->isRationalPositive());
+
+  quiz_assert(!(1_e / 2_e)->isRationalStrictlyNegative());
+  quiz_assert((1_e / 2_e)->isRationalStrictlyPositive());
+
+  quiz_assert((-1_e / 2_e)->isRationalStrictlyNegative());
+  quiz_assert(!(-1_e / 2_e)->isRationalStrictlyPositive());
+
+  quiz_assert(!(45_e / 73_e)->isRationalStrictlyNegative());
+  quiz_assert((45_e / 73_e)->isRationalPositive());
+
+  quiz_assert((-45_e / 73_e)->isRationalStrictlyNegative());
+  quiz_assert(!(-45_e / 73_e)->isRationalStrictlyPositive());
+}
+
 QUIZ_CASE(pcj_k_tree_ternary) {
   /* Ternaries are guessing a common type for both expressions which led to
    * issues with an IntegerLiteral and a KTree, the deduction guide of the

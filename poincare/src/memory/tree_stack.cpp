@@ -450,7 +450,8 @@ template Tree* TreeStack::push<Type::Decimal, int8_t>(int8_t);
 template Tree* TreeStack::push<Type::DoubleFloat, double>(double);
 template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);
-template Tree* TreeStack::push<Type::IntegerShort>(int8_t);
+template Tree* TreeStack::push<Type::IntegerNegShort>(uint8_t);
+template Tree* TreeStack::push<Type::IntegerPosShort>(uint8_t);
 template Tree* TreeStack::push<Type::List, int>(int);
 template Tree* TreeStack::push<Type::Matrix, int, int>(int, int);
 template Tree* TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,

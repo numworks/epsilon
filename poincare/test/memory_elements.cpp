@@ -79,7 +79,15 @@ QUIZ_CASE(pcj_type_block) {
                                                          .rational = true,
                                                          .number = true,
                                                          .userNamed = false}),
-      std::make_pair(Type::IntegerShort,
+      std::make_pair(Type::IntegerPosShort,
+                     TypeBlockProperties{.nAry = false,
+                                         .expression = true,
+                                         .layout = false,
+                                         .integer = true,
+                                         .rational = true,
+                                         .number = true,
+                                         .userNamed = false}),
+      std::make_pair(Type::IntegerNegShort,
                      TypeBlockProperties{.nAry = false,
                                          .expression = true,
                                          .layout = false,
@@ -421,29 +429,28 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(1_e, {TypeBlock(Type::One)});
   assert_tree_equals_blocks(2_e, {TypeBlock(Type::Two)});
   assert_tree_equals_blocks(12_e,
-                            {TypeBlock(Type::IntegerShort), ValueBlock(12)});
-  assert_tree_equals_blocks(127_e,
-                            {TypeBlock(Type::IntegerShort), ValueBlock(127)});
+                            {TypeBlock(Type::IntegerPosShort), ValueBlock(12)});
   assert_tree_equals_blocks(
-      128_e, {TypeBlock(Type::IntegerPosBig), ValueBlock(1), ValueBlock(128)});
+      255_e, {TypeBlock(Type::IntegerPosShort), ValueBlock(255)});
   assert_tree_equals_blocks(
       256_e, {TypeBlock(Type::IntegerPosBig), ValueBlock(2), ValueBlock(0),
               ValueBlock(1)});
   assert_tree_equals_blocks(-1_e, {TypeBlock(Type::MinusOne)});
   assert_tree_equals_blocks(-12_e,
-                            {TypeBlock(Type::IntegerShort), ValueBlock(-12)});
-  assert_tree_equals_blocks(-128_e,
-                            {TypeBlock(Type::IntegerShort), ValueBlock(-128)});
+                            {TypeBlock(Type::IntegerNegShort), ValueBlock(12)});
   assert_tree_equals_blocks(
-      -129_e, {TypeBlock(Type::IntegerNegBig), ValueBlock(1), ValueBlock(129)});
+      -255_e, {TypeBlock(Type::IntegerNegShort), ValueBlock(255)});
+  assert_tree_equals_blocks(
+      -256_e, {TypeBlock(Type::IntegerNegBig), ValueBlock(2), ValueBlock(0),
+               ValueBlock(1)});
 
   assert_tree_equals_blocks(π_e, {TypeBlock(Type::Pi)});
   assert_tree_equals_blocks(0.045_e,
                             {TypeBlock(Type::Decimal), ValueBlock(3),
-                             TypeBlock(Type::IntegerShort), ValueBlock(45)});
-  assert_tree_equals_blocks(1.23_e,
-                            {TypeBlock(Type::Decimal), ValueBlock(2),
-                             TypeBlock(Type::IntegerShort), ValueBlock(123)});
+                             TypeBlock(Type::IntegerPosShort), ValueBlock(45)});
+  assert_tree_equals_blocks(
+      1.23_e, {TypeBlock(Type::Decimal), ValueBlock(2),
+               TypeBlock(Type::IntegerPosShort), ValueBlock(123)});
   assert_tree_equals_blocks(
       2.0_fe, {TypeBlock(Type::SingleFloat), ValueBlock(0), ValueBlock(0),
                ValueBlock(0), ValueBlock(64)});
@@ -575,7 +582,7 @@ QUIZ_CASE(pcj_node) {
   // operator==
   const Tree* node0 = 42_e;
   Tree* node1 =
-      SharedTreeStack->push<Type::IntegerShort>(static_cast<int8_t>(42));
+      SharedTreeStack->push<Type::IntegerPosShort>(static_cast<uint8_t>(42));
   quiz_assert(node0 != node1 && *node0->block() == *node1->block());
   Tree* node2 = Tree::FromBlocks(SharedTreeStack->firstBlock());
   quiz_assert(node2 == node1);

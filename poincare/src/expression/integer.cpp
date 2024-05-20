@@ -128,9 +128,12 @@ Tree* IntegerHandler::pushOnTreeStack() const {
   if (isMinusOne()) {
     return SharedTreeStack->push(Type::MinusOne);
   }
-  if (isSignedType<int8_t>()) {
-    return SharedTreeStack->push<Type::IntegerShort>(
-        static_cast<int8_t>(*this));
+  if (isUnsignedType<uint8_t>()) {
+    return SharedTreeStack->push<Type::IntegerPosShort>(
+        static_cast<uint8_t>(*this));
+  }
+  if (numberOfDigits() == 1) {
+    return SharedTreeStack->push<Type::IntegerNegShort>(digit(0));
   }
   TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
                                                         : Type::IntegerPosBig);

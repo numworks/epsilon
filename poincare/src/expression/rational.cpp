@@ -26,9 +26,10 @@ IntegerHandler Rational::Numerator(const Tree* node) {
       return IntegerHandler(-1);
     case Type::Half:
       return IntegerHandler(1);
-    case Type::IntegerShort: {
-      int8_t value = static_cast<int8_t>(node->nodeValue(0));
-      return IntegerHandler(value);
+    case Type::IntegerPosShort:
+    case Type::IntegerNegShort: {
+      uint8_t value = node->nodeValue(0);
+      return IntegerHandler(type == Type::IntegerPosShort ? value : -value);
     }
     case Type::IntegerPosBig:
     case Type::IntegerNegBig: {
@@ -67,7 +68,8 @@ IntegerHandler Rational::Denominator(const Tree* node) {
     case Type::One:
     case Type::Two:
     case Type::MinusOne:
-    case Type::IntegerShort:
+    case Type::IntegerPosShort:
+    case Type::IntegerNegShort:
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
       return IntegerHandler(1);

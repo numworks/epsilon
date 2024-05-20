@@ -9,9 +9,10 @@ NODE(One)
 NODE(Two)
 NODE(MinusOne)
 
-/* - IntegerShort IS
- * | IS TAG | SIGNED DIGIT0 | */
-NODE(IntegerShort, 0, 1)
+/* - Integer(Pos/Neg)Short IS
+ * | IS TAG | DIGIT0 | */
+NODE(IntegerPosShort, 0, 1)
+NODE(IntegerNegShort, 0, 1)
 
 /* - Integer(Pos/Neg)Big IB: most significant digit last
  * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */

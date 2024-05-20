@@ -206,8 +206,12 @@ template <>
 struct IntegerRepresentation<2> : KTree<Type::Two> {};
 
 template <int64_t V>
-  requires(V >= INT8_MIN && V <= INT8_MAX)
-struct IntegerRepresentation<V> : KTree<Type::IntegerShort, V> {};
+  requires(V >= 0 && V <= UINT8_MAX)
+struct IntegerRepresentation<V> : KTree<Type::IntegerPosShort, V> {};
+
+template <int64_t V>
+  requires(V >= -UINT8_MAX && V < 0)
+struct IntegerRepresentation<V> : KTree<Type::IntegerNegShort, -V> {};
 
 /* This macro generated code adds deduction guides to construct an IntegerBig
  * with N blocks when V needs N bytes to be represented, for N from 1 to 8 and
@@ -236,10 +240,10 @@ struct IntegerRepresentation<V> : KTree<Type::IntegerShort, V> {};
   GUIDE(8, B(0), B(1), B(2), B(3), B(4), B(5), B(6), B(7));
 
 // IntegerPosBig
-#define GUIDE(N, ...)                                                 \
-  template <int64_t V>                                                \
-    requires(V > INT8_MAX && OMG::Arithmetic::NumberOfDigits(V) == N) \
-  struct IntegerRepresentation<V>                                     \
+#define GUIDE(N, ...)                                                  \
+  template <int64_t V>                                                 \
+    requires(V > UINT8_MAX && OMG::Arithmetic::NumberOfDigits(V) == N) \
+  struct IntegerRepresentation<V>                                      \
       : KTree<Type::IntegerPosBig, N, __VA_ARGS__> {};
 
 #define B(I) OMG::BitHelper::getByteAtIndex(V, I)
@@ -250,10 +254,10 @@ SPECIALIZATIONS;
 #undef GUIDE
 
 // IntegerNegBig
-#define GUIDE(N, ...)                                                  \
-  template <int64_t V>                                                 \
-    requires(V < INT8_MIN && OMG::Arithmetic::NumberOfDigits(-V) == N) \
-  struct IntegerRepresentation<V>                                      \
+#define GUIDE(N, ...)                                                    \
+  template <int64_t V>                                                   \
+    requires(V < -UINT8_MAX && OMG::Arithmetic::NumberOfDigits(-V) == N) \
+  struct IntegerRepresentation<V>                                        \
       : KTree<Type::IntegerNegBig, N, __VA_ARGS__> {};
 
 #define B(I) OMG::BitHelper::getByteAtIndex(-V, I)

@@ -392,7 +392,8 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::MinusOne:
     case Type::One:
     case Type::Two:
-    case Type::IntegerShort:
+    case Type::IntegerPosShort:
+    case Type::IntegerNegShort:
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
       // TODO_PCJ we need a way to layout an integer in base something

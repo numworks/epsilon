@@ -335,53 +335,59 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(cos(k),k,2,4)", "cos(2)×cos(3)×cos(4)");
   simplifies_to("product(sin(k),k,a+1,a+1)", "sin(a+1)");
 
+  Shared::GlobalContext globalContext;
+  store("x→f(x)", &globalContext);
+  ProjectionContext ctx = {
+      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_context = &globalContext,
+  };
+
   // contract sum
-  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b)", "0");
-  simplifies_to("sum(sin(k),k,a,b+n)-sum(sin(u),u,a,b)",
-                "sum(sin(k),k,a,b+n)-sum(sin(u),u,a,b)");
-  simplifies_to("sum(sin(k),k,a,b+10)-sum(sin(u),u,a,b)",
-                "sum(sin(k),k,b+1,b+10)");
-  simplifies_to("sum(sin(k),k,a,100)-sum(sin(u),u,a,5)", "sum(sin(k),k,6,100)");
-  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b+n)",
-                "sum(sin(k),k,a,b)-sum(sin(u),u,a,b+n)");
-  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a,b+10)",
-                "- sum(sin(u),u,b+1,b+10)");
-  simplifies_to("sum(sin(k),k,a,5)-sum(sin(u),u,a,100)",
-                "- sum(sin(u),u,6,100)");
-  simplifies_to("sum(sin(k),k,a+10,b)-sum(sin(u),u,a,b)",
-                "- sum(sin(u),u,a,a+9)");
-  simplifies_to("sum(sin(k),k,100,b)-sum(sin(u),u,5,b)",
-                "- sum(sin(u),u,5,99)");
-  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a+n,b)",
-                "sum(sin(k),k,a,b)-sum(sin(u),u,a+n,b)");
-  simplifies_to("sum(sin(k),k,a,b)-sum(sin(u),u,a+10,b)",
-                "sum(sin(k),k,a,a+9)");
-  simplifies_to("sum(sin(k),k,5,b)-sum(sin(u),u,100,b)", "sum(sin(k),k,5,99)");
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b)", "0", ctx);
+  simplifies_to("sum(f(k),k,a,b+n)-sum(f(u),u,a,b)",
+                "sum(f(k),k,a,b+n)-sum(f(u),u,a,b)", ctx);
+  simplifies_to("sum(f(k),k,a,b+10)-sum(f(u),u,a,b)", "sum(f(k),k,b+1,b+10)",
+                ctx);
+  simplifies_to("sum(f(k),k,a,100)-sum(f(u),u,a,5)", "sum(f(k),k,6,100)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+n)",
+                "sum(f(k),k,a,b)-sum(f(u),u,a,b+n)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+10)", "- sum(f(u),u,b+1,b+10)",
+                ctx);
+  simplifies_to("sum(f(k),k,a,5)-sum(f(u),u,a,100)", "- sum(f(u),u,6,100)",
+                ctx);
+  simplifies_to("sum(f(k),k,a+10,b)-sum(f(u),u,a,b)", "- sum(f(u),u,a,a+9)",
+                ctx);
+  simplifies_to("sum(f(k),k,100,b)-sum(f(u),u,5,b)", "- sum(f(u),u,5,99)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+n,b)",
+                "sum(f(k),k,a,b)-sum(f(u),u,a+n,b)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+10,b)", "sum(f(k),k,a,a+9)", ctx);
+  simplifies_to("sum(f(k),k,5,b)-sum(f(u),u,100,b)", "sum(f(k),k,5,99)", ctx);
 
   // contract product
-  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b)", "1");
-  simplifies_to("product(sin(k),k,a,b+n) / product(sin(u),u,a,b)",
-                "product(sin(k),k,a,b+n) / product(sin(u),u,a,b)");
-  simplifies_to("product(sin(k),k,a,b+10) / product(sin(u),u,a,b)",
-                "product(sin(k),k,b+1,b+10)");
-  simplifies_to("product(sin(k),k,a,100) / product(sin(u),u,a,5)",
-                "product(sin(k),k,6,100)");
-  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b+n)",
-                "product(sin(k),k,a,b) / product(sin(u),u,a,b+n)");
-  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a,b+10)",
-                "1 / product(sin(u),u,b+1,b+10)");
-  simplifies_to("product(sin(k),k,a,5) / product(sin(u),u,a,100)",
-                "1 / product(sin(u),u,6,100)");
-  simplifies_to("product(sin(k),k,a+10,b) / product(sin(u),u,a,b)",
-                "1 / product(sin(u),u,a,a+9)");
-  simplifies_to("product(sin(k),k,100,b) / product(sin(u),u,5,b)",
-                "1 / product(sin(u),u,5,99)");
-  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a+n,b)",
-                "product(sin(k),k,a,b) / product(sin(u),u,a+n,b)");
-  simplifies_to("product(sin(k),k,a,b) / product(sin(u),u,a+10,b)",
-                "product(sin(k),k,a,a+9)");
-  simplifies_to("product(sin(k),k,5,b) / product(sin(u),u,100,b)",
-                "product(sin(k),k,5,99)");
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b)", "1", ctx);
+  simplifies_to("product(f(k),k,a,b+n) / product(f(u),u,a,b)",
+                "product(f(k),k,a,b+n) / product(f(u),u,a,b)", ctx);
+  simplifies_to("product(f(k),k,a,b+10) / product(f(u),u,a,b)",
+                "product(f(k),k,b+1,b+10)", ctx);
+  simplifies_to("product(f(k),k,a,100) / product(f(u),u,a,5)",
+                "product(f(k),k,6,100)", ctx);
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+n)",
+                "product(f(k),k,a,b) / product(f(u),u,a,b+n)", ctx);
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+10)",
+                "1 / product(f(u),u,b+1,b+10)", ctx);
+  simplifies_to("product(f(k),k,a,5) / product(f(u),u,a,100)",
+                "1 / product(f(u),u,6,100)", ctx);
+  simplifies_to("product(f(k),k,a+10,b) / product(f(u),u,a,b)",
+                "1 / product(f(u),u,a,a+9)", ctx);
+  simplifies_to("product(f(k),k,100,b) / product(f(u),u,5,b)",
+                "1 / product(f(u),u,5,99)", ctx);
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a+n,b)",
+                "product(f(k),k,a,b) / product(f(u),u,a+n,b)", ctx);
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a+10,b)",
+                "product(f(k),k,a,a+9)", ctx);
+  simplifies_to("product(f(k),k,5,b) / product(f(u),u,100,b)",
+                "product(f(k),k,5,99)", ctx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

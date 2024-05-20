@@ -9,7 +9,7 @@
 using namespace Poincare::Internal;
 
 // By default, degree is -1 unless all children have a 0 degree.
-int privateDegree(const Tree* t, const Tree* symbol) {
+int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
   switch (t->type()) {
     case Type::UserSymbol:
       // Ignore UserSymbol's sign
@@ -17,11 +17,11 @@ int privateDegree(const Tree* t, const Tree* symbol) {
     case Type::Matrix:
     case Type::Store:
     case Type::UnitConversion:
-      return -1;
+      return k_unknown;
     case Type::Undef:
-      /* Previously the return value was -1, but it was causing problems in the
-       * equations of type `y = piecewise(x,x>0,undefined,x<=0)` since the
-       * computed yDeg here was -1 instead of 0. */
+      /* Previously the return degree was unknown, but it was causing problems
+       * in the equations of type `y = piecewise(x,x>0,undefined,x<=0)` since
+       * the computed yDeg here was unknown instead of 0. */
     case Type::UserFunction:
       // Functions would have been replaced beforehand if it had a definition.
     default:
@@ -29,8 +29,8 @@ int privateDegree(const Tree* t, const Tree* symbol) {
   }
   int degree = 0;
   for (uint8_t i = 0; const Tree* child : t->children()) {
-    int childDegree = privateDegree(child, symbol);
-    if (childDegree == -1) {
+    int childDegree = PrivateGet(child, symbol);
+    if (childDegree == k_unknown) {
       return childDegree;
     }
     switch (t->type()) {
@@ -52,7 +52,7 @@ int privateDegree(const Tree* t, const Tree* symbol) {
           assert(child->isInteger());
           if (childDegree > 0 ||
               ComplexSign::Get(child).realSign().canBeStriclyNegative()) {
-            return -1;
+            return k_unknown;
           }
           // TODO: Check overflow
           degree *= Integer::Handler(child).to<uint8_t>();
@@ -61,7 +61,7 @@ int privateDegree(const Tree* t, const Tree* symbol) {
       default:
         if (childDegree > 0) {
           // not handled
-          return -1;
+          return k_unknown;
         }
     }
     i++;
@@ -73,14 +73,14 @@ int Degree::Get(const Tree* t, const Tree* symbol,
                 ProjectionContext projectionContext) {
   assert(symbol->isUserSymbol());
   if (t->isStore() || t->isUnitConversion()) {
-    return -1;
+    return k_unknown;
   }
   // Project, simplify and and expand the expression for a more accurate degree.
   Tree* clone = t->clone();
   Simplification::ToSystem(clone, &projectionContext);
   Simplification::SimplifySystem(clone, false);
   AdvancedSimplification::DeepExpand(clone);
-  int degree = privateDegree(clone, symbol);
+  int degree = PrivateGet(clone, symbol);
   clone->removeTree();
   return degree;
 }

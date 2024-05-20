@@ -6,8 +6,12 @@
 #define RANGE(NAME, FIRST, LAST)
 #endif
 
-#ifndef NODE3
-#define NODE3(NAME, NB_CHILDREN, NODE_STRUCT)
+#ifndef NODE_USE
+#define NODE_USE(NAME, NB_CHILDREN, NODE_SIZE)
+#endif
+
+#ifndef NODE_DECL
+#define NODE_DECL(NAME, NODE_STRUCT)
 #endif
 
 // 1 - Expressions
@@ -35,4 +39,5 @@ NODE(NumberOfTypes)
 #undef SCOPED_NODE
 
 #undef RANGE
-#undef NODE3
+#undef NODE_USE
+#undef NODE_DECL

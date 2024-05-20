@@ -21,36 +21,38 @@ namespace Poincare::Internal {
 #define NARY2D NAry2DNumberOfChildrenTag
 #define NARY16 NAryLargeNumberOfChildrenTag
 
-// Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro
-#define GET4TH(A, B, C, D, ...) D
-/* TODO { char dummy[] } is a workaround to have a 0 sized-struct, we should
- * skip the definition and sizeof completely instead */
-#define NODE1(F) NODE3(F, 0, { char dummy[]; })
-#define NODE2(F, N) NODE3(F, N, { char dummy[]; })
-#define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
-
 // Helper to return struct names such as AbsLayoutNode
 #define NODE_NAME__(F) F##Node
 #define NODE_NAME_(F) NODE_NAME__(F)
 #define NODE_NAME(F) NODE_NAME_(SCOPED_NODE(F))
 
-// Declarations of custom node structs
-#define NODE3(F, N, S) struct NODE_NAME(F) S;
+// Boilerplate to alias NODE(F) as NODE_USE(F, 0, 0), NODE_USE is the varying
+// macro
+#define GET4TH(A, B, C, D, ...) D
+#define NODE1(F) NODE_USE(F, 0, 0)
+#define NODE2(F, N) NODE_USE(F, N, 0)
+#define NODE3(F, N, S) NODE_DECL(F, S) NODE_USE(F, N, sizeof(NODE_NAME(F)))
+#define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
 
+/* Declarations of custom node structs, they are processed only for nodes with 3
+ * arguments, ie with a custom node. */
+#define NODE_DECL(F, S) struct NODE_NAME(F) S;
 #include "types.h"
 
 enum class Type : uint8_t {
 // Add all the types to the enum
-#define NODE3(F, N, S) SCOPED_NODE(F),
+#define NODE_USE(F, N, S) SCOPED_NODE(F),
 #include "types.h"
 };
 
 enum class LayoutType : uint8_t {
 // Members of LayoutType have the same values as their Type counterpart
 #define RANGE(...)
-#define NODE3(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
+#define NODE_DECL(...)
+#define NODE_USE(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
 #include <poincare/src/layout/types.h>
-#undef NODE3
+#undef NODE_DECL
+#undef NODE_USE
 #undef RANGE
 };
 
@@ -70,7 +72,7 @@ class TypeBlock : public Block {
 #if POINCARE_TREE_LOG
   // Add an array of names for the Types
   static constexpr const char* names[] = {
-#define NODE3(F, N, S) #F,
+#define NODE_USE(F, N, S) #F,
 #include "types.h"
   };
 #endif
@@ -86,7 +88,7 @@ class TypeBlock : public Block {
 
 #define RANGE1(N) RANGE(N, N, N)
 
-#define NODE3(F, N, S) RANGE1(SCOPED_NODE(F))
+#define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))
 
 #include "types.h"
 #undef RANGE1
@@ -137,9 +139,9 @@ class TypeBlock : public Block {
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
-#define NODE3(F, N, S)       \
+#define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
-    return DefaultNumberOfMetaBlocks(N) + sizeof(NODE_NAME(F));
+    return DefaultNumberOfMetaBlocks(N) + S;
 #include "types.h"
       default:
         return 1;
@@ -205,7 +207,7 @@ class TypeBlock : public Block {
  private:
   constexpr static int NumberOfChildrenOrTag(Type type) {
     switch (type) {
-#define NODE3(F, N, S)       \
+#define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
     return N;
 #include "types.h"
@@ -220,6 +222,7 @@ class TypeBlock : public Block {
 #undef GET4TH
 #undef NODE1
 #undef NODE2
+#undef NODE3
 #undef NODE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));

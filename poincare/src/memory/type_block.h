@@ -29,8 +29,6 @@ namespace Poincare::Internal {
 #define NODE2(F, N) NODE3(F, N, { char dummy[]; })
 #define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
 
-#define RANGE(...)
-
 // Helper to return struct names such as AbsLayoutNode
 #define NODE_NAME__(F) F##Node
 #define NODE_NAME_(F) NODE_NAME__(F)
@@ -40,16 +38,11 @@ namespace Poincare::Internal {
 #define NODE3(F, N, S) struct NODE_NAME(F) S;
 
 #include "types.h"
-#undef NODE3
-#undef RANGE
 
 enum class Type : uint8_t {
 // Add all the types to the enum
-#define RANGE(...)
 #define NODE3(F, N, S) SCOPED_NODE(F),
 #include "types.h"
-#undef NODE3
-#undef RANGE
 };
 
 enum class LayoutType : uint8_t {
@@ -77,11 +70,8 @@ class TypeBlock : public Block {
 #if POINCARE_TREE_LOG
   // Add an array of names for the Types
   static constexpr const char* names[] = {
-#define RANGE(...)
 #define NODE3(F, N, S) #F,
 #include "types.h"
-#undef NODE3
-#undef RANGE
   };
 #endif
 
@@ -99,9 +89,7 @@ class TypeBlock : public Block {
 #define NODE3(F, N, S) RANGE1(SCOPED_NODE(F))
 
 #include "types.h"
-#undef NODE3
 #undef RANGE1
-#undef RANGE
 
   constexpr static bool IsOfType(Type thisType,
                                  std::initializer_list<Type> types) {
@@ -149,7 +137,6 @@ class TypeBlock : public Block {
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
-#define RANGE(...)
 #define NODE3(F, N, S)       \
   case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + sizeof(NODE_NAME(F));
@@ -158,8 +145,6 @@ class TypeBlock : public Block {
         return 1;
     }
   }
-#undef NODE3
-#undef RANGE
 
   constexpr size_t nodeSize() const {
     Type t = type();
@@ -220,13 +205,10 @@ class TypeBlock : public Block {
  private:
   constexpr static int NumberOfChildrenOrTag(Type type) {
     switch (type) {
-#define RANGE(...)
 #define NODE3(F, N, S)       \
   case Type::SCOPED_NODE(F): \
     return N;
 #include "types.h"
-#undef NODE3
-#undef RANGE
       default:
         return 0;
     }

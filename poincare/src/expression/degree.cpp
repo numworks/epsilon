@@ -80,5 +80,7 @@ int Degree::Get(const Tree* t, const Tree* variable,
   Simplification::ToSystem(clone, &projectionContext);
   Simplification::SimplifySystem(clone, false);
   AdvancedSimplification::DeepExpand(clone);
-  return privateDegree(clone, variable);
+  int degree = privateDegree(clone, variable);
+  clone->removeTree();
+  return degree;
 }

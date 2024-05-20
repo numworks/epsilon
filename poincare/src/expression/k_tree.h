@@ -288,8 +288,12 @@ template <>
 struct RationalRepresentation<1, 2> : KTree<Type::Half> {};
 
 template <int64_t N, int64_t D>
-  requires(N >= INT8_MIN && N <= INT8_MAX && D > 0 && D <= UINT8_MAX)
-struct RationalRepresentation<N, D> : KTree<Type::RationalShort, N, D> {};
+  requires(N >= 0 && N <= UINT8_MAX && D > 0 && D <= UINT8_MAX)
+struct RationalRepresentation<N, D> : KTree<Type::RationalPosShort, N, D> {};
+
+template <int64_t N, int64_t D>
+  requires(N<0 && -N <= UINT8_MAX && D> 0 && D <= UINT8_MAX)
+struct RationalRepresentation<N, D> : KTree<Type::RationalNegShort, -N, D> {};
 
 // TODO specializations for RationalNegBig and RationalPosBig
 

@@ -294,7 +294,8 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
     case Type::Half:
-    case Type::RationalShort:
+    case Type::RationalPosShort:
+    case Type::RationalNegShort:
     case Type::RationalPosBig:
     case Type::RationalNegBig:
     case Type::SingleFloat:

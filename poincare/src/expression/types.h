@@ -26,8 +26,9 @@ RANGE(Integer, Zero, IntegerNegBig)
 NODE(Half)
 
 /* - RationShort RS
- * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | */
-NODE(RationalShort, 0, 2)
+ * | RS TAG | UNSIGNED DIGIT | UNSIGNED DIGIT | */
+NODE(RationalPosShort, 0, 2)
+NODE(RationalNegShort, 0, 2)
 
 /* - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED

@@ -42,9 +42,10 @@ IntegerHandler Rational::Numerator(const Tree* node) {
                                 ? NonStrictSign::Negative
                                 : NonStrictSign::Positive);
     }
-    case Type::RationalShort: {
-      int8_t value = static_cast<int8_t>(node->nodeValue(0));
-      return IntegerHandler(value);
+    case Type::RationalPosShort:
+    case Type::RationalNegShort: {
+      uint8_t value = node->nodeValue(0);
+      return IntegerHandler(type == Type::RationalPosShort ? value : -value);
     }
     case Type::RationalPosBig:
     case Type::RationalNegBig: {
@@ -75,7 +76,8 @@ IntegerHandler Rational::Denominator(const Tree* node) {
       return IntegerHandler(1);
     case Type::Half:
       return IntegerHandler(2);
-    case Type::RationalShort: {
+    case Type::RationalPosShort:
+    case Type::RationalNegShort: {
       return IntegerHandler(node->nodeValue(1));
     }
     case Type::RationalPosBig:
@@ -110,10 +112,15 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
     node = numerator.pushOnTreeStack();
   } else if (numerator.isOne() && denominator.isTwo()) {
     node = SharedTreeStack->push(Type::Half);
-  } else if (numerator.isSignedType<int8_t>() &&
+  } else if (numerator.numberOfDigits() == 1 &&
              denominator.isUnsignedType<uint8_t>()) {
-    node = SharedTreeStack->push(Type::RationalShort);
-    SharedTreeStack->push(ValueBlock(static_cast<int8_t>(numerator)));
+    if (numerator.sign() == NonStrictSign::Positive) {
+      node = SharedTreeStack->push(Type::RationalPosShort);
+    } else {
+      node = SharedTreeStack->push(Type::RationalNegShort);
+      numerator.setSign(NonStrictSign::Positive);
+    }
+    SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(numerator)));
     SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
     node = SharedTreeStack->push(numeratorSign == NonStrictSign::Negative
@@ -132,8 +139,8 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
 }
 
 Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
-  /* Ensure unicity among all rationals. For example, convert 6/3 to Half node.
-   * As a result there are many forbidden rational nodes. */
+  /* Ensure unicity among all rationals. For example, convert 6/3 to Half
+   * node. As a result there are many forbidden rational nodes. */
   assert(!denominator.isZero());
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   // Push 1 temporary tree on the TreeStack.
@@ -209,8 +216,8 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
 }
 
 bool Rational::IsIrreducible(const Tree* i) {
-  if (!i->isOfType(
-          {Type::RationalShort, Type::RationalNegBig, Type::RationalPosBig})) {
+  if (!i->isOfType({Type::RationalNegShort, Type::RationalPosShort,
+                    Type::RationalNegBig, Type::RationalPosBig})) {
     return true;
   }
   TreeRef gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));

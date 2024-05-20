@@ -400,7 +400,8 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
     case Type::Half:
-    case Type::RationalShort:
+    case Type::RationalPosShort:
+    case Type::RationalNegShort:
     case Type::RationalPosBig:
     case Type::RationalNegBig: {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize

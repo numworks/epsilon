@@ -12,7 +12,8 @@ namespace Poincare::Internal {
 class Number {
  public:
   static bool IsStrictRational(const Tree* t) {
-    return t->isOfType({Type::Half, Type::RationalShort, Type::RationalNegBig,
+    return t->isOfType({Type::Half, Type::RationalNegShort,
+                        Type::RationalPosShort, Type::RationalNegBig,
                         Type::RationalPosBig});
   }
 

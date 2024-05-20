@@ -168,13 +168,6 @@ inline Poincare::SystemExpression CloneAndReduce(
       ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndApproximateKeepingSymbols(
-    Poincare::Expression* e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
-  *e = e->cloneAndApproximateKeepingSymbols(
-      ReductionContextForParameters(*e, context, reductionParameters));
-}
-
 inline void CloneAndReduceAndRemoveUnit(
     Poincare::Expression* e, Poincare::Expression* unit,
     Poincare::Context* context,

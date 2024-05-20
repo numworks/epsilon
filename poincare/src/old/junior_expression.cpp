@@ -448,11 +448,17 @@ JuniorExpression JuniorExpression::cloneAndReduce(
                                                 &reduceFailure);
 }
 
-JuniorExpression JuniorExpression::cloneAndApproximateKeepingSymbols(
-    ReductionContext reductionContext) const {
-  bool dummy;
-  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &dummy,
-                                                true);
+JuniorExpression JuniorExpression::getSystemFunction(
+    const char* symbolName) const {
+  Internal::Tree* result = tree()->clone();
+  Internal::Approximation::PrepareFunctionForApproximation(
+      result, symbolName, Internal::ComplexFormat::Real);
+  return JuniorExpression::Builder(result);
+}
+
+template <typename U>
+U JuniorExpression::approximateToScalarWithValue(U x) const {
+  return Internal::Approximation::ToReal<U>(tree(), x);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(
@@ -963,5 +969,10 @@ template Evaluation<float> EvaluationFromSimpleTree<float>(
     const Internal::Tree*);
 template Evaluation<double> EvaluationFromSimpleTree<double>(
     const Internal::Tree*);
+
+template float JuniorExpression::approximateToScalarWithValue<float>(
+    float) const;
+template double JuniorExpression::approximateToScalarWithValue<double>(
+    double) const;
 
 }  // namespace Poincare

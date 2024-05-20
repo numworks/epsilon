@@ -146,6 +146,12 @@ class JuniorExpression : public OExpression {
 
   JuniorExpression deepBeautify(const ReductionContext& reductionContext);
 
+  // Replace some UserSymbol into Var0 for approximateToScalarWithValue
+  JuniorExpression getSystemFunction(const char* symbolName) const;
+  // Approximate to scalar replacing Var0 with value.
+  template <typename U>
+  U approximateToScalarWithValue(U x) const;
+
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ
     assert(false);

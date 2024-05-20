@@ -510,9 +510,6 @@ class OExpression : public PoolHandle {
   U approximateToScalarWithValueForSymbol(
       const char* symbol, U x,
       const ApproximationContext& approximationContext) const;
-  // This also reduces the expression. Approximation is in double.
-  OExpression cloneAndApproximateKeepingSymbols(
-      ReductionContext reductionContext) const;
 
   /* This class is meant to contain data about named functions (e.g. sin,
    * tan...) in one place: their name, their number of children and a pointer to

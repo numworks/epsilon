@@ -563,8 +563,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(e.numberOfChildren() > subCurveIndex);
       e = e.childAtIndex(subCurveIndex);
     }
-    T value = e.approximateToScalarWithValueForSymbol(k_unknownName, t,
-                                                      approximationContext);
+    T value = e.approximateToScalarWithValue<T>(t);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(value, t);
@@ -579,11 +578,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   }
   assert(e.type() == ExpressionNode::Type::Point);
   assert(e.numberOfChildren() == 2);
-  return Coordinate2D<T>(
-      e.childAtIndex(0).approximateToScalarWithValueForSymbol(
-          k_unknownName, t, approximationContext),
-      e.childAtIndex(1).approximateToScalarWithValueForSymbol(
-          k_unknownName, t, approximationContext));
+  return Coordinate2D<T>(e.childAtIndex(0).approximateToScalarWithValue<T>(t),
+                         e.childAtIndex(1).approximateToScalarWithValue<T>(t));
 }
 
 ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)
@@ -795,13 +791,7 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
         derivationOrder == 0
             ? expressionReduced(record, context)
             : expressionDerivateReduced(record, context, derivationOrder);
-    PoincareHelpers::CloneAndApproximateKeepingSymbols(
-        &e, context,
-        {.complexFormat = complexFormat(record, context),
-         .updateComplexFormatWithExpression = false,
-         .target = ReductionTarget::SystemForApproximation,
-         .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
-    *approximated = e;
+    *approximated = e.getSystemFunction(k_unknownName);
   }
   return *approximated;
 }

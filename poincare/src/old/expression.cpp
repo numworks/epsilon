@@ -1632,13 +1632,6 @@ U OExpression::approximateToScalarWithValueForSymbol(
       .toScalar();
 }
 
-OExpression OExpression::cloneAndApproximateKeepingSymbols(
-    ReductionContext reductionContext) const {
-  bool dummy;
-  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &dummy,
-                                                true);
-}
-
 OExpression OExpression::deepApproximateKeepingSymbols(
     ReductionContext reductionContext, bool *parentCanApproximate,
     bool *parentShouldReduce) {

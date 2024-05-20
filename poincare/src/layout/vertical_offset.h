@@ -5,28 +5,24 @@
 
 namespace Poincare::Internal {
 namespace VerticalOffset {
-inline bool IsSuperscript(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return !node->nodeValueBlock(0)->getBit(0);
+inline bool IsSubscript(const Tree* node) {
+  return node->toVerticalOffsetLayoutNode()->isSubscript;
 }
 
-inline bool IsSubscript(const Tree* node) { return !IsSuperscript(node); }
+inline bool IsSuperscript(const Tree* node) { return !IsSubscript(node); }
 
-inline bool IsSuffix(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return !node->nodeValueBlock(0)->getBit(1);
+inline bool IsPrefix(const Tree* node) {
+  return node->toVerticalOffsetLayoutNode()->isPrefix;
 }
 
-inline bool IsPrefix(const Tree* node) { return !IsSuffix(node); }
+inline bool IsSuffix(const Tree* node) { return !IsPrefix(node); }
 
 inline void SetSuperscript(Tree* node, bool superscript) {
-  assert(node->isVerticalOffsetLayout());
-  node->nodeValueBlock(0)->setBit(0, !superscript);
+  node->toVerticalOffsetLayoutNode()->isSubscript = !superscript;
 }
 
 inline void SetSuffix(Tree* node, bool suffix) {
-  assert(node->isVerticalOffsetLayout());
-  node->nodeValueBlock(0)->setBit(1, !suffix);
+  node->toVerticalOffsetLayoutNode()->isPrefix = !suffix;
 }
 
 inline bool IsSuffixSuperscript(const Tree* node) {

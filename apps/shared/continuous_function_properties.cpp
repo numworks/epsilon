@@ -334,6 +334,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
     return;
   }
 
+#if 0  // TODO_PCJ
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
   if (analyzedExpression.isLinearCombinationOfFunction(
           context,
@@ -354,14 +355,9 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
               return false;
             }
             NewExpression base = e.childAtIndex(0);
-#if 0  // TODO_PCJ
             return base.type() == ExpressionNode::Type::ConstantMaths &&
                    static_cast<Constant&>(base).isExponentialE() &&
                    e.childAtIndex(1).polynomialDegree(context, symbol) == 1;
-#else
-            assert(false);
-            return false;
-#endif
           },
           Function::k_unknownName)) {
     setCaption(I18n::Message::ExponentialType);
@@ -393,7 +389,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
     setCaption(I18n::Message::TrigonometricType);
     return;
   }
-
+#endif
   // Others
   setCaption(I18n::Message::Function);
 }

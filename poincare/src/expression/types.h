@@ -1,42 +1,57 @@
 // 1 - Numbers
 
-// 1.1 - Integers
+// 1.1 - Rationals
 
-/* - Zero Z (same for One, Two, Half, MinusOne)
- * | Z TAG | */
-NODE(Zero)
-NODE(One)
-NODE(Two)
-NODE(MinusOne)
+/* Defined in neg rationals, neg integers, pos integers, pos rationals order to
+ * allow for nested range definitions. */
 
-/* - Integer(Pos/Neg)Short IS
- * | IS TAG | DIGIT0 | */
-NODE(IntegerPosShort, 0, 1)
-NODE(IntegerNegShort, 0, 1)
-
-/* - Integer(Pos/Neg)Big IB: most significant digit last
- * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */
-NODE(IntegerPosBig, 0, 1)
-NODE(IntegerNegBig, 0, 1)
-
-RANGE(Integer, Zero, IntegerNegBig)
-
-// 1.2 - Rationals
-
-NODE(Half)
-
-/* - RationShort RS
- * | RS TAG | UNSIGNED DIGIT | UNSIGNED DIGIT | */
-NODE(RationalPosShort, 0, 2)
-NODE(RationalNegShort, 0, 2)
+// 1.1.a - Negative rationals
 
 /* - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
  * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | */
-NODE(RationalPosBig, 0, 2)
 NODE(RationalNegBig, 0, 2)
 
-RANGE(Rational, Zero, RationalNegBig)
+/* - RationalShort
+ * | RS TAG | UINT8 ABSOLUTE NUMERATOR | UINT8 DENOMINATOR | */
+NODE(RationalNegShort, 0, 2)
+
+// 1.2 - Integers
+
+/* - Integer(Pos/Neg)Big IB: most significant digit last
+ * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | */
+NODE(IntegerNegBig, 0, 1)
+
+/* - Integer(Pos/Neg)Short IS
+ * | IS TAG | DIGIT0 | */
+NODE(IntegerNegShort, 0, 1)
+
+NODE(MinusOne)
+NODE(Zero)
+NODE(One)
+NODE(Two)
+
+NODE(IntegerPosShort, 0, 1)
+
+NODE(IntegerPosBig, 0, 1)
+
+RANGE(IntegerNegative, IntegerNegBig, Zero)
+RANGE(IntegerPositive, Zero, IntegerPosBig)
+RANGE(IntegerStrictlyNegative, IntegerNegBig, MinusOne)
+RANGE(IntegerStrictlyPositive, One, IntegerPosBig)
+RANGE(Integer, IntegerNegBig, IntegerPosBig)
+
+// 1.1.b - Positive rationals
+
+NODE(Half)  // Not in mathematical order
+NODE(RationalPosShort, 0, 2)
+NODE(RationalPosBig, 0, 2)
+
+RANGE(RationalNegative, RationalNegBig, Zero)
+RANGE(RationalPositive, Zero, RationalPosBig)
+RANGE(RationalStrictlyNegative, RationalNegBig, MinusOne)
+RANGE(RationalStrictlyPositive, One, RationalPosBig)
+RANGE(Rational, RationalNegBig, RationalPosBig)
 
 // 1.3 - Floats
 
@@ -57,7 +72,7 @@ NODE(Pi)
 
 RANGE(MathematicalConstant, EulerE, Pi)
 
-RANGE(Number, Zero, Pi)
+RANGE(Number, RationalNegBig, Pi)
 
 // 2 - Order dependant expressions
 
@@ -70,7 +85,7 @@ NODE(Pow, 2)
 
 NODE(Add, NARY)
 
-RANGE(Algebraic, Zero, Add)
+RANGE(Algebraic, RationalNegBig, Add)
 
 /* - UserSymbol US, CHARN must be 0.
  * | US TAG | SIGN | NUMBER CHARS | CHAR0 | ... | CHARN | */
@@ -316,7 +331,7 @@ RANGE(Undefined, NonReal, Undef)
 NODE(Store, 2)
 NODE(UnitConversion, 2)
 
-RANGE(Expression, Zero, UnitConversion)
+RANGE(Expression, RationalNegBig, UnitConversion)
 
 /* - PointOfInterest PI
  * | PI TAG | ABSCISSA | ORDINATE | DATA | INTEREST | INVERTED | SUBCURVEINDEX |

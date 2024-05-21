@@ -1,10 +1,43 @@
 #include "infinity.h"
 
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/probability/distribution_method.h>
 
 #include "k_tree.h"
 
 namespace Poincare::Internal {
+
+static bool shallowBubbleUpInfinityInDistribution(Tree* u) {
+  /* - normcdf(inf,a,b) = 1
+   * - normcdf(-inf,a,b) = 0
+   * - tcdfrange(-inf,inf,b) = 1
+   * - tcdfrange(-inf,-inf,b) = 0 */
+  assert(u->isDistribution());
+  DistributionMethod::Type methodType = DistributionMethod::Get(u);
+  if (methodType != DistributionMethod::Type::CDF &&
+      methodType != DistributionMethod::Type::CDFRange) {
+    return false;
+  }
+  Tree* child = u->firstChild();
+  PatternMatching::Context ctx;
+  if (methodType == DistributionMethod::Type::CDFRange) {
+    if (!PatternMatching::Match(KMult(-1_e, KInf), child, &ctx)) {
+      return false;
+    }
+    child = child->nextTree();
+  }
+  if (child->isInf()) {
+    u->cloneTreeOverTree(1_e);
+    return true;
+  }
+  if (PatternMatching::Match(KMult(-1_e, KInf), child, &ctx)) {
+    u->cloneTreeOverTree(0_e);
+    return true;
+  }
+  /* TODO: return CDF of the same distributions with the same parameters
+   * tcdfrange(-inf, 4, 5) => tcdf(4, 5) */
+  return false;
+}
 
 bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   if (
@@ -31,6 +64,10 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
       || PatternMatching::MatchReplaceSimplify(
              u, KAdd(KA_s, KMult(-1_e, KInf), KB_s, KInf, KC_s), KUndef)) {
     return true;
+  }
+
+  if (u->isDistribution()) {
+    return shallowBubbleUpInfinityInDistribution(u);
   }
 
   if (!u->isMult()) {

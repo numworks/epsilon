@@ -19,9 +19,6 @@ class CDFRangeMethod final : public DistributionMethod {
     return distribution->cumulativeDistributiveFunctionForRange(x[0], x[1],
                                                                 parameters);
   }
-
-  bool shallowReduce(const Tree** abscissae, const Distribution* distribution,
-                     const Tree** parameters, Tree* expression) const override;
 };
 
 }  // namespace Poincare::Internal

@@ -117,6 +117,9 @@ class Approximation final {
   template <typename T>
   static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 
+  template <typename T>
+  static T FloatBinomial(T n, T k);
+
  private:
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
 

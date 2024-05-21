@@ -216,6 +216,31 @@ static T FloatLog(T a, T b) {
              ? NAN
              : std::log(a) / std::log(b);
 }
+
+template <typename T>
+T Approximation::FloatBinomial(T n, T k) {
+  if (k != std::round(k)) {
+    return NAN;
+  }
+  if (k < 0) {
+    return 0;
+  }
+  // Generalized definition allows any n value
+  bool generalized = (n != std::round(n) || n < k);
+  // Take advantage of symmetry
+  k = (!generalized && k > (n - k)) ? n - k : k;
+
+  T result = 1;
+  for (T i = 0; i < k; i++) {
+    result *= (n - i) / (k - i);
+    if (std::isinf(result) || std::isnan(result)) {
+      return result;
+    }
+  }
+  // If not generalized, the output must be rounded
+  return generalized ? result : std::round(result);
+}
+
 template <typename T>
 static T PositiveIntegerApproximation(std::complex<T> c) {
   T s = std::abs(c);
@@ -861,26 +886,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::Binomial: {
       T n = child[0];
       T k = child[1];
-      if (k != std::round(k)) {
-        return NAN;
-      }
-      if (k < 0) {
-        return 0;
-      }
-      // Generalized definition allows any n value
-      bool generalized = (n != std::round(n) || n < k);
-      // Take advantage of symmetry
-      k = (!generalized && k > (n - k)) ? n - k : k;
-
-      T result = 1;
-      for (T i = 0; i < k; i++) {
-        result *= (n - i) / (k - i);
-        if (std::isinf(result) || std::isnan(result)) {
-          return result;
-        }
-      }
-      // If not generalized, the output must be rounded
-      return generalized ? result : std::round(result);
+      return FloatBinomial<T>(n, k);
     }
     case Type::Permute: {
       T n = child[0];

@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <float.h>
 #include <omg/float.h>
-#include <poincare/old/binomial_coefficient.h>
 #include <poincare/probability/hypergeometric_distribution.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/numeric/solver_algorithms.h>
 
 #include <cmath>
@@ -31,9 +31,9 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (k > K || (n - k) > (N - K) || (K - k) > (N - n)) {
     return 0;
   }
-  T result = BinomialCoefficientNode::compute(k, K) *
-             BinomialCoefficientNode::compute(n - k, N - K) /
-             BinomialCoefficientNode::compute(n, N);
+  T result = Approximation::FloatBinomial(k, K) *
+             Approximation::FloatBinomial(n - k, N - K) /
+             Approximation::FloatBinomial(n, N);
   if (result < 0 || result > 1) {
     // Precision errors
     return NAN;

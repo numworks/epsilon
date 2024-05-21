@@ -55,6 +55,11 @@ class JuniorExpressionNode final : public ExpressionNode {
       DoublePrecision p,
       const ApproximationContext& approximationContext) const override;
 
+  /* Similar to the previous one but bypass Evaluation */
+  template <typename T>
+  JuniorExpression approximateToTree(
+      const ApproximationContext& approximationContext) const;
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context) const;
@@ -156,6 +161,12 @@ class JuniorExpression : public OExpression {
   // Approximate to scalar replacing Var0 with value.
   template <typename U>
   U approximateToScalarWithValue(U x) const;
+
+  template <typename T>
+  JuniorExpression approximateToTree(
+      const ApproximationContext& approximationContext) const {
+    return node()->approximateToTree<T>(approximationContext);
+  }
 
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ

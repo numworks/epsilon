@@ -120,6 +120,16 @@ Evaluation<double> JuniorExpressionNode::approximate(
   return EvaluationFromTree<double>(tree(), approximationContext);
 }
 
+template <typename T>
+JuniorExpression JuniorExpressionNode::approximateToTree(
+    const ApproximationContext& approximationContext) const {
+  return JuniorExpression::Builder(Internal::Approximation::RootTreeToTree<T>(
+      tree(),
+      static_cast<Internal::AngleUnit>(approximationContext.angleUnit()),
+      static_cast<Internal::ComplexFormat>(
+          approximationContext.complexFormat())));
+}
+
 Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
@@ -971,6 +981,11 @@ bool Unit::HasAngleDimension(JuniorExpression expression) {
   assert(Internal::Dimension::DeepCheckDimensions(expression.tree()));
   return Internal::Dimension::GetDimension(expression.tree()).isAngleUnit();
 }
+
+template JuniorExpression JuniorExpressionNode::approximateToTree<float>(
+    const ApproximationContext&) const;
+template JuniorExpression JuniorExpressionNode::approximateToTree<double>(
+    const ApproximationContext&) const;
 
 template Evaluation<float> EvaluationFromTree<float>(
     const Internal::Tree*, const ApproximationContext&);

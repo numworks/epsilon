@@ -84,7 +84,7 @@ template <class T>
 inline Poincare::Expression Approximate(
     const Poincare::Expression e, Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
-  return e.approximate<T>(
+  return e.approximateToTree<T>(
       ApproximationContextForParameters(e, context, approximationParameters));
 }
 

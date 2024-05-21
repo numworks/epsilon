@@ -747,7 +747,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(∞,-3)", "nonreal");
   // TODO_PCJ: simplifies_to("log(∞,-3)", "∞-∞×i", cartesianCtx);
   simplifies_to("cos(∞)", "undef");
+  simplifies_to("cos(-∞)", "undef");
   simplifies_to("sin(∞)", "undef");
+  simplifies_to("sin(-∞)", "undef");
   simplifies_to("atan(∞)", "π/2");
 }
 

@@ -91,7 +91,6 @@ NODE(Add, NARY)
 RANGE(Algebraic, RationalNegBig, Add)
 
 NODE(UserSymbol, 0, {
-  uint8_t sign;
   uint8_t size;
   char name[];
 })

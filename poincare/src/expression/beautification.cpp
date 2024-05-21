@@ -321,11 +321,6 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     }
   }
 
-  if (e->isUserSymbol()) {
-    // Reset symbol sign to default.
-    return Symbol::ResetComplexSign(e);
-  }
-
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
       NAry::Sort(e, Comparison::Order::Beautification)) {
     return true;

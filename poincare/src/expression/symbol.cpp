@@ -18,19 +18,15 @@ char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
 
 const char* Symbol::GetName(const Tree* node) {
   assert(node->isUserNamed());
-  // BlockType, (ComplexSign,) Size, Name
-  return reinterpret_cast<const char*>(
-      node->block()->nextNth(1 + NameSizeValueIndex(node->type()) + 1));
+  // BlockType, Size, Name
+  return reinterpret_cast<const char*>(node->block()->nextNth(2));
 }
 
 ComplexSign Symbol::GetComplexSign(const Tree* node) {
+  // Undefined global variables are considered scalar (and real for UserSymbols)
   assert(node->isUserNamed());
   return node->isUserSymbol() ? ComplexSign::RealUnknown()
                               : ComplexSign::Unknown();
-}
-
-bool Symbol::SetComplexSign(Tree* userSymbol, ComplexFormat format) {
-  return false;
 }
 
 }  // namespace Poincare::Internal

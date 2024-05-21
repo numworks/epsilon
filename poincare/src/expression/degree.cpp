@@ -12,8 +12,7 @@ using namespace Poincare::Internal;
 int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
   switch (t->type()) {
     case Type::UserSymbol:
-      // Ignore UserSymbol's sign
-      return strcmp(Symbol::GetName(t), Symbol::GetName(symbol)) == 0 ? 1 : 0;
+      return t->treeIsIdenticalTo(symbol) ? 1 : 0;
     case Type::Matrix:
     case Type::Store:
     case Type::UnitConversion:

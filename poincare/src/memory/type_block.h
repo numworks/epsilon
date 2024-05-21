@@ -208,7 +208,7 @@ class TypeBlock : public Block {
         return numberOfMetaBlocks + numberOfTerms;
       }
       case Type::UserSymbol: {
-        uint8_t numberOfChars = static_cast<uint8_t>(*nextNth(2));
+        uint8_t numberOfChars = static_cast<uint8_t>(*nextNth(1));
         return numberOfMetaBlocks + numberOfChars;
       }
       case Type::UserFunction:

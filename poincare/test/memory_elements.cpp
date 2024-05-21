@@ -484,9 +484,8 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(KSub(1_e, 2_e),
                             {TypeBlock(Type::Sub), Type::One, Type::Two});
   assert_tree_equals_blocks(
-      "var"_e,
-      {TypeBlock(Type::UserSymbol), ValueBlock(255), ValueBlock(4),
-       ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(0)});
+      "var"_e, {TypeBlock(Type::UserSymbol), ValueBlock(4), ValueBlock('v'),
+                ValueBlock('a'), ValueBlock('r'), ValueBlock(0)});
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {

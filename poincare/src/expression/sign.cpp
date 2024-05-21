@@ -237,6 +237,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
   assert(Dimension::GetDimension(t).isScalar());
   if (t->isNumber()) {
     return ComplexSign(Number::Sign(t), Sign::Zero());
+  } else if (t->isUserNamed()) {
+    return Symbol::GetComplexSign(t);
   }
   switch (t->type()) {
     case Type::Mult: {
@@ -289,8 +291,6 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return ComplexArgument(Get(t->firstChild()));
     case Type::Dependency:
       return Get(Dependency::Main(t));
-    case Type::UserSymbol:
-      return Symbol::GetComplexSign(t);
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
 #if 0

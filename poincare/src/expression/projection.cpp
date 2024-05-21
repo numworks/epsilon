@@ -120,9 +120,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   if (e->isUndefined()) {
     return changed;
   }
-  if (e->isUserSymbol()) {
-    return Symbol::SetComplexSign(e, projectionContext->m_complexFormat);
-  }
   if (e->isParenthesis()) {
     e->removeNode();
     ShallowSystemProject(e, context);

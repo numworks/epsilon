@@ -46,6 +46,8 @@ class NodeConstructor final {
     static_assert(
         blockType != Type::PhysicalConstant && blockType != Type::SingleFloat &&
             blockType != Type::DoubleFloat && blockType != Type::UserSymbol &&
+            blockType != Type::UserSequence &&
+            blockType != Type::UserFunction &&
             blockType != Type::IntegerPosBig && blockType != Type::RackLayout &&
             blockType != Type::IntegerNegBig,
         "Type associated with specific specialized creators shouldn't end "
@@ -124,11 +126,6 @@ template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSymbol>(
     Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  if (blockIndex == 1) {
-    // Always push with default Unknown sign
-    *block = ComplexSign::Unknown().getValue();
-    return false;
-  }
   return CreateBlockAtIndexForUserType(Type::UserSymbol, block, blockIndex,
                                        name, nameSize);
 }

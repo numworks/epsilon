@@ -90,6 +90,10 @@ class JuniorExpression : public OExpression {
   JuniorExpression() {}
   JuniorExpression(const OExpression& other) { *this = other; }
 
+  JuniorExpression clone() const {
+    return static_cast<JuniorExpression>(OExpression::clone());
+  }
+
   static JuniorExpression Parse(const Internal::Tree* layout, Context* context,
                                 bool addMissingParenthesis = true,
                                 bool parseForAssignment = false);

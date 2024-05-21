@@ -287,6 +287,7 @@ poincare_src += $(addprefix poincare/src/numeric/,\
   erf_inv.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
+  roots.cpp \
   solver.cpp \
   solver_algorithms.cpp \
   statistics_dataset.cpp\
@@ -343,6 +344,7 @@ tests_src += $(addprefix poincare/test/,\
   range.cpp \
   rational.cpp \
   regularized_function.cpp \
+  roots.cpp \
   set.cpp \
   sign.cpp \
   simplification.cpp \

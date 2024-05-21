@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/function.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/serialization_helper.h>
@@ -284,8 +285,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
     }
     recordToSet = newModel;
   }
-  Poincare::UserExpression equation = Poincare::Comparison::Builder(
-      symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
+  Poincare::UserExpression equation = Poincare::UserExpression::Create(
+      KEqual(KA, KB), {.KA = symbol, .KB = expressionToStore});
   ExpiringPointer<ContinuousFunction> f =
       GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);
   // TODO: factorise with ContinuousFunction::setContent

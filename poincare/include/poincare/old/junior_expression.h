@@ -103,7 +103,7 @@ class JuniorExpression : public OExpression {
 
   static JuniorExpression Create(const Internal::Tree* structure,
                                  Internal::ContextTrees ctx);
-  operator const Internal::Tree*() { return tree(); }
+  operator const Internal::Tree*() const { return tree(); }
   // Builders from value.
   static JuniorExpression Builder(int32_t n);
   template <typename T>

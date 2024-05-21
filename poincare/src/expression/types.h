@@ -35,10 +35,10 @@ NODE(IntegerPosShort, 0, 1)
 
 NODE(IntegerPosBig, 0, 1)
 
-RANGE(IntegerNegative, IntegerNegBig, Zero)
-RANGE(IntegerPositive, Zero, IntegerPosBig)
-RANGE(IntegerStrictlyNegative, IntegerNegBig, MinusOne)
-RANGE(IntegerStrictlyPositive, One, IntegerPosBig)
+RANGE(NegativeInteger, IntegerNegBig, Zero)
+RANGE(PositiveInteger, Zero, IntegerPosBig)
+RANGE(StrictlyNegativeInteger, IntegerNegBig, MinusOne)
+RANGE(StrictlyPositiveInteger, One, IntegerPosBig)
 RANGE(Integer, IntegerNegBig, IntegerPosBig)
 
 // 1.1.b - Positive rationals
@@ -47,10 +47,10 @@ NODE(Half)  // Not in mathematical order
 NODE(RationalPosShort, 0, 2)
 NODE(RationalPosBig, 0, 2)
 
-RANGE(RationalNegative, RationalNegBig, Zero)
-RANGE(RationalPositive, Zero, RationalPosBig)
-RANGE(RationalStrictlyNegative, RationalNegBig, MinusOne)
-RANGE(RationalStrictlyPositive, One, RationalPosBig)
+RANGE(NegativeRational, RationalNegBig, Zero)
+RANGE(PositiveRational, Zero, RationalPosBig)
+RANGE(StrictlyNegativeRational, RationalNegBig, MinusOne)
+RANGE(StrictlyPositiveRational, One, RationalPosBig)
 RANGE(Rational, RationalNegBig, RationalPosBig)
 
 // 1.3 - Floats

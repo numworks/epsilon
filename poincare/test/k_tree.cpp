@@ -54,37 +54,37 @@ QUIZ_CASE(pcj_k_tree_integer) {
 }
 
 QUIZ_CASE(pcj_k_tree_rational_ranges) {
-  quiz_assert((0_e)->isIntegerNegative());
-  quiz_assert((0_e)->isIntegerPositive());
-  quiz_assert(!(0_e)->isIntegerStrictlyNegative());
-  quiz_assert(!(0_e)->isIntegerStrictlyPositive());
+  quiz_assert((0_e)->isNegativeInteger());
+  quiz_assert((0_e)->isPositiveInteger());
+  quiz_assert(!(0_e)->isStrictlyNegativeInteger());
+  quiz_assert(!(0_e)->isStrictlyPositiveInteger());
 
-  quiz_assert(!(12_e)->isIntegerNegative());
-  quiz_assert((12_e)->isIntegerPositive());
+  quiz_assert(!(12_e)->isNegativeInteger());
+  quiz_assert((12_e)->isPositiveInteger());
 
-  quiz_assert(!(1234_e)->isIntegerNegative());
-  quiz_assert((1234_e)->isIntegerPositive());
+  quiz_assert(!(1234_e)->isNegativeInteger());
+  quiz_assert((1234_e)->isPositiveInteger());
 
-  quiz_assert((-12_e)->isIntegerNegative());
-  quiz_assert(!(-12_e)->isIntegerPositive());
+  quiz_assert((-12_e)->isNegativeInteger());
+  quiz_assert(!(-12_e)->isPositiveInteger());
 
-  quiz_assert((-1234_e)->isIntegerNegative());
-  quiz_assert(!(-1234_e)->isIntegerPositive());
+  quiz_assert((-1234_e)->isNegativeInteger());
+  quiz_assert(!(-1234_e)->isPositiveInteger());
 
-  quiz_assert((0_e)->isRationalNegative());
-  quiz_assert((0_e)->isRationalPositive());
+  quiz_assert((0_e)->isNegativeRational());
+  quiz_assert((0_e)->isPositiveRational());
 
-  quiz_assert(!(1_e / 2_e)->isRationalStrictlyNegative());
-  quiz_assert((1_e / 2_e)->isRationalStrictlyPositive());
+  quiz_assert(!(1_e / 2_e)->isStrictlyNegativeRational());
+  quiz_assert((1_e / 2_e)->isStrictlyPositiveRational());
 
-  quiz_assert((-1_e / 2_e)->isRationalStrictlyNegative());
-  quiz_assert(!(-1_e / 2_e)->isRationalStrictlyPositive());
+  quiz_assert((-1_e / 2_e)->isStrictlyNegativeRational());
+  quiz_assert(!(-1_e / 2_e)->isStrictlyPositiveRational());
 
-  quiz_assert(!(45_e / 73_e)->isRationalStrictlyNegative());
-  quiz_assert((45_e / 73_e)->isRationalPositive());
+  quiz_assert(!(45_e / 73_e)->isStrictlyNegativeRational());
+  quiz_assert((45_e / 73_e)->isPositiveRational());
 
-  quiz_assert((-45_e / 73_e)->isRationalStrictlyNegative());
-  quiz_assert(!(-45_e / 73_e)->isRationalStrictlyPositive());
+  quiz_assert((-45_e / 73_e)->isStrictlyNegativeRational());
+  quiz_assert(!(-45_e / 73_e)->isStrictlyPositiveRational());
 }
 
 QUIZ_CASE(pcj_k_tree_ternary) {

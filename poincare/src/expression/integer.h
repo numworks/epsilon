@@ -306,7 +306,7 @@ class Integer {
     return OMG::BitHelper::getByteAtIndex(value, index);
   }
   static NonStrictSign Sign(Tree* tree) {
-    return tree->isIntegerPositive() ? NonStrictSign::Positive
+    return tree->isPositiveInteger() ? NonStrictSign::Positive
                                      : NonStrictSign::Negative;
   }
   static void SetSign(Tree* tree, NonStrictSign sign);

@@ -22,8 +22,8 @@ class Rational final {
   static IntegerHandler Numerator(const Tree* node);
   static IntegerHandler Denominator(const Tree* node);
   static Internal::Sign Sign(const Tree* node) {
-    return Internal::Sign(node->isZero(), node->isRationalStrictlyPositive(),
-                          node->isRationalStrictlyNegative(),
+    return Internal::Sign(node->isZero(), node->isStrictlyPositiveRational(),
+                          node->isStrictlyNegativeRational(),
                           !node->isInteger());
   }
   static bool SetSign(Tree* e, NonStrictSign sign);

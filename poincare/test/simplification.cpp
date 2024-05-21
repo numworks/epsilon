@@ -735,7 +735,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ: simplifies_to("0.3^∞", "0");
   // TODO_PCJ: simplifies_to("0.3^(-∞)", "undef");
   simplifies_to("1^∞", "undef");
-  // TODO_PCJ: simplifies_to("1^(-∞)", "undef");
+  simplifies_to("1^(-∞)", "undef");
   // TODO_PCJ: simplifies_to("2^∞", "∞");
   // TODO_PCJ: simplifies_to("2^(-∞)", "0");
   simplifies_to("x^∞", "x^∞");

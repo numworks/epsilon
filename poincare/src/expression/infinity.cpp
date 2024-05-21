@@ -50,7 +50,9 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   // x*inf -> sign(x)*inf
   PatternMatching::Context ctx;
   if (u->numberOfChildren() == 2) {
-    assert(u->child(0)->isInf() || u->child(1)->isInf());
+    if (!u->child(0)->isInf() && !u->child(1)->isInf()) {
+      return false;
+    }
     Tree* otherChild = u->child(0)->isInf() ? u->child(1) : u->child(0);
     // Handle cases -1,0,1,sign to avoid infinite loop
     if (otherChild->isZero()) {

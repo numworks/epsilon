@@ -31,7 +31,13 @@ EXECUTABLE_EXTENSION := bin
 SYSROOT := $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-path)
 export SDKROOT := $(shell xcrun --show-sdk-path)
 
-# TODO SFLAGS += -arch $(ARCH)
 SFLAGS += -isysroot $(SYSROOT)
 SFLAGS += -fPIC
 SFLAGS += -m$(APPLE_PLATFORM_MIN_VERSION_KEYWORD)-version-min=$(APPLE_PLATFORM_MIN_VERSION)
+
+# _arch_flag_helper, <arch>
+define _arch_flag_helper
+$(OUTPUT_DIRECTORY)/$1/%.bin: SFLAGS += -arch $1
+
+endef
+$(eval $(foreach a,$(ARCHS),$(call _arch_flag_helper,$a)))

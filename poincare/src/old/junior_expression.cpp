@@ -19,6 +19,7 @@
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/parser.h>
@@ -511,7 +512,12 @@ int JuniorExpression::getPolynomialCoefficients(
       Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
   Internal::Tree* poly =
       Internal::PolynomialParser::Parse(tree()->clone(), symbol);
-  int degree = poly->isPolynomial() ? Internal::Polynomial::Degree(poly) : 0;
+  if (!poly->isPolynomial()) {
+    coefficients[0] = Builder(poly);
+    symbol->removeTree();
+    return 0;
+  }
+  int degree = Internal::Polynomial::Degree(poly);
   int indexExponent = 0;
   int numberOfTerms = Internal::Polynomial::NumberOfTerms(poly);
   for (int i = degree; i >= 0; i--) {
@@ -524,7 +530,7 @@ int JuniorExpression::getPolynomialCoefficients(
           Builder(Internal::SharedTreeStack->push(Internal::Type::Zero));
     }
   }
-  assert(indexExponent == Internal::Polynomial::NumberOfTerms(poly));
+  assert(indexExponent == numberOfTerms);
   poly->removeTree();
   symbol->removeTree();
   return degree;

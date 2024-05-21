@@ -119,6 +119,10 @@ class Approximation final {
 
   template <typename T>
   static T FloatBinomial(T n, T k);
+  template <typename T>
+  static T FloatGCD(T a, T b);
+  template <typename T>
+  static T FloatLCM(T a, T b);
 
  private:
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
@@ -146,11 +150,30 @@ class Approximation final {
   template <typename T>
   static std::complex<T> ApproximatePower(const Tree* power,
                                           ComplexFormat complexFormat);
+  template <typename T>
+  static std::complex<T> ComputeComplexPower(const std::complex<T> c,
+                                             const std::complex<T> d,
+                                             ComplexFormat complexFormat);
+  template <typename T>
+  static std::complex<T> ComputeNotPrincipalRealRootOfRationalPow(
+      const std::complex<T> c, T p, T q);
 
   /* Approximate the conditions of a piecewise and return the tree corresponding
    * to the matching branch */
   template <typename T>
   static const Tree* SelectPiecewiseBranch(const Tree* piecewise);
+
+  template <typename T>
+  static bool IsIntegerRepresentationAccurate(T x);
+  template <typename T>
+  static T PositiveIntegerApproximation(std::complex<T> c);
+  template <typename T>
+  static std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(
+      std::complex<T> result, std::complex<T> input1,
+      std::complex<T> input2 = 1.0, bool enableNullResult = true);
+  template <typename T>
+  static std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
+                                                     std::complex<T> input);
 
   struct Context {
     using VariableType = double;

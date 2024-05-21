@@ -1,15 +1,11 @@
 #include <math.h>
 #include <omg/float.h>
-#include <poincare/old/approximation_helper.h>
 
 #include <bit>
 #include <complex>
 
 #include "approximation.h"
 #include "float.h"
-
-using Poincare::ApproximationHelper::MakeResultRealIfInputIsReal;
-using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
 
 namespace Poincare::Internal {
 

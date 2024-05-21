@@ -1,17 +1,13 @@
-#include <poincare/old/approximation_helper.h>
-
 #include "approximation.h"
 #include "context.h"
 #include "rational.h"
 
-using Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable;
-
 namespace Poincare::Internal {
 
 template <typename T>
-std::complex<T> computeOnComplex(const std::complex<T> c,
-                                 const std::complex<T> d,
-                                 ComplexFormat complexFormat) {
+std::complex<T> Approximation::ComputeComplexPower(
+    const std::complex<T> c, const std::complex<T> d,
+    ComplexFormat complexFormat) {
   if (c.imag() == static_cast<T>(0.0) && c.real() < static_cast<T>(0.0) &&
       ((d.real() == INFINITY && c.real() <= static_cast<T>(-1.0)) ||
        (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
@@ -71,7 +67,7 @@ std::complex<T> computeOnComplex(const std::complex<T> c,
 }
 
 template <typename T>
-std::complex<T> computeNotPrincipalRealRootOfRationalPow(
+std::complex<T> Approximation::ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<T> c, T p, T q) {
   // Assert p and q are in fact integers
   assert(std::round(p) == p);
@@ -89,8 +85,8 @@ std::complex<T> computeNotPrincipalRealRootOfRationalPow(
     std::complex<T> absc = c;
     absc.real(std::fabs(absc.real()));
     // compute |c|^(p/q) which is a real
-    std::complex<T> absCPowD =
-        computeOnComplex<T>(absc, std::complex<T>(p / q), ComplexFormat::Real);
+    std::complex<T> absCPowD = ComputeComplexPower<T>(
+        absc, std::complex<T>(p / q), ComplexFormat::Real);
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
@@ -132,10 +128,10 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    return computeNotPrincipalRealRootOfRationalPow(c, p, q);
+    return ComputeNotPrincipalRealRootOfRationalPow(c, p, q);
   }
 defaultApproximation:
-  return computeOnComplex<T>(c, ToComplex<T>(exponent), complexFormat);
+  return ComputeComplexPower<T>(c, ToComplex<T>(exponent), complexFormat);
 }
 
 template std::complex<float> Approximation::ApproximatePower(

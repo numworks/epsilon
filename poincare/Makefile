@@ -203,6 +203,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/arithmetic.cpp \
   expression/approximation.cpp \
   expression/approximation_derivative.cpp \
+  expression/approximation_helpers.cpp \
   expression/approximation_integral.cpp \
   expression/approximation_prepare.cpp \
   expression/approximation_power.cpp \

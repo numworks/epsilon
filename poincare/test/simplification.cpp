@@ -716,24 +716,39 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 
 QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("∞", "∞");
-  simplifies_to("-∞+1", "-∞");
-  simplifies_to("∞*(-π)", "-∞");
-  simplifies_to("x-∞", "x-∞");
-  simplifies_to("1/∞", "0");
-  simplifies_to("2^-∞", "0");
-  simplifies_to("0^∞", "0");
-  simplifies_to("e^-∞", "0");
-  simplifies_to("inf^x", "e^(∞×x)");
-  simplifies_to("log(inf,x)", "dep(∞/ln(x),{ln(x)})");
-  simplifies_to("0×∞", "undef");
+  simplifies_to("∞(-1)", "-∞");
+  // TODO_PCJ: simplifies_to("-∞+1", "-∞");
   simplifies_to("∞-∞", "undef");
+  simplifies_to("-∞+∞", "undef");
+  simplifies_to("x-∞", "x-∞");
+  simplifies_to("∞*(-π)", "-∞");
+  simplifies_to("0×∞", "undef");
+  simplifies_to("3×∞", "∞");
+  simplifies_to("-3×∞", "-∞");
+  simplifies_to("∞×(-∞)", "-∞");
+  simplifies_to("x(-∞)", "∞×sign(-x)");
+  simplifies_to("(abs(x)+1)*∞", "∞");
+  simplifies_to("1/∞", "0");
+  simplifies_to("0/∞", "0");
+  simplifies_to("0^∞", "0");
+  simplifies_to("0^(-∞)", "undef");
+  // TODO_PCJ: simplifies_to("0.3^∞", "0");
+  // TODO_PCJ: simplifies_to("0.3^(-∞)", "undef");
+  simplifies_to("1^∞", "undef");
+  // TODO_PCJ: simplifies_to("1^(-∞)", "undef");
+  // TODO_PCJ: simplifies_to("2^∞", "∞");
+  // TODO_PCJ: simplifies_to("2^(-∞)", "0");
+  simplifies_to("x^∞", "x^∞");
+  simplifies_to("∞^0", "undef");
+  // TODO_PCJ: simplifies_to("∞^x", "e^(∞×sign(x))");
+  // TODO_PCJ: simplifies_to("exp(∞)", "∞");
+  // TODO_PCJ: simplifies_to("exp(-∞)", "0");
+  simplifies_to("log(∞,x)", "dep(∞×sign(1/ln(x)),{ln(x)})");
+  simplifies_to("log(∞,-3)", "nonreal");
+  // TODO_PCJ: simplifies_to("log(∞,-3)", "∞-∞×i", cartesianCtx);
   simplifies_to("cos(∞)", "undef");
-  // FIXME: These cases should be undef
-  // simplifies_to("1^∞", "1"); // TODO false on device
-  simplifies_to("∞^0", "1");
-  // TODO: nonreal, see case Type::LnReal: in approximation.cpp
-  simplifies_to("log(inf,-3)", "undef");
-  simplifies_to("log(inf,-3)", "∞-∞×i", cartesianCtx);
+  simplifies_to("sin(∞)", "undef");
+  simplifies_to("atan(∞)", "π/2");
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry) {

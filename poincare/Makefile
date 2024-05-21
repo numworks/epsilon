@@ -220,6 +220,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/dimension.cpp \
   expression/dimension_vector.cpp \
   expression/float.cpp \
+  expression/infinity.cpp \
   expression/integer.cpp \
   expression/integer_serialization.cpp \
   expression/list.cpp \

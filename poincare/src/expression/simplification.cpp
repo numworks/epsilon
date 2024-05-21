@@ -12,6 +12,7 @@
 #include "dependency.h"
 #include "derivation.h"
 #include "dimension.h"
+#include "infinity.h"
 #include "k_tree.h"
 #include "list.h"
 #include "matrix.h"
@@ -65,7 +66,8 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
    * children in specialized systematic reduction. */
-  bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
+  bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false,
+       bubbleUpInf = false;
   for (const Tree* child : u->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
@@ -73,17 +75,22 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
+    } else if (child->isInf()) {
+      bubbleUpInf = true;
     }
   }
 
+  // 1. Bubble up floats
   bool changed =
       bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u);
 
+  // 2. Bubble up undef
   /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
    * with KA a Float and KB a UserVariable. We need to
    * ApproximateAndReplaceEveryScalar again. */
   changed = (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) || changed;
 
+  // 3. Bubble up dependencies
   if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(u)) {
     changed = true;
     assert(u->isDependency());
@@ -91,6 +98,10 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
      * simplifications. */
     ShallowSystematicReduce(u->child(0)) && ShallowSystematicReduce(u);
   }
+
+  // 4. Bubble up infinity
+  changed = (bubbleUpInf && Infinity::ShallowBubbleUpInfinity(u)) || changed;
+
   return changed;
 }
 

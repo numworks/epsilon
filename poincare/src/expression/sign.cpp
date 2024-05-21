@@ -291,6 +291,8 @@ ComplexSign ComplexSign::Get(const Tree* t) {
       return Get(Dependency::Main(t));
     case Type::UserSymbol:
       return Symbol::GetComplexSign(t);
+    case Type::Inf:
+      return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ACos:

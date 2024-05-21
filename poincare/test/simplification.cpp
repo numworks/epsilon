@@ -740,12 +740,13 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ: simplifies_to("2^(-∞)", "0");
   simplifies_to("x^∞", "x^∞");
   simplifies_to("∞^0", "undef");
-  // TODO_PCJ: simplifies_to("∞^x", "e^(∞×sign(x))");
+  simplifies_to("∞^x", "e^(∞×sign(x))");
   // TODO_PCJ: simplifies_to("exp(∞)", "∞");
   // TODO_PCJ: simplifies_to("exp(-∞)", "0");
   simplifies_to("log(∞,x)", "dep(∞×sign(1/ln(x)),{ln(x)})");
   simplifies_to("log(∞,-3)", "nonreal");
   // TODO_PCJ: simplifies_to("log(∞,-3)", "∞-∞×i", cartesianCtx);
+  simplifies_to("ln(-∞)", "nonreal");
   simplifies_to("cos(∞)", "undef");
   simplifies_to("cos(-∞)", "undef");
   simplifies_to("sin(∞)", "undef");

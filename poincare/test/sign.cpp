@@ -325,4 +325,8 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("(1+i)^4", ComplexSign(Sign::Integer(), Sign::Integer()));
   assert_sign("(5+i)^3", ComplexSign(Sign::Integer(), Sign::Integer()));
   assert_sign("(5-i)^(-1)", ComplexSign(Sign::Unknown(), Sign::Unknown()));
+
+  // inf
+  assert_sign("inf", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
+  assert_sign("-inf", ComplexSign(Sign::StrictlyNegative(), Sign::Zero()));
 }

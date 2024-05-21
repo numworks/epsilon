@@ -275,7 +275,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(i×2)", "π/2", cartesianCtx);
   simplifies_to("arg(-i×2)", "-π/2", cartesianCtx);
   simplifies_to("arg(0)", "undef", cartesianCtx);
-  simplifies_to("arg(-π+i×abs(y))", "π+arctan(-abs(y)/π)", cartesianCtx);
+  simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {
@@ -752,6 +752,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("sin(∞)", "undef");
   simplifies_to("sin(-∞)", "undef");
   simplifies_to("atan(∞)", "π/2");
+  simplifies_to("atan(-∞)", "-π/2");
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry) {

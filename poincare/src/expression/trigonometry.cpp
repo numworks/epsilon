@@ -314,6 +314,12 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
 }
 
 bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
+  // atan(-x) = -atan(x)
+  if (PatternMatching::MatchReplaceSimplify(
+          u, KATanRad(KMult(KA_s, -1_e, KB_s)),
+          KMult(-1_e, KATanRad(KMult(KA_s, KB_s))))) {
+    return true;
+  }
   // TODO_PCJ: Add more exact values (√3, 1/√3, ...)
   switch (u->child(0)->type()) {
     case Type::Zero:

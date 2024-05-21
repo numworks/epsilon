@@ -149,9 +149,26 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
  * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
 bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                       const Tree* replacement) {
-  if (expr->isUserSymbol() &&
+  assert(!symbol->isUserSequence());
+  if (symbol->isUserSymbol() && expr->isUserSymbol() &&
       strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
     expr->cloneTreeOverTree(replacement);
+    return true;
+  }
+  if (symbol->isUserFunction() && expr->isUserFunction() &&
+      strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
+    // Otherwise, local variable scope should be handled.
+    assert(!Variables::HasVariables(replacement));
+    bool treeIsUserFunction = true;
+    TreeRef evaluateAt;
+    if (treeIsUserFunction) {
+      evaluateAt = expr->child(0)->clone();
+    }
+    expr->cloneTreeOverTree(replacement);
+    if (treeIsUserFunction) {
+      expr->deepReplaceWith(KUnknownSymbol, evaluateAt);
+      evaluateAt->removeTree();
+    }
     return true;
   }
   bool isParametric = expr->isParametric();

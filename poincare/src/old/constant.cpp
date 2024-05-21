@@ -97,9 +97,10 @@ OExpression Constant::shallowReduce(ReductionContext reductionContext) {
     }
   } else {
     assert(info.m_unit != nullptr);
-    result = Multiplication::Builder(Float<double>::Builder(info.m_value),
-                                     OExpression::Parse(info.m_unit, nullptr));
-    result.childAtIndex(1).deepReduce(reductionContext);
+    assert(false);
+    // result = Multiplication::Builder(Float<double>::Builder(info.m_value),
+    // OExpression::Parse(info.m_unit, nullptr));
+    // result.childAtIndex(1).deepReduce(reductionContext);
   }
   replaceWithInPlace(result);
   return result;

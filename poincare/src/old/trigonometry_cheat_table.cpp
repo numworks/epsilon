@@ -8,7 +8,7 @@ OExpression TrigonometryCheatTable::Row::Pair::reducedExpression(
     bool assertNotUninitialized,
     const ReductionContext& reductionContext) const {
   OExpression e =
-      OExpression::Parse(m_expression, nullptr);  // No context needed
+      JuniorExpression::Parse(m_expression, nullptr);  // No context needed
   if (assertNotUninitialized) {
     assert(!e.isUninitialized());
   } else {

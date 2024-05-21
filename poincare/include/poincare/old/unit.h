@@ -194,8 +194,7 @@ class UnitNode final : public ExpressionNode {
     const Prefix* findBestPrefix(double value, double exponent) const;
     OExpression ratioExpressionReduced(
         const ReductionContext& reductionContext) const {
-      return OExpression::Parse(m_ratioExpression, nullptr)
-          .deepReduce(reductionContext);
+      assert(false);
     }
 
    protected:

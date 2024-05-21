@@ -163,11 +163,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   zoom.cpp \
 )
 
-poincare_src += $(addprefix poincare/src/old/parsing/,\
-  parser.cpp \
-  helper.cpp \
-  tokenizer.cpp \
-)
 
 tests_src += $(addprefix poincare/test/old/,\
   helper.cpp \

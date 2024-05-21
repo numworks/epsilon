@@ -54,24 +54,6 @@ OExpression OExpression::clone() const {
   return static_cast<OExpression &>(c);
 }
 
-OExpression OExpression::Parse(char const *string, Context *context,
-                               bool addParentheses, bool parseForAssignment) {
-  if (string[0] == 0) {
-    return OExpression();
-  }
-  Parser p(string, context, nullptr,
-           parseForAssignment ? ParsingContext::ParsingMethod::Assignment
-                              : ParsingContext::ParsingMethod::Classic);
-  OExpression expression = p.parse();
-  if (p.getStatus() != Parser::Status::Success) {
-    expression = OExpression();
-  }
-  if (!expression.isUninitialized() && addParentheses) {
-    expression = expression.addMissingParentheses();
-  }
-  return expression;
-}
-
 OExpression OExpression::ExpressionFromAddress(const void *address,
                                                size_t size) {
   if (address == nullptr || size == 0) {
@@ -1158,7 +1140,7 @@ size_t OExpression::serialize(char *buffer, size_t bufferSize,
 OExpression OExpression::ParseAndSimplify(
     const char *text, Context *context, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, bool *reductionFailure) {
-  JuniorExpression exp = Parse(text, context, false);
+  JuniorExpression exp = JuniorExpression::Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }

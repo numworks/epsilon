@@ -158,9 +158,6 @@ class OExpression : public PoolHandle {
   /* Constructor & Destructor */
   OExpression() : PoolHandle() {}
   OExpression clone() const;
-  static OExpression Parse(char const* string, Context* context,
-                           bool addMissingParenthesis = true,
-                           bool parseForAssignment = false);
   static OExpression ExpressionFromAddress(const void* address, size_t size);
 
   /* Hierarchy */

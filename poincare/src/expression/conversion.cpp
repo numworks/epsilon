@@ -27,7 +27,9 @@ Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
-  return Poincare::OExpression::Parse(buffer, nullptr, false, false);
+  assert(false);
+  // we may use the new parse here
+  // return Poincare::OExpression::Parse(buffer, nullptr, false, false);
 }
 
 void PushPoincareExpressionViaParse(Poincare::OExpression exp) {

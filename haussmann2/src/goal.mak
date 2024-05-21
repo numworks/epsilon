@@ -43,7 +43,7 @@ endef
 define libraries_for_flavored_goal
 $(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
 	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
-	$(MODULES_$(call name_for_flavored_target,$(notdir $1)))))
+	$(MODULES_$(call name_for_flavored_target,$1))))
 endef
 
 # Helpers

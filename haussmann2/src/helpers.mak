@@ -13,7 +13,7 @@ endef
 # name_for_flavored_target, <flavored target>
 #   name.flavor1.flavor2 -> name
 define name_for_flavored_target
-$(firstword $(subst ., ,$1))
+$(firstword $(subst ., ,$(notdir $1)))
 endef
 
 # flavors_for_flavored_target, <flavored target>

@@ -7,15 +7,14 @@
 
 namespace Poincare::Internal {
 
-/* Textual UserSymbols in expressions are projected into de Bruijn indices.  The
- * global free variables have an index corresponding to their alphabetical order
- * in global variables.  When a scope (parametric) is entered, all the indices
- * are shifted by one which leaves room to represent the new local variable with
- * the index \0. The user symbol of the local variable is kept as an hint for
- * the beautification.
+/* Textual UserSymbols in expressions are projected into de Bruijn indices. When
+ * a scope (parametric) is entered, all the indices are shifted by one which
+ * leaves room to represent the new local variable with the index \0. The user
+ * symbol of the local variable is kept as an hint for the beautification.
+ *
  * For instance:  x + sum(x + 2k, k, 0, n) => \0 + sum(\1 + 2*\0, k, 0, \1)
  *
- * Variable are also given a context restrained by the context. */
+ * Variable are also given a complex sign restrained by the context. */
 
 class Variables {
  public:

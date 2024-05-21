@@ -13,7 +13,6 @@
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/point_evaluation.h>
-#include <poincare/old/polynomial.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/sine.h>
 #include <poincare/old/subtraction.h>
@@ -23,6 +22,7 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/zoom.h>
 #include <poincare/print.h>
+#include <poincare/src/numeric/roots.h>
 
 #include <algorithm>
 
@@ -701,30 +701,16 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
                                         Preferences::UnitFormat::Metric,
                                         ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
-        Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0],
-                                          &m_expression, reductionContext,
-                                          false);
+        m_expression =
+            SystemExpression::Builder(Poincare::Internal::Roots::Linear(
+                coefficients[1].tree(), coefficients[0].tree()));
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         assert(m_properties.isOfDegreeTwo());
-        SystemExpression root1, root2, delta;
-        int solutions = Polynomial::QuadraticPolynomialRoots(
-            coefficients[2], coefficients[1], coefficients[0], &root1, &root2,
-            &delta, reductionContext, nullptr, false);
-        if (solutions <= 1) {
-          m_expression = root1;
-        } else {
-          // SubCurves are stored in a list
-          // Roots are ordered so that the first one is superior to the second
-          List newExpr = List::Builder();
-          newExpr.addChildAtIndexInPlace(root2, newExpr.numberOfChildren(),
-                                         newExpr.numberOfChildren());
-          newExpr.addChildAtIndexInPlace(root1, newExpr.numberOfChildren(),
-                                         newExpr.numberOfChildren());
-          /* Shallow reduce in case the equation could approximate to a list.
-           * Example: x^2={}(a) */
-          m_expression = newExpr.shallowReduce(reductionContext);
-        }
+        m_expression =
+            SystemExpression::Builder(Poincare::Internal::Roots::Quadratic(
+                coefficients[2].tree(), coefficients[1].tree(),
+                coefficients[0].tree()));
       } else {
         /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or

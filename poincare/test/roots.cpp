@@ -41,12 +41,11 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{2x+z, 4y-1}", "(1-4y)/(2x+z)");
   assert_roots_are("{1, -2, 1}", "1");
   assert_roots_are("{π, -2π, π}", "1");
-  assert_roots_are("{1, -1, -6}", "{-2, 3}");
+  assert_roots_are("{1, -1, -6}", "{3, -2}");
+  assert_roots_are("{1,-x-1,x}",
+                   "{1/2×(1+x+exp(1/2×ln(1-2×x+x^2))), "
+                   "-1/2×(-1-1×x+exp(1/2×ln(1-2×x+x^2)))}");
   // TODO: Results should be simpler but ADVANCED_MAX_DEPTH is too small
   // {-1×i,i}
-  assert_roots_are("{1, 0, 1}", "{-1/2×exp(1/2×ln(-4)),exp(1/2×π×i)}");
-  // {-1/2×(-1-1×x+exp(1/2×ln(1-2×x+x^2))),1/2×(1+x+exp(1/2×ln(1-2×x+x^2)))}
-  assert_roots_are("{1,-x-1,x}",
-                   "{-1/2×(-1-1×x+exp(1/2×ln(1-2×x+x^2))),1/"
-                   "2×(1+x+exp(1/2×ln(1-2×x+x^2)))}");
+  assert_roots_are("{1, 0, 1}", "{exp(1/2×π×i), -1/2×exp(1/2×ln(-4))}");
 }

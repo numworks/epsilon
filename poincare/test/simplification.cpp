@@ -184,7 +184,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
-  simplifies_to("abs(x^2)", "abs(x^2)", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
   simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
@@ -242,40 +241,48 @@ QUIZ_CASE(pcj_simplification_matrix) {
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
-  simplifies_to("i×im(x)+re(x)", "x", cartesianCtx);
-  simplifies_to("2×i×i", "-2", cartesianCtx);
-  simplifies_to("1+i×(1+i×(1+i))", "0", cartesianCtx);
-  simplifies_to("(1+i)×(3+2i)", "1+5×i", cartesianCtx);
-  simplifies_to("√(-1)", "i", cartesianCtx);
-  simplifies_to("re(2+i×π)", "2", cartesianCtx);
-  simplifies_to("im(2+i×π)", "π", cartesianCtx);
-  simplifies_to("conj(2+i×π)", "2-π×i", cartesianCtx);
-  simplifies_to("re(conj(x))-re(x)", "0", cartesianCtx);
-  simplifies_to("conj(conj(x))", "x", cartesianCtx);
-  simplifies_to("re(x+im(y))-im(y)", "re(x)", cartesianCtx);
-  simplifies_to("re(x)+i×im(x)", "x", cartesianCtx);
-  simplifies_to("re(x+i×y)+im(y)", "re(x)", cartesianCtx);
-  simplifies_to("im(x+i×y)", "im(x)+re(y)", cartesianCtx);
-  simplifies_to("re(x)+i×im(x+y)", "x+im(y)×i", cartesianCtx);
+  Shared::GlobalContext globalContext;
+  store("x→f(x)", &globalContext);
+  ProjectionContext ctx = {
+      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_context = &globalContext,
+      .m_complexFormat = ComplexFormat::Cartesian,
+  };
+
+  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
+  simplifies_to("2×i×i", "-2", ctx);
+  simplifies_to("1+i×(1+i×(1+i))", "0", ctx);
+  simplifies_to("(1+i)×(3+2i)", "1+5×i", ctx);
+  simplifies_to("√(-1)", "i", ctx);
+  simplifies_to("re(2+i×π)", "2", ctx);
+  simplifies_to("im(2+i×π)", "π", ctx);
+  simplifies_to("conj(2+i×π)", "2-π×i", ctx);
+  simplifies_to("re(conj(f(x)))-re(f(x))", "0", ctx);
+  simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
+  simplifies_to("re(f(x)+y)-y", "re(f(x))", ctx);
+  simplifies_to("re(i×f(y))+im(f(y))", "0", ctx);
+  simplifies_to("im(i×f(y))", "re(f(y))", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO: Should be im(x)+re(y), fail because of Full CRC collection
-  simplifies_to("i×(conj(x+i×y)+im(y)-re(x))", "re(y)+(-x+re(x))×i",
-                cartesianCtx);
+  // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
+  simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",
+                "re(f(y))+(-f(x)+re(f(x)))×i", ctx);
 #endif
-  simplifies_to("im(re(x)+i×im(x))", "im(x)", cartesianCtx);
-  simplifies_to("re(re(x)+i×im(x))", "re(x)", cartesianCtx);
+  simplifies_to("im(re(f(x))+i×im(f(x)))", "im(f(x))", ctx);
+  simplifies_to("re(re(f(x))+i×im(f(x)))", "re(f(x))", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Overflows CRC32 collection, should be 0
-  simplifies_to("abs(x+i×y)^2-(-im(y)+re(x))^2-(im(x)+re(y))^2",
-                "abs(x+y×i)^2-(-im(y)+re(x))^2-(im(x)+re(y))^2", cartesianCtx);
+  simplifies_to(
+      "abs(f(x)+i×f(y))^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2",
+      "abs(f(x)+f(y)×i)^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2", ctx);
 #endif
-  simplifies_to("arg(re(x)+re(y)×i)", "arg(re(x)+re(y)×i)", cartesianCtx);
-  simplifies_to("arg(π+i×2)", "arctan(2/π)", cartesianCtx);
-  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", cartesianCtx);
-  simplifies_to("arg(i×2)", "π/2", cartesianCtx);
-  simplifies_to("arg(-i×2)", "-π/2", cartesianCtx);
-  simplifies_to("arg(0)", "undef", cartesianCtx);
-  simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", cartesianCtx);
+  simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
+  simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
+  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", ctx);
+  simplifies_to("arg(i×2)", "π/2", ctx);
+  simplifies_to("arg(-i×2)", "-π/2", ctx);
+  simplifies_to("arg(0)", "undef", ctx);
+  simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
+  simplifies_to("abs(f(x)^2)", "abs(f(x)^2)", ctx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {
@@ -923,12 +930,10 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
 #endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
-  simplifies_to("ln(re(x))+ln(re(y))-ln(re(x)×re(y))",
-                "ln(re(x))+ln(re(y))-ln(re(x)×re(y))", cartesianCtx);
   simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "0", cartesianCtx);
 
   // Use complex logarithm internally
-  simplifies_to("√(re(x)^2)", "√(re(x)^2)", cartesianCtx);
+  simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);
   simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
   simplifies_to("√(0)", "0", cartesianCtx);
   simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);

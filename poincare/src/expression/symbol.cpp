@@ -25,20 +25,12 @@ const char* Symbol::GetName(const Tree* node) {
 
 ComplexSign Symbol::GetComplexSign(const Tree* node) {
   assert(node->isUserNamed());
-  return node->isUserSymbol() ? ComplexSign(node->nodeValue(0))
+  return node->isUserSymbol() ? ComplexSign::RealUnknown()
                               : ComplexSign::Unknown();
 }
 
 bool Symbol::SetComplexSign(Tree* userSymbol, ComplexFormat format) {
-  assert(userSymbol->isUserSymbol());
-  ComplexSign sign = format == ComplexFormat::Real ? ComplexSign::RealUnknown()
-                                                   : ComplexSign::Unknown();
-
-  if (userSymbol->nodeValue(0) == sign.getValue()) {
-    return false;
-  }
-  userSymbol->setNodeValue(0, sign.getValue());
-  return true;
+  return false;
 }
 
 }  // namespace Poincare::Internal

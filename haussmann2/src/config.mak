@@ -17,5 +17,19 @@ ifeq ($(VERBOSE),0)
 QUIET := @
 endif
 
+# Host detection
+ifeq ($(OS),Windows_NT)
+HOST := windows
+else
+_uname_s := $(shell uname -s)
+ifeq ($(_uname_s),Darwin)
+HOST := macos
+else ifeq ($(_uname_s),Linux)
+HOST := linux
+else
+HOST := unknown
+endif
+endif
+
 # Platform specific configuration
 include $(PATH_haussmann)/src/configs/$(PLATFORM).mak

@@ -1,5 +1,5 @@
 $(OUTPUT_DIRECTORY)/%.bin: $(OUTPUT_DIRECTORY)/%.elf
-	$(QUIET) echo "OBJCOPY\t$@"
+	$(call rule_label,OBJCOPY)
 	$(QUIET) $(OBJCOPY) -O binary $< $@
 
 $(eval $(call document_extension,bin,Extract plain binary from ELF file))

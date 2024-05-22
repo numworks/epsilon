@@ -14,7 +14,7 @@ $(OUTPUT_DIRECTORY)%/.:
 
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
-	$(QUIET) echo "LD\t$@"
+	$(call rule_label,LD)
 	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 $(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
@@ -22,16 +22,16 @@ $(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(call check_locks,$(call name_for_flavored_target,$*))
-	$(QUIET) echo "AR\t$@"
+	$(call rule_label,AR)
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
 $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).c | $$(@D)/.
-	$(QUIET) echo "CC\t$@"
+	$(call rule_label,CC)
 	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
-	$(QUIET) echo "CXX\t$@"
+	$(call rule_label,CXX)
 	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # Lock files, ensure that modules versions match

@@ -55,3 +55,8 @@ endef
 define strip_arch_dir
 $(call text_or,$(strip $(foreach a,$(ARCHS),$(patsubst $a/%,%,$(filter $a/%,$1)))),$1)
 endef
+
+# rule_label, <label>
+define rule_label
+@ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(OUTPUT_DIRECTORY)/%=%)"
+endef

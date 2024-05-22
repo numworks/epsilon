@@ -1,6 +1,8 @@
 
 PATH_haussmann := ..
 
+APP_NAME := Test
+APP_VERSION := 0.0.0
 OUTPUT_ROOT := out
 DEBUG := 1
 PLATFORM := macos
@@ -20,3 +22,5 @@ $(eval $(call create_goal,test,\
 	Some test executable that should exit with an error\
 ))
 $(eval $(call create_goal,test_dummy,main))
+
+SIMULATOR_PLIST := Info.plist

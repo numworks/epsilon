@@ -1,5 +1,7 @@
 # Configuration variables, may be edited on the command line.
 
+$(call assert_defined,APP_NAME)
+$(call assert_defined,APP_VERSION)
 $(call assert_defined,OUTPUT_ROOT)
 $(call assert_defined,DEBUG)
 $(call assert_defined,PLATFORM)

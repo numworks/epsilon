@@ -83,6 +83,43 @@ For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
 - Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
 - Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
 
+### Global variable's properties
+
+During our simplification algorithms, the global user symbols and functions are considered to be scalar.
+
+This allows for simplifications such as $x*y*x=x^2*y$, which wouldn't be possible if x was a matrix.
+
+Matrices could still be stored in variables, but it would be replaced on projection.
+
+User functions and sequences have an unknown complex sign, so $re(f(0))$ cannot be simplified further.
+
+However, user symbols are considered real, $re(x)$ simplifies to $x$ under any ComplexFormat.
+
+<details>
+<summary>Why are user symbols are considered real ?</summary>
+
+We considered two alternatives that weren't satisfying enough as for now. In the future, we should come back on this to allow more versatile usages.
+
+#### 1 - Unknown complex sign for user symbols as well
+
+They would behave like user functions.
+
+Impactful simplifications in applications using UserSymbols as reals are then impossible.
+
+For example, in Epsilon's Grapher, we analyze conics in `x` and `y` which will always be evaluated at real values.
+
+#### 2 - User symbols could store their own sign
+
+Just like variables, we could store the UserSymbol's sign in its node.
+
+We can no longer create UserSymbol Trees without needing a special context.
+
+For example, when computing an expressions's polynomial degree depending on "x", its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
+
+However, we try not to rely on any context when manipulating projected expressions.
+
+</details>
+
 ## Dimension check
 
 Dimension covers scalars, points, booleans, units, matrix size, and list size (handled in a different functions in a similar way).

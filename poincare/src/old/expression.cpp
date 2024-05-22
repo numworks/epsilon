@@ -1120,7 +1120,9 @@ Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   if (isUninitialized()) {
     return Layout();
   }
-  Internal::Tree *exp = Internal::FromPoincareExpression(*this);
+  assert(otype() == ExpressionNode::Type::JuniorExpression);
+  Internal::Tree *exp =
+      static_cast<const JuniorExpression &>(*this).tree()->clone();
   Internal::Tree *lay = Internal::Layoutter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);

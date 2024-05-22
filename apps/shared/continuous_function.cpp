@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/old/cosine.h>
@@ -801,6 +802,8 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
          .target = ReductionTarget::SystemForAnalysis,
          // Symbols have already been replaced.
          .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
+  } else {
+    result = SystemExpression::Create(KUndef, {});
   }
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is

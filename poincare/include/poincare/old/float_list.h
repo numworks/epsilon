@@ -3,12 +3,12 @@
 
 #include <poincare/numeric/statistics.h>
 
-#include "list.h"
+#include "junior_expression.h"
 
 namespace Poincare {
 
 template <typename T>
-class FloatList : public OList, public DatasetColumn<T> {
+class FloatList : public List, public DatasetColumn<T> {
   /* WARNING: Do not add children to FloatList with addChildAtIndexInPlace,
    * and do not replace children with replaceChildAtIndexInPlace.
    * The method floatExpressionAtIndex assumes that every child is a FloatNode,
@@ -19,7 +19,8 @@ class FloatList : public OList, public DatasetColumn<T> {
    */
  public:
   static FloatList<T> Builder() {
-    return PoolHandle::NAryBuilder<FloatList<T>, ListNode>();
+    List list = List::Builder();
+    return static_cast<FloatList<T>&>(list);
   }
 
   void addChildAtIndexInPlace(PoolHandle t, int index,
@@ -36,7 +37,7 @@ class FloatList : public OList, public DatasetColumn<T> {
 
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */
-  OExpression floatExpressionAtIndex(int index) const;
+  Internal::Tree* floatNodeAtIndex(int index) const;
 };
 
 }  // namespace Poincare

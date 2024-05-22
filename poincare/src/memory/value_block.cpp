@@ -1,5 +1,7 @@
 #include "value_block.h"
 
+#include <string.h>
+
 #include <bit>
 
 #if __EMSCRIPTEN__
@@ -62,5 +64,13 @@ double ValueBlock::get<double>() const {
   return std::bit_cast<double, uint64_t>(get<uint64_t>());
 }
 #endif
+
+template <typename T>
+void ValueBlock::set(T value) {
+  memcpy(this, &value, sizeof(value));
+}
+
+template void ValueBlock::set(float);
+template void ValueBlock::set(double);
 
 };  // namespace Poincare::Internal

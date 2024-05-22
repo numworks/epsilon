@@ -939,6 +939,13 @@ List List::Builder() {
   return static_cast<List&>(expr);
 }
 
+void List::removeChildAtIndexInPlace(int i) {
+  Internal::Tree* clone = tree()->clone();
+  Internal::NAry::RemoveChildAtIndex(clone, i);
+  JuniorExpression temp = JuniorExpression::Builder(clone);
+  *this = static_cast<List&>(temp);
+}
+
 // TODO_PCJ: Rework this and its usage
 void List::addChildAtIndexInPlace(JuniorExpression t, int index,
                                   int currentNumberOfChildren) {

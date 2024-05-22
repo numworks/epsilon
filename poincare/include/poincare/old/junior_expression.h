@@ -393,7 +393,7 @@ class Point final : public JuniorExpression {
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is List
-class List final : public JuniorExpression {
+class List : public JuniorExpression {
  public:
   static List Builder();
   bool isListOfPoints(Context* context) const {
@@ -408,10 +408,7 @@ class List final : public JuniorExpression {
   }
   int numberOfChildren() const;
 
-  void removeChildAtIndexInPlace(int i) {
-    assert(false);
-    return;
-  }
+  void removeChildAtIndexInPlace(int i);
   void addChildAtIndexInPlace(JuniorExpression t, int index,
                               int currentNumberOfChildren);
 };

@@ -20,6 +20,9 @@ class ValueBlock : public Block {
   }
 
   template <typename T>
+  void set(T value);
+
+  template <typename T>
     requires(sizeof(T) == 1)
   void set(T value) {
     *reinterpret_cast<T*>(this) = value;

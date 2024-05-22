@@ -8,6 +8,7 @@
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/advanced_simplification.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/continuity.h>
@@ -510,8 +511,10 @@ int JuniorExpression::getPolynomialCoefficients(
     JuniorExpression coefficients[]) const {
   Internal::Tree* symbol =
       Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
-  Internal::Tree* poly =
-      Internal::PolynomialParser::Parse(tree()->clone(), symbol);
+  Internal::Tree* poly = tree()->clone();
+  Internal::AdvancedSimplification::DeepExpand(poly);
+  // PolynomialParser::Parse eats given tree
+  poly = Internal::PolynomialParser::Parse(poly, symbol);
   if (!poly->isPolynomial()) {
     coefficients[0] = Builder(poly);
     symbol->removeTree();

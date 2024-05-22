@@ -21,7 +21,9 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
                     size_t lastPosition = k_noSize)
-      : LayoutSpanDecoder(rack->child(initialPosition),
+      : LayoutSpanDecoder(initialPosition == 0
+                              ? static_cast<const Layout*>(rack->nextNode())
+                              : rack->child(initialPosition),
                           (lastPosition == k_noSize ? rack->numberOfChildren()
                                                     : lastPosition) -
                               initialPosition) {}

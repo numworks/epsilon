@@ -99,6 +99,8 @@ class InputBeautification {
        [](TreeRef* parameters) {
          return KCodePointL<UCodePointMultiplicationSign>()->clone();
        }},
+      {"''", 0,
+       [](TreeRef* parameters) { return KCodePointL<u'"'>()->clone(); }},
   };
 
   constexpr static BeautificationRule k_infRule = {

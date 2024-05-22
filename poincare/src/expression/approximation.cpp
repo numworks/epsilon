@@ -788,6 +788,18 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::PowReal: {
       T a = child[0];
       T b = child[1];
+      if (std::fabs(a) == static_cast<T>(1.0) && std::fabs(b) == INFINITY) {
+        /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
+         * behavior we want. */
+        return NAN;
+      }
+      if ((a < static_cast<T>(-1.0) && b == INFINITY) ||
+          (static_cast<T>(-1.0) < a && a <= static_cast<T>(0.0) &&
+           b == -INFINITY)) {
+        /* a^inf with a <-1 and a^(-inf) with -1 < a <= 0 are approximated to
+         * complex infinity, not handled for now. We decide to return undef */
+        return NAN;
+      }
       /* PowerReal could not be reduced, b's reductions cannot be safely
        * interpreted as a rational. As a consequence, return NAN if a is
        * negative and b isn't an integer. */

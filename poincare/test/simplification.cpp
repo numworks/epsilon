@@ -2,6 +2,7 @@
 #include <poincare/src/expression/advanced_simplification.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/variables.h>
 
@@ -485,6 +486,20 @@ QUIZ_CASE(pcj_simplification_percent) {
   simplifies_to("-2-30%", "-2×(1-30/100)");
   simplifies_to("x-30%", "x×(1-30/100)",
                 {.m_strategy = Strategy::ApproximateToFloat});
+}
+
+QUIZ_CASE(pcj_simplification_list_bubble_up) {
+  // Bubble-up with no reduction to test the bubble-up itself
+  Tree* l1 = KPow(2_e, KList(3_e, 4_e))->clone();
+  List::BubbleUp(l1, [](Tree*) { return false; });
+  assert_trees_are_equal(l1, KList(KPow(2_e, 3_e), KPow(2_e, 4_e)));
+  l1->removeTree();
+
+  Tree* l2 = KMult(2_e, KAdd(3_e, KList(5_e, 6_e)), KList(7_e, 8_e))->clone();
+  List::BubbleUp(l2, [](Tree*) { return false; });
+  assert_trees_are_equal(l2, KList(KMult(2_e, KAdd(3_e, 5_e), 7_e),
+                                   KMult(2_e, KAdd(3_e, 6_e), 8_e)));
+  l2->removeTree();
 }
 
 QUIZ_CASE(pcj_simplification_list) {

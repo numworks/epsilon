@@ -1,7 +1,9 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <omg/concept.h>
 #include <poincare/src/memory/block.h>
+#include <poincare/src/memory/k_tree_concept.h>
 
 #include "old_expression.h"
 
@@ -114,6 +116,10 @@ class JuniorExpression : public OExpression {
   template <typename T>
   static JuniorExpression Builder(T x);
 
+  template <Internal::KTrees::KTreeConcept T>
+  static JuniorExpression Builder(T x) {
+    return Builder(static_cast<const Internal::Tree*>(x));
+  }
   static JuniorExpression Builder(const Internal::Tree* tree);
   // Eat the tree
   static JuniorExpression Builder(Internal::Tree* tree);

@@ -6,6 +6,7 @@
 
 #include <array>
 
+#include "k_tree_concept.h"
 #include "placeholder.h"
 #include "tree.h"
 
@@ -14,13 +15,6 @@ namespace KTrees {
 
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
-
-/* Concept that gathers all KTrees */
-
-class AbstractKTree {};
-
-template <class C>
-concept KTreeConcept = OMG::Concept::is_derived_from<C, AbstractKTree>;
 
 /* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
  * and set the value blocks as expected but it cannot be filled in a constexpr

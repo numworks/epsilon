@@ -1,5 +1,5 @@
+#include <poincare/numeric/roots.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/numeric/roots.h>
 
 #include "helper.h"
 

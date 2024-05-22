@@ -80,17 +80,24 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
     }
   }
 
-  // 1. Bubble up floats
-  bool changed =
-      bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u);
+  // 1. Bubble up infinity
+  bool changed = bubbleUpInf && Infinity::ShallowBubbleUpInfinity(u);
+  if (bubbleUpInf && !changed && !Infinity::TreeIsPlusOrMinusInfinity(u)) {
+    bubbleUpFloat = true;
+  }
 
-  // 2. Bubble up undef
+  // 2. Bubble up floats
+  changed =
+      (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u)) ||
+      changed;
+
+  // 3. Bubble up undef
   /* During a PatternMatching replace KPow(KA, KB) -> KExp(KMult(KLn(KA), KB))
    * with KA a Float and KB a UserVariable. We need to
    * ApproximateAndReplaceEveryScalar again. */
   changed = (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) || changed;
 
-  // 3. Bubble up dependencies
+  // 4. Bubble up dependencies
   if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(u)) {
     changed = true;
     assert(u->isDependency());
@@ -98,9 +105,6 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
      * simplifications. */
     ShallowSystematicReduce(u->child(0)) && ShallowSystematicReduce(u);
   }
-
-  // 4. Bubble up infinity
-  changed = (bubbleUpInf && Infinity::ShallowBubbleUpInfinity(u)) || changed;
 
   return changed;
 }

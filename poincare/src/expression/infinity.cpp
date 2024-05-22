@@ -39,29 +39,8 @@ static bool shallowBubbleUpInfinityInDistribution(Tree* u) {
 }
 
 bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
-  if (
-      // ln(inf) = inf
-      PatternMatching::MatchReplaceSimplify(u, KLn(KInf), KInf)
-      // cos(inf) = sin(inf) = undef
-      || PatternMatching::MatchReplaceSimplify(u, KTrig(KInf, KB), KUndef)
-      // atan(inf) = π/2
-      || PatternMatching::MatchReplaceSimplify(u, KATanRad(KInf),
-                                               KMult(1_e / 2_e, π_e))
-      // 1^inf -> undef
-      || PatternMatching::MatchReplaceSimplify(u, KPowReal(1_e, KInf), KUndef)
-      // 1^-inf -> undef
-      || PatternMatching::MatchReplaceSimplify(
-             u, KPowReal(1_e, KMult(-1_e, KInf)), KUndef)
-      // inf^0 -> undef
-      || PatternMatching::MatchReplaceSimplify(u, KPowReal(KInf, 0_e), KUndef)
-      // inf^(-1) -> 0
-      || PatternMatching::MatchReplaceSimplify(u, KPowReal(KInf, -1_e), 0_e)
-      // inf - inf = undef
-      || PatternMatching::MatchReplaceSimplify(
-             u, KAdd(KA_s, KInf, KB_s, KMult(-1_e, KInf), KC_s), KUndef)
-      // -inf + inf = undef
-      || PatternMatching::MatchReplaceSimplify(
-             u, KAdd(KA_s, KMult(-1_e, KInf), KB_s, KInf, KC_s), KUndef)) {
+  if (PatternMatching::MatchReplaceSimplify(u, KATanRad(KInf),
+                                            KMult(1_e / 2_e, π_e))) {
     return true;
   }
 

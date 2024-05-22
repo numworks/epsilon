@@ -38,7 +38,7 @@ jobs:
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f poincare
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f probability
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f python
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f regression
+      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f regression
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f sequence
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f shared
       # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f solver

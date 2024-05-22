@@ -24,7 +24,8 @@ Poincare::UserExpression TrigonometricModel::privateExpression(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
       {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
+       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
+       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
 double TrigonometricModel::evaluate(double* modelCoefficients, double x) const {

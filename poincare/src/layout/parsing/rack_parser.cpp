@@ -899,16 +899,13 @@ void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
   // ? Token::Type::LeftSystemBrace
   // : Token::Type::LeftParenthesis));
   popToken();  // Pop the left delimiter
-#if 0
-  TreeRef rank =
-#endif
-  parseUntil(rightDelimiter);
+  TreeRef rank = parseUntil(rightDelimiter);
   if (!popTokenIfType(rightDelimiter)) {
     // Right delimiter missing
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
-    assert(false);  // Not implemented
-    // leftHandSide = Sequence::Builder(name, 1, rank);
+    leftHandSide = SharedTreeStack->push<Type::UserSequence>(name);
+    leftHandSide->moveTreeAfterNode(rank);
   }
 }
 
@@ -976,30 +973,22 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     return;
   }
 
-#if 0
-  if (idType == Poincare::Context::SymbolAbstractType::Sequence ||
-      (idType == Poincare::Context::SymbolAbstractType::None &&
-       m_nextToken.type() == Token::Type::LeftSystemBrace)) {
+  // Parse u(n)
+  if (idType == Poincare::Context::SymbolAbstractType::Sequence) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
-    if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
-        m_nextToken.type() != Token::Type::LeftParenthesis) {
-      /* If the identifier is a sequence but not followed by braces, it can
-       * also be followed by parenthesis. If not, it's a syntax error. */
+    if (m_nextToken.type() != Token::Type::LeftParenthesis) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
-    parseSequence(leftHandSide, name,
-                  m_nextToken.type() == Token::Type::LeftSystemBrace
-                      ? Token::Type::RightSystemBrace
-                      : Token::Type::RightParenthesis);
+    parseSequence(leftHandSide, name, Token::Type::RightParenthesis);
     return;
   }
-
+#if 0
   State previousState = currentState();
   // Try to parse aspostrophe as derivative
   if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
-                                                 stoppingType, idType, true)) {
+                                                 stoppingType, true)) {
     return;
   }
   // Parse aspostrophe as unit (default parsing)

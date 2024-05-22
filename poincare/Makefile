@@ -297,6 +297,8 @@ poincare_src += $(addprefix poincare/src/numeric/,\
 
 poincare_src += $(addprefix poincare/src/probability/,\
   binomial_distribution.cpp \
+  cdf_method.cpp \
+  cdf_range_method.cpp \
   chi2_distribution.cpp \
   discrete_distribution.cpp \
   distribution.cpp \

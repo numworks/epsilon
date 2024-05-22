@@ -1,5 +1,6 @@
 #include "pdf_method.h"
 
+#include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
@@ -11,8 +12,7 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
                               const Tree** parameters, Tree* expression) const {
   const Tree* x = abscissae[0];
 
-  // TODO_PCJ: -inf
-  if (x->isInf()) {
+  if (Infinity::TreeIsPlusOrMinusInfinity(x)) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }

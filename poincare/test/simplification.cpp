@@ -772,10 +772,6 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("atan(inf)", "π/2");
   // TODO_PCJ: simplifies_to("atan(-inf)", "-π/2");
   // TODO_PCJ: simplifies_to("atan(e^inf)", "π/2");
-  simplifies_to("normcdf(inf,5,0.4)", "1");
-  simplifies_to("normcdf(-inf,5,0.4)", "0");
-  simplifies_to("tcdfrange(-inf,inf,5)", "1");
-  simplifies_to("tcdfrange(-inf,-inf,5)", "0");
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry) {
@@ -970,6 +966,10 @@ QUIZ_CASE(pcj_simplification_piecewise) {
 QUIZ_CASE(pcj_distributions) {
   simplifies_to("binomcdf(3,5,0.4)", "binomcdf(3,5,2/5)");
   simplifies_to("binompdf(3.5,5,0.4)", "binompdf(3,5,2/5)");
+  simplifies_to("normcdf(inf,5,0.4)", "1");
+  simplifies_to("normcdf(-inf,5,0.4)", "0");
+  simplifies_to("tcdfrange(-inf,inf,5)", "1");
+  simplifies_to("tcdfrange(-inf,-inf,5)", "0");
 }
 
 QUIZ_CASE(pcj_simplification_function) {

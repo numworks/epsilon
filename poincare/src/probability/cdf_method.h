@@ -19,6 +19,9 @@ class CDFMethod final : public DistributionMethod {
     return distribution->cumulativeDistributiveFunctionAtAbscissa(x[0],
                                                                   parameters);
   }
+
+  bool shallowReduce(const Tree** abscissae, const Distribution* distribution,
+                     const Tree** parameters, Tree* expression) const override;
 };
 
 }  // namespace Poincare::Internal

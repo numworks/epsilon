@@ -10,12 +10,13 @@ namespace Poincare::Internal {
 
 bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
-  return PatternMatching::MatchReplace(expr, KPow(KA, -1_e), KDiv(1_e, KA)) ||
-         PatternMatching::MatchReplace(expr, KExp(KMult(KA_s, KLn(KB), KC_s)),
-                                       KPow(KB, KMult(KA_s, KC_s))) ||
-         PatternMatching::MatchReplace(expr, KPowReal(KA, 1_e / 2_e),
+  bool changed = PatternMatching::MatchReplace(
+      expr, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
+  return PatternMatching::MatchReplace(expr, KPowReal(KA, 1_e / 2_e),
                                        KSqrt(KA)) ||
-         PatternMatching::MatchReplace(expr, KPow(KA, 1_e / 2_e), KSqrt(KA));
+         PatternMatching::MatchReplace(expr, KPow(KA, -1_e), KDiv(1_e, KA)) ||
+         PatternMatching::MatchReplace(expr, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
+         changed;
 }
 
 void Approximation::PrepareFunctionForApproximation(

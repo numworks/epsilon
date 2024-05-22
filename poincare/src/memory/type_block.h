@@ -17,10 +17,6 @@ namespace Poincare::Internal {
 /* The macro RANGE(name, start, end) creates a named group of previously
  * declared nodes. */
 
-#define NARY NAryNumberOfChildrenTag
-#define NARY2D NAry2DNumberOfChildrenTag
-#define NARY16 NAryLargeNumberOfChildrenTag
-
 // Helper to return struct names such as AbsLayoutNode
 #define NODE_NAME__(F) F##Node
 #define NODE_NAME_(F) NODE_NAME__(F)
@@ -150,8 +146,8 @@ class TypeBlock : public Block {
 
   // Their next metaBlock contains the numberOfChildren
   constexpr static bool IsNAry(Type type) {
-    return NumberOfChildrenOrTag(type) == NAryNumberOfChildrenTag ||
-           NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
+    return NumberOfChildrenOrTag(type) == NARY ||
+           NumberOfChildrenOrTag(type) == NARY16;
   }
   constexpr bool isNAry() const { return IsNAry(type()); }
   // NAry with a single metaBlock
@@ -159,20 +155,17 @@ class TypeBlock : public Block {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
   constexpr static bool IsNAry16(Type type) {
-    return NumberOfChildrenOrTag(type) == NAryLargeNumberOfChildrenTag;
+    return NumberOfChildrenOrTag(type) == NARY16;
   }
   constexpr bool isNAry16() const { return IsNAry16(type()); }
 
  private:
-  constexpr static int NAryNumberOfChildrenTag = -1;
-  constexpr static int NAry2DNumberOfChildrenTag = -2;
-  constexpr static int NAryLargeNumberOfChildrenTag = -3;
+  constexpr static int NARY = -1;
+  constexpr static int NARY2D = -2;
+  constexpr static int NARY16 = -3;
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
-    return N == NAry2DNumberOfChildrenTag      ? 3
-           : N == NAryNumberOfChildrenTag      ? 2
-           : N == NAryLargeNumberOfChildrenTag ? 3
-                                               : 1;
+    return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
   }
 
  public:
@@ -232,19 +225,19 @@ class TypeBlock : public Block {
     int n = NumberOfChildrenOrTag(type());
     if (n >= 0) {
       return n;
-    } else if (n == NAryNumberOfChildrenTag) {
+    } else if (n == NARY) {
       return static_cast<uint8_t>(*next());
-    } else if (n == NAryLargeNumberOfChildrenTag) {
+    } else if (n == NARY16) {
       return *reinterpret_cast<const uint16_t*>(next());
     } else {
-      assert(n == NAry2DNumberOfChildrenTag);
+      assert(n == NARY2D);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
     }
   }
 
   constexpr static int NumberOfChildren(Type type) {
-    assert(NumberOfChildrenOrTag(type) != NAryNumberOfChildrenTag &&
-           NumberOfChildrenOrTag(type) != NAry2DNumberOfChildrenTag);
+    assert(NumberOfChildrenOrTag(type) != NARY &&
+           NumberOfChildrenOrTag(type) != NARY2D);
     return NumberOfChildrenOrTag(type);
   }
 
@@ -263,8 +256,6 @@ class TypeBlock : public Block {
   }
 };
 
-#undef NARY
-#undef NARY2D
 #undef GET4TH
 #undef NODE1
 #undef NODE2

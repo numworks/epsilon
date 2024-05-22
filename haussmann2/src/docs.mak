@@ -18,12 +18,19 @@ help:
 
 # Display dependencies tree of modules versions
 define _modules_string
-Goal \033[38;5;34m$*\033[0m uses modules:$(foreach m,$(sort $(call flavorless_modules_for_flavored_goal,$*)),\n\033[38;5;20m$m@$(VERSION_$m)\033[0m $(foreach n,$(LOCKS_$m),\n\
-$(_null) requires \033[38;5;20m$n@$(VERSION_$n_FOR_$m)\033[0m$(if $(filter $(VERSION_$n),$(VERSION_$n_FOR_$m)),, \033[38;5;9m!= $n@$(VERSION_$n)\033[0m)))
+Goal \033[38;5;34m$*\033[0m uses modules:$(foreach m,$(sort $(call flavorless_modules_for_flavored_goal,$*)),\n\033[38;5;20m$m@$(VERSION_$m)\033[0m
+$(if $(findstring :,$(SOURCES_$m)),  flavors: $(call _extract_tastes,$(SOURCES_$m)),) $(foreach n,$(LOCKS_$m),\n\
+$(_null) requires: \033[38;5;20m$n@$(VERSION_$n_FOR_$m)\033[0m$(if $(filter $(VERSION_$n),$(VERSION_$n_FOR_$m)),, \033[38;5;9m!= $n@$(VERSION_$n)\033[0m)))
 endef
 
 export _modules_string
 %.modules:
 	@ echo "$$_modules_string"
 
-$(eval $(call document_extension,modules,List the goal's modules dependencies))
+$(eval $(call document_extension,modules,List the goal's modules flavors and dependencies))
+
+# Helpers
+
+define _extract_tastes
+$(sort $(subst :,,$(filter :%,$(subst :-, :,$(subst :+, :,$1)))))
+endef

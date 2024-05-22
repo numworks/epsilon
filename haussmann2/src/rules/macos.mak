@@ -10,10 +10,11 @@ _simulator_app_resources = $(addprefix $(_simulator_app)/Contents/Resources/,$(n
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
-$(_simulator_app_plist): $$(SIMULATOR_PLIST)
+$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM)
 	$(call rule_label,PLUTIL)
 	$(QUIET) cp $< $@
 	$(QUIET) plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@
+	$(QUIET) plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
 	$(QUIET) plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
 	$(QUIET) plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
 

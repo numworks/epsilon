@@ -74,6 +74,8 @@ class TreeStack {
 
   void flush();
   void flushFromBlock(const Block* node);
+  // Reset TreeStack end to tree, ignoring what comes after
+  void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node);
   void deleteIdentifier(uint16_t id) { m_referenceTable.deleteIdentifier(id); }
   void updateIdentifier(uint16_t id, Tree* newNode) {

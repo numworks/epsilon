@@ -48,7 +48,7 @@ Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
       Tree* result = expr->cloneNode();
       for (const Tree* child : expr->children()) {
         if (!GetElement(child, k, reduction)) {
-          SharedTreeStack->flushFromBlock(result->block());
+          SharedTreeStack->dropBlocksFrom(result);
           return nullptr;
         }
       }

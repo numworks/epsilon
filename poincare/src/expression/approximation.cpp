@@ -788,16 +788,18 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::PowReal: {
       T a = child[0];
       T b = child[1];
-      if (std::fabs(a) == static_cast<T>(1.0) && std::fabs(b) == INFINITY) {
-        /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
-         * behavior we want. */
+      if ((std::fabs(a) == INFINITY && b == static_cast<T>(0.0)) ||
+          (std::fabs(a) == static_cast<T>(1.0) && std::fabs(b) == INFINITY)) {
+        /* On simulator, std::pow(±Inf,0) and std::pow(±1,±Inf) are
+         * approximated to 1 while they should be undef. */
         return NAN;
       }
-      if ((a < static_cast<T>(-1.0) && b == INFINITY) ||
+      if ((std::fabs(a) == INFINITY && b == INFINITY) ||
+          (a < static_cast<T>(-1.0) && b == INFINITY) ||
           (static_cast<T>(-1.0) < a && a <= static_cast<T>(0.0) &&
            b == -INFINITY)) {
-        /* a^inf with a <-1 and a^(-inf) with -1 < a <= 0 are approximated to
-         * complex infinity, not handled for now. We decide to return undef */
+        /* ±inf^inf, a^inf with a <-1 and a^(-inf) with -1 < a <= 0 should
+         * approximated to complex infinity but we do not handle it for now. */
         return NAN;
       }
       /* PowerReal could not be reduced, b's reductions cannot be safely

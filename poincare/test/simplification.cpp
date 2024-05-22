@@ -749,8 +749,13 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("x^inf", "x^∞");
 
   // inf^x
-  // simplifies_to("inf^0", "undef");
-  // simplifies_to("inf^x", "e^(∞×sign(x))");
+  simplifies_to("inf^0", "undef");
+  simplifies_to("(-inf)^0", "undef");
+  simplifies_to("inf^inf", "undef");  // complex inf
+  simplifies_to("inf^(-inf)", "0");
+  simplifies_to("(-inf)^inf", "undef");  // complex inf
+  simplifies_to("(-inf)^(-inf)", "0");
+  simplifies_to("inf^x", "e^(∞×x)");
 
   // functions
   simplifies_to("exp(inf)", "∞");

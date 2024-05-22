@@ -726,7 +726,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("3×inf", "∞");
   simplifies_to("-3×inf", "-∞");
   simplifies_to("inf×(-inf)", "-∞");
-  simplifies_to("x(-inf)", "∞×sign(-1×x)");
+  simplifies_to("x(-inf)", "∞×sign(-x)");
   simplifies_to("(abs(x)+1)*inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");

@@ -3,6 +3,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
+#include "approximation.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {
@@ -49,7 +50,7 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   }
 
   if (!u->isMult()) {
-    return false;
+    return Approximation::ApproximateAndReplaceEveryScalar(u);
   }
 
   // inf*inf -> inf

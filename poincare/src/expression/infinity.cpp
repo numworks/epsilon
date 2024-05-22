@@ -40,6 +40,9 @@ static bool shallowBubbleUpInfinityInDistribution(Tree* u) {
 }
 
 bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
+  /* TODO_PCJ: recode every exact simplification for nodes we knox (ex: power
+   * with inf) to avoid having Float nodes. Will would be alble for example to
+   * reduce atan(e^inf) to π/2 or atan(-inf) in -π/2. */
   if (PatternMatching::MatchReplaceSimplify(u, KATanRad(KInf),
                                             KMult(1_e / 2_e, π_e))) {
     return true;

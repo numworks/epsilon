@@ -16,7 +16,7 @@ struct List {
 
   /* Evaluate the list expression and return its k-th value or nullptr.
    * For instance: 2+{3,4} -> 5
-   * Intermediary results are passed through reduction. */
+   * Intermediary results go through reduction. */
   static Tree* GetElement(const Tree* expr, int k, Tree::Operation reduction);
 
   /* Turn the list expression into an explicit list. */

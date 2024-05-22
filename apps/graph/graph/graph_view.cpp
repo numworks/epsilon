@@ -77,7 +77,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     }
     if (!isUndefined && f->numberOfSubCurves() == 2) {
       assert(e.type() == ExpressionNode::Type::List);
-      assert(e.numberOfChildren() == 2);
+      assert(static_cast<List &>(e).numberOfChildren() == 2);
       isUndefined =
           e.childAtIndex(0).isUndefined() && e.childAtIndex(1).isUndefined();
     }

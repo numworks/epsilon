@@ -545,7 +545,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(e.type() == ExpressionNode::Type::List);
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
-          tInt >= e.numberOfChildren()) {
+          tInt >= static_cast<List &>(e).numberOfChildren()) {
         return Coordinate2D<T>();
       }
       point = point = e.childAtIndex(tInt);
@@ -560,7 +560,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
       assert(derivationOrder == 0);
-      assert(e.numberOfChildren() > subCurveIndex);
+      assert(e.type() == ExpressionNode::Type::List);
+      assert(static_cast<List &>(e).numberOfChildren() > subCurveIndex);
       e = e.childAtIndex(subCurveIndex);
     }
     T value = e.approximateToScalarWithValue<T>(t);
@@ -1164,7 +1165,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
         record, AppsContainerHelper::sharedAppsContainerGlobalContext());
     if (e.type() == ExpressionNode::Type::List) {
       assert(prop.isOfDegreeTwo());
-      return e.numberOfChildren();
+      return static_cast<List &>(e).numberOfChildren();
     }
   }
   return 1;

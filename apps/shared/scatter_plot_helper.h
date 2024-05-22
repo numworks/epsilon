@@ -55,7 +55,7 @@ class ScatterPlotIterable {
 
   static int ListLength(const Poincare::SystemExpression& e) {
     return e.type() == Poincare::ExpressionNode::Type::List
-               ? e.numberOfChildren()
+               ? static_cast<const Poincare::List&>(e).numberOfChildren()
            : e.isUndefined() ? 0
                              : 1;
   }

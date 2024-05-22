@@ -46,7 +46,7 @@ ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
 }
 
 UserExpression CalculationStore::ansExpression(Context *context) const {
-  const UserExpression defaultAns = Rational::Builder(0);
+  const UserExpression defaultAns = JuniorExpression::Builder(0_e);
   if (numberOfCalculations() == 0) {
     return defaultAns;
   }

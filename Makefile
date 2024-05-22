@@ -5,3 +5,5 @@ OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= n0110
 include $(PATH_haussmann)/Makefile
+
+$(eval $(call import_module,liba,liba))

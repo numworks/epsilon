@@ -4,7 +4,4 @@ $(OUTPUT_DIRECTORY)/%.run: $(OUTPUT_DIRECTORY)/%.bin
 
 $(eval $(call document_extension,run,Execute <...>.bin))
 
-# Additional object files
-$(OUTPUT_DIRECTORY)/%.o: %.m | $$(@D)/.
-	$(QUIET) echo "OCC\t$@"
-	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
+include $(PATH_haussmann)/src/rules/shared.apple.mak

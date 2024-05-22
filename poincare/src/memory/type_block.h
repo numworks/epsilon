@@ -10,9 +10,9 @@ namespace Poincare::Internal {
 /* The items to include in the enum are wrapped with a macro and split in
  * different files to tidy them and be able to use them in different ways. */
 
-/* The macro NODE(name, nbChildren=0, nbAdditionalHeaderBlocks=0) declares nodes
- * with arity nbChildren (can be NARY) and some optional extra blocks in the
- * header to store special data. */
+/* The macro NODE(name, nbChildren=0, struct additionnalBlocks={}) declares
+ * nodes with arity nbChildren (can be NARY) and some optional extra blocks in
+ * the header to store special data. */
 
 /* The macro RANGE(name, start, end) creates a named group of previously
  * declared nodes. */
@@ -26,8 +26,10 @@ namespace Poincare::Internal {
 #define NODE_NAME_(F) NODE_NAME__(F)
 #define NODE_NAME(F) NODE_NAME_(SCOPED_NODE(F))
 
-// Boilerplate to alias NODE(F) as NODE_USE(F, 0, 0), NODE_USE is the varying
-// macro
+/* Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro.
+ * The first VA_ARGS will push the other arguments of GET4TH allowing it to
+ * select the suitable NODE_X macro and call it with the second VA_ARGS list.
+ * With 2 args, we have GET4TH(A, B, NODE3, NODE2)(A, B) => NODE2(A, B) */
 #define GET4TH(A, B, C, D, ...) D
 #define NODE1(F) NODE_USE(F, 0, 0)
 #define NODE2(F, N) NODE_USE(F, N, 0)

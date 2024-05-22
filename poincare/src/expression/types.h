@@ -84,7 +84,6 @@ RANGE(Number, RationalNegBig, Pi)
 
 NODE(Mult, NARY)
 
-/* - Power P (same for Factorial, Subtraction, Division) */
 NODE(Pow, 2)
 
 NODE(Add, NARY)

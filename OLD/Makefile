@@ -1,0 +1,182 @@
+# Disable default Make rules
+.SUFFIXES:
+
+# Define the default recipe
+default:
+
+# Define a phony target with no rule. Targets that depend on it will always
+# be remade
+.PHONY: force_remake
+
+include build/file_checker.mak
+include build/config.mak
+include build/defaults.mak
+include build/platform.$(PLATFORM).mak
+include build/toolchain.$(TOOLCHAIN).mak
+include build/variants.mak
+include build/helpers.mk
+
+# Expand $(SFLAGS) once to avoid calling ($shell ...) once per file.
+SFLAGS:=$(SFLAGS)
+
+.PHONY: info
+info:
+	@echo "EPSILON_VERSION = $(EPSILON_VERSION)"
+	@echo "EPSILON_APPS = $(EPSILON_APPS)"
+	@echo "EPSILON_I18N = $(EPSILON_I18N)"
+	@echo "PLATFORM" = $(PLATFORM)
+	@echo "DEBUG" = $(DEBUG)
+	@echo "NO_BOOTLOADER" = $(NO_BOOTLOADER)
+	@echo "EPSILON_GETOPT" = $(EPSILON_GETOPT)
+	@echo "ESCHER_LOG_EVENTS_BINARY" = $(ESCHER_LOG_EVENTS_BINARY)
+	@echo "QUIZ_USE_CONSOLE" = $(QUIZ_USE_CONSOLE)
+	@echo "ION_STORAGE_LOG" = $(ION_STORAGE_LOG)
+	@echo "POINCARE_TREE_LOG" = $(POINCARE_TREE_LOG)
+	@echo "POINCARE_TESTS_PRINT_EXPRESSIONS" = $(POINCARE_TESTS_PRINT_EXPRESSIONS)
+
+.PHONY: versions
+versions:
+	@echo "CXX:" $(CXX)
+	$(Q) $(CXX) --version
+	@echo ""
+	@echo "LD:" $(LD)
+	$(Q) $(LD) --version
+	@echo ""
+	@echo "LDFLAGS:" $(LDFLAGS)
+	@echo ""
+	@echo "PYTHON:" $(PYTHON)
+	$(Q) $(PYTHON) --version
+
+.PHONY: help
+help:
+	@echo "Device targets"
+	@echo "  make epsilon_flash"
+	@echo "  make epsilon.dfu"
+	@echo "  make epsilon.onboarding.dfu"
+	@echo "  make epsilon.onboarding.update.dfu"
+	@echo "  make epsilon.onboarding.beta.dfu"
+	@echo "  make flasher.light.bin"
+	@echo "  make epsilon.onboarding.allow3rdparty.dfu"
+	@echo "  make epsilon.onboarding.beta.allow3rdparty.dfu"
+	@echo "  make flasher.verbose.dfu"
+	@echo "  make bench.ram.bin"
+	@echo "  make bench.flash.bin"
+	@echo "  make binpack"
+	@echo ""
+	@echo "Simulator targets"
+	@echo "  make PLATFORM=simulator"
+	@echo "  make PLATFORM=simulator TARGET=android"
+	@echo "  make PLATFORM=simulator TARGET=ios"
+	@echo "  make PLATFORM=simulator TARGET=macos"
+	@echo "  make PLATFORM=simulator TARGET=web"
+	@echo "  make PLATFORM=simulator TARGET=windows"
+	@echo ""
+	@echo "Signable flasher"
+	@echo "  make flasher.dfu READ_ONLY=1 SIGNABLE=1"
+	@echo ""
+	@echo "Format modified and untracked .h and .cpp files with clang-format"
+	@echo "  make format"
+	@echo "Format files modified since <ref>"
+	@echo "  make format BASE=<ref>"
+	@echo "Format given files"
+	@echo "  make format CXXFILES='file1.cpp file2.cpp' PYFILES='file3.py'"
+	@echo "Reformat every commit from BASE to HEAD"
+	@echo "  make reformat BASE=<ref>"
+	@echo ""
+	@echo "Visualize the coverage of the unary tests or the screenshot tests"
+	@echo "  make PLATFORM=simulator ARCH=arm64 coverage"
+	@echo ""
+	@echo "Show the version of the tools used"
+	@echo "  make PLATFORM=simulator ARCH=arm64 versions"
+
+# Since we're building out-of-tree, we need to make sure the output directories
+# are created, otherwise the receipes will fail (e.g. gcc will fail to create
+# "output/foo/bar.o" because the directory "output/foo" doesn't exist).
+# We need to mark those directories as precious, otherwise Make will try to get
+# rid of them upon completion (and fail, since those folders won't be empty).
+.PRECIOUS: $(BUILD_DIR)/. $(BUILD_DIR)%/.
+$(BUILD_DIR)/.:
+	$(Q) mkdir -p $(dir $@)
+$(BUILD_DIR)%/.:
+	$(Q) mkdir -p $(dir $@)
+
+# To make objects dependent on their directory, we need a second expansion
+.SECONDEXPANSION:
+
+# Each sub-Makefile can either add sources to $(%_src) variables or define a
+# new executable target. The $(%_src) variables list the sources that can be
+# built and linked to executables being generated.
+ifndef USE_LIBA
+  $(error platform.mak should define USE_LIBA)
+endif
+ifeq ($(USE_LIBA),0)
+include liba/Makefile.bridge
+else
+SFLAGS += -ffreestanding -nostdinc -nostdlib
+include liba/Makefile
+include libaxx/Makefile
+endif
+include ion/Makefile
+include kandinsky/Makefile
+include poincare/Makefile
+include python/Makefile
+include escher/Makefile
+# include escher_junior/Makefile
+include omg/Makefile
+include eadk/Makefile
+# Executable Makefiles
+include apps/Makefile
+include build/struct_layout/Makefile
+include build/poincare_visualization/Makefile
+include quiz/Makefile # Quiz needs to be included at the end
+
+# Define main and shortcut targets
+include build/targets.mak
+
+# Define the DEBUG and ASSERTIONS flags. This can't be done in defaults.mak
+# since ASSERTIONS could have been altered by targets.mak or toolchain.mak,
+# after defaults.mak was applied.
+include build/debug_flags.mak
+
+all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(ion_device_bootloader_src) $(ion_device_userland_src) $(tests_src) $(omg_src)
+
+# Ensure kandinsky fonts are generated first
+$(call object_for,$(all_src)): $(kandinsky_deps)
+
+# kernel_obj are added separately since they require variants resolution
+all_objs = $(call object_for,$(all_src) $(kernel_src))
+.SECONDARY: $(all_objs)
+
+# Load source-based dependencies
+# Compilers can generate Makefiles that states the dependencies of a given
+# objet to other source and headers. This serve no purpose for a clean build,
+# but allows correct yet optimal incremental builds.
+-include $(all_objs:.o=.d)
+
+# Fill in the default recipe
+default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))
+
+# Load standard build rules
+include build/rules.mk
+
+# Load clang-format targets
+include build/format.mak
+
+.PHONY: clean
+clean:
+	@echo "CLEAN"
+	$(Q) rm -rf $(BUILD_DIR:/clean=)
+
+.PHONY: cowsay_%
+cowsay_%:
+	@echo " -------"
+	@echo "| $(*F) |"
+	@echo " -------"
+	@echo "        \\   ^__^"
+	@echo "         \\  (oo)\\_______"
+	@echo "            (__)\\       )\\/\\"
+	@echo "                ||----w |"
+	@echo "                ||     ||"
+
+.PHONY: clena
+clena: cowsay_CLENA clean

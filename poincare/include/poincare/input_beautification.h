@@ -95,6 +95,10 @@ class InputBeautification {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointMultiplicationSign));
        }},
+      {"''", 0,
+       [](Layout* parameters) {
+         return static_cast<Layout>(CodePointLayout::Builder('"'));
+       }},
   };
 
   constexpr static BeautificationRule k_infRule = {

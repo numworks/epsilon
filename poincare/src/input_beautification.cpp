@@ -18,7 +18,8 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
    *         = Do not apply any beautfication.
    * Example: "pi|" -> insert "a" -> "pia|" (do not beautify "pi" yet)
    * */
-  if (LayoutIsIdentifierMaterial(leftMostLayout)) {
+  if (LayoutIsIdentifierMaterial(leftMostLayout) &&
+      static_cast<CodePointLayout &>(leftMostLayout).codePoint() != '\'') {
     return BeautificationMethod{.beautifyIdentifiersBeforeInserting = false,
                                 .beautifyAfterInserting = false};
   }

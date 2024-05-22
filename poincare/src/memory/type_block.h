@@ -38,17 +38,37 @@ namespace Poincare::Internal {
 
 /* Declarations of custom node structs, they are processed only for nodes with 3
  * arguments, ie with a custom node. */
+
+/* For instance, the declaration
+ * NODE(RationalNegShort, 0, {
+ *   uint8_t absNumerator;
+ *   uint8_t denominator;
+ * })
+ *
+ * will produce
+ *
+ * struct RationalNegShortNode {
+ *   uint8_t absNumerator;
+ *   uint8_t denominator;
+ * };
+ */
+
 #define NODE_DECL(F, S) struct NODE_NAME(F) S;
 #include "types.h"
 
 enum class Type : uint8_t {
-// Add all the types to the enum
+/* Add all the types to the enum
+ * NODE(MinusOne) => MinusOne,
+ * NODE(Fraction) in layout.h => FractionLayout,
+ */
 #define NODE_USE(F, N, S) SCOPED_NODE(F),
 #include "types.h"
 };
 
 enum class LayoutType : uint8_t {
-// Members of LayoutType have the same values as their Type counterpart
+/* Members of LayoutType have the same values as their Type counterpart
+ * NODE(Fraction) => Fraction = Type::FractionLayout,
+ */
 #define RANGE(...)
 #define NODE_DECL(...)
 #define NODE_USE(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
@@ -72,7 +92,8 @@ class TypeBlock : public Block {
   constexpr operator Type() const { return type(); }
 
 #if POINCARE_TREE_LOG
-  // Add an array of names for the Types
+  /* Add an array of names for the Types
+   * NODE(MinusOne) => "MinusOne", */
   static constexpr const char* names[] = {
 #define NODE_USE(F, N, S) #F,
 #include "types.h"
@@ -157,6 +178,11 @@ class TypeBlock : public Block {
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
+      /* NODE(MinusOne) => DefaultNumberOfMetaBlocks(0) + 0
+       * NODE(Mult, NARY) => DefaultNumberOfMetaBlocks(NARY) + 0
+       * NODE(IntegerNegShort, 0, { uint8_t absValue; }) =>
+       *   DefaultNumberOfMetaBlocks(0) + sizeof(IntegerNegShortNode)
+       */
 #define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
@@ -225,6 +251,8 @@ class TypeBlock : public Block {
  private:
   constexpr static int NumberOfChildrenOrTag(Type type) {
     switch (type) {
+      /* NODE(MinusOne) => 0
+       * NODE(Pow, 2) => 2 */
 #define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
     return N;

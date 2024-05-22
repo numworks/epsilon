@@ -560,7 +560,6 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isParametric());
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
-  assert(analyzedExpression.numberOfChildren() == 2);
   assert(!analyzedExpression.hasMatrixOrListChild(context, false));
 
   setCurveParameterType(CurveParameterType::Parametric);

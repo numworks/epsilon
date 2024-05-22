@@ -77,7 +77,7 @@ template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
                                                      Context *context) {
   const SystemFunction *e = static_cast<const SystemFunction *>(model);
-  assert(e->numberOfChildren() == 2);
+  assert(e->type() == ExpressionNode::Type::Point);
   assert(coordinate == 0 || coordinate == 1);
   T value = PoincareHelpers::ApproximateWithValueForSymbol<T>(
       e->childAtIndex(coordinate), ContinuousFunction::k_unknownName, t,

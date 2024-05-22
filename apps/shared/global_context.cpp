@@ -353,8 +353,7 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
 static void storeParametricComponent(char *baseName, size_t baseNameLength,
                                      size_t bufferSize, const UserExpression &e,
                                      bool first) {
-  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point &&
-         e.numberOfChildren() == 2);
+  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point);
   UserExpression child = e.childAtIndex(first ? 0 : 1).clone();
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);

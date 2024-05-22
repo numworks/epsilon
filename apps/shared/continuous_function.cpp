@@ -577,7 +577,6 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(NAN, NAN);
   }
   assert(e.type() == ExpressionNode::Type::Point);
-  assert(e.numberOfChildren() == 2);
   return Coordinate2D<T>(e.childAtIndex(0).approximateToScalarWithValue<T>(t),
                          e.childAtIndex(1).approximateToScalarWithValue<T>(t));
 }
@@ -1003,7 +1002,6 @@ SystemExpression ContinuousFunction::Model::expressionSlopeReduced(
       assert(prop.isParametric() || prop.isPolar());
       SystemExpression expression = parametricForm(record, context);
       assert(expression.type() == ExpressionNode::Type::Point);
-      assert(expression.numberOfChildren() == 2);
       m_expressionSlope = Division::Builder(
           Derivative::Builder(expression.childAtIndex(1),
                               Symbol::SystemSymbol(), Symbol::SystemSymbol()),

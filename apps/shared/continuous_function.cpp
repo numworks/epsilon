@@ -703,14 +703,13 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       if (degree == 1) {
         m_expression =
             SystemExpression::Builder(Poincare::Internal::Roots::Linear(
-                coefficients[1].tree(), coefficients[0].tree()));
+                coefficients[1], coefficients[0]));
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         assert(m_properties.isOfDegreeTwo());
         m_expression =
             SystemExpression::Builder(Poincare::Internal::Roots::Quadratic(
-                coefficients[2].tree(), coefficients[1].tree(),
-                coefficients[0].tree()));
+                coefficients[2], coefficients[1], coefficients[0]));
       } else {
         /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or

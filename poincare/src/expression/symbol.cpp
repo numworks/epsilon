@@ -31,8 +31,8 @@ ComplexSign Symbol::GetComplexSign(const Tree* node) {
 
 bool Symbol::SetComplexSign(Tree* userSymbol, ComplexFormat format) {
   assert(userSymbol->isUserSymbol());
-  ComplexSign sign = (format == ComplexFormat::Real ? ComplexSign::RealUnknown()
-                                                    : ComplexSign::Unknown());
+  ComplexSign sign = format == ComplexFormat::Real ? ComplexSign::RealUnknown()
+                                                   : ComplexSign::Unknown();
 
   if (userSymbol->nodeValue(0) == sign.getValue()) {
     return false;

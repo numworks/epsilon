@@ -144,7 +144,8 @@ class JuniorExpression : public OExpression {
                                     bool* reductionFailure = nullptr) const;
   JuniorExpression cloneAndReduce(ReductionContext reductionContext) const;
 
-  JuniorExpression deepBeautify(const ReductionContext& reductionContext);
+  JuniorExpression cloneAndBeautify(
+      const ReductionContext& reductionContext) const;
 
   // Replace some UserSymbol into Var0 for approximateToScalarWithValue
   JuniorExpression getSystemFunction(const char* symbolName) const;

@@ -479,13 +479,13 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
 #else
   assert(!reduceFailure && (type() != ExpressionNode::Type::Store));
 #endif
-  /* TODO_PCJ: Beautify since cloneAndDeepReduceWithSystemCheckpoint isn't
-   * supposed to. */
-  return e.deepBeautify(reductionContext);
+  /* TODO_PCJ: e takes space in the pool only to be deleted right after
+   * beautification. This could be optimized. */
+  return e.cloneAndBeautify(reductionContext);
 }
 
-JuniorExpression JuniorExpression::deepBeautify(
-    const ReductionContext& reductionContext) {
+JuniorExpression JuniorExpression::cloneAndBeautify(
+    const ReductionContext& reductionContext) const {
   Internal::ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
@@ -494,9 +494,7 @@ JuniorExpression JuniorExpression::deepBeautify(
       .m_context = reductionContext.context()};
   Internal::Tree* e = tree()->clone();
   Internal::Beautification::DeepBeautify(e, context);
-  JuniorExpression beautifiedExpression = Builder(e);
-  replaceWithInPlace(beautifiedExpression);
-  return beautifiedExpression;
+  return Builder(e);
 }
 
 bool JuniorExpression::derivate(const ReductionContext& reductionContext,

@@ -3,7 +3,9 @@
 
 #include <poincare/src/memory/tree.h>
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 
 class Roots {
  public:
@@ -57,6 +59,10 @@ class Roots {
 #endif
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+using Roots = Internal::Roots;
+
+}  // namespace Poincare
 
 #endif

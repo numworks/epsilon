@@ -1,5 +1,4 @@
-#include "roots.h"
-
+#include <poincare/numeric/roots.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/n_ary.h>

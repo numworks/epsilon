@@ -3,6 +3,7 @@
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
 #include <poincare/layout.h>
+#include <poincare/numeric/roots.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
@@ -22,7 +23,6 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/zoom.h>
 #include <poincare/print.h>
-#include <poincare/src/numeric/roots.h>
 
 #include <algorithm>
 
@@ -701,15 +701,13 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
                                         Preferences::UnitFormat::Metric,
                                         ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
-        m_expression =
-            SystemExpression::Builder(Poincare::Internal::Roots::Linear(
-                coefficients[1], coefficients[0]));
+        m_expression = SystemExpression::Builder(
+            Poincare::Roots::Linear(coefficients[1], coefficients[0]));
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         assert(m_properties.isOfDegreeTwo());
-        m_expression =
-            SystemExpression::Builder(Poincare::Internal::Roots::Quadratic(
-                coefficients[2], coefficients[1], coefficients[0]));
+        m_expression = SystemExpression::Builder(Poincare::Roots::Quadratic(
+            coefficients[2], coefficients[1], coefficients[0]));
       } else {
         /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or

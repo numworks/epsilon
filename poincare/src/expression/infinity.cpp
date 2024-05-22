@@ -19,9 +19,8 @@ static bool shallowBubbleUpInfinityInDistribution(Tree* u) {
     return false;
   }
   Tree* child = u->firstChild();
-  PatternMatching::Context ctx;
   if (methodType == DistributionMethod::Type::CDFRange) {
-    if (!PatternMatching::Match(KMult(-1_e, KInf), child, &ctx)) {
+    if (!Infinity::TreeIsMinusInfinity(child)) {
       return false;
     }
     child = child->nextTree();
@@ -30,7 +29,7 @@ static bool shallowBubbleUpInfinityInDistribution(Tree* u) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
-  if (PatternMatching::Match(KMult(-1_e, KInf), child, &ctx)) {
+  if (Infinity::TreeIsMinusInfinity(child)) {
     u->cloneTreeOverTree(0_e);
     return true;
   }
@@ -109,6 +108,15 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   }
 
   return changed;
+}
+
+bool Infinity::TreeIsPlusOrMinusInfinity(const Tree* u) {
+  return u->isInf() || TreeIsMinusInfinity(u);
+}
+
+bool Infinity::TreeIsMinusInfinity(const Tree* u) {
+  PatternMatching::Context ctx;
+  return PatternMatching::Match(KMult(-1_e, KInf), u, &ctx);
 }
 
 }  // namespace Poincare::Internal

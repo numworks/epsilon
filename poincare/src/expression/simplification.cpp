@@ -68,7 +68,6 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
    * children in specialized systematic reduction. */
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false,
        bubbleUpInf = false;
-  PatternMatching::Context ctx;
   for (const Tree* child : u->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
@@ -76,8 +75,7 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
-    } else if (child->isInf() ||
-               PatternMatching::Match(KMult(-1_e, KInf), child, &ctx)) {
+    } else if (Infinity::TreeIsPlusOrMinusInfinity(child)) {
       bubbleUpInf = true;
     }
   }

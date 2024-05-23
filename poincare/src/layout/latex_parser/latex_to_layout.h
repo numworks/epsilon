@@ -16,25 +16,9 @@ class LatexToLayout {
   static Tree* Parse(const char* latexString);
 
  private:
-  struct MatchingIdentifierPairs {
-    const char* left;
-    const char* right;
-    Type type;
-  };
-
-  constexpr static MatchingIdentifierPairs k_identifiersPairs[] = {
-      {"\\left(", "\\right)", Type::ParenthesisLayout},
-      {"\\left|", "\\right|", Type::AbsLayout},
-  };
-
-  constexpr static size_t k_nPairs = std::size(k_identifiersPairs);
-
-  static void ParseOnRackUntil(Rack* parent, const char* latexString,
-                               const char* stringEnd);
-  static void ParseSpecialIdentifier(Rack* parent, const char** latexString,
-                                     const char* stringEnd);
-  static const char* FindIdentifier(const char* identifier, const char* string,
-                                    const char* stringEnd);
+  static void ParseOnRackUntilIdentifier(Rack* parent, const char** start,
+                                         const char* endIdentifier);
+  static Tree* NextToken(const char** start);
 };
 
 }  // namespace LatexParser

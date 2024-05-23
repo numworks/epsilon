@@ -384,4 +384,8 @@ QUIZ_CASE(poincare_latex_layout) {
           "1"_cl, "+"_cl,
           KAbsL(KRackL("3"_cl, "+"_cl, KParenthesisL("a-b"_l), "+"_cl, "2"_cl)),
           "+"_cl, "4"_cl));
+  assert_latex_layouts_to(
+      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}",
+      KRackL(KFracL(KRackL(KSqrtL("4"_l)),
+                    KRackL(KParenthesisL("3"_l ^ KSuperscriptL("5"_l))))));
 }

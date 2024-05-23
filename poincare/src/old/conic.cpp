@@ -457,7 +457,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 
   // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
   Expression numerator, denominator;
-  if (reducedExpression.otype() == ExpressionNode::Type::Multiplication) {
+  if (reducedExpression.type() == ExpressionNode::Type::Multiplication) {
 #if 0  // TODO_PCJ
     static_cast<Multiplication&>(reducedExpression)
         .splitIntoNormalForm(numerator, denominator, reductionContext);
@@ -465,7 +465,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
     m_shape = Shape::Undefined;
     return;
 #endif
-  } else if (reducedExpression.otype() == ExpressionNode::Type::Power &&
+  } else if (reducedExpression.type() == ExpressionNode::Type::Power &&
              reducedExpression.childAtIndex(1).isMinusOne()) {
     denominator = reducedExpression.childAtIndex(0);
   }
@@ -491,7 +491,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
   /* Denominator can be of the form a+b*cos(theta) and needs to be turned
    * into 1 + (b/a)*cos(theta) */
   denominator = denominator.cloneAndReduce(reductionContext);
-  if (denominator.otype() != ExpressionNode::Type::Addition) {
+  if (denominator.type() != ExpressionNode::Type::Addition) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -539,7 +539,7 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
       ReductionContext(context, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis);
   Expression reducedExpression = e.cloneAndReduce(reductionContext);
-  assert(reducedExpression.otype() == ExpressionNode::Type::OPoint);
+  assert(reducedExpression.type() == ExpressionNode::Type::Point);
 
   const Expression xOfT = reducedExpression.childAtIndex(0);
   const Expression yOfT = reducedExpression.childAtIndex(1);

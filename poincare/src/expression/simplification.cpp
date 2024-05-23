@@ -81,12 +81,12 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) {
-    BubbleUpFromChildren(u);
+    ShallowSystematicReduce(u);
     return true;
   }
 
   if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u)) {
-    BubbleUpFromChildren(u);
+    ShallowSystematicReduce(u);
     return true;
   }
 
@@ -99,7 +99,7 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
   }
 
   if (bubbleUpInf && Infinity::ShallowBubbleUpInfinity(u)) {
-    BubbleUpFromChildren(u);
+    ShallowSystematicReduce(u);
     return true;
   }
 

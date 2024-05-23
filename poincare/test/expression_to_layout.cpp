@@ -1,5 +1,6 @@
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/latex_parser/latex_to_layout.h>
 #include <poincare/src/layout/layoutter.h>
 
 #include "old/helper.h"
@@ -365,4 +366,22 @@ QUIZ_CASE(poincare_expression_to_layout_mixed_fraction) {
           Rational::Builder(4)),
       "\u0012\u00121\u0012\u00122\u0013/\u00123\u0013\u0013\u0013/"
       "\u00124\u0013\u0013");
+}
+
+void assert_latex_layouts_to(const char* latex, Layout l) {
+  Internal::Tree* t = Internal::LatexParser::LatexToLayout::Parse(latex);
+  Layout el = Layout::Builder(t);
+  quiz_assert_print_if_failure(el.isIdenticalTo(l), latex);
+}
+
+QUIZ_CASE(poincare_latex_layout) {
+  assert_latex_layouts_to("a-b", "a-b"_l);
+  assert_latex_layouts_to("\\left(a-b\\right)+2",
+                          KRackL(KParenthesisL("a-b"_l), "+"_cl, "2"_cl));
+  assert_latex_layouts_to(
+      "1+\\left|3+\\left(a-b\\right)+2\\right|+4",
+      KRackL(
+          "1"_cl, "+"_cl,
+          KAbsL(KRackL("3"_cl, "+"_cl, KParenthesisL("a-b"_l), "+"_cl, "2"_cl)),
+          "+"_cl, "4"_cl));
 }

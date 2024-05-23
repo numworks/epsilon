@@ -57,11 +57,11 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   return changed;
 }
 
-bool Infinity::TreeIsPlusOrMinusInfinity(const Tree* u) {
-  return u->isInf() || TreeIsMinusInfinity(u);
+bool Infinity::IsPlusOrMinusInfinity(const Tree* u) {
+  return u->isInf() || IsMinusInfinity(u);
 }
 
-bool Infinity::TreeIsMinusInfinity(const Tree* u) {
+bool Infinity::IsMinusInfinity(const Tree* u) {
   PatternMatching::Context ctx;
   return PatternMatching::Match(KMult(-1_e, KInf), u, &ctx);
 }

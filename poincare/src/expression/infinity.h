@@ -11,8 +11,8 @@ class Infinity {
  public:
   static bool ShallowBubbleUpInfinity(Tree* u);
 
-  static bool TreeIsPlusOrMinusInfinity(const Tree* u);
-  static bool TreeIsMinusInfinity(const Tree* u);
+  static bool IsPlusOrMinusInfinity(const Tree* u);
+  static bool IsMinusInfinity(const Tree* u);
 };
 
 }  // namespace Poincare::Internal

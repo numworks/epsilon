@@ -12,7 +12,7 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
                               const Tree** parameters, Tree* expression) const {
   const Tree* x = abscissae[0];
 
-  if (Infinity::TreeIsPlusOrMinusInfinity(x)) {
+  if (Infinity::IsPlusOrMinusInfinity(x)) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }

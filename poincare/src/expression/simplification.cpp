@@ -75,7 +75,7 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
-    } else if (Infinity::TreeIsPlusOrMinusInfinity(child)) {
+    } else if (Infinity::IsPlusOrMinusInfinity(child)) {
       bubbleUpInf = true;
     }
   }

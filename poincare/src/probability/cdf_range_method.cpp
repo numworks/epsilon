@@ -12,12 +12,12 @@ bool CDFRangeMethod::shallowReduce(const Tree** abscissae,
   const Tree* x = abscissae[0];
   const Tree* y = abscissae[1];
 
-  if (Infinity::TreeIsMinusInfinity(x)) {
+  if (Infinity::IsMinusInfinity(x)) {
     if (y->isInf()) {
       expression->cloneTreeOverTree(1_e);
       return true;
     }
-    if (Infinity::TreeIsMinusInfinity(y)) {
+    if (Infinity::IsMinusInfinity(y)) {
       expression->cloneTreeOverTree(0_e);
       return true;
     }

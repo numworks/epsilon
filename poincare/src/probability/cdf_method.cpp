@@ -14,7 +14,7 @@ bool CDFMethod::shallowReduce(const Tree** abscissae,
     expression->cloneTreeOverTree(1_e);
     return true;
   }
-  if (Infinity::TreeIsMinusInfinity(x)) {
+  if (Infinity::IsMinusInfinity(x)) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }

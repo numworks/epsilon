@@ -20,7 +20,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
    * so that u{n} can be defined as a function of v{n} without v{n} being
    * already defined.
-   * So expressionTypForIdentifier returns Type::Sequence for u, v and w,
+   * So expressionTypeForIdentifier returns Type::Sequence for u, v and w,
    * and calls the parent context in other cases.
    * The other methods (setExpressionForSymbolAbstract and
    * expressionForSymbolAbstract) always call the parent context. */

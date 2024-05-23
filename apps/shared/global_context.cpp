@@ -237,7 +237,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
   PoincareHelpers::CloneAndSimplify(&expression, this, params);
   /* "approximateKeepingUnits" is called because the expression might contain
-   * units, and juste calling "approximate" would return undef*/
+   * units, and just calling "approximate" would return undef */
 
 #if 0  // TODO_PCJ
   UserExpression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(

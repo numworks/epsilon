@@ -159,7 +159,6 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   if (PatternMatching::MatchReplaceSimplify(
           firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s))) {
     changed = true;
-    Simplification::ShallowSystematicReduce(u);
     if (isSin) {
       isOpposed = !isOpposed;
     }

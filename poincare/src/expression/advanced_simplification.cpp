@@ -90,13 +90,21 @@ bool SkipTree(const Tree* tree) {
 }
 
 Tree* NextNode(Tree* tree) {
+  assert(!SkipTree(tree));
   Tree* next = tree->nextNode();
-  return SkipTree(next) ? next->nextTree() : next;
+  while (SkipTree(next)) {
+    next = next->nextTree();
+  }
+  return next;
 }
 
 const Tree* NextNode(const Tree* tree) {
+  assert(!SkipTree(tree));
   const Tree* next = tree->nextNode();
-  return SkipTree(next) ? next->nextTree() : next;
+  while (SkipTree(next)) {
+    next = next->nextTree();
+  }
+  return next;
 }
 
 bool AdvancedSimplification::Direction::canApply(const Tree* u,

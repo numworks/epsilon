@@ -32,11 +32,9 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
 
   // x*inf -> sign(x)*inf
   PatternMatching::Context ctx;
-  if (u->numberOfChildren() == 2) {
-    if (!u->child(0)->isInf() && !u->child(1)->isInf()) {
-      return false;
-    }
-    Tree* otherChild = u->child(0)->isInf() ? u->child(1) : u->child(0);
+  if (PatternMatching::Match(KMult(KA, KInf), u, &ctx) ||
+      PatternMatching::Match(KMult(KInf, KA), u, &ctx)) {
+    const Tree* otherChild = ctx.getNode(KA);
     // Handle cases -1,0,1,sign to avoid infinite loop
     if (otherChild->isZero()) {
       // 0*inf -> undef

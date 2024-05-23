@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "dependency.h"
 #include "k_tree.h"
@@ -78,6 +79,16 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
                            const Tree* symbol) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
+  }
+  if (derivand->isPoint()) {
+    /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
+     * don't handle sums and product of points, so we escape the case here. */
+    return PatternMatching::CreateSimplify(
+        KPoint(KDiff(KA, KB, KC), KDiff(KA, KB, KD)),
+        {.KA = symbol,
+         .KB = symbolValue,
+         .KC = derivand->child(0),
+         .KD = derivand->child(1)});
   }
   if (derivand->isRandomNode()) {
     // Do not handle random nodes in derivation.

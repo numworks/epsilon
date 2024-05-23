@@ -132,7 +132,7 @@ T Random::PrivateApproximate(const Tree* randomTree, Context* context,
  * result where to be displayed exactly. */
 template <typename T>
 T Random::RandomInt(T a, T b) {
-  if (std::isnan(a) || std::isnan(b) || a > b || std::round(a) != a ||
+  if (!std::isfinite(a) || !std::isfinite(b) || a > b || std::round(a) != a ||
       std::round(b) != b) {
     return NAN;
   }

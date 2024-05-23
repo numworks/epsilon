@@ -2269,9 +2269,8 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
                                        "\u0012x+π\u0013/\u0012π×x\u0013", User);
 
   // Display in the form a+ib only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/\u0012i+1\u0013",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/\u0012i+1\u0013",
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)",
                                        SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
   assert_parsed_expression_simplify_to("√(i×(i+2))", "√(2×i-1)",

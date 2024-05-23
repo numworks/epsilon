@@ -834,6 +834,8 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
+  simplifies_to("acos({-1/√(2), 1/√(2)})", "{3π/4,π/4}");
+  simplifies_to("asin({-1/√(2), 1/√(2)})", "{-π/4,π/4}");
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",

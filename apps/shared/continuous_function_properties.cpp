@@ -592,23 +592,23 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
   assert(degOfTinX != 0 && degOfTinY != 0);
   SystemExpression variableX = xOfT.clone();
-#if 0  // TODO_PCJ
   if (variableX.type() == ExpressionNode::Type::Addition) {
+#if 0  // TODO_PCJ
     static_cast<Addition&>(variableX).removeConstantTerms(
         context, Function::k_unknownName);
-  }
 #else
-  assert(false);
+    assert(false);
 #endif
+  }
   SystemExpression variableY = yOfT.clone();
-#if 0  // TODO_PCJ
   if (variableY.type() == ExpressionNode::Type::Addition) {
+#if 0  // TODO_PCJ
     static_cast<Addition&>(variableY).removeConstantTerms(
         context, Function::k_unknownName);
-  }
 #else
-  assert(false);
+    assert(false);
 #endif
+  }
   SystemExpression quotient = Division::Builder(variableX, variableY);
   quotient = quotient.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(context));

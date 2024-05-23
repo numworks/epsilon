@@ -230,6 +230,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/projection.cpp \
   expression/random.cpp \
   expression/rational.cpp \
+  expression/sequence.cpp \
   expression/set.cpp \
   expression/sign.cpp \
   expression/simplification.cpp \

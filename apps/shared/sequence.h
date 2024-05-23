@@ -2,6 +2,7 @@
 #define APPS_SHARED_SEQUENCE_H
 
 #include <assert.h>
+#include <poincare/src/expression/sequence.h>
 
 #include "function.h"
 
@@ -24,11 +25,7 @@ class Sequence : public Function {
  public:
   constexpr static CodePoint k_sequenceSymbol =
       Poincare::Symbol::k_sequenceSymbol;
-  enum class Type : uint8_t {
-    Explicit = 0,
-    SingleRecurrence = 1,
-    DoubleRecurrence = 2
-  };
+  using Type = Poincare::Internal::Sequence::Type;
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return k_sequenceSymbol; }

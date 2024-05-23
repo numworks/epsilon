@@ -12,6 +12,7 @@
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/sum.h>
 #include <poincare/old/zoom.h>
+#include <poincare/src/expression/sequence.h>
 #include <string.h>
 
 #include <cmath>
@@ -142,71 +143,10 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
-  struct Pack {
-    char *name;
-    Type type;
-    int initialRank;
-    bool recursion;
-    bool systemSymbol;
-    bool otherSequences;
-  };
-  Pack pack{buffer,
-            type(),
-            initialRank(),
-            recursionIsAllowed,
-            systemSymbolIsAllowed,
-            otherSequencesAreAllowed};
-  return expressionClone().recursivelyMatches(
-      [](const NewExpression e, Context *context, void *arg) {
-        Pack *pack = static_cast<Pack *>(arg);
-#if 1  // TODO_PCJ
-        assert(false);
-        return OMG::Troolean::Unknown;
-#else
-        if (e.isRandom()) {
-          return OMG::Troolean::True;
-        }
-        if (!pack->systemSymbol && e.type() == ExpressionNode::Type::Symbol) {
-          const Symbol symbol = static_cast<const Symbol &>(e);
-          return symbol.isSystemSymbol() ? OMG::Troolean::True
-                                         : OMG::Troolean::Unknown;
-        }
-        if (e.type() != ExpressionNode::Type::Sequence) {
-          return OMG::Troolean::Unknown;
-        }
-        const Poincare::Sequence seq =
-            static_cast<const Poincare::Sequence &>(e);
-        char *buffer = pack->name;
-        if (strcmp(seq.name(), buffer) != 0) {
-          return !pack->otherSequences ? OMG::Troolean::True
-                                       : OMG::Troolean::Unknown;
-        }
-        UserExpression rank = seq.childAtIndex(0);
-        Type type = pack->type;
-        if (rank.type() == ExpressionNode::Type::BasedInteger) {
-          float rankValue = static_cast<const BasedInteger &>(rank)
-                                .integer()
-                                .approximate<float>();
-          if ((type != Type::Explicit && rankValue == pack->initialRank) ||
-              (type == Type::DoubleRecurrence &&
-               rankValue == pack->initialRank + 1)) {
-            return OMG::Troolean::False;
-          }
-          return OMG::Troolean::True;
-        }
-        Symbol n = Symbol::SystemSymbol();
-        if (pack->recursion &&
-            ((type != Type::Explicit && rank.isIdenticalTo(n)) ||
-             (type == Type::DoubleRecurrence &&
-              rank.isIdenticalTo(
-                  Addition::Builder(n, NewExpression::Builder(1)))))) {
-          return OMG::Troolean::False;
-        }
-        return OMG::Troolean::True;
-#endif
-      },
-      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &pack);
+  // TODO_PCJ: used SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+  return Poincare::Internal::Sequence::MainExpressionContainsForbiddenTerms(
+      expressionClone().tree(), buffer, type(), initialRank(),
+      recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
 void Sequence::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) const {

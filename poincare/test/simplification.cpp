@@ -761,8 +761,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
       "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
 #endif
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
-  // TODO: Bad
-  simplifies_to("sin(17)^2+cos(6)^2", "1", cartesianCtx);
+  simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
   // Other angle units :
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});

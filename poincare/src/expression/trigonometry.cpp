@@ -342,12 +342,12 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 
 bool Trigonometry::ContractTrigonometric(Tree* e) {
   return
-      // A?+cos(B)^2+C?+sin(D)^2+E? = 1 + A + C + E
+      // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
       PatternMatching::MatchReplaceSimplify(
           e,
-          KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KD, 1_e), 2_e),
-               KE_s),
-          KAdd(1_e, KA_s, KC_s, KE_s)) ||
+          KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KB, 1_e), 2_e),
+               KD_s),
+          KAdd(1_e, KA_s, KC_s, KD_s)) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
       PatternMatching::MatchReplaceSimplify(

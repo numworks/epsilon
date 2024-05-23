@@ -83,7 +83,8 @@ Sequence Sequence::Builder(const char* name, size_t length,
   // If needed, handle theta like functions and symbols
   assert(!AliasesLists::k_thetaAliases.contains(name, length));
   Internal::Tree* tree =
-      Internal::SharedTreeStack->push<Internal::Type::UserSequence>(name);
+      Internal::SharedTreeStack->push<Internal::Type::UserSequence>(name,
+                                                                    length + 1);
   assert(!child.isUninitialized());
   child.tree()->clone();
 

@@ -159,7 +159,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   constexpr const char *n_variable = "n";
   UserExpression sumExpression =
       Sum::Builder(Poincare::Sequence::Builder(
-                       sequence->fullName(), strlen(sequence->fullName()),
+                       sequence->fullName(), 1,
                        Symbol::Builder(k_variable, strlen(k_variable))),
                    Symbol::Builder(k_variable, strlen(k_variable)),
                    NewExpression::Builder(sequence->initialRank()),

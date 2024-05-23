@@ -10,6 +10,10 @@
 
 using namespace Poincare::Internal;
 
+constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
+                                                ComplexFormat::Cartesian};
+constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
+
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::RootTreeToReal<T>(n);
@@ -29,7 +33,7 @@ void approximates_to(const Tree* n, T f) {
 
 template <typename T>
 void approximates_to(const char* input, const char* output,
-                     ProjectionContext projectionContext = {}) {
+                     ProjectionContext projectionContext = realCtx) {
   // TODO: use same test and log as approximates_to?
   process_tree_and_compare(
       input, output,
@@ -88,4 +92,57 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
   approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
+}
+
+QUIZ_CASE(pcj_approximation_infinity) {
+  approximates_to<float>("inf", "∞");
+  approximates_to<float>("inf(-1)", "-∞");
+  approximates_to<float>("-inf+1", "-∞");
+  approximates_to<float>("inf-inf", "undef");
+  approximates_to<float>("-inf+inf", "undef");
+  approximates_to<float>("inf*(-π)", "-∞");
+  approximates_to<float>("inf*2*inf", "∞");
+  approximates_to<float>("0×inf", "undef");
+  approximates_to<float>("3×inf", "∞");
+  approximates_to<float>("-3×inf", "-∞");
+  approximates_to<float>("inf×(-inf)", "-∞");
+  approximates_to<float>("1/inf", "0");
+  approximates_to<float>("0/inf", "0");
+
+  // x^inf
+  approximates_to<float>("(-2)^inf", "undef");  // complex inf
+  approximates_to<float>("(-2)^(-inf)", "0");
+  approximates_to<float>("(-1)^inf", "undef");
+  approximates_to<float>("(-1)^(-inf)", "undef");
+  approximates_to<float>("(-0.3)^inf", "0");
+  approximates_to<float>("(-0.3)^(-inf)", "undef");  // complex inf
+  approximates_to<float>("0^inf", "0");
+  approximates_to<float>("0^(-inf)", "undef");  // complex inf
+  approximates_to<float>("0.3^inf", "0");
+  approximates_to<float>("0.3^(-inf)", "∞");
+  approximates_to<float>("1^inf", "undef");
+  approximates_to<float>("1^(-inf)", "undef");
+  approximates_to<float>("2^inf", "∞");
+  approximates_to<float>("2^(-inf)", "0");
+
+  // inf^x
+  // TODO_PCJ: approximates_to<float>("inf^0", "undef");
+  // TODO_PCJ: approximates_to<float>("(-inf)^0", "undef");
+  // TODO_PCJ: approximates_to<float>("inf^inf", "undef");  // complex inf
+  approximates_to<float>("inf^(-inf)", "0");
+  approximates_to<float>("(-inf)^inf", "undef");  // complex inf
+  approximates_to<float>("(-inf)^(-inf)", "0");
+
+  // functions
+  approximates_to<float>("exp(inf)", "∞");
+  approximates_to<float>("exp(-inf)", "0");
+  approximates_to<float>("log(inf,-3)", "nonreal");
+  approximates_to<float>("log(inf,-3)", "∞-∞×i", cartesianCtx);
+  approximates_to<float>("ln(-inf)", "nonreal");
+  approximates_to<float>("cos(inf)", "undef");
+  approximates_to<float>("cos(-inf)", "undef");
+  approximates_to<float>("sin(inf)", "undef");
+  approximates_to<float>("sin(-inf)", "undef");
+  approximates_to<float>("atan(inf)", "1.570796");
+  approximates_to<float>("atan(-inf)", "-1.570796");
 }

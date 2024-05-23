@@ -12,7 +12,11 @@ namespace Poincare::Internal {
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const char* name, Type type, int initialRank, bool recursion,
     bool systemSymbol, bool otherSequences) {
+  const Tree* skipUntil = e;
   for (const Tree* d : e->selfAndDescendants()) {
+    if (d < skipUntil) {
+      continue;
+    }
     if (d->isRandomNode()) {
       return true;
     }
@@ -41,9 +45,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
         ((type != Type::Explicit && rank->treeIsIdenticalTo(KUnknownSymbol)) ||
          (type == Type::DoubleRecurrence &&
           rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
-      // TODO this assert was not there but return TrinaryFalse was replaced by
-      // continue
-      assert(systemSymbol);
+      skipUntil = d->nextTree();
       continue;
     }
     return true;

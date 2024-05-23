@@ -978,6 +978,16 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
+    if (m_nextToken.type() == Token::Type::Subscript ||
+        (m_nextToken.type() == Token::Type::Layout &&
+         m_nextToken.firstLayout()->isParenthesisLayout())) {
+      popToken();
+      /* TODO factor with parseSequence */
+      leftHandSide = SharedTreeStack->push<Type::UserSequence>(name);
+      Parser::Parse(m_currentToken.firstLayout()->child(0),
+                    m_parsingContext.context());
+      return;
+    }
     if (m_nextToken.type() != Token::Type::LeftParenthesis) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }

@@ -193,7 +193,6 @@ NODE(Sqrt, 1)
 NODE(Root, 2)
 NODE(Sub, 2)
 NODE(Tan, 1)
-NODE(TanRad, 1)
 NODE(Trig, 2)
 NODE(TrigDiff, 2)
 

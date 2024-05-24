@@ -34,7 +34,6 @@ constexpr auto KAbs = KUnary<Type::Abs>();
 constexpr auto KCos = KUnary<Type::Cos>();
 constexpr auto KSin = KUnary<Type::Sin>();
 constexpr auto KTan = KUnary<Type::Tan>();
-constexpr auto KTanRad = KUnary<Type::TanRad>();
 constexpr auto KACos = KUnary<Type::ACos>();
 constexpr auto KASin = KUnary<Type::ASin>();
 constexpr auto KATan = KUnary<Type::ATan>();

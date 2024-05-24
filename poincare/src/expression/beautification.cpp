@@ -229,7 +229,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
 bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
                                                    AngleUnit angleUnit) {
   // Beautify System nodes to prevent future simplifications.
-  if (tree->isTrig() || tree->isTanRad()) {
+  if (tree->isTrig()) {
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = tree->child(0);
       child->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -239,8 +239,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
        * TODO: Call AdvancedReduce in DeepBeautify only if we went here. */
     }
     PatternMatching::MatchReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
-        PatternMatching::MatchReplace(tree, KTrig(KA, 1_e), KSin(KA)) ||
-        PatternMatching::MatchReplace(tree, KTanRad(KA), KTan(KA));
+        PatternMatching::MatchReplace(tree, KTrig(KA, 1_e), KSin(KA));
     return true;
   }
   if (tree->isATrig() || tree->isATanRad()) {

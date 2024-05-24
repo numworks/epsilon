@@ -178,7 +178,6 @@ $$
 | decimal{n}(A) | 10^(-n)×A |
 | cos(A) | trig(A×RadToAngleUnit, 0) |
 | sin(A) | trig(A×RadToAngleUnit, 1) |
-| tan(A) | tanRad(A×RadToAngleUnit) |
 | acos(A) | atrig(A, 0)×RadToAngleUnit |
 | asin(A) | atrig(A, 1)×RadToAngleUnit |
 | atan(A) | atanRad(A)×RadToAngleUnit |
@@ -211,22 +210,6 @@ $$
 | artanh(A) | (ln(1+A)-ln(1-A))×1/2 |
 
 </details>
-
-### Projection in advanced reduction
-
-Some projections are too difficult to undo to be applied at projection. But we still want to try them to see if it improves the result. We then try the projection during advanced reduction.
-
-For example, `tan(x)` should be projected in `sin(x)/cos(x)` because systematic reduction doesn't handle `tan` nodes. But `sin(x)/cos(x)` can be too difficult to convert back to `tan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
-
-Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
-
-Since this step is applied long after projection step, the new tree must already be in its projected form.
-
-In practice, we replace `tanRad(x)` (projected tree for tan) into `trig(x,1) * trig(x, 0)^(-1)`.
-
-This practice tends to slow down advanced reduction so we limit it to the very minimum.
-
-For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
 
 ## Systematic reduction
 

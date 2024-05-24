@@ -247,11 +247,12 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KCos(KA), KTrig(KA, 0_e)) ||
       // sin(A) -> trig(A, 1)
       PatternMatching::MatchReplace(e, KSin(KA), KTrig(KA, 1_e)) ||
-      // tan(A) -> tanRad(A, 1)
-      PatternMatching::MatchReplace(e, KTan(KA), KTanRad(KA)) ||
-      // cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
-      PatternMatching::MatchReplace(e, KCot(KA),
-                                    KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
+      // tan(A) -> sin(A)/cos(A)
+      PatternMatching::MatchReplace(
+          e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
+      // cot(A) -> cos(A)/sin(A)
+      PatternMatching::MatchReplace(
+          e, KCot(KA), KMult(KTrig(KA, 0_e), KPow(KTrig(KA, 1_e), -1_e))) ||
       /* acot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
        * instead of π/2 to handle angle unit */
       PatternMatching::MatchReplace(
@@ -288,11 +289,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
 bool Projection::Expand(Tree* tree) {
   return
-      // tan(A) -> sin(A) * cos(A)^(-1)
-      PatternMatching::MatchReplaceSimplify(
-          tree, KTanRad(KA),
-          KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      // TODO_PCJ: This expansion introduces KPow when KPowReal could be needed.
       // atan(A) -> asin(A/Sqrt(1 + A^2))
       PatternMatching::MatchReplaceSimplify(
           tree, KATanRad(KA),

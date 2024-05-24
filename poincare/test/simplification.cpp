@@ -822,13 +822,9 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
                 "{x,√(-x^2+1),cos(arctan(x))}");
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
+  // TODO_PCJ: tan(atan) and atan(tan)
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{tan(arccos(x)),tan(arcsin(x)),x}");
-#else
-  simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{tan(arccos(x)),tan(arcsin(x)),tan(arctan(x))}");
-#endif
+                "{√(-x^2+1)/x,x×(-x^2+1)^(-1/2),tan(arctan(x))}");
   simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");

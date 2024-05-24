@@ -450,10 +450,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       return TrigonometricToComplex(isCos ? Type::ACos : Type::ASin, a,
                                     AngleUnit::Radian);
     }
-    case Type::TanRad:
     case Type::ATanRad:
-      return TrigonometricToComplex(node->isTanRad() ? Type::Tan : Type::ATan,
-                                    ToComplex<T>(node->child(0)),
+      return TrigonometricToComplex(Type::ATan, ToComplex<T>(node->child(0)),
                                     AngleUnit::Radian);
     case Type::Var: {
       if (!s_context) {

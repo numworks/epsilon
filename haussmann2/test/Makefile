@@ -16,6 +16,7 @@ $(eval $(call create_module,main,1,\
 	dummy.cpp:-do_something\
 	main.cpp:+do_something\
 ))
+SFLAGS_main += -time:-do_something
 
 $(eval $(call create_goal,test,\
 	main.do_something aaa,\

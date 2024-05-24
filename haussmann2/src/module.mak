@@ -65,9 +65,19 @@ endef
 # objects_for_flavored_module, <dot-separated flavored module>
 # $1 might be prefixed with an arch's directory.
 define objects_for_flavored_module
-$(call objects_for_sources,$(subst ./,,$(dir $1)),$(call flavor_filter,\
-	$(SOURCES_$(call name_for_flavored_target,$1)),\
-	$(call flavors_for_flavored_target,$(notdir $1))))
+$(call objects_for_sources,$(subst ./,,$(dir $1)),$(call _flavor_filtered_module_variable,$1,SOURCES))
+endef
+
+# sflags_for_flavored_module, <dot-separated flavored module>
+# $1 might be prefixed with an arch's directory.
+define sflags_for_flavored_module
+$(call _flavor_filtered_module_variable,$1,SFLAGS)
+endef
+
+# ldflags_for_flavored_module, <dot-separated flavored module>
+# $1 might be prefixed with an arch's directory.
+define ldflags_for_flavored_module
+$(call _flavor_filtered_module_variable,$1,LDFLAGS)
 endef
 
 # Helpers
@@ -81,4 +91,11 @@ endef
 define _assert_valid_version
 $(if $(shell [[ "$1" =~ ^[0-9]+$$ ]] || echo error),\
 	$(error "Error: version should be an integer"),)
+endef
+
+# _flavor_filtered_module_variable, <dot-separated flavored module>, <variable name>
+define _flavor_filtered_module_variable
+$(call flavor_filter,\
+	$($2_$(call name_for_flavored_target,$1)),\
+	$(call flavors_for_flavored_target,$(notdir $1)))
 endef

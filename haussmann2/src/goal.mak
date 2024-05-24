@@ -16,14 +16,19 @@
 # Public API
 
 # create_goal, <name>, <modules>, <optional description>
+# FIXME Because of the way target-specific variables work, we cannot easily
+# propagate dynamic flavors to the sflags, so only static flavors written in
+# create_goal are taken into account.
+# e.g. If goal requires module.f1, then when building goal.f2.ext and thus
+# module.f1.f2.a, only f1 will be used to filter the sflags.
 define create_goal
 $(call _assert_valid_goal_name,$1)
 ALL_GOALS += $1
 MODULES_$1 := $2
 HELP_GOAL_$1 := $3
 
-$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(SFLAGS_$$(call name_for_flavored_target,$$m)))
-$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): LDFLAGS += $$(foreach m,$2,$$(LDFLAGS_$$(call name_for_flavored_target,$$m)))
+$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
+$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): LDFLAGS += $$(foreach m,$2,$$(call ldflags_for_flavored_module,$$m))
 
 $1%: $(call target_foreach_arch,$1%)
 	@ :

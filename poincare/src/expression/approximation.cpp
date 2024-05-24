@@ -793,11 +793,11 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
         /* std::pow(±Inf,0) = std::pow(±1,±Inf) = 1 but we want undef. */
         return NAN;
       }
-      if ((std::fabs(a) == INFINITY && b == INFINITY) ||
+      if ((a == -INFINITY && b == INFINITY) ||
           (a < static_cast<T>(-1.0) && b == INFINITY) ||
           (static_cast<T>(-1.0) < a && a <= static_cast<T>(0.0) &&
            b == -INFINITY)) {
-        /* ±inf^inf, a^inf with a <-1 and a^(-inf) with -1 < a <= 0 should be
+        /* (-inf)^inf, a^inf with a <-1 and a^(-inf) with -1 < a <= 0 should be
          * approximated to complex infinity but we do not handle it for now. */
         return NAN;
       }

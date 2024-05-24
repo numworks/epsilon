@@ -13,6 +13,9 @@ class Sequence {
     DoubleRecurrence = 2
   };
 
+  static Type GetType(const Tree* sequence);
+  static int InitialRank(const Tree* sequence);
+
   static bool MainExpressionContainsForbiddenTerms(
       const Tree* e, const char* name, Type type, int initialRank,
       bool recursion, bool systemSymbol, bool otherSequences);

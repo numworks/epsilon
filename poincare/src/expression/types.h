@@ -336,6 +336,16 @@ NODE(UnitConversion, 2)
 
 RANGE(Expression, RationalNegBig, UnitConversion)
 
+// SequenceExplicit(formula, firstRank)
+NODE(SequenceExplicit, 2)
+// SequenceSingleRecurrence(formula, firstRank, initialCondition)
+NODE(SequenceSingleRecurrence, 3)
+// SequenceDoubleRecurrence(formula, firstRank, initialCondition,
+// initialCondition)
+NODE(SequenceDoubleRecurrence, 4)
+
+RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
+
 // TODO: should this really be here ?
 NODE(PointOfInterest, 0, {
   double abscissa;

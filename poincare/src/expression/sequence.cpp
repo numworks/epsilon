@@ -9,6 +9,25 @@
 
 namespace Poincare::Internal {
 
+Sequence::Type Sequence::GetType(const Tree* sequence) {
+  switch (sequence->type()) {
+    case Internal::Type::SequenceExplicit:
+      return Type::Explicit;
+    case Internal::Type::SequenceSingleRecurrence:
+      return Type::SingleRecurrence;
+    case Internal::Type::SequenceDoubleRecurrence:
+      return Type::DoubleRecurrence;
+    default:
+      assert(false);
+  }
+}
+
+int Sequence::InitialRank(const Tree* sequence) {
+  assert(sequence->isSequence());
+  assert(sequence->child(1)->isInteger());
+  return Integer::Handler(sequence).to<int>();
+}
+
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const char* name, Type type, int initialRank, bool recursion,
     bool systemSymbol, bool otherSequences) {

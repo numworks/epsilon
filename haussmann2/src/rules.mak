@@ -15,7 +15,7 @@ $(OUTPUT_DIRECTORY)%/.:
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
-	$(QUIET) $(LD) $(SFLAGS) $^ $(LDFLAGS) -o $@
+	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
 $(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
 
@@ -28,11 +28,11 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 # Rules for object files
 $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).c | $$(@D)/.
 	$(call rule_label,CC)
-	$(QUIET) $(CC) $(SFLAGS) $(CFLAGS) -c $< -o $@
+	$(QUIET) $(CC) $(PRIORITY_SFLAGS) $(SFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
 	$(call rule_label,CXX)
-	$(QUIET) $(CXX) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(QUIET) $(CXX) $(PRIORITY_SFLAGS) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # Lock files, ensure that modules versions match
 %.lock:

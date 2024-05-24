@@ -309,9 +309,22 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
                 KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
 
+  // -1 * x -> -x
   if (PatternMatching::MatchReplace(e, KMult(-1_e, KA_p),
                                     KOpposite(KMult(KA_p)))) {
     return true;
+  }
+
+  if (
+      // sin(A)/cos(A) -> tan(A)
+      PatternMatching::MatchReplace(
+          e, KMult(KA_s, KPow(KCos(KB), -1_e), KC_s, KSin(KB), KD_s),
+          KMult(KA_s, KC_s, KTan(KB), KD_s)) ||
+      // cos(A)/sin(A) -> cot(A)
+      PatternMatching::MatchReplace(
+          e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
+          KMult(KA_s, KC_s, KCot(KB), KD_s))) {
+    changed = true;
   }
 
   // Turn multiplications with negative powers into divisions

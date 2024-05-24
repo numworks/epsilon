@@ -1283,9 +1283,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
                                        "-tan(π/21)/\u00123×π\u0013");
   assert_parsed_expression_simplify_to("-cos(π/62)ln(3)/(sin(π/62)π)",
                                        "-ln(3)/\u0012π×tan(π/62)\u0013");
-  assert_parsed_expression_simplify_to(
-      "-2cos(π/62)ln(3)/(sin(π/62)π)",
-      "-\u00122×ln(3)\u0013/\u0012π×tan(π/62)\u0013");
+  assert_parsed_expression_simplify_to("-2cos(π/62)ln(3)/(sin(π/62)π)",
+                                       "(-2×cot(π/62)×ln(3))/π");
   // -- cos
   assert_parsed_expression_simplify_to("cos(0)", "1");
   assert_parsed_expression_simplify_to("cos(π)", "-1");

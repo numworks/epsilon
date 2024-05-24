@@ -452,7 +452,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
 QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
-  simplifies_to("cot(x)", "cos(x)/sin(x)");
+  simplifies_to("cot(x)", "cot(x)");
   simplifies_to("arcsec(sec(π/6))", "π/6");
   simplifies_to("arccsc(csc(π/6))", "π/6");
   // TODO: Complete arctan exact values table.
@@ -463,8 +463,7 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("sec(arcsec(x))", "x");
   simplifies_to("csc(arccsc(x))", "x");
   // TODO: Should simplify to x
-  simplifies_to("cot(arccot(1+abs(x)))",
-                "cos(arctan(1/(1+abs(x))))/sin(arctan(1/(1+abs(x))))",
+  simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
 }
 

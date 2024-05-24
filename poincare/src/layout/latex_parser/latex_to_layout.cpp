@@ -49,6 +49,13 @@ Tree* LatexToLayout::NextToken(const char** start) {
   // The root's power is at index 0 in latex and 1 in layouts
   constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
                                                  "}"};
+  /* There is no easy way to know the end of an integral in Latex.
+   * We rely on the fact that the user makes it end with " dx"
+   *  Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
+   *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ dx
+   * */
+  constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
+                                                  "}",       "\3", "\\ dx"};
 
   using LayoutConstructor = Tree* (*)();
   struct LatexToken {
@@ -72,6 +79,11 @@ Tree* LatexToLayout::NextToken(const char** start) {
        []() -> Tree* { return KFracL(KRackL(), KRackL())->clone(); }},
       {nthRootToken, std::size(nthRootToken),
        []() -> Tree* { return KRootL(KRackL(), KRackL())->clone(); }},
+      // For now, you can only integrate in x
+      {integralToken, std::size(integralToken),
+       []() -> Tree* {
+         return KIntegralL("x"_l, KRackL(), KRackL(), KRackL())->clone();
+       }},
   };
 
   for (const LatexToken& token : k_tokens) {

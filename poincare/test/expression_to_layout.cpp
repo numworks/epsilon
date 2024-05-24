@@ -388,4 +388,7 @@ QUIZ_CASE(poincare_latex_layout) {
       "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}",
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesisL("3"_l ^ KSuperscriptL("5"_l))))));
+  assert_latex_layouts_to(
+      "\\int_{1}^{2}x^{3}\\ dx",
+      KRackL(KIntegralL("x"_l, "1"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))));
 }

@@ -60,8 +60,7 @@ bool Infinity::IsPlusOrMinusInfinity(const Tree* u) {
 }
 
 bool Infinity::IsMinusInfinity(const Tree* u) {
-  PatternMatching::Context ctx;
-  return PatternMatching::Match(KMult(-1_e, KInf), u, &ctx);
+  return u->treeIsIdenticalTo(KMult(-1_e, KInf));
 }
 
 }  // namespace Poincare::Internal

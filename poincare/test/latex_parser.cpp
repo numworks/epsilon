@@ -14,6 +14,7 @@ void assert_latex_layouts_to(const char* latex, const Tree* l) {
 
 QUIZ_CASE(poincare_latex_to_layout) {
   assert_latex_layouts_to("a-b", "a-b"_l);
+  assert_latex_layouts_to("a\\ -{\\ b}", "a-b"_l);
   assert_latex_layouts_to("\\left(a-b\\right)+2",
                           KRackL(KParenthesisL("a-b"_l), "+"_cl, "2"_cl));
   assert_latex_layouts_to(
@@ -55,5 +56,5 @@ QUIZ_CASE(poincare_layout_to_latex) {
       KRackL(KIntegralL("x"_l, "1"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))),
       "\\int_{1}^{2}x^{3}\\ dx");
   assert_layout_convert_to_latex("12"_l ^ KThousandSeparatorL ^ "345"_l,
-                                 "12345");
+                                 "12\\ 345");
 }

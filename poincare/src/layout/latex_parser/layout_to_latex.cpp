@@ -12,8 +12,8 @@ namespace LatexParser {
 
 char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
   for (const Tree* child : rack->children()) {
-    if (child->isSeparatorLayout()) {
-      // Invisible layouts in latex
+    if (child->isOperatorSeparatorLayout()) {
+      // Invisible in latex
       continue;
     }
 
@@ -25,6 +25,19 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
 
     if (child->isCodePointLayout()) {
       buffer = CodePointLayout::CopyName(child, buffer, end - buffer);
+      continue;
+    }
+
+    if (child->isThousandSeparatorLayout()) {
+      // Replace with '\ '
+      if (buffer + 1 >= end) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      *buffer = '\\';
+      buffer += 1;
+      *buffer = ' ';
+      buffer += 1;
+      *buffer = 0;
       continue;
     }
 

@@ -26,7 +26,9 @@ void LatexToLayout::ParseOnRackUntilIdentifier(Rack* parent, const char** start,
   while (**start != 0 &&
          (endLen == 0 || strncmp(*start, endIdentifier, endLen) != 0)) {
     Tree* child = NextToken(start);
-    NAry::AddChild(parent, child);
+    if (child) {
+      NAry::AddChild(parent, child);
+    }
   }
 
   if (**start == 0 && endLen > 0) {
@@ -58,6 +60,13 @@ Tree* LatexToLayout::NextToken(const char** start) {
     }
 
     return layoutToken;
+  }
+
+  if (**start == '\\' || **start == ' ' || **start == '{' || **start == '}') {
+    /* Ignore \ and {} if it doesn't belong to a know token
+     * Ignore spaces */
+    *start += 1;
+    return nullptr;
   }
 
   // Code points

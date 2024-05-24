@@ -150,7 +150,7 @@ $(eval $(call create_module,liba,1, \
 SFLAGS_liba += -Iliba/include/bridge:+bridge
 
 $(call objects_foreach_arch,liba/src/external/sqlite/mem5.c): CFLAGS += -w
-$(call objects_foreach_arch,liba/src/external/openbsd/%.c): SFLAGS := -Iliba/src/external/openbsd/include $(SFLAGS)
+$(call objects_foreach_arch,liba/src/external/openbsd/%.c): PRIORITY_SFLAGS := -Iliba/src/external/openbsd/include
 $(call objects_foreach_arch,liba/src/external/openbsd/%.c): CFLAGS += -w
 # A few OpenBSD libm files define constants using the "volatile" keyword. Like
 # "static const volatile float huge = 1.0e+30;". This obviously doesn't make any

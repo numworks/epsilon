@@ -106,6 +106,14 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
       buffer = append(")", buffer, end);
       break;
     }
+    case LayoutType::Point2D: {
+      buffer = append("(", buffer, end);
+      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = append(",", buffer, end);
+      buffer = Serialize(layout->child(1), buffer, end);
+      buffer = append(")", buffer, end);
+      break;
+    }
     default: {
       if (layout->isPiecewiseLayout()) {
         buffer = append("piecewise", buffer, end);

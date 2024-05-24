@@ -49,6 +49,8 @@ bool Infinity::ShallowBubbleUpInfinity(Tree* u) {
   }
   if (PatternMatching::MatchReplaceSimplify(
           u, KMult(KA_s, KInf, KB_s), KMult(KSign(KMult(KA_s, KB_s)), KInf))) {
+    /* Warning: it works because sign(z)=undef if z is complex and we don't
+     * handle i*inf.*/
     return true;
   }
 

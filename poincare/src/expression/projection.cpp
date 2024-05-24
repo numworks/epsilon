@@ -223,6 +223,12 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
                                     KAdd(KA, KMult(-1_e, KFloor(KA)))) ||
       // e -> exp(1)
       PatternMatching::MatchReplace(e, e_e, KExp(1_e)) ||
+      // log(A) -> ln(A) * ln(10)^(-1)
+      PatternMatching::MatchReplace(e, KLog(KA),
+                                    KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
+      // log(A, B) -> ln(A) * ln(B)^(-1)
+      PatternMatching::MatchReplace(e, KLogarithm(KA, KB),
+                                    KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
       // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchReplace(e, KConj(KA),
                                     KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||
@@ -243,35 +249,29 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KSin(KA), KTrig(KA, 1_e)) ||
       // tan(A) -> tanRad(A, 1)
       PatternMatching::MatchReplace(e, KTan(KA), KTanRad(KA)) ||
-      // log(A) -> ln(A) * ln(10)^(-1)
-      PatternMatching::MatchReplace(e, KLog(KA),
-                                    KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
-      // log(A, B) -> ln(A) * ln(B)^(-1)
-      PatternMatching::MatchReplace(e, KLogarithm(KA, KB),
-                                    KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
-      // Cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
+      // cot(A) -> cos(A)/sin(A) (Avoid tan to for dependencies)
       PatternMatching::MatchReplace(e, KCot(KA),
                                     KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
-      /* ArcCot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
+      /* acot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
        * instead of π/2 to handle angle unit */
       PatternMatching::MatchReplace(
           e, KACot(KA),
           KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
-      // Cosh(A) -> (exp(A)+exp(-A))*1/2
+      // cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchReplace(
           e, KCosH(KA),
           KMult(1_e / 2_e, KAdd(KExp(KA), KExp(KMult(-1_e, KA))))) ||
-      // Sinh(A) -> (exp(A)-exp(-A))*1/2
+      // sinh(A) -> (exp(A)-exp(-A))*1/2
       PatternMatching::MatchReplace(
           e, KSinH(KA),
           KMult(1_e / 2_e,
                 KAdd(KExp(KA), KMult(-1_e, KExp(KMult(-1_e, KA)))))) ||
-      // Tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
+      // tanh(A) -> (exp(2A)-1)/(exp(2A)+1)
       PatternMatching::MatchReplace(
           e, KTanH(KA),
           KMult(KAdd(KExp(KMult(2_e, KA)), -1_e),
                 KPow(KAdd(KExp(KMult(2_e, KA)), 1_e), -1_e))) ||
-      // ArTanh(A) -> (ln(1+A)-ln(1-A))*1/2
+      // atanh(A) -> (ln(1+A)-ln(1-A))*1/2
       PatternMatching::MatchReplace(
           e, KArTanH(KA),
           KMult(1_e / 2_e,

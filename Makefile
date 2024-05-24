@@ -7,3 +7,7 @@ PLATFORM ?= n0110
 include $(PATH_haussmann)/Makefile
 
 $(eval $(call import_module,liba,liba))
+
+$(eval $(call create_goal,testpsilon, \
+  liba.bridge \
+))

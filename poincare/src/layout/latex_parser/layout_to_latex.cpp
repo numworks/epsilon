@@ -2,6 +2,7 @@
 
 #include <omg/utf8_decoder.h>
 #include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "latex_tokens.h"
@@ -18,9 +19,7 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
     }
 
     if (buffer >= end) {
-      // Buffer is too short
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      return end;
+      break;
     }
 
     if (child->isCodePointLayout()) {
@@ -31,6 +30,7 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
     if (child->isThousandSeparatorLayout()) {
       // Replace with '\ '
       if (buffer + 1 >= end) {
+        // Buffer is too short
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
       *buffer = '\\';
@@ -52,6 +52,7 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
         const char* delimiter = token.description[i];
         size_t delimiterLength = strlen(delimiter);
         if (buffer + delimiterLength >= end) {
+          // Buffer is too short
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
           return end;
         }
@@ -70,10 +71,18 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
       tokenFound = true;
     }
 
-    if (!tokenFound) {
-      // Layout can't be represented in Latex (for now)
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    if (tokenFound) {
+      continue;
     }
+
+    // Use common serialization
+    buffer = SerializeLayout(Layout::From(child), buffer, end, Parse);
+    *buffer = 0;
+  }
+
+  if (buffer >= end) {
+    // Buffer is too short
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   return buffer;

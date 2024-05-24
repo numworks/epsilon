@@ -57,4 +57,7 @@ QUIZ_CASE(poincare_layout_to_latex) {
       "\\int_{1}^{2}x^{3}\\ dx");
   assert_layout_convert_to_latex("12"_l ^ KThousandSeparatorL ^ "345"_l,
                                  "12\\ 345");
+  assert_layout_convert_to_latex(
+      KRackL(KDiffL("x"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))),
+      "diff(x^{3},x,2)");
 }

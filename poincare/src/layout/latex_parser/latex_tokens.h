@@ -35,6 +35,30 @@ class Tokens {
   constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
                                                   "}",       "\3", "\\ dx"};
 
+  /* Layout to latex:
+   * Node with custom handling:
+   *   OperatorSeparator -> suppressed in Latex
+   *   ThousandSeparator -> replaced with ' '
+   * Node unimplemented (that are serialized instead):
+   *   Ceil
+   *   Floor
+   *   VectorNorm
+   *   Conj
+   *   CombinedCodePoints
+   *   CondensedSum
+   *   Diff
+   *   NthDiff
+   *   Product
+   *   Sum
+   *   ListSequence
+   *   Point2D
+   *   Binomial
+   *   Matrix
+   *   Piecewise
+   *   PtBinomial (not handled by serialization ?)
+   *   PtPermute (not handled by serialization ?)
+   * */
+
   using LayoutDetector = bool (*)(const Tree*);
   using LayoutConstructor = Tree* (*)();
 

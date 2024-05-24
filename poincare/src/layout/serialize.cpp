@@ -14,9 +14,9 @@ namespace Poincare::Internal {
  * to use operator priority to minimize parentheses and get the correct
  * multiplication symbol. */
 
-char* Serialize(const Rack* rack, char* buffer, char* end) {
+char* SerializeRack(const Rack* rack, char* buffer, char* end) {
   for (const Tree* child : rack->children()) {
-    buffer = Serialize(Layout::From(child), buffer, end);
+    buffer = SerializeLayout(Layout::From(child), buffer, end);
     if (buffer == end) {
       return end;
     }
@@ -30,7 +30,8 @@ char* append(const char* text, char* buffer, char* end) {
   return buffer + len;
 }
 
-char* Serialize(const Layout* layout, char* buffer, char* end) {
+char* SerializeLayout(const Layout* layout, char* buffer, char* end,
+                      RackSerializer serializer) {
   switch (layout->layoutType()) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {
@@ -42,32 +43,32 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
     }
     case LayoutType::Parenthesis: {
       buffer = append("(", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = serializer(layout->child(0), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }
     case LayoutType::CurlyBrace: {
       buffer = append("{", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = serializer(layout->child(0), buffer, end);
       buffer = append("}", buffer, end);
       break;
     }
     case LayoutType::Fraction: {
       buffer = append("((", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = serializer(layout->child(0), buffer, end);
       buffer = append(")/(", buffer, end);
-      buffer = Serialize(layout->child(1), buffer, end);
+      buffer = serializer(layout->child(1), buffer, end);
       buffer = append("))", buffer, end);
       break;
     }
     case LayoutType::VerticalOffset: {
       if (VerticalOffset::IsSuffixSuperscript(layout)) {
         buffer = append("^(", buffer, end);
-        buffer = Serialize(layout->child(0), buffer, end);
+        buffer = serializer(layout->child(0), buffer, end);
         buffer = append(")", buffer, end);
       } else {
         buffer = append("{", buffer, end);
-        buffer = Serialize(layout->child(0), buffer, end);
+        buffer = serializer(layout->child(0), buffer, end);
         buffer = append("}", buffer, end);
       }
       break;
@@ -84,7 +85,7 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
           if (i > 0) {
             buffer = append(",", buffer, end);
           }
-          buffer = Serialize(grid->childAt(i, j), buffer, end);
+          buffer = serializer(grid->childAt(i, j), buffer, end);
         }
         buffer = append("]", buffer, end);
       }
@@ -94,23 +95,23 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
     case LayoutType::Diff:
     case LayoutType::NthDiff: {
       buffer = append("diff(", buffer, end);
-      buffer = Serialize(layout->child(2), buffer, end);
+      buffer = serializer(layout->child(2), buffer, end);
       buffer = append(",", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = serializer(layout->child(0), buffer, end);
       buffer = append(",", buffer, end);
-      buffer = Serialize(layout->child(1), buffer, end);
+      buffer = serializer(layout->child(1), buffer, end);
       if (layout->isNthDiffLayout()) {
         buffer = append(",", buffer, end);
-        buffer = Serialize(layout->child(3), buffer, end);
+        buffer = serializer(layout->child(3), buffer, end);
       }
       buffer = append(")", buffer, end);
       break;
     }
     case LayoutType::Point2D: {
       buffer = append("(", buffer, end);
-      buffer = Serialize(layout->child(0), buffer, end);
+      buffer = serializer(layout->child(0), buffer, end);
       buffer = append(",", buffer, end);
-      buffer = Serialize(layout->child(1), buffer, end);
+      buffer = serializer(layout->child(1), buffer, end);
       buffer = append(")", buffer, end);
       break;
     }
@@ -146,10 +147,10 @@ char* Serialize(const Layout* layout, char* buffer, char* end) {
           buffer = append(",", buffer, end);
         }
         if (layout->isParametricLayout() && i == 0) {
-          buffer = Serialize(layout->lastChild(), buffer, end);
+          buffer = serializer(Rack::From(layout->lastChild()), buffer, end);
           buffer = append(",", buffer, end);
         }
-        buffer = Serialize(child, buffer, end);
+        buffer = serializer(Rack::From(child), buffer, end);
         firstChild = false;
         i++;
       }

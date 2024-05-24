@@ -17,6 +17,8 @@ class Tokens {
    * */
   constexpr static const char* parenthesisToken[] = {"\\left(", "\0",
                                                      "\\right)"};
+  constexpr static const char* curlyBracesToken[] = {"\\left{", "\0",
+                                                     "\\right}"};
   constexpr static const char* absToken[] = {"\\left|", "\0", "\\right|"};
   constexpr static const char* sqrtToken[] = {"\\sqrt{", "\0", "}"};
   constexpr static const char* superscriptToken[] = {"^{", "\0", "}"};
@@ -48,6 +50,10 @@ class Tokens {
       {parenthesisToken, std::size(parenthesisToken),
        [](const Tree* t) -> bool { return t->isParenthesisLayout(); },
        []() -> Tree* { return KParenthesisL(KRackL())->clone(); }},
+      // Curly braces
+      {curlyBracesToken, std::size(curlyBracesToken),
+       [](const Tree* t) -> bool { return t->isCurlyBraceLayout(); },
+       []() -> Tree* { return KCurlyBracesL(KRackL())->clone(); }},
       // Absolute value
       {absToken, std::size(absToken),
        [](const Tree* t) -> bool { return t->isAbsLayout(); },

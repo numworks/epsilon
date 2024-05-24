@@ -10,6 +10,7 @@ class Tree;
 class Undefined {
  public:
   static bool ShallowBubbleUpUndef(Tree* e);
+  static bool CanBeUndefined(const Tree* e);
   static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
 };
 

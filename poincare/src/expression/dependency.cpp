@@ -94,6 +94,12 @@ bool RemoveDefinedDependencies(Tree* dep) {
   int i = 0;
   const Tree* depI = set->nextNode();
   while (i < totalNumberOfDependencies) {
+    if (!Undefined::CanBeUndefined(depI)) {
+      changed = true;
+      NAry::RemoveChildAtIndex(set, i);
+      totalNumberOfDependencies--;
+      continue;
+    }
     Tree* approximation = depI->clone();
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
     Approximation::ApproximateAndReplaceEveryScalar(approximation);

@@ -210,7 +210,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(3×x^2×k×y,x,k,2)", "dep(6×k×y,{k^2})");
   simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "dep(6×k×y,{k^2})");
   simplifies_to("diff((x^2, floor(x)),x,k)",
-                "dep((dep(2×k,{k^2}),diff(floor(x),x,k)),{(k^2,floor(k))})");
+                "(dep(2×k,{k^2}),diff(floor(x),x,k))");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

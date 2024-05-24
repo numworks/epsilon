@@ -5,9 +5,13 @@
 
 namespace Poincare::Internal {
 
+bool Undefined::CanBeUndefined(const Tree* e) {
+  // Their elements can be undefined and it is never bubbled up.
+  return !(e->isPoint() || e->isList());
+}
+
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
-  return e->isPoint() || e->isList() ||
-         (e->isPiecewise() && childIndex % 2 == 0);
+  return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0);
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {

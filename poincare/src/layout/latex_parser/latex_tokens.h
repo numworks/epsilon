@@ -27,6 +27,8 @@ class Tokens {
   // The root's power is at index 0 in latex and 1 in layouts
   constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
                                                  "}"};
+  constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1",
+                                               "}"};
   /* There is no easy way to know the end of an integral in Latex.
    * We rely on the fact that the user makes it end with " dx"
    *  Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
@@ -52,7 +54,6 @@ class Tokens {
    *   Sum
    *   ListSequence
    *   Point2D
-   *   Binomial
    *   Matrix
    *   Piecewise
    *   PtBinomial (not handled by serialization ?)
@@ -106,6 +107,10 @@ class Tokens {
       {nthRootToken, std::size(nthRootToken),
        [](const Tree* t) -> bool { return t->isRootLayout(); },
        []() -> Tree* { return KRootL(KRackL(), KRackL())->clone(); }},
+      // Binomial
+      {binomToken, std::size(binomToken),
+       [](const Tree* t) -> bool { return t->isBinomialLayout(); },
+       []() -> Tree* { return KBinomialL(KRackL(), KRackL())->clone(); }},
       // Integral
       // For now, you can only integrate in x
       {integralToken, std::size(integralToken),

@@ -48,10 +48,11 @@ Type ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(const Tree* node, Poincare::Context* context) {
+Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
+                    ParsingContext::ParsingMethod method) {
   switch (node->layoutType()) {
     case LayoutType::Rack:
-      return RackParser(node, context).parse();
+      return RackParser(node, context, -1, method).parse();
     // case LayoutType::Parenthesis:
     // return Parse(node->child(0), context);
     case LayoutType::VerticalOffset:

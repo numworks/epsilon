@@ -570,16 +570,10 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
 
 void RackParser::parseAssignmentEqual(TreeRef& leftHandSide,
                                       Token::Type stoppingType) {
-#if 0
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::AssignmentEqual);
-  leftHandSide = Comparison::Builder(
-      leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
-#else
-  // FIXME
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+  CloneNodeAtNode(leftHandSide, KEqual);
 }
 
 void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
@@ -784,7 +778,8 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   if (aliasesList->contains("log") && popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
     TreeRef base = Parser::Parse(m_currentToken.firstLayout()->child(0),
-                                 m_parsingContext.context());
+                                 m_parsingContext.context(),
+                                 m_parsingContext.parsingMethod());
     TreeRef parameter = parseFunctionParameters();
     if (parameter->numberOfChildren() != 1) {
       // Unexpected number of many parameters.
@@ -1239,7 +1234,8 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
   leftHandSide =
-      Parser::Parse(m_currentToken.firstLayout(), m_parsingContext.context());
+      Parser::Parse(m_currentToken.firstLayout(), m_parsingContext.context(),
+                    m_parsingContext.parsingMethod());
   isThereImplicitOperator();
 }
 
@@ -1250,7 +1246,8 @@ void RackParser::parseSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef rightHandSide =
-      Parser::Parse(layout->child(0), m_parsingContext.context());
+      Parser::Parse(layout->child(0), m_parsingContext.context(),
+                    m_parsingContext.parsingMethod());
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1269,7 +1266,8 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   const Tree* layout = m_currentToken.firstLayout();
-  TreeRef base = Parser::Parse(layout->child(0), m_parsingContext.context());
+  TreeRef base = Parser::Parse(layout->child(0), m_parsingContext.context(),
+                               m_parsingContext.parsingMethod());
   if (base.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

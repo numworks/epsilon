@@ -24,6 +24,7 @@
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/src/layout/parsing/parsing_context.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/n_ary.h>
@@ -166,8 +167,11 @@ JuniorExpression JuniorExpression::Parse(const Internal::Tree* layout,
                                          Context* context,
                                          bool addMissingParenthesis,
                                          bool parseForAssignment) {
-  // TODO_PCJ: Use addMissingParenthesis and parseForAssignment.
-  return Builder(Internal::Parser::Parse(layout, context));
+  // TODO_PCJ: Use addMissingParenthesis
+  return Builder(Internal::Parser::Parse(
+      layout, context,
+      parseForAssignment ? Internal::ParsingContext::ParsingMethod::Assignment
+                         : Internal::ParsingContext::ParsingMethod::Classic));
 }
 
 JuniorExpression JuniorExpression::Parse(const char* string, Context* context,

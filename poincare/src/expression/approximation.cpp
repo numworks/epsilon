@@ -790,8 +790,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       T b = child[1];
       if ((std::fabs(a) == INFINITY && b == static_cast<T>(0.0)) ||
           (std::fabs(a) == static_cast<T>(1.0) && std::fabs(b) == INFINITY)) {
-        /* On simulator, std::pow(±Inf,0) and std::pow(±1,±Inf) return to 1
-         * while they should be undef. */
+        /* std::pow(±Inf,0) = std::pow(±1,±Inf) = 1 but we want undef. */
         return NAN;
       }
       if ((std::fabs(a) == INFINITY && b == INFINITY) ||

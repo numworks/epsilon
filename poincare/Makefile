@@ -260,8 +260,6 @@ poincare_src += $(addprefix poincare/src/,\
   layout/layoutter.cpp \
   layout/multiplication_symbol.cpp \
   layout/parser.cpp \
-  layout/latex_parser/latex_to_layout.cpp \
-  layout/latex_parser/layout_to_latex.cpp \
   layout/parsing/helper.cpp \
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \
@@ -316,6 +314,11 @@ poincare_src += $(addprefix poincare/src/probability/,\
   poisson_distribution.cpp \
   student_distribution.cpp \
   uniform_distribution.cpp \
+)
+
+tests_src += $(addprefix poincare/src/,\
+  layout/latex_parser/latex_to_layout.cpp \
+  layout/latex_parser/layout_to_latex.cpp \
 )
 
 tests_src += $(addprefix poincare/test/,\

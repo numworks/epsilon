@@ -5,6 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/sequence_cache.h>
 
 #include "sequence_store.h"
 
@@ -30,6 +31,8 @@ class SequenceContext : public Poincare::ContextWithParent {
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
+  Poincare::Internal::SequenceCache* cache() { return &m_cache; }
+  void resetCache() { cache()->resetCache(); }
 
  private:
   constexpr static int k_numberOfSequences =
@@ -38,8 +41,10 @@ class SequenceContext : public Poincare::ContextWithParent {
   const Poincare::UserExpression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
+  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   SequenceStore* m_sequenceStore;
   OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
+  Poincare::Internal::SequenceCache m_cache;
 };
 
 }  // namespace Shared

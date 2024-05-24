@@ -1,9 +1,20 @@
 #include "sequence_cache.h"
 
+#include <assert.h>
+#include <omg/signaling_nan.h>
+
+// TODO_PCJ remove this include
+#include <apps/shared/sequence_store.h>
+
 namespace Poincare::Internal {
 
-void SequenceContext::resetValuesOfSequence(int sequenceIndex,
-                                            bool intermediateComputation) {
+SequenceCache::SequenceCache(Shared::SequenceStore* sequenceStore)
+    : m_sequenceStore(sequenceStore) {
+  resetCache();
+}
+
+void SequenceCache::resetValuesOfSequence(int sequenceIndex,
+                                          bool intermediateComputation) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   double* values = valuesPointer(sequenceIndex, intermediateComputation);
   for (int depth = 0; depth < k_storageDepth; depth++) {
@@ -11,7 +22,7 @@ void SequenceContext::resetValuesOfSequence(int sequenceIndex,
   }
 }
 
-void SequenceContext::resetRanksAndValuesOfSequence(
+void SequenceCache::resetRanksAndValuesOfSequence(
     int sequenceIndex, bool intermediateComputation) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   int* rank = rankPointer(sequenceIndex, intermediateComputation);
@@ -19,15 +30,14 @@ void SequenceContext::resetRanksAndValuesOfSequence(
   resetValuesOfSequence(sequenceIndex, intermediateComputation);
 }
 
-void SequenceContext::resetComputationStatus() {
+void SequenceCache::resetComputationStatus() {
   m_isInsideComputation = false;
   for (int i = 0; i < k_numberOfSequences; i++) {
     m_smallestRankBeingComputed[i] = -1;
   }
 }
 
-double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
-                                                    int rank) {
+double SequenceCache::storedValueOfSequenceAtRank(int sequenceIndex, int rank) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   for (int loop = 0; loop < 3; loop++) {
     int storedRank = loop < 2 ? *(rankPointer(sequenceIndex, loop))
@@ -47,16 +57,16 @@ double SequenceContext::storedValueOfSequenceAtRank(int sequenceIndex,
   return OMG::SignalingNan<double>();
 }
 
-int* SequenceContext::rankPointer(int sequenceIndex,
-                                  bool intermediateComputation) {
+int* SequenceCache::rankPointer(int sequenceIndex,
+                                bool intermediateComputation) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   int* rank = intermediateComputation ? m_intermediateRanks : m_mainRanks;
   rank += sequenceIndex;
   return rank;
 }
 
-double* SequenceContext::valuesPointer(int sequenceIndex,
-                                       bool intermediateComputation) {
+double* SequenceCache::valuesPointer(int sequenceIndex,
+                                     bool intermediateComputation) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   double* values = intermediateComputation
                        ? reinterpret_cast<double*>(&m_intermediateValues)
@@ -65,9 +75,8 @@ double* SequenceContext::valuesPointer(int sequenceIndex,
   return values;
 }
 
-void SequenceContext::shiftValuesRight(int sequenceIndex,
-                                       bool intermediateComputation,
-                                       int delta) {
+void SequenceCache::shiftValuesRight(int sequenceIndex,
+                                     bool intermediateComputation, int delta) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   assert(delta > 0);
   if (delta >= k_storageDepth) {
@@ -85,14 +94,14 @@ void SequenceContext::shiftValuesRight(int sequenceIndex,
   }
 }
 
-void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
+void SequenceCache::stepUntilRank(int sequenceIndex, int rank) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
-  Sequence* s = sequenceAtNameIndex(sequenceIndex);
+  const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
   assert(s->isDefined());
   assert(rank >= s->initialRank());
-  bool explicitComputation =
-      rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
+  bool explicitComputation = rank >= s->firstNonInitialRank() &&
+                             s->canBeHandledAsExplicit(nullptr /* TODO this*/);
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
@@ -110,8 +119,8 @@ void SequenceContext::stepUntilRank(int sequenceIndex, int rank) {
   }
 }
 
-void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
-                                int step) {
+void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
+                              int step) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
@@ -141,9 +150,10 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
       *values = static_cast<double>(NAN);
       return;
     }
-    Sequence* s = sequenceAtNameIndex(sequenceIndex);
+    const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
-    *values = s->approximateAtContextRank(this, intermediateComputation);
+    *values = s->approximateAtContextRank(nullptr /* TODO: this */,
+                                          intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
     int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;
@@ -158,7 +168,7 @@ void SequenceContext::stepRanks(int sequenceIndex, bool intermediateComputation,
   }
 }
 
-void SequenceContext::resetCache() {
+void SequenceCache::resetCache() {
   for (int i = 0; i < k_numberOfSequences; i++) {
     resetRanksAndValuesOfSequence(i, true);
     resetRanksAndValuesOfSequence(i, false);
@@ -168,11 +178,21 @@ void SequenceContext::resetCache() {
   }
   resetComputationStatus();
   for (int i = 0; i < k_numberOfSequences; i++) {
-    m_sequenceIsNotComputable[i] = OMG::Troolean::Unknown;
+    // m_sequenceIsNotComputable[i] = OMG::Troolean::Unknown;
   }
 }
 
-int SequenceContext::rankForInitialValuesStorage(int sequenceIndex) const {
+const Shared::Sequence* SequenceCache::sequenceAtNameIndex(
+    int sequenceIndex) const {
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
+  Ion::Storage::Record record =
+      m_sequenceStore->recordAtNameIndex(sequenceIndex);
+  assert(!record.isNull());
+  const Shared::Sequence* s = m_sequenceStore->modelForRecord(record);
+  return s;
+}
+
+int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
   return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
 }
 

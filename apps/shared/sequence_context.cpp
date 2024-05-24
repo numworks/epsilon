@@ -15,9 +15,9 @@ namespace Shared {
 
 SequenceContext::SequenceContext(Context *parentContext,
                                  SequenceStore *sequenceStore)
-    : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {
-  resetCache();
-}
+    : ContextWithParent(parentContext),
+      m_sequenceStore(sequenceStore),
+      m_cache(sequenceStore) {}
 
 const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
@@ -45,7 +45,7 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
    * that are contained in the rank expression. */
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(
       rankExpression, lastDescendantContext ? lastDescendantContext : this);
-  result = storedValueOfSequenceAtRank(index, rankValue);
+  result = cache()->storedValueOfSequenceAtRank(index, rankValue);
   /* We try to approximate the sequence independently from the others at the
    * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for instance).
    * But we avoid doing so if the sequence referencing itself to avoid an

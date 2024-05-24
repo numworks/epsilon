@@ -171,14 +171,14 @@ double Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
        sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return NAN;
   }
-  sqctx->stepUntilRank(sequenceIndex, rank);
-  return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
+  sqctx->cache()->stepUntilRank(sequenceIndex, rank);
+  return sqctx->cache()->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
 double Sequence::approximateAtContextRank(SequenceContext *sqctx,
                                           bool intermediateComputation) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  int rank = sqctx->rank(sequenceIndex, intermediateComputation);
+  int rank = sqctx->cache()->rank(sequenceIndex, intermediateComputation);
   if (rank < initialRank()) {
     return NAN;
   }

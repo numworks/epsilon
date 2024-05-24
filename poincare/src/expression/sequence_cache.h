@@ -1,14 +1,16 @@
 #ifndef POINCARE_EXPRESSION_SEQUENCE_CACHE_H
 #define POINCARE_EXPRESSION_SEQUENCE_CACHE_H
 
-#include <poincare/src/memory/tree.h>
+namespace Shared {
+class SequenceStore;
+class Sequence;
+}  // namespace Shared
 
 namespace Poincare::Internal {
 
-class SequenceContext : public Poincare::ContextWithParent {
+class SequenceCache {
  public:
-  SequenceContext(Poincare::Context* parentContext,
-                  SequenceStore* sequenceStore);
+  SequenceCache(Shared::SequenceStore* sequenceStore);
 
   void resetCache();
   bool sequenceIsNotComputable(int sequenceIndex);
@@ -22,8 +24,8 @@ class SequenceContext : public Poincare::ContextWithParent {
  private:
   constexpr static int k_maxRecurrentRank = 10000;
   constexpr static int k_storageDepth = 6;
-  constexpr static int k_numberOfSequences =
-      SequenceStore::k_maxNumberOfSequences;
+  constexpr static int k_numberOfSequences = 3;
+  // SequenceStore::k_maxNumberOfSequences;
 
   int* rankPointer(int sequenceIndex, bool intermediateComputation);
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
@@ -34,7 +36,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);
   void resetComputationStatus();
-  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
+  const Shared::Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   int rankForInitialValuesStorage(int sequenceIndex) const;
 
   /* Main ranks for main computations and intermediate ranks for intermediate
@@ -52,6 +54,8 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   bool m_isInsideComputation;
   int m_smallestRankBeingComputed[k_numberOfSequences];
+
+  const Shared::SequenceStore* m_sequenceStore;
 };
 
 }  // namespace Poincare::Internal

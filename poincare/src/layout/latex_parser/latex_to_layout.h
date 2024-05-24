@@ -2,10 +2,7 @@
 #define POINCARE_LAYOUT_LATEX_PARSER_LATEX_TO_LAYOUT_H
 
 #include <poincare/src/layout/rack.h>
-#include <poincare/src/memory/tree_ref.h>
-#include <poincare/src/memory/type_block.h>
-
-#include <array>
+#include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {
 

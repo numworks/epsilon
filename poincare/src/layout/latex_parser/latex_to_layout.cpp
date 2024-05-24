@@ -4,9 +4,10 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
+#include <array>
+
 #include "../code_point_layout.h"
 #include "../k_tree.h"
-#include "../rack_layout.h"
 
 namespace Poincare::Internal {
 

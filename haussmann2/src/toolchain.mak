@@ -1,6 +1,11 @@
 # Compiler commands and parameters
 
-SFLAGS := -MMD -MP -Wall
+SFLAGS := \
+  -I. \
+  -MMD \
+  -MP \
+  -Wall
+
 ifeq ($(DEBUG),0)
 SFLAGS += -Os
 else

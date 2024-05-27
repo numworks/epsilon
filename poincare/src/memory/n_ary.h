@@ -22,7 +22,8 @@ class NAry {
   static bool SquashIfUnary(Tree* nary);
   static bool SquashIfEmpty(Tree* nary);
   static bool SquashIfPossible(Tree* nary) {
-    return SquashIfEmpty(nary) || SquashIfUnary(nary);
+    return (nary->isAdd() || nary->isMult()) &&
+           (SquashIfEmpty(nary) || SquashIfUnary(nary));
   }
   static bool Sanitize(Tree* nary);
   static bool Sort(Tree* nary,

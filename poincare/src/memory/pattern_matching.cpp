@@ -368,10 +368,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         if (simplify) {
           Simplification::ShallowSystematicReduce(insertedNode);
         } else {
-          // TODO proper fix
-          if (!insertedNode->isSet()) {
-            NAry::Sanitize(insertedNode);
-          }
+          NAry::Sanitize(insertedNode);
         }
         node = node->nextTree();
       } else if (withinNAry && numberOfChildren > 0) {

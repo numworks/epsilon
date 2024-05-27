@@ -200,9 +200,7 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
     }
   }
   // Update angle unit and complex format
-  ApproximationContext approximationContext(sqctx, complexFormat(sqctx));
-  return e.approximateToScalarWithValueForSymbol(k_unknownName, x,
-                                                 approximationContext);
+  return e.approximateToScalarWithValue(x);
 }
 
 UserExpression Sequence::sumBetweenBounds(double start, double end,

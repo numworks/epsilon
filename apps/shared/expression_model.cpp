@@ -110,6 +110,9 @@ SystemExpression ExpressionModel::expressionReduced(
           {.complexFormat = complexFormat(record, context),
            .updateComplexFormatWithExpression = false,
            .target = ReductionTarget::SystemForApproximation});
+      /* TODO_PCJ not the appropriate place but sequences uses their
+       * expressionReduced to approximate directly */
+      m_expression = m_expression.getSystemFunction(Function::k_unknownName);
     }
   }
   return m_expression;

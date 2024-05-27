@@ -25,7 +25,7 @@ _sources_liba_extended := $(addprefix src/, \
   nearbyintf.c \
 )
 
-_sources_liba_armv7m := $(addprefix src/armv7m, \
+_sources_liba_armv7m := $(addprefix src/armv7m/, \
   setjmp.s \
   longjmp.s \
 )

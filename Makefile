@@ -9,5 +9,5 @@ include $(PATH_haussmann)/Makefile
 $(eval $(call import_module,liba,liba))
 
 $(eval $(call create_goal,testpsilon, \
-  liba.openbsd \
+  liba.armv7m \
 ))

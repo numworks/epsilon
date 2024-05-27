@@ -69,29 +69,36 @@ function Calculator(emModule) {
   }
 
   // Load and run Epsilon
-  Epsilon(emModule);
+  Epsilon(emModule).then(resultModule => {
+    /* As per emscripten 3.1.58 "the argument passed into the module constructor is
+     * no longer mutated in place. The expectation is that the module instance will
+     * be available via the constructor return value."
+     * See https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md#3158---042324
+     * */
+    emModule = Object.assign(emModule, resultModule);
 
-  /* Install event handlers
-   * This needs to be done after loading Epsilon, otherwise the _IonSimulator*
-   * functions haven't been defined just yet. */
-  function eventHandler(keyHandler) {
-    return function(ev) {
-      var key = this.getAttribute('data-key');
-      keyHandler(key);
-      /* Always prevent default action of event.
-       * This will prevent the browser from delaying that event. Indeed the
-       * browser would otherwise try to see if that event could have any other
-       * meaning (e.g. a click) and might delay it as a result.*/
-      ev.preventDefault();
-    };
-  }
-  var downHandler = eventHandler(emModule._IonSimulatorKeyboardKeyDown);
-  var upHandler = eventHandler(emModule._IonSimulatorKeyboardKeyUp);
+    /* Install event handlers
+     * This needs to be done after loading Epsilon, otherwise the _IonSimulator*
+     * functions haven't been defined just yet. */
+    function eventHandler(keyHandler) {
+      return function(ev) {
+        var key = this.getAttribute('data-key');
+        keyHandler(key);
+        /* Always prevent default action of event.
+        * This will prevent the browser from delaying that event. Indeed the
+        * browser would otherwise try to see if that event could have any other
+        * meaning (e.g. a click) and might delay it as a result.*/
+        ev.preventDefault();
+      };
+    }
+    var downHandler = eventHandler(emModule._IonSimulatorKeyboardKeyDown);
+    var upHandler = eventHandler(emModule._IonSimulatorKeyboardKeyUp);
 
-  calculatorElement.querySelectorAll('span').forEach(function(span){
-    /* We use pointer events to handle both touch and mouse events */
-    span.addEventListener('pointerdown', downHandler);
-    span.addEventListener('pointerup', upHandler);
+    calculatorElement.querySelectorAll('span').forEach(function(span){
+      /* We use pointer events to handle both touch and mouse events */
+      span.addEventListener('pointerdown', downHandler);
+      span.addEventListener('pointerup', upHandler);
+    });
   });
 
   function resizeImgForJpg(img) {

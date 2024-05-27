@@ -40,9 +40,9 @@ ifeq ($(_has_libpng),1)
   _ldflags_kandinsky_rasterizer += $(shell pkg-config libpng --libs)
 endif
 
-_kandinsky_rasterizer := $(TOOLS_DIRECTORY)/rasterizer
+_kandinsky_rasterizer := $(TOOLS_DIRECTORY)/rasterizer.bin
 
-$(eval $(call create_tool,$(notdir $(_kandinsky_rasterizer)), \
+$(eval $(call create_tool,rasterizer, \
   omg.lz4only \
   kandinsky_rasterizer \
 ))

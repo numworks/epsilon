@@ -362,19 +362,33 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
     return true;
   }
   // TODO_PCJ: Add more exact values (√3, 1/√3, ...)
-  switch (u->child(0)->type()) {
-    case Type::Zero:
-      u->cloneTreeOverTree(0_e);
-      return true;
-    case Type::One:
-      u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
-      return true;
-    case Type::MinusOne:
-      u->cloneTreeOverTree(KMult(-1_e / 4_e, π_e));
-      return true;
-    default:
-      return false;
+  assert(u->isATanRad());
+  PatternMatching::Context ctx;
+  const Tree* arg = u->child(0);
+  if (arg->isZero()) {
+    // atan(0) = 0
+    u->cloneTreeOverTree(0_e);
+    return true;
   }
+  if (arg->isOne()) {
+    // atan(1) = π/4
+    u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
+    return true;
+  }
+  if (PatternMatching::Match(KExp(KMult(1_e / 2_e, KLn(3_e))), arg, &ctx)) {
+    // atan(√3) = π/3
+    u->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
+    return true;
+  }
+  if (PatternMatching::Match(KExp(KMult(-1_e / 2_e, KLn(3_e))), arg, &ctx) ||
+      PatternMatching::Match(KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
+                             arg, &ctx)) {
+    // TODO_PCJ: we shouldn't have to test both x=1/√3 and x=√3/3
+    // atan(1/√3) = π/6
+    u->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
+    return true;
+  }
+  return false;
 }
 
 /* TODO: Find an easier solution for nested expand/contract smart shallow

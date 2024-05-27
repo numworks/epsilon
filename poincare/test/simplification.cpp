@@ -455,8 +455,7 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("cot(x)", "cot(x)");
   simplifies_to("arcsec(sec(π/6))", "π/6");
   simplifies_to("arccsc(csc(π/6))", "π/6");
-  // TODO: Complete arctan exact values table.
-  simplifies_to("arccot(cot(π/6))", "arctan(3^(-1/2))");
+  simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(-1)", "-π/4");
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
@@ -799,7 +798,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
-  simplifies_to("arg(cos(π/6)+i*sin(π/6))", "arctan(3^(-1/2))");
+  simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to(
       "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
@@ -815,7 +814,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
 }
 
 QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
-  simplifies_to("acos(1)", "0");
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
@@ -834,8 +832,12 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
+  /* TODO_PCJ once inf is implemented: simplifies_to(
+      "atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
+      "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}"); */
   simplifies_to("acos({-1/√(2), 1/√(2)})", "{3π/4,π/4}");
   simplifies_to("asin({-1/√(2), 1/√(2)})", "{-π/4,π/4}");
+  simplifies_to("atan({-1/√(3), 1/√(3)})", "{-π/6,π/6}");
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",

@@ -34,6 +34,10 @@ $(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
 	$(call rule_label,CXX)
 	$(QUIET) $(CXX) $(PRIORITY_SFLAGS) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
 
+$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).s | $$(@D)/.
+	$(call rule_label,AS)
+	$(QUIET) $(CC) $(PRIORITY_SFLAGS) $(SFLAGS) -c $< -o $@
+
 # Lock files, ensure that modules versions match
 %.lock:
 	$(call lockfile_recipe,$*)

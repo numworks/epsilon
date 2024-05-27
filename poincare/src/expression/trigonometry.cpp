@@ -224,49 +224,56 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   return changed;
 }
 
+static bool simplifyATrigOfTrig(Tree* u) {
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
+    return false;
+  }
+  // x = π*y
+  const Tree* y = getPiFactor(ctx.getNode(KA));
+  if (!y) {
+    return false;
+  }
+  // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
+  bool swapATrig = (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
+  bool isSin = ctx.getNode(KB)->isOne();
+  /* For acos ∈ [0,π]:
+   * Compute k = ⌊y⌋
+   * if k is even, acos(cos(x)) = π*(y-k)
+   * if k is odd, acos(cos(x)) = acos(cos(-x)) = π*(k-y+1)
+
+   * For asin ∈ [-π/2,π/2]:
+   * Compute k = ⌊y + 1/2⌋
+   * if k is even, asin(sin(x)) = π*(y-k)
+   * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-y)*/
+  Tree* res = PatternMatching::CreateSimplify(
+      isSin ? KFloor(KAdd(KA, 1_e / 2_e)) : KFloor(KA), {.KA = y});
+  assert(res->isInteger());
+  bool kIsEven = Integer::Handler(res).isEven();
+  res->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = y, .KB = res}));
+  if (!kIsEven) {
+    res->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
+    if (!isSin) {
+      res->moveTreeOverTree(
+          PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
+    }
+  }
+  if (swapATrig) {
+    res->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KAdd(1_e / 2_e, KMult(-1_e, KA)), {.KA = res}));
+  }
+  res->moveTreeOverTree(
+      PatternMatching::CreateSimplify(KMult(π_e, KA), {.KA = res}));
+  u->moveTreeOverTree(res);
+  return true;
+}
+
 bool Trigonometry::SimplifyATrig(Tree* u) {
   assert(u->isATrig());
-  PatternMatching::Context ctx;
   // atrig(trig(x))
-  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
-    // x = π*y
-    const Tree* y = getPiFactor(ctx.getNode(KA));
-    if (!y) {
-      return false;
-    }
-    // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
-    bool swapATrig = (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
-    bool isSin = ctx.getNode(KB)->isOne();
-    /* For acos ∈ [0,π]:
-     * Compute k = ⌊y⌋
-     * if k is even, acos(cos(x)) = π*(y-k)
-     * if k is odd, acos(cos(x)) = acos(cos(-x)) = π*(k-y+1)
-
-     * For asin ∈ [-π/2,π/2]:
-     * Compute k = ⌊y + 1/2⌋
-     * if k is even, asin(sin(x)) = π*(y-k)
-     * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-y)*/
-    Tree* res = PatternMatching::CreateSimplify(
-        isSin ? KFloor(KAdd(KA, 1_e / 2_e)) : KFloor(KA), {.KA = y});
-    assert(res->isInteger());
-    bool kIsEven = Integer::Handler(res).isEven();
-    res->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KAdd(KA, KMult(-1_e, KB)), {.KA = y, .KB = res}));
-    if (!kIsEven) {
-      res->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
-      if (!isSin) {
-        res->moveTreeOverTree(
-            PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
-      }
-    }
-    if (swapATrig) {
-      res->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KAdd(1_e / 2_e, KMult(-1_e, KA)), {.KA = res}));
-    }
-    res->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(π_e, KA), {.KA = res}));
-    u->moveTreeOverTree(res);
+  if (simplifyATrigOfTrig(u)) {
     return true;
   }
   const Tree* arg = u->child(0);

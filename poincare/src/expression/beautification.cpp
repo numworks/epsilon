@@ -314,7 +314,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     return true;
   }
 
-  if (
+  int n = e->numberOfChildren();
+  while (
       // sin(A)/cos(A) -> tan(A)
       PatternMatching::MatchReplace(
           e, KMult(KA_s, KPow(KCos(KB), -1_e), KC_s, KSin(KB), KD_s),
@@ -323,6 +324,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(
           e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
           KMult(KA_s, KC_s, KCot(KB), KD_s))) {
+    assert(n > e->numberOfChildren());
+    n = e->numberOfChildren();
     changed = true;
   }
 

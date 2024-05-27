@@ -74,4 +74,8 @@ $(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$(QUIET) $3
 
+$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/%.$(strip $2) | $$$$(@D)/.
+	$$(call rule_label,$1)
+	$(QUIET) $3
+
 endef

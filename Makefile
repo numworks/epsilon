@@ -11,9 +11,18 @@ $(eval $(call import_module,libaxx,libaxx))
 $(eval $(call import_module,omg,omg))
 $(eval $(call import_module,kandinsky,kandinsky))
 
-$(eval $(call create_goal,testpsilon, \
+# FIXME
+$(eval $(call import_module,dummy,dummy))
+
+$(eval $(call create_goal,device, \
   liba \
   libaxx \
   omg \
   kandinsky \
+))
+
+$(eval $(call create_goal,simulator, \
+  omg \
+  kandinsky \
+  dummy \
 ))

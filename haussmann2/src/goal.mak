@@ -30,6 +30,8 @@ HELP_GOAL_$1 := $3
 $(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
 $(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): LDFLAGS += $$(foreach m,$2,$$(call ldflags_for_flavored_module,$$m))
 
+$$(call objects_foreach_arch,$$(call all_potential_sources,$1)): $$(foreach m,$2,$$(call priority_targets_for_flavored_module,$$m))
+
 $1%: $(call target_foreach_arch,$1%)
 	@ :
 
@@ -56,6 +58,13 @@ define libraries_for_flavored_goal
 $(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
 	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
 	$(MODULES_$(call name_for_flavored_target,$1))))
+endef
+
+# all_potential_sources, <goal>
+# Return any source file that appears in the goal's modules, regardless of
+# tastes.
+define all_potential_sources
+$(foreach m,$(call flavorless_modules_for_flavored_goal,$1),$(call tasteless_filter,$(SOURCES_$m)))
 endef
 
 # Helpers

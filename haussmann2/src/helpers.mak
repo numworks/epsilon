@@ -54,7 +54,7 @@ endef
 # objects_foreach_arch, <sources list>
 define objects_foreach_arch
 $(strip $(if $(ARCHS),\
-	$(foreach a,$(ARCHS),$(call objects_for_sources,$a,$1)),\
+	$(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1)),\
 	$(call objects_for_sources,,$1)))
 endef
 

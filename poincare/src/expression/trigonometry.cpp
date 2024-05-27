@@ -325,8 +325,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
                  KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))) {
     // TODO_PCJ: we shouldn't have to test both x=1/√2 and x=√2/2
     // acos(1/√2) = asin(1/√2) = π/4
-    u->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(π_e, KPow(4_e, -1_e))));
+    u->moveTreeOverTree(PatternMatching::CreateSimplify(KMult(1_e / 4_e, π_e)));
     changed = true;
   } else if (arg->isMult()) {
     /* TODO: Handle the same angles as ExactFormula (π/12, π/10, π/8 and π/5 are
@@ -335,11 +334,11 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
         // acos(√3/2) = π/6
         PatternMatching::MatchReplaceSimplify(
             u, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 0_e),
-            KMult(π_e, KPow(6_e, -1_e))) ||
+            KMult(1_e / 6_e, π_e)) ||
         // asin(√3/2) = π/3
         PatternMatching::MatchReplaceSimplify(
             u, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 1_e),
-            KMult(π_e, KPow(3_e, -1_e))) ||
+            KMult(1_e / 3_e, π_e)) ||
         changed;
   }
   if (argIsOpposed) {

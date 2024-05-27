@@ -14,6 +14,8 @@ endif
 
 OUTPUT_DIRECTORY ?= $(OUTPUT_ROOT)/$(_build_type)/$(PLATFORM)
 
+TOOLS_DIRECTORY ?= $(OUTPUT_ROOT)/tools
+
 VERBOSE ?= 0
 ifeq ($(VERBOSE),0)
 QUIET := @

@@ -1,5 +1,9 @@
 # Compiler commands and parameters
 
+HOSTCC := gcc
+HOSTCXX := g++
+HOSTLD := g++
+
 SFLAGS := \
   -I. \
   -MMD \

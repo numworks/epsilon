@@ -62,10 +62,16 @@ endef
 
 # Private API
 
+# sources_for_flavored_module, <dot-separated flavored module>
+# $1 might be prefixed with an arch's directory.
+define sources_for_flavored_module
+$(call _flavor_filtered_module_variable,$1,SOURCES)
+endef
+
 # objects_for_flavored_module, <dot-separated flavored module>
 # $1 might be prefixed with an arch's directory.
 define objects_for_flavored_module
-$(call objects_for_sources,$(subst ./,,$(dir $1)),$(call _flavor_filtered_module_variable,$1,SOURCES))
+$(call objects_for_sources,$(subst ./,,$(dir $1)),$(call sources_for_flavored_module,$1))
 endef
 
 # sflags_for_flavored_module, <dot-separated flavored module>

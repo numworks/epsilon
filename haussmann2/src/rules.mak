@@ -7,9 +7,9 @@
 -include $(shell find $(OUTPUT_DIRECTORY) -name '*.d' 2>/dev/null)
 
 # Create the output directories tree
-$(OUTPUT_DIRECTORY)/.:
+$(OUTPUT_ROOT)/.:
 	$(QUIET) mkdir -p $@
-$(OUTPUT_DIRECTORY)%/.:
+$(OUTPUT_ROOT)%/.:
 	$(QUIET) mkdir -p $@
 
 # Rules for executable applications
@@ -46,6 +46,9 @@ $(eval $(call rule_for_object, \
 	$(call lockfile_recipe,$*)
 
 $(eval $(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal))
+
+# Auxiliary binaries compiled for the host are built in their own directory.
+include $(PATH_haussmann)/src/rules/tools.mak
 
 # Platform-specific rules
 -include $(PATH_haussmann)/src/rules/$(PLATFORM).mak

@@ -35,6 +35,13 @@ $1%: $(call target_foreach_arch,$1%)
 
 endef
 
+# create_tool, <name>, <modules>
+define create_tool
+MODULES_$1 := $2
+$(TOOLS_DIRECTORY)/$1: TOOLS_SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
+
+endef
+
 # Private API
 
 # flavorless_modules_for_flavored_goal, <flavored goal>

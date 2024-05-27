@@ -6,6 +6,7 @@ HOSTLD := g++
 
 SFLAGS := \
   -I. \
+  -I$(OUTPUT_DIRECTORY) \
   -MMD \
   -MP \
   -Wall

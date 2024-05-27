@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/expression.h>
+#include <poincare/k_layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/serialization_helper.h>
@@ -288,7 +289,15 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   size_t nameLength =
       record.nameWithoutExtension(nameToHandle, nameToHandleMaxSize);
 
-  if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
+  if (m_currentPage == Page::Sequence) {
+    App::app()->modalViewController()->dismissModal();
+    // TODO_PCJ linear edition mode
+    sender()->handleEventWithLayout(Layout::Create(
+        KA ^ KSubscriptL(""_l), {.KA = Layout::String(nameToHandle)}));
+    return true;
+  }
+
+  if (m_currentPage == Page::Function) {
     // Add parentheses to a function name, and braces to a sequence
     char openingChar = m_currentPage == Page::Function ? '(' : '{';
     char closingChar = m_currentPage == Page::Function ? ')' : '}';

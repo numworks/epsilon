@@ -67,9 +67,9 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
         buffer = serializer(layout->child(0), buffer, end);
         buffer = append(")", buffer, end);
       } else {
-        buffer = append("{", buffer, end);
+        buffer = append("(", buffer, end);
         buffer = serializer(layout->child(0), buffer, end);
-        buffer = append("}", buffer, end);
+        buffer = append(")", buffer, end);
       }
       break;
     }

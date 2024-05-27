@@ -22,8 +22,14 @@ _sources_omg_all := $(addprefix src/, \
   unicode_helper.cpp \
 ) $(_sources_omg_decompress) $(_sources_omg_print) $(_sources_omg_utf8)
 
+_sources_omg_lz4only := $(addprefix src/external/lz4/, \
+  lz4.c \
+  lz4hc.c \
+)
 
 $(eval $(call create_module,omg,1, \
-  $(addsuffix :-minimal,$(_sources_omg_all)) \
-  $(foreach f,decompress print utf8,$(addsuffix :+$f,$(_sources_omg_$f))) \
+  $(addsuffix :-lz4only, \
+    $(addsuffix :-minimal,$(_sources_omg_all)) \
+    $(foreach f,decompress print utf8,$(addsuffix :+$f,$(_sources_omg_$f)))) \
+  $(addsuffix :+lz4only,$(_sources_omg_lz4only)) \
 ))

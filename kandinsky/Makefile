@@ -1,75 +1,66 @@
-SFLAGS += -Ikandinsky/include
-
-kandinsky_minimal_src += $(addprefix kandinsky/src/,\
-  color.cpp \
-  font.cpp\
-  point.cpp \
-  rect.cpp \
+_sources_kandinsky_fonts := $(addprefix fonts/, \
+  LargeFont.ttf \
+  SmallFont.ttf \
 )
 
-kandinsky_src += $(addprefix kandinsky/src/,\
+_sources_kandinsky_minimal := $(addprefix src/, \
   color.cpp \
+  font.cpp \
+  point.cpp \
+  rect.cpp \
+) $(_sources_kandinsky_fonts)
+
+_kandinsky_glyph_index := fonts/codepoint_to_glyph_index.cpp
+
+_sources_kandinsky_extended := $(addprefix src/, \
   context_line.cpp \
   context_pixel.cpp \
   context_rect.cpp \
   context_text.cpp \
   context_circle.cpp \
-  font.cpp \
   framebuffer.cpp \
-  point.cpp \
-  rect.cpp \
-)
+) $(_kandinsky_glyph_index)
 
-kandinsky_fonts_src += $(addprefix kandinsky/fonts/, \
-  LargeFont.ttf \
-  SmallFont.ttf \
-)
-kandinsky_src += $(BUILD_DIR)/kandinsky/fonts/codepoint_to_glyph_index.cpp
-
-kandinsky_src += $(kandinsky_fonts_src)
-kandinsky_minimal_src += $(kandinsky_fonts_src)
-
-tests_src += $(addprefix kandinsky/test/,\
-  color.cpp\
-  font.cpp\
-  rect.cpp\
-)
-
-code_points = kandinsky/fonts/code_points.h
-
-RASTERIZER_CFLAGS := -std=c11 -Iion/include $(shell pkg-config freetype2 --cflags)
-RASTERIZER_LDFLAGS := $(shell pkg-config freetype2 --libs)
-
-HAS_LIBPNG := $(shell pkg-config libpng --exists && echo 1)
-ifeq ($(HAS_LIBPNG),1)
-  RASTERIZER_CFLAGS += $(shell pkg-config libpng --cflags) -DGENERATE_PNG=1
-  RASTERIZER_LDFLAGS += $(shell pkg-config libpng --libs)
-endif
-
-$(eval $(call rule_for, \
-  HOSTCC, \
-  kandinsky/fonts/rasterizer, \
-  kandinsky/fonts/rasterizer.c kandinsky/fonts/code_points.h $(addprefix omg/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) $$(RASTERIZER_CFLAGS) $$(filter-out %.h,$$^) $$(RASTERIZER_LDFLAGS) -o $$@, \
-  global \
+$(eval $(call create_module,kandinsky,1, \
+  $(_sources_kandinsky_minimal) \
+  $(addsuffix :-minimal,$(_sources_kandinsky_extended)) \
 ))
 
-RASTERIZER := $(BUILD_DIR)/kandinsky/fonts/rasterizer
+# Rasterizer
 
-# Define a rasterizing recipe. Parameters : font name, size, packed_width, packed_height
+$(eval $(call import_module,kandinsky_rasterizer,kandinsky/fonts))
+$(eval $(call create_module,kandinsky_rasterizer,1,rasterizer.c))
+
+_cflags_kandinsky_rasterizer := -std=c11 $(shell pkg-config freetype2 --cflags)
+_ldflags_kandinsky_rasterizer := $(shell pkg-config freetype2 --libs)
+
+_has_libpng := $(shell pkg-config libpng --exists && echo 1)
+ifeq ($(_has_libpng),1)
+  _cflags_kandinsky_rasterizer += $(shell pkg-config libpng --cflags) -DGENERATE_PNG=1
+  _ldflags_kandinsky_rasterizer += $(shell pkg-config libpng --libs)
+endif
+
+_kandinsky_rasterizer := $(TOOLS_DIRECTORY)/rasterizer
+
+$(eval $(call create_tool,$(notdir $(_kandinsky_rasterizer)), \
+  omg.lz4only \
+  kandinsky_rasterizer \
+))
+
+$(_kandinsky_rasterizer): TOOLS_CFLAGS += $(_cflags_kandinsky_rasterizer)
+$(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)
+
+# Raster ttf into cpp
+
+# raster_font, <name>, <size>, <packed width>, <packed height>
 define raster_font
-$(call rule_for, \
-  RASTER, \
-  kandinsky/fonts/$(1).cpp, \
-  kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
-  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$(dir $$@)/$(1).h $$@ $$(dir $$@)/codepoint_to_glyph_index.cpp $(if $(HAS_LIBPNG),$$(basename $$@).png), \
-  global \
-)
-# codepoint_to_glyph_index.cpp is generated as an aside by the rasterizer
-# we tell make that it can be built with an empty recipe as long as the font is built
-$(BUILD_DIR)/kandinsky/fonts/codepoint_to_glyph_index.cpp: $(BUILD_DIR)/kandinsky/fonts/$(1).cpp
-$(BUILD_DIR)/kandinsky/fonts/$(1).h: $(BUILD_DIR)/kandinsky/fonts/$(1).cpp
-kandinsky_deps += $(BUILD_DIR)/kandinsky/fonts/$(1).h
+$(OUTPUT_DIRECTORY)/%.cpp: $(call strip_arch_dir,%).ttf $(_kandinsky_rasterizer) | $$(@D)/.
+	$(call rule_label,RASTER)
+	$(QUIET) $(_kandinsky_rasterizer) $$< $2 $2 $3 $4 $1 $$(basename $$@).h $$@ $$(dir $$@)/$(notdir $(_kandinsky_glyph_index)) $$(if $(_has_libpng),$$(basename $$@).png,)
+
+$(OUTPUT_DIRECTORY)/kandinsky/fonts/codepoint_to_glyph_index.cpp: $(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).cpp
+$(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).h: $(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).cpp
+
 endef
 
 $(eval $(call raster_font,SmallFont,12,7,14))

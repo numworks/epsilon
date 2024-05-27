@@ -1,4 +1,4 @@
-$(TOOLS_DIRECTORY)/%: $$(foreach m,$$(basename $$(call libraries_for_flavored_goal,%)),$$(call _tool_objects_for_sources,$$(call sources_for_flavored_module,$$m))) | $$(@D)/.
+$(TOOLS_DIRECTORY)/%.bin: $$(foreach m,$$(basename $$(call libraries_for_flavored_goal,%)),$$(call _tool_objects_for_sources,$$(call sources_for_flavored_module,$$m))) | $$(@D)/.
 	$(call rule_label,HOSTLD)
 	$(QUIET) $(HOSTLD) $(TOOLS_SFLAGS) $^ $(TOOLS_LDFLAGS) -o $@
 

@@ -225,8 +225,19 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 }
 
 static bool simplifyATrigOfTrig(Tree* u) {
+  TypeBlock type = Type::Undef;
   PatternMatching::Context ctx;
-  if (!PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
+  // asin(sin) or asin(cos) or acos(cos) or acos(sin)
+  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
+    type = ctx.getNode(KB)->isOne() ? Type::Sin : Type::Cos;
+  }
+  // atan(sin/cos)
+  if (PatternMatching::Match(
+          KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), u,
+          &ctx)) {
+    type = Type::Tan;
+  }
+  if (type == Type::Undef) {
     return false;
   }
   // x = π*y
@@ -235,8 +246,8 @@ static bool simplifyATrigOfTrig(Tree* u) {
     return false;
   }
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
-  bool swapATrig = (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
-  bool isSin = ctx.getNode(KB)->isOne();
+  bool swapATrig = type != Type::Tan &&
+                   (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
   /* For acos ∈ [0,π]:
    * Compute k = ⌊y⌋
    * if k is even, acos(cos(x)) = π*(y-k)
@@ -245,17 +256,22 @@ static bool simplifyATrigOfTrig(Tree* u) {
    * For asin ∈ [-π/2,π/2]:
    * Compute k = ⌊y + 1/2⌋
    * if k is even, asin(sin(x)) = π*(y-k)
-   * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-y)*/
+   * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-y)
+
+   * For atan ∈ [-π/2,π/2]:
+   * Compute k = ⌊y + 1/2⌋
+   * if k is even, atan(tan(x)) = π*(y-k)
+   * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(y-k) */
   Tree* res = PatternMatching::CreateSimplify(
-      isSin ? KFloor(KAdd(KA, 1_e / 2_e)) : KFloor(KA), {.KA = y});
+      type == Type::Cos ? KFloor(KA) : KFloor(KAdd(KA, 1_e / 2_e)), {.KA = y});
   assert(res->isInteger());
   bool kIsEven = Integer::Handler(res).isEven();
   res->moveTreeOverTree(PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = y, .KB = res}));
-  if (!kIsEven) {
+  if (!kIsEven && type != Type::Tan) {
     res->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
-    if (!isSin) {
+    if (type != Type::Sin) {
       res->moveTreeOverTree(
           PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
     }
@@ -331,6 +347,10 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
   if (PatternMatching::MatchReplaceSimplify(
           u, KATanRad(KMult(KA_s, -1_e, KB_s)),
           KMult(-1_e, KATanRad(KMult(KA_s, KB_s))))) {
+    return true;
+  }
+  // atan(tan(x)) = x
+  if (simplifyATrigOfTrig(u)) {
     return true;
   }
   // TODO_PCJ: Add more exact values (√3, 1/√3, ...)

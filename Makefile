@@ -7,7 +7,9 @@ PLATFORM ?= n0110
 include $(PATH_haussmann)/Makefile
 
 $(eval $(call import_module,liba,liba))
+$(eval $(call import_module,libaxx,libaxx))
 
 $(eval $(call create_goal,testpsilon, \
-  liba.armv7m \
+  liba.aeabirt.armv7m.openbsd \
+  libaxx \
 ))

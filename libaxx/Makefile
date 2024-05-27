@@ -1,5 +1,6 @@
-SFLAGS += -Ilibaxx/include
-
-libaxx_src += $(addprefix libaxx/src/, new.cpp)
-libaxx_src += $(addprefix libaxx/src/cxxabi/, atexit.cpp pure_virtual.cpp)
-libaxx_src += $(addprefix libaxx/include/external/libcxx/, complex.cpp)
+$(eval $(call create_module,libaxx,1, \
+  include/external/libcxx/complex.cpp \
+  src/cxxabi/atexit.cpp \
+  src/cxxabi/pure_virtual.cpp \
+  src/new.cpp \
+))

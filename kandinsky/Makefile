@@ -28,7 +28,7 @@ $(eval $(call create_module,kandinsky,1, \
 
 # Rasterizer
 
-$(eval $(call import_module,kandinsky_rasterizer,kandinsky/fonts))
+$(eval $(call import_module,kandinsky_rasterizer,$(PATH_kandinsky)/fonts))
 $(eval $(call create_module,kandinsky_rasterizer,1,rasterizer.c))
 
 _cflags_kandinsky_rasterizer := -std=c11 $(shell pkg-config freetype2 --cflags)
@@ -47,6 +47,8 @@ $(eval $(call create_tool,$(notdir $(_kandinsky_rasterizer)), \
   kandinsky_rasterizer \
 ))
 
+PRIORITY_TARGETS_kandinsky += $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/,$(addsuffix .h,$(basename $(_sources_kandinsky_fonts))))
+
 $(_kandinsky_rasterizer): TOOLS_CFLAGS += $(_cflags_kandinsky_rasterizer)
 $(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)
 
@@ -54,12 +56,11 @@ $(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)
 
 # raster_font, <name>, <size>, <packed width>, <packed height>
 define raster_font
-$(OUTPUT_DIRECTORY)/%.cpp: $(call strip_arch_dir,%).ttf $(_kandinsky_rasterizer) | $$(@D)/.
-	$(call rule_label,RASTER)
+$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp: $(PATH_kandinsky)/fonts/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
+	$$(call rule_label,RASTER)
 	$(QUIET) $(_kandinsky_rasterizer) $$< $2 $2 $3 $4 $1 $$(basename $$@).h $$@ $$(dir $$@)/$(notdir $(_kandinsky_glyph_index)) $$(if $(_has_libpng),$$(basename $$@).png,)
 
-$(OUTPUT_DIRECTORY)/kandinsky/fonts/codepoint_to_glyph_index.cpp: $(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).cpp
-$(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).h: $(OUTPUT_DIRECTORY)/kandinsky/fonts/$(1).cpp
+$(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp
 
 endef
 

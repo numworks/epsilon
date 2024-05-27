@@ -12,7 +12,7 @@ $(eval $(call import_module,omg,omg))
 $(eval $(call import_module,kandinsky,kandinsky))
 
 $(eval $(call create_goal,testpsilon, \
-  liba.aeabirt.armv7m \
+  liba \
   libaxx \
   omg \
   kandinsky \

@@ -8,6 +8,7 @@
 #include <poincare/old/decimal.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/sequence_cache.h>
 
 #include <array>
 
@@ -53,6 +54,7 @@ class GlobalContext final : public Poincare::Context {
       const Poincare::UserExpression &expression,
       const Poincare::SymbolAbstract &symbol) override;
   static OMG::GlobalBox<SequenceStore> sequenceStore;
+  static OMG::GlobalBox<Poincare::Internal::SequenceCache> sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext *sequenceContext() { return &m_sequenceContext; }

@@ -31,7 +31,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
-  Poincare::Internal::SequenceCache* cache() { return &m_cache; }
+  Poincare::Internal::SequenceCache* cache();
   void resetCache() { cache()->resetCache(); }
 
  private:
@@ -44,7 +44,6 @@ class SequenceContext : public Poincare::ContextWithParent {
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   SequenceStore* m_sequenceStore;
   OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
-  Poincare::Internal::SequenceCache m_cache;
 };
 
 }  // namespace Shared

@@ -11,6 +11,8 @@ void Init() {
       ->initSystemRecord<GlobalPreferences>();
 
   ::Shared::GlobalContext::sequenceStore.init();
+  ::Shared::GlobalContext::sequenceCache.init(
+      Shared::GlobalContext::sequenceStore.get());
   ::Shared::GlobalContext::continuousFunctionStore.init();
   ::AppsContainerStorage::sharedAppsContainerStorage.init();
 }

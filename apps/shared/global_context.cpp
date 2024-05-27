@@ -24,6 +24,7 @@ namespace Shared {
 constexpr const char *GlobalContext::k_extensions[];
 
 OMG::GlobalBox<SequenceStore> GlobalContext::sequenceStore;
+OMG::GlobalBox<Internal::SequenceCache> GlobalContext::sequenceCache;
 OMG::GlobalBox<ContinuousFunctionStore> GlobalContext::continuousFunctionStore;
 
 void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {

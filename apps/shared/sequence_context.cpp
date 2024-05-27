@@ -1,5 +1,6 @@
 #include "sequence_context.h"
 
+#include <apps/shared/global_context.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
 #include <poincare/expression.h>
@@ -15,9 +16,7 @@ namespace Shared {
 
 SequenceContext::SequenceContext(Context *parentContext,
                                  SequenceStore *sequenceStore)
-    : ContextWithParent(parentContext),
-      m_sequenceStore(sequenceStore),
-      m_cache(sequenceStore) {}
+    : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
@@ -92,6 +91,10 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
                                      ->mainExpressionIsNotComputable(this));
   }
   return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
+}
+
+Poincare::Internal::SequenceCache *SequenceContext::cache() {
+  return GlobalContext::sequenceCache;
 }
 
 }  // namespace Shared

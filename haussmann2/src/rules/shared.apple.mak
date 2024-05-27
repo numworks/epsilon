@@ -1,11 +1,13 @@
 # Additional object files
-$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).m | $$(@D)/.
-	$(call rule_label,OCC)
-	$(QUIET) $(CC) $(PRIORITY_SFLAGS) $(SFLAGS) $(CFLAGS) -c $< -o $@
+$(eval $(call rule_for_object, \
+  OCC, m, \
+  $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
+))
 
-$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).mm | $$(@D)/.
-	$(call rule_label,OCC)
-	$(QUIET) $(CXX) $(PRIORITY_SFLAGS) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
+$(eval $(call rule_for_object, \
+  OCC, mm, \
+  $$(CXX) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@ \
+))
 
 # Create a packaged app, made of:
 # - an executable grouping the binaries for all supported archs

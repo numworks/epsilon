@@ -26,17 +26,20 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
-$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).c | $$(@D)/.
-	$(call rule_label,CC)
-	$(QUIET) $(CC) $(PRIORITY_SFLAGS) $(SFLAGS) $(CFLAGS) -c $< -o $@
+$(eval $(call rule_for_object, \
+  CC, c, \
+  $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
+))
 
-$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).cpp | $$(@D)/.
-	$(call rule_label,CXX)
-	$(QUIET) $(CXX) $(PRIORITY_SFLAGS) $(SFLAGS) $(CXXFLAGS) -c $< -o $@
+$(eval $(call rule_for_object, \
+  CXX, cpp, \
+  $$(CXX) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@ \
+))
 
-$(OUTPUT_DIRECTORY)/%.o: $$(call strip_arch_dir,%).s | $$(@D)/.
-	$(call rule_label,AS)
-	$(QUIET) $(CC) $(PRIORITY_SFLAGS) $(SFLAGS) -c $< -o $@
+$(eval $(call rule_for_object, \
+  AS, s, \
+  $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
+))
 
 # Lock files, ensure that modules versions match
 %.lock:

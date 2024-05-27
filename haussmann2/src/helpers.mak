@@ -67,3 +67,11 @@ endef
 define rule_label
 @ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(OUTPUT_DIRECTORY)/%=%)"
 endef
+
+# simple_rule, <label>, <source extension>, <command>
+define rule_for_object
+$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
+	$$(call rule_label,$1)
+	$(QUIET) $3
+
+endef

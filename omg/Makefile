@@ -1,37 +1,29 @@
-SFLAGS += -Iomg/include
-
-omg_decompress_src := $(addprefix omg/src/, \
+_sources_omg_decompress := $(addprefix src/, \
   external/lz4/lz4.c \
   memory_decompress.cpp \
 )
 
-omg_src += $(addprefix omg/src/,\
+_sources_omg_print := $(addprefix src/, \
+  code_point.cpp \
+  print.cpp \
+)
+
+_sources_omg_utf8 := $(addprefix src/, \
+  utf8_decoder.cpp \
+  utf8_helper.cpp \
+)
+
+_sources_omg_all := $(addprefix src/, \
   arithmetic.cpp \
-  code_point.cpp\
   directions.cpp \
   float.cpp \
   list.cpp \
   memory.cpp \
-  print.cpp \
   unicode_helper.cpp \
-  utf8_decoder.cpp\
-  utf8_helper.cpp\
-) $(omg_decompress_src)
+) $(_sources_omg_decompress) $(_sources_omg_print) $(_sources_omg_utf8)
 
-tests_src += $(addprefix omg/test/,\
-  bit_helper.cpp\
-  print.cpp\
-  signaling_nan.cpp\
-)
 
-omg_bench_src = $(addprefix omg/src/,\
-  code_point.cpp\
-  print.cpp \
-  utf8_decoder.cpp \
-  utf8_helper.cpp \
-) $(omg_decompress_src)
-
-omg_kernel_src = $(addprefix omg/src/,\
-  utf8_decoder.cpp:+kernelassert \
-  utf8_helper.cpp:+kernelassert \
-) $(omg_decompress_src)
+$(eval $(call create_module,omg,1, \
+  $(addsuffix :-minimal,$(_sources_omg_all)) \
+  $(foreach f,decompress print utf8,$(addsuffix :+$f,$(_sources_omg_$f))) \
+))

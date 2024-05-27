@@ -53,7 +53,7 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
   if (OMG::IsSignalingNan(result)) {
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {
-      result = seq->approximateAtRank(rankValue, this);
+      result = seq->approximateAtRank(rankValue, cache());
     }
   }
   return NewExpression::Builder<double>(result);

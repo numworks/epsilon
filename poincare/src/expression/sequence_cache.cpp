@@ -152,8 +152,9 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     }
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
-    *values = s->approximateAtContextRank(nullptr /* TODO: this */,
-                                          intermediateComputation);
+    *values = s->approximateAtContextRank(
+        nullptr, rank(sequenceIndex, intermediateComputation),
+        intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
     int offset = rankForInitialValuesStorage(sequenceIndex) - *currentRank;
@@ -194,6 +195,11 @@ const Shared::Sequence* SequenceCache::sequenceAtNameIndex(
 
 int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
   return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
+}
+
+bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
+  // TODO_PCJ: move implementation from SequenceContext
+  return false;
 }
 
 }  // namespace Poincare::Internal

@@ -133,7 +133,8 @@ bool Sequence::isEmpty() const {
 bool Sequence::isSuitableForCobweb(Context *context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
-             initialRank(), reinterpret_cast<SequenceContext *>(context))) &&
+             initialRank(),
+             reinterpret_cast<SequenceContext *>(context)->cache())) &&
          !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
@@ -160,25 +161,26 @@ T Sequence::privateEvaluateYAtX(T x, Context *context) const {
   // Round behaviour changes platform-wise if std::isnan(x)
   assert(!std::isnan(x));
   int n = std::round(x);
-  return static_cast<T>(
-      approximateAtRank(n, reinterpret_cast<SequenceContext *>(context)));
+  return static_cast<T>(approximateAtRank(
+      n, reinterpret_cast<SequenceContext *>(context)->cache()));
 }
 
-double Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
+double Sequence::approximateAtRank(int rank,
+                                   Internal::SequenceCache *sqctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
        sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return NAN;
   }
-  sqctx->cache()->stepUntilRank(sequenceIndex, rank);
-  return sqctx->cache()->storedValueOfSequenceAtRank(sequenceIndex, rank);
+  sqctx->stepUntilRank(sequenceIndex, rank);
+  return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(SequenceContext *sqctx,
+double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
                                           bool intermediateComputation) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  int rank = sqctx->cache()->rank(sequenceIndex, intermediateComputation);
+  // int rank = sqctx->cache()->rank(sequenceIndex, intermediateComputation);
   if (rank < initialRank()) {
     return NAN;
   }

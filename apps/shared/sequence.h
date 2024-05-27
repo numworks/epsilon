@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <poincare/src/expression/sequence.h>
+#include <poincare/src/expression/sequence_cache.h>
 
 #include "function.h"
 
@@ -129,9 +130,10 @@ class Sequence : public Function {
       int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
-  double approximateAtContextRank(SequenceContext *sqctx,
+  double approximateAtContextRank(SequenceContext *sqctx, int rank,
                                   bool intermediateComputation) const;
-  double approximateAtRank(int rank, SequenceContext *sqctx) const;
+  double approximateAtRank(int rank,
+                           Poincare::Internal::SequenceCache *sqctx) const;
 
   Poincare::UserExpression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;

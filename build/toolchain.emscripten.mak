@@ -12,6 +12,6 @@ endif
 
 # Configure LDFLAGS
 EMSCRIPTEN_MODULARIZE ?= 1
-LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"' --memory-init-file 0
+LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"'
 
-LDFLAGS += -Oz -s WASM=0 -s PRECISE_F32=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'
+LDFLAGS += -Oz -s SINGLE_FILE -s PRECISE_F32=1 -s ASYNCIFY=1 -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel"]' -s EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'

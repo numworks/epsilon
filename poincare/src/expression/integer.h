@@ -120,7 +120,8 @@ class IntegerHandler final {
                                               : NonStrictSign::Negative) {}
   IntegerHandler(native_uint_t value, NonStrictSign sign)
       : m_digitAccessor(value),
-        m_sign(sign),
+        // TODO: should we represent -0?
+        m_sign(value == 0 ? NonStrictSign::Positive : sign),
         m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {}
 
   static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base);

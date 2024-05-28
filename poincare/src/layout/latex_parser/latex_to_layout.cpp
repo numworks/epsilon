@@ -15,9 +15,17 @@ namespace Poincare::Internal {
 namespace LatexParser {
 
 Tree* LatexToLayout::Parse(const char* latexString) {
-  Tree* result = KRackL()->clone();
-  ParseOnRackUntilIdentifier(Rack::From(result), &latexString, "");
-  return result;
+  ExceptionTry {
+    Tree* result = KRackL()->clone();
+    ParseOnRackUntilIdentifier(Rack::From(result), &latexString, "");
+    return result;
+  }
+  ExceptionCatch(type) {
+    if (type != ExceptionType::ParseFail) {
+      TreeStackCheckpoint::Raise(type);
+    }
+    return nullptr;
+  }
 }
 
 void LatexToLayout::ParseOnRackUntilIdentifier(Rack* parent, const char** start,

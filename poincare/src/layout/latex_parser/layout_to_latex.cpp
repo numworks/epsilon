@@ -3,6 +3,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/serialize.h>
+#include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "latex_tokens.h"
@@ -11,7 +12,7 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
-char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
+char* ParseWithExceptions(const Rack* rack, char* buffer, char* end) {
   for (const Tree* child : rack->children()) {
     if (child->isOperatorSeparatorLayout()) {
       // Invisible in latex
@@ -54,7 +55,6 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
         if (buffer + delimiterLength >= end) {
           // Buffer is too short
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-          return end;
         }
         memcpy(buffer, delimiter, delimiterLength);
         buffer += delimiterLength;
@@ -64,8 +64,8 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
         }
         assert(strlen(token.description[i + 1]) <= 1);
         int indexOfChildInLayout = token.description[i + 1][0];
-        buffer =
-            Parse(Rack::From(child->child(indexOfChildInLayout)), buffer, end);
+        buffer = ParseWithExceptions(
+            Rack::From(child->child(indexOfChildInLayout)), buffer, end);
         i += 2;
       }
       tokenFound = true;
@@ -76,7 +76,8 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
     }
 
     // Use common serialization
-    buffer = SerializeLayout(Layout::From(child), buffer, end, Parse);
+    buffer =
+        SerializeLayout(Layout::From(child), buffer, end, ParseWithExceptions);
     *buffer = 0;
   }
 
@@ -86,6 +87,20 @@ char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
   }
 
   return buffer;
+}
+
+char* LayoutToLatex::Parse(const Rack* rack, char* buffer, char* end) {
+  ExceptionTry {
+    char* result = ParseWithExceptions(rack, buffer, end);
+    return result;
+  }
+  ExceptionCatch(type) {
+    if (type != ExceptionType::ParseFail) {
+      TreeStackCheckpoint::Raise(type);
+    }
+    *buffer = 0;
+    return buffer;
+  }
 }
 
 }  // namespace LatexParser

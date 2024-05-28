@@ -17,7 +17,6 @@
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/sine.h>
-#include <poincare/old/subtraction.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/trigonometry.h>
@@ -630,7 +629,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     m_expression = expressionReducedForAnalysis(record, context);
     ContinuousFunctionProperties thisProperties = properties(record);
     if (!thisProperties.isEnabled()) {
-      m_expression = Undefined::Builder();
+      m_expression = JuniorUndefined::Builder();
       return m_expression;
     }
     Preferences::ComplexFormat complexFormat =
@@ -675,7 +674,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
         int xDegree = m_expression.polynomialDegree(context, k_unknownName);
         if (xDegree < 1 || xDegree > 2) {
           // Such degrees of equation in y and x are not handled.
-          m_expression = Undefined::Builder();
+          m_expression = JuniorUndefined::Builder();
           return m_expression;
         }
         // Equation can be plotted along y. For example : x=cos(y) or x^2=1
@@ -713,7 +712,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
         /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or
          * horizontal lines as needed. */
-        m_expression = Undefined::Builder();
+        m_expression = JuniorUndefined::Builder();
         return m_expression;
       }
       if (!willBeAlongX && yDegree != 0) {
@@ -860,7 +859,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     bool *isCartesianEquation) const {
   UserExpression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
-    return Undefined::Builder();
+    return JuniorUndefined::Builder();
   }
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
@@ -885,10 +884,10 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * - The input text is too long and "f(x)=" can't be inserted.
      * - When inputting amiguous equations like "x+y>2>y".
      * - When result is uninitialized because of circular definition.  */
-    return Undefined::Builder();
+    return JuniorUndefined::Builder();
   }
   if (equationType == ComparisonNode::OperatorType::NotEqual) {
-    return Undefined::Builder();
+    return JuniorUndefined::Builder();
   }
   if (computedEquationType) {
     *computedEquationType = equationType;
@@ -939,7 +938,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     *isCartesianEquation = isUnnamedFunction;
   }
   if (isUnnamedFunction) {
-    result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
+    result = Expression::Create(
+        KSub(KA, KB), {.KA = leftExpression, .KB = result.childAtIndex(1)});
     /* Replace all y symbols with UCodePointTemporaryUnknown so that they are
      * not replaced if they had a predefined value. This will not replace the y
      * symbols nested in function, which is not a supported behavior anyway.
@@ -953,7 +953,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   result = NewExpression::ExpressionWithoutSymbols(result, context);
   if (result.isUninitialized()) {
     // result was Circularly defined
-    return Undefined::Builder();
+    return JuniorUndefined::Builder();
   }
   if (isUnnamedFunction) {
     result = result.replaceSymbolWithExpression(
@@ -1188,14 +1188,18 @@ SystemParametricFunction ContinuousFunction::Model::parametricForm(
       /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
        * - x(θ) = r(θ) * cos(θ)
        * - y(θ) = r(θ) * sin(θ) */
-      x = Multiplication::Builder(e.clone(), Cosine::Builder(unknown.clone()));
-      y = Multiplication::Builder(e.clone(), Sine::Builder(unknown.clone()));
+      x = ProjectedExpression::Create(KMult(KA, KTrig(KB, 0_e)),
+                                      {.KA = e, .KB = unknown});
+      y = ProjectedExpression::Create(KMult(KA, KTrig(KB, 1_e)),
+                                      {.KA = e, .KB = unknown});
     } else {
       /* Turn θ(r) into f(r) = (x(r), y(r)) with
        * - x(r) = r * cos(θ(r))
        * - y(r) = r * sin(θ(r)) */
-      x = Multiplication::Builder(unknown.clone(), Cosine::Builder(e.clone()));
-      y = Multiplication::Builder(unknown.clone(), Sine::Builder(e.clone()));
+      x = ProjectedExpression::Create(KMult(KA, KTrig(KB, 0_e)),
+                                      {.KA = unknown, .KB = e});
+      y = ProjectedExpression::Create(KMult(KA, KTrig(KB, 1_e)),
+                                      {.KA = unknown, .KB = e});
     }
     e = Point::Builder(x, y);
   } else {

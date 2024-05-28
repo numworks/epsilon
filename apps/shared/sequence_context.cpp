@@ -84,13 +84,7 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
 }
 
 bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
-  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
-  if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
-    m_sequenceIsNotComputable[sequenceIndex] =
-        OMG::BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
-                                     ->mainExpressionIsNotComputable(this));
-  }
-  return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
+  return cache()->sequenceIsNotComputable(sequenceIndex);
 }
 
 Poincare::Internal::SequenceCache *SequenceContext::cache() {

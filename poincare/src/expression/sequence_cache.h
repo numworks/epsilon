@@ -1,6 +1,8 @@
 #ifndef POINCARE_EXPRESSION_SEQUENCE_CACHE_H
 #define POINCARE_EXPRESSION_SEQUENCE_CACHE_H
 
+#include <omg/troolean.h>
+
 namespace Shared {
 class SequenceStore;
 class Sequence;
@@ -54,6 +56,7 @@ class SequenceCache {
 
   bool m_isInsideComputation;
   int m_smallestRankBeingComputed[k_numberOfSequences];
+  OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
 
   const Shared::SequenceStore* m_sequenceStore;
 };

@@ -1,7 +1,6 @@
 #ifndef APPS_SHARED_SEQUENCE_CONTEXT_H
 #define APPS_SHARED_SEQUENCE_CONTEXT_H
 
-#include <omg/troolean.h>
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
 #include <poincare/old/symbol.h>
@@ -43,7 +42,6 @@ class SequenceContext : public Poincare::ContextWithParent {
       ContextWithParent* lastDescendantContext) override;
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   SequenceStore* m_sequenceStore;
-  OMG::Troolean m_sequenceIsNotComputable[k_numberOfSequences];
 };
 
 }  // namespace Shared

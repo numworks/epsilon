@@ -179,7 +179,7 @@ void SequenceCache::resetCache() {
   }
   resetComputationStatus();
   for (int i = 0; i < k_numberOfSequences; i++) {
-    // m_sequenceIsNotComputable[i] = OMG::Troolean::Unknown;
+    m_sequenceIsNotComputable[i] = OMG::Troolean::Unknown;
   }
 }
 
@@ -198,8 +198,13 @@ int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
 }
 
 bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
-  // TODO_PCJ: move implementation from SequenceContext
-  return false;
+  assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
+  if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
+    m_sequenceIsNotComputable[sequenceIndex] =
+        OMG::BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
+                                     ->mainExpressionIsNotComputable(nullptr));
+  }
+  return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
 }
 
 }  // namespace Poincare::Internal

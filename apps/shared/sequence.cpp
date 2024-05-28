@@ -58,32 +58,21 @@ void Sequence::setType(Type t) {
       Ion::Storage::Record::ErrorStatus::None;
   switch (t) {
     case Type::Explicit:
-      error = setContent("", nullptr);  // No context needed here
+      error = setExpressionContent(UserExpression());
       break;
     case Type::SingleRecurrence: {
-      char ex[] = "u\u0014{n\u0014}";
-      /* Maybe in the future sequence names will be longer and this
-       * code won't be valid anymore. This assert is to ensure that this code is
-       * changed if it's the case.
-       * */
-      assert(fullName()[1] == 0 || fullName()[1] == '.');
-      ex[0] = fullName()[0];
-      error = setContent(ex, nullptr);  // No context needed here
+      error = setExpressionContent(Poincare::Sequence::Builder(
+          fullName(), 1, UserExpression::Builder(KUnknownSymbol)));
       break;
     }
     case Type::DoubleRecurrence: {
-      char ex[] = "u\u0014{n+1\u0014}+u\u0014{n\u0014}";
-      /* Maybe in the future sequence names will be longer and this
-       * code won't be valid anymore. This assert is to ensure that this code is
-       * changed if it's the case.
-       * */
-      assert(fullName()[1] == 0 || fullName()[1] == '.');
-      constexpr int k_uNameSecondIndex = 9;
-      assert(ex[k_uNameSecondIndex] == 'u');
-      char name = fullName()[0];
-      ex[0] = name;
-      ex[k_uNameSecondIndex] = name;
-      error = setContent(ex, nullptr);  // No context needed here
+      error = setExpressionContent(Poincare::UserExpression::Create(
+          KAdd(KA, KB),
+          {.KA = Poincare::Sequence::Builder(
+               fullName(), 1,
+               UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
+           .KB = Poincare::Sequence::Builder(
+               fullName(), 1, UserExpression::Builder(KUnknownSymbol))}));
       break;
     }
   }

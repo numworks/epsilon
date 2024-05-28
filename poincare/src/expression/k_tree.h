@@ -414,21 +414,45 @@ consteval auto operator"" _e() {
 // specialized from
 // https://stackoverflow.com/questions/60434033/how-do-i-expand-a-compile-time-stdarray-into-a-parameter-pack/60440611#60440611
 
+// KUserSymbol<"x">() or "x"_e
+
 template <String S,
           typename IS = decltype(std::make_index_sequence<S.size()>())>
-struct Variable;
+struct KUserSymbol;
 
 template <String S, std::size_t... I>
-struct Variable<S, std::index_sequence<I...>> {
+struct KUserSymbol<S, std::index_sequence<I...>>
+    : KTree<Type::UserSymbol, sizeof...(I), S[I]...> {
   static_assert(!OMG::Print::IsDigit(S[0]),
                 "Integer literals should be written without quotes");
-  using tree = KTree<Type::UserSymbol, sizeof...(I), S[I]...>;
 };
 
 template <String S>
 consteval auto operator"" _e() {
-  return typename Variable<S>::tree();
+  return KUserSymbol<S>();
 }
+
+// KFun<"f">("x"_e) and KSeq<"u">("n"_e)
+
+template <Block B, String S,
+          typename IS = decltype(std::make_index_sequence<S.size()>())>
+struct _KFunHelper;
+
+template <Block B, String S, std::size_t... I>
+struct _KFunHelper<B, S, std::index_sequence<I...>>
+    : KTree<B, sizeof...(I), S[I]...> {
+  template <KTreeConcept CT>
+  consteval auto operator()(CT) const {
+    return Concat<_KFunHelper<B, S>, CT>();
+  }
+};
+
+// Template variables allow to write KFun<"f">("x"_e) and not KFun<"f">()("x"_e)
+template <String S>
+constexpr auto KFun = _KFunHelper<Type::UserFunction, S>();
+
+template <String S>
+constexpr auto KSeq = _KFunHelper<Type::UserSequence, S>();
 
 }  // namespace KTrees
 }  // namespace Poincare::Internal

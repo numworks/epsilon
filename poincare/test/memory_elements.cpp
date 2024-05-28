@@ -486,6 +486,18 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(
       "var"_e, {TypeBlock(Type::UserSymbol), ValueBlock(4), ValueBlock('v'),
                 ValueBlock('a'), ValueBlock('r'), ValueBlock(0)});
+  assert_tree_equals_blocks(
+      KFun<"f">("x"_e),
+      {TypeBlock(Type::UserFunction), ValueBlock(2), ValueBlock('f'),
+       ValueBlock(0), TypeBlock(Type::UserSymbol), ValueBlock(2),
+       ValueBlock('x'), ValueBlock(0)});
+  quiz_assert(KFun<"f0">->nodeSize() == 5);
+  assert_tree_equals_blocks(
+      KSeq<"u">("n0"_e),
+      {TypeBlock(Type::UserSequence), ValueBlock(2), ValueBlock('u'),
+       ValueBlock(0), TypeBlock(Type::UserSymbol), ValueBlock(3),
+       ValueBlock('n'), ValueBlock('0'), ValueBlock(0)});
+  quiz_assert(KSeq<"w">->nodeSize() == 4);
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {

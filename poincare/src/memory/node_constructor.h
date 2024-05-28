@@ -103,8 +103,13 @@ constexpr bool CreateBlockAtIndexForUserType(Type type, Block* block,
     *block = ValueBlock(nameSize);
     return nameSize == 0;
   }
-  *block = ValueBlock(name[blockIndex - numberOfMetaBlocks]);
-  return blockIndex - numberOfMetaBlocks >= nameSize - 1;
+  size_t nameIndex = blockIndex - numberOfMetaBlocks;
+  if (nameIndex == nameSize - 1) {
+    *block = '\0';
+  } else {
+    *block = ValueBlock(name[nameIndex]);
+  }
+  return nameIndex >= nameSize - 1;
 }
 
 template <>

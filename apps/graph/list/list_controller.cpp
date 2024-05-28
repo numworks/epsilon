@@ -184,9 +184,9 @@ void ListController::editExpression(Ion::Events::Event event) {
   m_editableCell.setHighlighted(true);
 }
 
-bool ListController::editSelectedRecordWithText(const char *text) {
+bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   GlobalContext::DeleteParametricComponentsOfRecord(selectedRecord());
-  bool result = FunctionListController::editSelectedRecordWithText(text);
+  bool result = FunctionListController::editSelectedRecordWithLayout(layout);
   GlobalContext::StoreParametricComponentsOfRecord(selectedRecord());
   return result;
 }

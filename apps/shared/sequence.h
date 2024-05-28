@@ -65,6 +65,10 @@ class Sequence : public Function {
       const char *c, Poincare::Context *context) {
     return m_firstInitialCondition.setContent(this, c, context);
   }
+  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
+      Poincare::Layout l, Poincare::Context *context) {
+    return m_firstInitialCondition.setLayoutContent(this, l, context);
+  }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() {
     return m_secondInitialCondition.name(this);
@@ -85,6 +89,10 @@ class Sequence : public Function {
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
       const char *c, Poincare::Context *context) {
     return m_secondInitialCondition.setContent(this, c, context);
+  }
+  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
+      Poincare::Layout l, Poincare::Context *context) {
+    return m_secondInitialCondition.setLayoutContent(this, l, context);
   }
   void tidyDownstreamPoolFrom(
       Poincare::PoolObject *treePoolCursor = nullptr) const override;

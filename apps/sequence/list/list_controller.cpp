@@ -153,7 +153,7 @@ void ListController::editExpression(Ion::Events::Event event) {
   App::app()->localContext()->resetCache();
 }
 
-bool ListController::editSelectedRecordWithText(const char *text) {
+bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   int sequenceDefinition;
   Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
@@ -161,13 +161,13 @@ bool ListController::editSelectedRecordWithText(const char *text) {
   Ion::Storage::Record::ErrorStatus error;
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
-      error = sequence->setContent(text, context);
+      error = sequence->setLayoutContent(layout, context);
       break;
     case k_firstInitialCondition:
-      error = sequence->setFirstInitialConditionContent(text, context);
+      error = sequence->setFirstInitialConditionContent(layout, context);
       break;
     default:
-      error = sequence->setSecondInitialConditionContent(text, context);
+      error = sequence->setSecondInitialConditionContent(layout, context);
   }
   didChangeModelsList();
   return error == Ion::Storage::Record::ErrorStatus::None;

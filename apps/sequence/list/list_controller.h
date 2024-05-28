@@ -72,7 +72,7 @@ class ListController : public Shared::FunctionListController {
   void didChangeModelsList() override;
   KDCoordinate baseline(int j, Escher::HighlightCell* cell);
   void addNewModelAction() override;
-  bool editSelectedRecordWithText(const char* text) override;
+  bool editSelectedRecordWithLayout(Poincare::Layout layout) override;
   Poincare::Layout getLayoutForSelectedRecord() const override;
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore* modelStore() const override;

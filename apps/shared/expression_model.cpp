@@ -159,6 +159,13 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
   return setExpressionContent(record, e);
 }
 
+Ion::Storage::Record::ErrorStatus ExpressionModel::setLayoutContent(
+    Ion::Storage::Record* record, const Layout& l, Context* context,
+    CodePoint symbol) {
+  UserExpression e = buildExpressionFromLayout(l, symbol, context);
+  return setExpressionContent(record, e);
+}
+
 Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(
     Ion::Storage::Record* record, const UserExpression& newExpression) {
   assert(record->fullName() != nullptr);
@@ -229,6 +236,16 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromText(
   }
   // Compute the expression to store, without replacing symbols
   UserExpression expressionToStore = UserExpression::Parse(c, context);
+  return ReplaceSymbolWithUnknown(expressionToStore, symbol);
+}
+
+Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
+    Poincare::Layout l, CodePoint symbol, Poincare::Context* context) const {
+  if (l.isUninitialized() || l.isEmpty()) {
+    return UserExpression();
+  }
+  // Compute the expression to store, without replacing symbols
+  UserExpression expressionToStore = UserExpression::Parse(l, context);
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

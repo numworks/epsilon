@@ -25,7 +25,7 @@ class ExpressionModelListController
   ExpressionModelListController(Escher::Responder* parentResponder,
                                 I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
-  virtual bool editSelectedRecordWithText(const char* text);
+  virtual bool editSelectedRecordWithLayout(Poincare::Layout layout);
   virtual Poincare::Layout getLayoutForSelectedRecord() const;
   bool handleEventOnExpression(Ion::Events::Event event,
                                bool inTemplateMenu = false);

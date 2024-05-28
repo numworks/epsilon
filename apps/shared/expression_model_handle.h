@@ -40,6 +40,10 @@ class ExpressionModelHandle : public Ion::Storage::Record {
       const char *c, Poincare::Context *context) {
     return editableModel()->setContent(this, c, context, symbol());
   }
+  virtual Ion::Storage::Record::ErrorStatus setLayoutContent(
+      const Poincare::Layout &l, Poincare::Context *context) {
+    return editableModel()->setLayoutContent(this, l, context, symbol());
+  }
   Ion::Storage::Record::ErrorStatus setExpressionContent(
       const Poincare::UserExpression &e) {
     return editableModel()->setExpressionContent(this, e);

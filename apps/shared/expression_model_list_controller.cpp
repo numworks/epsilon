@@ -168,13 +168,13 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   layoutFieldDidChangeSize(layoutField());
 }
 
-bool ExpressionModelListController::editSelectedRecordWithText(
-    const char *text) {
-  telemetryReportEvent("Edit", text);
+bool ExpressionModelListController::editSelectedRecordWithLayout(
+    Layout layout) {
+  // telemetryReportEvent("Edit", text); // TODO restore telemetry
   Ion::Storage::Record record = selectedRecord();
   ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
-  bool result = (model->setContent(text, App::app()->localContext()) ==
+  bool result = (model->setLayoutContent(layout, App::app()->localContext()) ==
                  Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   return result;
@@ -275,7 +275,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   if (!isValidExpressionModel(parsedExpression)) {
     return false;
   }
-  editSelectedRecordWithText(layoutField->text());
+  editSelectedRecordWithLayout(layoutField->layout());
   finishEdition();
   layoutField->clearLayout();
   return true;

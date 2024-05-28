@@ -90,9 +90,8 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
 
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    char buffer[k_maxSizeOfNamedModel];
-    m_layouts[selectedRow()].serializeForParsing(buffer, k_maxSizeOfNamedModel);
-    bool success = m_listController->editSelectedRecordWithText(buffer);
+    bool success = m_listController->editSelectedRecordWithLayout(
+        m_layouts[selectedRow()]);
     assert(success);
     (void)success;  // Silence warnings
     App::app()->modalViewController()->dismissModal();

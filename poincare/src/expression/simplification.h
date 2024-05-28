@@ -24,9 +24,6 @@ class Simplification {
   static bool DeepSystematicReduce(Tree* u);
   EDITION_REF_WRAP(DeepSystematicReduce);
 
-  static bool SimplifyPower(Tree* u);
-  EDITION_REF_WRAP(SimplifyPower);
-
   // Simplification steps
   static bool PrepareForProjection(Tree* e,
                                    ProjectionContext* projectionContext);
@@ -36,22 +33,8 @@ class Simplification {
       Tree* e, ProjectionContext projectionContext);
 
  private:
-  /* These private methods should never be called on TreeRefs.
-   * TODO: ensure it cannot. */
-  static bool SimplifyAbs(Tree* u);
-  static bool SimplifyPowerReal(Tree* u);
-  static bool SimplifyLnReal(Tree* u);
-  static bool SimplifyExp(Tree* u);
-  static bool SimplifyComplexArgument(Tree* t);
-  static bool SimplifyComplexPart(Tree* t);
-  static bool SimplifySign(Tree* t);
-  static bool SimplifyDistribution(Tree* t);
-  static bool SimplifyDim(Tree* t);
-
   static bool BubbleUpFromChildren(Tree* u);
   static bool SimplifySwitch(Tree* u);
-  static void ConvertPowerRealToPower(Tree* u);
-  static bool CanApproximateTree(Tree* u, bool* changed);
 };
 
 }  // namespace Poincare::Internal

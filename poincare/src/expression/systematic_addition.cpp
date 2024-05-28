@@ -85,7 +85,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
 bool SystematicOperation::SimplifyAddition(Tree* u) {
   assert(u->isAdd());
   bool modified = NAry::Flatten(u);
-  if (modified && Simplification::CanApproximateTree(u, &modified)) {
+  if (modified && CanApproximateTree(u, &modified)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
      * tried again to properly handle possible new float children. */
     return true;

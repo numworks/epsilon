@@ -240,6 +240,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/solver.cpp \
   expression/symbol.cpp \
   expression/systematic_addition.cpp \
+  expression/systematic_operation.cpp \
   expression/systematic_multiplication.cpp \
   expression/trigonometry.cpp \
   expression/undefined.cpp \

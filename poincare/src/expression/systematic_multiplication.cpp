@@ -132,7 +132,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
 bool SystematicOperation::SimplifyMultiplication(Tree* u) {
   assert(u->isMult());
   bool changed = NAry::Flatten(u);
-  if (changed && Simplification::CanApproximateTree(u, &changed)) {
+  if (changed && CanApproximateTree(u, &changed)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
      * tried again to properly handle possible new float children. */
     return true;

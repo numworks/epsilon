@@ -172,6 +172,12 @@ class JuniorExpression : public OExpression {
       const ApproximationContext& approximationContext) const {
     return node()->approximateToTree<T>(approximationContext);
   }
+  /* Approximation Helper */
+  template <typename U>
+  static U ParseAndSimplifyAndApproximateToScalar(
+      const char* text, Context* context,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ

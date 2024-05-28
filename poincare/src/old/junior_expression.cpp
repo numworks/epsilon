@@ -1,3 +1,4 @@
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
@@ -475,6 +476,16 @@ JuniorExpression JuniorExpression::getSystemFunction(
 template <typename U>
 U JuniorExpression::approximateToScalarWithValue(U x) const {
   return Internal::Approximation::ToReal<U>(tree(), x);
+}
+
+template <typename U>
+U JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
+    const char* text, Context* context,
+    SymbolicComputation symbolicComputation) {
+  JuniorExpression exp = ParseAndSimplify(text, context, symbolicComputation);
+  assert(!exp.isUninitialized());
+  // TODO: Shared shouldn't be called in Poincare
+  return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(
@@ -1008,5 +1019,12 @@ template float JuniorExpression::approximateToScalarWithValue<float>(
     float) const;
 template double JuniorExpression::approximateToScalarWithValue<double>(
     double) const;
+
+template float JuniorExpression::ParseAndSimplifyAndApproximateToScalar<float>(
+    const char* text, Context* context,
+    SymbolicComputation symbolicComputation);
+template double JuniorExpression::ParseAndSimplifyAndApproximateToScalar<
+    double>(const char* text, Context* context,
+            SymbolicComputation symbolicComputation);
 
 }  // namespace Poincare

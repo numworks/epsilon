@@ -38,16 +38,9 @@ def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
 
 
 def concatenate_images(list_images, output):
-    from PIL import Image
-    import numpy as np
-
-    # Concatenate same size images
-    concatenated = Image.fromarray(
-        np.concatenate(
-            [np.array(Image.open(im).convert("RGBA")) for im in list_images], axis=1
-        )
-    )
-    concatenated.save(output)
+    Popen(
+        ["convert", *list_images, "+append", output],
+    ).wait()
 
 
 def create_diff_gif(list_images_1, list_images_2, gif_destination_folder):

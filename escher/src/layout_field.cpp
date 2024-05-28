@@ -166,11 +166,7 @@ void LayoutField::scrollToCursor() {
 
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
-  KDSize previousSize = minimalSizeForOptimalDisplay();
-  const_cast<LayoutView *>(m_contentView.layoutView())
-      ->setLayout(newLayout.makeEditable());
-  putCursorOnOneSide(OMG::Direction::Right());
-  reload(previousSize);
+  insertLayoutAtCursor(newLayout);
 }
 
 Poincare::Context *LayoutField::context() const {

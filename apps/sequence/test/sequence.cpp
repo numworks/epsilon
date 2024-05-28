@@ -149,6 +149,20 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results3, types, definitions, conditions1,
                              conditions2);
 
+  /* u is independent, v recursive and v(0) depends on u
+   * u(n) = n; v(n+1) = v(n)+1; v(0) = u(5) */
+  double results4bis[SequenceStore::k_maxNumberOfSequences][10] = {
+      {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
+      {5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0},
+      {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "n";
+  definitions[1] = "v(n)+1";
+  conditions1[1] = "u(5)";
+  check_sequences_defined_by(results4bis, types, definitions, conditions1,
+                             conditions2);
+
   /* u independent, v defined with u
    * u(n) = n; v(n) = u(n)+n */
   double results4[SequenceStore::k_maxNumberOfSequences][10] = {
@@ -156,6 +170,7 @@ QUIZ_CASE(sequence_evaluation) {
       {0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0},
       {}};
   types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
   definitions[0] = "n";
   definitions[1] = "u(n)+n";
   conditions1[0] = nullptr;

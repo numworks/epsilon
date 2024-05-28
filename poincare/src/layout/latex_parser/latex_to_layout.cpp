@@ -63,7 +63,7 @@ Tree* LatexToLayout::NextToken(const char** start) {
   }
 
   if (**start == '\\' || **start == ' ' || **start == '{' || **start == '}') {
-    /* Ignore \ and {} if it doesn't belong to a know token
+    /* Ignore \ and {} if it doesn't belong to a known token
      * Ignore spaces */
     *start += 1;
     return nullptr;

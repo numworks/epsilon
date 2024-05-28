@@ -3,6 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <math.h>
 #include <omg/float.h>
+#include <omg/signaling_nan.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
 #include <poincare/src/numeric/statistics_dataset.h>
@@ -494,11 +495,25 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       Shared::Sequence sequence =
           Shared::GlobalContext::sequenceStore->sequenceAtIndex(index);
       T rank = To<T>(node->child(0));
-      if (std::isnan(rank) || rank != std::floor(rank)) {
+      if (std::isnan(rank)) {
         return NAN;
       }
-      return OutOfContext(sequence.approximateAtRank(
-          rank, Shared::GlobalContext::sequenceCache));
+      double result = NAN;
+      result =
+          Shared::GlobalContext::sequenceCache->storedValueOfSequenceAtRank(
+              index, rank);
+      /* We try to approximate the sequence independently from the others at the
+       * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for
+       * instance). But we avoid doing so if the sequence referencing itself to
+       * avoid an infinite loop. */
+      if (OMG::IsSignalingNan(result)) {
+        // If the rank is not an int, return NAN
+        if (std::floor(rank) == rank) {
+          result = OutOfContext(sequence.approximateAtRank(
+              rank, Shared::GlobalContext::sequenceCache));
+        }
+      }
+      return result;
     }
     /* Analysis */
     case Type::Sum:

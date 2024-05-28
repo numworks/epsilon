@@ -11,15 +11,15 @@ namespace Poincare::Internal {
 
 bool SystematicOperation::SimplifyPower(Tree* u) {
   assert(u->isPow());
-  Tree* v = u->child(0);
+  Tree* base = u->child(0);
   // 1^x -> 1
-  if (v->isOne()) {
+  if (base->isOne()) {
     u->cloneTreeOverTree(1_e);
     return true;
   }
-  // v^n
-  TreeRef n = v->nextTree();
-  if (v->isZero()) {
+  // base^n
+  TreeRef n = base->nextTree();
+  if (base->isZero()) {
     ComplexSign indexSign = ComplexSign::Get(n);
     if (indexSign.realSign().isStrictlyPositive()) {
       // 0^x is always defined.
@@ -36,28 +36,28 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
   }
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
-    // v^n -> exp(n*ln(v))
+    // base^n -> exp(n*ln(base))
     return PatternMatching::MatchReplaceSimplify(u, KPow(KA, KB),
                                                  KExp(KMult(KLn(KA), KB)));
   }
-  if (v->isRational()) {
-    u->moveTreeOverTree(Rational::IntegerPower(v, n));
+  if (base->isRational()) {
+    u->moveTreeOverTree(Rational::IntegerPower(base, n));
     return true;
   }
-  // v^0 -> 1
+  // base^0 -> 1
   if (n->isZero()) {
-    if (ComplexSign::Get(v).canBeNull()) {
+    if (ComplexSign::Get(base).canBeNull()) {
       return PatternMatching::MatchReplace(u, KA, KDep(1_e, KSet(KA)));
     }
     u->cloneTreeOverTree(1_e);
     return true;
   }
-  // v^1 -> v
+  // base^1 -> base
   if (n->isOne()) {
-    u->moveTreeOverTree(v);
+    u->moveTreeOverTree(base);
     return true;
   }
-  if (v->isComplexI()) {
+  if (base->isComplexI()) {
     // i^n -> ±1 or ±i
     Tree* remainder =
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
@@ -69,11 +69,11 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
     return true;
   }
   // (w^p)^n -> w^(p*n)
-  if (v->isPow()) {
-    TreeRef p = v->child(1);
+  if (base->isPow()) {
+    TreeRef p = base->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    // PowU PowV w p n
-    v->removeNode();
+    // PowU PowBase w p n
+    base->removeNode();
     MoveNodeAtNode(p, SharedTreeStack->push<Type::Mult>(2));
     // PowU w Mult<2> p n
     Simplification::ShallowSystematicReduce(p);
@@ -81,8 +81,8 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
     return true;
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
-  if (v->isMult()) {
-    for (Tree* w : v->children()) {
+  if (base->isMult()) {
+    for (Tree* w : base->children()) {
       TreeRef m = SharedTreeStack->push(Type::Pow);
       w->clone();
       n->clone();

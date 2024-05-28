@@ -169,12 +169,15 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     if (!Preferences::SharedPreferences()->examMode().isActive()) {
       openDFU(true);
+      if (Preferences::SharedPreferences()->examMode().isActive()) {
+        Ion::USB::enable();
+      }
     } else if (m_firstUSBEnumeration) {
       displayExamModePopUp(ExamMode(ExamMode::Ruleset::Off));
+      m_firstUSBEnumeration = false;
       // Warning: if the window is dirtied, you need to call window()->redraw()
       window()->redraw();
     }
-    m_firstUSBEnumeration = false;
     return true;
   }
   if (event == Ion::Events::USBPlug) {
@@ -452,6 +455,7 @@ void AppsContainer::openDFU(bool blocking) {
   } else if (preferences->examMode() != activeExamMode ||
              preferences->forceExamModeReload()) {
     setExamMode(preferences->examMode(), Ion::ExamMode::get());
+    m_firstUSBEnumeration = true;
   }
   // Update LED when exiting DFU mode
   Ion::LED::updateColorWithPlugAndCharge();

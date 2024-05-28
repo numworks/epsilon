@@ -2110,7 +2110,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("random()", "random()", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("re(x)", "re(x)", User, Radian,
+  assert_parsed_expression_simplify_to("re(x)", "x", User, Radian,
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian,
                                        MetricUnitFormat, Cartesian);

@@ -1,6 +1,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "infinity.h"
 #include "matrix.h"
 #include "number.h"
 #include "rational.h"
@@ -20,6 +21,9 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
       !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
+  } else if (child->isInf() && next->isInf()) {
+    // inf*inf -> inf
+    merge = KInf->clone();
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
     merge = PatternMatching::CreateSimplify(
@@ -88,6 +92,28 @@ static bool SimplifyMultiplicationChildRec(Tree* child, int index,
   return childChanged;
 }
 
+static bool SimplifyMultiplicationWithInf(Tree* e) {
+  // x*inf -> sign(x)*inf
+  // except when x = -1,0,1 or sign (to avoid infinite loop)
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(KMult(KA, KInf), e, &ctx) ||
+      PatternMatching::Match(KMult(KInf, KA), e, &ctx)) {
+    const Tree* x = ctx.getNode(KA);
+    assert(!x->isZero() && !x->isOne());
+    if (x->isMinusOne() || x->isSign()) {
+      return false;
+    }
+  }
+  if (PatternMatching::MatchReplaceSimplify(
+          e, KMult(KA_s, KInf, KB_s), KMult(KSign(KMult(KA_s, KB_s)), KInf))) {
+    /* Warning: it works because sign(z)=undef if z is complex and we don't
+     * handle i*inf.*/
+    return true;
+  }
+
+  return false;
+}
+
 static bool SimplifySortedMultiplication(Tree* multiplication) {
   int n = multiplication->numberOfChildren();
   bool changed = false;
@@ -98,6 +124,11 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
                                  &zero);
   NAry::SetNumberOfChildren(multiplication, n);
   if (zero) {
+    if (Infinity::HasInfinityChild(multiplication)) {
+      // 0*inf -> undef
+      multiplication->moveTreeOverTree(KUndef->clone());
+      return true;
+    }
     // 0 * {1, 2, 4} -> {0, 0, 0}. Same for matrices.
     Tree* zeroTree;
     Dimension dim = Dimension::GetDimension(multiplication);
@@ -117,9 +148,19 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
     multiplication->moveTreeOverTree(zeroTree);
     return true;
   }
-  if (!changed || NAry::SquashIfPossible(multiplication)) {
-    return changed;
+
+  if (changed && NAry::SquashIfPossible(multiplication)) {
+    return true;
   }
+
+  if (SimplifyMultiplicationWithInf(multiplication)) {
+    changed = true;
+  }
+
+  if (!changed) {
+    return false;
+  }
+
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */

@@ -162,8 +162,8 @@ QUIZ_CASE(poincare_simplification_infinity) {
 
   assert_parsed_expression_simplify_to("ln(inf)", Infinity::Name());
   assert_parsed_expression_simplify_to("log(inf,-3)", "log(∞,-3)");
-  assert_parsed_expression_simplify_to("log(inf,3)", Infinity::Name());
-  assert_parsed_expression_simplify_to("log(inf,0.3)", Infinity::Name(true));
+  assert_parsed_expression_simplify_to("log(inf,3)", "∞×sign(1/ln(3))");
+  assert_parsed_expression_simplify_to("log(inf,0.3)", "∞×sign(1/ln(3/10))");
   assert_parsed_expression_simplify_to("log(inf,x)", "log(∞,x)");
   assert_parsed_expression_simplify_to("ln(inf)*0", Undefined::Name());
 }

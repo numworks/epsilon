@@ -21,6 +21,11 @@ bool Logarithm::SimplifyLn(Tree* u) {
     u->removeNode();
     return true;
   }
+  if (child->isInf()) {
+    // ln(inf) -> inf
+    u->removeNode();
+    return true;
+  }
   if (!child->isInteger()) {
     return false;
   }

@@ -9,10 +9,9 @@ class Tree;
 
 class Infinity {
  public:
-  static bool ShallowBubbleUpInfinity(Tree* u);
-
   static bool IsPlusOrMinusInfinity(const Tree* u);
   static bool IsMinusInfinity(const Tree* u);
+  static bool HasInfinityChild(Tree* u);
 };
 
 }  // namespace Poincare::Internal

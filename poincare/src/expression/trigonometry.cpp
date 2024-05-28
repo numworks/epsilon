@@ -3,6 +3,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "comparison.h"
+#include "infinity.h"
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
@@ -197,6 +198,10 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
      * Maybe we should move this transformation (sin(asin(x)) and cos(acos(x)))
      * to advanced reduction.*/
     changed = true;
+  } else if (Infinity::IsPlusOrMinusInfinity(firstArgument)) {
+    // sin(±inf) = cos(±inf) = undef
+    u->cloneTreeOverTree(KUndef);
+    changed = true;
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
@@ -362,7 +367,10 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
   if (simplifyATrigOfTrig(u)) {
     return true;
   }
-  // TODO_PCJ: Add more exact values (√3, 1/√3, ...)
+  if (PatternMatching::MatchReplaceSimplify(u, KATanRad(KInf),
+                                            KMult(1_e / 2_e, π_e))) {
+    return true;
+  }
   assert(u->isATanRad());
   const Tree* arg = u->child(0);
   if (arg->isZero()) {

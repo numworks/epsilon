@@ -4,6 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
+#include "infinity.h"
 #include "list.h"
 #include "rational.h"
 
@@ -11,14 +12,42 @@ namespace Poincare::Internal {
 
 bool SystematicOperation::SimplifyPower(Tree* u) {
   assert(u->isPow());
+  // base^n
   Tree* base = u->child(0);
-  // 1^x -> 1
+  TreeRef n = base->nextTree();
+  if (Infinity::IsPlusOrMinusInfinity(n) &&
+      (base->isOne() || base->isMinusOne() ||
+       !ComplexSign::Get(base).imagSign().canBeNull())) {
+    // (±1)^(±inf) -> undef
+    // complex^(±inf) -> undef
+    u->cloneTreeOverTree(KUndef);
+    return true;
+  }
   if (base->isOne()) {
+    // 1^x -> 1
     u->cloneTreeOverTree(1_e);
     return true;
   }
-  // base^n
-  TreeRef n = base->nextTree();
+  if (Infinity::IsPlusOrMinusInfinity(base)) {
+    if ((Infinity::IsMinusInfinity(base) && n->isInf()) || n->isZero()) {
+      // (-inf)^inf -> undef
+      // (±inf)^0 -> undef
+      u->cloneTreeOverTree(KUndef);
+      return true;
+    }
+    ComplexSign nSign = ComplexSign::Get(n);
+    assert(nSign.isReal());
+    if (nSign.realSign().isNegative()) {
+      // (±inf)^neg -> 0
+      u->cloneTreeOverTree(0_e);
+      return true;
+    }
+    if (nSign.realSign().isPositive()) {
+      // (±inf)^pos -> inf
+      u->cloneTreeOverTree(KInf);
+      return true;
+    }
+  }
   if (base->isZero()) {
     ComplexSign indexSign = ComplexSign::Get(n);
     if (indexSign.realSign().isStrictlyPositive()) {
@@ -124,7 +153,8 @@ bool SystematicOperation::SimplifyPowerReal(Tree* u) {
   Tree* y = x->nextTree();
   ComplexSign xSign = ComplexSign::Get(x);
   ComplexSign ySign = ComplexSign::Get(y);
-  if (!ySign.canBeNonInteger() ||
+  if (Infinity::IsPlusOrMinusInfinity(x) ||
+      Infinity::IsPlusOrMinusInfinity(y) || !ySign.canBeNonInteger() ||
       (xSign.isReal() && xSign.realSign().isPositive())) {
     ConvertPowerRealToPower(u);
     return true;
@@ -373,6 +403,16 @@ bool SystematicOperation::SimplifyExp(Tree* u) {
     // exp(ln(x)) -> x
     u->removeNode();
     u->removeNode();
+    return true;
+  }
+  if (child->isInf()) {
+    // exp(inf) -> inf
+    u->removeNode();
+    return true;
+  }
+  if (Infinity::IsMinusInfinity(child)) {
+    // exp(-inf) = 0
+    u->cloneTreeOverTree(0_e);
     return true;
   }
   if (child->isZero()) {

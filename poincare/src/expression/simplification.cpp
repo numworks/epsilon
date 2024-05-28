@@ -43,8 +43,7 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
    * children in specialized systematic reduction. */
-  bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false,
-       bubbleUpInf = false;
+  bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
   for (const Tree* child : u->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
@@ -52,8 +51,6 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
-    } else if (Infinity::IsPlusOrMinusInfinity(child)) {
-      bubbleUpInf = true;
     }
   }
 
@@ -72,11 +69,6 @@ bool Simplification::BubbleUpFromChildren(Tree* u) {
     /* u->child(0) may now be reduced again. This could unlock further
      * simplifications. */
     ShallowSystematicReduce(u->child(0)) && ShallowSystematicReduce(u);
-    return true;
-  }
-
-  if (bubbleUpInf && Infinity::ShallowBubbleUpInfinity(u)) {
-    ShallowSystematicReduce(u);
     return true;
   }
 

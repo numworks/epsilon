@@ -193,6 +193,7 @@ NODE(Sqrt, 1)
 NODE(Root, 2)
 NODE(Sub, 2)
 NODE(Tan, 1)
+// Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
 NODE(Trig, 2)
 NODE(TrigDiff, 2)
 

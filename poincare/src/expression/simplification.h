@@ -12,6 +12,9 @@ namespace Poincare::Internal {
  * trees.) */
 
 class Simplification {
+  friend class Addition;
+  friend class Multiplication;
+
  public:
   static bool SimplifyWithAdaptiveStrategy(
       Tree* node, ProjectionContext* projectionContext);
@@ -22,10 +25,6 @@ class Simplification {
   static bool DeepSystematicReduce(Tree* u);
   EDITION_REF_WRAP(DeepSystematicReduce);
 
-  static bool SimplifyAddition(Tree* u);
-  EDITION_REF_WRAP(SimplifyAddition);
-  static bool SimplifyMultiplication(Tree* u);
-  EDITION_REF_WRAP(SimplifyMultiplication);
   static bool SimplifyPower(Tree* u);
   EDITION_REF_WRAP(SimplifyPower);
 
@@ -52,22 +51,8 @@ class Simplification {
 
   static bool BubbleUpFromChildren(Tree* u);
   static bool SimplifySwitch(Tree* u);
-  // Return true if child has been merged with next sibling.
-  static bool MergeAdditionChildWithNext(Tree* child, Tree* next);
-  // Return true if child has been merged with next sibling.
-  static bool MergeMultiplicationChildWithNext(Tree* child);
-  // Return true if child has been merged with one or more next siblings.
-  static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
-                                              int* numberOfSiblings,
-                                              bool* zero);
-  /* Return true if child has been merged with siblings. Recursively merge next
-   * siblings. */
-  static bool SimplifyMultiplicationChildRec(Tree* child, int index,
-                                             int* numberOfSiblings, bool* zero,
-                                             bool* multiplicationChanged);
-  // Simplify a sorted and sanitized multiplication.
-  static bool SimplifySortedMultiplication(Tree* multiplication);
   static void ConvertPowerRealToPower(Tree* u);
+  static bool CanApproximateTree(Tree* u, bool* changed);
 };
 
 }  // namespace Poincare::Internal

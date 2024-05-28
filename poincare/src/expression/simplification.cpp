@@ -4,6 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
+#include "addition.h"
 #include "advanced_simplification.h"
 #include "approximation.h"
 #include "beautification.h"
@@ -16,6 +17,7 @@
 #include "k_tree.h"
 #include "list.h"
 #include "matrix.h"
+#include "multiplication.h"
 #include "number.h"
 #include "random.h"
 #include "rational.h"
@@ -50,7 +52,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
 
 /* Approximate all children if one of them is already float. Return true if the
  * entire tree have been approximated. */
-bool CanApproximateTree(Tree* u, bool* changed) {
+bool Simplification::CanApproximateTree(Tree* u, bool* changed) {
   if (u->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
       Approximation::ApproximateAndReplaceEveryScalar(u)) {
     *changed = true;
@@ -122,7 +124,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::Abs:
       return SimplifyAbs(u);
     case Type::Add:
-      return SimplifyAddition(u);
+      return Addition::SimplifyAddition(u);
     case Type::ATanRad:
       return Trigonometry::SimplifyArcTangentRad(u);
     case Type::ATrig:
@@ -161,7 +163,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::LnReal:
       return SimplifyLnReal(u);
     case Type::Mult:
-      return SimplifyMultiplication(u);
+      return Multiplication::SimplifyMultiplication(u);
     case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
     case Type::Piecewise:
@@ -357,10 +359,6 @@ bool Simplification::SimplifyPower(Tree* u) {
                                                KExp(KMult(KA, KB)));
 }
 
-const Tree* Base(const Tree* u) { return u->isPow() ? u->child(0) : u; }
-
-const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
-
 void Simplification::ConvertPowerRealToPower(Tree* u) {
   u->cloneNodeOverNode(KPow);
   ShallowSystematicReduce(u);
@@ -446,285 +444,6 @@ bool Simplification::SimplifyLnReal(Tree* u) {
   }
   ShallowSystematicReduce(u);
   return true;
-}
-
-bool Simplification::MergeMultiplicationChildWithNext(Tree* child) {
-  Tree* next = child->nextTree();
-  Tree* merge = nullptr;
-  if (child->isNumber() && next->isNumber() &&
-      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
-    // Merge numbers
-    merge = Number::Multiplication(child, next);
-  } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
-    // t^m * t^n -> t^(m+n)
-    merge = PatternMatching::CreateSimplify(
-        KPow(KA, KAdd(KB, KC)),
-        {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
-    assert(!merge->isMult());
-  } else if (next->isMatrix()) {
-    // TODO: Maybe this should go in advanced reduction.
-    merge =
-        (child->isMatrix() ? Matrix::Multiplication
-                           : Matrix::ScalarMultiplication)(child, next, false);
-  }
-  if (!merge) {
-    return false;
-  }
-  // Replace both child and next with merge
-  next->moveTreeOverTree(merge);
-  child->removeTree();
-  return true;
-}
-
-bool Simplification::MergeMultiplicationChildrenFrom(Tree* child, int index,
-                                                     int* numberOfSiblings,
-                                                     bool* zero) {
-  bool changed = false;
-  while (index < *numberOfSiblings) {
-    if (child->isZero()) {
-      *zero = true;
-      return false;
-    }
-    if (child->isOne()) {
-      child->removeTree();
-    } else if (!(index + 1 < *numberOfSiblings &&
-                 MergeMultiplicationChildWithNext(child))) {
-      // Child is neither 0, 1 and can't be merged with next child (or is last).
-      return changed;
-    }
-    (*numberOfSiblings)--;
-    changed = true;
-  }
-  return changed;
-}
-
-bool Simplification::SimplifyMultiplicationChildRec(Tree* child, int index,
-                                                    int* numberOfSiblings,
-                                                    bool* multiplicationChanged,
-                                                    bool* zero) {
-  assert(index < *numberOfSiblings);
-  // Merge child with right siblings as much as possible.
-  bool childChanged =
-      MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero);
-  // Simplify starting from next child.
-  if (!*zero && index + 1 < *numberOfSiblings &&
-      SimplifyMultiplicationChildRec(child->nextTree(), index + 1,
-                                     numberOfSiblings, multiplicationChanged,
-                                     zero)) {
-    // Next child changed, child may now merge with it.
-    assert(!*zero);
-    childChanged =
-        MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero) ||
-        childChanged;
-  }
-  if (*zero) {
-    return false;
-  }
-  *multiplicationChanged = *multiplicationChanged || childChanged;
-  return childChanged;
-}
-
-bool Simplification::SimplifySortedMultiplication(Tree* multiplication) {
-  int n = multiplication->numberOfChildren();
-  bool changed = false;
-  bool zero = false;
-  /* Recursively merge children.
-   * Keep track of n, changed status and presence of zero child. */
-  SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed,
-                                 &zero);
-  NAry::SetNumberOfChildren(multiplication, n);
-  if (zero) {
-    // 0 * {1, 2, 4} -> {0, 0, 0}. Same for matrices.
-    Tree* zeroTree;
-    Dimension dim = Dimension::GetDimension(multiplication);
-    if (dim.isMatrix()) {
-      zeroTree = Matrix::Zero(dim.matrix);
-    } else {
-      int length = Dimension::GetListLength(multiplication);
-      if (length >= 0) {
-        // Push ListSequence of 0s instead of a list to delay its expansion.
-        zeroTree = Integer::Push(length);
-        zeroTree->moveTreeOverTree(PatternMatching::Create(
-            KListSequence(KVarK, KA, 0_e), {.KA = zeroTree}));
-      } else {
-        zeroTree = (0_e)->clone();
-      }
-    }
-    multiplication->moveTreeOverTree(zeroTree);
-    return true;
-  }
-  if (!changed || NAry::SquashIfPossible(multiplication)) {
-    return changed;
-  }
-  /* Merging children can un-sort the multiplication. It must then be simplified
-   * again once sorted again. For example:
-   * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
-  if (NAry::Sort(multiplication, Comparison::Order::PreserveMatrices)) {
-    SimplifySortedMultiplication(multiplication);
-  }
-  return true;
-}
-
-bool Simplification::SimplifyMultiplication(Tree* u) {
-  assert(u->isMult());
-  bool changed = NAry::Flatten(u);
-  if (changed && CanApproximateTree(u, &changed)) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
-  }
-  if (NAry::SquashIfPossible(u)) {
-    return true;
-  }
-  changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
-  changed = SimplifySortedMultiplication(u) || changed;
-  if (changed && u->isMult()) {
-    // Bubble-up may be unlocked after merging identical bases.
-    BubbleUpFromChildren(u);
-    assert(!ShallowSystematicReduce(u));
-  }
-  return changed;
-}
-
-bool TermsAreEqual(const Tree* u, const Tree* v) {
-  if (!u->isMult()) {
-    if (!v->isMult()) {
-      return u->treeIsIdenticalTo(v);
-    }
-    return TermsAreEqual(v, u);
-  }
-  if (!v->isMult()) {
-    return u->numberOfChildren() == 2 && u->child(0)->isRational() &&
-           u->child(1)->treeIsIdenticalTo(v);
-  }
-  bool uHasRational = u->child(0)->isRational();
-  bool vHasRational = v->child(0)->isRational();
-  int n = u->numberOfChildren() - uHasRational;
-  if (n != v->numberOfChildren() - vHasRational) {
-    return false;
-  }
-  const Tree* childU = u->child(uHasRational);
-  const Tree* childV = v->child(vHasRational);
-  for (int i = 0; i < n; i++) {
-    if (!childU->treeIsIdenticalTo(childV)) {
-      return false;
-    }
-    childU = childU->nextTree();
-    childV = childV->nextTree();
-  }
-  return true;
-}
-
-// The term of 2ab is ab
-Tree* PushTerm(const Tree* u) {
-  Tree* c = u->clone();
-  if (u->isMult() && u->child(0)->isRational()) {
-    NAry::RemoveChildAtIndex(c, 0);
-    NAry::SquashIfPossible(c);
-  }
-  return c;
-}
-
-// The constant of 2ab is 2
-const Tree* Constant(const Tree* u) {
-  if (u->isMult() && u->child(0)->isRational()) {
-    return u->child(0);
-  }
-  return 1_e;
-}
-
-bool Simplification::MergeAdditionChildWithNext(Tree* child, Tree* next) {
-  assert(next == child->nextTree());
-  Tree* merge = nullptr;
-  if (child->isNumber() && next->isNumber() &&
-      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
-    // Merge numbers
-    merge = Number::Addition(child, next);
-  } else if (TermsAreEqual(child, next)) {
-    // k1 * a + k2 * a -> (k1+k2) * a
-    Tree* term = PushTerm(child);
-    merge = PatternMatching::CreateSimplify(
-        KMult(KAdd(KA, KB), KC),
-        {.KA = Constant(child), .KB = Constant(next), .KC = term});
-    term->removeTree();
-    merge = term;
-  } else if (child->isMatrix() && next->isMatrix()) {
-    merge = Matrix::Addition(child, next);
-  }
-  if (!merge) {
-    return false;
-  }
-  // Replace both child and next with merge
-  next->moveTreeOverTree(merge);
-  child->removeTree();
-  return true;
-}
-
-bool Simplification::SimplifyAddition(Tree* u) {
-  assert(u->isAdd());
-  bool modified = NAry::Flatten(u);
-  if (modified && CanApproximateTree(u, &modified)) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
-  }
-  if (NAry::SquashIfPossible(u)) {
-    return true;
-  }
-  modified = NAry::Sort(u) || modified;
-  bool didSquashChildren = false;
-  int n = u->numberOfChildren();
-  int i = 0;
-  Tree* child = u->child(0);
-  while (i < n) {
-    if (child->isZero()) {
-      child->removeTree();
-      modified = true;
-      n--;
-      continue;
-    }
-    Tree* next = child->nextTree();
-    if (i + 1 < n && MergeAdditionChildWithNext(child, next)) {
-      // 1 + (a + b)/2 + (a + b)/2 -> 1 + a + b
-      if (child->isAdd()) {
-        n += child->numberOfChildren() - 1;
-        child->removeNode();
-        didSquashChildren = true;
-      }
-      modified = true;
-      n--;
-    } else {
-      child = next;
-      i++;
-    }
-  }
-  if (n != u->numberOfChildren()) {
-    assert(modified);
-    NAry::SetNumberOfChildren(u, n);
-    if (NAry::SquashIfPossible(u)) {
-      return true;
-    }
-  }
-  if (didSquashChildren) {
-    /* Newly squashed children should be sorted again and they may allow new
-     * simplifications. NOTE: Further simplification could theoretically be
-     * unlocked, see following assertion. */
-    NAry::Sort(u);
-  }
-  /* TODO: SimplifyAddition may encounter the same issues as the multiplication.
-   * If this assert can't be preserved, SimplifyAddition must handle one or both
-   * of this cases as handled in multiplication:
-   * With a,b and c the sorted addition children (a < b < c), M(a,b) the result
-   * of merging children a and b (with MergeAdditionChildWithNext) if it exists.
-   * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
-   * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
-   * merging again when child merged with nextChild) */
-  if (modified && u->isAdd()) {
-    // Bubble-up may be unlocked after merging equal terms.
-    BubbleUpFromChildren(u);
-    assert(!ShallowSystematicReduce(u));
-  }
-  return modified;
 }
 
 bool Simplification::SimplifyComplexArgument(Tree* tree) {

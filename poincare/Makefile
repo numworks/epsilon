@@ -196,6 +196,7 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
 
 
 poincare_src += $(addprefix poincare/src/,\
+  expression/addition.cpp \
   expression/advanced_simplification.cpp \
   expression/advanced_operation.cpp \
   expression/algebraic.cpp \
@@ -227,6 +228,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/logarithm.cpp \
   expression/matrix.cpp \
   expression/metric.cpp \
+  expression/multiplication.cpp \
   expression/number.cpp \
   expression/parametric.cpp \
   expression/physical_constant.cpp \

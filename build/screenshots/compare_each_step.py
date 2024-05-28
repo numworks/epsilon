@@ -1,5 +1,4 @@
 import os, shutil, argparse
-from PIL import Image
 
 from helpers.args_types import *
 from helpers.print_format import *
@@ -54,9 +53,9 @@ def main():
     )
 
     # Crop images: we need to have same size images
-    # Images in debug display the event at the bottom. Not in realease.
+    # Images in debug display the event at the bottom. Not in release.
     # Computed images were taken in debug mode, but we don't know for reference images.
-    _, ref_height = Image.open(list_reference_images[0]).size
+    _, ref_height = image_size(list_reference_images[0])
     if ref_height == 240:
         crop_images(list_computed_images)
     else:

@@ -37,6 +37,16 @@ def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
     return mae == "0"
 
 
+def image_size(image):
+    p = Popen(
+        ["identify", "-ping", "-format", "%w %h", image],
+        stdout=PIPE,
+        stderr=DEVNULL,
+    )
+    w, h = p.stdout.read().decode().split(" ")
+    return int(w), int(h)
+
+
 def crop_images(list_images):
     Popen(["mogrify", "-crop", "320x240+0+0", *list_images]).wait()
 

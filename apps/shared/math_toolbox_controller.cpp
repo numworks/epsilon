@@ -193,11 +193,8 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
 bool MathToolboxController::selectExtraCell(int selectedRow) {
   assert(m_extraCellsDataSource);
   Layout l = m_extraCellsDataSource->extraCellLayoutAtRow(selectedRow);
-  char buffer[k_maxSizeOfExtraCellExpression];
-  l.serializeForParsing(
-      buffer, k_maxSizeOfExtraCellExpression);  // No need of context here
   App::app()->modalViewController()->dismissModal();
-  sender()->handleEventWithText(buffer);
+  sender()->handleEventWithLayout(l);
   return true;
 }
 

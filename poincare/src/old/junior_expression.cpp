@@ -18,11 +18,13 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/parsing/parsing_context.h>
@@ -204,6 +206,13 @@ JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
 JuniorExpression JuniorExpression::Create(const Internal::Tree* structure,
                                           Internal::ContextTrees ctx) {
   Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
+  return Builder(tree);
+}
+
+JuniorExpression JuniorExpression::CreateSimplify(
+    const Internal::Tree* structure, Internal::ContextTrees ctx) {
+  Internal::Tree* tree =
+      Internal::PatternMatching::CreateSimplify(structure, ctx);
   return Builder(tree);
 }
 
@@ -463,6 +472,23 @@ JuniorExpression JuniorExpression::cloneAndReduce(
   bool reduceFailure;
   return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
                                                 &reduceFailure);
+}
+
+JuniorExpression JuniorExpression::getReducedDerivative(
+    const char* symbolName, int derivationOrder) const {
+  Internal::Tree* result =
+      Internal::SharedTreeStack->push(Internal::Type::NthDiff);
+  Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
+  const Internal::Tree* symbol =
+      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
+  Internal::Integer::Push(derivationOrder);
+  Internal::Tree* derivand = tree()->clone();
+  Internal::Variables::ReplaceSymbol(
+      derivand, symbol, 0, Internal::Parametric::VariableSign(result));
+  Internal::Simplification::SimplifySystem(result, false);
+  /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
+   * getSystemFunction is expected to be called on it later. */
+  return JuniorExpression::Builder(result);
 }
 
 JuniorExpression JuniorExpression::getSystemFunction(

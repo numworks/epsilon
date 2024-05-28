@@ -412,12 +412,7 @@ double ContinuousFunction::approximateSlope(double t,
     return NAN;
   }
   // Slope is simplified once and for all
-  SystemExpression slope = expressionSlopeReduced(context);
-  ApproximationContext approximationContext(context, complexFormat(context));
-  Evaluation<double> result = slope.approximateWithValueForSymbol(
-      k_unknownName, t, approximationContext);
-  assert(result.otype() == EvaluationNode<double>::Type::Complex);
-  return result.toScalar();
+  return expressionSlopeReduced(context).approximateToScalarWithValue(t);
 }
 
 void ContinuousFunction::setTMin(float tMin) {
@@ -974,24 +969,13 @@ SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
                                      ? &m_expressionFirstDerivate
                                      : &m_expressionSecondDerivate;
   if (derivative->isUninitialized()) {
-    SystemExpression expression = expressionReduced(record, context).clone();
-    *derivative = Derivative::Builder(expression, Symbol::SystemSymbol(),
-                                      Symbol::SystemSymbol(),
-                                      NewExpression::Builder(derivationOrder));
-    /* On complex functions, this step can take a significant time.
-     * A workaround could be to identify big functions to skip simplification
-     * at the cost of possible inaccurate evaluations (such as
-     * diff(abs(x),x,0) not being undefined). */
-    PoincareHelpers::CloneAndSimplify(
-        derivative, context,
-        {.complexFormat = complexFormat(record, context),
-         .updateComplexFormatWithExpression = false,
-         .target = ReductionTarget::SystemForApproximation});
+    *derivative = expressionReduced(record, context)
+                      .getReducedDerivative(k_unknownName, derivationOrder);
   }
   return *derivative;
 }
 
-SystemExpression ContinuousFunction::Model::expressionSlopeReduced(
+SystemFunction ContinuousFunction::Model::expressionSlopeReduced(
     const Ion::Storage::Record *record, Context *context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
@@ -1001,26 +985,23 @@ SystemExpression ContinuousFunction::Model::expressionSlopeReduced(
   ContinuousFunctionProperties prop = properties(record);
   if (m_expressionSlope.isUninitialized()) {
     if (prop.isCartesian()) {
-      m_expressionSlope = expressionDerivateReduced(record, context, 1);
+      m_expressionSlope = expressionDerivateReduced(record, context, 1)
+                              .getSystemFunction(k_unknownName);
     } else {
       assert(prop.isParametric() || prop.isPolar());
       SystemExpression expression = parametricForm(record, context);
       assert(expression.type() == ExpressionNode::Type::Point);
-      m_expressionSlope = Division::Builder(
-          Derivative::Builder(expression.childAtIndex(1),
-                              Symbol::SystemSymbol(), Symbol::SystemSymbol()),
-          Derivative::Builder(expression.childAtIndex(0),
-                              Symbol::SystemSymbol(), Symbol::SystemSymbol()));
+      m_expressionSlope =
+          SystemExpression::CreateSimplify(
+              KMult(KA, KPow(KB, -1_e)),
+              {
+                  .KA = expression.childAtIndex(1).getReducedDerivative(
+                      k_unknownName, 1),
+                  .KB = expression.childAtIndex(0).getReducedDerivative(
+                      k_unknownName, 1),
+              })
+              .getSystemFunction(k_unknownName);
     }
-    /* On complex functions, this step can take a significant time.
-     * A workaround could be to identify big functions to skip simplification
-     * at the cost of possible inaccurate evaluations (such as
-     * diff(abs(x),x,0) not being undefined). */
-    PoincareHelpers::CloneAndSimplify(
-        &m_expressionSlope, context,
-        {.complexFormat = complexFormat(record, context),
-         .updateComplexFormatWithExpression = false,
-         .target = ReductionTarget::SystemForApproximation});
   }
   return m_expressionSlope;
 }

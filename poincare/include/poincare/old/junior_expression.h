@@ -109,6 +109,8 @@ class JuniorExpression : public OExpression {
 
   static JuniorExpression Create(const Internal::Tree* structure,
                                  Internal::ContextTrees ctx);
+  static JuniorExpression CreateSimplify(const Internal::Tree* structure,
+                                         Internal::ContextTrees ctx);
   operator const Internal::Tree*() const { return tree(); }
   // Builders from value.
   static JuniorExpression Builder(int32_t n);
@@ -161,6 +163,8 @@ class JuniorExpression : public OExpression {
   JuniorExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
 
+  JuniorExpression getReducedDerivative(const char* symbolName,
+                                        int derivationOrder) const;
   // Replace some UserSymbol into Var0 for approximateToScalarWithValue
   JuniorExpression getSystemFunction(const char* symbolName) const;
   // Approximate to scalar replacing Var0 with value.

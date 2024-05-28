@@ -68,6 +68,7 @@ void check_sequences_defined_by(
    * GlobalContext::sequenceStore singleton. It won't be destructed. However,
    * we need to make sure that the pool is empty between quiz_cases. */
   store->tidyDownstreamPoolFrom();
+  GlobalContext::sequenceCache->resetCache();
 }
 
 void check_sum_of_sequence_between_bounds(double result, double start,
@@ -90,6 +91,7 @@ void check_sum_of_sequence_between_bounds(double result, double start,
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();  // Cf comment above
+  GlobalContext::sequenceCache->resetCache();
 }
 
 QUIZ_CASE(sequence_evaluation) {

@@ -1,13 +1,12 @@
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/latex_parser/latex_to_layout.h>
-#include <poincare/src/layout/latex_parser/layout_to_latex.h>
+#include <poincare/src/layout/parsing/latex_parser.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
 void assert_latex_layouts_to(const char* latex, const Tree* l) {
-  Tree* t = LatexParser::LatexToLayout::Parse(latex);
+  Tree* t = LatexParser::LatexToLayout(latex);
   quiz_assert_print_if_failure(t->treeIsIdenticalTo(l), latex);
   t->removeTree();
 }
@@ -35,8 +34,7 @@ QUIZ_CASE(poincare_latex_to_layout) {
 void assert_layout_convert_to_latex(const Tree* l, const char* latex) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  LatexParser::LayoutToLatex::Parse(Rack::From(l), buffer,
-                                    buffer + bufferSize - 1);
+  LatexParser::LayoutToLatex(Rack::From(l), buffer, buffer + bufferSize - 1);
   quiz_assert_print_if_failure(strncmp(buffer, latex, strlen(latex)) == 0,
                                latex);
 }

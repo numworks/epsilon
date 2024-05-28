@@ -317,8 +317,7 @@ poincare_src += $(addprefix poincare/src/probability/,\
 )
 
 tests_src += $(addprefix poincare/src/,\
-  layout/latex_parser/latex_to_layout.cpp \
-  layout/latex_parser/layout_to_latex.cpp \
+  layout/parsing/latex_parser.cpp \
 )
 
 tests_src += $(addprefix poincare/test/,\

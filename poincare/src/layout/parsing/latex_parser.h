@@ -8,15 +8,8 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
-class LatexToLayout {
- public:
-  static Tree* Parse(const char* latexString);
-
- private:
-  static void ParseOnRackUntilIdentifier(Rack* parent, const char** start,
-                                         const char* endIdentifier);
-  static Tree* NextToken(const char** start);
-};
+Tree* LatexToLayout(const char* latexString);
+char* LayoutToLatex(const Rack* rack, char* buffer, char* end);
 
 }  // namespace LatexParser
 

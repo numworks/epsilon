@@ -1,5 +1,3 @@
-#include "multiplication.h"
-
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -7,6 +5,7 @@
 #include "number.h"
 #include "rational.h"
 #include "simplification.h"
+#include "systematic_operation.h"
 
 namespace Poincare::Internal {
 
@@ -130,7 +129,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   return true;
 }
 
-bool Multiplication::SimplifyMultiplication(Tree* u) {
+bool SystematicOperation::SimplifyMultiplication(Tree* u) {
   assert(u->isMult());
   bool changed = NAry::Flatten(u);
   if (changed && Simplification::CanApproximateTree(u, &changed)) {

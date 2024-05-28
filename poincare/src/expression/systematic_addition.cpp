@@ -1,11 +1,10 @@
-#include "addition.h"
-
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "matrix.h"
 #include "number.h"
 #include "simplification.h"
+#include "systematic_operation.h"
 
 namespace Poincare::Internal {
 
@@ -83,7 +82,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-bool Addition::SimplifyAddition(Tree* u) {
+bool SystematicOperation::SimplifyAddition(Tree* u) {
   assert(u->isAdd());
   bool modified = NAry::Flatten(u);
   if (modified && Simplification::CanApproximateTree(u, &modified)) {

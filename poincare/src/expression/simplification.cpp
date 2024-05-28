@@ -4,7 +4,6 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
-#include "addition.h"
 #include "advanced_simplification.h"
 #include "approximation.h"
 #include "beautification.h"
@@ -17,10 +16,10 @@
 #include "k_tree.h"
 #include "list.h"
 #include "matrix.h"
-#include "multiplication.h"
 #include "number.h"
 #include "random.h"
 #include "rational.h"
+#include "systematic_operation.h"
 #include "undefined.h"
 #include "unit.h"
 #include "variables.h"
@@ -124,7 +123,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::Abs:
       return SimplifyAbs(u);
     case Type::Add:
-      return Addition::SimplifyAddition(u);
+      return SystematicOperation::SimplifyAddition(u);
     case Type::ATanRad:
       return Trigonometry::SimplifyArcTangentRad(u);
     case Type::ATrig:
@@ -163,7 +162,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::LnReal:
       return SimplifyLnReal(u);
     case Type::Mult:
-      return Multiplication::SimplifyMultiplication(u);
+      return SystematicOperation::SimplifyMultiplication(u);
     case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
     case Type::Piecewise:

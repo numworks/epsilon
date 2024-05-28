@@ -12,8 +12,7 @@ namespace Poincare::Internal {
  * trees.) */
 
 class Simplification {
-  friend class Addition;
-  friend class Multiplication;
+  friend class SystematicOperation;
 
  public:
   static bool SimplifyWithAdaptiveStrategy(

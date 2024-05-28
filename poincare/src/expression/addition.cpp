@@ -56,7 +56,7 @@ const Tree* Constant(const Tree* u) {
   return 1_e;
 }
 
-bool Addition::MergeAdditionChildWithNext(Tree* child, Tree* next) {
+static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
   if (child->isNumber() && next->isNumber() &&

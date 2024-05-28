@@ -14,7 +14,7 @@ const Tree* Base(const Tree* u) { return u->isPow() ? u->child(0) : u; }
 
 const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
 
-bool Multiplication::MergeMultiplicationChildWithNext(Tree* child) {
+static bool MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (child->isNumber() && next->isNumber() &&
@@ -42,9 +42,8 @@ bool Multiplication::MergeMultiplicationChildWithNext(Tree* child) {
   return true;
 }
 
-bool Multiplication::MergeMultiplicationChildrenFrom(Tree* child, int index,
-                                                     int* numberOfSiblings,
-                                                     bool* zero) {
+static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
+                                            int* numberOfSiblings, bool* zero) {
   bool changed = false;
   while (index < *numberOfSiblings) {
     if (child->isZero()) {
@@ -64,10 +63,10 @@ bool Multiplication::MergeMultiplicationChildrenFrom(Tree* child, int index,
   return changed;
 }
 
-bool Multiplication::SimplifyMultiplicationChildRec(Tree* child, int index,
-                                                    int* numberOfSiblings,
-                                                    bool* multiplicationChanged,
-                                                    bool* zero) {
+static bool SimplifyMultiplicationChildRec(Tree* child, int index,
+                                           int* numberOfSiblings,
+                                           bool* multiplicationChanged,
+                                           bool* zero) {
   assert(index < *numberOfSiblings);
   // Merge child with right siblings as much as possible.
   bool childChanged =
@@ -90,7 +89,7 @@ bool Multiplication::SimplifyMultiplicationChildRec(Tree* child, int index,
   return childChanged;
 }
 
-bool Multiplication::SimplifySortedMultiplication(Tree* multiplication) {
+static bool SimplifySortedMultiplication(Tree* multiplication) {
   int n = multiplication->numberOfChildren();
   bool changed = false;
   bool zero = false;

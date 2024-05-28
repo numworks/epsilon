@@ -9,10 +9,6 @@ class Addition {
  public:
   static bool SimplifyAddition(Tree* u);
   EDITION_REF_WRAP(SimplifyAddition);
-
- private:
-  // Return true if child has been merged with next sibling.
-  static bool MergeAdditionChildWithNext(Tree* child, Tree* next);
 };
 
 }  // namespace Poincare::Internal

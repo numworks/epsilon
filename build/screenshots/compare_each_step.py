@@ -58,11 +58,7 @@ def main():
     # Computed images were taken in debug mode, but we don't know for reference images.
     _, ref_height = Image.open(list_reference_images[0]).size
     if ref_height == 240:
-        for image_path in list_computed_images:
-            im = Image.open(image_path)
-            width, height = im.size
-            im_croppped = im.crop((0, 0, width, 240))
-            im_croppped.save(image_path)
+        crop_images(list_computed_images)
     else:
         assert ref_height == 270
 

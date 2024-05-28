@@ -73,7 +73,7 @@ class ListController : public Shared::FunctionListController {
   KDCoordinate baseline(int j, Escher::HighlightCell* cell);
   void addNewModelAction() override;
   bool editSelectedRecordWithText(const char* text) override;
-  void getTextForSelectedRecord(char* text, size_t size) const override;
+  Poincare::Layout getLayoutForSelectedRecord() const override;
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore* modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;

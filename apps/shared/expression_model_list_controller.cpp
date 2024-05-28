@@ -158,11 +158,7 @@ bool ExpressionModelListController::addEmptyModel() {
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    constexpr size_t initialTextContentMaxSize =
-        Constant::MaxSerializedExpressionSize;
-    char initialTextContent[initialTextContentMaxSize];
-    getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
-    layoutField()->setText(initialTextContent);
+    layoutField()->setLayout(getLayoutForSelectedRecord());
   }
   layoutField()->setEditing(true);
   App::app()->setFirstResponder(layoutField());
@@ -184,10 +180,9 @@ bool ExpressionModelListController::editSelectedRecordWithText(
   return result;
 }
 
-void ExpressionModelListController::getTextForSelectedRecord(
-    char *text, size_t size) const {
+Layout ExpressionModelListController::getLayoutForSelectedRecord() const {
   Ion::Storage::Record record = selectedRecord();
-  modelStore()->modelForRecord(record)->text(text, size);
+  return modelStore()->modelForRecord(record)->layout();
 }
 
 bool ExpressionModelListController::removeModelRow(

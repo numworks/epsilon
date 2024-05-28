@@ -26,7 +26,7 @@ class ExpressionModelListController
                                 I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char* text);
-  virtual void getTextForSelectedRecord(char* text, size_t size) const;
+  virtual Poincare::Layout getLayoutForSelectedRecord() const;
   bool handleEventOnExpression(Ion::Events::Event event,
                                bool inTemplateMenu = false);
   bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) {

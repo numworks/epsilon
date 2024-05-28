@@ -173,20 +173,17 @@ bool ListController::editSelectedRecordWithText(const char *text) {
   return error == Ion::Storage::Record::ErrorStatus::None;
 }
 
-void ListController::getTextForSelectedRecord(char *text, size_t size) const {
+Layout ListController::getLayoutForSelectedRecord() const {
   int sequenceDefinition;
   Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
-      sequence->text(text, size);
-      break;
+      return sequence->layout();
     case k_firstInitialCondition:
-      sequence->firstInitialConditionText(text, size);
-      break;
+      return sequence->firstInitialConditionLayout();
     default:
-      sequence->secondInitialConditionText(text, size);
-      break;
+      return sequence->secondInitialConditionLayout();
   }
 }
 

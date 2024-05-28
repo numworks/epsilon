@@ -1265,7 +1265,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "cot(x)");
   // 1/tan = cot if tan(x) != undef
-  assert_parsed_expression_simplify_to("1/tan(x)", "1/tan(x)");
+  assert_parsed_expression_simplify_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
   assert_parsed_expression_simplify_to("sin(x)×π/cos(x)", "π×tan(x)");
   assert_parsed_expression_simplify_to("sin(x)/(π×cos(x))", "tan(x)/π");
   assert_parsed_expression_simplify_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");

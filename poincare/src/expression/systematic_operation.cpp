@@ -72,13 +72,18 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
   if (base->isPow()) {
     TreeRef p = base->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    // PowU PowBase w p n
-    base->removeNode();
-    MoveNodeAtNode(p, SharedTreeStack->push<Type::Mult>(2));
-    // PowU w Mult<2> p n
-    Simplification::ShallowSystematicReduce(p);
-    Simplification::ShallowSystematicReduce(u);
-    return true;
+    ComplexSign nSign = ComplexSign::Get(n);
+    ComplexSign pSign = ComplexSign::Get(p);
+    assert(nSign.isReal() && pSign.isReal());
+    if (nSign.realSign().canBeStriclyNegative() &&
+        pSign.realSign().canBeStriclyNegative()) {
+      // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
+      return PatternMatching::MatchReplaceSimplify(
+          u, KPow(KPow(KA, KB), KC),
+          KDep(KPow(KA, KMult(KB, KC)), KSet(KPow(KA, KB))));
+    }
+    return PatternMatching::MatchReplaceSimplify(u, KPow(KPow(KA, KB), KC),
+                                                 KPow(KA, KMult(KB, KC)));
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (base->isMult()) {

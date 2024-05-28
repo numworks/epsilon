@@ -228,6 +228,11 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
   const Tree* tree = insertLayoutContext->m_tree;
+
+  if (tree->isRackLayout() && Rack::IsEmpty(tree)) {
+    return;
+  }
+
   Tree* copy = SharedTreeStack->contains(tree)
                    ? const_cast<Tree*>(insertLayoutContext->m_tree)
                    : tree->clone();
@@ -236,10 +241,6 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
   TreeRef ref(copy);
   if (!copy->isRackLayout()) {
     copy->cloneNodeAtNode(KRackL.node<1>);
-  }
-
-  if (Rack::IsEmpty(ref)) {
-    return;
   }
 
   assert(!forceRight || !forceLeft);

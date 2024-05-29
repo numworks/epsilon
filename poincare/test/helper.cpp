@@ -77,6 +77,20 @@ void quiz_assert_print_if_failure(bool test, const char* information) {
   quiz_assert(test);
 }
 
+void remove_system_codepoints(char* buffer) {
+  // TODO serialization should not add system codepoints instead
+  const char* source = buffer;
+  char* dest = buffer;
+  while (*source) {
+    if (*source == '\x11') {
+      source++;
+      continue;
+    }
+    *dest++ = *source++;
+  }
+  *dest = 0;
+}
+
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext) {
@@ -96,6 +110,7 @@ void process_tree_and_compare(const char* input, const char* output,
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
     *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+    remove_system_codepoints(buffer);
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;

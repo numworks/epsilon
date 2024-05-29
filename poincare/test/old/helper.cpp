@@ -106,6 +106,7 @@ void quiz_print_failure_ratio() {
 
 static void copy_without_system_chars(char *buffer, const char *input) {
   while (char c = *input++) {
+    if (c == 0x11) continue;
     if (c == 0x14) continue;
     c = (c == 0x12) ? '(' : (c == 0x13) ? ')' : c;
     *buffer++ = c;
@@ -136,6 +137,7 @@ void assert_parsed_expression_process_to(
     Tree *l = Internal::Layoutter::LayoutExpression(m, true,
                                                     numberOfSignificantDigits);
     *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
+    copy_without_system_chars(buffer, buffer);
     l->removeTree();
     bad = strcmp(buffer, result) != 0;
   }

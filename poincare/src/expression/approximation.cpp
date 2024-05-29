@@ -398,6 +398,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     }
     case Type::Abs:
       return std::abs(ToComplex<T>(node->child(0)));
+    case Type::Arg:
+      return std::arg(ToComplex<T>(node->child(0)));
     case Type::Inf:
       return INFINITY;
     case Type::Conj:

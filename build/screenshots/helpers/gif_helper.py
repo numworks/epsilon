@@ -64,6 +64,10 @@ def create_diff_gif(list_images_1, list_images_2, gif_destination_folder):
     if len(list_images_1) != n:
         print("Error: lists of images are not the same size. Cannot compare.")
         sys.exit(1)
+    _, height_1 = image_size(list_images_1[0])
+    _, height_2 = image_size(list_images_2[0])
+    if height_1 != height_2:
+        crop_images(list_images_1 if height_1 != 240 else list_images_2)
     print("Generating all diff images")
     diff_image = os.path.join(diff_folder, "diff.png")
     images_to_remove = []

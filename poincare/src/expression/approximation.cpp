@@ -198,13 +198,6 @@ static T FloatSubtraction(T a, T b) {
 }
 
 template <typename T>
-static T FloatLog(T a, T b) {
-  return a == static_cast<T>(0) || b == static_cast<T>(0)
-             ? NAN
-             : std::log(a) / std::log(b);
-}
-
-template <typename T>
 T Approximation::FloatBinomial(T k, T n) {
   if (k != std::round(k)) {
     return NAN;
@@ -277,22 +270,23 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   }
   // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
-    // Handle case of pure imaginary/real divisions
-    if (c.imag() == 0 && d.imag() == 0) {
-      return {c.real() / d.real(), 0};
+    // Handle case when d is pure imaginary/real
+    if (d.imag() == 0) {
+      return {c.real() / d.real(), c.imag() / d.real()};
     }
-    if (c.real() == 0 && d.real() == 0) {
-      return {c.imag() / d.imag(), 0};
-    }
-    if (c.imag() == 0 && d.real() == 0) {
-      return {0, -c.real() / d.imag()};
-    }
-    if (c.real() == 0 && d.imag() == 0) {
-      return {0, c.imag() / d.real()};
+    if (d.real() == 0) {
+      return {c.imag() / d.imag(), -c.real() / d.imag()};
     }
     // Other cases are left to the standard library, and might return NaN.
   }
   return c / d;
+}
+
+template <typename T>
+static T FloatLog(T a, T b) {
+  return a == static_cast<T>(0) || b == static_cast<T>(0)
+             ? NAN
+             : FloatDivision(std::log(a), std::log(b));
 }
 
 // Return true if one of the dependencies is undefined

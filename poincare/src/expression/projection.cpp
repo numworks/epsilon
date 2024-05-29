@@ -284,6 +284,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // A nand B -> not (A and B)
       PatternMatching::MatchReplace(e, KLogicalNand(KA, KB),
                                     KLogicalNot(KLogicalAnd(KA, KB))) ||
+      // Diff(A, B, C)  -> NThDiff(A, B, 1, C)
+      PatternMatching::MatchReplace(e, KDiff(KA, KB, KC),
+                                    KNthDiff(KA, KB, 1_e, KC)) ||
       changed;
 }
 

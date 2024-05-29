@@ -208,6 +208,7 @@ $$
 | arcosh(A) | ln(A + sqrt(A - 1)×sqrt(A + 1)) |
 | arsinh(A) | ln(A + sqrt(A^2 + 1)) |
 | artanh(A) | (ln(1+A)-ln(1-A))×1/2 |
+| Diff(A, B, C) | NThDiff(A, B, 1, C) |
 
 </details>
 

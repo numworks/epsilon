@@ -367,6 +367,9 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(
           e, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),
           KAdd(KA_s, KC_s, KFrac(KB), KD_s)) ||
+      // NThDiff(A, B, 1, C) -> Diff(A, B, C)
+      PatternMatching::MatchReplace(e, KNthDiff(KA, KB, 1_e, KC),
+                                    KDiff(KA, KB, KC)) ||
       ShallowBeautifyPercent(e) || changed;
 }
 

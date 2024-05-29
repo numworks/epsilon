@@ -23,7 +23,6 @@ int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
        * the computed yDeg here was unknown instead of 0. */
     case Type::UserFunction:
       // Functions would have been replaced beforehand if it had a definition.
-    case Type::Diff:
     case Type::NthDiff:
       // TODO: One could implement something like :
       // Deg(Diff(f(t), t, g(x)), x) = max(0, Deg(f(t), t) - 1) * Deg(g(x), x)

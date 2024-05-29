@@ -29,7 +29,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
         !Undefined::CanHaveUndefinedChild(expr, i)) {
       Tree* exprChildSet = Dependencies(exprChild);
       if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
-        if (expr->isDiff() || expr->isNthDiff()) {
+        if (expr->isNthDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
           const Tree* symbolValue = expr->child(1);
           Variables::LeaveScopeWithReplacement(exprChildSet, symbolValue,

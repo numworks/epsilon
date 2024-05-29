@@ -15,23 +15,16 @@ namespace Poincare::Internal {
 
 bool Derivation::ShallowSimplify(Tree* node) {
   // Tree is expected to have been reduced beforehand.
-  assert(node->isDiff() || node->isNthDiff());
+  assert(node->isNthDiff());
   const Tree* symbol = node->child(0);
   const Tree* symbolValue = symbol->nextTree();
-  const Tree* constDerivand;
-  int derivationOrder;
-  if (node->isDiff()) {
-    derivationOrder = 1;
-    constDerivand = symbolValue->nextTree();
-  } else {
-    const Tree* order = symbolValue->nextTree();
-    if (!Integer::Is<uint8_t>(order)) {
-      node->cloneTreeOverTree(KUndefUnhandled);
-      return true;
-    }
-    derivationOrder = Integer::Handler(order).to<uint8_t>();
-    constDerivand = order->nextTree();
+  const Tree* order = symbolValue->nextTree();
+  if (!Integer::Is<uint8_t>(order)) {
+    node->cloneTreeOverTree(KUndefUnhandled);
+    return true;
   }
+  int derivationOrder = Integer::Handler(order).to<uint8_t>();
+  const Tree* constDerivand = order->nextTree();
   Tree* derivand = constDerivand->clone();
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
@@ -84,7 +77,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
      * don't handle sums and product of points, so we escape the case here. */
     return PatternMatching::CreateSimplify(
-        KPoint(KDiff(KA, KB, KC), KDiff(KA, KB, KD)),
+        KPoint(KNthDiff(KA, KB, 1_e, KC), KNthDiff(KA, KB, 1_e, KD)),
         {.KA = symbol,
          .KB = symbolValue,
          .KC = derivand->child(0),
@@ -109,9 +102,10 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     Tree* mult = SharedTreeStack->push<Type::Mult>(1);
     if (!Derivate(derivandChild, symbolValue, symbol)) {
       // Could not derivate, preserve D(gi(x))
-      Tree* preservedDerivative = SharedTreeStack->push(Type::Diff);
+      Tree* preservedDerivative = SharedTreeStack->push(Type::NthDiff);
       symbol->clone();
       symbolValue->clone();
+      (1_e)->clone();
       derivandChild->clone();
       // EnterScope here since scope is preserved in Derivation::Derivate.
       Variables::EnterScope(preservedDerivative);

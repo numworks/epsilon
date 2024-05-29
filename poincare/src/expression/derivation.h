@@ -13,8 +13,7 @@ class Derivation {
  private:
   /* Push derivand derivation on the pool. If force is true, push a diff tree
    * anyway when we can't derivate. */
-  static Tree* Derivate(const Tree* derivand, const Tree* symbolValue,
-                        const Tree* symbol, bool force);
+  static Tree* Derivate(const Tree* derivand, const Tree* symbol, bool force);
 
   EDITION_REF_WRAP(ShallowSimplify)
 

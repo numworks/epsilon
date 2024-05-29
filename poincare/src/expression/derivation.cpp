@@ -28,7 +28,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   Tree* derivand = constDerivand->clone();
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
-    Tree* derivative = Derivate(derivand, symbolValue, symbol, false);
+    Tree* derivative = Derivate(derivand, symbol, false);
     if (!derivative) {
       // TODO is it worth to save the partial derivation if any ?
       derivand->removeTree();
@@ -68,8 +68,8 @@ bool Derivation::ShallowSimplify(Tree* node) {
 }
 
 // Derivate derivand preserving scope (V0^2 is derived to 2*V0).
-Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
-                           const Tree* symbol, bool force) {
+Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbol,
+                           bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
@@ -85,8 +85,8 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
     /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
      * don't handle sums and product of points, so we escape the case here. */
     Tree* result = SharedTreeStack->push(Type::Point);
-    Derivate(derivand->child(0), symbolValue, symbol, true);
-    Derivate(derivand->child(1), symbolValue, symbol, true);
+    Derivate(derivand->child(0), symbol, true);
+    Derivate(derivand->child(1), symbol, true);
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
@@ -125,7 +125,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
       return preservedDerivative;
     }
     NAry::SetNumberOfChildren(mult, 2);
-    Derivate(derivandChild, symbolValue, symbol, true);
+    Derivate(derivandChild, symbol, true);
     Simplification::ShallowSystematicReduce(mult);
     derivandChild = derivandChild->nextTree();
   }

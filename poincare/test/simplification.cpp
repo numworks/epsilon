@@ -464,6 +464,10 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
+
+  simplifies_to("sin(x)*(cos(x)^-1)*ln(x)", "dep(ln(x)×tan(x),{ln(x)})");
+  simplifies_to("ln(x)*tan(x)", "dep(ln(x)×tan(x),{ln(x)})");
+  simplifies_to("sin(x)*(cos(y)^-1)*(cos(x)^-1)*sin(y)", "tan(x)×tan(y)");
 }
 
 QUIZ_CASE(pcj_simplification_arithmetic) {

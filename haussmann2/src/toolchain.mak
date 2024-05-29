@@ -5,6 +5,7 @@ HOSTCXX := g++
 HOSTLD := g++
 
 SFLAGS := \
+  -DDEBUG=$(DEBUG) \
   -I. \
   -I$(OUTPUT_DIRECTORY) \
   -MMD \
@@ -12,7 +13,7 @@ SFLAGS := \
   -Wall
 
 ifeq ($(DEBUG),0)
-SFLAGS += -Os
+SFLAGS += -Os -DNDEBUG
 else
 SFLAGS += -O0 -g
 endif

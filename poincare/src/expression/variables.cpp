@@ -159,16 +159,11 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
       strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
     // Otherwise, local variable scope should be handled.
     assert(!Variables::HasVariables(replacement));
-    bool treeIsUserFunction = true;
     TreeRef evaluateAt;
-    if (treeIsUserFunction) {
-      evaluateAt = expr->child(0)->clone();
-    }
+    evaluateAt = expr->child(0)->clone();
     expr->cloneTreeOverTree(replacement);
-    if (treeIsUserFunction) {
-      expr->deepReplaceWith(KUnknownSymbol, evaluateAt);
-      evaluateAt->removeTree();
-    }
+    expr->deepReplaceWith(KUnknownSymbol, evaluateAt);
+    evaluateAt->removeTree();
     return true;
   }
   bool isParametric = expr->isParametric();

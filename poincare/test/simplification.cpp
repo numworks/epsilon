@@ -459,8 +459,8 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(-1)", "-π/4");
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
-  // TODO_PCJ: simplifies_to("sec(arcsec(x))", "x");
-  // TODO_PCJ: simplifies_to("csc(arccsc(x))", "x");
+  simplifies_to("sec(arcsec(x))", "dep(x,{1/x})");
+  simplifies_to("csc(arccsc(x))", "dep(x,{1/x})");
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);

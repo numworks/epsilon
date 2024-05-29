@@ -24,6 +24,7 @@ class Parametric {
   static bool ContractProductOfExp(Tree* t);
 
   // Accepts layout and expressions
+  static bool IsFunctionIndex(int i, const Tree* t);
   static uint8_t FunctionIndex(const Tree* t);
   static uint8_t FunctionIndex(TypeBlock type);
 

@@ -1231,7 +1231,7 @@ bool Approximation::CanApproximate(const Tree* tree,
         childIndex++;
         continue;
       }
-      if (childIndex == Parametric::FunctionIndex(tree)) {
+      if (Parametric::IsFunctionIndex(childIndex, tree)) {
         enterScope = true;
       }
     }

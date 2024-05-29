@@ -57,7 +57,7 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
   bool isParametric = expr->isParametric();
   for (IndexedChild<const Tree*> child : expr->indexedChildren()) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
-    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
+    } else if (isParametric && Parametric::IsFunctionIndex(child.index, expr)) {
       Tree* subSet = Set::PushEmpty();
       GetUserSymbols(child, subSet);
       Tree* boundSymbols = Set::PushEmpty();
@@ -103,7 +103,7 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
   bool changed = false;
   for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        id + (isParametric && child.index == Parametric::FunctionIndex(expr));
+        id + (isParametric && Parametric::IsFunctionIndex(child.index, expr));
     changed = Replace(child, updatedId, value, leave, simplify) || changed;
   }
   if (simplify && changed) {
@@ -130,7 +130,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   bool changed = false;
   for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
-    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
+    } else if (isParametric && Parametric::IsFunctionIndex(child.index, expr)) {
       // No need to continue if symbol is hidden by a local definition
       if (strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
                  symbol) != 0) {
@@ -169,7 +169,7 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
      * definition */
     if (!(isParametric &&
           (child.index == Parametric::k_variableIndex ||
-           (child.index == Parametric::FunctionIndex(expr) &&
+           (Parametric::IsFunctionIndex(child.index, expr) &&
             strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
                    Symbol::GetName(symbol)) == 0)))) {
       changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
@@ -198,7 +198,7 @@ bool Variables::ProjectLocalVariablesToId(Tree* expr, uint8_t depth) {
   bool isParametric = expr->isParametric();
   for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
-    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
+    } else if (isParametric && Parametric::IsFunctionIndex(child.index, expr)) {
       // Project local variable
       ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
                     Parametric::VariableSign(expr));
@@ -215,7 +215,7 @@ bool Variables::BeautifyToName(Tree* expr, uint8_t depth) {
   bool changed = false;
   bool isParametric = expr->isParametric();
   for (IndexedChild<Tree*> child : expr->indexedChildren()) {
-    if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
+    if (isParametric && Parametric::IsFunctionIndex(child.index, expr)) {
       // beautify variable introduced by this scope
       // TODO: check that name is available here or make new name
       changed = Replace(child, 0, expr->child(Parametric::k_variableIndex)) ||
@@ -249,7 +249,7 @@ bool Variables::HasVariable(const Tree* expr, int id) {
   bool isParametric = expr->isParametric();
   for (IndexedChild<const Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        id + (isParametric && child.index == Parametric::FunctionIndex(expr));
+        id + (isParametric && Parametric::IsFunctionIndex(child.index, expr));
     if (HasVariable(child, updatedId)) {
       return true;
     }
@@ -269,7 +269,7 @@ void Variables::EnterOrLeaveScope(Tree* expr, bool enter, int var) {
   bool isParametric = expr->isParametric();
   for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        var + (isParametric && child.index == Parametric::FunctionIndex(expr));
+        var + (isParametric && Parametric::IsFunctionIndex(child.index, expr));
     EnterOrLeaveScope(child, enter, updatedId);
   }
 }

@@ -38,6 +38,13 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
   }
 }
 
+bool Parametric::IsFunctionIndex(int i, const Tree* t) {
+  if (t->isIntegralWithAlternatives()) {
+    return i >= 3;
+  }
+  return i == FunctionIndex(t);
+}
+
 ComplexSign Parametric::VariableSign(const Tree* t) {
   switch (t->type()) {
     case Type::Diff:

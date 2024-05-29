@@ -27,8 +27,8 @@ bool Derivation::ShallowSimplify(Tree* node) {
   const Tree* constDerivand = order->nextTree();
   // Derivate the derivand successively, preserving local variable scope.
   Tree* derivative = constDerivand->clone();
-  int currentDerivationOrder = derivationOrder;
-  while (currentDerivationOrder > 0) {
+  int currentDerivationOrder = 0;
+  while (currentDerivationOrder < derivationOrder) {
     Tree* nextDerivative = Derivate(derivative, symbol, false);
     // Remove previous derivative
     if (!nextDerivative) {
@@ -51,16 +51,16 @@ bool Derivation::ShallowSimplify(Tree* node) {
     }
     if (derivative->isZero()) {
       // Early escape null derivative
-      currentDerivationOrder = 0;
+      currentDerivationOrder = derivationOrder;
     } else {
-      currentDerivationOrder--;
+      currentDerivationOrder++;
     }
   }
 
   Variables::LeaveScopeWithReplacement(derivative, symbolValue, true);
 
   // Add a dependency on initial derivand if anything has been derived.
-  if (currentDerivationOrder < derivationOrder && !derivative->isUndefined()) {
+  if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
     SharedTreeStack->push<Type::Set>(1);
     Variables::LeaveScopeWithReplacement(constDerivand->clone(), symbolValue,

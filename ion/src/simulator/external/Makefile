@@ -1,6 +1,4 @@
-SFLAGS += -Iion/src/simulator/external/ -Iion/src/simulator/external/sdl/include
-
-sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
+$(eval $(call create_module,sdl,1,$(addprefix sdl/src/, \
   SDL.c \
   SDL_assert.c \
   SDL_dataqueue.c \
@@ -104,19 +102,15 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   video/dummy/SDL_nullframebuffer.c \
   video/dummy/SDL_nullvideo.c \
   video/yuv2rgb/yuv_rgb.c \
-)
+)))
 
-ifeq ($(DEBUG),1)
-SDL_SFLAGS += -DSDL_ASSERT_LEVEL=2
+SFLAGS_sdl += -Iion/src/simulator/external/sdl/include
+
+PRIVATE_SFLAGS_sdl += -w
+ifeq ($(DEBUG),0)
+PRIVATE_SFLAGS_sdl += -DSDL_ASSERT_LEVEL=0
 else
-SDL_SFLAGS += -DSDL_ASSERT_LEVEL=0
+PRIVATE_SFLAGS_sdl += -DSDL_ASSERT_LEVEL=2
 endif
 
-# Ignore warnings from external sources
-SDL_SFLAGS += -w
-
-include ion/src/simulator/external/config.$(TARGET).mak
-
-$(call object_for,$(sdl_src)): SFLAGS += $(SDL_SFLAGS)
-
-ion_src += $(sdl_src)
+include $(PATH_sdl)/$(PLATFORM).mak

@@ -73,6 +73,14 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
+  // Merge subsequent nested derivatives. Avoid infinite simplification loops.
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(KNthDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
+    Tree* result =
+        PatternMatching::Create(KNthDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
+    Simplification::ShallowSystematicReduce(result->child(2));
+    return result;
+  }
   if (derivand->isPoint()) {
     /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
      * don't handle sums and product of points, so we escape the case here. */

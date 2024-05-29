@@ -44,8 +44,10 @@ QUIZ_CASE(poincare_expression_to_layout) {
 
 void assert_expression_layouts_and_serializes_to(OExpression expression,
                                                  const char* serialization) {
-  OLayout layout = expression.createLayout(
-      DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
+  OLayout layout =
+      JuniorExpression(expression)
+          .createLayout(DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits,
+                        nullptr);
 #if O
   // TODO_PCJ ? should be adapted since system parentheses are gone
   assert_layout_serializes_to(layout, serialization);
@@ -313,20 +315,20 @@ QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {
   assert_expression_layouts_and_serializes_to(
       Addition::Builder(
           {Multiplication::Builder(BasedInteger::Builder(2),
-                                   OExpression::Parse("_h", nullptr)),
+                                   Expression::Parse("_h", nullptr)),
            Multiplication::Builder(BasedInteger::Builder(3),
-                                   OExpression::Parse("_min", nullptr)),
+                                   Expression::Parse("_min", nullptr)),
            Multiplication::Builder(Decimal::Builder(4.5),
-                                   OExpression::Parse("_s", nullptr))}),
+                                   Expression::Parse("_s", nullptr))}),
       "2h3min4.5s");
   assert_expression_layouts_and_serializes_to(
       Addition::Builder(
           {Multiplication::Builder(BasedInteger::Builder(2),
-                                   OExpression::Parse("_h", nullptr)),
+                                   Expression::Parse("_h", nullptr)),
            Multiplication::Builder(BasedInteger::Builder(3),
-                                   OExpression::Parse("_min", nullptr)),
+                                   Expression::Parse("_min", nullptr)),
            Multiplication::Builder(Decimal::Builder(4, 30),
-                                   OExpression::Parse("_s", nullptr))}),
+                                   Expression::Parse("_s", nullptr))}),
       "2h+3min+4ᴇ30s");
 }
 

@@ -72,12 +72,13 @@ bool Derivation::ShallowSimplify(Tree* node) {
   return true;
 }
 
-// Derive derivand preserving scope (V0^2 is derived to 2*V0).
+// Derive derivand preserving scope (V0^2 -> 2*V0).
 Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
-  // Merge subsequent nested derivatives. Avoid infinite simplification loops.
+  /* Merge subsequent nested derivatives. Avoid infinite simplification loops.
+   * diff(f(V0), x, V0, n) -> diff(f(V0), x, V0, n+1) */
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KNthDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
     Tree* result =
@@ -86,8 +87,9 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     return result;
   }
   if (derivand->isPoint()) {
-    /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
-     * don't handle sums and product of points, so we escape the case here. */
+    /* (f(V0), g(V0)) -> (diff(f(V0), symbol, V0), diff(g(V0), symbol, V0))
+     * We could have Di(Point) to be (i==0,i==1), but we don't handle sums and
+     * product of points, so we escape the case here. */
     Tree* result = SharedTreeStack->push(Type::Point);
     Derive(derivand->child(0), symbol, true);
     Derive(derivand->child(1), symbol, true);
@@ -95,20 +97,18 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     return result;
   }
   if (derivand->isRandomNode()) {
-    // Do not handle random nodes in derivation.
+    /* Do not handle random nodes in derivation
+     * randint(1,5) -> undef */
     return KUndefUnhandled->clone();
   }
-  int numberOfChildren = derivand->numberOfChildren();
-  if (numberOfChildren == 0) {
-    return (0_e)->clone();
-  }
-
+  /* General case :
+   * f(g0(V0), g1(V0), ...) -> ... + Di(f) * diff(gi(V0), symbol, V0) + ...
+   * With Di the partial derivative on parameter i (see ShallowPartialDerivate)
+   * If f has no children, derivand cannot depend of V0, and empty addition is 0
+   * π->0 */
   Tree* result = SharedTreeStack->push<Type::Add>(0);
-  const Tree* derivandChild = derivand->child(0);
-  /* D(f(g0(x),g1(x), ...)) = Sum(Di(f)(g0(x),g1(x), ...)*D(gi(x)))
-   * With D being the Derivative and Di being the partial derivative on
-   * parameter i. */
-  for (int i = 0; i < numberOfChildren; i++) {
+  int i = 0;
+  for (const Tree* derivandChild : derivand->children()) {
     NAry::SetNumberOfChildren(result, i + 1);
     Tree* mult = SharedTreeStack->push<Type::Mult>(0);
     if (!ShallowPartialDerivate(derivand, i)) {
@@ -117,21 +117,22 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
       if (!force) {
         return nullptr;
       }
-      // Fallback to Diff(derivand)
+      /* Fallback to Diff(derivand)
+       * f(V0+V1) -> diff(f(V0+V2), symbol, V0) */
       Tree* preservedDerivative = SharedTreeStack->push(Type::NthDiff);
       symbol->clone();
       KVarX->clone();
       (1_e)->clone();
       Tree* nestedDerivand = derivand->clone();
-      /* Scope is preserved in Derivation::Derive. f(V0+V1) is derived to
-       * diff(symbol, V0, f(V0+V2)). */
       Variables::EnterScopeExceptLocalVariable(nestedDerivand);
       return preservedDerivative;
     }
+
     NAry::SetNumberOfChildren(mult, 2);
     Derive(derivandChild, symbol, true);
+
     Simplification::ShallowSystematicReduce(mult);
-    derivandChild = derivandChild->nextTree();
+    i++;
   }
   Simplification::ShallowSystematicReduce(result);
   return result;
@@ -188,13 +189,13 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       Tree* multiplication;
       if (derivand->isPow()) {
         multiplication = SharedTreeStack->push<Type::Mult>(2);
-        SharedTreeStack->clone(derivand->child(1));
+        derivand->child(1)->clone();
       }
-      Tree* newNode = SharedTreeStack->clone(derivand, false);
+      Tree* newNode = derivand->cloneNode();
       derivand->child(0)->clone();
       Tree* addition = SharedTreeStack->push<Type::Add>(2);
-      SharedTreeStack->clone(derivand->child(1));
-      SharedTreeStack->push(Type::MinusOne);
+      derivand->child(1)->clone();
+      (-1_e)->clone();
       Simplification::ShallowSystematicReduce(addition);
       Simplification::ShallowSystematicReduce(newNode);
       if (derivand->isPow()) {

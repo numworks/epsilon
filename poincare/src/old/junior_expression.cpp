@@ -620,7 +620,6 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   if (isUninitialized()) {
     return *this;
   }
-  assert(!symbol.tree()->isUserSequence());
   assert(symbol.tree()->isUserNamed());
   Tree* result = tree()->clone();
   assert(!onlySecondTerm || result->numberOfChildren() >= 2);

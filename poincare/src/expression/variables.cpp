@@ -146,9 +146,9 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
-void Variables::ReplaceUserFunctionWithTree(Tree* expr,
-                                            const Tree* replacement) {
-  assert(expr->isUserFunction());
+void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* expr,
+                                                      const Tree* replacement) {
+  assert(expr->isUserFunction() || expr->isUserSequence());
   // Otherwise, local variable scope should be handled.
   assert(!Variables::HasVariables(replacement));
   TreeRef evaluateAt = expr->child(0)->clone();
@@ -165,16 +165,23 @@ void Variables::ReplaceUserFunctionWithTree(Tree* expr,
  * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
 bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                       const Tree* replacement) {
-  assert(!symbol->isUserSequence());
-  if (symbol->isUserSymbol() && expr->isUserSymbol() &&
+  // TODO deep was before in SymbolAbstract::replaceSymbolWithExpression
+  // does it change anything (replace f(f(0)) with f(0) -> 0) -> 0 ?
+  if (symbol->isUserNamed() && symbol->type() == expr->type() &&
       strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
-    expr->cloneTreeOverTree(replacement);
-    return true;
-  }
-  if (symbol->isUserFunction() && expr->isUserFunction() &&
-      strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
-    ReplaceUserFunctionWithTree(expr, replacement);
-    return true;
+    if (symbol->isUserSymbol()) {
+      expr->cloneTreeOverTree(replacement);
+      return true;
+    }
+    if (symbol->child(0)->isUserSymbol()) {
+      ReplaceUserFunctionOrSequenceWithTree(expr, replacement);
+      return true;
+    }
+    if (symbol->treeIsIdenticalTo(expr)) {
+      expr->cloneTreeOverTree(replacement);
+      return true;
+    }
+    return false;
   }
   bool isParametric = expr->isParametric();
   bool changed = false;

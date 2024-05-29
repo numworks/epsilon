@@ -67,7 +67,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   }
   if (treeIsUserFunction) {
     // Replace function's symbol with definition
-    Variables::ReplaceUserFunctionWithTree(tree, definition);
+    Variables::ReplaceUserFunctionOrSequenceWithTree(tree, definition);
   } else {
     // Otherwise, local variable scope should be handled.
     assert(!Variables::HasVariables(definition));

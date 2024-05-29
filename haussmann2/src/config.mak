@@ -35,5 +35,12 @@ HOST := unknown
 endif
 endif
 
+# Git repository patch level
+GIT := $(shell command -v git 2> /dev/null)
+PATCH_LEVEL = NONE
+ifdef GIT
+  PATCH_LEVEL = $(shell (git rev-parse HEAD || echo NONE) | head -c 7)
+endif
+
 # Platform specific configuration
 include $(PATH_haussmann)/src/configs/$(PLATFORM).mak

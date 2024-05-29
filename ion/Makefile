@@ -28,148 +28,11 @@ _sources_ion_all := $(addprefix src/, \
   shared/storage/file_system.cpp \
   shared/storage/record.cpp \
   shared/storage/record_name_verifier.cpp \
-  simulator/external/sdl/src/SDL.c \
-  simulator/external/sdl/src/SDL_assert.c \
-  simulator/external/sdl/src/SDL_dataqueue.c \
-  simulator/external/sdl/src/SDL_error.c \
-  simulator/external/sdl/src/SDL_hints.c \
-  simulator/external/sdl/src/SDL_log.c \
-  simulator/external/sdl/src/atomic/SDL_atomic.c \
-  simulator/external/sdl/src/atomic/SDL_spinlock.c \
-  simulator/external/sdl/src/audio/SDL_audio.c \
-  simulator/external/sdl/src/audio/SDL_audiocvt.c \
-  simulator/external/sdl/src/audio/SDL_audiodev.c \
-  simulator/external/sdl/src/audio/SDL_audiotypecvt.c \
-  simulator/external/sdl/src/audio/SDL_mixer.c \
-  simulator/external/sdl/src/audio/SDL_wave.c \
-  simulator/external/sdl/src/audio/coreaudio/SDL_coreaudio.m \
-  simulator/external/sdl/src/audio/disk/SDL_diskaudio.c \
-  simulator/external/sdl/src/audio/dummy/SDL_dummyaudio.c \
-  simulator/external/sdl/src/core/unix/SDL_poll.c \
-  simulator/external/sdl/src/cpuinfo/SDL_cpuinfo.c \
-  simulator/external/sdl/src/dynapi/SDL_dynapi.c \
-  simulator/external/sdl/src/events/SDL_clipboardevents.c \
-  simulator/external/sdl/src/events/SDL_displayevents.c \
-  simulator/external/sdl/src/events/SDL_dropevents.c \
-  simulator/external/sdl/src/events/SDL_events.c \
-  simulator/external/sdl/src/events/SDL_gesture.c \
-  simulator/external/sdl/src/events/SDL_keyboard.c \
-  simulator/external/sdl/src/events/SDL_mouse.c \
-  simulator/external/sdl/src/events/SDL_quit.c \
-  simulator/external/sdl/src/events/SDL_windowevents.c \
-  simulator/external/sdl/src/events/SDL_touch.c \
-  simulator/external/sdl/src/file/SDL_rwops.c \
-  simulator/external/sdl/src/file/cocoa/SDL_rwopsbundlesupport.m \
-  simulator/external/sdl/src/filesystem/cocoa/SDL_sysfilesystem.m \
-  simulator/external/sdl/src/haptic/SDL_haptic.c \
-  simulator/external/sdl/src/haptic/darwin/SDL_syshaptic.c \
-  simulator/external/sdl/src/hidapi/SDL_hidapi.c \
-  simulator/external/sdl/src/joystick/SDL_gamecontroller.c \
-  simulator/external/sdl/src/joystick/SDL_joystick.c \
-  simulator/external/sdl/src/joystick/dummy/SDL_sysjoystick.c \
-  simulator/external/sdl/src/joystick/darwin/SDL_iokitjoystick.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_gamecube.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_ps4.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_ps5.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_rumble.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_steam.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_switch.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xbox360.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xbox360w.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xboxone.c \
-  simulator/external/sdl/src/joystick/hidapi/SDL_hidapijoystick.c \
-  simulator/external/sdl/src/joystick/virtual/SDL_virtualjoystick.c \
-  simulator/external/sdl/src/loadso/dlopen/SDL_sysloadso.c \
-  simulator/external/sdl/src/locale/SDL_locale.c \
-  simulator/external/sdl/src/locale/macosx/SDL_syslocale.m \
-  simulator/external/sdl/src/main/dummy/SDL_dummy_main.c \
-  simulator/external/sdl/src/misc/SDL_url.c \
-  simulator/external/sdl/src/misc/macosx/SDL_sysurl.m \
-  simulator/external/sdl/src/power/SDL_power.c \
-  simulator/external/sdl/src/power/macosx/SDL_syspower.c \
-  simulator/external/sdl/src/render/SDL_d3dmath.c \
-  simulator/external/sdl/src/render/SDL_yuv_sw.c \
-  simulator/external/sdl/src/render/SDL_render.c \
-  simulator/external/sdl/src/render/direct3d/SDL_render_d3d.c \
-  simulator/external/sdl/src/render/direct3d/SDL_shaders_d3d.c \
-  simulator/external/sdl/src/render/direct3d11/SDL_render_d3d11.c \
-  simulator/external/sdl/src/render/direct3d11/SDL_shaders_d3d11.c \
-  simulator/external/sdl/src/render/metal/SDL_render_metal.m \
-  simulator/external/sdl/src/render/opengl/SDL_render_gl.c \
-  simulator/external/sdl/src/render/opengl/SDL_shaders_gl.c \
-  simulator/external/sdl/src/render/opengles/SDL_render_gles.c \
-  simulator/external/sdl/src/render/opengles2/SDL_render_gles2.c \
-  simulator/external/sdl/src/render/opengles2/SDL_shaders_gles2.c \
-  simulator/external/sdl/src/render/psp/SDL_render_psp.c \
-  simulator/external/sdl/src/render/software/SDL_blendfillrect.c \
-  simulator/external/sdl/src/render/software/SDL_blendline.c \
-  simulator/external/sdl/src/render/software/SDL_blendpoint.c \
-  simulator/external/sdl/src/render/software/SDL_drawline.c \
-  simulator/external/sdl/src/render/software/SDL_drawpoint.c \
-  simulator/external/sdl/src/render/software/SDL_render_sw.c \
-  simulator/external/sdl/src/render/software/SDL_rotate.c \
-  simulator/external/sdl/src/sensor/SDL_sensor.c \
-  simulator/external/sdl/src/sensor/dummy/SDL_dummysensor.c \
-  simulator/external/sdl/src/stdlib/SDL_crc32.c \
-  simulator/external/sdl/src/stdlib/SDL_getenv.c \
-  simulator/external/sdl/src/stdlib/SDL_iconv.c \
-  simulator/external/sdl/src/stdlib/SDL_malloc.c \
-  simulator/external/sdl/src/stdlib/SDL_qsort.c \
-  simulator/external/sdl/src/stdlib/SDL_stdlib.c \
-  simulator/external/sdl/src/stdlib/SDL_string.c \
-  simulator/external/sdl/src/stdlib/SDL_strtokr.c \
-  simulator/external/sdl/src/thread/SDL_thread.c \
-  simulator/external/sdl/src/thread/pthread/SDL_syscond.c \
-  simulator/external/sdl/src/thread/pthread/SDL_sysmutex.c \
-  simulator/external/sdl/src/thread/pthread/SDL_systhread.c \
-  simulator/external/sdl/src/thread/pthread/SDL_systls.c \
-  simulator/external/sdl/src/thread/pthread/SDL_syssem.c \
-  simulator/external/sdl/src/timer/SDL_timer.c \
-  simulator/external/sdl/src/timer/unix/SDL_systimer.c \
-  simulator/external/sdl/src/video/SDL_RLEaccel.c \
-  simulator/external/sdl/src/video/SDL_blit.c \
-  simulator/external/sdl/src/video/SDL_blit_0.c \
-  simulator/external/sdl/src/video/SDL_blit_1.c \
-  simulator/external/sdl/src/video/SDL_blit_A.c \
-  simulator/external/sdl/src/video/SDL_blit_N.c \
-  simulator/external/sdl/src/video/SDL_blit_auto.c \
-  simulator/external/sdl/src/video/SDL_blit_copy.c \
-  simulator/external/sdl/src/video/SDL_blit_slow.c \
-  simulator/external/sdl/src/video/SDL_bmp.c \
-  simulator/external/sdl/src/video/SDL_clipboard.c \
-  simulator/external/sdl/src/video/SDL_egl.c \
-  simulator/external/sdl/src/video/SDL_pixels.c \
-  simulator/external/sdl/src/video/SDL_fillrect.c \
-  simulator/external/sdl/src/video/SDL_shape.c \
-  simulator/external/sdl/src/video/SDL_rect.c \
-  simulator/external/sdl/src/video/SDL_stretch.c \
-  simulator/external/sdl/src/video/SDL_surface.c \
-  simulator/external/sdl/src/video/SDL_video.c \
-  simulator/external/sdl/src/video/SDL_vulkan_utils.c \
-  simulator/external/sdl/src/video/SDL_yuv.c \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoaclipboard.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoaevents.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoakeyboard.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoamessagebox.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoametalview.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoamodes.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoamouse.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoamousetap.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoaopengl.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoashape.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoaopengles.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoavideo.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoavulkan.m \
-  simulator/external/sdl/src/video/cocoa/SDL_cocoawindow.m \
-  simulator/external/sdl/src/video/dummy/SDL_nullevents.c \
-  simulator/external/sdl/src/video/dummy/SDL_nullframebuffer.c \
-  simulator/external/sdl/src/video/dummy/SDL_nullvideo.c \
-  simulator/external/sdl/src/video/yuv2rgb/yuv_rgb.c \
-  simulator/macos/platform_files.m \
-  simulator/macos/window.m \
+  simulator/macos/platform_files.mm \
+  simulator/macos/window.mm \
   simulator/shared/actions.cpp \
-  simulator/shared/apple/platform_images.m \
-  simulator/shared/apple/platform_language.m \
+  simulator/shared/apple/platform_images.mm \
+  simulator/shared/apple/platform_language.mm \
   simulator/shared/circuit_breaker.cpp \
   simulator/shared/clipboard.cpp \
   simulator/shared/clipboard_helper.cpp \
@@ -203,5 +66,9 @@ _sources_ion_all := $(addprefix src/, \
 $(eval $(call create_module,ion,1, \
 	$(_sources_ion_all) \
 ))
+
+SFLAGS_ion += \
+  -DION_SIMULATOR_FILES=1 \
+  -DION_EVENTS_JOURNAL
 
 PRIVATE_SFLAGS_ion += -DEPSILON_VERSION=\"$(APP_VERSION)\" -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"

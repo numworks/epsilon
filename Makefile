@@ -23,8 +23,6 @@ $(eval $(call create_goal,device, \
 ))
 
 $(eval $(call create_goal,simulator, \
-  omg \
-  kandinsky \
   dummy \
   sdl \
 ))

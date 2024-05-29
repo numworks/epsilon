@@ -36,8 +36,8 @@ SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
 )
 
 PRIVATE_SFLAGS_sdl += \
-  -Iion/src/simulator/external/sdl/src/hidapi/hidapi \
-  -Iion/src/simulator/external/sdl/src/video/khronos \
+  -I$(PATH_sdl)/sdl/src/hidapi/hidapi \
+  -I$(PATH_sdl)/sdl/src/video/khronos \
   -fasm-blocks \
   -fobjc-weak \
   -fstrict-aliasing

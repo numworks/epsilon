@@ -1,88 +1,207 @@
-GIT := $(shell command -v git 2> /dev/null)
-PATCH_LEVEL = NONE
-ifdef GIT
-  PATCH_LEVEL = $(shell git rev-parse HEAD | head -c 7)
-endif
+# TODO
+# include ion/build/$(PLATFORM).mak
 
-SFLAGS += -Iion/include -DKD_CONFIG_H=1
-
-include ion/image/Makefile
-include ion/src/$(PLATFORM)/Makefile
--include ion/test/$(PLATFORM)/Makefile
-include ion/src/shared/tools/Makefile
-
-ion_src += $(addprefix ion/src/shared/, \
-  console_line.cpp \
-  display_context.cpp \
-  events.cpp \
-  events_modifier.cpp \
-  exam_mode.cpp \
-  keyboard.cpp \
-  keyboard_queue.cpp \
-  layout_events.cpp \
-  stack_position.cpp \
-  storage/file_system.cpp \
-  storage/record_name_verifier.cpp \
-  storage/record.cpp \
+_sources_ion_all := $(addprefix src/, \
+  shared/collect_registers.cpp \
+  shared/console_line.cpp \
+  shared/display_context.cpp \
+  shared/dummy/authentication.cpp \
+  shared/dummy/backlight.cpp \
+  shared/dummy/battery.cpp \
+  shared/dummy/display.cpp \
+  shared/dummy/external_apps.cpp \
+  shared/dummy/fcc_id.cpp \
+  shared/dummy/led.cpp \
+  shared/dummy/platform_info.cpp \
+  shared/dummy/post_and_hardware_tests.cpp \
+  shared/dummy/power.cpp \
+  shared/dummy/reset.cpp \
+  shared/dummy/stack.cpp \
+  shared/events.cpp \
+  shared/dummy/usb.cpp \
+  shared/events_modifier.cpp \
+  shared/exam_mode.cpp \
+  shared/keyboard_queue.cpp \
+  shared/keyboard.cpp \
+  shared/layout_events.cpp \
+  shared/stack_position.cpp \
+  shared/storage/file_system.cpp \
+  shared/storage/record.cpp \
+  shared/storage/record_name_verifier.cpp \
+  simulator/external/sdl/src/SDL.c \
+  simulator/external/sdl/src/SDL_assert.c \
+  simulator/external/sdl/src/SDL_dataqueue.c \
+  simulator/external/sdl/src/SDL_error.c \
+  simulator/external/sdl/src/SDL_hints.c \
+  simulator/external/sdl/src/SDL_log.c \
+  simulator/external/sdl/src/atomic/SDL_atomic.c \
+  simulator/external/sdl/src/atomic/SDL_spinlock.c \
+  simulator/external/sdl/src/audio/SDL_audio.c \
+  simulator/external/sdl/src/audio/SDL_audiocvt.c \
+  simulator/external/sdl/src/audio/SDL_audiodev.c \
+  simulator/external/sdl/src/audio/SDL_audiotypecvt.c \
+  simulator/external/sdl/src/audio/SDL_mixer.c \
+  simulator/external/sdl/src/audio/SDL_wave.c \
+  simulator/external/sdl/src/audio/coreaudio/SDL_coreaudio.m \
+  simulator/external/sdl/src/audio/disk/SDL_diskaudio.c \
+  simulator/external/sdl/src/audio/dummy/SDL_dummyaudio.c \
+  simulator/external/sdl/src/core/unix/SDL_poll.c \
+  simulator/external/sdl/src/cpuinfo/SDL_cpuinfo.c \
+  simulator/external/sdl/src/dynapi/SDL_dynapi.c \
+  simulator/external/sdl/src/events/SDL_clipboardevents.c \
+  simulator/external/sdl/src/events/SDL_displayevents.c \
+  simulator/external/sdl/src/events/SDL_dropevents.c \
+  simulator/external/sdl/src/events/SDL_events.c \
+  simulator/external/sdl/src/events/SDL_gesture.c \
+  simulator/external/sdl/src/events/SDL_keyboard.c \
+  simulator/external/sdl/src/events/SDL_mouse.c \
+  simulator/external/sdl/src/events/SDL_quit.c \
+  simulator/external/sdl/src/events/SDL_windowevents.c \
+  simulator/external/sdl/src/events/SDL_touch.c \
+  simulator/external/sdl/src/file/SDL_rwops.c \
+  simulator/external/sdl/src/file/cocoa/SDL_rwopsbundlesupport.m \
+  simulator/external/sdl/src/filesystem/cocoa/SDL_sysfilesystem.m \
+  simulator/external/sdl/src/haptic/SDL_haptic.c \
+  simulator/external/sdl/src/haptic/darwin/SDL_syshaptic.c \
+  simulator/external/sdl/src/hidapi/SDL_hidapi.c \
+  simulator/external/sdl/src/joystick/SDL_gamecontroller.c \
+  simulator/external/sdl/src/joystick/SDL_joystick.c \
+  simulator/external/sdl/src/joystick/dummy/SDL_sysjoystick.c \
+  simulator/external/sdl/src/joystick/darwin/SDL_iokitjoystick.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_gamecube.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_ps4.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_ps5.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_rumble.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_steam.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_switch.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xbox360.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xbox360w.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapi_xboxone.c \
+  simulator/external/sdl/src/joystick/hidapi/SDL_hidapijoystick.c \
+  simulator/external/sdl/src/joystick/virtual/SDL_virtualjoystick.c \
+  simulator/external/sdl/src/loadso/dlopen/SDL_sysloadso.c \
+  simulator/external/sdl/src/locale/SDL_locale.c \
+  simulator/external/sdl/src/locale/macosx/SDL_syslocale.m \
+  simulator/external/sdl/src/main/dummy/SDL_dummy_main.c \
+  simulator/external/sdl/src/misc/SDL_url.c \
+  simulator/external/sdl/src/misc/macosx/SDL_sysurl.m \
+  simulator/external/sdl/src/power/SDL_power.c \
+  simulator/external/sdl/src/power/macosx/SDL_syspower.c \
+  simulator/external/sdl/src/render/SDL_d3dmath.c \
+  simulator/external/sdl/src/render/SDL_yuv_sw.c \
+  simulator/external/sdl/src/render/SDL_render.c \
+  simulator/external/sdl/src/render/direct3d/SDL_render_d3d.c \
+  simulator/external/sdl/src/render/direct3d/SDL_shaders_d3d.c \
+  simulator/external/sdl/src/render/direct3d11/SDL_render_d3d11.c \
+  simulator/external/sdl/src/render/direct3d11/SDL_shaders_d3d11.c \
+  simulator/external/sdl/src/render/metal/SDL_render_metal.m \
+  simulator/external/sdl/src/render/opengl/SDL_render_gl.c \
+  simulator/external/sdl/src/render/opengl/SDL_shaders_gl.c \
+  simulator/external/sdl/src/render/opengles/SDL_render_gles.c \
+  simulator/external/sdl/src/render/opengles2/SDL_render_gles2.c \
+  simulator/external/sdl/src/render/opengles2/SDL_shaders_gles2.c \
+  simulator/external/sdl/src/render/psp/SDL_render_psp.c \
+  simulator/external/sdl/src/render/software/SDL_blendfillrect.c \
+  simulator/external/sdl/src/render/software/SDL_blendline.c \
+  simulator/external/sdl/src/render/software/SDL_blendpoint.c \
+  simulator/external/sdl/src/render/software/SDL_drawline.c \
+  simulator/external/sdl/src/render/software/SDL_drawpoint.c \
+  simulator/external/sdl/src/render/software/SDL_render_sw.c \
+  simulator/external/sdl/src/render/software/SDL_rotate.c \
+  simulator/external/sdl/src/sensor/SDL_sensor.c \
+  simulator/external/sdl/src/sensor/dummy/SDL_dummysensor.c \
+  simulator/external/sdl/src/stdlib/SDL_crc32.c \
+  simulator/external/sdl/src/stdlib/SDL_getenv.c \
+  simulator/external/sdl/src/stdlib/SDL_iconv.c \
+  simulator/external/sdl/src/stdlib/SDL_malloc.c \
+  simulator/external/sdl/src/stdlib/SDL_qsort.c \
+  simulator/external/sdl/src/stdlib/SDL_stdlib.c \
+  simulator/external/sdl/src/stdlib/SDL_string.c \
+  simulator/external/sdl/src/stdlib/SDL_strtokr.c \
+  simulator/external/sdl/src/thread/SDL_thread.c \
+  simulator/external/sdl/src/thread/pthread/SDL_syscond.c \
+  simulator/external/sdl/src/thread/pthread/SDL_sysmutex.c \
+  simulator/external/sdl/src/thread/pthread/SDL_systhread.c \
+  simulator/external/sdl/src/thread/pthread/SDL_systls.c \
+  simulator/external/sdl/src/thread/pthread/SDL_syssem.c \
+  simulator/external/sdl/src/timer/SDL_timer.c \
+  simulator/external/sdl/src/timer/unix/SDL_systimer.c \
+  simulator/external/sdl/src/video/SDL_RLEaccel.c \
+  simulator/external/sdl/src/video/SDL_blit.c \
+  simulator/external/sdl/src/video/SDL_blit_0.c \
+  simulator/external/sdl/src/video/SDL_blit_1.c \
+  simulator/external/sdl/src/video/SDL_blit_A.c \
+  simulator/external/sdl/src/video/SDL_blit_N.c \
+  simulator/external/sdl/src/video/SDL_blit_auto.c \
+  simulator/external/sdl/src/video/SDL_blit_copy.c \
+  simulator/external/sdl/src/video/SDL_blit_slow.c \
+  simulator/external/sdl/src/video/SDL_bmp.c \
+  simulator/external/sdl/src/video/SDL_clipboard.c \
+  simulator/external/sdl/src/video/SDL_egl.c \
+  simulator/external/sdl/src/video/SDL_pixels.c \
+  simulator/external/sdl/src/video/SDL_fillrect.c \
+  simulator/external/sdl/src/video/SDL_shape.c \
+  simulator/external/sdl/src/video/SDL_rect.c \
+  simulator/external/sdl/src/video/SDL_stretch.c \
+  simulator/external/sdl/src/video/SDL_surface.c \
+  simulator/external/sdl/src/video/SDL_video.c \
+  simulator/external/sdl/src/video/SDL_vulkan_utils.c \
+  simulator/external/sdl/src/video/SDL_yuv.c \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoaclipboard.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoaevents.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoakeyboard.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoamessagebox.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoametalview.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoamodes.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoamouse.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoamousetap.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoaopengl.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoashape.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoaopengles.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoavideo.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoavulkan.m \
+  simulator/external/sdl/src/video/cocoa/SDL_cocoawindow.m \
+  simulator/external/sdl/src/video/dummy/SDL_nullevents.c \
+  simulator/external/sdl/src/video/dummy/SDL_nullframebuffer.c \
+  simulator/external/sdl/src/video/dummy/SDL_nullvideo.c \
+  simulator/external/sdl/src/video/yuv2rgb/yuv_rgb.c \
+  simulator/macos/platform_files.m \
+  simulator/macos/window.m \
+  simulator/shared/actions.cpp \
+  simulator/shared/apple/platform_images.m \
+  simulator/shared/apple/platform_language.m \
+  simulator/shared/circuit_breaker.cpp \
+  simulator/shared/clipboard.cpp \
+  simulator/shared/clipboard_helper.cpp \
+  simulator/shared/clipboard_helper_sdl.cpp \
+  simulator/shared/compilation_flags.cpp \
+  simulator/shared/console.cpp \
+  simulator/shared/crc32.cpp \
+  simulator/shared/device_name.cpp \
+  simulator/shared/display.cpp \
+  simulator/shared/dummy/haptics_enabled.cpp \
+  simulator/shared/dummy/keyboard_callback.cpp \
+  simulator/shared/dummy/window_callback.cpp \
+  simulator/shared/events.cpp \
+  simulator/shared/events_platform.cpp \
+  simulator/shared/exam_bytes.cpp \
+  simulator/shared/framebuffer.cpp \
+  simulator/shared/haptics.cpp \
+  simulator/shared/init.cpp \
+  simulator/shared/journal.cpp \
+  simulator/shared/keyboard.cpp \
+  simulator/shared/main.cpp \
+  simulator/shared/platform_files.cpp \
+  simulator/shared/random.cpp \
+  simulator/shared/screenshot.cpp \
+  simulator/shared/state_file.cpp \
+  simulator/shared/timing.cpp \
+  simulator/shared/unix/platform_files.cpp \
+  simulator/shared/window.cpp \
 )
 
-# TODO EMILIE: tidy makefiles: these following should go in ion/src/device/Makefile?
+$(eval $(call create_module,ion,1, \
+	$(_sources_ion_all) \
+))
 
-ion_device_bench_src += $(addprefix ion/src/shared/, \
-  dummy/assert.cpp \
-  console_line.cpp \
-  display_context.cpp \
-  layout_events.cpp \
-)
-
-ion_device_flasher_src += $(addprefix ion/src/shared/, \
-  dummy/assert.cpp \
-  display_context.cpp \
-)
-
-ion_device_kernel_src += $(addprefix ion/src/shared/, \
-  console_line.cpp:+kernelassert \
-  display_context.cpp:+kernelassert \
-  events.cpp \
-  events_modifier.cpp \
-  keyboard.cpp \
-  keyboard_queue.cpp \
-  layout_events.cpp \
-)
-
-ion_device_bootloader_src += $(addprefix ion/src/shared/, \
-  dummy/assert.cpp \
-)
-
-ion_device_userland_src += $(addprefix ion/src/shared/, \
-  console_line.cpp \
-  display_context.cpp \
-  exam_mode.cpp \
-  stack_position.cpp \
-  storage/file_system.cpp \
-  storage/record_name_verifier.cpp \
-  storage/record.cpp \
-)
-
-ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
-ion_device_userland_src += ion/src/shared/layout_events.cpp
-endif
-
-tests_src += $(addprefix ion/test/,\
-  crc32.cpp\
-  events.cpp\
-  exam_bytes.cpp\
-  exam_mode.cpp\
-  keyboard.cpp\
-  ring_buffer.cpp \
-  storage.cpp \
-  utf8_decoder.cpp\
-  utf8_helper.cpp\
-)
-
-# Export version and patch level
-$(call object_for,ion/src/shared/dummy/platform_info.cpp): SFLAGS += -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" -DEPSILON_VERSION=\"$(EPSILON_VERSION)\"
-
-ifdef ION_STORAGE_LOG
-SFLAGS += -DION_STORAGE_LOG=1
-endif
+PRIVATE_SFLAGS_ion += -DEPSILON_VERSION=\"$(APP_VERSION)\" -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"

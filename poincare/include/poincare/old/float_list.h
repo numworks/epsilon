@@ -35,6 +35,7 @@ class FloatList : public List, public DatasetColumn<T> {
     return isUninitialized() ? 0 : numberOfChildren();
   }
 
+ private:
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */
   Internal::Tree* floatNodeAtIndex(int index) const;

@@ -67,14 +67,12 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       name, strlen(name), Poincare::Symbol::SystemSymbol());
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
   function = function.replaceSymbolWithExpression(sequenceSymbol, variable);
+  constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
+  function = function.getSystemFunction(k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
                                                  void *context) {
     Poincare::SystemFunction *e = (Poincare::SystemFunction *)model;
-    Poincare::Context *c = (Poincare::Context *)context;
-    constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
-    return Poincare::Coordinate2D<float>(
-        t, PoincareHelpers::ApproximateWithValueForSymbol<float>(
-               *e, k_unknownName, t, c));
+    return Poincare::Coordinate2D<float>(t, e->approximateToScalarWithValue(t));
   };
   if (!shouldUpdate()) {
     float xMin = plotView->range()->xMin();

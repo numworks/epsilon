@@ -39,8 +39,9 @@ $(eval $(call create_goal,device, \
 ))
 
 $(eval $(call create_goal,simulator, \
-  omg \
-  kandinsky \
-  sdl \
+  dummy.ion \
   ion \
+  kandinsky \
+  omg \
+  sdl \
 ))

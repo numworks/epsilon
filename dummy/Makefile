@@ -1,3 +1,4 @@
 $(eval $(call create_module,dummy,1, \
-  main.cpp \
+  ion_main.cpp:+ion \
+  main.cpp:-ion \
 ))

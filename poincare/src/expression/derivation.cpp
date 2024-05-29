@@ -94,13 +94,12 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
 
   Tree* result = SharedTreeStack->push<Type::Add>(0);
   const Tree* derivandChild = derivand->child(0);
-  /* D(f(g0(x),g1(x), ...)) = Sum(D(gi(x))*Di(f)(g0(x),g1(x), ...))
+  /* D(f(g0(x),g1(x), ...)) = Sum(Di(f)(g0(x),g1(x), ...)*D(gi(x)))
    * With D being the Derivative and Di being the partial derivative on
    * parameter i. */
   for (int i = 0; i < numberOfChildren; i++) {
     NAry::SetNumberOfChildren(result, i + 1);
-    Tree* mult = SharedTreeStack->push<Type::Mult>(1);
-    Derivate(derivandChild, symbolValue, symbol, true);
+    Tree* mult = SharedTreeStack->push<Type::Mult>(0);
     if (!ShallowPartialDerivate(derivand, i)) {
       // Cancel current derivation.
       result->removeTree();
@@ -118,6 +117,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
       return preservedDerivative;
     }
     NAry::SetNumberOfChildren(mult, 2);
+    Derivate(derivandChild, symbolValue, symbol, true);
     Simplification::ShallowSystematicReduce(mult);
     derivandChild = derivandChild->nextTree();
   }

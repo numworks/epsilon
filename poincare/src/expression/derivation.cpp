@@ -108,11 +108,12 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
       // Fallback to Diff(derivand)
       Tree* preservedDerivative = SharedTreeStack->push(Type::NthDiff);
       symbol->clone();
-      symbolValue->clone();
+      KVarX->clone();
       (1_e)->clone();
-      derivandChild->clone();
-      // EnterScope here since scope is preserved in Derivation::Derivate.
-      Variables::EnterScope(preservedDerivative);
+      Tree* nestedDerivand = derivand->clone();
+      /* Scope is preserved in Derivation::Derivate. f(V0+V1) is derived to
+       * diff(symbol, V0, f(V0+V2)). */
+      Variables::EnterScopeExceptLocalVariable(nestedDerivand);
       return preservedDerivative;
     }
     NAry::SetNumberOfChildren(mult, 2);

@@ -58,9 +58,13 @@ class Variables {
   static bool ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                     const Tree* replacement);
 
-  // Increment variables indexes
+  // Increment all variable indexes
   static void EnterScope(Tree* expr) {
     return EnterOrLeaveScope(expr, true, -1);
+  }
+  // Increment non null variable indexes
+  static void EnterScopeExceptLocalVariable(Tree* expr) {
+    return EnterOrLeaveScope(expr, true, 0);
   }
   // Decrement variables indexes
   static void LeaveScope(Tree* expr) {

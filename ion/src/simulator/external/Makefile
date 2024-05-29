@@ -104,7 +104,8 @@ $(eval $(call create_module,sdl,1,$(addprefix sdl/src/, \
   video/yuv2rgb/yuv_rgb.c \
 )))
 
-SFLAGS_sdl += -Iion/src/simulator/external/sdl/include
+# Override the unused -I$(PATH_sdl)/include
+SFLAGS_sdl := -I$(PATH_sdl) -I$(PATH_sdl)/sdl/include
 
 PRIVATE_SFLAGS_sdl += -w
 ifeq ($(DEBUG),0)

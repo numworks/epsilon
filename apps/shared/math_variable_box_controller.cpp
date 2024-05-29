@@ -291,7 +291,6 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
   if (m_currentPage == Page::Sequence) {
     App::app()->modalViewController()->dismissModal();
-    // TODO_PCJ linear edition mode
     sender()->handleEventWithLayout(Layout::Create(
         KA ^ KSubscriptL(""_l), {.KA = Layout::String(nameToHandle)}));
     return true;

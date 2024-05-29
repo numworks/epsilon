@@ -108,6 +108,8 @@ constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
 constexpr auto KSum = KFixedArity<4, Type::Sum>();
 constexpr auto KProduct = KFixedArity<4, Type::Product>();
 constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
+constexpr auto KIntegralWithAlternatives =
+    KFixedArity<6, Type::IntegralWithAlternatives>();
 constexpr auto KNthDiff = KFixedArity<4, Type::NthDiff>();
 
 constexpr auto KAdd = KNAry<Type::Add>();

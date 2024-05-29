@@ -214,6 +214,10 @@ NODE(NthDiff, 4)
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
 NODE(Integral, 4)
 
+// Integral(Symbol, LowerBound, UpperBound, Integrand,
+//          IntegrandNearLowerBound, IntegrandNearUpperBound)
+NODE(IntegralWithAlternatives, 6)
+
 // Sequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, 3)
 

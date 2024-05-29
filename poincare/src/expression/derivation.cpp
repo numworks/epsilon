@@ -28,7 +28,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   Tree* derivand = constDerivand->clone();
   int currentDerivationOrder = derivationOrder;
   while (currentDerivationOrder > 0) {
-    Tree* derivative = Derivate(derivand, symbolValue, symbol);
+    Tree* derivative = Derivate(derivand, symbolValue, symbol, false);
     if (!derivative) {
       // TODO is it worth to save the partial derivation if any ?
       derivand->removeTree();
@@ -69,7 +69,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
 
 // Derivate derivand preserving scope (V0^2 is derived to 2*V0).
 Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
-                           const Tree* symbol) {
+                           const Tree* symbol, bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
@@ -100,8 +100,14 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   for (int i = 0; i < numberOfChildren; i++) {
     NAry::SetNumberOfChildren(result, i + 1);
     Tree* mult = SharedTreeStack->push<Type::Mult>(1);
-    if (!Derivate(derivandChild, symbolValue, symbol)) {
-      // Could not derivate, preserve D(gi(x))
+    Derivate(derivandChild, symbolValue, symbol, true);
+    if (!ShallowPartialDerivate(derivand, i)) {
+      // Cancel current derivation.
+      result->removeTree();
+      if (!force) {
+        return nullptr;
+      }
+      // Fallback to Diff(derivand)
       Tree* preservedDerivative = SharedTreeStack->push(Type::NthDiff);
       symbol->clone();
       symbolValue->clone();
@@ -109,11 +115,7 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
       derivandChild->clone();
       // EnterScope here since scope is preserved in Derivation::Derivate.
       Variables::EnterScope(preservedDerivative);
-    }
-    if (!ShallowPartialDerivate(derivand, i)) {
-      // Cancel current derivation.
-      result->removeTree();
-      return nullptr;
+      return preservedDerivative;
     }
     NAry::SetNumberOfChildren(mult, 2);
     Simplification::ShallowSystematicReduce(mult);

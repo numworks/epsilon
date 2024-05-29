@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
-#include <omg/concept.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 

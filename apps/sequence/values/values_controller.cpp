@@ -3,9 +3,9 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/sum.h>
 
 #include <cmath>
 
@@ -155,15 +155,11 @@ Layout ValuesController::functionTitleLayout(int column) {
   if (!isSumColumn) {
     return sequence->nameLayout();
   }
-  constexpr const char *k_variable = "k";
-  constexpr const char *n_variable = "n";
-  UserExpression sumExpression =
-      Sum::Builder(Poincare::Sequence::Builder(
-                       sequence->fullName(), 1,
-                       Symbol::Builder(k_variable, strlen(k_variable))),
-                   Symbol::Builder(k_variable, strlen(k_variable)),
-                   NewExpression::Builder(sequence->initialRank()),
-                   Symbol::Builder(n_variable, strlen(n_variable)));
+  UserExpression sumExpression = UserExpression::Create(
+      KSum("k"_e, KA, "n"_e, KB),
+      {.KA = NewExpression::Builder(sequence->initialRank()),
+       .KB = Poincare::Sequence::Builder(sequence->fullName(), 1,
+                                         UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),
                                     nullptr);

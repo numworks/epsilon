@@ -29,7 +29,6 @@ _sources_ion_all := $(addprefix src/, \
   shared/storage/record.cpp \
   shared/storage/record_name_verifier.cpp \
   simulator/macos/platform_files.mm \
-  simulator/macos/window.mm \
   simulator/shared/actions.cpp \
   simulator/shared/apple/platform_images.mm \
   simulator/shared/apple/platform_language.mm \
@@ -68,7 +67,43 @@ $(eval $(call create_module,ion,1, \
 ))
 
 SFLAGS_ion += \
-  -DION_SIMULATOR_FILES=1 \
   -DION_EVENTS_JOURNAL
 
-PRIVATE_SFLAGS_ion += -DEPSILON_VERSION=\"$(APP_VERSION)\" -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
+PRIVATE_SFLAGS_ion += \
+  -DEPSILON_VERSION=\"$(APP_VERSION)\" \
+  -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
+
+# Simulator files - begin
+# TODO ION_SIMULATOR_FILES should be a flavor instead of a flag
+
+# TODO macos only
+_ion_simulator_window_setup := $(PATH_ion)/src/simulator/macos/window.mm
+
+# TODO Specialize per platform
+_ion_simulator_files := 1
+ifeq ($(_ion_simulator_files),0)
+_ion_simulator_window_setup ?= $(PATH_ion)/src/simulator/shared/dummy/window_position.cpp
+else
+_ion_simulator_window_setup ?= $(PATH_ion)/src/simulator/shared/window_position_cached.cpp
+SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/shared/, \
+  actions.cpp \
+  state_file.cpp \
+  screenshot.cpp \
+  platform_files.cpp \
+)
+# TODO Move to eadk module?
+SOURCES_ion += eadk/src/simulator.cpp
+SFLAGS_ion += -DION_SIMULATOR_FILES=1
+# Export symbols so that dlopen-ing NWB files can use eadk_external_data and eadk_external_data_size
+LDFLAGS_ion += $(LD_EXPORT_SYMBOLS_FLAG)
+endif
+SOURCES_ion += $(_ion_simulator_window_setup)
+
+# Simulator files - end
+
+# Simulator layout
+_sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
+$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
+	$(call rule_label,LAYOUT)
+	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
+SOURCES_ion += $(_sources_ion_simulator_layout)

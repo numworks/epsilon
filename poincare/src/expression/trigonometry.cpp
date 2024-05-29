@@ -361,7 +361,6 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
   }
   // TODO_PCJ: Add more exact values (√3, 1/√3, ...)
   assert(u->isATanRad());
-  PatternMatching::Context ctx;
   const Tree* arg = u->child(0);
   if (arg->isZero()) {
     // atan(0) = 0
@@ -373,6 +372,7 @@ bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
     u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
     return true;
   }
+  PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(1_e / 2_e, KLn(3_e))), arg, &ctx)) {
     // atan(√3) = π/3
     u->cloneTreeOverTree(KMult(1_e / 3_e, π_e));

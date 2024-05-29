@@ -968,6 +968,9 @@ QUIZ_CASE(pcj_simplification_piecewise) {
                 "piecewise(x, u<1, y)");
   simplifies_to("piecewise(x, u<1, y, True)", "piecewise(x, u<1, y)");
   simplifies_to("piecewise(1, True, undef)", "1");
+  simplifies_to("piecewise(3,1>0,2,undef)", "undef");
+  simplifies_to("piecewise(-1,undef,i)", "undef");
+  simplifies_to("piecewise(4^2,undef,6,4>2)", "undef");
 }
 
 QUIZ_CASE(pcj_distributions) {

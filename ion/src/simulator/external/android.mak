@@ -33,7 +33,7 @@ SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
 
 # Build the android native library cpufeatures
 _sources_sdl_cpufeature := app/android/cpu-features.c
-$(call objects_foreach_arch,$(_sources_sdl_cpufeature)): | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(_sources_sdl_cpufeature): | $$(@D)/.
 	$(call rule_label,COPY)
 	$(QUIET) cp $(NDK_PATH)/sources/android/cpufeatures/cpu-features.c $@
 SOURCES_sdl += $(_sources_sdl_cpufeature)

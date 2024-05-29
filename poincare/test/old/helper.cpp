@@ -3,6 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/conversion.h>
+#include <poincare/src/expression/float.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/serialize.h>
@@ -255,17 +256,27 @@ void assert_expression_approximates_to(const char *expression,
         /* TODO_PCJ: use ToSystem instead of PrepareForProjection and see the
          * tests that fail */
         // Replace user symbols, seed randoms and check dimensions
-        Simplification::PrepareForProjection(e, &context);
+        Simplification::ToSystem(e, &context);
         if (Internal::Dimension::GetDimension(e).isUnit()) {
           // no unit approximation yet
           e->removeTree();
           return KUndef->clone();
         }
-        TreeRef result = Internal::Approximation::RootTreeToTree<T>(
-            e, Internal::AngleUnit(reductionContext.angleUnit()),
-            Internal::ComplexFormat(reductionContext.complexFormat()));
-        e->removeTree();
-        return result;
+        if (!Internal::Dimension::GetDimension(e).isScalar() ||
+            Internal::Dimension::GetListLength(e) !=
+                Internal::Dimension::k_nonListListLength) {
+          TreeRef result = Internal::Approximation::RootTreeToTree<T>(
+              e, Internal::AngleUnit(reductionContext.angleUnit()),
+              Internal::ComplexFormat(reductionContext.complexFormat()));
+          e->removeTree();
+          return result;
+        }
+        Approximation::PrepareFunctionForApproximation(e, "x",
+                                                       context.m_complexFormat);
+        T value = Approximation::ToReal<T>(e);
+        e->moveTreeOverTree(
+            SharedTreeStack->push<Internal::FloatType<T>::type>(value));
+        return e;
       },
       numberOfSignificantDigits);
 }

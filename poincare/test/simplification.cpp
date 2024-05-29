@@ -800,9 +800,26 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // functions
   simplifies_to("exp(inf)", "∞");
   simplifies_to("exp(-inf)", "0");
+  // TODO_PCJ simplifies_to("log(inf,0)", "undef");
+  // TODO_PCJ simplifies_to("log(-inf,0)", "undef");
+  simplifies_to("log(inf,1)", "undef");
+  simplifies_to("log(-inf,1)", "undef");
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{ln(x)})");
+  simplifies_to("log(-inf,x)", "nonreal");
+  simplifies_to("log(-inf,x)", "ln(-∞)/ln(x)", cartesianCtx);
   simplifies_to("log(inf,-3)", "nonreal");
-  // TODO_PCJ simplifies_to("log(inf,-3)", "∞-∞×i", cartesianCtx);
+  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
+  // TODO_PCJ simplifies_to("log(0,inf)", "undef");
+  // TODO_PCJ simplifies_to("log(0,-inf)", "undef");
+  simplifies_to("log(1,inf)", "0");
+  // TODO_PCJ simplifies_to("log(1,-inf)", "0");
+  simplifies_to("log(x,inf)", "dep(0,{ln(x)})");
+  // TODO_PCJ simplifies_to("log(x,-inf)", "dep(∞×sign(1/ln(x)),{ln(x)})");
+  simplifies_to("log(inf,inf)", "undef");
+  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef");
+  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef");
+  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef");
+  simplifies_to("ln(inf)", "∞");
   simplifies_to("ln(-inf)", "nonreal");
   simplifies_to("cos(inf)", "undef");
   simplifies_to("cos(-inf)", "undef");

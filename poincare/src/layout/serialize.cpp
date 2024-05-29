@@ -14,7 +14,19 @@ namespace Poincare::Internal {
  * to use operator priority to minimize parentheses and get the correct
  * multiplication symbol. */
 
+char* append(const char* text, char* buffer, char* end) {
+  size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
+  memcpy(buffer, text, len);
+  return buffer + len;
+}
+
 char* SerializeRack(const Rack* rack, char* buffer, char* end) {
+  if (rack->numberOfChildren() == 0) {
+    /* Text fields serializes layouts to insert them and we need an empty
+     * codepoint for the cursor to be placed correctly in the text field.
+     * TODO: should this behavior be behind a flag ? */
+    buffer = append("\x11", buffer, end);
+  }
   for (const Tree* child : rack->children()) {
     buffer = SerializeLayout(Layout::From(child), buffer, end);
     if (buffer == end) {
@@ -22,12 +34,6 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
     }
   }
   return buffer;
-}
-
-char* append(const char* text, char* buffer, char* end) {
-  size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
-  memcpy(buffer, text, len);
-  return buffer + len;
 }
 
 char* SerializeLayout(const Layout* layout, char* buffer, char* end,

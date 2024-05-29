@@ -230,17 +230,15 @@ bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
 static bool simplifyATrigOfTrig(Tree* u) {
   TypeBlock type = Type::Undef;
   PatternMatching::Context ctx;
-  // asin(sin) or asin(cos) or acos(cos) or acos(sin)
   if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
+    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getNode(KB)->isOne() ? Type::Sin : Type::Cos;
-  }
-  // atan(sin/cos)
-  if (PatternMatching::Match(
-          KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), u,
-          &ctx)) {
+  } else if (PatternMatching::Match(
+                 KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), u,
+                 &ctx)) {
+    // atan(sin/cos)
     type = Type::Tan;
-  }
-  if (type == Type::Undef) {
+  } else {
     return false;
   }
   // x = π*y

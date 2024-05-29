@@ -76,12 +76,11 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbolValue,
   if (derivand->isPoint()) {
     /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
      * don't handle sums and product of points, so we escape the case here. */
-    return PatternMatching::CreateSimplify(
-        KPoint(KNthDiff(KA, KB, 1_e, KC), KNthDiff(KA, KB, 1_e, KD)),
-        {.KA = symbol,
-         .KB = symbolValue,
-         .KC = derivand->child(0),
-         .KD = derivand->child(1)});
+    Tree* result = SharedTreeStack->push(Type::Point);
+    Derivate(derivand->child(0), symbolValue, symbol, true);
+    Derivate(derivand->child(1), symbolValue, symbol, true);
+    Simplification::ShallowSystematicReduce(result);
+    return result;
   }
   if (derivand->isRandomNode()) {
     // Do not handle random nodes in derivation.

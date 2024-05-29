@@ -19,6 +19,8 @@
 #include "simplification.h"
 #include "symbol.h"
 
+#define DISABLE_CONVERSIONS 0
+
 namespace Poincare::Internal {
 
 Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
@@ -62,6 +64,9 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(Type type) {
 }
 
 Poincare::OExpression ToPoincareExpression(const Tree* exp) {
+#if DISABLE_CONVERSIONS
+  assert(false);
+#else
   // NOTE: Make sure new Types are handled here.
   Type type = exp->type();
 
@@ -345,9 +350,13 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     default:
       return Poincare::Undefined::Builder();
   }
+#endif
 }
 
 void PushPoincareExpression(Poincare::OExpression exp) {
+#if DISABLE_CONVERSIONS
+  assert(false);
+#else
   using OT = Poincare::ExpressionNode::Type;
   switch (exp.otype()) {
     case OT::AbsoluteValue:
@@ -886,6 +895,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     default:
       assert(false);
   }
+#endif
 }
 
 Tree* FromPoincareExpression(Poincare::OExpression exp) {

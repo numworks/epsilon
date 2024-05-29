@@ -599,6 +599,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return result;
     }
     case Type::Integral:
+      assert(false);
+    case Type::IntegralWithAlternatives:
       return ApproximateIntegral<T>(node);
 
     /* Matrices */

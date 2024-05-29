@@ -31,11 +31,9 @@ struct Substitution {
 struct AlternativeIntegrand {
   double a;
   double b;
-  Tree* integrandNearA = nullptr;
-  Tree* integrandNearB = nullptr;
+  const Tree* integrandNearA = nullptr;
+  const Tree* integrandNearB = nullptr;
 };
-
-Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound);
 
 template <typename T>
 T integrand(T x, Substitution<T> substitution);
@@ -77,7 +75,7 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
   bool fIsNanInB = std::isnan(To(integrand, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
-  if (fIsNanInA || fIsNanInB) {
+  if (integral->isIntegralWithAlternatives() && (fIsNanInA || fIsNanInB)) {
     /* When we have a singularity at a bound, we want to evaluate the integrand
      * really close to the bound since the area there is non-negligible.  If the
      * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
@@ -85,24 +83,11 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
      * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
      * evaluate the integrand really close to 1 (about 1-1e-300). */
     AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
-#if 0
-    /* We need SystemForAnalysis to remove the constant part by expanding
-     * polynomials introduced by the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
-    const ReductionContext reductionContext(
-        approximationContext.context(), approximationContext.complexFormat(),
-        approximationContext.angleUnit(), Preferences::UnitFormat::Metric,
-        ReductionTarget::SystemForAnalysis);
-#endif
-    /* Rewrite the integrand to be able to compute it directly at abscissa a + x
-     */
     if (fIsNanInA && a != 0) {
-      alternativeIntegrand.integrandNearA =
-          rewriteIntegrandNear(integrand, lowerBound);
+      alternativeIntegrand.integrandNearA = integral->child(4);
     }
-    // Same near b - x
     if (fIsNanInB && b != 0) {
-      alternativeIntegrand.integrandNearB =
-          rewriteIntegrandNear(integrand, upperBound);
+      alternativeIntegrand.integrandNearB = integral->child(5);
     }
     /* We are using 4 levels of refinement which means ≈ 64 integrand
      * evaluations = 2 (R- and R+) * 2^4 (ticks/unit) * 4 (typical decay on the
@@ -110,13 +95,6 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
      * else in hard examples. */
     DetailedResult<T> detailedResult =
         tanhSinhQuadrature<T>(4, alternativeIntegrand);
-    // Clear alternativeIntegrands
-    if (alternativeIntegrand.integrandNearB) {
-      alternativeIntegrand.integrandNearB->removeTree();
-    }
-    if (alternativeIntegrand.integrandNearA) {
-      alternativeIntegrand.integrandNearA->removeTree();
-    }
     // Arbitrary value to have the best choice of quadrature on the examples
     constexpr T insufficientPrecision = 0.001;
     if (!std::isnan(detailedResult.integral) &&
@@ -204,20 +182,6 @@ T integrand(T x, Substitution<T> substitution) {
       return Approximation::To(integrandExpression, arg) * w;
     }
   }
-}
-
-Tree* rewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
-  Tree* value = SharedTreeStack->push<Type::Add>(2);
-  bound->clone();
-  KVarX->clone();
-  Tree* tree = integrand->clone();
-  /* TODO:
-   * - The tree needs to be projected which is not the case currently
-   * - Replace does a systematic simplification already, do we need something
-   * more powerful ? */
-  Variables::Replace(tree, 0, value, false, false);
-  value->removeTree();
-  return value;
 }
 
 template <typename T>

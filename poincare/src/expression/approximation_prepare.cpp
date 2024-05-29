@@ -1,5 +1,6 @@
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "advanced_simplification.h"
 #include "approximation.h"
 #include "beautification.h"
 #include "k_tree.h"
@@ -19,12 +20,44 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
          changed;
 }
 
+Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
+  Tree* value = SharedTreeStack->push<Type::Add>(2);
+  bound->clone();
+  KVarX->clone();
+  Simplification::DeepSystematicReduce(value);
+  Tree* tree = integrand->clone();
+  // TODO This deep should not be done before
+  Simplification::DeepSystematicReduce(tree);
+  Variables::Replace(tree, 0, value, false, true);
+  /* We need to remove the constant part by expanding polynomials introduced by
+   * the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
+  AdvancedSimplification::DeepExpand(tree);
+  value->removeTree();
+  return value;
+}
+
+bool ShallowExpandIntegrals(Tree* expr, void* ctx) {
+  if (!expr->isIntegral()) {
+    return false;
+  }
+  Tree* insertAt = expr->nextTree();
+  // Same near b - x
+  Tree* upperIntegrand = RewriteIntegrandNear(expr->child(3), expr->child(2));
+  insertAt->moveTreeBeforeNode(upperIntegrand);
+  // Rewrite the integrand to be able to compute it directly at abscissa a + x
+  Tree* lowerIntegrand = RewriteIntegrandNear(expr->child(3), expr->child(1));
+  insertAt->moveTreeBeforeNode(lowerIntegrand);
+  expr->cloneNodeOverNode(KIntegralWithAlternatives);
+  return true;
+}
+
 bool Approximation::PrepareFunctionForApproximation(
     Tree* expr, const char* variable, ComplexFormat complexFormat) {
   bool changed = Variables::ReplaceSymbol(expr, variable, 0,
                                           complexFormat == ComplexFormat::Real
                                               ? ComplexSign::RealUnknown()
                                               : ComplexSign::Unknown());
+  changed = Tree::ApplyShallowInDepth(expr, &ShallowExpandIntegrals) || changed;
   changed = Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation) ||
             changed;
   changed = ApproximateAndReplaceEveryScalar(expr) || changed;

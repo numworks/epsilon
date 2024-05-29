@@ -33,7 +33,8 @@ bool Logarithm::SimplifyLn(Tree* u) {
     // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
     u->cloneTreeOverTree(KMult(π_e, i_e));
     return true;
-  } else if (child->isOne()) {
+  }
+  if (child->isOne()) {
     u->cloneTreeOverTree(0_e);
     return true;
   }

@@ -25,11 +25,11 @@ bool Derivation::ShallowSimplify(Tree* node) {
   }
   int derivationOrder = Integer::Handler(order).to<uint8_t>();
   const Tree* constDerivand = order->nextTree();
-  // Derivate the derivand successively, preserving local variable scope.
+  // Derive the derivand successively, preserving local variable scope.
   Tree* derivative = constDerivand->clone();
   int currentDerivationOrder = 0;
   while (currentDerivationOrder < derivationOrder) {
-    Tree* nextDerivative = Derivate(derivative, symbol, false);
+    Tree* nextDerivative = Derive(derivative, symbol, false);
     // Remove previous derivative
     if (!nextDerivative) {
       // Derivation wasn't handled.
@@ -72,9 +72,8 @@ bool Derivation::ShallowSimplify(Tree* node) {
   return true;
 }
 
-// Derivate derivand preserving scope (V0^2 is derived to 2*V0).
-Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbol,
-                           bool force) {
+// Derive derivand preserving scope (V0^2 is derived to 2*V0).
+Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     return (1_e)->clone();
   }
@@ -90,8 +89,8 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbol,
     /* Bubble-up the Point. We could have Di(Point) to be (i==0,i==1), but we
      * don't handle sums and product of points, so we escape the case here. */
     Tree* result = SharedTreeStack->push(Type::Point);
-    Derivate(derivand->child(0), symbol, true);
-    Derivate(derivand->child(1), symbol, true);
+    Derive(derivand->child(0), symbol, true);
+    Derive(derivand->child(1), symbol, true);
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
@@ -124,13 +123,13 @@ Tree* Derivation::Derivate(const Tree* derivand, const Tree* symbol,
       KVarX->clone();
       (1_e)->clone();
       Tree* nestedDerivand = derivand->clone();
-      /* Scope is preserved in Derivation::Derivate. f(V0+V1) is derived to
+      /* Scope is preserved in Derivation::Derive. f(V0+V1) is derived to
        * diff(symbol, V0, f(V0+V2)). */
       Variables::EnterScopeExceptLocalVariable(nestedDerivand);
       return preservedDerivative;
     }
     NAry::SetNumberOfChildren(mult, 2);
-    Derivate(derivandChild, symbol, true);
+    Derive(derivandChild, symbol, true);
     Simplification::ShallowSystematicReduce(mult);
     derivandChild = derivandChild->nextTree();
   }

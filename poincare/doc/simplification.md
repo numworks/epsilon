@@ -211,6 +211,22 @@ $$
 
 </details>
 
+### Projection in advanced reduction
+
+Some projections are too difficult to undo to be applied at projection. But we still want to try them to see if it improves the result. We then try the projection during advanced reduction.
+
+For example, `atan(x)` should be projected in `asin(x/√(1 + x^2))` because systematic reduction shouldn't handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
+
+Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
+
+Since this step is applied long after projection step, the new tree must already be in its projected form.
+
+In practice, we replace `atan(x)` (projected tree for tan) into `atrig(x*(1+x^2)^(-1/2),1)`.
+
+This practice tends to slow down advanced reduction so we limit it to the very minimum.
+
+For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
+
 ## Systematic reduction
 
 It is expected to:

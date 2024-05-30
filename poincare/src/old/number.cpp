@@ -96,7 +96,7 @@ Number Number::ParseNumber(const char *integralPart, size_t integralLength,
 template <typename T>
 Number Number::DecimalNumber(T f) {
   if (std::isnan(f)) {
-    return Undefined::Builder();
+    return OUndefined::Builder();
   }
   if (std::isinf(f)) {
     return Infinity::Builder(f < static_cast<T>(0.0));
@@ -107,7 +107,7 @@ Number Number::DecimalNumber(T f) {
 template <typename T>
 Number Number::FloatNumber(T f) {
   if (std::isnan(f)) {
-    return Undefined::Builder();
+    return OUndefined::Builder();
   } else if (std::isinf(f)) {
     return Infinity::Builder(f < static_cast<T>(0.0));
   } else {

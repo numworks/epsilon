@@ -31,9 +31,9 @@ Evaluation<T> UndefinedNode::templatedApproximate() const {
   return Complex<T>::Undefined();
 }
 
-JuniorUndefined JuniorUndefined::Builder() {
+Undefined Undefined::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(KUndef->clone());
-  return static_cast<JuniorUndefined&>(expr);
+  return static_cast<Undefined&>(expr);
 }
 
 template Evaluation<float> UndefinedNode::templatedApproximate() const;

@@ -384,7 +384,7 @@ template Product PoolHandle::FixedArityBuilder<Product, ProductNode>(
 template Subtraction
 PoolHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
 template Sum PoolHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
-template Undefined PoolHandle::FixedArityBuilder<Undefined, UndefinedNode>(
+template OUndefined PoolHandle::FixedArityBuilder<OUndefined, UndefinedNode>(
     const Tuple &);
 template Nonreal PoolHandle::FixedArityBuilder<Nonreal, NonrealNode>(
     const Tuple &);

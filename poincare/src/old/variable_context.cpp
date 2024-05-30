@@ -41,7 +41,7 @@ const Expression VariableContext::protectedExpressionForSymbolAbstract(
     if (symbol.type() == ExpressionNode::Type::Symbol) {
       return clone ? m_value.clone() : m_value;
     }
-    return JuniorUndefined::Builder();
+    return Undefined::Builder();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);

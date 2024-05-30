@@ -65,19 +65,19 @@ class UndefinedNode : public NumberNode {
   };
 };
 
-class Undefined final : public Number {
+class OUndefined final : public Number {
  public:
-  Undefined(const UndefinedNode* n) : Number(n) {}
-  static Undefined Builder() {
-    return PoolHandle::FixedArityBuilder<Undefined, UndefinedNode>();
+  OUndefined(const UndefinedNode* n) : Number(n) {}
+  static OUndefined Builder() {
+    return PoolHandle::FixedArityBuilder<OUndefined, UndefinedNode>();
   }
-  constexpr static const char* Name() { return "undef"; }
-  constexpr static int NameSize() { return 6; }
 };
 
-class JuniorUndefined final : public JuniorExpression {
+class Undefined final : public JuniorExpression {
  public:
-  static JuniorUndefined Builder();
+  static Undefined Builder();
+  constexpr static const char* Name() { return "undef"; }
+  constexpr static int NameSize() { return 6; }
 };
 
 }  // namespace Poincare

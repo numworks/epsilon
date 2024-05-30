@@ -75,6 +75,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
 // Derive derivand preserving scope (V0^2 -> 2*V0).
 Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
+    // V0 -> 1
     return (1_e)->clone();
   }
   /* Merge subsequent nested derivatives. Avoid infinite simplification loops.

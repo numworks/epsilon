@@ -75,7 +75,7 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
   bool fIsNanInB = std::isnan(To(integrand, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
-  if (integral->isIntegralWithAlternatives() && (fIsNanInA || fIsNanInB)) {
+  if (fIsNanInA || fIsNanInB) {
     /* When we have a singularity at a bound, we want to evaluate the integrand
      * really close to the bound since the area there is non-negligible.  If the
      * bound is non-null, say 1/sqrt(1-x) near 1, the closest point from 1 where
@@ -83,10 +83,10 @@ T Approximation::ApproximateIntegral(const Tree* integral) {
      * simplify the expression near one 1/sqrt(1-(1-dx)) = 1/sqrt(dx) we can
      * evaluate the integrand really close to 1 (about 1-1e-300). */
     AlternativeIntegrand alternativeIntegrand = {.a = a, .b = b};
-    if (fIsNanInA && a != 0) {
+    if (fIsNanInA && a != 0 && integral->isIntegralWithAlternatives()) {
       alternativeIntegrand.integrandNearA = integral->child(4);
     }
-    if (fIsNanInB && b != 0) {
+    if (fIsNanInB && b != 0 && integral->isIntegralWithAlternatives()) {
       alternativeIntegrand.integrandNearB = integral->child(5);
     }
     /* We are using 4 levels of refinement which means ≈ 64 integrand

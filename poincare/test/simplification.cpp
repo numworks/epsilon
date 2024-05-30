@@ -755,10 +755,13 @@ QUIZ_CASE(pcj_simplification_dependencies) {
 QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("inf", "∞");
   simplifies_to("inf(-1)", "-∞");
-  // TODO_PCJ simplifies_to("inf-1", "-∞");
-  // TODO_PCJ simplifies_to("-inf+1", "-∞");
+  simplifies_to("inf-1", "∞");
+  simplifies_to("-inf+1", "-∞");
+  simplifies_to("inf+inf", "∞");
+  simplifies_to("-inf-inf", "-∞");
   simplifies_to("inf-inf", "undef");
   simplifies_to("-inf+inf", "undef");
+  simplifies_to("inf-inf+3*inf", "undef");
   simplifies_to("x-inf", "x-∞");
   simplifies_to("inf*(-π)", "-∞");
   simplifies_to("inf*2*inf", "∞");

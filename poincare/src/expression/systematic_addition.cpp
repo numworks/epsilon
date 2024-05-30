@@ -1,6 +1,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "infinity.h"
 #include "matrix.h"
 #include "number.h"
 #include "simplification.h"
@@ -62,8 +63,16 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
       !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
     // Merge numbers
     merge = Number::Addition(child, next);
+  } else if (Infinity::IsPlusOrMinusInfinity(next) &&
+             (child->treeIsIdenticalTo(next) || child->isNumber())) {
+    // inf+inf -> inf
+    // -inf-inf -> -inf
+    // number ± inf -> ± inf
+    child->removeTree();
+    return true;
   } else if (TermsAreEqual(child, next)) {
     // k1 * a + k2 * a -> (k1+k2) * a
+    // inf-inf will be handled here: -> (1-1)*inf -> 0*inf -> undef
     Tree* term = PushTerm(child);
     merge = PatternMatching::CreateSimplify(
         KMult(KAdd(KA, KB), KC),

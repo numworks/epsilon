@@ -17,6 +17,9 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
                                        KSqrt(KA)) ||
          PatternMatching::MatchReplace(expr, KPow(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(expr, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
+         /* TODO: e^ is better than exp because we have code to handle special
+          * cases in pow, exp is probably more precise on normal values */
+         PatternMatching::MatchReplace(expr, KExp(KA), KPow(e_e, KA)) ||
          changed;
 }
 

@@ -38,3 +38,5 @@ class AdditionalResultCell : public Escher::MenuCell<ScrollableThreeLayoutsView,
 }  // namespace Calculation
 
 #endif
+
+cout<<a/b<<endl;

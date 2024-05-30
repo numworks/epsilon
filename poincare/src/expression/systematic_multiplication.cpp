@@ -23,7 +23,8 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
     merge = Number::Multiplication(child, next);
   } else if (child->isInf() && next->isInf()) {
     // inf*inf -> inf
-    merge = KInf->clone();
+    child->removeTree();
+    return true;
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
     merge = PatternMatching::CreateSimplify(

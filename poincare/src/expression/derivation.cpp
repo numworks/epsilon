@@ -92,8 +92,10 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
      * We could have Di(Point) to be (i==0,i==1), but we don't handle sums and
      * product of points, so we escape the case here. */
     Tree* result = SharedTreeStack->push(Type::Point);
-    Derive(derivand->child(0), symbol, true);
-    Derive(derivand->child(1), symbol, true);
+    Tree* tempDerivative = Derive(derivand->child(0), symbol, true);
+    assert(tempDerivative);
+    tempDerivative = Derive(derivand->child(1), symbol, true);
+    assert(tempDerivative);
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
@@ -130,7 +132,8 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     }
 
     NAry::SetNumberOfChildren(mult, 2);
-    Derive(derivandChild, symbol, true);
+    Tree* tempDerivative = Derive(derivandChild, symbol, true);
+    assert(tempDerivative);
 
     Simplification::ShallowSystematicReduce(mult);
     i++;

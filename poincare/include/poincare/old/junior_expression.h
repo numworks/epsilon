@@ -164,7 +164,7 @@ class JuniorExpression : public OExpression {
       const ReductionContext& reductionContext) const;
 
   JuniorExpression getReducedDerivative(const char* symbolName,
-                                        int derivationOrder) const;
+                                        int derivationOrder = 1) const;
   // Replace some UserSymbol into Var0 for approximateToScalarWithValue
   JuniorExpression getSystemFunction(const char* symbolName) const;
   // Approximate to scalar replacing Var0 with value.

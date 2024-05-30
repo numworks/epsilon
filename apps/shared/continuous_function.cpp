@@ -996,9 +996,9 @@ SystemFunction ContinuousFunction::Model::expressionSlopeReduced(
               KMult(KA, KPow(KB, -1_e)),
               {
                   .KA = expression.childAtIndex(1).getReducedDerivative(
-                      k_unknownName, 1),
+                      k_unknownName),
                   .KB = expression.childAtIndex(0).getReducedDerivative(
-                      k_unknownName, 1),
+                      k_unknownName),
               })
               .getSystemFunction(k_unknownName);
     }

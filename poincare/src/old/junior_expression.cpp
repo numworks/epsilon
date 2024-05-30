@@ -36,10 +36,11 @@
 
 namespace Poincare {
 
+using namespace Internal;
+
 /* JuniorExpressionNode */
 
-JuniorExpressionNode::JuniorExpressionNode(const Internal::Tree* tree,
-                                           size_t treeSize) {
+JuniorExpressionNode::JuniorExpressionNode(const Tree* tree, size_t treeSize) {
   memcpy(m_blocks, tree->block(), treeSize);
 }
 
@@ -60,40 +61,36 @@ int JuniorExpressionNode::simplificationOrderSameType(
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(otype() == e->otype());
-  return Internal::Comparison::Compare(
+  return Comparison::Compare(
       tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
 // Only handle approximated Boolean, Point and Complex trees.
 template <typename T>
-Evaluation<T> EvaluationFromSimpleTree(const Internal::Tree* tree) {
+Evaluation<T> EvaluationFromSimpleTree(const Tree* tree) {
   if (tree->isBoolean()) {
-    return BooleanEvaluation<T>::Builder(
-        Internal::Approximation::ToBoolean<T>(tree));
+    return BooleanEvaluation<T>::Builder(Approximation::ToBoolean<T>(tree));
   }
   if (tree->isPoint()) {
     assert(false);
     // TODO_PCJ: To implement.
     // return PointEvaluation<T>::Builder()
   }
-  return Complex<T>::Builder(Internal::Approximation::ToComplex<T>(tree));
+  return Complex<T>::Builder(Approximation::ToComplex<T>(tree));
 }
 
 // Return the Evaluation for any tree.
 template <typename T>
 Evaluation<T> EvaluationFromTree(
-    const Internal::Tree* origin,
-    const ApproximationContext& approximationContext) {
-  Internal::Tree* tree = Internal::Approximation::RootTreeToTree<T>(
-      origin,
-      static_cast<Internal::AngleUnit>(approximationContext.angleUnit()),
-      static_cast<Internal::ComplexFormat>(
-          approximationContext.complexFormat()));
+    const Tree* origin, const ApproximationContext& approximationContext) {
+  Tree* tree = Approximation::RootTreeToTree<T>(
+      origin, static_cast<AngleUnit>(approximationContext.angleUnit()),
+      static_cast<ComplexFormat>(approximationContext.complexFormat()));
   Evaluation<T> result;
   if (tree->isMatrix()) {
     MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
     int i = 0;
-    for (const Internal::Tree* child : tree->children()) {
+    for (const Tree* child : tree->children()) {
       matrix.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
       i++;
     }
@@ -101,7 +98,7 @@ Evaluation<T> EvaluationFromTree(
   } else if (tree->isList()) {
     ListComplex<T> list = ListComplex<T>::Builder();
     int i = 0;
-    for (const Internal::Tree* child : tree->children()) {
+    for (const Tree* child : tree->children()) {
       list.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
       i++;
     }
@@ -126,17 +123,15 @@ Evaluation<double> JuniorExpressionNode::approximate(
 template <typename T>
 JuniorExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
-  return JuniorExpression::Builder(Internal::Approximation::RootTreeToTree<T>(
-      tree(),
-      static_cast<Internal::AngleUnit>(approximationContext.angleUnit()),
-      static_cast<Internal::ComplexFormat>(
-          approximationContext.complexFormat())));
+  return JuniorExpression::Builder(Approximation::RootTreeToTree<T>(
+      tree(), static_cast<AngleUnit>(approximationContext.angleUnit()),
+      static_cast<ComplexFormat>(approximationContext.complexFormat())));
 }
 
-Layout JuniorExpressionNode::createLayout(
+Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
-  return JuniorLayout::Builder(Internal::Layoutter::LayoutExpression(
+  return JuniorLayout::Builder(Layoutter::LayoutExpression(
       tree()->clone(), false, numberOfSignificantDigits, floatDisplayMode));
 }
 
@@ -144,47 +139,45 @@ size_t JuniorExpressionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  Internal::Tree* layout = Internal::Layoutter::LayoutExpression(
-      tree()->clone(), true, numberOfSignificantDigits);
-  size_t size =
-      Internal::Serialize(layout, buffer, buffer + bufferSize) - buffer;
+  Tree* layout = Layoutter::LayoutExpression(tree()->clone(), true,
+                                             numberOfSignificantDigits);
+  size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
   layout->removeTree();
   return size;
 }
 
 bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
-                                    Symbol symbol, OExpression symbolValue) {
+                                    Poincare::Symbol symbol,
+                                    OExpression symbolValue) {
   // TODO_PCJ: Remove
   assert(false);
   return false;
 }
 
-const Internal::Tree* JuniorExpressionNode::tree() const {
-  return Internal::Tree::FromBlocks(m_blocks);
+const Tree* JuniorExpressionNode::tree() const {
+  return Tree::FromBlocks(m_blocks);
 }
 
 int JuniorExpressionNode::polynomialDegree(Context* context,
                                            const char* symbolName) const {
-  Internal::Tree* symbol =
-      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
+  Tree* symbol = SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
   // TODO_PCJ: Pass at least ComplexFormat and SymbolicComputation
-  Internal::ProjectionContext projectionContext = {.m_context = context};
-  int degree = Internal::Degree::Get(tree(), symbol, projectionContext);
+  ProjectionContext projectionContext = {.m_context = context};
+  int degree = Degree::Get(tree(), symbol, projectionContext);
   symbol->removeTree();
   return degree;
 }
 
 /* JuniorExpression */
 
-JuniorExpression JuniorExpression::Parse(const Internal::Tree* layout,
-                                         Context* context,
+JuniorExpression JuniorExpression::Parse(const Tree* layout, Context* context,
                                          bool addMissingParenthesis,
                                          bool parseForAssignment) {
   // TODO_PCJ: Use addMissingParenthesis
-  return Builder(Internal::Parser::Parse(
-      layout, context,
-      parseForAssignment ? Internal::ParsingContext::ParsingMethod::Assignment
-                         : Internal::ParsingContext::ParsingMethod::Classic));
+  return Builder(Parser::Parse(layout, context,
+                               parseForAssignment
+                                   ? ParsingContext::ParsingMethod::Assignment
+                                   : ParsingContext::ParsingMethod::Classic));
 }
 
 JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
@@ -193,7 +186,7 @@ JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
   if (string[0] == 0) {
     return JuniorExpression();
   }
-  Internal::Tree* layout = Internal::RackFromText(string);
+  Tree* layout = RackFromText(string);
   if (!layout) {
     return JuniorExpression();
   }
@@ -203,37 +196,34 @@ JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
   return result;
 }
 
-JuniorExpression JuniorExpression::Create(const Internal::Tree* structure,
-                                          Internal::ContextTrees ctx) {
-  Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
+JuniorExpression JuniorExpression::Create(const Tree* structure,
+                                          ContextTrees ctx) {
+  Tree* tree = PatternMatching::Create(structure, ctx);
   return Builder(tree);
 }
 
-JuniorExpression JuniorExpression::CreateSimplify(
-    const Internal::Tree* structure, Internal::ContextTrees ctx) {
-  Internal::Tree* tree =
-      Internal::PatternMatching::CreateSimplify(structure, ctx);
+JuniorExpression JuniorExpression::CreateSimplify(const Tree* structure,
+                                                  ContextTrees ctx) {
+  Tree* tree = PatternMatching::CreateSimplify(structure, ctx);
   return Builder(tree);
 }
 
 // Builders from value.
 JuniorExpression JuniorExpression::Builder(int32_t n) {
-  return Builder(Internal::Integer::Push(n));
+  return Builder(Integer::Push(n));
 }
 
 template <>
 JuniorExpression JuniorExpression::Builder<float>(float x) {
-  return Builder(
-      Internal::SharedTreeStack->push<Internal::Type::SingleFloat>(x));
+  return Builder(SharedTreeStack->push<Type::SingleFloat>(x));
 }
 
 template <>
 JuniorExpression JuniorExpression::Builder<double>(double x) {
-  return Builder(
-      Internal::SharedTreeStack->push<Internal::Type::DoubleFloat>(x));
+  return Builder(SharedTreeStack->push<Type::DoubleFloat>(x));
 }
 
-JuniorExpression JuniorExpression::Builder(const Internal::Tree* tree) {
+JuniorExpression JuniorExpression::Builder(const Tree* tree) {
   if (!tree) {
     return JuniorExpression();
   }
@@ -246,8 +236,8 @@ JuniorExpression JuniorExpression::Builder(const Internal::Tree* tree) {
   return static_cast<JuniorExpression&>(h);
 }
 
-JuniorExpression JuniorExpression::Builder(Internal::Tree* tree) {
-  JuniorExpression result = Builder(const_cast<const Internal::Tree*>(tree));
+JuniorExpression JuniorExpression::Builder(Tree* tree) {
+  JuniorExpression result = Builder(const_cast<const Tree*>(tree));
   if (tree) {
     tree->removeTree();
   }
@@ -260,7 +250,7 @@ JuniorExpression JuniorExpression::Juniorize(OExpression e) {
     // e is already a junior expression
     return static_cast<JuniorExpression&>(e);
   }
-  return Builder(Internal::FromPoincareExpression(e));
+  return Builder(FromPoincareExpression(e));
 }
 
 JuniorExpression JuniorExpression::childAtIndex(int i) const {
@@ -285,77 +275,77 @@ ExpressionNode::Type JuniorExpression::type() const {
                                : ExpressionNode::Type::Undefined;
   }
   switch (tree()->type()) {
-    case Internal::Type::Add:
+    case Type::Add:
       return ExpressionNode::Type::Addition;
-    case Internal::Type::True:
-    case Internal::Type::False:
+    case Type::True:
+    case Type::False:
       return ExpressionNode::Type::Boolean;
-    case Internal::Type::Arg:
+    case Type::Arg:
       return ExpressionNode::Type::ComplexArgument;
-    case Internal::Type::Conj:
+    case Type::Conj:
       return ExpressionNode::Type::Conjugate;
-    case Internal::Type::PhysicalConstant:
+    case Type::PhysicalConstant:
       return ExpressionNode::Type::ConstantPhysics;
-    case Internal::Type::Dependency:
+    case Type::Dependency:
       return ExpressionNode::Type::Dependency;
-    case Internal::Type::Diff:
+    case Type::Diff:
       return ExpressionNode::Type::Derivative;
-    case Internal::Type::Div:
+    case Type::Div:
       return ExpressionNode::Type::Division;
-    case Internal::Type::Factor:
+    case Type::Factor:
       return ExpressionNode::Type::Factor;
-    case Internal::Type::Frac:
+    case Type::Frac:
       return ExpressionNode::Type::FracPart;
-    case Internal::Type::Im:
+    case Type::Im:
       return ExpressionNode::Type::ImaginaryPart;
-    case Internal::Type::Inf:
+    case Type::Inf:
       return ExpressionNode::Type::Infinity;
-    case Internal::Type::Integral:
+    case Type::Integral:
       return ExpressionNode::Type::Integral;
-    case Internal::Type::List:
+    case Type::List:
       return ExpressionNode::Type::List;
-    case Internal::Type::ListSequence:
+    case Type::ListSequence:
       return ExpressionNode::Type::ListSequence;
-    case Internal::Type::Logarithm:
-    case Internal::Type::Log:
+    case Type::Logarithm:
+    case Type::Log:
       return ExpressionNode::Type::Logarithm;
-    case Internal::Type::Matrix:
+    case Type::Matrix:
       return ExpressionNode::Type::Matrix;
-    case Internal::Type::Mult:
+    case Type::Mult:
       return ExpressionNode::Type::Multiplication;
-    case Internal::Type::Opposite:
+    case Type::Opposite:
       return ExpressionNode::Type::Opposite;
-    case Internal::Type::Piecewise:
+    case Type::Piecewise:
       return ExpressionNode::Type::PiecewiseOperator;
-    case Internal::Type::Point:
+    case Type::Point:
       return ExpressionNode::Type::Point;
-    case Internal::Type::Pow:
+    case Type::Pow:
       return ExpressionNode::Type::Power;
-    case Internal::Type::Product:
+    case Type::Product:
       return ExpressionNode::Type::Product;
-    case Internal::Type::RandInt:
+    case Type::RandInt:
       return ExpressionNode::Type::Randint;
-    case Internal::Type::RandIntNoRep:
+    case Type::RandIntNoRep:
       return ExpressionNode::Type::RandintNoRepeat;
-    case Internal::Type::Random:
+    case Type::Random:
       return ExpressionNode::Type::Random;
-    case Internal::Type::Re:
+    case Type::Re:
       return ExpressionNode::Type::RealPart;
-    case Internal::Type::Round:
+    case Type::Round:
       return ExpressionNode::Type::Round;
-    case Internal::Type::Store:
+    case Type::Store:
       return ExpressionNode::Type::Store;
-    case Internal::Type::Sum:
+    case Type::Sum:
       return ExpressionNode::Type::Sum;
-    case Internal::Type::UnitConversion:
+    case Type::UnitConversion:
       return ExpressionNode::Type::UnitConvert;
-    case Internal::Type::UserSymbol:
+    case Type::UserSymbol:
       return ExpressionNode::Type::Symbol;
-    case Internal::Type::UserFunction:
+    case Type::UserFunction:
       return ExpressionNode::Type::Function;
-    case Internal::Type::UserSequence:
+    case Type::UserSequence:
       return ExpressionNode::Type::Sequence;
-    case Internal::Type::Parenthesis:
+    case Type::Parenthesis:
       return ExpressionNode::Type::Parenthesis;
 #if 0
       // No perfect Internal equivalents
@@ -364,12 +354,12 @@ ExpressionNode::Type JuniorExpression::type() const {
       return ExpressionNode::Type::DistributionDispatcher;
 #endif
       // Unused in apps, but they should not raise the default assert.
-    case Internal::Type::Equal:
-    case Internal::Type::NotEqual:
-    case Internal::Type::Superior:
-    case Internal::Type::SuperiorEqual:
-    case Internal::Type::Inferior:
-    case Internal::Type::InferiorEqual:
+    case Type::Equal:
+    case Type::NotEqual:
+    case Type::Superior:
+    case Type::SuperiorEqual:
+    case Type::Inferior:
+    case Type::InferiorEqual:
       // TODO_PCJ
       return ExpressionNode::Type::Comparison;
     default:
@@ -395,21 +385,19 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
   assert(reductionContext.target() == ReductionTarget::User);
-  Internal::ProjectionContext context = {
+  ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
-      .m_strategy = approximateKeepingSymbols
-                        ? Internal::Strategy::ApproximateToFloat
-                        : Internal::Strategy::Default,
+      .m_strategy = approximateKeepingSymbols ? Strategy::ApproximateToFloat
+                                              : Strategy::Default,
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  Internal::Tree* e = tree()->clone();
-  Internal::Simplification::SimplifyWithAdaptiveStrategy(e, &context);
+  Tree* e = tree()->clone();
+  Simplification::SimplifyWithAdaptiveStrategy(e, &context);
   if (approximateExpression) {
-    *approximateExpression =
-        Builder(Internal::Approximation::RootTreeToTree<double>(
-            e, context.m_angleUnit, context.m_complexFormat));
+    *approximateExpression = Builder(Approximation::RootTreeToTree<double>(
+        e, context.m_angleUnit, context.m_complexFormat));
   }
   *simplifiedExpression = Builder(e);
   return;
@@ -418,20 +406,19 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
 JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
     ReductionContext* reductionContext, bool* reduceFailure,
     bool approximateDuringReduction) const {
-  Internal::ProjectionContext context = {
+  ProjectionContext context = {
       .m_complexFormat = reductionContext->complexFormat(),
       .m_angleUnit = reductionContext->angleUnit(),
-      .m_strategy = approximateDuringReduction
-                        ? Internal::Strategy::ApproximateToFloat
-                        : Internal::Strategy::Default,
+      .m_strategy = approximateDuringReduction ? Strategy::ApproximateToFloat
+                                               : Strategy::Default,
       .m_unitFormat = reductionContext->unitFormat(),
       .m_symbolic = reductionContext->symbolicComputation(),
       .m_context = reductionContext->context()};
-  Internal::Tree* e = tree()->clone();
+  Tree* e = tree()->clone();
   // TODO_PCJ: Decide if a projection is needed or not
-  Internal::Simplification::ToSystem(e, &context);
-  Internal::Simplification::SimplifySystem(e, true);
-  Internal::Simplification::TryApproximationStrategyAgain(e, context);
+  Simplification::ToSystem(e, &context);
+  Simplification::SimplifySystem(e, true);
+  Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
   *reduceFailure = false;
   JuniorExpression simplifiedExpression = Builder(e);
@@ -457,7 +444,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
   }
   if (!*reduceFailure) {
     /* TODO_PCJ: Ensure Dependency::deepRemoveUselessDependencies(...) logic has
-     * been properly brought in Internal::Simplification. */
+     * been properly brought in Simplification. */
     simplifiedExpression =
         simplifiedExpression.deepRemoveUselessDependencies(*reductionContext);
   }
@@ -476,16 +463,14 @@ JuniorExpression JuniorExpression::cloneAndReduce(
 
 JuniorExpression JuniorExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
-  Internal::Tree* result =
-      Internal::SharedTreeStack->push(Internal::Type::NthDiff);
-  Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
-  const Internal::Tree* symbol =
-      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
-  Internal::Integer::Push(derivationOrder);
-  Internal::Tree* derivand = tree()->clone();
-  Internal::Variables::ReplaceSymbol(
-      derivand, symbol, 0, Internal::Parametric::VariableSign(result));
-  Internal::Simplification::SimplifySystem(result, false);
+  Tree* result = SharedTreeStack->push(Type::NthDiff);
+  SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  const Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  Integer::Push(derivationOrder);
+  Tree* derivand = tree()->clone();
+  Variables::ReplaceSymbol(derivand, symbol, 0,
+                           Parametric::VariableSign(result));
+  Simplification::SimplifySystem(result, false);
   /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
    * getSystemFunction is expected to be called on it later. */
   return JuniorExpression::Builder(result);
@@ -493,15 +478,15 @@ JuniorExpression JuniorExpression::getReducedDerivative(
 
 JuniorExpression JuniorExpression::getSystemFunction(
     const char* symbolName) const {
-  Internal::Tree* result = tree()->clone();
-  Internal::Approximation::PrepareFunctionForApproximation(
-      result, symbolName, Internal::ComplexFormat::Real);
+  Tree* result = tree()->clone();
+  Approximation::PrepareFunctionForApproximation(result, symbolName,
+                                                 ComplexFormat::Real);
   return JuniorExpression::Builder(result);
 }
 
 template <typename T>
 T JuniorExpression::approximateToScalarWithValue(T x) const {
-  return Internal::Approximation::ToReal<T>(tree(), x);
+  return Approximation::ToReal<T>(tree(), x);
 }
 
 template <typename T>
@@ -539,19 +524,20 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
 
 JuniorExpression JuniorExpression::cloneAndBeautify(
     const ReductionContext& reductionContext) const {
-  Internal::ProjectionContext context = {
+  ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  Internal::Tree* e = tree()->clone();
-  Internal::Beautification::DeepBeautify(e, context);
+  Tree* e = tree()->clone();
+  Beautification::DeepBeautify(e, context);
   return Builder(e);
 }
 
 bool JuniorExpression::derivate(const ReductionContext& reductionContext,
-                                Symbol symbol, OExpression symbolValue) {
+                                Poincare::Symbol symbol,
+                                OExpression symbolValue) {
   // TODO_PCJ: Remove
   assert(false);
   return false;
@@ -560,28 +546,26 @@ bool JuniorExpression::derivate(const ReductionContext& reductionContext,
 int JuniorExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     JuniorExpression coefficients[]) const {
-  Internal::Tree* symbol =
-      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
-  Internal::Tree* poly = tree()->clone();
-  Internal::AdvancedSimplification::DeepExpand(poly);
+  Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  Tree* poly = tree()->clone();
+  AdvancedSimplification::DeepExpand(poly);
   // PolynomialParser::Parse eats given tree
-  poly = Internal::PolynomialParser::Parse(poly, symbol);
+  poly = PolynomialParser::Parse(poly, symbol);
   if (!poly->isPolynomial()) {
     coefficients[0] = Builder(poly);
     symbol->removeTree();
     return 0;
   }
-  int degree = Internal::Polynomial::Degree(poly);
+  int degree = Polynomial::Degree(poly);
   int indexExponent = 0;
-  int numberOfTerms = Internal::Polynomial::NumberOfTerms(poly);
+  int numberOfTerms = Polynomial::NumberOfTerms(poly);
   for (int i = degree; i >= 0; i--) {
     if (indexExponent < numberOfTerms &&
-        i == Internal::Polynomial::ExponentAtIndex(poly, indexExponent)) {
+        i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
       coefficients[i] = Builder(poly->child(indexExponent + 1)->clone());
       indexExponent++;
     } else {
-      coefficients[i] =
-          Builder(Internal::SharedTreeStack->push(Internal::Type::Zero));
+      coefficients[i] = Builder(SharedTreeStack->push(Type::Zero));
     }
   }
   assert(indexExponent == numberOfTerms);
@@ -618,9 +602,9 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   }
   assert(!symbol.tree()->isUserSequence());
   assert(symbol.tree()->isUserNamed());
-  Internal::Tree* result = tree()->clone();
+  Tree* result = tree()->clone();
   assert(!onlySecondTerm || result->numberOfChildren() >= 2);
-  if (Internal::Variables::ReplaceSymbolWithTree(
+  if (Variables::ReplaceSymbolWithTree(
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
           expression.tree())) {
     JuniorExpression res = Builder(result);
@@ -697,15 +681,14 @@ bool JuniorExpression::recursivelyMatches(
   bool isParametered = tree()->isParametric();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
   for (int i = childrenCount - 1; i >= 0; i--) {
-    if (isParametered && i == Internal::Parametric::k_variableIndex) {
+    if (isParametered && i == Parametric::k_variableIndex) {
       continue;
     }
     // TODO: There's no need to clone the juniorExpression here.
     JuniorExpression childToAnalyze = childAtIndex(i);
     bool matches;
-    if (isParametered && i == Internal::Parametric::FunctionIndex(tree())) {
-      JuniorExpression symbolExpr =
-          childAtIndex(Internal::Parametric::k_variableIndex);
+    if (isParametered && i == Parametric::FunctionIndex(tree())) {
+      JuniorExpression symbolExpr = childAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
       matches = childToAnalyze.recursivelyMatches(
@@ -784,11 +767,11 @@ bool JuniorExpression::deepIsMatrix(Context* context, bool canContainMatrices,
   if (!canContainMatrices) {
     return false;
   }
-  return Internal::Dimension::GetDimension(tree()).isMatrix();
+  return Dimension::GetDimension(tree()).isMatrix();
 }
 
 bool JuniorExpression::deepIsList(Context* context) const {
-  return Internal::Dimension::IsList(tree());
+  return Dimension::IsList(tree());
 }
 
 bool JuniorExpression::hasComplexI(Context* context,
@@ -832,7 +815,7 @@ bool JuniorExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
 
 bool JuniorExpression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
-         Internal::Dimension::GetDimension(tree()).isSimpleAngleUnit();
+         Dimension::GetDimension(tree()).isSimpleAngleUnit();
 }
 
 bool JuniorExpression::isInRadians(Context* context) const {
@@ -844,7 +827,7 @@ bool JuniorExpression::isInRadians(Context* context) const {
       cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
-         Internal::Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
+         Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
 }
 
 bool JuniorExpression::involvesDiscontinuousFunction(Context* context) const {
@@ -853,92 +836,93 @@ bool JuniorExpression::involvesDiscontinuousFunction(Context* context) const {
 
 bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
                                        Context* context) {
-  return Internal::Continuity::InvolvesDiscontinuousFunction(e.tree());
+  return Continuity::InvolvesDiscontinuousFunction(e.tree());
 }
 
 /* Matrix */
 
-Matrix Matrix::Builder() {
-  JuniorExpression expr = JuniorExpression::Builder(
-      Internal::SharedTreeStack->push<Internal::Type::Matrix>(0, 0));
-  return static_cast<Matrix&>(expr);
+Poincare::Matrix Poincare::Matrix::Builder() {
+  JuniorExpression expr =
+      JuniorExpression::Builder(SharedTreeStack->push<Type::Matrix>(0, 0));
+  return static_cast<Poincare::Matrix&>(expr);
 }
 
-void Matrix::setDimensions(int rows, int columns) {
+void Poincare::Matrix::setDimensions(int rows, int columns) {
   assert(rows * columns == tree()->numberOfChildren());
-  Internal::Tree* clone = tree()->clone();
+  Tree* clone = tree()->clone();
   Internal::Matrix::SetNumberOfColumns(clone, columns);
   Internal::Matrix::SetNumberOfRows(clone, rows);
   JuniorExpression temp = JuniorExpression::Builder(clone);
-  *this = static_cast<Matrix&>(temp);
+  *this = static_cast<Poincare::Matrix&>(temp);
 }
 
-bool Matrix::isVector() const {
-  const Internal::Tree* t = tree();
+bool Poincare::Matrix::isVector() const {
+  const Tree* t = tree();
   return Internal::Matrix::NumberOfRows(t) == 1 ||
          Internal::Matrix::NumberOfColumns(t) == 1;
 }
 
-int Matrix::numberOfRows() const {
+int Poincare::Matrix::numberOfRows() const {
   return Internal::Matrix::NumberOfRows(tree());
 }
 
-int Matrix::numberOfColumns() const {
+int Poincare::Matrix::numberOfColumns() const {
   return Internal::Matrix::NumberOfColumns(tree());
 }
 
 // TODO_PCJ: Rework this and its usage
-void Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
-                                    int currentNumberOfChildren) {
-  Internal::Tree* clone = tree()->clone();
-  Internal::TreeRef newChild = t.tree()->clone();
+void Poincare::Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
+                                              int currentNumberOfChildren) {
+  Tree* clone = tree()->clone();
+  TreeRef newChild = t.tree()->clone();
   if (index >= clone->numberOfChildren()) {
     int rows = Internal::Matrix::NumberOfRows(clone);
     int columns = Internal::Matrix::NumberOfColumns(clone);
     for (int i = 1; i < columns; i++) {
-      Internal::KUndef->clone();
+      KUndef->clone();
     }
     Internal::Matrix::SetNumberOfRows(clone, rows + 1);
   } else {
-    Internal::Tree* previousChild = clone->child(index);
+    Tree* previousChild = clone->child(index);
     previousChild->removeTree();
     newChild->moveTreeAtNode(previousChild);
   }
   JuniorExpression temp = JuniorExpression::Builder(clone);
-  *this = static_cast<Matrix&>(temp);
+  *this = static_cast<Poincare::Matrix&>(temp);
 }
 
-JuniorExpression Matrix::matrixChild(int i, int j) {
+JuniorExpression Poincare::Matrix::matrixChild(int i, int j) {
   return JuniorExpression::Builder(Internal::Matrix::Child(tree(), i, j));
 }
 
-int Matrix::rank(Context* context, bool forceCanonization) {
+int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   if (!forceCanonization) {
     return Internal::Matrix::Rank(tree());
   }
-  Internal::Tree* clone = tree()->clone();
+  Tree* clone = tree()->clone();
   int result = Internal::Matrix::CanonizeAndRank(clone);
   JuniorExpression temp = JuniorExpression::Builder(clone);
-  *this = static_cast<Matrix&>(temp);
+  *this = static_cast<Poincare::Matrix&>(temp);
   return result;
 }
 
 // TODO_PCJ: Rework this and its usage
 template <typename T>
-int Matrix::ArrayInverse(T* array, int numberOfRows, int numberOfColumns) {
+int Poincare::Matrix::ArrayInverse(T* array, int numberOfRows,
+                                   int numberOfColumns) {
   return OMatrix::ArrayInverse(array, numberOfRows, numberOfColumns);
 }
 
-template int Matrix::ArrayInverse<double>(double*, int, int);
-template int Matrix::ArrayInverse<std::complex<float>>(std::complex<float>*,
-                                                       int, int);
-template int Matrix::ArrayInverse<std::complex<double>>(std::complex<double>*,
-                                                        int, int);
+template int Poincare::Matrix::ArrayInverse<double>(double*, int, int);
+template int Poincare::Matrix::ArrayInverse<std::complex<float>>(
+    std::complex<float>*, int, int);
+template int Poincare::Matrix::ArrayInverse<std::complex<double>>(
+    std::complex<double>*, int, int);
 
 /* Point */
 
 Point Point::Builder(JuniorExpression x, JuniorExpression y) {
-  Internal::Tree* tree = Internal::KPoint->cloneNode();
+  Tree* tree = KPoint->cloneNode();
   x.tree()->clone();
   y.tree()->clone();
   JuniorExpression temp = JuniorExpression::Builder(tree);
@@ -949,17 +933,17 @@ template <typename T>
 Coordinate2D<T> Point::approximate2D(
     const ApproximationContext& approximationContext) {
   // TODO_PCJ: Add context for angle unit and complex format.
-  return Coordinate2D<T>(
-      Internal::Approximation::RootTreeToReal<T>(tree()->child(0)),
-      Internal::Approximation::RootTreeToReal<T>(tree()->child(1)));
+  return Coordinate2D<T>(Approximation::RootTreeToReal<T>(tree()->child(0)),
+                         Approximation::RootTreeToReal<T>(tree()->child(1)));
 }
 
-Layout Point::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
-                             int significantDigits, Context* context) const {
-  Layout child0 = childAtIndex(0).createLayout(floatDisplayMode,
-                                               significantDigits, context);
-  Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
-                                               significantDigits, context);
+Poincare::Layout Point::create2DLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int significantDigits,
+    Context* context) const {
+  Poincare::Layout child0 = childAtIndex(0).createLayout(
+      floatDisplayMode, significantDigits, context);
+  Poincare::Layout child1 = childAtIndex(1).createLayout(
+      floatDisplayMode, significantDigits, context);
   return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
 }
 
@@ -971,14 +955,14 @@ template Coordinate2D<double> Point::approximate2D<double>(
 /* List */
 
 List List::Builder() {
-  JuniorExpression expr = JuniorExpression::Builder(
-      Internal::SharedTreeStack->push<Internal::Type::List>(0));
+  JuniorExpression expr =
+      JuniorExpression::Builder(SharedTreeStack->push<Type::List>(0));
   return static_cast<List&>(expr);
 }
 
 void List::removeChildAtIndexInPlace(int i) {
-  Internal::Tree* clone = tree()->clone();
-  Internal::NAry::RemoveChildAtIndex(clone, i);
+  Tree* clone = tree()->clone();
+  NAry::RemoveChildAtIndex(clone, i);
   JuniorExpression temp = JuniorExpression::Builder(clone);
   *this = static_cast<List&>(temp);
 }
@@ -986,9 +970,9 @@ void List::removeChildAtIndexInPlace(int i) {
 // TODO_PCJ: Rework this and its usage
 void List::addChildAtIndexInPlace(JuniorExpression t, int index,
                                   int currentNumberOfChildren) {
-  Internal::Tree* clone = tree()->clone();
-  Internal::TreeRef newChild = t.tree()->clone();
-  Internal::NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
+  Tree* clone = tree()->clone();
+  TreeRef newChild = t.tree()->clone();
+  NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   JuniorExpression temp = JuniorExpression::Builder(clone);
   *this = static_cast<List&>(temp);
 }
@@ -1005,25 +989,24 @@ bool Boolean::value() const {
 /* Unit */
 
 JuniorExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
-  return JuniorExpression::Builder(Internal::Units::Unit::Push(
-      angleUnit == Preferences::AngleUnit::Radian
-          ? &Internal::Units::Angle::representatives.radian
-      : angleUnit == Preferences::AngleUnit::Degree
-          ? &Internal::Units::Angle::representatives.degree
-          : &Internal::Units::Angle::representatives.gradian,
-      Internal::Units::Prefix::EmptyPrefix()));
+  return JuniorExpression::Builder(
+      Units::Unit::Push(angleUnit == Preferences::AngleUnit::Radian
+                            ? &Units::Angle::representatives.radian
+                        : angleUnit == Preferences::AngleUnit::Degree
+                            ? &Units::Angle::representatives.degree
+                            : &Units::Angle::representatives.gradian,
+                        Units::Prefix::EmptyPrefix()));
 }
 
 bool Unit::IsPureAngleUnit(JuniorExpression expression, bool isRadian) {
-  return Internal::Units::IsPureAngleUnit(expression.tree()) &&
-         (!isRadian ||
-          Internal::Units::Unit::GetRepresentative(expression.tree()) ==
-              &Internal::Units::Angle::representatives.radian);
+  return Units::IsPureAngleUnit(expression.tree()) &&
+         (!isRadian || Units::Unit::GetRepresentative(expression.tree()) ==
+                           &Units::Angle::representatives.radian);
 }
 
 bool Unit::HasAngleDimension(JuniorExpression expression) {
-  assert(Internal::Dimension::DeepCheckDimensions(expression.tree()));
-  return Internal::Dimension::GetDimension(expression.tree()).isAngleUnit();
+  assert(Dimension::DeepCheckDimensions(expression.tree()));
+  return Dimension::GetDimension(expression.tree()).isAngleUnit();
 }
 
 template JuniorExpression JuniorExpressionNode::approximateToTree<float>(
@@ -1032,14 +1015,12 @@ template JuniorExpression JuniorExpressionNode::approximateToTree<double>(
     const ApproximationContext&) const;
 
 template Evaluation<float> EvaluationFromTree<float>(
-    const Internal::Tree*, const ApproximationContext&);
+    const Tree*, const ApproximationContext&);
 template Evaluation<double> EvaluationFromTree<double>(
-    const Internal::Tree*, const ApproximationContext&);
+    const Tree*, const ApproximationContext&);
 
-template Evaluation<float> EvaluationFromSimpleTree<float>(
-    const Internal::Tree*);
-template Evaluation<double> EvaluationFromSimpleTree<double>(
-    const Internal::Tree*);
+template Evaluation<float> EvaluationFromSimpleTree<float>(const Tree*);
+template Evaluation<double> EvaluationFromSimpleTree<double>(const Tree*);
 
 template float JuniorExpression::approximateToScalarWithValue<float>(
     float) const;

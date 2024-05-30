@@ -57,12 +57,18 @@ bool Approximation::PrepareFunctionForApproximation(
                                           complexFormat == ComplexFormat::Real
                                               ? ComplexSign::RealUnknown()
                                               : ComplexSign::Unknown());
-  changed = Tree::ApplyShallowInDepth(expr, &ShallowExpandIntegrals) || changed;
-  changed = Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation) ||
-            changed;
+  changed = PrepareExpressionForApproximation(expr, complexFormat);
   changed = ApproximateAndReplaceEveryScalar(expr) || changed;
   // TODO: factor common sub-expressions
   // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
+  return changed;
+}
+
+bool Approximation::PrepareExpressionForApproximation(
+    Tree* expr, ComplexFormat complexFormat) {
+  bool changed = Tree::ApplyShallowInDepth(expr, &ShallowExpandIntegrals);
+  changed = Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation) ||
+            changed;
   return changed;
 }
 

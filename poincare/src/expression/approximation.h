@@ -119,6 +119,9 @@ class Approximation final {
   static bool PrepareFunctionForApproximation(Tree* expr, const char* variable,
                                               ComplexFormat complexFormat);
 
+  static bool PrepareExpressionForApproximation(Tree* expr,
+                                                ComplexFormat complexFormat);
+
   // Return false if tree could not be approximated to a defined value.
   static bool CanApproximate(const Tree* tree, bool approxLocalVar = false) {
     return CanApproximate(tree, 0);

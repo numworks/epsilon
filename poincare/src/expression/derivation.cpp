@@ -131,10 +131,9 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
       return preservedDerivative;
     }
 
-    NAry::SetNumberOfChildren(mult, 2);
     Tree* tempDerivative = Derive(derivandChild, symbol, true);
     assert(tempDerivative);
-
+    NAry::SetNumberOfChildren(mult, 2);
     Simplification::ShallowSystematicReduce(mult);
     i++;
   }

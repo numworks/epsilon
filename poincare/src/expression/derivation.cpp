@@ -139,35 +139,28 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   return result;
 }
 
-bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
+Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
   switch (derivand->type()) {
     case Type::Mult: {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
       int numberOfChildren = derivand->numberOfChildren();
       assert(numberOfChildren > 1 && index < numberOfChildren);
-      Tree* mult;
-      if (numberOfChildren > 2) {
-        mult = SharedTreeStack->push<Type::Mult>(numberOfChildren - 1);
-      }
+      Tree* mult = SharedTreeStack->push<Type::Mult>(numberOfChildren - 1);
       for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
           indexedNode.first->clone();
         }
       }
-      if (numberOfChildren > 2) {
-        Simplification::ShallowSystematicReduce(mult);
-      }
-      return true;
+      Simplification::ShallowSystematicReduce(mult);
+      return mult;
     }
     case Type::Add:
       // Di(x0 + x1 + ... + xi + ...) = 1
-      SharedTreeStack->push(Type::One);
-      return true;
+      return SharedTreeStack->push(Type::One);
     case Type::Exp:
       // Di(exp(x)) = exp(x)
-      derivand->clone();
-      return true;
+      return derivand->clone();
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
@@ -175,17 +168,16 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       derivand->child(0)->clone();
       SharedTreeStack->push(Type::MinusOne);
       Simplification::ShallowSystematicReduce(power);
-      return true;
+      return power;
     }
     case Type::Trig:
       // Di(Trig(x, n)) = Trig(x, n-1)
     case Type::Pow: {
       // Di(x^n) = n*x^(n-1)
       // Second parameter cannot depend on symbol.
-      assert(!Variables::HasVariables(derivand->child(1)));
       if (index == 1) {
-        SharedTreeStack->push(Type::Zero);
-        return true;
+        assert(!Variables::HasVariables(derivand->child(1)));
+        return (0_e)->clone();
       }
       Tree* multiplication;
       if (derivand->isPow()) {
@@ -202,10 +194,10 @@ bool Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       if (derivand->isPow()) {
         Simplification::ShallowSystematicReduce(multiplication);
       }
-      return true;
+      return derivand->isPow() ? multiplication : newNode;
     }
     default:
-      return false;
+      return nullptr;
   }
 }
 

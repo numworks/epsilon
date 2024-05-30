@@ -499,19 +499,19 @@ JuniorExpression JuniorExpression::getSystemFunction(
   return JuniorExpression::Builder(result);
 }
 
-template <typename U>
-U JuniorExpression::approximateToScalarWithValue(U x) const {
-  return Internal::Approximation::ToReal<U>(tree(), x);
+template <typename T>
+T JuniorExpression::approximateToScalarWithValue(T x) const {
+  return Internal::Approximation::ToReal<T>(tree(), x);
 }
 
-template <typename U>
-U JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
+template <typename T>
+T JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
     const char* text, Context* context,
     SymbolicComputation symbolicComputation) {
   JuniorExpression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
   // TODO: Shared shouldn't be called in Poincare
-  return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
+  return Shared::PoincareHelpers::ApproximateToScalar<T>(exp, context);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(

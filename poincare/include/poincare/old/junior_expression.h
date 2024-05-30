@@ -168,8 +168,8 @@ class JuniorExpression : public OExpression {
   // Replace some UserSymbol into Var0 for approximateToScalarWithValue
   JuniorExpression getSystemFunction(const char* symbolName) const;
   // Approximate to scalar replacing Var0 with value.
-  template <typename U>
-  U approximateToScalarWithValue(U x) const;
+  template <typename T>
+  T approximateToScalarWithValue(T x) const;
 
   template <typename T>
   JuniorExpression approximateToTree(
@@ -177,8 +177,8 @@ class JuniorExpression : public OExpression {
     return node()->approximateToTree<T>(approximationContext);
   }
   /* Approximation Helper */
-  template <typename U>
-  static U ParseAndSimplifyAndApproximateToScalar(
+  template <typename T>
+  static T ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);

@@ -211,6 +211,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "dep(6×k×y,{k^2})");
   simplifies_to("diff((x^2, floor(x)),x,k)", "(2×k,diff(floor(x),x,k))");
   simplifies_to("diff(floor(x), x, y, 1)", "diff(floor(x),x,y)");
+  // There should be no dependencies, see Dependency::ContainsSameDependency
   simplifies_to("diff(floor(x)+x, x, y, 2)",
                 "dep(diff(floor(x),x,y,2),{floor(y)})");
   simplifies_to("diff((sin(t),cos(t)),t,t,2)", "(-sin(t),-cos(t))");

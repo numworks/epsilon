@@ -107,3 +107,47 @@ $(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)
+
+# Packaged simulator assets
+
+_ion_simulator_iconset := $(OUTPUT_DIRECTORY)/app/assets/app.iconset
+_ion_simulator_icons_sizes := 16x16 32x32 64x64 128x128 256x256 512x512 1024x1024
+_ion_simulator_icons := $(patsubst %,$(_ion_simulator_iconset)/icon_%.png,$(_ion_simulator_icons_sizes))
+_ion_simulator_background := $(PATH_ion)/src/simulator/assets/background-with-shadow.webp
+_ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)
+# TODO macos only
+_ion_simulator_icons_use_mask := 1
+
+_ion_simulator_assets := \
+$(addprefix $(PATH_ion)/src/simulator/assets/, \
+  horizontal_arrow.png \
+  large_squircle.png \
+  round.png \
+  small_squircle.png \
+  vertical_arrow.png \
+) \
+  $(_ion_simulator_background) \
+  $(_ion_simulator_backgrounds_generated)
+
+$(eval $(foreach a,$(_ion_simulator_assets),\
+$(call rule_for_simulator_resource,COPY,$(notdir $a),$a,\
+  cp $$^ $$@ \
+)))
+
+# FIXME Sizes and offsets should be parameterized
+$(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
+	$(call rule_label,CONVERT)
+	$(QUIET) convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
+
+$(eval $(call rule_for_simulator_resource, \
+  ICNUTIL,app.icns,$(_ion_simulator_icons), \
+  iconutil --convert icns --output $$@ $$(dir $$<) \
+))
+
+$(_ion_simulator_icons): $(_ion_simulator_iconset)/icon_%.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
+	$(call rule_label,CONVERT)
+ifeq ($(SIMULATOR_ICON_USE_MASK),1)
+	$(QUIET) convert -background "#FFB734" MSVG:$< -gravity center -scale 80% -extent 1024x1024 MSVG:$(PATH_ion)/src/simulator/assets/icon_mask.svg -alpha Off -compose CopyOpacity -composite -resize $* $@
+else
+	$(QUIET) convert -background "#FFB734" -resize $* MSVG:$< $@
+endif

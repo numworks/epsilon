@@ -2,6 +2,7 @@
 
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/simplification.h>
@@ -273,9 +274,9 @@ void assert_expression_approximates_to(const char *expression,
         }
         Approximation::PrepareFunctionForApproximation(e, "x",
                                                        context.m_complexFormat);
-        T value = Approximation::ToReal<T>(e);
-        e->moveTreeOverTree(
-            SharedTreeStack->push<Internal::FloatType<T>::type>(value));
+        std::complex<T> value = Approximation::RootPreparedToComplex<T>(e);
+        e->moveTreeOverTree(Beautification::PushBeautifiedComplex(
+            value, context.m_complexFormat));
         return e;
       },
       numberOfSignificantDigits);

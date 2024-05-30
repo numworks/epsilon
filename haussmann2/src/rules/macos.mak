@@ -6,7 +6,7 @@ $(eval $(call document_extension,run,Execute <...>.bin))
 
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
-_simulator_app_resources = $(addprefix $(_simulator_app)/Contents/Resources/,$(notdir $(SIMULATOR_ASSETS)))
+_simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 

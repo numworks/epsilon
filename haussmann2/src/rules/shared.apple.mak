@@ -23,9 +23,18 @@ _simulator_app := $(OUTPUT_DIRECTORY)/%.app
 $(call assert_defined,_simulator_app_binary)
 $(call assert_defined,_simulator_app_plist)
 
-$(_simulator_app): $(_simulator_app_binary) $(_simulator_app_plist) $(_simulator_app_resources) | $$(@D)/.
+$(_simulator_app): $(_simulator_app_plist) $$(addprefix $(_simulator_app_resources_path)/,$$(_simulator_app_resources)) $(_simulator_app_binary) | $$(@D)/.
 	@ :
 
 $(_simulator_app_binary): $(call target_foreach_arch,%.$(EXECUTABLE_EXTENSION)) | $$(@D)/.
 	$(call rule_label,LIPO)
 	$(QUIET) $(LIPO) -create $^ -output $@
+
+# rule_for_simulator_resource, <label>, <targets>, <prerequisites>, <recipe>
+define rule_for_simulator_resource
+_simulator_app_resources += $(strip $2)
+$(addprefix $(_simulator_app_resources_path)/,$(strip $2)): $(strip $3) | $$$$(@D)/.
+	$$(call rule_label,$1)
+	$(QUIET) $4
+
+endef

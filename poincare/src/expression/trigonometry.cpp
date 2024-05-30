@@ -190,9 +190,12 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
                  u, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
     // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=√(1-x^2)
-    /* TODO: what about asin(sin(acos(x)))? we would want acos(x) and not
-     * asin(√(1-x^2)) Same with atan(tan(asin)), atan(tan(acos)),
-     * acos(cos(asin)) ... */
+    /* TODO: what about asin(sin(acos(x)))? Maybe the simplification
+     * asin(sin(...)) is more interesting than the simplification of
+     * sin(acos(x)).
+     * Same with atan(tan(asin)), atan(tan(acos)), acos(cos(asin)).
+     * Maybe we should move this transformation (sin(asin(x)) and cos(acos(x)))
+     * to advanced reduction.*/
     changed = true;
   }
   if (isOpposed && changed) {

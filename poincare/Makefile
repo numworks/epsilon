@@ -260,6 +260,7 @@ poincare_src += $(addprefix poincare/src/,\
   layout/multiplication_symbol.cpp \
   layout/parser.cpp \
   layout/parsing/helper.cpp \
+  layout/parsing/latex_parser.cpp \
   layout/parsing/rack_parser.cpp \
   layout/parsing/tokenizer.cpp \
   layout/rack_from_text.cpp \

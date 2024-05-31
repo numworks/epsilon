@@ -37,10 +37,11 @@ class Tree;
 
 namespace JSBridge {
 
-using JSTree = emscripten::val;
+/* Bind JSTree to JavaScript type Uint8Array
+ * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
+ * */
+EMSCRIPTEN_DECLARE_VAL_TYPE(JSTree);
 
-// Check if the given value is a JavaScript Uint8Array
-bool IsJSTree(const emscripten::val& val);
 // Copy the bytes of the given JavaScript Uint8Array into a the stack
 Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree);
 // Create a JavaScript Uint8Array from the given tree bytes

@@ -1,3 +1,4 @@
+#include <emscripten/bind.h>
 #include <poincare/js_bridge/js_tree.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -6,15 +7,18 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-bool IsJSTree(const emscripten::val& val) {
-  // This is a hack to check if the object is a Uint8Array in javascript
+bool IsUint8Array(const JSTree& val) {
+  // This is a hack to check if the object is really a Uint8Array in javascript
   return val["BYTES_PER_ELEMENT"].isNumber() &&
          val["BYTES_PER_ELEMENT"].as<size_t>() == 1;
 }
 
 // Copy Uint8Array bytes on the tree stack
 Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree) {
-  if (!IsJSTree(jsTree)) {
+  /* TODO: Should we really check if the object is a Uint8Array ?
+   * Typescript will already check it. It's just a complementary check
+   * if Poincare is used in pure javascript. */
+  if (!IsUint8Array(jsTree)) {
     // TODO throw invalid_argument error
     return nullptr;
   }
@@ -42,17 +46,15 @@ Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree) {
 JSTree JSTreeBuilder(const Internal::Tree* tree) {
   if (!tree) {
     // Empty array
-    return val::global("Uint8Array").new_();
+    return JSTree(val::global("Uint8Array").new_());
   }
   val typedArray = val(typed_memory_view(
       tree->treeSize(), reinterpret_cast<const uint8_t*>(tree)));
   /* This array will be instantiated on javascript heap, allowing it to be
    * properly handled by the js garbage collector */
-  JSTree jsTree = val::global("Uint8Array").new_(typedArray);
-  if (!IsJSTree(jsTree)) {
-    // TODO throw error
-  }
-  return jsTree;
+  return JSTree(val::global("Uint8Array").new_(typedArray));
 }
+
+EMSCRIPTEN_BINDINGS(js_tree) { register_type<JSTree>("Uint8Array"); }
 
 }  // namespace Poincare::JSBridge

@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 
@@ -116,6 +117,10 @@ class JuniorExpression : public OExpression {
   static JuniorExpression Builder(int32_t n);
   template <typename T>
   static JuniorExpression Builder(T x);
+  template <typename T>
+  static JuniorExpression Builder(Coordinate2D<T> point);
+  template <typename T>
+  static JuniorExpression Builder(PointOrScalar<T> pointOrScalar);
 
   template <Internal::KTrees::KTreeConcept T>
   static JuniorExpression Builder(T x) {
@@ -170,6 +175,9 @@ class JuniorExpression : public OExpression {
   // Approximate to scalar replacing Var0 with value.
   template <typename T>
   T approximateToScalarWithValue(T x) const;
+  // Approximate to PointOrScalar replacing Var0 with value.
+  template <typename T>
+  PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;
 
   template <typename T>
   JuniorExpression approximateToTree(

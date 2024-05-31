@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <float.h>
+#include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
@@ -36,6 +37,10 @@ class Approximation final {
 
   template <typename T>
   static T ToReal(const Tree* preparedFunction, T abscissa);
+
+  template <typename T>
+  static PointOrScalar<T> ToPointOrScalar(const Tree* preparedFunction,
+                                          T abscissa);
 
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>

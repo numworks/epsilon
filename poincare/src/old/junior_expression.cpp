@@ -223,6 +223,20 @@ JuniorExpression JuniorExpression::Builder<double>(double x) {
   return Builder(SharedTreeStack->push<Type::DoubleFloat>(x));
 }
 
+template <typename T>
+JuniorExpression JuniorExpression::Builder(Coordinate2D<T> point) {
+  return Create(KPoint(KA, KB),
+                {.KA = Builder<T>(point.x()), .KB = Builder<T>(point.y())});
+}
+
+template <typename T>
+JuniorExpression JuniorExpression::Builder(PointOrScalar<T> pointOrScalar) {
+  if (pointOrScalar.isScalar()) {
+    return Builder<T>(pointOrScalar.toScalar());
+  }
+  return Builder<T>(pointOrScalar.toPoint());
+}
+
 JuniorExpression JuniorExpression::Builder(const Tree* tree) {
   if (!tree) {
     return JuniorExpression();
@@ -497,6 +511,12 @@ T JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
   assert(!exp.isUninitialized());
   // TODO: Shared shouldn't be called in Poincare
   return Shared::PoincareHelpers::ApproximateToScalar<T>(exp, context);
+}
+
+template <typename T>
+PointOrScalar<T> JuniorExpression::approximateToPointOrScalarWithValue(
+    T x) const {
+  return Internal::Approximation::ToPointOrScalar<T>(tree(), x);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(
@@ -1021,6 +1041,19 @@ template Evaluation<double> EvaluationFromTree<double>(
 
 template Evaluation<float> EvaluationFromSimpleTree<float>(const Tree*);
 template Evaluation<double> EvaluationFromSimpleTree<double>(const Tree*);
+
+template JuniorExpression JuniorExpression::Builder<float>(Coordinate2D<float>);
+template JuniorExpression JuniorExpression::Builder<double>(
+    Coordinate2D<double>);
+template JuniorExpression JuniorExpression::Builder<float>(
+    PointOrScalar<float>);
+template JuniorExpression JuniorExpression::Builder<double>(
+    PointOrScalar<double>);
+
+template PointOrScalar<float>
+JuniorExpression::approximateToPointOrScalarWithValue<float>(float) const;
+template PointOrScalar<double>
+JuniorExpression::approximateToPointOrScalarWithValue<double>(double) const;
 
 template float JuniorExpression::approximateToScalarWithValue<float>(
     float) const;

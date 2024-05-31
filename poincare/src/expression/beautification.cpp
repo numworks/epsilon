@@ -361,6 +361,16 @@ bool Beautification::ShallowBeautify(Tree* e) {
     changed = true;
   }
 
+  // PowerReal(A,B) -> A^B
+  // PowerMatrix(A,B) -> A^B
+  // exp(A? * ln(B) * C?) -> B^(A*C)
+  if (PatternMatching::MatchReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
+      PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
+                                    KPow(KB, KMult(KA_s, KC_s)))) {
+    changed = true;
+  }
+
   if (e->isPow() && e->firstChild()->isEulerE()) {
     // We do not want e^-x -> 1/e^x and e^1/2 -> √(e)
     return changed;
@@ -378,17 +388,6 @@ bool Beautification::ShallowBeautify(Tree* e) {
     }
   }
 
-  // PowerReal(A,B) -> A^B
-  // PowerMatrix(A,B) -> A^B
-  // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (PatternMatching::MatchReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
-      PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
-                                    KPow(KB, KMult(KA_s, KC_s)))) {
-    // Pow(...,x) can be beautified is x < 0 or x = 1/2
-    Beautification::ShallowBeautify(e);
-    return true;
-  }
   return
       // lnReal(x) -> ln(x)
       PatternMatching::MatchReplace(e, KLnReal(KA), KLn(KA)) ||

@@ -53,7 +53,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
   if (type0 > type1) {
     /* We handle this case first to implement only the upper diagonal of the
      * comparison table. */
-    return -Compare(node1, node0);
+    return -Compare(node1, node0, order);
   }
   if ((type0.isNumber() && type1.isNumber())) {
     return CompareNumbers(node0, node1);
@@ -65,10 +65,10 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       if (order == Order::Beautification) {
         return -Compare(node0, node1, Order::System);
       }
-      int comparePowerChild = Compare(node0->child(0), node1);
+      int comparePowerChild = Compare(node0->child(0), node1, order);
       if (comparePowerChild == 0) {
         // 1/x < x < x^2
-        return Compare(node0->child(1), 1_e);
+        return Compare(node0->child(1), 1_e, order);
       }
       // w^2 < x < y^2
       return comparePowerChild;

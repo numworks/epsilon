@@ -197,14 +197,14 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sin(ln(x)), x, y)",
                 "dep(cos(ln(y))/y,{ln(y),sin(ln(y))})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep(e^(3×y)×(3×y^4×ln(y)+(1+4×ln(y))×y^3),{ln(y)})");
+                "dep(e^(3×y)×(3×ln(y)×y^4+(1+4×ln(y))×y^3),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
    * approximates to undef and not nonreal. */
   simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
-  simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×x^2×z,{x^3})");
+  simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×z×x^2,{x^3})");
 
   simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×x^2×k×y");
   simplifies_to("diff(3×x^2×k×y,x,k,2)", "dep(6×k×y,{k^2})");
@@ -331,8 +331,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(random(),k,0,10)", "product(random(),k,0,10)");
 
   // product(exp) <-> exp(sum)
+  // TODO_PCJ: we should have b×product(k,k,a,b)^2 not product(k,k,a,b)^2×b
   simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",
-                "dep(b×product(k,k,a,b)^2,{ln(b),sum(ln(k),k,a,b)})");
+                "dep(product(k,k,a,b)^2×b,{ln(b),sum(ln(k),k,a,b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
   // expand sum

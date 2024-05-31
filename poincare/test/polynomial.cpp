@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
+#include <poincare/src/expression/advanced_simplification.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/polynomial.h>
@@ -17,6 +18,8 @@ void assert_polynomial_is_parsed(const Tree* node,
   Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   Tree* clone = node->clone();
+  Simplification::DeepSystematicReduce(clone);
+  AdvancedSimplification::DeepExpand(clone);
   Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);
 }

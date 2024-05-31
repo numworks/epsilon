@@ -372,8 +372,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
       PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
                                     KPow(KB, KMult(KA_s, KC_s)))) {
-    // A^0.5 -> Sqrt(A)
-    PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA));
+    // Pow(...,x) can be beautified is x < 0 or x = 1/2
+    Beautification::ShallowBeautify(e, context);
     return true;
   }
   return
@@ -394,6 +394,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       // NThDiff(A, B, 1, C) -> Diff(A, B, C)
       PatternMatching::MatchReplace(e, KNthDiff(KA, KB, 1_e, KC),
                                     KDiff(KA, KB, KC)) ||
+      // A^0.5 -> Sqrt(A)
+      PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
       ShallowBeautifyPercent(e) || changed;
 }
 

@@ -167,8 +167,9 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("√(-x^2/√(x^2+1)^2+1)", "√(-x^2/(x^2+1)+1)");
   simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
+  // TODO_PCJ: x×1/√(...) ugly -> x/√(...)
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "(x×(x^2+1)^(-1/2))/√(-x^2/(x^2+1)+1)");
+                "(x×1/√(x^2+1))/√(-x^2/(x^2+1)+1)");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   // Sort order
@@ -847,11 +848,12 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "-(2^(-1/2)×(-1+√(3)))/2");
-  simplifies_to("cos(13×π/12)", "-(2^(-1/2)×(1+√(3)))/2");
+  // TODO_PCJ: 1/√(2)×(...)/2 ugly -> put under same denominator
+  simplifies_to("cos(7×π/12)", "-(1/√(2)×(-1+√(3)))/2");
+  simplifies_to("cos(13×π/12)", "-(1/√(2)×(1+√(3)))/2");
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
-  simplifies_to("cos(π×15/4)", "2^(-1/2)");
+  simplifies_to("cos(π×15/4)", "1/√(2)");
   simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
@@ -870,7 +872,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
   // Other angle units :
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(45)", "2^(-1/2)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
 
   simplifies_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
   simplifies_to("1/tan(3)", "cot(3)");
@@ -884,8 +886,9 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}");
   // TODO_PCJ: tan(atan) and atan(tan)
+  // TODO_PCJ: x×1/√(...) ugly -> x/√(...)
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,x×(-x^2+1)^(-1/2),tan(arctan(x))}");
+                "{√(-x^2+1)/x,x×1/√(-x^2+1),tan(arctan(x))}");
   simplifies_to("acos(cos(x))", "acos(cos(x))");
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");

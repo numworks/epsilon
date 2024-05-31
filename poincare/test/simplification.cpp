@@ -308,6 +308,9 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("cos(i)", "cos(i)", polarCtx);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
                 "[[42,(2×e^(π×i))/3][1+i,π×e^((-π/2)×i)]]", polarCtx);
+  simplifies_to("-2×m", "-2×_m", polarCtx);
+  simplifies_to("(-2,i)", "(-2,i)", polarCtx);
+  simplifies_to("{-2,-i}", "{2×e^(π×i),e^((-π/2)×i)}", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {

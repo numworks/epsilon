@@ -88,9 +88,10 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     return result;
   }
   if (derivand->isPoint()) {
-    /* (f(V0), g(V0)) -> (diff(f(V0), symbol, V0), diff(g(V0), symbol, V0))
-     * We could have Di(Point) to be (i==0,i==1), but we don't handle sums and
-     * product of points, so we escape the case here. */
+    /* Points could be handled in General case with
+     * Diff(Point(KA,KB)) = (1, 0) * Diff(KA) + (0, 1) * Diff(KB)
+     * but sums and product of points are not handled. We escape the case with
+     * (f(V0), g(V0)) -> (diff(f(V0), symbol, V0), diff(g(V0), symbol, V0)) */
     Tree* result = SharedTreeStack->push(Type::Point);
     // Force derivation to always distribute derivation on points.
     Tree* tempDerivative = Derive(derivand->child(0), symbol, true);

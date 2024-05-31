@@ -353,6 +353,11 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     changed = true;
   }
 
+  if (e->isPow() && e->firstChild()->isEulerE()) {
+    // We do not want e^-x -> 1/e^x and e^1/2 -> √(e)
+    return changed;
+  }
+
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
       NAry::Sort(e, Comparison::Order::Beautification)) {
     changed = true;

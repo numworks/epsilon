@@ -19,8 +19,8 @@ class Beautification {
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
 
-  static bool ShallowBeautify(Tree* node, void* context = nullptr);
-  EDITION_REF_WRAP_1D(ShallowBeautify, void*, nullptr);
+  static bool SafeShallowBeautify(Tree* node, void* context = nullptr);
+  EDITION_REF_WRAP_1D(SafeShallowBeautify, void*, nullptr);
   static bool DeepBeautify(Tree* node,
                            ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
@@ -37,6 +37,8 @@ class Beautification {
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
   static bool ShallowBeautifyPercent(Tree* tree);
   EDITION_REF_WRAP(ShallowBeautifyPercent);
+  static bool ShallowBeautify(Tree* node);
+  EDITION_REF_WRAP(ShallowBeautify);
 };
 
 }  // namespace Poincare::Internal

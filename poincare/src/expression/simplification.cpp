@@ -209,9 +209,8 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
             *static_cast<ProjectionContext*>(context);
         ToSystem(e, &projectionContext);
         SimplifySystem(e, true);
-        if (projectionContext.m_dimension.isScalar() &&
-            projectionContext.m_complexFormat == ComplexFormat::Polar) {
-          TurnToPolarForm(e);
+        if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
+          TurnToPolarForm(e, projectionContext.m_dimension);
         }
         // TODO: Should be in SimplifySystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
@@ -275,7 +274,17 @@ bool Simplification::SimplifySystem(Tree* e, bool advanced) {
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 
-bool Simplification::TurnToPolarForm(Tree* e) {
+bool Simplification::TurnToPolarForm(Tree* e, Dimension dim) {
+  if (dim.isMatrix()) {
+    bool changed = false;
+    for (Tree* child : e->children()) {
+      changed |= TurnToPolarForm(child, Dimension::Scalar());
+    }
+    return changed;
+  }
+  if (!dim.isScalar()) {
+    return false;
+  }
   /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
    * If abs or arg stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->push<Type::Mult>(2);

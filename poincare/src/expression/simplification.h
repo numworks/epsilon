@@ -32,6 +32,9 @@ class Simplification {
   static bool TryApproximationStrategyAgain(
       Tree* e, ProjectionContext projectionContext);
 
+  static bool TurnToPolarForm(Tree* e);
+  EDITION_REF_WRAP(TurnToPolarForm);
+
  private:
   static bool BubbleUpFromChildren(Tree* u);
   static bool SimplifySwitch(Tree* u);

@@ -16,6 +16,8 @@ using namespace Poincare::Internal;
 
 constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
                                                 ComplexFormat::Cartesian};
+constexpr ProjectionContext polarCtx = {.m_complexFormat =
+                                            ComplexFormat::Polar};
 // Default complex format
 constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
@@ -296,6 +298,14 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(0)", "undef", ctx);
   simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
   simplifies_to("abs(f(x)^2)", "abs(f(x)^2)", ctx);
+}
+
+QUIZ_CASE(pcj_simplification_polar) {
+  simplifies_to("0", "0", polarCtx);
+  simplifies_to("1", "1", polarCtx);
+  simplifies_to("-1", "e^(π×i)", polarCtx);
+  simplifies_to("2i", "2×e^((π×i)/2)", polarCtx);
+  simplifies_to("cos(i)", "cos(i)", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {

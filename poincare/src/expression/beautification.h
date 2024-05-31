@@ -36,9 +36,7 @@ class Beautification {
                                          bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
   static bool ShallowBeautifyPercent(Tree* tree);
-  EDITION_REF_WRAP(ShallowBeautifyPercent);
   static bool ShallowBeautify(Tree* node);
-  EDITION_REF_WRAP(ShallowBeautify);
 };
 
 }  // namespace Poincare::Internal

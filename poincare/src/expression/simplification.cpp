@@ -283,16 +283,17 @@ bool Simplification::TurnToPolarForm(Tree* e) {
   e->clone();
   bool absReduced = ShallowSystematicReduce(abs);
   SharedTreeStack->push(Type::Exp);
-  Tree* expMult = SharedTreeStack->push<Type::Mult>(2);
+  SharedTreeStack->push<Type::Mult>(2);
   SharedTreeStack->push(Type::ComplexI);
   Tree* arg = SharedTreeStack->push(Type::Arg);
   e->clone();
   bool argReduced = ShallowSystematicReduce(arg);
+  /* the multiplication that may be created by arg is not flattened on purpose
+   * to keep (π/2)*i as such and not as π*i/2 */
   if (!absReduced || !argReduced) {
     SharedTreeStack->dropBlocksFrom(result);
     return false;
   }
-  NAry::Flatten(expMult);
   if (abs->isZero() || arg->isZero()) {
     NAry::RemoveChildAtIndex(result, 1);
   }

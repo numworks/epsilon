@@ -368,3 +368,10 @@ endif
 ifdef POINCARE_TREE_LOG
 SFLAGS += -DPOINCARE_TREE_LOG=$(POINCARE_TREE_LOG)
 endif
+
+ifeq ($(TARGET),poincarejs)
+poincare_src += $(addprefix poincare/src/js_bridge/,\
+  expression.cpp \
+  js_tree.cpp \
+)
+endif

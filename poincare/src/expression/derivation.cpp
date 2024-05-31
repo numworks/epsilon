@@ -92,6 +92,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
      * We could have Di(Point) to be (i==0,i==1), but we don't handle sums and
      * product of points, so we escape the case here. */
     Tree* result = SharedTreeStack->push(Type::Point);
+    // Force derivation to always distribute derivation on points.
     Tree* tempDerivative = Derive(derivand->child(0), symbol, true);
     assert(tempDerivative);
     tempDerivative = Derive(derivand->child(1), symbol, true);
@@ -100,8 +101,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     return result;
   }
   if (derivand->isRandomNode()) {
-    /* Do not handle random nodes in derivation
-     * randint(1,5) -> undef */
+    // Do not handle random nodes in derivation
     return KUndefUnhandled->clone();
   }
   /* General case :
@@ -176,8 +176,8 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       // Di(Trig(x, n)) = Trig(x, n-1)
     case Type::Pow: {
       // Di(x^n) = n*x^(n-1)
-      // Second parameter cannot depend on symbol.
       if (index == 1) {
+        // Second parameter cannot depend on symbol.
         assert(!Variables::HasVariables(derivand->child(1)));
         return (0_e)->clone();
       }

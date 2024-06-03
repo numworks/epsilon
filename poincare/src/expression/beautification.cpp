@@ -307,6 +307,9 @@ bool Beautification::DeepBeautify(Tree* expr,
       Tree::ApplyShallowInDepth(expr, SafeShallowBeautify, nullptr, false) ||
       changed;
   changed = Variables::BeautifyToName(expr) || changed;
+  if (changed) {
+    DeepBubbleUpDivision(expr);
+  }
   return AddUnits(expr, projectionContext) || changed;
 }
 
@@ -456,6 +459,48 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   }
   SharedTreeStack->push(Type::ComplexI);
   return result;
+}
+
+bool Beautification::ShallowBubbleUpDivision(Tree* e) {
+  if (!e->isMult()) {
+    return false;
+  }
+  // a * (b / c) * d * (e / f) * g = (a * b * d * e * g) / (c * f)
+  TreeRef denom(SharedTreeStack->push<Type::Mult>(0));
+  const int nbChildren = e->numberOfChildren();
+  int nbDiv = 0;
+  Tree* child = e->firstChild();
+  for (int i = 0; i < nbChildren; i++) {
+    if (child->isDiv()) {
+      // Detach denominator
+      child->child(1)->detachTree();
+      // Remove div node (only numerator is left)
+      child->removeNode();
+      nbDiv++;
+    }
+    child = child->nextTree();
+  }
+  if (nbDiv == 0) {
+    denom->removeTree();
+    return false;
+  }
+  NAry::SetNumberOfChildren(denom, nbDiv);
+  // TODO: create method moveTreeAfterTree
+  e->nextTree()->moveTreeBeforeNode(denom);
+  e->cloneNodeAtNode(KDiv);
+  Simplification::ShallowSystematicReduce(e->child(0));
+  Simplification::ShallowSystematicReduce(e->child(1));
+  return true;
+}
+
+bool Beautification::DeepBubbleUpDivision(Tree* e) {
+  bool changed = false;
+  for (Tree* child : e->children()) {
+    changed = DeepBubbleUpDivision(child) || changed;
+  }
+  changed = ShallowBubbleUpDivision(e) || changed;
+  assert(!ShallowBubbleUpDivision(e));
+  return changed;
 }
 
 template Tree* Beautification::PushBeautifiedComplex(

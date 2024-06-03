@@ -37,6 +37,8 @@ class Beautification {
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
   static bool ShallowBeautifyPercent(Tree* tree);
   static bool ShallowBeautify(Tree* node);
+  static bool ShallowBubbleUpDivision(Tree* e);
+  static bool DeepBubbleUpDivision(Tree* e);
 };
 
 }  // namespace Poincare::Internal

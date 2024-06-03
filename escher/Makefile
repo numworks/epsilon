@@ -1,6 +1,4 @@
-SFLAGS += -Iescher/include
-
-escher_src += $(addprefix escher/src/,\
+$(eval $(call create_module,escher,1,$(addprefix src/, \
   abstract_text_field.cpp \
   alternate_empty_nested_menu_controller.cpp \
   alternate_empty_view_controller.cpp \
@@ -104,61 +102,44 @@ escher_src += $(addprefix escher/src/,\
   view_controller.cpp \
   warning_controller.cpp \
   window.cpp \
-)
-
-tests_src += $(addprefix escher/test/,\
-  clipboard.cpp \
-  layout_field.cpp \
-)
-
-$(eval $(call rule_for, \
-  HOSTCC, \
-  escher/image/inliner, \
-  escher/image/inliner.c $(addprefix omg/src/external/lz4/, lz4.c lz4hc.c), \
-  $$(HOSTCC) -std=c11 `libpng-config --cflags` $$^ `libpng-config --ldflags` -o $$@, \
-  global \
-))
-
-INLINER := $(BUILD_DIR)/escher/image/inliner
-INLINER_ARGS ?=
-
-.PRECIOUS: $(BUILD_DIR)/%.h $(BUILD_DIR)/%.cpp
-$(eval $(call rule_for, \
-  INLINER, \
-  %.cpp, \
-  %.png $$(INLINER), \
-  $$(INLINER) $$< $$(basename $$@).h $$(basename $$@).cpp $$(INLINER_ARGS), \
-  global \
-))
-
-# Mark a .cpp file as depending on a .png one
-# This is called with $1 = code.cpp and $2 = image.png
-# First, we mark code.o as requiring image.o. Rules will take care of inlining
-# the PNG and building the inlined cpp file. Second, we add the directory
-# corresponding to the one of code.cpp in the output dir as a header search
-# path. Since $1 can be a list, we have to map with foreach.
-define depends_on_image
-$(call object_for,$(1)): $(call object_for,$(2))
-$(call object_for,$(1)): SFLAGS += $(foreach d,$(sort $(dir $(call object_for,$(1)))),-I$(d))
-escher_src += $(2)
-endef
-
-define depends_on_transparent_image
-# Set INLINE_ARGS for Header and CPP files
-$(call object_for,$(2)): INLINER_ARGS += --transparent
-$(call depends_on_image,$(1),$(2))
-endef
-
-$(eval $(call depends_on_transparent_image,escher/src/dropdown_view.cpp,$(addprefix escher/image/,\
-  caret.png \
 )))
 
-ifeq ($(DEBUG),1)
-  ifeq ($(PLATFORM),simulator)
-    ESCHER_VIEW_LOGGING ?= 1
-  endif
-endif
+SFLAGS_escher += -DESCHER_VIEW_LOGGING=1:+logviews
 
-ifdef ESCHER_VIEW_LOGGING
-SFLAGS += -DESCHER_VIEW_LOGGING=$(ESCHER_VIEW_LOGGING)
-endif
+# Inliner
+
+_escher_inliner := $(TOOLS_DIRECTORY)/inliner.bin
+
+$(eval $(call import_module,escher_inliner,$(PATH_escher)/image))
+$(eval $(call create_module,escher_inliner,1,inliner.c))
+
+$(eval $(call create_tool,inliner, \
+  omg.lz4only \
+  escher_inliner \
+))
+
+$(_escher_inliner): TOOLS_CFLAGS += -std=c11 $(shell pkg-config libpng --cflags)
+$(_escher_inliner): TOOLS_LDFLAGS += $(shell pkg-config libpng --libs)
+
+$(OUTPUT_DIRECTORY)/%.cpp: %.png $(_escher_inliner) | $$(@D)/.
+	$(call rule_label,INLINE)
+	$(QUIET) $(_escher_inliner) $< $(basename $@).h $@ $(INLINER_ARGS)
+
+# Helpers for sources using images
+
+# depends_on_image, <list of cpp>, <list of png>
+# Rigorously, the .cpp files in $1 should have a prerequisite on the generated
+# header, not source, but this is the best we can do without paired targets.
+define depends_on_image
+$(call objects_foreach_arch,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2))
+$(call objects_foreach_arch,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY),$(sort $(dir $(strip $1)))),-I$d)
+
+endef
+
+# depends_on_transparent_image, <list of cpp>, <list of png>
+define depends_on_transparent_image
+$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
+$(call depends_on_image,$1,$2)
+endef
+
+$(eval $(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png))

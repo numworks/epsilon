@@ -26,6 +26,7 @@ $(eval $(call import_module,kandinsky,kandinsky))
 $(eval $(call import_module,sdl,ion/src/simulator/external))
 $(eval $(call import_module,ion,ion))
 $(eval $(call import_module,poincare,poincare))
+$(eval $(call import_module,escher,escher))
 
 # FIXME
 $(eval $(call import_module,dummy,dummy))
@@ -41,6 +42,7 @@ $(eval $(call create_goal,device, \
 
 $(eval $(call create_goal,simulator, \
   dummy.ion \
+  escher \
   ion \
   kandinsky \
   omg \

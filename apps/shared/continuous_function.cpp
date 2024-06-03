@@ -385,25 +385,21 @@ void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
 }
 
 template <typename T>
-Evaluation<T> ContinuousFunction::approximateDerivative(T t, Context *context,
-                                                        int derivationOrder,
-                                                        bool useDomain) const {
+PointOrScalar<T> ContinuousFunction::approximateDerivative(
+    T t, Context *context, int derivationOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
   if (useDomain && (t < tMin() || t > tMax())) {
     if (properties().isParametric()) {
-      return PointEvaluation<T>::Builder(NAN, NAN);
+      return PointOrScalar<T>(NAN, NAN);
     }
-    return Complex<T>::RealUndefined();
+    return PointOrScalar<T>(NAN);
   }
   // Derivative is simplified once and for all
-  SystemExpression derivate =
-      expressionDerivateReduced(context, derivationOrder);
-  ApproximationContext approximationContext(context, complexFormat(context));
-  Evaluation<T> result = derivate.approximateWithValueForSymbol(
-      k_unknownName, t, approximationContext);
-  return result;
+  SystemFunction derivate = expressionDerivateReduced(context, derivationOrder)
+                                .getSystemFunction(k_unknownName);
+  return derivate.approximateToPointOrScalarWithValue(t);
 }
 
 double ContinuousFunction::approximateSlope(double t,
@@ -1218,7 +1214,7 @@ ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *,
 template Coordinate2D<double>
 ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context *,
                                                          int) const;
-template Evaluation<double> ContinuousFunction::approximateDerivative(
+template PointOrScalar<double> ContinuousFunction::approximateDerivative(
     double t, Context *context, int derivationOrder, bool useDomain) const;
 
 }  // namespace Shared

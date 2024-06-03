@@ -189,12 +189,12 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   return true;
 }
 
-Evaluation<double>
+PointOrScalar<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  Evaluation<double> derivative = function->approximateDerivative<double>(
+  PointOrScalar<double> derivative = function->approximateDerivative<double>(
       cursor->t(), App::app()->localContext(), derivationOrder);
   double derivativeScalar = derivative.toScalar();
 
@@ -223,14 +223,13 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       Preferences::SharedPreferences()->displayMode();
   int precision = Preferences::SharedPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
-    assert(derivative.otype() == EvaluationNode<double>::Type::PointEvaluation);
-    Coordinate2D<double> xy =
-        static_cast<PointEvaluation<double>&>(derivative).xy();
+    assert(!derivative.isScalar());
+    Coordinate2D<double> xy = derivative.toPoint();
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=(%*.*ed;%*.*ed)", xy.x(), mode, precision, xy.y(),
                         mode, precision);
   } else {
-    assert(derivative.otype() == EvaluationNode<double>::Type::Complex);
+    assert(derivative.isScalar());
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=%*.*ed", derivativeScalar, mode, precision);
   }

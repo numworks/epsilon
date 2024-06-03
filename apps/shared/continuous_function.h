@@ -13,6 +13,7 @@
 #include <poincare/old/comparison.h>
 #include <poincare/old/conic.h>
 #include <poincare/old/symbol_abstract.h>
+#include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>
 
 #include "continuous_function_cache.h"
@@ -202,9 +203,10 @@ class ContinuousFunction : public Function {
 
   // Approximate derivative at t, on given sub curve if there is one
   template <typename T>
-  Poincare::Evaluation<T> approximateDerivative(T t, Poincare::Context *context,
-                                                int derivationOrder = 1,
-                                                bool useDomain = true) const;
+  Poincare::PointOrScalar<T> approximateDerivative(T t,
+                                                   Poincare::Context *context,
+                                                   int derivationOrder = 1,
+                                                   bool useDomain = true) const;
   double approximateSlope(double t, Poincare::Context *context) const;
 
   /* tMin, tMax and tAuto */

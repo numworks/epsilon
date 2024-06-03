@@ -4,6 +4,7 @@
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/interactive_curve_view_range.h>
+#include <poincare/point_or_scalar.h>
 
 #include "banner_view.h"
 #include "graph_view.h"
@@ -23,7 +24,8 @@ class GraphControllerHelper {
                                      double start, double end,
                                      int subCurveIndex);
   // Returns the derivative displayed in banner
-  Poincare::Evaluation<double> reloadDerivativeInBannerViewForCursorOnFunction(
+  Poincare::PointOrScalar<double>
+  reloadDerivativeInBannerViewForCursorOnFunction(
       Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
       int derivationOrder);
   // Returns the slope displayed in banner

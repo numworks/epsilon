@@ -196,21 +196,20 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       App::app()->functionStore()->modelForRecord(record);
   PointOrScalar<double> derivative = function->approximateDerivative<double>(
       cursor->t(), App::app()->localContext(), derivationOrder);
-  double derivativeScalar = derivative.toScalar();
 
   /* Force derivative to 0 if cursor is at an extremum where the function is
    * differentiable. */
-  if (derivationOrder == 1) {
+  if (derivative.isScalar() && derivationOrder == 1) {
     PointsOfInterestCache* pointsOfInterest =
         App::app()->graphController()->pointsOfInterestForRecord(record);
-    if (std::isfinite(derivativeScalar) &&
+    if (std::isfinite(derivative.toScalar()) &&
         (pointsOfInterest->hasInterestAtCoordinates(
              cursor->x(), cursor->y(),
              Solver<double>::Interest::LocalMaximum) ||
          pointsOfInterest->hasInterestAtCoordinates(
              cursor->x(), cursor->y(),
              Solver<double>::Interest::LocalMinimum))) {
-      derivativeScalar = 0.;
+      derivative = PointOrScalar<double>(0.);
     }
   }
 
@@ -231,7 +230,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   } else {
     assert(derivative.isScalar());
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
-                        "=%*.*ed", derivativeScalar, mode, precision);
+                        "=%*.*ed", derivative.toScalar(), mode, precision);
   }
   if (derivationOrder == 1) {
     bannerView()->firstDerivativeView()->setText(buffer);

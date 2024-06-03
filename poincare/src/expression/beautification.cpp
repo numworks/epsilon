@@ -98,9 +98,10 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
-                                         TreeRef& denominator) {
-  bool result = false;
+void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
+                                         TreeRef& denominator,
+                                         bool* needOpposite, bool* needI) {
+  assert(needOpposite && needI);
   numerator = SharedTreeStack->push<Type::Mult>(0);
   denominator = SharedTreeStack->push<Type::Mult>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
@@ -109,6 +110,11 @@ bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
     const Tree* factor = Factor(expr, i);
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
+    if (factor->isComplexI()) {
+      assert(*needI == false);
+      *needI = true;
+      continue;
+    }
     if (factor->isRational()) {
       if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
@@ -116,7 +122,7 @@ bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
       } else {
         IntegerHandler rNum = Rational::Numerator(factor);
         if (rNum.isMinusOne()) {
-          result = !result;
+          *needOpposite = !*needOpposite;
         } else if (!rNum.isOne()) {
           factorsNumerator = rNum.pushOnTreeStack();
         }
@@ -148,25 +154,32 @@ bool Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
   }
   NAry::SquashIfEmpty(numerator) || NAry::SquashIfUnary(numerator);
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
-  return result;
 }
 
 bool Beautification::BeautifyIntoDivision(Tree* expr) {
   TreeRef num;
   TreeRef den;
-  if (SplitMultiplication(expr, num, den)) {
+  bool needOpposite = false;
+  bool needI = false;
+  SplitMultiplication(expr, num, den, &needOpposite, &needI);
+  if (needOpposite) {
     expr->cloneNodeBeforeNode(KOpposite);
     expr = expr->child(0);
   }
+  if (needI) {
+    expr->cloneNodeBeforeNode(KMult.node<2>);
+    expr = expr->child(0);
+    expr->nextTree()->cloneTreeBeforeNode(i_e);
+  }
+  bool changed = false;
   if (!den->isOne()) {
+    changed = true;
     num->cloneNodeAtNode(KDiv);
-    expr->moveTreeOverTree(num);
-    return true;
   } else {
-    num->removeTree();
     den->removeTree();
   }
-  return false;
+  expr->moveTreeOverTree(num);
+  return needI || needOpposite || changed;
 }
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should

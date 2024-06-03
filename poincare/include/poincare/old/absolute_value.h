@@ -29,26 +29,6 @@ class AbsoluteValueNode final : public ExpressionNode {
     return childAtIndex(0)->isNull(context);
   }
 
-  // Approximation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) {
-    return std::abs(c);
-  }
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext,
-                                                   computeOnComplex<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext,
-                                                    computeOnComplex<double>);
-  }
-
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

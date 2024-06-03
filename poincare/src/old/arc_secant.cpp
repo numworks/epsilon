@@ -14,17 +14,6 @@ int ArcSecantNode::numberOfChildren() const {
   return ArcSecant::s_functionHelper.numberOfChildren();
 }
 
-template <typename T>
-std::complex<T> ArcSecantNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) {
-  if (c == static_cast<T>(0.0)) {
-    return complexNAN<T>();
-  }
-  return ArcCosineNode::computeOnComplex<T>(std::complex<T>(1) / c,
-                                            complexFormat, angleUnit);
-}
-
 size_t ArcSecantNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

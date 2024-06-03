@@ -81,20 +81,6 @@ class AdditionNode final : public NAryInfixExpressionNode {
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue) override;
 
-  /* Evaluation */
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapReduce<float>(this, approximationContext,
-                                                 Compute<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapReduce<double>(this, approximationContext,
-                                                  Compute<double>);
-  }
-
   // Properties
   bool displayImplicitAdditionBetweenUnits(Layout l) const;
 };

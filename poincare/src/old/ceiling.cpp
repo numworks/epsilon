@@ -26,21 +26,6 @@ size_t CeilingNode::serialize(char* buffer, size_t bufferSize,
       Ceiling::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-std::complex<T> CeilingNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0) {
-    return complexRealNAN<T>();
-  }
-  /* Assume low deviation from natural numbers are errors */
-  T delta = std::fabs((std::round(c.real()) - c.real()) / c.real());
-  if (delta <= OMG::Float::Epsilon<T>()) {
-    return std::round(c.real());
-  }
-  return std::ceil(c.real());
-}
-
 OExpression CeilingNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Ceiling(this).shallowReduce(reductionContext);

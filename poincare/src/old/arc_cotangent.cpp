@@ -17,18 +17,6 @@ int ArcCotangentNode::numberOfChildren() const {
   return ArcCotangent::s_functionHelper.numberOfChildren();
 }
 
-template <typename T>
-std::complex<T> ArcCotangentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) {
-  if (c == static_cast<T>(0.0)) {
-    return Trigonometry::ConvertRadianToAngleUnit(std::complex<T>(M_PI_2),
-                                                  angleUnit);
-  }
-  return ArcTangentNode::computeOnComplex<T>(std::complex<T>(1) / c,
-                                             complexFormat, angleUnit);
-}
-
 size_t ArcCotangentNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

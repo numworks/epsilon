@@ -30,13 +30,6 @@ OExpression ConjugateNode::shallowReduce(
   return Conjugate(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-std::complex<T> ConjugateNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  return std::conj(c);
-}
-
 OExpression Conjugate::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

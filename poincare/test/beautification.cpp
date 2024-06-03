@@ -38,3 +38,17 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref6);
   assert_trees_are_equal(ref6, KOpposite(KDiv(3_e, 2_e)));
 }
+
+void beautifies_to(const char* input, const char* output) {
+  process_tree_and_compare(input, output,
+                           [](Tree* tree, ProjectionContext ctx) {
+                             Projection::DeepSystemProject(tree, ctx);
+                             Beautification::DeepBeautify(tree, ctx);
+                           },
+                           {});
+}
+
+QUIZ_CASE(pcj_beautification_complex) {
+  beautifies_to("i/2", "1/2×i");
+  beautifies_to("2*i*π", "2×π×i");
+}

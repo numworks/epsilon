@@ -300,8 +300,6 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(0)", "undef", ctx);
   simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
   simplifies_to("abs(f(x)^2)", "abs(f(x)^2)", ctx);
-  simplifies_to("i/2", "1/2×i", ctx);
-  simplifies_to("2*i*π", "2×π×i", ctx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

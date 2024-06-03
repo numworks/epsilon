@@ -497,12 +497,19 @@ bool Beautification::ShallowBubbleUpDivision(Tree* e) {
   if (!e->isMult()) {
     return false;
   }
+  const int nbChildren = e->numberOfChildren();
+  if (nbChildren == 2 && e->child(0)->isDiv() && e->child(1)->isComplexI()) {
+    // Do not beautify (a / b) * i -> (a * i) / b
+    return false;
+  }
+  bool hasComplexI = false;  // Only used for assert
+
   // a * (b / c) * d * (e / f) * g = (a * b * d * e * g) / (c * f)
   TreeRef denom(SharedTreeStack->push<Type::Mult>(0));
-  const int nbChildren = e->numberOfChildren();
   int nbDiv = 0;
   Tree* child = e->firstChild();
   for (int i = 0; i < nbChildren; i++) {
+    hasComplexI = child->isComplexI();
     if (child->isDiv()) {
       // Detach denominator
       child->child(1)->detachTree();
@@ -516,6 +523,7 @@ bool Beautification::ShallowBubbleUpDivision(Tree* e) {
     denom->removeTree();
     return false;
   }
+  assert(!hasComplexI);
   NAry::SetNumberOfChildren(denom, nbDiv);
   // TODO: create method moveTreeAfterTree
   e->nextTree()->moveTreeBeforeNode(denom);

@@ -37,6 +37,7 @@
 
 # create_module, <name>, <version>, <sources>
 define create_module
+$(eval \
 $(call _assert_valid_module_name,$1)
 $(call _assert_valid_version,$2)
 $(call assert_defined,PATH_$1)
@@ -48,16 +49,17 @@ $(call target_foreach_arch,$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
 
 $1%a: $(call target_foreach_arch,$1%a)
 	@ :
-
+)
 endef
 
 # import_module, <name>, <path>
 define import_module
+$(eval \
 $(call _assert_valid_module_name,$1)
 PATH_$1 := $2
 -include $2/Makefile
 -include $2/locks.mak
-
+)
 endef
 
 # Private API

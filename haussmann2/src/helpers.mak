@@ -29,9 +29,10 @@ endef
 
 # document_extension, <name>, <documentation>
 define document_extension
+$(eval \
 ALL_EXTENSIONS += $1
 HELP_EXTENSION_$1 := $2
-
+)
 endef
 
 # Errors out if the path is absolute or contains returns to parent directory.
@@ -70,6 +71,7 @@ endef
 
 # simple_rule, <label>, <source extension>, <command>
 define rule_for_object
+$(eval \
 $(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$(QUIET) $3
@@ -77,5 +79,5 @@ $(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
 $(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$(QUIET) $3
-
+)
 endef

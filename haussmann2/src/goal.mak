@@ -22,6 +22,7 @@
 # e.g. If goal requires module.f1, then when building goal.f2.ext and thus
 # module.f1.f2.a, only f1 will be used to filter the sflags.
 define create_goal
+$(eval \
 $(call _assert_valid_goal_name,$1)
 ALL_GOALS += $1
 MODULES_$1 := $2
@@ -34,14 +35,15 @@ $$(call objects_foreach_arch,$$(call all_potential_sources,$1)): $$(foreach m,$2
 
 $1%: $(call target_foreach_arch,$1%)
 	@ :
-
+)
 endef
 
 # create_tool, <name>, <modules>
 define create_tool
+$(eval \
 MODULES_$1 := $2
 $(TOOLS_DIRECTORY)/$1: TOOLS_SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
-
+)
 endef
 
 # Private API

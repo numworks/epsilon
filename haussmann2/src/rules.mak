@@ -17,7 +17,7 @@ $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_go
 	$(call rule_label,LD)
 	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $^ $(LDFLAGS) -o $@
 
-$(eval $(call document_extension,$(EXECUTABLE_EXTENSION)))
+$(call document_extension,$(EXECUTABLE_EXTENSION))
 
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
@@ -26,26 +26,26 @@ $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(QUIET) $(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
-$(eval $(call rule_for_object, \
+$(call rule_for_object, \
   CC, c, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CFLAGS) -c $$< -o $$@ \
-))
+)
 
-$(eval $(call rule_for_object, \
+$(call rule_for_object, \
   CXX, cpp, \
   $$(CXX) $$(PRIORITY_SFLAGS) $$(SFLAGS) $$(CXXFLAGS) -c $$< -o $$@ \
-))
+)
 
-$(eval $(call rule_for_object, \
+$(call rule_for_object, \
   AS, s, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
-))
+)
 
 # Lock files, ensure that modules versions match
 %.lock:
 	$(call lockfile_recipe,$*)
 
-$(eval $(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal))
+$(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal)
 
 # Auxiliary binaries compiled for the host are built in their own directory.
 include $(PATH_haussmann)/src/rules/tools.mak

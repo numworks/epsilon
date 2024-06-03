@@ -27,7 +27,7 @@ export _modules_string
 %.modules:
 	@ echo "$$_modules_string"
 
-$(eval $(call document_extension,modules,List the goal's modules flavors and dependencies))
+$(call document_extension,modules,List the goal's modules flavors and dependencies)
 
 # Helpers
 

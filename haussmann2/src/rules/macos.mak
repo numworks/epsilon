@@ -2,7 +2,7 @@
 $(OUTPUT_DIRECTORY)/%.run: $(OUTPUT_DIRECTORY)/%.bin
 	$(QUIET) $^
 
-$(eval $(call document_extension,run,Execute <...>.bin))
+$(call document_extension,run,Execute <...>.bin)
 
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist

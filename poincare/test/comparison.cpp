@@ -18,3 +18,23 @@ QUIZ_CASE(pcj_compare_for_addition_beautification) {
   assert_trees_are_equal(e,
                          KAdd(KPow(KVarX, 2_e), KVarX, KPow(KVarX, 1_e / 2_e)));
 }
+
+void sorts_to(const char* input, const char* output,
+              Comparison::Order order = Comparison::Order::Beautification) {
+  static Comparison::Order s_order;
+  s_order = order;
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext ctx) { NAry::Sort(tree, s_order); }, {});
+}
+
+QUIZ_CASE(pcj_sort) {
+  using enum Comparison::Order;
+  sorts_to("π*2*i", "2*π*i");
+  // TODO_PCJ: √(2) should be before π and unknowns
+  sorts_to("π*2*√(2)*_m", "2×π×√(2)×_m");
+  sorts_to("π*2*√(2)*i*a*u", "2×π×a×u×√(2)×i");
+
+  sorts_to("b+b^2+a^2+a^3", "a^3+a^2+b^2+b", AdditionBeautification);
+  sorts_to("π+2+i", "2+π+i", AdditionBeautification);
+}

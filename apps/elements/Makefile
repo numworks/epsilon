@@ -1,7 +1,4 @@
-apps += Elements::App
-app_headers += apps/elements/app.h
-
-app_elements_src = $(addprefix apps/elements/,\
+SOURCES_apps += $(addprefix $(PATH_apps)/elements/, \
   app.cpp \
   banner_view.cpp \
   data_field.cpp \
@@ -16,8 +13,6 @@ app_elements_src = $(addprefix apps/elements/,\
   table_layout.cpp \
 )
 
-apps_src += $(app_elements_src)
+$(call depends_on_image,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/elements/elements_icon.png)
 
-i18n_files += $(call i18n_with_universal_for,elements/i18n/base)
-
-$(eval $(call depends_on_image,apps/elements/app.cpp,apps/elements/elements_icon.png))
+$(call i18n_with_universal,elements/i18n/base)

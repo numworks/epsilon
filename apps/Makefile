@@ -25,6 +25,8 @@ $(call create_module,apps,1, \
   init_tests.cpp:+test \
 )
 
+PRIVATE_SFLAGS_apps += -I$(PATH_apps)
+
 $(call depends_on_image,$(PATH_apps)/title_bar_view.cpp,$(PATH_apps)/exam_icon.png)
 
 # Include the specific apps
@@ -51,8 +53,6 @@ _apps_snapshot_cxxflags := \
 
 $(call objects_foreach_arch,$(addprefix $(PATH_apps)/,apps_container.cpp apps_container_storage.cpp init.cpp main.cpp)): CXXFLAGS += $(_apps_snapshot_cxxflags)
 
-include $(patsubst %,$(PATH_apps)/%/Makefile,$(EPSILON_APPS))
-
 # Generate I18n files
 include $(PATH_apps)/i18n.mak
 
@@ -61,3 +61,4 @@ $(call i18n_with_universal,shared)
 $(call i18n_with_universal,toolbox)
 $(call i18n_without_universal,variables)
 
+include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test usb $(EPSILON_APPS))

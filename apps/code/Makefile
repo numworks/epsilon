@@ -1,8 +1,6 @@
-apps += Code::App
-app_headers += apps/code/app.h
-
-app_code_src = $(addprefix apps/code/,\
+SOURCES_apps += $(addprefix $(PATH_apps)/code/, \
   app.cpp \
+  clipboard.cpp \
   console_controller.cpp \
   console_edit_cell.cpp \
   console_line_cell.cpp \
@@ -12,32 +10,22 @@ app_code_src = $(addprefix apps/code/,\
   helpers.cpp \
   menu_controller.cpp \
   python_text_area.cpp \
+  python_toolbox_controller.cpp \
+  python_variable_box_controller.cpp \
   sandbox_controller.cpp \
+  script.cpp \
   script_name_cell.cpp \
   script_parameter_controller.cpp \
-)
-
-app_code_test_src = $(addprefix apps/code/,\
-  clipboard.cpp \
-  python_toolbox_controller.cpp \
-  script.cpp \
   script_store.cpp \
   script_template.cpp \
   subtitle_cell.cpp \
-  python_variable_box_controller.cpp \
+  test/clipboard.cpp:+test \
+  test/python_variable_box.cpp:+test \
+  test/templates.cpp:+test \
 )
 
-tests_src += $(addprefix apps/code/test/,\
-  clipboard.cpp \
-  python_variable_box.cpp\
-  templates.cpp \
-)
+$(call depends_on_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/code/code_icon.png)
 
-app_code_src += $(app_code_test_src)
-apps_src += $(app_code_src)
-
-i18n_files += $(call i18n_with_universal_for,code/i18n/base)
-i18n_files += $(call i18n_with_universal_for,code/i18n/catalog)
-i18n_files += $(call i18n_with_universal_for,code/i18n/toolbox)
-
-$(eval $(call depends_on_image,apps/code/app.cpp,apps/code/code_icon.png))
+$(call i18n_with_universal,code/i18n/base)
+$(call i18n_with_universal,code/i18n/catalog)
+$(call i18n_with_universal,code/i18n/toolbox)

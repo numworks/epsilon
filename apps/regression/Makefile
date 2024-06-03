@@ -1,36 +1,32 @@
-apps += Regression::App
-app_headers += apps/regression/app.h
-
-app_regression_test_src += $(addprefix apps/regression/,\
+SOURCES_apps += $(addprefix $(PATH_apps)/regression/, \
+  app.cpp \
   store.cpp \
   model.cpp \
+$(addprefix stats/, \
+  calculation_controller.cpp \
+  column_title_cell.cpp \
+  even_odd_double_buffer_text_cell.cpp \
+) \
+$(addprefix graph/, \
+  banner_view.cpp \
+  go_to_parameter_controller.cpp \
+  graph_controller.cpp \
+  graph_options_controller.cpp \
+  graph_view.cpp \
+  regression_controller.cpp \
+  residual_plot_controller.cpp \
+  residual_plot_curve_view.cpp \
+  residual_plot_range.cpp \
+) \
+$(addprefix data/, \
+  store_controller.cpp \
+  store_parameter_controller.cpp \
+) \
+$(addprefix test/, \
+  model.cpp:+test \
+) \
 )
 
-app_regression_src = $(addprefix apps/regression/,\
-  app.cpp \
-  stats/calculation_controller.cpp \
-  stats/column_title_cell.cpp \
-  stats/even_odd_double_buffer_text_cell.cpp \
-  graph/banner_view.cpp \
-  graph/graph_controller.cpp \
-  graph/graph_options_controller.cpp \
-  graph/graph_view.cpp \
-  graph/go_to_parameter_controller.cpp \
-  graph/regression_controller.cpp \
-  graph/residual_plot_controller.cpp \
-  graph/residual_plot_curve_view.cpp \
-  graph/residual_plot_range.cpp \
-  data/store_controller.cpp \
-  data/store_parameter_controller.cpp \
-)
+$(call depends_on_image,$(PATH_apps)/regression/app.cpp,$(PATH_apps)/regression/regression_icon.png)
 
-app_regression_src += $(app_regression_test_src)
-apps_src += $(app_regression_src)
-
-i18n_files += $(call i18n_with_universal_for,regression/i18n/base)
-
-tests_src += $(addprefix apps/regression/test/,\
-  model.cpp\
-)
-
-$(eval $(call depends_on_image,apps/regression/app.cpp,apps/regression/regression_icon.png))
+$(call i18n_with_universal,regression/i18n/base)

@@ -17,7 +17,11 @@ Timer* RunLoop::timerAtIndex(int i) {
   return nullptr;
 }
 
-void RunLoop::run() { runWhile(nullptr, nullptr); }
+void RunLoop::run() {
+#ifndef TARGET_POINCARE_JS
+  runWhile(nullptr, nullptr);
+#endif
+}
 
 void RunLoop::runWhile(bool (*callback)(void* ctx), void* ctx) {
   bool continueCurrentRunLoop = true;

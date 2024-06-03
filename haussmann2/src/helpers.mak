@@ -10,6 +10,12 @@ define text_or
 $(if $1,$1,$2)
 endef
 
+# capitalize, <text>
+# aBcDe -> Abcde
+define capitalize
+$(shell echo $1 | awk '{print toupper(substr($$0,1,1)) tolower(substr($$0,2))}')
+endef
+
 # name_for_flavored_target, <flavored target>
 #   name.flavor1.flavor2 -> name
 define name_for_flavored_target

@@ -13,6 +13,8 @@ namespace Shared {
 class Sequence;
 
 class SequenceContext : public Poincare::ContextWithParent {
+  friend class Sequence;
+
  public:
   SequenceContext(Poincare::Context* parentContext,
                   SequenceStore* sequenceStore);
@@ -30,7 +32,6 @@ class SequenceContext : public Poincare::ContextWithParent {
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
-  Poincare::Internal::SequenceCache* cache();
   void resetCache() { cache()->resetCache(); }
 
  private:
@@ -40,6 +41,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   const Poincare::UserExpression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
+  Poincare::Internal::SequenceCache* cache();
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   SequenceStore* m_sequenceStore;
 };

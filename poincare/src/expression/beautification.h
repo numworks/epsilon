@@ -18,9 +18,6 @@ class Beautification {
                                   bool* needI);
   static bool BeautifyIntoDivision(Tree* expr);
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
-
-  static bool SafeShallowBeautify(Tree* node, void* context = nullptr);
-  EDITION_REF_WRAP_1D(SafeShallowBeautify, void*, nullptr);
   static bool DeepBeautify(Tree* node,
                            ProjectionContext projectionContext = {});
   EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
@@ -36,7 +33,7 @@ class Beautification {
                                          bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
   static bool ShallowBeautifyPercent(Tree* tree);
-  static bool ShallowBeautify(Tree* node);
+  static bool ShallowBeautify(Tree* node, void* context);
   static bool ShallowBubbleUpDivision(Tree* e);
   static bool DeepBubbleUpDivision(Tree* e);
   static void ReduceMultiplication(Tree* e);

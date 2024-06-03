@@ -303,9 +303,7 @@ bool Beautification::DeepBeautify(Tree* expr,
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
     AdvancedSimplification::AdvancedReduce(expr);
   }
-  changed =
-      Tree::ApplyShallowInDepth(expr, SafeShallowBeautify, nullptr, false) ||
-      changed;
+  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify) || changed;
   changed = Variables::BeautifyToName(expr) || changed;
   if (changed) {
     DeepBubbleUpDivision(expr);
@@ -315,15 +313,8 @@ bool Beautification::DeepBeautify(Tree* expr,
   return AddUnits(expr, projectionContext) || changed;
 }
 
-bool Beautification::SafeShallowBeautify(Tree* e, void* context) {
-  bool check = !e->isPercentAddition() && !e->isFactor();
-  bool changed = ShallowBeautify(e);
-  assert(!(changed && check && ShallowBeautify(e)));
-  return changed;
-}
-
 // Reverse most system projections to display better expressions
-bool Beautification::ShallowBeautify(Tree* e) {
+bool Beautification::ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
   if (e->isAdd()) {
     NAry::Sort(e, Comparison::Order::AdditionBeautification);

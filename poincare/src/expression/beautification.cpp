@@ -110,7 +110,10 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
     const Tree* factor = Factor(expr, i);
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
-    if (factor->isComplexI()) {
+    if (factor->isComplexI() && i == numberOfFactors - 1) {
+      /* Move the final i out of the multiplication e.g. 2^(-1)×i → (1/2)×i. If
+       * i is not in the last position, it is either intentional or a bug in the
+       * order, so leave it where it is. */
       assert(*needI == false);
       *needI = true;
       continue;
@@ -170,21 +173,23 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
     expr->cloneNodeBeforeNode(KOpposite);
     expr = expr->child(0);
   }
-  if (needI) {
-    expr->cloneNodeBeforeNode(KMult.node<2>);
-    expr = expr->child(0);
-    // TODO: create method cloneTreeAfterTree
-    expr->nextTree()->cloneTreeBeforeNode(i_e);
-  }
   bool changed = false;
   if (!den->isOne()) {
+    if (needI) {
+      expr->cloneNodeBeforeNode(KMult.node<2>);
+      expr = expr->child(0);
+      // TODO: create method cloneTreeAfterTree
+      expr->nextTree()->cloneTreeBeforeNode(i_e);
+    }
     changed = true;
     num->cloneNodeAtNode(KDiv);
+    expr->moveTreeOverTree(num);
+    return true;
   } else {
+    num->removeTree();
     den->removeTree();
   }
-  expr->moveTreeOverTree(num);
-  return needI || needOpposite || changed;
+  return false;
 }
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
@@ -347,16 +352,16 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     changed = true;
   }
 
+  if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
+      NAry::Sort(e, Comparison::Order::Beautification)) {
+    changed = true;
+  }
+
   // Turn multiplications with negative powers into divisions
   if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
     if (BeautifyIntoDivision(e)) {
       return true;
     }
-  }
-
-  if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
-      NAry::Sort(e, Comparison::Order::Beautification)) {
-    return true;
   }
 
   // PowerReal(A,B) -> A^B

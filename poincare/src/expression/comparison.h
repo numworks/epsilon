@@ -13,6 +13,9 @@ class Comparison {
     System,
     Beautification,
     PreserveMatrices,
+    /* TODO: AdditionBeautification mimics the order obtained by
+     * Addition::shallowBeautify. Providing a custom order in Beautification
+     * would be cleaner. */
     AdditionBeautification
   };
   /* Compare returns:

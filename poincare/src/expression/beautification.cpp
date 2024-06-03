@@ -173,6 +173,7 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   if (needI) {
     expr->cloneNodeBeforeNode(KMult.node<2>);
     expr = expr->child(0);
+    // TODO: create method cloneTreeAfterTree
     expr->nextTree()->cloneTreeBeforeNode(i_e);
   }
   bool changed = false;

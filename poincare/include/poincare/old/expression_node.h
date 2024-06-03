@@ -253,10 +253,16 @@ class ExpressionNode : public PoolObject {
   constexpr static int k_maxNumberOfSteps = 10000;
   virtual Evaluation<float> approximate(
       SinglePrecision p,
-      const ApproximationContext& approximationContext) const = 0;
+      const ApproximationContext& approximationContext) const {
+    assert(false);
+    return Evaluation<float>();
+  }
   virtual Evaluation<double> approximate(
       DoublePrecision p,
-      const ApproximationContext& approximationContext) const = 0;
+      const ApproximationContext& approximationContext) const {
+    assert(false);
+    return Evaluation<double>();
+  }
 
   /* Simplification */
   /*!*/ void deepReduceChildren(const ReductionContext& reductionContext);

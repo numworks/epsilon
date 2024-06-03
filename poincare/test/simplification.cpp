@@ -109,6 +109,30 @@ QUIZ_CASE(pcj_simplification_variables) {
       KSet("m"_e, "y"_e, "z"_e)));
 }
 
+QUIZ_CASE(pcj_replace_symbol_with_tree) {
+  // replace with u(2) with 4 in 2*u(2)+u(0)+u(n)
+  Tree* e1 = KAdd(KMult(2_e, KSeq<"u">(2_e)), KSeq<"u">(0_e), KSeq<"u">("n"_e))
+                 ->clone();
+  Variables::ReplaceSymbolWithTree(e1, KSeq<"u">(2_e), 4_e);
+  assert_trees_are_equal(
+      e1, KAdd(KMult(2_e, 4_e), KSeq<"u">(0_e), KSeq<"u">("n"_e)));
+  e1->removeTree();
+
+  // replace with f(0) with 0 in f(f(0)) gives 0
+  Tree* e2 = KFun<"f">(KFun<"f">(0_e))->clone();
+  Variables::ReplaceSymbolWithTree(e2, KFun<"f">(0_e), 0_e);
+  assert_trees_are_equal(e2, 0_e);
+  e2->removeTree();
+
+  // replace with u(n) with 2n+3 in 4*u(5*n)
+  Tree* e3 = KMult(4_e, KSeq<"u">(KMult(5_e, "n"_e)))->clone();
+  Variables::ReplaceSymbolWithTree(e3, KSeq<"u">("n"_e),
+                                   KAdd(KMult(2_e, KUnknownSymbol), 3_e));
+  assert_trees_are_equal(e3,
+                         KMult(4_e, KAdd(KMult(2_e, KMult(5_e, "n"_e)), 3_e)));
+  e3->removeTree();
+}
+
 void simplifies_to(const char* input, const char* output,
                    ProjectionContext projectionContext = realCtx) {
   process_tree_and_compare(

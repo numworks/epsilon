@@ -168,7 +168,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "x/√(x^2+1)/√(-x^2/(x^2+1)+1)");
+                "x/(√(x^2+1)×√(-x^2/(x^2+1)+1))");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   // Sort order
@@ -847,8 +847,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "-(-1+√(3))/√(2)/2");
-  simplifies_to("cos(13×π/12)", "-(1+√(3))/√(2)/2");
+  simplifies_to("cos(7×π/12)", "-(-1+√(3))/(2×√(2))");
+  simplifies_to("cos(13×π/12)", "-(1+√(3))/(2×√(2))");
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "1/√(2)");

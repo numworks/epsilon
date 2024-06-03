@@ -462,6 +462,26 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
 }
 
 bool Beautification::ShallowBubbleUpDivision(Tree* e) {
+  // Div(Div(a,b), Div(c,d)) -> Div(Mult(a,d), Mult(b,c))
+  if (PatternMatching::MatchReplace(e, KDiv(KDiv(KA, KB), KDiv(KC, KD)),
+                                    KDiv(KMult(KA, KD), KMult(KB, KC)))) {
+    Simplification::ShallowSystematicReduce(e->child(0));
+    Simplification::ShallowSystematicReduce(e->child(1));
+    return true;
+  }
+  // Div(a, Div(b,c)) -> Div(Mult(a,c), b)
+  if (PatternMatching::MatchReplace(e, KDiv(KA, KDiv(KB, KC)),
+                                    KDiv(KMult(KA, KC), KB))) {
+    Simplification::ShallowSystematicReduce(e->child(0));
+    return true;
+  }
+  // Div(Div(a,b), c) -> Div(a, Mult(b,c))
+  if (PatternMatching::MatchReplace(e, KDiv(KDiv(KA, KB), KC),
+                                    KDiv(KA, KMult(KB, KC)))) {
+    Simplification::ShallowSystematicReduce(e->child(1));
+    return true;
+  }
+
   if (!e->isMult()) {
     return false;
   }

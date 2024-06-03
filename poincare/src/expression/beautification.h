@@ -39,6 +39,7 @@ class Beautification {
   static bool ShallowBeautify(Tree* node);
   static bool ShallowBubbleUpDivision(Tree* e);
   static bool DeepBubbleUpDivision(Tree* e);
+  static void ReduceMultiplication(Tree* e);
 };
 
 }  // namespace Poincare::Internal

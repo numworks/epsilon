@@ -461,24 +461,47 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   return result;
 }
 
+void Beautification::ReduceMultiplication(Tree* e) {
+  /* This is a beautification friendy reduction for multiplication to avoid
+   * calling Simplification::ShallowSystematicReduce */
+  if (!e->isMult()) {
+    return;
+  }
+  int nbOnes = 0;
+  const int nbChildren = e->numberOfChildren();
+  Tree* child = e->firstChild();
+  for (int i = 0; i < nbChildren; i++) {
+    if (child->isOne()) {
+      child->removeTree();
+      nbOnes++;
+    } else {
+      child = child->nextTree();
+    }
+  }
+  NAry::SetNumberOfChildren(e, nbChildren - nbOnes);
+  NAry::Flatten(e);
+  NAry::SquashIfPossible(e);
+  NAry::Sort(e, Comparison::Order::Beautification);
+}
+
 bool Beautification::ShallowBubbleUpDivision(Tree* e) {
   // Div(Div(a,b), Div(c,d)) -> Div(Mult(a,d), Mult(b,c))
   if (PatternMatching::MatchReplace(e, KDiv(KDiv(KA, KB), KDiv(KC, KD)),
                                     KDiv(KMult(KA, KD), KMult(KB, KC)))) {
-    Simplification::ShallowSystematicReduce(e->child(0));
-    Simplification::ShallowSystematicReduce(e->child(1));
+    ReduceMultiplication(e->child(0));
+    ReduceMultiplication(e->child(1));
     return true;
   }
   // Div(a, Div(b,c)) -> Div(Mult(a,c), b)
   if (PatternMatching::MatchReplace(e, KDiv(KA, KDiv(KB, KC)),
                                     KDiv(KMult(KA, KC), KB))) {
-    Simplification::ShallowSystematicReduce(e->child(0));
+    ReduceMultiplication(e->child(0));
     return true;
   }
   // Div(Div(a,b), c) -> Div(a, Mult(b,c))
   if (PatternMatching::MatchReplace(e, KDiv(KDiv(KA, KB), KC),
                                     KDiv(KA, KMult(KB, KC)))) {
-    Simplification::ShallowSystematicReduce(e->child(1));
+    ReduceMultiplication(e->child(1));
     return true;
   }
 
@@ -508,8 +531,8 @@ bool Beautification::ShallowBubbleUpDivision(Tree* e) {
   // TODO: create method moveTreeAfterTree
   e->nextTree()->moveTreeBeforeNode(denom);
   e->cloneNodeAtNode(KDiv);
-  Simplification::ShallowSystematicReduce(e->child(0));
-  Simplification::ShallowSystematicReduce(e->child(1));
+  ReduceMultiplication(e->child(0));
+  ReduceMultiplication(e->child(1));
   return true;
 }
 

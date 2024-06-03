@@ -12,6 +12,11 @@ namespace Poincare::Internal {
 
 #if __EMSCRIPTEN__
 template <>
+uint16_t ValueBlock::get<uint16_t>() const {
+  return *reinterpret_cast<const emscripten_align1_short*>(this);
+}
+
+template <>
 uint32_t ValueBlock::get<uint32_t>() const {
   return *reinterpret_cast<const emscripten_align1_int*>(this);
 }

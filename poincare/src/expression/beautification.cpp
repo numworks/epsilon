@@ -123,6 +123,10 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
         IntegerHandler rNum = Rational::Numerator(factor);
         if (rNum.isMinusOne()) {
           *needOpposite = !*needOpposite;
+        } else if (rNum.sign() == NonStrictSign::Negative) {
+          *needOpposite = !*needOpposite;
+          rNum.setSign(NonStrictSign::Positive);
+          factorsNumerator = rNum.pushOnTreeStack();
         } else if (!rNum.isOne()) {
           factorsNumerator = rNum.pushOnTreeStack();
         }

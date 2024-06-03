@@ -33,4 +33,8 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref5);
   assert_trees_are_equal(
       ref5, KAdd(KOpposite("w"_e), "x"_e, KOpposite("y"_e), KOpposite("z"_e)));
+
+  TreeRef ref6((-3_e / 2_e)->clone());
+  Beautification::DeepBeautify(ref6);
+  assert_trees_are_equal(ref6, KOpposite(KDiv(3_e, 2_e)));
 }

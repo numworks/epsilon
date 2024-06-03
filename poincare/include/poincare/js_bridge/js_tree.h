@@ -42,7 +42,7 @@ namespace JSBridge {
  * */
 EMSCRIPTEN_DECLARE_VAL_TYPE(JSTree);
 
-// Copy the bytes of the given JavaScript Uint8Array into a the stack
+// Copy the bytes of the given JavaScript Uint8Array onto the stack
 Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree);
 // Create a JavaScript Uint8Array from the given tree bytes
 JSTree JSTreeBuilder(const Internal::Tree* tree);

@@ -45,12 +45,13 @@ Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree) {
 // Build an Uint8Array from the tree bytes
 JSTree JSTreeBuilder(const Internal::Tree* tree) {
   if (!tree) {
-    // Empty array
+    // Equivalent to the js code "new Uint8Array()"
     return JSTree(val::global("Uint8Array").new_());
   }
   val typedArray = val(typed_memory_view(
       tree->treeSize(), reinterpret_cast<const uint8_t*>(tree)));
-  /* This array will be instantiated on javascript heap, allowing it to be
+  /* Equivalent to the js code "new Uint8Array(typedArray)"
+   * This array will be instantiated on javascript heap, allowing it to be
    * properly handled by the js garbage collector */
   return JSTree(val::global("Uint8Array").new_(typedArray));
 }

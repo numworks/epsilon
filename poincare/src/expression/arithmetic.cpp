@@ -426,6 +426,9 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
 }
 
 bool Arithmetic::BeautifyFactor(Tree* expr) {
+  if (!expr->isFactor()) {
+    return false;
+  }
   Tree* child = expr->child(0);
   if (!child->isRational()) {
     return false;

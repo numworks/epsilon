@@ -310,6 +310,8 @@ bool Beautification::DeepBeautify(Tree* expr,
   if (changed) {
     DeepBubbleUpDivision(expr);
   }
+  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
+            changed;
   return AddUnits(expr, projectionContext) || changed;
 }
 
@@ -325,10 +327,6 @@ bool Beautification::ShallowBeautify(Tree* e) {
   bool changed = false;
   if (e->isAdd()) {
     NAry::Sort(e, Comparison::Order::AdditionBeautification);
-  } else if (e->isFactor()) {
-    if (Arithmetic::BeautifyFactor(e)) {
-      return true;
-    }
   }
 
 #if 0
@@ -411,7 +409,7 @@ bool Beautification::ShallowBeautify(Tree* e) {
                                     KDiff(KA, KB, KC)) ||
       // A^0.5 -> Sqrt(A)
       PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
-      ShallowBeautifyPercent(e) || changed;
+      changed;
 }
 
 template <typename T>
@@ -544,6 +542,10 @@ bool Beautification::DeepBubbleUpDivision(Tree* e) {
   changed = ShallowBubbleUpDivision(e) || changed;
   assert(!ShallowBubbleUpDivision(e));
   return changed;
+}
+
+bool Beautification::ShallowBeautifySpecialDisplays(Tree* e, void* context) {
+  return Arithmetic::BeautifyFactor(e) || ShallowBeautifyPercent(e);
 }
 
 template Tree* Beautification::PushBeautifiedComplex(

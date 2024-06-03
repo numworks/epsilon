@@ -1,4 +1,4 @@
-$(eval $(call create_module,escher,1,$(addprefix src/, \
+$(call create_module,escher,1,$(addprefix src/, \
   abstract_text_field.cpp \
   alternate_empty_nested_menu_controller.cpp \
   alternate_empty_view_controller.cpp \
@@ -102,7 +102,7 @@ $(eval $(call create_module,escher,1,$(addprefix src/, \
   view_controller.cpp \
   warning_controller.cpp \
   window.cpp \
-)))
+))
 
 SFLAGS_escher += -DESCHER_VIEW_LOGGING=1:+logviews
 
@@ -110,13 +110,13 @@ SFLAGS_escher += -DESCHER_VIEW_LOGGING=1:+logviews
 
 _escher_inliner := $(TOOLS_DIRECTORY)/inliner.bin
 
-$(eval $(call import_module,escher_inliner,$(PATH_escher)/image))
-$(eval $(call create_module,escher_inliner,1,inliner.c))
+$(call import_module,escher_inliner,$(PATH_escher)/image)
+$(call create_module,escher_inliner,1,inliner.c)
 
-$(eval $(call create_tool,inliner, \
+$(call create_tool,inliner, \
   omg.lz4only \
   escher_inliner \
-))
+)
 
 $(_escher_inliner): TOOLS_CFLAGS += -std=c11 $(shell pkg-config libpng --cflags)
 $(_escher_inliner): TOOLS_LDFLAGS += $(shell pkg-config libpng --libs)
@@ -131,15 +131,18 @@ $(OUTPUT_DIRECTORY)/%.cpp: %.png $(_escher_inliner) | $$(@D)/.
 # Rigorously, the .cpp files in $1 should have a prerequisite on the generated
 # header, not source, but this is the best we can do without paired targets.
 define depends_on_image
+$(eval \
 $(call objects_foreach_arch,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2))
 $(call objects_foreach_arch,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY),$(sort $(dir $(strip $1)))),-I$d)
-
+)
 endef
 
 # depends_on_transparent_image, <list of cpp>, <list of png>
 define depends_on_transparent_image
+$(eval \
 $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
 $(call depends_on_image,$1,$2)
+)
 endef
 
-$(eval $(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png))
+$(call depends_on_transparent_image,$(PATH_escher)/src/dropdown_view.cpp,$(PATH_escher)/image/caret.png)

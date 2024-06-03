@@ -139,13 +139,13 @@ _sources_liba_test += $(addprefix test/, \
   strlcpy.c \
 )
 
-$(eval $(call create_module,liba,1, \
+$(call create_module,liba,1, \
   $(addsuffix :-bridge, \
     $(_sources_liba_minimal) \
     $(addsuffix :-minimal,$(_sources_liba_extended)) \
     $(foreach f,armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f)))) \
   src/bridge.c:+bridge \
-))
+)
 
 SFLAGS_liba += -Iliba/include/bridge:+bridge
 

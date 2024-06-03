@@ -62,9 +62,9 @@ _sources_ion_all := $(addprefix src/, \
   simulator/shared/window.cpp \
 )
 
-$(eval $(call create_module,ion,1, \
+$(call create_module,ion,1, \
 	$(_sources_ion_all) \
-))
+)
 
 SFLAGS_ion += \
   -DION_EVENTS_JOURNAL
@@ -139,10 +139,10 @@ $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(QUIET) convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
 
-$(eval $(call rule_for_simulator_resource, \
+$(call rule_for_simulator_resource, \
   ICNUTIL,app.icns,$(_ion_simulator_icons), \
   iconutil --convert icns --output $$@ $$(dir $$<) \
-))
+)
 
 $(_ion_simulator_icons): $(_ion_simulator_iconset)/icon_%.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)

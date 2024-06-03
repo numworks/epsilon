@@ -192,6 +192,7 @@ $(addprefix expression/, \
   derivation.cpp \
   dimension.cpp \
   dimension_vector.cpp \
+  equation_solver.cpp \
   float_helper.cpp \
   infinity.cpp \
   integer.cpp \
@@ -213,7 +214,6 @@ $(addprefix expression/, \
   set.cpp \
   sign.cpp \
   simplification.cpp \
-  solver.cpp \
   symbol.cpp \
   systematic_addition.cpp \
   systematic_operation.cpp \
@@ -272,9 +272,9 @@ $(addprefix numeric/, \
   roots.cpp \
   solver.cpp \
   solver_algorithms.cpp \
-  statistics_dataset.cpp\
-  statistics_dataset_column.cpp\
-  zoom.cpp\
+  statistics_dataset.cpp \
+  statistics_dataset_column.cpp \
+  zoom.cpp \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \
@@ -351,45 +351,13 @@ _sources_poincare_test := $(addprefix test/, \
   zoom.cpp \
 )
 
-# TODO_PCJ: Restore these tests := \
-  tree/tree_handle.cpp \
-  tree/helpers.cpp \
-  arithmetic.cpp \
-  conics.cpp \
-  context.cpp \
-  erf_inv.cpp \
-  exam_mode.cpp \
-  dependency.cpp \
-  distribution.cpp \
-  expression.cpp \
-  expression_order.cpp \
-  expression_serialization.cpp \
-  expression_to_layout.cpp \
-  function_solver.cpp \
-  helpers.cpp \
-  input_beautification.cpp \
-  integer.cpp \
-  layout.cpp \
-  layout_cursor.cpp \
-  layout_serialization.cpp \
-  layout_to_expression.cpp \
-  matrix.cpp \
-  polynomial.cpp \
-  print.cpp \
-  print_float.cpp \
-  print_int.cpp \
-  range.cpp \
-  rational.cpp \
-  regularized_function.cpp \
-  zoom.cpp \
-
-$(eval $(call create_module,poincare,1, \
+$(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
   $(_sources_poincare_checkpoint) \
   $(_sources_poincare_storage) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
   $(addsuffix :+test,$(_sources_poincare_test)) \
-))
+)
 
 # TODO Convert
 ifeq ($(TARGET),poincarejs)

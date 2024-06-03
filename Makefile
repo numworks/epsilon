@@ -19,28 +19,28 @@ SFLAGS += \
 
 # Import modules
 
-$(eval $(call import_module,liba,liba))
-$(eval $(call import_module,libaxx,libaxx))
-$(eval $(call import_module,omg,omg))
-$(eval $(call import_module,kandinsky,kandinsky))
-$(eval $(call import_module,sdl,ion/src/simulator/external))
-$(eval $(call import_module,ion,ion))
-$(eval $(call import_module,poincare,poincare))
-$(eval $(call import_module,escher,escher))
+$(call import_module,liba,liba)
+$(call import_module,libaxx,libaxx)
+$(call import_module,omg,omg)
+$(call import_module,kandinsky,kandinsky)
+$(call import_module,sdl,ion/src/simulator/external)
+$(call import_module,ion,ion)
+$(call import_module,poincare,poincare)
+$(call import_module,escher,escher)
 
 # FIXME
-$(eval $(call import_module,dummy,dummy))
+$(call import_module,dummy,dummy)
 
 # Declare goals
 
-$(eval $(call create_goal,device, \
+$(call create_goal,device, \
   liba \
   libaxx \
   omg \
   kandinsky \
-))
+)
 
-$(eval $(call create_goal,simulator, \
+$(call create_goal,simulator, \
   dummy.ion \
   escher \
   ion \
@@ -48,4 +48,4 @@ $(eval $(call create_goal,simulator, \
   omg \
   poincare \
   sdl \
-))
+)

@@ -1,21 +1,32 @@
-SFLAGS += -Ipoincare/include
-
-poincare_src += $(addprefix poincare/src/old/,\
-  junior_layout.cpp \
-  layout.cpp \
-  layout_node.cpp \
+_sources_poincare_minimal := $(addprefix src/, \
+  init.cpp \
+  preferences.cpp \
+  print_float.cpp \
+  old/helpers.cpp \
+  old/integer.cpp \
+  old/serialization_helper.cpp \
+  old/pool_handle.cpp \
+  old/pool_object.cpp \
+  old/pool.cpp \
 )
 
-poincare_src += $(addprefix poincare/src/old/,\
-  aliases_list.cpp \
-  pool_checkpoint.cpp \
-  circuit_breaker_checkpoint.cpp \
-  exception_checkpoint.cpp \
-  helpers.cpp \
-  xnt_helpers.cpp \
+_sources_poincare_checkpoint := $(addprefix src/, \
+  $(addsuffix :-nocheckpoint, \
+    memory/tree_stack_checkpoint.cpp \
+    old/pool_checkpoint.cpp \
+    old/circuit_breaker_checkpoint.cpp \
+    old/exception_checkpoint.cpp \
+  ) \
+  old/pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
 
-poincare_src += $(addprefix poincare/src/old/,\
+_sources_poincare_storage := $(addprefix src/old/, \
+  preferences_in_storage.cpp:-nostorage \
+  preferences_no_storage.cpp:+nostorage \
+)
+
+_sources_poincare_extended := $(addprefix src/, \
+$(addprefix old/, \
   absolute_value.cpp \
   addition.cpp \
   approximation_helper.cpp \
@@ -75,7 +86,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   hyperbolic_trigonometric_function.cpp \
   imaginary_part.cpp \
   infinity.cpp \
-  integer.cpp \
   integral.cpp \
   junior_expression.cpp \
   least_common_multiple.cpp \
@@ -134,7 +144,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   round.cpp \
   secant.cpp \
   sequence.cpp \
-  serialization_helper.cpp \
   sign_function.cpp \
   simplification_helper.cpp \
   sine.cpp \
@@ -148,9 +157,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \
-  pool_handle.cpp \
-  pool_object.cpp \
-  pool.cpp \
   trigonometry.cpp \
   trigonometry_cheat_table.cpp \
   undefined.cpp \
@@ -160,166 +166,104 @@ poincare_src += $(addprefix poincare/src/old/,\
   vector_cross.cpp \
   vector_dot.cpp \
   vector_norm.cpp \
-)
-
-
-tests_src += $(addprefix poincare/test/old/,\
-  helper.cpp \
+) \
+$(addprefix expression/, \
+  advanced_simplification.cpp \
+  advanced_operation.cpp \
+  advanced_reduction.cpp \
+  algebraic.cpp \
+  aliases.cpp \
+  arithmetic.cpp \
   approximation.cpp \
-  derivative.cpp \
-  expression_properties.cpp \
-  layout.cpp \
-  parsing.cpp \
-  simplification.cpp \
-)
-
-# TODO_PCJ: Restore these tests
-  # tree/tree_handle.cpp \
-  # tree/helpers.cpp \
-  # arithmetic.cpp \
-  # conics.cpp \
-  # context.cpp \
-  # erf_inv.cpp \
-  # exam_mode.cpp \
-  # dependency.cpp \
-  # distribution.cpp \
-  # expression.cpp \
-  # expression_order.cpp \
-  # expression_serialization.cpp \
-  # expression_to_layout.cpp \
-  # function_solver.cpp \
-  # helpers.cpp \
-  # input_beautification.cpp \
-  # integer.cpp \
-  # layout_cursor.cpp \
-  # layout_serialization.cpp \
-  # layout_to_expression.cpp \
-  # matrix.cpp \
-  # polynomial.cpp \
-  # print.cpp \
-  # print_float.cpp \
-  # print_int.cpp \
-  # range.cpp \
-  # rational.cpp \
-  # regularized_function.cpp \
-
-poincare_bench_src = $(addprefix poincare/src/,\
-  init.cpp \
-  preferences.cpp \
-  print_float.cpp \
-)
-
-poincare_bench_src = $(addprefix poincare/src/old/,\
-  pool_checkpoint_dummy.cpp \
-  helpers.cpp \
+  approximation_derivative.cpp \
+  approximation_helpers.cpp \
+  approximation_integral.cpp \
+  approximation_prepare.cpp \
+  approximation_power.cpp \
+  approximation_trigonometry.cpp \
+  beautification.cpp \
+  binary.cpp \
+  builtin.cpp \
+  continuity.cpp \
+  conversion.cpp \
+  decimal.cpp \
+  degree.cpp \
+  dependency.cpp \
+  derivation.cpp \
+  dimension.cpp \
+  dimension_vector.cpp \
+  float_helper.cpp \
+  infinity.cpp \
   integer.cpp \
-  preferences_no_storage.cpp \
-  serialization_helper.cpp \
-  pool_handle.cpp \
-  pool_object.cpp \
-  pool.cpp \
-)
-
-
-poincare_src += $(addprefix poincare/src/,\
-  api.cpp \
-  expression/advanced_operation.cpp \
-  expression/advanced_reduction.cpp \
-  expression/algebraic.cpp \
-  expression/aliases.cpp \
-  expression/arithmetic.cpp \
-  expression/approximation.cpp \
-  expression/approximation_derivative.cpp \
-  expression/approximation_helpers.cpp \
-  expression/approximation_integral.cpp \
-  expression/approximation_prepare.cpp \
-  expression/approximation_power.cpp \
-  expression/approximation_trigonometry.cpp \
-  expression/beautification.cpp \
-  expression/binary.cpp \
-  expression/builtin.cpp \
-  expression/continuity.cpp \
-  expression/conversion.cpp \
-  expression/decimal.cpp \
-  expression/degree.cpp \
-  expression/dependency.cpp \
-  expression/derivation.cpp \
-  expression/dimension.cpp \
-  expression/dimension_vector.cpp \
-  expression/equation_solver.cpp \
-  expression/float_helper.cpp \
-  expression/infinity.cpp \
-  expression/integer.cpp \
-  expression/integer_serialization.cpp \
-  expression/list.cpp \
-  expression/logarithm.cpp \
-  expression/matrix.cpp \
-  expression/metric.cpp \
-  expression/number.cpp \
-  expression/order.cpp \
-  expression/parametric.cpp \
-  expression/physical_constant.cpp \
-  expression/polynomial.cpp \
-  expression/projection.cpp \
-  expression/random.cpp \
-  expression/rational.cpp \
-  expression/sequence.cpp \
-  expression/sequence_cache.cpp \
-  expression/set.cpp \
-  expression/sign.cpp \
-  expression/simplification.cpp \
-  expression/symbol.cpp \
-  expression/systematic_addition.cpp \
-  expression/systematic_operation.cpp \
-  expression/systematic_multiplication.cpp \
-  expression/systematic_reduction.cpp \
-  expression/trigonometry.cpp \
-  expression/undefined.cpp \
-  expression/unit.cpp \
-  expression/unit_representatives.cpp \
-  expression/variables.cpp \
-  expression/vector.cpp \
-  init.cpp \
-  layout/app_helpers.cpp \
-  layout/autocompleted_pair.cpp \
-  layout/code_point_layout.cpp \
-  layout/cursor_motion.cpp \
-  layout/empty_rectangle.cpp \
-  layout/grid.cpp \
-  layout/input_beautification.cpp \
-  layout/layout_cursor.cpp \
-  layout/layout_selection.cpp \
-  layout/layout_span.cpp \
-  layout/layout_span_decoder.cpp \
-  layout/layouter.cpp \
-  layout/multiplication_symbol.cpp \
-  layout/parser.cpp \
-  layout/parsing/helper.cpp \
-  layout/parsing/latex_parser.cpp \
-  layout/parsing/rack_parser.cpp \
-  layout/parsing/tokenizer.cpp \
-  layout/rack_from_text.cpp \
-  layout/rack_layout.cpp \
-  layout/rack_layout_decoder.cpp \
-  layout/render.cpp \
-  layout/serialize.cpp \
-  layout/xnt.cpp \
-  memory/block_stack.cpp \
-  memory/n_ary.cpp \
-  memory/pattern_matching.cpp \
-  memory/tree.cpp \
-  memory/tree_ref.cpp \
-  memory/tree_stack.cpp \
-  memory/tree_stack_checkpoint.cpp \
-  memory/value_block.cpp \
-  memory/visualization.cpp \
-  preferences.cpp \
-  print.cpp \
-  print_float.cpp \
-  range.cpp \
-)
-
-poincare_src += $(addprefix poincare/src/numeric/,\
+  integer_serialization.cpp \
+  list.cpp \
+  logarithm.cpp \
+  matrix.cpp \
+  metric.cpp \
+  number.cpp \
+  order.cpp \
+  parametric.cpp \
+  physical_constant.cpp \
+  polynomial.cpp \
+  projection.cpp \
+  random.cpp \
+  rational.cpp \
+  sequence.cpp \
+  sequence_cache.cpp \
+  set.cpp \
+  sign.cpp \
+  simplification.cpp \
+  solver.cpp \
+  symbol.cpp \
+  systematic_addition.cpp \
+  systematic_operation.cpp \
+  systematic_multiplication.cpp \
+  systematic_reduction.cpp \
+  trigonometry.cpp \
+  undefined.cpp \
+  unit.cpp \
+  unit_representatives.cpp \
+  variables.cpp \
+  vector.cpp \
+) \
+$(addprefix layout/, \
+  app_helpers.cpp \
+  autocompleted_pair.cpp \
+  code_point_layout.cpp \
+  cursor_motion.cpp \
+  empty_rectangle.cpp \
+  grid.cpp \
+  input_beautification.cpp \
+  layout_cursor.cpp \
+  layout_selection.cpp \
+  layout_span.cpp \
+  layout_span_decoder.cpp \
+  layouter.cpp \
+  multiplication_symbol.cpp \
+  parser.cpp \
+  parsing/helper.cpp \
+  parsing/latex_parser.cpp \
+  parsing/rack_parser.cpp \
+  parsing/tokenizer.cpp \
+  rack_from_text.cpp \
+  rack_layout.cpp \
+  rack_layout_decoder.cpp \
+  render.cpp \
+  serialize.cpp \
+  xnt.cpp \
+) \
+$(addprefix memory/, \
+  block_stack.cpp \
+  tree_stack.cpp \
+  tree_stack_checkpoint.cpp \
+  n_ary.cpp \
+  pattern_matching.cpp \
+  tree.cpp \
+  tree_ref.cpp \
+  value_block.cpp \
+  visualization.cpp \
+) \
+$(addprefix numeric/, \
   beta_function.cpp \
   erf_inv.cpp \
   helpers.cpp \
@@ -328,12 +272,11 @@ poincare_src += $(addprefix poincare/src/numeric/,\
   roots.cpp \
   solver.cpp \
   solver_algorithms.cpp \
-  statistics_dataset.cpp \
-  statistics_dataset_column.cpp \
-  zoom.cpp \
-)
-
-poincare_src += $(addprefix poincare/src/probability/,\
+  statistics_dataset.cpp\
+  statistics_dataset_column.cpp\
+  zoom.cpp\
+) \
+$(addprefix probability/, \
   binomial_distribution.cpp \
   cdf_method.cpp \
   cdf_range_method.cpp \
@@ -352,33 +295,25 @@ poincare_src += $(addprefix poincare/src/probability/,\
   poisson_distribution.cpp \
   student_distribution.cpp \
   uniform_distribution.cpp \
-)
-
-poincare_src += $(addprefix poincare/src/regression/,\
-  affine_regression.cpp \
-  cubic_regression.cpp \
-  exponential_regression.cpp \
-  linear_regression.cpp \
-  logarithmic_regression.cpp \
-  logistic_regression.cpp \
-  median_regression.cpp \
-  power_regression.cpp \
-  proportional_regression.cpp \
-  quadratic_regression.cpp \
-  quartic_regression.cpp \
-  regression.cpp \
-  regression_switch.cpp \
-  series.cpp \
-  transformed_regression.cpp \
-  trigonometric_regression.cpp \
-)
-
-tests_src += $(addprefix poincare/src/,\
-  layout/parsing/latex_parser.cpp \
-)
-
-tests_src += $(addprefix poincare/test/,\
+) \
   api.cpp \
+  init.cpp \
+  preferences.cpp \
+  print.cpp \
+  print_float.cpp \
+  range.cpp \
+)
+
+_sources_poincare_test := $(addprefix test/, \
+  old/helper.cpp \
+  old/approximation.cpp \
+  old/derivative.cpp \
+  old/expression_properties.cpp \
+  old/layout.cpp \
+  old/parsing.cpp \
+  old/simplification.cpp \
+  api.cpp \
+  latex_parser.cpp \
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \
@@ -416,18 +351,47 @@ tests_src += $(addprefix poincare/test/,\
   zoom.cpp \
 )
 
-tests_src += $(poincare_src)
+# TODO_PCJ: Restore these tests := \
+  tree/tree_handle.cpp \
+  tree/helpers.cpp \
+  arithmetic.cpp \
+  conics.cpp \
+  context.cpp \
+  erf_inv.cpp \
+  exam_mode.cpp \
+  dependency.cpp \
+  distribution.cpp \
+  expression.cpp \
+  expression_order.cpp \
+  expression_serialization.cpp \
+  expression_to_layout.cpp \
+  function_solver.cpp \
+  helpers.cpp \
+  input_beautification.cpp \
+  integer.cpp \
+  layout.cpp \
+  layout_cursor.cpp \
+  layout_serialization.cpp \
+  layout_to_expression.cpp \
+  matrix.cpp \
+  polynomial.cpp \
+  print.cpp \
+  print_float.cpp \
+  print_int.cpp \
+  range.cpp \
+  rational.cpp \
+  regularized_function.cpp \
+  zoom.cpp \
 
-ifeq ($(DEBUG),1)
-  ifeq ($(PLATFORM),simulator)
-    POINCARE_TREE_LOG ?= 1
-  endif
-endif
+$(eval $(call create_module,poincare,1, \
+  $(_sources_poincare_minimal) \
+  $(_sources_poincare_checkpoint) \
+  $(_sources_poincare_storage) \
+  $(addsuffix :-minimal,$(_sources_poincare_extended)) \
+  $(addsuffix :+test,$(_sources_poincare_test)) \
+))
 
-ifdef POINCARE_TREE_LOG
-SFLAGS += -DPOINCARE_TREE_LOG=$(POINCARE_TREE_LOG)
-endif
-
+# TODO Convert
 ifeq ($(TARGET),poincarejs)
 poincare_src += $(addprefix poincare/src/js_bridge/,\
   computation_context.cpp \
@@ -436,3 +400,5 @@ poincare_src += $(addprefix poincare/src/js_bridge/,\
   regression.cpp \
 )
 endif
+
+SFLAGS_poincare += -DPOINCARE_TREE_LOG=1:+logtrees

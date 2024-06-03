@@ -165,8 +165,20 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* expr,
  * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
 bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                       const Tree* replacement) {
-  // TODO deep was before in SymbolAbstract::replaceSymbolWithExpression
-  // does it change anything (replace f(f(0)) with f(0) -> 0) -> 0 ?
+  bool isParametric = expr->isParametric();
+  bool changed = false;
+  for (int i = 0; Tree * child : expr->children()) {
+    /* Do not replace parametric's variable and symbols hidden by a local
+     * definition */
+    if (!(isParametric &&
+          (i == Parametric::k_variableIndex ||
+           (i == Parametric::FunctionIndex(expr) &&
+            strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
+                   Symbol::GetName(symbol)) == 0)))) {
+      changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
+    }
+    i++;
+  }
   if (symbol->isUserNamed() && symbol->type() == expr->type() &&
       strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
     if (symbol->isUserSymbol()) {
@@ -182,20 +194,6 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
       return true;
     }
     return false;
-  }
-  bool isParametric = expr->isParametric();
-  bool changed = false;
-  for (int i = 0; Tree * child : expr->children()) {
-    /* Do not replace parametric's variable and symbols hidden by a local
-     * definition */
-    if (!(isParametric &&
-          (i == Parametric::k_variableIndex ||
-           (i == Parametric::FunctionIndex(expr) &&
-            strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
-                   Symbol::GetName(symbol)) == 0)))) {
-      changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
-    }
-    i++;
   }
   return changed;
 }

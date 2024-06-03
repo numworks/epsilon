@@ -1,3 +1,5 @@
+KANDINSKY_codepoints := $(PATH_kandinsky)/fonts/code_points.h
+
 _sources_kandinsky_fonts := $(addprefix fonts/, \
   LargeFont.ttf \
   SmallFont.ttf \

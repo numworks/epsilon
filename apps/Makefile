@@ -1,17 +1,4 @@
-include apps/helpers.mk
-include apps/shared/Makefile
-include apps/home/Makefile
-include apps/on_boarding/Makefile
-include apps/hardware_test/Makefile
-include apps/usb/Makefile
-apps =
-
-# All selected apps are included. Each Makefile below is responsible for setting
-# the $apps variable (name of the app class) and the $app_headers
-# (path to the apps header).
-$(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
-
-apps_src += $(addprefix apps/,\
+$(call create_module,apps,1, \
   apps_container.cpp \
   apps_container_helper.cpp \
   apps_container_launch_default.cpp:-onboarding \
@@ -34,68 +21,43 @@ apps_src += $(addprefix apps/,\
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \
+  apps_container_helper_tests.cpp:+test \
+  init_tests.cpp:+test \
 )
 
-tests_src += $(addprefix apps/,\
-  apps_container_helper_tests.cpp \
-  init_tests.cpp \
-)
+$(call depends_on_image,$(PATH_apps)/title_bar_view.cpp,$(PATH_apps)/exam_icon.png)
 
+# Include the specific apps
+# FIXME Use flavors instead of EPSILON_APPS?
+EPSILON_APPS ?= calculation graph code statistics distributions inference solver sequence regression elements finance settings
 
-snapshots_declaration = $(foreach i,$(apps),$(i)::Snapshot m_snapshot$(subst :,,$(i))Snapshot;)
-apps_declaration = $(foreach i,$(apps),$(i) m_$(subst :,,$(i));)
-snapshots_construction = $(foreach i,$(apps),,m_snapshot$(subst :,,$(i))Snapshot())
-snapshots_list = $(foreach i,$(apps),,&m_snapshot$(subst :,,$(i))Snapshot)
-snapshots_count = $(words $(apps))
-snapshot_includes = $(foreach i,$(app_headers),-include $(i) )
-epsilon_app_names = '$(foreach i,${EPSILON_APPS},"$(i)", )'
+_apps_classes := $(foreach a,$(EPSILON_APPS),$(call capitalize,$a)::App)
+_apps_snapshots_declaration := $(foreach a,$(_apps_classes),$a::Snapshot m_snapshot$(subst :,,$a)Snapshot;)
+_apps_declaration := $(foreach a,$(_apps_classes),$a m_$(subst :,,$a);)
+_apps_snapshots_construction := $(foreach a,$(_apps_classes),,m_snapshot$(subst :,,$a)Snapshot())
+_apps_snapshots_list := $(foreach a,$(_apps_classes),,&m_snapshot$(subst :,,$a)Snapshot)
+_apps_count := $(words $(EPSILON_APPS))
+_apps_includes_flags := $(patsubst %,-include $(PATH_apps)/%/app.h,$(EPSILON_APPS))
+_apps_names := $(foreach a,$(EPSILON_APPS),"$a",)
 
-$(call object_for,apps/apps_container_storage.cpp apps/apps_container.cpp apps/init.cpp apps/main.cpp): CXXFLAGS += $(snapshot_includes) -DAPPS_CONTAINER_APPS_DECLARATION="$(apps_declaration)" -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(snapshots_declaration)" -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(snapshots_construction)" -DAPPS_CONTAINER_SNAPSHOT_LIST="$(snapshots_list)" -DAPPS_CONTAINER_SNAPSHOT_COUNT=$(snapshots_count) -DEPSILON_APPS_NAMES=$(epsilon_app_names)
+_apps_snapshot_cxxflags := \
+  $(_apps_includes_flags) \
+  -DAPPS_CONTAINER_APPS_DECLARATION="$(_apps_declaration)" \
+  -DAPPS_CONTAINER_SNAPSHOT_DECLARATION="$(_apps_snapshots_declaration)" \
+  -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(_apps_snapshots_construction)" \
+  -DAPPS_CONTAINER_SNAPSHOT_LIST="$(_apps_snapshots_list)" \
+  -DAPPS_CONTAINER_SNAPSHOT_COUNT="$(_apps_snapshots_count)" \
+  -DEPSILON_APPS_NAMES='$(_apps_names)'
 
-# I18n file generation
+$(call objects_foreach_arch,$(addprefix $(PATH_apps)/,apps_container.cpp apps_container_storage.cpp init.cpp main.cpp)): CXXFLAGS += $(_apps_snapshot_cxxflags)
 
-country_preferences = apps/country_preferences.csv
-language_preferences = apps/language_preferences.csv
+include $(patsubst %,$(PATH_apps)/%/Makefile,$(EPSILON_APPS))
 
-# The header is refered to as <apps/i18n.h> so make sure it's findable this way
-SFLAGS += -I$(BUILD_DIR)
+# Generate I18n files
+include $(PATH_apps)/i18n.mak
 
-i18n_files += $(addprefix apps/language_,$(addsuffix .universal.i18n, $(EPSILON_I18N)))
+$(foreach l,$(EPSILON_I18N),$(call i18n_for_locale,language_$l,universal))
+$(call i18n_with_universal,shared)
+$(call i18n_with_universal,toolbox)
+$(call i18n_without_universal,variables)
 
-i18n_files += $(call i18n_with_universal_for,shared)
-i18n_files += $(call i18n_with_universal_for,toolbox)
-i18n_files += $(call i18n_without_universal_for,variables)
-
-$(eval $(call rule_for, \
-  I18N, \
-  apps/i18n.h, \
-  apps/i18n.py $(i18n_files) $(country_preferences) $(language_preferences), \
-  $$(PYTHON) apps/i18n.py \
-    --header $$@ \
-    --implementation $$(subst .h,.cpp,$$@) \
-    --locales $$(EPSILON_I18N) \
-    --supported-locales $(supported_locales) \
-    --countries $$(EPSILON_COUNTRIES) \
-    --supported-countries $(supported_countries) \
-    --codepoints $(code_points) \
-    --countrypreferences $(country_preferences) \
-    --languagepreferences $(language_preferences) \
-    --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
-  global \
-))
-
-$(BUILD_DIR)/apps/i18n.cpp: $(BUILD_DIR)/apps/i18n.h
-apps_src += $(BUILD_DIR)/apps/i18n.cpp
-
-# Handle PNG files
-
-$(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
-
-$(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
-
-apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_distributions_test_src) $(app_inference_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src) $(app_finance_test_src)
-
-apps_tests_src += $(addprefix apps/,\
-  global_preferences.cpp \
-  init_tests.cpp \
-)

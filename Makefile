@@ -27,6 +27,7 @@ $(call import_module,sdl,ion/src/simulator/external)
 $(call import_module,ion,ion)
 $(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
+$(call import_module,apps,apps)
 
 # FIXME
 $(call import_module,dummy,dummy)

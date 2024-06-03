@@ -498,16 +498,11 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       if (std::isnan(rank)) {
         return NAN;
       }
-      double result = NAN;
-      result =
+      double result =
           Shared::GlobalContext::sequenceCache->storedValueOfSequenceAtRank(
               index, rank);
-      /* We try to approximate the sequence independently from the others at the
-       * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for
-       * instance). But we avoid doing so if the sequence referencing itself to
-       * avoid an infinite loop. */
       if (OMG::IsSignalingNan(result)) {
-        // If the rank is not an int, return NAN
+        // compute value if not in cache
         if (std::floor(rank) == rank) {
           result = OutOfContext(sequence.approximateAtRank(
               rank, Shared::GlobalContext::sequenceCache));

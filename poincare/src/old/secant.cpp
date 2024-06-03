@@ -14,18 +14,6 @@ int SecantNode::numberOfChildren() const {
   return Secant::s_functionHelper.numberOfChildren();
 }
 
-template <typename T>
-std::complex<T> SecantNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) {
-  std::complex<T> denominator =
-      CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-  if (denominator == static_cast<T>(0.0)) {
-    return complexNAN<T>();
-  }
-  return std::complex<T>(1) / denominator;
-}
-
 size_t SecantNode::serialize(char* buffer, size_t bufferSize,
                              Preferences::PrintFloatMode floatDisplayMode,
                              int numberOfSignificantDigits) const {

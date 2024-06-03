@@ -15,20 +15,6 @@ int CotangentNode::numberOfChildren() const {
   return Cotangent::s_functionHelper.numberOfChildren();
 }
 
-template <typename T>
-std::complex<T> CotangentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit) {
-  std::complex<T> denominator =
-      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-  std::complex<T> numerator =
-      CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
-  if (denominator == static_cast<T>(0.0)) {
-    return complexNAN<T>();
-  }
-  return numerator / denominator;
-}
-
 size_t CotangentNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

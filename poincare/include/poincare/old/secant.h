@@ -20,11 +20,6 @@ class SecantNode final : public ExpressionNode {
   // Properties
   Type otype() const override { return Type::Secant; }
 
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
-
  private:
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
@@ -37,19 +32,6 @@ class SecantNode final : public ExpressionNode {
   };
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
-  }
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext,
-                                                   computeOnComplex<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext,
-                                                    computeOnComplex<double>);
   }
 };
 

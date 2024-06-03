@@ -67,10 +67,11 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       std::complex<T> numerator =
           type.isCot() ? TrigonometricToComplex(Type::Cos, value, angleUnit)
                        : 1;
-      if (type.isCot() && (numerator == static_cast<T>(1.0) ||
+      if (denominator == static_cast<T>(0.0) ||
+          type.isCot() && (numerator == static_cast<T>(1.0) ||
                            numerator == static_cast<T>(-1.0))) {
-        // cf comment for Tangent
-        return NAN;
+        // Take advantage of numerator with cot, cf comment for Tangent
+        return std::complex<T>(NAN, NAN);
       }
       return numerator / denominator;
     }

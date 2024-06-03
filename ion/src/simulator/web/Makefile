@@ -22,12 +22,12 @@ ion_src += $(addprefix ion/src/simulator/web/, \
 )
 
 ion_src += $(addprefix ion/src/simulator/shared/, \
-  dummy/circuit_breaker.cpp \
   dummy/language.cpp \
   dummy/haptics_enabled.cpp \
   haptics.cpp \
 )
 
+ion_src += ion/src/shared/dummy/circuit_breaker.cpp
 ion_src += ion/src/shared/collect_registers.cpp
 
 ifeq ($(EPSILON_TELEMETRY),1)

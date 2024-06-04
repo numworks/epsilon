@@ -25,16 +25,6 @@ OExpression FracPartNode::shallowReduce(
   return FracPart(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-std::complex<T> FracPartNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0) {
-    return complexRealNAN<T>();
-  }
-  return c.real() - std::floor(c.real());
-}
-
 OExpression FracPart::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

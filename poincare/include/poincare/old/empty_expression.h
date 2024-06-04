@@ -34,23 +34,6 @@ class EmptyExpressionNode final : public ExpressionNode {
     assert(parent() && parent()->otype() == Type::Conjugate);
     return LayoutShape::OneLetter;
   };
-
- private:
-  // Layout
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class EmptyExpression final : public OExpression {

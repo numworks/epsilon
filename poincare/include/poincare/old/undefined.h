@@ -33,18 +33,6 @@ class UndefinedNode : public NumberNode {
   }
   void setNegative(bool negative) override {}
 
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>();
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>();
-  }
-
   /* Derivation
    * Unlike Numbers that derivate to 0, Undefined derivates to Undefined. */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
@@ -57,8 +45,6 @@ class UndefinedNode : public NumberNode {
                    int numberOfSignificantDigits = 0) const override;
 
  protected:
-  template <typename T>
-  Evaluation<T> templatedApproximate() const;
   // Simplification
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;

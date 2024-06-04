@@ -47,24 +47,6 @@ OExpression FactorialNode::shallowReduce(
   return Factorial(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-std::complex<T> FactorialNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  T n = c.real();
-  if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return complexRealNAN<T>();
-  }
-  T result = 1;
-  for (int i = 1; i <= (int)n; i++) {
-    result *= static_cast<T>(i);
-    if (std::isinf(result)) {
-      return result;
-    }
-  }
-  return std::round(result);
-}
-
 size_t FactorialNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

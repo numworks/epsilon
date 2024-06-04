@@ -45,18 +45,6 @@ class ConstantNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  /* Approximation */
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>();
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>();
-  }
-
   constexpr static const char* k_exponentialEName = "e";
   constexpr static const char* k_complexIName = "i";
 
@@ -121,8 +109,6 @@ class ConstantNode final : public ExpressionNode {
 
  private:
   int rankOfConstant() const { return constantInfo().m_comparisonRank; }
-  template <typename T>
-  Evaluation<T> templatedApproximate() const;
 
   const ConstantInfo* m_constantInfo;
 };

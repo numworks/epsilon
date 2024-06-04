@@ -6,7 +6,6 @@
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
-#include <poincare/old/binomial_coefficient.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/dependency.h>
@@ -1007,6 +1006,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       int clippedN = n.extractedInt();
       assert(clippedN > 0);
 
+#if 0  // TODO_PCJ: compute has been removed.
       /* The multinome (a0+a2+...+a(m-1))^n has BinomialCoefficient(n+m-1,n)
        * terms ; we expand the multinome only when the number of terms in the
        * resulting sum has less than k_maxNumberOfTermsInExpandedMultinome
@@ -1017,6 +1017,9 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
               static_cast<double>(clippedN + baseChildren - 1))) {
         return *this;
       }
+#else
+      assert(false);
+#endif
 
       OExpression result = base;
       const OExpression a = result.clone();

@@ -32,35 +32,6 @@ OExpression PermuteCoefficientNode::shallowReduce(
   return PermuteCoefficient(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> PermuteCoefficientNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T> *c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2);
-        T n = ComplexNode<T>::ToScalar(c[0]);
-        T k = ComplexNode<T>::ToScalar(c[1]);
-        if (std::isnan(n) || std::isnan(k) || n != std::round(n) ||
-            k != std::round(k) || n < 0.0f || k < 0.0f) {
-          return complexRealNAN<T>();
-        }
-        if (k > n) {
-          return 0.0;
-        }
-        T result = 1;
-        for (int i = (int)n - (int)k + 1; i <= (int)n; i++) {
-          result *= i;
-          if (std::isinf(result) || std::isnan(result)) {
-            return result;
-          }
-        }
-        return std::round(result);
-      });
-}
-
 OExpression PermuteCoefficient::shallowReduce(
     ReductionContext reductionContext) {
   {

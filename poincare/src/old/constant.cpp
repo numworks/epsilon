@@ -48,16 +48,6 @@ size_t ConstantNode::serialize(char* buffer, size_t bufferSize,
   return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
-template <typename T>
-Evaluation<T> ConstantNode::templatedApproximate() const {
-  if (isComplexI()) {
-    return Complex<T>::Builder(0.0, 1.0);
-  }
-  ConstantInfo info = constantInfo();
-  return info.m_unit ? Complex<T>::Undefined()
-                     : Complex<T>::Builder(info.m_value);
-}
-
 OExpression ConstantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Constant(this).shallowReduce(reductionContext);

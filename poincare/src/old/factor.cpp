@@ -38,21 +38,6 @@ OExpression FactorNode::shallowBeautify(
   return Factor(this).shallowBeautify(reductionContext);
 }
 
-// Add tests :)
-template <typename T>
-Evaluation<T> FactorNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::MapOneChild<T>(
-      this, approximationContext,
-      [](const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit) {
-        if (std::isnan(ComplexNode<T>::ToScalar(c))) {
-          return complexNAN<T>();
-        }
-        return c;
-      });
-}
-
 Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(
     Integer i) const {
   assert(!i.isZero());

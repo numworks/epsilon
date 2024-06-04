@@ -12,10 +12,4 @@ size_t EmptyExpressionNode::serialize(
   return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 
-template <typename T>
-Evaluation<T> EmptyExpressionNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return Complex<T>::Undefined();
-}
-
 }  // namespace Poincare

@@ -42,22 +42,6 @@ bool SignFunctionNode::derivate(const ReductionContext& reductionContext,
   return SignFunction(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-template <typename T>
-std::complex<T> SignFunctionNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  if (c.imag() != 0 || std::isnan(c.real())) {
-    return complexRealNAN<T>();
-  }
-  if (c.real() == 0) {
-    return 0.0;
-  }
-  if (c.real() < 0) {
-    return -1.0;
-  }
-  return 1.0;
-}
-
 OExpression SignFunction::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

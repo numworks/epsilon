@@ -26,16 +26,9 @@ size_t UndefinedNode::serialize(char* buffer, size_t bufferSize,
                           bufferSize - 1);
 }
 
-template <typename T>
-Evaluation<T> UndefinedNode::templatedApproximate() const {
-  return Complex<T>::Undefined();
-}
-
 Undefined Undefined::Builder() {
   JuniorExpression expr = JuniorExpression::Builder(KUndef->clone());
   return static_cast<Undefined&>(expr);
 }
 
-template Evaluation<float> UndefinedNode::templatedApproximate() const;
-template Evaluation<double> UndefinedNode::templatedApproximate() const;
 }  // namespace Poincare

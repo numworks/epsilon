@@ -43,7 +43,7 @@ class NonrealNode final : public UndefinedNode {
   template <typename T>
   Evaluation<T> templatedApproximate() const {
     OExpression::SetEncounteredComplex(true);
-    return UndefinedNode::templatedApproximate<T>();
+    return Complex<T>::Undefined();
   }
 };
 

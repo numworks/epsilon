@@ -32,45 +32,6 @@ size_t BinomialCoefficientNode::serialize(
       BinomialCoefficient::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> BinomialCoefficientNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T>* c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2);
-        T n = ComplexNode<T>::ToScalar(c[0]);
-        T k = ComplexNode<T>::ToScalar(c[1]);
-        return compute(k, n);
-      });
-}
-
-template <typename T>
-T BinomialCoefficientNode::compute(T k, T n) {
-  if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
-    return NAN;
-  }
-  if (k < 0) {
-    return 0;
-  }
-  // Generalized definition allows any n value
-  bool generalized = (n != std::round(n) || n < k);
-  // Take advantage of symmetry
-  k = (!generalized && k > (n - k)) ? n - k : k;
-
-  T result = 1;
-  for (T i = 0; i < k; i++) {
-    result *= (n - i) / (k - i);
-    if (std::isinf(result) || std::isnan(result)) {
-      return result;
-    }
-  }
-  // If not generalized, the output must be round
-  return generalized ? result : std::round(result);
-}
-
 OExpression BinomialCoefficient::shallowReduce(
     ReductionContext reductionContext) {
   {
@@ -150,8 +111,5 @@ OExpression BinomialCoefficient::shallowReduce(
   replaceWithInPlace(result);
   return std::move(result);
 }
-
-template double BinomialCoefficientNode::compute(double k, double n);
-template float BinomialCoefficientNode::compute(float k, float n);
 
 }  // namespace Poincare

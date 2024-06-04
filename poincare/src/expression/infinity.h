@@ -11,7 +11,7 @@ class Infinity {
  public:
   static bool IsPlusOrMinusInfinity(const Tree* u);
   static bool IsMinusInfinity(const Tree* u);
-  static bool HasInfinityChild(Tree* u);
+  static bool HasInfinityChild(const Tree* u);
 };
 
 }  // namespace Poincare::Internal

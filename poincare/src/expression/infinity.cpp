@@ -15,14 +15,11 @@ bool Infinity::IsMinusInfinity(const Tree* u) {
   return u->treeIsIdenticalTo(KMult(-1_e, KInf));
 }
 
-bool Infinity::HasInfinityChild(Tree* u) {
-  int n = u->numberOfChildren();
-  Tree* child = u->firstChild();
-  for (int i = 0; i < n; i++) {
+bool Infinity::HasInfinityChild(const Tree* u) {
+  for (const Tree* child : u->children()) {
     if (child->isInf()) {
       return true;
     }
-    child = child->nextTree();
   }
   return false;
 }

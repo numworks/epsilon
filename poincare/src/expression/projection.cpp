@@ -186,13 +186,17 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     return true;
   }
 
-  if (  // Sqrt(A) -> A^0.5
+  if (
+      // Sqrt(A) -> A^0.5
       PatternMatching::MatchReplace(e, KSqrt(KA), KPow(KA, 1_e / 2_e)) ||
       // NthRoot(A, B) -> A^(1/B)
       PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
       PatternMatching::MatchReplace(e, KLogarithm(KA, e_e), KLn(KA)) ||
+      // Cot(A) -> cos(A)/sin(A)
+      PatternMatching::MatchReplace(e, KCot(KA),
+                                    KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
       // Sec(A) -> 1/cos(A)
       PatternMatching::MatchReplace(e, KSec(KA), KPow(KCos(KA), -1_e)) ||
       // Csc(A) -> 1/sin(A)
@@ -208,7 +212,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArSinh(A) -> ln(A+sqrt(A^2+1))
       PatternMatching::MatchReplace(
           e, KArSinH(KA), KLn(KAdd(KA, KSqrt(KAdd(KPow(KA, 2_e), 1_e)))))) {
-    // Ref node may need to be projected again.
+    // e may need to be projected again.
     ShallowSystemProject(e, context);
     return true;
   }
@@ -251,9 +255,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      // cot(A) -> cos(A)/sin(A)
-      PatternMatching::MatchReplace(
-          e, KCot(KA), KMult(KTrig(KA, 0_e), KPow(KTrig(KA, 1_e), -1_e))) ||
       /* acot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
        * instead of π/2 to handle angle unit */
       PatternMatching::MatchReplace(

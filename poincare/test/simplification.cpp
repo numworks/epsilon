@@ -506,6 +506,9 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
 }
 
 QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
+  simplifies_to("cot(π/2)", "0");
+  simplifies_to("cot(90)", "0", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("arccot(0)", "90", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("sec(x)", "1/cos(x)");
   simplifies_to("csc(x)", "1/sin(x)");
   simplifies_to("cot(x)", "cot(x)");

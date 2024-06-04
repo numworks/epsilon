@@ -45,10 +45,10 @@ _apps_names := $(foreach a,$(EPSILON_APPS),"$a",)
 _apps_snapshot_cxxflags := \
   $(_apps_includes_flags) \
   -DAPPS_CONTAINER_APPS_DECLARATION="$(_apps_declaration)" \
-  -DAPPS_CONTAINER_SNAPSHOT_DECLARATION="$(_apps_snapshots_declaration)" \
+  -DAPPS_CONTAINER_SNAPSHOT_DECLARATIONS="$(_apps_snapshots_declaration)" \
   -DAPPS_CONTAINER_SNAPSHOT_CONSTRUCTORS="$(_apps_snapshots_construction)" \
   -DAPPS_CONTAINER_SNAPSHOT_LIST="$(_apps_snapshots_list)" \
-  -DAPPS_CONTAINER_SNAPSHOT_COUNT="$(_apps_snapshots_count)" \
+  -DAPPS_CONTAINER_SNAPSHOT_COUNT="$(_apps_count)" \
   -DEPSILON_APPS_NAMES='$(_apps_names)'
 
 $(call objects_foreach_arch,$(addprefix $(PATH_apps)/,apps_container.cpp apps_container_storage.cpp init.cpp main.cpp)): CXXFLAGS += $(_apps_snapshot_cxxflags)
@@ -62,3 +62,6 @@ $(call i18n_with_universal,toolbox)
 $(call i18n_without_universal,variables)
 
 include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test usb $(EPSILON_APPS))
+
+$(call assert_defined,PYTHON_QSTRDEFS)
+$(call objects_foreach_arch,$(SOURCES_apps)): $(PYTHON_QSTRDEFS)

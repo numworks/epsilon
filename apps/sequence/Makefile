@@ -10,7 +10,7 @@ $(addprefix graph/, \
   graph_view.cpp \
   term_sum_controller.cpp \
 ) \
-$(addprefix graph/, \
+$(addprefix list/, \
   editable_sequence_cell.cpp \
   list_controller.cpp \
   list_parameter_controller.cpp \
@@ -19,7 +19,7 @@ $(addprefix graph/, \
   type_parameter_controller.cpp \
   vertical_sequence_title_cell.cpp \
 ) \
-$(addprefix graph/, \
+$(addprefix values/, \
   interval_parameter_controller.cpp \
   sequence_column_parameter_controller.cpp \
   sum_column_parameter_controller.cpp \

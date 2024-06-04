@@ -1,4 +1,4 @@
-SOURCES_apps += $(addprefix $(PATH_app)/calculation/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/calculation/, \
   additional_results/additional_results_controller.cpp \
   additional_results/additional_results_type.cpp \
   additional_results/chained_expressions_list_controller.cpp \

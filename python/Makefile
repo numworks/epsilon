@@ -1,15 +1,8 @@
-SFLAGS += -Ipython/src
-SFLAGS += -Ipython/port
-SFLAGS += -I$(BUILD_DIR)/python/port
-# Add NumWorks Ulab config
-SFLAGS += -DULAB_CONFIG_FILE="\"numworks_ulab_config.h\""
-
 # How to maintain this Makefile
-# - Copy PY_CORE_O_BASENAME from py.mk into py_src
-# - Copy select PY_EXTMOD_O_BASENAME from py.mk into extmod_src
+# - Copy PY_CORE_O_BASENAME from py.mk into _sources_python_py
+# - Copy select PY_EXTMOD_O_BASENAME from py.mk into _sources_python_extmod
 # - Edit special-case workarounds below as needed
-
-py_src = $(addprefix python/src/py/,\
+_sources_python_py := $(addprefix src/py/, \
   mpstate.c \
   nlr.c \
   nlrx86.c \
@@ -130,71 +123,82 @@ py_src = $(addprefix python/src/py/,\
   frozenmod.c \
 )
 
-extmod_src += $(addprefix python/src/extmod/,\
+_sources_python_extmod := $(addprefix src/extmod/, \
   modurandom.c \
 )
 
-port_src += $(addprefix python/port/,\
+_sources_python_port := $(addprefix port/, \
   port.c \
   builtins.c \
   helpers.c \
-  mod/ion/modion.cpp \
-  mod/ion/modion_table.cpp \
-  mod/kandinsky/modkandinsky.cpp \
-  mod/kandinsky/modkandinsky_table.c \
-  mod/matplotlib/modmatplotlib.cpp \
-  mod/matplotlib/modmatplotlib_table.c \
-  mod/matplotlib/pyplot/modpyplot.cpp \
-  mod/matplotlib/pyplot/modpyplot_table.c \
-  mod/matplotlib/pyplot/plot_controller.cpp \
-  mod/matplotlib/pyplot/plot_store.cpp \
-  mod/matplotlib/pyplot/pyplot_view.cpp \
-  mod/ndarray_operators.c \
-  mod/ulab_tools.c \
-  mod/ndarray.c \
-  mod/numpy/ndarray/ndarray_iter.c \
-  mod/ndarray_properties.c \
-  mod/numpy/approx.c \
-  mod/numpy/compare.c \
-  mod/numpy/carray/carray_tools.c \
-  mod/numpy/create.c \
-  mod/numpy/filter.c \
-  mod/numpy/linalg/linalg_tools.c \
-  mod/numpy/numerical.c \
-  mod/numpy/poly.c \
-  mod/numpy/stats.c \
-  mod/numpy/transform.c \
-  mod/numpy/vector.c \
-  mod/numpy/numpy.c \
-  mod/ulab.c \
-  mod/time/modtime.c \
-  mod/time/modtime_table.c \
-  mod/turtle/modturtle.cpp \
-  mod/turtle/modturtle_table.c \
-  mod/turtle/turtle.cpp \
   mphalport.c \
+$(addprefix mod/, \
+  ion/modion.cpp \
+  ion/modion_table.cpp \
+  kandinsky/modkandinsky.cpp \
+  kandinsky/modkandinsky_table.c \
+  matplotlib/modmatplotlib.cpp \
+  matplotlib/modmatplotlib_table.c \
+  matplotlib/pyplot/modpyplot.cpp \
+  matplotlib/pyplot/modpyplot_table.c \
+  matplotlib/pyplot/plot_controller.cpp \
+  matplotlib/pyplot/plot_store.cpp \
+  matplotlib/pyplot/pyplot_view.cpp \
+  ndarray.c \
+  ndarray_operators.c \
+  ndarray_properties.c \
+  numpy/approx.c \
+  numpy/carray/carray_tools.c \
+  numpy/compare.c \
+  numpy/create.c \
+  numpy/filter.c \
+  numpy/linalg/linalg_tools.c \
+  numpy/ndarray/ndarray_iter.c \
+  numpy/numerical.c \
+  numpy/numpy.c \
+  numpy/poly.c \
+  numpy/stats.c \
+  numpy/transform.c \
+  numpy/vector.c \
+  time/modtime.c \
+  time/modtime_table.c \
+  turtle/modturtle.cpp \
+  turtle/modturtle_table.c \
+  turtle/turtle.cpp \
+  ulab.c \
+  ulab_tools.c \
+))
+
+_sources_python_test := $(patsubst %,test/%:+test, \
+  basics.cpp \
+  execution_environment.cpp \
+  ion.cpp \
+  kandinsky.cpp \
+  math.cpp \
+  matplotlib.cpp \
+  numpy.cpp \
+  random.cpp \
+  time.cpp \
+  turtle.cpp \
 )
 
-# Workarounds
+# Workarounds - begin
 
 # Rename urandom to random
-# In order to change the name of the micropython module 'urandom' to 'random'
-# (without altering micropython files), we redefined the macro MP_QSTR_urandom
-# by DMP_QSTR_random.
-$(call object_for,python/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
-$(call object_for,python/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call objects_foreach_arch,$(PATH_python)/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call objects_foreach_arch,$(PATH_python)/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 # Dummy headers to satisfy Ulab module unused files includes like
 # "numpy/carray/carray.h"
-$(call object_for,python/port/mod/%.c): SFLAGS += -Ipython/port/mod/include
+$(call objects_foreach_arch,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include
 # Useful for both "../scipy/signal/signal.h" and "carray/carray.h"
-$(call object_for,python/port/mod/%.c): SFLAGS += -Ipython/port/mod/include/numpy
+$(call objects_foreach_arch,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include/numpy
 
 # Handle upward-growing stack
 # Some platforms such as emscripten have a stack that grows up. We've rewritten
 # the stack control file to handle this case.
-py_src := $(filter-out python/src/py/stackctrl.c, $(py_src))
-port_src += python/port/stackctrl.c
+_sources_python_py := $(filter-out src/py/stackctrl.c,$(_sources_python_py))
+_sources_python_port += port/stackctrl.c
 
 # Fix the GC on emscripten
 # With optimizations, register and stack variables might be held in a JavaScript
@@ -203,33 +207,35 @@ port_src += python/port/stackctrl.c
 # the heap objects they depend on will likely be destroyed. When the Python
 # computing resumes, if necessary heap objects have been destroyed, the Python
 # program crashes.
-ifeq ($(PLATFORM),emscripten)
-$(call object_for,$(py_src)): SFLAGS := $(subst -Os,-O0,$(SFLAGS))
+# This fix takes advantage of the fact that the last optimization flag takes
+# priority.
+ifeq ($(TOOLCHAIN),emscripten)
+$(call objects_foreach_arch,$(_sources_python_py)): SFLAGS += -O0
 endif
 
-python_src = $(py_src) $(extmod_src) $(port_src)
+# Workarounds - end
+
+$(call create_module,python,1, \
+  $(_sources_python_py) \
+  $(_sources_python_extmod) \
+  $(_sources_python_port) \
+  $(_sources_python_test) \
+)
+
+# Override the default python include path
+SFLAGS_python := \
+  -I$(PATH_python)/src \
+  -I$(PATH_python)/port \
+  -I$(OUTPUT_DIRECTORY)/$(PATH_python)/port
+
+SFLAGS_python += -DULAB_CONFIG_FILE="\"numworks_ulab_config.h\""
 
 # QSTR generation
 
-$(eval $(call rule_for, \
-  QSTRDAT, \
-  python/port/genhdr/qstrdefs.generated.h, \
-  python/port/genhdr/qstrdefs.in.h, \
-  $$(PYTHON) python/src/py/makeqstrdata.py $$< > $$@, \
-  global \
-))
+PYTHON_QSTRDEFS := $(OUTPUT_DIRECTORY)/$(PATH_python)/port/genhdr/qstrdefs.generated.h
 
-$(call object_for,$(python_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
+$(PYTHON_QSTRDEFS): $(PATH_python)/port/genhdr/qstrdefs.in.h $(PATH_python)/src/py/makeqstrdata.py | $$(@D)/.
+	$(call rule_label,QSTRDAT)
+	$(QUIET) $(PYTHON) $(filter %.py,$^) $< > $@
 
-tests_src += $(addprefix python/test/,\
-  basics.cpp \
-  execution_environment.cpp \
-  ion.cpp \
-  kandinsky.cpp \
-  math.cpp \
-  numpy.cpp \
-  random.cpp \
-  time.cpp \
-  turtle.cpp \
-  matplotlib.cpp \
-)
+$(call objects_foreach_arch,$(SOURCES_python)): $(PYTHON_QSTRDEFS)

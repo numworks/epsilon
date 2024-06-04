@@ -96,7 +96,10 @@ QUIZ_CASE(pcj_approximation_list) {
 
 QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("inf", "∞");
+  approximates_to<float>("inf*1", "∞");
   approximates_to<float>("inf(-1)", "-∞");
+  approximates_to<float>("inf/1", "∞");
+  approximates_to<float>("inf/(-1)", "-∞");
   approximates_to<float>("-inf+1", "-∞");
   approximates_to<float>("inf-inf", "undef");
   approximates_to<float>("-inf+inf", "undef");

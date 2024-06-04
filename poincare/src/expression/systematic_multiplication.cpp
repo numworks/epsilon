@@ -127,7 +127,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   if (zero) {
     if (Infinity::HasInfinityChild(multiplication)) {
       // 0*inf -> undef
-      multiplication->moveTreeOverTree(KUndef->clone());
+      multiplication->cloneTreeOverTree(KUndef);
       return true;
     }
     // 0 * {1, 2, 4} -> {0, 0, 0}. Same for matrices.

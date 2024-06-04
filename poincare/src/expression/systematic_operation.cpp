@@ -212,7 +212,7 @@ bool SystematicOperation::SimplifyPowerReal(Tree* u) {
 
 bool SystematicOperation::SimplifyLnReal(Tree* u) {
   assert(u->isLnReal());
-  // Under real mode, inputted ln(x) must return nonreal if x < 0
+  // Under real mode, input ln(x) must return nonreal if x < 0
   ComplexSign childSign = ComplexSign::Get(u->child(0));
   if (childSign.realSign().isStrictlyNegative() || childSign.isNonReal()) {
     // Child can't be real, positive or null

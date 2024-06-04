@@ -168,8 +168,6 @@ double Sequence::approximateAtRank(int rank,
 
 double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
                                           bool intermediateComputation) const {
-  int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  // int rank = sqctx->cache()->rank(sequenceIndex, intermediateComputation);
   if (rank < initialRank()) {
     return NAN;
   }

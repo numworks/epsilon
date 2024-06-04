@@ -526,7 +526,6 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       if (type.isUserSequence()) {
         if (m_linearMode) {
-          // PushCodePoint(layoutParent, '_');
           layoutExpression(layoutParent, expression->nextNode(),
                            k_forceParenthesis);
         } else {

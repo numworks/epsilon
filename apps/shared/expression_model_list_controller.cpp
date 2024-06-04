@@ -170,7 +170,8 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 
 bool ExpressionModelListController::editSelectedRecordWithLayout(
     Layout layout) {
-  // telemetryReportEvent("Edit", text); // TODO restore telemetry
+  // TODO_PCJ: restore telemetry
+  // telemetryReportEvent("Edit", text);
   Ion::Storage::Record record = selectedRecord();
   ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);

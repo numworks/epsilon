@@ -179,18 +179,17 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
     }
     i++;
   }
-  if (symbol->isUserNamed() && symbol->type() == expr->type() &&
-      strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
+  if (symbol->isUserNamed() && symbol->nodeIsIdenticalTo(expr)) {
     if (symbol->isUserSymbol()) {
+      expr->cloneTreeOverTree(replacement);
+      return true;
+    }
+    if (symbol->treeIsIdenticalTo(expr)) {
       expr->cloneTreeOverTree(replacement);
       return true;
     }
     if (symbol->child(0)->isUserSymbol()) {
       ReplaceUserFunctionOrSequenceWithTree(expr, replacement);
-      return true;
-    }
-    if (symbol->treeIsIdenticalTo(expr)) {
-      expr->cloneTreeOverTree(replacement);
       return true;
     }
     return false;

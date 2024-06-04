@@ -66,8 +66,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
       name, strlen(name), Poincare::Symbol::SystemSymbol());
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
-  function = function.replaceSymbolWithExpression(sequenceSymbol, variable);
-  function = function.getSystemFunction(Shared::Function::k_unknownName);
+  function = function.replaceSymbolWithExpression(sequenceSymbol, variable)
+                 .getSystemFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
                                                  void *context) {
     Poincare::SystemFunction *e = (Poincare::SystemFunction *)model;

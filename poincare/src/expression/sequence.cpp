@@ -25,7 +25,7 @@ Sequence::Type Sequence::GetType(const Tree* sequence) {
 int Sequence::InitialRank(const Tree* sequence) {
   assert(sequence->isSequence());
   assert(sequence->child(1)->isInteger());
-  return Integer::Handler(sequence).to<int>();
+  return Integer::Handler(sequence->child(1)).to<int>();
 }
 
 bool Sequence::MainExpressionContainsForbiddenTerms(

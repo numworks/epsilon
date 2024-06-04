@@ -17,7 +17,7 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
   TreeRef n = base->nextTree();
   if (Infinity::IsPlusOrMinusInfinity(n) &&
       (base->isOne() || base->isMinusOne() ||
-       !ComplexSign::Get(base).imagSign().canBeNull())) {
+       ComplexSign::Get(base).isNonReal())) {
     // (±1)^(±inf) -> undef
     // complex^(±inf) -> undef
     u->cloneTreeOverTree(KUndef);
@@ -36,7 +36,7 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
       return true;
     }
     ComplexSign nSign = ComplexSign::Get(n);
-    if (!nSign.imagSign().canBeNull()) {
+    if (nSign.isNonReal()) {
       // (±inf)^i -> undef
       u->cloneTreeOverTree(KUndef);
       return true;
@@ -214,8 +214,7 @@ bool SystematicOperation::SimplifyLnReal(Tree* u) {
   assert(u->isLnReal());
   // Under real mode, inputted ln(x) must return nonreal if x < 0
   ComplexSign childSign = ComplexSign::Get(u->child(0));
-  if (childSign.realSign().isStrictlyNegative() ||
-      !childSign.imagSign().canBeNull()) {
+  if (childSign.realSign().isStrictlyNegative() || childSign.isNonReal()) {
     // Child can't be real, positive or null
     u->cloneTreeOverTree(KNonReal);
     return true;

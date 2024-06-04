@@ -133,7 +133,7 @@ bool Binary::SimplifyComparison(Tree* tree) {
   if (tree->isInequality()) {
     ComplexSign signA = ComplexSign::Get(tree->child(0));
     ComplexSign signB = ComplexSign::Get(tree->child(1));
-    if (signA.isComplex() || signB.isComplex()) {
+    if (signA.isNonReal() || signB.isNonReal()) {
       tree->cloneTreeOverTree(KBadType);
       return true;
     }

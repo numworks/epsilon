@@ -2,9 +2,9 @@
 
 #include <apps/i18n.h>
 
-#include "images/cartesian_grid_icon.h"
-#include "images/polar_grid_icon.h"
+#include "cartesian_grid_icon.h"
 #include "interactive_curve_view_range.h"
+#include "polar_grid_icon.h"
 
 using namespace Escher;
 

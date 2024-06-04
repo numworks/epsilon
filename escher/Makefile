@@ -121,19 +121,20 @@ $(call create_tool,inliner, \
 $(_escher_inliner): TOOLS_CFLAGS += -std=c11 $(shell pkg-config libpng --cflags)
 $(_escher_inliner): TOOLS_LDFLAGS += $(shell pkg-config libpng --libs)
 
-$(OUTPUT_DIRECTORY)/%.cpp: %.png $(_escher_inliner) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.h: %.png $(_escher_inliner) | $$(@D)/.
 	$(call rule_label,INLINE)
-	$(QUIET) $(_escher_inliner) $< $(basename $@).h $@ $(INLINER_ARGS)
+	$(QUIET) $(_escher_inliner) $< $@ $(basename $@).cpp $(INLINER_ARGS)
+
+$(OUTPUT_DIRECTORY)/%.cpp: $(OUTPUT_DIRECTORY)/%.h
+	@ :
 
 # Helpers for sources using images
 
 # depends_on_image, <list of cpp>, <list of png>
-# Rigorously, the .cpp files in $1 should have a prerequisite on the generated
-# header, not source, but this is the best we can do without paired targets.
 define depends_on_image
 $(eval \
-$(call objects_foreach_arch,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2))
-$(call objects_foreach_arch,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY),$(sort $(dir $(strip $1)))),-I$d)
+$(call objects_foreach_arch,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2))
+$(call objects_foreach_arch,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
 )
 endef
 

@@ -1,10 +1,10 @@
 #include "graph_view_model.h"
 
-#include "../box_icon.h"
-#include "../cumulative_icon.h"
-#include "../histogram_icon.h"
-#include "../statistics_normal_icon.h"
 #include "assert.h"
+#include "box_icon.h"
+#include "cumulative_icon.h"
+#include "histogram_icon.h"
+#include "statistics_normal_icon.h"
 
 using namespace Statistics;
 

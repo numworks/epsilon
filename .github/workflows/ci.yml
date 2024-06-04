@@ -156,3 +156,17 @@ jobs:
         with:
           name: epsilon-ios.ipa
           path: output/release/simulator/ios/epsilon.ipa
+  poincarejs:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - uses: numworks/setup-emscripten@latest
+        with:
+          sdk: 3.1.60
+      - uses: actions/checkout@v3
+      - run: build/setup.sh --only-simulator
+      - run: make PLATFORM=poincarejs poincarejs.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: poincarejs.zip
+          path: output/release/poincarejs/poincarejs.html
+          retention-days: 7

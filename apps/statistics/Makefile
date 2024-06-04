@@ -42,7 +42,7 @@ $(addprefix data/, \
 $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png)
 
 $(call depends_on_transparent_image, \
-apps/statistics/graph/graph_view_model.cpp,
+apps/statistics/graph/graph_view_model.cpp, \
 $(addprefix apps/statistics/, \
   box_icon.png \
   histogram_icon.png \

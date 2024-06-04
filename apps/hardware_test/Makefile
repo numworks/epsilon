@@ -1,4 +1,4 @@
-app_hardware_test_src = $(addprefix apps/hardware_test/,\
+SOURCES_apps += $(addprefix $(PATH_apps)/hardware_test/, \
   app.cpp \
   arrow_view.cpp \
   battery_test_controller.cpp \
@@ -14,5 +14,3 @@ app_hardware_test_src = $(addprefix apps/hardware_test/,\
   serial_number_controller.cpp \
   vblank_test_controller.cpp \
 )
-
-apps_src += $(app_hardware_test_src)

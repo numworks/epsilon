@@ -42,6 +42,7 @@ $(call create_goal,device, \
 )
 
 $(call create_goal,simulator, \
+  apps \
   dummy.ion \
   escher \
   ion \

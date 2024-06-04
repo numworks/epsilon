@@ -53,6 +53,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     }
     const Tree* rank = d->child(0);
     if (rank->isInteger()) {
+      // u(k) is allowed only when it is an initial condition
       int rankValue = Integer::Handler(rank).to<int>();
       if ((type != Type::Explicit && rankValue == initialRank) ||
           (type == Type::DoubleRecurrence && rankValue == initialRank + 1)) {
@@ -60,10 +61,12 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
       }
       return true;
     }
+    // Recursion on a sequence is allowed only on u(n) (or u(n+1) if double rec)
     if (recursion &&
         ((type != Type::Explicit && rank->treeIsIdenticalTo(KUnknownSymbol)) ||
          (type == Type::DoubleRecurrence &&
           rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
+      // Ignore the child content which has been checked already
       skipUntil = d->nextTree();
       continue;
     }

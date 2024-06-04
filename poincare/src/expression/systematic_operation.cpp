@@ -160,7 +160,7 @@ bool SystematicOperation::SimplifyPowerReal(Tree* u) {
   ComplexSign xSign = ComplexSign::Get(x);
   ComplexSign ySign = ComplexSign::Get(y);
   if (Infinity::IsPlusOrMinusInfinity(x) ||
-      Infinity::IsPlusOrMinusInfinity(y) || !ySign.canBeNonInteger() ||
+      Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger() ||
       (xSign.isReal() && xSign.realSign().isPositive())) {
     ConvertPowerRealToPower(u);
     return true;

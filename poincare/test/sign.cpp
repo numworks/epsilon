@@ -6,7 +6,7 @@
 #include "helper.h"
 using namespace Poincare::Internal;
 
-static_assert(Sign::Zero().isZero() && !Sign::Zero().canBeNonInteger());
+static_assert(Sign::Zero().isZero() && Sign::Zero().isInteger());
 static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());
 static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
@@ -18,7 +18,7 @@ static_assert(ComplexSign(ComplexSign::Unknown().getValue()) ==
 static_assert(ComplexSign::Unknown().isUnknown());
 static_assert(ComplexSign::RealUnknown().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
-              !ComplexSign::RealInteger().canBeNonInteger());
+              ComplexSign::RealInteger().isInteger());
 
 namespace Poincare::Internal {
 extern Sign RelaxIntegerProperty(Sign s);

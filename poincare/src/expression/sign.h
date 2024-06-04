@@ -43,6 +43,7 @@ class Sign {
     return m_canBeStriclyPositive || m_canBeStriclyNegative;
   }
   constexpr bool isZero() const { return !canBeNonNull(); }
+  constexpr bool isInteger() const { return !canBeNonInteger(); }
   constexpr bool isStrictlyPositive() const {
     return !(m_canBeNull || m_canBeStriclyNegative);
   }
@@ -153,6 +154,7 @@ class ComplexSign {
   constexpr bool canBeNonInteger() const {
     return realSign().canBeNonInteger() || imagSign().canBeNonInteger();
   }
+  constexpr bool isInteger() const { return !canBeNonInteger(); }
 
   bool operator==(const ComplexSign&) const = default;
   ComplexSign operator&&(const ComplexSign& other) const {

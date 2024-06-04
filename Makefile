@@ -30,21 +30,10 @@ $(call import_module,escher,escher)
 $(call import_module,python,python)
 $(call import_module,apps,apps)
 
-# FIXME
-$(call import_module,dummy,dummy)
-
 # Declare goals
 
-$(call create_goal,device, \
-  liba \
-  libaxx \
-  omg \
-  kandinsky \
-)
-
-$(call create_goal,simulator, \
+$(call create_goal,epsilon, \
   apps \
-  dummy.ion \
   escher \
   ion \
   kandinsky \

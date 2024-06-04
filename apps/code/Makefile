@@ -22,6 +22,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/code/, \
   test/clipboard.cpp:+test \
   test/python_variable_box.cpp:+test \
   test/templates.cpp:+test \
+  code_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/code/app.cpp,$(PATH_apps)/code/code_icon.png)

@@ -26,8 +26,9 @@ $(addprefix values/, \
   values_controller.cpp \
 ) \
 $(addprefix test/, \
-sequence.cpp:+test \
+  sequence.cpp:+test \
 ) \
+  sequence_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/sequence/app.cpp,$(PATH_apps)/sequence/sequence_icon.png)

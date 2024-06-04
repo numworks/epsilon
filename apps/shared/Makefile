@@ -94,6 +94,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/, \
   vertical_cursor_view.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
+$(addprefix images/, \
+  polar_grid_icon.png \
+  cartesian_grid_icon.png \
+) \
 )
 
 $(call depends_on_transparent_image, \

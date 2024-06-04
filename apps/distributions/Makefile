@@ -32,6 +32,23 @@ $(addprefix test/, \
   distributions_results.cpp:+test \
   distributions_parameters.cpp:+test \
 ) \
+  distributions_icon.png \
+$(addprefix images/, \
+  binomial_icon.png \
+  chi_squared_icon.png \
+  exponential_icon.png \
+  fisher_icon.png \
+  geometric_icon.png \
+  hypergeometric_icon.png \
+  normal_icon.png \
+  poisson_icon.png \
+  student_icon.png \
+  uniform_icon.png \
+  calculation1_icon.png \
+  calculation2_icon.png \
+  calculation3_icon.png \
+  calculation4_icon.png \
+) \
 )
 
 $(call depends_on_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_icon.png)

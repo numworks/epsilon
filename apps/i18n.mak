@@ -41,6 +41,10 @@ $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h: $(PATH_apps)/i18n.py $$(_apps_i18n) $(_
 		--files $(_apps_i18n) \
 		$(if $(filter 1,$(I18N_COMPRESS)),--compress,)
 
+$(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.cpp: $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h
+
+SOURCES_apps += $(PATH_apps)/i18n.cpp
+
 # FIXME PRIORITY_TARGETS_<module> is used if files in other modules might depend
 # on those targets, but apps should not be upstream of anything.
 PRIORITY_TARGETS_apps += $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h

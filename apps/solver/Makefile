@@ -11,6 +11,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/solver/, \
   test/equation_store.cpp:+test \
   test/helpers.cpp:+test \
   test/solving_range.cpp:+test \
+  solver_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/solver/app.cpp,$(PATH_apps)/solver/solver_icon.png)

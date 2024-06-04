@@ -25,6 +25,7 @@ $(addprefix data/, \
 $(addprefix test/, \
   model.cpp:+test \
 ) \
+  regression_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/regression/app.cpp,$(PATH_apps)/regression/regression_icon.png)

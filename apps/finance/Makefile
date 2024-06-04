@@ -6,6 +6,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/finance/, \
   parameters_controller.cpp \
   result_controller.cpp \
   test/finance.cpp:+test \
+  finance_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/finance/app.cpp,$(PATH_apps)/finance/finance_icon.png)

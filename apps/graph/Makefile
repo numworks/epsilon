@@ -33,6 +33,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/, \
   test/helper.cpp:+test \
   test/function_names.cpp:+test \
   test/function_properties.cpp:+test \
+  graph_icon.png \
 )
 
 $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png)

@@ -15,7 +15,9 @@ $(addprefix sub_menu/, \
   press_to_test_controller.cpp \
   selectable_view_with_messages.cpp \
   test_mode_controller.cpp \
+  press_to_test_success.png \
 ) \
+  settings_icon.png \
 )
 
 $(call depends_on_image,$(PATH_apps)/settings/app.cpp,$(PATH_apps)/settings/settings_icon.png)

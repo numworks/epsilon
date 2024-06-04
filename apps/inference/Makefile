@@ -65,6 +65,11 @@ $(addprefix statistic/, \
 $(addprefix test/, \
   statistics.cpp:+test \
 ) \
+  inference_icon.png \
+$(addprefix images/, \
+  confidence_interval.png \
+  significance_test.png \
+) \
 )
 
 $(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_icon.png)

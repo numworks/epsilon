@@ -102,7 +102,9 @@ $(call create_module,escher,1,$(addprefix src/, \
   view_controller.cpp \
   warning_controller.cpp \
   window.cpp \
-))
+) \
+  image/caret.png \
+)
 
 SFLAGS_escher += -DESCHER_VIEW_LOGGING=1:+logviews
 

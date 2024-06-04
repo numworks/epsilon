@@ -37,6 +37,11 @@ $(addprefix data/, \
   store_parameter_controller.cpp \
 ) \
   test/store.cpp:+test \
+  stat_icon.png \
+  box_icon.png \
+  histogram_icon.png \
+  cumulative_icon.png \
+  statistics_normal_icon.png \
 )
 
 $(call depends_on_image,apps/statistics/app.cpp,apps/statistics/stat_icon.png)

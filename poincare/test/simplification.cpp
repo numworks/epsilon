@@ -793,6 +793,12 @@ QUIZ_CASE(pcj_simplification_infinity) {
 
   // inf^x
   simplifies_to("inf^i", "undef");
+  simplifies_to("inf^6", "∞");
+  simplifies_to("(-inf)^6", "∞");
+  simplifies_to("inf^7", "∞");
+  simplifies_to("(-inf)^7", "-∞");
+  simplifies_to("inf^-6", "0");
+  simplifies_to("(-inf)^-6", "0");
   simplifies_to("inf^0", "undef");
   simplifies_to("(-inf)^0", "undef");
   simplifies_to("inf^inf", "∞");

@@ -48,8 +48,15 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
         return true;
       }
       if (nSign.realSign().isPositive()) {
-        // (±inf)^pos -> inf
-        u->cloneTreeOverTree(KInf);
+        if (base->isInf()) {
+          // inf^pos -> inf
+          u->cloneTreeOverTree(KInf);
+          return true;
+        }
+        assert(Infinity::IsMinusInfinity(base));
+        // (-inf)^pos -> ±inf
+        u->moveTreeOverTree(PatternMatching::CreateSimplify(
+            KMult(KPow(-1_e, KA), KInf), {.KA = n}));
         return true;
       }
     }

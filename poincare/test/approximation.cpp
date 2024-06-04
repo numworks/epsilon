@@ -92,6 +92,7 @@ QUIZ_CASE(pcj_approximation_replace) {
 
 QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^0", "undef");
+  approximates_to<float>("0^i", "undef", cartesianCtx);
   approximates_to<float>("0^(3+4i)", "0", cartesianCtx);
   approximates_to<float>("0^(3-4i)", "0", cartesianCtx);
   approximates_to<float>("0^(-3+4i)", "undef", cartesianCtx);

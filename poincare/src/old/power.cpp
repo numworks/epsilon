@@ -194,69 +194,8 @@ template <typename T>
 std::complex<T> PowerNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
-  if (c.imag() == static_cast<T>(0.0) && c.real() < static_cast<T>(0.0) &&
-      ((d.real() == INFINITY && c.real() <= static_cast<T>(-1.0)) ||
-       (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
-    /* x^inf with x <= -1 and x^(-inf) with -1 <= x <= 0 are approximated to
-     * complex infinity, which we don't handle. We decide to return undef. */
-    return complexNAN<T>();
-  }
-  if (c.real() == static_cast<T>(0.0) && c.imag() == static_cast<T>(0.0) &&
-      d.imag() != static_cast<T>(0.0)) {
-    /* 0^complex should return undef
-     * std lib returns 0 in some cases, so we enforce the behavior here */
-    return complexNAN<T>();
-  }
-  std::complex<T> result;
-  if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
-      c.real() != static_cast<T>(0.0) &&
-      (c.real() > static_cast<T>(0.0) || std::round(d.real()) == d.real())) {
-#if !PLATFORM_DEVICE
-    if (std::fabs(c.real()) == static_cast<T>(1.0) &&
-        std::fabs(d.real()) == INFINITY) {
-      /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
-       * behavior we want. */
-      return complexRealNAN<T>();
-    }
-#endif
-    /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
-     * pow: (R-, N) -> R+ ((-2)^3 = -8)
-     * In these cases we rather use std::pow(double, double) because:
-     * - pow on complexes is not as precise as pow on double: for instance,
-     *   pow(complex<double>(2.0,0.0), complex<double>(3.0,0.0) =
-     * complex(7.9999999999999982,0.0) and pow(2.0,3.0) = 8.0
-     * - Using complex pow, std::pow(2.0, 1000) = (INFINITY, NAN).
-     *   Openbsd pow of a positive real and another real has a undefined
-     *   imaginary when the real result is infinity.
-     * However, we exclude c == 0 because std:pow(0.0, 0.0) = 1.0 and we would
-     * rather have 0^0 = undef. */
-    result = std::complex<T>(std::pow(c.real(), d.real()));
-  } else {
-    result = std::pow(c, d);
-  }
-  /* Openbsd trigonometric functions are numerical implementation and thus are
-   * approximative.
-   * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
-   * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
-   * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
-   * part and if arg ~ Pi/2 [Pi], we discard the residual real part.
-   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligible:
-   * With c = r*e^(iθ) and d = x+iy, c^d = r^x*e^(yθ)*e^i(yln(r)+xθ)
-   * so arg(c^d) = y*ln(r)+xθ.
-   * We consider that arg[π] is negligible if it is negligible compared to
-   * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
-  if (complexFormat != Preferences::ComplexFormat::Real &&
-      c.real() < static_cast<T>(0.0) && std::round(d.real()) != d.real()) {
-    /* Principal root of a negative base and non-integer index is always complex
-     * Neglecting it could cause visual artefacts when plotting x^x with a
-     * cartesian complex format. The issue is still visible when x is so small
-     * that result is 0, which is plotted even though it is "complex". */
-    return result;
-  }
-  std::complex<T> precision =
-      d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
-      result, precision, d, false);
+  assert(false);
+  return complexNAN<T>();
 }
 
 // Layout

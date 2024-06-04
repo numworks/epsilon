@@ -81,7 +81,7 @@ std::complex<T> Approximation::ComputeNotPrincipalRealRootOfRationalPow(
     /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
      * exist (which is not necessarily the principal root)!
      * For q even integer, a real root does not necessarily exist (example:
-     * -2 ^(1/2)). */
+     * (-2) ^(1/2)). */
     std::complex<T> absc = c;
     absc.real(std::fabs(absc.real()));
     // compute |c|^(p/q) which is a real

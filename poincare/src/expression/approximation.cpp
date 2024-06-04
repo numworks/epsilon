@@ -495,7 +495,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       Shared::Sequence sequence =
           Shared::GlobalContext::sequenceStore->sequenceAtIndex(index);
       T rank = To<T>(node->child(0));
-      if (std::isnan(rank)) {
+      if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
       double result =
@@ -503,10 +503,8 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
               index, rank);
       if (OMG::IsSignalingNan(result)) {
         // compute value if not in cache
-        if (std::floor(rank) == rank) {
-          result = OutOfContext(sequence.approximateAtRank(
-              rank, Shared::GlobalContext::sequenceCache));
-        }
+        result = OutOfContext(sequence.approximateAtRank(
+            rank, Shared::GlobalContext::sequenceCache));
       }
       return result;
     }

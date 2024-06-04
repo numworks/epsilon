@@ -450,11 +450,12 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   return result;
 }
 
-void Beautification::ReduceMultiplication(Tree* e) {
+bool Beautification::ReduceMultiplication(Tree* e) {
   /* This is a beautification friendy reduction for multiplication to avoid
    * calling Simplification::ShallowSystematicReduce */
+  bool changed = false;
   if (!e->isMult()) {
-    return;
+    return changed;
   }
   int nbOnes = 0;
   const int nbChildren = e->numberOfChildren();
@@ -467,10 +468,14 @@ void Beautification::ReduceMultiplication(Tree* e) {
       child = child->nextTree();
     }
   }
-  NAry::SetNumberOfChildren(e, nbChildren - nbOnes);
-  NAry::Flatten(e);
-  NAry::SquashIfPossible(e);
-  NAry::Sort(e, Comparison::Order::Beautification);
+  if (nbOnes > 0) {
+    NAry::SetNumberOfChildren(e, nbChildren - nbOnes);
+    changed = true;
+  }
+  changed = NAry::Flatten(e) || changed;
+  changed = NAry::SquashIfPossible(e) || changed;
+  changed = NAry::Sort(e, Comparison::Order::Beautification) || changed;
+  return changed;
 }
 
 bool Beautification::ShallowBubbleUpDivision(Tree* e) {

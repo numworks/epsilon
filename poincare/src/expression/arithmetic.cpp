@@ -436,6 +436,7 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
     isDiv = true;
     child = child->child(0);
   } else if (!child->isInteger()) {
+    assert(!child->isRational());
     return false;
   }
   assert(child->isInteger());

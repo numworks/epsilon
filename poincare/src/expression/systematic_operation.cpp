@@ -41,7 +41,8 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
       u->cloneTreeOverTree(KUndef);
       return true;
     }
-    if (nSign.isReal()) {
+    if (n->isInteger() || Infinity::IsPlusOrMinusInfinity(n)) {
+      assert(nSign.isReal());
       if (nSign.realSign().isNegative()) {
         // (±inf)^neg -> 0
         u->cloneTreeOverTree(0_e);

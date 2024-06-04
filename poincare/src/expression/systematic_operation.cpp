@@ -349,7 +349,8 @@ bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
 
 bool SystematicOperation::SimplifySign(Tree* expr) {
   assert(expr->isSign());
-  ComplexSign sign = ComplexSign::Get(expr->firstChild());
+  const Tree* child = expr->firstChild();
+  ComplexSign sign = ComplexSign::Get(child);
   const Tree* result;
   if (sign.isZero()) {
     result = 0_e;
@@ -360,6 +361,12 @@ bool SystematicOperation::SimplifySign(Tree* expr) {
     result = 1_e;
   } else if (sign.realSign().isStrictlyNegative()) {
     result = -1_e;
+  } else if (child->isLn() && child->firstChild()->isRational()) {
+    // sign(ln(x)) = 1 if x > 1, = 0 if x = 1, = -1 if 0 < x < 1
+    child = child->firstChild();
+    assert(Rational::Sign(child).isPositive());  // otherwise !sign.isReal()
+    result =
+        child->isOne() ? 0_e : (Rational::IsGreaterThanOne(child) ? 1_e : -1_e);
   } else {
     return false;
   }

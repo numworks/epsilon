@@ -114,9 +114,9 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("1^(-inf)", Undefined::Name());
   assert_parsed_expression_simplify_to("(-1)^inf", Undefined::Name());
   assert_parsed_expression_simplify_to("(-1)^(-inf)", Undefined::Name());
-  assert_parsed_expression_simplify_to("2^inf", "2^∞");
+  assert_parsed_expression_simplify_to("2^inf", "∞");
   assert_expression_simplifies_approximates_to<float>("2^inf", "∞");
-  assert_parsed_expression_simplify_to("2^(-inf)", "2^\U00000012-∞\U00000013");
+  assert_parsed_expression_simplify_to("2^(-inf)", "0");
   assert_expression_simplifies_approximates_to<float>("2^(-inf)", "0");
   assert_parsed_expression_simplify_to("(-2)^inf", "(-2)^∞");
   assert_expression_simplifies_approximates_to<float>("(-2)^inf",
@@ -124,10 +124,9 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("(-2)^(-inf)",
                                        "(-2)^\U00000012-∞\U00000013");
   assert_expression_simplifies_approximates_to<float>("(-2)^(-inf)", "0");
-  assert_parsed_expression_simplify_to("0.2^inf", "(1/5)^∞");
+  assert_parsed_expression_simplify_to("0.2^inf", "0");
   assert_expression_simplifies_approximates_to<float>("0.2^inf", "0");
-  assert_parsed_expression_simplify_to("0.2^(-inf)",
-                                       "(1/5)^\U00000012-∞\U00000013");
+  assert_parsed_expression_simplify_to("0.2^(-inf)", "∞");
   assert_expression_simplifies_approximates_to<float>("0.2^(-inf)", "∞");
   assert_parsed_expression_simplify_to("(-0.2)^inf", "(-1/5)^∞");
   assert_expression_simplifies_approximates_to<float>("(-0.2)^inf", "0");

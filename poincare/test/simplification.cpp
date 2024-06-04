@@ -783,12 +783,12 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // simplifies_to("(-0.3)^(-inf)", "undef");  // complex inf
   simplifies_to("0^inf", "0");
   simplifies_to("0^(-inf)", "undef");  // complex inf
-  // simplifies_to("0.3^inf", "0");
-  // simplifies_to("0.3^(-inf)", "∞");
+  simplifies_to("0.3^inf", "0");
+  simplifies_to("0.3^(-inf)", "∞");
   simplifies_to("1^inf", "undef");
   simplifies_to("1^(-inf)", "undef");
-  // simplifies_to("2^inf", "∞");
-  // simplifies_to("2^(-inf)", "0");
+  simplifies_to("2^inf", "∞");
+  simplifies_to("2^(-inf)", "0");
   simplifies_to("x^inf", "e^(∞×sign(ln(x)))");
 
   // inf^x

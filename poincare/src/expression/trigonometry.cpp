@@ -201,7 +201,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   } else if (Infinity::IsPlusOrMinusInfinity(firstArgument)) {
     // sin(±inf) = cos(±inf) = undef
     u->cloneTreeOverTree(KUndef);
-    changed = true;
+    return true;
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);

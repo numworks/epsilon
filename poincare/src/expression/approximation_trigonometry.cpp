@@ -82,8 +82,8 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       std::complex<T> result;
       if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
         /* asin/acos: [-1;1] -> R
-         * In these cases we rather use reals because asin/acos on
-         * complexes is not as precise in std library.
+         * In these cases we rather use reals because std::asin/acos is not as
+         * precise on complexes.
          * For instance,
          * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
          * - asin(0.03) = 0.0300045

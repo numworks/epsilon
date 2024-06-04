@@ -42,34 +42,6 @@ OExpression ArcSineNode::unaryFunctionDifferential(
   return ArcSine(this).unaryFunctionDifferential(reductionContext);
 }
 
-template <typename T>
-std::complex<T> ArcSineNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  std::complex<T> result;
-  if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
-    /* asin: [-1;1] -> R
-     * In these cases we rather use std::asin(double) because asin on complexes
-     * is not as precise as asin on double in std library. For instance,
-     * - asin(complex<double>(0.03,0.0) = complex(0.0300045,1.11022e-16)
-     * - asin(0.03) = 0.0300045 */
-    result = std::asin(c.real());
-  } else {
-    result = std::asin(c);
-    /* asin has a branch cut on ]-inf, -1[U]1, +inf[: it is then multivalued on
-     * this cut. We followed the convention chosen by the lib c++ of llvm on
-     * ]-inf+0i, -1+0i[ (warning: asin takes the other side of the cut values on
-     * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
-     * asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2). */
-    if (c.imag() == 0 && c.real() > 1) {
-      result.imag(-result.imag());  // other side of the cut
-    }
-  }
-  result =
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
-  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
-}
-
 bool ArcSine::derivate(const ReductionContext& reductionContext, Symbol symbol,
                        OExpression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,

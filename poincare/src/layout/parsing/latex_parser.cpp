@@ -40,6 +40,7 @@ constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
  * */
 constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
                                                 "}",       "\3", "\\ dx"};
+constexpr static const char* middleDotToken[] = {"\\cdot"};
 
 using LayoutDetector = bool (*)(const Tree*);
 using LayoutConstructor = Tree* (*)();
@@ -52,6 +53,13 @@ struct LatexToken {
 };
 
 constexpr static LatexToken k_tokens[] = {
+    // Middle Dot
+    {middleDotToken, std::size(middleDotToken),
+     [](const Tree* t) -> bool {
+       return t->isCodePointLayout() &&
+              CodePointLayout::GetCodePoint(t) == UCodePointMiddleDot;
+     },
+     []() -> Tree* { return KCodePointL<UCodePointMiddleDot>()->clone(); }},
     // Parenthesis
     {parenthesisToken, std::size(parenthesisToken),
      [](const Tree* t) -> bool { return t->isParenthesisLayout(); },

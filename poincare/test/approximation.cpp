@@ -129,6 +129,13 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("2^(-inf)", "0");
 
   // inf^x
+  approximates_to<float>("inf^i", "undef");
+  approximates_to<float>("inf^6", "∞");
+  approximates_to<float>("(-inf)^6", "∞");
+  approximates_to<float>("inf^7", "∞");
+  approximates_to<float>("(-inf)^7", "-∞");
+  approximates_to<float>("inf^-6", "0");
+  approximates_to<float>("(-inf)^-6", "0");
   // TODO_PCJ: approximates_to<float>("inf^0", "undef");
   // TODO_PCJ: approximates_to<float>("(-inf)^0", "undef");
   approximates_to<float>("inf^inf", "∞");

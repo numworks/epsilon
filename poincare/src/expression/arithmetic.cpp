@@ -429,30 +429,19 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
   if (!expr->isFactor()) {
     return false;
   }
-  Tree* child = expr->child(0);
-  bool isDiv = false;
-  if (child->isDiv() && child->child(0)->isInteger() &&
-      child->child(1)->isInteger()) {
-    isDiv = true;
-    child = child->child(0);
-  } else if (!child->isInteger()) {
-    assert(!child->isRational());
-    return false;
+  if (
+      // factor(a / b) -> factor(a) / factor(b)
+      PatternMatching::MatchReplace(expr, KFactor(KDiv(KA, KB)),
+                                    KDiv(KFactor(KA), KFactor(KB))) ||
+      // factor(- a) -> - factor(a)
+      PatternMatching::MatchReplace(expr, KFactor(KOpposite(KA)),
+                                    KOpposite(KFactor(KA)))) {
+    return true;
   }
-  assert(child->isInteger());
+  Tree* child = expr->firstChild();
+  assert(child->isInteger() && Integer::Sign(child) == NonStrictSign::Positive);
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  if (Integer::Sign(child) == NonStrictSign::Negative) {
-    KOpposite->cloneNode();
-  }
-  if (isDiv) {
-    KDiv->cloneNode();
-  }
   PushPrimeFactorization(Integer::Handler(child));
-  if (isDiv) {
-    child = child->nextTree();
-    assert(child->isInteger());
-    PushPrimeFactorization(Integer::Handler(child));
-  }
   expr->moveTreeOverTree(result);
   return true;
 }

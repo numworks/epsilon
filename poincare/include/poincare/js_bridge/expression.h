@@ -19,7 +19,8 @@ class Expression {
  public:
   static JSTree ParseLatex(std::string latex);
   static std::string ToLatex(const JSTree& jsTree);
-  static JSTree CloneAndSimplify(const JSTree& jsTree);
+  static JSTree CloneAndReduce(const JSTree& jsTree);
+  static JSTree CloneAndBeautify(const JSTree& jsTree);
   static double ApproximateToScalar(const JSTree& jsTree);
   static JSTree GetSystemFunction(const JSTree& jsTree, std::string var);
   static double ApproximateToScalarWithValue(const JSTree& jsTree, double val);

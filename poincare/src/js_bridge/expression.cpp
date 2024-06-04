@@ -50,9 +50,14 @@ std::string Expression::ToLatex(const JSTree& jsTree) {
   return std::string(buffer, strlen(buffer));
 }
 
-JSTree Expression::CloneAndSimplify(const JSTree& jsTree) {
+JSTree Expression::CloneAndReduce(const JSTree& jsTree) {
   return JSTreeBuilder(
-      JSTreeToExpression(jsTree).cloneAndSimplify(ReductionContext()));
+      JSTreeToExpression(jsTree).cloneAndReduce(ReductionContext()));
+}
+
+JSTree Expression::CloneAndBeautify(const JSTree& jsTree) {
+  return JSTreeBuilder(
+      JSTreeToExpression(jsTree).cloneAndBeautify(ReductionContext()));
 }
 
 // TODO: implement approximateToScalar on JuniorExpression directly
@@ -74,7 +79,8 @@ double Expression::ApproximateToScalarWithValue(const JSTree& jsTree,
 EMSCRIPTEN_BINDINGS(expression) {
   class_<Expression>("Expression")
       .class_function("ParseLatex", &Expression::ParseLatex)
-      .class_function("CloneAndSimplify", &Expression::CloneAndSimplify)
+      .class_function("CloneAndReduce", &Expression::CloneAndReduce)
+      .class_function("CloneAndBeautify", &Expression::CloneAndBeautify)
       .class_function("ToLatex", &Expression::ToLatex)
       .class_function("ApproximateToScalar", &Expression::ApproximateToScalar)
       .class_function("GetSystemFunction", &Expression::GetSystemFunction)

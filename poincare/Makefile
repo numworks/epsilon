@@ -29,6 +29,7 @@ _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
   absolute_value.cpp \
   addition.cpp \
+  aliases_list.cpp \
   approximation_helper.cpp \
   arc_cosecant.cpp \
   arc_cosine.cpp \
@@ -88,6 +89,9 @@ $(addprefix old/, \
   infinity.cpp \
   integral.cpp \
   junior_expression.cpp \
+  junior_layout.cpp \
+  layout.cpp \
+  layout_node.cpp \
   least_common_multiple.cpp \
   list.cpp \
   list_access.cpp \
@@ -166,6 +170,7 @@ $(addprefix old/, \
   vector_cross.cpp \
   vector_dot.cpp \
   vector_norm.cpp \
+  xnt_helpers.cpp \
 ) \
 $(addprefix expression/, \
   advanced_simplification.cpp \

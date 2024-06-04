@@ -116,17 +116,6 @@ size_t RationalNode::serialize(char *buffer, size_t bufferSize,
   return numberOfChar;
 }
 
-// Layout
-
-// Approximation
-
-template <typename T>
-T RationalNode::templatedApproximate() const {
-  T n = signedNumerator().approximate<T>();
-  T d = denominator().approximate<T>();
-  return n / d;
-}
-
 // Comparison
 
 int RationalNode::NaturalOrder(const RationalNode *i, const RationalNode *j) {
@@ -308,8 +297,5 @@ OExpression Rational::denominator() const {
   }
   return Rational::Builder(d);
 }
-
-template float RationalNode::templatedApproximate() const;
-template double RationalNode::templatedApproximate() const;
 
 }  // namespace Poincare

@@ -38,22 +38,6 @@ class RationalNode final : public NumberNode {
     return OMG::BinaryToTrinaryBool(!m_negative);
   }
 
-  // Layout
-
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<float>::Builder(templatedApproximate<float>());
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<double>::Builder(templatedApproximate<double>());
-  }
-  template <typename T>
-  T templatedApproximate() const;
-
   // Basic test
   bool isZero() const override { return unsignedNumerator().isZero(); }
   bool isOne() const override {

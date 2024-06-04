@@ -55,15 +55,6 @@ size_t BasedIntegerNode::serialize(char *buffer, size_t bufferSize,
   return integer().serialize(buffer, bufferSize, m_base);
 }
 
-// Layout
-
-// Approximation
-
-template <typename T>
-T BasedIntegerNode::templatedApproximate() const {
-  return integer().approximate<T>();
-}
-
 // Comparison
 
 int BasedIntegerNode::simplificationOrderSameType(
@@ -114,8 +105,5 @@ OExpression BasedInteger::shallowReduce() {
   replaceWithInPlace(result);
   return result;
 }
-
-template float BasedIntegerNode::templatedApproximate() const;
-template double BasedIntegerNode::templatedApproximate() const;
 
 }  // namespace Poincare

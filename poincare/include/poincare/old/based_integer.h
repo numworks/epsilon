@@ -42,22 +42,6 @@ class BasedIntegerNode final : public NumberNode {
   bool isInteger() const override { return true; }
   Integer integerValue() const override { return integer(); }
 
-  // Layout
-
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<float>::Builder(templatedApproximate<float>());
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<double>::Builder(templatedApproximate<double>());
-  }
-  template <typename T>
-  T templatedApproximate() const;
-
  private:
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;

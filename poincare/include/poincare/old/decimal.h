@@ -51,24 +51,24 @@ class DecimalNode final : public NumberNode {
   // NumberNode
   void setNegative(bool negative) override { m_negative = negative; }
   bool isZero() const override { return unsignedMantissa().isZero(); }
-  bool isOne() const override { return templatedApproximate<double>() == 1.0; }
+  bool isOne() const override {
+#if 0  // TODO_PCJ: templatedApproximate has been removed
+    return templatedApproximate<double>() == 1.0;
+#else
+    assert(false);
+    return false;
+#endif
+  }
   bool isMinusOne() const override {
+#if 0  // TODO_PCJ: templatedApproximate has been removed
     return templatedApproximate<double>() == -1.0;
+#else
+    assert(false);
+    return false;
+#endif
   }
   bool isInteger() const override;
   Integer integerValue() const override;
-
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<float>::Builder(templatedApproximate<float>());
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return Complex<double>::Builder(templatedApproximate<double>());
-  }
 
   // Comparison
   /* Warning: Decimal(mantissa: 1000, exponent: 3) and Decimal(mantissa: 1,

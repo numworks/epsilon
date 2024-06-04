@@ -84,9 +84,14 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
          * units. */
         return nullVector;
       }
+#if 0  // TODO_PCJ: templatedApproximate has been removed
       float exponentFloat = static_cast<const Rational&>(exp)
                                 .node()
                                 ->templatedApproximate<float>();
+#else
+      assert(false);
+      float exponentFloat = 0.f;
+#endif
       /* We limit to INT_MAX / 3 because an exponent might get bigger with
        * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
        * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */

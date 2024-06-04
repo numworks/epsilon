@@ -1866,10 +1866,15 @@ int ExpressionNode::numberOfNumericalValues() const {
     return k_error;
   }
   if (isNumber()) {
+#if 0  // TODO_PCJ: doubleApproximation has been removed
     return std::isfinite(
                static_cast<const NumberNode *>(this)->doubleApproximation())
                ? 1
                : k_error;
+#else
+    assert(false);
+    return false;
+#endif
   }
   if (otype() == ExpressionNode::Type::Power) {
     int base = childAtIndex(0)->numberOfNumericalValues();
@@ -1922,7 +1927,12 @@ void OExpression::replaceNumericalValuesWithSymbol(Symbol x) {
 float OExpression::getNumericalValue() const {
   assert(numberOfNumericalValues() <= 1);
   if (isNumber()) {
+#if 0  // TODO_PCJ: doubleApproximation has been removed
     return convert<Number>().doubleApproximation();
+#else
+    assert(false);
+    return 0.f;
+#endif
   }
   if (otype() == ExpressionNode::Type::ConstantMaths &&
       !convert<Constant>().isExponentialE() &&

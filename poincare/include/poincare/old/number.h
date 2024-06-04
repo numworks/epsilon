@@ -28,8 +28,6 @@ class NumberNode : public ExpressionNode {
   }
   virtual void setNegative(bool negative) = 0;
 
-  double doubleApproximation() const;
-
   // Basic test
   virtual bool isZero() const = 0;
   virtual bool isOne() const = 0;
@@ -75,8 +73,6 @@ class Number : public OExpression {
     node()->setNegative(!positive);
     return *this;
   }
-
-  double doubleApproximation() const { return node()->doubleApproximation(); };
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue);

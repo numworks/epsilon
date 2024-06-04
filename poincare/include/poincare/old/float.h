@@ -68,28 +68,11 @@ class FloatNode final : public NumberNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  /* Layout */
-  /* Evaluation */
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
 
  private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::Decimal; }
 
-  template <typename U>
-  Evaluation<U> templatedApproximate(
-      const ApproximationContext& approximationContext) const {
-    return Complex<U>::Builder((U)m_value);
-  }
   T m_value;
 };
 

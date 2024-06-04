@@ -16,35 +16,6 @@ extern "C" {
 
 namespace Poincare {
 
-double NumberNode::doubleApproximation() const {
-  switch (otype()) {
-    case Type::Undefined:
-    case Type::Nonreal:
-      return NAN;
-    case Type::Infinity:
-      assert(Number(this).isPositive() == OMG::Troolean::False ||
-             Number(this).isPositive() == OMG::Troolean::True);
-      return Number(this).isPositive() == OMG::Troolean::False ? -INFINITY
-                                                               : INFINITY;
-    case Type::Float:
-      return static_cast<const FloatNode<float> *>(this)->value();
-    case Type::Double:
-      return static_cast<const FloatNode<double> *>(this)->value();
-    case Type::Rational:
-      return static_cast<const RationalNode *>(this)
-          ->templatedApproximate<double>();
-    case Type::BasedInteger:
-      return static_cast<const BasedIntegerNode *>(this)
-          ->templatedApproximate<double>();
-    case Type::Decimal:
-      return static_cast<const DecimalNode *>(this)
-          ->templatedApproximate<double>();
-    default:
-      assert(false);
-      return 0.0;
-  }
-}
-
 bool NumberNode::derivate(const ReductionContext &reductionContext,
                           Symbol symbol, OExpression symbolValue) {
   return Number(this).derivate(reductionContext, symbol, symbolValue);
@@ -127,11 +98,16 @@ Number Number::BinaryOperation(const Number &i, const Number &j,
       return std::move(a);
     }
   }
+#if 0  // TODO_PCJ: doubleApproximation has been removed
   /* At least one of the operands is Undefined/Infinity/Float, or the Rational
    * addition overflowed */
   double a = doubleOp(i.node()->doubleApproximation(),
                       j.node()->doubleApproximation());
   return FloatNumber(a);
+#else
+  assert(false);
+  return FloatNumber(0.0);
+#endif
 }
 
 Number Number::Addition(const Number &i, const Number &j) {
@@ -165,6 +141,7 @@ int Number::NaturalOrder(const Number &i, const Number &j) {
   }
   /* One of the operand is Undefined/Infinity/Float or the Rational addition
    * overflowed. */
+#if 0  // TODO_PCJ: doubleApproximation has been removed
   if (i.node()->doubleApproximation() < j.node()->doubleApproximation()) {
     return -1;
   } else if (i.node()->doubleApproximation() ==
@@ -174,6 +151,10 @@ int Number::NaturalOrder(const Number &i, const Number &j) {
     assert(i.node()->doubleApproximation() > j.node()->doubleApproximation());
     return 1;
   }
+#else
+  assert(false);
+  return 0;
+#endif
 }
 
 bool Number::derivate(const ReductionContext &reductionContext, Symbol symbol,

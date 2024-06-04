@@ -145,10 +145,14 @@ double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {
      * of 0 even if the exponent is not a number.*/
     return 0.;
   }
+#if 0  // TODO_PCJ: doubleApproximation has been removed
   if (childAtIndex(1)->isNumber()) {
     return static_cast<NumberNode *>(childAtIndex(1))->doubleApproximation() *
            baseDegree;
   }
+#else
+  assert(false);
+#endif
   return NAN;
 }
 

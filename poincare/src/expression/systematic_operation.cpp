@@ -36,16 +36,22 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
       return true;
     }
     ComplexSign nSign = ComplexSign::Get(n);
-    assert(nSign.isReal());
-    if (nSign.realSign().isNegative()) {
-      // (±inf)^neg -> 0
-      u->cloneTreeOverTree(0_e);
+    if (!nSign.imagSign().canBeNull()) {
+      // (±inf)^i -> undef
+      u->cloneTreeOverTree(KUndef);
       return true;
     }
-    if (nSign.realSign().isPositive()) {
-      // (±inf)^pos -> inf
-      u->cloneTreeOverTree(KInf);
-      return true;
+    if (nSign.isReal()) {
+      if (nSign.realSign().isNegative()) {
+        // (±inf)^neg -> 0
+        u->cloneTreeOverTree(0_e);
+        return true;
+      }
+      if (nSign.realSign().isPositive()) {
+        // (±inf)^pos -> inf
+        u->cloneTreeOverTree(KInf);
+        return true;
+      }
     }
   }
   if (base->isZero()) {

@@ -792,6 +792,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("x^inf", "e^(∞×sign(ln(x)))");
 
   // inf^x
+  simplifies_to("inf^i", "undef");
   simplifies_to("inf^0", "undef");
   simplifies_to("(-inf)^0", "undef");
   simplifies_to("inf^inf", "∞");

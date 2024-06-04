@@ -34,12 +34,12 @@ constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
                                                "}"};
 constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
 /* There is no easy way to know the end of an integral in Latex.
- * We rely on the fact that the user makes it end with " dx"
+ * We rely on the fact that the user makes it end with " dt"
  *  Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ dx
+ *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ dt
  * */
 constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
-                                                "}",       "\3", "\\ dx"};
+                                                "}",       "\3", "\\ dt"};
 constexpr static const char* middleDotToken[] = {"\\cdot"};
 
 using LayoutDetector = bool (*)(const Tree*);
@@ -105,7 +105,7 @@ constexpr static LatexToken k_tokens[] = {
     {integralToken, std::size(integralToken),
      [](const Tree* t) -> bool { return t->isIntegralLayout(); },
      []() -> Tree* {
-       return KIntegralL("x"_l, KRackL(), KRackL(), KRackL())->clone();
+       return KIntegralL("t"_l, KRackL(), KRackL(), KRackL())->clone();
      }},
 };
 

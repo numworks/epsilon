@@ -27,8 +27,8 @@ QUIZ_CASE(poincare_latex_to_layout) {
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesisL("3"_l ^ KSuperscriptL("5"_l))))));
   assert_latex_layouts_to(
-      "\\int_{1}^{2}x^{3}\\ dx",
-      KRackL(KIntegralL("x"_l, "1"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))));
+      "\\int_{1}^{2}t^{3}\\ dt",
+      KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_cl ^ KSuperscriptL("3"_l))));
 }
 
 void assert_layout_convert_to_latex(const Tree* l, const char* latex) {
@@ -51,11 +51,11 @@ QUIZ_CASE(poincare_layout_to_latex) {
                     KRackL(KParenthesisL("3"_l ^ KSuperscriptL("5"_l))))),
       "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}");
   assert_layout_convert_to_latex(
-      KRackL(KIntegralL("x"_l, "1"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))),
-      "\\int_{1}^{2}x^{3}\\ dx");
+      KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_cl ^ KSuperscriptL("3"_l))),
+      "\\int_{1}^{2}t^{3}\\ dt");
   assert_layout_convert_to_latex("12"_l ^ KThousandSeparatorL ^ "345"_l,
                                  "12\\ 345");
   assert_layout_convert_to_latex(
-      KRackL(KDiffL("x"_l, "2"_l, "x"_cl ^ KSuperscriptL("3"_l))),
-      "diff(x^{3},x,2)");
+      KRackL(KDiffL("t"_l, "2"_l, "t"_cl ^ KSuperscriptL("3"_l))),
+      "diff(t^{3},t,2)");
 }

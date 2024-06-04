@@ -219,8 +219,7 @@ bool SystematicOperation::SimplifyLnReal(Tree* u) {
     u->cloneTreeOverTree(KNonReal);
     return true;
   }
-  if (childSign.realSign().canBeStriclyNegative() ||
-      !childSign.imagSign().isZero()) {
+  if (childSign.realSign().canBeStriclyNegative() || childSign.canBeNonReal()) {
     // Child can be nonreal or negative, add a dependency in case.
     u->moveTreeOverTree(PatternMatching::Create(
         KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = u->child(0)}));

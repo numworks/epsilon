@@ -142,6 +142,7 @@ class ComplexSign {
   constexpr bool isReal() const { return imagSign().isZero(); }
   constexpr bool isPureIm() const { return realSign().isZero(); }
   constexpr bool isNonReal() const { return !imagSign().canBeNull(); }
+  constexpr bool canBeNonReal() const { return imagSign().canBeNonNull(); }
   constexpr bool isZero() const { return isReal() && isPureIm(); }
   constexpr bool isPure() const { return isReal() || isPureIm(); }
   // Anything is possible

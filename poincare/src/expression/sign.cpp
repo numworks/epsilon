@@ -210,7 +210,7 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
 }
 
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
-  if (!exp.isReal() || exp.canBeNonInteger()) {
+  if (exp.canBeNonReal() || exp.canBeNonInteger()) {
     return ComplexSign::Unknown();
   }
   if (base.isZero()) {

@@ -4,6 +4,7 @@
 _null :=
 _space := $(_null) $(_null)
 $(_space) := $(_space)
+, := ,
 
 # text_or, <text>, <fallback if empty>
 define text_or

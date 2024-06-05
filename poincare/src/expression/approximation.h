@@ -31,16 +31,16 @@ class Approximation final {
                                               ComplexFormat complexFormat);
 
   template <typename T>
-  static T ToReal(const Tree* preparedExpression) {
-    return ToReal<T>(preparedExpression, NAN);
+  static T RootPreparedToReal(const Tree* preparedExpression) {
+    return RootPreparedToReal<T>(preparedExpression, NAN);
   }
 
   template <typename T>
-  static T ToReal(const Tree* preparedFunction, T abscissa);
+  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa);
 
   template <typename T>
-  static PointOrScalar<T> ToPointOrScalar(const Tree* preparedFunction,
-                                          T abscissa);
+  static PointOrScalar<T> RootPreparedToPointOrScalar(
+      const Tree* preparedFunction, T abscissa);
 
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>

@@ -500,7 +500,7 @@ JuniorExpression JuniorExpression::getSystemFunction(
 
 template <typename T>
 T JuniorExpression::approximateToScalarWithValue(T x) const {
-  return Approximation::ToReal<T>(tree(), x);
+  return Approximation::RootPreparedToReal<T>(tree(), x);
 }
 
 template <typename T>
@@ -516,7 +516,7 @@ T JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
 template <typename T>
 PointOrScalar<T> JuniorExpression::approximateToPointOrScalarWithValue(
     T x) const {
-  return Internal::Approximation::ToPointOrScalar<T>(tree(), x);
+  return Internal::Approximation::RootPreparedToPointOrScalar<T>(tree(), x);
 }
 
 JuniorExpression JuniorExpression::cloneAndSimplify(

@@ -71,7 +71,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
 
 // Function should have been prepared by PrepareFunctionForApproximation
 template <typename T>
-T Approximation::ToReal(const Tree* preparedFunction, T abscissa) {
+T Approximation::RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
   /* preparedFunction should have been at least projected, so these AngleUnit
@@ -86,8 +86,8 @@ T Approximation::ToReal(const Tree* preparedFunction, T abscissa) {
 }
 
 template <typename T>
-PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* preparedFunction,
-                                                T abscissa) {
+PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
+    const Tree* preparedFunction, T abscissa) {
   bool isPoint = preparedFunction->isPoint();
   Random::Context randomContext;
   s_randomContext = &randomContext;
@@ -1351,13 +1351,13 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* tree) {
  * correct ToComplex<T> as needed since the code is mostly independant of the
  * float type used in the tree. */
 
-template float Approximation::ToReal(const Tree*, float);
-template double Approximation::ToReal(const Tree*, double);
+template float Approximation::RootPreparedToReal(const Tree*, float);
+template double Approximation::RootPreparedToReal(const Tree*, double);
 
-template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*,
-                                                             float);
-template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
-                                                              double);
+template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
+    const Tree*, float);
+template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
+    const Tree*, double);
 
 template float Approximation::RootTreeToReal<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);

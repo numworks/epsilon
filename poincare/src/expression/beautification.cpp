@@ -306,13 +306,32 @@ bool Beautification::DeepBeautify(Tree* expr,
     AdvancedSimplification::AdvancedReduce(expr);
   }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify) || changed;
+  /* Divisions are created after the main beautification since they work top
+   * down and require powers to have been built from exponentials already. */
+  changed =
+      Tree::ApplyShallowInDepth(expr, ShallowBeautifyDivisions) || changed;
   changed = Variables::BeautifyToName(expr) || changed;
-  if (changed) {
-    DeepBubbleUpDivision(expr);
-  }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
             changed;
   return AddUnits(expr, projectionContext) || changed;
+}
+
+bool Beautification::ShallowBeautifyDivisions(Tree* e, void* context) {
+  if (e->isPow() && e->firstChild()->isEulerE()) {
+    // We do not want e^-x -> 1/e^x and e^1/2 -> √(e)
+    return false;
+  }
+
+  // Turn multiplications with negative powers into divisions
+  if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
+    if (BeautifyIntoDivision(e)) {
+      return true;
+    }
+  }
+
+  return
+      // A^0.5 -> Sqrt(A)
+      PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA));
 }
 
 // Reverse most system projections to display better expressions
@@ -333,12 +352,6 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
                 ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
                 KMult(KA_s, KLogarithm(KC, KB), KD_s));
 #endif
-
-  // -1 * x -> -x
-  if (PatternMatching::MatchReplace(e, KMult(-1_e, KA_p),
-                                    KOpposite(KMult(KA_p)))) {
-    return true;
-  }
 
   int n = e->numberOfChildren();
   while (
@@ -365,21 +378,9 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
     changed = true;
   }
 
-  if (e->isPow() && e->firstChild()->isEulerE()) {
-    // We do not want e^-x -> 1/e^x and e^1/2 -> √(e)
-    return changed;
-  }
-
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
       NAry::Sort(e, Comparison::Order::Beautification)) {
-    changed = true;
-  }
-
-  // Turn multiplications with negative powers into divisions
-  if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
-    if (BeautifyIntoDivision(e)) {
-      return true;
-    }
+    return true;
   }
 
   return
@@ -400,8 +401,6 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       // NThDiff(A, B, 1, C) -> Diff(A, B, C)
       PatternMatching::MatchReplace(e, KNthDiff(KA, KB, 1_e, KC),
                                     KDiff(KA, KB, KC)) ||
-      // A^0.5 -> Sqrt(A)
-      PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
       changed;
 }
 

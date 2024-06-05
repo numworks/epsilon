@@ -620,10 +620,10 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
       if (e->type() == Type::Sqrt) {
         exponent = static_cast<T>(0.5);
       } else if (e->type() == Type::Pow) {
-        exponent = Approximation::RootPreparedToReal<T>(e->child(1));
+        exponent = Approximation::RootPreparedToReal<T>(e->child(1), NAN);
       } else if (e->type() == Type::Root) {
         exponent = static_cast<T>(1.) /
-                   Approximation::RootPreparedToReal<T>(e->child(1));
+                   Approximation::RootPreparedToReal<T>(e->child(1), NAN);
       }
       if (std::isnan(exponent)) {
         return false;

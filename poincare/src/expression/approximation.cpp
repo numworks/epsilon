@@ -78,15 +78,16 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
       !Dimension::DeepCheckListLength(node)) {
     return KUndefUnhandledDimension->clone();
   }
-  return RootTreeToTree<T>(node, angleUnit, complexFormat,
-                           Dimension::GetDimension(node),
-                           Dimension::GetListLength(node));
+  return RootTreeToTreePrivate<T>(node, angleUnit, complexFormat,
+                                  Dimension::GetDimension(node),
+                                  Dimension::GetListLength(node));
 }
 
 template <typename T>
-Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
-                                    ComplexFormat complexFormat, Dimension dim,
-                                    int listLength) {
+Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
+                                           AngleUnit angleUnit,
+                                           ComplexFormat complexFormat,
+                                           Dimension dim, int listLength) {
   assert(Dimension::DeepCheckDimensions(node) &&
          Dimension::DeepCheckListLength(node));
   assert(listLength == Dimension::GetListLength(node));

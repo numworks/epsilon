@@ -26,76 +26,83 @@ struct Dimension;
 
 class Approximation final {
  public:
-  /* Approximations on root tree */
+  /* Approximations on root tree, independent from current s_context. */
 
+  /* preparedFunction is scalar and must have been prepared with
+   * PrepareFunctionForApproximation. */
   template <typename T>
-  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa = NAN) {
+  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
     return RootToPointOrScalarPrivate(preparedFunction, true, abscissa)
         .toScalar();
   }
+  /* preparedFunction is scalar or point, and must have been prepared with
+   * PrepareFunctionForApproximation. */
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
       const Tree* preparedFunction, T abscissa) {
     return RootToPointOrScalarPrivate(preparedFunction, true, abscissa);
   }
-  // Approximate an entire scalar tree, isolated from any outer context.
+  /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
+   * left to default on projected trees. */
   template <typename T>
-  static T RootTreeToReal(const Tree* node,
+  static T RootTreeToReal(const Tree* scalarTree,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate(node, false, NAN, angleUnit,
+    return RootToPointOrScalarPrivate(scalarTree, false, NAN, angleUnit,
                                       complexFormat)
         .toScalar();
   }
 
-  // Approximate a tree with any dimension, isolated from any outer context.
+  // angleUnit and complexFormat can be left to default on projected trees.
   template <typename T>
   static Tree* RootTreeToTree(
-      const Tree* node, AngleUnit angleUnit = AngleUnit::Radian,
+      const Tree* tree, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Cartesian);
-  // Approximate a tree with any dimension, isolated from any outer context.
-  template <typename T>
-  static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
-                              ComplexFormat complexFormat, Dimension dim,
-                              int listLength);
 
-  /* Approximations on tree */
-
-  template <typename T>
-  static std::complex<T> ToComplex(const Tree* node);
-
-  template <typename T>
-  static T To(const Tree* node) {
-    std::complex<T> value = ToComplex<T>(node);
-    return value.imag() == 0 ? value.real() : NAN;
-  }
-
-  // Approximate expression at KVarX/K = x
-  template <typename T>
-  static T To(const Tree* node, T x) {
-    assert(s_context);
-    s_context->setLocalValue(x);
-    return To<T>(node);
-  }
+  /* Approximations on tree, depends on current s_context */
 
   // Approximate a tree with any dimension
   template <typename T>
-  static Tree* ToTree(const Tree* node, Dimension dim);
+  static Tree* ToTree(const Tree* tree, Dimension dim);
 
+  // tree must be of scalar dimension
   template <typename T>
-  static bool ToBoolean(const Tree* node);
+  static std::complex<T> ToComplex(const Tree* tree);
 
+  // tree must be of scalar dimension and real.
   template <typename T>
-  static Tree* ToList(const Tree* node);
+  static T To(const Tree* tree) {
+    std::complex<T> value = ToComplex<T>(tree);
+    return value.imag() == 0 ? value.real() : NAN;
+  }
 
+  /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
+   * real */
   template <typename T>
-  static Tree* ToPoint(const Tree* node);
+  static T To(const Tree* tree, T x) {
+    assert(s_context);
+    s_context->setLocalValue(x);
+    return To<T>(tree);
+  }
 
+  // tree must be of boolean dimension.
   template <typename T>
-  static Tree* ToMatrix(const Tree* node);
+  static bool ToBoolean(const Tree* tree);
+
+  // tree must be of list dimension.
+  template <typename T>
+  static Tree* ToList(const Tree* tree);
+
+  // tree must be of point dimension.
+  template <typename T>
+  static Tree* ToPoint(const Tree* tree);
+
+  // tree must be of matrix dimension.
+  template <typename T>
+  static Tree* ToMatrix(const Tree* tree);
 
   // Replace a Tree with the Tree of its complex approximation
-  static bool ToComplexTree(Tree* node);
+  static bool ToComplexTree(Tree* tree);
   EDITION_REF_WRAP(ToComplexTree);
 
   /* Helpers */
@@ -105,12 +112,11 @@ class Approximation final {
                                               ComplexFormat complexFormat);
 
   // Return false if tree could not be approximated to a defined value.
-  static bool CanApproximate(const Tree* tree) {
+  static bool CanApproximate(const Tree* tree, bool approxLocalVar = false) {
     return CanApproximate(tree, 0);
   }
 
-  /* If collapse is true, approximate parents if all children have approximated.
-   * Also raise if result is undefined. */
+  // If collapse is true, approximate parents if all children have approximated.
   static bool ApproximateAndReplaceEveryScalar(
       Tree* tree, const ProjectionContext* ctx = nullptr);
   EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar,
@@ -135,6 +141,12 @@ class Approximation final {
       AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real);
 
+  // tree must be of given dimension and list length.
+  template <typename T>
+  static Tree* RootTreeToTreePrivate(const Tree* tree, AngleUnit angleUnit,
+                                     ComplexFormat complexFormat, Dimension dim,
+                                     int listLength);
+
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
 
   template <typename T>
@@ -142,7 +154,7 @@ class Approximation final {
   template <typename T, typename U>
   using Mapper = U (*)(T);
   template <typename T, typename U>
-  static U MapAndReduce(const Tree* node, Reductor<U> reductor,
+  static U MapAndReduce(const Tree* tree, Reductor<U> reductor,
                         Mapper<std::complex<T>, U> mapper = nullptr);
 
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);

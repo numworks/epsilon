@@ -10,7 +10,7 @@ _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
-$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM)
+$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	$(QUIET) cp $< $@
 	$(QUIET) plutil -insert "LSMinimumSystemVersion" -string "$(APPLE_PLATFORM_MIN_VERSION)" $@

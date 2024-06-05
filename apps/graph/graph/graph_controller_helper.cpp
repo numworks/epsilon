@@ -222,7 +222,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       Preferences::SharedPreferences()->displayMode();
   int precision = Preferences::SharedPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
-    assert(!derivative.isScalar());
+    assert(derivative.isPoint());
     Coordinate2D<double> xy = derivative.toPoint();
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=(%*.*ed;%*.*ed)", xy.x(), mode, precision, xy.y(),

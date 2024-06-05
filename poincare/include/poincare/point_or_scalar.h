@@ -11,17 +11,19 @@ namespace Poincare {
 template <typename T>
 class PointOrScalar {
  public:
-  PointOrScalar(T x, T y) : m_x(x), m_y(y) { assert(!isScalar()); }
+  PointOrScalar(T x, T y) : m_x(x), m_y(y) { assert(isPoint()); }
   PointOrScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {
     assert(isScalar());
   }
   bool isScalar() const { return OMG::IsSignalingNan(m_x); }
+  bool isPoint() const { return !isScalar(); }
+
   T toScalar() const {
     assert(isScalar());
     return m_y;
   }
   Coordinate2D<T> toPoint() const {
-    assert(!isScalar());
+    assert(isPoint());
     return Coordinate2D<T>(m_x, m_y);
   }
 

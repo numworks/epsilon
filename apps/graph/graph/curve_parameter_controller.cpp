@@ -155,6 +155,7 @@ double CurveParameterController::parameterAtIndex(int index) {
       assert(firstComponent);
       return derivative.toScalar();
     }
+    assert(derivative.isPoint());
     Coordinate2D<double> xy = derivative.toPoint();
     return firstComponent ? xy.x() : xy.y();
   }

@@ -27,7 +27,7 @@ struct Dimension;
 class Approximation final {
  public:
   // Optimize a projected function for efficient approximations
-  static void PrepareFunctionForApproximation(Tree* expr, const char* variable,
+  static bool PrepareFunctionForApproximation(Tree* expr, const char* variable,
                                               ComplexFormat complexFormat);
 
   template <typename T>

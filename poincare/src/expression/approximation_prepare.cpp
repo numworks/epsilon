@@ -19,16 +19,18 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
          changed;
 }
 
-void Approximation::PrepareFunctionForApproximation(
+bool Approximation::PrepareFunctionForApproximation(
     Tree* expr, const char* variable, ComplexFormat complexFormat) {
-  Variables::ReplaceSymbol(expr, variable, 0,
-                           complexFormat == ComplexFormat::Real
-                               ? ComplexSign::RealUnknown()
-                               : ComplexSign::Unknown());
-  Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation);
-  ApproximateAndReplaceEveryScalar(expr);
+  bool changed = Variables::ReplaceSymbol(expr, variable, 0,
+                                          complexFormat == ComplexFormat::Real
+                                              ? ComplexSign::RealUnknown()
+                                              : ComplexSign::Unknown());
+  changed = Tree::ApplyShallowInDepth(expr, &ShallowPrepareForApproximation) ||
+            changed;
+  changed = ApproximateAndReplaceEveryScalar(expr) || changed;
   // TODO: factor common sub-expressions
   // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
+  return changed;
 }
 
 }  // namespace Poincare::Internal

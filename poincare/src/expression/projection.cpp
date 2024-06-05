@@ -76,7 +76,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   tree->cloneTreeOverTree(definition);
   if (treeIsUserFunction) {
     if (!tree->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
-      // Add dependency
+      // If f(x) does not depend on x, add a dependency on x
       tree->moveTreeOverTree(PatternMatching::Create(
           KDep(KA, KSet(KB)), {.KA = tree, .KB = evaluateAt}));
     }

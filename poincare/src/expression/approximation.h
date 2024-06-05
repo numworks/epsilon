@@ -60,8 +60,8 @@ class Approximation final {
                           ComplexFormat complexFormat = ComplexFormat::Real);
 
   // Helper to replace a tree by its approximation
-  static bool SimplifyComplex(Tree* node);
-  EDITION_REF_WRAP(SimplifyComplex);
+  static bool ToComplexTree(Tree* node);
+  EDITION_REF_WRAP(ToComplexTree);
 
   // Approximate a tree with any dimension
   template <typename T>

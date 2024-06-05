@@ -964,7 +964,7 @@ Tree* PushComplex(std::complex<T> value) {
   return result;
 }
 
-bool Approximation::SimplifyComplex(Tree* node) {
+bool Approximation::ToComplexTree(Tree* node) {
   node->moveTreeOverTree(PushComplex(ToComplex<double>(node)));
   return true;
 }

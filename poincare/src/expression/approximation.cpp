@@ -187,9 +187,8 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
  */
 
 template <typename T>
-std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
-                                                 AngleUnit angleUnit,
-                                                 ComplexFormat complexFormat) {
+T Approximation::RootTreeToReal(const Tree* node, AngleUnit angleUnit,
+                                ComplexFormat complexFormat) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
@@ -197,7 +196,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  std::complex<T> result = ToComplex<T>(clone);
+  T result = RealPartIfReal(ToComplex<T>(clone));
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
@@ -1360,10 +1359,10 @@ template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*,
 template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
                                                               double);
 
-template std::complex<float> Approximation::RootTreeToComplex<float>(
-    const Tree*, AngleUnit, ComplexFormat);
-template std::complex<double> Approximation::RootTreeToComplex<double>(
-    const Tree*, AngleUnit, ComplexFormat);
+template float Approximation::RootTreeToReal<float>(const Tree*, AngleUnit,
+                                                    ComplexFormat);
+template double Approximation::RootTreeToReal<double>(const Tree*, AngleUnit,
+                                                      ComplexFormat);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);

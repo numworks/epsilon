@@ -12,7 +12,9 @@ template <typename T>
 class PointOrScalar {
  public:
   PointOrScalar(T x, T y) : m_x(x), m_y(y) { assert(!isScalar()); }
-  PointOrScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {}
+  PointOrScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {
+    assert(isScalar());
+  }
   bool isScalar() const { return OMG::IsSignalingNan(m_x); }
   T toScalar() const {
     assert(isScalar());

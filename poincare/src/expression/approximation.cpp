@@ -72,7 +72,7 @@ T Approximation::ToReal(const Tree* preparedFunction, T abscissa) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
   /* preparedFunction should have been at least projected, so these AngleUnit
-   * and CompexFormat parameters won't matter. */
+   * and ComplexFormat parameters won't matter. */
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
   s_context = &context;
   s_context->setLocalValue(abscissa);
@@ -89,7 +89,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* preparedFunction,
   Random::Context randomContext;
   s_randomContext = &randomContext;
   /* preparedFunction should have been at least projected, so these AngleUnit
-   * and CompexFormat parameters won't matter. */
+   * and ComplexFormat parameters won't matter. */
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
   s_context = &context;
   s_context->setLocalValue(abscissa);

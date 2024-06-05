@@ -35,9 +35,6 @@ class Beautification {
   static bool ShallowBeautifyPercent(Tree* tree);
   static bool ShallowBeautifyDivisions(Tree* node, void* context);
   static bool ShallowBeautify(Tree* node, void* context);
-  static bool ShallowBubbleUpDivision(Tree* e);
-  static bool DeepBubbleUpDivision(Tree* e);
-  static bool ReduceMultiplication(Tree* e);
   static bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 };
 

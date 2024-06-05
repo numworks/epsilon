@@ -14,7 +14,23 @@ SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
 
 PRIVATE_SFLAGS_ion += -DEPSILON_SDL_SCREEN_ONLY=1
 
-LDFLAGS_ion += --pre-js ion/src/simulator/web/preamble_env.js
+_ion_web_exported_functions := $(subst $( ),$(,) ,$(strip $(patsubst %,"%", \
+  _main \
+  _IonSimulatorKeyboardKeyDown \
+  _IonSimulatorKeyboardKeyUp \
+  _IonSimulatorEventsPushEvent \
+  _IonSoftwareVersion \
+  _IonPatchLevel \
+)))
+
+_ion_web_exported_runtime_methods := $(subst $( ),$(,) ,$(strip $(patsubst %,"%", \
+  UTF8ToString \
+)))
+
+LDFLAGS_ion += \
+  --pre-js ion/src/simulator/web/preamble_env.js \
+  -s EXPORTED_FUNCTIONS='[$(_ion_web_exported_functions)]' \
+  -s EXPORTED_RUNTIME_METHODS='[$(_ion_web_exported_runtime_methods)]'
 
 _ion_simulator_files := 0
 

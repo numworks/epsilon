@@ -158,6 +158,9 @@ jobs:
           path: output/release/simulator/ios/epsilon.ipa
   poincarejs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    # TODO: This is deactivated because setup-emscripten doesn't install tsc
+    #       which is needed to build the typescript file
+    if: ${{ false }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:

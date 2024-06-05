@@ -253,6 +253,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("dot([[1,2,3]],[[4,5,6]])", "32");
   simplifies_to("cross([[1,2,3]],[[4,5,6]])", "[[-3,6,-3]]");
   simplifies_to("0×[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
+  simplifies_to("trace([[√(2)+log(3)]])", "√(2)+ln(3)/ln(10)");
+  simplifies_to("transpose([[√(4)]])", "[[2]]");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {

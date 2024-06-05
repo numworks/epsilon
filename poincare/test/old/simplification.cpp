@@ -1682,12 +1682,12 @@ QUIZ_CASE(poincare_simplification_matrix) {
                                        Undefined::Name());
   assert_parsed_expression_simplify_to("trace([[√(2),2][4,3+log(3)]])",
                                        "log(3)+3+√(2)");
-  assert_parsed_expression_simplify_to("trace(√(2)+log(3))", "log(3)+√(2)");
+  assert_parsed_expression_simplify_to("trace(√(2)+log(3))", "undef");
 
   // Transpose
   assert_parsed_expression_simplify_to("transpose([[1/√(2),1/2,3][2,1,-3]])",
                                        "[[√(2)/2,2][1/2,1][3,-3]]");
-  assert_parsed_expression_simplify_to("transpose(√(4))", "2");
+  assert_parsed_expression_simplify_to("transpose(√(4))", "undef");
 
   // Ref and Rref
   assert_parsed_expression_simplify_to("ref([[1,1/√(2),√(4)]])",

@@ -197,8 +197,7 @@ UserExpression UserExpression::Parse(const char* string, Context* context,
   return result;
 }
 
-JuniorExpression JuniorExpression::Create(const Tree* structure,
-                                          ContextTrees ctx) {
+NewExpression NewExpression::Create(const Tree* structure, ContextTrees ctx) {
   Tree* tree = PatternMatching::Create(structure, ctx);
   return Builder(tree);
 }
@@ -233,9 +232,9 @@ SystemExpression SystemExpression::Builder(PointOrScalar<T> pointOrScalar) {
   return Builder<T>(pointOrScalar.toPoint());
 }
 
-JuniorExpression JuniorExpression::Builder(const Tree* tree) {
+NewExpression NewExpression::Builder(const Tree* tree) {
   if (!tree) {
-    return JuniorExpression();
+    return NewExpression();
   }
   size_t size = tree->treeSize();
   void* bufferNode =
@@ -243,37 +242,37 @@ JuniorExpression JuniorExpression::Builder(const Tree* tree) {
   JuniorExpressionNode* node =
       new (bufferNode) JuniorExpressionNode(tree, size);
   PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
-  return static_cast<JuniorExpression&>(h);
+  return static_cast<NewExpression&>(h);
 }
 
-JuniorExpression JuniorExpression::Builder(Tree* tree) {
-  JuniorExpression result = Builder(const_cast<const Tree*>(tree));
+NewExpression NewExpression::Builder(Tree* tree) {
+  NewExpression result = Builder(const_cast<const Tree*>(tree));
   if (tree) {
     tree->removeTree();
   }
   return result;
 }
 
-JuniorExpression JuniorExpression::Juniorize(OExpression e) {
+NewExpression NewExpression::Juniorize(OExpression e) {
   if (e.isUninitialized() ||
       e.otype() == ExpressionNode::Type::JuniorExpression) {
     // e is already a junior expression
-    return static_cast<JuniorExpression&>(e);
+    return static_cast<NewExpression&>(e);
   }
   return Builder(FromPoincareExpression(e));
 }
 
-JuniorExpression JuniorExpression::childAtIndex(int i) const {
+NewExpression NewExpression::childAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));
 }
 
-int JuniorExpression::numberOfDescendants(bool includeSelf) const {
+int NewExpression::numberOfDescendants(bool includeSelf) const {
   assert(tree());
   return tree()->numberOfDescendants(includeSelf);
 }
 
-ExpressionNode::Type JuniorExpression::type() const {
+ExpressionNode::Type NewExpression::type() const {
   /* TODO_PCJ: These are the types checked for in apps. Update apps to use the
    *           new blockType instead. */
   if (tree()->isRational()) {
@@ -377,7 +376,7 @@ ExpressionNode::Type JuniorExpression::type() const {
   }
 }
 
-bool JuniorExpression::isOfType(
+bool NewExpression::isOfType(
     std::initializer_list<ExpressionNode::Type> types) const {
   for (ExpressionNode::Type t : types) {
     if (type() == t) {
@@ -551,9 +550,8 @@ UserExpression ProjectedExpression::cloneAndBeautify(
   return Builder(e);
 }
 
-bool JuniorExpression::derivate(const ReductionContext& reductionContext,
-                                Poincare::Symbol symbol,
-                                OExpression symbolValue) {
+bool NewExpression::derivate(const ReductionContext& reductionContext,
+                             Poincare::Symbol symbol, OExpression symbolValue) {
   // TODO_PCJ: Remove
   assert(false);
   return false;
@@ -608,8 +606,8 @@ int SystemExpression::getPolynomialReducedCoefficients(
   return degree;
 }
 
-JuniorExpression JuniorExpression::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const JuniorExpression& expression,
+NewExpression NewExpression::replaceSymbolWithExpression(
+    const SymbolAbstract& symbol, const NewExpression& expression,
     bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
@@ -622,7 +620,7 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   if (Variables::ReplaceSymbolWithTree(
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
           expression.tree())) {
-    JuniorExpression res = Builder(result);
+    NewExpression res = Builder(result);
     replaceWithInPlace(res);
     return res;
   }
@@ -630,7 +628,7 @@ JuniorExpression JuniorExpression::replaceSymbolWithExpression(
   return *this;
 }
 
-static bool IsIgnoredSymbol(const JuniorExpression* e,
+static bool IsIgnoredSymbol(const NewExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
   if (e->type() != ExpressionNode::Type::Symbol) {
     return false;
@@ -646,10 +644,11 @@ static bool IsIgnoredSymbol(const JuniorExpression* e,
   return false;
 }
 
-bool JuniorExpression::recursivelyMatches(
-    ExpressionTrinaryTest test, Context* context,
-    SymbolicComputation replaceSymbols, void* auxiliary,
-    IgnoredSymbols* ignoredSymbols) const {
+bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
+                                       Context* context,
+                                       SymbolicComputation replaceSymbols,
+                                       void* auxiliary,
+                                       IgnoredSymbols* ignoredSymbols) const {
   if (!context) {
     replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
   }
@@ -700,10 +699,10 @@ bool JuniorExpression::recursivelyMatches(
       continue;
     }
     // TODO: There's no need to clone the juniorExpression here.
-    JuniorExpression childToAnalyze = childAtIndex(i);
+    NewExpression childToAnalyze = childAtIndex(i);
     bool matches;
     if (isParametered && i == Parametric::FunctionIndex(tree())) {
-      JuniorExpression symbolExpr = childAtIndex(Parametric::k_variableIndex);
+      NewExpression symbolExpr = childAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
       matches = childToAnalyze.recursivelyMatches(
@@ -719,10 +718,10 @@ bool JuniorExpression::recursivelyMatches(
   return false;
 }
 
-bool JuniorExpression::recursivelyMatches(
+bool NewExpression::recursivelyMatches(
     ExpressionTest test, Context* context,
     SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+  ExpressionTrinaryTest ternary = [](const NewExpression e, Context* context,
                                      void* auxiliary) {
     ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
     return (*trueTest)(e, context) ? OMG::Troolean::True
@@ -731,10 +730,10 @@ bool JuniorExpression::recursivelyMatches(
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool JuniorExpression::recursivelyMatches(
+bool NewExpression::recursivelyMatches(
     SimpleExpressionTest test, Context* context,
     SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+  ExpressionTrinaryTest ternary = [](const NewExpression e, Context* context,
                                      void* auxiliary) {
     SimpleExpressionTest* trueTest =
         static_cast<SimpleExpressionTest*>(auxiliary);
@@ -743,15 +742,15 @@ bool JuniorExpression::recursivelyMatches(
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool JuniorExpression::recursivelyMatches(ExpressionTestAuxiliary test,
-                                          Context* context,
-                                          SymbolicComputation replaceSymbols,
-                                          void* auxiliary) const {
+bool NewExpression::recursivelyMatches(ExpressionTestAuxiliary test,
+                                       Context* context,
+                                       SymbolicComputation replaceSymbols,
+                                       void* auxiliary) const {
   struct Pack {
     ExpressionTestAuxiliary* test;
     void* auxiliary;
   };
-  ExpressionTrinaryTest ternary = [](const JuniorExpression e, Context* context,
+  ExpressionTrinaryTest ternary = [](const NewExpression e, Context* context,
                                      void* pack) {
     ExpressionTestAuxiliary* trueTest =
         static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
@@ -763,7 +762,7 @@ bool JuniorExpression::recursivelyMatches(ExpressionTestAuxiliary test,
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 
-bool JuniorExpression::deepIsOfType(
+bool NewExpression::deepIsOfType(
     std::initializer_list<ExpressionNode::Type> types, Context* context) const {
   return recursivelyMatches(
       [](const Expression e, Context* context, void* auxiliary) {
@@ -777,30 +776,29 @@ bool JuniorExpression::deepIsOfType(
       &types);
 }
 
-bool JuniorExpression::deepIsMatrix(Context* context, bool canContainMatrices,
-                                    bool isReduced) const {
+bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
+                                 bool isReduced) const {
   if (!canContainMatrices) {
     return false;
   }
   return Dimension::GetDimension(tree()).isMatrix();
 }
 
-bool JuniorExpression::deepIsList(Context* context) const {
+bool NewExpression::deepIsList(Context* context) const {
   return Dimension::IsList(tree());
 }
 
-bool JuniorExpression::hasComplexI(Context* context,
-                                   SymbolicComputation replaceSymbols) const {
-  return !isUninitialized() &&
-         recursivelyMatches(
-             [](const JuniorExpression e, Context* context) {
-               return e.tree()->isComplexI();
-             },
-             context, replaceSymbols);
+bool NewExpression::hasComplexI(Context* context,
+                                SymbolicComputation replaceSymbols) const {
+  return !isUninitialized() && recursivelyMatches(
+                                   [](const NewExpression e, Context* context) {
+                                     return e.tree()->isComplexI();
+                                   },
+                                   context, replaceSymbols);
 }
 
-bool JuniorExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
-                               bool replaceSymbols, Context* ctx) const {
+bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
+                            bool replaceSymbols, Context* ctx) const {
   if (hasAngleUnits) {
     *hasAngleUnits = false;
   }
@@ -810,7 +808,7 @@ bool JuniorExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
   };
   Pack pack{ignoreAngleUnits, hasAngleUnits};
   return recursivelyMatches(
-      [](const JuniorExpression e, Context* context, void* arg) {
+      [](const NewExpression e, Context* context, void* arg) {
         Pack* pack = static_cast<Pack*>(arg);
         bool isAngleUnit = e.isPureAngleUnit();
         bool* hasAngleUnits = pack->hasAngleUnits;
@@ -828,37 +826,36 @@ bool JuniorExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
       &pack);
 }
 
-bool JuniorExpression::isPureAngleUnit() const {
+bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
          Dimension::GetDimension(tree()).isSimpleAngleUnit();
 }
 
-bool JuniorExpression::isInRadians(Context* context) const {
-  JuniorExpression units;
+bool NewExpression::isInRadians(Context* context) const {
+  NewExpression units;
   ReductionContext reductionContext;
   reductionContext.setContext(context);
   reductionContext.setUnitConversion(UnitConversion::None);
-  JuniorExpression thisClone =
+  NewExpression thisClone =
       cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
          Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
 }
 
-bool JuniorExpression::involvesDiscontinuousFunction(Context* context) const {
+bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
-bool JuniorExpression::IsDiscontinuous(const JuniorExpression e,
-                                       Context* context) {
+bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
 }
 
 /* Matrix */
 
 Poincare::Matrix Poincare::Matrix::Builder() {
-  JuniorExpression expr =
-      JuniorExpression::Builder(SharedTreeStack->push<Type::Matrix>(0, 0));
+  NewExpression expr =
+      NewExpression::Builder(SharedTreeStack->push<Type::Matrix>(0, 0));
   return static_cast<Poincare::Matrix&>(expr);
 }
 
@@ -867,7 +864,7 @@ void Poincare::Matrix::setDimensions(int rows, int columns) {
   Tree* clone = tree()->clone();
   Internal::Matrix::SetNumberOfColumns(clone, columns);
   Internal::Matrix::SetNumberOfRows(clone, rows);
-  JuniorExpression temp = JuniorExpression::Builder(clone);
+  NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<Poincare::Matrix&>(temp);
 }
 
@@ -886,7 +883,7 @@ int Poincare::Matrix::numberOfColumns() const {
 }
 
 // TODO_PCJ: Rework this and its usage
-void Poincare::Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
+void Poincare::Matrix::addChildAtIndexInPlace(NewExpression t, int index,
                                               int currentNumberOfChildren) {
   Tree* clone = tree()->clone();
   TreeRef newChild = t.tree()->clone();
@@ -902,12 +899,12 @@ void Poincare::Matrix::addChildAtIndexInPlace(JuniorExpression t, int index,
     previousChild->removeTree();
     newChild->moveTreeAtNode(previousChild);
   }
-  JuniorExpression temp = JuniorExpression::Builder(clone);
+  NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<Poincare::Matrix&>(temp);
 }
 
-JuniorExpression Poincare::Matrix::matrixChild(int i, int j) {
-  return JuniorExpression::Builder(Internal::Matrix::Child(tree(), i, j));
+NewExpression Poincare::Matrix::matrixChild(int i, int j) {
+  return NewExpression::Builder(Internal::Matrix::Child(tree(), i, j));
 }
 
 int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
@@ -916,7 +913,7 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   }
   Tree* clone = tree()->clone();
   int result = Internal::Matrix::CanonizeAndRank(clone);
-  JuniorExpression temp = JuniorExpression::Builder(clone);
+  NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<Poincare::Matrix&>(temp);
   return result;
 }
@@ -936,11 +933,11 @@ template int Poincare::Matrix::ArrayInverse<std::complex<double>>(
 
 /* Point */
 
-Point Point::Builder(JuniorExpression x, JuniorExpression y) {
+Point Point::Builder(NewExpression x, NewExpression y) {
   Tree* tree = KPoint->cloneNode();
   x.tree()->clone();
   y.tree()->clone();
-  JuniorExpression temp = JuniorExpression::Builder(tree);
+  NewExpression temp = NewExpression::Builder(tree);
   return static_cast<Point&>(temp);
 }
 
@@ -970,25 +967,25 @@ template Coordinate2D<double> Point::approximate2D<double>(
 /* List */
 
 List List::Builder() {
-  JuniorExpression expr =
-      JuniorExpression::Builder(SharedTreeStack->push<Type::List>(0));
+  NewExpression expr =
+      NewExpression::Builder(SharedTreeStack->push<Type::List>(0));
   return static_cast<List&>(expr);
 }
 
 void List::removeChildAtIndexInPlace(int i) {
   Tree* clone = tree()->clone();
   NAry::RemoveChildAtIndex(clone, i);
-  JuniorExpression temp = JuniorExpression::Builder(clone);
+  NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<List&>(temp);
 }
 
 // TODO_PCJ: Rework this and its usage
-void List::addChildAtIndexInPlace(JuniorExpression t, int index,
+void List::addChildAtIndexInPlace(NewExpression t, int index,
                                   int currentNumberOfChildren) {
   Tree* clone = tree()->clone();
   TreeRef newChild = t.tree()->clone();
   NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
-  JuniorExpression temp = JuniorExpression::Builder(clone);
+  NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<List&>(temp);
 }
 
@@ -1003,8 +1000,8 @@ bool Boolean::value() const {
 
 /* Unit */
 
-JuniorExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
-  return JuniorExpression::Builder(
+NewExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
+  return NewExpression::Builder(
       Units::Unit::Push(angleUnit == Preferences::AngleUnit::Radian
                             ? &Units::Angle::representatives.radian
                         : angleUnit == Preferences::AngleUnit::Degree
@@ -1013,13 +1010,13 @@ JuniorExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
                         Units::Prefix::EmptyPrefix()));
 }
 
-bool Unit::IsPureAngleUnit(JuniorExpression expression, bool isRadian) {
+bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {
   return Units::IsPureAngleUnit(expression.tree()) &&
          (!isRadian || Units::Unit::GetRepresentative(expression.tree()) ==
                            &Units::Angle::representatives.radian);
 }
 
-bool Unit::HasAngleDimension(JuniorExpression expression) {
+bool Unit::HasAngleDimension(NewExpression expression) {
   assert(Dimension::DeepCheckDimensions(expression.tree()));
   return Dimension::GetDimension(expression.tree()).isAngleUnit();
 }

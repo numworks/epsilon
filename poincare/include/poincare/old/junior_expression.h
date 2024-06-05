@@ -115,8 +115,8 @@ class JuniorExpression : public OExpression {
   JuniorExpression() {}
   JuniorExpression(const OExpression& other) { *this = other; }
 
-  JuniorExpression clone() const {
-    return static_cast<JuniorExpression>(OExpression::clone());
+  NewExpression clone() const {
+    return static_cast<NewExpression>(OExpression::clone());
   }
 
   static UserExpression Parse(const Internal::Tree* layout, Context* context,
@@ -126,8 +126,8 @@ class JuniorExpression : public OExpression {
                               bool addMissingParenthesis = true,
                               bool parseForAssignment = false);
 
-  static JuniorExpression Create(const Internal::Tree* structure,
-                                 Internal::ContextTrees ctx);
+  static NewExpression Create(const Internal::Tree* structure,
+                              Internal::ContextTrees ctx);
   static SystemExpression CreateSimplify(const Internal::Tree* structure,
                                          Internal::ContextTrees ctx);
   operator const Internal::Tree*() const { return tree(); }
@@ -141,27 +141,27 @@ class JuniorExpression : public OExpression {
   static SystemExpression Builder(PointOrScalar<T> pointOrScalar);
 
   template <Internal::KTrees::KTreeConcept T>
-  static JuniorExpression Builder(T x) {
+  static NewExpression Builder(T x) {
     return Builder(static_cast<const Internal::Tree*>(x));
   }
-  static JuniorExpression Builder(const Internal::Tree* tree);
+  static NewExpression Builder(const Internal::Tree* tree);
   // Eat the tree
-  static JuniorExpression Builder(Internal::Tree* tree);
-  static JuniorExpression Juniorize(OExpression e);
+  static NewExpression Builder(Internal::Tree* tree);
+  static NewExpression Juniorize(OExpression e);
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
-  JuniorExpression childAtIndex(int i) const;
+  NewExpression childAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
   ExpressionNode::Type type() const;
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;
 
-  JuniorExpression operator=(OExpression&& other) {
+  NewExpression operator=(OExpression&& other) {
     *this = Juniorize(other);
     return *this;
   }
 
-  JuniorExpression operator=(const OExpression& other) {
+  NewExpression operator=(const OExpression& other) {
     *this = Juniorize(other);
     return *this;
   }
@@ -233,15 +233,15 @@ class JuniorExpression : public OExpression {
                                 SystemExpression coefficients[]) const;
 
 #if 1  // TODO_PCJ
-  JuniorExpression replaceSymbolWithExpression(
-      const SymbolAbstract& symbol, const JuniorExpression& expression,
-      bool onlySecondTerm = false);
+  NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
+                                            const NewExpression& expression,
+                                            bool onlySecondTerm = false);
 
-  typedef OMG::Troolean (*ExpressionTrinaryTest)(const JuniorExpression e,
+  typedef OMG::Troolean (*ExpressionTrinaryTest)(const NewExpression e,
                                                  Context* context,
                                                  void* auxiliary);
   struct IgnoredSymbols {
-    JuniorExpression* head;
+    NewExpression* head;
     void* tail;
   };
   bool recursivelyMatches(
@@ -250,17 +250,17 @@ class JuniorExpression : public OExpression {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr,
       IgnoredSymbols* ignoredSymbols = nullptr) const;
-  typedef bool (*ExpressionTest)(const JuniorExpression e, Context* context);
+  typedef bool (*ExpressionTest)(const NewExpression e, Context* context);
   bool recursivelyMatches(
       ExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
-  typedef bool (*SimpleExpressionTest)(const JuniorExpression e);
+  typedef bool (*SimpleExpressionTest)(const NewExpression e);
   bool recursivelyMatches(
       SimpleExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
-  typedef bool (*ExpressionTestAuxiliary)(const JuniorExpression e,
+  typedef bool (*ExpressionTestAuxiliary)(const NewExpression e,
                                           Context* context, void* auxiliary);
   bool recursivelyMatches(
       ExpressionTestAuxiliary test, Context* context = nullptr,
@@ -275,52 +275,52 @@ class JuniorExpression : public OExpression {
   bool deepIsList(Context* context) const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsUninitialized(const JuniorExpression e) {
+  static bool IsUninitialized(const NewExpression e) {
     return e.isUninitialized();
   }
-  static bool IsUndefined(const JuniorExpression e) { return e.isUndefined(); }
-  static bool IsNAry(const JuniorExpression e) {
+  static bool IsUndefined(const NewExpression e) { return e.isUndefined(); }
+  static bool IsNAry(const NewExpression e) {
     return e.isOfType(
         {ExpressionNode::Type::Addition, ExpressionNode::Type::Multiplication});
   }
-  static bool IsApproximate(const JuniorExpression e) {
+  static bool IsApproximate(const NewExpression e) {
     return e.isOfType({ExpressionNode::Type::Decimal,
                        ExpressionNode::Type::Float,
                        ExpressionNode::Type::Double});
   }
-  static bool IsRandom(const JuniorExpression e) {
+  static bool IsRandom(const NewExpression e) {
     assert(false);
     return false;
   }
-  static bool IsMatrix(const JuniorExpression e, Context* context) {
+  static bool IsMatrix(const NewExpression e, Context* context) {
     assert(false);
     return false;
   }
-  static bool IsInfinity(const JuniorExpression e) {
+  static bool IsInfinity(const NewExpression e) {
     return e.isOfType({ExpressionNode::Type::Infinity});
   }
-  static bool IsPercent(const JuniorExpression e) {
+  static bool IsPercent(const NewExpression e) {
     return e.isOfType({ExpressionNode::Type::PercentSimple,
                        ExpressionNode::Type::PercentAddition});
   }
-  static bool IsDiscontinuous(const JuniorExpression e, Context* context);
-  static bool IsSymbolic(const JuniorExpression e) {
+  static bool IsDiscontinuous(const NewExpression e, Context* context);
+  static bool IsSymbolic(const NewExpression e) {
     assert(false);
     return false;
   }
-  static bool IsPoint(const JuniorExpression e) {
+  static bool IsPoint(const NewExpression e) {
     return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
   }
-  static bool IsSequence(const JuniorExpression e) {
+  static bool IsSequence(const NewExpression e) {
     return e.type() == ExpressionNode::Type::Sequence;
   }
-  static bool IsFactorial(const JuniorExpression e) {
+  static bool IsFactorial(const NewExpression e) {
     return e.type() == ExpressionNode::Type::Factorial;
   }
 
-  typedef bool (*PatternTest)(const JuniorExpression& e, Context* context,
+  typedef bool (*PatternTest)(const NewExpression& e, Context* context,
                               const char* symbol);
-  static bool IsRationalFraction(const JuniorExpression& e, Context* context,
+  static bool IsRationalFraction(const NewExpression& e, Context* context,
                                  const char* symbol) {
     assert(false);
     return false;
@@ -406,9 +406,9 @@ class Matrix final : public JuniorExpression {
   bool isVector() const;
   int numberOfRows() const;
   int numberOfColumns() const;
-  void addChildAtIndexInPlace(JuniorExpression t, int index,
+  void addChildAtIndexInPlace(NewExpression t, int index,
                               int currentNumberOfChildren);
-  JuniorExpression matrixChild(int i, int j);
+  NewExpression matrixChild(int i, int j);
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
   /* Inverse the array in-place. Array has to be given in the form
@@ -419,7 +419,7 @@ class Matrix final : public JuniorExpression {
 
 class Point final : public JuniorExpression {
  public:
-  static Point Builder(JuniorExpression x, JuniorExpression y);
+  static Point Builder(NewExpression x, NewExpression y);
   template <typename T>
   Coordinate2D<T> approximate2D(
       const ApproximationContext& approximationContext);
@@ -436,15 +436,15 @@ class List : public JuniorExpression {
     return false;
   }
   template <typename T>
-  JuniorExpression approximateAndRemoveUndefAndSort(
+  NewExpression approximateAndRemoveUndefAndSort(
       const ApproximationContext& approximationContext) const {
     assert(false);
-    return JuniorExpression();
+    return NewExpression();
   }
   int numberOfChildren() const;
 
   void removeChildAtIndexInPlace(int i);
-  void addChildAtIndexInPlace(JuniorExpression t, int index,
+  void addChildAtIndexInPlace(NewExpression t, int index,
                               int currentNumberOfChildren);
 };
 
@@ -456,9 +456,9 @@ class Boolean final : public JuniorExpression {
 class Unit final {
  public:
   // Build default unit for given angleUnit preference.
-  static JuniorExpression Builder(Preferences::AngleUnit angleUnit);
-  static bool IsPureAngleUnit(JuniorExpression expression, bool radianOnly);
-  static bool HasAngleDimension(JuniorExpression expression);
+  static NewExpression Builder(Preferences::AngleUnit angleUnit);
+  static bool IsPureAngleUnit(NewExpression expression, bool radianOnly);
+  static bool HasAngleDimension(NewExpression expression);
   static bool ShouldDisplayAdditionalOutputs(
       double value, OExpression unit, Preferences::UnitFormat unitFormat) {
     assert(false);

@@ -122,9 +122,9 @@ Evaluation<double> JuniorExpressionNode::approximate(
 }
 
 template <typename T>
-JuniorExpression JuniorExpressionNode::approximateToTree(
+SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
-  return JuniorExpression::Builder(Approximation::RootTreeToTree<T>(
+  return SystemExpression::Builder(Approximation::RootTreeToTree<T>(
       tree(), static_cast<AngleUnit>(approximationContext.angleUnit()),
       static_cast<ComplexFormat>(approximationContext.complexFormat())));
 }
@@ -171,9 +171,9 @@ int JuniorExpressionNode::polynomialDegree(Context* context,
 
 /* JuniorExpression */
 
-JuniorExpression JuniorExpression::Parse(const Tree* layout, Context* context,
-                                         bool addMissingParenthesis,
-                                         bool parseForAssignment) {
+UserExpression UserExpression::Parse(const Tree* layout, Context* context,
+                                     bool addMissingParenthesis,
+                                     bool parseForAssignment) {
   // TODO_PCJ: Use addMissingParenthesis
   return Builder(Parser::Parse(layout, context,
                                parseForAssignment
@@ -181,17 +181,17 @@ JuniorExpression JuniorExpression::Parse(const Tree* layout, Context* context,
                                    : ParsingContext::ParsingMethod::Classic));
 }
 
-JuniorExpression JuniorExpression::Parse(const char* string, Context* context,
-                                         bool addMissingParenthesis,
-                                         bool parseForAssignment) {
+UserExpression UserExpression::Parse(const char* string, Context* context,
+                                     bool addMissingParenthesis,
+                                     bool parseForAssignment) {
   if (string[0] == 0) {
-    return JuniorExpression();
+    return UserExpression();
   }
   Tree* layout = RackFromText(string);
   if (!layout) {
-    return JuniorExpression();
+    return UserExpression();
   }
-  JuniorExpression result =
+  UserExpression result =
       Parse(layout, context, addMissingParenthesis, parseForAssignment);
   layout->removeTree();
   return result;
@@ -203,30 +203,30 @@ JuniorExpression JuniorExpression::Create(const Tree* structure,
   return Builder(tree);
 }
 
-JuniorExpression JuniorExpression::CreateSimplify(const Tree* structure,
+SystemExpression SystemExpression::CreateSimplify(const Tree* structure,
                                                   ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateSimplify(structure, ctx);
   return Builder(tree);
 }
 
 // Builders from value.
-JuniorExpression JuniorExpression::Builder(int32_t n) {
+SystemExpression SystemExpression::Builder(int32_t n) {
   return Builder(Integer::Push(n));
 }
 
 template <typename T>
-JuniorExpression JuniorExpression::Builder(T x) {
+SystemExpression SystemExpression::Builder(T x) {
   return Builder(FloatNode::Push(x));
 }
 
 template <typename T>
-JuniorExpression JuniorExpression::Builder(Coordinate2D<T> point) {
+SystemExpression SystemExpression::Builder(Coordinate2D<T> point) {
   return Create(KPoint(KA, KB),
                 {.KA = Builder<T>(point.x()), .KB = Builder<T>(point.y())});
 }
 
 template <typename T>
-JuniorExpression JuniorExpression::Builder(PointOrScalar<T> pointOrScalar) {
+SystemExpression SystemExpression::Builder(PointOrScalar<T> pointOrScalar) {
   if (pointOrScalar.isScalar()) {
     return Builder<T>(pointOrScalar.toScalar());
   }
@@ -387,9 +387,9 @@ bool JuniorExpression::isOfType(
   return false;
 }
 
-void JuniorExpression::cloneAndSimplifyAndApproximate(
-    JuniorExpression* simplifiedExpression,
-    JuniorExpression* approximateExpression,
+void UserExpression::cloneAndSimplifyAndApproximate(
+    SystemExpression* simplifiedExpression,
+    SystemExpression* approximateExpression,
     const ReductionContext& reductionContext,
     bool approximateKeepingSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
@@ -413,7 +413,7 @@ void JuniorExpression::cloneAndSimplifyAndApproximate(
   return;
 }
 
-JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
+SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
     ReductionContext* reductionContext, bool* reduceFailure,
     bool approximateDuringReduction) const {
   ProjectionContext context = {
@@ -431,7 +431,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
   Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
   *reduceFailure = false;
-  JuniorExpression simplifiedExpression = Builder(e);
+  SystemExpression simplifiedExpression = Builder(e);
 #if 0
   if (approximateDuringReduction) {
     /* TODO_PCJ: We used to approximate after a full reduction (see comment).
@@ -463,7 +463,7 @@ JuniorExpression JuniorExpression::cloneAndDeepReduceWithSystemCheckpoint(
   return simplifiedExpression;
 }
 
-JuniorExpression JuniorExpression::cloneAndReduce(
+SystemExpression UserExpression::cloneAndReduce(
     ReductionContext reductionContext) const {
   // TODO: Ensure all cloneAndReduce usages handle reduction failure.
   bool reduceFailure;
@@ -471,7 +471,7 @@ JuniorExpression JuniorExpression::cloneAndReduce(
                                                 &reduceFailure);
 }
 
-JuniorExpression JuniorExpression::getReducedDerivative(
+SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
   Tree* result = SharedTreeStack->push(Type::NthDiff);
   SharedTreeStack->push<Type::UserSymbol>(symbolName);
@@ -483,42 +483,42 @@ JuniorExpression JuniorExpression::getReducedDerivative(
   Simplification::SimplifySystem(result, false);
   /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
    * getSystemFunction is expected to be called on it later. */
-  return JuniorExpression::Builder(result);
+  return SystemExpression::Builder(result);
 }
 
-JuniorExpression JuniorExpression::getSystemFunction(
+SystemFunction SystemExpression::getSystemFunction(
     const char* symbolName) const {
   Tree* result = tree()->clone();
   Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                  ComplexFormat::Real);
-  return JuniorExpression::Builder(result);
+  return SystemFunction::Builder(result);
 }
 
 template <typename T>
-T JuniorExpression::approximateToScalarWithValue(T x) const {
+T SystemExpression::approximateToScalarWithValue(T x) const {
   return Approximation::RootPreparedToReal<T>(tree(), x);
 }
 
 template <typename T>
-T JuniorExpression::ParseAndSimplifyAndApproximateToScalar(
+T UserExpression::ParseAndSimplifyAndApproximateToScalar(
     const char* text, Context* context,
     SymbolicComputation symbolicComputation) {
-  JuniorExpression exp = ParseAndSimplify(text, context, symbolicComputation);
+  UserExpression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
   // TODO: Shared shouldn't be called in Poincare
   return Shared::PoincareHelpers::ApproximateToScalar<T>(exp, context);
 }
 
 template <typename T>
-PointOrScalar<T> JuniorExpression::approximateToPointOrScalarWithValue(
+PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {
   return Internal::Approximation::RootPreparedToPointOrScalar<T>(tree(), x);
 }
 
-JuniorExpression JuniorExpression::cloneAndSimplify(
+UserExpression UserExpression::cloneAndSimplify(
     ReductionContext reductionContext, bool* reductionFailure) const {
   bool reduceFailure = false;
-  JuniorExpression e =
+  UserExpression e =
       cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
   if (reductionFailure) {
     *reductionFailure = reduceFailure;
@@ -538,7 +538,7 @@ JuniorExpression JuniorExpression::cloneAndSimplify(
   return e.cloneAndBeautify(reductionContext);
 }
 
-JuniorExpression JuniorExpression::cloneAndBeautify(
+UserExpression ProjectedExpression::cloneAndBeautify(
     const ReductionContext& reductionContext) const {
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
@@ -559,9 +559,9 @@ bool JuniorExpression::derivate(const ReductionContext& reductionContext,
   return false;
 }
 
-int JuniorExpression::getPolynomialCoefficients(
+int SystemExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
-    JuniorExpression coefficients[]) const {
+    SystemExpression coefficients[]) const {
   Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
   Tree* poly = tree()->clone();
   AdvancedSimplification::DeepExpand(poly);
@@ -590,8 +590,8 @@ int JuniorExpression::getPolynomialCoefficients(
   return degree;
 }
 
-int JuniorExpression::getPolynomialReducedCoefficients(
-    const char* symbolName, JuniorExpression coefficients[], Context* context,
+int SystemExpression::getPolynomialReducedCoefficients(
+    const char* symbolName, SystemExpression coefficients[], Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     bool keepDependencies) const {
@@ -1024,9 +1024,9 @@ bool Unit::HasAngleDimension(JuniorExpression expression) {
   return Dimension::GetDimension(expression.tree()).isAngleUnit();
 }
 
-template JuniorExpression JuniorExpressionNode::approximateToTree<float>(
+template SystemExpression JuniorExpressionNode::approximateToTree<float>(
     const ApproximationContext&) const;
-template JuniorExpression JuniorExpressionNode::approximateToTree<double>(
+template SystemExpression JuniorExpressionNode::approximateToTree<double>(
     const ApproximationContext&) const;
 
 template Evaluation<float> EvaluationFromTree<float>(
@@ -1037,31 +1037,30 @@ template Evaluation<double> EvaluationFromTree<double>(
 template Evaluation<float> EvaluationFromSimpleTree<float>(const Tree*);
 template Evaluation<double> EvaluationFromSimpleTree<double>(const Tree*);
 
-template JuniorExpression JuniorExpression::Builder<float>(float);
-template JuniorExpression JuniorExpression::Builder<double>(double);
-template JuniorExpression JuniorExpression::Builder<float>(Coordinate2D<float>);
-template JuniorExpression JuniorExpression::Builder<double>(
+template SystemExpression SystemExpression::Builder<float>(float);
+template SystemExpression SystemExpression::Builder<double>(double);
+template SystemExpression SystemExpression::Builder<float>(Coordinate2D<float>);
+template SystemExpression SystemExpression::Builder<double>(
     Coordinate2D<double>);
-template JuniorExpression JuniorExpression::Builder<float>(
+template SystemExpression SystemExpression::Builder<float>(
     PointOrScalar<float>);
-template JuniorExpression JuniorExpression::Builder<double>(
+template SystemExpression SystemExpression::Builder<double>(
     PointOrScalar<double>);
 
 template PointOrScalar<float>
-JuniorExpression::approximateToPointOrScalarWithValue<float>(float) const;
+SystemFunction::approximateToPointOrScalarWithValue<float>(float) const;
 template PointOrScalar<double>
-JuniorExpression::approximateToPointOrScalarWithValue<double>(double) const;
+SystemFunction::approximateToPointOrScalarWithValue<double>(double) const;
 
-template float JuniorExpression::approximateToScalarWithValue<float>(
-    float) const;
-template double JuniorExpression::approximateToScalarWithValue<double>(
+template float SystemFunction::approximateToScalarWithValue<float>(float) const;
+template double SystemFunction::approximateToScalarWithValue<double>(
     double) const;
 
-template float JuniorExpression::ParseAndSimplifyAndApproximateToScalar<float>(
+template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char* text, Context* context,
     SymbolicComputation symbolicComputation);
-template double JuniorExpression::ParseAndSimplifyAndApproximateToScalar<
-    double>(const char* text, Context* context,
-            SymbolicComputation symbolicComputation);
+template double UserExpression::ParseAndSimplifyAndApproximateToScalar<double>(
+    const char* text, Context* context,
+    SymbolicComputation symbolicComputation);
 
 }  // namespace Poincare

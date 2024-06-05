@@ -16,6 +16,24 @@ namespace Poincare {
 
 class Symbol;
 
+/* Aliases used to specify a JuniorExpression's type. TODO_PCJ: split them into
+ * actual classes to prevent casting one into another. */
+
+// Can be applied to different types of Expressions
+using NewExpression = JuniorExpression;
+// Can be layoutted (Not projected)
+using UserExpression = NewExpression;
+// Must have been projected
+using ProjectedExpression = NewExpression;
+// Must have been systematic simplified
+using SystemExpression = ProjectedExpression;
+// Must have been systematic simplified and can depend on a Variable
+using SystemFunction = SystemExpression;
+// Same with Scalar approximation
+using SystemCartesianFunction = SystemFunction;
+// Same with Point approximation
+using SystemParametricFunction = SystemFunction;
+
 class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;
 
@@ -59,7 +77,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
   /* Similar to the previous one but bypass Evaluation */
   template <typename T>
-  JuniorExpression approximateToTree(
+  SystemExpression approximateToTree(
       const ApproximationContext& approximationContext) const;
 
   // Layout
@@ -101,26 +119,26 @@ class JuniorExpression : public OExpression {
     return static_cast<JuniorExpression>(OExpression::clone());
   }
 
-  static JuniorExpression Parse(const Internal::Tree* layout, Context* context,
-                                bool addMissingParenthesis = true,
-                                bool parseForAssignment = false);
-  static JuniorExpression Parse(const char* layout, Context* context,
-                                bool addMissingParenthesis = true,
-                                bool parseForAssignment = false);
+  static UserExpression Parse(const Internal::Tree* layout, Context* context,
+                              bool addMissingParenthesis = true,
+                              bool parseForAssignment = false);
+  static UserExpression Parse(const char* layout, Context* context,
+                              bool addMissingParenthesis = true,
+                              bool parseForAssignment = false);
 
   static JuniorExpression Create(const Internal::Tree* structure,
                                  Internal::ContextTrees ctx);
-  static JuniorExpression CreateSimplify(const Internal::Tree* structure,
+  static SystemExpression CreateSimplify(const Internal::Tree* structure,
                                          Internal::ContextTrees ctx);
   operator const Internal::Tree*() const { return tree(); }
   // Builders from value.
-  static JuniorExpression Builder(int32_t n);
+  static SystemExpression Builder(int32_t n);
   template <typename T>
-  static JuniorExpression Builder(T x);
+  static SystemExpression Builder(T x);
   template <typename T>
-  static JuniorExpression Builder(Coordinate2D<T> point);
+  static SystemExpression Builder(Coordinate2D<T> point);
   template <typename T>
-  static JuniorExpression Builder(PointOrScalar<T> pointOrScalar);
+  static SystemExpression Builder(PointOrScalar<T> pointOrScalar);
 
   template <Internal::KTrees::KTreeConcept T>
   static JuniorExpression Builder(T x) {
@@ -153,25 +171,25 @@ class JuniorExpression : public OExpression {
   }
 
   void cloneAndSimplifyAndApproximate(
-      JuniorExpression* simplifiedExpression,
-      JuniorExpression* approximateExpression,
+      SystemExpression* simplifiedExpression,
+      SystemExpression* approximateExpression,
       const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
-  JuniorExpression cloneAndDeepReduceWithSystemCheckpoint(
+  SystemExpression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure,
       bool approximateDuringReduction = false) const;
 
-  JuniorExpression cloneAndSimplify(ReductionContext reductionContext,
-                                    bool* reductionFailure = nullptr) const;
-  JuniorExpression cloneAndReduce(ReductionContext reductionContext) const;
+  UserExpression cloneAndSimplify(ReductionContext reductionContext,
+                                  bool* reductionFailure = nullptr) const;
+  SystemExpression cloneAndReduce(ReductionContext reductionContext) const;
 
-  JuniorExpression cloneAndBeautify(
+  UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
 
-  JuniorExpression getReducedDerivative(const char* symbolName,
+  SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;
   // Replace some UserSymbol into Var0 for approximateToScalarWithValue
-  JuniorExpression getSystemFunction(const char* symbolName) const;
+  SystemFunction getSystemFunction(const char* symbolName) const;
   // Approximate to scalar replacing Var0 with value.
   template <typename T>
   T approximateToScalarWithValue(T x) const;
@@ -180,7 +198,7 @@ class JuniorExpression : public OExpression {
   PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;
 
   template <typename T>
-  JuniorExpression approximateToTree(
+  SystemExpression approximateToTree(
       const ApproximationContext& approximationContext) const {
     return node()->approximateToTree<T>(approximationContext);
   }
@@ -200,7 +218,7 @@ class JuniorExpression : public OExpression {
                 OExpression symbolValue);
 
   int getPolynomialReducedCoefficients(const char* symbolName,
-                                       JuniorExpression coefficients[],
+                                       SystemExpression coefficients[],
                                        Context* context,
                                        Preferences::ComplexFormat complexFormat,
                                        Preferences::AngleUnit angleUnit,
@@ -212,7 +230,7 @@ class JuniorExpression : public OExpression {
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
   int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                JuniorExpression coefficients[]) const;
+                                SystemExpression coefficients[]) const;
 
 #if 1  // TODO_PCJ
   JuniorExpression replaceSymbolWithExpression(

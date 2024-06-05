@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <ion.h>
 #include <ion/storage/file_system.h>
+#include <omg/memory.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/list.h>
 #include <poincare/old/serialization_helper.h>
@@ -373,18 +374,6 @@ uint32_t DoublePairStore::storeChecksum() const {
   return Ion::crc32DoubleWord(checkSumPerSeries, k_numberOfSeries);
 }
 
-/* TODO: This function is temporary. We want to create a function with a
- * similar behaviour in Ion in a near future.
- * This was copy pasted from the crc32EatByte function in the kernel. */
-constexpr uint32_t polynomialForCrc = 0x04C11DB7;
-uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
-  crc ^= data << 24;
-  for (int i = 8; i--;) {
-    crc = crc & 0x80000000 ? ((crc << 1) ^ polynomialForCrc) : (crc << 1);
-  }
-  return crc;
-}
-
 uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   /* Since the pool is not packed, it's noisy and we cannot just compute
    * the CRC32 of the expressionNode in the pool.
@@ -400,7 +389,8 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
       double value = get(series, i, j);
       for (size_t index = 0; index < sizeof(double) / sizeof(uint8_t);
            index++) {
-        crc = crc32EatByte(crc, *(reinterpret_cast<uint8_t *>(&value) + index));
+        crc = OMG::Memory::crc32EatByte(
+            crc, *(reinterpret_cast<uint8_t *>(&value) + index));
       }
     }
   }

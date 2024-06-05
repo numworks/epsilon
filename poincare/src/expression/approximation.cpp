@@ -1201,16 +1201,16 @@ U Approximation::MapAndReduce(const Tree* node, Reductor<U> reductor,
   return res;
 }
 
-bool Approximation::CanApproximate(const Tree* tree, bool approxLocalVar) {
+bool Approximation::CanApproximate(const Tree* tree,
+                                   int firstNonApproximableVarId) {
   if (tree->isRandomNode() || tree->isUserNamed() ||
-      (!approxLocalVar && tree->isVar() &&
-       Variables::Id(tree) == Parametric::k_localVariableId) ||
+      (tree->isVar() && Variables::Id(tree) >= firstNonApproximableVarId) ||
       tree->isSet()) {
     return false;
   }
   int childIndex = 0;
   for (const Tree* child : tree->children()) {
-    bool approxLocalVarInChild = approxLocalVar;
+    bool enterScope = false;
     if (tree->isParametric()) {
       if (childIndex == Parametric::k_variableIndex) {
         // Parametric's variable cant be approximated, but we never want to.
@@ -1218,11 +1218,10 @@ bool Approximation::CanApproximate(const Tree* tree, bool approxLocalVar) {
         continue;
       }
       if (childIndex == Parametric::FunctionIndex(tree)) {
-        // Ignore approxLocalVar since we enter a local context
-        approxLocalVarInChild = true;
+        enterScope = true;
       }
     }
-    if (!CanApproximate(child, approxLocalVarInChild)) {
+    if (!CanApproximate(child, firstNonApproximableVarId + enterScope)) {
       return false;
     }
     childIndex++;

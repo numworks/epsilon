@@ -64,9 +64,7 @@ class Approximation final {
   static T RootTreeToReal(const Tree* node,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    std::complex<T> value =
-        RootTreeToComplex<T>(node, angleUnit, complexFormat);
-    return value.imag() == 0 ? value.real() : NAN;
+    return RealPartIfReal(RootTreeToComplex<T>(node, angleUnit, complexFormat));
   }
 
   // Helper to replace a tree by its approximation
@@ -82,8 +80,7 @@ class Approximation final {
 
   template <typename T>
   static T To(const Tree* node) {
-    std::complex<T> value = ToComplex<T>(node);
-    return value.imag() == 0 ? value.real() : NAN;
+    return RealPartIfReal(ToComplex<T>(node));
   }
 
   // Approximate expression at KVarX/K = x
@@ -91,8 +88,7 @@ class Approximation final {
   static T To(const Tree* node, T x) {
     assert(s_context);
     s_context->setLocalValue(x);
-    std::complex<T> value = ToComplex<T>(node);
-    return value.imag() == 0 ? value.real() : NAN;
+    return RealPartIfReal(ToComplex<T>(node));
   }
 
   template <typename T>
@@ -134,6 +130,11 @@ class Approximation final {
  private:
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
 
+  // Return NAN if value is not real, real part otherwise.
+  template <typename T>
+  static T RealPartIfReal(std::complex<T> value) {
+    return value.imag() == 0 ? value.real() : NAN;
+  }
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T, typename U>

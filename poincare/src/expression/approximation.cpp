@@ -71,13 +71,15 @@ template <typename T>
 T Approximation::ToReal(const Tree* preparedFunction, T abscissa) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
+  /* preparedFunction should have been at least projected, so these AngleUnit
+   * and CompexFormat parameters won't matter. */
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
   s_context = &context;
   s_context->setLocalValue(abscissa);
-  std::complex<T> value = ToComplex<T>(preparedFunction);
+  T value = RealPartIfReal(ToComplex<T>(preparedFunction));
   s_randomContext = nullptr;
   s_context = nullptr;
-  return value.imag() == 0 ? value.real() : NAN;
+  return value;
 }
 
 template <typename T>
@@ -86,18 +88,18 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* preparedFunction,
   bool isPoint = preparedFunction->isPoint();
   Random::Context randomContext;
   s_randomContext = &randomContext;
+  /* preparedFunction should have been at least projected, so these AngleUnit
+   * and CompexFormat parameters won't matter. */
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
   s_context = &context;
   s_context->setLocalValue(abscissa);
   T xScalar;
   if (isPoint) {
     s_context->m_pointElement = 0;
-    std::complex<T> xValue = ToComplex<T>(preparedFunction);
-    xScalar = xValue.imag() == 0 ? xValue.real() : NAN;
+    xScalar = RealPartIfReal(ToComplex<T>(preparedFunction));
     s_context->m_pointElement = 1;
   }
-  std::complex<T> yValue = ToComplex<T>(preparedFunction);
-  T yScalar = yValue.imag() == 0 ? yValue.real() : NAN;
+  T yScalar = RealPartIfReal(ToComplex<T>(preparedFunction));
   s_randomContext = nullptr;
   s_context = nullptr;
   return isPoint ? PointOrScalar<T>(xScalar, yScalar)
@@ -192,11 +194,11 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  std::complex<T> result = ToComplex<T>(clone);
+  T result = RealPartIfReal(ToComplex<T>(clone));
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;
-  return result.imag() == 0 ? result.real() : NAN;
+  return result;
 }
 
 /* Helpers */

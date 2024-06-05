@@ -23,3 +23,5 @@ $(call create_goal,test,\
 	Some test executable that should exit with an error\
 )
 $(call create_goal,test_dummy,main)
+
+$(call create_zip,test.zip,$(OUTPUT_DIRECTORY)/arm64/test.bin)

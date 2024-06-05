@@ -46,6 +46,18 @@ $(TOOLS_DIRECTORY)/$1: TOOLS_SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavor
 )
 endef
 
+# create_zip, <zip file>, <contents>
+define create_zip
+$(eval \
+$1: $(OUTPUT_DIRECTORY)/$1
+	@ :
+
+$(OUTPUT_DIRECTORY)/$1: $2
+	$$(call rule_label,ZIP)
+	$(QUIET) rm -rf $$(basename $$@) && mkdir -p $$(basename $$@) && cp $$^ $$(basename $$@) && zip -r -9 -j $$@ $$(basename $$@) > /dev/null && rm -rf $$(basename $$@)
+)
+endef
+
 # Private API
 
 # flavorless_modules_for_flavored_goal, <flavored goal>

@@ -49,11 +49,10 @@ QUIZ_CASE(pcj_approximation_can_approximate) {
   quiz_assert(Approximation::CanApproximate(KAdd(2_e, 3_e)));
   quiz_assert(!Approximation::CanApproximate(KAdd(2_e, "x"_e)));
   quiz_assert(!Approximation::CanApproximate(KAdd(KVarX, 3_e)));
-  quiz_assert(Approximation::CanApproximate(KAdd(KVarX, 3_e), 1));
+  quiz_assert(
+      Approximation::CanApproximate(KSum("k"_e, 2_e, 8_e, KAdd(KVarK, 3_e))));
   quiz_assert(!Approximation::CanApproximate(
       KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0>, 3_e))));
-  quiz_assert(Approximation::CanApproximate(
-      KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0>, 3_e)), 1));
 }
 
 QUIZ_CASE(pcj_approximation) {

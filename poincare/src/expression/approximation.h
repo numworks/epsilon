@@ -102,11 +102,10 @@ class Approximation final {
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
 
-  /* Return false if tree could not be approximated to a defined value.
-   * Variables with id >= firstNonApproximableVarId are considered not
-   * approximable. */
-  static bool CanApproximate(const Tree* tree,
-                             int firstNonApproximableVarId = 0);
+  // Return false if tree could not be approximated to a defined value.
+  static bool CanApproximate(const Tree* tree) {
+    return CanApproximate(tree, 0);
+  }
 
   /* If collapse is true, approximate parents if all children have approximated.
    * Also raise if result is undefined. */
@@ -138,6 +137,10 @@ class Approximation final {
   static U MapAndReduce(const Tree* node, Reductor<U> reductor,
                         Mapper<std::complex<T>, U> mapper = nullptr);
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);
+
+  /* Variables with id >= firstNonApproximableVarId are considered not
+   * approximable. */
+  static bool CanApproximate(const Tree* tree, int firstNonApproximableVarId);
 
   template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,

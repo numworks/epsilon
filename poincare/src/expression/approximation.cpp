@@ -79,7 +79,7 @@ T Approximation::RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
   s_context = &context;
   s_context->setLocalValue(abscissa);
-  T value = RealPartIfReal(ToComplex<T>(preparedFunction));
+  T value = To<T>(preparedFunction);
   s_randomContext = nullptr;
   s_context = nullptr;
   return value;
@@ -99,10 +99,10 @@ PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
   T xScalar;
   if (isPoint) {
     s_context->m_pointElement = 0;
-    xScalar = RealPartIfReal(ToComplex<T>(preparedFunction));
+    xScalar = To<T>(preparedFunction);
     s_context->m_pointElement = 1;
   }
-  T yScalar = RealPartIfReal(ToComplex<T>(preparedFunction));
+  T yScalar = To<T>(preparedFunction);
   s_randomContext = nullptr;
   s_context = nullptr;
   return isPoint ? PointOrScalar<T>(xScalar, yScalar)
@@ -196,7 +196,7 @@ T Approximation::RootTreeToReal(const Tree* node, AngleUnit angleUnit,
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  T result = RealPartIfReal(ToComplex<T>(clone));
+  T result = To<T>(clone);
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;

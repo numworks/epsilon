@@ -61,7 +61,8 @@ class Approximation final {
 
   template <typename T>
   static T To(const Tree* node) {
-    return RealPartIfReal(ToComplex<T>(node));
+    std::complex<T> value = ToComplex<T>(node);
+    return value.imag() == 0 ? value.real() : NAN;
   }
 
   // Approximate expression at KVarX/K = x
@@ -69,7 +70,7 @@ class Approximation final {
   static T To(const Tree* node, T x) {
     assert(s_context);
     s_context->setLocalValue(x);
-    return RealPartIfReal(ToComplex<T>(node));
+    return To<T>(node);
   }
 
   // Approximate a tree with any dimension
@@ -124,12 +125,6 @@ class Approximation final {
 
  private:
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
-
-  // Return NAN if value is not real, real part otherwise.
-  template <typename T>
-  static T RealPartIfReal(std::complex<T> value) {
-    return value.imag() == 0 ? value.real() : NAN;
-  }
 
   template <typename T>
   using Reductor = T (*)(T, T);

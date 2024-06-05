@@ -23,15 +23,17 @@ class Symbol;
 using NewExpression = JuniorExpression;
 // Can be layoutted (Not projected)
 using UserExpression = NewExpression;
+// Can be approximated without context
+using NoContextExpression = NewExpression;
 // Must have been projected
-using ProjectedExpression = NewExpression;
+using ProjectedExpression = NoContextExpression;
 // Must have been systematic simplified
 using SystemExpression = ProjectedExpression;
-// Must have been systematic simplified and can depend on a Variable
-using SystemFunction = SystemExpression;
-// Same with Scalar approximation
+// Can depend on a Variable and has been prepared for approximation
+using SystemFunction = NoContextExpression;
+// SystemFunction with Scalar approximation
 using SystemCartesianFunction = SystemFunction;
-// Same with Point approximation
+// SystemFunction with Point approximation
 using SystemParametricFunction = SystemFunction;
 
 class JuniorExpressionNode final : public ExpressionNode {

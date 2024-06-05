@@ -45,6 +45,17 @@ void approximates_to(const char* input, const char* output,
       projectionContext);
 }
 
+QUIZ_CASE(pcj_approximation_can_approximate) {
+  quiz_assert(Approximation::CanApproximate(KAdd(2_e, 3_e)));
+  quiz_assert(!Approximation::CanApproximate(KAdd(2_e, "x"_e)));
+  quiz_assert(!Approximation::CanApproximate(KAdd(KVarX, 3_e)));
+  quiz_assert(Approximation::CanApproximate(KAdd(KVarX, 3_e), 1));
+  quiz_assert(!Approximation::CanApproximate(
+      KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0>, 3_e))));
+  quiz_assert(Approximation::CanApproximate(
+      KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0>, 3_e)), 1));
+}
+
 QUIZ_CASE(pcj_approximation) {
   approximates_to(123_e, 123.f);
   approximates_to(-123.21_fe, -123.21f);

@@ -197,22 +197,6 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   PointOrScalar<double> derivative = function->approximateDerivative<double>(
       cursor->t(), App::app()->localContext(), derivationOrder);
 
-  /* Force derivative to 0 if cursor is at an extremum where the function is
-   * differentiable. */
-  if (derivative.isScalar() && derivationOrder == 1) {
-    PointsOfInterestCache* pointsOfInterest =
-        App::app()->graphController()->pointsOfInterestForRecord(record);
-    if (std::isfinite(derivative.toScalar()) &&
-        (pointsOfInterest->hasInterestAtCoordinates(
-             cursor->x(), cursor->y(),
-             Solver<double>::Interest::LocalMaximum) ||
-         pointsOfInterest->hasInterestAtCoordinates(
-             cursor->x(), cursor->y(),
-             Solver<double>::Interest::LocalMinimum))) {
-      derivative = PointOrScalar<double>(0.);
-    }
-  }
-
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   size_t numberOfChar =
@@ -229,6 +213,21 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
                         mode, precision);
   } else {
     assert(derivative.isScalar());
+    /* Force derivative to 0 if cursor is at an extremum where the function is
+     * differentiable. */
+    if (derivationOrder == 1) {
+      PointsOfInterestCache* pointsOfInterest =
+          App::app()->graphController()->pointsOfInterestForRecord(record);
+      if (std::isfinite(derivative.toScalar()) &&
+          (pointsOfInterest->hasInterestAtCoordinates(
+               cursor->x(), cursor->y(),
+               Solver<double>::Interest::LocalMaximum) ||
+           pointsOfInterest->hasInterestAtCoordinates(
+               cursor->x(), cursor->y(),
+               Solver<double>::Interest::LocalMinimum))) {
+        derivative = PointOrScalar<double>(0.);
+      }
+    }
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
                         "=%*.*ed", derivative.toScalar(), mode, precision);
   }

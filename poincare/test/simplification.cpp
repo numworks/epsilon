@@ -640,13 +640,13 @@ QUIZ_CASE(pcj_simplification_power) {
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");
   // - x^y if x is complex or positive
-  simplifies_to("41^(1/3)", "41^(1/3)");
+  simplifies_to("41^(1/3)", "root(41,3)");
   // - PowerReal(x,y) y is not a rational
   simplifies_to("x^(e^3)", "x^e^3");
   simplifies_to("(x^e)^3)", "(x^e)^3)");
   // - Looking at y's reduced rational form p/q :
   //   * PowerReal(x,y) if x is of unknown sign and p odd
-  simplifies_to("x^(1/3)", "x^(1/3)");
+  simplifies_to("x^(1/3)", "root(x,3)");
   //   * Unreal if q is even and x negative
   simplifies_to("(-1)^(1/2)", "nonreal");
   //   * |x|^y if p is even

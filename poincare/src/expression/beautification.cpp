@@ -334,9 +334,22 @@ bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
     return false;
   }
 
-  return
-      // A^(1/2) -> Sqrt(A)
-      PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA));
+  // A^(1/2) -> Sqrt(A)
+  if (PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA))) {
+    return true;
+  }
+
+  // A^(1/N) -> Root(A, N)
+  if (e->isPow() && e->child(1)->isRational() &&
+      Rational::Numerator(e->child(1)).isOne()) {
+    Tree* root = SharedTreeStack->push(Type::Root);
+    e->child(0)->clone();
+    Rational::Denominator(e->child(1)).pushOnTreeStack();
+    e->moveTreeOverTree(root);
+    return true;
+  }
+
+  return false;
 }
 
 // Reverse most system projections to display better expressions

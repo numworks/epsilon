@@ -26,18 +26,14 @@ struct Dimension;
 
 class Approximation final {
  public:
-  // Optimize a projected function for efficient approximations
-  static bool PrepareFunctionForApproximation(Tree* expr, const char* variable,
-                                              ComplexFormat complexFormat);
+  /* Approximations on root tree */
 
+  template <typename T>
+  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa);
   template <typename T>
   static T RootPreparedToReal(const Tree* preparedExpression) {
     return RootPreparedToReal<T>(preparedExpression, NAN);
   }
-
-  template <typename T>
-  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa);
-
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
       const Tree* preparedFunction, T abscissa);
@@ -52,20 +48,13 @@ class Approximation final {
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                               ComplexFormat complexFormat, Dimension dim,
                               int listLength);
-
   // Approximate an entire scalar tree, isolated from any outer context.
   template <typename T>
   static T RootTreeToReal(const Tree* node,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real);
 
-  // Helper to replace a tree by its approximation
-  static bool ToComplexTree(Tree* node);
-  EDITION_REF_WRAP(ToComplexTree);
-
-  // Approximate a tree with any dimension
-  template <typename T>
-  static Tree* ToTree(const Tree* node, Dimension dim);
+  /* Approximations on tree */
 
   template <typename T>
   static std::complex<T> ToComplex(const Tree* node);
@@ -83,6 +72,10 @@ class Approximation final {
     return RealPartIfReal(ToComplex<T>(node));
   }
 
+  // Approximate a tree with any dimension
+  template <typename T>
+  static Tree* ToTree(const Tree* node, Dimension dim);
+
   template <typename T>
   static bool ToBoolean(const Tree* node);
 
@@ -94,6 +87,16 @@ class Approximation final {
 
   template <typename T>
   static Tree* ToMatrix(const Tree* node);
+
+  // Replace a Tree with the Tree of its complex approximation
+  static bool ToComplexTree(Tree* node);
+  EDITION_REF_WRAP(ToComplexTree);
+
+  /* Helpers */
+
+  // Optimize a projected function for efficient approximations
+  static bool PrepareFunctionForApproximation(Tree* expr, const char* variable,
+                                              ComplexFormat complexFormat);
 
   // Return false if tree could not be approximated to a defined value.
   static bool CanApproximate(const Tree* tree) {
@@ -127,6 +130,7 @@ class Approximation final {
   static T RealPartIfReal(std::complex<T> value) {
     return value.imag() == 0 ? value.real() : NAN;
   }
+
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T, typename U>
@@ -134,6 +138,7 @@ class Approximation final {
   template <typename T, typename U>
   static U MapAndReduce(const Tree* node, Reductor<U> reductor,
                         Mapper<std::complex<T>, U> mapper = nullptr);
+
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);
 
   /* Variables with id >= firstNonApproximableVarId are considered not

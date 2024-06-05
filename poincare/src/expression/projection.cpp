@@ -75,7 +75,11 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   }
   tree->cloneTreeOverTree(definition);
   if (treeIsUserFunction) {
-    tree->deepReplaceWith(KUnknownSymbol, evaluateAt);
+    if (!tree->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
+      // Add dependency
+      tree->moveTreeOverTree(PatternMatching::Create(
+          KDep(KA, KSet(KB)), {.KA = tree, .KB = evaluateAt}));
+    }
     evaluateAt->removeTree();
   }
   // Replace node again in case it has been replaced with another symbol

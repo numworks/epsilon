@@ -54,7 +54,8 @@ Random::Context* Approximation::s_randomContext = nullptr;
 /* Approximation::Context */
 
 Approximation::Context::Context(AngleUnit angleUnit,
-                                ComplexFormat complexFormat)
+                                ComplexFormat complexFormat,
+                                VariableType abscissa)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
       m_variablesOffset(k_maxNumberOfVariables)
@@ -67,46 +68,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_variables[i] = NAN;
   }
-}
-
-// Function should have been prepared by PrepareFunctionForApproximation
-template <typename T>
-T Approximation::RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  /* preparedFunction should have been at least projected, so these AngleUnit
-   * and ComplexFormat parameters won't matter. */
-  Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
-  s_context = &context;
-  s_context->setLocalValue(abscissa);
-  T value = To<T>(preparedFunction);
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return value;
-}
-
-template <typename T>
-PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
-    const Tree* preparedFunction, T abscissa) {
-  bool isPoint = preparedFunction->isPoint();
-  Random::Context randomContext;
-  s_randomContext = &randomContext;
-  /* preparedFunction should have been at least projected, so these AngleUnit
-   * and ComplexFormat parameters won't matter. */
-  Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
-  s_context = &context;
-  s_context->setLocalValue(abscissa);
-  T xScalar;
-  if (isPoint) {
-    s_context->m_pointElement = 0;
-    xScalar = To<T>(preparedFunction);
-    s_context->m_pointElement = 1;
-  }
-  T yScalar = To<T>(preparedFunction);
-  s_randomContext = nullptr;
-  s_context = nullptr;
-  return isPoint ? PointOrScalar<T>(xScalar, yScalar)
-                 : PointOrScalar<T>(yScalar);
+  setLocalValue(abscissa);
 }
 
 template <typename T>
@@ -187,20 +149,35 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
  */
 
 template <typename T>
-T Approximation::RootTreeToReal(const Tree* node, AngleUnit angleUnit,
-                                ComplexFormat complexFormat) {
+PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
+    const Tree* node, bool isPrepared, T abscissa, AngleUnit angleUnit,
+    ComplexFormat complexFormat) {
+  bool isPoint = node->isPoint();
   Random::Context randomContext;
   s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
+  Context context(angleUnit, complexFormat, abscissa);
   s_context = &context;
-  Tree* clone = node->clone();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-  T result = To<T>(clone);
-  clone->removeTree();
+  Tree* clone;
+  if (!isPrepared) {
+    clone = node->clone();
+    // TODO we should rather assume variable projection has already been done
+    Variables::ProjectLocalVariablesToId(clone);
+    node = clone;
+  }
+  T xScalar;
+  if (isPoint) {
+    s_context->m_pointElement = 0;
+    xScalar = To<T>(node);
+    s_context->m_pointElement = 1;
+  }
+  T yScalar = To<T>(node);
+  if (!isPrepared) {
+    clone->removeTree();
+  }
   s_randomContext = nullptr;
   s_context = nullptr;
-  return result;
+  return isPoint ? PointOrScalar<T>(xScalar, yScalar)
+                 : PointOrScalar<T>(yScalar);
 }
 
 /* Helpers */
@@ -1351,18 +1328,10 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* tree) {
  * correct ToComplex<T> as needed since the code is mostly independant of the
  * float type used in the tree. */
 
-template float Approximation::RootPreparedToReal(const Tree*, float);
-template double Approximation::RootPreparedToReal(const Tree*, double);
-
-template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
-    const Tree*, float);
-template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
-    const Tree*, double);
-
-template float Approximation::RootTreeToReal<float>(const Tree*, AngleUnit,
-                                                    ComplexFormat);
-template double Approximation::RootTreeToReal<double>(const Tree*, AngleUnit,
-                                                      ComplexFormat);
+template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
+    const Tree*, bool, float, AngleUnit, ComplexFormat);
+template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
+    const Tree*, bool, double, AngleUnit, ComplexFormat);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);

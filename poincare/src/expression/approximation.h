@@ -29,14 +29,24 @@ class Approximation final {
   /* Approximations on root tree */
 
   template <typename T>
-  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa);
-  template <typename T>
-  static T RootPreparedToReal(const Tree* preparedExpression) {
-    return RootPreparedToReal<T>(preparedExpression, NAN);
+  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa = NAN) {
+    return RootToPointOrScalarPrivate(preparedFunction, true, abscissa)
+        .toScalar();
   }
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
-      const Tree* preparedFunction, T abscissa);
+      const Tree* preparedFunction, T abscissa) {
+    return RootToPointOrScalarPrivate(preparedFunction, true, abscissa);
+  }
+  // Approximate an entire scalar tree, isolated from any outer context.
+  template <typename T>
+  static T RootTreeToReal(const Tree* node,
+                          AngleUnit angleUnit = AngleUnit::Radian,
+                          ComplexFormat complexFormat = ComplexFormat::Real) {
+    return RootToPointOrScalarPrivate(node, false, NAN, angleUnit,
+                                      complexFormat)
+        .toScalar();
+  }
 
   // Approximate a tree with any dimension, isolated from any outer context.
   template <typename T>
@@ -48,11 +58,6 @@ class Approximation final {
   static Tree* RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                               ComplexFormat complexFormat, Dimension dim,
                               int listLength);
-  // Approximate an entire scalar tree, isolated from any outer context.
-  template <typename T>
-  static T RootTreeToReal(const Tree* node,
-                          AngleUnit angleUnit = AngleUnit::Radian,
-                          ComplexFormat complexFormat = ComplexFormat::Real);
 
   /* Approximations on tree */
 
@@ -124,6 +129,12 @@ class Approximation final {
   static T FloatLCM(T a, T b);
 
  private:
+  template <typename T>
+  static PointOrScalar<T> RootToPointOrScalarPrivate(
+      const Tree* tree, bool isPrepared = true, T abscissa = NAN,
+      AngleUnit angleUnit = AngleUnit::Radian,
+      ComplexFormat complexFormat = ComplexFormat::Real);
+
   static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
 
   template <typename T>
@@ -181,7 +192,9 @@ class Approximation final {
 
   struct Context {
     using VariableType = double;
-    Context(AngleUnit angleUnit, ComplexFormat complexFormat);
+    Context(AngleUnit angleUnit = AngleUnit::Radian,
+            ComplexFormat complexFormat = ComplexFormat::Cartesian,
+            VariableType abscissa = NAN);
 
     VariableType variable(uint8_t index) const {
       return m_variables[indexForVariable(index)];

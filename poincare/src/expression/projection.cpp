@@ -65,21 +65,13 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   } else if (!definition) {
     return false;
   }
-  // Otherwise, local variable scope should be handled.
-  assert(!Variables::HasVariables(definition));
-  // Replace function's symbol with definition
-  TreeRef evaluateAt;
   if (treeIsUserFunction) {
-    evaluateAt = tree->child(0)->clone();
-  }
-  tree->cloneTreeOverTree(definition);
-  if (treeIsUserFunction) {
-    if (!tree->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
-      // If f(x) does not depend on x, add a dependency on x
-      tree->moveTreeOverTree(PatternMatching::Create(
-          KDep(KA, KSet(KB)), {.KA = tree, .KB = evaluateAt}));
-    }
-    evaluateAt->removeTree();
+    // Replace function's symbol with definition
+    Variables::ReplaceUserFunctionWithTree(tree, definition);
+  } else {
+    // Otherwise, local variable scope should be handled.
+    assert(!Variables::HasVariables(definition));
+    tree->cloneTreeOverTree(definition);
   }
   // Replace node again in case it has been replaced with another symbol
   ShallowReplaceUserNamed(tree, ctx);

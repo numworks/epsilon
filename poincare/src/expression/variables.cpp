@@ -1,5 +1,6 @@
 #include "variables.h"
 
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <string.h>
 
@@ -145,6 +146,21 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   return changed;
 }
 
+void Variables::ReplaceUserFunctionWithTree(Tree* expr,
+                                            const Tree* replacement) {
+  assert(expr->isUserFunction());
+  // Otherwise, local variable scope should be handled.
+  assert(!Variables::HasVariables(replacement));
+  TreeRef evaluateAt = expr->child(0)->clone();
+  expr->cloneTreeOverTree(replacement);
+  if (!expr->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
+    // If f(x) does not depend on x, add a dependency on x
+    expr->moveTreeOverTree(PatternMatching::Create(
+        KDep(KA, KSet(KB)), {.KA = expr, .KB = evaluateAt}));
+  }
+  evaluateAt->removeTree();
+}
+
 /* TODO: This could be factorized with other methods, such as Replace,
  * ReplaceSymbol or Projection::DeepReplaceUserNamed. */
 bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
@@ -157,13 +173,7 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
   }
   if (symbol->isUserFunction() && expr->isUserFunction() &&
       strcmp(Symbol::GetName(expr), Symbol::GetName(symbol)) == 0) {
-    // Otherwise, local variable scope should be handled.
-    assert(!Variables::HasVariables(replacement));
-    TreeRef evaluateAt;
-    evaluateAt = expr->child(0)->clone();
-    expr->cloneTreeOverTree(replacement);
-    expr->deepReplaceWith(KUnknownSymbol, evaluateAt);
-    evaluateAt->removeTree();
+    ReplaceUserFunctionWithTree(expr, replacement);
     return true;
   }
   bool isParametric = expr->isParametric();

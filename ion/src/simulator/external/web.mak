@@ -43,3 +43,9 @@ SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
 # The EM_ASM directive needs to be built using -std=gnu99
 # FIXME Handle PRIVATE_CFLAGS_<module> if needed
 $(call objects_foreach_arch,$(SOURCES_sdl)): CFLAGS += -std=gnu99
+
+# Search this specific directory for SDL_config.h before $(PATH_sdl)
+# FIXME Move this file to a SDL directory?
+SFLAGS_sdl := -Iion/src/simulator/web/include $(SFLAGS_sdl)
+# Make sure an error is raised if we ever use the standard SDL_config.h
+PRIVATE_SFLAGS_sdl += -DUSING_GENERATED_CONFIG_H

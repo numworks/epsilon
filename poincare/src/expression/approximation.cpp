@@ -197,7 +197,7 @@ std::complex<T> Approximation::RootTreeToComplex(const Tree* node,
   Tree* clone = node->clone();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
-  T result = RealPartIfReal(ToComplex<T>(clone));
+  std::complex<T> result = ToComplex<T>(clone);
   clone->removeTree();
   s_randomContext = nullptr;
   s_context = nullptr;

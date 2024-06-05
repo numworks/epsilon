@@ -267,6 +267,9 @@ bool Simplification::SimplifySystem(Tree* e, bool advanced) {
 }
 
 bool Simplification::TurnToPolarForm(Tree* e, Dimension dim) {
+  if (e->isUndefined()) {
+    return false;
+  }
   // Apply element-wise on explicit lists and matrices
   if (e->isMatrix() || (dim.isScalar() && e->isList())) {
     bool changed = false;

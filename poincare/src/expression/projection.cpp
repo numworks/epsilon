@@ -39,12 +39,11 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   SymbolicComputation symbolic = ctx.m_symbolic;
   assert(symbolic != SymbolicComputation::DoNotReplaceAnySymbol);
   bool treeIsUserFunction = tree->isUserFunction();
-  if (!treeIsUserFunction) {
-    if (!tree->isUserSymbol() ||
-        symbolic ==
-            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
-      return false;
-    }
+  if (!treeIsUserFunction &&
+      (!tree->isUserSymbol() ||
+       symbolic ==
+           SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
+    return false;
   }
   if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     tree->cloneTreeOverTree(KNotDefined);

@@ -467,7 +467,7 @@ QUIZ_CASE(pcj_simplification_factorial) {
   simplifies_to("(3/5)!", "undef");
   // TODO_PCJ: use ComplexSign to set undef this factorial
   simplifies_to("i!", "i!");
-  simplifies_to("π!", "π!");
+  simplifies_to("π!", "undef");
   simplifies_to("n!", "n!");
   // simplifies_to("(n+1)!/n!", "n+1"); TODO through parametric
 }

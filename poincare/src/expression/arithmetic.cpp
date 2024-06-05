@@ -17,6 +17,9 @@ namespace Poincare::Internal {
  * checked earlier. */
 
 OMG::Troolean IsInteger(const Tree* e) {
+  if (e->isMathematicalConstant() || e->treeIsIdenticalTo(KExp(1_e))) {
+    return OMG::Troolean::False;
+  }
   if (!e->isRational()) {
     return OMG::Troolean::Unknown;
   }

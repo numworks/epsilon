@@ -169,27 +169,28 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   bool needOpposite = false;
   bool needI = false;
   SplitMultiplication(expr, num, den, &needOpposite, &needI);
+  if (den->isOne() && !needOpposite && !needI) {
+    num->removeTree();
+    den->removeTree();
+    return false;
+  }
   if (needOpposite) {
     expr->cloneNodeBeforeNode(KOpposite);
     expr = expr->child(0);
   }
-  bool changed = false;
+  if (needI) {
+    expr->cloneNodeBeforeNode(KMult.node<2>);
+    expr = expr->child(0);
+    // TODO: create method cloneTreeAfterTree
+    expr->nextTree()->cloneTreeBeforeNode(i_e);
+  }
   if (!den->isOne()) {
-    if (needI) {
-      expr->cloneNodeBeforeNode(KMult.node<2>);
-      expr = expr->child(0);
-      // TODO: create method cloneTreeAfterTree
-      expr->nextTree()->cloneTreeBeforeNode(i_e);
-    }
-    changed = true;
     num->cloneNodeAtNode(KDiv);
-    expr->moveTreeOverTree(num);
-    return true;
   } else {
-    num->removeTree();
     den->removeTree();
   }
-  return false;
+  expr->moveTreeOverTree(num);
+  return true;
 }
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should

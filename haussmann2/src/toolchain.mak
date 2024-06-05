@@ -5,6 +5,7 @@ PYTHON := $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
 HOSTCC := gcc
 HOSTCXX := g++
 HOSTLD := g++
+HOSTCPP := cpp # The C preprocessor, nothing to do with C++
 
 SFLAGS := \
   -DDEBUG=$(DEBUG) \

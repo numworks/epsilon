@@ -32,6 +32,7 @@ $(call import_module,apps,apps)
 
 # Declare goals
 
+ifeq ($(PLATFORM_TYPE),simulator)
 $(call create_goal,epsilon, \
   apps \
   escher \
@@ -42,6 +43,7 @@ $(call create_goal,epsilon, \
   python \
   sdl \
 )
+endif
 
 ifeq ($(PLATFORM),web)
 $(call create_zip,epsilon%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \

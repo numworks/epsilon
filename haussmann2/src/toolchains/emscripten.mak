@@ -9,13 +9,12 @@ EXECUTABLE_EXTENSION := js
 
 # Modules should add EXPORTED_FUNCTIONS and EXPORTED_RUNTIME_METHODS to LDFLAGS.
 LDFLAGS += \
-  --memory-init-file 0 \
   -Oz \
+  -s SINGLE_FILE \
   -s ASYNCIFY=1 \
-  -s EXPORT_NAME="Epsilon" \
+  -s EXPORT_NAME="$(APP_NAME)" \
   -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) \
-  -s PRECISE_F32=1 \
-  -s WASM=0
+  -s PRECISE_F32=1
 
 ifneq ($(DEBUG),0)
 LDFLAGS += \

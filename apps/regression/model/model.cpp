@@ -100,7 +100,7 @@ void Model::fitLevenbergMarquardt(Store* store, int series,
          iterationCount < k_maxIterations) {
     // Create the alpha prime matrix (it is symmetric)
     double coefficientsAPrime[Model::k_maxNumberOfCoefficients *
-                              Model::k_maxNumberOfCoefficients] = {NAN};
+                              Model::k_maxNumberOfCoefficients];
     assert(n > 0);  // Ensure that coefficientsAPrime is initialized
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {

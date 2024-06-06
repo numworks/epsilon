@@ -240,8 +240,14 @@ void Layoutter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
         continue;
       }
       addSeparator(layoutParent);
-      if (op != UCodePointNull && !(op == '+' && child->isOpposite())) {
-        PushCodePoint(layoutParent, op);
+      if (op != UCodePointNull) {
+        if (op == '+' && child->isOpposite()) {
+          // Consume opposite block now and insert - instead of +
+          PushCodePoint(layoutParent, '-');
+          child->removeNode();
+        } else {
+          PushCodePoint(layoutParent, op);
+        }
         addSeparator(layoutParent);
       }
     }

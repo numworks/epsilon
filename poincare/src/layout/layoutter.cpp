@@ -797,8 +797,9 @@ void Layoutter::StripSeparators(Tree* rack) {
 }
 
 void Layoutter::StripUselessPlus(Tree* rack) {
-  /* Remove plus followed by minus, preversing separators
-   * 23+-45 => 23-45 and 23 + -45 => 23 - 45 */
+  /* Ad-hoc method to turn "+-" and "+<separator>-" into "-" and "-<separator>"
+   * respectively.
+   * TODO: do not insert "+" when followed by "-" in decimals and floats */
   assert(rack->isRackLayout());
   Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
@@ -810,6 +811,8 @@ void Layoutter::StripUselessPlus(Tree* rack) {
         next = next->nextTree();
       }
       if (CodePointLayout::IsCodePoint(next, '-')) {
+        /* Unary minus are not followed by a separator, reusing the potential
+         * separator of the plus is sufficient. */
         child->moveTreeOverTree(next);
         n--;
       }

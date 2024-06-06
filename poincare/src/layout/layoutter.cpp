@@ -805,7 +805,9 @@ void Layoutter::StripSeparators(Tree* rack) {
 void Layoutter::StripUselessPlus(Tree* rack) {
   /* Ad-hoc method to turn "+-" and "+<separator>-" into "-" and "-<separator>"
    * respectively.
-   * TODO: do not insert "+" when followed by "-" in decimals and floats */
+   * TODO: we should rather rework LayoutExpression(negative double) to make it
+   * work like rationals with first the beautification into opposite block and
+   * then the insertion of - instead of + when layoutting the addition. */
   assert(rack->isRackLayout());
   Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();

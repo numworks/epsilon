@@ -169,13 +169,10 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
   return result;
 }
 
-void assert_parsed_expression_is(
-    const char *expression, Poincare::OExpression r, bool addParentheses,
-    bool parseForAssignment,
-    Preferences::MixedFractions mixedFractionsParameter) {
+void assert_parsed_expression_is(const char *expression,
+                                 Poincare::OExpression r, bool addParentheses,
+                                 bool parseForAssignment) {
   Shared::GlobalContext context;
-  Preferences::SharedPreferences()->enableMixedFractions(
-      mixedFractionsParameter);
   Tree *parsed = parse_expression(expression, &context, addParentheses,
                                   parseForAssignment);
   Tree *expected = Internal::FromPoincareExpression(r);

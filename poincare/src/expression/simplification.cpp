@@ -201,9 +201,6 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
             *static_cast<ProjectionContext*>(context);
         ToSystem(e, &projectionContext);
         SimplifySystem(e, true);
-        if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
-          TurnToPolarForm(e, projectionContext.m_dimension);
-        }
         // TODO: Should be in SimplifySystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
         Beautification::DeepBeautify(e, projectionContext);
@@ -264,50 +261,6 @@ bool Simplification::SimplifySystem(Tree* e, bool advanced) {
     changed = AdvancedSimplification::AdvancedReduce(e) || changed;
   }
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
-}
-
-bool Simplification::TurnToPolarForm(Tree* e, Dimension dim) {
-  if (e->isUndefined()) {
-    return false;
-  }
-  // Apply element-wise on explicit lists and matrices
-  if (e->isMatrix() || (dim.isScalar() && e->isList())) {
-    bool changed = false;
-    for (Tree* child : e->children()) {
-      changed |= TurnToPolarForm(child, Dimension::Scalar());
-    }
-    return changed;
-  }
-  if (!dim.isScalar()) {
-    return false;
-  }
-  /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
-   * If abs or arg stays unreduced, leave x as it was. */
-  Tree* result = SharedTreeStack->push<Type::Mult>(2);
-  Tree* abs = SharedTreeStack->push(Type::Abs);
-  e->clone();
-  bool absReduced = ShallowSystematicReduce(abs);
-  SharedTreeStack->push(Type::Exp);
-  SharedTreeStack->push<Type::Mult>(2);
-  SharedTreeStack->push(Type::ComplexI);
-  Tree* arg = SharedTreeStack->push(Type::Arg);
-  e->clone();
-  bool argReduced = ShallowSystematicReduce(arg);
-  /* the multiplication that may be created by arg is not flattened on purpose
-   * to keep (π/2)*i as such and not as π*i/2 */
-  if (!absReduced || !argReduced) {
-    SharedTreeStack->dropBlocksFrom(result);
-    return false;
-  }
-  if (abs->isZero() || arg->isZero()) {
-    NAry::RemoveChildAtIndex(result, 1);
-  }
-  if (abs->isOne()) {
-    NAry::RemoveChildAtIndex(result, 0);
-  }
-  NAry::SquashIfPossible(result);
-  e->moveTreeOverTree(result);
-  return true;
 }
 
 bool Simplification::TryApproximationStrategyAgain(

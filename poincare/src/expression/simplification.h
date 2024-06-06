@@ -35,7 +35,6 @@ class Simplification {
  private:
   static bool BubbleUpFromChildren(Tree* u);
   static bool SimplifySwitch(Tree* u);
-  static bool TurnToPolarForm(Tree* e, Dimension dim);
 };
 
 }  // namespace Poincare::Internal

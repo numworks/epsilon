@@ -29,6 +29,7 @@ class Beautification {
                                      ComplexFormat complexFormat);
 
  private:
+  static bool TurnToPolarForm(Tree* e, Dimension dim);
   static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
                                          bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);

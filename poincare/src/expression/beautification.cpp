@@ -300,6 +300,9 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
 bool Beautification::DeepBeautify(Tree* expr,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
+  if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
+    TurnToPolarForm(expr, projectionContext.m_dimension);
+  }
   bool changed =
       DeepBeautifyAngleFunctions(expr, projectionContext.m_angleUnit, &dummy);
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
@@ -403,6 +406,50 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KNthDiff(KA, KB, 1_e, KC),
                                     KDiff(KA, KB, KC)) ||
       changed;
+}
+
+bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
+  if (e->isUndefined()) {
+    return false;
+  }
+  // Apply element-wise on explicit lists and matrices
+  if (e->isMatrix() || (dim.isScalar() && e->isList())) {
+    bool changed = false;
+    for (Tree* child : e->children()) {
+      changed |= TurnToPolarForm(child, Dimension::Scalar());
+    }
+    return changed;
+  }
+  if (!dim.isScalar()) {
+    return false;
+  }
+  /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
+   * If abs or arg stays unreduced, leave x as it was. */
+  Tree* result = SharedTreeStack->push<Type::Mult>(2);
+  Tree* abs = SharedTreeStack->push(Type::Abs);
+  e->clone();
+  bool absReduced = Simplification::ShallowSystematicReduce(abs);
+  SharedTreeStack->push(Type::Exp);
+  SharedTreeStack->push<Type::Mult>(2);
+  SharedTreeStack->push(Type::ComplexI);
+  Tree* arg = SharedTreeStack->push(Type::Arg);
+  e->clone();
+  bool argReduced = Simplification::ShallowSystematicReduce(arg);
+  /* the multiplication that may be created by arg is not flattened on purpose
+   * to keep (π/2)*i as such and not as π*i/2 */
+  if (!absReduced || !argReduced) {
+    SharedTreeStack->dropBlocksFrom(result);
+    return false;
+  }
+  if (abs->isZero() || arg->isZero()) {
+    NAry::RemoveChildAtIndex(result, 1);
+  }
+  if (abs->isOne()) {
+    NAry::RemoveChildAtIndex(result, 0);
+  }
+  NAry::SquashIfPossible(result);
+  e->moveTreeOverTree(result);
+  return true;
 }
 
 template <typename T>

@@ -100,8 +100,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
 
 void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
                                          TreeRef& denominator,
-                                         bool* needOpposite, bool* needI) {
-  assert(needOpposite && needI);
+                                         bool* needOpposite) {
+  assert(needOpposite);
   numerator = SharedTreeStack->push<Type::Mult>(0);
   denominator = SharedTreeStack->push<Type::Mult>(0);
   // TODO replace NumberOfFactors and Factor with an iterable
@@ -110,14 +110,6 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
     const Tree* factor = Factor(expr, i);
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
-    if (factor->isComplexI() && i == numberOfFactors - 1) {
-      /* Move the final i out of the multiplication e.g. 2^(-1)×i → (1/2)×i. If
-       * i is not in the last position, it is either intentional or a bug in the
-       * order, so leave it where it is. */
-      assert(*needI == false);
-      *needI = true;
-      continue;
-    }
     if (factor->isRational()) {
       if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
@@ -167,9 +159,8 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   TreeRef num;
   TreeRef den;
   bool needOpposite = false;
-  bool needI = false;
-  SplitMultiplication(expr, num, den, &needOpposite, &needI);
-  if (den->isOne() && !needOpposite && !needI) {
+  SplitMultiplication(expr, num, den, &needOpposite);
+  if (den->isOne() && !needOpposite) {
     num->removeTree();
     den->removeTree();
     return false;
@@ -177,12 +168,6 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   if (needOpposite) {
     expr->cloneNodeBeforeNode(KOpposite);
     expr = expr->child(0);
-  }
-  if (needI) {
-    expr->cloneNodeBeforeNode(KMult.node<2>);
-    expr = expr->child(0);
-    // TODO: create method cloneTreeAfterTree
-    expr->nextTree()->cloneTreeBeforeNode(i_e);
   }
   if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);
@@ -498,19 +483,25 @@ bool Beautification::ShallowBubbleUpDivision(Tree* e) {
     ReduceMultiplication(e->child(1));
     return true;
   }
+  // (a * i) / b -> (a / b) * i
+  if (PatternMatching::MatchReplace(e, KDiv(KMult(KA_s, i_e), KC),
+                                    KMult(KDiv(KMult(KA_s), KC), i_e))) {
+    return true;
+  }
 
   if (!e->isMult()) {
     return false;
   }
-  const int nbChildren = e->numberOfChildren();
-  if (nbChildren == 2 && e->child(0)->isDiv() && e->child(1)->isComplexI()) {
-    // Do not beautify (a / b) * i -> (a * i) / b
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(KMult(KDiv(KA, KC), i_e), e, &ctx)) {
+    // Already in the right form
     return false;
   }
   bool hasComplexI = false;  // Only used for assert
 
   // a * (b / c) * d * (e / f) * g = (a * b * d * e * g) / (c * f)
   TreeRef denom(SharedTreeStack->push<Type::Mult>(0));
+  const int nbChildren = e->numberOfChildren();
   int nbDiv = 0;
   Tree* child = e->firstChild();
   for (int i = 0; i < nbChildren; i++) {

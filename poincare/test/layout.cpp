@@ -22,6 +22,10 @@ QUIZ_CASE(pcj_expression_to_layout) {
       Layoutter::LayoutExpression(
           KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e)->clone(), true),
       "2 1/3+4"_l);
+  assert_trees_are_equal(
+      Layoutter::LayoutExpression(KAdd(12345_de, -54321_de)->clone(), false),
+      "12"_l ^ KThousandSeparatorL ^ "345"_l ^ KOperatorSeparatorL ^ "-"_l ^
+          KOperatorSeparatorL ^ "54"_l ^ KThousandSeparatorL ^ "321"_l);
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

@@ -797,25 +797,22 @@ void Layoutter::StripSeparators(Tree* rack) {
 }
 
 void Layoutter::StripUselessPlus(Tree* rack) {
+  /* Remove plus followed by minus, preversing separators
+   * 23+-45 => 23-45 and 23 + -45 => 23 - 45 */
   assert(rack->isRackLayout());
   Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
   int i = 0;
-  Tree* previousPlus = nullptr;
   while (i < n) {
-    if (child->isCodePointLayout()) {
-      if (previousPlus && CodePointLayout::GetCodePoint(child) == '-') {
-        assert(previousPlus->nextTree() == child &&
-               previousPlus->treeSize() == child->treeSize());
-        previousPlus->removeTree();
-        previousPlus = nullptr;
-        n--;
-        continue;
+    if (CodePointLayout::IsCodePoint(child, '+') && i + 1 < n) {
+      Tree* next = child->nextTree();
+      if (next->isOperatorSeparatorLayout() && i + 2 < n) {
+        next = next->nextTree();
       }
-      previousPlus =
-          CodePointLayout::GetCodePoint(child) == '+' ? child : nullptr;
-    } else {
-      previousPlus = nullptr;
+      if (CodePointLayout::IsCodePoint(next, '-')) {
+        child->moveTreeOverTree(next);
+        n--;
+      }
     }
     for (Tree* subRack : child->children()) {
       StripUselessPlus(subRack);

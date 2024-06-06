@@ -356,22 +356,18 @@ _sources_poincare_test := $(addprefix test/, \
   zoom.cpp \
 )
 
+_sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
+  expression.cpp \
+  js_tree.cpp \
+)
+
 $(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
   $(_sources_poincare_checkpoint) \
   $(_sources_poincare_storage) \
+  $(_sources_poincare_js_bridge) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )
-
-# TODO Convert
-ifeq ($(TARGET),poincarejs)
-poincare_src += $(addprefix poincare/src/js_bridge/,\
-  computation_context.cpp \
-  expression.cpp \
-  tree_converter.cpp \
-  regression.cpp \
-)
-endif
 
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1:+logtrees

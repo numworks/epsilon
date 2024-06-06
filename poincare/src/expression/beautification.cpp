@@ -514,7 +514,7 @@ bool Beautification::ShallowBubbleUpDivision(Tree* e) {
   int nbDiv = 0;
   Tree* child = e->firstChild();
   for (int i = 0; i < nbChildren; i++) {
-    hasComplexI = child->isComplexI();
+    hasComplexI = hasComplexI || child->isComplexI();
     if (child->isDiv()) {
       // Detach denominator
       child->child(1)->detachTree();

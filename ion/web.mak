@@ -1,5 +1,4 @@
 SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
-  shared/dummy/circuit_breaker.cpp \
   shared/dummy/haptics_enabled.cpp \
   shared/dummy/language.cpp \
   shared/haptics.cpp \
@@ -10,7 +9,10 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   web/window_callback.cpp \
 )
 
-SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
+SOURCES_ion += $(addprefix $(PATH_ion)/src/shared/, \
+  collect_registers.cpp \
+  dummy/circuit_breaker.cpp \
+)
 
 PRIVATE_SFLAGS_ion += -DEPSILON_SDL_SCREEN_ONLY=1
 

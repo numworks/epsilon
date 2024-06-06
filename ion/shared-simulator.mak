@@ -3,7 +3,7 @@ $(addprefix shared/dummy/, \
   authentication.cpp \
   backlight.cpp \
   battery.cpp \
-  display.cpp \
+  display_misc.cpp \
   external_apps.cpp \
   fcc_id.cpp \
   led.cpp \

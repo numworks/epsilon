@@ -15,7 +15,7 @@ $(OUTPUT_ROOT)%/.:
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
-	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $^ $(LDFLAGS) -o $@
+	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $^ $(call ldflags_for_flavored_goal,$*) -o $@
 
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 

@@ -17,6 +17,7 @@ $(call create_module,main,1,\
 	main.cpp:+do_something\
 )
 SFLAGS_main += -time:-do_something
+LDFLAGS_main += -aaaaaaa:+fa
 
 $(call create_goal,test,\
 	main.do_something aaa,\

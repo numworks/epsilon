@@ -314,9 +314,9 @@ bool Beautification::DeepBeautify(Tree* expr,
    * down and require powers to have been built from exponentials already. */
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifyDivisionsAndRoots) ||
             changed;
-  changed = Variables::BeautifyToName(expr) || changed;
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
             changed;
+  changed = Variables::BeautifyToName(expr) || changed;
   return AddUnits(expr, projectionContext) || changed;
 }
 

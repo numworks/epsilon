@@ -60,6 +60,12 @@ JSTree Expression::CloneAndBeautify(const JSTree& jsTree) {
       JSTreeToExpression(jsTree).cloneAndBeautify(ReductionContext()));
 }
 
+JSTree Expression::ApproximateToTree(const JSTree& jsTree) {
+  const ApproximationContext approxContext(nullptr);
+  return JSTreeBuilder(
+      JSTreeToExpression(jsTree).approximateToTree<double>(approxContext));
+}
+
 // TODO: implement approximateToScalar on JuniorExpression directly
 double Expression::ApproximateToScalar(const JSTree& jsTree) {
   return JSTreeToExpression(jsTree).approximateToScalarWithValue<double>(NAN);
@@ -82,6 +88,7 @@ EMSCRIPTEN_BINDINGS(expression) {
       .class_function("CloneAndReduce", &Expression::CloneAndReduce)
       .class_function("CloneAndBeautify", &Expression::CloneAndBeautify)
       .class_function("ToLatex", &Expression::ToLatex)
+      .class_function("ApproximateToTree", &Expression::ApproximateToTree)
       .class_function("ApproximateToScalar", &Expression::ApproximateToScalar)
       .class_function("GetSystemFunction", &Expression::GetSystemFunction)
       .class_function("ApproximateToScalarWithValue",

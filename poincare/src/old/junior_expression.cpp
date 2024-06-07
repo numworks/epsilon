@@ -485,12 +485,15 @@ SystemExpression SystemExpression::getReducedDerivative(
   return SystemExpression::Builder(result);
 }
 
-SystemFunction SystemExpression::getSystemFunction(
-    const char* symbolName) const {
+SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
+                                                   bool scalarsOnly) const {
   Tree* result = tree()->clone();
   Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                  ComplexFormat::Real);
-  return SystemFunction::Builder(result);
+  if (scalarsOnly && !Approximation::IsNonListScalar(result)) {
+    return JuniorExpression::Builder(KUndef->clone());
+  }
+  return JuniorExpression::Builder(result);
 }
 
 template <typename T>

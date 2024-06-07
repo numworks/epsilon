@@ -67,7 +67,7 @@ double Expression::ApproximateToScalar(const JSTree& jsTree) {
 
 JSTree Expression::GetSystemFunction(const JSTree& jsTree, std::string var) {
   return JSTreeBuilder(
-      JSTreeToExpression(jsTree).getSystemFunction(var.c_str()));
+      JSTreeToExpression(jsTree).getSystemFunction(var.c_str(), true));
 }
 
 double Expression::ApproximateToScalarWithValue(const JSTree& jsTree,

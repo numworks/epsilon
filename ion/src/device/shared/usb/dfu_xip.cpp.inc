@@ -1,8 +1,6 @@
-#include <ion.h>
-#include <shared/drivers/board_shared.h>
-#include <shared/drivers/serial_number.h>
 #include <shared/drivers/usb.h>
-#include <shared/usb/calculator.h>
+
+#include "calculator.h"
 
 namespace Ion {
 namespace USB {

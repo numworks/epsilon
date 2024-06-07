@@ -1,9 +1,10 @@
 #ifndef ION_DEVICE_SHARED_USB_CALCULATOR_H
 #define ION_DEVICE_SHARED_USB_CALCULATOR_H
 
+// This files needs the correct "drivers/usb.h" file included beforehand.
+
 #include <assert.h>
 #include <config/internal_flash.h>
-#include <drivers/usb.h>
 #include <ion/usb.h>
 #include <stddef.h>
 

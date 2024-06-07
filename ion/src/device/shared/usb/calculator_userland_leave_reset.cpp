@@ -1,5 +1,7 @@
 #include <ion/reset.h>
-#include <shared/usb/calculator.h>
+#include <userland/drivers/usb.h>
+
+#include "calculator.h"
 
 namespace Ion {
 namespace Device {

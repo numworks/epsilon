@@ -72,6 +72,15 @@ Approximation::Context::Context(AngleUnit angleUnit,
 }
 
 template <typename T>
+PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
+    const Tree* preparedFunction, T abscissa) {
+  Dimension dimension = Dimension::GetDimension(preparedFunction);
+  assert(dimension.isScalar() || dimension.isPoint());
+  return RootToPointOrScalarPrivate<T>(preparedFunction, dimension.isPoint(),
+                                       true, abscissa);
+}
+
+template <typename T>
 Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
   if (!Dimension::DeepCheckDimensions(node) ||
@@ -151,9 +160,8 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
 
 template <typename T>
 PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
-    const Tree* node, bool isPrepared, T abscissa, AngleUnit angleUnit,
-    ComplexFormat complexFormat) {
-  bool isPoint = node->isPoint();
+    const Tree* node, bool isPoint, bool isPrepared, T abscissa,
+    AngleUnit angleUnit, ComplexFormat complexFormat) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat, abscissa);
@@ -1329,10 +1337,14 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* tree) {
  * correct ToComplex<T> as needed since the code is mostly independant of the
  * float type used in the tree. */
 
+template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
+    const Tree*, float);
+template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
+    const Tree*, double);
 template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, float, AngleUnit, ComplexFormat);
+    const Tree*, bool, bool, float, AngleUnit, ComplexFormat);
 template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, double, AngleUnit, ComplexFormat);
+    const Tree*, bool, bool, double, AngleUnit, ComplexFormat);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);

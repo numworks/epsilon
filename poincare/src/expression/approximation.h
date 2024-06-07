@@ -32,24 +32,23 @@ class Approximation final {
    * PrepareFunctionForApproximation. */
   template <typename T>
   static T RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
-    return RootToPointOrScalarPrivate<T>(preparedFunction, true, abscissa)
+    return RootToPointOrScalarPrivate<T>(preparedFunction, false, true,
+                                         abscissa)
         .toScalar();
   }
   /* preparedFunction is scalar or point, and must have been prepared with
    * PrepareFunctionForApproximation. */
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
-      const Tree* preparedFunction, T abscissa) {
-    return RootToPointOrScalarPrivate<T>(preparedFunction, true, abscissa);
-  }
+      const Tree* preparedFunction, T abscissa);
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
    * left to default on projected trees. */
   template <typename T>
   static T RootTreeToReal(const Tree* scalarTree,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate<T>(scalarTree, false, NAN, angleUnit,
-                                         complexFormat)
+    return RootToPointOrScalarPrivate<T>(scalarTree, false, false, NAN,
+                                         angleUnit, complexFormat)
         .toScalar();
   }
 
@@ -116,7 +115,7 @@ class Approximation final {
     return CanApproximate(tree, 0);
   }
 
-  // If collapse is true, approximate parents if all children have approximated.
+  // Approximate every scalar subtree that can be approximated.
   static bool ApproximateAndReplaceEveryScalar(
       Tree* tree, const ProjectionContext* ctx = nullptr);
   EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar,
@@ -137,7 +136,7 @@ class Approximation final {
  private:
   template <typename T>
   static PointOrScalar<T> RootToPointOrScalarPrivate(
-      const Tree* tree, bool isPrepared = true, T abscissa = NAN,
+      const Tree* tree, bool isPoint, bool isPrepared = true, T abscissa = NAN,
       AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real);
 

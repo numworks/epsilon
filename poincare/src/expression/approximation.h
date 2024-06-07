@@ -166,6 +166,9 @@ class Approximation final {
   static std::complex<T> ToComplexSwitch(const Tree* node);
 
   template <typename T>
+  static Tree* ToBeautifiedComplex(const Tree* node);
+
+  template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
                                                 std::complex<T> value,
                                                 AngleUnit angleUnit);

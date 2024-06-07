@@ -130,13 +130,18 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
 }
 
 template <typename T>
+Tree* Approximation::ToBeautifiedComplex(const Tree* node) {
+  return Beautification::PushBeautifiedComplex(ToComplex<T>(node),
+                                               s_context->m_complexFormat);
+}
+
+template <typename T>
 Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   if (dim.isBoolean()) {
     return (ToBoolean<T>(node) ? KTrue : KFalse)->clone();
   }
   if (dim.isScalar()) {
-    return Beautification::PushBeautifiedComplex(ToComplex<T>(node),
-                                                 s_context->m_complexFormat);
+    return ToBeautifiedComplex<T>(node);
   }
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(node) : ToMatrix<T>(node);
@@ -144,8 +149,7 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
     return result;
   }
   for (Tree* child : result->children()) {
-    child->moveTreeOverTree(Beautification::PushBeautifiedComplex(
-        ToComplex<T>(child), s_context->m_complexFormat));
+    child->moveTreeOverTree(ToBeautifiedComplex<T>(child));
   }
   return result;
 }
@@ -1057,8 +1061,7 @@ Tree* Approximation::ToList(const Tree* node) {
   Tree* list = SharedTreeStack->push<Type::List>(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
-    std::complex<T> k = ToComplex<T>(node);
-    Beautification::PushBeautifiedComplex(k, s_context->m_complexFormat);
+    ToBeautifiedComplex<T>(node);
   }
   s_context->m_listElement = old;
   return list;

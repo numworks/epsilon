@@ -385,8 +385,10 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
     case Type::LCM:
       return MapAndReduce<T, T>(node, FloatLCM<T>,
                                 PositiveIntegerApproximation<T>);
-    case Type::Sqrt:
-      return std::sqrt(ToComplex<T>(node->child(0)));
+    case Type::Sqrt: {
+      std::complex<T> c = ToComplex<T>(node->child(0));
+      return NeglectRealOrImaginaryPartIfNeglectable(std::sqrt(c), c);
+    }
     case Type::Root:
       return std::pow(ToComplex<T>(node->child(0)),
                       static_cast<T>(1) / ToComplex<T>(node->child(1)));

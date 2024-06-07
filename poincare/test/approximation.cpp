@@ -33,7 +33,7 @@ void approximates_to(const Tree* n, T f) {
 
 template <typename T>
 void approximates_to(const char* input, const char* output,
-                     ProjectionContext projectionContext = realCtx) {
+                     const ProjectionContext& projectionContext = realCtx) {
   // TODO: use same test and log as approximates_to?
   process_tree_and_compare(
       input, output,
@@ -92,10 +92,10 @@ QUIZ_CASE(pcj_approximation_replace) {
 
 QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^0", "undef");
-  approximates_to<float>("0^(3+4i)", "0");
-  approximates_to<float>("0^(3-4i)", "0");
-  approximates_to<float>("0^(-3+4i)", "undef");
-  approximates_to<float>("0^(-3-4i)", "undef");
+  approximates_to<float>("0^(3+4i)", "0", cartesianCtx);
+  approximates_to<float>("0^(3-4i)", "0", cartesianCtx);
+  approximates_to<float>("0^(-3+4i)", "undef", cartesianCtx);
+  approximates_to<float>("0^(-3-4i)", "undef", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_list) {

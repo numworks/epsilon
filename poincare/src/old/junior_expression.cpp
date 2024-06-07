@@ -388,11 +388,11 @@ bool NewExpression::isOfType(
 
 void UserExpression::cloneAndSimplifyAndApproximate(
     SystemExpression* simplifiedExpression,
-    SystemExpression* approximateExpression,
+    SystemExpression* approximatedExpression,
     const ReductionContext& reductionContext,
     bool approximateKeepingSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
-  assert(!approximateExpression || approximateExpression->isUninitialized());
+  assert(!approximatedExpression || approximatedExpression->isUninitialized());
   assert(reductionContext.target() == ReductionTarget::User);
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
@@ -404,8 +404,8 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       .m_context = reductionContext.context()};
   Tree* e = tree()->clone();
   Simplification::SimplifyWithAdaptiveStrategy(e, &context);
-  if (approximateExpression) {
-    *approximateExpression = Builder(Approximation::RootTreeToTree<double>(
+  if (approximatedExpression) {
+    *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
         e, context.m_angleUnit, context.m_complexFormat));
   }
   *simplifiedExpression = Builder(e);

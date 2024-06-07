@@ -174,7 +174,7 @@ class JuniorExpression : public OExpression {
 
   void cloneAndSimplifyAndApproximate(
       SystemExpression* simplifiedExpression,
-      SystemExpression* approximateExpression,
+      SystemExpression* approximatedExpression,
       const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
   SystemExpression cloneAndDeepReduceWithSystemCheckpoint(

@@ -32,7 +32,7 @@ class Approximation final {
    * PrepareFunctionForApproximation. */
   template <typename T>
   static T RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
-    return RootToPointOrScalarPrivate(preparedFunction, true, abscissa)
+    return RootToPointOrScalarPrivate<T>(preparedFunction, true, abscissa)
         .toScalar();
   }
   /* preparedFunction is scalar or point, and must have been prepared with
@@ -40,7 +40,7 @@ class Approximation final {
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
       const Tree* preparedFunction, T abscissa) {
-    return RootToPointOrScalarPrivate(preparedFunction, true, abscissa);
+    return RootToPointOrScalarPrivate<T>(preparedFunction, true, abscissa);
   }
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
    * left to default on projected trees. */
@@ -48,8 +48,8 @@ class Approximation final {
   static T RootTreeToReal(const Tree* scalarTree,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate(scalarTree, false, NAN, angleUnit,
-                                      complexFormat)
+    return RootToPointOrScalarPrivate<T>(scalarTree, false, NAN, angleUnit,
+                                         complexFormat)
         .toScalar();
   }
 

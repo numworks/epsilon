@@ -485,6 +485,7 @@ SystemExpression SystemExpression::getReducedDerivative(
   return SystemExpression::Builder(result);
 }
 
+// TODO_PCJ: This should probably always return scalars or points
 SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
   Tree* result = tree()->clone();
@@ -496,6 +497,8 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
   return JuniorExpression::Builder(result);
 }
 
+/* TODO_PCJ: This cannot be called on system expressions, but rather on
+ * ScalarSystemFunction */
 template <typename T>
 T SystemExpression::approximateToScalarWithValue(T x) const {
   return Approximation::RootPreparedToReal<T>(tree(), x);

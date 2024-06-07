@@ -389,9 +389,24 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
       std::complex<T> c = ToComplex<T>(node->child(0));
       return NeglectRealOrImaginaryPartIfNeglectable(std::sqrt(c), c);
     }
-    case Type::Root:
-      return std::pow(ToComplex<T>(node->child(0)),
-                      static_cast<T>(1) / ToComplex<T>(node->child(1)));
+    case Type::Root: {
+      std::complex<T> base = ToComplex<T>(node->child(0));
+      std::complex<T> exp = ToComplex<T>(node->child(1));
+      /* If the complexFormat is Real, we look for nthroot of form root(x,q)
+       * with x real and q integer because they might have a real form which
+       * does not correspond to the principale angle. */
+      if (s_context->m_complexFormat == Preferences::ComplexFormat::Real &&
+          exp.imag() == 0.0 && std::round(exp.real()) == exp.real()) {
+        // root(x, q) with q integer and x real
+        std::complex<T> result =
+            ComputeNotPrincipalRealRootOfRationalPow<T>(base, 1, exp.real());
+        if (!std::isnan(result.real()) && !std::isnan(result.imag())) {
+          return result;
+        }
+      }
+      return ComputeComplexPower<T>(base, std::complex<T>(1.0) / (exp),
+                                    s_context->m_complexFormat);
+    }
     case Type::Exp:
       return std::exp(ToComplex<T>(node->child(0)));
     case Type::Log:

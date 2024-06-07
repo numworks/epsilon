@@ -130,8 +130,8 @@ class JuniorExpression : public OExpression {
 
   static NewExpression Create(const Internal::Tree* structure,
                               Internal::ContextTrees ctx);
-  static SystemExpression CreateSimplify(const Internal::Tree* structure,
-                                         Internal::ContextTrees ctx);
+  static SystemExpression CreateReduce(const Internal::Tree* structure,
+                                       Internal::ContextTrees ctx);
   operator const Internal::Tree*() const { return tree(); }
   // Builders from value.
   static SystemExpression Builder(int32_t n);

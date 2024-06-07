@@ -202,8 +202,8 @@ NewExpression NewExpression::Create(const Tree* structure, ContextTrees ctx) {
   return Builder(tree);
 }
 
-SystemExpression SystemExpression::CreateSimplify(const Tree* structure,
-                                                  ContextTrees ctx) {
+SystemExpression SystemExpression::CreateReduce(const Tree* structure,
+                                                ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateSimplify(structure, ctx);
   return Builder(tree);
 }

@@ -988,7 +988,7 @@ SystemFunction ContinuousFunction::Model::expressionSlopeReduced(
       SystemExpression expression = parametricForm(record, context);
       assert(expression.type() == ExpressionNode::Type::Point);
       m_expressionSlope =
-          SystemExpression::CreateSimplify(
+          SystemExpression::CreateReduce(
               KMult(KA, KPow(KB, -1_e)),
               {
                   .KA = expression.childAtIndex(1).getReducedDerivative(

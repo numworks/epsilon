@@ -186,7 +186,6 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
       e = secondInitialConditionExpressionReduced(sqctx);
     }
   }
-  // Update angle unit and complex format
   return e.approximateToScalarWithValue(x);
 }
 

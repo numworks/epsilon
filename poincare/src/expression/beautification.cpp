@@ -392,7 +392,6 @@ template <typename T>
 Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
                                             ComplexFormat complexFormat) {
   // TODO: factorize with the code above somehow ?
-  constexpr Type Type = FloatType<T>::type;
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
     return KUndef->clone();
@@ -401,7 +400,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     return KNonReal->clone();
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
-    return SharedTreeStack->push<Type>(re);
+    return FloatNode::Push(re);
   }
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   // Real part and separator
@@ -409,14 +408,14 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     // [re+]
     if (re != 0) {
       SharedTreeStack->push<Type::Add>(2);
-      SharedTreeStack->push<Type>(re);
+      FloatNode::Push(re);
     }
   } else {
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
       SharedTreeStack->push<Type::Mult>(2);
-      SharedTreeStack->push<Type>(abs);
+      FloatNode::Push(abs);
     }
     SharedTreeStack->push(Type::Pow);
     SharedTreeStack->push(Type::EulerE);
@@ -429,7 +428,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   }
   if (im != 1) {
     SharedTreeStack->push<Type::Mult>(2);
-    SharedTreeStack->push<Type>(im);
+    FloatNode::Push(im);
   }
   SharedTreeStack->push(Type::ComplexI);
   return result;

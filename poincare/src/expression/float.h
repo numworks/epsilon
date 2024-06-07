@@ -3,6 +3,7 @@
 
 #include <omg/bit_helper.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include <bit>
 
@@ -31,20 +32,12 @@ class FloatNode {
     return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
   static bool SetSign(Tree* tree, NonStrictSign sign);
-};
-
-// Helper from T  = float|double to corresponding Type
-template <class T>
-struct FloatType;
-
-template <>
-struct FloatType<float> {
-  static constexpr Type type = Type::SingleFloat;
-};
-
-template <>
-struct FloatType<double> {
-  static constexpr Type type = Type::DoubleFloat;
+  static Tree* Push(float value) {
+    return SharedTreeStack->push<Type::SingleFloat>(value);
+  }
+  static Tree* Push(double value) {
+    return SharedTreeStack->push<Type::DoubleFloat>(value);
+  }
 };
 
 }  // namespace Poincare::Internal

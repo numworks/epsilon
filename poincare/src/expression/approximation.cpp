@@ -930,13 +930,13 @@ Tree* PushComplex(std::complex<T> value) {
     return KUndef->clone();
   }
   if (value.imag() == 0.0) {
-    return SharedTreeStack->push<FloatType<T>::type>(value.real());
+    return FloatNode::Push(value.real());
   }
   Tree* result = SharedTreeStack->push<Type::Add>(2);
-  SharedTreeStack->push<FloatType<T>::type>(value.real());
+  FloatNode::Push(value.real());
   if (value.imag() != 1.0) {
     SharedTreeStack->push<Type::Mult>(2);
-    SharedTreeStack->push<FloatType<T>::type>(value.imag());
+    FloatNode::Push(value.imag());
   }
   SharedTreeStack->push(Type::ComplexI);
   return result;
@@ -1141,8 +1141,8 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->push<Type::Matrix>(1, 2);
-      SharedTreeStack->push<FloatType<T>::type>(T(dim.matrix.rows));
-      SharedTreeStack->push<FloatType<T>::type>(T(dim.matrix.cols));
+      FloatNode::Push(T(dim.matrix.rows));
+      FloatNode::Push(T(dim.matrix.cols));
       return result;
     }
     case Type::Cross: {

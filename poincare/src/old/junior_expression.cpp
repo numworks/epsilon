@@ -16,6 +16,7 @@
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/parametric.h>
@@ -213,14 +214,9 @@ JuniorExpression JuniorExpression::Builder(int32_t n) {
   return Builder(Integer::Push(n));
 }
 
-template <>
-JuniorExpression JuniorExpression::Builder<float>(float x) {
-  return Builder(SharedTreeStack->push<Type::SingleFloat>(x));
-}
-
-template <>
-JuniorExpression JuniorExpression::Builder<double>(double x) {
-  return Builder(SharedTreeStack->push<Type::DoubleFloat>(x));
+template <typename T>
+JuniorExpression JuniorExpression::Builder(T x) {
+  return Builder(FloatNode::Push(x));
 }
 
 template <typename T>
@@ -1041,6 +1037,8 @@ template Evaluation<double> EvaluationFromTree<double>(
 template Evaluation<float> EvaluationFromSimpleTree<float>(const Tree*);
 template Evaluation<double> EvaluationFromSimpleTree<double>(const Tree*);
 
+template JuniorExpression JuniorExpression::Builder<float>(float);
+template JuniorExpression JuniorExpression::Builder<double>(double);
 template JuniorExpression JuniorExpression::Builder<float>(Coordinate2D<float>);
 template JuniorExpression JuniorExpression::Builder<double>(
     Coordinate2D<double>);

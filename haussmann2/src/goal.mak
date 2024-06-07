@@ -78,6 +78,11 @@ define ldflags_for_flavored_goal
 $(LDFLAGS) $(foreach l,$(call libraries_for_flavored_goal,$1),$(call ldflags_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l)))
 endef
 
+# lddeps_for_flavored_goal, <flavored goal>
+define lddeps_for_flavored_goal
+$(foreach l,$(call libraries_for_flavored_goal,$1),$(call lddeps_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l)))
+endef
+
 # all_potential_sources, <goal>
 # Return any source file that appears in the goal's modules, regardless of
 # tastes.

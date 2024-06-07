@@ -13,9 +13,9 @@ $(OUTPUT_ROOT)%/.:
 	$(QUIET) mkdir -p $@
 
 # Rules for executable applications
-$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) $$(call lddeps_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
-	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $^ $(call ldflags_for_flavored_goal,$*) -o $@
+	$(QUIET) $(LD) $(PRIORITY_SFLAGS) $(SFLAGS) $(filter %.a,$^) $(call ldflags_for_flavored_goal,$*) -o $@
 
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 

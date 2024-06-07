@@ -88,6 +88,12 @@ define ldflags_for_flavored_module
 $(call _flavor_filtered_module_variable,$1,LDFLAGS)
 endef
 
+# lddeps_for_flavored_module, <dot-separated flavored module>
+# $1 might be prefixed with an arch's directory.
+define lddeps_for_flavored_module
+$(call _flavor_filtered_module_variable,$1,LDDEPS)
+endef
+
 # priority_targets_for_flavored_module, <dot-separated flavored module>
 # $1 might be prefixed with an arch's directory.
 define priority_targets_for_flavored_module

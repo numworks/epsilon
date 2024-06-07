@@ -312,15 +312,15 @@ bool Beautification::DeepBeautify(Tree* expr,
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify) || changed;
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
-  changed =
-      Tree::ApplyShallowInDepth(expr, ShallowBeautifyDivisions) || changed;
+  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifyDivisionsAndRoots) ||
+            changed;
   changed = Variables::BeautifyToName(expr) || changed;
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
             changed;
   return AddUnits(expr, projectionContext) || changed;
 }
 
-bool Beautification::ShallowBeautifyDivisions(Tree* e, void* context) {
+bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
   // Turn multiplications with negative powers into divisions
   if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
     if (BeautifyIntoDivision(e)) {
@@ -328,13 +328,14 @@ bool Beautification::ShallowBeautifyDivisions(Tree* e, void* context) {
     }
   }
 
+  // Roots are created along divisions to have x^(-1/2) -> 1/x^(1/2) -> 1/√(x)
   if (e->isPow() && e->child(0)->isEulerE()) {
     // We do not want e^1/2 -> √(e)
     return false;
   }
 
   return
-      // A^0.5 -> Sqrt(A)
+      // A^(1/2) -> Sqrt(A)
       PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA));
 }
 

@@ -331,6 +331,18 @@ bool UndefDependencies(const Tree* dep) {
 
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* node) {
+  std::complex<T> value = ToComplexSwitch<T>(node);
+  if (value.real() == -0) {
+    value.real(0);
+  }
+  if (value.imag() == -0) {
+    value.imag(0);
+  }
+  return value;
+}
+
+template <typename T>
+std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
   /* TODO: the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
    * faster, simpler and more precise real approximation to be used in every

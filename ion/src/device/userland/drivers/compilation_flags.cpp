@@ -1,7 +1,8 @@
-#include <drivers/svcall.h>
 #include <ion.h>
 #include <omg/print.h>
 #include <shared/drivers/board_shared.h>
+
+#include "svcall.h"
 
 #if !defined(DEBUG) || !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
 #error This file expects DEBUG, ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined

@@ -1,7 +1,8 @@
-#include <drivers/board.h>
 #include <ion.h>
 #include <shared/drivers/board_shared.h>
-#include <userland/drivers/persisting_bytes.h>
+
+#include "board.h"
+#include "persisting_bytes.h"
 
 #ifndef EPSILON_VERSION
 #error This file expects EPSILON_VERSION to be defined

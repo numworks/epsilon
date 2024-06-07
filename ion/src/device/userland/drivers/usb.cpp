@@ -1,8 +1,9 @@
-#include <drivers/board.h>
-#include <drivers/svcall.h>
 #include <ion/external_apps.h>
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/usb.h>
+
+#include "board.h"
+#include "svcall.h"
 
 namespace Ion {
 namespace Device {

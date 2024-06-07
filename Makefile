@@ -17,6 +17,10 @@ SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
   -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL)
 
+ifeq ($(PLATFORM_TYPE),device)
+SFLAGS += -DPLATFORM_DEVICE
+endif
+
 # Import modules
 
 $(call import_module,liba,liba)
@@ -72,4 +76,18 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 		--image $(filter %.webp,$^) \
 		--image $(filter %.jpg,$^) \
 		$(filter %.html,$^) >$@
+endif
+
+ifeq ($(PLATFORM_TYPE),device)
+$(call create_goal,userland, \
+  apps \
+  escher \
+  ion.userland \
+  kandinsky \
+  liba.aeabirt.armv7m.openbsd \
+  libaxx \
+  omg \
+  poincare \
+  python \
+)
 endif

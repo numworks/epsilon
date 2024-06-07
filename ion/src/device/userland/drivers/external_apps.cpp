@@ -1,8 +1,9 @@
 #include <assert.h>
 #include <config/board.h>
-#include <drivers/board.h>
 #include <ion/external_apps.h>
 #include <shared/drivers/flash_write_with_interruptions.h>
+
+#include "board.h"
 
 #ifndef EXTERNAL_APPS_API_LEVEL
 #error This file expects EXTERNAL_APPS_API_LEVEL to be defined

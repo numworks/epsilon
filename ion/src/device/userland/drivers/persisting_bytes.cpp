@@ -1,11 +1,13 @@
+#include "persisting_bytes.h"
+
 #include <assert.h>
-#include <drivers/persisting_bytes.h>
-#include <drivers/svcall.h>
 #include <shared/drivers/flash_information.h>
 #include <shared/drivers/flash_write_with_interruptions.h>
 #include <string.h>
 
 #include <algorithm>
+
+#include "svcall.h"
 
 extern "C" {
 extern char _persisting_bytes_buffer_start;

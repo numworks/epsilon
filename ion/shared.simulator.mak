@@ -1,4 +1,18 @@
 SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
+$(addprefix shared/, \
+  console_line.cpp \
+  display_context.cpp \
+  events.cpp \
+  events_modifier.cpp \
+  exam_mode.cpp \
+  keyboard_queue.cpp \
+  keyboard.cpp \
+  layout_events.cpp \
+  stack_position.cpp \
+  storage/file_system.cpp \
+  storage/record.cpp \
+  storage/record_name_verifier.cpp \
+) \
 $(addprefix shared/dummy/, \
   authentication.cpp \
   backlight.cpp \

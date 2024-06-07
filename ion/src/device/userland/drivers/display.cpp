@@ -1,6 +1,8 @@
-#include <drivers/display.h>
-#include <drivers/svcall.h>
+#include "display.h"
+
 #include <ion/display.h>
+
+#include "svcall.h"
 
 namespace Ion {
 namespace Display {

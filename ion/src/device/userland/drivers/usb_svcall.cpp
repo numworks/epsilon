@@ -1,8 +1,9 @@
-#include <drivers/svcall.h>
-#include <drivers/usb.h>
 #include <ion/authentication.h>
 #include <ion/usb.h>
 #include <shared/drivers/board_shared.h>
+
+#include "svcall.h"
+#include "usb.h"
 
 namespace Ion {
 namespace USB {

@@ -141,7 +141,8 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
       }
     } else if (factor->isPow() || factor->isPowReal()) {
       Tree* pow = factor->clone();
-      if (!pow->child(0)->isUnit() &&
+      // preserve m^(-2) and e^(-2)
+      if (!pow->child(0)->isUnit() && !pow->child(0)->isEulerE() &&
           MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
         if (pow->child(1)->isOne()) {
           pow->moveTreeOverTree(pow->child(0));
@@ -317,16 +318,16 @@ bool Beautification::DeepBeautify(Tree* expr,
 }
 
 bool Beautification::ShallowBeautifyDivisions(Tree* e, void* context) {
-  if (e->isPow() && e->firstChild()->isEulerE()) {
-    // We do not want e^-x -> 1/e^x and e^1/2 -> √(e)
-    return false;
-  }
-
   // Turn multiplications with negative powers into divisions
   if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
     if (BeautifyIntoDivision(e)) {
       return true;
     }
+  }
+
+  if (e->isPow() && e->child(0)->isEulerE()) {
+    // We do not want e^1/2 -> √(e)
+    return false;
   }
 
   return

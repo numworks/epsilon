@@ -73,3 +73,7 @@ _ldflags_ion_userland := \
   -Wl,-T,$(PATH_ion)/src/device/userland/flash/userland_A.ld:+A \
   -Wl,-T,$(PATH_ion)/src/device/userland/flash/userland_B.ld:+B \
   -L$(PATH_ion)/src/device/userland/flash
+
+_lddeps_ion_userland := \
+  $(PATH_ion)/src/device/userland/flash/userland_A.ld:+A \
+  $(PATH_ion)/src/device/userland/flash/userland_B.ld:+B

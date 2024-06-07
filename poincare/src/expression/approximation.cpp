@@ -58,7 +58,8 @@ Approximation::Context::Context(AngleUnit angleUnit,
                                 VariableType abscissa)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
-      m_variablesOffset(k_maxNumberOfVariables)
+      m_variablesOffset(k_maxNumberOfVariables),
+      m_encounteredComplex(false)
 #if ASSERTIONS
       ,
       m_listElement(-1),
@@ -131,7 +132,14 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
 
 template <typename T>
 Tree* Approximation::ToBeautifiedComplex(const Tree* node) {
-  return Beautification::PushBeautifiedComplex(ToComplex<T>(node),
+  std::complex<T> value = ToComplex<T>(node);
+  // Return nonreal if not undef and a complex was encountered in real mode
+  if (s_context->m_complexFormat == ComplexFormat::Real &&
+      s_context->m_encounteredComplex && !std::isnan(value.real()) &&
+      !std::isnan(value.imag())) {
+    return KNonReal->clone();
+  }
+  return Beautification::PushBeautifiedComplex(value,
                                                s_context->m_complexFormat);
 }
 
@@ -336,6 +344,9 @@ bool UndefDependencies(const Tree* dep) {
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* node) {
   std::complex<T> value = ToComplexSwitch<T>(node);
+  if (s_context && value.imag() != 0) {
+    s_context->m_encounteredComplex = true;
+  }
   if (value.real() == -0) {
     value.real(0);
   }

@@ -175,7 +175,7 @@ bool ExpressionModelListController::editSelectedRecordWithLayout(
   Ion::Storage::Record record = selectedRecord();
   ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
-  bool result = (model->setLayoutContent(layout, App::app()->localContext()) ==
+  bool result = (model->setContent(layout, App::app()->localContext()) ==
                  Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   return result;

@@ -74,7 +74,7 @@ class ContinuousFunction : public Function {
 
   /* ExpressionModelHandle */
 
-  Ion::Storage::Record::ErrorStatus setLayoutContent(
+  Ion::Storage::Record::ErrorStatus setContent(
       const Poincare::Layout &l, Poincare::Context *context) override;
   void tidyDownstreamPoolFrom(
       Poincare::PoolObject *treePoolCursor = nullptr) const override;

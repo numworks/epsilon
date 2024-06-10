@@ -161,7 +161,7 @@ bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   Ion::Storage::Record::ErrorStatus error;
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
-      error = sequence->setLayoutContent(layout, context);
+      error = sequence->setContent(layout, context);
       break;
     case k_firstInitialCondition:
       error = sequence->setFirstInitialConditionContent(layout, context);

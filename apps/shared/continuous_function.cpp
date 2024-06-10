@@ -150,16 +150,16 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                                      precision);
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::setLayoutContent(
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
     const Poincare::Layout &l, Context *context) {
   setCache(nullptr);
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
-   * ExpressionModelHandle::setLayoutContent implementation to avoid calling
-   * symbol() and any unnecessary plot type update at this point. See comment in
+   * ExpressionModelHandle::setContent implementation to avoid calling symbol()
+   * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromLayout. */
   Ion::Storage::Record::ErrorStatus error =
-      m_model.setLayoutContent(this, l, context, k_unnamedExpressionSymbol);
+      m_model.setContent(this, l, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     // Set proper name
     error = updateNameIfNeeded(context);

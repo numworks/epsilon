@@ -127,10 +127,10 @@ UserExpression ExpressionModel::expressionClone(
                                               expressionSize(record));
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
-   * methods layout, setLayoutContent (through buildExpressionFromLayout),
-   * layout and also in GlobalContext::expressionForSymbolAbstract and
-   * GlobalContext::setExpressionForSymbolAbstract. When getting the
-   * expression, the substitutions may probably be gathered here.
+   * methods layout, setContent (through buildExpressionFromLayout), layout and
+   * also in GlobalContext::expressionForSymbolAbstract and
+   * GlobalContext::setExpressionForSymbolAbstract. When getting the expression,
+   * the substitutions may probably be gathered here.
    */
 }
 
@@ -152,7 +152,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setLayoutContent(
+Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
     Ion::Storage::Record* record, const Layout& l, Context* context,
     CodePoint symbol) {
   UserExpression e = buildExpressionFromLayout(l, symbol, context);

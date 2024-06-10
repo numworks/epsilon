@@ -23,7 +23,7 @@ Sequence* addSequence(SequenceStore* store, Sequence::Type type,
       store->recordAtIndex(store->numberOfModels() - 1);
   Sequence* u = store->modelForRecord(record);
   u->setType(type);
-  err = u->setLayoutContent(JuniorLayout::Parse(definition), context);
+  err = u->setContent(JuniorLayout::Parse(definition), context);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   if (condition1) {
     err = u->setFirstInitialConditionContent(JuniorLayout::Parse(condition1),

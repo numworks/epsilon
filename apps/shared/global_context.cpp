@@ -290,7 +290,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
       KEqual(KA, KB), {.KA = symbol, .KB = expressionToStore});
   ExpiringPointer<ContinuousFunction> f =
       GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);
-  // TODO: factorize with ContinuousFunction::setLayoutContent
+  // TODO: factorize with ContinuousFunction::setContent
   bool wasCartesian = f->properties().isCartesian();
   error = f->setExpressionContent(equation);
   if (error == Ion::Storage::Record::ErrorStatus::None) {

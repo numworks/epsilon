@@ -22,9 +22,10 @@ class ExpressionModel {
                           CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setLayoutContent(
-      Ion::Storage::Record* record, const Poincare::Layout& l,
-      Poincare::Context* context, CodePoint symbol = 0);
+  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record* record,
+                                               const Poincare::Layout& l,
+                                               Poincare::Context* context,
+                                               CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(
       Ion::Storage::Record* record,
       const Poincare::UserExpression& newExpression);

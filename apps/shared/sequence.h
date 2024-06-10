@@ -13,7 +13,7 @@
 
 namespace Shared {
 
-/* WARNING: after calling setType, setInitialRank, setLayoutContent,
+/* WARNING: after calling setType, setInitialRank, setContent,
  * setFirstInitialConditionContent or setSecondInitialConditionContent, the
  * sequence context needs to invalidate the cache because the sequences
  * evaluations might have changed. */
@@ -63,7 +63,7 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
       Poincare::Layout l, Poincare::Context *context) {
-    return m_firstInitialCondition.setLayoutContent(this, l, context);
+    return m_firstInitialCondition.setContent(this, l, context);
   }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() {
@@ -84,7 +84,7 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
       Poincare::Layout l, Poincare::Context *context) {
-    return m_secondInitialCondition.setLayoutContent(this, l, context);
+    return m_secondInitialCondition.setContent(this, l, context);
   }
   void tidyDownstreamPoolFrom(
       Poincare::PoolObject *treePoolCursor = nullptr) const override;

@@ -980,7 +980,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
   }
 }
 
-bool Approximation::ToComplexTree(Tree* node) {
+bool Approximation::ApproximateToComplexTree(Tree* node) {
   node->moveTreeOverTree(ToBeautifiedComplex<double>(node));
   return true;
 }

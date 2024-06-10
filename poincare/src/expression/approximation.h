@@ -101,8 +101,8 @@ class Approximation final {
   static Tree* ToMatrix(const Tree* tree);
 
   // Replace a Tree with the Tree of its complex approximation
-  static bool ToComplexTree(Tree* tree);
-  EDITION_REF_WRAP(ToComplexTree);
+  static bool ApproximateToComplexTree(Tree* tree);
+  EDITION_REF_WRAP(ApproximateToComplexTree);
 
   /* Helpers */
 

@@ -7,18 +7,17 @@ namespace Poincare::Regression {
 double MedianRegression::getMedianValue(const Series* series,
                                         uint8_t* sortedIndex, int column,
                                         int startIndex, int endIndex) const {
+  // TODO: this should be factorized with other median code
   assert(endIndex != startIndex);
+  int medianIndex = sortedIndex[startIndex + (endIndex - startIndex) / 2];
+  double upperMedian =
+      column == 0 ? series->getX(medianIndex) : series->getY(medianIndex);
   if ((endIndex - startIndex) % 2 == 1) {
-    return store->get(series, column,
-                      sortedIndex[startIndex + (endIndex - startIndex) / 2]);
-  } else {
-    return (store->get(series, column,
-                       sortedIndex[startIndex + (endIndex - startIndex) / 2]) +
-            store->get(
-                series, column,
-                sortedIndex[startIndex + (endIndex - startIndex) / 2 - 1])) /
-           2;
+    return upperMedian;
   }
+  double lowerMedian = column == 0 ? series->getX(medianIndex - 1)
+                                   : series->getY(medianIndex - 1);
+  return (lowerMedian + upperMedian) / 2;
 }
 
 void MedianRegression::privateFit(const Series* series,
@@ -67,12 +66,11 @@ void MedianRegression::privateFit(const Series* series,
                            numberOfDots);
 
   leftPoint[1] =
-      getMedianValue(store, sortedIndex, series, 1, 0, sizeOfRightLeftGroup);
-  middlePoint[1] =
-      getMedianValue(store, sortedIndex, series, 1, sizeOfRightLeftGroup,
-                     sizeOfRightLeftGroup + sizeOfMiddleGroup);
+      getMedianValue(series, sortedIndex, 1, 0, sizeOfRightLeftGroup);
+  middlePoint[1] = getMedianValue(series, sortedIndex, 1, sizeOfRightLeftGroup,
+                                  sizeOfRightLeftGroup + sizeOfMiddleGroup);
   rightPoint[1] =
-      getMedianValue(store, sortedIndex, series, 1,
+      getMedianValue(series, sortedIndex, 1,
                      sizeOfRightLeftGroup + sizeOfMiddleGroup, numberOfDots);
 
   double a = (rightPoint[1] - leftPoint[1]) / (rightPoint[0] - leftPoint[0]);

@@ -169,6 +169,25 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
   return error;
 }
 
+Ion::Storage::Record::ErrorStatus ContinuousFunction::setLayoutContent(
+    const Poincare::Layout &l, Context *context) {
+  setCache(nullptr);
+  bool wasCartesian = properties().isCartesian();
+  /* About to set the content, the symbol does not matter here yet. We don't use
+   * ExpressionModelHandle::setContent implementation to avoid calling symbol()
+   * and any unnecessary plot type update at this point. See comment in
+   * ContinuousFunction::Model::buildExpressionFromText. */
+  Ion::Storage::Record::ErrorStatus error =
+      m_model.setLayoutContent(this, l, context, k_unnamedExpressionSymbol);
+  if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
+    // Set proper name
+    error = updateNameIfNeeded(context);
+    // Update model
+    updateModel(context, wasCartesian);
+  }
+  return error;
+}
+
 void ContinuousFunction::tidyDownstreamPoolFrom(
     PoolObject *treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
@@ -1092,6 +1111,59 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromText(
     // Fallback on normal parsing (replace symbol with unknown)
     expressionToStore =
         ExpressionModel::buildExpressionFromText(c, symbol, context);
+  }
+
+  return expressionToStore;
+}
+
+Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
+    Poincare::Layout l, CodePoint symbol, Poincare::Context *context) const {
+  /* The symbol parameter is discarded in this implementation. Either there is a
+   * valid named left expression and the symbol will be extracted, either the
+   * symbol should be the default symbol used in unnamed expressions. */
+  assert(symbol == k_unnamedExpressionSymbol);
+  // if l is uninitialized, we want to reinit the Expression
+  if (l.isUninitialized() || l.isEmpty()) {
+    return UserExpression();
+  }
+  /* Parse the expression to store as possible function assignment. */
+  UserExpression expressionToStore =
+      UserExpression::Parse(l, context, true, true);
+  if (expressionToStore.isUninitialized()) {
+    return expressionToStore;
+  }
+  // Check if the equation is of the form f(x)=...
+  if (IsFunctionAssignment(expressionToStore)) {
+    UserExpression functionSymbol =
+        expressionToStore.childAtIndex(0).childAtIndex(0);
+    // Extract the CodePoint function's symbol. We know it is either x, t or θ
+    assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
+    // Override the symbol so that it can be replaced in the right expression
+    if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
+      symbol = k_cartesianSymbol;
+    } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+      symbol = k_polarSymbol;
+    } else {
+      assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
+      symbol = k_parametricSymbol;
+    }
+    // Do not replace symbol in f(x)=
+    expressionToStore = ExpressionModel::ReplaceSymbolWithUnknown(
+        expressionToStore, symbol, true);
+  } else {
+    if (expressionToStore.recursivelyMatches([](const NewExpression e) {
+          return e.type() == ExpressionNode::Type::Symbol &&
+                 AliasesLists::k_thetaAliases.contains(
+                     static_cast<const Symbol &>(e).name());
+        })) {
+      symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
+                   Symbol::Builder(k_polarSymbol))
+                   ? k_radiusSymbol
+                   : k_polarSymbol;
+    }
+    // Fallback on normal parsing (replace symbol with unknown)
+    expressionToStore =
+        ExpressionModel::buildExpressionFromLayout(l, symbol, context);
   }
 
   return expressionToStore;

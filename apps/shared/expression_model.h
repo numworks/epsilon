@@ -44,7 +44,7 @@ class ExpressionModel {
   virtual Poincare::UserExpression buildExpressionFromText(
       const char* c, CodePoint symbol = 0,
       Poincare::Context* context = nullptr) const;
-  Poincare::UserExpression buildExpressionFromLayout(
+  virtual Poincare::UserExpression buildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
       Poincare::Context* context = nullptr) const;
   static Poincare::UserExpression ReplaceSymbolWithUnknown(

@@ -76,6 +76,8 @@ class ContinuousFunction : public Function {
 
   Ion::Storage::Record::ErrorStatus setContent(
       const char *c, Poincare::Context *context) override;
+  Ion::Storage::Record::ErrorStatus setLayoutContent(
+      const Poincare::Layout &l, Poincare::Context *context) override;
   void tidyDownstreamPoolFrom(
       Poincare::PoolObject *treePoolCursor = nullptr) const override;
 
@@ -435,6 +437,10 @@ class ContinuousFunction : public Function {
     // Build the expression from text, handling f(x)=... cartesian equations
     Poincare::UserExpression buildExpressionFromText(
         const char *c, CodePoint symbol = 0,
+        Poincare::Context *context = nullptr) const override;
+    // Build the expression from layout, handling f(x)=... cartesian equations
+    Poincare::UserExpression buildExpressionFromLayout(
+        Poincare::Layout l, CodePoint symbol = 0,
         Poincare::Context *context = nullptr) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(

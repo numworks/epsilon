@@ -125,7 +125,8 @@ Range2D<float> GraphController::optimalRange(
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      SystemParametricFunction e = f->parametricForm(context, true);
+      SystemParametricFunction e = f->parametricForm(context).getSystemFunction(
+          Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
       Zoom::Function2DWithContext<float> floatEvaluators[2] = {

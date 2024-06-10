@@ -179,6 +179,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "(x^2+2)^(3)", 6);
   assert_polynomial_degree_is(projCtx, "2-x-x^3", 3);
   assert_polynomial_degree_is(projCtx, "π×x", 1);
+  assert_polynomial_degree_is(projCtx, "x+π^(-3)", 1);
 
   // f: y→y^2+πy+1
   store("1+π×y+y^2→f(y)", &globalContext);
@@ -199,5 +200,6 @@ QUIZ_CASE(pcj_polynomial_degree) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   projCtx.m_complexFormat = ComplexFormat::Real;
-  assert_polynomial_degree_is(projCtx, "√(-1)×x", 0, "x");
+  assert_polynomial_degree_is(projCtx, "√(-1)×x", 0);
+  assert_polynomial_degree_is(projCtx, "√(x)", -1);
 }

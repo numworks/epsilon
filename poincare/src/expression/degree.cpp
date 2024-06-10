@@ -51,13 +51,17 @@ int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
         if (i == 0) {
           degree = childDegree;
         } else {
-          assert(child->isInteger());
-          if (childDegree > 0 ||
-              ComplexSign::Get(child).realSign().canBeStriclyNegative()) {
+          if (childDegree != 0) {
             return k_unknown;
           }
-          // TODO: Check overflow
-          degree *= Integer::Handler(child).to<uint8_t>();
+          if (degree != 0) {
+            if (!child->isInteger() ||
+                ComplexSign::Get(child).realSign().canBeStriclyNegative()) {
+              return k_unknown;
+            }
+            // TODO: Check overflow
+            degree *= Integer::Handler(child).to<uint8_t>();
+          }
         }
         break;
       default:

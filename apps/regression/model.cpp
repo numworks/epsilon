@@ -3,7 +3,17 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
+#include "store.h"
+
 namespace Regression {
+
+double StoreToSeries::getX(int i) const { return m_store->get(m_series, 0, i); }
+
+double StoreToSeries::getY(int i) const { return m_store->get(m_series, 1, i); }
+
+int StoreToSeries::numberOfPairs() const {
+  return m_store->numberOfPairsOfSeries(m_series);
+}
 
 static bool UseLinearMxpbForm() {
   return GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==

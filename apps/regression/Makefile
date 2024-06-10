@@ -5,23 +5,6 @@ app_regression_test_src += $(addprefix apps/regression/,\
   store.cpp \
 )
 
-app_regression_test_src += $(addprefix apps/regression/model/,\
-  affine_model.cpp \
-  cubic_model.cpp \
-  exponential_model.cpp \
-  linear_model.cpp \
-  logarithmic_model.cpp \
-  logistic_model.cpp \
-  model.cpp \
-  power_model.cpp \
-  proportional_model.cpp \
-  quadratic_model.cpp \
-  quartic_model.cpp \
-  transformed_model.cpp \
-  trigonometric_model.cpp \
-  median_model.cpp \
-)
-
 app_regression_src = $(addprefix apps/regression/,\
   app.cpp \
   stats/calculation_controller.cpp \

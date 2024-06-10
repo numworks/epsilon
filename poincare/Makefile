@@ -318,6 +318,23 @@ poincare_src += $(addprefix poincare/src/probability/,\
   uniform_distribution.cpp \
 )
 
+app_regression_test_src += $(addprefix poincare/src/regression/,\
+  affine_regression.cpp \
+  cubic_regression.cpp \
+  exponential_regression.cpp \
+  linear_regression.cpp \
+  logarithmic_regression.cpp \
+  logistic_regression.cpp \
+  regression.cpp \
+  power_regression.cpp \
+  proportional_regression.cpp \
+  quadratic_regression.cpp \
+  quartic_regression.cpp \
+  transformed_regression.cpp \
+  trigonometric_regression.cpp \
+  median_regression.cpp \
+)
+
 tests_src += $(addprefix poincare/src/,\
   layout/parsing/latex_parser.cpp \
 )

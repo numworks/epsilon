@@ -1,8 +1,7 @@
-#include "median_model.h"
-
 #include <assert.h>
 
 #include "../store.h"
+#include "median_model.h"
 
 namespace Regression {
 

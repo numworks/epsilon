@@ -1,5 +1,3 @@
-#include "trigonometric_model.h"
-
 #include <apps/regression/store.h>
 #include <assert.h>
 #include <poincare/expression.h>
@@ -9,6 +7,8 @@
 #include <poincare/preferences.h>
 
 #include <cmath>
+
+#include "trigonometric_model.h"
 
 namespace Regression {
 

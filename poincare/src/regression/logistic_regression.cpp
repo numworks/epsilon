@@ -1,5 +1,3 @@
-#include "logistic_model.h"
-
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -8,6 +6,7 @@
 #include <cmath>
 
 #include "../store.h"
+#include "logistic_model.h"
 
 namespace Regression {
 

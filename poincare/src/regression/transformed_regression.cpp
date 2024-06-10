@@ -1,11 +1,10 @@
-#include "transformed_model.h"
-
 #include <apps/shared/linear_regression_store.h>
 #include <assert.h>
 
 #include <cmath>
 
 #include "../store.h"
+#include "transformed_model.h"
 
 namespace Regression {
 

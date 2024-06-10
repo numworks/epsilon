@@ -1,10 +1,9 @@
-#include "logarithmic_model.h"
-
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
 #include "../store.h"
+#include "logarithmic_model.h"
 
 namespace Regression {
 

@@ -1,9 +1,8 @@
-#include "linear_model.h"
-
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
 #include "../store.h"
+#include "linear_model.h"
 
 namespace Regression {
 

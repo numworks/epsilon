@@ -1,9 +1,9 @@
-#include "cubic_model.h"
-
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+
+#include "cubic_model.h"
 
 namespace Regression {
 

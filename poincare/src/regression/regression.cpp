@@ -1,5 +1,3 @@
-#include "model.h"
-
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/float.h>
@@ -10,6 +8,7 @@
 #include <cmath>
 
 #include "../store.h"
+#include "model.h"
 
 using namespace Poincare;
 

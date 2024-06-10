@@ -1,11 +1,10 @@
-#include "power_model.h"
-
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 #include "../store.h"
+#include "power_model.h"
 
 namespace Regression {
 

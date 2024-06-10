@@ -1,3 +1,5 @@
+#include "quadratic_regression.h"
+
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -6,11 +8,11 @@
 
 namespace Regression {
 
-Poincare::Layout QuadraticModel::templateLayout() const {
+Poincare::Layout QuadraticRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 }
 
-Poincare::UserExpression QuadraticModel::privateExpression(
+Poincare::UserExpression QuadraticRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x^2+b*x+c
   return Poincare::NewExpression::Create(
@@ -20,16 +22,17 @@ Poincare::UserExpression QuadraticModel::privateExpression(
        .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
-double QuadraticModel::evaluate(double* modelCoefficients, double x) const {
+double QuadraticRegression::evaluate(double* modelCoefficients,
+                                     double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   return a * x * x + b * x + c;
 }
 
-double QuadraticModel::partialDerivate(double* modelCoefficients,
-                                       int derivateCoefficientIndex,
-                                       double x) const {
+double QuadraticRegression::partialDerivate(double* modelCoefficients,
+                                            int derivateCoefficientIndex,
+                                            double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: x^2
     return x * x;

@@ -1,3 +1,5 @@
+#include "quartic_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -7,12 +9,12 @@
 
 namespace Regression {
 
-Poincare::Layout QuarticModel::templateLayout() const {
+Poincare::Layout QuarticRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("4"_l) ^ "+b·x"_l ^ KSuperscriptL("3"_l) ^
          "+c·x"_l ^ KSuperscriptL("2"_l) ^ "+d·x+e"_l;
 }
 
-Poincare::UserExpression QuarticModel::privateExpression(
+Poincare::UserExpression QuarticRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x^4+b*x^3+c*x^2+d*x+e
   return Poincare::NewExpression::Create(
@@ -25,7 +27,7 @@ Poincare::UserExpression QuarticModel::privateExpression(
        .KE = Poincare::NewExpression::Builder<double>(modelCoefficients[4])});
 }
 
-double QuarticModel::evaluate(double* modelCoefficients, double x) const {
+double QuarticRegression::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -34,9 +36,9 @@ double QuarticModel::evaluate(double* modelCoefficients, double x) const {
   return a * x * x * x * x + b * x * x * x + c * x * x + d * x + e;
 }
 
-double QuarticModel::partialDerivate(double* modelCoefficients,
-                                     int derivateCoefficientIndex,
-                                     double x) const {
+double QuarticRegression::partialDerivate(double* modelCoefficients,
+                                          int derivateCoefficientIndex,
+                                          double x) const {
   switch (derivateCoefficientIndex) {
     case 0:
       // Derivate with respect to a: x^4

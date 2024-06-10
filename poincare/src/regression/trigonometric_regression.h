@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
 #define POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
-class TrigonometricModel : public Model {
+class TrigonometricRegression : public Regression {
  public:
-  using Model::Model;
+  using Regression::Regression;
   I18n::Message formulaMessage() const override {
     return I18n::Message::TrigonometricRegressionFormula;
   }

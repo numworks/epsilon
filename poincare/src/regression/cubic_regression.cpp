@@ -1,3 +1,5 @@
+#include "cubic_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -7,12 +9,12 @@
 
 namespace Regression {
 
-Poincare::Layout CubicModel::templateLayout() const {
+Poincare::Layout CubicRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("3"_l) ^ "+b·x"_l ^ KSuperscriptL("2"_l) ^
          "+c·x+d"_l;
 }
 
-Poincare::UserExpression CubicModel::privateExpression(
+Poincare::UserExpression CubicRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x^3+b*x^2+c*x+d
   return Poincare::NewExpression::Create(
@@ -24,7 +26,7 @@ Poincare::UserExpression CubicModel::privateExpression(
        .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
-double CubicModel::evaluate(double* modelCoefficients, double x) const {
+double CubicRegression::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -32,9 +34,9 @@ double CubicModel::evaluate(double* modelCoefficients, double x) const {
   return a * x * x * x + b * x * x + c * x + d;
 }
 
-double CubicModel::partialDerivate(double* modelCoefficients,
-                                   int derivateCoefficientIndex,
-                                   double x) const {
+double CubicRegression::partialDerivate(double* modelCoefficients,
+                                        int derivateCoefficientIndex,
+                                        double x) const {
   switch (derivateCoefficientIndex) {
     case 0:
       // Derivate with respect to a: x^3

@@ -1,16 +1,16 @@
 #ifndef POINCARE_REGRESSION_LINEAR_REGRESSION_H
 #define POINCARE_REGRESSION_LINEAR_REGRESSION_H
 
-#include "affine_model.h"
+#include "affine_regression.h"
 
 namespace Regression {
 
-class LinearModel : public AffineModel {
+class LinearRegression : public AffineRegression {
  public:
-  LinearModel(bool isApbxForm = false) : m_isApbxForm(isApbxForm) {}
+  LinearRegression(bool isApbxForm = false) : m_isApbxForm(isApbxForm) {}
   I18n::Message formulaMessage() const override {
     return m_isApbxForm ? I18n::Message::LinearApbxRegressionFormula
-                        : AffineModel::formulaMessage();
+                        : AffineRegression::formulaMessage();
   }
   I18n::Message name() const override { return I18n::Message::Linear; }
 

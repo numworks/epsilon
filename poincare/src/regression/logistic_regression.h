@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_LOGISTIC_REGRESSION_H
 #define POINCARE_REGRESSION_LOGISTIC_REGRESSION_H
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
-class LogisticModel : public Model {
+class LogisticRegression : public Regression {
  public:
-  using Model::Model;
+  using Regression::Regression;
 
   I18n::Message formulaMessage() const override {
     return I18n::Message::LogisticRegressionFormula;

@@ -1,3 +1,5 @@
+#include "proportional_regression.h"
+
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
@@ -5,7 +7,7 @@
 
 namespace Regression {
 
-Poincare::UserExpression ProportionalModel::privateExpression(
+Poincare::UserExpression ProportionalRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x
   return Poincare::NewExpression::Create(
@@ -13,13 +15,14 @@ Poincare::UserExpression ProportionalModel::privateExpression(
       {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0])});
 }
 
-double ProportionalModel::evaluate(double* modelCoefficients, double x) const {
+double ProportionalRegression::evaluate(double* modelCoefficients,
+                                        double x) const {
   return modelCoefficients[0] * x;
 }
 
-double ProportionalModel::levelSet(double* modelCoefficients, double xMin,
-                                   double xMax, double y,
-                                   Poincare::Context* context) {
+double ProportionalRegression::levelSet(double* modelCoefficients, double xMin,
+                                        double xMax, double y,
+                                        Poincare::Context* context) {
   const double a = modelCoefficients[0];
   if (a == 0.0) {
     return NAN;
@@ -27,9 +30,9 @@ double ProportionalModel::levelSet(double* modelCoefficients, double xMin,
   return y / a;
 }
 
-double ProportionalModel::partialDerivate(double* modelCoefficients,
-                                          int derivateCoefficientIndex,
-                                          double x) const {
+double ProportionalRegression::partialDerivate(double* modelCoefficients,
+                                               int derivateCoefficientIndex,
+                                               double x) const {
   assert(derivateCoefficientIndex == 0);
   // Derivate: x
   return x;

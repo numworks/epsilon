@@ -1,14 +1,14 @@
 #ifndef POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
 #define POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
 /* Such model are transformed before being fitted with a Linear Regression.
  * Transformation is the application of Ln on either None (Linear), X
  * (Logarithm), Y (Exponential) or both (Power). */
-class TransformedModel : public Model {
+class TransformedRegression : public Regression {
  public:
   int numberOfCoefficients() const override { return 2; }
   double evaluate(double* modelCoefficients, double x) const override;

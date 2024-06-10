@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_LOGARITHMIC_REGRESSION_H
 #define POINCARE_REGRESSION_LOGARITHMIC_REGRESSION_H
 
-#include "transformed_model.h"
+#include "transformed_regression.h"
 
 namespace Regression {
 
-class LogarithmicModel : public TransformedModel {
+class LogarithmicRegression : public TransformedRegression {
  public:
-  LogarithmicModel();
+  LogarithmicRegression();
   I18n::Message formulaMessage() const override {
     return I18n::Message::LogarithmicRegressionFormula;
   }

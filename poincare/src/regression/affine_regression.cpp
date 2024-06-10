@@ -1,3 +1,5 @@
+#include "affine_regression.h"
+
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
@@ -5,7 +7,7 @@
 
 namespace Regression {
 
-Poincare::UserExpression AffineModel::privateExpression(
+Poincare::UserExpression AffineRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x+b
   return Poincare::NewExpression::Create(
@@ -14,15 +16,15 @@ Poincare::UserExpression AffineModel::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-double AffineModel::evaluate(double* modelCoefficients, double x) const {
+double AffineRegression::evaluate(double* modelCoefficients, double x) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   return slope * x + yIntercept;
 }
 
-double AffineModel::levelSet(double* modelCoefficients, double xMin,
-                             double xMax, double y,
-                             Poincare::Context* context) {
+double AffineRegression::levelSet(double* modelCoefficients, double xMin,
+                                  double xMax, double y,
+                                  Poincare::Context* context) {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   if (slope == 0) {

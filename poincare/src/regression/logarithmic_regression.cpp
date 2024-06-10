@@ -1,3 +1,5 @@
+#include "logarithmic_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -7,12 +9,12 @@
 
 namespace Regression {
 
-LogarithmicModel::LogarithmicModel() : TransformedModel() {
-  assert(applyLnOnX() == Store::FitsLnX(Model::Type::Logarithmic));
-  assert(applyLnOnY() == Store::FitsLnY(Model::Type::Logarithmic));
+LogarithmicRegression::LogarithmicRegression() : TransformedRegression() {
+  assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Logarithmic));
+  assert(applyLnOnY() == Store::FitsLnY(Regression::Type::Logarithmic));
 }
 
-Poincare::UserExpression LogarithmicModel::privateExpression(
+Poincare::UserExpression LogarithmicRegression::privateExpression(
     double* modelCoefficients) const {
   // a+b*ln(x)
   return Poincare::NewExpression::Create(

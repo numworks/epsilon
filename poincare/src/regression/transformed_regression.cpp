@@ -1,3 +1,5 @@
+#include "transformed_regression.h"
+
 #include <apps/shared/linear_regression_store.h>
 #include <assert.h>
 
@@ -8,7 +10,8 @@
 
 namespace Regression {
 
-double TransformedModel::evaluate(double* modelCoefficients, double x) const {
+double TransformedRegression::evaluate(double* modelCoefficients,
+                                       double x) const {
   /* TODO: Ensure this transformed evaluation remain precise. Otherwise,
    * reimplement if for each models. Same for levelSet. */
   bool opposeY = false;
@@ -32,9 +35,9 @@ double TransformedModel::evaluate(double* modelCoefficients, double x) const {
          (applyLnOnY() ? std::exp(transformedY) : transformedY);
 }
 
-double TransformedModel::levelSet(double* modelCoefficients, double xMin,
-                                  double xMax, double y,
-                                  Poincare::Context* context) {
+double TransformedRegression::levelSet(double* modelCoefficients, double xMin,
+                                       double xMax, double y,
+                                       Poincare::Context* context) {
   bool opposeY = false;
   double a = modelCoefficients[0];
   if (applyLnOnA()) {
@@ -56,9 +59,9 @@ double TransformedModel::levelSet(double* modelCoefficients, double xMin,
   return applyLnOnX() ? std::exp(transformedX) : transformedX;
 }
 
-void TransformedModel::privateFit(Store* store, int series,
-                                  double* modelCoefficients,
-                                  Poincare::Context* context) {
+void TransformedRegression::privateFit(Store* store, int series,
+                                       double* modelCoefficients,
+                                       Poincare::Context* context) {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
          store->seriesIsActive(series));
   bool opposeY = applyLnOnA() && store->get(series, 1, 0) < 0.0;
@@ -75,8 +78,8 @@ void TransformedModel::privateFit(Store* store, int series,
   }
 }
 
-bool TransformedModel::dataSuitableForFit(Store* store, int series) const {
-  if (!Model::dataSuitableForFit(store, series)) {
+bool TransformedRegression::dataSuitableForFit(Store* store, int series) const {
+  if (!Regression::dataSuitableForFit(store, series)) {
     return false;
   }
   int numberOfPairs = store->numberOfPairsOfSeries(series);

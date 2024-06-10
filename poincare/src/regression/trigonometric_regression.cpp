@@ -1,3 +1,5 @@
+#include "trigonometric_regression.h"
+
 #include <apps/regression/store.h>
 #include <assert.h>
 #include <poincare/expression.h>
@@ -17,7 +19,7 @@ static double toRadians() {
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
-Poincare::UserExpression TrigonometricModel::privateExpression(
+Poincare::UserExpression TrigonometricRegression::privateExpression(
     double* modelCoefficients) const {
   // a*sin(bx+c)+d
   return Poincare::NewExpression::Create(
@@ -28,7 +30,8 @@ Poincare::UserExpression TrigonometricModel::privateExpression(
        .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
-double TrigonometricModel::evaluate(double* modelCoefficients, double x) const {
+double TrigonometricRegression::evaluate(double* modelCoefficients,
+                                         double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -38,9 +41,9 @@ double TrigonometricModel::evaluate(double* modelCoefficients, double x) const {
   return a * std::sin(radian * (b * x + c)) + d;
 }
 
-double TrigonometricModel::partialDerivate(double* modelCoefficients,
-                                           int derivateCoefficientIndex,
-                                           double x) const {
+double TrigonometricRegression::partialDerivate(double* modelCoefficients,
+                                                int derivateCoefficientIndex,
+                                                double x) const {
   if (derivateCoefficientIndex == 3) {
     // Derivate with respect to d: 1
     return 1.0;
@@ -158,7 +161,7 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   *yMaxExtremum = yMax;
 }
 
-void TrigonometricModel::specializedInitCoefficientsForFit(
+void TrigonometricRegression::specializedInitCoefficientsForFit(
     double* modelCoefficients, double defaultValue, Store* store,
     int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
@@ -198,7 +201,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(
   modelCoefficients[k_numberOfCoefficients - 1] = (yMax + yMin) / 2.0;
 }
 
-void TrigonometricModel::uniformizeCoefficientsFromFit(
+void TrigonometricRegression::uniformizeCoefficientsFromFit(
     double* modelCoefficients) const {
   // Coefficients must be unique.
   double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(

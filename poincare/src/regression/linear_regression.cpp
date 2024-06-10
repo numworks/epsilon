@@ -1,3 +1,5 @@
+#include "linear_regression.h"
+
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
@@ -6,10 +8,10 @@
 
 namespace Regression {
 
-Poincare::UserExpression LinearModel::privateExpression(
+Poincare::UserExpression LinearRegression::privateExpression(
     double* modelCoefficients) const {
   if (!m_isApbxForm) {
-    return AffineModel::privateExpression(modelCoefficients);
+    return AffineRegression::privateExpression(modelCoefficients);
   }
   // a+b*x
   return Poincare::NewExpression::Create(
@@ -18,9 +20,9 @@ Poincare::UserExpression LinearModel::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-void LinearModel::privateFit(Store* store, int series,
-                             double* modelCoefficients,
-                             Poincare::Context* context) {
+void LinearRegression::privateFit(Store* store, int series,
+                                  double* modelCoefficients,
+                                  Poincare::Context* context) {
   modelCoefficients[slopeCoefficientIndex()] = store->slope(series);
   modelCoefficients[yInterceptCoefficientIndex()] = store->yIntercept(series);
 }

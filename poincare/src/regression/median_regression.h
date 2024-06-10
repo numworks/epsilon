@@ -1,11 +1,11 @@
 #ifndef POINCARE_REGRESSION_MEDIAN_REGRESSION_H
 #define POINCARE_REGRESSION_MEDIAN_REGRESSION_H
 
-#include "affine_model.h"
+#include "affine_regression.h"
 
 namespace Regression {
 
-class MedianModel : public AffineModel {
+class MedianRegression : public AffineRegression {
  public:
   I18n::Message name() const override {
     return I18n::Message::MedianRegression;

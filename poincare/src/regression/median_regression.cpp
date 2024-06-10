@@ -1,3 +1,5 @@
+#include "median_regression.h"
+
 #include <assert.h>
 
 #include "../store.h"
@@ -5,9 +7,9 @@
 
 namespace Regression {
 
-double MedianModel::getMedianValue(Store* store, uint8_t* sortedIndex,
-                                   int series, int column, int startIndex,
-                                   int endIndex) {
+double MedianRegression::getMedianValue(Store* store, uint8_t* sortedIndex,
+                                        int series, int column, int startIndex,
+                                        int endIndex) {
   assert(endIndex != startIndex);
   if ((endIndex - startIndex) % 2 == 1) {
     return store->get(series, column,
@@ -22,9 +24,9 @@ double MedianModel::getMedianValue(Store* store, uint8_t* sortedIndex,
   }
 }
 
-void MedianModel::privateFit(Store* store, int series,
-                             double* modelCoefficients,
-                             Poincare::Context* context) {
+void MedianRegression::privateFit(Store* store, int series,
+                                  double* modelCoefficients,
+                                  Poincare::Context* context) {
   uint8_t numberOfDots = store->numberOfPairsOfSeries(series);
   assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {

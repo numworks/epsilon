@@ -1,3 +1,5 @@
+#include "power_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -8,16 +10,16 @@
 
 namespace Regression {
 
-PowerModel::PowerModel() : TransformedModel() {
-  assert(applyLnOnX() == Store::FitsLnX(Model::Type::Power));
-  assert(applyLnOnY() == Store::FitsLnY(Model::Type::Power));
+PowerRegression::PowerRegression() : TransformedRegression() {
+  assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Power));
+  assert(applyLnOnY() == Store::FitsLnY(Regression::Type::Power));
 }
 
-Poincare::Layout PowerModel::templateLayout() const {
+Poincare::Layout PowerRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("b"_l);
 }
 
-Poincare::UserExpression PowerModel::privateExpression(
+Poincare::UserExpression PowerRegression::privateExpression(
     double* modelCoefficients) const {
   // a*x^b
   return Poincare::NewExpression::Create(

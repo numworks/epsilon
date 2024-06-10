@@ -1,3 +1,5 @@
+#include "logistic_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -10,11 +12,11 @@
 
 namespace Regression {
 
-Poincare::Layout LogisticModel::templateLayout() const {
+Poincare::Layout LogisticRegression::templateLayout() const {
   return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
 }
 
-Poincare::UserExpression LogisticModel::privateExpression(
+Poincare::UserExpression LogisticRegression::privateExpression(
     double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
   return Poincare::NewExpression::Create(
@@ -24,7 +26,7 @@ Poincare::UserExpression LogisticModel::privateExpression(
        .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
-double LogisticModel::evaluate(double* modelCoefficients, double x) const {
+double LogisticRegression::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -36,9 +38,9 @@ double LogisticModel::evaluate(double* modelCoefficients, double x) const {
   return c / (1.0 + a * std::exp(-b * x));
 }
 
-double LogisticModel::levelSet(double* modelCoefficients, double xMin,
-                               double xMax, double y,
-                               Poincare::Context* context) {
+double LogisticRegression::levelSet(double* modelCoefficients, double xMin,
+                                    double xMax, double y,
+                                    Poincare::Context* context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -52,9 +54,9 @@ double LogisticModel::levelSet(double* modelCoefficients, double xMin,
   return -std::log(lnArgument) / b;
 }
 
-double LogisticModel::partialDerivate(double* modelCoefficients,
-                                      int derivateCoefficientIndex,
-                                      double x) const {
+double LogisticRegression::partialDerivate(double* modelCoefficients,
+                                           int derivateCoefficientIndex,
+                                           double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -72,10 +74,9 @@ double LogisticModel::partialDerivate(double* modelCoefficients,
   return 1.0 / denominator;
 }
 
-void LogisticModel::specializedInitCoefficientsForFit(double* modelCoefficients,
-                                                      double defaultValue,
-                                                      Store* store,
-                                                      int series) const {
+void LogisticRegression::specializedInitCoefficientsForFit(
+    double* modelCoefficients, double defaultValue, Store* store,
+    int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
          store->seriesIsActive(series));
   /* We optimize fit for data that actually follow a logistic function curve :

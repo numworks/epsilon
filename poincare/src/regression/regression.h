@@ -11,7 +11,7 @@ namespace Regression {
 
 class Store;
 
-class Model {
+class Regression {
  public:
   enum class Type : uint8_t {
     None = 0,

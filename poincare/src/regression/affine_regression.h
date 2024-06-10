@@ -3,15 +3,15 @@
 
 #include <apps/global_preferences.h>
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
 /* This is a pure virtual class that factorises all regression models that
  * compute an affine function (linear model and median-median model) */
-class AffineModel : public Model {
+class AffineRegression : public Regression {
  public:
-  using Model::Model;
+  using Regression::Regression;
   I18n::Message formulaMessage() const override {
     return UseMxpbForm() ? I18n::Message::LinearMxpbRegressionFormula
                          : I18n::Message::LinearRegressionFormula;

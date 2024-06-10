@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_QUADRATIC_REGRESSION_H
 #define POINCARE_REGRESSION_QUADRATIC_REGRESSION_H
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
-class QuadraticModel : public Model {
+class QuadraticRegression : public Regression {
  public:
-  using Model::Model;
+  using Regression::Regression;
   I18n::Message formulaMessage() const override {
     return I18n::Message::QuadraticRegressionFormula;
   }

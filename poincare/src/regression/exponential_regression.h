@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_EXPONENTIAL_REGRESSION_H
 #define POINCARE_REGRESSION_EXPONENTIAL_REGRESSION_H
 
-#include "transformed_model.h"
+#include "transformed_regression.h"
 
 namespace Regression {
 
-class ExponentialModel : public TransformedModel {
+class ExponentialRegression : public TransformedRegression {
  public:
-  ExponentialModel(bool isAbxForm = false);
+  ExponentialRegression(bool isAbxForm = false);
   I18n::Message formulaMessage() const override {
     return m_isAbxForm ? I18n::Message::ExponentialAbxRegressionFormula
                        : I18n::Message::ExponentialAebxRegressionFormula;

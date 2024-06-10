@@ -1,3 +1,5 @@
+#include "exponential_regression.h"
+
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
@@ -8,22 +10,22 @@
 
 namespace Regression {
 
-ExponentialModel::ExponentialModel(bool isAbxForm)
-    : TransformedModel(), m_isAbxForm(isAbxForm) {
-  assert(applyLnOnX() == Store::FitsLnX(isAbxForm
-                                            ? Model::Type::ExponentialAbx
-                                            : Model::Type::ExponentialAebx));
-  assert(applyLnOnY() == Store::FitsLnY(isAbxForm
-                                            ? Model::Type::ExponentialAbx
-                                            : Model::Type::ExponentialAebx));
+ExponentialRegression::ExponentialRegression(bool isAbxForm)
+    : TransformedRegression(), m_isAbxForm(isAbxForm) {
+  assert(applyLnOnX() ==
+         Store::FitsLnX(isAbxForm ? Regression::Type::ExponentialAbx
+                                  : Regression::Type::ExponentialAebx));
+  assert(applyLnOnY() ==
+         Store::FitsLnY(isAbxForm ? Regression::Type::ExponentialAbx
+                                  : Regression::Type::ExponentialAebx));
 }
 
-Poincare::Layout ExponentialModel::templateLayout() const {
+Poincare::Layout ExponentialRegression::templateLayout() const {
   return m_isAbxForm ? "a·b"_l ^ KSuperscriptL("x"_l)
                      : "a·e"_l ^ KSuperscriptL("b·x"_l);
 }
 
-Poincare::UserExpression ExponentialModel::privateExpression(
+Poincare::UserExpression ExponentialRegression::privateExpression(
     double* modelCoefficients) const {
   // if m_isAbxForm -> a*b^x, else a*e^bx
   return Poincare::NewExpression::Create(

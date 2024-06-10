@@ -1,13 +1,13 @@
 #ifndef POINCARE_REGRESSION_POWER_REGRESSION_H
 #define POINCARE_REGRESSION_POWER_REGRESSION_H
 
-#include "transformed_model.h"
+#include "transformed_regression.h"
 
 namespace Regression {
 
-class PowerModel : public TransformedModel {
+class PowerRegression : public TransformedRegression {
  public:
-  PowerModel();
+  PowerRegression();
   I18n::Message formulaMessage() const override {
     return I18n::Message::PowerRegressionFormula;
   }

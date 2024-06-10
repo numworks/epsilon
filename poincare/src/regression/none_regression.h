@@ -1,14 +1,14 @@
 #ifndef POINCARE_REGRESSION_NONE_REGRESSION_H
 #define POINCARE_REGRESSION_NONE_REGRESSION_H
 
-#include "model.h"
+#include "regression.h"
 
 namespace Regression {
 
 // This model is selected by default and represents a simple scatter plot
-class NoneModel : public Model {
+class NoneRegression : public Regression {
  public:
-  using Model::Model;
+  using Regression::Regression;
   I18n::Message formulaMessage() const override {
     assert(false);
     return I18n::Message::Default;

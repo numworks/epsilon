@@ -5,8 +5,7 @@
 
 #include <cmath>
 
-#include "../store.h"
-#include "transformed_model.h"
+#include "dataset_adapter.h"
 
 namespace Poincare::Regression {
 
@@ -65,8 +64,9 @@ void TransformedRegression::privateFit(const Series* series,
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   Shared::LinearRegressionStore::CalculationOptions options(
       applyLnOnX(), applyLnOnY(), opposeY);
-  modelCoefficients[0] = store->yIntercept(series, options);
-  modelCoefficients[1] = store->slope(series, options);
+  DatasetSeriesAdapter dataset(series);
+  modelCoefficients[0] = dataset.yIntercept(options);
+  modelCoefficients[1] = dataset.slope(options);
   if (applyLnOnA()) {
     modelCoefficients[0] =
         (opposeY ? -1.0 : 1.0) * std::exp(modelCoefficients[0]);

@@ -7,6 +7,8 @@
 
 #include <cmath>
 
+#include "dataset_adapter.h"
+
 namespace Poincare::Regression {
 
 Poincare::Layout LogisticRegression::templateLayout() const {
@@ -74,6 +76,8 @@ double LogisticRegression::partialDerivate(double* modelCoefficients,
 void LogisticRegression::specializedInitCoefficientsForFit(
     double* modelCoefficients, double defaultValue,
     const Series* series) const {
+  OneColumn xColumn(series, 0);
+  OneColumn yColumn(series, 1);
   /* We optimize fit for data that actually follow a logistic function curve :
    * f(x)=c/(1+a*e^(-bx))
    * We use these properties :
@@ -99,14 +103,13 @@ void LogisticRegression::specializedInitCoefficientsForFit(
 
   /* We assume the average of Y data is c/2. This handles both positive and
    * negative c coefficients while not being too dependent on outliers. */
-  double c = 2.0 * store->meanOfColumn(series, 1);
+  double c = 2.0 * yColumn.mean();
 
   /* The range of the interesting part is 10/b. We assume that most data points
    * are distributed around the interesting part. We can therefore estimate b
    * from X's range of values (dependent on outliers): Xmax - Xmin = 10/b */
-  double b = 10.0 / (store->maxValueOfColumn(series, 0) -
-                     store->minValueOfColumn(series, 0));
-  double slope = store->slope(series);
+  double b = 10.0 / (xColumn.max() - xColumn.min());
+  double slope = DatasetSeriesAdapter(series).slope();
   if (!std::isfinite(b)) {
     b = defaultValue;
   }
@@ -120,7 +123,7 @@ void LogisticRegression::specializedInitCoefficientsForFit(
 
   /* We assume the average of X data is ln(a)/b. This handles both positive and
    * negative values while not being too dependent on outliers. */
-  double a = std::exp(b * store->meanOfColumn(series, 0));
+  double a = std::exp(b * xColumn.mean());
   if (!std::isfinite(a)) {
     a = defaultValue;
   }

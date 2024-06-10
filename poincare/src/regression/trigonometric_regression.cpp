@@ -10,6 +10,8 @@
 
 #include <cmath>
 
+#include "dataset_adapter.h"
+
 namespace Poincare::Regression {
 
 static double toRadians() {
@@ -97,8 +99,7 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   int numberOfPairs = series->numberOfPairs();
   assert(numberOfPairs >= 3);
   // Use a StatisticsDataset to memoize the sorted index
-  Poincare::StatisticsDataset<double> dataset =
-      store->createDatasetFromSeries(series);
+  DatasetSeriesAdapter dataset(series);
   // Compute values at index 0 and 1
   int firstIndex = dataset.indexAtSortedIndex(0);
   int secondIndex = dataset.indexAtSortedIndex(1);

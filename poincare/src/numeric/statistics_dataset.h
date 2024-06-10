@@ -99,6 +99,9 @@ class StatisticsDataset {
     return indexAtCumulatedFrequency(1.0 / 2.0, upperIndex);
   }
 
+  T min() const { return sortedElementAtCumulatedFrequency(0, false); }
+  T max() const { return sortedElementAtCumulatedFrequency(1, false); }
+
  private:
   int datasetLength() const {
     assert(m_weights == nullptr || m_weights->length() == m_values->length());

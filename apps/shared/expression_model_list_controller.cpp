@@ -255,9 +255,8 @@ static CodePoint symbolForEquation(UserExpression expression) {
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  char buffer[TextField::MaxBufferSize()];
-  layoutField->layout().serializeForParsing(buffer, TextField::MaxBufferSize());
-  UserExpression parsedExpression = UserExpression::Parse(buffer, nullptr);
+  UserExpression parsedExpression =
+      UserExpression::Parse(layoutField->layout(), nullptr);
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;

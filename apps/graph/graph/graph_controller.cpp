@@ -79,9 +79,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
   const SystemFunction *e = static_cast<const SystemFunction *>(model);
   assert(e->type() == ExpressionNode::Type::Point);
   assert(coordinate == 0 || coordinate == 1);
-  T value = PoincareHelpers::ApproximateWithValueForSymbol<T>(
-      e->childAtIndex(coordinate), ContinuousFunction::k_unknownName, t,
-      context);
+  T value = e->childAtIndex(coordinate).approximateToScalarWithValue<T>(t);
   return Coordinate2D<T>(t, value);
 }
 

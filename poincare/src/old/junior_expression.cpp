@@ -488,12 +488,12 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
   Tree* result = tree()->clone();
   Dimension dimension = Dimension::GetDimension(tree());
-  if (!Dimension::IsList(tree()) &&
-      (dimension.isScalar() || (dimension.isPoint() && !scalarsOnly))) {
+  if ((scalarsOnly && (!dimension.isScalar() || Dimension::IsList(tree()))) ||
+      (!dimension.isScalar() && !dimension.isPoint())) {
+    result->cloneTreeOverTree(KUndef);
+  } else {
     Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                    ComplexFormat::Real);
-  } else {
-    result->cloneTreeOverTree(KUndef);
   }
   return JuniorExpression::Builder(result);
 }

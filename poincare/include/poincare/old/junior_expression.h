@@ -191,8 +191,8 @@ class JuniorExpression : public OExpression {
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;
   /* Replace some UserSymbol into Var0 for approximateToPointOrScalarWithValue
-   * Returns undef if the expression is not a point or a scalar.
-   * If scalarsOnly = true, returns undef if it's a point. */
+   * Returns undef if the expression's dimension is not point or scalar.
+   * If scalarsOnly = true, returns undef if it's a point or a list. */
   SystemFunction getSystemFunction(const char* symbolName,
                                    bool scalarsOnly = false) const;
   // Approximate to scalar replacing Var0 with value.

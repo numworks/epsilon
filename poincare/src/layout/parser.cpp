@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
@@ -53,20 +54,29 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
   switch (node->layoutType()) {
     case LayoutType::Rack:
       return RackParser(node, context, -1, method).parse();
-    // case LayoutType::Parenthesis:
-    // return Parse(node->child(0), context);
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
     case LayoutType::NthDiff:
       assert(false);
+    case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace: {
       Tree* list = RackParser(node->child(0), context, -1,
                               ParsingContext::ParsingMethod::CommaSeparatedList)
                        .parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      if (node->layoutType() == LayoutType::Parenthesis) {
+        int numberOfChildren = list->numberOfChildren();
+        if (numberOfChildren == 2) {
+          list->cloneNodeOverNode(KPoint);
+        } else if (numberOfChildren == 1) {
+          list->cloneNodeOverNode(KParenthesis);
+        } else {
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        }
       }
       return list;
     }

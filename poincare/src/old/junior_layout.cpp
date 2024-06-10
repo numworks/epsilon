@@ -5,6 +5,7 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/render.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/n_ary.h>
@@ -64,10 +65,10 @@ Internal::Tree* JuniorLayoutNode::tree() {
 }
 
 JuniorLayout JuniorLayout::Builder(const Internal::Tree* tree) {
-  assert(Internal::AppHelpers::IsSanitizedRack(tree));
   if (!tree) {
     return JuniorLayout();
   }
+  assert(Internal::AppHelpers::IsSanitizedRack(tree));
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(JuniorLayoutNode) + size);
   JuniorLayoutNode* node = new (bufferNode) JuniorLayoutNode(tree, size);
@@ -115,6 +116,13 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   }
   Internal::NAry::SetNumberOfChildren(tree, n);
   return Builder(tree);
+}
+
+JuniorLayout JuniorLayout::Parse(const char* string) {
+  if (!string || string[0] == 0) {
+    return JuniorLayout();
+  }
+  return JuniorLayout::Builder(Internal::RackFromText(string));
 }
 
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,

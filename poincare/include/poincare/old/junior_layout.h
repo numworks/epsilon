@@ -74,6 +74,7 @@ class JuniorLayout final : public OLayout {
 
   static JuniorLayout CodePoint(CodePoint cp);
   static JuniorLayout String(const char* str, int length = -1);
+  static JuniorLayout Parse(const char* string);
 
   static JuniorLayout Builder(const Internal::Tree* tree);
   // Eat the tree

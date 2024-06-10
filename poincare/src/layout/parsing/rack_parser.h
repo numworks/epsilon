@@ -35,13 +35,15 @@ class RackParser {
    * f(x)=xy) */
   RackParser(const Tree* rack, Poincare::Context* context, int textEnd = -1,
              ParsingContext::ParsingMethod parsingMethod =
-                 ParsingContext::ParsingMethod::Classic)
+                 ParsingContext::ParsingMethod::Classic,
+             bool commaSeparatedList = false)
       : m_parsingContext(context, parsingMethod),
         m_tokenizer(Rack::From(rack), &m_parsingContext, 0, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false),
+        m_comaSeparatedList(commaSeparatedList),
         m_root(rack) {}
 
   Tree* parse();
@@ -195,6 +197,7 @@ class RackParser {
   Token m_nextToken;
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
+  bool m_comaSeparatedList;
   const Tree* m_root;
 };
 

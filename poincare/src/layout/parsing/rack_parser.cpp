@@ -134,8 +134,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
 Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
   TreeRef result;
-  if (m_parsingContext.parsingMethod() ==
-      ParsingContext::ParsingMethod::CommaSeparatedList) {
+  if (m_comaSeparatedList) {
     result = parseCommaSeparatedList(true);
   } else {
     result = parseUntil(Token::Type::EndOfStream);
@@ -1175,7 +1174,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
     // Parse the RackLayout as a comma separated list.
     RackParser subParser(m_nextToken.firstLayout()->nextNode(),
                          m_parsingContext.context(), -1,
-                         ParsingContext::ParsingMethod::CommaSeparatedList);
+                         m_parsingContext.parsingMethod(), true);
     popToken();
     return subParser.parse();
   }

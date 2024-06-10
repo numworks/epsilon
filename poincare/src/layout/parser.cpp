@@ -62,9 +62,8 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
       assert(false);
     case LayoutType::Parenthesis:
     case LayoutType::CurlyBrace: {
-      Tree* list = RackParser(node->child(0), context, -1,
-                              ParsingContext::ParsingMethod::CommaSeparatedList)
-                       .parse();
+      Tree* list =
+          RackParser(node->child(0), context, -1, method, true).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }

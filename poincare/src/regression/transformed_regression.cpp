@@ -8,7 +8,7 @@
 #include "../store.h"
 #include "transformed_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 double TransformedRegression::evaluate(double* modelCoefficients,
                                        double x) const {
@@ -101,4 +101,4 @@ bool TransformedRegression::dataSuitableForFit(Store* store, int series) const {
   return true;
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

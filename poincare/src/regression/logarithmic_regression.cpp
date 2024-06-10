@@ -7,7 +7,7 @@
 #include "../store.h"
 #include "logarithmic_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 LogarithmicRegression::LogarithmicRegression() : TransformedRegression() {
   assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Logarithmic));
@@ -23,4 +23,4 @@ Poincare::UserExpression LogarithmicRegression::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

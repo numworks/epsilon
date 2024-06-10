@@ -3,7 +3,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class ProportionalRegression : public Regression {
  public:
@@ -25,6 +25,6 @@ class ProportionalRegression : public Regression {
                          int derivateCoefficientIndex, double x) const override;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

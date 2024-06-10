@@ -6,7 +6,7 @@
 #include "../store.h"
 #include "linear_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 Poincare::UserExpression LinearRegression::privateExpression(
     double* modelCoefficients) const {
@@ -27,4 +27,4 @@ void LinearRegression::privateFit(Store* store, int series,
   modelCoefficients[yInterceptCoefficientIndex()] = store->yIntercept(series);
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

@@ -3,7 +3,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class LogisticRegression : public Regression {
  public:
@@ -31,6 +31,6 @@ class LogisticRegression : public Regression {
                                          int series) const override;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

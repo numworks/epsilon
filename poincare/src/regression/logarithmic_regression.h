@@ -3,7 +3,7 @@
 
 #include "transformed_regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class LogarithmicRegression : public TransformedRegression {
  public:
@@ -20,6 +20,6 @@ class LogarithmicRegression : public TransformedRegression {
   bool applyLnOnY() const override { return false; }
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

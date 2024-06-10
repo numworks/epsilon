@@ -3,7 +3,7 @@
 
 #include "affine_regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class MedianRegression : public AffineRegression {
  public:
@@ -18,6 +18,6 @@ class MedianRegression : public AffineRegression {
                   Poincare::Context* context) override;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

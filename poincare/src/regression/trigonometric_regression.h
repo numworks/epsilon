@@ -3,7 +3,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class TrigonometricRegression : public Regression {
  public:
@@ -28,6 +28,6 @@ class TrigonometricRegression : public Regression {
   void uniformizeCoefficientsFromFit(double* modelCoefficients) const override;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

@@ -5,7 +5,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 /* This is a pure virtual class that factorises all regression models that
  * compute an affine function (linear model and median-median model) */
@@ -39,6 +39,6 @@ class AffineRegression : public Regression {
                   Poincare::Context* context) override = 0;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

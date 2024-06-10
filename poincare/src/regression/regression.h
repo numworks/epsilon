@@ -7,7 +7,7 @@
 #include <poincare/old/matrix.h>
 #include <stdint.h>
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class Store;
 
@@ -104,6 +104,6 @@ class Regression {
   virtual void uniformizeCoefficientsFromFit(double* modelCoefficients) const {}
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

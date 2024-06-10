@@ -3,7 +3,7 @@
 
 #include "transformed_regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class ExponentialRegression : public TransformedRegression {
  public:
@@ -29,6 +29,6 @@ class ExponentialRegression : public TransformedRegression {
   bool m_isAbxForm;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

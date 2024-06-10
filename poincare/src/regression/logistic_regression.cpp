@@ -10,7 +10,7 @@
 #include "../store.h"
 #include "logistic_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 Poincare::Layout LogisticRegression::templateLayout() const {
   return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
@@ -135,4 +135,4 @@ void LogisticRegression::specializedInitCoefficientsForFit(
   modelCoefficients[2] = c;
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

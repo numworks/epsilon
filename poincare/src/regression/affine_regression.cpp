@@ -3,9 +3,7 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
-#include "affine_model.h"
-
-namespace Regression {
+namespace Poincare::Regression {
 
 Poincare::UserExpression AffineRegression::privateExpression(
     double* modelCoefficients) const {
@@ -33,4 +31,4 @@ double AffineRegression::levelSet(double* modelCoefficients, double xMin,
   return (y - yIntercept) / slope;
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

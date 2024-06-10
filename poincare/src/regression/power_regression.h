@@ -3,7 +3,7 @@
 
 #include "transformed_regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class PowerRegression : public TransformedRegression {
  public:
@@ -21,6 +21,6 @@ class PowerRegression : public TransformedRegression {
   bool applyLnOnY() const override { return true; }
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

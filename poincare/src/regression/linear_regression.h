@@ -3,7 +3,7 @@
 
 #include "affine_regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 class LinearRegression : public AffineRegression {
  public:
@@ -26,6 +26,6 @@ class LinearRegression : public AffineRegression {
   bool m_isApbxForm;
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

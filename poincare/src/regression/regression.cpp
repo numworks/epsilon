@@ -14,7 +14,7 @@
 
 using namespace Poincare;
 
-namespace Regression {
+namespace Poincare::Regression {
 
 Layout Regression::templateLayout() const {
   const char* layoutString =
@@ -287,4 +287,4 @@ void Regression::specializedInitCoefficientsForFit(double* modelCoefficients,
   }
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

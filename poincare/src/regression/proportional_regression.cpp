@@ -3,9 +3,7 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
-#include "proportional_model.h"
-
-namespace Regression {
+namespace Poincare::Regression {
 
 Poincare::UserExpression ProportionalRegression::privateExpression(
     double* modelCoefficients) const {
@@ -38,4 +36,4 @@ double ProportionalRegression::partialDerivate(double* modelCoefficients,
   return x;
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

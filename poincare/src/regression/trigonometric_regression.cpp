@@ -10,9 +10,7 @@
 
 #include <cmath>
 
-#include "trigonometric_model.h"
-
-namespace Regression {
+namespace Poincare::Regression {
 
 static double toRadians() {
   return M_PI / Poincare::Trigonometry::PiInAngleUnit(
@@ -235,4 +233,4 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
   }
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

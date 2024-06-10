@@ -3,7 +3,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 /* Such model are transformed before being fitted with a Linear Regression.
  * Transformation is the application of Ln on either None (Linear), X
@@ -26,6 +26,6 @@ class TransformedRegression : public Regression {
   virtual bool applyLnOnB() const { return false; }
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

@@ -5,7 +5,7 @@
 #include "../store.h"
 #include "median_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 double MedianRegression::getMedianValue(Store* store, uint8_t* sortedIndex,
                                         int series, int column, int startIndex,
@@ -87,4 +87,4 @@ void MedianRegression::privateFit(Store* store, int series,
                          3;
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

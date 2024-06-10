@@ -8,7 +8,7 @@
 #include "../store.h"
 #include "power_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 PowerRegression::PowerRegression() : TransformedRegression() {
   assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Power));
@@ -28,4 +28,4 @@ Poincare::UserExpression PowerRegression::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

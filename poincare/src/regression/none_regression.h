@@ -3,7 +3,7 @@
 
 #include "regression.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 // This model is selected by default and represents a simple scatter plot
 class NoneRegression : public Regression {
@@ -41,6 +41,6 @@ class NoneRegression : public Regression {
                   Poincare::Context* context) override {}
 };
 
-}  // namespace Regression
+}  // namespace Poincare::Regression
 
 #endif

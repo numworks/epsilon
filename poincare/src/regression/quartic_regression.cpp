@@ -5,9 +5,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
-#include "quartic_model.h"
-
-namespace Regression {
+namespace Poincare::Regression {
 
 Poincare::Layout QuarticRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("4"_l) ^ "+b·x"_l ^ KSuperscriptL("3"_l) ^
@@ -59,4 +57,4 @@ double QuarticRegression::partialDerivate(double* modelCoefficients,
   };
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

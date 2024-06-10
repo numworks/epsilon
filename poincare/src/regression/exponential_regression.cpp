@@ -8,7 +8,7 @@
 #include "../store.h"
 #include "exponential_model.h"
 
-namespace Regression {
+namespace Poincare::Regression {
 
 ExponentialRegression::ExponentialRegression(bool isAbxForm)
     : TransformedRegression(), m_isAbxForm(isAbxForm) {
@@ -35,4 +35,4 @@ Poincare::UserExpression ExponentialRegression::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-}  // namespace Regression
+}  // namespace Poincare::Regression

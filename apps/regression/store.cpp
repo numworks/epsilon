@@ -41,8 +41,6 @@ Store::Store(Shared::GlobalContext *context,
              Model::Type *regressionTypes)
     : LinearRegressionStore(context, preferences),
       m_regressionTypes(regressionTypes),
-      m_exponentialAbxModel(true),
-      m_linearApbxModel(true),
       m_recomputeCoefficients{true, true, true} {
   initListsFromStorage();
 }
@@ -427,17 +425,10 @@ double Store::computeResidualStandardDeviation(int series,
   return std::sqrt(sum / (n - nCoeff));
 }
 
-Model *Store::regressionModel(int index) {
-  Model *models[Model::k_numberOfModels] = {
-      &m_noneModel,        &m_linearAxpbModel,      &m_proportionalModel,
-      &m_quadraticModel,   &m_cubicModel,           &m_quarticModel,
-      &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel,
-      &m_powerModel,       &m_trigonometricModel,   &m_logisticModel,
-      &m_medianModel,      &m_linearApbxModel};
-  static_assert(std::size(models) == Model::k_numberOfModels,
-                "Inconsistency between the number of models in the store and "
-                "the real number.");
-  return models[index];
+Model *Store::regressionModel(Model::Type type) {
+  static Model s_model(Model::Type::None);
+  new (&s_model) Model(type);
+  return &s_model;
 }
 
 int Store::BuildFunctionName(int series, char *buffer, int bufferSize) {

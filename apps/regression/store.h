@@ -7,19 +7,7 @@
 #include <escher/responder.h>
 #include <float.h>
 
-#include "model/cubic_model.h"
-#include "model/exponential_model.h"
-#include "model/linear_model.h"
-#include "model/logarithmic_model.h"
-#include "model/logistic_model.h"
-#include "model/median_model.h"
-#include "model/model.h"
-#include "model/none_model.h"
-#include "model/power_model.h"
-#include "model/proportional_model.h"
-#include "model/quadratic_model.h"
-#include "model/quartic_model.h"
-#include "model/trigonometric_model.h"
+#include "model.h"
 
 namespace Regression {
 
@@ -54,9 +42,7 @@ class Store : public Shared::LinearRegressionStore {
                          Poincare::Context* globalContext);
   int nextDot(int series, OMG::HorizontalDirection direction, int dot,
               bool displayMean);
-  Model* regressionModel(Model::Type type) {
-    return regressionModel(static_cast<int>(type));
-  }
+  Model* regressionModel(Model::Type type);
 
   // Series
   void updateSeriesValidity(int series) override;
@@ -140,7 +126,6 @@ class Store : public Shared::LinearRegressionStore {
   double computeResidualStandardDeviation(int series,
                                           Poincare::Context* globalContext);
   void resetMemoization();
-  Model* regressionModel(int index);
 
   constexpr static int k_functionNameSize = 3;
   static int BuildFunctionName(int series, char* buffer, int bufferSize);
@@ -152,20 +137,6 @@ class Store : public Shared::LinearRegressionStore {
   // This is a table of size k_numberOfSeries.
   Model::Type* m_regressionTypes;
 
-  NoneModel m_noneModel;
-  LinearModel m_linearAxpbModel;
-  ProportionalModel m_proportionalModel;
-  QuadraticModel m_quadraticModel;
-  CubicModel m_cubicModel;
-  QuarticModel m_quarticModel;
-  LogarithmicModel m_logarithmicModel;
-  ExponentialModel m_exponentialAebxModel;
-  ExponentialModel m_exponentialAbxModel;
-  PowerModel m_powerModel;
-  TrigonometricModel m_trigonometricModel;
-  LogisticModel m_logisticModel;
-  MedianModel m_medianModel;
-  LinearModel m_linearApbxModel;
   double m_regressionCoefficients[k_numberOfSeries]
                                  [Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];

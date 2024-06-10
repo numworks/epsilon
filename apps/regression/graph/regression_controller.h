@@ -8,7 +8,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 
-#include "../model/model.h"
+#include "../model.h"
 #include "../store.h"
 
 namespace Regression {

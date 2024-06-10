@@ -1,5 +1,5 @@
-#ifndef REGRESSION_MODEL_H
-#define REGRESSION_MODEL_H
+#ifndef POINCARE_REGRESSION_REGRESSION_H
+#define POINCARE_REGRESSION_REGRESSION_H
 
 #include <apps/i18n.h>
 #include <poincare/expression.h>

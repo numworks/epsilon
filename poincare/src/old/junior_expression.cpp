@@ -485,13 +485,15 @@ SystemExpression SystemExpression::getReducedDerivative(
   return SystemExpression::Builder(result);
 }
 
-// TODO_PCJ: This should probably always return scalars or points
 SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
   Tree* result = tree()->clone();
-  Approximation::PrepareFunctionForApproximation(result, symbolName,
-                                                 ComplexFormat::Real);
-  if (scalarsOnly && !Approximation::IsNonListScalar(result)) {
+  Dimension dimension = Dimension::GetDimension(tree());
+  if (!Dimension::IsList(tree()) &&
+      (dimension.isScalar() || (dimension.isPoint() && !scalarsOnly))) {
+    Approximation::PrepareFunctionForApproximation(result, symbolName,
+                                                   ComplexFormat::Real);
+  } else {
     result->cloneTreeOverTree(KUndef);
   }
   return JuniorExpression::Builder(result);

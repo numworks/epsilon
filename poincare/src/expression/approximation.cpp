@@ -1262,7 +1262,7 @@ bool Approximation::CanApproximate(const Tree* tree,
   return true;
 }
 
-bool Approximation::IsNonListScalar(const Tree* tree) {
+bool IsNonListScalar(const Tree* tree) {
   return Dimension::GetDimension(tree).isScalar() && !Dimension::IsList(tree);
 }
 

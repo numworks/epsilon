@@ -115,8 +115,6 @@ class Approximation final {
     return CanApproximate(tree, 0);
   }
 
-  static bool IsNonListScalar(const Tree* tree);
-
   // Approximate every scalar subtree that can be approximated.
   static bool ApproximateAndReplaceEveryScalar(
       Tree* tree, const ProjectionContext* ctx = nullptr);

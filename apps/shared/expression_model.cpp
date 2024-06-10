@@ -152,13 +152,6 @@ Layout ExpressionModel::layout(const Storage::Record* record,
   return m_layout;
 }
 
-Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
-    Ion::Storage::Record* record, const char* c, Context* context,
-    CodePoint symbol) {
-  UserExpression e = buildExpressionFromText(c, symbol, context);
-  return setExpressionContent(record, e);
-}
-
 Ion::Storage::Record::ErrorStatus ExpressionModel::setLayoutContent(
     Ion::Storage::Record* record, const Layout& l, Context* context,
     CodePoint symbol) {
@@ -226,17 +219,6 @@ void ExpressionModel::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr || m_layout.isDownstreamOf(treePoolCursor)) {
     m_layout = Layout();
   }
-}
-
-Poincare::UserExpression ExpressionModel::buildExpressionFromText(
-    const char* c, CodePoint symbol, Poincare::Context* context) const {
-  // if c = "", we want to reinit the Expression
-  if (!c || c[0] == 0) {
-    return UserExpression();
-  }
-  // Compute the expression to store, without replacing symbols
-  UserExpression expressionToStore = UserExpression::Parse(c, context);
-  return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 
 Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(

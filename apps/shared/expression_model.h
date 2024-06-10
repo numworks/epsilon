@@ -22,10 +22,6 @@ class ExpressionModel {
                           CodePoint symbol = 0) const;
 
   // Setters
-  Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record* record,
-                                               const char* c,
-                                               Poincare::Context* context,
-                                               CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setLayoutContent(
       Ion::Storage::Record* record, const Poincare::Layout& l,
       Poincare::Context* context, CodePoint symbol = 0);
@@ -41,9 +37,6 @@ class ExpressionModel {
 
  protected:
   // Setters helper
-  virtual Poincare::UserExpression buildExpressionFromText(
-      const char* c, CodePoint symbol = 0,
-      Poincare::Context* context = nullptr) const;
   virtual Poincare::UserExpression buildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
       Poincare::Context* context = nullptr) const;

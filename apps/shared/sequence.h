@@ -62,10 +62,6 @@ class Sequence : public Function {
     return m_firstInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
-      const char *c, Poincare::Context *context) {
-    return m_firstInitialCondition.setContent(this, c, context);
-  }
-  Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
       Poincare::Layout l, Poincare::Context *context) {
     return m_firstInitialCondition.setLayoutContent(this, l, context);
   }
@@ -85,10 +81,6 @@ class Sequence : public Function {
   }
   Poincare::Layout secondInitialConditionLayout() {
     return m_secondInitialCondition.layout(this);
-  }
-  Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
-      const char *c, Poincare::Context *context) {
-    return m_secondInitialCondition.setContent(this, c, context);
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
       Poincare::Layout l, Poincare::Context *context) {

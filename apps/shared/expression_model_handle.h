@@ -36,10 +36,6 @@ class ExpressionModelHandle : public Ion::Storage::Record {
       Poincare::PoolObject *treePoolCursor = nullptr) const {
     model()->tidyDownstreamPoolFrom(treePoolCursor);
   }
-  virtual Ion::Storage::Record::ErrorStatus setContent(
-      const char *c, Poincare::Context *context) {
-    return editableModel()->setContent(this, c, context, symbol());
-  }
   virtual Ion::Storage::Record::ErrorStatus setLayoutContent(
       const Poincare::Layout &l, Poincare::Context *context) {
     return editableModel()->setLayoutContent(this, l, context, symbol());

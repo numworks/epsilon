@@ -492,7 +492,7 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
   Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                  ComplexFormat::Real);
   if (scalarsOnly && !Approximation::IsNonListScalar(result)) {
-    return JuniorExpression::Builder(KUndef->clone());
+    result->cloneTreeOverTree(KUndef);
   }
   return JuniorExpression::Builder(result);
 }

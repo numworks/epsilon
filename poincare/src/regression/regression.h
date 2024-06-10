@@ -56,9 +56,9 @@ class Regression {
    * too time consuming. */
   virtual double evaluate(double* modelCoefficients, double x) const = 0;
   virtual double levelSet(double* modelCoefficients, double xMin, double xMax,
-                          double y, Poincare::Context* context);
+                          double y, Poincare::Context* context) const;
   void fit(const Series* series, double* modelCoefficients,
-           Poincare::Context* context);
+           Poincare::Context* context) const;
 
  protected:
   virtual Poincare::UserExpression privateExpression(
@@ -66,7 +66,7 @@ class Regression {
 
   // Fit
   virtual void privateFit(const Series* series, double* modelCoefficients,
-                          Poincare::Context* context);
+                          Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
 
  private:
@@ -86,7 +86,7 @@ class Regression {
   constexpr static double k_initialCoefficientValue = 1.0;
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(const Series* series, double* modelCoefficients,
-                             Poincare::Context* context);
+                             Poincare::Context* context) const;
   double chi2(const Series* series, double* modelCoefficients) const;
   double alphaPrimeCoefficient(const Series* series, double* modelCoefficients,
                                int k, int l, double lambda) const;
@@ -96,7 +96,7 @@ class Regression {
                          int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,
-                        Poincare::Context* context);
+                        Poincare::Context* context) const;
   void initCoefficientsForFit(double* modelCoefficients, double defaultValue,
                               bool forceDefaultValue,
                               const Series* s = nullptr) const;

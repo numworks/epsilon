@@ -22,7 +22,7 @@ double AffineRegression::evaluate(double* modelCoefficients, double x) const {
 
 double AffineRegression::levelSet(double* modelCoefficients, double xMin,
                                   double xMax, double y,
-                                  Poincare::Context* context) {
+                                  Poincare::Context* context) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   if (slope == 0) {

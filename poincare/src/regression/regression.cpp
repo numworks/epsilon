@@ -48,7 +48,7 @@ Poincare::UserExpression Regression::expression(
 }
 
 double Regression::levelSet(double* modelCoefficients, double xMin, double xMax,
-                            double y, Poincare::Context* context) {
+                            double y, Poincare::Context* context) const {
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
@@ -59,7 +59,7 @@ double Regression::levelSet(double* modelCoefficients, double xMin, double xMax,
 }
 
 void Regression::fit(const Series* series, double* modelCoefficients,
-                     Poincare::Context* context) {
+                     Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
     initCoefficientsForFit(modelCoefficients, NAN, true);
     return;
@@ -68,7 +68,7 @@ void Regression::fit(const Series* series, double* modelCoefficients,
 }
 
 void Regression::privateFit(const Series* series, double* modelCoefficients,
-                            Poincare::Context* context) {
+                            Poincare::Context* context) const {
   initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
                          series);
   fitLevenbergMarquardt(series, modelCoefficients, context);
@@ -90,7 +90,7 @@ bool Regression::dataSuitableForFit(const Series* series) const {
 
 void Regression::fitLevenbergMarquardt(const Series* series,
                                        double* modelCoefficients,
-                                       Context* context) {
+                                       Context* context) const {
   /* We want to find the best coefficients of the regression to minimize the sum
    * of the squares of the difference between a data point and the corresponding
    * point of the fitting regression (chi2 function).
@@ -225,7 +225,7 @@ double Regression::betaCoefficient(const Series* series,
 
 int Regression::solveLinearSystem(double* solutions, double* coefficients,
                                   double* constants, int solutionDimension,
-                                  Context* context) {
+                                  Context* context) const {
   int n = solutionDimension;
   assert(n <= k_maxNumberOfCoefficients);
   double

@@ -5,9 +5,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
-#include "../store.h"
-#include "power_model.h"
-
 namespace Poincare::Regression {
 
 Poincare::Layout PowerRegression::templateLayout() const {

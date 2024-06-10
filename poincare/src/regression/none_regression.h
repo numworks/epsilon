@@ -20,7 +20,7 @@ class NoneRegression : public Regression {
   }
 
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) override {
+                  Poincare::Context* context) const override {
     assert(false);
     return NAN;
   }
@@ -32,7 +32,7 @@ class NoneRegression : public Regression {
     return Poincare::UserExpression();
   }
   void privateFit(const Series* series, double* modelCoefficients,
-                  Poincare::Context* context) override {}
+                  Poincare::Context* context) const override {}
 };
 
 }  // namespace Poincare::Regression

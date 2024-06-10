@@ -20,7 +20,7 @@ double ProportionalRegression::evaluate(double* modelCoefficients,
 
 double ProportionalRegression::levelSet(double* modelCoefficients, double xMin,
                                         double xMax, double y,
-                                        Poincare::Context* context) {
+                                        Poincare::Context* context) const {
   const double a = modelCoefficients[0];
   if (a == 0.0) {
     return NAN;

@@ -4,9 +4,6 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
-#include "../store.h"
-#include "logarithmic_model.h"
-
 namespace Poincare::Regression {
 
 Poincare::UserExpression LogarithmicRegression::privateExpression(

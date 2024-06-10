@@ -12,7 +12,7 @@ class ProportionalRegression : public Regression {
 
   double evaluate(double* modelCoefficients, double x) const override;
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) override;
+                  Poincare::Context* context) const override;
 
  private:
   Poincare::UserExpression privateExpression(

@@ -3,9 +3,6 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
-#include "../store.h"
-#include "linear_model.h"
-
 namespace Poincare::Regression {
 
 Poincare::UserExpression LinearRegression::privateExpression(
@@ -22,7 +19,7 @@ Poincare::UserExpression LinearRegression::privateExpression(
 
 void LinearRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
-                                  Poincare::Context* context) {
+                                  Poincare::Context* context) const {
   modelCoefficients[slopeCoefficientIndex()] = store->slope(series);
   modelCoefficients[yInterceptCoefficientIndex()] = store->yIntercept(series);
 }

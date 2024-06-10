@@ -37,7 +37,7 @@ double TransformedRegression::evaluate(double* modelCoefficients,
 
 double TransformedRegression::levelSet(double* modelCoefficients, double xMin,
                                        double xMax, double y,
-                                       Poincare::Context* context) {
+                                       Poincare::Context* context) const {
   bool opposeY = false;
   double a = modelCoefficients[0];
   if (applyLnOnA()) {
@@ -61,7 +61,7 @@ double TransformedRegression::levelSet(double* modelCoefficients, double xMin,
 
 void TransformedRegression::privateFit(const Series* series,
                                        double* modelCoefficients,
-                                       Poincare::Context* context) {
+                                       Poincare::Context* context) const {
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   Shared::LinearRegressionStore::CalculationOptions options(
       applyLnOnX(), applyLnOnY(), opposeY);

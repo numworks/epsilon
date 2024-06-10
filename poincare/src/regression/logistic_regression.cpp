@@ -7,9 +7,6 @@
 
 #include <cmath>
 
-#include "../store.h"
-#include "logistic_model.h"
-
 namespace Poincare::Regression {
 
 Poincare::Layout LogisticRegression::templateLayout() const {
@@ -40,7 +37,7 @@ double LogisticRegression::evaluate(double* modelCoefficients, double x) const {
 
 double LogisticRegression::levelSet(double* modelCoefficients, double xMin,
                                     double xMax, double y,
-                                    Poincare::Context* context) {
+                                    Poincare::Context* context) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

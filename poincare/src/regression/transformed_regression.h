@@ -13,11 +13,11 @@ class TransformedRegression : public Regression {
   int numberOfCoefficients() const override { return 2; }
   double evaluate(double* modelCoefficients, double x) const override;
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) override;
+                  Poincare::Context* context) const override;
 
  protected:
   void privateFit(const Series* series, double* modelCoefficients,
-                  Poincare::Context* context) override;
+                  Poincare::Context* context) const override;
   bool dataSuitableForFit(const Series* series) const override;
 
   virtual bool applyLnOnX() const = 0;

@@ -16,7 +16,7 @@ class AffineRegression : public Regression {
 
   double evaluate(double* modelCoefficients, double x) const override;
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) override;
+                  Poincare::Context* context) const override;
 
  protected:
   Poincare::UserExpression privateExpression(
@@ -26,7 +26,7 @@ class AffineRegression : public Regression {
 
  private:
   void privateFit(const Series* series, double* modelCoefficients,
-                  Poincare::Context* context) override = 0;
+                  Poincare::Context* context) const override = 0;
 };
 
 }  // namespace Poincare::Regression

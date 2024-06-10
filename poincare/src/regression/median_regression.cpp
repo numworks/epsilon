@@ -2,14 +2,11 @@
 
 #include <assert.h>
 
-#include "../store.h"
-#include "median_model.h"
-
 namespace Poincare::Regression {
 
 double MedianRegression::getMedianValue(const Series* series,
                                         uint8_t* sortedIndex, int column,
-                                        int startIndex, int endIndex) {
+                                        int startIndex, int endIndex) const {
   assert(endIndex != startIndex);
   if ((endIndex - startIndex) % 2 == 1) {
     return store->get(series, column,
@@ -26,7 +23,7 @@ double MedianRegression::getMedianValue(const Series* series,
 
 void MedianRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
-                                  Poincare::Context* context) {
+                                  Poincare::Context* context) const {
   uint8_t numberOfDots = series->numberOfPairs();
   assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {

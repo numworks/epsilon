@@ -20,7 +20,7 @@ Poincare::UserExpression LinearRegression::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-void LinearRegression::privateFit(Store* store, int series,
+void LinearRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
                                   Poincare::Context* context) {
   modelCoefficients[slopeCoefficientIndex()] = store->slope(series);

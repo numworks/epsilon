@@ -31,7 +31,7 @@ class NoneRegression : public Regression {
       double* modelCoefficients) const override {
     return Poincare::UserExpression();
   }
-  void privateFit(Store* store, int series, double* modelCoefficients,
+  void privateFit(const Series* series, double* modelCoefficients,
                   Poincare::Context* context) override {}
 };
 

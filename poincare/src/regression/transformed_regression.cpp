@@ -59,12 +59,10 @@ double TransformedRegression::levelSet(double* modelCoefficients, double xMin,
   return applyLnOnX() ? std::exp(transformedX) : transformedX;
 }
 
-void TransformedRegression::privateFit(Store* store, int series,
+void TransformedRegression::privateFit(const Series* series,
                                        double* modelCoefficients,
                                        Poincare::Context* context) {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
-         store->seriesIsActive(series));
-  bool opposeY = applyLnOnA() && store->get(series, 1, 0) < 0.0;
+  bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   Shared::LinearRegressionStore::CalculationOptions options(
       applyLnOnX(), applyLnOnY(), opposeY);
   modelCoefficients[0] = store->yIntercept(series, options);
@@ -78,16 +76,16 @@ void TransformedRegression::privateFit(Store* store, int series,
   }
 }
 
-bool TransformedRegression::dataSuitableForFit(Store* store, int series) const {
-  if (!Regression::dataSuitableForFit(store, series)) {
+bool TransformedRegression::dataSuitableForFit(const Series* series) const {
+  if (!Regression::dataSuitableForFit(series)) {
     return false;
   }
-  int numberOfPairs = store->numberOfPairsOfSeries(series);
+  int numberOfPairs = series->numberOfPairs();
   assert(numberOfPairs > 0);
-  bool firstYIsNegative = store->get(series, 1, 0) < 0.0;
+  bool firstYIsNegative = series->getY(0) < 0.0;
   for (int j = 0; j < numberOfPairs; j++) {
-    double x = store->get(series, 0, j);
-    double y = store->get(series, 1, j);
+    double x = series->getX(j);
+    double y = series->getY(j);
     if (applyLnOnX() && x <= 0) {
       // X data points must be strictly positive
       return false;

@@ -58,32 +58,37 @@ double Regression::levelSet(double* modelCoefficients, double xMin, double xMax,
       .x();
 }
 
-void Regression::fit(Store* store, int series, double* modelCoefficients,
+void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) {
-  if (!dataSuitableForFit(store, series)) {
+  if (!dataSuitableForFit(series)) {
     initCoefficientsForFit(modelCoefficients, NAN, true);
     return;
   }
-  privateFit(store, series, modelCoefficients, context);
+  privateFit(series, modelCoefficients, context);
 }
 
-void Regression::privateFit(Store* store, int series, double* modelCoefficients,
+void Regression::privateFit(const Series* series, double* modelCoefficients,
                             Poincare::Context* context) {
   initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
-                         store, series);
-  fitLevenbergMarquardt(store, series, modelCoefficients, context);
+                         series);
+  fitLevenbergMarquardt(series, modelCoefficients, context);
   uniformizeCoefficientsFromFit(modelCoefficients);
 }
 
-bool Regression::dataSuitableForFit(Store* store, int series) const {
+bool Regression::dataSuitableForFit(const Series* series) const {
+#if 0
+  // TODO_PCJ
   if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series,
                                                       numberOfCoefficients())) {
     return false;
   }
   return store->seriesIsActive(series);
+#else
+  return true;
+#endif
 }
 
-void Regression::fitLevenbergMarquardt(Store* store, int series,
+void Regression::fitLevenbergMarquardt(const Series* series,
                                        double* modelCoefficients,
                                        Context* context) {
   /* We want to find the best coefficients of the regression to minimize the sum
@@ -94,7 +99,7 @@ void Regression::fitLevenbergMarquardt(Store* store, int series,
    * The equation to solve is A'*da = B, with A' a damped version of the chi2
    * Hessian matrix, da the coefficients increments and B colinear to the
    * gradient of chi2.*/
-  double currentChi2 = chi2(store, series, modelCoefficients);
+  double currentChi2 = chi2(series, modelCoefficients);
   double lambda = k_initialLambda;
   int n = numberOfCoefficients();  // n unknown coefficients
   int smallChi2ChangeCounts = 0;
@@ -107,8 +112,8 @@ void Regression::fitLevenbergMarquardt(Store* store, int series,
     assert(n > 0);  // Ensure that coefficientsAPrime is initialized
     for (int i = 0; i < n; i++) {
       for (int j = i; j < n; j++) {
-        double alphaPrime = alphaPrimeCoefficient(
-            store, series, modelCoefficients, i, j, lambda);
+        double alphaPrime =
+            alphaPrimeCoefficient(series, modelCoefficients, i, j, lambda);
         coefficientsAPrime[i * n + j] = alphaPrime;
         if (i != j) {
           coefficientsAPrime[j * n + i] = alphaPrime;
@@ -118,7 +123,7 @@ void Regression::fitLevenbergMarquardt(Store* store, int series,
     // Create the beta matrix
     double operandsB[Regression::k_maxNumberOfCoefficients];
     for (int j = 0; j < n; j++) {
-      operandsB[j] = betaCoefficient(store, series, modelCoefficients, j);
+      operandsB[j] = betaCoefficient(series, modelCoefficients, j);
     }
 
     // Compute the equation solution (= vector of coefficients increments)
@@ -135,7 +140,7 @@ void Regression::fitLevenbergMarquardt(Store* store, int series,
     }
 
     // Compare new chi2 with the previous value
-    double newChi2 = chi2(store, series, newModelCoefficients);
+    double newChi2 = chi2(series, newModelCoefficients);
     smallChi2ChangeCounts =
         (fabs(currentChi2 - newChi2) > k_chi2ChangeCondition)
             ? 0
@@ -153,12 +158,11 @@ void Regression::fitLevenbergMarquardt(Store* store, int series,
   }
 }
 
-double Regression::chi2(Store* store, int series,
-                        double* modelCoefficients) const {
+double Regression::chi2(const Series* series, double* modelCoefficients) const {
   double result = 0.0;
-  for (int i = 0; i < store->numberOfPairsOfSeries(series); i++) {
-    double xi = store->get(series, 0, i);
-    double yi = store->get(series, 1, i);
+  for (int n = series->numberOfPairs(), i = 0; i < n; i++) {
+    double xi = series->getX(i);
+    double yi = series->getY(i);
     double difference = yi - evaluate(modelCoefficients, xi);
     result += difference * difference;
   }
@@ -167,7 +171,7 @@ double Regression::chi2(Store* store, int series,
 
 /* a'(k,k) = a(k,k) * (1 + lambda)
  * a'(k,l) = a(l,k) when (k != l) */
-double Regression::alphaPrimeCoefficient(Store* store, int series,
+double Regression::alphaPrimeCoefficient(const Series* series,
                                          double* modelCoefficients, int k,
                                          int l, double lambda) const {
   assert(k >= 0 && k < numberOfCoefficients());
@@ -180,27 +184,25 @@ double Regression::alphaPrimeCoefficient(Store* store, int series,
      * a'(k,k) = a(k,k) * (1 + lambda), but if a'(k,k) is too small,
      * a'(k,k) = 2*epsilon so that the inversion method does not detect a'(k,k)
      * as a zero. */
-    result = alphaCoefficient(store, series, modelCoefficients, k, l) *
-             (1.0 + lambda);
+    result = alphaCoefficient(series, modelCoefficients, k, l) * (1.0 + lambda);
     if (std::fabs(result) < OMG::Float::EpsilonLax<double>()) {
       result = 2 * OMG::Float::EpsilonLax<double>();
     }
   } else {
-    result = alphaCoefficient(store, series, modelCoefficients, l, k);
+    result = alphaCoefficient(series, modelCoefficients, l, k);
   }
   return result;
 }
 
 // a(k,l) = sum(0, N-1, derivate(y(xi|a), ak) * derivate(y(xi|a), a))
-double Regression::alphaCoefficient(Store* store, int series,
+double Regression::alphaCoefficient(const Series* series,
                                     double* modelCoefficients, int k,
                                     int l) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
   double result = 0.0;
-  int m = store->numberOfPairsOfSeries(series);
-  for (int i = 0; i < m; i++) {
-    double xi = store->get(series, 0, i);
+  for (int n = series->numberOfPairs(), i = 0; i < n; i++) {
+    double xi = series->getX(i);
     result += partialDerivate(modelCoefficients, k, xi) *
               partialDerivate(modelCoefficients, l, xi);
   }
@@ -208,14 +210,13 @@ double Regression::alphaCoefficient(Store* store, int series,
 }
 
 // b(k) = sum(0, N-1, (yi - y(xi|a)) * derivate(y(xi|a), ak))
-double Regression::betaCoefficient(Store* store, int series,
+double Regression::betaCoefficient(const Series* series,
                                    double* modelCoefficients, int k) const {
   assert(k >= 0 && k < numberOfCoefficients());
   double result = 0.0;
-  int m = store->numberOfPairsOfSeries(series);  // m equations
-  for (int i = 0; i < m; i++) {
-    double xi = store->get(series, 0, i);
-    double yi = store->get(series, 1, i);
+  for (int n = series->numberOfPairs(), i = 0; i < n; i++) {
+    double xi = series->getX(i);
+    double yi = series->getY(i);
     result += (yi - evaluate(modelCoefficients, xi)) *
               partialDerivate(modelCoefficients, k, xi);
   }
@@ -263,24 +264,20 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
 
 void Regression::initCoefficientsForFit(double* modelCoefficients,
                                         double defaultValue,
-                                        bool forceDefaultValue, Store* store,
-                                        int series) const {
-  assert(forceDefaultValue ||
-         (store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
-          store->seriesIsActive(series)));
+                                        bool forceDefaultValue,
+                                        const Series* series) const {
+  // TODO_PCJ: assert(forceDefaultValue || store->seriesIsActive(series));
   if (forceDefaultValue) {
     Regression::specializedInitCoefficientsForFit(modelCoefficients,
                                                   defaultValue);
   } else {
-    specializedInitCoefficientsForFit(modelCoefficients, defaultValue, store,
-                                      series);
+    specializedInitCoefficientsForFit(modelCoefficients, defaultValue, series);
   }
 }
 
 void Regression::specializedInitCoefficientsForFit(double* modelCoefficients,
                                                    double defaultValue,
-                                                   Store* store,
-                                                   int series) const {
+                                                   const Series* series) const {
   const int nbCoef = numberOfCoefficients();
   for (int i = 0; i < nbCoef; i++) {
     modelCoefficients[i] = defaultValue;

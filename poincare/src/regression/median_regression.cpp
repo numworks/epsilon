@@ -7,9 +7,9 @@
 
 namespace Poincare::Regression {
 
-double MedianRegression::getMedianValue(Store* store, uint8_t* sortedIndex,
-                                        int series, int column, int startIndex,
-                                        int endIndex) {
+double MedianRegression::getMedianValue(const Series* series,
+                                        uint8_t* sortedIndex, int column,
+                                        int startIndex, int endIndex) {
   assert(endIndex != startIndex);
   if ((endIndex - startIndex) % 2 == 1) {
     return store->get(series, column,
@@ -24,10 +24,10 @@ double MedianRegression::getMedianValue(Store* store, uint8_t* sortedIndex,
   }
 }
 
-void MedianRegression::privateFit(Store* store, int series,
+void MedianRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
                                   Poincare::Context* context) {
-  uint8_t numberOfDots = store->numberOfPairsOfSeries(series);
+  uint8_t numberOfDots = series->numberOfPairs();
   assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {
     modelCoefficients[0] = NAN;
@@ -49,12 +49,11 @@ void MedianRegression::privateFit(Store* store, int series,
   double rightPoint[2];
 
   leftPoint[0] =
-      getMedianValue(store, sortedIndex, series, 0, 0, sizeOfRightLeftGroup);
-  middlePoint[0] =
-      getMedianValue(store, sortedIndex, series, 0, sizeOfRightLeftGroup,
-                     sizeOfRightLeftGroup + sizeOfMiddleGroup);
+      getMedianValue(series, sortedIndex, 0, 0, sizeOfRightLeftGroup);
+  middlePoint[0] = getMedianValue(series, sortedIndex, 0, sizeOfRightLeftGroup,
+                                  sizeOfRightLeftGroup + sizeOfMiddleGroup);
   rightPoint[0] =
-      getMedianValue(store, sortedIndex, series, 0,
+      getMedianValue(series, sortedIndex, 0,
                      sizeOfRightLeftGroup + sizeOfMiddleGroup, numberOfDots);
 
   if (rightPoint[0] == leftPoint[0]) {

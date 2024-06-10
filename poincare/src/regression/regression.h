@@ -8,7 +8,13 @@
 
 namespace Poincare::Regression {
 
-class Store;
+// Apps will provide series to the regression algorithm with Series
+class Series {
+ public:
+  virtual double getX(int i) const = 0;
+  virtual double getY(int i) const = 0;
+  virtual int numberOfPairs() const = 0;
+};
 
 class Regression {
  public:
@@ -49,7 +55,7 @@ class Regression {
   virtual double evaluate(double* modelCoefficients, double x) const = 0;
   virtual double levelSet(double* modelCoefficients, double xMin, double xMax,
                           double y, Poincare::Context* context);
-  void fit(Store* store, int series, double* modelCoefficients,
+  void fit(const Series* series, double* modelCoefficients,
            Poincare::Context* context);
 
  protected:
@@ -57,9 +63,9 @@ class Regression {
       double* modelCoefficients) const = 0;
 
   // Fit
-  virtual void privateFit(Store* store, int series, double* modelCoefficients,
+  virtual void privateFit(const Series* series, double* modelCoefficients,
                           Poincare::Context* context);
-  virtual bool dataSuitableForFit(Store* store, int series) const;
+  virtual bool dataSuitableForFit(const Series* series) const;
 
  private:
   // Model attributes
@@ -77,27 +83,24 @@ class Regression {
   constexpr static double k_chi2ChangeCondition = 0.001;
   constexpr static double k_initialCoefficientValue = 1.0;
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
-  void fitLevenbergMarquardt(Store* store, int series,
-                             double* modelCoefficients,
+  void fitLevenbergMarquardt(const Series* series, double* modelCoefficients,
                              Poincare::Context* context);
-  double chi2(Store* store, int series, double* modelCoefficients) const;
-  double alphaPrimeCoefficient(Store* store, int series,
-                               double* modelCoefficients, int k, int l,
-                               double lambda) const;
-  double alphaCoefficient(Store* store, int series, double* modelCoefficients,
+  double chi2(const Series* series, double* modelCoefficients) const;
+  double alphaPrimeCoefficient(const Series* series, double* modelCoefficients,
+                               int k, int l, double lambda) const;
+  double alphaCoefficient(const Series* series, double* modelCoefficients,
                           int k, int l) const;
-  double betaCoefficient(Store* store, int series, double* modelCoefficients,
+  double betaCoefficient(const Series* series, double* modelCoefficients,
                          int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,
                         Poincare::Context* context);
   void initCoefficientsForFit(double* modelCoefficients, double defaultValue,
-                              bool forceDefaultValue, Store* store = nullptr,
-                              int series = -1) const;
-  virtual void specializedInitCoefficientsForFit(double* modelCoefficients,
-                                                 double defaultValue,
-                                                 Store* store = nullptr,
-                                                 int series = -1) const;
+                              bool forceDefaultValue,
+                              const Series* s = nullptr) const;
+  virtual void specializedInitCoefficientsForFit(
+      double* modelCoefficients, double defaultValue,
+      const Series* s = nullptr) const;
   virtual void uniformizeCoefficientsFromFit(double* modelCoefficients) const {}
 };
 

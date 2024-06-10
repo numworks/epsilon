@@ -93,8 +93,8 @@ static void updateMinMax(double lower, double higher, double x, double y,
  * If one isn't found, return series min and max */
 static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
                         double* yMinExtremum, double* yMaxExtremum,
-                        Store* store, int series) {
-  int numberOfPairs = store->numberOfPairsOfSeries(series);
+                        const Series* series) {
+  int numberOfPairs = series->numberOfPairs();
   assert(numberOfPairs >= 3);
   // Use a StatisticsDataset to memoize the sorted index
   Poincare::StatisticsDataset<double> dataset =
@@ -102,10 +102,10 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   // Compute values at index 0 and 1
   int firstIndex = dataset.indexAtSortedIndex(0);
   int secondIndex = dataset.indexAtSortedIndex(1);
-  double x2 = store->get(series, 0, firstIndex);
-  double y2 = store->get(series, 1, firstIndex);
-  double x1 = store->get(series, 0, secondIndex);
-  double y1 = store->get(series, 1, secondIndex);
+  double x2 = series->getX(firstIndex);
+  double y2 = series->getY(firstIndex);
+  double x1 = series->getX(secondIndex);
+  double y1 = series->getY(secondIndex);
   // Compute max and min in case an extremum isn't identified
   double xMin, yMin, xMax, yMax, x0, y0;
   yMin = yMax = y2;
@@ -119,8 +119,8 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   foundMin = foundMax = false;
   for (int i = 2; i < numberOfPairs; i++) {
     int sortedIndex = dataset.indexAtSortedIndex(i);
-    x0 = store->get(series, 0, sortedIndex);
-    y0 = store->get(series, 1, sortedIndex);
+    x0 = series->getX(sortedIndex);
+    y0 = series->getY(sortedIndex);
     if (y2 < y1 && y1 < y0) {
       // Check if (x2, y2) was a minimum extrema (y4 > y3 > y2 < y1 < y0)
       foundMin = foundMin || checkExtremum(x2, y2, lastMinExtremum,
@@ -160,10 +160,8 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
 }
 
 void TrigonometricRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue, Store* store,
-    int series) const {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
-         store->seriesIsActive(series));
+    double* modelCoefficients, double defaultValue,
+    const Series* series) const {
   /* With trigonometric model, a good fit heavily depends on good starting
    * parameters. We try to find two successive extrema, and from them deduce the
    * amplitude, period, y-delta and phase.
@@ -173,7 +171,7 @@ void TrigonometricRegression::specializedInitCoefficientsForFit(
    * As a downside, data that should not be fitted as trigonometric could be
    * very off and suboptimal. */
   double xMin, xMax, yMin, yMax;
-  findExtrema(&xMin, &xMax, &yMin, &yMax, store, series);
+  findExtrema(&xMin, &xMax, &yMin, &yMax, series);
   // Init the "amplitude" coefficient a
   modelCoefficients[0] = (yMax - yMin) / 2.0;
   // Init the "period" coefficient b

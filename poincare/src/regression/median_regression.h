@@ -7,9 +7,9 @@ namespace Poincare::Regression {
 
 class MedianRegression : public AffineRegression {
  private:
-  double getMedianValue(Store* store, uint8_t* sortedIndex, int series,
-                        int column, int startIndex, int endIndex);
-  void privateFit(Store* store, int series, double* modelCoefficients,
+  double getMedianValue(const Series* series, uint8_t* sortedIndex, int column,
+                        int startIndex, int endIndex);
+  void privateFit(const Series* series, double* modelCoefficients,
                   Poincare::Context* context) override;
 };
 

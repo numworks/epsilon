@@ -16,9 +16,9 @@ class TransformedRegression : public Regression {
                   Poincare::Context* context) override;
 
  protected:
-  void privateFit(Store* store, int series, double* modelCoefficients,
+  void privateFit(const Series* series, double* modelCoefficients,
                   Poincare::Context* context) override;
-  bool dataSuitableForFit(Store* store, int series) const override;
+  bool dataSuitableForFit(const Series* series) const override;
 
   virtual bool applyLnOnX() const = 0;
   virtual bool applyLnOnY() const = 0;

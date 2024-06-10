@@ -75,10 +75,8 @@ double LogisticRegression::partialDerivate(double* modelCoefficients,
 }
 
 void LogisticRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue, Store* store,
-    int series) const {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
-         store->seriesIsActive(series));
+    double* modelCoefficients, double defaultValue,
+    const Series* series) const {
   /* We optimize fit for data that actually follow a logistic function curve :
    * f(x)=c/(1+a*e^(-bx))
    * We use these properties :

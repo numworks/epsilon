@@ -25,7 +25,7 @@ class AffineRegression : public Regression {
   virtual int yInterceptCoefficientIndex() const { return 1; }
 
  private:
-  void privateFit(Store* store, int series, double* modelCoefficients,
+  void privateFit(const Series* series, double* modelCoefficients,
                   Poincare::Context* context) override = 0;
 };
 

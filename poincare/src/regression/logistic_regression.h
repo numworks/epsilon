@@ -23,8 +23,8 @@ class LogisticRegression : public Regression {
   double partialDerivate(double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
   void specializedInitCoefficientsForFit(double* modelCoefficients,
-                                         double defaultValue, Store* store,
-                                         int series) const override;
+                                         double defaultValue,
+                                         const Series* series) const override;
 };
 
 }  // namespace Poincare::Regression

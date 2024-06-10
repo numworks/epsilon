@@ -174,9 +174,9 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setLayoutContent(
   setCache(nullptr);
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
-   * ExpressionModelHandle::setContent implementation to avoid calling symbol()
-   * and any unnecessary plot type update at this point. See comment in
-   * ContinuousFunction::Model::buildExpressionFromText. */
+   * ExpressionModelHandle::setLayoutContent implementation to avoid calling
+   * symbol() and any unnecessary plot type update at this point. See comment in
+   * ContinuousFunction::Model::buildExpressionFromLayout. */
   Ion::Storage::Record::ErrorStatus error =
       m_model.setLayoutContent(this, l, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {

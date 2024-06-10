@@ -13,7 +13,7 @@
 
 namespace Shared {
 
-/* WARNING: after calling setType, setInitialRank, setContent,
+/* WARNING: after calling setType, setInitialRank, setLayoutContent,
  * setFirstInitialConditionContent or setSecondInitialConditionContent, the
  * sequence context needs to invalidate the cache because the sequences
  * evaluations might have changed. */

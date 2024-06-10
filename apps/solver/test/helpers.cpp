@@ -33,7 +33,8 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
         equationStore.recordAtIndex(equationStore.numberOfModels() - 1);
     Shared::ExpiringPointer<Equation> model =
         equationStore.modelForRecord(record);
-    err = model->setContent(equation, &solverContext);
+    err =
+        model->setLayoutContent(JuniorLayout::Parse(equation), &solverContext);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }

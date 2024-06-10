@@ -77,9 +77,10 @@ void Sequence::setType(Type t) {
     }
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
-  (void)error;                                    // Silence compilation warning
-  setFirstInitialConditionContent("", nullptr);   // No context needed here
-  setSecondInitialConditionContent("", nullptr);  // No context needed here
+  (void)error;  // Silence compilation warning
+  // No context needed here
+  setFirstInitialConditionContent(Poincare::Layout(), nullptr);
+  setSecondInitialConditionContent(Poincare::Layout(), nullptr);
 }
 
 void Sequence::setInitialRank(int rank) {

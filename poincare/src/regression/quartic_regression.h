@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class QuarticRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::QuarticRegressionFormula;
-  }
-  I18n::Message name() const override { return I18n::Message::Quartic; }
   int numberOfCoefficients() const override { return 5; }
 
   Poincare::Layout templateLayout() const override;

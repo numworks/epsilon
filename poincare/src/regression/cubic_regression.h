@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class CubicRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message name() const override { return I18n::Message::Cubic; }
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::CubicRegressionFormula;
-  }
   int numberOfCoefficients() const override { return 4; }
 
   Poincare::Layout templateLayout() const override;

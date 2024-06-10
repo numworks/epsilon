@@ -12,10 +12,6 @@ namespace Poincare::Regression {
 class AffineRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message formulaMessage() const override {
-    return UseMxpbForm() ? I18n::Message::LinearMxpbRegressionFormula
-                         : I18n::Message::LinearRegressionFormula;
-  }
   int numberOfCoefficients() const override { return 2; }
 
   double evaluate(double* modelCoefficients, double x) const override;
@@ -29,12 +25,6 @@ class AffineRegression : public Regression {
   virtual int yInterceptCoefficientIndex() const { return 1; }
 
  private:
-  static bool UseMxpbForm() {
-    return GlobalPreferences::SharedGlobalPreferences()
-               ->regressionAppVariant() ==
-           CountryPreferences::RegressionApp::Variant1;
-  }
-
   void privateFit(Store* store, int series, double* modelCoefficients,
                   Poincare::Context* context) override = 0;
 };

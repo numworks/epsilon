@@ -8,11 +8,6 @@ namespace Poincare::Regression {
 class LinearRegression : public AffineRegression {
  public:
   LinearRegression(bool isApbxForm = false) : m_isApbxForm(isApbxForm) {}
-  I18n::Message formulaMessage() const override {
-    return m_isApbxForm ? I18n::Message::LinearApbxRegressionFormula
-                        : AffineRegression::formulaMessage();
-  }
-  I18n::Message name() const override { return I18n::Message::Linear; }
 
  private:
   Poincare::UserExpression privateExpression(

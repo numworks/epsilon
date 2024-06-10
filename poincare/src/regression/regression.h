@@ -1,7 +1,6 @@
 #ifndef POINCARE_REGRESSION_REGRESSION_H
 #define POINCARE_REGRESSION_REGRESSION_H
 
-#include <apps/i18n.h>
 #include <poincare/expression.h>
 #include <poincare/old/context.h>
 #include <poincare/old/matrix.h>
@@ -37,8 +36,6 @@ class Regression {
 
   constexpr static char k_xSymbol = 'x';
 
-  virtual I18n::Message formulaMessage() const = 0;
-  virtual I18n::Message name() const = 0;
   virtual int numberOfCoefficients() const = 0;
 
   virtual Poincare::Layout templateLayout() const;

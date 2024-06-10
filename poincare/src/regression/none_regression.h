@@ -9,12 +9,6 @@ namespace Poincare::Regression {
 class NoneRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message formulaMessage() const override {
-    assert(false);
-    return I18n::Message::Default;
-  }
-  // Used in regression model menus when no regression is selected
-  I18n::Message name() const override { return I18n::Message::Default; }
 
   Poincare::Layout templateLayout() const override {
     assert(false);

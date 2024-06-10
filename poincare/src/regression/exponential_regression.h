@@ -8,13 +8,6 @@ namespace Poincare::Regression {
 class ExponentialRegression : public TransformedRegression {
  public:
   ExponentialRegression(bool isAbxForm = false);
-  I18n::Message formulaMessage() const override {
-    return m_isAbxForm ? I18n::Message::ExponentialAbxRegressionFormula
-                       : I18n::Message::ExponentialAebxRegressionFormula;
-  }
-  I18n::Message name() const override {
-    return I18n::Message::ExponentialRegression;
-  }
   Poincare::Layout templateLayout() const override;
 
  private:

@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class TrigonometricRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::TrigonometricRegressionFormula;
-  }
-  I18n::Message name() const override { return I18n::Message::Trigonometrical; }
   int numberOfCoefficients() const override { return k_numberOfCoefficients; }
 
   double evaluate(double* modelCoefficients, double x) const override;

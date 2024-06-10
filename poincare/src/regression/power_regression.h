@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class PowerRegression : public TransformedRegression {
  public:
   PowerRegression();
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::PowerRegressionFormula;
-  }
-  I18n::Message name() const override { return I18n::Message::Power; }
   Poincare::Layout templateLayout() const override;
 
  private:

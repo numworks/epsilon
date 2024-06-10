@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class ProportionalRegression : public Regression {
  public:
   using Regression::Regression;
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::ProportionalRegressionFormula;
-  }
-  I18n::Message name() const override { return I18n::Message::Proportional; }
   int numberOfCoefficients() const override { return 1; }
 
   double evaluate(double* modelCoefficients, double x) const override;

@@ -8,10 +8,6 @@ namespace Poincare::Regression {
 class LogarithmicRegression : public TransformedRegression {
  public:
   LogarithmicRegression();
-  I18n::Message formulaMessage() const override {
-    return I18n::Message::LogarithmicRegressionFormula;
-  }
-  I18n::Message name() const override { return I18n::Message::Logarithmic; }
 
  private:
   Poincare::UserExpression privateExpression(

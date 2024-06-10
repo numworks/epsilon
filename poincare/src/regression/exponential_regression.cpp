@@ -10,16 +10,6 @@
 
 namespace Poincare::Regression {
 
-ExponentialRegression::ExponentialRegression(bool isAbxForm)
-    : TransformedRegression(), m_isAbxForm(isAbxForm) {
-  assert(applyLnOnX() ==
-         Store::FitsLnX(isAbxForm ? Regression::Type::ExponentialAbx
-                                  : Regression::Type::ExponentialAebx));
-  assert(applyLnOnY() ==
-         Store::FitsLnY(isAbxForm ? Regression::Type::ExponentialAbx
-                                  : Regression::Type::ExponentialAebx));
-}
-
 Poincare::Layout ExponentialRegression::templateLayout() const {
   return m_isAbxForm ? "a·b"_l ^ KSuperscriptL("x"_l)
                      : "a·e"_l ^ KSuperscriptL("b·x"_l);

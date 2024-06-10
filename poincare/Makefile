@@ -325,14 +325,15 @@ app_regression_test_src += $(addprefix poincare/src/regression/,\
   linear_regression.cpp \
   logarithmic_regression.cpp \
   logistic_regression.cpp \
-  regression.cpp \
+  median_regression.cpp \
   power_regression.cpp \
   proportional_regression.cpp \
   quadratic_regression.cpp \
   quartic_regression.cpp \
+  regression.cpp \
+  regression_switch.cpp \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
-  median_regression.cpp \
 )
 
 tests_src += $(addprefix poincare/src/,\

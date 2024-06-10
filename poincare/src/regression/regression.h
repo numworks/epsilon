@@ -40,6 +40,8 @@ class Regression {
                     Poincare::Matrix::k_maxNumberOfChildren,
                 "Model needs bigger than allowed matrices");
 
+  static const Regression* Get(Type type);
+
   constexpr static char k_xSymbol = 'x';
 
   virtual int numberOfCoefficients() const = 0;

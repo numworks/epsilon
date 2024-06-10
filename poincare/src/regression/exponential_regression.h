@@ -7,7 +7,8 @@ namespace Poincare::Regression {
 
 class ExponentialRegression : public TransformedRegression {
  public:
-  ExponentialRegression(bool isAbxForm = false);
+  constexpr ExponentialRegression(bool isAbxForm = false)
+      : m_isAbxForm(isAbxForm) {}
   Poincare::Layout templateLayout() const override;
 
  private:

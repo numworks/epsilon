@@ -6,9 +6,6 @@
 namespace Poincare::Regression {
 
 class LogarithmicRegression : public TransformedRegression {
- public:
-  LogarithmicRegression();
-
  private:
   Poincare::UserExpression privateExpression(
       double* modelCoefficients) const override;

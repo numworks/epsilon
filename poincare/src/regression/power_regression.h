@@ -7,7 +7,6 @@ namespace Poincare::Regression {
 
 class PowerRegression : public TransformedRegression {
  public:
-  PowerRegression();
   Poincare::Layout templateLayout() const override;
 
  private:

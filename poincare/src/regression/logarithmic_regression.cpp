@@ -9,11 +9,6 @@
 
 namespace Poincare::Regression {
 
-LogarithmicRegression::LogarithmicRegression() : TransformedRegression() {
-  assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Logarithmic));
-  assert(applyLnOnY() == Store::FitsLnY(Regression::Type::Logarithmic));
-}
-
 Poincare::UserExpression LogarithmicRegression::privateExpression(
     double* modelCoefficients) const {
   // a+b*ln(x)

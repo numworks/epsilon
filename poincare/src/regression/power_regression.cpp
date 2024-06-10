@@ -10,11 +10,6 @@
 
 namespace Poincare::Regression {
 
-PowerRegression::PowerRegression() : TransformedRegression() {
-  assert(applyLnOnX() == Store::FitsLnX(Regression::Type::Power));
-  assert(applyLnOnY() == Store::FitsLnY(Regression::Type::Power));
-}
-
 Poincare::Layout PowerRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("b"_l);
 }

@@ -7,7 +7,8 @@ namespace Poincare::Regression {
 
 class LinearRegression : public AffineRegression {
  public:
-  LinearRegression(bool isApbxForm = false) : m_isApbxForm(isApbxForm) {}
+  constexpr LinearRegression(bool isApbxForm = false)
+      : m_isApbxForm(isApbxForm) {}
 
  private:
   Poincare::UserExpression privateExpression(

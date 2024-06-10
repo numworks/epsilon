@@ -14,19 +14,19 @@ class Regression {
  public:
   enum class Type : uint8_t {
     None = 0,
-    LinearAxpb = 1,
-    Proportional = 2,
-    Quadratic = 3,
-    Cubic = 4,
-    Quartic = 5,
-    Logarithmic = 6,
-    ExponentialAebx = 7,
-    ExponentialAbx = 8,
-    Power = 9,
-    Trigonometric = 10,
-    Logistic = 11,
-    Median = 12,
-    LinearApbx = 13,
+    LinearAxpb,
+    LinearApbx,
+    Proportional,
+    Quadratic,
+    Cubic,
+    Quartic,
+    Logarithmic,
+    ExponentialAebx,
+    ExponentialAbx,
+    Power,
+    Trigonometric,
+    Logistic,
+    Median,
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model

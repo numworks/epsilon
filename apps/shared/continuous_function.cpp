@@ -1157,26 +1157,16 @@ SystemExpression ContinuousFunction::Model::parametricForm(
   assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
   SystemExpression e = expressionReduced(record, context);
   if (prop.isPolar() || prop.isInversePolar()) {
-    ProjectedExpression x, y;
-    ProjectedExpression unknown = Symbol::SystemSymbol();
-    if (prop.isPolar()) {
-      /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
-       * - x(θ) = r(θ) * cos(θ)
-       * - y(θ) = r(θ) * sin(θ) */
-      x = ProjectedExpression::Create(KMult(KA, KTrig(KB, 0_e)),
-                                      {.KA = e, .KB = unknown});
-      y = ProjectedExpression::Create(KMult(KA, KTrig(KB, 1_e)),
-                                      {.KA = e, .KB = unknown});
-    } else {
-      /* Turn θ(r) into f(r) = (x(r), y(r)) with
-       * - x(r) = r * cos(θ(r))
-       * - y(r) = r * sin(θ(r)) */
-      x = ProjectedExpression::Create(KMult(KA, KTrig(KB, 0_e)),
-                                      {.KA = unknown, .KB = e});
-      y = ProjectedExpression::Create(KMult(KA, KTrig(KB, 1_e)),
-                                      {.KA = unknown, .KB = e});
-    }
-    e = Point::Builder(x, y);
+    /* Turn r(θ) into f(θ) = (x(θ), y(θ)) with
+     * - x(θ) = r(θ) * cos(θ)
+     * - y(θ) = r(θ) * sin(θ)
+     * And θ(r) into f(r) = (x(r), y(r)) with
+     * - x(r) = r * cos(θ(r))
+     * - y(r) = r * sin(θ(r)) */
+    e = SystemExpression::CreateReduce(
+        KPoint(KMult(KA, KTrig(KB, 0_e)), KMult(KA, KTrig(KB, 1_e))),
+        {.KA = prop.isPolar() ? e : Symbol::SystemSymbol(),
+         .KB = prop.isPolar() ? Symbol::SystemSymbol() : e});
   } else {
     assert(prop.isParametric());
     e = e.clone();

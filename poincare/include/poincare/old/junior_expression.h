@@ -202,6 +202,10 @@ class JuniorExpression : public OExpression {
   template <typename T>
   PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;
 
+  // Approximate each elements, remove undef elements and sort the rest.
+  template <typename T>
+  SystemExpression approximateListRemoveUndefAndSort() const;
+
   template <typename T>
   SystemExpression approximateToTree(
       const ApproximationContext& approximationContext) const {
@@ -437,12 +441,6 @@ class Point final : public JuniorExpression {
 class List : public JuniorExpression {
  public:
   static List Builder();
-  template <typename T>
-  NewExpression approximateAndRemoveUndefAndSort(
-      const ApproximationContext& approximationContext) const {
-    assert(false);
-    return NewExpression();
-  }
   int numberOfChildren() const;
 
   void removeChildAtIndexInPlace(int i);

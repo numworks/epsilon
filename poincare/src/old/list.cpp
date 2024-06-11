@@ -178,21 +178,6 @@ OExpression OList::extremum(const ReductionContext& reductionContext,
   return childAtIndex(extremumIndex);
 }
 
-template <typename T>
-OExpression OList::approximateAndRemoveUndefAndSort(
-    const ApproximationContext& approximationContext) const {
-  if (isUninitialized()) {
-    return Undefined::Builder();
-  }
-  Evaluation<T> eval =
-      node()->templatedApproximate<T>(approximationContext, false);
-  if (eval.otype() != EvaluationNode<T>::Type::ListComplex) {
-    return Undefined::Builder();
-  }
-  static_cast<ListComplex<T>&>(eval).sort();
-  return eval.complexToExpression(approximationContext.complexFormat());
-}
-
 template Evaluation<float> ListNode::templatedApproximate(
     const ApproximationContext& approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(
@@ -212,9 +197,4 @@ template Evaluation<float> ListNode::productOfElements<float>(
     const ApproximationContext& approximationContext);
 template Evaluation<double> ListNode::productOfElements<double>(
     const ApproximationContext& approximationContext);
-
-template OExpression OList::approximateAndRemoveUndefAndSort<float>(
-    const ApproximationContext& approximationContext) const;
-template OExpression OList::approximateAndRemoveUndefAndSort<double>(
-    const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

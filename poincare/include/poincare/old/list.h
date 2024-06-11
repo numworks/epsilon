@@ -84,9 +84,6 @@ class OList : public OExpression {
   ListNode* node() const { return static_cast<ListNode*>(OExpression::node()); }
   OExpression extremum(const ReductionContext& reductionContext, bool minimum);
   OExpression shallowReduce(ReductionContext reductionContext);
-  template <typename T>
-  OExpression approximateAndRemoveUndefAndSort(
-      const ApproximationContext& approximationContext) const;
 };
 
 }  // namespace Poincare

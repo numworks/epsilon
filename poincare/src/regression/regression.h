@@ -37,6 +37,12 @@ class Regression {
 
   static const Regression* Get(Type type);
 
+#if TARGET_POINCARE_JS
+  /* Not useful since all regression objects are constexpr but silence embind
+   * warning. */
+  virtual ~Regression() = default;
+#endif
+
   constexpr static char k_xSymbol = 'x';
 
   virtual int numberOfCoefficients() const = 0;

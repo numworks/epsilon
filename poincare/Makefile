@@ -394,5 +394,6 @@ ifeq ($(TARGET),poincarejs)
 poincare_src += $(addprefix poincare/src/js_bridge/,\
   expression.cpp \
   js_tree.cpp \
+  regression.cpp \
 )
 endif

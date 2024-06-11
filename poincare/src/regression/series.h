@@ -10,6 +10,11 @@ class Series {
  public:
   virtual double getX(int i) const = 0;
   virtual double getY(int i) const = 0;
+
+#if TARGET_POINCARE_JS
+  virtual ~Series() = default;
+#endif
+
   double get(int column, int i) const {
     assert(column == 0 || column == 1);
     return column == 0 ? getX(i) : getY(i);

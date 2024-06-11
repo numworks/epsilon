@@ -19,7 +19,7 @@ class DatasetColumnSeriesAdapter : public Internal::DatasetColumn<double> {
   }
 
   double valueAtIndex(int index) const override {
-    return m_column == 0 ? m_series->getX(index) : m_series->getY(index);
+    return m_series->get(m_column, index);
   }
   int length() const override { return m_series->numberOfPairs(); }
 

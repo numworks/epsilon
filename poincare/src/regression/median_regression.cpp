@@ -10,13 +10,11 @@ double MedianRegression::getMedianValue(const Series* series,
   // TODO: this should be factorized with other median code
   assert(endIndex != startIndex);
   int medianIndex = sortedIndex[startIndex + (endIndex - startIndex) / 2];
-  double upperMedian =
-      column == 0 ? series->getX(medianIndex) : series->getY(medianIndex);
+  double upperMedian = series->get(column, medianIndex);
   if ((endIndex - startIndex) % 2 == 1) {
     return upperMedian;
   }
-  double lowerMedian = column == 0 ? series->getX(medianIndex - 1)
-                                   : series->getY(medianIndex - 1);
+  double lowerMedian = series->get(column, medianIndex - 1);
   return (lowerMedian + upperMedian) / 2;
 }
 

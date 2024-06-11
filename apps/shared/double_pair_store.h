@@ -134,8 +134,6 @@ class DoublePairStore {
     const bool m_lnOfX, m_lnOfY, m_oppositeOfY;
   };
   void sortColumn(int series, int column, bool delayUpdate = false);
-  void sortIndexByColumn(uint8_t *sortedIndex, int series, int column,
-                         int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i,
                      CalculationOptions options = CalculationOptions()) const;
 

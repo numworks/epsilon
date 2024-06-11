@@ -20,6 +20,28 @@ double MedianRegression::getMedianValue(const Series* series,
   return (lowerMedian + upperMedian) / 2;
 }
 
+static void sortIndexByColumn(uint8_t* sortedIndex, const Series* series,
+                              int column, int startIndex, int endIndex) {
+  assert(startIndex < endIndex);
+  void* pack[] = {const_cast<Series*>(series), sortedIndex + startIndex,
+                  &column};
+  Poincare::Helpers::Sort(
+      [](int i, int j, void* ctx, int n) {  // Swap method
+        void** pack = reinterpret_cast<void**>(ctx);
+        uint8_t* sortedIndex = reinterpret_cast<uint8_t*>(pack[1]);
+        std::swap(sortedIndex[i], sortedIndex[j]);
+      },
+      [](int i, int j, void* ctx, int n) {  // Comparison method
+        void** pack = reinterpret_cast<void**>(ctx);
+        const Series* series = reinterpret_cast<const Series*>(pack[0]);
+        uint8_t* sortedIndex = reinterpret_cast<uint8_t*>(pack[1]);
+        int column = *reinterpret_cast<int*>(pack[2]);
+        return series->get(column, sortedIndex[i]) >=
+               series->get(column, sortedIndex[j]);
+      },
+      pack, endIndex - startIndex);
+}
+
 void MedianRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
                                   Poincare::Context* context) const {
@@ -31,11 +53,11 @@ void MedianRegression::privateFit(const Series* series,
     return;
   }
 
-  uint8_t sortedIndex[Store::k_maxNumberOfPairs];
+  uint8_t sortedIndex[Regression::k_maxNumberOfPairs];
   for (uint8_t i = 0; i < numberOfDots; i++) {
     sortedIndex[i] = i;
   }
-  store->sortIndexByColumn(sortedIndex, series, 0, 0, numberOfDots);
+  sortIndexByColumn(sortedIndex, series, 0, 0, numberOfDots);
 
   int sizeOfMiddleGroup = numberOfDots / 3 + (numberOfDots % 3 == 1 ? 1 : 0);
   int sizeOfRightLeftGroup = numberOfDots / 3 + (numberOfDots % 3 == 2 ? 1 : 0);
@@ -58,12 +80,11 @@ void MedianRegression::privateFit(const Series* series,
     return;
   }
 
-  store->sortIndexByColumn(sortedIndex, series, 1, 0, sizeOfRightLeftGroup);
-  store->sortIndexByColumn(sortedIndex, series, 1, sizeOfRightLeftGroup,
-                           sizeOfRightLeftGroup + sizeOfMiddleGroup);
-  store->sortIndexByColumn(sortedIndex, series, 1,
-                           sizeOfRightLeftGroup + sizeOfMiddleGroup,
-                           numberOfDots);
+  sortIndexByColumn(sortedIndex, series, 1, 0, sizeOfRightLeftGroup);
+  sortIndexByColumn(sortedIndex, series, 1, sizeOfRightLeftGroup,
+                    sizeOfRightLeftGroup + sizeOfMiddleGroup);
+  sortIndexByColumn(sortedIndex, series, 1,
+                    sizeOfRightLeftGroup + sizeOfMiddleGroup, numberOfDots);
 
   leftPoint[1] =
       getMedianValue(series, sortedIndex, 1, 0, sizeOfRightLeftGroup);

@@ -13,6 +13,10 @@ class Series {
  public:
   virtual double getX(int i) const = 0;
   virtual double getY(int i) const = 0;
+  double get(int column, int i) const {
+    assert(column == 0 || column == 1);
+    return column == 0 ? getX(i) : getY(i);
+  }
   virtual int numberOfPairs() const = 0;
 };
 
@@ -68,6 +72,7 @@ class Regression {
   virtual void privateFit(const Series* series, double* modelCoefficients,
                           Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
+  constexpr static int k_maxNumberOfPairs = 100;
 
  private:
   // Model attributes

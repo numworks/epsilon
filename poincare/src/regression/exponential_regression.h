@@ -13,7 +13,7 @@ class ExponentialRegression : public TransformedRegression {
 
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
+      const double* modelCoefficients) const override;
   bool applyLnOnX() const override { return false; }
   bool applyLnOnY() const override { return true; }
   bool applyLnOnB() const override { return m_isAbxForm; }

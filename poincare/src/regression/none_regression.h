@@ -15,12 +15,12 @@ class NoneRegression : public Regression {
     return Poincare::Layout();
   }
 
-  double evaluate(double* modelCoefficients, double x) const override {
+  double evaluate(const double* modelCoefficients, double x) const override {
     return NAN;
   }
 
-  double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) const override {
+  double levelSet(const double* modelCoefficients, double xMin, double xMax,
+                  double y, Poincare::Context* context) const override {
     assert(false);
     return NAN;
   }
@@ -28,7 +28,7 @@ class NoneRegression : public Regression {
 
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override {
+      const double* modelCoefficients) const override {
     return Poincare::UserExpression();
   }
   void privateFit(const Series* series, double* modelCoefficients,

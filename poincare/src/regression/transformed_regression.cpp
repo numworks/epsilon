@@ -9,7 +9,7 @@
 
 namespace Poincare::Regression {
 
-double TransformedRegression::evaluate(double* modelCoefficients,
+double TransformedRegression::evaluate(const double* modelCoefficients,
                                        double x) const {
   /* TODO: Ensure this transformed evaluation remain precise. Otherwise,
    * reimplement if for each models. Same for levelSet. */
@@ -34,8 +34,8 @@ double TransformedRegression::evaluate(double* modelCoefficients,
          (applyLnOnY() ? std::exp(transformedY) : transformedY);
 }
 
-double TransformedRegression::levelSet(double* modelCoefficients, double xMin,
-                                       double xMax, double y,
+double TransformedRegression::levelSet(const double* modelCoefficients,
+                                       double xMin, double xMax, double y,
                                        Poincare::Context* context) const {
   bool opposeY = false;
   double a = modelCoefficients[0];

@@ -13,7 +13,7 @@ Poincare::Layout ExponentialRegression::templateLayout() const {
 }
 
 Poincare::UserExpression ExponentialRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // if m_isAbxForm -> a*b^x, else a*e^bx
   return Poincare::NewExpression::Create(
       m_isAbxForm ? KMult(KA, KPow(KB, "x"_e))

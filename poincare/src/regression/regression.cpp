@@ -20,7 +20,7 @@ Layout Regression::templateLayout() const {
 }
 
 Layout Regression::equationLayout(
-    double* modelCoefficients, const char* ySymbol, int significantDigits,
+    const double* modelCoefficients, const char* ySymbol, int significantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) const {
   UserExpression formula = expression(modelCoefficients);
   if (formula.isUninitialized()) {
@@ -35,7 +35,7 @@ Layout Regression::equationLayout(
 }
 
 Poincare::UserExpression Regression::expression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   for (int i = 0; i < numberOfCoefficients(); i++) {
     if (std::isnan(modelCoefficients[i])) {
       return UserExpression();
@@ -44,8 +44,9 @@ Poincare::UserExpression Regression::expression(
   return privateExpression(modelCoefficients);
 }
 
-double Regression::levelSet(double* modelCoefficients, double xMin, double xMax,
-                            double y, Poincare::Context* context) const {
+double Regression::levelSet(const double* modelCoefficients, double xMin,
+                            double xMax, double y,
+                            Poincare::Context* context) const {
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
@@ -155,7 +156,8 @@ void Regression::fitLevenbergMarquardt(const Series* series,
   }
 }
 
-double Regression::chi2(const Series* series, double* modelCoefficients) const {
+double Regression::chi2(const Series* series,
+                        const double* modelCoefficients) const {
   double result = 0.0;
   for (int n = series->numberOfPairs(), i = 0; i < n; i++) {
     double xi = series->getX(i);
@@ -169,7 +171,7 @@ double Regression::chi2(const Series* series, double* modelCoefficients) const {
 /* a'(k,k) = a(k,k) * (1 + lambda)
  * a'(k,l) = a(l,k) when (k != l) */
 double Regression::alphaPrimeCoefficient(const Series* series,
-                                         double* modelCoefficients, int k,
+                                         const double* modelCoefficients, int k,
                                          int l, double lambda) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
@@ -193,7 +195,7 @@ double Regression::alphaPrimeCoefficient(const Series* series,
 
 // a(k,l) = sum(0, N-1, derivate(y(xi|a), ak) * derivate(y(xi|a), a))
 double Regression::alphaCoefficient(const Series* series,
-                                    double* modelCoefficients, int k,
+                                    const double* modelCoefficients, int k,
                                     int l) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
@@ -208,7 +210,8 @@ double Regression::alphaCoefficient(const Series* series,
 
 // b(k) = sum(0, N-1, (yi - y(xi|a)) * derivate(y(xi|a), ak))
 double Regression::betaCoefficient(const Series* series,
-                                   double* modelCoefficients, int k) const {
+                                   const double* modelCoefficients,
+                                   int k) const {
   assert(k >= 0 && k < numberOfCoefficients());
   double result = 0.0;
   for (int n = series->numberOfPairs(), i = 0; i < n; i++) {

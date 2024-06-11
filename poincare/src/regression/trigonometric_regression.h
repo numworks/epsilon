@@ -10,13 +10,13 @@ class TrigonometricRegression : public Regression {
   using Regression::Regression;
   int numberOfCoefficients() const override { return k_numberOfCoefficients; }
 
-  double evaluate(double* modelCoefficients, double x) const override;
+  double evaluate(const double* modelCoefficients, double x) const override;
 
  private:
   constexpr static int k_numberOfCoefficients = 4;
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
-  double partialDerivate(double* modelCoefficients,
+      const double* modelCoefficients) const override;
+  double partialDerivate(const double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
   void specializedInitCoefficientsForFit(double* modelCoefficients,
                                          double defaultValue,

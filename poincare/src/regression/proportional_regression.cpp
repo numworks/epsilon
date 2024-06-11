@@ -6,20 +6,20 @@
 namespace Poincare::Regression {
 
 Poincare::UserExpression ProportionalRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*x
   return Poincare::NewExpression::Create(
       KMult(KA, "x"_e),
       {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0])});
 }
 
-double ProportionalRegression::evaluate(double* modelCoefficients,
+double ProportionalRegression::evaluate(const double* modelCoefficients,
                                         double x) const {
   return modelCoefficients[0] * x;
 }
 
-double ProportionalRegression::levelSet(double* modelCoefficients, double xMin,
-                                        double xMax, double y,
+double ProportionalRegression::levelSet(const double* modelCoefficients,
+                                        double xMin, double xMax, double y,
                                         Poincare::Context* context) const {
   const double a = modelCoefficients[0];
   if (a == 0.0) {
@@ -28,7 +28,7 @@ double ProportionalRegression::levelSet(double* modelCoefficients, double xMin,
   return y / a;
 }
 
-double ProportionalRegression::partialDerivate(double* modelCoefficients,
+double ProportionalRegression::partialDerivate(const double* modelCoefficients,
                                                int derivateCoefficientIndex,
                                                double x) const {
   assert(derivateCoefficientIndex == 0);

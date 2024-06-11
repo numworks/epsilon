@@ -6,7 +6,7 @@
 namespace Poincare::Regression {
 
 Poincare::UserExpression AffineRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*x+b
   return Poincare::NewExpression::Create(
       KAdd(KMult(KA, "x"_e), KB),
@@ -14,13 +14,14 @@ Poincare::UserExpression AffineRegression::privateExpression(
        .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
 }
 
-double AffineRegression::evaluate(double* modelCoefficients, double x) const {
+double AffineRegression::evaluate(const double* modelCoefficients,
+                                  double x) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   return slope * x + yIntercept;
 }
 
-double AffineRegression::levelSet(double* modelCoefficients, double xMin,
+double AffineRegression::levelSet(const double* modelCoefficients, double xMin,
                                   double xMax, double y,
                                   Poincare::Context* context) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];

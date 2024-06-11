@@ -14,13 +14,13 @@ class AffineRegression : public Regression {
   using Regression::Regression;
   int numberOfCoefficients() const override { return 2; }
 
-  double evaluate(double* modelCoefficients, double x) const override;
-  double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) const override;
+  double evaluate(const double* modelCoefficients, double x) const override;
+  double levelSet(const double* modelCoefficients, double xMin, double xMax,
+                  double y, Poincare::Context* context) const override;
 
  protected:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
+      const double* modelCoefficients) const override;
   virtual int slopeCoefficientIndex() const { return 0; }
   virtual int yInterceptCoefficientIndex() const { return 1; }
 

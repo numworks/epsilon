@@ -7,7 +7,7 @@
 namespace Poincare::Regression {
 
 Poincare::UserExpression LogarithmicRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a+b*ln(x)
   return Poincare::NewExpression::Create(
       KAdd(KA, KMult(KB, KLn("x"_e))),

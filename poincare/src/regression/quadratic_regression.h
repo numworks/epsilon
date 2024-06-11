@@ -12,12 +12,12 @@ class QuadraticRegression : public Regression {
 
   Poincare::Layout templateLayout() const override;
 
-  double evaluate(double* modelCoefficients, double x) const override;
+  double evaluate(const double* modelCoefficients, double x) const override;
 
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
-  double partialDerivate(double* modelCoefficients,
+      const double* modelCoefficients) const override;
+  double partialDerivate(const double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
 };
 

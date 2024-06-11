@@ -8,7 +8,7 @@ namespace Poincare::Regression {
 class LogarithmicRegression : public TransformedRegression {
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
+      const double* modelCoefficients) const override;
   bool applyLnOnX() const override { return true; }
   bool applyLnOnY() const override { return false; }
 };

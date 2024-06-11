@@ -8,7 +8,7 @@
 namespace Poincare::Regression {
 
 Poincare::UserExpression LinearRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   if (!m_isApbxForm) {
     return AffineRegression::privateExpression(modelCoefficients);
   }

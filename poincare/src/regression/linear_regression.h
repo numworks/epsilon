@@ -12,7 +12,7 @@ class LinearRegression : public AffineRegression {
 
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
+      const double* modelCoefficients) const override;
   void privateFit(const Series* series, double* modelCoefficients,
                   Poincare::Context* context) const override;
   /* In a+bx form, Coefficients are swapped */

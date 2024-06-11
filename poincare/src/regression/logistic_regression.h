@@ -13,14 +13,14 @@ class LogisticRegression : public Regression {
 
   Poincare::Layout templateLayout() const override;
 
-  double evaluate(double* modelCoefficients, double x) const override;
-  double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) const override;
+  double evaluate(const double* modelCoefficients, double x) const override;
+  double levelSet(const double* modelCoefficients, double xMin, double xMax,
+                  double y, Poincare::Context* context) const override;
 
  private:
   Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const override;
-  double partialDerivate(double* modelCoefficients,
+      const double* modelCoefficients) const override;
+  double partialDerivate(const double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
   void specializedInitCoefficientsForFit(double* modelCoefficients,
                                          double defaultValue,

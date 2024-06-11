@@ -12,7 +12,7 @@ Poincare::Layout PowerRegression::templateLayout() const {
 }
 
 Poincare::UserExpression PowerRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*x^b
   return Poincare::NewExpression::Create(
       KMult(KA, KPow("x"_e, KB)),

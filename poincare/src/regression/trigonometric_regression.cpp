@@ -20,7 +20,7 @@ static double toRadians() {
 }
 
 Poincare::UserExpression TrigonometricRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*sin(bx+c)+d
   return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
@@ -30,7 +30,7 @@ Poincare::UserExpression TrigonometricRegression::privateExpression(
        .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
-double TrigonometricRegression::evaluate(double* modelCoefficients,
+double TrigonometricRegression::evaluate(const double* modelCoefficients,
                                          double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -41,7 +41,7 @@ double TrigonometricRegression::evaluate(double* modelCoefficients,
   return a * std::sin(radian * (b * x + c)) + d;
 }
 
-double TrigonometricRegression::partialDerivate(double* modelCoefficients,
+double TrigonometricRegression::partialDerivate(const double* modelCoefficients,
                                                 int derivateCoefficientIndex,
                                                 double x) const {
   if (derivateCoefficientIndex == 3) {

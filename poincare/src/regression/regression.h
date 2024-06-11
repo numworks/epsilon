@@ -52,21 +52,23 @@ class Regression {
 
   virtual Poincare::Layout templateLayout() const;
   Poincare::Layout equationLayout(
-      double* modelCoefficients, const char* ySymbol, int significantDigits,
+      const double* modelCoefficients, const char* ySymbol,
+      int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
-  Poincare::UserExpression expression(double* modelCoefficients) const;
+  Poincare::UserExpression expression(const double* modelCoefficients) const;
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
-  virtual double evaluate(double* modelCoefficients, double x) const = 0;
-  virtual double levelSet(double* modelCoefficients, double xMin, double xMax,
-                          double y, Poincare::Context* context) const;
+  virtual double evaluate(const double* modelCoefficients, double x) const = 0;
+  virtual double levelSet(const double* modelCoefficients, double xMin,
+                          double xMax, double y,
+                          Poincare::Context* context) const;
   void fit(const Series* series, double* modelCoefficients,
            Poincare::Context* context) const;
 
  protected:
   virtual Poincare::UserExpression privateExpression(
-      double* modelCoefficients) const = 0;
+      const double* modelCoefficients) const = 0;
 
   // Fit
   virtual void privateFit(const Series* series, double* modelCoefficients,
@@ -76,7 +78,7 @@ class Regression {
 
  private:
   // Model attributes
-  virtual double partialDerivate(double* modelCoefficients,
+  virtual double partialDerivate(const double* modelCoefficients,
                                  int derivateCoefficientIndex, double x) const {
     assert(false);
     return 0.0;
@@ -92,12 +94,13 @@ class Regression {
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(const Series* series, double* modelCoefficients,
                              Poincare::Context* context) const;
-  double chi2(const Series* series, double* modelCoefficients) const;
-  double alphaPrimeCoefficient(const Series* series, double* modelCoefficients,
-                               int k, int l, double lambda) const;
-  double alphaCoefficient(const Series* series, double* modelCoefficients,
+  double chi2(const Series* series, const double* modelCoefficients) const;
+  double alphaPrimeCoefficient(const Series* series,
+                               const double* modelCoefficients, int k, int l,
+                               double lambda) const;
+  double alphaCoefficient(const Series* series, const double* modelCoefficients,
                           int k, int l) const;
-  double betaCoefficient(const Series* series, double* modelCoefficients,
+  double betaCoefficient(const Series* series, const double* modelCoefficients,
                          int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,

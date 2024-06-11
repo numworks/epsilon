@@ -11,9 +11,9 @@ namespace Poincare::Regression {
 class TransformedRegression : public Regression {
  public:
   int numberOfCoefficients() const override { return 2; }
-  double evaluate(double* modelCoefficients, double x) const override;
-  double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) const override;
+  double evaluate(const double* modelCoefficients, double x) const override;
+  double levelSet(const double* modelCoefficients, double xMin, double xMax,
+                  double y, Poincare::Context* context) const override;
 
  protected:
   void privateFit(const Series* series, double* modelCoefficients,

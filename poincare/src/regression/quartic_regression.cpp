@@ -13,7 +13,7 @@ Poincare::Layout QuarticRegression::templateLayout() const {
 }
 
 Poincare::UserExpression QuarticRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*x^4+b*x^3+c*x^2+d*x+e
   return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 4_e)), KMult(KB, KPow("x"_e, 3_e)),
@@ -25,7 +25,8 @@ Poincare::UserExpression QuarticRegression::privateExpression(
        .KE = Poincare::NewExpression::Builder<double>(modelCoefficients[4])});
 }
 
-double QuarticRegression::evaluate(double* modelCoefficients, double x) const {
+double QuarticRegression::evaluate(const double* modelCoefficients,
+                                   double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -34,7 +35,7 @@ double QuarticRegression::evaluate(double* modelCoefficients, double x) const {
   return a * x * x * x * x + b * x * x * x + c * x * x + d * x + e;
 }
 
-double QuarticRegression::partialDerivate(double* modelCoefficients,
+double QuarticRegression::partialDerivate(const double* modelCoefficients,
                                           int derivateCoefficientIndex,
                                           double x) const {
   switch (derivateCoefficientIndex) {

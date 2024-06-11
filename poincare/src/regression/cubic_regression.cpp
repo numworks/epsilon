@@ -13,7 +13,7 @@ Poincare::Layout CubicRegression::templateLayout() const {
 }
 
 Poincare::UserExpression CubicRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // a*x^3+b*x^2+c*x+d
   return Poincare::NewExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 3_e)), KMult(KB, KPow("x"_e, 2_e)),
@@ -24,7 +24,8 @@ Poincare::UserExpression CubicRegression::privateExpression(
        .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
 }
 
-double CubicRegression::evaluate(double* modelCoefficients, double x) const {
+double CubicRegression::evaluate(const double* modelCoefficients,
+                                 double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -32,7 +33,7 @@ double CubicRegression::evaluate(double* modelCoefficients, double x) const {
   return a * x * x * x + b * x * x + c * x + d;
 }
 
-double CubicRegression::partialDerivate(double* modelCoefficients,
+double CubicRegression::partialDerivate(const double* modelCoefficients,
                                         int derivateCoefficientIndex,
                                         double x) const {
   switch (derivateCoefficientIndex) {

@@ -16,7 +16,7 @@ Poincare::Layout LogisticRegression::templateLayout() const {
 }
 
 Poincare::UserExpression LogisticRegression::privateExpression(
-    double* modelCoefficients) const {
+    const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
   return Poincare::NewExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KExp(KMult(-1_e, KB, "x"_e))))),
@@ -25,7 +25,8 @@ Poincare::UserExpression LogisticRegression::privateExpression(
        .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
 }
 
-double LogisticRegression::evaluate(double* modelCoefficients, double x) const {
+double LogisticRegression::evaluate(const double* modelCoefficients,
+                                    double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -37,8 +38,8 @@ double LogisticRegression::evaluate(double* modelCoefficients, double x) const {
   return c / (1.0 + a * std::exp(-b * x));
 }
 
-double LogisticRegression::levelSet(double* modelCoefficients, double xMin,
-                                    double xMax, double y,
+double LogisticRegression::levelSet(const double* modelCoefficients,
+                                    double xMin, double xMax, double y,
                                     Poincare::Context* context) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -53,7 +54,7 @@ double LogisticRegression::levelSet(double* modelCoefficients, double xMin,
   return -std::log(lnArgument) / b;
 }
 
-double LogisticRegression::partialDerivate(double* modelCoefficients,
+double LogisticRegression::partialDerivate(const double* modelCoefficients,
                                            int derivateCoefficientIndex,
                                            double x) const {
   double a = modelCoefficients[0];

@@ -15,9 +15,10 @@ int StoreToSeries::numberOfPairs() const {
   return m_store->numberOfPairsOfSeries(m_series);
 }
 
-static bool UseLinearMxpbForm() {
-  return GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
-         CountryPreferences::RegressionApp::Variant1;
+bool Model::useLinearMxpbForm() const {
+  return (m_type == Type::LinearAxpb || m_type == Type::Median) &&
+         GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
+             CountryPreferences::RegressionApp::Variant1;
 }
 
 I18n::Message Model::name() const {

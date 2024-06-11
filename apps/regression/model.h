@@ -26,13 +26,21 @@ class Model {
 
   Model(Type type) : m_type(type) {}
 
-  const char* formula() const { return regression()->formula(); }
+  const char* formula() const {
+    if (useLinearMxpbForm()) {
+      return "y=m·x+b";
+    }
+    return regression()->formula();
+  }
   I18n::Message name() const;
   int numberOfCoefficients() const {
     return regression()->numberOfCoefficients();
   }
 
   Poincare::Layout templateLayout() const {
+    if (useLinearMxpbForm()) {
+      return Poincare::Layout::String("m·x+b");
+    }
     return regression()->templateLayout();
   };
   Poincare::Layout equationLayout(
@@ -67,6 +75,7 @@ class Model {
       Poincare::Regression::Regression::k_maxNumberOfCoefficients;
 
  private:
+  bool useLinearMxpbForm() const;
   const Poincare::Regression::Regression* regression() const {
     return Poincare::Regression::Regression::Get(m_type);
   }

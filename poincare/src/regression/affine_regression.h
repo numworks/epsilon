@@ -14,10 +14,7 @@ class AffineRegression : public Regression {
   using Regression::Regression;
   int numberOfCoefficients() const override { return 2; }
 
-  const char* formula() const override {
-    // TODO_PCJ: mx+b
-    return "y=a·x+b";
-  }
+  const char* formula() const override { return "y=a·x+b"; }
   double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;

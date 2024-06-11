@@ -332,6 +332,7 @@ app_regression_test_src += $(addprefix poincare/src/regression/,\
   quartic_regression.cpp \
   regression.cpp \
   regression_switch.cpp \
+  series.cpp \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
 )

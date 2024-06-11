@@ -74,16 +74,8 @@ void Regression::privateFit(const Series* series, double* modelCoefficients,
 }
 
 bool Regression::dataSuitableForFit(const Series* series) const {
-#if 0
-  // TODO_PCJ
-  if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series,
-                                                      numberOfCoefficients())) {
-    return false;
-  }
-  return store->seriesIsActive(series);
-#else
-  return true;
-#endif
+  return series->numberOfDistinctAbscissaeGreaterOrEqualTo(
+      numberOfCoefficients());
 }
 
 void Regression::fitLevenbergMarquardt(const Series* series,

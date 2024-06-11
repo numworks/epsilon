@@ -321,28 +321,6 @@ double Store::residualAtIndexForSeries(int series, int index,
   return get(series, 1, index) - yValueForXValue(series, x, globalContext);
 }
 
-bool Store::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
-  assert(series >= 0 && series < k_numberOfSeries);
-  int count = 0;
-  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
-    if (count >= i) {
-      return true;
-    }
-    double currentAbscissa = get(series, 0, j);
-    bool firstOccurrence = true;
-    for (int k = 0; k < j; k++) {
-      if (get(series, 0, k) == currentAbscissa) {
-        firstOccurrence = false;
-        break;
-      }
-    }
-    if (firstOccurrence) {
-      count++;
-    }
-  }
-  return count >= i;
-}
-
 bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
   int numberOfDefinedSeries = numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {

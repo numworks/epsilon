@@ -15,6 +15,7 @@ class Series {
     return column == 0 ? getX(i) : getY(i);
   }
   virtual int numberOfPairs() const = 0;
+  bool numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const;
 };
 
 }  // namespace Poincare::Regression

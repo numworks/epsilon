@@ -12,10 +12,10 @@ namespace Poincare::Regression {
 
 class Regression {
  public:
+  // TODO: the order is used by the regression app menu, make it independant
   enum class Type : uint8_t {
     None = 0,
     LinearAxpb,
-    LinearApbx,
     Proportional,
     Quadratic,
     Cubic,
@@ -27,6 +27,7 @@ class Regression {
     Trigonometric,
     Logistic,
     Median,
+    LinearApbx,
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model

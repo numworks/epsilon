@@ -59,6 +59,7 @@ static inline void ion_main_inner(const char *testFilter) {
     int initialPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
     reset_pool();
+    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
     quiz_reset_failure_ratio();
     c();
     quiz_print_failure_ratio();

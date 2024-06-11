@@ -132,6 +132,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduce_and_store("(3t,-2t^2)→f(t)");
   assert_reduces_to_formal_expression("diff(f(t),t,t)",
                                       "(\U00000014dep(3,{t}),-4×t)");
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fx.pc").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fy.pc").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // On matrices

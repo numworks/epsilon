@@ -10,10 +10,9 @@ def create_gif_from_images(
     print("Creating gif")
     gif = os.path.join(folder, gif_name + ".gif")
     p = Popen(
-        "convert"
-        # convert delays are in centiseconds
+        "magick " + " ".join(list_images)
+        # delays are in centiseconds
         + f" -set delay '%[fx:t==(n-1) ? {end_delay / 10} : {delay / 10}]' "
-        + " ".join(list_images)
         + " "
         + gif,
         shell=True,
@@ -29,7 +28,15 @@ def create_gif_from_images(
 
 def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
     p = Popen(
-        ["compare", "-metric", "mae", screenshot_1, screenshot_2, screenshot_diff],
+        [
+            "magick",
+            "compare",
+            "-metric",
+            "mae",
+            screenshot_1,
+            screenshot_2,
+            screenshot_diff,
+        ],
         stdout=DEVNULL,
         stderr=PIPE,
     )
@@ -39,7 +46,7 @@ def images_are_identical(screenshot_1, screenshot_2, screenshot_diff):
 
 def image_size(image):
     p = Popen(
-        ["identify", "-ping", "-format", "%w %h", image],
+        ["magick", "identify", "-ping", "-format", "%w %h", image],
         stdout=PIPE,
         stderr=DEVNULL,
     )
@@ -48,12 +55,12 @@ def image_size(image):
 
 
 def crop_images(list_images):
-    Popen(["mogrify", "-crop", "320x240+0+0", *list_images]).wait()
+    Popen(["magick", "mogrify", "-crop", "320x240+0+0", *list_images]).wait()
 
 
 def concatenate_images(list_images, output):
     Popen(
-        ["convert", *list_images, "+append", output],
+        ["magick", *list_images, "+append", output],
     ).wait()
 
 

@@ -632,9 +632,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      if (m_expression.type() == ExpressionNode::Type::List ||
-          (m_expression.type() == ExpressionNode::Type::Dependency &&
-           m_expression.childAtIndex(0).type() == ExpressionNode::Type::List)) {
+      if (m_expression.deepIsList(nullptr)) {
         SystemExpression list =
             m_expression.type() == ExpressionNode::Type::List
                 ? m_expression
@@ -856,11 +854,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
-    if (result.type() == ExpressionNode::Type::Point ||
-        (result.type() == ExpressionNode::Type::List &&
-         static_cast<List &>(result).isListOfPoints(context)) ||
-        (result.type() == ExpressionNode::Type::ListSequence &&
-         result.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
+    if (result.deepIsPoint(context, true)) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;

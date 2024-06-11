@@ -168,9 +168,42 @@ tests_src += $(addprefix poincare/test/old/,\
   helper.cpp \
   approximation.cpp \
   derivative.cpp \
+  expression_properties.cpp \
   parsing.cpp \
   simplification.cpp \
 )
+
+# TODO_PCJ: Restore these tests
+  # tree/tree_handle.cpp \
+  # tree/helpers.cpp \
+  # arithmetic.cpp \
+  # conics.cpp \
+  # context.cpp \
+  # erf_inv.cpp \
+  # exam_mode.cpp \
+  # dependency.cpp \
+  # distribution.cpp \
+  # expression.cpp \
+  # expression_order.cpp \
+  # expression_serialization.cpp \
+  # expression_to_layout.cpp \
+  # function_solver.cpp \
+  # helpers.cpp \
+  # input_beautification.cpp \
+  # integer.cpp \
+  # layout.cpp \
+  # layout_cursor.cpp \
+  # layout_serialization.cpp \
+  # layout_to_expression.cpp \
+  # matrix.cpp \
+  # polynomial.cpp \
+  # print.cpp \
+  # print_float.cpp \
+  # print_int.cpp \
+  # range.cpp \
+  # rational.cpp \
+  # regularized_function.cpp \
+  # zoom.cpp \
 
 poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \

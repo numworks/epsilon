@@ -784,6 +784,7 @@ bool NewExpression::deepIsOfType(
 
 bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
                                  bool isReduced) const {
+  // TODO_PCJ: Replace variables using context if UserExpression
   if (!canContainMatrices) {
     return false;
   }
@@ -791,7 +792,29 @@ bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
 }
 
 bool NewExpression::deepIsList(Context* context) const {
+  // TODO_PCJ: Replace variables using context if UserExpression
   return Dimension::IsList(tree());
+}
+
+bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
+  /* If a context is given, call PrepareForProjection to replace global
+   * variables with their definitions.
+   * TODO_PCJ: Split this method in two, one for UserExpression (replacing
+   * variables with context) and one for SystemExpression. */
+  Tree* t = tree()->clone();
+  if (context) {
+    ProjectionContext projCtx = {
+        .m_context = context,
+        .m_symbolic =
+            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+    Simplification::PrepareForProjection(t, &projCtx);
+  }
+  /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
+   * this behavior ? */
+  bool result = Dimension::GetDimension(t).isPoint() &&
+                (allowlists || !Dimension::IsList(t));
+  t->removeTree();
+  return result;
 }
 
 bool NewExpression::hasComplexI(Context* context,

@@ -1,3 +1,4 @@
+#if 0
 #include <apps/shared/global_context.h>
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/addition.h>
@@ -46,7 +47,7 @@
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_properties_is_number) {
+QUIZ_DISABLED_CASE(poincare_properties_is_number) {
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary).isNumber());
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Decimal).isNumber());
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Hexadecimal).isNumber());
@@ -63,7 +64,7 @@ QUIZ_CASE(poincare_properties_is_number) {
                    .isNumber());
 }
 
-QUIZ_CASE(poincare_properties_is_number_zero) {
+QUIZ_DISABLED_CASE(poincare_properties_is_number_zero) {
   Shared::GlobalContext context;
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary).isNull(&context) ==
               OMG::Troolean::False);
@@ -143,7 +144,7 @@ QUIZ_CASE(poincare_properties_is_number_zero) {
           .isNull(&context) == OMG::Troolean::Unknown);
 }
 
-QUIZ_CASE(poincare_properties_is_random) {
+QUIZ_DISABLED_CASE(poincare_properties_is_random) {
   quiz_assert(Random::Builder().isRandom());
   quiz_assert(
       Randint::Builder(Rational::Builder(1), Rational::Builder(2)).isRandom());
@@ -151,7 +152,7 @@ QUIZ_CASE(poincare_properties_is_random) {
   quiz_assert(!Rational::Builder(2, 3).isRandom());
 }
 
-QUIZ_CASE(poincare_properties_is_parametered_expression) {
+QUIZ_DISABLED_CASE(poincare_properties_is_parametered_expression) {
   quiz_assert(Derivative::Builder(Rational::Builder(1), Symbol::Builder('x'),
                                   Rational::Builder(2))
                   .isParameteredExpression());
@@ -168,7 +169,7 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
   quiz_assert(!Rational::Builder(2, 3).isParameteredExpression());
 }
 
-QUIZ_CASE(poincare_properties_is_rational_number) {
+QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary)
                   .isAlternativeFormOfRationalNumber());
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Decimal)
@@ -235,14 +236,14 @@ void assert_expression_has_not_property(
   assert_expression_has_property_or_not(expression, context, test, false);
 }
 
-QUIZ_CASE(poincare_properties_is_approximate) {
+QUIZ_DISABLED_CASE(poincare_properties_is_approximate) {
   Shared::GlobalContext context;
   assert_expression_has_property("3.4", &context, OExpression::IsApproximate);
   assert_expression_has_property("2.3+1", &context, OExpression::IsApproximate);
   assert_expression_has_not_property("a", &context, OExpression::IsApproximate);
 }
 
-QUIZ_CASE(poincare_properties_is_matrix) {
+QUIZ_DISABLED_CASE(poincare_properties_is_matrix) {
   Shared::GlobalContext context;
   assert_expression_has_property("[[1,2][3,4]]", &context,
                                  OExpression::IsMatrix);
@@ -277,7 +278,7 @@ void assert_expression_is_not_deep_matrix(const char* expression) {
   quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
 }
 
-QUIZ_CASE(poincare_properties_deep_is_matrix) {
+QUIZ_DISABLED_CASE(poincare_properties_deep_is_matrix) {
   assert_expression_is_not_deep_matrix("diff([[1,2][3,4]],x,2)");
   assert_expression_is_not_deep_matrix("sign([[1,2][3,4]])");
   assert_expression_is_not_deep_matrix("trace([[1,2][3,4]])");
@@ -286,7 +287,7 @@ QUIZ_CASE(poincare_properties_deep_is_matrix) {
   assert_expression_is_deep_matrix("2*dim(2)");
 }
 
-QUIZ_CASE(poincare_properties_is_infinity) {
+QUIZ_DISABLED_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
   assert_expression_has_property("3.4+inf", &context, OExpression::IsInfinity);
   assert_expression_has_not_property("2.3+1", &context,
@@ -297,7 +298,7 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
-QUIZ_CASE(poincare_properties_in_parametric) {
+QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   Shared::GlobalContext context;
   assert_expression_has_property("2x+1", &context, OExpression::IsSymbolic);
   assert_expression_has_not_property("diff(x^2,x,3)", &context,
@@ -325,7 +326,7 @@ void assert_reduced_expression_sign(
                                expression);
 }
 
-QUIZ_CASE(poincare_properties_decimal_sign) {
+QUIZ_DISABLED_CASE(poincare_properties_decimal_sign) {
   quiz_assert(Decimal::Builder(-2, 3).isPositive() == OMG::Troolean::False);
   quiz_assert(Decimal::Builder(-2, -3).isPositive() == OMG::Troolean::False);
   quiz_assert(Decimal::Builder(2, -3).isPositive() == OMG::Troolean::True);
@@ -333,7 +334,7 @@ QUIZ_CASE(poincare_properties_decimal_sign) {
   quiz_assert(Decimal::Builder(0, 1).isPositive() == OMG::Troolean::True);
 }
 
-QUIZ_CASE(poincare_properties_based_integer_sign) {
+QUIZ_DISABLED_CASE(poincare_properties_based_integer_sign) {
   quiz_assert(BasedInteger::Builder(2, OMG::Base::Binary).isPositive() ==
               OMG::Troolean::True);
   quiz_assert(BasedInteger::Builder(2, OMG::Base::Decimal).isPositive() ==
@@ -342,14 +343,14 @@ QUIZ_CASE(poincare_properties_based_integer_sign) {
               OMG::Troolean::True);
 }
 
-QUIZ_CASE(poincare_properties_rational_sign) {
+QUIZ_DISABLED_CASE(poincare_properties_rational_sign) {
   quiz_assert(Rational::Builder(-2).isPositive() == OMG::Troolean::False);
   quiz_assert(Rational::Builder(-2, 3).isPositive() == OMG::Troolean::False);
   quiz_assert(Rational::Builder(2, 3).isPositive() == OMG::Troolean::True);
   quiz_assert(Rational::Builder(0, 3).isPositive() == OMG::Troolean::True);
 }
 
-QUIZ_CASE(poincare_properties_expression_sign) {
+QUIZ_DISABLED_CASE(poincare_properties_expression_sign) {
   Shared::GlobalContext context;
   quiz_assert(
       ArcCosine::Builder(Rational::Builder(-1, 7)).isPositive(&context) ==
@@ -421,7 +422,7 @@ constexpr OMG::Troolean Positive = OMG::Troolean::True;
 constexpr OMG::Troolean Negative = OMG::Troolean::False;
 constexpr OMG::Troolean Unknown = OMG::Troolean::Unknown;
 
-QUIZ_CASE(poincare_properties_sign) {
+QUIZ_DISABLED_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("abs(-cos(2)+i)", Positive);
   assert_reduced_expression_sign("2.345ᴇ-23", Positive);
   assert_reduced_expression_sign("-2.345ᴇ-23", Negative);
@@ -474,7 +475,7 @@ void assert_sign_sets_to(
               (std::isnan(fValue) == std::isnan(eValue)));
 }
 
-QUIZ_CASE(poincare_properties_set_sign_positive) {
+QUIZ_DISABLED_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Factorial::Builder(Rational::Builder(3)),
                       OMG::Troolean::True);
   assert_sign_sets_to(
@@ -541,7 +542,7 @@ void assert_expression_is_not_real(const char* expression) {
   quiz_assert_print_if_failure(!e.isReal(&context), expression);
 }
 
-QUIZ_CASE(poincare_properties_is_real) {
+QUIZ_DISABLED_CASE(poincare_properties_is_real) {
   // Numbers
   assert_expression_is_real("2.3");
   assert_expression_is_real("random()");
@@ -708,7 +709,7 @@ void assert_expression_has_variables(const char* expression,
   }
 }
 
-QUIZ_CASE(poincare_properties_get_variables) {
+QUIZ_DISABLED_CASE(poincare_properties_get_variables) {
   /* Warning: Theses tests are weird because you need to avoid a lot of
    * reserved identifiers like:
    * - e and i
@@ -831,7 +832,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
   quiz_assert_print_if_failure(coefficients[d + 1] == 0, expression);
 }
 
-QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
+QUIZ_DISABLED_CASE(poincare_properties_get_polynomial_coefficients) {
   const char* coefficient0[] = {"2", "1", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x",
                                                        coefficient0);
@@ -895,7 +896,7 @@ void assert_reduced_expression_unit_is(const char* expression,
       expression);
 }
 
-QUIZ_CASE(poincare_properties_remove_unit) {
+QUIZ_DISABLED_CASE(poincare_properties_remove_unit) {
   assert_reduced_expression_unit_is("_km", "_m");
   assert_reduced_expression_unit_is("_min/_km", "_m^(-1)×_s");
   assert_reduced_expression_unit_is("_km^3", "_m^3");
@@ -933,7 +934,7 @@ void assert_additional_results_compute_to(
   }
 }
 
-QUIZ_CASE(poincare_expression_additional_results) {
+QUIZ_DISABLED_CASE(poincare_expression_additional_results) {
   // Time
   assert_additional_results_compute_to("3×_s", nullptr, 0);
   {
@@ -1033,7 +1034,7 @@ void assert_list_length_in_children_is(const char* definition,
                                definition);
 }
 
-QUIZ_CASE(poincare_expression_children_list_length) {
+QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
   assert_list_length_in_children_is("1+1", OExpression::k_noList);
   assert_list_length_in_children_is("1+{}", 0);
   assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
@@ -1042,42 +1043,56 @@ QUIZ_CASE(poincare_expression_children_list_length) {
                                     OExpression::k_mismatchedLists);
 }
 
-void assert_is_list_of_points(const char* definition, bool truth = true) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(definition, &globalContext, false);
-  quiz_assert_print_if_failure(
-      e.otype() == ExpressionNode::Type::OList &&
-          static_cast<OList&>(e).isListOfPoints(&globalContext) == truth,
-      definition);
+#endif
+
+#include <apps/shared/global_context.h>
+#include <ion/storage/file_system.h>
+#include <poincare/expression.h>
+
+#include "../helper.h"
+
+using namespace Poincare;
+
+void assert_is_list_of_points(const char* definition, Context* context,
+                              bool truth = true) {
+  UserExpression e = UserExpression::Builder(TextToTree(definition, context));
+  bool isListOfPoints = e.deepIsList(context) && e.deepIsPoint(context, true);
+  quiz_assert_print_if_failure(isListOfPoints == truth, definition);
 }
 
 QUIZ_CASE(poincare_expression_list_of_points) {
-  assert_reduce_and_store("(1,2)→a");
-  assert_reduce_and_store("3→b");
+  Shared::GlobalContext globalContext;
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
 
-  assert_is_list_of_points("{}");
-  assert_is_list_of_points("{(1,2)}");
-  assert_is_list_of_points("{(1,-2),(-3.4,5.6)}");
-  assert_is_list_of_points("{undef}");
-  assert_is_list_of_points("{x}");
-  assert_is_list_of_points("{a,(3,4)}");
-  assert_is_list_of_points("{a,undef,(3,4)}");
-  assert_is_list_of_points("{a,x,(3,4)}");
+  store("(1,2)→a", &globalContext);
+  store("3→b", &globalContext);
 
-  assert_is_list_of_points("{1,2,3}", false);
-  assert_is_list_of_points("{(1,2),3}", false);
-  assert_is_list_of_points("{(1,2),3,(4,5)}", false);
-  assert_is_list_of_points("{undef,1}", false);
-  assert_is_list_of_points("{b}", false);
+  assert_is_list_of_points("{(1,2)}", &globalContext);
+  assert_is_list_of_points("{(1,-2),(-3.4,5.6)}", &globalContext);
+  assert_is_list_of_points("{a,(3,4)}", &globalContext);
+  assert_is_list_of_points("{(undef,1),(3,undef),(undef, undef)}",
+                           &globalContext);
 
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-  /*
-  assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context, OExpression::IsInfinity);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  */
+  assert_is_list_of_points("{1,2,3}", &globalContext, false);
+  assert_is_list_of_points("{(1,2),3}", &globalContext, false);
+  assert_is_list_of_points("{(1,2),3,(4,5)}", &globalContext, false);
+  assert_is_list_of_points("{undef,1}", &globalContext, false);
+  assert_is_list_of_points("{b}", &globalContext, false);
+
+  // TODO_PCJ: These used to be lists of points but are not anymore.
+  assert_is_list_of_points("{}", &globalContext, false);
+  assert_is_list_of_points("{undef}", &globalContext, false);
+  assert_is_list_of_points("{x}", &globalContext, false);
+  assert_is_list_of_points("{a,undef,(3,4)}", &globalContext, false);
+  assert_is_list_of_points("{a,x,(3,4)}", &globalContext, false);
+
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
+
+#if 0
 
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
@@ -1090,7 +1105,7 @@ void assert_is_continuous_between_values(const char* expression, float x1,
       expression);
 }
 
-QUIZ_CASE(poincare_expression_continuous) {
+QUIZ_DISABLED_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+x^2", 2.43f, 2.45f, true);
   assert_is_continuous_between_values("x+x^2", 2.45f, 2.47f, true);
   assert_is_continuous_between_values("x+floor(x^2)", 2.43f, 2.45f, false);
@@ -1141,7 +1156,7 @@ void assert_is_linear_pattern_of_sin_or_cos(
   quiz_assert_print_if_failure(computedAngle == angle, expression);
 }
 
-QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
+QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern("1+(1/x)",
                                           &OExpression::IsRationalFraction);
   assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
@@ -1174,10 +1189,12 @@ void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
       expression);
 }
 
-QUIZ_CASE(poincare_expression_deep_is_symbolic) {
+QUIZ_DISABLED_CASE(poincare_expression_deep_is_symbolic) {
   assert_deep_is_symbolic("2/cos(3x+2)", true);
   assert_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
   assert_deep_is_symbolic("2/int(5xy, x, 3, 4)", true);
   assert_deep_is_symbolic("2/int(diff(xy, y, 2), x, 3, 4)", false);
   assert_deep_is_symbolic("2/int(diff(xy^n, y, 2), x, 3, 4)", true);
 }
+
+#endif

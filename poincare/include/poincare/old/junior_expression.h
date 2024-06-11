@@ -278,6 +278,7 @@ class JuniorExpression : public OExpression {
   bool deepIsMatrix(Context* context = nullptr, bool canContainMatrices = true,
                     bool isReduced = true) const;
   bool deepIsList(Context* context) const;
+  bool deepIsPoint(Context* context, bool allowlists) const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {
@@ -436,10 +437,6 @@ class Point final : public JuniorExpression {
 class List : public JuniorExpression {
  public:
   static List Builder();
-  bool isListOfPoints(Context* context) const {
-    assert(false);
-    return false;
-  }
   template <typename T>
   NewExpression approximateAndRemoveUndefAndSort(
       const ApproximationContext& approximationContext) const {

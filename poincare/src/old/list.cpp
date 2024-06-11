@@ -178,26 +178,6 @@ OExpression OList::extremum(const ReductionContext& reductionContext,
   return childAtIndex(extremumIndex);
 }
 
-bool OList::isListOfPoints(Context* context) const {
-  int n = numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    OExpression e = childAtIndex(i);
-    if (IsSymbolic(e)) {
-      if (!context) {
-        return false;
-      }
-      Expression ve = context->expressionForSymbolAbstract(
-          static_cast<SymbolAbstract&>(e), false);
-      if (!(ve.isUninitialized() || IsPoint(ve))) {
-        return false;
-      }
-    } else if (!IsPoint(e)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 template <typename T>
 OExpression OList::approximateAndRemoveUndefAndSort(
     const ApproximationContext& approximationContext) const {

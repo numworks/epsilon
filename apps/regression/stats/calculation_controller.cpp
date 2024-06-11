@@ -158,11 +158,10 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   // Regression cell
   if (c == Calculation::Regression) {
     Model *model = m_store->modelForSeries(series);
-    I18n::Message message = Store::HasCoefficients(regressionType)
-                                ? model->formulaMessage()
-                                : I18n::Message::Dash;
     static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(
-        I18n::translate(message));
+        Store::HasCoefficients(regressionType)
+            ? model->formula()
+            : I18n::translate(I18n::Message::Dash));
     static_cast<AbstractEvenOddBufferTextCell *>(cell)->setTextColor(
         KDColorBlack);
     return;

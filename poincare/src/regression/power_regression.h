@@ -7,6 +7,7 @@ namespace Poincare::Regression {
 
 class PowerRegression : public TransformedRegression {
  public:
+  const char* formula() const override { return "y=a·x^b"; }
   Poincare::Layout templateLayout() const override;
 
  private:

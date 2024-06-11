@@ -10,6 +10,7 @@ class LogisticRegression : public Regression {
   using Regression::Regression;
 
   int numberOfCoefficients() const override { return 3; }
+  const char* formula() const override { return "y=c/(1+a·exp(-b·x))"; }
 
   Poincare::Layout templateLayout() const override;
 

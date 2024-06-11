@@ -40,6 +40,10 @@ class Regression {
 
   virtual int numberOfCoefficients() const = 0;
 
+  virtual const char* formula() const {
+    assert(false);
+    return "";
+  }
   virtual Poincare::Layout templateLayout() const;
   Poincare::Layout equationLayout(
       const double* modelCoefficients, const char* ySymbol,

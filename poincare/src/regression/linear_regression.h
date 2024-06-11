@@ -9,6 +9,9 @@ class LinearRegression : public AffineRegression {
  public:
   constexpr LinearRegression(bool isApbxForm = false)
       : m_isApbxForm(isApbxForm) {}
+  const char* formula() const override {
+    return m_isApbxForm ? "y=a+b·x" : AffineRegression::formula();
+  }
 
  private:
   Poincare::UserExpression privateExpression(

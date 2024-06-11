@@ -26,7 +26,7 @@ class Model {
 
   Model(Type type) : m_type(type) {}
 
-  I18n::Message formulaMessage() const;
+  const char* formula() const { return regression()->formula(); }
   I18n::Message name() const;
   int numberOfCoefficients() const {
     return regression()->numberOfCoefficients();

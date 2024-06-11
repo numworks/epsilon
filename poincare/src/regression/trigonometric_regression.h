@@ -10,6 +10,7 @@ class TrigonometricRegression : public Regression {
   using Regression::Regression;
   int numberOfCoefficients() const override { return k_numberOfCoefficients; }
 
+  const char* formula() const override { return "y=a·sin(b·x+c)+d"; }
   double evaluate(const double* modelCoefficients, double x) const override;
 
  private:

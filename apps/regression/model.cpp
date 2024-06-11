@@ -52,38 +52,4 @@ I18n::Message Model::name() const {
   }
 }
 
-I18n::Message Model::formulaMessage() const {
-  switch (m_type) {
-    case Type::None:
-      assert(false);
-    case Type::LinearAxpb:
-      return UseLinearMxpbForm() ? I18n::Message::LinearMxpbRegressionFormula
-                                 : I18n::Message::LinearRegressionFormula;
-    case Type::LinearApbx:
-      return I18n::Message::LinearApbxRegressionFormula;
-    case Type::Proportional:
-      return I18n::Message::ProportionalRegressionFormula;
-    case Type::Quadratic:
-      return I18n::Message::QuadraticRegressionFormula;
-    case Type::Cubic:
-      return I18n::Message::CubicRegressionFormula;
-    case Type::Quartic:
-      return I18n::Message::QuarticRegressionFormula;
-    case Type::Logarithmic:
-      return I18n::Message::LogarithmicRegressionFormula;
-    case Type::ExponentialAebx:
-      return I18n::Message::ExponentialAebxRegressionFormula;
-    case Type::ExponentialAbx:
-      return I18n::Message::ExponentialAbxRegressionFormula;
-    case Type::Power:
-      return I18n::Message::PowerRegressionFormula;
-    case Type::Trigonometric:
-      return I18n::Message::TrigonometricRegressionFormula;
-    case Type::Logistic:
-      return I18n::Message::LogisticRegressionFormula;
-    case Type::Median:
-      assert(false);
-  }
-}
-
 }  // namespace Regression

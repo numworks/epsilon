@@ -10,6 +10,7 @@ class CubicRegression : public Regression {
   using Regression::Regression;
   int numberOfCoefficients() const override { return 4; }
 
+  const char* formula() const override { return "y=a·x^3+b·x^2+c·x+d"; }
   Poincare::Layout templateLayout() const override;
 
   double evaluate(const double* modelCoefficients, double x) const override;

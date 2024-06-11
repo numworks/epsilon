@@ -14,8 +14,7 @@ using namespace Poincare;
 namespace Poincare::Regression {
 
 Layout Regression::templateLayout() const {
-  const char* layoutString = "y=a*x";
-  // TODO_PCJ: I18n::translate(formulaMessage()) + sizeof("y=") - 1;
+  const char* layoutString = formula() + sizeof("y=") - 1;
   return Layout::String(layoutString);
 }
 

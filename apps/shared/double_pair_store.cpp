@@ -403,6 +403,9 @@ bool DoublePairStore::storeColumn(int series, int i) const {
     return true;
   }
   Symbol listSymbol = Symbol::Builder(name, nameLength);
+  /* TODO: add a flag to tell setExpressionForSymbolAbstract not to reduce the
+   * float list since there is nothing to reduce and it may be long. Break in
+   * regression_trigonometric_4 to see the performance issue. */
   return m_context->setExpressionForSymbolAbstract(m_dataLists[series][i],
                                                    listSymbol);
 }

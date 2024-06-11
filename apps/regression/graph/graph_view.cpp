@@ -5,7 +5,7 @@
 #include <poincare/old/context.h>
 
 #include "../app.h"
-#include "../model/model.h"
+#include "../model.h"
 
 using namespace Escher;
 using namespace Poincare;

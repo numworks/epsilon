@@ -3,11 +3,11 @@ app_headers += apps/regression/app.h
 
 app_regression_test_src += $(addprefix apps/regression/,\
   store.cpp \
+  model.cpp \
 )
 
 app_regression_src = $(addprefix apps/regression/,\
   app.cpp \
-  model.cpp \
   stats/calculation_controller.cpp \
   stats/column_title_cell.cpp \
   stats/even_odd_double_buffer_text_cell.cpp \

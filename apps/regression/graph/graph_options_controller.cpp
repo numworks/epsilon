@@ -69,7 +69,7 @@ void GraphOptionsController::viewWillAppear() {
   m_regressionEquationCell.label()->resetScroll();
 
   int series = m_graphController->selectedSeriesIndex();
-  Regression::Model *model = m_store->modelForSeries(series);
+  Model *model = m_store->modelForSeries(series);
 
   // Change regression cell
   m_changeRegressionCell.subLabel()->setMessage(model->name());

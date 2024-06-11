@@ -9,16 +9,13 @@
 
 #include <cmath>
 
-#include "../store.h"
-#include "model.h"
-
 using namespace Poincare;
 
 namespace Poincare::Regression {
 
 Layout Regression::templateLayout() const {
-  const char* layoutString =
-      I18n::translate(formulaMessage()) + sizeof("y=") - 1;
+  const char* layoutString = "y=a*x";
+  // TODO_PCJ: I18n::translate(formulaMessage()) + sizeof("y=") - 1;
   return Layout::String(layoutString);
 }
 

@@ -7,16 +7,7 @@
 
 #include <algorithm>
 
-#include "../model/cubic_model.h"
-#include "../model/exponential_model.h"
-#include "../model/linear_model.h"
-#include "../model/logarithmic_model.h"
-#include "../model/logistic_model.h"
-#include "../model/median_model.h"
-#include "../model/power_model.h"
-#include "../model/quadratic_model.h"
-#include "../model/quartic_model.h"
-#include "../model/trigonometric_model.h"
+#include "../model.h"
 
 using namespace Poincare;
 using namespace Escher;

@@ -6,19 +6,9 @@
 #include <poincare/old/matrix.h>
 #include <stdint.h>
 
-namespace Poincare::Regression {
+#include "series.h"
 
-// Apps will provide series to the regression algorithm with Series
-class Series {
- public:
-  virtual double getX(int i) const = 0;
-  virtual double getY(int i) const = 0;
-  double get(int column, int i) const {
-    assert(column == 0 || column == 1);
-    return column == 0 ? getX(i) : getY(i);
-  }
-  virtual int numberOfPairs() const = 0;
-};
+namespace Poincare::Regression {
 
 class Regression {
  public:

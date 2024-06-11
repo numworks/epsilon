@@ -5,7 +5,7 @@
 #include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/numeric/statistics_dataset_column.h>
 
-#include "regression.h"
+#include "series.h"
 
 using CalculationOptions = Shared::DoublePairStore::CalculationOptions;
 

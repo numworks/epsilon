@@ -14,15 +14,12 @@ SFLAGS += \
   -ffunction-sections \
   -ggdb3 \
   -nostdinc \
-  -nostdlib \
-  -Wl,--whole-archive
+  -nostdlib
 
 ifeq ($(DEBUG),0)
 SFLAGS += -flto=auto
 endif
 
-LDFLAGS := \
-  -Wl,--no-whole-archive \
-  $(LDFLAGS) \
+LDFLAGS += \
   -lgcc \
   -Wl,--gc-sections

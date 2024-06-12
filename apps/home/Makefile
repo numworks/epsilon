@@ -13,4 +13,4 @@ $(OUTPUT_DIRECTORY)/$(PATH_apps)/home/apps_layout.h: $(addprefix $(PATH_apps)/ho
 
 $(OUTPUT_DIRECTORY)/$(PATH_apps)/home/apps_layout.cpp: $(OUTPUT_DIRECTORY)/$(PATH_apps)/home/apps_layout.h
 
-$(call objects_foreach_arch,$(PATH_apps)/home/controller.cpp): $(OUTPUT_DIRECTORY)/$(PATH_apps)/home/apps_layout.h
+$(call all_objects_for,$(PATH_apps)/home/controller.cpp): $(OUTPUT_DIRECTORY)/$(PATH_apps)/home/apps_layout.h

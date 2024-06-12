@@ -135,8 +135,8 @@ $(OUTPUT_DIRECTORY)/%.cpp: $(OUTPUT_DIRECTORY)/%.h
 # depends_on_image, <list of cpp>, <list of png>
 define depends_on_image
 $(eval \
-$(call objects_foreach_arch,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2))
-$(call objects_foreach_arch,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
+$(call all_objects_for,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2))
+$(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
 )
 endef
 

@@ -51,7 +51,7 @@ _apps_snapshot_cxxflags := \
   -DAPPS_CONTAINER_SNAPSHOT_COUNT="$(_apps_count)" \
   -DEPSILON_APPS_NAMES='$(_apps_names)'
 
-$(call objects_foreach_arch,$(addprefix $(PATH_apps)/,apps_container.cpp apps_container_storage.cpp init.cpp main.cpp)): CXXFLAGS += $(_apps_snapshot_cxxflags)
+$(call all_objects_for,$(addprefix $(PATH_apps)/,apps_container.cpp apps_container_storage.cpp init.cpp main.cpp)): CXXFLAGS += $(_apps_snapshot_cxxflags)
 
 # Generate I18n files
 include $(PATH_apps)/i18n.mak
@@ -64,4 +64,4 @@ $(call i18n_without_universal,variables)
 include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test usb $(EPSILON_APPS))
 
 $(call assert_defined,PYTHON_QSTRDEFS)
-$(call objects_foreach_arch,$(SOURCES_apps)): $(PYTHON_QSTRDEFS)
+$(call all_objects_for,$(SOURCES_apps)): $(PYTHON_QSTRDEFS)

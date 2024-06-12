@@ -150,12 +150,12 @@ $(call create_module,liba,1, \
 
 SFLAGS_liba += -Iliba/include/bridge:+bridge
 
-$(call objects_foreach_arch,liba/src/external/sqlite/mem5.c): CFLAGS += -w
-$(call objects_foreach_arch,liba/src/external/openbsd/%.c): PRIORITY_SFLAGS := -Iliba/src/external/openbsd/include
-$(call objects_foreach_arch,liba/src/external/openbsd/%.c): CFLAGS += -w
+$(call all_objects_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w
+$(call all_objects_for,liba/src/external/openbsd/%.c): PRIORITY_SFLAGS := -Iliba/src/external/openbsd/include
+$(call all_objects_for,liba/src/external/openbsd/%.c): CFLAGS += -w
 # A few OpenBSD libm files define constants using the "volatile" keyword. Like
 # "static const volatile float huge = 1.0e+30;". This obviously doesn't make any
 # sense, and has been removed from other libm such as openlibm.
 # Luckily the "volatile" keyword is not used anywhere else in those files, so we
 # can simply define it as an empty macro.
-$(call objects_foreach_arch,$(addprefix liba/src/external/openbsd/,e_expf.c s_expm1f.c e_coshf.c e_powf.c)): CFLAGS += -Dvolatile=
+$(call all_objects_for,$(addprefix liba/src/external/openbsd/,e_expf.c s_expm1f.c e_coshf.c e_powf.c)): CFLAGS += -Dvolatile=

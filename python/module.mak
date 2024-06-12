@@ -185,14 +185,14 @@ _sources_python_test := $(patsubst %,test/%:+test, \
 # Workarounds - begin
 
 # Rename urandom to random
-$(call objects_foreach_arch,$(PATH_python)/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
-$(call objects_foreach_arch,$(PATH_python)/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call all_objects_for,$(PATH_python)/src/py/objmodule.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
+$(call all_objects_for,$(PATH_python)/src/extmod/modurandom.c): SFLAGS += -DMP_QSTR_urandom="MP_QSTR_random"
 
 # Dummy headers to satisfy Ulab module unused files includes like
 # "numpy/carray/carray.h"
-$(call objects_foreach_arch,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include
+$(call all_objects_for,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include
 # Useful for both "../scipy/signal/signal.h" and "carray/carray.h"
-$(call objects_foreach_arch,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include/numpy
+$(call all_objects_for,$(PATH_python)/port/mod/%.c): SFLAGS += -I$(PATH_python)/port/mod/include/numpy
 
 # Handle upward-growing stack
 # Some platforms such as emscripten have a stack that grows up. We've rewritten
@@ -210,7 +210,7 @@ _sources_python_port += port/stackctrl.c
 # This fix takes advantage of the fact that the last optimization flag takes
 # priority.
 ifeq ($(TOOLCHAIN),emscripten)
-$(call objects_foreach_arch,$(_sources_python_py)): SFLAGS += -O0
+$(call all_objects_for,$(_sources_python_py)): SFLAGS += -O0
 endif
 
 # Workarounds - end
@@ -238,4 +238,4 @@ $(PYTHON_QSTRDEFS): $(PATH_python)/port/genhdr/qstrdefs.in.h $(PATH_python)/src/
 	$(call rule_label,QSTRDAT)
 	$(QUIET) $(PYTHON) $(filter %.py,$^) $< > $@
 
-$(call objects_foreach_arch,$(SOURCES_python)): $(PYTHON_QSTRDEFS)
+$(call all_objects_for,$(SOURCES_python)): $(PYTHON_QSTRDEFS)

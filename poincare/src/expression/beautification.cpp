@@ -11,6 +11,7 @@
 #include "context.h"
 #include "float.h"
 #include "number.h"
+#include "projection.h"
 #include "rational.h"
 #include "simplification.h"
 #include "symbol.h"
@@ -317,7 +318,10 @@ bool Beautification::DeepBeautify(Tree* expr,
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
             changed;
   changed = Variables::BeautifyToName(expr) || changed;
-  return AddUnits(expr, projectionContext) || changed;
+  changed = AddUnits(expr, projectionContext) || changed;
+  assert(!expr->hasDescendantSatisfying(
+      [](const Tree* e) { return Projection::IsForbidden(e); }));
+  return changed;
 }
 
 bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {

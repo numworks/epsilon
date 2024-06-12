@@ -30,6 +30,10 @@ class Projection {
    * metric can cancel it if unecessary. */
   static bool Expand(Tree* tree);
 
+  /* Return true if node simplification and display is forbidden by current
+   * preferences. */
+  static bool IsForbidden(const Tree* e);
+
  private:
   static bool ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx);
   static bool ShallowSystemProject(Tree* e, void* ctx);

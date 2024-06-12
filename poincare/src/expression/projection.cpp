@@ -97,9 +97,32 @@ bool Projection::DeepSystemProject(Tree* e,
     changed =
         Approximation::ApproximateAndReplaceEveryScalar(e, &projectionContext);
   }
-  return Tree::ApplyShallowInDepth(e, ShallowSystemProject,
-                                   &projectionContext) ||
-         changed;
+  changed =
+      Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext) ||
+      changed;
+  assert(!e->hasDescendantSatisfying(
+      [](const Tree* e) { return IsForbidden(e); }));
+  return changed;
+}
+
+bool Projection::IsForbidden(const Tree* e) {
+  Poincare::ExamMode examMode =
+      Poincare::Preferences::SharedPreferences()->examMode();
+  switch (e->type()) {
+    case Type::Unit:
+      return examMode.forbidUnits();
+    case Type::Logarithm:
+      return examMode.forbidBasedLogarithm();
+    case Type::Sum:
+      return examMode.forbidSum();
+    case Type::Norm:
+      return examMode.forbidVectorNorm();
+    case Type::Cross:
+    case Type::Dot:
+      return examMode.forbidVectorProduct();
+    default:
+      return false;
+  }
 }
 
 /* The order of nodes in NAry is not a concern here. They will be sorted before
@@ -111,15 +134,16 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
 
-  bool changed = false;
-  if (e->isUndefined()) {
-    return changed;
+  if (IsForbidden(e)) {
+    e->cloneTreeOverTree(KForbidden);
+    return true;
   }
   if (e->isParenthesis()) {
     e->removeNode();
     ShallowSystemProject(e, context);
     return true;
   }
+  bool changed = false;
   if (e->isUnit()) {
     Units::Unit::RemoveUnit(e);
     changed = true;

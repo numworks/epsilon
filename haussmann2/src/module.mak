@@ -64,40 +64,19 @@ endef
 
 # Private API
 
-# sources_for_flavored_module, <dot-separated flavored module>
+# Getters for module variables, using flavors.
+# ..._for_flavored_module, <module with dot-separated flavors>
 # $1 might be prefixed with an arch's directory.
-define sources_for_flavored_module
-$(call _flavor_filtered_module_variable,$1,SOURCES)
-endef
+sources_for_flavored_module = $(call _flavor_filtered_module_variable,$1,SOURCES)
+sflags_for_flavored_module = $(call _flavor_filtered_module_variable,$1,SFLAGS)
+ldflags_for_flavored_module = $(call _flavor_filtered_module_variable,$1,LDFLAGS)
+lddeps_for_flavored_module = $(call _flavor_filtered_module_variable,$1,LDDEPS)
+priority_targets_for_flavored_module = $(call _flavor_filtered_module_variable,$1,PRIORITY_TARGETS)
 
 # objects_for_flavored_module, <dot-separated flavored module>
 # $1 might be prefixed with an arch's directory.
 define objects_for_flavored_module
 $(call objects_for_sources,$(subst ./,,$(dir $1)),$(call sources_for_flavored_module,$1))
-endef
-
-# sflags_for_flavored_module, <dot-separated flavored module>
-# $1 might be prefixed with an arch's directory.
-define sflags_for_flavored_module
-$(call _flavor_filtered_module_variable,$1,SFLAGS)
-endef
-
-# ldflags_for_flavored_module, <dot-separated flavored module>
-# $1 might be prefixed with an arch's directory.
-define ldflags_for_flavored_module
-$(call _flavor_filtered_module_variable,$1,LDFLAGS)
-endef
-
-# lddeps_for_flavored_module, <dot-separated flavored module>
-# $1 might be prefixed with an arch's directory.
-define lddeps_for_flavored_module
-$(call _flavor_filtered_module_variable,$1,LDDEPS)
-endef
-
-# priority_targets_for_flavored_module, <dot-separated flavored module>
-# $1 might be prefixed with an arch's directory.
-define priority_targets_for_flavored_module
-$(call _flavor_filtered_module_variable,$1,PRIORITY_TARGETS)
 endef
 
 # Helpers

@@ -76,10 +76,9 @@ bool MathToolboxController::isMessageTreeDisabled(
   I18n::Message label = messageTree->label();
   ExamMode examMode = Preferences::SharedPreferences()->examMode();
   return (messageTree->text() == I18n::Message::Sum && examMode.forbidSum()) ||
-         (label == I18n::Message::LogCommandWithArg &&
+         (label == I18n::Message::BasedLogarithm &&
           examMode.forbidBasedLogarithm()) ||
-         (label == I18n::Message::NormVectorCommandWithArg &&
-          examMode.forbidVectorNorm()) ||
+         (label == I18n::Message::NormVector && examMode.forbidVectorNorm()) ||
          ((label == I18n::Message::DotCommandWithArg ||
            label == I18n::Message::CrossCommandWithArg) &&
           examMode.forbidVectorProduct()) ||

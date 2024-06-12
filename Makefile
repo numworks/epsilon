@@ -6,6 +6,9 @@ APP_VERSION := 23.1.0
 OUTPUT_ROOT := output
 DEBUG ?= 1
 PLATFORM ?= macos
+
+ALL_SPECIAL_SUBDIRECTORIES := safe_stack
+
 include $(PATH_haussmann)/Makefile
 
 # Further configuration
@@ -21,9 +24,6 @@ SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
   -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL) \
   -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
-
-# FIXME temporary
-SFLAGS += -fstack-protector-strong
 
 ifeq ($(PLATFORM_TYPE),device)
 SFLAGS += -DPLATFORM_DEVICE
@@ -90,12 +90,15 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 endif
 
 ifeq ($(PLATFORM_TYPE),device)
+$(OUTPUT_DIRECTORY)/safe_stack/%: SFLAGS += -fstack-protector-strong
+
 $(call create_goal,kernel, \
   ion.kernel \
   kandinsky.minimal \
   liba.armv7m \
   libaxx \
   omg.minimal \
+,safe_stack, \
 )
 
 $(call create_goal,userland, \

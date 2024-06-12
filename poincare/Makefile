@@ -14,12 +14,8 @@ APP_NAME := InitPoincare
 APP_VERSION := 0.0.0
 OUTPUT_ROOT := output/poincarejs
 DEBUG ?= 0
-PLATFORM ?= web
+PLATFORM ?= foxglove
 include $(PATH_haussmann)/Makefile
-
-ifeq ($(TOOLCHAIN),emscripten)
-CXXFLAGS := $(filter-out -fno-rtti,$(CXXFLAGS))
-endif
 
 # Modules
 

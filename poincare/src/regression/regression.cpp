@@ -259,7 +259,6 @@ void Regression::initCoefficientsForFit(double* modelCoefficients,
                                         double defaultValue,
                                         bool forceDefaultValue,
                                         const Series* series) const {
-  // TODO_PCJ: assert(forceDefaultValue || store->seriesIsActive(series));
   if (forceDefaultValue) {
     Regression::specializedInitCoefficientsForFit(modelCoefficients,
                                                   defaultValue);

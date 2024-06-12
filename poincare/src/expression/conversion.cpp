@@ -566,6 +566,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
         case OT::ListProduct:
           SharedTreeStack->push(Type::ListProduct);
           break;
+        default:
+          assert(false);
       }
       PushPoincareExpression(exp.childAtIndex(0));
       if (exp.numberOfChildren() == 2) {

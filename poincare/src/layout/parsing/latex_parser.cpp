@@ -179,8 +179,8 @@ Tree* LatexToLayout(const char* latexString) {
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
     }
-    return nullptr;
   }
+  return nullptr;
 }
 
 // ===== Layout to Latex =====

@@ -391,7 +391,6 @@ static bool stringIsACodePointFollowedByNumbers(LayoutSpan span) {
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     const Layout* start, size_t* length, Token::Type* returnType) {
   size_t identifierLength = 0;
-  const Layout* temp = start;
   LayoutSpanDecoder decoder(start, *length);
   while (identifierLength < *length) {
     CodePoint c = decoder.nextCodePoint();

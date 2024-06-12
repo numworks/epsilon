@@ -586,6 +586,9 @@ KDCoordinate Render::Baseline(const Layout* node) {
       assert(Pair::k_lineThickness == CurlyBrace::k_lineThickness);
       KDCoordinate height = Grid::From(node)->height(s_font);
       return (height + 1) / 2 + Pair::k_lineThickness;
+    default:
+      assert(false);
+      return 0;
   };
 }
 

@@ -100,8 +100,7 @@ bool Projection::DeepSystemProject(Tree* e,
   changed =
       Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext) ||
       changed;
-  assert(!e->hasDescendantSatisfying(
-      [](const Tree* e) { return IsForbidden(e); }));
+  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }
 

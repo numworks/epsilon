@@ -319,8 +319,7 @@ bool Beautification::DeepBeautify(Tree* expr,
             changed;
   changed = Variables::BeautifyToName(expr) || changed;
   changed = AddUnits(expr, projectionContext) || changed;
-  assert(!expr->hasDescendantSatisfying(
-      [](const Tree* e) { return Projection::IsForbidden(e); }));
+  assert(!expr->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }
 

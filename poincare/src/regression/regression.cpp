@@ -5,10 +5,10 @@
 #include <omg/float.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/multiplication.h>
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/numeric/helpers.h>
 
 #include <cmath>
 
@@ -251,8 +251,8 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
       coefficients[i] = coefficientsSave[i];
     }
   }
-  Multiplication::computeOnArrays<double>(coefficients, constants, solutions, n,
-                                          n, 1);
+  MatrixMultiplicationOnArrays<double>(coefficients, constants, solutions, n, n,
+                                       1);
   return 0;
 }
 

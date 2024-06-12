@@ -288,6 +288,7 @@ poincare_src += $(addprefix poincare/src/,\
 poincare_src += $(addprefix poincare/src/numeric/,\
   beta_function.cpp \
   erf_inv.cpp \
+  helpers.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   roots.cpp \

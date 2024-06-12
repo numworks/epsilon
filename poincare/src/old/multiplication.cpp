@@ -413,21 +413,6 @@ OExpression Multiplication::removeUnit(OExpression *unit) {
   return squashUnaryHierarchyInPlace();
 }
 
-template <typename T>
-void Multiplication::computeOnArrays(T *m, T *n, T *result,
-                                     int mNumberOfColumns, int mNumberOfRows,
-                                     int nNumberOfColumns) {
-  for (int i = 0; i < mNumberOfRows; i++) {
-    for (int j = 0; j < nNumberOfColumns; j++) {
-      T res = 0.0f;
-      for (int k = 0; k < mNumberOfColumns; k++) {
-        res += m[i * mNumberOfColumns + k] * n[k * nNumberOfColumns + j];
-      }
-      result[i * nNumberOfColumns + j] = res;
-    }
-  }
-}
-
 static bool CanSimplifyUnitProduct(
     const UnitNode::DimensionVector &unitsExponents, size_t &unitsSupportSize,
     const UnitNode::DimensionVector *entryUnitExponents, int entryUnitExponent,
@@ -1614,11 +1599,5 @@ template std::complex<float> MultiplicationNode::computeOnComplex<float>(
 template std::complex<double> MultiplicationNode::computeOnComplex<double>(
     const std::complex<double>, const std::complex<double>,
     Preferences::ComplexFormat);
-
-template void Multiplication::computeOnArrays<double>(double *m, double *n,
-                                                      double *result,
-                                                      int mNumberOfColumns,
-                                                      int mNumberOfRows,
-                                                      int nNumberOfColumns);
 
 }  // namespace Poincare

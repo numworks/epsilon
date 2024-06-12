@@ -135,10 +135,6 @@ class Multiplication : public NAryExpression {
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const;
 
-  // Approximation
-  template <typename T>
-  static void computeOnArrays(T* m, T* n, T* result, int mNumberOfColumns,
-                              int mNumberOfRows, int nNumberOfColumns);
   // Simplification
   OExpression shallowBeautify(const ReductionContext& reductionContext);
   OExpression shallowReduce(ReductionContext reductionContext);

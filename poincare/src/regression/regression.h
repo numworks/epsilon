@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/old/context.h>
-#include <poincare/old/matrix.h>
 #include <stdint.h>
 
 #include "series.h"
@@ -31,9 +30,6 @@ class Regression {
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model
-  static_assert(k_maxNumberOfCoefficients * k_maxNumberOfCoefficients <=
-                    Poincare::Matrix::k_maxNumberOfChildren,
-                "Model needs bigger than allowed matrices");
 
   static const Regression* Get(Type type);
 

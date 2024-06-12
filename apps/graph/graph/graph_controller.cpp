@@ -79,8 +79,10 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
   const SystemFunction *e = static_cast<const SystemFunction *>(model);
   assert(e->type() == ExpressionNode::Type::Point);
   assert(coordinate == 0 || coordinate == 1);
-  T value = e->childAtIndex(coordinate).approximateToScalarWithValue<T>(t);
-  return Coordinate2D<T>(t, value);
+  // TODO: Approximating the other coordinate could be skipped for performances.
+  Coordinate2D<T> value =
+      e->approximateToPointOrScalarWithValue<T>(t).toPoint();
+  return Coordinate2D<T>(t, (coordinate == 0) ? value.x() : value.y());
 }
 
 Range2D<float> GraphController::optimalRange(

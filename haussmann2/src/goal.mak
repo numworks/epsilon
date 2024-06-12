@@ -15,7 +15,7 @@
 
 # Public API
 
-# create_goal, <name>, <modules>, <optional description>
+# create_goal, <name>, <modules>, <optional subdirectory>, <optional description>
 # FIXME Because of the way target-specific variables work, we cannot easily
 # propagate dynamic flavors to the sflags, so only static flavors written in
 # create_goal are taken into account.
@@ -25,14 +25,15 @@ define create_goal
 $(eval \
 $(call _assert_valid_goal_name,$1)
 ALL_GOALS += $1
+$(if $(filter-out $(ALL_SPECIAL_SUBDIRECTORIES),$3),$(error $3 should have been added to ALL_SPECIAL_SUBDIRECTORIES prior to including haussmann),)
 MODULES_$1 := $2
-HELP_GOAL_$1 := $3
+HELP_GOAL_$1 := $4
 
-$(call all_targets_named,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
+$(call all_targets_named,$(if $3,$3/,)$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
 
 $$(call all_objects_for,$$(call all_potential_sources,$1)): $$(foreach m,$2,$$(call priority_targets_for_flavored_module,$$m))
 
-$1%: $(call all_targets_named,$1%)
+$1%: $(call all_targets_named,$(if $3,$3/,)$1%)
 	@ :
 )
 endef

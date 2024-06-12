@@ -45,10 +45,10 @@ VERSION_$1 := $2
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $3))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 
+$(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES), \
+$(call all_targets_named,$d/$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
+)
 $(call all_targets_named,$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
-
-$1%a: $(call all_targets_named,$1%a)
-	@ :
 )
 endef
 

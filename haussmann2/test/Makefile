@@ -20,9 +20,13 @@ SFLAGS_main += -time:-do_something
 LDFLAGS_main += -aaaaaaa:+fa
 
 $(call create_goal,test,\
-	main.do_something aaa,\
+	main.do_something aaa,,\
 	Some test executable that should exit with an error\
 )
 $(call create_goal,test_dummy,main)
+$(call create_goal,nested,main.do_something aaa,nest, \
+	This executable and its sources are built in a subdirectory)
 
 $(call create_zip,test.zip,$(OUTPUT_DIRECTORY)/arm64/test.bin)
+
+$(info $(ALL_SPECIAL_SUBDIRECTORIES))

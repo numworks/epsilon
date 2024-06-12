@@ -62,13 +62,18 @@ endef
 # all_objects_for, <sources list>
 define all_objects_for
 $(strip $(if $(ARCHS),\
-	$(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1)),\
-	$(call objects_for_sources,,$1)))
+	$(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$a/$d/,$1))),\
+	$(call objects_for_sources,,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$d/,$1))))
 endef
 
-# strip_arch_dir, <path>
-define strip_arch_dir
-$(call text_or,$(strip $(foreach a,$(ARCHS),$(patsubst $a/%,%,$(filter $a/%,$1)))),$1)
+# strip_directory, <directories>, <path>
+define strip_directory
+$(call text_or,$(strip $(foreach d,$1,$(patsubst $d/%,%,$(filter $d/%,$2)))),$2)
+endef
+
+# strip_arch_and_special_dir, <path>
+define strip_arch_and_special_dir
+$(call strip_directory,$(ALL_SPECIAL_SUBDIRECTORIES),$(call strip_directory,$(ARCHS),$1))
 endef
 
 # rule_label, <label>
@@ -79,11 +84,11 @@ endef
 # simple_rule, <label>, <source extension>, <command>
 define rule_for_object
 $(eval \
-$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$(QUIET) $3
 
-$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_dir,%).$(strip $2) | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$(QUIET) $3
 )

@@ -404,6 +404,11 @@ double Store::computeResidualStandardDeviation(int series,
 }
 
 Model *Store::regressionModel(Model::Type type) {
+  /* Most of regression app still expects a Model * with ->name and (Store, int)
+   * API. We therefore cannot use directly a const Regression * pointer and need
+   * the Model object to live somewhere. This static instance is the only Model
+   * object and is reinitialized to point of the correct regression type
+   * on-the-fly. */
   static Model s_model(Model::Type::None);
   new (&s_model) Model(type);
   return &s_model;

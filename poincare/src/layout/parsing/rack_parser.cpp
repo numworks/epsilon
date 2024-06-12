@@ -134,7 +134,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
 Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
   TreeRef result;
-  if (m_comaSeparatedList) {
+  if (m_commaSeparatedList) {
     result = parseCommaSeparatedList(true);
   } else {
     result = parseUntil(Token::Type::EndOfStream);

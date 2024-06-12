@@ -43,7 +43,7 @@ class RackParser {
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false),
-        m_comaSeparatedList(commaSeparatedList),
+        m_commaSeparatedList(commaSeparatedList),
         m_root(rack) {}
 
   Tree* parse();
@@ -197,7 +197,7 @@ class RackParser {
   Token m_nextToken;
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
-  bool m_comaSeparatedList;
+  bool m_commaSeparatedList;
   const Tree* m_root;
 };
 

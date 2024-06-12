@@ -3,13 +3,16 @@
 #include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/float.h>
+#include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/comparison.h>
 #include <poincare/old/multiplication.h>
+#include <poincare/old/symbol.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include <cmath>
 
-using namespace Poincare;
+using namespace Poincare::Internal;
 
 namespace Poincare::Regression {
 
@@ -25,9 +28,9 @@ Layout Regression::equationLayout(
   if (formula.isUninitialized()) {
     return Layout();
   }
-  UserExpression equation =
-      Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)),
-                          ComparisonNode::OperatorType::Equal, formula);
+  UserExpression equation = UserExpression::Create(
+      KEqual(KA, KB),
+      {.KA = Symbol::Builder(ySymbol, strlen(ySymbol)), .KB = formula});
   return equation.createLayout(
       displayMode, significantDigits,
       AppsContainerHelper::sharedAppsContainerGlobalContext());

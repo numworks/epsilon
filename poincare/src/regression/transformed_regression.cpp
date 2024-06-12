@@ -1,6 +1,5 @@
 #include "transformed_regression.h"
 
-#include <apps/shared/linear_regression_store.h>
 #include <assert.h>
 
 #include <cmath>
@@ -62,8 +61,7 @@ void TransformedRegression::privateFit(const Series* series,
                                        double* modelCoefficients,
                                        Poincare::Context* context) const {
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
-  Shared::LinearRegressionStore::CalculationOptions options(
-      applyLnOnX(), applyLnOnY(), opposeY);
+  CalculationOptions options(applyLnOnX(), applyLnOnY(), opposeY);
   DatasetSeriesAdapter dataset(series);
   modelCoefficients[0] = dataset.yIntercept(options);
   modelCoefficients[1] = dataset.slope(options);

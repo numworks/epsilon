@@ -1,6 +1,5 @@
 #include "trigonometric_regression.h"
 
-#include <apps/regression/store.h>
 #include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>

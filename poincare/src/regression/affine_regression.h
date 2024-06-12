@@ -1,8 +1,6 @@
 #ifndef POINCARE_REGRESSION_AFFINE_REGRESSION_H
 #define POINCARE_REGRESSION_AFFINE_REGRESSION_H
 
-#include <apps/global_preferences.h>
-
 #include "regression.h"
 
 namespace Poincare::Regression {

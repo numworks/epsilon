@@ -973,10 +973,12 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   }
 
   // Parse u(n)
-  if (idType == Poincare::Context::SymbolAbstractType::Sequence) {
+  if (idType == Poincare::Context::SymbolAbstractType::Sequence ||
+      (idType == Poincare::Context::SymbolAbstractType::None &&
+       m_nextToken.type() == Token::Type::Subscript)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
-     * by braces, it's a sequence call. */
+     * by a subscript, it's a sequence call. */
     if (m_nextToken.type() == Token::Type::Subscript ||
         (m_nextToken.type() == Token::Type::Layout &&
          m_nextToken.firstLayout()->isParenthesisLayout())) {

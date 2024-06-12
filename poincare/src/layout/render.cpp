@@ -582,10 +582,11 @@ KDCoordinate Render::Baseline(const Layout* node) {
       return std::max(0, PtCombinatorics::AboveSymbol(node, s_font) +
                              PtCombinatorics::k_symbolBaseline);
     case LayoutType::Piecewise:
-    case LayoutType::Matrix:
+    case LayoutType::Matrix: {
       assert(Pair::k_lineThickness == CurlyBrace::k_lineThickness);
       KDCoordinate height = Grid::From(node)->height(s_font);
       return (height + 1) / 2 + Pair::k_lineThickness;
+    }
     default:
       assert(false);
       return 0;

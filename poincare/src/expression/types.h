@@ -325,6 +325,7 @@ NODE(UndefUnhandledDimension)  // [[1,2]] + [[1],[2]]
 NODE(UndefBadType)             // non-integers in gcd,lcm,...
 NODE(UndefOutOfDefinition)     // arg(0)
 NODE(UndefNotDefined)          // Global variable that has not been defined
+NODE(UndefForbidden)           // Forbidden by preferences, exam-modes, ...
 NODE(Undef)                    // Default
 
 RANGE(Undefined, NonReal, Undef)

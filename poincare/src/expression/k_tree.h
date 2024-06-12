@@ -24,6 +24,7 @@ constexpr auto KUndefUnhandledDimension =
 constexpr auto KBadType = KTree<Type::UndefBadType>();
 constexpr auto KOutOfDefinition = KTree<Type::UndefOutOfDefinition>();
 constexpr auto KNotDefined = KTree<Type::UndefNotDefined>();
+constexpr auto KForbidden = KTree<Type::UndefForbidden>();
 constexpr auto KInf = KTree<Type::Inf>();
 
 constexpr auto π_e = KTree<Type::Pi>();

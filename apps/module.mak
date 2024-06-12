@@ -4,8 +4,7 @@ $(call create_module,apps,1, \
   apps_container_launch_default.cpp:-onboarding \
   apps_container_launch_on_boarding.cpp:+onboarding \
   apps_container_prompt_beta.cpp:+beta \
-  apps_container_prompt_none.cpp:-beta \
-  apps_container_prompt_none.cpp:-update \
+  apps_container_prompt_none.cpp:-beta:-update \
   apps_container_prompt_update.cpp:+update \
   apps_container_storage.cpp \
   apps_window.cpp \

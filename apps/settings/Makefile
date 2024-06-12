@@ -2,8 +2,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/settings/, \
   app.cpp \
   main_controller.cpp \
   main_controller_prompt_beta.cpp:+beta \
-  main_controller_prompt_none.cpp:-beta \
-  main_controller_prompt_none.cpp:-update \
+  main_controller_prompt_none.cpp:-beta:-update \
   main_controller_prompt_update.cpp:+update \
 $(addprefix sub_menu/, \
   about_controller.cpp \

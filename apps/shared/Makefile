@@ -20,7 +20,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/, \
   editable_cell_table_view_controller.cpp \
   explicit_float_parameter_controller.cpp \
   expression_display_permissions.cpp \
-  expression_display_permissions.cpp \
   expression_function_title_cell.cpp \
   expression_model.cpp \
   expression_model_handle.cpp \
@@ -46,7 +45,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/, \
   interactive_curve_view_range.cpp \
   interactive_curve_view_range_delegate.cpp \
   interval.cpp \
-  interval.cpp \
   interval_parameter_controller.cpp \
   linear_regression_store.cpp \
   list_parameter_controller.cpp \
@@ -69,16 +67,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/, \
   range_parameter_controller.cpp \
   round_cursor_view.cpp \
   sequence.cpp \
-  sequence.cpp \
   sequence_context.cpp \
-  sequence_context.cpp \
-  sequence_store.cpp \
   sequence_store.cpp \
   shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
   single_interactive_curve_view_range_controller.cpp \
   single_range_controller.cpp \
-  statistics_store.cpp \
   statistics_store.cpp \
   store_app.cpp \
   store_controller.cpp \

@@ -1,4 +1,5 @@
 _sources_poincare_minimal := $(addprefix src/, \
+  api.cpp \
   init.cpp \
   preferences.cpp \
   print_float.cpp \
@@ -137,7 +138,6 @@ $(addprefix old/, \
   point_of_interest.cpp \
   polynomial.cpp \
   power.cpp \
-  preferences_in_storage.cpp \
   product.cpp \
   randint.cpp \
   randint_no_repeat.cpp \
@@ -260,7 +260,6 @@ $(addprefix layout/, \
 $(addprefix memory/, \
   block_stack.cpp \
   tree_stack.cpp \
-  tree_stack_checkpoint.cpp \
   n_ary.cpp \
   pattern_matching.cpp \
   tree.cpp \
@@ -301,11 +300,7 @@ $(addprefix probability/, \
   student_distribution.cpp \
   uniform_distribution.cpp \
 ) \
-  api.cpp \
-  init.cpp \
-  preferences.cpp \
   print.cpp \
-  print_float.cpp \
   range.cpp \
 )
 

@@ -27,12 +27,15 @@ $(call import_module,liba,liba)
 $(call import_module,libaxx,libaxx)
 $(call import_module,omg,omg)
 $(call import_module,kandinsky,kandinsky)
-$(call import_module,sdl,ion/src/simulator/external)
 $(call import_module,ion,ion)
 $(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
 $(call import_module,python,python)
 $(call import_module,apps,apps)
+
+ifeq ($(PLATFORM_TYPE),simulator)
+$(call import_module,sdl,ion/src/simulator/external)
+endif
 
 # Declare goals
 

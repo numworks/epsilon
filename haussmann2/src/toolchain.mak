@@ -26,9 +26,12 @@ CFLAGS := -std=c11
 CXXFLAGS := \
   -ffp-contract=off \
   -fno-exceptions \
-  -fno-rtti \
   -fno-threadsafe-statics \
   -std=c++20
+
+ifneq ($(_cxx_rtti),1)
+CXXFLAGS += -fno-rtti
+endif
 
 ARFLAGS := rcs
 

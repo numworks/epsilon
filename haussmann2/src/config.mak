@@ -23,7 +23,7 @@ endif
 
 # Platform type detection
 _platforms_device := n0110 n0115 n0120
-_platforms_simulator := android ios linux macos web windows
+_platforms_simulator := android foxglove ios linux macos web windows
 ifneq ($(filter $(_platforms_device),$(PLATFORM)),)
 PLATFORM_TYPE := device
 else

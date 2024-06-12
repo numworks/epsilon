@@ -11,7 +11,7 @@ EXECUTABLE_EXTENSION := js
 LDFLAGS += \
   -Oz \
   -s SINGLE_FILE \
-  -s ASYNCIFY=1 \
+  -s ASYNCIFY=$(_emscripten_asyncify) \
   -s EXPORT_NAME="$(APP_NAME)" \
   -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) \
   -s PRECISE_F32=1

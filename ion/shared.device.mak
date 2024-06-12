@@ -1,5 +1,15 @@
 _ion_firmware_components := bench bootloader flasher kernel userland
 
+ifeq ($(PLATFORM),n0120)
+_ion_mcu_suffix := stm32h
+else
+ifneq ($(filter $(PLATFORM),n0110 n0115),)
+_ion_mcu_suffix := stm32f
+else
+$(error Unsupported device platform $(PLATFORM))
+endif
+endif
+
 -include $(patsubst %,$(PATH_ion)/shared.device.%.mak,$(_ion_firmware_components))
 
 # USB sources - begin
@@ -30,16 +40,12 @@ $(addprefix stack/descriptor/, \
   webusb_platform_descriptor.cpp \
 ) \
   calculator_bootloader.cpp:+bootloader \
+  calculator_flasher_$(_ion_mcu_suffix).cpp:+flasher \
   calculator_userland.cpp:+userland \
   calculator_userland_leave.cpp:+userland:+allow3rdparty \
   calculator_userland_leave_reset.cpp:+userland:-allow3rdparty \
   dfu_interface.cpp \
 )
-ifeq ($(PLATFORM),n0120)
-_sources_ion_usb += device/shared/usb/calculator_flasher_stm32h.cpp:+flasher
-else
-_sources_ion_usb += device/shared/usb/calculator_flasher_stm32f.cpp:+flasher
-endif
 
 _sources_ion_usb := $(addsuffix :-kernel:-bench,$(_sources_ion_usb))
 
@@ -59,12 +65,17 @@ PRIVATE_SFLAGS_ion += \
   -DSIGNATURE_INDEX=$(SIGNATURE_INDEX)
 
 PRIVATE_SFLAGS_ion += \
+  -I$(PATH_ion)/src/device/epsilon-core/device/include/$(PLATFORM) \
   -I$(PATH_ion)/src/device/include/$(PLATFORM) \
-  -I$(PATH_ion)/src/device
+  -I$(PATH_ion)/src/device \
+  -I$(PATH_ion)/src/device/shared \
+  -I$(PATH_ion)/src/device/epsilon-core/device \
+  -I$(PATH_ion)/src/device/epsilon-core/device/shared-core
 
 LDFLAGS_ion += \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_ldflags_ion_$c))) \
   -L$(PATH_ion)/src/device/shared/flash \
+  -L$(OUTPUT_DIRECTORY)/ion/src/device/epsilon-core/device/shared-core/flash \
   -L$(OUTPUT_DIRECTORY)/ion/src/device/shared/flash
 
 LDDEPS_ion += \

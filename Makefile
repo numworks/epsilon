@@ -13,9 +13,17 @@ include $(PATH_haussmann)/Makefile
 ASSERTIONS ?= $(DEBUG)
 EXTERNAL_APPS_API_LEVEL ?= 0
 
+DEVELOPMENT ?= $(DEBUG)
+IN_FACTORY ?= 0
+EMBED_EXTRA_DATA ?= 0
+
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
-  -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL)
+  -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL) \
+  -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
+
+# FIXME temporary
+SFLAGS += -fstack-protector-strong
 
 ifeq ($(PLATFORM_TYPE),device)
 SFLAGS += -DPLATFORM_DEVICE
@@ -82,6 +90,14 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 endif
 
 ifeq ($(PLATFORM_TYPE),device)
+$(call create_goal,kernel, \
+  ion.kernel \
+  kandinsky.minimal \
+  liba.armv7m \
+  libaxx \
+  omg.minimal \
+)
+
 $(call create_goal,userland, \
   apps \
   escher \

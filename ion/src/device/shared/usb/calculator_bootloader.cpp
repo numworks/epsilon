@@ -1,6 +1,6 @@
+#include <bootloader/drivers/board.h>
 #include <bootloader/drivers/usb.h>
 #include <config/board.h>
-#include <drivers/board.h>
 #include <shared-core/drivers/reset.h>
 
 #include "calculator.cpp.inc"

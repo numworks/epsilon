@@ -9,12 +9,12 @@ double MedianRegression::getMedianValue(const Series* series,
                                         int startIndex, int endIndex) const {
   // TODO: this should be factorized with other median code
   assert(endIndex != startIndex);
-  int medianIndex = sortedIndex[startIndex + (endIndex - startIndex) / 2];
-  double upperMedian = series->get(column, medianIndex);
+  int medianIndex = startIndex + (endIndex - startIndex) / 2;
+  double upperMedian = series->get(column, sortedIndex[medianIndex]);
   if ((endIndex - startIndex) % 2 == 1) {
     return upperMedian;
   }
-  double lowerMedian = series->get(column, medianIndex - 1);
+  double lowerMedian = series->get(column, sortedIndex[medianIndex - 1]);
   return (lowerMedian + upperMedian) / 2;
 }
 

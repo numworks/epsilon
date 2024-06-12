@@ -137,10 +137,12 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* node) {
    * used with OutOfContext matrix operations, we should impose a context
    * instead. */
   // Return nonreal if not undef and a complex was encountered in real mode
-  if (s_context && s_context->m_complexFormat == ComplexFormat::Real &&
-      s_context->m_encounteredComplex && !std::isnan(value.real()) &&
-      !std::isnan(value.imag())) {
-    return KNonReal->clone();
+  if (s_context && s_context->m_encounteredComplex) {
+    if (s_context->m_complexFormat == ComplexFormat::Real &&
+        !std::isnan(value.real()) && !std::isnan(value.imag())) {
+      return KNonReal->clone();
+    }
+    s_context->m_encounteredComplex = false;
   }
   return Beautification::PushBeautifiedComplex(
       value, s_context ? s_context->m_complexFormat : ComplexFormat::Cartesian);

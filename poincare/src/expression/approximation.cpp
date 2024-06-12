@@ -350,12 +350,7 @@ std::complex<T> Approximation::ToComplex(const Tree* node) {
   if (s_context && value.imag() != 0) {
     s_context->m_encounteredComplex = true;
   }
-  if (value.real() == -0) {
-    value.real(0);
-  }
-  if (value.imag() == -0) {
-    value.imag(0);
-  }
+  // We used to flush negative zeros here but it was not worth
   return value;
 }
 

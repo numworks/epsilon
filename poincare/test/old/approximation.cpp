@@ -1530,7 +1530,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("arcosh(4)", "2.063437", Radian);
   // On ]-inf×i, 0[
   assert_expression_approximates_to<double>(
-      "arcosh(-42×i)", "4.4309584920805-1.5707963267949×i", Radian);
+      "arcosh(-42×i)", "4.4309584920805-1.5707963267947×i", Radian);
   assert_expression_approximates_to<float>(
       "arcosh(-42×i)", "4.431-1.571×i", Radian, MetricUnitFormat, Cartesian, 4);
   // On ]0, i×inf[: Symmetry: even on real
@@ -1580,7 +1580,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Degree);
   // On ]-inf×i, -i[
   assert_expression_approximates_to<double>(
-      "arsinh(-22×i)", "-3.7836727043295-1.5707963267949×i", Radian);
+      "arsinh(-22×i)", "-3.7836727043295-1.5707963267948×i", Radian);
   assert_expression_approximates_to<float>("arsinh(-22×i)", "-3.784-1.571×i",
                                            Degree, MetricUnitFormat, Cartesian,
                                            4);

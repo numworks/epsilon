@@ -45,9 +45,9 @@ VERSION_$1 := $2
 SOURCES_$1 = $(addprefix $$(PATH_$1)/,$(strip $3))
 SFLAGS_$1 = -I$$(PATH_$1)/include
 
-$(call target_foreach_arch,$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
+$(call all_targets_named,$1%a): SFLAGS += $$(PRIVATE_SFLAGS_$1)
 
-$1%a: $(call target_foreach_arch,$1%a)
+$1%a: $(call all_targets_named,$1%a)
 	@ :
 )
 endef

@@ -28,11 +28,11 @@ ALL_GOALS += $1
 MODULES_$1 := $2
 HELP_GOAL_$1 := $3
 
-$(call target_foreach_arch,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
+$(call all_targets_named,$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
 
-$$(call objects_foreach_arch,$$(call all_potential_sources,$1)): $$(foreach m,$2,$$(call priority_targets_for_flavored_module,$$m))
+$$(call all_objects_for,$$(call all_potential_sources,$1)): $$(foreach m,$2,$$(call priority_targets_for_flavored_module,$$m))
 
-$1%: $(call target_foreach_arch,$1%)
+$1%: $(call all_targets_named,$1%)
 	@ :
 )
 endef

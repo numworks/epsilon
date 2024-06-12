@@ -50,17 +50,17 @@ define assert_relative_descendant
 $(if $(filter /% ~/%,$1/.)$(findstring ..,$1/.),$(error "Error: the path cannot contain .. and must be relative"),)
 endef
 
-# target_foreach_arch, <target stem>
+# all_targets_named, <target stem>
 # if no arch is defined: stem -> $(OUTPUT_DIRECTORY)/stem
 # if archs are defined: stem -> $(OUTPUT_DIRECTORY)/arch1/stem $(OUTPUT_DIRECTORY)/arch2/stem
-define target_foreach_arch
+define all_targets_named
 $(strip $(addprefix $(OUTPUT_DIRECTORY)/,\
 	$(if $(ARCHS),$(addsuffix /$1,$(ARCHS)),$1)\
 ))
 endef
 
-# objects_foreach_arch, <sources list>
-define objects_foreach_arch
+# all_objects_for, <sources list>
+define all_objects_for
 $(strip $(if $(ARCHS),\
 	$(foreach a,$(ARCHS),$(call objects_for_sources,$a/,$1)),\
 	$(call objects_for_sources,,$1)))

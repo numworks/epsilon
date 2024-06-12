@@ -26,7 +26,7 @@ $(call assert_defined,_simulator_app_plist)
 $(_simulator_app): $(_simulator_app_plist) $$(addprefix $(_simulator_app_resources_path)/,$$(_simulator_app_resources)) $(_simulator_app_binary) | $$(@D)/.
 	@ :
 
-$(_simulator_app_binary): $(call target_foreach_arch,%.$(EXECUTABLE_EXTENSION)) | $$(@D)/.
+$(_simulator_app_binary): $(call all_targets_named,%.$(EXECUTABLE_EXTENSION)) | $$(@D)/.
 	$(call rule_label,LIPO)
 	$(QUIET) $(LIPO) -create $^ -output $@
 

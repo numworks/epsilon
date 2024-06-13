@@ -143,4 +143,10 @@ $(call create_goal,flasher, \
   omg.minimal \
 )
 
+ifeq ($(PLATFORM),n0120)
+flasher%flash: DFULEAVE := 0x24030000
+else
+flasher%flash: DFULEAVE := 0x20030000
+endif
+
 endif

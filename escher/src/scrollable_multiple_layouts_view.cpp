@@ -7,11 +7,14 @@ using namespace Poincare;
 
 namespace Escher {
 
+// TODO: move the whole file to apps/shared and use i18n ?
+const char* k_almostEqual = "≈";
+const char* k_equal = "=";
+
 AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
     : m_rightLayoutView({.style = {.font = font}}),
       m_approximateSign(
-          k_defaultApproximateMessage,
           {.style = {.glyphColor = Palette::GrayVeryDark, .font = font},
            .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_centeredLayoutView({.style = {.font = font}}),
@@ -19,7 +22,9 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_displayCenter(true),
       m_displayableCenter(true),
       m_rightIsStrictlyEqual(false),
-      m_horizontalAlignment(horizontalAlignment) {}
+      m_horizontalAlignment(horizontalAlignment) {
+  m_approximateSign.setText(k_almostEqual);
+}
 
 KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
     const {
@@ -90,8 +95,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::setDisplayCenter(
 void AbstractScrollableMultipleLayoutsView::ContentCell::
     setExactAndApproximateAreStriclyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
-  approximateSign()->setMessage(isEqual ? I18n::Message::Equal
-                                        : I18n::Message::AlmostEqual);
+  approximateSign()->setText(isEqual ? k_equal : k_almostEqual);
   reloadTextColor();
 }
 

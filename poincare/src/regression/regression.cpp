@@ -1,10 +1,11 @@
 #include "regression.h"
 
-#include <apps/apps_container_helper.h>
 #include <omg/float.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
+#include <poincare/numeric/solver.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/float.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/helpers.h>
@@ -30,9 +31,7 @@ Layout Regression::equationLayout(
   UserExpression equation = UserExpression::Create(
       KEqual(KA, KB),
       {.KA = Symbol::Builder(ySymbol, strlen(ySymbol)), .KB = formula});
-  return equation.createLayout(
-      displayMode, significantDigits,
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  return equation.createLayout(displayMode, significantDigits, nullptr);
 }
 
 Poincare::UserExpression Regression::expression(
@@ -52,9 +51,16 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   if (e.isUninitialized()) {
     return NAN;
   }
-  return Shared::PoincareHelpers::Solver(xMin, xMax, "x", context)
-      .nextIntersection(Number::DecimalNumber(y), e)
-      .x();
+  Poincare::Preferences* preferences =
+      Poincare::Preferences::SharedPreferences();
+  Tree* yTree = Internal::FloatNode::Push(y);
+  double result = Poincare::Internal::Solver(xMin, xMax, nullptr, context,
+                                             preferences->complexFormat(),
+                                             preferences->angleUnit())
+                      .nextIntersection(yTree, e)
+                      .x();
+  yTree->removeTree();
+  return result;
 }
 
 void Regression::fit(const Series* series, double* modelCoefficients,

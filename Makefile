@@ -124,4 +124,14 @@ $(call create_goal,userland, \
   poincare \
   python \
 )
+
+# Special target for the combined epsilon DFU
+epsilon%dfu: $(OUTPUT_DIRECTORY)/epsilon%dfu
+	@ :
+
+# TODO Needs to be an explicit rule to bypass the generic DFU rule.
+$(OUTPUT_DIRECTORY)/epsilon.dfu: $(patsubst %,$(OUTPUT_DIRECTORY)/%.elf,safe_stack/bootloader safe_stack/kernel.A safe_stack/kernel.B userland.A userland.B)
+	$(call rule_label,DFU)
+	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $^ -o $@
+
 endif

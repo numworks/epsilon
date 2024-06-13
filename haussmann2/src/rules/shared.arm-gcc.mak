@@ -12,4 +12,4 @@ $(call document_extension,dfu)
 
 $(OUTPUT_DIRECTORY)/%.flash: $(OUTPUT_DIRECTORY)/%.dfu
 	$(call rule_label,FLASH)
-	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/dfu.py -D $<
+	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/dfu.py -D $< $(if $(DFULEAVE),-s $(DFULEAVE):leave)

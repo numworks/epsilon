@@ -97,7 +97,10 @@ $(addprefix device/epsilon-core/device/kernel/drivers/, \
 ) \
 
 ifeq ($(PLATFORM),n0120)
-_sources_ion_kernel += device/epsilon-core/device/shared-core/drivers/board_power_supply_stm32h.cpp
+_sources_ion_kernel += $(addprefix device/epsilon-core/device/shared-core/drivers/, \
+  board_power_supply_stm32h.cpp \
+  keyboard_pins_stm32h.cpp \
+)
 endif
 
 _ldflags_ion_kernel := \

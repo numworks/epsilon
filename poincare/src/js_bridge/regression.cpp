@@ -62,32 +62,4 @@ EMSCRIPTEN_BINDINGS(regression) {
       .element(emscripten::index<4>());
 }
 
-/* Usage example :
-  var ArraySeries = Poincare.Series.extend("Series", {
-    __construct: function(x, y) {
-      if (x.length != y.length) {
-        console.log("bad array")
-          }
-      this.x = x
-        this.y = y
-        this.__parent.__construct.call(this);
-    },
-      getX: function(i) {
-      return this.x[i];
-    },
-      getY: function(i) {
-      return this.y[i];
-    },
-      numberOfPairs: function() {
-      return this.x.length;
-    },
-  });
-
-  var series = new ArraySeries([1.0, 8.0, 14.0, 79.0],
-                               [-3.581, 20.296, 40.676, 261.623]);
-  var regression = new Poincare.Regression(Poincare.RegressionType.Linear);
-  var coefficients = regression.fit(series);
-  var prediction = regression.evaluate(coefficients, 10);
-*/
-
 }  // namespace Poincare::JSBridge

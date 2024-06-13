@@ -19,11 +19,13 @@ EXTERNAL_APPS_API_LEVEL ?= 0
 DEVELOPMENT ?= $(DEBUG)
 IN_FACTORY ?= 0
 EMBED_EXTRA_DATA ?= 0
+SIGNATURE_INDEX ?= 0
 
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
   -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL) \
-  -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
+  -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA) \
+  -DSIGNATURE_INDEX=$(SIGNATURE_INDEX)
 
 ifeq ($(PLATFORM_TYPE),device)
 SFLAGS += -DPLATFORM_DEVICE
@@ -91,6 +93,16 @@ endif
 
 ifeq ($(PLATFORM_TYPE),device)
 $(OUTPUT_DIRECTORY)/safe_stack/%: SFLAGS += -fstack-protector-strong
+
+$(call create_goal,bootloader, \
+  ion.bootloader \
+  kandinsky.minimal \
+  liba.minimal \
+  libaxx \
+  libsodium \
+  omg.minimal.decompress \
+,safe_stack, \
+)
 
 $(call create_goal,kernel, \
   ion.kernel \

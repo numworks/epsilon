@@ -49,7 +49,7 @@ $(addprefix stack/descriptor/, \
 
 _sources_ion_usb := $(addsuffix :-kernel:-bench,$(_sources_ion_usb))
 
-# USB sources -end
+# USB sources - end
 
 SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_sources_ion_$c))) \

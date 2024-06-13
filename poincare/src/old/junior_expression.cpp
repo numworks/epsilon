@@ -1,4 +1,3 @@
-#include <apps/shared/poincare_helpers.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
@@ -512,8 +511,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
     SymbolicComputation symbolicComputation) {
   UserExpression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
-  // TODO: Shared shouldn't be called in Poincare
-  return Shared::PoincareHelpers::ApproximateToScalar<T>(exp, context);
+  return exp.approximateToScalar<T>(context);
 }
 
 template <typename T>

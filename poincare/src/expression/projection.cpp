@@ -1,6 +1,5 @@
 #include "projection.h"
 
-#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -85,8 +84,8 @@ ProjectionContext Projection::ContextFromSettings() {
       .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
       .m_strategy = Strategy::Default,
       .m_dimension = Dimension(),
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .m_unitFormat = UnitFormat::Metric,
+      // TODO_PCJ: forward SharedGlobalPreferences()->unitFormat() somehow
   };
 }
 

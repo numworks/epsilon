@@ -1,4 +1,3 @@
-#include <apps/shared/poincare_helpers.h>
 #include <float.h>
 #include <ion.h>
 #include <omg/float.h>
@@ -1147,12 +1146,15 @@ OExpression OExpression::ParseAndSimplify(
     return Undefined::Builder();
   }
   // TODO: Shared shouldn't be called in Poincare !
+  assert(false);
+#if 0
   Shared::PoincareHelpers::CloneAndSimplify(
       &exp, context,
       {.symbolicComputation = symbolicComputation,
        .unitConversion = unitConversion},
       reductionFailure);
   assert(!exp.isUninitialized());
+#endif
   return exp;
 }
 
@@ -1593,7 +1595,9 @@ U OExpression::ParseAndSimplifyAndApproximateToScalar(
   OExpression exp = ParseAndSimplify(text, context, symbolicComputation);
   assert(!exp.isUninitialized());
   // TODO: Shared shouldn't be called in Poincare !
-  return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
+  assert(false);
+  // return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
+  return NAN;
 }
 
 template <typename U>

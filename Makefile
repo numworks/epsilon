@@ -4,7 +4,7 @@ PATH_haussmann := haussmann
 APP_NAME := Epsilon
 APP_VERSION := 23.1.0
 OUTPUT_ROOT := output
-DEBUG ?= 1
+DEBUG ?= 0
 PLATFORM ?= macos
 
 ALL_SPECIAL_SUBDIRECTORIES := safe_stack
@@ -16,10 +16,10 @@ include $(PATH_haussmann)/Makefile
 ASSERTIONS ?= $(DEBUG)
 EXTERNAL_APPS_API_LEVEL ?= 0
 
-DEVELOPMENT ?= $(DEBUG)
+DEVELOPMENT ?= 1
 IN_FACTORY ?= 0
 EMBED_EXTRA_DATA ?= 0
-SIGNATURE_INDEX ?= 0
+SIGNATURE_INDEX ?= 1
 
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS) \
@@ -128,6 +128,8 @@ $(call create_goal,userland, \
 
 # Special target for the combined epsilon DFU
 epsilon%dfu: $(OUTPUT_DIRECTORY)/epsilon%dfu
+	@ :
+epsilon%flash: $(OUTPUT_DIRECTORY)/epsilon%flash
 	@ :
 
 # TODO Needs to be an explicit rule to bypass the generic DFU rule.

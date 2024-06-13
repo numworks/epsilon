@@ -829,9 +829,9 @@ bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
   Tree* t = tree()->clone();
   if (context) {
     ProjectionContext projCtx = {
-        .m_context = context,
         .m_symbolic =
-            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        .m_context = context};
     Simplification::PrepareForProjection(t, &projCtx);
   }
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore

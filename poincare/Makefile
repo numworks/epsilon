@@ -319,7 +319,7 @@ poincare_src += $(addprefix poincare/src/probability/,\
   uniform_distribution.cpp \
 )
 
-app_regression_test_src += $(addprefix poincare/src/regression/,\
+poincare_src += $(addprefix poincare/src/regression/,\
   affine_regression.cpp \
   cubic_regression.cpp \
   exponential_regression.cpp \

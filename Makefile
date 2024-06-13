@@ -92,6 +92,7 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 endif
 
 ifeq ($(PLATFORM_TYPE),device)
+
 $(OUTPUT_DIRECTORY)/safe_stack/%: SFLAGS += -fstack-protector-strong
 
 $(call create_goal,bootloader, \
@@ -133,5 +134,13 @@ epsilon%dfu: $(OUTPUT_DIRECTORY)/epsilon%dfu
 $(OUTPUT_DIRECTORY)/epsilon.dfu: $(patsubst %,$(OUTPUT_DIRECTORY)/%.elf,safe_stack/bootloader safe_stack/kernel.A safe_stack/kernel.B userland.A userland.B)
 	$(call rule_label,DFU)
 	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $^ -o $@
+
+$(call create_goal,flasher, \
+  ion.flasher \
+  kandinsky.minimal \
+  liba.minimal \
+  libaxx \
+  omg.minimal \
+)
 
 endif

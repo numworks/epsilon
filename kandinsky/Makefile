@@ -74,3 +74,6 @@ endef
 
 $(eval $(call raster_font,SmallFont,12,7,14))
 $(eval $(call raster_font,LargeFont,16,10,18))
+
+# Allow fonts to be included as <kandinsky/fonts/LargeFont.h>
+SFLAGS += -I$(BUILD_DIR)

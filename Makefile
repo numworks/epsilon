@@ -119,13 +119,16 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
-include python/Makefile
 include escher/Makefile
-# include escher_junior/Makefile
 include omg/Makefile
+
+ifndef NO_APPS
+include python/Makefile
 include eadk/Makefile
 # Executable Makefiles
 include apps/Makefile
+endif
+
 include build/struct_layout/Makefile
 include build/poincare_visualization/Makefile
 include quiz/Makefile # Quiz needs to be included at the end

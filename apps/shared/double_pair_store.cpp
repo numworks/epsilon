@@ -313,12 +313,6 @@ static bool compare(int a, int b, void *ctx, int numberOfElements) {
   return dataA >= dataB || std::isnan(dataA);
 };
 
-double DoublePairStore::CalculationOptions::transformValue(double value,
-                                                           int i) const {
-  value *= oppositeOfValue(i) ? -1.0 : 1.0;
-  return lnOfValue(i) ? std::log(value) : value;
-}
-
 void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
 

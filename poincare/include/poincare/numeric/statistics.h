@@ -12,6 +12,8 @@ using DatasetColumn = Internal::DatasetColumn<T>;
 template <typename T>
 using ConstantDatasetColumn = Internal::ConstantDatasetColumn<T>;
 
+using StatisticsCalculationOptions = Internal::StatisticsCalculationOptions;
+
 // Cf internal documentation
 template <typename T>
 using StatisticsDataset = Internal::StatisticsDataset<T>;

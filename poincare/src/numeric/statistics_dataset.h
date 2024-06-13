@@ -40,6 +40,23 @@
 
 namespace Poincare::Internal {
 
+// TODO: merge with StatisticsDataset
+class StatisticsCalculationOptions {
+ public:
+  StatisticsCalculationOptions()
+      : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
+  StatisticsCalculationOptions(bool lnOfX, bool lnOfY, bool oppositeOfY)
+      : m_lnOfX(lnOfX), m_lnOfY(lnOfY), m_oppositeOfY(oppositeOfY) {}
+  bool lnOfValue(int column) const { return column == 0 ? m_lnOfX : m_lnOfY; }
+  bool oppositeOfValue(int column) const {
+    return column == 1 && m_oppositeOfY;
+  }
+  double transformValue(double value, int column) const;
+
+ private:
+  const bool m_lnOfX, m_lnOfY, m_oppositeOfY;
+};
+
 template <typename T>
 class StatisticsDataset {
  public:

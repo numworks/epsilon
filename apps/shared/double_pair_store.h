@@ -117,22 +117,8 @@ class DoublePairStore {
     return column / k_numberOfColumnsPerSeries;
   }
 
-  // Calculations
-  class CalculationOptions {
-   public:
-    CalculationOptions()
-        : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
-    CalculationOptions(bool lnOfX, bool lnOfY, bool oppositeOfY)
-        : m_lnOfX(lnOfX), m_lnOfY(lnOfY), m_oppositeOfY(oppositeOfY) {}
-    bool lnOfValue(int column) const { return column == 0 ? m_lnOfX : m_lnOfY; }
-    bool oppositeOfValue(int column) const {
-      return column == 1 && m_oppositeOfY;
-    }
-    double transformValue(double value, int column) const;
+  using CalculationOptions = Poincare::StatisticsCalculationOptions;
 
-   private:
-    const bool m_lnOfX, m_lnOfY, m_oppositeOfY;
-  };
   void sortColumn(int series, int column, bool delayUpdate = false);
   double sumOfColumn(int series, int i,
                      CalculationOptions options = CalculationOptions()) const;

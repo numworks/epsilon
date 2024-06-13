@@ -8,6 +8,12 @@
 
 namespace Poincare::Internal {
 
+double StatisticsCalculationOptions::transformValue(double value,
+                                                    int column) const {
+  value *= oppositeOfValue(column) ? -1.0 : 1.0;
+  return lnOfValue(column) ? std::log(value) : value;
+}
+
 #if TODO_PCJ
 template <typename T>
 StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(

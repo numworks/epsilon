@@ -67,7 +67,7 @@ $(addprefix shared/, \
 ) \
   $(_sources_ion_userland_svc)
 
-$(call all_objects_for,$(_sources_ion_userland_svc)): SFLAGS += -fno-lto
+$(call all_objects_for,$(addprefix $(PATH_ion)/src/,$(_sources_ion_userland_svc))): SFLAGS += -fno-lto
 
 _ldflags_ion_userland := \
   -Wl,-T,$(PATH_ion)/src/device/userland/flash/userland_A.ld:+A \

@@ -307,6 +307,7 @@ bool Beautification::DeepBeautify(Tree* expr,
   bool changed =
       DeepBeautifyAngleFunctions(expr, projectionContext.m_angleUnit, &dummy);
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
+    // TODO: Some may want to call DeepBeautify without advancedReduction
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
     AdvancedSimplification::AdvancedReduce(expr);
   }

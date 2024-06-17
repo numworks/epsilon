@@ -1,6 +1,5 @@
 #include "approximation.h"
 
-#include <apps/shared/global_context.h>
 #include <math.h>
 #include <omg/float.h>
 #include <omg/signaling_nan.h>
@@ -518,23 +517,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       // Global variable
       return NAN;
     case Type::UserSequence: {
-      int index = Shared::GlobalContext::sequenceStore->SequenceIndexForName(
-          Internal::Symbol::GetName(node)[0]);
-      Shared::Sequence sequence =
-          Shared::GlobalContext::sequenceStore->sequenceAtIndex(index);
       T rank = To<T>(node->child(0));
       if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
-      double result =
-          Shared::GlobalContext::sequenceCache->storedValueOfSequenceAtRank(
-              index, rank);
-      if (OMG::IsSignalingNan(result)) {
-        // compute value if not in cache
-        result = OutOfContext(sequence.approximateAtRank(
-            rank, Shared::GlobalContext::sequenceCache));
-      }
-      return result;
+      return OutOfContext(
+          Poincare::Context::GlobalContext->approximateSequenceAtRank(
+              Internal::Symbol::GetName(node), rank));
     }
     /* Analysis */
     case Type::Sum:

@@ -384,4 +384,16 @@ void GlobalContext::StoreParametricComponentsOfRecord(
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }
 
+double GlobalContext::approximateSequenceAtRank(const char *identifier,
+                                                int rank) const {
+  int index = sequenceStore->SequenceIndexForName(identifier[0]);
+  Sequence sequence = sequenceStore->sequenceAtIndex(index);
+  double result = sequenceCache->storedValueOfSequenceAtRank(index, rank);
+  if (OMG::IsSignalingNan(result)) {
+    // compute value if not in cache
+    result = sequence.approximateAtRank(rank, sequenceCache);
+  }
+  return result;
+}
+
 }  // namespace Shared

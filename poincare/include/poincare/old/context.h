@@ -40,6 +40,11 @@ class Context {
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
+  virtual double approximateSequenceAtRank(const char* identifier,
+                                           int rank) const {
+    return NAN;
+  }
+
   static Context* GlobalContext;
 
  protected:

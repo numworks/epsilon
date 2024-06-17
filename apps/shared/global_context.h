@@ -99,6 +99,8 @@ class GlobalContext final : public Poincare::Context {
   // Record getter
   static Ion::Storage::Record SymbolAbstractRecordWithBaseName(
       const char *name);
+  double approximateSequenceAtRank(const char *identifier,
+                                   int rank) const override;
   SequenceContext m_sequenceContext;
 };
 

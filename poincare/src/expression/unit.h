@@ -285,6 +285,21 @@ class Unit {
   static void SetPrefix(Tree* unit, const Prefix* prefix);
 
   static double GetValue(const Tree* unit);
+
+  // Project expression and unit according to unitDisplay strategy
+  static bool ProjectToBestUnits(Tree* e, Dimension dimension,
+                                 UnitDisplay unitDisplay,
+                                 UnitFormat unitFormat);
+
+ private:
+  // Replace units and physical constants with their Basic SI value
+  static bool ShallowRemoveUnit(Tree* e, void*);
+  /* Remove subtrees that don't contain units. Return true if the entire tree
+   * has been removed. */
+  static bool KeepUnitsOnly(Tree* e);
+  // Old unit beautification, not taking input units into account.
+  static bool DeprecatedBeautify(Tree* e, Dimension dimension,
+                                 UnitFormat unitFormat);
 };
 
 Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents);

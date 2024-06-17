@@ -466,6 +466,10 @@ Dimension Dimension::GetDimension(const Tree* t) {
       int n = Approximation::To<float>(t->child(0));
       return Matrix(n, n);
     }
+    case Type::UnitConversion:
+      /* Use first child because it's representative is needed in
+       * Unit::ProjectToBestUnits in case of non kelvin units. */
+      return GetDimension(t->child(0));
     case Type::Unit:
       return Dimension::Unit(t);
     case Type::PhysicalConstant:

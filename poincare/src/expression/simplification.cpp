@@ -236,22 +236,18 @@ bool Simplification::PrepareForProjection(
 bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
-  /* 2 - Extract units */
-  if (e->isUnitConversion()) {
-    // TODO_PCJ actually extract required unit for later beautification.
-    e->moveTreeOverTree(e->child(0));
-    changed = true;
-  }
+  /* 2 - Update strategy depending on dimension */
   projectionContext->m_dimension = Dimension::GetDimension(e);
   if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
   }
-  if (projectionContext->m_dimension.hasNonKelvinTemperatureUnit()) {
-    // Convert the expression to Kelvin at root level.
-    Units::Unit::RemoveTemperatureUnit(e);
-    changed = true;
-  }
-  return Projection::DeepSystemProject(e, *projectionContext) || changed;
+  /* 3 - Project */
+  changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
+  /* 3 - Handle Units */
+  return Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
+                                         projectionContext->m_unitDisplay,
+                                         projectionContext->m_unitFormat) ||
+         changed;
 }
 
 bool Simplification::SimplifySystem(Tree* e, bool advanced) {

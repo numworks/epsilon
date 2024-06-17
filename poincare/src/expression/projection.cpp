@@ -142,17 +142,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     return true;
   }
   bool changed = false;
-  if (e->isUnit()) {
-    Units::Unit::RemoveUnit(e);
-    changed = true;
-  }
-  if (e->isPhysicalConstant()) {
-    Tree* value = SharedTreeStack->push<Type::DoubleFloat>(
-        PhysicalConstant::GetProperties(e).m_value);
-    e->moveTreeOverTree(value);
-    return true;
-  }
-
   if (e->isDecimal()) {
     Decimal::Project(e);
     changed = true;

@@ -197,36 +197,6 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
   return true;
 }
 
-/* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
- *           output 5°C, 41°F should output 41°F). */
-bool Beautification::AddUnits(Tree* expr, ProjectionContext projectionContext) {
-  Units::DimensionVector dimension = projectionContext.m_dimension.unit.vector;
-  if (!projectionContext.m_dimension.isUnit() || expr->isUndefined()) {
-    return false;
-  }
-  assert(!dimension.isEmpty());
-  TreeRef units;
-  if (projectionContext.m_dimension.isAngleUnit()) {
-    units = dimension.toBaseUnits();
-  } else {
-    double value = Approximation::RootTreeToReal<double>(expr);
-    units = SharedTreeStack->push<Type::Mult>(2);
-    ChooseBestDerivedUnits(&dimension);
-    dimension.toBaseUnits();
-    Simplification::DeepSystematicReduce(units);
-    Units::Unit::ChooseBestRepresentativeAndPrefixForValue(
-        units, &value, projectionContext.m_unitFormat);
-    Tree* approximated =
-        SharedTreeStack->push<Type::DoubleFloat>(static_cast<double>(value));
-    expr->moveTreeOverTree(approximated);
-  }
-  Beautification::DeepBeautify(units);
-  expr->moveTreeOverTree(
-      PatternMatching::Create(KMult(KA, KB), {.KA = expr, .KB = units}));
-  units->removeTree();
-  return true;
-}
-
 /* Find and beautify trigonometric system nodes while converting the angles.
  * Simplifications are needed, this has to be done before beautification.
  * A bottom-up pattern is also needed because inverse trigonometric must
@@ -319,7 +289,6 @@ bool Beautification::DeepBeautify(Tree* expr,
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
             changed;
   changed = Variables::BeautifyToName(expr) || changed;
-  changed = AddUnits(expr, projectionContext) || changed;
   assert(!expr->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }

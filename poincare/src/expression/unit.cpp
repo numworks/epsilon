@@ -7,6 +7,8 @@
 
 #include "approximation.h"
 #include "integer.h"
+#include "parametric.h"
+#include "physical_constant.h"
 #include "simplification.h"
 #include "unit_representatives.h"
 
@@ -903,6 +905,180 @@ void Unit::SetPrefix(Tree* unit, const Prefix* prefix) {
 double Unit::GetValue(const Tree* unit) {
   return GetRepresentative(unit)->ratio() *
          std::pow(10., GetPrefix(unit)->exponent());
+}
+
+// From a projected tree, gather the units, select the best ones and
+bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
+                              UnitDisplay unitDisplay, UnitFormat unitFormat) {
+  if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
+    // TODO_PCJ : Remove units that cancel themselves
+    return false;
+  }
+  if (!dimension.isUnit()) {
+    // There may remain units that cancel themselves, remove them.
+    return Tree::ApplyShallowInDepth(e, ShallowRemoveUnit);
+  }
+  TreeRef extractedUnits = e->clone();
+  if (e->isUnitConversion()) {
+    // Use second child for target units and first one for value.
+    extractedUnits->moveTreeOverTree(extractedUnits->child(1));
+    e->moveTreeOverTree(e->child(0));
+    unitDisplay = UnitDisplay::AutomaticInput;
+  }
+  if (IsNonKelvinTemperature(dimension.unit.representative)) {
+    RemoveTemperatureUnit(e);
+  }
+  Tree::ApplyShallowInDepth(e, ShallowRemoveUnit);
+  if (unitDisplay == UnitDisplay::Deprecated) {
+    // TODO: Remove UnitFormat once Deprecated display is removed.
+    extractedUnits->removeTree();
+    DeprecatedBeautify(e, dimension, unitFormat);
+    return true;
+  }
+  bool treeRemoved = KeepUnitsOnly(extractedUnits);
+  assert(!treeRemoved);
+  // Take advantage of e being last tree.
+  assert(e->nextTree() == extractedUnits);
+  assert(dimension.unit.vector ==
+         Dimension::GetDimension(extractedUnits).unit.vector);
+  switch (unitDisplay) {
+    case UnitDisplay::Forbidden:
+      extractedUnits->removeTree();
+      e->cloneTreeOverTree(KUndef);
+      return true;
+    case UnitDisplay::AutomaticInput:
+      // extractedUnits might be of the form _mm*_Hz+(_m+_km)*_s^-1.
+      // TODO: Implement the extraction of one of the terms to use it.
+    case UnitDisplay::MainOutput:
+      // TODO:
+    case UnitDisplay::AutomaticMetric:
+      // TODO
+    case UnitDisplay::AutomaticImperial:
+      // TODO
+    case UnitDisplay::Decomposition:
+      // TODO
+    case UnitDisplay::Equivalent:
+      // TODO
+    case UnitDisplay::BasicSI:
+      extractedUnits->moveTreeOverTree(dimension.unit.vector.toBaseUnits());
+      e->cloneNodeAtNode(KMult.node<2>);
+      return true;
+    case UnitDisplay::None:
+    case UnitDisplay::Deprecated:
+      // Silence warning
+      break;
+  }
+  assert(false);
+  return true;
+}
+
+bool Unit::ShallowRemoveUnit(Tree* e, void*) {
+  switch (e->type()) {
+    case Type::Unit:
+      /* RemoveUnit replace with SI ratio expression. We could use GetValue, but
+       * angle units must remain exact. A projection is therefore necessary. */
+      RemoveUnit(e);
+      Projection::DeepSystemProject(e);
+      return true;
+    case Type::PhysicalConstant: {
+      e->moveTreeOverTree(SharedTreeStack->push<Type::DoubleFloat>(
+          PhysicalConstant::GetProperties(e).m_value));
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
+bool Unit::KeepUnitsOnly(Tree* e) {
+#if ASSERTIONS
+  bool wasUnit = Dimension::GetDimension(e).isUnit();
+#endif
+  int childIndex = -1;
+  switch (e->type()) {
+    case Type::Unit:
+    case Type::PhysicalConstant:
+      assert(wasUnit);
+      return false;
+    case Type::Add:
+    case Type::Mult: {
+      int n = e->numberOfChildren();
+      int remainingChildren = n;
+      Tree* child = e->child(0);
+      for (size_t i = 0; i < n; i++) {
+        if (!KeepUnitsOnly(child)) {
+          child = child->nextTree();
+        } else {
+          remainingChildren--;
+        }
+      }
+      if (child == e->nextNode()) {
+        // All children have been removed.
+        e->removeNode();
+        assert(!wasUnit);
+        return true;
+      }
+      NAry::SetNumberOfChildren(e, remainingChildren);
+      assert(wasUnit);
+      return false;
+    }
+    case Type::Sum:
+    case Type::Product:
+      childIndex = Parametric::FunctionIndex(e->type());
+      break;
+    case Type::Round:
+    case Type::Pow:
+    case Type::PowReal:
+      childIndex = 0;
+      break;
+    default:
+      break;
+  }
+  // By default ignore units contained in tree.
+  if (childIndex == -1) {
+    assert(!wasUnit);
+    e->removeTree();
+    return true;
+  }
+  // If there were units at childIndex, keep the tree.
+  if (!KeepUnitsOnly(e->child(childIndex))) {
+    assert(wasUnit);
+    return false;
+  }
+  // Otherwise, remove node and remaining children, ignoring their units.
+  int numberOfChildren = e->numberOfChildren();
+  e->removeNode();
+  for (int i = 1; i < numberOfChildren; i++) {
+    e->removeTree();
+  }
+  assert(!wasUnit);
+  return true;
+}
+
+/* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
+ *           output 5°C, 41°F should output 41°F). */
+bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
+                              UnitFormat unitFormat) {
+  assert(dimension.isUnit() && !e->isUndefined());
+  Units::DimensionVector vector = dimension.unit.vector;
+  assert(!vector.isEmpty());
+  TreeRef units;
+  if (dimension.isAngleUnit()) {
+    units = vector.toBaseUnits();
+  } else {
+    double value = Approximation::RootTreeToReal<double>(e);
+    units = SharedTreeStack->push<Type::Mult>(2);
+    ChooseBestDerivedUnits(&vector);
+    vector.toBaseUnits();
+    Units::Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
+                                                           unitFormat);
+    Tree* approximated = SharedTreeStack->push<Type::DoubleFloat>(value);
+    e->moveTreeOverTree(approximated);
+  }
+  e->moveTreeOverTree(
+      PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = units}));
+  units->removeTree();
+  return true;
 }
 
 bool IsCombinationOfUnits(const Tree* expr) {

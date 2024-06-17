@@ -1070,6 +1070,8 @@ bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
     units = SharedTreeStack->push<Type::Mult>(2);
     ChooseBestDerivedUnits(&vector);
     vector.toBaseUnits();
+    NAry::Flatten(units);
+    NAry::SquashIfPossible(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
                                                            unitFormat);
     Tree* approximated = SharedTreeStack->push<Type::DoubleFloat>(value);

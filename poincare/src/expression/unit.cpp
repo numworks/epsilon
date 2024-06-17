@@ -482,7 +482,8 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
   return false;
 }
 
-static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+// Return true if a prefix was chosen.
+static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
   double exponent = 1.f;
   Tree* factor = unit;
@@ -494,17 +495,18 @@ static void ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     factor = factor->child(0);
   }
   if (!factor->isUnit()) {
-    return;
+    return false;
   }
   if (exponent == 0.f) {
     /* Finding the best representative for a unit with exponent 0 doesn't
      * really make sense, and should only happen with a weak ReductionTarget
      * (such as in Graph app), that only rely on approximations. We keep the
      * unit unchanged as it will approximate to undef anyway. */
-    return;
+    return false;
   }
   Unit::ChooseBestRepresentativeAndPrefix(factor, value, exponent, unitFormat,
                                           optimizePrefix);
+  return true;
 }
 
 void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
@@ -518,11 +520,14 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
     numberOfFactors = 1;
     factor = units;
   }
-  ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
-                                                        unitFormat, true);
+  bool didOptimizePrefix =
+      ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
+                                                            unitFormat, true);
   for (int i = 1; i < numberOfFactors; i++) {
-    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-        units->child(i), value, unitFormat, false);
+    didOptimizePrefix =
+        ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+            units->child(i), value, unitFormat, !didOptimizePrefix) ||
+        didOptimizePrefix;
   }
 }
 

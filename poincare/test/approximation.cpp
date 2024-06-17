@@ -198,3 +198,40 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("(1/0,2)", "(undef,2)");
   approximates_to<float>("[[√(-1),2]]", "nonreal");  // TODO: [[nonreal,2]] ?
 }
+
+QUIZ_CASE(pcj_approximation_units) {
+  approximates_to<float>("12_m", "12×_m");
+  approximates_to<float>("1_s", "1×_s");
+  approximates_to<float>("1_m+1_s", "undef");
+  approximates_to<float>("1_m+1_yd", "1.9144×_m");
+  approximates_to<float>("1_m+x", "undef");
+  approximates_to<float>("1_mm+1_km", "1000.001×_m");
+  approximates_to<float>("2_month×7_dm", "3681720×_s×_m");
+  approximates_to<float>("1234_g", "1.234×_kg");
+  approximates_to<float>("sum(_s,x,0,1)", "2×_s");
+
+  // Temperature
+  approximates_to<float>("4_°C", "277.15×_K");
+  // Note: this used to be undef in previous Poincare.
+  approximates_to<float>("((4-2)_°C)×2", "277.15×_K");
+  approximates_to<float>("((4-2)_°F)×2", "257.5945×_K");
+  approximates_to<float>("8_°C/2", "277.15×_K");
+  approximates_to<float>("2_K+2_K", "4×_K");
+  approximates_to<float>("2_K×2_K", "4×_K^2");
+  approximates_to<float>("1/_K", "1×_K^-1");
+  approximates_to<float>("(2_K)^2", "4×_K^2");
+
+  // Undefined
+  approximates_to<float>("2_°C-1_°C", "undef");
+  approximates_to<float>("2_°C+2_K", "undef");
+  approximates_to<float>("2_K+2_°C", "undef");
+  approximates_to<float>("2_K×2_°C", "undef");
+  approximates_to<float>("1/_°C", "undef");
+  approximates_to<float>("(1_°C)^2", "undef");
+  approximates_to<float>("tan(2_m)", "undef");
+  approximates_to<float>("tan(2_rad^2)", "undef");
+
+  // Constants
+  approximates_to<float>("_mn + _mp", "3.34755ᴇ-27×_kg");
+  approximates_to<float>("_mn + _G", "undef");
+}

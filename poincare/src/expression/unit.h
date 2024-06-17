@@ -283,6 +283,8 @@ class Unit {
                                 const Representative* representative);
   static const Prefix* GetPrefix(const Tree* unit);
   static void SetPrefix(Tree* unit, const Prefix* prefix);
+
+  static double GetValue(const Tree* unit);
 };
 
 Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents);

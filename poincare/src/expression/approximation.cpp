@@ -153,8 +153,22 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   if (dim.isBoolean()) {
     return (ToBoolean<T>(node) ? KTrue : KFalse)->clone();
   }
-  if (dim.isScalar()) {
-    return ToBeautifiedComplex<T>(node);
+  if (dim.isUnit() || dim.isScalar()) {
+    // By default, approximation returns basic SI Units.
+    if (dim.isUnit() && dim.hasNonKelvinTemperatureUnit()) {
+      Tree* result = node->clone();
+      Units::Unit::RemoveTemperatureUnit(result);
+      dim.unit.representative = &Units::Temperature::representatives.kelvin;
+      result->moveTreeOverTree(ToTree<T>(result, dim));
+      return result;
+    }
+    Tree* result = ToBeautifiedComplex<T>(node);
+    if (dim.isUnit()) {
+      result->cloneNodeAtNode(KMult.node<2>);
+      dim.unit.vector.toBaseUnits();
+      NAry::Flatten(result);
+    }
+    return result;
   }
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(node) : ToMatrix<T>(node);
@@ -810,10 +824,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return UndefDependencies(node) ? NAN
                                      : ToComplex<T>(Dependency::Main(node));
     }
-    /* At this point, the overall expression is expected to be Scalar, but it
-     * could be 1_m/1_ft. Approximating to ratios is enough. */
+    /* Handle units as their scalar value in basic SI so prefix and
+     * representative homogeneity isn't necessary. Dimension is expected to be
+     * handled at this point. */
     case Type::Unit:
-      return Units::Unit::GetRepresentative(node)->ratio();
+      return Units::Unit::GetValue(node);
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(node).m_value;
     default:;

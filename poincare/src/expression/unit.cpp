@@ -804,10 +804,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
     return;
   }
   // Convert value to base units
-  double baseValue =
-      *value * std::pow(GetRepresentative(unit)->ratio() *
-                            std::pow(10., GetPrefix(unit)->exponent()),
-                        exponent);
+  double baseValue = *value * std::pow(GetValue(unit), exponent);
   const Prefix* bestPrefix = (optimizePrefix) ? Prefix::EmptyPrefix() : nullptr;
   const Representative* bestRepresentative =
       GetRepresentative(unit)->standardRepresentative(baseValue, exponent,
@@ -836,7 +833,7 @@ bool Unit::IsNonKelvinTemperature(const Representative* representative) {
 
 void Unit::RemoveUnit(Tree* unit) {
   const Representative* representative = GetRepresentative(unit);
-  // Temperature units should have been handled with ConvertTreeToKelvin.
+  // Temperature units should have been escaped before.
   assert(!IsNonKelvinTemperature(representative));
   Tree* result = SharedTreeStack->push<Type::Mult>(2);
   representative->ratioExpressionReduced()->clone();
@@ -896,6 +893,11 @@ void Unit::SetRepresentative(Tree* unit, const Representative* representative) {
 
 void Unit::SetPrefix(Tree* unit, const Prefix* prefix) {
   unit->setNodeValue(1, Prefix::ToId(prefix));
+}
+
+double Unit::GetValue(const Tree* unit) {
+  return GetRepresentative(unit)->ratio() *
+         std::pow(10., GetPrefix(unit)->exponent());
 }
 
 bool IsCombinationOfUnits(const Tree* expr) {

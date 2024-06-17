@@ -277,7 +277,7 @@ class Unit {
   static void RemoveUnit(Tree* unit);
   // Push Unit
   static Tree* Push(const Representative* unitRepresentative,
-                    const Prefix* unitPrefixx = Prefix::EmptyPrefix());
+                    const Prefix* unitPrefix = Prefix::EmptyPrefix());
   static const Representative* GetRepresentative(const Tree* unit);
   static void SetRepresentative(Tree* unit,
                                 const Representative* representative);

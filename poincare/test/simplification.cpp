@@ -742,6 +742,14 @@ QUIZ_CASE(pcj_simplification_unit) {
   // Constants
   simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");
   simplifies_to("_mn + _G", "undef");
+
+  // 0
+  simplifies_to("0×0×2×(_rad + _°)×_°", "0×_rad^2");
+  simplifies_to("0×0×2×(_km + _m)×_km×_s", "0×_m^2×_s");
+  simplifies_to("0×_°C", "0×_°C", {.m_unitDisplay = UnitDisplay::None});
+  simplifies_to("6×0×_°F", "0×_°F", {.m_unitDisplay = UnitDisplay::None});
+  simplifies_to("0×_K", "0×_K");
+  simplifies_to("0×_K_s_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

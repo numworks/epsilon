@@ -135,6 +135,30 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
     Dimension dim = Dimension::GetDimension(multiplication);
     if (dim.isMatrix()) {
       zeroTree = Matrix::Zero(dim.matrix);
+    } else if (dim.isUnit()) {
+      // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
+      // Use hash because change is too complex to track.
+      uint32_t hash = changed ? 0 : multiplication->hash();
+      if (dim.hasNonKelvinTemperatureUnit()) {
+        /* Temperature exception : 0*_°C != 0*K : unit must be preserved.
+         * Taking advantage of the fact only very simple expressions of such
+         * temperatures are allowed. */
+        assert(dim.unit.vector.supportSize() == 1 &&
+               dim.unit.vector.temperature == 1);
+        multiplication->moveTreeOverTree(PatternMatching::Create(
+            KMult(0_e, KA),
+            {.KA = Units::Unit::Push(dim.unit.representative)}));
+      } else {
+        // Since all units are equivalent, use base SI.
+        multiplication->moveTreeOverTree(dim.unit.vector.toBaseUnits());
+        if (multiplication->isMult()) {
+          NAry::Sort(multiplication, Comparison::Order::PreserveMatrices);
+        } else {
+          multiplication->cloneNodeAtNode(KMult.node<1>);
+        }
+        NAry::AddChildAtIndex(multiplication, (0_e)->clone(), 0);
+      }
+      return changed || (hash != multiplication->hash());
     } else {
       int length = Dimension::GetListLength(multiplication);
       if (length >= 0) {

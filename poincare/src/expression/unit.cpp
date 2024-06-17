@@ -921,7 +921,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   TreeRef extractedUnits = e->clone();
   if (e->isUnitConversion()) {
     // Use second child for target units and first one for value.
-    extractedUnits->moveTreeOverTree(extractedUnits->child(1));
+    MoveTreeOverTree(extractedUnits, extractedUnits->child(1));
     e->moveTreeOverTree(e->child(0));
     unitDisplay = UnitDisplay::AutomaticInput;
   }
@@ -960,7 +960,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::Equivalent:
       // TODO
     case UnitDisplay::BasicSI:
-      extractedUnits->moveTreeOverTree(dimension.unit.vector.toBaseUnits());
+      MoveTreeOverTree(extractedUnits, dimension.unit.vector.toBaseUnits());
       e->cloneNodeAtNode(KMult.node<2>);
       return true;
     case UnitDisplay::None:

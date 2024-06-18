@@ -1,11 +1,14 @@
 #include "equation_solver.h"
 
+#include <poincare/numeric/solver.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric/zoom.h>
 
 #include "advanced_simplification.h"
 #include "beautification.h"
+#include "float.h"
+#include "list.h"
 #include "matrix.h"
 #include "polynomial.h"
 #include "set.h"
@@ -169,6 +172,54 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
   }
   equationStandardForm->removeTree();
   return {finalRange.min(), finalRange.max()};
+}
+
+static void registerSolution(Tree* list, double f) {
+  if (std::isfinite(f)) {
+    NAry::AddChild(list, FloatNode::Push(f));
+  }
+}
+
+Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
+                                       Range1D<double> range,
+                                       Context* context) {
+  // assert(m_type == Type::GeneralMonovariable);
+  // assert(m_numberOfSolvingVariables == 1);
+
+  Tree* undevelopedExpression = equationsSet->child(0)->clone();
+  // equationStandardFormForApproximateSolve(context);
+  Approximation::PrepareFunctionForApproximation(undevelopedExpression, "x",
+                                                 ComplexFormat::Real);
+  // int numberOfSolutions = 0;
+
+  assert(range.isValid());
+  Solver<double> solver = Poincare::Internal::Solver<double>(
+      range.min(), range.max(), nullptr, nullptr /*context*/,
+      ComplexFormat::Cartesian, AngleUnit::Radian);
+  solver.stretch();
+
+  TreeRef resultList = List::PushEmpty();
+
+  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
+    double root = solver.nextRoot(undevelopedExpression).x();
+    if (root < range.min()) {
+      i--;
+      continue;
+    } else if (root > range.max()) {
+      root = NAN;
+    }
+
+    if (i == k_maxNumberOfApproximateSolutions) {
+      context->hasMoreSolutions = true;
+    } else {
+      if (std::isnan(root)) {
+        break;
+      }
+      registerSolution(resultList, root);
+    }
+  }
+  undevelopedExpression->removeTree();
+  return resultList;
 }
 
 void EquationSolver::ProjectAndSimplify(Tree* equationsSet,

@@ -43,6 +43,9 @@ class EquationSolver {
   static Range1D<double> AutomaticInterval(const Tree* equationSet,
                                            Context* context);
 
+  static Tree* ApproximateSolve(const Tree* equationsSet, Range1D<double> range,
+                                Context* context);
+
  private:
   // Return list of exact solutions.
   static Tree* PrivateExactSolve(const Tree* equationsSet, Context* context,

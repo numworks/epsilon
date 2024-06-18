@@ -92,7 +92,9 @@ void check_range(std::initializer_list<const char*> inputs, double min,
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }
-  Poincare::Range1D<double> range = Solver::AutomaticInterval(equationSet);
+  Solver::Context context = Solver::Context();
+  Poincare::Range1D<double> range =
+      Solver::AutomaticInterval(equationSet, &context);
   quiz_assert(range.min() == min);
   quiz_assert(range.max() == max);
 }

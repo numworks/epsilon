@@ -18,6 +18,7 @@ class EquationSolver {
     // If true, defined userVariables are ignored.
     bool overrideUserVariables = false;
     bool exactResults = true;
+    bool hasMoreSolutions = false;
     // Context used for apps/solver compatibility
     int numberOfUserVariables = 0;
     char userVariables[6][Symbol::k_maxNameSize];
@@ -39,7 +40,8 @@ class EquationSolver {
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,
                           ProjectionContext projectionContext, Error* error);
 
-  static Range1D<double> AutomaticInterval(const Tree* equationSet);
+  static Range1D<double> AutomaticInterval(const Tree* equationSet,
+                                           Context* context);
 
  private:
   // Return list of exact solutions.

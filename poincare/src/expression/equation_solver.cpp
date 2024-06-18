@@ -128,7 +128,8 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
   return Coordinate2D<T>(t, Approximation::RootPreparedToReal(e, t));
 }
 
-Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet) {
+Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
+                                                  Context* context) {
   // TODO: standard form should do the prepare for approx equations
   Tree* equationStandardForm = equationSet->child(0)->clone();
   Approximation::PrepareFunctionForApproximation(equationStandardForm, "x",
@@ -152,7 +153,7 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet) {
    * of 0 and 5 solutions right of zero. This means that sometimes, for a
    * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
    * displayed. We still want to notify the user that more solutions exist. */
-  // m_hasMoreSolutions = !finiteNumberOfSolutions;
+  context->hasMoreSolutions = !finiteNumberOfSolutions;
   zoom.fitBounds(evaluator<float>, model, false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {

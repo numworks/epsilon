@@ -484,7 +484,7 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
   return false;
 }
 
-// Return true if a prefix was chosen.
+// Return true if best representative and prefix has been chosen.
 static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
   double exponent = 1.f;
@@ -907,7 +907,7 @@ double Unit::GetValue(const Tree* unit) {
          std::pow(10., GetPrefix(unit)->exponent());
 }
 
-// From a projected tree, gather the units, select the best ones and
+// From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
                               UnitDisplay unitDisplay, UnitFormat unitFormat) {
   if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {

@@ -994,12 +994,12 @@ bool Unit::KeepUnitsOnly(Tree* e) {
 #if ASSERTIONS
   bool wasUnit = Dimension::GetDimension(e).isUnit();
 #endif
-  int childIndex = -1;
+  bool didRemovedTree;
   switch (e->type()) {
     case Type::Unit:
     case Type::PhysicalConstant:
-      assert(wasUnit);
-      return false;
+      didRemovedTree = false;
+      break;
     case Type::Add:
     case Type::Mult: {
       int n = e->numberOfChildren();
@@ -1015,44 +1015,45 @@ bool Unit::KeepUnitsOnly(Tree* e) {
       if (child == e->nextNode()) {
         // All children have been removed.
         e->removeNode();
-        assert(!wasUnit);
-        return true;
+        didRemovedTree = true;
+        break;
       }
       NAry::SetNumberOfChildren(e, remainingChildren);
-      assert(wasUnit);
-      return false;
+      didRemovedTree = false;
+      break;
     }
     case Type::Sum:
     case Type::Product:
-      childIndex = Parametric::FunctionIndex(e->type());
+      e->moveTreeOverTree(e->child(Parametric::FunctionIndex(e->type())));
+      didRemovedTree = KeepUnitsOnly(e);
       break;
     case Type::Round:
-    case Type::Pow:
+      e->moveTreeOverTree(e->child(0));
+      didRemovedTree = KeepUnitsOnly(e);
+      break;
     case Type::PowReal:
-      childIndex = 0;
+      // Ignore PowReal nodes
+      e->cloneNodeOverNode(KPow);
+    case Type::Pow:
+      // If there are units in base, keep the tree.
+      if (!KeepUnitsOnly(e->child(0))) {
+        didRemovedTree = false;
+        break;
+      }
+      // Otherwise, remove node and index, ignoring their units.
+      e->removeNode();
+      e->removeTree();
+      didRemovedTree = true;
       break;
     default:
+      // By default ignore units contained in tree.
+      assert(!wasUnit);
+      e->removeTree();
+      didRemovedTree = true;
       break;
   }
-  // By default ignore units contained in tree.
-  if (childIndex == -1) {
-    assert(!wasUnit);
-    e->removeTree();
-    return true;
-  }
-  // If there were units at childIndex, keep the tree.
-  if (!KeepUnitsOnly(e->child(childIndex))) {
-    assert(wasUnit);
-    return false;
-  }
-  // Otherwise, remove node and remaining children, ignoring their units.
-  int numberOfChildren = e->numberOfChildren();
-  e->removeNode();
-  for (int i = 1; i < numberOfChildren; i++) {
-    e->removeTree();
-  }
-  assert(!wasUnit);
-  return true;
+  assert(didRemovedTree != wasUnit);
+  return didRemovedTree;
 }
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should

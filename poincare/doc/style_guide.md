@@ -144,6 +144,16 @@ for (Tree* child : tree->children()) {
   f(child);
 }
 ```
+
+If you need the index of the child use:
+```cpp
+for (IndexedChild<const Tree*> child : tree->indexedChildren()) {
+  if (child.index == 0) {
+    f(child); // child get casted into a const Tree *
+  }
+}
+```
+
 For more advanced operations, you can use :
 ```cpp
 Tree* child = tree->child(0);

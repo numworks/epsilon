@@ -1,5 +1,5 @@
-#ifndef POINCARE_EXPRESSION_SOLVER_H
-#define POINCARE_EXPRESSION_SOLVER_H
+#ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
+#define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
 #include <poincare/src/memory/tree.h>
 
@@ -11,7 +11,7 @@ namespace Poincare::Internal {
 /* Solver methods are a direct (and incomplete for now) adaptation of methods in
  * apps/solver/system_of_equations.cpp. */
 
-class Solver {
+class EquationSolver {
  public:
   struct Context {
     // If true, defined userVariables are ignored.

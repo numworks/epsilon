@@ -248,6 +248,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/derivation.cpp \
   expression/dimension.cpp \
   expression/dimension_vector.cpp \
+  expression/equation_solver.cpp \
   expression/float.cpp \
   expression/infinity.cpp \
   expression/integer.cpp \
@@ -268,7 +269,6 @@ poincare_src += $(addprefix poincare/src/,\
   expression/set.cpp \
   expression/sign.cpp \
   expression/simplification.cpp \
-  expression/solver.cpp \
   expression/symbol.cpp \
   expression/systematic_addition.cpp \
   expression/systematic_operation.cpp \

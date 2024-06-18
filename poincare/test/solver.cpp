@@ -1,12 +1,14 @@
 #include <apps/shared/global_context.h>
+#include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/expression/solver.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
 using namespace Poincare::Internal;
+
+using Solver = EquationSolver;
 
 bool check_solutions(std::initializer_list<const char*> inputs,
                      std::initializer_list<const char*> outputs,

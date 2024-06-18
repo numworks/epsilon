@@ -1,4 +1,4 @@
-#include "solver.h"
+#include "equation_solver.h"
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -15,8 +15,9 @@
 
 namespace Poincare::Internal {
 
-Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
-                         ProjectionContext projectionContext, Error* error) {
+Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
+                                 ProjectionContext projectionContext,
+                                 Error* error) {
   context->overrideUserVariables = false;
   projectionContext.m_symbolic =
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
@@ -53,9 +54,10 @@ Tree* Solver::ExactSolve(const Tree* equationsSet, Context* context,
  * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
  *   and Error::EquationUndefined).
  * - Project equality into subtraction.  */
-Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
-                                ProjectionContext projectionContext,
-                                Error* error) {
+Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
+                                        Context* context,
+                                        ProjectionContext projectionContext,
+                                        Error* error) {
   /* Clone and simplify the equations */
   Tree* simplifiedEquationSet = equationsSet->clone();
   ProjectAndSimplify(simplifiedEquationSet, projectionContext, error);
@@ -119,9 +121,9 @@ Tree* Solver::PrivateExactSolve(const Tree* equationsSet, Context* context,
   return result;
 }
 
-void Solver::ProjectAndSimplify(Tree* equationsSet,
-                                ProjectionContext projectionContext,
-                                Error* error) {
+void EquationSolver::ProjectAndSimplify(Tree* equationsSet,
+                                        ProjectionContext projectionContext,
+                                        Error* error) {
   assert(*error == Error::NoError);
   Simplification::ToSystem(equationsSet, &projectionContext);
   if (projectionContext.m_dimension.isUnit()) {
@@ -137,8 +139,9 @@ void Solver::ProjectAndSimplify(Tree* equationsSet,
   }
 }
 
-Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
-                                Context context, Error* error) {
+Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
+                                        uint8_t n, Context context,
+                                        Error* error) {
   context.exactResults = true;
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
@@ -211,9 +214,9 @@ Tree* Solver::SolveLinearSystem(const Tree* simplifiedEquationSet, uint8_t n,
   return nullptr;
 }
 
-Tree* Solver::GetLinearCoefficients(const Tree* equation,
-                                    uint8_t numberOfVariables,
-                                    Context context) {
+Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
+                                            uint8_t numberOfVariables,
+                                            Context context) {
   TreeRef result = SharedTreeStack->push<Type::List>(0);
   TreeRef tree = equation->clone();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
@@ -269,8 +272,9 @@ Tree* Solver::GetLinearCoefficients(const Tree* equation,
   return result;
 }
 
-Solver::Error Solver::RegisterSolution(Tree* solution, uint8_t variableId,
-                                       Context context) {
+EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
+                                                       uint8_t variableId,
+                                                       Context context) {
   /* TODO:
    * - Implement equations. Here a x=2 solution will register as x-2.
    * - Handle exact results being forbidden.

@@ -20,6 +20,25 @@ void Indent(std::ostream& stream, int indentation);
 
 class TreeRef;
 
+template <typename T>  // T is Tree* or const Tree*
+class IndexedChild {
+  friend class Tree;
+  IndexedChild(T child) : m_child(nullptr), index(0) {
+    // Used as the end of the iterators
+    assert(child == nullptr);
+  }
+  IndexedChild(T child, int index) : m_child(child), index(index) {}
+
+ public:
+  bool operator==(const IndexedChild<T>& other) const = default;
+  bool operator!=(const IndexedChild<T>& other) const = default;
+  T operator->() const { return m_child; }
+  operator T() { return m_child; }
+
+  T m_child;
+  uint16_t index;
+};
+
 /* A block is a byte-long object containing either a type or some value.
  * Several blocks can form a node, like:
  * [INT][LENGTH][DIGIT0][DIGIT1]...[DIGITN][LENGTH][INT]
@@ -294,6 +313,21 @@ class Tree : public TypeBlock {
     }
   };
 
+  template <typename U>
+  class ChildrenIterator<IndexedChild<U>>
+      : public AbstractIterator<IndexedChild<U>> {
+    using T = IndexedChild<U>;
+    using Parent = AbstractIterator<T>;
+
+   public:
+    using AbstractIterator<T>::AbstractIterator;
+    ChildrenIterator<T>& operator++() {
+      Parent::m_remaining--;
+      Parent::m_node = {Parent::m_node->nextTree(), Parent::m_node.index + 1};
+      return *this;
+    }
+  };
+
   template <typename T>
   class DescendantsIterator : public AbstractIterator<T> {
     using Parent = AbstractIterator<T>;
@@ -353,6 +387,9 @@ class Tree : public TypeBlock {
  public:
   using ConstTrees = ElementList<ChildrenIterator<const Tree*>>;
   using Trees = ElementList<ChildrenIterator<Tree*>>;
+  using ConstIndexedTrees =
+      ElementList<ChildrenIterator<IndexedChild<const Tree*>>>;
+  using IndexedTrees = ElementList<ChildrenIterator<IndexedChild<Tree*>>>;
   using ConstNodes = ElementList<DescendantsIterator<const Tree*>>;
   using Nodes = ElementList<DescendantsIterator<Tree*>>;
   using ConstAncestors = TargetList<RootToNodeIterator<const Tree*>>;
@@ -367,6 +404,13 @@ class Tree : public TypeBlock {
   Trees children() { return {nextNode(), numberOfChildren()}; }
   // Do not alter number of children while iterating
   Nodes descendants() { return {nextNode(), numberOfChildren()}; }
+
+  IndexedTrees indexedChildren() {
+    return {{nextNode(), 0}, numberOfChildren()};
+  }
+  ConstIndexedTrees indexedChildren() const {
+    return {{nextNode(), 0}, numberOfChildren()};
+  }
 
   ConstAncestors ancestors(const Tree* root) const { return {root, this}; }
 

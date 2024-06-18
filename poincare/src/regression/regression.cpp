@@ -47,16 +47,13 @@ Poincare::UserExpression Regression::expression(
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
                             Poincare::Context* context) const {
+  // TODO: use evaluate to approximate instead of expression
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
   }
-  Poincare::Preferences* preferences =
-      Poincare::Preferences::SharedPreferences();
   Tree* yTree = Internal::FloatNode::Push(y);
-  double result = Poincare::Internal::Solver(xMin, xMax, nullptr, context,
-                                             preferences->complexFormat(),
-                                             preferences->angleUnit())
+  double result = Poincare::Internal::Solver(xMin, xMax, context)
                       .nextIntersection(yTree, e)
                       .x();
   yTree->removeTree();

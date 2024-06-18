@@ -86,10 +86,7 @@ class Solver {
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, const char* unknown = nullptr,
-         Context* context = nullptr,
-         ComplexFormat complexFormat = ComplexFormat::Cartesian,
-         AngleUnit angleUnit = AngleUnit::Radian);
+  Solver(T xStart, T xEnd, Context* context = nullptr);
 
   T start() const { return m_xStart; }
   T end() const { return m_xEnd; }
@@ -130,7 +127,6 @@ class Solver {
  private:
   struct FunctionEvaluationParameters {
     // const ApproximationContext &approximationContext;
-    const char* unknown;
     const Tree* expression;
   };
 
@@ -186,9 +182,6 @@ class Solver {
   T m_maximalXStep;
   T m_yResult;
   Context* m_context;
-  const char* m_unknown;
-  ComplexFormat m_complexFormat;
-  AngleUnit m_angleUnit;
   Interest m_lastInterest;
   GrowthSpeed m_growthSpeed;
 };

@@ -74,7 +74,7 @@ void assert_solutions_are(
     Interest interest, Preferences::AngleUnit angleUnit,
     const char* otherExpression) {
   Shared::GlobalContext context;
-  Solver<double> solver(start, end, "x", &context, Real, angleUnit);
+  Solver<double> solver(start, end, &context);
   for (Poincare::Coordinate2D<double> c : expected) {
     assert_next_solution_is(expression, &context, &solver, c, interest,
                             otherExpression, angleUnit);

@@ -194,8 +194,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
 
   assert(range.isValid());
   Solver<double> solver = Poincare::Internal::Solver<double>(
-      range.min(), range.max(), nullptr, nullptr /*context*/,
-      ComplexFormat::Cartesian, AngleUnit::Radian);
+      range.min(), range.max(), nullptr /*context*/);
   solver.stretch();
 
   TreeRef resultList = List::PushEmpty();

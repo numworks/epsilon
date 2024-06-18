@@ -14,16 +14,12 @@ namespace Poincare::Internal {
 constexpr KTree minusOne = -1_e;
 
 template <typename T>
-Solver<T>::Solver(T xStart, T xEnd, const char* unknown, Context* context,
-                  ComplexFormat complexFormat, AngleUnit angleUnit)
+Solver<T>::Solver(T xStart, T xEnd, Context* context)
     : m_xStart(xStart),
       m_xEnd(xEnd),
       m_maximalXStep(MaximalStep(xEnd - xStart)),
       m_yResult(k_NAN),
       m_context(context),
-      m_unknown(unknown),
-      m_complexFormat(complexFormat),
-      m_angleUnit(angleUnit),
       m_lastInterest(Interest::None),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {}
@@ -91,7 +87,6 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
 template <typename T>
 Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
                                 HoneResult hone) {
-  assert(m_unknown && m_unknown[0] != '\0');
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomNode(); })) {
     return Coordinate2D<T>(NAN, NAN);
@@ -104,13 +99,12 @@ Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
 #if 0
     .approximationContext = approximationContext,
 #endif
-    .unknown = m_unknown,
     .expression = e
   };
   FunctionEvaluation f = [](T x, const void* aux) {
     const FunctionEvaluationParameters* p =
         reinterpret_cast<const FunctionEvaluationParameters*>(aux);
-    return Approximation::RootPreparedToReal<T>(p->expression, x);  // m_unknown
+    return Approximation::RootPreparedToReal<T>(p->expression, x);
   };
 
   return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
@@ -199,8 +193,8 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
   // m_angleUnit);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    T y1 = Approximation::RootPreparedToReal<T>(e1, m_xStart);  // m_unknown
-    T y2 = Approximation::RootPreparedToReal<T>(e2, m_xStart);  // m_unknown
+    T y1 = Approximation::RootPreparedToReal<T>(e1, m_xStart);
+    T y2 = Approximation::RootPreparedToReal<T>(e2, m_xStart);
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
       /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
        * or undef expressions in specific points like x^2/x, the root of the
@@ -319,7 +313,7 @@ bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
   const Solver<T>::FunctionEvaluationParameters* p =
       reinterpret_cast<const Solver<T>::FunctionEvaluationParameters*>(aux);
   return Continuity::IsDiscontinuousBetweenValuesForSymbol(p->expression,
-                                                           p->unknown, x1, x2);
+                                                           nullptr, x1, x2);
 };
 
 template <typename T>
@@ -719,8 +713,7 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
 
 // Explicit template instantiations
 
-template Solver<double>::Solver(double, double, const char*, Context*,
-                                ComplexFormat, AngleUnit);
+template Solver<double>::Solver(double, double, Context*);
 template Coordinate2D<double> Solver<double>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
@@ -744,8 +737,7 @@ template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);
-template Solver<float>::Solver(float, float, const char*, Context*,
-                               ComplexFormat, AngleUnit);
+template Solver<float>::Solver(float, float, Context*);
 template Coordinate2D<float> Solver<float>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);

@@ -85,3 +85,19 @@ QUIZ_CASE(pcj_solver) {
                   Solver::Error::RequireApproximateSolution);
 #endif
 }
+
+void check_range(std::initializer_list<const char*> inputs, double min,
+                 double max) {
+  Tree* equationSet = Poincare::Internal::List::PushEmpty();
+  for (const char* equation : inputs) {
+    NAry::AddChild(equationSet, TextToTree(equation));
+  }
+  Poincare::Range1D<double> range = Solver::AutomaticInterval(equationSet);
+  quiz_assert(range.min() == min);
+  quiz_assert(range.max() == max);
+}
+
+QUIZ_CASE(pcj_solver_auto_range) {
+  // TODO: import all tests from solver app
+  check_range({"cos(x)-0"}, -15.5654296875, 15.5654296875);
+}

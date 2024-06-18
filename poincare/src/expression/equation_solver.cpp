@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/src/numeric/zoom.h>
 
 #include "advanced_simplification.h"
 #include "beautification.h"
@@ -119,6 +120,54 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   }
 
   return result;
+}
+
+template <typename T>
+static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+  const Tree* e = reinterpret_cast<const Tree*>(model);
+  return Coordinate2D<T>(t, Approximation::RootPreparedToReal(e, t));
+}
+
+Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet) {
+  // TODO: standard form should do the prepare for approx equations
+  Tree* equationStandardForm = equationSet->child(0)->clone();
+  Approximation::PrepareFunctionForApproximation(equationStandardForm, "x",
+                                                 ComplexFormat::Real);
+  constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
+  // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
+  constexpr float k_yxRatio = 3.06f / 5.76f;
+  Zoom zoom(NAN, NAN, k_yxRatio, nullptr,
+            k_maxFloatForAutoApproximateSolvingRange);
+  // Use the intersection between the definition domain of f and the bounds
+  zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
+                 k_maxFloatForAutoApproximateSolvingRange);
+  zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
+                           k_maxNumberOfApproximateSolutions / 2);
+  const void* model = static_cast<const void*>(equationStandardForm);
+  bool finiteNumberOfSolutions = true;
+  bool didFitRoots = zoom.fitRoots(evaluator<float>, model, false,
+                                   evaluator<double>, &finiteNumberOfSolutions);
+  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
+   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
+   * of 0 and 5 solutions right of zero. This means that sometimes, for a
+   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
+   * displayed. We still want to notify the user that more solutions exist. */
+  // m_hasMoreSolutions = !finiteNumberOfSolutions;
+  zoom.fitBounds(evaluator<float>, model, false);
+  Range1D<float> finalRange = *(zoom.range(false, false).x());
+  if (didFitRoots) {
+    /* The range was computed from the solution found with a solver in float. We
+     * need to strech the range in case it does not cover the solution found
+     * with a solver in double. */
+    constexpr static float k_securityMarginCoef = 1 / 10.0;
+    float securityMargin =
+        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
+        k_securityMarginCoef;
+    finalRange.stretchEachBoundBy(securityMargin,
+                                  k_maxFloatForAutoApproximateSolvingRange);
+  }
+  equationStandardForm->removeTree();
+  return {finalRange.min(), finalRange.max()};
 }
 
 void EquationSolver::ProjectAndSimplify(Tree* equationsSet,

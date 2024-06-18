@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
+#include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 
 #include "projection.h"
@@ -32,9 +33,13 @@ class EquationSolver {
     DisabledInExamMode,  // TODO rebased from poincare
   };
 
+  constexpr static int k_maxNumberOfApproximateSolutions = 10;
+
   // Return list of exact solutions.
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,
                           ProjectionContext projectionContext, Error* error);
+
+  static Range1D<double> AutomaticInterval(const Tree* equationSet);
 
  private:
   // Return list of exact solutions.

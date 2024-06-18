@@ -327,8 +327,9 @@ poincare_src += $(addprefix poincare/src/numeric/,\
   roots.cpp \
   solver.cpp \
   solver_algorithms.cpp \
-  statistics_dataset.cpp\
-  statistics_dataset_column.cpp\
+  statistics_dataset.cpp \
+  statistics_dataset_column.cpp \
+  zoom.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/probability/,\

@@ -696,9 +696,10 @@ void Render::DrawSimpleLayout(const Layout* node, KDContext* ctx, KDPoint p,
   }
   assert(node->numberOfChildren() <= 4);
   RenderNode(node, ctx, p, style);
-  for (int i = 0; const Tree* child : node->children()) {
-    DrawRack(Rack::From(child), ctx, PositionOfChild(node, i++).translatedBy(p),
-             style, selection, !node->isAutocompletedPair());
+  for (IndexedChild<const Tree*> child : node->indexedChildren()) {
+    DrawRack(Rack::From(child), ctx,
+             PositionOfChild(node, child.index).translatedBy(p), style,
+             selection, !node->isAutocompletedPair());
   }
 }
 

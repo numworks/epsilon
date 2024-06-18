@@ -32,11 +32,10 @@ namespace Poincare::Internal {
 
 Tree* RackParser::parse() {
   ExceptionTry {
-    for (int i = 0; const Tree* child : m_root->children()) {
+    for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
       if (child->treeIsIdenticalTo(KCodePointL<UCodePointRightwardsArrow>())) {
-        return parseExpressionWithRightwardsArrow(i);
+        return parseExpressionWithRightwardsArrow(child.index);
       }
-      i++;
     }
     Tree* result = initializeFirstTokenAndParseUntilEnd();
     // Only 1 tree has been created.

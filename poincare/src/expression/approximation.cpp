@@ -839,7 +839,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     return NAN;
   }
   T child[2];
-  for (int i = 0; const Tree* childNode : node->children()) {
+  for (IndexedChild<const Tree*> childNode : node->indexedChildren()) {
     std::complex<T> app = ToComplex<T>(childNode);
     if (app.imag() != 0) {
       return NAN;
@@ -847,7 +847,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     if (std::isnan(app.real())) {
       return NAN;
     }
-    child[i++] = app.real();
+    child[childNode.index] = app.real();
   }
   switch (node->type()) {
     case Type::Decimal:

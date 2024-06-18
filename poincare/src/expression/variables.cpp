@@ -31,11 +31,10 @@ ComplexSign Variables::GetComplexSign(const Tree* variable) {
 
 uint8_t Variables::ToId(const Tree* variables, const char* name,
                         uint8_t length) {
-  for (uint8_t i = 0; const Tree* child : variables->children()) {
+  for (IndexedChild<const Tree*> child : variables->indexedChildren()) {
     if (strcmp(Symbol::GetName(child), name) == 0) {
-      return i;
+      return child.index;
     }
-    i++;
   }
   assert(false);  // Not found
 }
@@ -56,9 +55,9 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
     return Set::Add(set, expr);
   }
   bool isParametric = expr->isParametric();
-  for (int i = 0; const Tree* child : expr->children()) {
-    if (isParametric && i == Parametric::k_variableIndex) {
-    } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
+  for (IndexedChild<const Tree*> child : expr->indexedChildren()) {
+    if (isParametric && child.index == Parametric::k_variableIndex) {
+    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
       Tree* subSet = Set::PushEmpty();
       GetUserSymbols(child, subSet);
       Tree* boundSymbols = Set::PushEmpty();
@@ -68,7 +67,6 @@ void Variables::GetUserSymbols(const Tree* expr, Tree* set) {
     } else {
       GetUserSymbols(child, set);
     }
-    i++;
   }
 }
 
@@ -103,9 +101,9 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
   }
   bool isParametric = expr->isParametric();
   bool changed = false;
-  for (int i = 0; Tree * child : expr->children()) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        id + (isParametric && i++ == Parametric::FunctionIndex(expr));
+        id + (isParametric && child.index == Parametric::FunctionIndex(expr));
     changed = Replace(child, updatedId, value, leave, simplify) || changed;
   }
   if (simplify && changed) {
@@ -130,9 +128,9 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
   }
   bool isParametric = expr->isParametric();
   bool changed = false;
-  for (int i = 0; Tree * child : expr->children()) {
-    if (isParametric && i == Parametric::k_variableIndex) {
-    } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
+    if (isParametric && child.index == Parametric::k_variableIndex) {
+    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
       // No need to continue if symbol is hidden by a local definition
       if (strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
                  symbol) != 0) {
@@ -141,7 +139,6 @@ bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
     } else {
       changed = ReplaceSymbol(child, symbol, id, sign) || changed;
     }
-    i++;
   }
   return changed;
 }
@@ -167,17 +164,16 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
                                       const Tree* replacement) {
   bool isParametric = expr->isParametric();
   bool changed = false;
-  for (int i = 0; Tree * child : expr->children()) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     /* Do not replace parametric's variable and symbols hidden by a local
      * definition */
     if (!(isParametric &&
-          (i == Parametric::k_variableIndex ||
-           (i == Parametric::FunctionIndex(expr) &&
+          (child.index == Parametric::k_variableIndex ||
+           (child.index == Parametric::FunctionIndex(expr) &&
             strcmp(Symbol::GetName(expr->child(Parametric::k_variableIndex)),
                    Symbol::GetName(symbol)) == 0)))) {
       changed = ReplaceSymbolWithTree(child, symbol, replacement) || changed;
     }
-    i++;
   }
   if (symbol->isUserNamed() && symbol->nodeIsIdenticalTo(expr)) {
     if (symbol->isUserSymbol()) {
@@ -200,9 +196,9 @@ bool Variables::ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
 bool Variables::ProjectLocalVariablesToId(Tree* expr, uint8_t depth) {
   bool changed = false;
   bool isParametric = expr->isParametric();
-  for (int i = 0; Tree * child : expr->children()) {
-    if (isParametric && i == Parametric::k_variableIndex) {
-    } else if (isParametric && i == Parametric::FunctionIndex(expr)) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
+    if (isParametric && child.index == Parametric::k_variableIndex) {
+    } else if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
       // Project local variable
       ReplaceSymbol(child, expr->child(Parametric::k_variableIndex), 0,
                     Parametric::VariableSign(expr));
@@ -210,7 +206,6 @@ bool Variables::ProjectLocalVariablesToId(Tree* expr, uint8_t depth) {
     } else {
       changed = ProjectLocalVariablesToId(child, depth) || changed;
     }
-    i++;
   }
   return changed;
 }
@@ -219,8 +214,8 @@ bool Variables::BeautifyToName(Tree* expr, uint8_t depth) {
   assert(!expr->isVar());
   bool changed = false;
   bool isParametric = expr->isParametric();
-  for (int i = 0; Tree * child : expr->children()) {
-    if (isParametric && i++ == Parametric::FunctionIndex(expr)) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
+    if (isParametric && child.index == Parametric::FunctionIndex(expr)) {
       // beautify variable introduced by this scope
       // TODO: check that name is available here or make new name
       changed = Replace(child, 0, expr->child(Parametric::k_variableIndex)) ||
@@ -252,9 +247,9 @@ bool Variables::HasVariable(const Tree* expr, int id) {
     return Id(expr) == id;
   }
   bool isParametric = expr->isParametric();
-  for (int i = 0; const Tree* child : expr->children()) {
+  for (IndexedChild<const Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        id + (isParametric && i++ == Parametric::FunctionIndex(expr));
+        id + (isParametric && child.index == Parametric::FunctionIndex(expr));
     if (HasVariable(child, updatedId)) {
       return true;
     }
@@ -272,9 +267,9 @@ void Variables::EnterOrLeaveScope(Tree* expr, bool enter, int var) {
     return;
   }
   bool isParametric = expr->isParametric();
-  for (int i = 0; Tree * child : expr->children()) {
+  for (IndexedChild<Tree*> child : expr->indexedChildren()) {
     int updatedId =
-        var + (isParametric && i++ == Parametric::FunctionIndex(expr));
+        var + (isParametric && child.index == Parametric::FunctionIndex(expr));
     EnterOrLeaveScope(child, enter, updatedId);
   }
 }

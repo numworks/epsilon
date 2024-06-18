@@ -135,30 +135,29 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       }
       buffer = append("(", buffer, end);
       bool firstChild = true;
-      for (int i = 0; const Tree* child : layout->children()) {
+      for (IndexedChild<const Tree*> child : layout->indexedChildren()) {
         if (layout->isParametricLayout() &&
-            i == layout->numberOfChildren() - 1) {
+            child.index == layout->numberOfChildren() - 1) {
           break;
         }
         if (layout->isPiecewiseLayout() &&
-            i == layout->numberOfChildren() - 2) {
+            child.index == layout->numberOfChildren() - 2) {
           break;
         }
         if (layout->isPiecewiseLayout() &&
-            i == layout->numberOfChildren() - 3 &&
+            child.index == layout->numberOfChildren() - 3 &&
             child->numberOfChildren() == 0) {
           break;
         }
         if (!firstChild) {
           buffer = append(",", buffer, end);
         }
-        if (layout->isParametricLayout() && i == 0) {
+        if (layout->isParametricLayout() && child.index == 0) {
           buffer = serializer(Rack::From(layout->lastChild()), buffer, end);
           buffer = append(",", buffer, end);
         }
         buffer = serializer(Rack::From(child), buffer, end);
         firstChild = false;
-        i++;
       }
       buffer = append(")", buffer, end);
     }

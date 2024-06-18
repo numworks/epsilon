@@ -21,12 +21,11 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
   using Type = Internal::Type;
   // TODO complexity should be linear
   int childLength[t->numberOfChildren()];
-  for (int i = 0; const Tree* child : t->children()) {
+  for (IndexedChild<const Tree*> child : t->indexedChildren()) {
     if (!DeepCheckListLength(child)) {
       return false;
     }
-    childLength[i] = GetListLength(child);
-    i++;
+    childLength[child.index] = GetListLength(child);
   }
   switch (t->type()) {
     case Type::SampleStdDev:
@@ -143,18 +142,18 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   Dimension childDim[t->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
-  for (int i = 0; const Tree* child : t->children()) {
+  for (IndexedChild<const Tree*> child : t->indexedChildren()) {
     if (!DeepCheckDimensions(child)) {
       return false;
     }
-    childDim[i] = GetDimension(child);
-    if (childDim[i].isUnit()) {
+    childDim[child.index] = GetDimension(child);
+    if (childDim[child.index].isUnit()) {
       // Cannot mix non-Kelvin temperature unit with any unit.
       // TODO: UnitConvert should be able to handle this.
       if (hasNonKelvinChild) {
         return false;
       }
-      if (childDim[i].hasNonKelvinTemperatureUnit()) {
+      if (childDim[child.index].hasNonKelvinTemperatureUnit()) {
         if (hasUnitChild) {
           return false;
         }
@@ -164,29 +163,29 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
     }
     if (!t->isPiecewise() && !t->isParenthesis() && !t->isDependency() &&
         !t->isList() &&
-        childDim[i].isBoolean() != t->isLogicalOperatorOrBoolean()) {
+        childDim[child.index].isBoolean() != t->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child. */
       return false;
     }
-    if (childDim[i].isPoint()) {
+    if (childDim[child.index].isPoint()) {
       // A few operations are allowed on points.
       switch (t->type()) {
         case Type::Piecewise:
-          if (i % 2 == 1) {
+          if (child.index % 2 == 1) {
             return false;
           }
           break;
         case Type::Diff:
         case Type::NthDiff:
         case Type::ListSequence:
-          if (i != Parametric::FunctionIndex(t)) {
+          if (child.index != Parametric::FunctionIndex(t)) {
             return false;
           }
           break;
         case Type::ListElement:
         case Type::ListSlice:
-          if (i > 0) {
+          if (child.index > 0) {
             return false;
           }
           break;
@@ -200,8 +199,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
           return false;
       }
     }
-    assert(childDim[i].isSanitized());
-    i++;
+    assert(childDim[child.index].isSanitized());
   }
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;

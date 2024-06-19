@@ -29,7 +29,7 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   KVarX->clone();
   Simplification::DeepSystematicReduce(value);
   Tree* tree = integrand->clone();
-  // TODO This deep should not be done before
+  // TODO: This deep should have been done before
   Simplification::DeepSystematicReduce(tree);
   Variables::Replace(tree, 0, value, false, true);
   /* We need to remove the constant part by expanding polynomials introduced by
@@ -44,10 +44,10 @@ bool ShallowExpandIntegrals(Tree* expr, void* ctx) {
     return false;
   }
   Tree* insertAt = expr->nextTree();
-  // Same near b - x
+  // Rewrite the integrand to be able to compute it directly at abscissa b - x
   Tree* upperIntegrand = RewriteIntegrandNear(expr->child(3), expr->child(2));
   insertAt->moveTreeBeforeNode(upperIntegrand);
-  // Rewrite the integrand to be able to compute it directly at abscissa a + x
+  // Same near a + x
   Tree* lowerIntegrand = RewriteIntegrandNear(expr->child(3), expr->child(1));
   insertAt->moveTreeBeforeNode(lowerIntegrand);
   expr->cloneNodeOverNode(KIntegralWithAlternatives);

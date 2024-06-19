@@ -612,7 +612,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return result;
     }
     case Type::Integral:
-      // assert(false);
+      // TODO: assert(false) if we enforce preparation before approximation
     case Type::IntegralWithAlternatives:
       return ApproximateIntegral<T>(node);
 

@@ -211,7 +211,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(bc)-abs(ab)*abs(c)", "0");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
 }
 
@@ -334,7 +334,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("cos(i)", "cos(i)", polarCtx);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
                 "[[42,(2×e^(π×i))/3][1+i,π×e^((-π/2)×i)]]", polarCtx);
-  simplifies_to("-2×m", "-2×_m", polarCtx);
+  simplifies_to("-2×_m", "-2×_m", polarCtx);
   simplifies_to("(-2,i)", "(-2,i)", polarCtx);
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^((-π/2)×i)}", polarCtx);
 }
@@ -794,7 +794,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("3×inf", "∞");
   simplifies_to("-3×inf", "-∞");
   simplifies_to("inf×(-inf)", "-∞");
-  simplifies_to("x(-inf)", "∞×sign(-x)");
+  simplifies_to("x×(-inf)", "∞×sign(-x)");
   simplifies_to("(abs(x)+1)*inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");

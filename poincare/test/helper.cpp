@@ -94,10 +94,6 @@ void remove_system_codepoints(char* buffer) {
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext) {
-  Shared::GlobalContext ctx;
-  if (!projectionContext.m_context) {
-    projectionContext.m_context = &ctx;
-  }
   Tree* expected = TextToTree(output, projectionContext.m_context);
   Tree* expression = TextToTree(input, projectionContext.m_context);
   process(expression, projectionContext);

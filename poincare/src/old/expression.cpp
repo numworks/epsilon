@@ -1145,16 +1145,12 @@ OExpression OExpression::ParseAndSimplify(
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  // TODO: Shared shouldn't be called in Poincare !
-  assert(false);
-#if 0
-  Shared::PoincareHelpers::CloneAndSimplify(
-      &exp, context,
-      {.symbolicComputation = symbolicComputation,
-       .unitConversion = unitConversion},
-      reductionFailure);
+  ReductionContext ctx =
+      ReductionContext::DefaultReductionContextForAnalysis(context);
+  ctx.setSymbolicComputation(symbolicComputation);
+  ctx.setUnitConversion(unitConversion);
+  exp = exp.cloneAndSimplify(ctx);
   assert(!exp.isUninitialized());
-#endif
   return exp;
 }
 

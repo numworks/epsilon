@@ -5,6 +5,7 @@
 #include <poincare/old/context_with_parent.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/range.h>
+#include <poincare/src/expression/equation_solver.h>
 
 #include "equation.h"
 #include "equation_store.h"
@@ -32,15 +33,7 @@ class SystemOfEquations {
     GeneralMonovariable,
   };
 
-  enum class Error : uint8_t {
-    NoError = 0,
-    EquationUndefined,
-    EquationNonreal,
-    TooManyVariables,
-    NonLinearSystem,
-    RequireApproximateSolution,
-    DisabledInExamMode,
-  };
+  using Error = Poincare::Internal::EquationSolver::Error;
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
@@ -55,8 +48,12 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
+    // Variable is now displayed in the equation solution
+    return "0=";
+#if 0
     assert(index < m_numberOfSolvingVariables && m_variables[index][0] != '\0');
     return m_variables[index];
+#endif
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
   const char* userVariable(size_t index) const {

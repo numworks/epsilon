@@ -12,14 +12,68 @@
 #include <poincare/old/polynomial.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/src/expression/equation_solver.h>
+#include <poincare/src/expression/list.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include "app.h"
 
 using namespace Poincare;
+using Poincare::Internal::EquationSolver;
 using namespace Shared;
 
 namespace Solver {
+
+SystemOfEquations::Error SystemOfEquations::exactSolve(
+    Poincare::Context* context) {
+  EquationSolver::Context solverContext;
+  Error error = Error::NoError;
+
+  // Copy equations on the EditionPool
+  Internal::Tree* equations = Internal::List::PushEmpty();
+  int nEquations = m_store->numberOfDefinedModels();
+  for (int i = 0; i < nEquations; i++) {
+    ExpiringPointer<Equation> equation =
+        m_store->modelForRecord(m_store->definedRecordAtIndex(i));
+    Poincare::Expression equationExpression = equation->expressionClone();
+    Internal::NAry::AddChild(equations, equationExpression.tree()->clone());
+  }
+
+  Internal::Tree* result =
+      EquationSolver::ExactSolve(equations, &solverContext, {}, &error);
+
+  if (error == Error::NoError) {
+    assert(result);
+    // Update member variables for LinearSystem
+    m_type = Type::LinearSystem;
+    m_degree = 1;
+    m_hasMoreSolutions = false;
+    m_numberOfSolutions = result->numberOfChildren();
+    m_numberOfSolvingVariables = m_numberOfSolutions;
+    m_overrideUserVariables = solverContext.overrideUserVariables;
+    m_numberOfUserVariables = solverContext.numberOfUserVariables;
+    // Copy user variables
+    memcpy(m_userVariables, solverContext.userVariables, sizeof(char[6][10]));
+    // Copy solutions
+    for (int i = 0; const Internal::Tree* solution : result->children()) {
+      Poincare::Expression exact = Poincare::UserExpression::Builder(solution);
+      Poincare::Layout exactLayout =
+          PoincareHelpers::CreateLayout(exact, context);
+      m_solutions[i++] = Solution(exactLayout, Poincare::Layout(), NAN, true);
+    }
+    result->removeTree();
+  }
+#if 0
+  else if (error == Error::RequireApproximateSolution) {
+    m_type = Type::GeneralMonovariable;
+    m_approximateResolutionMinimum = -k_defaultApproximateSearchRange;
+    m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
+  }
+#endif
+  equations->removeTree();
+  return error;
+}
 
 const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
@@ -33,6 +87,7 @@ SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);
 }
 
+#if 0
 SystemOfEquations::Error SystemOfEquations::exactSolve(Context* context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
@@ -52,6 +107,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context* context) {
   }
   return secondError;
 }
+#endif
 
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {

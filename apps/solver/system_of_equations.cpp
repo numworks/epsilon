@@ -16,11 +16,13 @@
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "app.h"
 
 using namespace Poincare;
 using Poincare::Internal::EquationSolver;
+using namespace Poincare::Internal::KTrees;
 using namespace Shared;
 
 namespace Solver {
@@ -37,7 +39,10 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     ExpiringPointer<Equation> equation =
         m_store->modelForRecord(m_store->definedRecordAtIndex(i));
     Poincare::Expression equationExpression = equation->expressionClone();
-    Internal::NAry::AddChild(equations, equationExpression.tree()->clone());
+    Internal::Tree* equal = equationExpression.tree()->cloneTree();
+    Internal::PatternMatching::MatchReplace(equal, KEqual(KA, KB),
+                                            KSub(KA, KB));
+    Internal::NAry::AddChild(equations, equal);
   }
 
   Internal::Tree* result =

@@ -199,9 +199,15 @@ void assert_reduce_and_store(const char *expression,
                              Preferences::UnitFormat unitFormat,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
-  Shared::GlobalContext globalContext;
   // TODO_PCJ: reduce expression (to check it stays a store expression)
-  store(expression, &globalContext);
+  if (Poincare::Context::GlobalContext) {
+    store(expression, Poincare::Context::GlobalContext);
+  } else {
+    /* TODO: we should assert a global context exists instead since it doesn't
+     * make much sense to store in a temporary context. */
+    Shared::GlobalContext globalContext;
+    store(expression, &globalContext);
+  }
 }
 
 void assert_parsed_expression_simplify_to(

@@ -5,6 +5,8 @@
 
 namespace Poincare {
 
+Context* Context::GlobalContext = nullptr;
+
 const Expression Context::expressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone) {
   return protectedExpressionForSymbolAbstract(symbol, clone, nullptr);

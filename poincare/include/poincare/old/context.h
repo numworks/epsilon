@@ -40,6 +40,8 @@ class Context {
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
+  static Context* GlobalContext;
+
  protected:
   /* This is used by the ContextWithParent to pass itself to its parent.
    * When getting the expression for a sequences in GlobalContext, you need

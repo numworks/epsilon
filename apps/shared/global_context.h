@@ -44,7 +44,15 @@ class GlobalContext final : public Poincare::Context {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  GlobalContext() : m_sequenceContext(this, sequenceStore){};
+  GlobalContext() : m_sequenceContext(this, sequenceStore) {
+    // GlobalContext expects to have a single instance at a time
+    assert(Poincare::Context::GlobalContext == nullptr);
+    Poincare::Context::GlobalContext = this;
+  };
+
+#if ASSERTIONS
+  ~GlobalContext() { Poincare::Context::GlobalContext = nullptr; }
+#endif
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */

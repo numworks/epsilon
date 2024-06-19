@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DIMENSION_H
 #define POINCARE_EXPRESSION_DIMENSION_H
 
+#include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
 
 #include "unit_representatives.h"
@@ -84,11 +85,16 @@ struct Dimension {
   constexpr static int k_unknownListLength = -2;
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
-  static int GetListLength(const Tree* t);
-  static bool IsList(const Tree* t) { return GetListLength(t) >= 0; }
-  static bool DeepCheckListLength(const Tree* t);
-  static Dimension GetDimension(const Tree* t);
-  static bool DeepCheckDimensions(const Tree* t);
+  static int GetListLength(const Tree* t, Poincare::Context* ctx = nullptr);
+  static bool IsList(const Tree* t, Poincare::Context* ctx = nullptr) {
+    return GetListLength(t, ctx) >= 0;
+  }
+  static bool DeepCheckListLength(const Tree* t,
+                                  Poincare::Context* ctx = nullptr);
+  static Dimension GetDimension(const Tree* t,
+                                Poincare::Context* ctx = nullptr);
+  static bool DeepCheckDimensions(const Tree* t,
+                                  Poincare::Context* ctx = nullptr);
 
   DimensionType type;
   union {

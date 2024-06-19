@@ -814,37 +814,21 @@ bool NewExpression::deepIsOfType(
 
 bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
                                  bool isReduced) const {
-  // TODO_PCJ: Replace variables using context if UserExpression
   if (!canContainMatrices) {
     return false;
   }
-  return Dimension::GetDimension(tree()).isMatrix();
+  return Dimension::GetDimension(tree(), context).isMatrix();
 }
 
 bool NewExpression::deepIsList(Context* context) const {
-  // TODO_PCJ: Replace variables using context if UserExpression
-  return Dimension::IsList(tree());
+  return Dimension::IsList(tree(), context);
 }
 
 bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
-  /* If a context is given, call PrepareForProjection to replace global
-   * variables with their definitions.
-   * TODO_PCJ: Split this method in two, one for UserExpression (replacing
-   * variables with context) and one for SystemExpression. */
-  Tree* t = tree()->clone();
-  if (context) {
-    ProjectionContext projCtx = {
-        .m_symbolic =
-            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-        .m_context = context};
-    Simplification::PrepareForProjection(t, &projCtx);
-  }
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  bool result = Dimension::GetDimension(t).isPoint() &&
-                (allowlists || !Dimension::IsList(t));
-  t->removeTree();
-  return result;
+  return Dimension::GetDimension(tree(), context).isPoint() &&
+         (allowlists || !Dimension::IsList(tree(), context));
 }
 
 bool NewExpression::hasComplexI(Context* context,
@@ -899,7 +883,7 @@ bool NewExpression::isInRadians(Context* context) const {
       cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
-         Dimension::GetDimension(tree()).isSimpleRadianAngleUnit();
+         Dimension::GetDimension(tree(), context).isSimpleRadianAngleUnit();
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {

@@ -12,20 +12,22 @@
 
 namespace Poincare::Internal {
 
+// TODO_PCJ: Use context with userNamed trees
+
 Dimension Dimension::Unit(const Tree* unit) {
   return Unit(Units::DimensionVector::FromBaseUnits(unit),
               Units::Unit::GetRepresentative(unit));
 }
 
-bool Dimension::DeepCheckListLength(const Tree* t) {
+bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
   using Type = Internal::Type;
   // TODO complexity should be linear
   int childLength[t->numberOfChildren()];
   for (IndexedChild<const Tree*> child : t->indexedChildren()) {
-    if (!DeepCheckListLength(child)) {
+    if (!DeepCheckListLength(child, ctx)) {
       return false;
     }
-    childLength[child.index] = GetListLength(child);
+    childLength[child.index] = GetListLength(child, ctx);
   }
   switch (t->type()) {
     case Type::SampleStdDev:
@@ -80,7 +82,7 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
         if (t->isListSequence() || t->isRandIntNoRep()) {
           return false;
         }
-        Dimension dim = GetDimension(t);
+        Dimension dim = GetDimension(t, ctx);
         if (dim.isMatrix() || dim.isUnit()) {
           return false;
         }
@@ -90,7 +92,7 @@ bool Dimension::DeepCheckListLength(const Tree* t) {
   return true;
 }
 
-int Dimension::GetListLength(const Tree* t) {
+int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
   switch (t->type()) {
     case Type::Mean:
     case Type::StdDev:
@@ -105,7 +107,7 @@ int Dimension::GetListLength(const Tree* t) {
     case Type::ListElement:
       return k_nonListListLength;
     case Type::ListSort:
-      return GetListLength(t->child(0));
+      return GetListLength(t->child(0), ctx);
     case Type::List:
       return t->numberOfChildren();
     case Type::ListSequence:
@@ -114,7 +116,7 @@ int Dimension::GetListLength(const Tree* t) {
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(t->child(1)) &&
              Integer::Is<uint8_t>(t->child(2)));
-      int listLength = GetListLength(t->child(0));
+      int listLength = GetListLength(t->child(0), ctx);
       int start = Integer::Handler(t->child(1)).to<uint8_t>();
       start = std::max(start, 1);
       int end = Integer::Handler(t->child(2)).to<uint8_t>();
@@ -128,7 +130,7 @@ int Dimension::GetListLength(const Tree* t) {
     default: {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
-        int childListDim = GetListLength(child);
+        int childListDim = GetListLength(child, ctx);
         if (childListDim >= 0) {
           return childListDim;
         }
@@ -138,15 +140,15 @@ int Dimension::GetListLength(const Tree* t) {
   }
 }
 
-bool Dimension::DeepCheckDimensions(const Tree* t) {
+bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
   Dimension childDim[t->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (IndexedChild<const Tree*> child : t->indexedChildren()) {
-    if (!DeepCheckDimensions(child)) {
+    if (!DeepCheckDimensions(child, ctx)) {
       return false;
     }
-    childDim[child.index] = GetDimension(child);
+    childDim[child.index] = GetDimension(child, ctx);
     if (childDim[child.index].isUnit()) {
       // Cannot mix non-Kelvin temperature unit with any unit.
       // TODO: UnitConvert should be able to handle this.
@@ -384,7 +386,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t) {
   return true;
 }
 
-Dimension Dimension::GetDimension(const Tree* t) {
+Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
   switch (t->type()) {
     case Type::Div:
     case Type::Mult: {
@@ -394,7 +396,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
       Units::DimensionVector unitVector = Units::DimensionVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
-        Dimension dim = GetDimension(child);
+        Dimension dim = GetDimension(child, ctx);
         if (dim.isMatrix()) {
           if (rows == 0) {
             rows = dim.matrix.rows;
@@ -418,13 +420,13 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::ListSequence:
     case Type::Diff:
     case Type::NthDiff:
-      return GetDimension(t->child(Parametric::FunctionIndex(t)));
+      return GetDimension(t->child(Parametric::FunctionIndex(t)), ctx);
     case Type::Dependency:
-      return GetDimension(Dependency::Main(t));
+      return GetDimension(Dependency::Main(t), ctx);
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
-      Dimension dim = GetDimension(t->child(0));
+      Dimension dim = GetDimension(t->child(0), ctx);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(t->child(1));
         // TODO: Handle/forbid index > int8_t
@@ -453,13 +455,14 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Parenthesis:
     case Type::ListElement:
     case Type::ListSort:
-      return GetDimension(t->child(0));
+      return GetDimension(t->child(0), ctx);
     case Type::Matrix:
       return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
     case Type::Dim:
-      return GetDimension(t->child(0)).isMatrix() ? Matrix(1, 2) : Scalar();
+      return GetDimension(t->child(0), ctx).isMatrix() ? Matrix(1, 2)
+                                                       : Scalar();
     case Type::Transpose: {
-      Dimension dim = GetDimension(t->child(0));
+      Dimension dim = GetDimension(t->child(0), ctx);
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
@@ -469,7 +472,7 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::UnitConversion:
       /* Use first child because it's representative is needed in
        * Unit::ProjectToBestUnits in case of non kelvin units. */
-      return GetDimension(t->child(0));
+      return GetDimension(t->child(0), ctx);
     case Type::Unit:
       return Dimension::Unit(t);
     case Type::PhysicalConstant:
@@ -480,7 +483,8 @@ Dimension Dimension::GetDimension(const Tree* t) {
     case Type::Set:
     case Type::ListSlice:
     case Type::List:
-      return GetListLength(t) > 0 ? GetDimension(t->child(0)) : Scalar();
+      return GetListLength(t, ctx) > 0 ? GetDimension(t->child(0), ctx)
+                                       : Scalar();
     case Type::ACos:
     case Type::ASin:
     case Type::ATan:

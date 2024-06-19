@@ -73,8 +73,8 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
    *  now be updated as the function f(x), so the record needs a renaming.
    * */
   if (!record.isNull()) {
-    Ion::Storage::Record::ErrorStatus error = updateNameIfNeeded(
-        AppsContainerHelper::sharedAppsContainerGlobalContext());
+    Ion::Storage::Record::ErrorStatus error =
+        updateNameIfNeeded(Poincare::Context::GlobalContext);
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     (void)error;
   }
@@ -1130,8 +1130,7 @@ ContinuousFunctionProperties ContinuousFunction::Model::properties(
     const Ion::Storage::Record *record) const {
   if (!m_properties.isInitialized()) {
     // Computing the expression equation will update the function properties
-    expressionReducedForAnalysis(
-        record, AppsContainerHelper::sharedAppsContainerGlobalContext());
+    expressionReducedForAnalysis(record, Poincare::Context::GlobalContext);
   }
   assert(m_properties.isInitialized());
   return m_properties;
@@ -1141,8 +1140,8 @@ int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record *record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
-    SystemExpression e = expressionReduced(
-        record, AppsContainerHelper::sharedAppsContainerGlobalContext());
+    SystemExpression e =
+        expressionReduced(record, Poincare::Context::GlobalContext);
     if (e.type() == ExpressionNode::Type::List) {
       assert(prop.isOfDegreeTwo());
       return static_cast<List &>(e).numberOfChildren();

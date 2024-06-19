@@ -521,11 +521,16 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 }
 
 template <typename T>
-SystemExpression SystemExpression::approximateListRemoveUndefAndSort() const {
+SystemExpression SystemExpression::approximateListAndSort() const {
   assert(deepIsList(nullptr));
   Tree* clone = SharedTreeStack->push(Type::ListSort);
   tree()->clone();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
+  return SystemExpression::Builder(clone);
+}
+
+SystemExpression SystemExpression::removeUndefListElements() const {
+  Tree* clone = tree()->clone();
   assert(clone->isList());
   int n = clone->numberOfChildren();
   int remainingChildren = n;
@@ -1103,10 +1108,10 @@ SystemFunction::approximateToPointOrScalarWithValue<float>(float) const;
 template PointOrScalar<double>
 SystemFunction::approximateToPointOrScalarWithValue<double>(double) const;
 
-template SystemExpression
-SystemExpression::approximateListRemoveUndefAndSort<float>() const;
-template SystemExpression
-SystemExpression::approximateListRemoveUndefAndSort<double>() const;
+template SystemExpression SystemExpression::approximateListAndSort<float>()
+    const;
+template SystemExpression SystemExpression::approximateListAndSort<double>()
+    const;
 
 template float SystemFunction::approximateToScalarWithValue<float>(float) const;
 template double SystemFunction::approximateToScalarWithValue<double>(

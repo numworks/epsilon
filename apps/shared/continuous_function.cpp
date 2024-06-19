@@ -637,7 +637,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
             m_expression.type() == ExpressionNode::Type::List
                 ? m_expression
                 : m_expression.childAtIndex(0);
-        m_expression = m_expression.approximateListRemoveUndefAndSort<double>();
+        m_expression = m_expression.approximateListAndSort<double>()
+                           .removeUndefListElements();
       } else {
         assert(m_expression.type() == ExpressionNode::Type::Point ||
                (m_expression.type() == ExpressionNode::Type::Dependency &&

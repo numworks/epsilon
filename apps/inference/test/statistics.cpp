@@ -592,7 +592,6 @@ QUIZ_CASE(probability_homogeneity_test) {
 }
 
 QUIZ_CASE(probability_slope_t_statistic) {
-  Shared::GlobalContext context;
   StatisticTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
   testCase.m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
@@ -629,10 +628,11 @@ QUIZ_CASE(probability_slope_t_statistic) {
   testCase.m_standardError = 0.03931119904518827;
   testCase.m_marginOfError = 0.0763887357606289424986;
 
-  SlopeTTest test(&context);
+  SlopeTTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
   inputTableValues(&test, &test, testCase);
   testTest(&test, testCase);
-  SlopeTInterval interval(&context);
+  SlopeTInterval interval(
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
   inputTableValues(&interval, &interval, testCase);
   testInterval(&interval, testCase);
 }

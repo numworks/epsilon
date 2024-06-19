@@ -50,12 +50,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
   }
   // Get Definition
   const Tree* definition =
-      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(
-                          Symbol::GetName(tree), Symbol::Length(tree),
-                          treeIsUserFunction
-                              ? Poincare::Context::SymbolAbstractType::Function
-                              : Poincare::Context::SymbolAbstractType::Symbol)
-                    : nullptr;
+      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(tree) : nullptr;
   if (symbolic ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {

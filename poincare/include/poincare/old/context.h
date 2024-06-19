@@ -35,6 +35,8 @@ class Context {
   const Internal::Tree* treeForSymbolIdentifier(const char* identifier,
                                                 int length,
                                                 SymbolAbstractType type);
+  const Internal::Tree* treeForSymbolIdentifier(
+      const Internal::Tree* identifier);
   virtual bool setExpressionForSymbolAbstract(
       const JuniorExpression& expression, const SymbolAbstract& symbol) = 0;
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}

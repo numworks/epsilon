@@ -37,11 +37,19 @@ class Approximation final {
                                          abscissa, listElement)
         .toScalar();
   }
+
+  /* preparedFunction is scalar and must have been prepared with
+   * PrepareFunctionForApproximation. */
+  template <typename T>
+  static std::complex<T> RootPreparedToComplex(const Tree* preparedFunction,
+                                               T abscissa = NAN);
+
   /* preparedFunction is scalar or point, and must have been prepared with
    * PrepareFunctionForApproximation. */
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
       const Tree* preparedFunction, T abscissa);
+
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
    * left to default on projected trees. */
   template <typename T>

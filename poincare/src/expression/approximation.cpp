@@ -215,6 +215,19 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
                  : PointOrScalar<T>(yScalar);
 }
 
+template <typename T>
+std::complex<T> Approximation::RootPreparedToComplex(
+    const Tree* preparedFunction, T abscissa) {
+  Random::Context randomContext;
+  s_randomContext = &randomContext;
+  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, abscissa);
+  s_context = &context;
+  std::complex<T> result = ToComplex<T>(preparedFunction);
+  s_randomContext = nullptr;
+  s_context = nullptr;
+  return result;
+}
+
 /* Helpers */
 
 template <typename T>
@@ -1329,6 +1342,11 @@ template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
     const Tree*, bool, bool, float, int, AngleUnit, ComplexFormat);
 template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
     const Tree*, bool, bool, double, int, AngleUnit, ComplexFormat);
+
+template std::complex<float> Approximation::RootPreparedToComplex<float>(
+    const Tree*, float);
+template std::complex<double> Approximation::RootPreparedToComplex<double>(
+    const Tree*, double);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);

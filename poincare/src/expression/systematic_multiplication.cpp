@@ -17,14 +17,16 @@ const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
 static bool MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
-  if (child->isNumber() && next->isNumber() &&
-      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
-    // Merge numbers
-    merge = Number::Multiplication(child, next);
-  } else if (child->isInf() && next->isInf()) {
-    // inf*inf -> inf
+  if (child->isOne() || (child->isInf() && next->isInf())) {
+    // 1 * x -> x
+    // inf * inf -> inf
     child->removeTree();
     return true;
+  } else if (child->isNumber() && next->isNumber() &&
+             !((child->isMathematicalConstant()) ||
+               next->isMathematicalConstant())) {
+    // Merge numbers
+    merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
     merge = PatternMatching::CreateSimplify(
@@ -48,20 +50,20 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
 
 static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
                                             int* numberOfSiblings, bool* zero) {
+  assert(*numberOfSiblings > 0);
   bool changed = false;
   while (index < *numberOfSiblings) {
     if (child->isZero()) {
       *zero = true;
       return false;
     }
-    if (child->isOne()) {
-      child->removeTree();
-    } else if (!(index + 1 < *numberOfSiblings &&
-                 MergeMultiplicationChildWithNext(child))) {
+    if (!(index + 1 < *numberOfSiblings &&
+          MergeMultiplicationChildWithNext(child))) {
       // Child is neither 0, 1 and can't be merged with next child (or is last).
       return changed;
     }
     (*numberOfSiblings)--;
+    assert(*numberOfSiblings > 0);
     changed = true;
   }
   return changed;
@@ -71,6 +73,7 @@ static bool SimplifyMultiplicationChildRec(Tree* child, int index,
                                            int* numberOfSiblings,
                                            bool* multiplicationChanged,
                                            bool* zero) {
+  assert(*numberOfSiblings > 0);
   assert(index < *numberOfSiblings);
   // Merge child with right siblings as much as possible.
   bool childChanged =
@@ -119,10 +122,12 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   int n = multiplication->numberOfChildren();
   bool changed = false;
   bool zero = false;
+  assert(n > 1);
   /* Recursively merge children.
    * Keep track of n, changed status and presence of zero child. */
   SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed,
                                  &zero);
+  assert(n > 0);
   NAry::SetNumberOfChildren(multiplication, n);
   if (zero) {
     if (Infinity::HasInfinityChild(multiplication)) {

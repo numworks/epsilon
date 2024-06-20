@@ -9,6 +9,7 @@
 #include "parametric.h"
 #include "physical_constant.h"
 #include "symbol.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -61,6 +62,25 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
           // List of lists are forbidden
           return false;
         }
+      }
+      return true;
+    }
+    case Type::UserSymbol: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        return DeepCheckListLength(definition, ctx);
+      }
+      return true;
+    }
+    case Type::UserFunction: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        Tree* clone = t->clone();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        bool result = DeepCheckListLength(clone, ctx);
+        clone->removeTree();
+        return result;
       }
       return true;
     }
@@ -127,6 +147,25 @@ int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::RandIntNoRep:
       assert(Integer::Is<uint8_t>(t->child(2)));
       return Integer::Handler(t->child(2)).to<uint8_t>();
+    case Type::UserSymbol: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        return GetListLength(definition, ctx);
+      }
+      return k_nonListListLength;
+    }
+    case Type::UserFunction: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        Tree* clone = t->clone();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        int result = GetListLength(clone, ctx);
+        clone->removeTree();
+        return result;
+      }
+      // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
+    }
     default: {
       // TODO sort lists first to optimize GetListLength ?
       for (const Tree* child : t->children()) {
@@ -346,9 +385,19 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::Ceil:
     case Type::Sign:
     // case Type::Sqrt: TODO: Handle _m^(1/2)
-    case Type::UserFunction:
+    case Type::UserFunction: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        Tree* clone = t->clone();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        bool result = DeepCheckDimensions(clone, ctx);
+        clone->removeTree();
+        return result;
+      }
       unitsAllowed = true;
       break;
+    }
     case Type::Cos:
     case Type::Sin:
     case Type::Tan:
@@ -361,6 +410,13 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       return true;
     case Type::RandIntNoRep:
       return Integer::Is<uint8_t>(t->child(2));
+    case Type::UserSymbol: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        return DeepCheckDimensions(definition, ctx);
+      }
+      break;
+    }
     default:
       if (t->isLogicalOperatorOrBoolean()) {
         return true;
@@ -444,7 +500,6 @@ Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
     case Type::Floor:
     case Type::Ceil:
     case Type::Round:
-    case Type::UserFunction:
     case Type::Add:
     case Type::Sub:
     case Type::Cross:
@@ -485,6 +540,26 @@ Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
     case Type::List:
       return GetListLength(t, ctx) > 0 ? GetDimension(t->child(0), ctx)
                                        : Scalar();
+    case Type::UserSymbol: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        return GetDimension(definition, ctx);
+      }
+      return Scalar();
+    }
+    case Type::UserFunction: {
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      if (definition) {
+        Tree* clone = t->clone();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        Dimension result = GetDimension(clone, ctx);
+        clone->removeTree();
+        return result;
+      }
+      // TODO: Maybe scalar ?
+      return GetDimension(t->child(0), ctx);
+    }
     case Type::ACos:
     case Type::ASin:
     case Type::ATan:

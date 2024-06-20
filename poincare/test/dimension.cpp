@@ -1,29 +1,31 @@
+#include <apps/shared/global_context.h>
 #include <poincare/src/expression/dimension.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
-bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0)) {
+bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
+         Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
-  bool result = Dimension::DeepCheckDimensions(expression) &&
-                d == Dimension::GetDimension(expression);
+  bool result = Dimension::DeepCheckDimensions(expression, ctx) &&
+                d == Dimension::GetDimension(expression, ctx);
   expression->removeTree();
   return result;
 }
 
-bool len(const char* input, int n) {
+bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
-  assert(Dimension::DeepCheckDimensions(expression));
-  bool result = Dimension::GetListLength(expression) == n;
+  assert(Dimension::DeepCheckDimensions(expression, ctx));
+  bool result = Dimension::GetListLength(expression, ctx) == n;
   expression->removeTree();
   return result;
 }
 
-bool hasInvalidDimOrLen(const char* input) {
+bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
-  bool result = !Dimension::DeepCheckDimensions(expression) ||
-                !Dimension::DeepCheckListLength(expression);
+  bool result = !Dimension::DeepCheckDimensions(expression, ctx) ||
+                !Dimension::DeepCheckListLength(expression, ctx);
   expression->removeTree();
   return result;
 }
@@ -109,5 +111,26 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*[[1]]"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*_m"));
 
+  Shared::GlobalContext globalContext;
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
+  store("2→a", &globalContext);
+  store("{4,2}→b", &globalContext);
+  store("(1,3)→c", &globalContext);
+  store("33_m→d", &globalContext);
+  store("{x,2*x}→g(x)", &globalContext);
+  store("(x,2*x)→h(x)", &globalContext);
+  store("x+33_m→j(x)", &globalContext);
+
+  QUIZ_ASSERT(dim("a", Scalar, &globalContext));
+  QUIZ_ASSERT(dim("c", Point, &globalContext));
+  QUIZ_ASSERT(len("h(b)", 2, &globalContext));
+  QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, &globalContext));
+  QUIZ_ASSERT(hasInvalidDimOrLen("j(d)", &globalContext));
+  QUIZ_ASSERT(hasInvalidDimOrLen("j(c)", &globalContext));
+
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

@@ -562,15 +562,11 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     }
     return Coordinate2D<T>(t, value);
   }
-  if (e.type() == ExpressionNode::Type::Dependency) {
-    e = e.childAtIndex(0);
-  }
   if (e.isUndefined()) {
     return Coordinate2D<T>(NAN, NAN);
   }
   assert(e.type() == ExpressionNode::Type::Point);
-  return Coordinate2D<T>(e.childAtIndex(0).approximateToScalarWithValue<T>(t),
-                         e.childAtIndex(1).approximateToScalarWithValue<T>(t));
+  return e.approximateToPointOrScalarWithValue<T>(t).toPoint();
 }
 
 ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)

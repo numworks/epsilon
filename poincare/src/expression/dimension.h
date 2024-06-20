@@ -96,6 +96,8 @@ struct Dimension {
   static bool DeepCheckDimensions(const Tree* t,
                                   Poincare::Context* ctx = nullptr);
 
+  static void ReplaceTreeWithDimensionedType(Tree* e, Type type);
+
   DimensionType type;
   union {
     MatrixDimension matrix;

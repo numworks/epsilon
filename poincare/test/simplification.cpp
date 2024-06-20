@@ -280,7 +280,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("transpose([[√(4)]])", "[[2]]");
 
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
-  simplifies_to("undef*[[2][4]]", "undef");  // TODO_PCJ: [[undef][undef]]
+  simplifies_to("undef*[[2][4]]", "[[undef][undef]]");
   simplifies_to("[[1/0][4]]", "[[undef][4]]");
 }
 

@@ -589,4 +589,32 @@ bool Dimension::operator==(const Dimension& other) const {
   return true;
 }
 
+void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
+  assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  int length = Dimension::GetListLength(e);
+  if (length >= 0) {
+    // Push ListSequence instead of a list to delay its expansion.
+    SharedTreeStack->push(Type::ListSequence);
+    KVarK->clone();
+    Integer::Push(length);
+  }
+  Dimension dim = Dimension::GetDimension(e);
+  if (dim.isMatrix()) {
+    int nRows = dim.matrix.rows;
+    int nCols = dim.matrix.cols;
+    SharedTreeStack->push<Type::Matrix>(nRows, nCols);
+    for (int i = 0; i < nRows * nCols; i++) {
+      SharedTreeStack->push(type);
+    }
+  } else if (dim.isPoint()) {
+    SharedTreeStack->push(Type::Point);
+    SharedTreeStack->push(type);
+    SharedTreeStack->push(type);
+  } else {
+    SharedTreeStack->push(type);
+  }
+  e->moveTreeOverTree(result);
+}
+
 }  // namespace Poincare::Internal

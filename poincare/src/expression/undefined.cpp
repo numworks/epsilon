@@ -3,6 +3,8 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 
+#include "dimension.h"
+
 namespace Poincare::Internal {
 
 bool Undefined::CanBeUndefined(const Tree* e) {
@@ -11,7 +13,8 @@ bool Undefined::CanBeUndefined(const Tree* e) {
 }
 
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
-  return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0);
+  return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0) ||
+         (e->isListSequence() && childIndex == 2);
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
@@ -28,8 +31,7 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   if (worstType == Type::Zero) {
     return false;
   }
-  e->moveTreeOverTree(SharedTreeStack->push(worstType));
-  assert(e->isUndefined());
+  Dimension::ReplaceTreeWithDimensionedType(e, worstType);
   return true;
 }
 

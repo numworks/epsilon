@@ -21,12 +21,14 @@ std::string toLatexString(const UserExpression* expression) {
   return std::string(buffer, strlen(buffer));
 }
 
+// TODO: This will be deleted once ReductionContext is binded to js
 SystemExpression cloneAndReduce(const UserExpression* expression) {
   EmptyContext context;
   return expression->cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
 }
 
+// TODO: This will be deleted once ReductionContext is binded to js
 UserExpression cloneAndBeautify(const ProjectedExpression* expression) {
   EmptyContext context;
   return expression->cloneAndBeautify(
@@ -38,13 +40,13 @@ SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
   return expression->getSystemFunction(var.c_str(), true);
 }
 
+// TODO: This will be deleted once ApproximationContext is binded to js
 SystemExpression approximateToTreeDouble(const SystemExpression* expression) {
   EmptyContext context;
   const ApproximationContext approxContext(&context);
   return expression->approximateToTree<double>(approxContext);
 }
 
-// Binding code
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
       .function("isUninitialized", &PoolHandle::isUninitialized);

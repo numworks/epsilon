@@ -8,12 +8,14 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-/* Bind JSTree to JavaScript type Uint8Array
+/* Bind Uint8Array to JavaScript type
  * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
  * */
 EMSCRIPTEN_DECLARE_VAL_TYPE(Uint8Array);
 
-// Copy Uint8Array bytes on the tree stack and then build an expression from it
+// TODO: This method should be differentiated from each type of expression
+/* Copy Javascript Uint8Array bytes on the tree stack and then build an
+ * expression from it */
 JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree) {
   size_t treeSize = jsTree["length"].as<size_t>();
   if (treeSize == 0) {
@@ -35,7 +37,7 @@ JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree) {
   return JuniorExpression::Builder(tree);
 }
 
-// Build an Uint8Array from the tree bytes
+// Create a JavaScript Uint8Array from the given expression tree
 Uint8Array ExpressionToUint8Array(const JuniorExpression expression) {
   const Internal::Tree* tree = expression.tree();
   if (!tree) {

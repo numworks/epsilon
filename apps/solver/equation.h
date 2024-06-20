@@ -15,8 +15,6 @@ class Equation : public Shared::ExpressionModelHandle {
     return m_model.standardForm(this, context, replaceFunctionsButNotSymbols,
                                 reductionTarget);
   }
-  bool containsIComplex(Poincare::Context* context,
-                        Poincare::SymbolicComputation replaceSymbols) const;
   CodePoint symbol() const override { return 0; }
 
  private:

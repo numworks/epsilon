@@ -18,11 +18,6 @@ using namespace Shared;
 
 namespace Solver {
 
-bool Equation::containsIComplex(Context* context,
-                                SymbolicComputation replaceSymbols) const {
-  return expressionClone().hasComplexI(context, replaceSymbols);
-}
-
 SystemExpression Equation::Model::standardForm(
     const Storage::Record* record, Context* context,
     bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {

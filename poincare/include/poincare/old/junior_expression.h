@@ -413,15 +413,6 @@ class JuniorExpression : public OExpression {
   // Swap
   void swapChildrenInPlace(int i, int j) { assert(false); }
 #endif
-
-#ifdef TARGET_POINCARE_JS
-  static UserExpression ParseLatexFromString(std::string latex);
-  std::string toLatexString() const;
-  SystemExpression cloneAndReduce() const;
-  UserExpression cloneAndBeautify() const;
-  SystemFunction getSystemFunctionFromString(std::string var) const;
-  SystemExpression approximateToTreeDouble() const;
-#endif
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is Matrix

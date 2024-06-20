@@ -1,5 +1,5 @@
 #include <emscripten/bind.h>
-#include <poincare/js_bridge/tree_converter.h>
+#include <emscripten/val.h>
 #include <poincare/old/junior_expression.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -8,9 +8,13 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
+/* Bind JSTree to JavaScript type Uint8Array
+ * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
+ * */
+EMSCRIPTEN_DECLARE_VAL_TYPE(Uint8Array);
+
 // Copy Uint8Array bytes on the tree stack and then build an expression from it
-JuniorExpression TreeConverter::Uint8ArrayToExpression(
-    const Uint8Array& jsTree) {
+JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree) {
   size_t treeSize = jsTree["length"].as<size_t>();
   if (treeSize == 0) {
     return JuniorExpression();
@@ -32,8 +36,7 @@ JuniorExpression TreeConverter::Uint8ArrayToExpression(
 }
 
 // Build an Uint8Array from the tree bytes
-Uint8Array TreeConverter::ExpressionToUint8Array(
-    const JuniorExpression expression) {
+Uint8Array ExpressionToUint8Array(const JuniorExpression expression) {
   const Internal::Tree* tree = expression.tree();
   if (!tree) {
     // Equivalent to the js code "new Uint8Array()"
@@ -49,11 +52,8 @@ Uint8Array TreeConverter::ExpressionToUint8Array(
 
 EMSCRIPTEN_BINDINGS(tree_converter) {
   register_type<Uint8Array>("Uint8Array");
-  class_<TreeConverter>("PCR_TreeConverter")
-      .class_function("Uint8ArrayToExpression",
-                      &TreeConverter::Uint8ArrayToExpression)
-      .class_function("ExpressionToUint8Array",
-                      &TreeConverter::ExpressionToUint8Array);
+  function("Uint8ArrayToPCRExpression", &Uint8ArrayToExpression);
+  function("PCRExpressionToUint8Array", &ExpressionToUint8Array);
 }
 
 }  // namespace Poincare::JSBridge

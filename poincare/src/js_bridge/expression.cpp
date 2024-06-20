@@ -5,43 +5,43 @@
 #include <string>
 using namespace emscripten;
 
-namespace Poincare {
+namespace Poincare::JSBridge {
 
-UserExpression JuniorExpression::ParseLatexFromString(std::string latex) {
+UserExpression ParseLatexFromString(std::string latex) {
   EmptyContext context;
   return JuniorExpression::ParseLatex(latex.c_str(), &context);
 }
 
-std::string UserExpression::toLatexString() const {
+std::string toLatexString(const UserExpression* expression) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
-  toLatex(buffer, k_bufferSize, Preferences::PrintFloatMode::Decimal, 7,
-          &context);
+  expression->toLatex(buffer, k_bufferSize,
+                      Preferences::PrintFloatMode::Decimal, 7, &context);
   return std::string(buffer, strlen(buffer));
 }
 
-SystemExpression UserExpression::cloneAndReduce() const {
+SystemExpression cloneAndReduce(const UserExpression* expression) {
   EmptyContext context;
-  return cloneAndReduce(
+  return expression->cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
 }
 
-UserExpression ProjectedExpression::cloneAndBeautify() const {
+UserExpression cloneAndBeautify(const ProjectedExpression* expression) {
   EmptyContext context;
-  return cloneAndBeautify(
+  return expression->cloneAndBeautify(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
 }
 
-SystemFunction SystemExpression::getSystemFunctionFromString(
-    std::string var) const {
-  return getSystemFunction(var.c_str(), true);
+SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
+                                           std::string var) {
+  return expression->getSystemFunction(var.c_str(), true);
 }
 
-SystemExpression SystemExpression::approximateToTreeDouble() const {
+SystemExpression approximateToTreeDouble(const SystemExpression* expression) {
   EmptyContext context;
   const ApproximationContext approxContext(&context);
-  return approximateToTree<double>(approxContext);
+  return expression->approximateToTree<double>(approxContext);
 }
 
 // Binding code
@@ -50,17 +50,16 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("isUninitialized", &PoolHandle::isUninitialized);
   class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
       .constructor<>()
-      .class_function("ParseLatex", &JuniorExpression::ParseLatexFromString)
-      .function("toLatex", &JuniorExpression::toLatexString)
-      .function("cloneAndReduce", select_overload<SystemExpression() const>(
-                                      &JuniorExpression::cloneAndReduce))
-      .function("cloneAndBeautify", select_overload<UserExpression() const>(
-                                        &JuniorExpression::cloneAndBeautify))
-      .function("getSystemFunction",
-                &JuniorExpression::getSystemFunctionFromString)
-      .function("approximateToTree", &JuniorExpression::approximateToTreeDouble)
+      .class_function("ParseLatex", &ParseLatexFromString)
+      .function("toLatex", &toLatexString, allow_raw_pointers())
+      .function("cloneAndReduce", &cloneAndReduce, allow_raw_pointers())
+      .function("cloneAndBeautify", &cloneAndBeautify, allow_raw_pointers())
+      .function("getSystemFunction", &getSystemFunctionFromString,
+                allow_raw_pointers())
+      .function("approximateToTree", &approximateToTreeDouble,
+                allow_raw_pointers())
       .function("approximateToScalarWithValue",
                 &JuniorExpression::approximateToScalarWithValue<double>);
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::JSBridge

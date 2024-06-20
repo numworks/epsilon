@@ -35,15 +35,15 @@ double evaluate(const Regression::Regression* reg,
 }
 
 EMSCRIPTEN_BINDINGS(regression) {
-  class_<Regression::Series>("Series").allow_subclass<SeriesWrapper>(
-      "SeriesWrapper");
+  class_<Regression::Series>("PCR_Series")
+      .allow_subclass<SeriesWrapper>("PCR_SeriesWrapper");
 
   enum_<Regression::Regression::Type>("RegressionType")
       .value("Linear", Regression::Regression::Type::LinearAxpb)
       .value("Quadratic", Regression::Regression::Type::Quadratic)
       .value("Cubic", Regression::Regression::Type::Cubic);
 
-  class_<Regression::Regression>("Regression")
+  class_<Regression::Regression>("PCR_Regression")
       /* The regression object return by Get is a static const object,
        * policy::reference tells JS it does not have the ownership on it. */
       .constructor(&Regression::Regression::Get,

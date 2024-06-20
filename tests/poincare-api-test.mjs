@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
-import InitPoincare from './poincare.mjs'
+import Poincare from './poincare.mjs'
 
-var Poincare = await InitPoincare()
+var Poincare = await Poincare()
 
-class ArraySeries extends Poincare.Series.extend("Series", {}) {
+class ArraySeries extends Poincare.Series.extend("PCR_Series", {}) {
   constructor(x, y) {
     super()
     if (x.length != y.length) {
@@ -25,7 +25,7 @@ class ArraySeries extends Poincare.Series.extend("Series", {}) {
 
 var series = new ArraySeries([1.0, 8.0, 14.0, 79.0],
                              [-3.581, 20.296, 40.676, 261.623]);
-var regression = new Poincare.Regression(Poincare.RegressionType.Linear);
+var regression = new Poincare.PCR_Regression(Poincare.RegressionType.Linear);
 var coefficients = regression.fit(series);
 
 assert.deepEqual(coefficients, [ 3.3995413996411177, -6.934805690848492, NaN, NaN, NaN ])

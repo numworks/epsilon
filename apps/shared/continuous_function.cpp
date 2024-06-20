@@ -333,7 +333,8 @@ int ContinuousFunction::derivationOrderFromRelativeIndex(
 
 int ContinuousFunction::derivationOrderFromSubCurveIndex(
     int subCurveIndex) const {
-  assert(0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true));
+  assert(numberOfSubCurves() == 0 ||
+         (0 <= subCurveIndex && subCurveIndex < numberOfSubCurves(true)));
   return numberOfSubCurves() > 1
              ? 0
              : derivationOrderFromRelativeIndex(subCurveIndex,
@@ -549,15 +550,13 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   }
 
   if (!properties().isParametric()) {
-    // TODO: set default subCurveIndex at -1
-    int listElement = -1;
     if (numberOfSubCurves() >= 2) {
+      assert(subCurveIndex >= 0);
       assert(derivationOrder == 0);
       assert(e.type() == ExpressionNode::Type::List);
       assert(static_cast<List &>(e).numberOfChildren() > subCurveIndex);
-      listElement = subCurveIndex;
     }
-    T value = e.approximateToScalarWithValue<T>(t, listElement);
+    T value = e.approximateToScalarWithValue<T>(t, subCurveIndex);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(value, t);

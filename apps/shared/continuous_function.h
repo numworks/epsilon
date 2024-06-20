@@ -299,11 +299,11 @@ class ContinuousFunction : public Function {
   // Evaluate XY at parameter (distinct from approximation with Polar types)
   template <typename T>
   Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(
-      T t, Poincare::Context *context, int subCurveIndex = 0) const;
+      T t, Poincare::Context *context, int subCurveIndex = -1) const;
   // Approximate XY at parameter
   template <typename T>
   Poincare::Coordinate2D<T> templatedApproximateAtParameter(
-      T t, Poincare::Context *context, int subCurveIndex = 0) const;
+      T t, Poincare::Context *context, int subCurveIndex = -1) const;
 
   /* Record */
 

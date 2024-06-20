@@ -280,8 +280,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("transpose([[√(4)]])", "[[2]]");
 
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
-  simplifies_to("undef*[[2][4]]", "undef");
-  simplifies_to("[[1/0][4]]", "undef");
+  simplifies_to("undef*[[2][4]]", "undef");  // TODO_PCJ: [[undef][undef]]
+  simplifies_to("[[1/0][4]]", "[[undef][4]]");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
@@ -757,13 +757,17 @@ QUIZ_CASE(pcj_simplification_unit) {
 
 QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("0^(5+ln(5))", "0");
-  simplifies_to("[[x/x]]", "dep([[1]],{x^0})");
+  simplifies_to("[[x/x]]", "[[dep(1,{x^0})]]");
   simplifies_to("lcm(undef, 2+x/x)", "undef");
   simplifies_to(
       "{(x, 2), (x/x, 2), (3, undef), (1 , piecewise(x/x + (a + b)^2 - 2*a*b, "
       "x + y/y>2, undef))}",
       "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(a^2+b^2+1,{x^0}),"
       "(x+1)>2,undef),{y^0}))}");
+
+  simplifies_to("{1,undef}", "{1,undef}");
+  simplifies_to("[[1,undef]]", "[[1,undef]]");
+  simplifies_to("(1,undef)", "(1,undef)");
 
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->clone();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KSet(0_e));

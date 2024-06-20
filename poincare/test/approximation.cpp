@@ -196,7 +196,8 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("{√(-1),1/0}", "{nonreal,undef}");
   approximates_to<float>("(√(-1),2)", "(undef,undef)");  // TODO: (nonreal,2)
   approximates_to<float>("(1/0,2)", "(undef,2)");
-  approximates_to<float>("[[√(-1),2]]", "nonreal");  // TODO: [[nonreal,2]] ?
+  approximates_to<float>("[[√(-1),2]]",
+                         "[[undef,undef]]");  // TODO: [[nonreal,2]] ?
 }
 
 QUIZ_CASE(pcj_approximation_units) {

@@ -31,9 +31,10 @@ class Approximation final {
   /* preparedFunction is scalar and must have been prepared with
    * PrepareFunctionForApproximation. */
   template <typename T>
-  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa) {
+  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa,
+                              int listElement = -1) {
     return RootToPointOrScalarPrivate<T>(preparedFunction, false, true,
-                                         abscissa)
+                                         abscissa, listElement)
         .toScalar();
   }
   /* preparedFunction is scalar or point, and must have been prepared with
@@ -47,7 +48,7 @@ class Approximation final {
   static T RootTreeToReal(const Tree* scalarTree,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate<T>(scalarTree, false, false, NAN,
+    return RootToPointOrScalarPrivate<T>(scalarTree, false, false, NAN, -1,
                                          angleUnit, complexFormat)
         .toScalar();
   }
@@ -137,7 +138,7 @@ class Approximation final {
   template <typename T>
   static PointOrScalar<T> RootToPointOrScalarPrivate(
       const Tree* tree, bool isPoint, bool isPrepared = true, T abscissa = NAN,
-      AngleUnit angleUnit = AngleUnit::Radian,
+      int listElement = -1, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real);
 
   // tree must be of given dimension and list length.
@@ -203,7 +204,7 @@ class Approximation final {
     using VariableType = double;
     Context(AngleUnit angleUnit = AngleUnit::Radian,
             ComplexFormat complexFormat = ComplexFormat::Cartesian,
-            VariableType abscissa = NAN);
+            VariableType abscissa = NAN, int listElement = -1);
 
     VariableType variable(uint8_t index) const {
       return m_variables[indexForVariable(index)];

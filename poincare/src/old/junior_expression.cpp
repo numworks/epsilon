@@ -501,8 +501,8 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
 /* TODO_PCJ: This cannot be called on system expressions, but rather on
  * ScalarSystemFunction */
 template <typename T>
-T SystemExpression::approximateToScalarWithValue(T x) const {
-  return Approximation::RootPreparedToReal<T>(tree(), x);
+T SystemExpression::approximateToScalarWithValue(T x, int listElement) const {
+  return Approximation::RootPreparedToReal<T>(tree(), x, listElement);
 }
 
 template <typename T>
@@ -1097,9 +1097,9 @@ template SystemExpression SystemExpression::approximateListAndSort<float>()
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
-template float SystemFunction::approximateToScalarWithValue<float>(float) const;
+template float SystemFunction::approximateToScalarWithValue<float>(float, int) const;
 template double SystemFunction::approximateToScalarWithValue<double>(
-    double) const;
+    double, int) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char* text, Context* context,

@@ -197,7 +197,7 @@ class JuniorExpression : public OExpression {
                                    bool scalarsOnly = false) const;
   // Approximate to scalar replacing Var0 with value.
   template <typename T>
-  T approximateToScalarWithValue(T x) const;
+  T approximateToScalarWithValue(T x, int listElement = -1) const;
   // Approximate to PointOrScalar replacing Var0 with value.
   template <typename T>
   PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;

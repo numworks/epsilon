@@ -54,17 +54,13 @@ Random::Context* Approximation::s_randomContext = nullptr;
 
 Approximation::Context::Context(AngleUnit angleUnit,
                                 ComplexFormat complexFormat,
-                                VariableType abscissa)
+                                VariableType abscissa, int listElement)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
       m_variablesOffset(k_maxNumberOfVariables),
-      m_encounteredComplex(false)
-#if ASSERTIONS
-      ,
-      m_listElement(-1),
-      m_pointElement(-1)
-#endif
-{
+      m_encounteredComplex(false),
+      m_listElement(listElement),
+      m_pointElement(-1) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_variables[i] = NAN;
   }
@@ -191,10 +187,10 @@ Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
 template <typename T>
 PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
     const Tree* node, bool isPoint, bool isPrepared, T abscissa,
-    AngleUnit angleUnit, ComplexFormat complexFormat) {
+    int listElement, AngleUnit angleUnit, ComplexFormat complexFormat) {
   Random::Context randomContext;
   s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat, abscissa);
+  Context context(angleUnit, complexFormat, abscissa, listElement);
   s_context = &context;
   Tree* clone;
   if (!isPrepared) {
@@ -1328,9 +1324,9 @@ template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
 template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
     const Tree*, double);
 template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, bool, float, AngleUnit, ComplexFormat);
+    const Tree*, bool, bool, float, int, AngleUnit, ComplexFormat);
 template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, bool, double, AngleUnit, ComplexFormat);
+    const Tree*, bool, bool, double, int, AngleUnit, ComplexFormat);
 
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);

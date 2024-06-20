@@ -549,13 +549,15 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   }
 
   if (!properties().isParametric()) {
+    // TODO: set default subCurveIndex at -1
+    int listElement = -1;
     if (numberOfSubCurves() >= 2) {
       assert(derivationOrder == 0);
       assert(e.type() == ExpressionNode::Type::List);
       assert(static_cast<List &>(e).numberOfChildren() > subCurveIndex);
-      e = e.childAtIndex(subCurveIndex);
+      listElement = subCurveIndex;
     }
-    T value = e.approximateToScalarWithValue<T>(t);
+    T value = e.approximateToScalarWithValue<T>(t, listElement);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(value, t);

@@ -286,7 +286,7 @@ class ContinuousFunction : public Function {
     return m_model.expressionDerivateReduced(this, context, derivationOrder);
   }
   // Return the reduced expression of the slope (dy/dx)
-  Poincare::SystemFunction expressionSlopeReduced(
+  Poincare::SystemFunctionScalar expressionSlopeReduced(
       Poincare::Context *context) const {
     return m_model.expressionSlopeReduced(this, context);
   }
@@ -426,7 +426,7 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record *record, Poincare::Context *context,
         int derivationOrder) const;
     // Return the slope (dy/dx)
-    Poincare::SystemFunction expressionSlopeReduced(
+    Poincare::SystemFunctionScalar expressionSlopeReduced(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
@@ -465,7 +465,7 @@ class ContinuousFunction : public Function {
     mutable Poincare::SystemFunction m_expressionFirstDerivateApproximated;
     mutable Poincare::SystemExpression m_expressionSecondDerivate;
     mutable Poincare::SystemFunction m_expressionSecondDerivateApproximated;
-    mutable Poincare::SystemExpression m_expressionSlope;
+    mutable Poincare::SystemFunctionScalar m_expressionSlope;
   };
 
   // Return model pointer

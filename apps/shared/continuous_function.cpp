@@ -184,7 +184,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context *context) const {
-  SystemFunction equation = expressionReduced(context);
+  SystemExpression equation = expressionReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
   return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2,
                                                         approximationContext);
@@ -961,7 +961,7 @@ SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
   return *derivative;
 }
 
-SystemFunction ContinuousFunction::Model::expressionSlopeReduced(
+SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
     const Ion::Storage::Record *record, Context *context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
@@ -1107,7 +1107,7 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
   }
   if (treePoolCursor == nullptr ||
       m_expressionSlope.isDownstreamOf(treePoolCursor)) {
-    m_expressionSlope = SystemExpression();
+    m_expressionSlope = SystemFunctionScalar();
   }
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {

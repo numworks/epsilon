@@ -76,7 +76,8 @@ static Coordinate2D<T> evaluatorSecondCurve(T t, const void *model,
 template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
                                                      Context *context) {
-  const SystemFunction *e = static_cast<const SystemFunction *>(model);
+  const SystemFunctionPoint *e =
+      static_cast<const SystemFunctionPoint *>(model);
   assert(e->type() == ExpressionNode::Type::Point);
   assert(coordinate == 0 || coordinate == 1);
   // TODO: Approximating the other coordinate could be skipped for performances.
@@ -125,7 +126,7 @@ Range2D<float> GraphController::optimalRange(
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      SystemParametricFunction e = f->parametricForm(context).getSystemFunction(
+      SystemFunctionPoint e = f->parametricForm(context).getSystemFunction(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];

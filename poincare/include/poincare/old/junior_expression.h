@@ -32,9 +32,9 @@ using SystemExpression = ProjectedExpression;
 // Can depend on a Variable and has been prepared for approximation
 using SystemFunction = NoContextExpression;
 // SystemFunction with Scalar approximation
-using SystemCartesianFunction = SystemFunction;
+using SystemFunctionScalar = SystemFunction;
 // SystemFunction with Point approximation
-using SystemParametricFunction = SystemFunction;
+using SystemFunctionPoint = SystemFunction;
 
 class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;

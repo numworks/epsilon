@@ -20,21 +20,6 @@ namespace Poincare::Internal {
 /* The macro RANGE(name, start, end) creates a named group of previously
  * declared nodes. */
 
-// Helper to return struct names such as AbsLayoutNode
-#define NODE_NAME__(F) F##Node
-#define NODE_NAME_(F) NODE_NAME__(F)
-#define NODE_NAME(F) NODE_NAME_(SCOPED_NODE(F))
-
-/* Boilerplate to alias NODE(F) as NODE3(F, 0, 0), NODE3 is the varying macro.
- * The first VA_ARGS will push the other arguments of GET4TH allowing it to
- * select the suitable NODE_X macro and call it with the second VA_ARGS list.
- * With 2 args, we have GET4TH(A, B, NODE3, NODE2)(A, B) => NODE2(A, B) */
-#define GET4TH(A, B, C, D, ...) D
-#define NODE1(F) NODE_USE(F, 0, 0)
-#define NODE2(F, N) NODE_USE(F, N, 0)
-#define NODE3(F, N, S) NODE_DECL(F, S) NODE_USE(F, N, sizeof(NODE_NAME(F)))
-#define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
-
 /* Declarations of custom node structs, they are processed only for nodes with 3
  * arguments, ie with a custom node. */
 
@@ -68,13 +53,9 @@ enum class LayoutType : uint8_t {
 /* Members of LayoutType have the same values as their Type counterpart
  * NODE(Fraction) => Fraction = Type::FractionLayout,
  */
-#define RANGE(...)
-#define NODE_DECL(...)
+#define ONLY_LAYOUTS 1
 #define NODE_USE(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
-#include <poincare/src/layout/types.h>
-#undef NODE_DECL
-#undef NODE_USE
-#undef RANGE
+#include "types.h"
 };
 
 class TypeBlock : public Block {
@@ -263,12 +244,6 @@ class TypeBlock : public Block {
     }
   }
 };
-
-#undef GET4TH
-#undef NODE1
-#undef NODE2
-#undef NODE3
-#undef NODE
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

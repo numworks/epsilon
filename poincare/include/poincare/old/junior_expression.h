@@ -127,6 +127,9 @@ class JuniorExpression : public OExpression {
   static UserExpression Parse(const char* layout, Context* context,
                               bool addMissingParenthesis = true,
                               bool parseForAssignment = false);
+  static UserExpression ParseLatex(const char* latex, Context* context,
+                                   bool addMissingParenthesis = true,
+                                   bool parseForAssignment = false);
 
   static NewExpression Create(const Internal::Tree* structure,
                               Internal::ContextTrees ctx);
@@ -242,6 +245,11 @@ class JuniorExpression : public OExpression {
    * coefficients has up to 3 entries.  */
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 SystemExpression coefficients[]) const;
+
+  char* toLatex(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits, Context* context,
+                bool forceStripMargin = false, bool nested = false) const;
 
 #if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
@@ -404,6 +412,15 @@ class JuniorExpression : public OExpression {
   void mergeChildrenAtIndexInPlace(PoolHandle t, int i) { assert(false); }
   // Swap
   void swapChildrenInPlace(int i, int j) { assert(false); }
+#endif
+
+#ifdef TARGET_POINCARE_JS
+  static UserExpression ParseLatexFromString(std::string latex);
+  std::string toLatexString() const;
+  SystemExpression cloneAndReduce() const;
+  UserExpression cloneAndBeautify() const;
+  SystemFunction getSystemFunctionFromString(std::string var) const;
+  SystemExpression approximateToTreeDouble() const;
 #endif
 };
 

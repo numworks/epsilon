@@ -27,6 +27,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/layoutter.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/layout/parsing/parsing_context.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
@@ -187,6 +188,19 @@ UserExpression UserExpression::Parse(const char* string, Context* context,
     return UserExpression();
   }
   Tree* layout = RackFromText(string);
+  if (!layout) {
+    return UserExpression();
+  }
+  UserExpression result =
+      Parse(layout, context, addMissingParenthesis, parseForAssignment);
+  layout->removeTree();
+  return result;
+}
+
+UserExpression UserExpression::ParseLatex(const char* latex, Context* context,
+                                          bool addMissingParenthesis,
+                                          bool parseForAssignment) {
+  Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
     return UserExpression();
   }
@@ -640,6 +654,17 @@ int SystemExpression::getPolynomialReducedCoefficients(
     }
   }
   return degree;
+}
+
+char* UserExpression::toLatex(char* buffer, int bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits, Context* context,
+                              bool forceStripMargin, bool nested) const {
+  return LatexParser::LayoutToLatex(
+      Rack::From(createLayout(floatDisplayMode, numberOfSignificantDigits,
+                              context, forceStripMargin, nested)
+                     .tree()),
+      buffer, buffer + bufferSize - 1);
 }
 
 NewExpression NewExpression::replaceSymbolWithExpression(

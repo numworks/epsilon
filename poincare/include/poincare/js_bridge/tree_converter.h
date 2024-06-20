@@ -31,22 +31,24 @@
 
 namespace Poincare {
 
-namespace Internal {
-class Tree;
-}
+class JuniorExpression;
 
 namespace JSBridge {
-
 /* Bind JSTree to JavaScript type Uint8Array
  * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
  * */
-EMSCRIPTEN_DECLARE_VAL_TYPE(JSTree);
+EMSCRIPTEN_DECLARE_VAL_TYPE(Uint8Array);
 
-// Copy the bytes of the given JavaScript Uint8Array onto the stack
-Internal::Tree* CloneJSTreeOnStack(const JSTree& jsTree);
-// Create a JavaScript Uint8Array from the given tree bytes
-JSTree JSTreeBuilder(const Internal::Tree* tree);
+class TreeConverter {
+ public:
+  // TODO: This method should be differentiated from each type of expression
+  // Copy the bytes of the given JavaScript Uint8Array onto the pool
+  static JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree);
+  // Create a JavaScript Uint8Array from the given expression tree
+  static Uint8Array ExpressionToUint8Array(const JuniorExpression expression);
+};
 
 }  // namespace JSBridge
+
 }  // namespace Poincare
 #endif

@@ -1,98 +1,66 @@
 #include <emscripten/bind.h>
-#include <poincare/js_bridge/expression.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/junior_layout.h>
-#include <poincare/src/expression/approximation.h>
-#include <poincare/src/layout/parser.h>
-#include <poincare/src/layout/parsing/latex_parser.h>
-#include <poincare/src/layout/rack.h>
-#include <poincare/src/memory/tree.h>
 
 #include <string>
 using namespace emscripten;
 
-namespace Poincare::JSBridge {
+namespace Poincare {
 
-// === Helpers ===
-
-JSTree JSTreeBuilder(JuniorExpression expression) {
-  return JSTreeBuilder(expression.tree());
+UserExpression JuniorExpression::ParseLatexFromString(std::string latex) {
+  EmptyContext context;
+  return JuniorExpression::ParseLatex(latex.c_str(), &context);
 }
 
-JuniorExpression JSTreeToExpression(const JSTree& jsTree) {
-  // the Tree is removed by the Builder
-  return JuniorExpression::Builder(CloneJSTreeOnStack(jsTree));
-}
-
-// === Expression functions ===
-
-// TODO: implement ParseLatex on JuniorExpression directly
-JSTree Expression::ParseLatex(std::string latex) {
-  Internal::Tree* layout = Internal::LatexParser::LatexToLayout(latex.c_str());
-  JuniorExpression expression = JuniorExpression();
-  if (layout) {
-    expression = JuniorExpression::Parse(layout, nullptr);
-    layout->removeTree();
-  }
-  return JSTreeBuilder(expression);
-}
-
-// TODO: implement toLatex on JuniorExpression directly
-std::string Expression::ToLatex(const JSTree& jsTree) {
-  JuniorExpression e = JSTreeToExpression(jsTree);
+std::string UserExpression::toLatexString() const {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
-  Internal::LatexParser::LayoutToLatex(
-      Internal::Rack::From(
-          e.createLayout(Preferences::PrintFloatMode::Decimal, 7, nullptr)
-              .tree()),
-      buffer, buffer + k_bufferSize - 1);
+  EmptyContext context;
+  toLatex(buffer, k_bufferSize, Preferences::PrintFloatMode::Decimal, 7,
+          &context);
   return std::string(buffer, strlen(buffer));
 }
 
-JSTree Expression::CloneAndReduce(const JSTree& jsTree) {
-  return JSTreeBuilder(
-      JSTreeToExpression(jsTree).cloneAndReduce(ReductionContext()));
+SystemExpression UserExpression::cloneAndReduce() const {
+  EmptyContext context;
+  return cloneAndReduce(
+      ReductionContext::DefaultReductionContextForAnalysis(&context));
 }
 
-JSTree Expression::CloneAndBeautify(const JSTree& jsTree) {
-  return JSTreeBuilder(
-      JSTreeToExpression(jsTree).cloneAndBeautify(ReductionContext()));
+UserExpression ProjectedExpression::cloneAndBeautify() const {
+  EmptyContext context;
+  return cloneAndBeautify(
+      ReductionContext::DefaultReductionContextForAnalysis(&context));
 }
 
-JSTree Expression::ApproximateToTree(const JSTree& jsTree) {
-  const ApproximationContext approxContext(nullptr);
-  return JSTreeBuilder(
-      JSTreeToExpression(jsTree).approximateToTree<double>(approxContext));
+SystemFunction SystemExpression::getSystemFunctionFromString(
+    std::string var) const {
+  return getSystemFunction(var.c_str(), true);
 }
 
-// TODO: implement approximateToScalar on JuniorExpression directly
-double Expression::ApproximateToScalar(const JSTree& jsTree) {
-  return JSTreeToExpression(jsTree).approximateToScalarWithValue<double>(NAN);
-}
-
-JSTree Expression::GetSystemFunction(const JSTree& jsTree, std::string var) {
-  return JSTreeBuilder(
-      JSTreeToExpression(jsTree).getSystemFunction(var.c_str(), true));
-}
-
-double Expression::ApproximateToScalarWithValue(const JSTree& jsTree,
-                                                double val) {
-  return JSTreeToExpression(jsTree).approximateToScalarWithValue<double>(val);
+SystemExpression SystemExpression::approximateToTreeDouble() const {
+  EmptyContext context;
+  const ApproximationContext approxContext(&context);
+  return approximateToTree<double>(approxContext);
 }
 
 // Binding code
-EMSCRIPTEN_BINDINGS(expression) {
-  class_<Expression>("Expression")
-      .class_function("ParseLatex", &Expression::ParseLatex)
-      .class_function("CloneAndReduce", &Expression::CloneAndReduce)
-      .class_function("CloneAndBeautify", &Expression::CloneAndBeautify)
-      .class_function("ToLatex", &Expression::ToLatex)
-      .class_function("ApproximateToTree", &Expression::ApproximateToTree)
-      .class_function("ApproximateToScalar", &Expression::ApproximateToScalar)
-      .class_function("GetSystemFunction", &Expression::GetSystemFunction)
-      .class_function("ApproximateToScalarWithValue",
-                      &Expression::ApproximateToScalarWithValue);
+EMSCRIPTEN_BINDINGS(junior_expression) {
+  class_<PoolHandle>("PCR_PoolHandle")
+      .function("isUninitialized", &PoolHandle::isUninitialized);
+  class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
+      .constructor<>()
+      .class_function("ParseLatex", &JuniorExpression::ParseLatexFromString)
+      .function("toLatex", &JuniorExpression::toLatexString)
+      .function("cloneAndReduce", select_overload<SystemExpression() const>(
+                                      &JuniorExpression::cloneAndReduce))
+      .function("cloneAndBeautify", select_overload<UserExpression() const>(
+                                        &JuniorExpression::cloneAndBeautify))
+      .function("getSystemFunction",
+                &JuniorExpression::getSystemFunctionFromString)
+      .function("approximateToTree", &JuniorExpression::approximateToTreeDouble)
+      .function("approximateToScalarWithValue",
+                &JuniorExpression::approximateToScalarWithValue<double>);
 }
 
-}  // namespace Poincare::JSBridge
+}  // namespace Poincare

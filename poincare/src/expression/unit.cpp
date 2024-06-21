@@ -1018,7 +1018,12 @@ bool Unit::KeepUnitsOnly(Tree* e) {
         didRemovedTree = true;
         break;
       }
-      NAry::SetNumberOfChildren(e, remainingChildren);
+      assert(remainingChildren > 0);
+      if (remainingChildren == 1) {
+        e->removeNode();
+      } else {
+        NAry::SetNumberOfChildren(e, remainingChildren);
+      }
       didRemovedTree = false;
       break;
     }

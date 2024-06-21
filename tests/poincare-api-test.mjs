@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict'
-import Poincare from './poincare.mjs'
+import InitPoincare from './poincare.mjs'
+import fs from 'fs'
 
-var Poincare = await Poincare()
+var wasmFile = fs.readFileSync('./poincare.wasm');
+const wasmBinary = new Uint8Array(wasmFile);
 
-class ArraySeries extends Poincare.Series.extend("PCR_Series", {}) {
+var Poincare = InitPoincare({ wasmBinary: wasmBinary });
+
+class ArraySeries extends Poincare.PCR_Series.extend("PCR_Series", {}) {
   constructor(x, y) {
     super()
     if (x.length != y.length) {

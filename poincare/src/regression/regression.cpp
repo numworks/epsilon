@@ -47,7 +47,7 @@ Poincare::UserExpression Regression::expression(
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
                             Poincare::Context* context) const {
-  // TODO: use evaluate to approximate instead of expression
+  // TODO: use the float evaluate() instead of approximating the expression
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;

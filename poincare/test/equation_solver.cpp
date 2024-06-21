@@ -8,20 +8,19 @@
 #include "helper.h"
 using namespace Poincare::Internal;
 
-using Solver = EquationSolver;
-
-bool check_solutions(std::initializer_list<const char*> inputs,
-                     std::initializer_list<const char*> outputs,
-                     ProjectionContext projectionContext,
-                     Solver::Error expectedError = Solver::Error::NoError) {
+bool check_solutions(
+    std::initializer_list<const char*> inputs,
+    std::initializer_list<const char*> outputs,
+    ProjectionContext projectionContext,
+    EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationSet = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }
-  Solver::Context context = Solver::Context();
-  Solver::Error error = Solver::Error::NoError;
-  Tree* solutions =
-      Solver::ExactSolve(equationSet, &context, projectionContext, &error);
+  EquationSolver::Context context = EquationSolver::Context();
+  EquationSolver::Error error = EquationSolver::Error::NoError;
+  Tree* solutions = EquationSolver::ExactSolve(equationSet, &context,
+                                               projectionContext, &error);
   quiz_assert(error == expectedError);
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() == outputs.size());
@@ -46,7 +45,7 @@ bool check_solutions(std::initializer_list<const char*> inputs,
   return true;
 }
 
-QUIZ_CASE(pcj_solver) {
+QUIZ_CASE(pcj_equation_solver) {
   Shared::GlobalContext globalContext;
   assert(
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
@@ -70,19 +69,20 @@ QUIZ_CASE(pcj_solver) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Errors
   check_solutions({"x+y+z", "x-y"}, {}, projCtx,
-                  Solver::Error::TooManyVariables);
-  check_solutions({"x^2", "y"}, {}, projCtx, Solver::Error::NonLinearSystem);
+                  EquationSolver::Error::TooManyVariables);
+  check_solutions({"x^2", "y"}, {}, projCtx,
+                  EquationSolver::Error::NonLinearSystem);
   check_solutions({"y*(1+x)", "y-1"}, {}, projCtx,
-                  Solver::Error::NonLinearSystem);
+                  EquationSolver::Error::NonLinearSystem);
   check_solutions({"x*y+y", "y-1"}, {}, projCtx,
-                  Solver::Error::NonLinearSystem);
+                  EquationSolver::Error::NonLinearSystem);
   check_solutions({"identity(3)"}, {}, projCtx,
-                  Solver::Error::EquationUndefined);
+                  EquationSolver::Error::EquationUndefined);
 
 #if 0
-  check_solutions({"x^2+1"}, {}, projCtx, Solver::Error::EquationNonreal);
+  check_solutions({"x^2+1"}, {}, projCtx, EquationSolver::Error::EquationNonreal);
   check_solutions({"sin(x)"}, {}, projCtx,
-                  Solver::Error::RequireApproximateSolution);
+                  EquationSolver::Error::RequireApproximateSolution);
 #endif
 }
 
@@ -92,14 +92,14 @@ void check_range(std::initializer_list<const char*> inputs, double min,
   for (const char* equation : inputs) {
     NAry::AddChild(equationSet, TextToTree(equation));
   }
-  Solver::Context context = Solver::Context();
+  EquationSolver::Context context = EquationSolver::Context();
   Poincare::Range1D<double> range =
-      Solver::AutomaticInterval(equationSet, &context);
+      EquationSolver::AutomaticInterval(equationSet, &context);
   quiz_assert(range.min() == min);
   quiz_assert(range.max() == max);
 }
 
-QUIZ_CASE(pcj_solver_auto_range) {
+QUIZ_CASE(pcj_equation_solver_auto_range) {
   // TODO: import all tests from solver app
   check_range({"cos(x)-0"}, -15.5654296875, 15.5654296875);
 }

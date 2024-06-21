@@ -382,6 +382,7 @@ tests_src += $(addprefix poincare/test/,\
   comparison.cpp \
   dimension.cpp \
   distribution.cpp \
+  equation_solver.cpp \
   erf_inv.cpp \
   expression_comparison.cpp \
   expression_to_layout.cpp \
@@ -410,7 +411,6 @@ tests_src += $(addprefix poincare/test/,\
   set.cpp \
   sign.cpp \
   simplification.cpp \
-  solver.cpp \
 )
 
 tests_src += $(poincare_src)

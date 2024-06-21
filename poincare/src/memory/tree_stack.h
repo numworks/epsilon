@@ -76,32 +76,32 @@ class TreeStack {
    * requires. It gives nice completions and ok-ish errors.
    */
 
-#define PUSHER(F, N)                      \
-  template <int I = N>                    \
-    requires(I >= 0 && I == N)            \
-  Tree* push##F() {                       \
-    return push(Type::F);                 \
-  }                                       \
-                                          \
-  template <int I = N>                    \
-    requires(I == NARY && I == N)         \
-  Tree* push##F(int nb) {                 \
-    Tree* result = push(Type::F);         \
-    push(nb);                             \
-    return result;                        \
-  }                                       \
-                                          \
-  template <int I = N>                    \
-    requires(I == NARY2D && I == N)       \
-  Tree* push##F(int nbRows, int nbCols) { \
-    Tree* result = push(Type::F);         \
-    push(nbRows);                         \
-    push(nbCols);                         \
-    return result;                        \
+#define PUSHER(F, N, S)                       \
+  template <int I = N>                        \
+    requires(I >= 0 && I == N && S == 0)      \
+  Tree* push##F() {                           \
+    return push(Type::F);                     \
+  }                                           \
+                                              \
+  template <int I = N>                        \
+    requires(I == NARY && I == N && S == 0)   \
+  Tree* push##F(int nb) {                     \
+    Tree* result = push(Type::F);             \
+    push(nb);                                 \
+    return result;                            \
+  }                                           \
+                                              \
+  template <int I = N>                        \
+    requires(I == NARY2D && I == N && S == 0) \
+  Tree* push##F(int nbRows, int nbCols) {     \
+    Tree* result = push(Type::F);             \
+    push(nbRows);                             \
+    push(nbCols);                             \
+    return result;                            \
   }
 
-#define PUSHER_(F, N) PUSHER(F, N)
-#define NODE_USE(F, N, S) PUSHER_(SCOPED_NODE(F), N)
+#define PUSHER_(F, N, S) PUSHER(F, N, S)
+#define NODE_USE(F, N, S) PUSHER_(SCOPED_NODE(F), N, S)
 #include "types.h"
 #undef PUSHER
 #undef PUSHER_

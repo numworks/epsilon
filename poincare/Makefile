@@ -304,12 +304,13 @@ poincare_src += $(addprefix poincare/src/,\
   layout/render.cpp \
   layout/serialize.cpp \
   layout/xnt.cpp \
-  memory/tree_stack.cpp \
-  memory/tree_stack_checkpoint.cpp \
+  memory/block_stack.cpp \
   memory/n_ary.cpp \
   memory/pattern_matching.cpp \
   memory/tree.cpp \
   memory/tree_ref.cpp \
+  memory/tree_stack.cpp \
+  memory/tree_stack_checkpoint.cpp \
   memory/value_block.cpp \
   memory/visualization.cpp \
   preferences.cpp \

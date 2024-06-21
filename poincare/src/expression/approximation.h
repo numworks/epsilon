@@ -2,7 +2,6 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <float.h>
-#include <poincare/old/context.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -220,7 +219,6 @@ class Approximation final {
       assert(index < m_variablesOffset);
       return (index + m_variablesOffset) % k_maxNumberOfVariables;
     }
-    const Poincare::Context* m_context;
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
 

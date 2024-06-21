@@ -78,13 +78,13 @@ class TreeStack {
 
 #define PUSHER(F, N)                      \
   template <int I = N>                    \
-    requires(I >= 0)                      \
+    requires(I >= 0 && I == N)            \
   Tree* push##F() {                       \
     return push(Type::F);                 \
   }                                       \
                                           \
   template <int I = N>                    \
-    requires(I == NARY)                   \
+    requires(I == NARY && I == N)         \
   Tree* push##F(int nb) {                 \
     Tree* result = push(Type::F);         \
     push(nb);                             \
@@ -92,7 +92,7 @@ class TreeStack {
   }                                       \
                                           \
   template <int I = N>                    \
-    requires(I == NARY2D)                 \
+    requires(I == NARY2D && I == N)       \
   Tree* push##F(int nbRows, int nbCols) { \
     Tree* result = push(Type::F);         \
     push(nbRows);                         \

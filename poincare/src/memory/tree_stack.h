@@ -85,9 +85,9 @@ class TreeStack {
                                               \
   template <int I = N>                        \
     requires(I == NARY && I == N && S == 0)   \
-  Tree* push##F(int nb) {                     \
+  Tree* push##F(int nbChildren) {             \
     Tree* result = push(Type::F);             \
-    push(nb);                                 \
+    push(nbChildren);                         \
     return result;                            \
   }                                           \
                                               \

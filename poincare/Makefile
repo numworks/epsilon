@@ -427,6 +427,7 @@ endif
 
 ifeq ($(TARGET),poincarejs)
 poincare_src += $(addprefix poincare/src/js_bridge/,\
+  computation_context.cpp \
   expression.cpp \
   tree_converter.cpp \
   regression.cpp \

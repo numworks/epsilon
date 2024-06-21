@@ -62,6 +62,50 @@ class TreeStack {
     insertBlock(lastBlock(), block, true);
     return Tree::FromBlocks(lastBlock() - 1);
   }
+
+  // TODO: factorize with TypeBlock
+  constexpr static int NARY = -1;
+  constexpr static int NARY2D = -2;
+  constexpr static int NARY16 = -3;
+
+  /* Define pushCos(), pushAdd(2) for simple nodes without additional value
+   * blocks.
+   *
+   * We cannot define the function conditionally on the value of the template
+   * parameter so we define all the versions for all nodes and filter them with
+   * requires. It gives nice completions and ok-ish errors.
+   */
+
+#define PUSHER(F, N)                      \
+  template <int I = N>                    \
+    requires(I >= 0)                      \
+  Tree* push##F() {                       \
+    return push(Type::F);                 \
+  }                                       \
+                                          \
+  template <int I = N>                    \
+    requires(I == NARY)                   \
+  Tree* push##F(int nb) {                 \
+    Tree* result = push(Type::F);         \
+    push(nb);                             \
+    return result;                        \
+  }                                       \
+                                          \
+  template <int I = N>                    \
+    requires(I == NARY2D)                 \
+  Tree* push##F(int nbRows, int nbCols) { \
+    Tree* result = push(Type::F);         \
+    push(nbRows);                         \
+    push(nbCols);                         \
+    return result;                        \
+  }
+
+#define PUSHER_(F, N) PUSHER(F, N)
+#define NODE_USE(F, N, S) PUSHER_(SCOPED_NODE(F), N)
+#include "types.h"
+#undef PUSHER
+#undef PUSHER_
+
   bool insertBlock(Block* destination, Block block, bool at = false) {
     return insertBlocks(destination, &block, 1, at);
   }

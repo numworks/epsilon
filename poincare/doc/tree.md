@@ -189,6 +189,21 @@ You can now read the various `Tree` motions in [tree.h](/poincare/src/memory/tre
 references. Mind the difference between `moveBefore` and `moveAt` that are the
 same function tree-wise but not reference-wise.
 
+The TreeStack has a `log` method as well, that shows each Tree it containst and the references pointing to Trees.
+
+`p Poincare::Internal::TreeStack::SharedTreeStack->log() # in lldb`
+
+```xml
+<TreeStack>
+  <Reference id="0, ">
+    <Add numberOfChildren="2">
+      <Two value="2"/>
+      <IntegerPosShort value="3"/>
+    </Add>
+  </Reference>
+</TreeStack>
+```
+
 <details>
 <summary>Implementation details </summary>
 

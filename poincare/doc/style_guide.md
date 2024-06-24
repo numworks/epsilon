@@ -252,6 +252,19 @@ tree->cloneNodeOverTree(KUndef);
 tree->cloneTreeOverTree(KUndef);
 ```
 
+> [!CAUTION]
+> This is broken:
+
+```cpp
+KPow->clone(); // random bytes are copied as children
+```
+
+> [!TIP]
+> This does what you want:
+
+```cpp
+KPow->cloneNode();
+```
 ## Add TREE_REF_WRAP to public methods overriding their input Tree
 > [!CAUTION]
 > This is dangerous :

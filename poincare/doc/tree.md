@@ -98,6 +98,28 @@ and the range `Number` contains all the nodes from `Zero` to `Pi`. The first ran
 
 The range `MathematicalConstant` is included in the range `Number`.
 
+### Logging
+The structure of a Tree can be inspected with several logging functions (available only in DEBUG) depending on the level of detail your are interested with :
+- logBlocks gives you the more detailed info with each block represented between `[]` and their interpretation
+  ```
+  [Add][2]
+    [Two]
+    [IntegerPosShort][3]
+  ```
+
+- log() shows the tree structure in a XML fashion with addresses to help tell who is who
+  ```xml
+  <Add size="2" address="0x1006bb3a5" numberOfChildren="2">
+    <Two size="1" address="0x1006bb3a7" value="2"/>
+    <IntegerPosShort size="2" address="0x1006bb3a8" value="3"/>
+  </Add>
+  ```
+
+- tree->logDiffWith(otherTree) can compare trees with a diff-like output on top of the log output
+
+- logSerialized() is terser and used to focus on the mathematical logic rather than the structure
+  ```2+3```
+
 
 ## The TreeStack
 

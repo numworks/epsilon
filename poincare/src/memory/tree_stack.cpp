@@ -3,11 +3,11 @@
 #include <assert.h>
 #include <omg/memory.h>
 #include <poincare/old/junior_layout.h>
+#include <poincare/src/expression/float.h>
 #include <poincare/src/expression/physical_constant.h>
 
 #include <algorithm>
 
-#include "node_constructor.h"
 #include "tree_stack_checkpoint.h"
 
 #if POINCARE_POOL_VISUALIZATION
@@ -147,24 +147,6 @@ Tree* TreeStack::pushPointOfInterest(PointOfInterestNode data) {
   insertBlocks(lastBlock(), reinterpret_cast<Block*>(&data),
                sizeof(PointOfInterestNode));
   return result;
-}
-
-template <Type blockType, typename... Types>
-Tree* TreeStack::push(Types... args) {
-  Block* newNode = lastBlock();
-
-  size_t i = 0;
-  bool endOfNode = false;
-  do {
-    Block block;
-    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(
-        &block, i++, args...);
-    pushBlock(block);
-  } while (!endOfNode);
-#if POINCARE_POOL_VISUALIZATION
-  Log("Push", newNode, i);
-#endif
-  return Tree::FromBlocks(newNode);
 }
 
 void TreeStack::executeAndStoreLayout(ActionWithContext action, void* context,

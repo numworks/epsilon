@@ -49,8 +49,7 @@ class TreeStack : public BlockStack {
   Tree* clone(const Tree* node, bool isTree = true) {
     return initFromAddress(static_cast<const void*>(node->block()), isTree);
   }
-  template <Type blockType, typename... Types>
-  Tree* push(Types... args);
+
   Tree* pushBlock(Block block) {
     insertBlock(lastBlock(), block, true);
     return Tree::FromBlocks(lastBlock() - 1);

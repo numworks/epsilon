@@ -207,7 +207,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
     leftParenthesisIndex--;
   }
   TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
-  TreeRef tempRack = SharedTreeStack->push<Type::RackLayout>(0);
+  TreeRef tempRack = SharedTreeStack->pushRackLayout(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
     TreeRef child = NAry::DetachChildAtIndex(rack, i);

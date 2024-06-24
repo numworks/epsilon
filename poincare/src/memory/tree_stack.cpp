@@ -133,6 +133,14 @@ Tree* TreeStack::pushVerticalOffsetLayout(bool isSubscript, bool isPrefix) {
   return result;
 }
 
+Tree* pushRackLayout(int nbChildren) {
+  // Move this inside PUSHER if more NARY16 node are added
+  Tree* result = pushBlock(Type::RackLayout);
+  pushBlock(nbChildren % 256);
+  pushBlock(nbChildren / 256);
+  return result;
+}
+
 template <Type blockType, typename... Types>
 Tree* TreeStack::push(Types... args) {
   Block* newNode = lastBlock();
@@ -242,6 +250,5 @@ template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                uint8_t, bool, uint8_t>(double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
 template Tree* TreeStack::push<Type::Polynomial, int>(int);
-template Tree* TreeStack::push<Type::RackLayout, int>(int);
 
 }  // namespace Poincare::Internal

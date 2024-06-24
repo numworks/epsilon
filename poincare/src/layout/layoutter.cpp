@@ -94,7 +94,7 @@ Tree* Layoutter::LayoutExpression(Tree* expression, bool linearMode,
   /* expression lives before layoutParent in the TreeStack and will be
    * destroyed in the process. An TreeRef is necessary to keep track of
    * layoutParent's root. */
-  TreeRef layoutParent = SharedTreeStack->push<Type::RackLayout>(0);
+  TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
   Layoutter layoutter(linearMode, false, numberOfSignificantDigits, floatMode);
   layoutter.m_addSeparators =
       !linearMode && layoutter.requireSeparators(expression);
@@ -161,7 +161,7 @@ void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
                                    const char* name) {
   layoutText(layoutParent, name);
   TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
-  TreeRef newParent = SharedTreeStack->push<Type::RackLayout>(0);
+  TreeRef newParent = SharedTreeStack->pushRackLayout(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (j == 1 && expression->isListStatWithCoefficients() &&
@@ -179,7 +179,7 @@ void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
 
 void Layoutter::layoutChildrenAsRacks(Tree* expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
-    TreeRef newParent = SharedTreeStack->push<Type::RackLayout>(0);
+    TreeRef newParent = SharedTreeStack->pushRackLayout(0);
     layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
@@ -307,14 +307,14 @@ void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   }
   if (type == Type::Div) {
     createdLayout = SharedTreeStack->pushFractionLayout();
-    TreeRef rack = SharedTreeStack->push<Type::RackLayout>(0);
+    TreeRef rack = SharedTreeStack->pushRackLayout(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {
     assert(type == Type::Pow || type == Type::PowMatrix);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     createdLayout = KSuperscriptL->cloneNode();
   }
-  TreeRef rack = SharedTreeStack->push<Type::RackLayout>(0);
+  TreeRef rack = SharedTreeStack->pushRackLayout(0);
   layoutExpression(rack, expression, k_maxPriority);
   NAry::AddChild(layoutParent, createdLayout);
 }
@@ -443,7 +443,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
             rack = layoutParent;
           } else {
             Tree* createdLayout = KSuperscriptL->cloneNode();
-            rack = SharedTreeStack->push<Type::RackLayout>(0);
+            rack = SharedTreeStack->pushRackLayout(0);
             NAry::AddChild(layoutParent, createdLayout);
           }
           layoutExpression(rack, expression->child(2), k_forceParenthesis);

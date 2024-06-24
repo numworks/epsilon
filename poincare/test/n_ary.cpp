@@ -9,14 +9,14 @@
 using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
-  TreeRef rackLayout1 = SharedTreeStack->push<Type::RackLayout>(3);
+  TreeRef rackLayout1 = SharedTreeStack->pushRackLayout(3);
   SharedTreeStack->pushAsciiCodePointLayout('x');
   SharedTreeStack->pushVerticalOffsetLayout(false, false);
   SharedTreeStack->pushAsciiCodePointLayout('2');
   SharedTreeStack->pushAsciiCodePointLayout('+');
   // rackLayout1 is x^2+
 
-  TreeRef rackLayout2 = SharedTreeStack->push<Type::RackLayout>(3);
+  TreeRef rackLayout2 = SharedTreeStack->pushRackLayout(3);
   SharedTreeStack->pushAsciiCodePointLayout('-');
   SharedTreeStack->pushAsciiCodePointLayout('4');
   SharedTreeStack->pushAsciiCodePointLayout('3');
@@ -31,7 +31,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::RemoveChildAtIndex(rackLayout1, 4);
   // rackLayout1 is x^2-34
 
-  TreeRef rackLayout3 = SharedTreeStack->push<Type::RackLayout>(5);
+  TreeRef rackLayout3 = SharedTreeStack->pushRackLayout(5);
   SharedTreeStack->pushAsciiCodePointLayout('x');
   SharedTreeStack->pushVerticalOffsetLayout(false, false);
   SharedTreeStack->pushAsciiCodePointLayout('2');

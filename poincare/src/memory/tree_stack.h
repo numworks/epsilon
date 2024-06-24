@@ -151,6 +151,8 @@ class TreeStack : public BlockStack {
   Tree* pushParenthesisLayout(bool leftIsTemporary, bool rightIsTemporary);
   Tree* pushVerticalOffsetLayout(bool isSubscript, bool isPrefix);
 
+  Tree* pushRackLayout(int nbChildren);
+
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {

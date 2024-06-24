@@ -205,6 +205,35 @@ Tree* firstChild = tree->child(0);
 
 Both examples are equivalent to access a tree's first child, but the later asserts the Tree has a child and makes the intent clear.
 
+## Save children pointers when are used several times
+
+Remind that `nextTree` and `child` walk the tree descendants, iterating over all of them.
+It may be costly when the Tree is large.
+
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+bool TestSomethingOnPow(const Tree * pow) {
+  if (pow->child(1)->isInteger() && !pow->child(1)->isZero()) {
+    ...
+  }
+}
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+bool TestSomethingOnPow(const Tree * pow) {
+  const Tree * base = pow->child(0);
+  const Tree * exponent = pow->child(1); // or base->nextTree()
+  if (exponent->isInteger() && !exponent->isZero()) {
+    ...
+  }
+}
+```
+
 ## Distinguish Trees from Nodes
 
 Childless trees are equivalent to their node. We avoid mixing the definition for clarity, and in case children are added later.

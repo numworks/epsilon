@@ -1048,6 +1048,12 @@ bool OExpression::ExactAndApproximateExpressionsAreEqual(
   assert(!approximateExpression.parent().isUninitialized() ||
          approximateExpression.otype() != ExpressionNode::Type::Undefined);
 
+  // TODO_PCJ: Port this method to JuniorExpression
+  if (exactExpression.otype() == ExpressionNode::Type::JuniorExpression ||
+      approximateExpression.otype() == ExpressionNode::Type::JuniorExpression) {
+    return false;
+  }
+
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */
   if (approximateExpression.otype() == ExpressionNode::Type::Double) {

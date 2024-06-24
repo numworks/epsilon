@@ -40,7 +40,15 @@ constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
  * */
 constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
                                                 "}",       "\3", "\\ dt"};
+
+// Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};
+constexpr static const char* multiplicationSignToken[] = {"\\times"};
+constexpr static const char* lesserOrEqualToken[] = {"\\le"};
+constexpr static const char* greaterOrEqualToken[] = {"\\ge"};
+constexpr static const char* rightwardsArrowToken[] = {"\\to"};
+constexpr static const char* infinityToken[] = {"\\infty"};
+constexpr static const char* divisionToken[] = {"\\div"};
 
 using LayoutDetector = bool (*)(const Tree*);
 using LayoutConstructor = Tree* (*)();
@@ -52,14 +60,17 @@ struct LatexToken {
   const LayoutConstructor constructor;
 };
 
+#define CODEPOINT_TOKEN(S, C)                                   \
+  {                                                             \
+    S, std::size(S),                                            \
+        [](const Tree* t) -> bool {                             \
+          return t->isCodePointLayout() &&                      \
+                 CodePointLayout::GetCodePoint(t) == C;         \
+        },                                                      \
+        []() -> Tree* { return KCodePointL<C>()->cloneTree(); } \
+  }
+
 constexpr static LatexToken k_tokens[] = {
-    // Middle Dot
-    {middleDotToken, std::size(middleDotToken),
-     [](const Tree* l) -> bool {
-       return l->isCodePointLayout() &&
-              CodePointLayout::GetCodePoint(l) == UCodePointMiddleDot;
-     },
-     []() -> Tree* { return "·"_cl->cloneTree(); }},
     // Parenthesis
     {parenthesisToken, std::size(parenthesisToken),
      [](const Tree* l) -> bool { return l->isParenthesesLayout(); },
@@ -107,6 +118,25 @@ constexpr static LatexToken k_tokens[] = {
      []() -> Tree* {
        return KIntegralL("t"_l, KRackL(), KRackL(), KRackL())->cloneTree();
      }},
+    /* WARNING: The order matters here, since we want "\left(" to be checked
+     * before "\le" */
+    // Middle Dot
+    CODEPOINT_TOKEN(middleDotToken, UCodePointMiddleDot),
+    // Multiplication sign
+    CODEPOINT_TOKEN(multiplicationSignToken, UCodePointMultiplicationSign),
+    // <=
+    CODEPOINT_TOKEN(lesserOrEqualToken, UCodePointInferiorEqual),
+    // >=
+    CODEPOINT_TOKEN(greaterOrEqualToken, UCodePointSuperiorEqual),
+    // ->
+    CODEPOINT_TOKEN(rightwardsArrowToken, UCodePointRightwardsArrow),
+    // Infinity
+    CODEPOINT_TOKEN(infinityToken, UCodePointInfinity),
+    // ÷
+    {divisionToken, std::size(divisionToken),
+     // This codepoint doesn't exist in Poincare
+     [](const Tree* t) -> bool { return false; },
+     []() -> Tree* { return KCodePointL<'/'>()->cloneTree(); }},
 };
 
 // ===== Latex to Layout ======
@@ -219,11 +249,6 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
       break;
     }
 
-    if (child->isCodePointLayout()) {
-      buffer = CodePointLayout::CopyName(child, buffer, end - buffer);
-      continue;
-    }
-
     if (child->isThousandSeparatorLayout()) {
       // Replace with '\ '
       if (buffer + 1 >= end) {
@@ -268,6 +293,11 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
     }
 
     if (tokenFound) {
+      continue;
+    }
+
+    if (child->isCodePointLayout()) {
+      buffer = CodePointLayout::CopyName(child, buffer, end - buffer);
       continue;
     }
 

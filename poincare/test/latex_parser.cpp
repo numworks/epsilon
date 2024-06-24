@@ -26,6 +26,14 @@ QUIZ_CASE(pcj_latex_to_layout) {
   assert_latex_layouts_to(
       "\\int_{1}^{2}t^{3}\\ dt",
       KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to("\\le\\ge\\cdot\\times\\to\\div\\infty",
+                          KCodePointL<UCodePointInferiorEqual>() ^
+                              KCodePointL<UCodePointSuperiorEqual>() ^
+                              KCodePointL<UCodePointMiddleDot>() ^
+                              KCodePointL<UCodePointMultiplicationSign>() ^
+                              KCodePointL<UCodePointRightwardsArrow>() ^
+                              KCodePointL<'/'>() ^
+                              KCodePointL<UCodePointInfinity>());
 }
 
 void assert_layout_convert_to_latex(const Tree* l, const char* latex) {
@@ -52,4 +60,12 @@ QUIZ_CASE(pcj_layout_to_latex) {
   assert_layout_convert_to_latex(
       KRackL(KDiffL("t"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))),
       "diff(t^{3},t,2)");
+  assert_layout_convert_to_latex(
+      KCodePointL<UCodePointInferiorEqual>() ^
+          KCodePointL<UCodePointSuperiorEqual>() ^
+          KCodePointL<UCodePointMiddleDot>() ^
+          KCodePointL<UCodePointMultiplicationSign>() ^
+          KCodePointL<UCodePointRightwardsArrow>() ^
+          KCodePointL<UCodePointInfinity>(),
+      "\\le\\ge\\cdot\\times\\to\\infty");
 }

@@ -57,10 +57,9 @@ class TreeStack : public BlockStack {
   constexpr static int NARY2D = -2;
   constexpr static int NARY16 = -3;
 
-  /* Define pushCos(), pushAdd(2) for simple nodes without additional value
-   * blocks.
-   *
-   * We cannot define the function conditionally on the value of the template
+  // Generic pushers for simple nodes and n-aries e.g. pushCos(), pushAdd(nb)
+
+  /* We cannot define the function conditionally on the value of the template
    * parameter so we define all the versions for all nodes and filter them with
    * requires. It gives nice completions and ok-ish errors.
    */
@@ -94,6 +93,14 @@ class TreeStack : public BlockStack {
 #include "types.h"
 #undef PUSHER
 #undef PUSHER_
+
+  // Specialized pushers for nodes with additional value blocks
+
+  Tree* pushDecimal(uint8_t digitsAfterZero) {
+    Tree* result = pushBlock(Type::Decimal);
+    pushBlock(digitsAfterZero);
+    return result;
+  }
 
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }

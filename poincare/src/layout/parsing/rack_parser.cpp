@@ -371,7 +371,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
-      leftHandSide = SharedTreeStack->push<Type::Decimal, int8_t>(offset);
+      leftHandSide = SharedTreeStack->pushDecimal(offset);
       Tree* child =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       child->moveTreeOverTree(IntegerHandler::Multiplication(

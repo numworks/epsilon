@@ -795,7 +795,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       int numberOfDigits = Poincare::Integer::NumberOfBase10DigitsWithoutSign(
           d.node()->unsignedMantissa());
       int8_t exponent = numberOfDigits - 1 - d.node()->exponent();
-      SharedTreeStack->push<Type::Decimal>(exponent);
+      SharedTreeStack->pushDecimal(exponent);
       Poincare::Integer mantissa = d.node()->unsignedMantissa();
       char buffer[100];
       mantissa.serialize(buffer, 100);

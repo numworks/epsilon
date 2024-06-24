@@ -150,7 +150,6 @@ template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
                                CodePoint>(CodePoint, CodePoint);
-template Tree* TreeStack::push<Type::Decimal, int8_t>(int8_t);
 template Tree* TreeStack::push<Type::DoubleFloat, double>(double);
 template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);

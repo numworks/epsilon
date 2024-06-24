@@ -127,7 +127,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   if (zero) {
     if (Infinity::HasInfinityChild(multiplication)) {
       // 0*inf -> undef
-      multiplication->cloneTreeOverTree(KUndef);
+      Dimension::ReplaceTreeWithDimensionedType(multiplication, Type::Undef);
       return true;
     }
     Dimension dim = Dimension::GetDimension(multiplication);

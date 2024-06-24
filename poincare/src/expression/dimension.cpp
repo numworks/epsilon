@@ -66,10 +66,11 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
       return true;
     }
     case Type::UserSymbol: {
+      // UserSymbols in context should always be well defined
+#if ASSERTIONS
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
-      if (definition) {
-        return DeepCheckListLength(definition, ctx);
-      }
+      assert(!definition || DeepCheckListLength(definition, ctx));
+#endif
       return true;
     }
     case Type::UserFunction: {
@@ -411,11 +412,12 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::RandIntNoRep:
       return Integer::Is<uint8_t>(t->child(2));
     case Type::UserSymbol: {
+      // UserSymbols in context should always be well defined
+#if ASSERTIONS
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
-      if (definition) {
-        return DeepCheckDimensions(definition, ctx);
-      }
-      break;
+      assert(!definition || DeepCheckDimensions(definition, ctx));
+#endif
+      return true;
     }
     default:
       if (t->isLogicalOperatorOrBoolean()) {

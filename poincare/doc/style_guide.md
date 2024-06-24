@@ -223,6 +223,56 @@ tree->cloneNodeOverTree(KUndef);
 tree->cloneTreeOverTree(KUndef);
 ```
 
+## Add TREE_REF_WRAP to public methods overriding their input Tree
+> [!CAUTION]
+> This is dangerous :
+
+```cpp
+bool HighlyAdvancedReduction(Tree *t) {
+  t->cloneTreeOverTree(0_e);
+  return true;
+}
+
+void user() {
+  TreeRef r = ...;
+  HighlyAdvancedReduction(r);
+  r->removeTree(); // r is broken !
+}
+```
+
+> [!TIP]
+> But fine if you add :
+
+```cpp
+bool HighlyAdvancedReduction(Tree *t) { ... }
+TREE_REF_WRAP(HighlyAdvancedReduction);
+```
+
+
+## Create Ranges to test membership to related node types
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+bool IsTrigoHyperbolic(const Tree *t) {
+  return t->isCosH() || t->isSinH() || t->isTanH();
+}
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+// in types.h
+NODE(CosH, 1)
+NODE(SinH, 1)
+NODE(TanH, 1)
+RANGE(TrigoHyperbolic, CosH, TanH)
+
+// automatically defined in your code
+t->isTrigoHyperbolic()
+```
+
 ## Use layoutType in a switch over layout’s types
 > [!CAUTION]
 > Avoid this:
@@ -277,5 +327,3 @@ void moveCursorAt(Rack * rack, int index) {
 | Non-recursive bottom-up iteration | Iterate in the right direction to always change the downstream children |
 | Handling ill-formatted expression during simplification | Implement check in `DeepCheckDimensions` or `DeepCheckListLength` to always assume valid expressions |
 | Uncertain manipulation of multiple `Tree* ` | Using `TreeRef` |
-| Public methods susceptible of overwriting their input Tree | Use EDITION_REF_WRAP |
-| `isUserSymbol() \|\| isUserSequence() \|\| isUserFunction()` | Organize types.h and create a `RANGE`: `isUserNamed()` |

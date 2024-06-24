@@ -108,14 +108,13 @@ with your trees temporarily. It is not intended for storage and can be cleared b
 exceptions. You must save your trees elsewhere before you return to the app’s code.
 
 The primary way to create trees from scratch is to push nodes at the end of the
-`SharedTreeStack`. Its `push` method is templated to accommodate the different
-arguments needed by various tree types.
+`SharedTreeStack` with the `push*` methods. For instance :
 
 ```cpp
 // pushing an Addition node with two-children and saving its address in *add*
-Tree * add = SharedTreeStack->push<Type::Addition>(2);
+Tree * add = SharedTreeStack->pushAdd(2);
 // pushing a One node (that has no children) representing 1
-SharedTreeStack->push(Type::One);
+SharedTreeStack->pushOne();
 // cloning an other Tree at the end of the TreeStack
 otherTree->clone()
 // add now points to 1 + cloneOfOtherTree
@@ -286,7 +285,7 @@ You can use the name of a Node that expect children without the invocation to re
 However if the node is n-ary you need to provide the number of arguments with node:
 
 ```cpp
-KCos->cloneNode(); // equivalent to SharedTreeStack->push(Type::Cos)
+KCos->cloneNode(); // equivalent to SharedTreeStack->pushCos()
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 

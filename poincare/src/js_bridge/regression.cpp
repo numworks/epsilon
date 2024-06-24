@@ -39,9 +39,20 @@ EMSCRIPTEN_BINDINGS(regression) {
       .allow_subclass<SeriesWrapper>("PCR_SeriesWrapper");
 
   enum_<Regression::Regression::Type>("RegressionType")
-      .value("Linear", Regression::Regression::Type::LinearAxpb)
+      .value("None", Regression::Regression::Type::None)
+      .value("LinearAxpb", Regression::Regression::Type::LinearAxpb)
+      .value("Proportional", Regression::Regression::Type::Proportional)
       .value("Quadratic", Regression::Regression::Type::Quadratic)
-      .value("Cubic", Regression::Regression::Type::Cubic);
+      .value("Cubic", Regression::Regression::Type::Cubic)
+      .value("Quartic", Regression::Regression::Type::Quartic)
+      .value("Logarithmic", Regression::Regression::Type::Logarithmic)
+      .value("ExponentialAebx", Regression::Regression::Type::ExponentialAebx)
+      .value("ExponentialAbx", Regression::Regression::Type::ExponentialAbx)
+      .value("Power", Regression::Regression::Type::Power)
+      .value("Trigonometric", Regression::Regression::Type::Trigonometric)
+      .value("Logistic", Regression::Regression::Type::Logistic)
+      .value("Median", Regression::Regression::Type::Median)
+      .value("LinearApbx", Regression::Regression::Type::LinearApbx);
 
   class_<Regression::Regression>("PCR_Regression")
       /* The regression object return by Get is a static const object,

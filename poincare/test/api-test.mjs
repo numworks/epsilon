@@ -10,9 +10,7 @@ var Poincare = await InitPoincare({ wasmBinary: wasmBinary });
 class ArraySeries extends Poincare.PCR_Series.extend("PCR_Series", {}) {
   constructor(x, y) {
     super()
-    if (x.length != y.length) {
-      console.log("bad array")
-    }
+    assert.equal(x.length, y.length)
     this.x = x
     this.y = y
   }
@@ -29,7 +27,7 @@ class ArraySeries extends Poincare.PCR_Series.extend("PCR_Series", {}) {
 
 var series = new ArraySeries([1.0, 8.0, 14.0, 79.0],
                              [-3.581, 20.296, 40.676, 261.623]);
-var regression = new Poincare.PCR_Regression(Poincare.RegressionType.Linear);
+var regression = new Poincare.PCR_Regression(Poincare.RegressionType.LinearAxpb);
 var coefficients = regression.fit(series);
 
 assert.deepEqual(coefficients, [ 3.3995413996411177, -6.934805690848492, NaN, NaN, NaN ])

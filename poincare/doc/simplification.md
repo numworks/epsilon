@@ -413,10 +413,10 @@ With dependency, we can replace the local variable:
 ## List bubble up
 
 At this step, there are still nested lists in the expression, but we know the expected list length.
+The list expression is turned into an actual list node by `List::BubbleUp`.
+It build the elements one at a time, using GetElement to retrieve them.
 
-Using `ProjectToNthElement` function, we project each of the expected elements to build the output simplified list.
-
-For example: Applying `ProjectToNthElement` to the second element of `{4,5,6} + sequence(k,k,3)` will compute `5+2` and simplify it to `7`.
+For instance: `GetElement({2, 3, 4}, 1) -> 3` and `GetElement(ListSequence(2*k, k, 50), 36) -> 2*36 -> 72`
 
 ## Advanced Reduction
 

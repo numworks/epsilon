@@ -15,13 +15,4 @@ bool Infinity::IsMinusInfinity(const Tree* u) {
   return u->treeIsIdenticalTo(KMult(-1_e, KInf));
 }
 
-bool Infinity::HasInfinityChild(const Tree* u) {
-  for (const Tree* child : u->children()) {
-    if (child->isInf()) {
-      return true;
-    }
-  }
-  return false;
-}
-
 }  // namespace Poincare::Internal

@@ -17,6 +17,20 @@ const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
 static bool MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
+  if (child->isZero()) {
+    if (next->isInf()) {
+      // 0 * inf -> undef
+      merge = KUndef->cloneTree();
+    } else {
+      Dimension nextDim = Dimension::Get(next);
+      if (!nextDim.isMatrix() && !nextDim.isUnit() &&
+          !Dimension::IsList(next)) {
+        // 0 * x -> 0
+        next->removeTree();
+        return true;
+      }
+    }
+  }
   if (child->isOne() || (child->isInf() && next->isInf())) {
     // 1 * x -> x
     // inf * inf -> inf
@@ -47,14 +61,10 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
 }
 
 static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
-                                            int* numberOfSiblings, bool* zero) {
+                                            int* numberOfSiblings) {
   assert(*numberOfSiblings > 0);
   bool changed = false;
   while (index < *numberOfSiblings) {
-    if (child->isZero()) {
-      *zero = true;
-      return false;
-    }
     if (!(index + 1 < *numberOfSiblings &&
           MergeMultiplicationChildWithNext(child))) {
       // Child is neither 0, 1 and can't be merged with next child (or is last).
@@ -69,26 +79,20 @@ static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
 
 static bool SimplifyMultiplicationChildRec(Tree* child, int index,
                                            int* numberOfSiblings,
-                                           bool* multiplicationChanged,
-                                           bool* zero) {
+                                           bool* multiplicationChanged) {
   assert(*numberOfSiblings > 0);
   assert(index < *numberOfSiblings);
   // Merge child with right siblings as much as possible.
   bool childChanged =
-      MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero);
+      MergeMultiplicationChildrenFrom(child, index, numberOfSiblings);
   // Simplify starting from next child.
-  if (!*zero && index + 1 < *numberOfSiblings &&
+  if (index + 1 < *numberOfSiblings &&
       SimplifyMultiplicationChildRec(child->nextTree(), index + 1,
-                                     numberOfSiblings, multiplicationChanged,
-                                     zero)) {
+                                     numberOfSiblings, multiplicationChanged)) {
     // Next child changed, child may now merge with it.
-    assert(!*zero);
     childChanged =
-        MergeMultiplicationChildrenFrom(child, index, numberOfSiblings, zero) ||
+        MergeMultiplicationChildrenFrom(child, index, numberOfSiblings) ||
         childChanged;
-  }
-  if (*zero) {
-    return false;
   }
   *multiplicationChanged = *multiplicationChanged || childChanged;
   return childChanged;
@@ -119,20 +123,13 @@ static bool SimplifyMultiplicationWithInf(Tree* e) {
 static bool SimplifySortedMultiplication(Tree* multiplication) {
   int n = multiplication->numberOfChildren();
   bool changed = false;
-  bool zero = false;
   assert(n > 1);
   /* Recursively merge children.
-   * Keep track of n, changed status and presence of zero child. */
-  SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed,
-                                 &zero);
+   * Keep track of n and changed status. */
+  SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed);
   assert(n > 0);
   NAry::SetNumberOfChildren(multiplication, n);
-  if (zero) {
-    if (Infinity::HasInfinityChild(multiplication)) {
-      // 0*inf -> undef
-      Dimension::ReplaceTreeWithDimensionedType(multiplication, Type::Undef);
-      return true;
-    }
+  if (multiplication->child(0)->isZero()) {
     Dimension dim = Dimension::Get(multiplication);
     if (dim.isUnit()) {
       // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
@@ -159,8 +156,6 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
       }
       return changed || (hash != multiplication->hash());
     }
-    Dimension::ReplaceTreeWithDimensionedType(multiplication, Type::Zero);
-    return true;
   }
 
   if (changed && NAry::SquashIfPossible(multiplication)) {

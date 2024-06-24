@@ -280,7 +280,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("transpose([[√(4)]])", "[[2]]");
 
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
-  // TODO_PCJ: simplifies_to("0*[[2][inf]]", "[[2][undef]]");
+  simplifies_to("0*[[2][inf]]", "[[0][undef]]");
   simplifies_to("0*inf*[[2][3]]", "[[undef][undef]]");
   simplifies_to("undef*[[2][4]]", "[[undef][undef]]");
   simplifies_to("[[1/0][4]]", "[[undef][4]]");
@@ -601,7 +601,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{3,4}(1,2)", "{3,4}");
   simplifies_to("{3,4}(0,5)", "{3,4}");
   simplifies_to("0*{3,4}", "{0,0}");
-  // TODO_PCJ: simplifies_to("0*{3,inf}", "{0,undef}");
+  simplifies_to("0*{3,inf}", "{0,undef}");
   simplifies_to("0*inf*{3,4}", "{undef,undef}");
   simplifies_to("{1,2}/{1,0}", "{1,undef}");
   simplifies_to("med(π*{undef,nonreal,x,3})", "undef");

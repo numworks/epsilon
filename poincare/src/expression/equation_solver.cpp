@@ -383,7 +383,7 @@ EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
    */
   // TODO: Use user settings for a RealUnkown sign ?
   solution->moveTreeBeforeNode(
-      SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
+      SharedTreeStack->pushVar(variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedTreeStack->pushAdd(2));
   Simplification::SimplifySystem(solution, true);
   return Error::NoError;

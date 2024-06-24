@@ -5,7 +5,6 @@
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/physical_constant.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/layout/code_point_layout.h>
 
 #include "value_block.h"
@@ -190,13 +189,6 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
   return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
                                             Type::VerticalOffsetLayout,
                                             isSubscript | (0b10 && isPrefix));
-}
-
-template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Var>(
-    Block* block, size_t blockIndex, uint8_t id, ComplexSign sign) {
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, Type::Var, id,
-                                            sign.getValue());
 }
 
 template <>

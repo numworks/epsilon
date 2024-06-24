@@ -39,6 +39,13 @@ Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
   return result;
 }
 
+Tree* TreeStack::pushVar(uint8_t id, ComplexSign sign) {
+  Tree* result = pushBlock(Type::Var);
+  pushBlock(id);
+  pushBlock(sign.getValue());
+  return result;
+}
+
 template <Type blockType, typename... Types>
 Tree* TreeStack::push(Types... args) {
   Block* newNode = lastBlock();
@@ -165,8 +172,6 @@ template Tree* TreeStack::push<Type::SingleFloat, float>(float);
 template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
-template Tree* TreeStack::push<Type::Var, uint8_t, ComplexSign>(uint8_t,
-                                                                ComplexSign);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 

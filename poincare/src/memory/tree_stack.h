@@ -11,6 +11,9 @@
 #include <iostream>
 #endif
 
+// TODO: used only for pushVar
+#include <poincare/src/expression/sign.h>
+
 namespace Poincare {
 class JuniorLayout;
 }
@@ -126,6 +129,8 @@ class TreeStack : public BlockStack {
   Tree* pushUserSequence(const char* name, size_t size) {
     return pushUserNamed(Type::UserSequence, name, size);
   }
+
+  Tree* pushVar(uint8_t id, ComplexSign sign);
 
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }

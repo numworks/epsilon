@@ -13,7 +13,7 @@
 namespace Poincare::Internal {
 
 Variables::Variable::Variable(uint8_t id, ComplexSign sign) {
-  Tree* temp = SharedTreeStack->push<Type::Var>(id, sign);
+  Tree* temp = SharedTreeStack->pushVar(id, sign);
   assert(k_size == temp->treeSize());
   temp->copyTreeTo(m_blocks);
   temp->removeTree();
@@ -121,8 +121,7 @@ bool Variables::ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
 bool Variables::ReplaceSymbol(Tree* expr, const char* symbol, int id,
                               ComplexSign sign) {
   if (expr->isUserSymbol() && strcmp(Symbol::GetName(expr), symbol) == 0) {
-    Tree* var =
-        SharedTreeStack->push<Type::Var>(static_cast<uint8_t>(id), sign);
+    Tree* var = SharedTreeStack->pushVar(static_cast<uint8_t>(id), sign);
     expr->moveTreeOverTree(var);
     return true;
   }

@@ -228,7 +228,7 @@ SystemExpression SystemExpression::Builder(int32_t n) {
 
 template <typename T>
 SystemExpression SystemExpression::Builder(T x) {
-  return Builder(FloatNode::Push(x));
+  return Builder(SharedTreeStack->pushFloat(x));
 }
 
 template <typename T>

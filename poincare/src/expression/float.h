@@ -32,12 +32,6 @@ class FloatNode {
     return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
   }
   static bool SetSign(Tree* tree, NonStrictSign sign);
-  static Tree* Push(float value) {
-    return SharedTreeStack->pushSingleFloat(value);
-  }
-  static Tree* Push(double value) {
-    return SharedTreeStack->pushDoubleFloat(value);
-  }
 };
 
 }  // namespace Poincare::Internal

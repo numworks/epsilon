@@ -1178,8 +1178,8 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
-      FloatNode::Push(T(dim.matrix.rows));
-      FloatNode::Push(T(dim.matrix.cols));
+      SharedTreeStack->pushFloat(T(dim.matrix.rows));
+      SharedTreeStack->pushFloat(T(dim.matrix.cols));
       return result;
     }
     case Type::Cross: {

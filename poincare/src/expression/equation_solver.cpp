@@ -176,7 +176,7 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
 
 static void registerSolution(Tree* list, double f) {
   if (std::isfinite(f)) {
-    NAry::AddChild(list, FloatNode::Push(f));
+    NAry::AddChild(list, SharedTreeStack->pushFloat(f));
   }
 }
 

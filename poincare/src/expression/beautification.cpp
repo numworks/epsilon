@@ -451,7 +451,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     return KNonReal->clone();
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
-    return FloatNode::Push(re);
+    return SharedTreeStack->pushFloat(re);
   }
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   // Real part and separator
@@ -459,14 +459,14 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     // [re+]
     if (re != 0) {
       SharedTreeStack->pushAdd(2);
-      FloatNode::Push(re);
+      SharedTreeStack->pushFloat(re);
     }
   } else {
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
       SharedTreeStack->pushMult(2);
-      FloatNode::Push(abs);
+      SharedTreeStack->pushFloat(abs);
     }
     SharedTreeStack->pushPow();
     SharedTreeStack->pushEulerE();
@@ -479,7 +479,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   }
   if (im != 1) {
     SharedTreeStack->pushMult(2);
-    FloatNode::Push(im);
+    SharedTreeStack->pushFloat(im);
   }
   SharedTreeStack->pushComplexI();
   return result;

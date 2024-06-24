@@ -108,6 +108,10 @@ class TreeStack : public BlockStack {
   Tree* pushSingleFloat(float value);
   Tree* pushDoubleFloat(double value);
 
+  // overloaded pushFloat to be used with pushFloat(T value)
+  Tree* pushFloat(float value) { return pushSingleFloat(value); }
+  Tree* pushFloat(double value) { return pushDoubleFloat(value); }
+
   Tree* pushUserSymbol(const char* name) {
     return pushUserSymbol(name, strlen(name) + 1);
   }

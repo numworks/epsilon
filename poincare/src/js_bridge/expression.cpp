@@ -29,9 +29,12 @@ SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
       .function("isUninitialized", &PoolHandle::isUninitialized);
-  class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
+  class_<OExpression, base<PoolHandle>>("PCR_OExpression");
+  class_<JuniorExpression, base<OExpression>>("PCR_Expression")
       .constructor<>()
       .class_function("ParseLatex", &ParseLatexFromString)
+      .class_function("ExactAndApproximateExpressionsAreEqual",
+                      &OExpression::ExactAndApproximateExpressionsAreEqual)
       .function("toLatex", &toLatexString, allow_raw_pointers())
       .function("cloneAndReduce", &JuniorExpression::cloneAndReduce)
       .function("cloneAndBeautify", &JuniorExpression::cloneAndBeautify)

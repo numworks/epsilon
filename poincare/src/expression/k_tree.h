@@ -223,7 +223,7 @@ struct IntegerRepresentation<V> : KTree<Type::IntegerNegShort, -V> {};
  * A single guide looks like this:
  *
  *  template <int64_t V>
- *  requires(V > INT8_MAX && Integer::NumberOfDigits(V) == N)
+ *  requires(V > INT8_MAX && OMG::Arithmetic::NumberOfDigits(V) == N)
  *  struct IntegerRepresentation<V>
  *      : KTree<Type::IntegerPosBig, N, OMG::BitHelper::getByteAtIndex(V, 0),
  *                                           ...

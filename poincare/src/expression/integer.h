@@ -295,14 +295,6 @@ class Integer {
     return e->isInteger() && Handler(e).is<T>();
   }
 
-  constexpr static uint8_t NumberOfDigits(uint64_t value) {
-    uint8_t numberOfDigits = 0;
-    while (value && numberOfDigits < sizeof(uint64_t)) {
-      value = value >> OMG::BitHelper::numberOfBitsIn<uint8_t>();
-      numberOfDigits++;
-    }
-    return numberOfDigits;
-  }
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return OMG::BitHelper::getByteAtIndex(value, index);
   }

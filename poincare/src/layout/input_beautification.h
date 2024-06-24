@@ -249,10 +249,10 @@ class InputBeautification {
         // TODO handle NL-log cf LayoutHelper::Logarithm
         TreeRef log = "log"_l->clone();
         NAry::SetNumberOfChildren(log, 5);
-        SharedTreeStack->push<Type::VerticalOffsetLayout>(true, false);
+        SharedTreeStack->pushVerticalOffsetLayout(true, false);
         parameters[1]->detachTree();
         // TODO would be nicer with a temporary parenthesis ?
-        SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
+        SharedTreeStack->pushParenthesisLayout(false, false);
         parameters[0]->detachTree();
         return log;
       }};

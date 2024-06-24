@@ -148,6 +148,9 @@ class TreeStack : public BlockStack {
   Tree* pushCombinedCodePointsLayout(CodePoint codePoint,
                                      CodePoint combinedCodePoint);
 
+  Tree* pushParenthesisLayout(bool leftIsTemporary, bool rightIsTemporary);
+  Tree* pushVerticalOffsetLayout(bool isSubscript, bool isPrefix);
+
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {

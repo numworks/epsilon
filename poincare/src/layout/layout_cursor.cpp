@@ -206,8 +206,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
                                      rack, OMG::Direction::Left())) {
     leftParenthesisIndex--;
   }
-  TreeRef parenthesis =
-      SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
+  TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
   TreeRef tempRack = SharedTreeStack->push<Type::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {

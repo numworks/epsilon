@@ -103,25 +103,6 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::RackLayout>(
 
 template <>
 constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::ParenthesisLayout>(
-    Block* block, size_t blockIndex, bool leftIsTemporary,
-    bool rightIsTemporary) {
-  return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, Type::ParenthesisLayout,
-      leftIsTemporary | (0b10 && rightIsTemporary));
-}
-
-template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    Type::VerticalOffsetLayout>(Block* block, size_t blockIndex,
-                                bool isSubscript, bool isPrefix) {
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            Type::VerticalOffsetLayout,
-                                            isSubscript | (0b10 && isPrefix));
-}
-
-template <>
-constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::IntegerPosBig>(
     Block* block, size_t blockIndex, uint64_t value) {
   return CreateIntegerBlockAtIndexForType(block, blockIndex,

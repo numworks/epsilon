@@ -118,6 +118,21 @@ Tree* TreeStack::pushCombinedCodePointsLayout(CodePoint codePoint,
   return result;
 }
 
+Tree* TreeStack::pushParenthesisLayout(bool leftIsTemporary,
+                                       bool rightIsTemporary) {
+  Tree* result = pushBlock(Type::ParenthesisLayout);
+  // TODO: factor with autocompleted_pair.h
+  pushBlock(leftIsTemporary | (0b10 && rightIsTemporary));
+  return result;
+}
+
+Tree* TreeStack::pushVerticalOffsetLayout(bool isSubscript, bool isPrefix) {
+  Tree* result = pushBlock(Type::VerticalOffsetLayout);
+  // TODO: factor with vertical_offset.h
+  pushBlock(isSubscript | (0b10 && isPrefix));
+  return result;
+}
+
 template <Type blockType, typename... Types>
 Tree* TreeStack::push(Types... args) {
   Block* newNode = lastBlock();
@@ -223,14 +238,10 @@ void TreeStack::execute(ActionWithContext action, void* context,
   }
 }
 
-template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
-    bool leftIsTemporary, bool rightIsTemporary);
 template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                uint8_t, bool, uint8_t>(double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
 template Tree* TreeStack::push<Type::Polynomial, int>(int);
 template Tree* TreeStack::push<Type::RackLayout, int>(int);
-template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
-    bool isSubscript, bool isPrefix);
 
 }  // namespace Poincare::Internal

@@ -11,7 +11,7 @@ using namespace Poincare::Internal;
 QUIZ_CASE(pcj_n_ary_manipulation) {
   TreeRef rackLayout1 = SharedTreeStack->push<Type::RackLayout>(3);
   SharedTreeStack->pushAsciiCodePointLayout('x');
-  SharedTreeStack->push<Type::VerticalOffsetLayout>(false, false);
+  SharedTreeStack->pushVerticalOffsetLayout(false, false);
   SharedTreeStack->pushAsciiCodePointLayout('2');
   SharedTreeStack->pushAsciiCodePointLayout('+');
   // rackLayout1 is x^2+
@@ -33,7 +33,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   TreeRef rackLayout3 = SharedTreeStack->push<Type::RackLayout>(5);
   SharedTreeStack->pushAsciiCodePointLayout('x');
-  SharedTreeStack->push<Type::VerticalOffsetLayout>(false, false);
+  SharedTreeStack->pushVerticalOffsetLayout(false, false);
   SharedTreeStack->pushAsciiCodePointLayout('2');
   SharedTreeStack->pushAsciiCodePointLayout('-');
   SharedTreeStack->pushAsciiCodePointLayout('3');

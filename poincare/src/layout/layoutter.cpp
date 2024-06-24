@@ -160,8 +160,7 @@ void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
 void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
                                    const char* name) {
   layoutText(layoutParent, name);
-  TreeRef parenthesis =
-      SharedTreeStack->push<Type::ParenthesisLayout>(false, false);
+  TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
   TreeRef newParent = SharedTreeStack->push<Type::RackLayout>(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {

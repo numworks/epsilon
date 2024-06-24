@@ -13,7 +13,8 @@ void assert_latex_layouts_to(const char* latex, const Tree* expectedLayout) {
 
 QUIZ_CASE(pcj_latex_to_layout) {
   assert_latex_layouts_to("a-b", "a-b"_l);
-  assert_latex_layouts_to("a\\ -{\\ b}", "a-b"_l);
+  assert_latex_layouts_to("a\\ -{\\ b}+\\operatorname{re}(\\text{i})",
+                          "a-b+re(i)"_l);
   assert_latex_layouts_to("\\left(a-b\\right)+2",
                           KParenthesesL("a-b"_l) ^ "+2"_l);
   assert_latex_layouts_to(

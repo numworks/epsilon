@@ -23,7 +23,8 @@ namespace LatexParser {
  * layout (ex: "\0" or "\1")
  * */
 constexpr static const char* parenthesisToken[] = {"\\left(", "\0", "\\right)"};
-constexpr static const char* curlyBracesToken[] = {"\\left{", "\0", "\\right}"};
+constexpr static const char* curlyBracesToken[] = {"\\left\\{", "\0",
+                                                   "\\right\\}"};
 constexpr static const char* absToken[] = {"\\left|", "\0", "\\right|"};
 constexpr static const char* sqrtToken[] = {"\\sqrt{", "\0", "}"};
 constexpr static const char* superscriptToken[] = {"^{", "\0", "}"};
@@ -50,6 +51,14 @@ constexpr static const char* rightwardsArrowToken[] = {"\\to"};
 constexpr static const char* infinityToken[] = {"\\infty"};
 constexpr static const char* divisionToken[] = {"\\div"};
 
+// Tokens that do nothing
+constexpr static const char* textToken[] = {"\\text{"};
+constexpr static const char* operatorToken[] = {"\\operatorname{"};
+constexpr static const char* spaceToken[] = {" "};
+constexpr static const char* escapeToken[] = {"\\"};
+constexpr static const char* leftBraceToken[] = {"{"};
+constexpr static const char* rightBraceToken[] = {"}"};
+
 using LayoutDetector = bool (*)(const Tree*);
 using LayoutConstructor = Tree* (*)();
 
@@ -68,6 +77,12 @@ struct LatexToken {
                  CodePointLayout::GetCodePoint(t) == C;         \
         },                                                      \
         []() -> Tree* { return KCodePointL<C>()->cloneTree(); } \
+  }
+
+#define DO_NOTHING_TOKEN(S)                                       \
+  {                                                               \
+    S, std::size(S), [](const Tree* t) -> bool { return false; }, \
+        []() -> Tree* { return nullptr; }                         \
   }
 
 constexpr static LatexToken k_tokens[] = {
@@ -137,6 +152,13 @@ constexpr static LatexToken k_tokens[] = {
      // This codepoint doesn't exist in Poincare
      [](const Tree* t) -> bool { return false; },
      []() -> Tree* { return KCodePointL<'/'>()->cloneTree(); }},
+    // Tokens that do nothing
+    DO_NOTHING_TOKEN(textToken),
+    DO_NOTHING_TOKEN(operatorToken),
+    DO_NOTHING_TOKEN(spaceToken),
+    DO_NOTHING_TOKEN(escapeToken),
+    DO_NOTHING_TOKEN(leftBraceToken),
+    DO_NOTHING_TOKEN(rightBraceToken),
 };
 
 // ===== Latex to Layout ======
@@ -183,13 +205,6 @@ Tree* NextLatexToken(const char** start) {
     }
 
     return layoutToken;
-  }
-
-  if (**start == '\\' || **start == ' ' || **start == '{' || **start == '}') {
-    /* Ignore \ and {} if it doesn't belong to a known token
-     * Ignore spaces */
-    *start += 1;
-    return nullptr;
   }
 
   // Code points

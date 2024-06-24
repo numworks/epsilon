@@ -858,12 +858,10 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     }
     case OT::Random:
-      SharedTreeStack->pushBlock(Type::Random);
-      SharedTreeStack->pushBlock(0);  // seed
+      SharedTreeStack->pushRandom(0);
       return;
     case OT::Randint:
-      SharedTreeStack->pushBlock(Type::RandInt);
-      SharedTreeStack->pushBlock(0);  // seed
+      SharedTreeStack->pushRandInt(0);
       if (exp.numberOfChildren() == 2) {
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
@@ -873,8 +871,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       }
       return;
     case OT::RandintNoRepeat:
-      SharedTreeStack->pushBlock(Type::RandIntNoRep);
-      SharedTreeStack->pushBlock(0);  // seed
+      SharedTreeStack->pushRandIntNoRep(0);
       PushPoincareExpression(exp.childAtIndex(0));
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));

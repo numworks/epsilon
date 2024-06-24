@@ -69,6 +69,23 @@ Tree* TreeStack::pushVar(uint8_t id, ComplexSign sign) {
   return result;
 }
 
+Tree* TreeStack::pushRandom(uint8_t seed) {
+  Tree* result = pushBlock(Type::Random);
+  pushBlock(seed);
+  return result;
+}
+
+Tree* TreeStack::pushRandInt(uint8_t seed) {
+  Tree* result = pushBlock(Type::RandInt);
+  pushBlock(seed);
+  return result;
+}
+Tree* TreeStack::pushRandIntNoRep(uint8_t seed) {
+  Tree* result = pushBlock(Type::RandIntNoRep);
+  pushBlock(seed);
+  return result;
+}
+
 Tree* TreeStack::pushPhysicalConstant(uint8_t constantId) {
   assert(constantId < PhysicalConstant::k_numberOfConstants);
   Tree* result = pushBlock(Type::PhysicalConstant);

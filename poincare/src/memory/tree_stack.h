@@ -139,6 +139,10 @@ class TreeStack : public BlockStack {
 
   Tree* pushVar(uint8_t id, ComplexSign sign);
 
+  Tree* pushRandom(uint8_t seed);
+  Tree* pushRandInt(uint8_t seed);
+  Tree* pushRandIntNoRep(uint8_t seed);
+
   Tree* pushPhysicalConstant(uint8_t constantId);
   Tree* pushUnit(uint8_t representativeId, uint8_t prefixId);
 

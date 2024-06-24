@@ -223,6 +223,53 @@ tree->cloneNodeOverTree(KUndef);
 tree->cloneTreeOverTree(KUndef);
 ```
 
+## Use layoutType in a switch over layout’s types
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+switch(layout->type()) {
+  case Type::CodePointLayout:
+    ...
+  case Type::VerticalOffsetLayout:
+    ...
+  default: // do nothing if expression
+}
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+switch(layout->layoutType()) {
+  case LayoutType::CodePoint:
+    ...
+  case LayoutType::VerticalOffset:
+    ...
+  // no default if all layouts are handled
+}
+```
+
+## Use Rack* and Layout* 
+To make the distinction on what the Tree* points to.
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+void moveCursorAt(Tree * rack, int index) {
+  Tree * layout = rack->child(index);
+  ...
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+void moveCursorAt(Rack * rack, int index) {
+  Layout * layout = rack->child(index);
+  ...
+```
+
 ## Others
 
 | Avoid | Prefer |
@@ -232,5 +279,3 @@ tree->cloneTreeOverTree(KUndef);
 | Uncertain manipulation of multiple `Tree* ` | Using `TreeRef` |
 | Public methods susceptible of overwriting their input Tree | Use EDITION_REF_WRAP |
 | `isUserSymbol() \|\| isUserSequence() \|\| isUserFunction()` | Organize types.h and create a `RANGE`: `isUserNamed()` |
-| With layout trees, `switch (type())` | `switch (layoutType())` |
-| With layout trees, `Tree*` | `Rack*` or `Layout*` |

@@ -130,12 +130,8 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
       multiplication->cloneTreeOverTree(KUndef);
       return true;
     }
-    // 0 * {1, 2, 4} -> {0, 0, 0}. Same for matrices.
-    Tree* zeroTree;
     Dimension dim = Dimension::GetDimension(multiplication);
-    if (dim.isMatrix()) {
-      zeroTree = Matrix::Zero(dim.matrix);
-    } else if (dim.isUnit()) {
+    if (dim.isUnit()) {
       // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
       // Use hash because change is too complex to track.
       uint32_t hash = changed ? 0 : multiplication->hash();
@@ -159,18 +155,8 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
         NAry::AddChildAtIndex(multiplication, (0_e)->clone(), 0);
       }
       return changed || (hash != multiplication->hash());
-    } else {
-      int length = Dimension::GetListLength(multiplication);
-      if (length >= 0) {
-        // Push ListSequence of 0s instead of a list to delay its expansion.
-        zeroTree = Integer::Push(length);
-        zeroTree->moveTreeOverTree(PatternMatching::Create(
-            KListSequence(KVarK, KA, 0_e), {.KA = zeroTree}));
-      } else {
-        zeroTree = (0_e)->clone();
-      }
     }
-    multiplication->moveTreeOverTree(zeroTree);
+    Dimension::ReplaceTreeWithDimensionedType(multiplication, Type::Zero);
     return true;
   }
 

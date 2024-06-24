@@ -92,7 +92,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
      * Diff(Point(KA,KB)) = (1, 0) * Diff(KA) + (0, 1) * Diff(KB)
      * but sums and product of points are not handled. We escape the case with
      * (f(V0), g(V0)) -> (diff(f(V0), symbol, V0), diff(g(V0), symbol, V0)) */
-    Tree* result = SharedTreeStack->push(Type::Point);
+    Tree* result = SharedTreeStack->pushPoint();
     // Force derivation to always distribute derivation on points.
     Tree* tempDerivative = Derive(derivand->child(0), symbol, true);
     assert(tempDerivative);
@@ -123,7 +123,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
       }
       /* Fallback to Diff(derivand)
        * f(V0+V1) -> diff(f(V0+V2), symbol, V0) */
-      Tree* preservedDerivative = SharedTreeStack->push(Type::NthDiff);
+      Tree* preservedDerivative = SharedTreeStack->pushNthDiff();
       symbol->clone();
       KVarX->clone();
       (1_e)->clone();
@@ -160,16 +160,16 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
     }
     case Type::Add:
       // Di(x0 + x1 + ... + xi + ...) = 1
-      return SharedTreeStack->push(Type::One);
+      return SharedTreeStack->pushOne();
     case Type::Exp:
       // Di(exp(x)) = exp(x)
       return derivand->clone();
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
-      Tree* power = SharedTreeStack->push(Type::Pow);
+      Tree* power = SharedTreeStack->pushPow();
       derivand->child(0)->clone();
-      SharedTreeStack->push(Type::MinusOne);
+      SharedTreeStack->pushMinusOne();
       Simplification::ShallowSystematicReduce(power);
       return power;
     }

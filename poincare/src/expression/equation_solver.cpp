@@ -330,7 +330,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
     if (!polynomial->isPolynomial()) {
       // tree did not depend on variable. Continue.
       tree = polynomial;
-      NAry::AddChild(result, SharedTreeStack->push(Type::Zero));
+      NAry::AddChild(result, SharedTreeStack->pushZero());
       continue;
     }
     if (Polynomial::Degree(polynomial) != 1) {
@@ -349,8 +349,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
     polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
     polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
     // Update tree to follow [Coeff0] if it exists for next variables.
-    tree = nullConstant ? SharedTreeStack->push(Type::Zero)
-                        : polynomial->nextTree();
+    tree = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
     if (PolynomialParser::ContainsVariable(polynomial) ||
         (i == numberOfVariables - 1 &&
          PolynomialParser::ContainsVariable(tree))) {

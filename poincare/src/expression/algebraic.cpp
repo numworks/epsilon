@@ -17,9 +17,9 @@ TreeRef Algebraic::Rationalize(TreeRef expression) {
   if (Number::IsStrictRational(expression)) {
     TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
     Rational::Numerator(expression).pushOnTreeStack();
-    SharedTreeStack->push(Type::Pow);
+    SharedTreeStack->pushPow();
     Rational::Denominator(expression).pushOnTreeStack();
-    SharedTreeStack->push(Type::MinusOne);
+    SharedTreeStack->pushMinusOne();
     expression->moveTreeOverTree(fraction);
     return fraction;
   }
@@ -73,7 +73,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
   TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  TreeRef power(SharedTreeStack->push(Type::Pow));
+  TreeRef power(SharedTreeStack->pushPow());
   power->moveTreeAfterNode(commonDenominator);
   commonDenominator->nextTree()->cloneTreeBeforeNode(-1_e);
   // TODO basicReduction of power

@@ -150,7 +150,7 @@ void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
      * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
      * builtins. */
     for (size_t i = 1; i < layout->nodeSize(); i++) {
-      SharedTreeStack->push(Type::Zero);
+      SharedTreeStack->pushZero();
     }
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
@@ -307,7 +307,7 @@ void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
     return;
   }
   if (type == Type::Div) {
-    createdLayout = SharedTreeStack->push(Type::FractionLayout);
+    createdLayout = SharedTreeStack->pushFractionLayout();
     TreeRef rack = SharedTreeStack->push<Type::RackLayout>(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {

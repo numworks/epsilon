@@ -383,7 +383,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     if (smallE != end) {
       // Decimal * 10^exponent
       Tree* mult = SharedTreeStack->push<Type::Mult>(1);
-      SharedTreeStack->push(Type::Pow);
+      SharedTreeStack->pushPow();
       (10_e)->clone();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);

@@ -111,7 +111,7 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
   if (denominator.isOne() || numerator.isZero()) {
     node = numerator.pushOnTreeStack();
   } else if (numerator.isOne() && denominator.isTwo()) {
-    node = SharedTreeStack->push(Type::Half);
+    node = SharedTreeStack->pushHalf();
   } else if (numerator.numberOfDigits() == 1 &&
              denominator.isUnsignedType<uint8_t>()) {
     if (numerator.sign() == NonStrictSign::Positive) {

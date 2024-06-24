@@ -485,7 +485,7 @@ SystemExpression UserExpression::cloneAndReduce(
 
 SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
-  Tree* result = SharedTreeStack->push(Type::NthDiff);
+  Tree* result = SharedTreeStack->pushNthDiff();
   SharedTreeStack->push<Type::UserSymbol>(symbolName);
   const Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
   Integer::Push(derivationOrder);
@@ -537,7 +537,7 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
   assert(deepIsList(nullptr));
-  Tree* clone = SharedTreeStack->push(Type::ListSort);
+  Tree* clone = SharedTreeStack->pushListSort();
   tree()->clone();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
   return SystemExpression::Builder(clone);
@@ -629,7 +629,7 @@ int SystemExpression::getPolynomialCoefficients(
       coefficients[i] = Builder(poly->child(indexExponent + 1)->clone());
       indexExponent++;
     } else {
-      coefficients[i] = Builder(SharedTreeStack->push(Type::Zero));
+      coefficients[i] = Builder(SharedTreeStack->pushZero());
     }
   }
   assert(indexExponent == numberOfTerms);

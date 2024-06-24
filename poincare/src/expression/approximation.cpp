@@ -1062,7 +1062,7 @@ Tree* Approximation::ToList(const Tree* node) {
 template <typename T>
 Tree* Approximation::ToPoint(const Tree* node) {
   int old = s_context->m_pointElement;
-  Tree* point = SharedTreeStack->push(Type::Point);
+  Tree* point = SharedTreeStack->pushPoint();
   s_context->m_pointElement = 0;
   ToBeautifiedComplex<T>(node);
   s_context->m_pointElement = 1;

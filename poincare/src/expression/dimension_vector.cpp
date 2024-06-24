@@ -78,7 +78,7 @@ Tree* DimensionVector::toBaseUnits() const {
       continue;
     }
     if (exponent != 1) {
-      SharedTreeStack->push(Type::Pow);
+      SharedTreeStack->pushPow();
     }
     Unit::Push(representative);
     if (exponent != 1) {

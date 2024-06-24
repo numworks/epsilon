@@ -117,16 +117,16 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer* buffer) {
 
 Tree* IntegerHandler::pushOnTreeStack() const {
   if (isZero()) {
-    return SharedTreeStack->push(Type::Zero);
+    return SharedTreeStack->pushZero();
   }
   if (isOne()) {
-    return SharedTreeStack->push(Type::One);
+    return SharedTreeStack->pushOne();
   }
   if (isTwo()) {
-    return SharedTreeStack->push(Type::Two);
+    return SharedTreeStack->pushTwo();
   }
   if (isMinusOne()) {
-    return SharedTreeStack->push(Type::MinusOne);
+    return SharedTreeStack->pushMinusOne();
   }
   if (isUnsignedType<uint8_t>()) {
     return SharedTreeStack->push<Type::IntegerPosShort>(

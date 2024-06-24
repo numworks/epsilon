@@ -171,7 +171,7 @@ class InputBeautification {
       {/* int( */
        "int", 4,
        [](TreeRef* parameters) -> Tree* {
-         TreeRef integral = SharedTreeStack->push(Type::IntegralLayout);
+         TreeRef integral = SharedTreeStack->pushIntegralLayout();
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -211,7 +211,7 @@ class InputBeautification {
        "product", 4,
        [](TreeRef* parameters) -> Tree* {
          // TODO factorize with diff and int
-         TreeRef product = SharedTreeStack->push(Type::ProductLayout);
+         TreeRef product = SharedTreeStack->pushProductLayout();
          parameters[1]->detachTree();
          parameters[2]->detachTree();
          parameters[3]->detachTree();
@@ -233,7 +233,7 @@ class InputBeautification {
   constexpr static BeautificationRule k_sumRule = {
       "sum", 4, [](TreeRef* parameters) -> Tree* {
         // TODO factorize with diff and int
-        TreeRef sum = SharedTreeStack->push(Type::SumLayout);
+        TreeRef sum = SharedTreeStack->pushSumLayout();
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[3]->detachTree();

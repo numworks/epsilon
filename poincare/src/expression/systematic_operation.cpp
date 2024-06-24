@@ -131,7 +131,7 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (base->isMult()) {
     for (Tree* w : base->children()) {
-      TreeRef m = SharedTreeStack->push(Type::Pow);
+      TreeRef m = SharedTreeStack->pushPow();
       w->clone();
       n->clone();
       w->moveTreeOverTree(m);

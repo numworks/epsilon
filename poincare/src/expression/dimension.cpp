@@ -595,7 +595,7 @@ void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   int length = Dimension::GetListLength(e);
   if (length >= 0) {
     // Push ListSequence instead of a list to delay its expansion.
-    SharedTreeStack->push(Type::ListSequence);
+    SharedTreeStack->pushListSequence();
     KVarK->clone();
     Integer::Push(length);
   }
@@ -608,7 +608,7 @@ void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
       SharedTreeStack->push(type);
     }
   } else if (dim.isPoint()) {
-    SharedTreeStack->push(Type::Point);
+    SharedTreeStack->pushPoint();
     SharedTreeStack->push(type);
     SharedTreeStack->push(type);
   } else {

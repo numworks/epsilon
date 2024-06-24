@@ -844,7 +844,7 @@ void Unit::RemoveUnit(Tree* unit) {
   assert(!IsNonKelvinTemperature(representative));
   Tree* result = SharedTreeStack->push<Type::Mult>(2);
   representative->ratioExpressionReduced()->clone();
-  SharedTreeStack->push(Type::Pow);
+  SharedTreeStack->pushPow();
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
   unit->moveTreeOverTree(result);

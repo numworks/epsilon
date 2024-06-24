@@ -315,7 +315,7 @@ bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
   // A^(1/N) -> Root(A, N)
   if (e->isPow() && e->child(1)->isRational() &&
       Rational::Numerator(e->child(1)).isOne()) {
-    Tree* root = SharedTreeStack->push(Type::Root);
+    Tree* root = SharedTreeStack->pushRoot();
     e->child(0)->clone();
     Rational::Denominator(e->child(1)).pushOnTreeStack();
     e->moveTreeOverTree(root);
@@ -413,13 +413,13 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
   /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
    * If abs or arg stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->push<Type::Mult>(2);
-  Tree* abs = SharedTreeStack->push(Type::Abs);
+  Tree* abs = SharedTreeStack->pushAbs();
   e->clone();
   bool absReduced = Simplification::ShallowSystematicReduce(abs);
-  SharedTreeStack->push(Type::Exp);
+  SharedTreeStack->pushExp();
   SharedTreeStack->push<Type::Mult>(2);
-  SharedTreeStack->push(Type::ComplexI);
-  Tree* arg = SharedTreeStack->push(Type::Arg);
+  SharedTreeStack->pushComplexI();
+  Tree* arg = SharedTreeStack->pushArg();
   e->clone();
   bool argReduced = Simplification::ShallowSystematicReduce(arg);
   /* the multiplication that may be created by arg is not flattened on purpose
@@ -468,20 +468,20 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
       SharedTreeStack->push<Type::Mult>(2);
       FloatNode::Push(abs);
     }
-    SharedTreeStack->push(Type::Pow);
-    SharedTreeStack->push(Type::EulerE);
+    SharedTreeStack->pushPow();
+    SharedTreeStack->pushEulerE();
     im = std::arg(value);
   }
   // Complex part ±[im×]i
   if (im < 0) {
-    SharedTreeStack->push(Type::Opposite);
+    SharedTreeStack->pushOpposite();
     im = -im;
   }
   if (im != 1) {
     SharedTreeStack->push<Type::Mult>(2);
     FloatNode::Push(im);
   }
-  SharedTreeStack->push(Type::ComplexI);
+  SharedTreeStack->pushComplexI();
   return result;
 }
 

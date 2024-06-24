@@ -812,22 +812,31 @@ bool NewExpression::deepIsOfType(
       &types);
 }
 
+// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
                                  bool isReduced) const {
   if (!canContainMatrices) {
     return false;
   }
-  return Dimension::GetDimension(tree(), context).isMatrix();
+  return Dimension::DeepCheckDimensions(tree(), context) &&
+         Dimension::DeepCheckListLength(tree(), context) &&
+         Dimension::GetDimension(tree(), context).isMatrix();
 }
 
+// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool NewExpression::deepIsList(Context* context) const {
-  return Dimension::IsList(tree(), context);
+  return Dimension::DeepCheckDimensions(tree(), context) &&
+         Dimension::DeepCheckListLength(tree(), context) &&
+         Dimension::IsList(tree(), context);
 }
 
+// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  return Dimension::GetDimension(tree(), context).isPoint() &&
+  return Dimension::DeepCheckDimensions(tree(), context) &&
+         Dimension::DeepCheckListLength(tree(), context) &&
+         Dimension::GetDimension(tree(), context).isPoint() &&
          (allowlists || !Dimension::IsList(tree(), context));
 }
 
@@ -1097,9 +1106,10 @@ template SystemExpression SystemExpression::approximateListAndSort<float>()
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
-template float SystemFunction::approximateToScalarWithValue<float>(float, int) const;
-template double SystemFunction::approximateToScalarWithValue<double>(
-    double, int) const;
+template float SystemFunction::approximateToScalarWithValue<float>(float,
+                                                                   int) const;
+template double SystemFunction::approximateToScalarWithValue<double>(double,
+                                                                     int) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char* text, Context* context,

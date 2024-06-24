@@ -37,7 +37,8 @@ T constexpr CeilDivision(T numerator, T denominator) {
 
 constexpr size_t NumberOfDigits(uint32_t value) {
   return CeilDivision<size_t>(
-      OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
+      value == UINT32_MAX ? 32
+                          : OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
       OMG::BitHelper::k_numberOfBitsInByte);
 }
 

@@ -749,7 +749,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×_°C", "0×_°C", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("6×0×_°F", "0×_°F", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("0×_K", "0×_K");
-  simplifies_to("0×_K_s_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
+  simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

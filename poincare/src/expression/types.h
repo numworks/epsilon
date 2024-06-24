@@ -70,6 +70,7 @@ NODE(SingleFloat, 0, { float value; })
 NODE(DoubleFloat, 0, { double value; })
 
 RANGE(Float, SingleFloat, DoubleFloat)
+RANGE(RationalOrFloat, RationalNegBig, DoubleFloat)
 
 // 1.4 - Mathematical constants
 

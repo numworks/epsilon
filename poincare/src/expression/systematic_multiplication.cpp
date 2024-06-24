@@ -22,9 +22,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
     // inf * inf -> inf
     child->removeTree();
     return true;
-  } else if (child->isNumber() && next->isNumber() &&
-             !((child->isMathematicalConstant()) ||
-               next->isMathematicalConstant())) {
+  } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {

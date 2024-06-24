@@ -59,8 +59,7 @@ const Tree* Constant(const Tree* u) {
 static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   assert(next == child->nextTree());
   Tree* merge = nullptr;
-  if (child->isNumber() && next->isNumber() &&
-      !((child->isMathematicalConstant()) || next->isMathematicalConstant())) {
+  if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Addition(child, next);
   } else if (Infinity::IsPlusOrMinusInfinity(next) && child->isNumber()) {

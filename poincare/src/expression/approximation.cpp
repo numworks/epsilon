@@ -1177,7 +1177,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Dim: {
       Dimension dim = Dimension::GetDimension(node->child(0));
       assert(dim.isMatrix());
-      Tree* result = SharedTreeStack->push<Type::Matrix>(1, 2);
+      Tree* result = SharedTreeStack->pushMatrix(1, 2);
       FloatNode::Push(T(dim.matrix.rows));
       FloatNode::Push(T(dim.matrix.cols));
       return result;

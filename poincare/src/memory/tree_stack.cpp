@@ -156,11 +156,6 @@ template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerNegShort>(uint8_t);
 template Tree* TreeStack::push<Type::IntegerPosShort>(uint8_t);
-template Tree* TreeStack::push<Type::Matrix, int, int>(int, int);
-template Tree* TreeStack::push<Type::Matrix, uint8_t, uint8_t>(uint8_t,
-                                                               uint8_t);
-template Tree* TreeStack::push<Type::MatrixLayout, uint8_t, uint8_t>(uint8_t,
-                                                                     uint8_t);
 template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
 template Tree* TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);

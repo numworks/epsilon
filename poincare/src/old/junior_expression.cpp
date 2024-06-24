@@ -932,7 +932,7 @@ bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
 
 Poincare::Matrix Poincare::Matrix::Builder() {
   NewExpression expr =
-      NewExpression::Builder(SharedTreeStack->push<Type::Matrix>(0, 0));
+      NewExpression::Builder(SharedTreeStack->pushMatrix(0, 0));
   return static_cast<Poincare::Matrix&>(expr);
 }
 

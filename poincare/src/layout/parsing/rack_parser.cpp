@@ -1127,8 +1127,7 @@ void RackParser::parseMatrix(TreeRef& leftHandSide, Token::Type stoppingType) {
   }
   uint8_t numberOfRows = 0;
   uint8_t numberOfColumns = 0;
-  Tree* matrix =
-      SharedTreeStack->push<Type::Matrix>(numberOfRows, numberOfColumns);
+  Tree* matrix = SharedTreeStack->pushMatrix(numberOfRows, numberOfColumns);
   while (!popTokenIfType(Token::Type::RightBracket)) {
     TreeRef row = parseVector();
     if (numberOfRows > 0 && numberOfColumns != row->numberOfChildren()) {

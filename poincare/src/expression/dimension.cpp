@@ -603,7 +603,7 @@ void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   if (dim.isMatrix()) {
     int nRows = dim.matrix.rows;
     int nCols = dim.matrix.cols;
-    SharedTreeStack->push<Type::Matrix>(nRows, nCols);
+    SharedTreeStack->pushMatrix(nRows, nCols);
     for (int i = 0; i < nRows * nCols; i++) {
       SharedTreeStack->pushBlock(type);
     }

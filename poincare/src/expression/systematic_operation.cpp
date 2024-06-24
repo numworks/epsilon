@@ -405,7 +405,7 @@ bool SystematicOperation::SimplifyDistribution(Tree* expr) {
 bool SystematicOperation::SimplifyDim(Tree* u) {
   Dimension dim = Dimension::GetDimension(u->child(0));
   if (dim.isMatrix()) {
-    Tree* result = SharedTreeStack->push<Type::Matrix>(1, 2);
+    Tree* result = SharedTreeStack->pushMatrix(1, 2);
     Integer::Push(dim.matrix.rows);
     Integer::Push(dim.matrix.cols);
     u->moveTreeOverTree(result);

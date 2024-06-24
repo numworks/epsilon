@@ -246,7 +246,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
   uint8_t rows = simplifiedEquationSet->numberOfChildren();
-  Tree* matrix = SharedTreeStack->push<Type::Matrix>(0, 0);
+  Tree* matrix = SharedTreeStack->pushMatrix(0, 0);
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : simplifiedEquationSet->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n, context);

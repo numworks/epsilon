@@ -84,8 +84,8 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
       const Grid* grid = Grid::From(node);
       Tree* expr;
       if (grid->isMatrixLayout()) {
-        expr = SharedTreeStack->push<Type::Matrix>(grid->numberOfRows() - 1,
-                                                   grid->numberOfColumns() - 1);
+        expr = SharedTreeStack->pushMatrix(grid->numberOfRows() - 1,
+                                           grid->numberOfColumns() - 1);
       } else {
         expr = SharedTreeStack->pushPiecewise(0);
       }

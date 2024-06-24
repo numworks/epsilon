@@ -768,7 +768,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->pushPow();
           break;
         case OT::OMatrix:
-          SharedTreeStack->push<Type::Matrix>(
+          SharedTreeStack->pushMatrix(
               static_cast<Poincare::OMatrix&>(exp).numberOfRows(),
               static_cast<Poincare::OMatrix&>(exp).numberOfColumns());
           break;

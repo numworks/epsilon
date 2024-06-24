@@ -902,7 +902,7 @@ void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
     // Right delimiter missing
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
-    leftHandSide = SharedTreeStack->push<Type::UserSequence>(name);
+    leftHandSide = SharedTreeStack->pushUserSequence(name);
     leftHandSide->moveTreeAfterNode(rank);
   }
 }
@@ -960,13 +960,13 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     if (idType != Poincare::Context::SymbolAbstractType::Function &&
         idType != Poincare::Context::SymbolAbstractType::Sequence &&
         idType != Poincare::Context::SymbolAbstractType::List) {
-      leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
+      leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }
   }
 
   if (idType == Poincare::Context::SymbolAbstractType::List) {
-    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
+    leftHandSide = SharedTreeStack->pushUserSymbol(name);
     parseListParameters(leftHandSide);
     return;
   }
@@ -983,7 +983,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
          m_nextToken.firstLayout()->isParenthesisLayout())) {
       popToken();
       /* TODO factor with parseSequence */
-      leftHandSide = SharedTreeStack->push<Type::UserSequence>(name);
+      leftHandSide = SharedTreeStack->pushUserSequence(name);
       Parser::Parse(m_currentToken.firstLayout()->child(0),
                     m_parsingContext.context());
       return;
@@ -1039,7 +1039,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       return false;
     }
-    leftHandSide = SharedTreeStack->push<Type::UserSymbol>(name);
+    leftHandSide = SharedTreeStack->pushUserSymbol(name);
     return true;
   }
 
@@ -1063,7 +1063,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
                                 BasedInteger::Builder(derivationOrder));
 #endif
     } else {
-      result = SharedTreeStack->push<Type::UserFunction>(name);
+      result = SharedTreeStack->pushUserFunction(name);
       parameter->moveNodeBeforeNode(result);
       assert(result->child(0) == parameter);
     }

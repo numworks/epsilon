@@ -94,8 +94,7 @@ Function Function::Builder(const char* name, size_t length,
     length = strlen(name);
   }
   Internal::Tree* tree =
-      Internal::SharedTreeStack->push<Internal::Type::UserFunction>(name,
-                                                                    length + 1);
+      Internal::SharedTreeStack->pushUserFunction(name, length + 1);
   assert(!child.isUninitialized());
   child.tree()->clone();
 

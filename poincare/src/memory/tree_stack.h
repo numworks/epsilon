@@ -102,6 +102,31 @@ class TreeStack : public BlockStack {
     return result;
   }
 
+  Tree* pushUserSymbol(const char* name) {
+    return pushUserSymbol(name, strlen(name) + 1);
+  }
+
+  Tree* pushUserSymbol(const char* name, size_t size) {
+    // TODO: change size to length
+    return pushUserNamed(Type::UserSymbol, name, size);
+  }
+
+  Tree* pushUserFunction(const char* name) {
+    return pushUserFunction(name, strlen(name) + 1);
+  }
+
+  Tree* pushUserFunction(const char* name, size_t size) {
+    return pushUserNamed(Type::UserFunction, name, size);
+  }
+
+  Tree* pushUserSequence(const char* name) {
+    return pushUserSequence(name, strlen(name) + 1);
+  }
+
+  Tree* pushUserSequence(const char* name, size_t size) {
+    return pushUserNamed(Type::UserSequence, name, size);
+  }
+
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {
@@ -148,6 +173,9 @@ class TreeStack : public BlockStack {
 
   void execute(ActionWithContext action, void* context, const void* data,
                int maxSize, Relax relax = k_defaultRelax);
+
+  // type should be UserSequence, UserFunction or UserSymbol
+  Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
 };
 
 #define SharedTreeStack TreeStack::SharedTreeStack

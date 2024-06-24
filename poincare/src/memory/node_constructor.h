@@ -93,48 +93,6 @@ NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::Matrix>(
                                             rows, cols);
 }
 
-constexpr bool CreateBlockAtIndexForUserType(Type type, Block* block,
-                                             size_t blockIndex,
-                                             const char* name,
-                                             size_t nameSize) {
-  size_t numberOfMetaBlocks = TypeBlock::NumberOfMetaBlocks(type);
-  if (blockIndex < numberOfMetaBlocks) {
-    assert(blockIndex == numberOfMetaBlocks - 1);
-    *block = ValueBlock(nameSize);
-    return nameSize == 0;
-  }
-  size_t nameIndex = blockIndex - numberOfMetaBlocks;
-  if (nameIndex == nameSize - 1) {
-    *block = '\0';
-  } else {
-    *block = ValueBlock(name[nameIndex]);
-  }
-  return nameIndex >= nameSize - 1;
-}
-
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserFunction>(
-    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(Type::UserFunction, block, blockIndex,
-                                       name, nameSize);
-}
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSequence>(
-    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(Type::UserSequence, block, blockIndex,
-                                       name, nameSize);
-}
-
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::UserSymbol>(
-    Block* block, size_t blockIndex, const char* name, size_t nameSize) {
-  return CreateBlockAtIndexForUserType(Type::UserSymbol, block, blockIndex,
-                                       name, nameSize);
-}
-
 template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::SingleFloat>(

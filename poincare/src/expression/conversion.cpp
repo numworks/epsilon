@@ -807,7 +807,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::Function:
     case OT::Symbol: {
       Poincare::Symbol s = static_cast<Poincare::Symbol&>(exp);
-      Tree* t = SharedTreeStack->push<Type::UserSymbol>(
+      Tree* t = SharedTreeStack->pushUserSymbol(
           s.name(), (exp.otype() == OT::Sequence ? 1 : strlen(s.name())) + 1);
       if (exp.otype() == OT::Function) {
         *t->block() = Type::UserFunction;

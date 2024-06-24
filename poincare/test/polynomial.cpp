@@ -145,7 +145,7 @@ void assert_polynomial_degree_is(ProjectionContext projectionContext,
                                  const char* input, int expectedDegree,
                                  const char* symbolName = "x") {
   Tree* expression = TextToTree(input, projectionContext.m_context);
-  Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   int degree = Degree::Get(expression, symbol, projectionContext);
   quiz_assert(degree == expectedDegree);
   symbol->removeTree();

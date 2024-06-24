@@ -102,8 +102,8 @@ Symbol Symbol::Builder(const char* name, int length) {
     length = strlen(name);
   }
   // UserSequence  UserSymbol
-  JuniorExpression expr = JuniorExpression::Builder(
-      Internal::SharedTreeStack->push<Internal::Type::UserSymbol>(
+  JuniorExpression expr =
+      JuniorExpression::Builder(Internal::SharedTreeStack->pushUserSymbol(
           name, static_cast<size_t>(length + 1)));
   return static_cast<Symbol&>(expr);
 }

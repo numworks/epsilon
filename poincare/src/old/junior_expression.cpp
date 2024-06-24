@@ -161,7 +161,7 @@ const Tree* JuniorExpressionNode::tree() const {
 
 int JuniorExpressionNode::polynomialDegree(Context* context,
                                            const char* symbolName) const {
-  Tree* symbol = SharedTreeStack->push<Internal::Type::UserSymbol>(symbolName);
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   // TODO_PCJ: Pass at least ComplexFormat and SymbolicComputation
   ProjectionContext projectionContext = {.m_context = context};
   int degree = Degree::Get(tree(), symbol, projectionContext);
@@ -486,8 +486,8 @@ SystemExpression UserExpression::cloneAndReduce(
 SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
   Tree* result = SharedTreeStack->pushNthDiff();
-  SharedTreeStack->push<Type::UserSymbol>(symbolName);
-  const Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  SharedTreeStack->pushUserSymbol(symbolName);
+  const Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Integer::Push(derivationOrder);
   Tree* derivand = tree()->clone();
   Variables::ReplaceSymbol(derivand, symbol, 0,
@@ -610,7 +610,7 @@ bool NewExpression::derivate(const ReductionContext& reductionContext,
 int SystemExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     SystemExpression coefficients[]) const {
-  Tree* symbol = SharedTreeStack->push<Type::UserSymbol>(symbolName);
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Tree* poly = tree()->clone();
   AdvancedSimplification::DeepExpand(poly);
   // PolynomialParser::Parse eats given tree

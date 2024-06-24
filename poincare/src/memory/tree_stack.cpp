@@ -28,17 +28,15 @@ size_t TreeStack::numberOfTrees() const {
   return result;
 }
 
-template <>
-Tree* TreeStack::push<Type::UserFunction>(const char* name) {
-  return push<Type::UserFunction>(name, strlen(name) + 1);
-}
-template <>
-Tree* TreeStack::push<Type::UserSequence>(const char* name) {
-  return push<Type::UserSequence>(name, strlen(name) + 1);
-}
-template <>
-Tree* TreeStack::push<Type::UserSymbol>(const char* name) {
-  return push<Type::UserSymbol>(name, strlen(name) + 1);
+Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
+  assert(type.isUserNamed());
+  Tree* result = pushBlock(type);
+  pushBlock(size);
+  for (int i = 0; i < size - 1; i++) {
+    pushBlock(name[i]);
+  }
+  pushBlock(0);
+  return result;
 }
 
 template <Type blockType, typename... Types>
@@ -167,12 +165,6 @@ template Tree* TreeStack::push<Type::SingleFloat, float>(float);
 template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
-template Tree* TreeStack::push<Type::UserFunction, const char*, size_t>(
-    const char*, size_t);
-template Tree* TreeStack::push<Type::UserSequence, const char*, size_t>(
-    const char*, size_t);
-template Tree* TreeStack::push<Type::UserSymbol, const char*, size_t>(
-    const char*, size_t);
 template Tree* TreeStack::push<Type::Var, uint8_t, ComplexSign>(uint8_t,
                                                                 ComplexSign);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(

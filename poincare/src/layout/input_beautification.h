@@ -27,7 +27,7 @@ consteval static BeautificationRule ruleHelper() {
   return BeautificationRule{
       *Builtin::GetReservedFunction(type)->aliases(),
       TypeBlock::NumberOfChildren(type), [](TreeRef* parameters) -> Tree* {
-        TreeRef ref = SharedTreeStack->push(layoutType);
+        TreeRef ref = SharedTreeStack->pushBlock(layoutType);
         for (int i = 0; i < TypeBlock::NumberOfChildren(layoutType); i++) {
           parameters[i]->detachTree();
         }
@@ -122,8 +122,8 @@ class InputBeautification {
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](TreeRef* parameters) -> Tree* {
-        TreeRef diff = SharedTreeStack->push(Type::DiffLayout);
-        SharedTreeStack->push(0);
+        TreeRef diff = SharedTreeStack->pushBlock(Type::DiffLayout);
+        SharedTreeStack->pushBlock(0);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         parameters[0]->detachTree();
@@ -197,10 +197,10 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         TreeRef ref = SharedTreeStack->push(Type::PiecewiseLayout);
+         TreeRef ref = SharedTreeStack->pushBlock(Type::PiecewiseLayout);
          // TODO we need a builder to make this safe
-         SharedTreeStack->push(2);
-         SharedTreeStack->push(2);
+         SharedTreeStack->pushBlock(2);
+         SharedTreeStack->pushBlock(2);
          parameters[0]->detachTree();
          parameters[1]->detachTree();
          KRackL()->clone();

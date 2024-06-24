@@ -11,12 +11,12 @@ QUIZ_CASE(pcj_block) {
   SharedTreeStack->flush();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
-  Block* firstBlock = SharedTreeStack->push(Type::Zero)->block();
-  SharedTreeStack->push(Type::One);
-  SharedTreeStack->push(Type::Two);
-  SharedTreeStack->push(ValueBlock(4));
-  SharedTreeStack->push(ValueBlock(-4));
-  SharedTreeStack->push(Type::Zero);
+  Block* firstBlock = SharedTreeStack->pushBlock(Type::Zero)->block();
+  SharedTreeStack->pushBlock(Type::One);
+  SharedTreeStack->pushBlock(Type::Two);
+  SharedTreeStack->pushBlock(ValueBlock(4));
+  SharedTreeStack->pushBlock(ValueBlock(-4));
+  SharedTreeStack->pushBlock(Type::Zero);
   assert_pool_block_sizes_is(6);
 
   // Block navigation

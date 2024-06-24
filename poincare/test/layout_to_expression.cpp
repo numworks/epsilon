@@ -231,9 +231,9 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   using namespace Poincare::Internal;
   // TODO: this is tedious and fragile
   Tree* p = SharedTreeStack->push<Type::RackLayout>(1);
-  SharedTreeStack->push(Type::PiecewiseLayout);
-  SharedTreeStack->push(4);
-  SharedTreeStack->push(2);
+  SharedTreeStack->pushBlock(Type::PiecewiseLayout);
+  SharedTreeStack->pushBlock(4);
+  SharedTreeStack->pushBlock(2);
   "3"_l->clone();
   "2>3"_l->clone();
   "2"_l->clone();

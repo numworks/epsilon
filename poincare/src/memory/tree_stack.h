@@ -47,7 +47,7 @@ class TreeStack : public BlockStack {
   }
   template <Type blockType, typename... Types>
   Tree* push(Types... args);
-  Tree* push(Block block) {
+  Tree* pushBlock(Block block) {
     insertBlock(lastBlock(), block, true);
     return Tree::FromBlocks(lastBlock() - 1);
   }
@@ -69,23 +69,23 @@ class TreeStack : public BlockStack {
   template <int I = N>                        \
     requires(I >= 0 && I == N && S == 0)      \
   Tree* push##F() {                           \
-    return push(Type::F);                     \
+    return pushBlock(Type::F);                \
   }                                           \
                                               \
   template <int I = N>                        \
     requires(I == NARY && I == N && S == 0)   \
   Tree* push##F(int nbChildren) {             \
-    Tree* result = push(Type::F);             \
-    push(nbChildren);                         \
+    Tree* result = pushBlock(Type::F);        \
+    pushBlock(nbChildren);                    \
     return result;                            \
   }                                           \
                                               \
   template <int I = N>                        \
     requires(I == NARY2D && I == N && S == 0) \
   Tree* push##F(int nbRows, int nbCols) {     \
-    Tree* result = push(Type::F);             \
-    push(nbRows);                             \
-    push(nbCols);                             \
+    Tree* result = pushBlock(Type::F);        \
+    pushBlock(nbRows);                        \
+    pushBlock(nbCols);                        \
     return result;                            \
   }
 

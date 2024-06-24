@@ -598,9 +598,9 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::OBoolean:
-      SharedTreeStack->push(static_cast<Poincare::OBoolean&>(exp).value()
-                                ? Type::True
-                                : Type::False);
+      SharedTreeStack->pushBlock(static_cast<Poincare::OBoolean&>(exp).value()
+                                     ? Type::True
+                                     : Type::False);
       return;
     case OT::LogicalOperatorNot:
       SharedTreeStack->pushLogicalNot();
@@ -628,7 +628,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
         default:
           assert(false);
       }
-      SharedTreeStack->push(type);
+      SharedTreeStack->pushBlock(type);
       PushPoincareExpression(exp.childAtIndex(0));
       return PushPoincareExpression(exp.childAtIndex(1));
     }
@@ -680,7 +680,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     case OT::Sum:
     case OT::Product:
-      SharedTreeStack->push(exp.otype() == OT::Sum ? Type::Sum : Type::Product);
+      SharedTreeStack->pushBlock(exp.otype() == OT::Sum ? Type::Sum
+                                                        : Type::Product);
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
       PushPoincareExpression(exp.childAtIndex(3));
@@ -722,12 +723,12 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->push<Type::Piecewise>(exp.numberOfChildren());
           break;
         case OT::GreatCommonDivisor:
-          SharedTreeStack->push(Type::GCD);
-          SharedTreeStack->push(exp.numberOfChildren());
+          SharedTreeStack->pushBlock(Type::GCD);
+          SharedTreeStack->pushBlock(exp.numberOfChildren());
           break;
         case OT::LeastCommonMultiple:
-          SharedTreeStack->push(Type::LCM);
-          SharedTreeStack->push(exp.numberOfChildren());
+          SharedTreeStack->pushBlock(Type::LCM);
+          SharedTreeStack->pushBlock(exp.numberOfChildren());
           break;
         case OT::Comparison: {
           Poincare::Comparison c = static_cast<Poincare::Comparison&>(exp);
@@ -754,7 +755,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
             default:
               assert(false);
           }
-          SharedTreeStack->push(type);
+          SharedTreeStack->pushBlock(type);
           break;
         }
         case OT::Subtraction:
@@ -847,24 +848,24 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     }
     case OT::DistributionDispatcher: {
-      SharedTreeStack->push(Type::Distribution);
-      SharedTreeStack->push(exp.numberOfChildren());
+      SharedTreeStack->pushBlock(Type::Distribution);
+      SharedTreeStack->pushBlock(exp.numberOfChildren());
       Poincare::DistributionDispatcher dd =
           static_cast<Poincare::DistributionDispatcher&>(exp);
-      SharedTreeStack->push(static_cast<uint8_t>(dd.distributionType()));
-      SharedTreeStack->push(static_cast<uint8_t>(dd.methodType()));
+      SharedTreeStack->pushBlock(static_cast<uint8_t>(dd.distributionType()));
+      SharedTreeStack->pushBlock(static_cast<uint8_t>(dd.methodType()));
       for (int i = 0; i < exp.numberOfChildren(); i++) {
         PushPoincareExpression(exp.childAtIndex(i));
       }
       return;
     }
     case OT::Random:
-      SharedTreeStack->push(Type::Random);
-      SharedTreeStack->push(0);  // seed
+      SharedTreeStack->pushBlock(Type::Random);
+      SharedTreeStack->pushBlock(0);  // seed
       return;
     case OT::Randint:
-      SharedTreeStack->push(Type::RandInt);
-      SharedTreeStack->push(0);  // seed
+      SharedTreeStack->pushBlock(Type::RandInt);
+      SharedTreeStack->pushBlock(0);  // seed
       if (exp.numberOfChildren() == 2) {
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
@@ -874,8 +875,8 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       }
       return;
     case OT::RandintNoRepeat:
-      SharedTreeStack->push(Type::RandIntNoRep);
-      SharedTreeStack->push(0);  // seed
+      SharedTreeStack->pushBlock(Type::RandIntNoRep);
+      SharedTreeStack->pushBlock(0);  // seed
       PushPoincareExpression(exp.childAtIndex(0));
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));

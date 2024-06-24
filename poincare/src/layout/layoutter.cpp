@@ -144,7 +144,7 @@ void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
     // Built 2D layout associated with builtin
     const BuiltinWithLayout* builtinWithLayout =
         static_cast<const BuiltinWithLayout*>(builtin);
-    TreeRef layout = SharedTreeStack->push(
+    TreeRef layout = SharedTreeStack->pushBlock(
         static_cast<Type>(builtinWithLayout->layoutType()));
     /* Some builtins have a bigger nodeSize. Additional parameters are not
      * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
@@ -475,7 +475,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
               Preferences::CombinatoricSymbols::Default) {
         layoutBuiltin(layoutParent, expression);
       } else {
-        TreeRef layout = SharedTreeStack->push(
+        TreeRef layout = SharedTreeStack->pushBlock(
             type.isBinomial() ? Type::PtBinomialLayout : Type::PtPermuteLayout);
         layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
@@ -552,9 +552,9 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutBuiltin(layoutParent, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
-        TreeRef layout = SharedTreeStack->push(Type::PiecewiseLayout);
-        SharedTreeStack->push(rows + 1);
-        SharedTreeStack->push(2);
+        TreeRef layout = SharedTreeStack->pushBlock(Type::PiecewiseLayout);
+        SharedTreeStack->pushBlock(rows + 1);
+        SharedTreeStack->pushBlock(2);
         layoutChildrenAsRacks(expression);
         // Placeholders
         if (expression->numberOfChildren() % 2 == 1) {

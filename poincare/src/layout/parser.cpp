@@ -109,7 +109,8 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
     }
     default: {
       // The layout children map one-to-one to the expression
-      TreeRef ref = SharedTreeStack->push(ExpressionType(node->layoutType()));
+      TreeRef ref =
+          SharedTreeStack->pushBlock(ExpressionType(node->layoutType()));
       int n = node->numberOfChildren();
       for (int i = 0; i < n; i++) {
         if (!Parse(node->child(i), context)) {

@@ -21,9 +21,9 @@ bool AutocompletedPair::IsAutoCompletedBracketPairCodePoint(CodePoint c,
 
 Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
   assert(type.isAutocompletedPair());
-  Tree* result = SharedTreeStack->push(type);
+  Tree* result = SharedTreeStack->pushBlock(type);
   // TODO proper node constructor
-  SharedTreeStack->push(0);
+  SharedTreeStack->pushBlock(0);
   KRackL()->clone();
   return result;
 }

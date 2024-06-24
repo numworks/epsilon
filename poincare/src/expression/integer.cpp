@@ -137,8 +137,8 @@ Tree* IntegerHandler::pushOnTreeStack() const {
   }
   TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
                                                         : Type::IntegerPosBig);
-  Tree* node = SharedTreeStack->push(typeBlock);
-  SharedTreeStack->push(m_numberOfDigits);
+  Tree* node = SharedTreeStack->pushBlock(typeBlock);
+  SharedTreeStack->pushBlock(m_numberOfDigits);
   pushDigitsOnTreeStack();
 #if POINCARE_POOL_VISUALIZATION
   Log("PushInteger", node->block(), node->treeSize());
@@ -149,7 +149,7 @@ Tree* IntegerHandler::pushOnTreeStack() const {
 void IntegerHandler::pushDigitsOnTreeStack() const {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    SharedTreeStack->push(ValueBlock(digit(i)));
+    SharedTreeStack->pushBlock(ValueBlock(digit(i)));
   }
 }
 

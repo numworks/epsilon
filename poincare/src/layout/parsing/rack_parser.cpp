@@ -557,11 +557,11 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
      * It is now parsed as (a < b and b = c) to simplify code. */
     /* TODO_PCJ: fix code with a < b < c < d */
     CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
-    Tree* comparison = SharedTreeStack->push(operatorType);
+    Tree* comparison = SharedTreeStack->pushBlock(operatorType);
     MoveNodeAtNode(rightHandSide, comparison);
     CloneNodeAtNode(leftHandSide, KLogicalAnd);
   } else {
-    Tree* comparison = SharedTreeStack->push(operatorType);
+    Tree* comparison = SharedTreeStack->pushBlock(operatorType);
     MoveNodeAtNode(leftHandSide, comparison);
   }
 }
@@ -654,7 +654,7 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  Tree* node = SharedTreeStack->push(operatorType);
+  Tree* node = SharedTreeStack->pushBlock(operatorType);
   leftHandSide->moveNodeAtNode(node);
 }
 

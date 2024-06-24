@@ -605,14 +605,14 @@ void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
     int nCols = dim.matrix.cols;
     SharedTreeStack->push<Type::Matrix>(nRows, nCols);
     for (int i = 0; i < nRows * nCols; i++) {
-      SharedTreeStack->push(type);
+      SharedTreeStack->pushBlock(type);
     }
   } else if (dim.isPoint()) {
     SharedTreeStack->pushPoint();
-    SharedTreeStack->push(type);
-    SharedTreeStack->push(type);
+    SharedTreeStack->pushBlock(type);
+    SharedTreeStack->pushBlock(type);
   } else {
-    SharedTreeStack->push(type);
+    SharedTreeStack->pushBlock(type);
   }
   e->moveTreeOverTree(result);
 }

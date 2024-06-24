@@ -39,7 +39,7 @@ class BlockStack {
   void replaceBlock(Block* previousBlock, Block newBlock);
   void replaceBlocks(Block* destination, const Block* newBlocks,
                      size_t numberOfBlocks);
-  Block* push(Block block) {
+  Block* pushBlock(Block block) {
     insertBlock(lastBlock(), block, true);
     return lastBlock() - 1;
   }

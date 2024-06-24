@@ -115,19 +115,19 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
   } else if (numerator.numberOfDigits() == 1 &&
              denominator.isUnsignedType<uint8_t>()) {
     if (numerator.sign() == NonStrictSign::Positive) {
-      node = SharedTreeStack->push(Type::RationalPosShort);
+      node = SharedTreeStack->pushBlock(Type::RationalPosShort);
     } else {
-      node = SharedTreeStack->push(Type::RationalNegShort);
+      node = SharedTreeStack->pushBlock(Type::RationalNegShort);
       numerator.setSign(NonStrictSign::Positive);
     }
-    SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(numerator)));
-    SharedTreeStack->push(ValueBlock(static_cast<uint8_t>(denominator)));
+    SharedTreeStack->pushBlock(ValueBlock(static_cast<uint8_t>(numerator)));
+    SharedTreeStack->pushBlock(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
-    node = SharedTreeStack->push(numeratorSign == NonStrictSign::Negative
-                                     ? Type::RationalNegBig
-                                     : Type::RationalPosBig);
-    SharedTreeStack->push(ValueBlock(numerator.numberOfDigits()));
-    SharedTreeStack->push(ValueBlock(denominator.numberOfDigits()));
+    node = SharedTreeStack->pushBlock(numeratorSign == NonStrictSign::Negative
+                                          ? Type::RationalNegBig
+                                          : Type::RationalPosBig);
+    SharedTreeStack->pushBlock(ValueBlock(numerator.numberOfDigits()));
+    SharedTreeStack->pushBlock(ValueBlock(denominator.numberOfDigits()));
     numerator.pushDigitsOnTreeStack();
     denominator.pushDigitsOnTreeStack();
   }

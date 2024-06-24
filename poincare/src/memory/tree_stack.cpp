@@ -51,7 +51,7 @@ Tree* TreeStack::push(Types... args) {
     Block block;
     endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(
         &block, i++, args...);
-    push(block);
+    pushBlock(block);
   } while (!endOfNode);
 #if POINCARE_POOL_VISUALIZATION
   Log("Push", newNode, i);

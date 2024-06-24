@@ -120,7 +120,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
 
   // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
   if (isSum && function->isMult()) {
-    TreeRef a(SharedTreeStack->push<Type::Mult>(0));
+    TreeRef a(SharedTreeStack->pushMult(0));
     const int nbChildren = function->numberOfChildren();
     int nbChildrenRemoved = 0;
     Tree* child = function->firstChild();
@@ -354,7 +354,7 @@ bool Parametric::Explicit(Tree* expr) {
   }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     // Create k value at this step
-    Tree* value = SharedTreeStack->push<Type::Add>(2);
+    Tree* value = SharedTreeStack->pushAdd(2);
     lowerBound->clone();
     Integer::Push(step);
     Simplification::ShallowSystematicReduce(value);

@@ -294,7 +294,7 @@ bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
     return false;
   }
   // Extract pure real or pure imaginary in addition
-  TreeRef a(SharedTreeStack->push<Type::Add>(0));
+  TreeRef a(SharedTreeStack->pushAdd(0));
   const int nbChildren = child->numberOfChildren();
   int nbChildrenRemoved = 0;
   int nbChildrenOut = 0;
@@ -311,7 +311,7 @@ bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
         nbChildrenOut++;
       } else {
         // im(x) = -i*x
-        TreeRef t(SharedTreeStack->push<Type::Mult>(3));
+        TreeRef t(SharedTreeStack->pushMult(3));
         (-1_e)->clone();
         (i_e)->clone();
         elem->detachTree();

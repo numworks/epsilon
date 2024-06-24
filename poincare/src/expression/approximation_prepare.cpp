@@ -24,7 +24,7 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
 }
 
 Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
-  Tree* value = SharedTreeStack->push<Type::Add>(2);
+  Tree* value = SharedTreeStack->pushAdd(2);
   bound->clone();
   KVarX->clone();
   Simplification::DeepSystematicReduce(value);

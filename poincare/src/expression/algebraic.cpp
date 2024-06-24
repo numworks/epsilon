@@ -15,7 +15,7 @@ namespace Poincare::Internal {
 
 TreeRef Algebraic::Rationalize(TreeRef expression) {
   if (Number::IsStrictRational(expression)) {
-    TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
+    TreeRef fraction(SharedTreeStack->pushMult(2));
     Rational::Numerator(expression).pushOnTreeStack();
     SharedTreeStack->pushPow();
     Rational::Denominator(expression).pushOnTreeStack();
@@ -63,14 +63,14 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
        NodeIterator::Children<Editable>(expression)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
-    TreeRef multiplication(SharedTreeStack->push<Type::Mult>(1));
+    TreeRef multiplication(SharedTreeStack->pushMult(1));
     child->moveNodeBeforeNode(multiplication);
     child->nextTree()->moveTreeBeforeNode(
         SharedTreeStack->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  TreeRef fraction(SharedTreeStack->push<Type::Mult>(2));
+  TreeRef fraction(SharedTreeStack->pushMult(2));
   fraction->moveTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
   TreeRef power(SharedTreeStack->pushPow());

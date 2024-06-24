@@ -7,7 +7,7 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_set) {
   // Set::Add
-  Tree* set0 = SharedTreeStack->push<Type::Set>(0);
+  Tree* set0 = SharedTreeStack->pushSet(0);
   Set::Add(set0, 1_e);
   Set::Add(set0, 2_e);
   Set::Add(set0, 3_e);

@@ -62,7 +62,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   // Add a dependency on initial derivand if anything has been derived.
   if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
-    SharedTreeStack->push<Type::Set>(1);
+    SharedTreeStack->pushSet(1);
     Variables::LeaveScopeWithReplacement(constDerivand->clone(), symbolValue,
                                          false);
     derivative->cloneNodeAtNode(KDep);
@@ -110,11 +110,11 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
    * With Di the partial derivative on parameter i (see ShallowPartialDerivate)
    * If f has no children, derivand cannot depend of V0, and empty addition is 0
    * π->0 */
-  Tree* result = SharedTreeStack->push<Type::Add>(0);
+  Tree* result = SharedTreeStack->pushAdd(0);
   int i = 0;
   for (const Tree* derivandChild : derivand->children()) {
     NAry::SetNumberOfChildren(result, i + 1);
-    Tree* mult = SharedTreeStack->push<Type::Mult>(0);
+    Tree* mult = SharedTreeStack->pushMult(0);
     if (!ShallowPartialDerivate(derivand, i)) {
       // Cancel current derivation.
       result->removeTree();
@@ -148,7 +148,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       // Di(x0 * x1 * ... * xi * ...) = x0 * x1 * ... * xi-1 * xi+1 * ...
       int numberOfChildren = derivand->numberOfChildren();
       assert(numberOfChildren > 1 && index < numberOfChildren);
-      Tree* mult = SharedTreeStack->push<Type::Mult>(numberOfChildren - 1);
+      Tree* mult = SharedTreeStack->pushMult(numberOfChildren - 1);
       for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
@@ -184,12 +184,12 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       }
       Tree* multiplication;
       if (derivand->isPow()) {
-        multiplication = SharedTreeStack->push<Type::Mult>(2);
+        multiplication = SharedTreeStack->pushMult(2);
         derivand->child(1)->clone();
       }
       Tree* newNode = derivand->cloneNode();
       derivand->child(0)->clone();
-      Tree* addition = SharedTreeStack->push<Type::Add>(2);
+      Tree* addition = SharedTreeStack->pushAdd(2);
       derivand->child(1)->clone();
       (-1_e)->clone();
       Simplification::ShallowSystematicReduce(addition);

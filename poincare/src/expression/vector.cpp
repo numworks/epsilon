@@ -9,7 +9,7 @@ Tree* Vector::Norm(const Tree* v) {
   // Norm is defined on vectors only
   int childrenNumber = v->numberOfChildren();
   Tree* result = KPow->cloneNode();
-  Tree* sum = SharedTreeStack->push<Type::Add>(childrenNumber);
+  Tree* sum = SharedTreeStack->pushAdd(childrenNumber);
   for (const Tree* child : v->children()) {
     Tree* squaredAbsValue = KPow->cloneNode();
     Tree* absValue = KAbs->cloneNode();
@@ -28,7 +28,7 @@ Tree* Vector::Dot(const Tree* u, const Tree* v) {
   // Dot product is defined between two vectors of same size and type
   assert(u->numberOfChildren() == v->numberOfChildren());
   int childrenNumber = v->numberOfChildren();
-  Tree* sum = SharedTreeStack->push<Type::Add>(childrenNumber);
+  Tree* sum = SharedTreeStack->pushAdd(childrenNumber);
   const Tree* childV = v->child(0);
   for (const Tree* childU : u->children()) {
     Tree* product = KMult.node<2>->cloneNode();

@@ -512,7 +512,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
 
   // Detach placeholder matches at the end of the TreeStack in a system list
   TreeRef placeholderMatches(
-      SharedTreeStack->push<Type::List>(initializedPlaceHolders));
+      SharedTreeStack->pushList(initializedPlaceHolders));
 
   // TreeStack: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 

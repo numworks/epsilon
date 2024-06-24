@@ -1044,8 +1044,7 @@ template Coordinate2D<double> Point::approximate2D<double>(
 /* List */
 
 List List::Builder() {
-  NewExpression expr =
-      NewExpression::Builder(SharedTreeStack->push<Type::List>(0));
+  NewExpression expr = NewExpression::Builder(SharedTreeStack->pushList(0));
   return static_cast<List&>(expr);
 }
 

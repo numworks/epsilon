@@ -42,7 +42,7 @@ Tree* Matrix::Identity(const Tree* n) {
 Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
-  Tree* result = SharedTreeStack->push<Type::Add>(n);
+  Tree* result = SharedTreeStack->pushAdd(n);
   const Tree* child = matrix->child(0);
   for (int i = 0; i < n - 1; i++) {
     child->clone();
@@ -113,7 +113,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
                                    bool approximate) {
   Tree* result = m->cloneNode();
   for (const Tree* child : m->children()) {
-    Tree* mult = SharedTreeStack->push<Type::Mult>(2);
+    Tree* mult = SharedTreeStack->pushMult(2);
     scalar->clone();
     child->clone();
     if (approximate) {
@@ -149,10 +149,10 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
   const Tree* childURowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
-      Tree* add = SharedTreeStack->push<Type::Add, int>(internal);
+      Tree* add = SharedTreeStack->pushAdd(internal);
       childURowK = childURow0;
       for (int k = 0; k < internal; k++) {
-        Tree* mult = SharedTreeStack->push<Type::Mult>(2);
+        Tree* mult = SharedTreeStack->pushMult(2);
         assert(childURowK == Child(u, row, k));
         childURowK->clone();
         childURowK = childURowK->nextTree();
@@ -188,7 +188,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
 
   TreeRef det;
   if (determinant) {
-    det = SharedTreeStack->push<Type::Mult>(0);
+    det = SharedTreeStack->pushMult(0);
   }
 
   int m = NumberOfRows(matrix);

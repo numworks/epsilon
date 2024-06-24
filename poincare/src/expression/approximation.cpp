@@ -109,7 +109,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     int old = s_context->m_listElement;
-    SharedTreeStack->push<Type::List>(listLength);
+    SharedTreeStack->pushList(listLength);
     for (int i = 0; i < listLength; i++) {
       s_context->m_listElement = i;
       ToTree<T>(clone, dim);
@@ -1050,7 +1050,7 @@ template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
   int length = Dimension::GetListLength(node);
   int old = s_context->m_listElement;
-  Tree* list = SharedTreeStack->push<Type::List>(length);
+  Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
     ToBeautifiedComplex<T>(node);

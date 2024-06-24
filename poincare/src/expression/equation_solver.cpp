@@ -47,7 +47,7 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
     if (*error == Error::NoError) {
       /* The system becomes invalid when overriding the user variables: the
        * first solution was better. Restore inital empty set */
-      result = SharedTreeStack->push<Type::Set>(0);
+      result = SharedTreeStack->pushSet(0);
     }
   }
   return result;
@@ -282,7 +282,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
        * solution. */
       matrix->removeTree();
       *error = Error::NoError;
-      return SharedTreeStack->push<Type::Set>(0);
+      return SharedTreeStack->pushSet(0);
     }
     coefficient = coefficient->nextTree();
   }
@@ -305,7 +305,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
         }
       }
     }
-    matrix->moveNodeOverNode(SharedTreeStack->push<Type::Set>(n));
+    matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
     return matrix;
   }
   // TODO: Introduce temporary variables to formally solve the system.
@@ -317,7 +317,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
                                             uint8_t numberOfVariables,
                                             Context context) {
-  TreeRef result = SharedTreeStack->push<Type::List>(0);
+  TreeRef result = SharedTreeStack->pushList(0);
   TreeRef tree = equation->clone();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
@@ -384,7 +384,7 @@ EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
   // TODO: Use user settings for a RealUnkown sign ?
   solution->moveTreeBeforeNode(
       SharedTreeStack->push<Type::Var>(variableId, ComplexSign::Unknown()));
-  solution->moveNodeBeforeNode(SharedTreeStack->push<Type::Add>(2));
+  solution->moveNodeBeforeNode(SharedTreeStack->pushAdd(2));
   Simplification::SimplifySystem(solution, true);
   return Error::NoError;
 }

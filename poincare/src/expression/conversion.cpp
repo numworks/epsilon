@@ -711,16 +711,16 @@ void PushPoincareExpression(Poincare::OExpression exp) {
     case OT::LeastCommonMultiple:
       switch (exp.otype()) {
         case OT::Addition:
-          SharedTreeStack->push<Type::Add>(exp.numberOfChildren());
+          SharedTreeStack->pushAdd(exp.numberOfChildren());
           break;
         case OT::Multiplication:
-          SharedTreeStack->push<Type::Mult>(exp.numberOfChildren());
+          SharedTreeStack->pushMult(exp.numberOfChildren());
           break;
         case OT::OList:
-          SharedTreeStack->push<Type::List>(exp.numberOfChildren());
+          SharedTreeStack->pushList(exp.numberOfChildren());
           break;
         case OT::PiecewiseOperator:
-          SharedTreeStack->push<Type::Piecewise>(exp.numberOfChildren());
+          SharedTreeStack->pushPiecewise(exp.numberOfChildren());
           break;
         case OT::GreatCommonDivisor:
           SharedTreeStack->pushBlock(Type::GCD);

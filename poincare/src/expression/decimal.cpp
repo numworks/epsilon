@@ -15,7 +15,7 @@ namespace Poincare::Internal {
 void Decimal::Project(Tree* tree) {
   assertValidDecimal(tree);
   // dec<n>(x) -> 10^(-n)*x
-  Tree* mult = SharedTreeStack->push<Type::Mult>(1);
+  Tree* mult = SharedTreeStack->pushMult(1);
   SharedTreeStack->pushPow();
   SharedTreeStack->push<Type::IntegerPosShort, uint8_t>(10);
   IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)

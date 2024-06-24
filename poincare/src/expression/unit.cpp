@@ -842,7 +842,7 @@ void Unit::RemoveUnit(Tree* unit) {
   const Representative* representative = GetRepresentative(unit);
   // Temperature units should have been escaped before.
   assert(!IsNonKelvinTemperature(representative));
-  Tree* result = SharedTreeStack->push<Type::Mult>(2);
+  Tree* result = SharedTreeStack->pushMult(2);
   representative->ratioExpressionReduced()->clone();
   SharedTreeStack->pushPow();
   Integer::Push(10);
@@ -1068,7 +1068,7 @@ bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
     units = vector.toBaseUnits();
   } else {
     double value = Approximation::RootTreeToReal<double>(e);
-    units = SharedTreeStack->push<Type::Mult>(2);
+    units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
     vector.toBaseUnits();
     NAry::Flatten(units);

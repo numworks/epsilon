@@ -205,7 +205,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   }
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
-    u->moveNodeAtNode(SharedTreeStack->push<Type::Mult>(2));
+    u->moveNodeAtNode(SharedTreeStack->pushMult(2));
     Simplification::ShallowSystematicReduce(u);
   }
   return changed;

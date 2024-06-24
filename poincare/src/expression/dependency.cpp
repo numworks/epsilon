@@ -43,7 +43,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
            *   (especially difficult in the advanced and systematic reduction).
            */
           int numberOfDependencies = exprChildSet->numberOfChildren();
-          TreeRef set = SharedTreeStack->push<Type::Set>(numberOfDependencies);
+          TreeRef set = SharedTreeStack->pushSet(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
             if (Variables::HasVariable(exprChildSet->firstChild(),
                                        Parametric::k_localVariableId)) {

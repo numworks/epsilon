@@ -66,7 +66,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
 }
 
 Tree* DimensionVector::toBaseUnits() const {
-  Tree* result = SharedTreeStack->push<Type::Mult>(0);
+  Tree* result = SharedTreeStack->pushMult(0);
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     // We require the base units to be the first seven in DefaultRepresentatives

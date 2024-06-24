@@ -29,7 +29,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
     return PatternMatching::CreateSimplify(
         KMult(-1_e / 2_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
   }
-  SharedTreeStack->push<Type::List>(2);
+  SharedTreeStack->pushList(2);
   // {(-B+√Δ)/2A, -(B+√Δ)/2A}
   Tree* root1 = PatternMatching::CreateSimplify(
       KMult(1_e / 2_e, KAdd(KMult(-1_e, KB), KExp(KMult(1_e / 2_e, KLn(KC)))),

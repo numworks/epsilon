@@ -87,7 +87,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
         expr = SharedTreeStack->push<Type::Matrix>(grid->numberOfRows() - 1,
                                                    grid->numberOfColumns() - 1);
       } else {
-        expr = SharedTreeStack->push<Type::Piecewise>(0);
+        expr = SharedTreeStack->pushPiecewise(0);
       }
       int n = grid->numberOfChildren();
       int actualNumberOfChildren = 0;

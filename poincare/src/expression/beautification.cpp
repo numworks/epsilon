@@ -103,8 +103,8 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
                                          TreeRef& denominator,
                                          bool* needOpposite, bool* needI) {
   assert(needOpposite && needI);
-  numerator = SharedTreeStack->push<Type::Mult>(0);
-  denominator = SharedTreeStack->push<Type::Mult>(0);
+  numerator = SharedTreeStack->pushMult(0);
+  denominator = SharedTreeStack->pushMult(0);
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(expr);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -412,12 +412,12 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
   }
   /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
    * If abs or arg stays unreduced, leave x as it was. */
-  Tree* result = SharedTreeStack->push<Type::Mult>(2);
+  Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
   e->clone();
   bool absReduced = Simplification::ShallowSystematicReduce(abs);
   SharedTreeStack->pushExp();
-  SharedTreeStack->push<Type::Mult>(2);
+  SharedTreeStack->pushMult(2);
   SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
   e->clone();
@@ -458,14 +458,14 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   if (complexFormat == ComplexFormat::Cartesian) {
     // [re+]
     if (re != 0) {
-      SharedTreeStack->push<Type::Add>(2);
+      SharedTreeStack->pushAdd(2);
       FloatNode::Push(re);
     }
   } else {
     // [abs×]e^
     T abs = std::abs(value);
     if (abs != 1) {
-      SharedTreeStack->push<Type::Mult>(2);
+      SharedTreeStack->pushMult(2);
       FloatNode::Push(abs);
     }
     SharedTreeStack->pushPow();
@@ -478,7 +478,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     im = -im;
   }
   if (im != 1) {
-    SharedTreeStack->push<Type::Mult>(2);
+    SharedTreeStack->pushMult(2);
     FloatNode::Push(im);
   }
   SharedTreeStack->pushComplexI();

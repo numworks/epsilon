@@ -124,9 +124,8 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
                             OperationReduce operationMonomialAndReduce) {
   if (!polA->isPolynomial()) {
     if (!polB->isPolynomial()) {
-      TreeRef op = blockType == Type::Add
-                       ? SharedTreeStack->push<Type::Add>(2)
-                       : SharedTreeStack->push<Type::Mult>(2);
+      TreeRef op = blockType == Type::Add ? SharedTreeStack->pushAdd(2)
+                                          : SharedTreeStack->pushMult(2);
       // We're about to move polynomes around, we need references
       TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
@@ -343,7 +342,7 @@ void PolynomialParser::AddVariable(Tree* set, const Tree* variable) {
 }
 
 Tree* PolynomialParser::GetVariables(const Tree* expression) {
-  Tree* variables = SharedTreeStack->push<Type::Set>(0);
+  Tree* variables = SharedTreeStack->pushSet(0);
   if (expression->isInteger()) {  // TODO: generic belongToField?
     return variables;
   }
@@ -506,7 +505,7 @@ TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, ui
     if (Comparison::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
-    TreeRef addition = SharedTreeStack->push<Type::Add>(0);
+    TreeRef addition = SharedTreeStack->pushAdd(0);
     for (const Tree* child : expression->children()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent == exponent) {

@@ -106,8 +106,8 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   while (n != length && (cp = decoder.nextCodePoint())) {
     ::CodePoint cc = 0;
     if (n + 1 != length && (cc = decoder.nextCodePoint()) && cc.isCombining()) {
-      Internal::TreeStack::SharedTreeStack
-          ->push<Internal::Type::CombinedCodePointsLayout>(cp, cc);
+      Internal::TreeStack::SharedTreeStack->pushCombinedCodePointsLayout(cp,
+                                                                         cc);
     } else {
       decoder.previousCodePoint();
       Internal::CodePointLayout::Push(cp);

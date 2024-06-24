@@ -497,8 +497,8 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
       newChild = AutocompletedPair::BuildFromBracketType(bracketType);
       AutocompletedPair::SetTemporary(newChild, OtherSide(bracketSide), true);
     } else if (nextCodePoint.isCombining()) {
-      newChild = SharedTreeStack->push<Type::CombinedCodePointsLayout>(
-          codePoint, nextCodePoint);
+      newChild = SharedTreeStack->pushCombinedCodePointsLayout(codePoint,
+                                                               nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
       newChild = CodePointLayout::Push(codePoint);

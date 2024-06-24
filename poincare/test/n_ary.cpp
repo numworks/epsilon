@@ -10,16 +10,16 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
   TreeRef rackLayout1 = SharedTreeStack->push<Type::RackLayout>(3);
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('x');
+  SharedTreeStack->pushAsciiCodePointLayout('x');
   SharedTreeStack->push<Type::VerticalOffsetLayout>(false, false);
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('2');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('+');
+  SharedTreeStack->pushAsciiCodePointLayout('2');
+  SharedTreeStack->pushAsciiCodePointLayout('+');
   // rackLayout1 is x^2+
 
   TreeRef rackLayout2 = SharedTreeStack->push<Type::RackLayout>(3);
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('-');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('4');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('3');
+  SharedTreeStack->pushAsciiCodePointLayout('-');
+  SharedTreeStack->pushAsciiCodePointLayout('4');
+  SharedTreeStack->pushAsciiCodePointLayout('3');
   // rackLayout2 is -43
 
   TreeRef four = NAry::DetachChildAtIndex(rackLayout2, 1);
@@ -32,12 +32,12 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   // rackLayout1 is x^2-34
 
   TreeRef rackLayout3 = SharedTreeStack->push<Type::RackLayout>(5);
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('x');
+  SharedTreeStack->pushAsciiCodePointLayout('x');
   SharedTreeStack->push<Type::VerticalOffsetLayout>(false, false);
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('2');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('-');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('3');
-  SharedTreeStack->push<Type::AsciiCodePointLayout, CodePoint>('4');
+  SharedTreeStack->pushAsciiCodePointLayout('2');
+  SharedTreeStack->pushAsciiCodePointLayout('-');
+  SharedTreeStack->pushAsciiCodePointLayout('3');
+  SharedTreeStack->pushAsciiCodePointLayout('4');
   // rackLayout3 is x^2-34
 
   assert_trees_are_equal(rackLayout1, rackLayout3);

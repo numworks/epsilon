@@ -93,37 +93,6 @@ constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
 }
 
 template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    Type::UnicodeCodePointLayout>(Block* block, size_t blockIndex,
-                                  CodePoint value) {
-  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
-  // assert(value >= 128);
-  return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, Type::UnicodeCodePointLayout,
-      OMG::BitHelper::getByteAtIndex(value, 0),
-      OMG::BitHelper::getByteAtIndex(value, 1),
-      OMG::BitHelper::getByteAtIndex(value, 2),
-      OMG::BitHelper::getByteAtIndex(value, 3));
-}
-
-template <>
-constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<
-    Type::CombinedCodePointsLayout>(Block* block, size_t blockIndex,
-                                    CodePoint first, CodePoint second) {
-  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
-  return CreateBlockAtIndexForNthBlocksNode(
-      block, blockIndex, Type::CombinedCodePointsLayout,
-      OMG::BitHelper::getByteAtIndex(first, 0),
-      OMG::BitHelper::getByteAtIndex(first, 1),
-      OMG::BitHelper::getByteAtIndex(first, 2),
-      OMG::BitHelper::getByteAtIndex(first, 3),
-      OMG::BitHelper::getByteAtIndex(second, 0),
-      OMG::BitHelper::getByteAtIndex(second, 1),
-      OMG::BitHelper::getByteAtIndex(second, 2),
-      OMG::BitHelper::getByteAtIndex(second, 3));
-}
-
-template <>
 constexpr bool
 NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::RackLayout>(
     Block* block, size_t blockIndex, int nbChildren) {

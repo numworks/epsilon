@@ -1,6 +1,7 @@
 #ifndef POINCARE_MEMORY_TREE_STACK_H
 #define POINCARE_MEMORY_TREE_STACK_H
 
+#include <omg/code_point.h>
 #include <omg/global_box.h>
 #include <string.h>
 
@@ -141,6 +142,11 @@ class TreeStack : public BlockStack {
 
   Tree* pushPhysicalConstant(uint8_t constantId);
   Tree* pushUnit(uint8_t representativeId, uint8_t prefixId);
+
+  Tree* pushAsciiCodePointLayout(CodePoint codePoint);
+  Tree* pushUnicodeCodePointLayout(CodePoint codePoint);
+  Tree* pushCombinedCodePointsLayout(CodePoint codePoint,
+                                     CodePoint combinedCodePoint);
 
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }

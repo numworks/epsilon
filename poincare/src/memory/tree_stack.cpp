@@ -83,6 +83,41 @@ Tree* TreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
   return result;
 }
 
+Tree* TreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
+  Tree* result = pushBlock(Type::AsciiCodePointLayout);
+  assert(codePoint < 128);
+  pushBlock(int(codePoint));
+  return result;
+}
+
+Tree* TreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
+  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  Tree* result = pushBlock(Type::UnicodeCodePointLayout);
+  int first = codePoint;
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 0));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 1));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 2));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 3));
+  return result;
+}
+
+Tree* TreeStack::pushCombinedCodePointsLayout(CodePoint codePoint,
+                                              CodePoint combinedCodePoint) {
+  static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
+  Tree* result = pushBlock(Type::CombinedCodePointsLayout);
+  int first = codePoint;
+  int second = combinedCodePoint;
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 0));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 1));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 2));
+  pushBlock(OMG::BitHelper::getByteAtIndex(first, 3));
+  pushBlock(OMG::BitHelper::getByteAtIndex(second, 0));
+  pushBlock(OMG::BitHelper::getByteAtIndex(second, 1));
+  pushBlock(OMG::BitHelper::getByteAtIndex(second, 2));
+  pushBlock(OMG::BitHelper::getByteAtIndex(second, 3));
+  return result;
+}
+
 template <Type blockType, typename... Types>
 Tree* TreeStack::push(Types... args) {
   Block* newNode = lastBlock();
@@ -188,10 +223,6 @@ void TreeStack::execute(ActionWithContext action, void* context,
   }
 }
 
-template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
-    CodePoint);
-template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
-                               CodePoint>(CodePoint, CodePoint);
 template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
 template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
@@ -199,8 +230,6 @@ template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
 template Tree* TreeStack::push<Type::Polynomial, int>(int);
 template Tree* TreeStack::push<Type::RackLayout, int>(int);
-template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
-    CodePoint);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 

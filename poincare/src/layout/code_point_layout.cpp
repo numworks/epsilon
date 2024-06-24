@@ -20,9 +20,9 @@ CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* node) {
 
 Tree* CodePointLayout::Push(CodePoint cp) {
   if (cp < 128) {
-    return SharedTreeStack->push<Type::AsciiCodePointLayout>(cp);
+    return SharedTreeStack->pushAsciiCodePointLayout(cp);
   }
-  return SharedTreeStack->push<Type::UnicodeCodePointLayout>(cp);
+  return SharedTreeStack->pushUnicodeCodePointLayout(cp);
 }
 
 char* CodePointLayout::CopyName(const Tree* node, char* buffer,

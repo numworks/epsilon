@@ -720,7 +720,7 @@ void RackParser::parseConstant(TreeRef& leftHandSide,
   assert(leftHandSide.isUninitialized());
   int index = PhysicalConstant::Index(m_currentToken.toSpan());
   assert(index >= 0);
-  leftHandSide = SharedTreeStack->push<Type::PhysicalConstant>(uint8_t(index));
+  leftHandSide = SharedTreeStack->pushPhysicalConstant(uint8_t(index));
   isThereImplicitOperator();
 }
 

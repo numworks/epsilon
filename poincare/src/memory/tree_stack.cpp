@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <omg/memory.h>
 #include <poincare/old/junior_layout.h>
+#include <poincare/src/expression/physical_constant.h>
 
 #include <algorithm>
 
@@ -43,6 +44,20 @@ Tree* TreeStack::pushVar(uint8_t id, ComplexSign sign) {
   Tree* result = pushBlock(Type::Var);
   pushBlock(id);
   pushBlock(sign.getValue());
+  return result;
+}
+
+Tree* TreeStack::pushPhysicalConstant(uint8_t constantId) {
+  assert(constantId < PhysicalConstant::k_numberOfConstants);
+  Tree* result = pushBlock(Type::PhysicalConstant);
+  pushBlock(constantId);
+  return result;
+}
+
+Tree* TreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
+  Tree* result = pushBlock(Type::Unit);
+  pushBlock(representativeId);
+  pushBlock(prefixId);
   return result;
 }
 
@@ -162,7 +177,6 @@ template Tree* TreeStack::push<Type::IntegerNegShort>(uint8_t);
 template Tree* TreeStack::push<Type::IntegerPosShort>(uint8_t);
 template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
-template Tree* TreeStack::push<Type::PhysicalConstant, uint8_t>(uint8_t);
 template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                uint8_t, bool, uint8_t>(double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
@@ -171,7 +185,6 @@ template Tree* TreeStack::push<Type::RackLayout, int>(int);
 template Tree* TreeStack::push<Type::SingleFloat, float>(float);
 template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
-template Tree* TreeStack::push<Type::Unit, uint8_t, uint8_t>(uint8_t, uint8_t);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(
     bool isSubscript, bool isPrefix);
 

@@ -4,7 +4,6 @@
 #include <omg/bit_helper.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/integer.h>
-#include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/layout/code_point_layout.h>
 
 #include "value_block.h"
@@ -74,15 +73,6 @@ class NodeConstructor final {
     return blockIndex + 1 >= numberOfMetaBlocks + numberOfDigits;
   }
 };
-
-template <>
-constexpr bool
-NodeConstructor::SpecializedCreateBlockAtIndexForType<Type::PhysicalConstant>(
-    Block* block, size_t blockIndex, uint8_t index) {
-  assert(index < PhysicalConstant::k_numberOfConstants);
-  return CreateBlockAtIndexForNthBlocksNode(block, blockIndex,
-                                            Type::PhysicalConstant, index);
-}
 
 template <>
 constexpr bool

@@ -883,7 +883,7 @@ Tree* Unit::Push(const Representative* unitRepresentative,
                  const Prefix* unitPrefix) {
   uint8_t repId = Representative::ToId(unitRepresentative);
   uint8_t preId = Prefix::ToId(unitPrefix);
-  return SharedTreeStack->push<Type::Unit>(repId, preId);
+  return SharedTreeStack->pushUnit(repId, preId);
 }
 
 const Representative* Unit::GetRepresentative(const Tree* unit) {

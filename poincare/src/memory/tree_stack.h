@@ -132,6 +132,9 @@ class TreeStack : public BlockStack {
 
   Tree* pushVar(uint8_t id, ComplexSign sign);
 
+  Tree* pushPhysicalConstant(uint8_t constantId);
+  Tree* pushUnit(uint8_t representativeId, uint8_t prefixId);
+
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {

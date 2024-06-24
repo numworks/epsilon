@@ -11,10 +11,12 @@ PointOfInterest PointOfInterest::Builder(
     double abscissa, double ordinate,
     typename Solver<double>::Interest interest, uint32_t data, bool inverted,
     int subCurveIndex) {
+  Internal::PointOfInterestNode node{
+      abscissa, ordinate,
+      data,     static_cast<uint8_t>(interest),
+      inverted, static_cast<uint8_t>(subCurveIndex)};
   JuniorExpression expr = JuniorExpression::Builder(
-      Internal::SharedTreeStack->push<Internal::Type::PointOfInterest>(
-          abscissa, ordinate, data, static_cast<uint8_t>(interest), inverted,
-          static_cast<uint8_t>(subCurveIndex)));
+      Internal::SharedTreeStack->pushPointOfInterest(node));
   return static_cast<PointOfInterest &>(expr);
 }
 

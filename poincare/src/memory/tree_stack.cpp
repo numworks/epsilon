@@ -133,11 +133,19 @@ Tree* TreeStack::pushVerticalOffsetLayout(bool isSubscript, bool isPrefix) {
   return result;
 }
 
-Tree* pushRackLayout(int nbChildren) {
+Tree* TreeStack::pushRackLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
   Tree* result = pushBlock(Type::RackLayout);
   pushBlock(nbChildren % 256);
   pushBlock(nbChildren / 256);
+  return result;
+}
+
+Tree* TreeStack::pushPointOfInterest(PointOfInterestNode data) {
+  Tree* result = pushBlock(Type::PointOfInterest);
+  // Copy content of data as if it was blocks
+  insertBlocks(lastBlock(), reinterpret_cast<Block*>(&data),
+               sizeof(PointOfInterestNode));
   return result;
 }
 
@@ -245,10 +253,5 @@ void TreeStack::execute(ActionWithContext action, void* context,
     }
   }
 }
-
-template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
-                               uint8_t, bool, uint8_t>(double, double, uint32_t,
-                                                       uint8_t, bool, uint8_t);
-template Tree* TreeStack::push<Type::Polynomial, int>(int);
 
 }  // namespace Poincare::Internal

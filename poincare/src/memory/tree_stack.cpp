@@ -29,6 +29,28 @@ size_t TreeStack::numberOfTrees() const {
   return result;
 }
 
+Tree* TreeStack::pushSingleFloat(float value) {
+  Tree* result = pushBlock(Type::SingleFloat);
+  pushBlock(FloatNode::SubFloatAtIndex(value, 0));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 1));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 2));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 3));
+  return result;
+}
+
+Tree* TreeStack::pushDoubleFloat(double value) {
+  Tree* result = pushBlock(Type::DoubleFloat);
+  pushBlock(FloatNode::SubFloatAtIndex(value, 0));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 1));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 2));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 3));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 4));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 5));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 6));
+  pushBlock(FloatNode::SubFloatAtIndex(value, 7));
+  return result;
+}
+
 Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
   assert(type.isUserNamed());
   Tree* result = pushBlock(type);
@@ -170,7 +192,6 @@ template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
                                CodePoint>(CodePoint, CodePoint);
-template Tree* TreeStack::push<Type::DoubleFloat, double>(double);
 template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);
 template Tree* TreeStack::push<Type::IntegerNegShort>(uint8_t);
@@ -182,7 +203,6 @@ template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,
                                                        uint8_t, bool, uint8_t);
 template Tree* TreeStack::push<Type::Polynomial, int>(int);
 template Tree* TreeStack::push<Type::RackLayout, int>(int);
-template Tree* TreeStack::push<Type::SingleFloat, float>(float);
 template Tree* TreeStack::push<Type::UnicodeCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::VerticalOffsetLayout, bool, bool>(

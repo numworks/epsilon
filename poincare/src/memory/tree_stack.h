@@ -105,6 +105,9 @@ class TreeStack : public BlockStack {
     return result;
   }
 
+  Tree* pushSingleFloat(float value);
+  Tree* pushDoubleFloat(double value);
+
   Tree* pushUserSymbol(const char* name) {
     return pushUserSymbol(name, strlen(name) + 1);
   }

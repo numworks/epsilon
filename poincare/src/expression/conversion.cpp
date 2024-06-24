@@ -833,11 +833,11 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return;
     }
     case OT::Float:
-      SharedTreeStack->push<Type::SingleFloat>(
+      SharedTreeStack->pushSingleFloat(
           static_cast<Poincare::Float<float>&>(exp).value());
       return;
     case OT::Double:
-      SharedTreeStack->push<Type::DoubleFloat>(
+      SharedTreeStack->pushDoubleFloat(
           static_cast<Poincare::Float<double>&>(exp).value());
       return;
     case OT::Infinity: {

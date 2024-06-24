@@ -33,10 +33,10 @@ class FloatNode {
   }
   static bool SetSign(Tree* tree, NonStrictSign sign);
   static Tree* Push(float value) {
-    return SharedTreeStack->push<Type::SingleFloat>(value);
+    return SharedTreeStack->pushSingleFloat(value);
   }
   static Tree* Push(double value) {
-    return SharedTreeStack->push<Type::DoubleFloat>(value);
+    return SharedTreeStack->pushDoubleFloat(value);
   }
 };
 

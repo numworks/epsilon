@@ -981,7 +981,7 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
       Projection::DeepSystemProject(e);
       return true;
     case Type::PhysicalConstant: {
-      e->moveTreeOverTree(SharedTreeStack->push<Type::DoubleFloat>(
+      e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(
           PhysicalConstant::GetProperties(e).m_value));
       return true;
     }
@@ -1075,7 +1075,7 @@ bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
     NAry::SquashIfPossible(units);
     Units::Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
                                                            unitFormat);
-    Tree* approximated = SharedTreeStack->push<Type::DoubleFloat>(value);
+    Tree* approximated = SharedTreeStack->pushDoubleFloat(value);
     e->moveTreeOverTree(approximated);
   }
   e->moveTreeOverTree(

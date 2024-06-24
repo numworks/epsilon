@@ -197,10 +197,7 @@ class InputBeautification {
           * layout does not have 3 empty children. This is a fringe case
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
-         TreeRef ref = SharedTreeStack->pushBlock(Type::PiecewiseLayout);
-         // TODO we need a builder to make this safe
-         SharedTreeStack->pushBlock(2);
-         SharedTreeStack->pushBlock(2);
+         TreeRef ref = SharedTreeStack->pushPiecewiseLayout(2, 2);
          parameters[0]->detachTree();
          parameters[1]->detachTree();
          KRackL()->clone();

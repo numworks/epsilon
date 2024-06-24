@@ -26,8 +26,8 @@ QUIZ_CASE(pcj_tree_stack) {
   pool->flush();
   quiz_assert(pool->size() == 0);
 
-  pool->pushBlock(Type::Zero);
-  pool->pushBlock(Type::One);
+  pool->pushZero();
+  pool->pushOne();
   quiz_assert(*pool->firstBlock() == Type::Zero &&
               *(pool->lastBlock() - 1) == Type::One && pool->size() == 2);
   pool->popBlock();
@@ -41,9 +41,9 @@ QUIZ_CASE(pcj_tree_stack) {
               *(pool->blockAtIndex(3)) == Type::Two && pool->size() == 4);
   pool->removeBlocks(pool->firstBlock(), 3);
   quiz_assert(*(pool->firstBlock()) == Type::Two && pool->size() == 1);
-  pool->pushBlock(Type::Zero);
-  pool->pushBlock(Type::One);
-  pool->pushBlock(Type::Half);
+  pool->pushZero();
+  pool->pushOne();
+  pool->pushHalf();
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
   pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
   quiz_assert(*(pool->blockAtIndex(0)) == Type::Two &&

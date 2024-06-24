@@ -723,12 +723,10 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           SharedTreeStack->pushPiecewise(exp.numberOfChildren());
           break;
         case OT::GreatCommonDivisor:
-          SharedTreeStack->pushBlock(Type::GCD);
-          SharedTreeStack->pushBlock(exp.numberOfChildren());
+          SharedTreeStack->pushGCD(exp.numberOfChildren());
           break;
         case OT::LeastCommonMultiple:
-          SharedTreeStack->pushBlock(Type::LCM);
-          SharedTreeStack->pushBlock(exp.numberOfChildren());
+          SharedTreeStack->pushLCM(exp.numberOfChildren());
           break;
         case OT::Comparison: {
           Poincare::Comparison c = static_cast<Poincare::Comparison&>(exp);

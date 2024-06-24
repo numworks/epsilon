@@ -551,9 +551,7 @@ void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutBuiltin(layoutParent, expression);
       } else {
         int rows = (expression->numberOfChildren() + 1) / 2;
-        TreeRef layout = SharedTreeStack->pushBlock(Type::PiecewiseLayout);
-        SharedTreeStack->pushBlock(rows + 1);
-        SharedTreeStack->pushBlock(2);
+        TreeRef layout = SharedTreeStack->pushPiecewiseLayout(rows + 1, 2);
         layoutChildrenAsRacks(expression);
         // Placeholders
         if (expression->numberOfChildren() % 2 == 1) {

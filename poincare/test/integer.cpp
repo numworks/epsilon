@@ -390,4 +390,8 @@ QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast(Integer::Handler(300_e), 300, false, false, true);
   assert_integer_cast(Integer::Handler(4294967295_e), 4294967295, false, false,
                       false);
+  assert_integer_cast(Integer::Handler(283495231345_e), 283495231345, false,
+                      false, false);
+  assert_integer_cast(Integer::Handler(9223372036854775807_e),
+                      9223372036854775807, false, false, false);
 }

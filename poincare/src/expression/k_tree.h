@@ -243,10 +243,11 @@ struct IntegerRepresentation<V> : KTree<Type::IntegerNegShort, -V> {};
   GUIDE(8, B(0), B(1), B(2), B(3), B(4), B(5), B(6), B(7));
 
 // IntegerPosBig
-#define GUIDE(N, ...)                                                  \
-  template <int64_t V>                                                 \
-    requires(V > UINT8_MAX && OMG::Arithmetic::NumberOfDigits(V) == N) \
-  struct IntegerRepresentation<V>                                      \
+#define GUIDE(N, ...)                                                        \
+  template <int64_t V>                                                       \
+    requires(V > UINT8_MAX &&                                                \
+             OMG::Arithmetic::NumberOfDigits(static_cast<uint64_t>(V)) == N) \
+  struct IntegerRepresentation<V>                                            \
       : KTree<Type::IntegerPosBig, N, __VA_ARGS__> {};
 
 #define B(I) OMG::BitHelper::getByteAtIndex(V, I)
@@ -257,10 +258,11 @@ SPECIALIZATIONS;
 #undef GUIDE
 
 // IntegerNegBig
-#define GUIDE(N, ...)                                                    \
-  template <int64_t V>                                                   \
-    requires(V < -UINT8_MAX && OMG::Arithmetic::NumberOfDigits(-V) == N) \
-  struct IntegerRepresentation<V>                                        \
+#define GUIDE(N, ...)                                                         \
+  template <int64_t V>                                                        \
+    requires(V < -UINT8_MAX &&                                                \
+             OMG::Arithmetic::NumberOfDigits(static_cast<uint64_t>(-V)) == N) \
+  struct IntegerRepresentation<V>                                             \
       : KTree<Type::IntegerNegBig, N, __VA_ARGS__> {};
 
 #define B(I) OMG::BitHelper::getByteAtIndex(-V, I)

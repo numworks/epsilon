@@ -45,8 +45,8 @@ class ContinuousFunctionProperties {
   };
   /* Use LastStatus instead of the usual NumberOfStatuses to have all values fit
    * on two bits. */
-  constexpr static int k_numberOfStatuses =
-      static_cast<int>(Status::LastStatus) + 1;
+  constexpr static uint8_t k_numberOfStatuses =
+      static_cast<uint8_t>(Status::LastStatus) + 1;
 
   // Order impact order of columns in Graph/Values
   enum class SymbolType : uint8_t {

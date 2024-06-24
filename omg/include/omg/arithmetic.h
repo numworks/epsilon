@@ -36,11 +36,22 @@ T constexpr CeilDivision(T numerator, T denominator) {
 }
 
 constexpr size_t NumberOfDigits(uint32_t value) {
-  return CeilDivision<size_t>(
-      value == UINT32_MAX ? 32
-                          : OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
-      OMG::BitHelper::k_numberOfBitsInByte);
+  return value == UINT32_MAX
+             ? sizeof(uint32_t)
+             : CeilDivision<size_t>(
+                   OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
+                   OMG::BitHelper::k_numberOfBitsInByte);
 }
+
+constexpr size_t NumberOfDigits(uint64_t value) {
+  return value == UINT64_MAX
+             ? sizeof(uint64_t)
+             : CeilDivision<size_t>(
+                   OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
+                   OMG::BitHelper::k_numberOfBitsInByte);
+}
+
+// uint64_t ?
 
 }  // namespace OMG::Arithmetic
 

@@ -192,10 +192,6 @@ template Tree* TreeStack::push<Type::AsciiCodePointLayout, CodePoint>(
     CodePoint);
 template Tree* TreeStack::push<Type::CombinedCodePointsLayout, CodePoint,
                                CodePoint>(CodePoint, CodePoint);
-template Tree* TreeStack::push<Type::IntegerNegBig>(uint64_t);
-template Tree* TreeStack::push<Type::IntegerPosBig>(uint64_t);
-template Tree* TreeStack::push<Type::IntegerNegShort>(uint8_t);
-template Tree* TreeStack::push<Type::IntegerPosShort>(uint8_t);
 template Tree* TreeStack::push<Type::ParenthesisLayout, bool, bool>(
     bool leftIsTemporary, bool rightIsTemporary);
 template Tree* TreeStack::push<Type::PointOfInterest, double, double, uint32_t,

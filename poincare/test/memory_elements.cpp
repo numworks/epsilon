@@ -1,3 +1,4 @@
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/node_iterator.h>
@@ -502,18 +503,11 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
 
 QUIZ_CASE(pcj_edition_node_constructor) {
   assert_node_equals_blocks(
-      SharedTreeStack->push<Type::IntegerPosBig>(
-          static_cast<uint64_t>(1232424242)),
+      Integer::Push(1232424242),
       {TypeBlock(Type::IntegerPosBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
   assert_node_equals_blocks(
-      SharedTreeStack->push<Type::IntegerNegBig>(
-          static_cast<uint64_t>(1232424242)),
-      {TypeBlock(Type::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
-       ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
-  assert_node_equals_blocks(
-      SharedTreeStack->push<Type::IntegerNegBig>(
-          static_cast<uint64_t>(1232424242)),
+      Integer::Push(-1232424242),
       {TypeBlock(Type::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
 }
@@ -600,8 +594,7 @@ QUIZ_CASE(pcj_node) {
 
   // operator==
   const Tree* node0 = 42_e;
-  Tree* node1 =
-      SharedTreeStack->push<Type::IntegerPosShort>(static_cast<uint8_t>(42));
+  Tree* node1 = Integer::Push(42);
   quiz_assert(node0 != node1 && *node0->block() == *node1->block());
   Tree* node2 = Tree::FromBlocks(SharedTreeStack->firstBlock());
   quiz_assert(node2 == node1);
@@ -663,11 +656,9 @@ QUIZ_CASE(pcj_node) {
 }
 
 QUIZ_CASE(pcj_node_size) {
-  Tree* node = SharedTreeStack->push<Type::IntegerPosBig>(
-      static_cast<uint64_t>(0x00FF0000));
+  Tree* node = Integer::Push(0x00FF0000);
   quiz_assert(node->nodeSize() == 5);
-  node = SharedTreeStack->push<Type::IntegerNegBig>(
-      static_cast<uint64_t>(0x0000FF00));
+  node = Integer::Push(-0x0000FF00);
   quiz_assert(node->nodeSize() == 4);
 }
 

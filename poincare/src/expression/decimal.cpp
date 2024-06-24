@@ -2,6 +2,7 @@
 
 #include <poincare/old/serialization_helper.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 
@@ -17,7 +18,7 @@ void Decimal::Project(Tree* tree) {
   // dec<n>(x) -> 10^(-n)*x
   Tree* mult = SharedTreeStack->pushMult(1);
   SharedTreeStack->pushPow();
-  SharedTreeStack->push<Type::IntegerPosShort, uint8_t>(10);
+  Integer::Push(10);
   IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
       .pushOnTreeStack();
   tree->moveTreeOverNode(mult);

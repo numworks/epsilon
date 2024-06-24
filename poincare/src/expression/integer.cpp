@@ -128,16 +128,16 @@ Tree* IntegerHandler::pushOnTreeStack() const {
   if (isMinusOne()) {
     return SharedTreeStack->pushMinusOne();
   }
-  if (isUnsignedType<uint8_t>()) {
-    return SharedTreeStack->push<Type::IntegerPosShort>(
-        static_cast<uint8_t>(*this));
-  }
   if (numberOfDigits() == 1) {
-    return SharedTreeStack->push<Type::IntegerNegShort>(digit(0));
+    Tree* node = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
+                                                ? Type::IntegerNegShort
+                                                : Type::IntegerPosShort);
+    SharedTreeStack->pushBlock(digit(0));
+    return node;
   }
-  TypeBlock typeBlock(sign() == NonStrictSign::Negative ? Type::IntegerNegBig
-                                                        : Type::IntegerPosBig);
-  Tree* node = SharedTreeStack->pushBlock(typeBlock);
+  Tree* node = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
+                                              ? Type::IntegerNegBig
+                                              : Type::IntegerPosBig);
   SharedTreeStack->pushBlock(m_numberOfDigits);
   pushDigitsOnTreeStack();
 #if POINCARE_POOL_VISUALIZATION

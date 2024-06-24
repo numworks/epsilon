@@ -33,8 +33,8 @@ QUIZ_CASE(pcj_integer_constructor) {
   IntegerHandler minusOne(-1);
   IntegerHandler a(12);
   IntegerHandler b(-23);
-  SharedTreeStack->push<Type::IntegerPosBig>(static_cast<uint64_t>(1232424242));
-  SharedTreeStack->push<Type::IntegerNegBig>(static_cast<uint64_t>(23424));
+  Integer::Push(1232424242);
+  Integer::Push(23424);
   Integer::Push("123", sizeof("123") - 1);
   Integer::Push("-123", sizeof("-123") - 1);
   Integer::Push("12345678910111213141516",

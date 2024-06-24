@@ -76,8 +76,7 @@ QUIZ_CASE(pcj_edition_reference) {
 
   // Constructors
   ref0->clone();
-  TreeRef ref2 = TreeRef(
-      SharedTreeStack->push<Type::IntegerPosShort>(static_cast<uint8_t>(8)));
+  TreeRef ref2 = TreeRef((8_e)->clone());
   assert_tree_stack_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions

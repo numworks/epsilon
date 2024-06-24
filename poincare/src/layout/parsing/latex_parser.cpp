@@ -69,63 +69,63 @@ struct LatexToken {
   const LayoutConstructor constructor;
 };
 
-#define CODEPOINT_TOKEN(S, C)                                   \
-  {                                                             \
-    S, std::size(S),                                            \
-        [](const Tree* t) -> bool {                             \
-          return t->isCodePointLayout() &&                      \
-                 CodePointLayout::GetCodePoint(t) == C;         \
-        },                                                      \
-        []() -> Tree* { return KCodePointL<C>()->cloneTree(); } \
+#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
+  {                                                            \
+    LATEX, std::size(LATEX),                                   \
+        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
+        []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
   }
 
-#define DO_NOTHING_TOKEN(S)                                       \
-  {                                                               \
-    S, std::size(S), [](const Tree* t) -> bool { return false; }, \
-        []() -> Tree* { return nullptr; }                         \
+#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)                      \
+  {                                                                      \
+    LATEX, std::size(LATEX),                                             \
+        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
+        []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
+  }
+
+#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                               \
+  {                                                                     \
+    LATEX, std::size(LATEX),                                            \
+        [](const Tree* t) -> bool {                                     \
+          return t->isCodePointLayout() &&                              \
+                 CodePointLayout::GetCodePoint(t) == CODEPOINT;         \
+        },                                                              \
+        []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
+  }
+
+#define DO_NOTHING_TOKEN(LATEX)                                           \
+  {                                                                       \
+    LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
+        []() -> Tree* { return nullptr; }                                 \
   }
 
 constexpr static LatexToken k_tokens[] = {
     // Parenthesis
-    {parenthesisToken, std::size(parenthesisToken),
-     [](const Tree* l) -> bool { return l->isParenthesesLayout(); },
-     []() -> Tree* { return KParenthesesL(KRackL())->cloneTree(); }},
+    ONE_CHILD_TOKEN(parenthesisToken, isParenthesesLayout, KParenthesesL),
     // Curly braces
-    {curlyBracesToken, std::size(curlyBracesToken),
-     [](const Tree* l) -> bool { return l->isCurlyBracesLayout(); },
-     []() -> Tree* { return KCurlyBracesL(KRackL())->cloneTree(); }},
+    ONE_CHILD_TOKEN(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
     // Absolute value
-    {absToken, std::size(absToken),
-     [](const Tree* l) -> bool { return l->isAbsLayout(); },
-     []() -> Tree* { return KAbsL(KRackL())->cloneTree(); }},
+    ONE_CHILD_TOKEN(absToken, isAbsLayout, KAbsL),
     // Sqrt
-    {sqrtToken, std::size(sqrtToken),
-     [](const Tree* l) -> bool { return l->isSqrtLayout(); },
-     []() -> Tree* { return KSqrtL(KRackL())->cloneTree(); }},
+    ONE_CHILD_TOKEN(sqrtToken, isSqrtLayout, KSqrtL),
     // Superscript
     {superscriptToken, std::size(superscriptToken),
      [](const Tree* l) -> bool {
        return l->isVerticalOffsetLayout() && VerticalOffset::IsSuperscript(l);
      },
-     // Subscript
      []() -> Tree* { return KSuperscriptL(KRackL())->cloneTree(); }},
+    // Subscript
     {subscriptToken, std::size(subscriptToken),
      [](const Tree* l) -> bool {
        return l->isVerticalOffsetLayout() && VerticalOffset::IsSubscript(l);
      },
      []() -> Tree* { return KSubscriptL(KRackL())->cloneTree(); }},
     // Fraction
-    {fracToken, std::size(fracToken),
-     [](const Tree* l) -> bool { return l->isFractionLayout(); },
-     []() -> Tree* { return KFracL(KRackL(), KRackL())->cloneTree(); }},
+    TWO_CHILDREN_TOKEN(fracToken, isFractionLayout, KFracL),
     // Root
-    {nthRootToken, std::size(nthRootToken),
-     [](const Tree* l) -> bool { return l->isRootLayout(); },
-     []() -> Tree* { return KRootL(KRackL(), KRackL())->cloneTree(); }},
+    TWO_CHILDREN_TOKEN(nthRootToken, isRootLayout, KRootL),
     // Binomial
-    {binomToken, std::size(binomToken),
-     [](const Tree* l) -> bool { return l->isBinomialLayout(); },
-     []() -> Tree* { return KBinomialL(KRackL(), KRackL())->cloneTree(); }},
+    TWO_CHILDREN_TOKEN(binomToken, isBinomialLayout, KBinomialL),
     // Integral
     // For now, you can only integrate in x
     {integralToken, std::size(integralToken),

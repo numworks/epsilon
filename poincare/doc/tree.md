@@ -1,3 +1,13 @@
+This file is about the internal representation and usage of Trees. Go to TODO if
+you want to use them in applications.
+
+## Summary
+
+- [What is a Tree ?] #what-is-a-tree
+- [How to inspect the structure of a Tree ?](#how-to-inspect-the-structure-of-a-tree-)
+- [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
+
+
 # Tree data structure
 
 [`Tree`](../src/memory/tree.h) is the central data structure in Poincare.
@@ -98,7 +108,7 @@ and the range `Number` contains all the nodes from `Zero` to `Pi`. The first ran
 
 The range `MathematicalConstant` is included in the range `Number`.
 
-### Log
+## How to inspect the structure of a Tree ?
 The structure of a `Tree` can be inspected with several log functions (available only in DEBUG) depending on the level of detail your are interested with :
 - `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
@@ -288,17 +298,24 @@ The only requirement is to ensure that they are only used in methods:
 Also remember that there is a limit to the number of TreeRef used at the same time (`TreeStack::k_maxNumberOfReferences`).
 
 
-## KTrees
+## How to create a Tree at compile time ?
 
-Trees may be created at compile time to be included in flash for static content
-that won't change.
+When you have a formula that does not need to change, you can define it at
+compile time (to be included in the flash) using KTrees.
 
-To do this you need to use the constexpr tree constructors, prefixed by `K`.
-Here the up-to-date list for
+KTrees are a collective name for a collection of constexpr constructors defined in the headers
 [expressions](/poincare/src/expression/k_tree.h) and
 [layouts](/poincare/src/layout/k_tree.h).
 
-Some literals are also available to write numbers in a readable way:
+They start with the letter K and can be nested to create the Tree you would expect:
+
+```cpp
+constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e));
+```
+
+### Literals
+
+As you can see, some specials literals with the suffix `_e` exist to write numbers in a readable way:
  - `23_e` is the integer 23
  - `-4_e/5_e` is the rational -4/5 (a single Tree with no children, unlike
    Opposite(Division(4,5)))
@@ -306,9 +323,8 @@ Some literals are also available to write numbers in a readable way:
  - `23.0_fe` is a float
  - `23_de` is a double
 
-```cpp
-const Tree * immutableExpression = KExp(KMult(2_e, i_e, π_e));
-```
+
+### Reusing KTrees
 
 You may construct large KTrees or factorize their construction using a constexpr.
 In the example below, the twoPi will appear twice in the flash:
@@ -328,12 +344,11 @@ KCos->cloneNode(); // equivalent to SharedTreeStack->pushCos()
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 
-
-
+### Implementation details
 <details>
-<summary>Implementation details</summary>
+<summary>Details</summary>
 
-`KTrees` are implemented with templates and each different tree has a different c++
+`KTrees` are implemented with templates and each different tree has a different C++
 type. The type includes as template parameters the complete list of blocks needed to represent the `Tree`.
 `KCos(2_e)` is under-the-hood an alias to `KTree<Type::Cos, Type::Two>()`, ie an object of a special type used to represent only trees with a 2 in a cos.
 

@@ -418,7 +418,7 @@ bool SystematicOperation::SimplifyDim(Tree* u) {
 bool SystematicOperation::SimplifyExp(Tree* u) {
   Tree* child = u->child(0);
   if (child->isLn()) {
-    /* TODO_PCJ: Add a ln(x) dependency on user-inputted ln only when x can be
+    /* TODO_PCJ: Add a ln(x) dependency on user-input ln only when x can be
      * null. */
     // exp(ln(x)) -> x
     u->removeNode();

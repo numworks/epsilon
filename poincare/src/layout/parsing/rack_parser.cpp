@@ -1333,7 +1333,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
      * parsed the first time.
-     * It can for example be a mixed fraction inputed earlier with a different
+     * It can for example be a mixed fraction input earlier with a different
      * country preference.
      * There is no risk of confusion with a multiplication since a parsed
      * multiplication between an integer and a fraction will be beautified

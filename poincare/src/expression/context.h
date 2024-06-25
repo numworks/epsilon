@@ -38,7 +38,7 @@ enum class UnitDisplay : uint8_t {
   AutomaticMetric,
   // Best prefix and best imperial representative
   AutomaticImperial,
-  // If multiple choice, best of the inputted representative and prefix
+  // If multiple choice, best of the input representative and prefix
   AutomaticInput,
   // Decompose time, angle, and imperial volume, area and length (1h 15min)
   Decomposition,

@@ -38,7 +38,7 @@ bool Logarithm::SimplifyLn(Tree* u) {
     u->cloneTreeOverTree(0_e);
     return true;
   }
-  // TODO_PCJ: Raise Unhandled if child is zero and ln is user-inputted.
+  // TODO_PCJ: Raise Unhandled if child is zero and ln is user-input.
   return false;
 }
 

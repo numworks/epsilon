@@ -108,7 +108,7 @@ class Distribution : public Shared::Inference {
 
   CalculationBuffer m_calculationBuffer;
   const Poincare::Distribution* m_distribution;
-  // Used if one of the parameters is not inputted by the user
+  // Used if one of the parameters is not input by the user
   int m_indexOfUninitializedParameter;
 };
 

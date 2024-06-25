@@ -76,7 +76,7 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
-        Tree* clone = t->clone();
+        Tree* clone = t->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         bool result = DeepCheckListLength(clone, ctx);
@@ -158,7 +158,7 @@ int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
-        Tree* clone = t->clone();
+        Tree* clone = t->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         int result = ListLength(clone, ctx);
@@ -389,7 +389,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
-        Tree* clone = t->clone();
+        Tree* clone = t->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         bool result = DeepCheckDimensions(clone, ctx);
@@ -550,7 +550,7 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
-        Tree* clone = t->clone();
+        Tree* clone = t->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         Dimension result = Get(clone, ctx);
@@ -594,7 +594,7 @@ void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   if (length >= 0) {
     // Push ListSequence instead of a list to delay its expansion.
     SharedTreeStack->pushListSequence();
-    KVarK->clone();
+    KVarK->cloneTree();
     Integer::Push(length);
   }
   Dimension dim = Dimension::Get(e);

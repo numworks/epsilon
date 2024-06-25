@@ -77,7 +77,7 @@ class TreeRef {
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
  private:
-  TreeRef(const Tree* tree) : TreeRef(tree->clone()){};
+  TreeRef(const Tree* tree) : TreeRef(tree->cloneTree()){};
   Tree* tree() const;
   uint16_t m_identifier;
 };

@@ -96,7 +96,7 @@ Function Function::Builder(const char* name, size_t length,
   Internal::Tree* tree =
       Internal::SharedTreeStack->pushUserFunction(name, length + 1);
   assert(!child.isUninitialized());
-  child.tree()->clone();
+  child.tree()->cloneTree();
 
   JuniorExpression expr = JuniorExpression::Builder(tree);
   return static_cast<Function&>(expr);

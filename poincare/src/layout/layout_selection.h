@@ -27,8 +27,8 @@ class LayoutSelection {
   LayoutSelection() : LayoutSelection(nullptr, 0, 0) {}
 
 #if 0
-  LayoutSelection clone() {
-    return LayoutSelection(m_node->clone(), m_startPosition, m_endPosition);
+  LayoutSelection cloneTree() {
+    return LayoutSelection(m_node->cloneTree(), m_startPosition, m_endPosition);
   }
 #endif
 

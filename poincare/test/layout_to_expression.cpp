@@ -58,7 +58,7 @@ void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {
   char buffer[bufferSize];
   l.serializeForParsing(buffer, bufferSize);
 
-  Internal::Tree* ej = Internal::Parser::Parse(l.tree()->clone(), nullptr);
+  Internal::Tree* ej = Internal::Parser::Parse(l.tree()->cloneTree(), nullptr);
   quiz_assert_print_if_failure(ej, buffer);
   Internal::Tree* rj = Internal::FromPoincareExpression(r);
   quiz_assert_print_if_failure(rj, buffer);
@@ -232,14 +232,14 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   // TODO: this is tedious and fragile
   Tree* p = SharedTreeStack->pushRackLayout(1);
   SharedTreeStack->pushPiecewiseLayout(4, 2);
-  "3"_l->clone();
-  "2>3"_l->clone();
-  "2"_l->clone();
-  "2<3"_l->clone();
-  "1"_l->clone();
-  ""_l->clone();
-  ""_l->clone();
-  ""_l->clone();
+  "3"_l->cloneTree();
+  "2>3"_l->cloneTree();
+  "2"_l->cloneTree();
+  "2<3"_l->cloneTree();
+  "1"_l->cloneTree();
+  ""_l->cloneTree();
+  ""_l->cloneTree();
+  ""_l->cloneTree();
   l = Layout::Builder(p);
 
   OList args = OList::Builder();

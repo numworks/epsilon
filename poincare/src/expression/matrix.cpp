@@ -16,7 +16,7 @@ namespace Poincare::Internal {
 Tree* Matrix::Zero(MatrixDimension d) {
   Tree* result = SharedTreeStack->pushMatrix(d.rows, d.cols);
   for (int i = 0; i < d.rows * d.cols; i++) {
-    (0_e)->clone();
+    (0_e)->cloneTree();
   }
   return result;
 }
@@ -24,18 +24,18 @@ Tree* Matrix::Zero(MatrixDimension d) {
 Tree* Matrix::Identity(const Tree* n) {
   assert(n->isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {
-    return KUndefUnhandled->clone();
+    return KUndefUnhandled->cloneTree();
   }
   uint8_t nb = *Integer::Handler(n).digits();
   Tree* result = SharedTreeStack->pushMatrix(nb, nb);
   for (int i = 0; i < nb - 1; i++) {
-    (1_e)->clone();
+    (1_e)->cloneTree();
     // cloning n zeros is indeed a memset(0)
     for (int j = 0; j < nb; j++) {
-      (0_e)->clone();
+      (0_e)->cloneTree();
     }
   }
-  (1_e)->clone();
+  (1_e)->cloneTree();
   return result;
 }
 
@@ -45,12 +45,12 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   Tree* result = SharedTreeStack->pushAdd(n);
   const Tree* child = matrix->child(0);
   for (int i = 0; i < n - 1; i++) {
-    child->clone();
+    child->cloneTree();
     for (int j = 0; j < n + 1; j++) {
       child = child->nextTree();
     }
   }
-  child->clone();
+  child->cloneTree();
   if (approximate) {
     Approximation::ApproximateToComplexTree(result);
   } else {
@@ -63,7 +63,7 @@ Tree* Matrix::Transpose(const Tree* m) {
   uint8_t rows = NumberOfRows(m);
   uint8_t cols = NumberOfColumns(m);
   if (rows == 1 || cols == 1) {
-    Tree* result = m->clone();
+    Tree* result = m->cloneTree();
     SetNumberOfRows(result, cols);
     SetNumberOfColumns(result, rows);
     return result;
@@ -79,7 +79,7 @@ Tree* Matrix::Transpose(const Tree* m) {
   }
   for (int col = 0; col < cols; col++) {
     for (int row = 0; row < rows; row++) {
-      rowsM[row]->clone();
+      rowsM[row]->cloneTree();
       rowsM[row] = rowsM[row]->nextTree();
     }
   }
@@ -96,8 +96,8 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
   Tree* result = u->cloneNode();
   for (int i = 0; i < n; i++) {
     Tree* child = KAdd.node<2>->cloneNode();
-    childU->clone();
-    childV->clone();
+    childU->cloneTree();
+    childV->cloneTree();
     if (approximate) {
       Approximation::ApproximateToComplexTree(child);
     } else {
@@ -114,8 +114,8 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
   Tree* result = m->cloneNode();
   for (const Tree* child : m->children()) {
     Tree* mult = SharedTreeStack->pushMult(2);
-    scalar->clone();
-    child->clone();
+    scalar->cloneTree();
+    child->cloneTree();
     if (approximate) {
       Approximation::ApproximateToComplexTree(mult);
     } else {
@@ -154,10 +154,10 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
       for (int k = 0; k < internal; k++) {
         Tree* mult = SharedTreeStack->pushMult(2);
         assert(childURowK == Child(u, row, k));
-        childURowK->clone();
+        childURowK->cloneTree();
         childURowK = childURowK->nextTree();
         assert(rowsV[k] == Child(v, k, col));
-        rowsV[k]->clone();
+        rowsV[k]->cloneTree();
         rowsV[k] = rowsV[k]->nextTree();
         if (approximate) {
           Approximation::ApproximateToComplexTree(mult);
@@ -239,7 +239,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
       k++;
       if (determinant) {
         // Update determinant: det *= 0
-        NAry::AddChild(det, (0_e)->clone());
+        NAry::AddChild(det, (0_e)->cloneTree());
       }
     } else {
       // Swap row h and iPivot
@@ -249,14 +249,14 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
         }
         if (determinant) {
           // Update determinant: det *= -1
-          NAry::AddChild(det, (-1_e)->clone());
+          NAry::AddChild(det, (-1_e)->cloneTree());
         }
       }
       // Set to 1 M[h][k] by linear combination
       Tree* divisor = Child(matrix, h, k);
       if (determinant) {
         // Update determinant: det *= divisor
-        NAry::AddChild(det, divisor->clone());
+        NAry::AddChild(det, divisor->cloneTree());
       }
       Tree* opHJ = divisor;
       for (int j = k + 1; j < n; j++) {
@@ -319,7 +319,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
 }
 
 int Matrix::Rank(const Tree* m) {
-  Tree* copy = m->clone();
+  Tree* copy = m->cloneTree();
   RowCanonize(copy);
   int rank = RankOfCanonized(copy);
   copy->removeTree();
@@ -359,11 +359,11 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   const Tree* childIJ = m->child(0);
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
-      childIJ->clone();
+      childIJ->cloneTree();
       childIJ = childIJ->nextTree();
     }
     for (int j = 0; j < dim; j++) {
-      (i == j ? 1_e : 0_e)->clone();
+      (i == j ? 1_e : 0_e)->cloneTree();
     }
   }
   // Compute the inverse
@@ -403,7 +403,7 @@ Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
     return result;
   }
   if (p == 1) {
-    return m->clone();
+    return m->cloneTree();
   }
   if (p == 2) {
     return Multiplication(m, m);

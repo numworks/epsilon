@@ -80,7 +80,7 @@ bool Variables::Replace(Tree* expr, int id, const Tree* value, bool leave,
                         bool simplify) {
   /* TODO We need to track the replacement value only if it is in the pool and
    * after expr. Cloning is overkill but easy. */
-  TreeRef valueRef = value->clone();
+  TreeRef valueRef = value->cloneTree();
   bool result = Replace(expr, id, valueRef, leave, simplify);
   valueRef->removeTree();
   return result;
@@ -147,7 +147,7 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* expr,
   assert(expr->isUserFunction() || expr->isUserSequence());
   // Otherwise, local variable scope should be handled.
   assert(!Variables::HasVariables(replacement));
-  TreeRef evaluateAt = expr->child(0)->clone();
+  TreeRef evaluateAt = expr->child(0)->cloneTree();
   expr->cloneTreeOverTree(replacement);
   if (!expr->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
     // If f(x) does not depend on x, add a dependency on x

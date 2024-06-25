@@ -134,7 +134,7 @@ void Tree::logAttributes(std::ostream& stream) const {
 }
 
 void Tree::logSerialize(std::ostream& stream) const {
-  TreeRef outputLayout = Layouter::LayoutExpression(clone(), true);
+  TreeRef outputLayout = Layouter::LayoutExpression(cloneTree(), true);
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
@@ -403,7 +403,7 @@ bool Tree::hasChildSatisfying(Predicate predicate) const {
   return false;
 }
 
-Tree* Tree::clone() const { return SharedTreeStack->clone(this); }
+Tree* Tree::cloneTree() const { return SharedTreeStack->clone(this); }
 Tree* Tree::cloneNode() const { return SharedTreeStack->clone(this, false); }
 
 // Tree edition

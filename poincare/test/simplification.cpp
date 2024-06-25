@@ -24,7 +24,7 @@ constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,
                                            const Tree* output) {
-  Tree* tree = input->clone();
+  Tree* tree = input->cloneTree();
   // Expand / contract expects a deep systematic reduced tree
   Simplification::DeepSystematicReduce(tree);
   quiz_assert(operation(tree));
@@ -112,20 +112,20 @@ QUIZ_CASE(pcj_simplification_variables) {
 QUIZ_CASE(pcj_replace_symbol_with_tree) {
   // replace with u(2) with 4 in 2*u(2)+u(0)+u(n)
   Tree* e1 = KAdd(KMult(2_e, KSeq<"u">(2_e)), KSeq<"u">(0_e), KSeq<"u">("n"_e))
-                 ->clone();
+                 ->cloneTree();
   Variables::ReplaceSymbolWithTree(e1, KSeq<"u">(2_e), 4_e);
   assert_trees_are_equal(
       e1, KAdd(KMult(2_e, 4_e), KSeq<"u">(0_e), KSeq<"u">("n"_e)));
   e1->removeTree();
 
   // replace with f(0) with 0 in f(f(0)) gives 0
-  Tree* e2 = KFun<"f">(KFun<"f">(0_e))->clone();
+  Tree* e2 = KFun<"f">(KFun<"f">(0_e))->cloneTree();
   Variables::ReplaceSymbolWithTree(e2, KFun<"f">(0_e), 0_e);
   assert_trees_are_equal(e2, 0_e);
   e2->removeTree();
 
   // replace with u(n) with 2n+3 in 4*u(5*n)
-  Tree* e3 = KMult(4_e, KSeq<"u">(KMult(5_e, "n"_e)))->clone();
+  Tree* e3 = KMult(4_e, KSeq<"u">(KMult(5_e, "n"_e)))->cloneTree();
   Variables::ReplaceSymbolWithTree(e3, KSeq<"u">("n"_e),
                                    KAdd(KMult(2_e, KUnknownSymbol), 3_e));
   assert_trees_are_equal(e3,
@@ -348,7 +348,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // Leave and enter with a nested parametric
   const Tree* a = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<2, 0>));
   const Tree* b = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<1, 0>));
-  Tree* e = a->clone();
+  Tree* e = a->cloneTree();
   Variables::LeaveScope(e);
   assert_trees_are_equal(e, b);
   Variables::EnterScope(e);
@@ -561,12 +561,13 @@ QUIZ_CASE(pcj_simplification_percent) {
 
 QUIZ_CASE(pcj_simplification_list_bubble_up) {
   // Bubble-up with no reduction to test the bubble-up itself
-  Tree* l1 = KPow(2_e, KList(3_e, 4_e))->clone();
+  Tree* l1 = KPow(2_e, KList(3_e, 4_e))->cloneTree();
   List::BubbleUp(l1, [](Tree*) { return false; });
   assert_trees_are_equal(l1, KList(KPow(2_e, 3_e), KPow(2_e, 4_e)));
   l1->removeTree();
 
-  Tree* l2 = KMult(2_e, KAdd(3_e, KList(5_e, 6_e)), KList(7_e, 8_e))->clone();
+  Tree* l2 =
+      KMult(2_e, KAdd(3_e, KList(5_e, 6_e)), KList(7_e, 8_e))->cloneTree();
   List::BubbleUp(l2, [](Tree*) { return false; });
   assert_trees_are_equal(l2, KList(KMult(2_e, KAdd(3_e, 5_e), 7_e),
                                    KMult(2_e, KAdd(3_e, 6_e), 8_e)));
@@ -695,7 +696,7 @@ QUIZ_CASE(pcj_simplification_float) {
                 {.m_strategy = Strategy::ApproximateToFloat});
 
   // This was raising asserts because of float approximation on flatten.
-  Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->clone();
+  Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();
   Simplification::ShallowSystematicReduce(u->child(0));
   QUIZ_ASSERT(Simplification::ShallowSystematicReduce(u));
   QUIZ_ASSERT(!Simplification::ShallowSystematicReduce(u));
@@ -776,25 +777,25 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("[[1,undef]]", "[[1,undef]]");
   simplifies_to("(1,undef)", "(1,undef)");
 
-  Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->clone();
+  Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e)->cloneTree();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KSet(0_e));
   Dependency::ShallowBubbleUpDependencies(e1);
   QUIZ_ASSERT(e1->treeIsIdenticalTo(r1));
 
   Tree* e2 = KAdd(KDep(KMult(2_e, 3_e), KSet(0_e)), 4_e, KDep(5_e, KSet(6_e)))
-                 ->clone();
+                 ->cloneTree();
   const Tree* r2 = KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KSet(0_e, 6_e));
   Dependency::ShallowBubbleUpDependencies(e2);
   QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
 
   ProjectionContext context;
-  Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->clone();
+  Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->cloneTree();
   const Tree* r3 = KDep(3_e, KSet(KPow("a"_e, 0_e)));
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 
   Tree* e4 =
-      KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->clone();
+      KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->cloneTree();
   const Tree* r4 = KDep(1_e, KSet(KAbs("y"_e), "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));

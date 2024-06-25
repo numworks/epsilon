@@ -132,8 +132,8 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
   if (base->isMult()) {
     for (Tree* w : base->children()) {
       TreeRef m = SharedTreeStack->pushPow();
-      w->clone();
-      n->clone();
+      w->cloneTree();
+      n->cloneTree();
       w->moveTreeOverTree(m);
       Simplification::ShallowSystematicReduce(m);
     }
@@ -313,8 +313,8 @@ bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
       } else {
         // im(x) = -i*x
         TreeRef t(SharedTreeStack->pushMult(3));
-        (-1_e)->clone();
-        (i_e)->clone();
+        (-1_e)->cloneTree();
+        (i_e)->cloneTree();
         elem->detachTree();
         Simplification::ShallowSystematicReduce(t);
         nbChildrenOut++;

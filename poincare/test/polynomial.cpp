@@ -17,7 +17,7 @@ void assert_polynomial_is_parsed(const Tree* node,
   SharedTreeStack->flush();
   Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
-  Tree* clone = node->clone();
+  Tree* clone = node->cloneTree();
   Simplification::DeepSystematicReduce(clone);
   AdvancedSimplification::DeepExpand(clone);
   Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
@@ -73,31 +73,32 @@ QUIZ_CASE(pcj_polynomial_operations) {
                           KPol(Exponents<1>(), "y"_e, 7_e), 23_e);
 
   /* Inverse(A) = -x^2 - 3*x*y - y - 1 */
-  Tree* inv = polA->clone();
+  Tree* inv = polA->cloneTree();
   Polynomial::Inverse(inv);
   assert_trees_are_equal(inv, KPol(Exponents<2, 1, 0>(), "x"_e, -1_e,
                                    KPol(Exponents<1>(), "y"_e, -3_e),
                                    KPol(Exponents<1, 0>(), "y"_e, -1_e, -1_e)));
 
   /* Normalize(C) = 2x^3 - 7*x*y - 23*/
-  Tree* norm = polC->clone();
+  Tree* norm = polC->cloneTree();
   Polynomial::Normalize(norm);
   assert_trees_are_equal(norm, KPol(Exponents<3, 1, 0>(), "x"_e, 2_e,
                                     KPol(Exponents<1>(), "y"_e, -7_e), -23_e));
 
   /* A + B = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
   assert_trees_are_equal(
-      Polynomial::Addition(polA->clone(), polB->clone()),
+      Polynomial::Addition(polA->cloneTree(), polB->cloneTree()),
       TreeRef(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                    KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                    KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
   SharedTreeStack->flush();
 
   /* B + A = x^3 + x^2 + 2*x*y^2 + 10*x*y + y + 24 */
-  assert_trees_are_equal(Polynomial::Addition(polB->clone(), polA->clone()),
-                         KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
-                              KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
-                              KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e)));
+  assert_trees_are_equal(
+      Polynomial::Addition(polB->cloneTree(), polA->cloneTree()),
+      KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
+           KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
+           KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e)));
   SharedTreeStack->flush();
 
   // TODO: test A-B and B-A!
@@ -106,8 +107,8 @@ QUIZ_CASE(pcj_polynomial_operations) {
   (2y^3+9y^2+
    * 76y)x + 23y + 23 */
   assert_trees_are_equal(
-      Polynomial::Multiplication(TreeRef(polA->clone()),
-                                 TreeRef(polB->clone())),
+      Polynomial::Multiplication(TreeRef(polA->cloneTree()),
+                                 TreeRef(polB->cloneTree())),
       KPol(Exponents<5, 4, 3, 2, 1, 0>(), "x"_e, 1_e,
            KPol(Exponents<1>(), "y"_e, 3_e),
            KPol(Exponents<2, 1, 0>(), "y"_e, 2_e, 8_e, 1_e),
@@ -134,7 +135,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
   polB = KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), 1_e);
   // A / B = (xy + 1)*(xy - 1) + y + 1
   auto [quotient, remainder] =
-      Polynomial::PseudoDivision(polA->clone(), polB->clone());
+      Polynomial::PseudoDivision(polA->cloneTree(), polB->cloneTree());
   assert_trees_are_equal(
       quotient,
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), -1_e));

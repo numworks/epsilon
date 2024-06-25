@@ -81,7 +81,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
   if (!Dimension::DeepCheckDimensions(node) ||
       !Dimension::DeepCheckListLength(node)) {
-    return KUndefUnhandledDimension->clone();
+    return KUndefUnhandledDimension->cloneTree();
   }
   return RootTreeToTreePrivate<T>(node, angleUnit, complexFormat,
                                   Dimension::Get(node),
@@ -102,7 +102,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
   s_randomContext = &randomContext;
   Context context(angleUnit, complexFormat);
   s_context = &context;
-  Tree* clone = node->clone();
+  Tree* clone = node->cloneTree();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
 
@@ -135,7 +135,7 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* node) {
   if (s_context && s_context->m_encounteredComplex) {
     if (s_context->m_complexFormat == ComplexFormat::Real &&
         !std::isnan(value.real()) && !std::isnan(value.imag())) {
-      return KNonReal->clone();
+      return KNonReal->cloneTree();
     }
     s_context->m_encounteredComplex = false;
   }
@@ -146,12 +146,12 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* node) {
 template <typename T>
 Tree* Approximation::ToTree(const Tree* node, Dimension dim) {
   if (dim.isBoolean()) {
-    return (ToBoolean<T>(node) ? KTrue : KFalse)->clone();
+    return (ToBoolean<T>(node) ? KTrue : KFalse)->cloneTree();
   }
   if (dim.isUnit() || dim.isScalar()) {
     // By default, approximation returns basic SI Units.
     if (dim.isUnit() && dim.hasNonKelvinTemperatureUnit()) {
-      Tree* result = node->clone();
+      Tree* result = node->cloneTree();
       Units::Unit::RemoveTemperatureUnit(result);
       dim.unit.representative = &Units::Temperature::representatives.kelvin;
       result->moveTreeOverTree(ToTree<T>(result, dim));
@@ -194,7 +194,7 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
   s_context = &context;
   Tree* clone;
   if (!isPrepared) {
-    clone = node->clone();
+    clone = node->cloneTree();
     // TODO we should rather assume variable projection has already been done
     Variables::ProjectLocalVariablesToId(clone);
     node = clone;
@@ -1139,8 +1139,8 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Div: {
       Tree* a = ToMatrix<T>(node->child(0));
       Tree* s = KDiv->cloneNode();
-      one->clone();
-      node->child(1)->clone();
+      one->cloneTree();
+      node->child(1)->cloneTree();
       ToBeautifiedComplex<T>(s);
       s->removeTree();
       s->moveTreeOverTree(
@@ -1153,7 +1153,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       const Tree* index = base->nextTree();
       T value = To<T>(index);
       if (std::isnan(value) || value != std::round(value)) {
-        return KUndef->clone();
+        return KUndef->cloneTree();
       }
       Tree* result = ToMatrix<T>(base);
       result->moveTreeOverTree(
@@ -1193,11 +1193,11 @@ Tree* Approximation::ToMatrix(const Tree* node) {
     case Type::Piecewise:
       return ToMatrix<T>(SelectPiecewiseBranch<T>(node));
     case Type::Dependency:
-      return UndefDependencies(node) ? KUndef->clone()
+      return UndefDependencies(node) ? KUndef->cloneTree()
                                      : ToMatrix<T>(Dependency::Main(node));
     default:;
   }
-  return KUndef->clone();
+  return KUndef->cloneTree();
 }
 
 template <typename T>

@@ -27,7 +27,7 @@ bool AdvancedSimplification::AdvancedReduce(Tree* u) {
    * will be explored.
    * This means calling AdvancedReduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
-  Tree* editedExpression = u->clone();
+  Tree* editedExpression = u->cloneTree();
   Context ctx(editedExpression, u, Metric::GetMetric(u));
   // Add initial root
   ctx.m_crcCollection.add(u->hash(), 0);

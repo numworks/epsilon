@@ -192,7 +192,7 @@ class Tree : public TypeBlock {
   bool deepReplaceWith(const Tree* target, const Tree* replacement);
   bool deepReplaceWith(const Tree* target, TreeRef& replacement);
 
-  Tree* clone() const;
+  Tree* cloneTree() const;
   Tree* cloneNode() const;
 
   // Tree motions

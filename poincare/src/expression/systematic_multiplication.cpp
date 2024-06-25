@@ -152,7 +152,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
         } else {
           multiplication->cloneNodeAtNode(KMult.node<1>);
         }
-        NAry::AddChildAtIndex(multiplication, (0_e)->clone(), 0);
+        NAry::AddChildAtIndex(multiplication, (0_e)->cloneTree(), 0);
       }
       return changed || (hash != multiplication->hash());
     }

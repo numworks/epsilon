@@ -63,7 +63,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         ProjectionContext projectionContext,
                                         Error* error) {
   /* Clone and simplify the equations */
-  Tree* simplifiedEquationSet = equationsSet->clone();
+  Tree* simplifiedEquationSet = equationsSet->cloneTree();
   ProjectAndSimplify(simplifiedEquationSet, projectionContext, error);
   if (*error != Error::NoError) {
     simplifiedEquationSet->removeTree();
@@ -74,7 +74,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   Tree* userSymbols = Variables::GetUserSymbols(simplifiedEquationSet);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
   Tree* replacedSymbols = Set::Difference(
-      Variables::GetUserSymbols(equationsSet), userSymbols->clone());
+      Variables::GetUserSymbols(equationsSet), userSymbols->cloneTree());
   if (replacedSymbols->numberOfChildren() > 0) {
     int i = 0;
     for (const Tree* variable : replacedSymbols->children()) {
@@ -134,7 +134,7 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
 Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
                                                   Context* context) {
   // TODO: standard form should do the prepare for approx equations
-  Tree* equationStandardForm = equationSet->child(0)->clone();
+  Tree* equationStandardForm = equationSet->child(0)->cloneTree();
   Approximation::PrepareFunctionForApproximation(equationStandardForm, "x",
                                                  ComplexFormat::Real);
   constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
@@ -186,7 +186,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
   // assert(m_type == Type::GeneralMonovariable);
   // assert(m_numberOfSolvingVariables == 1);
 
-  Tree* undevelopedExpression = equationsSet->child(0)->clone();
+  Tree* undevelopedExpression = equationsSet->child(0)->cloneTree();
   // equationStandardFormForApproximateSolve(context);
   Approximation::PrepareFunctionForApproximation(undevelopedExpression, "x",
                                                  ComplexFormat::Real);
@@ -318,7 +318,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
                                             uint8_t numberOfVariables,
                                             Context context) {
   TreeRef result = SharedTreeStack->pushList(0);
-  TreeRef tree = equation->clone();
+  TreeRef tree = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
   AdvancedSimplification::DeepExpand(tree);

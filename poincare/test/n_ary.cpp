@@ -43,30 +43,30 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   assert_trees_are_equal(rackLayout1, rackLayout3);
 
   TreeRef addition1 = SharedTreeStack->pushAdd(3);
-  (1_e)->clone();
+  (1_e)->cloneTree();
   SharedTreeStack->pushAdd(3);
   SharedTreeStack->pushMult(2);
-  (2_e)->clone();
-  (3_e)->clone();
-  (4_e)->clone();
-  (5_e)->clone();
+  (2_e)->cloneTree();
+  (3_e)->cloneTree();
+  (4_e)->cloneTree();
+  (5_e)->cloneTree();
   SharedTreeStack->pushAdd(2);
   SharedTreeStack->pushAdd(1);
-  (6_e)->clone();
-  (7_e)->clone();
+  (6_e)->cloneTree();
+  (7_e)->cloneTree();
   // addition1 is 1+(2*3+4+5)+((+6)+7)
   NAry::Flatten(addition1);
   // addition1 is 1+2*3+4+5+6+7
 
   TreeRef addition2 = SharedTreeStack->pushAdd(6);
-  (1_e)->clone();
+  (1_e)->cloneTree();
   SharedTreeStack->pushMult(2);
-  (2_e)->clone();
-  (3_e)->clone();
-  (4_e)->clone();
-  (5_e)->clone();
-  (6_e)->clone();
-  (7_e)->clone();
+  (2_e)->cloneTree();
+  (3_e)->cloneTree();
+  (4_e)->cloneTree();
+  (5_e)->cloneTree();
+  (6_e)->cloneTree();
+  (7_e)->cloneTree();
   // addition2 is 1+2+3
 
   assert_trees_are_equal(addition1, addition2);

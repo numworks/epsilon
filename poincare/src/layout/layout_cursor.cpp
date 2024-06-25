@@ -234,7 +234,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
 
   Tree* copy = SharedTreeStack->contains(tree)
                    ? const_cast<Tree*>(insertLayoutContext->m_tree)
-                   : tree->clone();
+                   : tree->cloneTree();
   // We need to keep track of the node which must live in the edition pool
   // TODO: do we need ConstReferences on const Nodes in the pool ?
   TreeRef ref(copy);
@@ -446,7 +446,7 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
    * containing the layouts corresponding to each code point. */
-  TreeRef layoutToInsert = KRackL()->clone();
+  TreeRef layoutToInsert = KRackL()->cloneTree();
   TreeRef currentLayout = layoutToInsert;
   // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
@@ -468,7 +468,7 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
             insertLayoutContext{layoutToInsert, forceCursorRightOfText,
                                 forceCursorLeftOfText};
         insertLayout(context, &insertLayoutContext);
-        layoutToInsert = KRackL()->clone();
+        layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
         setCursorToFirstEmptyCodePoint = false;

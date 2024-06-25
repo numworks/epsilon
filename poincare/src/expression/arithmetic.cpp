@@ -408,10 +408,10 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
 Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   FactorizedInteger result = PrimeFactorization(m);
   if (result.numberOfFactors == 0) {
-    return KUndefUnhandled->clone();
+    return KUndefUnhandled->cloneTree();
   }
   assert(result.numberOfFactors);  // TODO #85
-  Tree* mult = KMult()->clone();
+  Tree* mult = KMult()->cloneTree();
   for (int i = 0; i < result.numberOfFactors; i++) {
     if (result.coefficients[i] > 1) {
       KPow->cloneNode();

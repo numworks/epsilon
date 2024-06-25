@@ -72,7 +72,7 @@ static void assert_irreducible_form(const Tree* iNumerator,
                                     const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
-  Tree* result = i->clone();
+  Tree* result = i->cloneTree();
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();

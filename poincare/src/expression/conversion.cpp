@@ -24,7 +24,7 @@
 namespace Poincare::Internal {
 
 Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
-  TreeRef outputLayout = Layouter::LayoutExpression(exp->clone());
+  TreeRef outputLayout = Layouter::LayoutExpression(exp->cloneTree());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
@@ -573,7 +573,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       if (exp.numberOfChildren() == 2) {
         PushPoincareExpression(exp.childAtIndex(1));
       } else {
-        (1_e)->clone();
+        (1_e)->cloneTree();
       }
       return;
     }
@@ -826,7 +826,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       } else if (c.isComplexI()) {
         SharedTreeStack->pushComplexI();
       } else {
-        KUndefUnhandled->clone();
+        KUndefUnhandled->cloneTree();
       }
       return;
     }
@@ -866,7 +866,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
       } else {
-        (1_e)->clone();
+        (1_e)->cloneTree();
         PushPoincareExpression(exp.childAtIndex(1));
       }
       return;
@@ -877,7 +877,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(2));
       return;
     case OT::Undefined:
-      KUndef->clone();
+      KUndef->cloneTree();
       return;
     case OT::EmptyExpression:
       SharedTreeStack->pushEmpty();

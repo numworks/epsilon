@@ -146,7 +146,7 @@ Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
    * or its inverse in 'unitsAccu'.
    * - Repeat those steps until no more simplification is possible.
    */
-  Tree* unitsAccu = KMult()->clone();
+  Tree* unitsAccu = KMult()->cloneTree();
   /* If exponents are not integers, FromBaseUnits will return a null
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
@@ -571,7 +571,7 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
   if (representative->siVector() ==
       AngleRepresentative::Dimension) {
     /* Angles are the only unit where we want to display the exact value. */
-    Expression exactValue = exactOutput.clone();
+    Expression exactValue = exactOutput.cloneTree();
     Expression unit;
     ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(UnitConversion::None);
@@ -666,7 +666,7 @@ Expression Unit::ConvertTemperatureUnits(
                                  value * std::pow(10., startPrefix->exponent()),
                                  startRepr, targetRepr) *
                              std::pow(10., -targetPrefix->exponent())),
-      unit.clone());
+      unit.cloneTree());
 }
 
 #endif
@@ -843,7 +843,7 @@ void Unit::RemoveUnit(Tree* unit) {
   // Temperature units should have been escaped before.
   assert(!IsNonKelvinTemperature(representative));
   Tree* result = SharedTreeStack->pushMult(2);
-  representative->ratioExpressionReduced()->clone();
+  representative->ratioExpressionReduced()->cloneTree();
   SharedTreeStack->pushPow();
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
@@ -918,7 +918,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     // There may remain units that cancel themselves, remove them.
     return Tree::ApplyShallowInDepth(e, ShallowRemoveUnit);
   }
-  TreeRef extractedUnits = e->clone();
+  TreeRef extractedUnits = e->cloneTree();
   if (e->isUnitConversion()) {
     // Use second child for target units and first one for value.
     MoveTreeOverTree(extractedUnits, extractedUnits->child(1));

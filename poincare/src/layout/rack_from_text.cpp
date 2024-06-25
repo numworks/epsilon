@@ -17,7 +17,7 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
     Tree* child;
     switch (codePoint) {
       case UCodePointEmpty:
-        child = KRackL()->clone();
+        child = KRackL()->cloneTree();
         break;
 #if 0
       // TODO_PCJ: renable and treat braces the same way
@@ -26,7 +26,7 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
          * parenthesis */
         child =
             SharedTreeStack->pushParenthesisLayout(false, false);
-        RackFromTextRec(decoder, KRackL()->clone(), child);
+        RackFromTextRec(decoder, KRackL()->cloneTree(), child);
         break;
       }
       case ')':
@@ -44,7 +44,7 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
 }
 
 Rack* RackFromText(const char* text) {
-  Rack* root = Rack::From(KRackL()->clone());
+  Rack* root = Rack::From(KRackL()->cloneTree());
   UTF8Decoder decoder(text);
   RackFromTextRec(&decoder, root, nullptr);
   return root;

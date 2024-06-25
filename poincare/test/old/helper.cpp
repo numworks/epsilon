@@ -261,7 +261,7 @@ void assert_expression_approximates_to(const char *expression,
         if (Internal::Dimension::Get(e).isUnit()) {
           // no unit approximation yet
           e->removeTree();
-          return KUndef->clone();
+          return KUndef->cloneTree();
         }
         if (!Internal::Dimension::Get(e).isScalar() ||
             Internal::Dimension::ListLength(e) !=

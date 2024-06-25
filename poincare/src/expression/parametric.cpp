@@ -348,18 +348,18 @@ bool Parametric::Explicit(Tree* expr) {
   Tree* result;
   if (isSum) {
     Dimension d = Dimension::Get(child);
-    result = d.isMatrix() ? Matrix::Zero(d.matrix) : (0_e)->clone();
+    result = d.isMatrix() ? Matrix::Zero(d.matrix) : (0_e)->cloneTree();
   } else {
-    result = (1_e)->clone();
+    result = (1_e)->cloneTree();
   }
   for (uint8_t step = 0; step < numberOfTerms; step++) {
     // Create k value at this step
     Tree* value = SharedTreeStack->pushAdd(2);
-    lowerBound->clone();
+    lowerBound->cloneTree();
     Integer::Push(step);
     Simplification::ShallowSystematicReduce(value);
     // Clone the child and replace k with its value
-    Tree* clone = child->clone();
+    Tree* clone = child->cloneTree();
     Variables::Replace(clone, k_localVariableId, value, true);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);

@@ -237,7 +237,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   /* The content of h will be modified if token match which would break the
    * tokenizer. To avoid this we run the tokenizer on h and modifications on a
    * copy of h. */
-  Tree* clone = h->clone();
+  Tree* clone = h->cloneTree();
   /* The cursor is inside h and we need to move it inside clone for it to follow
    * editions. Since they are the still the same, we swap them. */
   h->swapWithTree(clone);
@@ -330,7 +330,7 @@ bool InputBeautification::BeautifyPipeKey(Tree* h, int indexOfPipeKey,
     return false;
   }
   NAry::RemoveChildAtIndex(h, indexOfPipeKey);
-  TreeRef parameter = KRackL()->clone();
+  TreeRef parameter = KRackL()->cloneTree();
   TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutBufferCursor::TreeStackCursor cursorForInsertion =
       *static_cast<LayoutBufferCursor::TreeStackCursor*>(cursor);
@@ -551,7 +551,7 @@ bool InputBeautification::CreateParametersList(
   int i = 0;  // Index in paramsString
   int n = paramsString->numberOfChildren();
   int parameterIndex = 0;
-  Tree* currentParameter = KRackL()->clone();
+  Tree* currentParameter = KRackL()->cloneTree();
 
   int cursorPosition = layoutCursor->cursorNode() == paramsString
                            ? layoutCursor->position()
@@ -574,7 +574,7 @@ bool InputBeautification::CreateParametersList(
       // right parenthesis or ',' reached. Add parameter
       assert(parameterIndex < k_maxNumberOfParameters);
       parameters[parameterIndex] = currentParameter;
-      currentParameter = KRackL()->clone();
+      currentParameter = KRackL()->cloneTree();
       do {
         parameterIndex++;
         /* Some parameters are already preprocessed (like when beautifying
@@ -583,7 +583,7 @@ bool InputBeautification::CreateParametersList(
                parameters[parameterIndex]);
     } else {
       // Add layout to parameter
-      NAry::AddOrMergeChild(currentParameter, child->clone());
+      NAry::AddOrMergeChild(currentParameter, child->cloneTree());
     }
 
     cursorPosition--;
@@ -594,7 +594,7 @@ bool InputBeautification::CreateParametersList(
 
   // Fill the remaining parameters with empty layouts
   for (int p = parameterIndex; p < beautificationRule.numberOfParameters; p++) {
-    parameters[p] = KRackL()->clone();
+    parameters[p] = KRackL()->cloneTree();
   }
 
   if (!newCursor.isUninitialized()) {

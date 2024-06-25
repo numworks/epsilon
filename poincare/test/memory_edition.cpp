@@ -75,8 +75,8 @@ QUIZ_CASE(pcj_edition_reference) {
   quiz_assert(ref0 != ref1);
 
   // Constructors
-  ref0->clone();
-  TreeRef ref2 = TreeRef((8_e)->clone());
+  ref0->cloneTree();
+  TreeRef ref2 = TreeRef((8_e)->cloneTree());
   assert_tree_stack_contains({k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
@@ -179,10 +179,10 @@ QUIZ_CASE(pcj_edition_reference_destructor) {
 QUIZ_CASE(pcj_tree_comments) {
   TreeRef u, v;
   auto setup = [&]() {
-    u = "aaaa"_e->clone();
-    "bb"_e->clone();
-    v = "ccc"_e->clone();
-    "dd"_e->clone();
+    u = "aaaa"_e->cloneTree();
+    "bb"_e->cloneTree();
+    v = "ccc"_e->cloneTree();
+    "dd"_e->cloneTree();
   };
   setup();
   u->moveNodeBeforeNode(v);

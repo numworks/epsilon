@@ -25,10 +25,10 @@ bool Approximation::ShallowPrepareForApproximation(Tree* expr, void* ctx) {
 
 Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Tree* value = SharedTreeStack->pushAdd(2);
-  bound->clone();
-  KVarX->clone();
+  bound->cloneTree();
+  KVarX->cloneTree();
   Simplification::DeepSystematicReduce(value);
-  Tree* tree = integrand->clone();
+  Tree* tree = integrand->cloneTree();
   // TODO: This deep should have been done before
   Simplification::DeepSystematicReduce(tree);
   Variables::Replace(tree, 0, value, false, true);

@@ -109,7 +109,7 @@ QUIZ_CASE(pcj_integer_compare) {
 
 static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
                                const Tree* r) {
-  Tree* t = i->clone();
+  Tree* t = i->cloneTree();
   Integer::SetSign(t, sign);
   quiz_assert(t->treeIsIdenticalTo(r));
   t->removeTree();

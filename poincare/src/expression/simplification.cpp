@@ -28,7 +28,7 @@ bool Simplification::DeepSystematicReduce(Tree* u) {
   }
 
 #if ASSERTIONS
-  TreeRef previousTree = u->clone();
+  TreeRef previousTree = u->cloneTree();
 #endif
   bool shallowModified = ShallowSystematicReduce(u);
 #if ASSERTIONS
@@ -191,7 +191,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
-        Tree* e = static_cast<const Tree*>(data)->clone();
+        Tree* e = static_cast<const Tree*>(data)->cloneTree();
         if (e->isStore()) {
           // Store is an expression only for convenience
           e = e->child(0);

@@ -26,7 +26,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
   int derivationOrder = Integer::Handler(order).to<uint8_t>();
   const Tree* constDerivand = order->nextTree();
   // Derive the derivand successively, preserving local variable scope.
-  Tree* derivative = constDerivand->clone();
+  Tree* derivative = constDerivand->cloneTree();
   int currentDerivationOrder = 0;
   while (currentDerivationOrder < derivationOrder) {
     Tree* nextDerivative = Derive(derivative, symbol, false);
@@ -63,8 +63,8 @@ bool Derivation::ShallowSimplify(Tree* node) {
   if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
     SharedTreeStack->pushSet(1);
-    Variables::LeaveScopeWithReplacement(constDerivand->clone(), symbolValue,
-                                         false);
+    Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
+                                         symbolValue, false);
     derivative->cloneNodeAtNode(KDep);
   }
 
@@ -76,7 +76,7 @@ bool Derivation::ShallowSimplify(Tree* node) {
 Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   if (derivand->treeIsIdenticalTo(KVarX)) {
     // V0 -> 1
-    return (1_e)->clone();
+    return (1_e)->cloneTree();
   }
   /* Merge subsequent nested derivatives. Avoid infinite simplification loops.
    * diff(f(V0), x, V0, n) -> diff(f(V0), x, V0, n+1) */
@@ -103,7 +103,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   }
   if (derivand->isRandomized()) {
     // Do not handle random nodes in derivation
-    return KUndefUnhandled->clone();
+    return KUndefUnhandled->cloneTree();
   }
   /* General case :
    * f(g0(V0), g1(V0), ...) -> ... + Di(f) * diff(gi(V0), symbol, V0) + ...
@@ -124,10 +124,10 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
       /* Fallback to Diff(derivand)
        * f(V0+V1) -> diff(f(V0+V2), symbol, V0) */
       Tree* preservedDerivative = SharedTreeStack->pushNthDiff();
-      symbol->clone();
-      KVarX->clone();
-      (1_e)->clone();
-      Tree* nestedDerivand = derivand->clone();
+      symbol->cloneTree();
+      KVarX->cloneTree();
+      (1_e)->cloneTree();
+      Tree* nestedDerivand = derivand->cloneTree();
       Variables::EnterScopeExceptLocalVariable(nestedDerivand);
       return preservedDerivative;
     }
@@ -152,7 +152,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       for (std::pair<const Tree*, int> indexedNode :
            NodeIterator::Children<NoEditable>(derivand)) {
         if (indexedNode.second != index) {
-          indexedNode.first->clone();
+          indexedNode.first->cloneTree();
         }
       }
       Simplification::ShallowSystematicReduce(mult);
@@ -163,12 +163,12 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       return SharedTreeStack->pushOne();
     case Type::Exp:
       // Di(exp(x)) = exp(x)
-      return derivand->clone();
+      return derivand->cloneTree();
     case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
       Tree* power = SharedTreeStack->pushPow();
-      derivand->child(0)->clone();
+      derivand->child(0)->cloneTree();
       SharedTreeStack->pushMinusOne();
       Simplification::ShallowSystematicReduce(power);
       return power;
@@ -180,18 +180,18 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       if (index == 1) {
         // Second parameter cannot depend on symbol.
         assert(!Variables::HasVariables(derivand->child(1)));
-        return (0_e)->clone();
+        return (0_e)->cloneTree();
       }
       Tree* multiplication;
       if (derivand->isPow()) {
         multiplication = SharedTreeStack->pushMult(2);
-        derivand->child(1)->clone();
+        derivand->child(1)->cloneTree();
       }
       Tree* newNode = derivand->cloneNode();
-      derivand->child(0)->clone();
+      derivand->child(0)->cloneTree();
       Tree* addition = SharedTreeStack->pushAdd(2);
-      derivand->child(1)->clone();
-      (-1_e)->clone();
+      derivand->child(1)->cloneTree();
+      (-1_e)->cloneTree();
       Simplification::ShallowSystematicReduce(addition);
       Simplification::ShallowSystematicReduce(newNode);
       if (derivand->isPow()) {

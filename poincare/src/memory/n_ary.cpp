@@ -161,7 +161,7 @@ push:
   // push children in their destination order
   Tree* newNAry = SharedTreeStack->clone(nary, false);
   for (int i = 0; i < numberOfChildren; i++) {
-    children[indexes[i]]->clone();
+    children[indexes[i]]->cloneTree();
   }
   assert(nary->treeSize() == newNAry->treeSize());
   // replace nary with the sorted one
@@ -193,7 +193,7 @@ Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
   SetNumberOfChildren(result, nb);
   const Tree* child = nary->child(startIndex);
   for (int i = 0; i < nb; i++) {
-    child->clone();
+    child->cloneTree();
     child = child->nextTree();
   }
   return result;

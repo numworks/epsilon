@@ -27,7 +27,7 @@ size_t UndefinedNode::serialize(char* buffer, size_t bufferSize,
 }
 
 Undefined Undefined::Builder() {
-  JuniorExpression expr = JuniorExpression::Builder(KUndef->clone());
+  JuniorExpression expr = JuniorExpression::Builder(KUndef->cloneTree());
   return static_cast<Undefined&>(expr);
 }
 

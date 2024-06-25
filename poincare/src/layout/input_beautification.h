@@ -79,42 +79,42 @@ class InputBeautification {
       {"<=", 0,
        [](TreeRef* parameters) -> Tree* {
          // TODO factorize the comparison operators once we have them in PCJ
-         return KCodePointL<u'≤'>()->clone();
+         return KCodePointL<u'≤'>()->cloneTree();
        }},
       {">=", 0,
-       [](TreeRef* parameters) { return KCodePointL<u'≥'>()->clone(); }},
+       [](TreeRef* parameters) { return KCodePointL<u'≥'>()->cloneTree(); }},
       {"!=", 0,
        [](TreeRef* parameters) {
          // ≠
          return KRackL("="_cl,
                        KCodePointL<UCodePointCombiningLongSolidusOverlay>())
-             ->clone();
+             ->cloneTree();
        }},
       // Special char
       {"->", 0,
        [](TreeRef* parameters) {
-         return KCodePointL<UCodePointRightwardsArrow>()->clone();
+         return KCodePointL<UCodePointRightwardsArrow>()->cloneTree();
        }},
       {"*", 0,
        [](TreeRef* parameters) {
-         return KCodePointL<UCodePointMultiplicationSign>()->clone();
+         return KCodePointL<UCodePointMultiplicationSign>()->cloneTree();
        }},
       {"''", 0,
-       [](TreeRef* parameters) { return KCodePointL<u'"'>()->clone(); }},
+       [](TreeRef* parameters) { return KCodePointL<u'"'>()->cloneTree(); }},
   };
 
   constexpr static BeautificationRule k_infRule = {
       "inf", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointInfinity>()->clone();
+        return KCodePointL<UCodePointInfinity>()->cloneTree();
       }};
 
   constexpr static BeautificationRule k_piRule = {
       "pi", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointGreekSmallLetterPi>()->clone();
+        return KCodePointL<UCodePointGreekSmallLetterPi>()->cloneTree();
       }};
   constexpr static BeautificationRule k_thetaRule = {
       "theta", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointGreekSmallLetterTheta>()->clone();
+        return KCodePointL<UCodePointGreekSmallLetterTheta>()->cloneTree();
       }};
 
   constexpr static BeautificationRule k_absoluteValueRule =
@@ -128,7 +128,7 @@ class InputBeautification {
         parameters[2]->detachTree();
         parameters[0]->detachTree();
         if (RackLayout::IsEmpty(parameters[1])) {
-          NAry::AddChildAtIndex(parameters[1], "x"_cl->clone(), 0);
+          NAry::AddChildAtIndex(parameters[1], "x"_cl->cloneTree(), 0);
         }
         return diff;
       }};
@@ -161,7 +161,7 @@ class InputBeautification {
       {/* exp( */
        "exp", 1,
        [](TreeRef* parameters) -> Tree* {
-         TreeRef exp = KRackL("e"_cl, KSuperscriptL(KRackL()))->clone();
+         TreeRef exp = KRackL("e"_cl, KSuperscriptL(KRackL()))->cloneTree();
          exp->child(1)->child(0)->moveTreeOverTree(parameters[0]);
          return exp;
        }},
@@ -177,7 +177,7 @@ class InputBeautification {
          parameters[3]->detachTree();
          parameters[0]->detachTree();
          if (RackLayout::IsEmpty(parameters[1])) {
-           NAry::AddChildAtIndex(parameters[1], "x"_cl->clone(), 0);
+           NAry::AddChildAtIndex(parameters[1], "x"_cl->cloneTree(), 0);
          }
          return integral;
        }},
@@ -200,8 +200,8 @@ class InputBeautification {
          TreeRef ref = SharedTreeStack->pushPiecewiseLayout(2, 2);
          parameters[0]->detachTree();
          parameters[1]->detachTree();
-         KRackL()->clone();
-         KRackL()->clone();
+         KRackL()->cloneTree();
+         KRackL()->cloneTree();
          return ref;
        }},
       {/* product( */
@@ -214,7 +214,7 @@ class InputBeautification {
          parameters[3]->detachTree();
          parameters[0]->detachTree();
          if (RackLayout::IsEmpty(parameters[1])) {
-           NAry::AddChildAtIndex(parameters[1], "k"_cl->clone(), 0);
+           NAry::AddChildAtIndex(parameters[1], "k"_cl->cloneTree(), 0);
          }
          return product;
        }},
@@ -236,7 +236,7 @@ class InputBeautification {
         parameters[3]->detachTree();
         parameters[0]->detachTree();
         if (RackLayout::IsEmpty(parameters[1])) {
-          NAry::AddChildAtIndex(parameters[1], "k"_cl->clone(), 0);
+          NAry::AddChildAtIndex(parameters[1], "k"_cl->cloneTree(), 0);
         }
         return sum;
       }};
@@ -244,7 +244,7 @@ class InputBeautification {
   constexpr static BeautificationRule k_logarithmRule = {
       "log", 2, [](TreeRef* parameters) -> Tree* {
         // TODO handle NL-log cf LayoutHelper::Logarithm
-        TreeRef log = "log"_l->clone();
+        TreeRef log = "log"_l->cloneTree();
         NAry::SetNumberOfChildren(log, 5);
         SharedTreeStack->pushVerticalOffsetLayout(true, false);
         parameters[1]->detachTree();

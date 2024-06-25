@@ -40,7 +40,7 @@ bool TermsAreEqual(const Tree* u, const Tree* v) {
 
 // The term of 2ab is ab
 Tree* PushTerm(const Tree* u) {
-  Tree* c = u->clone();
+  Tree* c = u->cloneTree();
   if (u->isMult() && u->child(0)->isRational()) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfPossible(c);

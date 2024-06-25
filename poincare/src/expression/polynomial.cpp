@@ -28,14 +28,14 @@ Tree* Polynomial::PushEmpty(const Tree* variable) {
 Tree* Polynomial::PushMonomial(const Tree* variable, uint8_t exponent,
                                const Tree* coefficient) {
   if (exponent == 0) {
-    return (1_e)->clone();
+    return (1_e)->cloneTree();
   }
   if (!coefficient) {
     // Writing 1_e directly in the declaration does not work with clang
     coefficient = 1_e;
   }
   Tree* pol = PushEmpty(variable);
-  return AddMonomial(pol, std::make_pair(coefficient->clone(), exponent));
+  return AddMonomial(pol, std::make_pair(coefficient->cloneTree(), exponent));
 }
 
 Tree* Polynomial::LeadingIntegerCoefficient(Tree* polynomial) {
@@ -109,7 +109,7 @@ Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
                       std::pair<Tree*, uint8_t> monomial, bool isLastTerm) {
                      TreeRef resultRef(result);
                      Tree* polynomialClone =
-                         isLastTerm ? polynomial : polynomial->clone();
+                         isLastTerm ? polynomial : polynomial->cloneTree();
                      Tree* multiplication =
                          MultiplicationMonomial(polynomialClone, monomial);
                      return Addition(resultRef, multiplication);
@@ -117,7 +117,7 @@ Tree* Polynomial::Multiplication(Tree* polA, Tree* polB) {
 }
 
 Tree* Polynomial::Subtraction(Tree* polA, Tree* polB) {
-  return Addition(polA, Multiplication(polB, (-1_e)->clone()));
+  return Addition(polA, Multiplication(polB, (-1_e)->cloneTree()));
 }
 
 Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
@@ -154,7 +154,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(b);
     variableB->removeTree();
-    TreeRef result((0_e)->clone());
+    TreeRef result((0_e)->cloneTree());
     assert(i < nbOfTermsB);
     while (i < nbOfTermsB) {
       TreeRef nextCoefficientB = coefficientB->nextTree();
@@ -188,7 +188,7 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
     Tree* currentCoefficient = previousChild->nextTree();
     // Avoid one cloning for last term
     Tree* coeffClone = i == nbOfTerms - 1 ? static_cast<Tree*>(coefficient)
-                                          : coefficient->clone();
+                                          : coefficient->cloneTree();
     Tree* multiplication =
         Polynomial::Multiplication(currentCoefficient, coeffClone);
     previousChild->nextTree()->moveTreeBeforeNode(multiplication);
@@ -224,18 +224,18 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     }
     quotient->removeTree();
     remainder->removeTree();
-    return {.quotient = (0_e)->clone(), .remainder = a};
+    return {.quotient = (0_e)->cloneTree(), .remainder = a};
   }
   if (!polA->isPolynomial()) {
     polB->removeTree();
-    return {.quotient = (0_e)->clone(), .remainder = a};
+    return {.quotient = (0_e)->cloneTree(), .remainder = a};
   }
   const Tree* var = Variable(a);
   if (polB->isPolynomial() && Comparison::Compare(var, Variable(polB)) >= 0) {
     var = Variable(polB);
   }
   TreeRef b(polB);
-  TreeRef x = var->clone();
+  TreeRef x = var->cloneTree();
   uint8_t degreeA, degreeB;
   TreeRef leadingCoeffA, leadingCoeffB;
   extractDegreeAndLeadingCoefficient(a, x, &degreeA, &leadingCoeffA);
@@ -243,7 +243,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
   TreeRef currentQuotient(0_e);
   while (degreeA >= degreeB) {
     DivisionResult result =
-        PseudoDivision(leadingCoeffA->clone(), leadingCoeffB->clone());
+        PseudoDivision(leadingCoeffA->cloneTree(), leadingCoeffB->cloneTree());
     TreeRef quotient = result.quotient;
     TreeRef remainder = result.remainder;
     bool stopCondition = !remainder->isZero();
@@ -253,14 +253,15 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
       break;
     }
     TreeRef xPowerDegAMinusDegB =
-        Polynomial::PushMonomial(x->clone(), degreeA - degreeB);
+        Polynomial::PushMonomial(x->cloneTree(), degreeA - degreeB);
     currentQuotient = Polynomial::Addition(
-        currentQuotient, Polynomial::Multiplication(
-                             quotient->clone(), xPowerDegAMinusDegB->clone()));
+        currentQuotient,
+        Polynomial::Multiplication(quotient->cloneTree(),
+                                   xPowerDegAMinusDegB->cloneTree()));
     a = Polynomial::Subtraction(
         a, Polynomial::Multiplication(
-               quotient,
-               Polynomial::Multiplication(b->clone(), xPowerDegAMinusDegB)));
+               quotient, Polynomial::Multiplication(b->cloneTree(),
+                                                    xPowerDegAMinusDegB)));
     extractDegreeAndLeadingCoefficient(a, x, &degreeA, &leadingCoeffA);
   }
   b->removeTree();
@@ -448,7 +449,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   if (expression->isMult()) {
     for (auto [child, index] : NodeIterator::Children<Editable>(expression)) {
       auto [childCoefficient, childExponent] =
-          ParseMonomial(child->clone(), variable);
+          ParseMonomial(child->cloneTree(), variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at
         // basicReduction
@@ -527,7 +528,7 @@ TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, ui
 
 std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
   if (Comparison::AreEqual(expression, variable)) {
-    return std::make_pair((1_e)->clone(), 1);
+    return std::make_pair((1_e)->cloneTree(), 1);
   }
   Type type = expression.type();
   if (type == Type::Pow) {
@@ -535,7 +536,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
     Tree* exponent = base.nextTree();
     if (Comparison::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
       assert(Integer::Handler(exponent).to<uint8_t>() > 1);
-      return std::make_pair((1_e)->clone(), Integer::Handler(exponent).to<uint8_t>());
+      return std::make_pair((1_e)->cloneTree(), Integer::Handler(exponent).to<uint8_t>());
     }
   }
   if (type == Type::Mult) {

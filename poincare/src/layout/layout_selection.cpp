@@ -8,7 +8,7 @@ namespace Poincare::Internal {
 
 Tree* LayoutSelection::cloneSelection() const {
   if (!m_node) {
-    return KRackL()->clone();
+    return KRackL()->cloneTree();
   }
   return NAry::CloneSubRange(m_node, leftPosition(), rightPosition());
 }

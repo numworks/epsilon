@@ -24,7 +24,7 @@ Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
   Tree* result = SharedTreeStack->pushBlock(type);
   // TODO proper node constructor
   SharedTreeStack->pushBlock(0);
-  KRackL()->clone();
+  KRackL()->cloneTree();
   return result;
 }
 
@@ -89,7 +89,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
    * */
   Tree* readRack = rack;
   int readIndex = 0;
-  TreeRef resultRack = KRackL()->clone();
+  TreeRef resultRack = KRackL()->cloneTree();
   Tree* writtenRack = resultRack;
 
   assert((cursorRack == nullptr) == (cursorPosition == nullptr));
@@ -116,7 +116,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
       Tree* readChild = readRack->child(readIndex);
       if (readChild->type() != type) {
         assert(!readChild->isRackLayout());
-        Tree* readClone = readChild->clone();
+        Tree* readClone = readChild->cloneTree();
         NAry::AddOrMergeChild(writtenRack, readClone);
         readIndex++;
 

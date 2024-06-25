@@ -639,7 +639,7 @@ Tree* IntegerHandler::GCD(const IntegerHandler& a, const IntegerHandler& b) {
 Tree* IntegerHandler::LCM(const IntegerHandler& a, const IntegerHandler& b) {
   WorkingBuffer workingBuffer;
   if (a.isZero() || b.isZero()) {
-    return (0_e)->clone();
+    return (0_e)->cloneTree();
   }
   IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);

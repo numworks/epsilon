@@ -116,7 +116,7 @@ void Layouter::addSeparator(Tree* layoutParent) {
     return;
   }
   assert(!m_linearMode);
-  NAry::AddChild(layoutParent, KOperatorSeparatorL->clone());
+  NAry::AddChild(layoutParent, KOperatorSeparatorL->cloneTree());
 }
 
 void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
@@ -190,7 +190,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
-  Tree* rack = KRackL()->clone();
+  Tree* rack = KRackL()->cloneTree();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the TreeStack at each steps. Value is therefore
    * temporarily stored and updated on the TreeStack. */
@@ -327,7 +327,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   // Add Parentheses if necessary
   if (parentPriority < OperatorPriority(type) &&
       !(type.isPoint() || type.isList())) {
-    TreeRef parenthesis = KParenthesesL(KRackL())->clone();
+    TreeRef parenthesis = KParenthesesL(KRackL())->cloneTree();
     NAry::AddChild(layoutParent, parenthesis);
     TreeRef rack = parenthesis->child(0);
     return layoutExpression(rack, expression, k_maxPriority);
@@ -494,7 +494,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       // Base
       TreeRef layout =
           nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
-      TreeRef newParent = KRackL()->clone();
+      TreeRef newParent = KRackL()->cloneTree();
       layoutExpression(newParent, expression->child(1), k_maxPriority);
       NAry::AddChild(layoutParent, layout);
       if (nlLog) {
@@ -554,10 +554,10 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutChildrenAsRacks(expression);
         // Placeholders
         if (expression->numberOfChildren() % 2 == 1) {
-          KRackL()->clone();
+          KRackL()->cloneTree();
         }
-        KRackL()->clone();
-        KRackL()->clone();
+        KRackL()->cloneTree();
+        KRackL()->cloneTree();
         NAry::AddChild(layoutParent, layout);
       }
       break;
@@ -582,7 +582,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                 : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
             m_floatMode);
       }
-      TreeRef rack = KRackL()->clone();
+      TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
       AddThousandSeparators(rack);
       NAry::AddOrMergeChild(layoutParent, rack);
@@ -627,7 +627,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       } else {
         TreeRef parenthesis =
             (type.isList() ? KCurlyBracesL : KParenthesesL)->cloneNode();
-        TreeRef rack = KRackL()->clone();
+        TreeRef rack = KRackL()->cloneTree();
         NAry::AddChild(layoutParent, parenthesis);
         layoutInfixOperator(rack, expression, ',');
         break;
@@ -755,8 +755,8 @@ bool Layouter::requireSeparators(const Tree* expr) {
   if (expr->isFloat() || expr->isDecimal()) {
     /* Since rules are complex with floatDisplayMode, layout the float and check
      * if it has separators. */
-    Tree* clone = expr->clone();
-    TreeRef rack = KRackL()->clone();
+    Tree* clone = expr->cloneTree();
+    TreeRef rack = KRackL()->cloneTree();
     layoutExpression(rack, clone, k_tokenPriority);
     for (const Tree* child : rack->children()) {
       if (child->isSeparatorLayout()) {

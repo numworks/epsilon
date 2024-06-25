@@ -384,7 +384,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       // Decimal * 10^exponent
       Tree* mult = SharedTreeStack->pushMult(1);
       SharedTreeStack->pushPow();
-      (10_e)->clone();
+      (10_e)->cloneTree();
       Integer::Push(exponent, base);
       leftHandSide->moveTreeAtNode(mult);
       NAry::SetNumberOfChildren(leftHandSide, 2);
@@ -753,13 +753,13 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
       parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
     // Add default parameters
     if (type == Type::Round) {
-      NAry::AddChild(parameterList, (0_e)->clone());
+      NAry::AddChild(parameterList, (0_e)->cloneTree());
     }
     if (type == Type::RandInt) {
-      NAry::AddChildAtIndex(parameterList, (1_e)->clone(), 0);
+      NAry::AddChildAtIndex(parameterList, (1_e)->cloneTree(), 0);
     }
     if (type.isListStatWithCoefficients()) {
-      NAry::AddChild(parameterList, (1_e)->clone());
+      NAry::AddChild(parameterList, (1_e)->cloneTree());
     }
   }
   MoveNodeOverNode(parameterList,

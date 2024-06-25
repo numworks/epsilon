@@ -59,7 +59,7 @@ Tree* TextToTree(const char* input, Poincare::Context* context) {
   Tree* expression = RackFromText(input);
   Tree* parsed = RackParser(expression, context).parse();
   if (!parsed) {
-    parsed = KUndef->clone();
+    parsed = KUndef->cloneTree();
   }
   expression->moveTreeOverTree(parsed);
   return expression;
@@ -101,7 +101,8 @@ void process_tree_and_compare(const char* input, const char* output,
   quiz_assert(expected);
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    Tree* outputLayout = Layouter::LayoutExpression(expression->clone(), true);
+    Tree* outputLayout =
+        Layouter::LayoutExpression(expression->cloneTree(), true);
     quiz_assert(outputLayout);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];

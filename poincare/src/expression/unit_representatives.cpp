@@ -237,7 +237,7 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
   // Conversion to degrees should be added to all units not degree related
   if (this == &radian || this == &gradian) {
     dest[numberOfResults++] =
-        convertInto(exactValue.clone(), &degree, reductionContext)
+        convertInto(exactValue.cloneTree(), &degree, reductionContext)
             .approximateKeepingUnits<double>(reductionContext);
   }
   // Degrees related units should show their decomposition in DMS

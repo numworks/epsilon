@@ -18,12 +18,12 @@ Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
   switch (expr->type()) {
     case Type::List:
       assert(k < expr->numberOfChildren());
-      return expr->child(k)->clone();
+      return expr->child(k)->cloneTree();
     case Type::ListSequence: {
       if (Parametric::HasLocalRandom(expr)) {
         return nullptr;
       }
-      Tree* result = expr->child(2)->clone();
+      Tree* result = expr->child(2)->cloneTree();
       TreeRef value = Integer::Push(k + 1);
       Variables::Replace(result, 0, value);
       value->removeTree();
@@ -64,7 +64,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
   assert(size >= 0);
   if (size == 0) {
     assert(type.isListSum() || type.isListProduct());
-    (type.isListSum() ? 0_e : 1_e)->clone();
+    (type.isListSum() ? 0_e : 1_e)->cloneTree();
   }
   for (int i = 0; i < size; i++) {
     Tree* element =

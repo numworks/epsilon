@@ -98,7 +98,7 @@ JuniorLayout JuniorLayout::CodePoint(::CodePoint cp) {
 }
 
 JuniorLayout JuniorLayout::String(const char* str, int length) {
-  Internal::Tree* tree = KRackL()->clone();
+  Internal::Tree* tree = KRackL()->cloneTree();
   UTF8Decoder decoder(str);
   int n = 0;
   ::CodePoint cp = 0;
@@ -145,14 +145,14 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 }
 
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
-  Internal::Tree* clone = tree()->clone();
+  Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
   Internal::Layouter::StripSeparators(clone);
   return JuniorLayout::Builder(clone);
 }
 
 JuniorLayout JuniorLayout::cloneWithoutChildrenRacks() {
-  Internal::Tree* clone = tree()->clone();
+  Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
   Internal::AppHelpers::DeleteChildrenRacks(clone);
   return JuniorLayout::Builder(clone);

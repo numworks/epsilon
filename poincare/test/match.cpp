@@ -145,8 +145,8 @@ QUIZ_CASE(pcj_rewrite_replace) {
   const Tree* p = KAdd(KA, KA);
   const Tree* s = KMult(2_e, KA);
   TreeRef ref(SharedTreeStack->pushAdd(2));
-  (5_e)->clone();
-  (5_e)->clone();
+  (5_e)->cloneTree();
+  (5_e)->cloneTree();
   TreeRef result = PatternMatching::MatchCreate(ref, p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
   PatternMatching::MatchReplace(ref, p, s);

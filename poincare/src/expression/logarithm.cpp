@@ -172,10 +172,10 @@ bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
 Tree* PushIK2Pi(int k) {
   // Push i*k*2π
   Tree* result = (KMult.node<4>)->cloneNode();
-  (i_e)->clone();
-  (2_e)->clone();
+  (i_e)->cloneTree();
+  (2_e)->cloneTree();
   Integer::Push(k);
-  (π_e)->clone();
+  (π_e)->cloneTree();
   Simplification::DeepSystematicReduce(result);
   return result;
 }
@@ -318,7 +318,7 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   }
   if (isNegative) {
     // ln(-1) = iπ using the principal complex logarithm.
-    KMult(π_e, i_e)->clone();
+    KMult(π_e, i_e)->cloneTree();
   }
   NAry::SetNumberOfChildren(result, factorization.numberOfFactors + isNegative);
   NAry::SquashIfPossible(result);

@@ -133,14 +133,14 @@ Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
   return JuniorLayout::Builder(Layouter::LayoutExpression(
-      tree()->clone(), false, numberOfSignificantDigits, floatDisplayMode));
+      tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode));
 }
 
 size_t JuniorExpressionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  Tree* layout = Layouter::LayoutExpression(tree()->clone(), true,
+  Tree* layout = Layouter::LayoutExpression(tree()->cloneTree(), true,
                                             numberOfSignificantDigits);
   size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
   layout->removeTree();
@@ -415,7 +415,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  Tree* e = tree()->clone();
+  Tree* e = tree()->cloneTree();
   Simplification::SimplifyWithAdaptiveStrategy(e, &context);
   if (approximatedExpression) {
     *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
@@ -436,7 +436,7 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
       .m_unitFormat = reductionContext->unitFormat(),
       .m_symbolic = reductionContext->symbolicComputation(),
       .m_context = reductionContext->context()};
-  Tree* e = tree()->clone();
+  Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::ToSystem(e, &context);
   Simplification::SimplifySystem(e, true);
@@ -489,7 +489,7 @@ SystemExpression SystemExpression::getReducedDerivative(
   SharedTreeStack->pushUserSymbol(symbolName);
   const Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Integer::Push(derivationOrder);
-  Tree* derivand = tree()->clone();
+  Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,
                            Parametric::VariableSign(result));
   Simplification::SimplifySystem(result, false);
@@ -500,7 +500,7 @@ SystemExpression SystemExpression::getReducedDerivative(
 
 SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
-  Tree* result = tree()->clone();
+  Tree* result = tree()->cloneTree();
   Dimension dimension = Dimension::Get(tree());
   if ((scalarsOnly && (!dimension.isScalar() || Dimension::IsList(tree()))) ||
       (!dimension.isScalar() && !dimension.isPoint())) {
@@ -538,13 +538,13 @@ template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
   assert(deepIsList(nullptr));
   Tree* clone = SharedTreeStack->pushListSort();
-  tree()->clone();
+  tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
   return SystemExpression::Builder(clone);
 }
 
 SystemExpression SystemExpression::removeUndefListElements() const {
-  Tree* clone = tree()->clone();
+  Tree* clone = tree()->cloneTree();
   assert(clone->isList());
   int n = clone->numberOfChildren();
   int remainingChildren = n;
@@ -595,7 +595,7 @@ UserExpression ProjectedExpression::cloneAndBeautify(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  Tree* e = tree()->clone();
+  Tree* e = tree()->cloneTree();
   Beautification::DeepBeautify(e, context);
   return Builder(e);
 }
@@ -611,7 +611,7 @@ int SystemExpression::getPolynomialCoefficients(
     Context* context, const char* symbolName,
     SystemExpression coefficients[]) const {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-  Tree* poly = tree()->clone();
+  Tree* poly = tree()->cloneTree();
   AdvancedSimplification::DeepExpand(poly);
   // PolynomialParser::Parse eats given tree
   poly = PolynomialParser::Parse(poly, symbol);
@@ -626,7 +626,7 @@ int SystemExpression::getPolynomialCoefficients(
   for (int i = degree; i >= 0; i--) {
     if (indexExponent < numberOfTerms &&
         i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
-      coefficients[i] = Builder(poly->child(indexExponent + 1)->clone());
+      coefficients[i] = Builder(poly->child(indexExponent + 1)->cloneTree());
       indexExponent++;
     } else {
       coefficients[i] = Builder(SharedTreeStack->pushZero());
@@ -676,7 +676,7 @@ NewExpression NewExpression::replaceSymbolWithExpression(
     return *this;
   }
   assert(symbol.tree()->isUserNamed());
-  Tree* result = tree()->clone();
+  Tree* result = tree()->cloneTree();
   assert(!onlySecondTerm || result->numberOfChildren() >= 2);
   if (Variables::ReplaceSymbolWithTree(
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
@@ -938,7 +938,7 @@ Poincare::Matrix Poincare::Matrix::Builder() {
 
 void Poincare::Matrix::setDimensions(int rows, int columns) {
   assert(rows * columns == tree()->numberOfChildren());
-  Tree* clone = tree()->clone();
+  Tree* clone = tree()->cloneTree();
   Internal::Matrix::SetNumberOfColumns(clone, columns);
   Internal::Matrix::SetNumberOfRows(clone, rows);
   NewExpression temp = NewExpression::Builder(clone);
@@ -962,13 +962,13 @@ int Poincare::Matrix::numberOfColumns() const {
 // TODO_PCJ: Rework this and its usage
 void Poincare::Matrix::addChildAtIndexInPlace(NewExpression t, int index,
                                               int currentNumberOfChildren) {
-  Tree* clone = tree()->clone();
-  TreeRef newChild = t.tree()->clone();
+  Tree* clone = tree()->cloneTree();
+  TreeRef newChild = t.tree()->cloneTree();
   if (index >= clone->numberOfChildren()) {
     int rows = Internal::Matrix::NumberOfRows(clone);
     int columns = Internal::Matrix::NumberOfColumns(clone);
     for (int i = 1; i < columns; i++) {
-      KUndef->clone();
+      KUndef->cloneTree();
     }
     Internal::Matrix::SetNumberOfRows(clone, rows + 1);
   } else {
@@ -988,7 +988,7 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   if (!forceCanonization) {
     return Internal::Matrix::Rank(tree());
   }
-  Tree* clone = tree()->clone();
+  Tree* clone = tree()->cloneTree();
   int result = Internal::Matrix::CanonizeAndRank(clone);
   NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<Poincare::Matrix&>(temp);
@@ -1012,8 +1012,8 @@ template int Poincare::Matrix::ArrayInverse<std::complex<double>>(
 
 Point Point::Builder(NewExpression x, NewExpression y) {
   Tree* tree = KPoint->cloneNode();
-  x.tree()->clone();
-  y.tree()->clone();
+  x.tree()->cloneTree();
+  y.tree()->cloneTree();
   NewExpression temp = NewExpression::Builder(tree);
   return static_cast<Point&>(temp);
 }
@@ -1049,7 +1049,7 @@ List List::Builder() {
 }
 
 void List::removeChildAtIndexInPlace(int i) {
-  Tree* clone = tree()->clone();
+  Tree* clone = tree()->cloneTree();
   NAry::RemoveChildAtIndex(clone, i);
   NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<List&>(temp);
@@ -1058,8 +1058,8 @@ void List::removeChildAtIndexInPlace(int i) {
 // TODO_PCJ: Rework this and its usage
 void List::addChildAtIndexInPlace(NewExpression t, int index,
                                   int currentNumberOfChildren) {
-  Tree* clone = tree()->clone();
-  TreeRef newChild = t.tree()->clone();
+  Tree* clone = tree()->cloneTree();
+  TreeRef newChild = t.tree()->cloneTree();
   NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
   NewExpression temp = NewExpression::Builder(clone);
   *this = static_cast<List&>(temp);

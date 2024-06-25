@@ -123,7 +123,7 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
     if (factor->isRational()) {
       if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
-        factorsNumerator = factor->clone();
+        factorsNumerator = factor->cloneTree();
       } else {
         IntegerHandler rNum = Rational::Numerator(factor);
         if (rNum.isMinusOne()) {
@@ -141,7 +141,7 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
         }
       }
     } else if (factor->isPow() || factor->isPowReal()) {
-      Tree* pow = factor->clone();
+      Tree* pow = factor->cloneTree();
       // preserve m^(-2) and e^(-2)
       if (!pow->child(0)->isUnit() && !pow->child(0)->isEulerE() &&
           MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
@@ -153,7 +153,7 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
         factorsNumerator = pow;
       }
     } else {
-      factorsNumerator = factor->clone();
+      factorsNumerator = factor->cloneTree();
     }
     if (factorsDenominator) {
       NAry::AddChild(denominator, factorsDenominator);
@@ -316,7 +316,7 @@ bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
   if (e->isPow() && e->child(1)->isRational() &&
       Rational::Numerator(e->child(1)).isOne()) {
     Tree* root = SharedTreeStack->pushRoot();
-    e->child(0)->clone();
+    e->child(0)->cloneTree();
     Rational::Denominator(e->child(1)).pushOnTreeStack();
     e->moveTreeOverTree(root);
     return true;
@@ -414,13 +414,13 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
    * If abs or arg stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
-  e->clone();
+  e->cloneTree();
   bool absReduced = Simplification::ShallowSystematicReduce(abs);
   SharedTreeStack->pushExp();
   SharedTreeStack->pushMult(2);
   SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
-  e->clone();
+  e->cloneTree();
   bool argReduced = Simplification::ShallowSystematicReduce(arg);
   /* the multiplication that may be created by arg is not flattened on purpose
    * to keep (π/2)*i as such and not as π*i/2 */
@@ -445,10 +445,10 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   // TODO: factorize with the code above somehow ?
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
-    return KUndef->clone();
+    return KUndef->cloneTree();
   }
   if (im != 0 && complexFormat == ComplexFormat::Real) {
-    return KNonReal->clone();
+    return KNonReal->cloneTree();
   }
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
     return SharedTreeStack->pushFloat(re);

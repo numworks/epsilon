@@ -52,7 +52,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
               expr->cloneNode();
               for (const Tree* exprChild2 : expr->children()) {
                 if (exprChild2 != exprChild) {
-                  exprChild2->clone();
+                  exprChild2->cloneTree();
                 } else {
                   NAry::DetachChildAtIndex(exprChildSet, 0);
                 }
@@ -100,7 +100,7 @@ bool RemoveDefinedDependencies(Tree* dep) {
       totalNumberOfDependencies--;
       continue;
     }
-    Tree* approximation = depI->clone();
+    Tree* approximation = depI->cloneTree();
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
     Approximation::ApproximateAndReplaceEveryScalar(approximation);
     if (approximation->isUndefined()) {

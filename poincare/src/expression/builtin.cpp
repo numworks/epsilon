@@ -115,7 +115,7 @@ Tree* DistributionBuiltin::pushNode(int numberOfChildren) const {
 
 Tree* BuiltinAns::pushNode(int numberOfChildren) const {
   assert(numberOfChildren == 0);
-  return "Ans"_e->clone();
+  return "Ans"_e->cloneTree();
 }
 
 bool Builtin::HasCustomIdentifier(LayoutSpan name) {

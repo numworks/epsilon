@@ -63,18 +63,18 @@ jobs:
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: Binary size summary (userland only)
         if: ${{ steps.epsilon-core.outcome != 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: App sizes
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" > ./metrics-output/app_sizes
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" > ./metrics-output/app_sizes
       - name: Binary size N0110
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/bootloader/bootloader.elf base/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/bootloader/bootloader.elf head/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
       - name: Binary size N0110 (userland only)
         if: ${{ steps.epsilon-core.outcome != 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
       - name: Upload metrics output
         uses: actions/upload-artifact@v3
         with:

@@ -45,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
-          path: output/release/simulator/android/epsilon.apk
+          path: output/release/android/epsilon.apk
   device:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     strategy:
@@ -96,12 +96,12 @@ jobs:
       - run: build/setup.sh
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
-      - run: ./output/release/simulator/windows/test.exe --headless --limit-stack-usage
+      - run: ./output/release/windows/test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-windows.exe
-          path: output/release/simulator/windows/epsilon.exe
+          path: output/release/windows/epsilon.exe
   web:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
@@ -111,11 +111,11 @@ jobs:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
-      - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
+      - run: timeout 5m node output/release/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon.html
-          path: output/release/simulator/web/epsilon.html
+          path: output/release/web/epsilon.html
           retention-days: 7
   linux:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
@@ -124,12 +124,12 @@ jobs:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
+      - run: output/release/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         if: ${{ (github.repository != 'numworks/epsilon-internal') }}
         with:
           name: epsilon-linux.bin
-          path: output/release/simulator/linux/epsilon.bin
+          path: output/release/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.macos == 'true') }}
@@ -137,12 +137,12 @@ jobs:
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
-      - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
+      - run: output/release/macos/x86_64/test.bin --headless --limit-stack-usage
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.app
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-macos.zip
-          path: output/release/simulator/macos/epsilon.app
+          path: output/release/macos/epsilon.app
   ios:
     runs-on: macOS-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.ios == 'true') }}
@@ -155,7 +155,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-ios.ipa
-          path: output/release/simulator/ios/epsilon.ipa
+          path: output/release/ios/epsilon.ipa
   poincarejs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     # TODO: This is deactivated because setup-emscripten doesn't install tsc
@@ -167,9 +167,9 @@ jobs:
           sdk: 3.1.60
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=poincarejs poincarejs.zip
+      - run: make -f poincare/Makefile
       - uses: actions/upload-artifact@v3
         with:
           name: poincarejs.zip
-          path: output/release/poincarejs/poincarejs.html
+          path: output/release/foxglove/poincarejs.zip
           retention-days: 7

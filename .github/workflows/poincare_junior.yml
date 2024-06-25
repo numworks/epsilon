@@ -23,23 +23,23 @@ jobs:
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
       # TODO_PCJ: Uncomment all filters, delete this workflow and re-activate ci.yml once they all run.
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f calculation
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f code
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f distributions
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f escher
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f finance
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f graph
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f interval
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f ion
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f kandinsky
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f liba
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f omg
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f pcj
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f poincare
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f probability
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f python
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f regression
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f sequence
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f shared
-      # - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f solver
-      - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage -f statistics
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f calculation
+      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f code
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f distributions
+      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f escher
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f finance
+      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f graph
+      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f interval
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f ion
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f kandinsky
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f liba
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f omg
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f pcj
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f poincare
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f probability
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f python
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f regression
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f sequence
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f shared
+      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f solver
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f statistics

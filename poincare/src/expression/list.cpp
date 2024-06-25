@@ -59,8 +59,8 @@ Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
 
 Tree* List::Fold(const Tree* list, TypeBlock type) {
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  // TODO compute GetListLength less often
-  int size = Dimension::GetListLength(list);
+  // TODO compute ListLength less often
+  int size = Dimension::ListLength(list);
   assert(size >= 0);
   if (size == 0) {
     assert(type.isListSum() || type.isListProduct());
@@ -104,9 +104,8 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   KTree sampleStdDev =
       KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), 1_e / 2_e);
   if (type.isSampleStdDev()) {
-    Tree* n = coefficients->isOne()
-                  ? Integer::Push(Dimension::GetListLength(list))
-                  : Fold(coefficients, Type::ListSum);
+    Tree* n = coefficients->isOne() ? Integer::Push(Dimension::ListLength(list))
+                                    : Fold(coefficients, Type::ListSum);
     PatternMatching::CreateSimplify(sampleStdDev,
                                     {.KA = list, .KB = coefficients, .KC = n});
     n->removeTree();
@@ -123,7 +122,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   if (coefficients->isOne()) {
     Tree* result = KMult.node<2>->cloneNode();
     Fold(list, Type::ListSum);
-    Rational::Push(1, Dimension::GetListLength(list));
+    Rational::Push(1, Dimension::ListLength(list));
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
@@ -133,7 +132,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
 }
 
 bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
-  int length = Dimension::GetListLength(expr);
+  int length = Dimension::ListLength(expr);
   if (length < 0 || expr->isList()) {
     return false;
   }
@@ -171,8 +170,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::Median: {
       // precision used for comparisons
       using T = double;
-      bool hasWeightList = Dimension::GetListLength(e->child(1)) !=
-                           Dimension::k_nonListListLength;
+      bool hasWeightList =
+          Dimension::ListLength(e->child(1)) != Dimension::k_nonListListLength;
       Tree* valuesList = e->child(0);
       BubbleUp(valuesList, Simplification::ShallowSystematicReduce);
       Tree* weigthsList = e->child(1);
@@ -238,7 +237,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     }
     case Type::ListSlice: {
       int minIndex = 1;
-      int maxIndex = Dimension::GetListLength(e->child(0));
+      int maxIndex = Dimension::ListLength(e->child(0));
       TreeRef startIndex = e->child(1);
       TreeRef endIndex = e->child(2);
       assert(Integer::Is<uint8_t>(startIndex) &&
@@ -255,7 +254,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       return changed;
     }
     case Type::Dim:
-      e->moveTreeOverTree(Integer::Push(Dimension::GetListLength(e->child(0))));
+      e->moveTreeOverTree(Integer::Push(Dimension::ListLength(e->child(0))));
       return true;
     default:
       return false;

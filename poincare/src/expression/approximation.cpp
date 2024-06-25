@@ -85,7 +85,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
   }
   return RootTreeToTreePrivate<T>(node, angleUnit, complexFormat,
                                   Dimension::GetDimension(node),
-                                  Dimension::GetListLength(node));
+                                  Dimension::ListLength(node));
 }
 
 template <typename T>
@@ -95,7 +95,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
                                            Dimension dim, int listLength) {
   assert(Dimension::DeepCheckDimensions(node) &&
          Dimension::DeepCheckListLength(node));
-  assert(listLength == Dimension::GetListLength(node));
+  assert(listLength == Dimension::ListLength(node));
   assert(dim == Dimension::GetDimension(node));
 
   Random::Context randomContext;
@@ -662,7 +662,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       return result;
     }
     case Type::Dim: {
-      int n = Dimension::GetListLength(node->child(0));
+      int n = Dimension::ListLength(node->child(0));
       return n >= 0 ? n : NAN;
     }
     case Type::ListElement: {
@@ -670,7 +670,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       const Tree* index = node->child(1);
       assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
-      if (i < 0 || i >= Dimension::GetListLength(values)) {
+      if (i < 0 || i >= Dimension::ListLength(values)) {
         return NAN;
       }
       int old = s_context->m_listElement;
@@ -694,7 +694,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::ListSum:
     case Type::ListProduct: {
       const Tree* values = node->child(0);
-      int length = Dimension::GetListLength(values);
+      int length = Dimension::ListLength(values);
       int old = s_context->m_listElement;
       std::complex<T> result = node->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
@@ -708,7 +708,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::Min:
     case Type::Max: {
       const Tree* values = node->child(0);
-      int length = Dimension::GetListLength(values);
+      int length = Dimension::ListLength(values);
       int old = s_context->m_listElement;
       T result;
       for (int i = 0; i < length; i++) {
@@ -731,7 +731,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::Variance: {
       const Tree* values = node->child(0);
       const Tree* coefficients = node->child(1);
-      int length = Dimension::GetListLength(values);
+      int length = Dimension::ListLength(values);
       int old = s_context->m_listElement;
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
@@ -781,7 +781,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
       Tree* list = ToList<T>(node->child(0));
       TreeDatasetColumn<T> values(list);
       T median;
-      if (Dimension::GetListLength(node->child(1)) !=
+      if (Dimension::ListLength(node->child(1)) !=
           Dimension::k_nonListListLength) {
         Tree* weightsList = ToList<T>(node->child(1));
         TreeDatasetColumn<T> weights(weightsList);
@@ -1048,7 +1048,7 @@ bool Approximation::ToBoolean(const Tree* node) {
 
 template <typename T>
 Tree* Approximation::ToList(const Tree* node) {
-  int length = Dimension::GetListLength(node);
+  int length = Dimension::ListLength(node);
   int old = s_context->m_listElement;
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {

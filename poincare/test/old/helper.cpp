@@ -264,7 +264,7 @@ void assert_expression_approximates_to(const char *expression,
           return KUndef->clone();
         }
         if (!Internal::Dimension::GetDimension(e).isScalar() ||
-            Internal::Dimension::GetListLength(e) !=
+            Internal::Dimension::ListLength(e) !=
                 Internal::Dimension::k_nonListListLength) {
           TreeRef result = Internal::Approximation::RootTreeToTree<T>(
               e, Internal::AngleUnit(reductionContext.angleUnit()),

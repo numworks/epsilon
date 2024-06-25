@@ -28,7 +28,7 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
     if (!DeepCheckListLength(child, ctx)) {
       return false;
     }
-    childLength[child.index] = GetListLength(child, ctx);
+    childLength[child.index] = ListLength(child, ctx);
   }
   switch (t->type()) {
     case Type::SampleStdDev:
@@ -113,7 +113,7 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
   return true;
 }
 
-int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
+int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
   switch (t->type()) {
     case Type::Mean:
     case Type::StdDev:
@@ -128,7 +128,7 @@ int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::ListElement:
       return k_nonListListLength;
     case Type::ListSort:
-      return GetListLength(t->child(0), ctx);
+      return ListLength(t->child(0), ctx);
     case Type::List:
       return t->numberOfChildren();
     case Type::ListSequence:
@@ -137,7 +137,7 @@ int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(t->child(1)) &&
              Integer::Is<uint8_t>(t->child(2)));
-      int listLength = GetListLength(t->child(0), ctx);
+      int listLength = ListLength(t->child(0), ctx);
       int start = Integer::Handler(t->child(1)).to<uint8_t>();
       start = std::max(start, 1);
       int end = Integer::Handler(t->child(2)).to<uint8_t>();
@@ -151,7 +151,7 @@ int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::UserSymbol: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
-        return GetListLength(definition, ctx);
+        return ListLength(definition, ctx);
       }
       return k_nonListListLength;
     }
@@ -161,16 +161,16 @@ int Dimension::GetListLength(const Tree* t, Poincare::Context* ctx) {
         Tree* clone = t->clone();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        int result = GetListLength(clone, ctx);
+        int result = ListLength(clone, ctx);
         clone->removeTree();
         return result;
       }
       // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
     }
     default: {
-      // TODO sort lists first to optimize GetListLength ?
+      // TODO sort lists first to optimize ListLength ?
       for (const Tree* child : t->children()) {
-        int childListDim = GetListLength(child, ctx);
+        int childListDim = ListLength(child, ctx);
         if (childListDim >= 0) {
           return childListDim;
         }
@@ -540,8 +540,7 @@ Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
     case Type::Set:
     case Type::ListSlice:
     case Type::List:
-      return GetListLength(t, ctx) > 0 ? GetDimension(t->child(0), ctx)
-                                       : Scalar();
+      return ListLength(t, ctx) > 0 ? GetDimension(t->child(0), ctx) : Scalar();
     case Type::UserSymbol: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
       if (definition) {
@@ -592,7 +591,7 @@ bool Dimension::operator==(const Dimension& other) const {
 void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  int length = Dimension::GetListLength(e);
+  int length = Dimension::ListLength(e);
   if (length >= 0) {
     // Push ListSequence instead of a list to delay its expansion.
     SharedTreeStack->pushListSequence();

@@ -17,7 +17,7 @@ bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
   assert(Dimension::DeepCheckDimensions(expression, ctx));
-  bool result = Dimension::GetListLength(expression, ctx) == n;
+  bool result = Dimension::ListLength(expression, ctx) == n;
   expression->removeTree();
   return result;
 }

@@ -85,9 +85,9 @@ struct Dimension {
   constexpr static int k_unknownListLength = -2;
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
-  static int GetListLength(const Tree* t, Poincare::Context* ctx = nullptr);
+  static int ListLength(const Tree* t, Poincare::Context* ctx = nullptr);
   static bool IsList(const Tree* t, Poincare::Context* ctx = nullptr) {
-    return GetListLength(t, ctx) >= 0;
+    return ListLength(t, ctx) >= 0;
   }
   static bool DeepCheckListLength(const Tree* t,
                                   Poincare::Context* ctx = nullptr);

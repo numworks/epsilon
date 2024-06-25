@@ -4,7 +4,7 @@ Here are guidelines to follow when developing in Poincare.
 These practices ensure an optimized, uniform and self-contained code base.
 
 > [!NOTE]
-> As Poincare is being updated, old files are still being processed and may not yet follow those guidelines.
+> As Poincare is being updated, old files are still being processed and may noovert yet follow those guidelines.
 >
 > If there is a good reason not to follow one of them, please add a comment explaining why.
 >
@@ -205,17 +205,16 @@ Tree* firstChild = tree->child(0);
 
 Both examples are equivalent to access a tree's first child, but the later asserts the Tree has a child and makes the intent clear.
 
-## Save children pointers when are used several times
+## Save children pointers when used several times
 
-Remind that `nextTree` and `child` walk the tree descendants, iterating over all of them.
-It may be costly when the Tree is large.
+Remember that `nextTree` and `child` walk all descendants, it may be costly when the Tree is large.
 
 > [!CAUTION]
 > Avoid this:
 
 ```cpp
 bool TestSomethingOnPow(const Tree * pow) {
-  if (pow->child(1)->isInteger() && !pow->child(1)->isZero()) {
+  if (pow->child(0)->isEulerE() && pow->child(1)->isInteger() && !pow->child(1)->isZero()) {
     ...
   }
 }
@@ -228,7 +227,7 @@ bool TestSomethingOnPow(const Tree * pow) {
 bool TestSomethingOnPow(const Tree * pow) {
   const Tree * base = pow->child(0);
   const Tree * exponent = pow->child(1); // or base->nextTree()
-  if (exponent->isInteger() && !exponent->isZero()) {
+  if (base->isEulerE() && exponent->isInteger() && !exponent->isZero()) {
     ...
   }
 }
@@ -315,7 +314,7 @@ RANGE(TrigoHyperbolic, CosH, TanH)
 t->isTrigoHyperbolic()
 ```
 
-## Use layoutType in a switch over layout’s types
+## Use layoutType in a switch
 > [!CAUTION]
 > Avoid this:
 

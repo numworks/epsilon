@@ -1,1 +1,4 @@
+PCB_LATEST := 504
+SIGNATURE_INDEX ?= 1
+
 TOOLCHAIN ?= arm-gcc-m7f

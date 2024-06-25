@@ -15,7 +15,7 @@
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
-#include <poincare/src/expression/float.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/parametric.h>

@@ -4,7 +4,7 @@
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/decimal.h>
-#include <poincare/src/expression/float.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/number.h>

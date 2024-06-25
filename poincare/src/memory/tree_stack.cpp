@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <omg/memory.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare/src/expression/float.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/physical_constant.h>
 
 #include <algorithm>

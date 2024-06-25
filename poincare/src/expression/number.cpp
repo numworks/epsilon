@@ -1,7 +1,7 @@
 #include "number.h"
 
 #include "approximation.h"
-#include "float.h"
+#include "float_helper.h"
 #include "rational.h"
 
 namespace Poincare::Internal {

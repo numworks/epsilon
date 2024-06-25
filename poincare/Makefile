@@ -249,7 +249,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/dimension.cpp \
   expression/dimension_vector.cpp \
   expression/equation_solver.cpp \
-  expression/float.cpp \
+  expression/float_helper.cpp \
   expression/infinity.cpp \
   expression/integer.cpp \
   expression/integer_serialization.cpp \

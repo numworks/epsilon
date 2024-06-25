@@ -1,5 +1,5 @@
-#ifndef POINCARE_EXPRESSION_FLOAT_H
-#define POINCARE_EXPRESSION_FLOAT_H
+#ifndef POINCARE_EXPRESSION_FLOAT_HELPER_H
+#define POINCARE_EXPRESSION_FLOAT_HELPER_H
 
 #include <omg/bit_helper.h>
 #include <poincare/src/memory/tree.h>

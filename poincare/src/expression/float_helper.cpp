@@ -1,4 +1,4 @@
-#include "float.h"
+#include "float_helper.h"
 
 #include <poincare/src/memory/tree_stack.h>
 

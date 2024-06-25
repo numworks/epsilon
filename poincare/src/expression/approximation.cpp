@@ -17,7 +17,7 @@
 #include "decimal.h"
 #include "dependency.h"
 #include "dimension.h"
-#include "float.h"
+#include "float_helper.h"
 #include "list.h"
 #include "matrix.h"
 #include "physical_constant.h"

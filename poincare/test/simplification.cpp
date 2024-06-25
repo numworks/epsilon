@@ -287,16 +287,12 @@ QUIZ_CASE(pcj_simplification_matrix) {
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
-  simplifies_to("i×im(x)+re(x)", "x");
   Shared::GlobalContext globalContext;
-  store("x→f(x)", &globalContext);
   ProjectionContext ctx = {
       .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
       .m_context = &globalContext,
       .m_complexFormat = ComplexFormat::Cartesian,
   };
-
-  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
   simplifies_to("2×i×i", "-2", ctx);
   simplifies_to("1+i×(1+i×(1+i))", "0", ctx);
   simplifies_to("(1+i)×(3+2i)", "1+5×i", ctx);
@@ -304,6 +300,10 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(2+i×π)", "2", ctx);
   simplifies_to("im(2+i×π)", "π", ctx);
   simplifies_to("conj(2+i×π)", "2-π×i", ctx);
+  simplifies_to("i×im(x)+re(x)", "x");
+
+  store("x→f(x)", &globalContext);
+  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
   simplifies_to("re(conj(f(x)))-re(f(x))", "0", ctx);
   simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
   simplifies_to("re(f(x)+y)-y", "re(f(x))", ctx);

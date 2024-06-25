@@ -98,16 +98,16 @@ and the range `Number` contains all the nodes from `Zero` to `Pi`. The first ran
 
 The range `MathematicalConstant` is included in the range `Number`.
 
-### Logging
-The structure of a Tree can be inspected with several logging functions (available only in DEBUG) depending on the level of detail your are interested with :
-- logBlocks gives you the more detailed info with each block represented between `[]` and their interpretation
+### Log
+The structure of a `Tree` can be inspected with several log functions (available only in DEBUG) depending on the level of detail your are interested with :
+- `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
   [Add][2]
     [Two]
     [IntegerPosShort][3]
   ```
 
-- log() shows the tree structure in a XML fashion with addresses to help tell who is who
+- `tree->log()` shows the tree structure in a XML fashion with addresses to help tell who is who
   ```xml
   <Add size="2" address="0x1006bb3a5" numberOfChildren="2">
     <Two size="1" address="0x1006bb3a7" value="2"/>
@@ -115,10 +115,12 @@ The structure of a Tree can be inspected with several logging functions (availab
   </Add>
   ```
 
-- tree->logDiffWith(otherTree) can compare trees with a diff-like output on top of the log output
+- `tree->logDiffWith(otherTree)` can compare trees with a diff-like output on top of the log output
 
-- logSerialized() is terser and used to focus on the mathematical logic rather than the structure
-  ```2+3```
+- `tree->logSerialized()` is terser and used to focus on the mathematical logic rather than the structure  
+  ```
+  2+3
+  ```
 
 
 ## The TreeStack
@@ -189,9 +191,9 @@ You can now read the various `Tree` motions in [tree.h](/poincare/src/memory/tre
 references. Mind the difference between `moveBefore` and `moveAt` that are the
 same function tree-wise but not reference-wise.
 
-The TreeStack has a `log` method as well, that shows each Tree it containst and the references pointing to Trees.
+The `TreeStack` has a `log` method as well, that shows each `Tree` it contains and the references pointing to Trees.
 
-`p Poincare::Internal::TreeStack::SharedTreeStack->log() # in lldb`
+`(lldb) p Poincare::Internal::TreeStack::SharedTreeStack->log()`
 
 ```xml
 <TreeStack>

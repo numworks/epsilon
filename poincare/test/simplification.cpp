@@ -6,6 +6,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
 
@@ -1146,4 +1147,17 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   simplifies_to("sum(t,t,1,3)", "6");
 
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}
+
+QUIZ_CASE(pcj_decimal) {
+  Tree* tree = SharedTreeStack->pushDecimal(static_cast<int8_t>(-2));
+  (124_e)->cloneTree();
+  ProjectionContext ctx = realCtx;
+  Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
+  QUIZ_ASSERT(tree->treeIsIdenticalTo(12400_e));
+  tree->removeTree();
+  tree = SharedTreeStack->pushDecimal(static_cast<int8_t>(2));
+  (124_e)->cloneTree();
+  Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
+  QUIZ_ASSERT(tree->treeIsIdenticalTo(KDiv(31_e, 25_e)));
 }

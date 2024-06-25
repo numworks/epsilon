@@ -19,7 +19,7 @@ void Decimal::Project(Tree* e) {
   Tree* mult = SharedTreeStack->pushMult(1);
   SharedTreeStack->pushPow();
   Integer::Push(10);
-  IntegerHandler(DecimalOffset(e), NonStrictSign::Negative).pushOnTreeStack();
+  Integer::Push(-DecimalOffset(e));
   e->moveTreeOverNode(mult);
   NAry::SetNumberOfChildren(e, 2);
 }

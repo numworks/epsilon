@@ -287,6 +287,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
+  simplifies_to("i×im(x)+re(x)", "x");
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);
   ProjectionContext ctx = {

@@ -37,7 +37,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   const Tree* num = expr->child(0);
   const Tree* denom = num->nextTree();
   OMG::Troolean childrenAreIntegers =
-      OMG::TrinaryAnd(IsInteger(num), IsInteger(denom));
+      OMG::TrooleanAnd(IsInteger(num), IsInteger(denom));
   if (childrenAreIntegers == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;
@@ -153,7 +153,7 @@ bool Arithmetic::SimplifyPermute(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean childrenArePositiveInteger =
-      OMG::TrinaryAnd(IsPositiveInteger(n), IsPositiveInteger(k));
+      OMG::TrooleanAnd(IsPositiveInteger(n), IsPositiveInteger(k));
   if (childrenArePositiveInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
     return true;

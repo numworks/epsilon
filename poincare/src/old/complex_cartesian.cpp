@@ -26,7 +26,7 @@ namespace Poincare {
 OMG::Troolean ComplexCartesianNode::isNull(Context* context) const {
   OMG::Troolean realIsNull = childAtIndex(0)->isNull(context);
   OMG::Troolean imagIsNull = childAtIndex(1)->isNull(context);
-  return TrinaryAnd(realIsNull, imagIsNull);
+  return TrooleanAnd(realIsNull, imagIsNull);
 }
 
 OExpression ComplexCartesianNode::shallowReduce(

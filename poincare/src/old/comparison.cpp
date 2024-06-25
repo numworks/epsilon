@@ -138,18 +138,18 @@ OMG::Troolean ComparisonNode::TruthValueOfOperator(
     OMG::Troolean leftChildIsGreater) {
   if (type == OperatorType::Equal || type == OperatorType::NotEqual) {
     return type == OperatorType::Equal ? chidlrenAreEqual
-                                       : TrinaryNot(chidlrenAreEqual);
+                                       : TrooleanNot(chidlrenAreEqual);
   }
   if (type == OperatorType::Inferior || type == OperatorType::InferiorEqual) {
     // Revert the symbol to handle only the Superior and SuperiorOrEqual cases
     type = SwitchInferiorSuperior(type);
-    leftChildIsGreater = TrinaryNot(leftChildIsGreater);
+    leftChildIsGreater = TrooleanNot(leftChildIsGreater);
   }
   if (type == OperatorType::Superior) {
-    return TrinaryAnd(leftChildIsGreater, TrinaryNot(chidlrenAreEqual));
+    return TrooleanAnd(leftChildIsGreater, TrooleanNot(chidlrenAreEqual));
   }
   assert(type == OperatorType::SuperiorEqual);
-  return TrinaryOr(leftChildIsGreater, chidlrenAreEqual);
+  return TrooleanOr(leftChildIsGreater, chidlrenAreEqual);
 }
 
 ComparisonNode::ComparisonNode(int numberOfOperands,

@@ -88,8 +88,8 @@ class Domain {
                                Type domain2) {
     assert(result != nullptr);
     OMG::Troolean expressionsAreIn =
-        TrinaryAnd(ExpressionIsIn(expression1, domain1),
-                   ExpressionIsIn(expression2, domain2));
+        TrooleanAnd(ExpressionIsIn(expression1, domain1),
+                    ExpressionIsIn(expression2, domain2));
     switch (expressionsAreIn) {
       case OMG::Troolean::Unknown:
         return false;

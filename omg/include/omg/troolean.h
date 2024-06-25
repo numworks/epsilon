@@ -36,7 +36,7 @@ enum class Troolean : int8_t { False = -1, Unknown = 0, True = 1 };
  *   | F || T | U | F |
  * */
 
-inline Troolean TrinaryNot(Troolean b) {
+inline Troolean TrooleanNot(Troolean b) {
   if (b == Troolean::True) {
     return Troolean::False;
   }
@@ -47,7 +47,7 @@ inline Troolean TrinaryNot(Troolean b) {
   return Troolean::Unknown;
 }
 
-inline Troolean TrinaryAnd(Troolean b1, Troolean b2) {
+inline Troolean TrooleanAnd(Troolean b1, Troolean b2) {
   if (b1 == Troolean::False || b2 == Troolean::False) {
     return Troolean::False;
   }
@@ -57,7 +57,7 @@ inline Troolean TrinaryAnd(Troolean b1, Troolean b2) {
   return Troolean::True;
 }
 
-inline Troolean TrinaryOr(Troolean b1, Troolean b2) {
+inline Troolean TrooleanOr(Troolean b1, Troolean b2) {
   if (b1 == Troolean::True || b2 == Troolean::True) {
     return Troolean::True;
   }

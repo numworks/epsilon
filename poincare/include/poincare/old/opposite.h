@@ -25,7 +25,7 @@ class OppositeNode final : public ExpressionNode {
   }
   Type otype() const override { return Type::Opposite; }
   OMG::Troolean isPositive(Context* context) const override {
-    return TrinaryNot(childAtIndex(0)->isPositive(context));
+    return TrooleanNot(childAtIndex(0)->isPositive(context));
   }
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;

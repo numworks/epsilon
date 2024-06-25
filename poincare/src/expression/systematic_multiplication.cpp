@@ -22,9 +22,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
       // 0 * inf -> undef
       merge = KUndef->cloneTree();
     } else {
-      Dimension nextDim = Dimension::Get(next);
-      if (!nextDim.isMatrix() && !nextDim.isUnit() &&
-          !Dimension::IsList(next)) {
+      if (Dimension::Get(next).isScalar() && !Dimension::IsList(next)) {
         // 0 * x -> 0
         next->removeTree();
         return true;

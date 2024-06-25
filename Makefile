@@ -42,6 +42,7 @@ $(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
 $(call import_module,python,python)
 $(call import_module,apps,apps)
+$(call import_module,quiz,quiz)
 
 ifeq ($(PLATFORM_TYPE),simulator)
 $(call import_module,sdl,ion/src/simulator/external)
@@ -58,6 +59,18 @@ $(call create_goal,epsilon, \
   omg \
   poincare \
   python \
+  sdl \
+)
+
+$(call create_goal,test, \
+  apps.test \
+  escher.test \
+  ion.test \
+  kandinsky.test \
+  omg.test \
+  poincare.test \
+  python.test \
+  quiz \
   sdl \
 )
 endif

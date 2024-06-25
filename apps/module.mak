@@ -1,6 +1,6 @@
 $(call create_module,apps,1, \
   apps_container.cpp \
-  apps_container_helper.cpp \
+  apps_container_helper.cpp:-test \
   apps_container_launch_default.cpp:-onboarding \
   apps_container_launch_on_boarding.cpp:+onboarding \
   apps_container_prompt_beta.cpp:+beta \
@@ -14,9 +14,9 @@ $(call create_module,apps,1, \
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   global_preferences.cpp \
-  init.cpp \
+  init.cpp:-test \
   lock_view.cpp \
-  main.cpp \
+  main.cpp:-test \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \

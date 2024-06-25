@@ -43,7 +43,7 @@ $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h: $(PATH_apps)/i18n.py $$(_apps_i18n) $(_
 
 $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.cpp: $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h
 
-SOURCES_apps += $(PATH_apps)/i18n.cpp
+SOURCES_apps += $(PATH_apps)/i18n.cpp:-test
 
 # FIXME PRIORITY_TARGETS_<module> is used if files in other modules might depend
 # on those targets, but apps should not be upstream of anything.

@@ -1,1 +1,1 @@
-TOOLCHAIN ?= arm-gcc
+TOOLCHAIN ?= host-gcc

@@ -231,7 +231,7 @@ std::complex<T> Approximation::RootPreparedToComplex(
 /* Helpers */
 
 template <typename T>
-T Approximation::FloatBinomial(T k, T n) {
+T Approximation::FloatBinomial(T n, T k) {
   if (k != std::round(k)) {
     return NAN;
   }
@@ -928,7 +928,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::Binomial: {
       T n = child[0];
       T k = child[1];
-      return FloatBinomial<T>(k, n);
+      return FloatBinomial<T>(n, k);
     }
     case Type::Permute: {
       T n = child[0];

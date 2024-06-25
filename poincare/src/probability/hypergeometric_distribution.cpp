@@ -31,9 +31,9 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (k > K || (n - k) > (N - K) || (K - k) > (N - n)) {
     return 0;
   }
-  T result = Approximation::FloatBinomial(k, K) *
-             Approximation::FloatBinomial(n - k, N - K) /
-             Approximation::FloatBinomial(n, N);
+  T result = Approximation::FloatBinomial(K, k) *
+             Approximation::FloatBinomial(N - K, n - k) /
+             Approximation::FloatBinomial(N, n);
   if (result < 0 || result > 1) {
     // Precision errors
     return NAN;

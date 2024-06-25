@@ -39,7 +39,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       std::complex<T> angleInput = ConvertToRadian(value, angleUnit);
       std::complex<T> res =
           type.isCos() ? std::cos(angleInput) : std::sin(angleInput);
-      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
+      return NeglectRealOrImaginaryPartIfNegligible(res, angleInput);
     }
     case Type::Tan: {
       std::complex<T> angleInput = ConvertToRadian(value, angleUnit);
@@ -57,7 +57,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         return NAN;
       }
       std::complex<T> res = std::tan(angleInput);
-      return NeglectRealOrImaginaryPartIfNeglectable(res, angleInput);
+      return NeglectRealOrImaginaryPartIfNegligible(res, angleInput);
     }
     case Type::Sec:
     case Type::Csc:
@@ -104,7 +104,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
           result.imag(-result.imag());  // other side of the cut
         }
       }
-      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      result = NeglectRealOrImaginaryPartIfNegligible(result, c);
       return ConvertFromRadian(result, angleUnit);
     }
     case Type::ATan: {
@@ -137,7 +137,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
           result.real(-result.real());  // other side of the cut
         }
       }
-      result = NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      result = NeglectRealOrImaginaryPartIfNegligible(result, c);
       return ConvertFromRadian(result, angleUnit);
     }
     case Type::ASec:
@@ -167,11 +167,11 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
       /* If c is real and large (over 100.0), the float evaluation of std::cosh
        * will return image = NaN when it should be 0.0. */
       return MakeResultRealIfInputIsReal<T>(
-          NeglectRealOrImaginaryPartIfNeglectable(
+          NeglectRealOrImaginaryPartIfNegligible(
               type.isSinH() ? std::sinh(value) : std::cosh(value), value),
           value);
     case Type::TanH:
-      return NeglectRealOrImaginaryPartIfNeglectable(std::tanh(value), value);
+      return NeglectRealOrImaginaryPartIfNegligible(std::tanh(value), value);
 
     case Type::ArSinH: {
       std::complex<T> result = std::asinh(value);
@@ -184,7 +184,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
           value.imag() < 1) {
         result.real(-result.real());  // other side of the cut
       }
-      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+      return NeglectRealOrImaginaryPartIfNegligible(result, value);
     }
     case Type::ArCosH: {
       std::complex<T> result = std::acosh(value);
@@ -192,7 +192,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
        * cut. We followed the convention chosen by the lib c++ of llvm on
        * ]-inf+0i, 1+0i] (warning: atanh takes the other side of the cut values
        * on ]-inf-0i, 1-0i[).*/
-      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+      return NeglectRealOrImaginaryPartIfNegligible(result, value);
     }
     case Type::ArTanH: {
       std::complex<T> result = std::atanh(value);
@@ -205,7 +205,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
           value.real() > 1) {
         result.imag(-result.imag());  // other side of the cut
       }
-      return NeglectRealOrImaginaryPartIfNeglectable(result, value);
+      return NeglectRealOrImaginaryPartIfNegligible(result, value);
     }
 
     default:

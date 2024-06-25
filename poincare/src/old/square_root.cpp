@@ -33,8 +33,7 @@ std::complex<T> SquareRootNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
-                                                                      c);
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
 }
 
 OExpression SquareRootNode::shallowReduce(

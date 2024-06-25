@@ -105,8 +105,8 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
     m_d = coefficientsX[1].approximateToScalar<double>(approximationContext);
   }
   m_f = coefficientsX[0].approximateToScalar<double>(approximationContext);
-  // Round the coefficients to 0 if they are neglectable against the other ones
-  roundCoefficientsIfNeglectable();
+  // Round the coefficients to 0 if they are negligible against the other ones
+  roundCoefficientsIfNegligible();
   if (!isConic()) {
     m_shape = Shape::Undefined;
     return;
@@ -132,21 +132,21 @@ void CartesianConic::updateConicType() {
   }
 }
 
-double CartesianConic::roundIfNeglectable(double value, double target,
-                                          double amplitude) const {
+double CartesianConic::roundIfNegligible(double value, double target,
+                                         double amplitude) const {
   return (std::abs(value - target) < k_tolerance * std::abs(amplitude)) ? target
                                                                         : value;
 }
 
-void CartesianConic::roundCoefficientsIfNeglectable() {
+void CartesianConic::roundCoefficientsIfNegligible() {
   double amplitude = std::max({std::fabs(m_a), std::fabs(m_b), std::fabs(m_c),
                                std::fabs(m_d), std::fabs(m_e), std::fabs(m_f)});
-  m_a = roundIfNeglectable(m_a, 0.0, amplitude);
-  m_b = roundIfNeglectable(m_b, 0.0, amplitude);
-  m_c = roundIfNeglectable(m_c, 0.0, amplitude);
-  m_d = roundIfNeglectable(m_d, 0.0, amplitude);
-  m_e = roundIfNeglectable(m_e, 0.0, amplitude);
-  m_f = roundIfNeglectable(m_f, 0.0, amplitude);
+  m_a = roundIfNegligible(m_a, 0.0, amplitude);
+  m_b = roundIfNegligible(m_b, 0.0, amplitude);
+  m_c = roundIfNegligible(m_c, 0.0, amplitude);
+  m_d = roundIfNegligible(m_d, 0.0, amplitude);
+  m_e = roundIfNegligible(m_e, 0.0, amplitude);
+  m_f = roundIfNegligible(m_f, 0.0, amplitude);
 }
 
 void CartesianConic::multiplyCoefficients(double factor) {
@@ -202,13 +202,13 @@ void CartesianConic::rotateConic() {
     cr = std::cos(r);
     sr = std::sin(r);
     // Replacing x with cr*x+sr*y and y with -sr*x+cr*y to cancel B coefficient
-    m_a = roundIfNeglectable(a * cr * cr - b * cr * sr + c * sr * sr, 0.0,
-                             amplitude);
-    m_b = roundIfNeglectable(
+    m_a = roundIfNegligible(a * cr * cr - b * cr * sr + c * sr * sr, 0.0,
+                            amplitude);
+    m_b = roundIfNegligible(
         2 * a * cr * sr + b * cr * cr - b * sr * sr - 2 * c * sr * cr, 0.0,
         amplitude);
-    m_c = roundIfNeglectable(a * sr * sr + b * cr * sr + c * cr * cr, 0.0,
-                             amplitude);
+    m_c = roundIfNegligible(a * sr * sr + b * cr * sr + c * cr * cr, 0.0,
+                            amplitude);
     assert(m_b == 0.0);
     /* Looking at each π/2 rotations to find the most canonic form :
      * - A is strictly positive (y is the axis of symmetry)
@@ -230,8 +230,8 @@ void CartesianConic::rotateConic() {
   m_r = (m_r == 0.0) ? r : NAN;
   // Apply the rotation to D and E (F remains unchanged)
   amplitude = std::max(std::fabs(d), std::fabs(e));
-  m_d = roundIfNeglectable(d * cr - e * sr, 0.0, amplitude);
-  m_e = roundIfNeglectable(d * sr + e * cr, 0.0, amplitude);
+  m_d = roundIfNegligible(d * cr - e * sr, 0.0, amplitude);
+  m_e = roundIfNegligible(d * sr + e * cr, 0.0, amplitude);
   // Assert the conic is rotated in a canonic for.
   assert(isCanonicallyRotated());
 }
@@ -274,15 +274,15 @@ void CartesianConic::centerConic() {
     k = 0.0;
   }
   // A and C remain unchanged
-  m_d = roundIfNeglectable(d - 2 * a * h, 0.0,
-                           std::max(std::fabs(d), std::fabs(2 * a * h)));
-  m_e = roundIfNeglectable(e - 2 * c * k, 0.0,
-                           std::max(std::fabs(e), std::fabs(2 * c * k)));
+  m_d = roundIfNegligible(d - 2 * a * h, 0.0,
+                          std::max(std::fabs(d), std::fabs(2 * a * h)));
+  m_e = roundIfNegligible(e - 2 * c * k, 0.0,
+                          std::max(std::fabs(e), std::fabs(2 * c * k)));
   double fAmplitude =
       std::max({std::fabs(f), std::fabs(a * h * h), std::fabs(c * k * k),
                 std::fabs(d * h), std::fabs(e * k)});
-  m_f = roundIfNeglectable(f + a * h * h + c * k * k - d * h - e * k, 0.0,
-                           fAmplitude);
+  m_f = roundIfNegligible(f + a * h * h + c * k * k - d * h - e * k, 0.0,
+                          fAmplitude);
   // Update center (taking previous rotation into account)
   assert(!std::isnan(m_r));
   double cr = std::cos(m_r);
@@ -323,11 +323,11 @@ void CartesianConic::canonize() {
   // Canonize either F or A
   if (m_f != 0.0) {
     multiplyCoefficients(-1 / m_f);
-    m_f = roundIfNeglectable(m_f, -1.0, std::abs(m_f));
+    m_f = roundIfNegligible(m_f, -1.0, std::abs(m_f));
     assert(m_f == -1.0);
   } else {
     multiplyCoefficients(1 / m_a);
-    m_a = roundIfNeglectable(m_a, 1.0, std::abs(m_a));
+    m_a = roundIfNegligible(m_a, 1.0, std::abs(m_a));
     assert(m_a == 1.0);
   }
   /* The sign of F may sometimes change after centering. In that case, the

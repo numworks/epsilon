@@ -29,8 +29,7 @@ std::complex<T> HyperbolicArcSineNode::computeOnComplex(
   if (c.real() == 0 && c.imag() < 1) {
     result.real(-result.real());  // other side of the cut
   }
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
-                                                                      c);
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
 }
 
 template std::complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<

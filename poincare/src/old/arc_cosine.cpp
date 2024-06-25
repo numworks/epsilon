@@ -67,7 +67,7 @@ std::complex<T> ArcCosineNode::computeOnComplex(
     }
   }
   result =
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
   return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
 }
 

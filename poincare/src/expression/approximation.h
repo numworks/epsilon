@@ -204,7 +204,7 @@ class Approximation final {
   template <typename T>
   static T PositiveIntegerApproximation(T c);
   template <typename T>
-  static std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(
+  static std::complex<T> NeglectRealOrImaginaryPartIfNegligible(
       std::complex<T> result, std::complex<T> input1,
       std::complex<T> input2 = 1.0, bool enableNullResult = true);
   template <typename T>

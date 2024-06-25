@@ -21,7 +21,7 @@ uint32_t PositiveIntegerApproximationIfPossible(
     const ExpressionNode* expression, bool* isUndefined,
     const ApproximationContext& approximationContext);
 template <typename T>
-std::complex<T> NeglectRealOrImaginaryPartIfNeglectable(
+std::complex<T> NeglectRealOrImaginaryPartIfNegligible(
     std::complex<T> result, std::complex<T> input1,
     std::complex<T> input2 = 1.0, bool enableNullResult = true);
 template <typename T>

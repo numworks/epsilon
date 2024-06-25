@@ -413,7 +413,7 @@ QUIZ_CASE(poincare_approximation_division) {
                                             Undefined::Name());
   // assert_expression_approximates_to<double>("(3+4i)/[[3,4][1,i]]",
   // "[[1,4×i][i,-3×i]]");
-  /* TODO: this tests fails because of neglectable real or imaginary parts.
+  /* TODO: this tests fails because of negligible real or imaginary parts.
    * It currently approximates to
    * [[1+5.5511151231258ᴇ-17×i,-2.2204460492503ᴇ-16+4×i][i,-3×i]] or
    * [[1-1.1102230246252ᴇ-16×i,2.2204460492503ᴇ-16+4×i]

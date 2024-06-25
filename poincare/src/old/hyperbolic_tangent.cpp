@@ -20,7 +20,7 @@ template <typename T>
 std::complex<T> HyperbolicTangentNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
       std::tanh(c), c);
 }
 

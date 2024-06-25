@@ -94,11 +94,10 @@ class CartesianConic : public Conic {
 
   // Thereshold under which a parameter is considered null
   constexpr static double k_tolerance = 10.0 * DBL_EPSILON;
-  // Return target if |target-value| is neglectable compared to |amplitude|
-  double roundIfNeglectable(double value, double target,
-                            double amplitude) const;
-  // Round all coefficients to 0 if neglectable against the others
-  void roundCoefficientsIfNeglectable();
+  // Return target if |target-value| is negligible compared to |amplitude|
+  double roundIfNegligible(double value, double target, double amplitude) const;
+  // Round all coefficients to 0 if negligible against the others
+  void roundCoefficientsIfNegligible();
   // Multiply all coefficients by a factor
   void multiplyCoefficients(double factor);
   // Update conic type from parameters

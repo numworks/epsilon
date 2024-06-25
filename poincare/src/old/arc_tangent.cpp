@@ -56,7 +56,7 @@ std::complex<T> ArcTangentNode::computeOnComplex(
     }
   }
   result =
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
   return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
 }
 

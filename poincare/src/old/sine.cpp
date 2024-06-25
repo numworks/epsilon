@@ -21,7 +21,7 @@ std::complex<T> SineNode::computeOnComplex(const std::complex<T> c,
                                            Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::sin(angleInput);
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
       res, angleInput);
 }
 

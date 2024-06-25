@@ -29,8 +29,7 @@ std::complex<T> HyperbolicArcTangentNode::computeOnComplex(
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag());  // other side of the cut
   }
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
-                                                                      c);
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
 }
 
 template std::complex<float>

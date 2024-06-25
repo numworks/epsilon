@@ -22,8 +22,8 @@ std::complex<T> HyperbolicCosineNode::computeOnComplex(
   /* If c is real and large (over 100.0), the float evaluation of std::cosh
    * will return image = NaN when it should be 0.0. */
   return ApproximationHelper::MakeResultRealIfInputIsReal<T>(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c),
-                                                                   c),
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(std::cosh(c),
+                                                                  c),
       c);
 }
 

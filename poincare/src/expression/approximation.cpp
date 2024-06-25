@@ -412,7 +412,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     }
     case Type::Sqrt: {
       std::complex<T> c = ToComplex<T>(node->child(0));
-      return NeglectRealOrImaginaryPartIfNeglectable(std::sqrt(c), c);
+      return NeglectRealOrImaginaryPartIfNegligible(std::sqrt(c), c);
     }
     case Type::Root: {
       std::complex<T> base = ToComplex<T>(node->child(0));

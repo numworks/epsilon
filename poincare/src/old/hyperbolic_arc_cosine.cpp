@@ -25,8 +25,7 @@ std::complex<T> HyperbolicArcCosineNode::computeOnComplex(
    * on this cut. We followed the convention chosen by the lib c++ of llvm on
    * ]-inf+0i, 1+0i] (warning: atanh takes the other side of the cut values on
    * ]-inf-0i, 1-0i[).*/
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
-                                                                      c);
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
 }
 
 template std::complex<float>

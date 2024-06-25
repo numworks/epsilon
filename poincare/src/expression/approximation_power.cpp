@@ -48,10 +48,10 @@ std::complex<T> Approximation::ComputeComplexPower(
    * avoid weird results as e(i*pi) = -1+6E-17*i, we compute the argument of
    * the result of c^d and if arg ~ 0 [Pi], we discard the residual imaginary
    * part and if arg ~ Pi/2 [Pi], we discard the residual real part.
-   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligeable:
+   * Let's determine when the arg [Pi] (or arg [Pi/2]) is negligible:
    * With c = r*e^(iθ) and d = x+iy, c^d = r^x*e^(yθ)*e^i(yln(r)+xθ)
    * so arg(c^d) = y*ln(r)+xθ.
-   * We consider that arg[π] is negligeable if it is negligeable compared to
+   * We consider that arg[π] is negligible if it is negligible compared to
    * norm(d) = sqrt(x^2+y^2) and ln(r) = ln(norm(c)).*/
   if (complexFormat != ComplexFormat::Real && c.real() < static_cast<T>(0.0) &&
       std::round(d.real()) != d.real()) {
@@ -63,7 +63,7 @@ std::complex<T> Approximation::ComputeComplexPower(
   }
   std::complex<T> precision =
       d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
-  return NeglectRealOrImaginaryPartIfNeglectable(result, precision, d, false);
+  return NeglectRealOrImaginaryPartIfNegligible(result, precision, d, false);
 }
 
 template <typename T>

@@ -16,7 +16,7 @@ extern "C" {
 namespace Poincare {
 
 template <typename T>
-bool isNegligeable(T x, T precision, T norm1, T norm2) {
+bool isNegligible(T x, T precision, T norm1, T norm2) {
   T absX = std::fabs(x);
   return absX <= 10.0 * precision && absX / norm1 <= precision &&
          absX / norm2 <= precision;
@@ -67,7 +67,7 @@ uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(
 }
 
 template <typename T>
-std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
     std::complex<T> result, std::complex<T> input1, std::complex<T> input2,
     bool enableNullResult) {
   /* Cheat: openbsd  functions (cos, sin, tan, cosh, acos, pow...) are
@@ -85,10 +85,10 @@ std::complex<T> ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
   T precision = OMG::Float::EpsilonLax<T>();
-  if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }
-  if (isNegligeable(result.real(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.real(), precision, magnitude1, magnitude2)) {
     result.real(0);
   }
   return result;
@@ -431,10 +431,10 @@ Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(
     Poincare::ExpressionNode const *, bool *, const ApproximationContext &);
 
 template std::complex<float>
-Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(
+Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible<float>(
     std::complex<float>, std::complex<float>, std::complex<float>, bool);
 template std::complex<double>
-Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(
+Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible<double>(
     std::complex<double>, std::complex<double>, std::complex<double>, bool);
 template std::complex<float>
     Poincare::ApproximationHelper::MakeResultRealIfInputIsReal<float>(

@@ -32,7 +32,7 @@ T Approximation::PositiveIntegerApproximation(T c) {
 }
 
 template <typename T>
-bool isNegligeable(T x, T precision, T norm1, T norm2) {
+bool isNegligible(T x, T precision, T norm1, T norm2) {
   T absX = std::fabs(x);
   return absX <= 10.0 * precision && absX / norm1 <= precision &&
          absX / norm2 <= precision;
@@ -51,7 +51,7 @@ T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
 }
 
 template <typename T>
-std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNeglectable(
+std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNegligible(
     std::complex<T> result, std::complex<T> input1, std::complex<T> input2,
     bool enableNullResult) {
   /* Cheat: openbsd  functions (cos, sin, tan, cosh, acos, pow...) are
@@ -69,10 +69,10 @@ std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNeglectable(
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
   T precision = OMG::Float::EpsilonLax<T>();
-  if (isNegligeable(result.imag(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }
-  if (isNegligeable(result.real(), precision, magnitude1, magnitude2)) {
+  if (isNegligible(result.real(), precision, magnitude1, magnitude2)) {
     result.real(0);
   }
   return result;
@@ -93,15 +93,15 @@ template float Approximation::PositiveIntegerApproximation(float);
 template double Approximation::PositiveIntegerApproximation(double);
 
 template std::complex<float>
-Approximation::NeglectRealOrImaginaryPartIfNeglectable(std::complex<float>,
-                                                       std::complex<float>,
-                                                       std::complex<float>,
-                                                       bool);
+Approximation::NeglectRealOrImaginaryPartIfNegligible(std::complex<float>,
+                                                      std::complex<float>,
+                                                      std::complex<float>,
+                                                      bool);
 template std::complex<double>
-Approximation::NeglectRealOrImaginaryPartIfNeglectable(std::complex<double>,
-                                                       std::complex<double>,
-                                                       std::complex<double>,
-                                                       bool);
+Approximation::NeglectRealOrImaginaryPartIfNegligible(std::complex<double>,
+                                                      std::complex<double>,
+                                                      std::complex<double>,
+                                                      bool);
 
 template std::complex<float> Approximation::MakeResultRealIfInputIsReal(
     std::complex<float>, std::complex<float>);

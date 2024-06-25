@@ -58,8 +58,8 @@ KDSize PiecewiseOperatorLayoutNode::computeSize(KDFont::Size font) {
   }
   // Add a right margin of size k_curlyBraceWidth
   KDSize sizeWithBrace = KDSize(
-      sizeWithoutBrace.width() + 2 * CurlyBraceLayoutNode::k_curlyBraceWidth,
-      CurlyBraceLayoutNode::Height(sizeWithoutBrace.height()));
+      sizeWithoutBrace.width() + 2 * CurlyBracesLayoutNode::k_curlyBraceWidth,
+      CurlyBracesLayoutNode::Height(sizeWithoutBrace.height()));
   return sizeWithBrace;
 }
 
@@ -67,13 +67,13 @@ KDPoint PiecewiseOperatorLayoutNode::positionOfChild(LayoutNode *l,
                                                      KDFont::Size font) {
   assert(indexOfChild(l) >= 0);
   return GridLayoutNode::positionOfChild(l, font).translatedBy(
-      KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth,
-              CurlyBraceLayoutNode::k_lineThickness));
+      KDPoint(CurlyBracesLayoutNode::k_curlyBraceWidth,
+              CurlyBracesLayoutNode::k_lineThickness));
 }
 
 KDCoordinate PiecewiseOperatorLayoutNode::computeBaseline(KDFont::Size font) {
   return GridLayoutNode::computeBaseline(font) +
-         CurlyBraceLayoutNode::k_lineThickness;
+         CurlyBracesLayoutNode::k_lineThickness;
 }
 
 void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
@@ -104,12 +104,12 @@ void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
   }
 
   // Draw the grid and the {
-  CurlyBraceLayoutNode::RenderWithChildHeight(
+  CurlyBracesLayoutNode::RenderWithChildHeight(
       true, gridSize(style.font).height(), ctx, p, style.glyphColor,
       style.backgroundColor);
 
   // Draw the commas
-  KDCoordinate commaAbscissa = CurlyBraceLayoutNode::k_curlyBraceWidth +
+  KDCoordinate commaAbscissa = CurlyBracesLayoutNode::k_curlyBraceWidth +
                                columnWidth(0, style.font) + k_gridEntryMargin;
   for (int i = 0; i < numberOfRows(); i++) {
     LayoutNode *leftChild = childAtIndex(i * 2);

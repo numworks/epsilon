@@ -13,7 +13,7 @@ constexpr static uint8_t topLeftCurve[k_curveHeight][k_curveWidth] = {
     {0x11, 0xEE, 0xFF, 0xFF, 0xFF}};
 }  // namespace Parenthesis
 
-namespace CurlyBrace {
+namespace CurlyBraces {
 constexpr static uint8_t topLeftCurve[k_curveHeight][k_curveWidth] = {
     {0xBD, 0x33, 0x13, 0x00, 0x00}, {0x31, 0x74, 0xDA, 0xFF, 0xFF},
     {0x00, 0xDC, 0xFF, 0xFF, 0xFF}, {0x00, 0xDE, 0xFF, 0xFF, 0xFF},
@@ -25,7 +25,7 @@ constexpr static uint8_t leftCenter[k_centerHeight][k_centerWidth] = {
     {0x00, 0x00, 0xB3},
     {0xF2, 0xB8, 0x11},
 };
-}  // namespace CurlyBrace
+}  // namespace CurlyBraces
 
 namespace Sum {
 const uint8_t symbolPixelOneBranchLargeFont

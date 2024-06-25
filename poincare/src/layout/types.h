@@ -27,14 +27,14 @@ NODE(Parentheses, 1, {
   bool leftIsTemporary : 1;
   bool rightIsTemporary : 1;
 })
-NODE(CurlyBrace, 1, {
+NODE(CurlyBraces, 1, {
   bool leftIsTemporary : 1;
   bool rightIsTemporary : 1;
 })
 
 RANGE(SquareBracketPair, AbsLayout, VectorNormLayout)
-RANGE(AutocompletedPair, ParenthesesLayout, CurlyBraceLayout)
-RANGE(Pair, AbsLayout, CurlyBraceLayout)
+RANGE(AutocompletedPair, ParenthesesLayout, CurlyBracesLayout)
+RANGE(Pair, AbsLayout, CurlyBracesLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
 // CondensedSum(sumSymbol, start, end)

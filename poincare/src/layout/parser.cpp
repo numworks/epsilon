@@ -61,7 +61,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
     case LayoutType::NthDiff:
       assert(false);
     case LayoutType::Parentheses:
-    case LayoutType::CurlyBrace: {
+    case LayoutType::CurlyBraces: {
       Tree* list =
           RackParser(node->child(0), context, -1, method, true).parse();
       if (!list) {

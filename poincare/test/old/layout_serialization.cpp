@@ -35,8 +35,8 @@ QUIZ_CASE(poincare_layout_serialization) {
       ConjugateLayout::Builder(CodePointLayout::Builder('1')),
       "conj\u00121\u0013");
 
-  // CurlyBraceLayout
-  assert_layout_serializes_to(CurlyBraceLayout::Builder(), "{}");
+  // CurlyBracesLayout
+  assert_layout_serializes_to(CurlyBracesLayout::Builder(), "{}");
 
   // DerivativeLayout
   assert_layout_serializes_to(

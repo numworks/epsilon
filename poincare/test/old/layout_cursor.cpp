@@ -312,11 +312,11 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * |[} -> "{}" -> {|}{}
    */
   {
-    Layout l = HorizontalLayout::Builder(CurlyBraceLayout::Builder());
+    Layout l = HorizontalLayout::Builder(CurlyBracesLayout::Builder());
     static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Left());
-    c.insertLayout(CurlyBraceLayout::Builder(), nullptr);
+    c.insertLayout(CurlyBracesLayout::Builder(), nullptr);
     assert_layout_serializes_to(l, "{}{}");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
   }

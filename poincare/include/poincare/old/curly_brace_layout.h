@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
+class CurlyBracesLayoutNode : public AutocompletedBracketPairLayoutNode {
  public:
   constexpr static KDCoordinate k_curveHeight = 6;
   constexpr static KDCoordinate k_curveWidth = 5;
@@ -31,12 +31,12 @@ class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
   }
 
   // LayoutNode
-  Type otype() const override { return Type::CurlyBraceLayout; }
+  Type otype() const override { return Type::CurlyBracesLayout; }
 
   // PoolObject
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
-    stream << "CurlyBraceLayout";
+    stream << "CurlyBracesLayout";
   }
 #endif
   size_t serialize(char* buffer, size_t bufferSize,
@@ -62,16 +62,16 @@ class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
   }
 };
 
-class CurlyBraceLayout final
-    : public LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode> {
+class CurlyBracesLayout final
+    : public LayoutOneChild<CurlyBracesLayout, CurlyBracesLayoutNode> {
  public:
-  CurlyBraceLayout() = delete;
-  static CurlyBraceLayout Builder() {
+  CurlyBracesLayout() = delete;
+  static CurlyBracesLayout Builder() {
     return Builder(HorizontalLayout::Builder());
   }
-  static CurlyBraceLayout Builder(OLayout l) {
+  static CurlyBracesLayout Builder(OLayout l) {
     // Ensure curly brace layout has always an horizontal child
-    return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(
+    return LayoutOneChild<CurlyBracesLayout, CurlyBracesLayoutNode>::Builder(
         l.isHorizontal() ? l : HorizontalLayout::Builder(l));
   }
 };

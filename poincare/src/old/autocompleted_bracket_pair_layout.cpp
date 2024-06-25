@@ -9,8 +9,8 @@ bool AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
     return false;
   }
   assert(type && side);
-  *type =
-      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesesLayout;
+  *type = (c == '{' || c == '}') ? Type::CurlyBracesLayout
+                                 : Type::ParenthesesLayout;
   *side = (c == '(' || c == UCodePointLeftSystemParenthesis || c == '{')
               ? Side::Left
               : Side::Right;
@@ -24,8 +24,8 @@ OLayout AutocompletedBracketPairLayoutNode::BuildFromBracketType(
   if (type == LayoutNode::Type::ParenthesesLayout) {
     return ParenthesisLayout::Builder();
   }
-  assert(type == LayoutNode::Type::CurlyBraceLayout);
-  return CurlyBraceLayout::Builder();
+  assert(type == LayoutNode::Type::CurlyBracesLayout);
+  return CurlyBracesLayout::Builder();
 }
 
 static HorizontalLayout horizontalParent(OLayout l) {
@@ -69,7 +69,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     int *cursorPosition) {
   PrivateBalanceBrackets(Type::ParenthesesLayout, hLayout, cursorLayout,
                          cursorPosition);
-  PrivateBalanceBrackets(Type::CurlyBraceLayout, hLayout, cursorLayout,
+  PrivateBalanceBrackets(Type::CurlyBracesLayout, hLayout, cursorLayout,
                          cursorPosition);
 }
 
@@ -80,7 +80,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
 
   /* TODO: OLayout::recursivelyMatched should take a context and the type should
    * be put in it, instead of creating 2 different functions. */
-  assert(type == Type::ParenthesesLayout || type == Type::CurlyBraceLayout);
+  assert(type == Type::ParenthesesLayout || type == Type::CurlyBracesLayout);
   if ((type == Type::ParenthesesLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
@@ -89,10 +89,10 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
                         : OMG::Troolean::Unknown;
            })
            .isUninitialized()) ||
-      (type == Type::CurlyBraceLayout &&
+      (type == Type::CurlyBracesLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
-             return l.otype() == Type::CurlyBraceLayout
+             return l.otype() == Type::CurlyBracesLayout
                         ? OMG::Troolean::True
                         : OMG::Troolean::Unknown;
            })

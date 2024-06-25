@@ -2,8 +2,8 @@
 
 namespace Poincare {
 
-constexpr static uint8_t topLeftCurve[CurlyBraceLayoutNode::k_curveHeight]
-                                     [CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t topLeftCurve[CurlyBracesLayoutNode::k_curveHeight]
+                                     [CurlyBracesLayoutNode::k_curveWidth] = {
                                          {0xBD, 0x33, 0x13, 0x00, 0x00},
                                          {0x31, 0x74, 0xDA, 0xFF, 0xFF},
                                          {0x00, 0xDC, 0xFF, 0xFF, 0xFF},
@@ -12,8 +12,8 @@ constexpr static uint8_t topLeftCurve[CurlyBraceLayoutNode::k_curveHeight]
                                          {0x02, 0xF3, 0xFF, 0xFF, 0xFF},
 };
 
-constexpr static uint8_t topRightCurve[CurlyBraceLayoutNode::k_curveHeight]
-                                      [CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t topRightCurve[CurlyBracesLayoutNode::k_curveHeight]
+                                      [CurlyBracesLayoutNode::k_curveWidth] = {
                                           {0x00, 0x00, 0x13, 0x33, 0xBD},
                                           {0xFF, 0xFF, 0xDA, 0x74, 0x31},
                                           {0xFF, 0xFF, 0xFF, 0xDC, 0x00},
@@ -22,18 +22,19 @@ constexpr static uint8_t topRightCurve[CurlyBraceLayoutNode::k_curveHeight]
                                           {0xFF, 0xFF, 0xFF, 0xF3, 0x02},
 };
 
-constexpr static uint8_t bottomLeftCurve[CurlyBraceLayoutNode::k_curveHeight]
-                                        [CurlyBraceLayoutNode::k_curveWidth] = {
-                                            {0x02, 0xF3, 0xFF, 0xFF, 0xFF},
-                                            {0x00, 0xEF, 0xFF, 0xFF, 0xFF},
-                                            {0x00, 0xDE, 0xFF, 0xFF, 0xFF},
-                                            {0x00, 0xDC, 0xFF, 0xFF, 0xFF},
-                                            {0x31, 0x74, 0xDA, 0xFF, 0xFF},
-                                            {0xBD, 0x33, 0x13, 0x00, 0x00},
+constexpr static uint8_t bottomLeftCurve[CurlyBracesLayoutNode::k_curveHeight]
+                                        [CurlyBracesLayoutNode::k_curveWidth] =
+                                            {
+                                                {0x02, 0xF3, 0xFF, 0xFF, 0xFF},
+                                                {0x00, 0xEF, 0xFF, 0xFF, 0xFF},
+                                                {0x00, 0xDE, 0xFF, 0xFF, 0xFF},
+                                                {0x00, 0xDC, 0xFF, 0xFF, 0xFF},
+                                                {0x31, 0x74, 0xDA, 0xFF, 0xFF},
+                                                {0xBD, 0x33, 0x13, 0x00, 0x00},
 };
 
-constexpr static uint8_t bottomRightCurve[CurlyBraceLayoutNode::k_curveHeight]
-                                         [CurlyBraceLayoutNode::k_curveWidth] =
+constexpr static uint8_t bottomRightCurve[CurlyBracesLayoutNode::k_curveHeight]
+                                         [CurlyBracesLayoutNode::k_curveWidth] =
                                              {
                                                  {0xFF, 0xFF, 0xFF, 0xF3, 0x02},
                                                  {0xFF, 0xFF, 0xFF, 0xEF, 0x00},
@@ -43,25 +44,25 @@ constexpr static uint8_t bottomRightCurve[CurlyBraceLayoutNode::k_curveHeight]
                                                  {0x00, 0x00, 0x13, 0x33, 0xBD},
 };
 
-constexpr static uint8_t leftCenter[CurlyBraceLayoutNode::k_centerHeight]
-                                   [CurlyBraceLayoutNode::k_centerWidth] = {
+constexpr static uint8_t leftCenter[CurlyBracesLayoutNode::k_centerHeight]
+                                   [CurlyBracesLayoutNode::k_centerWidth] = {
                                        {0xF2, 0xB8, 0x11},
                                        {0x00, 0x00, 0xB3},
                                        {0xF2, 0xB8, 0x11},
 };
 
-constexpr static uint8_t rightCenter[CurlyBraceLayoutNode::k_centerHeight]
-                                    [CurlyBraceLayoutNode::k_centerWidth] = {
+constexpr static uint8_t rightCenter[CurlyBracesLayoutNode::k_centerHeight]
+                                    [CurlyBracesLayoutNode::k_centerWidth] = {
                                         {0x11, 0xB8, 0xF2},
                                         {0xB3, 0x00, 0x00},
                                         {0x11, 0xB8, 0xF2},
 };
 
-void CurlyBraceLayoutNode::RenderWithChildHeight(bool left,
-                                                 KDCoordinate childHeight,
-                                                 KDContext* ctx, KDPoint p,
-                                                 KDColor expressionColor,
-                                                 KDColor backgroundColor) {
+void CurlyBracesLayoutNode::RenderWithChildHeight(bool left,
+                                                  KDCoordinate childHeight,
+                                                  KDContext* ctx, KDPoint p,
+                                                  KDColor expressionColor,
+                                                  KDColor backgroundColor) {
   // Compute margins and dimensions for each part
   KDColor workingBuffer[k_curveHeight * k_curveWidth];
   assert(k_curveHeight * k_curveWidth >= k_centerHeight * k_centerWidth);

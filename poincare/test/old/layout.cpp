@@ -13,7 +13,7 @@ QUIZ_CASE(poincare_layout_constructors) {
   ParenthesisLayout e5 = ParenthesisLayout::Builder();
   CondensedSumLayout e7 = CondensedSumLayout::Builder(e4, e5, e3);
   ConjugateLayout e8 = ConjugateLayout::Builder(e7);
-  CurlyBraceLayout e10 = CurlyBraceLayout::Builder();
+  CurlyBracesLayout e10 = CurlyBracesLayout::Builder();
   FloorLayout e11 = FloorLayout::Builder(e10);
   FractionLayout e12 = FractionLayout::Builder(e8, e11);
   HorizontalLayout e13 = HorizontalLayout::Builder();

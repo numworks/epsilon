@@ -156,7 +156,7 @@ KDSize Render::Size(const Layout* node) {
       break;
     }
     case LayoutType::Parentheses:
-    case LayoutType::CurlyBrace:
+    case LayoutType::CurlyBraces:
     case LayoutType::Abs:
     case LayoutType::Floor:
     case LayoutType::Ceil:
@@ -228,8 +228,8 @@ KDSize Render::Size(const Layout* node) {
       }
       // Add a right margin of size k_curlyBraceWidth
       KDSize sizeWithBrace =
-          KDSize(sizeWithoutBrace.width() + 2 * CurlyBrace::k_curlyBraceWidth,
-                 CurlyBrace::Height(sizeWithoutBrace.height()));
+          KDSize(sizeWithoutBrace.width() + 2 * CurlyBraces::k_curlyBraceWidth,
+                 CurlyBraces::Height(sizeWithoutBrace.height()));
       width = sizeWithBrace.width();
       height = sizeWithBrace.height();
       break;
@@ -281,7 +281,7 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
   }
   assert(isPiecewiseLayout());
   return p.translatedBy(
-      KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness));
+      KDPoint(CurlyBraces::k_curlyBraceWidth, CurlyBraces::k_lineThickness));
 }
 
 KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
@@ -440,7 +440,7 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
       return KDPoint(x, y);
     }
     case LayoutType::Parentheses:
-    case LayoutType::CurlyBrace:
+    case LayoutType::CurlyBraces:
     case LayoutType::Abs:
     case LayoutType::Floor:
     case LayoutType::Ceil:
@@ -455,7 +455,7 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
         return PositionOfVariable(node, s_font);
       }
       if (childIndex == k_functionIndex) {
-        return KDPoint(CurlyBrace::k_curlyBraceWidth,
+        return KDPoint(CurlyBraces::k_curlyBraceWidth,
                        Baseline(node) - Baseline(node->child(k_functionIndex)));
       }
       return KDPoint(PositionOfVariable(node, s_font).x() +
@@ -556,7 +556,7 @@ KDCoordinate Render::Baseline(const Layout* node) {
       return Height(node->child(0)) + Fraction::k_lineMargin +
              Fraction::k_lineHeight;
     case LayoutType::Parentheses:
-    case LayoutType::CurlyBrace:
+    case LayoutType::CurlyBraces:
     case LayoutType::Abs:
     case LayoutType::Floor:
     case LayoutType::Ceil:
@@ -566,8 +566,8 @@ KDCoordinate Render::Baseline(const Layout* node) {
     }
     case LayoutType::ListSequence: {
       using namespace ListSequence;
-      return CurlyBrace::Baseline(Height(node->child(k_functionIndex)),
-                                  Baseline(node->child(k_functionIndex)));
+      return CurlyBraces::Baseline(Height(node->child(k_functionIndex)),
+                                   Baseline(node->child(k_functionIndex)));
     }
     case LayoutType::VerticalOffset:
       return 0;
@@ -583,7 +583,7 @@ KDCoordinate Render::Baseline(const Layout* node) {
                              PtCombinatorics::k_symbolBaseline);
     case LayoutType::Piecewise:
     case LayoutType::Matrix: {
-      assert(Pair::k_lineThickness == CurlyBrace::k_lineThickness);
+      assert(Pair::k_lineThickness == CurlyBraces::k_lineThickness);
       KDCoordinate height = Grid::From(node)->height(s_font);
       return (height + 1) / 2 + Pair::k_lineThickness;
     }
@@ -733,10 +733,10 @@ void Render::DrawGridLayout(const Layout* node, KDContext* ctx, KDPoint p,
       size = KDSize(grid->columnWidth(0, s_font), size.height());
     }
     // Add a right margin of size k_curlyBraceWidth
-    size = KDSize(size.width() + 2 * CurlyBrace::k_curlyBraceWidth,
-                  CurlyBrace::Height(size.height()));
+    size = KDSize(size.width() + 2 * CurlyBraces::k_curlyBraceWidth,
+                  CurlyBraces::Height(size.height()));
     offset =
-        KDPoint(CurlyBrace::k_curlyBraceWidth, CurlyBrace::k_lineThickness);
+        KDPoint(CurlyBraces::k_curlyBraceWidth, CurlyBraces::k_lineThickness);
   }
   offset = offset.translatedBy(p);
   int rowBaseline = 0;
@@ -843,10 +843,10 @@ void RenderSquareBracketPair(
   }
 }
 
-void RenderCurlyBraceWithChildHeight(bool left, KDCoordinate childHeight,
-                                     KDContext* ctx, KDPoint p,
-                                     const KDGlyph::Style& style) {
-  using namespace CurlyBrace;
+void RenderCurlyBracesWithChildHeight(bool left, KDCoordinate childHeight,
+                                      KDContext* ctx, KDPoint p,
+                                      const KDGlyph::Style& style) {
+  using namespace CurlyBraces;
   // Compute margins and dimensions for each part
   KDColor workingBuffer[k_curveHeight * k_curveWidth];
   assert(k_curveHeight * k_curveWidth >= k_centerHeight * k_centerWidth);
@@ -1136,7 +1136,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::Parentheses:
-    case LayoutType::CurlyBrace:
+    case LayoutType::CurlyBraces:
     case LayoutType::Abs:
     case LayoutType::Floor:
     case LayoutType::Ceil:
@@ -1155,9 +1155,9 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                 KDColor::Blend(style.glyphColor, style.backgroundColor,
                                Pair::k_temporaryBlendAlpha);
           }
-          if (node->isCurlyBraceLayout()) {
-            RenderCurlyBraceWithChildHeight(left, Height(node->child(0)), ctx,
-                                            point, braceStyle);
+          if (node->isCurlyBracesLayout()) {
+            RenderCurlyBracesWithChildHeight(left, Height(node->child(0)), ctx,
+                                             point, braceStyle);
           } else {
             RenderParenthesisWithChildHeight(left, Height(node->child(0)), ctx,
                                              point, braceStyle);
@@ -1181,17 +1181,18 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
 
       KDCoordinate braceY =
           Baseline(node) -
-          CurlyBrace::Baseline(functionSize.height(), functionBaseline);
+          CurlyBraces::Baseline(functionSize.height(), functionBaseline);
 
       KDPoint leftBracePosition = KDPoint(0, braceY);
-      RenderCurlyBraceWithChildHeight(true, functionSize.height(), ctx,
-                                      leftBracePosition.translatedBy(p), style);
+      RenderCurlyBracesWithChildHeight(true, functionSize.height(), ctx,
+                                       leftBracePosition.translatedBy(p),
+                                       style);
 
-      KDPoint rightBracePosition =
-          KDPoint(CurlyBrace::k_curlyBraceWidth + functionSize.width(), braceY);
-      RenderCurlyBraceWithChildHeight(false, functionSize.height(), ctx,
-                                      rightBracePosition.translatedBy(p),
-                                      style);
+      KDPoint rightBracePosition = KDPoint(
+          CurlyBraces::k_curlyBraceWidth + functionSize.width(), braceY);
+      RenderCurlyBracesWithChildHeight(false, functionSize.height(), ctx,
+                                       rightBracePosition.translatedBy(p),
+                                       style);
 
       // Draw k≤...
       KDPoint inferiorEqualPosition = KDPoint(
@@ -1368,11 +1369,11 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
       assert(grid->numberOfColumns() == 2);
 
       // Draw the curly brace
-      RenderCurlyBraceWithChildHeight(true, grid->height(style.font), ctx, p,
-                                      style);
+      RenderCurlyBracesWithChildHeight(true, grid->height(style.font), ctx, p,
+                                       style);
 
       // Draw the commas
-      KDCoordinate commaAbscissa = CurlyBrace::k_curlyBraceWidth +
+      KDCoordinate commaAbscissa = CurlyBraces::k_curlyBraceWidth +
                                    grid->columnWidth(0, style.font) +
                                    k_gridEntryMargin;
       int nbRows = grid->numberOfRows() - !grid->isEditing();

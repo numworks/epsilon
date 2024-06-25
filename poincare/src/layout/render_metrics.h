@@ -106,7 +106,7 @@ constexpr KDCoordinate k_bracketWidth =
 constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace VectorNorm
 
-namespace CurlyBrace {
+namespace CurlyBraces {
 using Pair::k_lineThickness;
 constexpr KDCoordinate k_curveHeight = 6;
 constexpr KDCoordinate k_curveWidth = 5;
@@ -123,7 +123,7 @@ constexpr KDCoordinate Baseline(KDCoordinate childHeight,
                                 KDCoordinate childBaseline) {
   return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
-}  // namespace CurlyBrace
+}  // namespace CurlyBraces
 
 namespace Parenthesis {
 constexpr KDCoordinate k_widthMargin = 1;
@@ -156,8 +156,8 @@ inline KDCoordinate BracketWidth(const Layout* node) {
       return AbsoluteValue::k_bracketWidth;
     case LayoutType::VectorNorm:
       return VectorNorm::k_bracketWidth;
-    case LayoutType::CurlyBrace:
-      return CurlyBrace::k_curlyBraceWidth;
+    case LayoutType::CurlyBraces:
+      return CurlyBraces::k_curlyBraceWidth;
     case LayoutType::Parentheses:
       return Parenthesis::k_parenthesisWidth;
     default:
@@ -174,8 +174,8 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
       return AbsoluteValue::k_minVerticalMargin;
     case LayoutType::VectorNorm:
       return VectorNorm::k_minVerticalMargin;
-    case LayoutType::CurlyBrace:
-      return CurlyBrace::k_minVerticalMargin;
+    case LayoutType::CurlyBraces:
+      return CurlyBraces::k_minVerticalMargin;
     case LayoutType::Parentheses:
       return Parenthesis::k_minVerticalMargin;
     default:
@@ -623,14 +623,14 @@ constexpr KDCoordinate k_variableBaselineOffset = 2;
 inline KDCoordinate VariableSlotBaseline(const Layout* node,
                                          KDFont::Size font) {
   return std::max(
-      {KDCoordinate(CurlyBrace::Height(Height(node->child(k_functionIndex))) +
+      {KDCoordinate(CurlyBraces::Height(Height(node->child(k_functionIndex))) +
                     k_variableBaselineOffset),
        Baseline(node->child(k_upperBoundIndex)),
        Baseline(node->child(k_variableIndex))});
 }
 
 inline KDCoordinate BracesWidth(const Layout* node, KDFont::Size font) {
-  return 2 * CurlyBrace::k_curlyBraceWidth +
+  return 2 * CurlyBraces::k_curlyBraceWidth +
          Width(node->child(k_functionIndex));
 }
 

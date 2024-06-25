@@ -57,7 +57,7 @@ KDPoint ListSequenceLayoutNode::positionOfChild(LayoutNode* child,
     return positionOfVariable(font);
   }
   if (child == functionLayout()) {
-    return KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth,
+    return KDPoint(CurlyBracesLayoutNode::k_curlyBraceWidth,
                    baseline(font) - functionLayout()->baseline(font));
   }
   assert(child == upperBoundLayout());
@@ -75,7 +75,7 @@ KDPoint ListSequenceLayoutNode::positionOfVariable(KDFont::Size font) {
 
 KDCoordinate ListSequenceLayoutNode::variableSlotBaseline(KDFont::Size font) {
   return std::max(
-      {static_cast<int>(CurlyBraceLayoutNode::Height(
+      {static_cast<int>(CurlyBracesLayoutNode::Height(
                             functionLayout()->layoutSize(font).height()) +
                         k_variableBaselineOffset),
        static_cast<int>(upperBoundLayout()->baseline(font)),
@@ -83,13 +83,13 @@ KDCoordinate ListSequenceLayoutNode::variableSlotBaseline(KDFont::Size font) {
 }
 
 KDCoordinate ListSequenceLayoutNode::computeBaseline(KDFont::Size font) {
-  return CurlyBraceLayoutNode::Baseline(
+  return CurlyBracesLayoutNode::Baseline(
       functionLayout()->layoutSize(font).height(),
       functionLayout()->baseline(font));
 }
 
 KDCoordinate ListSequenceLayoutNode::bracesWidth(KDFont::Size font) {
-  return 2 * CurlyBraceLayoutNode::k_curlyBraceWidth +
+  return 2 * CurlyBracesLayoutNode::k_curlyBraceWidth +
          functionLayout()->layoutSize(font).width();
 }
 
@@ -102,17 +102,17 @@ void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
 
   KDCoordinate braceY =
       baseline(font) -
-      CurlyBraceLayoutNode::Baseline(functionSize.height(), functionBaseline);
+      CurlyBracesLayoutNode::Baseline(functionSize.height(), functionBaseline);
 
   KDPoint leftBracePosition = KDPoint(0, braceY);
-  CurlyBraceLayoutNode::RenderWithChildHeight(
+  CurlyBracesLayoutNode::RenderWithChildHeight(
       true, functionSize.height(), ctx, leftBracePosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 
   KDPoint rightBracePosition = KDPoint(
-      CurlyBraceLayoutNode::k_curlyBraceWidth + functionSize.width(), braceY);
+      CurlyBracesLayoutNode::k_curlyBraceWidth + functionSize.width(), braceY);
 
-  CurlyBraceLayoutNode::RenderWithChildHeight(
+  CurlyBracesLayoutNode::RenderWithChildHeight(
       false, functionSize.height(), ctx, rightBracePosition.translatedBy(p),
       style.glyphColor, style.backgroundColor);
 

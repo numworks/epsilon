@@ -62,14 +62,15 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
       m.numberOfBase10DigitsWithoutSign(&workingBuffer);
   exponent = numberOfDigitsInMantissa - 1 - exponent;
   if (numberOfDigitsInMantissa > numberOfSignificantDigits) {
-    DivisionResult<IntegerHandler> d = IntegerHandler::Udiv(
-        m,
-        IntegerHandler((int64_t)std::pow(
-            10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)),
-        &workingBuffer);
+    double value =
+        std::pow(10.0, numberOfDigitsInMantissa - numberOfSignificantDigits);
+    // IntegerHandler builder is not implemented on int64_t
+    assert(value <= UINT32_MAX);
+    uint32_t value32 = static_cast<uint32_t>(value);
+    DivisionResult<IntegerHandler> d =
+        IntegerHandler::Udiv(m, IntegerHandler(value32), &workingBuffer);
     m = d.quotient;
-    int64_t boundary = 5. * std::pow(10., numberOfDigitsInMantissa -
-                                              numberOfSignificantDigits - 1);
+    uint32_t boundary = value32 / 2;
     if (IntegerHandler::Compare(d.remainder, IntegerHandler(boundary)) >= 0) {
       m = IntegerHandler::Sum(m, IntegerHandler(1), false, &workingBuffer);
       // if 9999 was rounded to 10000, we need to update exponent and mantissa

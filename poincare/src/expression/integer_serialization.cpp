@@ -33,16 +33,18 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
   /* If we check the number of digits, we want *i to stay outside of the
    * interval ]-10^numberDigits; 10^numberDigits[. */
   const bool shouldCheckMinimalNumberOfDigits = minimalNumbersOfDigits > 0;
+
+  double minimumValue = std::pow(10.0, minimalNumbersOfDigits - 1);
+  // IntegerHandler builder with int64_t is not implemented yet.
+  assert(minimumValue <= UINT32_MAX);
+  uint32_t minimumValue32 = static_cast<uint32_t>(minimumValue);
+
   IntegerHandler minimum =
-      // shouldCheckMinimalNumberOfDigits ?
-      IntegerHandler(
-          static_cast<int64_t>(std::pow(10.0, minimalNumbersOfDigits - 1)));
-  // : Integer::Overflow(false);
+      // !shouldCheckMinimalNumberOfDigits ? Integer::Overflow(false) :
+      IntegerHandler(minimumValue32, NonStrictSign::Positive);
   IntegerHandler minusMinimum =
-      // shouldCheckMinimalNumberOfDigits ?
-      IntegerHandler(
-          -static_cast<int64_t>(std::pow(10.0, minimalNumbersOfDigits - 1)));
-  // : Integer::Overflow(false);
+      // !shouldCheckMinimalNumberOfDigits ? Integer::Overflow(false) :
+      IntegerHandler(minimumValue32, NonStrictSign::Negative);
 
   IntegerHandler base = IntegerHandler(10);
   DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);

@@ -126,18 +126,6 @@ class IntegerHandler final {
         // TODO: should we represent -0?
         m_sign(value == 0 ? NonStrictSign::Positive : sign),
         m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {}
-  IntegerHandler(double_native_int_t value)
-      : IntegerHandler(
-            static_cast<double_native_uint_t>(abs(value)),
-            value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
-  IntegerHandler(double_native_uint_t value,
-                 NonStrictSign sign = NonStrictSign::Positive)
-      : m_digitAccessor(value),
-        m_sign(sign),
-        m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {
-    // Digits constructor with double_native_uint_t not implemented
-    assert(false);
-  }
 
   static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base);
 
@@ -303,21 +291,6 @@ class Integer {
   }
   static Tree* Push(native_int_t value) {
     return IntegerHandler(value).pushOnTreeStack();
-  }
-  static Tree* Push(native_uint_t value) {
-    // Not implemented.
-    assert(false);
-    return nullptr;
-  }
-  static Tree* Push(double_native_uint_t value) {
-    // Not implemented.
-    assert(false);
-    return nullptr;
-  }
-  static Tree* Push(double_native_int_t value) {
-    // Not implemented.
-    assert(false);
-    return nullptr;
   }
 
   static IntegerHandler Handler(const Tree* e);

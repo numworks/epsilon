@@ -69,10 +69,14 @@ endef
 # libraries_for_flavored_goal, <flavored goal>
 # $1 might contain an arch, hence the $(dir $1).
 # Do not use flavors_for_flavored_target to avoid an extraneous subst.
+# If the argument does not match any goal, return _UNREACHABLE instead of the
+# empty string. This is to avoid a non-goal target latching onto an implicit
+# rule when libraries_for_flavored_goal is used to generate the prerequisites.
 define libraries_for_flavored_goal
-$(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
+$(call text_or,$(addprefix $(OUTPUT_DIRECTORY)/$(subst ./,,$(dir $1)),\
 	$(addsuffix $(subst $( ),,$(filter .%,$(subst ., .,$(notdir $1)))).a,\
-	$(MODULES_$(call name_for_flavored_target,$1))))
+	$(MODULES_$(call name_for_flavored_target,$1)))), \
+	_UNREACHABLE)
 endef
 
 # ldflags_for_flavored_goal, <flavored goal>

@@ -145,8 +145,7 @@ epsilon%dfu: $(OUTPUT_DIRECTORY)/epsilon%dfu
 epsilon%flash: $(OUTPUT_DIRECTORY)/epsilon%flash
 	@ :
 
-# TODO Needs to be an explicit rule to bypass the generic DFU rule.
-$(OUTPUT_DIRECTORY)/epsilon.dfu: $(patsubst %,$(OUTPUT_DIRECTORY)/%.elf,safe_stack/bootloader safe_stack/kernel.A safe_stack/kernel.B userland.A userland.B)
+$(OUTPUT_DIRECTORY)/epsilon%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$(addprefix safe_stack/,bootloader.elf kernel.A.elf kernel.B.elf) userland.A%elf userland.B%elf)
 	$(call rule_label,DFU)
 	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $^ -o $@
 

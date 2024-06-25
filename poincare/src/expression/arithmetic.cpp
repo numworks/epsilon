@@ -257,7 +257,7 @@ bool Arithmetic::ExpandBinomial(Tree* e) {
             KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
 
-static constexpr size_t k_biggestPrimeFactor = 10000;
+static constexpr uint16_t k_biggestPrimeFactor = 10000;
 static constexpr size_t k_numberOfPrimeFactors = 1000;
 static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,

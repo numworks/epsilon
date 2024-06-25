@@ -35,11 +35,13 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
   const bool shouldCheckMinimalNumberOfDigits = minimalNumbersOfDigits > 0;
   IntegerHandler minimum =
       // shouldCheckMinimalNumberOfDigits ?
-      IntegerHandler((int64_t)std::pow(10.0, minimalNumbersOfDigits - 1));
+      IntegerHandler(
+          static_cast<int64_t>(std::pow(10.0, minimalNumbersOfDigits - 1)));
   // : Integer::Overflow(false);
   IntegerHandler minusMinimum =
       // shouldCheckMinimalNumberOfDigits ?
-      IntegerHandler(-(int64_t)std::pow(10.0, minimalNumbersOfDigits - 1));
+      IntegerHandler(
+          -static_cast<int64_t>(std::pow(10.0, minimalNumbersOfDigits - 1)));
   // : Integer::Overflow(false);
 
   IntegerHandler base = IntegerHandler(10);

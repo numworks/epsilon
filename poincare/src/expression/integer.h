@@ -23,6 +23,7 @@ namespace Poincare::Internal {
 typedef uint16_t half_native_uint_t;
 typedef uint32_t native_uint_t;
 typedef int32_t native_int_t;
+typedef int64_t double_native_int_t;
 typedef uint64_t double_native_uint_t;
 
 // Can be used unaligned
@@ -116,13 +117,27 @@ class IntegerHandler final {
         m_sign(sign),
         m_numberOfDigits(numberOfDigits) {}
   IntegerHandler(native_int_t value)
-      : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive
-                                              : NonStrictSign::Negative) {}
-  IntegerHandler(native_uint_t value, NonStrictSign sign)
+      : IntegerHandler(
+            static_cast<native_uint_t>(abs(value)),
+            value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
+  IntegerHandler(native_uint_t value,
+                 NonStrictSign sign = NonStrictSign::Positive)
       : m_digitAccessor(value),
         // TODO: should we represent -0?
         m_sign(value == 0 ? NonStrictSign::Positive : sign),
         m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {}
+  IntegerHandler(double_native_int_t value)
+      : IntegerHandler(
+            static_cast<double_native_uint_t>(abs(value)),
+            value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
+  IntegerHandler(double_native_uint_t value,
+                 NonStrictSign sign = NonStrictSign::Positive)
+      : m_digitAccessor(value),
+        m_sign(sign),
+        m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {
+    // Digits constructor with double_native_uint_t not implemented
+    assert(false);
+  }
 
   static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base);
 
@@ -289,6 +304,22 @@ class Integer {
   static Tree* Push(native_int_t value) {
     return IntegerHandler(value).pushOnTreeStack();
   }
+  static Tree* Push(native_uint_t value) {
+    // Not implemented.
+    assert(false);
+    return nullptr;
+  }
+  static Tree* Push(double_native_uint_t value) {
+    // Not implemented.
+    assert(false);
+    return nullptr;
+  }
+  static Tree* Push(double_native_int_t value) {
+    // Not implemented.
+    assert(false);
+    return nullptr;
+  }
+
   static IntegerHandler Handler(const Tree* e);
   template <typename T>
   static bool Is(const Tree* e) {

@@ -244,3 +244,17 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<float>("arcsec(0)", "undef");
   approximates_to<float>("arccsc(0)", "undef");
 }
+
+QUIZ_CASE(pcj_approximation_decimal) {
+  approximates_to(283495231345_e, 283495231345.f);
+  approximates_to(283495231345._e, 283495231345.f);
+  approximates_to(283495231345.0_e, 283495231345.f);
+  approximates_to(283495231345.00_e, 283495231345.f);
+
+  approximates_to(0.028349523100_e, 0.0283495231f);
+  approximates_to(0.28349523100_e, 0.283495231f);
+  approximates_to(2.8349523100_e, 2.83495231f);
+  approximates_to(283495231.00_e, 283495231.f);
+  approximates_to(2834952310.0_e, 2834952310.f);
+  approximates_to(28349523100_e, 28349523100.f);
+}

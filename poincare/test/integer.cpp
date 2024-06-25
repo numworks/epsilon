@@ -44,6 +44,25 @@ QUIZ_CASE(pcj_integer_constructor) {
   Integer::Push("101011", sizeof("101011") - 1, OMG::Base::Binary);
   Integer::Push("A2B3", sizeof("A2B3") - 1, OMG::Base::Hexadecimal);
   Integer::Push("123", sizeof("123") - 1, OMG::Base::Decimal);
+
+  // Testing different constructors limits
+  Tree* e1 = IntegerHandler(UINT32_MAX).pushOnTreeStack();
+#if 0
+  /* Not implemented */
+  Tree* e2 = Integer::Push(UINT32_MAX);
+  quiz_assert(e1->treeIsIdenticalTo(e2));
+  e2->removeTree();
+#endif
+  e1->removeTree();
+#if 0
+  /* Not implemented */
+  e1 = IntegerHandler(UINT64_MAX).pushOnTreeStack();
+  quiz_assert(e1->treeIsIdenticalTo(e1));
+  Tree* e2 = Integer::Push(UINT64_MAX);
+  quiz_assert(e1->treeIsIdenticalTo(e2));
+  e2->removeTree();
+  e1->removeTree();
+#endif
 }
 
 QUIZ_CASE(pcj_integer_properties) {

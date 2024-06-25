@@ -55,7 +55,7 @@ $1: $(OUTPUT_DIRECTORY)/$1
 
 $(OUTPUT_DIRECTORY)/$1: $2
 	$$(call rule_label,ZIP)
-	$(QUIET) rm -rf $$(basename $$@) && mkdir -p $$(basename $$@) && cp $$^ $$(basename $$@) && zip -r -9 -j $$@ $$(basename $$@) > /dev/null && rm -rf $$(basename $$@)
+	rm -rf $$(basename $$@) && mkdir -p $$(basename $$@) && cp $$^ $$(basename $$@) && zip -r -9 -j $$@ $$(basename $$@) > /dev/null && rm -rf $$(basename $$@)
 )
 endef
 

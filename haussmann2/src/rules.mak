@@ -8,14 +8,14 @@
 
 # Create the output directories tree
 $(OUTPUT_ROOT)/.:
-	$(QUIET) mkdir -p $@
+	mkdir -p $@
 $(OUTPUT_ROOT)%/.:
-	$(QUIET) mkdir -p $@
+	mkdir -p $@
 
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) $$(call lddeps_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
-	$(QUIET) $(LD) \
+	$(LD) \
 		$(PRIORITY_SFLAGS) $(SFLAGS) \
 		$(foreach l,$(filter %.a,$^),$(call objects_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l))) \
 		$(call ldflags_for_flavored_goal,$*) \
@@ -25,9 +25,9 @@ $(call document_extension,$(EXECUTABLE_EXTENSION))
 
 # Rules for modules as static libraries
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
-	$(QUIET) $(call check_locks,$(call name_for_flavored_target,$*))
+	$(call check_locks,$(call name_for_flavored_target,$*))
 	$(call rule_label,AR)
-	$(QUIET) $(AR) $(ARFLAGS) $@ $^
+	$(AR) $(ARFLAGS) $@ $^
 
 # Rules for object files
 $(call rule_for_object, \

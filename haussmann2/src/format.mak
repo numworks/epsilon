@@ -10,10 +10,10 @@ format: CXXFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFF
 format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFARGS) --staged; git ls-files --others --exclude-standard) | grep --extended-regexp "(\.py$$)")
 format:
 # Use xargs to elegantly handle the case CXXFILES=""
-	$(QUIET) echo "=== Formatting .cpp and .h files ==="
-	$(QUIET) echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
-	$(QUIET) echo "=== Formatting .py files ==="
-	$(QUIET) echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
+	echo "=== Formatting .cpp and .h files ==="
+	echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
+	echo "=== Formatting .py files ==="
+	echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
 
 .PHONY: reformat
 reformat:

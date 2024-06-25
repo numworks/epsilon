@@ -20,7 +20,7 @@
 .PHONY: flavor_test
 flavor_test: flavor_test_list := e1 e2:-f1 e3:+f2 e4:+f1:-f3 e5:+f3:-f4
 flavor_test:
-	$(QUIET) echo '$(call flavor_filter,$(flavor_test_list),f1 f3)'
+	echo '$(call flavor_filter,$(flavor_test_list),f1 f3)'
 
 # flavor_filter, <list with tastes>, <flavors>
 define flavor_filter

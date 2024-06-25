@@ -19,13 +19,13 @@ class Tree;
 
 class Sign {
  public:
-  constexpr Sign(bool canBeNull, bool canBeStriclyPositive,
-                 bool canBeStriclyNegative, bool canBeNonInteger = true)
+  constexpr Sign(bool canBeNull, bool canBeStrictlyPositive,
+                 bool canBeStrictlyNegative, bool canBeNonInteger = true)
       : m_canBeNull(canBeNull),
-        m_canBeStriclyPositive(canBeStriclyPositive),
-        m_canBeStriclyNegative(canBeStriclyNegative),
+        m_canBeStrictlyPositive(canBeStrictlyPositive),
+        m_canBeStrictlyNegative(canBeStrictlyNegative),
         m_canBeNonInteger(canBeNonInteger &&
-                          (canBeStriclyPositive || canBeStriclyNegative)) {
+                          (canBeStrictlyPositive || canBeStrictlyNegative)) {
     // By ensuring its members can't be modified, a Sign is always valid.
     assert(isValid());
   }
@@ -36,25 +36,29 @@ class Sign {
              OMG::BitHelper::getBitRange(value, 3, 3)) {}
 
   constexpr bool canBeNull() const { return m_canBeNull; }
-  constexpr bool canBeStriclyPositive() const { return m_canBeStriclyPositive; }
-  constexpr bool canBeStriclyNegative() const { return m_canBeStriclyNegative; }
+  constexpr bool canBeStrictlyPositive() const {
+    return m_canBeStrictlyPositive;
+  }
+  constexpr bool canBeStrictlyNegative() const {
+    return m_canBeStrictlyNegative;
+  }
   constexpr bool canBeNonInteger() const { return m_canBeNonInteger; }
   constexpr bool canBeNonNull() const {
-    return m_canBeStriclyPositive || m_canBeStriclyNegative;
+    return m_canBeStrictlyPositive || m_canBeStrictlyNegative;
   }
   constexpr bool isZero() const { return !canBeNonNull(); }
   constexpr bool isInteger() const { return !canBeNonInteger(); }
   constexpr bool isStrictlyPositive() const {
-    return !(m_canBeNull || m_canBeStriclyNegative);
+    return !(m_canBeNull || m_canBeStrictlyNegative);
   }
   constexpr bool isStrictlyNegative() const {
-    return !(m_canBeNull || m_canBeStriclyPositive);
+    return !(m_canBeNull || m_canBeStrictlyPositive);
   }
-  constexpr bool isNegative() const { return !m_canBeStriclyPositive; }
-  constexpr bool isPositive() const { return !m_canBeStriclyNegative; }
+  constexpr bool isNegative() const { return !m_canBeStrictlyPositive; }
+  constexpr bool isPositive() const { return !m_canBeStrictlyNegative; }
   // It can be positive, negative and null
   constexpr bool isUnknown() const {
-    return m_canBeNull && m_canBeStriclyPositive && m_canBeStriclyNegative;
+    return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative;
   }
   // It's either strictly positive, strictly negative or null.
   constexpr bool isKnown() const {
@@ -64,21 +68,21 @@ class Sign {
   bool operator==(const Sign&) const = default;
   Sign operator||(const Sign& other) const {
     return Sign(m_canBeNull || other.canBeNull(),
-                m_canBeStriclyPositive || other.canBeStriclyPositive(),
-                m_canBeStriclyNegative || other.canBeStriclyNegative(),
+                m_canBeStrictlyPositive || other.canBeStrictlyPositive(),
+                m_canBeStrictlyNegative || other.canBeStrictlyNegative(),
                 m_canBeNonInteger || other.canBeNonInteger());
   }
   Sign operator&&(const Sign& other) const {
     return Sign(m_canBeNull && other.canBeNull(),
-                m_canBeStriclyPositive && other.canBeStriclyPositive(),
-                m_canBeStriclyNegative && other.canBeStriclyNegative(),
+                m_canBeStrictlyPositive && other.canBeStrictlyPositive(),
+                m_canBeStrictlyNegative && other.canBeStrictlyNegative(),
                 m_canBeNonInteger && other.canBeNonInteger());
   }
 
   constexpr uint8_t getValue() {
     // Cannot use bit_cast because it doesn't handle bitfields.
-    return m_canBeNull << 0 | m_canBeStriclyPositive << 1 |
-           m_canBeStriclyNegative << 2 | m_canBeNonInteger << 3;
+    return m_canBeNull << 0 | m_canBeStrictlyPositive << 1 |
+           m_canBeStrictlyNegative << 2 | m_canBeNonInteger << 3;
   }
 
   constexpr static Sign Zero() { return Sign(true, false, false); }
@@ -116,13 +120,13 @@ class Sign {
 
  private:
   constexpr bool isValid() const {
-    return m_canBeStriclyPositive || m_canBeStriclyNegative ||
+    return m_canBeStrictlyPositive || m_canBeStrictlyNegative ||
            (m_canBeNull && !m_canBeNonInteger);
   }
 
   bool m_canBeNull : 1;
-  bool m_canBeStriclyPositive : 1;
-  bool m_canBeStriclyNegative : 1;
+  bool m_canBeStrictlyPositive : 1;
+  bool m_canBeStrictlyNegative : 1;
   bool m_canBeNonInteger : 1;
 };
 

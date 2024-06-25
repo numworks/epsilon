@@ -18,28 +18,28 @@ namespace Poincare::Internal {
  * mode simplifications. */
 
 Sign RelaxIntegerProperty(Sign s) {
-  return Sign(s.canBeNull(), s.canBeStriclyPositive(),
-              s.canBeStriclyNegative());
+  return Sign(s.canBeNull(), s.canBeStrictlyPositive(),
+              s.canBeStrictlyNegative());
 }
 
 Sign DecimalFunction(Sign s, Type type) {
   bool canBeNull = s.canBeNull();
-  bool canBeStriclyPositive = s.canBeStriclyPositive();
-  bool canBeStriclyNegative = s.canBeStriclyNegative();
+  bool canBeStrictlyPositive = s.canBeStrictlyPositive();
+  bool canBeStrictlyNegative = s.canBeStrictlyNegative();
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
     case Type::Ceil:
-      canBeNull |= canBeStriclyNegative && canBeNonInteger;
+      canBeNull |= canBeStrictlyNegative && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Floor:
-      canBeNull |= canBeStriclyPositive && canBeNonInteger;
+      canBeNull |= canBeStrictlyPositive && canBeNonInteger;
       canBeNonInteger = false;
       break;
     case Type::Frac:
       canBeNull = true;
-      canBeStriclyPositive = canBeNonInteger;
-      canBeStriclyNegative = false;
+      canBeStrictlyPositive = canBeNonInteger;
+      canBeStrictlyNegative = false;
       break;
     case Type::Round:
       canBeNull = true;
@@ -47,30 +47,30 @@ Sign DecimalFunction(Sign s, Type type) {
     default:
       assert(false);
   }
-  return Sign(canBeNull, canBeStriclyPositive, canBeStriclyNegative,
+  return Sign(canBeNull, canBeStrictlyPositive, canBeStrictlyNegative,
               canBeNonInteger);
 }
 
 Sign Opposite(Sign s) {
-  return Sign(s.canBeNull(), s.canBeStriclyNegative(), s.canBeStriclyPositive(),
-              s.canBeNonInteger());
+  return Sign(s.canBeNull(), s.canBeStrictlyNegative(),
+              s.canBeStrictlyPositive(), s.canBeNonInteger());
 }
 
 Sign Mult(Sign s1, Sign s2) {
   return Sign(s1.canBeNull() || s2.canBeNull(),
-              (s1.canBeStriclyPositive() && s2.canBeStriclyPositive()) ||
-                  (s1.canBeStriclyNegative() && s2.canBeStriclyNegative()),
-              (s1.canBeStriclyPositive() && s2.canBeStriclyNegative()) ||
-                  (s1.canBeStriclyNegative() && s2.canBeStriclyPositive()),
+              (s1.canBeStrictlyPositive() && s2.canBeStrictlyPositive()) ||
+                  (s1.canBeStrictlyNegative() && s2.canBeStrictlyNegative()),
+              (s1.canBeStrictlyPositive() && s2.canBeStrictlyNegative()) ||
+                  (s1.canBeStrictlyNegative() && s2.canBeStrictlyPositive()),
               s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
 Sign Add(Sign s1, Sign s2) {
   return Sign((s1.canBeNull() && s2.canBeNull()) ||
-                  (s1.canBeStriclyPositive() && s2.canBeStriclyNegative()) ||
-                  (s1.canBeStriclyNegative() && s2.canBeStriclyPositive()),
-              s1.canBeStriclyPositive() || s2.canBeStriclyPositive(),
-              s1.canBeStriclyNegative() || s2.canBeStriclyNegative(),
+                  (s1.canBeStrictlyPositive() && s2.canBeStrictlyNegative()) ||
+                  (s1.canBeStrictlyNegative() && s2.canBeStrictlyPositive()),
+              s1.canBeStrictlyPositive() || s2.canBeStrictlyPositive(),
+              s1.canBeStrictlyNegative() || s2.canBeStrictlyNegative(),
               s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
@@ -90,13 +90,13 @@ void Sign::log(std::ostream& stream, bool endOfLine) const {
     if (isUnknown()) {
       stream << "Unknown";
     } else {
-      if (m_canBeStriclyPositive && m_canBeStriclyNegative) {
+      if (m_canBeStrictlyPositive && m_canBeStrictlyNegative) {
         stream << "Non Null";
       } else {
         if (!m_canBeNull) {
           stream << "Strictly ";
         }
-        stream << (m_canBeStriclyNegative ? "Negative" : "Positive");
+        stream << (m_canBeStrictlyNegative ? "Negative" : "Positive");
       }
     }
   }
@@ -120,12 +120,12 @@ ComplexSign Abs(ComplexSign s) {
 ComplexSign ArcCosine(ComplexSign s) {
   Sign re = s.realSign();
   Sign im = s.imagSign();
-  return ComplexSign(Sign(re.canBeStriclyPositive(), true, false),
+  return ComplexSign(Sign(re.canBeStrictlyPositive(), true, false),
                      Sign(im.canBeNull(),
-                          im.canBeStriclyNegative() ||
-                              (im.canBeNull() && re.canBeStriclyPositive()),
-                          im.canBeStriclyPositive() ||
-                              (im.canBeNull() && re.canBeStriclyNegative())));
+                          im.canBeStrictlyNegative() ||
+                              (im.canBeNull() && re.canBeStrictlyPositive()),
+                          im.canBeStrictlyPositive() ||
+                              (im.canBeNull() && re.canBeStrictlyNegative())));
 }
 
 ComplexSign ArcSine(ComplexSign s) {
@@ -135,8 +135,8 @@ ComplexSign ArcSine(ComplexSign s) {
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (imagSign.canBeNull() && realSign.canBeNonNull()) {
-    imagSign = imagSign || Sign(true, realSign.canBeStriclyNegative(),
-                                realSign.canBeStriclyPositive());
+    imagSign = imagSign || Sign(true, realSign.canBeStrictlyNegative(),
+                                realSign.canBeStrictlyPositive());
   }
   return ComplexSign(realSign, imagSign);
 }
@@ -148,8 +148,8 @@ ComplexSign ArcTangent(ComplexSign s) {
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (realSign.canBeNull() && imagSign.canBeNonNull()) {
-    realSign = realSign || Sign(true, imagSign.canBeStriclyPositive(),
-                                imagSign.canBeStriclyNegative());
+    realSign = realSign || Sign(true, imagSign.canBeStrictlyPositive(),
+                                imagSign.canBeStrictlyNegative());
   }
   return ComplexSign(realSign, imagSign);
 }
@@ -168,10 +168,10 @@ ComplexSign ComplexArgument(ComplexSign s) {
   Sign re = s.realSign();
   Sign im = s.imagSign();
   return ComplexSign(
-      Sign(im.canBeNull() && (re.canBeNull() || re.canBeStriclyPositive()),
-           (im.canBeNull() && re.canBeStriclyNegative()) ||
-               im.canBeStriclyPositive(),
-           im.canBeStriclyNegative()),
+      Sign(im.canBeNull() && (re.canBeNull() || re.canBeStrictlyPositive()),
+           (im.canBeNull() && re.canBeStrictlyNegative()) ||
+               im.canBeStrictlyPositive(),
+           im.canBeStrictlyNegative()),
       Sign::Zero());
 }
 

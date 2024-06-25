@@ -69,7 +69,7 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
       u->cloneTreeOverTree(0_e);
       return true;
     }
-    if (!indexSign.realSign().canBeStriclyPositive()) {
+    if (!indexSign.realSign().canBeStrictlyPositive()) {
       // 0^x cannot be defined
       u->cloneTreeOverTree(KOutOfDefinition);
       return true;
@@ -118,8 +118,8 @@ bool SystematicOperation::SimplifyPower(Tree* u) {
     ComplexSign nSign = ComplexSign::Get(n);
     ComplexSign pSign = ComplexSign::Get(p);
     assert(nSign.isReal() && pSign.isReal());
-    if (nSign.realSign().canBeStriclyNegative() &&
-        pSign.realSign().canBeStriclyNegative()) {
+    if (nSign.realSign().canBeStrictlyNegative() &&
+        pSign.realSign().canBeStrictlyNegative()) {
       // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
       return PatternMatching::MatchReplaceSimplify(
           u, KPow(KPow(KA, KB), KC),
@@ -220,7 +220,8 @@ bool SystematicOperation::SimplifyLnReal(Tree* u) {
     u->cloneTreeOverTree(KNonReal);
     return true;
   }
-  if (childSign.realSign().canBeStriclyNegative() || childSign.canBeNonReal()) {
+  if (childSign.realSign().canBeStrictlyNegative() ||
+      childSign.canBeNonReal()) {
     // Child can be nonreal or negative, add a dependency in case.
     u->moveTreeOverTree(PatternMatching::Create(
         KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = u->child(0)}));
@@ -467,10 +468,10 @@ bool SystematicOperation::SimplifyAbs(Tree* u) {
   }
   bool isReal = complexSign.isReal();
   Sign sign = isReal ? complexSign.realSign() : complexSign.imagSign();
-  if (sign.canBeStriclyNegative() && sign.canBeStriclyPositive()) {
+  if (sign.canBeStrictlyNegative() && sign.canBeStrictlyPositive()) {
     return false;
   }
-  const Tree* minusOne = (isReal == sign.canBeStriclyNegative()) ? -1_e : 1_e;
+  const Tree* minusOne = (isReal == sign.canBeStrictlyNegative()) ? -1_e : 1_e;
   const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
   u->moveTreeOverTree(PatternMatching::CreateSimplify(

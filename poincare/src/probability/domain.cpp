@@ -17,7 +17,7 @@ OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type) {
   }
 
   OMG::Troolean isPositive = sign.realSign().isPositive() ? OMG::Troolean::True
-                             : sign.realSign().canBeStriclyPositive()
+                             : sign.realSign().canBeStrictlyPositive()
                                  ? OMG::Troolean::Unknown
                                  : OMG::Troolean::False;
   if (type & k_onlyPositive) {

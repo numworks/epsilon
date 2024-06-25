@@ -56,7 +56,7 @@ int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
           }
           if (degree != 0) {
             if (!child->isInteger() ||
-                ComplexSign::Get(child).realSign().canBeStriclyNegative()) {
+                ComplexSign::Get(child).realSign().canBeStrictlyNegative()) {
               return k_unknown;
             }
             // TODO: Check overflow

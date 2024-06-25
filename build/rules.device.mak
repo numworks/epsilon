@@ -88,5 +88,5 @@ $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
 )
 endef
 
-$(call rule_for_composite_dfu,epsilon,bootloader/bootloader.elf kernel/kernel.A.elf kernel/kernel.B.elf userland.A%elf userland.B%elf)
-$(call rule_for_composite_dfu,test,bootloader/bootloader.elf kernel/kernel.A.elf kernel/kernel.B.elf userland_test.A%elf userland_test.B%elf)
+$(call rule_for_composite_dfu,epsilon,bootloader/bootloader.elf kernel/kernel.A%elf kernel/kernel.B%elf userland.A%elf userland.B%elf)
+$(call rule_for_composite_dfu,test,bootloader/bootloader.elf kernel/kernel.A%elf kernel/kernel.B%elf userland_test.A%elf userland_test.B%elf)

@@ -137,7 +137,7 @@ Tree* TreeStack::pushCombinedCodePointsLayout(CodePoint codePoint,
 
 Tree* TreeStack::pushParenthesisLayout(bool leftIsTemporary,
                                        bool rightIsTemporary) {
-  Tree* result = pushBlock(Type::ParenthesisLayout);
+  Tree* result = pushBlock(Type::ParenthesesLayout);
   // TODO: factor with autocompleted_pair.h
   pushBlock(leftIsTemporary | (0b10 && rightIsTemporary));
   return result;

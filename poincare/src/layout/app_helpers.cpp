@@ -15,7 +15,7 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
     return;
   }
   Tree* lastChild = tree->child(tree->numberOfChildren() - 1);
-  if (lastChild->isParenthesisLayout() &&
+  if (lastChild->isParenthesesLayout() &&
       !AutocompletedPair::IsTemporary(lastChild, Side::Left)) {
     AutocompletedPair::SetTemporary(lastChild, Side::Right, true);
   }
@@ -23,7 +23,7 @@ void MakeRightMostParenthesisTemporary(Tree* tree) {
 
 void DeleteChildrenRacks(Tree* rack) {
   for (Tree* layout : rack->children()) {
-    if (layout->isParenthesisLayout()) {
+    if (layout->isParenthesesLayout()) {
       AutocompletedPair::SetTemporary(layout, Side::Right, true);
     }
     for (Tree* subRack : layout->children()) {

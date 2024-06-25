@@ -131,7 +131,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     e->cloneTreeOverTree(KForbidden);
     return true;
   }
-  if (e->isParenthesis()) {
+  if (e->isParentheses()) {
     e->removeNode();
     ShallowSystemProject(e, context);
     return true;

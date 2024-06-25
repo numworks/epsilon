@@ -327,7 +327,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   // Add Parentheses if necessary
   if (parentPriority < OperatorPriority(type) &&
       !(type.isPoint() || type.isList())) {
-    TreeRef parenthesis = KParenthesisL(KRackL())->clone();
+    TreeRef parenthesis = KParenthesesL(KRackL())->clone();
     NAry::AddChild(layoutParent, parenthesis);
     TreeRef rack = parenthesis->child(0);
     return layoutExpression(rack, expression, k_maxPriority);
@@ -626,13 +626,13 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         break;
       } else {
         TreeRef parenthesis =
-            (type.isList() ? KCurlyBracesL : KParenthesisL)->cloneNode();
+            (type.isList() ? KCurlyBracesL : KParenthesesL)->cloneNode();
         TreeRef rack = KRackL()->clone();
         NAry::AddChild(layoutParent, parenthesis);
         layoutInfixOperator(rack, expression, ',');
         break;
       }
-    case Type::Parenthesis:
+    case Type::Parentheses:
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParenthesis);
       break;

@@ -42,8 +42,8 @@ Type ExpressionType(LayoutType type) {
       return Type::Sqrt;
     case LayoutType::Root:
       return Type::Root;
-    case LayoutType::Parenthesis:
-      return Type::Parenthesis;
+    case LayoutType::Parentheses:
+      return Type::Parentheses;
     default:
       assert(false);
   }
@@ -60,19 +60,19 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
     case LayoutType::CombinedCodePoints:
     case LayoutType::NthDiff:
       assert(false);
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace: {
       Tree* list =
           RackParser(node->child(0), context, -1, method, true).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      if (node->layoutType() == LayoutType::Parenthesis) {
+      if (node->layoutType() == LayoutType::Parentheses) {
         int numberOfChildren = list->numberOfChildren();
         if (numberOfChildren == 2) {
           list->cloneNodeOverNode(KPoint);
         } else if (numberOfChildren == 1) {
-          list->cloneNodeOverNode(KParenthesis);
+          list->cloneNodeOverNode(KParentheses);
         } else {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }

@@ -14,10 +14,10 @@ using namespace Poincare::Internal;
 QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(
       Layouter::LayoutExpression(KPow(KAdd("x"_e, "y"_e), 2_e)->clone()),
-      KRackL(KParenthesisL("x+y"_l), KSuperscriptL("2"_l)));
+      KRackL(KParenthesesL("x+y"_l), KSuperscriptL("2"_l)));
   assert_trees_are_equal(
       Layouter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
-      KRackL(KParenthesisL("x·y"_l), KSuperscriptL("2"_l)));
+      KRackL(KParenthesesL("x·y"_l), KSuperscriptL("2"_l)));
   assert_trees_are_equal(
       Layouter::LayoutExpression(
           KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e)->clone(), true),
@@ -55,8 +55,8 @@ QUIZ _CASE(pcj_layout_render) {
   // TODO layoutCursor is nullptr and expected
   Layout l = Layout(
       KRackL("1+"_l,
-             KParenthesisL(KRackL(
-                 "2×"_l, KParenthesisL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
+             KParenthesesL(KRackL(
+                 "2×"_l, KParenthesesL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
              /*KSuperscriptL("2"_l),*/ "-2"_l));
   l.draw(ctx, KDPoint(10, 100), KDFont::Size::Large);
 }

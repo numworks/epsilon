@@ -14,7 +14,7 @@ bool AutocompletedPair::IsAutoCompletedBracketPairCodePoint(CodePoint c,
   }
   assert(type && side);
   *type =
-      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesisLayout;
+      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesesLayout;
   *side = (c == '(' || c == '{') ? Side::Left : Side::Right;
   return true;
 }
@@ -46,7 +46,7 @@ static int bracketNestingLevel(Tree* rack, TypeBlock type, Tree* root) {
 
 void AutocompletedPair::BalanceBrackets(Tree* rack, TreeRef& cursorLayout,
                                         int* cursorPosition) {
-  PrivateBalanceBrackets(Type::ParenthesisLayout, rack, cursorLayout,
+  PrivateBalanceBrackets(Type::ParenthesesLayout, rack, cursorLayout,
                          cursorPosition, rack);
   PrivateBalanceBrackets(Type::CurlyBraceLayout, rack, cursorLayout,
                          cursorPosition, rack);
@@ -58,7 +58,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
                                                Tree* rootRack) {
   assert(type.isAutocompletedPair());
 
-  assert(type == Type::ParenthesisLayout || type == Type::CurlyBraceLayout);
+  assert(type == Type::ParenthesesLayout || type == Type::CurlyBraceLayout);
   bool hasDescendantToBalance = false;
   for (const Tree* d : rack->descendants()) {
     if (d->type() == type) {

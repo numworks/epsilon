@@ -367,7 +367,7 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::Function;
     case Type::UserSequence:
       return ExpressionNode::Type::Sequence;
-    case Type::Parenthesis:
+    case Type::Parentheses:
       return ExpressionNode::Type::Parenthesis;
 #if 0
       // No perfect Internal equivalents

@@ -883,7 +883,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       SharedTreeStack->pushEmpty();
       return;
     case OT::Parenthesis:
-      SharedTreeStack->pushParenthesis();
+      SharedTreeStack->pushParentheses();
       return PushPoincareExpression(exp.childAtIndex(0));
     case OT::JuniorExpression: {
       SharedTreeStack->clone(

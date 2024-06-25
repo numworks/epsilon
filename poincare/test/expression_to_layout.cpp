@@ -28,7 +28,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
   assert_parsed_expression_layouts_to(
       "int(1,x,2,3)", KRackL(KIntegralL("x"_l, "2"_l, "3"_l, "1"_l)));
   // PCJ expressions do not preserve parentheses
-  assert_parsed_expression_layouts_to("(1)", KRackL(KParenthesisL("1"_l)));
+  assert_parsed_expression_layouts_to("(1)", KRackL(KParenthesesL("1"_l)));
   assert_parsed_expression_layouts_to("√(1)", KRackL(KSqrtL("1"_l)));
   assert_parsed_expression_layouts_to("root(1,2)",
                                       KRackL(KRootL("1"_l, "2"_l)));
@@ -38,7 +38,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
       "product(1,n,2,3)", KRackL(KProductL("n"_l, "2"_l, "3"_l, "1"_l)));
   assert_parsed_expression_layouts_to("1^2", "1"_l ^ KSuperscriptL("2"_l));
   assert_parsed_expression_layouts_to(
-      "-1^2", "-"_l ^ KParenthesisL("1"_l ^ KSuperscriptL("2"_l)));
+      "-1^2", "-"_l ^ KParenthesesL("1"_l ^ KSuperscriptL("2"_l)));
   assert_parsed_expression_layouts_to("-x^2", "-x"_l ^ KSuperscriptL("2"_l));
 }
 

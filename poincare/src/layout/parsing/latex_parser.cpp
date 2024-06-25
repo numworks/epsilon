@@ -62,8 +62,8 @@ constexpr static LatexToken k_tokens[] = {
      []() -> Tree* { return KCodePointL<UCodePointMiddleDot>()->clone(); }},
     // Parenthesis
     {parenthesisToken, std::size(parenthesisToken),
-     [](const Tree* t) -> bool { return t->isParenthesisLayout(); },
-     []() -> Tree* { return KParenthesisL(KRackL())->clone(); }},
+     [](const Tree* t) -> bool { return t->isParenthesesLayout(); },
+     []() -> Tree* { return KParenthesesL(KRackL())->clone(); }},
     // Curly braces
     {curlyBracesToken, std::size(curlyBracesToken),
      [](const Tree* t) -> bool { return t->isCurlyBraceLayout(); },

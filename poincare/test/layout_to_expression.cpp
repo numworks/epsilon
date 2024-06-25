@@ -126,13 +126,13 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   assert_parsed_layout_is(l, e);
 
   // log_3(2)
-  l = "log"_l ^ KSubscriptL("3"_l) ^ KParenthesisL("2"_l);
+  l = "log"_l ^ KSubscriptL("3"_l) ^ KParenthesesL("2"_l);
   e = Logarithm::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3));
   assert_parsed_layout_is(l, e);
 
   /* 3
    *  log(2) */
-  l = KPrefixSuperscriptL("3"_l) ^ "log"_l ^ KParenthesisL("2"_l);
+  l = KPrefixSuperscriptL("3"_l) ^ "log"_l ^ KParenthesesL("2"_l);
   e = Logarithm::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3));
   assert_parsed_layout_is(l, e);
 
@@ -176,7 +176,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   assert_parsed_layout_is(l, e);
 
   // 2^det([[3!, 7][4,5])
-  l = "2"_l ^ KSuperscriptL("det"_l ^ KParenthesisL(KRackL(KMatrix2x2L(
+  l = "2"_l ^ KSuperscriptL("det"_l ^ KParenthesesL(KRackL(KMatrix2x2L(
                                           "3!"_l, "7"_l, "4"_l, "5"_l))));
   m = BuildOneChildMatrix(Factorial::Builder(BasedInteger::Builder(3)));
   m.addChildAtIndexInPlace(BasedInteger::Builder(7), 1, 1);

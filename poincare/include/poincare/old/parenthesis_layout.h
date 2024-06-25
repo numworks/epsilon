@@ -33,7 +33,7 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
   }
 
   // LayoutNode
-  Type otype() const override { return Type::ParenthesisLayout; }
+  Type otype() const override { return Type::ParenthesesLayout; }
 
   // PoolObject
 #if POINCARE_TREE_LOG

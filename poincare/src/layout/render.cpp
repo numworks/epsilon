@@ -155,7 +155,7 @@ KDSize Render::Size(const Layout* node) {
                denominatorSize.height();
       break;
     }
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace:
     case LayoutType::Abs:
     case LayoutType::Floor:
@@ -439,7 +439,7 @@ KDPoint Render::PositionOfChild(const Layout* node, int childIndex) {
                                          : 0;
       return KDPoint(x, y);
     }
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace:
     case LayoutType::Abs:
     case LayoutType::Floor:
@@ -555,7 +555,7 @@ KDCoordinate Render::Baseline(const Layout* node) {
     case LayoutType::Fraction:
       return Height(node->child(0)) + Fraction::k_lineMargin +
              Fraction::k_lineHeight;
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace:
     case LayoutType::Abs:
     case LayoutType::Floor:
@@ -1135,7 +1135,7 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                     style.glyphColor);
       return;
     }
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace:
     case LayoutType::Abs:
     case LayoutType::Floor:

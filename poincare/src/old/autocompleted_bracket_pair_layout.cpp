@@ -10,7 +10,7 @@ bool AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
   }
   assert(type && side);
   *type =
-      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesisLayout;
+      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesesLayout;
   *side = (c == '(' || c == UCodePointLeftSystemParenthesis || c == '{')
               ? Side::Left
               : Side::Right;
@@ -21,7 +21,7 @@ OLayout AutocompletedBracketPairLayoutNode::BuildFromBracketType(
     LayoutNode::Type type) {
   assert(
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
-  if (type == LayoutNode::Type::ParenthesisLayout) {
+  if (type == LayoutNode::Type::ParenthesesLayout) {
     return ParenthesisLayout::Builder();
   }
   assert(type == LayoutNode::Type::CurlyBraceLayout);
@@ -67,7 +67,7 @@ static int bracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
 void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
     int *cursorPosition) {
-  PrivateBalanceBrackets(Type::ParenthesisLayout, hLayout, cursorLayout,
+  PrivateBalanceBrackets(Type::ParenthesesLayout, hLayout, cursorLayout,
                          cursorPosition);
   PrivateBalanceBrackets(Type::CurlyBraceLayout, hLayout, cursorLayout,
                          cursorPosition);
@@ -80,11 +80,11 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
 
   /* TODO: OLayout::recursivelyMatched should take a context and the type should
    * be put in it, instead of creating 2 different functions. */
-  assert(type == Type::ParenthesisLayout || type == Type::CurlyBraceLayout);
-  if ((type == Type::ParenthesisLayout &&
+  assert(type == Type::ParenthesesLayout || type == Type::CurlyBraceLayout);
+  if ((type == Type::ParenthesesLayout &&
        hLayout
            .recursivelyMatches([](const OLayout l) {
-             return l.otype() == Type::ParenthesisLayout
+             return l.otype() == Type::ParenthesesLayout
                         ? OMG::Troolean::True
                         : OMG::Troolean::Unknown;
            })

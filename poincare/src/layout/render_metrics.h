@@ -158,7 +158,7 @@ inline KDCoordinate BracketWidth(const Layout* node) {
       return VectorNorm::k_bracketWidth;
     case LayoutType::CurlyBrace:
       return CurlyBrace::k_curlyBraceWidth;
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
       return Parenthesis::k_parenthesisWidth;
     default:
       assert(false);
@@ -176,7 +176,7 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
       return VectorNorm::k_minVerticalMargin;
     case LayoutType::CurlyBrace:
       return CurlyBrace::k_minVerticalMargin;
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
       return Parenthesis::k_minVerticalMargin;
     default:
       assert(false);

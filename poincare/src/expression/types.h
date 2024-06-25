@@ -312,7 +312,7 @@ NODE(Dependency, 2)
 NODE(Piecewise, NARY)
 // Used in dependencies only, shall never be systematic simplified.
 NODE(Set, NARY)
-NODE(Parenthesis, 1)
+NODE(Parentheses, 1)
 NODE(Empty)
 
 // 10 - Undefined expressions

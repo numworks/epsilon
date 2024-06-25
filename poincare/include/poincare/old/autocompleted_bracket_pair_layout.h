@@ -18,7 +18,7 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
   }
 
   static bool IsAutoCompletedBracketPairType(Type type) {
-    return type == LayoutNode::Type::ParenthesisLayout ||
+    return type == LayoutNode::Type::ParenthesesLayout ||
            type == LayoutNode::Type::CurlyBraceLayout;
   }
   static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, Type* type,

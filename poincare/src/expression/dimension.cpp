@@ -203,7 +203,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       }
       hasUnitChild = true;
     }
-    if (!t->isPiecewise() && !t->isParenthesis() && !t->isDependency() &&
+    if (!t->isPiecewise() && !t->isParentheses() && !t->isDependency() &&
         !t->isList() &&
         childDim[child.index].isBoolean() != t->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
@@ -407,7 +407,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       break;
     case Type::Matrix:
       break;
-    case Type::Parenthesis:
+    case Type::Parentheses:
       return true;
     case Type::RandIntNoRep:
       return Integer::Is<uint8_t>(t->child(2));
@@ -509,7 +509,7 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
     case Type::Ref:
     case Type::Rref:
     case Type::Piecewise:
-    case Type::Parenthesis:
+    case Type::Parentheses:
     case Type::ListElement:
     case Type::ListSort:
       return Get(t->child(0), ctx);

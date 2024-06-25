@@ -69,7 +69,7 @@ constexpr auto KArCosH = KUnary<Type::ArCosH>();
 constexpr auto KArSinH = KUnary<Type::ArSinH>();
 constexpr auto KArTanH = KUnary<Type::ArTanH>();
 constexpr auto KPercentSimple = KUnary<Type::PercentSimple>();
-constexpr auto KParenthesis = KUnary<Type::Parenthesis>();
+constexpr auto KParentheses = KUnary<Type::Parentheses>();
 constexpr auto KSign = KUnary<Type::Sign>();
 constexpr auto KFactor = KUnary<Type::Factor>();
 

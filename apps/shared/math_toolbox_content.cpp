@@ -501,19 +501,19 @@ constexpr ToolboxMessage unitChildren[] = {
 
 constexpr ToolboxMessage calculChildren[] = {
     ToolboxMessageMath(
-        KRackL(KDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l))),
+        KRackL(KDiffL("x"_l, "a"_l, "f"_l ^ KParenthesesL("x"_l))),
         I18n::Message::DerivateNumber),
     ToolboxMessageMath(
-        KRackL(KNthDiffL("x"_l, "a"_l, "f"_l ^ KParenthesisL("x"_l), "n"_l)),
+        KRackL(KNthDiffL("x"_l, "a"_l, "f"_l ^ KParenthesesL("x"_l), "n"_l)),
         I18n::Message::HigherOrderDerivateNumber),
     ToolboxMessageMath(
-        KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f"_l ^ KParenthesisL("x"_l))),
+        KRackL(KIntegralL("x"_l, "a"_l, "b"_l, "f"_l ^ KParenthesesL("x"_l))),
         I18n::Message::Integral),
     ToolboxMessageMath(
-        KRackL(KSumL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        KRackL(KSumL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesesL("k"_l))),
         I18n::Message::Sum),
     ToolboxMessageMath(
-        KRackL(KProductL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        KRackL(KProductL("k"_l, "m"_l, "n"_l, "f"_l ^ KParenthesesL("k"_l))),
         I18n::Message::Product)};
 
 constexpr ToolboxMessage complexChildren[] = {
@@ -786,7 +786,7 @@ constexpr ToolboxMessage listsChildren[] = {
     ToolboxMessageMath(KRackL(KCurlyBracesL("1,2,3"_l)),
                        I18n::Message::NewList),
     ToolboxMessageMath(
-        KRackL(KListSequenceL("k"_l, "n"_l, "f"_l ^ KParenthesisL("k"_l))),
+        KRackL(KListSequenceL("k"_l, "n"_l, "f"_l ^ KParenthesesL("k"_l))),
         I18n::Message::ListSequenceDescription),
     ToolboxMessageNode(I18n::Message::StatsApp, listsStatsFork, true),
     ToolboxMessageNode(I18n::Message::Operations, listsOperationsChildren)};
@@ -814,10 +814,10 @@ constexpr ToolboxMessage logicChildren[] = {
                        false, I18n::Message::NandCommandWithSpaces)};
 
 extern constexpr ToolboxMessage logFork[] = {
-    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ KParenthesisL("x"_l),
+    ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ KParenthesesL("x"_l),
                        I18n::Message::BasedLogarithm),
     ToolboxMessageMath(
-        KPrefixSuperscriptL("a"_l) ^ "log"_l ^ KParenthesisL("x"_l),
+        KPrefixSuperscriptL("a"_l) ^ "log"_l ^ KParenthesesL("x"_l),
         I18n::Message::BasedLogarithm)};
 
 constexpr ToolboxMessage menu[] = {

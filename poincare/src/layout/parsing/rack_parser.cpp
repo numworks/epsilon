@@ -682,7 +682,7 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
     CloneNodeOverNode(list, KPoint);
     leftHandSide = list;
   } else if (!list.isUninitialized() && list->numberOfChildren() == 1) {
-    CloneNodeOverNode(list, KParenthesis);
+    CloneNodeOverNode(list, KParentheses);
     leftHandSide = list;
   } else {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -980,7 +980,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
      * by a subscript, it's a sequence call. */
     if (m_nextToken.type() == Token::Type::Subscript ||
         (m_nextToken.type() == Token::Type::Layout &&
-         m_nextToken.firstLayout()->isParenthesisLayout())) {
+         m_nextToken.firstLayout()->isParenthesesLayout())) {
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
@@ -1094,7 +1094,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
 
 Tree* RackParser::tryParseFunctionParameters() {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&
-                             m_nextToken.firstLayout()->isParenthesisLayout();
+                             m_nextToken.firstLayout()->isParenthesesLayout();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
     return nullptr;
@@ -1169,7 +1169,7 @@ Tree* RackParser::parseVector() {
 Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
   // First rack's layout cannot be a comma separated list.
   if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
-      m_nextToken.firstLayout()->isParenthesisLayout()) {
+      m_nextToken.firstLayout()->isParenthesesLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
     RackParser subParser(m_nextToken.firstLayout()->nextNode(),

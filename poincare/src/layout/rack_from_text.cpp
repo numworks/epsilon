@@ -12,7 +12,7 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
                      const Tree* parentheses) {
   CodePoint codePoint = decoder->nextCodePoint();
   assert(parent && parent->isNAry());
-  assert(!parentheses || parentheses->layoutType() == LayoutType::Parenthesis);
+  assert(!parentheses || parentheses->layoutType() == LayoutType::Parentheses);
   while (codePoint != UCodePointNull) {
     Tree* child;
     switch (codePoint) {

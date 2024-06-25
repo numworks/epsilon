@@ -354,7 +354,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
                                   s_context ? s_context->m_listElement : -1);
   }
   switch (node->type()) {
-    case Type::Parenthesis:
+    case Type::Parentheses:
       return ToComplex<T>(node->child(0));
     case Type::ComplexI:
       return std::complex<T>(0, 1);
@@ -1016,7 +1016,7 @@ bool Approximation::ToBoolean(const Tree* node) {
     assert(s_context->m_listElement != -1);
     return ToBoolean<T>(node->child(s_context->m_listElement));
   }
-  if (node->isParenthesis()) {
+  if (node->isParentheses()) {
     return ToBoolean<T>(node->child(0));
   }
   assert(node->isLogicalOperator());

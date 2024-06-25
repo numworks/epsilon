@@ -53,7 +53,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
   bool onlyLeftParenthesisIsInserted =
       onlyOneLayoutIsInserted &&
-      (leftMostLayout.otype() == LayoutNode::Type::ParenthesisLayout &&
+      (leftMostLayout.otype() == LayoutNode::Type::ParenthesesLayout &&
        !static_cast<ParenthesisLayoutNode *>(leftMostLayout.node())
             ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
 
@@ -110,7 +110,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 
   // - Step 2 - Apply the beautification
   Layout insertedLayout = h.childAtIndex(insertedLayoutIndex);
-  if (insertedLayout.otype() == LayoutNode::Type::ParenthesisLayout) {
+  if (insertedLayout.otype() == LayoutNode::Type::ParenthesesLayout) {
     /* - Step 2.1 - Beautify after a parenthesis insertion.
      *    > Beautify identifiers and functions left of the parenthesis.
      *    > Beautifiy d/dx() into derivative function */
@@ -199,7 +199,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   bool followedByParenthesis =
       (rightmostIndexToBeautify < h.numberOfChildren() - 1 &&
        h.childAtIndex(rightmostIndexToBeautify + 1).otype() ==
-           LayoutNode::Type::ParenthesisLayout);
+           LayoutNode::Type::ParenthesesLayout);
 
   // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
@@ -343,7 +343,7 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
     HorizontalLayout h, int indexOfFraction, LayoutCursor *layoutCursor) {
   assert(indexOfFraction >= 0 && indexOfFraction < h.numberOfChildren() - 1 &&
          h.childAtIndex(indexOfFraction + 1).otype() ==
-             LayoutNode::Type::ParenthesisLayout);
+             LayoutNode::Type::ParenthesesLayout);
   Layout childToMatch = h.childAtIndex(indexOfFraction);
   Layout fractionDDXLayout = FractionLayout::Builder(
       HorizontalLayout::Builder(CodePointLayout::Builder('d')),
@@ -412,7 +412,7 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   }
   Layout parenthesis = h.parent();
   if (parenthesis.isUninitialized() ||
-      parenthesis.otype() != LayoutNode::Type::ParenthesisLayout) {
+      parenthesis.otype() != LayoutNode::Type::ParenthesesLayout) {
     return false;
   }
   Layout horizontalParent = parenthesis.parent();
@@ -478,7 +478,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
          h.childAtIndex(endIndex + 1).otype() ==
-             LayoutNode::Type::ParenthesisLayout);
+             LayoutNode::Type::ParenthesesLayout);
   int currentNumberOfChildren = h.numberOfChildren();
   // Create pattern layout
   Layout parameters[k_maxNumberOfParameters];
@@ -542,7 +542,7 @@ bool InputBeautification::CreateParametersList(
     Layout *parameters, HorizontalLayout h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
   Layout parenthesis = h.childAtIndex(parenthesisIndexInParent);
-  assert(parenthesis.otype() == LayoutNode::Type::ParenthesisLayout);
+  assert(parenthesis.otype() == LayoutNode::Type::ParenthesesLayout);
   // Left parenthesis should not be temporary
   assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())
               ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));

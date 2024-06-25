@@ -52,7 +52,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
   bool onlyLeftParenthesisIsInserted =
       onlyOneLayoutIsInserted &&
-      (leftMostLayout->isParenthesisLayout() &&
+      (leftMostLayout->isParenthesesLayout() &&
        !AutocompletedPair::IsTemporary(leftMostLayout, Side::Left));
 
   return BeautificationMethod{
@@ -108,7 +108,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
 
   // - Step 2 - Apply the beautification
   TreeRef insertedLayout = h->child(insertedLayoutIndex);
-  if (insertedLayout->isParenthesisLayout()) {
+  if (insertedLayout->isParenthesesLayout()) {
     /* - Step 2.1 - Beautify after a parenthesis insertion.
      *    > Beautify identifiers and functions left of the parenthesis.
      *    > Beautifiy d/dx() into derivative function */
@@ -192,7 +192,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
          rightmostIndexToBeautify >= 0);
   bool followedByParenthesis =
       (rightmostIndexToBeautify < h->numberOfChildren() - 1 &&
-       h->child(rightmostIndexToBeautify + 1)->isParenthesisLayout());
+       h->child(rightmostIndexToBeautify + 1)->isParenthesesLayout());
 
   // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
@@ -348,7 +348,7 @@ bool InputBeautification::BeautifyPipeKey(Tree* h, int indexOfPipeKey,
 bool InputBeautification::BeautifyFractionIntoDerivative(
     Tree* h, int indexOfFraction, LayoutCursor* layoutCursor) {
   assert(indexOfFraction >= 0 && indexOfFraction < h->numberOfChildren() - 1 &&
-         h->child(indexOfFraction + 1)->isParenthesisLayout());
+         h->child(indexOfFraction + 1)->isParenthesesLayout());
   TreeRef childToMatch = h->child(indexOfFraction);
   const Tree* fractionDDXLayout = KFracL("d"_l, "dx"_l);
   if (!fractionDDXLayout->treeIsIdenticalTo(childToMatch)) {
@@ -408,7 +408,7 @@ bool InputBeautification::BeautifySum(Tree* h, int indexOfComma,
     return false;
   }
   TreeRef parenthesis = h->parent(layoutCursor->rootNode());
-  if (parenthesis.isUninitialized() || !parenthesis->isParenthesisLayout()) {
+  if (parenthesis.isUninitialized() || !parenthesis->isParenthesesLayout()) {
     return false;
   }
   TreeRef horizontalParent = parenthesis->parent(layoutCursor->rootNode());
@@ -475,7 +475,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     int* numberOfLayoutsAddedOrRemoved, Tree* preProcessedParameter,
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
-         h->child(endIndex + 1)->isParenthesisLayout());
+         h->child(endIndex + 1)->isParenthesesLayout());
   int currentNumberOfChildren = h->numberOfChildren();
   // Create pattern layout
   TreeRef parameters[k_maxNumberOfParameters] = {};
@@ -540,7 +540,7 @@ bool InputBeautification::CreateParametersList(
     TreeRef* parameters, Tree* h, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor* layoutCursor) {
   TreeRef parenthesis = h->child(parenthesisIndexInParent);
-  assert(parenthesis->isParenthesisLayout());
+  assert(parenthesis->isParenthesesLayout());
   // Left parenthesis should not be temporary
   assert(!AutocompletedPair::IsTemporary(parenthesis, Side::Left));
 

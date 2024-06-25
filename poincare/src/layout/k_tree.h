@@ -23,7 +23,7 @@ constexpr auto KAbsL = KUnary<Type::AbsLayout>();
 constexpr auto KCeilL = KUnary<Type::CeilLayout>();
 constexpr auto KFloorL = KUnary<Type::FloorLayout>();
 constexpr auto KVectorNormL = KUnary<Type::VectorNormLayout>();
-constexpr auto KParenthesisL = KUnary<Type::ParenthesisLayout, 0>();
+constexpr auto KParenthesesL = KUnary<Type::ParenthesesLayout, 0>();
 constexpr auto KCurlyBracesL = KUnary<Type::CurlyBraceLayout, 0>();
 
 constexpr auto KCondensedSumL = KFixedArity<3, Type::CondensedSumLayout>();

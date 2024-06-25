@@ -389,7 +389,7 @@ QUIZ_CASE(pcj_type_block) {
                                          .rational = false,
                                          .number = false,
                                          .userNamed = false}),
-      std::make_pair(Type::ParenthesisLayout,
+      std::make_pair(Type::ParenthesesLayout,
                      TypeBlockProperties{.nAry = false,
                                          .expression = false,
                                          .layout = true,
@@ -682,8 +682,8 @@ QUIZ_CASE(pcj_tree_ancestors) {
 QUIZ_CASE(pcj_constructor) {
   assert_tree_equals_blocks(
       KRackL("1+"_l,
-             KParenthesisL(KRackL(
-                 "2*"_l, KParenthesisL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
+             KParenthesesL(KRackL(
+                 "2*"_l, KParenthesesL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
              KSuperscriptL("2"_l), "-2"_l),
       {
           TypeBlock(Type::RackLayout),
@@ -696,7 +696,7 @@ QUIZ_CASE(pcj_constructor) {
           ValueBlock('1'),
           TypeBlock(Type::AsciiCodePointLayout),
           ValueBlock('+'),
-          TypeBlock(Type::ParenthesisLayout),
+          TypeBlock(Type::ParenthesesLayout),
           ValueBlock(0),
           TypeBlock(Type::RackLayout),
           ValueBlock(2),
@@ -708,7 +708,7 @@ QUIZ_CASE(pcj_constructor) {
           ValueBlock('2'),
           TypeBlock(Type::AsciiCodePointLayout),
           ValueBlock('*'),
-          TypeBlock(Type::ParenthesisLayout),
+          TypeBlock(Type::ParenthesesLayout),
           ValueBlock(0),
           TypeBlock(Type::RackLayout),
           ValueBlock(2),

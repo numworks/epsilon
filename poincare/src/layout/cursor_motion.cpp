@@ -419,7 +419,7 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
       return childIndex == Fraction::k_denominatorIndex
                  ? DeletionMethod::FractionDenominatorDeletion
                  : DeletionMethod::MoveLeft;
-    case LayoutType::Parenthesis:
+    case LayoutType::Parentheses:
     case LayoutType::CurlyBrace:
       if ((childIndex == k_outsideIndex &&
            AutocompletedPair::IsTemporary(node, Side::Right)) ||

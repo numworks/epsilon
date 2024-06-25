@@ -300,6 +300,24 @@ $(addprefix probability/, \
   student_distribution.cpp \
   uniform_distribution.cpp \
 ) \
+$(addprefix regression/, \
+  affine_regression.cpp \
+  cubic_regression.cpp \
+  exponential_regression.cpp \
+  linear_regression.cpp \
+  logarithmic_regression.cpp \
+  logistic_regression.cpp \
+  median_regression.cpp \
+  power_regression.cpp \
+  proportional_regression.cpp \
+  quadratic_regression.cpp \
+  quartic_regression.cpp \
+  regression.cpp \
+  regression_switch.cpp \
+  series.cpp \
+  transformed_regression.cpp \
+  trigonometric_regression.cpp \
+) \
   print.cpp \
   range.cpp \
 )
@@ -352,8 +370,10 @@ _sources_poincare_test := $(addprefix test/, \
 )
 
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
+  computation_context.cpp \
   expression.cpp \
-  js_tree.cpp \
+  regression.cpp \
+  tree_converter.cpp \
 )
 
 $(call create_module,poincare,1, \

@@ -9,7 +9,7 @@ class Derivation {
  public:
   // Shallow simplify a derivation Tree* inplace.
   static bool ShallowSimplify(Tree* e);
-  EDITION_REF_WRAP(ShallowSimplify)
+  TREE_REF_WRAP(ShallowSimplify)
 
  private:
   /* Push derivand derivation on the pool. If force is true, push a diff tree

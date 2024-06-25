@@ -25,7 +25,7 @@ class Projection {
   static ProjectionContext ContextFromSettings();
   static bool DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
-  EDITION_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
+  TREE_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */

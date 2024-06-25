@@ -113,13 +113,13 @@ class PatternMatching {
                            const Tree* structure) {
     return PrivateMatchReplace(node, pattern, structure, false);
   }
-  EDITION_REF_WRAP_2(MatchReplace, const Tree*, const Tree*);
+  TREE_REF_WRAP_2(MatchReplace, const Tree*, const Tree*);
   // Return true if reference has been replaced
   static bool MatchReplaceSimplify(Tree* node, const Tree* pattern,
                                    const Tree* structure) {
     return PrivateMatchReplace(node, pattern, structure, true);
   }
-  EDITION_REF_WRAP_2(MatchReplaceSimplify, const Tree*, const Tree*);
+  TREE_REF_WRAP_2(MatchReplaceSimplify, const Tree*, const Tree*);
 
  private:
   static bool PrivateMatchReplace(Tree* node, const Tree* pattern,

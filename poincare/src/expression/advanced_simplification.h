@@ -21,14 +21,14 @@ namespace Poincare::Internal {
 class AdvancedSimplification {
  public:
   static bool AdvancedReduce(Tree* u);
-  EDITION_REF_WRAP(AdvancedReduce);
+  TREE_REF_WRAP(AdvancedReduce);
 
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
-  EDITION_REF_WRAP(DeepContract);
+  TREE_REF_WRAP(DeepContract);
   // Top-Bottom deep expand
   static bool DeepExpand(Tree* e);
-  EDITION_REF_WRAP(DeepExpand);
+  TREE_REF_WRAP(DeepExpand);
 
  private:
   // Ordered list of hashes encountered during advanced reduction.

@@ -20,7 +20,7 @@ class Beautification {
   static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
   static bool DeepBeautify(Tree* node,
                            ProjectionContext projectionContext = {});
-  EDITION_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
+  TREE_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   /* Create a Tree to represent a complex value according to the format, for
    * instance 0+1*i => <Constant i> in Cartesian mode. */

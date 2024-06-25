@@ -17,12 +17,12 @@ class Simplification {
  public:
   static bool SimplifyWithAdaptiveStrategy(
       Tree* node, ProjectionContext* projectionContext);
-  EDITION_REF_WRAP_1(SimplifyWithAdaptiveStrategy, ProjectionContext*);
+  TREE_REF_WRAP_1(SimplifyWithAdaptiveStrategy, ProjectionContext*);
 
   static bool ShallowSystematicReduce(Tree* u);
-  EDITION_REF_WRAP(ShallowSystematicReduce);
+  TREE_REF_WRAP(ShallowSystematicReduce);
   static bool DeepSystematicReduce(Tree* u);
-  EDITION_REF_WRAP(DeepSystematicReduce);
+  TREE_REF_WRAP(DeepSystematicReduce);
 
   // Simplification steps
   static bool PrepareForProjection(Tree* e,

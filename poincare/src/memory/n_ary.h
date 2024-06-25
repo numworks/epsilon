@@ -32,11 +32,11 @@ class NAry {
       Tree* nary, Tree* child,
       Comparison::Order order = Comparison::Order::System);
   static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
-  EDITION_REF_WRAP(Flatten);
-  EDITION_REF_WRAP(SquashIfPossible);
-  EDITION_REF_WRAP(SquashIfEmpty);
-  EDITION_REF_WRAP(SquashIfUnary);
-  EDITION_REF_WRAP(Sanitize);
+  TREE_REF_WRAP(Flatten);
+  TREE_REF_WRAP(SquashIfPossible);
+  TREE_REF_WRAP(SquashIfEmpty);
+  TREE_REF_WRAP(SquashIfUnary);
+  TREE_REF_WRAP(Sanitize);
 
  private:
   static constexpr size_t k_maxNumberOfChildren = 255;

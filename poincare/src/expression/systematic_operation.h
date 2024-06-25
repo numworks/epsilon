@@ -10,13 +10,13 @@ class SystematicOperation {
 
  public:
   static bool SimplifyMultiplication(Tree* u);
-  EDITION_REF_WRAP(SimplifyMultiplication);
+  TREE_REF_WRAP(SimplifyMultiplication);
 
   static bool SimplifyAddition(Tree* u);
-  EDITION_REF_WRAP(SimplifyAddition);
+  TREE_REF_WRAP(SimplifyAddition);
 
   static bool SimplifyPower(Tree* u);
-  EDITION_REF_WRAP(SimplifyPower);
+  TREE_REF_WRAP(SimplifyPower);
 
  private:
   /* These private methods should never be called on TreeRefs.

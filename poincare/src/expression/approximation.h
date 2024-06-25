@@ -111,7 +111,7 @@ class Approximation final {
 
   // Replace a Tree with the Tree of its complex approximation
   static bool ApproximateToComplexTree(Tree* tree);
-  EDITION_REF_WRAP(ApproximateToComplexTree);
+  TREE_REF_WRAP(ApproximateToComplexTree);
 
   /* Helpers */
 
@@ -130,8 +130,8 @@ class Approximation final {
   // Approximate every scalar subtree that can be approximated.
   static bool ApproximateAndReplaceEveryScalar(
       Tree* tree, const ProjectionContext* ctx = nullptr);
-  EDITION_REF_WRAP_1D(ApproximateAndReplaceEveryScalar,
-                      const ProjectionContext*, nullptr);
+  TREE_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, const ProjectionContext*,
+                   nullptr);
 
   /* Returns -1 if every condition is false, it assumes there is no other free
    * variable than VarX */

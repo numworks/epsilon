@@ -107,27 +107,27 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
 /* Macros to define a method working with references from a method on tree */
 
 /* No argument */
-#define EDITION_REF_WRAP(F) \
+#define TREE_REF_WRAP(F) \
   static bool F(TreeRef& r) { return ApplyPreservingReference(F, r); }
 
 /* One argument */
-#define EDITION_REF_WRAP_1(F, T) \
+#define TREE_REF_WRAP_1(F, T) \
   static bool F(TreeRef& r, T a1) { return ApplyPreservingReference(F, r, a1); }
 
 /* One argument with default value */
-#define EDITION_REF_WRAP_1D(F, T, D)           \
+#define TREE_REF_WRAP_1D(F, T, D)              \
   static bool F(TreeRef& r, T a1 = D) {        \
     return ApplyPreservingReference(F, r, a1); \
   }
 
 /* Two arguments */
-#define EDITION_REF_WRAP_2(F, T1, T2)              \
+#define TREE_REF_WRAP_2(F, T1, T2)                 \
   static bool F(TreeRef& r, T1 u1, T2 u2) {        \
     return ApplyPreservingReference(F, r, u1, u2); \
   }
 
 /* Two arguments with default value */
-#define EDITION_REF_WRAP_2D(F, T1, D1, T2, D2)        \
+#define TREE_REF_WRAP_2D(F, T1, D1, T2, D2)           \
   static bool F(TreeRef& r, T1 u1 = D1, T2 u2 = D2) { \
     return ApplyPreservingReference(F, r, u1, u2);    \
   }

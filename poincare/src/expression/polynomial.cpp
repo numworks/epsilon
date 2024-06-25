@@ -438,7 +438,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   }
   PatternMatching::Context ctx = PatternMatching::Context({.KA = variable});
   if (PatternMatching::Match(KPow(KA, KB), expression, &ctx)) {
-    const Tree* exponent = ctx.getNode(KB);
+    const Tree* exponent = ctx.getTree(KB);
     if (Integer::Is<uint8_t>(exponent)) {
       uint8_t exp = Integer::Handler(exponent).to<uint8_t>();
       assert(exp > 1);

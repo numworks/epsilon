@@ -26,10 +26,10 @@ int Metric::GetMetric(const Tree* u) {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
       if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), u, &ctx)) {
-        if (!ctx.getNode(KA)->isHalf()) {
-          result += GetMetric(ctx.getNode(KA));
+        if (!ctx.getTree(KA)->isHalf()) {
+          result += GetMetric(ctx.getTree(KA));
         }
-        return result + GetMetric(ctx.getNode(KB));
+        return result + GetMetric(ctx.getTree(KB));
       }
       break;
     }

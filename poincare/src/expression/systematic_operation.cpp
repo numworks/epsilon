@@ -441,7 +441,7 @@ bool SystematicOperation::SimplifyExp(Tree* u) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
-      (ctx.getNode(KA)->isInteger() || ctx.getNode(KB)->isZero())) {
+      (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero())) {
     /* To ensure there is only one way of representing x^n. Also handle 0^y with
      * Power logic. */
     // exp(n*ln(x)) -> x^n with n an integer or x null.

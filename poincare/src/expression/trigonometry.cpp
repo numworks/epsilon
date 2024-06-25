@@ -240,7 +240,7 @@ static bool simplifyATrigOfTrig(Tree* u) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
-    type = ctx.getNode(KB)->isOne() ? Type::Sin : Type::Cos;
+    type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
   } else if (PatternMatching::Match(
                  KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), u,
                  &ctx)) {
@@ -250,13 +250,13 @@ static bool simplifyATrigOfTrig(Tree* u) {
     return false;
   }
   // x = π*y
-  const Tree* y = getPiFactor(ctx.getNode(KA));
+  const Tree* y = getPiFactor(ctx.getTree(KA));
   if (!y) {
     return false;
   }
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
   bool swapATrig = type != Type::Tan &&
-                   (!ctx.getNode(KB)->treeIsIdenticalTo(ctx.getNode(KC)));
+                   (!ctx.getTree(KB)->treeIsIdenticalTo(ctx.getTree(KC)));
   /* For acos ∈ [0,π]:
    * Compute k = ⌊y⌋
    * if k is even, acos(cos(x)) = π*(y-k)

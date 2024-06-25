@@ -208,9 +208,9 @@ bool Logarithm::ContractLn(Tree* e) {
   PatternMatching::Context ctx;
   // A*ln(B) = ln(B^A) + i*(A*arg(B) - arg(B^A)) if A is an integer.
   if (PatternMatching::Match(KMult(KA, KLn(KB)), e, &ctx) &&
-      ctx.getNode(KA)->isInteger()) {
-    const Tree* a = ctx.getNode(KB);
-    const Tree* b = ctx.getNode(KA);
+      ctx.getTree(KA)->isInteger()) {
+    const Tree* a = ctx.getTree(KB);
+    const Tree* b = ctx.getTree(KA);
     TreeRef c = PushProductCorrection(a, b);
     ctx.setNode(KC, c, 1, false);
     e->moveTreeOverTree(
@@ -221,8 +221,8 @@ bool Logarithm::ContractLn(Tree* e) {
   // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
   if (PatternMatching::Match(KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s), e,
                              &ctx)) {
-    const Tree* a = ctx.getNode(KB);
-    const Tree* b = ctx.getNode(KD);
+    const Tree* a = ctx.getTree(KB);
+    const Tree* b = ctx.getTree(KD);
     TreeRef c = PushAdditionCorrection(a, b);
     ctx.setNode(KF, c, 1, false);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -242,7 +242,7 @@ bool Logarithm::ExpandLn(Tree* e) {
   // ln(A*B?) = ln(A) + ln(B) - i*(arg(A) + arg(B) - arg(AB))
   if (PatternMatching::Match(KLn(KMult(KA, KB_p)), e, &ctx)) {
     // Since KB_p can match multiple trees, we need them as a single tree.
-    const Tree* a = ctx.getNode(KA);
+    const Tree* a = ctx.getTree(KA);
     TreeRef b = PatternMatching::CreateSimplify(KMult(KB_p), ctx);
     TreeRef c = PushAdditionCorrection(a, b);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -253,8 +253,8 @@ bool Logarithm::ExpandLn(Tree* e) {
   }
   // ln(A^B) = B*ln(A) - i*( B*arg(A) - arg(A^B))
   if (PatternMatching::Match(KLn(KPow(KA, KB)), e, &ctx)) {
-    const Tree* a = ctx.getNode(KA);
-    const Tree* b = ctx.getNode(KB);
+    const Tree* a = ctx.getTree(KA);
+    const Tree* b = ctx.getTree(KB);
     TreeRef c = PushProductCorrection(a, b);
     ctx.setNode(KC, c, 1, false);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(

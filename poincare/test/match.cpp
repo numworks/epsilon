@@ -44,10 +44,10 @@ QUIZ_CASE(pcj_match) {
   const Tree* t = KAdd(2_e, 1_e);
   PatternMatching::Context ctx;
   quiz_assert(PatternMatching::Match(KA, t, &ctx));
-  assert_trees_are_equal(ctx.getNode(Placeholder::A), t);
+  assert_trees_are_equal(ctx.getTree(Placeholder::A), t);
   PatternMatching::Context ctx2;
   quiz_assert(PatternMatching::Match(KAdd(KA, 1_e), t, &ctx2));
-  assert_trees_are_equal(ctx2.getNode(Placeholder::A), 2_e);
+  assert_trees_are_equal(ctx2.getTree(Placeholder::A), 2_e);
   PatternMatching::Context ctx3;
   quiz_assert(!PatternMatching::Match(KAdd(KA, 2_e), t, &ctx3));
   quiz_assert(ctx3.isUninitialized());
@@ -58,8 +58,8 @@ QUIZ_CASE(pcj_match) {
   const Tree* p = KAdd(KA, KA, KB);
   PatternMatching::Context ctx4;
   quiz_assert(PatternMatching::Match(p, t2, &ctx4));
-  assert_trees_are_equal(ctx4.getNode(Placeholder::A), 1_e);
-  assert_trees_are_equal(ctx4.getNode(Placeholder::B), 2_e);
+  assert_trees_are_equal(ctx4.getTree(Placeholder::A), 1_e);
+  assert_trees_are_equal(ctx4.getTree(Placeholder::B), 2_e);
 
   PatternMatching::Context ctx5;
   const Tree* n5 = KExp(KMult(KFact(1_e)));
@@ -80,18 +80,18 @@ QUIZ_CASE(pcj_match) {
   const Tree* n9 = KAdd(KMult("z"_e, KIm("x"_e)), "y"_e);
   quiz_assert(PatternMatching::Match(KAdd(KMult("z"_e, KIm(KA), KB_s), KC_s),
                                      n9, &ctx9));
-  assert_trees_are_equal(ctx9.getNode(Placeholder::A), "x"_e);
+  assert_trees_are_equal(ctx9.getTree(Placeholder::A), "x"_e);
   quiz_assert(ctx9.getNumberOfTrees(Placeholder::B) == 0);
   quiz_assert(ctx9.getNumberOfTrees(Placeholder::C) == 1);
-  assert_trees_are_equal(ctx9.getNode(Placeholder::C), "y"_e);
+  assert_trees_are_equal(ctx9.getTree(Placeholder::C), "y"_e);
 
   PatternMatching::Context ctx10;
   const Tree* n10 = KAdd(KMult("z"_e, KIm("x"_e)), "y"_e);
   quiz_assert(
       PatternMatching::Match(KAdd(KMult("z"_e, KIm(KA)), KB_s), n10, &ctx10));
-  assert_trees_are_equal(ctx10.getNode(Placeholder::A), "x"_e);
+  assert_trees_are_equal(ctx10.getTree(Placeholder::A), "x"_e);
   quiz_assert(ctx10.getNumberOfTrees(Placeholder::B) == 1);
-  assert_trees_are_equal(ctx10.getNode(Placeholder::B), "y"_e);
+  assert_trees_are_equal(ctx10.getTree(Placeholder::B), "y"_e);
 
   PatternMatching::Context ctx11;
   const Tree* n11 =
@@ -106,7 +106,7 @@ QUIZ_CASE(pcj_match) {
   PatternMatching::Context ctx13;
   quiz_assert(PatternMatching::Match(KMult(KA_s, KB, KC_s), "x"_e, &ctx13));
   quiz_assert(ctx13.getNumberOfTrees(Placeholder::A) == 0);
-  assert_trees_are_equal(ctx13.getNode(Placeholder::B), "x"_e);
+  assert_trees_are_equal(ctx13.getTree(Placeholder::B), "x"_e);
   quiz_assert(ctx13.getNumberOfTrees(Placeholder::C) == 0);
 
   PatternMatching::Context ctx14;
@@ -126,9 +126,9 @@ QUIZ_CASE(pcj_match) {
       PatternMatching::Match(KAdd(KA_s, KMult(KB_s, "x"_e), KC_s, KMult(KB_s)),
                              KAdd("x"_e, KMult(2_e, "x"_e), 2_e), &ctx16));
   quiz_assert(ctx16.getNumberOfTrees(Placeholder::A) == 1);
-  assert_trees_are_equal(ctx16.getNode(Placeholder::A), "x"_e);
+  assert_trees_are_equal(ctx16.getTree(Placeholder::A), "x"_e);
   quiz_assert(ctx16.getNumberOfTrees(Placeholder::B) == 1);
-  assert_trees_are_equal(ctx16.getNode(Placeholder::B), 2_e);
+  assert_trees_are_equal(ctx16.getTree(Placeholder::B), 2_e);
   quiz_assert(ctx16.getNumberOfTrees(Placeholder::C) == 0);
 
   PatternMatching::Context ctx17;
@@ -138,7 +138,7 @@ QUIZ_CASE(pcj_match) {
   quiz_assert(ctx17.getNumberOfTrees(Placeholder::A) == 0);
   quiz_assert(ctx17.getNumberOfTrees(Placeholder::B) == 0);
   quiz_assert(ctx17.getNumberOfTrees(Placeholder::C) == 1);
-  assert_trees_are_equal(ctx17.getNode(Placeholder::C), KMult(2_e, "x"_e));
+  assert_trees_are_equal(ctx17.getTree(Placeholder::C), KMult(2_e, "x"_e));
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {

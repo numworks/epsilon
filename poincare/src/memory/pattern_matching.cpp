@@ -165,8 +165,8 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
     if (child->isPlaceholder()) {
       Placeholder::Tag tag = Placeholder::NodeToTag(child);
       Placeholder::Filter filter = Placeholder::NodeToFilter(child);
-      if (context->getNode(tag)) {
-        if (emptiedPlaceholders.getNode(tag)) {
+      if (context->getTree(tag)) {
+        if (emptiedPlaceholders.getTree(tag)) {
           /* If an emptied placeholder is met more than once, unmark it so we
            * can't set it to one child later. */
           emptiedPlaceholders.setNode(tag, nullptr, 0, true);
@@ -202,7 +202,7 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
      *       be tried. */
     Placeholder::Tag emptiedPlaceholderTag = Placeholder::Tag::NumberOfTags;
     for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-      if (emptiedPlaceholders.getNode(i)) {
+      if (emptiedPlaceholders.getTree(i)) {
         emptiedPlaceholderTag = static_cast<Placeholder::Tag>(i);
       }
     }
@@ -247,7 +247,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
 
     if (pattern->isPlaceholder()) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
-      const Tree* tagNode = context->getNode(tag);
+      const Tree* tagNode = context->getTree(tag);
       if (tagNode) {
         // AnyTrees status should be preserved if the Placeholder is reused.
         assert(context->isAnyTree(tag) == (Placeholder::NodeToFilter(pattern) !=
@@ -389,7 +389,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    const Tree* nodeToInsert = context.getNode(tag);
+    const Tree* nodeToInsert = context.getTree(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
     // nodeToInsert must be initialized even with 0 treesToInsert
     assert(nodeToInsert && treesToInsert >= 0);
@@ -486,7 +486,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
   int initializedPlaceHolders = 0;
   TreeRef placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    if (!ctx.getNode(i)) {
+    if (!ctx.getTree(i)) {
       continue;
     }
     for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
@@ -495,14 +495,14 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
     }
     // Keep track of placeholder matches before detaching them
     int numberOfTrees = ctx.getNumberOfTrees(i);
-    if (!ctx.getNode(i)) {
+    if (!ctx.getTree(i)) {
       placeholders[i] = TreeRef();
     } else if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
       placeholders[i] = TreeRef(SharedTreeStack->lastBlock());
     } else {
       // the context is known to point on non const parts of the source
-      placeholders[i] = TreeRef(const_cast<Tree*>(ctx.getNode(i)));
+      placeholders[i] = TreeRef(const_cast<Tree*>(ctx.getTree(i)));
     }
     // Invalidate context before anything is detached.
     ctx.setNode(i, nullptr, numberOfTrees, ctx.isAnyTree(i));

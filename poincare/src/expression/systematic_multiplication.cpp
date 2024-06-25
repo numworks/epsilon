@@ -99,7 +99,7 @@ static bool SimplifyMultiplicationWithInf(Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KMult(KA, KInf), e, &ctx) ||
       PatternMatching::Match(KMult(KInf, KA), e, &ctx)) {
-    const Tree* x = ctx.getNode(KA);
+    const Tree* x = ctx.getTree(KA);
     assert(!x->isZero() && !x->isOne());
     if (x->isMinusOne() || x->isSign()) {
       return false;

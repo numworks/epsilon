@@ -37,10 +37,10 @@ class PatternMatching {
       }
     }
     template <Placeholder::Tag T>
-    const Tree* getNode(KPlaceholder<T>) const {
-      return getNode(T);
+    const Tree* getTree(KPlaceholder<T>) const {
+      return getTree(T);
     }
-    const Tree* getNode(uint8_t tag) const { return m_array[tag]; }
+    const Tree* getTree(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     bool isAnyTree(uint8_t tag) const {
 #if ASSERTIONS

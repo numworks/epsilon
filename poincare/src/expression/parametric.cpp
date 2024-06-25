@@ -226,7 +226,7 @@ bool Parametric::ContractSum(Tree* expr) {
           KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))), expr,
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getNode(KC), ctx.getNode(KF));
+        ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -248,7 +248,7 @@ bool Parametric::ContractSum(Tree* expr) {
           KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))), expr,
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getNode(KB), ctx.getNode(KF));
+        ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -279,7 +279,7 @@ bool Parametric::ContractProduct(Tree* expr) {
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           expr, &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getNode(KC), ctx.getNode(KF));
+        ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -301,7 +301,7 @@ bool Parametric::ContractProduct(Tree* expr) {
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
           expr, &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getNode(KB), ctx.getNode(KF));
+        ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {

@@ -1,4 +1,5 @@
-$(OUTPUT_DIRECTORY)/safe_stack/%: SFLAGS += -fstack-protector-strong
+$(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
+$(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -fstack-protector-strong
 
 $(call create_goal,bootloader, \
   ion.bootloader \
@@ -7,17 +8,31 @@ $(call create_goal,bootloader, \
   libaxx \
   libsodium \
   omg.minimal.decompress \
-,safe_stack, \
+,bootloader, \
 )
 
+ifeq ($(DEBUG),0)
 $(call create_goal,kernel, \
   ion.kernel \
   kandinsky.minimal \
   liba.armv7m \
   libaxx \
   omg.minimal \
-,safe_stack, \
+,kernel, \
 )
+else
+$(call create_goal,kernel, \
+  ion.kernel.kernelassert \
+  kandinsky \
+  liba.armv7m \
+  libaxx \
+  omg.kernelassert \
+,kernel, \
+)
+
+# Kernel without optimization is too large to fit in its 64k section.
+$(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -Os
+endif
 
 $(call create_goal,userland, \
   apps \
@@ -73,5 +88,5 @@ $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
 )
 endef
 
-$(call rule_for_composite_dfu,epsilon,$(addprefix safe_stack/,bootloader.elf kernel.A.elf kernel.B.elf) userland.A%elf userland.B%elf)
-$(call rule_for_composite_dfu,test,$(addprefix safe_stack/,bootloader.elf kernel.A.elf kernel.B.elf) userland_test.A%elf userland_test.B%elf)
+$(call rule_for_composite_dfu,epsilon,bootloader/bootloader.elf kernel/kernel.A.elf kernel/kernel.B.elf userland.A%elf userland.B%elf)
+$(call rule_for_composite_dfu,test,bootloader/bootloader.elf kernel/kernel.A.elf kernel/kernel.B.elf userland_test.A%elf userland_test.B%elf)

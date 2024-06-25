@@ -7,7 +7,7 @@ OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= n0110
 
-ALL_SPECIAL_SUBDIRECTORIES := safe_stack
+ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel
 
 include $(PATH_haussmann)/Makefile
 

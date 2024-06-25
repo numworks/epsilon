@@ -363,9 +363,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
     case Type::EulerE:
       return M_E;
     case Type::SingleFloat:
-      return FloatNode::FloatTo(node);
+      return FloatHelper::FloatTo(node);
     case Type::DoubleFloat:
-      return FloatNode::DoubleTo(node);
+      return FloatHelper::DoubleTo(node);
     case Type::Add: {
       std::complex<T> result = 0;
       for (const Tree* child : node->children()) {

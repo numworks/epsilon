@@ -574,7 +574,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         expression->nextNode()->removeTree();
       } else {
         Poincare::PrintFloat::ConvertFloatToText(
-            FloatNode::To(expression), buffer, std::size(buffer),
+            FloatHelper::To(expression), buffer, std::size(buffer),
             Poincare::PrintFloat::k_maxFloatGlyphLength,
             m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
             : type == Type::SingleFloat

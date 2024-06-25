@@ -31,23 +31,23 @@ size_t TreeStack::numberOfTrees() const {
 
 Tree* TreeStack::pushSingleFloat(float value) {
   Tree* result = pushBlock(Type::SingleFloat);
-  pushBlock(FloatNode::SubFloatAtIndex(value, 0));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 1));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 2));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 3));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 2));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 3));
   return result;
 }
 
 Tree* TreeStack::pushDoubleFloat(double value) {
   Tree* result = pushBlock(Type::DoubleFloat);
-  pushBlock(FloatNode::SubFloatAtIndex(value, 0));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 1));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 2));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 3));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 4));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 5));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 6));
-  pushBlock(FloatNode::SubFloatAtIndex(value, 7));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 2));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 3));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 4));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 5));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 6));
+  pushBlock(FloatHelper::SubFloatAtIndex(value, 7));
   return result;
 }
 

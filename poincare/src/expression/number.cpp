@@ -41,7 +41,7 @@ Sign Number::Sign(const Tree* node) {
       return Sign::StrictlyPositive();
     case Type::DoubleFloat:
     case Type::SingleFloat: {
-      double value = FloatNode::To(node);
+      double value = FloatHelper::To(node);
       // Floats are not considered integer since they may have been rounded
       return Internal::Sign(value == 0, value > 0, value < 0, true);
     }
@@ -56,7 +56,7 @@ bool Number::SetSign(Tree* number, NonStrictSign sign) {
   if (number->isRational()) {
     return Rational::SetSign(number, NonStrictSign::Positive);
   } else if (number->isFloat()) {
-    return FloatNode::SetSign(number, NonStrictSign::Positive);
+    return FloatHelper::SetSign(number, NonStrictSign::Positive);
   }
   assert(Number::Sign(number).isZero() ||
          Number::Sign(number).isPositive() ==

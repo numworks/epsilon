@@ -11,7 +11,7 @@
 
 namespace Poincare::Internal {
 
-class FloatNode {
+class FloatHelper {
  public:
   constexpr static uint8_t SubFloatAtIndex(float value, int index) {
     return OMG::BitHelper::getByteAtIndex(std::bit_cast<uint32_t>(value),

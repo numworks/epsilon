@@ -4,7 +4,7 @@
 
 namespace Poincare::Internal {
 
-bool FloatNode::SetSign(Tree* tree, NonStrictSign sign) {
+bool FloatHelper::SetSign(Tree* tree, NonStrictSign sign) {
   double value = To(tree);
   if (value == 0 || (value > 0.0) == (sign == NonStrictSign::Positive)) {
     return false;

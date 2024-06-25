@@ -120,8 +120,6 @@ class Tree : public TypeBlock {
   Tree* nextNode() {
     return const_cast<Tree*>(const_cast<const Tree*>(this)->nextNode());
   }
-  const Tree* firstChild() const { return nextNode(); }
-  Tree* firstChild() { return nextNode(); }
   const Tree* nextTree() const {
     const Tree* result = this;
     int nbOfChildrenToScan = 1;

@@ -263,32 +263,31 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     }
     case Type::PowReal:
     case Type::Pow:
-      return Power(Get(t->firstChild()), Get(t->child(1)),
-                   t->child(1)->isTwo());
+      return Power(Get(t->child(0)), Get(t->child(1)), t->child(1)->isTwo());
     case Type::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::Positive(), Sign::Zero());
     case Type::Abs:
-      return Abs(Get(t->firstChild()));
+      return Abs(Get(t->child(0)));
     case Type::Exp:
-      return Exponential(Get(t->firstChild()));
+      return Exponential(Get(t->child(0)));
     case Type::Ln:
-      return Ln(Get(t->firstChild()));
+      return Ln(Get(t->child(0)));
     case Type::Re:
-      return ComplexSign(Get(t->firstChild()).realSign(), Sign::Zero());
+      return ComplexSign(Get(t->child(0)).realSign(), Sign::Zero());
     case Type::Im:
-      return ComplexSign(Get(t->firstChild()).imagSign(), Sign::Zero());
+      return ComplexSign(Get(t->child(0)).imagSign(), Sign::Zero());
     case Type::Var:
       return Variables::GetComplexSign(t);
     case Type::ComplexI:
       return ComplexSign(Sign::Zero(), Sign::StrictlyPositiveInteger());
     case Type::Trig:
       assert(t->child(1)->isOne() || t->child(1)->isZero());
-      return Trig(Get(t->firstChild()), t->child(1)->isOne());
+      return Trig(Get(t->child(0)), t->child(1)->isOne());
     case Type::ATanRad:
-      return ArcTangent(Get(t->firstChild()));
+      return ArcTangent(Get(t->child(0)));
     case Type::Arg:
-      return ComplexArgument(Get(t->firstChild()));
+      return ComplexArgument(Get(t->child(0)));
     case Type::Dependency:
       return Get(Dependency::Main(t));
     case Type::Inf:
@@ -296,25 +295,25 @@ ComplexSign ComplexSign::Get(const Tree* t) {
 #if 0
     // Activate these cases if necessary
     case Type::ACos:
-      return ArcCosine(Get(t->firstChild()));
+      return ArcCosine(Get(t->child(0)));
     case Type::ASin:
-      return ArcSine(Get(t->firstChild()));
+      return ArcSine(Get(t->child(0)));
     case Type::ATan:
-      return ArcTangent(Get(t->firstChild()));
+      return ArcTangent(Get(t->child(0)));
     case Type::Fact:
-      assert(Get(t->firstChild()) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
+      assert(Get(t->child(0)) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
       return RealStrictlyPositiveInteger();
     case Type::Ceil:
     case Type::Floor:
     case Type::Frac:
     case Type::Round:
-      return DecimalFunction(Get(t->firstChild()), t->type());
+      return DecimalFunction(Get(t->child(0)), t->type());
     case Type::PercentSimple:
-      return RelaxIntegerProperty(Get(t->firstChild()));
+      return RelaxIntegerProperty(Get(t->child(0)));
     case Type::MixedFraction:
-      return Add(Get(t->firstChild()), Get(t->child(1)));
+      return Add(Get(t->child(0)), Get(t->child(1)));
     case Type::Parenthesis:
-      return Get(t->firstChild());
+      return Get(t->child(0));
 #endif
     default:
       return Unknown();

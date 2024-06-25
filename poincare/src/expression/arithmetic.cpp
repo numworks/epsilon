@@ -34,7 +34,7 @@ OMG::Troolean IsPositiveInteger(const Tree* tree) {
 bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuo = expr->isQuo();
-  const Tree* num = expr->firstChild();
+  const Tree* num = expr->child(0);
   const Tree* denom = num->nextTree();
   OMG::Troolean childrenAreIntegers =
       OMG::TrinaryAnd(IsInteger(num), IsInteger(denom));
@@ -57,7 +57,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
 }
 
 bool Arithmetic::SimplifyFloor(Tree* expr) {
-  Tree* child = expr->firstChild();
+  Tree* child = expr->child(0);
   if (!child->isRational()) {
     return false;
   }
@@ -69,7 +69,7 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
 }
 
 bool Arithmetic::SimplifyRound(Tree* expr) {
-  const Tree* child = expr->firstChild();
+  const Tree* child = expr->child(0);
   OMG::Troolean parameterIsInteger = IsInteger(child->nextTree());
   if (parameterIsInteger == OMG::Troolean::False) {
     expr->cloneTreeOverTree(KBadType);
@@ -86,7 +86,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
 }
 
 bool Arithmetic::SimplifyFactor(Tree* expr) {
-  const Tree* child = expr->firstChild();
+  const Tree* child = expr->child(0);
   if (!child->isRational()) {
     expr->cloneTreeOverTree(KBadType);
     return true;
@@ -96,7 +96,7 @@ bool Arithmetic::SimplifyFactor(Tree* expr) {
 
 bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
-  Tree* first = expr->firstChild();
+  Tree* first = expr->child(0);
   Tree* next = first;
   while (expr->numberOfChildren() > 1) {
     OMG::Troolean nextIsInteger = IsInteger(next);
@@ -438,7 +438,7 @@ bool Arithmetic::BeautifyFactor(Tree* expr) {
                                     KOpposite(KFactor(KA)))) {
     return true;
   }
-  Tree* child = expr->firstChild();
+  Tree* child = expr->child(0);
   assert(child->isInteger() && Integer::Sign(child) == NonStrictSign::Positive);
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   PushPrimeFactorization(Integer::Handler(child));

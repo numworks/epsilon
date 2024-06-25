@@ -123,7 +123,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     TreeRef a(SharedTreeStack->pushMult(0));
     const int nbChildren = function->numberOfChildren();
     int nbChildrenRemoved = 0;
-    Tree* child = function->firstChild();
+    Tree* child = function->child(0);
     for (int i = 0; i < nbChildren; i++) {
       if (!Variables::HasVariable(child, k_localVariableId)) {
         Variables::LeaveScope(child);
@@ -164,7 +164,7 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     // Move the node Pow before the Prod
     expr->moveNodeBeforeNode(function);
     // Shallow reduce the Prod
-    Simplification::ShallowSystematicReduce(expr->firstChild());
+    Simplification::ShallowSystematicReduce(expr->child(0));
     // Shallow reduce Prod^a
     Simplification::ShallowSystematicReduce(expr);
     return true;

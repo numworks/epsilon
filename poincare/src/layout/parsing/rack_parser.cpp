@@ -1277,7 +1277,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   }
   // Turn log into logarithm
   leftHandSide = PatternMatching::Create(KLogarithm(KA, KB),
-                                         {.KA = log->firstChild(), .KB = base});
+                                         {.KA = log->child(0), .KB = base});
   base->removeTree();
   log->removeTree();
 }

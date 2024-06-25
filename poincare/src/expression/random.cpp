@@ -24,7 +24,7 @@ uint8_t Random::SeedRandomNodes(Tree* tree, uint8_t maxSeed) {
   int descendants = 1;
   while (descendants > 0) {
     descendants--;
-    if (u->isRandomNode()) {
+    if (u->isRandomized()) {
       if (GetSeed(u) == 0) {
         // RandIntNoRep needs to reserve seed for each of its elements.
         /* RandIntNoRep dimension may have not been checked at this point and we

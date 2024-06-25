@@ -5,7 +5,7 @@
 namespace Poincare::Internal {
 
 bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
-  return e->isRandomNode() || e->isPiecewise() ||
+  return e->isRandomized() || e->isPiecewise() ||
          (e->isOfType(
               {Type::Floor, Type::Round, Type::Ceil, Type::Frac, Type::Abs}) &&
           Variables::HasVariables(e));
@@ -15,7 +15,7 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
                                                        const char* symbol,
                                                        float x1, float x2) {
   // TODO_PCJ: symbol is ignored for now
-  if (e->isRandomNode()) {
+  if (e->isRandomized()) {
     return true;
   }
   bool isDiscontinuous = false;

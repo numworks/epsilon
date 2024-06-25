@@ -101,7 +101,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     Simplification::ShallowSystematicReduce(result);
     return result;
   }
-  if (derivand->isRandomNode()) {
+  if (derivand->isRandomized()) {
     // Do not handle random nodes in derivation
     return KUndefUnhandled->clone();
   }

@@ -118,7 +118,7 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
     stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
   }
-  if (isRandomNode()) {
+  if (isRandomized()) {
     stream << " seed=" << static_cast<int>(Random::GetSeed(this));
   }
   if (isUnit()) {

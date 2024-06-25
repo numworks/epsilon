@@ -95,7 +95,7 @@ Tree* Builtin::pushNode(int numberOfChildren) const {
   Tree* result = SharedTreeStack->pushBlock(m_blockType);
   if (TypeBlock(m_blockType).isNAry()) {
     SharedTreeStack->pushBlock(numberOfChildren);
-  } else if (TypeBlock(m_blockType).isRandomNode()) {
+  } else if (TypeBlock(m_blockType).isRandomized()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
     SharedTreeStack->pushBlock(0);

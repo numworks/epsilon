@@ -349,7 +349,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
            Rational::Denominator(node).to<T>();
   }
 
-  if (node->isRandomNode()) {
+  if (node->isRandomized()) {
     return Random::Approximate<T>(node, s_randomContext,
                                   s_context ? s_context->m_listElement : -1);
   }
@@ -1231,7 +1231,7 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
 
 bool Approximation::CanApproximate(const Tree* tree,
                                    int firstNonApproximableVarId) {
-  if (tree->isRandomNode() || tree->isUserNamed() ||
+  if (tree->isRandomized() || tree->isUserNamed() ||
       (tree->isVar() && Variables::Id(tree) >= firstNonApproximableVarId) ||
       tree->isSet()) {
     return false;

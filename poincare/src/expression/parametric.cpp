@@ -321,7 +321,7 @@ bool Parametric::ContractProduct(Tree* expr) {
 bool Parametric::HasLocalRandom(const Tree* expr) {
   // TODO: could be factorized with HasVariable
   return expr->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isRandomNode(); });
+      [](const Tree* e) { return e->isRandomized(); });
 }
 
 bool Parametric::Explicit(Tree* expr) {

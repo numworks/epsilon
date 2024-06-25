@@ -181,7 +181,7 @@ NODE(Random, 0, { uint8_t seed; })
 NODE(RandInt, 2, { uint8_t seed; })
 NODE(RandIntNoRep, 3, { uint8_t seed; })
 
-RANGE(RandomNode, Random, RandIntNoRep)
+RANGE(Randomized, Random, RandIntNoRep)
 
 NODE(Re, 1)
 NODE(Rem, 2)

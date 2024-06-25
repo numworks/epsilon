@@ -88,7 +88,7 @@ template <typename T>
 Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
                                 HoneResult hone) {
   if (e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isRandomNode(); })) {
+          [](const Tree* e) { return e->isRandomized(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
 #if 0
@@ -113,7 +113,7 @@ Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
 template <typename T>
 Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
   if (e->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isRandomNode(); })) {
+          [](const Tree* e) { return e->isRandomized(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
 

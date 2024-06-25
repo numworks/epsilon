@@ -36,7 +36,7 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     if (d < skipUntil) {
       continue;
     }
-    if (d->isRandomNode()) {
+    if (d->isRandomized()) {
       return true;
     }
     if (!systemSymbol && d->treeIsIdenticalTo(KUnknownSymbol)) {

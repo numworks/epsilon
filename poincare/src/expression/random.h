@@ -41,7 +41,7 @@ class Random {
    * seed the unseeded nodes. Return the last seed. */
   static uint8_t SeedRandomNodes(Tree* tree, uint8_t maxSeed = 0);
   static uint8_t GetSeed(const Tree* randomTree) {
-    assert(randomTree->isRandomNode());
+    assert(randomTree->isRandomized());
     return randomTree->nodeValue(0);
   }
   template <typename T>
@@ -53,7 +53,7 @@ class Random {
   static T PrivateApproximate(const Tree* randomTree, Context* context,
                               int listElement);
   static void SetSeed(Tree* randomTree, uint8_t seed) {
-    assert(randomTree->isRandomNode() && GetSeed(randomTree) == 0);
+    assert(randomTree->isRandomized() && GetSeed(randomTree) == 0);
     randomTree->setNodeValue(0, seed);
   }
   template <typename T>

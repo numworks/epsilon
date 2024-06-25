@@ -237,7 +237,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Update strategy depending on dimension */
-  projectionContext->m_dimension = Dimension::GetDimension(e);
+  projectionContext->m_dimension = Dimension::Get(e);
   if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
   }

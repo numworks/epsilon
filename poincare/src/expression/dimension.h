@@ -91,8 +91,7 @@ struct Dimension {
   }
   static bool DeepCheckListLength(const Tree* t,
                                   Poincare::Context* ctx = nullptr);
-  static Dimension GetDimension(const Tree* t,
-                                Poincare::Context* ctx = nullptr);
+  static Dimension Get(const Tree* t, Poincare::Context* ctx = nullptr);
   static bool DeepCheckDimensions(const Tree* t,
                                   Poincare::Context* ctx = nullptr);
 

@@ -258,12 +258,12 @@ void assert_expression_approximates_to(const char *expression,
          * tests that fail */
         // Replace user symbols, seed randoms and check dimensions
         Simplification::ToSystem(e, &context);
-        if (Internal::Dimension::GetDimension(e).isUnit()) {
+        if (Internal::Dimension::Get(e).isUnit()) {
           // no unit approximation yet
           e->removeTree();
           return KUndef->clone();
         }
-        if (!Internal::Dimension::GetDimension(e).isScalar() ||
+        if (!Internal::Dimension::Get(e).isScalar() ||
             Internal::Dimension::ListLength(e) !=
                 Internal::Dimension::k_nonListListLength) {
           TreeRef result = Internal::Approximation::RootTreeToTree<T>(

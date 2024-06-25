@@ -34,8 +34,8 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     order = Order::Beautification;
   }
   if (order == Order::PreserveMatrices) {
-    bool node0IsMatrix = Dimension::GetDimension(node0).isMatrix();
-    bool node1IsMatrix = Dimension::GetDimension(node1).isMatrix();
+    bool node0IsMatrix = Dimension::Get(node0).isMatrix();
+    bool node1IsMatrix = Dimension::Get(node1).isMatrix();
     if (node0IsMatrix && node1IsMatrix) {
       if (node0->treeIsIdenticalTo(node1)) {
         return 0;

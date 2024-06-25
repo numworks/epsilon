@@ -939,8 +939,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   assert(!treeRemoved);
   // Take advantage of e being last tree.
   assert(e->nextTree() == extractedUnits);
-  assert(dimension.unit.vector ==
-         Dimension::GetDimension(extractedUnits).unit.vector);
+  assert(dimension.unit.vector == Dimension::Get(extractedUnits).unit.vector);
   switch (unitDisplay) {
     case UnitDisplay::Forbidden:
       extractedUnits->removeTree();
@@ -992,7 +991,7 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
 
 bool Unit::KeepUnitsOnly(Tree* e) {
 #if ASSERTIONS
-  bool wasUnit = Dimension::GetDimension(e).isUnit();
+  bool wasUnit = Dimension::Get(e).isUnit();
 #endif
   bool didRemovedTree;
   switch (e->type()) {

@@ -9,7 +9,7 @@ bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
          Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
   bool result = Dimension::DeepCheckDimensions(expression, ctx) &&
-                d == Dimension::GetDimension(expression, ctx);
+                d == Dimension::Get(expression, ctx);
   expression->removeTree();
   return result;
 }

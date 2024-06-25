@@ -347,7 +347,7 @@ bool Parametric::Explicit(Tree* expr) {
   boundsDifference->removeTree();
   Tree* result;
   if (isSum) {
-    Dimension d = Dimension::GetDimension(child);
+    Dimension d = Dimension::Get(child);
     result = d.isMatrix() ? Matrix::Zero(d.matrix) : (0_e)->clone();
   } else {
     result = (1_e)->clone();

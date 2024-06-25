@@ -70,7 +70,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
 template <typename T>
 PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
     const Tree* preparedFunction, T abscissa) {
-  Dimension dimension = Dimension::GetDimension(preparedFunction);
+  Dimension dimension = Dimension::Get(preparedFunction);
   assert(dimension.isScalar() || dimension.isPoint());
   return RootToPointOrScalarPrivate<T>(preparedFunction, dimension.isPoint(),
                                        true, abscissa);
@@ -84,7 +84,7 @@ Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
     return KUndefUnhandledDimension->clone();
   }
   return RootTreeToTreePrivate<T>(node, angleUnit, complexFormat,
-                                  Dimension::GetDimension(node),
+                                  Dimension::Get(node),
                                   Dimension::ListLength(node));
 }
 
@@ -96,7 +96,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
   assert(Dimension::DeepCheckDimensions(node) &&
          Dimension::DeepCheckListLength(node));
   assert(listLength == Dimension::ListLength(node));
-  assert(dim == Dimension::GetDimension(node));
+  assert(dim == Dimension::Get(node));
 
   Random::Context randomContext;
   s_randomContext = &randomContext;
@@ -300,7 +300,7 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 bool UndefDependencies(const Tree* dep) {
   // Dependency children may have different dimensions.
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
-    Dimension dim = Dimension::GetDimension(child);
+    Dimension dim = Dimension::Get(child);
     if (dim.isScalar()) {
       // Optimize most cases
       std::complex<float> c = Approximation::ToComplex<float>(child);
@@ -309,8 +309,7 @@ bool UndefDependencies(const Tree* dep) {
       }
       assert(!std::isnan(c.imag()));
     } else {
-      Tree* a =
-          Approximation::ToTree<float>(child, Dimension::GetDimension(child));
+      Tree* a = Approximation::ToTree<float>(child, Dimension::Get(child));
       if (a->isUndefined()) {
         a->removeTree();
         return true;
@@ -1115,7 +1114,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : node->children()) {
-        bool childIsMatrix = Dimension::GetDimension(child).isMatrix();
+        bool childIsMatrix = Dimension::Get(child).isMatrix();
         Tree* approx =
             childIsMatrix ? ToMatrix<T>(child) : ToBeautifiedComplex<T>(child);
         if (result == nullptr) {
@@ -1175,7 +1174,7 @@ Tree* Approximation::ToMatrix(const Tree* node) {
       return result;
     }
     case Type::Dim: {
-      Dimension dim = Dimension::GetDimension(node->child(0));
+      Dimension dim = Dimension::Get(node->child(0));
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
       SharedTreeStack->pushFloat(T(dim.matrix.rows));
@@ -1259,7 +1258,7 @@ bool Approximation::CanApproximate(const Tree* tree,
 }
 
 bool IsNonListScalar(const Tree* tree) {
-  return Dimension::GetDimension(tree).isScalar() && !Dimension::IsList(tree);
+  return Dimension::Get(tree).isScalar() && !Dimension::IsList(tree);
 }
 
 bool SkipApproximation(TypeBlock type) {

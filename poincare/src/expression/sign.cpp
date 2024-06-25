@@ -234,7 +234,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
 
 // Note: A complex function plotter can be used to fill in these methods.
 ComplexSign ComplexSign::Get(const Tree* t) {
-  assert(Dimension::GetDimension(t).isScalar());
+  assert(Dimension::Get(t).isScalar());
   if (t->isNumber()) {
     return ComplexSign(Number::Sign(t), Sign::Zero());
   } else if (t->isUserNamed()) {

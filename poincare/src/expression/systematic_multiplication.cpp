@@ -130,7 +130,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
       Dimension::ReplaceTreeWithDimensionedType(multiplication, Type::Undef);
       return true;
     }
-    Dimension dim = Dimension::GetDimension(multiplication);
+    Dimension dim = Dimension::Get(multiplication);
     if (dim.isUnit()) {
       // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
       // Use hash because change is too complex to track.

@@ -501,7 +501,7 @@ SystemExpression SystemExpression::getReducedDerivative(
 SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
   Tree* result = tree()->clone();
-  Dimension dimension = Dimension::GetDimension(tree());
+  Dimension dimension = Dimension::Get(tree());
   if ((scalarsOnly && (!dimension.isScalar() || Dimension::IsList(tree()))) ||
       (!dimension.isScalar() && !dimension.isPoint())) {
     result->cloneTreeOverTree(KUndef);
@@ -845,7 +845,7 @@ bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
   }
   return Dimension::DeepCheckDimensions(tree(), context) &&
          Dimension::DeepCheckListLength(tree(), context) &&
-         Dimension::GetDimension(tree(), context).isMatrix();
+         Dimension::Get(tree(), context).isMatrix();
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
@@ -861,7 +861,7 @@ bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
    * this behavior ? */
   return Dimension::DeepCheckDimensions(tree(), context) &&
          Dimension::DeepCheckListLength(tree(), context) &&
-         Dimension::GetDimension(tree(), context).isPoint() &&
+         Dimension::Get(tree(), context).isPoint() &&
          (allowlists || !Dimension::IsList(tree(), context));
 }
 
@@ -905,7 +905,7 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
 
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
-         Dimension::GetDimension(tree()).isSimpleAngleUnit();
+         Dimension::Get(tree()).isSimpleAngleUnit();
 }
 
 bool NewExpression::isInRadians(Context* context) const {
@@ -917,7 +917,7 @@ bool NewExpression::isInRadians(Context* context) const {
       cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
-         Dimension::GetDimension(tree(), context).isSimpleRadianAngleUnit();
+         Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
@@ -1094,7 +1094,7 @@ bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {
 
 bool Unit::HasAngleDimension(NewExpression expression) {
   assert(Dimension::DeepCheckDimensions(expression.tree()));
-  return Dimension::GetDimension(expression.tree()).isAngleUnit();
+  return Dimension::Get(expression.tree()).isAngleUnit();
 }
 
 template SystemExpression JuniorExpressionNode::approximateToTree<float>(

@@ -212,19 +212,19 @@ The `TreeStack` has a `log` method as well, that shows each `Tree` it contains a
 The `TreeStack` has a reference table, which is an array of node offsets. This
 array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
 
-In addition, offset can be a special identifier
-(`TreeStack::ReferenceTable::InvalidatedOffset`), indicating the node doesn't
+In addition, offset can have a special value :
+- `TreeStack::ReferenceTable::InvalidatedOffset` indicates that the node doesn't
 exist anymore in the `TreeStack`.
+- `TreeStack::ReferenceTable::DeletedOffset` indicates that the `TreeRef`
+has been deleted.
 
 Each `TreeRef` has an identifier. It represents the index at which the
 `TreeRef`'s node offset can be found in the `TreeStack`'s reference
 table.
 
-Similarly, the identifier can be special:
-- `TreeStack::ReferenceTable::NoNodeIdentifier` indicates the `TreeRef`
-doesn't point to any tree.
-- `TreeStack::ReferenceTable::DeletedOffset` indicates the `TreeRef`
-has been deleted.
+Similarly, the identifier can be the special value
+`TreeStack::ReferenceTable::NoNodeIdentifier` to indicates that the `TreeRef` doesn't
+point to any tree.
 
 To retrieve the node pointed by an `TreeRef`, we just return the node in
 the `TreeStack` at the corresponding offset.

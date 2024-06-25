@@ -537,6 +537,8 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
   return x2;
 }
 
+constexpr KTree zero = 0_e;
+
 template <typename T>
 Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
                                                    int childIndex) const {
@@ -554,7 +556,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
      * To avoid this problem, clone e and replace cos(xRoot) by 0.
      * */
     Tree* ebis = e->clone();
-    ebis->child(childIndex)->cloneTreeOverTree(0_e);
+    ebis->child(childIndex)->cloneTreeOverTree(zero);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
 #if 0

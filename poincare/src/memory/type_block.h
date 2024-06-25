@@ -247,30 +247,6 @@ class TypeBlock : public Block {
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 
-// Add a TreeBorder blocks at the end to assert we don't navigate out of it.
-template <int size>
-class BlockBuffer {
- public:
-  constexpr BlockBuffer() {
-#if ASSERTIONS
-    m_blocks[size] = Type::TreeBorder;
-#endif
-  }
-  constexpr TypeBlock* blocks() {
-    return static_cast<TypeBlock*>(static_cast<Block*>(m_blocks));
-  }
-  consteval const TypeBlock* blocks() const {
-    return static_cast<const TypeBlock*>(m_blocks);
-  }
-
- private:
-#if ASSERTIONS
-  Block m_blocks[size + 1];
-#else
-  Block m_blocks[size];
-#endif
-};
-
 }  // namespace Poincare::Internal
 
 #endif

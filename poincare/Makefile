@@ -12,7 +12,7 @@ true_default: poincarejs.zip
 PATH_haussmann := haussmann
 APP_NAME := InitPoincare
 APP_VERSION := 0.0.0
-OUTPUT_ROOT := output/poincarejs
+OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= foxglove
 include $(PATH_haussmann)/Makefile

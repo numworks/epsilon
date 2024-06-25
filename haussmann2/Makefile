@@ -41,3 +41,4 @@ clean:
 	$(QUIET) rmdir -p $(OUTPUT_DIRECTORY) 2> /dev/null || :
 
 include $(PATH_haussmann)/src/docs.mak
+include $(PATH_haussmann)/src/format.mak

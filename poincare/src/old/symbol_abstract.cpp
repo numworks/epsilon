@@ -191,7 +191,7 @@ void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
   assert(*isCircular != OMG::Troolean::True);
   if (*isCircular == OMG::Troolean::Unknown) {
     const char *visitedSymbols[OExpression::k_maxSymbolReplacementsCount];
-    *isCircular = OMG::BinaryToTrinaryBool(involvesCircularity(
+    *isCircular = OMG::BoolToTroolean(involvesCircularity(
         context, OExpression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
   }
 }

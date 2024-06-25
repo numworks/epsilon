@@ -20,13 +20,13 @@ OMG::Troolean IsInteger(const Tree* tree) {
   if (!tree->isRational()) {
     return OMG::Troolean::Unknown;
   }
-  return OMG::BinaryToTrinaryBool(tree->isInteger());
+  return OMG::BoolToTroolean(tree->isInteger());
 }
 
 OMG::Troolean IsPositiveInteger(const Tree* tree) {
   OMG::Troolean isInteger = IsInteger(tree);
   if (isInteger == OMG::Troolean::True) {
-    return OMG::BinaryToTrinaryBool(Rational::Sign(tree).isPositive());
+    return OMG::BoolToTroolean(Rational::Sign(tree).isPositive());
   }
   return isInteger;
 }

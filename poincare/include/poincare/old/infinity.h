@@ -24,7 +24,7 @@ class InfinityNode final : public NumberNode {
   // Properties
   Type otype() const override { return Type::Infinity; }
   OMG::Troolean isPositive(Context* context) const override {
-    return OMG::BinaryToTrinaryBool(!m_negative);
+    return OMG::BoolToTroolean(!m_negative);
   }
 
   // NumberNode

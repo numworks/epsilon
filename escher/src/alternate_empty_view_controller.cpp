@@ -14,13 +14,13 @@ AlternateEmptyViewController::ContentView::ContentView(
 
 bool AlternateEmptyViewController::ContentView::isEmpty() {
   if (m_isEmpty == OMG::Troolean::Unknown) {
-    m_isEmpty = OMG::BinaryToTrinaryBool(m_delegate->isEmpty());
+    m_isEmpty = OMG::BoolToTroolean(m_delegate->isEmpty());
   }
-  return OMG::TrinaryToBinaryBool(m_isEmpty);
+  return OMG::TrooleanToBool(m_isEmpty);
 }
 
 View* AlternateEmptyViewController::ContentView::currentView() {
-  assert(m_isEmpty == OMG::BinaryToTrinaryBool(m_delegate->isEmpty()));
+  assert(m_isEmpty == OMG::BoolToTroolean(m_delegate->isEmpty()));
   return isEmpty() ? m_delegate->emptyView() : m_mainViewController->view();
 }
 

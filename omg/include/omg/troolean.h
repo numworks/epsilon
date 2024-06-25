@@ -67,11 +67,11 @@ inline Troolean TrooleanOr(Troolean b1, Troolean b2) {
   return Troolean::False;
 }
 
-inline Troolean BinaryToTrinaryBool(bool b) {
+inline Troolean BoolToTroolean(bool b) {
   return b ? Troolean::True : Troolean::False;
 }
 
-inline bool TrinaryToBinaryBool(Troolean b) {
+inline bool TrooleanToBool(Troolean b) {
   assert(b != Troolean::Unknown);
   return b == Troolean::True;
 }

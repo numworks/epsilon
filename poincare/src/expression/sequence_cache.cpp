@@ -201,10 +201,10 @@ bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
     m_sequenceIsNotComputable[sequenceIndex] =
-        OMG::BinaryToTrinaryBool(sequenceAtNameIndex(sequenceIndex)
-                                     ->mainExpressionIsNotComputable(nullptr));
+        OMG::BoolToTroolean(sequenceAtNameIndex(sequenceIndex)
+                                ->mainExpressionIsNotComputable(nullptr));
   }
-  return TrinaryToBinaryBool(m_sequenceIsNotComputable[sequenceIndex]);
+  return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }
 
 }  // namespace Poincare::Internal

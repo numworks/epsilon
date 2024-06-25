@@ -36,7 +36,7 @@ class NumberNode : public ExpressionNode {
   virtual Integer integerValue() const = 0;
 
   OMG::Troolean isNull(Context* context) const override {
-    return OMG::BinaryToTrinaryBool(isZero());
+    return OMG::BoolToTroolean(isZero());
   }
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,

@@ -1519,7 +1519,7 @@ OExpression OExpression::setSign(bool positive,
   }
   OMG::Troolean currentSignPositive = isPositive(reductionContext.context());
   assert(currentSignPositive != OMG::Troolean::Unknown);
-  if (OMG::BinaryToTrinaryBool(positive) == currentSignPositive) {
+  if (OMG::BoolToTroolean(positive) == currentSignPositive) {
     return *this;
   }
   Multiplication revertedSign = Multiplication::Builder(Rational::Builder(-1));

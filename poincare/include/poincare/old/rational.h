@@ -35,7 +35,7 @@ class RationalNode final : public NumberNode {
   // OExpression subclassing
   Type otype() const override { return Type::Rational; }
   OMG::Troolean isPositive(Context* context) const override {
-    return OMG::BinaryToTrinaryBool(!m_negative);
+    return OMG::BoolToTroolean(!m_negative);
   }
 
   // Basic test

@@ -23,7 +23,7 @@ OMG::Troolean DivisionNode::isPositive(Context *context) const {
       denominatorPositive == OMG::Troolean::Unknown) {
     return OMG::Troolean::Unknown;
   }
-  return OMG::BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
+  return OMG::BoolToTroolean(numeratorPositive == denominatorPositive);
 }
 
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(

@@ -683,7 +683,7 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(
       double approximation = coefficients[degree].approximateToScalar<double>(
           approximationContext);
       if (!std::isnan(approximation) && approximation != 0.0) {
-        isPositive = OMG::BinaryToTrinaryBool(approximation > 0.0);
+        isPositive = OMG::BoolToTroolean(approximation > 0.0);
       }
     }
     *highestDegreeCoefficientIsPositive = isPositive;

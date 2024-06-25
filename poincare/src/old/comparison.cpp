@@ -283,10 +283,10 @@ Evaluation<T> ComparisonNode::templatedApproximate(
     } else {
       /* leftChildIsGreater is always used in combination with childrenAreEqual
        * so the fact that it's strictly greater or not is not important. */
-      leftChildIsGreater = OMG::BinaryToTrinaryBool(scalarDifference > 0.0);
+      leftChildIsGreater = OMG::BoolToTroolean(scalarDifference > 0.0);
       chidlrenAreEqual =
-          OMG::BinaryToTrinaryBool(std::isfinite(scalarDifference) &&
-                                   std::fabs(scalarDifference) <= epsilon);
+          OMG::BoolToTroolean(std::isfinite(scalarDifference) &&
+                              std::fabs(scalarDifference) <= epsilon);
     }
     OMG::Troolean truthValue = TruthValueOfOperator(
         m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);

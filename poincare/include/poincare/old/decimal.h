@@ -43,7 +43,7 @@ class DecimalNode final : public NumberNode {
   // Properties
   Type otype() const override { return Type::Decimal; }
   OMG::Troolean isPositive(Context* context) const override {
-    return OMG::BinaryToTrinaryBool(!m_negative);
+    return OMG::BoolToTroolean(!m_negative);
   }
 
   bool isNegative() const { return m_negative; }

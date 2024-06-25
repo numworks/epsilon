@@ -1,4 +1,4 @@
-#include "layoutter.h"
+#include "layouter.h"
 
 #include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
@@ -87,18 +87,18 @@ static constexpr int OperatorPriority(TypeBlock type) {
 // Commas have no associated block but behave like an operator
 static constexpr int k_commaPriority = OperatorPriority(Type::Set);
 
-Tree* Layoutter::LayoutExpression(Tree* expression, bool linearMode,
-                                  int numberOfSignificantDigits,
-                                  Preferences::PrintFloatMode floatMode) {
+Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
+                                 int numberOfSignificantDigits,
+                                 Preferences::PrintFloatMode floatMode) {
   assert(expression->isExpression());
   /* expression lives before layoutParent in the TreeStack and will be
    * destroyed in the process. An TreeRef is necessary to keep track of
    * layoutParent's root. */
   TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
-  Layoutter layoutter(linearMode, false, numberOfSignificantDigits, floatMode);
-  layoutter.m_addSeparators =
-      !linearMode && layoutter.requireSeparators(expression);
-  layoutter.layoutExpression(layoutParent, expression, k_maxPriority);
+  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode);
+  layouter.m_addSeparators =
+      !linearMode && layouter.requireSeparators(expression);
+  layouter.layoutExpression(layoutParent, expression, k_maxPriority);
   StripUselessPlus(layoutParent);
   return layoutParent;
 }
@@ -111,7 +111,7 @@ static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {
   NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
 }
 
-void Layoutter::addSeparator(Tree* layoutParent) {
+void Layouter::addSeparator(Tree* layoutParent) {
   if (!m_addSeparators) {
     return;
   }
@@ -119,7 +119,7 @@ void Layoutter::addSeparator(Tree* layoutParent) {
   NAry::AddChild(layoutParent, KOperatorSeparatorL->clone());
 }
 
-void Layoutter::layoutText(TreeRef& layoutParent, const char* text) {
+void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
@@ -128,7 +128,7 @@ void Layoutter::layoutText(TreeRef& layoutParent, const char* text) {
   }
 }
 
-void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
+void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
   assert(Builtin::IsReservedFunction(expression));
   const Builtin* builtin = Builtin::GetReservedFunction(expression);
   if (m_linearMode || !builtin->has2DLayout()) {
@@ -157,8 +157,8 @@ void Layoutter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
   }
 }
 
-void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
-                                   const char* name) {
+void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
+                                  const char* name) {
   layoutText(layoutParent, name);
   TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
   TreeRef newParent = SharedTreeStack->pushRackLayout(0);
@@ -177,16 +177,15 @@ void Layoutter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
   }
 }
 
-void Layoutter::layoutChildrenAsRacks(Tree* expression) {
+void Layouter::layoutChildrenAsRacks(Tree* expression) {
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     TreeRef newParent = SharedTreeStack->pushRackLayout(0);
     layoutExpression(newParent, expression->nextNode(), k_maxPriority);
   }
 }
 
-void Layoutter::layoutIntegerHandler(TreeRef& layoutParent,
-                                     IntegerHandler handler,
-                                     int decimalOffset) {
+void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
+                                    IntegerHandler handler, int decimalOffset) {
   if (handler.strictSign() == StrictSign::Negative) {
     PushCodePoint(layoutParent, '-');
   }
@@ -217,8 +216,8 @@ void Layoutter::layoutIntegerHandler(TreeRef& layoutParent,
   NAry::AddOrMergeChild(layoutParent, rack);
 }
 
-void Layoutter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
-                                    CodePoint op, bool multiplication) {
+void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
+                                   CodePoint op, bool multiplication) {
   Type type = expression->type();
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
@@ -255,7 +254,7 @@ void Layoutter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
   }
 }
 
-void Layoutter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
+void Layouter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
   if (!m_linearMode) {
     TreeRef layout = expression->cloneNode();
     *layout->block() = Type::MatrixLayout;
@@ -282,7 +281,7 @@ void Layoutter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
   PushCodePoint(layoutParent, ']');
 }
 
-void Layoutter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
+void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   // TODO_PCJ ask the context whether to add an underscore
   if (m_linearMode) {
     PushCodePoint(layoutParent, '_');
@@ -293,7 +292,7 @@ void Layoutter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
       Units::Unit::GetRepresentative(expression)->rootSymbols().mainAlias());
 }
 
-void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
+void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->child(0);
@@ -320,8 +319,8 @@ void Layoutter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
 }
 
 // Remove expression while converting it to a layout in layoutParent
-void Layoutter::layoutExpression(TreeRef& layoutParent, Tree* expression,
-                                 int parentPriority) {
+void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
+                                int parentPriority) {
   assert(layoutParent->isRackLayout());
   TypeBlock type = expression->type();
 
@@ -717,7 +716,7 @@ int FirstNonDigitIndex(Tree* rack) {
 constexpr int k_minDigitsForThousandSeparator = 5;
 constexpr int k_minValueForThousandSeparator = 10000;
 
-bool Layoutter::AddThousandSeparators(Tree* rack) {
+bool Layouter::AddThousandSeparators(Tree* rack) {
   int nonDigitIndex = FirstNonDigitIndex(rack);
   bool isNegative = rack->child(0)->isCodePointLayout() &&
                     CodePointLayout::GetCodePoint(rack->child(0)) == '-';
@@ -739,7 +738,7 @@ bool Layoutter::AddThousandSeparators(Tree* rack) {
   return true;
 }
 
-bool Layoutter::requireSeparators(const Tree* expr) {
+bool Layouter::requireSeparators(const Tree* expr) {
   if (expr->isRational()) {
     // TODO_PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expr);
@@ -779,7 +778,7 @@ bool Layoutter::requireSeparators(const Tree* expr) {
   return false;
 }
 
-void Layoutter::StripSeparators(Tree* rack) {
+void Layouter::StripSeparators(Tree* rack) {
   assert(rack->isRackLayout());
   Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();
@@ -799,7 +798,7 @@ void Layoutter::StripSeparators(Tree* rack) {
   NAry::SetNumberOfChildren(rack, n);
 }
 
-void Layoutter::StripUselessPlus(Tree* rack) {
+void Layouter::StripUselessPlus(Tree* rack) {
   /* Ad-hoc method to turn "+-" and "+<separator>-" into "-" and "-<separator>"
    * respectively.
    * TODO: we should rather rework LayoutExpression(negative double) to make it
@@ -831,7 +830,7 @@ void Layoutter::StripUselessPlus(Tree* rack) {
   NAry::SetNumberOfChildren(rack, n);
 }
 
-bool Layoutter::ImplicitAddition(const Tree* addition) {
+bool Layouter::ImplicitAddition(const Tree* addition) {
   if (addition->numberOfChildren() < 2) {
     return false;
   }

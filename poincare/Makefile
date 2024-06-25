@@ -291,7 +291,7 @@ poincare_src += $(addprefix poincare/src/,\
   layout/layout_selection.cpp \
   layout/layout_span.cpp \
   layout/layout_span_decoder.cpp \
-  layout/layoutter.cpp \
+  layout/layouter.cpp \
   layout/multiplication_symbol.cpp \
   layout/parser.cpp \
   layout/parsing/helper.cpp \

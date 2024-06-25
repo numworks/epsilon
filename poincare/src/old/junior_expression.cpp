@@ -25,7 +25,7 @@
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/expression/variables.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/layout/parsing/parsing_context.h>
@@ -132,7 +132,7 @@ SystemExpression JuniorExpressionNode::approximateToTree(
 Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context) const {
-  return JuniorLayout::Builder(Layoutter::LayoutExpression(
+  return JuniorLayout::Builder(Layouter::LayoutExpression(
       tree()->clone(), false, numberOfSignificantDigits, floatDisplayMode));
 }
 
@@ -140,8 +140,8 @@ size_t JuniorExpressionNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const {
-  Tree* layout = Layoutter::LayoutExpression(tree()->clone(), true,
-                                             numberOfSignificantDigits);
+  Tree* layout = Layouter::LayoutExpression(tree()->clone(), true,
+                                            numberOfSignificantDigits);
   size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
   layout->removeTree();
   return size;

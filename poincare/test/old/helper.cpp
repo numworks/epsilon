@@ -6,7 +6,7 @@
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/float.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/old/parsing/parser.h>
@@ -136,8 +136,8 @@ void assert_parsed_expression_process_to(
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
-    Tree *l = Internal::Layoutter::LayoutExpression(m, true,
-                                                    numberOfSignificantDigits);
+    Tree *l = Internal::Layouter::LayoutExpression(m, true,
+                                                   numberOfSignificantDigits);
     *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
     copy_without_system_chars(buffer, buffer);
     l->removeTree();
@@ -382,7 +382,7 @@ void assert_layout_serializes_to(Tree *layout, const char *serialization) {
 }
 
 void assert_expression_layouts_as(Tree *expression, Tree *layout) {
-  Tree *l = Internal::Layoutter::LayoutExpression(expression);
+  Tree *l = Internal::Layouter::LayoutExpression(expression);
   quiz_assert(l->treeIsIdenticalTo(layout));
 }
 

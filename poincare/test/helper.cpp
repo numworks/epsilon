@@ -4,7 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/old/store.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
@@ -101,7 +101,7 @@ void process_tree_and_compare(const char* input, const char* output,
   quiz_assert(expected);
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    Tree* outputLayout = Layoutter::LayoutExpression(expression->clone(), true);
+    Tree* outputLayout = Layouter::LayoutExpression(expression->clone(), true);
     quiz_assert(outputLayout);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];

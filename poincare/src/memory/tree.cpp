@@ -19,7 +19,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/serialize.h>
 
 #include "placeholder.h"
@@ -134,7 +134,7 @@ void Tree::logAttributes(std::ostream& stream) const {
 }
 
 void Tree::logSerialize(std::ostream& stream) const {
-  TreeRef outputLayout = Layoutter::LayoutExpression(clone(), true);
+  TreeRef outputLayout = Layouter::LayoutExpression(clone(), true);
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];

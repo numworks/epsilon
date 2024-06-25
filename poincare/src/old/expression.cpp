@@ -34,7 +34,7 @@
 #include <poincare/old/unit.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/src/expression/conversion.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 
 #include <cmath>
 #include <utility>
@@ -1122,7 +1122,7 @@ Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   assert(otype() == ExpressionNode::Type::JuniorExpression);
   Internal::Tree *exp =
       static_cast<const JuniorExpression &>(*this).tree()->clone();
-  Internal::Tree *lay = Internal::Layoutter::LayoutExpression(
+  Internal::Tree *lay = Internal::Layouter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode);
   return JuniorLayout::Builder(lay);
 }

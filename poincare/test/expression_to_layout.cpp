@@ -1,6 +1,6 @@
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 
 #include "old/helper.h"
 
@@ -9,7 +9,7 @@ using namespace Poincare::Internal::KTrees;
 
 void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
   Internal::Tree* e = parse_expression(expression, nullptr, true);
-  Internal::Tree* t = Internal::Layoutter::LayoutExpression(e);
+  Internal::Tree* t = Internal::Layouter::LayoutExpression(e);
   Layout el = Layout::Builder(t);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }

@@ -1,5 +1,5 @@
-#ifndef POINCARE_LAYOUTTER_H
-#define POINCARE_LAYOUTTER_H
+#ifndef POINCARE_LAYOUTER_H
+#define POINCARE_LAYOUTER_H
 
 #include <poincare/src/expression/decimal.h>
 #include <poincare/src/expression/integer.h>
@@ -9,7 +9,7 @@ using Poincare::Preferences;
 
 namespace Poincare::Internal {
 
-class Layoutter {
+class Layouter {
  public:
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
                                 int numberOfSignificantDigits = -1,
@@ -24,8 +24,8 @@ class Layoutter {
   static bool ImplicitAddition(const Tree* addition);
 
  private:
-  Layoutter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
-            Preferences::PrintFloatMode floatMode)
+  Layouter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
+           Preferences::PrintFloatMode floatMode)
       : m_linearMode(linearMode),
         m_addSeparators(addSeparators),
         m_numberOfSignificantDigits(numberOfSignificantDigits),

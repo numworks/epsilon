@@ -4,7 +4,7 @@
 #include <poincare/src/layout/app_helpers.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/render.h>
 #include <poincare/src/layout/serialize.h>
@@ -147,7 +147,7 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
   Internal::Tree* clone = tree()->clone();
   assert(clone->isRackLayout());
-  Internal::Layoutter::StripSeparators(clone);
+  Internal::Layouter::StripSeparators(clone);
   return JuniorLayout::Builder(clone);
 }
 

@@ -1,7 +1,7 @@
 #include "conversion.h"
 
 #include <poincare/old/poincare_expressions.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
@@ -24,7 +24,7 @@
 namespace Poincare::Internal {
 
 Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
-  TreeRef outputLayout = Layoutter::LayoutExpression(exp->clone());
+  TreeRef outputLayout = Layouter::LayoutExpression(exp->clone());
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;

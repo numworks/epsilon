@@ -3,7 +3,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/multiplication_symbol.h>
 #include <poincare/src/layout/render.h>
 
@@ -13,23 +13,23 @@ using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_expression_to_layout) {
   assert_trees_are_equal(
-      Layoutter::LayoutExpression(KPow(KAdd("x"_e, "y"_e), 2_e)->clone()),
+      Layouter::LayoutExpression(KPow(KAdd("x"_e, "y"_e), 2_e)->clone()),
       KRackL(KParenthesisL("x+y"_l), KSuperscriptL("2"_l)));
   assert_trees_are_equal(
-      Layoutter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
+      Layouter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->clone()),
       KRackL(KParenthesisL("x·y"_l), KSuperscriptL("2"_l)));
   assert_trees_are_equal(
-      Layoutter::LayoutExpression(
+      Layouter::LayoutExpression(
           KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e)->clone(), true),
       "2 1/3+4"_l);
-  assert_trees_are_equal(Layoutter::LayoutExpression(
+  assert_trees_are_equal(Layouter::LayoutExpression(
                              KAdd(12345_e, KOpposite(54321_e))->clone(), false),
                          // 12 345 - 54 321
                          "12"_l ^ KThousandSeparatorL ^ "345"_l ^
                              KOperatorSeparatorL ^ "-"_l ^ KOperatorSeparatorL ^
                              "54"_l ^ KThousandSeparatorL ^ "321"_l);
   assert_trees_are_equal(
-      Layoutter::LayoutExpression(KAdd(12345_de, -54321_de)->clone(), false),
+      Layouter::LayoutExpression(KAdd(12345_de, -54321_de)->clone(), false),
       "12"_l ^ KThousandSeparatorL ^ "345"_l ^ KOperatorSeparatorL ^ "-"_l ^
           KOperatorSeparatorL ^ "54"_l ^ KThousandSeparatorL ^ "321"_l);
 }

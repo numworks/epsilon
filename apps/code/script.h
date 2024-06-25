@@ -16,8 +16,8 @@ class Script : public Ion::Storage::Record {
    * 1 = null-terminating char */
 
   static bool DefaultName(char buffer[], size_t bufferSize);
-  static bool NameCompliant(const char *name);
-  static ErrorStatus Create(const char *name, const char *content);
+  static bool NameCompliant(const char* name);
+  static ErrorStatus Create(const char* name, const char* content);
 
   // Status accessors
   bool fetchedFromConsole() const { return status()->fetchedFromConsole(); }
@@ -34,8 +34,8 @@ class Script : public Ion::Storage::Record {
   }
 
   Script(Ion::Storage::Record r = Ion::Storage::Record()) : Record(r) {}
-  const char *content() const {
-    return static_cast<const char *>(value().buffer) + sizeof(Status);
+  const char* content() const {
+    return static_cast<const char*>(value().buffer) + sizeof(Status);
   }
   size_t contentSize() const { return value().size - sizeof(Status); }
   size_t usedSize() const { return contentSize() - (strlen(content()) + 1); };
@@ -82,9 +82,8 @@ class Script : public Ion::Storage::Record {
   };
   static_assert(sizeof(Status) == 1, "Unexpected status size");
 
-  Status *status() const {
-    return const_cast<Status *>(
-        reinterpret_cast<const Status *>(value().buffer));
+  Status* status() const {
+    return const_cast<Status*>(reinterpret_cast<const Status*>(value().buffer));
   }
 };
 

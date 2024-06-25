@@ -17,10 +17,10 @@ using namespace Poincare;
 namespace Graph {
 
 ListController::ListController(
-    Responder *parentResponder, ButtonRowController *header,
-    ButtonRowController *footer,
-    FunctionParameterController *functionParameterController,
-    DerivativeColumnParameterController *derivativeColumnParameterController)
+    Responder* parentResponder, ButtonRowController* header,
+    ButtonRowController* footer,
+    FunctionParameterController* functionParameterController,
+    DerivativeColumnParameterController* derivativeColumnParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
       m_editableCell(this, this, &m_modelsStackController),
@@ -33,7 +33,7 @@ ListController::ListController(
 
 /* TableViewDataSource */
 
-HighlightCell *ListController::reusableCell(int index, int type) {
+HighlightCell* ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_editableCellType) {
     return &m_editableCell;
@@ -63,7 +63,7 @@ void ListController::viewDidDisappear() {
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or
 // "r1(θ)="
-void ListController::fillWithDefaultFunctionEquation(char *buffer,
+void ListController::fillWithDefaultFunctionEquation(char* buffer,
                                                      size_t bufferSize,
                                                      CodePoint symbol) const {
   size_t length;
@@ -90,7 +90,7 @@ bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
          !expression.deepIsList(nullptr);
 }
 
-bool ListController::completeEquation(LayoutField *equationField,
+bool ListController::completeEquation(LayoutField* equationField,
                                       CodePoint symbol) {
   equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
@@ -116,7 +116,7 @@ bool ListController::completeEquation(LayoutField *equationField,
   return handled;
 }
 
-void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
+void ListController::layoutFieldDidHandleEvent(LayoutField* layoutField) {
   bool isVisible = m_editableCell.isTemplateButtonVisible();
   bool shouldBeVisible = m_editableCell.templateButtonShouldBeVisible();
 
@@ -129,7 +129,7 @@ void ListController::layoutFieldDidHandleEvent(LayoutField *layoutField) {
   m_editableCell.setTemplateButtonVisible(shouldBeVisible);
 }
 
-bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
+bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                                 Ion::Events::Event event) {
   assert(layoutField == this->layoutField());
   m_parameterColumnSelected = false;
@@ -157,7 +157,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
 }
 
 void ListController::layoutFieldDidAbortEditing(
-    Escher::LayoutField *layoutField) {
+    Escher::LayoutField* layoutField) {
   assert(!m_editableCell.isTemplateButtonHighlighted());
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
 }
@@ -229,7 +229,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   return FunctionListController::handleEvent(event);
 }
 
-Shared::ListParameterController *ListController::parameterController() {
+Shared::ListParameterController* ListController::parameterController() {
   return m_functionParameterController;
 }
 
@@ -266,12 +266,12 @@ Poincare::Layout ListController::extraCellLayoutAtRow(int row) {
   return Layout::CodePoint(codepoints[row]);
 }
 
-HighlightCell *ListController::functionCells(int row) {
+HighlightCell* ListController::functionCells(int row) {
   assert(row >= 0 && row < k_maxNumberOfDisplayableRows);
   return &m_expressionCells[row];
 }
 
-void ListController::fillCellForRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
@@ -281,7 +281,7 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
     int derivationOrder =
         derivationOrderFromRelativeRow(f.pointer(), relativeRow);
     if (type == k_expressionCellType) {
-      FunctionCell *functionCell = static_cast<FunctionCell *>(cell);
+      FunctionCell* functionCell = static_cast<FunctionCell*>(cell);
       Layout layout;
       I18n::Message caption = I18n::Message::Default;
       bool hideMessage;
@@ -304,14 +304,14 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
       functionCell->setHideMessage(hideMessage);
       KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
       functionCell->expressionCell()->setTextColor(textColor);
-      static_cast<FunctionCell *>(functionCell)
+      static_cast<FunctionCell*>(functionCell)
           ->setParameterSelected(m_parameterColumnSelected);
     }
     // f can be null if the entry was just created and is still empty.
     KDColor functionColor = (!f->isNull() && f->isActive())
                                 ? f->color(derivationOrder)
                                 : Palette::GrayDark;
-    static_cast<AbstractFunctionCell *>(cell)->setColor(functionColor);
+    static_cast<AbstractFunctionCell*>(cell)->setColor(functionColor);
   }
   FunctionListController::fillCellForRow(cell, row);
 }
@@ -340,7 +340,7 @@ void ListController::addNewModelAction() {
   editExpression(Ion::Events::OK);
 }
 
-ContinuousFunctionStore *ListController::modelStore() const {
+ContinuousFunctionStore* ListController::modelStore() const {
   return App::app()->functionStore();
 }
 
@@ -349,7 +349,7 @@ int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
   return 1 + f->displayPlotFirstDerivative() + f->displayPlotSecondDerivative();
 }
 
-int ListController::derivationOrderFromRelativeRow(ContinuousFunction *f,
+int ListController::derivationOrderFromRelativeRow(ContinuousFunction* f,
                                                    int relativeRow) const {
   return f->derivationOrderFromRelativeIndex(
       relativeRow, ContinuousFunction::DerivativeDisplayType::Plot);

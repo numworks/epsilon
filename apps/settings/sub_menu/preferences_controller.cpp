@@ -14,7 +14,7 @@ using namespace Escher;
 
 namespace Settings {
 
-PreferencesController::PreferencesController(Responder *parentResponder)
+PreferencesController::PreferencesController(Responder* parentResponder)
     : GenericSubController(parentResponder) {}
 
 bool PreferencesController::handleEvent(Ion::Events::Event event) {
@@ -25,14 +25,14 @@ bool PreferencesController::handleEvent(Ion::Events::Event event) {
            selectedRow() != numberOfRows() - 1);
     setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
     AppsContainer::sharedAppsContainer()->refreshPreferences();
-    StackViewController *stack = stackController();
+    StackViewController* stack = stackController();
     stack->pop();
     return true;
   }
   return GenericSubController::handleEvent(event);
 }
 
-HighlightCell *PreferencesController::reusableCell(int index, int type) {
+HighlightCell* PreferencesController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_cells[index];
@@ -89,10 +89,10 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   }
 }
 
-void PreferencesController::fillCellForRow(HighlightCell *cell, int row) {
+void PreferencesController::fillCellForRow(HighlightCell* cell, int row) {
   GenericSubController::fillCellForRow(cell, row);
-  MenuCell<MessageTextView, LayoutView> *myCell =
-      static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
+  MenuCell<MessageTextView, LayoutView>* myCell =
+      static_cast<MenuCell<MessageTextView, LayoutView>*>(cell);
   I18n::Message message = m_messageTreeModel->childAtIndex(row)->label();
   myCell->subLabel()->setLayout(layoutForPreferences(message));
   myCell->subLabel()->setFont(
@@ -106,7 +106,7 @@ KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
                                                         int valueIndex) {
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
@@ -131,7 +131,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
 
 int PreferencesController::valueIndexForPreference(
     I18n::Message message) const {
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }

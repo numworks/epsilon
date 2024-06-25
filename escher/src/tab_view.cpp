@@ -11,7 +11,7 @@ TabView::TabView()
 
 int TabView::numberOfTabs() const { return m_numberOfTabs; }
 
-void TabView::drawRect(KDContext *ctx, KDRect rect) const {
+void TabView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // Draw a separator with the content
@@ -19,7 +19,7 @@ void TabView::drawRect(KDContext *ctx, KDRect rect) const {
                 KDColorWhite);
 }
 
-void TabView::addTab(TabViewController *controller) {
+void TabView::addTab(TabViewController* controller) {
   assert(m_numberOfTabs < k_maxNumberOfTabs);
   uint8_t tabIndex = m_numberOfTabs;
   m_cells[tabIndex].setTabController(controller, tabIndex);
@@ -55,7 +55,7 @@ void TabView::setSelectedIndex(int index) {
 
 int TabView::numberOfSubviews() const { return m_numberOfTabs; }
 
-View *TabView::subviewAtIndex(int index) {
+View* TabView::subviewAtIndex(int index) {
   assert(index < m_numberOfTabs);
   return &m_cells[index];
 }
@@ -82,9 +82,9 @@ void TabView::layoutSubviews(bool force) {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char *TabView::className() const { return "TabView"; }
+const char* TabView::className() const { return "TabView"; }
 
-void TabView::logAttributes(std::ostream &os) const {
+void TabView::logAttributes(std::ostream& os) const {
   View::logAttributes(os);
   os << " numberOfTabs=\"" << (int)m_numberOfTabs << "\"";
   os << " activeTabIndex=\"" << (int)m_activeTabIndex << "\"";

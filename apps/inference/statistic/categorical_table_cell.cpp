@@ -13,8 +13,8 @@ namespace Inference {
 /* CategoricalTableCell */
 
 CategoricalTableCell::CategoricalTableCell(
-    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
-    Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parentResponder, Escher::TableViewDataSource* dataSource,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
     : Escher::Responder(parentResponder),
       m_selectableTableView(this, dataSource, this, this, scrollViewDelegate) {
   m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
@@ -48,7 +48,7 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
 }
 
 void CategoricalTableCell::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (!withinTemporarySelection && previousOffset != t->contentOffset()) {
@@ -69,8 +69,8 @@ void CategoricalTableCell::layoutSubviews(bool force) {
 /* InputCategoricalTableCell */
 
 InputCategoricalTableCell::InputCategoricalTableCell(
-    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
-    Statistic *statistic, Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parentResponder, Escher::TableViewDataSource* dataSource,
+    Statistic* statistic, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, dataSource, scrollViewDelegate),
       m_statistic(statistic),
       m_numberOfRows(0),
@@ -79,7 +79,7 @@ InputCategoricalTableCell::InputCategoricalTableCell(
 }
 
 bool InputCategoricalTableCell::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Right &&
           m_selectableTableView.selectedColumn() <
@@ -93,7 +93,7 @@ bool InputCategoricalTableCell::textFieldShouldFinishEditing(
 }
 
 bool InputCategoricalTableCell::textFieldDidFinishEditing(
-    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double p = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(p)) {
     return false;
@@ -131,9 +131,9 @@ bool InputCategoricalTableCell::handleEvent(Ion::Events::Event event) {
 }
 
 void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
-                                         void *cell, int index) {
-  InferenceEvenOddEditableCell *c =
-      static_cast<InferenceEvenOddEditableCell *>(cell);
+                                         void* cell, int index) {
+  InferenceEvenOddEditableCell* c =
+      static_cast<InferenceEvenOddEditableCell*>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->editableTextCell()->textField()->setDelegate(this);
 }
@@ -223,8 +223,8 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
 /* DoubleColumnTableCell */
 
 DoubleColumnTableCell::DoubleColumnTableCell(
-    Escher::Responder *parentResponder, Statistic *statistic,
-    Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parentResponder, Statistic* statistic,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, statistic,
                                 scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
@@ -237,7 +237,7 @@ int DoubleColumnTableCell::reusableCellCount(int type) const {
   return k_maxNumberOfReusableRows * k_maxNumberOfColumns;
 }
 
-HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
+HighlightCell* DoubleColumnTableCell::reusableCell(int i, int type) {
   assert(i < reusableCellCount(type));
   if (type == k_typeOfHeaderCells) {
     assert(i < k_maxNumberOfColumns);
@@ -246,13 +246,13 @@ HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
   return cell(i);
 }
 
-void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+void DoubleColumnTableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                                 int column, int row) {
   if (typeAtLocation(column, row) == k_typeOfHeaderCells) {
     return;
   }
-  InferenceEvenOddEditableCell *myCell =
-      static_cast<InferenceEvenOddEditableCell *>(cell);
+  InferenceEvenOddEditableCell* myCell =
+      static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
                            column, row - 1, tableModel());
 }

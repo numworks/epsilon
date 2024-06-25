@@ -11,8 +11,8 @@ namespace Distributions {
 /* Parameters Controller */
 
 ParametersController::ParametersController(
-    Escher::StackViewController *parentResponder, Distribution *distribution,
-    CalculationController *calculationController)
+    Escher::StackViewController* parentResponder, Distribution* distribution,
+    CalculationController* calculationController)
     : FloatParameterController<double>(parentResponder, &m_headerView),
       m_headerView(I18n::Message::DefineParameters, k_messageFormat),
       m_bottomView(I18n::Message::LeaveAFieldEmpty, k_messageFormat),
@@ -26,7 +26,7 @@ ParametersController::ParametersController(
   }
 }
 
-const char *ParametersController::title() {
+const char* ParametersController::title() {
   return I18n::translate(m_distribution->title());
 }
 
@@ -55,14 +55,13 @@ int ParametersController::numberOfRows() const {
   return 1 + m_distribution->numberOfParameters();
 }
 
-void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
+void ParametersController::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_buttonCellType) {
     return;
   }
   assert(typeAtRow(row) == k_parameterCellType);
-  MenuCellWithEditableText<LayoutView, MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
-          cell);
+  MenuCellWithEditableText<LayoutView, MessageTextView>* myCell =
+      static_cast<MenuCellWithEditableText<LayoutView, MessageTextView>*>(cell);
   myCell->label()->setLayout(m_distribution->parameterSymbolAtIndex(row));
   myCell->subLabel()->setMessage(
       m_distribution->parameterDefinitionAtIndex(row));
@@ -83,17 +82,17 @@ KDCoordinate ParametersController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-HighlightCell *ParametersController::reusableParameterCell(int index,
+HighlightCell* ParametersController::reusableParameterCell(int index,
                                                            int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfCells);
   return &m_menuListCell[index];
 }
 
-TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
+TextField* ParametersController::textFieldOfCellAtIndex(HighlightCell* cell,
                                                         int index) {
   assert(typeAtRow(index) == k_parameterCellType);
-  return static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
+  return static_cast<MenuCellWithEditableText<LayoutView, MessageTextView>*>(
              cell)
       ->textField();
 }
@@ -117,7 +116,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
 }
 
 bool ParametersController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, event)) {
     m_selectableListView.reloadData();
     return true;
@@ -129,7 +128,7 @@ void ParametersController::buttonAction() {
   stackOpenPage(m_calculationController);
 }
 
-bool ParametersController::hasUndefinedValue(const char *text,
+bool ParametersController::hasUndefinedValue(const char* text,
                                              double floatValue) const {
   if (text[0] == 0) {
     // Accept empty inputs

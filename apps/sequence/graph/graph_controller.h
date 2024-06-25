@@ -16,11 +16,11 @@ namespace Sequence {
 
 class GraphController final : public Shared::FunctionGraphController {
  public:
-  GraphController(Escher::Responder *parentResponder,
-                  Escher::ButtonRowController *header,
-                  CurveViewRange *interactiveRange,
-                  Shared::CurveViewCursor *cursor, int *selectedCurveIndex,
-                  Shared::SequenceStore *sequenceStore);
+  GraphController(Escher::Responder* parentResponder,
+                  Escher::ButtonRowController* header,
+                  CurveViewRange* interactiveRange,
+                  Shared::CurveViewCursor* cursor, int* selectedCurveIndex,
+                  Shared::SequenceStore* sequenceStore);
 
   // ViewController
   void viewWillAppear() override;
@@ -29,7 +29,7 @@ class GraphController final : public Shared::FunctionGraphController {
   I18n::Message emptyMessage() override;
 
   // TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
   // InteractiveCurveViewRangeDelegate
@@ -37,7 +37,7 @@ class GraphController final : public Shared::FunctionGraphController {
       bool computeX, bool computeY,
       Poincare::Range2D<float> originalRange) const override;
 
-  TermSumController *termSumController() { return &m_termSumController; }
+  TermSumController* termSumController() { return &m_termSumController; }
   float interestingXMin() const;
   void moveToRank(int n);
 
@@ -45,10 +45,10 @@ class GraphController final : public Shared::FunctionGraphController {
   class SequenceSelectionController
       : public Shared::FunctionGraphController::FunctionSelectionController {
    public:
-    SequenceSelectionController(GraphController *graphController)
+    SequenceSelectionController(GraphController* graphController)
         : Shared::FunctionGraphController::FunctionSelectionController(
               graphController) {}
-    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+    Shared::CurveSelectionCellWithChevron* reusableCell(int index,
                                                         int type) override {
       assert(index >= 0 &&
              index < Shared::SequenceStore::k_maxNumberOfSequences);
@@ -65,7 +65,7 @@ class GraphController final : public Shared::FunctionGraphController {
   };
 
   // ZoomCurveViewController
-  CurveViewRange *interactiveCurveViewRange() override { return m_graphRange; }
+  CurveViewRange* interactiveCurveViewRange() override { return m_graphRange; }
 
   // SimpleInteractiveCurveViewController
   bool moveCursorHorizontally(OMG::HorizontalDirection direction,
@@ -73,33 +73,33 @@ class GraphController final : public Shared::FunctionGraphController {
 
   // InteractiveCurveViewController
   void openMenuForCurveAtIndex(int curveIndex) override;
-  SequenceSelectionController *curveSelectionController() const override {
-    return const_cast<SequenceSelectionController *>(
+  SequenceSelectionController* curveSelectionController() const override {
+    return const_cast<SequenceSelectionController*>(
         &m_sequenceSelectionController);
   }
 
   // FunctionBannerDelegate
-  Shared::XYBannerView *bannerView() override { return &m_bannerView; }
+  Shared::XYBannerView* bannerView() override { return &m_bannerView; }
 
   // FunctionGraphController
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;
-  Shared::SequenceStore *functionStore() const override {
-    return static_cast<Shared::SequenceStore *>(
+  Shared::SequenceStore* functionStore() const override {
+    return static_cast<Shared::SequenceStore*>(
         Shared::FunctionGraphController::functionStore());
   }
-  GraphView *functionGraphView() override { return &m_view; }
+  GraphView* functionGraphView() override { return &m_view; }
   void openMenuForSelectedCurve() override;
 
   Shared::RingCursorView m_cursorView;
   Shared::XYBannerView m_bannerView;
   GraphView m_view;
-  CurveViewRange *m_graphRange;
+  CurveViewRange* m_graphRange;
   CurveParameterController m_curveParameterController;
   SequenceSelectionController m_sequenceSelectionController;
   TermSumController m_termSumController;
   CobwebController m_cobwebController;
-  Shared::SequenceStore *m_sequenceStore;
+  Shared::SequenceStore* m_sequenceStore;
   float m_smallestRank;
 };
 

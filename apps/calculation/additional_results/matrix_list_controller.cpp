@@ -25,7 +25,7 @@ void MatrixListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   /* Change complex format to avoid all additional expressions to be
    * "nonreal" (with [i] for instance). As additional results are computed
    * from the output, which is built taking ComplexFormat into account, there
@@ -42,7 +42,7 @@ void MatrixListController::computeAdditionalResults(
   Expression clone = exactOutput.type() == ExpressionNode::Type::Matrix
                          ? exactOutput.clone()
                          : approximateOutput.clone();
-  Matrix matrix = static_cast<const Matrix &>(clone);
+  Matrix matrix = static_cast<const Matrix&>(clone);
 
   bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
   size_t index = 0;

@@ -7,9 +7,9 @@ using namespace Escher;
 namespace Calculation {
 
 CalculationSelectableListView::CalculationSelectableListView(
-    Responder *parentResponder, ListViewDataSource *dataSource,
-    SelectableListViewDataSource *selectionDataSource,
-    SelectableListViewDelegate *delegate)
+    Responder* parentResponder, ListViewDataSource* dataSource,
+    SelectableListViewDataSource* selectionDataSource,
+    SelectableListViewDelegate* delegate)
     : ::SelectableListView(parentResponder, dataSource, selectionDataSource,
                            delegate) {
   setVerticalCellOverlap(0);
@@ -33,7 +33,7 @@ void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
   }
 
   /* Main part of the scroll */
-  HistoryViewCell *cell = static_cast<HistoryViewCell *>(selectedCell());
+  HistoryViewCell* cell = static_cast<HistoryViewCell*>(selectedCell());
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
 
@@ -101,13 +101,13 @@ void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
    * cell and reselect the first responder.
    * We have to recall "selectedCell" because when the table might have been
    * relayouted in "setContentOffset".*/
-  cell = static_cast<HistoryViewCell *>(selectedCell());
+  cell = static_cast<HistoryViewCell*>(selectedCell());
   assert(cell);
   App::app()->setFirstResponder(cell, true);
 }
 
 void CalculationSelectableListView::didEnterResponderChain(
-    Responder *previousFirstResponder) {
+    Responder* previousFirstResponder) {
   resetSizeAndOffsetMemoization();
   SelectableTableView::didEnterResponderChain(previousFirstResponder);
 }

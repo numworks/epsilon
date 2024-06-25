@@ -7,7 +7,7 @@ using namespace Escher;
 namespace Graph {
 
 DerivativesParameterController::DerivativesParameterController(
-    Responder *parentResponder)
+    Responder* parentResponder)
     : UniformSelectableListController(parentResponder) {
   constexpr I18n::Message messages[k_numberOfCells] = {
       I18n::Message::FirstDerivativeValue,
@@ -51,8 +51,8 @@ void DerivativesParameterController::setRecord(Ion::Storage::Record record) {
   }
 }
 
-StackViewController *DerivativesParameterController::stackController() const {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* DerivativesParameterController::stackController() const {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction>

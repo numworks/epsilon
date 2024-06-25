@@ -60,13 +60,13 @@ constexpr ToolboxMessage unitDistanceYard = ToolboxMessageLeaf(
 constexpr ToolboxMessage unitDistanceMile = ToolboxMessageLeaf(
     I18n::Message::UnitDistanceMileSymbol, I18n::Message::UnitDistanceMile);
 
-constexpr const ToolboxMessage *const unitDistanceMeterChildren[] = {
+constexpr const ToolboxMessage* const unitDistanceMeterChildren[] = {
     &unitDistanceMeterPico,  &unitDistanceMeterNano,  &unitDistanceMeterMicro,
     &unitDistanceMeterMilli, &unitDistanceMeterCenti, &unitDistanceMeter,
     &unitDistanceMeterKilo};
 constexpr ToolboxMessage unitDistanceMeterNode = ToolboxMessageNode(
     I18n::Message::UnitMetricMenu, unitDistanceMeterChildren);
-constexpr const ToolboxMessage *const unitDistanceChildrenForImperialToolbox[] =
+constexpr const ToolboxMessage* const unitDistanceChildrenForImperialToolbox[] =
     {&unitDistanceInch,
      &unitDistanceFoot,
      &unitDistanceYard,
@@ -75,11 +75,11 @@ constexpr const ToolboxMessage *const unitDistanceChildrenForImperialToolbox[] =
      &unitDistanceLightYear,
      &unitDistanceParsec,
      &unitDistanceMeterNode};
-constexpr const ToolboxMessage *const unitDistanceImperialChildren[] = {
+constexpr const ToolboxMessage* const unitDistanceImperialChildren[] = {
     &unitDistanceInch, &unitDistanceFoot, &unitDistanceYard, &unitDistanceMile};
 constexpr ToolboxMessage unitDistanceImperialNode = ToolboxMessageNode(
     I18n::Message::UnitImperialMenu, unitDistanceImperialChildren);
-constexpr const ToolboxMessage *const unitDistanceChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessage* const unitDistanceChildrenForMetricToolbox[] = {
     &unitDistanceMeterPico,   &unitDistanceMeterNano,
     &unitDistanceMeterMicro,  &unitDistanceMeterMilli,
     &unitDistanceMeterCenti,  &unitDistanceMeter,
@@ -175,22 +175,22 @@ constexpr ToolboxMessage unitVolumeQuart = ToolboxMessageLeaf(
 constexpr ToolboxMessage unitVolumeGallon = ToolboxMessageLeaf(
     I18n::Message::UnitVolumeGallonSymbol, I18n::Message::UnitVolumeGallon);
 
-constexpr const ToolboxMessage *const unitVolumeLiterChildren[] = {
+constexpr const ToolboxMessage* const unitVolumeLiterChildren[] = {
     &unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci,
     &unitVolumeLiter};
 constexpr ToolboxMessage unitVolumeLiterNode =
     ToolboxMessageNode(I18n::Message::UnitMetricMenu, unitVolumeLiterChildren);
-constexpr const ToolboxMessage *const unitVolumeChildrenForImperialToolbox[] = {
+constexpr const ToolboxMessage* const unitVolumeChildrenForImperialToolbox[] = {
     &unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce,
     &unitVolumeCup,      &unitVolumePint,       &unitVolumeQuart,
     &unitVolumeGallon,   &unitVolumeLiterNode};
-constexpr const ToolboxMessage *const unitVolumeImperialChildren[] = {
+constexpr const ToolboxMessage* const unitVolumeImperialChildren[] = {
     &unitVolumeTeaspoon, &unitVolumeTablespoon, &unitVolumeFluidOunce,
     &unitVolumeCup,      &unitVolumePint,       &unitVolumeQuart,
     &unitVolumeGallon};
 constexpr ToolboxMessage unitVolumeImperialNode = ToolboxMessageNode(
     I18n::Message::UnitImperialMenu, unitVolumeImperialChildren);
-constexpr const ToolboxMessage *const unitVolumeChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessage* const unitVolumeChildrenForMetricToolbox[] = {
     &unitVolumeLiterMilli, &unitVolumeLiterCenti, &unitVolumeLiterDeci,
     &unitVolumeLiter, &unitVolumeImperialNode};
 
@@ -206,18 +206,18 @@ constexpr ToolboxMessage unitSurfaceHectar = ToolboxMessageLeaf(
 constexpr ToolboxMessage unitSurfaceAcre = ToolboxMessageLeaf(
     I18n::Message::UnitSurfaceAcreSymbol, I18n::Message::UnitSurfaceAcre);
 
-constexpr const ToolboxMessage *const unitSurfaceMetricChildren[] = {
+constexpr const ToolboxMessage* const unitSurfaceMetricChildren[] = {
     &unitSurfaceHectar};
 constexpr ToolboxMessage unitSurfaceMetricNode = ToolboxMessageNode(
     I18n::Message::UnitMetricMenu, unitSurfaceMetricChildren);
-constexpr const ToolboxMessage *const unitSurfaceChildrenForImperialToolbox[] =
+constexpr const ToolboxMessage* const unitSurfaceChildrenForImperialToolbox[] =
     {&unitSurfaceAcre, &unitSurfaceMetricNode};
 
-constexpr const ToolboxMessage *const unitSurfaceImperialChildren[] = {
+constexpr const ToolboxMessage* const unitSurfaceImperialChildren[] = {
     &unitSurfaceAcre};
 constexpr ToolboxMessage unitSurfaceImperialNode = ToolboxMessageNode(
     I18n::Message::UnitImperialMenu, unitSurfaceImperialChildren);
-constexpr const ToolboxMessage *const unitSurfaceChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessage* const unitSurfaceChildrenForMetricToolbox[] = {
     &unitSurfaceHectar, &unitSurfaceImperialNode};
 
 constexpr ToolboxMessage unitSurfaceFork[] = {
@@ -250,19 +250,19 @@ constexpr ToolboxMessage unitMassShortTon = ToolboxMessageLeaf(
 constexpr ToolboxMessage unitMassLongTon = ToolboxMessageLeaf(
     I18n::Message::UnitMassLongTonSymbol, I18n::Message::UnitMassLongTon);
 
-constexpr const ToolboxMessage *const unitMassGramChildren[] = {
+constexpr const ToolboxMessage* const unitMassGramChildren[] = {
     &unitMassGramMicro, &unitMassGramMilli, &unitMassGram, &unitMassGramKilo,
     &unitMassTonne};
 constexpr ToolboxMessage unitMassGramNode =
     ToolboxMessageNode(I18n::Message::UnitMetricMenu, unitMassGramChildren);
-constexpr const ToolboxMessage *const unitMassChildrenForImperialToolbox[] = {
+constexpr const ToolboxMessage* const unitMassChildrenForImperialToolbox[] = {
     &unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon,
     &unitMassGramNode};
-constexpr const ToolboxMessage *const unitMassImperialChildren[] = {
+constexpr const ToolboxMessage* const unitMassImperialChildren[] = {
     &unitMassOunce, &unitMassPound, &unitMassShortTon, &unitMassLongTon};
 constexpr ToolboxMessage unitMassImperialNode = ToolboxMessageNode(
     I18n::Message::UnitImperialMenu, unitMassImperialChildren);
-constexpr const ToolboxMessage *const unitMassChildrenForMetricToolbox[] = {
+constexpr const ToolboxMessage* const unitMassChildrenForMetricToolbox[] = {
     &unitMassGramMicro, &unitMassGramMilli, &unitMassGram,
     &unitMassGramKilo,  &unitMassTonne,     &unitMassImperialNode};
 
@@ -416,11 +416,11 @@ constexpr ToolboxMessage unitTemperatureFahrenheit =
     ToolboxMessageLeaf(I18n::Message::UnitTemperatureFahrenheitSymbol,
                        I18n::Message::UnitTemperatureFahrenheit);
 
-constexpr const ToolboxMessage *const
+constexpr const ToolboxMessage* const
     unitTemperatureChildrenForMetricToolbox[] = {&unitTemperatureKelvin,
                                                  &unitTemperatureCelsius,
                                                  &unitTemperatureFahrenheit};
-constexpr const ToolboxMessage *const
+constexpr const ToolboxMessage* const
     unitTemperatureChildrenForImperialToolbox[] = {&unitTemperatureKelvin,
                                                    &unitTemperatureFahrenheit,
                                                    &unitTemperatureCelsius};
@@ -750,12 +750,12 @@ constexpr ToolboxMessage listSampleSTD =
     ToolboxMessageLeaf(I18n::Message::ListSampleStandardDevCommandWithArg,
                        I18n::Message::SampleSTD);
 
-constexpr const ToolboxMessage *const listStatsDefaultOrder[] = {
+constexpr const ToolboxMessage* const listStatsDefaultOrder[] = {
     &listMean,     &listStandardDeviation, &listMedian,
     &listVariance, &listSampleSTD,
 };
 
-constexpr const ToolboxMessage *const listStatsAlternateOrder[]{
+constexpr const ToolboxMessage* const listStatsAlternateOrder[]{
     &listMean,   &listStandardDeviation, &listSampleSTD,
     &listMedian, &listVariance,
 };

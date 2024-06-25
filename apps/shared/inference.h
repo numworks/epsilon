@@ -27,7 +27,7 @@ class Inference : public MemoizedCurveViewRange {
   // Input parameters
   virtual int numberOfParameters() = 0;
   virtual double parameterAtIndex(int i) const {
-    return const_cast<Inference *>(this)->parametersArray()[i];
+    return const_cast<Inference*>(this)->parametersArray()[i];
   }
   virtual void setParameterAtIndex(double f, int i) {
     parametersArray()[i] = f;
@@ -60,7 +60,7 @@ class Inference : public MemoizedCurveViewRange {
   }
   virtual float computeYMax() const = 0;
   virtual ParameterRepresentation paramRepresentationAtIndex(int i) const = 0;
-  virtual double *parametersArray() = 0;
+  virtual double* parametersArray() = 0;
 
  private:
   static const Poincare::Range1D<float> DefaultYRange() {

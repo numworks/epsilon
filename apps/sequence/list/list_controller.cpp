@@ -15,9 +15,9 @@ namespace Sequence {
 
 constexpr KDCoordinate ListController::k_minTitleColumnWidth;
 
-ListController::ListController(Responder *parentResponder,
-                               ButtonRowController *header,
-                               ButtonRowController *footer)
+ListController::ListController(Responder* parentResponder,
+                               ButtonRowController* header,
+                               ButtonRowController* footer)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddSequence),
       m_editableCell(this, this),
@@ -35,7 +35,7 @@ KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   KDCoordinate sequenceHeight;
   int sequenceDefinition;
-  Shared::Sequence *sequence =
+  Shared::Sequence* sequence =
       modelStore()->modelForRecord(recordAtRow(row, &sequenceDefinition));
   Layout layout;
   if (sequenceDefinition == k_firstInitialCondition) {
@@ -76,7 +76,7 @@ void ListController::viewDidDisappear() {
   App::app()->defaultToolbox()->setExtraCellsDataSource(nullptr);
 }
 
-HighlightCell *ListController::reusableCell(int index, int type) {
+HighlightCell* ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < maxNumberOfDisplayableRows());
   switch (type) {
     case k_expressionCellType:
@@ -89,12 +89,12 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-void ListController::fillCellForRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
-    AbstractSequenceCell *sequenceCell =
-        static_cast<AbstractSequenceCell *>(cell);
+    AbstractSequenceCell* sequenceCell =
+        static_cast<AbstractSequenceCell*>(cell);
     // Update the expression cell first since the title's baseline depends on it
     if (type == k_expressionCellType) {
       fillExpressionCellForRow(sequenceCell->mainCell(), row);
@@ -108,13 +108,13 @@ void ListController::fillCellForRow(HighlightCell *cell, int row) {
 
 /* MathLayoutFieldDelegate */
 
-bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
+bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                                 Ion::Events::Event event) {
   if (event == Ion::Events::Toolbox) {
     // Set extra cells
     int recurrenceDepth = -1;
     int sequenceDefinition;
-    Shared::Sequence *sequence =
+    Shared::Sequence* sequence =
         modelStore()->modelForRecord(selectedRecord(&sequenceDefinition));
     if (sequenceDefinition == k_sequenceDefinition) {
       recurrenceDepth = sequence->numberOfElements() - 1;
@@ -127,7 +127,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
 }
 
 bool ListController::isAcceptableExpression(const UserExpression expression,
-                                            Context *context) {
+                                            Context* context) {
   // Do not accept any OperatorType.
   return MathLayoutFieldDelegate::isAcceptableExpression(expression, context) &&
          expression.type() != ExpressionNode::Type::Comparison;
@@ -156,8 +156,8 @@ void ListController::editExpression(Ion::Events::Event event) {
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   int sequenceDefinition;
   Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
-  Shared::Sequence *sequence = modelStore()->modelForRecord(record);
-  Context *context = App::app()->localContext();
+  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
+  Context* context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
@@ -176,7 +176,7 @@ bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
 Layout ListController::getLayoutForSelectedRecord() const {
   int sequenceDefinition;
   Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
-  Shared::Sequence *sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       return sequence->layout();
@@ -187,24 +187,24 @@ Layout ListController::getLayoutForSelectedRecord() const {
   }
 }
 
-HighlightCell *ListController::titleCells(int index) {
+HighlightCell* ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return m_sequenceCells[index].titleCell();
 }
 
-HighlightCell *ListController::functionCells(int index) {
+HighlightCell* ListController::functionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return m_sequenceCells[index].expressionCell();
 }
 
-void ListController::fillTitleCellForRow(VerticalSequenceTitleCell *cell,
+void ListController::fillTitleCellForRow(VerticalSequenceTitleCell* cell,
                                          int row,
-                                         HighlightCell *expressionCell) {
+                                         HighlightCell* expressionCell) {
   assert(row >= 0 && row < k_maxNumberOfRows);
   cell->setBaseline(baseline(row, expressionCell));
   int sequenceDefinition;
   Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
-  Shared::Sequence *sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor nameColor =
       sequence->isActive() ? sequence->color() : Palette::GrayDark;
@@ -221,13 +221,13 @@ void ListController::fillTitleCellForRow(VerticalSequenceTitleCell *cell,
   }
 }
 
-void ListController::fillExpressionCellForRow(HighlightCell *cell, int row) {
+void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   assert(typeAtRow(row) == k_expressionCellType);
-  Escher::EvenOddExpressionCell *myCell =
-      static_cast<Escher::EvenOddExpressionCell *>(cell);
+  Escher::EvenOddExpressionCell* myCell =
+      static_cast<Escher::EvenOddExpressionCell*>(cell);
   int sequenceDefinition;
   Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
-  Shared::Sequence *sequence = modelStore()->modelForRecord(record);
+  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
@@ -248,8 +248,8 @@ KDCoordinate ListController::maxFunctionNameWidth() {
   int numberOfModels = modelStore()->numberOfModels();
   for (int i = 0; i < numberOfModels; i++) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(i);
-    const char *functionName = record.fullName();
-    const char *dotPosition =
+    const char* functionName = record.fullName();
+    const char* dotPosition =
         strchr(functionName, Ion::Storage::Record::k_dotChar);
     assert(dotPosition != nullptr);
     maxNameLength =
@@ -269,13 +269,13 @@ void ListController::didChangeModelsList() {
   }
 }
 
-KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
-  assert(j >= 0 && j < const_cast<ListController *>(this)->numberOfRows());
+KDCoordinate ListController::baseline(int j, HighlightCell* cell) {
+  assert(j >= 0 && j < const_cast<ListController*>(this)->numberOfRows());
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1;  // Baseline < 0 triggers default behaviour (centered alignment)
   }
-  return 0.5 * (const_cast<ListController *>(this)->rowHeight(j) -
+  return 0.5 * (const_cast<ListController*>(this)->rowHeight(j) -
                 layout->layoutSize(k_font).height()) +
          layout->baseline(k_font);
 }
@@ -292,7 +292,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   return true;
 }
 
-SequenceStore *ListController::modelStore() const {
+SequenceStore* ListController::modelStore() const {
   return App::app()->functionStore();
 }
 
@@ -303,7 +303,7 @@ KDCoordinate ListController::nameWidth(int nameLength) const {
 
 void ListController::showLastSequence() {
   selectableListView()->resetSizeAndOffsetMemoization();
-  SequenceStore *store = const_cast<ListController *>(this)->modelStore();
+  SequenceStore* store = const_cast<ListController*>(this)->modelStore();
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfRows() - (hasAddSequenceButton ? 0 : 1) - 1;

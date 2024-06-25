@@ -12,11 +12,11 @@ using namespace Escher;
 
 namespace Settings {
 
-GenericSubController::GenericSubController(Responder *parentResponder)
+GenericSubController::GenericSubController(Responder* parentResponder)
     : SelectableListViewController(parentResponder),
       m_messageTreeModel(nullptr) {}
 
-const char *GenericSubController::title() {
+const char* GenericSubController::title() {
   if (m_messageTreeModel) {
     return I18n::translate(m_messageTreeModel->label());
   }
@@ -62,23 +62,23 @@ KDCoordinate GenericSubController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-void GenericSubController::fillCellForRow(HighlightCell *cell, int row) {
-  static_cast<MessageTextView *>(
-      static_cast<AbstractMenuCell *>(cell)->widget(CellWidget::Type::Label))
+void GenericSubController::fillCellForRow(HighlightCell* cell, int row) {
+  static_cast<MessageTextView*>(
+      static_cast<AbstractMenuCell*>(cell)->widget(CellWidget::Type::Label))
       ->setMessage(m_messageTreeModel->childAtIndex(row)->label());
 }
 
 void GenericSubController::setMessageTreeModel(
-    const MessageTree *messageTreeModel) {
-  m_messageTreeModel = (MessageTree *)messageTreeModel;
+    const MessageTree* messageTreeModel) {
+  m_messageTreeModel = (MessageTree*)messageTreeModel;
 }
 
 void GenericSubController::viewDidDisappear() {
   m_selectableListView.deselectTable();
 }
 
-StackViewController *GenericSubController::stackController() const {
-  return (StackViewController *)parentResponder();
+StackViewController* GenericSubController::stackController() const {
+  return (StackViewController*)parentResponder();
 }
 
 }  // namespace Settings

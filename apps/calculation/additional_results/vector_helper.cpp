@@ -14,12 +14,12 @@ namespace Calculation {
 namespace VectorHelper {
 
 Expression BuildVectorNorm(
-    const UserExpression exactOutput, Context *context,
+    const UserExpression exactOutput, Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
   if (exactOutput.type() != ExpressionNode::Type::Matrix ||
-      !static_cast<const Matrix &>(exactOutput).isVector()) {
+      !static_cast<const Matrix&>(exactOutput).isVector()) {
     return Expression();
   }
   Expression norm = VectorNorm::Builder(exactOutput);

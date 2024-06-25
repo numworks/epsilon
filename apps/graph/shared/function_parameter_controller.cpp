@@ -16,7 +16,7 @@ using namespace Escher;
 namespace Graph {
 
 FunctionParameterController::FunctionParameterController(
-    Responder *parentResponder)
+    Responder* parentResponder)
     : Shared::ListParameterController(parentResponder,
                                       I18n::Message::FunctionColor,
                                       I18n::Message::DeleteExpression),
@@ -29,16 +29,16 @@ FunctionParameterController::FunctionParameterController(
   m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
 }
 
-const char *FunctionParameterController::title() {
+const char* FunctionParameterController::title() {
   assert(m_parameterDelegate);
   return m_parameterDelegate->usePersonalizedTitle()
              ? m_titleBuffer
              : I18n::translate(I18n::Message::Options);
 }
 
-HighlightCell *FunctionParameterController::cell(int row) {
+HighlightCell* FunctionParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell *const cells[] = {&m_detailsCell,     &m_colorCell,
+  HighlightCell* const cells[] = {&m_detailsCell,     &m_colorCell,
                                   &m_derivativesCell, &m_functionDomainCell,
                                   &m_enableCell,      &m_deleteCell};
   static_assert(std::size(cells) == k_numberOfRows);
@@ -62,7 +62,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
   m_selectableListView.resetSizeAndOffsetMemoization();
 }
 
-const char *intervalBracket(double value, bool opening) {
+const char* intervalBracket(double value, bool opening) {
   if (std::isinf(value)) {
     return GlobalPreferences::SharedGlobalPreferences()->openIntervalChar(
         opening);
@@ -70,7 +70,7 @@ const char *intervalBracket(double value, bool opening) {
   return opening ? "[" : "]";
 }
 
-int writeInterval(char *buffer, int bufferSize, double min, double max,
+int writeInterval(char* buffer, int bufferSize, double min, double max,
                   int numberOfSignificantDigits,
                   Preferences::PrintFloatMode mode) {
   return Poincare::Print::CustomPrintf(
@@ -81,7 +81,7 @@ int writeInterval(char *buffer, int bufferSize, double min, double max,
 
 void FunctionParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
-    App *myApp = App::app();
+    App* myApp = App::app();
     Shared::ExpiringPointer<ContinuousFunction> function =
         myApp->functionStore()->modelForRecord(m_record);
     m_detailsCell.subLabel()->setMessage(function->properties().caption());
@@ -99,9 +99,9 @@ void FunctionParameterController::viewWillAppear() {
 }
 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell *cell = selectedCell();
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  HighlightCell* cell = selectedCell();
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
   if (cell == &m_detailsCell && m_detailsCell.canBeActivatedByEvent(event)) {
     stack->push(&m_detailsParameterController);
     return true;
@@ -135,7 +135,7 @@ void FunctionParameterController::initializeColumnParameters() {
   Shared::ColumnParameters::initializeColumnParameters();
 }
 
-Shared::ClearColumnHelper *FunctionParameterController::clearColumnHelper() {
+Shared::ClearColumnHelper* FunctionParameterController::clearColumnHelper() {
   return App::app()->valuesController();
 }
 

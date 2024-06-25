@@ -16,23 +16,23 @@ namespace Statistics {
  */
 class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
  public:
-  GraphButtonRowDelegate(Escher::ButtonRowController *header,
-                         Escher::StackViewController *stackViewController,
-                         Escher::Responder *typeButtonParentResponder,
-                         Escher::ViewController *typeViewController)
+  GraphButtonRowDelegate(Escher::ButtonRowController* header,
+                         Escher::StackViewController* stackViewController,
+                         Escher::Responder* typeButtonParentResponder,
+                         Escher::ViewController* typeViewController)
       : Escher::ButtonRowDelegate(header, nullptr),
         m_stackViewController(stackViewController),
         m_typeViewController(typeViewController),
         m_typeButton(typeButtonParentResponder, I18n::Message::Type,
                      Escher::Invocation::Builder<GraphButtonRowDelegate>(
-                         [](GraphButtonRowDelegate *delegate, void *sender) {
+                         [](GraphButtonRowDelegate* delegate, void* sender) {
                            delegate->pushTypeController();
                            return true;
                          },
                          this),
                      KDFont::Size::Small) {}
 
-  Escher::StackViewController *stackController() {
+  Escher::StackViewController* stackController() {
     return m_stackViewController;
   }
 
@@ -42,19 +42,19 @@ class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
     assert(position == Escher::ButtonRowController::Position::Top);
     return 1;
   }
-  Escher::ButtonCell *buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0 &&
            position == Escher::ButtonRowController::Position::Top);
-    return const_cast<Escher::SimpleButtonCell *>(&m_typeButton);
+    return const_cast<Escher::SimpleButtonCell*>(&m_typeButton);
   }
 
  private:
   void pushTypeController() { stackController()->push(m_typeViewController); }
 
-  Escher::StackViewController *m_stackViewController;
-  Escher::ViewController *m_typeViewController;
+  Escher::StackViewController* m_stackViewController;
+  Escher::ViewController* m_typeViewController;
   Escher::SimpleButtonCell m_typeButton;
 };
 

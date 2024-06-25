@@ -20,7 +20,7 @@ namespace Shared {
 
 class GlobalContext final : public Poincare::Context {
  public:
-  constexpr static const char *k_extensions[] = {
+  constexpr static const char* k_extensions[] = {
       Ion::Storage::expressionExtension,
       Ion::Storage::matrixExtension,
       Ion::Storage::functionExtension,
@@ -31,14 +31,14 @@ class GlobalContext final : public Poincare::Context {
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information
-  static bool SymbolAbstractNameIsFree(const char *baseName);
+  static bool SymbolAbstractNameIsFree(const char* baseName);
 
   static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
   // Destroy records
-  static void DestroyRecordsBaseNamedWithoutExtension(const char *baseName,
-                                                      const char *extension);
-  static void DeleteParametricComponentsWithBaseName(char *baseName,
+  static void DestroyRecordsBaseNamedWithoutExtension(const char* baseName,
+                                                      const char* extension);
+  static void DeleteParametricComponentsWithBaseName(char* baseName,
                                                      size_t baseNameLength,
                                                      size_t bufferSize);
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
@@ -56,50 +56,50 @@ class GlobalContext final : public Poincare::Context {
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  SymbolAbstractType expressionTypeForIdentifier(const char *identifier,
+  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override;
   bool setExpressionForSymbolAbstract(
-      const Poincare::UserExpression &expression,
-      const Poincare::SymbolAbstract &symbol) override;
+      const Poincare::UserExpression& expression,
+      const Poincare::SymbolAbstract& symbol) override;
   static OMG::GlobalBox<SequenceStore> sequenceStore;
   static OMG::GlobalBox<Poincare::Internal::SequenceCache> sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
-  SequenceContext *sequenceContext() { return &m_sequenceContext; }
+  SequenceContext* sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(
-      Poincare::PoolObject *treePoolCursor = nullptr) override;
+      Poincare::PoolObject* treePoolCursor = nullptr) override;
   void prepareForNewApp();
   void reset();
 
  private:
   // Expression getters
   const Poincare::UserExpression protectedExpressionForSymbolAbstract(
-      const Poincare::SymbolAbstract &symbol, bool clone,
-      Poincare::ContextWithParent *lastDescendantContext) override;
+      const Poincare::SymbolAbstract& symbol, bool clone,
+      Poincare::ContextWithParent* lastDescendantContext) override;
   const Poincare::UserExpression expressionForSymbolAndRecord(
-      const Poincare::SymbolAbstract &symbol, Ion::Storage::Record r,
-      Context *ctx);
+      const Poincare::SymbolAbstract& symbol, Ion::Storage::Record r,
+      Context* ctx);
   static const Poincare::UserExpression ExpressionForActualSymbol(
       Ion::Storage::Record r);
   static const Poincare::UserExpression ExpressionForFunction(
-      const Poincare::UserExpression &parameter, Ion::Storage::Record r);
+      const Poincare::UserExpression& parameter, Ion::Storage::Record r);
   const Poincare::UserExpression expressionForSequence(
-      const Poincare::SymbolAbstract &symbol, Ion::Storage::Record r,
-      Context *ctx);
+      const Poincare::SymbolAbstract& symbol, Ion::Storage::Record r,
+      Context* ctx);
   // Expression setters
   /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(
-      Poincare::UserExpression &expression,
-      const Poincare::SymbolAbstract &symbol,
+      Poincare::UserExpression& expression,
+      const Poincare::SymbolAbstract& symbol,
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForFunction(
-      const Poincare::UserExpression &expression,
-      const Poincare::SymbolAbstract &symbol,
+      const Poincare::UserExpression& expression,
+      const Poincare::SymbolAbstract& symbol,
       Ion::Storage::Record previousRecord);
   // Record getter
   static Ion::Storage::Record SymbolAbstractRecordWithBaseName(
-      const char *name);
-  double approximateSequenceAtRank(const char *identifier,
+      const char* name);
+  double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override;
   SequenceContext m_sequenceContext;
 };

@@ -9,8 +9,8 @@ using namespace Escher;
 namespace Shared {
 
 GoToParameterController::GoToParameterController(
-    Responder *parentResponder, InteractiveCurveViewRange *graphRange,
-    CurveViewCursor *cursor)
+    Responder* parentResponder, InteractiveCurveViewRange* graphRange,
+    CurveViewCursor* cursor)
     : FloatParameterController<double>(parentResponder),
       m_cursor(cursor),
       m_graphRange(graphRange),
@@ -20,14 +20,14 @@ GoToParameterController::GoToParameterController(
       m_tempParameter(0.0),
       m_parameterCell(&m_selectableListView, this) {}
 
-HighlightCell *GoToParameterController::reusableParameterCell(int index,
+HighlightCell* GoToParameterController::reusableParameterCell(int index,
                                                               int type) {
   assert(index == 0);
   return &m_parameterCell;
 }
 
-TextField *GoToParameterController::textFieldOfCellAtIndex(
-    Escher::HighlightCell *cell, int index) {
+TextField* GoToParameterController::textFieldOfCellAtIndex(
+    Escher::HighlightCell* cell, int index) {
   assert(typeAtRow(index) == k_parameterCellType);
   return m_parameterCell.textField();
 }
@@ -65,7 +65,7 @@ bool GoToParameterController::setParameterAtIndex(int parameterIndex,
 void GoToParameterController::buttonAction() {
   // Update parameter value to m_tempParameter, and proceed if value is valid
   if (confirmParameterAtIndex(0, m_tempParameter)) {
-    StackViewController *stack = (StackViewController *)parentResponder();
+    StackViewController* stack = (StackViewController*)parentResponder();
     stack->popUntilDepth(
         InteractiveCurveViewController::k_graphControllerStackDepth, true);
   }

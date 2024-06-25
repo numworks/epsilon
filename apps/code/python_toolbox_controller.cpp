@@ -997,7 +997,7 @@ constexpr ToolboxMessage toolboxModel =
     ToolboxMessageNode(I18n::Message::Toolbox, menu);
 
 constexpr static bool catalogContainsAllChildren(
-    const ToolboxMessage *list, int numberOfChildren,
+    const ToolboxMessage* list, int numberOfChildren,
     bool sameCaptionIsEnough = false) {
   constexpr int nCatalog = std::size(catalogChildren);
   for (int i = 0; i < numberOfChildren; i++) {
@@ -1050,18 +1050,18 @@ static_assert(catalogContainsAllChildren(TimeModuleChildren,
 PythonToolboxController::PythonToolboxController()
     : Toolbox(nullptr, rootModel()->label()) {}
 
-const ToolboxMessageTree *PythonToolboxController::moduleChildren(
-    const char *name, int *numberOfNodes) const {
-  for (const ToolboxMessage &tm : modulesChildren) {
-    const ToolboxMessageTree &t =
-        reinterpret_cast<const ToolboxMessageTree &>(tm);
+const ToolboxMessageTree* PythonToolboxController::moduleChildren(
+    const char* name, int* numberOfNodes) const {
+  for (const ToolboxMessage& tm : modulesChildren) {
+    const ToolboxMessageTree& t =
+        reinterpret_cast<const ToolboxMessageTree&>(tm);
     if (strcmp(I18n::translate(t.label()), name) == 0) {
       const int childrenCount = t.numberOfChildren();
       if (numberOfNodes != nullptr) {
         *numberOfNodes = childrenCount;
       }
       assert(childrenCount > 0);
-      return static_cast<const ToolboxMessageTree *>(t.childAtIndex(0));
+      return static_cast<const ToolboxMessageTree*>(t.childAtIndex(0));
     }
   }
   return nullptr;
@@ -1085,9 +1085,9 @@ bool PythonToolboxController::handleEvent(Ion::Events::Event event) {
 }
 
 bool PythonToolboxController::selectLeaf(int selectedRow) {
-  const ToolboxMessageTree *node = static_cast<const ToolboxMessageTree *>(
+  const ToolboxMessageTree* node = static_cast<const ToolboxMessageTree*>(
       m_messageTreeModel->childAtIndex(selectedRow));
-  const char *editedText = I18n::translate(node->insertedText());
+  const char* editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
   if (node->stripInsertedText()) {
@@ -1103,16 +1103,16 @@ bool PythonToolboxController::selectLeaf(int selectedRow) {
   return true;
 }
 
-const ToolboxMessageTree *PythonToolboxController::rootModel() const {
+const ToolboxMessageTree* PythonToolboxController::rootModel() const {
   return toolboxModel.toMessageTree();
 }
 
-ToolboxLeafCell *PythonToolboxController::leafCellAtIndex(int index) {
+ToolboxLeafCell* PythonToolboxController::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-NestedMenuController::NodeCell *PythonToolboxController::nodeCellAtIndex(
+NestedMenuController::NodeCell* PythonToolboxController::nodeCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
@@ -1130,13 +1130,13 @@ KDCoordinate PythonToolboxController::nonMemoizedRowHeight(int row) {
   return Toolbox::nonMemoizedRowHeight(row);
 }
 
-void PythonToolboxController::fillCellForRow(HighlightCell *cell, int row) {
-  const ToolboxMessageTree *messageTree =
-      static_cast<const ToolboxMessageTree *>(
+void PythonToolboxController::fillCellForRow(HighlightCell* cell, int row) {
+  const ToolboxMessageTree* messageTree =
+      static_cast<const ToolboxMessageTree*>(
           m_messageTreeModel->childAtIndex(row));
   // Message is leaf
   if (typeAtRow(row) == k_leafCellType) {
-    ToolboxLeafCell *myCell = static_cast<ToolboxLeafCell *>(cell);
+    ToolboxLeafCell* myCell = static_cast<ToolboxLeafCell*>(cell);
     if (messageTree->text() == I18n::Message::Default &&
         UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
       // Leaf node with a multiple row label and no subLabel have a small font.

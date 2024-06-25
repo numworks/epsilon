@@ -23,10 +23,10 @@ constexpr static size_t calculationBufferSize =
     10 * (sizeof(::Calculation::Calculation) +
           ::Calculation::Calculation::k_numberOfExpressions *
               ::Constant::MaxSerializedExpressionSize +
-          sizeof(::Calculation::Calculation *));
+          sizeof(::Calculation::Calculation*));
 char calculationBuffer[calculationBufferSize];
 
-void assert_store_is(CalculationStore *store, const char **result) {
+void assert_store_is(CalculationStore* store, const char** result) {
   for (int i = 0; i < store->numberOfCalculations(); i++) {
     quiz_assert(strcmp(store->calculationAtIndex(i)->inputText(), result[i]) ==
                 0);
@@ -37,7 +37,7 @@ QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
   // Store is now {9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
-  const char *result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
+  const char* result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
   for (int i = 0; i < 10; i++) {
     char text[2] = {(char)(i + '0'), 0};
     store.push(text, &globalContext);
@@ -49,15 +49,15 @@ QUIZ_CASE(calculation_store) {
     store.deleteCalculationAtIndex(i);
   }
   // Store is now {9, 7, 5, 3, 1}
-  const char *result2[] = {"9", "7", "5", "3", "1"};
+  const char* result2[] = {"9", "7", "5", "3", "1"};
   assert_store_is(&store, result2);
 
   store.deleteAll();
   /* Checking if the store handles correctly the delete of older calculations
    * when full. */
   constexpr size_t minimalSize = ::CalculationStore::k_calculationMinimalSize +
-                                 sizeof(::Calculation::Calculation *);
-  constexpr const char *pattern = "123456789+";
+                                 sizeof(::Calculation::Calculation*);
+  constexpr const char* pattern = "123456789+";
   constexpr size_t patternSize = 10;
   assert(strlen(pattern) == patternSize);
 
@@ -130,8 +130,8 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
-void assertAnsIs(const char *input, const char *expectedAnsInputText,
-                 Context *context, CalculationStore *store) {
+void assertAnsIs(const char* input, const char* expectedAnsInputText,
+                 Context* context, CalculationStore* store) {
   store->push(input, context);
   store->push("Ans", context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
@@ -203,12 +203,12 @@ QUIZ_CASE(calculation_ans) {
   store.deleteAll();
 }
 
-void assertCalculationIs(const char *input, DisplayOutput display,
-                         EqualSign sign, const char *exactOutput,
-                         const char *displayedApproximateOutput,
-                         const char *storedApproximateOutput, Context *context,
-                         CalculationStore *store,
-                         const char *storedInput = nullptr) {
+void assertCalculationIs(const char* input, DisplayOutput display,
+                         EqualSign sign, const char* exactOutput,
+                         const char* displayedApproximateOutput,
+                         const char* storedApproximateOutput, Context* context,
+                         CalculationStore* store,
+                         const char* storedInput = nullptr) {
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
@@ -420,8 +420,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Preferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
-void assertMainCalculationOutputIs(const char *input, const char *output,
-                                   Context *context, CalculationStore *store) {
+void assertMainCalculationOutputIs(const char* input, const char* output,
+                                   Context* context, CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
@@ -772,12 +772,12 @@ QUIZ_CASE(calculation_complex_format) {
 QUIZ_CASE(calculation_involving_sequence) {
   Shared::GlobalContext globalContext;
 
-  Shared::SequenceStore *seqStore = globalContext.sequenceStore;
+  Shared::SequenceStore* seqStore = globalContext.sequenceStore;
   Ion::Storage::Record::ErrorStatus err = seqStore->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   Ion::Storage::Record record =
       seqStore->recordAtIndex(seqStore->numberOfModels() - 1);
-  Shared::Sequence *u = seqStore->modelForRecord(record);
+  Shared::Sequence* u = seqStore->modelForRecord(record);
   u->setType(Shared::Sequence::Type::Explicit);
   err = u->setContent("i"_l, &globalContext);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
@@ -791,8 +791,8 @@ QUIZ_CASE(calculation_involving_sequence) {
   seqStore->tidyDownstreamPoolFrom();
 }
 
-bool operator==(const AdditionalResultsType &a,
-                const AdditionalResultsType &b) {
+bool operator==(const AdditionalResultsType& a,
+                const AdditionalResultsType& b) {
   // TODO C++20 Use a default comparison operator
   return a.integer == b.integer && a.rational == b.rational &&
          a.directTrigonometry == b.directTrigonometry &&
@@ -803,8 +803,8 @@ bool operator==(const AdditionalResultsType &a,
 }
 
 void assertCalculationAdditionalResultTypeHas(
-    const char *input, const AdditionalResultsType additionalResultsType,
-    Context *context, CalculationStore *store) {
+    const char* input, const AdditionalResultsType additionalResultsType,
+    Context* context, CalculationStore* store) {
   store->push(input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);

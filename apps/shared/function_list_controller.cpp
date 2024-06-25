@@ -8,9 +8,9 @@ using namespace Escher;
 
 namespace Shared {
 
-FunctionListController::FunctionListController(Responder *parentResponder,
-                                               ButtonRowController *header,
-                                               ButtonRowController *footer,
+FunctionListController::FunctionListController(Responder* parentResponder,
+                                               ButtonRowController* header,
+                                               ButtonRowController* footer,
                                                I18n::Message text)
     : ExpressionModelListController(parentResponder, text),
       ButtonRowDelegate(header, footer),
@@ -18,8 +18,8 @@ FunctionListController::FunctionListController(Responder *parentResponder,
       m_selectableListView(this, this, this, this),
       m_plotButton(this, I18n::Message::Plot,
                    Invocation::Builder<FunctionListController>(
-                       [](FunctionListController *list, void *sender) {
-                         TabViewController *tabController =
+                       [](FunctionListController* list, void* sender) {
+                         TabViewController* tabController =
                              list->tabController();
                          tabController->setActiveTab(1);
                          return true;
@@ -29,8 +29,8 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                    Palette::PurpleBright),
       m_valuesButton(this, I18n::Message::DisplayValues,
                      Invocation::Builder<FunctionListController>(
-                         [](FunctionListController *list, void *sender) {
-                           TabViewController *tabController =
+                         [](FunctionListController* list, void* sender) {
+                           TabViewController* tabController =
                                list->tabController();
                            tabController->setActiveTab(2);
                            return true;
@@ -52,24 +52,24 @@ int FunctionListController::numberOfButtons(
   return 0;
 }
 
-ButtonCell *FunctionListController::buttonAtIndex(
+ButtonCell* FunctionListController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
-  const ButtonCell *buttons[2] = {&m_plotButton, &m_valuesButton};
-  return (ButtonCell *)buttons[index];
+  const ButtonCell* buttons[2] = {&m_plotButton, &m_valuesButton};
+  return (ButtonCell*)buttons[index];
 }
 
 /* Responder */
 
 void FunctionListController::didEnterResponderChain(
-    Responder *previousFirstResponder) {
+    Responder* previousFirstResponder) {
   selectableListView()->reloadData(false);
 }
 
 void FunctionListController::willExitResponderChain(
-    Responder *nextFirstResponder) {
+    Responder* nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
     selectableListView()->deselectTable();
@@ -108,7 +108,7 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
       }
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         // Open function parameter menu
-        StackViewController *stack = stackController();
+        StackViewController* stack = stackController();
         parameterController()->setRecord(selectedRecord());
         stack->push(parameterController());
         return true;
@@ -152,22 +152,22 @@ bool FunctionListController::handleEvent(Ion::Events::Event event) {
 
 /* ExpressionModelListController */
 
-void FunctionListController::fillCellForRow(HighlightCell *cell, int row) {
-  EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
+void FunctionListController::fillCellForRow(HighlightCell* cell, int row) {
+  EvenOddCell* evenOddCell = static_cast<EvenOddCell*>(cell);
   evenOddCell->setEven(modelIndexForRow(row) % 2 == 0);
   evenOddCell->reloadCell();
 }
 
-StackViewController *FunctionListController::stackController() const {
-  return static_cast<StackViewController *>(
+StackViewController* FunctionListController::stackController() const {
+  return static_cast<StackViewController*>(
       parentResponder()->parentResponder()->parentResponder());
 }
 
-TabViewController *FunctionListController::tabController() const {
-  return static_cast<TabViewController *>(parentResponder()
-                                              ->parentResponder()
-                                              ->parentResponder()
-                                              ->parentResponder());
+TabViewController* FunctionListController::tabController() const {
+  return static_cast<TabViewController*>(parentResponder()
+                                             ->parentResponder()
+                                             ->parentResponder()
+                                             ->parentResponder());
 }
 
 }  // namespace Shared

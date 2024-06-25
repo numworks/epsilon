@@ -8,8 +8,8 @@ using namespace Escher;
 
 namespace Finance {
 
-ParametersController::ParametersController(StackViewController *parent,
-                                           ResultController *resultController)
+ParametersController::ParametersController(StackViewController* parent,
+                                           ResultController* resultController)
     : Shared::FloatParameterController<double>(parent, &m_messageView),
       m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController),
@@ -21,9 +21,9 @@ ParametersController::ParametersController(StackViewController *parent,
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
 }
 
-const char *ParametersController::title() {
+const char* ParametersController::title() {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
-  const char *label =
+  const char* label =
       I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
   int length = Poincare::Print::UnsafeCustomPrintf(
       m_titleBuffer, k_titleBufferSize,
@@ -54,7 +54,7 @@ bool ParametersController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
+void ParametersController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_buttonCellType) {
     return;
@@ -69,8 +69,8 @@ void ParametersController::fillCellForRow(HighlightCell *cell, int row) {
     return;
   }
   assert(type == k_inputCellType);
-  MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
+  MenuCellWithEditableText<MessageTextView, MessageTextView>* myCell =
+      static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView>*>(
           cell);
   myCell->label()->setMessage(App::GetInterestData()->labelForParameter(param));
   myCell->subLabel()->setMessage(
@@ -122,7 +122,7 @@ int ParametersController::reusableParameterCellCount(int type) const {
   return 1;
 }
 
-HighlightCell *ParametersController::reusableParameterCell(int i, int type) {
+HighlightCell* ParametersController::reusableParameterCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);
@@ -133,11 +133,11 @@ HighlightCell *ParametersController::reusableParameterCell(int i, int type) {
   }
 }
 
-TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
+TextField* ParametersController::textFieldOfCellAtIndex(HighlightCell* cell,
                                                         int index) {
   assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
-             MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
+             MenuCellWithEditableText<MessageTextView, MessageTextView>*>(cell)
       ->textField();
 }
 

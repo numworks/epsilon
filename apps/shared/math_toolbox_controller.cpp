@@ -26,7 +26,7 @@ extern const ToolboxMessage toolboxModel;
 MathToolboxController::MathToolboxController()
     : Toolbox(nullptr, rootModel()->label()), m_extraCellsDataSource(nullptr) {}
 
-const ToolboxMessageTree *MathToolboxController::rootModel() const {
+const ToolboxMessageTree* MathToolboxController::rootModel() const {
   return toolboxModel.toMessageTree();
 }
 
@@ -72,7 +72,7 @@ KDCoordinate MathToolboxController::nonMemoizedRowHeight(int row) {
 }
 
 bool MathToolboxController::isMessageTreeDisabled(
-    const ToolboxMessageTree *messageTree) const {
+    const ToolboxMessageTree* messageTree) const {
   I18n::Message label = messageTree->label();
   ExamMode examMode = Preferences::SharedPreferences()->examMode();
   return (messageTree->text() == I18n::Message::Sum && examMode.forbidSum()) ||
@@ -86,7 +86,7 @@ bool MathToolboxController::isMessageTreeDisabled(
 }
 
 bool MathToolboxController::displayMessageTreeDisabledPopUp(
-    const Escher::ToolboxMessageTree *messageTree) {
+    const Escher::ToolboxMessageTree* messageTree) {
   if (isMessageTreeDisabled(messageTree)) {
     // TODO: It would be better if warning did not dismiss the toolbox
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode);
@@ -95,30 +95,30 @@ bool MathToolboxController::displayMessageTreeDisabledPopUp(
   return false;
 }
 
-void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
+void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
   if (row < numberOfExtraCellsInCurrentMenu()) {
     assert(m_extraCellsDataSource);
-    static_cast<LeafCell *>(cell)->label()->setLayout(
+    static_cast<LeafCell*>(cell)->label()->setLayout(
         m_extraCellsDataSource->extraCellLayoutAtRow(row));
-    static_cast<LeafCell *>(cell)->subLabel()->setMessage(
+    static_cast<LeafCell*>(cell)->subLabel()->setMessage(
         I18n::Message::Default);
     cell->reloadCell();
     return;
   }
-  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
+  const ToolboxMessageTree* messageTree = messageTreeModelAtIndex(row);
   KDColor textColor =
       isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (typeAtRow(row) == k_leafCellType) {
-    assert(static_cast<void *>(m_nodeCells) > static_cast<void *>(cell) ||
-           static_cast<void *>(cell) >=
-               static_cast<void *>(m_nodeCells + k_maxNumberOfDisplayedRows));
+    assert(static_cast<void*>(m_nodeCells) > static_cast<void*>(cell) ||
+           static_cast<void*>(cell) >=
+               static_cast<void*>(m_nodeCells + k_maxNumberOfDisplayedRows));
     // Message is leaf
-    LeafCell *myCell = static_cast<LeafCell *>(cell);
+    LeafCell* myCell = static_cast<LeafCell*>(cell);
 
     Layout resultLayout = messageTree->layout();
 
     if (resultLayout.isUninitialized()) {
-      const char *text = I18n::translate(messageTree->label());
+      const char* text = I18n::translate(messageTree->label());
 
       if (Poincare::Preferences::SharedPreferences()->editionMode() ==
           Poincare::Preferences::EditionMode::Edition2D) {
@@ -143,10 +143,10 @@ void MathToolboxController::fillCellForRow(HighlightCell *cell, int row) {
     myCell->label()->setTextColor(textColor);
   } else {
     assert(typeAtRow(row) == k_nodeCellType);
-    assert(static_cast<void *>(m_leafCells) > static_cast<void *>(cell) ||
-           static_cast<void *>(cell) >=
-               static_cast<void *>(m_leafCells + k_maxNumberOfDisplayedRows));
-    static_cast<NestedMenuController::NodeCell *>(cell)->label()->setTextColor(
+    assert(static_cast<void*>(m_leafCells) > static_cast<void*>(cell) ||
+           static_cast<void*>(cell) >=
+               static_cast<void*>(m_leafCells + k_maxNumberOfDisplayedRows));
+    static_cast<NestedMenuController::NodeCell*>(cell)->label()->setTextColor(
         textColor);
     Escher::Toolbox::fillCellForRow(cell, row);
   }
@@ -160,7 +160,7 @@ bool MathToolboxController::selectSubMenu(int selectedRow) {
 
 bool MathToolboxController::selectLeaf(int selectedRow) {
   assert(typeAtRow(selectedRow) == k_leafCellType);
-  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(selectedRow);
+  const ToolboxMessageTree* messageTree = messageTreeModelAtIndex(selectedRow);
   if (displayMessageTreeDisabledPopUp(messageTree)) {
     return true;
   }
@@ -174,7 +174,7 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
   }
 
   // Translate the message
-  const char *text = I18n::translate(messageTree->insertedText());
+  const char* text = I18n::translate(messageTree->insertedText());
   // Has to be in the same scope as handleEventWithText
   char textToInsert[k_maxMessageSize];
   if (messageTree->stripInsertedText()) {
@@ -197,19 +197,19 @@ bool MathToolboxController::selectExtraCell(int selectedRow) {
   return true;
 }
 
-MathToolboxController::LeafCell *MathToolboxController::leafCellAtIndex(
+MathToolboxController::LeafCell* MathToolboxController::leafCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *MathToolboxController::nodeCellAtIndex(
+Escher::NestedMenuController::NodeCell* MathToolboxController::nodeCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }
 
-const Escher::ToolboxMessageTree *
+const Escher::ToolboxMessageTree*
 MathToolboxController::messageTreeModelAtIndex(int index) const {
   assert(index >= numberOfExtraCellsInCurrentMenu() &&
          index - numberOfExtraCellsInCurrentMenu() <
@@ -235,7 +235,7 @@ int MathToolboxController::controlChecksum() const {
 }
 
 int MathToolboxController::indexAfterFork(
-    const ToolboxMessageTree *forkMessageTree) const {
+    const ToolboxMessageTree* forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
     if (Poincare::Preferences::SharedPreferences()
             ->mixedFractionsAreEnabled()) {

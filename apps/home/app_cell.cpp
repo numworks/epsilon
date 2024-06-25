@@ -12,7 +12,7 @@ AppCell::AppCell()
       m_image(0, 0, nullptr, 0),
       m_pointerNameView(nullptr, k_glyphsFormat) {}
 
-void AppCell::drawRect(KDContext *ctx, KDRect rect) const {
+void AppCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDSize nameSize = textView()->minimalSizeForOptimalDisplay();
   ctx->fillRect(
       KDRect(0, bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
@@ -22,8 +22,8 @@ void AppCell::drawRect(KDContext *ctx, KDRect rect) const {
 
 int AppCell::numberOfSubviews() const { return isVisible() ? 2 : 0; }
 
-View *AppCell::subviewAtIndex(int index) {
-  View *views[] = {&m_iconView, const_cast<TextView *>(textView())};
+View* AppCell::subviewAtIndex(int index) {
+  View* views[] = {&m_iconView, const_cast<TextView*>(textView())};
   return views[index];
 }
 
@@ -34,7 +34,7 @@ void AppCell::layoutSubviews(bool force) {
                 force);
   KDSize nameSize = textView()->minimalSizeForOptimalDisplay();
   setChildFrame(
-      const_cast<TextView *>(textView()),
+      const_cast<TextView*>(textView()),
       KDRect((bounds().width() - nameSize.width()) / 2 - k_nameWidthMargin,
              bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
              nameSize.width() + 2 * k_nameWidthMargin,
@@ -42,7 +42,7 @@ void AppCell::layoutSubviews(bool force) {
       force);
 }
 
-void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor *descriptor) {
+void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor* descriptor) {
   m_iconView.setImage(descriptor->icon());
   m_messageNameView.setMessage(descriptor->name());
   m_pointerNameView.setText(nullptr);
@@ -65,12 +65,12 @@ void AppCell::setVisible(bool visible) {
 }
 
 void AppCell::reloadCell() {
-  TextView *t = const_cast<TextView *>(textView());
+  TextView* t = const_cast<TextView*>(textView());
   t->setTextColor(isHighlighted() ? KDColorWhite : KDColorBlack);
   t->setBackgroundColor(isHighlighted() ? Palette::YellowDark : KDColorWhite);
 }
 
-const Escher::TextView *AppCell::textView() const {
+const Escher::TextView* AppCell::textView() const {
   if (m_pointerNameView.text()) {
     return &m_pointerNameView;
   } else {

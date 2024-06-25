@@ -8,12 +8,12 @@ namespace Escher {
 
 void ViewController::viewWillAppear() {
 #if EPSILON_TELEMETRY
-  const char *screenId = telemetryId();
+  const char* screenId = telemetryId();
   if (screenId == nullptr) {
     return;
   }
 
-  const char *appId = App::app()->telemetryId();
+  const char* appId = App::app()->telemetryId();
   if (appId == nullptr) {
     return;
   }
@@ -32,9 +32,9 @@ void ViewController::viewWillAppear() {
 #endif
 }
 
-void ViewController::stackOpenPage(ViewController *nextPage) {
-  StackViewController *stackViewControllerResponder =
-      static_cast<StackViewController *>(parentResponder());
+void ViewController::stackOpenPage(ViewController* nextPage) {
+  StackViewController* stackViewControllerResponder =
+      static_cast<StackViewController*>(parentResponder());
   assert(stackViewControllerResponder != nullptr);
   stackViewControllerResponder->push(nextPage);
 }
@@ -42,8 +42,8 @@ void ViewController::stackOpenPage(ViewController *nextPage) {
 bool ViewController::popFromStackViewControllerOnLeftEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
-    StackViewController *stackViewControllerResponder =
-        static_cast<StackViewController *>(parentResponder());
+    StackViewController* stackViewControllerResponder =
+        static_cast<StackViewController*>(parentResponder());
     assert(stackViewControllerResponder != nullptr);
     stackViewControllerResponder->pop();
     return true;
@@ -52,9 +52,9 @@ bool ViewController::popFromStackViewControllerOnLeftEvent(
 }
 
 #if EPSILON_TELEMETRY
-void ViewController::telemetryReportEvent(const char *action,
-                                          const char *label) const {
-  const char *category = App::app()->telemetryId();
+void ViewController::telemetryReportEvent(const char* action,
+                                          const char* label) const {
+  const char* category = App::app()->telemetryId();
   assert(category != nullptr);
   assert(action != nullptr);
   assert(label != nullptr);

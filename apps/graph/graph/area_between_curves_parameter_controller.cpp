@@ -11,7 +11,7 @@ namespace Graph {
 Ion::Storage::Record
 AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
     int index, Ion::Storage::Record excludedRecord) {
-  ContinuousFunctionStore *store = App::app()->functionStore();
+  ContinuousFunctionStore* store = App::app()->functionStore();
   assert(index < store->numberOfAreaCompatibleFunctions());
   int maxNumberOfFonctions = store->numberOfActiveFunctions();
   int numberOfDerivableActiveFunctionsFound = 0;
@@ -35,14 +35,14 @@ AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
 }
 
 AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
-    Responder *parentResponder,
-    AreaBetweenCurvesGraphController *areaGraphController)
+    Responder* parentResponder,
+    AreaBetweenCurvesGraphController* areaGraphController)
     : ListWithTopAndBottomController(parentResponder, &m_topView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
       m_topView(I18n::Message::SelectSecondCurve, k_messageFormat) {}
 
-const char *AreaBetweenCurvesParameterController::title() {
+const char* AreaBetweenCurvesParameterController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
@@ -62,20 +62,20 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
 }
 
 void AreaBetweenCurvesParameterController::fillCellForRow(
-    Escher::HighlightCell *cell, int row) {
+    Escher::HighlightCell* cell, int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
-  CurveSelectionCell *curveSelectionCell =
-      static_cast<CurveSelectionCell *>(cell);
+  CurveSelectionCell* curveSelectionCell =
+      static_cast<CurveSelectionCell*>(cell);
   curveSelectionCell->setColor(function->color());
   curveSelectionCell->label()->setLayout(function->layout().clone());
 }
 
 bool AreaBetweenCurvesParameterController::handleEvent(
     Ion::Events::Event event) {
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
   if (event == Ion::Events::Left) {
     stack->pop();
     return true;

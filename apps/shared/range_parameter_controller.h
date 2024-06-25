@@ -25,13 +25,13 @@ class RangeParameterController
       Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                        Escher::ChevronView>;
   RangeParameterController(
-      Escher::Responder *parentResponder,
-      InteractiveCurveViewRange *interactiveCurveViewRange);
+      Escher::Responder* parentResponder,
+      InteractiveCurveViewRange* interactiveCurveViewRange);
 
-  const char *title() override { return I18n::translate(I18n::Message::Axis); }
+  const char* title() override { return I18n::translate(I18n::Message::Axis); }
 
   int numberOfRows() const override { return 5; }
-  Escher::HighlightCell *cell(int row) override;
+  Escher::HighlightCell* cell(int row) override;
   KDCoordinate separatorBeforeRow(int row) override;
 
   void showGridTypeMenu(bool visible) { m_gridTypeCell.setVisible(visible); }
@@ -40,9 +40,9 @@ class RangeParameterController
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  void setRange(InteractiveCurveViewRange *range);
-  Escher::StackViewController *stackController() {
-    return static_cast<Escher::StackViewController *>(parentResponder());
+  void setRange(InteractiveCurveViewRange* range);
+  Escher::StackViewController* stackController() {
+    return static_cast<Escher::StackViewController*>(parentResponder());
   }
   TELEMETRY_ID("Range");
 
@@ -50,7 +50,7 @@ class RangeParameterController
   void buttonAction();
   void fillCells();
 
-  InteractiveCurveViewRange *m_interactiveRange;
+  InteractiveCurveViewRange* m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::UnequalView>

@@ -30,7 +30,7 @@ namespace Events {
 
 // ion/src/simulator/shared/events.h
 
-char *sharedExternalTextBuffer() {
+char* sharedExternalTextBuffer() {
   static char buffer[sharedExternalTextBufferSize];
   return buffer;
 }
@@ -47,9 +47,9 @@ void resetPreemptiveKeyboardState() {}
 
 void didPressNewKey() { Simulator::Haptics::rumble(); }
 
-void openURL(const char *url) { SDL_OpenURL(url); }
+void openURL(const char* url) { SDL_OpenURL(url); }
 
-bool waitForInterruptingEvent(int maximumDelay, int *timeout) {
+bool waitForInterruptingEvent(int maximumDelay, int* timeout) {
   Keyboard::scan();
   /* As pressing keys on the simulator does not generate interruptions, we need
    * to poll the keyboard more regularly than on the device. */
@@ -67,21 +67,21 @@ bool waitForInterruptingEvent(int maximumDelay, int *timeout) {
 
 // ion/include/ion/events.h
 
-const char *Event::text() const {
+const char* Event::text() const {
   if (*this == ExternalText) {
-    return const_cast<const char *>(sharedExternalTextBuffer());
+    return const_cast<const char*>(sharedExternalTextBuffer());
   }
   return defaultText();
 }
 
 #if ION_EVENTS_JOURNAL
 
-static Journal *sSourceJournal = nullptr;
-static Journal *sDestinationJournal = nullptr;
-void replayFrom(Journal *l) { sSourceJournal = l; }
-void logTo(Journal *l) { sDestinationJournal = l; }
+static Journal* sSourceJournal = nullptr;
+static Journal* sDestinationJournal = nullptr;
+void replayFrom(Journal* l) { sSourceJournal = l; }
+void logTo(Journal* l) { sDestinationJournal = l; }
 
-Event getEvent(int *timeout) {
+Event getEvent(int* timeout) {
   Event nextEvent = Events::None;
   // Replay
   if (sSourceJournal != nullptr) {
@@ -120,11 +120,11 @@ Event getEvent(int *timeout) {
 
 #else
 
-Event getEvent(int *timeout) { return sharedGetEvent(timeout); }
+Event getEvent(int* timeout) { return sharedGetEvent(timeout); }
 
 #endif
 
-size_t copyText(uint8_t eventId, char *buffer, size_t bufferSize) {
+size_t copyText(uint8_t eventId, char* buffer, size_t bufferSize) {
   return sharedCopyText(eventId, buffer, bufferSize);
 }
 

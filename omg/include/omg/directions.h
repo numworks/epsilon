@@ -23,8 +23,8 @@ class Direction {
   constexpr static Direction Up() { return Direction(Tag::Up); }
   constexpr static Direction Down() { return Direction(Tag::Down); }
 
-  bool operator==(const Direction &other) const { return m_tag == other.m_tag; }
-  bool operator!=(const Direction &other) const { return m_tag != other.m_tag; }
+  bool operator==(const Direction& other) const { return m_tag == other.m_tag; }
+  bool operator!=(const Direction& other) const { return m_tag != other.m_tag; }
 
  private:
   enum class Tag { Left, Right, Up, Down };

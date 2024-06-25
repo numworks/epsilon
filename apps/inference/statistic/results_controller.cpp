@@ -10,9 +10,9 @@ using namespace Escher;
 namespace Inference {
 
 ResultsController::ResultsController(
-    Responder *parent, Statistic *statistic,
-    TestGraphController *testGraphController,
-    IntervalGraphController *intervalGraphController, bool enableHeadline)
+    Responder* parent, Statistic* statistic,
+    TestGraphController* testGraphController,
+    IntervalGraphController* intervalGraphController, bool enableHeadline)
     : ListWithTopAndBottomController(parent,
                                      enableHeadline ? &m_title : nullptr),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
@@ -38,10 +38,10 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() {
              : ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
-const char *ResultsController::title() {
+const char* ResultsController::title() {
   m_titleBuffer[0] = 0;
-  StackViewController *stackViewControllerResponder =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController* stackViewControllerResponder =
+      static_cast<StackViewController*>(parentResponder());
   bool resultsIsTopPage =
       stackViewControllerResponder->topViewController() != this;
   if (resultsIsTopPage &&
@@ -63,12 +63,12 @@ void ResultsController::initView() {
   ListWithTopAndBottomController::initView();
 }
 
-bool ResultsController::ButtonAction(ResultsController *controller, void *s) {
+bool ResultsController::ButtonAction(ResultsController* controller, void* s) {
   if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
-  ViewController *graph;
+  ViewController* graph;
   if (controller->m_statistic->subApp() == Statistic::SubApp::Test) {
     graph = controller->m_testGraphController;
   } else {
@@ -82,11 +82,11 @@ int ResultsController::numberOfRows() const {
   return m_statistic->numberOfResults() + 1 /* button */;
 }
 
-void ResultsController::fillCellForRow(HighlightCell *cell, int row) {
+void ResultsController::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) != k_resultCellType) {
     return;
   }
-  ResultCell *myCell = static_cast<ResultCell *>(cell);
+  ResultCell* myCell = static_cast<ResultCell*>(cell);
   double value;
   Poincare::Layout message;
   I18n::Message subMessage;
@@ -102,7 +102,7 @@ void ResultsController::fillCellForRow(HighlightCell *cell, int row) {
   myCell->accessory()->setText(buffer);
 }
 
-HighlightCell *ResultsController::reusableCell(int index, int type) {
+HighlightCell* ResultsController::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
     return cell(index);
   }

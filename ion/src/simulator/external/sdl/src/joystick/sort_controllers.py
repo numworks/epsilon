@@ -14,28 +14,30 @@ controller_guids = {}
 conditionals = []
 split_pattern = re.compile(r'([^"]*")([^,]*,)([^,]*,)([^"]*)(".*)')
 
+
 def find_element(prefix, bindings):
-    i=0
+    i = 0
     for element in bindings:
         if element.startswith(prefix):
             return i
-        i=(i + 1)
+        i = i + 1
 
     return -1
-       
+
+
 def save_controller(line):
     global controllers
     match = split_pattern.match(line)
-    entry = [ match.group(1), match.group(2), match.group(3) ]
+    entry = [match.group(1), match.group(2), match.group(3)]
     bindings = sorted(match.group(4).split(","))
-    if (bindings[0] == ""):
+    if bindings[0] == "":
         bindings.pop(0)
 
-    pos=find_element("sdk", bindings)
+    pos = find_element("sdk", bindings)
     if pos >= 0:
         bindings.append(bindings.pop(pos))
 
-    pos=find_element("hint:", bindings)
+    pos = find_element("hint:", bindings)
     if pos >= 0:
         bindings.append(bindings.pop(pos))
 
@@ -43,28 +45,32 @@ def save_controller(line):
     entry.append(match.group(5))
     controllers.append(entry)
 
-    if ',sdk' in line or ',hint:' in line:
+    if ",sdk" in line or ",hint:" in line:
         conditionals.append(entry[1])
+
 
 def write_controllers():
     global controllers
     global controller_guids
     # Check for duplicates
     for entry in controllers:
-        if (entry[1] in controller_guids and entry[1] not in conditionals):
+        if entry[1] in controller_guids and entry[1] not in conditionals:
             current_name = entry[2]
             existing_name = controller_guids[entry[1]][2]
-            print("Warning: entry '%s' is duplicate of entry '%s'" % (current_name, existing_name))
+            print(
+                "Warning: entry '%s' is duplicate of entry '%s'"
+                % (current_name, existing_name)
+            )
 
-            if (not current_name.startswith("(DUPE)")):
+            if not current_name.startswith("(DUPE)"):
                 entry[2] = "(DUPE) " + current_name
 
-            if (not existing_name.startswith("(DUPE)")):
+            if not existing_name.startswith("(DUPE)"):
                 controller_guids[entry[1]][2] = "(DUPE) " + existing_name
 
         controller_guids[entry[1]] = entry
 
-    for entry in sorted(controllers, key=lambda entry: entry[2]+"-"+entry[1]):
+    for entry in sorted(controllers, key=lambda entry: entry[2] + "-" + entry[1]):
         line = "".join(entry) + "\n"
         line = line.replace("\t", "    ")
         if not line.endswith(",\n") and not line.endswith("*/\n"):
@@ -74,24 +80,25 @@ def write_controllers():
     controllers = []
     controller_guids = {}
 
+
 for line in input:
-    if (parsing_controllers):
-        if (line.startswith("{")):
+    if parsing_controllers:
+        if line.startswith("{"):
             output.write(line)
-        elif (line.startswith("    NULL")):
+        elif line.startswith("    NULL"):
             parsing_controllers = False
             write_controllers()
             output.write(line)
-        elif (line.startswith("#if")):
+        elif line.startswith("#if"):
             print("Parsing " + line.strip())
             output.write(line)
-        elif (line.startswith("#endif")):
+        elif line.startswith("#endif"):
             write_controllers()
             output.write(line)
         else:
             save_controller(line)
     else:
-        if (line.startswith("static const char *s_ControllerMappings")):
+        if line.startswith("static const char *s_ControllerMappings"):
             parsing_controllers = True
 
         output.write(line)

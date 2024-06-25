@@ -15,7 +15,7 @@ using namespace Escher;
 
 namespace Settings {
 
-PressToTestController::PressToTestController(Responder *parentResponder)
+PressToTestController::PressToTestController(Responder* parentResponder)
     : ListWithTopAndBottomController(parentResponder, &m_topMessageView,
                                      &m_bottomMessageView),
       m_topMessageView(I18n::Message::Default, k_messageFormat),
@@ -25,7 +25,7 @@ PressToTestController::PressToTestController(Responder *parentResponder)
       m_activateButton(
           &m_selectableListView, I18n::Message::ActivateTestMode,
           Invocation::Builder<PressToTestController>(
-              [](PressToTestController *controller, void *sender) {
+              [](PressToTestController* controller, void* sender) {
                 AppsContainer::sharedAppsContainer()->displayExamModePopUp(
                     ExamMode(ExamMode::Ruleset::PressToTest,
                              controller->getPressToTestParams()));
@@ -34,9 +34,9 @@ PressToTestController::PressToTestController(Responder *parentResponder)
               this),
           ButtonCell::Style::EmbossedLight),
       m_confirmPopUpController(Invocation::Builder<PressToTestController>(
-          [](PressToTestController *controller, void *sender) {
+          [](PressToTestController* controller, void* sender) {
             controller->resetController();
-            static_cast<StackViewController *>(controller->parentResponder())
+            static_cast<StackViewController*>(controller->parentResponder())
                 ->pop();
             return true;
           },
@@ -101,7 +101,7 @@ void PressToTestController::setMessages() {
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = innerSelectedRow();
   if (typeAtRow(row) == k_switchCellType &&
-      static_cast<PressToTestSwitch *>(m_selectableListView.cell(selectedRow()))
+      static_cast<PressToTestSwitch*>(m_selectableListView.cell(selectedRow()))
           ->canBeActivatedByEvent(event) &&
       !Preferences::SharedPreferences()->examMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
@@ -122,7 +122,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
       m_confirmPopUpController.presentModally();
     } else {
       resetController();
-      static_cast<StackViewController *>(parentResponder())->pop();
+      static_cast<StackViewController*>(parentResponder())->pop();
     }
     return true;
   }
@@ -148,7 +148,7 @@ int PressToTestController::typeAtRow(int row) const {
   return row < k_numberOfSwitchCells ? k_switchCellType : k_buttonCellType;
 }
 
-HighlightCell *PressToTestController::reusableCell(int index, int type) {
+HighlightCell* PressToTestController::reusableCell(int index, int type) {
   if (type == k_buttonCellType) {
     assert(index == 0);
     return &m_activateButton;
@@ -162,13 +162,13 @@ int PressToTestController::reusableCellCount(int type) const {
   return type == k_buttonCellType ? 1 : k_numberOfReusableSwitchCells;
 }
 
-void PressToTestController::fillCellForRow(HighlightCell *cell, int row) {
+void PressToTestController::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_buttonCellType) {
     assert(!Preferences::SharedPreferences()->examMode().isActive());
     return;
   }
   assert(typeAtRow(row) == k_switchCellType);
-  PressToTestSwitch *myCell = static_cast<PressToTestSwitch *>(cell);
+  PressToTestSwitch* myCell = static_cast<PressToTestSwitch*>(cell);
   // A true params means the feature is disabled,
   bool featureIsDisabled = getParamAtIndex(row);
   myCell->label()->setMessage(LabelAtIndex(row));

@@ -29,14 +29,14 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
       name, Ion::Storage::equationExtension, nullptr, 0);
 }
 
-Shared::ExpressionModelHandle *EquationStore::setMemoizedModelAtIndex(
+Shared::ExpressionModelHandle* EquationStore::setMemoizedModelAtIndex(
     int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   m_equations[cacheIndex] = Equation(record);
   return &m_equations[cacheIndex];
 }
 
-ExpressionModelHandle *EquationStore::memoizedModelAtIndex(
+ExpressionModelHandle* EquationStore::memoizedModelAtIndex(
     int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_equations[cacheIndex];

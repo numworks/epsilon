@@ -14,7 +14,7 @@ static inline uint32_t minUint32T(uint32_t x, uint32_t y) {
   return x < y ? x : y;
 }
 
-void DFUInterface::StatusData::push(Channel *c) const {
+void DFUInterface::StatusData::push(Channel* c) const {
   c->push(m_bStatus);
   c->push(m_bwPollTimeout[2]);
   c->push(m_bwPollTimeout[1]);
@@ -23,11 +23,11 @@ void DFUInterface::StatusData::push(Channel *c) const {
   c->push(m_iString);
 }
 
-void DFUInterface::StateData::push(Channel *c) const { c->push(m_bState); }
+void DFUInterface::StateData::push(Channel* c) const { c->push(m_bState); }
 
-void DFUInterface::wholeDataReceivedCallback(SetupPacket *request,
-                                             uint8_t *transferBuffer,
-                                             uint16_t *transferBufferLength) {
+void DFUInterface::wholeDataReceivedCallback(SetupPacket* request,
+                                             uint8_t* transferBuffer,
+                                             uint16_t* transferBufferLength) {
   if (request->bRequest() == (uint8_t)DFURequest::Download) {
     // Handle a download request
     if (request->wValue() == 0) {
@@ -62,9 +62,9 @@ void DFUInterface::wholeDataReceivedCallback(SetupPacket *request,
   }
 }
 
-void DFUInterface::wholeDataSentCallback(SetupPacket *request,
-                                         uint8_t *transferBuffer,
-                                         uint16_t *transferBufferLength) {
+void DFUInterface::wholeDataSentCallback(SetupPacket* request,
+                                         uint8_t* transferBuffer,
+                                         uint16_t* transferBufferLength) {
   if (request->bRequest() == (uint8_t)DFURequest::GetStatus) {
     // Do any needed action after the GetStatus request.
     if (m_state == State::dfuMANIFEST) {
@@ -90,9 +90,9 @@ void DFUInterface::wholeDataSentCallback(SetupPacket *request,
   }
 }
 
-bool DFUInterface::processSetupInRequest(SetupPacket *request,
-                                         uint8_t *transferBuffer,
-                                         uint16_t *transferBufferLength,
+bool DFUInterface::processSetupInRequest(SetupPacket* request,
+                                         uint8_t* transferBuffer,
+                                         uint16_t* transferBufferLength,
                                          uint16_t transferBufferMaxLength) {
   if (Interface::processSetupInRequest(request, transferBuffer,
                                        transferBufferLength,
@@ -124,7 +124,7 @@ bool DFUInterface::processSetupInRequest(SetupPacket *request,
 }
 
 bool DFUInterface::processDownloadRequest(uint16_t wLength,
-                                          uint16_t *transferBufferLength) {
+                                          uint16_t* transferBufferLength) {
   if (m_state != State::dfuIDLE && m_state != State::dfuDNLOADIDLE) {
     m_state = State::dfuERROR;
     m_status = Status::errNOTDONE;
@@ -142,9 +142,9 @@ bool DFUInterface::processDownloadRequest(uint16_t wLength,
   return true;
 }
 
-bool DFUInterface::processUploadRequest(SetupPacket *request,
-                                        uint8_t *transferBuffer,
-                                        uint16_t *transferBufferLength,
+bool DFUInterface::processUploadRequest(SetupPacket* request,
+                                        uint8_t* transferBuffer,
+                                        uint16_t* transferBufferLength,
                                         uint16_t transferBufferMaxLength) {
   if (m_state != State::dfuIDLE && m_state != State::dfuUPLOADIDLE) {
     m_ep0->stallTransaction();
@@ -169,15 +169,15 @@ bool DFUInterface::processUploadRequest(SetupPacket *request,
         (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
     // Copy the requested memory zone into the transfer buffer.
     uint16_t copySize = minUint32T(transferBufferMaxLength, request->wLength());
-    memcpy(transferBuffer, (void *)readAddress, copySize);
+    memcpy(transferBuffer, (void*)readAddress, copySize);
     *transferBufferLength = copySize;
   }
   m_state = State::dfuUPLOADIDLE;
   return true;
 }
 
-void DFUInterface::setAddressPointerCommand(SetupPacket *request,
-                                            uint8_t *transferBuffer,
+void DFUInterface::setAddressPointerCommand(SetupPacket* request,
+                                            uint8_t* transferBuffer,
                                             uint16_t transferBufferLength) {
   assert(transferBufferLength == 5);
   // Compute the new address but change it after the next getStatus request.
@@ -199,7 +199,7 @@ void DFUInterface::changeAddressPointerIfNeeded() {
   m_status = Status::OK;
 }
 
-void DFUInterface::eraseCommand(uint8_t *transferBuffer,
+void DFUInterface::eraseCommand(uint8_t* transferBuffer,
                                 uint16_t transferBufferLength) {
   /* We determine whether the commands asks for a mass erase or which sector to
    * erase. The erase must be done after the next getStatus request. */
@@ -256,13 +256,13 @@ void DFUInterface::writeOnMemory() {
     // Write on SRAM
     // FIXME We should check that we are not overriding the current
     // instructions.
-    memcpy((void *)m_writeAddress, m_largeBuffer, m_largeBufferLength);
+    memcpy((void*)m_writeAddress, m_largeBuffer, m_largeBufferLength);
   } else {
     int writeSector = Flash::SectorAtAddress(m_writeAddress);
     bool written = false;
     if (writeSector >= 0) {
       written = Flash::WriteMemoryWithInterruptions(
-          reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer,
+          reinterpret_cast<uint8_t*>(m_writeAddress), m_largeBuffer,
           m_largeBufferLength, false);
     }
     if (!written) {
@@ -281,8 +281,8 @@ void DFUInterface::writeOnMemory() {
   m_status = Status::OK;
 }
 
-bool DFUInterface::getStatus(SetupPacket *request, uint8_t *transferBuffer,
-                             uint16_t *transferBufferLength,
+bool DFUInterface::getStatus(SetupPacket* request, uint8_t* transferBuffer,
+                             uint16_t* transferBufferLength,
                              uint16_t transferBufferMaxLength) {
   // Change the status if needed
   if (m_state == State::dfuMANIFESTSYNC) {
@@ -296,8 +296,8 @@ bool DFUInterface::getStatus(SetupPacket *request, uint8_t *transferBuffer,
   return true;
 }
 
-bool DFUInterface::clearStatus(SetupPacket *request, uint8_t *transferBuffer,
-                               uint16_t *transferBufferLength,
+bool DFUInterface::clearStatus(SetupPacket* request, uint8_t* transferBuffer,
+                               uint16_t* transferBufferLength,
                                uint16_t transferBufferMaxLength) {
   m_status = Status::OK;
   m_state = State::dfuIDLE;
@@ -305,13 +305,13 @@ bool DFUInterface::clearStatus(SetupPacket *request, uint8_t *transferBuffer,
                    transferBufferMaxLength);
 }
 
-bool DFUInterface::getState(uint8_t *transferBuffer,
-                            uint16_t *transferBufferLength, uint16_t maxSize) {
+bool DFUInterface::getState(uint8_t* transferBuffer,
+                            uint16_t* transferBufferLength, uint16_t maxSize) {
   *transferBufferLength = StateData(m_state).copy(transferBuffer, maxSize);
   return true;
 }
 
-bool DFUInterface::dfuAbort(uint16_t *transferBufferLength) {
+bool DFUInterface::dfuAbort(uint16_t* transferBufferLength) {
   m_status = Status::OK;
   m_state = State::dfuIDLE;
   *transferBufferLength = 0;

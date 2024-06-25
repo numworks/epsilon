@@ -16,19 +16,19 @@ class App : public Shared::AppWithStoreMenu {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
     Snapshot() { init(); };
 
-    App *unpack(Escher::Container *container) override;
-    const Descriptor *descriptor() const override;
+    App* unpack(Escher::Container* container) override;
+    const Descriptor* descriptor() const override;
     void reset() override;
 
-    const DataField *field() const { return m_field; }
-    void setField(const DataField *field) { m_field = field; }
+    const DataField* field() const { return m_field; }
+    void setField(const DataField* field) { m_field = field; }
     AtomicNumber selectedElement() const { return m_selectedElement; }
     void setSelectedElement(AtomicNumber selectedElement) {
       m_selectedElement = selectedElement;
@@ -41,21 +41,21 @@ class App : public Shared::AppWithStoreMenu {
    private:
     void init();
 
-    const DataField *m_field;
+    const DataField* m_field;
     AtomicNumber m_selectedElement;
     AtomicNumber m_previousElement;
   };
   TELEMETRY_ID("ElementsTable");
 
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
 
-  Snapshot *snapshot() {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  Snapshot* snapshot() {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  ElementsViewDataSource *elementsViewDataSource() { return &m_dataSource; }
+  ElementsViewDataSource* elementsViewDataSource() { return &m_dataSource; }
 
  private:
-  App(Snapshot *snapshot);
+  App(Snapshot* snapshot);
 
   Escher::StackViewController::Default m_stackController;
   MainController m_mainController;

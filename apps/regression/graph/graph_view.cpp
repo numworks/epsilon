@@ -15,16 +15,16 @@ namespace Regression {
 
 // RegressionPlotPolicy
 
-static Coordinate2D<float> evaluateRegression(float x, void *model,
-                                              void *context) {
-  Model *regression = reinterpret_cast<Model *>(model);
-  double *coeffs = reinterpret_cast<double *>(context);
+static Coordinate2D<float> evaluateRegression(float x, void* model,
+                                              void* context) {
+  Model* regression = reinterpret_cast<Model*>(model);
+  double* coeffs = reinterpret_cast<double*>(context);
   return Poincare::Coordinate2D<float>(x, regression->evaluate(coeffs, x));
 }
 
-void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
-                                    KDContext *ctx, KDRect rect) const {
-  Context *globalContext =
+void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
+                                    KDContext* ctx, KDRect rect) const {
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   int selectedSeries = App::app()->graphController()->selectedSeriesIndex();
   for (int s = 0; s <= Store::k_numberOfSeries; s++) {
@@ -42,7 +42,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
     assert(series < Palette::numberOfDataColors());
     KDColor color = Palette::DataColor[series];
     // - Draw regression curve
-    Model *seriesModel = m_store->modelForSeries(series);
+    Model* seriesModel = m_store->modelForSeries(series);
     CurveDrawing plot(Curve2D(evaluateRegression, seriesModel),
                       m_store->coefficientsForSeries(series, globalContext),
                       plotView->range()->xMin(), plotView->range()->xMax(),
@@ -68,9 +68,9 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
 
 // GraphView
 
-GraphView::GraphView(InteractiveCurveViewRange *range, Store *store,
-                     CurveViewCursor *cursor, Shared::BannerView *bannerView,
-                     Shared::CursorView *cursorView)
+GraphView::GraphView(InteractiveCurveViewRange* range, Store* store,
+                     CurveViewCursor* cursor, Shared::BannerView* bannerView,
+                     Shared::CursorView* cursorView)
     : PlotView(range) {
   // RegressionPlotPolicy
   m_store = store;

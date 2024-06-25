@@ -13,7 +13,7 @@ using namespace Poincare;
 namespace Graph {
 
 DetailsParameterController::DetailsParameterController(
-    Responder *parentResponder)
+    Responder* parentResponder)
     : SelectableListViewController(parentResponder, this) {}
 
 bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
@@ -27,7 +27,7 @@ bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-const char *DetailsParameterController::title() {
+const char* DetailsParameterController::title() {
   return I18n::translate(I18n::Message::Details);
 }
 
@@ -43,9 +43,9 @@ KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-void DetailsParameterController::fillCellForRow(HighlightCell *cell, int row) {
+void DetailsParameterController::fillCellForRow(HighlightCell* cell, int row) {
   assert(0 <= row && row < k_numberOfDataPoints);
-  DetailCell *myCell = static_cast<DetailCell *>(cell);
+  DetailCell* myCell = static_cast<DetailCell*>(cell);
   if (row == k_indexOfCurveTypeRow) {
     myCell->label()->setMessage(I18n::Message::Type);
     myCell->subLabel()->setMessage(I18n::Message::Default);
@@ -76,7 +76,7 @@ void DetailsParameterController::fillCellForRow(HighlightCell *cell, int row) {
   }
 }
 
-DetailCell *DetailsParameterController::reusableCell(int index, int type) {
+DetailCell* DetailsParameterController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
 }
@@ -85,7 +85,7 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
     Shared::ExpiringPointer<Shared::ContinuousFunction> f = function();
-    Poincare::Context *context = App::app()->localContext();
+    Poincare::Context* context = App::app()->localContext();
     if (functionIsNonVerticalLine()) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept, context);
@@ -137,7 +137,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
 Shared::ExpiringPointer<Shared::ContinuousFunction>
 DetailsParameterController::function() const {
   assert(!m_record.isNull());
-  App *myApp = App::app();
+  App* myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);
 }
 
@@ -260,7 +260,7 @@ void DetailsParameterController::setLineDetailsValues(double slope,
   m_detailValues[2] = intercept;
 }
 
-void DetailsParameterController::setConicDetailsValues(Poincare::Conic *conic) {
+void DetailsParameterController::setConicDetailsValues(Poincare::Conic* conic) {
   Conic::Shape type = function()->properties().conicShape();
   assert(type == conic->conicType().shape);
   double cx, cy;
@@ -300,8 +300,8 @@ void DetailsParameterController::setConicDetailsValues(Poincare::Conic *conic) {
   return;
 }
 
-StackViewController *DetailsParameterController::stackController() const {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* DetailsParameterController::stackController() const {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 }  // namespace Graph

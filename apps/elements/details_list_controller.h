@@ -13,17 +13,17 @@ namespace Elements {
 
 class DetailsListController : public Escher::ListWithTopAndBottomController {
  public:
-  DetailsListController(Escher::StackViewController *parentResponder);
+  DetailsListController(Escher::StackViewController* parentResponder);
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
   // Escher::ViewController
-  const char *title() override;
+  const char* title() override;
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return k_numberOfRows; }
-  Escher::HighlightCell *reusableCell(int index, int type) override {
+  Escher::HighlightCell* reusableCell(int index, int type) override {
     return m_cells + index;
   }
   int reusableCellCount(int type) const override {
@@ -33,7 +33,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
 
   // Escher::ListViewDataSource
   int typeAtRow(int row) const override { return 0; }
-  void fillCellForRow(Escher::HighlightCell *cell, int row) override;
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   bool canStoreCellAtRow(int row) override;
 
  private:
@@ -43,13 +43,13 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::StackTitleHeight);
 
-  static const DataField *DataFieldForRow(int row);
+  static const DataField* DataFieldForRow(int row);
 
   // Escher::MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
-  Escher::StackViewController *stackViewController() const {
-    return static_cast<Escher::StackViewController *>(parentResponder());
+  Escher::StackViewController* stackViewController() const {
+    return static_cast<Escher::StackViewController*>(parentResponder());
   }
 
   using PhysicalQuantityCell =

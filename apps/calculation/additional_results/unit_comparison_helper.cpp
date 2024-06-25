@@ -455,7 +455,7 @@ constexpr static const ReferenceValue k_volumeReferences[] = {
 constexpr static const int k_numberOfReferenceTables = 8;
 constexpr static const struct {
   ReferenceUnit unit;
-  const ReferenceValue *referenceTable;
+  const ReferenceValue* referenceTable;
   size_t tableLength;
 } k_referenceTables[] = {
     {ReferenceUnit({"_m", "_m"}), k_lengthReferences,
@@ -480,13 +480,13 @@ static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
 
 int FindUpperAndLowerReferenceValues(
     double inputValue, Expression orderedSIUnit,
-    const ReferenceValue **returnReferenceValues,
-    int *returnReferenceTableIndex) {
+    const ReferenceValue** returnReferenceValues,
+    int* returnReferenceTableIndex) {
   /* 1. Find table of corresponding unit.
    * WARNING : if you call this method with a unit that is not an SI unit,
    * in right order, the comparison won't work.
    * Units you can use are listed in k_referenceTables.*/
-  const ReferenceValue *referenceTable = nullptr;
+  const ReferenceValue* referenceTable = nullptr;
   char unitBuffer[k_sizeOfUnitBuffer];
   assert(!orderedSIUnit.isUninitialized());
   PoincareHelpers::Serialize(orderedSIUnit, unitBuffer, k_sizeOfUnitBuffer);
@@ -550,7 +550,7 @@ bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit) {
          0;
 }
 
-void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
+void FillRatioBuffer(double ratio, char* textBuffer, int bufferSize) {
   assert(bufferSize <= k_sizeOfUnitComparisonBuffer && bufferSize > 0);
   assert(ratio < 100.0 && ratio >= 0.01);
   bool withPercentage = false;
@@ -581,7 +581,7 @@ void FillRatioBuffer(double ratio, char *textBuffer, int bufferSize) {
 }
 
 UserExpression BuildComparisonExpression(double value,
-                                         const ReferenceValue *referenceValue,
+                                         const ReferenceValue* referenceValue,
                                          int tableIndex) {
   assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);

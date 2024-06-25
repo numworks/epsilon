@@ -14,20 +14,20 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
   constexpr static size_t k_glyphLength =
       Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxGlyphLength;
 
-  void reloadAxis(Shared::AbstractPlotView *plotView,
+  void reloadAxis(Shared::AbstractPlotView* plotView,
                   Shared::AbstractPlotView::Axis) override;
-  float tickPosition(int i, const Shared::AbstractPlotView *plotView,
+  float tickPosition(int i, const Shared::AbstractPlotView* plotView,
                      Shared::AbstractPlotView::Axis) const override;
-  void drawLabel(int i, float t, const Shared::AbstractPlotView *plotView,
-                 KDContext *ctx, KDRect rect,
+  void drawLabel(int i, float t, const Shared::AbstractPlotView* plotView,
+                 KDContext* ctx, KDRect rect,
                  Shared::AbstractPlotView::Axis axis,
                  KDColor color = k_color) const override;
 
  private:
   constexpr static int k_numberOfLabels = 2;
 
-  Interval *interval(const Shared::AbstractPlotView *plotView) const {
-    return static_cast<Interval *>(plotView->range());
+  Interval* interval(const Shared::AbstractPlotView* plotView) const {
+    return static_cast<Interval*>(plotView->range());
   }
 
   float m_ticks[k_numberOfLabels];
@@ -45,11 +45,11 @@ class IntervalPlotPolicy {
   constexpr static KDCoordinate k_mainIntervalThickness = 2;
   constexpr static KDCoordinate k_intervalBoundHalfHeight = 4;
 
-  void drawPlot(const Shared::AbstractPlotView *plotView, KDContext *ctx,
+  void drawPlot(const Shared::AbstractPlotView* plotView, KDContext* ctx,
                 KDRect rect) const;
 
-  Interval *m_interval;
-  const int *m_selectedIntervalIndex;
+  Interval* m_interval;
+  const int* m_selectedIntervalIndex;
 };
 
 class IntervalCurveView
@@ -57,7 +57,7 @@ class IntervalCurveView
                               Shared::PlotPolicy::NoBanner,
                               Shared::PlotPolicy::NoCursor> {
  public:
-  IntervalCurveView(Interval *interval, const int *selectedIndex);
+  IntervalCurveView(Interval* interval, const int* selectedIndex);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;

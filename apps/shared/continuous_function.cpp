@@ -36,7 +36,7 @@ namespace Shared {
 /* ContinuousFunction - Public */
 
 ContinuousFunction ContinuousFunction::NewModel(
-    Ion::Storage::Record::ErrorStatus *error, const char *baseName,
+    Ion::Storage::Record::ErrorStatus* error, const char* baseName,
     KDColor color) {
   assert(baseName != nullptr);
   // Create the record
@@ -81,11 +81,11 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
-    Context *context) {
+    Context* context) {
   return m_model.renameRecordIfNeeded(this, context);
 }
 
-size_t ContinuousFunction::nameWithoutArgument(char *buffer, size_t bufferSize,
+size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
                                                int derivationOrder) {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   size_t length = 0;
@@ -109,7 +109,7 @@ size_t ContinuousFunction::nameWithoutArgument(char *buffer, size_t bufferSize,
   return length;
 }
 
-size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
+size_t ContinuousFunction::nameWithArgument(char* buffer, size_t bufferSize,
                                             int derivationOrder) {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   size_t length = nameWithoutArgument(buffer, bufferSize, derivationOrder);
@@ -120,7 +120,7 @@ size_t ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize,
 }
 
 size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
-                                              char *buffer, size_t bufferSize,
+                                              char* buffer, size_t bufferSize,
                                               int precision) {
   ContinuousFunctionProperties thisProperties = properties();
   /* With Vertical curves, cursorT != cursorX .
@@ -132,9 +132,9 @@ size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
 }
 
 size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
-                                              double cursorY, char *buffer,
+                                              double cursorY, char* buffer,
                                               size_t bufferSize, int precision,
-                                              Context *context) {
+                                              Context* context) {
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode =
@@ -151,7 +151,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
-    const Poincare::Layout &l, Context *context) {
+    const Poincare::Layout& l, Context* context) {
   setCache(nullptr);
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
@@ -170,28 +170,28 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
 }
 
 void ContinuousFunction::tidyDownstreamPoolFrom(
-    PoolObject *treePoolCursor) const {
+    PoolObject* treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
   m_cache = nullptr;
 }
 
 bool ContinuousFunction::isNamed() const {
   // Unnamed functions have a fullname starting with k_unnamedRecordFirstChar
-  const char *recordFullName = fullName();
+  const char* recordFullName = fullName();
   return recordFullName != nullptr &&
          recordFullName[0] != k_unnamedRecordFirstChar;
 }
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
-    float x1, float x2, Poincare::Context *context) const {
+    float x1, float x2, Poincare::Context* context) const {
   SystemExpression equation = expressionReduced(context);
   ApproximationContext approximationContext(context, complexFormat(context));
   return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2,
                                                         approximationContext);
 }
 
-void ContinuousFunction::getLineParameters(double *slope, double *intercept,
-                                           Context *context) const {
+void ContinuousFunction::getLineParameters(double* slope, double* intercept,
+                                           Context* context) const {
   assert(properties().isLine());
   SystemExpression equation = expressionReduced(context);
   // Compute metrics for details view of Line
@@ -223,7 +223,7 @@ void ContinuousFunction::getLineParameters(double *slope, double *intercept,
 }
 
 CartesianConic ContinuousFunction::cartesianConicParameters(
-    Context *context) const {
+    Context* context) const {
   assert(properties().isConic() && properties().isCartesian());
   return CartesianConic(expressionReducedForAnalysis(context), context,
                         complexFormat(context), k_unknownName);
@@ -236,7 +236,7 @@ KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
                                                   double cursorX,
                                                   double cursorY,
-                                                  Context *context) const {
+                                                  Context* context) const {
   switch (properties().symbolType()) {
     case ContinuousFunctionProperties::SymbolType::T:
       return index == 0   ? cursorT
@@ -250,7 +250,7 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
   }
 }
 
-void ContinuousFunction::updateModel(Context *context, bool wasCartesian) {
+void ContinuousFunction::updateModel(Context* context, bool wasCartesian) {
   setCache(nullptr);
   m_model.resetProperties();  // Reset model's properties.
   properties();               // update properties.
@@ -363,8 +363,8 @@ int ContinuousFunction::subCurveIndexFromDerivationOrder(
 }
 
 void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
-    int derivationOrder, bool *image, bool *firstDerivative,
-    bool *secondDerivative) const {
+    int derivationOrder, bool* image, bool* firstDerivative,
+    bool* secondDerivative) const {
   *image = false;
   *firstDerivative = false;
   *secondDerivative = false;
@@ -387,7 +387,7 @@ void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
 
 template <typename T>
 PointOrScalar<T> ContinuousFunction::approximateDerivative(
-    T t, Context *context, int derivationOrder, bool useDomain) const {
+    T t, Context* context, int derivationOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
@@ -404,7 +404,7 @@ PointOrScalar<T> ContinuousFunction::approximateDerivative(
 }
 
 double ContinuousFunction::approximateSlope(double t,
-                                            Poincare::Context *context) const {
+                                            Poincare::Context* context) const {
   if (t < tMin() || t > tMax()) {
     return NAN;
   }
@@ -458,7 +458,7 @@ float ContinuousFunction::autoTMin() const {
 }
 
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
-    Context *context) const {
+    Context* context) const {
   return expressionApproximated(context).recursivelyMatches(
       [](const NewExpression e) {
         return !e.isUninitialized() &&
@@ -468,15 +468,15 @@ bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
       });
 }
 
-void ContinuousFunction::trimResolutionInterval(double *start,
-                                                double *end) const {
+void ContinuousFunction::trimResolutionInterval(double* start,
+                                                double* end) const {
   double tmin = tMin(), tmax = tMax();
   *start = *start < tmin ? tmin : tmax < *start ? tmax : *start;
   *end = *end < tmin ? tmin : tmax < *end ? tmax : *end;
 }
 
 UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
-                                                    Context *context) const {
+                                                    Context* context) const {
   assert(properties().isCartesian());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
@@ -500,7 +500,7 @@ float ContinuousFunction::rangeStep() const {
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
-    T t, Context *context, int subCurveIndex) const {
+    T t, Context* context, int subCurveIndex) const {
   ContinuousFunctionProperties thisProperties = properties();
   Coordinate2D<T> x1x2 =
       templatedApproximateAtParameter(t, context, subCurveIndex);
@@ -518,7 +518,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
-    T t, Context *context, int subCurveIndex) const {
+    T t, Context* context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
@@ -537,7 +537,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(e.type() == ExpressionNode::Type::List);
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
-          tInt >= static_cast<List &>(e).numberOfChildren()) {
+          tInt >= static_cast<List&>(e).numberOfChildren()) {
         return Coordinate2D<T>();
       }
       point = point = e.childAtIndex(tInt);
@@ -546,7 +546,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    return static_cast<Point &>(point).approximate2D<T>(approximationContext);
+    return static_cast<Point&>(point).approximate2D<T>(approximationContext);
   }
 
   if (!properties().isParametric()) {
@@ -554,7 +554,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(subCurveIndex >= 0);
       assert(derivationOrder == 0);
       assert(e.type() == ExpressionNode::Type::List);
-      assert(static_cast<List &>(e).numberOfChildren() > subCurveIndex);
+      assert(static_cast<List&>(e).numberOfChildren() > subCurveIndex);
     }
     T value = e.approximateToScalarWithValue<T>(t, subCurveIndex);
     if (isAlongY()) {
@@ -610,7 +610,7 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
 /* ContinuousFunction::Model */
 
 SystemExpression ContinuousFunction::Model::expressionReduced(
-    const Ion::Storage::Record *record, Context *context) const {
+    const Ion::Storage::Record* record, Context* context) const {
   // m_expression might already be memmoized.
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
@@ -738,10 +738,10 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
 }
 
 Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
-    const Ion::Storage::Record *record, Poincare::Context *context,
+    const Ion::Storage::Record* record, Poincare::Context* context,
     int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
-  SystemFunction *approximated;
+  SystemFunction* approximated;
   switch (derivationOrder) {
     case 0:
       approximated = &m_expressionApproximated;
@@ -766,7 +766,7 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
 
 Poincare::SystemExpression
 ContinuousFunction::Model::expressionReducedForAnalysis(
-    const Ion::Storage::Record *record, Poincare::Context *context) const {
+    const Ion::Storage::Record* record, Poincare::Context* context) const {
   ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType computedEquationType =
@@ -802,7 +802,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
 }
 
 UserExpression ContinuousFunction::Model::expressionClone(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   assert(record->fullName() != nullptr &&
          record->fullName()[0] != k_unnamedRecordFirstChar);
   UserExpression e = ExpressionModel::expressionClone(record);
@@ -813,7 +813,7 @@ UserExpression ContinuousFunction::Model::expressionClone(
 }
 
 UserExpression ContinuousFunction::Model::originalEquation(
-    const Ion::Storage::Record *record, CodePoint symbol) const {
+    const Ion::Storage::Record* record, CodePoint symbol) const {
   UserExpression unknownSymbolEquation =
       ExpressionModel::expressionClone(record);
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
@@ -838,10 +838,10 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
 }
 
 UserExpression ContinuousFunction::Model::expressionEquation(
-    const Ion::Storage::Record *record, Context *context,
-    ComparisonNode::OperatorType *computedEquationType,
-    ContinuousFunctionProperties::SymbolType *computedFunctionSymbol,
-    bool *isCartesianEquation) const {
+    const Ion::Storage::Record* record, Context* context,
+    ComparisonNode::OperatorType* computedEquationType,
+    ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
+    bool* isCartesianEquation) const {
   UserExpression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
@@ -880,8 +880,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);
-    const char *functionName =
-        static_cast<Poincare::Function &>(leftExpression).name();
+    const char* functionName =
+        static_cast<Poincare::Function&>(leftExpression).name();
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
@@ -946,12 +946,12 @@ UserExpression ContinuousFunction::Model::expressionEquation(
 }
 
 SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
-    const Ion::Storage::Record *record, Context *context,
+    const Ion::Storage::Record* record, Context* context,
     int derivationOrder) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
   assert(1 <= derivationOrder && derivationOrder <= 2);
-  SystemExpression *derivative = derivationOrder == 1
+  SystemExpression* derivative = derivationOrder == 1
                                      ? &m_expressionFirstDerivate
                                      : &m_expressionSecondDerivate;
   if (derivative->isUninitialized()) {
@@ -962,7 +962,7 @@ SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
 }
 
 SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
-    const Ion::Storage::Record *record, Context *context) const {
+    const Ion::Storage::Record* record, Context* context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
    * For curves with multiple subcurves and for inverse polar,
@@ -993,8 +993,8 @@ SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
 }
 
 Ion::Storage::Record::ErrorStatus
-ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
-                                                Context *context) const {
+ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
+                                                Context* context) const {
   /* Use ExpressionModel::expressionClone because it does not alter
    * the left-hand side of "f(x)=" and "f(t)=", which allows the name
    * of the function to be found. */
@@ -1010,7 +1010,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
     if (IsFunctionAssignment(newExpression)) {
       UserExpression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
-          record, static_cast<SymbolAbstract &>(function).name(),
+          record, static_cast<SymbolAbstract&>(function).name(),
           Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
@@ -1035,7 +1035,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record *record,
 }
 
 Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol, Poincare::Context *context) const {
+    Poincare::Layout l, CodePoint symbol, Poincare::Context* context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
@@ -1072,7 +1072,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     if (expressionToStore.recursivelyMatches([](const NewExpression e) {
           return e.type() == ExpressionNode::Type::Symbol &&
                  AliasesLists::k_thetaAliases.contains(
-                     static_cast<const Symbol &>(e).name());
+                     static_cast<const Symbol&>(e).name());
         })) {
       symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))
@@ -1088,7 +1088,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
 }
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
-    PoolObject *treePoolCursor) const {
+    PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
     m_expressionFirstDerivate = SystemExpression();
@@ -1117,7 +1117,7 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
 }
 
 ContinuousFunctionProperties ContinuousFunction::Model::properties(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   if (!m_properties.isInitialized()) {
     // Computing the expression equation will update the function properties
     expressionReducedForAnalysis(record, Poincare::Context::GlobalContext);
@@ -1127,21 +1127,21 @@ ContinuousFunctionProperties ContinuousFunction::Model::properties(
 }
 
 int ContinuousFunction::Model::numberOfSubCurves(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
     SystemExpression e =
         expressionReduced(record, Poincare::Context::GlobalContext);
     if (e.type() == ExpressionNode::Type::List) {
       assert(prop.isOfDegreeTwo());
-      return static_cast<List &>(e).numberOfChildren();
+      return static_cast<List&>(e).numberOfChildren();
     }
   }
   return 1;
 }
 
 SystemExpression ContinuousFunction::Model::parametricForm(
-    const Ion::Storage::Record *record, Poincare::Context *context) const {
+    const Ion::Storage::Record* record, Poincare::Context* context) const {
   ContinuousFunctionProperties prop = properties(record);
   assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
   SystemExpression e = expressionReduced(record, context);
@@ -1164,13 +1164,13 @@ SystemExpression ContinuousFunction::Model::parametricForm(
   return e;
 }
 
-void *ContinuousFunction::Model::expressionAddress(
-    const Ion::Storage::Record *record) const {
-  return (char *)record->value().buffer + sizeof(RecordDataBuffer);
+void* ContinuousFunction::Model::expressionAddress(
+    const Ion::Storage::Record* record) const {
+  return (char*)record->value().buffer + sizeof(RecordDataBuffer);
 }
 
 size_t ContinuousFunction::Model::expressionSize(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   return record->value().size - sizeof(RecordDataBuffer);
 }
 
@@ -1179,19 +1179,19 @@ void ContinuousFunction::Model::setStorageChangeFlag() const {
 }
 
 template Coordinate2D<float>
-ContinuousFunction::templatedApproximateAtParameter<float>(float, Context *,
+ContinuousFunction::templatedApproximateAtParameter<float>(float, Context*,
                                                            int) const;
 template Coordinate2D<double>
-ContinuousFunction::templatedApproximateAtParameter<double>(double, Context *,
+ContinuousFunction::templatedApproximateAtParameter<double>(double, Context*,
                                                             int) const;
 
 template Coordinate2D<float>
-ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context *,
+ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context*,
                                                         int) const;
 template Coordinate2D<double>
-ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context *,
+ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context*,
                                                          int) const;
 template PointOrScalar<double> ContinuousFunction::approximateDerivative(
-    double t, Context *context, int derivationOrder, bool useDomain) const;
+    double t, Context* context, int derivationOrder, bool useDomain) const;
 
 }  // namespace Shared

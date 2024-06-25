@@ -12,22 +12,22 @@ class TabViewController;
 class TabViewCell : public View {
  public:
   TabViewCell();
-  void drawRect(KDContext *ctx, KDRect rect) const override;
-  void setTabController(TabViewController *controller, uint8_t tabNumber);
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+  void setTabController(TabViewController* controller, uint8_t tabNumber);
   void setActive(bool active);
   void setSelected(bool selected);
   KDSize minimalSizeForOptimalDisplay() const override;
 
  protected:
 #if ESCHER_VIEW_LOGGING
-  const char *className() const override;
-  void logAttributes(std::ostream &os) const override;
+  const char* className() const override;
+  void logAttributes(std::ostream& os) const override;
 #endif
  private:
   uint8_t m_tabNumber;
   bool m_active;
   bool m_selected;
-  TabViewController *m_controller;
+  TabViewController* m_controller;
 };
 
 }  // namespace Escher

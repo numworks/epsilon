@@ -15,11 +15,11 @@ using namespace Shared;
 namespace Graph {
 
 GraphController::GraphController(
-    Escher::Responder *parentResponder, Escher::ButtonRowController *header,
-    Shared::InteractiveCurveViewRange *interactiveRange,
-    CurveViewCursor *cursor, int *selectedCurveIndex,
-    FunctionParameterController *functionParameterController,
-    DerivativeColumnParameterController *derivativeColumnParameterController)
+    Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+    Shared::InteractiveCurveViewRange* interactiveRange,
+    CurveViewCursor* cursor, int* selectedCurveIndex,
+    FunctionParameterController* functionParameterController,
+    DerivativeColumnParameterController* derivativeColumnParameterController)
     : FunctionGraphController(parentResponder, header, interactiveRange,
                               &m_view, cursor, selectedCurveIndex),
       m_bannerView(this, this),
@@ -63,21 +63,20 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
-  const ContinuousFunction *f = static_cast<const ContinuousFunction *>(model);
+static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+  const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
   return f->evaluateXYAtParameter(t, context);
 }
 template <typename T>
-static Coordinate2D<T> evaluatorSecondCurve(T t, const void *model,
-                                            Context *context) {
-  const ContinuousFunction *f = static_cast<const ContinuousFunction *>(model);
+static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model,
+                                            Context* context) {
+  const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
   return f->evaluateXYAtParameter(t, context, 1);
 }
 template <typename T, int coordinate>
-static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
-                                                     Context *context) {
-  const SystemFunctionPoint *e =
-      static_cast<const SystemFunctionPoint *>(model);
+static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model,
+                                                     Context* context) {
+  const SystemFunctionPoint* e = static_cast<const SystemFunctionPoint*>(model);
   assert(e->type() == ExpressionNode::Type::Point);
   assert(coordinate == 0 || coordinate == 1);
   // TODO: Approximating the other coordinate could be skipped for performances.
@@ -88,10 +87,10 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
 
 Range2D<float> GraphController::optimalRange(
     bool computeX, bool computeY, Range2D<float> originalRange) const {
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
             k_maxFloat);
-  ContinuousFunctionStore *store = functionStore();
+  ContinuousFunctionStore* store = functionStore();
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
@@ -160,7 +159,7 @@ Range2D<float> GraphController::optimalRange(
       assert(f->properties().isCartesian());
       canComputeIntersections[i] = true;
       bool alongY = f->isAlongY();
-      Range1D<float> *bounds = alongY ? &yBounds : &xBounds;
+      Range1D<float>* bounds = alongY ? &yBounds : &xBounds;
       // Use the intersection between the definition domain of f and the bounds
       zoom.setBounds(std::clamp(f->tMin(), bounds->min(), bounds->max()),
                      std::clamp(f->tMax(), bounds->min(), bounds->max()));
@@ -182,9 +181,9 @@ Range2D<float> GraphController::optimalRange(
        * more than one piecewise will be rare. */
       SystemFunction p;
       NewExpression::ExpressionTestAuxiliary yieldPiecewise =
-          [](const NewExpression e, Context *, void *auxiliary) {
+          [](const NewExpression e, Context*, void* auxiliary) {
             if (e.type() == ExpressionNode::Type::PiecewiseOperator) {
-              *static_cast<NewExpression *>(auxiliary) = e;
+              *static_cast<NewExpression*>(auxiliary) = e;
               return true;
             } else {
               return false;
@@ -210,7 +209,7 @@ Range2D<float> GraphController::optimalRange(
       if (canComputeIntersections[i] &&
           f->properties()
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
-        ContinuousFunction *mainF = f.operator->();
+        ContinuousFunction* mainF = f.operator->();
         for (int j = 0; j < i; j++) {
           ExpiringPointer<ContinuousFunction> g =
               store->modelForRecord(store->activeRecordAtIndex(j));
@@ -253,11 +252,11 @@ Range2D<float> GraphController::optimalRange(
                         *(computeY ? newRange : originalRange).y());
 }
 
-PointsOfInterestCache *GraphController::pointsOfInterestForRecord(
+PointsOfInterestCache* GraphController::pointsOfInterestForRecord(
     Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
-  PointsOfInterestCache *cache = nullptr;
+  PointsOfInterestCache* cache = nullptr;
   for (int i = 0; i < static_cast<int>(m_pointsOfInterest.length()); i++) {
     if (m_pointsOfInterest.elementAtIndex(i)->record() == record) {
       cache = m_pointsOfInterest.elementAtIndex(i);
@@ -286,9 +285,9 @@ PointsOfInterestCache *GraphController::pointsOfInterestForRecord(
 
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
     int j) const {
-  GraphController *graphController =
-      static_cast<GraphController *>(m_graphController);
-  ContinuousFunctionStore *store = graphController->functionStore();
+  GraphController* graphController =
+      static_cast<GraphController*>(m_graphController);
+  ContinuousFunctionStore* store = graphController->functionStore();
   ExpiringPointer<ContinuousFunction> function =
       store->modelForRecord(store->activeRecordAtIndex(j));
   constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
@@ -343,9 +342,9 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int currentCurveIndex,
-                                              Poincare::Context *context,
+                                              Poincare::Context* context,
                                               int currentSubCurveIndex,
-                                              int *nextSubCurveIndex) const {
+                                              int* nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
   if (functionStore()->displaysOnlyCartesianFunctions(&nbOfActiveFunctions)) {
@@ -389,7 +388,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }
 
-  Poincare::Context *context = App::app()->localContext();
+  Poincare::Context* context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
     ApproximationContext approximationContext(context);
     float t = 0;
@@ -445,7 +444,7 @@ void GraphController::openMenuForSelectedCurve() {
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
 
   int nextSubCurve = 0;
   int nextCurve =
@@ -550,12 +549,12 @@ void GraphController::jumpToLeftRightCurve(double t,
 }
 
 void GraphController::reloadBannerViewForCursorOnFunction(
-    CurveViewCursor *cursor, Ion::Storage::Record record,
-    FunctionStore *functionStore, Poincare::Context *context,
+    CurveViewCursor* cursor, Ion::Storage::Record record,
+    FunctionStore* functionStore, Poincare::Context* context,
     bool cappedNumberOfSignificantDigits) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  PointsOfInterestCache *pointsOfInterest = pointsOfInterestForRecord(record);
+  PointsOfInterestCache* pointsOfInterest = pointsOfInterestForRecord(record);
   bannerView()->emptyInterestMessages(&m_cursorView);
   /* The interests are sorted from most important to lowest, in case there is
    * not enough space on the banner to display all of them. */

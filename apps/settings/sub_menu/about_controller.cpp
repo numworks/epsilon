@@ -11,12 +11,12 @@ using namespace Escher;
 
 namespace Settings {
 
-AboutController::AboutController(Responder *parentResponder)
+AboutController::AboutController(Responder* parentResponder)
     : GenericSubController(parentResponder),
       m_hardwareTestPopUpController(
           Escher::Invocation(
-              [](void *context, void *sender) {
-                AppsContainer *appsContainer =
+              [](void* context, void* sender) {
+                AppsContainer* appsContainer =
                     AppsContainer::sharedAppsContainer();
                 appsContainer->switchToBuiltinApp(
                     appsContainer->hardwareTestAppSnapshot());
@@ -51,13 +51,13 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       assert(m_selectableListView.selectedCell() ==
              m_cells + Row(CellType::Version));
 
-      using TextGetter = const char *(*)();
+      using TextGetter = const char* (*)();
       constexpr TextGetter k_textGettersCycle[] = {
           &Ion::epsilonVersion, &Ion::patchLevel, &Ion::pcbVersion,
           &Ion::compilationFlags, &Ion::runningBootloader};
       constexpr int k_nGetters = std::size(k_textGettersCycle);
 
-      const char *previousText =
+      const char* previousText =
           m_cells[Row(CellType::Version)].subLabel()->text();
       for (int i = 0; i < k_nGetters; i++) {
         if (strcmp(previousText, k_textGettersCycle[i]()) == 0) {
@@ -81,7 +81,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
-HighlightCell *AboutController::reusableCell(int index, int type) {
+HighlightCell* AboutController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_cells[index];
@@ -94,7 +94,7 @@ KDCoordinate AboutController::nonMemoizedRowHeight(int row) {
 }
 
 void AboutController::viewWillAppear() {
-  const char *messages[k_totalNumberOfCell] = {
+  const char* messages[k_totalNumberOfCell] = {
     deviceName(),
     Ion::epsilonVersion(),
     Ion::serialNumber(),
@@ -115,7 +115,7 @@ void AboutController::viewWillAppear() {
   GenericSubController::viewWillAppear();
 }
 
-const char *AboutController::deviceName() const {
+const char* AboutController::deviceName() const {
   return Ion::DeviceName::read();
 }
 

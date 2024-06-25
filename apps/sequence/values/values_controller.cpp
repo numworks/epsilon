@@ -16,8 +16,8 @@ using namespace Escher;
 
 namespace Sequence {
 
-ValuesController::ValuesController(Responder *parentResponder,
-                                   ButtonRowController *header)
+ValuesController::ValuesController(Responder* parentResponder,
+                                   ButtonRowController* header)
     : Shared::ValuesController(parentResponder, header),
       m_intervalParameterController(this),
       m_sequenceColumnParameterController(this),
@@ -25,11 +25,10 @@ ValuesController::ValuesController(Responder *parentResponder,
       m_setIntervalButton(
           this, I18n::Message::IntervalSet,
           Invocation::Builder<ValuesController>(
-              [](ValuesController *valuesController, void *sender) {
-                StackViewController *stack =
-                    ((StackViewController *)
-                         valuesController->stackController());
-                IntervalParameterController *controller =
+              [](ValuesController* valuesController, void* sender) {
+                StackViewController* stack =
+                    ((StackViewController*)valuesController->stackController());
+                IntervalParameterController* controller =
                     valuesController->intervalParameterController();
                 controller->setInterval(valuesController->intervalAtColumn(
                     valuesController->selectedColumn()));
@@ -72,7 +71,7 @@ int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset,
 
 // ColumnHelper
 
-size_t ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char* buffer) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return Shared::ValuesController::fillColumnName(column, buffer);
   }
@@ -101,7 +100,7 @@ bool ValuesController::setDataAtLocation(double floatBody, int column,
 // Shared::ValuesController
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i,
-                                                      bool *isSumColumn) {
+                                                      bool* isSumColumn) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   int numberOfActiveSequences = functionStore()->numberOfActiveFunctions();
   assert(numberOfAbscissaColumns() == 1);
@@ -142,15 +141,15 @@ void ValuesController::updateNumberOfColumns() {
   }
 }
 
-Layout *ValuesController::memoizedLayoutAtIndex(int i) {
+Layout* ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
 }
 
 Layout ValuesController::functionTitleLayout(int column) {
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   bool isSumColumn = false;
-  Shared::Sequence *sequence =
+  Shared::Sequence* sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   if (!isSumColumn) {
     return sequence->nameLayout();
@@ -166,11 +165,11 @@ Layout ValuesController::functionTitleLayout(int column) {
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   Shared::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   UserExpression result;
@@ -187,28 +186,28 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                           preferences->numberOfSignificantDigits(), context);
 }
 
-Shared::Interval *ValuesController::intervalAtColumn(int column) {
+Shared::Interval* ValuesController::intervalAtColumn(int column) {
   return App::app()->interval();
 }
 
-Shared::ExpressionFunctionTitleCell *ValuesController::functionTitleCells(
+Shared::ExpressionFunctionTitleCell* ValuesController::functionTitleCells(
     int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableColumns);
   return &m_sequenceTitleCells[j];
 }
 
-Escher::EvenOddExpressionCell *ValuesController::valueCells(int j) {
+Escher::EvenOddExpressionCell* ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
 }
 
-Escher::AbstractEvenOddEditableTextCell *ValuesController::abscissaCells(
+Escher::AbstractEvenOddEditableTextCell* ValuesController::abscissaCells(
     int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableRows);
   return &m_abscissaCells[j];
 }
 
-Escher::EvenOddMessageTextCell *ValuesController::abscissaTitleCells(int j) {
+Escher::EvenOddMessageTextCell* ValuesController::abscissaTitleCells(int j) {
   assert(j >= 0 && j < abscissaTitleCellsCount());
   return &m_abscissaTitleCell;
 }
@@ -218,7 +217,7 @@ void ValuesController::setDefaultStartEndMessages() {
                                                     I18n::Message::NEnd);
 }
 
-Shared::ColumnParameterController *
+Shared::ColumnParameterController*
 ValuesController::sequenceColumnParameterController() {
   int col = selectedColumn();
   assert(col > 0);

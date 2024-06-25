@@ -7,22 +7,22 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-KernelHeader *kernelHeader() {
+KernelHeader* kernelHeader() {
   uint32_t slotOffset =
       isRunningSlotA() ? Config::SlotAOffset : Config::SlotBOffset;
-  return reinterpret_cast<KernelHeader *>(
+  return reinterpret_cast<KernelHeader*>(
       Config::KernelVirtualOrigin + slotOffset + Config::SignedPayloadLength);
 }
 
-UserlandHeader *userlandHeader() {
+UserlandHeader* userlandHeader() {
   return userlandHeader(isRunningSlotA() ? Slot::A : Slot::B);
 }
 
-UserlandHeader *userlandHeader(Slot slot) {
+UserlandHeader* userlandHeader(Slot slot) {
   uint32_t slotOffset =
       slot == Slot::A ? Config::SlotAOffset : Config::SlotBOffset;
-  return reinterpret_cast<UserlandHeader *>(Config::UserlandVirtualOrigin +
-                                            slotOffset);
+  return reinterpret_cast<UserlandHeader*>(Config::UserlandVirtualOrigin +
+                                           slotOffset);
 }
 
 uint32_t userlandStart() {
@@ -40,8 +40,8 @@ uint32_t userlandEnd(Slot slot) {
 }
 
 uint32_t securityLevel() {
-  return *(reinterpret_cast<uint32_t *>(
-      isRunningSlotA() ? Config::SlotAOrigin : Config::SlotBOrigin));
+  return *(reinterpret_cast<uint32_t*>(isRunningSlotA() ? Config::SlotAOrigin
+                                                        : Config::SlotBOrigin));
 }
 
 }  // namespace Board

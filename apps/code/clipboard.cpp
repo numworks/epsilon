@@ -11,12 +11,12 @@ namespace Code {
 
 int Clipboard::s_replacementRuleStartingPoint = 0;
 
-Clipboard *Clipboard::sharedClipboard() {
+Clipboard* Clipboard::sharedClipboard() {
   assert(sizeof(Clipboard) == sizeof(Escher::Clipboard));
-  return static_cast<Clipboard *>(Escher::Clipboard::SharedClipboard());
+  return static_cast<Clipboard*>(Escher::Clipboard::SharedClipboard());
 }
 
-bool Clipboard::ShouldReplaceLetterE(const char *text, size_t length,
+bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,
                                      size_t position) {
   if (text[position] != 'e') {
     /* This method only exists to prevent the letter 'e' from being replaced
@@ -37,7 +37,7 @@ bool Clipboard::ShouldReplaceLetterE(const char *text, size_t length,
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    mp_lexer_t *lex =
+    mp_lexer_t* lex =
         mp_lexer_new_from_str_len(0, text + start, length - start, 0);
     size_t lastColumn = lex->tok_column;
     mp_token_kind_t lastKind = lex->tok_kind;
@@ -57,7 +57,7 @@ bool Clipboard::ShouldReplaceLetterE(const char *text, size_t length,
   }
 }
 
-const UTF8Helper::TextPair *Clipboard::PythonTextPairs() {
+const UTF8Helper::TextPair* Clipboard::PythonTextPairs() {
   /* The order in which the text pairs are stored is important. Indeed when
    * leaving python, the text stored in the buffer is converted into an input
    * for other apps. Therefore if we want to convert "3**3" into "3^3", the

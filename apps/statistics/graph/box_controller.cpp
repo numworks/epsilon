@@ -10,12 +10,12 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder *parentResponder,
-                             ButtonRowController *header,
-                             TabViewController *tabController,
-                             Escher::StackViewController *stackViewController,
-                             Escher::ViewController *typeViewController,
-                             Store *store)
+BoxController::BoxController(Responder* parentResponder,
+                             ButtonRowController* header,
+                             TabViewController* tabController,
+                             Escher::StackViewController* stackViewController,
+                             Escher::ViewController* typeViewController,
+                             Store* store)
     : MultipleDataViewController(parentResponder, tabController, header,
                                  stackViewController, typeViewController,
                                  store),
@@ -23,7 +23,7 @@ BoxController::BoxController(Responder *parentResponder,
       m_boxParameterController(nullptr, store, this),
       m_parameterButton(this, I18n::Message::StatisticsGraphSettings,
                         Invocation::Builder<BoxController>(
-                            [](BoxController *boxController, void *sender) {
+                            [](BoxController* boxController, void* sender) {
                               boxController->stackController()->push(
                                   boxController->boxParameterController());
                               return true;
@@ -31,10 +31,10 @@ BoxController::BoxController(Responder *parentResponder,
                             this),
                         KDFont::Size::Small) {}
 
-ButtonCell *BoxController::buttonAtIndex(
+ButtonCell* BoxController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position)
-                    : const_cast<SimpleButtonCell *>(&m_parameterButton);
+                    : const_cast<SimpleButtonCell*>(&m_parameterButton);
 }
 
 bool BoxController::handleEvent(Ion::Events::Event event) {

@@ -10,9 +10,9 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphView::GraphView(InteractiveCurveViewRange *graphRange,
-                     CurveViewCursor *cursor, Shared::BannerView *bannerView,
-                     MemoizedCursorView *cursorView)
+GraphView::GraphView(InteractiveCurveViewRange* graphRange,
+                     CurveViewCursor* cursor, Shared::BannerView* bannerView,
+                     MemoizedCursorView* cursorView)
     : FunctionGraphView(graphRange, cursor, bannerView, cursorView),
       m_interestView(this),
       m_areaIndex(0),
@@ -28,7 +28,7 @@ void GraphView::reload(bool resetInterrupted, bool force) {
   return FunctionGraphView::reload(resetInterrupted, force);
 }
 
-void GraphView::drawRect(KDContext *ctx, KDRect rect) const {
+void GraphView::drawRect(KDContext* ctx, KDRect rect) const {
   if (rect.intersectedWith(boundsWithoutBanner()) == boundsWithoutBanner()) {
     // If the whole curve is redrawn, all points of interest need a redraw
     m_nextPointOfInterestIndex = 0;
@@ -53,7 +53,7 @@ int GraphView::numberOfDrawnRecords() const {
 }
 
 void GraphView::drawRecord(Ion::Storage::Record record, int index,
-                           KDContext *ctx, KDRect rect,
+                           KDContext* ctx, KDRect rect,
                            bool firstDrawnRecord) const {
   if (firstDrawnRecord) {
     m_areaIndex = 0;
@@ -77,7 +77,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     }
     if (!isUndefined && f->numberOfSubCurves() == 2) {
       assert(e.type() == ExpressionNode::Type::List);
-      assert(static_cast<List &>(e).numberOfChildren() == 2);
+      assert(static_cast<List&>(e).numberOfChildren() == 2);
       isUndefined =
           e.childAtIndex(0).isUndefined() && e.childAtIndex(1).isUndefined();
     }
@@ -87,7 +87,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     }
   }
 
-  ContinuousFunctionCache *cch = functionStore()->cacheAtIndex(index);
+  ContinuousFunctionCache* cch = functionStore()->cacheAtIndex(index);
   float tmin = f->tMin();
   float tmax = f->tMax();
   Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
@@ -144,62 +144,62 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   drawTangent(ctx, rect, record);
 }
 
-void GraphView::tidyModel(int i, PoolObject *treePoolCursor) const {
+void GraphView::tidyModel(int i, PoolObject* treePoolCursor) const {
   functionStore()
       ->modelForRecord(functionStore()->activeRecordAtIndex(i))
       ->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
-ContinuousFunctionStore *GraphView::functionStore() const {
+ContinuousFunctionStore* GraphView::functionStore() const {
   return App::app()->functionStore();
 }
 
 template <typename T>
-static Coordinate2D<T> evaluateXY(T t, void *model, void *context) {
-  return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(
-      t, reinterpret_cast<Context *>(context), 0);
+static Coordinate2D<T> evaluateXY(T t, void* model, void* context) {
+  return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
+      t, reinterpret_cast<Context*>(context), 0);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYSecondCurve(T t, void *model, void *context) {
-  return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(
-      t, reinterpret_cast<Context *>(context), 1);
+static Coordinate2D<T> evaluateXYSecondCurve(T t, void* model, void* context) {
+  return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
+      t, reinterpret_cast<Context*>(context), 1);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYFirstDerivative(T t, void *model,
-                                                 void *context) {
-  return reinterpret_cast<ContinuousFunction *>(model)
-      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context *>(context),
+static Coordinate2D<T> evaluateXYFirstDerivative(T t, void* model,
+                                                 void* context) {
+  return reinterpret_cast<ContinuousFunction*>(model)
+      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context*>(context),
                                         1);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYSecondDerivative(T t, void *model,
-                                                  void *context) {
-  return reinterpret_cast<ContinuousFunction *>(model)
-      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context *>(context),
+static Coordinate2D<T> evaluateXYSecondDerivative(T t, void* model,
+                                                  void* context) {
+  return reinterpret_cast<ContinuousFunction*>(model)
+      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context*>(context),
                                         2);
 }
 
-static Coordinate2D<float> evaluateInfinity(float t, void *, void *) {
+static Coordinate2D<float> evaluateInfinity(float t, void*, void*) {
   return Coordinate2D<float>(INFINITY, INFINITY);
 }
-static Coordinate2D<float> evaluateMinusInfinity(float t, void *, void *) {
+static Coordinate2D<float> evaluateMinusInfinity(float t, void*, void*) {
   return Coordinate2D<float>(-INFINITY, -INFINITY);
 }
-static Coordinate2D<float> evaluateZero(float t, void *, void *) {
+static Coordinate2D<float> evaluateZero(float t, void*, void*) {
   return Coordinate2D<float>(t, 0.f);
 }
 
 bool GraphView::FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2,
-                                                          void *model,
-                                                          void *context) {
-  return static_cast<ContinuousFunction *>(model)
+                                                          void* model,
+                                                          void* context) {
+  return static_cast<ContinuousFunction*>(model)
       ->isDiscontinuousBetweenFloatValues(
-          x1, x2, static_cast<Poincare::Context *>(context));
+          x1, x2, static_cast<Poincare::Context*>(context));
 }
 
 template <typename T>
 GraphView::Curve2DEvaluation<T> GraphView::subCurveEvaluation(
-    ContinuousFunction *f, int subCurveIndex) const {
+    ContinuousFunction* f, int subCurveIndex) const {
   if (subCurveIndex == 0) {
     return evaluateXY<T>;
   }
@@ -216,8 +216,8 @@ GraphView::Curve2DEvaluation<T> GraphView::subCurveEvaluation(
                               : evaluateXYSecondDerivative<T>;
 }
 
-void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
-                              ContinuousFunction *f,
+void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
+                              ContinuousFunction* f,
                               Ion::Storage::Record record, float tStart,
                               float tEnd, float tStep,
                               DiscontinuityTest discontinuity,
@@ -265,7 +265,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
         if (m_secondSelectedRecord.isNull()) {
           patternLower = Curve2D(evaluateZero);
         } else {
-          ContinuousFunction *otherModel =
+          ContinuousFunction* otherModel =
               functionStore()
                   ->modelForRecord(m_secondSelectedRecord)
                   .
@@ -311,7 +311,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
   }
 }
 
-void GraphView::drawTangent(KDContext *ctx, KDRect rect,
+void GraphView::drawTangent(KDContext* ctx, KDRect rect,
                             Ion::Storage::Record record) const {
   if (!m_tangentDisplay || m_selectedRecord != record) {
     return;
@@ -399,7 +399,7 @@ static float polarThetaFromCoordinates(float x, float y,
       .real();
 }
 
-void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
+void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
                           float tStart, float tEnd, float tStep,
                           DiscontinuityTest discontinuity) const {
   assert(f->properties().isPolar());
@@ -522,7 +522,7 @@ void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
   }
 }
 
-void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
+void GraphView::drawFunction(KDContext* ctx, KDRect rect, ContinuousFunction* f,
                              float tStart, float tEnd, float tStep,
                              DiscontinuityTest discontinuity) const {
   assert(f->properties().isParametric() || f->properties().isInversePolar() ||
@@ -533,8 +533,8 @@ void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
   plot.draw(this, ctx, rect);
 }
 
-void GraphView::drawScatterPlot(KDContext *ctx, KDRect rect,
-                                ContinuousFunction *f) const {
+void GraphView::drawScatterPlot(KDContext* ctx, KDRect rect,
+                                ContinuousFunction* f) const {
   assert(f->properties().isScatterPlot());
   // TODO Handle limiting tMax and tMin ?
   ApproximationContext approximationContext(context());
@@ -549,7 +549,7 @@ void GraphView::resumePointsOfInterestDrawing() {
   m_interestView.dirtyBounds();
 }
 
-void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
+void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
   if (!hasFocus()) {
     return;
   }
@@ -566,7 +566,7 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
     return;
   }
 
-  PointsOfInterestCache *pointsOfInterestCache =
+  PointsOfInterestCache* pointsOfInterestCache =
       App::app()->graphController()->pointsOfInterestForRecord(selectedRec);
 
   bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints(m_interest);
@@ -607,7 +607,7 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
       drawRect(ctx, rect);
       if (cursorView()) {
         cursorView()->setHighlighted(false);
-        static_cast<MemoizedCursorView *>(cursorView())
+        static_cast<MemoizedCursorView*>(cursorView())
             ->redrawCursor(rect.translatedBy(absoluteOrigin()));
       }
     }
@@ -645,7 +645,7 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
        * but it is thanks to the constructor. */
       /* The cursor cannot be safely highlighted here since it might intersect
        * the dot of the point of interest without being exactly on it. */
-      static_cast<MemoizedCursorView *>(cursorView())
+      static_cast<MemoizedCursorView*>(cursorView())
           ->redrawCursor(rect.translatedBy(absoluteOrigin()));
     }
   } while (1);
@@ -657,9 +657,9 @@ KDRect GraphView::boundsWithoutBanner() const {
                 bounds().height() - m_banner->bounds().height());
 }
 
-void GraphView::drawAxesAndGrid(KDContext *ctx, KDRect rect) const {
-  InteractiveCurveViewRange *viewRange =
-      static_cast<InteractiveCurveViewRange *>(range());
+void GraphView::drawAxesAndGrid(KDContext* ctx, KDRect rect) const {
+  InteractiveCurveViewRange* viewRange =
+      static_cast<InteractiveCurveViewRange*>(range());
   if (viewRange->gridType() == InteractiveCurveViewRange::GridType::Polar) {
     PlotPolicy::WithPolarGrid::DrawGrid(this, ctx, rect);
 

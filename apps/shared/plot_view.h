@@ -38,7 +38,7 @@ class AbstractPlotView : public Escher::View {
     return static_cast<Axis>(1 - static_cast<uint8_t>(axis));
   }
 
-  AbstractPlotView(CurveViewRange *range)
+  AbstractPlotView(CurveViewRange* range)
       : m_range(range),
         m_stampDashIndex(k_stampIndexNoDash),
         m_drawnRangeVersion(0),
@@ -46,17 +46,17 @@ class AbstractPlotView : public Escher::View {
         m_focus(false) {}
 
   // Escher::View
-  void drawRect(KDContext *ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
-  virtual Escher::View *bannerView() const = 0;
-  virtual CursorView *cursorView() const = 0;
+  virtual Escher::View* bannerView() const = 0;
+  virtual CursorView* cursorView() const = 0;
   virtual void setFocus(bool f);
 
-  CurveViewRange *range() const { return m_range; }
-  void setRange(CurveViewRange *range) { m_range = range; }
-  void setCursorView(CursorView *cursorView);
+  CurveViewRange* range() const { return m_range; }
+  void setRange(CurveViewRange* range) { m_range = range; }
+  void setCursorView(CursorView* cursorView);
   bool hasFocus() const { return m_focus; }
   float rangeMin(Axis axis) const {
     return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin();
@@ -89,7 +89,7 @@ class AbstractPlotView : public Escher::View {
   }
   double angleFromPoint(KDPoint point) const;
   /* Compute the rect where a label will be drawn. */
-  KDRect labelRect(const char *label, Poincare::Coordinate2D<float> xy,
+  KDRect labelRect(const char* label, Poincare::Coordinate2D<float> xy,
                    RelativePosition xPosition, RelativePosition yPosition,
                    bool ignoreMargin = false) const;
 
@@ -97,44 +97,44 @@ class AbstractPlotView : public Escher::View {
   /* FIXME These methods are public as they need to be accessible to helper
    * classes used as template parameters to PlotView. A better solution might
    * be to private them and befriend the helpers. */
-  void drawStraightSegment(KDContext *ctx, KDRect rect, Axis parallel,
+  void drawStraightSegment(KDContext* ctx, KDRect rect, Axis parallel,
                            float position, float min, float max, KDColor color,
                            KDCoordinate thickness = 1,
                            KDCoordinate dashSize = 0) const;
   void drawDashedStraightSegment(
-      KDContext *ctx, KDRect rect, Axis parallel, float position, float min,
+      KDContext* ctx, KDRect rect, Axis parallel, float position, float min,
       float max, KDColor color, KDCoordinate thickness = k_defaultDashThickness,
       KDCoordinate dashSize = k_defaultDashLength) const {
     drawStraightSegment(ctx, rect, parallel, position, min, max, color,
                         thickness, dashSize);
   }
-  void drawSegment(KDContext *ctx, KDRect rect, Poincare::Coordinate2D<float> a,
+  void drawSegment(KDContext* ctx, KDRect rect, Poincare::Coordinate2D<float> a,
                    Poincare::Coordinate2D<float> b, KDColor color,
                    bool thick = false) const;
-  void drawLabel(KDContext *ctx, KDRect rect, const char *label,
+  void drawLabel(KDContext* ctx, KDRect rect, const char* label,
                  Poincare::Coordinate2D<float> xy, RelativePosition xPosition,
                  RelativePosition yPosition, KDColor color,
                  bool ignoreMargin = false) const;
-  void drawLabel(KDContext *ctx, KDRect rect, const char *label,
+  void drawLabel(KDContext* ctx, KDRect rect, const char* label,
                  KDRect labelRect, KDColor color) const;
-  void drawLayout(KDContext *ctx, KDRect rect, Poincare::Layout layout,
+  void drawLayout(KDContext* ctx, KDRect rect, Poincare::Layout layout,
                   Poincare::Coordinate2D<float> xy, RelativePosition xPosition,
                   RelativePosition yPosition, KDColor color,
                   bool ignoreMargin = false) const;
   KDRect dotRect(Dots::Size size, Poincare::Coordinate2D<float> xy) const;
-  void drawDot(KDContext *ctx, KDRect rect, Dots::Size size,
+  void drawDot(KDContext* ctx, KDRect rect, Dots::Size size,
                Poincare::Coordinate2D<float> xy, KDColor color) const;
-  void drawArc(KDContext *ctx, KDRect rect,
+  void drawArc(KDContext* ctx, KDRect rect,
                Poincare::Coordinate2D<float> center, float radius,
                float angleStart, float angleEnd, KDColor color) const;
-  void drawCircle(KDContext *ctx, KDRect rect,
+  void drawCircle(KDContext* ctx, KDRect rect,
                   Poincare::Coordinate2D<float> center, float radius,
                   KDColor color) const {
     drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color);
   }
-  void drawTick(KDContext *ctx, KDRect rect, Axis perpendicular, float position,
+  void drawTick(KDContext* ctx, KDRect rect, Axis perpendicular, float position,
                 KDColor color = KDColorBlack) const;
-  void drawArrowhead(KDContext *ctx, KDRect rect,
+  void drawArrowhead(KDContext* ctx, KDRect rect,
                      Poincare::Coordinate2D<float> xy,
                      Poincare::Coordinate2D<float> dxy, float pixelArrowWidth,
                      KDColor color, bool thick = false,
@@ -144,11 +144,11 @@ class AbstractPlotView : public Escher::View {
   void setDashed(bool dashed) const {
     m_stampDashIndex = dashed ? 0 : k_stampIndexNoDash;
   }
-  void straightJoinDots(KDContext *ctx, KDRect rect,
+  void straightJoinDots(KDContext* ctx, KDRect rect,
                         Poincare::Coordinate2D<float> pixelA,
                         Poincare::Coordinate2D<float> pixelB, KDColor color,
                         bool thick) const;
-  void stamp(KDContext *ctx, KDRect rect, Poincare::Coordinate2D<float> p,
+  void stamp(KDContext* ctx, KDRect rect, Poincare::Coordinate2D<float> p,
              KDColor color, bool thick) const;
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1,
                          Poincare::Coordinate2D<float> p2, bool thick) const;
@@ -166,25 +166,25 @@ class AbstractPlotView : public Escher::View {
   constexpr static int8_t k_stampIndexNoDash = -1;
   constexpr static KDCoordinate k_tickHalfLength = 2;
 
-  virtual Escher::View *ornamentView() const { return nullptr; }
+  virtual Escher::View* ornamentView() const { return nullptr; }
   // Escher::View
   int numberOfSubviews() const override {
     return (bannerView() != nullptr) + (cursorView() != nullptr) +
            (ornamentView() != nullptr);
   }
-  Escher::View *subviewAtIndex(int i) override;
+  Escher::View* subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual void drawBackground(KDContext *ctx, KDRect rect) const {
+  virtual void drawBackground(KDContext* ctx, KDRect rect) const {
     ctx->fillRect(rect, backgroundColor());
   }
-  virtual void drawAxesAndGrid(KDContext *ctx, KDRect rect) const = 0;
+  virtual void drawAxesAndGrid(KDContext* ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
-  virtual void drawPlot(KDContext *ctx, KDRect rect) const = 0;
+  virtual void drawPlot(KDContext* ctx, KDRect rect) const = 0;
   virtual KDRect bannerFrame() = 0;
-  virtual void privateSetCursorView(CursorView *) = 0;
+  virtual void privateSetCursorView(CursorView*) = 0;
 
-  CurveViewRange *m_range;
+  CurveViewRange* m_range;
   mutable int8_t m_stampDashIndex;
   uint32_t m_drawnRangeVersion;
   bool m_bannerOverlapsGraph;
@@ -200,7 +200,7 @@ class PlotView : public AbstractPlotView,
  public:
   using AbstractPlotView::AbstractPlotView;
 
-  CursorView *cursorView() const override final {
+  CursorView* cursorView() const override final {
     return CCursor::cursorView(this);
   }
 
@@ -208,18 +208,18 @@ class PlotView : public AbstractPlotView,
   KDRect cursorFrame() override final { return CCursor::cursorFrame(this); }
 
  private:
-  void drawAxesAndGrid(KDContext *ctx, KDRect rect) const override {
+  void drawAxesAndGrid(KDContext* ctx, KDRect rect) const override {
     CAxes::drawAxesAndGrid(this, ctx, rect);
   }
   void reloadAxes() override final { CAxes::reloadAxes(this); }
-  void drawPlot(KDContext *ctx, KDRect rect) const override final {
+  void drawPlot(KDContext* ctx, KDRect rect) const override final {
     CPlot::drawPlot(this, ctx, rect);
   }
-  Escher::View *bannerView() const override final {
+  Escher::View* bannerView() const override final {
     return CBanner::bannerView(this);
   }
   KDRect bannerFrame() override final { return CBanner::bannerFrame(this); }
-  void privateSetCursorView(CursorView *cursorView) override final {
+  void privateSetCursorView(CursorView* cursorView) override final {
     CCursor::privateSetCursorView(this, cursorView);
   }
 };

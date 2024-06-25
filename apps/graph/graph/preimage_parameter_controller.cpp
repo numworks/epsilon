@@ -9,9 +9,9 @@ using namespace Escher;
 namespace Graph {
 
 PreimageParameterController::PreimageParameterController(
-    Responder *parentResponder, Shared::InteractiveCurveViewRange *graphRange,
-    Shared::CurveViewCursor *cursor,
-    PreimageGraphController *preimageGraphController)
+    Responder* parentResponder, Shared::InteractiveCurveViewRange* graphRange,
+    Shared::CurveViewCursor* cursor,
+    PreimageGraphController* preimageGraphController)
     : Shared::GoToParameterController(parentResponder, graphRange, cursor),
       m_preimageGraphController(preimageGraphController) {}
 
@@ -24,8 +24,8 @@ void PreimageParameterController::viewWillAppear() {
 void PreimageParameterController::buttonAction() {
   if (confirmParameterAtIndex(0, m_tempParameter)) {
     m_preimageGraphController->setRecord(m_record);
-    StackViewController *stack =
-        static_cast<StackViewController *>(parentResponder());
+    StackViewController* stack =
+        static_cast<StackViewController*>(parentResponder());
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);

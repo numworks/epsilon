@@ -14,19 +14,19 @@ void resetPreemptiveKeyboardState() {}
 
 void didPressNewKey() {}
 
-void openURL(const char *url) {}
+void openURL(const char* url) {}
 
-bool waitForInterruptingEvent(int maximumDelay, int *timeout) { return false; }
+bool waitForInterruptingEvent(int maximumDelay, int* timeout) { return false; }
 
 // ion/include/ion/events.h
 
-const char *Event::text() const { return ""; }
+const char* Event::text() const { return ""; }
 
-Event getEvent(int *timeout) { return Events::None; }
+Event getEvent(int* timeout) { return Events::None; }
 
 Event getPlatformEvent() { return Events::None; }
 
-size_t copyText(uint8_t eventId, char *buffer, size_t bufferSize) { return 0; }
+size_t copyText(uint8_t eventId, char* buffer, size_t bufferSize) { return 0; }
 
 bool isDefined(uint8_t eventId) { return true; }
 

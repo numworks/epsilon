@@ -9,8 +9,8 @@ namespace Shared {
 
 template <typename T>
 SingleRangeController<T>::SingleRangeController(
-    Responder *parentResponder,
-    Shared::MessagePopUpController *confirmPopUpController)
+    Responder* parentResponder,
+    Shared::MessagePopUpController* confirmPopUpController)
     : FloatParameterController<T>(parentResponder),
       m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
@@ -30,7 +30,7 @@ void SingleRangeController<T>::viewWillAppear() {
 }
 
 template <typename T>
-HighlightCell *SingleRangeController<T>::reusableCell(int index, int type) {
+HighlightCell* SingleRangeController<T>::reusableCell(int index, int type) {
   if (type == k_autoCellType) {
     return &m_autoCell;
   }
@@ -43,17 +43,17 @@ HighlightCell *SingleRangeController<T>::reusableCell(int index, int type) {
 template <typename T>
 KDCoordinate SingleRangeController<T>::nonMemoizedRowHeight(int row) {
   int type = typeAtRow(row);
-  HighlightCell *cell =
-      type == k_autoCellType ? static_cast<HighlightCell *>(&m_autoCell)
+  HighlightCell* cell =
+      type == k_autoCellType ? static_cast<HighlightCell*>(&m_autoCell)
       : type == this->k_parameterCellType
-          ? static_cast<HighlightCell *>(&m_boundsCells[row - 1])
+          ? static_cast<HighlightCell*>(&m_boundsCells[row - 1])
           : nullptr;
   return cell ? this->protectedNonMemoizedRowHeight(cell, row)
               : FloatParameterController<T>::nonMemoizedRowHeight(row);
 }
 
 template <typename T>
-void SingleRangeController<T>::fillCellForRow(Escher::HighlightCell *cell,
+void SingleRangeController<T>::fillCellForRow(Escher::HighlightCell* cell,
                                               int row) {
   int type = typeAtRow(row);
   if (type == k_autoCellType) {
@@ -84,7 +84,7 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
 }
 
 template <typename T>
-HighlightCell *SingleRangeController<T>::reusableParameterCell(int index,
+HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
   assert(index >= 1 && index < k_numberOfTextCells + 1);
   return &m_boundsCells[index - 1];
@@ -104,10 +104,10 @@ void SingleRangeController<T>::setRange(T min, T max) {
 }
 
 template <typename T>
-TextField *SingleRangeController<T>::textFieldOfCellAtIndex(HighlightCell *cell,
+TextField* SingleRangeController<T>::textFieldOfCellAtIndex(HighlightCell* cell,
                                                             int index) {
   assert(typeAtRow(index) == this->k_parameterCellType);
-  return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+  return static_cast<MenuCellWithEditableText<MessageTextView>*>(cell)
       ->textField();
 }
 
@@ -119,7 +119,7 @@ void SingleRangeController<T>::buttonAction() {
 
 template <typename T>
 bool SingleRangeController<T>::textFieldDidFinishEditing(
-    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   if (FloatParameterController<T>::textFieldDidFinishEditing(textField,
                                                              event)) {
     setAutoStatus(false);

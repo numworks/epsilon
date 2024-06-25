@@ -24,9 +24,9 @@ class CategoricalTableCell : public Escher::HighlightCell,
                              public Escher::SelectableTableViewDataSource,
                              public Escher::SelectableTableViewDelegate {
  public:
-  CategoricalTableCell(Escher::Responder *parentResponder,
-                       Escher::TableViewDataSource *dataSource,
-                       Escher::ScrollViewDelegate *scrollViewDelegate);
+  CategoricalTableCell(Escher::Responder* parentResponder,
+                       Escher::TableViewDataSource* dataSource,
+                       Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -34,12 +34,12 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
   // HighlightCell
   void reloadCell() override {}
-  Responder *responder() override { return this; }
+  Responder* responder() override { return this; }
 
-  Escher::SelectableTableView *selectableTableView() {
+  Escher::SelectableTableView* selectableTableView() {
     return &m_selectableTableView;
   }
-  virtual CategoricalTableViewDataSource *tableViewDataSource() = 0;
+  virtual CategoricalTableViewDataSource* tableViewDataSource() = 0;
 
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_selectableTableView.minimalSizeForOptimalDisplay();
@@ -50,7 +50,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView *t, int previousSelectedCol,
+      Escher::SelectableTableView* t, int previousSelectedCol,
       int previousSelectedRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
 
@@ -58,13 +58,13 @@ class CategoricalTableCell : public Escher::HighlightCell,
 
  protected:
   constexpr static int k_bottomMargin = 5;
-  virtual CategoricalController *categoricalController() = 0;
+  virtual CategoricalController* categoricalController() = 0;
 
   Escher::SelectableTableView m_selectableTableView;
 
  private:
   int numberOfSubviews() const override { return 1; }
-  Escher::View *subviewAtIndex(int i) override {
+  Escher::View* subviewAtIndex(int i) override {
     return &m_selectableTableView;
   }
 };
@@ -75,32 +75,32 @@ class InputCategoricalTableCell
       public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
       public Shared::ClearColumnHelper {
  public:
-  InputCategoricalTableCell(Escher::Responder *parentResponder,
-                            Escher::TableViewDataSource *dataSource,
-                            Statistic *statistic,
-                            Escher::ScrollViewDelegate *scrollViewDelegate);
+  InputCategoricalTableCell(Escher::Responder* parentResponder,
+                            Escher::TableViewDataSource* dataSource,
+                            Statistic* statistic,
+                            Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
   // Responder
   bool handleEvent(Ion::Events::Event e) override;
 
   // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
-  void initCell(InferenceEvenOddEditableCell, void *cell, int index) override;
+  void initCell(InferenceEvenOddEditableCell, void* cell, int index) override;
 
   bool recomputeDimensions();
   virtual bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                             bool forceReloadPage = false,
                                             bool forceReloadCell = false);
-  Table *tableModel() { return Table::FromStatistic(m_statistic); }
+  Table* tableModel() { return Table::FromStatistic(m_statistic); }
 
  protected:
   // ClearColumnHelper
-  Escher::SelectableTableView *table() override {
+  Escher::SelectableTableView* table() override {
     return selectableTableView();
   }
   int numberOfElementsInColumn(int column) const override;
@@ -112,11 +112,11 @@ class InputCategoricalTableCell
   virtual int relativeColumn(int column) const = 0;
   int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
-  const Table *constTableModel() const {
-    return const_cast<InputCategoricalTableCell *>(this)->tableModel();
+  const Table* constTableModel() const {
+    return const_cast<InputCategoricalTableCell*>(this)->tableModel();
   }
 
-  Statistic *m_statistic;
+  Statistic* m_statistic;
   int m_numberOfRows;
   int m_numberOfColumns;
 };
@@ -127,12 +127,12 @@ class DoubleColumnTableCell
       public DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
-  DoubleColumnTableCell(Escher::Responder *parentResponder,
-                        Statistic *statistic,
-                        Escher::ScrollViewDelegate *scrollViewDelegate);
+  DoubleColumnTableCell(Escher::Responder* parentResponder,
+                        Statistic* statistic,
+                        Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell
-  CategoricalTableViewDataSource *tableViewDataSource() override {
+  CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
   }
 
@@ -142,15 +142,15 @@ class DoubleColumnTableCell
   }  // Add header
   int numberOfColumns() const override { return m_numberOfColumns; }
   int reusableCellCount(int type) const override;
-  Escher::HighlightCell *reusableCell(int i, int type) override;
+  Escher::HighlightCell* reusableCell(int i, int type) override;
   int typeAtLocation(int column, int row) const override {
     return row == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells;
   }
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 
   // DynamicCellsDataSource
-  Escher::SelectableTableView *tableView() override {
+  Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
 
@@ -164,7 +164,7 @@ class DoubleColumnTableCell
   }
   // CategoricalTableViewDataSource
   int relativeColumn(int column) const override { return column; }
-  virtual Escher::HighlightCell *headerCell(int index) = 0;
+  virtual Escher::HighlightCell* headerCell(int index) = 0;
 };
 
 }  // namespace Inference

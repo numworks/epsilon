@@ -16,20 +16,20 @@ class GridTypeController
           2> {
  public:
   enum class GridType { Cartesian, Polar };
-  GridTypeController(Escher::Responder *parentResponder,
-                     InteractiveCurveViewRange *interactiveCurveViewRange);
+  GridTypeController(Escher::Responder* parentResponder,
+                     InteractiveCurveViewRange* interactiveCurveViewRange);
 
   void viewWillAppear() override;
 
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::StackViewController *stackController() {
-    return static_cast<Escher::StackViewController *>(parentResponder());
+  Escher::StackViewController* stackController() {
+    return static_cast<Escher::StackViewController*>(parentResponder());
   }
 
-  const char *title() override;
+  const char* title() override;
 
  private:
-  InteractiveCurveViewRange *m_interactiveCurveViewRange;
+  InteractiveCurveViewRange* m_interactiveCurveViewRange;
 };
 
 }  // namespace Shared

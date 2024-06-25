@@ -44,44 +44,44 @@ class FileSystem {
   uint32_t checksum();
 
   // Storage delegate
-  void setDelegate(StorageDelegate *delegate) { m_delegate = delegate; }
+  void setDelegate(StorageDelegate* delegate) { m_delegate = delegate; }
   void notifyChangeToDelegate(const Record r = Record()) const;
   Record::ErrorStatus notifyFullnessToDelegate() const;
 
   // Record name verifier
-  RecordNameVerifier *recordNameVerifier() { return &m_recordNameVerifier; }
+  RecordNameVerifier* recordNameVerifier() { return &m_recordNameVerifier; }
 
   // Record counters
   int numberOfRecords();
-  int numberOfRecordsWithExtension(const char *extension) {
+  int numberOfRecordsWithExtension(const char* extension) {
     return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
   }
   // NOTE: We could handle the "hidden" status at Record level instead of this
   int numberOfRecordsStartingWithout(const char nonStartingChar,
-                                     const char *extension) {
+                                     const char* extension) {
     return numberOfRecordsWithFilter(extension, FirstCharFilter,
                                      &nonStartingChar);
   }
 
   // Record names helper
-  typedef bool (*IsNameAvailableTest)(char *buffer, size_t bufferSize,
-                                      void *auxiliary);
-  int firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
+  typedef bool (*IsNameAvailableTest)(char* buffer, size_t bufferSize,
+                                      void* auxiliary);
+  int firstAvailableNameFromPrefix(char* buffer, size_t prefixLength,
                                    size_t bufferSize, IsNameAvailableTest test,
-                                   void *auxiliary = nullptr, int maxId = 99);
-  int firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
-                                   size_t bufferSize, const char *extension,
+                                   void* auxiliary = nullptr, int maxId = 99);
+  int firstAvailableNameFromPrefix(char* buffer, size_t prefixLength,
+                                   size_t bufferSize, const char* extension,
                                    int maxId = 99);
 
   // Record creation
   Record::ErrorStatus createRecordWithExtension(
-      const char *baseName, const char *extension, const void *data,
+      const char* baseName, const char* extension, const void* data,
       size_t size, bool extensionCanOverrideItself = false);
   Record::ErrorStatus createRecordWithFullNameAndDataChunks(
-      const char *fullName, const void *dataChunks[], size_t sizeChunks[],
+      const char* fullName, const void* dataChunks[], size_t sizeChunks[],
       size_t numberOfChunks, bool extensionCanOverrideItself = false);
   Record::ErrorStatus createRecordWithDataChunks(
-      Record::Name recordName, const void *dataChunks[], size_t sizeChunks[],
+      Record::Name recordName, const void* dataChunks[], size_t sizeChunks[],
       size_t numberOfChunks, bool extensionCanOverrideItself = false);
 
   template <typename T>
@@ -97,44 +97,44 @@ class FileSystem {
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
-  Record recordWithExtensionAtIndex(const char *extension, int index) {
+  Record recordWithExtensionAtIndex(const char* extension, int index) {
     return recordWithFilterAtIndex(extension, index, ExtensionOnlyFilter);
   }
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar,
-                                                   const char *extension,
+                                                   const char* extension,
                                                    int index) {
     return recordWithFilterAtIndex(extension, index, FirstCharFilter,
                                    &nonStartingChar);
   }
   Record recordNamed(Record::Name name);
-  Record recordNamed(const char *fullName) {
+  Record recordNamed(const char* fullName) {
     return recordNamed(Record::CreateRecordNameFromFullName(fullName));
   }
-  Record recordBaseNamedWithExtension(const char *baseName,
-                                      const char *extension) {
+  Record recordBaseNamedWithExtension(const char* baseName,
+                                      const char* extension) {
     return recordNamed(
         Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension));
   }
-  Record recordBaseNamedWithExtensions(const char *baseName,
-                                       const char *const extensions[],
+  Record recordBaseNamedWithExtensions(const char* baseName,
+                                       const char* const extensions[],
                                        size_t numberOfExtensions);
-  const char *extensionOfRecordBaseNamedWithExtensions(
-      const char *baseName, int baseNameLength, const char *const extensions[],
+  const char* extensionOfRecordBaseNamedWithExtensions(
+      const char* baseName, int baseNameLength, const char* const extensions[],
       size_t numberOfExtensions);
 
   template <typename T>
-  T *findSystemRecord() {
+  T* findSystemRecord() {
     Ion::Storage::Record record = recordBaseNamedWithExtension(
         T::k_recordName, Ion::Storage::systemExtension);
     assert(!record.isNull());
     Ion::Storage::Record::Data data = record.value();
     assert(data.size == sizeof(T));
-    return static_cast<T *>(const_cast<void *>(data.buffer));
+    return static_cast<T*>(const_cast<void*>(data.buffer));
   }
 
   // Record destruction
   void destroyAllRecords();
-  void destroyRecordsWithExtension(const char *extension);
+  void destroyRecordsWithExtension(const char* extension);
 
   /* Destroy competing records.
    * Return true if other records with same full name or competing names
@@ -152,82 +152,82 @@ class FileSystem {
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t) * 8);
 
   // Record filter on names
-  typedef bool (*RecordFilter)(Record::Name name, const void *auxiliary);
-  static bool ExtensionOnlyFilter(Record::Name name, const void *auxiliary) {
+  typedef bool (*RecordFilter)(Record::Name name, const void* auxiliary);
+  static bool ExtensionOnlyFilter(Record::Name name, const void* auxiliary) {
     return true;
   };
-  static bool FirstCharFilter(Record::Name name, const void *auxiliary) {
+  static bool FirstCharFilter(Record::Name name, const void* auxiliary) {
     assert(auxiliary);
-    return name.baseName[0] != *static_cast<const char *>(auxiliary);
+    return name.baseName[0] != *static_cast<const char*>(auxiliary);
   };
   // Private record counters and getters
-  int numberOfRecordsWithFilter(const char *extension, RecordFilter filter,
-                                const void *auxiliary = nullptr);
-  Record recordWithFilterAtIndex(const char *extension, int index,
+  int numberOfRecordsWithFilter(const char* extension, RecordFilter filter,
+                                const void* auxiliary = nullptr);
+  Record recordWithFilterAtIndex(const char* extension, int index,
                                  RecordFilter filter,
-                                 const void *auxiliary = nullptr);
-  void destroyRecordsMatching(RecordFilter filter, const void *auxiliary);
+                                 const void* auxiliary = nullptr);
+  void destroyRecordsMatching(RecordFilter filter, const void* auxiliary);
 
   FileSystem();
 
   /* Getters/Setters on recordID */
   Record::Name nameOfRecord(const Record record) const;
-  Record::ErrorStatus setNameOfRecord(Record *record, Record::Name name);
+  Record::ErrorStatus setNameOfRecord(Record* record, Record::Name name);
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
   bool destroyRecord(const Record record, bool notifyDelegate = true);
 
   /* Getters on address in buffer */
-  char *pointerOfRecord(const Record record) const;
-  record_size_t sizeOfRecordStarting(char *start) const;
-  const void *valueOfRecordStarting(char *start) const;
-  Record::Name nameOfRecordStarting(char *start) const;
+  char* pointerOfRecord(const Record record) const;
+  record_size_t sizeOfRecordStarting(char* start) const;
+  const void* valueOfRecordStarting(char* start) const;
+  Record::Name nameOfRecordStarting(char* start) const;
 
   /* Overriders */
-  size_t overrideSizeAtPosition(char *position, record_size_t size);
-  size_t overrideNameAtPosition(char *position, Record::Name name);
-  size_t overrideValueAtPosition(char *position, const void *data,
+  size_t overrideSizeAtPosition(char* position, record_size_t size);
+  size_t overrideNameAtPosition(char* position, Record::Name name);
+  size_t overrideValueAtPosition(char* position, const void* data,
                                  record_size_t size);
 
-  bool isNameOfRecordTaken(Record r, const Record *recordToExclude = nullptr);
-  char *endBuffer();
+  bool isNameOfRecordTaken(Record r, const Record* recordToExclude = nullptr);
+  char* endBuffer();
   size_t sizeOfRecordWithName(Record::Name name, size_t dataSize);
-  bool slideBuffer(char *position, int delta);
+  bool slideBuffer(char* position, int delta);
   class RecordIterator {
    public:
-    RecordIterator(char *start) : m_recordStart(start) {}
-    char *operator*() { return m_recordStart; }
-    RecordIterator &operator++();
-    bool operator!=(const RecordIterator &it) const {
+    RecordIterator(char* start) : m_recordStart(start) {}
+    char* operator*() { return m_recordStart; }
+    RecordIterator& operator++();
+    bool operator!=(const RecordIterator& it) const {
       return m_recordStart != it.m_recordStart;
     }
 
    private:
-    char *m_recordStart;
+    char* m_recordStart;
   };
   RecordIterator begin() const {
-    if (sizeOfRecordStarting((char *)m_buffer) == 0) {
+    if (sizeOfRecordStarting((char*)m_buffer) == 0) {
       return nullptr;
     }
-    return RecordIterator((char *)m_buffer);
+    return RecordIterator((char*)m_buffer);
   };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
   Record privateRecordBasedNamedWithExtensions(
-      const char *baseName, int baseNameLength, const char *const extensions[],
-      size_t numberOfExtensions, const char **extensionResult = nullptr);
+      const char* baseName, int baseNameLength, const char* const extensions[],
+      size_t numberOfExtensions, const char** extensionResult = nullptr);
   bool recordNameHasBaseNameAndOneOfTheseExtensions(
-      Record::Name name, const char *baseName, int baseNameLength,
-      const char *const extensions[], size_t numberOfExtensions,
-      const char **extensionResult);
+      Record::Name name, const char* baseName, int baseNameLength,
+      const char* const extensions[], size_t numberOfExtensions,
+      const char** extensionResult);
 
   uint32_t m_magicHeader;
   char m_buffer[k_storageSize];
   uint32_t m_magicFooter;
-  StorageDelegate *m_delegate;
+  StorageDelegate* m_delegate;
   RecordNameVerifier m_recordNameVerifier;
   mutable Record m_lastRecordRetrieved;
-  mutable char *m_lastRecordRetrievedPointer;
+  mutable char* m_lastRecordRetrievedPointer;
 };
 
 }  // namespace Storage

@@ -25,16 +25,16 @@ class ValuesController : public Shared::ValuesController,
                          public ParameterDelegate {
  public:
   ValuesController(
-      Escher::Responder *parentResponder, Escher::ButtonRowController *header,
-      FunctionParameterController *functionParameterController,
-      DerivativeColumnParameterController *derivativeColumnParameterController);
+      Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+      FunctionParameterController* functionParameterController,
+      DerivativeColumnParameterController* derivativeColumnParameterController);
   bool displayButtonExactValues() const;
 
   // View controller
   void viewDidDisappear() override;
 
   // TableViewDataSource
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   int typeAtLocation(int column, int row) const override;
   KDCoordinate separatorBeforeColumn(int column) override;
@@ -43,7 +43,7 @@ class ValuesController : public Shared::ValuesController,
   int numberOfButtons(Escher::ButtonRowController::Position) const override {
     return isEmpty() ? 0 : 1 + displayButtonExactValues();
   }
-  Escher::ButtonCell *buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate
@@ -57,10 +57,10 @@ class ValuesController : public Shared::ValuesController,
   }
 
   // Shared::ValuesController
-  Shared::IntervalParameterController *intervalParameterController() override {
+  Shared::IntervalParameterController* intervalParameterController() override {
     return &m_intervalParameterController;
   }
-  IntervalParameterSelectorController *intervalParameterSelectorController() {
+  IntervalParameterSelectorController* intervalParameterSelectorController() {
     return &m_intervalParameterSelectorController;
   }
 
@@ -102,10 +102,10 @@ class ValuesController : public Shared::ValuesController,
     assert(false);
     return -1;
   }
-  Escher::TableSize1DManager *columnWidthManager() override {
+  Escher::TableSize1DManager* columnWidthManager() override {
     return m_tableSizeManager.columnWidthManager();
   }
-  Escher::TableSize1DManager *rowHeightManager() override {
+  Escher::TableSize1DManager* rowHeightManager() override {
     return m_tableSizeManager.rowHeightManager();
   }
   void rowWasDeleted(int column, int row) override;
@@ -117,62 +117,62 @@ class ValuesController : public Shared::ValuesController,
   }
 
   // ColumnHelper
-  size_t fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char* buffer) override;
 
   // EditableCellTableViewController
   void reloadEditedCell(int column, int row) override;
   void updateSizeMemoizationForRow(int row) override {
     m_tableSizeManager.rowDidChange(row);
   }
-  void setTitleCellStyle(Escher::HighlightCell *titleCell, int column) override;
+  void setTitleCellStyle(Escher::HighlightCell* titleCell, int column) override;
 
   // Shared::ValuesController
-  Shared::ContinuousFunctionStore *functionStore() const override {
-    return static_cast<Shared::ContinuousFunctionStore *>(
+  Shared::ContinuousFunctionStore* functionStore() const override {
+    return static_cast<Shared::ContinuousFunctionStore*>(
         Shared::ValuesController::functionStore());
   }
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() override;
-  Poincare::Layout *memoizedLayoutAtIndex(int i) override;
+  Poincare::Layout* memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int column) override;
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
-  void setStartEndMessages(Shared::IntervalParameterController *controller,
+  void setStartEndMessages(Shared::IntervalParameterController* controller,
                            int column) override;
   void createMemoizedLayout(int column, int row, int index) override;
   int numberOfColumnsForAbscissaColumn(int column) override;
   void updateSizeMemoizationForColumnAfterIndexChanged(
       int column, KDCoordinate columnPreviousWidth, int changedRow) override;
-  Shared::Interval *intervalAtColumn(int column) override;
+  Shared::Interval* intervalAtColumn(int column) override;
   I18n::Message valuesParameterMessageAtColumn(int column) const override;
-  Shared::ExpressionFunctionTitleCell *functionTitleCells(int j) override;
-  Escher::EvenOddExpressionCell *valueCells(int j) override;
+  Shared::ExpressionFunctionTitleCell* functionTitleCells(int j) override;
+  Escher::EvenOddExpressionCell* valueCells(int j) override;
   int abscissaCellsCount() const override {
     return k_maxNumberOfDisplayableAbscissaCells;
   }
-  Escher::AbstractEvenOddEditableTextCell *abscissaCells(int j) override;
+  Escher::AbstractEvenOddEditableTextCell* abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override {
     return k_maxNumberOfDisplayableSymbolTypes;
   }
-  Escher::EvenOddMessageTextCell *abscissaTitleCells(int j) override;
-  Escher::SelectableViewController *functionParameterController() override {
+  Escher::EvenOddMessageTextCell* abscissaTitleCells(int j) override;
+  Escher::SelectableViewController* functionParameterController() override {
     return parameterController<Escher::SelectableViewController>();
   }
-  Shared::ColumnParameters *functionParameters() override {
+  Shared::ColumnParameters* functionParameters() override {
     return parameterController<Shared::ColumnParameters>();
   }
 
   template <class T>
-  T *parameterController();
+  T* parameterController();
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
-  Ion::Storage::Record recordAtColumn(int i, int *derivationOrder);
+  Ion::Storage::Record recordAtColumn(int i, int* derivationOrder);
   Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(
-      int column, int row, double *abscissa, int *derivationOrder);
+      int column, int row, double* abscissa, int* derivationOrder);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(
-      int *column) const;
+      int* column) const;
   bool cellHasValue(int column, int row, bool includeEmptyLastRow) const {
     return row <= numberOfElementsInColumn(column) + includeEmptyLastRow;
   }
@@ -195,10 +195,10 @@ class ValuesController : public Shared::ValuesController,
   Escher::EvenOddEditableTextCell<
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits>
       m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
-  FunctionParameterController *m_functionParameterController;
+  FunctionParameterController* m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
-  DerivativeColumnParameterController *m_derivativeColumnParameterController;
+  DerivativeColumnParameterController* m_derivativeColumnParameterController;
   Escher::SimpleButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;

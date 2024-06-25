@@ -19,8 +19,8 @@ class AbstractTextField : public TextInput {
  public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
-  AbstractTextField(Responder *parentResponder, View *contentView,
-                    TextFieldDelegate *delegate);
+  AbstractTextField(Responder* parentResponder, View* contentView,
+                    TextFieldDelegate* delegate);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -33,7 +33,7 @@ class AbstractTextField : public TextInput {
   void scrollToCursor() override;
 
   // EditableField
-  bool handleEventWithText(const char *text, bool indentation = false,
+  bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
   bool handleEventWithLayout(Poincare::Layout layout) override;
   void setEditing(bool isEditing) {
@@ -45,17 +45,17 @@ class AbstractTextField : public TextInput {
   bool isEditable() {
     return m_delegate ? m_delegate->textFieldIsEditable(this) : true;
   }
-  void setDelegate(TextFieldDelegate *delegate) { m_delegate = delegate; }
-  void setText(const char *text);
-  char *draftText() const {
-    return const_cast<char *>(nonEditableContentView()->draftText());
+  void setDelegate(TextFieldDelegate* delegate) { m_delegate = delegate; }
+  void setText(const char* text);
+  char* draftText() const {
+    return const_cast<char*>(nonEditableContentView()->draftText());
   }
   size_t draftTextLength() const {
     assert(isEditing());
     return nonEditableContentView()->draftTextLength();
   }
-  char *draftTextEnd() const {
-    return const_cast<char *>(nonEditableContentView()->draftTextEnd());
+  char* draftTextEnd() const {
+    return const_cast<char*>(nonEditableContentView()->draftTextEnd());
   }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
@@ -65,7 +65,7 @@ class AbstractTextField : public TextInput {
   bool cursorAtEndOfText() const {
     return isEditing() && cursorLocation() == draftTextEnd();
   }
-  size_t dumpContent(char *buffer, size_t bufferSize, int *cursorOffset);
+  size_t dumpContent(char* buffer, size_t bufferSize, int* cursorOffset);
 
  protected:
   class ContentView : public TextInput::ContentView {
@@ -80,20 +80,20 @@ class AbstractTextField : public TextInput {
      * = 212 characters. */
     constexpr static int k_maxBufferSize = 220;
 
-    ContentView(char *textBuffer, size_t textBufferSize,
+    ContentView(char* textBuffer, size_t textBufferSize,
                 KDGlyph::Format format);
 
     // View
-    void drawRect(KDContext *ctx, KDRect rect) const override;
+    void drawRect(KDContext* ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
 
     // TextInput::ContentView
-    const char *text() const override;
-    const char *draftText() const override;
+    const char* text() const override;
+    const char* draftText() const override;
     /* If the text to be appended is too long to be added without overflowing
      * the buffer, nothing is done (not even adding few letters from the text to
      * reach the maximum buffer capacity) and false is returned. */
-    bool insertTextAtLocation(const char *text, char *location,
+    bool insertTextAtLocation(const char* text, char* location,
                               int textLength = -1) override;
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
@@ -105,7 +105,7 @@ class AbstractTextField : public TextInput {
     void setTextColor(KDColor textColor);
 
     bool isEditing() const { return m_isEditing; }
-    void setText(const char *text);
+    void setText(const char* text);
     void setEditing(bool isEditing);
     void reinitDraftTextBuffer();
     size_t draftTextBufferSize() const { return MaxBufferSize(); }
@@ -119,11 +119,11 @@ class AbstractTextField : public TextInput {
     KDRect cursorRect() const override;
 
    protected:
-    KDRect glyphFrameAtPosition(const char *buffer,
-                                const char *position) const override;
+    KDRect glyphFrameAtPosition(const char* buffer,
+                                const char* position) const override;
 
    private:
-    char *m_textBuffer;
+    char* m_textBuffer;
     size_t m_textBufferSize;
     bool m_isEditing;
     /* The textfield is 'Stalling' when the edition has been interrupted (by a
@@ -131,9 +131,9 @@ class AbstractTextField : public TextInput {
     bool m_isStalled;
   };
 
-  const ContentView *nonEditableContentView() const override = 0;
-  ContentView *contentView() {
-    return const_cast<ContentView *>(nonEditableContentView());
+  const ContentView* nonEditableContentView() const override = 0;
+  ContentView* contentView() {
+    return const_cast<ContentView*>(nonEditableContentView());
   }
 
  private:
@@ -143,8 +143,8 @@ class AbstractTextField : public TextInput {
                               FirstResponderAlteration::WillSpoil);
   }
   bool prepareToEdit() override;
-  bool findXNT(char *buffer, size_t bufferSize, int xntIndex,
-               size_t *cycleSize) override;
+  bool findXNT(char* buffer, size_t bufferSize, int xntIndex,
+               size_t* cycleSize) override;
   void removePreviousXNT() override;
 
   virtual void removeWholeText();
@@ -152,13 +152,13 @@ class AbstractTextField : public TextInput {
   bool handleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;
   bool storeInClipboard() const;
-  bool privateHandleEvent(Ion::Events::Event event, bool *textDidChange);
-  bool insertText(const char *text, bool indentation = false,
+  bool privateHandleEvent(Ion::Events::Event event, bool* textDidChange);
+  bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
-  size_t getTextFromEvent(Ion::Events::Event event, char *buffer,
+  size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
                           size_t bufferSize);
 
-  TextFieldDelegate *m_delegate;
+  TextFieldDelegate* m_delegate;
 };
 
 }  // namespace Escher

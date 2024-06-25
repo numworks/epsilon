@@ -22,27 +22,27 @@ class App : public Shared::MathApp {
     I18n::Message upperName() const override {
       return I18n::Message::SolverAppCapital;
     };
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
-    App *unpack(Escher::Container *container) override {
+    App* unpack(Escher::Container* container) override {
       return new (container->currentAppBuffer()) App(this);
     };
-    const Descriptor *descriptor() const override;
+    const Descriptor* descriptor() const override;
     void reset() override;
   };
 
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
-  Poincare::Context *localContext() override { return &m_context; }
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
+  Poincare::Context* localContext() override { return &m_context; }
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
-  EquationStore *equationStore() { return &m_equationStore; }
-  SystemOfEquations *system() { return &m_system; }
+  EquationStore* equationStore() { return &m_equationStore; }
+  SystemOfEquations* system() { return &m_system; }
 
   void openSolutionsController(bool approximateSolve);
   void openIntervalController();
@@ -53,7 +53,7 @@ class App : public Shared::MathApp {
   TELEMETRY_ID("Solver");
 
  private:
-  App(Snapshot *snapshot);
+  App(Snapshot* snapshot);
 
   EquationStore m_equationStore;
   // Controllers

@@ -16,10 +16,10 @@ bool ScriptNameCell::ScriptNameTextField::handleEvent(
 }
 
 void ScriptNameCell::ScriptNameTextField::willSetCursorLocation(
-    const char **location) {
+    const char** location) {
   size_t textLength = strlen(text());
   assert(textLength >= k_extensionLength);
-  const char *maxLocation =
+  const char* maxLocation =
       m_contentView.draftText() + (textLength - k_extensionLength);
   if (*location > maxLocation) {
     *location = maxLocation;
@@ -38,13 +38,13 @@ void ScriptNameCell::ScriptNameTextField::removeWholeText() {
 bool ScriptNameCell::ScriptNameTextField::removeTextBeforeExtension(
     bool whole) {
   assert(isEditing());
-  const char *extension =
+  const char* extension =
       m_contentView.draftText() + (strlen(text()) - k_extensionLength);
   assert(extension >= m_contentView.draftText() &&
          extension < m_contentView.draftText() +
                          (ContentView::k_maxBufferSize - k_extensionLength));
-  char *destination =
-      const_cast<char *>(whole ? m_contentView.draftText() : cursorLocation());
+  char* destination =
+      const_cast<char*>(whole ? m_contentView.draftText() : cursorLocation());
   if (destination == extension) {
     return false;
   }
@@ -60,7 +60,7 @@ bool ScriptNameCell::ScriptNameTextField::removeTextBeforeExtension(
   return true;
 }
 
-const char *ScriptNameCell::text() const {
+const char* ScriptNameCell::text() const {
   if (!m_textField.isEditing()) {
     return m_textField.text();
   }

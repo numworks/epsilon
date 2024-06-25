@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Escher {
 
-StackHeaderView::StackHeaderView(ViewController *controller, KDColor textColor,
+StackHeaderView::StackHeaderView(ViewController* controller, KDColor textColor,
                                  KDColor backgroundColor,
                                  KDColor separatorColor)
     : View(),
@@ -18,7 +18,7 @@ StackHeaderView::StackHeaderView(ViewController *controller, KDColor textColor,
   markWholeFrameAsDirty();
 }
 
-void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
+void StackHeaderView::drawRect(KDContext* ctx, KDRect rect) const {
   KDRect b = bounds();
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
@@ -31,9 +31,9 @@ void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char *StackHeaderView::className() const { return "StackViewHeader"; }
+const char* StackHeaderView::className() const { return "StackViewHeader"; }
 
-void StackHeaderView::logAttributes(std::ostream &os) const {
+void StackHeaderView::logAttributes(std::ostream& os) const {
   View::logAttributes(os);
   os << " name=\"" << m_controller->title() << "\"";
 }

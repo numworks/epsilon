@@ -14,7 +14,7 @@ namespace Inference {
 
 // TestPlotPolicy
 
-void TestPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
+void TestPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                               KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
   ComparisonNode::OperatorType op =
@@ -24,7 +24,7 @@ void TestPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
 }
 
 void TestPlotPolicy::drawZLabelAndZGraduation(
-    const AbstractPlotView *plotView, KDContext *ctx, KDRect rect, float z,
+    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float z,
     ComparisonNode::OperatorType op) const {
   if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
     Layout absolute =
@@ -38,8 +38,8 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
   }
 }
 
-void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView *plotView,
-                                            KDContext *ctx, KDRect rect,
+void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
+                                            KDContext* ctx, KDRect rect,
                                             float x, Layout layout) const {
   plotView->drawTick(ctx, rect, AbstractPlotView::Axis::Horizontal, x);
   plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f),
@@ -47,20 +47,20 @@ void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView *plotView,
                        AbstractPlotView::RelativePosition::After, KDColorBlack);
 }
 
-static Coordinate2D<float> evaluate(float x, void *model, void *) {
-  Test *test = reinterpret_cast<Test *>(model);
+static Coordinate2D<float> evaluate(float x, void* model, void*) {
+  Test* test = reinterpret_cast<Test*>(model);
   return Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
 }
 
-static Coordinate2D<float> evaluateZero(float, void *, void *) {
+static Coordinate2D<float> evaluateZero(float, void*, void*) {
   return Coordinate2D<float>(0.f, 0.f);
 }
 
-void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView *plotView,
-                                   KDContext *ctx, KDRect rect, float z,
+void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
+                                   KDContext* ctx, KDRect rect, float z,
                                    ComparisonNode::OperatorType op,
                                    double factor) const {
-  CurveViewRange *range = plotView->range();
+  CurveViewRange* range = plotView->range();
   if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
     z = std::fabs(z);
     if (range->xMax() > 0) {
@@ -141,12 +141,12 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView *plotView,
 
 // TestXAxis
 
-void TestXAxis::drawLabel(int i, float t, const AbstractPlotView *plotView,
-                          KDContext *ctx, KDRect rect,
+void TestXAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
+                          KDContext* ctx, KDRect rect,
                           AbstractPlotView::Axis axis, KDColor color) const {
   assert(axis == AbstractPlotView::Axis::Horizontal);
-  const TestCurveView *testCurveView =
-      static_cast<const TestCurveView *>(plotView);
+  const TestCurveView* testCurveView =
+      static_cast<const TestCurveView*>(plotView);
   float z = testCurveView->test()->testCriticalValue();
   KDCoordinate labelWidth =
       KDFont::Font(AbstractPlotView::k_font)->stringSize(label(i)).width();
@@ -162,7 +162,7 @@ void TestXAxis::drawLabel(int i, float t, const AbstractPlotView *plotView,
 
 // TestCurveView
 
-TestCurveView::TestCurveView(Test *test) : PlotView(test) {
+TestCurveView::TestCurveView(Test* test) : PlotView(test) {
   // TestPlotPolicy
   m_test = test;
 }

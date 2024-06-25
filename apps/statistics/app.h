@@ -24,22 +24,22 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   class Snapshot : public Shared::StoreApp::Snapshot {
    public:
     Snapshot();
 
-    App *unpack(Escher::Container *container) override;
+    App* unpack(Escher::Container* container) override;
     void reset() override;
     void countryWasUpdated() override;
-    const Descriptor *descriptor() const override;
-    uint32_t *storeVersion() { return &m_storeVersion; }
-    GraphViewModel *graphViewModel() { return &m_graphViewModel; }
-    UserPreferences *userPreferences() { return &m_userPreferences; }
-    int8_t *selectedSeries() { return &m_selectedSeries; }
-    int16_t *selectedIndex() { return &m_selectedIndex; }
+    const Descriptor* descriptor() const override;
+    uint32_t* storeVersion() { return &m_storeVersion; }
+    GraphViewModel* graphViewModel() { return &m_graphViewModel; }
+    UserPreferences* userPreferences() { return &m_userPreferences; }
+    int8_t* selectedSeries() { return &m_selectedSeries; }
+    int16_t* selectedIndex() { return &m_selectedIndex; }
 
    private:
     uint32_t m_storeVersion;
@@ -49,22 +49,22 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     int16_t m_selectedIndex;
   };
 
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
 
   TELEMETRY_ID("Statistics");
 
-  Shared::StoreController *storeController() override {
+  Shared::StoreController* storeController() override {
     return &m_tabs.tab<StoreTab>()->m_storeController;
   }
-  Escher::InputViewController *inputViewController() {
+  Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
   }
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
  private:
-  App(Snapshot *snapshot, Poincare::Context *parentContext);
+  App(Snapshot* snapshot, Poincare::Context* parentContext);
   int activeViewControllerIndex() const override {
     return GraphViewModel::IndexOfGraphView(
         snapshot()->graphViewModel()->selectedGraphView());
@@ -73,13 +73,13 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle;
   }
   void activeViewDidBecomeFirstResponder(
-      Escher::ViewController *activeViewController) override;
-  void didBecomeActive(Escher::Window *window) override;
+      Escher::ViewController* activeViewController) override;
+  void didBecomeActive(Escher::Window* window) override;
 
   struct StoreTab : public Escher::Tab {
     StoreTab();
     static constexpr I18n::Message k_title = I18n::Message::DataTab;
-    Escher::ViewController *top() override {
+    Escher::ViewController* top() override {
       return &m_storeStackViewController;
     }
     StoreController m_storeController;
@@ -90,7 +90,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   struct GraphTab : public Escher::Tab {
     GraphTab();
     static constexpr I18n::Message k_title = I18n::Message::StatisticsGraphTab;
-    Escher::ViewController *top() override {
+    Escher::ViewController* top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
     NormalProbabilityController m_normalProbabilityController;
@@ -115,7 +115,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   struct CalculationTab : public Escher::Tab {
     CalculationTab();
     static constexpr I18n::Message k_title = I18n::Message::StatTab;
-    Escher::ViewController *top() override { return &m_calculationHeader; }
+    Escher::ViewController* top() override { return &m_calculationHeader; }
     CalculationController m_calculationController;
     Escher::AlternateEmptyViewController
         m_calculationAlternateEmptyViewController;
@@ -124,7 +124,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   };
 
   Store m_store;
-  Poincare::Context *m_context;
+  Poincare::Context* m_context;
   Escher::InputViewController m_inputViewController;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
   Escher::TabUnionViewController m_tabViewController;

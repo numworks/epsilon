@@ -24,7 +24,7 @@ void DataView::changeDataViewSeriesSelection(int series, bool select) {
 }
 
 KDRect DataView::bannerFrame() const {
-  KDCoordinate bannerHeight = const_cast<DataView *>(this)
+  KDCoordinate bannerHeight = const_cast<DataView*>(this)
                                   ->bannerView()
                                   ->minimalSizeForOptimalDisplay()
                                   .height();

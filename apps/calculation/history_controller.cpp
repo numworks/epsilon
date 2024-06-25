@@ -14,8 +14,8 @@ using namespace Escher;
 namespace Calculation {
 
 HistoryController::HistoryController(
-    EditExpressionController *editExpressionController,
-    CalculationStore *calculationStore)
+    EditExpressionController* editExpressionController,
+    CalculationStore* calculationStore)
     : ViewController(editExpressionController),
       m_selectableListView(this, this, this, this),
       m_calculationStore(calculationStore),
@@ -64,7 +64,7 @@ void HistoryController::didBecomeFirstResponder() {
   App::app()->setFirstResponder(&m_selectableListView);
 }
 
-void HistoryController::willExitResponderChain(Responder *nextFirstResponder) {
+void HistoryController::willExitResponderChain(Responder* nextFirstResponder) {
   if (nextFirstResponder == nullptr) {
     return;
   }
@@ -114,7 +114,7 @@ Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
 }
 
 void HistoryController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView *list, int previousSelectedRow, KDPoint previousOffset,
+    SelectableListView* list, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(list == &m_selectableListView);
   m_selectableListView.didChangeSelectionAndDidScroll();
@@ -126,8 +126,8 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
   } else if (selectedRow() == -1) {
     setSelectedSubviewType(SubviewType::None, false, previousSelectedRow);
   } else {
-    HistoryViewCell *selectedCell =
-        static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
+    HistoryViewCell* selectedCell =
+        static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
     SubviewType nextSelectedSubviewType = m_selectedSubviewType;
     if (selectedCell && !selectedCell->displaysSingleLine()) {
       nextSelectedSubviewType = previousSelectedRow < selectedRow()
@@ -139,7 +139,7 @@ void HistoryController::listViewDidChangeSelectionAndDidScroll(
 }
 
 KDPoint HistoryController::offsetToRestoreAfterReload(
-    const SelectableTableView *t) const {
+    const SelectableTableView* t) const {
   assert(t == &m_selectableListView);
   KDCoordinate delta = 0;
   int selectedRow = m_selectableListView.selectedRow();
@@ -168,7 +168,7 @@ int HistoryController::numberOfRows() const {
   return m_calculationStore->numberOfCalculations();
 };
 
-HighlightCell *HistoryController::reusableCell(int index, int type) {
+HighlightCell* HistoryController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0);
   assert(index < k_maxNumberOfDisplayedRows);
@@ -180,9 +180,9 @@ int HistoryController::reusableCellCount(int type) const {
   return k_maxNumberOfDisplayedRows;
 }
 
-void HistoryController::fillCellForRow(HighlightCell *cell, int row) {
-  HistoryViewCell *myCell = static_cast<HistoryViewCell *>(cell);
-  Poincare::Context *context = App::app()->localContext();
+void HistoryController::fillCellForRow(HighlightCell* cell, int row) {
+  HistoryViewCell* myCell = static_cast<HistoryViewCell*>(cell);
+  Poincare::Context* context = App::app()->localContext();
   myCell->setCalculation(
       calculationAtIndex(row).pointer(),
       row == selectedRow() && m_selectedSubviewType == SubviewType::Output,
@@ -202,7 +202,7 @@ KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
 }
 
 bool HistoryController::calculationAtIndexToggles(int index) const {
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() &&
          calculationAtIndex(index)->displayOutput(context) ==
              Calculation::DisplayOutput::ExactAndApproximateToggle;
@@ -212,8 +212,8 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
                                                bool sameCell,
                                                int previousSelectedRow) {
   // Avoid selecting non-displayed ellipsis
-  HistoryViewCell *selectedCell =
-      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
+  HistoryViewCell* selectedCell =
+      static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
   if (subviewType == SubviewType::Ellipsis && selectedCell &&
       !selectedCell->hasEllipsis()) {
     subviewType = SubviewType::Output;
@@ -243,8 +243,8 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
   /* Refill the selected cell and the previous selected cell because cells
    * repartition might have changed */
   selectedCell =
-      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
-  HistoryViewCell *previousSelectedCell = static_cast<HistoryViewCell *>(
+      static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
+  HistoryViewCell* previousSelectedCell = static_cast<HistoryViewCell*>(
       m_selectableListView.cell(previousSelectedRow));
   /* 'reloadData' calls 'fillCellForRow' for each cell while the table
    * has been deselected. To reload the expanded cell, we call one more time
@@ -265,14 +265,14 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
 }
 
 void HistoryController::handleOK() {
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   int focusRow = selectedRow();
   Calculation::DisplayOutput displayOutput =
       calculationAtIndex(focusRow)->displayOutput(context);
-  HistoryViewCell *selectedCell =
-      static_cast<HistoryViewCell *>(m_selectableListView.selectedCell());
-  EditExpressionController *editController =
-      static_cast<EditExpressionController *>(parentResponder());
+  HistoryViewCell* selectedCell =
+      static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
+  EditExpressionController* editController =
+      static_cast<EditExpressionController*>(parentResponder());
 
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();

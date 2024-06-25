@@ -20,15 +20,15 @@ namespace Distributions {
 constexpr int CalculationController::k_titleBufferSize;
 
 CalculationController::ContentView::ContentView(
-    SelectableTableView *selectableTableView, Distribution *distribution,
-    Calculation *calculation)
+    SelectableTableView* selectableTableView, Distribution* distribution,
+    Calculation* calculation)
     : m_selectableTableView(selectableTableView),
       m_distributionCurveView(distribution, calculation),
       m_unknownParameterBanner(
           {.style = {.backgroundColor = Palette::WallScreen},
            .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
-View *CalculationController::ContentView::subviewAtIndex(int index) {
+View* CalculationController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return m_selectableTableView;
@@ -60,8 +60,8 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
 }
 
 CalculationController::CalculationController(
-    StackViewController *parentResponder, Distribution *distribution,
-    Calculation *calculation)
+    StackViewController* parentResponder, Distribution* distribution,
+    Calculation* calculation)
     : ViewController(parentResponder),
       m_calculation(calculation),
       m_distribution(distribution),
@@ -138,7 +138,7 @@ KDCoordinate CalculationController::defaultRowHeight() {
   return m_dropdown.minimalSizeForOptimalDisplay().height();
 }
 
-HighlightCell *CalculationController::reusableCell(int index, int type) {
+HighlightCell* CalculationController::reusableCell(int index, int type) {
   assert(index == 0);
   switch (type) {
     case 0:
@@ -149,7 +149,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
 }
 
 void CalculationController::textFieldDidHandleEvent(
-    ::AbstractTextField *textField) {
+    ::AbstractTextField* textField) {
   /* We do not reload the responder because it would setEditing(false)
    * the textField and the input would not be handled properly. */
   m_selectableTableView.reloadData(false);
@@ -159,7 +159,7 @@ void CalculationController::textFieldDidHandleEvent(
 }
 
 bool CalculationController::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
                                                              event) ||
          (event == Ion::Events::Right &&
@@ -170,7 +170,7 @@ bool CalculationController::textFieldShouldFinishEditing(
 }
 
 bool CalculationController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   assert(selectedColumn() != 0);
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
@@ -283,7 +283,7 @@ void CalculationController::onDropdownSelected(int selectedRow) {
 }
 
 bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event,
-                                                 Responder *responder) {
+                                                 Responder* responder) {
   if (event == Ion::Events::Right) {
     return responder->handleEvent(Ion::Events::OK);
   }

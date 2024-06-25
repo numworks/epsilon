@@ -5,8 +5,8 @@ using namespace Escher;
 namespace Inference {
 
 InputGoodnessController::InputGoodnessController(
-    StackViewController *parent, ViewController *resultsController,
-    GoodnessTest *statistic)
+    StackViewController* parent, ViewController* resultsController,
+    GoodnessTest* statistic)
     : InputCategoricalController(parent, resultsController, statistic),
       m_degreeOfFreedomCell(&m_selectableListView, this),
       m_inputGoodnessTableCell(&m_selectableListView, statistic, this, this) {
@@ -27,7 +27,7 @@ void InputGoodnessController::createDynamicCells() {
   m_inputGoodnessTableCell.createCells();
 }
 
-HighlightCell *InputGoodnessController::explicitCellAtRow(int row) {
+HighlightCell* InputGoodnessController::explicitCellAtRow(int row) {
   if (row == k_indexOfDegreeOfFreedom) {
     return &m_degreeOfFreedomCell;
   }
@@ -36,7 +36,7 @@ HighlightCell *InputGoodnessController::explicitCellAtRow(int row) {
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   if (index == k_indexOfDegreeOfFreedom) {
-    return static_cast<GoodnessTest *>(m_statistic)->indexOfDegreeOfFreedom();
+    return static_cast<GoodnessTest*>(m_statistic)->indexOfDegreeOfFreedom();
   }
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }

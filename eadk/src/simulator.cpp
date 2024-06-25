@@ -21,7 +21,7 @@ eadk_keyboard_state_t eadk_keyboard_scan() {
   return Ion::Keyboard::scan();
 }
 
-eadk_event_t eadk_event_get(int32_t *timeout) {
+eadk_event_t eadk_event_get(int32_t* timeout) {
   Ion::Events::Event e = Ion::Events::getEvent(timeout);
   preemptive_termination(e);
   return (uint8_t)e;
@@ -41,37 +41,37 @@ float eadk_battery_voltage() { return Ion::Battery::voltage(); }
 
 static_assert(sizeof(KDColor) == sizeof(eadk_color_t), "Size mismatch");
 static inline KDColor c(eadk_color_t color) {
-  return *reinterpret_cast<KDColor *>(&color);
+  return *reinterpret_cast<KDColor*>(&color);
 }
 
 static_assert(sizeof(KDPoint) == sizeof(eadk_point_t), "Size mismatch");
 static inline KDPoint p(eadk_point_t point) {
-  return *reinterpret_cast<KDPoint *>(&point);
+  return *reinterpret_cast<KDPoint*>(&point);
 }
 
 static_assert(sizeof(KDRect) == sizeof(eadk_rect_t), "Size mismatch");
 static inline KDRect r(eadk_rect_t rect) {
-  return *reinterpret_cast<KDRect *>(&rect);
+  return *reinterpret_cast<KDRect*>(&rect);
 }
 
-void eadk_display_push_rect(eadk_rect_t rect, const eadk_color_t *pixels) {
-  Ion::Display::pushRect(r(rect), reinterpret_cast<const KDColor *>(pixels));
+void eadk_display_push_rect(eadk_rect_t rect, const eadk_color_t* pixels) {
+  Ion::Display::pushRect(r(rect), reinterpret_cast<const KDColor*>(pixels));
 }
 void eadk_display_push_rect_uniform(eadk_rect_t rect, eadk_color_t color) {
   Ion::Display::pushRectUniform(r(rect), c(color));
 }
 
-void eadk_display_pull_rect(eadk_rect_t rect, eadk_color_t *pixels) {
-  Ion::Display::pullRect(r(rect), reinterpret_cast<KDColor *>(pixels));
+void eadk_display_pull_rect(eadk_rect_t rect, eadk_color_t* pixels) {
+  Ion::Display::pullRect(r(rect), reinterpret_cast<KDColor*>(pixels));
 }
 
 bool eadk_display_wait_for_vblank() { return Ion::Display::waitForVBlank(); }
 
-void eadk_display_draw_string(const char *text, eadk_point_t point,
+void eadk_display_draw_string(const char* text, eadk_point_t point,
                               bool large_font, eadk_color_t text_color,
                               eadk_color_t background_color) {
   // TODO: Duplicated from ion/src/device/userland/drivers/display.cpp
-  KDContext *ctx = Ion::Display::Context::SharedContext;
+  KDContext* ctx = Ion::Display::Context::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(Ion::Display::Rect);
   ctx->drawString(
@@ -90,7 +90,7 @@ void eadk_timing_msleep(uint32_t ms) { Ion::Timing::msleep(ms); }
 
 uint64_t eadk_timing_millis() { return Ion::Timing::millis(); }
 
-const char *eadk_external_data = nullptr;
+const char* eadk_external_data = nullptr;
 extern size_t eadk_external_data_size = 0;
 
 bool eadk_usb_is_plugged() { return Ion::USB::isPlugged(); }

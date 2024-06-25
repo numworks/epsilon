@@ -14,15 +14,15 @@ class DisplayTypeController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView>, 8> {
  public:
-  DisplayTypeController(Escher::StackViewController *stackController);
+  DisplayTypeController(Escher::StackViewController* stackController);
   bool handleEvent(Ion::Events::Event e) override;
-  const char *title() override {
+  const char* title() override {
     return I18n::translate(I18n::Message::DisplayTypeTitle);
   }
   void viewWillAppear() override;
 
  private:
-  constexpr static const DataField *k_fields[k_numberOfCells] = {
+  constexpr static const DataField* k_fields[k_numberOfCells] = {
       &ElementsDataBase::GroupField,
       &ElementsDataBase::BlockField,
       &ElementsDataBase::MetalField,
@@ -33,8 +33,8 @@ class DisplayTypeController
       &ElementsDataBase::RadiusField,
   };
 
-  Escher::StackViewController *stackViewController() const {
-    return static_cast<Escher::StackViewController *>(parentResponder());
+  Escher::StackViewController* stackViewController() const {
+    return static_cast<Escher::StackViewController*>(parentResponder());
   }
 };
 

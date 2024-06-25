@@ -12,8 +12,8 @@ using namespace Escher;
 
 namespace Code {
 
-EditorController::EditorController(MenuController *menuController,
-                                   App *pythonDelegate)
+EditorController::EditorController(MenuController* menuController,
+                                   App* pythonDelegate)
     : ViewController(nullptr),
       m_editorView(this, pythonDelegate),
       m_script(Ion::Storage::Record()),
@@ -39,7 +39,7 @@ void EditorController::setScript(Script script, int scriptIndex) {
 
   Ion::Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(
       m_script);
-  m_editorView.setText(const_cast<char *>(m_script.content()),
+  m_editorView.setText(const_cast<char*>(m_script.content()),
                        m_script.contentSize());
 }
 
@@ -77,8 +77,8 @@ void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
 }
 
-StackViewController *EditorController::stackController() {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* EditorController::stackController() {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 void EditorController::cleanStorageEmptySpace() {

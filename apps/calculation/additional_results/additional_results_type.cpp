@@ -130,7 +130,7 @@ bool AdditionalResultsType::HasDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.hasUnit(true));
-  Context *globalContext =
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
       input, exactOutput, globalContext, calculationPreferences);
@@ -151,7 +151,7 @@ bool AdditionalResultsType::HasUnit(
     const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(exactOutput.hasUnit());
-  Context *globalContext =
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
@@ -189,7 +189,7 @@ bool AdditionalResultsType::HasUnit(
 bool AdditionalResultsType::HasVector(
     const UserExpression exactOutput, const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
-  Context *globalContext =
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression norm = VectorHelper::BuildVectorNorm(
       exactOutput.clone(), globalContext, calculationPreferences);
@@ -250,7 +250,7 @@ bool AdditionalResultsType::HasScientificNotation(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
-  Context *globalContext =
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (approximateOutput.type() == ExpressionNode::Type::Nonreal ||
       calculationPreferences.displayMode ==
@@ -269,7 +269,7 @@ bool AdditionalResultsType::HasScientificNotation(
 bool AdditionalResultsType::HasInteger(const UserExpression exactOutput) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit());
-  constexpr const char *k_maximalIntegerWithAdditionalResults =
+  constexpr const char* k_maximalIntegerWithAdditionalResults =
       "10000000000000000";
   return exactOutput.isBasedIntegerCappedBy(
       k_maximalIntegerWithAdditionalResults);

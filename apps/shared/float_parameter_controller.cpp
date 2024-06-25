@@ -14,12 +14,12 @@ namespace Shared {
 
 template <typename T>
 FloatParameterController<T>::FloatParameterController(
-    Responder *parentResponder, View *topView)
+    Responder* parentResponder, View* topView)
     : ListWithTopAndBottomController(parentResponder, topView),
       m_okButton(
           &m_selectableListView, I18n::Message::Ok,
           Invocation::Builder<FloatParameterController>(
-              [](FloatParameterController *parameterController, void *sender) {
+              [](FloatParameterController* parameterController, void* sender) {
                 parameterController->buttonAction();
                 return true;
               },
@@ -52,7 +52,7 @@ int FloatParameterController<T>::reusableCellCount(int type) const {
 }
 
 template <typename T>
-HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
+HighlightCell* FloatParameterController<T>::reusableCell(int index, int type) {
   if (type == k_buttonCellType) {
     return &m_okButton;
   }
@@ -60,7 +60,7 @@ HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
 }
 
 template <typename T>
-void FloatParameterController<T>::fillCellForRow(HighlightCell *cell, int row) {
+void FloatParameterController<T>::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_buttonCellType ||
       textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;
@@ -83,7 +83,7 @@ KDCoordinate FloatParameterController<T>::nonMemoizedRowHeight(int row) {
 
 template <typename T>
 bool FloatParameterController<T>::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down &&
           innerSelectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && innerSelectedRow() > 0) ||
@@ -92,8 +92,8 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(
 
 template <typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
-  char *text = textField->draftText();
+    AbstractTextField* textField, Ion::Events::Event event) {
+  char* text = textField->draftText();
   T floatBody = ParseInputFloatValue<T>(text);
   if (hasUndefinedValue(text, floatBody) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
@@ -112,12 +112,12 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
 
 template <typename T>
 void FloatParameterController<T>::buttonAction() {
-  StackViewController *stack = FloatParameterController<T>::stackController();
+  StackViewController* stack = FloatParameterController<T>::stackController();
   stack->pop();
 }
 
 template <typename T>
-bool FloatParameterController<T>::hasUndefinedValue(const char *text,
+bool FloatParameterController<T>::hasUndefinedValue(const char* text,
                                                     T floatValue) const {
   InfinityTolerance infTolerance = infinityAllowanceForRow(innerSelectedRow());
   return HasUndefinedValue(floatValue,

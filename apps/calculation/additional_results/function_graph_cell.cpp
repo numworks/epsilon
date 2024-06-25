@@ -16,11 +16,11 @@ using namespace Escher;
 namespace Calculation {
 
 template <size_t N>
-void FunctionAxis<N>::reloadAxis(AbstractPlotView *plotView,
+void FunctionAxis<N>::reloadAxis(AbstractPlotView* plotView,
                                  AbstractPlotView::Axis axis) {
   PlotPolicy::LabeledAxis<N>::reloadAxis(plotView, axis);
-  const FunctionModel *model =
-      static_cast<const FunctionModel *>(plotView->range());
+  const FunctionModel* model =
+      static_cast<const FunctionModel*>(plotView->range());
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa()
                                                        : model->ordinate();
   // Compute special labels content and position
@@ -31,10 +31,10 @@ void FunctionAxis<N>::reloadAxis(AbstractPlotView *plotView,
 }
 
 template <size_t N>
-void FunctionAxis<N>::drawAxis(const AbstractPlotView *plotView, KDContext *ctx,
+void FunctionAxis<N>::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
                                KDRect rect, AbstractPlotView::Axis axis) const {
-  const FunctionModel *model =
-      static_cast<const FunctionModel *>(plotView->range());
+  const FunctionModel* model =
+      static_cast<const FunctionModel*>(plotView->range());
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa()
                                                        : model->ordinate();
   AbstractPlotView::Axis otherAxis = axis == AbstractPlotView::Axis::Horizontal
@@ -68,8 +68,8 @@ bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
           PlotPolicy::LabeledAxis<N>::labelWillBeDisplayed(i, labelRect));
 }
 
-void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
-                                   KDContext *ctx, KDRect rect) const {
+void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
+                                   KDContext* ctx, KDRect rect) const {
   assert(!m_model->function().recursivelyMatches(NewExpression::IsSequence));
 
   // Since exp(-2.5) is generalized as exp(-x), x cannot be negative
@@ -78,10 +78,10 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
   float y = m_model->ordinate();
 
   Expression function = m_model->function();
-  Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
-                                                 void *context) {
-    Expression *e = (Expression *)model;
-    Context *c = (Context *)context;
+  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
+                                                 void* context) {
+    Expression* e = (Expression*)model;
+    Context* c = (Context*)context;
     constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
     return Coordinate2D<float>(
         t, PoincareHelpers::ApproximateWithValueForSymbol<float>(
@@ -106,17 +106,17 @@ FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::
     labelWillBeDisplayed(int i, KDRect labelRect) const;
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::reloadAxis(
-    AbstractPlotView *plotView, AbstractPlotView::Axis axis);
+    AbstractPlotView* plotView, AbstractPlotView::Axis axis);
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::reloadAxis(
-    AbstractPlotView *plotView, AbstractPlotView::Axis axis);
+    AbstractPlotView* plotView, AbstractPlotView::Axis axis);
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::drawAxis(
-    const AbstractPlotView *plotView, KDContext *ctx, KDRect rect,
+    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
     AbstractPlotView::Axis axis) const;
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::drawAxis(
-    const AbstractPlotView *plotView, KDContext *ctx, KDRect rect,
+    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
     AbstractPlotView::Axis axis) const;
 
 }  // namespace Calculation

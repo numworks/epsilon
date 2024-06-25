@@ -14,18 +14,18 @@ class AlternateViewDelegate {
   virtual int activeViewControllerIndex() const = 0;
   virtual ViewController::TitlesDisplay alternateViewTitlesDisplay() = 0;
   virtual void activeViewDidBecomeFirstResponder(
-      ViewController *activeViewController) = 0;
+      ViewController* activeViewController) = 0;
 };
 
 class AlternateViewController : public ViewController {
  public:
   AlternateViewController(
-      Responder *parentResponder, AlternateViewDelegate *delegate,
-      std::initializer_list<ViewController *> viewControllers);
-  ViewController *activeViewController() {
+      Responder* parentResponder, AlternateViewDelegate* delegate,
+      std::initializer_list<ViewController*> viewControllers);
+  ViewController* activeViewController() {
     return m_viewControllers[m_delegate->activeViewControllerIndex()];
   }
-  View *view() override { return activeViewController()->view(); }
+  View* view() override { return activeViewController()->view(); }
   ViewController::TitlesDisplay titlesDisplay() override {
     return m_delegate->alternateViewTitlesDisplay();
   }
@@ -40,8 +40,8 @@ class AlternateViewController : public ViewController {
 
  private:
   constexpr static size_t k_maxNumberOfViewController = 4;
-  AlternateViewDelegate *m_delegate;
-  ViewController *m_viewControllers[k_maxNumberOfViewController];
+  AlternateViewDelegate* m_delegate;
+  ViewController* m_viewControllers[k_maxNumberOfViewController];
 };
 
 }  // namespace Escher

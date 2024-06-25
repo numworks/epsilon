@@ -5,18 +5,18 @@
 
 using namespace Ion;
 
-Storage::Record::ErrorStatus putRecordInSharedStorage(const char *baseName,
-                                                      const char *extension,
-                                                      const char *data) {
+Storage::Record::ErrorStatus putRecordInSharedStorage(const char* baseName,
+                                                      const char* extension,
+                                                      const char* data) {
   size_t dataSize = strlen(data);
   return Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       baseName, extension, data, dataSize);
 }
 
 QUIZ_CASE(ion_storage_records_crc32) {
-  const char *baseNameRecord = "ionTestStorage";
-  const char *extensionRecord = "record1";
-  const char *fullNameRecord = "ionTestStorage.record1";
+  const char* baseNameRecord = "ionTestStorage";
+  const char* extensionRecord = "record1";
+  const char* fullNameRecord = "ionTestStorage.record1";
   Storage::Record a(baseNameRecord, extensionRecord);
   Storage::Record b(fullNameRecord);
   quiz_assert(a == b);
@@ -30,9 +30,9 @@ QUIZ_CASE(ion_storage_store_and_destroy_record) {
   size_t initialStorageAvailableStage =
       Storage::FileSystem::sharedFileSystem->availableSize();
 
-  const char *baseNameRecord = "ionTestStorage";
-  const char *extensionRecord = "record1";
-  const char *dataRecord =
+  const char* baseNameRecord = "ionTestStorage";
+  const char* extensionRecord = "record1";
+  const char* dataRecord =
       "This is a test to ensure one can create, retrieve, modify and delete "
       "records in ion's shared storage.";
 
@@ -47,7 +47,7 @@ QUIZ_CASE(ion_storage_store_and_destroy_record) {
           baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
-  quiz_assert(strcmp(dataRecord, static_cast<const char *>(
+  quiz_assert(strcmp(dataRecord, static_cast<const char*>(
                                      retrievedRecord.value().buffer)) == 0);
 
   // Destroy it
@@ -64,9 +64,9 @@ QUIZ_CASE(ion_storage_put_record_twice) {
   size_t initialStorageAvailableStage =
       Storage::FileSystem::sharedFileSystem->availableSize();
 
-  const char *baseNameRecord = "ionTestStorage";
-  const char *extensionRecord = "record";
-  const char *dataRecord =
+  const char* baseNameRecord = "ionTestStorage";
+  const char* extensionRecord = "record";
+  const char* dataRecord =
       "This is a test to ensure one can create, retrieve, modify and delete "
       "records in ion's shared storage.";
 
@@ -85,7 +85,7 @@ QUIZ_CASE(ion_storage_put_record_twice) {
           baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
-  quiz_assert(strcmp(dataRecord, static_cast<const char *>(
+  quiz_assert(strcmp(dataRecord, static_cast<const char*>(
                                      retrievedRecord.value().buffer)) == 0);
 
   // Destroy it
@@ -102,9 +102,9 @@ QUIZ_CASE(ion_storage_invalid_renaming) {
   size_t initialStorageAvailableStage =
       Storage::FileSystem::sharedFileSystem->availableSize();
 
-  const char *baseNameRecord = "ionTestStorage";
-  const char *extensionRecord = "record1";
-  const char *dataRecord =
+  const char* baseNameRecord = "ionTestStorage";
+  const char* extensionRecord = "record1";
+  const char* dataRecord =
       "This is a test to ensure one can create, retrieve, modify and delete "
       "records in ion's shared storage.";
 
@@ -119,11 +119,11 @@ QUIZ_CASE(ion_storage_invalid_renaming) {
           baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
-  quiz_assert(strcmp(dataRecord, static_cast<const char *>(
+  quiz_assert(strcmp(dataRecord, static_cast<const char*>(
                                      retrievedRecord.value().buffer)) == 0);
 
   // Rename the record with an invalid name
-  const char *fullNameRecord2 = "invalidNameWithoutDot";
+  const char* fullNameRecord2 = "invalidNameWithoutDot";
   error = Ion::Storage::Record::SetFullName(&retrievedRecord, fullNameRecord2);
   quiz_assert(error == Storage::Record::ErrorStatus::NonCompliantName);
 
@@ -141,9 +141,9 @@ QUIZ_CASE(ion_storage_valid_renaming) {
   size_t initialStorageAvailableStage =
       Storage::FileSystem::sharedFileSystem->availableSize();
 
-  const char *baseNameRecord = "ionTestStorage";
-  const char *extensionRecord = "record1";
-  const char *dataRecord =
+  const char* baseNameRecord = "ionTestStorage";
+  const char* extensionRecord = "record1";
+  const char* dataRecord =
       "This is a test to ensure one can create, retrieve, modify and delete "
       "records in ion's shared storage.";
 
@@ -158,11 +158,11 @@ QUIZ_CASE(ion_storage_valid_renaming) {
           baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
-  quiz_assert(strcmp(dataRecord, static_cast<const char *>(
+  quiz_assert(strcmp(dataRecord, static_cast<const char*>(
                                      retrievedRecord.value().buffer)) == 0);
 
   // Rename the record with a valid name
-  const char *newFullNameRecord = "testStorage.record2";
+  const char* newFullNameRecord = "testStorage.record2";
   error =
       Ion::Storage::Record::SetFullName(&retrievedRecord, newFullNameRecord);
   quiz_assert(error == Storage::Record::ErrorStatus::None);
@@ -176,7 +176,7 @@ QUIZ_CASE(ion_storage_valid_renaming) {
   // Retrieve the new record
   Storage::Record newRetrievedRecord =
       Storage::FileSystem::sharedFileSystem->recordNamed(newFullNameRecord);
-  quiz_assert(strcmp(dataRecord, static_cast<const char *>(
+  quiz_assert(strcmp(dataRecord, static_cast<const char*>(
                                      newRetrievedRecord.value().buffer)) == 0);
 
   // Destroy it
@@ -190,18 +190,18 @@ QUIZ_CASE(ion_storage_valid_renaming) {
 }
 
 QUIZ_CASE(ion_storage_available_space_moving) {
-  const char *extensionRecord = "record1";
-  const char *baseNameRecord1 = "ionTestStorage1";
-  const char *dataRecord1 =
+  const char* extensionRecord = "record1";
+  const char* baseNameRecord1 = "ionTestStorage1";
+  const char* dataRecord1 =
       "This is a test to ensure one can edit a record in the shared storage - "
       "first record.";
-  const char *baseNameRecord2 = "ionTestStorage2";
-  const char *dataRecord2 =
+  const char* baseNameRecord2 = "ionTestStorage2";
+  const char* dataRecord2 =
       "This is a test to ensure one can edit a record in the shared storage - "
       "second record.";
-  const char *baseNameRecord3 = "ionTestStorage3";
-  const char *baseNameRecord4 = "ionTestStorage4";
-  const char *dataRecord3 = R"(
+  const char* baseNameRecord3 = "ionTestStorage3";
+  const char* baseNameRecord4 = "ionTestStorage4";
+  const char* dataRecord3 = R"(
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -570,9 +570,9 @@ aaaaaa)";
   retrievedRecord4.destroy();
 }
 
-void createTestRecordWithErrorStatus(const char *baseName,
-                                     const char *extension,
-                                     const char *data = nullptr,
+void createTestRecordWithErrorStatus(const char* baseName,
+                                     const char* extension,
+                                     const char* data = nullptr,
                                      Storage::Record::ErrorStatus testError =
                                          Storage::Record::ErrorStatus::None) {
   if (data == nullptr) {
@@ -585,20 +585,20 @@ void createTestRecordWithErrorStatus(const char *baseName,
   quiz_assert(error == testError);
 }
 
-Storage::Record getRecord(const char *baseName, const char *extension) {
+Storage::Record getRecord(const char* baseName, const char* extension) {
   return Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
       baseName, extension);
 }
 
-bool isDataOfRecord(const char *baseName, const char *extension,
-                    const char *data) {
-  const char *recordData = reinterpret_cast<const char *>(
+bool isDataOfRecord(const char* baseName, const char* extension,
+                    const char* data) {
+  const char* recordData = reinterpret_cast<const char*>(
       getRecord(baseName, extension).value().buffer);
   return strcmp(recordData, data) == 0;
 }
 
 QUIZ_CASE(ion_storage_record_name_verifier) {
-  Ion::Storage::RecordNameVerifier *recordNameVerifier =
+  Ion::Storage::RecordNameVerifier* recordNameVerifier =
       Storage::FileSystem::sharedFileSystem->recordNameVerifier();
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
       Storage::functionExtension, 1);
@@ -611,11 +611,11 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(
       Storage::matrixExtension, 2);
 
-  const char *varName0 = "A";
-  const char *varName1 = "A1";
-  const char *varName2 = "A10";
-  const char *data0 = "abcdefgh";
-  const char *data1 = "Bonjour Hello";
+  const char* varName0 = "A";
+  const char* varName1 = "A1";
+  const char* varName2 = "A10";
+  const char* data0 = "abcdefgh";
+  const char* data1 = "Bonjour Hello";
 
   // Test if record does not overrides itself if same name and extension
   createTestRecordWithErrorStatus(varName1, Storage::expressionExtension,
@@ -667,7 +667,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   quiz_assert(getRecord(varName0, Storage::expressionExtension).isNull());
 
   // Test if record with non-competing extension can always be created
-  const char *testExtension = "py";
+  const char* testExtension = "py";
   createTestRecordWithErrorStatus(varName0, testExtension);
   quiz_assert(!getRecord(varName0, Storage::listExtension).isNull());
   quiz_assert(!getRecord(varName0, testExtension).isNull());
@@ -682,9 +682,9 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if reserved names are correctly handled
-  const char *regressionReservedNames[] = {"X", "Y"};
-  const char *statisticsReservedNames[] = {"N", "V"};
-  const char *sequencesReservedNames[] = {"u", "v", "w"};
+  const char* regressionReservedNames[] = {"X", "Y"};
+  const char* statisticsReservedNames[] = {"N", "V"};
+  const char* sequencesReservedNames[] = {"u", "v", "w"};
 
   recordNameVerifier->registerArrayOfReservedNames(
       regressionReservedNames, Storage::listExtension, 3, 2);

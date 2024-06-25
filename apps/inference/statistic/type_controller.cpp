@@ -14,11 +14,11 @@ using namespace Escher;
 
 namespace Inference {
 
-TypeController::TypeController(StackViewController *parent,
-                               HypothesisController *hypothesisController,
-                               InputController *inputController,
-                               DatasetController *datasetController,
-                               Statistic *statistic)
+TypeController::TypeController(StackViewController* parent,
+                               HypothesisController* hypothesisController,
+                               InputController* inputController,
+                               DatasetController* datasetController,
+                               Statistic* statistic)
     : UniformSelectableListController(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
@@ -48,7 +48,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
     assert(selRow == k_indexOfPooledTest);
     type = DistributionType::TPooled;
   }
-  ViewController *controller = m_inputController;
+  ViewController* controller = m_inputController;
   if (m_statistic->hasHypothesisParameters()) {
     controller = m_hypothesisController;
   } else if (m_statistic->canChooseDataset()) {
@@ -64,7 +64,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-const char *TypeController::title() {
+const char* TypeController::title() {
   I18n::Message format = m_statistic->distributionTitle();
   I18n::Message testOrInterval = m_statistic->statisticBasicTitle();
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
@@ -73,7 +73,7 @@ const char *TypeController::title() {
   return m_titleBuffer;
 }
 
-void TypeController::stackOpenPage(ViewController *nextPage) {
+void TypeController::stackOpenPage(ViewController* nextPage) {
   switch (m_statistic->distributionType()) {
     case DistributionType::T:
       selectRow(k_indexOfTTest);

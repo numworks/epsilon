@@ -28,17 +28,17 @@ class StoreApp : public MathApp {
     char m_memoizedFormulasBuffer[k_numberOfMemoizedFormulas][k_bufferSize];
   };
 
-  static StoreApp *storeApp() {
-    return static_cast<StoreApp *>(Escher::App::app());
+  static StoreApp* storeApp() {
+    return static_cast<StoreApp*>(Escher::App::app());
   }
 
-  Snapshot *storeAppSnapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  Snapshot* storeAppSnapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
  protected:
   using MathApp::MathApp;
-  virtual StoreController *storeController() = 0;
+  virtual StoreController* storeController() = 0;
 
  private:
   bool storageCanChangeForRecordName(

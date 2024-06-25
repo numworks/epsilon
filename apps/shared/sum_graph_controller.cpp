@@ -17,10 +17,10 @@ using namespace Escher;
 
 namespace Shared {
 
-SumGraphController::SumGraphController(Responder *parentResponder,
-                                       FunctionGraphView *graphView,
-                                       InteractiveCurveViewRange *range,
-                                       CurveViewCursor *cursor)
+SumGraphController::SumGraphController(Responder* parentResponder,
+                                       FunctionGraphView* graphView,
+                                       InteractiveCurveViewRange* range,
+                                       CurveViewCursor* cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_step(Step::FirstParameter),
       m_startSum(NAN),
@@ -149,7 +149,7 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
   m_graphView->selectRecord(record);
 }
 
-bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
+bool SumGraphController::textFieldDidFinishEditing(AbstractTextField* textField,
                                                    Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
@@ -179,7 +179,7 @@ bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
 
 bool SumGraphController::handleEnter() {
   if (m_step == Step::Result) {
-    StackViewController *stack = (StackViewController *)parentResponder();
+    StackViewController* stack = (StackViewController*)parentResponder();
     stack->pop();
   } else {
     Step currentStep = m_step;
@@ -207,7 +207,7 @@ void SumGraphController::reloadBannerView() {
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
     assert(!selectedRecord().isNull());
-    Poincare::Context *context = FunctionApp::app()->localContext();
+    Poincare::Context* context = FunctionApp::app()->localContext();
     Poincare::SystemExpression sum =
         createSumExpression(m_startSum, endSum, context);
     result = PoincareHelpers::ApproximateToScalar<double>(sum, context);
@@ -222,7 +222,7 @@ void SumGraphController::reloadBannerView() {
 }
 
 Poincare::UserExpression SumGraphController::createSumExpression(
-    double startSum, double endSum, Poincare::Context *context) {
+    double startSum, double endSum, Poincare::Context* context) {
   ExpiringPointer<Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   return function->sumBetweenBounds(startSum, endSum, context);
@@ -230,7 +230,7 @@ Poincare::UserExpression SumGraphController::createSumExpression(
 
 /* Legend View */
 
-SumGraphController::LegendView::LegendView(SumGraphController *controller)
+SumGraphController::LegendView::LegendView(SumGraphController* controller)
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
@@ -238,7 +238,7 @@ SumGraphController::LegendView::LegendView(SumGraphController *controller)
   m_textBuffer[0] = 0;
 }
 
-void SumGraphController::LegendView::drawRect(KDContext *ctx,
+void SumGraphController::LegendView::drawRect(KDContext* ctx,
                                               KDRect rect) const {
   ctx->fillRect(bounds(), Palette::GrayMiddle);
 }
@@ -299,7 +299,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = Layout::String(" = ", 3);
-    Preferences *preferences = Preferences::SharedPreferences();
+    Preferences* preferences = Preferences::SharedPreferences();
     Layout resultLayout =
         valueLayout(result, preferences->numberOfSignificantDigits(),
                     preferences->displayMode());
@@ -327,7 +327,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   layoutSubviews(step, false);
 }
 
-View *SumGraphController::LegendView::subviewAtIndex(int index) {
+View* SumGraphController::LegendView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 3);
   if (index == 0) {
     return &m_sum;

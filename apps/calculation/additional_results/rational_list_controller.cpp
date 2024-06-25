@@ -79,7 +79,7 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-Layout RationalListController::layoutAtIndex(Escher::HighlightCell *cell,
+Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
                                              int index) {
   return ExpressionsListController::layoutAtIndex(cell, index);
 #if 0  // TODO_PCJ

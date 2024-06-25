@@ -11,17 +11,17 @@ namespace Statistics {
 class FrequencyController : public PlotController,
                             public Shared::MathTextFieldDelegate {
  public:
-  FrequencyController(Escher::Responder *parentResponder,
-                      Escher::ButtonRowController *header,
-                      Escher::TabViewController *tabController,
-                      Escher::StackViewController *stackViewController,
-                      Escher::ViewController *typeViewController, Store *store);
+  FrequencyController(Escher::Responder* parentResponder,
+                      Escher::ButtonRowController* header,
+                      Escher::TabViewController* tabController,
+                      Escher::StackViewController* stackViewController,
+                      Escher::ViewController* typeViewController, Store* store);
 
   // Responder
   void didBecomeFirstResponder() override;
 
   // TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
   // PlotController
@@ -36,7 +36,7 @@ class FrequencyController : public PlotController,
   }
   bool connectPoints() const override { return true; }
   // Append '%' to vertical axis labels.
-  void appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char *labelBuffer,
+  void appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char* labelBuffer,
                          int maxSize, int glyphLength,
                          int maxGlyphLength) const override;
   // A 0.5 ratio ensures the vertical labels are 0, 20, 40, 60, 80 and 100%
@@ -61,7 +61,7 @@ class FrequencyController : public PlotController,
                            int precision) override;
   void moveCursorToSelectedIndex(bool setColor) override;
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
-  void computeYBounds(float *yMin, float *yMax) const override;
+  void computeYBounds(float* yMin, float* yMax) const override;
   bool handleNullFrequencies() const override { return true; }
   int nextSubviewWhenMovingVertically(
       OMG::VerticalDirection direction) const override;
@@ -72,12 +72,12 @@ class FrequencyController : public PlotController,
   KDCoordinate horizontalMargin() const override { return k_largeMargin; }
   KDCoordinate bottomMargin() const override { return k_mediumMargin; }
   KDCoordinate topMargin() const override { return k_smallMargin; }
-  const char *resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
+  const char* resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
   I18n::Message resultMessage() const override {
     return I18n::Message::StatisticsFrequencyFcc;
   }
 
-  PlotBannerView *bannerView() override {
+  PlotBannerView* bannerView() override {
     return &m_bannerViewWithEditableField;
   }
 

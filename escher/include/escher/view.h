@@ -41,19 +41,19 @@ class View {
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to
    * the Kandinsky library using the provided context. */
-  virtual void drawRect(KDContext *ctx, KDRect rect) const {
+  virtual void drawRect(KDContext* ctx, KDRect rect) const {
     // By default, a view doesn't do anything, it's transparent
   }
 
   void setSize(KDSize size);
-  void setChildFrame(View *child, KDRect frame, bool force);
-  KDPoint pointFromPointInView(View *view, KDPoint point);
+  void setChildFrame(View* child, KDRect frame, bool force);
+  KDPoint pointFromPointInView(View* view, KDPoint point);
   KDRect absoluteFrame() const { return m_frame; }
   KDPoint absoluteOrigin() const { return m_frame.origin(); }
-  KDRect relativeChildFrame(const View *child) const {
+  KDRect relativeChildFrame(const View* child) const {
     return child->absoluteFrame().relativeTo(absoluteOrigin());
   }
-  KDPoint relativeChildOrigin(const View *child) const {
+  KDPoint relativeChildOrigin(const View* child) const {
     return child->absoluteOrigin().relativeTo(absoluteOrigin());
   }
 
@@ -63,7 +63,7 @@ class View {
   virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }
 
 #if ESCHER_VIEW_LOGGING
-  friend std::ostream &operator<<(std::ostream &os, View &view);
+  friend std::ostream& operator<<(std::ostream& os, View& view);
   __attribute__((__used__)) void log() const;
 #endif
  protected:
@@ -83,11 +83,11 @@ class View {
   void markWholeFrameAsDirty() { m_dirtyRect = m_frame; }
 
 #if ESCHER_VIEW_LOGGING
-  virtual const char *className() const;
-  virtual void logAttributes(std::ostream &os) const;
+  virtual const char* className() const;
+  virtual void logAttributes(std::ostream& os) const;
 #endif
   virtual int numberOfSubviews() const { return 0; }
-  virtual View *subviewAtIndex(int index) { return nullptr; }
+  virtual View* subviewAtIndex(int index) { return nullptr; }
 
  private:
   void setFrame(KDRect frame, bool force);

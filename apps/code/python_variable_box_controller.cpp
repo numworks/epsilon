@@ -87,7 +87,7 @@ bool PythonVariableBoxController::handleEvent(Ion::Events::Event event) {
 }
 
 void PythonVariableBoxController::didEnterResponderChain(
-    Responder *previousFirstResponder) {
+    Responder* previousFirstResponder) {
   /* Code::PythonVariableBoxController should always be called from an
    * environment where Python has already been inited. This way, we do not
    * deinit Python when leaving the PythonVariableBoxController, so we do not
@@ -120,7 +120,7 @@ int PythonVariableBoxController::numberOfRows() const {
   return result;
 }
 
-HighlightCell *PythonVariableBoxController::reusableCell(int index, int type) {
+HighlightCell* PythonVariableBoxController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_itemCellType) {
     return m_itemCells + index;
@@ -139,17 +139,17 @@ int PythonVariableBoxController::reusableCellCount(int type) const {
   return k_maxNumberOfDisplayedItems;
 }
 
-void PythonVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
+void PythonVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
   assert(row >= 0 && row < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;
   int cellType =
       typeAndOriginAtLocation(row, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *typedCell =
+    MenuCell<BufferTextView<k_labelCharSize>, PointerTextView>* typedCell =
         static_cast<
-            MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *>(cell);
-    ScriptNode *node = scriptNodeAtIndex(
+            MenuCell<BufferTextView<k_labelCharSize>, PointerTextView>*>(cell);
+    ScriptNode* node = scriptNodeAtIndex(
         row - (m_displaySubtitles ? cumulatedOriginsCount : 0));
     /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
      * greater than node->nameLength() */
@@ -175,8 +175,8 @@ void PythonVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
   assert(cellType == k_subtitleCellType);
   assert(cellOrigin < m_originsCount);
   assert(m_rowsPerOrigins[cellOrigin] > 0);
-  SubtitleCell *myCell = static_cast<SubtitleCell *>(cell);
-  const char *moduleName = m_originsName[cellOrigin];
+  SubtitleCell* myCell = static_cast<SubtitleCell*>(cell);
+  const char* moduleName = m_originsName[cellOrigin];
   I18n::Message prefix = I18n::Message::Default;
   I18n::Message suffix = I18n::Message::Default;
   if (cellOrigin >= k_importedOrigin &&
@@ -200,7 +200,7 @@ void PythonVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
 }
 
 void PythonVariableBoxController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
+    SelectableListView* l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
   if (!withinTemporarySelection && m_displaySubtitles &&
@@ -216,7 +216,7 @@ int PythonVariableBoxController::typeAtRow(int row) const {
 }
 
 void PythonVariableBoxController::loadFunctionsAndVariables(
-    int scriptIndex, const char *textToAutocomplete,
+    int scriptIndex, const char* textToAutocomplete,
     int textToAutocompleteLength) {
   assert(scriptIndex >= 0);
 
@@ -250,7 +250,7 @@ void PythonVariableBoxController::loadFunctionsAndVariables(
   script.setFetchedForVariableBox(true);
 
   // Load the imported and current variables
-  const char *scriptContent = script.content();
+  const char* scriptContent = script.content();
   assert(scriptContent != nullptr);
   loadImportedVariablesInScript(scriptContent, textToAutocomplete,
                                 textToAutocompleteLength);
@@ -258,9 +258,9 @@ void PythonVariableBoxController::loadFunctionsAndVariables(
                                textToAutocompleteLength);
 }
 
-const char *PythonVariableBoxController::autocompletionAlternativeAtIndex(
-    int textToAutocompleteLength, int *textToInsertLength, bool *addParentheses,
-    int index, int *indexToUpdate) {
+const char* PythonVariableBoxController::autocompletionAlternativeAtIndex(
+    int textToAutocompleteLength, int* textToInsertLength, bool* addParentheses,
+    int index, int* indexToUpdate) {
   if (numberOfRows() == 0) {
     return nullptr;
   }
@@ -281,8 +281,8 @@ const char *PythonVariableBoxController::autocompletionAlternativeAtIndex(
     *indexToUpdate = index;
   }
 
-  ScriptNode *node = scriptNodeAtIndex(index);
-  const char *currentName = node->name();
+  ScriptNode* node = scriptNodeAtIndex(index);
+  const char* currentName = node->name();
   int currentNameLength = node->nameLength();
   if (currentNameLength < 0) {
     currentNameLength = strlen(currentName);
@@ -321,7 +321,7 @@ void PythonVariableBoxController::empty() {
 }
 
 void PythonVariableBoxController::insertAutocompletionResultAtIndex(int index) {
-  ScriptNode *selectedScriptNode = scriptNodeAtIndex(index);
+  ScriptNode* selectedScriptNode = scriptNodeAtIndex(index);
   if (selectedScriptNode == nullptr) {
     /* Autocompletion has not been found. It can happen if the index is no
      * longer valid, when the PythonVariableBoxController has been emptied and
@@ -347,13 +347,13 @@ void PythonVariableBoxController::insertAutocompletionResultAtIndex(int index) {
 
 // PRIVATE METHODS
 
-int PythonVariableBoxController::NodeNameCompare(ScriptNode *node,
-                                                 const char *name,
+int PythonVariableBoxController::NodeNameCompare(ScriptNode* node,
+                                                 const char* name,
                                                  int nameLength,
-                                                 bool *strictlyStartsWith) {
+                                                 bool* strictlyStartsWith) {
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   assert(nameLength > 0);
-  const char *nodeName = node->name();
+  const char* nodeName = node->name();
   const int nodeNameLength =
       node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
   const int comparisonLength = std::min(nameLength, nodeNameLength);
@@ -390,7 +390,7 @@ size_t PythonVariableBoxController::nodesCountForOrigin(uint8_t origin) const {
   return m_rowsPerOrigins[origin];
 }
 
-ScriptNode *PythonVariableBoxController::scriptNodeAtIndex(int index) {
+ScriptNode* PythonVariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   assert(index < static_cast<int>(m_nodesCount));
   assert(m_nodesCount <= k_maxScriptNodesCount);
@@ -399,7 +399,7 @@ ScriptNode *PythonVariableBoxController::scriptNodeAtIndex(int index) {
 }
 
 int PythonVariableBoxController::typeAndOriginAtLocation(
-    int i, uint8_t *resultOrigin, int *cumulatedOriginsCount) const {
+    int i, uint8_t* resultOrigin, int* cumulatedOriginsCount) const {
   assert(i < static_cast<int>(m_nodesCount +
                               (m_displaySubtitles ? m_originsCount : 0)));
   int cellIndex = 0;
@@ -446,7 +446,7 @@ bool PythonVariableBoxController::selectLeaf(int row) {
   return true;
 }
 
-void PythonVariableBoxController::insertTextInCaller(const char *text,
+void PythonVariableBoxController::insertTextInCaller(const char* text,
                                                      int textLength) {
   int textLen = textLength < 0 ? strlen(text) : textLength;
   constexpr int k_maxScriptObjectNameSize = 100;  // Ad hoc value
@@ -458,13 +458,13 @@ void PythonVariableBoxController::insertTextInCaller(const char *text,
 }
 
 void PythonVariableBoxController::loadBuiltinNodes(
-    const char *textToAutocomplete, int textToAutocompleteLength) {
+    const char* textToAutocomplete, int textToAutocompleteLength) {
   /* TODO Could be great to use strings defined in STATIC const char *const
    * tok_kw[] in python/lexer.c
    * The commented values do not work with our current MicroPython but might
    * work later, which is why we keep them. */
   const struct {
-    const char *name;
+    const char* name;
     ScriptNode::Type type;
   } builtinNames[] = {
       {"False", ScriptNode::Type::WithoutParentheses},
@@ -606,34 +606,34 @@ void PythonVariableBoxController::loadBuiltinNodes(
  * here to be able to use it. */
 struct mp_reader_mem_t {
   size_t free_len;  // if >0 mem is freed on close by: m_free(beg, free_len)
-  const byte *beg;
-  const byte *cur;
-  const byte *end;
+  const byte* beg;
+  const byte* cur;
+  const byte* end;
 };
 
 void PythonVariableBoxController::loadImportedVariablesInScript(
-    const char *scriptContent, const char *textToAutocomplete,
+    const char* scriptContent, const char* textToAutocomplete,
     int textToAutocompleteLength) {
   /* Load the imported variables and functions: lex and the parse on a line per
    * line basis until parsing fails, while detecting import structures. */
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    const char *parseStart = scriptContent;
+    const char* parseStart = scriptContent;
     // Skip new lines at the beginning of the script
     while (*parseStart == '\n' && *parseStart != 0) {
       parseStart++;
     }
-    const char *parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+    const char* parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
 
     while (parseStart != parseEnd) {
-      mp_lexer_t *lex =
+      mp_lexer_t* lex =
           mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
       mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
       mp_parse_node_t pn = parseTree.root;
 
       if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-        addNodesFromImportMaybe((mp_parse_node_struct_t *)pn,
-                                textToAutocomplete, textToAutocompleteLength);
+        addNodesFromImportMaybe((mp_parse_node_struct_t*)pn, textToAutocomplete,
+                                textToAutocompleteLength);
       }
 
       mp_parse_tree_clear(&parseTree);
@@ -663,18 +663,18 @@ void PythonVariableBoxController::loadImportedVariablesInScript(
      * In that case we try again parsing this line from the start to the end of
      * the text to autocomplete only, to make sure ongoing autocompletion will
      * still be available. */
-    const char *parseStart = textToAutocomplete;
+    const char* parseStart = textToAutocomplete;
     // Search for the beginning of the line
     while (parseStart != scriptContent && *(parseStart - 1) != '\n') {
       parseStart--;
     }
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(
+    mp_lexer_t* lex = mp_lexer_new_from_str_len(
         0, parseStart,
         textToAutocomplete + textToAutocompleteLength - parseStart, 0);
     mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
     mp_parse_node_t pn = parseTree.root;
     if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-      addNodesFromImportMaybe((mp_parse_node_struct_t *)pn, textToAutocomplete,
+      addNodesFromImportMaybe((mp_parse_node_struct_t*)pn, textToAutocomplete,
                               textToAutocompleteLength);
     }
     nlr_pop();
@@ -684,7 +684,7 @@ void PythonVariableBoxController::loadImportedVariablesInScript(
 }
 
 void PythonVariableBoxController::loadCurrentVariablesInScript(
-    const char *scriptContent, const char *textToAutocomplete,
+    const char* scriptContent, const char* textToAutocomplete,
     int textToAutocompleteLength) {
   /* To find variable and function names: we lex the script and keep all
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
@@ -693,12 +693,12 @@ void PythonVariableBoxController::loadCurrentVariablesInScript(
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
     // Lex the script
-    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent,
+    _mp_lexer_t* lex = mp_lexer_new_from_str_len(0, scriptContent,
                                                  strlen(scriptContent), false);
 
     // Keep track of DEF tokens to differentiate between variables and functions
     bool defToken = false;
-    const char *beginningLine = scriptContent;
+    const char* beginningLine = scriptContent;
     size_t beginningLineIndex = 0;
 
     while (lex->tok_kind != MP_TOKEN_END) {
@@ -723,7 +723,7 @@ void PythonVariableBoxController::loadCurrentVariablesInScript(
         }
         assert(beginningLineIndex == line);
         // tok_column starts at 1, not 0
-        const char *tokenInText = beginningLine + lex->tok_column - 1;
+        const char* tokenInText = beginningLine + lex->tok_column - 1;
         assert(strncmp(tokenInText, lex->vstr.buf, nameLength) == 0);
 
         ScriptNode::Type nodeType =
@@ -747,7 +747,7 @@ void PythonVariableBoxController::loadCurrentVariablesInScript(
 
 void PythonVariableBoxController::
     loadGlobalAndImportedVariablesInScriptAsImported(
-        Script script, const char *textToAutocomplete,
+        Script script, const char* textToAutocomplete,
         int textToAutocompleteLength, bool importFromModules) {
   if (script.fetchedForVariableBox()) {
     // We already fetched these script variables
@@ -755,15 +755,15 @@ void PythonVariableBoxController::
   }
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    const char *scriptName = script.fullName();
-    const char *scriptContent = script.content();
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent,
+    const char* scriptName = script.fullName();
+    const char* scriptContent = script.content();
+    mp_lexer_t* lex = mp_lexer_new_from_str_len(0, scriptContent,
                                                 strlen(scriptContent), false);
     mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
     mp_parse_node_t pn = parseTree.root;
 
     if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-      mp_parse_node_struct_t *pns = (mp_parse_node_struct_t *)pn;
+      mp_parse_node_struct_t* pns = (mp_parse_node_struct_t*)pn;
       uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
       if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
         // The script is only a single function or variable definition
@@ -782,8 +782,8 @@ void PythonVariableBoxController::
         for (size_t i = 0; i < n; i++) {
           mp_parse_node_t child = pns->nodes[i];
           if (MP_PARSE_NODE_IS_STRUCT(child)) {
-            mp_parse_node_struct_t *child_pns =
-                (mp_parse_node_struct_t *)(child);
+            mp_parse_node_struct_t* child_pns =
+                (mp_parse_node_struct_t*)(child);
             structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
               if (addImportStructFromScript(child_pns, structKind, scriptName,
@@ -808,7 +808,7 @@ void PythonVariableBoxController::
 }
 
 bool PythonVariableBoxController::addNodesFromImportMaybe(
-    mp_parse_node_struct_t *parseNode, const char *textToAutocomplete,
+    mp_parse_node_struct_t* parseNode, const char* textToAutocomplete,
     int textToAutocompleteLength, bool importFromModules) {
   // Determine if the node is an import structure
   uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(parseNode);
@@ -830,14 +830,14 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
     if (MP_PARSE_NODE_IS_LEAF(child) &&
         MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
       // Parsing something like "import xyz"
-      const char *id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
+      const char* id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
 
       /* xyz might be:
        *  - a module name -> in which case we want no importation source on the
        *    node. The node will not be added if it is already in the builtins.
        *  - a script name -> we want to have xyz.py as the importation source
        *  - a non-existing identifier -> we want no source */
-      const char *sourceId = nullptr;
+      const char* sourceId = nullptr;
       if (importationSourceIsModule(id)) {
         if (!importFromModules) {
           return true;
@@ -860,7 +860,7 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
        * added without description, nor sources although it could have been
        * fetched with a "from math import *". We try here to at least find a
        * source name for a suited subtitle */
-      const char *source =
+      const char* source =
           (sourceId != nullptr)
               ? sourceId
               : I18n::translate(I18n::Message::ImportedModulesAndScripts);
@@ -871,7 +871,7 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
       }
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
-      addNodesFromImportMaybe((mp_parse_node_struct_t *)child,
+      addNodesFromImportMaybe((mp_parse_node_struct_t*)child,
                               textToAutocomplete, textToAutocompleteLength,
                               importFromModules);
     } else if (MP_PARSE_NODE_IS_TOKEN(child) &&
@@ -885,14 +885,14 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
   // Fetch a script / module content if needed
   if (loadAllSourceContent) {
     assert(childNodesCount > 0);
-    const char *importationSourceName =
+    const char* importationSourceName =
         importationSourceNameFromNode(parseNode->nodes[0]);
     if (importationSourceName == nullptr) {
       // For instance, the name is a "dotted name" but not matplotlib.pyplot
       return true;
     }
     int numberOfModuleChildren = 0;
-    const ToolboxMessageTree *moduleChildren = nullptr;
+    const ToolboxMessageTree* moduleChildren = nullptr;
     if (importationSourceIsModule(importationSourceName, &moduleChildren,
                                   &numberOfModuleChildren)) {
       if (!importFromModules) {
@@ -906,7 +906,7 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
         constexpr int numberOfNodesToSkip = 3;
         assert(numberOfModuleChildren > numberOfNodesToSkip);
         for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
-          const char *name = I18n::translate((moduleChildren + i)->label());
+          const char* name = I18n::translate((moduleChildren + i)->label());
           if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
                                ScriptNode::Type::WithoutParentheses,
                                k_importedOrigin, name, -1,
@@ -921,7 +921,7 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
     } else {
       // Try fetching the nodes from a script
       Script importedScript;
-      const char *scriptFullName;
+      const char* scriptFullName;
       if (importationSourceIsScript(importationSourceName, &scriptFullName,
                                     &importedScript)) {
         loadGlobalAndImportedVariablesInScriptAsImported(
@@ -932,15 +932,15 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
   return true;
 }
 
-const char *PythonVariableBoxController::importationSourceNameFromNode(
-    mp_parse_node_t &node) {
+const char* PythonVariableBoxController::importationSourceNameFromNode(
+    mp_parse_node_t& node) {
   if (MP_PARSE_NODE_IS_LEAF(node) &&
       MP_PARSE_NODE_LEAF_KIND(node) == MP_PARSE_NODE_ID) {
     // The importation source is "simple", for instance: from math import *
     return qstr_str(MP_PARSE_NODE_LEAF_ARG(node));
   }
   if (MP_PARSE_NODE_IS_STRUCT(node)) {  // TODO replace this with an assert?
-    mp_parse_node_struct_t *nodePNS = (mp_parse_node_struct_t *)node;
+    mp_parse_node_struct_t* nodePNS = (mp_parse_node_struct_t*)node;
     uint nodeStructKind = MP_PARSE_NODE_STRUCT_KIND(nodePNS);
     if (nodeStructKind != PN_dotted_name) {
       return nullptr;
@@ -956,7 +956,7 @@ const char *PythonVariableBoxController::importationSourceNameFromNode(
     if (numberOfSplitNames != 2) {
       return nullptr;
     }
-    const char *nodeSubName =
+    const char* nodeSubName =
         qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[0]));
     if (strcmp(nodeSubName, qstr_str(MP_QSTR_matplotlib)) == 0) {
       nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[1]));
@@ -969,9 +969,9 @@ const char *PythonVariableBoxController::importationSourceNameFromNode(
 }
 
 bool PythonVariableBoxController::importationSourceIsModule(
-    const char *sourceName, const ToolboxMessageTree **moduleChildren,
-    int *numberOfModuleChildren) {
-  const ToolboxMessageTree *children =
+    const char* sourceName, const ToolboxMessageTree** moduleChildren,
+    int* numberOfModuleChildren) {
+  const ToolboxMessageTree* children =
       App::app()->toolbox()->moduleChildren(sourceName, numberOfModuleChildren);
   if (moduleChildren != nullptr) {
     *moduleChildren = children;
@@ -984,8 +984,8 @@ bool PythonVariableBoxController::importationSourceIsModule(
 }
 
 bool PythonVariableBoxController::importationSourceIsScript(
-    const char *sourceName, const char **scriptFullName,
-    Script *retreivedScript) {
+    const char* sourceName, const char** scriptFullName,
+    Script* retreivedScript) {
   // Try fetching the nodes from a script
   Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
   if (importedScript.isNull()) {
@@ -998,7 +998,7 @@ bool PythonVariableBoxController::importationSourceIsScript(
   return true;
 }
 
-const char *structName(mp_parse_node_struct_t *structNode) {
+const char* structName(mp_parse_node_struct_t* structNode) {
   // Find the id child node, which stores the struct's name
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(structNode);
   if (childNodesCount < 1) {
@@ -1014,11 +1014,11 @@ const char *structName(mp_parse_node_struct_t *structNode) {
 }
 
 bool PythonVariableBoxController::addImportStructFromScript(
-    mp_parse_node_struct_t *pns, uint structKind, const char *scriptName,
-    const char *textToAutocomplete, int textToAutocompleteLength) {
+    mp_parse_node_struct_t* pns, uint structKind, const char* scriptName,
+    const char* textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
-  const char *name = structName(pns);
+  const char* name = structName(pns);
   if (name == nullptr) {
     return false;
   }
@@ -1031,10 +1031,10 @@ bool PythonVariableBoxController::addImportStructFromScript(
 
 // The returned boolean means we should escape the process
 bool PythonVariableBoxController::addNodeIfMatches(
-    const char *textToAutocomplete, int textToAutocompleteLength,
-    ScriptNode::Type nodeType, uint8_t nodeOrigin, const char *nodeName,
-    int nodeNameLength, const char *nodeSourceName,
-    const char *nodeDescription) {
+    const char* textToAutocomplete, int textToAutocompleteLength,
+    ScriptNode::Type nodeType, uint8_t nodeOrigin, const char* nodeName,
+    int nodeNameLength, const char* nodeSourceName,
+    const char* nodeDescription) {
   if (m_nodesCount >= k_maxScriptNodesCount) {
     // There is no room to add any another node
     return true;
@@ -1135,7 +1135,7 @@ bool PythonVariableBoxController::addNodeIfMatches(
         insertionIndex = cumulatedNodeCount + originNodesCount;
       }
       for (size_t i = 0; i < originNodesCount; i++) {
-        ScriptNode *matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
+        ScriptNode* matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
         int comparisonResult =
             NodeNameCompare(matchingNode, nodeName, nodeNameLength);
         if (comparisonResult == 0 ||

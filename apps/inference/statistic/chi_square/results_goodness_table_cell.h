@@ -18,17 +18,17 @@ class ResultGoodnessContributionsTable
       public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   ResultGoodnessContributionsTable(
-      Escher::Responder *parent, CategoricalController *parentController,
-      GoodnessTest *statistic, Escher::ScrollViewDelegate *scrollViewDelegate);
+      Escher::Responder* parent, CategoricalController* parentController,
+      GoodnessTest* statistic, Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // View
-  void drawRect(KDContext *ctx, KDRect rect) const override;
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int column) override;
-  Escher::HighlightCell *reusableCell(int index, int type) override {
+  Escher::HighlightCell* reusableCell(int index, int type) override {
     return cell(index);
   }
   int reusableCellCount(int type) const override {
@@ -36,15 +36,15 @@ class ResultGoodnessContributionsTable
   }
 
   // DynamicCellsDataSource
-  Escher::SelectableTableView *tableView() override {
+  Escher::SelectableTableView* tableView() override {
     return &m_selectableTableView;
   }
 
   // CategoricalTableCell
-  CategoricalTableViewDataSource *tableViewDataSource() override {
+  CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
   }
-  CategoricalController *categoricalController() override {
+  CategoricalController* categoricalController() override {
     return m_parentController;
   }
 
@@ -64,8 +64,8 @@ class ResultGoodnessContributionsTable
 
   static constexpr KDCoordinate k_columnsWidth[] = {95, 95, 100};
 
-  GoodnessTest *m_statistic;
-  CategoricalController *m_parentController;
+  GoodnessTest* m_statistic;
+  CategoricalController* m_parentController;
 };
 }  // namespace Inference
 

@@ -11,10 +11,10 @@ using namespace Shared;
 
 namespace Solver {
 
-IntervalController::IntervalController(Responder *parentResponder)
+IntervalController::IntervalController(Responder* parentResponder)
     : SingleRangeController(parentResponder, &m_confirmPopUpController),
       m_confirmPopUpController(Invocation::Builder<IntervalController>(
-          [](IntervalController *controller, void *sender) {
+          [](IntervalController* controller, void* sender) {
             controller->stackController()->pop();
             return true;
           },
@@ -22,7 +22,7 @@ IntervalController::IntervalController(Responder *parentResponder)
   m_okButton.setMessage(I18n::Message::ResolveEquation);
 }
 
-const char *IntervalController::title() {
+const char* IntervalController::title() {
   return I18n::translate(I18n::Message::SearchInverval);
 }
 
@@ -45,23 +45,23 @@ double IntervalController::limit() const {
 }
 
 void IntervalController::extractParameters() {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   m_rangeParam = system->approximateSolvingRange();
   m_autoParam = system->autoApproximateSolvingRange();
 }
 
 void IntervalController::confirmParameters() {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   system->setApproximateSolvingRange(m_rangeParam);
 }
 
 bool IntervalController::parametersAreDifferent() {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   return m_rangeParam != system->approximateSolvingRange();
 }
 
 void IntervalController::setAutoRange() {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   system->autoComputeApproximateSolvingRange(App::app()->localContext());
   m_rangeParam = system->approximateSolvingRange();
 }
@@ -70,7 +70,7 @@ void IntervalController::pop(bool onConfirmation) {
   if (onConfirmation) {
     App::app()->system()->approximateSolve(App::app()->localContext());
   }
-  StackViewController *stack = stackController();
+  StackViewController* stack = stackController();
   stack->pop();
 }
 

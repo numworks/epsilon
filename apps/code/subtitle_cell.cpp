@@ -14,7 +14,7 @@ SubtitleCell::SubtitleCell()
                             .backgroundColor = k_backgroundColor,
                             .font = KDFont::Size::Small}}) {}
 
-void SubtitleCell::drawRect(KDContext *ctx, KDRect rect) const {
+void SubtitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : k_backgroundColor;
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);

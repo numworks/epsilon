@@ -8,10 +8,10 @@
 namespace Shared {
 
 // public
-void ContinuousFunctionCache::PrepareForCaching(void *fun,
-                                                ContinuousFunctionCache *cache,
+void ContinuousFunctionCache::PrepareForCaching(void* fun,
+                                                ContinuousFunctionCache* cache,
                                                 float tMin, float tStep) {
-  ContinuousFunction *function = static_cast<ContinuousFunction *>(fun);
+  ContinuousFunction* function = static_cast<ContinuousFunction*>(fun);
 
   if (!cache) {
     /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
@@ -56,7 +56,7 @@ void ContinuousFunctionCache::clear() {
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
-    const ContinuousFunction *function, Poincare::Context *context, float t,
+    const ContinuousFunction* function, Poincare::Context* context, float t,
     int curveIndex) {
   int resIndex = indexForParameter(function, t, curveIndex);
   if (resIndex < 0) {
@@ -65,8 +65,8 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
   return valuesAtIndex(function, context, t, resIndex, curveIndex);
 }
 
-void ContinuousFunctionCache::ComputeNonCartesianSteps(float *tStep,
-                                                       float *tCacheStep,
+void ContinuousFunctionCache::ComputeNonCartesianSteps(float* tStep,
+                                                       float* tCacheStep,
                                                        float tMax, float tMin) {
   // Expected step length
   *tStep = (tMax - tMin) / k_graphStepDenominator;
@@ -105,7 +105,7 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
 }
 
 int ContinuousFunctionCache::indexForParameter(
-    const ContinuousFunction *function, float t, int curveIndex) const {
+    const ContinuousFunction* function, float t, int curveIndex) const {
   assert(!std::isnan(t));
   if (curveIndex != 0 || std::isinf(t)) {
     /* TODO: For now, second curves are not cached. It may (or not) be slightly
@@ -131,7 +131,7 @@ int ContinuousFunctionCache::indexForParameter(
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
-    const ContinuousFunction *function, Poincare::Context *context, float t,
+    const ContinuousFunction* function, Poincare::Context* context, float t,
     int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->properties().isCartesian()) {
@@ -151,7 +151,7 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
 
-void ContinuousFunctionCache::pan(ContinuousFunction *function, float newTMin) {
+void ContinuousFunctionCache::pan(ContinuousFunction* function, float newTMin) {
   assert(function->properties().isCartesian());
   if (newTMin == m_tMin) {
     return;

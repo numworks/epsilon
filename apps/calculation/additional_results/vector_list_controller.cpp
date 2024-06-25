@@ -24,7 +24,7 @@ void VectorListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   ComputationContext computationContext(context, complexFormat(), angleUnit());
   computationContext.updateComplexFormat(exactOutput);
 
@@ -61,7 +61,7 @@ void VectorListController::computeAdditionalResults(
 
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
-  Matrix vector = static_cast<const Matrix &>(approximateOutput);
+  Matrix vector = static_cast<const Matrix&>(approximateOutput);
   assert(vector.isVector());
   if (vector.numberOfChildren() != 2) {
     // Vector is not 2D

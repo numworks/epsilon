@@ -11,7 +11,7 @@ class TwoMessagesPopupDataSource : public Escher::ExplicitListViewDataSource {
  public:
   TwoMessagesPopupDataSource() {}
   int numberOfRows() const override { return k_numberOfRows; }
-  Escher::HighlightCell *cell(int row) override { return &m_cells[row]; }
+  Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
   void setMessages(I18n::Message message1, I18n::Message message2) {
     m_cells[0].setText(I18n::translate(message1));
     m_cells[1].setText(I18n::translate(message2));

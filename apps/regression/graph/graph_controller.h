@@ -19,11 +19,11 @@ namespace Regression {
 
 class GraphController : public Shared::InteractiveCurveViewController {
  public:
-  GraphController(Escher::Responder *parentResponder,
-                  Escher::ButtonRowController *header,
-                  Shared::InteractiveCurveViewRange *interactiveRange,
-                  Shared::CurveViewCursor *cursor, int *selectedDotIndex,
-                  int *selectedCurveIndex, Store *store);
+  GraphController(Escher::Responder* parentResponder,
+                  Escher::ButtonRowController* header,
+                  Shared::InteractiveCurveViewRange* interactiveRange,
+                  Shared::CurveViewCursor* cursor, int* selectedDotIndex,
+                  int* selectedCurveIndex, Store* store);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -48,26 +48,26 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
       Poincare::Range2D<float> originalRange) const override;
-  void tidyModels(Poincare::PoolObject *treePoolCursor) override {}
+  void tidyModels(Poincare::PoolObject* treePoolCursor) override {}
 
   void selectRegressionCurve() { *m_selectedDotIndex = -1; }
   int selectedSeriesIndex() const {
     return seriesIndexFromCurveIndex(*m_selectedCurveIndex);
   }
-  Poincare::Context *globalContext() const;
+  Poincare::Context* globalContext() const;
 
  private:
   class CurveSelectionController : public Shared::CurveSelectionController {
    public:
-    CurveSelectionController(GraphController *graphController)
+    CurveSelectionController(GraphController* graphController)
         : Shared::CurveSelectionController(graphController) {}
-    const char *title() override {
+    const char* title() override {
       return I18n::translate(I18n::Message::Regression);
     }
     int numberOfRows() const override {
       return graphController()->numberOfCurves();
     }
-    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+    Shared::CurveSelectionCellWithChevron* reusableCell(int index,
                                                         int type) override {
       assert(index >= 0 && index < Store::k_numberOfSeries);
       return m_cells + index;
@@ -75,23 +75,23 @@ class GraphController : public Shared::InteractiveCurveViewController {
     int reusableCellCount(int type) const override {
       return Store::k_numberOfSeries;
     }
-    void fillCellForRow(Escher::HighlightCell *cell, int row) override;
+    void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
    private:
     KDCoordinate nonMemoizedRowHeight(int row) override;
-    GraphController *graphController() const {
-      return static_cast<GraphController *>(
-          const_cast<InteractiveCurveViewController *>(m_graphController));
+    GraphController* graphController() const {
+      return static_cast<GraphController*>(
+          const_cast<InteractiveCurveViewController*>(m_graphController));
     }
     Shared::CurveSelectionCellWithChevron m_cells[Store::k_numberOfSeries];
   };
 
   // ZoomCurveViewController
-  Shared::InteractiveCurveViewRange *interactiveCurveViewRange() override {
-    return const_cast<const GraphController *>(this)
+  Shared::InteractiveCurveViewRange* interactiveCurveViewRange() override {
+    return const_cast<const GraphController*>(this)
         ->interactiveCurveViewRange();
   }
-  Shared::AbstractPlotView *curveView() override { return &m_view; }
+  Shared::AbstractPlotView* curveView() override { return &m_view; }
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() const override {
@@ -105,11 +105,11 @@ class GraphController : public Shared::InteractiveCurveViewController {
   void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  CurveSelectionController *curveSelectionController() const override {
-    return const_cast<CurveSelectionController *>(&m_curveSelectionController);
+  CurveSelectionController* curveSelectionController() const override {
+    return const_cast<CurveSelectionController*>(&m_curveSelectionController);
   }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
-                                          Poincare::Context *context,
+                                          Poincare::Context* context,
                                           int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override {
@@ -118,10 +118,10 @@ class GraphController : public Shared::InteractiveCurveViewController {
   int numberOfSubCurves(int curveIndex) const override { return 1; }
   bool isAlongY(int curveIndex) const override { return false; }
 
-  Shared::InteractiveCurveViewRange *interactiveCurveViewRange() const;
+  Shared::InteractiveCurveViewRange* interactiveCurveViewRange() const;
   void setAbscissaInputAsFirstResponder();
   bool buildRegressionExpression(
-      char *buffer, size_t bufferSize, Model::Type modelType,
+      char* buffer, size_t bufferSize, Model::Type modelType,
       int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
   void setRoundCrossCursorView();
@@ -148,7 +148,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return dotCoordinate(curveIndex, dotIndex, 1);
   }
   double dotCoordinate(int curveIndex, int dotIndex, int coordinate) const;
-  double yValue(int curveIndex, double t, Poincare::Context *context) const {
+  double yValue(int curveIndex, double t, Poincare::Context* context) const {
     return m_store->yValueForXValue(seriesIndexFromCurveIndex(curveIndex), t,
                                     context);
   }
@@ -156,12 +156,12 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;
-  Store *m_store;
+  Store* m_store;
   GraphOptionsController m_graphOptionsController;
   CurveSelectionController m_curveSelectionController;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
-  int *m_selectedDotIndex;
+  int* m_selectedDotIndex;
   Model::Type m_selectedModelType;
 };
 

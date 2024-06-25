@@ -15,12 +15,12 @@ using namespace Escher;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder *parentResponder,
-                                 Escher::ButtonRowController *header,
-                                 CurveViewRange *interactiveRange,
-                                 CurveViewCursor *cursor,
-                                 int *selectedCurveIndex,
-                                 SequenceStore *sequenceStore)
+GraphController::GraphController(Responder* parentResponder,
+                                 Escher::ButtonRowController* header,
+                                 CurveViewRange* interactiveRange,
+                                 CurveViewCursor* cursor,
+                                 int* selectedCurveIndex,
+                                 SequenceStore* sequenceStore)
     : FunctionGraphController(parentResponder, header, interactiveRange,
                               &m_view, cursor, selectedCurveIndex),
       m_bannerView(this, this),
@@ -59,7 +59,7 @@ float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    Shared::Sequence *s =
+    Shared::Sequence* s =
         functionStore()->modelForRecord(recordAtCurveIndex(i));
     nmin = std::min(nmin, s->initialRank());
   }
@@ -67,7 +67,7 @@ float GraphController::interestingXMin() const {
   return nmin;
 }
 
-bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
+bool GraphController::textFieldDidFinishEditing(AbstractTextField* textField,
                                                 Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
@@ -96,11 +96,11 @@ Range2D<float> GraphController::optimalRange(
     *result.x() = *originalRange.x();
   }
   if (computeY) {
-    Poincare::Context *context = App::app()->localContext();
+    Poincare::Context* context = App::app()->localContext();
     Zoom zoom(result.xMin(), result.xMax(),
               InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
-    Shared::Sequence *sequences[nbOfActiveModels];
+    Shared::Sequence* sequences[nbOfActiveModels];
     for (int i = 0; i < nbOfActiveModels; i++) {
       sequences[i] = functionStore()->modelForRecord(recordAtCurveIndex(i));
     }
@@ -121,9 +121,9 @@ Range2D<float> GraphController::optimalRange(
 
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(
     int j) const {
-  GraphController *graphController =
-      static_cast<GraphController *>(m_graphController);
-  SequenceStore *store = graphController->functionStore();
+  GraphController* graphController =
+      static_cast<GraphController*>(m_graphController);
+  SequenceStore* store = graphController->functionStore();
   ExpiringPointer<Shared::Sequence> sequence =
       store->modelForRecord(store->activeRecordAtIndex(j));
   return sequence->definitionName().clone();
@@ -137,7 +137,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
 bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                                              int scrollSpeed) {
   int xCursorPosition = std::round(m_cursor->x());
-  Shared::Sequence *s =
+  Shared::Sequence* s =
       functionStore()->modelForRecord(recordAtSelectedCurveIndex());
   int x = m_view.nextDotIndex(s, xCursorPosition, direction, scrollSpeed);
   if (x == xCursorPosition) {

@@ -8,19 +8,19 @@
 namespace Statistics {
 
 NormalProbabilityController::NormalProbabilityController(
-    Escher::Responder *parentResponder, Escher::ButtonRowController *header,
-    Escher::TabViewController *tabController,
-    Escher::StackViewController *stackViewController,
-    Escher::ViewController *typeViewController, Store *store)
+    Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+    Escher::TabViewController* tabController,
+    Escher::StackViewController* stackViewController,
+    Escher::ViewController* typeViewController, Store* store)
     : PlotController(parentResponder, header, tabController,
                      stackViewController, typeViewController, store) {
   m_curveView.setCursorView(&m_cursorView);
   m_view.setBannerView(&m_simpleBannerView);
 }
 
-bool NormalProbabilityController::drawSeriesZScoreLine(int series, float *x,
-                                                       float *y, float *u,
-                                                       float *v) const {
+bool NormalProbabilityController::drawSeriesZScoreLine(int series, float* x,
+                                                       float* y, float* u,
+                                                       float* v) const {
   // Plot the y=(x-mean(X)/sigma(X)) line
   float mean = m_store->mean(series);
   float sigma = m_store->standardDeviation(series);
@@ -60,8 +60,8 @@ bool NormalProbabilityController::moveSelectionHorizontally(
   return false;
 }
 
-void NormalProbabilityController::computeYBounds(float *yMin,
-                                                 float *yMax) const {
+void NormalProbabilityController::computeYBounds(float* yMin,
+                                                 float* yMax) const {
   int biggestSeries = 0;
   int maxTotal = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {

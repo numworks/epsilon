@@ -24,7 +24,7 @@ bool ScrollViewBar::update(KDCoordinate totalContentLength,
   return visible();
 }
 
-void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
+void ScrollViewHorizontalBar::drawRect(KDContext* ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
@@ -41,7 +41,7 @@ void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
 ScrollViewVerticalBar::ScrollViewVerticalBar()
     : m_margins(Metric::CommonMargins.vertical()) {}
 
-void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
+void ScrollViewVerticalBar::drawRect(KDContext* ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
@@ -66,7 +66,7 @@ bool ScrollViewArrow::update(bool visible) {
   return visible;
 }
 
-void ScrollViewArrow::drawRect(KDContext *ctx, KDRect rect) const {
+void ScrollViewArrow::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
   ctx->alignAndDrawString(arrow(), KDPointZero, bounds().size(),
                           {.style = {.glyphColor = k_color,
@@ -78,9 +78,9 @@ void ScrollViewArrow::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char *ScrollViewBar::className() const { return "ScrollViewBar"; }
+const char* ScrollViewBar::className() const { return "ScrollViewBar"; }
 
-void ScrollViewBar::logAttributes(std::ostream &os) const {
+void ScrollViewBar::logAttributes(std::ostream& os) const {
   View::logAttributes(os);
   os << " offset=\"" << m_offset << "\"";
   os << " visibleLength=\"" << m_visibleLength << "\"";

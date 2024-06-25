@@ -10,7 +10,7 @@ using namespace Escher;
 namespace Regression {
 
 StoreParameterController::StoreParameterController(
-    Responder *parentResponder, Shared::StoreColumnHelper *storeColumnHelper)
+    Responder* parentResponder, Shared::StoreColumnHelper* storeColumnHelper)
     : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
   m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
 }
@@ -18,7 +18,7 @@ StoreParameterController::StoreParameterController(
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if (selectedCell() == &m_changeRegressionCell &&
       m_changeRegressionCell.canBeActivatedByEvent(event)) {
-    RegressionController *regressionController =
+    RegressionController* regressionController =
         App::app()->regressionController();
     regressionController->setSeries(m_storeColumnHelper->selectedSeries());
     regressionController->setDisplayedFromDataTab(true);
@@ -28,7 +28,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-AbstractMenuCell *StoreParameterController::cell(int row) {
+AbstractMenuCell* StoreParameterController::cell(int row) {
   assert(row >= 0 && row < numberOfRows());
   if (row == k_changeRegressionCellIndex) {
     return &m_changeRegressionCell;
@@ -38,7 +38,7 @@ AbstractMenuCell *StoreParameterController::cell(int row) {
 }
 
 void StoreParameterController::viewWillAppear() {
-  Store *regressionStore = static_cast<Store *>(m_storeColumnHelper->store());
+  Store* regressionStore = static_cast<Store*>(m_storeColumnHelper->store());
   m_changeRegressionCell.subLabel()->setMessage(
       regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
           ->name());

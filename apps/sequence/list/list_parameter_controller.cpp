@@ -12,7 +12,7 @@ using namespace Escher;
 
 namespace Sequence {
 
-ListParameterController::ListParameterController(ListController *listController)
+ListParameterController::ListParameterController(ListController* listController)
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
@@ -22,18 +22,18 @@ ListParameterController::ListParameterController(ListController *listController)
   m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
-const char *ListParameterController::title() {
+const char* ListParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 
 bool ListParameterController::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up ||
          MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ListParameterController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
@@ -54,7 +54,7 @@ bool ListParameterController::textFieldDidFinishEditing(
 }
 
 void ListParameterController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
+    SelectableListView* l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
   if (withinTemporarySelection || previousSelectedRow == l->selectedRow()) {
@@ -71,9 +71,9 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-HighlightCell *ListParameterController::cell(int row) {
+HighlightCell* ListParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell *const cells[] = {&m_typeCell, &m_firstRankCell, &m_enableCell,
+  HighlightCell* const cells[] = {&m_typeCell, &m_firstRankCell, &m_enableCell,
                                   &m_colorCell, &m_deleteCell};
   return cells[row];
 }
@@ -87,10 +87,10 @@ void ListParameterController::viewWillAppear() {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell *cell = selectedCell();
+  HighlightCell* cell = selectedCell();
   if (cell == &m_typeCell && m_typeCell.canBeActivatedByEvent(event)) {
     m_typeParameterController.setRecord(m_record);
-    static_cast<StackViewController *>(parentResponder())
+    static_cast<StackViewController*>(parentResponder())
         ->push(&m_typeParameterController);
     return true;
   }

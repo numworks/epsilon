@@ -40,11 +40,11 @@ constexpr MessageTree
 #endif
 };
 
-MainController::MainController(Responder *parentResponder)
+MainController::MainController(Responder* parentResponder)
     : SelectableListViewController(parentResponder),
       m_resetButton(&m_selectableListView, I18n::Message::ResetCalculator,
                     Invocation::Builder<MainController>(
-                        [](MainController *controller, void *sender) {
+                        [](MainController* controller, void* sender) {
                           controller->m_resetController.presentModally();
                           return true;
                         },
@@ -58,7 +58,7 @@ MainController::MainController(Responder *parentResponder)
       m_testModeController(this, this),
       m_aboutController(this),
       m_resetController(Invocation::Builder<MainController>(
-                            [](MainController *controller, void *sender) {
+                            [](MainController* controller, void* sender) {
                               Ion::Reset::core();
                               return true;
                             },
@@ -72,7 +72,7 @@ MainController::MainController(Responder *parentResponder)
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  GlobalPreferences *globalPreferences =
+  GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
   int type = typeAtRow(index);
@@ -81,8 +81,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     return false;
   }
 
-  AbstractMenuCell *cell =
-      static_cast<AbstractMenuCell *>(m_selectableListView.cell(index));
+  AbstractMenuCell* cell =
+      static_cast<AbstractMenuCell*>(m_selectableListView.cell(index));
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
@@ -113,14 +113,14 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void MainController::pushModel(const Escher::MessageTree *messageTreeModel) {
-  ViewController *selectedSubController =
+void MainController::pushModel(const Escher::MessageTree* messageTreeModel) {
+  ViewController* selectedSubController =
       subControllerForCell(messageTreeModel->label());
   assert(selectedSubController);
   if (messageTreeModel->numberOfChildren() != 0) {
-    static_cast<GenericSubController *>(selectedSubController)
+    static_cast<GenericSubController*>(selectedSubController)
         ->setMessageTreeModel(messageTreeModel);
-    static_cast<GenericSubController *>(selectedSubController)
+    static_cast<GenericSubController*>(selectedSubController)
         ->selectableListView()
         ->resetSizeAndOffsetMemoization();
   }
@@ -147,7 +147,7 @@ KDCoordinate MainController::nonMemoizedRowHeight(int row) {
   }
 }
 
-HighlightCell *MainController::reusableCell(int index, int type) {
+HighlightCell* MainController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_defaultCellType) {
     assert(index < k_numberOfSimpleChevronCells);
@@ -185,10 +185,10 @@ int MainController::typeAtRow(int row) const {
   };
 }
 
-void MainController::fillCellForRow(HighlightCell *cell, int row) {
-  GlobalPreferences *globalPreferences =
+void MainController::fillCellForRow(HighlightCell* cell, int row) {
+  GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -203,8 +203,8 @@ void MainController::fillCellForRow(HighlightCell *cell, int row) {
   if (type == k_resetCellType) {
     return;
   }
-  static_cast<MessageTextView *>(
-      static_cast<AbstractMenuCell *>(cell)->widget(CellWidget::Type::Label))
+  static_cast<MessageTextView*>(
+      static_cast<AbstractMenuCell*>(cell)->widget(CellWidget::Type::Label))
       ->setMessage(title);
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);
@@ -215,17 +215,17 @@ void MainController::fillCellForRow(HighlightCell *cell, int row) {
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
     int languageIndex = (int)(globalPreferences->language());
-    static_cast<SubMenuCell *>(cell)->subLabel()->setMessage(
+    static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::LanguageNames[languageIndex]);
     return;
   }
   if (message == I18n::Message::Country) {
     int countryIndex = (int)(globalPreferences->country());
-    static_cast<SubMenuCell *>(cell)->subLabel()->setMessage(
+    static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::CountryNames[countryIndex]);
     return;
   }
-  SubMenuCell *myTextCell = static_cast<SubMenuCell *>(cell);
+  SubMenuCell* myTextCell = static_cast<SubMenuCell*>(cell);
   int childIndex = -1;
   switch (message) {
     case I18n::Message::AngleUnit:
@@ -273,13 +273,13 @@ I18n::Message MainController::messageAtModelIndex(int i) const {
   return model()->childAtIndex(i)->label();
 }
 
-const MessageTree *MainController::model() { return &s_model; }
+const MessageTree* MainController::model() { return &s_model; }
 
-StackViewController *MainController::stackController() const {
-  return (StackViewController *)parentResponder();
+StackViewController* MainController::stackController() const {
+  return (StackViewController*)parentResponder();
 }
 
-ViewController *MainController::subControllerForCell(
+ViewController* MainController::subControllerForCell(
     I18n::Message cellMessage) {
   switch (cellMessage) {
     case I18n::Message::AngleUnit:

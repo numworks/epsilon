@@ -8,7 +8,7 @@
 
 namespace Inference {
 
-const Distribution *Statistic::distribution() const {
+const Distribution* Statistic::distribution() const {
   DistributionType type = distributionType();
   switch (type) {
     case DistributionType::T:
@@ -27,7 +27,7 @@ double Statistic::parameterAtIndex(int i) const {
          indexOfThreshold() == numberOfStatisticParameters());
   return i == indexOfThreshold()
              ? m_threshold
-             : const_cast<Statistic *>(this)->parametersArray()[i];
+             : const_cast<Statistic*>(this)->parametersArray()[i];
 }
 
 void Statistic::setParameterAtIndex(double f, int i) {
@@ -52,12 +52,12 @@ double Statistic::cumulativeDistributiveInverseForProbability(
       probability, m_degreesOfFreedom);
 }
 
-bool Statistic::Initialize(Statistic *statistic, SubApp subApp) {
+bool Statistic::Initialize(Statistic* statistic, SubApp subApp) {
   if (statistic->subApp() == subApp) {
     return false;
   }
   statistic->~Statistic();
-  Statistic *s = nullptr;
+  Statistic* s = nullptr;
   switch (subApp) {
     case SubApp::Test:
       s = new (statistic)

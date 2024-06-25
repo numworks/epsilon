@@ -7,7 +7,7 @@ using namespace Escher;
 namespace Elements {
 
 DisplayTypeController::DisplayTypeController(
-    StackViewController *stackController)
+    StackViewController* stackController)
     : UniformSelectableListController(stackController) {
   for (int i = 0; i < k_numberOfCells; ++i) {
     cell(i)->label()->setMessage(k_fields[i]->fieldLegend());
@@ -16,7 +16,7 @@ DisplayTypeController::DisplayTypeController(
 
 void DisplayTypeController::viewWillAppear() {
   size_t fieldIndex = 0;
-  const DataField *currentField = App::app()->elementsViewDataSource()->field();
+  const DataField* currentField = App::app()->elementsViewDataSource()->field();
   while (k_fields[fieldIndex] != currentField) {
     fieldIndex++;
     assert(fieldIndex < k_numberOfCells);

@@ -22,7 +22,7 @@ namespace Solver {
 
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
-SolutionsController::ContentView::ContentView(SolutionsController *controller)
+SolutionsController::ContentView::ContentView(SolutionsController* controller)
     : m_warningMessageView(k_warningFormat),
       m_selectableTableView(controller, controller, controller, this),
       m_displayWarningMoreSolutions(false) {
@@ -30,7 +30,7 @@ SolutionsController::ContentView::ContentView(SolutionsController *controller)
   m_selectableTableView.setVerticalCellOverlap(0);
 }
 
-void SolutionsController::ContentView::drawRect(KDContext *ctx,
+void SolutionsController::ContentView::drawRect(KDContext* ctx,
                                                 KDRect rect) const {
   if (hideTableView()) {
     // No selectable table, fill the entire bound for background
@@ -67,7 +67,7 @@ void SolutionsController::ContentView::setWarningMessageWithNumber(
 }
 
 void SolutionsController::ContentView::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (withinTemporarySelection) {
@@ -95,11 +95,11 @@ int SolutionsController::ContentView::numberOfSubviews() const {
   return !hideTableView() + m_displayWarningMoreSolutions;
 }
 
-View *SolutionsController::ContentView::subviewAtIndex(int index) {
+View* SolutionsController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   return index == 0 && !hideTableView()
-             ? static_cast<View *>(&m_selectableTableView)
-             : static_cast<View *>(&m_warningMessageView);
+             ? static_cast<View*>(&m_selectableTableView)
+             : static_cast<View*>(&m_warningMessageView);
 }
 
 bool SolutionsController::ContentView::tableIsTooLargeForWarningMessage()
@@ -159,8 +159,8 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
   }
 }
 
-SolutionsController::SolutionsController(Responder *parentResponder,
-                                         ButtonRowController *header)
+SolutionsController::SolutionsController(Responder* parentResponder,
+                                         ButtonRowController* header)
     : ViewController(parentResponder),
       ButtonRowDelegate(header, nullptr),
       m_deltaCell({.style = {.font = k_deltaFont},
@@ -169,12 +169,12 @@ SolutionsController::SolutionsController(Responder *parentResponder,
       m_searchIntervalCell(
           this, I18n::Message::SearchInverval,
           Invocation::Builder<SolutionsController>(
-              [](SolutionsController *controller, void *sender) -> bool {
+              [](SolutionsController* controller, void* sender) -> bool {
                 App::app()->openIntervalController();
                 return true;
               },
               this)) {
-  const char *delta =
+  const char* delta =
       GlobalPreferences::SharedGlobalPreferences()->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   m_delta2Layout = Layout::Create(
@@ -200,7 +200,7 @@ SolutionsController::SolutionsController(Responder *parentResponder,
 }
 
 /* ViewController */
-const char *SolutionsController::title() {
+const char* SolutionsController::title() {
   if (App::app()->system()->type() ==
       SystemOfEquations::Type::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);
@@ -216,7 +216,7 @@ void SolutionsController::initView() {
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = true;
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
 
   if (system->numberOfSolutions() == 0) {
     // There are no solutions
@@ -261,7 +261,7 @@ void SolutionsController::viewDidDisappear() {
 }
 
 void SolutionsController::didEnterResponderChain(
-    Responder *previousFirstResponder) {
+    Responder* previousFirstResponder) {
   // Select the most left present subview on all cells and reinitialize scroll
   for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].reinitSelection();
@@ -269,7 +269,7 @@ void SolutionsController::didEnterResponderChain(
 }
 
 bool SolutionsController::handleEvent(Ion::Events::Event event) {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   if (!solutionsAreApproximate() || system->numberOfSolutions() == 0) {
     return false;
   }
@@ -289,7 +289,7 @@ bool SolutionsController::handleEvent(Ion::Events::Event event) {
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   int numberOfRows = system->numberOfSolutions();
   if (system->numberOfUserVariables() > 0) {
     // Add the empty row if there are rows above predefined variables message
@@ -299,9 +299,9 @@ int SolutionsController::numberOfRows() const {
   return numberOfRows;
 }
 
-void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
+void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
                                               int row) {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   int type = typeAtLocation(column, row);
   if (type == k_emptyCellType) {
@@ -310,7 +310,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
   if (type == k_messageCellType) {
     // Predefined variable used/ignored message
     assert(column >= 0);
-    MessageCell *messageCell = static_cast<MessageCell *>(cell);
+    MessageCell* messageCell = static_cast<MessageCell*>(cell);
     // Message is split across two cells : |**** used | predefined  vars ****|
     messageCell->setHorizontalAlignment(column == 0 ? 1.0f : 0.0f);
     if (usedUserVariables()) {
@@ -327,7 +327,7 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
   if (type == k_deltaCellType) {
     // Formula of the discriminant
     assert(system->degree() == 2 || system->degree() == 3);
-    static_cast<EvenOddExpressionCell *>(cell)->setLayout(
+    static_cast<EvenOddExpressionCell*>(cell)->setLayout(
         system->degree() == 2 ? m_delta2Layout : m_delta3Layout);
   }
   if (type == k_symbolCellType) {
@@ -345,13 +345,13 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
       if (system->type() == SystemOfEquations::Type::LinearSystem) {
         /* The system has more than one variable: the cell text is the
          * variable name */
-        const char *varName = system->variable(row);
+        const char* varName = system->variable(row);
         SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
                                                       varName, strlen(varName));
       } else {
         /* The system has one variable but might have many solutions: the cell
          * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
-        const char *varName = system->variable(0);
+        const char* varName = system->variable(0);
         size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
         length += OMG::Print::IntLeft(row + 1, bufferSymbol + length,
@@ -361,12 +361,12 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
     } else {
       // It's a user variable row, get variable name
       assert(rowOfUserVariablesMessage >= 0);
-      const char *varName =
+      const char* varName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
       SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
                                                     varName, strlen(varName));
     }
-    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferSymbol);
+    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferSymbol);
   }
   if (type == k_approximateValueCellType) {
     assert(system->numberOfSolutions() > 0);
@@ -377,15 +377,15 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
     PoincareHelpers::ConvertFloatToText<double>(
         system->solution(row)->approximate(), bufferValue, bufferSize,
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
-    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(bufferValue);
+    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferValue);
   }
   if (type == k_exactValueCellType) {
     if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
       // It's a solution row
       assert(system->numberOfSolutions() > 0);
-      const Solution *solution = system->solution(row);
-      ScrollableTwoLayoutsCell *valueCell =
-          static_cast<ScrollableTwoLayoutsCell *>(cell);
+      const Solution* solution = system->solution(row);
+      ScrollableTwoLayoutsCell* valueCell =
+          static_cast<ScrollableTwoLayoutsCell*>(cell);
       /* ScrollableTwoLayoutsCell will always try to display its
        * approximate layout. If the only layout is the exact one, they need to
        * be swapped.
@@ -400,22 +400,22 @@ void SolutionsController::fillCellForLocation(HighlightCell *cell, int column,
           solution->exactAndApproximateAreEqual());
     } else {
       // It's a user variable row, get values of the solutions or discriminant
-      const char *symbol =
+      const char* symbol =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
       Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
               Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      static_cast<ScrollableTwoLayoutsCell *>(cell)->setLayouts(Layout(),
-                                                                layout);
+      static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
+                                                               layout);
     }
   }
-  static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
+  static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
 }
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
     // It's a solution row
     assert(system->numberOfSolutions() > 0);
@@ -450,7 +450,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
     return k_defaultCellHeight;
   }
   // TODO: memoize user symbols if too slow
-  const char *symbol =
+  const char* symbol =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
   Layout layout = PoincareHelpers::CreateLayout(
       App::app()->localContext()->expressionForSymbolAbstract(
@@ -460,7 +460,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
          2 * Metric::CommonSmallMargin;
 }
 
-HighlightCell *SolutionsController::reusableCell(int index, int type) {
+HighlightCell* SolutionsController::reusableCell(int index, int type) {
   switch (type) {
     case k_symbolCellType:
       return &m_symbolCells[index];
@@ -498,7 +498,7 @@ int SolutionsController::reusableCellCount(int type) const {
 
 int SolutionsController::typeAtLocation(int column, int row) const {
   const int rowOfUserVariableMessage = userVariablesMessageRow();
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   if (row == rowOfUserVariableMessage - 1) {
     return k_emptyCellType;
   }
@@ -520,7 +520,7 @@ int SolutionsController::typeAtLocation(int column, int row) const {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   if (system->numberOfSolutions() > 0) {
     App::app()->setFirstResponder(m_contentView.selectableTableView());
   } else if (solutionsAreApproximate()) {
@@ -544,7 +544,7 @@ bool SolutionsController::usedUserVariables() const {
 }
 
 int SolutionsController::userVariablesMessageRow() const {
-  SystemOfEquations *system = App::app()->system();
+  SystemOfEquations* system = App::app()->system();
   assert(system->numberOfUserVariables() >= 0);
   if (system->numberOfUserVariables() == 0) {
     // No user variables

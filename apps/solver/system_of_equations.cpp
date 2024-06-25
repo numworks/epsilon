@@ -21,17 +21,17 @@ namespace Solver {
 
 const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract &symbol, bool clone,
-    ContextWithParent *lastDescendantContext) {
+    const SymbolAbstract& symbol, bool clone,
+    ContextWithParent* lastDescendantContext) {
   if (symbol.type() == ExpressionNode::Type::Symbol &&
-      static_cast<const Symbol &>(symbol).name()[0] == 't') {
+      static_cast<const Symbol&>(symbol).name()[0] == 't') {
     return UserExpression();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);
 }
 
-SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
+SystemOfEquations::Error SystemOfEquations::exactSolve(Context* context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
   if (firstError == Error::RequireApproximateSolution ||
@@ -52,11 +52,11 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
-  void **modelArray = reinterpret_cast<void **>(const_cast<void *>(model));
-  const SystemFunction *e =
-      reinterpret_cast<const SystemFunction *>(modelArray[0]);
-  const char *variable = reinterpret_cast<const char *>(modelArray[1]);
+static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+  void** modelArray = reinterpret_cast<void**>(const_cast<void*>(model));
+  const SystemFunction* e =
+      reinterpret_cast<const SystemFunction*>(modelArray[0]);
+  const char* variable = reinterpret_cast<const char*>(modelArray[1]);
   return Coordinate2D<T>(
       t, e->approximateToScalarWithValueForSymbol<T>(
              variable, t,
@@ -72,7 +72,7 @@ void SystemOfEquations::setApproximateSolvingRange(
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
-void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
+void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   SystemExpression equationStandardForm =
       equationStandardFormForApproximateSolve(context);
   constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
@@ -83,11 +83,11 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
                  k_maxFloatForAutoApproximateSolvingRange);
   zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
                            k_maxNumberOfApproximateSolutions / 2);
-  void *model[2] = {static_cast<void *>(&equationStandardForm),
-                    static_cast<void *>(m_variables[0])};
+  void* model[2] = {static_cast<void*>(&equationStandardForm),
+                    static_cast<void*>(m_variables[0])};
   bool finiteNumberOfSolutions = true;
   bool didFitRoots =
-      zoom.fitRoots(evaluator<float>, static_cast<void *>(model), false,
+      zoom.fitRoots(evaluator<float>, static_cast<void*>(model), false,
                     evaluator<double>, &finiteNumberOfSolutions);
   /* When there are more than k_maxNumberOfApproximateSolutions on one side of
    * 0, the zoom is setting the interval to have a maximum of 5 solutions left
@@ -95,7 +95,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
    * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
    * displayed. We still want to notify the user that more solutions exist. */
   m_hasMoreSolutions = !finiteNumberOfSolutions;
-  zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
+  zoom.fitBounds(evaluator<float>, static_cast<void*>(model), false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {
     /* The range was computed from the solution found with a solver in float. We
@@ -114,7 +114,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context *context) {
                       static_cast<double>(finalRange.max()));
 }
 
-void SystemOfEquations::approximateSolve(Context *context) {
+void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfSolvingVariables == 1);
 
@@ -149,7 +149,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
   }
 }
 
-void SystemOfEquations::tidy(PoolObject *treePoolCursor) {
+void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   for (int i = 0; i < k_maxNumberOfSolutions; i++) {
     if (treePoolCursor == nullptr ||
         m_solutions[i].exactLayout().isDownstreamOf(treePoolCursor) ||
@@ -160,14 +160,14 @@ void SystemOfEquations::tidy(PoolObject *treePoolCursor) {
 }
 
 SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
-    Context *context) {
+    Context* context) {
   return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
       ->standardForm(context, m_overrideUserVariables,
                      ReductionTarget::SystemForApproximation);
 }
 
 SystemOfEquations::Error SystemOfEquations::privateExactSolve(
-    Context *context) {
+    Context* context) {
   m_numberOfSolutions = 0;
   SystemExpression simplifiedEquations[EquationStore::k_maxNumberOfEquations];
   Error error = simplifyAndFindVariables(context, simplifiedEquations);
@@ -188,7 +188,7 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
 }
 
 SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
-    Context *context, SystemExpression *simplifiedEquations) {
+    Context* context, SystemExpression* simplifiedEquations) {
   m_numberOfSolvingVariables = 0;
   m_numberOfUserVariables = 0;
   m_variables[0][0] = 0;
@@ -199,7 +199,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
                                         ->examMode()
                                         .forbidSimultaneousEquationSolver();
 
-  EquationStore *store = m_store;
+  EquationStore* store = m_store;
   int nEquations = store->numberOfDefinedModels();
   if (forbidSimultaneousEquation && nEquations > 1) {
     return Error::DisabledInExamMode;
@@ -213,7 +213,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     // Gather user variables
     int nVariables = equationsWithUserVariables.getVariables(
         context,
-        [](const char *s, Context *c) {
+        [](const char* s, Context* c) {
           return c->expressionTypeForIdentifier(s, strlen(s)) ==
                  Context::SymbolAbstractType::Symbol;
         },
@@ -247,9 +247,8 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
 
     // Gather solving variables
     int nbSolvingVariables = simplifiedEquations[i].getVariables(
-        context, [](const char *, Context *) { return true; },
-        &m_variables[0][0], SymbolAbstractNode::k_maxNameSize,
-        m_numberOfSolvingVariables);
+        context, [](const char*, Context*) { return true; }, &m_variables[0][0],
+        SymbolAbstractNode::k_maxNameSize, m_numberOfSolvingVariables);
     /* The equation has been parsed, so there should not be any variable with a
      * name that is too long. */
     // FIXME Special return values of getVariables should be named.
@@ -267,7 +266,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
 }
 
 SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
-    Context *context, SystemExpression *simplifiedEquations) {
+    Context* context, SystemExpression* simplifiedEquations) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat =
@@ -466,7 +465,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 }
 
 SystemOfEquations::Error SystemOfEquations::solvePolynomial(
-    Context *context, SystemExpression *simplifiedEquations) {
+    Context* context, SystemExpression* simplifiedEquations) {
   assert(m_numberOfSolvingVariables == 1 &&
          m_store->numberOfDefinedModels() == 1);
   Preferences::AngleUnit angleUnit =
@@ -533,8 +532,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
 }
 
 static void simplifyAndApproximateSolution(
-    UserExpression e, UserExpression *exact, UserExpression *approximate,
-    bool approximateDuringReduction, Context *context,
+    UserExpression e, UserExpression* exact, UserExpression* approximate,
+    bool approximateDuringReduction, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
@@ -557,14 +556,14 @@ static void simplifyAndApproximateSolution(
 }
 
 SystemOfEquations::Error SystemOfEquations::registerSolution(
-    UserExpression e, Context *context, SolutionType type) {
+    UserExpression e, Context* context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   UserExpression exact, approximate;
 
   bool forbidExactSolution =
       Preferences::SharedPreferences()->examMode().forbidExactResults();
-  EquationStore *store = m_store;
+  EquationStore* store = m_store;
   int nEquations = store->numberOfDefinedModels();
   int i = 0;
   while (i < nEquations && !forbidExactSolution) {
@@ -673,8 +672,8 @@ uint32_t SystemOfEquations::tagParametersUsedAsVariables() const {
   return tags;
 }
 
-void SystemOfEquations::tagVariableIfParameter(const char *variable,
-                                               uint32_t *tags) const {
+void SystemOfEquations::tagVariableIfParameter(const char* variable,
+                                               uint32_t* tags) const {
   if (variable[0] != k_parameterPrefix) {
     return;
   }

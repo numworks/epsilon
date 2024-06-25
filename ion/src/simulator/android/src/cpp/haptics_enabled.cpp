@@ -9,7 +9,7 @@ namespace Simulator {
 namespace Haptics {
 
 bool isEnabled() {
-  JNIEnv *env = static_cast<JNIEnv *>(SDL_AndroidGetJNIEnv());
+  JNIEnv* env = static_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
   jobject activity = static_cast<jobject>(SDL_AndroidGetActivity());
   jclass j_class = env->FindClass("com/numworks/calculator/EpsilonActivity");
   jmethodID j_methodId =

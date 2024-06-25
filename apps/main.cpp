@@ -34,7 +34,7 @@ void ion_main(int argc, const char* const argv[]) {
 
 #else
 
-void ion_main(int argc, const char *const argv[]) {
+void ion_main(int argc, const char* const argv[]) {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Poincare::Init();
   Escher::Init();
@@ -48,7 +48,7 @@ void ion_main(int argc, const char *const argv[]) {
     /* Option should be given at run-time:
      * $ ./epsilon.elf --language fr */
     if (strcmp(argv[i], "--language") == 0 && argc > i + 1) {
-      const char *requestedLanguageId = argv[i + 1];
+      const char* requestedLanguageId = argv[i + 1];
       for (int j = 0; j < I18n::NumberOfLanguages; j++) {
         if (strcmp(requestedLanguageId, I18n::LanguageISO6391Codes[j]) == 0) {
           GlobalPreferences::SharedGlobalPreferences()->setLanguage(
@@ -61,17 +61,17 @@ void ion_main(int argc, const char *const argv[]) {
       continue;
     }
 
-    const char *appNames[] = {"home", EPSILON_APPS_NAMES};
+    const char* appNames[] = {"home", EPSILON_APPS_NAMES};
 
     /* Option to open a given app at run-time:
      * $ ./epsilon.elf --open-app code */
     if (strcmp(argv[i], "--open-app") == 0 && argc > i + 1) {
-      const char *requestedAppName = argv[i + 1];
+      const char* requestedAppName = argv[i + 1];
       for (int j = 0;
            j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps();
            j++) {
         if (strcmp(requestedAppName, appNames[j]) == 0) {
-          Escher::App::Snapshot *snapshot =
+          Escher::App::Snapshot* snapshot =
               AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
           AppsContainer::sharedAppsContainer()->setInitialAppSnapshot(snapshot);
           break;
@@ -91,7 +91,7 @@ void ion_main(int argc, const char *const argv[]) {
          j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps(); j++) {
       int cmp = strcmp(argv[i] + 2, appNames[j]);
       if (cmp == '-') {
-        Escher::App::Snapshot *snapshot =
+        Escher::App::Snapshot* snapshot =
             AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
         snapshot->setOpt(argv[i] + 2 + strlen(appNames[j]) + 1, argv[i + 1]);
         break;
@@ -105,7 +105,7 @@ void ion_main(int argc, const char *const argv[]) {
    * example, stack pointer could go backward after initialization and allocated
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
-  Ion::setStackStart((void *)(&stackTop));
+  Ion::setStackStart((void*)(&stackTop));
 
   AppsContainer::sharedAppsContainer()->run();
 

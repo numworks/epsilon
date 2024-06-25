@@ -13,7 +13,7 @@ using namespace Poincare;
 namespace Shared {
 
 ExplicitFloatParameterController::ExplicitFloatParameterController(
-    Responder *parentResponder)
+    Responder* parentResponder)
     : ExplicitSelectableListViewController(parentResponder) {}
 
 void ExplicitFloatParameterController::didBecomeFirstResponder() {
@@ -65,14 +65,14 @@ void ExplicitFloatParameterController::fillParameterCellAtRow(int row) {
 }
 
 bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows() - 1) ||
          (event == Ion::Events::Up && selectedRow() > 0) ||
          MathTextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   int row = selectedRow();
   if (HasUndefinedValue(floatBody)) {

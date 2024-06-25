@@ -5,8 +5,8 @@
 namespace Inference {
 
 ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
-    Escher::Responder *parent, CategoricalController *parentController,
-    GoodnessTest *statistic, Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parent, CategoricalController* parentController,
+    GoodnessTest* statistic, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parent, this, scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_goodnessContributionsTableNumberOfReusableCells>(
@@ -17,7 +17,7 @@ ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
 }
 
 // View
-void ResultGoodnessContributionsTable::drawRect(KDContext *ctx,
+void ResultGoodnessContributionsTable::drawRect(KDContext* ctx,
                                                 KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
@@ -28,9 +28,9 @@ void ResultGoodnessContributionsTable::drawRect(KDContext *ctx,
 }
 
 void ResultGoodnessContributionsTable::fillCellForLocation(
-    Escher::HighlightCell *cell, int column, int row) {
-  InferenceEvenOddBufferCell *myCell =
-      static_cast<InferenceEvenOddBufferCell *>(cell);
+    Escher::HighlightCell* cell, int column, int row) {
+  InferenceEvenOddBufferCell* myCell =
+      static_cast<InferenceEvenOddBufferCell*>(cell);
   myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
 
   if (row == 0) {

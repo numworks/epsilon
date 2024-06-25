@@ -21,7 +21,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::RegressionAppCapital;
 }
 
-const Image *App::Descriptor::icon() const {
+const Image* App::Descriptor::icon() const {
   return ImageStore::RegressionIcon;
 }
 
@@ -46,9 +46,9 @@ App::Snapshot::Snapshot()
           Shared::DoublePairStore::k_numberOfSeries, 1);
 }
 
-App *App::Snapshot::unpack(Container *container) {
+App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer())
-      App(this, static_cast<AppsContainer *>(container)->globalContext());
+      App(this, static_cast<AppsContainer*>(container)->globalContext());
 }
 
 void App::Snapshot::reset() {
@@ -59,7 +59,7 @@ void App::Snapshot::reset() {
 
 constexpr static App::Descriptor sDescriptor;
 
-const App::Descriptor *App::Snapshot::descriptor() const {
+const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
@@ -98,7 +98,7 @@ App::CalculationTab::CalculationTab()
                           &m_calculationAlternateEmptyViewController,
                           &m_calculationController) {}
 
-App::App(Snapshot *snapshot, Poincare::Context *parentContext)
+App::App(Snapshot* snapshot, Poincare::Context* parentContext)
     : StoreApp(snapshot, &m_inputViewController),
       m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
               snapshot->storePreferences(), snapshot->regressionTypes()),

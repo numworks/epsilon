@@ -8,8 +8,8 @@ using namespace Escher;
 namespace Code {
 
 ScriptParameterController::ScriptParameterController(
-    Responder *parentResponder, I18n::Message title,
-    MenuController *menuController)
+    Responder* parentResponder, I18n::Message title,
+    MenuController* menuController)
     : ExplicitSelectableListViewController(parentResponder),
       m_pageTitle(title),
       m_script(Ion::Storage::Record()),
@@ -29,12 +29,12 @@ void ScriptParameterController::dismissScriptParameterController() {
   stackViewController()->pop();
 }
 
-const char *ScriptParameterController::title() {
+const char* ScriptParameterController::title() {
   return I18n::translate(m_pageTitle);
 }
 
 bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
-  AbstractMenuCell *cell = static_cast<AbstractMenuCell *>(selectedCell());
+  AbstractMenuCell* cell = static_cast<AbstractMenuCell*>(selectedCell());
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
@@ -72,16 +72,16 @@ void ScriptParameterController::didBecomeFirstResponder() {
   ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 
-AbstractMenuCell *ScriptParameterController::cell(int row) {
+AbstractMenuCell* ScriptParameterController::cell(int row) {
   assert(row >= 0);
   assert(row < k_totalNumberOfCell);
-  AbstractMenuCell *cells[k_totalNumberOfCell] = {
+  AbstractMenuCell* cells[k_totalNumberOfCell] = {
       &m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
   return cells[row];
 }
 
-StackViewController *ScriptParameterController::stackViewController() {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* ScriptParameterController::stackViewController() {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 void ScriptParameterController::updateAutoImportSwitch() {

@@ -10,8 +10,8 @@ using namespace Escher;
 
 namespace Inference {
 
-CategoricalController::CategoricalController(Responder *parent,
-                                             ViewController *nextController,
+CategoricalController::CategoricalController(Responder* parent,
+                                             ViewController* nextController,
                                              Invocation invocation)
     : SelectableListViewController<ListViewDataSource>(parent, this),
       m_nextController(nextController),
@@ -22,8 +22,8 @@ CategoricalController::CategoricalController(Responder *parent,
   setScrollViewDataSourceDelegate(this);
 }
 
-bool CategoricalController::ButtonAction(CategoricalController *controller,
-                                         void *s) {
+bool CategoricalController::ButtonAction(CategoricalController* controller,
+                                         void* s) {
   controller->stackOpenPage(controller->m_nextController);
   return true;
 }
@@ -90,14 +90,14 @@ void CategoricalController::didScroll() {
   }
 }
 
-bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
+bool CategoricalController::updateBarIndicator(bool vertical, bool* visible) {
   assert(visible);
   if (!vertical) {
     return false;
   }
 
-  ScrollView::BarDecorator *decorator =
-      static_cast<ScrollView::BarDecorator *>(m_selectableListView.decorator());
+  ScrollView::BarDecorator* decorator =
+      static_cast<ScrollView::BarDecorator*>(m_selectableListView.decorator());
   KDCoordinate otherCellsHeight =
       m_selectableListView.minimalSizeForOptimalDisplay().height() -
       categoricalTableCell()->bounds().height();
@@ -108,7 +108,7 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   return true;
 }
 
-KDRect CategoricalController::visibleRectInBounds(ScrollView *scrollView) {
+KDRect CategoricalController::visibleRectInBounds(ScrollView* scrollView) {
   assert(scrollView == categoricalTableCell()->selectableTableView());
 
   KDCoordinate listVisibleStart = listVerticalOffset();
@@ -148,7 +148,7 @@ KDRect CategoricalController::visibleRectInBounds(ScrollView *scrollView) {
 }
 
 void CategoricalController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView *l, int previousRow, KDPoint previousOffset,
+    SelectableListView* l, int previousRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
 #if 0
@@ -180,7 +180,7 @@ void CategoricalController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-HighlightCell *CategoricalController::reusableCell(int index, int type) {
+HighlightCell* CategoricalController::reusableCell(int index, int type) {
   assert(index == 0);
   if (type == indexOfTableCell()) {
     return categoricalTableCell();
@@ -188,7 +188,7 @@ HighlightCell *CategoricalController::reusableCell(int index, int type) {
   return explicitCellAtRow(type);
 }
 
-HighlightCell *CategoricalController::explicitCellAtRow(int row) {
+HighlightCell* CategoricalController::explicitCellAtRow(int row) {
   assert(row == indexOfNextCell());
   return &m_next;
 }
@@ -207,7 +207,7 @@ void CategoricalController::initView() {
   SelectableListViewController::initView();
 }
 
-void CategoricalController::initWidth(TableView *tableView) {
+void CategoricalController::initWidth(TableView* tableView) {
   ListViewDataSource::initWidth(tableView);
   int n = numberOfRows();
   for (int row = 0; row < n; row++) {
@@ -218,8 +218,8 @@ void CategoricalController::initWidth(TableView *tableView) {
 }
 
 InputCategoricalController::InputCategoricalController(
-    StackViewController *parent, ViewController *nextController,
-    Statistic *statistic)
+    StackViewController* parent, ViewController* nextController,
+    Statistic* statistic)
     : CategoricalController(
           parent, nextController,
           Invocation::Builder<InputCategoricalController>(
@@ -228,13 +228,13 @@ InputCategoricalController::InputCategoricalController(
       m_significanceCell(&m_selectableListView, this) {}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          event == Ion::Events::Up || event == Ion::Events::Down;
 }
 
 bool InputCategoricalController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   // Parse and check significance level
   double p = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(p)) {
@@ -258,7 +258,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(
 }
 
 bool InputCategoricalController::ButtonAction(
-    InputCategoricalController *controller, void *s) {
+    InputCategoricalController* controller, void* s) {
   if (!controller->m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
@@ -281,7 +281,7 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
-HighlightCell *InputCategoricalController::explicitCellAtRow(int row) {
+HighlightCell* InputCategoricalController::explicitCellAtRow(int row) {
   if (row == indexOfSignificanceCell()) {
     return &m_significanceCell;
   }

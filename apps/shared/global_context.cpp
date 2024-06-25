@@ -21,7 +21,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr const char *GlobalContext::k_extensions[];
+constexpr const char* GlobalContext::k_extensions[];
 
 OMG::GlobalBox<SequenceStore> GlobalContext::sequenceStore;
 OMG::GlobalBox<Internal::SequenceCache> GlobalContext::sequenceCache;
@@ -33,13 +33,13 @@ void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   GlobalContext::continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
-bool GlobalContext::SymbolAbstractNameIsFree(const char *baseName) {
+bool GlobalContext::SymbolAbstractNameIsFree(const char* baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
-  Context *context = Escher::App::app()->localContext();
+  Context* context = Escher::App::app()->localContext();
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
@@ -68,7 +68,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
 }
 
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
-    const char *baseName, const char *extension) {
+    const char* baseName, const char* extension) {
   for (int i = 0; i < k_numberOfExtensions; i++) {
     if (strcmp(k_extensions[i], extension) != 0) {
       Ion::Storage::FileSystem::sharedFileSystem
@@ -79,8 +79,8 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
 }
 
 Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
-    const char *identifier, int length) {
-  const char *extension =
+    const char* identifier, int length) {
+  const char* extension =
       Ion::Storage::FileSystem::sharedFileSystem
           ->extensionOfRecordBaseNamedWithExtensions(
               identifier, length, k_extensions, k_numberOfExtensions);
@@ -103,17 +103,17 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
 }
 
 const UserExpression GlobalContext::protectedExpressionForSymbolAbstract(
-    const Poincare::SymbolAbstract &symbol, bool clone,
-    Poincare::ContextWithParent *lastDescendantContext) {
+    const Poincare::SymbolAbstract& symbol, bool clone,
+    Poincare::ContextWithParent* lastDescendantContext) {
   Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
   return expressionForSymbolAndRecord(
       symbol, r,
-      lastDescendantContext ? static_cast<Context *>(lastDescendantContext)
-                            : static_cast<Context *>(this));
+      lastDescendantContext ? static_cast<Context*>(lastDescendantContext)
+                            : static_cast<Context*>(this));
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(
-    const UserExpression &expression, const SymbolAbstract &symbol) {
+    const UserExpression& expression, const SymbolAbstract& symbol) {
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
@@ -133,7 +133,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
          symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   UserExpression childSymbol = symbol.childAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(
-      static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
+      static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
   if (!(childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
@@ -145,14 +145,14 @@ bool GlobalContext::setExpressionForSymbolAbstract(
     UserExpression symbolInX = Poincare::Function::Builder(
         symbolToStore.name(), strlen(symbolToStore.name()),
         Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
-    symbolToStore = static_cast<const SymbolAbstract &>(symbolInX);
+    symbolToStore = static_cast<const SymbolAbstract&>(symbolInX);
   }
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
 }
 
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
-    const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
+    const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForActualSymbol(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
@@ -175,7 +175,7 @@ const UserExpression GlobalContext::ExpressionForActualSymbol(
 }
 
 const UserExpression GlobalContext::ExpressionForFunction(
-    const UserExpression &parameter, Ion::Storage::Record r) {
+    const UserExpression& parameter, Ion::Storage::Record r) {
   UserExpression e;
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
@@ -194,7 +194,7 @@ const UserExpression GlobalContext::ExpressionForFunction(
 }
 
 const UserExpression GlobalContext::expressionForSequence(
-    const SymbolAbstract &symbol, Ion::Storage::Record r, Context *ctx) {
+    const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
     return UserExpression();
   }
@@ -228,7 +228,7 @@ const UserExpression GlobalContext::expressionForSequence(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
-    UserExpression &expression, const SymbolAbstract &symbol,
+    UserExpression& expression, const SymbolAbstract& symbol,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =
       ExpressionDisplayPermissions::NeverDisplayReductionOfInput(expression,
@@ -254,7 +254,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
     expression = approximation;
   }
   ExpressionNode::Type type = expression.type();
-  const char *extension;
+  const char* extension;
   if (type == ExpressionNode::Type::List) {
     extension = Ion::Storage::listExtension;
   } else if (type == ExpressionNode::Type::Matrix) {
@@ -270,7 +270,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
-    const UserExpression &expressionToStore, const SymbolAbstract &symbol,
+    const UserExpression& expressionToStore, const SymbolAbstract& symbol,
     Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
@@ -301,12 +301,12 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
 }
 
 Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
-    const char *name) {
+    const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
-void GlobalContext::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) {
+void GlobalContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
   sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
   continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
@@ -323,7 +323,7 @@ void GlobalContext::reset() {
 
 // Parametric components
 
-static void deleteParametricComponent(char *baseName, size_t baseNameLength,
+static void deleteParametricComponent(char* baseName, size_t baseNameLength,
                                       size_t bufferSize, bool first) {
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
@@ -334,7 +334,7 @@ static void deleteParametricComponent(char *baseName, size_t baseNameLength,
 }
 
 void GlobalContext::DeleteParametricComponentsWithBaseName(
-    char *baseName, size_t baseNameLength, size_t bufferSize) {
+    char* baseName, size_t baseNameLength, size_t bufferSize) {
   deleteParametricComponent(baseName, baseNameLength, bufferSize, true);
   deleteParametricComponent(baseName, baseNameLength, bufferSize, false);
 }
@@ -352,8 +352,8 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
   DeleteParametricComponentsWithBaseName(buffer, length, bufferSize);
 }
 
-static void storeParametricComponent(char *baseName, size_t baseNameLength,
-                                     size_t bufferSize, const UserExpression &e,
+static void storeParametricComponent(char* baseName, size_t baseNameLength,
+                                     size_t bufferSize, const UserExpression& e,
                                      bool first) {
   assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point);
   UserExpression child = e.childAtIndex(first ? 0 : 1).clone();
@@ -384,7 +384,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
   storeParametricComponent(buffer, length, bufferSize, e, false);
 }
 
-double GlobalContext::approximateSequenceAtRank(const char *identifier,
+double GlobalContext::approximateSequenceAtRank(const char* identifier,
                                                 int rank) const {
   int index = sequenceStore->SequenceIndexForName(identifier[0]);
   Sequence sequence = sequenceStore->sequenceAtIndex(index);

@@ -23,11 +23,11 @@ class MenuController : public Escher::ViewController,
                        public Escher::TextFieldDelegate,
                        public Escher::ButtonRowDelegate {
  public:
-  MenuController(Escher::Responder *parentResponder, App *pythonDelegate,
-                 Escher::ButtonRowController *footer);
-  ConsoleController *consoleController();
-  Escher::StackViewController *stackViewController();
-  void willExitResponderChain(Escher::Responder *nextFirstResponder) override;
+  MenuController(Escher::Responder* parentResponder, App* pythonDelegate,
+                 Escher::ButtonRowController* footer);
+  ConsoleController* consoleController();
+  Escher::StackViewController* stackViewController();
+  void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();
@@ -37,7 +37,7 @@ class MenuController : public Escher::ViewController,
   int editedScriptIndex() const { return m_editorController.scriptIndex(); }
 
   /* ViewController */
-  Escher::View *view() override { return &m_selectableTableView; }
+  Escher::View* view() override { return &m_selectableTableView; }
   ViewController::TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
@@ -49,9 +49,9 @@ class MenuController : public Escher::ViewController,
   /* TableViewDataSource */
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  Escher::HighlightCell *reusableCell(int index, int type) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   KDCoordinate defaultRowHeight() override {
@@ -60,30 +60,30 @@ class MenuController : public Escher::ViewController,
 
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView *t, int previousSelectedCol,
+      Escher::SelectableTableView* t, int previousSelectedCol,
       int previousSelectedRow, KDPoint previousOffset,
       bool withinTemporarySelection) override;
 
   /* TextFieldDelegate */
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  void textFieldDidAbortEditing(Escher::AbstractTextField *textField) override {
+  void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override {
     privateTextFieldDidAbortEditing(textField, true);
   }
-  void textFieldDidHandleEvent(Escher::AbstractTextField *textField) override;
+  void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;
 
   /* ButtonRowDelegate */
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override {
     return 1;
   }
-  Escher::ButtonCell *buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    return const_cast<Escher::ButtonCell *>(&m_consoleButton);
+    return const_cast<Escher::ButtonCell*>(&m_consoleButton);
   }
 
  private:
@@ -101,7 +101,7 @@ class MenuController : public Escher::ViewController,
   void editScriptAtIndex(int scriptIndex);
   void updateAddScriptRowDisplay();
   void privateTextFieldDidAbortEditing(
-      Escher::AbstractTextField *textField,
+      Escher::AbstractTextField* textField,
       bool menuControllerStaysInResponderChain);
   void forceTextFieldEditionToAbort(bool menuControllerStaysInResponderChain);
   void privateModalViewAltersFirstResponder(

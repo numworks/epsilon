@@ -12,12 +12,12 @@ namespace Shared {
 class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
                                              public MathTextFieldDelegate {
  public:
-  SimpleInteractiveCurveViewController(Escher::Responder *parentResponder,
-                                       CurveViewCursor *cursor)
+  SimpleInteractiveCurveViewController(Escher::Responder* parentResponder,
+                                       CurveViewCursor* cursor)
       : ZoomCurveViewController(parentResponder), m_cursor(cursor) {}
 
   bool handleEvent(Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField *textField,
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
 
  protected:
@@ -48,9 +48,8 @@ class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
     return false;
   }
 
-  const AbstractPlotView *constCurveView() const {
-    return const_cast<SimpleInteractiveCurveViewController *>(this)
-        ->curveView();
+  const AbstractPlotView* constCurveView() const {
+    return const_cast<SimpleInteractiveCurveViewController*>(this)->curveView();
   }
   float cursorBottomMarginRatioForBannerHeight(float bannerHeight) const {
     return (constCurveView()
@@ -68,7 +67,7 @@ class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
         cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
 
-  CurveViewCursor *m_cursor;
+  CurveViewCursor* m_cursor;
 };
 
 }  // namespace Shared

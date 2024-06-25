@@ -39,7 +39,7 @@ void GaugeView::setHighlighted(bool highlighted) {
   }
 }
 
-void GaugeView::drawRect(KDContext *ctx, KDRect rect) const {
+void GaugeView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
   /* Draw the gauge centered vertically on all the width available */
   KDCoordinate width = bounds().width() - k_indicatorDiameter;
@@ -57,7 +57,7 @@ void GaugeView::drawRect(KDContext *ctx, KDRect rect) const {
   KDRect frame(width * m_level, (height - k_indicatorDiameter) / 2,
                k_indicatorDiameter, k_indicatorDiameter);
   ctx->blendRectWithMask(frame, Palette::YellowDark,
-                         (const uint8_t *)gaugeIndicatorMask,
+                         (const uint8_t*)gaugeIndicatorMask,
                          gaugeIndicatorWorkingBuffer);
 }
 

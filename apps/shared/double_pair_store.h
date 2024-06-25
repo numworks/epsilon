@@ -25,22 +25,22 @@ class DoublePairStore {
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
   // Must be 1 char long or change the name-related methods.
-  constexpr static const char *k_regressionColumNames[] = {"X", "Y"};
+  constexpr static const char* k_regressionColumNames[] = {"X", "Y"};
   static_assert(std::size(k_regressionColumNames) == k_numberOfColumnsPerSeries,
                 "Number of columns per series does not match number of column "
                 "names in Regression.");
   // Must be 1 char long or change the name-related methods.
-  constexpr static const char *k_statisticsColumNames[] = {"V", "N"};
+  constexpr static const char* k_statisticsColumNames[] = {"V", "N"};
   static_assert(std::size(k_statisticsColumNames) == k_numberOfColumnsPerSeries,
                 "Number of columns per series does not match number of column "
                 "names in Statistics.");
   constexpr static size_t k_tableNameLength =
       2 * k_columnNamesLength + sizeof("/");
 
-  DoublePairStore(GlobalContext *context,
-                  DoublePairStorePreferences *preferences);
+  DoublePairStore(GlobalContext* context,
+                  DoublePairStorePreferences* preferences);
   // Delete the implicit copy constructor: the object is heavy
-  DoublePairStore(const DoublePairStore &) = delete;
+  DoublePairStore(const DoublePairStore&) = delete;
 
   // Call this after initializing the store
   void initListsFromStorage(bool delayUpdate = false);
@@ -51,10 +51,10 @@ class DoublePairStore {
   // Column name
   virtual char columnNamePrefixAtIndex(int column) const = 0;
   // Fills 3 chars in the buffer (2 chars for name + null terminate)
-  size_t fillColumnName(int series, int column, char *buffer) const;
-  bool isColumnName(const char *name, int nameLen, int *returnSeries = nullptr,
-                    int *returnColumn = nullptr);
-  size_t tableName(int series, char *buffer, size_t bufferSize) const;
+  size_t fillColumnName(int series, int column, char* buffer) const;
+  bool isColumnName(const char* name, int nameLen, int* returnSeries = nullptr,
+                    int* returnColumn = nullptr);
+  size_t tableName(int series, char* buffer, size_t bufferSize) const;
 
   // Get and set data
   double get(int series, int i, int j) const;
@@ -62,7 +62,7 @@ class DoublePairStore {
            bool setOtherColumnToDefaultIfEmpty = false);
   /* TODO: The "delayUpdate" parameter is kept for consistency but is currently
    * always called with true. Should it be removed ? */
-  bool setList(Poincare::List &List, int series, int i,
+  bool setList(Poincare::List& List, int series, int i,
                bool delayUpdate = false,
                bool setOtherColumnToDefaultIfEmpty = false);
 
@@ -92,8 +92,8 @@ class DoublePairStore {
   void setSeriesHidden(int series, bool hidden);
   bool seriesIsActive(int series) const;
   bool seriesIsValid(int series) const;
-  typedef bool (*ActiveSeriesTest)(const DoublePairStore *, int);
-  static bool DefaultActiveSeriesTest(const DoublePairStore *store,
+  typedef bool (*ActiveSeriesTest)(const DoublePairStore*, int);
+  static bool DefaultActiveSeriesTest(const DoublePairStore* store,
                                       int series) {
     return store->seriesIsActive(series);
   }
@@ -169,7 +169,7 @@ class DoublePairStore {
 
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries]
                                          [k_numberOfColumnsPerSeries];
-  DoublePairStorePreferences *m_storePreferences;
+  DoublePairStorePreferences* m_storePreferences;
 
  private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX,
@@ -178,7 +178,7 @@ class DoublePairStore {
   void deleteTrailingUndef(int series, int i);
   void deletePairsOfUndef(int series);
 
-  GlobalContext *m_context;
+  GlobalContext* m_context;
 };
 
 }  // namespace Shared

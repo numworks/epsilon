@@ -22,11 +22,11 @@ namespace Statistics {
 
 class PlotController : public DataViewController {
  public:
-  PlotController(Escher::Responder *parentResponder,
-                 Escher::ButtonRowController *header,
-                 Escher::TabViewController *tabController,
-                 Escher::StackViewController *stackViewController,
-                 Escher::ViewController *typeViewController, Store *store);
+  PlotController(Escher::Responder* parentResponder,
+                 Escher::ButtonRowController* header,
+                 Escher::TabViewController* tabController,
+                 Escher::StackViewController* stackViewController,
+                 Escher::ViewController* typeViewController, Store* store);
   bool seriesIsActive(int series) const {
     return activeSeriesMethod()(m_store, series);
   }
@@ -34,12 +34,12 @@ class PlotController : public DataViewController {
   virtual double valueAtIndex(int series, int i) const = 0;
   virtual double resultAtIndex(int series, int i) const = 0;
   virtual bool connectPoints() const { return false; }
-  virtual bool drawSeriesZScoreLine(int series, float *x, float *y, float *u,
-                                    float *v) const {
+  virtual bool drawSeriesZScoreLine(int series, float* x, float* y, float* u,
+                                    float* v) const {
     return false;
   }
   virtual void appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
-                                 char *labelBuffer, int maxSize,
+                                 char* labelBuffer, int maxSize,
                                  int glyphLength, int maxGlyphLength) const {}
   virtual float labelStepMultiplicator(
       Shared::AbstractPlotView::Axis axis) const {
@@ -47,7 +47,7 @@ class PlotController : public DataViewController {
   }
 
   // DataViewController
-  DataView *dataView() override { return &m_view; }
+  DataView* dataView() override { return &m_view; }
 
  protected:
   constexpr static KDCoordinate k_smallMargin = 10;
@@ -71,7 +71,7 @@ class PlotController : public DataViewController {
                     static_cast<double>(totalValues(previousSelectedSeries)))));
   }
 
-  virtual PlotBannerView *bannerView() = 0;
+  virtual PlotBannerView* bannerView() = 0;
 
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
@@ -84,13 +84,13 @@ class PlotController : public DataViewController {
   bool moveSelectionVertically(OMG::VerticalDirection direction) override;
 
   void computeRanges(KDCoordinate bannerHeight);
-  void computeXBounds(float *xMin, float *xMax) const;
-  virtual void computeYBounds(float *yMin, float *yMax) const = 0;
+  void computeXBounds(float* xMin, float* xMax) const;
+  virtual void computeYBounds(float* yMin, float* yMax) const = 0;
   virtual bool handleNullFrequencies() const = 0;
   virtual KDCoordinate horizontalMargin() const = 0;
   virtual KDCoordinate bottomMargin() const = 0;
   virtual KDCoordinate topMargin() const = 0;
-  virtual const char *resultMessageTemplate() const = 0;
+  virtual const char* resultMessageTemplate() const = 0;
   virtual I18n::Message resultMessage() const = 0;
 };
 

@@ -14,21 +14,21 @@ class TabView : public View {
  public:
   TabView();
   int numberOfTabs() const;
-  void drawRect(KDContext *ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
-  void addTab(TabViewController *controller);
+  void addTab(TabViewController* controller);
   void setActiveIndex(int index);
   void setSelectedIndex(int index);
 
  protected:
 #if ESCHER_VIEW_LOGGING
-  const char *className() const override;
-  void logAttributes(std::ostream &os) const override;
+  const char* className() const override;
+  void logAttributes(std::ostream& os) const override;
 #endif
  private:
   constexpr static KDCoordinate k_activeTabHeight = 5;
   int numberOfSubviews() const override;
-  View *subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   constexpr static uint8_t k_maxNumberOfTabs = 3;

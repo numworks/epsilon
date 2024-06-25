@@ -18,11 +18,11 @@ using namespace Poincare;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(
-    InteractiveCurveViewRange *graphRange, BannerView *bannerView,
-    CurveViewCursor *cursor, GraphView *graphView,
-    GraphController *graphController,
-    FunctionParameterController *functionParameterController,
-    DerivativeColumnParameterController *derivativeColumnParameterController)
+    InteractiveCurveViewRange* graphRange, BannerView* bannerView,
+    CurveViewCursor* cursor, GraphView* graphView,
+    GraphController* graphController,
+    FunctionParameterController* functionParameterController,
+    DerivativeColumnParameterController* derivativeColumnParameterController)
     : ExplicitFloatParameterController(nullptr),
       m_graphRange(graphRange),
       m_cursor(cursor),
@@ -44,12 +44,12 @@ CurveParameterController::CurveParameterController(
   m_optionsCell.label()->setMessage(I18n::Message::Options);
 }
 
-Escher::HighlightCell *CurveParameterController::cell(int row) {
+Escher::HighlightCell* CurveParameterController::cell(int row) {
   assert(0 <= row && row < k_numberOfRows);
   if (row < k_numberOfParameterRows) {
     return &m_parameterCells[row];
   }
-  HighlightCell *cells[k_numberOfRows - k_numberOfParameterRows] = {
+  HighlightCell* cells[k_numberOfRows - k_numberOfParameterRows] = {
       &m_calculationCell, &m_optionsCell};
   return cells[row - k_numberOfParameterRows];
 }
@@ -59,15 +59,15 @@ CurveParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
-const char *CurveParameterController::title() {
+const char* CurveParameterController::title() {
   if (function()->isNamed()) {
-    const char *calculate = I18n::translate(I18n::Message::CalculateOnFx);
+    const char* calculate = I18n::translate(I18n::Message::CalculateOnFx);
     size_t len = strlen(calculate);
     memcpy(m_title, calculate, len);
     function()->nameWithArgument(m_title + len, k_titleSize - len,
                                  m_derivationOrder);
   } else {
-    const char *colorName = I18n::translate(
+    const char* colorName = I18n::translate(
         Shared::ColorNames::NameForCurveColor(function()->color()));
     Poincare::Print::CustomPrintf(
         m_title, k_titleSize,
@@ -142,7 +142,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 }
 
 double CurveParameterController::parameterAtIndex(int index) {
-  Poincare::Context *ctx = App::app()->localContext();
+  Poincare::Context* ctx = App::app()->localContext();
   int derivationOrder = derivationOrderOfParameterAtRow(index);
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
@@ -198,13 +198,13 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
 }
 
 bool CurveParameterController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   int index = selectedRow();
   if (!ExplicitFloatParameterController::textFieldDidFinishEditing(textField,
                                                                    event)) {
     return false;
   }
-  StackViewController *stack = stackController();
+  StackViewController* stack = stackController();
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
   if (function()->properties().parameterAtIndexIsPreimage(index)) {
@@ -213,14 +213,14 @@ bool CurveParameterController::textFieldDidFinishEditing(
   return true;
 }
 
-TextField *CurveParameterController::textFieldOfCellAtRow(int row) {
+TextField* CurveParameterController::textFieldOfCellAtRow(int row) {
   assert(0 <= row && row <= k_numberOfParameterRows);
-  return static_cast<ParameterCell *>(cell(row))->textField();
+  return static_cast<ParameterCell*>(cell(row))->textField();
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell *cell = selectedCell();
-  StackViewController *stack = stackController();
+  HighlightCell* cell = selectedCell();
+  StackViewController* stack = stackController();
   if (cell == &m_calculationCell &&
       m_calculationCell.canBeActivatedByEvent(event)) {
     m_calculationParameterController.setRecord(m_record);
@@ -301,8 +301,8 @@ void CurveParameterController::didBecomeFirstResponder() {
   Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
 }
 
-StackViewController *CurveParameterController::stackController() const {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* CurveParameterController::stackController() const {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 }  // namespace Graph

@@ -9,15 +9,15 @@ namespace Shared {
 
 namespace FunctionNameHelper {
 
-size_t AddSuffixForParametricComponent(char *baseName, size_t baseNameLength,
+size_t AddSuffixForParametricComponent(char* baseName, size_t baseNameLength,
                                        size_t bufferSize, bool first) {
   return SerializationHelper::CodePoint(baseName + baseNameLength,
                                         bufferSize - baseNameLength,
                                         first ? 'x' : 'y');
 }
 
-size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction *f,
-                                           char *buffer, size_t bufferSize,
+size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
+                                           char* buffer, size_t bufferSize,
                                            bool first, int derivationOrder) {
   size_t length = f->name(buffer, bufferSize);
   length += FunctionNameHelper::AddSuffixForParametricComponent(
@@ -34,7 +34,7 @@ size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction *f,
   return length;
 }
 
-static bool parametricComponentNameIsFree(char *baseName, size_t baseNameLength,
+static bool parametricComponentNameIsFree(char* baseName, size_t baseNameLength,
                                           size_t bufferSize, bool first) {
   AddSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
   bool isFree = GlobalContext::SymbolAbstractNameIsFree(baseName);
@@ -42,7 +42,7 @@ static bool parametricComponentNameIsFree(char *baseName, size_t baseNameLength,
   return isFree;
 }
 
-bool ParametricComponentsNamesAreFree(char *baseName, size_t baseNameLength,
+bool ParametricComponentsNamesAreFree(char* baseName, size_t baseNameLength,
                                       size_t bufferSize) {
   return parametricComponentNameIsFree(baseName, baseNameLength, bufferSize,
                                        true) &&
@@ -50,7 +50,7 @@ bool ParametricComponentsNamesAreFree(char *baseName, size_t baseNameLength,
                                        false);
 }
 
-static bool functionNameIsFree(char *buffer, size_t bufferSize,
+static bool functionNameIsFree(char* buffer, size_t bufferSize,
                                CodePoint symbol) {
   size_t length = strlen(buffer);
   return GlobalContext::SymbolAbstractNameIsFree(buffer) &&
@@ -58,7 +58,7 @@ static bool functionNameIsFree(char *buffer, size_t bufferSize,
           ParametricComponentsNamesAreFree(buffer, length, bufferSize));
 }
 
-int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
+int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
       'f', 'g', 'h', 'p'};
@@ -86,15 +86,15 @@ int DefaultName(char *buffer, size_t bufferSize, CodePoint symbol) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->firstAvailableNameFromPrefix(
           buffer, length, bufferSize,
-          [](char *buffer, size_t bufferSize, void *auxiliary) {
-            CodePoint *symbol = static_cast<CodePoint *>(auxiliary);
+          [](char* buffer, size_t bufferSize, void* auxiliary) {
+            CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
             return functionNameIsFree(buffer, bufferSize, *symbol);
           },
           &symbol);
 }
 
 bool ParametricComponentsNameError(UserExpression expression,
-                                   ContinuousFunction *f) {
+                                   ContinuousFunction* f) {
   /* Check that parametric components name are free if we are defining a
    * parametric function. */
   if (!ContinuousFunction::IsFunctionAssignment(expression)) {
@@ -113,7 +113,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char functionName[bufferSize];
   assert(function.type() == ExpressionNode::Type::Function);
-  strlcpy(functionName, static_cast<Poincare::Function &>(function).name(),
+  strlcpy(functionName, static_cast<Poincare::Function&>(function).name(),
           bufferSize);
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);

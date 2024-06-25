@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-Toolbox::Toolbox(Responder *parentResponder, I18n::Message title)
+Toolbox::Toolbox(Responder* parentResponder, I18n::Message title)
     : NestedMenuController(parentResponder, title),
       m_messageTreeModel(nullptr) {}
 
@@ -20,12 +20,12 @@ int Toolbox::reusableCellCount(int type) const {
   return maxNumberOfDisplayedRows();
 }
 
-void Toolbox::fillCellForRow(HighlightCell *cell, int row) {
+void Toolbox::fillCellForRow(HighlightCell* cell, int row) {
   assert(typeAtRow(row) == k_nodeCellType);
-  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
+  const ToolboxMessageTree* messageTree = messageTreeModelAtIndex(row);
   assert(messageTree->numberOfChildren() != 0);
-  NestedMenuController::NodeCell *myCell =
-      static_cast<NestedMenuController::NodeCell *>(cell);
+  NestedMenuController::NodeCell* myCell =
+      static_cast<NestedMenuController::NodeCell*>(cell);
   myCell->label()->setMessage(messageTree->label());
   myCell->reloadCell();
 }
@@ -55,7 +55,7 @@ bool Toolbox::returnToPreviousMenu() {
   int stateDepth = 0;
   m_messageTreeModel = rootModel();
   while (stateDepth < currentDepth - 1) {
-    const StackState *previousState = stack()->elementAtIndex(stateDepth++);
+    const StackState* previousState = stack()->elementAtIndex(stateDepth++);
     m_messageTreeModel = messageTreeModelAtIndex(previousState->selectedRow());
   }
   return NestedMenuController::returnToPreviousMenu();
@@ -66,13 +66,13 @@ bool Toolbox::returnToRootMenu() {
   return NestedMenuController::returnToRootMenu();
 }
 
-const ToolboxMessageTree *Toolbox::messageTreeModelAtIndex(int index) const {
+const ToolboxMessageTree* Toolbox::messageTreeModelAtIndex(int index) const {
   assert(index >= 0 && index < m_messageTreeModel->numberOfChildren());
-  const ToolboxMessageTree *messageTree =
-      static_cast<const ToolboxMessageTree *>(
+  const ToolboxMessageTree* messageTree =
+      static_cast<const ToolboxMessageTree*>(
           m_messageTreeModel->childAtIndex(index));
   if (messageTree->isFork()) {
-    messageTree = static_cast<const ToolboxMessageTree *>(
+    messageTree = static_cast<const ToolboxMessageTree*>(
         messageTree->childAtIndex(indexAfterFork(messageTree)));
   }
   return messageTree;

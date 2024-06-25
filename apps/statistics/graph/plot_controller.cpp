@@ -6,12 +6,12 @@
 
 namespace Statistics {
 
-PlotController::PlotController(Escher::Responder *parentResponder,
-                               Escher::ButtonRowController *header,
-                               Escher::TabViewController *tabController,
-                               Escher::StackViewController *stackViewController,
-                               Escher::ViewController *typeViewController,
-                               Store *store)
+PlotController::PlotController(Escher::Responder* parentResponder,
+                               Escher::ButtonRowController* header,
+                               Escher::TabViewController* tabController,
+                               Escher::StackViewController* stackViewController,
+                               Escher::ViewController* typeViewController,
+                               Store* store)
     : DataViewController(parentResponder, tabController, header,
                          stackViewController, typeViewController, store),
       m_cursor(FLT_MAX),
@@ -108,7 +108,7 @@ void PlotController::computeRanges(KDCoordinate bannerHeight) {
                          yMin, yMax);
 }
 
-void PlotController::computeXBounds(float *xMin, float *xMax) const {
+void PlotController::computeXBounds(float* xMin, float* xMax) const {
   *xMin = m_store->minValueForAllSeries(handleNullFrequencies(),
                                         activeSeriesMethod());
   *xMax = m_store->maxValueForAllSeries(handleNullFrequencies(),

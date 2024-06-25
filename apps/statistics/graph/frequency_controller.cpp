@@ -11,10 +11,10 @@
 namespace Statistics {
 
 FrequencyController::FrequencyController(
-    Escher::Responder *parentResponder, Escher::ButtonRowController *header,
-    Escher::TabViewController *tabController,
-    Escher::StackViewController *stackViewController,
-    Escher::ViewController *typeViewController, Store *store)
+    Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+    Escher::TabViewController* tabController,
+    Escher::StackViewController* stackViewController,
+    Escher::ViewController* typeViewController, Store* store)
     : PlotController(parentResponder, header, tabController,
                      stackViewController, typeViewController, store),
       m_bannerViewWithEditableField(this, this) {
@@ -31,7 +31,7 @@ void FrequencyController::didBecomeFirstResponder() {
 }
 
 bool FrequencyController::textFieldDidFinishEditing(
-    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double newX = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(newX)) {
     return false;
@@ -61,7 +61,7 @@ bool FrequencyController::textFieldDidFinishEditing(
 }
 
 void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
-                                            char *labelBuffer, int maxSize,
+                                            char* labelBuffer, int maxSize,
                                             int glyphLength,
                                             int maxGlyphLength) const {
   if (axis == Shared::AbstractPlotView::Axis::Horizontal) {
@@ -258,7 +258,7 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(
   assert(false);
 }
 
-void FrequencyController::computeYBounds(float *yMin, float *yMax) const {
+void FrequencyController::computeYBounds(float* yMin, float* yMax) const {
   // Frequency curve is always bounded between 0 and 100
   *yMin = 0.0f;
   *yMax = 100.0f;

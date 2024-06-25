@@ -20,11 +20,11 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramController::HistogramController(
-    Responder *parentResponder, ButtonRowController *header,
-    TabViewController *tabController,
-    Escher::StackViewController *stackViewController,
-    Escher::ViewController *typeViewController, Store *store,
-    uint32_t *storeVersion)
+    Responder* parentResponder, ButtonRowController* header,
+    TabViewController* tabController,
+    Escher::StackViewController* stackViewController,
+    Escher::ViewController* typeViewController, Store* store,
+    uint32_t* storeVersion)
     : MultipleDataViewController(parentResponder, tabController, header,
                                  stackViewController, typeViewController,
                                  store),
@@ -35,7 +35,7 @@ HistogramController::HistogramController(
       m_parameterButton(
           this, I18n::Message::StatisticsGraphSettings,
           Invocation::Builder<HistogramController>(
-              [](HistogramController *histogramController, void *sender) {
+              [](HistogramController* histogramController, void* sender) {
                 histogramController->stackController()->push(
                     histogramController->histogramParameterController());
                 return true;
@@ -43,10 +43,10 @@ HistogramController::HistogramController(
               this),
           KDFont::Size::Small) {}
 
-ButtonCell *HistogramController::buttonAtIndex(
+ButtonCell* HistogramController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position)
-                    : const_cast<SimpleButtonCell *>(&m_parameterButton);
+                    : const_cast<SimpleButtonCell*>(&m_parameterButton);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {
@@ -70,8 +70,8 @@ void HistogramController::viewWillAppearBeforeReload() {
 }
 
 void HistogramController::highlightSelection() {
-  HistogramView *selectedHistogramView =
-      static_cast<HistogramView *>(m_view.plotViewForSeries(selectedSeries()));
+  HistogramView* selectedHistogramView =
+      static_cast<HistogramView*>(m_view.plotViewForSeries(selectedSeries()));
   selectedHistogramView->setHighlight(
       m_store->startOfBarAtIndex(selectedSeries(), selectedIndex()),
       m_store->endOfBarAtIndex(selectedSeries(), selectedIndex()));
@@ -156,7 +156,7 @@ bool HistogramController::moveSelectionHorizontally(
   return false;
 }
 
-void HistogramController::preinitXRangeParameters(double *xMin, double *xMax) {
+void HistogramController::preinitXRangeParameters(double* xMin, double* xMax) {
   /* Compute m_store's min and max values, hold them temporarily in the
    * CurveViewRange, for later use by initRangeParameters and
    * initBarParameters. Indeed, initRangeParameters will anyway alter the

@@ -14,55 +14,55 @@ class InputStoreController;
 class StoreTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  StoreTableCell(Escher::Responder *parentResponder, Statistic *statistic,
-                 Poincare::Context *parentContext,
-                 InputStoreController *inputStoreController,
-                 Escher::ScrollViewDelegate *scrollViewDelegate);
+  StoreTableCell(Escher::Responder* parentResponder, Statistic* statistic,
+                 Poincare::Context* parentContext,
+                 InputStoreController* inputStoreController,
+                 Escher::ScrollViewDelegate* scrollViewDelegate);
 
   constexpr static int k_numberOfReusableCells =
       Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   // TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
   // SelectableTableViewDelegate
-  int numberOfRowsAtColumn(const Escher::SelectableTableView *t,
+  int numberOfRowsAtColumn(const Escher::SelectableTableView* t,
                            int column) override;
 
   // StoreColumnHelper
-  Shared::DoublePairStore *store() override {
+  Shared::DoublePairStore* store() override {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
-      return static_cast<SlopeTStatistic *>(tableModel());
+      return static_cast<SlopeTStatistic*>(tableModel());
     }
     assert(
         m_statistic->significanceTestType() == SignificanceTestType::OneMean ||
         m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
-    return static_cast<RawDataStatistic *>(tableModel());
+    return static_cast<RawDataStatistic*>(tableModel());
   }
-  const Shared::DoublePairStore *store() const {
-    return const_cast<StoreTableCell *>(this)->store();
+  const Shared::DoublePairStore* store() const {
+    return const_cast<StoreTableCell*>(this)->store();
   }
 
  private:
-  Escher::HighlightCell *headerCell(int index) override {
+  Escher::HighlightCell* headerCell(int index) override {
     return &m_header[index];
   }
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
 
   // ClearColumnHelper
-  size_t fillColumnName(int column, char *buffer) override {
+  size_t fillColumnName(int column, char* buffer) override {
     return fillColumnNameFromStore(column, buffer);
   }
   void setClearPopUpContent() override;
 
-  Escher::InputViewController *inputViewController() override;
+  Escher::InputViewController* inputViewController() override;
   void reload() override;
-  CategoricalController *categoricalController() override;
+  CategoricalController* categoricalController() override;
 
   Shared::BufferFunctionTitleCell m_header[Table::k_maxNumberOfStoreColumns];
-  InputStoreController *m_inputStoreController;
+  InputStoreController* m_inputStoreController;
 };
 
 }  // namespace Inference

@@ -14,8 +14,8 @@ using namespace Escher;
 
 namespace Code {
 
-MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
-                               ButtonRowController *footer)
+MenuController::MenuController(Responder* parentResponder, App* pythonDelegate,
+                               ButtonRowController* footer)
     : ViewController(parentResponder),
       RegularHeightTableViewDataSource(),
       ButtonRowDelegate(nullptr, footer),
@@ -23,7 +23,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       m_consoleButton(
           this, I18n::Message::Console,
           Invocation::Builder<MenuController>(
-              [](MenuController *menu, void *sender) {
+              [](MenuController* menu, void* sender) {
                 menu->consoleController()->setAutoImport(true);
                 menu->stackViewController()->push(menu->consoleController());
                 return true;
@@ -46,16 +46,16 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
   }
 }
 
-ConsoleController *MenuController::consoleController() {
+ConsoleController* MenuController::consoleController() {
   return App::app()->consoleController();
 }
 
-StackViewController *MenuController::stackViewController() {
-  return static_cast<StackViewController *>(
+StackViewController* MenuController::stackViewController() {
+  return static_cast<StackViewController*>(
       parentResponder()->parentResponder());
 }
 
-void MenuController::willExitResponderChain(Responder *nextFirstResponder) {
+void MenuController::willExitResponderChain(Responder* nextFirstResponder) {
   forceTextFieldEditionToAbort(false);
 }
 
@@ -131,12 +131,12 @@ void MenuController::renameSelectedScript() {
           Ion::Events::ShiftAlphaStatus::AlphaStatus::Locked));
   m_selectableTableView.selectCellAtLocation(
       0, (m_selectableTableView.selectedRow()));
-  ScriptNameCell *myCell =
-      static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell());
+  ScriptNameCell* myCell =
+      static_cast<ScriptNameCell*>(m_selectableTableView.selectedCell());
   App::app()->setFirstResponder(myCell);
   myCell->setHighlighted(false);
-  TextField *tf = myCell->textField();
-  const char *previousText = tf->text();
+  TextField* tf = myCell->textField();
+  const char* previousText = tf->text();
   tf->setEditing(true);
   tf->setText(previousText);
   tf->setCursorLocation(tf->text() + strlen(previousText));
@@ -172,14 +172,14 @@ int MenuController::numberOfRows() const {
   return ScriptStore::NumberOfScripts() + m_shouldDisplayAddScriptRow;
 }
 
-void MenuController::fillCellForLocation(HighlightCell *cell, int column,
+void MenuController::fillCellForLocation(HighlightCell* cell, int column,
                                          int row) {
   if (typeAtLocation(column, row) == k_scriptCellType) {
-    (static_cast<ScriptNameCell *>(cell))
+    (static_cast<ScriptNameCell*>(cell))
         ->textField()
         ->setText(ScriptStore::ScriptAtIndex(row).fullName());
   }
-  static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
+  static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
 }
 
 KDCoordinate MenuController::nonMemoizedColumnWidth(int column) {
@@ -190,7 +190,7 @@ KDCoordinate MenuController::nonMemoizedColumnWidth(int column) {
   return k_parametersColumnWidth;
 }
 
-HighlightCell *MenuController::reusableCell(int index, int type) {
+HighlightCell* MenuController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_scriptCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableScriptCells);
@@ -236,7 +236,7 @@ int MenuController::typeAtLocation(int column, int row) const {
 }
 
 void MenuController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 &&
@@ -248,20 +248,20 @@ void MenuController::tableViewDidChangeSelectionAndDidScroll(
   }
 }
 
-bool MenuController::textFieldShouldFinishEditing(AbstractTextField *textField,
+bool MenuController::textFieldShouldFinishEditing(AbstractTextField* textField,
                                                   Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          event == Ion::Events::Down || event == Ion::Events::Up;
 }
 
-bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
+bool MenuController::textFieldDidFinishEditing(AbstractTextField* textField,
                                                Ion::Events::Event event) {
-  const char *newName;
+  const char* newName;
   //"script99" + "." + "py"
   constexpr static int bufferSize = Script::k_defaultScriptNameMaxSize + 1 +
                                     ScriptStore::k_scriptExtensionLength;
   char numberedDefaultName[bufferSize];
-  char *text = textField->draftText();
+  char* text = textField->draftText();
 
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {
     newName = text;
@@ -283,7 +283,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
       textField->setText(numberedDefaultName);
       textField->setCursorLocation(textField->draftText() + defaultNameLength);
     }
-    newName = const_cast<const char *>(numberedDefaultName);
+    newName = const_cast<const char*>(numberedDefaultName);
   }
   Script script =
       ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow());
@@ -318,10 +318,10 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField *textField,
   return false;
 }
 
-void MenuController::textFieldDidHandleEvent(AbstractTextField *textField) {
+void MenuController::textFieldDidHandleEvent(AbstractTextField* textField) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
-    const char *maxPointerLocation =
+    const char* maxPointerLocation =
         textField->draftTextEnd() - scriptExtensionLength;
     if (textField->cursorLocation() > maxPointerLocation) {
       textField->setCursorLocation(maxPointerLocation);
@@ -360,13 +360,13 @@ void MenuController::updateAddScriptRowDisplay() {
 }
 
 void MenuController::privateTextFieldDidAbortEditing(
-    AbstractTextField *textField, bool menuControllerStaysInResponderChain) {
+    AbstractTextField* textField, bool menuControllerStaysInResponderChain) {
   /* If menuControllerStaysInResponderChain is false, we do not want to use
    * methods that might call setFirstResponder, because we might be in the
    * middle of another setFirstResponder call. */
   Script script =
       ScriptStore::ScriptAtIndex(m_selectableTableView.selectedRow());
-  const char *scriptName = script.fullName();
+  const char* scriptName = script.fullName();
   if (strlen(scriptName) <= 1 + strlen(ScriptStore::k_scriptExtension)) {
     // The previous text was an empty name. Use a numbered default script name.
     char numberedDefaultName[Script::k_defaultScriptNameMaxSize];
@@ -409,8 +409,8 @@ void MenuController::forceTextFieldEditionToAbort(
       selectedColumn != 0) {
     return;
   }
-  TextField *tf =
-      static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())
+  TextField* tf =
+      static_cast<ScriptNameCell*>(m_selectableTableView.selectedCell())
           ->textField();
   if (!tf->isEditing()) {
     return;

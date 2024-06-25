@@ -4,7 +4,7 @@
 
 namespace Escher {
 
-void TransparentImageView::drawRect(KDContext *ctx, KDRect rect) const {
+void TransparentImageView::drawRect(KDContext* ctx, KDRect rect) const {
   if (m_image == nullptr) {
     return;
   }
@@ -28,18 +28,18 @@ void TransparentImageView::drawRect(KDContext *ctx, KDRect rect) const {
   assert(Ion::stackSafe());
 
   OMG::Memory::Decompress(m_image->compressedPixelData(),
-                          reinterpret_cast<uint8_t *>(pixelBuffer),
+                          reinterpret_cast<uint8_t*>(pixelBuffer),
                           m_image->compressedPixelDataSize(), pixelBufferSize);
 
-  uint8_t *mask = reinterpret_cast<uint8_t *>(pixelBuffer) +
+  uint8_t* mask = reinterpret_cast<uint8_t*>(pixelBuffer) +
                   sizeof(KDColor) * m_image->width() * m_image->height();
   blendInPlace(pixelBuffer, mask);
 
   ctx->fillRectWithPixels(bounds(), pixelBuffer, nullptr);
 }
 
-void TransparentImageView::blendInPlace(KDColor *colorBuffer,
-                                        uint8_t *alphaBuffer) const {
+void TransparentImageView::blendInPlace(KDColor* colorBuffer,
+                                        uint8_t* alphaBuffer) const {
   int position;
   for (int row = 0; row < m_image->height(); row++) {
     for (int col = 0; col < m_image->width(); col++) {

@@ -21,27 +21,27 @@ class FunctionApp : public MathApp {
                    public Escher::TabViewDataSource {
    public:
     Snapshot();
-    CurveViewCursor *cursor() { return &m_cursor; }
-    virtual FunctionStore *functionStore() = 0;
-    int *selectedCurveIndex() { return &m_selectedCurveIndex; }
+    CurveViewCursor* cursor() { return &m_cursor; }
+    virtual FunctionStore* functionStore() = 0;
+    int* selectedCurveIndex() { return &m_selectedCurveIndex; }
     void reset() override;
 
    private:
     CurveViewCursor m_cursor;
     int m_selectedCurveIndex;
   };
-  static FunctionApp *app() {
-    return static_cast<FunctionApp *>(Escher::App::app());
+  static FunctionApp* app() {
+    return static_cast<FunctionApp*>(Escher::App::app());
   }
   virtual ~FunctionApp() = default;
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
-  virtual FunctionStore *functionStore() const {
+  virtual FunctionStore* functionStore() const {
     return snapshot()->functionStore();
   }
-  virtual ValuesController *valuesController() = 0;
+  virtual ValuesController* valuesController() = 0;
 
   bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const override;
@@ -49,12 +49,12 @@ class FunctionApp : public MathApp {
   void concludeIntrusiveStorageChange() override;
 
  protected:
-  FunctionApp(Snapshot *snapshot, Escher::AbstractTabUnion *tabs,
+  FunctionApp(Snapshot* snapshot, Escher::AbstractTabUnion* tabs,
               I18n::Message firstTabName);
 
   struct ListTab : public Escher::Tab {
-    ListTab(Shared::FunctionListController *listController);
-    Escher::ViewController *top() override {
+    ListTab(Shared::FunctionListController* listController);
+    Escher::ViewController* top() override {
       return &m_listStackViewController;
     }
     Escher::ButtonRowController m_listFooter;
@@ -63,8 +63,8 @@ class FunctionApp : public MathApp {
   };
   struct GraphTab : public Escher::Tab {
     static constexpr I18n::Message k_title = I18n::Message::GraphTab;
-    GraphTab(Shared::FunctionGraphController *graphController);
-    Escher::ViewController *top() override {
+    GraphTab(Shared::FunctionGraphController* graphController);
+    Escher::ViewController* top() override {
       return &m_graphStackViewController;
     }
     Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
@@ -73,8 +73,8 @@ class FunctionApp : public MathApp {
   };
   struct ValuesTab : public Escher::Tab {
     static constexpr I18n::Message k_title = I18n::Message::ValuesTab;
-    ValuesTab(Shared::ValuesController *valuesController);
-    Escher::ViewController *top() override {
+    ValuesTab(Shared::ValuesController* valuesController);
+    Escher::ViewController* top() override {
       return &m_valuesStackViewController;
     }
     Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
@@ -83,7 +83,7 @@ class FunctionApp : public MathApp {
   };
 
   Escher::TabUnionViewController m_tabViewController;
-  Escher::ViewController *m_activeControllerBeforeStore;
+  Escher::ViewController* m_activeControllerBeforeStore;
 };
 
 }  // namespace Shared

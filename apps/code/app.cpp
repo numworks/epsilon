@@ -18,7 +18,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::CodeAppCapital;
 }
 
-const Image *App::Descriptor::icon() const { return ImageStore::CodeIcon; }
+const Image* App::Descriptor::icon() const { return ImageStore::CodeIcon; }
 
 App::Snapshot::Snapshot()
 #if EPSILON_GETOPT
@@ -28,30 +28,30 @@ App::Snapshot::Snapshot()
   ScriptStore::InitTemplates();
 }
 
-App *App::Snapshot::unpack(Container *container) {
+App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
 constexpr static App::Descriptor sDescriptor;
 
-const App::Descriptor *App::Snapshot::descriptor() const {
+const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
 #if EPSILON_GETOPT
 bool App::Snapshot::lockOnConsole() const { return m_lockOnConsole; }
 
-void App::Snapshot::setOpt(const char *name, const char *value) {
+void App::Snapshot::setOpt(const char* name, const char* value) {
   if (strcmp(name, "script") == 0) {
     ScriptStore::DeleteAllScripts();
-    char *separator =
-        const_cast<char *>(UTF8Helper::CodePointSearch(value, ':'));
+    char* separator =
+        const_cast<char*>(UTF8Helper::CodePointSearch(value, ':'));
     if (*separator == 0) {
       return;
     }
     *separator = 0;
-    const char *scriptName = value;
-    const char *scriptContent = separator;
+    const char* scriptName = value;
+    const char* scriptContent = separator;
     Script::Create(scriptName, scriptContent + 1);
     return;
   }
@@ -62,7 +62,7 @@ void App::Snapshot::setOpt(const char *name, const char *value) {
 }
 #endif
 
-App::App(Snapshot *snapshot)
+App::App(Snapshot* snapshot)
     : Shared::SharedApp(snapshot, &m_codeStackViewController),
       m_pythonUser(nullptr),
       m_consoleController(nullptr, this
@@ -116,13 +116,13 @@ bool App::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void App::willExitResponderChain(Responder *nextFirstResponder) {
+void App::willExitResponderChain(Responder* nextFirstResponder) {
   m_menuController.willExitApp();
 }
 
-bool App::textInputDidReceiveEvent(EditableField *textInput,
+bool App::textInputDidReceiveEvent(EditableField* textInput,
                                    Ion::Events::Event event) {
-  const char *pythonText = Helpers::PythonTextForEvent(event);
+  const char* pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {
     textInput->handleEventWithText(pythonText);
     return true;
@@ -130,13 +130,13 @@ bool App::textInputDidReceiveEvent(EditableField *textInput,
   return false;
 }
 
-void App::initPythonWithUser(const void *pythonUser) {
+void App::initPythonWithUser(const void* pythonUser) {
   if (!m_pythonUser) {
     /* Tree pool will be used as an extension of the heap. */
     assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
     Poincare::Pool::sharedPool.deinit();
 
-    char *heap = pythonHeap();
+    char* heap = pythonHeap();
     MicroPython::init(heap, heap + k_pythonHeapSize);
   }
   m_pythonUser = pythonUser;

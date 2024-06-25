@@ -10,7 +10,7 @@ namespace Escher {
 TabViewCell::TabViewCell()
     : View(), m_active(false), m_selected(false), m_controller(nullptr) {}
 
-void TabViewCell::setTabController(TabViewController *controller,
+void TabViewCell::setTabController(TabViewController* controller,
                                    uint8_t tabNumber) {
   m_tabNumber = tabNumber;
   m_controller = controller;
@@ -32,7 +32,7 @@ KDSize TabViewCell::minimalSizeForOptimalDisplay() const {
       ->stringSize(m_controller->tabName(m_tabNumber));
 }
 
-void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
+void TabViewCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   // choose the background color
@@ -58,9 +58,9 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char *TabViewCell::className() const { return "TabViewCell"; }
+const char* TabViewCell::className() const { return "TabViewCell"; }
 
-void TabViewCell::logAttributes(std::ostream &os) const {
+void TabViewCell::logAttributes(std::ostream& os) const {
   View::logAttributes(os);
   os << " active=\"" << m_active << "\"";
   os << " name=\"" << m_controller->tabName(m_tabNumber) << "\"";

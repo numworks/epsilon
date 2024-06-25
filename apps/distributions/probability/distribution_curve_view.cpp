@@ -12,31 +12,31 @@ namespace Distributions {
 // DistributionPlotPolicy
 
 template <typename T>
-static T evaluateDistribution1D(T x, void *model, void *) {
-  Distribution *distribution = reinterpret_cast<Distribution *>(model);
+static T evaluateDistribution1D(T x, void* model, void*) {
+  Distribution* distribution = reinterpret_cast<Distribution*>(model);
   return distribution->evaluateAtAbscissa(x);
 }
 
 static Poincare::Coordinate2D<float> evaluateDistribution2D(float x,
-                                                            void *model,
-                                                            void *context) {
+                                                            void* model,
+                                                            void* context) {
   return Poincare::Coordinate2D<float>(
       x, evaluateDistribution1D<float>(x, model, context));
 }
 
-static Poincare::Coordinate2D<float> evaluateZero(float, void *, void *) {
+static Poincare::Coordinate2D<float> evaluateZero(float, void*, void*) {
   return Poincare::Coordinate2D<float>(0.f, 0.f);
 }
 
-static bool barIsHighlighted(double x, void *, void *context) {
-  double *parameters = reinterpret_cast<double *>(context);
+static bool barIsHighlighted(double x, void*, void* context) {
+  double* parameters = reinterpret_cast<double*>(context);
   double start = parameters[0];
   double end = parameters[1];
   return start <= x && x <= end;
 }
 
-void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
-                                      KDContext *ctx, KDRect rect) const {
+void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
+                                      KDContext* ctx, KDRect rect) const {
   double lowerBound = m_calculation->lowerBound();
   double upperBound = m_calculation->upperBound();
 
@@ -58,8 +58,8 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
 
 // DistributionCurveView
 
-DistributionCurveView::DistributionCurveView(Distribution *distribution,
-                                             Calculation *calculation)
+DistributionCurveView::DistributionCurveView(Distribution* distribution,
+                                             Calculation* calculation)
     : PlotView(distribution) {
   // DistributionPlotPolicy
   m_distribution = distribution;

@@ -15,10 +15,10 @@
 namespace Escher {
 /* TextArea */
 
-TextArea::TextArea(Responder *parentResponder, View *contentView)
+TextArea::TextArea(Responder* parentResponder, View* contentView)
     : TextInput(parentResponder, contentView) {}
 
-static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
+static inline void InsertSpacesAtLocation(int spacesCount, char* buffer,
                                           int bufferSize) {
   assert(buffer != nullptr);
   assert((int)(strlen(buffer) + spacesCount) < bufferSize);
@@ -34,7 +34,7 @@ static inline void InsertSpacesAtLocation(int spacesCount, char *buffer,
   }
 }
 
-bool TextArea::handleEventWithText(const char *text, bool indentation,
+bool TextArea::handleEventWithText(const char* text, bool indentation,
                                    bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
@@ -51,8 +51,8 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
   int totalIndentationSize = 0;
   size_t addedTextLength = strlen(text);
   size_t previousTextLength = contentView()->getText()->textLength();
-  char *insertionPosition = const_cast<char *>(cursorLocation());
-  const char *textAreaBuffer = contentView()->text();
+  char* insertionPosition = const_cast<char*>(cursorLocation());
+  const char* textAreaBuffer = contentView()->text();
   if (indentation) {
     // Compute the indentation
     spacesCount = indentationBeforeCursor();
@@ -98,22 +98,22 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
       int glyphCount[3] = {0, 0, 0};
       UTF8Helper::PerformAtCodePoints(
           text, '\n',
-          [](int, void *intArray, int, int) {
+          [](int, void* intArray, int, int) {
             // '\n' found, Increment n
-            int *n = (int *)intArray + 2;
+            int* n = (int*)intArray + 2;
             *n = *n + 1;
             // Reset ia
-            int *ia = (int *)intArray + 1;
+            int* ia = (int*)intArray + 1;
             *ia = 0;
           },
-          [](int, void *intArray, int, int) {
-            if (((int *)intArray)[2] == 0) {
+          [](int, void* intArray, int, int) {
+            if (((int*)intArray)[2] == 0) {
               // While no '\n' found, increment ib
-              int *ib = (int *)intArray;
+              int* ib = (int*)intArray;
               *ib = *ib + 1;
             } else {
               // Increment ia
-              int *ia = (int *)intArray + 1;
+              int* ia = (int*)intArray + 1;
               *ia = *ia + 1;
             }
           },
@@ -150,18 +150,18 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
   if (indentation) {
     UTF8Helper::PerformAtCodePoints(
         insertionPosition, '\n',
-        [](int codePointOffset, void *text, int indentation, int bufferLength) {
+        [](int codePointOffset, void* text, int indentation, int bufferLength) {
           int offset = codePointOffset + UTF8Decoder::CharSizeOfCodePoint('\n');
-          InsertSpacesAtLocation(indentation, (char *)text + offset,
+          InsertSpacesAtLocation(indentation, (char*)text + offset,
                                  bufferLength);
         },
-        [](int c1, void *c2, int c3, int c4) {}, (void *)insertionPosition,
+        [](int c1, void* c2, int c3, int c4) {}, (void*)insertionPosition,
         spacesCount,
         contentView()->getText()->bufferSize() -
             (insertionPosition - contentView()->getText()->text()),
         UCodePointNull, true, nullptr, insertionPosition + addedTextLength);
   }
-  const char *endOfInsertedText =
+  const char* endOfInsertedText =
       insertionPosition + addedTextLength + totalIndentationSize;
   size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(
       insertionPosition, endOfInsertedText);
@@ -178,7 +178,7 @@ bool TextArea::handleEventWithText(const char *text, bool indentation,
       forceCursorRightOfText ||
       !UTF8Helper::HasCodePoint(insertionPosition, UCodePointEmpty,
                                 insertionPosition + cursorIndexInCommand - 1));
-  const char *nextCursorLocation =
+  const char* nextCursorLocation =
       forceCursorRightOfText ? endOfInsertedText
                              : insertionPosition + cursorIndexInCommand;
   setCursorLocation(nextCursorLocation);
@@ -220,7 +220,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     if (contentView()->selectionIsEmpty()) {
       return false;
     }
-    const char *start = contentView()->selectionLeft();
+    const char* start = contentView()->selectionLeft();
     Escher::Clipboard::SharedClipboard()->store(
         start, contentView()->selectionRight() - start);
     if (event == Ion::Events::Cut) {
@@ -260,7 +260,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void TextArea::setText(char *textBuffer, size_t textBufferSize) {
+void TextArea::setText(char* textBuffer, size_t textBufferSize) {
   contentView()->setText(textBuffer, textBufferSize);
   contentView()->moveCursorGeo(0, 0);
 }
@@ -271,21 +271,21 @@ int TextArea::indentationBeforeCursor() const {
    * indentation size when encountering spaces, reset it to 0 when encountering
    * another code point, until reaching the beginning of the line. */
   UTF8Helper::PerformAtCodePoints(
-      const_cast<TextArea *>(this)->contentView()->text(), ' ',
-      [](int codePointOffset, void *indentationSize, int context1,
+      const_cast<TextArea*>(this)->contentView()->text(), ' ',
+      [](int codePointOffset, void* indentationSize, int context1,
          int context2) {
-        int *castedSize = (int *)indentationSize;
+        int* castedSize = (int*)indentationSize;
         *castedSize = *castedSize + 1;
       },
-      [](int codePointOffset, void *indentationSize, int context1,
-         int context2) { *((int *)indentationSize) = 0; },
+      [](int codePointOffset, void* indentationSize, int context1,
+         int context2) { *((int*)indentationSize) = 0; },
       &indentationSize, 0, -1, '\n', false, cursorLocation());
   return indentationSize;
 }
 
 /* TextArea::Text */
 
-const char *TextArea::Text::pointerAtPosition(Position p) {
+const char* TextArea::Text::pointerAtPosition(Position p) {
   assert(m_buffer != nullptr);
   if (p.line() < 0) {
     return m_buffer;
@@ -293,7 +293,7 @@ const char *TextArea::Text::pointerAtPosition(Position p) {
   int y = 0;
   for (Line l : *this) {
     if (p.line() == y) {
-      const char *result =
+      const char* result =
           UTF8Helper::CodePointAtGlyphOffset(l.text(), p.column());
       return std::min(result, l.text() + l.charLength());
     }
@@ -303,7 +303,7 @@ const char *TextArea::Text::pointerAtPosition(Position p) {
 }
 
 TextArea::Text::Position TextArea::Text::positionAtPointer(
-    const char *p) const {
+    const char* p) const {
   assert(m_buffer != nullptr);
   assert(m_buffer <= p && p < m_buffer + m_bufferSize);
   size_t y = 0;
@@ -318,7 +318,7 @@ TextArea::Text::Position TextArea::Text::positionAtPointer(
   return Position(0, 0);
 }
 
-void TextArea::Text::insertText(const char *s, int textLength, char *location) {
+void TextArea::Text::insertText(const char* s, int textLength, char* location) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location < m_buffer + m_bufferSize - 1);
   assert(strlen(m_buffer) + textLength < m_bufferSize);
@@ -335,7 +335,7 @@ void TextArea::Text::insertText(const char *s, int textLength, char *location) {
 }
 
 void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces,
-                                            char *location) {
+                                            char* location) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location < m_buffer + m_bufferSize - 1);
   assert(strlen(m_buffer) + numberOfSpaces < m_bufferSize);
@@ -352,7 +352,7 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces,
   }
 }
 
-CodePoint TextArea::Text::removePreviousGlyph(char **position) {
+CodePoint TextArea::Text::removePreviousGlyph(char** position) {
   assert(m_buffer != nullptr);
   assert(m_buffer <= *position && *position < m_buffer + m_bufferSize);
 
@@ -373,12 +373,12 @@ CodePoint TextArea::Text::removePreviousGlyph(char **position) {
   return removedCodePoint;
 }
 
-size_t TextArea::Text::removeText(const char *start, const char *end) {
+size_t TextArea::Text::removeText(const char* start, const char* end) {
   assert(start <= end);
   assert(start >= m_buffer && end <= m_buffer + m_bufferSize);
 
-  char *dst = const_cast<char *>(start);
-  char *src = const_cast<char *>(end);
+  char* dst = const_cast<char*>(start);
+  char* src = const_cast<char*>(end);
   size_t delta = src - dst;
 
   if (delta == 0) {
@@ -416,7 +416,7 @@ size_t TextArea::Text::removeText(const char *start, const char *end) {
   return 0;
 }
 
-size_t TextArea::Text::removeRemainingLine(const char *location,
+size_t TextArea::Text::removeRemainingLine(const char* location,
                                            OMG::HorizontalDirection direction) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location <= m_buffer + m_bufferSize);
@@ -424,7 +424,7 @@ size_t TextArea::Text::removeRemainingLine(const char *location,
   assert(direction.isLeft() || location < m_buffer + m_bufferSize);
 
   UTF8Decoder decoder(m_buffer, location);
-  const char *codePointPosition = decoder.stringPosition();
+  const char* codePointPosition = decoder.stringPosition();
   CodePoint nextCodePoint = direction.isRight() ? decoder.nextCodePoint()
                                                 : decoder.previousCodePoint();
   if (direction.isLeft()) {
@@ -449,7 +449,7 @@ size_t TextArea::Text::removeRemainingLine(const char *location,
 
 /* TextArea::Text::Line */
 
-TextArea::Text::Line::Line(const char *text) : m_text(text), m_charLength(0) {
+TextArea::Text::Line::Line(const char* text) : m_text(text), m_charLength(0) {
   if (m_text != nullptr) {
     m_charLength = UTF8Helper::CodePointSearch(text, '\n') - m_text;
   }
@@ -461,7 +461,7 @@ KDCoordinate TextArea::Text::Line::glyphWidth(KDFont::Size const font) const {
       .width();
 }
 
-bool TextArea::Text::Line::contains(const char *c) const {
+bool TextArea::Text::Line::contains(const char* c) const {
   return (c >= m_text) &&
          ((c < m_text + m_charLength) ||
           (c == m_text + m_charLength && (UTF8Helper::CodePointIs(c, 0) ||
@@ -470,8 +470,8 @@ bool TextArea::Text::Line::contains(const char *c) const {
 
 /* TextArea::Text::LineIterator */
 
-TextArea::Text::LineIterator &TextArea::Text::LineIterator::operator++() {
-  const char *last = m_line.text() + m_line.charLength();
+TextArea::Text::LineIterator& TextArea::Text::LineIterator::operator++() {
+  const char* last = m_line.text() + m_line.charLength();
   assert(UTF8Helper::CodePointIs(last, 0) ||
          UTF8Helper::CodePointIs(last, '\n'));
   assert(UTF8Decoder::CharSizeOfCodePoint('\n') == 1);
@@ -497,7 +497,7 @@ KDSize TextArea::Text::span(KDFont::Size const font) const {
 
 /* TextArea::ContentView */
 
-void TextArea::ContentView::drawRect(KDContext *ctx, KDRect rect) const {
+void TextArea::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   // TODO: We're clearing areas we'll draw text over. It's not needed.
   clearRect(ctx, rect);
 
@@ -524,9 +524,9 @@ void TextArea::ContentView::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 void TextArea::ContentView::drawStringAt(
-    KDContext *ctx, int line, int column, const char *text, int length,
-    KDColor textColor, KDColor backgroundColor, const char *selectionStart,
-    const char *selectionEnd, KDColor backgroundHighlightColor) const {
+    KDContext* ctx, int line, int column, const char* text, int length,
+    KDColor textColor, KDColor backgroundColor, const char* selectionStart,
+    const char* selectionEnd, KDColor backgroundHighlightColor) const {
   if (length < 0) {
     return;
   }
@@ -548,7 +548,7 @@ void TextArea::ContentView::drawStringAt(
   if (!drawSelection) {
     return;
   }
-  const char *highlightedDrawStart = std::max(selectionStart, text);
+  const char* highlightedDrawStart = std::max(selectionStart, text);
   size_t highlightedDrawLength =
       std::min(selectionEnd - highlightedDrawStart,
                length - (highlightedDrawStart - text));
@@ -559,7 +559,7 @@ void TextArea::ContentView::drawStringAt(
                                .font = m_format.style.font},
                               highlightedDrawLength);
 
-  const char *notHighlightedDrawStart =
+  const char* notHighlightedDrawStart =
       highlightedDrawStart + highlightedDrawLength;
   ctx->drawString(notHighlightedDrawStart, nextPoint, glyphStyle,
                   length - (notHighlightedDrawStart - text));
@@ -573,13 +573,13 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
       span.width() + KDFont::GlyphWidth(m_format.style.font), span.height());
 }
 
-void TextArea::ContentView::setText(char *textBuffer, size_t textBufferSize) {
+void TextArea::ContentView::setText(char* textBuffer, size_t textBufferSize) {
   m_text.setText(textBuffer, textBufferSize);
   m_cursorLocation = text();
 }
 
-bool TextArea::ContentView::insertTextAtLocation(const char *text,
-                                                 char *location,
+bool TextArea::ContentView::insertTextAtLocation(const char* text,
+                                                 char* location,
                                                  int textLength) {
   size_t textLen = textLength < 0 ? strlen(text) : textLength;
   assert(textLen <= strlen(text));
@@ -605,7 +605,7 @@ bool TextArea::ContentView::removePreviousGlyph() {
     return false;
   }
   bool lineBreak = false;
-  char *cursorLoc = const_cast<char *>(cursorLocation());
+  char* cursorLoc = const_cast<char*>(cursorLocation());
   lineBreak = m_text.removePreviousGlyph(&cursorLoc) == '\n';
   setCursorLocation(cursorLoc);  // Update the cursor
   layoutSubviews();              // Reposition the cursor
@@ -640,7 +640,7 @@ bool TextArea::ContentView::removeStartOfLine() {
   return false;
 }
 
-size_t TextArea::ContentView::removeText(const char *start, const char *end) {
+size_t TextArea::ContentView::removeText(const char* start, const char* end) {
   return m_text.removeText(start, end);
 }
 
@@ -652,8 +652,8 @@ size_t TextArea::ContentView::deleteSelection() {
   return removedLength;
 }
 
-KDRect TextArea::ContentView::glyphFrameAtPosition(const char *text,
-                                                   const char *position) const {
+KDRect TextArea::ContentView::glyphFrameAtPosition(const char* text,
+                                                   const char* position) const {
   assert(text == m_text.text());
   KDSize glyphSize = KDFont::GlyphSize(m_format.style.font);
   Text::Position p = m_text.positionAtPointer(position);
@@ -689,7 +689,7 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 }
 
 void TextArea::selectUpDown(OMG::VerticalDirection direction, int step) {
-  const char *previousCursorLocation = contentView()->cursorLocation();
+  const char* previousCursorLocation = contentView()->cursorLocation();
   contentView()->moveCursorGeo(0, direction.isUp() ? -step : step);
   contentView()->updateSelection(previousCursorLocation);
   scrollToCursor();

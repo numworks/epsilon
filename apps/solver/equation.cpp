@@ -18,13 +18,13 @@ using namespace Shared;
 
 namespace Solver {
 
-bool Equation::containsIComplex(Context *context,
+bool Equation::containsIComplex(Context* context,
                                 SymbolicComputation replaceSymbols) const {
   return expressionClone().hasComplexI(context, replaceSymbols);
 }
 
 SystemExpression Equation::Model::standardForm(
-    const Storage::Record *record, Context *context,
+    const Storage::Record* record, Context* context,
     bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {
   SystemExpression returnedExpression = SystemExpression();
   // In any case, undefined symbols must be preserved.
@@ -40,7 +40,7 @@ SystemExpression Equation::Model::standardForm(
     expressionInputWithoutFunctions = Undefined::Builder();
   }
   EmptyContext emptyContext;
-  Context *contextToUse =
+  Context* contextToUse =
       replaceFunctionsButNotSymbols ? &emptyContext : context;
 
   // Reduce the expression
@@ -51,7 +51,7 @@ SystemExpression Equation::Model::standardForm(
   if (simplifiedInput.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
-                 [](const NewExpression e, Context *context) {
+                 [](const NewExpression e, Context* context) {
                    return e.isOfType({ExpressionNode::Type::Undefined,
                                       ExpressionNode::Type::Infinity}) ||
                           NewExpression::IsMatrix(e, context);
@@ -77,20 +77,20 @@ SystemExpression Equation::Model::standardForm(
      * 1 = 0) or 0 if it has infinite solutions. */
     returnedExpression =
         simplifiedInput.type() == ExpressionNode::Type::Boolean &&
-                static_cast<Boolean &>(simplifiedInput).value()
+                static_cast<Boolean&>(simplifiedInput).value()
             ? Rational::Builder(0)
             : Rational::Builder(1);
   }
   return returnedExpression;
 }
 
-void *Equation::Model::expressionAddress(
-    const Ion::Storage::Record *record) const {
-  return (char *)record->value().buffer;
+void* Equation::Model::expressionAddress(
+    const Ion::Storage::Record* record) const {
+  return (char*)record->value().buffer;
 }
 
 size_t Equation::Model::expressionSize(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   return record->value().size;
 }
 

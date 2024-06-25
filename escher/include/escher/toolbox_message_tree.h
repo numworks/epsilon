@@ -14,8 +14,8 @@ union ToolboxMessage;
 class ToolboxMessageTree : public MessageTree {
  public:
   using MessageTree::MessageTree;
-  const MessageTree *childAtIndex(int index) const override { return nullptr; }
-  virtual const ToolboxMessage *childrenList() const { return nullptr; }
+  const MessageTree* childAtIndex(int index) const override { return nullptr; }
+  virtual const ToolboxMessage* childrenList() const { return nullptr; }
   virtual Poincare::Layout layout() const { return {}; }
   virtual constexpr I18n::Message text() const { return I18n::Message(0); }
   virtual I18n::Message insertedText() const { return I18n::Message(0); }
@@ -46,7 +46,7 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
 
 class ToolboxMessageMath : public ToolboxMessageTree {
  public:
-  constexpr ToolboxMessageMath(const Poincare::Internal::Tree *layout,
+  constexpr ToolboxMessageMath(const Poincare::Internal::Tree* layout,
                                I18n::Message text)
       : ToolboxMessageTree(text), m_layout(layout){};
 
@@ -56,45 +56,45 @@ class ToolboxMessageMath : public ToolboxMessageTree {
   Poincare::Layout layout() const override { return m_layout; }
 
  private:
-  const Poincare::Internal::Tree *m_layout;
+  const Poincare::Internal::Tree* m_layout;
 };
 
 class ToolboxMessageNodeDirect : public ToolboxMessageTree {
  public:
   constexpr ToolboxMessageNodeDirect(I18n::Message label,
-                                     const ToolboxMessage *const children,
+                                     const ToolboxMessage* const children,
                                      int numberOfChildren)
       : ToolboxMessageTree(label),
         m_directChildren(children),
         m_numberOfChildren(numberOfChildren) {}
 
   int numberOfChildren() const override { return m_numberOfChildren; }
-  const MessageTree *childAtIndex(int index) const override;
-  const ToolboxMessage *childrenList() const override {
+  const MessageTree* childAtIndex(int index) const override;
+  const ToolboxMessage* childrenList() const override {
     return m_directChildren;
   }
 
  private:
-  const ToolboxMessage *const m_directChildren;
+  const ToolboxMessage* const m_directChildren;
   const int16_t m_numberOfChildren;
 };
 
 class ToolboxMessageNodeIndirect : public ToolboxMessageTree {
  public:
   constexpr ToolboxMessageNodeIndirect(I18n::Message label,
-                                       const ToolboxMessage *const *children,
+                                       const ToolboxMessage* const* children,
                                        int numberOfChildren)
       : ToolboxMessageTree(label),
         m_indirectChildren(children),
         m_numberOfChildren(numberOfChildren) {}
 
   int numberOfChildren() const override { return m_numberOfChildren; }
-  const MessageTree *childAtIndex(int index) const override {
-    return reinterpret_cast<const MessageTree *>(m_indirectChildren[index]);
+  const MessageTree* childAtIndex(int index) const override {
+    return reinterpret_cast<const MessageTree*>(m_indirectChildren[index]);
   }
 
  private:
-  const ToolboxMessage *const *m_indirectChildren;
+  const ToolboxMessage* const* m_indirectChildren;
   const int16_t m_numberOfChildren;
 };
 
@@ -107,7 +107,7 @@ constexpr ToolboxMessageNodeDirect ToolboxMessageNode(
 
 template <int N>
 constexpr ToolboxMessageNodeIndirect ToolboxMessageNode(
-    I18n::Message label, const ToolboxMessage *const (&children)[N],
+    I18n::Message label, const ToolboxMessage* const (&children)[N],
     bool fork = false) {
   return ToolboxMessageNodeIndirect(label, children, fork ? -N : N);
 }
@@ -122,8 +122,8 @@ union ToolboxMessage {
   constexpr ToolboxMessage(ToolboxMessageNodeDirect node) : nodeDirect(node) {}
   constexpr ToolboxMessage(ToolboxMessageNodeIndirect node)
       : nodeIndirect(node) {}
-  const ToolboxMessageTree *toMessageTree() const {
-    return reinterpret_cast<const ToolboxMessageTree *>(this);
+  const ToolboxMessageTree* toMessageTree() const {
+    return reinterpret_cast<const ToolboxMessageTree*>(this);
   }
   ToolboxMessageLeaf leaf;
   ToolboxMessageMath math;
@@ -132,9 +132,9 @@ union ToolboxMessage {
 };
 
 // This method needs to be after the union's definition to know the union's size
-inline const MessageTree *ToolboxMessageNodeDirect::childAtIndex(
+inline const MessageTree* ToolboxMessageNodeDirect::childAtIndex(
     int index) const {
-  return reinterpret_cast<const MessageTree *>(m_directChildren + index);
+  return reinterpret_cast<const MessageTree*>(m_directChildren + index);
 }
 
 }  // namespace Escher

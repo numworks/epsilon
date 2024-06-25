@@ -16,13 +16,13 @@ using namespace Escher;
 
 namespace Graph {
 
-const char *AreaBetweenCurvesGraphController::title() {
+const char* AreaBetweenCurvesGraphController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
 void AreaBetweenCurvesGraphController::viewWillAppear() {
   IntegralGraphController::viewWillAppear();
-  static_cast<GraphView *>(m_graphView)
+  static_cast<GraphView*>(m_graphView)
       ->setInterest(Solver<double>::Interest::Intersection);
 }
 
@@ -99,7 +99,7 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 
 Poincare::SystemExpression
 AreaBetweenCurvesGraphController::createSumExpression(
-    double startSum, double endSum, Poincare::Context *context) {
+    double startSum, double endSum, Poincare::Context* context) {
   // Get the expression of the first function
   ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());

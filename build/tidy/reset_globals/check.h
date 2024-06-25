@@ -12,13 +12,13 @@ namespace epsilon {
 
 class ResetGlobalsCheck : public ClangTidyCheck {
  public:
-  ResetGlobalsCheck(StringRef Name, ClangTidyContext *Context)
+  ResetGlobalsCheck(StringRef Name, ClangTidyContext* Context)
       : ClangTidyCheck(Name, Context) {}
-  void registerMatchers(ast_matchers::MatchFinder *Finder) override;
-  void check(const ast_matchers::MatchFinder::MatchResult &Result) override;
+  void registerMatchers(ast_matchers::MatchFinder* Finder) override;
+  void check(const ast_matchers::MatchFinder::MatchResult& Result) override;
 
  private:
-  void diagnose(const VarDecl *decl, const char *message);
+  void diagnose(const VarDecl* decl, const char* message);
 };
 
 }  // namespace epsilon

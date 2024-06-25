@@ -14,7 +14,7 @@ class InterestData {
   constexpr static uint8_t k_maxNumberOfUnknowns =
       5;  // static_cast<uint8_t>(CompoundInterestData::Parameter::PY)
 
-  InterestData(double *sharedValues) : m_sharedValues(sharedValues) {}
+  InterestData(double* sharedValues) : m_sharedValues(sharedValues) {}
 
   virtual I18n::Message labelForParameter(uint8_t param) const = 0;
   virtual I18n::Message sublabelForParameter(uint8_t param) const = 0;
@@ -51,7 +51,7 @@ class InterestData {
   uint8_t m_unknown;
 
  private:
-  double *m_sharedValues;
+  double* m_sharedValues;
 };
 
 class SimpleInterestData : public InterestData {
@@ -65,7 +65,7 @@ class SimpleInterestData : public InterestData {
   };
 
  public:
-  SimpleInterestData(double *sharedValues) : InterestData(sharedValues) {
+  SimpleInterestData(double* sharedValues) : InterestData(sharedValues) {
     resetValues();
   }
 
@@ -121,7 +121,7 @@ class CompoundInterestData : public InterestData {
   };
 
  public:
-  CompoundInterestData(double *sharedValues) : InterestData(sharedValues) {
+  CompoundInterestData(double* sharedValues) : InterestData(sharedValues) {
     resetValues();
   }
 
@@ -179,15 +179,15 @@ class Data {
   Data()
       /* The cast is there to prevent GCC from warning about m_sharedValues
        * array being used uninitialized */
-      : m_compoundInterestData(static_cast<double *>(m_sharedValues)),
-        m_simpleInterestData(static_cast<double *>(m_sharedValues)),
+      : m_compoundInterestData(static_cast<double*>(m_sharedValues)),
+        m_simpleInterestData(static_cast<double*>(m_sharedValues)),
         m_selectedModel(true) {}
   void reset();
   void setModel(bool selectedModel) { m_selectedModel = selectedModel; }
-  InterestData *interestData() {
+  InterestData* interestData() {
     return m_selectedModel
-               ? static_cast<InterestData *>(&m_simpleInterestData)
-               : static_cast<InterestData *>(&m_compoundInterestData);
+               ? static_cast<InterestData*>(&m_simpleInterestData)
+               : static_cast<InterestData*>(&m_compoundInterestData);
   }
 
  private:

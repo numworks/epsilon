@@ -10,9 +10,9 @@ using namespace Escher;
 namespace Inference {
 
 InputHomogeneityTableCell::InputHomogeneityTableCell(
-    Escher::Responder *parentResponder, HomogeneityTest *test,
-    InputHomogeneityController *inputHomogeneityController,
-    Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parentResponder, HomogeneityTest* test,
+    InputHomogeneityController* inputHomogeneityController,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, test,
                                 scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
@@ -27,7 +27,7 @@ void InputHomogeneityTableCell::didBecomeFirstResponder() {
   CategoricalTableCell::didBecomeFirstResponder();
 }
 
-void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                                     int column, int row) {
   HomogeneityTableDataSource::fillCellForLocation(cell, column, row);
   if ((column == 0 && row != 0 && row == numberOfRows() - 1 &&
@@ -35,12 +35,12 @@ void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell *cell,
       (row == 0 && column != 0 && column == numberOfColumns() - 1 &&
        column < k_maxNumberOfColumns)) {
     /* The last column/row is empty and has its title grayed out. */
-    static_cast<InferenceEvenOddBufferCell *>(cell)->setTextColor(
+    static_cast<InferenceEvenOddBufferCell*>(cell)->setTextColor(
         Palette::GrayDark);
   }
 }
 
-size_t InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
+size_t InputHomogeneityTableCell::fillColumnName(int column, char* buffer) {
   constexpr size_t bufferSize =
       Shared::ColumnParameterController::k_titleBufferSize;
   size_t length =
@@ -52,9 +52,9 @@ size_t InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
 }
 
 void InputHomogeneityTableCell::fillInnerCellForLocation(
-    Escher::HighlightCell *cell, int column, int row) {
-  InferenceEvenOddEditableCell *myCell =
-      static_cast<InferenceEvenOddEditableCell *>(cell);
+    Escher::HighlightCell* cell, int column, int row) {
+  InferenceEvenOddEditableCell* myCell =
+      static_cast<InferenceEvenOddEditableCell*>(cell);
   fillValueCellForLocation(myCell->editableTextCell()->textField(), myCell,
                            column, row, tableModel());
 }
@@ -85,7 +85,7 @@ void InputHomogeneityTableCell::destroyCells() {
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 
-CategoricalController *InputHomogeneityTableCell::categoricalController() {
+CategoricalController* InputHomogeneityTableCell::categoricalController() {
   return m_inputHomogeneityController;
 }
 

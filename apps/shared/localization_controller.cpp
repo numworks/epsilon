@@ -12,8 +12,8 @@ constexpr int
     LocalizationController::ContentView::k_numberOfCountryWarningLines;
 
 LocalizationController::ContentView::ContentView(
-    LocalizationController *controller,
-    SelectableListViewDataSource *dataSource)
+    LocalizationController* controller,
+    SelectableListViewDataSource* dataSource)
     : m_controller(controller),
       m_selectableListView(controller, controller, dataSource),
       m_countryTitleMessage(I18n::Message::Country),
@@ -40,7 +40,7 @@ int LocalizationController::ContentView::numberOfSubviews() const {
              m_controller->shouldDisplayWarning();
 }
 
-View *LocalizationController::ContentView::subviewAtIndex(int i) {
+View* LocalizationController::ContentView::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   /* This relies on the fact that the title is never displayed without the
    * warning. */
@@ -160,7 +160,7 @@ I18n::Country LocalizationController::CountryAtIndex(int i) {
 }
 
 LocalizationController::LocalizationController(
-    Responder *parentResponder, LocalizationController::Mode mode)
+    Responder* parentResponder, LocalizationController::Mode mode)
     : ViewController(parentResponder), m_contentView(this, this), m_mode(mode) {
   setVerticalMargins();
 }
@@ -184,7 +184,7 @@ int LocalizationController::indexOfCellToSelectOnReset() const {
       GlobalPreferences::SharedGlobalPreferences()->language());
 }
 
-const char *LocalizationController::title() {
+const char* LocalizationController::title() {
   if (mode() == Mode::Language) {
     return I18n::translate(I18n::Message::Language);
   }
@@ -219,14 +219,14 @@ KDCoordinate LocalizationController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-void LocalizationController::fillCellForRow(HighlightCell *cell, int row) {
+void LocalizationController::fillCellForRow(HighlightCell* cell, int row) {
   if (mode() == Mode::Language) {
-    static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
+    static_cast<MenuCell<MessageTextView>*>(cell)->label()->setMessage(
         I18n::LanguageNames[row]);
     return;
   }
   assert(mode() == Mode::Country);
-  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
+  static_cast<MenuCell<MessageTextView>*>(cell)->label()->setMessage(
       I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(row))]);
 }
 

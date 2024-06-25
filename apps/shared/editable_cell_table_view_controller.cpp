@@ -19,12 +19,12 @@ using namespace Poincare;
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(
-    Responder *parentResponder, Escher::SelectableTableViewDelegate *delegate)
+    Responder* parentResponder, Escher::SelectableTableViewDelegate* delegate)
     : TabTableController(parentResponder),
       m_selectableTableView(this, this, this, delegate) {}
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return MathTextFieldDelegate::textFieldShouldFinishEditing(textField,
                                                              event) ||
          (event == Ion::Events::Down && selectedRow() < numberOfRows()) ||
@@ -37,7 +37,7 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
   if (HasUndefinedValue(floatBody)) {
     return false;
@@ -85,10 +85,10 @@ int EditableCellTableViewController::numberOfRows() const {
 }
 
 void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
-    HighlightCell *cell, int column, int row,
+    HighlightCell* cell, int column, int row,
     Preferences::PrintFloatMode floatDisplayMode,
     uint8_t numberOfSignificantDigits) {
-  static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
+  static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
   if (row == 0) {
     setTitleCellText(cell, column);
     setTitleCellStyle(cell, column);
@@ -108,7 +108,7 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
           dataAtLocation(column, row), buffer, k_bufferSize,
           numberOfSignificantDigits, floatDisplayMode);
     }
-    static_cast<AbstractEvenOddEditableTextCell *>(cell)
+    static_cast<AbstractEvenOddEditableTextCell*>(cell)
         ->editableTextCell()
         ->textField()
         ->setText(buffer);
@@ -141,8 +141,8 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
       selectedRow() == 0) {
-    SelectableViewController *controller = columnParameterController();
-    ColumnParameters *parameters = columnParameters();
+    SelectableViewController* controller = columnParameterController();
+    ColumnParameters* parameters = columnParameters();
     if (controller != nullptr) {
       parameters
           ->initializeColumnParameters();  // Always initialize before pushing

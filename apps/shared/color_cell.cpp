@@ -4,10 +4,10 @@
 
 namespace Shared {
 
-void ColorView::drawRect(KDContext *ctx, KDRect rect) const {
+void ColorView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
   ctx->blendRectWithMask(bounds(), m_color,
-                         reinterpret_cast<const uint8_t *>(Dots::LargeDotMask),
+                         reinterpret_cast<const uint8_t*>(Dots::LargeDotMask),
                          workingBuffer);
 }
 

@@ -12,10 +12,10 @@ namespace Inference {
 class ResultsGoodnessTabController : public Escher::TabViewController,
                                      public Escher::TabViewDataSource {
  public:
-  ResultsGoodnessTabController(Escher::Responder *parent,
-                               TestGraphController *testGraphController,
-                               IntervalGraphController *intervalGraphController,
-                               GoodnessTest *statistic);
+  ResultsGoodnessTabController(Escher::Responder* parent,
+                               TestGraphController* testGraphController,
+                               IntervalGraphController* intervalGraphController,
+                               GoodnessTest* statistic);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -31,38 +31,38 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
    public:
     using ResultsController::ResultsController;
 
-    void stackOpenPage(ViewController *nextPage) override {
+    void stackOpenPage(ViewController* nextPage) override {
       tabController()->stackOpenPage(nextPage);
     }
 
-    const char *title() override;
+    const char* title() override;
 
-    Escher::TabViewController *tabController() {
-      return static_cast<Escher::TabViewController *>(parentResponder());
+    Escher::TabViewController* tabController() {
+      return static_cast<Escher::TabViewController*>(parentResponder());
     }
   };
   class ContributionsController : public CategoricalController {
    public:
-    ContributionsController(Escher::Responder *parentResponder,
-                            Escher::ViewController *nextController,
-                            GoodnessTest *statistic);
+    ContributionsController(Escher::Responder* parentResponder,
+                            Escher::ViewController* nextController,
+                            GoodnessTest* statistic);
     // ViewController
     void viewWillAppear() override;
-    void stackOpenPage(ViewController *nextPage) override {
+    void stackOpenPage(ViewController* nextPage) override {
       tabController()->stackOpenPage(nextPage);
     }
 
-    Escher::TabViewController *tabController() {
-      return static_cast<Escher::TabViewController *>(parentResponder());
+    Escher::TabViewController* tabController() {
+      return static_cast<Escher::TabViewController*>(parentResponder());
     }
 
     // Escher::ViewController
-    const char *title() override {
+    const char* title() override {
       return I18n::translate(I18n::Message::Contributions);
     }
 
    private:
-    virtual CategoricalTableCell *categoricalTableCell() override {
+    virtual CategoricalTableCell* categoricalTableCell() override {
       return &m_table;
     }
     void createDynamicCells() override;

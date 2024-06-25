@@ -30,7 +30,7 @@ static UserExpression enhancePushedExpression(UserExpression expression) {
 
 // Public
 
-CalculationStore::CalculationStore(char *buffer, size_t bufferSize)
+CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
     : m_buffer(buffer),
       m_bufferSize(bufferSize),
       m_numberOfCalculations(0),
@@ -39,13 +39,13 @@ CalculationStore::CalculationStore(char *buffer, size_t bufferSize)
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
   assert(0 <= index && index <= numberOfCalculations() - 1);
-  Calculation *ptr = reinterpret_cast<Calculation *>(
+  Calculation* ptr = reinterpret_cast<Calculation*>(
       index == numberOfCalculations() - 1 ? m_buffer
                                           : endOfCalculationAtIndex(index + 1));
   return ExpiringPointer(ptr);
 }
 
-UserExpression CalculationStore::ansExpression(Context *context) const {
+UserExpression CalculationStore::ansExpression(Context* context) const {
   const UserExpression defaultAns = UserExpression::Builder(0_e);
   if (numberOfCalculations() == 0) {
     return defaultAns;
@@ -93,14 +93,14 @@ UserExpression CalculationStore::ansExpression(Context *context) const {
 }
 
 UserExpression CalculationStore::replaceAnsInExpression(
-    UserExpression expression, Context *context) const {
+    UserExpression expression, Context* context) const {
   Symbol ansSymbol = Symbol::Ans();
   UserExpression ansExpression = this->ansExpression(context);
   return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout, Poincare::Context *context) {
+    Poincare::Layout inputLayout, Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -108,8 +108,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * approximative to avoid long computation to determine it.
    */
   m_inUsePreferences = *Preferences::SharedPreferences();
-  char *cursor = endOfCalculations();
-  Calculation *current;
+  char* cursor = endOfCalculations();
+  Calculation* current;
   UserExpression exactOutputExpression, approximateOutputExpression,
       storeExpression;
 
@@ -125,7 +125,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       VariableContext ansContext = createAnsContext(context);
 
       // Push a new, empty Calculation
-      current = reinterpret_cast<Calculation *>(cursor);
+      current = reinterpret_cast<Calculation*>(cursor);
       cursor = pushEmptyCalculation(
           cursor,
           Poincare::Preferences::SharedPreferences()->calculationPreferences());
@@ -136,7 +136,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
           UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      char *nextCursor = pushExpressionTree(
+      char* nextCursor = pushExpressionTree(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (nextCursor == k_pushError) {
         return errorPushUndefined();
@@ -160,11 +160,11 @@ ExpiringPointer<Calculation> CalculationStore::push(
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
         UserExpression exactStoredExpression =
-            static_cast<Store &>(storeExpression).value();
+            static_cast<Store&>(storeExpression).value();
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
                 exactStoredExpression, context);
-        if (static_cast<Store &>(storeExpression).symbol().type() ==
+        if (static_cast<Store&>(storeExpression).symbol().type() ==
                 ExpressionNode::Type::Symbol &&
             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,
@@ -173,9 +173,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
               KStore(KA, KB), {.KA = approximateOutputExpression,
                                .KB = storeExpression.childAtIndex(1)});
         }
-        assert(static_cast<Store &>(storeExpression).symbol().type() !=
+        assert(static_cast<Store&>(storeExpression).symbol().type() !=
                    ExpressionNode::Type::Symbol ||
-               !static_cast<Store &>(storeExpression)
+               !static_cast<Store&>(storeExpression)
                     .value()
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
@@ -202,9 +202,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (!storeExpression.isUninitialized()) {
     assert(storeExpression.type() == ExpressionNode::Type::Store);
-    if (static_cast<Store &>(storeExpression).storeValueForSymbol(context)) {
+    if (static_cast<Store&>(storeExpression).storeValueForSymbol(context)) {
       exactOutputExpression = context->expressionForSymbolAbstract(
-          static_cast<Store &>(storeExpression).symbol(), false);
+          static_cast<Store&>(storeExpression).symbol(), false);
       assert(!exactOutputExpression.isUninitialized());
     } else {
       exactOutputExpression = Undefined::Builder();
@@ -226,7 +226,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         i == 0 ? exactOutputExpression : approximateOutputExpression;
     int digits = PrintFloat::k_maxNumberOfSignificantDigits;
 
-    char *nextCursor = pushExpressionTree(cursor, e, digits);
+    char* nextCursor = pushExpressionTree(cursor, e, digits);
     if (nextCursor == k_pushError) {
       nextCursor = pushUndefined(cursor);
       if (nextCursor == k_pushError) {
@@ -241,10 +241,10 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */
-  assert(cursor < pointerArea() - sizeof(Calculation *));
+  assert(cursor < pointerArea() - sizeof(Calculation*));
   pointerArray()[-1] = cursor;
-  Calculation *newCalculation =
-      reinterpret_cast<Calculation *>(endOfCalculations());
+  Calculation* newCalculation =
+      reinterpret_cast<Calculation*>(endOfCalculations());
 
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
@@ -257,7 +257,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
 bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   if (m_inUsePreferences.combinatoricSymbols() ==
           preferences->combinatoricSymbols() &&
       m_inUsePreferences.numberOfSignificantDigits() ==
@@ -270,7 +270,7 @@ bool CalculationStore::preferencesHaveChanged() {
   return true;
 }
 
-VariableContext CalculationStore::createAnsContext(Context *context) {
+VariableContext CalculationStore::createAnsContext(Context* context) {
   VariableContext ansContext(Symbol::k_ansAliases.mainAlias(), context);
   ansContext.setExpressionForSymbolAbstract(ansExpression(context),
                                             Symbol::Ans());
@@ -279,29 +279,28 @@ VariableContext CalculationStore::createAnsContext(Context *context) {
 
 // Private
 
-char *CalculationStore::endOfCalculationAtIndex(int index) const {
+char* CalculationStore::endOfCalculationAtIndex(int index) const {
   assert(0 <= index && index < numberOfCalculations());
-  char *res = pointerArray()[index];
+  char* res = pointerArray()[index];
   /* Make sure the calculation pointed to is inside the buffer */
   assert(m_buffer <= res && res < m_buffer + m_bufferSize);
   return res;
 }
 
 size_t CalculationStore::spaceForNewCalculations(
-    char *currentEndOfCalculations) const {
+    char* currentEndOfCalculations) const {
   // Be careful with size_t: negative values are not handled
-  return currentEndOfCalculations + sizeof(Calculation *) < pointerArea()
-             ? (pointerArea() - currentEndOfCalculations) -
-                   sizeof(Calculation *)
+  return currentEndOfCalculations + sizeof(Calculation*) < pointerArea()
+             ? (pointerArea() - currentEndOfCalculations) - sizeof(Calculation*)
              : 0;
 }
 
 size_t CalculationStore::privateDeleteCalculationAtIndex(
-    int index, char *shiftedMemoryEnd) {
-  char *deletionStart = index == numberOfCalculations() - 1
+    int index, char* shiftedMemoryEnd) {
+  char* deletionStart = index == numberOfCalculations() - 1
                             ? m_buffer
                             : endOfCalculationAtIndex(index + 1);
-  char *deletionEnd = endOfCalculationAtIndex(index);
+  char* deletionEnd = endOfCalculationAtIndex(index);
   size_t deletedSize = deletionEnd - deletionStart;
   size_t shiftedMemorySize = shiftedMemoryEnd - deletionEnd;
 
@@ -319,11 +318,11 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
 
 ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
   assert(numberOfCalculations() == 0);
-  char *cursor = pushUndefined(m_buffer);
+  char* cursor = pushUndefined(m_buffer);
   assert(m_buffer < cursor &&
-         cursor <= m_buffer + m_bufferSize - sizeof(Calculation *));
+         cursor <= m_buffer + m_bufferSize - sizeof(Calculation*));
   *(pointerArray() - 1) = cursor;
-  Calculation *calculation = reinterpret_cast<Calculation *>(m_buffer);
+  Calculation* calculation = reinterpret_cast<Calculation*>(m_buffer);
   m_numberOfCalculations = 1;
   return ExpiringPointer(calculation);
 }
@@ -338,8 +337,8 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
  * several if k_pushError.
  */
 
-char *CalculationStore::pushEmptyCalculation(
-    char *location,
+char* CalculationStore::pushEmptyCalculation(
+    char* location,
     Poincare::Preferences::CalculationPreferences calculationPreferences) {
   while (spaceForNewCalculations(location) < k_calculationMinimalSize) {
     if (numberOfCalculations() == 0) {
@@ -351,7 +350,7 @@ char *CalculationStore::pushEmptyCalculation(
   return location + sizeof(Calculation);
 }
 
-char *CalculationStore::pushExpressionTree(char *location, UserExpression e,
+char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
                                            int numberOfSignificantDigits) {
   while (true) {
     size_t availableSize = spaceForNewCalculations(location);
@@ -368,7 +367,7 @@ char *CalculationStore::pushExpressionTree(char *location, UserExpression e,
   assert(false);
 }
 
-char *CalculationStore::pushUndefined(char *location) {
+char* CalculationStore::pushUndefined(char* location) {
   return pushExpressionTree(location, Undefined::Builder(),
                             m_inUsePreferences.numberOfSignificantDigits());
 }

@@ -17,7 +17,7 @@ using namespace Poincare;
 namespace Home {
 
 Controller::ContentView::ContentView(
-    Controller *controller, SelectableTableViewDataSource *selectionDataSource)
+    Controller* controller, SelectableTableViewDataSource* selectionDataSource)
     : m_selectableTableView(controller, controller, selectionDataSource,
                             controller) {
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -27,12 +27,12 @@ Controller::ContentView::ContentView(
       {k_indicatorMargin, k_indicatorMargin - k_bottomMargin});
 }
 
-SelectableTableView *Controller::ContentView::selectableTableView() {
+SelectableTableView* Controller::ContentView::selectableTableView() {
   return &m_selectableTableView;
 }
 
 void Controller::ContentView::reloadBottomRow(
-    SimpleTableViewDataSource *dataSource, int lastIconColumn) {
+    SimpleTableViewDataSource* dataSource, int lastIconColumn) {
   /* We mark the missing icons on the last row as dirty. */
   for (int i = lastIconColumn + 1; i < dataSource->numberOfColumns(); i++) {
     markRectAsDirty(KDRect(dataSource->columnWidth(0) * i,
@@ -41,7 +41,7 @@ void Controller::ContentView::reloadBottomRow(
   }
 }
 
-View *Controller::ContentView::subviewAtIndex(int index) {
+View* Controller::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_selectableTableView;
 }
@@ -57,8 +57,8 @@ void Controller::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_selectableTableView, frame, force);
 }
 
-Controller::Controller(Responder *parentResponder,
-                       SelectableTableViewDataSource *selectionDataSource)
+Controller::Controller(Responder* parentResponder,
+                       SelectableTableViewDataSource* selectionDataSource)
     : ViewController(parentResponder), m_view(this, selectionDataSource) {}
 
 bool Controller::handleEvent(Ion::Events::Event event) {
@@ -124,21 +124,21 @@ void Controller::didBecomeFirstResponder() {
   App::app()->setFirstResponder(m_view.selectableTableView());
 }
 
-HighlightCell *Controller::reusableCell(int index) {
+HighlightCell* Controller::reusableCell(int index) {
   assert(0 <= index && index < reusableCellCount());
   return &m_reusableCells[index];
 }
 
-void Controller::fillCellForLocation(HighlightCell *cell, int column, int row) {
-  AppCell *appCell = static_cast<AppCell *>(cell);
-  AppsContainer *container = AppsContainer::sharedAppsContainer();
+void Controller::fillCellForLocation(HighlightCell* cell, int column, int row) {
+  AppCell* appCell = static_cast<AppCell*>(cell);
+  AppsContainer* container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(column, row);
   if (appIdx >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
     if (appIdx < container->numberOfBuiltinApps()) {
-      const ::App::Descriptor *descriptor =
+      const ::App::Descriptor* descriptor =
           container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx))
               ->descriptor();
       appCell->setBuiltinAppDescriptor(descriptor);
@@ -151,13 +151,13 @@ void Controller::fillCellForLocation(HighlightCell *cell, int column, int row) {
 }
 
 int Controller::numberOfIcons() const {
-  AppsContainer *container = AppsContainer::sharedAppsContainer();
+  AppsContainer* container = AppsContainer::sharedAppsContainer();
   assert(container->numberOfApps() > 0);
   return container->numberOfApps() - 1;
 }
 
 void Controller::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == m_view.selectableTableView());
   /* If the number of icons is != 3*n, when we display the lowest row, no icons
@@ -171,16 +171,16 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(
   }
 }
 
-SelectableTableViewDataSource *Controller::selectionDataSource() const {
+SelectableTableViewDataSource* Controller::selectionDataSource() const {
   return App::app()->snapshot();
 }
 
 void Controller::switchToSelectedApp() {
-  AppsContainer *container = AppsContainer::sharedAppsContainer();
+  AppsContainer* container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(),
                                         selectionDataSource()->selectedRow());
   if (appIdx < container->numberOfBuiltinApps()) {
-    ::App::Snapshot *selectedSnapshot =
+    ::App::Snapshot* selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
     if (appIsForbidden(selectedSnapshot->descriptor()->name())) {
       App::app()->displayWarning(forbiddenAppMessage());

@@ -200,8 +200,8 @@ class OTG {
   REGS_REGISTER_AT(DOEPTSIZ0, 0xB10);
   REGS_REGISTER_AT(PCGCCTL, 0xE00);
   REGS_REGISTER_AT(DFIFO0, 0x1000);
-  constexpr volatile DIEPINT *DIEPINT(int i) const {
-    return (class DIEPINT *)(Base() + 0x908 + i * 0x20);
+  constexpr volatile DIEPINT* DIEPINT(int i) const {
+    return (class DIEPINT*)(Base() + 0x908 + i * 0x20);
   }
   constexpr uint32_t Base() const { return REGS_CONFIG_OTG_BASE_ADDRESS; }
 };

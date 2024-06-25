@@ -14,13 +14,13 @@ using namespace Escher;
 namespace Calculation {
 
 EditExpressionController::ContentView::ContentView(
-    Responder *parentResponder, CalculationSelectableListView *subview,
-    LayoutFieldDelegate *layoutFieldDelegate)
+    Responder* parentResponder, CalculationSelectableListView* subview,
+    LayoutFieldDelegate* layoutFieldDelegate)
     : View(),
       m_mainView(subview),
       m_expressionInputBar(parentResponder, layoutFieldDelegate) {}
 
-View *EditExpressionController::ContentView::subviewAtIndex(int index) {
+View* EditExpressionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return m_mainView;
@@ -46,13 +46,13 @@ void EditExpressionController::ContentView::reload() {
 }
 
 EditExpressionController::EditExpressionController(
-    Responder *parentResponder, HistoryController *historyController,
-    CalculationStore *calculationStore)
+    Responder* parentResponder, HistoryController* historyController,
+    CalculationStore* calculationStore)
     : ViewController(parentResponder),
       m_historyController(historyController),
       m_calculationStore(calculationStore),
       m_contentView(this,
-                    static_cast<CalculationSelectableListView *>(
+                    static_cast<CalculationSelectableListView*>(
                         m_historyController->view()),
                     this) {}
 
@@ -69,7 +69,7 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 void EditExpressionController::restoreInput() {
-  App::Snapshot *snap = App::app()->snapshot();
+  App::Snapshot* snap = App::app()->snapshot();
   m_contentView.layoutField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
@@ -83,7 +83,7 @@ void EditExpressionController::restoreInput() {
 }
 
 void EditExpressionController::memoizeInput() {
-  App::Snapshot *snap = App::app()->snapshot();
+  App::Snapshot* snap = App::app()->snapshot();
   *snap->cacheBufferInformationAddress() =
       m_contentView.layoutField()->dumpContent(
           snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(),
@@ -95,7 +95,7 @@ void EditExpressionController::viewWillAppear() {
 }
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(
-    ::LayoutField *layoutField, Ion::Events::Event event) {
+    ::LayoutField* layoutField, Ion::Events::Event event) {
   assert(m_contentView.layoutField() == layoutField);
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
@@ -114,7 +114,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
 }
 
 void EditExpressionController::layoutFieldDidHandleEvent(
-    Escher::LayoutField *layoutField) {
+    Escher::LayoutField* layoutField) {
   assert(m_contentView.layoutField() == layoutField);
   /* Memoize on all handled event, even if the text did not change, to properly
    * update the cursor position. */
@@ -122,13 +122,13 @@ void EditExpressionController::layoutFieldDidHandleEvent(
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(
-    ::LayoutField *layoutField, Ion::Events::Event event) {
+    ::LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
 #if TODO_PCJ
   assert(layoutField->context() == context());
 #endif
-  Context *context = this->context();
+  Context* context = this->context();
   VariableContext ansContext = m_calculationStore->createAnsContext(context);
   if (layoutField->isEmpty()) {
     return false;
@@ -140,7 +140,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   }
   assert(!layout.isUninitialized());
   // TODO layout is parsed twice : in isAcceptableLayout and in push
-  Calculation *calculation =
+  Calculation* calculation =
       m_calculationStore->push(layout, context).pointer();
   if (calculation) {
     HistoryViewCell::ComputeCalculationHeights(calculation, context);
@@ -152,7 +152,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
 }
 
 void EditExpressionController::layoutFieldDidChangeSize(
-    ::LayoutField *layoutField) {
+    ::LayoutField* layoutField) {
   assert(m_contentView.layoutField() == layoutField);
   if (layoutField->inputViewHeightDidChange()) {
     /* Reload the whole view only if the LayoutField's height did actually
@@ -169,7 +169,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::UserExpression expression, Context *context) {
+    const Poincare::UserExpression expression, Context* context) {
   if (expression.isUninitialized()) {
     return false;
   }

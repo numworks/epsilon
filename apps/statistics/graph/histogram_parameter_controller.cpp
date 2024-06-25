@@ -13,12 +13,12 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramParameterController::HistogramParameterController(
-    Responder *parentResponder, Store *store)
+    Responder* parentResponder, Store* store)
     : FloatParameterController<double>(parentResponder),
       m_store(store),
       m_confirmPopUpController(
           Invocation::Builder<HistogramParameterController>(
-              [](HistogramParameterController *controller, void *sender) {
+              [](HistogramParameterController* controller, void* sender) {
                 controller->stackController()->pop();
                 return true;
               },
@@ -41,7 +41,7 @@ void HistogramParameterController::viewWillAppear() {
   FloatParameterController::viewWillAppear();
 }
 
-const char *HistogramParameterController::title() {
+const char* HistogramParameterController::title() {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 
@@ -93,17 +93,17 @@ bool HistogramParameterController::setParameterAtIndex(int parameterIndex,
   return true;
 }
 
-HighlightCell *HistogramParameterController::reusableParameterCell(int index,
+HighlightCell* HistogramParameterController::reusableParameterCell(int index,
                                                                    int type) {
   assert(index >= 0 && index < k_numberOfCells);
   return &m_cells[index];
 }
 
-Escher::TextField *HistogramParameterController::textFieldOfCellAtIndex(
-    HighlightCell *cell, int index) {
+Escher::TextField* HistogramParameterController::textFieldOfCellAtIndex(
+    HighlightCell* cell, int index) {
   assert(typeAtRow(index) == k_parameterCellType);
   return static_cast<
-             MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
+             MenuCellWithEditableText<MessageTextView, MessageTextView>*>(cell)
       ->textField();
 }
 
@@ -138,7 +138,7 @@ bool HistogramParameterController::authorizedParameters(
 }
 
 bool HistogramParameterController::AuthorizedBarWidth(
-    double barWidth, double firstDrawnBarAbscissa, Store *store) {
+    double barWidth, double firstDrawnBarAbscissa, Store* store) {
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (!Shared::DoublePairStore::DefaultActiveSeriesTest(store, i)) {
       continue;

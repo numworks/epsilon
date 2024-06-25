@@ -20,23 +20,23 @@ class App : public Shared::FunctionApp {
    public:
     I18n::Message name() const override;
     I18n::Message upperName() const override;
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   class Snapshot : public Shared::FunctionApp::Snapshot {
    public:
     using Shared::FunctionApp::Snapshot::Snapshot;
-    App *unpack(Escher::Container *container) override;
+    App* unpack(Escher::Container* container) override;
     void reset() override;
     void tidy() override;
-    const Descriptor *descriptor() const override;
-    Shared::ContinuousFunctionStore *functionStore() override {
-      return static_cast<Shared::GlobalContext *>(
+    const Descriptor* descriptor() const override;
+    Shared::ContinuousFunctionStore* functionStore() override {
+      return static_cast<Shared::GlobalContext*>(
                  AppsContainerHelper::sharedAppsContainerGlobalContext())
           ->continuousFunctionStore;
     }
-    Shared::InteractiveCurveViewRange *graphRange() { return &m_graphRange; }
-    Shared::Interval *intervalForSymbolType(
+    Shared::InteractiveCurveViewRange* graphRange() { return &m_graphRange; }
+    Shared::Interval* intervalForSymbolType(
         Shared::ContinuousFunctionProperties::SymbolType symbolType) {
       return m_interval + static_cast<size_t>(symbolType);
     }
@@ -46,31 +46,31 @@ class App : public Shared::FunctionApp {
     Shared::Interval m_interval
         [Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes];
   };
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
   TELEMETRY_ID("Graph");
-  Shared::ContinuousFunctionStore *functionStore() const override {
+  Shared::ContinuousFunctionStore* functionStore() const override {
     return snapshot()->functionStore();
   }
-  Shared::Interval *intervalForSymbolType(
+  Shared::Interval* intervalForSymbolType(
       Shared::ContinuousFunctionProperties::SymbolType symbolType) {
     return snapshot()->intervalForSymbolType(symbolType);
   }
-  ValuesController *valuesController() override {
+  ValuesController* valuesController() override {
     return &m_tabs.tab<ValuesTab>()->m_valuesController;
   }
-  ListController *listController() {
+  ListController* listController() {
     return &m_tabs.tab<ListTab>()->m_listController;
   }
-  GraphController *graphController() {
+  GraphController* graphController() {
     return &m_tabs.tab<GraphTab>()->m_graphController;
   }
 
  private:
-  App(Snapshot *snapshot);
+  App(Snapshot* snapshot);
 
   struct ListTab : public Shared::FunctionApp::ListTab {
     static constexpr I18n::Message k_title = I18n::Message::FunctionTab;

@@ -17,7 +17,7 @@ const uint8_t chevronMask[ChevronView::k_chevronHeight]
                              {0x0C, 0xE1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-void ChevronView::drawRect(KDContext *ctx, KDRect rect) const {
+void ChevronView::drawRect(KDContext* ctx, KDRect rect) const {
   /* Draw the chevron aligned on the right of the view and vertically centered.
    * The heightCenter is the coordinate of the vertical middle of the view. That
    * way, (heightCenter-switchHalfHeight) indicates the top the chevron. */
@@ -29,7 +29,7 @@ void ChevronView::drawRect(KDContext *ctx, KDRect rect) const {
   KDColor
       workingBuffer[ChevronView::k_chevronWidth * ChevronView::k_chevronHeight];
   ctx->blendRectWithMask(frame, Palette::YellowDark,
-                         (const uint8_t *)chevronMask, workingBuffer);
+                         (const uint8_t*)chevronMask, workingBuffer);
 }
 
 KDSize ChevronView::minimalSizeForOptimalDisplay() const {

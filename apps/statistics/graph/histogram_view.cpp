@@ -10,24 +10,24 @@ namespace Statistics {
 
 // HistogramPlotPolicy
 
-static double histogramLevels(double x, void *model, void *context) {
-  Store *store = reinterpret_cast<Store *>(model);
-  double *parameters = reinterpret_cast<double *>(context);
+static double histogramLevels(double x, void* model, void* context) {
+  Store* store = reinterpret_cast<Store*>(model);
+  double* parameters = reinterpret_cast<double*>(context);
   double maxSize = parameters[0];
   double series = parameters[1];
   assert(maxSize >= 0);
   return maxSize == 0 ? 0 : store->heightOfBarAtValue(series, x) / maxSize;
 }
 
-static bool barIsHighlighted(double x, void *model, void *context) {
-  double *parameters = reinterpret_cast<double *>(context);
+static bool barIsHighlighted(double x, void* model, void* context) {
+  double* parameters = reinterpret_cast<double*>(context);
   double start = parameters[2];
   double end = parameters[3];
   return start <= x && x < end;
 }
 
-void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
-                                   KDContext *ctx, KDRect rect) const {
+void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
+                                   KDContext* ctx, KDRect rect) const {
   double context[] = {m_store->maxHeightOfBar(m_series),
                       static_cast<double>(m_series), m_highlightedBarStart,
                       m_highlightedBarEnd};
@@ -52,8 +52,8 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
 
 // HistogramView
 
-HistogramView::HistogramView(Store *store, int series,
-                             Shared::CurveViewRange *range)
+HistogramView::HistogramView(Store* store, int series,
+                             Shared::CurveViewRange* range)
     : PlotView(range) {
   // HistogramPlotPolicy
   m_store = store;

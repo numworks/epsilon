@@ -21,9 +21,9 @@ namespace Graph {
 /* PUBLIC */
 
 ValuesController::ValuesController(
-    Responder *parentResponder, ButtonRowController *header,
-    FunctionParameterController *functionParameterController,
-    DerivativeColumnParameterController *derivativeColumnParameterController)
+    Responder* parentResponder, ButtonRowController* header,
+    FunctionParameterController* functionParameterController,
+    DerivativeColumnParameterController* derivativeColumnParameterController)
     : Shared::ValuesController(parentResponder, header),
       m_tableSizeManager(this),
       m_functionParameterController(functionParameterController),
@@ -33,15 +33,14 @@ ValuesController::ValuesController(
       m_setIntervalButton(
           this, I18n::Message::IntervalSet,
           Invocation::Builder<ValuesController>(
-              [](ValuesController *valuesController, void *sender) {
-                StackViewController *stack =
-                    ((StackViewController *)
-                         valuesController->stackController());
-                IntervalParameterSelectorController
-                    *intervalSelectorController =
+              [](ValuesController* valuesController, void* sender) {
+                StackViewController* stack =
+                    ((StackViewController*)valuesController->stackController());
+                IntervalParameterSelectorController*
+                    intervalSelectorController =
                         valuesController->intervalParameterSelectorController();
                 if (intervalSelectorController->numberOfRows() == 1) {
-                  IntervalParameterController *intervalController =
+                  IntervalParameterController* intervalController =
                       valuesController->intervalParameterController();
                   intervalController->setInterval(
                       valuesController->intervalAtColumn(0));
@@ -60,7 +59,7 @@ ValuesController::ValuesController(
       m_exactValuesButton(
           this, I18n::Message::ExactResults,
           Invocation::Builder<ValuesController>(
-              [](ValuesController *valuesController, void *sender) {
+              [](ValuesController* valuesController, void* sender) {
                 valuesController->exactValuesButtonAction();
                 return true;
               },
@@ -87,20 +86,20 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
+void ValuesController::fillCellForLocation(HighlightCell* cell, int column,
                                            int row) {
   // Handle hidden cells
   int type = typeAtLocation(column, row);
   if (type == k_notEditableValueCellType || type == k_editableValueCellType) {
-    EvenOddCell *eoCell = static_cast<EvenOddCell *>(cell);
+    EvenOddCell* eoCell = static_cast<EvenOddCell*>(cell);
     eoCell->setVisible(cellHasValue(column, row, true));
     if (!cellHasValue(column, row, false)) {
-      static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
+      static_cast<EvenOddCell*>(cell)->setEven(row % 2 == 0);
       if (type == k_notEditableValueCellType) {
-        static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
+        static_cast<EvenOddExpressionCell*>(eoCell)->setLayout(Layout());
       } else {
         assert(type == k_editableValueCellType);
-        static_cast<Escher::AbstractEvenOddEditableTextCell *>(eoCell)
+        static_cast<Escher::AbstractEvenOddEditableTextCell*>(eoCell)
             ->editableTextCell()
             ->textField()
             ->setText("");
@@ -130,11 +129,11 @@ void ValuesController::rowWasDeleted(int row, int column) {
 
 // ButtonRowDelegate
 
-Escher::ButtonCell *ValuesController::buttonAtIndex(
+Escher::ButtonCell* ValuesController::buttonAtIndex(
     int index, Escher::ButtonRowController::Position position) const {
   return index == 0 && displayButtonExactValues()
-             ? const_cast<Escher::ButtonState *>(&m_exactValuesButton)
-             : const_cast<Escher::SimpleButtonCell *>(&m_setIntervalButton);
+             ? const_cast<Escher::ButtonState*>(&m_exactValuesButton)
+             : const_cast<Escher::SimpleButtonCell*>(&m_setIntervalButton);
 }
 
 // PrefacedTableViewDelegate
@@ -189,7 +188,7 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
   tempCell.setFont(k_cellFont);
   tempCell.setLayout(l);
   bool addVerticalMargin =
-      !static_cast<JuniorLayout &>(l).tree()->child(0)->isPoint2DLayout();
+      !static_cast<JuniorLayout&>(l).tree()->child(0)->isPoint2DLayout();
   return tempCell.minimalSizeForOptimalDisplay() +
          KDSize(Metric::SmallCellMargin * 2,
                 addVerticalMargin * Metric::SmallCellMargin * 2);
@@ -238,7 +237,7 @@ KDSize ValuesController::cellSizeAtLocation(int row, int column) {
 
 // ColumnHelper
 
-size_t ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char* buffer) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
     int derivationOrder;
     Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
@@ -262,7 +261,7 @@ void ValuesController::reloadEditedCell(int column, int row) {
   Shared::ValuesController::reloadEditedCell(column, row);
 }
 
-void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
+void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
@@ -270,7 +269,7 @@ void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  static_cast<FunctionTitleCell *>(cell)->setColor(
+  static_cast<FunctionTitleCell*>(cell)->setColor(
       function->color(derivationOrder));
 }
 
@@ -308,7 +307,7 @@ void ValuesController::updateNumberOfColumns() {
   }
 }
 
-Layout *ValuesController::memoizedLayoutAtIndex(int i) {
+Layout* ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
 }
@@ -358,18 +357,18 @@ int ValuesController::numberOfAbscissaColumnsBeforeValuesColumn(
 }
 
 void ValuesController::setStartEndMessages(
-    Shared::IntervalParameterController *controller, int column) {
+    Shared::IntervalParameterController* controller, int column) {
   m_intervalParameterSelectorController.setStartEndMessages(
       controller, symbolTypeAtColumn(&column));
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  Preferences *preferences = Preferences::SharedPreferences();
+  Preferences* preferences = Preferences::SharedPreferences();
   double abscissa;
   int derivationOrder;
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   UserExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
@@ -413,7 +412,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
           ApproximatedParametricCellSize().width() -
               2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
-    layout = static_cast<const Point &>(result).create2DLayout(
+    layout = static_cast<const Point&>(result).create2DLayout(
         preferences->displayMode(), preferences->numberOfSignificantDigits(),
         context);
   }
@@ -437,7 +436,7 @@ void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(
   }
 }
 
-Shared::Interval *ValuesController::intervalAtColumn(int column) {
+Shared::Interval* ValuesController::intervalAtColumn(int column) {
   return App::app()->intervalForSymbolType(symbolTypeAtColumn(&column));
 }
 
@@ -447,24 +446,24 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(
       symbolTypeAtColumn(&column));
 }
 
-Shared::ExpressionFunctionTitleCell *ValuesController::functionTitleCells(
+Shared::ExpressionFunctionTitleCell* ValuesController::functionTitleCells(
     int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableColumns);
   return &m_functionTitleCells[j];
 }
 
-EvenOddExpressionCell *ValuesController::valueCells(int j) {
+EvenOddExpressionCell* ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
 }
 
-Escher::AbstractEvenOddEditableTextCell *ValuesController::abscissaCells(
+Escher::AbstractEvenOddEditableTextCell* ValuesController::abscissaCells(
     int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells);
   return &m_abscissaCells[j];
 }
 
-Escher::EvenOddMessageTextCell *ValuesController::abscissaTitleCells(int j) {
+Escher::EvenOddMessageTextCell* ValuesController::abscissaTitleCells(int j) {
   assert(j >= 0 && j < abscissaTitleCellsCount());
   return &m_abscissaTitleCells[j];
 }
@@ -472,7 +471,7 @@ Escher::EvenOddMessageTextCell *ValuesController::abscissaTitleCells(int j) {
 // Graph::ValuesController
 
 template <class T>
-T *ValuesController::parameterController() {
+T* ValuesController::parameterController() {
   int derivationOrder;
   Ion::Storage::Record record =
       recordAtColumn(selectedColumn(), &derivationOrder);
@@ -523,7 +522,7 @@ void ValuesController::activateExactValues(bool activate) {
 }
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i,
-                                                      int *derivationOrder) {
+                                                      int* derivationOrder) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
@@ -548,7 +547,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
 }
 
 Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
-    int column, int row, double *abscissa, int *derivationOrder) {
+    int column, int row, double* abscissa, int* derivationOrder) {
   *abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   Ion::Storage::Record record = recordAtColumn(column, derivationOrder);
@@ -570,7 +569,7 @@ int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
 }
 
 ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(
-    int *column) const {
+    int* column) const {
   // column becomes the index of the column in the sub table (of symbol type)
   size_t symbolTypeIndex = 0;
   while (*column >= numberOfColumnsForSymbolType(symbolTypeIndex)) {

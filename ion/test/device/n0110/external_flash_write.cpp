@@ -18,12 +18,12 @@ QUIZ_CASE(ion_ext_flash_program) {
   for (int page = 0; page < (1 << 15); page++) {
     uint8_t buffer[256];
     for (int byte = 0; byte < 256; byte++) {
-      buffer[byte] = expected_value_at(reinterpret_cast<uint8_t *>(
+      buffer[byte] = expected_value_at(reinterpret_cast<uint8_t*>(
           Ion::Device::ExternalFlash::Config::StartAddress + page * 256 +
           byte));
     }
     Ion::Device::ExternalFlash::WriteMemory(
-        reinterpret_cast<uint8_t *>(page * 256), buffer, 256);
+        reinterpret_cast<uint8_t*>(page * 256), buffer, 256);
   }
   quiz_stopwatch_print_lap(startTime);
 }

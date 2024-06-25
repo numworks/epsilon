@@ -38,46 +38,46 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     I18n::Message upperName() const override {
       return I18n::Message::InferenceAppCapital;
     };
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
    public:
-    App *unpack(Escher::Container *container) override;
-    const Descriptor *descriptor() const override;
+    App* unpack(Escher::Container* container) override;
+    const Descriptor* descriptor() const override;
     void tidy() override;
     void reset() override;
 
-    Statistic *statistic() { return m_statisticBuffer.statistic(); }
+    Statistic* statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *,
-                    LargeStackViewController::k_maxNumberOfChildren>
-        *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController*,
+                    LargeStackViewController::k_maxNumberOfChildren>*
+    pageQueue() {
       return &m_pageQueue;
     }
 
    private:
     friend App;
     // TODO: optimize size of Stack
-    Ion::RingBuffer<Escher::ViewController *,
+    Ion::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>
         m_pageQueue;
     StatisticBuffer m_statisticBuffer;
   };
 
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
-  void didBecomeActive(Escher::Window *window) override;
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
+  void didBecomeActive(Escher::Window* window) override;
   bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const override;
 
   // Navigation
-  void willOpenPage(Escher::ViewController *controller) override;
-  void didExitPage(Escher::ViewController *controller) override;
+  void willOpenPage(Escher::ViewController* controller) override;
+  void didExitPage(Escher::ViewController* controller) override;
 
   // Cells buffer API
-  void *buffer(size_t offset = 0) { return m_buffer + offset; }
-  void cleanBuffer(DynamicCellsDataSourceDestructor *destructor);
+  void* buffer(size_t offset = 0) { return m_buffer + offset; }
+  void cleanBuffer(DynamicCellsDataSourceDestructor* destructor);
 
   constexpr static int k_bufferSize =  // 21056
       std::max({sizeof(ResultCell) * k_maxNumberOfResultCells,
@@ -103,14 +103,14 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     return static_cast<int>(Statistic::SubApp::NumberOfSubApps);
   }
 
-  Escher::InputViewController *inputViewController() {
+  Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
   }
 
  private:
-  App(Snapshot *snapshot, Poincare::Context *parentContext);
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  App(Snapshot* snapshot, Poincare::Context* parentContext);
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
   // Controllers
@@ -134,7 +134,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   /* Buffer used for allocating table cells to avoid duplicating required
    * space for these memory-needy tables. */
   char m_buffer[k_bufferSize];
-  DynamicCellsDataSourceDestructor *m_bufferDestructor;
+  DynamicCellsDataSourceDestructor* m_bufferDestructor;
 };
 
 }  // namespace Inference

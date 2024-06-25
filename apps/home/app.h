@@ -19,17 +19,17 @@ class App : public Escher::App {
   class Snapshot : public Escher::App::Snapshot,
                    public Escher::SelectableTableViewDataSource {
    public:
-    App *unpack(Escher::Container *container) override;
-    const Descriptor *descriptor() const override;
+    App* unpack(Escher::Container* container) override;
+    const Descriptor* descriptor() const override;
   };
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
   TELEMETRY_ID("Home");
 
  private:
-  App(Snapshot *snapshot);
+  App(Snapshot* snapshot);
   Controller m_controller;
 };
 

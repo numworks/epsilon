@@ -21,8 +21,8 @@ using namespace Escher;
 namespace Distributions {
 
 DistributionController::DistributionController(
-    Escher::StackViewController *parentResponder, Distribution *distribution,
-    ParametersController *parametersController)
+    Escher::StackViewController* parentResponder, Distribution* distribution,
+    ParametersController* parametersController)
     : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
           parentResponder),
       m_contentView(&m_selectableListView, I18n::Message::ChooseDistribution),
@@ -37,13 +37,13 @@ DistributionController::DistributionController(
   selectRow(0);
 }
 
-void DistributionController::stackOpenPage(Escher::ViewController *nextPage) {
+void DistributionController::stackOpenPage(Escher::ViewController* nextPage) {
   selectRow(static_cast<int>(m_distribution->type()));
   ViewController::stackOpenPage(nextPage);
 }
 
 bool DistributionController::handleEvent(Ion::Events::Event event) {
-  StackViewController *stack = (StackViewController *)parentResponder();
+  StackViewController* stack = (StackViewController*)parentResponder();
   // canBeActivatedByEvent can be called on any cell with chevron
   if (m_cells[0].canBeActivatedByEvent(event)) {
     setDistributionAccordingToIndex(selectedRow());
@@ -53,7 +53,7 @@ bool DistributionController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell *DistributionController::reusableCell(int index) {
+HighlightCell* DistributionController::reusableCell(int index) {
   assert(index >= 0);
   assert(index < reusableCellCount());
   return &m_cells[index];
@@ -67,10 +67,10 @@ constexpr I18n::Message sMessages[] = {
     I18n::Message::Poisson,     I18n::Message::Fisher,
 };
 
-void DistributionController::fillCellForRow(HighlightCell *cell, int row) {
-  DistributionCell *myCell = static_cast<DistributionCell *>(cell);
+void DistributionController::fillCellForRow(HighlightCell* cell, int row) {
+  DistributionCell* myCell = static_cast<DistributionCell*>(cell);
   myCell->subLabel()->setMessage(sMessages[row]);
-  const Image *images[k_totalNumberOfModels] = {
+  const Image* images[k_totalNumberOfModels] = {
       ImageStore::BinomialIcon,    ImageStore::UniformIcon,
       ImageStore::ExponentialIcon, ImageStore::NormalIcon,
       ImageStore::ChiSquaredIcon,  ImageStore::StudentIcon,

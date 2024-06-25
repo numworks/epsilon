@@ -16,7 +16,7 @@ const uint8_t ellipsisMask[EllipsisView::k_ellipsisHeight]
                                0xFF},
 };
 
-void EllipsisView::drawRect(KDContext *ctx, KDRect rect) const {
+void EllipsisView::drawRect(KDContext* ctx, KDRect rect) const {
   /* Draw the ellipsis vertically and horizontally centered in the view.
    * The heightCenter is the coordinate of the vertical middle of the view. That
    * way, (heightCenter-switchHalfHeight) indicates the top the ellipsis. */
@@ -29,7 +29,7 @@ void EllipsisView::drawRect(KDContext *ctx, KDRect rect) const {
                k_ellipsisHeight);
   KDColor ellipsisWorkingBuffer[EllipsisView::k_ellipsisWidth *
                                 EllipsisView::k_ellipsisHeight];
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)ellipsisMask,
+  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t*)ellipsisMask,
                          ellipsisWorkingBuffer);
 }
 

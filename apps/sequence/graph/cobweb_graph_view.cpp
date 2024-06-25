@@ -22,8 +22,8 @@ using namespace Shared;
 
 namespace Sequence {
 
-void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
-                                KDContext *ctx, KDRect rect) const {
+void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
+                                KDContext* ctx, KDRect rect) const {
   assert(!m_record.isNull());
   assert(rect.height() < k_maxHeight);
   if (shouldUpdate()) {
@@ -40,7 +40,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       }
     }
   }
-  SequenceStore *sequenceStore = App::app()->functionStore();
+  SequenceStore* sequenceStore = App::app()->functionStore();
   ExpiringPointer<Shared::Sequence> sequence =
       sequenceStore->modelForRecord(m_record);
   constexpr size_t bufferSize = k_textMaxLength + 1;
@@ -48,8 +48,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   size_t nameLength = sequence->name(name, bufferSize);
   KDColor fadedColor =
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
-  SequenceContext *context =
-      reinterpret_cast<SequenceContext *>(App::app()->localContext());
+  SequenceContext* context =
+      reinterpret_cast<SequenceContext*>(App::app()->localContext());
   Poincare::UserExpression function = sequence->expressionClone();
 
   /* Replace initial term by its value, to avoid replacing it by a wrong value
@@ -68,9 +68,9 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
   function = function.replaceSymbolWithExpression(sequenceSymbol, variable)
                  .getSystemFunction(Shared::Function::k_unknownName);
-  Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
-                                                 void *context) {
-    Poincare::SystemFunction *e = (Poincare::SystemFunction *)model;
+  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
+                                                 void* context) {
+    Poincare::SystemFunction* e = (Poincare::SystemFunction*)model;
     return Poincare::Coordinate2D<float>(t, e->approximateToScalarWithValue(t));
   };
   if (!shouldUpdate()) {
@@ -159,19 +159,18 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       AbstractPlotView::RelativePosition::Before, Escher::Palette::GrayDark);
 }
 
-void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView *plotView,
-                                       KDContext *ctx, KDRect rect) const {
-  const CobwebGraphView *cobweb =
-      static_cast<const CobwebGraphView *>(plotView);
+void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView* plotView,
+                                       KDContext* ctx, KDRect rect) const {
+  const CobwebGraphView* cobweb = static_cast<const CobwebGraphView*>(plotView);
   if (cobweb->shouldUpdate()) {
     return;
   }
   Shared::PlotPolicy::TwoLabeledAxes::drawAxesAndGrid(cobweb, ctx, rect);
 }
 
-CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange *graphRange,
-                                 CurveViewCursor *cursor,
-                                 BannerView *bannerView, CursorView *cursorView)
+CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange* graphRange,
+                                 CurveViewCursor* cursor,
+                                 BannerView* bannerView, CursorView* cursorView)
     : PlotView(graphRange) {
   setBannerOverlapsGraph(false);
   // WithBanner
@@ -181,7 +180,7 @@ CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange *graphRange,
   m_cursorView = cursorView;
 }
 
-void CobwebGraphView::drawBackground(KDContext *ctx, KDRect rect) const {
+void CobwebGraphView::drawBackground(KDContext* ctx, KDRect rect) const {
   if (shouldUpdate()) {
     return;
   }

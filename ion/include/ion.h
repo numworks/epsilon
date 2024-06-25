@@ -33,26 +33,26 @@
  * Don't worry though, once all its initialization will be performed, ION will
  * jump to your code at ion_main, which you have to implement yourself. */
 
-void ion_main(int argc, const char *const argv[]);
+void ion_main(int argc, const char* const argv[]);
 
 namespace Ion {
 
-const char *epsilonVersion();
-const char *kernelVersion();
-const char *patchLevel();
-const char *fccId();
+const char* epsilonVersion();
+const char* kernelVersion();
+const char* patchLevel();
+const char* fccId();
 constexpr static int k_serialNumberLength = 16;
-const char *serialNumber();
-const char *pcbVersion();
-const char *compilationFlags();
-const char *runningBootloader();
+const char* serialNumber();
+const char* pcbVersion();
+const char* compilationFlags();
+const char* runningBootloader();
 
 // Provides a true random number
 uint32_t random();
 
 // Sets and returns address to the first object that can be allocated on stack
-void *stackStart();
-void setStackStart(void *);
+void* stackStart();
+void setStackStart(void*);
 // Tells whether the stack pointer is within acceptable bounds
 bool stackSafe();
 

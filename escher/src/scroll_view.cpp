@@ -9,8 +9,8 @@ extern "C" {
 
 namespace Escher {
 
-ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource,
-                       Escher::ScrollViewDelegate *scrollViewDelegate)
+ScrollView::ScrollView(View* contentView, ScrollViewDataSource* dataSource,
+                       Escher::ScrollViewDelegate* scrollViewDelegate)
     : View(),
       m_dataSource(dataSource),
       m_contentView(contentView),
@@ -200,7 +200,7 @@ KDRect ScrollView::layoutDecorator(bool force) {
   return innerFrame;
 }
 
-void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {
+void ScrollView::InnerView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDRect contentFrame = relativeChildFrame(m_scrollView->m_contentView);
@@ -219,7 +219,7 @@ void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {
   ctx->fillRect(KDRect(contentRight, 0, width - contentRight, height), color);
 }
 
-View *ScrollView::BarDecorator::indicatorAtIndex(int index) {
+View* ScrollView::BarDecorator::indicatorAtIndex(int index) {
   if (index == 1) {
     return &m_verticalBar;
   }
@@ -228,9 +228,9 @@ View *ScrollView::BarDecorator::indicatorAtIndex(int index) {
 }
 
 KDRect ScrollView::BarDecorator::layoutIndicators(
-    View *parent, KDSize content, KDPoint offset, KDRect frame,
-    KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-    ScrollViewDataSourceDelegate *delegate) {
+    View* parent, KDSize content, KDPoint offset, KDRect frame,
+    KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
+    ScrollViewDataSourceDelegate* delegate) {
   bool hBarWasVisible = m_horizontalBar.visible();
   bool vBarWasVisible = m_verticalBar.visible();
   bool hBarIsVisible, vBarIsVisible;
@@ -271,7 +271,7 @@ KDRect ScrollView::BarDecorator::layoutIndicators(
   return frame;
 }
 
-View *ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
+View* ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
   switch (index) {
     case 1:
       return &m_rightArrow;
@@ -282,9 +282,9 @@ View *ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
 }
 
 KDRect ScrollView::ArrowDecorator::layoutIndicators(
-    View *parent, KDSize content, KDPoint offset, KDRect frame,
-    KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-    ScrollViewDataSourceDelegate *delegate) {
+    View* parent, KDSize content, KDPoint offset, KDRect frame,
+    KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
+    ScrollViewDataSourceDelegate* delegate) {
   // There is no need to dirty the rects
   KDSize arrowSize = KDFont::GlyphSize(KDFont::Size::Large);
   KDCoordinate rightArrowFrameBreadth =
@@ -314,9 +314,9 @@ void ScrollView::ArrowDecorator::setFont(KDFont::Size font) {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char *ScrollView::className() const { return "ScrollView"; }
+const char* ScrollView::className() const { return "ScrollView"; }
 
-void ScrollView::logAttributes(std::ostream &os) const {
+void ScrollView::logAttributes(std::ostream& os) const {
   View::logAttributes(os);
   os << " offset=\"" << (int)contentOffset().x() << ","
      << (int)contentOffset().y() << "\"";

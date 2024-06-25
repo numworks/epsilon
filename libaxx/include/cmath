@@ -132,7 +132,7 @@ inline constexpr float fabs(float x) { return __builtin_fabsf(x); }
 inline constexpr float floor(float x) { return __builtin_floorf(x); }
 inline constexpr float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
 inline constexpr float fmod(float x, float y) { return __builtin_fmodf(x, y); }
-inline constexpr float frexp(float x, int *exp) {
+inline constexpr float frexp(float x, int* exp) {
   return __builtin_frexpf(x, exp);
 }
 inline constexpr float hypot(float x, float y) {
@@ -142,17 +142,17 @@ inline constexpr float ldexp(float x, int exp) {
   return __builtin_ldexpf(x, exp);
 }
 inline constexpr float lgamma(float x) { return __builtin_lgammaf(x); }
-inline constexpr float lgamma_r(float x, int *signgamp) {
+inline constexpr float lgamma_r(float x, int* signgamp) {
   return __builtin_lgammaf_r(x, signgamp);
 }
 inline constexpr float log(float x) { return __builtin_logf(x); }
 inline constexpr float log1p(float x) { return __builtin_log1pf(x); }
 inline constexpr float log10(float x) { return __builtin_log10f(x); }
 inline constexpr float logb(float x) { return __builtin_logbf(x); }
-inline constexpr float modf(float x, float *iptr) {
+inline constexpr float modf(float x, float* iptr) {
   return __builtin_modff(x, iptr);
 }
-inline constexpr float nanf(const char *tagp) { return __builtin_nanf(tagp); }
+inline constexpr float nanf(const char* tagp) { return __builtin_nanf(tagp); }
 inline constexpr float nearbyint(float x) { return __builtin_nearbyintf(x); }
 inline constexpr float nextafter(float from, float to) {
   return __builtin_nextafterf(from, to);
@@ -207,7 +207,7 @@ inline constexpr double fmax(double x, double y) {
 inline constexpr double fmod(double x, double y) {
   return __builtin_fmod(x, y);
 }
-inline constexpr double frexp(double x, int *exp) {
+inline constexpr double frexp(double x, int* exp) {
   return __builtin_frexp(x, exp);
 }
 inline constexpr double hypot(double x, double y) {
@@ -217,7 +217,7 @@ inline constexpr double ldexp(double x, int exp) {
   return __builtin_scalbn(x, exp);
 }
 inline constexpr double lgamma(double x) { return __builtin_lgamma(x); }
-inline constexpr double lgamma_r(double x, int *signgamp) {
+inline constexpr double lgamma_r(double x, int* signgamp) {
   return __builtin_lgamma_r(x, signgamp);
 }
 inline constexpr double log(double x) { return __builtin_log(x); }
@@ -225,10 +225,10 @@ inline constexpr double log1p(double x) { return __builtin_log1p(x); }
 inline constexpr double log10(double x) { return __builtin_log10(x); }
 inline constexpr double log2(double x) { return __builtin_log2(x); }
 inline constexpr double logb(double x) { return __builtin_logb(x); }
-inline constexpr double modf(double x, double *iptr) {
+inline constexpr double modf(double x, double* iptr) {
   return __builtin_modf(x, iptr);
 }
-inline constexpr double nan(const char *tagp) { return __builtin_nan(tagp); }
+inline constexpr double nan(const char* tagp) { return __builtin_nan(tagp); }
 inline constexpr double nearbyint(double x) { return __builtin_nearbyint(x); }
 inline constexpr double nextafter(double from, double to) {
   return __builtin_nextafter(from, to);

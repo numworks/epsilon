@@ -45,13 +45,13 @@ const uint8_t okMask[OkView::k_okSize][OkView::k_okSize] = {
      0x05, 0x20, 0x53, 0xA4, 0xF9, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-void OkView::drawRect(KDContext *ctx, KDRect rect) const {
+void OkView::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   KDRect frame((width - k_okSize) / 2, (height - k_okSize) / 2, k_okSize,
                k_okSize);
   KDColor okWorkingBuffer[OkView::k_okSize * OkView::k_okSize];
-  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t *)okMask,
+  ctx->blendRectWithMask(frame, KDColorBlack, (const uint8_t*)okMask,
                          okWorkingBuffer);
 }
 

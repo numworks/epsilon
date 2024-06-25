@@ -50,10 +50,10 @@ class KDRect {
   KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
   KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
 
-  bool operator==(const KDRect &other) const {
+  bool operator==(const KDRect& other) const {
     return (m_origin == other.origin() && m_size == other.size());
   }
-  bool operator!=(const KDRect &other) const { return !(other == *this); }
+  bool operator!=(const KDRect& other) const { return !(other == *this); }
 
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setSize(KDSize size) { m_size = size; }
@@ -64,14 +64,14 @@ class KDRect {
   KDRect paddedWith(KDCoordinate value) const;
   KDRect trimmedBy(KDCoordinate value) const { return paddedWith(-value); }
   KDRect movedTo(KDPoint p) const;
-  bool intersects(const KDRect &other) const;
-  KDRect intersectedWith(const KDRect &other) const;
+  bool intersects(const KDRect& other) const;
+  KDRect intersectedWith(const KDRect& other) const;
   // Returns the smallest rectangle containing r1 and r2
-  KDRect unionedWith(const KDRect &other) const;
+  KDRect unionedWith(const KDRect& other) const;
   // Returns the smallest rectangle containing r1\r2
-  KDRect differencedWith(const KDRect &other) const;
+  KDRect differencedWith(const KDRect& other) const;
   bool contains(KDPoint p) const;
-  bool containsRect(const KDRect &other) const;
+  bool containsRect(const KDRect& other) const;
   bool isAbove(KDPoint p) const;
   bool isUnder(KDPoint p) const;
   bool isEmpty() const;

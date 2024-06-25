@@ -4,7 +4,7 @@
 
 namespace Escher {
 
-void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext *ctx,
+void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext* ctx,
                                                             KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);

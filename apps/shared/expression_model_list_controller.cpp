@@ -18,7 +18,7 @@ namespace Shared {
 /* Table Data Source */
 
 ExpressionModelListController::ExpressionModelListController(
-    Responder *parentResponder, I18n::Message text)
+    Responder* parentResponder, I18n::Message text)
     : ViewController(parentResponder),
       m_addNewModelCell({{.font = k_font}}),
       m_editedCellIndex(-1) {
@@ -27,8 +27,8 @@ ExpressionModelListController::ExpressionModelListController(
 }
 
 int ExpressionModelListController::numberOfRows() const {
-  const ExpressionModelStore *store =
-      const_cast<ExpressionModelListController *>(this)->modelStore();
+  const ExpressionModelStore* store =
+      const_cast<ExpressionModelListController*>(this)->modelStore();
   int modelsCount = store->numberOfModels();
   int nRows = 0;
   for (int i = 0; i < modelsCount; i++) {
@@ -194,7 +194,7 @@ bool ExpressionModelListController::removeModelRow(
 }
 
 int ExpressionModelListController::modelIndexForRow(int row,
-                                                    int *relativeRow) const {
+                                                    int* relativeRow) const {
   *relativeRow = 0;
   if (row < 0) {
     return row;
@@ -223,7 +223,7 @@ int ExpressionModelListController::modelIndexForRow(int row) const {
 }
 
 void ExpressionModelListController::layoutFieldDidChangeSize(
-    LayoutField *layoutField) {
+    LayoutField* layoutField) {
   selectableListView()->reloadData(false);
 }
 
@@ -235,8 +235,8 @@ void ExpressionModelListController::finishEdition() {
 static CodePoint symbolForEquation(UserExpression expression) {
   CodePoint symbol = Symbol::k_cartesianSymbol;
   expression.recursivelyMatches(
-      [](const NewExpression e, Context *context, void *auxiliary) {
-        CodePoint *symbol = static_cast<CodePoint *>(auxiliary);
+      [](const NewExpression e, Context* context, void* auxiliary) {
+        CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);
         if (e.isIdenticalTo(Symbol::Builder(Symbol::k_polarSymbol))) {
           *symbol = Symbol::k_polarSymbol;
@@ -253,7 +253,7 @@ static CodePoint symbolForEquation(UserExpression expression) {
 }
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
-    LayoutField *layoutField, Ion::Events::Event event) {
+    LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   UserExpression parsedExpression =
       UserExpression::Parse(layoutField->layout(), nullptr);
@@ -282,12 +282,12 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
 }
 
 void ExpressionModelListController::layoutFieldDidAbortEditing(
-    Escher::LayoutField *layoutField) {
+    Escher::LayoutField* layoutField) {
   finishEdition();
 }
 
 Ion::Storage::Record ExpressionModelListController::recordAtRow(
-    int row, int *relativeRow) const {
+    int row, int* relativeRow) const {
   return modelStore()->recordAtIndex(modelIndexForRow(row, relativeRow));
 }
 
@@ -297,7 +297,7 @@ Ion::Storage::Record ExpressionModelListController::recordAtRow(int row) const {
 }
 
 Ion::Storage::Record ExpressionModelListController::selectedRecord(
-    int *relativeRow) const {
+    int* relativeRow) const {
   return recordAtRow(selectedRow(), relativeRow);
 }
 

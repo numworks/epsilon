@@ -8,12 +8,12 @@ namespace Ion {
 namespace ExamBytes {
 
 Int read() {
-  return *reinterpret_cast<Int *>(
+  return *reinterpret_cast<Int*>(
       PersistingBytes::read(PersistingBytes::Entry::ExamBytes));
 }
 
 void write(Int value) {
-  PersistingBytes::write(reinterpret_cast<uint8_t *>(&value), sizeof(Int),
+  PersistingBytes::write(reinterpret_cast<uint8_t*>(&value), sizeof(Int),
                          PersistingBytes::Entry::ExamBytes);
 }
 

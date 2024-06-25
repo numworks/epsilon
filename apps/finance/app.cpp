@@ -10,17 +10,17 @@ namespace Finance {
 
 // App::Descriptor
 
-const Escher::Image *App::Descriptor::icon() const {
+const Escher::Image* App::Descriptor::icon() const {
   return ImageStore::FinanceIcon;
 }
 
 // App::Snapshot
 
-App *App::Snapshot::unpack(Escher::Container *container) {
+App* App::Snapshot::unpack(Escher::Container* container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
-const App::Descriptor *App::Snapshot::descriptor() const {
+const App::Descriptor* App::Snapshot::descriptor() const {
   constexpr static Descriptor s_descriptor;
   return &s_descriptor;
 }
@@ -31,33 +31,33 @@ void App::Snapshot::reset() {
   Shared::SharedApp::Snapshot::reset();
 }
 
-void App::didBecomeActive(Escher::Window *window) {
-  Ion::RingBuffer<Escher::ViewController *, Snapshot::k_maxDepth> *queue =
+void App::didBecomeActive(Escher::Window* window) {
+  Ion::RingBuffer<Escher::ViewController*, Snapshot::k_maxDepth>* queue =
       snapshot()->pageQueue();
   int queueLength = queue->length();
-  Escher::ViewController *currentController = &m_menuController;
+  Escher::ViewController* currentController = &m_menuController;
   for (int i = 0; i < queueLength; i++) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */
-    Escher::ViewController *controller = queue->queuePop();
+    Escher::ViewController* controller = queue->queuePop();
     currentController->stackOpenPage(controller);
     currentController = controller;
   }
   Escher::App::didBecomeActive(window);
 }
 
-void App::willOpenPage(Escher::ViewController *controller) {
+void App::willOpenPage(Escher::ViewController* controller) {
   snapshot()->pageQueue()->push(controller);
 }
 
-void App::didExitPage(Escher::ViewController *controller) {
-  Escher::ViewController *c = snapshot()->pageQueue()->stackPop();
+void App::didExitPage(Escher::ViewController* controller) {
+  Escher::ViewController* c = snapshot()->pageQueue()->stackPop();
   assert(c == controller);
   (void)c;
 }
 
 // App
-App::App(Snapshot *snapshot)
+App::App(Snapshot* snapshot)
     : Shared::MathApp(snapshot, &m_stackViewController),
       m_resultController(&m_stackViewController),
       m_parametersController(&m_stackViewController, &m_resultController),

@@ -22,8 +22,8 @@ WithCurves::Pattern::Pattern(bool s0, bool s1, bool s2, bool s3, KDColor color,
 WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor)
     : Pattern(s == 0, s == 1, s == 2, s == 3, color, backgroundColor) {}
 
-void WithCurves::Pattern::drawInLine(const AbstractPlotView *plotView,
-                                     KDContext *ctx, KDRect rect,
+void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
+                                     KDContext* ctx, KDRect rect,
                                      AbstractPlotView::Axis parallel,
                                      float position, float min,
                                      float max) const {
@@ -97,7 +97,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView *plotView,
 
 // WithCurves::CurveDrawing
 
-WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void *context,
+WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void* context,
                                        float tStart, float tEnd, float tStep,
                                        KDColor color, bool thick, bool dashed)
     : m_curve(curve),
@@ -142,8 +142,8 @@ void WithCurves::CurveDrawing::setPrecisionOptions(
   m_discontinuity = discontinuity;
 }
 
-void WithCurves::CurveDrawing::draw(const AbstractPlotView *plotView,
-                                    KDContext *ctx, KDRect rect) const {
+void WithCurves::CurveDrawing::draw(const AbstractPlotView* plotView,
+                                    KDContext* ctx, KDRect rect) const {
   assert(plotView);
   if (m_tStart > m_tEnd) {
     return;
@@ -187,8 +187,8 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
           (y2 == yC && yC == y1));
 }
 
-void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
-                                        KDContext *ctx, KDRect rect, float t1,
+void WithCurves::CurveDrawing::joinDots(const AbstractPlotView* plotView,
+                                        KDContext* ctx, KDRect rect, float t1,
                                         Coordinate2D<float> xy1, float t2,
                                         Coordinate2D<float> xy2,
                                         int remainingIterations,
@@ -278,7 +278,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
   }
   remainingIterations--;
 
-  CurveViewRange *range = plotView->range();
+  CurveViewRange* range = plotView->range();
   float xMin = range->xMin();
   float xMax = range->xMax();
   float yMin = range->yMin();
@@ -308,7 +308,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
 }
 
 void WithCurves::CurveDrawing::drawPattern(
-    const AbstractPlotView *plotView, KDContext *ctx, KDRect rect, float t,
+    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float t,
     Poincare::Coordinate2D<float> xy) const {
   // Draw a line with the pattern
   float (Coordinate2D<float>::*abscissa)() const =
@@ -341,8 +341,8 @@ void WithCurves::CurveDrawing::drawPattern(
 
 // WithCurves
 
-void WithCurves::drawArcOfEllipse(const AbstractPlotView *plotView,
-                                  KDContext *ctx, KDRect rect,
+void WithCurves::drawArcOfEllipse(const AbstractPlotView* plotView,
+                                  KDContext* ctx, KDRect rect,
                                   Coordinate2D<float> center, float width,
                                   float height, float angleStart,
                                   float angleEnd, KDColor color) const {
@@ -353,8 +353,8 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView *plotView,
                                  height / plotView->pixelHeight());
   float angleStep = segmentLength / radiusInPixel;
   float parameters[] = {center.x(), center.y(), width, height};
-  Curve2DEvaluation<float> arc = [](float t, void *model, void *) {
-    float *parameters = reinterpret_cast<float *>(model);
+  Curve2DEvaluation<float> arc = [](float t, void* model, void*) {
+    float* parameters = reinterpret_cast<float*>(model);
     float x = parameters[0];
     float y = parameters[1];
     float a = parameters[2];
@@ -370,7 +370,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView *plotView,
 // WithHistogram::HistogramDrawing
 
 WithHistogram::HistogramDrawing::HistogramDrawing(
-    Curve1D curve, void *model, void *context, HighlightTest highlightTest,
+    Curve1D curve, void* model, void* context, HighlightTest highlightTest,
     double start, double barsWidth, bool displayBorder, bool fillBars,
     KDColor color, KDColor highlightColor, KDColor borderColor)
     : m_curve(curve),
@@ -385,8 +385,8 @@ WithHistogram::HistogramDrawing::HistogramDrawing(
       m_highlightColor(highlightColor),
       m_borderColor(borderColor) {}
 
-void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
-                                           KDContext *ctx, KDRect rect) const {
+void WithHistogram::HistogramDrawing::draw(const AbstractPlotView* plotView,
+                                           KDContext* ctx, KDRect rect) const {
   /* To values interval [a, b[ correspond a pixel
    * interval [A, B[. Tick for a is at pixel A and
    * tick for b is at pixel B.

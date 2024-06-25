@@ -22,18 +22,18 @@ class Axes : public CGrid {
     m_yAxis.setOtherAxis(m_xAxis.isAxis());
   }
 
-  void drawAxes(const AbstractPlotView *plotView, KDContext *ctx,
+  void drawAxes(const AbstractPlotView* plotView, KDContext* ctx,
                 KDRect rect) const {
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
   }
 
-  void drawAxesAndGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  void drawAxesAndGrid(const AbstractPlotView* plotView, KDContext* ctx,
                        KDRect rect) const {
     CGrid::DrawGrid(plotView, ctx, rect);
     drawAxes(plotView, ctx, rect);
   }
-  void reloadAxes(AbstractPlotView *plotView) {
+  void reloadAxes(AbstractPlotView* plotView) {
     m_xAxis.reloadAxis(plotView, AbstractPlotView::Axis::Horizontal);
     m_yAxis.reloadAxis(plotView, AbstractPlotView::Axis::Vertical);
   }
@@ -47,18 +47,18 @@ class Axes : public CGrid {
 
 class NoGrid {
  protected:
-  static void DrawGrid(const AbstractPlotView *, KDContext *, KDRect) {}
+  static void DrawGrid(const AbstractPlotView*, KDContext*, KDRect) {}
 };
 
 class WithCartesianGrid {
  protected:
-  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                        KDRect rect);
 
  private:
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayWhite;
-  static void DrawGridLines(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
                             KDRect rect, AbstractPlotView::Axis parallel,
                             bool boldGrid);
 };
@@ -67,7 +67,7 @@ class WithPolarGrid {
   friend class Graph::GraphView;
 
  protected:
-  static void DrawGrid(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
                        KDRect rect);
 
  private:
@@ -76,30 +76,30 @@ class WithPolarGrid {
   constexpr static float k_minimumGraduationDistanceToCenter = 60;
   constexpr static int k_angleStepInDegree = 15;
 
-  static void DrawPolarCircles(const AbstractPlotView *plotView, KDContext *ctx,
+  static void DrawPolarCircles(const AbstractPlotView* plotView, KDContext* ctx,
                                KDRect rect);
 
-  static void ComputeRadiusBounds(const AbstractPlotView *plotView, KDRect rect,
-                                  float *min, float *max);
-  static void ComputeAngleBounds(const AbstractPlotView *plotView, KDRect rect,
+  static void ComputeRadiusBounds(const AbstractPlotView* plotView, KDRect rect,
+                                  float* min, float* max);
+  static void ComputeAngleBounds(const AbstractPlotView* plotView, KDRect rect,
                                  float xMin, float xMax, float yMin, float yMax,
-                                 float *angleMin, float *angleMax);
+                                 float* angleMin, float* angleMax);
 };
 
 class NoAxis {
  public:
-  void drawAxis(const AbstractPlotView *plotView, KDContext *ctx, KDRect rect,
+  void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
                 AbstractPlotView::Axis) const {}
-  void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis) {}
+  void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis) {}
   bool isAxis() const { return false; }
   void setOtherAxis(bool other) {}
 };
 
 class PlainAxis {
  public:
-  void drawAxis(const AbstractPlotView *plotView, KDContext *ctx, KDRect rect,
+  void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
                 AbstractPlotView::Axis) const;
-  void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis) {}
+  void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis) {}
   bool isAxis() const { return true; }
   void setOtherAxis(bool other) {}
 
@@ -109,18 +109,18 @@ class PlainAxis {
 
 class SimpleAxis : public PlainAxis {
  public:
-  void drawAxis(const AbstractPlotView *plotView, KDContext *ctx, KDRect rect,
+  void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
                 AbstractPlotView::Axis axis) const;
-  virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
+  virtual void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis axis) {}
   virtual void setOtherAxis(bool other) {}
 
  protected:
-  virtual float tickPosition(int i, const AbstractPlotView *plotView,
+  virtual float tickPosition(int i, const AbstractPlotView* plotView,
                              AbstractPlotView::Axis axis) const;
-  virtual float tickStep(const AbstractPlotView *plotView,
+  virtual float tickStep(const AbstractPlotView* plotView,
                          AbstractPlotView::Axis axis) const;
-  virtual void drawLabel(int i, float t, const AbstractPlotView *plotView,
-                         KDContext *ctx, KDRect rect,
+  virtual void drawLabel(int i, float t, const AbstractPlotView* plotView,
+                         KDContext* ctx, KDRect rect,
                          AbstractPlotView::Axis axis,
                          KDColor color = k_color) const {}
 };
@@ -143,26 +143,26 @@ class AbstractLabeledAxis : public SimpleAxis {
 
   AbstractLabeledAxis() : m_lastDrawnRect(KDRectZero), m_hidden(false) {}
 
-  void reloadAxis(AbstractPlotView *plotView,
+  void reloadAxis(AbstractPlotView* plotView,
                   AbstractPlotView::Axis axis) override;
   void setOtherAxis(bool other) override { m_otherAxis = other; }
   void setHidden(bool hide) { m_hidden = hide; }
 
  protected:
   virtual size_t numberOfLabels() const = 0;
-  virtual char *mutableLabel(int i) = 0;
-  const char *label(int i) const {
-    return const_cast<AbstractLabeledAxis *>(this)->mutableLabel(i);
+  virtual char* mutableLabel(int i) = 0;
+  const char* label(int i) const {
+    return const_cast<AbstractLabeledAxis*>(this)->mutableLabel(i);
   }
-  virtual int computeLabel(int i, const AbstractPlotView *plotView,
+  virtual int computeLabel(int i, const AbstractPlotView* plotView,
                            AbstractPlotView::Axis axis);
   virtual bool labelWillBeDisplayed(int i, KDRect rect) const;
-  KDRect labelRect(int i, float t, const AbstractPlotView *plotView,
+  KDRect labelRect(int i, float t, const AbstractPlotView* plotView,
                    AbstractPlotView::Axis axis) const;
-  void drawLabel(int i, float t, const AbstractPlotView *plotView,
-                 KDContext *ctx, KDRect rect, AbstractPlotView::Axis axis,
+  void drawLabel(int i, float t, const AbstractPlotView* plotView,
+                 KDContext* ctx, KDRect rect, AbstractPlotView::Axis axis,
                  KDColor color = k_color) const override;
-  void computeLabelsRelativePosition(const AbstractPlotView *plotView,
+  void computeLabelsRelativePosition(const AbstractPlotView* plotView,
                                      AbstractPlotView::Axis axis) const;
 
   mutable float m_labelsPosition;
@@ -183,7 +183,7 @@ class LabeledAxis : public AbstractLabeledAxis {
 
  protected:
   size_t numberOfLabels() const override { return N; }
-  char *mutableLabel(int i) override {
+  char* mutableLabel(int i) override {
     assert(static_cast<size_t>(i) < N);
     return m_labels[i];
   }

@@ -12,7 +12,7 @@ namespace epsilon {
 
 class EpsilonModule : public ClangTidyModule {
  public:
-  void addCheckFactories(ClangTidyCheckFactories &CheckFactories) override {
+  void addCheckFactories(ClangTidyCheckFactories& CheckFactories) override {
     CheckFactories.registerCheck<ResetGlobalsCheck>("epsilon-reset-globals");
   }
 };

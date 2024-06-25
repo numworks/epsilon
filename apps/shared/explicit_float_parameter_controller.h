@@ -19,26 +19,26 @@ class ExplicitFloatParameterController
     : public Escher::ExplicitSelectableListViewController,
       public ParameterTextFieldDelegate {
  public:
-  ExplicitFloatParameterController(Escher::Responder *parentResponder);
+  ExplicitFloatParameterController(Escher::Responder* parentResponder);
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
  protected:
-  Escher::StackViewController *stackController() {
-    return static_cast<Escher::StackViewController *>(parentResponder());
+  Escher::StackViewController* stackController() {
+    return static_cast<Escher::StackViewController*>(parentResponder());
   }
   virtual double parameterAtIndex(int index) = 0;
   virtual void fillParameterCellAtRow(int row);
 
  private:
   virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;
-  virtual Escher::TextField *textFieldOfCellAtRow(int row) = 0;
+  virtual Escher::TextField* textFieldOfCellAtRow(int row) = 0;
 };
 
 }  // namespace Shared

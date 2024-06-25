@@ -10,19 +10,19 @@ namespace Regression {
 
 class StoreController : public Shared::StoreController {
  public:
-  StoreController(Escher::Responder *parentResponder, Store *store,
-                  Escher::ButtonRowController *header,
-                  Poincare::Context *parentContext);
-  Model *selectedModel() {
-    return static_cast<Store *>(m_store)->modelForSeries(selectedSeries());
+  StoreController(Escher::Responder* parentResponder, Store* store,
+                  Escher::ButtonRowController* header,
+                  Poincare::Context* parentContext);
+  Model* selectedModel() {
+    return static_cast<Store*>(m_store)->modelForSeries(selectedSeries());
   }
 
  private:
-  Escher::InputViewController *inputViewController() override;
-  Escher::SelectableViewController *columnParameterController() override {
+  Escher::InputViewController* inputViewController() override;
+  Escher::SelectableViewController* columnParameterController() override {
     return &m_storeParameterController;
   }
-  Shared::ColumnParameters *columnParameters() override {
+  Shared::ColumnParameters* columnParameters() override {
     return &m_storeParameterController;
   }
   void clearSelectedColumn() override;

@@ -21,8 +21,8 @@ void ColorParameterController::viewWillAppear() {
 }
 
 bool ColorParameterController::handleEvent(Ion::Events::Event event) {
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     KDColor selectedColor = ColorNames::k_colors[selectedRow()];
     function()->setColor(selectedColor, m_derivationOrder);
@@ -38,8 +38,8 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ColorParameterController::fillCellForRow(HighlightCell *cell, int row) {
-  ColorCell *colorCell = static_cast<ColorCell *>(cell);
+void ColorParameterController::fillCellForRow(HighlightCell* cell, int row) {
+  ColorCell* colorCell = static_cast<ColorCell*>(cell);
   assert(row >= 0);
   assert(row < ColorNames::k_count);
   colorCell->label()->setMessage(ColorNames::k_messages[row]);

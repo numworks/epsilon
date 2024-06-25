@@ -13,11 +13,11 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   virtual CodePoint symbol() const = 0;
 
   // Property
-  void text(char *buffer, size_t bufferSize) const {
+  void text(char* buffer, size_t bufferSize) const {
     return model()->text(this, buffer, bufferSize, symbol());
   }
   virtual Poincare::SystemExpression expressionReduced(
-      Poincare::Context *context) const {
+      Poincare::Context* context) const {
     return model()->expressionReduced(this, context);
   }
   Poincare::UserExpression expressionClone() const {
@@ -33,28 +33,28 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   /* tidyDownstreamPoolFrom tidy the model if its members are located downstream
    * in Poincare pool of the node given as arguments. */
   virtual void tidyDownstreamPoolFrom(
-      Poincare::PoolObject *treePoolCursor = nullptr) const {
+      Poincare::PoolObject* treePoolCursor = nullptr) const {
     model()->tidyDownstreamPoolFrom(treePoolCursor);
   }
   virtual Ion::Storage::Record::ErrorStatus setContent(
-      const Poincare::Layout &l, Poincare::Context *context) {
+      const Poincare::Layout& l, Poincare::Context* context) {
     return editableModel()->setContent(this, l, context, symbol());
   }
   Ion::Storage::Record::ErrorStatus setExpressionContent(
-      const Poincare::UserExpression &e) {
+      const Poincare::UserExpression& e) {
     return editableModel()->setExpressionContent(this, e);
   }
 
   Poincare::Preferences::ComplexFormat complexFormat(
-      Poincare::Context *context) const {
+      Poincare::Context* context) const {
     return model()->complexFormat(this, context);
   }
 
  protected:
-  ExpressionModel *editableModel() {
-    return const_cast<ExpressionModel *>(model());
+  ExpressionModel* editableModel() {
+    return const_cast<ExpressionModel*>(model());
   }
-  virtual const ExpressionModel *model() const = 0;
+  virtual const ExpressionModel* model() const = 0;
   virtual size_t metaDataSize() const = 0;
 };
 

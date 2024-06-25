@@ -22,7 +22,7 @@ class App : public Shared::MathApp {
     I18n::Message upperName() const override {
       return I18n::Message::FinanceAppCapital;
     }
-    const Escher::Image *icon() const override;
+    const Escher::Image* icon() const override;
   };
 
   // Snapshot
@@ -32,40 +32,40 @@ class App : public Shared::MathApp {
      * InterestMenuController, ParametersController and ResultController */
     constexpr static uint8_t k_maxDepth = 3;
 
-    App *unpack(Escher::Container *container) override;
-    const Descriptor *descriptor() const override;
+    App* unpack(Escher::Container* container) override;
+    const Descriptor* descriptor() const override;
     void reset() override;
-    Ion::RingBuffer<Escher::ViewController *, k_maxDepth> *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController*, k_maxDepth>* pageQueue() {
       return &m_pageQueue;
     }
-    Data *data() { return &m_data; }
+    Data* data() { return &m_data; }
 
    private:
-    Ion::RingBuffer<Escher::ViewController *, k_maxDepth> m_pageQueue;
+    Ion::RingBuffer<Escher::ViewController*, k_maxDepth> m_pageQueue;
     Data m_data;
   };
   TELEMETRY_ID("Finance");
 
-  static App *app() { return static_cast<App *>(Escher::App::app()); }
-  static InterestData *GetInterestData() {
+  static App* app() { return static_cast<App*>(Escher::App::app()); }
+  static InterestData* GetInterestData() {
     return app()->snapshot()->data()->interestData();
   }
   static void SetModel(bool selectedModel) {
     return app()->snapshot()->data()->setModel(selectedModel);
   }
 
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
+  Snapshot* snapshot() const {
+    return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
-  void didBecomeActive(Escher::Window *window) override;
+  void didBecomeActive(Escher::Window* window) override;
 
   // Navigation
-  void willOpenPage(Escher::ViewController *controller) override;
-  void didExitPage(Escher::ViewController *controller) override;
+  void willOpenPage(Escher::ViewController* controller) override;
+  void didExitPage(Escher::ViewController* controller) override;
 
  private:
-  App(Snapshot *snapshot);
+  App(Snapshot* snapshot);
 
   // Controllers
   ResultController m_resultController;

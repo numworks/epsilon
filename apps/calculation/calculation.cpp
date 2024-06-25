@@ -18,7 +18,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-bool Calculation::operator==(const Calculation &c) {
+bool Calculation::operator==(const Calculation& c) {
   /* Some calculations can make appear trigonometric functions in their exact
    * output. Their argument will be different with the angle unit preferences
    * but both input and approximate output will be the same.
@@ -29,10 +29,10 @@ bool Calculation::operator==(const Calculation &c) {
          memcmp(m_trees, c.m_trees, cumulatedTreeSizes());
 }
 
-Calculation *Calculation::next() const {
-  return reinterpret_cast<Calculation *>(
-      const_cast<char *>(reinterpret_cast<const char *>(this) +
-                         sizeof(Calculation) + cumulatedTreeSizes()));
+Calculation* Calculation::next() const {
+  return reinterpret_cast<Calculation*>(
+      const_cast<char*>(reinterpret_cast<const char*>(this) +
+                        sizeof(Calculation) + cumulatedTreeSizes()));
 }
 
 UserExpression Calculation::input() {
@@ -103,7 +103,7 @@ Layout Calculation::createInputLayout() {
   return Layout();
 }
 
-Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
+Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = exactOutput();
@@ -118,7 +118,7 @@ Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
 }
 
 Layout Calculation::createApproximateOutputLayout(
-    bool *couldNotCreateApproximateLayout) {
+    bool* couldNotCreateApproximateLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e =
@@ -151,7 +151,7 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
          input.childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
-Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
+Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;
   }
@@ -186,9 +186,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   return m_displayOutput;
 }
 
-void Calculation::createOutputLayouts(Layout *exactOutput,
-                                      Layout *approximateOutput,
-                                      Context *context,
+void Calculation::createOutputLayouts(Layout* exactOutput,
+                                      Layout* approximateOutput,
+                                      Context* context,
                                       bool canChangeDisplayOutput,
                                       KDCoordinate maxVisibleWidth,
                                       KDFont::Size font) {
@@ -243,7 +243,7 @@ void Calculation::createOutputLayouts(Layout *exactOutput,
   }
 }
 
-Calculation::EqualSign Calculation::equalSign(Context *context) {
+Calculation::EqualSign Calculation::equalSign(Context* context) {
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
@@ -296,9 +296,9 @@ Calculation::EqualSign Calculation::equalSign(Context *context) {
 }
 
 void Calculation::fillExpressionsForAdditionalResults(
-    UserExpression *input, UserExpression *exactOutput,
-    UserExpression *approximateOutput) {
-  Context *globalContext =
+    UserExpression* input, UserExpression* exactOutput,
+    UserExpression* approximateOutput) {
+  Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   *input = this->input();
   *approximateOutput =

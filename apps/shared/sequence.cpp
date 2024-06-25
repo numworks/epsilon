@@ -29,7 +29,7 @@ I18n::Message Sequence::parameterMessageName() const {
   return I18n::Message::N;
 }
 
-size_t Sequence::nameWithArgumentAndType(char *buffer, size_t bufferSize) {
+size_t Sequence::nameWithArgumentAndType(char* buffer, size_t bufferSize) {
   size_t result = nameWithArgument(buffer, bufferSize);
   assert(result >= 1);
   size_t offset = result - 1;
@@ -96,7 +96,7 @@ Layout Sequence::nameLayout() {
 }
 
 bool Sequence::isDefined() const {
-  RecordDataBuffer *data = recordData();
+  RecordDataBuffer* data = recordData();
   switch (type()) {
     case Type::Explicit:
       return value().size > metaDataSize();
@@ -112,7 +112,7 @@ bool Sequence::isDefined() const {
 }
 
 bool Sequence::isEmpty() const {
-  RecordDataBuffer *data = recordData();
+  RecordDataBuffer* data = recordData();
   Type type = data->type();
   return Function::isEmpty() &&
          (type == Type::Explicit || (data->initialConditionSize(0) == 0 &&
@@ -120,16 +120,16 @@ bool Sequence::isEmpty() const {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSuitableForCobweb(Context *context) const {
+bool Sequence::isSuitableForCobweb(Context* context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(),
-             reinterpret_cast<SequenceContext *>(context)->cache())) &&
+             reinterpret_cast<SequenceContext*>(context)->cache())) &&
          !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
 bool Sequence::mainExpressionContainsForbiddenTerms(
-    Context *context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
+    Context* context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
     bool otherSequencesAreAllowed) const {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
@@ -140,23 +140,23 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
       recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
-void Sequence::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) const {
+void Sequence::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) const {
   model()->tidyDownstreamPoolFrom(treePoolCursor);
   m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
   m_secondInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 template <typename T>
-T Sequence::privateEvaluateYAtX(T x, Context *context) const {
+T Sequence::privateEvaluateYAtX(T x, Context* context) const {
   // Round behaviour changes platform-wise if std::isnan(x)
   assert(!std::isnan(x));
   int n = std::round(x);
   return static_cast<T>(approximateAtRank(
-      n, reinterpret_cast<SequenceContext *>(context)->cache()));
+      n, reinterpret_cast<SequenceContext*>(context)->cache()));
 }
 
 double Sequence::approximateAtRank(int rank,
-                                   Internal::SequenceCache *sqctx) const {
+                                   Internal::SequenceCache* sqctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
@@ -167,7 +167,7 @@ double Sequence::approximateAtRank(int rank,
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
+double Sequence::approximateAtContextRank(SequenceContext* sqctx, int rank,
                                           bool intermediateComputation) const {
   if (rank < initialRank()) {
     return NAN;
@@ -191,7 +191,7 @@ double Sequence::approximateAtContextRank(SequenceContext *sqctx, int rank,
 }
 
 UserExpression Sequence::sumBetweenBounds(double start, double end,
-                                          Context *context) const {
+                                          Context* context) const {
   /* Here, we cannot just create the expression sum(u(n), start, end) because
    * the approximation of u(n) is not handled by Poincare (but only by
    * Sequence). */
@@ -213,45 +213,45 @@ UserExpression Sequence::sumBetweenBounds(double start, double end,
   return NewExpression::Builder<double>(result);
 }
 
-Sequence::RecordDataBuffer *Sequence::recordData() const {
+Sequence::RecordDataBuffer* Sequence::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer*>(const_cast<void*>(d.buffer));
 }
 
 /* Sequence Model */
 
-Layout Sequence::SequenceModel::name(Sequence *sequence) {
+Layout Sequence::SequenceModel::name(Sequence* sequence) {
   if (m_name.isUninitialized()) {
     buildName(sequence);
   }
   return m_name;
 }
 
-void Sequence::SequenceModel::tidyName(PoolObject *treePoolCursor) const {
+void Sequence::SequenceModel::tidyName(PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr || m_name.isDownstreamOf(treePoolCursor)) {
     m_name = Layout();
   }
 }
 
 void Sequence::SequenceModel::tidyDownstreamPoolFrom(
-    PoolObject *treePoolCursor) const {
+    PoolObject* treePoolCursor) const {
   tidyName(treePoolCursor);
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 void Sequence::SequenceModel::updateNewDataWithExpression(
-    Ion::Storage::Record *record, const UserExpression &expressionToStore,
-    void *expressionAddress, size_t newExpressionSize,
+    Ion::Storage::Record* record, const UserExpression& expressionToStore,
+    void* expressionAddress, size_t newExpressionSize,
     size_t previousExpressionSize) {
   Ion::Storage::Record::Data newData = record->value();
   // Translate expressions located downstream
   size_t sizeBeforeExpression =
-      (char *)expressionAddress - (char *)newData.buffer;
+      (char*)expressionAddress - (char*)newData.buffer;
   size_t remainingSize =
       newData.size - sizeBeforeExpression - previousExpressionSize;
-  memmove((char *)expressionAddress + newExpressionSize,
-          (char *)expressionAddress + previousExpressionSize, remainingSize);
+  memmove((char*)expressionAddress + newExpressionSize,
+          (char*)expressionAddress + previousExpressionSize, remainingSize);
   // Copy the expression
   if (!expressionToStore.isUninitialized()) {
     memmove(expressionAddress, expressionToStore.addressInPool(),
@@ -267,23 +267,23 @@ void Sequence::SequenceModel::setStorageChangeFlag() const {
 
 /* Definition Handle*/
 
-void *Sequence::DefinitionModel::expressionAddress(
-    const Ion::Storage::Record *record) const {
-  return (char *)record->value().buffer + sizeof(RecordDataBuffer);
+void* Sequence::DefinitionModel::expressionAddress(
+    const Ion::Storage::Record* record) const {
+  return (char*)record->value().buffer + sizeof(RecordDataBuffer);
 }
 
 size_t Sequence::DefinitionModel::expressionSize(
-    const Ion::Storage::Record *record) const {
+    const Ion::Storage::Record* record) const {
   Ion::Storage::Record::Data data = record->value();
-  RecordDataBuffer *dataBuffer =
-      static_cast<const Sequence *>(record)->recordData();
+  RecordDataBuffer* dataBuffer =
+      static_cast<const Sequence*>(record)->recordData();
   return data.size - sizeof(RecordDataBuffer) -
          dataBuffer->initialConditionSize(0) -
          dataBuffer->initialConditionSize(1);
 }
 
-void Sequence::DefinitionModel::buildName(Sequence *sequence) {
-  const char *index;
+void Sequence::DefinitionModel::buildName(Sequence* sequence) {
+  const char* index;
   if (sequence->type() == Type::Explicit) {
     index = "n";
   } else if (sequence->type() == Type::SingleRecurrence) {
@@ -299,32 +299,32 @@ void Sequence::DefinitionModel::buildName(Sequence *sequence) {
 
 /* Initial Condition Handle*/
 
-void *Sequence::InitialConditionModel::expressionAddress(
-    const Ion::Storage::Record *record) const {
+void* Sequence::InitialConditionModel::expressionAddress(
+    const Ion::Storage::Record* record) const {
   Ion::Storage::Record::Data data = record->value();
-  RecordDataBuffer *dataBuffer =
-      static_cast<const Sequence *>(record)->recordData();
+  RecordDataBuffer* dataBuffer =
+      static_cast<const Sequence*>(record)->recordData();
   size_t offset = conditionIndex() == 0
                       ? data.size - dataBuffer->initialConditionSize(0) -
                             dataBuffer->initialConditionSize(1)
                       : data.size - dataBuffer->initialConditionSize(1);
-  return (char *)data.buffer + offset;
+  return (char*)data.buffer + offset;
 }
 
 size_t Sequence::InitialConditionModel::expressionSize(
-    const Ion::Storage::Record *record) const {
-  return static_cast<const Sequence *>(record)
+    const Ion::Storage::Record* record) const {
+  return static_cast<const Sequence*>(record)
       ->recordData()
       ->initialConditionSize(conditionIndex());
 }
 
 void Sequence::InitialConditionModel::updateMetaData(
-    const Ion::Storage::Record *record, size_t newSize) {
-  static_cast<const Sequence *>(record)->recordData()->setInitialConditionSize(
+    const Ion::Storage::Record* record, size_t newSize) {
+  static_cast<const Sequence*>(record)->recordData()->setInitialConditionSize(
       newSize, conditionIndex());
 }
 
-void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
+void Sequence::InitialConditionModel::buildName(Sequence* sequence) {
   assert(
       (conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) ||
       sequence->type() == Type::DoubleRecurrence);
@@ -336,7 +336,7 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
                            .KB = Layout::String(buffer)});
 }
 
-template double Sequence::privateEvaluateYAtX<double>(double, Context *) const;
-template float Sequence::privateEvaluateYAtX<float>(float, Context *) const;
+template double Sequence::privateEvaluateYAtX<double>(double, Context*) const;
+template float Sequence::privateEvaluateYAtX<float>(float, Context*) const;
 
 }  // namespace Shared

@@ -21,7 +21,7 @@ I18n::Message App::Descriptor::upperName() const {
   return I18n::Message::SequenceAppCapital;
 }
 
-const Image *App::Descriptor::icon() const { return ImageStore::SequenceIcon; }
+const Image* App::Descriptor::icon() const { return ImageStore::SequenceIcon; }
 
 App::Snapshot::Snapshot()
     : Shared::FunctionApp::Snapshot::Snapshot(),
@@ -34,7 +34,7 @@ App::Snapshot::Snapshot()
           std::size(Shared::SequenceStore::k_sequenceNames));
 }
 
-App *App::Snapshot::unpack(Container *container) {
+App* App::Snapshot::unpack(Container* container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
@@ -66,7 +66,7 @@ void App::Snapshot::reset() {
 
 constexpr static App::Descriptor sDescriptor;
 
-const App::Descriptor *App::Snapshot::descriptor() const {
+const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 

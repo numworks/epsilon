@@ -17,8 +17,8 @@ namespace Calculation {
 
 /* HistoryViewCell */
 
-void HistoryViewCell::ComputeCalculationHeights(Calculation *calculation,
-                                                Context *context) {
+void HistoryViewCell::ComputeCalculationHeights(Calculation* calculation,
+                                                Context* context) {
   HistoryViewCell cell(nullptr);
   cell.setNewCalculation(calculation, false, context, true);
   KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
@@ -28,7 +28,7 @@ void HistoryViewCell::ComputeCalculationHeights(Calculation *calculation,
   calculation->setHeights(unExpandedHeight, expandedHeight);
 }
 
-HistoryViewCell::HistoryViewCell(Responder *parentResponder)
+HistoryViewCell::HistoryViewCell(Responder* parentResponder)
     : Responder(parentResponder),
       m_calculationCRC32(0),
       m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
@@ -138,7 +138,7 @@ void HistoryViewCell::cellDidSelectSubview(
   reloadScroll();
 }
 
-View *HistoryViewCell::subviewAtIndex(int index) {
+View* HistoryViewCell::subviewAtIndex(int index) {
   /* The order of the subviews should not matter here as they don't overlap.
    * However, the order determines the order of redrawing as well. For several
    * reasons listed after, changing subview selection often redraws the entire
@@ -157,7 +157,7 @@ View *HistoryViewCell::subviewAtIndex(int index) {
    * complex view enables to redraw it before the vblank thereby preventing
    * blinking).
    * TODO: this is a dirty hack which should be fixed! */
-  View *views[3] = {&m_scrollableOutputView, &m_inputView, &m_ellipsis};
+  View* views[3] = {&m_scrollableOutputView, &m_inputView, &m_ellipsis};
   return views[index];
 }
 
@@ -191,9 +191,9 @@ void HistoryViewCell::layoutSubviews(bool force) {
 
 void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
                                            KDCoordinate frameHeight,
-                                           KDRect *ellipsisFrame,
-                                           KDRect *inputFrame,
-                                           KDRect *outputFrame) {
+                                           KDRect* ellipsisFrame,
+                                           KDRect* inputFrame,
+                                           KDRect* outputFrame) {
   assert(ellipsisFrame && inputFrame && outputFrame);
 
   if (isDisplayingEllipsis()) {
@@ -254,12 +254,12 @@ void HistoryViewCell::resetMemoization() {
   m_calculationCRC32 = 0;
 }
 
-void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
-                                     Context *context,
+void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
+                                     Context* context,
                                      bool canChangeDisplayOutput) {
   uint32_t newCalculationCRC =
-      Ion::crc32Byte((const uint8_t *)calculation,
-                     ((char *)calculation->next()) - ((char *)calculation));
+      Ion::crc32Byte((const uint8_t*)calculation,
+                     ((char*)calculation->next()) - ((char*)calculation));
   if (newCalculationCRC == m_calculationCRC32) {
     if (updateExpanded(expanded)) {
       reloadScroll();
@@ -281,8 +281,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
   reloadScroll();
 }
 
-void HistoryViewCell::setNewCalculation(Calculation *calculation, bool expanded,
-                                        Poincare::Context *context,
+void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
+                                        Poincare::Context* context,
                                         bool canChangeDisplayOutput) {
   // Memoization
   m_hasEllipsis = calculation->additionalResultsType().isNotEmpty();

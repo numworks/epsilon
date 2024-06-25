@@ -20,8 +20,8 @@ using namespace Ion::Storage;
 
 namespace Shared {
 
-DoublePairStore::DoublePairStore(GlobalContext *context,
-                                 DoublePairStorePreferences *preferences)
+DoublePairStore::DoublePairStore(GlobalContext* context,
+                                 DoublePairStorePreferences* preferences)
     : m_storePreferences(preferences), m_context(context) {}
 
 void DoublePairStore::initListsInPool() {
@@ -50,7 +50,7 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       if (e.type() != ExpressionNode::Type::List) {
         continue;
       }
-      setList(static_cast<List &>(e), s, i, true);
+      setList(static_cast<List&>(e), s, i, true);
     }
     updateSeries(s, delayUpdate);
   }
@@ -65,7 +65,7 @@ void DoublePairStore::tidy() {
 }
 
 size_t DoublePairStore::fillColumnName(int series, int column,
-                                       char *buffer) const {
+                                       char* buffer) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(column >= 0 && column < k_numberOfColumnsPerSeries);
   buffer[0] = columnNamePrefixAtIndex(column);
@@ -74,8 +74,8 @@ size_t DoublePairStore::fillColumnName(int series, int column,
   return 2;
 }
 
-bool DoublePairStore::isColumnName(const char *name, int nameLen,
-                                   int *returnSeries, int *returnColumn) {
+bool DoublePairStore::isColumnName(const char* name, int nameLen,
+                                   int* returnSeries, int* returnColumn) {
   if (nameLen != 2 || name[1] < '1' || name[1] >= '1' + k_numberOfSeries) {
     return false;
   }
@@ -93,7 +93,7 @@ bool DoublePairStore::isColumnName(const char *name, int nameLen,
   return false;
 }
 
-size_t DoublePairStore::tableName(int series, char *buffer,
+size_t DoublePairStore::tableName(int series, char* buffer,
                                   size_t bufferSize) const {
   size_t length = fillColumnName(series, 0, buffer);
   length +=
@@ -129,7 +129,7 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   return updateSeries(series, delayUpdate);
 }
 
-bool DoublePairStore::setList(List &list, int series, int i, bool delayUpdate,
+bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
                               bool setOtherColumnToDefaultIfEmpty) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/
@@ -289,11 +289,11 @@ int DoublePairStore::activeSeriesIndexFromSeriesIndex(
   return activeSeriesCount;
 }
 
-static void swapRows(int a, int b, void *ctx, int numberOfElements) {
+static void swapRows(int a, int b, void* ctx, int numberOfElements) {
   // Swap X and Y values
-  void **pack = reinterpret_cast<void **>(ctx);
-  DoublePairStore *store = reinterpret_cast<DoublePairStore *>(pack[0]);
-  int *series = reinterpret_cast<int *>(pack[1]);
+  void** pack = reinterpret_cast<void**>(ctx);
+  DoublePairStore* store = reinterpret_cast<DoublePairStore*>(pack[0]);
+  int* series = reinterpret_cast<int*>(pack[1]);
   double dataAx = store->get(*series, 0, a);
   double dataAy = store->get(*series, 1, a);
   store->set(store->get(*series, 0, b), *series, 0, a, true);
@@ -302,12 +302,12 @@ static void swapRows(int a, int b, void *ctx, int numberOfElements) {
   store->set(dataAy, *series, 1, b, true);
 };
 
-static bool compare(int a, int b, void *ctx, int numberOfElements) {
-  void **pack = reinterpret_cast<void **>(ctx);
-  const DoublePairStore *store =
-      reinterpret_cast<const DoublePairStore *>(pack[0]);
-  int *series = reinterpret_cast<int *>(pack[1]);
-  int *column = reinterpret_cast<int *>(pack[2]);
+static bool compare(int a, int b, void* ctx, int numberOfElements) {
+  void** pack = reinterpret_cast<void**>(ctx);
+  const DoublePairStore* store =
+      reinterpret_cast<const DoublePairStore*>(pack[0]);
+  int* series = reinterpret_cast<int*>(pack[1]);
+  int* column = reinterpret_cast<int*>(pack[2]);
   double dataA = store->get(*series, *column, a);
   double dataB = store->get(*series, *column, b);
   return dataA >= dataB || std::isnan(dataA);
@@ -316,7 +316,7 @@ static bool compare(int a, int b, void *ctx, int numberOfElements) {
 void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
 
-  void *context[] = {const_cast<DoublePairStore *>(this), &series, &column};
+  void* context[] = {const_cast<DoublePairStore*>(this), &series, &column};
   Poincare::Helpers::Sort(swapRows, compare, context,
                           numberOfPairsOfSeries(series));
   updateSeries(series, delayUpdate);
@@ -357,7 +357,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
       for (size_t index = 0; index < sizeof(double) / sizeof(uint8_t);
            index++) {
         crc = OMG::Memory::crc32EatByte(
-            crc, *(reinterpret_cast<uint8_t *>(&value) + index));
+            crc, *(reinterpret_cast<uint8_t*>(&value) + index));
       }
     }
   }

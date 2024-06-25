@@ -21,10 +21,10 @@ using namespace Escher;
 namespace Regression {
 
 GraphController::GraphController(
-    Responder *parentResponder, ButtonRowController *header,
-    Shared::InteractiveCurveViewRange *interactiveRange,
-    CurveViewCursor *cursor, int *selectedDotIndex, int *selectedCurveIndex,
-    Store *store)
+    Responder* parentResponder, ButtonRowController* header,
+    Shared::InteractiveCurveViewRange* interactiveRange,
+    CurveViewCursor* cursor, int* selectedDotIndex, int* selectedCurveIndex,
+    Store* store)
     : InteractiveCurveViewController(parentResponder, header, interactiveRange,
                                      &m_view, cursor, I18n::Message::Regression,
                                      selectedCurveIndex),
@@ -87,7 +87,7 @@ void GraphController::setAbscissaInputAsFirstResponder() {
   App::app()->setFirstResponder(m_bannerView.abscissaValue());
 }
 
-Poincare::Context *GraphController::globalContext() const {
+Poincare::Context* GraphController::globalContext() const {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 
@@ -103,20 +103,20 @@ KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(
 }
 
 void GraphController::CurveSelectionController::fillCellForRow(
-    HighlightCell *cell, int row) {
+    HighlightCell* cell, int row) {
   int series = graphController()->seriesIndexFromCurveIndex(row);
-  const char *name = Store::SeriesTitle(series);
-  CurveSelectionCellWithChevron *myCell =
-      static_cast<CurveSelectionCellWithChevron *>(cell);
+  const char* name = Store::SeriesTitle(series);
+  CurveSelectionCellWithChevron* myCell =
+      static_cast<CurveSelectionCellWithChevron*>(cell);
   myCell->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
   myCell->label()->setLayout(Layout::String(name));
 }
 
 bool GraphController::buildRegressionExpression(
-    char *buffer, size_t bufferSize, Model::Type modelType,
+    char* buffer, size_t bufferSize, Model::Type modelType,
     int significantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) const {
-  double *coefficients =
+  double* coefficients =
       m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
   Layout l = m_store->regressionModel(modelType)->equationLayout(
       coefficients,
@@ -233,7 +233,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
   return true;
 }
 
-InteractiveCurveViewRange *GraphController::interactiveCurveViewRange() const {
+InteractiveCurveViewRange* GraphController::interactiveCurveViewRange() const {
   return App::app()->graphRange();
 }
 
@@ -246,7 +246,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Push regression controller directly
-    RegressionController *controller = App::app()->regressionController();
+    RegressionController* controller = App::app()->regressionController();
     controller->setSeries(selectedSeriesIndex());
     controller->setDisplayedFromDataTab(false);
     stackController()->push(controller);
@@ -288,7 +288,7 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(
 }
 
 bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
-  Poincare::Context *context = globalContext();
+  Poincare::Context* context = globalContext();
   double x = m_cursor->x();
   double y = m_cursor->y();
 
@@ -374,7 +374,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t,
-                                               Poincare::Context *context,
+                                               Poincare::Context* context,
                                                int subCurveIndex) const {
   return Coordinate2D<double>(t, yValue(curveIndex, t, context));
 }

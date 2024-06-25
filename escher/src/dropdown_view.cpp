@@ -9,7 +9,7 @@
 
 namespace Escher {
 
-PopupItemView::PopupItemView(HighlightCell *cell)
+PopupItemView::PopupItemView(HighlightCell* cell)
     : m_isPoppingUp(false), m_cell(cell) {
   m_caret.setImage(ImageStore::Caret);
   m_caret.setBackgroundColor(KDColorWhite);
@@ -57,7 +57,7 @@ int PopupItemView::numberOfSubviews() const {
   return 1 + !m_isPoppingUp;  // Hide caret when popping
 }
 
-View *PopupItemView::subviewAtIndex(int i) {
+View* PopupItemView::subviewAtIndex(int i) {
   if (i == 0) {
     return m_cell;
   }
@@ -65,7 +65,7 @@ View *PopupItemView::subviewAtIndex(int i) {
   return &m_caret;
 }
 
-void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
+void PopupItemView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor backgroundColor = defaultBackgroundColor();
   drawInnerRect(ctx, bounds(), backgroundColor);
   // When popping, the cell has no borders
@@ -76,8 +76,8 @@ void PopupItemView::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 Dropdown::DropdownPopupController::DropdownPopupController(
-    Responder *parentResponder, ExplicitListViewDataSource *listDataSource,
-    Dropdown *dropdown, DropdownCallback *callback)
+    Responder* parentResponder, ExplicitListViewDataSource* listDataSource,
+    Dropdown* dropdown, DropdownCallback* callback)
     : ExplicitSelectableListViewController(parentResponder),
       m_listViewDataSource(listDataSource),
       m_memoizedCellWidth(-1),
@@ -145,14 +145,14 @@ void Dropdown::DropdownPopupController::resetSizeMemoization() {
   ExplicitListViewDataSource::resetSizeMemoization();
 }
 
-HighlightCell *Dropdown::DropdownPopupController::innerCellAtRow(int row) {
+HighlightCell* Dropdown::DropdownPopupController::innerCellAtRow(int row) {
   return m_listViewDataSource->reusableCell(
       row, m_listViewDataSource->typeAtRow(row));
 }
 
-Dropdown::Dropdown(Responder *parentResponder,
-                   ExplicitListViewDataSource *listDataSource,
-                   DropdownCallback *callback)
+Dropdown::Dropdown(Responder* parentResponder,
+                   ExplicitListViewDataSource* listDataSource,
+                   DropdownCallback* callback)
     : Responder(parentResponder),
       m_popup(this, listDataSource, this, callback) {
   selectRow(0);

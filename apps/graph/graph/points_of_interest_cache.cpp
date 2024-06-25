@@ -18,7 +18,7 @@ namespace Graph {
 PointsOfInterestCache PointsOfInterestCache::clone() const {
   PointsOfInterestCache result = *this;
   SystemExpression cloneList = result.list().clone();
-  result.m_list.setList(static_cast<Poincare::List &>(cloneList));
+  result.m_list.setList(static_cast<Poincare::List&>(cloneList));
   return result;
 }
 
@@ -209,8 +209,8 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
 #else
   float searchStep = Solver<double>::MaximalStep(m_start - m_end);
 
-  ContinuousFunctionStore *store = App::app()->functionStore();
-  Context *context = App::app()->localContext();
+  ContinuousFunctionStore* store = App::app()->functionStore();
+  Context* context = App::app()->localContext();
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
   SystemFunction e = f->expressionApproximated(context);
 
@@ -230,7 +230,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   }
 
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(
-      const SystemFunction &e);
+      const SystemFunction& e);
   NextSolution methodsNext[] = {&Solver<double>::nextRoot,
                                 &Solver<double>::nextMinimum,
                                 &Solver<double>::nextMaximum};
@@ -291,7 +291,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       }
       append(intersection.x(), intersection.y(),
              Solver<double>::Interest::Intersection,
-             *reinterpret_cast<uint32_t *>(&record));
+             *reinterpret_cast<uint32_t*>(&record));
     }
   }
 #endif
@@ -307,8 +307,8 @@ void PointsOfInterestCache::append(double x, double y,
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
-    PoolObject *treePoolCursor) const {
-  ContinuousFunctionStore *store = App::app()->functionStore();
+    PoolObject* treePoolCursor) const {
+  ContinuousFunctionStore* store = App::app()->functionStore();
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {
     store->modelForRecord(store->activeRecordAtIndex(i))

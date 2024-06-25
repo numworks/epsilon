@@ -14,15 +14,15 @@ using namespace Escher;
 namespace Graph {
 
 TangentGraphController::TangentGraphController(
-    Responder *parentResponder, GraphView *graphView, BannerView *bannerView,
-    InteractiveCurveViewRange *curveViewRange, CurveViewCursor *cursor)
+    Responder* parentResponder, GraphView* graphView, BannerView* bannerView,
+    InteractiveCurveViewRange* curveViewRange, CurveViewCursor* cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(graphView),
       m_bannerView(bannerView),
       m_graphRange(curveViewRange),
       m_drawTangent(false) {}
 
-const char *TangentGraphController::title() {
+const char* TangentGraphController::title() {
   I18n::Message message = m_drawTangent ? I18n::Message::Tangent
                                         : I18n::Message::CartesianSlopeFormula;
   return I18n::translate(message);
@@ -51,7 +51,7 @@ void TangentGraphController::didBecomeFirstResponder() {
 }
 
 bool TangentGraphController::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   /* TODO: factorise with
    * InteractiveCurveViewController::textFieldDidFinishEditing */
   double floatBody = ParseInputFloatValue<double>(textField->draftText());
@@ -118,8 +118,8 @@ bool TangentGraphController::moveCursorHorizontally(
 }
 
 bool TangentGraphController::handleEnter() {
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
   stack->pop();
   return true;
 }

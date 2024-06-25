@@ -15,8 +15,8 @@ using namespace Escher;
 
 namespace Sequence {
 
-TypeParameterController::TypeParameterController(Responder *parentResponder,
-                                                 ListController *list,
+TypeParameterController::TypeParameterController(Responder* parentResponder,
+                                                 ListController* list,
                                                  KDMargins margins)
     : UniformSelectableListController<MenuCell<LayoutView, MessageTextView>,
                                       k_numberOfCells>(parentResponder),
@@ -32,16 +32,16 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
   m_selectableListView.hideScrollBars();
 }
 
-const char *TypeParameterController::title() {
+const char* TypeParameterController::title() {
   return I18n::translate(isNewModel() ? I18n::Message::ChooseSequenceType
                                       : I18n::Message::SequenceType);
 }
 
 void TypeParameterController::viewWillAppear() {
-  const char *nextName = isNewModel() ? SequenceStore::FirstAvailableName()
+  const char* nextName = isNewModel() ? SequenceStore::FirstAvailableName()
                                       : sequence()->fullName();
   assert(nextName != nullptr);
-  const char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
+  const char* subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
   for (size_t j = 0; j < k_numberOfCells; j++) {
     cell(j)->label()->setLayout(Layout::Create(
         KA ^ KSubscriptL(KB), {.KA = Layout::CodePoint(nextName[0]),
@@ -83,7 +83,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
                   ->sequencesInitialRank());
         }
       }
-      StackViewController *stack = stackController();
+      StackViewController* stack = stackController();
       assert(stack->depth() > 2);
       stack->pop();
       stack->pop();
@@ -97,7 +97,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record =
         sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels() - 1);
-    Shared::Sequence *newSequence = sequenceStore()->modelForRecord(record);
+    Shared::Sequence* newSequence = sequenceStore()->modelForRecord(record);
     newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
     // Make all the lines of the added sequence visible
     m_listController->showLastSequence();
@@ -116,7 +116,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-SequenceStore *TypeParameterController::sequenceStore() {
+SequenceStore* TypeParameterController::sequenceStore() {
   return App::app()->functionStore();
 }
 

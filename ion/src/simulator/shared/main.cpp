@@ -27,16 +27,16 @@
 #include "actions.h"
 #include "screenshot.h"
 extern "C" {
-extern char *eadk_external_data;
+extern char* eadk_external_data;
 extern size_t eadk_external_data_size;
 }
 #include <dlfcn.h>
 #endif
 
-constexpr static const char *k_loadStateFileKeys[] = {"--load-state-file",
+constexpr static const char* k_loadStateFileKeys[] = {"--load-state-file",
                                                       "-l"};
-constexpr static const char *k_headlessFlags[] = {"--headless", "-h"};
-constexpr static const char *k_languageFlag = "--language";
+constexpr static const char* k_headlessFlags[] = {"--headless", "-h"};
+constexpr static const char* k_languageFlag = "--language";
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -44,38 +44,38 @@ constexpr static const char *k_languageFlag = "--language";
 
 class Args {
  public:
-  Args(int argc, char *argv[]) : m_arguments(argv, argv + argc) {}
-  bool has(const char *key) const;
-  const char *get(const char *key, bool pop = false);
-  const char *pop(const char *key) { return get(key, true); }
-  const char *pop(const char *const *keys, size_t numberOfKeys);
-  bool popFlag(const char *flag);
-  bool popFlags(const char *const *flags, size_t numberOfFlags);
-  void push(const char *key, const char *value) {
+  Args(int argc, char* argv[]) : m_arguments(argv, argv + argc) {}
+  bool has(const char* key) const;
+  const char* get(const char* key, bool pop = false);
+  const char* pop(const char* key) { return get(key, true); }
+  const char* pop(const char* const* keys, size_t numberOfKeys);
+  bool popFlag(const char* flag);
+  bool popFlags(const char* const* flags, size_t numberOfFlags);
+  void push(const char* key, const char* value) {
     if (key != nullptr && value != nullptr) {
       m_arguments.push_back(key);
       m_arguments.push_back(value);
     }
   }
-  void push(const char *argument) { m_arguments.push_back(argument); }
+  void push(const char* argument) { m_arguments.push_back(argument); }
   int argc() const { return m_arguments.size(); }
-  const char *const *argv() const { return &m_arguments[0]; }
+  const char* const* argv() const { return &m_arguments[0]; }
 
  private:
-  std::vector<const char *>::const_iterator find(const char *name) const;
-  std::vector<const char *> m_arguments;
+  std::vector<const char*>::const_iterator find(const char* name) const;
+  std::vector<const char*> m_arguments;
 };
 
-bool Args::has(const char *name) const {
+bool Args::has(const char* name) const {
   return find(name) != m_arguments.end();
 }
 
-const char *Args::get(const char *argument, bool pop) {
+const char* Args::get(const char* argument, bool pop) {
   auto nameIt = find(argument);
   if (nameIt != m_arguments.end()) {
     auto valueIt = std::next(nameIt);
     if (valueIt != m_arguments.end()) {
-      const char *value = *valueIt;
+      const char* value = *valueIt;
       if (pop) {
         m_arguments.erase(valueIt);
         m_arguments.erase(nameIt);
@@ -89,15 +89,15 @@ const char *Args::get(const char *argument, bool pop) {
   return nullptr;
 }
 
-const char *Args::pop(const char *const *keys, size_t numberOfKeys) {
-  const char *result = nullptr;
+const char* Args::pop(const char* const* keys, size_t numberOfKeys) {
+  const char* result = nullptr;
   for (size_t i = 0; !result && i < numberOfKeys; i++) {
     result = pop(keys[i]);
   }
   return result;
 }
 
-bool Args::popFlag(const char *argument) {
+bool Args::popFlag(const char* argument) {
   auto flagIt = find(argument);
   if (flagIt != m_arguments.end()) {
     m_arguments.erase(flagIt);
@@ -106,7 +106,7 @@ bool Args::popFlag(const char *argument) {
   return false;
 }
 
-bool Args::popFlags(const char *const *flags, size_t numberOfFlags) {
+bool Args::popFlags(const char* const* flags, size_t numberOfFlags) {
   bool result = false;
   for (size_t i = 0; !result && i < numberOfFlags; i++) {
     result = popFlag(flags[i]);
@@ -114,13 +114,13 @@ bool Args::popFlags(const char *const *flags, size_t numberOfFlags) {
   return result;
 }
 
-std::vector<const char *>::const_iterator Args::find(const char *name) const {
+std::vector<const char*>::const_iterator Args::find(const char* name) const {
   return std::find_if(m_arguments.begin(), m_arguments.end(),
-                      [name](const char *s) { return strcmp(s, name) == 0; });
+                      [name](const char* s) { return strcmp(s, name) == 0; });
 }
 
 #if ION_SIMULATOR_FILES
-static inline int load_eadk_external_data(const char *path) {
+static inline int load_eadk_external_data(const char* path) {
   if (path == nullptr) {
     return 0;
   }
@@ -128,7 +128,7 @@ static inline int load_eadk_external_data(const char *path) {
     fprintf(stderr, "Warning: eadk_external_data already loaded\n");
     return -1;
   }
-  FILE *f = fopen(path, "rb");
+  FILE* f = fopen(path, "rb");
   if (f == NULL) {
     fprintf(stderr, "Error loading external data file %s\n", path);
     return -1;
@@ -136,7 +136,7 @@ static inline int load_eadk_external_data(const char *path) {
   fseek(f, 0, SEEK_END);
   eadk_external_data_size = ftell(f);
   fseek(f, 0, SEEK_SET);
-  eadk_external_data = static_cast<char *>(malloc(eadk_external_data_size));
+  eadk_external_data = static_cast<char*>(malloc(eadk_external_data_size));
   if (eadk_external_data == nullptr) {
     fprintf(stderr, "Error allocating external data file\n");
     fclose(f);
@@ -155,7 +155,7 @@ static inline int load_eadk_external_data(const char *path) {
 
 using namespace Ion::Simulator;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   Args args(argc, argv);
 
 #ifndef __WIN32__
@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if ION_SIMULATOR_FILES
-  const char *stateFile =
+  const char* stateFile =
       args.pop(k_loadStateFileKeys, std::size(k_loadStateFileKeys));
   if (stateFile) {
     assert(Journal::replayJournal());
@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
               "the language of the statefile will be used instead.\n");
       args.pop(k_languageFlag);
     }
-    const char *replayJournalLanguage =
+    const char* replayJournalLanguage =
         Journal::replayJournal()->startingLanguage();
     if (replayJournalLanguage[0] == 0) {
       /* If the state file contains the wildcard language, still set the
@@ -192,12 +192,12 @@ int main(int argc, char *argv[]) {
     args.push(k_languageFlag, replayJournalLanguage);
   }
 
-  const char *screenshotPath = args.pop("--take-screenshot");
+  const char* screenshotPath = args.pop("--take-screenshot");
   if (screenshotPath) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
   }
 
-  const char *allScreenshotsFolder = args.pop("--take-all-screenshots");
+  const char* allScreenshotsFolder = args.pop("--take-all-screenshots");
   if (allScreenshotsFolder) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(
         allScreenshotsFolder, true);
@@ -243,18 +243,18 @@ int main(int argc, char *argv[]) {
   }
 
 #if ION_SIMULATOR_FILES
-  const char *nwb = args.pop("--nwb");
+  const char* nwb = args.pop("--nwb");
   if (nwb) {
     if (load_eadk_external_data(args.pop("--nwb-external-data"))) {
       return -1;
     }
-    void *handle = dlopen(nwb, RTLD_LAZY);
+    void* handle = dlopen(nwb, RTLD_LAZY);
     if (handle == nullptr) {
       fprintf(stderr, "Error loading %s: %s\n", nwb, dlerror());
       return -1;
     }
-    int (*nwb_main)(int argc, const char *const argv[]);
-    *(void **)(&nwb_main) = dlsym(handle, "main");
+    int (*nwb_main)(int argc, const char* const argv[]);
+    *(void**)(&nwb_main) = dlsym(handle, "main");
     if (nwb_main == nullptr) {
       fprintf(stderr, "Could not locate nwb_main symbol: %s\n", dlerror());
       return -1;

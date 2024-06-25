@@ -4,19 +4,19 @@ using namespace Escher;
 
 namespace Shared {
 
-Interval::IntervalParameters *
+Interval::IntervalParameters*
 IntervalParameterController::SharedTempIntervalParameters() {
   static Interval::IntervalParameters sTempIntervalParameters;
   return &sTempIntervalParameters;
 }
 
 IntervalParameterController::IntervalParameterController(
-    Responder *parentResponder)
+    Responder* parentResponder)
     : FloatParameterController<double>(parentResponder),
       m_interval(nullptr),
       m_title(I18n::Message::IntervalSet),
       m_confirmPopUpController(Invocation::Builder<IntervalParameterController>(
-          [](IntervalParameterController *controller, void *sender) {
+          [](IntervalParameterController* controller, void* sender) {
             controller->stackController()->pop();
             return true;
           },
@@ -30,12 +30,12 @@ IntervalParameterController::IntervalParameterController(
   }
 }
 
-void IntervalParameterController::setInterval(Interval *interval) {
+void IntervalParameterController::setInterval(Interval* interval) {
   m_interval = interval;
   *SharedTempIntervalParameters() = *(interval->parameters());
 }
 
-const char *IntervalParameterController::title() {
+const char* IntervalParameterController::title() {
   return I18n::translate(m_title);
 }
 
@@ -90,17 +90,17 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex,
   return true;
 }
 
-HighlightCell *IntervalParameterController::reusableParameterCell(int index,
+HighlightCell* IntervalParameterController::reusableParameterCell(int index,
                                                                   int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   return &m_intervalCells[index];
 }
 
-TextField *IntervalParameterController::textFieldOfCellAtIndex(
-    HighlightCell *cell, int index) {
+TextField* IntervalParameterController::textFieldOfCellAtIndex(
+    HighlightCell* cell, int index) {
   assert(typeAtRow(index) == k_parameterCellType);
-  return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+  return static_cast<MenuCellWithEditableText<MessageTextView>*>(cell)
       ->textField();
 }
 
@@ -125,7 +125,7 @@ int IntervalParameterController::reusableParameterCellCount(int type) const {
 void IntervalParameterController::buttonAction() {
   m_interval->setParameters(*SharedTempIntervalParameters());
   m_interval->forceRecompute();
-  StackViewController *stack = stackController();
+  StackViewController* stack = stackController();
   stack->popUntilDepth(1, true);
 }
 

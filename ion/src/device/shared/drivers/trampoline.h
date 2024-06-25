@@ -28,8 +28,8 @@ namespace Trampoline {
 #define TRAMPOLINE_INTERFACE(index, function, argsList, returnType, args...) \
   typedef returnType (*FunctionType##_##function)(args);                     \
   returnType function(args) {                                                \
-    FunctionType##_##function *trampolineFunction =                          \
-        reinterpret_cast<FunctionType##_##function *>(                       \
+    FunctionType##_##function* trampolineFunction =                          \
+        reinterpret_cast<FunctionType##_##function*>(                        \
             Ion::Device::Trampoline::addressOfFunction(index));              \
     return (*trampolineFunction)argsList;                                    \
   }

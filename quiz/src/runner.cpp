@@ -11,11 +11,11 @@
 #include "quiz.h"
 #include "symbols.h"
 
-void quiz_print(const char *message) { Ion::Console::writeLine(message); }
+void quiz_print(const char* message) { Ion::Console::writeLine(message); }
 
 bool quiz_print_clear() { return Ion::Console::clear(); }
 
-static inline void ion_main_inner(const char *testFilter) {
+static inline void ion_main_inner(const char* testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
   int totalCases = 0;
@@ -85,13 +85,13 @@ static inline void ion_main_inner(const char *testFilter) {
 #endif
 }
 
-void ion_main(int argc, const char *const argv[]) {
+void ion_main(int argc, const char* const argv[]) {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Poincare::Init();
   Escher::Init();
   Apps::Init();
 
-  const char *testFilter = nullptr;
+  const char* testFilter = nullptr;
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE
   for (int i = 1; i < argc; i++) {
@@ -109,7 +109,7 @@ void ion_main(int argc, const char *const argv[]) {
    * example, stack pointer could go backward after initialization and allocated
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
-  Ion::setStackStart((void *)(&stackTop));
+  Ion::setStackStart((void*)(&stackTop));
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     ion_main_inner(testFilter);

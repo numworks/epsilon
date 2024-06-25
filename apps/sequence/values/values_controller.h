@@ -14,14 +14,14 @@ namespace Sequence {
 class ValuesController : public Shared::ValuesController,
                          Escher::RegularTableSize1DManager {
  public:
-  ValuesController(Escher::Responder *parentResponder,
-                   Escher::ButtonRowController *header);
+  ValuesController(Escher::Responder* parentResponder,
+                   Escher::ButtonRowController* header);
 
   // ButtonRowDelegate
-  Escher::ButtonCell *buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::SimpleButtonCell *>(&m_setIntervalButton);
+    return const_cast<Escher::SimpleButtonCell*>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -35,16 +35,16 @@ class ValuesController : public Shared::ValuesController,
   }
 
   // Shared::ValuesController
-  IntervalParameterController *intervalParameterController() override {
+  IntervalParameterController* intervalParameterController() override {
     return &m_intervalParameterController;
   }
 
  private:
   // TableViewDataSource
-  Escher::TableSize1DManager *columnWidthManager() override {
+  Escher::TableSize1DManager* columnWidthManager() override {
     return &m_widthManager;
   }
-  Escher::TableSize1DManager *rowHeightManager() override { return this; }
+  Escher::TableSize1DManager* rowHeightManager() override { return this; }
 
   // TableSize1DManager (height)
   constexpr static KDCoordinate k_sumLayoutHeight = 52;
@@ -55,7 +55,7 @@ class ValuesController : public Shared::ValuesController,
                                      KDCoordinate defaultSize) override;
 
   // ColumnHelper
-  size_t fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char* buffer) override;
 
   // EditableCellTableViewController
   bool checkDataAtLocation(double floatBody, int column,
@@ -65,42 +65,42 @@ class ValuesController : public Shared::ValuesController,
   bool setDataAtLocation(double floatBody, int column, int row) override;
 
   // Shared::ValuesController
-  Shared::SequenceStore *functionStore() const override {
-    return static_cast<Shared::SequenceStore *>(
+  Shared::SequenceStore* functionStore() const override {
+    return static_cast<Shared::SequenceStore*>(
         Shared::ValuesController::functionStore());
   }
   Ion::Storage::Record recordAtColumn(int i) override {
     return recordAtColumn(i, nullptr);
   }
-  Ion::Storage::Record recordAtColumn(int i, bool *isSumColumn);
+  Ion::Storage::Record recordAtColumn(int i, bool* isSumColumn);
   void updateNumberOfColumns() override;
-  Poincare::Layout *memoizedLayoutAtIndex(int i) override;
+  Poincare::Layout* memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int column) override;
-  void setStartEndMessages(Shared::IntervalParameterController *controller,
+  void setStartEndMessages(Shared::IntervalParameterController* controller,
                            int column) override {
     setDefaultStartEndMessages();
   }
   void createMemoizedLayout(int i, int j, int index) override;
-  Shared::Interval *intervalAtColumn(int column) override;
+  Shared::Interval* intervalAtColumn(int column) override;
   I18n::Message valuesParameterMessageAtColumn(int column) const override {
     return I18n::Message::N;
   }
-  Shared::ExpressionFunctionTitleCell *functionTitleCells(int j) override;
-  Escher::EvenOddExpressionCell *valueCells(int j) override;
+  Shared::ExpressionFunctionTitleCell* functionTitleCells(int j) override;
+  Escher::EvenOddExpressionCell* valueCells(int j) override;
   int abscissaCellsCount() const override {
     return k_maxNumberOfDisplayableRows;
   }
-  Escher::AbstractEvenOddEditableTextCell *abscissaCells(int j) override;
+  Escher::AbstractEvenOddEditableTextCell* abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override { return 1; }
-  Escher::EvenOddMessageTextCell *abscissaTitleCells(int j) override;
+  Escher::EvenOddMessageTextCell* abscissaTitleCells(int j) override;
 
-  Escher::SelectableViewController *functionParameterController() override {
+  Escher::SelectableViewController* functionParameterController() override {
     return sequenceColumnParameterController();
   }
-  Shared::ColumnParameters *functionParameters() override {
+  Shared::ColumnParameters* functionParameters() override {
     return sequenceColumnParameterController();
   }
-  Shared::ColumnParameterController *sequenceColumnParameterController();
+  Shared::ColumnParameterController* sequenceColumnParameterController();
 
   void setDefaultStartEndMessages();
 

@@ -45,7 +45,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
-    KDContext *ctx = Ion::Display::Context::SharedContext;
+    KDContext* ctx = Ion::Display::Context::SharedContext;
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(rectNeedingRedraw);
     drawRect(ctx, rectNeedingRedraw.relativeTo(m_frame.origin()));
@@ -57,7 +57,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
     assert(subviewsNumber == numberOfSubviews());
-    View *subview = subviewAtIndex(i);
+    View* subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;
     }
@@ -80,7 +80,7 @@ void View::setSize(KDSize size) {
   setFrame(KDRect(m_frame.origin(), size), false);
 }
 
-void View::setChildFrame(View *child, KDRect frame, bool force) {
+void View::setChildFrame(View* child, KDRect frame, bool force) {
   /* We will move the child. This will leave a blank spot in this view where it
    * previously was. At this point, we know that the only area that needs to be
    * redrawn in the superview is the old frame minus the part covered by the new
@@ -142,7 +142,7 @@ void View::translate(KDPoint delta) {
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
     assert(subviewsNumber == numberOfSubviews());
-    View *subview = subviewAtIndex(i);
+    View* subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;
     }
@@ -150,22 +150,22 @@ void View::translate(KDPoint delta) {
   }
 }
 
-KDPoint View::pointFromPointInView(View *view, KDPoint point) {
+KDPoint View::pointFromPointInView(View* view, KDPoint point) {
   return point.translatedBy(relativeChildOrigin(view));
 }
 
 KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }
 
 #if ESCHER_VIEW_LOGGING
-const char *View::className() const { return "View"; }
+const char* View::className() const { return "View"; }
 
-void View::logAttributes(std::ostream &os) const {
+void View::logAttributes(std::ostream& os) const {
   os << " address=\"" << this << "\"";
   os << " frame=\"" << m_frame.x() << "," << m_frame.y() << ","
      << m_frame.width() << "," << m_frame.height() << "\"";
 }
 
-std::ostream &operator<<(std::ostream &os, View &view) {
+std::ostream& operator<<(std::ostream& os, View& view) {
   // TODO find something better than this static variable, like a custom stream
   static int indentColumn = 0;
   constexpr static int bufferSize = 200;
@@ -193,7 +193,7 @@ std::ostream &operator<<(std::ostream &os, View &view) {
 
 void View::log() const {
   // TODO << should use a const View but it requires a const subview
-  std::cout << *const_cast<View *>(this);
+  std::cout << *const_cast<View*>(this);
 }
 #endif
 

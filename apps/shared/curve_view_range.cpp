@@ -16,7 +16,7 @@ uint32_t CurveViewRange::rangeChecksum() const {
   size_t dataLengthInBytes = sizeof(data);
   // Assert that dataLengthInBytes is a multiple of 4
   assert((dataLengthInBytes & 0x3) == 0);
-  return Ion::crc32DoubleWord((uint32_t *)data,
+  return Ion::crc32DoubleWord((uint32_t*)data,
                               dataLengthInBytes / sizeof(uint32_t));
 }
 

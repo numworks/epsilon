@@ -16,8 +16,8 @@ HomogeneityTableDataSource::HomogeneityTableDataSource()
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
 void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell,
-                                          void *cell, int index) {
-  static_cast<InferenceEvenOddBufferCell *>(cell)->setFont(KDFont::Size::Small);
+                                          void* cell, int index) {
+  static_cast<InferenceEvenOddBufferCell*>(cell)->setFont(KDFont::Size::Small);
 }
 
 int HomogeneityTableDataSource::reusableCellCount(int type) const {
@@ -29,7 +29,7 @@ int HomogeneityTableDataSource::reusableCellCount(int type) const {
   return k_numberOfReusableCells;
 }
 
-HighlightCell *HomogeneityTableDataSource::reusableCell(int i, int type) {
+HighlightCell* HomogeneityTableDataSource::reusableCell(int i, int type) {
   if (type == k_typeOfTopLeftCell) {
     assert(i == 0);
     return &m_topLeftCell;
@@ -50,14 +50,14 @@ int HomogeneityTableDataSource::typeAtLocation(int column, int row) const {
 }
 
 void HomogeneityTableDataSource::fillCellForLocation(
-    Escher::HighlightCell *cell, int column, int row) {
+    Escher::HighlightCell* cell, int column, int row) {
   int type = typeAtLocation(column, row);
   if (type == k_typeOfTopLeftCell) {
     return;
   }
   if (type == k_typeOfHeaderCells) {
-    InferenceEvenOddBufferCell *myCell =
-        static_cast<InferenceEvenOddBufferCell *>(cell);
+    InferenceEvenOddBufferCell* myCell =
+        static_cast<InferenceEvenOddBufferCell*>(cell);
     char digit;
     if (row == 0) {
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);

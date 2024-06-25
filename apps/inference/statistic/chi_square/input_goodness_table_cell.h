@@ -16,12 +16,12 @@ class InputGoodnessController;
 
 class InputGoodnessTableCell : public DoubleColumnTableCell {
  public:
-  InputGoodnessTableCell(Escher::Responder *parentResponder, GoodnessTest *test,
-                         InputGoodnessController *inputGoodnessController,
-                         Escher::ScrollViewDelegate *scrollViewDelegate);
+  InputGoodnessTableCell(Escher::Responder* parentResponder, GoodnessTest* test,
+                         InputGoodnessController* inputGoodnessController,
+                         Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
-  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
   bool recomputeDimensionsAndReload(bool forceReloadTable = false,
@@ -37,16 +37,16 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
           I18n::Message::Observed, I18n::Message::Expected};
 
   // ClearColumnHelper
-  size_t fillColumnName(int column, char *buffer) override;
+  size_t fillColumnName(int column, char* buffer) override;
 
-  Escher::HighlightCell *headerCell(int index) override {
+  Escher::HighlightCell* headerCell(int index) override {
     return &m_header[index];
   }
-  GoodnessTest *statistic() { return static_cast<GoodnessTest *>(m_statistic); }
-  CategoricalController *categoricalController() override;
+  GoodnessTest* statistic() { return static_cast<GoodnessTest*>(m_statistic); }
+  CategoricalController* categoricalController() override;
 
   Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];
-  InputGoodnessController *m_inputGoodnessController;
+  InputGoodnessController* m_inputGoodnessController;
 };
 
 }  // namespace Inference

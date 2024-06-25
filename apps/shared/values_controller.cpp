@@ -19,8 +19,8 @@ namespace Shared {
 
 // Constructor and helpers
 
-ValuesController::ValuesController(Responder *parentResponder,
-                                   ButtonRowController *header)
+ValuesController::ValuesController(Responder* parentResponder,
+                                   ButtonRowController* header)
     : EditableCellTableViewController(parentResponder,
                                       &m_prefacedTwiceTableView),
       ButtonRowDelegate(header, nullptr),
@@ -37,7 +37,7 @@ ValuesController::ValuesController(Responder *parentResponder,
 void ValuesController::setupSelectableTableViewAndCells() {
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
-    AbstractEvenOddEditableTextCell *c = abscissaCells(i);
+    AbstractEvenOddEditableTextCell* c = abscissaCells(i);
     c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegate(this);
   }
@@ -111,7 +111,7 @@ void ValuesController::didBecomeFirstResponder() {
   }
 }
 
-void ValuesController::willExitResponderChain(Responder *nextFirstResponder) {
+void ValuesController::willExitResponderChain(Responder* nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
     selectableTableView()->deselectTable();
@@ -124,14 +124,14 @@ void ValuesController::willExitResponderChain(Responder *nextFirstResponder) {
 
 int ValuesController::numberOfColumns() const { return m_numberOfColumns; }
 
-void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
+void ValuesController::fillCellForLocation(HighlightCell* cell, int column,
                                            int row) {
   fillCellForLocationWithDisplayMode(
       cell, column, row, Preferences::SharedPreferences()->displayMode(),
       Preferences::SharedPreferences()->numberOfSignificantDigits());
   // The cell is not a title cell and not editable
   if (typeAtLocation(column, row) == k_notEditableValueCellType) {
-    EvenOddExpressionCell *myCell = static_cast<EvenOddExpressionCell *>(cell);
+    EvenOddExpressionCell* myCell = static_cast<EvenOddExpressionCell*>(cell);
     // Special case: last row
     if (row == numberOfElementsInColumn(column) + k_numberOfTitleRows) {
       myCell->setLayout(KRackL());
@@ -142,7 +142,7 @@ void ValuesController::fillCellForLocation(HighlightCell *cell, int column,
   }
 }
 
-HighlightCell *ValuesController::reusableCell(int index, int type) {
+HighlightCell* ValuesController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
     case k_abscissaTitleCellType:
@@ -183,19 +183,19 @@ int ValuesController::typeAtLocation(int column, int row) const {
   return (column > 0) + 2 * (row > 0);
 }
 
-Responder *ValuesController::responderWhenEmpty() {
+Responder* ValuesController::responderWhenEmpty() {
   tabController()->selectTab();
   return tabController();
 }
 
-SelectableViewController *ValuesController::columnParameterController() {
+SelectableViewController* ValuesController::columnParameterController() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
     return &m_abscissaParameterController;
   }
   return functionParameterController();
 }
 
-ColumnParameters *ValuesController::columnParameters() {
+ColumnParameters* ValuesController::columnParameters() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
     return &m_abscissaParameterController;
   }
@@ -286,7 +286,7 @@ void ValuesController::didChangeCell(int column, int row) {
 }
 
 int ValuesController::numberOfElementsInColumn(int column) const {
-  return const_cast<ValuesController *>(this)
+  return const_cast<ValuesController*>(this)
       ->intervalAtColumn(column)
       ->numberOfElements();
 }
@@ -302,16 +302,17 @@ KDCoordinate ValuesController::defaultColumnWidth() {
 
 // Parent controller getters
 
-Escher::TabViewController *ValuesController::tabController() const {
-  return static_cast<Escher::TabViewController *>(parentResponder()
-                                                      ->parentResponder()
-                                                      ->parentResponder()
-                                                      ->parentResponder());
+Escher::TabViewController* ValuesController::tabController() const {
+  return static_cast<Escher::TabViewController*>(parentResponder()
+                                                     ->parentResponder()
+                                                     ->parentResponder()
+                                                     ->parentResponder());
 }
 
-StackViewController *ValuesController::stackController() const {
-  return (StackViewController
-              *)(parentResponder()->parentResponder()->parentResponder());
+StackViewController* ValuesController::stackController() const {
+  return (StackViewController*)(parentResponder()
+                                    ->parentResponder()
+                                    ->parentResponder());
 }
 
 // Model getters
@@ -322,7 +323,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
       i - numberOfAbscissaColumnsBeforeAbsoluteColumn(i));
 }
 
-FunctionStore *ValuesController::functionStore() const {
+FunctionStore* ValuesController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 
@@ -332,13 +333,13 @@ void ValuesController::resetLayoutMemoization() {
   const int numberOfCells = k_maxNumberOfDisplayableCells;
   for (int i = 0; i < numberOfCells; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
-    EvenOddExpressionCell *valueCell = valueCells(i);
+    EvenOddExpressionCell* valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
   const int numberOfFunctionColumns = k_maxNumberOfDisplayableColumns;
   for (int i = 0; i < numberOfFunctionColumns; i++) {
-    ExpressionFunctionTitleCell *titleCell = functionTitleCells(i);
+    ExpressionFunctionTitleCell* titleCell = functionTitleCells(i);
     assert(titleCell);
     titleCell->setLayout(Layout());
   }
@@ -476,35 +477,35 @@ void ValuesController::clearSelectedColumn() {
   m_selectableTableView.resetSizeAndOffsetMemoization();
 }
 
-size_t ValuesController::fillColumnName(int column, char *buffer) {
+size_t ValuesController::fillColumnName(int column, char* buffer) {
   assert(typeAtLocation(column, 0) == k_abscissaTitleCellType);
   I18n::Message message = valuesParameterMessageAtColumn(column);
   return Print::CustomPrintf(buffer, k_maxSizeOfColumnName,
                              I18n::translate(message));
 }
 
-void ValuesController::setTitleCellText(HighlightCell *cell, int column) {
+void ValuesController::setTitleCellText(HighlightCell* cell, int column) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
-    Shared::ExpressionFunctionTitleCell *myCell =
-        static_cast<Shared::ExpressionFunctionTitleCell *>(cell);
+    Shared::ExpressionFunctionTitleCell* myCell =
+        static_cast<Shared::ExpressionFunctionTitleCell*>(cell);
     myCell->setLayout(functionTitleLayout(column));
     return;
   }
   if (typeAtLocation(column, 0) == k_abscissaTitleCellType) {
-    EvenOddMessageTextCell *myTitleCell =
-        static_cast<EvenOddMessageTextCell *>(cell);
+    EvenOddMessageTextCell* myTitleCell =
+        static_cast<EvenOddMessageTextCell*>(cell);
     myTitleCell->setMessage(valuesParameterMessageAtColumn(column));
     return;
   }
 }
 
-void ValuesController::setTitleCellStyle(HighlightCell *cell, int column) {
+void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   if (typeAtLocation(column, 0) != k_functionTitleCellType) {
     return;
   }
-  Shared::Function *function =
+  Shared::Function* function =
       functionStore()->modelForRecord(recordAtColumn(column)).pointer();
-  static_cast<FunctionTitleCell *>(cell)->setColor(function->color());
+  static_cast<FunctionTitleCell*>(cell)->setColor(function->color());
 }
 
 void ValuesController::reloadEditedCell(int column, int row) {
@@ -523,7 +524,7 @@ void ValuesController::initializeInterval() {
 void ValuesController::initValueCells() {
   int numberOfValueCells = k_maxNumberOfDisplayableCells;
   for (int i = 0; i < numberOfValueCells; i++) {
-    EvenOddExpressionCell *valueCell = valueCells(i);
+    EvenOddExpressionCell* valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setFont(k_cellFont);
     valueCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);

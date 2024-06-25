@@ -13,7 +13,7 @@ using namespace Escher;
 
 namespace Shared {
 
-bool AbstractMathFieldDelegate::handleEventForField(EditableField *field,
+bool AbstractMathFieldDelegate::handleEventForField(EditableField* field,
                                                     Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
     bool inserted = field->handleXNT(m_currentXNTIndex, defaultXNT());
@@ -36,12 +36,12 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
 }
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,
-                                                       Context *context) {
+                                                       Context* context) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store;
 }
 
-bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
-                                                 Context *context) {
+bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
+                                                 Context* context) {
   /* Parsing
    * Do not parse for assignment to detect if there is a syntax error, since
    * some errors could be missed.
@@ -68,20 +68,20 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char *text,
   return isAcceptableExpression(exp, context);
 }
 
-MathLayoutFieldDelegate *MathLayoutFieldDelegate::Default() {
+MathLayoutFieldDelegate* MathLayoutFieldDelegate::Default() {
   static MathLayoutFieldDelegate s_defaultMathLayoutFieldDelegate;
   return &s_defaultMathLayoutFieldDelegate;
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
-    LayoutField *layoutField, Ion::Events::Event event) {
+    LayoutField* layoutField, Ion::Events::Event event) {
   return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event)
              ? true
              : handleEventForField(layoutField, event);
 }
 
 bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
-                                                 Poincare::Context *context) {
+                                                 Poincare::Context* context) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return true;
@@ -91,7 +91,7 @@ bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
-    LayoutField *layoutField, Ion::Events::Event event) {
+    LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   if (!isAcceptableLayout(layoutField->layout(), context())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
@@ -100,20 +100,20 @@ bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
   return true;
 }
 
-MathTextFieldDelegate *MathTextFieldDelegate::Default() {
+MathTextFieldDelegate* MathTextFieldDelegate::Default() {
   static MathTextFieldDelegate s_defaultMathTextFieldDelegate;
   return &s_defaultMathTextFieldDelegate;
 }
 
 bool MathTextFieldDelegate::textFieldDidReceiveEvent(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldDidReceiveEvent(textField, event)
              ? true
              : handleEventForField(textField, event);
 }
 
 bool MathTextFieldDelegate::textFieldDidFinishEditing(
-    AbstractTextField *textField, Ion::Events::Event event) {
+    AbstractTextField* textField, Ion::Events::Event event) {
   assert(!textField->isEditing());
   if (textField->text()[0] != 0 &&
       !isAcceptableText(textField->text(), App::app()->localContext())) {
@@ -124,7 +124,7 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
 }
 
 template <typename T>
-T MathTextFieldDelegate::ParseInputFloatValue(const char *text) {
+T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return UserExpression::ParseAndSimplifyAndApproximateToScalar<T>(
       text, App::app()->localContext());
 }
@@ -141,9 +141,9 @@ bool MathTextFieldDelegate::HasUndefinedValue(T value, bool enablePlusInfinity,
   return isUndefined;
 }
 
-template float MathTextFieldDelegate::ParseInputFloatValue<float>(const char *);
+template float MathTextFieldDelegate::ParseInputFloatValue<float>(const char*);
 template double MathTextFieldDelegate::ParseInputFloatValue<double>(
-    const char *);
+    const char*);
 template bool MathTextFieldDelegate::HasUndefinedValue(float, bool, bool);
 template bool MathTextFieldDelegate::HasUndefinedValue(double, bool, bool);
 

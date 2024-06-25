@@ -19,11 +19,11 @@ class GraphController : public Shared::FunctionGraphController,
                         public GraphControllerHelper {
  public:
   GraphController(
-      Escher::Responder *parentResponder, Escher::ButtonRowController *header,
-      Shared::InteractiveCurveViewRange *interactiveRange,
-      Shared::CurveViewCursor *cursor, int *selectedCurveIndex,
-      FunctionParameterController *functionParameterController,
-      DerivativeColumnParameterController *derivativeColumnParameterController);
+      Escher::Responder* parentResponder, Escher::ButtonRowController* header,
+      Shared::InteractiveCurveViewRange* interactiveRange,
+      Shared::CurveViewCursor* cursor, int* selectedCurveIndex,
+      FunctionParameterController* functionParameterController,
+      DerivativeColumnParameterController* derivativeColumnParameterController);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -41,15 +41,15 @@ class GraphController : public Shared::FunctionGraphController,
       Poincare::Range2D<float> originalRange) const override;
 
   // TextFieldDelegate
-  bool textFieldIsEditable(Escher::AbstractTextField *) override {
+  bool textFieldIsEditable(Escher::AbstractTextField*) override {
     return !functionStore()
                 ->modelForRecord(recordAtSelectedCurveIndex())
                 ->properties()
                 .isScatterPlot();
   }
 
-  PointsOfInterestCache *pointsOfInterestForRecord(Ion::Storage::Record record);
-  PointsOfInterestCache *pointsOfInterestForSelectedRecord() {
+  PointsOfInterestCache* pointsOfInterestForRecord(Ion::Storage::Record record);
+  PointsOfInterestCache* pointsOfInterestForSelectedRecord() {
     return pointsOfInterestForRecord(recordAtSelectedCurveIndex());
   }
 
@@ -57,10 +57,10 @@ class GraphController : public Shared::FunctionGraphController,
   class FunctionSelectionController
       : public Shared::FunctionGraphController::FunctionSelectionController {
    public:
-    FunctionSelectionController(GraphController *graphController)
+    FunctionSelectionController(GraphController* graphController)
         : Shared::FunctionGraphController::FunctionSelectionController(
               graphController) {}
-    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+    Shared::CurveSelectionCellWithChevron* reusableCell(int index,
                                                         int type) override {
       assert(index >= 0 && index < k_maxNumberOfDisplayableFunctions);
       return m_cells + index;
@@ -77,14 +77,14 @@ class GraphController : public Shared::FunctionGraphController,
   };
 
   // ZoomCurveViewController
-  Shared::InteractiveCurveViewRange *interactiveCurveViewRange() override {
+  Shared::InteractiveCurveViewRange* interactiveCurveViewRange() override {
     return m_graphRange;
   }
 
   // GraphControllerHelper
-  BannerView *bannerView() override { return &m_bannerView; }
-  GraphView *graphView() override { return &m_view; }
-  Shared::FunctionBannerDelegate *functionBannerDelegate() override {
+  BannerView* bannerView() override { return &m_bannerView; }
+  GraphView* graphView() override { return &m_view; }
+  Shared::FunctionBannerDelegate* functionBannerDelegate() override {
     return this;
   }
   void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction,
@@ -101,29 +101,29 @@ class GraphController : public Shared::FunctionGraphController,
                           int subCurveIndex = -1) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                int currentCurveIndex,
-                               Poincare::Context *context,
+                               Poincare::Context* context,
                                int currentSubCurveIndex,
-                               int *nextSubCurveIndex) const override;
+                               int* nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;
-  Shared::ContinuousFunctionStore *functionStore() const override {
-    return static_cast<Shared::ContinuousFunctionStore *>(
+  Shared::ContinuousFunctionStore* functionStore() const override {
+    return static_cast<Shared::ContinuousFunctionStore*>(
         Shared::FunctionGraphController::functionStore());
   }
-  GraphView *functionGraphView() override { return &m_view; }
+  GraphView* functionGraphView() override { return &m_view; }
   void openMenuForSelectedCurve() override;
   bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewController
-  FunctionSelectionController *curveSelectionController() const override {
-    return const_cast<FunctionSelectionController *>(
+  FunctionSelectionController* curveSelectionController() const override {
+    return const_cast<FunctionSelectionController*>(
         &m_functionSelectionController);
   }
 
   // FunctionBannerDelegate
   void reloadBannerViewForCursorOnFunction(
-      Shared::CurveViewCursor *cursor, Ion::Storage::Record record,
-      Shared::FunctionStore *functionStore, Poincare::Context *context,
+      Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
+      Shared::FunctionStore* functionStore, Poincare::Context* context,
       bool cappedNumberOfSignificantDigits = false) override;
 
   bool defaultRangeIsNormalized() const {
@@ -133,12 +133,12 @@ class GraphController : public Shared::FunctionGraphController,
   }
   void interestingFunctionRange(
       Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,
-      float tMax, float step, float *xm, float *xM, float *ym, float *yM) const;
+      float tMax, float step, float* xm, float* xM, float* ym, float* yM) const;
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;
-  Shared::InteractiveCurveViewRange *m_graphRange;
+  Shared::InteractiveCurveViewRange* m_graphRange;
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
   constexpr static int k_numberOfCaches = 5;

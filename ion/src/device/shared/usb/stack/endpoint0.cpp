@@ -269,8 +269,8 @@ int Endpoint0::receiveSomeData() {
   return packetSize;
 }
 
-uint16_t Endpoint0::readPacket(void *buffer, uint16_t length) {
-  uint32_t *buffer32 = (uint32_t *)buffer;
+uint16_t Endpoint0::readPacket(void* buffer, uint16_t length) {
+  uint32_t* buffer32 = (uint32_t*)buffer;
   uint16_t buffer32Length = std::min(length, m_receivedPacketSize);
 
   int i;
@@ -294,8 +294,8 @@ uint16_t Endpoint0::readPacket(void *buffer, uint16_t length) {
   return buffer32Length;
 }
 
-uint16_t Endpoint0::writePacket(const void *buffer, uint16_t length) {
-  const uint32_t *buffer32 = (uint32_t *)buffer;
+uint16_t Endpoint0::writePacket(const void* buffer, uint16_t length) {
+  const uint32_t* buffer32 = (uint32_t*)buffer;
 
   //  Return if there is already a packet waiting to be read in the TX FIFO
   if (OTG.DIEPTSIZ0()->getPKTCNT()) {

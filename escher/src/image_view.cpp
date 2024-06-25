@@ -9,7 +9,7 @@ namespace Escher {
 
 ImageView::ImageView() : View(), m_image(nullptr) {}
 
-void ImageView::drawRect(KDContext *ctx, KDRect rect) const {
+void ImageView::drawRect(KDContext* ctx, KDRect rect) const {
   if (m_image == nullptr) {
     return;
   }
@@ -23,13 +23,13 @@ void ImageView::drawRect(KDContext *ctx, KDRect rect) const {
   assert(Ion::stackSafe());
 
   OMG::Memory::Decompress(
-      m_image->compressedPixelData(), reinterpret_cast<uint8_t *>(pixelBuffer),
+      m_image->compressedPixelData(), reinterpret_cast<uint8_t*>(pixelBuffer),
       m_image->compressedPixelDataSize(), pixelBufferSize * sizeof(KDColor));
 
   ctx->fillRectWithPixels(bounds(), pixelBuffer, nullptr);
 }
 
-void ImageView::setImage(const Image *image) {
+void ImageView::setImage(const Image* image) {
   if (image != m_image) {
     m_image = image;
     markWholeFrameAsDirty();

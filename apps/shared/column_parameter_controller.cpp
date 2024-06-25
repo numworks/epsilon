@@ -21,8 +21,8 @@ void ColumnParameters::initializeColumnParameters() {
                                 m_columnNameBuffer);
 }
 
-Escher::StackViewController *ColumnParameterController::stackView() {
-  return static_cast<Escher::StackViewController *>(parentResponder());
+Escher::StackViewController* ColumnParameterController::stackView() {
+  return static_cast<Escher::StackViewController*>(parentResponder());
 }
 
 }  // namespace Shared

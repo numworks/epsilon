@@ -19,8 +19,8 @@
  * Note that this adds an extra runtime dependency (as compared to just SDL),
  * but this should not be an issue. */
 
-static inline HRESULT CreateStreamOnResource(const char *name,
-                                             LPSTREAM *stream) {
+static inline HRESULT CreateStreamOnResource(const char* name,
+                                             LPSTREAM* stream) {
   HINSTANCE hInstance = GetModuleHandle(0);
   *stream = nullptr;
   HRSRC hC = FindResource(hInstance, name, RT_RCDATA);
@@ -35,7 +35,7 @@ static inline HRESULT CreateStreamOnResource(const char *name,
     SDL_Log("Could not load resource %s", name);
     return E_INVALIDARG;
   }
-  void *bytes = LockResource(hG);
+  void* bytes = LockResource(hG);
   ULONG size = SizeofResource(hInstance, hC);
   HRESULT hr = CreateStreamOnHGlobal(NULL, true, stream);
   if (SUCCEEDED(hr)) {
@@ -60,16 +60,16 @@ class GdiplusSession {
 
 // Helper function from MSDN
 // https://docs.microsoft.com/en-us/windows/win32/gdiplus/-gdiplus-retrieving-the-class-identifier-for-an-encoder-use
-int GetEncoderClsid(const WCHAR *format, CLSID *pClsid) {
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
   UINT num = 0;   // number of image encoders
   UINT size = 0;  // size of the image encoder array in bytes
 
-  Gdiplus::ImageCodecInfo *pImageCodecInfo = nullptr;
+  Gdiplus::ImageCodecInfo* pImageCodecInfo = nullptr;
   Gdiplus::GetImageEncodersSize(&num, &size);
   if (size == 0) {
     return -1;
   }
-  pImageCodecInfo = static_cast<Gdiplus::ImageCodecInfo *>(malloc(size));
+  pImageCodecInfo = static_cast<Gdiplus::ImageCodecInfo*>(malloc(size));
   if (pImageCodecInfo == nullptr) {
     return -1;
   }
@@ -88,9 +88,9 @@ int GetEncoderClsid(const WCHAR *format, CLSID *pClsid) {
   return -1;
 }
 
-static wchar_t *createWideCharArray(const char *src) {
+static wchar_t* createWideCharArray(const char* src) {
   int wchars_num = MultiByteToWideChar(CP_UTF8, 0, src, -1, NULL, 0);
-  wchar_t *wstr = new wchar_t[wchars_num];
+  wchar_t* wstr = new wchar_t[wchars_num];
   MultiByteToWideChar(CP_UTF8, 0, src, -1, wstr, wchars_num);
   return wstr;
 }
@@ -99,7 +99,7 @@ namespace Ion {
 namespace Simulator {
 namespace Platform {
 
-SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
+SDL_Texture* loadImage(SDL_Renderer* renderer, const char* identifier) {
   GdiplusSession session;
 
   LPSTREAM stream;
@@ -110,22 +110,22 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
     }
   }
   assert(resourceID >= 0);
-  const char *resname = MAKEINTRESOURCE(resourceID);
+  const char* resname = MAKEINTRESOURCE(resourceID);
   CreateStreamOnResource(resname, &stream);
 
-  Gdiplus::Bitmap *image = Gdiplus::Bitmap::FromStream(stream);
+  Gdiplus::Bitmap* image = Gdiplus::Bitmap::FromStream(stream);
 
   int width = (int)image->GetWidth();
   int height = (int)image->GetHeight();
   Gdiplus::Rect rc(0, 0, width, height);
 
-  Gdiplus::BitmapData *bitmapData = new Gdiplus::BitmapData;
+  Gdiplus::BitmapData* bitmapData = new Gdiplus::BitmapData;
   image->LockBits(&rc, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB,
                   bitmapData);
 
   size_t bytesPerPixel = 4;
 
-  SDL_Texture *texture =
+  SDL_Texture* texture =
       SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
                         SDL_TEXTUREACCESS_STATIC, width, height);
 
@@ -140,23 +140,22 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
   return texture;
 }
 
-void saveImage(const KDColor *pixels, int width, int height, const char *path) {
+void saveImage(const KDColor* pixels, int width, int height, const char* path) {
   static_assert(sizeof(KDColor) == 2, "KDColor expected to be RGB565");
   GdiplusSession session;
 
-  Gdiplus::Bitmap bitmap(
-      width, height, 2 * width, PixelFormat16bppRGB565,
-      reinterpret_cast<BYTE *>(const_cast<KDColor *>(pixels)));
+  Gdiplus::Bitmap bitmap(width, height, 2 * width, PixelFormat16bppRGB565,
+                         reinterpret_cast<BYTE*>(const_cast<KDColor*>(pixels)));
 
   CLSID pngClsid;
   if (GetEncoderClsid(L"image/png", &pngClsid) > 0) {
-    wchar_t *widePath = createWideCharArray(path);
+    wchar_t* widePath = createWideCharArray(path);
     bitmap.Save(widePath, &pngClsid, nullptr);
     delete[] widePath;
   }
 }
 
-void copyImageToClipboard(const KDColor *pixels, int width, int height) {
+void copyImageToClipboard(const KDColor* pixels, int width, int height) {
   // TODO
 }
 

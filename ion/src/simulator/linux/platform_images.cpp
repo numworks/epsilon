@@ -20,13 +20,13 @@ png_size_t readSize = 0;
 void ReadDataFromMemory(png_structp png, png_bytep outBytes,
                         png_size_t byteSize) {
   png_voidp io = png_get_io_ptr(png);
-  memcpy((char *)outBytes, (char *)io + readSize, byteSize);
+  memcpy((char*)outBytes, (char*)io + readSize, byteSize);
   readSize += byteSize;
 }
 
-bool readPNG(unsigned char *start, size_t size, unsigned char **bitmapData,
-             unsigned int *width, unsigned int *height,
-             unsigned int *bytesPerPixel, Uint32 *pixelFormat) {
+bool readPNG(unsigned char* start, size_t size, unsigned char** bitmapData,
+             unsigned int* width, unsigned int* height,
+             unsigned int* bytesPerPixel, Uint32* pixelFormat) {
   readSize = 0;
   png_structp png =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -61,7 +61,7 @@ bool readPNG(unsigned char *start, size_t size, unsigned char **bitmapData,
 
   const png_uint_32 bytesPerRow = png_get_rowbytes(png, info);
   *bitmapData = new unsigned char[*height * bytesPerRow];
-  unsigned char *rowData = *bitmapData;
+  unsigned char* rowData = *bitmapData;
   for (unsigned int row = 0; row < *height; row++) {
     png_read_row(png, static_cast<png_bytep>(rowData), nullptr);
     rowData += bytesPerRow;
@@ -71,10 +71,10 @@ bool readPNG(unsigned char *start, size_t size, unsigned char **bitmapData,
   return true;
 }
 
-bool readJPG(const unsigned char *start, size_t size,
-             unsigned char **bitmapData, unsigned int *width,
-             unsigned int *height, unsigned int *bytesPerPixel,
-             Uint32 *pixelFormat) {
+bool readJPG(const unsigned char* start, size_t size,
+             unsigned char** bitmapData, unsigned int* width,
+             unsigned int* height, unsigned int* bytesPerPixel,
+             Uint32* pixelFormat) {
   *pixelFormat = SDL_PIXELFORMAT_RGB24;
   struct jpeg_decompress_struct info;
   struct jpeg_error_mgr err;
@@ -96,7 +96,7 @@ bool readJPG(const unsigned char *start, size_t size,
   *bitmapData = new unsigned char[*height * *width * *bytesPerPixel];
 
   while (info.output_scanline < info.output_height) {
-    unsigned char *buffer_array[1];
+    unsigned char* buffer_array[1];
     buffer_array[0] =
         *bitmapData + info.output_scanline * *width * *bytesPerPixel;
     jpeg_read_scanlines(&info, buffer_array, 1);
@@ -107,11 +107,11 @@ bool readJPG(const unsigned char *start, size_t size,
   return true;
 }
 
-SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
-  constexpr static const char *jpgExtension = ".jpg";
-  constexpr static const char *pngExtension = ".png";
+SDL_Texture* loadImage(SDL_Renderer* renderer, const char* identifier) {
+  constexpr static const char* jpgExtension = ".jpg";
+  constexpr static const char* pngExtension = ".png";
 
-  unsigned char *assetStart = nullptr;
+  unsigned char* assetStart = nullptr;
   unsigned long assertSize = 0;
   AssetFormat format = AssetFormat::None;
 
@@ -142,7 +142,7 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
   unsigned int width;
   unsigned int height;
   unsigned int bytesPerPixel;
-  unsigned char *bitmapData;
+  unsigned char* bitmapData;
   Uint32 pixelFormat;
 
   switch (format) {
@@ -162,7 +162,7 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
 
   assert(bytesPerPixel == SDL_BYTESPERPIXEL(pixelFormat));
 
-  SDL_Texture *texture = SDL_CreateTexture(
+  SDL_Texture* texture = SDL_CreateTexture(
       renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, width, height);
 
   SDL_UpdateTexture(texture, nullptr, bitmapData, width * bytesPerPixel);
@@ -187,8 +187,8 @@ class RGB888Pixel {
 };
 static_assert(sizeof(RGB888Pixel) == 3, "RGB888Pixel shall be 3 bytes long");
 
-void saveImage(const KDColor *pixels, int width, int height, const char *path) {
-  FILE *file = fopen(path, "wb");  // Write in binary mode
+void saveImage(const KDColor* pixels, int width, int height, const char* path) {
+  FILE* file = fopen(path, "wb");  // Write in binary mode
 
   png_structp png =
       png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -202,7 +202,7 @@ void saveImage(const KDColor *pixels, int width, int height, const char *path) {
 
   png_write_info(png, info);
 
-  RGB888Pixel *row = new RGB888Pixel[3 * width];
+  RGB888Pixel* row = new RGB888Pixel[3 * width];
   for (int j = 0; j < height; j++) {
     for (int i = 0; i < width; i++) {
       row[i] = RGB888Pixel(pixels[i + width * j]);
@@ -218,7 +218,7 @@ void saveImage(const KDColor *pixels, int width, int height, const char *path) {
   fclose(file);
 }
 
-void copyImageToClipboard(const KDColor *pixels, int width, int height) {
+void copyImageToClipboard(const KDColor* pixels, int width, int height) {
   // Unsupported
 }
 

@@ -13,13 +13,13 @@ using namespace Shared;
 namespace Graph {
 
 IntersectionGraphController::IntersectionGraphController(
-    Responder *parentResponder, GraphView *graphView, BannerView *bannerView,
-    Shared::InteractiveCurveViewRange *curveViewRange, CurveViewCursor *cursor)
+    Responder* parentResponder, GraphView* graphView, BannerView* bannerView,
+    Shared::InteractiveCurveViewRange* curveViewRange, CurveViewCursor* cursor)
     : CalculationGraphController(parentResponder, graphView, bannerView,
                                  curveViewRange, cursor,
                                  I18n::Message::NoIntersectionFound) {}
 
-const char *IntersectionGraphController::title() {
+const char* IntersectionGraphController::title() {
   return I18n::translate(I18n::Message::Intersection);
 }
 
@@ -28,7 +28,7 @@ void IntersectionGraphController::reloadBannerView() {
   CalculationGraphController::reloadBannerView();
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  const char *legend = "=";
+  const char* legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(m_record);
@@ -58,12 +58,12 @@ void IntersectionGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
-    double start, double max, Poincare::Context *context) {
+    double start, double max, Poincare::Context* context) {
   PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, context);
   if (!p.isUninitialized()) {
     assert(sizeof(p.data()) == sizeof(Ion::Storage::Record));
     uint32_t data = p.data();
-    m_intersectedRecord = *reinterpret_cast<Ion::Storage::Record *>(&data);
+    m_intersectedRecord = *reinterpret_cast<Ion::Storage::Record*>(&data);
   }
   return p.xy();
 }

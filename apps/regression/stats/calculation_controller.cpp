@@ -15,9 +15,9 @@ using namespace Escher;
 
 namespace Regression {
 
-CalculationController::CalculationController(Responder *parentResponder,
-                                             ButtonRowController *header,
-                                             Store *store)
+CalculationController::CalculationController(Responder* parentResponder,
+                                             ButtonRowController* header,
+                                             Store* store)
     : DoublePairTableController(parentResponder, header), m_store(store) {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setParentResponder(&m_selectableTableView);
@@ -29,7 +29,7 @@ CalculationController::CalculationController(Responder *parentResponder,
 }
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (!withinTemporarySelection && t->selectedColumn() > 1 &&
@@ -38,16 +38,16 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     /* If we are on a double text cell, we have to choose which subcell to
      * select It has to be done after the scroll for the selectedCell to be
      * defined */
-    EvenOddDoubleBufferTextCell *myCell =
-        static_cast<EvenOddDoubleBufferTextCell *>(t->selectedCell());
+    EvenOddDoubleBufferTextCell* myCell =
+        static_cast<EvenOddDoubleBufferTextCell*>(t->selectedCell());
     // Default selected subcell is the left one
     bool firstSubCellSelected = true;
     if (previousSelectedCol > 1 && previousSelectedRow >= 0 &&
         previousSelectedRow <= k_numberOfDoubleBufferCalculations) {
       /* If we come from another double text cell, we have to update
        * subselection */
-      EvenOddDoubleBufferTextCell *myPreviousCell =
-          static_cast<EvenOddDoubleBufferTextCell *>(
+      EvenOddDoubleBufferTextCell* myPreviousCell =
+          static_cast<EvenOddDoubleBufferTextCell*>(
               t->cellAtLocation(previousSelectedCol, previousSelectedRow));
       /* If the selection stays in the same column, we copy the subselection
        * from previous cell. Otherwise, the selection has jumped to another
@@ -71,8 +71,8 @@ bool CalculationController::canStoreCellAtLocation(int column, int row) {
     return false;
   }
   if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
-    AbstractEvenOddBufferTextCell *bufferCell =
-        static_cast<AbstractEvenOddBufferTextCell *>(
+    AbstractEvenOddBufferTextCell* bufferCell =
+        static_cast<AbstractEvenOddBufferTextCell*>(
             m_selectableTableView.cellAtLocation(column, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
@@ -93,27 +93,27 @@ int CalculationController::numberOfRows() const {
          m_store->AnyActiveSeriesSatisfies(Store::DisplayRSquared);
 }
 
-void DashBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
+void DashBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
   bufferCell->setText(I18n::translate(I18n::Message::Dash));
 }
 
-void DisableBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
+void DisableBufferCell(AbstractEvenOddBufferTextCell* bufferCell) {
   bufferCell->setTextColor(Palette::GrayDark);
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
 
-void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
+void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
                                                 int row) {
   int type = typeAtLocation(column, row);
   if (type == k_hideableCellType) {
     return;
   }
-  EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
+  EvenOddCell* myCell = static_cast<EvenOddCell*>(cell);
   myCell->setEven(row % 2 == 0);
 
   // Coordinate and series title
   if (type == k_seriesTitleCellType) {
-    ColumnTitleCell *myCell = static_cast<ColumnTitleCell *>(cell);
+    ColumnTitleCell* myCell = static_cast<ColumnTitleCell*>(cell);
     size_t series = m_store->seriesIndexFromActiveSeriesIndex(
         column - k_numberOfHeaderColumns);
     assert(series < DoublePairStore::k_numberOfSeries);
@@ -133,8 +133,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   // Calculation title and symbols
   if (type == k_calculationTitleCellType ||
       type == k_calculationSymbolCellType) {
-    EvenOddMessageTextCell *myCell =
-        static_cast<EvenOddMessageTextCell *>(cell);
+    EvenOddMessageTextCell* myCell = static_cast<EvenOddMessageTextCell*>(cell);
     myCell->setTextColor(
         type == k_calculationTitleCellType ? KDColorBlack : Palette::GrayDark);
     I18n::Message message = type == k_calculationTitleCellType
@@ -157,12 +156,12 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
 
   // Regression cell
   if (c == Calculation::Regression) {
-    Model *model = m_store->modelForSeries(series);
-    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(
+    Model* model = m_store->modelForSeries(series);
+    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(
         Store::HasCoefficients(regressionType)
             ? model->formula()
             : I18n::translate(I18n::Message::Dash));
-    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setTextColor(
+    static_cast<AbstractEvenOddBufferTextCell*>(cell)->setTextColor(
         KDColorBlack);
     return;
   }
@@ -187,9 +186,9 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
             &Store::varianceOfColumn,
             &Store::sampleStandardDeviationOfColumn,
         };
-    double *calculation1 =
+    double* calculation1 =
         m_memoizedDoubleCalculationCells[series][0] + calculationIndex;
-    double *calculation2 =
+    double* calculation2 =
         m_memoizedDoubleCalculationCells[series][1] + calculationIndex;
     if (std::isnan(*calculation1) || std::isnan(*calculation2)) {
       *calculation1 = (m_store->*calculationMethods[calculationIndex])(
@@ -203,8 +202,8 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
            Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
                                   series, 1, Store::CalculationOptions())));
-    EvenOddDoubleBufferTextCell *myCell =
-        static_cast<EvenOddDoubleBufferTextCell *>(cell);
+    EvenOddDoubleBufferTextCell* myCell =
+        static_cast<EvenOddDoubleBufferTextCell*>(cell);
     PoincareHelpers::ConvertFloatToText<double>(
         *calculation1, buffer, bufferSize,
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
@@ -217,10 +216,10 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   }
 
   // Single calculation cells
-  Context *globContext =
+  Context* globContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  AbstractEvenOddBufferTextCell *bufferCell =
-      static_cast<AbstractEvenOddBufferTextCell *>(cell);
+  AbstractEvenOddBufferTextCell* bufferCell =
+      static_cast<AbstractEvenOddBufferTextCell*>(cell);
   bufferCell->setTextColor(KDColorBlack);
   double result = NAN;
 
@@ -232,7 +231,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
         calculationMethods[k_numberOfMemoizedSingleBufferCalculations] = {
             &Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
             &Store::columnProductSum};
-    double *calculation =
+    double* calculation =
         m_memoizedSimpleCalculationCells[series] + calculationIndex;
     if (std::isnan(*calculation)) {
       *calculation = (m_store->*calculationMethods[calculationIndex])(series);
@@ -320,7 +319,7 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
   return k_minCalculationCellWidth;
 }
 
-HighlightCell *CalculationController::reusableCell(int index, int type) {
+HighlightCell* CalculationController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
     case k_seriesTitleCellType:

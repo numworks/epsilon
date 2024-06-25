@@ -17,10 +17,10 @@ class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
       Escher::Palette::GrayMiddle;
   constexpr static KDColor k_selectedBarColor = Escher::Palette::YellowDark;
 
-  void drawPlot(const Shared::AbstractPlotView *, KDContext *ctx,
+  void drawPlot(const Shared::AbstractPlotView*, KDContext* ctx,
                 KDRect rect) const;
 
-  Store *m_store;
+  Store* m_store;
   int m_series;
   double m_highlightedBarStart;
   double m_highlightedBarEnd;
@@ -31,7 +31,7 @@ class HistogramView
                               HistogramPlotPolicy, Shared::PlotPolicy::NoBanner,
                               Shared::PlotPolicy::NoCursor> {
  public:
-  HistogramView(Store *store, int series, Shared::CurveViewRange *range);
+  HistogramView(Store* store, int series, Shared::CurveViewRange* range);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false);

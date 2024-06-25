@@ -18,7 +18,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-size_t Function::WithArgument(CodePoint argument, char *buffer,
+size_t Function::WithArgument(CodePoint argument, char* buffer,
                               size_t bufferSize) {
   size_t length = SerializationHelper::CodePoint(buffer, bufferSize, '(');
   assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
@@ -30,7 +30,7 @@ size_t Function::WithArgument(CodePoint argument, char *buffer,
 }
 
 size_t Function::NameWithArgument(Ion::Storage::Record record,
-                                  CodePoint argument, char *buffer,
+                                  CodePoint argument, char* buffer,
                                   size_t bufferSize) {
   size_t length = record.nameWithoutExtension(buffer, bufferSize);
   return length + WithArgument(argument, buffer + length, bufferSize - length);
@@ -54,38 +54,38 @@ void Function::setActive(bool active) {
 }
 
 size_t Function::printAbscissaValue(double cursorT, double cursorX,
-                                    char *buffer, size_t bufferSize,
+                                    char* buffer, size_t bufferSize,
                                     int precision) {
   return PoincareHelpers::ConvertFloatToText<double>(cursorT, buffer,
                                                      bufferSize, precision);
 }
 
 size_t Function::printFunctionValue(double cursorT, double cursorX,
-                                    double cursorY, char *buffer,
+                                    double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
-                                    Poincare::Context *context) {
+                                    Poincare::Context* context) {
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer,
                                                      bufferSize, precision);
 }
 
-size_t Function::name(char *buffer, size_t bufferSize) const {
+size_t Function::name(char* buffer, size_t bufferSize) const {
   return nameWithoutExtension(buffer, bufferSize);
 }
 
-size_t Function::withArgument(char *buffer, size_t bufferSize) const {
+size_t Function::withArgument(char* buffer, size_t bufferSize) const {
   return Function::WithArgument(symbol(), buffer, bufferSize);
 }
 
-size_t Function::nameWithArgument(char *buffer, size_t bufferSize,
+size_t Function::nameWithArgument(char* buffer, size_t bufferSize,
                                   int derivationOrder) {
   assert(derivationOrder == 0);
   return Function::NameWithArgument(*this, symbol(), buffer, bufferSize);
 }
 
-Function::RecordDataBuffer *Function::recordData() const {
+Function::RecordDataBuffer* Function::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();
-  return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
+  return reinterpret_cast<RecordDataBuffer*>(const_cast<void*>(d.buffer));
 }
 
 }  // namespace Shared

@@ -142,7 +142,7 @@ static inline KDColor TokenColor(mp_token_kind_t tokenKind) {
   return DefaultColor;
 }
 
-static inline size_t TokenLength(mp_lexer_t *lex, const char *tokenPosition) {
+static inline size_t TokenLength(mp_lexer_t* lex, const char* tokenPosition) {
   /* The lexer stores the beginning of the current token and of the next token,
    * so we just use that. */
   if (lex->line > 1) {
@@ -154,13 +154,13 @@ static inline size_t TokenLength(mp_lexer_t *lex, const char *tokenPosition) {
 }
 
 PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(
-    const char *autocompletionLocation,
-    const char **autocompletionLocationBeginning,
-    const char **autocompletionLocationEnd) const {
-  const char *location = autocompletionLocation != nullptr
+    const char* autocompletionLocation,
+    const char** autocompletionLocationBeginning,
+    const char** autocompletionLocationEnd) const {
+  const char* location = autocompletionLocation != nullptr
                              ? autocompletionLocation
                              : cursorLocation();
-  const char *beginningOfToken = nullptr;
+  const char* beginningOfToken = nullptr;
 
   /* If there is already autocompleting, the cursor must be at the end of an
    * identifier. Trying to compute autocompletionType will fail: because of the
@@ -175,13 +175,13 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(
   }
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    const char *firstNonSpace =
+    const char* firstNonSpace =
         UTF8Helper::BeginningOfWord(m_contentView.draftText(), location);
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(
+    mp_lexer_t* lex = mp_lexer_new_from_str_len(
         0, firstNonSpace, UTF8Helper::EndOfWord(location) - firstNonSpace, 0);
 
-    const char *tokenStart;
-    const char *tokenEnd;
+    const char* tokenStart;
+    const char* tokenEnd;
     _mp_token_kind_t currentTokenKind = lex->tok_kind;
 
     while (currentTokenKind != MP_TOKEN_NEWLINE &&
@@ -236,7 +236,7 @@ PythonTextArea::AutocompletionType PythonTextArea::autocompletionType(
   return autocompleteType;
 }
 
-const char *PythonTextArea::ContentView::textToAutocomplete() const {
+const char* PythonTextArea::ContentView::textToAutocomplete() const {
   return UTF8Helper::BeginningOfWord(draftText(), cursorLocation());
 }
 
@@ -248,7 +248,7 @@ void PythonTextArea::ContentView::unloadSyntaxHighlighter() {
   m_pythonDelegate->deinitPython();
 }
 
-void PythonTextArea::ContentView::clearRect(KDContext *ctx, KDRect rect) const {
+void PythonTextArea::ContentView::clearRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, BackgroundColor);
 }
 
@@ -260,11 +260,11 @@ void PythonTextArea::ContentView::clearRect(KDContext *ctx, KDRect rect) const {
 #define LOG_DRAW(...)
 #endif
 
-void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
-                                           const char *text, size_t byteLength,
+void PythonTextArea::ContentView::drawLine(KDContext* ctx, int line,
+                                           const char* text, size_t byteLength,
                                            int fromColumn, int toColumn,
-                                           const char *selectionStart,
-                                           const char *selectionEnd) const {
+                                           const char* selectionStart,
+                                           const char* selectionEnd) const {
   LOG_DRAW("Drawing \"%.*s\"\n", byteLength, text);
 
   assert(m_pythonDelegate->isPythonUser(this));
@@ -273,10 +273,10 @@ void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
    * basis. This can work, however the MicroPython lexer won't accept a line
    * starting with a whitespace. So we're discarding leading whitespaces
    * beforehand. */
-  const char *firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
+  const char* firstNonSpace = UTF8Helper::NotCodePointSearch(text, ' ');
   if (firstNonSpace != text) {
     // Color the discarded leading whitespaces
-    const char *spacesStart =
+    const char* spacesStart =
         UTF8Helper::CodePointAtGlyphOffset(text, fromColumn);
     drawStringAt(ctx, line, fromColumn, spacesStart,
                  std::min(text + byteLength, firstNonSpace) - spacesStart,
@@ -287,17 +287,17 @@ void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
     return;
   }
 
-  const char *autocompleteStart = m_autocomplete ? m_cursorLocation : nullptr;
+  const char* autocompleteStart = m_autocomplete ? m_cursorLocation : nullptr;
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(
+    mp_lexer_t* lex = mp_lexer_new_from_str_len(
         0, firstNonSpace, byteLength - (firstNonSpace - text), 0);
     LOG_DRAW("Pop token %d\n", lex->tok_kind);
 
-    const char *tokenFrom = firstNonSpace;
+    const char* tokenFrom = firstNonSpace;
     size_t tokenLength = 0;
-    const char *tokenEnd = firstNonSpace;
+    const char* tokenEnd = firstNonSpace;
     while (lex->tok_kind != MP_TOKEN_NEWLINE && lex->tok_kind != MP_TOKEN_END) {
       tokenFrom = firstNonSpace + lex->tok_column - 1;
       if (tokenFrom != tokenEnd) {
@@ -402,7 +402,7 @@ void PythonTextArea::ContentView::drawLine(KDContext *ctx, int line,
 }
 
 KDRect PythonTextArea::ContentView::dirtyRectFromPosition(
-    const char *position, bool includeFollowingLines) const {
+    const char* position, bool includeFollowingLines) const {
   /* Mark the whole line as dirty.
    * TextArea has a very conservative approach and only dirties the surroundings
    * of the current character. That works for plain text, but when doing syntax
@@ -494,9 +494,9 @@ bool PythonTextArea::handleSpecialEvent(Ion::Events::Event event) {
   /* If the cursor is on the left of the text of a line:
    * - backspace one indentation space at a time.
    * - a space triggers an indentation.*/
-  const char *thisText = text();
-  const char *thisCursorLocation = cursorLocation();
-  const char *firstNonSpace =
+  const char* thisText = text();
+  const char* thisCursorLocation = cursorLocation();
+  const char* firstNonSpace =
       UTF8Helper::NotCodePointSearch(thisText, ' ', true, thisCursorLocation);
   assert(firstNonSpace >= thisText);
   bool cursorIsPrecededOnTheLineBySpacesOnly =
@@ -523,7 +523,7 @@ bool PythonTextArea::handleSpecialEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool PythonTextArea::handleEventWithText(const char *text, bool indentation,
+bool PythonTextArea::handleEventWithText(const char* text, bool indentation,
                                          bool forceCursorRightOfText) {
   if (*text == 0) {
     return false;
@@ -540,8 +540,8 @@ bool PythonTextArea::handleEventWithText(const char *text, bool indentation,
 void PythonTextArea::removeAutocompletionText() {
   assert(m_contentView.isAutocompleting());
   assert(m_contentView.autocompletionEnd() != nullptr);
-  const char *autocompleteStart = m_contentView.cursorLocation();
-  const char *autocompleteEnd = m_contentView.autocompletionEnd();
+  const char* autocompleteStart = m_contentView.cursorLocation();
+  const char* autocompleteEnd = m_contentView.autocompletionEnd();
   assert(autocompleteEnd != nullptr && autocompleteEnd > autocompleteStart);
   m_contentView.removeText(autocompleteStart, autocompleteEnd);
 }
@@ -553,15 +553,15 @@ void PythonTextArea::prepareVariableBoxBeforeOpening() {
     m_wasAutocompleting = true;
     removeAutocompletion();
   }
-  PythonVariableBoxController *varBox = App::app()->variableBox();
+  PythonVariableBoxController* varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(true);
   varBox->setTitle(I18n::Message::Autocomplete);
   /* If the editor should be autocompleting an identifier, the variable box has
    * already been loaded. We check shouldAutocomplete and not isAutocompleting,
    * because the autocompletion result might be empty. */
-  const char *beginningOfAutocompletion = nullptr;
-  const char *cursor = nullptr;
+  const char* beginningOfAutocompletion = nullptr;
+  const char* cursor = nullptr;
   PythonTextArea::AutocompletionType autocompType =
       autocompletionType(nullptr, &beginningOfAutocompletion, &cursor);
   int scriptIndex =
@@ -588,8 +588,8 @@ void PythonTextArea::removeAutocompletion() {
 
 void PythonTextArea::addAutocompletion(int index) {
   assert(!m_contentView.isAutocompleting());
-  const char *autocompletionTokenBeginning = nullptr;
-  const char *autocompletionLocation = const_cast<char *>(cursorLocation());
+  const char* autocompletionTokenBeginning = nullptr;
+  const char* autocompletionLocation = const_cast<char*>(cursorLocation());
   m_autocompletionResultIndex = index;
   if (autocompletionType(autocompletionLocation,
                          &autocompletionTokenBeginning) !=
@@ -610,10 +610,10 @@ void PythonTextArea::addAutocompletion(int index) {
 }
 
 bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
-                                                  int *currentIndexToUpdate) {
+                                                  int* currentIndexToUpdate) {
   // The variable box should be loaded at this point
-  const char *autocompletionTokenBeginning = nullptr;
-  const char *autocompletionLocation = const_cast<char *>(cursorLocation());
+  const char* autocompletionTokenBeginning = nullptr;
+  const char* autocompletionLocation = const_cast<char*>(cursorLocation());
   // Done to get autocompletionTokenBeginning
   AutocompletionType type =
       autocompletionType(autocompletionLocation, &autocompletionTokenBeginning);
@@ -623,11 +623,11 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
   }
   assert(type == AutocompletionType::EndOfIdentifier);
   (void)type;  // Silence warnings
-  PythonVariableBoxController *varBox =
+  PythonVariableBoxController* varBox =
       m_contentView.pythonDelegate()->variableBox();
   int textToInsertLength = 0;
   bool addParentheses = false;
-  const char *textToInsert = varBox->autocompletionAlternativeAtIndex(
+  const char* textToInsert = varBox->autocompletionAlternativeAtIndex(
       autocompletionLocation - autocompletionTokenBeginning,
       &textToInsertLength, &addParentheses, nextIndex, currentIndexToUpdate);
 
@@ -638,7 +638,7 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
   if (textToInsertLength > 0) {
     // Try to insert the text (this might fail if the buffer is full)
     if (!m_contentView.insertTextAtLocation(
-            textToInsert, const_cast<char *>(autocompletionLocation),
+            textToInsert, const_cast<char*>(autocompletionLocation),
             textToInsertLength)) {
       return false;
     }
@@ -648,14 +648,14 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
   }
 
   // Try to insert the parentheses if needed
-  const char *parentheses = ScriptNode::k_parentheses;
+  const char* parentheses = ScriptNode::k_parentheses;
   constexpr int parenthesesLength = 2;
   assert(strlen(parentheses) == parenthesesLength);
   /* If couldInsertText is false, we should not try to add the parentheses as
    * there was already not enough space to add the autocompletion. */
   if (addParentheses &&
       m_contentView.insertTextAtLocation(
-          parentheses, const_cast<char *>(autocompletionLocation),
+          parentheses, const_cast<char*>(autocompletionLocation),
           parenthesesLength)) {
     m_contentView.setAutocompleting(true);
     m_contentView.setAutocompletionEnd(autocompletionLocation +
@@ -678,7 +678,7 @@ void PythonTextArea::acceptAutocompletion(
   assert(m_contentView.isAutocompleting());
 
   // Save the cursor location
-  const char *previousCursorLocation = cursorLocation();
+  const char* previousCursorLocation = cursorLocation();
 
   removeAutocompletion();
 

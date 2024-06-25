@@ -19,13 +19,13 @@ using namespace Poincare;
 // Private sub-helpers
 
 template <typename T>
-void solve_and_process_error(std::initializer_list<const char *> equations,
-                             T &&lambda) {
+void solve_and_process_error(std::initializer_list<const char*> equations,
+                             T&& lambda) {
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
   EquationStore equationStore;
   SystemOfEquations system(&equationStore);
-  for (const char *equation : equations) {
+  for (const char* equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
@@ -45,19 +45,19 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
 }
 
 template <typename T>
-void solve_and(std::initializer_list<const char *> equations, T &&lambda) {
-  solve_and_process_error(equations, [lambda](SystemOfEquations *system,
+void solve_and(std::initializer_list<const char*> equations, T&& lambda) {
+  solve_and_process_error(equations, [lambda](SystemOfEquations* system,
                                               SystemOfEquations::Error error) {
     quiz_assert(error == NoError);
     lambda(system);
   });
 }
 
-void assert_solves_with_range_to(const char *equation, double min, double max,
+void assert_solves_with_range_to(const char* equation, double min, double max,
                                  std::initializer_list<double> solutions,
-                                 const char *variable = nullptr) {
+                                 const char* variable = nullptr) {
   solve_and_process_error(
-      {equation}, [min, max, solutions, variable](SystemOfEquations *system,
+      {equation}, [min, max, solutions, variable](SystemOfEquations* system,
                                                   SystemOfEquations::Error e) {
         Shared::GlobalContext globalContext;
         SolverContext solverContext(&globalContext);
@@ -83,36 +83,36 @@ void assert_solves_with_range_to(const char *equation, double min, double max,
 
 // Helpers
 
-void assert_solves_to_error(std::initializer_list<const char *> equations,
+void assert_solves_to_error(std::initializer_list<const char*> equations,
                             SystemOfEquations::Error error) {
-  solve_and_process_error(equations, [error](SystemOfEquations *system,
+  solve_and_process_error(equations, [error](SystemOfEquations* system,
                                              SystemOfEquations::Error e) {
     quiz_assert(e == error);
   });
 }
 
-static void compareSolutions(SystemOfEquations *system,
-                             std::initializer_list<const char *> solutions) {
+static void compareSolutions(SystemOfEquations* system,
+                             std::initializer_list<const char*> solutions) {
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
 
   size_t i = 0;
-  for (const char *solution : solutions) {
+  for (const char* solution : solutions) {
     // Solutions are specified under the form "foo=bar"
     constexpr int maxSolutionLength = 100;
     char editableSolution[maxSolutionLength];
     strlcpy(editableSolution, solution, maxSolutionLength);
 
-    char *equal = strchr(editableSolution, '=');
+    char* equal = strchr(editableSolution, '=');
     quiz_assert(equal != nullptr);
     *equal = 0;
 
-    const char *expectedVariable = editableSolution;
+    const char* expectedVariable = editableSolution;
     if (system->type() != SystemOfEquations::Type::PolynomialMonovariable) {
       /* For some reason the EquationStore returns up to 3 results but always
        * just one variable, so we don't check variable name...
        * TODO: Change this poor behavior. */
-      const char *obtainedVariable = system->variable(i);
+      const char* obtainedVariable = system->variable(i);
       quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
     }
 
@@ -122,7 +122,7 @@ static void compareSolutions(SystemOfEquations *system,
      * is used in the app, but it's a nightmare to test, so changing this
      * behavior is a TODO. */
 
-    const char *expectedValue = equal + 1;
+    const char* expectedValue = equal + 1;
 
     /* We compare Expressions, by parsing the expected Expression and
      * serializing and parsing the obtained layout. We need to ignore the
@@ -152,37 +152,37 @@ static void compareSolutions(SystemOfEquations *system,
 }
 
 void assert_solves_to_infinite_solutions(
-    std::initializer_list<const char *> equations,
-    std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](SystemOfEquations *system) {
+    std::initializer_list<const char*> equations,
+    std::initializer_list<const char*> solutions) {
+  solve_and(equations, [solutions](SystemOfEquations* system) {
     quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
                 system->hasMoreSolutions());
     compareSolutions(system, solutions);
   });
 }
 
-void assert_solves_to(std::initializer_list<const char *> equations,
-                      std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](SystemOfEquations *system) {
+void assert_solves_to(std::initializer_list<const char*> equations,
+                      std::initializer_list<const char*> solutions) {
+  solve_and(equations, [solutions](SystemOfEquations* system) {
     compareSolutions(system, solutions);
   });
 }
 
-void assert_solves_numerically_to(const char *equation, double min, double max,
+void assert_solves_numerically_to(const char* equation, double min, double max,
                                   std::initializer_list<double> solutions,
-                                  const char *variable) {
+                                  const char* variable) {
   assert(!std::isnan(min) && !std::isnan(max));
   return assert_solves_with_range_to(equation, min, max, solutions, variable);
 }
 
 void assert_solves_with_auto_solving_range(
-    const char *equation, std::initializer_list<double> solutions) {
+    const char* equation, std::initializer_list<double> solutions) {
   return assert_solves_with_range_to(equation, NAN, NAN, solutions);
 }
 
-void assert_auto_solving_range_is(const char *equation, double min,
+void assert_auto_solving_range_is(const char* equation, double min,
                                   double max) {
-  solve_and_process_error({equation}, [min, max](SystemOfEquations *system,
+  solve_and_process_error({equation}, [min, max](SystemOfEquations* system,
                                                  SystemOfEquations::Error e) {
     Shared::GlobalContext globalContext;
     SolverContext solverContext(&globalContext);
@@ -199,8 +199,8 @@ void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
   Preferences::SharedPreferences()->setAngleUnit(angleUnit);
 }
 
-void set(const char *variable, const char *value) {
-  const char *assign = "→";
+void set(const char* variable, const char* value) {
+  const char* assign = "→";
 
   char buffer[32];
   assert(strlen(value) + strlen(assign) + strlen(variable) < sizeof(buffer));
@@ -220,7 +220,7 @@ void set(const char *variable, const char *value) {
 #endif
 }
 
-void unset(const char *variable) {
+void unset(const char* variable) {
   // The variable is either an expression or a function
   Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtension(variable, "exp")

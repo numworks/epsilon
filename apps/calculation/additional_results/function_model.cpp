@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-static Context *context() { return App::app()->localContext(); }
+static Context* context() { return App::app()->localContext(); }
 
 void FunctionModel::setParameters(Expression function, float abscissa,
                                   float ordinate) {
@@ -34,8 +34,8 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value,
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void *model, Context *context) {
-  const Expression *f = static_cast<const Expression *>(model);
+static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+  const Expression* f = static_cast<const Expression*>(model);
   return Coordinate2D<T>(
       t, Shared::PoincareHelpers::ApproximateWithValueForSymbol<T>(
              *f, Shared::Function::k_unknownName, t, context));

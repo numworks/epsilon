@@ -4,11 +4,11 @@
 namespace Ion {
 namespace Clipboard {
 
-char *buffer() { return nullptr; }
+char* buffer() { return nullptr; }
 
-void write(const char *text) {}
+void write(const char* text) {}
 
-const char *read() { return ""; }
+const char* read() { return ""; }
 
 void sendBufferToSystemClipboard() {}
 

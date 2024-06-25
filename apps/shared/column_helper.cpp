@@ -18,7 +18,7 @@ namespace Shared {
 
 ClearColumnHelper::ClearColumnHelper()
     : m_confirmPopUpController(Invocation::Builder<ClearColumnHelper>(
-          [](ClearColumnHelper *param, void *parent) {
+          [](ClearColumnHelper* param, void* parent) {
             param->clearSelectedColumn();
             App::app()->modalViewController()->dismissModal();
             param->table()->reloadData();
@@ -43,9 +43,9 @@ void ClearColumnHelper::setClearPopUpContent() {
 
 /* StoreColumnHelper */
 
-StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
-                                     Context *parentContext,
-                                     ClearColumnHelper *clearColumnHelper)
+StoreColumnHelper::StoreColumnHelper(Escher::Responder* responder,
+                                     Context* parentContext,
+                                     ClearColumnHelper* clearColumnHelper)
     : m_clearColumnHelper(clearColumnHelper),
       m_templateController(responder, this),
       m_templateStackController(nullptr, &m_templateController,
@@ -99,18 +99,18 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
   inputViewController()->setTextBody(templateString);
   inputViewController()->edit(
       Ion::Events::OK, this,
-      [](void *context, void *sender) {
-        StoreColumnHelper *storeColumnHelper =
-            static_cast<StoreColumnHelper *>(context);
-        InputViewController *thisInputViewController =
-            static_cast<InputViewController *>(sender);
+      [](void* context, void* sender) {
+        StoreColumnHelper* storeColumnHelper =
+            static_cast<StoreColumnHelper*>(context);
+        InputViewController* thisInputViewController =
+            static_cast<InputViewController*>(sender);
         return storeColumnHelper->fillColumnWithFormula(
             thisInputViewController->textBody());
       },
-      [](void *context, void *sender) { return true; });
+      [](void* context, void* sender) { return true; });
 }
 
-bool StoreColumnHelper::fillColumnWithFormula(const char *text) {
+bool StoreColumnHelper::fillColumnWithFormula(const char* text) {
   int column = store()->relativeColumn(referencedColumn());
   int series = store()->seriesAtColumn(referencedColumn());
   Layout formulaLayout;
@@ -148,9 +148,9 @@ int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
 }
 
 StoreColumnHelper::FillColumnStatus
-StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
-                                                int *column,
-                                                Layout *formulaLayout) {
+StoreColumnHelper::privateFillColumnWithFormula(const char* text, int* series,
+                                                int* column,
+                                                Layout* formulaLayout) {
   StoreContext storeContext(store(), m_parentContext);
   UserExpression formula = UserExpression::Parse(text, &storeContext);
   if (formula.isUninitialized()) {
@@ -160,7 +160,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
     bool isValidEquality = false;
     UserExpression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
-      Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
+      Symbol symbolLeftOfEqual = static_cast<Symbol&>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
                                 strlen(symbolLeftOfEqual.name()), series,
                                 column)) {
@@ -199,7 +199,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
     int formulaNumberOfChildren =
-        static_cast<List &>(formula).numberOfChildren();
+        static_cast<List&>(formula).numberOfChildren();
     for (int i = 0; i < formulaNumberOfChildren; i++) {
       if (!formula.childAtIndex(i).isUndefined()) {
         allChildrenAreUndefined = false;
@@ -213,7 +213,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
-    store()->setList(static_cast<Poincare::List &>(formula), *series, *column,
+    store()->setList(static_cast<Poincare::List&>(formula), *series, *column,
                      true, true);
     return FillColumnStatus::Success;
   }
@@ -242,9 +242,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const char *text, int *series,
   return FillColumnStatus::Success;
 }
 
-size_t StoreColumnHelper::clearPopUpText(int column, char *buffer,
+size_t StoreColumnHelper::clearPopUpText(int column, char* buffer,
                                          size_t bufferSize) {
-  DoublePairStore *store = this->store();
+  DoublePairStore* store = this->store();
   int series = store->seriesAtColumn(column);
   int relativeColumn = store->relativeColumn(column);
   DoublePairStore::ClearType type = store->clearType(relativeColumn);
@@ -266,9 +266,9 @@ size_t StoreColumnHelper::clearPopUpText(int column, char *buffer,
                                        I18n::translate(message), placeHolder);
 }
 
-size_t StoreColumnHelper::clearCellText(int column, char *buffer,
+size_t StoreColumnHelper::clearCellText(int column, char* buffer,
                                         size_t bufferSize) {
-  DoublePairStore *store = this->store();
+  DoublePairStore* store = this->store();
   int series = store->seriesAtColumn(column);
   int relativeColumn = store->relativeColumn(column);
   DoublePairStore::ClearType type = store->clearType(relativeColumn);

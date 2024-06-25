@@ -8,7 +8,7 @@ namespace Solver {
 
 /* EquationListView */
 
-EquationListView::EquationListView(ListController *listController)
+EquationListView::EquationListView(ListController* listController)
     : Responder(listController),
       View(),
       m_braceStyle(BraceStyle::None),
@@ -29,7 +29,7 @@ void EquationListView::setBraceStyle(BraceStyle style) {
 }
 
 void EquationListView::scrollViewDidChangeOffset(
-    ScrollViewDataSource *scrollViewDataSource) {
+    ScrollViewDataSource* scrollViewDataSource) {
   m_scrollBraceView.setContentOffset(
       KDPoint(0, scrollViewDataSource->offset().y()));
   layoutSubviews();
@@ -37,8 +37,8 @@ void EquationListView::scrollViewDidChangeOffset(
 
 int EquationListView::numberOfSubviews() const { return 2; }
 
-View *EquationListView::subviewAtIndex(int index) {
-  View *subviews[] = {&m_listView, &m_scrollBraceView};
+View* EquationListView::subviewAtIndex(int index) {
+  View* subviews[] = {&m_listView, &m_scrollBraceView};
   return subviews[index];
 }
 
@@ -106,22 +106,22 @@ const uint8_t bottomBrace[braceExtremumHeight][braceExtremumWidth] = {
     {0xFF, 0xFF, 0xF7, 0x25, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00},
 };
 
-void EquationListView::BraceView::drawRect(KDContext *ctx, KDRect rect) const {
+void EquationListView::BraceView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   KDCoordinate height = bounds().height();
   KDCoordinate margin = 3;
   KDColor braceWorkingBuffer[60];
   ctx->blendRectWithMask(
       KDRect(margin, 0, braceExtremumWidth, braceExtremumHeight), KDColorBlack,
-      (const uint8_t *)topBrace, (KDColor *)(braceWorkingBuffer));
+      (const uint8_t*)topBrace, (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(0, height / 2 - braceCenterHeight / 2,
                                 braceCenterWidth, braceCenterHeight),
-                         KDColorBlack, (const uint8_t *)middleBrace,
-                         (KDColor *)(braceWorkingBuffer));
+                         KDColorBlack, (const uint8_t*)middleBrace,
+                         (KDColor*)(braceWorkingBuffer));
   ctx->blendRectWithMask(KDRect(margin, height - braceExtremumHeight,
                                 braceExtremumWidth, braceExtremumHeight),
-                         KDColorBlack, (const uint8_t *)bottomBrace,
-                         (KDColor *)(braceWorkingBuffer));
+                         KDColorBlack, (const uint8_t*)bottomBrace,
+                         (KDColor*)(braceWorkingBuffer));
   ctx->fillRect(
       KDRect(margin, braceExtremumHeight, 1,
              height / 2 - braceCenterHeight / 2 - braceExtremumHeight),

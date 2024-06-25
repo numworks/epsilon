@@ -13,9 +13,9 @@ using namespace Escher;
 
 namespace Solver {
 
-ListController::ListController(Responder *parentResponder,
-                               EquationStore *equationStore,
-                               ButtonRowController *footer)
+ListController::ListController(Responder* parentResponder,
+                               EquationStore* equationStore,
+                               ButtonRowController* footer)
     : ExpressionModelListController(parentResponder,
                                     I18n::Message::AddEquation),
       ButtonRowDelegate(nullptr, footer),
@@ -26,7 +26,7 @@ ListController::ListController(Responder *parentResponder,
                           ? I18n::Message::ResolveSystem
                           : I18n::Message::ResolveEquation,
                       Invocation::Builder<ListController>(
-                          [](ListController *list, void *sender) {
+                          [](ListController* list, void* sender) {
                             list->resolveEquations();
                             return true;
                           },
@@ -52,15 +52,15 @@ int ListController::numberOfButtons(
   return 0;
 }
 
-ButtonCell *ListController::buttonAtIndex(
+ButtonCell* ListController::buttonAtIndex(
     int index, ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
-  return const_cast<ButtonCell *>(&m_resolveButton);
+  return const_cast<ButtonCell*>(&m_resolveButton);
 }
 
-HighlightCell *ListController::reusableCell(int index, int type) {
+HighlightCell* ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfRows);
   switch (type) {
@@ -76,11 +76,11 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-void ListController::fillCellForRow(HighlightCell *cell, int row) {
+void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_expressionCellType) {
-    EvenOddExpressionCell *evenOddCell =
-        static_cast<EvenOddExpressionCell *>(cell);
+    EvenOddExpressionCell* evenOddCell =
+        static_cast<EvenOddExpressionCell*>(cell);
     ExpiringPointer<Equation> equation =
         modelStore()->modelForRecord(recordAtRow(row));
     evenOddCell->setLayout(equation->layout());
@@ -118,24 +118,24 @@ void ListController::didBecomeFirstResponder() {
   App::app()->setFirstResponder(selectableListView());
 }
 
-void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
+void ListController::didEnterResponderChain(Responder* previousFirstResponder) {
   selectableListView()->reloadData(false);
   // Reload brace if the model store has evolved
   reloadBrace();
 }
 
-bool ListController::completeEquation(LayoutField *equationField,
+bool ListController::completeEquation(LayoutField* equationField,
                                       CodePoint symbol) {
   equationField->putCursorOnOneSide(OMG::Direction::Right());
   return equationField->handleEventWithText("=0");
 }
 
-void ListController::layoutFieldDidChangeSize(LayoutField *layoutField) {
+void ListController::layoutFieldDidChangeSize(LayoutField* layoutField) {
   ExpressionModelListController::layoutFieldDidChangeSize(layoutField);
   reloadBrace();
 }
 
-bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
+bool ListController::layoutFieldDidFinishEditing(LayoutField* layoutField,
                                                  Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   if (ExpressionModelListController::layoutFieldDidFinishEditing(layoutField,
@@ -148,14 +148,14 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
 }
 
 void ListController::layoutFieldDidAbortEditing(
-    Escher::LayoutField *layoutField) {
+    Escher::LayoutField* layoutField) {
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
   reloadBrace();
   reloadButtonMessage();
 }
 
 bool ListController::isAcceptableExpression(const Poincare::UserExpression exp,
-                                            Poincare::Context *context) {
+                                            Poincare::Context* context) {
   /* Complete SharedApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
   return MathLayoutFieldDelegate::isAcceptableExpression(exp, context) &&
@@ -177,7 +177,7 @@ void ListController::resolveEquations() {
   // altered
   modelStore()->tidyDownstreamPoolFrom();
   App::app()->system()->tidy();
-  Poincare::Context *context = App::app()->localContext();
+  Poincare::Context* context = App::app()->localContext();
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
@@ -258,16 +258,16 @@ void ListController::reloadBrace() {
   }
 }
 
-EquationStore *ListController::modelStore() const {
+EquationStore* ListController::modelStore() const {
   return App::app()->equationStore();
 }
 
-SelectableListView *ListController::selectableListView() {
+SelectableListView* ListController::selectableListView() {
   return m_equationListView.selectableListView();
 }
 
-StackViewController *ListController::stackController() const {
-  return static_cast<StackViewController *>(
+StackViewController* ListController::stackController() const {
+  return static_cast<StackViewController*>(
       parentResponder()->parentResponder());
 }
 

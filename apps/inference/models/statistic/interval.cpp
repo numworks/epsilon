@@ -22,9 +22,9 @@ namespace Inference {
 
 Interval::~Interval() { tidy(); }
 
-void Interval::setGraphTitleForValue(double marginOfError, char *buffer,
+void Interval::setGraphTitleForValue(double marginOfError, char* buffer,
                                      size_t bufferSize) const {
-  const char *format = I18n::translate(
+  const char* format = I18n::translate(
       I18n::Message::StatisticGraphControllerIntervalTitleFormat);
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, format, marginOfError,
@@ -33,9 +33,9 @@ void Interval::setGraphTitleForValue(double marginOfError, char *buffer,
 }
 
 void Interval::setResultTitleForValues(double estimate, double threshold,
-                                       char *buffer, size_t bufferSize,
+                                       char* buffer, size_t bufferSize,
                                        bool resultIsTopPage) const {
-  const char *confidence = I18n::translate(I18n::Message::Confidence);
+  const char* confidence = I18n::translate(I18n::Message::Confidence);
   if (resultIsTopPage) {
     Poincare::Print::CustomPrintf(
         buffer, bufferSize, "%s=%*.*ed %s=%*.*ed", estimateSymbol(), estimate,
@@ -52,7 +52,7 @@ void Interval::setResultTitleForValues(double estimate, double threshold,
 }
 
 bool Interval::initializeSignificanceTest(SignificanceTestType testType,
-                                          Shared::GlobalContext *context) {
+                                          Shared::GlobalContext* context) {
   if (!Statistic::initializeSignificanceTest(testType, context)) {
     return false;
   }
@@ -95,14 +95,14 @@ bool Interval::isGraphable() const {
 }
 
 float Interval::computeXMin() const {
-  assert(const_cast<Interval *>(this)->largestMarginOfError() >= 0);
-  return estimate() - const_cast<Interval *>(this)->largestMarginOfError() *
+  assert(const_cast<Interval*>(this)->largestMarginOfError() >= 0);
+  return estimate() - const_cast<Interval*>(this)->largestMarginOfError() *
                           k_intervalMarginRatio;
 }
 
 float Interval::computeXMax() const {
-  assert(const_cast<Interval *>(this)->largestMarginOfError() >= 0);
-  return estimate() + const_cast<Interval *>(this)->largestMarginOfError() *
+  assert(const_cast<Interval*>(this)->largestMarginOfError() >= 0);
+  return estimate() + const_cast<Interval*>(this)->largestMarginOfError() *
                           k_intervalMarginRatio;
 }
 
@@ -165,9 +165,9 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
   return k_numberOfDisplayedIntervals - 1;
 }
 
-void Interval::resultAtIndex(int index, double *value,
-                             Poincare::Layout *message,
-                             I18n::Message *subMessage, int *precision) {
+void Interval::resultAtIndex(int index, double* value,
+                             Poincare::Layout* message,
+                             I18n::Message* subMessage, int* precision) {
   // Estimate cell is not displayed -> shift i
   index += estimateLayout().isUninitialized();
   switch (index) {

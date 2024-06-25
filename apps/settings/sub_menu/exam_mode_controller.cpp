@@ -14,7 +14,7 @@ using namespace Escher;
 
 namespace Settings {
 
-ExamModeController::ExamModeController(Responder *parentResponder)
+ExamModeController::ExamModeController(Responder* parentResponder)
     : GenericSubController(parentResponder),
       m_contentView(&m_selectableListView) {}
 
@@ -27,7 +27,7 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
 }
 
 void ExamModeController::didEnterResponderChain(
-    Responder *previousFirstResponder) {
+    Responder* previousFirstResponder) {
   /* When a pop-up is dismissed, the exam mode status might have changed. We
    * reload the selection as the number of rows might have also changed. We
    * force to reload the entire data because they might have changed. */
@@ -82,7 +82,7 @@ int ExamModeController::numberOfRows() const {
   return k_maxNumberOfCells;
 }
 
-HighlightCell *ExamModeController::reusableCell(int index, int type) {
+HighlightCell* ExamModeController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_maxNumberOfCells);
   return &m_cell[index];
@@ -92,8 +92,8 @@ int ExamModeController::reusableCellCount(int type) const {
   return k_maxNumberOfCells;
 }
 
-void ExamModeController::fillCellForRow(HighlightCell *cell, int row) {
-  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
+void ExamModeController::fillCellForRow(HighlightCell* cell, int row) {
+  static_cast<MenuCell<MessageTextView>*>(cell)->label()->setMessage(
       examModeActivationMessage(row));
 }
 

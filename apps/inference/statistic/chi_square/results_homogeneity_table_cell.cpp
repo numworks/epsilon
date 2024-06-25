@@ -7,9 +7,9 @@ using namespace Escher;
 namespace Inference {
 
 ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
-    Escher::Responder *parentResponder, HomogeneityTest *test,
-    ResultsHomogeneityController *resultsTableController,
-    Escher::ScrollViewDelegate *scrollViewDelegate)
+    Escher::Responder* parentResponder, HomogeneityTest* test,
+    ResultsHomogeneityController* resultsTableController,
+    Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, this, scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
@@ -33,7 +33,7 @@ void ResultsHomogeneityTableCell::didBecomeFirstResponder() {
   CategoricalTableCell::didBecomeFirstResponder();
 }
 
-void ResultsHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
+void ResultsHomogeneityTableCell::drawRect(KDContext* ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
   ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
@@ -42,13 +42,13 @@ void ResultsHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 void ResultsHomogeneityTableCell::fillCellForLocation(
-    Escher::HighlightCell *cell, int column, int row) {
+    Escher::HighlightCell* cell, int column, int row) {
   if (m_mode == Mode::ExpectedValue &&
       ((column == 0 && row == innerNumberOfRows()) ||
        (row == 0 && column == innerNumberOfColumns()))) {
     // Override to display "Total" instead
-    InferenceEvenOddBufferCell *myCell =
-        static_cast<InferenceEvenOddBufferCell *>(cell);
+    InferenceEvenOddBufferCell* myCell =
+        static_cast<InferenceEvenOddBufferCell*>(cell);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setText(I18n::translate(I18n::Message::Total));
     myCell->setEven(row % 2 == 0);
@@ -58,9 +58,9 @@ void ResultsHomogeneityTableCell::fillCellForLocation(
 }
 
 void ResultsHomogeneityTableCell::fillInnerCellForLocation(
-    Escher::HighlightCell *cell, int column, int row) {
-  InferenceEvenOddBufferCell *myCell =
-      static_cast<InferenceEvenOddBufferCell *>(cell);
+    Escher::HighlightCell* cell, int column, int row) {
+  InferenceEvenOddBufferCell* myCell =
+      static_cast<InferenceEvenOddBufferCell*>(cell);
 
   double value;
   if (m_mode == Mode::ExpectedValue) {
@@ -105,7 +105,7 @@ void ResultsHomogeneityTableCell::destroyCells() {
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 
-CategoricalController *ResultsHomogeneityTableCell::categoricalController() {
+CategoricalController* ResultsHomogeneityTableCell::categoricalController() {
   return m_resultsTableController;
 }
 

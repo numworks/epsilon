@@ -14,14 +14,14 @@ using namespace Escher;
 
 namespace Regression {
 
-RegressionController::RegressionController(Responder *parentResponder,
-                                           Store *store)
+RegressionController::RegressionController(Responder* parentResponder,
+                                           Store* store)
     : SelectableListViewController(parentResponder),
       m_store(store),
       m_series(-1),
       m_displayedFromDataTab(true) {}
 
-const char *RegressionController::title() {
+const char* RegressionController::title() {
   if (displaySeriesNameAsTitle()) {
     return Store::SeriesTitle(m_series);
   }
@@ -58,16 +58,16 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(m_series > -1);
     m_store->setSeriesRegressionType(m_series, ModelTypeAtIndex(selectedRow()));
-    StackViewController *stack =
-        static_cast<StackViewController *>(parentResponder());
+    StackViewController* stack =
+        static_cast<StackViewController*>(parentResponder());
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);
     return true;
   }
   if (event == Ion::Events::Left) {
-    StackViewController *stack =
-        static_cast<StackViewController *>(parentResponder());
+    StackViewController* stack =
+        static_cast<StackViewController*>(parentResponder());
     stack->pop();
     return true;
   }
@@ -79,17 +79,17 @@ KDCoordinate RegressionController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-HighlightCell *RegressionController::reusableCell(int index, int type) {
+HighlightCell* RegressionController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_numberOfCells);
   return &m_regressionCells[index];
 }
 
-void RegressionController::fillCellForRow(HighlightCell *cell, int row) {
+void RegressionController::fillCellForRow(HighlightCell* cell, int row) {
   assert(row >= 0 && row < numberOfRows());
-  MenuCell<MessageTextView, LayoutView> *myCell =
-      static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
-  Model *model = m_store->regressionModel(ModelTypeAtIndex(row));
+  MenuCell<MessageTextView, LayoutView>* myCell =
+      static_cast<MenuCell<MessageTextView, LayoutView>*>(cell);
+  Model* model = m_store->regressionModel(ModelTypeAtIndex(row));
   myCell->label()->setMessage(model->name());
   myCell->subLabel()->setLayout(model->templateLayout());
 }

@@ -7,7 +7,7 @@ namespace Escher {
 
 AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
-void AbstractMenuCell::drawRect(KDContext *ctx, KDRect rect) const {
+void AbstractMenuCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor backColor = BackgroundColor(isHighlighted());
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
@@ -41,8 +41,8 @@ KDCoordinate AbstractMenuCell::minimalHeightForOptimalDisplay() const {
   return k_topOffset + contentHeight + k_bottomOffset;
 }
 
-Responder *AbstractMenuCell::responder() {
-  Responder *r = nullptr;
+Responder* AbstractMenuCell::responder() {
+  Responder* r = nullptr;
   /* The priority order was chose arbitrarely because there currently is no cell
    * with more than 1 responder. Accessory could be prioritized over subLabel or
    * label if needed. */
@@ -72,15 +72,15 @@ int AbstractMenuCell::numberOfSubviews() const {
          (accessoryView() != nullptr);
 }
 
-View *AbstractMenuCell::subviewAtIndex(int index) {
+View* AbstractMenuCell::subviewAtIndex(int index) {
   if (index == 0) {
-    return const_cast<View *>(labelView());
+    return const_cast<View*>(labelView());
   }
   if (index == 1 && subLabelView() != nullptr) {
-    return const_cast<View *>(subLabelView());
+    return const_cast<View*>(subLabelView());
   }
   assert(index == 2 || (index == 1 && subLabelView() == nullptr));
-  return const_cast<View *>(accessoryView());
+  return const_cast<View*>(accessoryView());
 }
 
 void AbstractMenuCell::layoutSubviews(bool force) {
@@ -166,9 +166,9 @@ void AbstractMenuCell::layoutSubviews(bool force) {
   }
 
   // Set frames
-  setFrameIfViewExists(const_cast<View *>(labelView()), labelRect, force);
-  setFrameIfViewExists(const_cast<View *>(subLabelView()), subLabelRect, force);
-  setFrameIfViewExists(const_cast<View *>(accessoryView()), accessoryRect,
+  setFrameIfViewExists(const_cast<View*>(labelView()), labelRect, force);
+  setFrameIfViewExists(const_cast<View*>(subLabelView()), subLabelRect, force);
+  setFrameIfViewExists(const_cast<View*>(accessoryView()), accessoryRect,
                        force);
 }
 
@@ -187,7 +187,7 @@ bool AbstractMenuCell::shouldAlignLabelAndAccessory() const {
 
 bool AbstractMenuCell::shouldHideSublabel() const {
   return accessoryIsAnEditableTextField() && singleRowMode() &&
-         static_cast<const EditableTextWidget *>(
+         static_cast<const EditableTextWidget*>(
              constWidget(CellWidget::Type::Accessory))
              ->isEditing();
 }
@@ -199,7 +199,7 @@ bool AbstractMenuCell::singleRowMode() const {
   KDCoordinate accessoryWidth =
       accessoryIsAnEditableTextField()
           ? std::max(thisAccessorySize.width(),
-                     static_cast<const EditableTextWidget *>(
+                     static_cast<const EditableTextWidget*>(
                          constWidget(CellWidget::Type::Accessory))
                          ->minimalWidth())
           : thisAccessorySize.width();
@@ -215,7 +215,7 @@ bool AbstractMenuCell::singleRowMode() const {
          thisSubLabelSize.width() == 0;
 }
 
-KDRect AbstractMenuCell::setFrameIfViewExists(View *v, KDRect rect,
+KDRect AbstractMenuCell::setFrameIfViewExists(View* v, KDRect rect,
                                               bool force) {
   if (v) {
     setChildFrame(v, rect, force);

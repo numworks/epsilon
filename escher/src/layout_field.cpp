@@ -46,7 +46,7 @@ void LayoutField::ContentView::clearLayout() {
   Layout l = KRackL();
   m_layoutView.setLayout(l);
   m_cursor = Poincare::Internal::LayoutBufferCursor(
-      l, const_cast<Poincare::Internal::Tree *>(l.tree()));
+      l, const_cast<Poincare::Internal::Tree*>(l.tree()));
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -54,7 +54,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(Poincare::Context *context,
+void LayoutField::ContentView::copySelection(Poincare::Context* context,
                                              bool intoStoreMenu) {
   Poincare::Internal::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
@@ -65,7 +65,7 @@ void LayoutField::ContentView::copySelection(Poincare::Context *context,
   }
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  Poincare::Internal::Tree *t = selection.cloneSelection();
+  Poincare::Internal::Tree* t = selection.cloneSelection();
   Layout layoutToParse = JuniorLayout::Builder(t);
 
   layoutToParse.serializeParsedExpression(buffer, bufferSize,
@@ -83,7 +83,7 @@ void LayoutField::ContentView::copySelection(Poincare::Context *context,
   }
 }
 
-View *LayoutField::ContentView::subviewAtIndex(int index) {
+View* LayoutField::ContentView::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_layoutView;
   }
@@ -121,8 +121,8 @@ LayoutField::ContentView::ContentView(KDGlyph::Format format)
  * space (for example the one from TextField). */
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
-LayoutField::LayoutField(Responder *parentResponder,
-                         LayoutFieldDelegate *delegate, KDGlyph::Format format)
+LayoutField::LayoutField(Responder* parentResponder,
+                         LayoutFieldDelegate* delegate, KDGlyph::Format format)
     : EditableField(parentResponder, &m_contentView),
       m_contentView(format),
       m_delegate(delegate),
@@ -132,7 +132,7 @@ LayoutField::LayoutField(Responder *parentResponder,
   setBackgroundColor(KDColorWhite);
 }
 
-void LayoutField::setDelegate(LayoutFieldDelegate *delegate) {
+void LayoutField::setDelegate(LayoutFieldDelegate* delegate) {
   m_delegate = delegate;
 }
 
@@ -169,13 +169,13 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   insertLayoutAtCursor(newLayout);
 }
 
-Poincare::Context *LayoutField::context() const {
+Poincare::Context* LayoutField::context() const {
   return nullptr;
   // return m_delegate ? m_delegate->context() : nullptr;
 }
 
-size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
-                                int *cursorOffset, int *position) {
+size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,
+                                int* cursorOffset, int* position) {
   assert(layoutHasNode());
   size_t size = layout().tree()->treeSize();
   if (size > bufferSize) {
@@ -183,9 +183,9 @@ size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
     size = 0;
     *cursorOffset = -1;
   } else {
-    memcpy(buffer, reinterpret_cast<char *>(layout().tree()), size);
-    *cursorOffset = reinterpret_cast<char *>(cursor()->cursorNode()) -
-                    reinterpret_cast<char *>(layout().tree());
+    memcpy(buffer, reinterpret_cast<char*>(layout().tree()), size);
+    *cursorOffset = reinterpret_cast<char*>(cursor()->cursorNode()) -
+                    reinterpret_cast<char*>(layout().tree());
     *position = cursor()->position();
   }
   return size;
@@ -204,8 +204,8 @@ bool LayoutField::prepareToEdit() {
   return true;
 }
 
-bool LayoutField::findXNT(char *buffer, size_t bufferSize, int xntIndex,
-                          size_t *cycleSize) {
+bool LayoutField::findXNT(char* buffer, size_t bufferSize, int xntIndex,
+                          size_t* cycleSize) {
   if (linearMode()) {
     Poincare::Internal::RackLayoutDecoder decoder(cursor()->cursorNode(),
                                                   cursor()->position());
@@ -238,9 +238,9 @@ void LayoutField::reload(KDSize previousSize) {
 }
 
 using LayoutInsertionMethod = void (Poincare::Internal::LayoutBufferCursor::*)(
-    Poincare::Context *context);
+    Poincare::Context* context);
 
-bool LayoutField::insertText(const char *text, bool indentation,
+bool LayoutField::insertText(const char* text, bool indentation,
                              bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
@@ -260,7 +260,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
     return false;
   }
 
-  Poincare::Internal::LayoutBufferCursor *cursor = this->cursor();
+  Poincare::Internal::LayoutBufferCursor* cursor = this->cursor();
   // Handle special cases
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
@@ -345,7 +345,7 @@ bool LayoutField::insertText(const char *text, bool indentation,
    * */
   if (!forceCursorRightOfText) {
     Poincare::Internal::AppHelpers::MakeRightMostParenthesisTemporary(
-        static_cast<JuniorLayout &>(resultLayout).tree());
+        static_cast<JuniorLayout&>(resultLayout).tree());
   }
 
   insertLayoutAtCursor(resultLayout, forceCursorRightOfText,
@@ -365,12 +365,12 @@ KDSize LayoutField::minimalSizeForOptimalDisplay() const {
                 inputViewHeight());
 }
 
-const char *LayoutField::text() {
+const char* LayoutField::text() {
   layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
   return m_draftBuffer;
 }
 
-void LayoutField::setText(const char *text) {
+void LayoutField::setText(const char* text) {
   clearLayout();
   insertText(text, false, true);
 }
@@ -389,13 +389,13 @@ void LayoutField::reload() {
   }
 }
 
-void LayoutField::restoreContent(const char *buffer, size_t size,
-                                 int *cursorOffset, int *position) {
+void LayoutField::restoreContent(const char* buffer, size_t size,
+                                 int* cursorOffset, int* position) {
   if (size == 0) {
     return;
   }
   JuniorLayout l = JuniorLayout::Builder(
-      reinterpret_cast<const Poincare::Internal::Tree *>(buffer));
+      reinterpret_cast<const Poincare::Internal::Tree*>(buffer));
   setLayout(l);
   if (*cursorOffset != -1) {
     *cursor() =
@@ -406,7 +406,7 @@ void LayoutField::restoreContent(const char *buffer, size_t size,
   }
 }
 
-void LayoutField::setTextEditionBuffer(char *buffer, size_t bufferSize) {
+void LayoutField::setTextEditionBuffer(char* buffer, size_t bufferSize) {
   m_draftBuffer = buffer;
   m_draftBufferSize = bufferSize;
 }
@@ -416,7 +416,7 @@ KDCoordinate LayoutField::inputViewHeight() const {
                   ScrollView::minimalSizeForOptimalDisplay().height());
 }
 
-bool LayoutField::handleEventWithText(const char *text, bool indentation,
+bool LayoutField::handleEventWithText(const char* text, bool indentation,
                                       bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool didHandle = insertText(text, indentation, forceCursorRightOfText);
@@ -442,8 +442,8 @@ bool LayoutField::handleEventWithLayout(Layout layout) {
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
-                                     bool *layoutDidChange,
-                                     bool *shouldUpdateCursor) {
+                                     bool* layoutDidChange,
+                                     bool* shouldUpdateCursor) {
   *layoutDidChange = false;
   *shouldUpdateCursor = true;
 
@@ -554,12 +554,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   return false;
 }
 
-size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char *buffer,
+size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char* buffer,
                                      size_t bufferSize) {
   if (event == Ion::Events::Log &&
       Poincare::Preferences::SharedPreferences()->logarithmKeyEvent() ==
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
-    constexpr const char *k_logWithBase10 = "log(\x11,10)";
+    constexpr const char* k_logWithBase10 = "log(\x11,10)";
     return strlcpy(buffer, k_logWithBase10, bufferSize);
   }
   if (event == Ion::Events::Sto && m_delegate &&
@@ -582,7 +582,7 @@ bool LayoutField::handleStoreEvent() {
 }
 
 bool LayoutField::handleMoveEvent(Ion::Events::Event event,
-                                  bool *layoutDidChange) {
+                                  bool* layoutDidChange) {
   bool isMoveEvent = event.isMoveEvent();
   bool isSelectionEvent = event.isSelectionEvent();
   if (!isMoveEvent && !isSelectionEvent) {

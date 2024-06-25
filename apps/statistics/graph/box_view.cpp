@@ -16,7 +16,7 @@ namespace Statistics {
 
 typedef AbstractPlotView::Axis Axis;
 
-void BoxPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
+void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect) const {
   int numberOfSeries = m_store->numberOfActiveSeries(
       Shared::DoublePairStore::DefaultActiveSeriesTest);
@@ -75,8 +75,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
   }
 }
 
-void BoxPlotPolicy::drawCalculation(const AbstractPlotView *plotView,
-                                    KDContext *ctx, KDRect rect,
+void BoxPlotPolicy::drawCalculation(const AbstractPlotView* plotView,
+                                    KDContext* ctx, KDRect rect,
                                     int selectedCalculation, float lowBound,
                                     float upBound, float segmentOrd,
                                     KDColor color, bool isSelected) const {
@@ -93,7 +93,7 @@ void BoxPlotPolicy::drawCalculation(const AbstractPlotView *plotView,
   }
 }
 
-void BoxPlotPolicy::drawBar(const AbstractPlotView *plotView, KDContext *ctx,
+void BoxPlotPolicy::drawBar(const AbstractPlotView* plotView, KDContext* ctx,
                             KDRect rect, float calculation, float lowBound,
                             float upBound, KDColor color,
                             bool isSelected) const {
@@ -112,8 +112,8 @@ void BoxPlotPolicy::drawBar(const AbstractPlotView *plotView, KDContext *ctx,
   }
 }
 
-void BoxPlotPolicy::drawOutlier(const AbstractPlotView *plotView,
-                                KDContext *ctx, KDRect rect, float calculation,
+void BoxPlotPolicy::drawOutlier(const AbstractPlotView* plotView,
+                                KDContext* ctx, KDRect rect, float calculation,
                                 float segmentOrd, KDColor color,
                                 bool isSelected) const {
   plotView->drawDot(ctx, rect, k_outlierDotSize,
@@ -130,8 +130,8 @@ void BoxPlotPolicy::drawOutlier(const AbstractPlotView *plotView,
   }
 }
 
-void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView *plotView,
-                                         KDContext *ctx, KDRect rect,
+void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView* plotView,
+                                         KDContext* ctx, KDRect rect,
                                          float calculation, float lowBound,
                                          float upBound) const {
   drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor,
@@ -140,8 +140,8 @@ void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView *plotView,
               OMG::Direction::Down());
 }
 
-void BoxPlotPolicy::drawChevron(const AbstractPlotView *plotView,
-                                KDContext *ctx, KDRect rect, float x, float y,
+void BoxPlotPolicy::drawChevron(const AbstractPlotView* plotView,
+                                KDContext* ctx, KDRect rect, float x, float y,
                                 KDColor color,
                                 OMG::VerticalDirection direction) const {
   // Place the chevron so that it points two pixels, the left one being (x, y).
@@ -154,16 +154,16 @@ void BoxPlotPolicy::drawChevron(const AbstractPlotView *plotView,
     return;
   }
   KDColor workingBuffer[Chevrons::k_chevronHeight * Chevrons::k_chevronWidth];
-  const uint8_t *mask =
-      (const uint8_t *)(direction.isUp() ? Chevrons::UpChevronMask
-                                         : Chevrons::DownChevronMask);
+  const uint8_t* mask =
+      (const uint8_t*)(direction.isUp() ? Chevrons::UpChevronMask
+                                        : Chevrons::DownChevronMask);
   ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
 }
 
 // BoxView
 
-BoxView::BoxView(Store *store, int series,
-                 DataViewController *dataViewController)
+BoxView::BoxView(Store* store, int series,
+                 DataViewController* dataViewController)
     : PlotView(&m_boxRange), m_boxRange(store) {
   // BoxPlotPolicy
   m_store = store;

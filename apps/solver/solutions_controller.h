@@ -25,17 +25,17 @@ class SolutionsController : public Escher::ViewController,
                             public Escher::TableViewDataSource,
                             public Escher::ButtonRowDelegate {
  public:
-  SolutionsController(Escher::Responder *parentResponder,
-                      Escher::ButtonRowController *header);
+  SolutionsController(Escher::Responder* parentResponder,
+                      Escher::ButtonRowController* header);
 
   // ViewController
-  const char *title() override;
-  Escher::View *view() override { return &m_contentView; }
+  const char* title() override;
+  Escher::View* view() override { return &m_contentView; }
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didEnterResponderChain(
-      Escher::Responder *previousFirstResponder) override;
+      Escher::Responder* previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   TELEMETRY_ID("Solutions");
@@ -45,22 +45,22 @@ class SolutionsController : public Escher::ViewController,
       Escher::ButtonRowController::Position position) const override {
     return 1;
   }
-  Escher::ButtonCell *buttonAtIndex(
+  Escher::ButtonCell* buttonAtIndex(
       int index,
       Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
     assert(solutionsAreApproximate());
     /* const_cast is valid here as long as a const SolutionsController is never
      * needed. */
-    return const_cast<Escher::SimpleButtonCell *>(&m_searchIntervalCell);
+    return const_cast<Escher::SimpleButtonCell*>(&m_searchIntervalCell);
   }
 
   // TableViewDataSource
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
-  void fillCellForLocation(Escher::HighlightCell *cell, int column,
+  void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  Escher::HighlightCell *reusableCell(int index, int type) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
   bool canSelectCellAtLocation(int column, int row) override {
@@ -81,8 +81,8 @@ class SolutionsController : public Escher::ViewController,
   }
   // TODO: Memoize the row height ?
   KDCoordinate nonMemoizedRowHeight(int row) override;
-  Escher::TabViewController *tabController() const {
-    return static_cast<Escher::TabViewController *>(
+  Escher::TabViewController* tabController() const {
+    return static_cast<Escher::TabViewController*>(
         parentResponder()->parentResponder());
   }
 
@@ -92,17 +92,17 @@ class SolutionsController : public Escher::ViewController,
     constexpr static KDCoordinate k_bottomMessageSpace = 60;
     constexpr static KDColor k_backgroundColor =
         Escher::Palette::WallScreenDark;
-    ContentView(SolutionsController *controller);
-    void drawRect(KDContext *ctx, KDRect rect) const override;
+    ContentView(SolutionsController* controller);
+    void drawRect(KDContext* ctx, KDRect rect) const override;
     void setWarning(bool warning);
     void setWarningMessage(I18n::Message message);
     void setWarningMessageWithNumber(I18n::Message message, int n);
-    Escher::SelectableTableView *selectableTableView() {
+    Escher::SelectableTableView* selectableTableView() {
       return &m_selectableTableView;
     }
     // SelectableTableViewDelegate
     void tableViewDidChangeSelectionAndDidScroll(
-        Escher::SelectableTableView *t, int previousSelectedCol,
+        Escher::SelectableTableView* t, int previousSelectedCol,
         int previousSelectedRow, KDPoint previousOffset,
         bool withinTemporarySelection = false) override;
 
@@ -117,7 +117,7 @@ class SolutionsController : public Escher::ViewController,
       return m_selectableTableView.totalNumberOfRows() == 0;
     }
     int numberOfSubviews() const override;
-    Escher::View *subviewAtIndex(int index) override;
+    Escher::View* subviewAtIndex(int index) override;
 
     bool tableIsTooLargeForWarningMessage() const;
     void layoutSubviews(bool force = false) override;
@@ -155,7 +155,7 @@ class SolutionsController : public Escher::ViewController,
      * precede the message row with an empty row. */
     constexpr static float k_verticalAlignment = KDGlyph::k_alignTop;
     int numberOfSubviews() const override { return 1; }
-    Escher::View *subviewAtIndex(int index) override {
+    Escher::View* subviewAtIndex(int index) override {
       assert(index == 0);
       return &m_messageView;
     }

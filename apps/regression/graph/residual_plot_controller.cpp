@@ -8,7 +8,7 @@
 namespace Regression {
 
 ResidualPlotController::ResidualPlotController(
-    Escher::Responder *parentResponder, Store *store)
+    Escher::Responder* parentResponder, Store* store)
     : Escher::ViewController(parentResponder),
       m_store(store),
       m_cursor(FLT_MAX),
@@ -78,7 +78,7 @@ bool ResidualPlotController::moveHorizontally(
 bool ResidualPlotController::handleEvent(Ion::Events::Event event) {
   assert(m_store->seriesIsActive(m_selectedSeriesIndex));
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    static_cast<Escher::StackViewController *>(parentResponder())->pop();
+    static_cast<Escher::StackViewController*>(parentResponder())->pop();
     return true;
   }
   if (event == Ion::Events::Right || event == Ion::Events::Left) {

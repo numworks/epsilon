@@ -8,7 +8,7 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
   int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    View *subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
+    View* subview = const_cast<OrientedLayout*>(this)->subviewAtIndex(i);
     KDSize subviewSize = adaptSize(subview->minimalSizeForOptimalDisplay());
     requiredMainDirectionLength += subviewSize.height();
     requiredSecondaryDirectionLength =
@@ -30,7 +30,7 @@ void OrientedLayout::layoutSubviews(bool force) {
   KDCoordinate offsetMainDirection = m_mainDirectionMargin;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    View *subview = subviewAtIndex(i);
+    View* subview = subviewAtIndex(i);
     const KDCoordinate requiredMainDirectionLength =
         adaptSize(subview->minimalSizeForOptimalDisplay()).height();
     assert(availableMainDirection >=
@@ -45,7 +45,7 @@ void OrientedLayout::layoutSubviews(bool force) {
   }
 }
 
-void OrientedLayout::drawRect(KDContext *ctx, KDRect rect) const {
+void OrientedLayout::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw in margins
   const KDSize boundsSize = adaptSize(bounds().size());
   // Left margin

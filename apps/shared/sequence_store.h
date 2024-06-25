@@ -14,8 +14,8 @@ class SequenceStore : public FunctionStore {
   /* Sequence Store hold all its Sequences in an array. The Sequence pointers
    * return by modelForRecord are therefore non-expirable. We choose to return
    * Sequence * instead of ExpiringPointer<Sequence>. */
-  Sequence *modelForRecord(Ion::Storage::Record record) const {
-    return static_cast<Sequence *>(privateModelForRecord(record));
+  Sequence* modelForRecord(Ion::Storage::Record record) const {
+    return static_cast<Sequence*>(privateModelForRecord(record));
   }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   /* WARNING: after calling removeModel or removeAll, the sequence context
@@ -29,11 +29,11 @@ class SequenceStore : public FunctionStore {
   }
 
   static int SequenceIndexForName(char name);
-  static const char *FirstAvailableName(size_t *nameIndex = nullptr);
-  constexpr static const char *k_sequenceNames[] = {"u", "v", "w"};
+  static const char* FirstAvailableName(size_t* nameIndex = nullptr);
+  constexpr static const char* k_sequenceNames[] = {"u", "v", "w"};
   constexpr static size_t k_maxSequenceNameLength = []() {
     size_t m = 0;
-    for (const char *s : k_sequenceNames) {
+    for (const char* s : k_sequenceNames) {
       m = std::max<size_t>(m, Poincare::Helpers::StringLength(s));
     }
     return m;
@@ -50,7 +50,7 @@ class SequenceStore : public FunctionStore {
   int maxNumberOfMemoizedModels() const override {
     return SequenceStore::k_maxNumberOfSequences;
   }
-  const char *modelExtension() const override {
+  const char* modelExtension() const override {
     return Ion::Storage::sequenceExtension;
   }
   /* We don't use model memoization for two reasons:
@@ -63,9 +63,9 @@ class SequenceStore : public FunctionStore {
    * m_sequences whatever the value of cacheIndex. We thus return a
    * ExpressionModelHandle pointer after setting the model as it won't be the
    * memoized model at cacheIndex. */
-  ExpressionModelHandle *setMemoizedModelAtIndex(
+  ExpressionModelHandle* setMemoizedModelAtIndex(
       int cacheIndex, Ion::Storage::Record record) const override;
-  ExpressionModelHandle *memoizedModelAtIndex(int cacheIndex) const override;
+  ExpressionModelHandle* memoizedModelAtIndex(int cacheIndex) const override;
   mutable Sequence m_sequences[k_maxNumberOfSequences];
 };
 

@@ -12,9 +12,9 @@
 using namespace Escher;
 using namespace Inference;
 
-InputController::InputController(Escher::StackViewController *parent,
-                                 ResultsController *resultsController,
-                                 Statistic *statistic)
+InputController::InputController(Escher::StackViewController* parent,
+                                 ResultsController* resultsController,
+                                 Statistic* statistic)
     : FloatParameterController<double>(parent, &m_messageView),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),
@@ -36,24 +36,24 @@ KDCoordinate InputController::nonMemoizedRowHeight(int row) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(row);
 }
 
-void InputController::initCell(ParameterCell, void *cell, int index) {
-  ParameterCell *c = static_cast<ParameterCell *>(cell);
+void InputController::initCell(ParameterCell, void* cell, int index) {
+  ParameterCell* c = static_cast<ParameterCell*>(cell);
   c->setParentResponder(&m_selectableListView);
   c->setDelegate(this);
 }
 
-void InputController::InputTitle(Escher::ViewController *vc,
-                                 Statistic *statistic, char *titleBuffer,
+void InputController::InputTitle(Escher::ViewController* vc,
+                                 Statistic* statistic, char* titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
     /* H0:<first symbol>=<firstParam>
      * Ha:<first symbol><operator symbol><firstParams>
      * α=<threshold> */
-    const char *symbol = statistic->hypothesisSymbol();
-    const char *op = Poincare::ComparisonNode::ComparisonOperatorString(
+    const char* symbol = statistic->hypothesisSymbol();
+    const char* op = Poincare::ComparisonNode::ComparisonOperatorString(
         statistic->hypothesisParams()->comparisonOperator());
-    StackViewController *stackViewControllerResponder =
-        static_cast<StackViewController *>(vc->parentResponder());
+    StackViewController* stackViewControllerResponder =
+        static_cast<StackViewController*>(vc->parentResponder());
     constexpr int k_maxNumberOfGlyphs =
         Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
     if (stackViewControllerResponder->topViewController() != vc) {
@@ -118,10 +118,10 @@ void InputController::buttonAction() {
   stackOpenPage(m_resultsController);
 }
 
-void InputController::fillCellForRow(Escher::HighlightCell *cell, int row) {
+void InputController::fillCellForRow(Escher::HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_parameterCellType) {
-    ParameterCell *mCell = static_cast<ParameterCell *>(cell);
+    ParameterCell* mCell = static_cast<ParameterCell*>(cell);
     mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
     mCell->subLabel()->setMessage(m_statistic->parameterDefinitionAtIndex(row));
   }
@@ -142,7 +142,7 @@ int InputController::reusableParameterCellCount(int type) const {
   return 1;
 }
 
-HighlightCell *InputController::reusableParameterCell(int index, int type) {
+HighlightCell* InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
     assert(index >= 0 && index < k_numberOfReusableCells);
     return cell(index);
@@ -151,14 +151,14 @@ HighlightCell *InputController::reusableParameterCell(int index, int type) {
   return &m_significanceCell;
 }
 
-TextField *InputController::textFieldOfCellAtIndex(HighlightCell *cell,
+TextField* InputController::textFieldOfCellAtIndex(HighlightCell* cell,
                                                    int index) {
   if (typeAtRow(index) == k_significanceCellType) {
     assert(cell == &m_significanceCell);
     return m_significanceCell.textField();
   }
   assert(typeAtRow(index) == k_parameterCellType);
-  return static_cast<ParameterCell *>(cell)->textField();
+  return static_cast<ParameterCell*>(cell)->textField();
 }
 
 bool InputController::handleEvent(Ion::Events::Event event) {

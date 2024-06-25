@@ -13,7 +13,7 @@ using namespace Shared;
 namespace Calculation {
 
 UnitListController::UnitListController(
-    EditExpressionController *editExpressionController)
+    EditExpressionController* editExpressionController)
     : ExpressionsListController(editExpressionController, true),
       m_numberOfExpressionCells(0),
       m_numberOfBufferCells(0),
@@ -37,7 +37,7 @@ void UnitListController::viewDidDisappear() {
   m_numberOfBufferCells = 0;
 }
 
-HighlightCell *UnitListController::reusableCell(int index, int type) {
+HighlightCell* UnitListController::reusableCell(int index, int type) {
   if (type == k_expressionCellType) {
     return ExpressionsListController::reusableCell(index, type);
   }
@@ -54,12 +54,12 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int row) {
   return protectedNonMemoizedRowHeight(&tempCell, row);
 }
 
-void UnitListController::fillCellForRow(HighlightCell *cell, int row) {
+void UnitListController::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_expressionCellType) {
     return ExpressionsListController::fillCellForRow(cell, row);
   }
   assert(typeAtRow(row) == k_bufferCellType);
-  BufferCell *myCell = static_cast<BufferCell *>(cell);
+  BufferCell* myCell = static_cast<BufferCell*>(cell);
   fillBufferCellAtIndex(myCell, row - m_numberOfExpressionCells);
   myCell->subLabel()->setMessage(messageAtIndex(row));
 }
@@ -87,7 +87,7 @@ void UnitListController::computeAdditionalResults(
   Expression copy = exactClone;
   Expression units;
   // Reduce to be able to recognize units
-  Context *context = App::app()->localContext();
+  Context* context = App::app()->localContext();
   PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &copy, &units, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
@@ -233,10 +233,10 @@ I18n::Message UnitListController::messageAtIndex(int index) {
   return (I18n::Message)0;
 }
 
-void UnitListController::fillBufferCellAtIndex(BufferCell *bufferCell,
+void UnitListController::fillBufferCellAtIndex(BufferCell* bufferCell,
                                                int index) {
   assert(index < m_numberOfBufferCells);
-  const UnitComparison::ReferenceValue *referenceValue =
+  const UnitComparison::ReferenceValue* referenceValue =
       m_referenceValues[index];
   assert(referenceValue != nullptr);
   I18n::Message messageInCell;
@@ -253,7 +253,7 @@ void UnitListController::fillBufferCellAtIndex(BufferCell *bufferCell,
                                                   floatToTextBuffer);
 }
 
-Layout UnitListController::layoutAtIndex(HighlightCell *cell, int index) {
+Layout UnitListController::layoutAtIndex(HighlightCell* cell, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
     return ExpressionsListController::layoutAtIndex(cell, index);

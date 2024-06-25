@@ -10,19 +10,19 @@ class KDSize {
       : m_width(width), m_height(height) {}
   constexpr KDCoordinate width() const { return m_width; }
   constexpr KDCoordinate height() const { return m_height; }
-  bool operator==(const KDSize &other) const {
+  bool operator==(const KDSize& other) const {
     return m_width == other.width() && m_height == other.height();
   }
-  KDSize operator+(const KDSize &other) const {
+  KDSize operator+(const KDSize& other) const {
     return KDSize(m_width + other.width(), m_height + other.height());
   }
-  KDSize operator-(const KDSize &other) const {
+  KDSize operator-(const KDSize& other) const {
     return KDSize(m_width - other.width(), m_height - other.height());
   }
-  KDSize operator+(const KDMargins &margins) const {
+  KDSize operator+(const KDMargins& margins) const {
     return KDSize(m_width + margins.width(), m_height + margins.height());
   }
-  KDSize operator-(const KDMargins &margins) const {
+  KDSize operator-(const KDMargins& margins) const {
     return KDSize(m_width - margins.width(), m_height - margins.height());
   }
 

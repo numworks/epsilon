@@ -25,8 +25,8 @@ class ScrollViewBar : public ScrollViewIndicator {
       Metric::ScrollViewBarThickness;
   constexpr static KDColor k_trackColor = Palette::GrayMiddle;
 #if ESCHER_VIEW_LOGGING
-  const char *className() const override;
-  void logAttributes(std::ostream &os) const override;
+  const char* className() const override;
+  void logAttributes(std::ostream& os) const override;
 #endif
   float m_offset;
   float m_visibleLength;
@@ -34,7 +34,7 @@ class ScrollViewBar : public ScrollViewIndicator {
 
 class ScrollViewHorizontalBar : public ScrollViewBar {
  public:
-  void drawRect(KDContext *ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:
   constexpr static KDCoordinate k_leftMargin = Metric::CommonMargins.left();
@@ -47,7 +47,7 @@ class ScrollViewHorizontalBar : public ScrollViewBar {
 class ScrollViewVerticalBar : public ScrollViewBar {
  public:
   ScrollViewVerticalBar();
-  void drawRect(KDContext *ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setMargins(KDVerticalMargins margins) { m_margins = margins; }
 
  private:
@@ -63,8 +63,8 @@ class ScrollViewArrow : public ScrollViewIndicator {
   bool update(bool visible);
   void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   void setFont(KDFont::Size font) { m_font = font; }
-  void drawRect(KDContext *ctx, KDRect rect) const override;
-  virtual const char *arrow() const = 0;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+  virtual const char* arrow() const = 0;
 
  private:
   KDColor m_backgroundColor;
@@ -74,12 +74,12 @@ class ScrollViewArrow : public ScrollViewIndicator {
 
 class ScrollViewLeftArrow : public ScrollViewArrow {
  public:
-  const char *arrow() const override { return "<"; }
+  const char* arrow() const override { return "<"; }
 };
 
 class ScrollViewRightArrow : public ScrollViewArrow {
  public:
-  const char *arrow() const override { return ">"; }
+  const char* arrow() const override { return ">"; }
 };
 
 }  // namespace Escher

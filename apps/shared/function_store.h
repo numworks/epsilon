@@ -30,14 +30,14 @@ class FunctionStore : public ExpressionModelStore {
   }
   ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const {
     return ExpiringPointer<Function>(
-        static_cast<Function *>(privateModelForRecord(record)));
+        static_cast<Function*>(privateModelForRecord(record)));
   }
 
  protected:
-  static bool IsFunctionActive(ExpressionModelHandle *model, void *context) {
+  static bool IsFunctionActive(ExpressionModelHandle* model, void* context) {
     // An active function must be defined
     return isModelDefined(model, context) &&
-           static_cast<Function *>(model)->isActive();
+           static_cast<Function*>(model)->isActive();
   }
 };
 

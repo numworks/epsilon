@@ -45,7 +45,7 @@ const uint8_t onOffMask[SwitchView::k_onOffSize][SwitchView::k_onOffSize] = {
     {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-void SwitchView::drawRect(KDContext *ctx, KDRect rect) const {
+void SwitchView::drawRect(KDContext* ctx, KDRect rect) const {
   /* Draw the view aligned on the right of the view and vertically centered
    * The heightCenter is the coordinate of the vertical middle of the view. That
    * way, (heightCenter-halfHeight) indicates the top of the StateView. */
@@ -58,13 +58,13 @@ void SwitchView::drawRect(KDContext *ctx, KDRect rect) const {
                k_switchHeight);
   ctx->blendRectWithMask(
       frame, m_state ? Palette::YellowDark : Palette::GrayDark,
-      reinterpret_cast<const uint8_t *>(switchMask), workingBuffer);
+      reinterpret_cast<const uint8_t*>(switchMask), workingBuffer);
 
   KDCoordinate onOffX = width - (m_state ? k_onOffSize : k_switchWidth);
   KDRect onOffFrame(onOffX, heightCenter - halfHeight, k_onOffSize,
                     k_onOffSize);
   ctx->blendRectWithMask(onOffFrame, KDColorWhite,
-                         reinterpret_cast<const uint8_t *>(onOffMask),
+                         reinterpret_cast<const uint8_t*>(onOffMask),
                          workingBuffer);
 }
 

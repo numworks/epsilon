@@ -92,7 +92,7 @@ void BatteryView::updateBatteryAnimation() {
                                    : 0;
 }
 
-void BatteryView::drawInsideBatteryLevel(KDContext *ctx, KDCoordinate width,
+void BatteryView::drawInsideBatteryLevel(KDContext* ctx, KDCoordinate width,
                                          KDColor color) const {
   ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight), color);
   ctx->fillRect(KDRect(k_batteryInsideX + width, 0,
@@ -100,7 +100,7 @@ void BatteryView::drawInsideBatteryLevel(KDContext *ctx, KDCoordinate width,
                 Palette::YellowLight);
 }
 
-void BatteryView::drawRect(KDContext *ctx, KDRect rect) const {
+void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
   assert(m_chargeState != Ion::Battery::Charge::EMPTY);
   /* We draw from left to right. The middle part representing the battery
    *'content' depends on the charge */
@@ -120,7 +120,7 @@ void BatteryView::drawRect(KDContext *ctx, KDRect rect) const {
     KDRect frame((k_batteryWidth - k_flashWidth) / 2, 0, k_flashWidth,
                  k_flashHeight);
     KDColor flashWorkingBuffer[k_flashHeight * k_flashWidth];
-    ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask,
+    ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t*)flashMask,
                            flashWorkingBuffer);
   } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
@@ -147,7 +147,7 @@ void BatteryView::drawRect(KDContext *ctx, KDRect rect) const {
                    k_tickHeight);
       KDColor tickWorkingBuffer[k_tickHeight * k_tickWidth];
       ctx->blendRectWithMask(frame, TitleBarView::k_backgroundColor,
-                             (const uint8_t *)tickMask, tickWorkingBuffer);
+                             (const uint8_t*)tickMask, tickWorkingBuffer);
     }
   }
 

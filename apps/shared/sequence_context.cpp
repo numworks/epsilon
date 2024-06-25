@@ -14,13 +14,13 @@ using namespace Poincare;
 
 namespace Shared {
 
-SequenceContext::SequenceContext(Context *parentContext,
-                                 SequenceStore *sequenceStore)
+SequenceContext::SequenceContext(Context* parentContext,
+                                 SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract &symbol, bool clone,
-    ContextWithParent *lastDescendantContext) {
+    const SymbolAbstract& symbol, bool clone,
+    ContextWithParent* lastDescendantContext) {
   if (symbol.type() != ExpressionNode::Type::Sequence) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
@@ -28,14 +28,14 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
   double result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
-  char name = static_cast<const Symbol &>(symbol).name()[0];
+  char name = static_cast<const Symbol&>(symbol).name()[0];
   int index = SequenceStore::SequenceIndexForName(name);
   Ion::Storage::Record record = sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
     return NewExpression::Builder<double>(result);
   }
   assert(record.fullName()[0] == symbol.name()[0]);
-  Sequence *seq = sequenceStore()->modelForRecord(record);
+  Sequence* seq = sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
     return NewExpression::Builder<double>(result);
   }
@@ -58,12 +58,12 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
   return NewExpression::Builder<double>(result);
 }
 
-void SequenceContext::tidyDownstreamPoolFrom(PoolObject *treePoolCursor) {
+void SequenceContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
   m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 Context::SymbolAbstractType SequenceContext::expressionTypeForIdentifier(
-    const char *identifier, int length) {
+    const char* identifier, int length) {
   constexpr int numberOfSequencesNames =
       std::size(SequenceStore::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
@@ -74,12 +74,12 @@ Context::SymbolAbstractType SequenceContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
+Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   Ion::Storage::Record record =
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
   assert(!record.isNull());
-  Sequence *s = m_sequenceStore->modelForRecord(record);
+  Sequence* s = m_sequenceStore->modelForRecord(record);
   return s;
 }
 
@@ -87,7 +87,7 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   return cache()->sequenceIsNotComputable(sequenceIndex);
 }
 
-Poincare::Internal::SequenceCache *SequenceContext::cache() {
+Poincare::Internal::SequenceCache* SequenceContext::cache() {
   return GlobalContext::sequenceCache;
 }
 

@@ -13,18 +13,18 @@
 using namespace Shared;
 
 MenuController::MenuController(
-    Escher::StackViewController *parentResponder,
-    std::initializer_list<Escher::ViewController *> controllers,
+    Escher::StackViewController* parentResponder,
+    std::initializer_list<Escher::ViewController*> controllers,
     std::initializer_list<std::initializer_list<I18n::Message>> messages,
-    std::initializer_list<const Escher::Image *> images,
-    MenuControllerDelegate *delegate)
+    std::initializer_list<const Escher::Image*> images,
+    MenuControllerDelegate* delegate)
     : Escher::UniformSelectableListController<Escher::SubappCell,
                                               k_numberOfCells>(parentResponder),
       m_delegate(delegate) {
   selectRow(0);
 
   int i = 0;
-  for (Escher::ViewController *vc : controllers) {
+  for (Escher::ViewController* vc : controllers) {
     m_controllers[i++] = vc;
   }
   i = 0;
@@ -33,14 +33,14 @@ MenuController::MenuController(
     cell(i++)->setMessages(*mess.begin(), *(mess.begin() + 1));
   }
   i = 0;
-  for (const Escher::Image *img : images) {
+  for (const Escher::Image* img : images) {
     cell(i++)->setImage(img);
   }
 
   centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);
 }
 
-void MenuController::stackOpenPage(Escher::ViewController *nextPage) {
+void MenuController::stackOpenPage(Escher::ViewController* nextPage) {
   selectRow(m_delegate->selectedSubApp());
   ViewController::stackOpenPage(nextPage);
 }

@@ -12,35 +12,35 @@ using namespace Escher;
 
 namespace Inference {
 
-const Escher::Image *App::Descriptor::icon() const {
+const Escher::Image* App::Descriptor::icon() const {
   return ImageStore::InferenceIcon;
 }
 
-App *App::Snapshot::unpack(Container *container) {
+App* App::Snapshot::unpack(Container* container) {
   statistic()->init();
   return new (container->currentAppBuffer())
-      App(this, static_cast<AppsContainer *>(container)->globalContext());
+      App(this, static_cast<AppsContainer*>(container)->globalContext());
 }
 
-App::App(Snapshot *snapshot, Poincare::Context *parentContext)
+App::App(Snapshot* snapshot, Poincare::Context* parentContext)
     : MathApp(snapshot, &m_inputViewController),
       m_testGraphController(&m_stackViewController,
-                            static_cast<Test *>(snapshot->statistic())),
+                            static_cast<Test*>(snapshot->statistic())),
       m_intervalGraphController(&m_stackViewController,
-                                static_cast<Interval *>(snapshot->statistic())),
+                                static_cast<Interval*>(snapshot->statistic())),
       m_homogeneityResultsController(
           &m_stackViewController, &m_resultsController,
-          static_cast<HomogeneityTest *>(snapshot->statistic())),
+          static_cast<HomogeneityTest*>(snapshot->statistic())),
       m_inputHomogeneityController(
           &m_stackViewController, &m_homogeneityResultsController,
-          static_cast<HomogeneityTest *>(snapshot->statistic())),
+          static_cast<HomogeneityTest*>(snapshot->statistic())),
       m_goodnessResultsController(
           &m_stackViewController, &m_testGraphController,
           &m_intervalGraphController,
-          static_cast<GoodnessTest *>(snapshot->statistic())),
+          static_cast<GoodnessTest*>(snapshot->statistic())),
       m_inputGoodnessController(
           &m_stackViewController, &m_goodnessResultsController,
-          static_cast<GoodnessTest *>(snapshot->statistic())),
+          static_cast<GoodnessTest*>(snapshot->statistic())),
       m_inputStoreController(&m_stackViewController, &m_resultsController,
                              snapshot->statistic(), parentContext),
       m_resultsController(&m_stackViewController, snapshot->statistic(),
@@ -51,12 +51,11 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
                        &m_inputController, &m_datasetController,
                        snapshot->statistic()),
       m_categoricalTypeController(
-          &m_stackViewController,
-          static_cast<Chi2Test *>(snapshot->statistic()),
+          &m_stackViewController, static_cast<Chi2Test*>(snapshot->statistic()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController,
                              &m_inputStoreController, &m_datasetController,
-                             static_cast<Test *>(snapshot->statistic())),
+                             static_cast<Test*>(snapshot->statistic())),
       m_datasetController(&m_stackViewController, &m_inputController,
                           &m_inputStoreController, snapshot->statistic()),
       m_testController(&m_stackViewController, &m_hypothesisController,
@@ -74,18 +73,18 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
                             Shared::MathLayoutFieldDelegate::Default()),
       m_bufferDestructor(nullptr) {}
 
-void App::didBecomeActive(Window *window) {
-  Ion::RingBuffer<Escher::ViewController *,
-                  LargeStackViewController::k_maxNumberOfChildren> *queue =
+void App::didBecomeActive(Window* window) {
+  Ion::RingBuffer<Escher::ViewController*,
+                  LargeStackViewController::k_maxNumberOfChildren>* queue =
       snapshot()->pageQueue();
   int queueLength = queue->length();
-  Escher::ViewController *currentController = &m_menuController;
+  Escher::ViewController* currentController = &m_menuController;
   bool stop = false;
   bool resultsWereRecomputed = false;
   for (int i = 0; i < queueLength; i++) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */
-    Escher::ViewController *controller = queue->queuePop();
+    Escher::ViewController* controller = queue->queuePop();
     if (stop) {
       continue;
     }
@@ -112,17 +111,17 @@ void App::didBecomeActive(Window *window) {
   Escher::App::didBecomeActive(window);
 }
 
-void App::willOpenPage(ViewController *controller) {
+void App::willOpenPage(ViewController* controller) {
   snapshot()->pageQueue()->push(controller);
 }
 
-void App::didExitPage(ViewController *controller) {
-  ViewController *c = snapshot()->pageQueue()->stackPop();
+void App::didExitPage(ViewController* controller) {
+  ViewController* c = snapshot()->pageQueue()->stackPop();
   assert(c == controller);
   (void)c;
 }
 
-void App::cleanBuffer(DynamicCellsDataSourceDestructor *destructor) {
+void App::cleanBuffer(DynamicCellsDataSourceDestructor* destructor) {
   assert(destructor);
   if (m_bufferDestructor) {
     m_bufferDestructor->dynamicCellsTableView()->selectColumn(0);
@@ -146,7 +145,7 @@ void App::selectSubApp(int subAppIndex) {
 
 constexpr static App::Descriptor sDescriptor;
 
-const App::Descriptor *App::Snapshot::descriptor() const {
+const App::Descriptor* App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 

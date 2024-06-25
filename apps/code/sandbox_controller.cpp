@@ -10,11 +10,11 @@ using namespace Escher;
 
 namespace Code {
 
-SandboxController::SandboxController(Responder *parentResponder)
+SandboxController::SandboxController(Responder* parentResponder)
     : ViewController(parentResponder), m_solidColorView(KDColorWhite) {}
 
-StackViewController *SandboxController::stackViewController() {
-  return static_cast<StackViewController *>(parentResponder());
+StackViewController* SandboxController::stackViewController() {
+  return static_cast<StackViewController*>(parentResponder());
 }
 
 void SandboxController::reset() {

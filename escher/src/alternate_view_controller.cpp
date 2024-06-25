@@ -7,12 +7,12 @@ namespace Escher {
 /* AlternateViewController */
 
 AlternateViewController::AlternateViewController(
-    Responder *parentResponder, AlternateViewDelegate *delegate,
-    std::initializer_list<ViewController *> viewControllers)
+    Responder* parentResponder, AlternateViewDelegate* delegate,
+    std::initializer_list<ViewController*> viewControllers)
     : ViewController(parentResponder), m_delegate(delegate) {
   assert(viewControllers.size() <= k_maxNumberOfViewController);
   size_t index = 0;
-  for (ViewController *viewController : viewControllers) {
+  for (ViewController* viewController : viewControllers) {
     m_viewControllers[index++] = viewController;
   }
 }

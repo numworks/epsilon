@@ -22,7 +22,7 @@ static_assert(Store::k_numberOfSeries == 3,
               "Number of series changed, Regression::Store() needs to adapt "
               "(m_seriesChecksum)");
 
-const char *Store::SeriesTitle(int series) {
+const char* Store::SeriesTitle(int series) {
   /* Controller titles for menus targetting a specific series. These cannot
    * live on the stack and must be const char *. */
   switch (series) {
@@ -36,9 +36,9 @@ const char *Store::SeriesTitle(int series) {
   }
 }
 
-Store::Store(Shared::GlobalContext *context,
-             DoublePairStorePreferences *preferences,
-             Model::Type *regressionTypes)
+Store::Store(Shared::GlobalContext* context,
+             DoublePairStorePreferences* preferences,
+             Model::Type* regressionTypes)
     : LinearRegressionStore(context, preferences),
       m_regressionTypes(regressionTypes),
       m_recomputeCoefficients{true, true, true} {
@@ -63,7 +63,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 
 int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
                               double y, int currentSeries, int currentDot,
-                              int *nextSeries, Context *globalContext) {
+                              int* nextSeries, Context* globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
@@ -183,14 +183,14 @@ bool Store::updateSeries(int series, bool delayUpdate) {
 
 /* Calculations */
 
-void Store::updateCoefficients(int series, Context *globalContext) {
+void Store::updateCoefficients(int series, Context* globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(seriesIsActive(series));
   if (!m_recomputeCoefficients[series]) {
     return;
   }
 
-  Model *seriesModel = modelForSeries(series);
+  Model* seriesModel = modelForSeries(series);
   seriesModel->fit(this, series, m_regressionCoefficients[series],
                    globalContext);
   m_recomputeCoefficients[series] = false;
@@ -216,14 +216,14 @@ void Store::updateCoefficients(int series, Context *globalContext) {
       computeResidualStandardDeviation(series, globalContext);
 }
 
-double *Store::coefficientsForSeries(int series, Context *globalContext) {
+double* Store::coefficientsForSeries(int series, Context* globalContext) {
   updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];
 }
 
-bool Store::coefficientsAreDefined(int series, Context *globalContext,
+bool Store::coefficientsAreDefined(int series, Context* globalContext,
                                    bool finite) {
-  double *coefficients = coefficientsForSeries(series, globalContext);
+  double* coefficients = coefficientsForSeries(series, globalContext);
   int numberOfCoefficients = modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefficients; i++) {
     if (std::isnan(coefficients[i]) ||
@@ -267,14 +267,14 @@ double Store::correlationCoefficient(int series) const {
 }
 
 double Store::determinationCoefficientForSeries(int series,
-                                                Context *globalContext) {
+                                                Context* globalContext) {
   /* Returns the Determination coefficient (R2).
    * It will be updated if the regression has been updated */
   updateCoefficients(series, globalContext);
   return m_determinationCoefficient[series];
 }
 
-double Store::residualStandardDeviation(int series, Context *globalContext) {
+double Store::residualStandardDeviation(int series, Context* globalContext) {
   updateCoefficients(series, globalContext);
   return m_residualStandardDeviation[series];
 }
@@ -302,21 +302,21 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::yValueForXValue(int series, double x, Context *globalContext) {
-  Model *model = regressionModel(m_regressionTypes[series]);
-  double *coefficients = coefficientsForSeries(series, globalContext);
+double Store::yValueForXValue(int series, double x, Context* globalContext) {
+  Model* model = regressionModel(m_regressionTypes[series]);
+  double* coefficients = coefficientsForSeries(series, globalContext);
   return model->evaluate(coefficients, x);
 }
 
-double Store::xValueForYValue(int series, double y, Context *globalContext) {
-  Model *model = regressionModel(m_regressionTypes[series]);
-  double *coefficients = coefficientsForSeries(series, globalContext);
+double Store::xValueForYValue(int series, double y, Context* globalContext) {
+  Model* model = regressionModel(m_regressionTypes[series]);
+  double* coefficients = coefficientsForSeries(series, globalContext);
   return model->levelSet(coefficients, App::app()->graphRange()->xMin(),
                          App::app()->graphRange()->xMax(), y, globalContext);
 }
 
 double Store::residualAtIndexForSeries(int series, int index,
-                                       Context *globalContext) {
+                                       Context* globalContext) {
   double x = get(series, 0, index);
   return get(series, 1, index) - yValueForXValue(series, x, globalContext);
 }
@@ -332,7 +332,7 @@ bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
 }
 
 double Store::computeDeterminationCoefficient(int series,
-                                              Context *globalContext) {
+                                              Context* globalContext) {
   // Computes and returns the determination coefficient of the regression.
   if (seriesSatisfies(series, DisplayRSquared)) {
     /* With linear regressions and transformed models (Exponential, Logarithm
@@ -388,7 +388,7 @@ double Store::computeDeterminationCoefficient(int series,
 }
 
 double Store::computeResidualStandardDeviation(int series,
-                                               Context *globalContext) {
+                                               Context* globalContext) {
   int nCoeff =
       regressionModel(m_regressionTypes[series])->numberOfCoefficients();
   int n = numberOfPairsOfSeries(series);
@@ -403,7 +403,7 @@ double Store::computeResidualStandardDeviation(int series,
   return std::sqrt(sum / (n - nCoeff));
 }
 
-Model *Store::regressionModel(Model::Type type) {
+Model* Store::regressionModel(Model::Type type) {
   /* Most of regression app still expects a Model * with ->name and (Store, int)
    * API. We therefore cannot use directly a const Regression * pointer and need
    * the Model object to live somewhere. This static instance is the only Model
@@ -414,7 +414,7 @@ Model *Store::regressionModel(Model::Type type) {
   return &s_model;
 }
 
-int Store::BuildFunctionName(int series, char *buffer, int bufferSize) {
+int Store::BuildFunctionName(int series, char* buffer, int bufferSize) {
   assert(bufferSize >= k_functionNameSize);
   size_t length = strlcpy(buffer, k_functionName, bufferSize);
   length +=

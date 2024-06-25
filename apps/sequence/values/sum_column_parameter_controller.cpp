@@ -6,7 +6,7 @@ using namespace Shared;
 namespace Sequence {
 
 SumColumnParameterController::SumColumnParameterController(
-    Shared::ValuesController *valuesController)
+    Shared::ValuesController* valuesController)
     : ColumnParameterController(valuesController),
       m_valuesController(valuesController) {
   m_hideColumn.label()->setMessage(I18n::Message::HideSumOfTerms);
@@ -20,7 +20,7 @@ bool SumColumnParameterController::handleEvent(Ion::Events::Event event) {
         m_valuesController->selectedRow());
     GlobalContext::sequenceStore->modelForRecord(m_record)->setDisplaySum(
         false);
-    StackViewController *stack = (StackViewController *)(parentResponder());
+    StackViewController* stack = (StackViewController*)(parentResponder());
     stack->pop();
     return true;
   }

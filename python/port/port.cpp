@@ -33,20 +33,20 @@ extern "C" {
 
 #include <escher/palette.h>
 
-static MicroPython::ScriptProvider *sScriptProvider = nullptr;
-static MicroPython::ExecutionEnvironment *sCurrentExecutionEnvironment =
+static MicroPython::ScriptProvider* sScriptProvider = nullptr;
+static MicroPython::ExecutionEnvironment* sCurrentExecutionEnvironment =
     nullptr;
 
 MicroPython::ExecutionEnvironment::~ExecutionEnvironment() {
   sCurrentExecutionEnvironment = nullptr;
 }
 
-MicroPython::ExecutionEnvironment *
+MicroPython::ExecutionEnvironment*
 MicroPython::ExecutionEnvironment::currentExecutionEnvironment() {
   return sCurrentExecutionEnvironment;
 }
 
-bool MicroPython::ExecutionEnvironment::runCode(const char *str) {
+bool MicroPython::ExecutionEnvironment::runCode(const char* str) {
   assert(sCurrentExecutionEnvironment == nullptr);
   sCurrentExecutionEnvironment = this;
 
@@ -57,7 +57,7 @@ bool MicroPython::ExecutionEnvironment::runCode(const char *str) {
   bool runSucceeded = true;
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
+    mp_lexer_t* lex = mp_lexer_new_from_str_len(0, str, strlen(str), false);
     /* The input type is "single input" because the Python console is supposed
      * to be fed lines and not files. */
     // TODO: add a parameter when other input types (file, eval) are required
@@ -86,7 +86,7 @@ void MicroPython::ExecutionEnvironment::HandleExceptionSilently() {
 }
 
 void MicroPython::ExecutionEnvironment::HandleException(
-    nlr_buf_t *nlr_buf, MicroPython::ExecutionEnvironment *env) {
+    nlr_buf_t* nlr_buf, MicroPython::ExecutionEnvironment* env) {
   /* We need a static execution environment to print. If it's not already set,
    * the caller should give it as a parameter. */
   if (env != nullptr) {
@@ -145,10 +145,10 @@ void MicroPython::ExecutionEnvironment::HandleException(
 void MicroPython::ExecutionEnvironment::interrupt() { mp_keyboard_interrupt(); }
 
 extern "C" {
-extern const void *_process_stack_end;
+extern const void* _process_stack_end;
 }
 
-void MicroPython::init(void *heapStart, void *heapEnd) {
+void MicroPython::init(void* heapStart, void* heapEnd) {
 #if __EMSCRIPTEN__
   static mp_obj_t pystack[1024];
   mp_pystack_init(pystack, &pystack[MP_ARRAY_SIZE(pystack)]);
@@ -161,12 +161,12 @@ void MicroPython::init(void *heapStart, void *heapEnd) {
    * - to check if the maximal recursion depth has been reached.
    * Current stack pointer could go backward after initialization. A stack start
    * pointer defined in main is therefore used. */
-  void *stackTopAddress = Ion::stackStart();
+  void* stackTopAddress = Ion::stackStart();
 
 #if MP_PORT_USE_STACK_SYMBOLS
   mp_stack_set_top(stackTopAddress);
   size_t stackLimitInBytes =
-      (char *)stackTopAddress - (char *)&_process_stack_end;
+      (char*)stackTopAddress - (char*)&_process_stack_end;
   mp_stack_set_limit(stackLimitInBytes);
 #else
   mp_stack_set_top(stackTopAddress);
@@ -181,11 +181,11 @@ void MicroPython::init(void *heapStart, void *heapEnd) {
 
 void MicroPython::deinit() { mp_deinit(); }
 
-void MicroPython::registerScriptProvider(ScriptProvider *s) {
+void MicroPython::registerScriptProvider(ScriptProvider* s) {
   sScriptProvider = s;
 }
 
-void MicroPython::collectRootsAtAddress(char *address, int byteLength) {
+void MicroPython::collectRootsAtAddress(char* address, int byteLength) {
   /* The given address is not necessarily aligned on sizeof(void *). However,
    * any pointer stored in the range [address, address + byteLength] will be
    * aligned on sizeof(void *). This is a consequence of the alignment
@@ -208,7 +208,7 @@ void MicroPython::collectRootsAtAddress(char *address, int byteLength) {
   alignedByteLength += reinterpret_cast<uintptr_t>(address) & bitMaskOnes;
 
   assert(alignedAddress % ((uintptr_t)sizeof(uintptr_t)) == 0);
-  gc_collect_root((void **)alignedAddress,
+  gc_collect_root((void**)alignedAddress,
                   alignedByteLength / sizeof(uintptr_t));
 }
 
@@ -217,7 +217,7 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode) {
       static_cast<int>(Mode::MaxIntensity255);
   if (mp_obj_is_str(input)) {
     size_t l;
-    const char *color = mp_obj_str_get_data(input, &l);
+    const char* color = mp_obj_str_get_data(input, &l);
     constexpr NamedColor pairs[] = {
         NamedColor("blue", KDColorBlue),
         NamedColor("b", KDColorBlue),
@@ -268,7 +268,7 @@ KDColor MicroPython::Color::Parse(mp_obj_t input, Mode mode) {
     // https://github.com/numworks/epsilon/issues/1533#issuecomment-618443492
   } else {
     size_t len;
-    mp_obj_t *elem;
+    mp_obj_t* elem;
 
     mp_obj_get_array(input, &len, &elem);
 
@@ -288,14 +288,14 @@ void gc_collect_regs_and_stack(void) {
   jmp_buf regs;
   uintptr_t sp = Ion::collectRegisters(regs);
 
-  void *python_stack_top = MP_STATE_THREAD(stack_top);
+  void* python_stack_top = MP_STATE_THREAD(stack_top);
   assert(python_stack_top != NULL);
 
   /* On the device, the stack is stored in reverse order, but it might not be
    * the case on a computer. We thus have to take the absolute value of the
    * addresses difference. */
   size_t stackLengthInByte;
-  void **scanStart;
+  void** scanStart;
   if ((uintptr_t)python_stack_top > sp) {
     /* To compute the stack length:
      *                               registers
@@ -306,7 +306,7 @@ void gc_collect_regs_and_stack(void) {
      * */
 
     stackLengthInByte = (uintptr_t)python_stack_top - sp;
-    scanStart = (void **)sp;
+    scanStart = (void**)sp;
 
   } else {
     /* When computing the stack length, take into account regs' size.
@@ -317,11 +317,11 @@ void gc_collect_regs_and_stack(void) {
      * */
 
     stackLengthInByte = sp - (uintptr_t)python_stack_top + sizeof(regs);
-    scanStart = (void **)python_stack_top;
+    scanStart = (void**)python_stack_top;
   }
   /* Memory error detectors might find an error here as they might split regs
    * and stack memory zones. */
-  MicroPython::collectRootsAtAddress((char *)scanStart, stackLengthInByte);
+  MicroPython::collectRootsAtAddress((char*)scanStart, stackLengthInByte);
 }
 
 void gc_collect(void) {
@@ -332,15 +332,15 @@ void gc_collect(void) {
   gc_collect_end();
 }
 
-void nlr_jump_fail(void *val) {
+void nlr_jump_fail(void* val) {
   /* Called by nlr_jump if no nlr buf has been pushed.
    * Bail out with a fatal error. */
   abort();
 }
 
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+mp_lexer_t* mp_lexer_new_from_file(const char* filename) {
   if (sScriptProvider != nullptr) {
-    const char *script = sScriptProvider->contentOfScript(filename, true);
+    const char* script = sScriptProvider->contentOfScript(filename, true);
     if (script != nullptr) {
       return mp_lexer_new_from_str_len(qstr_from_str(filename), script,
                                        strlen(script), 0 /* size_t free_len*/);
@@ -352,19 +352,19 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
   }
 }
 
-mp_import_stat_t mp_import_stat(const char *path) {
+mp_import_stat_t mp_import_stat(const char* path) {
   if (sScriptProvider && sScriptProvider->contentOfScript(path, false)) {
     return MP_IMPORT_STAT_FILE;
   }
   return MP_IMPORT_STAT_NO_EXIST;
 }
 
-void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
+void mp_hal_stdout_tx_strn_cooked(const char* str, size_t len) {
   assert(sCurrentExecutionEnvironment != nullptr);
   sCurrentExecutionEnvironment->printText(str, len);
 }
 
-const char *mp_hal_input(const char *prompt) {
+const char* mp_hal_input(const char* prompt) {
   assert(sCurrentExecutionEnvironment != nullptr);
   return sCurrentExecutionEnvironment->inputText(prompt);
 }

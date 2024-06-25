@@ -16,9 +16,9 @@ using namespace Escher;
 
 namespace Statistics {
 
-StoreController::StoreController(Responder *parentResponder, Store *store,
-                                 ButtonRowController *header,
-                                 Context *parentContext)
+StoreController::StoreController(Responder* parentResponder, Store* store,
+                                 ButtonRowController* header,
+                                 Context* parentContext)
     : Shared::StoreController(parentResponder, store, header, parentContext),
       m_store(store),
       m_storeParameterController(this, this, store) {}
@@ -31,7 +31,7 @@ void StoreController::sortSelectedColumn() {
       relativeIndex != k_cumulatedFrequencyRelativeColumn ? relativeIndex : 0);
 }
 
-size_t StoreController::fillColumnName(int column, char *buffer) {
+size_t StoreController::fillColumnName(int column, char* buffer) {
   if (isCumulatedFrequencyColumn(column)) {
     // FC column options doesn't specify the column name.
     buffer[0] = 0;
@@ -48,15 +48,15 @@ int StoreController::numberOfColumns() const {
   return result;
 }
 
-void StoreController::fillCellForLocation(HighlightCell *cell, int column,
+void StoreController::fillCellForLocation(HighlightCell* cell, int column,
                                           int row) {
   if (typeAtLocation(column, row) != k_nonEditableCellType) {
     return Shared::StoreController::fillCellForLocation(cell, column, row);
   }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(column);
-  AbstractEvenOddBufferTextCell *myCell =
-      static_cast<AbstractEvenOddBufferTextCell *>(cell);
+  AbstractEvenOddBufferTextCell* myCell =
+      static_cast<AbstractEvenOddBufferTextCell*>(cell);
   if (row > numberOfElementsInCol + 1) {
     myCell->setText("");
     myCell->setVisible(false);
@@ -107,10 +107,10 @@ double StoreController::dataAtLocation(int column, int row) {
   return Shared::StoreController::dataAtLocation(column, row);
 }
 
-void StoreController::setTitleCellText(HighlightCell *cell, int column) {
+void StoreController::setTitleCellText(HighlightCell* cell, int column) {
   assert(typeAtLocation(column, 0) == k_titleCellType);
-  BufferFunctionTitleCell *myTitleCell =
-      static_cast<BufferFunctionTitleCell *>(cell);
+  BufferFunctionTitleCell* myTitleCell =
+      static_cast<BufferFunctionTitleCell*>(cell);
   if (isCumulatedFrequencyColumn(column)) {
     myTitleCell->setText(
         I18n::translate(I18n::Message::CumulatedFrequencyColumnName));
@@ -145,7 +145,7 @@ void StoreController::clearSelectedColumn() {
 
 bool StoreController::deleteCellValue(int series, int i, int j,
                                       bool authorizeNonEmptyRowDeletion) {
-  HighlightCell *selectedCell = nullptr;
+  HighlightCell* selectedCell = nullptr;
   if (isCumulatedFrequencyColumn(i)) {
     selectedCell = selectableTableView()->selectedCell();
   }
@@ -163,7 +163,7 @@ bool StoreController::deleteCellValue(int series, int i, int j,
   return result;
 }
 
-InputViewController *StoreController::inputViewController() {
+InputViewController* StoreController::inputViewController() {
   return Statistics::App::app()->inputViewController();
 }
 

@@ -13,7 +13,7 @@ class ScrollView;
 
 class ScrollViewDelegate {
  public:
-  virtual KDRect visibleRectInBounds(ScrollView *scrollView) = 0;
+  virtual KDRect visibleRectInBounds(ScrollView* scrollView) = 0;
 };
 
 class ScrollView : public View {
@@ -24,12 +24,12 @@ class ScrollView : public View {
    * cf TableView, InputViewController, EditExpressionController. */
 
  public:
-  ScrollView(View *contentView, ScrollViewDataSource *dataSource,
-             Escher::ScrollViewDelegate *scrollViewDelegate = nullptr);
+  ScrollView(View* contentView, ScrollViewDataSource* dataSource,
+             Escher::ScrollViewDelegate* scrollViewDelegate = nullptr);
   KDSize contentSizeWithMargins() const;
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  KDMargins *margins() { return &m_margins; }
+  KDMargins* margins() { return &m_margins; }
   KDMargins constMargins() const { return m_margins; }
   void setMargins(KDMargins m) { m_margins = m; }
   void resetMargins() { setMargins({}); }
@@ -37,14 +37,14 @@ class ScrollView : public View {
   class Decorator {
    public:
     virtual int numberOfIndicators() const { return 0; }
-    virtual View *indicatorAtIndex(int index) {
+    virtual View* indicatorAtIndex(int index) {
       assert(false);
       return nullptr;
     }
     virtual KDRect layoutIndicators(
-        View *parent, KDSize content, KDPoint offset, KDRect frame,
-        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-        ScrollViewDataSourceDelegate *delegate = nullptr) {
+        View* parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate* delegate = nullptr) {
       return frame;
     }
     virtual void setBackgroundColor(KDColor c) {}
@@ -62,13 +62,13 @@ class ScrollView : public View {
       m_verticalBar.setMargins(margins);
     }
     int numberOfIndicators() const override { return m_visible ? 2 : 0; }
-    View *indicatorAtIndex(int index) override;
+    View* indicatorAtIndex(int index) override;
     KDRect layoutIndicators(
-        View *parent, KDSize content, KDPoint offset, KDRect frame,
-        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-        ScrollViewDataSourceDelegate *delegate = nullptr) override;
-    ScrollViewVerticalBar *verticalBar() { return &m_verticalBar; }
-    ScrollViewHorizontalBar *horizontalBar() { return &m_horizontalBar; }
+        View* parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate* delegate = nullptr) override;
+    ScrollViewVerticalBar* verticalBar() { return &m_verticalBar; }
+    ScrollViewHorizontalBar* horizontalBar() { return &m_horizontalBar; }
     void setVisibility(bool visible) { m_visible = visible; }
     // Draw the bar after the table to know its size
     bool layoutBeforeInnerView() const override { return false; }
@@ -82,11 +82,11 @@ class ScrollView : public View {
   class ArrowDecorator : public Decorator {
    public:
     int numberOfIndicators() const override { return 2; }
-    View *indicatorAtIndex(int index) override;
+    View* indicatorAtIndex(int index) override;
     KDRect layoutIndicators(
-        View *parent, KDSize content, KDPoint offset, KDRect frame,
-        KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
-        ScrollViewDataSourceDelegate *delegate = nullptr) override;
+        View* parent, KDSize content, KDPoint offset, KDRect frame,
+        KDRect* dirtyRect1, KDRect* dirtyRect2, bool force,
+        ScrollViewDataSourceDelegate* delegate = nullptr) override;
     void setBackgroundColor(KDColor c) override;
     void setFont(KDFont::Size font);
 
@@ -95,7 +95,7 @@ class ScrollView : public View {
     ScrollViewLeftArrow m_leftArrow;
   };
 
-  virtual Decorator *decorator() = 0;
+  virtual Decorator* decorator() = 0;
   virtual void setBackgroundColor(KDColor c) {
     m_backgroundColor = c;
     decorator()->setBackgroundColor(m_backgroundColor);
@@ -130,30 +130,29 @@ class ScrollView : public View {
   virtual bool alwaysForceRelayoutOfContentView() const { return false; }
   virtual float marginPortionTolerance() const { return 0.8f; }
 #if ESCHER_VIEW_LOGGING
-  const char *className() const override;
-  void logAttributes(std::ostream &os) const override;
+  const char* className() const override;
+  void logAttributes(std::ostream& os) const override;
 #endif
   int numberOfSubviews() const override {
-    return 1 +
-           const_cast<ScrollView *>(this)->decorator()->numberOfIndicators();
+    return 1 + const_cast<ScrollView*>(this)->decorator()->numberOfIndicators();
   }
-  View *subviewAtIndex(int index) override {
+  View* subviewAtIndex(int index) override {
     return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index);
   }
 
  private:
   class InnerView : public View {
    public:
-    InnerView(ScrollView *scrollView) : View(), m_scrollView(scrollView) {}
-    void drawRect(KDContext *ctx, KDRect rect) const override;
+    InnerView(ScrollView* scrollView) : View(), m_scrollView(scrollView) {}
+    void drawRect(KDContext* ctx, KDRect rect) const override;
 
    private:
     int numberOfSubviews() const override { return 1; }
-    View *subviewAtIndex(int index) override {
+    View* subviewAtIndex(int index) override {
       assert(index == 0);
       return m_scrollView->m_contentView;
     }
-    const ScrollView *m_scrollView;
+    const ScrollView* m_scrollView;
   };
 
   KDRect layoutDecorator(bool force);
@@ -164,10 +163,10 @@ class ScrollView : public View {
                : bounds();
   }
 
-  ScrollViewDataSource *m_dataSource;
-  View *m_contentView;
+  ScrollViewDataSource* m_dataSource;
+  View* m_contentView;
   InnerView m_innerView;
-  Escher::ScrollViewDelegate *m_scrollViewDelegate;
+  Escher::ScrollViewDelegate* m_scrollViewDelegate;
 
   KDMargins m_margins;
   mutable KDCoordinate m_excessWidth;

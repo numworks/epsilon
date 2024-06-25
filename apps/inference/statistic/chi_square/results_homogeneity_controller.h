@@ -10,15 +10,15 @@ namespace Inference {
 
 class ResultsHomogeneityController : public CategoricalController {
  public:
-  ResultsHomogeneityController(Escher::ViewController *nextController,
-                               HomogeneityTest *statistic);
+  ResultsHomogeneityController(Escher::ViewController* nextController,
+                               HomogeneityTest* statistic);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
   void viewWillAppear() override;
-  void stackOpenPage(ViewController *nextPage) override {
+  void stackOpenPage(ViewController* nextPage) override {
     tabController()->stackOpenPage(nextPage);
   }
 
@@ -26,13 +26,13 @@ class ResultsHomogeneityController : public CategoricalController {
     m_resultsHomogeneityTable.setMode(mode);
   }
 
-  Escher::TabViewController *tabController() {
-    return static_cast<Escher::TabViewController *>(
+  Escher::TabViewController* tabController() {
+    return static_cast<Escher::TabViewController*>(
         parentResponder()->parentResponder());
   }
 
  private:
-  CategoricalTableCell *categoricalTableCell() override {
+  CategoricalTableCell* categoricalTableCell() override {
     return &m_resultsHomogeneityTable;
   }
   void createDynamicCells() override;
@@ -42,9 +42,9 @@ class ResultsHomogeneityController : public CategoricalController {
 class ResultsHomogeneityTabController : public Escher::TabViewController,
                                         public Escher::TabViewDataSource {
  public:
-  ResultsHomogeneityTabController(Escher::StackViewController *parent,
-                                  Escher::ViewController *nextController,
-                                  HomogeneityTest *statistic);
+  ResultsHomogeneityTabController(Escher::StackViewController* parent,
+                                  Escher::ViewController* nextController,
+                                  HomogeneityTest* statistic);
 
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
@@ -56,11 +56,11 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
  private:
   class SingleModeController : public ViewController {
    public:
-    SingleModeController(Escher::Responder *responder,
-                         ResultsHomogeneityController *tableController)
+    SingleModeController(Escher::Responder* responder,
+                         ResultsHomogeneityController* tableController)
         : Escher::ViewController(responder),
           m_tableController(tableController) {}
-    Escher::View *view() override { return m_tableController->view(); }
+    Escher::View* view() override { return m_tableController->view(); }
     void didBecomeFirstResponder() override {
       m_tableController->didBecomeFirstResponder();
     }
@@ -69,13 +69,13 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
 
    protected:
     void switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode);
-    ResultsHomogeneityController *m_tableController;
+    ResultsHomogeneityController* m_tableController;
   };
 
   class ExpectedValuesController : public SingleModeController {
    public:
     using SingleModeController::SingleModeController;
-    const char *title() override {
+    const char* title() override {
       return I18n::translate(
           I18n::Message::HomogeneityResultsExpectedValuesTitle);
     }
@@ -88,7 +88,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
   class ContributionsController : public SingleModeController {
    public:
     using SingleModeController::SingleModeController;
-    const char *title() override {
+    const char* title() override {
       return I18n::translate(I18n::Message::Contributions);
     }
     void viewWillAppear() override {

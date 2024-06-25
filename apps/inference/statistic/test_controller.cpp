@@ -16,13 +16,13 @@ using namespace Escher;
 
 namespace Inference {
 
-TestController::TestController(StackViewController *parentResponder,
-                               HypothesisController *hypothesisController,
-                               TypeController *typeController,
-                               CategoricalTypeController *categoricalController,
-                               InputStoreController *inputStoreController,
-                               InputController *inputController,
-                               Statistic *statistic)
+TestController::TestController(StackViewController* parentResponder,
+                               HypothesisController* hypothesisController,
+                               TypeController* typeController,
+                               CategoricalTypeController* categoricalController,
+                               InputStoreController* inputStoreController,
+                               InputController* inputController,
+                               Statistic* statistic)
     : UniformSelectableListController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
@@ -41,11 +41,11 @@ TestController::TestController(StackViewController *parentResponder,
   selectRow(0);
 }
 
-const char *TestController::title() {
+const char* TestController::title() {
   return I18n::translate(m_statistic->statisticTitle());
 }
 
-void TestController::stackOpenPage(ViewController *nextPage) {
+void TestController::stackOpenPage(ViewController* nextPage) {
   SignificanceTestType type = m_statistic->significanceTestType();
   selectRow(static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
@@ -61,7 +61,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   if (!cell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
-  SelectableViewController *controller = nullptr;
+  SelectableViewController* controller = nullptr;
   SignificanceTestType testType;
   int row = selectedRow();
   if (row == k_indexOfOneProp) {

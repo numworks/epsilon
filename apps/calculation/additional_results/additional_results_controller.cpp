@@ -15,7 +15,7 @@ void AdditionalResultsController::openAdditionalResults(
     const Preferences::CalculationPreferences calculationPreferences) {
   // Head controller
   /* TODO: Refactor to avoid writing an if for each parent * child. */
-  ExpressionsListController *mainController = nullptr;
+  ExpressionsListController* mainController = nullptr;
   if (type.complex || type.unit || type.vector || type.matrix ||
       type.directTrigonometry || type.inverseTrigonometry || type.function) {
     m_unionController.~UnionController();
@@ -46,7 +46,7 @@ void AdditionalResultsController::openAdditionalResults(
                  calculationPreferences);
 
   // Tail controller
-  ExpressionsListController *tailController = nullptr;
+  ExpressionsListController* tailController = nullptr;
   if (type.integer) {
     tailController = &m_integerController;
   } else if (type.rational) {
@@ -57,9 +57,9 @@ void AdditionalResultsController::openAdditionalResults(
 
   if (tailController) {
     if (mainController) {
-      static_cast<ChainedExpressionsListController *>(mainController)
-          ->setTail(static_cast<ChainableExpressionsListController *>(
-              tailController));
+      static_cast<ChainedExpressionsListController*>(mainController)
+          ->setTail(
+              static_cast<ChainableExpressionsListController*>(tailController));
     } else {
       mainController = tailController;
       tailController = nullptr;
@@ -73,7 +73,7 @@ void AdditionalResultsController::openAdditionalResults(
 }
 
 void AdditionalResultsController::computeResults(
-    ExpressionsListController **expressionsListController,
+    ExpressionsListController** expressionsListController,
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput,
     Preferences::CalculationPreferences calculationPreferences) {

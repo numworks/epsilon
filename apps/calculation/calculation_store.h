@@ -37,29 +37,29 @@ a = pointerArea()
 
 class CalculationStore {
  public:
-  CalculationStore(char *buffer, size_t bufferSize);
+  CalculationStore(char* buffer, size_t bufferSize);
 
   /* A Calculation does not count toward the number while it is being built and
    * filled. */
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
-  Poincare::UserExpression ansExpression(Poincare::Context *context) const;
+  Poincare::UserExpression ansExpression(Poincare::Context* context) const;
   Poincare::UserExpression replaceAnsInExpression(
-      Poincare::UserExpression expression, Poincare::Context *context) const;
+      Poincare::UserExpression expression, Poincare::Context* context) const;
   size_t bufferSize() const { return m_bufferSize; }
   size_t remainingBufferSize() const {
-    return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation *);
+    return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation*);
   }
 
   Shared::ExpiringPointer<Calculation> push(Poincare::Layout input,
-                                            Poincare::Context *context);
+                                            Poincare::Context* context);
   void deleteCalculationAtIndex(int index) {
     privateDeleteCalculationAtIndex(index, endOfCalculations());
   }
   void deleteAll() { m_numberOfCalculations = 0; }
   bool preferencesHaveChanged();
 
-  Poincare::VariableContext createAnsContext(Poincare::Context *context);
+  Poincare::VariableContext createAnsContext(Poincare::Context* context);
 
   /* It is not really the minimal size, but it clears enough space for most
    * calculations instead of clearing less space, then fail to serialize, clear
@@ -70,24 +70,24 @@ class CalculationStore {
                                 ::Constant::MaxSerializedExpressionSize;
 
  private:
-  static constexpr char *k_pushError = nullptr;
+  static constexpr char* k_pushError = nullptr;
 
-  char *pointerArea() const {
+  char* pointerArea() const {
     return m_buffer + m_bufferSize -
-           m_numberOfCalculations * sizeof(Calculation *);
+           m_numberOfCalculations * sizeof(Calculation*);
   }
-  char **pointerArray() const {
-    return reinterpret_cast<char **>(pointerArea());
+  char** pointerArray() const {
+    return reinterpret_cast<char**>(pointerArea());
   }
-  char *endOfCalculations() const {
+  char* endOfCalculations() const {
     return numberOfCalculations() == 0 ? m_buffer : endOfCalculationAtIndex(0);
   }
-  char *endOfCalculationAtIndex(int index) const;
+  char* endOfCalculationAtIndex(int index) const;
   /* Account for the size of an additional pointer at the end of the buffer. */
-  size_t spaceForNewCalculations(char *currentEndOfCalculations) const;
+  size_t spaceForNewCalculations(char* currentEndOfCalculations) const;
 
-  size_t privateDeleteCalculationAtIndex(int index, char *shiftedMemoryEnd);
-  size_t deleteOldestCalculation(char *endOfTemporaryData) {
+  size_t privateDeleteCalculationAtIndex(int index, char* shiftedMemoryEnd);
+  size_t deleteOldestCalculation(char* endOfTemporaryData) {
     return privateDeleteCalculationAtIndex(numberOfCalculations() - 1,
                                            endOfTemporaryData);
   }
@@ -95,14 +95,14 @@ class CalculationStore {
 
   /* Push helper methods return a pointer to the end of the pushed content, or
    * k_pushError if the content was not pushed. */
-  char *pushEmptyCalculation(
-      char *location,
+  char* pushEmptyCalculation(
+      char* location,
       Poincare::Preferences::CalculationPreferences calculationPreferences);
-  char *pushExpressionTree(char *location, Poincare::UserExpression e,
+  char* pushExpressionTree(char* location, Poincare::UserExpression e,
                            int numberOfSignificantDigits);
-  char *pushUndefined(char *location);
+  char* pushUndefined(char* location);
 
-  char *const m_buffer;
+  char* const m_buffer;
   const size_t m_bufferSize;
   int m_numberOfCalculations;
   Poincare::Preferences m_inUsePreferences;

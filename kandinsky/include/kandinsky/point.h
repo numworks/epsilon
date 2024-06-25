@@ -11,10 +11,10 @@ class KDPoint {
   KDPoint translatedBy(KDPoint other) const;
   KDPoint relativeTo(KDPoint p) const { return translatedBy(p.opposite()); }
   KDPoint opposite() const;
-  bool operator==(const KDPoint &other) const {
+  bool operator==(const KDPoint& other) const {
     return (m_x == other.m_x && m_y == other.m_y);
   }
-  bool operator!=(const KDPoint &other) const { return !(operator==(other)); }
+  bool operator!=(const KDPoint& other) const { return !(operator==(other)); }
   uint16_t squareDistanceTo(KDPoint other) const;
 
  private:

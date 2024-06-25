@@ -12,21 +12,21 @@ namespace Shared {
 // RangeParameterController
 
 RangeParameterController::RangeParameterController(
-    Responder *parentResponder, InteractiveCurveViewRange *interactiveRange)
+    Responder* parentResponder, InteractiveCurveViewRange* interactiveRange)
     : ExplicitSelectableListViewController(parentResponder),
       m_interactiveRange(interactiveRange),
       m_tempInteractiveRange(*interactiveRange),
       m_okButton(
           &m_selectableListView, I18n::Message::Ok,
           Invocation::Builder<RangeParameterController>(
-              [](RangeParameterController *parameterController, void *sender) {
+              [](RangeParameterController* parameterController, void* sender) {
                 parameterController->buttonAction();
                 return true;
               },
               this),
           ButtonCell::Style::EmbossedLight),
       m_confirmPopUpController(Invocation::Builder<RangeParameterController>(
-          [](RangeParameterController *controller, void *sender) {
+          [](RangeParameterController* controller, void* sender) {
             controller->stackController()->pop();
             return true;
           },
@@ -41,9 +41,9 @@ RangeParameterController::RangeParameterController(
   m_gridTypeCell.setVisible(false);
 }
 
-HighlightCell *RangeParameterController::cell(int row) {
+HighlightCell* RangeParameterController::cell(int row) {
   assert(row < numberOfRows());
-  HighlightCell *cells[] = {&m_normalizeCell, &m_xRangeCell, &m_yRangeCell,
+  HighlightCell* cells[] = {&m_normalizeCell, &m_xRangeCell, &m_yRangeCell,
                             &m_gridTypeCell, &m_okButton};
   return cells[row];
 }
@@ -79,7 +79,7 @@ void RangeParameterController::fillCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    MenuCell *cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
+    MenuCell* cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 
@@ -93,7 +93,7 @@ void RangeParameterController::fillCells() {
 }
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
-  HighlightCell *cell = this->cell(row);
+  HighlightCell* cell = this->cell(row);
   return cell == &m_xRangeCell || cell == &m_okButton ? k_defaultRowSeparator
                                                       : 0;
 }
@@ -127,7 +127,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     m_confirmPopUpController.presentModally();
     return true;
   }
-  HighlightCell *cell = this->cell(selectedRow());
+  HighlightCell* cell = this->cell(selectedRow());
   if (cell == &m_normalizeCell &&
       m_normalizeCell.canBeActivatedByEvent(event)) {
     m_normalizeCell.setHighlighted(false);
@@ -136,21 +136,21 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
-      static_cast<MenuCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<MenuCell*>(cell)->canBeActivatedByEvent(event)) {
     m_singleInteractiveCurveViewRangeController.setAxis(
         cell == &m_xRangeCell ? Axis::X : Axis::Y);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
   if (cell == &m_gridTypeCell &&
-      static_cast<MenuCell *>(cell)->canBeActivatedByEvent(event)) {
+      static_cast<MenuCell*>(cell)->canBeActivatedByEvent(event)) {
     stackController()->push(&m_gridTypeController);
     return true;
   }
   return false;
 }
 
-void RangeParameterController::setRange(InteractiveCurveViewRange *range) {
+void RangeParameterController::setRange(InteractiveCurveViewRange* range) {
   m_interactiveRange = range;
   m_tempInteractiveRange = *range;
 }

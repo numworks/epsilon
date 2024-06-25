@@ -13,7 +13,7 @@ namespace Graph {
 IntervalParameterSelectorController::IntervalParameterSelectorController()
     : SelectableListViewController(nullptr) {}
 
-const char *IntervalParameterSelectorController::title() {
+const char* IntervalParameterSelectorController::title() {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 
@@ -21,8 +21,8 @@ bool IntervalParameterSelectorController::handleEvent(
     Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (m_intervalParameterCell[0].canBeActivatedByEvent(event)) {
-    StackViewController *stack = (StackViewController *)parentResponder();
-    Shared::IntervalParameterController *controller =
+    StackViewController* stack = (StackViewController*)parentResponder();
+    Shared::IntervalParameterController* controller =
         App::app()->valuesController()->intervalParameterController();
     Shared::ContinuousFunctionProperties::SymbolType symbolType =
         symbolTypeAtRow(selectedRow());
@@ -51,17 +51,17 @@ int IntervalParameterSelectorController::numberOfRows() const {
   return rowCount;
 }
 
-HighlightCell *IntervalParameterSelectorController::reusableCell(int index) {
+HighlightCell* IntervalParameterSelectorController::reusableCell(int index) {
   assert(0 <= index && index < reusableCellCount());
   return m_intervalParameterCell + index;
 }
 
-void IntervalParameterSelectorController::fillCellForRow(HighlightCell *cell,
+void IntervalParameterSelectorController::fillCellForRow(HighlightCell* cell,
                                                          int row) {
   assert(0 <= row && row < numberOfRows());
   Shared::ContinuousFunctionProperties::SymbolType symbolType =
       symbolTypeAtRow(row);
-  static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView> *>(cell)
+  static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView>*>(cell)
       ->label()
       ->setMessage(messageForType(symbolType));
 }
@@ -103,7 +103,7 @@ I18n::Message IntervalParameterSelectorController::messageForType(
 }
 
 void IntervalParameterSelectorController::setStartEndMessages(
-    Shared::IntervalParameterController *controller,
+    Shared::IntervalParameterController* controller,
     Shared::ContinuousFunctionProperties::SymbolType symbolType) {
   switch (symbolType) {
     case Shared::ContinuousFunctionProperties::SymbolType::X:

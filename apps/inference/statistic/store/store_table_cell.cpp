@@ -11,10 +11,10 @@ using namespace Escher;
 
 namespace Inference {
 
-StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
-                               Poincare::Context *parentContext,
-                               InputStoreController *inputStoreController,
-                               Escher::ScrollViewDelegate *scrollViewDelegate)
+StoreTableCell::StoreTableCell(Responder* parentResponder, Statistic* statistic,
+                               Poincare::Context* parentContext,
+                               InputStoreController* inputStoreController,
+                               Escher::ScrollViewDelegate* scrollViewDelegate)
     : DoubleColumnTableCell(parentResponder, statistic, scrollViewDelegate),
       StoreColumnHelper(this, parentContext, this),
       m_inputStoreController(inputStoreController) {
@@ -25,14 +25,14 @@ StoreTableCell::StoreTableCell(Responder *parentResponder, Statistic *statistic,
 }
 
 bool StoreTableCell::textFieldDidFinishEditing(
-    Escher::AbstractTextField *textField, Ion::Events::Event event) {
-  Table *t = tableModel();
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
+  Table* t = tableModel();
   if (t->numberOfSeries() == 1) {
     return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
   }
 
   assert(t->numberOfSeries() == 2);
-  Shared::DoublePairStore *s = store();
+  Shared::DoublePairStore* s = store();
   int minLength = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
                                 s->numberOfPairsOfSeries(t->seriesAt(1)));
 
@@ -56,23 +56,23 @@ bool StoreTableCell::textFieldDidFinishEditing(
   return true;
 }
 
-int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView *t,
+int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView* t,
                                          int column) {
   assert(&m_selectableTableView == t);
-  Shared::DoublePairStore *s = store();
+  Shared::DoublePairStore* s = store();
   int numberOfElements = s->numberOfPairsOfSeries(s->seriesAtColumn(column));
   // title + number of elements + last empty cell for input
   return 1 + numberOfElements +
          (numberOfElements < tableModel()->maxNumberOfRows());
 }
 
-void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
+void StoreTableCell::fillCellForLocation(Escher::HighlightCell* cell,
                                          int column, int row) {
   DoubleColumnTableCell::fillCellForLocation(cell, column, row);
 
   if (typeAtLocation(column, row) == k_typeOfHeaderCells) {
-    Shared::BufferFunctionTitleCell *headerCell =
-        static_cast<Shared::BufferFunctionTitleCell *>(cell);
+    Shared::BufferFunctionTitleCell* headerCell =
+        static_cast<Shared::BufferFunctionTitleCell*>(cell);
     assert(m_header <= headerCell &&
            headerCell < m_header + Table::k_maxNumberOfStoreColumns);
     headerCell->setColor(
@@ -80,7 +80,7 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
 
     char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
-      fillColumnName(column, const_cast<char *>(headerCell->text()));
+      fillColumnName(column, const_cast<char*>(headerCell->text()));
     } else {
       assert(m_statistic->significanceTestType() ==
                  SignificanceTestType::OneMean ||
@@ -90,7 +90,7 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell *cell,
       I18n::Message prefix = store()->relativeColumn(column) == 0
                                  ? I18n::Message::Values
                                  : I18n::Message::Frequencies;
-      Poincare::Print::CustomPrintf(const_cast<char *>(headerCell->text()),
+      Poincare::Print::CustomPrintf(const_cast<char*>(headerCell->text()),
                                     k_maxSizeOfColumnName,
                                     I18n::translate(prefix), columnName);
     }
@@ -112,13 +112,13 @@ void StoreTableCell::setClearPopUpContent() {
   m_confirmPopUpController.setContentText(buffer);
 }
 
-InputViewController *StoreTableCell::inputViewController() {
+InputViewController* StoreTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
 void StoreTableCell::reload() { recomputeDimensionsAndReload(true); }
 
-CategoricalController *StoreTableCell::categoricalController() {
+CategoricalController* StoreTableCell::categoricalController() {
   return m_inputStoreController;
 }
 

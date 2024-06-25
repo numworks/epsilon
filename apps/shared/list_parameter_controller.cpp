@@ -10,9 +10,9 @@ using namespace Escher;
 namespace Shared {
 
 ListParameterController::ListParameterController(
-    Responder *parentResponder, I18n::Message functionColorMessage,
+    Responder* parentResponder, I18n::Message functionColorMessage,
     I18n::Message deleteFunctionMessage,
-    SelectableListViewDelegate *listDelegate)
+    SelectableListViewDelegate* listDelegate)
     : ExplicitSelectableListViewController(parentResponder, listDelegate),
       m_colorParameterController(nullptr) {
   m_enableCell.label()->setMessage(
@@ -42,9 +42,9 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell *cell = selectedCell();
-  StackViewController *stack =
-      static_cast<StackViewController *>(parentResponder());
+  HighlightCell* cell = selectedCell();
+  StackViewController* stack =
+      static_cast<StackViewController*>(parentResponder());
 
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     function()->setActive(!function()->isActive());
@@ -61,8 +61,8 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     assert(functionStore()->numberOfModels() > 0);
     m_selectableListView.deselectTable();
     functionStore()->removeModel(m_record);
-    StackViewController *stack =
-        static_cast<StackViewController *>(parentResponder());
+    StackViewController* stack =
+        static_cast<StackViewController*>(parentResponder());
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);
@@ -76,7 +76,7 @@ ExpiringPointer<Function> ListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 
-FunctionStore *ListParameterController::functionStore() {
+FunctionStore* ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
 }
 

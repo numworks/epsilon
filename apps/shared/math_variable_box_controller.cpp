@@ -65,7 +65,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     int row = selectedRow();
     if (destroyRecordAtRow(row)) {
       if (App::app()->modalViewController()->currentModalViewController() !=
-          static_cast<const ViewController *>(this)) {
+          static_cast<const ViewController*>(this)) {
         // The varbox was dismissed by prepareForIntrusiveStorageChange
         return true;
       }
@@ -136,20 +136,20 @@ int MathVariableBoxController::reusableCellCount(int type) const {
   return k_numberOfMenuRows;
 }
 
-void MathVariableBoxController::fillCellForRow(HighlightCell *cell, int row) {
+void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_defineVariableCellType) {
     return;
   }
   if (type == k_nodeCellType) {
-    Escher::NestedMenuController::NodeCell *myCell =
-        static_cast<Escher::NestedMenuController::NodeCell *>(cell);
+    Escher::NestedMenuController::NodeCell* myCell =
+        static_cast<Escher::NestedMenuController::NodeCell*>(cell);
     myCell->label()->setMessage(nodeLabel(pageAtIndex(row)));
     myCell->reloadCell();
     return;
   }
   assert(type == k_leafCellType);
-  LeafCell *myCell = static_cast<LeafCell *>(cell);
+  LeafCell* myCell = static_cast<LeafCell*>(cell);
   Storage::Record record = recordAtIndex(row);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
@@ -214,7 +214,7 @@ int MathVariableBoxController::typeAtRow(int row) const {
   return k_leafCellType;
 }
 
-HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
+HighlightCell* MathVariableBoxController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_defineVariableCellType) {
     return &m_defineVariableCell;
@@ -225,13 +225,13 @@ HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-MathVariableBoxController::LeafCell *MathVariableBoxController::leafCellAtIndex(
+MathVariableBoxController::LeafCell* MathVariableBoxController::leafCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-Escher::NestedMenuController::NodeCell *
+Escher::NestedMenuController::NodeCell*
 MathVariableBoxController::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
@@ -387,7 +387,7 @@ Layout MathVariableBoxController::expressionLayoutForRecord(
   return m_layouts[index - m_firstMemoizedLayoutIndex];
 }
 
-const char *MathVariableBoxController::Extension(Page page) {
+const char* MathVariableBoxController::Extension(Page page) {
   // Function contains two extensions (func and reg)
   assert(page != Page::RootMenu && page != Page::Function);
   switch (page) {
@@ -458,8 +458,8 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
         length = f->name(buffer, bufferSize);
       }
     }
-    Shared::AppWithStoreMenu *app =
-        static_cast<Shared::AppWithStoreMenu *>(App::app());
+    Shared::AppWithStoreMenu* app =
+        static_cast<Shared::AppWithStoreMenu*>(App::app());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();

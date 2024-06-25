@@ -65,6 +65,12 @@ class TreeStack : public BlockStack {
   /* We cannot define the function conditionally on the value of the template
    * parameter so we define all the versions for all nodes and filter them with
    * requires. It gives nice completions and ok-ish errors.
+   *
+   * For instance, pushCos() is indeed pushCos<1>() and only the first template
+   * will match resolving to :
+   *   Tree* pushCos() {
+   *     return pushBlock(Type::Cos());
+   *   }
    */
 
 #define PUSHER(F, N, S)                       \

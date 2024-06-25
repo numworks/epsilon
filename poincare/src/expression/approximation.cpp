@@ -448,7 +448,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* node) {
              : node->isLog()         ? std::log10(c)
                                      : std::log(c);
     }
-    case Type::Logarithm: {
+    case Type::LogBase: {
       std::complex<T> a = ToComplex<T>(node->child(0));
       std::complex<T> b = ToComplex<T>(node->child(1));
       return a == static_cast<T>(0) || b == static_cast<T>(0)

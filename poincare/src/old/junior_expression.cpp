@@ -328,7 +328,7 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::List;
     case Type::ListSequence:
       return ExpressionNode::Type::ListSequence;
-    case Type::Logarithm:
+    case Type::LogBase:
     case Type::Log:
       return ExpressionNode::Type::Logarithm;
     case Type::Matrix:

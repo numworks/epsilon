@@ -124,7 +124,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::FracPart::Builder(child);
       case Type::Log:
         return Poincare::Logarithm::Builder(child);
-      case Type::Logarithm:
+      case Type::LogBase:
         return Poincare::Logarithm::Builder(
             child, ToPoincareExpression(exp->child(1)));
       case Type::Binomial:
@@ -642,7 +642,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       return PushPoincareExpression(exp.childAtIndex(1));
     case OT::Logarithm:
       if (exp.numberOfChildren() == 2) {
-        SharedTreeStack->pushLogarithm();
+        SharedTreeStack->pushLogBase();
         PushPoincareExpression(exp.childAtIndex(0));
         PushPoincareExpression(exp.childAtIndex(1));
       } else {

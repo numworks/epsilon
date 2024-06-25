@@ -862,7 +862,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 #endif
 
-  if (numberOfParameters == 1 && builtin->blockType() == Type::Logarithm) {
+  if (numberOfParameters == 1 && builtin->blockType() == Type::LogBase) {
     builtin = Builtin::GetReservedFunction(KLog);
   } else if (numberOfParameters == 2 && builtin->blockType() == Type::Log) {
     builtin = Builtin::GetReservedFunction(KLogarithm);

@@ -1167,7 +1167,7 @@ QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",
       [](const OExpression& e, Context* context, const char* symbol) {
-        return e.otype() == ExpressionNode::Type::Logarithm &&
+        return e.otype() == ExpressionNode::Type::LogBase &&
                e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
       });
 

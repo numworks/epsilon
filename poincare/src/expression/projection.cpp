@@ -104,7 +104,7 @@ bool Projection::IsForbidden(const Tree* e) {
   switch (e->type()) {
     case Type::Unit:
       return examMode.forbidUnits();
-    case Type::Logarithm:
+    case Type::LogBase:
       return examMode.forbidBasedLogarithm();
     case Type::Sum:
       return examMode.forbidSum();

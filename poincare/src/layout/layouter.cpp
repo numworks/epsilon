@@ -479,13 +479,13 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         NAry::AddChild(layoutParent, layout);
       }
       break;
-    case Type::Logarithm: {
+    case Type::LogBase: {
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
         break;
       }
       constexpr const char* log =
-          Builtin::GetReservedFunction(Type::Logarithm)->aliases()->mainAlias();
+          Builtin::GetReservedFunction(Type::LogBase)->aliases()->mainAlias();
       bool nlLog = Preferences::SharedPreferences()->logarithmBasePosition() ==
                    Preferences::LogarithmBasePosition::TopLeft;
       if (!nlLog) {

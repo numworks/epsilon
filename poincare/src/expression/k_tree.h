@@ -74,7 +74,7 @@ constexpr auto KSign = KUnary<Type::Sign>();
 constexpr auto KFactor = KUnary<Type::Factor>();
 
 constexpr auto KATrig = KBinary<Type::ATrig>();
-constexpr auto KLogarithm = KBinary<Type::Logarithm>();
+constexpr auto KLogarithm = KBinary<Type::LogBase>();
 constexpr auto KTrig = KBinary<Type::Trig>();
 constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
 constexpr auto KDiv = KBinary<Type::Div>();

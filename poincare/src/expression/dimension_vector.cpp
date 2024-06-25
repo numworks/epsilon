@@ -11,10 +11,10 @@
 namespace Poincare::Internal {
 
 namespace Units {
-DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
+SIVector SIVector::FromBaseUnits(const Tree* baseUnits) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
-  DimensionVector vector = Empty();
+  SIVector vector = Empty();
   int numberOfFactors;
   int factorIndex = 0;
   const Tree* factor;
@@ -55,8 +55,8 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
     }
     // Fill the vector with the unit's exponent
     assert(factor->isUnit());
-    vector.addAllCoefficients(
-        Unit::GetRepresentative(factor)->dimensionVector(), exponent);
+    vector.addAllCoefficients(Unit::GetRepresentative(factor)->siVector(),
+                              exponent);
     if (++factorIndex >= numberOfFactors) {
       break;
     }
@@ -65,7 +65,7 @@ DimensionVector DimensionVector::FromBaseUnits(const Tree* baseUnits) {
   return vector;
 }
 
-Tree* DimensionVector::toBaseUnits() const {
+Tree* SIVector::toBaseUnits() const {
   Tree* result = SharedTreeStack->pushMult(0);
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {

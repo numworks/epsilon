@@ -14,7 +14,7 @@ struct MatrixDimension {
 };
 
 struct UnitDimension {
-  Units::DimensionVector vector;
+  Units::SIVector vector;
   // Only one representative is needed for now.
   const Units::Representative* representative;
 };
@@ -43,7 +43,7 @@ struct Dimension {
   static Dimension Matrix(uint8_t rows, uint8_t cols) {
     return Dimension({.rows = rows, .cols = cols});
   }
-  static Dimension Unit(Units::DimensionVector vector,
+  static Dimension Unit(Units::SIVector vector,
                         const Units::Representative* representative) {
     return Dimension({.vector = vector, .representative = representative});
   }

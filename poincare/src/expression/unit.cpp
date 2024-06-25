@@ -101,20 +101,20 @@ const Representative* Representative::FromId(uint8_t id) {
   return Representative::DefaultRepresentatives()[0];
 }
 
-static bool CanSimplifyUnitProduct(const DimensionVector* unitsExponents,
+static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
                                    size_t& unitsSupportSize,
-                                   const DimensionVector* entryUnitExponents,
+                                   const SIVector* entryUnitExponents,
                                    int entryUnitExponent,
                                    int8_t& bestUnitExponent,
-                                   DimensionVector& bestRemainderExponents,
+                                   SIVector& bestRemainderExponents,
                                    size_t& bestRemainderSupportSize) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' int array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  DimensionVector simplifiedExponents;
+  SIVector simplifiedExponents;
 
-  for (size_t i = 0; i < DimensionVector::k_numberOfBaseUnits; i++) {
+  for (size_t i = 0; i < SIVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
     simplifiedExponents.setCoefficientAtIndex(
         i, unitsExponents->coefficientAtIndex(i) -
@@ -138,7 +138,7 @@ static bool CanSimplifyUnitProduct(const DimensionVector* unitsExponents,
   return isSimpler;
 }
 
-Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents) {
+Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
   /* Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
@@ -151,16 +151,16 @@ Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents) {
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
   size_t unitsSupportSize = unitsExponents->supportSize();
-  DimensionVector bestRemainderExponents;
+  SIVector bestRemainderExponents;
   size_t bestRemainderSupportSize;
   while (unitsSupportSize > 1) {
     const Representative* bestDim = nullptr;
     int8_t bestUnitExponent = 0;
     // Look up in the table of derived units.
-    for (int i = DimensionVector::k_numberOfBaseUnits;
+    for (int i = SIVector::k_numberOfBaseUnits;
          i < Representative::k_numberOfDimensions - 1; i++) {
       const Representative* dim = Representative::DefaultRepresentatives()[i];
-      const DimensionVector entryUnitExponents = dim->dimensionVector();
+      const SIVector entryUnitExponents = dim->siVector();
       // A simplification is tried by either multiplying or dividing
       if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
                                  &entryUnitExponents, 1, bestUnitExponent,
@@ -199,11 +199,11 @@ Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents) {
 }
 
 const Representative* Representative::RepresentativeForDimension(
-    DimensionVector vector) {
+    SIVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
     const Representative* representative =
         Representative::DefaultRepresentatives()[i];
-    if (vector == representative->dimensionVector()) {
+    if (vector == representative->siVector()) {
       return representative;
     }
   }
@@ -427,8 +427,8 @@ int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
   }
   assert(type() == e->type());
   const UnitNode* eNode = static_cast<const UnitNode*>(e);
-  DimensionVector v = representative()->dimensionVector();
-  DimensionVector w = eNode->representative()->dimensionVector();
+  SIVector v = representative()->siVector();
+  SIVector w = eNode->representative()->siVector();
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     if (v.coefficientAtIndex(i) != w.coefficientAtIndex(i)) {
       return v.coefficientAtIndex(i) - w.coefficientAtIndex(i);
@@ -539,7 +539,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
   if (unit.isUninitialized() || !std::isfinite(value)) {
     return false;
   }
-  DimensionVector vector = DimensionVector::FromBaseUnits(unit);
+  SIVector vector = SIVector::FromBaseUnits(unit);
   const Representative* representative =
       Representative::RepresentativeForDimension(vector);
 
@@ -564,11 +564,11 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
       units.type() == ExpressionNode::Type::Unit
           ? static_cast<Unit&>(units).node()->representative()
           : Representative::RepresentativeForDimension(
-                DimensionVector::FromBaseUnits(units));
+                SIVector::FromBaseUnits(units));
   if (!representative) {
     return 0;
   }
-  if (representative->dimensionVector() ==
+  if (representative->siVector() ==
       AngleRepresentative::Dimension) {
     /* Angles are the only unit where we want to display the exact value. */
     Expression exactValue = exactOutput.clone();
@@ -641,7 +641,7 @@ Expression Unit::ConvertTemperatureUnits(
     Expression e, Unit unit, const ReductionContext& reductionContext) {
   const Representative* targetRepr = unit.representative();
   const Prefix* targetPrefix = unit.node()->prefix();
-  assert(unit.representative()->dimensionVector() ==
+  assert(unit.representative()->siVector() ==
          TemperatureRepresentative::Dimension);
 
   Expression startUnit;
@@ -652,7 +652,7 @@ Expression Unit::ConvertTemperatureUnits(
   }
   const Representative* startRepr =
       static_cast<Unit&>(startUnit).representative();
-  if (startRepr->dimensionVector() !=
+  if (startRepr->siVector() !=
       TemperatureRepresentative::Dimension) {
     return Undefined::Builder();
   }
@@ -739,8 +739,8 @@ Expression Unit::shallowReduce(ReductionContext reductionContext) {
    * (6)  -123_°C->_K
    * (7)  Right member of a unit convert - this is handled above, as
    *      UnitConversion is set to None in this case. */
-  if (node()->representative()->dimensionVector() ==
-          TemperatureRepresentative::Default().dimensionVector() &&
+  if (node()->representative()->siVector() ==
+          TemperatureRepresentative::Default().siVector() &&
       node()->representative() != &Representatives::Temperature::kelvin) {
     Expression p = parent();
     if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
@@ -800,8 +800,8 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) ||
-       (*value == 0.0 && GetRepresentative(unit)->dimensionVector() !=
-                             Temperature::Dimension))) {
+       (*value == 0.0 &&
+        GetRepresentative(unit)->siVector() != Temperature::Dimension))) {
     /* Use the base unit to represent an infinite or null value, as all units
      * are equivalent.
      * This is not true for temperatures (0 K != 0°C != 0°F). */
@@ -1061,7 +1061,7 @@ bool Unit::KeepUnitsOnly(Tree* e) {
 bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
                               UnitFormat unitFormat) {
   assert(dimension.isUnit() && !e->isUndefined());
-  Units::DimensionVector vector = dimension.unit.vector;
+  Units::SIVector vector = dimension.unit.vector;
   assert(!vector.isEmpty());
   TreeRef units;
   if (dimension.isAngleUnit()) {
@@ -1106,7 +1106,7 @@ bool HasUnit(const Tree* expr) {
 
 bool IsPureAngleUnit(const Tree* expr) {
   return expr->isUnit() &&
-         Unit::GetRepresentative(expr)->dimensionVector() == Angle::Dimension;
+         Unit::GetRepresentative(expr)->siVector() == Angle::Dimension;
 }
 
 }  // namespace Units

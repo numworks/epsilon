@@ -16,7 +16,7 @@ namespace Poincare::Internal {
 // TODO_PCJ: Use context with userNamed trees
 
 Dimension Dimension::Unit(const Tree* unit) {
-  return Unit(Units::DimensionVector::FromBaseUnits(unit),
+  return Unit(Units::SIVector::FromBaseUnits(unit),
               Units::Unit::GetRepresentative(unit));
 }
 
@@ -260,7 +260,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
        * builtins. */
       uint8_t cols = 0;
-      Units::DimensionVector unitVector = Units::DimensionVector::Empty();
+      Units::SIVector unitVector = Units::SIVector::Empty();
       for (int i = 0; i < t->numberOfChildren(); i++) {
         bool secondDivisionChild = (i == 1 && t->isDiv());
         Dimension next = childDim[i];
@@ -451,7 +451,7 @@ Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
       uint8_t rows = 0;
       uint8_t cols = 0;
       const Units::Representative* representative = nullptr;
-      Units::DimensionVector unitVector = Units::DimensionVector::Empty();
+      Units::SIVector unitVector = Units::SIVector::Empty();
       bool secondDivisionChild = false;
       for (const Tree* child : t->children()) {
         Dimension dim = GetDimension(child, ctx);
@@ -490,7 +490,7 @@ Dimension Dimension::GetDimension(const Tree* t, Poincare::Context* ctx) {
         // TODO: Handle/forbid index > int8_t
         assert(!std::isnan(index) &&
                std::fabs(index) < static_cast<float>(INT8_MAX));
-        Units::DimensionVector unitVector = Units::DimensionVector::Empty();
+        Units::SIVector unitVector = Units::SIVector::Empty();
         unitVector.addAllCoefficients(dim.unit.vector,
                                       static_cast<int8_t>(index));
         return Unit(unitVector, dim.unit.representative);

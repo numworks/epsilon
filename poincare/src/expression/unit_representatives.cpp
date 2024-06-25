@@ -214,7 +214,7 @@ const Representative* Angle::standardRepresentative(
 
 Expression Angle::convertInto(Expression value, const Representative* other,
                               UnitFormat unitFormat) const {
-  assert(dimensionVector() == other->dimensionVector());
+  assert(siVector() == other->siVector());
   Expression unit = Unit::Builder(other, Prefix::EmptyPrefix());
   Expression inRadians =
       Multiplication::Builder(value, ratioExpressionReduced(reductionContext))

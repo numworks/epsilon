@@ -34,9 +34,7 @@ class Helper : public Representative {
   const Representative* representativesOfSameDimension() const override {
     return reinterpret_cast<const Representative*>(&R::representatives);
   };
-  const DimensionVector dimensionVector() const override {
-    return R::Dimension;
-  }
+  const SIVector siVector() const override { return R::Dimension; }
   bool isBaseUnit() const override {
     if constexpr (R::Dimension.isSI()) {
       return this == representativesOfSameDimension();
@@ -48,7 +46,7 @@ class Helper : public Representative {
 
 class Time : public Helper<Time> {
  public:
-  constexpr static DimensionVector Dimension{.time = 1};
+  constexpr static SIVector Dimension{.time = 1};
 
   // The template is required since Time is still incomplete here
   template <class R>
@@ -78,7 +76,7 @@ class Time : public Helper<Time> {
 
 class Distance : public Helper<Distance> {
  public:
-  constexpr static DimensionVector Dimension{.distance = 1};
+  constexpr static SIVector Dimension{.distance = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -111,7 +109,7 @@ class Distance : public Helper<Distance> {
 
 class Angle : public Helper<Angle> {
  public:
-  constexpr static DimensionVector Dimension{.angle = 1};
+  constexpr static SIVector Dimension{.angle = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -145,7 +143,7 @@ class Angle : public Helper<Angle> {
 
 class Mass : public Helper<Mass> {
  public:
-  constexpr static DimensionVector Dimension{.mass = 1};
+  constexpr static SIVector Dimension{.mass = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -178,7 +176,7 @@ class Mass : public Helper<Mass> {
 
 class Current : public Helper<Current> {
  public:
-  constexpr static DimensionVector Dimension{.current = 1};
+  constexpr static SIVector Dimension{.current = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -191,7 +189,7 @@ class Current : public Helper<Current> {
 
 class Temperature : public Helper<Temperature> {
  public:
-  constexpr static DimensionVector Dimension{.temperature = 1};
+  constexpr static SIVector Dimension{.temperature = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -228,7 +226,7 @@ class Temperature : public Helper<Temperature> {
 
 class AmountOfSubstance : public Helper<AmountOfSubstance> {
  public:
-  constexpr static DimensionVector Dimension{.amountOfSubstance = 1};
+  constexpr static SIVector Dimension{.amountOfSubstance = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -241,7 +239,7 @@ class AmountOfSubstance : public Helper<AmountOfSubstance> {
 
 class LuminousIntensity : public Helper<LuminousIntensity> {
  public:
-  constexpr static DimensionVector Dimension{.luminousIntensity = 1};
+  constexpr static SIVector Dimension{.luminousIntensity = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -254,7 +252,7 @@ class LuminousIntensity : public Helper<LuminousIntensity> {
 
 class Frequency : public Helper<Frequency> {
  public:
-  constexpr static DimensionVector Dimension{.time = -1};
+  constexpr static SIVector Dimension{.time = -1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -267,8 +265,7 @@ class Frequency : public Helper<Frequency> {
 
 class Force : public Helper<Force> {
  public:
-  constexpr static DimensionVector Dimension{
-      .time = -2, .distance = 1, .mass = 1};
+  constexpr static SIVector Dimension{.time = -2, .distance = 1, .mass = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -281,8 +278,7 @@ class Force : public Helper<Force> {
 
 class Pressure : public Helper<Pressure> {
  public:
-  constexpr static DimensionVector Dimension{
-      .time = -2, .distance = -1, .mass = 1};
+  constexpr static SIVector Dimension{.time = -2, .distance = -1, .mass = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -297,8 +293,7 @@ class Pressure : public Helper<Pressure> {
 
 class Energy : public Helper<Energy> {
  public:
-  constexpr static DimensionVector Dimension{
-      .time = -2, .distance = 2, .mass = 1};
+  constexpr static SIVector Dimension{.time = -2, .distance = 2, .mass = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -322,8 +317,7 @@ class Energy : public Helper<Energy> {
 
 class Power : public Helper<Power> {
  public:
-  constexpr static DimensionVector Dimension{
-      .time = -3, .distance = 2, .mass = 1};
+  constexpr static SIVector Dimension{.time = -3, .distance = 2, .mass = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -337,7 +331,7 @@ class Power : public Helper<Power> {
 
 class ElectricCharge : public Helper<ElectricCharge> {
  public:
-  constexpr static DimensionVector Dimension{.time = 1, .current = 1};
+  constexpr static SIVector Dimension{.time = 1, .current = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -350,7 +344,7 @@ class ElectricCharge : public Helper<ElectricCharge> {
 
 class ElectricPotential : public Helper<ElectricPotential> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -1};
 
   template <class R>
@@ -364,7 +358,7 @@ class ElectricPotential : public Helper<ElectricPotential> {
 
 class ElectricCapacitance : public Helper<ElectricCapacitance> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = 4, .distance = -2, .mass = -1, .current = 2};
 
   template <class R>
@@ -378,7 +372,7 @@ class ElectricCapacitance : public Helper<ElectricCapacitance> {
 
 class ElectricResistance : public Helper<ElectricResistance> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = -3, .distance = 2, .mass = 1, .current = -2};
 
   template <class R>
@@ -392,7 +386,7 @@ class ElectricResistance : public Helper<ElectricResistance> {
 
 class ElectricConductance : public Helper<ElectricConductance> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = 3, .distance = -2, .mass = -1, .current = 2};
 
   template <class R>
@@ -406,7 +400,7 @@ class ElectricConductance : public Helper<ElectricConductance> {
 
 class MagneticFlux : public Helper<MagneticFlux> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -1};
 
   template <class R>
@@ -420,8 +414,7 @@ class MagneticFlux : public Helper<MagneticFlux> {
 
 class MagneticField : public Helper<MagneticField> {
  public:
-  constexpr static DimensionVector Dimension{
-      .time = -2, .mass = 1, .current = -1};
+  constexpr static SIVector Dimension{.time = -2, .mass = 1, .current = -1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -434,7 +427,7 @@ class MagneticField : public Helper<MagneticField> {
 
 class Inductance : public Helper<Inductance> {
  public:
-  constexpr static DimensionVector Dimension{
+  constexpr static SIVector Dimension{
       .time = -2, .distance = 2, .mass = 1, .current = -2};
 
   template <class R>
@@ -448,8 +441,7 @@ class Inductance : public Helper<Inductance> {
 
 class CatalyticActivity : public Helper<CatalyticActivity> {
  public:
-  constexpr static DimensionVector Dimension{.time = -1,
-                                             .amountOfSubstance = 1};
+  constexpr static SIVector Dimension{.time = -1, .amountOfSubstance = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -462,7 +454,7 @@ class CatalyticActivity : public Helper<CatalyticActivity> {
 
 class Surface : public Helper<Surface> {
  public:
-  constexpr static DimensionVector Dimension{.distance = 2};
+  constexpr static SIVector Dimension{.distance = 2};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -488,7 +480,7 @@ class Surface : public Helper<Surface> {
 
 class Volume : public Helper<Volume> {
  public:
-  constexpr static DimensionVector Dimension{.distance = 3};
+  constexpr static SIVector Dimension{.distance = 3};
 
   template <class R>
   struct Representatives : Helper::Representatives {
@@ -520,7 +512,7 @@ class Volume : public Helper<Volume> {
 
 class Speed : public Helper<Speed> {
  public:
-  constexpr static DimensionVector Dimension{.time = -1, .distance = 1};
+  constexpr static SIVector Dimension{.time = -1, .distance = 1};
 
   template <class R>
   struct Representatives : Helper::Representatives {

@@ -17,7 +17,7 @@ class PhysicalConstant {
   struct Properties {
     Aliases m_aliasesList;
     double m_value;
-    Units::DimensionVector m_dimension;
+    Units::SIVector m_dimension;
   };
 
   static int Index(LayoutSpan name);

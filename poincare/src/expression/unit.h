@@ -74,10 +74,9 @@ class Representative {
   static const Representative* FromId(uint8_t id);
 
   static const Representative* const* DefaultRepresentatives();
-  static const Representative* RepresentativeForDimension(
-      DimensionVector vector);
+  static const Representative* RepresentativeForDimension(SIVector vector);
 
-  virtual const DimensionVector dimensionVector() const = 0;
+  virtual const SIVector siVector() const = 0;
   virtual int numberOfRepresentatives() const = 0;
   /* representativesOfSameDimension returns a pointer to the array containing
    * all representatives for this's dimension. */
@@ -302,7 +301,7 @@ class Unit {
                                  UnitFormat unitFormat);
 };
 
-Tree* ChooseBestDerivedUnits(DimensionVector* unitsExponents);
+Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);
 bool IsCombinationOfUnits(const Tree* expr);
 
 bool HasUnit(const Tree* expr);

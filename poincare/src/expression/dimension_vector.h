@@ -13,11 +13,11 @@ class Tree;
 
 namespace Units {
 
-struct DimensionVector {
+struct SIVector {
   constexpr static uint8_t k_numberOfBaseUnits = 8;
   // Operators
-  bool operator==(const DimensionVector&) const = default;
-  bool operator!=(const DimensionVector&) const = default;
+  bool operator==(const SIVector&) const = default;
+  bool operator!=(const SIVector&) const = default;
   // SupportSize is defined as the number of distinct base units.
   constexpr size_t supportSize() const {
     size_t supportSize = 0;
@@ -41,14 +41,13 @@ struct DimensionVector {
     return numberOfOnes == 1;
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
-  constexpr static DimensionVector Empty() { return {}; }
+  constexpr static SIVector Empty() { return {}; }
 
-  static DimensionVector FromBaseUnits(const Tree* baseUnits);
+  static SIVector FromBaseUnits(const Tree* baseUnits);
   // Push SI units matching the vector
   Tree* toBaseUnits() const;
 
-  constexpr void addAllCoefficients(const DimensionVector other,
-                                    int8_t factor) {
+  constexpr void addAllCoefficients(const SIVector other, int8_t factor) {
     for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
       setCoefficientAtIndex(
           i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
@@ -97,9 +96,9 @@ struct DimensionVector {
   int8_t amountOfSubstance = 0;
   int8_t luminousIntensity = 0;
 };
-static_assert(sizeof(DimensionVector) ==
-              sizeof(uint8_t) * DimensionVector::k_numberOfBaseUnits);
-static_assert(DimensionVector::Empty().isEmpty());
+static_assert(sizeof(SIVector) ==
+              sizeof(uint8_t) * SIVector::k_numberOfBaseUnits);
+static_assert(SIVector::Empty().isEmpty());
 
 }  // namespace Units
 }  // namespace Poincare::Internal

@@ -42,10 +42,10 @@ _ion_web_path := $(PATH_ion)/src/simulator/web
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html: $(addprefix $(PATH_ion)/src/simulator/,shared/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
-	$(QUIET) $(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
+	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.css: $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.html.inc $(addprefix $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.,html css)
 	$(call rule_label,HOSTCPP)
-	$(QUIET) $(HOSTCPP) -I$(dir $@) -P $(filter %.inc,$^) $@
+	$(HOSTCPP) -I$(dir $@) -P $(filter %.inc,$^) $@

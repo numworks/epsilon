@@ -236,6 +236,6 @@ PYTHON_QSTRDEFS := $(OUTPUT_DIRECTORY)/$(PATH_python)/port/genhdr/qstrdefs.gener
 
 $(PYTHON_QSTRDEFS): $(PATH_python)/port/genhdr/qstrdefs.in.h $(PATH_python)/src/py/makeqstrdata.py | $$(@D)/.
 	$(call rule_label,QSTRDAT)
-	$(QUIET) $(PYTHON) $(filter %.py,$^) $< > $@
+	$(PYTHON) $(filter %.py,$^) $< > $@
 
 $(call all_objects_for,$(SOURCES_python)): $(PYTHON_QSTRDEFS)

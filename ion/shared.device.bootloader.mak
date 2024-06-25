@@ -100,7 +100,7 @@ $(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_
 
 $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2)): $(OUTPUT_DIRECTORY)/%.h: %.png | $$$$(@D)/.
 	$$(call rule_label,PNGSER)
-	$(QUIET) $(PYTHON) $(_ion_png_serializer) --png $$< --header $$@ --cimplementation $$(@:.h=.cpp)
+	$(PYTHON) $(_ion_png_serializer) --png $$< --header $$@ --cimplementation $$(@:.h=.cpp)
 
 $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): %.cpp: %.h
 	@ :

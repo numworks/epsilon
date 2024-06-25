@@ -61,7 +61,7 @@ define raster_font
 $(eval \
 $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp: $(PATH_kandinsky)/fonts/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
 	$$(call rule_label,RASTER)
-	$(QUIET) $(_kandinsky_rasterizer) $$< $2 $2 $3 $4 $1 $$(basename $$@).h $$@ $$(dir $$@)/$(notdir $(_kandinsky_glyph_index)) $$(if $(_has_libpng),$$(basename $$@).png,)
+	$(_kandinsky_rasterizer) $$< $2 $2 $3 $4 $1 $$(basename $$@).h $$@ $$(dir $$@)/$(notdir $(_kandinsky_glyph_index)) $$(if $(_has_libpng),$$(basename $$@).png,)
 
 $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp
 )

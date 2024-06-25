@@ -60,7 +60,7 @@ _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/asse
 # FIXME Sizes and offsets should be parameterized
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
-	$(QUIET) convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
+	convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
 
 # Simulator backgrounds - end
 
@@ -93,5 +93,5 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
 $(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
-	$(QUIET) $(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
+	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)

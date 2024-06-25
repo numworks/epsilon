@@ -125,7 +125,7 @@ $(_escher_inliner): TOOLS_LDFLAGS += $(shell pkg-config libpng --libs)
 
 $(OUTPUT_DIRECTORY)/%.h: %.png $(_escher_inliner) | $$(@D)/.
 	$(call rule_label,INLINE)
-	$(QUIET) $(_escher_inliner) $< $@ $(basename $@).cpp $(INLINER_ARGS)
+	$(_escher_inliner) $< $@ $(basename $@).cpp $(INLINER_ARGS)
 
 $(OUTPUT_DIRECTORY)/%.cpp: $(OUTPUT_DIRECTORY)/%.h
 	@ :

@@ -28,7 +28,7 @@ $(call assert_defined,KANDINSKY_codepoints)
 
 $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h: $(PATH_apps)/i18n.py $$(_apps_i18n) $(_language_preferences) $(_country_preferences) | $$(@D)/.
 	$(call rule_label,I18N)
-	$(QUIET) $(PYTHON) $< \
+	$(PYTHON) $< \
 		--header $@ \
 		--implementation $(basename $@).cpp \
 		--locales $(EPSILON_I18N) \

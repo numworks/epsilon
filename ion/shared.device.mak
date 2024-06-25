@@ -92,6 +92,6 @@ LDDEPS_ion += \
 
 $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash/board.ld: $(PATH_ion)/src/device/include/$(PLATFORM)/config/board.h | $$(@D)/.
 	$(call rule_label,AWK)
-	$(QUIET) $(CXX) $(SFLAGS) -E $< -o $(@:.ld=.h)
-	$(QUIET) awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@
+	$(CXX) $(SFLAGS) -E $< -o $(@:.ld=.h)
+	awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@
 

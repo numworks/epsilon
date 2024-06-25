@@ -45,7 +45,7 @@ epsilon%html: $(OUTPUT_DIRECTORY)/epsilon%html
 
 $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js ion/src/simulator/web/simulator.html app/assets/background.jpg) ion/src/simulator/assets/background-with-shadow.webp ion/src/simulator/web/inline.py
 	$(call rule_label,INLINE)
-	$(QUIET) $(filter %.py,$^) \
+	$(PYTHON) $(filter %.py,$^) \
 		--script $(filter %.js,$^) \
 		--image $(filter %.webp,$^) \
 		--image $(filter %.jpg,$^) \

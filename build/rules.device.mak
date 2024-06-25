@@ -84,7 +84,7 @@ $1%flash: $(OUTPUT_DIRECTORY)/$1%flash
 
 $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
 	$$(call rule_label,DFU)
-	$(QUIET) $(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $$^ -o $$@
+	$(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $$^ -o $$@
 )
 endef
 

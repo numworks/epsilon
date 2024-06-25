@@ -11,7 +11,7 @@ $(call create_module,quiz,1,$(addprefix src/, \
 # current goal
 $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: | $$(@D)/.
 	$(call rule_label,AWK)
-	$(QUIET) awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
+	awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
 		$(foreach m,$(filter-out quiz quiz.%,$(MODULES_$(GOAL))), \
 			$(call tasteless_filter,$(filter %:+test,$(SOURCES_$(firstword $(subst ., ,$m)))))) \
 		> $@

@@ -6,6 +6,24 @@ $(call assert_defined,OUTPUT_ROOT)
 $(call assert_defined,DEBUG)
 $(call assert_defined,PLATFORM)
 
+# Host detection
+ifeq ($(OS),Windows_NT)
+HOST := windows
+else
+_uname_s := $(shell uname -s)
+ifeq ($(_uname_s),Darwin)
+HOST := macos
+else ifeq ($(_uname_s),Linux)
+HOST := linux
+else
+HOST := unknown
+endif
+endif
+
+ifneq ($(filter simulator host,$(PLATFORM)),)
+override PLATFORM := $(HOST)
+endif
+
 ifeq ($(DEBUG),0)
 _build_type := release
 else
@@ -31,20 +49,6 @@ ifneq ($(filter $(_platforms_simulator),$(PLATFORM)),)
 PLATFORM_TYPE := simulator
 else
 $(error Unsupported platform $(PLATFORM))
-endif
-endif
-
-# Host detection
-ifeq ($(OS),Windows_NT)
-HOST := windows
-else
-_uname_s := $(shell uname -s)
-ifeq ($(_uname_s),Darwin)
-HOST := macos
-else ifeq ($(_uname_s),Linux)
-HOST := linux
-else
-HOST := unknown
 endif
 endif
 

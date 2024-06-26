@@ -1,6 +1,8 @@
 define _help_string
-Invoking make with \033[38;5;34mPLATFORM=$(PLATFORM)\033[0m.
-
+Building \033[38;5;2m$(APP_NAME)@$(APP_VERSION)\033[0m with:\033[38;5;2m
+  DEBUG=$(DEBUG)
+  PLATFORM=$(PLATFORM)
+\033[0m
 Build a goal by calling
   \033[38;5;20mmake <goal>.<optional flavors>.<extension>\033[0m
 

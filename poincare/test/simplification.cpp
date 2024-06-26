@@ -699,9 +699,9 @@ QUIZ_CASE(pcj_simplification_float) {
 
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();
-  SystematicReduction::ShallowSystematicReduce(u->child(0));
-  QUIZ_ASSERT(SystematicReduction::ShallowSystematicReduce(u));
-  QUIZ_ASSERT(!SystematicReduction::ShallowSystematicReduce(u));
+  SystematicReduction::ShallowReduce(u->child(0));
+  QUIZ_ASSERT(SystematicReduction::ShallowReduce(u));
+  QUIZ_ASSERT(!SystematicReduction::ShallowReduce(u));
 }
 
 QUIZ_CASE(pcj_simplification_unit) {

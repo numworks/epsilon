@@ -54,7 +54,7 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   if (approximate) {
     Approximation::ApproximateToComplexTree(result);
   } else {
-    SystematicReduction::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowReduce(result);
   }
   return result;
 }
@@ -101,7 +101,7 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
     if (approximate) {
       Approximation::ApproximateToComplexTree(child);
     } else {
-      SystematicReduction::ShallowSystematicReduce(child);
+      SystematicReduction::ShallowReduce(child);
     }
     childU = childU->nextTree();
     childV = childV->nextTree();
@@ -119,7 +119,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
     if (approximate) {
       Approximation::ApproximateToComplexTree(mult);
     } else {
-      SystematicReduction::ShallowSystematicReduce(mult);
+      SystematicReduction::ShallowReduce(mult);
     }
   }
   return result;
@@ -162,13 +162,13 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
         if (approximate) {
           Approximation::ApproximateToComplexTree(mult);
         } else {
-          SystematicReduction::ShallowSystematicReduce(mult);
+          SystematicReduction::ShallowReduce(mult);
         }
       }
       if (approximate) {
         Approximation::ApproximateToComplexTree(add);
       } else {
-        SystematicReduction::ShallowSystematicReduce(add);
+        SystematicReduction::ShallowReduce(add);
       }
     }
     childURow0 = childURowK;
@@ -311,7 +311,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
     if (approximate) {
       Approximation::ApproximateToComplexTree(det);
     } else {
-      SystematicReduction::ShallowSystematicReduce(det);
+      SystematicReduction::ShallowReduce(det);
     }
     *determinant = det;
   }

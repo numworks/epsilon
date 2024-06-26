@@ -340,7 +340,7 @@ bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
   assert(root < tree);
   for (Tree* child : root->children()) {
     if (UpwardSystematicReduce(child, tree)) {
-      SystematicReduction::ShallowSystematicReduce(root);
+      SystematicReduction::ShallowReduce(root);
       return true;
     }
   }

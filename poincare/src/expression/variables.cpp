@@ -107,7 +107,7 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
     changed = Replace(child, updatedId, value, leave, simplify) || changed;
   }
   if (simplify && changed) {
-    SystematicReduction::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowReduce(expr);
   }
   return changed;
 }

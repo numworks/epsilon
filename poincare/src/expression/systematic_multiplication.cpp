@@ -193,7 +193,7 @@ bool SystematicOperation::ReduceMultiplication(Tree* u) {
   if (changed && u->isMult()) {
     // Bubble-up may be unlocked after merging identical bases.
     SystematicReduction::BubbleUpFromChildren(u);
-    assert(!SystematicReduction::ShallowSystematicReduce(u));
+    assert(!SystematicReduction::ShallowReduce(u));
   }
   return changed;
 }

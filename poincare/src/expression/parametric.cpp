@@ -142,16 +142,16 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     assert(function->numberOfChildren() > 0);  // Because HasVariable
     if (function->numberOfChildren() == 1) {
       // Shallow reduce to remove the Mult
-      SystematicReduction::ShallowSystematicReduce(function);
+      SystematicReduction::ShallowReduce(function);
     }
     // Shallow reduce the Sum
-    SystematicReduction::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowReduce(expr);
     // Add factor a before the Sum
     expr->moveTreeBeforeNode(a);
     // a is already a Mult, increase its number of children to include the Sum
     NAry::SetNumberOfChildren(expr, expr->numberOfChildren() + 1);
     // Shallow reduce a*Sum
-    SystematicReduction::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowReduce(expr);
     return true;
   }
 
@@ -164,9 +164,9 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     // Move the node Pow before the Prod
     expr->moveNodeBeforeNode(function);
     // Shallow reduce the Prod
-    SystematicReduction::ShallowSystematicReduce(expr->child(0));
+    SystematicReduction::ShallowReduce(expr->child(0));
     // Shallow reduce Prod^a
-    SystematicReduction::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowReduce(expr);
     return true;
   }
 
@@ -357,14 +357,14 @@ bool Parametric::Explicit(Tree* expr) {
     Tree* value = SharedTreeStack->pushAdd(2);
     lowerBound->cloneTree();
     Integer::Push(step);
-    SystematicReduction::ShallowSystematicReduce(value);
+    SystematicReduction::ShallowReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->cloneTree();
     Variables::Replace(clone, k_localVariableId, value, true);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool
-    SystematicReduction::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowReduce(result);
   }
   expr->moveTreeOverTree(result);
   return true;

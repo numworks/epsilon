@@ -16,8 +16,8 @@
 namespace Poincare::Internal {
 
 bool SystematicReduction::DeepReduce(Tree* u) {
-  /* Although they are also flattened in ShallowSystematicReduce, flattening
-   * here could save multiple ShallowSystematicReduce and flatten calls. */
+  /* Although they are also flattened in ShallowReduce, flattening
+   * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   // Never simplify any dependencies
   if (!u->isSet()) {
@@ -29,7 +29,7 @@ bool SystematicReduction::DeepReduce(Tree* u) {
 #if ASSERTIONS
   TreeRef previousTree = u->cloneTree();
 #endif
-  bool shallowModified = ShallowSystematicReduce(u);
+  bool shallowModified = ShallowReduce(u);
 #if ASSERTIONS
   assert(shallowModified != u->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
@@ -37,7 +37,7 @@ bool SystematicReduction::DeepReduce(Tree* u) {
   return shallowModified || modified;
 }
 
-bool SystematicReduction::ShallowSystematicReduce(Tree* u) {
+bool SystematicReduction::ShallowReduce(Tree* u) {
   bool changed = BubbleUpFromChildren(u);
   return SimplifySwitch(u) || changed;
 }
@@ -59,12 +59,12 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) {
-    ShallowSystematicReduce(u);
+    ShallowReduce(u);
     return true;
   }
 
   if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u)) {
-    ShallowSystematicReduce(u);
+    ShallowReduce(u);
     return true;
   }
 
@@ -72,7 +72,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
     assert(u->isDependency());
     /* u->child(0) may now be reduced again. This could unlock further
      * simplifications. */
-    ShallowSystematicReduce(u->child(0)) && ShallowSystematicReduce(u);
+    ShallowReduce(u->child(0)) && ShallowReduce(u);
     return true;
   }
 

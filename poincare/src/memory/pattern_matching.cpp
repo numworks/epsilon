@@ -367,7 +367,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify);
         if (simplify) {
-          SystematicReduction::ShallowSystematicReduce(insertedNode);
+          SystematicReduction::ShallowReduce(insertedNode);
         } else {
           NAry::Sanitize(insertedNode);
         }
@@ -384,7 +384,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
             CreateTree(node, context, nullptr, simplify);
             node = node->nextTree();
           }
-          SystematicReduction::ShallowSystematicReduce(result);
+          SystematicReduction::ShallowReduce(result);
         }
       }
       continue;

@@ -218,7 +218,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
     return true;
   } else if (mustSystematicReduce) {
     assert(modified);
-    *simplifyParent = SystematicReduction::ShallowSystematicReduce(tree);
+    *simplifyParent = SystematicReduction::ShallowReduce(tree);
   }
   return modified;
 }
@@ -415,13 +415,13 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
   Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
-  bool absReduced = SystematicReduction::ShallowSystematicReduce(abs);
+  bool absReduced = SystematicReduction::ShallowReduce(abs);
   SharedTreeStack->pushExp();
   SharedTreeStack->pushMult(2);
   SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
-  bool argReduced = SystematicReduction::ShallowSystematicReduce(arg);
+  bool argReduced = SystematicReduction::ShallowReduce(arg);
   /* the multiplication that may be created by arg is not flattened on purpose
    * to keep (π/2)*i as such and not as π*i/2 */
   if (!absReduced || !argReduced) {

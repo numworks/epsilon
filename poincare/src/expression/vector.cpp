@@ -14,13 +14,13 @@ Tree* Vector::Norm(const Tree* v) {
     Tree* squaredAbsValue = KPow->cloneNode();
     Tree* absValue = KAbs->cloneNode();
     child->cloneTree();
-    SystematicReduction::ShallowSystematicReduce(absValue);
+    SystematicReduction::ShallowReduce(absValue);
     (2_e)->cloneTree();
-    SystematicReduction::ShallowSystematicReduce(squaredAbsValue);
+    SystematicReduction::ShallowReduce(squaredAbsValue);
   }
-  SystematicReduction::ShallowSystematicReduce(sum);
+  SystematicReduction::ShallowReduce(sum);
   (1_e / 2_e)->cloneTree();
-  SystematicReduction::ShallowSystematicReduce(result);
+  SystematicReduction::ShallowReduce(result);
   return result;
 }
 
@@ -35,9 +35,9 @@ Tree* Vector::Dot(const Tree* u, const Tree* v) {
     childU->cloneTree();
     childV->cloneTree();
     childV = childV->nextTree();
-    SystematicReduction::ShallowSystematicReduce(product);
+    SystematicReduction::ShallowReduce(product);
   }
-  SystematicReduction::ShallowSystematicReduce(sum);
+  SystematicReduction::ShallowReduce(sum);
   return sum;
 }
 
@@ -52,13 +52,13 @@ Tree* Vector::Cross(const Tree* u, const Tree* v) {
     Tree* a1b2 = KMult.node<2>->cloneNode();
     u->child(j1)->cloneTree();
     v->child(j2)->cloneTree();
-    SystematicReduction::ShallowSystematicReduce(a1b2);
+    SystematicReduction::ShallowReduce(a1b2);
     Tree* a2b1 = KMult.node<3>->cloneNode();
     (-1_e)->cloneTree();
     u->child(j2)->cloneTree();
     v->child(j1)->cloneTree();
-    SystematicReduction::ShallowSystematicReduce(a2b1);
-    SystematicReduction::ShallowSystematicReduce(difference);
+    SystematicReduction::ShallowReduce(a2b1);
+    SystematicReduction::ShallowReduce(difference);
   }
   return result;
 }

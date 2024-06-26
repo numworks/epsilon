@@ -94,7 +94,7 @@ static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   Tree* result = operation(i, j);
-  SystematicReduction::ShallowSystematicReduce(result);
+  SystematicReduction::ShallowReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();

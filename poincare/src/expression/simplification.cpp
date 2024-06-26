@@ -91,8 +91,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 
 bool Simplification::SimplifySystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
-  changed = List::BubbleUp(e, SystematicReduction::ShallowSystematicReduce) ||
-            changed;
+  changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {
     changed = AdvancedSimplification::AdvancedReduce(e) || changed;
   }

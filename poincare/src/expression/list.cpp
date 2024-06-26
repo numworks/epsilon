@@ -68,8 +68,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     (type.isListSum() ? 0_e : 1_e)->cloneTree();
   }
   for (int i = 0; i < size; i++) {
-    Tree* element =
-        GetElement(list, i, SystematicReduction::ShallowSystematicReduce);
+    Tree* element = GetElement(list, i, SystematicReduction::ShallowReduce);
     assert(element);
     if (i == 0) {
       continue;
@@ -77,7 +76,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     if (type.isListSum() || type.isListProduct()) {
       const Tree* node = type.isListSum() ? KAdd.node<2> : KMult.node<2>;
       result->cloneNodeBeforeNode(node);
-      SystematicReduction::ShallowSystematicReduce(result);
+      SystematicReduction::ShallowReduce(result);
     } else {
       assert(type.isMin() || type.isMax());
       // Bubble up undefined children.
@@ -124,7 +123,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     Tree* result = KMult.node<2>->cloneNode();
     Fold(list, Type::ListSum);
     Rational::Push(1, Dimension::ListLength(list));
-    SystematicReduction::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowReduce(result);
     return result;
   }
   return PatternMatching::CreateSimplify(
@@ -174,11 +173,11 @@ bool List::ShallowApplyListOperators(Tree* e) {
       bool hasWeightList =
           Dimension::ListLength(e->child(1)) != Dimension::k_nonListListLength;
       Tree* valuesList = e->child(0);
-      BubbleUp(valuesList, SystematicReduction::ShallowSystematicReduce);
+      BubbleUp(valuesList, SystematicReduction::ShallowReduce);
       Tree* weigthsList = e->child(1);
       if (hasWeightList) {
         // weigths are approximated in place
-        BubbleUp(weigthsList, SystematicReduction::ShallowSystematicReduce);
+        BubbleUp(weigthsList, SystematicReduction::ShallowReduce);
         weigthsList->moveTreeOverTree(
             Approximation::RootTreeToTree<T>(weigthsList));
         assert(weigthsList->isList());
@@ -213,8 +212,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     }
     case Type::ListSort: {
       Tree* list = e->child(0);
-      bool changed =
-          BubbleUp(list, SystematicReduction::ShallowSystematicReduce);
+      bool changed = BubbleUp(list, SystematicReduction::ShallowReduce);
       if (!list->isList()) {
         return changed;
       }
@@ -229,8 +227,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
         e->cloneTreeOverTree(KUndef);
         return true;
       }
-      Tree* element = GetElement(e->child(0), i,
-                                 SystematicReduction::ShallowSystematicReduce);
+      Tree* element =
+          GetElement(e->child(0), i, SystematicReduction::ShallowReduce);
       if (!element) {
         return false;
       }

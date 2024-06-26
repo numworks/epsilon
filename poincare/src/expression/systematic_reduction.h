@@ -11,8 +11,8 @@ class SystematicReduction {
  public:
   static bool DeepReduce(Tree* u);
   TREE_REF_WRAP(DeepReduce);
-  static bool ShallowSystematicReduce(Tree* u);
-  TREE_REF_WRAP(ShallowSystematicReduce);
+  static bool ShallowReduce(Tree* u);
+  TREE_REF_WRAP(ShallowReduce);
 
  private:
   static bool BubbleUpFromChildren(Tree* u);

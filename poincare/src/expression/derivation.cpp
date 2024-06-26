@@ -84,7 +84,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   if (PatternMatching::Match(KNthDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
     Tree* result =
         PatternMatching::Create(KNthDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
-    SystematicReduction::ShallowSystematicReduce(result->child(2));
+    SystematicReduction::ShallowReduce(result->child(2));
     return result;
   }
   if (derivand->isPoint()) {
@@ -98,7 +98,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     assert(tempDerivative);
     tempDerivative = Derive(derivand->child(1), symbol, true);
     assert(tempDerivative);
-    SystematicReduction::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowReduce(result);
     return result;
   }
   if (derivand->isRandomized()) {
@@ -135,10 +135,10 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     Tree* tempDerivative = Derive(derivandChild, symbol, true);
     assert(tempDerivative);
     NAry::SetNumberOfChildren(mult, 2);
-    SystematicReduction::ShallowSystematicReduce(mult);
+    SystematicReduction::ShallowReduce(mult);
     i++;
   }
-  SystematicReduction::ShallowSystematicReduce(result);
+  SystematicReduction::ShallowReduce(result);
   return result;
 }
 
@@ -155,7 +155,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
           indexedNode.first->cloneTree();
         }
       }
-      SystematicReduction::ShallowSystematicReduce(mult);
+      SystematicReduction::ShallowReduce(mult);
       return mult;
     }
     case Type::Add:
@@ -170,7 +170,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       Tree* power = SharedTreeStack->pushPow();
       derivand->child(0)->cloneTree();
       SharedTreeStack->pushMinusOne();
-      SystematicReduction::ShallowSystematicReduce(power);
+      SystematicReduction::ShallowReduce(power);
       return power;
     }
     case Type::Trig:
@@ -192,10 +192,10 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       Tree* addition = SharedTreeStack->pushAdd(2);
       derivand->child(1)->cloneTree();
       (-1_e)->cloneTree();
-      SystematicReduction::ShallowSystematicReduce(addition);
-      SystematicReduction::ShallowSystematicReduce(newNode);
+      SystematicReduction::ShallowReduce(addition);
+      SystematicReduction::ShallowReduce(newNode);
       if (derivand->isPow()) {
-        SystematicReduction::ShallowSystematicReduce(multiplication);
+        SystematicReduction::ShallowReduce(multiplication);
       }
       return derivand->isPow() ? multiplication : newNode;
     }

@@ -149,7 +149,7 @@ bool SystematicOperation::ReduceAddition(Tree* u) {
   if (modified && u->isAdd()) {
     // Bubble-up may be unlocked after merging equal terms.
     SystematicReduction::BubbleUpFromChildren(u);
-    assert(!SystematicReduction::ShallowSystematicReduce(u));
+    assert(!SystematicReduction::ShallowReduce(u));
   }
   return modified;
 }

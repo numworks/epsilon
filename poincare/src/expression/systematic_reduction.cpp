@@ -146,7 +146,7 @@ bool SystematicReduction::Switch(Tree* u) {
       return SystematicOperation::ReduceSign(u);
     case Type::Sum:
     case Type::Product:
-      return Parametric::SimplifySumOrProduct(u);
+      return Parametric::ReduceSumOrProduct(u);
     case Type::Trig:
       return Trigonometry::ReduceTrig(u);
     case Type::TrigDiff:

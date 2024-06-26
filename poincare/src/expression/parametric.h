@@ -13,7 +13,7 @@ namespace Poincare::Internal {
 
 class Parametric {
  public:
-  static bool SimplifySumOrProduct(Tree* t);
+  static bool ReduceSumOrProduct(Tree* t);
   static bool ExpandSum(Tree* t);
   static bool ExpandProduct(Tree* t);
   static bool ContractSum(Tree* t);

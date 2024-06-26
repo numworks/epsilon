@@ -60,7 +60,7 @@ ComplexSign Parametric::VariableSign(const Tree* t) {
   }
 }
 
-bool Parametric::SimplifySumOrProduct(Tree* expr) {
+bool Parametric::ReduceSumOrProduct(Tree* expr) {
   assert(expr->isSum() || expr->isProduct());
   bool isSum = expr->isSum();
   Tree* lowerBound = expr->child(k_lowerBoundIndex);

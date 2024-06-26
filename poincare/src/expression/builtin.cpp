@@ -92,10 +92,10 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
 };
 
 Tree* Builtin::pushNode(int numberOfChildren) const {
-  Tree* result = SharedTreeStack->pushBlock(m_blockType);
-  if (TypeBlock(m_blockType).isNAry()) {
+  Tree* result = SharedTreeStack->pushBlock(m_type);
+  if (TypeBlock(m_type).isNAry()) {
     SharedTreeStack->pushBlock(numberOfChildren);
-  } else if (TypeBlock(m_blockType).isRandomized()) {
+  } else if (TypeBlock(m_type).isRandomized()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
     SharedTreeStack->pushBlock(0);
@@ -179,7 +179,7 @@ const Builtin* Builtin::GetSpecialIdentifier(LayoutSpan name) {
 
 const Builtin* Builtin::GetSpecialIdentifier(Type type) {
   for (const Builtin& builtin : s_specialIdentifiers) {
-    if (builtin.m_blockType == type) {
+    if (builtin.m_type == type) {
       return &builtin;
     }
   }
@@ -187,7 +187,7 @@ const Builtin* Builtin::GetSpecialIdentifier(Type type) {
 }
 
 bool Builtin::checkNumberOfParameters(int n) const {
-  switch (m_blockType) {
+  switch (m_type) {
     case Type::Round:
     case Type::Mean:
     case Type::Variance:
@@ -202,7 +202,7 @@ bool Builtin::checkNumberOfParameters(int n) const {
     case Type::Piecewise:
       return 1 <= n && n <= UINT8_MAX;
     default:
-      return n == TypeBlock::NumberOfChildren(m_blockType);
+      return n == TypeBlock::NumberOfChildren(m_type);
   }
 }
 

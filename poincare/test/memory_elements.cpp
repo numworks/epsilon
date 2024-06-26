@@ -44,7 +44,7 @@ QUIZ_CASE(pcj_type_block) {
   static_assert(sizeof(TypeBlockProperties) == sizeof(uint8_t),
                 "TypeBlockProperties  has too many entries for an uint8_t");
 
-  std::pair<Type, TypeBlockProperties> blockTypeTests[] = {
+  std::pair<Type, TypeBlockProperties> typeTests[] = {
       std::make_pair(Type::Zero, TypeBlockProperties{.nAry = false,
                                                      .expression = true,
                                                      .layout = false,
@@ -414,7 +414,7 @@ QUIZ_CASE(pcj_type_block) {
                                          .number = false,
                                          .userNamed = false})};
 
-  for (std::pair<Type, TypeBlockProperties> test : blockTypeTests) {
+  for (std::pair<Type, TypeBlockProperties> test : typeTests) {
     TypeBlock block = TypeBlock(std::get<Type>(test));
     TypeBlockProperties properties = std::get<TypeBlockProperties>(test);
     quiz_assert(block.isNAry() == properties.nAry);

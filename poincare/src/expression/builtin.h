@@ -14,10 +14,10 @@ class Tree;
 
 class Builtin {
  public:
-  constexpr Builtin(Type blockType, Aliases aliases)
-      : m_blockType(blockType), m_aliases(aliases) {}
+  constexpr Builtin(Type type, Aliases aliases)
+      : m_type(type), m_aliases(aliases) {}
 
-  constexpr TypeBlock blockType() const { return m_blockType; }
+  constexpr TypeBlock type() const { return m_type; }
   constexpr const Aliases* aliases() const { return &m_aliases; }
   virtual bool has2DLayout() const { return false; }
   virtual Tree* pushNode(int numberOfChildren) const;
@@ -50,15 +50,14 @@ class Builtin {
   static const Builtin* GetSpecialIdentifier(Type type);
 
  private:
-  Type m_blockType;
+  Type m_type;
   Aliases m_aliases;
 };
 
 class BuiltinWithLayout : public Builtin {
  public:
-  constexpr BuiltinWithLayout(Type blockType, Aliases aliases,
-                              LayoutType layoutType)
-      : Builtin(blockType, aliases), m_layoutType(layoutType) {}
+  constexpr BuiltinWithLayout(Type type, Aliases aliases, LayoutType layoutType)
+      : Builtin(type, aliases), m_layoutType(layoutType) {}
   LayoutType layoutType() const { return m_layoutType; }
   bool has2DLayout() const override { return true; }
 
@@ -177,12 +176,12 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
 
 constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
   for (const Builtin& builtin : s_builtins) {
-    if (builtin.m_blockType == type) {
+    if (builtin.m_type == type) {
       return &builtin;
     }
   }
   for (const Builtin& builtin : s_builtinsWithLayout) {
-    if (builtin.m_blockType == type) {
+    if (builtin.m_type == type) {
       return &builtin;
     }
   }

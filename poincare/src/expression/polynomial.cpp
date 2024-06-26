@@ -120,13 +120,13 @@ Tree* Polynomial::Subtraction(Tree* polA, Tree* polB) {
   return Addition(polA, Multiplication(polB, (-1_e)->cloneTree()));
 }
 
-Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
+Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
                             OperationMonomial operationMonomial,
                             OperationReduce operationMonomialAndReduce) {
   if (!polA->isPolynomial()) {
     if (!polB->isPolynomial()) {
-      TreeRef op = blockType == Type::Add ? SharedTreeStack->pushAdd(2)
-                                          : SharedTreeStack->pushMult(2);
+      TreeRef op = type == Type::Add ? SharedTreeStack->pushAdd(2)
+                                     : SharedTreeStack->pushMult(2);
       // We're about to move polynomes around, we need references
       TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
@@ -134,12 +134,12 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
       SystematicReduction::DeepReduce(op);
       return op;
     }
-    return Operation(polB, polA, blockType, operationMonomial,
+    return Operation(polB, polA, type, operationMonomial,
                      operationMonomialAndReduce);
   }
   const Tree* x = Variable(polA);
   if (polB->isPolynomial() && Comparison::Compare(x, Variable(polB)) > 0) {
-    return Operation(polB, polA, blockType, operationMonomial,
+    return Operation(polB, polA, type, operationMonomial,
                      operationMonomialAndReduce);
   }
   if (!polB->isPolynomial() || !Comparison::AreEqual(x, Variable(polB))) {

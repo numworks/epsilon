@@ -287,7 +287,7 @@ int NewExpression::numberOfDescendants(bool includeSelf) const {
 
 ExpressionNode::Type NewExpression::type() const {
   /* TODO_PCJ: These are the types checked for in apps. Update apps to use the
-   *           new blockType instead. */
+   *           new type instead. */
   if (tree()->isRational()) {
     return tree()->isInteger() ? ExpressionNode::Type::BasedInteger
                                : ExpressionNode::Type::Rational;

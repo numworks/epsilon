@@ -143,7 +143,7 @@ Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
 // Private
 
 Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
-  typedef void (RackParser::*TokenParser)(TreeRef & leftHandSide,
+  typedef void (RackParser::*TokenParser)(TreeRef& leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,          // Token::Type::EndOfStream
@@ -748,7 +748,7 @@ void RackParser::parseReservedFunction(TreeRef& leftHandSide,
 }
 
 static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
-  TypeBlock type = builtin->blockType();
+  TypeBlock type = builtin->type();
   if (!type.isNAry() &&
       parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
     // Add default parameters
@@ -819,7 +819,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 #endif
 
-  if (m_parsingContext.context() && builtin->blockType().isParametric()) {
+  if (m_parsingContext.context() && builtin->type().isParametric()) {
     //  We must make sure that the parameter is parsed as a single variable.
     const Layout* parameterText;
     size_t parameterLength;
@@ -862,13 +862,13 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 #endif
 
-  if (numberOfParameters == 1 && builtin->blockType() == Type::LogBase) {
+  if (numberOfParameters == 1 && builtin->type() == Type::LogBase) {
     builtin = Builtin::GetReservedFunction(KLog);
-  } else if (numberOfParameters == 2 && builtin->blockType() == Type::Log) {
+  } else if (numberOfParameters == 2 && builtin->type() == Type::Log) {
     builtin = Builtin::GetReservedFunction(KLogarithm);
-  } else if (numberOfParameters == 1 && builtin->blockType() == Type::Sum) {
+  } else if (numberOfParameters == 1 && builtin->type() == Type::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
-  } else if (numberOfParameters == 4 && builtin->blockType() == Type::Diff) {
+  } else if (numberOfParameters == 4 && builtin->type() == Type::Diff) {
     builtin = Builtin::GetReservedFunction(KNthDiff);
   }
   assert(builtin);

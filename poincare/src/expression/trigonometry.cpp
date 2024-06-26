@@ -104,7 +104,7 @@ const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   }
 }
 
-bool Trigonometry::SimplifyTrigDiff(Tree* u) {
+bool Trigonometry::ReduceTrigDiff(Tree* u) {
   assert(u->isTrigDiff());
   /* TrigDiff is used to factorize Trigonometric contraction. It determines the
    * first term of these equations :
@@ -113,12 +113,12 @@ bool Trigonometry::SimplifyTrigDiff(Tree* u) {
    * 2*cos(x)*sin(y) =-sin(x-y) + sin(x+y)  -> TrigDiff(0,1) = 3
    * 2*cos(x)*cos(y) = cos(x-y) + cos(x+y)  -> TrigDiff(0,0) = 0
    */
-  // Simplify children as trigonometry second elements.
+  // Reduce children as trigonometry second elements.
   bool isOpposed = false;
   Tree* x = u->child(0);
-  SimplifyTrigSecondElement(x, &isOpposed);
+  ReduceTrigSecondElement(x, &isOpposed);
   Tree* y = x->nextTree();
-  SimplifyTrigSecondElement(y, &isOpposed);
+  ReduceTrigSecondElement(y, &isOpposed);
   // Find TrigDiff value depending on children types (sin or cos)
   bool isDifferent = x->type() != y->type();
   // Account for sign difference between TrigDiff(1,0) and TrigDiff(0,1)
@@ -146,13 +146,13 @@ const Tree* getPiFactor(const Tree* u) {
   return nullptr;
 }
 
-bool Trigonometry::SimplifyTrig(Tree* u) {
+bool Trigonometry::ReduceTrig(Tree* u) {
   assert(u->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
   Tree* firstArgument = u->child(0);
   Tree* secondArgument = firstArgument->nextTree();
   bool isOpposed = false;
-  bool changed = SimplifyTrigSecondElement(secondArgument, &isOpposed);
+  bool changed = ReduceTrigSecondElement(secondArgument, &isOpposed);
   assert(secondArgument->isZero() || secondArgument->isOne());
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
@@ -211,7 +211,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   return changed;
 }
 
-bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
+bool Trigonometry::ReduceTrigSecondElement(Tree* u, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
   assert(u->isInteger() && !SystematicReduction::DeepReduce(u));
   bool changed = false;
@@ -295,7 +295,7 @@ static bool simplifyATrigOfTrig(Tree* u) {
   return true;
 }
 
-bool Trigonometry::SimplifyATrig(Tree* u) {
+bool Trigonometry::ReduceATrig(Tree* u) {
   assert(u->isATrig());
   // atrig(trig(x))
   if (simplifyATrigOfTrig(u)) {
@@ -356,7 +356,7 @@ bool Trigonometry::SimplifyATrig(Tree* u) {
   return changed;
 }
 
-bool Trigonometry::SimplifyArcTangentRad(Tree* u) {
+bool Trigonometry::ReduceArcTangentRad(Tree* u) {
   // atan(-x) = -atan(x)
   if (PatternMatching::MatchReplaceSimplify(
           u, KATanRad(KMult(KA_s, -1_e, KB_s)),

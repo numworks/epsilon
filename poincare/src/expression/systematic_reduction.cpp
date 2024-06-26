@@ -92,9 +92,9 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Add:
       return SystematicOperation::ReduceAddition(u);
     case Type::ATanRad:
-      return Trigonometry::SimplifyArcTangentRad(u);
+      return Trigonometry::ReduceArcTangentRad(u);
     case Type::ATrig:
-      return Trigonometry::SimplifyATrig(u);
+      return Trigonometry::ReduceATrig(u);
     case Type::Binomial:
       return Arithmetic::SimplifyBinomial(u);
     case Type::Arg:
@@ -148,9 +148,9 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Product:
       return Parametric::SimplifySumOrProduct(u);
     case Type::Trig:
-      return Trigonometry::SimplifyTrig(u);
+      return Trigonometry::ReduceTrig(u);
     case Type::TrigDiff:
-      return Trigonometry::SimplifyTrigDiff(u);
+      return Trigonometry::ReduceTrigDiff(u);
     default:
       if (u->type().isListToScalar()) {
         return List::ShallowApplyListOperators(u);

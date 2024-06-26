@@ -1,4 +1,4 @@
-#include "comparison.h"
+#include "order.h"
 
 #include <poincare/src/memory/node_iterator.h>
 #include <poincare/src/memory/type_block.h>
@@ -13,7 +13,7 @@
 
 namespace Poincare::Internal {
 
-int Comparison::Compare(const Tree* node0, const Tree* node1, OrderType order) {
+int Order::Compare(const Tree* node0, const Tree* node1, OrderType order) {
   if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {
@@ -105,7 +105,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, OrderType order) {
                          type0 == Type::Add || type0 == Type::Mult);
 }
 
-bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
+bool Order::ContainsSubtree(const Tree* tree, const Tree* subtree) {
   if (AreEqual(tree, subtree)) {
     return true;
   }
@@ -117,7 +117,7 @@ bool Comparison::ContainsSubtree(const Tree* tree, const Tree* subtree) {
   return false;
 }
 
-int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
+int Order::CompareNumbers(const Tree* node0, const Tree* node1) {
   assert(node0->type() <= node1->type());
   if (node1->isMathematicalConstant()) {
     return node0->isMathematicalConstant() ? CompareConstants(node0, node1)
@@ -145,7 +145,7 @@ int Comparison::CompareNumbers(const Tree* node0, const Tree* node1) {
   return approximation > 0.0f ? 1 : -1;
 }
 
-int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
+int Order::CompareNames(const Tree* node0, const Tree* node1) {
   int stringComparison = strcmp(Symbol::GetName(node0), Symbol::GetName(node1));
   if (stringComparison == 0) {
     int delta = Symbol::Length(node0) - Symbol::Length(node1);
@@ -154,12 +154,12 @@ int Comparison::CompareNames(const Tree* node0, const Tree* node1) {
   return stringComparison;
 }
 
-int Comparison::CompareConstants(const Tree* node0, const Tree* node1) {
+int Order::CompareConstants(const Tree* node0, const Tree* node1) {
   return static_cast<uint8_t>(node1->type()) -
          static_cast<uint8_t>(node0->type());
 }
 
-int Comparison::ComparePolynomial(const Tree* node0, const Tree* node1) {
+int Order::ComparePolynomial(const Tree* node0, const Tree* node1) {
   int childrenComparison = CompareChildren(node0, node1);
   if (childrenComparison != 0) {
     return childrenComparison;
@@ -181,7 +181,7 @@ int PrivateCompareChildren(const Tree* node0, const Tree* node1) {
        MultipleNodesIterator::Children<NoEditable, 2>({node0, node1})) {
     const Tree* child0 = std::get<std::array<const Tree*, 2>>(indexedNodes)[0];
     const Tree* child1 = std::get<std::array<const Tree*, 2>>(indexedNodes)[1];
-    int order = Comparison::Compare(child0, child1);
+    int order = Order::Compare(child0, child1);
     if (order != 0) {
       return order;
     }
@@ -199,7 +199,7 @@ int CompareNextTreePairOrItself(const Tree* node0, const Tree* node1,
                                         numberOfComparisons - 1)
           : 0;
   return nextTreeComparison != 0 ? nextTreeComparison
-                                 : Comparison::Compare(node0, node1);
+                                 : Order::Compare(node0, node1);
 }
 
 int PrivateCompareChildrenBackwards(const Tree* node0, const Tree* node1) {
@@ -215,8 +215,8 @@ int PrivateCompareChildrenBackwards(const Tree* node0, const Tree* node1) {
       numberOfComparisons);
 }
 
-int Comparison::CompareChildren(const Tree* node0, const Tree* node1,
-                                bool backward) {
+int Order::CompareChildren(const Tree* node0, const Tree* node1,
+                           bool backward) {
   int comparison = (backward ? PrivateCompareChildrenBackwards
                              : PrivateCompareChildren)(node0, node1);
   if (comparison != 0) {
@@ -234,7 +234,7 @@ int Comparison::CompareChildren(const Tree* node0, const Tree* node1,
   return 0;
 }
 
-int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
+int Order::CompareLastChild(const Tree* node0, const Tree* node1) {
   int comparisonWithChild = Compare(node0->lastChild(), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
@@ -242,7 +242,7 @@ int Comparison::CompareLastChild(const Tree* node0, const Tree* node1) {
   return 1;
 }
 
-bool Comparison::AreEqual(const Tree* node0, const Tree* node1) {
+bool Order::AreEqual(const Tree* node0, const Tree* node1) {
   // treeIsIdenticalTo is faster since it uses memcmp
   bool areEqual = node0->treeIsIdenticalTo(node1);
   // Trees could be different but compare the same due to float imprecision.

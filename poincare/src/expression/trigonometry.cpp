@@ -2,10 +2,10 @@
 
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "comparison.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "number.h"
+#include "order.h"
 #include "rational.h"
 #include "systematic_reduction.h"
 
@@ -217,7 +217,7 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* u, bool* isOpposed) {
   bool changed = false;
   IntegerHandler i = Integer::Handler(u);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
-  if (Comparison::Compare(remainder, 2_e) >= 0) {
+  if (Order::Compare(remainder, 2_e) >= 0) {
     changed = true;
     *isOpposed = !*isOpposed;
     remainder->moveTreeOverTree(

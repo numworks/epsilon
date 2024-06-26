@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_N_ARY_H
 #define POINCARE_MEMORY_N_ARY_H
 
-#include <poincare/src/expression/comparison.h>
+#include <poincare/src/expression/order.h>
 
 namespace Poincare::Internal {
 
@@ -27,10 +27,10 @@ class NAry {
   }
   static bool Sanitize(Tree* nary);
   static bool Sort(Tree* nary,
-                   Comparison::OrderType order = Comparison::OrderType::System);
+                   Order::OrderType order = Order::OrderType::System);
   static void SortedInsertChild(
       Tree* nary, Tree* child,
-      Comparison::OrderType order = Comparison::OrderType::System);
+      Order::OrderType order = Order::OrderType::System);
   static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
   TREE_REF_WRAP(Flatten);
   TREE_REF_WRAP(SquashIfPossible);

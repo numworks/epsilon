@@ -1,5 +1,5 @@
-#include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/order.h>
 
 #include "helper.h"
 
@@ -7,7 +7,7 @@ using namespace Poincare::Internal;
 
 void assert_comparison_equals(const Tree* node0, const Tree* node1,
                               int result) {
-  int comparison = Comparison::Compare(node0, node1);
+  int comparison = Order::Compare(node0, node1);
   assert(comparison == result);
 }
 
@@ -20,11 +20,11 @@ QUIZ_CASE(pcj_expression_comparison) {
 }
 
 void assert_contain_subtree(const Tree* tree, const Tree* subtree) {
-  assert(Comparison::ContainsSubtree(tree, subtree));
+  assert(Order::ContainsSubtree(tree, subtree));
 }
 
 void assert_not_contain_subtree(const Tree* tree, const Tree* subtree) {
-  assert(!Comparison::ContainsSubtree(tree, subtree));
+  assert(!Order::ContainsSubtree(tree, subtree));
 }
 
 QUIZ_CASE(pcj_subtree) {

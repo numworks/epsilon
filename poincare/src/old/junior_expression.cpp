@@ -10,7 +10,6 @@
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/beautification.h>
-#include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/degree.h>
@@ -18,6 +17,7 @@
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/order.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/sign.h>
@@ -62,8 +62,8 @@ int JuniorExpressionNode::simplificationOrderSameType(
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(otype() == e->otype());
-  return Comparison::Compare(
-      tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
+  return Order::Compare(tree(),
+                        static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
 // Only handle approximated Boolean, Point and Complex trees.

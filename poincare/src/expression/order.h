@@ -1,11 +1,11 @@
-#ifndef POINCARE_EXPRESSION_COMPARISON_H
-#define POINCARE_EXPRESSION_COMPARISON_H
+#ifndef POINCARE_EXPRESSION_ORDER_H
+#define POINCARE_EXPRESSION_ORDER_H
 
 #include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
 
-class Comparison {
+class Order {
  public:
   /* System optimizes the reduction while Beautification is for display.
    * TODO: Fine tune and take advantage of System OrderType during reduction. */

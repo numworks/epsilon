@@ -6,9 +6,9 @@
 #include <poincare/src/memory/value_block.h>
 
 #include "advanced_reduction.h"
-#include "comparison.h"
 #include "k_tree.h"
 #include "number.h"
+#include "order.h"
 #include "rational.h"
 #include "set.h"
 #include "sign.h"
@@ -138,11 +138,11 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
                      operationMonomialAndReduce);
   }
   const Tree* x = Variable(polA);
-  if (polB->isPolynomial() && Comparison::Compare(x, Variable(polB)) > 0) {
+  if (polB->isPolynomial() && Order::Compare(x, Variable(polB)) > 0) {
     return Operation(polB, polA, type, operationMonomial,
                      operationMonomialAndReduce);
   }
-  if (!polB->isPolynomial() || !Comparison::AreEqual(x, Variable(polB))) {
+  if (!polB->isPolynomial() || !Order::AreEqual(x, Variable(polB))) {
     polA =
         operationMonomial(polA, std::make_pair(polB, static_cast<uint8_t>(0)));
   } else {
@@ -199,8 +199,7 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
 static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
                                                uint8_t* degree,
                                                TreeRef* coefficient) {
-  if (pol->isPolynomial() &&
-      Comparison::AreEqual(x, Polynomial::Variable(pol))) {
+  if (pol->isPolynomial() && Order::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
     *coefficient = Polynomial::LeadingCoefficient(pol);
   } else {
@@ -231,7 +230,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     return {.quotient = (0_e)->cloneTree(), .remainder = a};
   }
   const Tree* var = Variable(a);
-  if (polB->isPolynomial() && Comparison::Compare(var, Variable(polB)) >= 0) {
+  if (polB->isPolynomial() && Order::Compare(var, Variable(polB)) >= 0) {
     var = Variable(polB);
   }
   TreeRef b(polB);
@@ -383,8 +382,8 @@ Tree* PolynomialParser::RecursivelyParse(Tree* expression,
       continue;
     }
     variableIndex += 1;
-    if (Comparison::ContainsSubtree(expression,
-                                    std::get<const Tree*>(indexedVariable))) {
+    if (Order::ContainsSubtree(expression,
+                               std::get<const Tree*>(indexedVariable))) {
       variable = std::get<const Tree*>(indexedVariable);
       break;
     }
@@ -433,7 +432,7 @@ Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
 
 std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     Tree* expression, const Tree* variable) {
-  if (Comparison::AreEqual(expression, variable)) {
+  if (Order::AreEqual(expression, variable)) {
     return std::make_pair(expression->cloneTreeOverTree(1_e),
                           static_cast<uint8_t>(1));
   }
@@ -463,7 +462,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     }
   }
   // Assertion results from IsPolynomial = true
-  assert(!Comparison::ContainsSubtree(expression, variable));
+  assert(!Order::ContainsSubtree(expression, variable));
   return std::make_pair(expression, static_cast<uint8_t>(0));
 }
 
@@ -504,7 +503,7 @@ uint8_t Polynomial::Degree(const Tree* expression, const Tree* variable) {
 TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, uint8_t exponent) {
   Type type = expression.type();
   if (expression.isAdd()) {
-    if (Comparison::AreEqual(expression, variable)) {
+    if (Order::AreEqual(expression, variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
     TreeRef addition = SharedTreeStack->pushAdd(0);
@@ -527,14 +526,14 @@ TreeRef Polynomial::Coefficient(const Tree* expression, const Tree* variable, ui
 }
 
 std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expression, const Tree* variable) {
-  if (Comparison::AreEqual(expression, variable)) {
+  if (Order::AreEqual(expression, variable)) {
     return std::make_pair((1_e)->cloneTree(), 1);
   }
   Type type = expression.type();
   if (type == Type::Pow) {
     Tree* base = expression.child(0);
     Tree* exponent = base.nextTree();
-    if (Comparison::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
+    if (Order::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
       assert(Integer::Handler(exponent).to<uint8_t>() > 1);
       return std::make_pair((1_e)->cloneTree(), Integer::Handler(exponent).to<uint8_t>());
     }
@@ -553,7 +552,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* expressi
     }
   }
   // Assertion results from IsPolynomial = true
-  assert(Comparison::ContainsSubtree(expression, variable));
+  assert(Order::ContainsSubtree(expression, variable));
   return std::make_pair(TreeRef::Clone(expression), 0);
 }
 

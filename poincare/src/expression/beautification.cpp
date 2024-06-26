@@ -329,7 +329,7 @@ bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
 bool Beautification::ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
   if (e->isAdd()) {
-    NAry::Sort(e, Comparison::OrderType::AdditionBeautification);
+    NAry::Sort(e, Order::OrderType::AdditionBeautification);
   }
 
 #if 0
@@ -370,7 +370,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   }
 
   if (e->isOfType({Type::Mult, Type::GCD, Type::LCM}) &&
-      NAry::Sort(e, Comparison::OrderType::Beautification)) {
+      NAry::Sort(e, Order::OrderType::Beautification)) {
     return true;
   }
 

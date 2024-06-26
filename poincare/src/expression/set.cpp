@@ -3,8 +3,8 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
 
-#include "comparison.h"
 #include "k_tree.h"
+#include "order.h"
 
 namespace Poincare::Internal {
 
@@ -12,7 +12,7 @@ Tree* Set::PushEmpty() { return KSet.node<0>->cloneNode(); }
 
 bool Set::Includes(const Tree* set, const Tree* expression) {
   for (const Tree* child : set->children()) {
-    int comparison = Comparison::Compare(child, expression);
+    int comparison = Order::Compare(child, expression);
     if (comparison >= 0) {
       return comparison == 0;
     }
@@ -25,7 +25,7 @@ void Set::Add(Tree* set, const Tree* expression) {
   // If set is empty, target is set's next tree
   int numberOfChildren = set->numberOfChildren();
   for (int i = 0; i < numberOfChildren; i++) {
-    int comparison = Comparison::Compare(target, expression);
+    int comparison = Order::Compare(target, expression);
     if (comparison == 0) {
       return;
     } else if (comparison > 0) {
@@ -58,7 +58,7 @@ static Tree* MergeSets(TreeRef set0, TreeRef set1,
     set1 = set0->nextTree()->moveTreeBeforeNode(set1);
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
-    int comparison = Comparison::Compare(currentChild0, currentChild1);
+    int comparison = Order::Compare(currentChild0, currentChild1);
     if (comparison < 0) {  // Increment child of set 0
       TreeRef nextChild0 = currentChild0->nextTree();
       if (removeChildrenOnlyInSet0) {

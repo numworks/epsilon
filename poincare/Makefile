@@ -239,7 +239,6 @@ poincare_src += $(addprefix poincare/src/,\
   expression/beautification.cpp \
   expression/binary.cpp \
   expression/builtin.cpp \
-  expression/comparison.cpp \
   expression/continuity.cpp \
   expression/conversion.cpp \
   expression/decimal.cpp \
@@ -258,6 +257,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/matrix.cpp \
   expression/metric.cpp \
   expression/number.cpp \
+  expression/order.cpp \
   expression/parametric.cpp \
   expression/physical_constant.cpp \
   expression/polynomial.cpp \

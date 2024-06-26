@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <omg/list.h>
-#include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/order.h>
 
 #include "node_iterator.h"
 #include "tree_ref.h"
@@ -103,7 +103,7 @@ bool NAry::Sanitize(Tree* nary) {
   return SquashIfPossible(nary) || flattened;
 }
 
-bool NAry::Sort(Tree* nary, Comparison::OrderType order) {
+bool NAry::Sort(Tree* nary, Order::OrderType order) {
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
@@ -111,7 +111,7 @@ bool NAry::Sort(Tree* nary, Comparison::OrderType order) {
   if (numberOfChildren == 2) {
     Tree* child0 = nary->child(0);
     Tree* child1 = child0->nextTree();
-    if (Comparison::Compare(child0, child1, order) > 0) {
+    if (Order::Compare(child0, child1, order) > 0) {
       child0->moveTreeAtNode(child1);
       return true;
     }
@@ -140,15 +140,15 @@ bool NAry::Sort(Tree* nary, Comparison::OrderType order) {
         uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);
         const Tree** children =
             static_cast<decltype(children)>(contextArray[1]);
-        Comparison::OrderType order =
-            *static_cast<Comparison::OrderType*>(contextArray[2]);
-        return Comparison::Compare(children[indexes[i]], children[indexes[j]],
-                                   order) >= 0;
+        Order::OrderType order =
+            *static_cast<Order::OrderType*>(contextArray[2]);
+        return Order::Compare(children[indexes[i]], children[indexes[j]],
+                              order) >= 0;
       },
       contextArray, numberOfChildren);
   // TODO use the sort from stdlib instead
   /* std::sort(&indexes[0], &indexes[numberOfChildren], [&](uint8_t a, uint8_t
-   * b) { return Comparison::Compare(children[a], children[b], order) < 0;
+   * b) { return Order::Compare(children[a], children[b], order) < 0;
    * }); */
   // test if something has changed
   for (int i = 0; i < numberOfChildren; i++) {
@@ -169,8 +169,7 @@ push:
   return true;
 }
 
-void NAry::SortedInsertChild(Tree* nary, Tree* child,
-                             Comparison::OrderType order) {
+void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
   Tree* children[k_maxNumberOfChildren];
   for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index++] = const_cast<Tree*>(child);
@@ -179,7 +178,7 @@ void NAry::SortedInsertChild(Tree* nary, Tree* child,
   uint8_t b = nary->numberOfChildren();
   while (b - a > 0) {
     uint8_t m = (a + b) / 2;
-    if (Comparison::Compare(children[m], child, order) < 0) {
+    if (Order::Compare(children[m], child, order) < 0) {
       a = (a + b + 1) / 2;
     } else {
       b = m;

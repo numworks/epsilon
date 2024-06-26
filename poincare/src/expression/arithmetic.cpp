@@ -162,11 +162,11 @@ bool Arithmetic::ReducePermute(Tree* expr) {
     return false;
   }
   // TODO Rational::Compare
-  if (Comparison::Compare(n, k) < 0) {
+  if (Order::Compare(n, k) < 0) {
     return expr->cloneTreeOverTree(0_e);
   }
   const Tree* k_maxNValue = 100_e;
-  if (Comparison::Compare(n, k_maxNValue) > 0) {
+  if (Order::Compare(n, k_maxNValue) > 0) {
     /* If n is too big, we do not reduce to avoid too long computation.
      * The permute coefficient will be evaluate approximatively later. */
     return false;
@@ -205,7 +205,7 @@ bool Arithmetic::ReduceBinomial(Tree* expr) {
     return false;
   }
   const Tree* k_maxNValue = 300_e;
-  if (Comparison::Compare(n, k) < 0) {
+  if (Order::Compare(n, k) < 0) {
     // Generalized binomial coefficient (n < k)
     if (!Rational::Sign(n).isStrictlyNegative()) {
       // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
@@ -214,18 +214,18 @@ bool Arithmetic::ReduceBinomial(Tree* expr) {
     }
     Tree* kMinusN =
         IntegerHandler::Subtraction(Integer::Handler(k), Integer::Handler(n));
-    if (Comparison::Compare(kMinusN, k_maxNValue) > 0) {
+    if (Order::Compare(kMinusN, k_maxNValue) > 0) {
       kMinusN->removeTree();
       return false;
     }
     kMinusN->removeTree();
   } else {
-    if (Comparison::Compare(n, k_maxNValue) > 0) {
+    if (Order::Compare(n, k_maxNValue) > 0) {
       return false;
     }
     Tree* nMinusK =
         IntegerHandler::Subtraction(Integer::Handler(n), Integer::Handler(k));
-    if (Comparison::Compare(nMinusK, k) < 0) {
+    if (Order::Compare(nMinusK, k) < 0) {
       k->moveTreeOverTree(nMinusK);
     } else {
       nMinusK->removeTree();

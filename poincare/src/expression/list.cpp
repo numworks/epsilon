@@ -83,7 +83,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
       // TODO_PCJ: we need a natural order not a comparison
       if (!result->isUndefined() &&
           (element->isUndefined() ||
-           Comparison::Compare(element, result) == ((type.isMax()) ? 1 : -1))) {
+           Order::Compare(element, result) == ((type.isMax()) ? 1 : -1))) {
         result->removeTree();
       } else {
         element->removeTree();

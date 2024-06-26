@@ -39,7 +39,7 @@ bool SystematicReduction::DeepReduce(Tree* u) {
 
 bool SystematicReduction::ShallowReduce(Tree* u) {
   bool changed = BubbleUpFromChildren(u);
-  return SimplifySwitch(u) || changed;
+  return Switch(u) || changed;
 }
 
 bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
@@ -79,7 +79,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
   return false;
 }
 
-bool SystematicReduction::SimplifySwitch(Tree* u) {
+bool SystematicReduction::Switch(Tree* u) {
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheckDimensions(u));
   if (!u->isNAry() && u->numberOfChildren() == 0) {

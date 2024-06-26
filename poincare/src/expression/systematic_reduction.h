@@ -16,7 +16,7 @@ class SystematicReduction {
 
  private:
   static bool BubbleUpFromChildren(Tree* u);
-  static bool SimplifySwitch(Tree* u);
+  static bool Switch(Tree* u);
 };
 
 }  // namespace Poincare::Internal

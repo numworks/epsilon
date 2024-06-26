@@ -15,16 +15,6 @@ int SineNode::numberOfChildren() const {
   return Sine::s_functionHelper.numberOfChildren();
 }
 
-template <typename T>
-std::complex<T> SineNode::computeOnComplex(const std::complex<T> c,
-                                           Preferences::ComplexFormat,
-                                           Preferences::AngleUnit angleUnit) {
-  std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
-  std::complex<T> res = std::sin(angleInput);
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
-      res, angleInput);
-}
-
 size_t SineNode::serialize(char* buffer, size_t bufferSize,
                            Preferences::PrintFloatMode floatDisplayMode,
                            int numberOfSignificantDigits) const {

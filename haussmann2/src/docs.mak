@@ -11,6 +11,9 @@ $(_null) \033[38;5;20m$g\033[0m$(if $(HELP_GOAL_$g),\n    ↳ $(HELP_GOAL_$g),))
 
 This platform provides the following extensions: $(foreach g,$(sort $(ALL_EXTENSIONS)),\n\
 $(_null) \033[38;5;20m.$g\033[0m$(if $(HELP_EXTENSION_$g),\n    ↳ $(HELP_EXTENSION_$g),))
+
+This platform provides the following additional targets: $(foreach g,$(sort $(ALL_OTHER_TARGETS)),\n\
+$(_null) \033[38;5;20m$g\033[0m$(if $(HELP_OTHER_TARGET_$g),\n    ↳ $(HELP_OTHER_TARGET_$g),))
 endef
 
 export _help_string
@@ -30,6 +33,8 @@ export _modules_string
 	@ echo "$$_modules_string"
 
 $(call document_extension,modules,List the goal's modules flavors and dependencies)
+
+$(call document_other_target,help)
 
 # Helpers
 

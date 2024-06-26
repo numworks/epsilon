@@ -47,7 +47,7 @@ $(TOOLS_DIRECTORY)/$1: TOOLS_SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavor
 )
 endef
 
-# create_zip, <zip file>, <contents>
+# create_zip, <zip file>, <contents>, <optional description>
 define create_zip
 $(eval \
 $1: $(OUTPUT_DIRECTORY)/$1

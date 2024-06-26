@@ -42,6 +42,14 @@ HELP_EXTENSION_$1 := $2
 )
 endef
 
+# document_other_target, <name>, <documentation>
+define document_other_target
+$(eval \
+ALL_OTHER_TARGETS += $1
+HELP_OTHER_TARGET_$1 := $2
+)
+endef
+
 # Errors out if the path is absolute or contains returns to parent directory.
 # This is used in make clean to forbid removing a directory out of the building
 # tree.

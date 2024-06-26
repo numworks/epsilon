@@ -22,3 +22,6 @@ reformat:
 	else \
 	  git rebase --autostash --strategy-option=theirs --exec "make format BASE=HEAD~; git commit -a --amend --no-edit" $(BASE); \
 	fi
+
+$(call document_other_target,format,Format C++ and Python files. Apply on files specified explicitly (in CXXFILES and PYFILES variables) or on files modified since BASE (defaults to HEAD))
+$(call document_other_target,reformat,Rebase and apply make format to all commits since BASE)

@@ -83,12 +83,12 @@ endef
 
 # _assert_valid_module_name, <name>
 define _assert_valid_module_name
-$(if $(shell [[ "$1" =~ [^a-z0-9_] ]] && echo error),\
+$(if $(shell echo '$1' | grep -Eq '[^a-z0-9_]' && echo error),\
 	$(error "Error: module name should only contain lowercase letters, digits, and underscores"),)
 endef
 
 define _assert_valid_version
-$(if $(shell [[ "$1" =~ ^[0-9]+$$ ]] || echo error),\
+$(if $(shell echo '$1' | grep -Eq '^[0-9]+$$' || echo error),\
 	$(error "Error: version should be an integer"),)
 endef
 

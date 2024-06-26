@@ -100,6 +100,6 @@ endef
 
 # _assert_valid_goal_name, <name>
 define _assert_valid_goal_name
-$(if $(shell [[ "$1" =~ [^a-z0-9_] ]] && echo error),\
+$(if $(shell echo '$1' | grep -Eq '[^a-z0-9_]' && echo error),\
 	$(error "Error: goal name should only contain lowercase letters, digits, and underscores"),)
 endef

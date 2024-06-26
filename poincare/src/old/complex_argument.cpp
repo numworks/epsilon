@@ -31,13 +31,6 @@ OExpression ComplexArgumentNode::shallowReduce(
   return ComplexArgument(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-std::complex<T> ComplexArgumentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  return std::arg(c);
-}
-
 OExpression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

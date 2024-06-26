@@ -292,6 +292,9 @@ class Integer {
   static Tree* Push(native_int_t value) {
     return IntegerHandler(value).pushOnTreeStack();
   }
+  static Tree* Push(native_uint_t value) {
+    return IntegerHandler(value, NonStrictSign::Positive).pushOnTreeStack();
+  }
 
   static IntegerHandler Handler(const Tree* e);
   template <typename T>

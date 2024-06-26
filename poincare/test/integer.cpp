@@ -47,12 +47,9 @@ QUIZ_CASE(pcj_integer_constructor) {
 
   // Testing different constructors limits
   Tree* e1 = IntegerHandler(UINT32_MAX).pushOnTreeStack();
-#if 0
-  /* Not implemented */
   Tree* e2 = Integer::Push(UINT32_MAX);
   quiz_assert(e1->treeIsIdenticalTo(e2));
   e2->removeTree();
-#endif
   e1->removeTree();
 #if 0
   /* Not implemented */

@@ -154,7 +154,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
     case Type::CosH:
     case Type::SinH:
       /* If c is real and large (over 100.0), the float evaluation of std::cosh
-       * will return image = NaN when it should be 0.0. */
+       * and std::sinh will return image = NaN when it should be 0.0. */
       return MakeResultRealIfInputIsReal<T>(
           NeglectRealOrImaginaryPartIfNegligible(
               type.isSinH() ? std::sinh(value) : std::cosh(value), value),

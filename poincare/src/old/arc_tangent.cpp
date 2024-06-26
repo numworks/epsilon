@@ -25,41 +25,6 @@ size_t ArcTangentNode::serialize(char* buffer, size_t bufferSize,
       ArcTangent::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-std::complex<T> ArcTangentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  std::complex<T> result;
-  if (c.imag() == static_cast<T>(0.) &&
-      std::fabs(c.real()) <= static_cast<T>(1.)) {
-    /* atan: R -> R
-     * In these cases we rather use std::atan(double) because atan on complexes
-     * is not as precise as atan on double in std library. For instance,
-     * - atan(complex<double>(0.01,0.0) =
-     * complex(9.9996666866652E-3,5.5511151231258E-17)
-     * - atan(0.03) = 9.9996666866652E-3 */
-    result = std::atan(c.real());
-  } else if (c.real() == static_cast<T>(0.) &&
-             std::abs(c.imag()) == static_cast<T>(1.)) {
-    /* The case c = ±i is caught here because std::atan(i) return i*inf when it
-     * should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
-    result = std::complex<T>(NAN, NAN);
-  } else {
-    result = std::atan(c);
-    /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued
-     * on this cut. We followed the convention chosen by the lib c++ of llvm on
-     * ]-i+0, -i*inf+0[ (warning: atan takes the other side of the cut values on
-     * ]-i+0, -i*inf+0[) and choose the values on ]-inf*i, -i[ to comply with
-     * atan(-x) = -atan(x) and sin(atan(x)) = x/sqrt(1+x^2). */
-    if (c.real() == 0 && c.imag() < -1) {
-      result.real(-result.real());  // other side of the cut
-    }
-  }
-  result =
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
-  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
-}
-
 OExpression ArcTangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
   ArcTangent e = ArcTangent(this);

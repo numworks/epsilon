@@ -12,7 +12,7 @@
 #include "rational.h"
 #include "set.h"
 #include "sign.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -131,7 +131,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type blockType,
       TreeRef polARef(polA);
       op->moveTreeAfterNode(polB);
       op->moveTreeAfterNode(polARef);
-      Simplification::DeepSystematicReduce(op);
+      SystematicReduction::DeepSystematicReduce(op);
       return op;
     }
     return Operation(polB, polA, blockType, operationMonomial,
@@ -456,7 +456,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
         /* TODO: if the previous assertion is wrong, we have to multiply
          * children coefficients and addition children exponents. */
         child->moveTreeOverTree(childCoefficient);
-        Simplification::DeepSystematicReduce(expression);
+        SystematicReduction::DeepSystematicReduce(expression);
         return std::make_pair(expression, childExponent);
       }
       childCoefficient->removeTree();

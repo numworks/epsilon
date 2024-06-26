@@ -4,7 +4,7 @@
 #include "approximation.h"
 #include "beautification.h"
 #include "k_tree.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -27,10 +27,10 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Tree* value = SharedTreeStack->pushAdd(2);
   bound->cloneTree();
   KVarX->cloneTree();
-  Simplification::DeepSystematicReduce(value);
+  SystematicReduction::DeepSystematicReduce(value);
   Tree* tree = integrand->cloneTree();
   // TODO: This deep should have been done before
-  Simplification::DeepSystematicReduce(tree);
+  SystematicReduction::DeepSystematicReduce(tree);
   Variables::Replace(tree, 0, value, false, true);
   /* We need to remove the constant part by expanding polynomials introduced by
    * the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */

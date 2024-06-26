@@ -7,7 +7,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -180,7 +180,7 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
       const Tree* exactFormula = ExactFormula(n, isSin, &isOpposed);
       if (exactFormula) {
         u->cloneTreeOverTree(exactFormula);
-        Simplification::DeepSystematicReduce(u);
+        SystematicReduction::DeepSystematicReduce(u);
         changed = true;
       }
     } else {
@@ -206,14 +206,14 @@ bool Trigonometry::SimplifyTrig(Tree* u) {
   if (isOpposed && changed) {
     u->cloneTreeAtNode(-1_e);
     u->moveNodeAtNode(SharedTreeStack->pushMult(2));
-    Simplification::ShallowSystematicReduce(u);
+    SystematicReduction::ShallowSystematicReduce(u);
   }
   return changed;
 }
 
 bool Trigonometry::SimplifyTrigSecondElement(Tree* u, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
-  assert(u->isInteger() && !Simplification::DeepSystematicReduce(u));
+  assert(u->isInteger() && !SystematicReduction::DeepSystematicReduce(u));
   bool changed = false;
   IntegerHandler i = Integer::Handler(u);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));

@@ -1,6 +1,6 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
-#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/variables.h>
 
 #include "helper.h"
@@ -253,7 +253,7 @@ void assert_sign(const char* input, ComplexSign expectedSign,
   /* TODO_PCJ: Factorize this with Simplification::Simplify to have properly
    * projected variables, random trees, ... */
   Projection::DeepSystemProject(expression, {.m_complexFormat = complexFormat});
-  Simplification::DeepSystematicReduce(expression);
+  SystematicReduction::DeepSystematicReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {

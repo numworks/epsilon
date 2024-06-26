@@ -1,6 +1,7 @@
 #include "pattern_matching.h"
 
-#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/systematic_reduction.h>
 
 #include "n_ary.h"
 #include "type_block.h"
@@ -366,7 +367,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify);
         if (simplify) {
-          Simplification::ShallowSystematicReduce(insertedNode);
+          SystematicReduction::ShallowSystematicReduce(insertedNode);
         } else {
           NAry::Sanitize(insertedNode);
         }
@@ -383,7 +384,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
             CreateTree(node, context, nullptr, simplify);
             node = node->nextTree();
           }
-          Simplification::ShallowSystematicReduce(result);
+          SystematicReduction::ShallowSystematicReduce(result);
         }
       }
       continue;
@@ -414,12 +415,13 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
         Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
-        assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
+        assert(
+            !(simplify && SystematicReduction::DeepSystematicReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
-    assert(!(simplify && Simplification::DeepSystematicReduce(inserted)));
+    assert(!(simplify && SystematicReduction::DeepSystematicReduce(inserted)));
     node = node->nextNode();
   }
   return top;

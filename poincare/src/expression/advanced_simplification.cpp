@@ -4,7 +4,7 @@
 
 #include "k_tree.h"
 #include "metric.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -334,13 +334,13 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
 bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
                                                     const Tree* tree) {
   if (root == tree) {
-    assert(!Simplification::DeepSystematicReduce(root));
+    assert(!SystematicReduction::DeepSystematicReduce(root));
     return true;
   }
   assert(root < tree);
   for (Tree* child : root->children()) {
     if (UpwardSystematicReduce(child, tree)) {
-      Simplification::ShallowSystematicReduce(root);
+      SystematicReduction::ShallowSystematicReduce(root);
       return true;
     }
   }
@@ -382,7 +382,7 @@ bool AdvancedSimplification::DeepExpand(Tree* e) {
   nextTree->removeTree();
   if (changed) {
     // Bottom-up systematic reduce is necessary.
-    Simplification::DeepSystematicReduce(e);
+    SystematicReduction::DeepSystematicReduce(e);
     // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = DeepExpand(e);
     assert(!temp || !DeepExpand(e));
@@ -402,11 +402,11 @@ bool AdvancedSimplification::TryAllOperations(Tree* e,
    * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
   int failures = 0;
   int i = 0;
-  assert(!Simplification::DeepSystematicReduce(e));
+  assert(!SystematicReduction::DeepSystematicReduce(e));
   while (failures < numberOfOperations) {
     failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
     // EveryOperation should preserve e's reduced status
-    assert(!Simplification::DeepSystematicReduce(e));
+    assert(!SystematicReduction::DeepSystematicReduce(e));
     i++;
   }
   return i > numberOfOperations;
@@ -415,10 +415,10 @@ bool AdvancedSimplification::TryAllOperations(Tree* e,
 bool AdvancedSimplification::TryOneOperation(Tree* e,
                                              const Tree::Operation* operations,
                                              int numberOfOperations) {
-  assert(!Simplification::DeepSystematicReduce(e));
+  assert(!SystematicReduction::DeepSystematicReduce(e));
   for (size_t i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {
-      assert(!Simplification::DeepSystematicReduce(e));
+      assert(!SystematicReduction::DeepSystematicReduce(e));
       return true;
     }
   }

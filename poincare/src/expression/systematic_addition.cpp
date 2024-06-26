@@ -4,8 +4,8 @@
 #include "infinity.h"
 #include "matrix.h"
 #include "number.h"
-#include "simplification.h"
 #include "systematic_operation.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -148,8 +148,8 @@ bool SystematicOperation::ReduceAddition(Tree* u) {
    * merging again when child merged with nextChild) */
   if (modified && u->isAdd()) {
     // Bubble-up may be unlocked after merging equal terms.
-    Simplification::BubbleUpFromChildren(u);
-    assert(!Simplification::ShallowSystematicReduce(u));
+    SystematicReduction::BubbleUpFromChildren(u);
+    assert(!SystematicReduction::ShallowSystematicReduce(u));
   }
   return modified;
 }

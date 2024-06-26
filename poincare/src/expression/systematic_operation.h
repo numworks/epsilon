@@ -6,7 +6,7 @@
 namespace Poincare::Internal {
 
 class SystematicOperation {
-  friend class Simplification;
+  friend class SystematicReduction;
 
  public:
   static bool ReduceMultiplication(Tree* u);

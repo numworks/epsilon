@@ -7,6 +7,7 @@
 #include "infinity.h"
 #include "list.h"
 #include "rational.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -135,11 +136,11 @@ bool SystematicOperation::ReducePower(Tree* u) {
       w->cloneTree();
       n->cloneTree();
       w->moveTreeOverTree(m);
-      Simplification::ShallowSystematicReduce(m);
+      SystematicReduction::ShallowSystematicReduce(m);
     }
     n->removeTree();
     u->removeNode();
-    Simplification::ShallowSystematicReduce(u);
+    SystematicReduction::ShallowSystematicReduce(u);
     return true;
   }
   // exp(a)^b -> exp(a*b)
@@ -149,7 +150,7 @@ bool SystematicOperation::ReducePower(Tree* u) {
 
 void SystematicOperation::ConvertPowerRealToPower(Tree* u) {
   u->cloneNodeOverNode(KPow);
-  Simplification::ShallowSystematicReduce(u);
+  SystematicReduction::ShallowSystematicReduce(u);
 }
 
 bool SystematicOperation::ReducePowerReal(Tree* u) {
@@ -199,14 +200,14 @@ bool SystematicOperation::ReducePowerReal(Tree* u) {
 
   // We can fallback to |x|^y
   x->cloneNodeAtNode(KAbs);
-  Simplification::ShallowSystematicReduce(x);
+  SystematicReduction::ShallowSystematicReduce(x);
   ConvertPowerRealToPower(u);
 
   if (xNegative && !pIsEven) {
     // -|x|^y
     u->cloneTreeAtNode(KMult(-1_e));
     NAry::SetNumberOfChildren(u, 2);
-    Simplification::ShallowSystematicReduce(u);
+    SystematicReduction::ShallowSystematicReduce(u);
   }
   return true;
 }
@@ -230,7 +231,7 @@ bool SystematicOperation::ReduceLnReal(Tree* u) {
     // Safely fallback to complex logarithm.
     u->cloneNodeOverNode(KLn);
   }
-  Simplification::ShallowSystematicReduce(u);
+  SystematicReduction::ShallowSystematicReduce(u);
   return true;
 }
 
@@ -316,7 +317,7 @@ bool SystematicOperation::ReduceComplexPart(Tree* tree) {
         (-1_e)->cloneTree();
         (i_e)->cloneTree();
         elem->detachTree();
-        Simplification::ShallowSystematicReduce(t);
+        SystematicReduction::ShallowSystematicReduce(t);
         nbChildrenOut++;
       }
       nbChildrenRemoved++;
@@ -337,13 +338,13 @@ bool SystematicOperation::ReduceComplexPart(Tree* tree) {
     includeOriginalTree = false;
   } else if (child->numberOfChildren() == 1) {
     // Shallow reduce to remove the Add node
-    Simplification::ShallowSystematicReduce(child);
+    SystematicReduction::ShallowSystematicReduce(child);
   }
   tree->moveTreeBeforeNode(a);
   // Increase the number of children of a to include the original re/im
   NAry::SetNumberOfChildren(tree, nbChildrenOut + includeOriginalTree);
   // Shallow reduce new tree
-  Simplification::ShallowSystematicReduce(tree);
+  SystematicReduction::ShallowSystematicReduce(tree);
   return true;
 }
 

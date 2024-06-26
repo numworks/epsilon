@@ -9,7 +9,7 @@
 #include "number.h"
 #include "rational.h"
 #include "sign.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -176,7 +176,7 @@ Tree* PushIK2Pi(int k) {
   (2_e)->cloneTree();
   Integer::Push(k);
   (π_e)->cloneTree();
-  Simplification::DeepSystematicReduce(result);
+  SystematicReduction::DeepSystematicReduce(result);
   return result;
 }
 
@@ -322,7 +322,7 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   }
   NAry::SetNumberOfChildren(result, factorization.numberOfFactors + isNegative);
   NAry::SquashIfPossible(result);
-  assert(!Simplification::DeepSystematicReduce(result));
+  assert(!SystematicReduction::DeepSystematicReduce(result));
   return result;
 }
 

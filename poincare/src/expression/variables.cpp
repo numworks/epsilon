@@ -7,8 +7,8 @@
 #include "k_tree.h"
 #include "parametric.h"
 #include "set.h"
-#include "simplification.h"
 #include "symbol.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -107,7 +107,7 @@ bool Variables::Replace(Tree* expr, int id, const TreeRef& value, bool leave,
     changed = Replace(child, updatedId, value, leave, simplify) || changed;
   }
   if (simplify && changed) {
-    Simplification::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowSystematicReduce(expr);
   }
   return changed;
 }

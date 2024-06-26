@@ -7,7 +7,7 @@
 #include "number.h"
 #include "rational.h"
 #include "sign.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -99,7 +99,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
     if (numerator == negativeRationalExponent) {
       return expression->cloneTreeOverTree(1_e);
     }
-    Simplification::DeepSystematicReduce(expression);
+    SystematicReduction::DeepSystematicReduce(expression);
     return expression;
   }
   if (expression->isMult()) {

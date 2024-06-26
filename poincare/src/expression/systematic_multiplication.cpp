@@ -5,8 +5,8 @@
 #include "matrix.h"
 #include "number.h"
 #include "rational.h"
-#include "simplification.h"
 #include "systematic_operation.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -192,8 +192,8 @@ bool SystematicOperation::ReduceMultiplication(Tree* u) {
   changed = SimplifySortedMultiplication(u) || changed;
   if (changed && u->isMult()) {
     // Bubble-up may be unlocked after merging identical bases.
-    Simplification::BubbleUpFromChildren(u);
-    assert(!Simplification::ShallowSystematicReduce(u));
+    SystematicReduction::BubbleUpFromChildren(u);
+    assert(!SystematicReduction::ShallowSystematicReduce(u));
   }
   return changed;
 }

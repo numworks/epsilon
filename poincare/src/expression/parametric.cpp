@@ -8,7 +8,7 @@
 #include "k_tree.h"
 #include "matrix.h"
 #include "sign.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -142,16 +142,16 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     assert(function->numberOfChildren() > 0);  // Because HasVariable
     if (function->numberOfChildren() == 1) {
       // Shallow reduce to remove the Mult
-      Simplification::ShallowSystematicReduce(function);
+      SystematicReduction::ShallowSystematicReduce(function);
     }
     // Shallow reduce the Sum
-    Simplification::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowSystematicReduce(expr);
     // Add factor a before the Sum
     expr->moveTreeBeforeNode(a);
     // a is already a Mult, increase its number of children to include the Sum
     NAry::SetNumberOfChildren(expr, expr->numberOfChildren() + 1);
     // Shallow reduce a*Sum
-    Simplification::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowSystematicReduce(expr);
     return true;
   }
 
@@ -164,9 +164,9 @@ bool Parametric::SimplifySumOrProduct(Tree* expr) {
     // Move the node Pow before the Prod
     expr->moveNodeBeforeNode(function);
     // Shallow reduce the Prod
-    Simplification::ShallowSystematicReduce(expr->child(0));
+    SystematicReduction::ShallowSystematicReduce(expr->child(0));
     // Shallow reduce Prod^a
-    Simplification::ShallowSystematicReduce(expr);
+    SystematicReduction::ShallowSystematicReduce(expr);
     return true;
   }
 
@@ -357,14 +357,14 @@ bool Parametric::Explicit(Tree* expr) {
     Tree* value = SharedTreeStack->pushAdd(2);
     lowerBound->cloneTree();
     Integer::Push(step);
-    Simplification::ShallowSystematicReduce(value);
+    SystematicReduction::ShallowSystematicReduce(value);
     // Clone the child and replace k with its value
     Tree* clone = child->cloneTree();
     Variables::Replace(clone, k_localVariableId, value, true);
     value->removeTree();
     result->cloneNodeAtNode(isSum ? KAdd.node<2> : KMult.node<2>);
     // Terms are simplified one at a time to avoid overflowing the pool
-    Simplification::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowSystematicReduce(result);
   }
   expr->moveTreeOverTree(result);
   return true;

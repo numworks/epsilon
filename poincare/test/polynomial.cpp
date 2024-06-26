@@ -5,7 +5,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/projection.h>
-#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 
 #include "helper.h"
 
@@ -18,7 +18,7 @@ void assert_polynomial_is_parsed(const Tree* node,
   Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   Tree* clone = node->cloneTree();
-  Simplification::DeepSystematicReduce(clone);
+  SystematicReduction::DeepSystematicReduce(clone);
   AdvancedSimplification::DeepExpand(clone);
   Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);

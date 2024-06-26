@@ -273,6 +273,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/systematic_addition.cpp \
   expression/systematic_operation.cpp \
   expression/systematic_multiplication.cpp \
+  expression/systematic_reduction.cpp \
   expression/trigonometry.cpp \
   expression/undefined.cpp \
   expression/unit.cpp \

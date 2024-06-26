@@ -1,7 +1,7 @@
 #include "vector.h"
 
 #include "k_tree.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -14,13 +14,13 @@ Tree* Vector::Norm(const Tree* v) {
     Tree* squaredAbsValue = KPow->cloneNode();
     Tree* absValue = KAbs->cloneNode();
     child->cloneTree();
-    Simplification::ShallowSystematicReduce(absValue);
+    SystematicReduction::ShallowSystematicReduce(absValue);
     (2_e)->cloneTree();
-    Simplification::ShallowSystematicReduce(squaredAbsValue);
+    SystematicReduction::ShallowSystematicReduce(squaredAbsValue);
   }
-  Simplification::ShallowSystematicReduce(sum);
+  SystematicReduction::ShallowSystematicReduce(sum);
   (1_e / 2_e)->cloneTree();
-  Simplification::ShallowSystematicReduce(result);
+  SystematicReduction::ShallowSystematicReduce(result);
   return result;
 }
 
@@ -35,9 +35,9 @@ Tree* Vector::Dot(const Tree* u, const Tree* v) {
     childU->cloneTree();
     childV->cloneTree();
     childV = childV->nextTree();
-    Simplification::ShallowSystematicReduce(product);
+    SystematicReduction::ShallowSystematicReduce(product);
   }
-  Simplification::ShallowSystematicReduce(sum);
+  SystematicReduction::ShallowSystematicReduce(sum);
   return sum;
 }
 
@@ -52,13 +52,13 @@ Tree* Vector::Cross(const Tree* u, const Tree* v) {
     Tree* a1b2 = KMult.node<2>->cloneNode();
     u->child(j1)->cloneTree();
     v->child(j2)->cloneTree();
-    Simplification::ShallowSystematicReduce(a1b2);
+    SystematicReduction::ShallowSystematicReduce(a1b2);
     Tree* a2b1 = KMult.node<3>->cloneNode();
     (-1_e)->cloneTree();
     u->child(j2)->cloneTree();
     v->child(j1)->cloneTree();
-    Simplification::ShallowSystematicReduce(a2b1);
-    Simplification::ShallowSystematicReduce(difference);
+    SystematicReduction::ShallowSystematicReduce(a2b1);
+    SystematicReduction::ShallowSystematicReduce(difference);
   }
   return result;
 }

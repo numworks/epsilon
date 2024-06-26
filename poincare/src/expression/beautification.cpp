@@ -13,8 +13,8 @@
 #include "number.h"
 #include "projection.h"
 #include "rational.h"
-#include "simplification.h"
 #include "symbol.h"
+#include "systematic_reduction.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -218,7 +218,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
     return true;
   } else if (mustSystematicReduce) {
     assert(modified);
-    *simplifyParent = Simplification::ShallowSystematicReduce(tree);
+    *simplifyParent = SystematicReduction::ShallowSystematicReduce(tree);
   }
   return modified;
 }
@@ -415,13 +415,13 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
   Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
-  bool absReduced = Simplification::ShallowSystematicReduce(abs);
+  bool absReduced = SystematicReduction::ShallowSystematicReduce(abs);
   SharedTreeStack->pushExp();
   SharedTreeStack->pushMult(2);
   SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
-  bool argReduced = Simplification::ShallowSystematicReduce(arg);
+  bool argReduced = SystematicReduction::ShallowSystematicReduce(arg);
   /* the multiplication that may be created by arg is not flattened on purpose
    * to keep (π/2)*i as such and not as π*i/2 */
   if (!absReduced || !argReduced) {

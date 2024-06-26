@@ -4,6 +4,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/variables.h>
 
 #include "helper.h"
@@ -26,7 +27,7 @@ void deepSystematicReduce_and_operation_to(const Tree* input,
                                            const Tree* output) {
   Tree* tree = input->cloneTree();
   // Expand / contract expects a deep systematic reduced tree
-  Simplification::DeepSystematicReduce(tree);
+  SystematicReduction::DeepSystematicReduce(tree);
   quiz_assert(operation(tree));
   assert_trees_are_equal(tree, output);
   tree->removeTree();
@@ -698,9 +699,9 @@ QUIZ_CASE(pcj_simplification_float) {
 
   // This was raising asserts because of float approximation on flatten.
   Tree* u = (KMult(KPow(180_e, -1_e), π_e, KMult(180_de, "x"_e)))->cloneTree();
-  Simplification::ShallowSystematicReduce(u->child(0));
-  QUIZ_ASSERT(Simplification::ShallowSystematicReduce(u));
-  QUIZ_ASSERT(!Simplification::ShallowSystematicReduce(u));
+  SystematicReduction::ShallowSystematicReduce(u->child(0));
+  QUIZ_ASSERT(SystematicReduction::ShallowSystematicReduce(u));
+  QUIZ_ASSERT(!SystematicReduction::ShallowSystematicReduce(u));
 }
 
 QUIZ_CASE(pcj_simplification_unit) {

@@ -1,7 +1,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
-#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -94,7 +94,7 @@ static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   Tree* result = operation(i, j);
-  Simplification::ShallowSystematicReduce(result);
+  SystematicReduction::ShallowSystematicReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();

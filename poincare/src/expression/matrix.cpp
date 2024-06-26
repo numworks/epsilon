@@ -8,7 +8,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
-#include "simplification.h"
+#include "systematic_reduction.h"
 #include "vector.h"
 
 namespace Poincare::Internal {
@@ -54,7 +54,7 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   if (approximate) {
     Approximation::ApproximateToComplexTree(result);
   } else {
-    Simplification::ShallowSystematicReduce(result);
+    SystematicReduction::ShallowSystematicReduce(result);
   }
   return result;
 }
@@ -101,7 +101,7 @@ Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
     if (approximate) {
       Approximation::ApproximateToComplexTree(child);
     } else {
-      Simplification::ShallowSystematicReduce(child);
+      SystematicReduction::ShallowSystematicReduce(child);
     }
     childU = childU->nextTree();
     childV = childV->nextTree();
@@ -119,7 +119,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
     if (approximate) {
       Approximation::ApproximateToComplexTree(mult);
     } else {
-      Simplification::ShallowSystematicReduce(mult);
+      SystematicReduction::ShallowSystematicReduce(mult);
     }
   }
   return result;
@@ -162,13 +162,13 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
         if (approximate) {
           Approximation::ApproximateToComplexTree(mult);
         } else {
-          Simplification::ShallowSystematicReduce(mult);
+          SystematicReduction::ShallowSystematicReduce(mult);
         }
       }
       if (approximate) {
         Approximation::ApproximateToComplexTree(add);
       } else {
-        Simplification::ShallowSystematicReduce(add);
+        SystematicReduction::ShallowSystematicReduce(add);
       }
     }
     childURow0 = childURowK;
@@ -184,7 +184,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
 bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
                          bool approximate) {
   // The matrix children have to be reduced to be able to spot 0
-  assert(approximate || !Simplification::DeepSystematicReduce(matrix));
+  assert(approximate || !SystematicReduction::DeepSystematicReduce(matrix));
 
   TreeRef det;
   if (determinant) {
@@ -311,7 +311,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
     if (approximate) {
       Approximation::ApproximateToComplexTree(det);
     } else {
-      Simplification::ShallowSystematicReduce(det);
+      SystematicReduction::ShallowSystematicReduce(det);
     }
     *determinant = det;
   }
@@ -418,7 +418,7 @@ Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
 }
 
 bool Matrix::SimplifySwitch(Tree* u) {
-  // Dim is handled in Simplification::SimplifySwitch
+  // Dim is handled in SystematicReduction::SimplifySwitch
   assert(u->isAMatrixOrContainsMatricesAsChildren() && !u->isDim());
   Tree* child = u->child(0);
   if (!child->isMatrix() && !u->isIdentity()) {

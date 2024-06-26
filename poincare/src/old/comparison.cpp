@@ -19,10 +19,10 @@ const char* ComparisonNode::ComparisonOperatorString(OperatorType type) {
 }
 
 Layout ComparisonNode::ComparisonOperatorLayout(OperatorType type) {
-  const char* operatorString = ComparisonOperatorString(type);
   Layout result;
   assert(false);
 #if 0
+  const char* operatorString = ComparisonOperatorString(type);
   assert(result.otype() == LayoutNode::Type::CodePointLayout ||
          result.otype() == LayoutNode::Type::CombinedCodePointsLayout);
 #endif

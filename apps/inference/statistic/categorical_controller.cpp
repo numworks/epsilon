@@ -46,7 +46,8 @@ void CategoricalController::didScroll() {
   KDCoordinate heightBeforeTableCell =
       cumulatedHeightBeforeRow(tableCellRow) + topMargin;
 
-  assert(firstVisibleRow < tableCellRow == listOffset < heightBeforeTableCell);
+  assert((firstVisibleRow < tableCellRow) ==
+         (listOffset < heightBeforeTableCell));
 
   KDCoordinate maxTableOffset = std::max(
       0, tableCellFullHeight() - (m_selectableListView.bounds().height() -

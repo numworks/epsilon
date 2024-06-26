@@ -32,7 +32,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                        Preferences::PrintFloatMode mode,
                        int numberOfSignificantDigits) {
   assert(decimal->isDecimal() ||
-         decimal->isOpposite() && decimal->child(0)->isDecimal());
+         (decimal->isOpposite() && decimal->child(0)->isDecimal()));
   bool m_negative = decimal->isOpposite();
   if (m_negative) {
     decimal = decimal->child(0);

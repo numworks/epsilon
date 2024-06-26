@@ -82,14 +82,6 @@ constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
   return numberOfBitsIn<uint32_t>() - countLeadingZeros(i) - 1;
 }
 
-constexpr inline size_t numberOfBitsToCountUpTo(uint8_t i) {
-  return i == 0 ? 0 : std::bit_width(static_cast<uint32_t>(i - 1));
-}
-
-constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
-  return i == 0 ? 0 : std::bit_width(i - 1);
-}
-
 constexpr inline size_t numberOfBitsToCountUpTo(uint64_t i) {
   return i == 0 ? 0 : std::bit_width(i - 1);
 }

@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <poincare/src/expression/advanced_simplification.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
@@ -34,13 +34,13 @@ void deepSystematicReduce_and_operation_to(const Tree* input,
 }
 
 void expand_to(const Tree* input, const Tree* output) {
-  deepSystematicReduce_and_operation_to(
-      input, AdvancedSimplification::DeepExpand, output);
+  deepSystematicReduce_and_operation_to(input, AdvancedReduction::DeepExpand,
+                                        output);
 }
 
 void contract_to(const Tree* input, const Tree* output) {
-  deepSystematicReduce_and_operation_to(
-      input, AdvancedSimplification::DeepContract, output);
+  deepSystematicReduce_and_operation_to(input, AdvancedReduction::DeepContract,
+                                        output);
 }
 
 QUIZ_CASE(pcj_simplification_expansion) {

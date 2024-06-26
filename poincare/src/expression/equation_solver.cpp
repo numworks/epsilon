@@ -5,7 +5,7 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric/zoom.h>
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "beautification.h"
 #include "float.h"
 #include "list.h"
@@ -321,7 +321,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   TreeRef tree = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
-  AdvancedSimplification::DeepExpand(tree);
+  AdvancedReduction::DeepExpand(tree);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?

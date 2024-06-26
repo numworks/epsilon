@@ -224,8 +224,8 @@ poincare_bench_src = $(addprefix poincare/src/old/,\
 
 
 poincare_src += $(addprefix poincare/src/,\
-  expression/advanced_simplification.cpp \
   expression/advanced_operation.cpp \
+  expression/advanced_reduction.cpp \
   expression/algebraic.cpp \
   expression/aliases.cpp \
   expression/arithmetic.cpp \

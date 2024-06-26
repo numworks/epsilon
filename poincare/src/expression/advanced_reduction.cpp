@@ -1,4 +1,4 @@
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -21,7 +21,7 @@ void LogIndent() {
 
 #endif
 
-bool AdvancedSimplification::Reduce(Tree* u) {
+bool AdvancedReduction::Reduce(Tree* u) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
@@ -47,7 +47,7 @@ bool AdvancedSimplification::Reduce(Tree* u) {
   return result;
 }
 
-bool AdvancedSimplification::CrcCollection::add(uint32_t crc, uint8_t depth) {
+bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
   if (isFull()) {
     // Behave as if all trees had already been tested.
     return false;
@@ -106,8 +106,8 @@ const Tree* NextNode(const Tree* tree) {
   return next;
 }
 
-bool AdvancedSimplification::Direction::canApply(const Tree* u,
-                                                 const Tree* root) const {
+bool AdvancedReduction::Direction::canApply(const Tree* u,
+                                            const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(!isNextNode() ||
          (NextNode(u)->block() < SharedTreeStack->lastBlock()) ==
@@ -115,8 +115,8 @@ bool AdvancedSimplification::Direction::canApply(const Tree* u,
   return !isNextNode() || NextNode(u)->block() < SharedTreeStack->lastBlock();
 }
 
-bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
-                                              bool* rootChanged) const {
+bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
+                                         bool* rootChanged) const {
   if (isNextNode()) {
     assert(m_type >= k_baseNextNodeType);
     for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
@@ -137,7 +137,7 @@ bool AdvancedSimplification::Direction::apply(Tree** u, Tree* root,
 }
 
 #if POINCARE_TREE_LOG
-void AdvancedSimplification::Direction::log() {
+void AdvancedReduction::Direction::log() {
   if (isNextNode()) {
     std::cout << "NextNode";
     if (m_type > 1) {
@@ -152,7 +152,7 @@ void AdvancedSimplification::Direction::log() {
 }
 #endif
 
-bool AdvancedSimplification::Direction::combine(Direction other) {
+bool AdvancedReduction::Direction::combine(Direction other) {
   if (!isNextNode() || !other.isNextNode() ||
       m_type >= k_expandType - other.m_type) {
     return false;
@@ -161,7 +161,7 @@ bool AdvancedSimplification::Direction::combine(Direction other) {
   return true;
 }
 
-bool AdvancedSimplification::Direction::decrement() {
+bool AdvancedReduction::Direction::decrement() {
   if (!isNextNode() || m_type == k_baseNextNodeType) {
     return false;
   }
@@ -169,7 +169,7 @@ bool AdvancedSimplification::Direction::decrement() {
   return true;
 }
 
-bool AdvancedSimplification::Path::apply(Tree* root) const {
+bool AdvancedReduction::Path::apply(Tree* root) const {
   Tree* u = root;
   bool rootChanged = false;
   for (uint8_t i = 0; i < length(); i++) {
@@ -179,14 +179,14 @@ bool AdvancedSimplification::Path::apply(Tree* root) const {
   return rootChanged;
 }
 
-void AdvancedSimplification::Path::popBaseDirection() {
+void AdvancedReduction::Path::popBaseDirection() {
   assert(m_length > 0);
   if (!m_stack[m_length - 1].decrement()) {
     m_length--;
   }
 }
 
-bool AdvancedSimplification::Path::append(Direction direction) {
+bool AdvancedReduction::Path::append(Direction direction) {
   if (m_length == 0 || !m_stack[m_length - 1].combine(direction)) {
     if (m_length >= k_size) {
       return false;
@@ -197,7 +197,7 @@ bool AdvancedSimplification::Path::append(Direction direction) {
   return true;
 }
 
-bool AdvancedSimplification::ReduceRec(Tree* u, Context* ctx) {
+bool AdvancedReduction::ReduceRec(Tree* u, Context* ctx) {
   bool fullExploration = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
@@ -330,8 +330,7 @@ bool AdvancedSimplification::ReduceRec(Tree* u, Context* ctx) {
   return fullExploration;
 }
 
-bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
-                                                    const Tree* tree) {
+bool AdvancedReduction::UpwardSystematicReduce(Tree* root, const Tree* tree) {
   if (root == tree) {
     assert(!SystematicReduction::DeepReduce(root));
     return true;
@@ -348,7 +347,7 @@ bool AdvancedSimplification::UpwardSystematicReduce(Tree* root,
 
 /* Expand/Contract operations */
 
-bool AdvancedSimplification::DeepContract(Tree* e) {
+bool AdvancedReduction::DeepContract(Tree* e) {
   if (e->isSet()) {
     // Never contract anything in dependency's dependencies set.
     return false;
@@ -361,7 +360,7 @@ bool AdvancedSimplification::DeepContract(Tree* e) {
   return ShallowContract(e, true) || changed;
 }
 
-bool AdvancedSimplification::DeepExpand(Tree* e) {
+bool AdvancedReduction::DeepExpand(Tree* e) {
   // Tree::ApplyShallowInDepth could be used but we need to skip sets
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
@@ -389,9 +388,9 @@ bool AdvancedSimplification::DeepExpand(Tree* e) {
   return changed;
 }
 
-bool AdvancedSimplification::TryAllOperations(Tree* e,
-                                              const Tree::Operation* operations,
-                                              int numberOfOperations) {
+bool AdvancedReduction::TryAllOperations(Tree* e,
+                                         const Tree::Operation* operations,
+                                         int numberOfOperations) {
   /* For example :
    * Most contraction operations are very shallow.
    * exp(A)*exp(B)*exp(C)*|D|*|E| = exp(A+B)*exp(C)*|D|*|E|
@@ -411,9 +410,9 @@ bool AdvancedSimplification::TryAllOperations(Tree* e,
   return i > numberOfOperations;
 }
 
-bool AdvancedSimplification::TryOneOperation(Tree* e,
-                                             const Tree::Operation* operations,
-                                             int numberOfOperations) {
+bool AdvancedReduction::TryOneOperation(Tree* e,
+                                        const Tree::Operation* operations,
+                                        int numberOfOperations) {
   assert(!SystematicReduction::DeepReduce(e));
   for (size_t i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {

@@ -1,6 +1,6 @@
 #include "degree.h"
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "integer.h"
 #include "sign.h"
 #include "simplification.h"
@@ -85,7 +85,7 @@ int Degree::Get(const Tree* t, const Tree* symbol,
   Tree* clone = t->cloneTree();
   Simplification::ToSystem(clone, &projectionContext);
   Simplification::SimplifySystem(clone, false);
-  AdvancedSimplification::DeepExpand(clone);
+  AdvancedReduction::DeepExpand(clone);
   int degree = PrivateGet(clone, symbol);
   clone->removeTree();
   return degree;

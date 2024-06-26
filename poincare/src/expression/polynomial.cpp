@@ -5,7 +5,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/value_block.h>
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "comparison.h"
 #include "k_tree.h"
 #include "number.h"
@@ -405,7 +405,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* expression,
 }
 
 Tree* PolynomialParser::Parse(Tree* expression, const Tree* variable) {
-  assert(!AdvancedSimplification::DeepExpand(expression));
+  assert(!AdvancedReduction::DeepExpand(expression));
   TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = expression->type();
   if (type == Type::Add) {

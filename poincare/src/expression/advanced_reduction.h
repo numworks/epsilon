@@ -1,5 +1,5 @@
-#ifndef POINCARE_EXPRESSION_ADVANCED_SIMPLIFICATION_H
-#define POINCARE_EXPRESSION_ADVANCED_SIMPLIFICATION_H
+#ifndef POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
+#define POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
 
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -18,7 +18,7 @@
 
 namespace Poincare::Internal {
 
-class AdvancedSimplification {
+class AdvancedReduction {
  public:
   static bool Reduce(Tree* u);
   TREE_REF_WRAP(Reduce);

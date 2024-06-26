@@ -8,7 +8,7 @@
 #include <poincare/old/matrix_complex.h>
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
-#include <poincare/src/expression/advanced_simplification.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/comparison.h>
 #include <poincare/src/expression/continuity.h>
@@ -612,7 +612,7 @@ int SystemExpression::getPolynomialCoefficients(
     SystemExpression coefficients[]) const {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Tree* poly = tree()->cloneTree();
-  AdvancedSimplification::DeepExpand(poly);
+  AdvancedReduction::DeepExpand(poly);
   // PolynomialParser::Parse eats given tree
   poly = PolynomialParser::Parse(poly, symbol);
   if (!poly->isPolynomial()) {

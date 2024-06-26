@@ -4,7 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "angle.h"
 #include "approximation.h"
 #include "arithmetic.h"
@@ -279,7 +279,7 @@ bool Beautification::DeepBeautify(Tree* expr,
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
     // TODO: Some may want to call DeepBeautify without advancedReduction
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
-    AdvancedSimplification::Reduce(expr);
+    AdvancedReduction::Reduce(expr);
   }
   changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify) || changed;
   /* Divisions are created after the main beautification since they work top

@@ -1,6 +1,6 @@
 #include "simplification.h"
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "beautification.h"
 #include "dependency.h"
 #include "list.h"
@@ -93,7 +93,7 @@ bool Simplification::SimplifySystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {
-    changed = AdvancedSimplification::Reduce(e) || changed;
+    changed = AdvancedReduction::Reduce(e) || changed;
   }
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }

@@ -1,6 +1,6 @@
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "advanced_simplification.h"
+#include "advanced_reduction.h"
 #include "approximation.h"
 #include "beautification.h"
 #include "k_tree.h"
@@ -34,7 +34,7 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Variables::Replace(tree, 0, value, false, true);
   /* We need to remove the constant part by expanding polynomials introduced by
    * the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
-  AdvancedSimplification::DeepExpand(tree);
+  AdvancedReduction::DeepExpand(tree);
   value->removeTree();
   return value;
 }

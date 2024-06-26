@@ -17,6 +17,7 @@ class Comparison {
      * Addition::shallowBeautify. Providing a custom order in Beautification
      * would be cleaner. */
     AdditionBeautification
+    // TODO: add real comparison order (numerical)
   };
   /* Compare returns:
    *  1 if block0 > block1

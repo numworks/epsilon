@@ -158,11 +158,12 @@ Tree* TreeStack::pushRackLayout(int nbChildren) {
   return result;
 }
 
-Tree* TreeStack::pushPointOfInterest(PointOfInterestNode data) {
+Tree* TreeStack::pushPointOfInterest(
+    CustomTypeStructs::PointOfInterestNode data) {
   Tree* result = pushBlock(Type::PointOfInterest);
   // Copy content of data as if it was blocks
   insertBlocks(lastBlock(), reinterpret_cast<Block*>(&data),
-               sizeof(PointOfInterestNode));
+               sizeof(CustomTypeStructs::PointOfInterestNode));
   return result;
 }
 

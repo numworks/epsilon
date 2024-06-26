@@ -23,7 +23,8 @@ namespace Poincare::Internal {
 /* Declarations of custom node structs, they are processed only for nodes with 3
  * arguments, ie with a custom node. */
 
-/* For instance, the declaration
+namespace CustomTypeStructs {
+/* Declare a struct for each custom node:
  * NODE(RationalNegShort, 0, {
  *   uint8_t absNumerator;
  *   uint8_t denominator;
@@ -39,6 +40,7 @@ namespace Poincare::Internal {
 
 #define NODE_DECL(F, S) struct NODE_NAME(F) S;
 #include "types.h"
+}  // namespace CustomTypeStructs
 
 enum class Type : uint8_t {
 /* Add all the types to the enum
@@ -97,14 +99,14 @@ class TypeBlock : public Block {
 #undef RANGE1
 
   // Add casts to custom node structs
-#define CAST_(F, T)                            \
-  F* to##F() {                                 \
-    assert(type() == Type::T);                 \
-    return reinterpret_cast<F*>(next());       \
-  }                                            \
-  const F* to##F() const {                     \
-    assert(type() == Type::T);                 \
-    return reinterpret_cast<const F*>(next()); \
+#define CAST_(F, T)                                               \
+  CustomTypeStructs::F* to##F() {                                 \
+    assert(type() == Type::T);                                    \
+    return reinterpret_cast<CustomTypeStructs::F*>(next());       \
+  }                                                               \
+  const CustomTypeStructs::F* to##F() const {                     \
+    assert(type() == Type::T);                                    \
+    return reinterpret_cast<const CustomTypeStructs::F*>(next()); \
   }
 #define CAST(F, T) CAST_(F, T)
 #define NODE_DECL(F, S) CAST(NODE_NAME(F), SCOPED_NODE(F))

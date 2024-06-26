@@ -11,7 +11,7 @@ PointOfInterest PointOfInterest::Builder(
     double abscissa, double ordinate,
     typename Solver<double>::Interest interest, uint32_t data, bool inverted,
     int subCurveIndex) {
-  Internal::PointOfInterestNode node{
+  Internal::CustomTypeStructs::PointOfInterestNode node{
       abscissa, ordinate,
       data,     static_cast<uint8_t>(interest),
       inverted, static_cast<uint8_t>(subCurveIndex)};

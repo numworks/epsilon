@@ -225,8 +225,7 @@ bool Simplification::PrepareForProjection(
     maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
     changed = true;
   }
-  if (!Dimension::DeepCheckDimensions(e) ||
-      !Dimension::DeepCheckListLength(e)) {
+  if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     changed = true;
   }

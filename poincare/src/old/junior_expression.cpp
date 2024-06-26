@@ -843,15 +843,13 @@ bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
   if (!canContainMatrices) {
     return false;
   }
-  return Dimension::DeepCheckDimensions(tree(), context) &&
-         Dimension::DeepCheckListLength(tree(), context) &&
+  return Dimension::DeepCheck(tree(), context) &&
          Dimension::Get(tree(), context).isMatrix();
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool NewExpression::deepIsList(Context* context) const {
-  return Dimension::DeepCheckDimensions(tree(), context) &&
-         Dimension::DeepCheckListLength(tree(), context) &&
+  return Dimension::DeepCheck(tree(), context) &&
          Dimension::IsList(tree(), context);
 }
 
@@ -859,8 +857,7 @@ bool NewExpression::deepIsList(Context* context) const {
 bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  return Dimension::DeepCheckDimensions(tree(), context) &&
-         Dimension::DeepCheckListLength(tree(), context) &&
+  return Dimension::DeepCheck(tree(), context) &&
          Dimension::Get(tree(), context).isPoint() &&
          (allowlists || !Dimension::IsList(tree(), context));
 }

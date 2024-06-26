@@ -94,6 +94,9 @@ struct Dimension {
   static Dimension Get(const Tree* t, Poincare::Context* ctx = nullptr);
   static bool DeepCheckDimensions(const Tree* t,
                                   Poincare::Context* ctx = nullptr);
+  static bool DeepCheck(const Tree* t, Poincare::Context* ctx = nullptr) {
+    return DeepCheckDimensions(t, ctx) && DeepCheckListLength(t, ctx);
+  }
 
   static void ReplaceTreeWithDimensionedType(Tree* e, Type type);
 

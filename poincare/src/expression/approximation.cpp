@@ -79,8 +79,7 @@ PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
 template <typename T>
 Tree* Approximation::RootTreeToTree(const Tree* node, AngleUnit angleUnit,
                                     ComplexFormat complexFormat) {
-  if (!Dimension::DeepCheckDimensions(node) ||
-      !Dimension::DeepCheckListLength(node)) {
+  if (!Dimension::DeepCheck(node)) {
     return KUndefUnhandledDimension->cloneTree();
   }
   return RootTreeToTreePrivate<T>(node, angleUnit, complexFormat,
@@ -93,8 +92,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* node,
                                            AngleUnit angleUnit,
                                            ComplexFormat complexFormat,
                                            Dimension dim, int listLength) {
-  assert(Dimension::DeepCheckDimensions(node) &&
-         Dimension::DeepCheckListLength(node));
+  assert(Dimension::DeepCheck(node));
   assert(listLength == Dimension::ListLength(node));
   assert(dim == Dimension::Get(node));
 

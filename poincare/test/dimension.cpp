@@ -24,8 +24,7 @@ bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
 
 bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
   Tree* expression = TextToTree(input);
-  bool result = !Dimension::DeepCheckDimensions(expression, ctx) ||
-                !Dimension::DeepCheckListLength(expression, ctx);
+  bool result = !Dimension::DeepCheck(expression, ctx);
   expression->removeTree();
   return result;
 }

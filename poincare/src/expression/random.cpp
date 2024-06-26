@@ -30,8 +30,7 @@ uint8_t Random::SeedRandomNodes(Tree* tree, uint8_t maxSeed) {
         /* RandIntNoRep dimension may have not been checked at this point and we
          * need its length. The dimension check for RandIntNoRep is
          * straighforward and can be done at this step. */
-        int size = u->isRandIntNoRep() && Dimension::DeepCheckDimensions(u) &&
-                           Dimension::DeepCheckListLength(u)
+        int size = u->isRandIntNoRep() && Dimension::DeepCheck(u)
                        ? Dimension::ListLength(u)
                        : 1;
         assert(static_cast<int>(currentSeed) + size < UINT8_MAX);

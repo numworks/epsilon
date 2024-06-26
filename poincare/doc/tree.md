@@ -10,10 +10,12 @@
 - [How to create a Tree at run time ?](#how-to-create-a-tree-at-run-time-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
 - [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
+- [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
 - [How to transform a Tree using pattern matching ?](#how-to-transform-a-tree-using-pattern-matching-)
+- [How to transform an n-ary Tree using pattern matching ?](#how-to-transform-an-n-ary-tree-using-pattern-matching-)
 
 
-# What is a Tree ?
+## What is a Tree ?
 
 [`Tree`](../src/memory/tree.h) is the central data structure in Poincare.
 
@@ -25,8 +27,9 @@ compile time or runtime and rewrite them using pattern-matching.
 It is designed for space-efficiency and may be manipulated at a low-level
 when fine control is preferred over safe abstractions.
 
+TODO
 
-## Block, Node, Type and Tree
+### Block, Node, Type and Tree
 
 Every `Tree` starts with a `Node` directly followed in memory by a given number of other
 trees that are its children.
@@ -392,27 +395,42 @@ template <KTreeConcept KT> f(KT ktree) {
 
 
 ## How to create a Tree using pattern matching ?
-## How to transform a Tree using pattern matching ?
-## Pattern matching
 
-Constexpr trees are the basis of a much-used mechanism to create and rewrite
-trees: pattern-matching.
-
-The pattern is a [constexpr tree](#how-to-create-a-tree-at-compile-time-) containing placeholders named `KA`,`KB`…`KH`.
-
-For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
-obtain a Context where `ctx[KA]` points to the Addition tree inside your
-expression.
-
-Or the other way around you can use Create with a structure and a context to
-push at the end of the `TreeStack` a brand new tree:
+If the tree you want to create has always the same structure where you need to customize some children, the safest way to build it is to use `PatternMaching::Create`.
 
 ```cpp
 Tree * myTree = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
 ```
 
-These two functions `Match` and `Create` are combined into `MatchCreate` and `MatchReplace` to
-avoid dealing with the context at all:
+The first argument is a pattern, a [constexpr tree](#how-to-create-a-tree-at-compile-time-) that may contain placeholders named `KA`,`KB`… up to `KH`.
+
+The second argument is a PatternMatching::Context that associates any placeholder used in the pattern to a `const Tree*` to be copied each time the pattern is encountered.
+
+The resulting Tree will be pushed at the end of the TreeStack.
+
+If your pattern is a simplified tree and context values are simplified too, `CreateSimplify` will apply the systematic reduction as needed to make sure the result is simplified.
+
+
+## How to retrieve sub-trees using pattern matching ?
+
+`PatternMatching::Match` works the other way around and will fill a `Context` if
+the tree you give it fits the pattern.
+
+For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
+obtain a Context where `ctx[KA]` points to the Addition tree inside your
+expression.
+
+```cpp
+PatternMatching::Context ctx;
+const Tree * myTree = Cos(Add(2, 3));
+PatternMatching::Match(myTree, KCos(KA), &ctx) // -> returns true;
+ctx->getTree(KA); // Points to Add inside myTree;
+```
+
+
+## How to transform a Tree using pattern matching ?
+
+The two functions `Match` and `Create` are combined in `MatchCreate` and `MatchReplace` to alter the structure of trees without dealing with a context at all:
 
 ```cpp
 // Apply simplification a + a -> 2 * a
@@ -431,7 +449,9 @@ but also call systematic simplification on each created tree along the way (**bu
 not placeholders**, which are assumed to be simplified trees already).
 
 
-### Placeholders
+## How to transform an n-ary Tree using pattern matching ?
+
+TODO
 
 Placeholders are named from `A` to `H`, and are expected to match with different
 trees.

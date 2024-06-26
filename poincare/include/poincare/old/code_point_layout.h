@@ -76,7 +76,7 @@ class CodePointLayout : public OLayout {
  private:
   using OLayout::node;
   CodePointLayoutNode *node() {
-    return static_cast<CodePointLayoutNode *>(OLayout::node());
+    return static_cast<CodePointLayoutNode *>(OLayout::object());
   }
 };
 

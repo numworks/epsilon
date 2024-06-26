@@ -65,7 +65,7 @@ class CombinedCodePointsLayout final : public CodePointLayout {
         ->combinedCodePoint();
   }
   CombinedCodePointsLayoutNode *node() {
-    return static_cast<CombinedCodePointsLayoutNode *>(OLayout::node());
+    return static_cast<CombinedCodePointsLayoutNode *>(OLayout::object());
   }
 };
 

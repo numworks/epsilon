@@ -110,7 +110,7 @@ class VerticalOffsetLayout final : public OLayout {
 
  private:
   VerticalOffsetLayoutNode *node() const {
-    return static_cast<VerticalOffsetLayoutNode *>(OLayout::node());
+    return static_cast<VerticalOffsetLayoutNode *>(OLayout::object());
   }
 };
 

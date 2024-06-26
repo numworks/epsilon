@@ -57,50 +57,52 @@ class PoolHandle {
   PoolHandle clone() const;
 
   uint16_t identifier() const { return m_identifier; }
-  PoolObject* node() const;
+  PoolObject* object() const;
   bool wasErasedByException() const {
-    return hasNode(m_identifier) && node() == nullptr;
+    return hasNode(m_identifier) && object() == nullptr;
   }
-  int nodeRetainCount() const { return node()->retainCount(); }
+  int nodeRetainCount() const { return object()->retainCount(); }
   size_t size() const;
-  size_t sizeOfNode() const { return node()->size(); }
-  void* addressInPool() const { return reinterpret_cast<void*>(node()); }
+  size_t sizeOfNode() const { return object()->size(); }
+  void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
-  bool isGhost() const { return node()->isGhost(); }
-  bool deepIsGhost() const { return node()->deepIsGhost(); }
+  bool isGhost() const { return object()->isGhost(); }
+  bool deepIsGhost() const { return object()->deepIsGhost(); }
   bool isUninitialized() const {
     return m_identifier == PoolObject::NoNodeIdentifier;
   }
   bool isDownstreamOf(PoolObject* treePoolCursor) {
     return !isUninitialized() &&
-           (node() == nullptr || node() >= treePoolCursor);
+           (object() == nullptr || object() >= treePoolCursor);
   }
 
   /* Hierarchy */
   bool hasChild(PoolHandle t) const;
-  bool hasSibling(PoolHandle t) const { return node()->hasSibling(t.node()); }
+  bool hasSibling(PoolHandle t) const {
+    return object()->hasSibling(t.object());
+  }
   bool hasAncestor(PoolHandle t, bool includeSelf) const {
-    return node()->hasAncestor(t.node(), includeSelf);
+    return object()->hasAncestor(t.object(), includeSelf);
   }
   PoolHandle commonAncestorWith(PoolHandle t,
                                 bool includeTheseNodes = true) const;
-  int numberOfChildren() const { return node()->numberOfChildren(); }
+  int numberOfChildren() const { return object()->numberOfChildren(); }
   void setNumberOfChildren(int numberOfChildren) {
-    node()->setNumberOfChildren(numberOfChildren);
+    object()->setNumberOfChildren(numberOfChildren);
   }
   int indexOfChild(PoolHandle t) const;
   PoolHandle parent() const;
   PoolHandle childAtIndex(int i) const;
-  void setParentIdentifier(uint16_t id) { node()->setParentIdentifier(id); }
-  void deleteParentIdentifier() { node()->deleteParentIdentifier(); }
+  void setParentIdentifier(uint16_t id) { object()->setParentIdentifier(id); }
+  void deleteParentIdentifier() { object()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() {
-    node()->deleteParentIdentifierInChildren();
+    object()->deleteParentIdentifierInChildren();
   }
   void incrementNumberOfChildren(int increment = 1) {
-    node()->incrementNumberOfChildren(increment);
+    object()->incrementNumberOfChildren(increment);
   }
   int numberOfDescendants(bool includeSelf) const {
-    return node()->numberOfDescendants(includeSelf);
+    return object()->numberOfDescendants(includeSelf);
   }
 
   /* Hierarchy operations */
@@ -208,7 +210,7 @@ class PoolHandle {
   PoolHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
       : m_identifier(nodeIndentifier) {
     if (hasNode(nodeIndentifier)) {
-      node()->retain();
+      object()->retain();
     }
   }
 

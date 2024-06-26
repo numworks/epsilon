@@ -215,7 +215,7 @@ class Integer final : public PoolHandle {
   Integer(int identifier, bool negative)
       : PoolHandle(identifier), m_negative(negative), m_digit(0) {}
   IntegerNode *node() const {
-    return static_cast<IntegerNode *>(PoolHandle::node());
+    return static_cast<IntegerNode *>(PoolHandle::object());
   }
 
   // Arithmetic

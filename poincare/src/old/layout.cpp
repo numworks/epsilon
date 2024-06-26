@@ -12,7 +12,7 @@ Layout Layout::clone() const {
     return Layout();
   }
   PoolHandle c = PoolHandle::clone();
-  Layout cast = Layout(static_cast<LayoutNode *>(c.node()));
+  Layout cast = Layout(static_cast<LayoutNode *>(c.object()));
   cast->invalidAllSizesPositionsAndBaselines();
   return cast;
 }

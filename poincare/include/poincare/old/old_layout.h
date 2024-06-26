@@ -18,14 +18,14 @@ class OLayout : public PoolHandle {
 
   const LayoutNode *operator->() const {
     assert(isUninitialized() ||
-           (PoolHandle::node() && !PoolHandle::node()->isGhost()));
-    return static_cast<const LayoutNode *>(PoolHandle::node());
+           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    return static_cast<const LayoutNode *>(PoolHandle::object());
   }
 
   LayoutNode *operator->() {
     assert(isUninitialized() ||
-           (PoolHandle::node() && !PoolHandle::node()->isGhost()));
-    return static_cast<LayoutNode *>(PoolHandle::node());
+           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    return static_cast<LayoutNode *>(PoolHandle::object());
   }
 
   bool isIdenticalTo(OLayout l, bool makeEditable = false) const {

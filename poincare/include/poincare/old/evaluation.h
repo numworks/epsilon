@@ -65,8 +65,8 @@ class Evaluation : public PoolHandle {
   }
 #endif
   EvaluationNode<T> *node() const {
-    assert(!PoolHandle::node()->isGhost());
-    return static_cast<EvaluationNode<T> *>(PoolHandle::node());
+    assert(!PoolHandle::object()->isGhost());
+    return static_cast<EvaluationNode<T> *>(PoolHandle::object());
   }
 
   /* Hierarchy */

@@ -165,7 +165,7 @@ class HorizontalLayout final : public OLayout {
   }
 
   HorizontalLayoutNode *node() const {
-    return static_cast<HorizontalLayoutNode *>(OLayout::node());
+    return static_cast<HorizontalLayoutNode *>(OLayout::object());
   }
 };
 

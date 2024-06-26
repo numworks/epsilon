@@ -99,7 +99,7 @@ class JuniorLayout final : public OLayout {
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 
   JuniorLayoutNode* node() {
-    return static_cast<JuniorLayoutNode*>(OLayout::node());
+    return static_cast<JuniorLayoutNode*>(OLayout::object());
   }
 
   // True if rack with only code points in it

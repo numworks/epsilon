@@ -642,8 +642,8 @@ class OExpression : public PoolHandle {
   /* Reference */
   ExpressionNode* node() const {
     assert(identifier() != PoolObject::NoNodeIdentifier &&
-           !PoolHandle::node()->isGhost());
-    return static_cast<ExpressionNode*>(PoolHandle::node());
+           !PoolHandle::object()->isGhost());
+    return static_cast<ExpressionNode*>(PoolHandle::object());
   }
 
   /* Hierarchy */

@@ -149,7 +149,7 @@ class GridLayout : public OLayout {
 
  private:
   virtual GridLayoutNode *node() const {
-    return static_cast<GridLayoutNode *>(OLayout::node());
+    return static_cast<GridLayoutNode *>(OLayout::object());
   }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }

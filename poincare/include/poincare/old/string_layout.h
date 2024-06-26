@@ -77,7 +77,7 @@ class StringLayout : public OLayout {
  private:
   using OLayout::node;
   StringLayoutNode *node() {
-    return static_cast<StringLayoutNode *>(OLayout::node());
+    return static_cast<StringLayoutNode *>(OLayout::object());
   }
 };
 

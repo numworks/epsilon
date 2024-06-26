@@ -63,7 +63,7 @@ class MatrixLayout final : public GridLayout {
 
  private:
   MatrixLayoutNode *node() const {
-    return static_cast<MatrixLayoutNode *>(OLayout::node());
+    return static_cast<MatrixLayoutNode *>(OLayout::object());
   }
 };
 

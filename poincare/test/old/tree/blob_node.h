@@ -31,7 +31,9 @@ class BlobByReference : public PoolHandle {
   int data() { return node()->data(); }
 
  private:
-  BlobNode *node() const { return static_cast<BlobNode *>(PoolHandle::node()); }
+  BlobNode *node() const {
+    return static_cast<BlobNode *>(PoolHandle::object());
+  }
 };
 
 }  // namespace Poincare

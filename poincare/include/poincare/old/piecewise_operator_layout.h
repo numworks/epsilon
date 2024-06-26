@@ -63,7 +63,7 @@ class PiecewiseOperatorLayout /*final*/ : public GridLayout {
   // Make private. Use addRow instead.
   using GridLayout::addChildAtIndexInPlace;
   PiecewiseOperatorLayoutNode *node() const {
-    return static_cast<PiecewiseOperatorLayoutNode *>(OLayout::node());
+    return static_cast<PiecewiseOperatorLayoutNode *>(OLayout::object());
   }
 };
 

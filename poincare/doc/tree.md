@@ -1,14 +1,19 @@
-This file is about the internal representation and usage of Trees. Go to TODO if
-you want to use them in applications.
+> [!IMPORTANT] This file is about the internal representation and usage of Trees.
+>
+> Go to TODO if you want to use them in applications.
 
 ## Summary
 
-- [What is a Tree ?] #what-is-a-tree
+- [What is a Tree ?](#what-is-a-tree)
+- [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
 - [How to inspect the structure of a Tree ?](#how-to-inspect-the-structure-of-a-tree-)
+- [How to create a Tree at run time ?](#how-to-create-a-tree-at-run-time-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
+- [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
+- [How to transform a Tree using pattern matching ?](#how-to-transform-a-tree-using-pattern-matching-)
 
 
-# Tree data structure
+# What is a Tree ?
 
 [`Tree`](../src/memory/tree.h) is the central data structure in Poincare.
 
@@ -87,26 +92,17 @@ above this parent and walk downward from there (this is what
 Most of the time, algorithms are built such that their behavior doesn't change
 depending of where your tree is or what are its siblings.
 
-### Ranges
 
-Related types can be grouped inside ranges. A range is defined on consecutive nodes.
-It generates a method that can be called on a `Tree *`.
+## How to know what Type a Tree has ?
 
-```cpp
-NODE(Zero)
-...
-NODE(EulerE)
-NODE(Pi)
+There are three situations to distinguish:
 
-RANGE(MathematicalConstant, EulerE, Pi)
-RANGE(Number, Zero, Pi)
-```
+- If you want to test if your Tree's root is a node of a given type, say `Cos`, use the automatically defined `tree->isCos()` method.
 
-In the example above, the range `MathematicalConstant` contains all the nodes from `EulerE` to `Pi`,
-and the range `Number` contains all the nodes from `Zero` to `Pi`. The first range generates a method
-`tree->isMathematicalConstant()` and the second range generates a method `tree->isNumber()`.
+- If you want to test if the root belongs to a group of related type, there maybe a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers can be used with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
 
-The range `MathematicalConstant` is included in the range `Number`.
+- If you are more interested by the kind of mathematical object the tree represents, Dimension analysis is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a scalar or a matrix dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
+
 
 ## How to inspect the structure of a Tree ?
 The structure of a `Tree` can be inspected with several log functions (available only in DEBUG) depending on the level of detail your are interested with :
@@ -132,31 +128,54 @@ The structure of a `Tree` can be inspected with several log functions (available
   2+3
   ```
 
+## How to create a Tree at runtime ?
 
-## The TreeStack
+When you need a Tree depending on user content or computed values, you need to build it on the `TreeStack`.
 
-Trees may live anywhere (inside buffers in apps, in the storage, in flash) but only the ones in the `TreeStack` can be modified.
+> [!NOTE]
+> **TreeStack**: the TreeStack is a dedicated range of memory where you can create
+> and play with your trees temporarily. It is not intended for storage and can be
+> cleared by exceptions. You must save your trees elsewhere before you return to
+> the app’s code.
 
-The `TreeStack` is a dedicated range of memory where you can create and play
-with your trees temporarily. It is not intended for storage and can be cleared by
-exceptions. You must save your trees elsewhere before you return to the app’s code.
+The low-level method is presented here, for a safer approach, read [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-).
 
-The primary way to create trees from scratch is to push nodes at the end of the
-`SharedTreeStack` with the `push*` methods. For instance :
+### Pushing nodes
+
+The most basic way to create trees from scratch is to push nodes successively at the end of the TreeStack.
+The `SharedTreeStack` global object have push methods for each kind of node:
 
 ```cpp
-// pushing an Addition node with two-children and saving its address in *add*
-Tree * add = SharedTreeStack->pushAdd(2);
-// pushing a One node (that has no children) representing 1
-SharedTreeStack->pushOne();
-// cloning an other Tree at the end of the TreeStack
-otherTree->clone()
-// add now points to 1 + cloneOfOtherTree
+// pushing an Add (addition) node with two-children
+Tree * expr = SharedTreeStack->pushAdd(2);
+```
+```cpp
+// pushing Pi
+SharedTreeStack->pushPi();
+```
+```cpp
+// pushing a double
+SharedTreeStack->pushDoubleFloat(3.0);
 ```
 
-> [!CAUTION]
-> Be careful with `Tree *` they are easily broken when changing something above
-> them in the TreeStack:
+You are responsible to create a valid Tree structure using this method.
+
+If you do the three previous operations in that order, `expr` will point to the tree `π+3.0`.
+
+If you do only the first two, `expr` will silently point to a broken Tree with garbage that will crash when used.
+
+### Cloning trees
+
+Since all methods returning a new Tree* need to push it at the end of the TreeStack,
+you can interleave node pushes with tree creation methods to build a more complex structure.
+
+```cpp
+Tree * expr2 = SharedTreeStack->pushCos();
+expr->cloneTree()
+// expr2->logSerialize() prints "cos(π+3.0)"
+```
+
+## TreeStack
 
 ```cpp
 Tree * a = someTree->clone();
@@ -372,15 +391,16 @@ template <KTreeConcept KT> f(KT ktree) {
 </details>
 
 
-
+## How to create a Tree using pattern matching ?
+## How to transform a Tree using pattern matching ?
 ## Pattern matching
 
 Constexpr trees are the basis of a much-used mechanism to create and rewrite
 trees: pattern-matching.
 
-The pattern is a constexpr tree containing placeholders named `KA`,`KB`…`KH`.
+The pattern is a [constexpr tree](#how-to-create-a-tree-at-compile-time-) containing placeholders named `KA`,`KB`…`KH`.
 
-For instance you can match Cosine(Addition(2, 3)) against `KCos(KA)` and will
+For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
 obtain a Context where `ctx[KA]` points to the Addition tree inside your
 expression.
 

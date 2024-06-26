@@ -60,28 +60,8 @@ template <typename T>
 std::complex<T> DivisionNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
-  constexpr T zero = static_cast<T>(0.0);
-  if (d.real() == zero && d.imag() == zero) {
-    return complexNAN<T>();
-  }
-  // Special case to prevent (inf,0)/(1,0) from returning (inf, nan).
-  if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
-    // Handle case of pure imaginary/real divisions
-    if (c.imag() == zero && d.imag() == zero) {
-      return std::complex<T>(c.real() / d.real(), zero);
-    }
-    if (c.real() == zero && d.real() == zero) {
-      return std::complex<T>(c.imag() / d.imag(), zero);
-    }
-    if (c.imag() == zero && d.real() == zero) {
-      return std::complex<T>(zero, -c.real() / d.imag());
-    }
-    if (c.real() == zero && d.imag() == zero) {
-      return std::complex<T>(zero, c.imag() / d.real());
-    }
-    // Other cases are left to the standard library, and might return NaN.
-  }
-  return c / d;
+  assert(false);
+  return complexNAN<T>();
 }
 
 // Division

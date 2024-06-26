@@ -16,21 +16,21 @@ class Arithmetic {
     uint8_t numberOfFactors = 0;
   };
 
-  static bool SimplifyFactorial(Tree* expr);
+  static bool ReduceFactorial(Tree* expr);
   static bool ExpandFactorial(Tree* expr);
-  static bool SimplifyQuotientOrRemainder(Tree* expr);
-  static bool SimplifyFloor(Tree* expr);
-  static bool SimplifyRound(Tree* expr);
-  static bool SimplifyFactor(Tree* expr);
+  static bool ReduceQuotientOrRemainder(Tree* expr);
+  static bool ReduceFloor(Tree* expr);
+  static bool ReduceRound(Tree* expr);
+  static bool ReduceFactor(Tree* expr);
 
   // Turn binomial and permute into factorials
-  static bool SimplifyPermute(Tree* expr);
+  static bool ReducePermute(Tree* expr);
   static bool ExpandPermute(Tree* expr);
-  static bool SimplifyBinomial(Tree* expr);
+  static bool ReduceBinomial(Tree* expr);
   static bool ExpandBinomial(Tree* expr);
 
-  static bool SimplifyGCD(Tree* expr) { return SimplifyGCDOrLCM(expr, true); }
-  static bool SimplifyLCM(Tree* expr) { return SimplifyGCDOrLCM(expr, false); }
+  static bool ReduceGCD(Tree* expr) { return ReduceGCDOrLCM(expr, true); }
+  static bool ReduceLCM(Tree* expr) { return ReduceGCDOrLCM(expr, false); }
 
   static bool BeautifyFactor(Tree* expr);
 
@@ -40,7 +40,7 @@ class Arithmetic {
   static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);
 
  private:
-  static bool SimplifyGCDOrLCM(Tree* expr, bool isGCD);
+  static bool ReduceGCDOrLCM(Tree* expr, bool isGCD);
   static Tree* PushPrimeFactorization(IntegerHandler m);
 };
 

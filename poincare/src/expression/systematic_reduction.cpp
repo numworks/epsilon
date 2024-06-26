@@ -96,7 +96,7 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::ATrig:
       return Trigonometry::ReduceATrig(u);
     case Type::Binomial:
-      return Arithmetic::SimplifyBinomial(u);
+      return Arithmetic::ReduceBinomial(u);
     case Type::Arg:
       return SystematicOperation::ReduceComplexArgument(u);
     case Type::NthDiff:
@@ -108,18 +108,18 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Exp:
       return SystematicOperation::ReduceExp(u);
     case Type::Fact:
-      return Arithmetic::SimplifyFactorial(u);
+      return Arithmetic::ReduceFactorial(u);
     case Type::Factor:
-      return Arithmetic::SimplifyFactor(u);
+      return Arithmetic::ReduceFactor(u);
     case Type::Floor:
-      return Arithmetic::SimplifyFloor(u);
+      return Arithmetic::ReduceFloor(u);
     case Type::GCD:
-      return Arithmetic::SimplifyGCD(u);
+      return Arithmetic::ReduceGCD(u);
     case Type::Im:
     case Type::Re:
       return SystematicOperation::ReduceComplexPart(u);
     case Type::LCM:
-      return Arithmetic::SimplifyLCM(u);
+      return Arithmetic::ReduceLCM(u);
     case Type::ListSort:
     case Type::Median:
       return List::ShallowApplyListOperators(u);
@@ -130,7 +130,7 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Mult:
       return SystematicOperation::ReduceMultiplication(u);
     case Type::Permute:
-      return Arithmetic::SimplifyPermute(u);
+      return Arithmetic::ReducePermute(u);
     case Type::Piecewise:
       return Binary::ReducePiecewise(u);
     case Type::Pow:
@@ -139,9 +139,9 @@ bool SystematicReduction::Switch(Tree* u) {
       return SystematicOperation::ReducePowerReal(u);
     case Type::Quo:
     case Type::Rem:
-      return Arithmetic::SimplifyQuotientOrRemainder(u);
+      return Arithmetic::ReduceQuotientOrRemainder(u);
     case Type::Round:
-      return Arithmetic::SimplifyRound(u);
+      return Arithmetic::ReduceRound(u);
     case Type::Sign:
       return SystematicOperation::ReduceSign(u);
     case Type::Sum:

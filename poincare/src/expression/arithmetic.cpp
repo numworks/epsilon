@@ -31,7 +31,7 @@ OMG::Troolean IsPositiveInteger(const Tree* tree) {
   return isInteger;
 }
 
-bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
+bool Arithmetic::ReduceQuotientOrRemainder(Tree* expr) {
   assert(expr->numberOfChildren() == 2);
   bool isQuo = expr->isQuo();
   const Tree* num = expr->child(0);
@@ -56,7 +56,7 @@ bool Arithmetic::SimplifyQuotientOrRemainder(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::SimplifyFloor(Tree* expr) {
+bool Arithmetic::ReduceFloor(Tree* expr) {
   Tree* child = expr->child(0);
   if (!child->isRational()) {
     return false;
@@ -68,7 +68,7 @@ bool Arithmetic::SimplifyFloor(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::SimplifyRound(Tree* expr) {
+bool Arithmetic::ReduceRound(Tree* expr) {
   const Tree* child = expr->child(0);
   OMG::Troolean parameterIsInteger = IsInteger(child->nextTree());
   if (parameterIsInteger == OMG::Troolean::False) {
@@ -85,7 +85,7 @@ bool Arithmetic::SimplifyRound(Tree* expr) {
             KPow(10_e, KMult(-1_e, KB))));
 }
 
-bool Arithmetic::SimplifyFactor(Tree* expr) {
+bool Arithmetic::ReduceFactor(Tree* expr) {
   const Tree* child = expr->child(0);
   if (!child->isRational()) {
     expr->cloneTreeOverTree(KBadType);
@@ -94,7 +94,7 @@ bool Arithmetic::SimplifyFactor(Tree* expr) {
   return false;
 }
 
-bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
+bool Arithmetic::ReduceGCDOrLCM(Tree* expr, bool isGCD) {
   bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
   Tree* first = expr->child(0);
   Tree* next = first;
@@ -123,7 +123,7 @@ bool Arithmetic::SimplifyGCDOrLCM(Tree* expr, bool isGCD) {
   return true;
 }
 
-bool Arithmetic::SimplifyFactorial(Tree* expr) {
+bool Arithmetic::ReduceFactorial(Tree* expr) {
   const Tree* child = expr->child(0);
   OMG::Troolean childIsPositiveInteger = IsPositiveInteger(child);
   if (childIsPositiveInteger == OMG::Troolean::Unknown) {
@@ -149,7 +149,7 @@ bool Arithmetic::ExpandFactorial(Tree* expr) {
   return true;
 }
 
-bool Arithmetic::SimplifyPermute(Tree* expr) {
+bool Arithmetic::ReducePermute(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean childrenArePositiveInteger =
@@ -181,7 +181,7 @@ bool Arithmetic::ExpandPermute(Tree* expr) {
       KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
 
-bool Arithmetic::SimplifyBinomial(Tree* expr) {
+bool Arithmetic::ReduceBinomial(Tree* expr) {
   Tree* n = expr->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean kIsInteger = IsInteger(k);

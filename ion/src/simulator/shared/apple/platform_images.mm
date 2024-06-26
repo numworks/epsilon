@@ -22,7 +22,8 @@ static CGContextRef createABGR8888Context(size_t width, size_t height) {
     nullptr, // The context will allocate and take ownership of the bitmap buffer
     width, height,
     bitsPerComponent, bytesPerRow, colorSpace,
-    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big
+    // bitmapInfo accepts constants from CGImageAlphaInfo and CGBitmapInfo
+    static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)
   );
   if (colorSpace) {
     CFRelease(colorSpace);

@@ -13,7 +13,7 @@
 
 namespace Poincare::Internal {
 
-bool Derivation::ShallowSimplify(Tree* node) {
+bool Derivation::Reduce(Tree* node) {
   // Tree's children are expected to have been reduced beforehand.
   assert(node->isNthDiff());
   const Tree* symbol = node->child(0);

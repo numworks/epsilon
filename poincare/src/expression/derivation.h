@@ -8,8 +8,8 @@ namespace Poincare::Internal {
 class Derivation {
  public:
   // Shallow simplify a derivation Tree* inplace.
-  static bool ShallowSimplify(Tree* e);
-  TREE_REF_WRAP(ShallowSimplify)
+  static bool Reduce(Tree* e);
+  TREE_REF_WRAP(Reduce)
 
  private:
   /* Push derivand derivation on the pool. If force is true, push a diff tree

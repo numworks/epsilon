@@ -100,7 +100,7 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Arg:
       return SystematicOperation::ReduceComplexArgument(u);
     case Type::NthDiff:
-      return Derivation::ShallowSimplify(u);
+      return Derivation::Reduce(u);
     case Type::Dim:
       return SystematicOperation::ReduceDim(u);
     case Type::Distribution:

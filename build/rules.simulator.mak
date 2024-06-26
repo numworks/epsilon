@@ -5,6 +5,7 @@ $(call create_goal,epsilon, \
   escher \
   ion \
   kandinsky \
+  liba_bridge \
   omg \
   poincare \
   python \
@@ -16,6 +17,7 @@ $(call create_goal,test, \
   escher.test \
   ion.test \
   kandinsky.test \
+  liba_bridge \
   omg.test \
   poincare.test \
   python.test \

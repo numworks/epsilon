@@ -1,9 +1,8 @@
 #ifndef LIBA_BRIDGE_STRING_H
 #define LIBA_BRIDGE_STRING_H
 
+#include <liba/include/private/macros.h>
 #include_next <string.h>
-
-#include "../private/macros.h"
 
 LIBA_BEGIN_DECLS
 

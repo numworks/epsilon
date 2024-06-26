@@ -519,11 +519,9 @@ int CursorMotion::CollapsingAbsorbingChildIndex(
   return direction.isRight() && l->isFractionLayout() ? 1 : 0;
 }
 
-bool CursorMotion::IsCollapsable(const Tree* l, const Tree* root,
+bool CursorMotion::IsCollapsable(const Layout* l, const Rack* root,
                                  OMG::HorizontalDirection direction) {
   switch (l->layoutType()) {
-    case LayoutType::Rack:
-      return l->numberOfChildren() > 0;
     case LayoutType::Fraction: {
       /* We do not want to absorb a fraction if something else is already being
        * absorbed. This way, the user can write a product of fractions without

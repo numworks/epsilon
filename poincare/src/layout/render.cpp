@@ -236,7 +236,7 @@ KDSize Render::Size(const Layout* l) {
 
 KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
   assert(root <= l && root->nextTree() > l);
-  assert(l->isLayout());
+  assert(l->isRackOrLayout());
   if (l == root) {
     return KDPointZero;
   }

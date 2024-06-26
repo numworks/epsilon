@@ -4,6 +4,8 @@
 #include <omg/directions.h>
 #include <poincare/src/memory/tree.h>
 
+#include "rack.h"
+
 namespace Poincare::Internal {
 
 enum class DeletionMethod {
@@ -36,7 +38,7 @@ class CursorMotion {
   static int IndexToPointToWhenInserting(const Tree* l);
   static Tree* DeepChildToPointToWhenInserting(Tree* l);
 
-  static bool IsCollapsable(const Tree* l, const Tree* root,
+  static bool IsCollapsable(const Layout* l, const Rack* root,
                             OMG::HorizontalDirection direction);
 
   static bool ShouldCollapseSiblingsOnDirection(

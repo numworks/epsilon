@@ -197,7 +197,7 @@ static bool IsTemporaryAutocompletedBracketPair(const Tree* l, Side tempSide) {
 }
 
 // Return leftParenthesisIndex
-static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(TreeRef rack,
+static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(Rack* rack,
                                                                int index) {
   int leftParenthesisIndex = index + 1;
   // TODO: Use Iterator
@@ -366,7 +366,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
    * not merged */
   if (numberOfInsertedChildren == 1 && !autocompletedPairInserted) {
     // ref is undef
-    collapseSiblingsOfLayout(toCollapse);
+    collapseSiblingsOfLayout(Layout::From(toCollapse));
     int indexOfChildToPointTo =
         (forceRight || forceLeft)
             ? k_outsideIndex
@@ -1044,7 +1044,7 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   setLayout(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
 }
 
-void LayoutCursor::collapseSiblingsOfLayout(Tree* l) {
+void LayoutCursor::collapseSiblingsOfLayout(Layout* l) {
   using namespace OMG;
   for (HorizontalDirection dir : {Direction::Right(), Direction::Left()}) {
     if (CursorMotion::ShouldCollapseSiblingsOnDirection(l, dir)) {
@@ -1055,8 +1055,8 @@ void LayoutCursor::collapseSiblingsOfLayout(Tree* l) {
 }
 
 void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
-    Tree* l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
-  Tree* rack = cursorNode();
+    Layout* l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
+  Rack* rack = cursorNode();
   assert(rack->indexOfChild(l) != -1);
   /* This method absorbs the siblings of a layout when it's inserted.
    *
@@ -1074,7 +1074,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
   int indexInParent = rack->indexOfChild(l);
   int numberOfSiblings = rack->numberOfChildren();
 
-  Tree* sibling;
+  Layout* sibling;
   int step = direction.isRight() ? 1 : -1;
   /* Loop through the siblings and add them into l until an uncollapsable
    * layout is encountered. */
@@ -1087,7 +1087,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
     if (!CursorMotion::IsCollapsable(sibling, rack, direction)) {
       break;
     }
-    sibling = NAry::DetachChildAtIndex(rack, siblingIndex);
+    sibling = Layout::From(NAry::DetachChildAtIndex(rack, siblingIndex));
     int newIndex = direction.isRight() ? absorbingRack->numberOfChildren() : 0;
     assert(!sibling->isRackLayout());
     NAry::AddChildAtIndex(absorbingRack, sibling, newIndex);

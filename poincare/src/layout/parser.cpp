@@ -51,9 +51,11 @@ Type ExpressionType(LayoutType type) {
 
 Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
                     ParsingContext::ParsingMethod method) {
+  if (l->isRackLayout()) {
+    // TODO: should be inlined in the caller
+    return RackParser(l, context, -1, method).parse();
+  }
   switch (l->layoutType()) {
-    case LayoutType::Rack:
-      return RackParser(l, context, -1, method).parse();
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:

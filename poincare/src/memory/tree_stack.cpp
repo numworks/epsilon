@@ -172,7 +172,7 @@ void TreeStack::executeAndStoreLayout(ActionWithContext action, void* context,
                                       Relax relax) {
   assert(numberOfTrees() == 0);
   execute(action, context, data, k_maxNumberOfBlocks, relax);
-  assert(Tree::FromBlocks(firstBlock())->isLayout());
+  assert(Tree::FromBlocks(firstBlock())->isRackLayout());
   *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
   flush();
 }

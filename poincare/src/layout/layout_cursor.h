@@ -121,8 +121,8 @@ class LayoutCursor {
   virtual void invalidateSizesAndPositions() {}
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
 
-  void collapseSiblingsOfLayout(Tree* l);
-  void collapseSiblingsOfLayoutOnDirection(Tree* l,
+  void collapseSiblingsOfLayout(Layout* l);
+  void collapseSiblingsOfLayoutOnDirection(Layout* l,
                                            OMG::HorizontalDirection direction,
                                            int absorbingChildIndex);
 

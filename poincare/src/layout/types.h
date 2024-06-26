@@ -1,4 +1,7 @@
+#ifndef ONLY_LAYOUTS
 NODE(Rack, NARY16)
+#endif
+
 NODE(VerticalOffset, 1, {
   bool isSubscript : 1;
   bool isPrefix : 1;
@@ -78,4 +81,5 @@ NODE(Conj, 1)
 NODE(Root, 2)
 NODE(Sqrt, 1)
 
-RANGE(Layout, RackLayout, SqrtLayout)
+RANGE(Layout, VerticalOffsetLayout, SqrtLayout)
+RANGE(RackOrLayout, RackLayout, SqrtLayout)

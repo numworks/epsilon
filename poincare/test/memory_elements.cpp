@@ -376,7 +376,7 @@ QUIZ_CASE(pcj_type_block) {
                                                     .userNamed = false}),
       std::make_pair(Type::RackLayout, TypeBlockProperties{.nAry = true,
                                                            .expression = false,
-                                                           .layout = true,
+                                                           .layout = false,
                                                            .integer = false,
                                                            .rational = false,
                                                            .number = false,

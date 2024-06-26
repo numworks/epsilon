@@ -41,36 +41,25 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
           type.isCos() ? std::cos(angleInput) : std::sin(angleInput);
       return NeglectRealOrImaginaryPartIfNegligible(res, angleInput);
     }
-    case Type::Tan: {
-      std::complex<T> angleInput = ConvertToRadian(value, angleUnit);
-      /* tan should be undefined at (2n+1)*pi/2 for any integer n.
-       * std::tan is not reliable at these values because it is diverging and
-       * any approximation errors on pi could easily yield a finite result. At
-       * these values, cos yields 0, but is also greatly affected by
-       * approximation error and could yield a non-null value : cos(pi/2+e) ~=
-       * -e On the other hand, sin, which should yield either 1 or -1 around
-       * these values is much more resilient : sin(pi/2+e) ~= 1 - (e^2)/2. We
-       * therefore use sin to identify values at which tan should be undefined.
-       */
-      std::complex<T> sin = std::sin(angleInput);
-      if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
-        return NAN;
-      }
-      std::complex<T> res = std::tan(angleInput);
-      return NeglectRealOrImaginaryPartIfNegligible(res, angleInput);
-    }
+    case Type::Tan:
+    case Type::Cot:
     case Type::Sec:
-    case Type::Csc:
-    case Type::Cot: {
+    case Type::Csc: {
+      /* We use std::sin/std::cos instead of std::tan for 4 reasons:
+       * - we do not want tan(π/2) to be infinity
+       * - we have the same approximation when computing sin/cos or tan
+       * - we homogenize approximation across platforms
+       * - we have a symmetrical computation to cotangent
+       * Same comment for cotangent. */
       std::complex<T> denominator = TrigonometricToComplex(
-          type.isSec() ? Type::Cos : Type::Sin, value, angleUnit);
+          type.isTan() || type.isSec() ? Type::Cos : Type::Sin, value,
+          angleUnit);
       std::complex<T> numerator =
-          type.isCot() ? TrigonometricToComplex(Type::Cos, value, angleUnit)
-                       : 1;
-      if (denominator == static_cast<T>(0.0) ||
-          (type.isCot() && (numerator == static_cast<T>(1.0) ||
-                            numerator == static_cast<T>(-1.0)))) {
-        // Take advantage of numerator with cot, cf comment for Tangent
+          type.isTan() || type.isCot()
+              ? TrigonometricToComplex(type.isTan() ? Type::Sin : Type::Cos,
+                                       value, angleUnit)
+              : 1;
+      if (denominator == static_cast<T>(0.0)) {
         return std::complex<T>(NAN, NAN);
       }
       return numerator / denominator;

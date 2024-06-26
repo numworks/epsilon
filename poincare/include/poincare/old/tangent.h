@@ -40,24 +40,6 @@ class TangentNode final : public ExpressionNode {
                 OExpression symbolValue) override;
   OExpression unaryFunctionDifferential(
       const ReductionContext& reductionContext) override;
-
-  // Evaluation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext,
-                                                   computeOnComplex<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext,
-                                                    computeOnComplex<double>);
-  }
 };
 
 class Tangent final : public ExpressionOneChild<Tangent, TangentNode> {

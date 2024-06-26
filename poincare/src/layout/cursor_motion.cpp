@@ -512,7 +512,7 @@ bool CursorMotion::ShouldCollapseSiblingsOnDirection(
   } else {
     return node->isConjLayout() || node->isFractionLayout() ||
            node->isSqrtLayout() || node->isRootLayout() ||
-           node->isSquareBracketPair();
+           node->isSquareBrackets();
   }
 }
 

@@ -212,7 +212,7 @@ KDSize Render::Size(const Layout* node) {
     }
     case LayoutType::Matrix: {
       KDSize matrixSize =
-          SquareBracketPair::SizeGivenChildSize(Grid::From(node)->size(s_font));
+          SquareBrackets::SizeGivenChildSize(Grid::From(node)->size(s_font));
       width = matrixSize.width();
       height = matrixSize.height();
       break;
@@ -277,7 +277,7 @@ KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
   KDPoint p(x, y);
   if (isMatrixLayout()) {
     /* TODO calling height here is bad for complexity */
-    return p.translatedBy(SquareBracketPair::ChildOffset(height(font)));
+    return p.translatedBy(SquareBrackets::ChildOffset(height(font)));
   }
   assert(isPiecewiseLayout());
   return p.translatedBy(
@@ -723,8 +723,8 @@ void Render::DrawGridLayout(const Layout* node, KDContext* ctx, KDPoint p,
       rowCumulatedHeight[rows - 1 - !editing]);
   KDPoint offset = KDPointZero;
   if (node->isMatrixLayout()) {
-    size = SquareBracketPair::SizeGivenChildSize(size);
-    offset = SquareBracketPair::ChildOffset(size.height());
+    size = SquareBrackets::SizeGivenChildSize(size);
+    offset = SquareBrackets::ChildOffset(size.height());
   } else {
     assert(node->isPiecewiseLayout());
     if (node->numberOfChildren() == 4 && !grid->isEditing() &&
@@ -801,14 +801,14 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
                 style.glyphColor);
 }
 
-void RenderSquareBracketPair(
+void RenderSquareBrackets(
     bool left, KDCoordinate childHeight, KDContext* ctx, KDPoint p,
     const KDGlyph::Style& style,
-    KDCoordinate minVerticalMargin = SquareBracketPair::k_minVerticalMargin,
-    KDCoordinate bracketWidth = SquareBracketPair::k_bracketWidth,
+    KDCoordinate minVerticalMargin = SquareBrackets::k_minVerticalMargin,
+    KDCoordinate bracketWidth = SquareBrackets::k_bracketWidth,
     bool renderTopBar = true, bool renderBottomBar = true,
     bool renderDoubleBar = false) {
-  using namespace SquareBracketPair;
+  using namespace SquareBrackets;
   KDCoordinate horizontalBarX =
       p.x() + (left ? k_externalWidthMargin : k_lineThickness);
   KDCoordinate horizontalBarLength =
@@ -1163,12 +1163,12 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
                                              point, braceStyle);
           }
         } else {
-          RenderSquareBracketPair(left, Height(node->child(0)), ctx, point,
-                                  style, Pair::MinVerticalMargin(node),
-                                  Pair::BracketWidth(node),
-                                  node->layoutType() == LayoutType::Ceil,
-                                  node->layoutType() == LayoutType::Floor,
-                                  node->layoutType() == LayoutType::VectorNorm);
+          RenderSquareBrackets(left, Height(node->child(0)), ctx, point, style,
+                               Pair::MinVerticalMargin(node),
+                               Pair::BracketWidth(node),
+                               node->layoutType() == LayoutType::Ceil,
+                               node->layoutType() == LayoutType::Floor,
+                               node->layoutType() == LayoutType::VectorNorm);
         }
       }
       return;
@@ -1356,11 +1356,11 @@ void Render::RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
     case LayoutType::Matrix: {
       const Grid* grid = Grid::From(node);
       KDCoordinate height = grid->height(s_font);
-      RenderSquareBracketPair(true, height, ctx, p, style);
+      RenderSquareBrackets(true, height, ctx, p, style);
       KDCoordinate rightOffset =
-          SquareBracketPair::ChildOffset(height).x() + grid->width(s_font);
-      RenderSquareBracketPair(false, height, ctx,
-                              p.translatedBy(KDPoint(rightOffset, 0)), style);
+          SquareBrackets::ChildOffset(height).x() + grid->width(s_font);
+      RenderSquareBrackets(false, height, ctx,
+                           p.translatedBy(KDPoint(rightOffset, 0)), style);
       return;
     }
     case LayoutType::Piecewise: {

@@ -32,7 +32,7 @@ NODE(CurlyBraces, 1, {
   bool rightIsTemporary : 1;
 })
 
-RANGE(SquareBracketPair, AbsLayout, VectorNormLayout)
+RANGE(SquareBrackets, AbsLayout, VectorNormLayout)
 RANGE(AutocompletedPair, ParenthesesLayout, CurlyBracesLayout)
 RANGE(Pair, AbsLayout, CurlyBracesLayout)
 

@@ -71,7 +71,7 @@ constexpr KDPoint ChildOffset(KDCoordinate minVerticalMargin,
 }
 }  // namespace Pair
 
-namespace SquareBracketPair {
+namespace SquareBrackets {
 using Pair::k_lineThickness;
 constexpr KDCoordinate k_internalWidthMargin = 5;
 constexpr KDCoordinate k_externalWidthMargin = 2;
@@ -88,21 +88,21 @@ constexpr KDSize SizeGivenChildSize(KDSize childSize) {
 constexpr KDPoint ChildOffset(KDCoordinate childHeight) {
   return Pair::ChildOffset(k_minVerticalMargin, k_bracketWidth, childHeight);
 }
-}  // namespace SquareBracketPair
+}  // namespace SquareBrackets
 
 namespace AbsoluteValue {
 constexpr KDCoordinate k_k_innerWidthMargin = 2;
-constexpr KDCoordinate k_bracketWidth =
-    Pair::k_lineThickness + k_k_innerWidthMargin +
-    SquareBracketPair::k_externalWidthMargin;
+constexpr KDCoordinate k_bracketWidth = Pair::k_lineThickness +
+                                        k_k_innerWidthMargin +
+                                        SquareBrackets::k_externalWidthMargin;
 constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace AbsoluteValue
 
 namespace VectorNorm {
 constexpr KDCoordinate k_innerWidthMargin = 2;
 constexpr KDCoordinate k_bracketWidth =
-    2 * Pair::k_lineThickness + SquareBracketPair::k_doubleBarMargin +
-    k_innerWidthMargin + SquareBracketPair::k_externalWidthMargin;
+    2 * Pair::k_lineThickness + SquareBrackets::k_doubleBarMargin +
+    k_innerWidthMargin + SquareBrackets::k_externalWidthMargin;
 constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace VectorNorm
 
@@ -151,7 +151,7 @@ inline KDCoordinate BracketWidth(const Layout* node) {
   switch (node->layoutType()) {
     case LayoutType::Ceil:
     case LayoutType::Floor:
-      return SquareBracketPair::k_bracketWidth;
+      return SquareBrackets::k_bracketWidth;
     case LayoutType::Abs:
       return AbsoluteValue::k_bracketWidth;
     case LayoutType::VectorNorm:
@@ -169,7 +169,7 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
   switch (node->layoutType()) {
     case LayoutType::Ceil:
     case LayoutType::Floor:
-      return SquareBracketPair::k_minVerticalMargin;
+      return SquareBrackets::k_minVerticalMargin;
     case LayoutType::Abs:
       return AbsoluteValue::k_minVerticalMargin;
     case LayoutType::VectorNorm:

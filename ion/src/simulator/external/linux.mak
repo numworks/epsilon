@@ -1,8 +1,6 @@
 SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
-  audio/dummy/SDL_dummyaudio.c \
   core/linux/SDL_threadprio.c \
   core/unix/SDL_poll.c \
-  file/SDL_rwops.c \
   filesystem/unix/SDL_sysfilesystem.c \
   haptic/dummy/SDL_syshaptic.c \
   hidapi/SDL_hidapi.c \
@@ -12,8 +10,6 @@ SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
   main/dummy/SDL_dummy_main.c \
   misc/dummy/SDL_sysurl.c \
   power/linux/SDL_syspower.c \
-  render/opengl/SDL_render_gl.c \
-  render/opengl/SDL_shaders_gl.c \
   thread/pthread/SDL_syscond.c \
   thread/pthread/SDL_sysmutex.c \
   thread/pthread/SDL_syssem.c \
@@ -47,3 +43,9 @@ LDFLAGS_sdl += \
   -ldl \
   -lpthread \
   -static-libgcc
+
+# Search this specific directory for SDL_config.h before $(PATH_sdl)
+# FIXME Move this file to a SDL directory?
+SFLAGS_sdl := -Iion/src/simulator/linux/include $(SFLAGS_sdl)
+# Make sure an error is raised if we ever use the standard SDL_config.h
+PRIVATE_SFLAGS_sdl += -DUSING_GENERATED_CONFIG_H

@@ -47,8 +47,8 @@ Tree* RackParser::parse() {
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
     }
-    return nullptr;
   }
+  return nullptr;
 }
 
 static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,

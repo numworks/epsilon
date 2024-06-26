@@ -295,8 +295,8 @@ char* LayoutToLatex(const Rack* rack, char* buffer, char* end) {
       TreeStackCheckpoint::Raise(type);
     }
     *buffer = 0;
-    return buffer;
   }
+  return buffer;
 }
 
 }  // namespace LatexParser

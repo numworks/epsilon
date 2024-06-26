@@ -439,7 +439,7 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::ToSystem(e, &context);
-  Simplification::SimplifySystem(e, true);
+  Simplification::ReduceSystem(e, true);
   Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
   *reduceFailure = false;
@@ -492,7 +492,7 @@ SystemExpression SystemExpression::getReducedDerivative(
   Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,
                            Parametric::VariableSign(result));
-  Simplification::SimplifySystem(result, false);
+  Simplification::ReduceSystem(result, false);
   /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
    * getSystemFunction is expected to be called on it later. */
   return SystemExpression::Builder(result);

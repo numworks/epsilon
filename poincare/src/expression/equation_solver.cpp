@@ -230,7 +230,7 @@ void EquationSolver::ProjectAndSimplify(Tree* equationsSet,
     *error = Error::EquationUndefined;
     return;
   }
-  Simplification::SimplifySystem(equationsSet, true);
+  Simplification::ReduceSystem(equationsSet, true);
   // Need to call Simplification::TryApproximationStrategyAgain otherwise.
   assert(projectionContext.m_strategy == Strategy::Default);
   if (equationsSet->isUndefined()) {
@@ -385,7 +385,7 @@ EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
   solution->moveTreeBeforeNode(
       SharedTreeStack->pushVar(variableId, ComplexSign::Unknown()));
   solution->moveNodeBeforeNode(SharedTreeStack->pushAdd(2));
-  Simplification::SimplifySystem(solution, true);
+  Simplification::ReduceSystem(solution, true);
   return Error::NoError;
 }
 

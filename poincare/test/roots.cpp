@@ -9,7 +9,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   ProjectionContext projCtx = {.m_complexFormat = ComplexFormat::Cartesian};
   Tree* coeff = parse(coefficients);
   Simplification::ToSystem(coeff, &projCtx);
-  Simplification::SimplifySystem(coeff, true);
+  Simplification::ReduceSystem(coeff, true);
   int numberOfCoefficients = coeff->numberOfChildren();
   Tree* result = nullptr;
   switch (numberOfCoefficients) {
@@ -25,10 +25,10 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
       quiz_assert(false);
   }
   // TODO: Advanced reduction is needed to simplify roots of rationals
-  Simplification::SimplifySystem(result, true);
+  Simplification::ReduceSystem(result, true);
   Tree* expected = parse(expectedRoots);
   Simplification::ToSystem(expected, &projCtx);
-  Simplification::SimplifySystem(expected, false);
+  Simplification::ReduceSystem(expected, false);
   assert_trees_are_equal(expected, result);
   expected->removeTree();
   result->removeTree();

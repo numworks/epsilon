@@ -40,8 +40,8 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
         ToSystem(e, &projectionContext);
-        SimplifySystem(e, true);
-        // TODO: Should be in SimplifySystem but projectionContext is needed.
+        ReduceSystem(e, true);
+        // TODO: Should be in ReduceSystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
         Beautification::DeepBeautify(e, projectionContext);
       },
@@ -89,7 +89,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
          changed;
 }
 
-bool Simplification::SimplifySystem(Tree* e, bool advanced) {
+bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {

@@ -9,8 +9,8 @@ namespace Poincare::Internal {
 
 class Logarithm final {
  public:
-  static bool SimplifyLn(Tree* u);
-  TREE_REF_WRAP(SimplifyLn);
+  static bool ReduceLn(Tree* u);
+  TREE_REF_WRAP(ReduceLn);
   static bool ContractLn(Tree* node);
   TREE_REF_WRAP(ContractLn);
   static bool ExpandLn(Tree* node);

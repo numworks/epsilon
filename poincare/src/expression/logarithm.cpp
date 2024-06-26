@@ -13,7 +13,7 @@
 
 namespace Poincare::Internal {
 
-bool Logarithm::SimplifyLn(Tree* u) {
+bool Logarithm::ReduceLn(Tree* u) {
   Tree* child = u->child(0);
   if (child->isExp()) {
     // ln(exp(x)) -> x

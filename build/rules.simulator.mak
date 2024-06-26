@@ -30,6 +30,8 @@ $(call create_zip,epsilon%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
   app/assets/background.jpg \
 ))
 
+$(call document_other_target,epsilon.<flavors>.zip)
+
 $(call create_zip,htmlpack%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
   epsilon%js \
   ion/src/simulator/web/calculator.html \
@@ -39,6 +41,8 @@ $(call create_zip,htmlpack%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
 ) \
   ion/src/simulator/assets/background-with-shadow.webp \
 )
+
+$(call document_other_target,htmlpack.<flavors>.zip)
 
 epsilon%html: $(OUTPUT_DIRECTORY)/epsilon%html
 	@ :
@@ -50,4 +54,6 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 		--image $(filter %.webp,$^) \
 		--image $(filter %.jpg,$^) \
 		$(filter %.html,$^) >$@
+
+$(call document_other_target,epsilon.<flavors>.html)
 endif

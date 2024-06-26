@@ -28,6 +28,7 @@ $(call create_goal,kernel, \
   libaxx \
   omg.kernelassert \
 ,kernel, \
+In debug mode the kernel is built with -Os to fit in its section \
 )
 
 # Kernel without optimization is too large to fit in its 64k section.
@@ -65,6 +66,7 @@ $(call create_goal,flasher, \
   liba.minimal \
   libaxx \
   omg.minimal \
+,,Building flasher.flash will automatically jump at the right address \
 )
 
 ifeq ($(PLATFORM),n0120)
@@ -89,4 +91,7 @@ $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
 endef
 
 $(call rule_for_composite_dfu,epsilon,bootloader/bootloader.elf kernel/kernel.A%elf kernel/kernel.B%elf userland.A%elf userland.B%elf)
+$(call document_other_target,epsilon.<flavors>.dfu,Composite DFU file made of a bootloader and two kernel&userland)
+
 $(call rule_for_composite_dfu,test,bootloader/bootloader.elf kernel/kernel.A%elf kernel/kernel.B%elf userland_test.A%elf userland_test.B%elf)
+$(call document_other_target,test.<flavors>.dfu)

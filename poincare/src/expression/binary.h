@@ -16,14 +16,14 @@ class Binary {
 
   static const char* ComparisonOperatorName(TypeBlock type);
 
-  static bool SimplifyBooleanOperator(Tree* tree);
-  TREE_REF_WRAP(SimplifyBooleanOperator);
+  static bool ReduceBooleanOperator(Tree* tree);
+  TREE_REF_WRAP(ReduceBooleanOperator);
 
-  static bool SimplifyComparison(Tree* tree);
-  TREE_REF_WRAP(SimplifyComparison);
+  static bool ReduceComparison(Tree* tree);
+  TREE_REF_WRAP(ReduceComparison);
 
-  static bool SimplifyPiecewise(Tree* tree);
-  TREE_REF_WRAP(SimplifyPiecewise);
+  static bool ReducePiecewise(Tree* tree);
+  TREE_REF_WRAP(ReducePiecewise);
 
  private:
   constexpr static const char* k_logicalNotName = "not";

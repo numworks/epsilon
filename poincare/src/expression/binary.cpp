@@ -90,7 +90,7 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
  * - hook a SAT solver
  */
 
-bool Binary::SimplifyBooleanOperator(Tree* tree) {
+bool Binary::ReduceBooleanOperator(Tree* tree) {
   return
       // not true -> false
       PatternMatching::MatchReplace(tree, KLogicalNot(KTrue), KFalse) ||
@@ -127,7 +127,7 @@ bool Binary::SimplifyBooleanOperator(Tree* tree) {
       PatternMatching::MatchReplace(tree, KLogicalXor(KA, KA), KFalse);
 }
 
-bool Binary::SimplifyComparison(Tree* tree) {
+bool Binary::ReduceComparison(Tree* tree) {
   assert(tree->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
   if (tree->isInequality()) {
@@ -194,7 +194,7 @@ bool Binary::SimplifyComparison(Tree* tree) {
   return true;
 }
 
-bool Binary::SimplifyPiecewise(Tree* piecewise) {
+bool Binary::ReducePiecewise(Tree* piecewise) {
   int n = piecewise->numberOfChildren();
   int i = 0;
   Tree* child = piecewise->child(0);

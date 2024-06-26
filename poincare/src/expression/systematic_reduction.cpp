@@ -132,7 +132,7 @@ bool SystematicReduction::Switch(Tree* u) {
     case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
     case Type::Piecewise:
-      return Binary::SimplifyPiecewise(u);
+      return Binary::ReducePiecewise(u);
     case Type::Pow:
       return SystematicOperation::ReducePower(u);
     case Type::PowReal:
@@ -156,10 +156,10 @@ bool SystematicReduction::Switch(Tree* u) {
         return List::ShallowApplyListOperators(u);
       }
       if (u->type().isLogicalOperator()) {
-        return Binary::SimplifyBooleanOperator(u);
+        return Binary::ReduceBooleanOperator(u);
       }
       if (u->type().isComparison()) {
-        return Binary::SimplifyComparison(u);
+        return Binary::ReduceComparison(u);
       }
       if (u->isAMatrixOrContainsMatricesAsChildren()) {
         return Matrix::SystematicReduceMatrixOperation(u);

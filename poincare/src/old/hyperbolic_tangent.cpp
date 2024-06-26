@@ -16,14 +16,6 @@ size_t HyperbolicTangentNode::serialize(
       HyperbolicTangent::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-std::complex<T> HyperbolicTangentNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(
-      std::tanh(c), c);
-}
-
 bool HyperbolicTangentNode::derivate(const ReductionContext& reductionContext,
                                      Symbol symbol, OExpression symbolValue) {
   return HyperbolicTangent(this).derivate(reductionContext, symbol,
@@ -47,12 +39,5 @@ OExpression HyperbolicTangent::unaryFunctionDifferential(
   return Power::Builder(HyperbolicCosine::Builder(childAtIndex(0).clone()),
                         Rational::Builder(-2));
 }
-
-template std::complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<
-    float>(std::complex<float>, Preferences::ComplexFormat,
-           Preferences::AngleUnit);
-template std::complex<double> Poincare::HyperbolicTangentNode::computeOnComplex<
-    double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
-            Preferences::AngleUnit);
 
 }  // namespace Poincare

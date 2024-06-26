@@ -4,7 +4,7 @@ Here are guidelines to follow when developing in Poincare.
 These practices ensure an optimized, uniform and self-contained code base.
 
 > [!NOTE]
-> As Poincare is being updated, old files are still being processed and may noovert yet follow those guidelines.
+> As Poincare is being updated, old files are still being processed and may not yet follow those guidelines.
 >
 > If there is a good reason not to follow one of them, please add a comment explaining why.
 >
@@ -314,7 +314,7 @@ RANGE(TrigoHyperbolic, CosH, TanH)
 t->isTrigoHyperbolic()
 ```
 
-## Use layoutType in a switch
+## Layouts: Use layoutType in a switch
 > [!CAUTION]
 > Avoid this:
 
@@ -341,7 +341,7 @@ switch(layout->layoutType()) {
 }
 ```
 
-## Use Rack* and Layout* 
+## Layouts: Use Rack* and Layout*
 To make the distinction on what the Tree* points to.
 > [!CAUTION]
 > Avoid this:

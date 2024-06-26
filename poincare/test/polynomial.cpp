@@ -18,7 +18,7 @@ void assert_polynomial_is_parsed(const Tree* node,
   Tree* variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   Tree* clone = node->cloneTree();
-  SystematicReduction::DeepSystematicReduce(clone);
+  SystematicReduction::DeepReduce(clone);
   AdvancedSimplification::DeepExpand(clone);
   Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);

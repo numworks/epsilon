@@ -253,7 +253,7 @@ void assert_sign(const char* input, ComplexSign expectedSign,
   /* TODO_PCJ: Factorize this with Simplification::Simplify to have properly
    * projected variables, random trees, ... */
   Projection::DeepSystemProject(expression, {.m_complexFormat = complexFormat});
-  SystematicReduction::DeepSystematicReduce(expression);
+  SystematicReduction::DeepReduce(expression);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {

@@ -27,10 +27,10 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Tree* value = SharedTreeStack->pushAdd(2);
   bound->cloneTree();
   KVarX->cloneTree();
-  SystematicReduction::DeepSystematicReduce(value);
+  SystematicReduction::DeepReduce(value);
   Tree* tree = integrand->cloneTree();
   // TODO: This deep should have been done before
-  SystematicReduction::DeepSystematicReduce(tree);
+  SystematicReduction::DeepReduce(tree);
   Variables::Replace(tree, 0, value, false, true);
   /* We need to remove the constant part by expanding polynomials introduced by
    * the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */

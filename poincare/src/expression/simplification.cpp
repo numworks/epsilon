@@ -90,7 +90,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 }
 
 bool Simplification::SimplifySystem(Tree* e, bool advanced) {
-  bool changed = SystematicReduction::DeepSystematicReduce(e);
+  bool changed = SystematicReduction::DeepReduce(e);
   changed = List::BubbleUp(e, SystematicReduction::ShallowSystematicReduce) ||
             changed;
   if (advanced) {
@@ -107,7 +107,7 @@ bool Simplification::TryApproximationStrategyAgain(
     return false;
   }
   // NAries could be sorted again, some children may be merged.
-  SystematicReduction::DeepSystematicReduce(e);
+  SystematicReduction::DeepReduce(e);
   return true;
 }
 

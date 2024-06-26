@@ -9,8 +9,8 @@ class SystematicReduction {
   friend class SystematicOperation;
 
  public:
-  static bool DeepSystematicReduce(Tree* u);
-  TREE_REF_WRAP(DeepSystematicReduce);
+  static bool DeepReduce(Tree* u);
+  TREE_REF_WRAP(DeepReduce);
   static bool ShallowSystematicReduce(Tree* u);
   TREE_REF_WRAP(ShallowSystematicReduce);
 

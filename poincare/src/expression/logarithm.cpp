@@ -176,7 +176,7 @@ Tree* PushIK2Pi(int k) {
   (2_e)->cloneTree();
   Integer::Push(k);
   (π_e)->cloneTree();
-  SystematicReduction::DeepSystematicReduce(result);
+  SystematicReduction::DeepReduce(result);
   return result;
 }
 
@@ -322,7 +322,7 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   }
   NAry::SetNumberOfChildren(result, factorization.numberOfFactors + isNegative);
   NAry::SquashIfPossible(result);
-  assert(!SystematicReduction::DeepSystematicReduce(result));
+  assert(!SystematicReduction::DeepReduce(result));
   return result;
 }
 

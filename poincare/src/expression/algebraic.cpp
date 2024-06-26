@@ -99,7 +99,7 @@ TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
     if (numerator == negativeRationalExponent) {
       return expression->cloneTreeOverTree(1_e);
     }
-    SystematicReduction::DeepSystematicReduce(expression);
+    SystematicReduction::DeepReduce(expression);
     return expression;
   }
   if (expression->isMult()) {

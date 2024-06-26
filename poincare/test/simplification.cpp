@@ -27,7 +27,7 @@ void deepSystematicReduce_and_operation_to(const Tree* input,
                                            const Tree* output) {
   Tree* tree = input->cloneTree();
   // Expand / contract expects a deep systematic reduced tree
-  SystematicReduction::DeepSystematicReduce(tree);
+  SystematicReduction::DeepReduce(tree);
   quiz_assert(operation(tree));
   assert_trees_are_equal(tree, output);
   tree->removeTree();

@@ -15,14 +15,14 @@
 
 namespace Poincare::Internal {
 
-bool SystematicReduction::DeepSystematicReduce(Tree* u) {
+bool SystematicReduction::DeepReduce(Tree* u) {
   /* Although they are also flattened in ShallowSystematicReduce, flattening
    * here could save multiple ShallowSystematicReduce and flatten calls. */
   bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
   // Never simplify any dependencies
   if (!u->isSet()) {
     for (Tree* child : u->children()) {
-      modified |= DeepSystematicReduce(child);
+      modified |= DeepReduce(child);
     }
   }
 

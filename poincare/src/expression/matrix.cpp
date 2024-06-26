@@ -184,7 +184,7 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
 bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
                          bool approximate) {
   // The matrix children have to be reduced to be able to spot 0
-  assert(approximate || !SystematicReduction::DeepSystematicReduce(matrix));
+  assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
   TreeRef det;
   if (determinant) {

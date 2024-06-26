@@ -415,13 +415,12 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
         Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
-        assert(
-            !(simplify && SystematicReduction::DeepSystematicReduce(inserted)));
+        assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
-    assert(!(simplify && SystematicReduction::DeepSystematicReduce(inserted)));
+    assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
     node = node->nextNode();
   }
   return top;

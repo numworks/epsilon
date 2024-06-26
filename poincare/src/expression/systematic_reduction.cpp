@@ -162,7 +162,7 @@ bool SystematicReduction::Switch(Tree* u) {
         return Binary::SimplifyComparison(u);
       }
       if (u->isAMatrixOrContainsMatricesAsChildren()) {
-        return Matrix::SimplifySwitch(u);
+        return Matrix::SystematicReduceMatrixOperation(u);
       }
       return false;
   }

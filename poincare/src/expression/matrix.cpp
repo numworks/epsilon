@@ -417,7 +417,7 @@ Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
   return result;
 }
 
-bool Matrix::SimplifySwitch(Tree* u) {
+bool Matrix::SystematicReduceMatrixOperation(Tree* u) {
   // Dim is handled in SystematicReduction::Switch
   assert(u->isAMatrixOrContainsMatricesAsChildren() && !u->isDim());
   Tree* child = u->child(0);

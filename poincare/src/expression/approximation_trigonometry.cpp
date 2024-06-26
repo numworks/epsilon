@@ -67,9 +67,8 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
 
     case Type::ACos:
     case Type::ASin: {
-      std::complex<T> c = value;
       std::complex<T> result;
-      if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
+      if (value.imag() == 0 && std::fabs(value.real()) <= static_cast<T>(1.0)) {
         /* asin/acos: [-1;1] -> R
          * In these cases we rather use reals because std::asin/acos is not as
          * precise on complexes.
@@ -78,9 +77,10 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
          * - asin(0.03) = 0.0300045
          * - acos(complex<double>(0.03,0.0) = complex(1.54079,-1.11022e-16)
          * - acos(0.03) = 1.54079 */
-        result = type.isASin() ? std::asin(c.real()) : std::acos(c.real());
+        result =
+            type.isASin() ? std::asin(value.real()) : std::acos(value.real());
       } else {
-        result = type.isASin() ? std::asin(c) : std::acos(c);
+        result = type.isASin() ? std::asin(value) : std::acos(value);
         /* asin and acos have a branch cut on ]-inf, -1[U]1, +inf[
          * We followed the convention chosen by the lib c++ of llvm on
          * ]-inf+0i, -1+0i[ (warning: it takes the other side of the cut values
@@ -89,18 +89,18 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
          *   asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2)     for asin
          *   acos(-x) = π - acos(x) and tan(acos(x)) = sqrt(1-x^2)/x  for acos
          */
-        if (c.imag() == 0 && !std::signbit(c.imag()) && c.real() > 1) {
+        if (value.imag() == 0 && !std::signbit(value.imag()) &&
+            value.real() > 1) {
           result.imag(-result.imag());  // other side of the cut
         }
       }
-      result = NeglectRealOrImaginaryPartIfNegligible(result, c);
+      result = NeglectRealOrImaginaryPartIfNegligible(result, value);
       return ConvertFromRadian(result, angleUnit);
     }
     case Type::ATan: {
-      std::complex<T> c = value;
       std::complex<T> result;
-      if (c.imag() == static_cast<T>(0.) &&
-          std::fabs(c.real()) <= static_cast<T>(1.)) {
+      if (value.imag() == static_cast<T>(0.) &&
+          std::fabs(value.real()) <= static_cast<T>(1.)) {
         /* atan: R -> R
          * In these cases we rather use std::atan(double) because atan on
          * complexes is not as precise as atan on double in std library.
@@ -108,25 +108,27 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
          * - atan(complex<double>(0.01,0.0) =
          *       complex(9.9996666866652E-3,5.5511151231258E-17)
          * - atan(0.03) = 9.9996666866652E-3 */
-        result = std::atan(c.real());
-      } else if (c.real() == static_cast<T>(0.) &&
-                 std::abs(c.imag()) == static_cast<T>(1.)) {
-        /* The case c = ±i is caught here because std::atan(i) return i*inf when
-         * it should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
+        result = std::atan(value.real());
+      } else if (value.real() == static_cast<T>(0.) &&
+                 std::abs(value.imag()) == static_cast<T>(1.)) {
+        /* The case value = ±i is caught here because std::atan(i) return i*inf
+         * when it should be undef. (same as log(0) in
+         * Logarithm::computeOnComplex)*/
         result = std::complex<T>(NAN, NAN);
       } else {
-        result = std::atan(c);
+        result = std::atan(value);
         /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then
          * multivalued on this cut. We followed the convention chosen by the lib
          * c++ of llvm on ]-i+0, -i*inf+0[ (warning: atan takes the other side
          * of the cut values on ]-i+0, -i*inf+0[) and choose the values on
          * ]-inf*i, -i[ to comply with atan(-x) = -atan(x) and sin(atan(x)) =
          * x/sqrt(1+x^2). */
-        if (c.real() == 0 && !std::signbit(c.real()) && c.imag() < -1) {
+        if (value.real() == 0 && !std::signbit(value.real()) &&
+            value.imag() < -1) {
           result.real(-result.real());  // other side of the cut
         }
       }
-      result = NeglectRealOrImaginaryPartIfNegligible(result, c);
+      result = NeglectRealOrImaginaryPartIfNegligible(result, value);
       return ConvertFromRadian(result, angleUnit);
     }
     case Type::ASec:

@@ -17,7 +17,7 @@ $(call create_goal,kernel, \
   kandinsky.minimal \
   liba.armv7m \
   libaxx \
-  omg.minimal \
+  omg.minimal.decompress \
 ,kernel, \
 )
 else
@@ -26,7 +26,7 @@ $(call create_goal,kernel, \
   kandinsky \
   liba.armv7m \
   libaxx \
-  omg.kernelassert \
+  omg.minimal.decompress.utf8 \
 ,kernel, \
 In debug mode the kernel is built with -Os to fit in its section \
 )

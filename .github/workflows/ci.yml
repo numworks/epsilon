@@ -39,6 +39,9 @@ jobs:
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
       - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
@@ -93,6 +96,9 @@ jobs:
             git
             mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
@@ -109,6 +115,9 @@ jobs:
         with:
           sdk: 3.1.60
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: timeout 5m node output/release/web/test.js --headless --limit-stack-usage
@@ -122,6 +131,9 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
       - run: output/release/linux/test.bin --headless --limit-stack-usage
@@ -135,6 +147,9 @@ jobs:
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.macos == 'true') }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
       - run: output/release/macos/x86_64/test.bin --headless --limit-stack-usage
@@ -148,6 +163,9 @@ jobs:
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.ios == 'true') }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 epsilon.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 test.ipa
@@ -166,6 +184,9 @@ jobs:
         with:
           sdk: 3.1.60
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make -f poincare/Makefile
       - uses: actions/upload-artifact@v3

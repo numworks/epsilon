@@ -19,6 +19,9 @@ jobs:
       - uses: numworks/setup-llvm@latest
       - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin

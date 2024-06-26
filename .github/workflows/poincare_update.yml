@@ -23,6 +23,8 @@ jobs:
         with:
           fetch-depth: 100
           ref: ${{ github.event.pull_request.head.sha }}
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
       - name: Fetch target branch
         run: git fetch --depth=100 origin ${{ github.event.pull_request.base.sha }}
       - name: Find most recent ancestor of PR and target branch

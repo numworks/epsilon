@@ -79,7 +79,7 @@ class GlobalContext final : public Poincare::Context {
   const Poincare::UserExpression expressionForSymbolAndRecord(
       const Poincare::SymbolAbstract& symbol, Ion::Storage::Record r,
       Context* ctx);
-  static const Poincare::UserExpression ExpressionForActualSymbol(
+  static const Poincare::UserExpression ExpressionForUserNamed(
       Ion::Storage::Record r);
   static const Poincare::UserExpression ExpressionForFunction(
       const Poincare::UserExpression& parameter, Ion::Storage::Record r);
@@ -88,7 +88,7 @@ class GlobalContext final : public Poincare::Context {
       Context* ctx);
   // Expression setters
   /* This modifies the expression. */
-  Ion::Storage::Record::ErrorStatus setExpressionForActualSymbol(
+  Ion::Storage::Record::ErrorStatus setExpressionForUserNamed(
       Poincare::UserExpression& expression,
       const Poincare::SymbolAbstract& symbol,
       Ion::Storage::Record previousRecord);

@@ -43,7 +43,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
-    return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record),
+    return PoincareHelpers::CreateLayout(ExpressionForUserNamed(record),
                                          context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
@@ -126,7 +126,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    return setExpressionForActualSymbol(finalExpression, symbol, record) ==
+    return setExpressionForUserNamed(finalExpression, symbol, record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   assert(symbol.type() == ExpressionNode::Type::Function &&
@@ -154,7 +154,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    return ExpressionForActualSymbol(r);
+    return ExpressionForUserNamed(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
     return ExpressionForFunction(symbol.childAtIndex(0), r);
   }
@@ -162,7 +162,7 @@ const UserExpression GlobalContext::expressionForSymbolAndRecord(
   return expressionForSequence(symbol, r, ctx);
 }
 
-const UserExpression GlobalContext::ExpressionForActualSymbol(
+const UserExpression GlobalContext::ExpressionForUserNamed(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
@@ -227,7 +227,7 @@ const UserExpression GlobalContext::expressionForSequence(
   return NewExpression::Builder<double>(NAN);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
     UserExpression& expression, const SymbolAbstract& symbol,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation =

@@ -195,6 +195,7 @@ class UnitNode final : public ExpressionNode {
     OExpression ratioExpressionReduced(
         const ReductionContext& reductionContext) const {
       assert(false);
+      return OExpression();
     }
 
    protected:

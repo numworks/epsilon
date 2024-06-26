@@ -9,27 +9,27 @@ class SystematicOperation {
   friend class Simplification;
 
  public:
-  static bool SimplifyMultiplication(Tree* u);
-  TREE_REF_WRAP(SimplifyMultiplication);
+  static bool ReduceMultiplication(Tree* u);
+  TREE_REF_WRAP(ReduceMultiplication);
 
-  static bool SimplifyAddition(Tree* u);
-  TREE_REF_WRAP(SimplifyAddition);
+  static bool ReduceAddition(Tree* u);
+  TREE_REF_WRAP(ReduceAddition);
 
-  static bool SimplifyPower(Tree* u);
-  TREE_REF_WRAP(SimplifyPower);
+  static bool ReducePower(Tree* u);
+  TREE_REF_WRAP(ReducePower);
 
  private:
   /* These private methods should never be called on TreeRefs.
    * TODO: ensure it cannot. */
-  static bool SimplifyAbs(Tree* u);
-  static bool SimplifyPowerReal(Tree* u);
-  static bool SimplifyLnReal(Tree* u);
-  static bool SimplifyExp(Tree* u);
-  static bool SimplifyComplexArgument(Tree* t);
-  static bool SimplifyComplexPart(Tree* t);
-  static bool SimplifySign(Tree* t);
-  static bool SimplifyDistribution(Tree* t);
-  static bool SimplifyDim(Tree* t);
+  static bool ReduceAbs(Tree* u);
+  static bool ReducePowerReal(Tree* u);
+  static bool ReduceLnReal(Tree* u);
+  static bool ReduceExp(Tree* u);
+  static bool ReduceComplexArgument(Tree* t);
+  static bool ReduceComplexPart(Tree* t);
+  static bool ReduceSign(Tree* t);
+  static bool ReduceDistribution(Tree* t);
+  static bool ReduceDim(Tree* t);
 
   static void ConvertPowerRealToPower(Tree* u);
   static bool CanApproximateTree(Tree* u, bool* changed);

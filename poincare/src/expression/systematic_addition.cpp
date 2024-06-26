@@ -87,7 +87,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-bool SystematicOperation::SimplifyAddition(Tree* u) {
+bool SystematicOperation::ReduceAddition(Tree* u) {
   assert(u->isAdd());
   bool modified = NAry::Flatten(u);
   if (modified && CanApproximateTree(u, &modified)) {
@@ -138,8 +138,8 @@ bool SystematicOperation::SimplifyAddition(Tree* u) {
      * unlocked, see following assertion. */
     NAry::Sort(u);
   }
-  /* TODO: SimplifyAddition may encounter the same issues as the multiplication.
-   * If this assert can't be preserved, SimplifyAddition must handle one or both
+  /* TODO: ReduceAddition may encounter the same issues as the multiplication.
+   * If this assert can't be preserved, ReduceAddition must handle one or both
    * of this cases as handled in multiplication:
    * With a,b and c the sorted addition children (a < b < c), M(a,b) the result
    * of merging children a and b (with MergeAdditionChildWithNext) if it exists.

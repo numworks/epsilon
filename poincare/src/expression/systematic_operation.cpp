@@ -10,7 +10,7 @@
 
 namespace Poincare::Internal {
 
-bool SystematicOperation::SimplifyPower(Tree* u) {
+bool SystematicOperation::ReducePower(Tree* u) {
   assert(u->isPow());
   // base^n
   Tree* base = u->child(0);
@@ -152,7 +152,7 @@ void SystematicOperation::ConvertPowerRealToPower(Tree* u) {
   Simplification::ShallowSystematicReduce(u);
 }
 
-bool SystematicOperation::SimplifyPowerReal(Tree* u) {
+bool SystematicOperation::ReducePowerReal(Tree* u) {
   assert(u->isPowReal());
   /* Return :
    * - x^y if x is complex or positive or y is integer
@@ -211,7 +211,7 @@ bool SystematicOperation::SimplifyPowerReal(Tree* u) {
   return true;
 }
 
-bool SystematicOperation::SimplifyLnReal(Tree* u) {
+bool SystematicOperation::ReduceLnReal(Tree* u) {
   assert(u->isLnReal());
   // Under real mode, input ln(x) must return nonreal if x < 0
   ComplexSign childSign = ComplexSign::Get(u->child(0));
@@ -234,7 +234,7 @@ bool SystematicOperation::SimplifyLnReal(Tree* u) {
   return true;
 }
 
-bool SystematicOperation::SimplifyComplexArgument(Tree* tree) {
+bool SystematicOperation::ReduceComplexArgument(Tree* tree) {
   assert(tree->isArg());
   const Tree* child = tree->child(0);
   ComplexSign childSign = ComplexSign::Get(child);
@@ -272,7 +272,7 @@ bool SystematicOperation::SimplifyComplexArgument(Tree* tree) {
   return true;
 }
 
-bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
+bool SystematicOperation::ReduceComplexPart(Tree* tree) {
   assert(tree->isRe() || tree->isIm());
   bool isRe = tree->isRe();
   Tree* child = tree->child(0);
@@ -347,7 +347,7 @@ bool SystematicOperation::SimplifyComplexPart(Tree* tree) {
   return true;
 }
 
-bool SystematicOperation::SimplifySign(Tree* expr) {
+bool SystematicOperation::ReduceSign(Tree* expr) {
   assert(expr->isSign());
   const Tree* child = expr->child(0);
   ComplexSign sign = ComplexSign::Get(child);
@@ -374,7 +374,7 @@ bool SystematicOperation::SimplifySign(Tree* expr) {
   return true;
 }
 
-bool SystematicOperation::SimplifyDistribution(Tree* expr) {
+bool SystematicOperation::ReduceDistribution(Tree* expr) {
   const Tree* child = expr->child(0);
   const Tree* abscissae[DistributionMethod::k_maxNumberOfParameters];
   DistributionMethod::Type methodType = DistributionMethod::Get(expr);
@@ -403,7 +403,7 @@ bool SystematicOperation::SimplifyDistribution(Tree* expr) {
   return method->shallowReduce(abscissae, distribution, parameters, expr);
 }
 
-bool SystematicOperation::SimplifyDim(Tree* u) {
+bool SystematicOperation::ReduceDim(Tree* u) {
   Dimension dim = Dimension::Get(u->child(0));
   if (dim.isMatrix()) {
     Tree* result = SharedTreeStack->pushMatrix(1, 2);
@@ -415,7 +415,7 @@ bool SystematicOperation::SimplifyDim(Tree* u) {
   return List::ShallowApplyListOperators(u);
 }
 
-bool SystematicOperation::SimplifyExp(Tree* u) {
+bool SystematicOperation::ReduceExp(Tree* u) {
   Tree* child = u->child(0);
   if (child->isLn()) {
     /* TODO_PCJ: Add a ln(x) dependency on user-input ln only when x can be
@@ -453,13 +453,13 @@ bool SystematicOperation::SimplifyExp(Tree* u) {
   return false;
 }
 
-bool SystematicOperation::SimplifyAbs(Tree* u) {
+bool SystematicOperation::ReduceAbs(Tree* u) {
   assert(u->isAbs());
   Tree* child = u->child(0);
   if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
-    assert(!SimplifyAbs(u));
+    assert(!ReduceAbs(u));
     return true;
   }
   ComplexSign complexSign = ComplexSign::Get(child);

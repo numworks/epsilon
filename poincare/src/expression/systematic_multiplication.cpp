@@ -75,9 +75,9 @@ static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
   return changed;
 }
 
-static bool SimplifyMultiplicationChildRec(Tree* child, int index,
-                                           int* numberOfSiblings,
-                                           bool* multiplicationChanged) {
+static bool ReduceMultiplicationChildRec(Tree* child, int index,
+                                         int* numberOfSiblings,
+                                         bool* multiplicationChanged) {
   assert(*numberOfSiblings > 0);
   assert(index < *numberOfSiblings);
   // Merge child with right siblings as much as possible.
@@ -85,8 +85,8 @@ static bool SimplifyMultiplicationChildRec(Tree* child, int index,
       MergeMultiplicationChildrenFrom(child, index, numberOfSiblings);
   // Simplify starting from next child.
   if (index + 1 < *numberOfSiblings &&
-      SimplifyMultiplicationChildRec(child->nextTree(), index + 1,
-                                     numberOfSiblings, multiplicationChanged)) {
+      ReduceMultiplicationChildRec(child->nextTree(), index + 1,
+                                   numberOfSiblings, multiplicationChanged)) {
     // Next child changed, child may now merge with it.
     childChanged =
         MergeMultiplicationChildrenFrom(child, index, numberOfSiblings) ||
@@ -96,7 +96,7 @@ static bool SimplifyMultiplicationChildRec(Tree* child, int index,
   return childChanged;
 }
 
-static bool SimplifyMultiplicationWithInf(Tree* e) {
+static bool ReduceMultiplicationWithInf(Tree* e) {
   // x*inf -> sign(x)*inf
   // except when x = -1,0,1 or sign (to avoid infinite loop)
   PatternMatching::Context ctx;
@@ -124,7 +124,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   assert(n > 1);
   /* Recursively merge children.
    * Keep track of n and changed status. */
-  SimplifyMultiplicationChildRec(multiplication->child(0), 0, &n, &changed);
+  ReduceMultiplicationChildRec(multiplication->child(0), 0, &n, &changed);
   assert(n > 0);
   NAry::SetNumberOfChildren(multiplication, n);
   if (multiplication->child(0)->isZero()) {
@@ -160,7 +160,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
     return true;
   }
 
-  if (SimplifyMultiplicationWithInf(multiplication)) {
+  if (ReduceMultiplicationWithInf(multiplication)) {
     changed = true;
   }
 
@@ -177,7 +177,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   return true;
 }
 
-bool SystematicOperation::SimplifyMultiplication(Tree* u) {
+bool SystematicOperation::ReduceMultiplication(Tree* u) {
   assert(u->isMult());
   bool changed = NAry::Flatten(u);
   if (changed && CanApproximateTree(u, &changed)) {

@@ -121,7 +121,7 @@ OExpression DistributionDispatcher::shallowReduce(
     *stopReduction = false;
   }
 #else
-  // Implemented in Internal::Simplification::SimplifyDistribution
+  // Implemented in Internal::Simplification::ReduceDistribution
   assert(false);
 #endif
   return *this;

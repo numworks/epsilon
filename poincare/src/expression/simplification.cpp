@@ -89,9 +89,9 @@ bool Simplification::SimplifySwitch(Tree* u) {
   }
   switch (u->type()) {
     case Type::Abs:
-      return SystematicOperation::SimplifyAbs(u);
+      return SystematicOperation::ReduceAbs(u);
     case Type::Add:
-      return SystematicOperation::SimplifyAddition(u);
+      return SystematicOperation::ReduceAddition(u);
     case Type::ATanRad:
       return Trigonometry::SimplifyArcTangentRad(u);
     case Type::ATrig:
@@ -99,15 +99,15 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::Binomial:
       return Arithmetic::SimplifyBinomial(u);
     case Type::Arg:
-      return SystematicOperation::SimplifyComplexArgument(u);
+      return SystematicOperation::ReduceComplexArgument(u);
     case Type::NthDiff:
       return Derivation::ShallowSimplify(u);
     case Type::Dim:
-      return SystematicOperation::SimplifyDim(u);
+      return SystematicOperation::ReduceDim(u);
     case Type::Distribution:
-      return SystematicOperation::SimplifyDistribution(u);
+      return SystematicOperation::ReduceDistribution(u);
     case Type::Exp:
-      return SystematicOperation::SimplifyExp(u);
+      return SystematicOperation::ReduceExp(u);
     case Type::Fact:
       return Arithmetic::SimplifyFactorial(u);
     case Type::Factor:
@@ -118,7 +118,7 @@ bool Simplification::SimplifySwitch(Tree* u) {
       return Arithmetic::SimplifyGCD(u);
     case Type::Im:
     case Type::Re:
-      return SystematicOperation::SimplifyComplexPart(u);
+      return SystematicOperation::ReduceComplexPart(u);
     case Type::LCM:
       return Arithmetic::SimplifyLCM(u);
     case Type::ListSort:
@@ -127,24 +127,24 @@ bool Simplification::SimplifySwitch(Tree* u) {
     case Type::Ln:
       return Logarithm::SimplifyLn(u);
     case Type::LnReal:
-      return SystematicOperation::SimplifyLnReal(u);
+      return SystematicOperation::ReduceLnReal(u);
     case Type::Mult:
-      return SystematicOperation::SimplifyMultiplication(u);
+      return SystematicOperation::ReduceMultiplication(u);
     case Type::Permute:
       return Arithmetic::SimplifyPermute(u);
     case Type::Piecewise:
       return Binary::SimplifyPiecewise(u);
     case Type::Pow:
-      return SystematicOperation::SimplifyPower(u);
+      return SystematicOperation::ReducePower(u);
     case Type::PowReal:
-      return SystematicOperation::SimplifyPowerReal(u);
+      return SystematicOperation::ReducePowerReal(u);
     case Type::Quo:
     case Type::Rem:
       return Arithmetic::SimplifyQuotientOrRemainder(u);
     case Type::Round:
       return Arithmetic::SimplifyRound(u);
     case Type::Sign:
-      return SystematicOperation::SimplifySign(u);
+      return SystematicOperation::ReduceSign(u);
     case Type::Sum:
     case Type::Product:
       return Parametric::SimplifySumOrProduct(u);

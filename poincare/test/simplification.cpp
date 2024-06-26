@@ -987,7 +987,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
   simplifies_to("product(k×π, k, 1, 12)", "479001600×π^(12)");
 
-  // TODO SimplifyAddition on matrices
+  // TODO ReduceAddition on matrices
   simplifies_to("sum([[k][n]], k, 1, 4)", "[[10][4×n]]");
 
   simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");

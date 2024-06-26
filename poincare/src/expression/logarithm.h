@@ -9,14 +9,14 @@ namespace Poincare::Internal {
 
 class Logarithm final {
  public:
-  static bool ReduceLn(Tree* u);
+  static bool ReduceLn(Tree* e);
   TREE_REF_WRAP(ReduceLn);
-  static bool ContractLn(Tree* node);
+  static bool ContractLn(Tree* e);
   TREE_REF_WRAP(ContractLn);
-  static bool ExpandLn(Tree* node);
+  static bool ExpandLn(Tree* e);
   TREE_REF_WRAP(ExpandLn);
   // ln(12/5)->2*ln(2)+ln(3)-ln(5)
-  static bool ExpandLnOnRational(Tree* expr);
+  static bool ExpandLnOnRational(Tree* e);
 
  private:
   // ln(12)->2*ln(2)+ln(3), return nullptr if m is prime and escapeIfPrime true.

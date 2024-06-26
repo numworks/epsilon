@@ -5,10 +5,10 @@
 
 using namespace Poincare::Internal;
 
-void assert_latex_layouts_to(const char* latex, const Tree* l) {
-  Tree* t = LatexParser::LatexToLayout(latex);
-  quiz_assert_print_if_failure(t->treeIsIdenticalTo(l), latex);
-  t->removeTree();
+void assert_latex_layouts_to(const char* latex, const Tree* expectedLayout) {
+  Tree* l = LatexParser::LatexToLayout(latex);
+  quiz_assert_print_if_failure(l->treeIsIdenticalTo(expectedLayout), latex);
+  l->removeTree();
 }
 
 QUIZ_CASE(poincare_latex_to_layout) {

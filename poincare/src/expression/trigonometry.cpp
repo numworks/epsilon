@@ -11,8 +11,8 @@
 
 namespace Poincare::Internal {
 
-bool Trigonometry::IsDirect(const Tree* node) {
-  switch (node->type()) {
+bool Trigonometry::IsDirect(const Tree* e) {
+  switch (e->type()) {
     case Type::Cos:
     case Type::Sin:
     case Type::Tan:
@@ -22,8 +22,8 @@ bool Trigonometry::IsDirect(const Tree* node) {
   }
 }
 
-bool Trigonometry::IsInverse(const Tree* node) {
-  switch (node->type()) {
+bool Trigonometry::IsInverse(const Tree* e) {
+  switch (e->type()) {
     case Type::ACos:
     case Type::ASin:
     case Type::ATan:
@@ -104,8 +104,8 @@ const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   }
 }
 
-bool Trigonometry::ReduceTrigDiff(Tree* u) {
-  assert(u->isTrigDiff());
+bool Trigonometry::ReduceTrigDiff(Tree* e) {
+  assert(e->isTrigDiff());
   /* TrigDiff is used to factorize Trigonometric contraction. It determines the
    * first term of these equations :
    * 2*sin(x)*sin(y) = cos(x-y) - cos(x+y)  -> TrigDiff(1,1) = 0
@@ -115,7 +115,7 @@ bool Trigonometry::ReduceTrigDiff(Tree* u) {
    */
   // Reduce children as trigonometry second elements.
   bool isOpposed = false;
-  Tree* x = u->child(0);
+  Tree* x = e->child(0);
   ReduceTrigSecondElement(x, &isOpposed);
   Tree* y = x->nextTree();
   ReduceTrigSecondElement(y, &isOpposed);
@@ -126,30 +126,30 @@ bool Trigonometry::ReduceTrigDiff(Tree* u) {
     isOpposed = !isOpposed;
   }
   // Replace TrigDiff with result
-  u->cloneTreeOverTree(isDifferent ? (isOpposed ? 3_e : 1_e)
+  e->cloneTreeOverTree(isDifferent ? (isOpposed ? 3_e : 1_e)
                                    : (isOpposed ? 2_e : 0_e));
   return true;
 }
 
-// If u is of the form π*n, return n.
-const Tree* getPiFactor(const Tree* u) {
-  if (u->treeIsIdenticalTo(π_e)) {
+// If e is of the form π*n, return n.
+const Tree* getPiFactor(const Tree* e) {
+  if (e->treeIsIdenticalTo(π_e)) {
     return 1_e;
   }
-  if (u->isZero()) {
+  if (e->isZero()) {
     return 0_e;
   }
-  if (u->isMult() && u->numberOfChildren() == 2 && u->child(0)->isRational() &&
-      u->child(1)->treeIsIdenticalTo(π_e)) {
-    return u->child(0);
+  if (e->isMult() && e->numberOfChildren() == 2 && e->child(0)->isRational() &&
+      e->child(1)->treeIsIdenticalTo(π_e)) {
+    return e->child(0);
   }
   return nullptr;
 }
 
-bool Trigonometry::ReduceTrig(Tree* u) {
-  assert(u->isTrig());
+bool Trigonometry::ReduceTrig(Tree* e) {
+  assert(e->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
-  Tree* firstArgument = u->child(0);
+  Tree* firstArgument = e->child(0);
   Tree* secondArgument = firstArgument->nextTree();
   bool isOpposed = false;
   bool changed = ReduceTrigSecondElement(secondArgument, &isOpposed);
@@ -179,16 +179,16 @@ bool Trigonometry::ReduceTrig(Tree* u) {
       multipleTree->removeTree();
       const Tree* exactFormula = ExactFormula(n, isSin, &isOpposed);
       if (exactFormula) {
-        u->cloneTreeOverTree(exactFormula);
-        SystematicReduction::DeepReduce(u);
+        e->cloneTreeOverTree(exactFormula);
+        SystematicReduction::DeepReduce(e);
         changed = true;
       }
     } else {
       multipleTree->removeTree();
     }
-  } else if (PatternMatching::MatchReplace(u, KTrig(KATrig(KA, KB), KB), KA) ||
+  } else if (PatternMatching::MatchReplace(e, KTrig(KATrig(KA, KB), KB), KA) ||
              PatternMatching::MatchReplaceSimplify(
-                 u, KTrig(KATrig(KA, KB), KC),
+                 e, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
     // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=√(1-x^2)
     /* TODO: what about asin(sin(acos(x)))? Maybe the simplification
@@ -200,49 +200,49 @@ bool Trigonometry::ReduceTrig(Tree* u) {
     changed = true;
   } else if (Infinity::IsPlusOrMinusInfinity(firstArgument)) {
     // sin(±inf) = cos(±inf) = undef
-    u->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KUndef);
     return true;
   }
   if (isOpposed && changed) {
-    u->cloneTreeAtNode(-1_e);
-    u->moveNodeAtNode(SharedTreeStack->pushMult(2));
-    SystematicReduction::ShallowReduce(u);
+    e->cloneTreeAtNode(-1_e);
+    e->moveNodeAtNode(SharedTreeStack->pushMult(2));
+    SystematicReduction::ShallowReduce(e);
   }
   return changed;
 }
 
-bool Trigonometry::ReduceTrigSecondElement(Tree* u, bool* isOpposed) {
+bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   // Trig second element is always expected to be a reduced integer.
-  assert(u->isInteger() && !SystematicReduction::DeepReduce(u));
+  assert(e->isInteger() && !SystematicReduction::DeepReduce(e));
   bool changed = false;
-  IntegerHandler i = Integer::Handler(u);
+  IntegerHandler i = Integer::Handler(e);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
   if (Order::Compare(remainder, 2_e) >= 0) {
     changed = true;
     *isOpposed = !*isOpposed;
     remainder->moveTreeOverTree(
         IntegerHandler::Remainder(i, IntegerHandler(2)));
-    assert(!remainder->treeIsIdenticalTo(u));
+    assert(!remainder->treeIsIdenticalTo(e));
   }
-  changed |= !remainder->treeIsIdenticalTo(u);
+  changed |= !remainder->treeIsIdenticalTo(e);
   if (changed) {
-    u->moveTreeOverTree(remainder);
+    e->moveTreeOverTree(remainder);
   } else {
     remainder->removeTree();
   }
   // Simplified second element should have only two possible values.
-  assert(u->isZero() || u->isOne());
+  assert(e->isZero() || e->isOne());
   return changed;
 }
 
-static bool simplifyATrigOfTrig(Tree* u) {
+static bool simplifyATrigOfTrig(Tree* e) {
   TypeBlock type = Type::Undef;
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), u, &ctx)) {
+  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), e, &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
   } else if (PatternMatching::Match(
-                 KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), u,
+                 KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), e,
                  &ctx)) {
     // atan(sin/cos)
     type = Type::Tan;
@@ -291,21 +291,21 @@ static bool simplifyATrigOfTrig(Tree* u) {
   }
   res->moveTreeOverTree(
       PatternMatching::CreateSimplify(KMult(π_e, KA), {.KA = res}));
-  u->moveTreeOverTree(res);
+  e->moveTreeOverTree(res);
   return true;
 }
 
-bool Trigonometry::ReduceATrig(Tree* u) {
-  assert(u->isATrig());
+bool Trigonometry::ReduceATrig(Tree* e) {
+  assert(e->isATrig());
   // atrig(trig(x))
-  if (simplifyATrigOfTrig(u)) {
+  if (simplifyATrigOfTrig(e)) {
     return true;
   }
-  const Tree* arg = u->child(0);
+  const Tree* arg = e->child(0);
   bool isAsin = arg->nextTree()->isOne();
   ComplexSign argSign = ComplexSign::Get(arg);
   if (argSign.isZero()) {
-    u->cloneTreeOverTree(isAsin ? 0_e : KMult(1_e / 2_e, π_e));
+    e->cloneTreeOverTree(isAsin ? 0_e : KMult(1_e / 2_e, π_e));
     return true;
   }
   if (!argSign.isReal()) {
@@ -314,16 +314,16 @@ bool Trigonometry::ReduceATrig(Tree* u) {
   bool argIsOpposed = argSign.realSign().isNegative();
   bool changed = argIsOpposed;
   if (argIsOpposed) {
-    u->child(0)->moveTreeOverTree(
+    e->child(0)->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = arg}));
   }
   if (arg->isOne()) {
     // asin(1) = π/2 and acos(1) = 0
-    u->cloneTreeOverTree(isAsin ? KMult(1_e / 2_e, π_e) : 0_e);
+    e->cloneTreeOverTree(isAsin ? KMult(1_e / 2_e, π_e) : 0_e);
     changed = true;
   } else if (arg->isHalf()) {
     // asin(1/2) = π/6 and acos(1/2) = π/3
-    u->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
   } else if (arg->treeIsIdenticalTo(KExp(KMult(-1_e / 2_e, KLn(2_e)))) ||
@@ -331,7 +331,7 @@ bool Trigonometry::ReduceATrig(Tree* u) {
                  KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))) {
     // TODO_PCJ: we shouldn't have to test both x=1/√2 and x=√2/2
     // acos(1/√2) = asin(1/√2) = π/4
-    u->moveTreeOverTree(PatternMatching::CreateSimplify(KMult(1_e / 4_e, π_e)));
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(KMult(1_e / 4_e, π_e)));
     changed = true;
   } else if (arg->isMult()) {
     /* TODO: Handle the same angles as ExactFormula (π/12, π/10, π/8 and π/5 are
@@ -339,11 +339,11 @@ bool Trigonometry::ReduceATrig(Tree* u) {
     changed =
         // acos(√3/2) = π/6
         PatternMatching::MatchReplaceSimplify(
-            u, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 0_e),
+            e, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 0_e),
             KMult(1_e / 6_e, π_e)) ||
         // asin(√3/2) = π/3
         PatternMatching::MatchReplaceSimplify(
-            u, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 1_e),
+            e, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 1_e),
             KMult(1_e / 3_e, π_e)) ||
         changed;
   }
@@ -351,42 +351,42 @@ bool Trigonometry::ReduceATrig(Tree* u) {
     assert(changed);
     // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
     PatternMatching::MatchReplaceSimplify(
-        u, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
+        e, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
   }
   return changed;
 }
 
-bool Trigonometry::ReduceArcTangentRad(Tree* u) {
+bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   // atan(-x) = -atan(x)
   if (PatternMatching::MatchReplaceSimplify(
-          u, KATanRad(KMult(KA_s, -1_e, KB_s)),
+          e, KATanRad(KMult(KA_s, -1_e, KB_s)),
           KMult(-1_e, KATanRad(KMult(KA_s, KB_s))))) {
     return true;
   }
   // atan(tan(x)) = x
-  if (simplifyATrigOfTrig(u)) {
+  if (simplifyATrigOfTrig(e)) {
     return true;
   }
-  if (PatternMatching::MatchReplaceSimplify(u, KATanRad(KInf),
+  if (PatternMatching::MatchReplaceSimplify(e, KATanRad(KInf),
                                             KMult(1_e / 2_e, π_e))) {
     return true;
   }
-  assert(u->isATanRad());
-  const Tree* arg = u->child(0);
+  assert(e->isATanRad());
+  const Tree* arg = e->child(0);
   if (arg->isZero()) {
     // atan(0) = 0
-    u->cloneTreeOverTree(0_e);
+    e->cloneTreeOverTree(0_e);
     return true;
   }
   if (arg->isOne()) {
     // atan(1) = π/4
-    u->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
+    e->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
     return true;
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(KExp(KMult(1_e / 2_e, KLn(3_e))), arg, &ctx)) {
     // atan(√3) = π/3
-    u->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
+    e->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
     return true;
   }
   if (PatternMatching::Match(KExp(KMult(-1_e / 2_e, KLn(3_e))), arg, &ctx) ||
@@ -394,7 +394,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* u) {
                              arg, &ctx)) {
     // TODO_PCJ: we shouldn't have to test both x=1/√3 and x=√3/3
     // atan(1/√3) = π/6
-    u->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
+    e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
     return true;
   }
   return false;

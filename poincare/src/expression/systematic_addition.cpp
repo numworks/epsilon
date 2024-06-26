@@ -9,39 +9,39 @@
 
 namespace Poincare::Internal {
 
-bool TermsAreEqual(const Tree* u, const Tree* v) {
-  if (!u->isMult()) {
-    if (!v->isMult()) {
-      return u->treeIsIdenticalTo(v);
+bool TermsAreEqual(const Tree* e1, const Tree* e2) {
+  if (!e1->isMult()) {
+    if (!e2->isMult()) {
+      return e1->treeIsIdenticalTo(e2);
     }
-    return TermsAreEqual(v, u);
+    return TermsAreEqual(e2, e1);
   }
-  if (!v->isMult()) {
-    return u->numberOfChildren() == 2 && u->child(0)->isRational() &&
-           u->child(1)->treeIsIdenticalTo(v);
+  if (!e2->isMult()) {
+    return e1->numberOfChildren() == 2 && e1->child(0)->isRational() &&
+           e1->child(1)->treeIsIdenticalTo(e2);
   }
-  bool uHasRational = u->child(0)->isRational();
-  bool vHasRational = v->child(0)->isRational();
-  int n = u->numberOfChildren() - uHasRational;
-  if (n != v->numberOfChildren() - vHasRational) {
+  bool e1HasRational = e1->child(0)->isRational();
+  bool e2HasRational = e2->child(0)->isRational();
+  int n = e1->numberOfChildren() - e1HasRational;
+  if (n != e2->numberOfChildren() - e2HasRational) {
     return false;
   }
-  const Tree* childU = u->child(uHasRational);
-  const Tree* childV = v->child(vHasRational);
+  const Tree* childE1 = e1->child(e1HasRational);
+  const Tree* childE2 = e2->child(e2HasRational);
   for (int i = 0; i < n; i++) {
-    if (!childU->treeIsIdenticalTo(childV)) {
+    if (!childE1->treeIsIdenticalTo(childE2)) {
       return false;
     }
-    childU = childU->nextTree();
-    childV = childV->nextTree();
+    childE1 = childE1->nextTree();
+    childE2 = childE2->nextTree();
   }
   return true;
 }
 
 // The term of 2ab is ab
-Tree* PushTerm(const Tree* u) {
-  Tree* c = u->cloneTree();
-  if (u->isMult() && u->child(0)->isRational()) {
+Tree* PushTerm(const Tree* e) {
+  Tree* c = e->cloneTree();
+  if (e->isMult() && e->child(0)->isRational()) {
     NAry::RemoveChildAtIndex(c, 0);
     NAry::SquashIfPossible(c);
   }
@@ -49,9 +49,9 @@ Tree* PushTerm(const Tree* u) {
 }
 
 // The constant of 2ab is 2
-const Tree* Constant(const Tree* u) {
-  if (u->isMult() && u->child(0)->isRational()) {
-    return u->child(0);
+const Tree* Constant(const Tree* e) {
+  if (e->isMult() && e->child(0)->isRational()) {
+    return e->child(0);
   }
   return 1_e;
 }
@@ -87,22 +87,22 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-bool SystematicOperation::ReduceAddition(Tree* u) {
-  assert(u->isAdd());
-  bool modified = NAry::Flatten(u);
-  if (modified && CanApproximateTree(u, &modified)) {
+bool SystematicOperation::ReduceAddition(Tree* e) {
+  assert(e->isAdd());
+  bool modified = NAry::Flatten(e);
+  if (modified && CanApproximateTree(e, &modified)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
      * tried again to properly handle possible new float children. */
     return true;
   }
-  if (NAry::SquashIfPossible(u)) {
+  if (NAry::SquashIfPossible(e)) {
     return true;
   }
-  modified = NAry::Sort(u) || modified;
+  modified = NAry::Sort(e) || modified;
   bool didSquashChildren = false;
-  int n = u->numberOfChildren();
+  int n = e->numberOfChildren();
   int i = 0;
-  Tree* child = u->child(0);
+  Tree* child = e->child(0);
   while (i < n) {
     if (child->isZero()) {
       child->removeTree();
@@ -125,10 +125,10 @@ bool SystematicOperation::ReduceAddition(Tree* u) {
       i++;
     }
   }
-  if (n != u->numberOfChildren()) {
+  if (n != e->numberOfChildren()) {
     assert(modified);
-    NAry::SetNumberOfChildren(u, n);
-    if (NAry::SquashIfPossible(u)) {
+    NAry::SetNumberOfChildren(e, n);
+    if (NAry::SquashIfPossible(e)) {
       return true;
     }
   }
@@ -136,7 +136,7 @@ bool SystematicOperation::ReduceAddition(Tree* u) {
     /* Newly squashed children should be sorted again and they may allow new
      * simplifications. NOTE: Further simplification could theoretically be
      * unlocked, see following assertion. */
-    NAry::Sort(u);
+    NAry::Sort(e);
   }
   /* TODO: ReduceAddition may encounter the same issues as the multiplication.
    * If this assert can't be preserved, ReduceAddition must handle one or both
@@ -146,10 +146,10 @@ bool SystematicOperation::ReduceAddition(Tree* u) {
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
    * merging again when child merged with nextChild) */
-  if (modified && u->isAdd()) {
+  if (modified && e->isAdd()) {
     // Bubble-up may be unlocked after merging equal terms.
-    SystematicReduction::BubbleUpFromChildren(u);
-    assert(!SystematicReduction::ShallowReduce(u));
+    SystematicReduction::BubbleUpFromChildren(e);
+    assert(!SystematicReduction::ShallowReduce(e));
   }
   return modified;
 }

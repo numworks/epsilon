@@ -15,16 +15,16 @@ namespace Poincare::Internal {
 
 Tree* List::PushEmpty() { return KList.node<0>->cloneNode(); }
 
-Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
-  switch (expr->type()) {
+Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
+  switch (e->type()) {
     case Type::List:
-      assert(k < expr->numberOfChildren());
-      return expr->child(k)->cloneTree();
+      assert(k < e->numberOfChildren());
+      return e->child(k)->cloneTree();
     case Type::ListSequence: {
-      if (Parametric::HasLocalRandom(expr)) {
+      if (Parametric::HasLocalRandom(e)) {
         return nullptr;
       }
-      Tree* result = expr->child(2)->cloneTree();
+      Tree* result = e->child(2)->cloneTree();
       TreeRef value = Integer::Push(k + 1);
       Variables::Replace(result, 0, value);
       value->removeTree();
@@ -36,18 +36,18 @@ Tree* List::GetElement(const Tree* expr, int k, Tree::Operation reduction) {
     case Type::Median:
       return nullptr;  // If their are still there, their bubble-up failed
     case Type::ListSlice: {
-      assert(Integer::Is<uint8_t>(expr->child(1)) &&
-             Integer::Is<uint8_t>(expr->child(2)));
+      assert(Integer::Is<uint8_t>(e->child(1)) &&
+             Integer::Is<uint8_t>(e->child(2)));
       int startIndex =
-          std::max(Integer::Handler(expr->child(1)).to<uint8_t>() - 1, 0);
-      return GetElement(expr->child(0), startIndex + k, reduction);
+          std::max(Integer::Handler(e->child(1)).to<uint8_t>() - 1, 0);
+      return GetElement(e->child(0), startIndex + k, reduction);
     }
     default:
-      if (expr->type().isListToScalar()) {
+      if (e->type().isListToScalar()) {
         return nullptr;
       }
-      Tree* result = expr->cloneNode();
-      for (const Tree* child : expr->children()) {
+      Tree* result = e->cloneNode();
+      for (const Tree* child : e->children()) {
         if (!GetElement(child, k, reduction)) {
           SharedTreeStack->dropBlocksFrom(result);
           return nullptr;
@@ -131,14 +131,14 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
       {.KA = list, .KB = coefficients});
 }
 
-bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
-  int length = Dimension::ListLength(expr);
-  if (length < 0 || expr->isList()) {
+bool List::BubbleUp(Tree* e, Tree::Operation reduction) {
+  int length = Dimension::ListLength(e);
+  if (length < 0 || e->isList()) {
     return false;
   }
   Tree* list = List::PushEmpty();
   for (int i = 0; i < length; i++) {
-    Tree* element = GetElement(expr, i, reduction);
+    Tree* element = GetElement(e, i, reduction);
     if (!element) {
       assert(i == 0);
       list->removeTree();
@@ -146,7 +146,7 @@ bool List::BubbleUp(Tree* expr, Tree::Operation reduction) {
     }
   }
   NAry::SetNumberOfChildren(list, length);
-  expr->moveTreeOverTree(list);
+  e->moveTreeOverTree(list);
   return true;
 }
 

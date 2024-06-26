@@ -109,20 +109,20 @@ class PatternMatching {
   static Tree* MatchCreate(const Tree* source, const Tree* pattern,
                            const Tree* structure);
   // Return true if reference has been replaced
-  static bool MatchReplace(Tree* node, const Tree* pattern,
+  static bool MatchReplace(Tree* source, const Tree* pattern,
                            const Tree* structure) {
-    return PrivateMatchReplace(node, pattern, structure, false);
+    return PrivateMatchReplace(source, pattern, structure, false);
   }
   TREE_REF_WRAP_2(MatchReplace, const Tree*, const Tree*);
   // Return true if reference has been replaced
-  static bool MatchReplaceSimplify(Tree* node, const Tree* pattern,
+  static bool MatchReplaceSimplify(Tree* source, const Tree* pattern,
                                    const Tree* structure) {
-    return PrivateMatchReplace(node, pattern, structure, true);
+    return PrivateMatchReplace(source, pattern, structure, true);
   }
   TREE_REF_WRAP_2(MatchReplaceSimplify, const Tree*, const Tree*);
 
  private:
-  static bool PrivateMatchReplace(Tree* node, const Tree* pattern,
+  static bool PrivateMatchReplace(Tree* source, const Tree* pattern,
                                   const Tree* structure, bool simplify);
 
   /* During Match, MatchContext allow keeping track of matched Nary sizes.

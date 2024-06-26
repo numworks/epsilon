@@ -74,9 +74,9 @@ Sign Add(Sign s1, Sign s2) {
               s1.canBeNonInteger() || s2.canBeNonInteger());
 }
 
-Sign Sign::Get(const Tree* t) {
-  assert(ComplexSign::Get(t).isReal());
-  return ComplexSign::Get(t).realSign();
+Sign Sign::Get(const Tree* e) {
+  assert(ComplexSign::Get(e).isReal());
+  return ComplexSign::Get(e).realSign();
 }
 
 #if POINCARE_TREE_LOG
@@ -233,17 +233,17 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
 }
 
 // Note: A complex function plotter can be used to fill in these methods.
-ComplexSign ComplexSign::Get(const Tree* t) {
-  assert(Dimension::Get(t).isScalar());
-  if (t->isNumber()) {
-    return ComplexSign(Number::Sign(t), Sign::Zero());
-  } else if (t->isUserNamed()) {
-    return Symbol::GetComplexSign(t);
+ComplexSign ComplexSign::Get(const Tree* e) {
+  assert(Dimension::Get(e).isScalar());
+  if (e->isNumber()) {
+    return ComplexSign(Number::Sign(e), Sign::Zero());
+  } else if (e->isUserNamed()) {
+    return Symbol::GetComplexSign(e);
   }
-  switch (t->type()) {
+  switch (e->type()) {
     case Type::Mult: {
       ComplexSign s = RealStrictlyPositiveInteger();  // 1
-      for (const Tree* c : t->children()) {
+      for (const Tree* c : e->children()) {
         s = Mult(s, Get(c));
         if (s.isUnknown() || s.isZero()) {
           break;
@@ -253,7 +253,7 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     }
     case Type::Add: {
       ComplexSign s = Zero();
-      for (const Tree* c : t->children()) {
+      for (const Tree* c : e->children()) {
         s = Add(s, Get(c));
         if (s.isUnknown()) {
           break;
@@ -263,66 +263,66 @@ ComplexSign ComplexSign::Get(const Tree* t) {
     }
     case Type::PowReal:
     case Type::Pow:
-      return Power(Get(t->child(0)), Get(t->child(1)), t->child(1)->isTwo());
+      return Power(Get(e->child(0)), Get(e->child(1)), e->child(1)->isTwo());
     case Type::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::Positive(), Sign::Zero());
     case Type::Abs:
-      return Abs(Get(t->child(0)));
+      return Abs(Get(e->child(0)));
     case Type::Exp:
-      return Exponential(Get(t->child(0)));
+      return Exponential(Get(e->child(0)));
     case Type::Ln:
-      return Ln(Get(t->child(0)));
+      return Ln(Get(e->child(0)));
     case Type::Re:
-      return ComplexSign(Get(t->child(0)).realSign(), Sign::Zero());
+      return ComplexSign(Get(e->child(0)).realSign(), Sign::Zero());
     case Type::Im:
-      return ComplexSign(Get(t->child(0)).imagSign(), Sign::Zero());
+      return ComplexSign(Get(e->child(0)).imagSign(), Sign::Zero());
     case Type::Var:
-      return Variables::GetComplexSign(t);
+      return Variables::GetComplexSign(e);
     case Type::ComplexI:
       return ComplexSign(Sign::Zero(), Sign::StrictlyPositiveInteger());
     case Type::Trig:
-      assert(t->child(1)->isOne() || t->child(1)->isZero());
-      return Trig(Get(t->child(0)), t->child(1)->isOne());
+      assert(e->child(1)->isOne() || e->child(1)->isZero());
+      return Trig(Get(e->child(0)), e->child(1)->isOne());
     case Type::ATanRad:
-      return ArcTangent(Get(t->child(0)));
+      return ArcTangent(Get(e->child(0)));
     case Type::Arg:
-      return ComplexArgument(Get(t->child(0)));
+      return ComplexArgument(Get(e->child(0)));
     case Type::Dependency:
-      return Get(Dependency::Main(t));
+      return Get(Dependency::Main(e));
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ACos:
-      return ArcCosine(Get(t->child(0)));
+      return ArcCosine(Get(e->child(0)));
     case Type::ASin:
-      return ArcSine(Get(t->child(0)));
+      return ArcSine(Get(e->child(0)));
     case Type::ATan:
-      return ArcTangent(Get(t->child(0)));
+      return ArcTangent(Get(e->child(0)));
     case Type::Fact:
-      assert(Get(t->child(0)) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
+      assert(Get(e->child(0)) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
       return RealStrictlyPositiveInteger();
     case Type::Ceil:
     case Type::Floor:
     case Type::Frac:
     case Type::Round:
-      return DecimalFunction(Get(t->child(0)), t->type());
+      return DecimalFunction(Get(e->child(0)), e->type());
     case Type::PercentSimple:
-      return RelaxIntegerProperty(Get(t->child(0)));
+      return RelaxIntegerProperty(Get(e->child(0)));
     case Type::MixedFraction:
-      return Add(Get(t->child(0)), Get(t->child(1)));
+      return Add(Get(e->child(0)), Get(e->child(1)));
     case Type::Parenthesis:
-      return Get(t->child(0));
+      return Get(e->child(0));
 #endif
     default:
       return Unknown();
   }
 }
 
-ComplexSign ComplexSign::SignOfDifference(const Tree* a, const Tree* b) {
+ComplexSign ComplexSign::SignOfDifference(const Tree* e1, const Tree* e2) {
   Tree* difference = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
-                                                     {.KA = a, .KB = b});
+                                                     {.KA = e1, .KB = e2});
   ComplexSign result = Get(difference);
   if (AdvancedReduction::DeepExpand(difference)) {
     /* We do not use advance reduction here but it might be usefull to expand

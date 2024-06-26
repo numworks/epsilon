@@ -63,21 +63,21 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(Type type) {
   }
 }
 
-Poincare::OExpression ToPoincareExpression(const Tree* exp) {
+Poincare::OExpression ToPoincareExpression(const Tree* e) {
 #if DISABLE_CONVERSIONS
   assert(false);
 #else
   // NOTE: Make sure new Types are handled here.
-  Type type = exp->type();
+  Type type = e->type();
 
-  if (Builtin::IsReservedFunction(exp)) {
-    Poincare::OExpression child = ToPoincareExpression(exp->child(0));
+  if (Builtin::IsReservedFunction(e)) {
+    Poincare::OExpression child = ToPoincareExpression(e->child(0));
     switch (type) {
       case Type::Sqrt:
         return Poincare::SquareRoot::Builder(child);
       case Type::Root:
         return Poincare::NthRoot::Builder(child,
-                                          ToPoincareExpression(exp->child(1)));
+                                          ToPoincareExpression(e->child(1)));
       case Type::Cos:
         return Poincare::Cosine::Builder(child);
       case Type::Sin:
@@ -125,23 +125,23 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
       case Type::Log:
         return Poincare::Logarithm::Builder(child);
       case Type::LogBase:
-        return Poincare::Logarithm::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+        return Poincare::Logarithm::Builder(child,
+                                            ToPoincareExpression(e->child(1)));
       case Type::Binomial:
         return Poincare::BinomialCoefficient::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+            child, ToPoincareExpression(e->child(1)));
       case Type::Permute:
         return Poincare::PermuteCoefficient::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+            child, ToPoincareExpression(e->child(1)));
       case Type::Round:
         return Poincare::Round::Builder(child,
-                                        ToPoincareExpression(exp->child(1)));
+                                        ToPoincareExpression(e->child(1)));
       case Type::Cross:
         return Poincare::VectorCross::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+            child, ToPoincareExpression(e->child(1)));
       case Type::Dot:
-        return Poincare::VectorDot::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+        return Poincare::VectorDot::Builder(child,
+                                            ToPoincareExpression(e->child(1)));
       case Type::Det:
         return Poincare::Determinant::Builder(child);
       case Type::Dim:
@@ -174,16 +174,16 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
         return Poincare::PercentSimple::Builder(child);
       case Type::PercentAddition:
         return Poincare::PercentAddition::Builder(
-            child, ToPoincareExpression(exp->child(1)));
+            child, ToPoincareExpression(e->child(1)));
       case Type::Diff: {
         Poincare::OExpression symbol = child;
         if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Derivative::Builder(
-            ToPoincareExpression(exp->child(2)),
+            ToPoincareExpression(e->child(2)),
             static_cast<Poincare::Symbol&>(symbol),
-            ToPoincareExpression(exp->child(1)));
+            ToPoincareExpression(e->child(1)));
       }
       case Type::Integral: {
         Poincare::OExpression symbol = child;
@@ -191,20 +191,20 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Integral::Builder(
-            ToPoincareExpression(exp->child(3)),
+            ToPoincareExpression(e->child(3)),
             static_cast<Poincare::Symbol&>(symbol),
-            ToPoincareExpression(exp->child(1)),
-            ToPoincareExpression(exp->child(2)));
+            ToPoincareExpression(e->child(1)),
+            ToPoincareExpression(e->child(2)));
       }
       case Type::Sum: {
         Poincare::OExpression symbol = child;
         if (symbol.otype() != Poincare::ExpressionNode::Type::Symbol) {
           return Poincare::Undefined::Builder();
         }
-        return Poincare::Sum::Builder(ToPoincareExpression(exp->child(3)),
+        return Poincare::Sum::Builder(ToPoincareExpression(e->child(3)),
                                       static_cast<Poincare::Symbol&>(symbol),
-                                      ToPoincareExpression(exp->child(1)),
-                                      ToPoincareExpression(exp->child(2)));
+                                      ToPoincareExpression(e->child(1)),
+                                      ToPoincareExpression(e->child(2)));
       }
       case Type::Product: {
         Poincare::OExpression symbol = child;
@@ -212,25 +212,25 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
           return Poincare::Undefined::Builder();
         }
         return Poincare::Product::Builder(
-            ToPoincareExpression(exp->child(3)),
+            ToPoincareExpression(e->child(3)),
             static_cast<Poincare::Symbol&>(symbol),
-            ToPoincareExpression(exp->child(1)),
-            ToPoincareExpression(exp->child(2)));
+            ToPoincareExpression(e->child(1)),
+            ToPoincareExpression(e->child(2)));
       }
       case Type::Dependency: {
-        assert(Dependency::Dependencies(exp)->isSet());
+        assert(Dependency::Dependencies(e)->isSet());
         Poincare::OList listOfDependencies = Poincare::OList::Builder();
-        for (const Tree* child : Dependency::Dependencies(exp)->children()) {
+        for (const Tree* child : Dependency::Dependencies(e)->children()) {
           listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
                                                     0, 0);
         }
         return Poincare::Dependency::Builder(
-            ToPoincareExpression(Dependency::Main(exp)), listOfDependencies);
+            ToPoincareExpression(Dependency::Main(e)), listOfDependencies);
       }
       case Type::Piecewise: {
         Poincare::List arguments = Poincare::List::Builder();
         int i = 0;
-        for (const Tree* child : exp->children()) {
+        for (const Tree* child : e->children()) {
           arguments.addChildAtIndexInPlace(ToPoincareExpression(child), i, i);
           i++;
         }
@@ -249,7 +249,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
           type == Type::Add ? static_cast<Poincare::NAryExpression>(
                                   Poincare::Addition::Builder())
                             : Poincare::Multiplication::Builder();
-      for (const Tree* child : exp->children()) {
+      for (const Tree* child : e->children()) {
         nary.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     nary.numberOfChildren(),
                                     nary.numberOfChildren());
@@ -258,7 +258,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     }
     case Type::List: {
       Poincare::OList list = Poincare::OList::Builder();
-      for (const Tree* child : exp->children()) {
+      for (const Tree* child : e->children()) {
         list.addChildAtIndexInPlace(ToPoincareExpression(child),
                                     list.numberOfChildren(),
                                     list.numberOfChildren());
@@ -267,21 +267,20 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     }
     case Type::Matrix: {
       Poincare::OMatrix mat = Poincare::OMatrix::Builder();
-      for (const Tree* child : exp->children()) {
+      for (const Tree* child : e->children()) {
         mat.addChildAtIndexInPlace(ToPoincareExpression(child),
                                    mat.numberOfChildren(),
                                    mat.numberOfChildren());
       }
-      mat.setDimensions(Matrix::NumberOfRows(exp),
-                        Matrix::NumberOfColumns(exp));
+      mat.setDimensions(Matrix::NumberOfRows(e), Matrix::NumberOfColumns(e));
       return mat;
     }
     case Type::Sub:
     case Type::Pow:
     case Type::PowMatrix:
     case Type::Div: {
-      Poincare::OExpression child0 = ToPoincareExpression(exp->child(0));
-      Poincare::OExpression child1 = ToPoincareExpression(exp->child(1));
+      Poincare::OExpression child0 = ToPoincareExpression(e->child(0));
+      Poincare::OExpression child1 = ToPoincareExpression(e->child(1));
       Poincare::OExpression result;
       if (type == Type::Sub) {
         result = Poincare::Subtraction::Builder(child0, child1);
@@ -309,10 +308,9 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     case Type::DoubleFloat:
     case Type::Decimal:
     case Type::Unit:
-      return ToPoincareExpressionViaParse(exp);
+      return ToPoincareExpressionViaParse(e);
     case Type::UserSymbol: {
-      return Poincare::Symbol::Builder(Symbol::GetName(exp),
-                                       Symbol::Length(exp));
+      return Poincare::Symbol::Builder(Symbol::GetName(e), Symbol::Length(e));
     }
     case Type::ComplexI:
       return Poincare::Constant::ComplexIBuilder();
@@ -323,28 +321,26 @@ Poincare::OExpression ToPoincareExpression(const Tree* exp) {
     case Type::Inf:
       return Poincare::Infinity::Builder(false);
     case Type::Fact:
-      return Poincare::Factorial::Builder(ToPoincareExpression(exp->child(0)));
+      return Poincare::Factorial::Builder(ToPoincareExpression(e->child(0)));
     case Type::NonReal:
       return Poincare::Nonreal::Builder();
     case Type::Opposite:
-      return Poincare::Opposite::Builder(ToPoincareExpression(exp->child(0)));
+      return Poincare::Opposite::Builder(ToPoincareExpression(e->child(0)));
     case Type::Equal:
     case Type::NotEqual:
     case Type::Superior:
     case Type::Inferior:
     case Type::SuperiorEqual:
     case Type::InferiorEqual:
-      return Poincare::Comparison::Builder(ToPoincareExpression(exp->child(0)),
+      return Poincare::Comparison::Builder(ToPoincareExpression(e->child(0)),
                                            ComparisonToOperator(type),
-                                           ToPoincareExpression(exp->child(1)));
+                                           ToPoincareExpression(e->child(1)));
     case Type::UserFunction:
-      return Poincare::Function::Builder(Symbol::GetName(exp),
-                                         Symbol::Length(exp),
-                                         ToPoincareExpression(exp->child(0)));
+      return Poincare::Function::Builder(Symbol::GetName(e), Symbol::Length(e),
+                                         ToPoincareExpression(e->child(0)));
     case Type::UserSequence:
-      return Poincare::Sequence::Builder(Symbol::GetName(exp),
-                                         Symbol::Length(exp),
-                                         ToPoincareExpression(exp->child(0)));
+      return Poincare::Sequence::Builder(Symbol::GetName(e), Symbol::Length(e),
+                                         ToPoincareExpression(e->child(0)));
     case Type::Set:
     case Type::Polynomial:
     default:
@@ -897,9 +893,9 @@ void PushPoincareExpression(Poincare::OExpression exp) {
 }
 
 Tree* FromPoincareExpression(Poincare::OExpression exp) {
-  Tree* node = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  Tree* e = Tree::FromBlocks(SharedTreeStack->lastBlock());
   PushPoincareExpression(exp);
-  return node;
+  return e;
 }
 
 }  // namespace Poincare::Internal

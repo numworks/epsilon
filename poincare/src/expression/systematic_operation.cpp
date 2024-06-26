@@ -11,53 +11,53 @@
 
 namespace Poincare::Internal {
 
-bool SystematicOperation::ReducePower(Tree* u) {
-  assert(u->isPow());
+bool SystematicOperation::ReducePower(Tree* e) {
+  assert(e->isPow());
   // base^n
-  Tree* base = u->child(0);
+  Tree* base = e->child(0);
   TreeRef n = base->nextTree();
   if (Infinity::IsPlusOrMinusInfinity(n) &&
       (base->isOne() || base->isMinusOne() ||
        ComplexSign::Get(base).isNonReal())) {
     // (±1)^(±inf) -> undef
     // complex^(±inf) -> undef
-    u->cloneTreeOverTree(KUndef);
+    e->cloneTreeOverTree(KUndef);
     return true;
   }
   if (base->isOne()) {
     // 1^x -> 1
-    u->cloneTreeOverTree(1_e);
+    e->cloneTreeOverTree(1_e);
     return true;
   }
   if (Infinity::IsPlusOrMinusInfinity(base)) {
     if ((Infinity::IsMinusInfinity(base) && n->isInf()) || n->isZero()) {
       // (-inf)^inf -> undef
       // (±inf)^0 -> undef
-      u->cloneTreeOverTree(KUndef);
+      e->cloneTreeOverTree(KUndef);
       return true;
     }
     ComplexSign nSign = ComplexSign::Get(n);
     if (nSign.isNonReal()) {
       // (±inf)^i -> undef
-      u->cloneTreeOverTree(KUndef);
+      e->cloneTreeOverTree(KUndef);
       return true;
     }
     if (n->isInteger() || Infinity::IsPlusOrMinusInfinity(n)) {
       assert(nSign.isReal());
       if (nSign.realSign().isNegative()) {
         // (±inf)^neg -> 0
-        u->cloneTreeOverTree(0_e);
+        e->cloneTreeOverTree(0_e);
         return true;
       }
       if (nSign.realSign().isPositive()) {
         if (base->isInf()) {
           // inf^pos -> inf
-          u->cloneTreeOverTree(KInf);
+          e->cloneTreeOverTree(KInf);
           return true;
         }
         assert(Infinity::IsMinusInfinity(base));
         // (-inf)^pos -> ±inf
-        u->moveTreeOverTree(PatternMatching::CreateSimplify(
+        e->moveTreeOverTree(PatternMatching::CreateSimplify(
             KMult(KPow(-1_e, KA), KInf), {.KA = n}));
         return true;
       }
@@ -67,38 +67,38 @@ bool SystematicOperation::ReducePower(Tree* u) {
     ComplexSign indexSign = ComplexSign::Get(n);
     if (indexSign.realSign().isStrictlyPositive()) {
       // 0^x is always defined.
-      u->cloneTreeOverTree(0_e);
+      e->cloneTreeOverTree(0_e);
       return true;
     }
     if (!indexSign.realSign().canBeStrictlyPositive()) {
       // 0^x cannot be defined
-      u->cloneTreeOverTree(KOutOfDefinition);
+      e->cloneTreeOverTree(KOutOfDefinition);
       return true;
     }
     // Use a dependency as a fallback.
-    return PatternMatching::MatchReplace(u, KA, KDep(0_e, KSet(KA)));
+    return PatternMatching::MatchReplace(e, KA, KDep(0_e, KSet(KA)));
   }
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
     // base^n -> exp(n*ln(base))
-    return PatternMatching::MatchReplaceSimplify(u, KPow(KA, KB),
+    return PatternMatching::MatchReplaceSimplify(e, KPow(KA, KB),
                                                  KExp(KMult(KLn(KA), KB)));
   }
   if (base->isRational()) {
-    u->moveTreeOverTree(Rational::IntegerPower(base, n));
+    e->moveTreeOverTree(Rational::IntegerPower(base, n));
     return true;
   }
   // base^0 -> 1
   if (n->isZero()) {
     if (ComplexSign::Get(base).canBeNull()) {
-      return PatternMatching::MatchReplace(u, KA, KDep(1_e, KSet(KA)));
+      return PatternMatching::MatchReplace(e, KA, KDep(1_e, KSet(KA)));
     }
-    u->cloneTreeOverTree(1_e);
+    e->cloneTreeOverTree(1_e);
     return true;
   }
   // base^1 -> base
   if (n->isOne()) {
-    u->moveTreeOverTree(base);
+    e->moveTreeOverTree(base);
     return true;
   }
   if (base->isComplexI()) {
@@ -107,7 +107,7 @@ bool SystematicOperation::ReducePower(Tree* u) {
         IntegerHandler::Remainder(Integer::Handler(n), IntegerHandler(4));
     int rem = Integer::Handler(remainder).to<uint8_t>();
     remainder->removeTree();
-    u->cloneTreeOverTree(
+    e->cloneTreeOverTree(
         rem == 0 ? 1_e
                  : (rem == 1 ? i_e : (rem == 2 ? -1_e : KMult(-1_e, i_e))));
     return true;
@@ -123,10 +123,10 @@ bool SystematicOperation::ReducePower(Tree* u) {
         pSign.realSign().canBeStrictlyNegative()) {
       // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
       return PatternMatching::MatchReplaceSimplify(
-          u, KPow(KPow(KA, KB), KC),
+          e, KPow(KPow(KA, KB), KC),
           KDep(KPow(KA, KMult(KB, KC)), KSet(KPow(KA, KB))));
     }
-    return PatternMatching::MatchReplaceSimplify(u, KPow(KPow(KA, KB), KC),
+    return PatternMatching::MatchReplaceSimplify(e, KPow(KPow(KA, KB), KC),
                                                  KPow(KA, KMult(KB, KC)));
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
@@ -139,22 +139,22 @@ bool SystematicOperation::ReducePower(Tree* u) {
       SystematicReduction::ShallowReduce(m);
     }
     n->removeTree();
-    u->removeNode();
-    SystematicReduction::ShallowReduce(u);
+    e->removeNode();
+    SystematicReduction::ShallowReduce(e);
     return true;
   }
   // exp(a)^b -> exp(a*b)
-  return PatternMatching::MatchReplaceSimplify(u, KPow(KExp(KA), KB),
+  return PatternMatching::MatchReplaceSimplify(e, KPow(KExp(KA), KB),
                                                KExp(KMult(KA, KB)));
 }
 
-void SystematicOperation::ConvertPowerRealToPower(Tree* u) {
-  u->cloneNodeOverNode(KPow);
-  SystematicReduction::ShallowReduce(u);
+void SystematicOperation::ConvertPowerRealToPower(Tree* e) {
+  e->cloneNodeOverNode(KPow);
+  SystematicReduction::ShallowReduce(e);
 }
 
-bool SystematicOperation::ReducePowerReal(Tree* u) {
-  assert(u->isPowReal());
+bool SystematicOperation::ReducePowerReal(Tree* e) {
+  assert(e->isPowReal());
   /* Return :
    * - x^y if x is complex or positive or y is integer
    * - PowerReal(x,y) if y is not a rational
@@ -164,14 +164,14 @@ bool SystematicOperation::ReducePowerReal(Tree* u) {
    *   * |x|^y if p is even
    *   * -|x|^y if p is odd
    */
-  Tree* x = u->child(0);
+  Tree* x = e->child(0);
   Tree* y = x->nextTree();
   ComplexSign xSign = ComplexSign::Get(x);
   ComplexSign ySign = ComplexSign::Get(y);
   if (Infinity::IsPlusOrMinusInfinity(x) ||
       Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger() ||
       (xSign.isReal() && xSign.realSign().isPositive())) {
-    ConvertPowerRealToPower(u);
+    ConvertPowerRealToPower(e);
     return true;
   }
 
@@ -194,50 +194,50 @@ bool SystematicOperation::ReducePowerReal(Tree* u) {
   assert(xNegative || pIsEven);
 
   if (xNegative && qIsEven) {
-    u->cloneTreeOverTree(KNonReal);
+    e->cloneTreeOverTree(KNonReal);
     return true;
   }
 
   // We can fallback to |x|^y
   x->cloneNodeAtNode(KAbs);
   SystematicReduction::ShallowReduce(x);
-  ConvertPowerRealToPower(u);
+  ConvertPowerRealToPower(e);
 
   if (xNegative && !pIsEven) {
     // -|x|^y
-    u->cloneTreeAtNode(KMult(-1_e));
-    NAry::SetNumberOfChildren(u, 2);
-    SystematicReduction::ShallowReduce(u);
+    e->cloneTreeAtNode(KMult(-1_e));
+    NAry::SetNumberOfChildren(e, 2);
+    SystematicReduction::ShallowReduce(e);
   }
   return true;
 }
 
-bool SystematicOperation::ReduceLnReal(Tree* u) {
-  assert(u->isLnReal());
+bool SystematicOperation::ReduceLnReal(Tree* e) {
+  assert(e->isLnReal());
   // Under real mode, input ln(x) must return nonreal if x < 0
-  ComplexSign childSign = ComplexSign::Get(u->child(0));
+  ComplexSign childSign = ComplexSign::Get(e->child(0));
   if (childSign.realSign().isStrictlyNegative() || childSign.isNonReal()) {
     // Child can't be real, positive or null
-    u->cloneTreeOverTree(KNonReal);
+    e->cloneTreeOverTree(KNonReal);
     return true;
   }
   if (childSign.realSign().canBeStrictlyNegative() ||
       childSign.canBeNonReal()) {
     // Child can be nonreal or negative, add a dependency in case.
-    u->moveTreeOverTree(PatternMatching::Create(
-        KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = u->child(0)}));
-    u = u->child(0);
+    e->moveTreeOverTree(PatternMatching::Create(
+        KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = e->child(0)}));
+    e = e->child(0);
   } else {
     // Safely fallback to complex logarithm.
-    u->cloneNodeOverNode(KLn);
+    e->cloneNodeOverNode(KLn);
   }
-  SystematicReduction::ShallowReduce(u);
+  SystematicReduction::ShallowReduce(e);
   return true;
 }
 
-bool SystematicOperation::ReduceComplexArgument(Tree* tree) {
-  assert(tree->isArg());
-  const Tree* child = tree->child(0);
+bool SystematicOperation::ReduceComplexArgument(Tree* e) {
+  assert(e->isArg());
+  const Tree* child = e->child(0);
   ComplexSign childSign = ComplexSign::Get(child);
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
@@ -249,19 +249,19 @@ bool SystematicOperation::ReduceComplexArgument(Tree* tree) {
   if (realSign.isZero() && imagSign.isKnown()) {
     if (imagSign.isZero()) {
       // atan2(0, 0) = undef
-      tree->cloneTreeOverTree(KOutOfDefinition);
+      e->cloneTreeOverTree(KOutOfDefinition);
       return true;
     }
     // atan2(y, 0) = π/2 if y > 0, -π/2 if y < 0
-    tree->cloneTreeOverTree(imagSign.isStrictlyPositive()
-                                ? KMult(1_e / 2_e, π_e)
-                                : KMult(-1_e / 2_e, π_e));
+    e->cloneTreeOverTree(imagSign.isStrictlyPositive()
+                             ? KMult(1_e / 2_e, π_e)
+                             : KMult(-1_e / 2_e, π_e));
   } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
              imagSign.isStrictlyNegative()) {
     /* atan2(y, x) = arctan(y/x)      if x > 0
      *               arctan(y/x) + π  if y >= 0 and x < 0
      *               arctan(y/x) - π  if y < 0  and x < 0 */
-    tree->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
         {.KA = child,
          .KB = realSign.isStrictlyPositive()
@@ -273,21 +273,21 @@ bool SystematicOperation::ReduceComplexArgument(Tree* tree) {
   return true;
 }
 
-bool SystematicOperation::ReduceComplexPart(Tree* tree) {
-  assert(tree->isRe() || tree->isIm());
-  bool isRe = tree->isRe();
-  Tree* child = tree->child(0);
+bool SystematicOperation::ReduceComplexPart(Tree* e) {
+  assert(e->isRe() || e->isIm());
+  bool isRe = e->isRe();
+  Tree* child = e->child(0);
   ComplexSign childSign = ComplexSign::Get(child);
   if (childSign.isPure()) {
     if (isRe != childSign.isReal()) {
       // re(x) = 0 or im(x) = 0
-      tree->cloneTreeOverTree(0_e);
+      e->cloneTreeOverTree(0_e);
     } else if (isRe) {
       // re(x) = x
-      tree->removeNode();
+      e->removeNode();
     } else {
       // im(x) = -i*x
-      tree->moveTreeOverTree(
+      e->moveTreeOverTree(
           PatternMatching::CreateSimplify(KMult(-1_e, i_e, KA), {.KA = child}));
     }
     return true;
@@ -333,24 +333,24 @@ bool SystematicOperation::ReduceComplexPart(Tree* tree) {
   }
   bool includeOriginalTree = true;
   if (child->numberOfChildren() == 0) {
-    // Remove re/im(add) tree
-    tree->removeTree();
+    // Remove re/im(add) e
+    e->removeTree();
     includeOriginalTree = false;
   } else if (child->numberOfChildren() == 1) {
     // Shallow reduce to remove the Add node
     SystematicReduction::ShallowReduce(child);
   }
-  tree->moveTreeBeforeNode(a);
+  e->moveTreeBeforeNode(a);
   // Increase the number of children of a to include the original re/im
-  NAry::SetNumberOfChildren(tree, nbChildrenOut + includeOriginalTree);
+  NAry::SetNumberOfChildren(e, nbChildrenOut + includeOriginalTree);
   // Shallow reduce new tree
-  SystematicReduction::ShallowReduce(tree);
+  SystematicReduction::ShallowReduce(e);
   return true;
 }
 
-bool SystematicOperation::ReduceSign(Tree* expr) {
-  assert(expr->isSign());
-  const Tree* child = expr->child(0);
+bool SystematicOperation::ReduceSign(Tree* e) {
+  assert(e->isSign());
+  const Tree* child = e->child(0);
   ComplexSign sign = ComplexSign::Get(child);
   const Tree* result;
   if (sign.isZero()) {
@@ -371,19 +371,19 @@ bool SystematicOperation::ReduceSign(Tree* expr) {
   } else {
     return false;
   }
-  expr->cloneTreeOverTree(result);
+  e->cloneTreeOverTree(result);
   return true;
 }
 
-bool SystematicOperation::ReduceDistribution(Tree* expr) {
-  const Tree* child = expr->child(0);
+bool SystematicOperation::ReduceDistribution(Tree* e) {
+  const Tree* child = e->child(0);
   const Tree* abscissae[DistributionMethod::k_maxNumberOfParameters];
-  DistributionMethod::Type methodType = DistributionMethod::Get(expr);
+  DistributionMethod::Type methodType = DistributionMethod::Get(e);
   for (int i = 0; i < DistributionMethod::numberOfParameters(methodType); i++) {
     abscissae[i] = child;
     child = child->nextTree();
   }
-  Distribution::Type distributionType = Distribution::Get(expr);
+  Distribution::Type distributionType = Distribution::Get(e);
   const Tree* parameters[Distribution::k_maxNumberOfParameters];
   for (int i = 0; i < Distribution::numberOfParameters(distributionType); i++) {
     parameters[i] = child;
@@ -398,69 +398,69 @@ bool SystematicOperation::ReduceDistribution(Tree* expr) {
     return false;
   }
   if (!parametersAreOk) {
-    expr->cloneTreeOverTree(KOutOfDefinition);
+    e->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
-  return method->shallowReduce(abscissae, distribution, parameters, expr);
+  return method->shallowReduce(abscissae, distribution, parameters, e);
 }
 
-bool SystematicOperation::ReduceDim(Tree* u) {
-  Dimension dim = Dimension::Get(u->child(0));
+bool SystematicOperation::ReduceDim(Tree* e) {
+  Dimension dim = Dimension::Get(e->child(0));
   if (dim.isMatrix()) {
     Tree* result = SharedTreeStack->pushMatrix(1, 2);
     Integer::Push(dim.matrix.rows);
     Integer::Push(dim.matrix.cols);
-    u->moveTreeOverTree(result);
+    e->moveTreeOverTree(result);
     return true;
   }
-  return List::ShallowApplyListOperators(u);
+  return List::ShallowApplyListOperators(e);
 }
 
-bool SystematicOperation::ReduceExp(Tree* u) {
-  Tree* child = u->child(0);
+bool SystematicOperation::ReduceExp(Tree* e) {
+  Tree* child = e->child(0);
   if (child->isLn()) {
     /* TODO_PCJ: Add a ln(x) dependency on user-input ln only when x can be
      * null. */
     // exp(ln(x)) -> x
-    u->removeNode();
-    u->removeNode();
+    e->removeNode();
+    e->removeNode();
     return true;
   }
   if (child->isInf()) {
     // exp(inf) -> inf
-    u->removeNode();
+    e->removeNode();
     return true;
   }
   if (Infinity::IsMinusInfinity(child)) {
     // exp(-inf) = 0
-    u->cloneTreeOverTree(0_e);
+    e->cloneTreeOverTree(0_e);
     return true;
   }
   if (child->isZero()) {
     // exp(0) = 1
-    u->cloneTreeOverTree(1_e);
+    e->cloneTreeOverTree(1_e);
     return true;
   }
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), u, &ctx) &&
+  if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), e, &ctx) &&
       (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero())) {
     /* To ensure there is only one way of representing x^n. Also handle 0^y with
      * Power logic. */
     // exp(n*ln(x)) -> x^n with n an integer or x null.
-    u->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
-    assert(!u->isExp());
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
+    assert(!e->isExp());
     return true;
   }
   return false;
 }
 
-bool SystematicOperation::ReduceAbs(Tree* u) {
-  assert(u->isAbs());
-  Tree* child = u->child(0);
+bool SystematicOperation::ReduceAbs(Tree* e) {
+  assert(e->isAbs());
+  Tree* child = e->child(0);
   if (child->isAbs()) {
     // ||x|| -> |x|
     child->removeNode();
-    assert(!ReduceAbs(u));
+    assert(!ReduceAbs(e));
     return true;
   }
   ComplexSign complexSign = ComplexSign::Get(child);
@@ -475,18 +475,18 @@ bool SystematicOperation::ReduceAbs(Tree* u) {
   const Tree* minusOne = (isReal == sign.canBeStrictlyNegative()) ? -1_e : 1_e;
   const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
-  u->moveTreeOverTree(PatternMatching::CreateSimplify(
+  e->moveTreeOverTree(PatternMatching::CreateSimplify(
       KMult(KA, KB, KC), {.KA = minusOne, .KB = complexI, .KC = child}));
   return true;
 }
 
 /* Approximate all children if one of them is already float. Return true if the
  * entire tree have been approximated. */
-bool SystematicOperation::CanApproximateTree(Tree* u, bool* changed) {
-  if (u->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
-      Approximation::ApproximateAndReplaceEveryScalar(u)) {
+bool SystematicOperation::CanApproximateTree(Tree* e, bool* changed) {
+  if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
+      Approximation::ApproximateAndReplaceEveryScalar(e)) {
     *changed = true;
-    if (u->isFloat()) {
+    if (e->isFloat()) {
       return true;
     }
   }

@@ -13,22 +13,22 @@ namespace Poincare::Internal {
 
 class Parametric {
  public:
-  static bool ReduceSumOrProduct(Tree* t);
-  static bool ExpandSum(Tree* t);
-  static bool ExpandProduct(Tree* t);
-  static bool ContractSum(Tree* t);
-  static bool ContractProduct(Tree* t);
-  static bool Explicit(Tree* t);
-  static bool HasLocalRandom(const Tree* t);
-  static bool ExpandExpOfSum(Tree* t);
-  static bool ContractProductOfExp(Tree* t);
+  static bool ReduceSumOrProduct(Tree* e);
+  static bool ExpandSum(Tree* e);
+  static bool ExpandProduct(Tree* e);
+  static bool ContractSum(Tree* e);
+  static bool ContractProduct(Tree* e);
+  static bool Explicit(Tree* e);
+  static bool HasLocalRandom(const Tree* e);
+  static bool ExpandExpOfSum(Tree* e);
+  static bool ContractProductOfExp(Tree* e);
 
   // Accepts layout and expressions
-  static bool IsFunctionIndex(int i, const Tree* t);
-  static uint8_t FunctionIndex(const Tree* t);
+  static bool IsFunctionIndex(int i, const Tree* e);
+  static uint8_t FunctionIndex(const Tree* e);
   static uint8_t FunctionIndex(TypeBlock type);
 
-  static ComplexSign VariableSign(const Tree* t);
+  static ComplexSign VariableSign(const Tree* e);
 
   constexpr static ComplexSign k_discreteVariableSign =
       ComplexSign::RealInteger();

@@ -176,9 +176,9 @@ class LayoutBufferCursor final : public LayoutCursor {
                                                          forceLeft, linearMode};
     execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Tree* tree, Poincare::Context* context,
+  void insertLayout(const Tree* l, Poincare::Context* context,
                     bool forceRight = false, bool forceLeft = false) {
-    TreeStackCursor::InsertLayoutContext insertLayoutContext{tree, forceRight,
+    TreeStackCursor::InsertLayoutContext insertLayoutContext{l, forceRight,
                                                              forceLeft};
     execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
   }

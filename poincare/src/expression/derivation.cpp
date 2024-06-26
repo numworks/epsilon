@@ -13,14 +13,14 @@
 
 namespace Poincare::Internal {
 
-bool Derivation::Reduce(Tree* node) {
+bool Derivation::Reduce(Tree* e) {
   // Tree's children are expected to have been reduced beforehand.
-  assert(node->isNthDiff());
-  const Tree* symbol = node->child(0);
+  assert(e->isNthDiff());
+  const Tree* symbol = e->child(0);
   const Tree* symbolValue = symbol->nextTree();
   const Tree* order = symbolValue->nextTree();
   if (!Integer::Is<uint8_t>(order)) {
-    node->cloneTreeOverTree(KUndefUnhandled);
+    e->cloneTreeOverTree(KUndefUnhandled);
     return true;
   }
   int derivationOrder = Integer::Handler(order).to<uint8_t>();
@@ -68,7 +68,7 @@ bool Derivation::Reduce(Tree* node) {
     derivative->cloneNodeAtNode(KDep);
   }
 
-  node->moveTreeOverTree(derivative);
+  e->moveTreeOverTree(derivative);
   return true;
 }
 

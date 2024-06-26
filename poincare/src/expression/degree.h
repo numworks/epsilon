@@ -10,12 +10,12 @@ namespace Poincare::Internal {
 class Degree {
  public:
   // Return polynomial degree of any un-projected expression on given symbol.
-  static int Get(const Tree* tree, const Tree* symbol,
+  static int Get(const Tree* e, const Tree* symbol,
                  ProjectionContext projectionContext);
   constexpr static int k_unknown = -1;
 
  private:
-  static int PrivateGet(const Tree* tree, const Tree* symbol);
+  static int PrivateGet(const Tree* e, const Tree* symbol);
 };
 
 }  // namespace Poincare::Internal

@@ -9,7 +9,7 @@ namespace Poincare::Internal {
 /* Temporary bi-directional conversions between old and new poincare to smooth
  * transition. */
 
-Poincare::OExpression ToPoincareExpression(const Tree* exp);
+Poincare::OExpression ToPoincareExpression(const Tree* e);
 void PushPoincareExpression(Poincare::OExpression exp);
 Tree* FromPoincareExpression(Poincare::OExpression exp);
 

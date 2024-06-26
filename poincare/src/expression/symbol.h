@@ -29,14 +29,14 @@ class Symbol final {
 
   constexpr static KTree k_systemSymbol = "\x01"_e;
 
-  static uint8_t Length(const Tree* node) {
-    assert(node->isUserNamed());
-    return node->nodeValue(0) - 1;
+  static uint8_t Length(const Tree* e) {
+    assert(e->isUserNamed());
+    return e->nodeValue(0) - 1;
   }
-  static char* CopyName(const Tree* node, char* buffer, size_t bufferSize);
-  static const char* GetName(const Tree* node);
+  static char* CopyName(const Tree* e, char* buffer, size_t bufferSize);
+  static const char* GetName(const Tree* e);
 
-  static ComplexSign GetComplexSign(const Tree* node);
+  static ComplexSign GetComplexSign(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

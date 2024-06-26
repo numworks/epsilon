@@ -7,25 +7,25 @@ namespace Poincare::Internal {
 
 class Trigonometry final {
  public:
-  static bool IsDirect(const Tree* node);
-  static bool IsInverse(const Tree* node);
-  static bool ReduceTrig(Tree* u);
+  static bool IsDirect(const Tree* e);
+  static bool IsInverse(const Tree* e);
+  static bool ReduceTrig(Tree* e);
   TREE_REF_WRAP(ReduceTrig);
-  static bool ReduceTrigDiff(Tree* u);
+  static bool ReduceTrigDiff(Tree* e);
   TREE_REF_WRAP(ReduceTrigDiff);
-  static bool ReduceATrig(Tree* u);
+  static bool ReduceATrig(Tree* e);
   TREE_REF_WRAP(ReduceATrig);
-  static bool ReduceArcTangentRad(Tree* u);
+  static bool ReduceArcTangentRad(Tree* e);
   TREE_REF_WRAP(ReduceArcTangentRad);
-  static bool ContractTrigonometric(Tree* node);
+  static bool ContractTrigonometric(Tree* e);
   TREE_REF_WRAP(ContractTrigonometric);
-  static bool ExpandTrigonometric(Tree* node);
+  static bool ExpandTrigonometric(Tree* e);
   TREE_REF_WRAP(ExpandTrigonometric);
 
  private:
   // Given n, return the exact expression of sin(n*π/120).
   static const Tree* ExactFormula(uint8_t n, bool isSin, bool* isOpposed);
-  static bool ReduceTrigSecondElement(Tree* u, bool* isOpposed);
+  static bool ReduceTrigSecondElement(Tree* e, bool* isOpposed);
   TREE_REF_WRAP_1(ReduceTrigSecondElement, bool*);
 };
 

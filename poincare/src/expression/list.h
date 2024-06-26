@@ -17,10 +17,10 @@ struct List {
   /* Evaluate the list expression and return its k-th value or nullptr.
    * For instance: 2+{3,4} -> 5
    * Intermediary results go through reduction. */
-  static Tree* GetElement(const Tree* expr, int k, Tree::Operation reduction);
+  static Tree* GetElement(const Tree* e, int k, Tree::Operation reduction);
 
   /* Turn the list expression into an explicit list. */
-  static bool BubbleUp(Tree* expr, Tree::Operation reduction);
+  static bool BubbleUp(Tree* e, Tree::Operation reduction);
 
   static Tree* Fold(const Tree* list, TypeBlock type);
   static Tree* Mean(const Tree* list, const Tree* coefficients);
@@ -28,7 +28,7 @@ struct List {
   static Tree* Variance(const Tree* list, const Tree* coefficients,
                         TypeBlock type);
 
-  static bool ShallowApplyListOperators(Tree* expr);
+  static bool ShallowApplyListOperators(Tree* e);
 };
 
 }  // namespace Poincare::Internal

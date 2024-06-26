@@ -10,10 +10,10 @@ namespace Poincare::Internal {
 class Metric {
  public:
   // Metric of given tree. The smaller is the better.
-  static int GetMetric(const Tree* u) { return u->treeSize(); }
+  static int GetMetric(const Tree* e) { return e->treeSize(); }
 
 #if 0
-  static int GetMetric(const Tree* u);
+  static int GetMetric(const Tree* e);
 
  private:
   constexpr static int k_defaultMetric = 2 * 3 * 5;

@@ -5,29 +5,29 @@
 
 namespace Poincare::Internal {
 namespace VerticalOffset {
-inline bool IsSubscript(const Tree* node) {
-  return node->toVerticalOffsetLayoutNode()->isSubscript;
+inline bool IsSubscript(const Tree* l) {
+  return l->toVerticalOffsetLayoutNode()->isSubscript;
 }
 
-inline bool IsSuperscript(const Tree* node) { return !IsSubscript(node); }
+inline bool IsSuperscript(const Tree* l) { return !IsSubscript(l); }
 
-inline bool IsPrefix(const Tree* node) {
-  return node->toVerticalOffsetLayoutNode()->isPrefix;
+inline bool IsPrefix(const Tree* l) {
+  return l->toVerticalOffsetLayoutNode()->isPrefix;
 }
 
-inline bool IsSuffix(const Tree* node) { return !IsPrefix(node); }
+inline bool IsSuffix(const Tree* l) { return !IsPrefix(l); }
 
-inline void SetSuperscript(Tree* node, bool superscript) {
-  node->toVerticalOffsetLayoutNode()->isSubscript = !superscript;
+inline void SetSuperscript(Tree* l, bool superscript) {
+  l->toVerticalOffsetLayoutNode()->isSubscript = !superscript;
 }
 
-inline void SetSuffix(Tree* node, bool suffix) {
-  node->toVerticalOffsetLayoutNode()->isPrefix = !suffix;
+inline void SetSuffix(Tree* l, bool suffix) {
+  l->toVerticalOffsetLayoutNode()->isPrefix = !suffix;
 }
 
-inline bool IsSuffixSuperscript(const Tree* node) {
-  assert(node->isVerticalOffsetLayout());
-  return IsSuffix(node) && IsSuperscript(node);
+inline bool IsSuffixSuperscript(const Tree* l) {
+  assert(l->isVerticalOffsetLayout());
+  return IsSuffix(l) && IsSuperscript(l);
 }
 }  // namespace VerticalOffset
 

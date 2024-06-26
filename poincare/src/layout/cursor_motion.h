@@ -24,24 +24,24 @@ enum class PositionInLayout : uint8_t { Left, Middle, Right };
 class CursorMotion {
  public:
   // TODO: Finish these methods implementation.
-  static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* node,
+  static DeletionMethod DeletionMethodForCursorLeftOfChild(const Tree* l,
                                                            int index);
-  static int IndexAfterHorizontalCursorMove(Tree* node,
+  static int IndexAfterHorizontalCursorMove(Tree* l,
                                             OMG::HorizontalDirection direction,
                                             int currentIndex);
   static int IndexAfterVerticalCursorMove(
-      Tree* node, OMG::VerticalDirection direction, int currentIndex,
+      Tree* l, OMG::VerticalDirection direction, int currentIndex,
       PositionInLayout positionAtCurrentIndex);
 
-  static int IndexToPointToWhenInserting(const Tree* node);
-  static Tree* DeepChildToPointToWhenInserting(Tree* node);
+  static int IndexToPointToWhenInserting(const Tree* l);
+  static Tree* DeepChildToPointToWhenInserting(Tree* l);
 
-  static bool IsCollapsable(const Tree* node, const Tree* root,
+  static bool IsCollapsable(const Tree* l, const Tree* root,
                             OMG::HorizontalDirection direction);
 
   static bool ShouldCollapseSiblingsOnDirection(
-      const Tree* node, OMG::HorizontalDirection direction);
-  static int CollapsingAbsorbingChildIndex(const Tree* node,
+      const Tree* l, OMG::HorizontalDirection direction);
+  static int CollapsingAbsorbingChildIndex(const Tree* l,
                                            OMG::HorizontalDirection direction);
 
  private:

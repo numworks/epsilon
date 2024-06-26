@@ -23,13 +23,13 @@ struct ProjectionContext {
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
-  static bool DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx);
+  static bool DeepReplaceUserNamed(Tree* e, ProjectionContext ctx);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
   TREE_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */
-  static bool Expand(Tree* tree);
+  static bool Expand(Tree* e);
 
   /* Return true if node simplification and display is forbidden by current
    * preferences. */

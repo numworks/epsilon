@@ -26,28 +26,28 @@ enum class LayoutShape {
 
 using enum LayoutShape;
 
-LayoutShape LeftLayoutShape(const Tree* expr) {
-  const Builtin* builtin = Builtin::GetReservedFunction(expr);
+LayoutShape LeftLayoutShape(const Tree* e) {
+  const Builtin* builtin = Builtin::GetReservedFunction(e);
   if (builtin && !builtin->has2DLayout()) {
     // This builtin will be displayed as : foobar()
     return MoreLetters;
   }
-  if (expr->isUndefined()) {
+  if (e->isUndefined()) {
     // should be assert(false) ?
     return MoreLetters;
   }
-  if (expr->isLogicalOperator()) {
+  if (e->isLogicalOperator()) {
     return Default;
   }
-  if (expr->isInteger()) {
+  if (e->isInteger()) {
     // assert(!m_negative)
     return Integer;
   }
-  if (expr->isRational()) {
+  if (e->isRational()) {
     // assert(!m_negative)
     return Fraction;
   }
-  switch (expr->type()) {
+  switch (e->type()) {
     case Type::Abs:
     case Type::Ceil:
     case Type::Floor:
@@ -90,7 +90,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
     case Type::PercentSimple:
     case Type::PercentAddition:  // is it true ?
     case Type::Sub:
-      return LeftLayoutShape(expr->child(0));
+      return LeftLayoutShape(e->child(0));
 
     case Type::ComplexI:
     case Type::Pi:
@@ -106,7 +106,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case Type::Dependency:
       // should be assert false ?
-      return LeftLayoutShape(Dependency::Main(expr));
+      return LeftLayoutShape(Dependency::Main(e));
 
     case Type::Diff:
       // why ? should be fraction ?
@@ -137,7 +137,7 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
 
     case Type::Mult:  // from NAry
       // should be assert(false) ?
-      return LeftLayoutShape(expr->child(0));
+      return LeftLayoutShape(e->child(0));
 
     case Type::Root:
       return NthRoot;
@@ -172,21 +172,21 @@ LayoutShape LeftLayoutShape(const Tree* expr) {
   }
 }
 
-LayoutShape RightLayoutShape(const Tree* expr) {
-  const Builtin* builtin = Builtin::GetReservedFunction(expr);
+LayoutShape RightLayoutShape(const Tree* e) {
+  const Builtin* builtin = Builtin::GetReservedFunction(e);
   if (builtin && !builtin->has2DLayout()) {
     // This builtin will be displayed as : foobar()
     return BoundaryPunctuation;
   }
-  switch (expr->type()) {
+  switch (e->type()) {
     case Type::Conj:
     case Type::Sub:
-      return RightLayoutShape(expr->child(0));
+      return RightLayoutShape(e->child(0));
 
     case Type::Dependency:
       // should be assert false ?
       // was not there
-      return RightLayoutShape(Dependency::Main(expr));
+      return RightLayoutShape(Dependency::Main(e));
 
     case Type::Diff:
       return BoundaryPunctuation;
@@ -201,14 +201,14 @@ LayoutShape RightLayoutShape(const Tree* expr) {
 
     case Type::Mult:  // from NAry
       // should be assert(false) ?
-      return RightLayoutShape(expr->lastChild());
+      return RightLayoutShape(e->lastChild());
 
     case Type::Root:
     case Type::Sqrt:
       return Root;
 
     case Type::Opposite:
-      return RightLayoutShape(expr->child(0));
+      return RightLayoutShape(e->child(0));
 
     case Type::Fact:
     case Type::Pow:
@@ -221,10 +221,10 @@ LayoutShape RightLayoutShape(const Tree* expr) {
       return BoundaryPunctuation;
 
     case Type::UserSymbol:
-      return LeftLayoutShape(expr);
+      return LeftLayoutShape(e);
 
     default:
-      return LeftLayoutShape(expr);
+      return LeftLayoutShape(e);
   }
 }
 

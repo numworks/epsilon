@@ -24,19 +24,19 @@ class Order {
    * -1 if block0 < block1
    *  0 if block0 == block1
    */
-  static int Compare(const Tree* node0, const Tree* node1,
+  static int Compare(const Tree* e0, const Tree* e1,
                      OrderType order = OrderType::System);
-  static bool AreEqual(const Tree* node0, const Tree* node1);
+  static bool AreEqual(const Tree* e0, const Tree* e1);
   static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 
  private:
-  static int CompareNumbers(const Tree* node0, const Tree* node1);
-  static int CompareNames(const Tree* node0, const Tree* node1);
-  static int CompareConstants(const Tree* node0, const Tree* node1);
-  static int ComparePolynomial(const Tree* node0, const Tree* node1);
-  static int CompareChildren(const Tree* node0, const Tree* node1,
+  static int CompareNumbers(const Tree* e0, const Tree* e1);
+  static int CompareNames(const Tree* e0, const Tree* e1);
+  static int CompareConstants(const Tree* e0, const Tree* e1);
+  static int ComparePolynomial(const Tree* e0, const Tree* e1);
+  static int CompareChildren(const Tree* e0, const Tree* e1,
                              bool backward = false);
-  static int CompareLastChild(const Tree* node0, const Tree* node1);
+  static int CompareLastChild(const Tree* e0, const Tree* e1);
 };
 
 }  // namespace Poincare::Internal

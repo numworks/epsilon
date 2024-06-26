@@ -5,12 +5,12 @@
 
 namespace Poincare::Internal {
 
-OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type) {
-  if (expression->isUndefined() || expression->isInf()) {
+OMG::Troolean Domain::ExpressionIsIn(const Tree* e, Type type) {
+  if (e->isUndefined() || e->isInf()) {
     return OMG::Troolean::False;
   }
 
-  ComplexSign sign = ComplexSign::Get(expression);
+  ComplexSign sign = ComplexSign::Get(e);
 
   if (!sign.isReal()) {
     return OMG::Troolean::Unknown;
@@ -33,26 +33,26 @@ OMG::Troolean Domain::ExpressionIsIn(const Tree* expression, Type type) {
     }
   }
 
-  if (!expression->isRational()) {
+  if (!e->isRational()) {
     // TODO we could leverage sign analysis to give an anwser on some domains
     return OMG::Troolean::Unknown;
   }
 
-  if (type & k_onlyIntegers && !expression->isInteger()) {
+  if (type & k_onlyIntegers && !e->isInteger()) {
     return OMG::Troolean::False;
   }
 
-  if (type & k_nonZero && expression->isZero()) {
+  if (type & k_nonZero && e->isZero()) {
     return OMG::Troolean::False;
   }
 
   if (type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded) &&
-      Rational::IsGreaterThanOne(expression)) {
-    assert(Rational::Sign(expression).isPositive());
+      Rational::IsGreaterThanOne(e)) {
+    assert(Rational::Sign(e).isPositive());
     return OMG::Troolean::False;
   }
 
-  if (type == ZeroExcludedToOneExcluded && expression->isOne()) {
+  if (type == ZeroExcludedToOneExcluded && e->isOne()) {
     return OMG::Troolean::False;
   }
 

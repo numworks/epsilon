@@ -9,8 +9,8 @@ class Tree;
 
 class Infinity {
  public:
-  static bool IsPlusOrMinusInfinity(const Tree* u);
-  static bool IsMinusInfinity(const Tree* u);
+  static bool IsPlusOrMinusInfinity(const Tree* e);
+  static bool IsMinusInfinity(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

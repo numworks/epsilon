@@ -8,8 +8,8 @@ namespace Poincare::Internal {
 
 class Decimal final {
  public:
-  static int8_t DecimalOffset(const Tree* tree) { return tree->nodeValue(0); }
-  static void Project(Tree* tree);
+  static int8_t DecimalOffset(const Tree* e) { return e->nodeValue(0); }
+  static void Project(Tree* e);
 
   // Decimal<2>(21012)  -> 210.12
   // Decimal<-2>(21012) -> 2101200.
@@ -18,8 +18,8 @@ class Decimal final {
                        int numberOfSignificantDigits);
 
  private:
-  static inline void assertValidDecimal(const Tree* tree) {
-    assert(tree->isDecimal());
+  static inline void assertValidDecimal(const Tree* e) {
+    assert(e->isDecimal());
   }
 };
 

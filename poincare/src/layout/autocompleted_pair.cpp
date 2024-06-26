@@ -310,24 +310,24 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
   NAry::AddOrMergeChildAtIndex(rack, resultRack, 0);
 }
 
-void AutocompletedPair::MakeChildrenPermanent(Tree* node, Side side,
+void AutocompletedPair::MakeChildrenPermanent(Tree* l, Side side,
                                               bool includeThis) {
   /* Recursively make all bracket children permanent on that side.
    * e.g. (((1]]|] -> "+" -> (((1))+|] */
-  if (!IsTemporary(node, side)) {
+  if (!IsTemporary(l, side)) {
     return;
   }
-  Tree* child = ChildOnSide(node, side);
-  if (node->type() == child->type()) {
+  Tree* child = ChildOnSide(l, side);
+  if (l->type() == child->type()) {
     MakeChildrenPermanent(child, side, true);
   }
   if (includeThis) {
-    SetTemporary(node, side, false);
+    SetTemporary(l, side, false);
   }
 }
 
-Tree* AutocompletedPair::ChildOnSide(Tree* node, Side side) {
-  Tree* child = node->child(0);
+Tree* AutocompletedPair::ChildOnSide(Tree* l, Side side) {
+  Tree* child = l->child(0);
   if (child->isRackLayout() && child->numberOfChildren() > 0) {
     return child->child(side == Side::Left ? 0 : child->numberOfChildren() - 1);
   }

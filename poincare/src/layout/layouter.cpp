@@ -738,24 +738,24 @@ bool Layouter::AddThousandSeparators(Tree* rack) {
   return true;
 }
 
-bool Layouter::requireSeparators(const Tree* expr) {
-  if (expr->isRational()) {
+bool Layouter::requireSeparators(const Tree* expression) {
+  if (expression->isRational()) {
     // TODO_PCJ same for decimals and floats
-    IntegerHandler num = Rational::Numerator(expr);
+    IntegerHandler num = Rational::Numerator(expression);
     num.setSign(NonStrictSign::Positive);
     if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
       return true;
     }
-    IntegerHandler den = Rational::Denominator(expr);
+    IntegerHandler den = Rational::Denominator(expression);
     if (IntegerHandler::Compare(den, k_minValueForThousandSeparator) >= 0) {
       return true;
     }
     return false;
   }
-  if (expr->isFloat() || expr->isDecimal()) {
+  if (expression->isFloat() || expression->isDecimal()) {
     /* Since rules are complex with floatDisplayMode, layout the float and check
      * if it has separators. */
-    Tree* clone = expr->cloneTree();
+    Tree* clone = expression->cloneTree();
     TreeRef rack = KRackL()->cloneTree();
     layoutExpression(rack, clone, k_tokenPriority);
     for (const Tree* child : rack->children()) {
@@ -767,11 +767,11 @@ bool Layouter::requireSeparators(const Tree* expr) {
     rack->removeTree();
     return false;
   }
-  for (const Tree* child : expr->children()) {
+  for (const Tree* child : expression->children()) {
     if (requireSeparators(child)) {
       return true;
     }
-    if (expr->isMult() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
+    if (expression->isMult() && Units::Unit::IsUnitOrPowerOfUnit(child)) {
       return true;
     }
   }

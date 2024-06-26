@@ -342,10 +342,10 @@ bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-bool Tree::ApplyShallowInDepth(Tree* e, ShallowOperation shallowOperation,
+bool Tree::ApplyShallowInDepth(Tree* t, ShallowOperation shallowOperation,
                                void* context, bool check) {
   bool changed = false;
-  for (Tree* node : e->selfAndDescendants()) {
+  for (Tree* node : t->selfAndDescendants()) {
     changed = shallowOperation(node, context) || changed;
     assert(!(changed && check && shallowOperation(node, context)));
   }
@@ -507,20 +507,20 @@ Tree* Tree::detach(bool isTree) {
   return Tree::FromBlocks(destination - sizeToMove);
 }
 
-void Tree::swapWithTree(Tree* v) {
-  if (block() > v->block()) {
-    return v->swapWithTree(this);
+void Tree::swapWithTree(Tree* t) {
+  if (block() > t->block()) {
+    return t->swapWithTree(this);
   }
-  v->moveTreeBeforeNode(this);
-  moveTreeBeforeNode(v);
+  t->moveTreeBeforeNode(this);
+  moveTreeBeforeNode(t);
 }
 
-void SwapTreesPointers(Tree** u, Tree** v) {
-  TreeRef ru(*u);
-  TreeRef rv(*v);
-  (*u)->swapWithTree(*v);
-  *u = ru;
-  *v = rv;
+void SwapTreesPointers(Tree** t1, Tree** t2) {
+  TreeRef ru(*t1);
+  TreeRef rv(*t2);
+  (*t1)->swapWithTree(*t2);
+  *t1 = ru;
+  *t2 = rv;
 }
 
 int NumberOfNextTreeTo(const Tree* from, const Tree* to) {

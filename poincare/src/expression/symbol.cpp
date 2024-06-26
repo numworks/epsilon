@@ -8,25 +8,24 @@
 
 namespace Poincare::Internal {
 
-char* Symbol::CopyName(const Tree* node, char* buffer, size_t bufferSize) {
-  assert(node->isUserNamed());
-  size_t length = Length(node);
-  assert(GetName(node)[length] == 0);
-  return buffer +
-         strlcpy(buffer, GetName(node), std::min(bufferSize, length + 1));
+char* Symbol::CopyName(const Tree* e, char* buffer, size_t bufferSize) {
+  assert(e->isUserNamed());
+  size_t length = Length(e);
+  assert(GetName(e)[length] == 0);
+  return buffer + strlcpy(buffer, GetName(e), std::min(bufferSize, length + 1));
 }
 
-const char* Symbol::GetName(const Tree* node) {
-  assert(node->isUserNamed());
+const char* Symbol::GetName(const Tree* e) {
+  assert(e->isUserNamed());
   // BlockType, Size, Name
-  return reinterpret_cast<const char*>(node->block()->nextNth(2));
+  return reinterpret_cast<const char*>(e->block()->nextNth(2));
 }
 
-ComplexSign Symbol::GetComplexSign(const Tree* node) {
+ComplexSign Symbol::GetComplexSign(const Tree* e) {
   // Undefined global variables are considered scalar (and real for UserSymbols)
-  assert(node->isUserNamed());
-  return node->isUserSymbol() ? ComplexSign::RealUnknown()
-                              : ComplexSign::Unknown();
+  assert(e->isUserNamed());
+  return e->isUserSymbol() ? ComplexSign::RealUnknown()
+                           : ComplexSign::Unknown();
 }
 
 }  // namespace Poincare::Internal

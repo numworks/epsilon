@@ -5,9 +5,8 @@
 
 using namespace Poincare::Internal;
 
-void assert_comparison_equals(const Tree* node0, const Tree* node1,
-                              int result) {
-  int comparison = Order::Compare(node0, node1);
+void assert_comparison_equals(const Tree* e0, const Tree* e1, int result) {
+  int comparison = Order::Compare(e0, e1);
   assert(comparison == result);
 }
 

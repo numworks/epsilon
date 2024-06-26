@@ -18,9 +18,9 @@ Random::Context::Context() {
   }
 }
 
-uint8_t Random::SeedRandomNodes(Tree* tree, uint8_t maxSeed) {
+uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
   uint8_t currentSeed = maxSeed;
-  Tree* u = tree;
+  Tree* u = e;
   int descendants = 1;
   while (descendants > 0) {
     descendants--;

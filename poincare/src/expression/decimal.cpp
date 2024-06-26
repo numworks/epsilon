@@ -13,16 +13,15 @@
 
 namespace Poincare::Internal {
 
-void Decimal::Project(Tree* tree) {
-  assertValidDecimal(tree);
+void Decimal::Project(Tree* e) {
+  assertValidDecimal(e);
   // dec<n>(x) -> 10^(-n)*x
   Tree* mult = SharedTreeStack->pushMult(1);
   SharedTreeStack->pushPow();
   Integer::Push(10);
-  IntegerHandler(DecimalOffset(tree), NonStrictSign::Negative)
-      .pushOnTreeStack();
-  tree->moveTreeOverNode(mult);
-  NAry::SetNumberOfChildren(tree, 2);
+  IntegerHandler(DecimalOffset(e), NonStrictSign::Negative).pushOnTreeStack();
+  e->moveTreeOverNode(mult);
+  NAry::SetNumberOfChildren(e, 2);
 }
 
 using Poincare::Preferences;

@@ -10,11 +10,11 @@
 namespace Poincare::Internal {
 namespace AppHelpers {
 
-void MakeRightMostParenthesisTemporary(Tree* tree) {
-  if (!tree->isRackLayout() || tree->numberOfChildren() == 0) {
+void MakeRightMostParenthesisTemporary(Tree* l) {
+  if (!l->isRackLayout() || l->numberOfChildren() == 0) {
     return;
   }
-  Tree* lastChild = tree->child(tree->numberOfChildren() - 1);
+  Tree* lastChild = l->child(l->numberOfChildren() - 1);
   if (lastChild->isParenthesesLayout() &&
       !AutocompletedPair::IsTemporary(lastChild, Side::Left)) {
     AutocompletedPair::SetTemporary(lastChild, Side::Right, true);

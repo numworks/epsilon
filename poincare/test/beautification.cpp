@@ -41,9 +41,9 @@ QUIZ_CASE(pcj_beautification) {
 
 void beautifies_to(const char* input, const char* output) {
   process_tree_and_compare(input, output,
-                           [](Tree* tree, ProjectionContext ctx) {
-                             Projection::DeepSystemProject(tree, ctx);
-                             Beautification::DeepBeautify(tree, ctx);
+                           [](Tree* e, ProjectionContext ctx) {
+                             Projection::DeepSystemProject(e, ctx);
+                             Beautification::DeepBeautify(e, ctx);
                            },
                            {});
 }

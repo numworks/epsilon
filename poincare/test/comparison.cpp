@@ -25,7 +25,7 @@ void sorts_to(const char* input, const char* output,
   s_order = order;
   process_tree_and_compare(
       input, output,
-      [](Tree* tree, ProjectionContext ctx) { NAry::Sort(tree, s_order); }, {});
+      [](Tree* e, ProjectionContext ctx) { NAry::Sort(e, s_order); }, {});
 }
 
 QUIZ_CASE(pcj_sort) {

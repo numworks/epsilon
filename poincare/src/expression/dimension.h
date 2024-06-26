@@ -85,17 +85,17 @@ struct Dimension {
   constexpr static int k_unknownListLength = -2;
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
-  static int ListLength(const Tree* t, Poincare::Context* ctx = nullptr);
-  static bool IsList(const Tree* t, Poincare::Context* ctx = nullptr) {
-    return ListLength(t, ctx) >= 0;
+  static int ListLength(const Tree* e, Poincare::Context* ctx = nullptr);
+  static bool IsList(const Tree* e, Poincare::Context* ctx = nullptr) {
+    return ListLength(e, ctx) >= 0;
   }
-  static bool DeepCheckListLength(const Tree* t,
+  static bool DeepCheckListLength(const Tree* e,
                                   Poincare::Context* ctx = nullptr);
-  static Dimension Get(const Tree* t, Poincare::Context* ctx = nullptr);
-  static bool DeepCheckDimensions(const Tree* t,
+  static Dimension Get(const Tree* e, Poincare::Context* ctx = nullptr);
+  static bool DeepCheckDimensions(const Tree* e,
                                   Poincare::Context* ctx = nullptr);
-  static bool DeepCheck(const Tree* t, Poincare::Context* ctx = nullptr) {
-    return DeepCheckDimensions(t, ctx) && DeepCheckListLength(t, ctx);
+  static bool DeepCheck(const Tree* e, Poincare::Context* ctx = nullptr) {
+    return DeepCheckDimensions(e, ctx) && DeepCheckListLength(e, ctx);
   }
 
   static void ReplaceTreeWithDimensionedType(Tree* e, Type type);

@@ -14,23 +14,23 @@ class PointOfInterest final {
  public:
   /* Abscissa/ordinate are from the function perspective, while x/y are related
    * to the drawings. They differ only with functions along y. */
-  static double GetAbscissa(const Tree* tree) {
-    return tree->nodeValueBlock(0)->get<double>();
+  static double GetAbscissa(const Tree* e) {
+    return e->nodeValueBlock(0)->get<double>();
   }
-  static double GetOrdinate(const Tree* tree) {
-    return tree->nodeValueBlock(k_ordinateValueIndex)->get<double>();
+  static double GetOrdinate(const Tree* e) {
+    return e->nodeValueBlock(k_ordinateValueIndex)->get<double>();
   }
-  static uint32_t GetData(const Tree* tree) {
-    return tree->nodeValueBlock(k_dataValueIndex)->get<uint32_t>();
+  static uint32_t GetData(const Tree* e) {
+    return e->nodeValueBlock(k_dataValueIndex)->get<uint32_t>();
   }
-  static uint8_t GetInterest(const Tree* tree) {
-    return tree->nodeValueBlock(k_interestValueIndex)->get<uint8_t>();
+  static uint8_t GetInterest(const Tree* e) {
+    return e->nodeValueBlock(k_interestValueIndex)->get<uint8_t>();
   }
-  static bool IsInverted(const Tree* tree) {
-    return tree->nodeValueBlock(k_invertedValueIndex)->get<bool>();
+  static bool IsInverted(const Tree* e) {
+    return e->nodeValueBlock(k_invertedValueIndex)->get<bool>();
   }
-  static uint8_t GetSubCurveIndex(const Tree* tree) {
-    return tree->nodeValueBlock(k_subCurveIndexValueIndex)->get<uint8_t>();
+  static uint8_t GetSubCurveIndex(const Tree* e) {
+    return e->nodeValueBlock(k_subCurveIndexValueIndex)->get<uint8_t>();
   }
 
  private:

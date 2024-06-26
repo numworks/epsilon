@@ -251,8 +251,8 @@ class Unit {
       const Representative* smallestRepresentative,
       const Representative* biggestRepresentative);
 
-  static bool IsUnitOrPowerOfUnit(const Tree* expr);
-  static bool ForceMarginLeftOfUnit(const Tree* expr);
+  static bool IsUnitOrPowerOfUnit(const Tree* e);
+  static bool ForceMarginLeftOfUnit(const Tree* e);
 
 #if 0
   // Simplification
@@ -302,10 +302,10 @@ class Unit {
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);
-bool IsCombinationOfUnits(const Tree* expr);
+bool IsCombinationOfUnits(const Tree* e);
 
-bool HasUnit(const Tree* expr);
-bool IsPureAngleUnit(const Tree* expr);
+bool HasUnit(const Tree* e);
+bool IsPureAngleUnit(const Tree* e);
 
 }  // namespace Units
 }  // namespace Poincare::Internal

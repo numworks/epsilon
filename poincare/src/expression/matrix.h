@@ -31,21 +31,22 @@ struct Matrix {
   static Tree* Zero(MatrixDimension d);
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix, bool approximate = false);
-  static Tree* Addition(const Tree* a, const Tree* b, bool approximate = false);
-  static Tree* ScalarMultiplication(const Tree* s, const Tree* m,
+  static Tree* Addition(const Tree* matrix1, const Tree* matrix2,
+                        bool approximate = false);
+  static Tree* ScalarMultiplication(const Tree* scalar, const Tree* matrix,
                                     bool approximate = false);
-  static Tree* Multiplication(const Tree* a, const Tree* b,
+  static Tree* Multiplication(const Tree* matrix1, const Tree* matrix2,
                               bool approximate = false);
   static Tree* Transpose(const Tree* matrix);
-  static bool RowCanonize(Tree* m, bool reduced = true,
+  static bool RowCanonize(Tree* matrix, bool reduced = true,
                           Tree** determinant = nullptr,
                           bool approximate = false);
-  static int Rank(const Tree* m);
-  static int CanonizeAndRank(Tree* m);
-  static int RankOfCanonized(const Tree* m);
-  static Tree* Inverse(const Tree* m, bool approximate = false);
-  static Tree* Power(const Tree* m, int p, bool approximate = false);
-  static bool SystematicReduceMatrixOperation(Tree* u);
+  static int Rank(const Tree* matrix);
+  static int CanonizeAndRank(Tree* matrix);
+  static int RankOfCanonized(const Tree* matrix);
+  static Tree* Inverse(const Tree* matrix, bool approximate = false);
+  static Tree* Power(const Tree* matrix, int power, bool approximate = false);
+  static bool SystematicReduceMatrixOperation(Tree* e);
 };
 
 }  // namespace Poincare::Internal

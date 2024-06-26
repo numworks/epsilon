@@ -6,24 +6,24 @@
 namespace Poincare::Internal {
 
 struct Dependency {
-  static const Tree* Main(const Tree* expr) {
-    assert(expr->isDependency());
-    return expr->child(k_mainIndex);
+  static const Tree* Main(const Tree* e) {
+    assert(e->isDependency());
+    return e->child(k_mainIndex);
   }
-  static const Tree* Dependencies(const Tree* expr) {
-    assert(expr->isDependency());
-    return expr->child(k_dependenciesIndex);
+  static const Tree* Dependencies(const Tree* e) {
+    assert(e->isDependency());
+    return e->child(k_dependenciesIndex);
   }
-  static Tree* Main(Tree* expr) {
-    assert(expr->isDependency());
-    return expr->child(k_mainIndex);
+  static Tree* Main(Tree* e) {
+    assert(e->isDependency());
+    return e->child(k_mainIndex);
   }
-  static Tree* Dependencies(Tree* expr) {
-    assert(expr->isDependency());
-    return expr->child(k_dependenciesIndex);
+  static Tree* Dependencies(Tree* e) {
+    assert(e->isDependency());
+    return e->child(k_dependenciesIndex);
   }
-  static bool ShallowBubbleUpDependencies(Tree* expr);
-  static bool DeepRemoveUselessDependencies(Tree* expr);
+  static bool ShallowBubbleUpDependencies(Tree* e);
+  static bool DeepRemoveUselessDependencies(Tree* e);
 
  private:
   constexpr static int k_mainIndex = 0;

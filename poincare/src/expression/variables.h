@@ -29,58 +29,54 @@ class Variables {
     Block m_blocks[k_size];
   };
   // Push a Set with the free user symbols of the expression
-  static Tree* GetUserSymbols(const Tree* t);
-  static bool ProjectLocalVariablesToId(Tree* t, uint8_t depth = 0);
-  static bool BeautifyToName(Tree* t, uint8_t depth = 0);
+  static Tree* GetUserSymbols(const Tree* e);
+  static bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
+  static bool BeautifyToName(Tree* e, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);
   static ComplexSign GetComplexSign(const Tree* variable);
 
   // On projected expressions
-  static bool HasVariables(const Tree* t);
+  static bool HasVariables(const Tree* e);
 
   // On projected expressions
-  static bool HasVariable(const Tree* t, const Tree* variable);
-  static bool HasVariable(const Tree* t, int id);
+  static bool HasVariable(const Tree* e, const Tree* variable);
+  static bool HasVariable(const Tree* e, int id);
 
-  // Replace occurrences of variable with value and simplify inside expr
-  static bool Replace(Tree* expr, const Tree* variable, const Tree* value,
+  // Replace occurrences of variable with value and simplify inside e
+  static bool Replace(Tree* e, const Tree* variable, const Tree* value,
                       bool simplify);
-  static bool Replace(Tree* expr, int id, const Tree* value, bool leave = false,
+  static bool Replace(Tree* e, int id, const Tree* value, bool leave = false,
                       bool simplify = true);
-  static bool Replace(Tree* expr, int id, const TreeRef& value,
-                      bool leave = false, bool simplify = true);
+  static bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
+                      bool simplify = true);
 
   // Replace symbol with Var<id>
-  static bool ReplaceSymbol(Tree* expr, const char* symbol, int id,
+  static bool ReplaceSymbol(Tree* e, const char* symbol, int id,
                             ComplexSign sign);
-  static bool ReplaceSymbol(Tree* expr, const Tree* symbol, int id,
+  static bool ReplaceSymbol(Tree* e, const Tree* symbol, int id,
                             ComplexSign sign);
-  static void ReplaceUserFunctionOrSequenceWithTree(Tree* expr,
+  static void ReplaceUserFunctionOrSequenceWithTree(Tree* e,
                                                     const Tree* replacement);
-  static bool ReplaceSymbolWithTree(Tree* expr, const Tree* symbol,
+  static bool ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
                                     const Tree* replacement);
 
   // Increment all variable indexes
-  static void EnterScope(Tree* expr) {
-    return EnterOrLeaveScope(expr, true, -1);
-  }
+  static void EnterScope(Tree* e) { return EnterOrLeaveScope(e, true, -1); }
   // Increment non null variable indexes
-  static void EnterScopeExceptLocalVariable(Tree* expr) {
-    return EnterOrLeaveScope(expr, true, 0);
+  static void EnterScopeExceptLocalVariable(Tree* e) {
+    return EnterOrLeaveScope(e, true, 0);
   }
   // Decrement variables indexes
-  static void LeaveScope(Tree* expr) {
-    return EnterOrLeaveScope(expr, false, 0);
-  }
-  static void LeaveScopeWithReplacement(Tree* expr, const Tree* value,
+  static void LeaveScope(Tree* e) { return EnterOrLeaveScope(e, false, 0); }
+  static void LeaveScopeWithReplacement(Tree* e, const Tree* value,
                                         bool simplify) {
-    Replace(expr, 0, value, true, simplify);
+    Replace(e, 0, value, true, simplify);
   }
 
  private:
   // Variables below preserveUnder are considered local and preserved
-  static void EnterOrLeaveScope(Tree* expr, bool enter, int preserveUnder);
-  static void GetUserSymbols(const Tree* t, Tree* set);
+  static void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
+  static void GetUserSymbols(const Tree* e, Tree* set);
   static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
   static const Tree* ToSymbol(const Tree* variables, uint8_t id);
 };

@@ -9,10 +9,10 @@
 using namespace Poincare::Internal;
 
 // By default, degree is -1 unless all children have a 0 degree.
-int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
-  switch (t->type()) {
+int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
+  switch (e->type()) {
     case Type::UserSymbol:
-      return t->treeIsIdenticalTo(symbol) ? 1 : 0;
+      return e->treeIsIdenticalTo(symbol) ? 1 : 0;
     case Type::Matrix:
     case Type::Store:
     case Type::UnitConversion:
@@ -30,12 +30,12 @@ int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
       break;
   }
   int degree = 0;
-  for (uint8_t i = 0; const Tree* child : t->children()) {
+  for (uint8_t i = 0; const Tree* child : e->children()) {
     int childDegree = PrivateGet(child, symbol);
     if (childDegree == k_unknown) {
       return childDegree;
     }
-    switch (t->type()) {
+    switch (e->type()) {
       case Type::Dependency:
         assert(i == 0);
         return childDegree;
@@ -75,14 +75,14 @@ int Degree::PrivateGet(const Tree* t, const Tree* symbol) {
   return degree;
 }
 
-int Degree::Get(const Tree* t, const Tree* symbol,
+int Degree::Get(const Tree* e, const Tree* symbol,
                 ProjectionContext projectionContext) {
   assert(symbol->isUserSymbol());
-  if (t->isStore() || t->isUnitConversion()) {
+  if (e->isStore() || e->isUnitConversion()) {
     return k_unknown;
   }
   // Project, simplify and expand the expression for a more accurate degree.
-  Tree* clone = t->cloneTree();
+  Tree* clone = e->cloneTree();
   Simplification::ToSystem(clone, &projectionContext);
   Simplification::ReduceSystem(clone, false);
   AdvancedReduction::DeepExpand(clone);

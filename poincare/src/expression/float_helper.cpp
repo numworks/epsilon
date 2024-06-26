@@ -4,13 +4,13 @@
 
 namespace Poincare::Internal {
 
-bool FloatHelper::SetSign(Tree* tree, NonStrictSign sign) {
-  double value = To(tree);
+bool FloatHelper::SetSign(Tree* e, NonStrictSign sign) {
+  double value = To(e);
   if (value == 0 || (value > 0.0) == (sign == NonStrictSign::Positive)) {
     return false;
   }
-  tree->moveTreeOverTree(
-      tree->isSingleFloat()
+  e->moveTreeOverTree(
+      e->isSingleFloat()
           ? SharedTreeStack->pushSingleFloat(-static_cast<float>(value))
           : SharedTreeStack->pushDoubleFloat(-value));
   return true;

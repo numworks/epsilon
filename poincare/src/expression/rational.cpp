@@ -13,8 +13,8 @@ namespace Poincare::Internal {
 
 // TODO: tests
 
-IntegerHandler Rational::Numerator(const Tree* node) {
-  Type type = node->type();
+IntegerHandler Rational::Numerator(const Tree* e) {
+  Type type = e->type();
   switch (type) {
     case Type::Zero:
       return IntegerHandler(static_cast<int8_t>(0));
@@ -28,13 +28,13 @@ IntegerHandler Rational::Numerator(const Tree* node) {
       return IntegerHandler(1);
     case Type::IntegerPosShort:
     case Type::IntegerNegShort: {
-      uint8_t value = node->nodeValue(0);
+      uint8_t value = e->nodeValue(0);
       return IntegerHandler(type == Type::IntegerPosShort ? value : -value);
     }
     case Type::IntegerPosBig:
     case Type::IntegerNegBig: {
-      const Block* block = node->block();
-      uint8_t numberOfDigits = node->nodeValue(0);
+      const Block* block = e->block();
+      uint8_t numberOfDigits = e->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(2));
       return IntegerHandler(digits, numberOfDigits,
@@ -44,13 +44,13 @@ IntegerHandler Rational::Numerator(const Tree* node) {
     }
     case Type::RationalPosShort:
     case Type::RationalNegShort: {
-      uint8_t value = node->nodeValue(0);
+      uint8_t value = e->nodeValue(0);
       return IntegerHandler(type == Type::RationalPosShort ? value : -value);
     }
     case Type::RationalPosBig:
     case Type::RationalNegBig: {
-      const Block* block = node->block();
-      uint8_t numberOfDigits = node->nodeValue(0);
+      const Block* block = e->block();
+      uint8_t numberOfDigits = e->nodeValue(0);
       const uint8_t* digits =
           reinterpret_cast<const uint8_t*>(block->nextNth(3));
       return IntegerHandler(digits, numberOfDigits,
@@ -63,8 +63,8 @@ IntegerHandler Rational::Numerator(const Tree* node) {
   }
 }
 
-IntegerHandler Rational::Denominator(const Tree* node) {
-  switch (node->type()) {
+IntegerHandler Rational::Denominator(const Tree* e) {
+  switch (e->type()) {
     case Type::Zero:
     case Type::One:
     case Type::Two:
@@ -78,13 +78,13 @@ IntegerHandler Rational::Denominator(const Tree* node) {
       return IntegerHandler(2);
     case Type::RationalPosShort:
     case Type::RationalNegShort: {
-      return IntegerHandler(node->nodeValue(1));
+      return IntegerHandler(e->nodeValue(1));
     }
     case Type::RationalPosBig:
     case Type::RationalNegBig: {
-      const Block* block = node->block();
-      uint8_t numeratorNumberOfDigits = node->nodeValue(0);
-      uint8_t denominatorNumberOfDigits = node->nodeValue(1);
+      const Block* block = e->block();
+      uint8_t numeratorNumberOfDigits = e->nodeValue(0);
+      uint8_t denominatorNumberOfDigits = e->nodeValue(1);
       const uint8_t* digits = reinterpret_cast<const uint8_t*>(
           block->nextNth(3 + numeratorNumberOfDigits));
       return IntegerHandler(digits, denominatorNumberOfDigits,
@@ -107,35 +107,35 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
                                     : NonStrictSign::Negative;
   numerator.setSign(numeratorSign);
   denominator.setSign(NonStrictSign::Positive);
-  Tree* node;
+  Tree* e;
   if (denominator.isOne() || numerator.isZero()) {
-    node = numerator.pushOnTreeStack();
+    e = numerator.pushOnTreeStack();
   } else if (numerator.isOne() && denominator.isTwo()) {
-    node = SharedTreeStack->pushHalf();
+    e = SharedTreeStack->pushHalf();
   } else if (numerator.numberOfDigits() == 1 &&
              denominator.isUnsignedType<uint8_t>()) {
     if (numerator.sign() == NonStrictSign::Positive) {
-      node = SharedTreeStack->pushBlock(Type::RationalPosShort);
+      e = SharedTreeStack->pushBlock(Type::RationalPosShort);
     } else {
-      node = SharedTreeStack->pushBlock(Type::RationalNegShort);
+      e = SharedTreeStack->pushBlock(Type::RationalNegShort);
       numerator.setSign(NonStrictSign::Positive);
     }
     SharedTreeStack->pushBlock(ValueBlock(static_cast<uint8_t>(numerator)));
     SharedTreeStack->pushBlock(ValueBlock(static_cast<uint8_t>(denominator)));
   } else {
-    node = SharedTreeStack->pushBlock(numeratorSign == NonStrictSign::Negative
-                                          ? Type::RationalNegBig
-                                          : Type::RationalPosBig);
+    e = SharedTreeStack->pushBlock(numeratorSign == NonStrictSign::Negative
+                                       ? Type::RationalNegBig
+                                       : Type::RationalPosBig);
     SharedTreeStack->pushBlock(ValueBlock(numerator.numberOfDigits()));
     SharedTreeStack->pushBlock(ValueBlock(denominator.numberOfDigits()));
     numerator.pushDigitsOnTreeStack();
     denominator.pushDigitsOnTreeStack();
   }
-  assert(IsIrreducible(node));
+  assert(IsIrreducible(e));
 #if POINCARE_POOL_VISUALIZATION
-  Log("PushRational", node->block(), node->treeSize());
+  Log("PushRational", e->block(), e->treeSize());
 #endif
-  return node;
+  return e;
 }
 
 Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
@@ -162,52 +162,52 @@ Tree* Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   return result;
 }
 
-bool Rational::SetSign(Tree* tree, NonStrictSign sign) {
-  IntegerHandler numerator = Numerator(tree);
-  IntegerHandler denominator = Denominator(tree);
+bool Rational::SetSign(Tree* e, NonStrictSign sign) {
+  IntegerHandler numerator = Numerator(e);
+  IntegerHandler denominator = Denominator(e);
   if (numerator.isZero() || sign == numerator.sign()) {
     return false;
   }
   numerator.setSign(sign);
-  tree->moveTreeOverTree(PushIrreducible(numerator, denominator));
+  e->moveTreeOverTree(PushIrreducible(numerator, denominator));
   return true;
 }
 
-Tree* Rational::Addition(const Tree* i, const Tree* j) {
+Tree* Rational::Addition(const Tree* e1, const Tree* e2) {
   // a/b + c/d
-  Tree* ad = IntegerHandler::Multiplication(Numerator(i), Denominator(j));
-  Tree* cb = IntegerHandler::Multiplication(Numerator(j), Denominator(i));
+  Tree* ad = IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
+  Tree* cb = IntegerHandler::Multiplication(Numerator(e2), Denominator(e1));
   TreeRef newNumerator =
       IntegerHandler::Addition(Integer::Handler(ad), Integer::Handler(cb));
   cb->removeTree();
   ad->removeTree();
   TreeRef newDenominator =
-      IntegerHandler::Multiplication(Denominator(i), Denominator(j));
+      IntegerHandler::Multiplication(Denominator(e1), Denominator(e2));
   TreeRef result = Rational::Push(newNumerator, newDenominator);
   newDenominator->removeTree();
   newNumerator->removeTree();
   return result;
 }
 
-Tree* Rational::Multiplication(const Tree* i, const Tree* j) {
+Tree* Rational::Multiplication(const Tree* e1, const Tree* e2) {
   Tree* newNumerator =
-      IntegerHandler::Multiplication(Numerator(i), Numerator(j));
+      IntegerHandler::Multiplication(Numerator(e1), Numerator(e2));
   Tree* newDenominator =
-      IntegerHandler::Multiplication(Denominator(i), Denominator(j));
+      IntegerHandler::Multiplication(Denominator(e1), Denominator(e2));
   TreeRef result = Rational::Push(newNumerator, newDenominator);
   newDenominator->removeTree();
   newNumerator->removeTree();
   return result;
 }
 
-Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
-  assert(!(i->isZero() && Sign(j).isNegative()));
-  IntegerHandler absJ = Integer::Handler(j);
+Tree* Rational::IntegerPower(const Tree* e1, const Tree* e2) {
+  assert(!(e1->isZero() && Sign(e2).isNegative()));
+  IntegerHandler absJ = Integer::Handler(e2);
   absJ.setSign(NonStrictSign::Positive);
-  Tree* newNumerator = IntegerHandler::Power(Numerator(i), absJ);
-  Tree* newDenominator = IntegerHandler::Power(Denominator(i), absJ);
+  Tree* newNumerator = IntegerHandler::Power(Numerator(e1), absJ);
+  Tree* newDenominator = IntegerHandler::Power(Denominator(e1), absJ);
   TreeRef result =
-      Sign(j).isNegative()
+      Sign(e2).isNegative()
           ? Rational::PushIrreducible(newDenominator, newNumerator)
           : Rational::PushIrreducible(newNumerator, newDenominator);
   newDenominator->removeTree();
@@ -215,25 +215,25 @@ Tree* Rational::IntegerPower(const Tree* i, const Tree* j) {
   return result;
 }
 
-bool Rational::IsIrreducible(const Tree* i) {
-  if (!i->isOfType({Type::RationalNegShort, Type::RationalPosShort,
+bool Rational::IsIrreducible(const Tree* e) {
+  if (!e->isOfType({Type::RationalNegShort, Type::RationalPosShort,
                     Type::RationalNegBig, Type::RationalPosBig})) {
     return true;
   }
-  TreeRef gcd = IntegerHandler::GCD(Numerator(i), Denominator(i));
+  TreeRef gcd = IntegerHandler::GCD(Numerator(e), Denominator(e));
   bool result = gcd->isOne();
   gcd->removeTree();
   return result;
 }
 
-bool Rational::IsGreaterThanOne(const Tree* r) {
-  return IntegerHandler::Compare(Numerator(r), Denominator(r)) > 0;
+bool Rational::IsGreaterThanOne(const Tree* e) {
+  return IntegerHandler::Compare(Numerator(e), Denominator(e)) > 0;
 }
 
-Tree* Rational::CreateMixedFraction(const Tree* r,
+Tree* Rational::CreateMixedFraction(const Tree* e,
                                     bool mixedFractionsAreEnabled) {
-  IntegerHandler num = Numerator(r);
-  IntegerHandler den = Denominator(r);
+  IntegerHandler num = Numerator(e);
+  IntegerHandler den = Denominator(e);
   bool numIsNegative = num.strictSign() == StrictSign::Negative;
   num.setSign(NonStrictSign::Positive);
   // Push quotient and remainder

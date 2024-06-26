@@ -8,14 +8,14 @@ namespace Poincare::Internal {
 
 class CodePointLayout {
  public:
-  static CodePoint GetCodePoint(const Tree* node);
-  static CodePoint GetCombinedCodePoint(const Tree* node);
+  static CodePoint GetCodePoint(const Tree* l);
+  static CodePoint GetCombinedCodePoint(const Tree* l);
   static Tree* Push(CodePoint cp);
 
   // Print name in buffer and return end
-  static char* CopyName(const Tree* node, char* buffer, size_t bufferSize);
+  static char* CopyName(const Tree* l, char* buffer, size_t bufferSize);
 
-  static bool IsCodePoint(const Tree* node, CodePoint cp);
+  static bool IsCodePoint(const Tree* l, CodePoint cp);
 };
 
 }  // namespace Poincare::Internal

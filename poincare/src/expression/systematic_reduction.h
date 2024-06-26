@@ -9,14 +9,14 @@ class SystematicReduction {
   friend class SystematicOperation;
 
  public:
-  static bool DeepReduce(Tree* u);
+  static bool DeepReduce(Tree* e);
   TREE_REF_WRAP(DeepReduce);
-  static bool ShallowReduce(Tree* u);
+  static bool ShallowReduce(Tree* e);
   TREE_REF_WRAP(ShallowReduce);
 
  private:
-  static bool BubbleUpFromChildren(Tree* u);
-  static bool Switch(Tree* u);
+  static bool BubbleUpFromChildren(Tree* e);
+  static bool Switch(Tree* e);
 };
 
 }  // namespace Poincare::Internal

@@ -28,7 +28,7 @@ class ConstantDatasetColumn : public DatasetColumn<T> {
 template <typename T>
 class TreeDatasetColumn : public DatasetColumn<T> {
  public:
-  TreeDatasetColumn(const Tree* tree);
+  TreeDatasetColumn(const Tree* e);
   T valueAtIndex(int index) const override;
   int length() const override;
 

@@ -59,18 +59,18 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
   return result;
 }
 
-Tree* Matrix::Transpose(const Tree* m) {
-  uint8_t rows = NumberOfRows(m);
-  uint8_t cols = NumberOfColumns(m);
+Tree* Matrix::Transpose(const Tree* matrix) {
+  uint8_t rows = NumberOfRows(matrix);
+  uint8_t cols = NumberOfColumns(matrix);
   if (rows == 1 || cols == 1) {
-    Tree* result = m->cloneTree();
+    Tree* result = matrix->cloneTree();
     SetNumberOfRows(result, cols);
     SetNumberOfColumns(result, rows);
     return result;
   }
   Tree* result = SharedTreeStack->pushMatrix(cols, rows);
   const Tree* rowsM[rows];
-  const Tree* child = m->child(0);
+  const Tree* child = matrix->child(0);
   for (int row = 0; row < rows; row++) {
     rowsM[row] = child;
     for (int col = 0; col < cols; col++) {
@@ -86,33 +86,34 @@ Tree* Matrix::Transpose(const Tree* m) {
   return result;
 }
 
-Tree* Matrix::Addition(const Tree* u, const Tree* v, bool approximate) {
+Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
+                       bool approximate) {
   // should be an assert after dimensional analysis
-  assert(NumberOfRows(u) == NumberOfRows(v) &&
-         NumberOfColumns(u) == NumberOfColumns(v));
-  const Tree* childU = u->child(0);
-  const Tree* childV = v->child(0);
-  int n = u->numberOfChildren();
-  Tree* result = u->cloneNode();
+  assert(NumberOfRows(matrix1) == NumberOfRows(matrix2) &&
+         NumberOfColumns(matrix1) == NumberOfColumns(matrix2));
+  const Tree* childM1 = matrix1->child(0);
+  const Tree* childM2 = matrix2->child(0);
+  int n = matrix1->numberOfChildren();
+  Tree* result = matrix1->cloneNode();
   for (int i = 0; i < n; i++) {
     Tree* child = KAdd.node<2>->cloneNode();
-    childU->cloneTree();
-    childV->cloneTree();
+    childM1->cloneTree();
+    childM2->cloneTree();
     if (approximate) {
       Approximation::ApproximateToComplexTree(child);
     } else {
       SystematicReduction::ShallowReduce(child);
     }
-    childU = childU->nextTree();
-    childV = childV->nextTree();
+    childM1 = childM1->nextTree();
+    childM2 = childM2->nextTree();
   }
   return result;
 }
 
-Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
+Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
                                    bool approximate) {
-  Tree* result = m->cloneNode();
-  for (const Tree* child : m->children()) {
+  Tree* result = matrix->cloneNode();
+  for (const Tree* child : matrix->children()) {
     Tree* mult = SharedTreeStack->pushMult(2);
     scalar->cloneTree();
     child->cloneTree();
@@ -125,40 +126,41 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* m,
   return result;
 }
 
-Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
-  assert(NumberOfColumns(u) == NumberOfRows(v));
-  uint8_t rows = NumberOfRows(u);
-  uint8_t internal = NumberOfColumns(u);
-  uint8_t cols = NumberOfColumns(v);
+Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
+                             bool approximate) {
+  assert(NumberOfColumns(matrix1) == NumberOfRows(matrix2));
+  uint8_t rows = NumberOfRows(matrix1);
+  uint8_t internal = NumberOfColumns(matrix1);
+  uint8_t cols = NumberOfColumns(matrix2);
   Tree* result = SharedTreeStack->pushMatrix(rows, cols);
   /* The complexity of the naive multiplication is n^3 by itself but if we do
    * not take care, indexing the children with child will add an n^2
-   * factor. To avoid this, we keep track of each row of v. */
-  const Tree* rowsV[internal];
+   * factor. To avoid this, we keep track of each row of matrix2. */
+  const Tree* rowsM2[internal];
   {
     // Initialize row pointers
-    const Tree* childV = v->child(0);
+    const Tree* childM2 = matrix2->child(0);
     for (int k = 0; k < internal; k++) {
-      rowsV[k] = childV;
+      rowsM2[k] = childM2;
       for (int c = 0; c < cols; c++) {
-        childV = childV->nextTree();
+        childM2 = childM2->nextTree();
       }
     }
   }
-  const Tree* childURow0 = u->child(0);
-  const Tree* childURowK;
+  const Tree* childM1Row0 = matrix1->child(0);
+  const Tree* childM1RowK;
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
       Tree* add = SharedTreeStack->pushAdd(internal);
-      childURowK = childURow0;
+      childM1RowK = childM1Row0;
       for (int k = 0; k < internal; k++) {
         Tree* mult = SharedTreeStack->pushMult(2);
-        assert(childURowK == Child(u, row, k));
-        childURowK->cloneTree();
-        childURowK = childURowK->nextTree();
-        assert(rowsV[k] == Child(v, k, col));
-        rowsV[k]->cloneTree();
-        rowsV[k] = rowsV[k]->nextTree();
+        assert(childM1RowK == Child(matrix1, row, k));
+        childM1RowK->cloneTree();
+        childM1RowK = childM1RowK->nextTree();
+        assert(rowsM2[k] == Child(matrix2, k, col));
+        rowsM2[k]->cloneTree();
+        rowsM2[k] = rowsM2[k]->nextTree();
         if (approximate) {
           Approximation::ApproximateToComplexTree(mult);
         } else {
@@ -171,12 +173,12 @@ Tree* Matrix::Multiplication(const Tree* u, const Tree* v, bool approximate) {
         SystematicReduction::ShallowReduce(add);
       }
     }
-    childURow0 = childURowK;
+    childM1Row0 = childM1RowK;
     // Since each row has moved cols times we can shift them to restore them
     for (int k = internal - 1; k > 0; k--) {
-      rowsV[k] = rowsV[k - 1];
+      rowsM2[k] = rowsM2[k - 1];
     }
-    rowsV[0] = v->child(0);
+    rowsM2[0] = matrix2->child(0);
   }
   return result;
 }
@@ -318,26 +320,26 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
   return true;
 }
 
-int Matrix::Rank(const Tree* m) {
-  Tree* copy = m->cloneTree();
+int Matrix::Rank(const Tree* matrix) {
+  Tree* copy = matrix->cloneTree();
   RowCanonize(copy);
   int rank = RankOfCanonized(copy);
   copy->removeTree();
   return rank;
 }
 
-int Matrix::CanonizeAndRank(Tree* m) {
-  RowCanonize(m);
-  return RankOfCanonized(m);
+int Matrix::CanonizeAndRank(Tree* matrix) {
+  RowCanonize(matrix);
+  return RankOfCanonized(matrix);
 }
 
-int Matrix::RankOfCanonized(const Tree* m) {
-  int rank = NumberOfRows(m);
+int Matrix::RankOfCanonized(const Tree* matrix) {
+  int rank = NumberOfRows(matrix);
   int i = rank - 1;
   while (i >= 0) {
-    int j = NumberOfColumns(m) - 1;
+    int j = NumberOfColumns(matrix) - 1;
     // TODO: Handle OMG::Troolean::Unknown. See rowCanonize comment
-    while (j >= i && Child(m, i, j)->isZero()) {
+    while (j >= i && Child(matrix, i, j)->isZero()) {
       j--;
     }
     if (j <= i - 1) {
@@ -350,13 +352,13 @@ int Matrix::RankOfCanonized(const Tree* m) {
   return rank;
 }
 
-Tree* Matrix::Inverse(const Tree* m, bool approximate) {
-  assert(NumberOfRows(m) == NumberOfColumns(m));
-  int dim = NumberOfRows(m);
+Tree* Matrix::Inverse(const Tree* matrix, bool approximate) {
+  assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
+  int dim = NumberOfRows(matrix);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
    * identity matrix */
   Tree* matrixAI = SharedTreeStack->pushMatrix(dim, dim * 2);
-  const Tree* childIJ = m->child(0);
+  const Tree* childIJ = matrix->child(0);
   for (int i = 0; i < dim; i++) {
     for (int j = 0; j < dim; j++) {
       childIJ->cloneTree();
@@ -389,55 +391,55 @@ Tree* Matrix::Inverse(const Tree* m, bool approximate) {
   return matrixAI;
 }
 
-Tree* Matrix::Power(const Tree* m, int p, bool approximate) {
-  assert(NumberOfRows(m) == NumberOfColumns(m));
-  if (p < 0) {
-    Tree* result = Power(m, -p);
+Tree* Matrix::Power(const Tree* matrix, int power, bool approximate) {
+  assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
+  if (power < 0) {
+    Tree* result = Power(matrix, -power);
     // TODO is it worth to compute inverse first ?
     result->moveTreeOverTree(Inverse(result, approximate));
     return result;
   }
-  if (p == 0) {
-    Tree* result = Integer::Push(NumberOfRows(m));
+  if (power == 0) {
+    Tree* result = Integer::Push(NumberOfRows(matrix));
     result->moveTreeOverTree(Identity(result));
     return result;
   }
-  if (p == 1) {
-    return m->cloneTree();
+  if (power == 1) {
+    return matrix->cloneTree();
   }
-  if (p == 2) {
-    return Multiplication(m, m);
+  if (power == 2) {
+    return Multiplication(matrix, matrix);
   }
   // Quick exponentiation
-  Tree* result = Power(m, p / 2);
+  Tree* result = Power(matrix, power / 2);
   result->moveTreeOverTree(Multiplication(result, result, approximate));
-  if (p % 2 == 1) {
-    result->moveTreeOverTree(Multiplication(m, result, approximate));
+  if (power % 2 == 1) {
+    result->moveTreeOverTree(Multiplication(matrix, result, approximate));
   }
   return result;
 }
 
-bool Matrix::SystematicReduceMatrixOperation(Tree* u) {
+bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
   // Dim is handled in SystematicReduction::Switch
-  assert(u->isAMatrixOrContainsMatricesAsChildren() && !u->isDim());
-  Tree* child = u->child(0);
-  if (!child->isMatrix() && !u->isIdentity()) {
+  assert(e->isAMatrixOrContainsMatricesAsChildren() && !e->isDim());
+  Tree* child = e->child(0);
+  if (!child->isMatrix() && !e->isIdentity()) {
     return false;
   }
-  if (u->isRef() || u->isRref()) {
-    RowCanonize(child, u->isRref());
-    u->removeNode();
+  if (e->isRef() || e->isRref()) {
+    RowCanonize(child, e->isRref());
+    e->removeNode();
     return true;
   }
   Tree* result;
-  switch (u->type()) {
+  switch (e->type()) {
     case Type::Cross:
     case Type::Dot: {
       Tree* child2 = child->nextTree();
-      if (!u->child(1)->isMatrix()) {
+      if (!e->child(1)->isMatrix()) {
         return false;
       }
-      result = (u->isCross() ? Vector::Cross : Vector::Dot)(child, child2);
+      result = (e->isCross() ? Vector::Cross : Vector::Dot)(child, child2);
       break;
     }
     case Type::Det:
@@ -471,7 +473,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* u) {
       assert(false);
       return false;
   }
-  u->moveTreeOverTree(result);
+  e->moveTreeOverTree(result);
   return true;
 }
 

@@ -90,51 +90,51 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
  * - hook a SAT solver
  */
 
-bool Binary::ReduceBooleanOperator(Tree* tree) {
+bool Binary::ReduceBooleanOperator(Tree* e) {
   return
       // not true -> false
-      PatternMatching::MatchReplace(tree, KLogicalNot(KTrue), KFalse) ||
+      PatternMatching::MatchReplace(e, KLogicalNot(KTrue), KFalse) ||
       // not false -> true
-      PatternMatching::MatchReplace(tree, KLogicalNot(KFalse), KTrue) ||
+      PatternMatching::MatchReplace(e, KLogicalNot(KFalse), KTrue) ||
       // false and A -> false
-      PatternMatching::MatchReplace(tree, KLogicalAnd(KFalse, KA), KFalse) ||
-      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KFalse), KFalse) ||
+      PatternMatching::MatchReplace(e, KLogicalAnd(KFalse, KA), KFalse) ||
+      PatternMatching::MatchReplace(e, KLogicalAnd(KA, KFalse), KFalse) ||
       // true and A -> A
-      PatternMatching::MatchReplace(tree, KLogicalAnd(KTrue, KA), KA) ||
-      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KTrue), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalAnd(KTrue, KA), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalAnd(KA, KTrue), KA) ||
       // true or A -> true
-      PatternMatching::MatchReplace(tree, KLogicalOr(KTrue, KA), KTrue) ||
-      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KTrue), KTrue) ||
+      PatternMatching::MatchReplace(e, KLogicalOr(KTrue, KA), KTrue) ||
+      PatternMatching::MatchReplace(e, KLogicalOr(KA, KTrue), KTrue) ||
       // false or A -> A
-      PatternMatching::MatchReplace(tree, KLogicalOr(KFalse, KA), KA) ||
-      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KFalse), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalOr(KFalse, KA), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalOr(KA, KFalse), KA) ||
       // false xor A -> A
-      PatternMatching::MatchReplace(tree, KLogicalXor(KFalse, KA), KA) ||
-      PatternMatching::MatchReplace(tree, KLogicalXor(KA, KFalse), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalXor(KFalse, KA), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalXor(KA, KFalse), KA) ||
       // true xor A -> not A
-      PatternMatching::MatchReplaceSimplify(tree, KLogicalXor(KTrue, KA),
+      PatternMatching::MatchReplaceSimplify(e, KLogicalXor(KTrue, KA),
                                             KLogicalNot(KA)) ||
-      PatternMatching::MatchReplaceSimplify(tree, KLogicalXor(KA, KTrue),
+      PatternMatching::MatchReplaceSimplify(e, KLogicalXor(KA, KTrue),
                                             KLogicalNot(KA)) ||
 
       // not (not A) -> A
-      PatternMatching::MatchReplace(tree, KLogicalNot(KLogicalNot(KA)), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalNot(KLogicalNot(KA)), KA) ||
       // A or A -> A
-      PatternMatching::MatchReplace(tree, KLogicalOr(KA, KA), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalOr(KA, KA), KA) ||
       // A and A -> A
-      PatternMatching::MatchReplace(tree, KLogicalAnd(KA, KA), KA) ||
+      PatternMatching::MatchReplace(e, KLogicalAnd(KA, KA), KA) ||
       // A xor A -> false
-      PatternMatching::MatchReplace(tree, KLogicalXor(KA, KA), KFalse);
+      PatternMatching::MatchReplace(e, KLogicalXor(KA, KA), KFalse);
 }
 
-bool Binary::ReduceComparison(Tree* tree) {
-  assert(tree->numberOfChildren() == 2);
+bool Binary::ReduceComparison(Tree* e) {
+  assert(e->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
-  if (tree->isInequality()) {
-    ComplexSign signA = ComplexSign::Get(tree->child(0));
-    ComplexSign signB = ComplexSign::Get(tree->child(1));
+  if (e->isInequality()) {
+    ComplexSign signA = ComplexSign::Get(e->child(0));
+    ComplexSign signB = ComplexSign::Get(e->child(1));
     if (signA.isNonReal() || signB.isNonReal()) {
-      tree->cloneTreeOverTree(KBadType);
+      e->cloneTreeOverTree(KBadType);
       return true;
     }
     // Do not reduce inequalities if we are not sure to have reals
@@ -143,19 +143,19 @@ bool Binary::ReduceComparison(Tree* tree) {
     }
   }
   ComplexSign complexSign =
-      ComplexSign::SignOfDifference(tree->child(0), tree->child(1));
+      ComplexSign::SignOfDifference(e->child(0), e->child(1));
   const Tree* result = nullptr;
-  if (!tree->isInequality()) {
+  if (!e->isInequality()) {
     // = or !=
     if (complexSign.isZero()) {
-      result = tree->isEqual() ? KTrue : KFalse;
+      result = e->isEqual() ? KTrue : KFalse;
     } else if (!complexSign.canBeNull()) {
-      result = tree->isEqual() ? KFalse : KTrue;
+      result = e->isEqual() ? KFalse : KTrue;
     }
   } else {
     assert(complexSign.isReal());
     Sign sign = complexSign.realSign();
-    switch (tree->type()) {
+    switch (e->type()) {
       case Type::InferiorEqual:
         if (sign.isNegative()) {
           result = KTrue;
@@ -190,7 +190,7 @@ bool Binary::ReduceComparison(Tree* tree) {
   if (!result) {
     return false;
   }
-  tree->cloneTreeOverTree(result);
+  e->cloneTreeOverTree(result);
   return true;
 }
 

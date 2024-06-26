@@ -20,7 +20,7 @@ namespace Poincare::Internal {
 
 class AdvancedReduction {
  public:
-  static bool Reduce(Tree* u);
+  static bool Reduce(Tree* e);
   TREE_REF_WRAP(Reduce);
 
   // Bottom-up deep contract
@@ -53,9 +53,9 @@ class AdvancedReduction {
    public:
     constexpr static uint8_t k_numberOfBaseDirections = 3;
     // Return true if direction was applied.
-    bool apply(Tree** u, Tree* root, bool* rootChanged) const;
+    bool apply(Tree** e, Tree* root, bool* rootChanged) const;
     // Return true if can apply direction.
-    bool canApply(const Tree* u, const Tree* root) const;
+    bool canApply(const Tree* e, const Tree* root) const;
     // Constructor needed for Path::m_stack
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
@@ -127,7 +127,7 @@ class AdvancedReduction {
   };
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
-  static bool ReduceRec(Tree* u, Context* ctx);
+  static bool ReduceRec(Tree* e, Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 
@@ -142,10 +142,10 @@ class AdvancedReduction {
   }
 
   // Try all Operations until they all fail consecutively.
-  static bool TryAllOperations(Tree* node, const Tree::Operation* operations,
+  static bool TryAllOperations(Tree* e, const Tree::Operation* operations,
                                int numberOfOperations);
   // Try all Operations until one of them succeed.
-  static bool TryOneOperation(Tree* node, const Tree::Operation* operations,
+  static bool TryOneOperation(Tree* e, const Tree::Operation* operations,
                               int numberOfOperations);
 
   constexpr static Tree::Operation k_contractOperations[] = {

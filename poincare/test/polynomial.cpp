@@ -11,13 +11,12 @@
 
 using namespace Poincare::Internal;
 
-void assert_polynomial_is_parsed(const Tree* node,
-                                 const Tree* expectedVariables,
+void assert_polynomial_is_parsed(const Tree* e, const Tree* expectedVariables,
                                  const Tree* expectedPolynomial) {
   SharedTreeStack->flush();
-  Tree* variables = PolynomialParser::GetVariables(node);
+  Tree* variables = PolynomialParser::GetVariables(e);
   assert_trees_are_equal(variables, expectedVariables);
-  Tree* clone = node->cloneTree();
+  Tree* clone = e->cloneTree();
   SystematicReduction::DeepReduce(clone);
   AdvancedReduction::DeepExpand(clone);
   Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);

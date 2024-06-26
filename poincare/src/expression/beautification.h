@@ -12,14 +12,13 @@ class Beautification {
   friend class Approximation;
 
  public:
-  static float DegreeForSortingAddition(const Tree* expr, bool symbolsOnly);
-  static void SplitMultiplication(const Tree* expr, TreeRef& numerator,
+  static float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
+  static void SplitMultiplication(const Tree* e, TreeRef& numerator,
                                   TreeRef& denominator, bool* needOpposite,
                                   bool* needI);
-  static bool BeautifyIntoDivision(Tree* expr);
-  static bool AddUnits(Tree* expr, ProjectionContext projectionContext);
-  static bool DeepBeautify(Tree* node,
-                           ProjectionContext projectionContext = {});
+  static bool BeautifyIntoDivision(Tree* e);
+  static bool AddUnits(Tree* e, ProjectionContext projectionContext);
+  static bool DeepBeautify(Tree* e, ProjectionContext projectionContext = {});
   TREE_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   /* Create a Tree to represent a complex value according to the format, for
@@ -30,12 +29,12 @@ class Beautification {
 
  private:
   static bool TurnToPolarForm(Tree* e, Dimension dim);
-  static bool DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
+  static bool DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                          bool* simplifyParent);
-  static bool ShallowBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit);
-  static bool ShallowBeautifyPercent(Tree* tree);
-  static bool ShallowBeautifyDivisionsAndRoots(Tree* node, void* context);
-  static bool ShallowBeautify(Tree* node, void* context);
+  static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit);
+  static bool ShallowBeautifyPercent(Tree* e);
+  static bool ShallowBeautifyDivisionsAndRoots(Tree* e, void* context);
+  static bool ShallowBeautify(Tree* e, void* context);
   static bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 };
 

@@ -147,14 +147,14 @@ const Builtin* Builtin::GetReservedFunction(LayoutSpan name) {
   return nullptr;
 }
 
-const Builtin* Builtin::GetReservedFunction(const Tree* tree) {
-  const Builtin* builtin = GetReservedFunction(tree->type());
+const Builtin* Builtin::GetReservedFunction(const Tree* e) {
+  const Builtin* builtin = GetReservedFunction(e->type());
   if (builtin) {
     return builtin;
   }
-  if (tree->isDistribution()) {
-    DistributionMethod::Type method = DistributionMethod::Get(tree);
-    Distribution::Type distribution = Distribution::Get(tree);
+  if (e->isDistribution()) {
+    DistributionMethod::Type method = DistributionMethod::Get(e);
+    Distribution::Type distribution = Distribution::Get(e);
     for (const DistributionBuiltin& builtin : s_distributionsBuiltins) {
       if (builtin.method() == method &&
           builtin.distribution() == distribution) {

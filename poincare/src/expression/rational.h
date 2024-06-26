@@ -19,26 +19,25 @@ class Rational final {
   static Tree* Push(const Tree* numerator, const Tree* denominator) {
     return Push(Integer::Handler(numerator), Integer::Handler(denominator));
   }
-  static IntegerHandler Numerator(const Tree* node);
-  static IntegerHandler Denominator(const Tree* node);
-  static Internal::Sign Sign(const Tree* node) {
-    return Internal::Sign(node->isZero(), node->isStrictlyPositiveRational(),
-                          node->isStrictlyNegativeRational(),
-                          !node->isInteger());
+  static IntegerHandler Numerator(const Tree* e);
+  static IntegerHandler Denominator(const Tree* e);
+  static Internal::Sign Sign(const Tree* e) {
+    return Internal::Sign(e->isZero(), e->isStrictlyPositiveRational(),
+                          e->isStrictlyNegativeRational(), !e->isInteger());
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 
-  static Tree* Addition(const Tree* i, const Tree* j);
-  static Tree* Multiplication(const Tree* i, const Tree* j);
+  static Tree* Addition(const Tree* e1, const Tree* e2);
+  static Tree* Multiplication(const Tree* e1, const Tree* e2);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
-  static Tree* IntegerPower(const Tree* i, const Tree* j);
+  static Tree* IntegerPower(const Tree* e1, const Tree* e2);
 
-  static bool IsGreaterThanOne(const Tree* r);
-  static Tree* CreateMixedFraction(const Tree* r,
+  static bool IsGreaterThanOne(const Tree* e);
+  static Tree* CreateMixedFraction(const Tree* e,
                                    bool mixedFractionsAreEnabled);
 
  private:
-  static bool IsIrreducible(const Tree* i);
+  static bool IsIrreducible(const Tree* e);
   static Tree* PushIrreducible(IntegerHandler numerator,
                                IntegerHandler denominator);
   static Tree* PushIrreducible(const Tree* numerator, const Tree* denominator) {

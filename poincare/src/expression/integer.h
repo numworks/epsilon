@@ -289,10 +289,10 @@ class Integer {
   static Tree* Push(native_int_t value) {
     return IntegerHandler(value).pushOnTreeStack();
   }
-  static IntegerHandler Handler(const Tree* expression);
+  static IntegerHandler Handler(const Tree* e);
   template <typename T>
-  static bool Is(const Tree* expression) {
-    return expression->isInteger() && Handler(expression).is<T>();
+  static bool Is(const Tree* e) {
+    return e->isInteger() && Handler(e).is<T>();
   }
 
   constexpr static uint8_t NumberOfDigits(uint64_t value) {
@@ -306,11 +306,11 @@ class Integer {
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return OMG::BitHelper::getByteAtIndex(value, index);
   }
-  static NonStrictSign Sign(Tree* tree) {
-    return tree->isPositiveInteger() ? NonStrictSign::Positive
-                                     : NonStrictSign::Negative;
+  static NonStrictSign Sign(Tree* e) {
+    return e->isPositiveInteger() ? NonStrictSign::Positive
+                                  : NonStrictSign::Negative;
   }
-  static void SetSign(Tree* tree, NonStrictSign sign);
+  static void SetSign(Tree* e, NonStrictSign sign);
 };
 
 }  // namespace Poincare::Internal

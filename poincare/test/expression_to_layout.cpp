@@ -7,11 +7,12 @@
 using namespace Poincare;
 using namespace Poincare::Internal::KTrees;
 
-void assert_parsed_expression_layouts_to(const char* expression, Layout l) {
+void assert_parsed_expression_layouts_to(const char* expression,
+                                         Layout expectedLayout) {
   Internal::Tree* e = parse_expression(expression, nullptr, true);
-  Internal::Tree* t = Internal::Layouter::LayoutExpression(e);
-  Layout el = Layout::Builder(t);
-  quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
+  Internal::Tree* l = Internal::Layouter::LayoutExpression(e);
+  Layout el = Layout::Builder(l);
+  quiz_assert_print_if_failure(el.isIdenticalTo(expectedLayout), expression);
 }
 
 QUIZ_CASE(poincare_expression_to_layout) {

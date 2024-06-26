@@ -7,7 +7,7 @@
 namespace Poincare::Internal {
 
 template <typename T>
-TreeDatasetColumn<T>::TreeDatasetColumn(const Tree* tree) : m_tree(tree) {
+TreeDatasetColumn<T>::TreeDatasetColumn(const Tree* e) : m_tree(e) {
   assert(m_tree->isList());
 }
 

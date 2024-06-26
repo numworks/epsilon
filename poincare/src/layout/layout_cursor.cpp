@@ -81,9 +81,9 @@ KDCoordinate LayoutCursor::cursorBaseline(KDFont::Size font) const {
   return Render::Baseline(cursorNode());
 }
 
-static const Tree* mostNestedGridParent(const Tree* node, const Tree* root) {
+static const Tree* mostNestedGridParent(const Tree* l, const Tree* root) {
   const Tree* ancestorGrid = nullptr;
-  for (const Tree* ancestor : node->ancestors(root)) {
+  for (const Tree* ancestor : l->ancestors(root)) {
     if (ancestor->isGridLayout()) {
       ancestorGrid = ancestor;
     }
@@ -626,9 +626,9 @@ Tree* LayoutCursor::parentLayout(int* index) const {
   return rootNode()->parentOfDescendant(cursorNode(), index);
 }
 
-void LayoutCursor::setCursorNode(Rack* node, int childIndex,
+void LayoutCursor::setCursorNode(Rack* l, int childIndex,
                                  OMG::HorizontalDirection side) {
-  setLayout(node->child(childIndex), side);
+  setLayout(l->child(childIndex), side);
 }
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {

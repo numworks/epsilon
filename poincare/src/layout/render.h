@@ -22,50 +22,50 @@ class Render {
   friend KDSize Size(const Rack* rack);
 
  public:
-  static KDSize Size(const Tree* node, KDFont::Size fontSize) {
+  static KDSize Size(const Tree* l, KDFont::Size fontSize) {
     s_font = fontSize;
-    return Size(static_cast<const Rack*>(node), false);
+    return Size(static_cast<const Rack*>(l), false);
   }
 
-  static KDCoordinate Baseline(const Tree* node, KDFont::Size fontSize) {
+  static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize) {
     s_font = fontSize;
-    return Baseline(static_cast<const Rack*>(node));
+    return Baseline(static_cast<const Rack*>(l));
   }
 
-  static KDPoint AbsoluteOrigin(const Tree* node, const Tree* root);
-  static void Draw(const Tree* node, KDContext* ctx, KDPoint p,
-                   KDFont::Size font, KDColor expressionColor = KDColorBlack,
+  static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root);
+  static void Draw(const Tree* l, KDContext* ctx, KDPoint p, KDFont::Size font,
+                   KDColor expressionColor = KDColorBlack,
                    KDColor backgroundColor = KDColorWhite,
                    const LayoutCursor* cursor = nullptr);
 
  private:
-  static KDSize Size(const Rack* node, bool showEmpty = true);
-  static KDSize Size(const Layout* node);
+  static KDSize Size(const Rack* l, bool showEmpty = true);
+  static KDSize Size(const Layout* l);
 
-  static KDCoordinate Height(const Rack* node) { return Size(node).height(); }
-  static KDCoordinate Width(const Rack* node, bool showEmpty = true) {
-    return Size(node, showEmpty).width();
+  static KDCoordinate Height(const Rack* l) { return Size(l).height(); }
+  static KDCoordinate Width(const Rack* l, bool showEmpty = true) {
+    return Size(l, showEmpty).width();
   }
-  static KDCoordinate Height(const Layout* node) { return Size(node).height(); }
-  static KDCoordinate Width(const Layout* node) { return Size(node).width(); }
+  static KDCoordinate Height(const Layout* l) { return Size(l).height(); }
+  static KDCoordinate Width(const Layout* l) { return Size(l).width(); }
 
-  static KDCoordinate Baseline(const Layout* node);
+  static KDCoordinate Baseline(const Layout* l);
   // Empty should not change the baseline so no extra argument here
-  static KDCoordinate Baseline(const Rack* node);
+  static KDCoordinate Baseline(const Rack* l);
 
-  static KDPoint PositionOfChild(const Rack* node, int childIndex);
-  static KDPoint PositionOfChild(const Layout* node, int childIndex);
+  static KDPoint PositionOfChild(const Rack* l, int childIndex);
+  static KDPoint PositionOfChild(const Layout* l, int childIndex);
 
-  static void DrawSimpleLayout(const Layout* node, KDContext* ctx, KDPoint p,
+  static void DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
                                const KDGlyph::Style& style,
                                LayoutSelection selection);
-  static void DrawGridLayout(const Layout* node, KDContext* ctx, KDPoint p,
+  static void DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
                              const KDGlyph::Style& style,
                              LayoutSelection selection);
-  static void DrawRack(const Rack* node, KDContext* ctx, KDPoint p,
+  static void DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
                        const KDGlyph::Style& style, LayoutSelection selection,
                        bool showEmpty = true);
-  static void RenderNode(const Layout* node, KDContext* ctx, KDPoint p,
+  static void RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                          const KDGlyph::Style& style);
 
   static KDFont::Size s_font;

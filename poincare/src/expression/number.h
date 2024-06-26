@@ -11,16 +11,16 @@ namespace Poincare::Internal {
 
 class Number {
  public:
-  static bool IsStrictRational(const Tree* t) {
-    return t->isOfType({Type::Half, Type::RationalNegShort,
+  static bool IsStrictRational(const Tree* e) {
+    return e->isOfType({Type::Half, Type::RationalNegShort,
                         Type::RationalPosShort, Type::RationalNegBig,
                         Type::RationalPosBig});
   }
 
-  static Tree* Addition(const Tree* i, const Tree* j);
-  static Tree* Multiplication(const Tree* i, const Tree* j);
-  static Internal::Sign Sign(const Tree* node);
-  static bool SetSign(Tree* number, NonStrictSign sign);
+  static Tree* Addition(const Tree* e1, const Tree* e2);
+  static Tree* Multiplication(const Tree* e1, const Tree* e2);
+  static Internal::Sign Sign(const Tree* e);
+  static bool SetSign(Tree* e, NonStrictSign sign);
 };
 
 }  // namespace Poincare::Internal

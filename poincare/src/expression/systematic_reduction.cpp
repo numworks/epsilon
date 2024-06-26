@@ -15,40 +15,40 @@
 
 namespace Poincare::Internal {
 
-bool SystematicReduction::DeepReduce(Tree* u) {
+bool SystematicReduction::DeepReduce(Tree* e) {
   /* Although they are also flattened in ShallowReduce, flattening
    * here could save multiple ShallowReduce and flatten calls. */
-  bool modified = (u->isMult() || u->isAdd()) && NAry::Flatten(u);
+  bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);
   // Never simplify any dependencies
-  if (!u->isSet()) {
-    for (Tree* child : u->children()) {
+  if (!e->isSet()) {
+    for (Tree* child : e->children()) {
       modified |= DeepReduce(child);
     }
   }
 
 #if ASSERTIONS
-  TreeRef previousTree = u->cloneTree();
+  TreeRef previousTree = e->cloneTree();
 #endif
-  bool shallowModified = ShallowReduce(u);
+  bool shallowModified = ShallowReduce(e);
 #if ASSERTIONS
-  assert(shallowModified != u->treeIsIdenticalTo(previousTree));
+  assert(shallowModified != e->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
 #endif
   return shallowModified || modified;
 }
 
-bool SystematicReduction::ShallowReduce(Tree* u) {
-  bool changed = BubbleUpFromChildren(u);
-  return Switch(u) || changed;
+bool SystematicReduction::ShallowReduce(Tree* e) {
+  bool changed = BubbleUpFromChildren(e);
+  return Switch(e) || changed;
 }
 
-bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
+bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
    * children in specialized systematic reduction. */
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
-  for (const Tree* child : u->children()) {
+  for (const Tree* child : e->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
     } else if (child->isDependency()) {
@@ -58,111 +58,111 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* u) {
     }
   }
 
-  if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(u)) {
-    ShallowReduce(u);
+  if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {
+    ShallowReduce(e);
     return true;
   }
 
-  if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(u)) {
-    ShallowReduce(u);
+  if (bubbleUpFloat && Approximation::ApproximateAndReplaceEveryScalar(e)) {
+    ShallowReduce(e);
     return true;
   }
 
-  if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(u)) {
-    assert(u->isDependency());
-    /* u->child(0) may now be reduced again. This could unlock further
+  if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(e)) {
+    assert(e->isDependency());
+    /* e->child(0) may now be reduced again. This could unlock further
      * simplifications. */
-    ShallowReduce(u->child(0)) && ShallowReduce(u);
+    ShallowReduce(e->child(0)) && ShallowReduce(e);
     return true;
   }
 
   return false;
 }
 
-bool SystematicReduction::Switch(Tree* u) {
+bool SystematicReduction::Switch(Tree* e) {
   // This assert is quite costly, should be an assert level 2 ?
-  assert(Dimension::DeepCheckDimensions(u));
-  if (!u->isNAry() && u->numberOfChildren() == 0) {
+  assert(Dimension::DeepCheckDimensions(e));
+  if (!e->isNAry() && e->numberOfChildren() == 0) {
     // No childless tree have a reduction pattern.
     return false;
   }
-  switch (u->type()) {
+  switch (e->type()) {
     case Type::Abs:
-      return SystematicOperation::ReduceAbs(u);
+      return SystematicOperation::ReduceAbs(e);
     case Type::Add:
-      return SystematicOperation::ReduceAddition(u);
+      return SystematicOperation::ReduceAddition(e);
     case Type::ATanRad:
-      return Trigonometry::ReduceArcTangentRad(u);
+      return Trigonometry::ReduceArcTangentRad(e);
     case Type::ATrig:
-      return Trigonometry::ReduceATrig(u);
+      return Trigonometry::ReduceATrig(e);
     case Type::Binomial:
-      return Arithmetic::ReduceBinomial(u);
+      return Arithmetic::ReduceBinomial(e);
     case Type::Arg:
-      return SystematicOperation::ReduceComplexArgument(u);
+      return SystematicOperation::ReduceComplexArgument(e);
     case Type::NthDiff:
-      return Derivation::Reduce(u);
+      return Derivation::Reduce(e);
     case Type::Dim:
-      return SystematicOperation::ReduceDim(u);
+      return SystematicOperation::ReduceDim(e);
     case Type::Distribution:
-      return SystematicOperation::ReduceDistribution(u);
+      return SystematicOperation::ReduceDistribution(e);
     case Type::Exp:
-      return SystematicOperation::ReduceExp(u);
+      return SystematicOperation::ReduceExp(e);
     case Type::Fact:
-      return Arithmetic::ReduceFactorial(u);
+      return Arithmetic::ReduceFactorial(e);
     case Type::Factor:
-      return Arithmetic::ReduceFactor(u);
+      return Arithmetic::ReduceFactor(e);
     case Type::Floor:
-      return Arithmetic::ReduceFloor(u);
+      return Arithmetic::ReduceFloor(e);
     case Type::GCD:
-      return Arithmetic::ReduceGCD(u);
+      return Arithmetic::ReduceGCD(e);
     case Type::Im:
     case Type::Re:
-      return SystematicOperation::ReduceComplexPart(u);
+      return SystematicOperation::ReduceComplexPart(e);
     case Type::LCM:
-      return Arithmetic::ReduceLCM(u);
+      return Arithmetic::ReduceLCM(e);
     case Type::ListSort:
     case Type::Median:
-      return List::ShallowApplyListOperators(u);
+      return List::ShallowApplyListOperators(e);
     case Type::Ln:
-      return Logarithm::ReduceLn(u);
+      return Logarithm::ReduceLn(e);
     case Type::LnReal:
-      return SystematicOperation::ReduceLnReal(u);
+      return SystematicOperation::ReduceLnReal(e);
     case Type::Mult:
-      return SystematicOperation::ReduceMultiplication(u);
+      return SystematicOperation::ReduceMultiplication(e);
     case Type::Permute:
-      return Arithmetic::ReducePermute(u);
+      return Arithmetic::ReducePermute(e);
     case Type::Piecewise:
-      return Binary::ReducePiecewise(u);
+      return Binary::ReducePiecewise(e);
     case Type::Pow:
-      return SystematicOperation::ReducePower(u);
+      return SystematicOperation::ReducePower(e);
     case Type::PowReal:
-      return SystematicOperation::ReducePowerReal(u);
+      return SystematicOperation::ReducePowerReal(e);
     case Type::Quo:
     case Type::Rem:
-      return Arithmetic::ReduceQuotientOrRemainder(u);
+      return Arithmetic::ReduceQuotientOrRemainder(e);
     case Type::Round:
-      return Arithmetic::ReduceRound(u);
+      return Arithmetic::ReduceRound(e);
     case Type::Sign:
-      return SystematicOperation::ReduceSign(u);
+      return SystematicOperation::ReduceSign(e);
     case Type::Sum:
     case Type::Product:
-      return Parametric::ReduceSumOrProduct(u);
+      return Parametric::ReduceSumOrProduct(e);
     case Type::Trig:
-      return Trigonometry::ReduceTrig(u);
+      return Trigonometry::ReduceTrig(e);
     case Type::TrigDiff:
-      return Trigonometry::ReduceTrigDiff(u);
+      return Trigonometry::ReduceTrigDiff(e);
     default:
-      if (u->type().isListToScalar()) {
-        return List::ShallowApplyListOperators(u);
+      if (e->type().isListToScalar()) {
+        return List::ShallowApplyListOperators(e);
       }
-      if (u->type().isLogicalOperator()) {
-        return Binary::ReduceBooleanOperator(u);
+      if (e->type().isLogicalOperator()) {
+        return Binary::ReduceBooleanOperator(e);
       }
-      if (u->type().isComparison()) {
-        return Binary::ReduceComparison(u);
+      if (e->type().isComparison()) {
+        return Binary::ReduceComparison(e);
       }
-      if (u->isAMatrixOrContainsMatricesAsChildren()) {
-        return Matrix::SystematicReduceMatrixOperation(u);
+      if (e->isAMatrixOrContainsMatricesAsChildren()) {
+        return Matrix::SystematicReduceMatrixOperation(e);
       }
       return false;
   }

@@ -51,10 +51,10 @@ Tree* RackParser::parse() {
   }
 }
 
-static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
+static inline void turnIntoBinaryNode(const Tree* l, TreeRef& leftHandSide,
                                       TreeRef& rightHandSide) {
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
-  CloneNodeAtNode(leftHandSide, node);
+  CloneNodeAtNode(leftHandSide, l);
 }
 
 Tree* RackParser::parseExpressionWithRightwardsArrow(
@@ -654,8 +654,8 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  Tree* node = SharedTreeStack->pushBlock(operatorType);
-  leftHandSide->moveNodeAtNode(node);
+  Tree* l = SharedTreeStack->pushBlock(operatorType);
+  leftHandSide->moveNodeAtNode(l);
 }
 
 void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,
@@ -921,16 +921,16 @@ void RackParser::parseSpecialIdentifier(TreeRef& leftHandSide,
 void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  const Tree* node = m_currentToken.firstLayout();
+  const Tree* l = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
   constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   char buffer[bufferSize];
   char* end = buffer + bufferSize;
   char* buf = buffer;
   while (length--) {
-    assert(node->isCodePointLayout());
-    buf = CodePointLayout::CopyName(node, buf, end - buf);
-    node = node->nextTree();
+    assert(l->isCodePointLayout());
+    buf = CodePointLayout::CopyName(l, buf, end - buf);
+    l = l->nextTree();
   }
   privateParseCustomIdentifier(leftHandSide, buffer, m_currentToken.length(),
                                stoppingType);

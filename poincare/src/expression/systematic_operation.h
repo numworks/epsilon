@@ -9,30 +9,30 @@ class SystematicOperation {
   friend class SystematicReduction;
 
  public:
-  static bool ReduceMultiplication(Tree* u);
+  static bool ReduceMultiplication(Tree* e);
   TREE_REF_WRAP(ReduceMultiplication);
 
-  static bool ReduceAddition(Tree* u);
+  static bool ReduceAddition(Tree* e);
   TREE_REF_WRAP(ReduceAddition);
 
-  static bool ReducePower(Tree* u);
+  static bool ReducePower(Tree* e);
   TREE_REF_WRAP(ReducePower);
 
  private:
   /* These private methods should never be called on TreeRefs.
    * TODO: ensure it cannot. */
-  static bool ReduceAbs(Tree* u);
-  static bool ReducePowerReal(Tree* u);
-  static bool ReduceLnReal(Tree* u);
-  static bool ReduceExp(Tree* u);
-  static bool ReduceComplexArgument(Tree* t);
-  static bool ReduceComplexPart(Tree* t);
-  static bool ReduceSign(Tree* t);
-  static bool ReduceDistribution(Tree* t);
-  static bool ReduceDim(Tree* t);
+  static bool ReduceAbs(Tree* e);
+  static bool ReducePowerReal(Tree* e);
+  static bool ReduceLnReal(Tree* e);
+  static bool ReduceExp(Tree* e);
+  static bool ReduceComplexArgument(Tree* e);
+  static bool ReduceComplexPart(Tree* e);
+  static bool ReduceSign(Tree* e);
+  static bool ReduceDistribution(Tree* e);
+  static bool ReduceDim(Tree* e);
 
-  static void ConvertPowerRealToPower(Tree* u);
-  static bool CanApproximateTree(Tree* u, bool* changed);
+  static void ConvertPowerRealToPower(Tree* e);
+  static bool CanApproximateTree(Tree* e, bool* changed);
 };
 
 }  // namespace Poincare::Internal

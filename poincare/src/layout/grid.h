@@ -13,14 +13,14 @@ class Grid : public Layout {
  public:
   constexpr static KDCoordinate k_gridEntryMargin = 6;
 
-  static const Grid* From(const Tree* node) {
-    assert(node->isGridLayout());
-    return static_cast<const Grid*>(node);
+  static const Grid* From(const Tree* l) {
+    assert(l->isGridLayout());
+    return static_cast<const Grid*>(l);
   }
 
-  static Grid* From(Tree* node) {
-    assert(node->isGridLayout());
-    return static_cast<Grid*>(node);
+  static Grid* From(Tree* l) {
+    assert(l->isGridLayout());
+    return static_cast<Grid*>(l);
   }
 
   uint8_t numberOfRows() const { return nodeValue(0); }

@@ -6,9 +6,9 @@
 namespace Poincare::Internal {
 
 struct Vector {
-  static Tree* Cross(const Tree* u, const Tree* v);
-  static Tree* Dot(const Tree* u, const Tree* v);
-  static Tree* Norm(const Tree* v);
+  static Tree* Cross(const Tree* e1, const Tree* e2);
+  static Tree* Dot(const Tree* e1, const Tree* e2);
+  static Tree* Norm(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

@@ -109,7 +109,7 @@ class Sign {
   }
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
 
-  static Sign Get(const Tree* t);
+  static Sign Get(const Tree* e);
 
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {
@@ -186,11 +186,11 @@ class ComplexSign {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }
 
-  static ComplexSign Get(const Tree* t);
+  static ComplexSign Get(const Tree* e);
 
-  /* Sign of a - b so that a < b <=> SignOfDifference(a, b) < 0 and so on.
+  /* Sign of e1 - e2 so that e1 < e2 <=> SignOfDifference(e1, e2) < 0 and so on.
    * Beware that the difference may be real while the trees were complexes. */
-  static ComplexSign SignOfDifference(const Tree* a, const Tree* b);
+  static ComplexSign SignOfDifference(const Tree* e1, const Tree* e2);
 
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {

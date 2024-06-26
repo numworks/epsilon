@@ -49,11 +49,11 @@ Type ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
+Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
                     ParsingContext::ParsingMethod method) {
-  switch (node->layoutType()) {
+  switch (l->layoutType()) {
     case LayoutType::Rack:
-      return RackParser(node, context, -1, method).parse();
+      return RackParser(l, context, -1, method).parse();
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
@@ -62,12 +62,11 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
       assert(false);
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
-      Tree* list =
-          RackParser(node->child(0), context, -1, method, true).parse();
+      Tree* list = RackParser(l->child(0), context, -1, method, true).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      if (node->layoutType() == LayoutType::Parentheses) {
+      if (l->layoutType() == LayoutType::Parentheses) {
         int numberOfChildren = list->numberOfChildren();
         if (numberOfChildren == 2) {
           list->cloneNodeOverNode(KPoint);
@@ -81,7 +80,7 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
     }
     case LayoutType::Piecewise:
     case LayoutType::Matrix: {
-      const Grid* grid = Grid::From(node);
+      const Grid* grid = Grid::From(l);
       Tree* expr;
       if (grid->isMatrixLayout()) {
         expr = SharedTreeStack->pushMatrix(grid->numberOfRows() - 1,
@@ -109,11 +108,10 @@ Tree* Parser::Parse(const Tree* node, Poincare::Context* context,
     }
     default: {
       // The layout children map one-to-one to the expression
-      TreeRef ref =
-          SharedTreeStack->pushBlock(ExpressionType(node->layoutType()));
-      int n = node->numberOfChildren();
+      TreeRef ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
+      int n = l->numberOfChildren();
       for (int i = 0; i < n; i++) {
-        if (!Parse(node->child(i), context)) {
+        if (!Parse(l->child(i), context)) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
       }

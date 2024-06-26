@@ -9,9 +9,9 @@
 namespace Poincare::Internal {
 
 int CursorMotion::IndexAfterHorizontalCursorMove(
-    Tree* node, OMG::HorizontalDirection direction, int currentIndex) {
-  int nChildren = node->numberOfChildren();
-  switch (node->layoutType()) {
+    Tree* l, OMG::HorizontalDirection direction, int currentIndex) {
+  int nChildren = l->numberOfChildren();
+  switch (l->layoutType()) {
     case LayoutType::Point2D:
     case LayoutType::Binomial:
     case LayoutType::Fraction:
@@ -22,7 +22,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       return k_outsideIndex;
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-      const Grid* grid = Grid::From(node);
+      const Grid* grid = Grid::From(l);
       if (currentIndex == k_outsideIndex) {
         int row = grid->numberOfRows() - 1 - !grid->numberOfRowsIsFixed();
         int col = grid->numberOfColumns() - 1 - !grid->numberOfColumnsIsFixed();
@@ -41,51 +41,51 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     case LayoutType::Diff:
     case LayoutType::NthDiff: {
       using namespace Derivative;
-      if (node->isDiffLayout()) {
+      if (l->isDiffLayout()) {
         if (currentIndex == k_derivandIndex) {
-          SetVariableSlot(node, direction.isRight() ? VariableSlot::Assignment
-                                                    : VariableSlot::Fraction);
+          SetVariableSlot(l, direction.isRight() ? VariableSlot::Assignment
+                                                 : VariableSlot::Fraction);
           return k_variableIndex;
         }
         if (currentIndex == k_variableIndex &&
-            GetVariableSlot(node) == VariableSlot::Fraction) {
+            GetVariableSlot(l) == VariableSlot::Fraction) {
           return direction.isRight() ? k_derivandIndex : k_outsideIndex;
         }
       } else {
         if (currentIndex == k_derivandIndex) {
           if (direction.isRight()) {
-            SetVariableSlot(node, VariableSlot::Assignment);
+            SetVariableSlot(l, VariableSlot::Assignment);
             return k_variableIndex;
           }
-          SetOrderSlot(node, OrderSlot::Denominator);
+          SetOrderSlot(l, OrderSlot::Denominator);
           return k_orderIndex;
         }
         if (currentIndex == k_variableIndex &&
-            GetVariableSlot(node) == VariableSlot::Fraction) {
+            GetVariableSlot(l) == VariableSlot::Fraction) {
           if (direction.isRight()) {
-            SetOrderSlot(node, OrderSlot::Denominator);
+            SetOrderSlot(l, OrderSlot::Denominator);
             return k_orderIndex;
           }
           return k_outsideIndex;
         }
         if (currentIndex == k_orderIndex) {
-          if (GetOrderSlot(node) == OrderSlot::Denominator) {
+          if (GetOrderSlot(l) == OrderSlot::Denominator) {
             if (direction.isLeft()) {
-              SetVariableSlot(node, VariableSlot::Fraction);
+              SetVariableSlot(l, VariableSlot::Fraction);
               return k_variableIndex;
             }
             return k_derivandIndex;
           }
-          assert(GetOrderSlot(node) == OrderSlot::Numerator);
+          assert(GetOrderSlot(l) == OrderSlot::Numerator);
           return direction.isRight() ? k_derivandIndex : k_outsideIndex;
         }
       }
       if (currentIndex == k_outsideIndex && direction.isRight()) {
-        SetVariableSlot(node, VariableSlot::Fraction);
+        SetVariableSlot(l, VariableSlot::Fraction);
         return k_variableIndex;
       }
       if (currentIndex == k_abscissaIndex && direction.isLeft()) {
-        SetVariableSlot(node, VariableSlot::Assignment);
+        SetVariableSlot(l, VariableSlot::Assignment);
         return k_variableIndex;
       }
       switch (currentIndex) {
@@ -97,7 +97,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
           return k_outsideIndex;
         default: {
           assert(currentIndex == k_variableIndex &&
-                 GetVariableSlot(node) == VariableSlot::Assignment);
+                 GetVariableSlot(l) == VariableSlot::Assignment);
           return direction.isRight() ? k_abscissaIndex : k_derivandIndex;
         }
       }
@@ -182,9 +182,9 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
 }
 
 int CursorMotion::IndexAfterVerticalCursorMove(
-    Tree* node, OMG::VerticalDirection direction, int currentIndex,
+    Tree* l, OMG::VerticalDirection direction, int currentIndex,
     PositionInLayout positionAtCurrentIndex) {
-  switch (node->layoutType()) {
+  switch (l->layoutType()) {
     case LayoutType::Fraction:
       if (currentIndex == k_outsideIndex) {
         return direction.isUp() ? TwoRows::k_upperIndex : TwoRows::k_lowerIndex;
@@ -203,7 +203,7 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     }
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-      const Grid* grid = Grid::From(node);
+      const Grid* grid = Grid::From(l);
       if (currentIndex == k_outsideIndex) {
         return k_cantMoveIndex;
       }
@@ -218,49 +218,49 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::Diff:
     case LayoutType::NthDiff: {
       using namespace Derivative;
-      if (node->isDiffLayout()) {
+      if (l->isDiffLayout()) {
         if (direction.isDown() && currentIndex == k_derivandIndex &&
             positionAtCurrentIndex == PositionInLayout::Left) {
-          SetVariableSlot(node, VariableSlot::Fraction);
+          SetVariableSlot(l, VariableSlot::Fraction);
           return k_variableIndex;
         }
         if (direction.isUp() && currentIndex == k_variableIndex &&
-            GetVariableSlot(node) == VariableSlot::Fraction) {
+            GetVariableSlot(l) == VariableSlot::Fraction) {
           return k_derivandIndex;
         }
       } else {
         if (direction.isUp() && currentIndex == k_variableIndex &&
-            GetVariableSlot(node) == VariableSlot::Fraction) {
-          SetOrderSlot(node, positionAtCurrentIndex == PositionInLayout::Right
-                                 ? OrderSlot::Denominator
-                                 : OrderSlot::Numerator);
+            GetVariableSlot(l) == VariableSlot::Fraction) {
+          SetOrderSlot(l, positionAtCurrentIndex == PositionInLayout::Right
+                              ? OrderSlot::Denominator
+                              : OrderSlot::Numerator);
           return k_orderIndex;
         }
         if (direction.isUp() &&
             ((currentIndex == k_derivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
              (currentIndex == k_orderIndex &&
-              GetOrderSlot(node) == OrderSlot::Denominator))) {
-          SetOrderSlot(node, OrderSlot::Numerator);
+              GetOrderSlot(l) == OrderSlot::Denominator))) {
+          SetOrderSlot(l, OrderSlot::Numerator);
           return k_orderIndex;
         }
         if (direction.isDown() &&
             ((currentIndex == k_derivandIndex &&
               positionAtCurrentIndex == PositionInLayout::Left) ||
              (currentIndex == k_orderIndex &&
-              GetOrderSlot(node) == OrderSlot::Numerator))) {
-          SetOrderSlot(node, OrderSlot::Denominator);
+              GetOrderSlot(l) == OrderSlot::Numerator))) {
+          SetOrderSlot(l, OrderSlot::Denominator);
           return k_orderIndex;
         }
         if (direction.isDown() && currentIndex == k_orderIndex &&
-            GetOrderSlot(node) == OrderSlot::Denominator &&
+            GetOrderSlot(l) == OrderSlot::Denominator &&
             positionAtCurrentIndex == PositionInLayout::Left) {
-          SetVariableSlot(node, VariableSlot::Fraction);
+          SetVariableSlot(l, VariableSlot::Fraction);
           return k_variableIndex;
         }
       }
       if (direction.isUp() && currentIndex == k_variableIndex &&
-          GetVariableSlot(node) == VariableSlot::Assignment) {
+          GetVariableSlot(l) == VariableSlot::Assignment) {
         return k_derivandIndex;
       }
       if (direction.isDown() && currentIndex == k_derivandIndex &&
@@ -337,28 +337,28 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     }
     case LayoutType::VerticalOffset: {
       if (currentIndex == k_outsideIndex &&
-          ((direction.isUp() && VerticalOffset::IsSuperscript(node)) ||
-           (direction.isDown() && VerticalOffset::IsSubscript(node)))) {
+          ((direction.isUp() && VerticalOffset::IsSuperscript(l)) ||
+           (direction.isDown() && VerticalOffset::IsSubscript(l)))) {
         return 0;
       }
       if (currentIndex == 0 &&
-          ((direction.isDown() && VerticalOffset::IsSuperscript(node)) ||
-           (direction.isUp() && VerticalOffset::IsSubscript(node))) &&
+          ((direction.isDown() && VerticalOffset::IsSuperscript(l)) ||
+           (direction.isUp() && VerticalOffset::IsSubscript(l))) &&
           positionAtCurrentIndex != PositionInLayout::Middle) {
         return k_outsideIndex;
       }
       return k_cantMoveIndex;
     }
     default:
-      assert(currentIndex < node->numberOfChildren());
+      assert(currentIndex < l->numberOfChildren());
       assert(currentIndex != k_outsideIndex ||
              positionAtCurrentIndex != PositionInLayout::Middle);
       return k_cantMoveIndex;
   }
 }
 
-int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {
-  switch (node->layoutType()) {
+int CursorMotion::IndexToPointToWhenInserting(const Tree* l) {
+  switch (l->layoutType()) {
     case LayoutType::Product:
     case LayoutType::Sum:
       return Parametric::k_lowerBoundIndex;
@@ -370,26 +370,26 @@ int CursorMotion::IndexToPointToWhenInserting(const Tree* node) {
     case LayoutType::ListSequence:
       return ListSequence::k_functionIndex;
     case LayoutType::Fraction:
-      return RackLayout::IsEmpty(node->child(Fraction::k_numeratorIndex))
+      return RackLayout::IsEmpty(l->child(Fraction::k_numeratorIndex))
                  ? Fraction::k_numeratorIndex
                  : Fraction::k_denominatorIndex;
     default:
-      return node->numberOfChildren() > 0 ? 0 : k_outsideIndex;
+      return l->numberOfChildren() > 0 ? 0 : k_outsideIndex;
   }
 }
 
-Tree* CursorMotion::DeepChildToPointToWhenInserting(Tree* node) {
-  for (Tree* d : node->descendants()) {
+Tree* CursorMotion::DeepChildToPointToWhenInserting(Tree* l) {
+  for (Tree* d : l->descendants()) {
     if (d->isRackLayout() && RackLayout::IsEmpty(d)) {
       return d;
     }
     if (d->isAutocompletedPair()) {
       /* If the inserted bracket is temp on the left, do not put cursor
        * inside it so that the cursor is put right when inserting ")". */
-      return AutocompletedPair::IsTemporary(d, Side::Left) ? node : d;
+      return AutocompletedPair::IsTemporary(d, Side::Left) ? l : d;
     }
   }
-  return node;
+  return l;
 }
 
 static bool IsEmpty(const Tree* layout) {
@@ -403,12 +403,12 @@ static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(
 }
 
 DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
-    const Tree* node, int childIndex) {
-  switch (node->layoutType()) {
+    const Tree* l, int childIndex) {
+  switch (l->layoutType()) {
     case LayoutType::Point2D:
     case LayoutType::Binomial:
       using namespace TwoRows;
-      if (childIndex == k_upperIndex && IsEmpty(node->child(k_lowerIndex))) {
+      if (childIndex == k_upperIndex && IsEmpty(l->child(k_lowerIndex))) {
         return DeletionMethod::DeleteParent;
       }
       if (childIndex == k_lowerIndex) {
@@ -422,9 +422,8 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces:
       if ((childIndex == k_outsideIndex &&
-           AutocompletedPair::IsTemporary(node, Side::Right)) ||
-          (childIndex == 0 &&
-           AutocompletedPair::IsTemporary(node, Side::Left))) {
+           AutocompletedPair::IsTemporary(l, Side::Right)) ||
+          (childIndex == 0 && AutocompletedPair::IsTemporary(l, Side::Left))) {
         return DeletionMethod::MoveLeft;
       }
       return DeletionMethod::AutocompletedBracketPairMakeTemporary;
@@ -449,7 +448,7 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
       return StandardDeletionMethodForLayoutContainingArgument(
           childIndex, NthRoot::k_radicandIndex);
     case LayoutType::VerticalOffset:
-      return childIndex == 0 && IsEmpty(node->child(0))
+      return childIndex == 0 && IsEmpty(l->child(0))
                  ? DeletionMethod::DeleteLayout
                  : DeletionMethod::MoveLeft;
     case LayoutType::Product:
@@ -458,7 +457,7 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
           childIndex, Parametric::k_argumentIndex);
     case LayoutType::Matrix:
     case LayoutType::Piecewise: {
-      const Grid* grid = Grid::From(node);
+      const Grid* grid = Grid::From(l);
       if (childIndex == k_outsideIndex) {
         return DeletionMethod::MoveLeft;
       }
@@ -499,41 +498,40 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     }
     default:
       assert((childIndex >= 0 || childIndex == k_outsideIndex) &&
-             childIndex < node->numberOfChildren());
+             childIndex < l->numberOfChildren());
       return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout
                                           : DeletionMethod::MoveLeft;
   }
 }
 
 bool CursorMotion::ShouldCollapseSiblingsOnDirection(
-    const Tree* node, OMG::HorizontalDirection direction) {
+    const Tree* l, OMG::HorizontalDirection direction) {
   if (direction.isLeft()) {
-    return node->isFractionLayout();
+    return l->isFractionLayout();
   } else {
-    return node->isConjLayout() || node->isFractionLayout() ||
-           node->isSqrtLayout() || node->isRootLayout() ||
-           node->isSquareBrackets();
+    return l->isConjLayout() || l->isFractionLayout() || l->isSqrtLayout() ||
+           l->isRootLayout() || l->isSquareBrackets();
   }
 }
 
 int CursorMotion::CollapsingAbsorbingChildIndex(
-    const Tree* node, OMG::HorizontalDirection direction) {
-  return direction.isRight() && node->isFractionLayout() ? 1 : 0;
+    const Tree* l, OMG::HorizontalDirection direction) {
+  return direction.isRight() && l->isFractionLayout() ? 1 : 0;
 }
 
-bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
+bool CursorMotion::IsCollapsable(const Tree* l, const Tree* root,
                                  OMG::HorizontalDirection direction) {
-  switch (node->layoutType()) {
+  switch (l->layoutType()) {
     case LayoutType::Rack:
-      return node->numberOfChildren() > 0;
+      return l->numberOfChildren() > 0;
     case LayoutType::Fraction: {
       /* We do not want to absorb a fraction if something else is already being
        * absorbed. This way, the user can write a product of fractions without
        * typing the × sign. */
       int indexOfThis;
-      const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+      const Tree* parent = root->parentOfDescendant(l, &indexOfThis);
       assert(parent && parent->numberOfChildren() > 1);
-      int indexInParent = parent->indexOfChild(node);
+      int indexInParent = parent->indexOfChild(l);
       int indexOfAbsorbingSibling =
           indexInParent + (direction.isLeft() ? 1 : -1);
       assert(indexOfAbsorbingSibling >= 0 &&
@@ -541,14 +539,14 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
       const Tree* absorbingSibling = parent->child(indexOfAbsorbingSibling);
       if (absorbingSibling->numberOfChildren() > 0) {
         absorbingSibling = absorbingSibling->child(
-            CollapsingAbsorbingChildIndex(node, direction));
+            CollapsingAbsorbingChildIndex(l, direction));
       }
       return absorbingSibling->isRackLayout() &&
              Rack::IsEmpty(absorbingSibling);
     }
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {
-      CodePoint codePoint = CodePointLayout::GetCodePoint(node);
+      CodePoint codePoint = CodePointLayout::GetCodePoint(l);
       if (codePoint == '+' || codePoint == UCodePointRightwardsArrow ||
           codePoint.isEquationOperator() || codePoint == ',') {
         return false;
@@ -557,7 +555,7 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
         /* If the expression is like 3ᴇ-200, we want '-' to be collapsable.
          * Otherwise, '-' is not collapsable. */
         int indexOfThis;
-        const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+        const Tree* parent = root->parentOfDescendant(l, &indexOfThis);
         assert(parent);
         if (indexOfThis > 0) {
           const Tree* leftBrother = parent->child(indexOfThis - 1);
@@ -576,7 +574,7 @@ bool CursorMotion::IsCollapsable(const Tree* node, const Tree* root,
         /* We want '*' to be collapsable only if the following brother is not
          * a fraction, so that the user can write intuitively "1/2 * 3/4". */
         int indexOfThis;
-        const Tree* parent = root->parentOfDescendant(node, &indexOfThis);
+        const Tree* parent = root->parentOfDescendant(l, &indexOfThis);
         assert(parent);
         const Tree* brother;
         if (indexOfThis > 0 && direction.isLeft()) {

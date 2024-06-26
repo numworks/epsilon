@@ -17,11 +17,11 @@ class LayoutSelection {
    *     -> LayoutSelection(l, 2, 10) = "23456789"
    *
    * */
-  LayoutSelection(const Tree* n, int startPosition, int endPosition)
-      : m_node(n), m_startPosition(startPosition), m_endPosition(endPosition) {
-    assert(!n || (n->isRackLayout() && 0 <= startPosition &&
-                  startPosition <= n->numberOfChildren() && 0 <= endPosition &&
-                  endPosition <= n->numberOfChildren()));
+  LayoutSelection(const Tree* l, int startPosition, int endPosition)
+      : m_node(l), m_startPosition(startPosition), m_endPosition(endPosition) {
+    assert(!l || (l->isRackLayout() && 0 <= startPosition &&
+                  startPosition <= l->numberOfChildren() && 0 <= endPosition &&
+                  endPosition <= l->numberOfChildren()));
   }
 
   LayoutSelection() : LayoutSelection(nullptr, 0, 0) {}

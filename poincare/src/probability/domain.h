@@ -64,40 +64,37 @@ class Domain {
     return true;
   }
 
-  static OMG::Troolean ExpressionIsIn(const Tree* expression, Type domain);
+  static OMG::Troolean ExpressionIsIn(const Tree* e, Type domain);
 
-  static bool ExpressionIsIn(bool* result, const Tree* expression,
-                             Type domain) {
+  static bool ExpressionIsIn(bool* result, const Tree* e, Type domain) {
     assert(result != nullptr);
-    OMG::Troolean expressionsIsIn = ExpressionIsIn(expression, domain);
-    switch (expressionsIsIn) {
+    OMG::Troolean isIn = ExpressionIsIn(e, domain);
+    switch (isIn) {
       case OMG::Troolean::Unknown:
         return false;
       case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsIsIn == OMG::Troolean::False);
+        assert(isIn == OMG::Troolean::False);
         *result = false;
         return true;
     }
   }
 
-  static bool ExpressionsAreIn(bool* result, const Tree* expression1,
-                               Type domain1, const Tree* expression2,
-                               Type domain2) {
+  static bool ExpressionsAreIn(bool* result, const Tree* e1, Type domain1,
+                               const Tree* e2, Type domain2) {
     assert(result != nullptr);
-    OMG::Troolean expressionsAreIn =
-        TrooleanAnd(ExpressionIsIn(expression1, domain1),
-                    ExpressionIsIn(expression2, domain2));
-    switch (expressionsAreIn) {
+    OMG::Troolean areIn =
+        TrooleanAnd(ExpressionIsIn(e1, domain1), ExpressionIsIn(e2, domain2));
+    switch (areIn) {
       case OMG::Troolean::Unknown:
         return false;
       case OMG::Troolean::True:
         *result = true;
         return true;
       default:
-        assert(expressionsAreIn == OMG::Troolean::False);
+        assert(areIn == OMG::Troolean::False);
         *result = false;
         return true;
     }

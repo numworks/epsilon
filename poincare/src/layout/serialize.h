@@ -11,10 +11,10 @@ using RackSerializer = char* (*)(const Rack* rack, char* buffer, char* end);
 char* SerializeLayout(const Layout* layout, char* buffer, char* end,
                       RackSerializer serializer = &SerializeRack);
 
-inline char* Serialize(const Tree* tree, char* buffer, char* end) {
-  char* used = tree->isRackLayout()
-                   ? SerializeRack(Rack::From(tree), buffer, end)
-                   : SerializeLayout(Layout::From(tree), buffer, end);
+inline char* Serialize(const Tree* l, char* buffer, char* end) {
+  char* used = l->isRackLayout()
+                   ? SerializeRack(Rack::From(l), buffer, end)
+                   : SerializeLayout(Layout::From(l), buffer, end);
   *used = 0;
   return used;
 }

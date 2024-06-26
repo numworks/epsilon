@@ -20,17 +20,17 @@ Dimension Dimension::Unit(const Tree* unit) {
               Units::Unit::GetRepresentative(unit));
 }
 
-bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
+bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   using Type = Internal::Type;
   // TODO complexity should be linear
-  int childLength[t->numberOfChildren()];
-  for (IndexedChild<const Tree*> child : t->indexedChildren()) {
+  int childLength[e->numberOfChildren()];
+  for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (!DeepCheckListLength(child, ctx)) {
       return false;
     }
     childLength[child.index] = ListLength(child, ctx);
   }
-  switch (t->type()) {
+  switch (e->type()) {
     case Type::SampleStdDev:
       // SampleStdDev needs a list of length >= 2
       return childLength[0] >= 2 && (childLength[1] == k_nonListListLength ||
@@ -57,7 +57,7 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
              childLength[2] == k_nonListListLength;
     case Type::Set:
     case Type::List: {
-      for (int i = 0; i < t->numberOfChildren(); i++) {
+      for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {
           // List of lists are forbidden
           return false;
@@ -68,15 +68,15 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       assert(!definition || DeepCheckListLength(definition, ctx));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = t->cloneTree();
+        Tree* clone = e->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         bool result = DeepCheckListLength(clone, ctx);
@@ -86,9 +86,9 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
       return true;
     }
     default: {
-      assert(!t->isListToScalar());
+      assert(!e->isListToScalar());
       int thisLength = k_unknownListLength;
-      for (int i = 0; i < t->numberOfChildren(); i++) {
+      for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i] == k_nonListListLength) {
           continue;
         }
@@ -100,10 +100,10 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
       }
       if (thisLength >= 0) {
         // Lists are forbidden
-        if (t->isListSequence() || t->isRandIntNoRep()) {
+        if (e->isListSequence() || e->isRandIntNoRep()) {
           return false;
         }
-        Dimension dim = Get(t, ctx);
+        Dimension dim = Get(e, ctx);
         if (dim.isMatrix() || dim.isUnit()) {
           return false;
         }
@@ -113,8 +113,8 @@ bool Dimension::DeepCheckListLength(const Tree* t, Poincare::Context* ctx) {
   return true;
 }
 
-int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
-  switch (t->type()) {
+int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
+  switch (e->type()) {
     case Type::Mean:
     case Type::StdDev:
     case Type::Median:
@@ -128,37 +128,37 @@ int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
     case Type::ListElement:
       return k_nonListListLength;
     case Type::ListSort:
-      return ListLength(t->child(0), ctx);
+      return ListLength(e->child(0), ctx);
     case Type::List:
-      return t->numberOfChildren();
+      return e->numberOfChildren();
     case Type::ListSequence:
       // TODO: Handle undef Approximation.
-      return Approximation::To<float>(t->child(1));
+      return Approximation::To<float>(e->child(1));
     case Type::ListSlice: {
-      assert(Integer::Is<uint8_t>(t->child(1)) &&
-             Integer::Is<uint8_t>(t->child(2)));
-      int listLength = ListLength(t->child(0), ctx);
-      int start = Integer::Handler(t->child(1)).to<uint8_t>();
+      assert(Integer::Is<uint8_t>(e->child(1)) &&
+             Integer::Is<uint8_t>(e->child(2)));
+      int listLength = ListLength(e->child(0), ctx);
+      int start = Integer::Handler(e->child(1)).to<uint8_t>();
       start = std::max(start, 1);
-      int end = Integer::Handler(t->child(2)).to<uint8_t>();
+      int end = Integer::Handler(e->child(2)).to<uint8_t>();
       end = std::min(end, listLength);
       // TODO: Handle undef Approximation.
       return std::max(end - start + 1, 0);
     }
     case Type::RandIntNoRep:
-      assert(Integer::Is<uint8_t>(t->child(2)));
-      return Integer::Handler(t->child(2)).to<uint8_t>();
+      assert(Integer::Is<uint8_t>(e->child(2)));
+      return Integer::Handler(e->child(2)).to<uint8_t>();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
         return ListLength(definition, ctx);
       }
       return k_nonListListLength;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = t->cloneTree();
+        Tree* clone = e->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         int result = ListLength(clone, ctx);
@@ -169,7 +169,7 @@ int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
     }
     default: {
       // TODO sort lists first to optimize ListLength ?
-      for (const Tree* child : t->children()) {
+      for (const Tree* child : e->children()) {
         int childListDim = ListLength(child, ctx);
         if (childListDim >= 0) {
           return childListDim;
@@ -180,11 +180,11 @@ int Dimension::ListLength(const Tree* t, Poincare::Context* ctx) {
   }
 }
 
-bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
-  Dimension childDim[t->numberOfChildren()];
+bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
+  Dimension childDim[e->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
-  for (IndexedChild<const Tree*> child : t->indexedChildren()) {
+  for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (!DeepCheckDimensions(child, ctx)) {
       return false;
     }
@@ -203,16 +203,16 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       }
       hasUnitChild = true;
     }
-    if (!t->isPiecewise() && !t->isParentheses() && !t->isDependency() &&
-        !t->isList() &&
-        childDim[child.index].isBoolean() != t->isLogicalOperatorOrBoolean()) {
+    if (!e->isPiecewise() && !e->isParentheses() && !e->isDependency() &&
+        !e->isList() &&
+        childDim[child.index].isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child. */
       return false;
     }
     if (childDim[child.index].isPoint()) {
       // A few operations are allowed on points.
-      switch (t->type()) {
+      switch (e->type()) {
         case Type::Piecewise:
           if (child.index % 2 == 1) {
             return false;
@@ -221,7 +221,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
         case Type::Diff:
         case Type::NthDiff:
         case Type::ListSequence:
-          if (child.index != Parametric::FunctionIndex(t)) {
+          if (child.index != Parametric::FunctionIndex(e)) {
             return false;
           }
           break;
@@ -245,10 +245,10 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
   }
   bool unitsAllowed = false;
   bool angleUnitsAllowed = false;
-  switch (t->type()) {
+  switch (e->type()) {
     case Type::Add:
     case Type::Sub:
-      for (int i = 1; i < t->numberOfChildren(); i++) {
+      for (int i = 1; i < e->numberOfChildren(); i++) {
         if (childDim[0] != childDim[i]) {
           return false;
         }
@@ -261,8 +261,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
        * builtins. */
       uint8_t cols = 0;
       Units::SIVector unitVector = Units::SIVector::Empty();
-      for (int i = 0; i < t->numberOfChildren(); i++) {
-        bool secondDivisionChild = (i == 1 && t->isDiv());
+      for (int i = 0; i < e->numberOfChildren(); i++) {
+        bool secondDivisionChild = (i == 1 && e->isDiv());
         Dimension next = childDim[i];
         if (next.isMatrix()) {
           // Matrix size must match. Forbid Matrices on denominator
@@ -300,7 +300,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
         // Powers of non-Kelvin temperature unit are forbidden
         return false;
       }
-      const Tree* index = t->child(1);
+      const Tree* index = e->child(1);
       // TODO: Handle operations such as m^(1+1) or m^(-1*n) or m^(1/2) or m^0.5
       return index->isInteger() ||
              (index->isOpposite() && index->child(0)->isInteger()) ||
@@ -312,13 +312,13 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       return childDim[Parametric::k_variableIndex].isScalar() &&
              childDim[Parametric::k_lowerBoundIndex].isScalar() &&
              childDim[Parametric::k_upperBoundIndex].isScalar() &&
-             (!t->isProduct() ||
+             (!e->isProduct() ||
               childDim[Parametric::k_integrandIndex].isScalar() ||
               childDim[Parametric::k_integrandIndex].isSquareMatrix());
 
     // Matrices
     case Type::Dim:
-      return childDim[0].isMatrix() || IsList(t->child(0));
+      return childDim[0].isMatrix() || IsList(e->child(0));
     case Type::Ref:
     case Type::Rref:
     case Type::Transpose:
@@ -329,7 +329,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       return childDim[0].isSquareMatrix();
     case Type::Identity:
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && t->child(0)->isInteger();
+      return childDim[0].isScalar() && e->child(0)->isInteger();
     case Type::Norm:
       return childDim[0].isVector();
     case Type::Dot:
@@ -344,7 +344,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::Piecewise: {
       /* A piecewise can contain any type provided it is the same everywhere
        * Conditions are stored on odd indices and should be booleans */
-      for (int i = 0; i < t->numberOfChildren(); i++) {
+      for (int i = 0; i < e->numberOfChildren(); i++) {
         if (i % 2 == 1) {
           if (!childDim[i].isBoolean()) {
             return false;
@@ -368,7 +368,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::List:
       /* Lists can contain scalars, points or booleans but they must all be of
        * the same type. */
-      for (int i = 0; i < t->numberOfChildren(); i++) {
+      for (int i = 0; i < e->numberOfChildren(); i++) {
         if (!(childDim[i].isScalar() || childDim[i].isPoint() ||
               childDim[i].isBoolean()) ||
             childDim[i] != childDim[0]) {
@@ -377,19 +377,19 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
       }
       return true;
     case Type::ListElement:
-      return Integer::Is<uint8_t>(t->child(1));
+      return Integer::Is<uint8_t>(e->child(1));
     case Type::ListSlice:
-      return Integer::Is<uint8_t>(t->child(1)) &&
-             Integer::Is<uint8_t>(t->child(2));
+      return Integer::Is<uint8_t>(e->child(1)) &&
+             Integer::Is<uint8_t>(e->child(2));
     case Type::Abs:
     case Type::Floor:
     case Type::Ceil:
     case Type::Sign:
     // case Type::Sqrt: TODO: Handle _m^(1/2)
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = t->cloneTree();
+        Tree* clone = e->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         bool result = DeepCheckDimensions(clone, ctx);
@@ -410,20 +410,20 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     case Type::Parentheses:
       return true;
     case Type::RandIntNoRep:
-      return Integer::Is<uint8_t>(t->child(2));
+      return Integer::Is<uint8_t>(e->child(2));
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       assert(!definition || DeepCheckDimensions(definition, ctx));
 #endif
       return true;
     }
     default:
-      if (t->isLogicalOperatorOrBoolean()) {
+      if (e->isLogicalOperatorOrBoolean()) {
         return true;
       }
-      assert(t->isScalarOnly());
+      assert(e->isScalarOnly());
       break;
   }
   if (hasNonKelvinChild ||
@@ -432,7 +432,7 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
     return false;
   }
   // Check each child against the flags
-  for (int i = 0; i < t->numberOfChildren(); i++) {
+  for (int i = 0; i < e->numberOfChildren(); i++) {
     if (childDim[i].isScalar() || childDim[i].isPoint() ||
         (childDim[i].isUnit() &&
          (unitsAllowed ||
@@ -444,8 +444,8 @@ bool Dimension::DeepCheckDimensions(const Tree* t, Poincare::Context* ctx) {
   return true;
 }
 
-Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
-  switch (t->type()) {
+Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
+  switch (e->type()) {
     case Type::Div:
     case Type::Mult: {
       uint8_t rows = 0;
@@ -453,7 +453,7 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
       const Units::Representative* representative = nullptr;
       Units::SIVector unitVector = Units::SIVector::Empty();
       bool secondDivisionChild = false;
-      for (const Tree* child : t->children()) {
+      for (const Tree* child : e->children()) {
         Dimension dim = Get(child, ctx);
         if (dim.isMatrix()) {
           if (rows == 0) {
@@ -465,7 +465,7 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
                                         secondDivisionChild ? -1 : 1);
           representative = dim.unit.representative;
         }
-        secondDivisionChild = (t->isDiv());
+        secondDivisionChild = (e->isDiv());
       }
       // Only unique and celsius, fahrenheit or radians representatives matter.
       return rows > 0
@@ -478,15 +478,15 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
     case Type::ListSequence:
     case Type::Diff:
     case Type::NthDiff:
-      return Get(t->child(Parametric::FunctionIndex(t)), ctx);
+      return Get(e->child(Parametric::FunctionIndex(e)), ctx);
     case Type::Dependency:
-      return Get(Dependency::Main(t), ctx);
+      return Get(Dependency::Main(e), ctx);
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
-      Dimension dim = Get(t->child(0), ctx);
+      Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(t->child(1));
+        float index = Approximation::To<float>(e->child(1));
         // TODO: Handle/forbid index > int8_t
         assert(!std::isnan(index) &&
                std::fabs(index) < static_cast<float>(INT8_MAX));
@@ -512,45 +512,45 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
     case Type::Parentheses:
     case Type::ListElement:
     case Type::ListSort:
-      return Get(t->child(0), ctx);
+      return Get(e->child(0), ctx);
     case Type::Matrix:
-      return Matrix(Matrix::NumberOfRows(t), Matrix::NumberOfColumns(t));
+      return Matrix(Matrix::NumberOfRows(e), Matrix::NumberOfColumns(e));
     case Type::Dim:
-      return Get(t->child(0), ctx).isMatrix() ? Matrix(1, 2) : Scalar();
+      return Get(e->child(0), ctx).isMatrix() ? Matrix(1, 2) : Scalar();
     case Type::Transpose: {
-      Dimension dim = Get(t->child(0), ctx);
+      Dimension dim = Get(e->child(0), ctx);
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
-      int n = Approximation::To<float>(t->child(0));
+      int n = Approximation::To<float>(e->child(0));
       return Matrix(n, n);
     }
     case Type::UnitConversion:
       /* Use first child because it's representative is needed in
        * Unit::ProjectToBestUnits in case of non kelvin units. */
-      return Get(t->child(0), ctx);
+      return Get(e->child(0), ctx);
     case Type::Unit:
-      return Dimension::Unit(t);
+      return Dimension::Unit(e);
     case Type::PhysicalConstant:
-      return Dimension::Unit(PhysicalConstant::GetProperties(t).m_dimension,
+      return Dimension::Unit(PhysicalConstant::GetProperties(e).m_dimension,
                              nullptr);
     case Type::Point:
       return Point();
     case Type::Set:
     case Type::ListSlice:
     case Type::List:
-      return ListLength(t, ctx) > 0 ? Get(t->child(0), ctx) : Scalar();
+      return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
         return Get(definition, ctx);
       }
       return Scalar();
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(t) : nullptr;
+      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = t->cloneTree();
+        Tree* clone = e->cloneTree();
         // Replace function's symbol with definition
         Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
         Dimension result = Get(clone, ctx);
@@ -558,14 +558,14 @@ Dimension Dimension::Get(const Tree* t, Poincare::Context* ctx) {
         return result;
       }
       // TODO: Maybe scalar ?
-      return Get(t->child(0), ctx);
+      return Get(e->child(0), ctx);
     }
     case Type::ACos:
     case Type::ASin:
     case Type::ATan:
       // Note: Angle units could be returned here.
     default:
-      if (t->isLogicalOperatorOrBoolean() || t->isComparison()) {
+      if (e->isLogicalOperatorOrBoolean() || e->isComparison()) {
         return Boolean();
       }
       return Scalar();

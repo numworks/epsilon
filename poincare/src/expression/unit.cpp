@@ -700,16 +700,16 @@ bool Unit::AllowImplicitAddition(const Representative* smallestRepresentative,
   return false;
 }
 
-bool Unit::IsUnitOrPowerOfUnit(const Tree* expr) {
-  return expr->isUnit() || (expr->isPow() && expr->child(0)->isUnit());
+bool Unit::IsUnitOrPowerOfUnit(const Tree* e) {
+  return e->isUnit() || (e->isPow() && e->child(0)->isUnit());
 }
 
-bool Unit::ForceMarginLeftOfUnit(const Tree* expr) {
-  assert(IsUnitOrPowerOfUnit(expr));
-  if (expr->isPow()) {
-    expr = expr->child(0);
+bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
+  assert(IsUnitOrPowerOfUnit(e));
+  if (e->isPow()) {
+    e = e->child(0);
   }
-  const Representative* representative = GetRepresentative(expr);
+  const Representative* representative = GetRepresentative(e);
   for (const Representative* repr : k_representativesWithoutLeftMargin) {
     if (repr == representative) {
       return false;
@@ -1083,29 +1083,29 @@ bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
   return true;
 }
 
-bool IsCombinationOfUnits(const Tree* expr) {
-  if (expr->isUnit()) {
+bool IsCombinationOfUnits(const Tree* e) {
+  if (e->isUnit()) {
     return true;
   }
-  if (expr->isMult() || expr->isDiv()) {
-    return !expr->hasChildSatisfying(
+  if (e->isMult() || e->isDiv()) {
+    return !e->hasChildSatisfying(
         [](const Tree* e) { return !IsCombinationOfUnits(e); });
   }
-  if (expr->isPow()) {
-    return IsCombinationOfUnits(expr->child(0));
+  if (e->isPow()) {
+    return IsCombinationOfUnits(e->child(0));
   }
   return false;
 }
 
-bool HasUnit(const Tree* expr) {
+bool HasUnit(const Tree* e) {
   // TODO should HasUnit be replaced by dimensional analysis ?
-  return expr->hasDescendantSatisfying(
+  return e->hasDescendantSatisfying(
       [](const Tree* e) { return e->isUnit() || e->isPhysicalConstant(); });
 }
 
-bool IsPureAngleUnit(const Tree* expr) {
-  return expr->isUnit() &&
-         Unit::GetRepresentative(expr)->siVector() == Angle::Dimension;
+bool IsPureAngleUnit(const Tree* e) {
+  return e->isUnit() &&
+         Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
 }
 
 }  // namespace Units

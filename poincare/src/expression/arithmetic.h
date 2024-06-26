@@ -16,23 +16,23 @@ class Arithmetic {
     uint8_t numberOfFactors = 0;
   };
 
-  static bool ReduceFactorial(Tree* expr);
-  static bool ExpandFactorial(Tree* expr);
-  static bool ReduceQuotientOrRemainder(Tree* expr);
-  static bool ReduceFloor(Tree* expr);
-  static bool ReduceRound(Tree* expr);
-  static bool ReduceFactor(Tree* expr);
+  static bool ReduceFactorial(Tree* e);
+  static bool ExpandFactorial(Tree* e);
+  static bool ReduceQuotientOrRemainder(Tree* e);
+  static bool ReduceFloor(Tree* e);
+  static bool ReduceRound(Tree* e);
+  static bool ReduceFactor(Tree* e);
 
   // Turn binomial and permute into factorials
-  static bool ReducePermute(Tree* expr);
-  static bool ExpandPermute(Tree* expr);
-  static bool ReduceBinomial(Tree* expr);
-  static bool ExpandBinomial(Tree* expr);
+  static bool ReducePermute(Tree* e);
+  static bool ExpandPermute(Tree* e);
+  static bool ReduceBinomial(Tree* e);
+  static bool ExpandBinomial(Tree* e);
 
-  static bool ReduceGCD(Tree* expr) { return ReduceGCDOrLCM(expr, true); }
-  static bool ReduceLCM(Tree* expr) { return ReduceGCDOrLCM(expr, false); }
+  static bool ReduceGCD(Tree* e) { return ReduceGCDOrLCM(e, true); }
+  static bool ReduceLCM(Tree* e) { return ReduceGCDOrLCM(e, false); }
 
-  static bool BeautifyFactor(Tree* expr);
+  static bool BeautifyFactor(Tree* e);
 
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
 
@@ -40,7 +40,7 @@ class Arithmetic {
   static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);
 
  private:
-  static bool ReduceGCDOrLCM(Tree* expr, bool isGCD);
+  static bool ReduceGCDOrLCM(Tree* e, bool isGCD);
   static Tree* PushPrimeFactorization(IntegerHandler m);
 };
 

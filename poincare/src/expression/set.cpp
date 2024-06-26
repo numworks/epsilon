@@ -10,9 +10,9 @@ namespace Poincare::Internal {
 
 Tree* Set::PushEmpty() { return KSet.node<0>->cloneNode(); }
 
-bool Set::Includes(const Tree* set, const Tree* expression) {
+bool Set::Includes(const Tree* set, const Tree* e) {
   for (const Tree* child : set->children()) {
-    int comparison = Order::Compare(child, expression);
+    int comparison = Order::Compare(child, e);
     if (comparison >= 0) {
       return comparison == 0;
     }
@@ -20,12 +20,12 @@ bool Set::Includes(const Tree* set, const Tree* expression) {
   return false;
 }
 
-void Set::Add(Tree* set, const Tree* expression) {
+void Set::Add(Tree* set, const Tree* e) {
   Tree* target = set->nextNode();
   // If set is empty, target is set's next tree
   int numberOfChildren = set->numberOfChildren();
   for (int i = 0; i < numberOfChildren; i++) {
-    int comparison = Order::Compare(target, expression);
+    int comparison = Order::Compare(target, e);
     if (comparison == 0) {
       return;
     } else if (comparison > 0) {
@@ -34,7 +34,7 @@ void Set::Add(Tree* set, const Tree* expression) {
     target = target->nextTree();
   }
   // target is either set's next tree or one of its children
-  target->cloneTreeBeforeNode(expression);
+  target->cloneTreeBeforeNode(e);
   NAry::SetNumberOfChildren(set, numberOfChildren + 1);
 }
 

@@ -7,25 +7,25 @@ using namespace Poincare::Internal;
 
 bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
          Poincare::Context* ctx = nullptr) {
-  Tree* expression = TextToTree(input);
-  bool result = Dimension::DeepCheckDimensions(expression, ctx) &&
-                d == Dimension::Get(expression, ctx);
-  expression->removeTree();
+  Tree* e = TextToTree(input);
+  bool result =
+      Dimension::DeepCheckDimensions(e, ctx) && d == Dimension::Get(e, ctx);
+  e->removeTree();
   return result;
 }
 
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
-  Tree* expression = TextToTree(input);
-  assert(Dimension::DeepCheckDimensions(expression, ctx));
-  bool result = Dimension::ListLength(expression, ctx) == n;
-  expression->removeTree();
+  Tree* e = TextToTree(input);
+  assert(Dimension::DeepCheckDimensions(e, ctx));
+  bool result = Dimension::ListLength(e, ctx) == n;
+  e->removeTree();
   return result;
 }
 
 bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
-  Tree* expression = TextToTree(input);
-  bool result = !Dimension::DeepCheck(expression, ctx);
-  expression->removeTree();
+  Tree* e = TextToTree(input);
+  bool result = !Dimension::DeepCheck(e, ctx);
+  e->removeTree();
   return result;
 }
 

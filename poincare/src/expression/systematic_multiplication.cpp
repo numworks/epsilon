@@ -10,9 +10,9 @@
 
 namespace Poincare::Internal {
 
-const Tree* Base(const Tree* u) { return u->isPow() ? u->child(0) : u; }
+const Tree* Base(const Tree* e) { return e->isPow() ? e->child(0) : e; }
 
-const Tree* Exponent(const Tree* u) { return u->isPow() ? u->child(1) : 1_e; }
+const Tree* Exponent(const Tree* e) { return e->isPow() ? e->child(1) : 1_e; }
 
 static bool MergeMultiplicationChildWithNext(Tree* child) {
   Tree* next = child->nextTree();
@@ -177,23 +177,23 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   return true;
 }
 
-bool SystematicOperation::ReduceMultiplication(Tree* u) {
-  assert(u->isMult());
-  bool changed = NAry::Flatten(u);
-  if (changed && CanApproximateTree(u, &changed)) {
+bool SystematicOperation::ReduceMultiplication(Tree* e) {
+  assert(e->isMult());
+  bool changed = NAry::Flatten(e);
+  if (changed && CanApproximateTree(e, &changed)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
      * tried again to properly handle possible new float children. */
     return true;
   }
-  if (NAry::SquashIfPossible(u)) {
+  if (NAry::SquashIfPossible(e)) {
     return true;
   }
-  changed = NAry::Sort(u, Order::OrderType::PreserveMatrices) || changed;
-  changed = SimplifySortedMultiplication(u) || changed;
-  if (changed && u->isMult()) {
+  changed = NAry::Sort(e, Order::OrderType::PreserveMatrices) || changed;
+  changed = SimplifySortedMultiplication(e) || changed;
+  if (changed && e->isMult()) {
     // Bubble-up may be unlocked after merging identical bases.
-    SystematicReduction::BubbleUpFromChildren(u);
-    assert(!SystematicReduction::ShallowReduce(u));
+    SystematicReduction::BubbleUpFromChildren(e);
+    assert(!SystematicReduction::ShallowReduce(e));
   }
   return changed;
 }

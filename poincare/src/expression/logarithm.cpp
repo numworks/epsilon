@@ -13,17 +13,17 @@
 
 namespace Poincare::Internal {
 
-bool Logarithm::ReduceLn(Tree* u) {
-  Tree* child = u->child(0);
+bool Logarithm::ReduceLn(Tree* e) {
+  Tree* child = e->child(0);
   if (child->isExp()) {
     // ln(exp(x)) -> x
-    u->removeNode();
-    u->removeNode();
+    e->removeNode();
+    e->removeNode();
     return true;
   }
   if (child->isInf()) {
     // ln(inf) -> inf
-    u->removeNode();
+    e->removeNode();
     return true;
   }
   if (!child->isInteger()) {
@@ -31,11 +31,11 @@ bool Logarithm::ReduceLn(Tree* u) {
   }
   if (child->isMinusOne()) {
     // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
-    u->cloneTreeOverTree(KMult(π_e, i_e));
+    e->cloneTreeOverTree(KMult(π_e, i_e));
     return true;
   }
   if (child->isOne()) {
-    u->cloneTreeOverTree(0_e);
+    e->cloneTreeOverTree(0_e);
     return true;
   }
   // TODO_PCJ: Raise Unhandled if child is zero and ln is user-input.

@@ -71,65 +71,65 @@ class Approximation final {
 
   // Approximate a tree with any dimension
   template <typename T>
-  static Tree* ToTree(const Tree* tree, Dimension dim);
+  static Tree* ToTree(const Tree* e, Dimension dim);
 
   // tree must be of scalar dimension
   template <typename T>
-  static std::complex<T> ToComplex(const Tree* tree);
+  static std::complex<T> ToComplex(const Tree* e);
 
   // tree must be of scalar dimension and real.
   template <typename T>
-  static T To(const Tree* tree) {
-    std::complex<T> value = ToComplex<T>(tree);
+  static T To(const Tree* e) {
+    std::complex<T> value = ToComplex<T>(e);
     return value.imag() == 0 ? value.real() : NAN;
   }
 
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
   template <typename T>
-  static T To(const Tree* tree, T x) {
+  static T To(const Tree* e, T x) {
     assert(s_context);
     s_context->setLocalValue(x);
-    return To<T>(tree);
+    return To<T>(e);
   }
 
   // tree must be of boolean dimension.
   template <typename T>
-  static bool ToBoolean(const Tree* tree);
+  static bool ToBoolean(const Tree* e);
 
   // tree must be of list dimension.
   template <typename T>
-  static Tree* ToList(const Tree* tree);
+  static Tree* ToList(const Tree* e);
 
   // tree must be of point dimension.
   template <typename T>
-  static Tree* ToPoint(const Tree* tree);
+  static Tree* ToPoint(const Tree* e);
 
   // tree must be of matrix dimension.
   template <typename T>
-  static Tree* ToMatrix(const Tree* tree);
+  static Tree* ToMatrix(const Tree* e);
 
   // Replace a Tree with the Tree of its complex approximation
-  static bool ApproximateToComplexTree(Tree* tree);
+  static bool ApproximateToComplexTree(Tree* e);
   TREE_REF_WRAP(ApproximateToComplexTree);
 
   /* Helpers */
 
   // Optimize a projected function for efficient approximations
-  static bool PrepareFunctionForApproximation(Tree* expr, const char* variable,
+  static bool PrepareFunctionForApproximation(Tree* e, const char* variable,
                                               ComplexFormat complexFormat);
 
-  static bool PrepareExpressionForApproximation(Tree* expr,
+  static bool PrepareExpressionForApproximation(Tree* e,
                                                 ComplexFormat complexFormat);
 
-  // Return false if tree could not be approximated to a defined value.
-  static bool CanApproximate(const Tree* tree, bool approxLocalVar = false) {
-    return CanApproximate(tree, 0);
+  // Return false if e could not be approximated to a defined value.
+  static bool CanApproximate(const Tree* e, bool approxLocalVar = false) {
+    return CanApproximate(e, 0);
   }
 
   // Approximate every scalar subtree that can be approximated.
   static bool ApproximateAndReplaceEveryScalar(
-      Tree* tree, const ProjectionContext* ctx = nullptr);
+      Tree* e, const ProjectionContext* ctx = nullptr);
   TREE_REF_WRAP_1D(ApproximateAndReplaceEveryScalar, const ProjectionContext*,
                    nullptr);
 
@@ -148,29 +148,29 @@ class Approximation final {
  private:
   template <typename T>
   static PointOrScalar<T> RootToPointOrScalarPrivate(
-      const Tree* tree, bool isPoint, bool isPrepared = true, T abscissa = NAN,
+      const Tree* e, bool isPoint, bool isPrepared = true, T abscissa = NAN,
       int listElement = -1, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real);
 
   // tree must be of given dimension and list length.
   template <typename T>
-  static Tree* RootTreeToTreePrivate(const Tree* tree, AngleUnit angleUnit,
+  static Tree* RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
                                      ComplexFormat complexFormat, Dimension dim,
                                      int listLength);
 
-  static bool ShallowPrepareForApproximation(Tree* expr, void* ctx);
+  static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
-  static bool PrivateApproximateAndReplaceEveryScalar(Tree* tree);
+  static bool PrivateApproximateAndReplaceEveryScalar(Tree* e);
 
   /* Variables with id >= firstNonApproximableVarId are considered not
    * approximable. */
-  static bool CanApproximate(const Tree* tree, int firstNonApproximableVarId);
+  static bool CanApproximate(const Tree* e, int firstNonApproximableVarId);
 
   template <typename T>
-  static std::complex<T> ToComplexSwitch(const Tree* node);
+  static std::complex<T> ToComplexSwitch(const Tree* e);
 
   template <typename T>
-  static Tree* ToBeautifiedComplex(const Tree* node);
+  static Tree* ToBeautifiedComplex(const Tree* e);
 
   template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,

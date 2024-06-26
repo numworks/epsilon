@@ -6,61 +6,60 @@
 
 namespace Poincare::Internal {
 
-Tree* Number::Addition(const Tree* i, const Tree* j) {
-  if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(i) +
-                                            Approximation::To<double>(j));
+Tree* Number::Addition(const Tree* e1, const Tree* e2) {
+  if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
+    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(e1) +
+                                            Approximation::To<double>(e2));
   }
-  if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(i) +
-                                            Approximation::To<float>(j));
+  if (e1->isSingleFloat() || e2->isSingleFloat()) {
+    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(e1) +
+                                            Approximation::To<float>(e2));
   }
-  assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
-  Tree* result = Rational::Addition(i, j);
+  assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
+  Tree* result = Rational::Addition(e1, e2);
   return result;
 }
-Tree* Number::Multiplication(const Tree* i, const Tree* j) {
-  if (i->isDoubleFloat() || j->isDoubleFloat()) {
-    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(i) *
-                                            Approximation::To<double>(j));
+Tree* Number::Multiplication(const Tree* e1, const Tree* e2) {
+  if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
+    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(e1) *
+                                            Approximation::To<double>(e2));
   }
-  if (i->isSingleFloat() || j->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(i) *
-                                            Approximation::To<float>(j));
+  if (e1->isSingleFloat() || e2->isSingleFloat()) {
+    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(e1) *
+                                            Approximation::To<float>(e2));
   }
-  assert(!i->isMathematicalConstant() && !j->isMathematicalConstant());
-  Tree* result = Rational::Multiplication(i, j);
+  assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
+  Tree* result = Rational::Multiplication(e1, e2);
   return result;
 }
 
-Sign Number::Sign(const Tree* node) {
-  assert(node->isNumber());
-  switch (node->type()) {
+Sign Number::Sign(const Tree* e) {
+  assert(e->isNumber());
+  switch (e->type()) {
     case Type::Pi:
     case Type::EulerE:
       return Sign::StrictlyPositive();
     case Type::DoubleFloat:
     case Type::SingleFloat: {
-      double value = FloatHelper::To(node);
+      double value = FloatHelper::To(e);
       // Floats are not considered integer since they may have been rounded
       return Internal::Sign(value == 0, value > 0, value < 0, true);
     }
     default:
-      assert(node->isRational());
-      return Rational::Sign(node);
+      assert(e->isRational());
+      return Rational::Sign(e);
   }
 }
 
-bool Number::SetSign(Tree* number, NonStrictSign sign) {
-  assert(number->isNumber());
-  if (number->isRational()) {
-    return Rational::SetSign(number, NonStrictSign::Positive);
-  } else if (number->isFloat()) {
-    return FloatHelper::SetSign(number, NonStrictSign::Positive);
+bool Number::SetSign(Tree* e, NonStrictSign sign) {
+  assert(e->isNumber());
+  if (e->isRational()) {
+    return Rational::SetSign(e, NonStrictSign::Positive);
+  } else if (e->isFloat()) {
+    return FloatHelper::SetSign(e, NonStrictSign::Positive);
   }
-  assert(Number::Sign(number).isZero() ||
-         Number::Sign(number).isPositive() ==
-             (sign == NonStrictSign::Positive));
+  assert(Number::Sign(e).isZero() ||
+         Number::Sign(e).isPositive() == (sign == NonStrictSign::Positive));
   return false;
 }
 

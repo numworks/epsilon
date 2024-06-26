@@ -21,17 +21,17 @@ class FloatHelper {
     return OMG::BitHelper::getByteAtIndex(std::bit_cast<uint64_t>(value),
                                           index);
   }
-  static float FloatTo(const Tree* tree) {
-    return tree->nodeValueBlock(0)->get<float>();
+  static float FloatTo(const Tree* e) {
+    return e->nodeValueBlock(0)->get<float>();
   }
-  static double DoubleTo(const Tree* tree) {
-    return tree->nodeValueBlock(0)->get<double>();
+  static double DoubleTo(const Tree* e) {
+    return e->nodeValueBlock(0)->get<double>();
   }
-  static double To(const Tree* tree) {
-    assert(tree->isFloat());
-    return tree->isSingleFloat() ? FloatTo(tree) : DoubleTo(tree);
+  static double To(const Tree* e) {
+    assert(e->isFloat());
+    return e->isSingleFloat() ? FloatTo(e) : DoubleTo(e);
   }
-  static bool SetSign(Tree* tree, NonStrictSign sign);
+  static bool SetSign(Tree* e, NonStrictSign sign);
 };
 
 }  // namespace Poincare::Internal

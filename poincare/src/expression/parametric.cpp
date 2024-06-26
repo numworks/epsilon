@@ -13,8 +13,8 @@
 
 namespace Poincare::Internal {
 
-uint8_t Parametric::FunctionIndex(const Tree* t) {
-  return FunctionIndex(t->type());
+uint8_t Parametric::FunctionIndex(const Tree* e) {
+  return FunctionIndex(e->type());
 }
 
 uint8_t Parametric::FunctionIndex(TypeBlock type) {
@@ -38,15 +38,15 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
   }
 }
 
-bool Parametric::IsFunctionIndex(int i, const Tree* t) {
-  if (t->isIntegralWithAlternatives()) {
+bool Parametric::IsFunctionIndex(int i, const Tree* e) {
+  if (e->isIntegralWithAlternatives()) {
     return i >= 3;
   }
-  return i == FunctionIndex(t);
+  return i == FunctionIndex(e);
 }
 
-ComplexSign Parametric::VariableSign(const Tree* t) {
-  switch (t->type()) {
+ComplexSign Parametric::VariableSign(const Tree* e) {
+  switch (e->type()) {
     case Type::Diff:
     case Type::NthDiff:
     case Type::Integral:
@@ -60,10 +60,10 @@ ComplexSign Parametric::VariableSign(const Tree* t) {
   }
 }
 
-bool Parametric::ReduceSumOrProduct(Tree* expr) {
-  assert(expr->isSum() || expr->isProduct());
-  bool isSum = expr->isSum();
-  Tree* lowerBound = expr->child(k_lowerBoundIndex);
+bool Parametric::ReduceSumOrProduct(Tree* e) {
+  assert(e->isSum() || e->isProduct());
+  bool isSum = e->isSum();
+  Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
   ComplexSign sign = ComplexSign::SignOfDifference(lowerBound, upperBound);
   // TODO: what about when bounds are not integer but diff is integer ?
@@ -73,18 +73,18 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
   if (sign.realSign().isStrictlyPositive()) {
-    expr->cloneTreeOverTree(isSum ? 0_e : 1_e);
+    e->cloneTreeOverTree(isSum ? 0_e : 1_e);
     return true;
   }
 
   // If a=b, no need to wait for advanced reduction to explicit
   if (sign.realSign().isZero()) {
-    return Explicit(expr);
+    return Explicit(e);
   }
 
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
   if (PatternMatching::MatchReplaceSimplify(
-          expr, KSum(KA, KB, KC, KVarK),
+          e, KSum(KA, KB, KC, KVarK),
           KMult(1_e / 2_e, KAdd(KMult(KC, KAdd(1_e, KC)),
                                 KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
     return true;
@@ -92,7 +92,7 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
 
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
   if (PatternMatching::MatchReplaceSimplify(
-          expr, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
+          e, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
           KMult(KPow(6_e, -1_e),
                 KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
                      KMult(-1_e, KAdd(-1_e, KB), KB,
@@ -100,7 +100,7 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
     return true;
   }
 
-  if (HasLocalRandom(expr)) {
+  if (HasLocalRandom(e)) {
     return false;
   }
 
@@ -114,7 +114,7 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
     Tree* result = PatternMatching::CreateSimplify(
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
         {.KA = upperBound, .KB = lowerBound, .KC = function});
-    expr->moveTreeOverTree(result);
+    e->moveTreeOverTree(result);
     return true;
   }
 
@@ -145,13 +145,13 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
       SystematicReduction::ShallowReduce(function);
     }
     // Shallow reduce the Sum
-    SystematicReduction::ShallowReduce(expr);
+    SystematicReduction::ShallowReduce(e);
     // Add factor a before the Sum
-    expr->moveTreeBeforeNode(a);
+    e->moveTreeBeforeNode(a);
     // a is already a Mult, increase its number of children to include the Sum
-    NAry::SetNumberOfChildren(expr, expr->numberOfChildren() + 1);
+    NAry::SetNumberOfChildren(e, e->numberOfChildren() + 1);
     // Shallow reduce a*Sum
-    SystematicReduction::ShallowReduce(expr);
+    SystematicReduction::ShallowReduce(e);
     return true;
   }
 
@@ -162,36 +162,36 @@ bool Parametric::ReduceSumOrProduct(Tree* expr) {
     // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
     assert(!Variables::HasVariable(a, k_localVariableId));
     // Move the node Pow before the Prod
-    expr->moveNodeBeforeNode(function);
+    e->moveNodeBeforeNode(function);
     // Shallow reduce the Prod
-    SystematicReduction::ShallowReduce(expr->child(0));
+    SystematicReduction::ShallowReduce(e->child(0));
     // Shallow reduce Prod^a
-    SystematicReduction::ShallowReduce(expr);
+    SystematicReduction::ShallowReduce(e);
     return true;
   }
 
   return false;
 }
 
-bool Parametric::ExpandSum(Tree* expr) {
-  return expr->isSum() &&
+bool Parametric::ExpandSum(Tree* e) {
+  return e->isSum() &&
          // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
          (PatternMatching::MatchReplaceSimplify(
-              expr, KSum(KA, KB, KC, KAdd(KD, KE_p)),
+              e, KSum(KA, KB, KC, KAdd(KD, KE_p)),
               KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE_p)))) ||
           // sum(x_k, k, 0, n) = x_0 + ... + x_n
-          Explicit(expr));
+          Explicit(e));
 }
 
-bool Parametric::ExpandProduct(Tree* expr) {
-  return expr->isProduct() &&
+bool Parametric::ExpandProduct(Tree* e) {
+  return e->isProduct() &&
          // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
          (PatternMatching::MatchReplaceSimplify(
-              expr, KProduct(KA, KB, KC, KMult(KD, KE_p)),
+              e, KProduct(KA, KB, KC, KMult(KD, KE_p)),
               KMult(KProduct(KA, KB, KC, KD),
                     KProduct(KA, KB, KC, KMult(KE_p)))) ||
           // prod(x_k, k, 0, n) = x_0 * ... * x_n
-          Explicit(expr));
+          Explicit(e));
 }
 
 /* TODO:
@@ -212,7 +212,7 @@ bool Parametric::ExpandProduct(Tree* expr) {
  *   sum(v(k), k, min(c,b), max(a,d))
  */
 
-bool Parametric::ContractSum(Tree* expr) {
+bool Parametric::ContractSum(Tree* e) {
   /* TODO: handle any form:
    * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
    * - KAdd(KA_s, KMult(KSum, -1_e), KB_s, KSum, KC_s) */
@@ -223,7 +223,7 @@ bool Parametric::ContractSum(Tree* expr) {
    * -> - Sum(u(k), k, b+1, c) if b < c */
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
-          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))), expr,
+          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))), e,
           &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
@@ -236,7 +236,7 @@ bool Parametric::ContractSum(Tree* expr) {
                                                 ctx)
               : PatternMatching::CreateSimplify(
                     KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
-      expr->moveTreeOverTree(result);
+      e->moveTreeOverTree(result);
       return true;
     }
   }
@@ -245,7 +245,7 @@ bool Parametric::ContractSum(Tree* expr) {
    * -> 0 if a = b (can be included in previous case and then will be reduced)
    * -> - Sum(u(k), k, b, a-1) if a > b */
   if (PatternMatching::Match(
-          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))), expr,
+          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))), e,
           &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
@@ -258,14 +258,14 @@ bool Parametric::ContractSum(Tree* expr) {
                     KSum(KA, KB, KAdd(KF, -1_e), KD), ctx)
               : PatternMatching::CreateSimplify(
                     KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
-      expr->moveTreeOverTree(result);
+      e->moveTreeOverTree(result);
       return true;
     }
   }
   return false;
 }
 
-bool Parametric::ContractProduct(Tree* expr) {
+bool Parametric::ContractProduct(Tree* e) {
   /* TODO: handle any form:
    * - KMult(KA_s, KProduct, KB_s, KPow(KProduct, -1_e), KC_s)
    * - KMult(KA_s, KPow(KProduct, -1_e), KB_s, KProduct, KC_s) */
@@ -277,7 +277,7 @@ bool Parametric::ContractProduct(Tree* expr) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
-          expr, &ctx)) {
+          e, &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
@@ -289,7 +289,7 @@ bool Parametric::ContractProduct(Tree* expr) {
                     KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
               : PatternMatching::CreateSimplify(
                     KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
-      expr->moveTreeOverTree(result);
+      e->moveTreeOverTree(result);
       return true;
     }
   }
@@ -299,7 +299,7 @@ bool Parametric::ContractProduct(Tree* expr) {
    * -> 1 / Prod(u(k), k, b, a-1) if a > b */
   if (PatternMatching::Match(
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
-          expr, &ctx)) {
+          e, &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
@@ -311,28 +311,28 @@ bool Parametric::ContractProduct(Tree* expr) {
                     KProduct(KA, KB, KAdd(KF, -1_e), KD), ctx)
               : PatternMatching::CreateSimplify(
                     KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
-      expr->moveTreeOverTree(result);
+      e->moveTreeOverTree(result);
       return true;
     }
   }
   return false;
 }
 
-bool Parametric::HasLocalRandom(const Tree* expr) {
+bool Parametric::HasLocalRandom(const Tree* e) {
   // TODO: could be factorized with HasVariable
-  return expr->hasDescendantSatisfying(
+  return e->hasDescendantSatisfying(
       [](const Tree* e) { return e->isRandomized(); });
 }
 
-bool Parametric::Explicit(Tree* expr) {
-  if (!(expr->isSum() || expr->isProduct())) {
+bool Parametric::Explicit(Tree* e) {
+  if (!(e->isSum() || e->isProduct())) {
     return false;
   }
-  if (HasLocalRandom(expr)) {
+  if (HasLocalRandom(e)) {
     return false;
   }
-  bool isSum = expr->isSum();
-  const Tree* lowerBound = expr->child(k_lowerBoundIndex);
+  bool isSum = e->isSum();
+  const Tree* lowerBound = e->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateSimplify(
@@ -366,23 +366,23 @@ bool Parametric::Explicit(Tree* expr) {
     // Terms are simplified one at a time to avoid overflowing the pool
     SystematicReduction::ShallowReduce(result);
   }
-  expr->moveTreeOverTree(result);
+  e->moveTreeOverTree(result);
   return true;
 }
 
-bool Parametric::ExpandExpOfSum(Tree* expr) {
+bool Parametric::ExpandExpOfSum(Tree* e) {
   // TODO: factorize with AdvancedOperation::ExpandExp
   // exp(a*sum(f(k),k,m,n)*b) = product(exp(a*f(k)*b),k,m,n)
   return PatternMatching::MatchReplaceSimplify(
-      expr, KExp(KMult(KA_s, KSum(KB, KC, KD, KE), KF_s)),
+      e, KExp(KMult(KA_s, KSum(KB, KC, KD, KE), KF_s)),
       KProduct(KB, KC, KD, KExp(KMult(KA_s, KE, KF_s))));
 }
 
-bool Parametric::ContractProductOfExp(Tree* expr) {
+bool Parametric::ContractProductOfExp(Tree* e) {
   // TODO: factorize with AdvancedOperation::ContractExp
   // product(exp(f(k)),k,m,n) = exp(sum(f(k),k,m,n))
   return PatternMatching::MatchReplaceSimplify(
-      expr, KProduct(KA, KB, KC, KExp(KD)), KExp(KSum(KA, KB, KC, KD)));
+      e, KProduct(KA, KB, KC, KExp(KD)), KExp(KSum(KA, KB, KC, KD)));
 }
 
 }  // namespace Poincare::Internal

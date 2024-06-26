@@ -8,15 +8,15 @@
 
 namespace Poincare::Internal {
 
-int Metric::GetMetric(const Tree* u) {
-  int result = GetMetric(u->type());
-  switch (u->type()) {
+int Metric::GetMetric(const Tree* e) {
+  int result = GetMetric(e->type());
+  switch (e->type()) {
     case Type::Mult: {
       // Ignore (-1) in multiplications
       PatternMatching::Context ctx;
-      if (u->child(0)->isMinusOne()) {
+      if (e->child(0)->isMinusOne()) {
         result -= GetMetric(Type::MinusOne);
-        if (u->numberOfChildren() == 2) {
+        if (e->numberOfChildren() == 2) {
           result -= GetMetric(Type::Mult);
         }
       }
@@ -25,7 +25,7 @@ int Metric::GetMetric(const Tree* u) {
     case Type::Exp: {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
-      if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), u, &ctx)) {
+      if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), e, &ctx)) {
         if (!ctx.getTree(KA)->isHalf()) {
           result += GetMetric(ctx.getTree(KA));
         }
@@ -34,15 +34,15 @@ int Metric::GetMetric(const Tree* u) {
       break;
     }
     case Type::Dependency:
-      return result + GetMetric(Dependency::Main(u));
+      return result + GetMetric(Dependency::Main(e));
     case Type::Trig:
     case Type::ATrig:
       // Ignore second child
-      return result + GetMetric(u->child(0));
+      return result + GetMetric(e->child(0));
     default:
       break;
   }
-  for (const Tree* child : u->children()) {
+  for (const Tree* child : e->children()) {
     result += GetMetric(child);
   }
   return result;

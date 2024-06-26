@@ -5,17 +5,16 @@
 
 namespace Poincare::Internal {
 
-CodePoint CodePointLayout::GetCodePoint(const Tree* node) {
-  if (node->isAsciiCodePointLayout()) {
-    return CodePoint(node->nodeValueBlock(0)->get<uint8_t>());
+CodePoint CodePointLayout::GetCodePoint(const Tree* l) {
+  if (l->isAsciiCodePointLayout()) {
+    return CodePoint(l->nodeValueBlock(0)->get<uint8_t>());
   }
-  assert(node->isUnicodeCodePointLayout() ||
-         node->isCombinedCodePointsLayout());
-  return CodePoint(node->nodeValueBlock(0)->get<uint32_t>());
+  assert(l->isUnicodeCodePointLayout() || l->isCombinedCodePointsLayout());
+  return CodePoint(l->nodeValueBlock(0)->get<uint32_t>());
 }
 
-CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* node) {
-  return CodePoint(node->nodeValueBlock(4)->get<uint32_t>());
+CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* l) {
+  return CodePoint(l->nodeValueBlock(4)->get<uint32_t>());
 }
 
 Tree* CodePointLayout::Push(CodePoint cp) {
@@ -25,20 +24,20 @@ Tree* CodePointLayout::Push(CodePoint cp) {
   return SharedTreeStack->pushUnicodeCodePointLayout(cp);
 }
 
-char* CodePointLayout::CopyName(const Tree* node, char* buffer,
+char* CodePointLayout::CopyName(const Tree* l, char* buffer,
                                 size_t bufferSize) {
-  CodePoint c = GetCodePoint(node);
+  CodePoint c = GetCodePoint(l);
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  if (node->isCombinedCodePointsLayout()) {
-    CodePoint c = GetCombinedCodePoint(node);
+  if (l->isCombinedCodePointsLayout()) {
+    CodePoint c = GetCombinedCodePoint(l);
     size += UTF8Decoder::CodePointToChars(c, buffer + size, bufferSize - size);
   }
   buffer[size] = 0;
   return &buffer[size];
 }
 
-bool CodePointLayout::IsCodePoint(const Tree* node, CodePoint cp) {
-  return node->isCodePointLayout() && GetCodePoint(node) == cp;
+bool CodePointLayout::IsCodePoint(const Tree* l, CodePoint cp) {
+  return l->isCodePointLayout() && GetCodePoint(l) == cp;
 }
 
 }  // namespace Poincare::Internal

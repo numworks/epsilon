@@ -16,34 +16,34 @@ namespace Poincare::Internal {
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
 
-OMG::Troolean IsInteger(const Tree* tree) {
-  if (!tree->isRational()) {
+OMG::Troolean IsInteger(const Tree* e) {
+  if (!e->isRational()) {
     return OMG::Troolean::Unknown;
   }
-  return OMG::BoolToTroolean(tree->isInteger());
+  return OMG::BoolToTroolean(e->isInteger());
 }
 
-OMG::Troolean IsPositiveInteger(const Tree* tree) {
-  OMG::Troolean isInteger = IsInteger(tree);
+OMG::Troolean IsPositiveInteger(const Tree* e) {
+  OMG::Troolean isInteger = IsInteger(e);
   if (isInteger == OMG::Troolean::True) {
-    return OMG::BoolToTroolean(Rational::Sign(tree).isPositive());
+    return OMG::BoolToTroolean(Rational::Sign(e).isPositive());
   }
   return isInteger;
 }
 
-bool Arithmetic::ReduceQuotientOrRemainder(Tree* expr) {
-  assert(expr->numberOfChildren() == 2);
-  bool isQuo = expr->isQuo();
-  const Tree* num = expr->child(0);
+bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
+  assert(e->numberOfChildren() == 2);
+  bool isQuo = e->isQuo();
+  const Tree* num = e->child(0);
   const Tree* denom = num->nextTree();
   OMG::Troolean childrenAreIntegers =
       OMG::TrooleanAnd(IsInteger(num), IsInteger(denom));
   if (childrenAreIntegers == OMG::Troolean::False) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
   if (denom->isZero()) {
-    expr->cloneTreeOverTree(KUndefZeroDivision);
+    e->cloneTreeOverTree(KUndefZeroDivision);
     return true;
   }
   if (childrenAreIntegers == OMG::Troolean::Unknown) {
@@ -51,28 +51,28 @@ bool Arithmetic::ReduceQuotientOrRemainder(Tree* expr) {
   }
   IntegerHandler n = Integer::Handler(num);
   IntegerHandler d = Integer::Handler(denom);
-  expr->moveTreeOverTree(isQuo ? IntegerHandler::Quotient(n, d)
-                               : IntegerHandler::Remainder(n, d));
+  e->moveTreeOverTree(isQuo ? IntegerHandler::Quotient(n, d)
+                            : IntegerHandler::Remainder(n, d));
   return true;
 }
 
-bool Arithmetic::ReduceFloor(Tree* expr) {
-  Tree* child = expr->child(0);
+bool Arithmetic::ReduceFloor(Tree* e) {
+  Tree* child = e->child(0);
   if (!child->isRational()) {
     return false;
   }
   DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
                                                 Rational::Denominator(child));
   div.remainder->removeTree();
-  expr->moveTreeOverTree(div.quotient);
+  e->moveTreeOverTree(div.quotient);
   return true;
 }
 
-bool Arithmetic::ReduceRound(Tree* expr) {
-  const Tree* child = expr->child(0);
+bool Arithmetic::ReduceRound(Tree* e) {
+  const Tree* child = e->child(0);
   OMG::Troolean parameterIsInteger = IsInteger(child->nextTree());
   if (parameterIsInteger == OMG::Troolean::False) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
   if (parameterIsInteger == OMG::Troolean::Unknown || !child->isRational()) {
@@ -80,31 +80,31 @@ bool Arithmetic::ReduceRound(Tree* expr) {
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
   return PatternMatching::MatchReplaceSimplify(
-      expr, KRound(KA, KB),
+      e, KRound(KA, KB),
       KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), 1_e / 2_e)),
             KPow(10_e, KMult(-1_e, KB))));
 }
 
-bool Arithmetic::ReduceFactor(Tree* expr) {
-  const Tree* child = expr->child(0);
+bool Arithmetic::ReduceFactor(Tree* e) {
+  const Tree* child = e->child(0);
   if (!child->isRational()) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
   return false;
 }
 
-bool Arithmetic::ReduceGCDOrLCM(Tree* expr, bool isGCD) {
-  bool changed = NAry::Flatten(expr) + NAry::Sort(expr);
-  Tree* first = expr->child(0);
+bool Arithmetic::ReduceGCDOrLCM(Tree* e, bool isGCD) {
+  bool changed = NAry::Flatten(e) + NAry::Sort(e);
+  Tree* first = e->child(0);
   Tree* next = first;
-  while (expr->numberOfChildren() > 1) {
+  while (e->numberOfChildren() > 1) {
     OMG::Troolean nextIsInteger = IsInteger(next);
     if (nextIsInteger == OMG::Troolean::Unknown) {
       return changed;
     }
     if (nextIsInteger == OMG::Troolean::False) {
-      expr->cloneTreeOverTree(KBadType);
+      e->cloneTreeOverTree(KBadType);
       return true;
     }
     if (first != next) {
@@ -114,48 +114,48 @@ bool Arithmetic::ReduceGCDOrLCM(Tree* expr, bool isGCD) {
                            : IntegerHandler::LCM(Integer::Handler(first),
                                                  Integer::Handler(next));
       next->moveTreeOverTree(merged);
-      NAry::RemoveChildAtIndex(expr, 0);
+      NAry::RemoveChildAtIndex(e, 0);
       changed = true;
     }
     next = first->nextTree();
   }
-  expr->removeNode();
+  e->removeNode();
   return true;
 }
 
-bool Arithmetic::ReduceFactorial(Tree* expr) {
-  const Tree* child = expr->child(0);
+bool Arithmetic::ReduceFactorial(Tree* e) {
+  const Tree* child = e->child(0);
   OMG::Troolean childIsPositiveInteger = IsPositiveInteger(child);
   if (childIsPositiveInteger == OMG::Troolean::Unknown) {
     return false;
   }
   if (childIsPositiveInteger == OMG::Troolean::False) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
-  return ExpandFactorial(expr);
+  return ExpandFactorial(e);
 }
 
-bool Arithmetic::ExpandFactorial(Tree* expr) {
+bool Arithmetic::ExpandFactorial(Tree* e) {
   // A! = Prod(k, 1, A, k)
-  PatternMatching::MatchReplaceSimplify(expr, KFact(KA),
+  PatternMatching::MatchReplaceSimplify(e, KFact(KA),
                                         KProduct("k"_e, 1_e, KA, KVarK));
   /* Explicit the product directly to compute the factorial if the argument was
    * a rational */
-  if (expr->isProduct() && expr->child(2)->isRational()) {
-    assert(IsPositiveInteger(expr->child(2)) == OMG::Troolean::True);
-    Parametric::Explicit(expr);
+  if (e->isProduct() && e->child(2)->isRational()) {
+    assert(IsPositiveInteger(e->child(2)) == OMG::Troolean::True);
+    Parametric::Explicit(e);
   }
   return true;
 }
 
-bool Arithmetic::ReducePermute(Tree* expr) {
-  Tree* n = expr->child(0);
+bool Arithmetic::ReducePermute(Tree* e) {
+  Tree* n = e->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean childrenArePositiveInteger =
       OMG::TrooleanAnd(IsPositiveInteger(n), IsPositiveInteger(k));
   if (childrenArePositiveInteger == OMG::Troolean::False) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
   if (childrenArePositiveInteger == OMG::Troolean::Unknown) {
@@ -163,7 +163,7 @@ bool Arithmetic::ReducePermute(Tree* expr) {
   }
   // TODO Rational::Compare
   if (Order::Compare(n, k) < 0) {
-    return expr->cloneTreeOverTree(0_e);
+    return e->cloneTreeOverTree(0_e);
   }
   const Tree* k_maxNValue = 100_e;
   if (Order::Compare(n, k_maxNValue) > 0) {
@@ -171,33 +171,33 @@ bool Arithmetic::ReducePermute(Tree* expr) {
      * The permute coefficient will be evaluate approximatively later. */
     return false;
   }
-  return ExpandPermute(expr);
+  return ExpandPermute(e);
 }
 
-bool Arithmetic::ExpandPermute(Tree* expr) {
+bool Arithmetic::ExpandPermute(Tree* e) {
   // permute(n, k) -> n!/(n-k)!
   return PatternMatching::MatchReplaceSimplify(
-      expr, KPermute(KA, KB),
+      e, KPermute(KA, KB),
       KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
 
-bool Arithmetic::ReduceBinomial(Tree* expr) {
-  Tree* n = expr->child(0);
+bool Arithmetic::ReduceBinomial(Tree* e) {
+  Tree* n = e->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean kIsInteger = IsInteger(k);
   if (kIsInteger == OMG::Troolean::False) {
-    expr->cloneTreeOverTree(KBadType);
+    e->cloneTreeOverTree(KBadType);
     return true;
   }
   if (kIsInteger == OMG::Troolean::Unknown || !n->isRational()) {
     return false;
   }
   if (k->isZero()) {
-    expr->cloneTreeOverTree(1_e);
+    e->cloneTreeOverTree(1_e);
     return true;
   }
   if (Rational::Sign(k).isStrictlyNegative()) {
-    expr->cloneTreeOverTree(0_e);
+    e->cloneTreeOverTree(0_e);
     return true;
   }
   if (!n->isInteger()) {
@@ -209,7 +209,7 @@ bool Arithmetic::ReduceBinomial(Tree* expr) {
     // Generalized binomial coefficient (n < k)
     if (!Rational::Sign(n).isStrictlyNegative()) {
       // When n is an integer and 0 <= n < k, binomial(n,k) is 0.
-      expr->cloneTreeOverTree(0_e);
+      e->cloneTreeOverTree(0_e);
       return true;
     }
     Tree* kMinusN =
@@ -236,20 +236,20 @@ bool Arithmetic::ReduceBinomial(Tree* expr) {
    */
   // binomial(n, k) -> prod((n - j) / (k - j), j, 0, k - 1)
   PatternMatching::MatchReplaceSimplify(
-      expr, KBinomial(KA, KB),
+      e, KBinomial(KA, KB),
       KProduct("j"_e, 0_e, KAdd(KB, -1_e),
                KMult(KAdd(KA, KMult(-1_e, KVarK)),
                      KPow(KAdd(KB, KMult(-1_e, KVarK)), -1_e))));
-  Parametric::Explicit(expr);
+  Parametric::Explicit(e);
   return true;
 }
 
-bool Arithmetic::ExpandBinomial(Tree* expr) {
+bool Arithmetic::ExpandBinomial(Tree* e) {
   // binomial(n, k) -> n!/(k!(n-k)!)
   // TODO generalized binomial formula with unknowns ?
   return false;
   return PatternMatching::MatchReplaceSimplify(
-      expr, KBinomial(KA, KB),
+      e, KBinomial(KA, KB),
       KMult(KFact(KA), KPow(KFact(KB), -1_e),
             KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
@@ -425,24 +425,24 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   return mult;
 }
 
-bool Arithmetic::BeautifyFactor(Tree* expr) {
-  if (!expr->isFactor()) {
+bool Arithmetic::BeautifyFactor(Tree* e) {
+  if (!e->isFactor()) {
     return false;
   }
   if (
       // factor(a / b) -> factor(a) / factor(b)
-      PatternMatching::MatchReplace(expr, KFactor(KDiv(KA, KB)),
+      PatternMatching::MatchReplace(e, KFactor(KDiv(KA, KB)),
                                     KDiv(KFactor(KA), KFactor(KB))) ||
       // factor(- a) -> - factor(a)
-      PatternMatching::MatchReplace(expr, KFactor(KOpposite(KA)),
+      PatternMatching::MatchReplace(e, KFactor(KOpposite(KA)),
                                     KOpposite(KFactor(KA)))) {
     return true;
   }
-  Tree* child = expr->child(0);
+  Tree* child = e->child(0);
   assert(child->isInteger() && Integer::Sign(child) == NonStrictSign::Positive);
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   PushPrimeFactorization(Integer::Handler(child));
-  expr->moveTreeOverTree(result);
+  e->moveTreeOverTree(result);
   return true;
 }
 

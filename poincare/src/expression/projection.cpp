@@ -11,7 +11,7 @@
 
 namespace Poincare::Internal {
 
-bool Projection::DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
+bool Projection::DeepReplaceUserNamed(Tree* e, ProjectionContext ctx) {
   if (ctx.m_symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
     return false;
   }
@@ -20,55 +20,55 @@ bool Projection::DeepReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
    * We push a temporary tree to preserve TreeRef.
    * TODO: Maybe find a solution for this unintuitive workaround, the same hack
    * is used in Projection::DeepExpand. */
-  TreeRef nextTree = tree->nextTree()->cloneTreeBeforeNode(0_e);
-  while (tree->block() < nextTree->block()) {
-    if (tree->isParametric()) {
+  TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
+  while (e->block() < nextTree->block()) {
+    if (e->isParametric()) {
       // Skip Parametric node and its variable, never replaced.
       static_assert(Parametric::k_variableIndex == 0);
-      tree = tree->nextNode()->nextTree();
+      e = e->nextNode()->nextTree();
     }
-    changed = ShallowReplaceUserNamed(tree, ctx) || changed;
-    tree = tree->nextNode();
+    changed = ShallowReplaceUserNamed(e, ctx) || changed;
+    e = e->nextNode();
   }
   nextTree->removeTree();
   return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* tree, ProjectionContext ctx) {
+bool Projection::ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx) {
   SymbolicComputation symbolic = ctx.m_symbolic;
   assert(symbolic != SymbolicComputation::DoNotReplaceAnySymbol);
-  bool treeIsUserFunction = tree->isUserFunction();
-  if (!treeIsUserFunction &&
-      (!tree->isUserSymbol() ||
+  bool eIsUserFunction = e->isUserFunction();
+  if (!eIsUserFunction &&
+      (!e->isUserSymbol() ||
        symbolic ==
            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
     return false;
   }
   if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    tree->cloneTreeOverTree(KNotDefined);
+    e->cloneTreeOverTree(KNotDefined);
     return true;
   }
   // Get Definition
   const Tree* definition =
-      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(tree) : nullptr;
+      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(e) : nullptr;
   if (symbolic ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
-    tree->cloneTreeOverTree(KNotDefined);
+    e->cloneTreeOverTree(KNotDefined);
     return true;
   } else if (!definition) {
     return false;
   }
-  if (treeIsUserFunction) {
+  if (eIsUserFunction) {
     // Replace function's symbol with definition
-    Variables::ReplaceUserFunctionOrSequenceWithTree(tree, definition);
+    Variables::ReplaceUserFunctionOrSequenceWithTree(e, definition);
   } else {
     // Otherwise, local variable scope should be handled.
     assert(!Variables::HasVariables(definition));
-    tree->cloneTreeOverTree(definition);
+    e->cloneTreeOverTree(definition);
   }
   // Replace node again in case it has been replaced with another symbol
-  ShallowReplaceUserNamed(tree, ctx);
+  ShallowReplaceUserNamed(e, ctx);
   return true;
 }
 
@@ -292,11 +292,11 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       changed;
 }
 
-bool Projection::Expand(Tree* tree) {
+bool Projection::Expand(Tree* e) {
   return
       // atan(A) -> asin(A/Sqrt(1 + A^2))
       PatternMatching::MatchReplaceSimplify(
-          tree, KATanRad(KA),
+          e, KATanRad(KA),
           KATrig(
               KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
               1_e));

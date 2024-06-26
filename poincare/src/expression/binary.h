@@ -16,13 +16,13 @@ class Binary {
 
   static const char* ComparisonOperatorName(TypeBlock type);
 
-  static bool ReduceBooleanOperator(Tree* tree);
+  static bool ReduceBooleanOperator(Tree* e);
   TREE_REF_WRAP(ReduceBooleanOperator);
 
-  static bool ReduceComparison(Tree* tree);
+  static bool ReduceComparison(Tree* e);
   TREE_REF_WRAP(ReduceComparison);
 
-  static bool ReducePiecewise(Tree* tree);
+  static bool ReducePiecewise(Tree* e);
   TREE_REF_WRAP(ReducePiecewise);
 
  private:

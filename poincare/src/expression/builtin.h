@@ -22,12 +22,12 @@ class Builtin {
   virtual bool has2DLayout() const { return false; }
   virtual Tree* pushNode(int numberOfChildren) const;
   virtual bool checkNumberOfParameters(int n) const;
-  static bool IsReservedFunction(const Tree* tree) {
-    return GetReservedFunction(tree) != nullptr;
+  static bool IsReservedFunction(const Tree* e) {
+    return GetReservedFunction(e) != nullptr;
   }
-  static Aliases ReservedFunctionName(const Tree* tree) {
-    assert(GetReservedFunction(tree));
-    return GetReservedFunction(tree)->m_aliases;
+  static Aliases ReservedFunctionName(const Tree* e) {
+    assert(GetReservedFunction(e));
+    return GetReservedFunction(e)->m_aliases;
   }
   static Aliases SpecialIdentifierName(Type type) {
     assert(GetSpecialIdentifier(type));
@@ -44,7 +44,7 @@ class Builtin {
   }
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
-  static const Builtin* GetReservedFunction(const Tree* tree);
+  static const Builtin* GetReservedFunction(const Tree* e);
   static constexpr const Builtin* GetReservedFunction(Type type);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(Type type);

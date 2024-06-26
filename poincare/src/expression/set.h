@@ -11,8 +11,8 @@ class Set {
    */
  public:
   static Tree* PushEmpty();
-  static bool Includes(const Tree* set, const Tree* expression);
-  static void Add(Tree* set, const Tree* expression);
+  static bool Includes(const Tree* set, const Tree* e);
+  static void Add(Tree* set, const Tree* e);
   static Tree* Pop(Tree* set);
   static Tree* Union(Tree* set0, Tree* set1);
   static Tree* Intersection(Tree* set0, Tree* set1);

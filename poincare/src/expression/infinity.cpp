@@ -7,12 +7,12 @@
 
 namespace Poincare::Internal {
 
-bool Infinity::IsPlusOrMinusInfinity(const Tree* u) {
-  return u->isInf() || IsMinusInfinity(u);
+bool Infinity::IsPlusOrMinusInfinity(const Tree* e) {
+  return e->isInf() || IsMinusInfinity(e);
 }
 
-bool Infinity::IsMinusInfinity(const Tree* u) {
-  return u->treeIsIdenticalTo(KMult(-1_e, KInf));
+bool Infinity::IsMinusInfinity(const Tree* e) {
+  return e->treeIsIdenticalTo(KMult(-1_e, KInf));
 }
 
 }  // namespace Poincare::Internal

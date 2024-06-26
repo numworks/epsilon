@@ -101,16 +101,15 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static bool ContainsVariable(const Tree* tree);
-  static Tree* GetVariables(const Tree* expression);
-  static Tree* RecursivelyParse(Tree* expression, const Tree* variables,
+  static bool ContainsVariable(const Tree* e);
+  static Tree* GetVariables(const Tree* e);
+  static Tree* RecursivelyParse(Tree* e, const Tree* variables,
                                 size_t variableIndex = 0);
-  static Tree* Parse(Tree* expression, const Tree* variable);
+  static Tree* Parse(Tree* e, const Tree* variable);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);
-  static std::pair<Tree*, uint8_t> ParseMonomial(Tree* expression,
-                                                 const Tree* variable);
+  static std::pair<Tree*, uint8_t> ParseMonomial(Tree* e, const Tree* variable);
 #if 0
   Tree* PolynomialInterpretation
   Tree* RationalInterpretation --> list of 2 polynomial

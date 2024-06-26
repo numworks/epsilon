@@ -12,7 +12,7 @@ namespace Poincare::Internal {
 class Simplification {
  public:
   static bool SimplifyWithAdaptiveStrategy(
-      Tree* node, ProjectionContext* projectionContext);
+      Tree* e, ProjectionContext* projectionContext);
   TREE_REF_WRAP_1(SimplifyWithAdaptiveStrategy, ProjectionContext*);
 
   // Simplification steps

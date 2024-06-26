@@ -262,14 +262,14 @@ void Grid::addEmptyRow() {
 void Grid::addEmptyColumn() {
   int oldNumberOfColumns = numberOfColumns();
   setNumberOfColumns(oldNumberOfColumns + 1);
-  Tree* tree = this;
+  Tree* l = this;
   for (int i = 0; i < numberOfRows(); i++) {
     // Skip grid (i == 0) or empty rack
-    tree = tree->nextNode();
+    l = l->nextNode();
     for (int j = 0; j < oldNumberOfColumns; j++) {
-      tree = tree->nextTree();
+      l = l->nextTree();
     };
-    tree->cloneTreeBeforeNode(KRackL());
+    l->cloneTreeBeforeNode(KRackL());
   }
 }
 

@@ -10,10 +10,10 @@ class JuniorLayout;
 namespace Poincare::Internal {
 namespace AppHelpers {
 
-void MakeRightMostParenthesisTemporary(Tree* tree);
+void MakeRightMostParenthesisTemporary(Tree* l);
 
 // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
-void DeleteChildrenRacks(Tree* tree);
+void DeleteChildrenRacks(Tree* rack);
 
 bool ContainsSmallCapitalE(const Tree* rack);
 

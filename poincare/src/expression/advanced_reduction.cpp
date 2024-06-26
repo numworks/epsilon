@@ -21,28 +21,28 @@ void LogIndent() {
 
 #endif
 
-bool AdvancedReduction::Reduce(Tree* u) {
+bool AdvancedReduction::Reduce(Tree* e) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
    * This means calling Reduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
-  Tree* editedExpression = u->cloneTree();
-  Context ctx(editedExpression, u, Metric::GetMetric(u));
+  Tree* editedExpression = e->cloneTree();
+  Context ctx(editedExpression, e, Metric::GetMetric(e));
   // Add initial root
-  ctx.m_crcCollection.add(u->hash(), 0);
+  ctx.m_crcCollection.add(e->hash(), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
-  u->logSerialize();
+  e->logSerialize();
   s_indent = 1;
 #endif
   ReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
-  bool result = ctx.m_bestPath.apply(u);
+  bool result = ctx.m_bestPath.apply(e);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
   std::cout << "Final result (" << ctx.m_bestMetric << ") is : ";
-  u->logSerialize();
+  e->logSerialize();
 #endif
   return result;
 }
@@ -84,35 +84,35 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
  * preceding them. This is the only place we use a set for now. If we end up
  * using it elsewhere, we should reconsider this and maybe swap Dependencies
  * children, so we can skip the first one. */
-bool SkipTree(const Tree* tree) {
-  return tree->block() < SharedTreeStack->lastBlock() && tree->isSet();
+bool SkipTree(const Tree* e) {
+  return e->block() < SharedTreeStack->lastBlock() && e->isSet();
 }
 
-Tree* NextNode(Tree* tree) {
-  assert(!SkipTree(tree));
-  Tree* next = tree->nextNode();
+Tree* NextNode(Tree* e) {
+  assert(!SkipTree(e));
+  Tree* next = e->nextNode();
   while (SkipTree(next)) {
     next = next->nextTree();
   }
   return next;
 }
 
-const Tree* NextNode(const Tree* tree) {
-  assert(!SkipTree(tree));
-  const Tree* next = tree->nextNode();
+const Tree* NextNode(const Tree* e) {
+  assert(!SkipTree(e));
+  const Tree* next = e->nextNode();
   while (SkipTree(next)) {
     next = next->nextTree();
   }
   return next;
 }
 
-bool AdvancedReduction::Direction::canApply(const Tree* u,
+bool AdvancedReduction::Direction::canApply(const Tree* e,
                                             const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(!isNextNode() ||
-         (NextNode(u)->block() < SharedTreeStack->lastBlock()) ==
-             NextNode(u)->hasAncestor(root, false));
-  return !isNextNode() || NextNode(u)->block() < SharedTreeStack->lastBlock();
+         (NextNode(e)->block() < SharedTreeStack->lastBlock()) ==
+             NextNode(e)->hasAncestor(root, false));
+  return !isNextNode() || NextNode(e)->block() < SharedTreeStack->lastBlock();
 }
 
 bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
@@ -170,10 +170,10 @@ bool AdvancedReduction::Direction::decrement() {
 }
 
 bool AdvancedReduction::Path::apply(Tree* root) const {
-  Tree* u = root;
+  Tree* e = root;
   bool rootChanged = false;
   for (uint8_t i = 0; i < length(); i++) {
-    bool didApply = m_stack[i].apply(&u, root, &rootChanged);
+    bool didApply = m_stack[i].apply(&e, root, &rootChanged);
     assert(didApply);
   }
   return rootChanged;
@@ -197,12 +197,12 @@ bool AdvancedReduction::Path::append(Direction direction) {
   return true;
 }
 
-bool AdvancedReduction::ReduceRec(Tree* u, Context* ctx) {
+bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   bool fullExploration = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "ReduceRec on subtree: ";
-  u->logSerialize();
+  e->logSerialize();
 #endif
   if (!ctx->m_path.canAddNewDirection()) {
     fullExploration = false;
@@ -220,7 +220,7 @@ bool AdvancedReduction::ReduceRec(Tree* u, Context* ctx) {
         ctx->m_path.apply(ctx->m_root);
         ctx->m_mustResetRoot = false;
       }
-      Tree* target = u;
+      Tree* target = e;
       bool rootChanged = false;
       if (!dir.canApply(target, ctx->m_root)) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3

@@ -13,27 +13,25 @@
 
 namespace Poincare::Internal {
 
-bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
-  if (expr->isDependency()) {
-    if (!Main(expr)->isDependency()) {
+bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
+  if (e->isDependency()) {
+    if (!Main(e)->isDependency()) {
       return false;
     }
-    Set::Union(Dependencies(Main(expr)), Dependencies(expr));
-    expr->removeNode();
+    Set::Union(Dependencies(Main(e)), Dependencies(e));
+    e->removeNode();
     return true;
   }
   TreeRef finalSet = Set::PushEmpty();
   int i = 0;
-  for (Tree* exprChild : expr->children()) {
-    if (exprChild->isDependency() &&
-        !Undefined::CanHaveUndefinedChild(expr, i)) {
-      Tree* exprChildSet = Dependencies(exprChild);
-      if (expr->isParametric() && Parametric::FunctionIndex(expr) == i) {
-        if (expr->isNthDiff()) {
+  for (Tree* eChild : e->children()) {
+    if (eChild->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
+      Tree* eChildSet = Dependencies(eChild);
+      if (e->isParametric() && Parametric::FunctionIndex(e) == i) {
+        if (e->isNthDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
-          const Tree* symbolValue = expr->child(1);
-          Variables::LeaveScopeWithReplacement(exprChildSet, symbolValue,
-                                               false);
+          const Tree* symbolValue = e->child(1);
+          Variables::LeaveScopeWithReplacement(eChildSet, symbolValue, false);
         } else {
           /* sum(dep({    f(k),           z},     k), k, 1, n) ->
            *     dep({sum(f(k), k, 1, n), z}, sum(k,  k, 1, n))
@@ -42,40 +40,40 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* expr) {
            *   but we would have to handle them along the simplification process
            *   (especially difficult in the advanced and systematic reduction).
            */
-          int numberOfDependencies = exprChildSet->numberOfChildren();
+          int numberOfDependencies = eChildSet->numberOfChildren();
           TreeRef set = SharedTreeStack->pushSet(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
-            if (Variables::HasVariable(exprChildSet->child(0),
+            if (Variables::HasVariable(eChildSet->child(0),
                                        Parametric::k_localVariableId)) {
               /* Clone the entire parametric tree with detached dependency
-               * instead of exprChild */
-              expr->cloneNode();
-              for (const Tree* exprChild2 : expr->children()) {
-                if (exprChild2 != exprChild) {
-                  exprChild2->cloneTree();
+               * instead of eChild */
+              e->cloneNode();
+              for (const Tree* eChild2 : e->children()) {
+                if (eChild2 != eChild) {
+                  eChild2->cloneTree();
                 } else {
-                  NAry::DetachChildAtIndex(exprChildSet, 0);
+                  NAry::DetachChildAtIndex(eChildSet, 0);
                 }
               }
             } else {
               // Dependency can be detached out of parametric's scope.
-              Variables::LeaveScope(NAry::DetachChildAtIndex(exprChildSet, 0));
+              Variables::LeaveScope(NAry::DetachChildAtIndex(eChildSet, 0));
             }
           }
-          exprChildSet->removeTree();
-          exprChildSet = set;
+          eChildSet->removeTree();
+          eChildSet = set;
         }
       }
       // Move dependency list at the end
-      Set::Union(finalSet, exprChildSet);
+      Set::Union(finalSet, eChildSet);
       // Remove Dependency block in child
-      exprChild->removeNode();
+      eChild->removeNode();
     }
     i++;
   }
   if (finalSet->numberOfChildren() > 0) {
-    expr->nextTree()->moveTreeBeforeNode(finalSet);
-    expr->cloneNodeBeforeNode(KDep);
+    e->nextTree()->moveTreeBeforeNode(finalSet);
+    e->cloneNodeBeforeNode(KDep);
     return true;
   }
   finalSet->removeTree();
@@ -122,7 +120,7 @@ bool RemoveDefinedDependencies(Tree* dep) {
     }
   }
 
-  // expression->isUndefined() ||
+  // e->isUndefined() ||
   if (totalNumberOfDependencies == 0) {
     set->removeTree();
     dep->removeNode();
@@ -221,13 +219,13 @@ bool RemoveUselessDependencies(Tree* dep) {
   return changed;
 }
 
-bool Dependency::DeepRemoveUselessDependencies(Tree* expr) {
+bool Dependency::DeepRemoveUselessDependencies(Tree* e) {
   bool changed = false;
-  for (Tree* child : expr->children()) {
+  for (Tree* child : e->children()) {
     changed |= DeepRemoveUselessDependencies(child);
   }
-  if (expr->isDependency()) {
-    changed |= RemoveUselessDependencies(expr);
+  if (e->isDependency()) {
+    changed |= RemoveUselessDependencies(e);
   }
   return changed;
 }

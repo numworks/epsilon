@@ -129,21 +129,21 @@ Tree* IntegerHandler::pushOnTreeStack() const {
     return SharedTreeStack->pushMinusOne();
   }
   if (numberOfDigits() == 1) {
-    Tree* node = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
-                                                ? Type::IntegerNegShort
-                                                : Type::IntegerPosShort);
+    Tree* e = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
+                                             ? Type::IntegerNegShort
+                                             : Type::IntegerPosShort);
     SharedTreeStack->pushBlock(digit(0));
-    return node;
+    return e;
   }
-  Tree* node = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
-                                              ? Type::IntegerNegBig
-                                              : Type::IntegerPosBig);
+  Tree* e = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
+                                           ? Type::IntegerNegBig
+                                           : Type::IntegerPosBig);
   SharedTreeStack->pushBlock(m_numberOfDigits);
   pushDigitsOnTreeStack();
 #if POINCARE_POOL_VISUALIZATION
-  Log("PushInteger", node->block(), node->treeSize());
+  Log("PushInteger", e->block(), e->treeSize());
 #endif
-  return node;
+  return e;
 }
 
 void IntegerHandler::pushDigitsOnTreeStack() const {
@@ -774,15 +774,15 @@ void IntegerHandler::sanitize() {
 
 // TODO: tests
 
-IntegerHandler Integer::Handler(const Tree* expression) {
-  assert(Rational::Denominator(expression).isOne());
-  return Rational::Numerator(expression);
+IntegerHandler Integer::Handler(const Tree* e) {
+  assert(Rational::Denominator(e).isOne());
+  return Rational::Numerator(e);
 }
 
-void Integer::SetSign(Tree* tree, NonStrictSign sign) {
-  IntegerHandler h = Handler(tree);
+void Integer::SetSign(Tree* e, NonStrictSign sign) {
+  IntegerHandler h = Handler(e);
   h.setSign(sign);
-  tree->moveTreeOverTree(h.pushOnTreeStack());
+  e->moveTreeOverTree(h.pushOnTreeStack());
 }
 
 }  // namespace Poincare::Internal

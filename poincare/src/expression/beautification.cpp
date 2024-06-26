@@ -19,9 +19,9 @@
 
 namespace Poincare::Internal {
 
-float Beautification::DegreeForSortingAddition(const Tree* expr,
+float Beautification::DegreeForSortingAddition(const Tree* e,
                                                bool symbolsOnly) {
-  switch (expr->type()) {
+  switch (e->type()) {
     case Type::Mult: {
       /* If we consider the symbol degree, the degree of a multiplication is
        * the sum of the degrees of its terms :
@@ -36,16 +36,16 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
        * */
       if (symbolsOnly) {
         float degree = 0.;
-        for (const Tree* c : expr->children()) {
+        for (const Tree* c : e->children()) {
           degree += DegreeForSortingAddition(c, symbolsOnly);
         }
         return degree;
       }
-      assert(expr->numberOfChildren() > 0);
-      return DegreeForSortingAddition(expr->lastChild(), symbolsOnly);
+      assert(e->numberOfChildren() > 0);
+      return DegreeForSortingAddition(e->lastChild(), symbolsOnly);
     }
     case Type::Pow: {
-      double baseDegree = DegreeForSortingAddition(expr->child(0), symbolsOnly);
+      double baseDegree = DegreeForSortingAddition(e->child(0), symbolsOnly);
       if (baseDegree == 0.) {
         /* We escape here so that even if the exponent is not a number,
          * the degree is still computed to 0.
@@ -53,7 +53,7 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
          * of 0 even if the exponent is not a number.*/
         return 0.;
       }
-      const Tree* index = expr->child(1);
+      const Tree* index = e->child(1);
       if (index->isNumber()) {
         return Approximation::To<float>(index) * baseDegree;
       }
@@ -67,48 +67,48 @@ float Beautification::DegreeForSortingAddition(const Tree* expr,
   }
 }
 
-Tree* Factor(Tree* expr, int index) {
-  if (expr->isMult()) {
-    return expr->child(index);
+Tree* Factor(Tree* e, int index) {
+  if (e->isMult()) {
+    return e->child(index);
   }
-  return expr;
+  return e;
 }
 
-const Tree* Factor(const Tree* expr, int index) {
-  if (expr->isMult()) {
-    return expr->child(index);
+const Tree* Factor(const Tree* e, int index) {
+  if (e->isMult()) {
+    return e->child(index);
   }
-  return expr;
+  return e;
 }
 
-int NumberOfFactors(const Tree* expr) {
-  if (expr->isMult()) {
-    return expr->numberOfChildren();
+int NumberOfFactors(const Tree* e) {
+  if (e->isMult()) {
+    return e->numberOfChildren();
   }
   return 1;
 }
 
-bool MakePositiveAnyNegativeNumeralFactor(Tree* expr) {
-  // The expression is a negative number
-  Tree* factor = Factor(expr, 0);
-  if (factor->isMinusOne() && expr->isMult()) {
-    NAry::RemoveChildAtIndex(expr, 0);
-    NAry::SquashIfUnary(expr);
+bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
+  // The eession is a negative number
+  Tree* factor = Factor(e, 0);
+  if (factor->isMinusOne() && e->isMult()) {
+    NAry::RemoveChildAtIndex(e, 0);
+    NAry::SquashIfUnary(e);
     return true;
   }
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
+void Beautification::SplitMultiplication(const Tree* e, TreeRef& numerator,
                                          TreeRef& denominator,
                                          bool* needOpposite, bool* needI) {
   assert(needOpposite && needI);
   numerator = SharedTreeStack->pushMult(0);
   denominator = SharedTreeStack->pushMult(0);
   // TODO replace NumberOfFactors and Factor with an iterable
-  const int numberOfFactors = NumberOfFactors(expr);
+  const int numberOfFactors = NumberOfFactors(e);
   for (int i = 0; i < numberOfFactors; i++) {
-    const Tree* factor = Factor(expr, i);
+    const Tree* factor = Factor(e, i);
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
     if (factor->isComplexI() && i == numberOfFactors - 1 &&
@@ -166,12 +166,12 @@ void Beautification::SplitMultiplication(const Tree* expr, TreeRef& numerator,
   NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
 }
 
-bool Beautification::BeautifyIntoDivision(Tree* expr) {
+bool Beautification::BeautifyIntoDivision(Tree* e) {
   TreeRef num;
   TreeRef den;
   bool needOpposite = false;
   bool needI = false;
-  SplitMultiplication(expr, num, den, &needOpposite, &needI);
+  SplitMultiplication(e, num, den, &needOpposite, &needI);
   if (den->isOne() && !needOpposite) {
     // no need to apply needI if den->isOne
     num->removeTree();
@@ -179,21 +179,21 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
     return false;
   }
   if (needOpposite) {
-    expr->cloneNodeBeforeNode(KOpposite);
-    expr = expr->child(0);
+    e->cloneNodeBeforeNode(KOpposite);
+    e = e->child(0);
   }
   if (needI) {
-    expr->cloneNodeBeforeNode(KMult.node<2>);
-    expr = expr->child(0);
+    e->cloneNodeBeforeNode(KMult.node<2>);
+    e = e->child(0);
     // TODO: create method cloneTreeAfterTree
-    expr->nextTree()->cloneTreeBeforeNode(i_e);
+    e->nextTree()->cloneTreeBeforeNode(i_e);
   }
   if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);
   } else {
     den->removeTree();
   }
-  expr->moveTreeOverTree(num);
+  e->moveTreeOverTree(num);
   return true;
 }
 
@@ -201,52 +201,52 @@ bool Beautification::BeautifyIntoDivision(Tree* expr) {
  * Simplifications are needed, this has to be done before beautification.
  * A bottom-up pattern is also needed because inverse trigonometric must
  * simplify its parents. */
-bool Beautification::DeepBeautifyAngleFunctions(Tree* tree, AngleUnit angleUnit,
+bool Beautification::DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                                 bool* simplifyParent) {
   bool modified = false;
   bool mustSystematicReduce = false;
-  for (Tree* child : tree->children()) {
+  for (Tree* child : e->children()) {
     bool tempMustSystematicReduce = false;
     modified |=
         DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystematicReduce);
     mustSystematicReduce |= tempMustSystematicReduce;
   }
   // A parent simplification is required after inverse trigonometry beautify
-  *simplifyParent = (angleUnit != AngleUnit::Radian &&
-                     (tree->isATrig() || tree->isATanRad()));
-  if (ShallowBeautifyAngleFunctions(tree, angleUnit)) {
+  *simplifyParent =
+      (angleUnit != AngleUnit::Radian && (e->isATrig() || e->isATanRad()));
+  if (ShallowBeautifyAngleFunctions(e, angleUnit)) {
     return true;
   } else if (mustSystematicReduce) {
     assert(modified);
-    *simplifyParent = SystematicReduction::ShallowReduce(tree);
+    *simplifyParent = SystematicReduction::ShallowReduce(e);
   }
   return modified;
 }
 
 // At this stage of the simplification, advanced reductions are expected.
-bool Beautification::ShallowBeautifyAngleFunctions(Tree* tree,
+bool Beautification::ShallowBeautifyAngleFunctions(Tree* e,
                                                    AngleUnit angleUnit) {
   // Beautify System nodes to prevent future simplifications.
-  if (tree->isTrig()) {
+  if (e->isTrig()) {
     if (angleUnit != AngleUnit::Radian) {
-      Tree* child = tree->child(0);
+      Tree* child = e->child(0);
       child->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.
        * TODO: Call Reduce in DeepBeautify only if we went here. */
     }
-    PatternMatching::MatchReplace(tree, KTrig(KA, 0_e), KCos(KA)) ||
-        PatternMatching::MatchReplace(tree, KTrig(KA, 1_e), KSin(KA));
+    PatternMatching::MatchReplace(e, KTrig(KA, 0_e), KCos(KA)) ||
+        PatternMatching::MatchReplace(e, KTrig(KA, 1_e), KSin(KA));
     return true;
   }
-  if (tree->isATrig() || tree->isATanRad()) {
-    PatternMatching::MatchReplace(tree, KATrig(KA, 0_e), KACos(KA)) ||
-        PatternMatching::MatchReplace(tree, KATrig(KA, 1_e), KASin(KA)) ||
-        PatternMatching::MatchReplace(tree, KATanRad(KA), KATan(KA));
+  if (e->isATrig() || e->isATanRad()) {
+    PatternMatching::MatchReplace(e, KATrig(KA, 0_e), KACos(KA)) ||
+        PatternMatching::MatchReplace(e, KATrig(KA, 1_e), KASin(KA)) ||
+        PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
     if (angleUnit != AngleUnit::Radian) {
-      tree->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KA, KB), {.KA = tree, .KB = Angle::ToRad(angleUnit)}));
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)}));
     }
     return true;
   }
@@ -268,28 +268,28 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
                                        KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
 }
 
-bool Beautification::DeepBeautify(Tree* expr,
+bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
   if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
-    TurnToPolarForm(expr, projectionContext.m_dimension);
+    TurnToPolarForm(e, projectionContext.m_dimension);
   }
   bool changed =
-      DeepBeautifyAngleFunctions(expr, projectionContext.m_angleUnit, &dummy);
+      DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy);
   if (changed && projectionContext.m_angleUnit != AngleUnit::Radian) {
     // TODO: Some may want to call DeepBeautify without advancedReduction
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
-    AdvancedReduction::Reduce(expr);
+    AdvancedReduction::Reduce(e);
   }
-  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautify) || changed;
+  changed = Tree::ApplyShallowInDepth(e, ShallowBeautify) || changed;
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
-  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifyDivisionsAndRoots) ||
-            changed;
-  changed = Tree::ApplyShallowInDepth(expr, ShallowBeautifySpecialDisplays) ||
-            changed;
-  changed = Variables::BeautifyToName(expr) || changed;
-  assert(!expr->hasDescendantSatisfying(Projection::IsForbidden));
+  changed =
+      Tree::ApplyShallowInDepth(e, ShallowBeautifyDivisionsAndRoots) || changed;
+  changed =
+      Tree::ApplyShallowInDepth(e, ShallowBeautifySpecialDisplays) || changed;
+  changed = Variables::BeautifyToName(e) || changed;
+  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }
 

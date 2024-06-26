@@ -93,12 +93,12 @@ Function Function::Builder(const char* name, size_t length,
     name = AliasesLists::k_thetaAliases.mainAlias();
     length = strlen(name);
   }
-  Internal::Tree* tree =
+  Internal::Tree* e =
       Internal::SharedTreeStack->pushUserFunction(name, length + 1);
   assert(!child.isUninitialized());
   child.tree()->cloneTree();
 
-  JuniorExpression expr = JuniorExpression::Builder(tree);
+  JuniorExpression expr = JuniorExpression::Builder(e);
   return static_cast<Function&>(expr);
 }
 

@@ -435,7 +435,7 @@ Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
   return Create(structure, ctx);
 }
 
-bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
+bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
                                           const Tree* structure,
                                           bool simplify) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
@@ -459,13 +459,13 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
   Context ctx;
   // Escape case for full matches like A -> cos(A)
   if (pattern->isPlaceholder()) {
-    ctx.setNode(Placeholder::NodeToTag(pattern), node, 1, false);
-    node->moveTreeOverTree(Create(structure, ctx, simplify));
+    ctx.setNode(Placeholder::NodeToTag(pattern), source, 1, false);
+    source->moveTreeOverTree(Create(structure, ctx, simplify));
     return true;
   }
 
   // Step 1 - Match the pattern
-  if (!Match(pattern, node, &ctx)) {
+  if (!Match(pattern, source, &ctx)) {
     return false;
   }
   /* Following this example :
@@ -483,7 +483,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
   // Step 2 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
    * preserved. */
-  TreeRef treeNext = node->nextTree();
+  TreeRef treeNext = source->nextTree();
   int initializedPlaceHolders = 0;
   TreeRef placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
@@ -535,7 +535,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
   // TreeStack: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
   // Step 3 - Replace with placeholder matches only
-  node->moveTreeOverTree(placeholderMatches);
+  source->moveTreeOverTree(placeholderMatches);
 
   // TreeStack: ..... | _{3} x y z | ....
 
@@ -553,7 +553,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* node, const Tree* pattern,
   // TreeStack: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
-  node->moveTreeOverTree(created);
+  source->moveTreeOverTree(created);
 
   // TreeStack: ..... | +{2} *{2} x z *{2} y z | ....
   return true;

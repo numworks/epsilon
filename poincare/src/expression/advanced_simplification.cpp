@@ -21,23 +21,22 @@ void LogIndent() {
 
 #endif
 
-bool AdvancedSimplification::AdvancedReduce(Tree* u) {
+bool AdvancedSimplification::Reduce(Tree* u) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
-   * This means calling AdvancedReduce on an equivalent but different
+   * This means calling Reduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
   Tree* editedExpression = u->cloneTree();
   Context ctx(editedExpression, u, Metric::GetMetric(u));
   // Add initial root
   ctx.m_crcCollection.add(u->hash(), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-  std::cout << "\nAdvancedReduce\nInitial tree (" << ctx.m_bestMetric
-            << ") is : ";
+  std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
   u->logSerialize();
   s_indent = 1;
 #endif
-  AdvancedReduceRec(editedExpression, &ctx);
+  ReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
   bool result = ctx.m_bestPath.apply(u);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
@@ -198,11 +197,11 @@ bool AdvancedSimplification::Path::append(Direction direction) {
   return true;
 }
 
-bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
+bool AdvancedSimplification::ReduceRec(Tree* u, Context* ctx) {
   bool fullExploration = true;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
-  std::cout << "AdvancedReduceRec on subtree: ";
+  std::cout << "ReduceRec on subtree: ";
   u->logSerialize();
 #endif
   if (!ctx->m_path.canAddNewDirection()) {
@@ -272,7 +271,7 @@ bool AdvancedSimplification::AdvancedReduceRec(Tree* u, Context* ctx) {
         isLeaf = false;
         bool canAddDir = ctx->m_path.append(dir);
         assert(canAddDir);
-        if (!AdvancedReduceRec(target, ctx)) {
+        if (!ReduceRec(target, ctx)) {
           fullExploration = false;
         } else if (rootChanged) {
           // No need to explore this again, even at smaller lengths.

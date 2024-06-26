@@ -93,7 +93,7 @@ bool Simplification::SimplifySystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {
-    changed = AdvancedSimplification::AdvancedReduce(e) || changed;
+    changed = AdvancedSimplification::Reduce(e) || changed;
   }
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }

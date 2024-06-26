@@ -20,8 +20,8 @@ namespace Poincare::Internal {
 
 class AdvancedSimplification {
  public:
-  static bool AdvancedReduce(Tree* u);
-  TREE_REF_WRAP(AdvancedReduce);
+  static bool Reduce(Tree* u);
+  TREE_REF_WRAP(Reduce);
 
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
@@ -127,7 +127,7 @@ class AdvancedSimplification {
   };
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
-  static bool AdvancedReduceRec(Tree* u, Context* ctx);
+  static bool ReduceRec(Tree* u, Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 

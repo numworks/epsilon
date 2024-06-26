@@ -103,7 +103,7 @@ bool NAry::Sanitize(Tree* nary) {
   return SquashIfPossible(nary) || flattened;
 }
 
-bool NAry::Sort(Tree* nary, Comparison::Order order) {
+bool NAry::Sort(Tree* nary, Comparison::OrderType order) {
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
@@ -140,8 +140,8 @@ bool NAry::Sort(Tree* nary, Comparison::Order order) {
         uint8_t* indexes = static_cast<decltype(indexes)>(contextArray[0]);
         const Tree** children =
             static_cast<decltype(children)>(contextArray[1]);
-        Comparison::Order order =
-            *static_cast<Comparison::Order*>(contextArray[2]);
+        Comparison::OrderType order =
+            *static_cast<Comparison::OrderType*>(contextArray[2]);
         return Comparison::Compare(children[indexes[i]], children[indexes[j]],
                                    order) >= 0;
       },
@@ -169,7 +169,8 @@ push:
   return true;
 }
 
-void NAry::SortedInsertChild(Tree* nary, Tree* child, Comparison::Order order) {
+void NAry::SortedInsertChild(Tree* nary, Tree* child,
+                             Comparison::OrderType order) {
   Tree* children[k_maxNumberOfChildren];
   for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index++] = const_cast<Tree*>(child);

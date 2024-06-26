@@ -14,14 +14,15 @@ QUIZ_CASE(pcj_compare) {
 
 QUIZ_CASE(pcj_compare_for_addition_beautification) {
   Tree* e = KAdd(KVarX, KPow(KVarX, 2_e), KPow(KVarX, 1_e / 2_e))->cloneTree();
-  NAry::Sort(e, Comparison::Order::AdditionBeautification);
+  NAry::Sort(e, Comparison::OrderType::AdditionBeautification);
   assert_trees_are_equal(e,
                          KAdd(KPow(KVarX, 2_e), KVarX, KPow(KVarX, 1_e / 2_e)));
 }
 
-void sorts_to(const char* input, const char* output,
-              Comparison::Order order = Comparison::Order::Beautification) {
-  static Comparison::Order s_order;
+void sorts_to(
+    const char* input, const char* output,
+    Comparison::OrderType order = Comparison::OrderType::Beautification) {
+  static Comparison::OrderType s_order;
   s_order = order;
   process_tree_and_compare(
       input, output,
@@ -29,7 +30,7 @@ void sorts_to(const char* input, const char* output,
 }
 
 QUIZ_CASE(pcj_sort) {
-  using enum Comparison::Order;
+  using enum Comparison::OrderType;
   sorts_to("π*2*i", "2*π*i");
   // TODO_PCJ: √(2) should be before π and unknowns
   sorts_to("π*2*√(2)*_m", "2×π×√(2)×_m");

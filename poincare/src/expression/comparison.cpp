@@ -13,8 +13,8 @@
 
 namespace Poincare::Internal {
 
-int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
-  if (order == Order::AdditionBeautification) {
+int Comparison::Compare(const Tree* node0, const Tree* node1, OrderType order) {
+  if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {
       float n0Degree =
@@ -31,9 +31,9 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       }
     }
     // If they have same degree, sort children in decreasing order of base.
-    order = Order::Beautification;
+    order = OrderType::Beautification;
   }
-  if (order == Order::PreserveMatrices) {
+  if (order == OrderType::PreserveMatrices) {
     bool node0IsMatrix = Dimension::Get(node0).isMatrix();
     bool node1IsMatrix = Dimension::Get(node1).isMatrix();
     if (node0IsMatrix && node1IsMatrix) {
@@ -46,7 +46,7 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
       // Preserve all matrices to the right
       return node0IsMatrix ? 1 : -1;
     }
-    order = Order::System;
+    order = OrderType::System;
   }
   TypeBlock type0 = node0->type();
   TypeBlock type1 = node1->type();
@@ -62,8 +62,8 @@ int Comparison::Compare(const Tree* node0, const Tree* node1, Order order) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type0 == Type::Pow) {
-      if (order == Order::Beautification) {
-        return -Compare(node0, node1, Order::System);
+      if (order == OrderType::Beautification) {
+        return -Compare(node0, node1, OrderType::System);
       }
       int comparePowerChild = Compare(node0->child(0), node1, order);
       if (comparePowerChild == 0) {

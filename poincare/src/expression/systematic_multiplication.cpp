@@ -146,7 +146,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
         // Since all units are equivalent, use base SI.
         multiplication->moveTreeOverTree(dim.unit.vector.toBaseUnits());
         if (multiplication->isMult()) {
-          NAry::Sort(multiplication, Comparison::Order::PreserveMatrices);
+          NAry::Sort(multiplication, Comparison::OrderType::PreserveMatrices);
         } else {
           multiplication->cloneNodeAtNode(KMult.node<1>);
         }
@@ -171,7 +171,7 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
-  if (NAry::Sort(multiplication, Comparison::Order::PreserveMatrices)) {
+  if (NAry::Sort(multiplication, Comparison::OrderType::PreserveMatrices)) {
     SimplifySortedMultiplication(multiplication);
   }
   return true;
@@ -188,7 +188,7 @@ bool SystematicOperation::ReduceMultiplication(Tree* u) {
   if (NAry::SquashIfPossible(u)) {
     return true;
   }
-  changed = NAry::Sort(u, Comparison::Order::PreserveMatrices) || changed;
+  changed = NAry::Sort(u, Comparison::OrderType::PreserveMatrices) || changed;
   changed = SimplifySortedMultiplication(u) || changed;
   if (changed && u->isMult()) {
     // Bubble-up may be unlocked after merging identical bases.

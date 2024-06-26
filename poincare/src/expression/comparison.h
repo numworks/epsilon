@@ -8,8 +8,8 @@ namespace Poincare::Internal {
 class Comparison {
  public:
   /* System optimizes the reduction while Beautification is for display.
-   * TODO: Fine tune and take advantage of System Order during reduction. */
-  enum class Order {
+   * TODO: Fine tune and take advantage of System OrderType during reduction. */
+  enum class OrderType {
     System,
     Beautification,
     PreserveMatrices,
@@ -25,7 +25,7 @@ class Comparison {
    *  0 if block0 == block1
    */
   static int Compare(const Tree* node0, const Tree* node1,
-                     Order order = Order::System);
+                     OrderType order = OrderType::System);
   static bool AreEqual(const Tree* node0, const Tree* node1);
   static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 

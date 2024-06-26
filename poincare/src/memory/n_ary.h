@@ -27,10 +27,10 @@ class NAry {
   }
   static bool Sanitize(Tree* nary);
   static bool Sort(Tree* nary,
-                   Comparison::Order order = Comparison::Order::System);
+                   Comparison::OrderType order = Comparison::OrderType::System);
   static void SortedInsertChild(
       Tree* nary, Tree* child,
-      Comparison::Order order = Comparison::Order::System);
+      Comparison::OrderType order = Comparison::OrderType::System);
   static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
   TREE_REF_WRAP(Flatten);
   TREE_REF_WRAP(SquashIfPossible);

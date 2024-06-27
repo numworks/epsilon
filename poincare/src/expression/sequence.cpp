@@ -1,6 +1,7 @@
 #include "sequence.h"
 
 #include <assert.h>
+#include <omg/unreachable.h>
 #include <string.h>
 
 #include "integer.h"
@@ -18,7 +19,7 @@ Sequence::Type Sequence::GetType(const Tree* sequence) {
     case Internal::Type::SequenceDoubleRecurrence:
       return Type::DoubleRecurrence;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

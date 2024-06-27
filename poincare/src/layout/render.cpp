@@ -3,6 +3,7 @@
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <kandinsky/dot.h>
+#include <omg/unreachable.h>
 #include <poincare/src/memory/node_iterator.h>
 
 #include "autocompleted_pair.h"
@@ -487,6 +488,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       return grid->positionOfChildAt(column, row, s_font);
     }
   };
+  OMG::unreachable();
 }
 
 KDCoordinate Render::Baseline(const Layout* l) {

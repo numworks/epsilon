@@ -1,5 +1,6 @@
 #include "rational.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/value_block.h>
 
 #include "k_tree.h"
@@ -59,7 +60,7 @@ IntegerHandler Rational::Numerator(const Tree* e) {
                                 : NonStrictSign::Positive);
     }
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 
@@ -91,7 +92,7 @@ IntegerHandler Rational::Denominator(const Tree* e) {
                             NonStrictSign::Positive);
     }
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

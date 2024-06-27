@@ -3,6 +3,7 @@
 
 #include <escher/metric.h>
 #include <kandinsky/coordinate.h>
+#include <omg/unreachable.h>
 
 #include "assert.h"
 #include "indices.h"
@@ -161,7 +162,7 @@ inline KDCoordinate BracketWidth(const Layout* node) {
     case LayoutType::Parentheses:
       return Parenthesis::k_parenthesisWidth;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 
@@ -179,7 +180,7 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
     case LayoutType::Parentheses:
       return Parenthesis::k_minVerticalMargin;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 }  // namespace Pair

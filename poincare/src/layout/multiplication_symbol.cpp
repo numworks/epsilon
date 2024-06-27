@@ -1,5 +1,6 @@
 #include "multiplication_symbol.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/unit.h>
@@ -334,7 +335,7 @@ Symbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
           return Empty;
       }
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

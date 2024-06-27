@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <omg/unreachable.h>
 
 #include "store.h"
 
@@ -51,6 +52,7 @@ I18n::Message Model::name() const {
     case Type::Median:
       return I18n::Message::MedianRegression;
   }
+  OMG::unreachable();
 }
 
 }  // namespace Regression

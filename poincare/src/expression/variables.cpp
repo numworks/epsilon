@@ -1,5 +1,6 @@
 #include "variables.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <string.h>
@@ -36,7 +37,7 @@ uint8_t Variables::ToId(const Tree* variables, const char* name,
       return child.index;
     }
   }
-  assert(false);  // Not found
+  OMG::unreachable();  // Not found
 }
 
 const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {

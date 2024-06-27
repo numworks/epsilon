@@ -1,3 +1,5 @@
+#include <omg/unreachable.h>
+
 #include "cubic_regression.h"
 #include "exponential_regression.h"
 #include "linear_regression.h"
@@ -58,6 +60,7 @@ const Regression* Regression::Get(Type type) {
       constexpr static MedianRegression median;
       return &median;
   }
+  OMG::unreachable();
 }
 
 }  // namespace Poincare::Regression

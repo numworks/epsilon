@@ -1,5 +1,6 @@
 #include "parametric.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -34,7 +35,7 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
     case Type::ProductLayout:
       return k_integrandIndex;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 
@@ -56,7 +57,7 @@ ComplexSign Parametric::VariableSign(const Tree* e) {
     case Type::Product:
       return k_discreteVariableSign;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

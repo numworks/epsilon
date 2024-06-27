@@ -1,5 +1,6 @@
 #include "conversion.h"
 
+#include <omg/unreachable.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
@@ -29,7 +30,7 @@ Poincare::OExpression ToPoincareExpressionViaParse(const Tree* exp) {
   char buffer[bufferSize];
   *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
   outputLayout->removeTree();
-  assert(false);
+  OMG::unreachable();
   // we may use the new parse here
   // return Poincare::OExpression::Parse(buffer, nullptr, false, false);
 }
@@ -59,7 +60,7 @@ Poincare::ComparisonNode::OperatorType ComparisonToOperator(Type type) {
     case Type::InferiorEqual:
       return Poincare::ComparisonNode::OperatorType::InferiorEqual;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 
@@ -622,7 +623,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           type = Type::LogicalNor;
           break;
         default:
-          assert(false);
+          OMG::unreachable();
       }
       SharedTreeStack->pushBlock(type);
       PushPoincareExpression(exp.childAtIndex(0));
@@ -747,7 +748,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
               type = Type::SuperiorEqual;
               break;
             default:
-              assert(false);
+              OMG::unreachable();
           }
           SharedTreeStack->pushBlock(type);
           break;

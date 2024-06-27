@@ -1,5 +1,6 @@
 #include <math.h>
 #include <omg/float.h>
+#include <omg/unreachable.h>
 
 #include <bit>
 #include <complex>
@@ -145,7 +146,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       return TrigonometricToComplex(Type::ATan, static_cast<T>(1) / value,
                                     angleUnit);
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 
@@ -200,7 +201,7 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
     }
 
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

@@ -1,5 +1,6 @@
 #include "binary.h"
 
+#include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -30,7 +31,7 @@ const char* Binary::OperatorName(TypeBlock type) {
       return name.name;
     }
   }
-  assert(false);
+  OMG::unreachable();
 }
 
 const char* Binary::ComparisonOperatorName(TypeBlock type) {
@@ -39,7 +40,7 @@ const char* Binary::ComparisonOperatorName(TypeBlock type) {
       return name.mainString;
     }
   }
-  assert(false);
+  OMG::unreachable();
 }
 
 bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,

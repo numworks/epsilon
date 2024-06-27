@@ -3,6 +3,7 @@
 #include <math.h>
 #include <omg/float.h>
 #include <omg/signaling_nan.h>
+#include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/node_iterator.h>
 #include <poincare/src/numeric/statistics_dataset.h>
@@ -1035,7 +1036,7 @@ bool Approximation::ToBoolean(const Tree* e) {
     case Type::LogicalXor:
       return a ^ b;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -45,7 +46,7 @@ Type ExpressionType(LayoutType type) {
     case LayoutType::Parentheses:
       return Type::Parentheses;
     default:
-      assert(false);
+      OMG::unreachable();
   }
 }
 

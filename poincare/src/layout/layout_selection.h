@@ -42,11 +42,13 @@ class LayoutSelection {
   int leftPosition() const { return std::min(m_startPosition, m_endPosition); }
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
+#if 0
   bool containsNode(const Tree* n) const {
     const Block* b = n->block();
     return !isEmpty() && b >= m_node->child(leftPosition())->block() &&
            b <= m_node->child(rightPosition() - 1)->block();
   }
+#endif
 
   Tree* cloneSelection() const;
 

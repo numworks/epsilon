@@ -38,7 +38,7 @@ jobs:
       - name: Make head
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Verify that a single make is sufficient
-        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin --question
+        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 output/release/linux/test.bin --question
       - name: Run head
         shell: bash
         run: output/release/linux/test.bin --headless --limit-stack-usage -f poincare | tee out

@@ -158,7 +158,7 @@ The low-level method is presented here, for a safer approach, read [How to creat
 ### Pushing nodes
 
 The most basic way to create trees from scratch is to push nodes successively at the end of the TreeStack.
-The `SharedTreeStack` global object have push methods for each kind of node:
+The `SharedTreeStack` global object has push methods for each kind of node:
 
 ```cpp
 // pushing an Add (addition) node with two-children
@@ -223,7 +223,7 @@ performance matters. You will often see function passing `TreeRefs &` to
 avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same `Tree`.
 
 All the methods on available on `Tree` are accessible on `TreeRef` as
-well. It should be easy to upgrade a `Tree *` into an `TreeRef` at any
+well. It should be easy to upgrade a `Tree *` into a `TreeRef` at any
 point when you want to track your `Tree` safely.
 
 ```cpp
@@ -442,7 +442,7 @@ If your pattern is a simplified tree and context values are simplified too, `Cre
 ## How to retrieve sub-trees using pattern matching ?
 
 `PatternMatching::Match` works the other way around and will fill a `Context` if
-the tree you give it fits the pattern.
+the tree you provide it fits the pattern.
 
 For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
 obtain a Context where `ctx[KA]` points to the addition tree inside your
@@ -458,7 +458,7 @@ ctx->getTree(KA); // Points to Add inside myTree;
 
 ## How to transform a Tree using pattern matching ?
 
-The two functions `Match` and `Create` are combined in `MatchCreate` and `MatchReplace` to alter the structure of trees without dealing with a context at all:
+The functions `Match` and `Create` are combined in `MatchCreate` and `MatchReplace` to alter the structure of trees without dealing with a context at all:
 
 ```cpp
 // Apply simplification a + a -> 2 * a

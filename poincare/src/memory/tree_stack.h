@@ -209,7 +209,7 @@ class TreeStack : public BlockStack {
   }
 
   void execute(ActionWithContext action, void* context, const void* data,
-               int maxSize, Relax relax = k_defaultRelax);
+               size_t maxSize, Relax relax = k_defaultRelax);
 
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);

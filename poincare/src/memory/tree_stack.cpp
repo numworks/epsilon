@@ -55,7 +55,7 @@ Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
   assert(type.isUserNamed());
   Tree* result = pushBlock(type);
   pushBlock(size);
-  for (int i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++) {
     pushBlock(name[i]);
   }
   pushBlock(0);
@@ -221,7 +221,7 @@ void TreeStack::log(std::ostream& stream, LogFormat format, bool verbose,
 #endif
 
 void TreeStack::execute(ActionWithContext action, void* context,
-                        const void* data, int maxSize, Relax relax) {
+                        const void* data, size_t maxSize, Relax relax) {
 #if ASSERTIONS
   size_t treesNumber = numberOfTrees();
 #endif

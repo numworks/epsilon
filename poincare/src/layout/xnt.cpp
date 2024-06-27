@@ -54,7 +54,7 @@ static CodePoint codePointAtIndexInCycle(int index, int startingIndex,
   assert(index >= 0);
   assert(cycleSize);
   *cycleSize = sizeOfCycle(cycle);
-  assert(0 <= startingIndex && startingIndex < *cycleSize);
+  assert(0 <= startingIndex && startingIndex < static_cast<int>(*cycleSize));
   return cycle[(startingIndex + index) % *cycleSize];
 }
 

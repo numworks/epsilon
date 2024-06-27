@@ -31,7 +31,7 @@ CodePoint CPLayoutDecoder::codePointAt(size_t index) const {
    * sufficient. We will probably never need to parse non-ascii symbols like π
    * as part of a word. Decoders needs to be refactored anyway. */
   const Tree* codePoint = m_firstCodePoint;
-  for (int i = 0; i < index; i++) {
+  for (size_t i = 0; i < index; i++) {
     codePoint = codePoint->nextTree();
   }
   if (!codePoint->isCodePointLayout()) {

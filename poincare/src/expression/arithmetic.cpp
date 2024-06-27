@@ -353,8 +353,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     return result;
   }
 
-  int t = 0;                                      // n prime factor index
-  int k = 0;                                      // prime factor index
+  size_t t = 0;                                   // n prime factor index
+  size_t k = 0;                                   // prime factor index
   uint16_t testedPrimeFactor(k_primeFactors[k]);  // prime factor
   result.factors[t] = testedPrimeFactor;
   result.coefficients[t] = 0;

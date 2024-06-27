@@ -23,7 +23,8 @@ bool check_solutions(
                                                projectionContext, &error);
   quiz_assert(error == expectedError);
   if (solutions) {
-    quiz_assert(solutions->numberOfChildren() == outputs.size());
+    quiz_assert(solutions->numberOfChildren() ==
+                static_cast<int>(outputs.size()));
     projectionContext.m_symbolic =
         context.overrideUserVariables
             ? SymbolicComputation::DoNotReplaceAnySymbol

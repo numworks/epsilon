@@ -151,7 +151,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
     TreeRef b = polB;
     Tree* variableB = b->child(0);
     TreeRef coefficientB = variableB->nextTree();
-    size_t i = 0;
+    int i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(b);
     variableB->removeTree();
     TreeRef result((0_e)->cloneTree());
@@ -375,7 +375,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
   const Tree* variable = nullptr;
   for (std::pair<const Tree*, int> indexedVariable :
        NodeIterator::Children<NoEditable>(variables)) {
-    if (std::get<int>(indexedVariable) < variableIndex) {
+    if (std::get<int>(indexedVariable) < static_cast<int>(variableIndex)) {
       // Skip previously handled variable
       continue;
     }
@@ -405,7 +405,7 @@ Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
   TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = e->type();
   if (type == Type::Add) {
-    for (size_t i = 0; i < e->numberOfChildren(); i++) {
+    for (int i = 0; i < e->numberOfChildren(); i++) {
       /* We deplete the addition from its children as we scan it so we can
        * always take the first child. */
       Tree* child = e->child(0);

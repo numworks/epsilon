@@ -77,7 +77,7 @@ uint8_t Representative::ToId(const Representative* representative) {
   const Representative* list = representative->representativesOfSameDimension();
   for (int i = 0; i < k_numberOfDimensions; i++) {
     if (list == DefaultRepresentatives()[i]) {
-      size_t representativeOffset = (representative - list);
+      int representativeOffset = (representative - list);
       assert(representativeOffset < list->numberOfRepresentatives());
       return id + representativeOffset;
     } else {
@@ -1005,7 +1005,7 @@ bool Unit::KeepUnitsOnly(Tree* e) {
       int n = e->numberOfChildren();
       int remainingChildren = n;
       Tree* child = e->child(0);
-      for (size_t i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
         if (!KeepUnitsOnly(child)) {
           child = child->nextTree();
         } else {

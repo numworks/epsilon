@@ -417,7 +417,7 @@ bool AdvancedReduction::TryOneOperation(Tree* e,
                                         const Tree::Operation* operations,
                                         int numberOfOperations) {
   assert(!SystematicReduction::DeepReduce(e));
-  for (size_t i = 0; i < numberOfOperations; i++) {
+  for (int i = 0; i < numberOfOperations; i++) {
     if (operations[i](e)) {
       assert(!SystematicReduction::DeepReduce(e));
       return true;

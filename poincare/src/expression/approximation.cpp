@@ -760,7 +760,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       if (e->isStdDev()) {
         return stdDev;
       }
-      T sampleStdDevCoef = std::pow(1 + 1 / (coefficientsSum - 1), 0.5);
+      T sampleStdDevCoef =
+          std::pow(1 + 1 / (coefficientsSum - 1), static_cast<T>(0.5));
       return stdDev * sampleStdDevCoef;
     }
     case Type::ListSort: {
@@ -845,8 +846,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
   }
   switch (e->type()) {
     case Type::Decimal:
-      return child[0] *
-             std::pow(10.0, -static_cast<T>(Decimal::DecimalOffset(e)));
+      return child[0] * std::pow(std::complex<T>(10.0),
+                                 -static_cast<T>(Decimal::DecimalOffset(e)));
     case Type::PowReal: {
       T a = child[0];
       T b = child[1];

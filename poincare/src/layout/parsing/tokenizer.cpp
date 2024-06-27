@@ -26,7 +26,8 @@ bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
   }
   return true;
 #else
-  return (length == -1 ? decoder.end() - decoder.start() : length) <= 7;
+  return (length == static_cast<size_t>(-1) ? decoder.end() - decoder.start()
+                                            : length) <= 7;
 #endif
 }
 
@@ -416,7 +417,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   LayoutSpan span(start, *length);
   // If there are two \" around an identifier, it is a forced custom identifier
   const Layout* lastCharOfString = start;
-  for (int i = 0; i < *length - 1; i++) {
+  for (size_t i = 0; i < *length - 1; i++) {
     lastCharOfString = static_cast<const Layout*>(lastCharOfString->nextTree());
   }
   if (*length > 2 && CodePointLayout::IsCodePoint(start, '"') &&

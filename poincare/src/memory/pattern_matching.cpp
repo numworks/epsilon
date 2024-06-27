@@ -381,7 +381,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         Tree* result = SharedTreeStack->clone(node, false);
         node = node->nextNode();
         if (simplify) {
-          for (size_t i = 0; i < numberOfChildren; i++) {
+          for (int i = 0; i < numberOfChildren; i++) {
             CreateTree(node, context, nullptr, simplify);
             node = node->nextTree();
           }

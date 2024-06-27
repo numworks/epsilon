@@ -31,7 +31,8 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();
   // Nothing has leaked
-  quiz_assert(numberOfTrees == SharedTreeStack->numberOfTrees());
+  quiz_assert(static_cast<size_t>(numberOfTrees) ==
+              SharedTreeStack->numberOfTrees());
 }
 
 QUIZ_CASE(pcj_context) {

@@ -7,8 +7,11 @@
 
 - [What is a Tree ?](#what-is-a-tree-)
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
+- [How to walk through a Tree ?](#how-to-walk-through-a-tree-)
 - [How to inspect the structure of a Tree ?](#how-to-inspect-the-structure-of-a-tree-)
 - [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
+- [How to reorganize Trees in the TreeStack ?](#how-to-reorganize-trees-in-the-treestack-)
+- [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
 - [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
 - [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
@@ -74,19 +77,10 @@ switch (tree->type()) {
 }
 ```
 
-For convenience, `tree->isCos()` is defined as an equivalent to `tree->type() == Type::Cos`.
-
 Since trees have a variable size, code manipulates them via `Tree *`
 pointers. Moreover, the `const` keyword is used pervasively to differentiate
 `const Tree *` from `Tree *` to constrain signatures.
 
-Once you have a tree pointer, you may navigate with:
-```cpp
-Tree * sibling = tree->nextTree();
-const Tree * child = constTree->child(0);
-for (Tree * child : tree->children()) { ... }
-for (const Tree * subTree : tree->selfAndDescendants()) { ... }
-```
 
 Unlike the previous Poincare, Tree can only be iterated forward.  You can't
 access the previous child or the parent of a tree, unless you know a root tree
@@ -106,6 +100,23 @@ There are three situations to distinguish:
 - If you want to test if the root belongs to a group of related types, there may be a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers and membership can be tested with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
 
 - If you are more interested by the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
+
+
+## How to walk through a Tree ?
+Once you have a tree pointer, you may iterate over its children or descendants with:
+```cpp
+Tree * sibling = tree->nextTree();
+
+const Tree * child = constTree->child(0);
+
+for (Tree * child : tree->children()) {
+  ...
+}
+
+for (const Tree * subTree : tree->selfAndDescendants()) {
+  ...
+}
+```
 
 
 ## How to inspect the structure of a Tree ?
@@ -179,11 +190,17 @@ expr->cloneTree()
 // expr2->logSerialize() prints "cos(π+3.0)"
 ```
 
-## TreeStack
+
+## How to reorganize Trees in the TreeStack ?
+The [Tree class](../src/memory/tree.h) offers a lot of methods to move non-const Tree in the TreeStack
+relatively to other Trees, clone them at a specific place, delete them and swap them.
+
+When doing so you should always keep in mind that the TreeStack is a Stack and that removing or extending
+a Tree will move the other Trees down the stack.
 
 ```cpp
-Tree * a = someTree->clone();
-Tree * b = anotherTree->clone();
+Tree * a = someTree->cloneTree();
+Tree * b = anotherTree->cloneTree();
 // a and b are now in the TreeStack with b just after a
 assert(a->nextTree() == b);
 
@@ -194,9 +211,9 @@ a->removeTree();
 ```
 
 
-## TreeRefs
+## How to track Trees in the TreeStack ?
 
-A `TreeRef` is a smart pointer used to track a `Tree` as it moves inside the
+A **`TreeRef`** is a smart pointer used to track a `Tree` as it moves inside the
 `TreeStack`. It is not needed in the `Pool` since nodes cannot be edited there.
 
 For this purpose, the `TreeStack` owns a table of all the alive `TreeRef` and
@@ -210,8 +227,8 @@ well. It should be easy to upgrade a `Tree *` into an `TreeRef` at any
 point when you want to track your `Tree` safely.
 
 ```cpp
-TreeRef a = someTree->clone();
-TreeRef b = anotherTree->clone();
+TreeRef a = someTree->cloneTree();
+TreeRef b = anotherTree->cloneTree();
 // a and b are now in the TreeStack with b just after a
 assert(a->nextTree() == b);
 

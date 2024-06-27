@@ -14,21 +14,6 @@ OExpression ListMedianNode::shallowReduce(
   return ListMedian(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListMedianNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  assert(false);
-#if 0
-  ListComplex<T> evaluationArray[2];
-  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
-      this, approximationContext, evaluationArray);
-  if (dataset.isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(dataset.median());
-#endif
-}
-
 OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
   ApproximationContext approximationContext(reductionContext, true);
   for (int k = 0; k < numberOfChildren(); k++) {
@@ -49,6 +34,7 @@ OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
     }
   }
   assert(false);
+  return OExpression();
 #if 0
   ListComplex<double> evaluationArray[2];
   StatisticsDataset<double> dataset =
@@ -76,10 +62,5 @@ OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
   return div.shallowReduce(reductionContext);
 #endif
 }
-
-template Evaluation<float> ListMedianNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListMedianNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

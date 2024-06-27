@@ -13,21 +13,6 @@ OExpression ListVarianceNode::shallowReduce(
   return ListVariance(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListVarianceNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  assert(false);
-#if 0
-  ListComplex<T> evaluationArray[2];
-  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
-      this, approximationContext, evaluationArray);
-  if (dataset.isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(dataset.variance());
-#endif
-}
-
 OExpression ListVariance::shallowReduce(ReductionContext reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
@@ -49,8 +34,4 @@ OExpression ListVariance::shallowReduce(ReductionContext reductionContext) {
   return s.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListVarianceNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListVarianceNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 }  // namespace Poincare

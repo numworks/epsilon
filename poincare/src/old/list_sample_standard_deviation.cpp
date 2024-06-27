@@ -14,21 +14,6 @@ OExpression ListSampleStandardDeviationNode::shallowReduce(
   return ListSampleStandardDeviation(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListSampleStandardDeviationNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  assert(false);
-#if 0
-  ListComplex<T> evaluationArray[2];
-  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
-      this, approximationContext, evaluationArray);
-  if (dataset.isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(dataset.sampleStandardDeviation());
-#endif
-}
-
 OExpression ListSampleStandardDeviation::shallowReduce(
     ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
@@ -58,12 +43,5 @@ OExpression ListSampleStandardDeviation::shallowReduce(
   replaceWithInPlace(m);
   return m.shallowReduce(reductionContext);
 }
-
-template Evaluation<float>
-ListSampleStandardDeviationNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double>
-ListSampleStandardDeviationNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

@@ -24,14 +24,14 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   }
   TreeRef finalSet = Set::PushEmpty();
   int i = 0;
-  for (Tree* eChild : e->children()) {
-    if (eChild->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
-      Tree* eChildSet = Dependencies(eChild);
+  for (Tree* child : e->children()) {
+    if (child->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
+      Tree* childSet = Dependencies(child);
       if (e->isParametric() && Parametric::FunctionIndex(e) == i) {
         if (e->isNthDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
           const Tree* symbolValue = e->child(1);
-          Variables::LeaveScopeWithReplacement(eChildSet, symbolValue, false);
+          Variables::LeaveScopeWithReplacement(childSet, symbolValue, false);
         } else {
           /* sum(dep({    f(k),           z},     k), k, 1, n) ->
            *     dep({sum(f(k), k, 1, n), z}, sum(k,  k, 1, n))
@@ -40,34 +40,34 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
            *   but we would have to handle them along the simplification process
            *   (especially difficult in the advanced and systematic reduction).
            */
-          int numberOfDependencies = eChildSet->numberOfChildren();
+          int numberOfDependencies = childSet->numberOfChildren();
           TreeRef set = SharedTreeStack->pushSet(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
-            if (Variables::HasVariable(eChildSet->child(0),
+            if (Variables::HasVariable(childSet->child(0),
                                        Parametric::k_localVariableId)) {
               /* Clone the entire parametric tree with detached dependency
-               * instead of eChild */
+               * instead of child */
               e->cloneNode();
-              for (const Tree* eChild2 : e->children()) {
-                if (eChild2 != eChild) {
-                  eChild2->cloneTree();
+              for (const Tree* child2 : e->children()) {
+                if (child2 != child) {
+                  child2->cloneTree();
                 } else {
-                  NAry::DetachChildAtIndex(eChildSet, 0);
+                  NAry::DetachChildAtIndex(childSet, 0);
                 }
               }
             } else {
               // Dependency can be detached out of parametric's scope.
-              Variables::LeaveScope(NAry::DetachChildAtIndex(eChildSet, 0));
+              Variables::LeaveScope(NAry::DetachChildAtIndex(childSet, 0));
             }
           }
-          eChildSet->removeTree();
-          eChildSet = set;
+          childSet->removeTree();
+          childSet = set;
         }
       }
       // Move dependency list at the end
-      Set::Union(finalSet, eChildSet);
+      Set::Union(finalSet, childSet);
       // Remove Dependency block in child
-      eChild->removeNode();
+      child->removeNode();
     }
     i++;
   }

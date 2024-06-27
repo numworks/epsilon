@@ -516,11 +516,11 @@ void Tree::swapWithTree(Tree* t) {
 }
 
 void SwapTreesPointers(Tree** t1, Tree** t2) {
-  TreeRef ru(*t1);
-  TreeRef rv(*t2);
+  TreeRef t1Ref(*t1);
+  TreeRef t2Ref(*t2);
   (*t1)->swapWithTree(*t2);
-  *t1 = ru;
-  *t2 = rv;
+  *t1 = t1Ref;
+  *t2 = t2Ref;
 }
 
 int NumberOfNextTreeTo(const Tree* from, const Tree* to) {

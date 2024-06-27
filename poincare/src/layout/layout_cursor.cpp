@@ -464,6 +464,7 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
+        (void)currentSubscriptDepth;
         LayoutBufferCursor::TreeStackCursor::InsertLayoutContext
             insertLayoutContext{layoutToInsert, forceCursorRightOfText,
                                 forceCursorLeftOfText};

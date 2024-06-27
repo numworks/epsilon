@@ -356,6 +356,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
           e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
           KMult(KA_s, KC_s, KCot(KB), KD_s))) {
     assert(n > e->numberOfChildren());
+    (void)n;
     n = e->numberOfChildren();
     changed = true;
   }

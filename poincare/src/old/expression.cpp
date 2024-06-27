@@ -96,6 +96,7 @@ bool OExpression::isInteger() const {
           childAtIndex(0).isInteger());
 }
 
+#if 0
 static bool IsIgnoredSymbol(const OExpression *e,
                             OExpression::IgnoredSymbols *ignoredSymbols) {
   if (e->otype() != ExpressionNode::Type::Symbol) {
@@ -111,6 +112,7 @@ static bool IsIgnoredSymbol(const OExpression *e,
   }
   return false;
 }
+#endif
 
 bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
                                      Context *context,

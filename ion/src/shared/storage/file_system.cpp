@@ -195,6 +195,7 @@ int FileSystem::numberOfRecords() {
   int count = 0;
   for (char* p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
+    (void)(currentName);
     assert(!Record::NameIsEmpty(currentName));
     count++;
   }

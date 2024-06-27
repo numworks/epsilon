@@ -98,6 +98,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     assert(tempDerivative);
     tempDerivative = Derive(derivand->child(1), symbol, true);
     assert(tempDerivative);
+    (void)tempDerivative;
     SystematicReduction::ShallowReduce(result);
     return result;
   }
@@ -134,6 +135,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
 
     Tree* tempDerivative = Derive(derivandChild, symbol, true);
     assert(tempDerivative);
+    (void)tempDerivative;
     NAry::SetNumberOfChildren(mult, 2);
     SystematicReduction::ShallowReduce(mult);
     i++;

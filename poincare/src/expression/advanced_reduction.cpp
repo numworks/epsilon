@@ -174,6 +174,7 @@ bool AdvancedReduction::Path::apply(Tree* root) const {
   bool rootChanged = false;
   for (uint8_t i = 0; i < length(); i++) {
     bool didApply = m_stack[i].apply(&e, root, &rootChanged);
+    (void)didApply;
     assert(didApply);
   }
   return rootChanged;
@@ -271,6 +272,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         isLeaf = false;
         bool canAddDir = ctx->m_path.append(dir);
         assert(canAddDir);
+        (void)canAddDir;
         if (!ReduceRec(target, ctx)) {
           fullExploration = false;
         } else if (rootChanged) {
@@ -384,6 +386,7 @@ bool AdvancedReduction::DeepExpand(Tree* e) {
     // TODO_PCJ: Find a solution so we don't have to run this twice.
     bool temp = DeepExpand(e);
     assert(!temp || !DeepExpand(e));
+    (void)temp;
   }
   return changed;
 }

@@ -87,6 +87,7 @@ OExpression Constant::shallowReduce(ReductionContext reductionContext) {
     }
   } else {
     assert(info.m_unit != nullptr);
+    (void)info;
     assert(false);
     // result = Multiplication::Builder(Float<double>::Builder(info.m_value),
     // OExpression::Parse(info.m_unit, nullptr));

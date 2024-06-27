@@ -93,6 +93,7 @@ int PatternMatching::MatchContext::remainingLocalTrees(const Tree* node) const {
   const Tree* parent =
       m_localSourceRoot->parentOfDescendant(node, &nodePosition);
   assert(parent && parent == m_localSourceRoot);
+  (void)parent;
   return m_localSourceRoot->numberOfChildren() - nodePosition;
 }
 
@@ -416,11 +417,13 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       for (int i = 0; i < treesToInsert - 1; i++) {
         Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
         assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
+        (void)(inserted);
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
     assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
+    (void)(inserted);
     node = node->nextNode();
   }
   return top;

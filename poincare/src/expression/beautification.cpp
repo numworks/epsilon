@@ -89,7 +89,7 @@ int NumberOfFactors(const Tree* e) {
 }
 
 bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
-  // The eession is a negative number
+  // The expression is a negative number
   Tree* factor = Factor(e, 0);
   if (factor->isMinusOne() && e->isMult()) {
     NAry::RemoveChildAtIndex(e, 0);

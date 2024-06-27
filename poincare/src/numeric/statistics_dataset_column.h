@@ -33,7 +33,7 @@ class TreeDatasetColumn : public DatasetColumn<T> {
   int length() const override;
 
  private:
-  const Tree* m_tree;
+  const Tree* m_list;
 };
 
 }  // namespace Poincare::Internal

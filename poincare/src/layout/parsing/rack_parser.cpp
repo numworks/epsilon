@@ -51,10 +51,10 @@ Tree* RackParser::parse() {
   }
 }
 
-static inline void turnIntoBinaryNode(const Tree* l, TreeRef& leftHandSide,
+static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
                                       TreeRef& rightHandSide) {
   assert(leftHandSide->nextTree() == static_cast<Tree*>(rightHandSide));
-  CloneNodeAtNode(leftHandSide, l);
+  CloneNodeAtNode(leftHandSide, node);
 }
 
 Tree* RackParser::parseExpressionWithRightwardsArrow(
@@ -143,7 +143,7 @@ Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
 // Private
 
 Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
-  typedef void (RackParser::*TokenParser)(TreeRef & leftHandSide,
+  typedef void (RackParser::*TokenParser)(TreeRef& leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,          // Token::Type::EndOfStream
@@ -654,8 +654,8 @@ void RackParser::parseBinaryLogicalOperator(Type operatorType,
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  Tree* l = SharedTreeStack->pushBlock(operatorType);
-  leftHandSide->moveNodeAtNode(l);
+  Tree* node = SharedTreeStack->pushBlock(operatorType);
+  leftHandSide->moveNodeAtNode(node);
 }
 
 void RackParser::parseBinaryOperator(const TreeRef& leftHandSide,

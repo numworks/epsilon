@@ -1,3 +1,4 @@
+#include <python/test/execution_environment.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -58,8 +59,12 @@ void assert_variables_are(const char* script,
 }
 
 QUIZ_CASE(python_variable_box) {
+  init_environment();
+
   const char* expectedVariables[] = {"froo", "from", "frozenset()"};
   // FIXME This test does not load imported variables for now
   assert_variables_are("\x01 from math import *\nfroo=3", 21, 2,
                        expectedVariables, std::size(expectedVariables));
+
+  deinit_environment();
 }

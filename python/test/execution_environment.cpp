@@ -57,7 +57,7 @@ bool execute_input(TestExecutionEnvironment env, bool singleCommandLine,
   return executionResult;
 }
 
-TestExecutionEnvironment init_environement() {
+TestExecutionEnvironment init_environment() {
   MicroPython::init(TestExecutionEnvironment::s_pythonHeap,
                     TestExecutionEnvironment::s_pythonHeap +
                         TestExecutionEnvironment::s_pythonHeapSize);
@@ -68,7 +68,7 @@ void deinit_environment() { MicroPython::deinit(); }
 
 void assert_script_execution_result(bool expectedResult, const char* script,
                                     const char* outputText = nullptr) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   quiz_assert(expectedResult == execute_input(env, false, script, outputText));
   deinit_environment();
 }

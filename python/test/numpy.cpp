@@ -3,14 +3,14 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_numpy) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   // Test "from matplotlib.pyplot import *"
   assert_command_execution_fails(env, "np.array([1,3,4])");
   assert_command_execution_succeeds(env, "from numpy import *");
   assert_command_execution_succeeds(env, "ones(3)", "array([1.0, 1.0, 1.0])\n");
 
   deinit_environment();
-  env = init_environement();
+  env = init_environment();
   assert_command_execution_succeeds(env, "import numpy as np");
   assert_command_execution_succeeds(env, "arr1 = np.array([1,3,5,4])");
   /* TODO: We cannot test floating results due to precision disparity in

@@ -4,28 +4,28 @@
 
 QUIZ_CASE(python_matplotlib_pyplot_import) {
   // Test "from matplotlib.pyplot import *"
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_fails(env, "arrow(2,3,4,5)");
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "arrow(2,3,4,5)");
   deinit_environment();
 
   // "from matplotlib import *"
-  env = init_environement();
+  env = init_environment();
   assert_command_execution_fails(env, "pyplot.arrow(2,3,4,5)");
   assert_command_execution_succeeds(env, "from matplotlib import *");
   assert_command_execution_succeeds(env, "pyplot.arrow(2,3,4,5)");
   deinit_environment();
 
   // "import matplotlib"
-  env = init_environement();
+  env = init_environment();
   assert_command_execution_fails(env, "matplotlib.pyplot.arrow(2,3,4,5)");
   assert_command_execution_succeeds(env, "import matplotlib");
   assert_command_execution_succeeds(env, "matplotlib.pyplot.arrow(2,3,4,5)");
   deinit_environment();
 
   // "import matplotlib.pyplot"
-  env = init_environement();
+  env = init_environment();
   assert_command_execution_fails(env, "matplotlib.pyplot.arrow(2,3,4,5)");
   assert_command_execution_succeeds(env, "import matplotlib.pyplot");
   assert_command_execution_succeeds(env, "matplotlib.pyplot.arrow(2,3,4,5)");
@@ -33,7 +33,7 @@ QUIZ_CASE(python_matplotlib_pyplot_import) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_arrow) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "arrow(2,3,4,5)");
   assert_command_execution_fails(env, "arrow(2,3,4,5, 0.1)");
@@ -46,7 +46,7 @@ QUIZ_CASE(python_matplotlib_pyplot_arrow) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_axis) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "axis((2,3,4,5))");
   assert_command_execution_succeeds(env, "axis([2,3,4,5])");
@@ -57,7 +57,7 @@ QUIZ_CASE(python_matplotlib_pyplot_axis) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_bar) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "bar([0,2,3],[10,12,23])");
   assert_command_execution_succeeds(env, "bar(10,[0,2,3])");
@@ -78,7 +78,7 @@ QUIZ_CASE(python_matplotlib_pyplot_bar) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_grid) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "grid(True)");
   assert_command_execution_succeeds(env, "grid()");
@@ -86,7 +86,7 @@ QUIZ_CASE(python_matplotlib_pyplot_grid) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_hist) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "hist(0)");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6])");
@@ -100,7 +100,7 @@ QUIZ_CASE(python_matplotlib_pyplot_hist) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_plot) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "plot([2,3,4,5,6])");
   assert_command_execution_succeeds(env, "plot(2,3)");
@@ -113,7 +113,7 @@ QUIZ_CASE(python_matplotlib_pyplot_plot) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_scatter) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "scatter(2,3)");
   assert_command_execution_succeeds(env, "scatter([2,3,4,5,6],[3,4,5,6,7])");
@@ -127,7 +127,7 @@ QUIZ_CASE(python_matplotlib_pyplot_scatter) {
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_text) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "text(2,3,'hello')");
   assert_command_execution_succeeds(env, "show()");

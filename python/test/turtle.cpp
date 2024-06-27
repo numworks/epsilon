@@ -5,7 +5,7 @@
 // TODO: to be completed
 
 QUIZ_CASE(python_turtle) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_fails(env, "forward(3)");
   assert_command_execution_succeeds(env, "from turtle import *");
   assert_command_execution_succeeds(env, "reset()");
@@ -29,7 +29,7 @@ QUIZ_CASE(python_turtle) {
 
 QUIZ_CASE(python_turtle_circle) {
   // Turtle position should be unchanged after a complete circle
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from turtle import *");
   assert_command_execution_succeeds(env, "goto(0,0)");
   assert_command_execution_succeeds(env, "circle(28)");
@@ -39,7 +39,7 @@ QUIZ_CASE(python_turtle_circle) {
 }
 
 QUIZ_CASE(python_turtle_distance) {
-  TestExecutionEnvironment env = init_environement();
+  TestExecutionEnvironment env = init_environment();
   assert_command_execution_succeeds(env, "from turtle import *");
   assert_command_execution_succeeds(env, "goto(10,10)");
   assert_command_execution_succeeds(env, "distance(0,0)",

@@ -16,7 +16,7 @@ class TestExecutionEnvironment : public MicroPython::ExecutionEnvironment {
   size_t m_printTextIndex;
 };
 
-TestExecutionEnvironment init_environement();
+TestExecutionEnvironment init_environment();
 void deinit_environment();
 
 void assert_script_execution_succeeds(const char* script,

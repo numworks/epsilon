@@ -62,19 +62,19 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* l = layoutCursor->cursorNode();
+  Tree* node = layoutCursor->cursorNode();
   int position = layoutCursor->position();
   if (position == 0) {
     return false;
   }
   return TokenizeAndBeautifyIdentifiers(
-      l, position - 1, k_simpleIdentifiersRules, k_lenOfSimpleIdentifiersRules,
-      context, layoutCursor);
+      node, position - 1, k_simpleIdentifiersRules,
+      k_lenOfSimpleIdentifiersRules, context, layoutCursor);
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* l = layoutCursor->cursorNode();
+  Tree* node = layoutCursor->cursorNode();
   Tree* root = layoutCursor->rootNode();
   int position = layoutCursor->position();
 
@@ -88,7 +88,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
      * insertion. --> Beautify left of its parent
      * For example "sqrt(|4+5)" -> "|" is left of "|4+5", so
      * beautify left of the parenthesis ("sqrt()"). */
-    TreeRef insertedLayout = l->parent(root);
+    TreeRef insertedLayout = node->parent(root);
     if (insertedLayout.isUninitialized()) {
       return false;
     }
@@ -99,9 +99,9 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     }
     h = horizontalParent;
     insertedLayoutIndex = horizontalParent->indexOfChild(insertedLayout);
-  } else if (l->isRackLayout()) {
+  } else if (node->isRackLayout()) {
     insertedLayoutIndex = position - 1;
-    h = l;
+    h = node;
   } else {
     return false;
   }
@@ -456,31 +456,31 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
     const Tree* firstLayout, size_t identifierLength,
-    BeautificationRule beautificationRule, Tree* l, int startIndex,
+    BeautificationRule beautificationRule, Tree* rack, int startIndex,
     LayoutCursor* layoutCursor, int* comparisonResult,
     int* numberOfLayoutsAddedOrRemoved) {
   Aliases patternAliases = beautificationRule.listOfBeautifiedAliases;
   int firstIndex;
-  const Tree* rack =
+  const Tree* rack2 =
       layoutCursor->rootNode()->parentOfDescendant(firstLayout, &firstIndex);
-  RackLayoutDecoder decoder(rack, firstIndex, firstIndex + identifierLength);
+  RackLayoutDecoder decoder(rack2, firstIndex, firstIndex + identifierLength);
   *comparisonResult = patternAliases.maxDifferenceWith(&decoder);
   if (*comparisonResult == 0) {
     return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-        l, startIndex, startIndex + identifierLength - 1, beautificationRule,
+        rack, startIndex, startIndex + identifierLength - 1, beautificationRule,
         layoutCursor, numberOfLayoutsAddedOrRemoved);
   }
   return false;
 }
 
 bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-    Tree* l, int startIndex, int endIndex,
+    Tree* rack, int startIndex, int endIndex,
     BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
     int* numberOfLayoutsAddedOrRemoved, Tree* preProcessedParameter,
     int indexOfPreProcessedParameter) {
   assert(beautificationRule.numberOfParameters == 0 ||
-         l->child(endIndex + 1)->isParenthesesLayout());
-  int currentNumberOfChildren = l->numberOfChildren();
+         rack->child(endIndex + 1)->isParenthesesLayout());
+  int currentNumberOfChildren = rack->numberOfChildren();
   // Create pattern layout
   TreeRef parameters[k_maxNumberOfParameters] = {};
   if (preProcessedParameter) {
@@ -490,7 +490,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
   if (beautificationRule.numberOfParameters > 0) {
     endIndex++;  // Include parenthesis in layouts to delete
     bool validNumberOfParams = CreateParametersList(
-        parameters, l, endIndex, beautificationRule, layoutCursor);
+        parameters, rack, endIndex, beautificationRule, layoutCursor);
     if (!validNumberOfParams) {
       // Too many parameters, beautification is cancelled
       return false;
@@ -500,20 +500,20 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 
   // Remove layout
   int numberOfRemovedLayouts = endIndex - startIndex + 1;
-  bool cursorIsInRemovedLayouts = layoutCursor->cursorNode() == l &&
+  bool cursorIsInRemovedLayouts = layoutCursor->cursorNode() == rack &&
                                   layoutCursor->position() > startIndex &&
                                   layoutCursor->position() <= endIndex;
   bool cursorIsAfterRemovedLayouts =
-      layoutCursor->cursorNode() == l && layoutCursor->position() > endIndex;
+      layoutCursor->cursorNode() == rack && layoutCursor->position() > endIndex;
   while (endIndex >= startIndex) {
-    NAry::RemoveChildAtIndex(l, endIndex);
+    NAry::RemoveChildAtIndex(rack, endIndex);
     endIndex--;
   }
   assert(endIndex == startIndex - 1);
   // Replace input with pattern
   int numberOfInsertedLayouts =
       inserted->isRackLayout() ? inserted->numberOfChildren() : 1;
-  NAry::AddOrMergeChildAtIndex(l, inserted, startIndex);
+  NAry::AddOrMergeChildAtIndex(rack, inserted, startIndex);
   // Set cursor to a proper position
   if (cursorIsInRemovedLayouts) {
     // TODO safeSetPosition
@@ -535,15 +535,15 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 
   if (numberOfLayoutsAddedOrRemoved) {
     *numberOfLayoutsAddedOrRemoved =
-        l->numberOfChildren() - currentNumberOfChildren;
+        rack->numberOfChildren() - currentNumberOfChildren;
   }
   return true;
 }
 
 bool InputBeautification::CreateParametersList(
-    TreeRef* parameters, Tree* l, int parenthesisIndexInParent,
+    TreeRef* parameters, Tree* rack, int parenthesisIndexInParent,
     BeautificationRule beautificationRule, LayoutCursor* layoutCursor) {
-  TreeRef parenthesis = l->child(parenthesisIndexInParent);
+  TreeRef parenthesis = rack->child(parenthesisIndexInParent);
   assert(parenthesis->isParenthesesLayout());
   // Left parenthesis should not be temporary
   assert(!AutocompletedPair::IsTemporary(parenthesis, Side::Left));

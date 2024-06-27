@@ -143,7 +143,7 @@ endef
 # depends_on_transparent_image, <list of cpp>, <list of png>
 define depends_on_transparent_image
 $(eval \
-$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
+$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2)): INLINER_ARGS += --transparent
 $(call depends_on_image,$1,$2)
 )
 endef

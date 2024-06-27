@@ -128,5 +128,5 @@ QUIZ_CASE(pcj_k_rack) {
 
 QUIZ_CASE(pcj_k_tree_to_tree_pointer) {
   constexpr const Tree* a = KAdd(2_e, 3_e);
-  assert(a->treeSize() == 5);
+  quiz_assert(a->treeSize() == 5);
 }

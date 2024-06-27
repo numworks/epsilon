@@ -14,8 +14,8 @@ QUIZ_CASE(pcj_set) {
   assert_trees_are_equal(set0, KSet(1_e, 2_e, 3_e));
 
   // Inclusion
-  assert(Set::Includes(set0, 1_e));
-  assert(!Set::Includes(set0, 0_e));
+  quiz_assert(Set::Includes(set0, 1_e));
+  quiz_assert(!Set::Includes(set0, 0_e));
 
   // Pop
   assert_trees_are_equal(Set::Pop(set0), 1_e);

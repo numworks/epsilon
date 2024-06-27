@@ -54,18 +54,18 @@ QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler a = CreateIntegerHandler("254");
   IntegerHandler b = CreateIntegerHandler("-13");
 
-  assert(a.strictSign() == StrictSign::Positive);
-  assert(b.strictSign() == StrictSign::Negative);
-  assert(zero.strictSign() == StrictSign::Null);
-  assert(!a.isZero() && zero.isZero());
-  assert(!a.isOne() && one.isOne());
-  assert(!a.isMinusOne() && minusOne.isMinusOne());
-  assert(!a.isTwo() && two.isTwo());
-  assert(a.isEven() && !b.isEven());
-  assert(!a.isSignedType<int8_t>() && b.isSignedType<int8_t>() &&
-         static_cast<int8_t>(b) == -13);
-  assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
-         static_cast<uint8_t>(a) == 254);
+  quiz_assert(a.strictSign() == StrictSign::Positive);
+  quiz_assert(b.strictSign() == StrictSign::Negative);
+  quiz_assert(zero.strictSign() == StrictSign::Null);
+  quiz_assert(!a.isZero() && zero.isZero());
+  quiz_assert(!a.isOne() && one.isOne());
+  quiz_assert(!a.isMinusOne() && minusOne.isMinusOne());
+  quiz_assert(!a.isTwo() && two.isTwo());
+  quiz_assert(a.isEven() && !b.isEven());
+  quiz_assert(!a.isSignedType<int8_t>() && b.isSignedType<int8_t>() &&
+              static_cast<int8_t>(b) == -13);
+  quiz_assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
+              static_cast<uint8_t>(a) == 254);
 }
 
 static void assert_equal(const char* a, const char* b) {

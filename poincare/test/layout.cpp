@@ -37,16 +37,16 @@ QUIZ_CASE(pcj_expression_to_layout) {
 QUIZ_CASE(pcj_layout_decoder) {
   const Tree* l = "123"_l;
   CPLayoutDecoder d(l->child(0), 0, 3);
-  assert(d.nextCodePoint() == '1');
-  assert(d.nextCodePoint() == '2');
-  assert(d.nextCodePoint() == '3');
-  assert(d.nextCodePoint() == 0);
+  quiz_assert(d.nextCodePoint() == '1');
+  quiz_assert(d.nextCodePoint() == '2');
+  quiz_assert(d.nextCodePoint() == '3');
+  quiz_assert(d.nextCodePoint() == 0);
 }
 
 QUIZ_CASE(pcj_omg_code_point) {
   const LayoutSpan l(Rack::From("123"_l));
-  assert(CodePointSearch(l, '2') == 1);
-  assert(CodePointSearch(l, '4') == l.length);
+  quiz_assert(CodePointSearch(l, '2') == 1);
+  quiz_assert(CodePointSearch(l, '4') == l.length);
 }
 
 #if 0

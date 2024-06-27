@@ -7,7 +7,7 @@ using namespace Poincare::Internal;
 
 void assert_comparison_equals(const Tree* e1, const Tree* e2, int result) {
   int comparison = Order::Compare(e1, e2);
-  assert(comparison == result);
+  quiz_assert(comparison == result);
 }
 
 QUIZ_CASE(pcj_expression_comparison) {
@@ -19,11 +19,11 @@ QUIZ_CASE(pcj_expression_comparison) {
 }
 
 void assert_contain_subtree(const Tree* tree, const Tree* subtree) {
-  assert(Order::ContainsSubtree(tree, subtree));
+  quiz_assert(Order::ContainsSubtree(tree, subtree));
 }
 
 void assert_not_contain_subtree(const Tree* tree, const Tree* subtree) {
-  assert(!Order::ContainsSubtree(tree, subtree));
+  quiz_assert(!Order::ContainsSubtree(tree, subtree));
 }
 
 QUIZ_CASE(pcj_subtree) {

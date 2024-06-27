@@ -30,221 +30,246 @@ extern Sign Add(Sign s1, Sign s2);
 
 QUIZ_CASE(pcj_sign_methods) {
   // OR operator
-  assert((Sign::Zero() || Sign::NonNull()) == Sign::Unknown());
-  assert((Sign::Zero() || Sign::StrictlyPositive()) == Sign::Positive());
-  assert((Sign::Zero() || Sign::StrictlyNegative()) == Sign::Negative());
-  assert((Sign::StrictlyPositive() || Sign::StrictlyNegative()) ==
-         Sign::NonNull());
-  assert((Sign::Positive() || Sign::StrictlyNegative()) == Sign::Unknown());
-  assert((Sign::StrictlyPositive() || Sign::Negative()) == Sign::Unknown());
-  assert((Sign::Positive() || Sign::Negative()) == Sign::Unknown());
+  quiz_assert((Sign::Zero() || Sign::NonNull()) == Sign::Unknown());
+  quiz_assert((Sign::Zero() || Sign::StrictlyPositive()) == Sign::Positive());
+  quiz_assert((Sign::Zero() || Sign::StrictlyNegative()) == Sign::Negative());
+  quiz_assert((Sign::StrictlyPositive() || Sign::StrictlyNegative()) ==
+              Sign::NonNull());
+  quiz_assert((Sign::Positive() || Sign::StrictlyNegative()) ==
+              Sign::Unknown());
+  quiz_assert((Sign::StrictlyPositive() || Sign::Negative()) ==
+              Sign::Unknown());
+  quiz_assert((Sign::Positive() || Sign::Negative()) == Sign::Unknown());
 
   // RelaxIntegerProperty
-  assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
-  assert(RelaxIntegerProperty(Sign::NonNull()) == Sign::NonNull());
-  assert(RelaxIntegerProperty(Sign::StrictlyPositive()) ==
-         Sign::StrictlyPositive());
-  assert(RelaxIntegerProperty(Sign::Positive()) == Sign::Positive());
-  assert(RelaxIntegerProperty(Sign::StrictlyNegative()) ==
-         Sign::StrictlyNegative());
-  assert(RelaxIntegerProperty(Sign::Negative()) == Sign::Negative());
-  assert(RelaxIntegerProperty(Sign::Unknown()) == Sign::Unknown());
-  assert(RelaxIntegerProperty(Sign::StrictlyPositiveInteger()) ==
-         Sign::StrictlyPositive());
-  assert(RelaxIntegerProperty(Sign::PositiveInteger()) == Sign::Positive());
-  assert(RelaxIntegerProperty(Sign::StrictlyNegativeInteger()) ==
-         Sign::StrictlyNegative());
-  assert(RelaxIntegerProperty(Sign::NegativeInteger()) == Sign::Negative());
-  assert(RelaxIntegerProperty(Sign::NonNullInteger()) == Sign::NonNull());
-  assert(RelaxIntegerProperty(Sign::Integer()) == Sign::Unknown());
+  quiz_assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
+  quiz_assert(RelaxIntegerProperty(Sign::NonNull()) == Sign::NonNull());
+  quiz_assert(RelaxIntegerProperty(Sign::StrictlyPositive()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(RelaxIntegerProperty(Sign::Positive()) == Sign::Positive());
+  quiz_assert(RelaxIntegerProperty(Sign::StrictlyNegative()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(RelaxIntegerProperty(Sign::Negative()) == Sign::Negative());
+  quiz_assert(RelaxIntegerProperty(Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(RelaxIntegerProperty(Sign::StrictlyPositiveInteger()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(RelaxIntegerProperty(Sign::PositiveInteger()) ==
+              Sign::Positive());
+  quiz_assert(RelaxIntegerProperty(Sign::StrictlyNegativeInteger()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(RelaxIntegerProperty(Sign::NegativeInteger()) ==
+              Sign::Negative());
+  quiz_assert(RelaxIntegerProperty(Sign::NonNullInteger()) == Sign::NonNull());
+  quiz_assert(RelaxIntegerProperty(Sign::Integer()) == Sign::Unknown());
 
   // Ceil
-  assert(DecimalFunction(Sign::Zero(), Type::Ceil) == Sign::Zero());
-  assert(DecimalFunction(Sign::NonNull(), Type::Ceil) == Sign::Integer());
-  assert(DecimalFunction(Sign::StrictlyPositive(), Type::Ceil) ==
-         Sign::StrictlyPositiveInteger());
-  assert(DecimalFunction(Sign::Positive(), Type::Ceil) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::StrictlyNegative(), Type::Ceil) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::Negative(), Type::Ceil) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::Unknown(), Type::Ceil) == Sign::Integer());
-  assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Ceil) ==
-         Sign::StrictlyPositiveInteger());
-  assert(DecimalFunction(Sign::PositiveInteger(), Type::Ceil) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Ceil) ==
-         Sign::StrictlyNegativeInteger());
-  assert(DecimalFunction(Sign::NegativeInteger(), Type::Ceil) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::NonNullInteger(), Type::Ceil) ==
-         Sign::NonNullInteger());
-  assert(DecimalFunction(Sign::Integer(), Type::Ceil) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::Zero(), Type::Ceil) == Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Ceil) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Ceil) ==
+              Sign::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Sign::Positive(), Type::Ceil) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Ceil) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::Negative(), Type::Ceil) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Ceil) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Ceil) ==
+              Sign::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Ceil) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Ceil) ==
+              Sign::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Ceil) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Ceil) ==
+              Sign::NonNullInteger());
+  quiz_assert(DecimalFunction(Sign::Integer(), Type::Ceil) == Sign::Integer());
 
   // Floor
-  assert(DecimalFunction(Sign::Zero(), Type::Floor) == Sign::Zero());
-  assert(DecimalFunction(Sign::NonNull(), Type::Floor) == Sign::Integer());
-  assert(DecimalFunction(Sign::StrictlyPositive(), Type::Floor) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::Positive(), Type::Floor) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::StrictlyNegative(), Type::Floor) ==
-         Sign::StrictlyNegativeInteger());
-  assert(DecimalFunction(Sign::Negative(), Type::Floor) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::Unknown(), Type::Floor) == Sign::Integer());
-  assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Floor) ==
-         Sign::StrictlyPositiveInteger());
-  assert(DecimalFunction(Sign::PositiveInteger(), Type::Floor) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Floor) ==
-         Sign::StrictlyNegativeInteger());
-  assert(DecimalFunction(Sign::NegativeInteger(), Type::Floor) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::NonNullInteger(), Type::Floor) ==
-         Sign::NonNullInteger());
-  assert(DecimalFunction(Sign::Integer(), Type::Floor) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::Zero(), Type::Floor) == Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Floor) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Floor) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::Positive(), Type::Floor) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Floor) ==
+              Sign::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Sign::Negative(), Type::Floor) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Floor) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Floor) ==
+              Sign::StrictlyPositiveInteger());
+  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Floor) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Floor) ==
+              Sign::StrictlyNegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Floor) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Floor) ==
+              Sign::NonNullInteger());
+  quiz_assert(DecimalFunction(Sign::Integer(), Type::Floor) == Sign::Integer());
 
   // Frac
-  assert(DecimalFunction(Sign::Zero(), Type::Frac) == Sign::Zero());
-  assert(DecimalFunction(Sign::NonNull(), Type::Frac) == Sign::Positive());
-  assert(DecimalFunction(Sign::StrictlyPositive(), Type::Frac) ==
-         Sign::Positive());
-  assert(DecimalFunction(Sign::Positive(), Type::Frac) == Sign::Positive());
-  assert(DecimalFunction(Sign::StrictlyNegative(), Type::Frac) ==
-         Sign::Positive());
-  assert(DecimalFunction(Sign::Negative(), Type::Frac) == Sign::Positive());
-  assert(DecimalFunction(Sign::Unknown(), Type::Frac) == Sign::Positive());
-  assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Frac) ==
-         Sign::Zero());
-  assert(DecimalFunction(Sign::PositiveInteger(), Type::Frac) == Sign::Zero());
-  assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Frac) ==
-         Sign::Zero());
-  assert(DecimalFunction(Sign::NegativeInteger(), Type::Frac) == Sign::Zero());
-  assert(DecimalFunction(Sign::NonNullInteger(), Type::Frac) == Sign::Zero());
-  assert(DecimalFunction(Sign::Integer(), Type::Frac) == Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::Zero(), Type::Frac) == Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Frac) == Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Frac) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::Positive(), Type::Frac) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Frac) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::Negative(), Type::Frac) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Frac) == Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Frac) ==
+              Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Frac) ==
+              Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Frac) ==
+              Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Frac) ==
+              Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Frac) ==
+              Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::Integer(), Type::Frac) == Sign::Zero());
 
   // Round
-  assert(DecimalFunction(Sign::Zero(), Type::Round) == Sign::Zero());
-  assert(DecimalFunction(Sign::NonNull(), Type::Round) == Sign::Unknown());
-  assert(DecimalFunction(Sign::StrictlyPositive(), Type::Round) ==
-         Sign::Positive());
-  assert(DecimalFunction(Sign::Positive(), Type::Round) == Sign::Positive());
-  assert(DecimalFunction(Sign::StrictlyNegative(), Type::Round) ==
-         Sign::Negative());
-  assert(DecimalFunction(Sign::Negative(), Type::Round) == Sign::Negative());
-  assert(DecimalFunction(Sign::Unknown(), Type::Round) == Sign::Unknown());
-  assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Round) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::PositiveInteger(), Type::Round) ==
-         Sign::PositiveInteger());
-  assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Round) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::NegativeInteger(), Type::Round) ==
-         Sign::NegativeInteger());
-  assert(DecimalFunction(Sign::NonNullInteger(), Type::Round) ==
-         Sign::Integer());
-  assert(DecimalFunction(Sign::Integer(), Type::Round) == Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::Zero(), Type::Round) == Sign::Zero());
+  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Round) == Sign::Unknown());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Round) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::Positive(), Type::Round) ==
+              Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Round) ==
+              Sign::Negative());
+  quiz_assert(DecimalFunction(Sign::Negative(), Type::Round) ==
+              Sign::Negative());
+  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Round) == Sign::Unknown());
+  quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Round) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Round) ==
+              Sign::PositiveInteger());
+  quiz_assert(DecimalFunction(Sign::StrictlyNegativeInteger(), Type::Round) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NegativeInteger(), Type::Round) ==
+              Sign::NegativeInteger());
+  quiz_assert(DecimalFunction(Sign::NonNullInteger(), Type::Round) ==
+              Sign::Integer());
+  quiz_assert(DecimalFunction(Sign::Integer(), Type::Round) == Sign::Integer());
 
   // Opposite
-  assert(Opposite(Sign::Zero()) == Sign::Zero());
-  assert(Opposite(Sign::NonNull()) == Sign::NonNull());
-  assert(Opposite(Sign::StrictlyPositive()) == Sign::StrictlyNegative());
-  assert(Opposite(Sign::Positive()) == Sign::Negative());
-  assert(Opposite(Sign::StrictlyNegative()) == Sign::StrictlyPositive());
-  assert(Opposite(Sign::Negative()) == Sign::Positive());
-  assert(Opposite(Sign::Unknown()) == Sign::Unknown());
-  assert(Opposite(Sign::StrictlyPositiveInteger()) ==
-         Sign::StrictlyNegativeInteger());
-  assert(Opposite(Sign::PositiveInteger()) == Sign::NegativeInteger());
-  assert(Opposite(Sign::StrictlyNegativeInteger()) ==
-         Sign::StrictlyPositiveInteger());
-  assert(Opposite(Sign::NegativeInteger()) == Sign::PositiveInteger());
-  assert(Opposite(Sign::NonNullInteger()) == Sign::NonNullInteger());
-  assert(Opposite(Sign::Integer()) == Sign::Integer());
+  quiz_assert(Opposite(Sign::Zero()) == Sign::Zero());
+  quiz_assert(Opposite(Sign::NonNull()) == Sign::NonNull());
+  quiz_assert(Opposite(Sign::StrictlyPositive()) == Sign::StrictlyNegative());
+  quiz_assert(Opposite(Sign::Positive()) == Sign::Negative());
+  quiz_assert(Opposite(Sign::StrictlyNegative()) == Sign::StrictlyPositive());
+  quiz_assert(Opposite(Sign::Negative()) == Sign::Positive());
+  quiz_assert(Opposite(Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Opposite(Sign::StrictlyPositiveInteger()) ==
+              Sign::StrictlyNegativeInteger());
+  quiz_assert(Opposite(Sign::PositiveInteger()) == Sign::NegativeInteger());
+  quiz_assert(Opposite(Sign::StrictlyNegativeInteger()) ==
+              Sign::StrictlyPositiveInteger());
+  quiz_assert(Opposite(Sign::NegativeInteger()) == Sign::PositiveInteger());
+  quiz_assert(Opposite(Sign::NonNullInteger()) == Sign::NonNullInteger());
+  quiz_assert(Opposite(Sign::Integer()) == Sign::Integer());
 
   // Mult(..., Zero)
-  assert(Mult(Sign::Zero(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::NonNull(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::StrictlyPositive(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::Positive(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::StrictlyNegative(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::Negative(), Sign::Zero()) == Sign::Zero());
-  assert(Mult(Sign::Unknown(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::Zero(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::NonNull(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::StrictlyPositive(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::Positive(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::StrictlyNegative(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::Negative(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Mult(Sign::Unknown(), Sign::Zero()) == Sign::Zero());
   // Mult(..., NonNull)
-  assert(Mult(Sign::NonNull(), Sign::NonNull()) == Sign::NonNull());
-  assert(Mult(Sign::StrictlyPositive(), Sign::NonNull()) == Sign::NonNull());
-  assert(Mult(Sign::Positive(), Sign::NonNull()) == Sign::Unknown());
-  assert(Mult(Sign::StrictlyNegative(), Sign::NonNull()) == Sign::NonNull());
-  assert(Mult(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
-  assert(Mult(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::NonNull(), Sign::NonNull()) == Sign::NonNull());
+  quiz_assert(Mult(Sign::StrictlyPositive(), Sign::NonNull()) ==
+              Sign::NonNull());
+  quiz_assert(Mult(Sign::Positive(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::StrictlyNegative(), Sign::NonNull()) ==
+              Sign::NonNull());
+  quiz_assert(Mult(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
   // Mult(..., Positive)
-  assert(Mult(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
-         Sign::StrictlyPositive());
-  assert(Mult(Sign::Positive(), Sign::StrictlyPositive()) == Sign::Positive());
-  assert(Mult(Sign::StrictlyNegative(), Sign::StrictlyPositive()) ==
-         Sign::StrictlyNegative());
-  assert(Mult(Sign::Negative(), Sign::StrictlyPositive()) == Sign::Negative());
-  assert(Mult(Sign::Unknown(), Sign::StrictlyPositive()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(Mult(Sign::Positive(), Sign::StrictlyPositive()) ==
+              Sign::Positive());
+  quiz_assert(Mult(Sign::StrictlyNegative(), Sign::StrictlyPositive()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(Mult(Sign::Negative(), Sign::StrictlyPositive()) ==
+              Sign::Negative());
+  quiz_assert(Mult(Sign::Unknown(), Sign::StrictlyPositive()) ==
+              Sign::Unknown());
   // Mult(..., PositiveOrNull)
-  assert(Mult(Sign::Positive(), Sign::Positive()) == Sign::Positive());
-  assert(Mult(Sign::StrictlyNegative(), Sign::Positive()) == Sign::Negative());
-  assert(Mult(Sign::Negative(), Sign::Positive()) == Sign::Negative());
-  assert(Mult(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::Positive(), Sign::Positive()) == Sign::Positive());
+  quiz_assert(Mult(Sign::StrictlyNegative(), Sign::Positive()) ==
+              Sign::Negative());
+  quiz_assert(Mult(Sign::Negative(), Sign::Positive()) == Sign::Negative());
+  quiz_assert(Mult(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
   // Mult(..., Negative)
-  assert(Mult(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
-         Sign::StrictlyPositive());
-  assert(Mult(Sign::Negative(), Sign::StrictlyNegative()) == Sign::Positive());
-  assert(Mult(Sign::Unknown(), Sign::StrictlyNegative()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(Mult(Sign::Negative(), Sign::StrictlyNegative()) ==
+              Sign::Positive());
+  quiz_assert(Mult(Sign::Unknown(), Sign::StrictlyNegative()) ==
+              Sign::Unknown());
   // Mult(..., NegativeOrNull)
-  assert(Mult(Sign::Negative(), Sign::Negative()) == Sign::Positive());
-  assert(Mult(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::Negative(), Sign::Negative()) == Sign::Positive());
+  quiz_assert(Mult(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
   // Mult(..., Unknown)
-  assert(Mult(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
 
   // Add(..., Zero)
-  assert(Add(Sign::Zero(), Sign::Zero()) == Sign::Zero());
-  assert(Add(Sign::NonNull(), Sign::Zero()) == Sign::NonNull());
-  assert(Add(Sign::StrictlyPositive(), Sign::Zero()) ==
-         Sign::StrictlyPositive());
-  assert(Add(Sign::Positive(), Sign::Zero()) == Sign::Positive());
-  assert(Add(Sign::StrictlyNegative(), Sign::Zero()) ==
-         Sign::StrictlyNegative());
-  assert(Add(Sign::Negative(), Sign::Zero()) == Sign::Negative());
-  assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Zero(), Sign::Zero()) == Sign::Zero());
+  quiz_assert(Add(Sign::NonNull(), Sign::Zero()) == Sign::NonNull());
+  quiz_assert(Add(Sign::StrictlyPositive(), Sign::Zero()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(Add(Sign::Positive(), Sign::Zero()) == Sign::Positive());
+  quiz_assert(Add(Sign::StrictlyNegative(), Sign::Zero()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(Add(Sign::Negative(), Sign::Zero()) == Sign::Negative());
+  quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
   // Add(..., NonNull)
-  assert(Add(Sign::NonNull(), Sign::NonNull()) == Sign::Unknown());
-  assert(Add(Sign::StrictlyPositive(), Sign::NonNull()) == Sign::Unknown());
-  assert(Add(Sign::Positive(), Sign::NonNull()) == Sign::Unknown());
-  assert(Add(Sign::StrictlyNegative(), Sign::NonNull()) == Sign::Unknown());
-  assert(Add(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
-  assert(Add(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Add(Sign::NonNull(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Add(Sign::StrictlyPositive(), Sign::NonNull()) ==
+              Sign::Unknown());
+  quiz_assert(Add(Sign::Positive(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Add(Sign::StrictlyNegative(), Sign::NonNull()) ==
+              Sign::Unknown());
+  quiz_assert(Add(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
   // Add(..., Positive)
-  assert(Add(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
-         Sign::StrictlyPositive());
-  assert(Add(Sign::Positive(), Sign::StrictlyPositive()) ==
-         Sign::StrictlyPositive());
-  assert(Add(Sign::StrictlyNegative(), Sign::StrictlyPositive()) ==
-         Sign::Unknown());
-  assert(Add(Sign::Negative(), Sign::StrictlyPositive()) == Sign::Unknown());
-  assert(Add(Sign::Unknown(), Sign::StrictlyPositive()) == Sign::Unknown());
+  quiz_assert(Add(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(Add(Sign::Positive(), Sign::StrictlyPositive()) ==
+              Sign::StrictlyPositive());
+  quiz_assert(Add(Sign::StrictlyNegative(), Sign::StrictlyPositive()) ==
+              Sign::Unknown());
+  quiz_assert(Add(Sign::Negative(), Sign::StrictlyPositive()) ==
+              Sign::Unknown());
+  quiz_assert(Add(Sign::Unknown(), Sign::StrictlyPositive()) ==
+              Sign::Unknown());
   // Add(..., PositiveOrNull)
-  assert(Add(Sign::Positive(), Sign::Positive()) == Sign::Positive());
-  assert(Add(Sign::StrictlyNegative(), Sign::Positive()) == Sign::Unknown());
-  assert(Add(Sign::Negative(), Sign::Positive()) == Sign::Unknown());
-  assert(Add(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Positive(), Sign::Positive()) == Sign::Positive());
+  quiz_assert(Add(Sign::StrictlyNegative(), Sign::Positive()) ==
+              Sign::Unknown());
+  quiz_assert(Add(Sign::Negative(), Sign::Positive()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
   // Add(..., Negative)
-  assert(Add(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
-         Sign::StrictlyNegative());
-  assert(Add(Sign::Negative(), Sign::StrictlyNegative()) ==
-         Sign::StrictlyNegative());
-  assert(Add(Sign::Unknown(), Sign::StrictlyNegative()) == Sign::Unknown());
+  quiz_assert(Add(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(Add(Sign::Negative(), Sign::StrictlyNegative()) ==
+              Sign::StrictlyNegative());
+  quiz_assert(Add(Sign::Unknown(), Sign::StrictlyNegative()) ==
+              Sign::Unknown());
   // Add(..., NegativeOrNull)
-  assert(Add(Sign::Negative(), Sign::Negative()) == Sign::Negative());
-  assert(Add(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Negative(), Sign::Negative()) == Sign::Negative());
+  quiz_assert(Add(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
   // Add(..., Unknown)
-  assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
 }
 
 void assert_sign(const char* input, ComplexSign expectedSign,

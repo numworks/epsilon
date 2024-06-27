@@ -45,7 +45,8 @@ struct Matrix {
   static int CanonizeAndRank(Tree* matrix);
   static int RankOfCanonized(const Tree* matrix);
   static Tree* Inverse(const Tree* matrix, bool approximate = false);
-  static Tree* Power(const Tree* matrix, int power, bool approximate = false);
+  static Tree* Power(const Tree* matrix, int exponent,
+                     bool approximate = false);
   static bool SystematicReduceMatrixOperation(Tree* e);
 };
 

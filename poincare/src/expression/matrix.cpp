@@ -391,29 +391,29 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate) {
   return matrixAI;
 }
 
-Tree* Matrix::Power(const Tree* matrix, int power, bool approximate) {
+Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
-  if (power < 0) {
-    Tree* result = Power(matrix, -power);
+  if (exponent < 0) {
+    Tree* result = Power(matrix, -exponent);
     // TODO is it worth to compute inverse first ?
     result->moveTreeOverTree(Inverse(result, approximate));
     return result;
   }
-  if (power == 0) {
+  if (exponent == 0) {
     Tree* result = Integer::Push(NumberOfRows(matrix));
     result->moveTreeOverTree(Identity(result));
     return result;
   }
-  if (power == 1) {
+  if (exponent == 1) {
     return matrix->cloneTree();
   }
-  if (power == 2) {
+  if (exponent == 2) {
     return Multiplication(matrix, matrix);
   }
   // Quick exponentiation
-  Tree* result = Power(matrix, power / 2);
+  Tree* result = Power(matrix, exponent / 2);
   result->moveTreeOverTree(Multiplication(result, result, approximate));
-  if (power % 2 == 1) {
+  if (exponent % 2 == 1) {
     result->moveTreeOverTree(Multiplication(matrix, result, approximate));
   }
   return result;

@@ -7,10 +7,10 @@
 namespace Poincare::Internal {
 
 Tree* LayoutSelection::cloneSelection() const {
-  if (!m_node) {
+  if (!m_layout) {
     return KRackL()->cloneTree();
   }
-  return NAry::CloneSubRange(m_node, leftPosition(), rightPosition());
+  return NAry::CloneSubRange(m_layout, leftPosition(), rightPosition());
 }
 
 }  // namespace Poincare::Internal

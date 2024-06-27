@@ -18,7 +18,9 @@ class LayoutSelection {
    *
    * */
   LayoutSelection(const Tree* l, int startPosition, int endPosition)
-      : m_node(l), m_startPosition(startPosition), m_endPosition(endPosition) {
+      : m_layout(l),
+        m_startPosition(startPosition),
+        m_endPosition(endPosition) {
     assert(!l || (l->isRackLayout() && 0 <= startPosition &&
                   startPosition <= l->numberOfChildren() && 0 <= endPosition &&
                   endPosition <= l->numberOfChildren()));
@@ -28,13 +30,13 @@ class LayoutSelection {
 
 #if 0
   LayoutSelection cloneTree() {
-    return LayoutSelection(m_node->cloneTree(), m_startPosition, m_endPosition);
+    return LayoutSelection(m_layout->cloneTree(), m_startPosition, m_endPosition);
   }
 #endif
 
-  bool isEmpty() const { return !m_node || m_startPosition == m_endPosition; }
+  bool isEmpty() const { return !m_layout || m_startPosition == m_endPosition; }
 
-  const Tree* layout() const { return m_node; }
+  const Tree* layout() const { return m_layout; }
   /* startPosition can be higher than endPosition if the selection is from
    * right to left. */
   int startPosition() const { return m_startPosition; }
@@ -45,15 +47,15 @@ class LayoutSelection {
 #if 0
   bool containsNode(const Tree* n) const {
     const Block* b = n->block();
-    return !isEmpty() && b >= m_node->child(leftPosition())->block() &&
-           b <= m_node->child(rightPosition() - 1)->block();
+    return !isEmpty() && b >= m_layout->child(leftPosition())->block() &&
+           b <= m_layout->child(rightPosition() - 1)->block();
   }
 #endif
 
   Tree* cloneSelection() const;
 
  private:
-  const Tree* m_node;
+  const Tree* m_layout;
   int m_startPosition;
   int m_endPosition;
 };

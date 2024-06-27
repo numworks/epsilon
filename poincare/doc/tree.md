@@ -1,13 +1,14 @@
-> [!IMPORTANT] This file is about the internal representation and usage of Trees.
+> [!IMPORTANT]
+> This file is about the internal representation and usage of Trees.
 >
 > Go to TODO if you want to use them in applications.
 
 ## Summary
 
-- [What is a Tree ?](#what-is-a-tree)
+- [What is a Tree ?](#what-is-a-tree-)
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
 - [How to inspect the structure of a Tree ?](#how-to-inspect-the-structure-of-a-tree-)
-- [How to create a Tree at run time ?](#how-to-create-a-tree-at-run-time-)
+- [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
 - [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
 - [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
@@ -102,13 +103,13 @@ There are three situations to distinguish:
 
 - If you want to test if your Tree's root is a node of a given type, say `Cos`, use the automatically defined `tree->isCos()` method.
 
-- If you want to test if the root belongs to a group of related type, there maybe a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers can be used with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
+- If you want to test if the root belongs to a group of related types, there may be a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers and membership can be tested with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
 
-- If you are more interested by the kind of mathematical object the tree represents, Dimension analysis is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a scalar or a matrix dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
+- If you are more interested by the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
 
 
 ## How to inspect the structure of a Tree ?
-The structure of a `Tree` can be inspected with several log functions (available only in DEBUG) depending on the level of detail your are interested with :
+The structure of a Tree can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with :
 - `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
   [Add][2]
@@ -326,13 +327,13 @@ When you have a formula that does not need to change, you can define it at
 compile time (to be included in the flash) using KTrees.
 
 KTrees are a collective name for a collection of constexpr constructors defined in the headers
-[expressions](/poincare/src/expression/k_tree.h) and
-[layouts](/poincare/src/layout/k_tree.h).
+[expression/k_tree.h](/poincare/src/expression/k_tree.h) and
+[layout/k_tree.h](/poincare/src/layout/k_tree.h).
 
-They start with the letter K and can be nested to create the Tree you would expect:
+They have the name of the node prefixed by K and can be nested to create the Tree you would expect:
 
 ```cpp
-constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e));
+constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e)); // exp(2*i*π)
 ```
 
 ### Literals
@@ -345,17 +346,27 @@ As you can see, some specials literals with the suffix `_e` exist to write numbe
  - `23.0_fe` is a float
  - `23_de` is a double
 
+### Layouts
+
+KTrees to create layouts work in a similar fashion with:
+ - an L suffix to the constructors, e.g. `KRackL`, `KAbsL`
+ - `"a"_cl` is a shortcut for KCodePointL<'a'>()
+ - `"abc"_l` is a shortcut for KRackL("a"_cl, "b"_cl, "c"a"_cl)
+ - `^` can concatenate layouts and racks into racks
+
+```cpp
+const Tree * quadraticLayout = "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
+```
 
 ### Reusing KTrees
 
 You may construct large KTrees or factorize their construction using a constexpr.
-In the example below, the twoPi will appear twice in the flash:
 
 ```cpp
 constexpr KTree twoPi = KMult(2_e, π_e);
 
 ...
-  KAdd(KCos(twoPi), KSin(twoPi))->clone();
+  KAdd(KCos(twoPi), KSin(twoPi))->cloneTree();
 ```
 
 You can use the name of a Node that expect children without the invocation to refer to its node.
@@ -404,7 +415,7 @@ Tree * myTree = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
 
 The first argument is a pattern, a [constexpr tree](#how-to-create-a-tree-at-compile-time-) that may contain placeholders named `KA`,`KB`… up to `KH`.
 
-The second argument is a PatternMatching::Context that associates any placeholder used in the pattern to a `const Tree*` to be copied each time the pattern is encountered.
+The second argument is a `PatternMatching::Context` that associates any placeholder used in the pattern to a `const Tree*` to be cloned each time the pattern is encountered.
 
 The resulting Tree will be pushed at the end of the TreeStack.
 
@@ -417,7 +428,7 @@ If your pattern is a simplified tree and context values are simplified too, `Cre
 the tree you give it fits the pattern.
 
 For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
-obtain a Context where `ctx[KA]` points to the Addition tree inside your
+obtain a Context where `ctx[KA]` points to the addition tree inside your
 expression.
 
 ```cpp
@@ -451,30 +462,22 @@ not placeholders**, which are assumed to be simplified trees already).
 
 ## How to transform an n-ary Tree using pattern matching ?
 
-TODO
+If you want to match children in an n-ary without knowing its number of children in advance,
+you can use `_s` and `_p` to match several children with a single placeholder:
+ - `_s` stands for `*` in regex, `KA_s` will match 0, 1 or more consecutive sibling trees
+ - `_p` stands for `*` in regex, `KA_p` will match 1 or more consecutive sibling trees
 
-Placeholders are named from `A` to `H`, and are expected to match with different
-trees.
-
-They have a type and are expected to have the same type both on match and on
-create:
+When you used `_s` or `_p` to match several children with a placeholder, you are expected to reuse the
+same suffix to insert these trees inside an n-ary in the create pattern.
 
 ```cpp
-// Apply simplification a*(b+c)*d -> a*b*d + a*(c)*d
+// Apply simplification a*(b+c...)*d... -> a*b*d + a*(c...)*d...
 bool hasChanged = MatchReplaceSimplify(
     myTree, KMult(KA, KAdd(KB, KC_p), KD_s),
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```
 
-There are three types of placeholders:
-- `One`: Matching a single tree, named `KA` for example.
-- `ZeroOrMore`: Matching 0, 1 or more consecutive sibling trees, named `KD_s`
-for example. The `_s` stands for `*` in regex.
-- `OneOrMore`: Matching 1 or more consecutive sibling trees, named `KC_p` for
-example. The `_p` stands for `+` in regex.
-
-
-For example, in the `a*(b+c)*d -> a*b*d + a*(c)*d` example above, we would match:
+More example of matches using the `KMult(KA, KAdd(KB, KC_p), KD_s)` pattern :
 
 |expression|KA|KB|KC_p|KD_s|
 |-|-|-|-|-|

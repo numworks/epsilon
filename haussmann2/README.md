@@ -2,57 +2,118 @@
 
 Shared build system between C++ projects, using makefiles.
 
-## Using this repository
+## Building
+
+Run `make help` (or simply `make`) for a list of the main targets.
+There are two types of targets:
+- exectuable targets: combine one of the named goals with an extension, along with optional flavors, e.g. `make kernel.A.allow3rdparty.elf`
+- miscellaneous targets: do not necessarily resolve to an executable file, e.g. `make format`, `make epsilon.dfu`
+
+Build is controlled by variables that can be supplied on the command line:
+- `DEBUG`: 0 or 1
+- `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORMto become the name of the host environment.
+- `VERBOSE`: set to 1 to print the commands as they are exectuted
+
+## Including Haussmann in a project
 
 In your application, add this repository as a submodule.
 
-In your makefiles, define the following variables:
-- `PATH_haussmann`: the position of the submodule
-- `OUTPUT_ROOT`: the directory where the outputs are tucked away
-- `DEBUG`: typically 0 or 1
-- `PLATFORM`: indicates which toolchain and special rules to use
+In your makefile, define the following variables:
+- `PATH_haussmann`: the path to the submodule in the project
+- `OUTPUT_ROOT`: files will be built in `$(OUTPUT_ROOT)/<'debug'|'release'>/$(PLATFORM)/`
+- `APP_NAME`
+- `APP_VERSION`
+- you might give default values to `DEBUG` and `PLATFORM`
 
 ... then `include $(PATH_haussmann)/Makefile`.
 
-Additionally, a `VERBOSE` variable can be set to 1 to make a verbose build.
+## Creating goals
 
-Repositories that are not applications but shared libraries should not include
-this repository directly in their primary makefiles, only in their tests, as it
-will be provided by the application.
+The function `create_goal` is used to generate rules for making an executable target.
+Its arguments are:
+- the name of the goal, must be letters, numbers, and underscores
+- a list of modules
+- (optional) a directory to append to the output path
+- (optional) a description
 
-## Creating modules
-
-### Overview
-
-Modules are thematically appropriate sections of code. They are characterized by
-the following variables:
-- `VERSION_<name>`: The version of the module.
-- `SOURCES_<name>`: The list of all sources, in varying formats, that form the module.
-- `PRIVATE_SFLAGS_<name>`: A list of compilation flags that are only provided when building that module's objects.
-- `SFLAGS_<name>` and `LDFLAGS_<name>`: Compilation and link flags added to all objects built along with that module.
-
-### Helpers and syntax
-
-A simple module named "example_module" in version 3 can be defined with the following syntax:
 ```
-$(eval $(call create_module,example_module,3,\
-  first_source.c\
-  directory/second_source.cpp\
-  tasteful_source.cpp:+good_taste:-bad_taste\
-))
+$(call create_goal,demo, \
+  database \
+  gui \
+  render \
+  ,, \
+  A simple demo of the app
+)
+```
+This will create a goal called demo, with 3 modules, no subdirectory, and a description. If `.bin` is an extension on the current platform, `make demo.bin` is an acceptable target.
+
+When building a goal, the list of modules indicate which source files and which compilation flags will be used (see modules below for more explanations). Source files can be further configured using flavors :
+- Invoking `make demo.test.bin` will forward the `test` flavor to all modules.
+- In the module list, writing `gui.light` will forward the `light` flavor to the `gui` module every build.
+
+> [!CAUTION]
+> Because of some limitations, the subdirectory argument must be declared by adding its name to the variable `ALL_SPECIAL_SUBDIRECTORIES` prior to including Haussmann.
+
+## Using modules
+
+A module is a collection of files and flags, grouped into several variables:
+- `PATH_<module>`
+- `VERSION_<module>`
+- `SOURCES_<module>`: the list of source files for this module, with optional flags. The paths may be relative to the root of the project, or the output directory.
+- `SFLAGS_<module>`: those flags are used when building all objects of goals involving this module.
+- `PRIVATE_SFLAGS_<module>`: on the other hand, those flags are only used when building the objects of this module.
+- `LDFLAGS_<module>`: flags used for linking executables using this module.
+- `LDDEPS_<module>`: linked executables using this module will depend on those non-sources files (e.g. linker scripts).
+- `PRIORITY_TARGETS_<module>`: those files will be created before the others in the goal using this module.
+
+Modules are typically created in their own subdirectory, using a file named `module.mak`. The function `import_module` takes the path of the module and include the `module.mak` file if found.
+
+```
+$(call import_module,database,src/database)
 ```
 
-This will take care of initializing `SOURCES_example_module` with the given files,
-and `SFLAGS_example_module` with the `-I` flag for this module's `include` directory.
+The function `create_module` is used to define the basics of a new module: its version, some sources, and the flag `-I$(PATH_<module>/include`.
+Its arguments are:
+- the name of the module
+- the version, an integer
+- a list of sources, with optional tastes. The paths are relative to the module's path.
 
-_Tastes_ modify the sources that are built depending on the _flavors_ passed to
-the module at compilation.
-e.g.:
-- `a.cpp:+f1:-f2` means a.cpp is only compiled if the flavor `f1` is provided and `f2` is not provided.
-- `b.cpp:+f1:+f2` is compiled if both `f1` and `f2` are provided.
-- `c.cpp:-f1:-f2` is compiled if neither `f1` and `f2` are provided.
+```
+$(call create_module,database,3, \
+  query.cpp \
+  transaction.cpp \
+  postgresql.cpp:-lite \
+  sqlite:+lite \
+)
+```
 
-### Locking modules
+The other variables of the module need to be edited by hand.
+
+> [!TIP]
+> A module does not always require a `module.mak` file, but make sure `import_module` is called before `create_module`, as the prior will define `PATH_<module>` used by the latter.
+
+## Flavors and tastes
+
+Tastes modify the sources that are built depending on the flavors passed to
+the module at compilation, e.g.:
+- `a.cpp:+f1` means a.cpp is only compiled if the flavor `f1` is provided (e.g. `make goal.f1.exe` or `$(call create_goal,goal,module.f1)`
+- `b.cpp:-f1` is only compiled if the flavor `f1` is not provided.
+
+If several tastes qualify the same file, they combine as an AND i.e. the file is only compiled if all its flavors are satified, e.g.:
+- `c.cpp:+f1:+f2:-f3` is compiled only if both `f1` and `f2` are provided and `f3` is not.
+
+To combine tastes as an OR, you can specify the file several times:
+```
+$(call create_module,module,1, \
+  d.cpp:+f1 \
+  d.cpp:+f2 \
+)
+```
+`d.cpp` will be compiled if either `f1` or `f2` is provided.
+
+## Modules inter-dependencies
+
+### Locking dependencies
 
 A module might depend on some other modules. To prevent conflicts, the version
 of the dependencies can be listed in a lock file; if someone attempts to build
@@ -63,42 +124,8 @@ e.g. Say a module `main_mod` depends on `depA` and `depB`.
 - Calling `make main_mod.lock` will create the file `lock.mak`, listing the dependencies and their current versions.
 - In another project, when building a goal requiring `main_mod`, the build system will look for `lock.mak` at the root of `main_mod`and compare the listed versions with the ones provided.
 
-Lock files should only be re-generated once the module has been tested against
-the new versions of its dependencies.
-
-## Using modules
-
-### Including modules
-
-Applications select which modules they want to use with the following syntax:
-```
-$(eval $(call import_module,module_name,module/path))
-```
-
-If a file `module/path/Makefile` is found, it will be included. This Makefile
-should typically contain the call to `create_module`.
-
-### Creating goals
-
-Applications can create a _goal_ with the following syntax:
-```
-$(eval $(call create_goal,goal_name,\
-  first_module\
-  second_module.flavor1.flavor2\
-))
-```
-
-This will generate rules for building a binary file (e.g. for embedded
-platforms `goal_name.elf`) composed of objects for the specified modules, along
-with any platform-specific rules.
-
-Goals can be invoked with additional _flavors_ (e.g. `goal_name.alternate.elf`).
-Those are passed to modules, along with any flavor imposed when creating the
-goal, to be compared against the sources' tastes.
-
-e.g. When building `goal_name.alternate.elf`, `first_module` will be compiled
-with the `alternate` flavor, and `second_module` with the `alternate`, `flavor1`
-and `flavor2` flavors.
+> [!CAUTION]
+> Lock files should only be re-generated once the module has been tested against the new versions of its dependencies.
 
 ### Solving modules versions conflicts
 
@@ -110,36 +137,45 @@ The project can either:
 - downgrade to `modA` version 1, if possible.
 - if `modA` version 2 is required, the `modB` maintainers will need to release a new version that uses the new `modA` version.
 
-Compilation will fail as soon as a conflict is encountered. To list all
-conflicts as once for a specific goal, use `make <goal>.versions`.
-This will display a list of all modules required by <goal> (with the version
-provided), their respective dependencies (as specified in their `lock.mak`, with
-the version required), and will highlight any discrepancy.
+> [!TIP]
+> Compilation will fail as soon as a conflict is encountered.
+> To list all conflicts as once for a specific goal, use `make goal.modules`.
+> This will display a list of all modules required by `goal` (with the version provided), their respective dependencies (as specified in their `lock.mak`, with the version required), and will highlight any discrepancy.
+
+## Documentation
+
+Goals are automatically added to `make help` along with their description.
+
+The functions `document_extension` and `document_other_target` add new entries to their respective sections.
+```
+$(call document_extension,exe,A windows executable)
+$(call document_other_target,format,Format modified .cpp and .py files)
+```
 
 ## Examples
 
 A reusable library:
 ```
 SomeLib
-├── sources
+├── src
 │   ├── core.c
 │   ├── dangerous.c
 │   └── safe.c
 ├── test
 │   ├── haussmann
-│   ├── SomeOtherLib
-│   └── Makefile
-│       └── Define PATH_haussmann, DEBUG, PLATFORM, OUTPUT_ROOT
-│           include haussmann/Makefile
-│           $(eval $(call import_module,some_lib,..))
-│           $(eval $(call import_module,some_other_lib,SomeOtherLib))
-│           $(eval $(call create_goal,test_runner,some_lib some_other_lib))
-└── Makefile
-    └── $(eval $(call create_module,some_lib,2,\
-          core.c\
-          dangerous.c:+unsafe\
-          safe.c:-unsafe\
-        ))
+│   └── SomeOtherLib
+├── Makefile
+│   └── Define PATH_haussmann, DEBUG, PLATFORM, OUTPUT_ROOT...
+│       include haussmann/Makefile
+│       $(call import_module,some_lib,.)
+│       $(call import_module,some_other_lib,SomeOtherLib)
+│       $(call create_goal,test_runner,some_lib some_other_lib)
+└── module.mak
+    └── $(call create_module,some_lib,2, \
+          src/core.c \
+          src/dangerous.c:+unsafe \
+          src/safe.c:-unsafe \
+        )
 ```
 
 An application using the previous library and some other private modules:
@@ -154,10 +190,10 @@ SomeApp
 └── Makefile
     └── Define PATH_haussmann, DEBUG, PLATFORM, OUTPUT_ROOT
         include haussmann/Makefile
-        $(eval $(call import_module,some_lib,sources/external/SomeLib))
-        $(eval $(call import_module,first_module,sources/FirstModule))
-        $(eval $(call import_module,second_module,sources/SecondModule))
-        $(eval $(call create_goal,app,some_lib.unsafe first_module second_module))
+        $(call import_module,some_lib,sources/external/SomeLib)
+        $(call import_module,first_module,sources/FirstModule)
+        $(call import_module,second_module,sources/SecondModule)
+        $(call create_goal,app,some_lib.unsafe first_module second_module)
 ```
 
 ## Commits

@@ -7,8 +7,8 @@
 # (and only this one) no matter what flavors are passed to the goal.
 #
 # Applications use the following function to create a goal:
-#   create_goal, <name>, <modules>, <optional description>
-# This will create a variable MODULE_<name> holding the list of modules, along
+#   create_goal, <name>, <modules>, <optional subdirectory>, <optional description>
+# This will create a variable MODULES_<name> holding the list of modules, along
 # with a short target allowing a user to build the goal without having to type
 # the full path (e.g. goal.a.bin instead of out/put/dir/ect/ory/goal.a.bin).
 # The description will be displayed in the make help message.

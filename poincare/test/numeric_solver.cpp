@@ -23,10 +23,10 @@ void assert_next_solution_is(const char* expression, Context* context,
                              AngleUnit angleUnit) {
   assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
-  ProjectionContext projCtx = {.m_context = context,
-                               .m_strategy = Strategy::ApproximateToFloat,
+  ProjectionContext projCtx = {.m_complexFormat = ComplexFormat::Real,
                                .m_angleUnit = angleUnit,
-                               .m_complexFormat = ComplexFormat::Real};
+                               .m_strategy = Strategy::ApproximateToFloat,
+                               .m_context = context};
 
   Tree* e = parse_expression(expression, context, false);
   Simplification::ToSystem(e, &projCtx);

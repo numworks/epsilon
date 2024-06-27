@@ -290,9 +290,9 @@ QUIZ_CASE(pcj_simplification_matrix) {
 QUIZ_CASE(pcj_simplification_complex) {
   Shared::GlobalContext globalContext;
   ProjectionContext ctx = {
+      .m_complexFormat = ComplexFormat::Cartesian,
       .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
       .m_context = &globalContext,
-      .m_complexFormat = ComplexFormat::Cartesian,
   };
   simplifies_to("2×i×i", "-2", ctx);
   simplifies_to("1+i×(1+i×(1+i))", "0", ctx);

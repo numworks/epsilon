@@ -318,18 +318,18 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
                                             uint8_t numberOfVariables,
                                             Context context) {
   TreeRef result = SharedTreeStack->pushList(0);
-  TreeRef tree = equation->cloneTree();
+  TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
-  AdvancedReduction::DeepExpand(tree);
+  AdvancedReduction::DeepExpand(eq);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        tree, Variables::Variable(i, ComplexSign::Unknown()));
+        eq, Variables::Variable(i, ComplexSign::Unknown()));
     if (!polynomial->isPolynomial()) {
-      // tree did not depend on variable. Continue.
-      tree = polynomial;
+      // eq did not depend on variable. Continue.
+      eq = polynomial;
       NAry::AddChild(result, SharedTreeStack->pushZero());
       continue;
     }
@@ -348,25 +348,25 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
     // Pilfer polynomial result : [P][Variable][Coeff1][?Coeff0]
     polynomial->removeNode();  // Remove Node : [Variable][Coeff1][?Coeff0]
     polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
-    // Update tree to follow [Coeff0] if it exists for next variables.
-    tree = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
+    // Update eq to follow [Coeff0] if it exists for next variables.
+    eq = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
     if (PolynomialParser::ContainsVariable(polynomial) ||
         (i == numberOfVariables - 1 &&
-         PolynomialParser::ContainsVariable(tree))) {
+         PolynomialParser::ContainsVariable(eq))) {
       /* The expression can be linear on all coefficients taken one by one but
        * non-linear (ex: xy = 2). We delete the results and return false if one
        * of the coefficients (or last constant term) contains a variable. */
-      tree->removeTree();
+      eq->removeTree();
       polynomial->removeTree();
       result->removeTree();
       return nullptr;
     }
-    /* This will detach [Coeff1] into result, leaving tree alone and polynomial
+    /* This will detach [Coeff1] into result, leaving eq alone and polynomial
      * properly pilfered. */
     NAry::AddChild(result, polynomial);
   }
   // Constant term is remaining [Coeff0].
-  Tree* constant = tree->detachTree();
+  Tree* constant = eq->detachTree();
   NAry::AddChild(result, constant);
   return result;
 }

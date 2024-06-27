@@ -13,40 +13,40 @@ namespace Poincare::Internal {
 
 // TODO: tests
 
-TreeRef Algebraic::Rationalize(TreeRef expression) {
-  if (Number::IsStrictRational(expression)) {
+TreeRef Algebraic::Rationalize(TreeRef e) {
+  if (Number::IsStrictRational(e)) {
     TreeRef fraction(SharedTreeStack->pushMult(2));
-    Rational::Numerator(expression).pushOnTreeStack();
+    Rational::Numerator(e).pushOnTreeStack();
     SharedTreeStack->pushPow();
-    Rational::Denominator(expression).pushOnTreeStack();
+    Rational::Denominator(e).pushOnTreeStack();
     SharedTreeStack->pushMinusOne();
-    expression->moveTreeOverTree(fraction);
+    e->moveTreeOverTree(fraction);
     return fraction;
   }
-  if (expression->isPow()) {
-    Rationalize(expression->child(0));
-    return expression;  // TODO return basicReduction
+  if (e->isPow()) {
+    Rationalize(e->child(0));
+    return e;  // TODO return basicReduction
   }
-  if (expression->isMult()) {
+  if (e->isMult()) {
     for (std::pair<TreeRef, int> indexedNode :
-         NodeIterator::Children<Editable>(expression)) {
+         NodeIterator::Children<Editable>(e)) {
       Rationalize(std::get<TreeRef>(indexedNode));
     }
-    return expression;  // TODO return basicReduction
+    return e;  // TODO return basicReduction
   }
-  if (expression->isAdd()) {
+  if (e->isAdd()) {
     // Factorize on common denominator a/b + c/d
-    return RationalizeAddition(expression);
+    return RationalizeAddition(e);
   }
-  return expression;
+  return e;
 }
 
-TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
-  assert(expression->isAdd());
+TreeRef Algebraic::RationalizeAddition(TreeRef e) {
+  assert(e->isAdd());
   TreeRef commonDenominator(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<TreeRef, int> indexedNode :
-       NodeIterator::Children<Editable>(expression)) {
+       NodeIterator::Children<Editable>(e)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     child = Rationalize(child);
     TreeRef denominator = Denominator(SharedTreeStack->clone(child));
@@ -55,12 +55,12 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
   // basic reduction commonDenominator
   assert(!commonDenominator->isZero());
   if (commonDenominator->isOne()) {
-    return expression;
+    return e;
   }
   /* Step 2: Turn the expression into the numerator. We start with this being
    * a/b+c/d and we want to create numerator = a/b*b*d + c/d*b*d = a*d + c*b */
   for (std::pair<TreeRef, int> indexedNode :
-       NodeIterator::Children<Editable>(expression)) {
+       NodeIterator::Children<Editable>(e)) {
     TreeRef child = std::get<TreeRef>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
     TreeRef multiplication(SharedTreeStack->pushMult(1));
@@ -69,9 +69,9 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
         SharedTreeStack->clone(commonDenominator));
     // TODO basicReduction of child
   }
-  // Create Mult(expression, Pow)
+  // Create Mult(e, Pow)
   TreeRef fraction(SharedTreeStack->pushMult(2));
-  fraction->moveTreeAfterNode(expression);
+  fraction->moveTreeAfterNode(e);
   // Create Pow(commonDenominator, -1)
   TreeRef power(SharedTreeStack->pushPow());
   power->moveTreeAfterNode(commonDenominator);
@@ -81,36 +81,36 @@ TreeRef Algebraic::RationalizeAddition(TreeRef expression) {
   return fraction;
 }
 
-TreeRef Algebraic::NormalFormator(TreeRef expression, bool numerator) {
-  if (expression->isRational()) {
-    IntegerHandler ator = numerator ? Rational::Numerator(expression)
-                                    : Rational::Denominator(expression);
+TreeRef Algebraic::NormalFormator(TreeRef e, bool numerator) {
+  if (e->isRational()) {
+    IntegerHandler ator =
+        numerator ? Rational::Numerator(e) : Rational::Denominator(e);
     TreeRef result = ator.pushOnTreeStack();
-    expression->moveNodeOverNode(result);
+    e->moveNodeOverNode(result);
     return result;
   }
-  if (expression->isPow()) {
-    TreeRef exponent = expression->child(1);
+  if (e->isPow()) {
+    TreeRef exponent = e->child(1);
     bool negativeRationalExponent =
         exponent->isRational() && Rational::Sign(exponent).isStrictlyNegative();
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }
     if (numerator == negativeRationalExponent) {
-      return expression->cloneTreeOverTree(1_e);
+      return e->cloneTreeOverTree(1_e);
     }
-    SystematicReduction::DeepReduce(expression);
-    return expression;
+    SystematicReduction::DeepReduce(e);
+    return e;
   }
-  if (expression->isMult()) {
+  if (e->isMult()) {
     for (std::pair<TreeRef, int> indexedNode :
-         NodeIterator::Children<Editable>(expression)) {
+         NodeIterator::Children<Editable>(e)) {
       TreeRef child = std::get<TreeRef>(indexedNode);
       child = NormalFormator(child, numerator);
     }
-    // TODO basicReduction of expression
+    // TODO basicReduction of e
   }
-  return expression;
+  return e;
 }
 
 }  // namespace Poincare::Internal

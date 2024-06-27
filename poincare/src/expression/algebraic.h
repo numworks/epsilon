@@ -7,13 +7,13 @@ namespace Poincare::Internal {
 
 class Algebraic final {
  public:
-  static void Expand(TreeRef node);
+  static void Expand(TreeRef e);
   // develop product of sum
   // develop integer power of sum
   // -->be recursive on the results above
   // develop the integer part of power of non-integer?
   // what about subexpressions? cos(x*(x+1))? NO?
-  static TreeRef Rationalize(TreeRef node);
+  static TreeRef Rationalize(TreeRef e);
   static TreeRef SideRelations(Tree* e);
 
   static TreeRef Numerator(TreeRef e) { return NormalFormator(e, true); }

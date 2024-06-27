@@ -139,4 +139,11 @@ template std::complex<float> Approximation::ApproximatePower(
 template std::complex<double> Approximation::ApproximatePower(
     const Tree* child, ComplexFormat complexFormat);
 
+template std::complex<float>
+Approximation::ComputeNotPrincipalRealRootOfRationalPow(
+    const std::complex<float> c, float p, float q);
+template std::complex<double>
+Approximation::ComputeNotPrincipalRealRootOfRationalPow(
+    const std::complex<double> c, double p, double q);
+
 }  // namespace Poincare::Internal

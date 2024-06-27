@@ -4,13 +4,13 @@
 #include "helper.h"
 
 QUIZ_CASE(pcj_beautification) {
-  Tree* e0 = KMult(3_e, KPow("x"_e, -2_e))->cloneTree();
-  Beautification::DeepBeautify(e0);
-  assert_trees_are_equal(e0, KDiv(3_e, KPow("x"_e, 2_e)));
-
-  Tree* e1 = KMult(3_e, KPow("x"_e, 2_e))->cloneTree();
+  Tree* e1 = KMult(3_e, KPow("x"_e, -2_e))->cloneTree();
   Beautification::DeepBeautify(e1);
-  assert_trees_are_equal(e1, KMult(3_e, KPow("x"_e, 2_e)));
+  assert_trees_are_equal(e1, KDiv(3_e, KPow("x"_e, 2_e)));
+
+  Tree* e2 = KMult(3_e, KPow("x"_e, 2_e))->cloneTree();
+  Beautification::DeepBeautify(e2);
+  assert_trees_are_equal(e2, KMult(3_e, KPow("x"_e, 2_e)));
 
   TreeRef ref1(KAdd(KCos(3_e), KSin("x"_e),
                     KMult(-1_e, 2_e, KExp(KMult(KLn(5_e), "y"_e))),

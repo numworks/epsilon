@@ -13,14 +13,14 @@
 
 namespace Poincare::Internal {
 
-int Order::Compare(const Tree* e0, const Tree* e1, OrderType order) {
+int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
   if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {
       float n0Degree =
-          Beautification::DegreeForSortingAddition(e0, sortBySymbolDegree);
-      float n1Degree =
           Beautification::DegreeForSortingAddition(e1, sortBySymbolDegree);
+      float n1Degree =
+          Beautification::DegreeForSortingAddition(e2, sortBySymbolDegree);
       if (!std::isnan(n1Degree) &&
           (std::isnan(n0Degree) || n0Degree > n1Degree)) {
         return -1;
@@ -34,74 +34,74 @@ int Order::Compare(const Tree* e0, const Tree* e1, OrderType order) {
     order = OrderType::Beautification;
   }
   if (order == OrderType::PreserveMatrices) {
-    bool e0IsMatrix = Dimension::Get(e0).isMatrix();
     bool e1IsMatrix = Dimension::Get(e1).isMatrix();
-    if (e0IsMatrix && e1IsMatrix) {
-      if (e0->treeIsIdenticalTo(e1)) {
+    bool e2IsMatrix = Dimension::Get(e2).isMatrix();
+    if (e1IsMatrix && e2IsMatrix) {
+      if (e1->treeIsIdenticalTo(e2)) {
         return 0;
       }
-      return e0 < e1 ? -1 : 1;
+      return e1 < e2 ? -1 : 1;
     }
-    if (e0IsMatrix || e1IsMatrix) {
+    if (e1IsMatrix || e2IsMatrix) {
       // Preserve all matrices to the right
-      return e0IsMatrix ? 1 : -1;
+      return e1IsMatrix ? 1 : -1;
     }
     order = OrderType::System;
   }
-  TypeBlock type0 = e0->type();
   TypeBlock type1 = e1->type();
-  if (type0 > type1) {
+  TypeBlock type2 = e2->type();
+  if (type1 > type2) {
     /* We handle this case first to implement only the upper diagonal of the
      * comparison table. */
-    return -Compare(e1, e0, order);
+    return -Compare(e2, e1, order);
   }
-  if ((type0.isNumber() && type1.isNumber())) {
-    return CompareNumbers(e0, e1);
+  if ((type1.isNumber() && type2.isNumber())) {
+    return CompareNumbers(e1, e2);
   }
-  if (type0 < type1) {
+  if (type1 < type2) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
-    if (type0 == Type::Pow) {
+    if (type1 == Type::Pow) {
       if (order == OrderType::Beautification) {
-        return -Compare(e0, e1, OrderType::System);
+        return -Compare(e1, e2, OrderType::System);
       }
-      int comparePowerChild = Compare(e0->child(0), e1, order);
+      int comparePowerChild = Compare(e1->child(0), e2, order);
       if (comparePowerChild == 0) {
         // 1/x < x < x^2
-        return Compare(e0->child(1), 1_e, order);
+        return Compare(e1->child(1), 1_e, order);
       }
       // w^2 < x < y^2
       return comparePowerChild;
     }
-    if (type0 == Type::ComplexI) {
+    if (type1 == Type::ComplexI) {
       return 1;
     }
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
-    if (type0 == Type::Add || type0 == Type::Mult) {
+    if (type1 == Type::Add || type1 == Type::Mult) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
-      return CompareLastChild(e0, e1);
+      return CompareLastChild(e1, e2);
     }
     return -1;
   }
-  assert(type0 == type1);
-  if (type0.isUserNamed()) {
-    int nameComparison = CompareNames(e0, e1);
+  assert(type1 == type2);
+  if (type1.isUserNamed()) {
+    int nameComparison = CompareNames(e1, e2);
     if (nameComparison != 0) {
       // a(x) < b(y)
       return nameComparison;
     }
     // a(1) < a(2), Scan children
   }
-  if (type0 == Type::Polynomial) {
-    return ComparePolynomial(e0, e1);
+  if (type1 == Type::Polynomial) {
+    return ComparePolynomial(e1, e2);
   }
-  if (type0 == Type::Var) {
-    return Variables::Id(e0) - Variables::Id(e1);
+  if (type1 == Type::Var) {
+    return Variables::Id(e1) - Variables::Id(e2);
   }
   // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
-  return CompareChildren(e0, e1, type0 == Type::Add || type0 == Type::Mult);
+  return CompareChildren(e1, e2, type1 == Type::Add || type1 == Type::Mult);
 }
 
 bool Order::ContainsSubtree(const Tree* tree, const Tree* subtree) {
@@ -116,69 +116,69 @@ bool Order::ContainsSubtree(const Tree* tree, const Tree* subtree) {
   return false;
 }
 
-int Order::CompareNumbers(const Tree* e0, const Tree* e1) {
-  assert(e0->type() <= e1->type());
-  if (e1->isMathematicalConstant()) {
-    return e0->isMathematicalConstant() ? CompareConstants(e0, e1) : -1;
+int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
+  assert(e1->type() <= e2->type());
+  if (e2->isMathematicalConstant()) {
+    return e1->isMathematicalConstant() ? CompareConstants(e1, e2) : -1;
   }
-  assert(!e0->isMathematicalConstant());
-  if (e0->isRational() && e1->isRational()) {
-    // TODO_PCJ: return Rational::NaturalOrder(e0, e1);
+  assert(!e1->isMathematicalConstant());
+  if (e1->isRational() && e2->isRational()) {
+    // TODO_PCJ: return Rational::NaturalOrder(e1, e2);
   }
   float approximation =
-      Approximation::To<float>(e0) - Approximation::To<float>(e1);
+      Approximation::To<float>(e1) - Approximation::To<float>(e2);
   if (approximation == 0.0f || std::isnan(approximation)) {
-    if (e0->treeIsIdenticalTo(e1)) {
+    if (e1->treeIsIdenticalTo(e2)) {
       return 0;
     }
     // Trees are different but float approximation is not precise enough.
     double doubleApproximation =
-        Approximation::To<double>(e0) - Approximation::To<double>(e1);
+        Approximation::To<double>(e1) - Approximation::To<double>(e2);
     if (doubleApproximation == 0) {
       return 0;
     }
     return doubleApproximation > 0.0f ? 1 : -1;
   }
-  assert(!e0->treeIsIdenticalTo(e1));
+  assert(!e1->treeIsIdenticalTo(e2));
   return approximation > 0.0f ? 1 : -1;
 }
 
-int Order::CompareNames(const Tree* e0, const Tree* e1) {
-  int stringComparison = strcmp(Symbol::GetName(e0), Symbol::GetName(e1));
+int Order::CompareNames(const Tree* e1, const Tree* e2) {
+  int stringComparison = strcmp(Symbol::GetName(e1), Symbol::GetName(e2));
   if (stringComparison == 0) {
-    int delta = Symbol::Length(e0) - Symbol::Length(e1);
+    int delta = Symbol::Length(e1) - Symbol::Length(e2);
     return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
   }
   return stringComparison;
 }
 
-int Order::CompareConstants(const Tree* e0, const Tree* e1) {
-  return static_cast<uint8_t>(e1->type()) - static_cast<uint8_t>(e0->type());
+int Order::CompareConstants(const Tree* e1, const Tree* e2) {
+  return static_cast<uint8_t>(e2->type()) - static_cast<uint8_t>(e1->type());
 }
 
-int Order::ComparePolynomial(const Tree* e0, const Tree* e1) {
-  int childrenComparison = CompareChildren(e0, e1);
+int Order::ComparePolynomial(const Tree* e1, const Tree* e2) {
+  int childrenComparison = CompareChildren(e1, e2);
   if (childrenComparison != 0) {
     return childrenComparison;
   }
-  int numberOfTerms = Polynomial::NumberOfTerms(e0);
-  assert(numberOfTerms == Polynomial::NumberOfTerms(e1));
+  int numberOfTerms = Polynomial::NumberOfTerms(e1);
+  assert(numberOfTerms == Polynomial::NumberOfTerms(e2));
   for (int i = 0; i < numberOfTerms; i++) {
-    uint8_t exponent0 = Polynomial::ExponentAtIndex(e0, i);
     uint8_t exponent1 = Polynomial::ExponentAtIndex(e1, i);
-    if (exponent0 != exponent1) {
-      return exponent0 - exponent1;
+    uint8_t exponent2 = Polynomial::ExponentAtIndex(e2, i);
+    if (exponent1 != exponent2) {
+      return exponent1 - exponent2;
     }
   }
   return 0;
 }
 
-int PrivateCompareChildren(const Tree* e0, const Tree* e1) {
+int PrivateCompareChildren(const Tree* e1, const Tree* e2) {
   for (std::pair<std::array<const Tree*, 2>, int> indexedNodes :
-       MultipleNodesIterator::Children<NoEditable, 2>({e0, e1})) {
-    const Tree* child0 = std::get<std::array<const Tree*, 2>>(indexedNodes)[0];
-    const Tree* child1 = std::get<std::array<const Tree*, 2>>(indexedNodes)[1];
-    int order = Order::Compare(child0, child1);
+       MultipleNodesIterator::Children<NoEditable, 2>({e1, e2})) {
+    const Tree* child1 = std::get<std::array<const Tree*, 2>>(indexedNodes)[0];
+    const Tree* child2 = std::get<std::array<const Tree*, 2>>(indexedNodes)[1];
+    int order = Order::Compare(child1, child2);
     if (order != 0) {
       return order;
     }
@@ -188,59 +188,59 @@ int PrivateCompareChildren(const Tree* e0, const Tree* e1) {
 
 // Use a recursive method to compare the trees backward. Both number of
 // nextTree() and comparison is optimal.
-int CompareNextTreePairOrItself(const Tree* e0, const Tree* e1,
+int CompareNextTreePairOrItself(const Tree* e1, const Tree* e2,
                                 int numberOfComparisons) {
   int nextTreeComparison =
       numberOfComparisons > 1
-          ? CompareNextTreePairOrItself(e0->nextTree(), e1->nextTree(),
+          ? CompareNextTreePairOrItself(e1->nextTree(), e2->nextTree(),
                                         numberOfComparisons - 1)
           : 0;
-  return nextTreeComparison != 0 ? nextTreeComparison : Order::Compare(e0, e1);
+  return nextTreeComparison != 0 ? nextTreeComparison : Order::Compare(e1, e2);
 }
 
-int PrivateCompareChildrenBackwards(const Tree* e0, const Tree* e1) {
-  int numberOfChildren0 = e0->numberOfChildren();
+int PrivateCompareChildrenBackwards(const Tree* e1, const Tree* e2) {
   int numberOfChildren1 = e1->numberOfChildren();
-  int numberOfComparisons = std::min(numberOfChildren0, numberOfChildren1);
+  int numberOfChildren2 = e2->numberOfChildren();
+  int numberOfComparisons = std::min(numberOfChildren1, numberOfChildren2);
   if (numberOfComparisons == 0) {
     return 0;
   }
   return CompareNextTreePairOrItself(
-      e0->child(numberOfChildren0 - numberOfComparisons),
-      e1->child(numberOfChildren1 - numberOfComparisons), numberOfComparisons);
+      e1->child(numberOfChildren1 - numberOfComparisons),
+      e2->child(numberOfChildren2 - numberOfComparisons), numberOfComparisons);
 }
 
-int Order::CompareChildren(const Tree* e0, const Tree* e1, bool backward) {
+int Order::CompareChildren(const Tree* e1, const Tree* e2, bool backward) {
   int comparison = (backward ? PrivateCompareChildrenBackwards
-                             : PrivateCompareChildren)(e0, e1);
+                             : PrivateCompareChildren)(e1, e2);
   if (comparison != 0) {
     return comparison;
   }
-  int numberOfChildren0 = e0->numberOfChildren();
   int numberOfChildren1 = e1->numberOfChildren();
+  int numberOfChildren2 = e2->numberOfChildren();
   // The NULL node is the least node type.
-  if (numberOfChildren0 < numberOfChildren1) {
+  if (numberOfChildren1 < numberOfChildren2) {
     return 1;
   }
-  if (numberOfChildren1 < numberOfChildren0) {
+  if (numberOfChildren2 < numberOfChildren1) {
     return -1;
   }
   return 0;
 }
 
-int Order::CompareLastChild(const Tree* e0, const Tree* e1) {
-  int comparisonWithChild = Compare(e0->lastChild(), e1);
+int Order::CompareLastChild(const Tree* e1, const Tree* e2) {
+  int comparisonWithChild = Compare(e1->lastChild(), e2);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
   }
   return 1;
 }
 
-bool Order::AreEqual(const Tree* e0, const Tree* e1) {
+bool Order::AreEqual(const Tree* e1, const Tree* e2) {
   // treeIsIdenticalTo is faster since it uses memcmp
-  bool areEqual = e0->treeIsIdenticalTo(e1);
+  bool areEqual = e1->treeIsIdenticalTo(e2);
   // Trees could be different but compare the same due to float imprecision.
-  assert(!areEqual || Compare(e0, e1) == 0);
+  assert(!areEqual || Compare(e1, e2) == 0);
   return areEqual;
 }
 

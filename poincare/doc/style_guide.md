@@ -81,6 +81,35 @@ bool Simplify(Tree* t) {
 }
 ```
 
+## Use OMG::unreachable() to mark unreachable paths
+
+It similar to `assert(false)` but will not need dummy returns to avoid warnings.
+
+If the case list is exhaustive, put it after the switch:
+```cpp
+bool SomeFunction(Tree* e) {
+  switch (e->type()) {
+    case Type::Add:
+      return true;
+    ...
+  }
+  OMG::unreachable();
+}
+```
+
+If the case list is not exhaustive but non listed cases should not appear:
+```cpp
+bool SomeFunction(Tree* e) {
+  switch (e->type()) {
+    case Type::Add:
+      return true;
+    ...
+    default:
+      OMG::unreachable();
+  }
+}
+```
+
 ## Tree creation on TreeStack
 
 To preserve valid tree pointers whenever something is put on the `TreeStack`, trees must be pushed at the end.

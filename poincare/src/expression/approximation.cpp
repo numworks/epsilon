@@ -846,7 +846,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
   }
   switch (e->type()) {
     case Type::Decimal:
-      return child[0] * std::pow(std::complex<T>(10.0),
+      return child[0] * std::pow(static_cast<T>(10.0),
                                  -static_cast<T>(Decimal::DecimalOffset(e)));
     case Type::PowReal: {
       T a = child[0];

@@ -1,14 +1,14 @@
 > [!IMPORTANT]
 > This file is about the internal representation and usage of Trees.
 >
-> Go to TODO if you want to use them in applications.
+> Refer to the [External API](./external.md) if you want to use them in applications.
 
 ## Summary
 
 - [What is a Tree ?](#what-is-a-tree-)
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
 - [How to walk through a Tree ?](#how-to-walk-through-a-tree-)
-- [How to inspect the structure of a Tree ?](#how-to-inspect-the-structure-of-a-tree-)
+- [How to display a Tree ?](#how-to-display-a-tree-)
 - [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
 - [How to reorganize Trees in the TreeStack ?](#how-to-reorganize-trees-in-the-treestack-)
 - [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
@@ -95,11 +95,11 @@ depending of where your tree is or what are its siblings.
 
 There are three situations to distinguish:
 
-- If you want to test if your Tree's root is a node of a given type, say `Cos`, use the automatically defined `tree->isCos()` method.
+- If you want to test if your node is of a given type, say `Cos`, use the automatically defined `tree->isCos()` method. This is equivalent to `tree->type() == Type::Cos`.
 
 - If you want to test if the root belongs to a group of related types, there may be a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers and membership can be tested with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
 
-- If you are more interested by the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
+- If you are more interested in the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
 
 
 ## How to walk through a Tree ?
@@ -119,7 +119,7 @@ for (const Tree * subTree : tree->selfAndDescendants()) {
 ```
 
 
-## How to inspect the structure of a Tree ?
+## How to display a Tree ?
 The structure of a Tree can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with :
 - `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
@@ -341,7 +341,7 @@ Also remember that there is a limit to the number of TreeRef used at the same ti
 ## How to create a Tree at compile time ?
 
 When you have a formula that does not need to change, you can define it at
-compile time (to be included in the flash) using KTrees.
+compile time (to be included in the flash) using a KTree.
 
 KTrees are a collective name for a collection of constexpr constructors defined in the headers
 [expression/k_tree.h](/poincare/src/expression/k_tree.h) and
@@ -355,7 +355,7 @@ constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e)); // e
 
 ### Literals
 
-As you can see, some specials literals with the suffix `_e` exist to write numbers in a readable way:
+Some specials literals with the suffix `_e` exist to write numbers in a readable way:
  - `23_e` is the integer 23
  - `-4_e/5_e` is the rational -4/5 (a single Tree with no children, unlike
    Opposite(Division(4,5)))
@@ -386,11 +386,21 @@ constexpr KTree twoPi = KMult(2_e, π_e);
   KAdd(KCos(twoPi), KSin(twoPi))->cloneTree();
 ```
 
-You can use the name of a Node that expect children without the invocation to refer to its node.
-However if the node is n-ary you need to provide the number of arguments with node:
+### Using KTrees just for a node
+
+You can use a KTree constructor without the parentheses and children if you need only the node.
 
 ```cpp
 KCos->cloneNode(); // equivalent to SharedTreeStack->pushCos()
+```
+
+> [!WARNING]
+> Only use methods like `cloneNode()` that expect node on standalone nodes. `cloneTree` would crash.
+
+
+If the node is n-ary you need to provide the number of arguments with `.node<nbChildren>`:
+
+```cpp
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 

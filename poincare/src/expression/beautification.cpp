@@ -234,7 +234,8 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e,
           KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.
-       * TODO: Call Reduce in DeepBeautify only if we went here. */
+       * TODO: Call AdvancedReduction::Reduce in DeepBeautify only if we went
+       * here. */
     }
     PatternMatching::MatchReplace(e, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchReplace(e, KTrig(KA, 1_e), KSin(KA));

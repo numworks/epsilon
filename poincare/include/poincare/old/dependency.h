@@ -29,28 +29,12 @@ class DependencyNode : public ExpressionNode {
     return mainExpression()->leftLayoutShape();
   }
 
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue) override;
 
  private:
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
-
   ExpressionNode* mainExpression() const;
   ExpressionNode* dependenciesList() const;
 };

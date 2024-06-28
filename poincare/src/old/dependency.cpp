@@ -44,26 +44,6 @@ size_t DependencyNode::serialize(char *buffer, size_t bufferSize,
       Dependency::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> DependencyNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  ExpressionNode *dependencies =
-      childAtIndex(Dependency::k_indexOfDependenciesList);
-  if (dependencies->isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-  assert(dependencies->otype() == ExpressionNode::Type::OList);
-  int childrenNumber = dependencies->numberOfChildren();
-  for (int i = 0; i < childrenNumber; i++) {
-    if (dependencies->childAtIndex(i)
-            ->approximate(static_cast<T>(1), approximationContext)
-            .isUndefined()) {
-      return Complex<T>::Undefined();
-    }
-  }
-  return mainExpression()->approximate(static_cast<T>(1), approximationContext);
-}
-
 ExpressionNode *DependencyNode::mainExpression() const {
   return childAtIndex(Dependency::k_indexOfMainExpression);
 }

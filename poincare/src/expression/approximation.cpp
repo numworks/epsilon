@@ -663,6 +663,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       const Tree* index = e->child(1);
       assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
+      assert(!std::isnan(i));
       if (i < 0 || i >= Dimension::ListLength(values)) {
         return NAN;
       }
@@ -677,7 +678,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       const Tree* values = e->child(0);
       const Tree* startIndex = e->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
+      assert(Integer::Is<uint8_t>(e->child(2)));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
+      assert(!std::isnan(start) && start >= 0);
       int old = s_context->m_listElement;
       s_context->m_listElement += start;
       std::complex<T> result = ToComplex<T>(values);

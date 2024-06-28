@@ -47,67 +47,6 @@ OExpression ListAccessNode<2>::shallowReduce(
   return ListSlice(this).shallowReduce(reductionContext);
 }
 
-template <>
-template <typename T>
-Evaluation<T> ListAccessNode<1>::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)
-                            ->approximate(T(), approximationContext);
-  if (child.otype() != EvaluationNode<T>::Type::ListComplex) {
-    return Complex<T>::Undefined();
-  }
-  ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
-
-  T indexChild =
-      childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(indexChild) || static_cast<int>(indexChild) != indexChild) {
-    return Complex<T>::Undefined();
-  }
-  int indexInt = static_cast<int>(indexChild);
-  if (indexInt < 1 || indexInt > listChild.numberOfChildren()) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(listChild.complexAtIndex(indexInt - 1));
-}
-
-template <>
-template <typename T>
-Evaluation<T> ListAccessNode<2>::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)
-                            ->approximate(T(), approximationContext);
-  if (child.otype() != EvaluationNode<T>::Type::ListComplex) {
-    return Complex<T>::Undefined();
-  }
-  ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
-
-  T startIndex =
-      childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(startIndex) || static_cast<int>(startIndex) != startIndex) {
-    return Complex<T>::Undefined();
-  }
-  T endIndex =
-      childAtIndex(1)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(endIndex) || static_cast<int>(endIndex) != endIndex) {
-    return Complex<T>::Undefined();
-  }
-  int startInt = static_cast<int>(startIndex);
-  int endInt = static_cast<int>(endIndex);
-  ListComplex<T> returnList = ListComplex<T>::Builder();
-  for (int i = startInt - 1; i < endInt; i++) {
-    if (i >= listChild.numberOfChildren()) {
-      break;
-    }
-    if (i < 0) {
-      continue;
-    }
-    returnList.addChildAtIndexInPlace(
-        Complex<T>::Builder(listChild.complexAtIndex(i)),
-        returnList.numberOfChildren(), returnList.numberOfChildren());
-  }
-  return std::move(returnList);
-}
-
 OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e =
@@ -206,13 +145,5 @@ template size_t ListAccessNode<2>::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfSignificantDigits) const;
-template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

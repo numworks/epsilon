@@ -26,17 +26,6 @@ size_t DeterminantNode::serialize(char* buffer, size_t bufferSize,
       Determinant::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> DeterminantNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(
-      static_cast<MatrixComplex<T>&>(input).determinant());
-}
-
 OExpression DeterminantNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return Determinant(this).shallowReduce(reductionContext);

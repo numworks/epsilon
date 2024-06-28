@@ -615,6 +615,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       Tree* m = ToMatrix<T>(e->child(0));
       Tree* value;
       if (e->isDet()) {
+        // TODO: we should compute with reduced=false
         OutOfContext(Matrix::RowCanonize(m, true, &value, true));
       } else if (e->isNorm()) {
         value = OutOfContext(Vector::Norm(m));

@@ -896,6 +896,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Rem: {
       T a = child[0];
       T b = child[1];
+      assert(!std::isnan(a) && !std::isnan(b));
       if (a != (int)a || b != (int)b) {
         return NAN;
       }

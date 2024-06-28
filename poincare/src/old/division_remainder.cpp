@@ -30,26 +30,6 @@ OExpression DivisionRemainderNode::shallowReduce(
   return DivisionRemainder(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> DivisionRemainderNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T> *c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2);
-        T f1 = ComplexNode<T>::ToScalar(c[0]);
-        T f2 = ComplexNode<T>::ToScalar(c[1]);
-        if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 ||
-            f2 != (int)f2) {
-          return complexRealNAN<T>();
-        }
-        return std::round(f1 -
-                          f2 * DivisionQuotient::TemplatedQuotient(f1, f2));
-      });
-}
-
 OExpression DivisionRemainder::shallowReduce(
     ReductionContext reductionContext) {
   {

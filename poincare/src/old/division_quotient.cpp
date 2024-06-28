@@ -40,25 +40,6 @@ size_t DivisionQuotientNode::serialize(
       DivisionQuotient::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> DivisionQuotientNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T> *c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2);
-        T f1 = ComplexNode<T>::ToScalar(c[0]);
-        T f2 = ComplexNode<T>::ToScalar(c[1]);
-        if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 ||
-            f2 != (int)f2) {
-          return complexRealNAN<T>();
-        }
-        return DivisionQuotient::TemplatedQuotient(f1, f2);
-      });
-}
-
 OExpression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

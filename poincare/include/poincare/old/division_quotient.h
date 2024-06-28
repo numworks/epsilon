@@ -38,31 +38,12 @@ class DivisionQuotientNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class DivisionQuotient final
     : public ExpressionTwoChildren<DivisionQuotient, DivisionQuotientNode> {
  public:
   using ExpressionBuilder::ExpressionBuilder;
-
-  template <typename T>
-  static T TemplatedQuotient(T a, T b) {
-    return b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
-  }
 
   // OExpression
   OExpression shallowReduce(ReductionContext reductionContext);

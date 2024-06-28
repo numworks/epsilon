@@ -22,17 +22,6 @@ OExpression ListSumNode::shallowReduce(
   return ListSum(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListSumNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  ExpressionNode* child = childAtIndex(0);
-  if (child->otype() != ExpressionNode::Type::OList) {
-    return Complex<T>::Undefined();
-  }
-
-  return static_cast<ListNode*>(child)->sumOfElements<T>(approximationContext);
-}
-
 OExpression ListSum::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
   if (child.otype() != ExpressionNode::Type::OList) {
@@ -47,10 +36,5 @@ OExpression ListSum::shallowReduce(ReductionContext reductionContext) {
   replaceWithInPlace(sum);
   return sum.shallowReduce(reductionContext);
 }
-
-template Evaluation<float> ListSumNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListSumNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

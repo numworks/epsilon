@@ -48,11 +48,6 @@ class ListNode : public ExpressionNode {
   template <typename T>
   Evaluation<T> extremumApproximation(
       const ApproximationContext& approximationContext, bool minimum);
-  template <typename T>
-  Evaluation<T> sumOfElements(const ApproximationContext& approximationContext);
-  template <typename T>
-  Evaluation<T> productOfElements(
-      const ApproximationContext& approximationContext);
 
  private:
   template <typename T>

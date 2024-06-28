@@ -70,43 +70,6 @@ Evaluation<T> ListNode::extremumApproximation(
                                           approximationContext);
 }
 
-template <typename T>
-Evaluation<T> ListNode::sumOfElements(
-    const ApproximationContext& approximationContext) {
-  if (numberOfChildren() == 0) {
-    return Complex<T>::Builder(0.0);
-  }
-  return ApproximationHelper::MapReduce<T>(
-      this, approximationContext,
-      [](Evaluation<T> eval1, Evaluation<T> eval2,
-         Preferences::ComplexFormat complexFormat) {
-        return ApproximationHelper::Reduce<T>(
-            eval1, eval2, complexFormat, AdditionNode::computeOnComplex<T>,
-            ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-            ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-            ApproximationHelper::UndefinedOnMatrixAndMatrix<T>);
-      });
-}
-
-template <typename T>
-Evaluation<T> ListNode::productOfElements(
-    const ApproximationContext& approximationContext) {
-  if (numberOfChildren() == 0) {
-    return Complex<T>::Builder(1.0);
-  }
-  return ApproximationHelper::MapReduce<T>(
-      this, approximationContext,
-      [](Evaluation<T> eval1, Evaluation<T> eval2,
-         Preferences::ComplexFormat complexFormat) {
-        return ApproximationHelper::Reduce<T>(
-            eval1, eval2, complexFormat,
-            MultiplicationNode::computeOnComplex<T>,
-            ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-            ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-            ApproximationHelper::UndefinedOnMatrixAndMatrix<T>);
-      });
-}
-
 OExpression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return OList(this).shallowReduce(reductionContext);
 }
@@ -187,14 +150,4 @@ template Evaluation<float> ListNode::extremumApproximation<float>(
     const ApproximationContext& approximationContext, bool minimum);
 template Evaluation<double> ListNode::extremumApproximation<double>(
     const ApproximationContext& approximationContext, bool minimum);
-
-template Evaluation<float> ListNode::sumOfElements<float>(
-    const ApproximationContext& approximationContext);
-template Evaluation<double> ListNode::sumOfElements<double>(
-    const ApproximationContext& approximationContext);
-
-template Evaluation<float> ListNode::productOfElements<float>(
-    const ApproximationContext& approximationContext);
-template Evaluation<double> ListNode::productOfElements<double>(
-    const ApproximationContext& approximationContext);
 }  // namespace Poincare

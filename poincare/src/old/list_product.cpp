@@ -23,17 +23,6 @@ OExpression ListProductNode::shallowReduce(
   return ListProduct(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListProductNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  ExpressionNode* child = childAtIndex(0);
-  if (child->otype() != ExpressionNode::Type::OList) {
-    return Complex<T>::Undefined();
-  }
-  return static_cast<ListNode*>(child)->productOfElements<T>(
-      approximationContext);
-}
-
 OExpression ListProduct::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
   if (child.otype() != ExpressionNode::Type::OList) {
@@ -48,10 +37,5 @@ OExpression ListProduct::shallowReduce(ReductionContext reductionContext) {
   replaceWithInPlace(product);
   return product.shallowReduce(reductionContext);
 }
-
-template Evaluation<float> ListProductNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListProductNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

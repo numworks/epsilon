@@ -62,14 +62,6 @@ class JuniorExpressionNode final : public ExpressionNode {
   int polynomialDegree(Context* context, const char* symbolName) const override;
 
   // Approximation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) {
-    // TODO_PCJ: Plug in approximation
-    assert(false);
-    return NAN;
-  }
   Evaluation<float> approximate(
       SinglePrecision p,
       const ApproximationContext& approximationContext) const override;

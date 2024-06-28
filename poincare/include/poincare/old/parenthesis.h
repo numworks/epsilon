@@ -39,23 +39,6 @@ class ParenthesisNode final : public ExpressionNode {
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
-
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-
- private:
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class Parenthesis final

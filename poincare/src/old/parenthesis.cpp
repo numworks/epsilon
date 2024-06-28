@@ -17,12 +17,6 @@ OExpression ParenthesisNode::shallowReduce(
   return Parenthesis(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ParenthesisNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return childAtIndex(0)->approximate(T(), approximationContext);
-}
-
 OExpression Parenthesis::shallowReduce(ReductionContext reductionContext) {
   OExpression e =
       SimplificationHelper::defaultShallowReduce(*this, &reductionContext);

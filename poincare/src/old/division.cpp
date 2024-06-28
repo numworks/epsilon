@@ -56,14 +56,6 @@ OExpression DivisionNode::shallowReduce(
   return Division(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-std::complex<T> DivisionNode::computeOnComplex(
-    const std::complex<T> c, const std::complex<T> d,
-    Preferences::ComplexFormat complexFormat) {
-  assert(false);
-  return complexNAN<T>();
-}
-
 // Division
 OExpression Division::shallowReduce(ReductionContext reductionContext) {
   {

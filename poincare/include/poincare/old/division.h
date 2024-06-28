@@ -35,29 +35,6 @@ class DivisionNode final : public ExpressionNode {
     return ExpressionNode::removeUnit(unit);
   }
 
-  // Approximation
-  template <typename T>
-  static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2,
-                               Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::Reduce<T>(
-        eval1, eval2, complexFormat, computeOnComplex<T>,
-        ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-        computeOnMatrixAndComplex<T>,
-        ApproximationHelper::UndefinedOnMatrixAndMatrix<T>);
-  }
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapReduce<float>(this, approximationContext,
-                                                 Compute<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapReduce<double>(this, approximationContext,
-                                                  Compute<double>);
-  }
-
   // Layout
   bool childNeedsSystemParenthesesAtSerialization(
       const PoolObject* child) const override;
@@ -70,20 +47,6 @@ class DivisionNode final : public ExpressionNode {
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::Fraction;
   };
-
- private:
-  // Approximation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, const std::complex<T> d,
-      Preferences::ComplexFormat complexFormat);
-  template <typename T>
-  static MatrixComplex<T> computeOnMatrixAndComplex(
-      const MatrixComplex<T> m, const std::complex<T> c,
-      Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrixAndComplex(
-        m, c, complexFormat, computeOnComplex<T>);
-  }
 };
 
 class Division final : public ExpressionTwoChildren<Division, DivisionNode> {

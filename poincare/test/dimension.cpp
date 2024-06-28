@@ -117,6 +117,11 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(!dim("[[1][3]]^[[4,5]]"));
   QUIZ_ASSERT(!dim("3^[[4,5]]"));
 
+  // Division
+  QUIZ_ASSERT(dim("[[1,2]]/3", Matrix(1, 2)));
+  QUIZ_ASSERT(!dim("3/[[1,2]]"));
+  QUIZ_ASSERT(!dim("[[1][2]]/[[3][4]]"));
+
   Shared::GlobalContext globalContext;
   assert(
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==

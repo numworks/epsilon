@@ -21,6 +21,11 @@ constexpr int countl_zero<unsigned long>(unsigned long x) noexcept {
   return x == 0 ? 8 * sizeof(unsigned long) : __builtin_clzl(x);
 }
 
+template <>
+constexpr int countl_zero<unsigned long long>(unsigned long long x) noexcept {
+  return x == 0 ? 8 * sizeof(unsigned long long) : __builtin_clzll(x);
+}
+
 template <class T>
 constexpr int bit_width(T x) noexcept {
   return 8 * sizeof(T) - countl_zero(x);

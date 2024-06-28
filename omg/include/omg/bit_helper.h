@@ -83,7 +83,7 @@ constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(uint64_t i) {
-  return i == 0 ? 0 : std::bit_width(i - 1);
+  return i == 0 ? 0 : std::bit_width<uint64_t>(i - 1);
 }
 
 template <typename T>

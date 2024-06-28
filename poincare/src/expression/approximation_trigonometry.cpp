@@ -113,8 +113,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       } else if (value.real() == static_cast<T>(0.) &&
                  std::abs(value.imag()) == static_cast<T>(1.)) {
         /* The case value = ±i is caught here because std::atan(i) return i*inf
-         * when it should be undef. (same as log(0) in
-         * Logarithm::computeOnComplex)*/
+         * when it should be undef. (same as log(0))*/
         result = std::complex<T>(NAN, NAN);
       } else {
         result = std::atan(value);

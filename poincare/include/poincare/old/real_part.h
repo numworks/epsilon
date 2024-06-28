@@ -43,25 +43,6 @@ class RealPartNode final : public ExpressionNode {
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
-  // Evaluation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit) {
-    return std::real(c);
-  }
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext,
-                                                   computeOnComplex<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext,
-                                                    computeOnComplex<double>);
-  }
 };
 
 class RealPart final : public ExpressionOneChild<RealPart, RealPartNode> {

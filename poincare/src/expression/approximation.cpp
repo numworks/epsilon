@@ -462,10 +462,14 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Re: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
+      // TODO: why not use std::re(c)?
+      // TODO: undef are not bubbled-up?
       std::complex<T> c = ToComplex<T>(e->child(0));
       return std::isnan(c.imag()) ? NAN : c.real();
     }
     case Type::Im: {
+      // TODO: why not use std::im(c)?
+      // TODO: undef are not bubbled-up?
       std::complex<T> c = ToComplex<T>(e->child(0));
       return std::isnan(c.real()) ? NAN : c.imag();
     }

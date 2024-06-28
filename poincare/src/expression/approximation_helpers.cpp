@@ -24,8 +24,8 @@ T Approximation::PositiveIntegerApproximation(T c) {
    * 4294967296. */
   if (std::isnan(s) || s != std::round(s) || s >= static_cast<T>(UINT32_MAX) ||
       !IsIntegerRepresentationAccurate(s)) {
-    /* PositiveIntegerApproximationIfPossible returns undefined result if
-     * scalar cannot be accurately represented as an unsigned integer. */
+    /* PositiveIntegerApproximation returns undefined result if scalar cannot be
+     * accurately represented as an unsigned integer. */
     return NAN;
   }
   return s;

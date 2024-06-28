@@ -20,13 +20,6 @@ template <typename T>
 uint32_t PositiveIntegerApproximationIfPossible(
     const ExpressionNode* expression, bool* isUndefined,
     const ApproximationContext& approximationContext);
-template <typename T>
-std::complex<T> NeglectRealOrImaginaryPartIfNegligible(
-    std::complex<T> result, std::complex<T> input1,
-    std::complex<T> input2 = 1.0, bool enableNullResult = true);
-template <typename T>
-std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
-                                            std::complex<T> input);
 
 // Map on mutliple children
 template <typename T>
@@ -60,12 +53,6 @@ template <typename T>
 Evaluation<T> UndefinedOnBoolean(const bool b) {
   return Complex<T>::Undefined();
 }
-template <typename T>
-Evaluation<T> MapOneChild(const ExpressionNode* expression,
-                          const ApproximationContext& approximationContext,
-                          ComplexCompute<T> compute,
-                          BooleanCompute<T> booleanCompute = UndefinedOnBoolean,
-                          bool mapOnList = true);
 
 // Lambda computation function
 template <typename T>
@@ -85,57 +72,12 @@ using MatrixAndMatrixReduction =
     MatrixComplex<T> (*)(const MatrixComplex<T> m, const MatrixComplex<T> n,
                          Preferences::ComplexFormat complexFormat);
 
-// Undef computation functions
-template <typename T>
-MatrixComplex<T> UndefinedOnComplexAndMatrix(
-    const std::complex<T> c, const MatrixComplex<T> m,
-    Preferences::ComplexFormat complexFormat) {
-  return MatrixComplex<T>::Undefined();
-}
-template <typename T>
-MatrixComplex<T> UndefinedOnMatrixAndComplex(
-    const MatrixComplex<T> m, const std::complex<T> c,
-    Preferences::ComplexFormat complexFormat) {
-  return MatrixComplex<T>::Undefined();
-}
-template <typename T>
-MatrixComplex<T> UndefinedOnMatrixAndMatrix(
-    const MatrixComplex<T> m, const MatrixComplex<T> n,
-    Preferences::ComplexFormat complexFormat) {
-  return MatrixComplex<T>::Undefined();
-}
-
-template <typename T>
-Evaluation<T> Reduce(Evaluation<T> eval1, Evaluation<T> eval2,
-                     Preferences::ComplexFormat complexFormat,
-                     ComplexAndComplexReduction<T> computeOnComplexes,
-                     ComplexAndMatrixReduction<T> computeOnComplexAndMatrix,
-                     MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
-                     MatrixAndMatrixReduction<T> computeOnMatrices,
-                     bool mapOnList = true);
-
 // Lambda reduction function (by default you should use Reduce).
 template <typename T>
 using ReductionFunction =
     Evaluation<T> (*)(Evaluation<T> eval1, Evaluation<T> eval2,
                       Preferences::ComplexFormat complexFormat);
 
-// TODO: For now, MapReduce is always undef on booleans
-template <typename T>
-Evaluation<T> MapReduce(const ExpressionNode* expression,
-                        const ApproximationContext& approximationContext,
-                        ReductionFunction<T> reductionFunction);
-
-template <typename T>
-MatrixComplex<T> ElementWiseOnMatrixAndComplex(
-    const MatrixComplex<T> n, std::complex<T> c,
-    Preferences::ComplexFormat complexFormat,
-    ComplexAndComplexReduction<T> computeOnComplexes);
-template <typename T>
-MatrixComplex<T> ElementWiseOnMatrices(
-    const MatrixComplex<T> m, const MatrixComplex<T> n,
-    Preferences::ComplexFormat complexFormat,
-    ComplexAndComplexReduction<T> computeOnComplexes);
 };  // namespace ApproximationHelper
 
 }  // namespace Poincare

@@ -109,6 +109,14 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*[[1]]"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*_m"));
 
+  // Pow
+  QUIZ_ASSERT(dim("[[1,2][3,4]]^3", Matrix(2, 2)));
+  QUIZ_ASSERT(!dim("[[1,3]]^3"));
+  QUIZ_ASSERT(!dim("[[1][3]]^3"));
+  QUIZ_ASSERT(!dim("[[1][3]]^[[4]]"));
+  QUIZ_ASSERT(!dim("[[1][3]]^[[4,5]]"));
+  QUIZ_ASSERT(!dim("3^[[4,5]]"));
+
   Shared::GlobalContext globalContext;
   assert(
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==

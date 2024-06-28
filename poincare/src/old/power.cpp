@@ -155,48 +155,6 @@ double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {
   return NAN;
 }
 
-// Private
-
-template <typename T>
-std::complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(
-    const std::complex<T> c, T p, T q) {
-  // Assert p and q are in fact integers
-  assert(std::round(p) == p);
-  assert(std::round(q) == q);
-  /* Try to find a real root of c^(p/q) with p, q integers. We ignore cases
-   * where the principal root is real as these cases are handled generically
-   * later (for instance 1232^(1/8) which has a real principal root is not
-   * handled here). */
-  if (c.imag() == static_cast<T>(0.0) &&
-      std::pow(static_cast<T>(-1.0), q) < static_cast<T>(0.0)) {
-    /* If c real and q odd integer (q odd if (-1)^q = -1), a real root does
-     * exist (which is not necessarily the principal root)!
-     * For q even integer, a real root does not necessarily exist (example:
-     * -2 ^(1/2)). */
-    std::complex<T> absc = c;
-    absc.real(std::fabs(absc.real()));
-    // compute |c|^(p/q) which is a real
-    std::complex<T> absCPowD = PowerNode::computeOnComplex<T>(
-        absc, std::complex<T>(p / q), Preferences::ComplexFormat::Real);
-    /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
-     *                      = sign(c)^p         * |c|^(p/q)
-     *                      = -|c|^(p/q) iff c < 0 and p odd */
-    return c.real() < static_cast<T>(0.0) &&
-                   std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0)
-               ? -absCPowD
-               : absCPowD;
-  }
-  return complexNAN<T>();
-}
-
-template <typename T>
-std::complex<T> PowerNode::computeOnComplex(
-    const std::complex<T> c, const std::complex<T> d,
-    Preferences::ComplexFormat complexFormat) {
-  assert(false);
-  return complexNAN<T>();
-}
-
 // Layout
 
 // Serialize
@@ -273,93 +231,6 @@ int PowerNode::simplificationOrderSameType(const ExpressionNode *e,
 bool PowerNode::derivate(const ReductionContext &reductionContext,
                          Symbol symbol, OExpression symbolValue) {
   return Power(this).derivate(reductionContext, symbol, symbolValue);
-}
-
-// Evaluation
-template <typename T>
-MatrixComplex<T> PowerNode::computeOnMatrixAndComplex(
-    const MatrixComplex<T> m, const std::complex<T> d,
-    Preferences::ComplexFormat complexFormat) {
-  if (m.numberOfRows() != m.numberOfColumns()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  T power = Complex<T>::Builder(d).toScalar();
-  if (std::isnan(power) || std::isinf(power) || power != (int)power ||
-      std::fabs(power) > k_maxApproximatePowerMatrix) {
-    return MatrixComplex<T>::Undefined();
-  }
-  if (power < 0) {
-    MatrixComplex<T> inverse = m.inverse();
-    if (inverse.isUninitialized()) {
-      return MatrixComplex<T>::Undefined();
-    }
-    Complex<T> minusC = Complex<T>::Builder(-d);
-    MatrixComplex<T> result = PowerNode::computeOnMatrixAndComplex(
-        inverse, minusC.complexAtIndex(0), complexFormat);
-    return result;
-  }
-  MatrixComplex<T> result = MatrixComplex<T>::CreateIdentity(m.numberOfRows());
-  // TODO: implement a quick exponentiation
-  for (int k = 0; k < (int)power; k++) {
-    result = MultiplicationNode::computeOnMatrices<T>(result, m, complexFormat);
-  }
-  return result;
-}
-
-template <typename T>
-Evaluation<T> PowerNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  Evaluation<T> base = childAtIndex(0)->approximate(T(), approximationContext);
-  /* Special case: c^(p/q) with p, q integers
-   * In real mode, c^(p/q) might have a real root which is not the principal
-   * root. We return this value in that case to avoid returning "nonreal". */
-  if (approximationContext.complexFormat() ==
-          Preferences::ComplexFormat::Real &&
-      base.otype() == EvaluationNode<T>::Type::Complex) {
-    std::complex<T> c = base.complexAtIndex(0);
-    T p = NAN;
-    T q = NAN;
-    // If the power has been reduced, we look for a rational index
-    if (childAtIndex(1)->otype() == ExpressionNode::Type::Rational) {
-      const RationalNode *r =
-          static_cast<const RationalNode *>(childAtIndex(1));
-      p = r->signedNumerator().approximate<T>();
-      q = r->denominator().approximate<T>();
-    }
-    /* If the power has been simplified (reduced + beautified), we look for an
-     * index of the for Division(Rational,Rational). */
-    if (childAtIndex(1)->otype() == ExpressionNode::Type::Division &&
-        childAtIndex(1)->childAtIndex(0)->otype() ==
-            ExpressionNode::Type::Rational &&
-        childAtIndex(1)->childAtIndex(1)->otype() ==
-            ExpressionNode::Type::Rational) {
-      const RationalNode *pRat =
-          static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(0));
-      const RationalNode *qRat =
-          static_cast<const RationalNode *>(childAtIndex(1)->childAtIndex(1));
-      if (!pRat->denominator().isOne() || !qRat->denominator().isOne()) {
-        goto defaultApproximation;
-      }
-      p = pRat->signedNumerator().approximate<T>();
-      q = qRat->signedNumerator().approximate<T>();
-    }
-    /* We don't handle power that haven't been reduced or simplified as the
-     * index can take to many forms and still be equivalent to p/q,
-     * with p, q integers. */
-    if (std::isnan(p) || std::isnan(q)) {
-      goto defaultApproximation;
-    }
-    Complex<T> result =
-        Complex<T>::Builder(computeNotPrincipalRealRootOfRationalPow(c, p, q));
-    if (!result.isUndefined()) {
-      return std::move(result);
-    }
-  }
-defaultApproximation:
-  Evaluation<T> result =
-      Compute<T>(base, childAtIndex(1)->approximate(T(), approximationContext),
-                 approximationContext.complexFormat());
-  return result.isUndefined() ? Complex<T>::Undefined() : result;
 }
 
 // Power
@@ -1717,29 +1588,5 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational &b,
   return std::isnan(powerNumerator) || std::isnan(powerDenominator) ||
          powerNumerator > FLT_MAX || powerDenominator > FLT_MAX;
 }
-
-template std::complex<float> PowerNode::computeOnComplex<float>(
-    std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
-template std::complex<double> PowerNode::computeOnComplex<double>(
-    std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
-
-template std::complex<double>
-PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(
-    std::complex<double>, double, double);
-template std::complex<float>
-PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>,
-                                                           float, float);
-
-template Evaluation<float> Poincare::PowerNode::Compute<float>(
-    Evaluation<float> eval1, Evaluation<float> eval2,
-    Preferences::ComplexFormat complexFormat);
-template Evaluation<double> Poincare::PowerNode::Compute<double>(
-    Evaluation<double> eval1, Evaluation<double> eval2,
-    Preferences::ComplexFormat complexFormat);
-
-template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(
-    const Poincare::ApproximationContext &approximationContext) const;
-template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(
-    const Poincare::ApproximationContext &approximationContext) const;
 
 }  // namespace Poincare

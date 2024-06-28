@@ -33,23 +33,6 @@ class PowerNode final : public ExpressionNode {
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
 
-  template <typename T>
-  static std::complex<T> computeNotPrincipalRealRootOfRationalPow(
-      const std::complex<T> c, T p, T q);
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, const std::complex<T> d,
-      Preferences::ComplexFormat complexFormat);
-  template <typename T>
-  static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2,
-                               Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::Reduce<T>(
-        eval1, eval2, complexFormat, computeOnComplex<T>,
-        ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-        computeOnMatrixAndComplex<T>,
-        ApproximationHelper::UndefinedOnMatrixAndMatrix<T>);
-  }
-
  private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 
@@ -83,19 +66,6 @@ class PowerNode final : public ExpressionNode {
   static MatrixComplex<T> computeOnMatrixAndComplex(
       const MatrixComplex<T> m, const std::complex<T> d,
       Preferences::ComplexFormat complexFormat);
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class Power final : public ExpressionTwoChildren<Power, PowerNode> {

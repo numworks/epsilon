@@ -17,22 +17,9 @@ class ProductNode final : public SumAndProductNode {
   Type otype() const override { return Type::Product; }
 
  private:
-  float emptySumAndProductValue() const override { return 1.0f; }
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-
-  // Evaluation
-  Evaluation<double> evaluateWithNextTerm(
-      DoublePrecision p, Evaluation<double> a, Evaluation<double> b,
-      Preferences::ComplexFormat complexFormat) const override {
-    return MultiplicationNode::Compute<double>(a, b, complexFormat);
-  }
-  Evaluation<float> evaluateWithNextTerm(
-      SinglePrecision p, Evaluation<float> a, Evaluation<float> b,
-      Preferences::ComplexFormat complexFormat) const override {
-    return MultiplicationNode::Compute<float>(a, b, complexFormat);
-  }
 };
 
 class Product final : public SumAndProduct {

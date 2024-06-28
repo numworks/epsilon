@@ -537,11 +537,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Product: {
       const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
       std::complex<T> low = ToComplex<T>(lowerBoundChild);
+      assert(!std::isnan(low.real()) && !std::isnan(low.imag()));
       if (low.imag() != 0 || (int)low.real() != low.real()) {
         return NAN;
       }
       const Tree* upperBoundChild = lowerBoundChild->nextTree();
       std::complex<T> up = ToComplex<T>(upperBoundChild);
+      assert(!std::isnan(up.real()) && !std::isnan(up.imag()));
       if (up.imag() != 0 || (int)up.real() != up.real()) {
         return NAN;
       }

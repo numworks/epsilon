@@ -31,8 +31,6 @@ compile time or runtime and rewrite them using pattern-matching.
 It is designed for space-efficiency and may be manipulated at a low-level
 when fine control is preferred over safe abstractions.
 
-TODO
-
 ### Block, Node, Type and Tree
 
 Every `Tree` starts with a `Node` directly followed in memory by a given number of other
@@ -127,13 +125,16 @@ There are three situations to distinguish:
 Once you have a tree pointer, you may iterate over its children or descendants with:
 ```cpp
 Tree * sibling = tree->nextTree();
-
+```
+```cpp
 const Tree * child = constTree->child(0);
-
+```
+```cpp
 for (Tree * child : tree->children()) {
   ...
 }
-
+```
+```cpp
 for (const Tree * subTree : tree->selfAndDescendants()) {
   ...
 }
@@ -169,7 +170,7 @@ The structure of a Tree can be inspected in DEBUG with several log functions, de
 When you need a Tree depending on user content or computed values, you need to build it on the `TreeStack`.
 
 > [!NOTE]
-> **TreeStack**: the TreeStack is a dedicated range of memory where you can create
+> The `TreeStack` is a dedicated range of memory where you can create
 > and play with your trees temporarily. It is not intended for storage and can be
 > cleared by exceptions. You must save your trees elsewhere before you return to
 > the app’s code.
@@ -179,7 +180,7 @@ The low-level method is presented here, for a safer approach, read [How to creat
 ### Pushing nodes
 
 The most basic way to create trees from scratch is to push nodes successively at the end of the TreeStack.
-The `SharedTreeStack` global object has push methods for each kind of node:
+The global object `SharedTreeStack` has push methods for each kind of node:
 
 ```cpp
 // pushing an Add (addition) node with two-children
@@ -194,15 +195,15 @@ SharedTreeStack->pushPi();
 SharedTreeStack->pushDoubleFloat(3.0);
 ```
 
-You are responsible to create a valid Tree structure using this method.
+You are responsible to create a valid tree structure using this method.
 
 If you do the three previous operations in that order, `expr` will point to the tree `π+3.0`.
 
-If you do only the first two, `expr` will silently point to a broken Tree with garbage that will crash when used.
+If you do only the first two, `expr` will silently point to a broken tree with garbage that will crash when used.
 
 ### Cloning trees
 
-Since all methods returning a new Tree* need to push it at the end of the TreeStack,
+Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
 you can interleave node pushes with tree creation methods to build a more complex structure.
 
 ```cpp
@@ -465,14 +466,14 @@ The first argument is a pattern, a [constexpr tree](#how-to-create-a-tree-at-com
 
 The second argument is a `PatternMatching::Context` that associates any placeholder used in the pattern to a `const Tree*` to be cloned each time the pattern is encountered.
 
-The resulting Tree will be pushed at the end of the TreeStack.
+The resulting tree will be pushed at the end of the `TreeStack`.
 
 If your pattern is a simplified tree and context values are simplified too, `CreateSimplify` will apply the systematic reduction as needed to make sure the result is simplified.
 
 
 ## How to retrieve sub-trees using pattern matching ?
 
-`PatternMatching::Match` works the other way around and will fill a `Context` if
+`PatternMatching::Match` works the other way around and will fill a `PatternMatching::Context` if
 the tree you provide it fits the pattern.
 
 For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
@@ -481,9 +482,10 @@ expression.
 
 ```cpp
 PatternMatching::Context ctx;
-const Tree * myTree = Cos(Add(2, 3));
-PatternMatching::Match(myTree, KCos(KA), &ctx) // -> returns true;
-ctx->getTree(KA); // Points to Add inside myTree;
+const Tree * someExpr = Cos(Add(2, 3));
+if (PatternMatching::Match(someExpr, KCos(KA), &ctx)) {
+  ctx->getTree(KA); // Points to Add inside someExpr
+}
 ```
 
 
@@ -493,7 +495,7 @@ The functions `Match` and `Create` are combined in `MatchCreate` and `MatchRepla
 
 ```cpp
 // Apply simplification a + a -> 2 * a
-bool hasChanged = MatchReplace(myTree, KAdd(KA, KA), KMult(2_e, KA));
+bool hasChanged = MatchReplace(expression, KAdd(KA, KA), KMult(2_e, KA));
 ```
 <details>
 <summary>Note</summary>
@@ -512,8 +514,8 @@ not placeholders**, which are assumed to be simplified trees already).
 
 If you want to match children in an n-ary without knowing its number of children in advance,
 you can use `_s` and `_p` to match several children with a single placeholder:
- - `_s` stands for `*` in regex, `KA_s` will match 0, 1 or more consecutive sibling trees
- - `_p` stands for `*` in regex, `KA_p` will match 1 or more consecutive sibling trees
+ - `_s` stands for `*` in regex, `KA_s` will match 0, 1 or more trees
+ - `_p` stands for `+` in regex, `KA_p` will match 1 or more trees
 
 When you used `_s` or `_p` to match several children with a placeholder, you are expected to reuse the
 same suffix to insert these trees inside an n-ary in the create pattern.
@@ -525,7 +527,7 @@ bool hasChanged = MatchReplaceSimplify(
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```
 
-More example of matches using the `KMult(KA, KAdd(KB, KC_p), KD_s)` pattern :
+Some more expressions matching `KMult(KA, KAdd(KB, KC_p), KD_s)` :
 
 |expression|KA|KB|KC_p|KD_s|
 |-|-|-|-|-|

@@ -11,15 +11,7 @@ class PointNode : public ExpressionNode {
  public:
   // ExpressionNode
   Type otype() const override { return Type::OPoint; }
-  Evaluation<float> approximate(
-      SinglePrecision p, const ApproximationContext& context) const override {
-    return templatedApproximate<float>(context);
-  }
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
-  Evaluation<double> approximate(
-      DoublePrecision p, const ApproximationContext& context) const override {
-    return templatedApproximate<double>(context);
-  }
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
@@ -35,10 +27,6 @@ class PointNode : public ExpressionNode {
                    int significantDigits) const override;
 
   constexpr static char k_prefix[] = "";
-
- private:
-  template <typename T>
-  Evaluation<T> templatedApproximate(const ApproximationContext&) const;
 };
 
 class OPoint : public ExpressionTwoChildren<OPoint, PointNode> {

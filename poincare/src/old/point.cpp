@@ -18,13 +18,6 @@ OExpression PointNode::shallowReduce(const ReductionContext& reductionContext) {
   return OPoint(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> PointNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Coordinate2D<T> xy = OPoint(this).approximate2D<T>(approximationContext);
-  return PointEvaluation<T>::Builder(xy.x(), xy.y());
-}
-
 OExpression OPoint::shallowReduce(ReductionContext reductionContext) {
   OExpression e = SimplificationHelper::defaultShallowReduce(
       *this, &reductionContext,

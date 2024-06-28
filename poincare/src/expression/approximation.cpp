@@ -884,6 +884,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return child[0] - std::floor(child[0]);
     }
     case Type::Round: {
+      assert(!std::isnan(child[1]));
       if (child[1] != std::round(child[1])) {
         return NAN;
       }

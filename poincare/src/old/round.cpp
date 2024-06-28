@@ -24,30 +24,6 @@ OExpression RoundNode::shallowReduce(const ReductionContext& reductionContext) {
   return Round(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> RoundNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T>* c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2 || numberOfComplexes == 1);
-        T f1 = ComplexNode<T>::ToScalar(c[0]);
-        T f2;
-        if (numberOfComplexes == 1) {
-          f2 = 0.0;
-        } else {
-          f2 = ComplexNode<T>::ToScalar(c[1]);
-        }
-        if (std::isnan(f2) || f2 != std::round(f2)) {
-          return complexRealNAN<T>();
-        }
-        T err = std::pow(10, std::floor(f2));
-        return std::round(f1 * err) / err;
-      });
-}
-
 OExpression Round::shallowReduce(ReductionContext reductionContext) {
   {
     if (numberOfChildren() == 2 && childAtIndex(1).hasUnit()) {

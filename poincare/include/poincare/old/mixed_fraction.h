@@ -34,20 +34,6 @@ class MixedFractionNode final : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templateApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class MixedFraction final : public OExpression {

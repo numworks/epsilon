@@ -28,26 +28,6 @@ size_t MixedFractionNode::serialize(
                                     numberOfSignificantDigits, " ");
 }
 
-template <typename T>
-Evaluation<T> MixedFractionNode::templateApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> integerPart =
-      childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> fractionPart =
-      childAtIndex(1)->approximate(T(), approximationContext);
-  if (integerPart.otype() != EvaluationNode<T>::Type::Complex ||
-      fractionPart.otype() != EvaluationNode<T>::Type::Complex) {
-    return Complex<T>::Undefined();
-  }
-  T evaluatedIntegerPart = integerPart.toScalar();
-  T evaluatedFractionPart = fractionPart.toScalar();
-  if (evaluatedFractionPart < 0.0 ||
-      evaluatedIntegerPart != std::fabs(evaluatedIntegerPart)) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(evaluatedIntegerPart + evaluatedFractionPart);
-}
-
 OExpression MixedFraction::shallowReduce(ReductionContext context) {
   OExpression integerPart = childAtIndex(0);
   OExpression fractionPart = childAtIndex(1);

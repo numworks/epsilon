@@ -153,26 +153,6 @@ size_t BinaryLogicalOperatorNode::serialize(
                                     numberOfSignificantDigits, nameBuffer);
 }
 
-template <typename T>
-Evaluation<T> BinaryLogicalOperatorNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T> *c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit,
-         void *context) { return complexNAN<T>(); },
-      [](const bool *b, int numberOfBooleans, void *context) {
-        assert(numberOfBooleans == 2);
-        Evaluation<T> result = BooleanEvaluation<T>::Builder(
-            static_cast<BinaryLogicalOperatorNode *>(context)->evaluate(b[0],
-                                                                        b[1]));
-        return result;
-      },
-      true,
-      reinterpret_cast<void *>(const_cast<BinaryLogicalOperatorNode *>(this)));
-}
-
 OExpression BinaryLogicalOperatorNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return BinaryLogicalOperator(this).shallowReduce(reductionContext);
@@ -221,10 +201,5 @@ BinaryLogicalOperator BinaryLogicalOperator::Builder(
       ->setOperatorType(type);
   return expression;
 }
-
-template Evaluation<float> BinaryLogicalOperatorNode::templatedApproximate<
-    float>(const ApproximationContext &) const;
-template Evaluation<double> BinaryLogicalOperatorNode::templatedApproximate<
-    double>(const ApproximationContext &) const;
 
 }  // namespace Poincare

@@ -44,40 +44,6 @@ class DerivativeNode final : public ParameteredExpressionNode {
     return LayoutShape::BoundaryPunctuation;
   }
 
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
-  template <typename T>
-  T scalarApproximateWithValueForArgumentAndOrder(
-      T evaluationArgument, int order,
-      const ApproximationContext& approximationContext) const;
-  template <typename T>
-  T growthRateAroundAbscissa(
-      T x, T h, int order,
-      const ApproximationContext& approximationContext) const;
-  template <typename T>
-  T riddersApproximation(int order,
-                         const ApproximationContext& approximationContext, T x,
-                         T h, T* error) const;
-  // TODO: Change coefficients?
-  constexpr static double k_maxErrorRateOnApproximation = 0.001;
-  constexpr static double k_minInitialRate = 0.01;
-  constexpr static double k_rateStepSize = 1.4;
-  constexpr static double k_minSignificantError = 3e-11;
-
-  constexpr static int k_maxOrderForApproximation = 4;
-
   bool isValidCondensedForm() const;
   Expression createValidExpandedForm() const;
   int extractIntegerOrder() const;

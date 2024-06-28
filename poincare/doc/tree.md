@@ -98,6 +98,27 @@ There are three situations to distinguish:
 - If you want to test if your node is of a given type, say `Cos`, use the automatically defined `tree->isCos()` method. This is equivalent to `tree->type() == Type::Cos`.
 
 - If you want to test if the root belongs to a group of related types, there may be a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers and membership can be tested with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
+  <details>
+  <summary>Ranges declarations</summary>
+   
+  A range is defined on consecutive nodes with `RANGE(rangeName, FirstNode, LastNode)` and may be nested.
+
+  ```cpp
+  NODE(Zero)
+  ...
+  NODE(EulerE)
+  NODE(Pi)
+
+  RANGE(MathematicalConstant, EulerE, Pi)
+  RANGE(Number, Zero, Pi)
+  ```
+
+  In the example above, the range `MathematicalConstant` contains all the nodes from `EulerE` to `Pi`,
+  and the range `Number` contains all the nodes from `Zero` to `Pi`. The first range generates a method
+  `tree->isMathematicalConstant()` and the second range generates a method `tree->isNumber()`.
+
+  The range `MathematicalConstant` is included in the range `Number`.
+  </details>
 
 - If you are more interested in the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
 

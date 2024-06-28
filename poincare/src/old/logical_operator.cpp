@@ -66,19 +66,6 @@ size_t LogicalOperatorNotNode::serialize(
       nameBuffer, SerializationHelper::ParenthesisType::None);
 }
 
-template <typename T>
-Evaluation<T> LogicalOperatorNotNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::MapOneChild<T>(
-      this, approximationContext,
-      [](const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit) { return complexNAN<T>(); },
-      [](const bool b) {
-        Evaluation<T> result = BooleanEvaluation<T>::Builder(!b);
-        return result;
-      });
-}
-
 OExpression LogicalOperatorNotNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return LogicalOperatorNot(this).shallowReduce(reductionContext);
@@ -238,10 +225,6 @@ BinaryLogicalOperator BinaryLogicalOperator::Builder(
 template Evaluation<float> BinaryLogicalOperatorNode::templatedApproximate<
     float>(const ApproximationContext &) const;
 template Evaluation<double> BinaryLogicalOperatorNode::templatedApproximate<
-    double>(const ApproximationContext &) const;
-template Evaluation<float> LogicalOperatorNotNode::templatedApproximate<float>(
-    const ApproximationContext &) const;
-template Evaluation<double> LogicalOperatorNotNode::templatedApproximate<
     double>(const ApproximationContext &) const;
 
 }  // namespace Poincare

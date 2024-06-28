@@ -24,11 +24,6 @@ size_t InfinityNode::serialize(char* buffer, size_t bufferSize,
       .CharLength;
 }
 
-template <typename T>
-Evaluation<T> InfinityNode::templatedApproximate() const {
-  return Complex<T>::Builder(m_negative ? -INFINITY : INFINITY);
-}
-
 bool InfinityNode::derivate(const ReductionContext& reductionContext,
                             Symbol symbol, OExpression symbolValue) {
   return Infinity(this).derivate(reductionContext, symbol, symbolValue);
@@ -47,6 +42,4 @@ bool Infinity::derivate(const ReductionContext& reductionContext, Symbol symbol,
   return true;
 }
 
-template Evaluation<float> InfinityNode::templatedApproximate<float>() const;
-template Evaluation<double> InfinityNode::templatedApproximate() const;
 }  // namespace Poincare

@@ -38,18 +38,6 @@ class InfinityNode final : public NumberNode {
   }
   void setNegative(bool negative) override { m_negative = negative; }
 
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>();
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>();
-  }
-
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =
@@ -70,8 +58,6 @@ class InfinityNode final : public NumberNode {
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::MoreLetters;
   }
-  template <typename T>
-  Evaluation<T> templatedApproximate() const;
   bool m_negative;
 };
 

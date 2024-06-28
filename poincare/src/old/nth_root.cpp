@@ -34,36 +34,6 @@ OExpression NthRootNode::shallowReduce(
   return NthRoot(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> NthRootNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T>* c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
-        assert(numberOfComplexes == 2);
-        std::complex<T> basec = c[0];
-        std::complex<T> indexc = c[1];
-        /* If the complexFormat is Real, we look for nthroot of form root(x,q)
-         * with x real and q integer because they might have a real form which
-         * does not correspond to the principale angle. */
-        if (complexFormat == Preferences::ComplexFormat::Real &&
-            indexc.imag() == 0.0 &&
-            std::round(indexc.real()) == indexc.real()) {
-          // root(x, q) with q integer and x real
-          std::complex<T> result =
-              PowerNode::computeNotPrincipalRealRootOfRationalPow(
-                  basec, static_cast<T>(1.0), indexc.real());
-          if (!std::isnan(result.real()) && !std::isnan(result.imag())) {
-            return result;
-          }
-        }
-        return PowerNode::computeOnComplex<T>(
-            basec, std::complex<T>(1.0) / (indexc), complexFormat);
-      });
-}
-
 OExpression NthRoot::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

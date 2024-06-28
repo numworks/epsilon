@@ -29,30 +29,6 @@ class AdditionNode final : public NAryInfixExpressionNode {
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const override;
 
-  // Evaluation
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, const std::complex<T> d,
-      Preferences::ComplexFormat complexFormat) {
-    return c + d;
-  }
-  template <typename T>
-  static MatrixComplex<T> computeOnMatrices(
-      const MatrixComplex<T> m, const MatrixComplex<T> n,
-      Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::ElementWiseOnMatrices(m, n, complexFormat,
-                                                      computeOnComplex<T>);
-  }
-  template <typename T>
-  static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2,
-                               Preferences::ComplexFormat complexFormat) {
-    return ApproximationHelper::Reduce<T>(
-        eval1, eval2, complexFormat, computeOnComplex<T>,
-        ApproximationHelper::UndefinedOnComplexAndMatrix<T>,
-        ApproximationHelper::UndefinedOnMatrixAndComplex<T>,
-        computeOnMatrices<T>);
-  }
-
   // Simplification
   LayoutShape leftLayoutShape() const override {
     /* When beautifying a Multiplication of Additions, Parentheses are added

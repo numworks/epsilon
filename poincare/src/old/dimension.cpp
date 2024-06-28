@@ -29,23 +29,6 @@ size_t DimensionNode::serialize(char* buffer, size_t bufferSize,
       ODimension::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> DimensionNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.otype() == EvaluationNode<T>::Type::ListComplex) {
-    return Complex<T>::Builder(std::complex<T>(input.numberOfChildren()));
-  }
-  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex ||
-      input.isUndefined()) {
-    return Complex<T>::Undefined();
-  }
-  std::complex<T> operands[] = {
-      std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows()),
-      std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfColumns())};
-  return MatrixComplex<T>::Builder(operands, 1, 2);
-}
-
 OExpression ODimension::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

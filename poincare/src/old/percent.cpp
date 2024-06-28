@@ -70,16 +70,6 @@ OExpression PercentSimpleNode::shallowReduce(
   return PercentSimple(this).shallowReduce(reductionContext);
 }
 
-// Evaluation
-
-template <typename U>
-Evaluation<U> PercentSimpleNode::templateApproximate(
-    const ApproximationContext& approximationContext,
-    bool* inputIsUndefined) const {
-  return Complex<U>::Builder(
-      childAtIndex(0)->approximate(U(), approximationContext).toScalar() /
-      100.0);
-}
 /* PercentAdditionNode */
 
 // Properties
@@ -149,21 +139,6 @@ OExpression PercentAdditionNode::shallowBeautify(
 OExpression PercentAdditionNode::shallowReduce(
     const ReductionContext& reductionContext) {
   return PercentAddition(this).shallowReduce(reductionContext);
-}
-
-// Evaluation
-
-template <typename U>
-Evaluation<U> PercentAdditionNode::templateApproximate(
-    const ApproximationContext& approximationContext,
-    bool* inputIsUndefined) const {
-  Evaluation<U> aInput =
-      childAtIndex(0)->approximate(U(), approximationContext);
-  Evaluation<U> bInput =
-      childAtIndex(1)->approximate(U(), approximationContext);
-  U a = aInput.toScalar();
-  U b = bInput.toScalar();
-  return Complex<U>::Builder(a * (1.0 + b / 100.0));
 }
 
 /* PercentSimple */

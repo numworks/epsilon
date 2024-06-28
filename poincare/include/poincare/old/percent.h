@@ -49,21 +49,6 @@ class PercentSimpleNode : public ExpressionNode {
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<double>(approximationContext);
-  }
-  template <typename U>
-  Evaluation<U> templateApproximate(
-      const ApproximationContext& approximationContext,
-      bool* inputIsUndefined = nullptr) const;
 };
 
 class PercentAdditionNode final : public PercentSimpleNode {
@@ -87,21 +72,6 @@ class PercentAdditionNode final : public PercentSimpleNode {
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<double>(approximationContext);
-  }
-  template <typename U>
-  Evaluation<U> templateApproximate(
-      const ApproximationContext& approximationContext,
-      bool* inputIsUndefined = nullptr) const;
 };
 
 class PercentSimple

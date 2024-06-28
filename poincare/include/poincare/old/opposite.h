@@ -30,21 +30,6 @@ class OppositeNode final : public ExpressionNode {
   bool childAtIndexNeedsUserParentheses(const OExpression& child,
                                         int childIndex) const override;
 
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
-
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =

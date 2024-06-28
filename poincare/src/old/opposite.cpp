@@ -14,15 +14,6 @@
 
 namespace Poincare {
 
-template <typename T>
-Evaluation<T> OppositeNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> childEval =
-      childAtIndex(0)->approximate(T(), approximationContext);
-  return MultiplicationNode::Compute(Complex<T>::Builder(-1), childEval,
-                                     approximationContext.complexFormat());
-}
-
 /* Layout */
 
 bool OppositeNode::childAtIndexNeedsUserParentheses(const OExpression& child,

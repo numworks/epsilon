@@ -57,35 +57,6 @@ OExpression LogarithmNode::shallowBeautify(
   return Logarithm(this).shallowBeautify();
 }
 
-template <typename U>
-Evaluation<U> LogarithmNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  if (numberOfChildren() == 1) {
-    return ApproximationHelper::MapOneChild<U>(this, approximationContext,
-                                               computeOnComplex<U>);
-  }
-  Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
-  if (Poincare::Preferences::SharedPreferences()
-          ->examMode()
-          .forbidBasedLogarithm() &&
-      n.toScalar() != static_cast<U>(10.0) &&
-      n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
-    return Complex<U>::Undefined();
-  }
-  return ApproximationHelper::Map<U>(
-      this, approximationContext,
-      [](const std::complex<U>* c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* context) {
-        assert(numberOfComplexes == 2);
-        std::complex<U> x = c[0];
-        std::complex<U> n = c[1];
-        return DivisionNode::computeOnComplex<U>(
-            computeOnComplex(x, complexFormat, angleUnit),
-            computeOnComplex(n, complexFormat, angleUnit), complexFormat);
-      });
-}
-
 void Logarithm::deepReduceChildren(const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
@@ -420,10 +391,5 @@ OExpression Logarithm::shallowBeautify() {
   }
   return *this;
 }
-
-template Evaluation<float> LogarithmNode::templatedApproximate<float>(
-    const ApproximationContext&) const;
-template Evaluation<double> LogarithmNode::templatedApproximate<double>(
-    const ApproximationContext&) const;
 
 }  // namespace Poincare

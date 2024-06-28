@@ -32,11 +32,6 @@ class SquareRootNode final : public ExpressionNode {
   }
 #endif
 
-  template <typename T>
-  static std::complex<T> computeOnComplex(
-      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit);
-
  private:
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
@@ -45,19 +40,6 @@ class SquareRootNode final : public ExpressionNode {
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::Root; };
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<float>(this, approximationContext,
-                                                   computeOnComplex<float>);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return ApproximationHelper::MapOneChild<double>(this, approximationContext,
-                                                    computeOnComplex<double>);
-  }
 };
 
 class SquareRoot final : public ExpressionOneChild<SquareRoot, SquareRootNode> {

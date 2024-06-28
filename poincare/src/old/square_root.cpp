@@ -28,14 +28,6 @@ size_t SquareRootNode::serialize(char *buffer, size_t bufferSize,
       SquareRoot::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-std::complex<T> SquareRootNode::computeOnComplex(
-    const std::complex<T> c, Preferences::ComplexFormat,
-    Preferences::AngleUnit angleUnit) {
-  std::complex<T> result = std::sqrt(c);
-  return ApproximationHelper::NeglectRealOrImaginaryPartIfNegligible(result, c);
-}
-
 OExpression SquareRootNode::shallowReduce(
     const ReductionContext &reductionContext) {
   return SquareRoot(this).shallowReduce(reductionContext);

@@ -106,38 +106,6 @@ double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
       ->degreeForSortingAddition(symbolsOnly);
 }
 
-template <typename T>
-std::complex<T> MultiplicationNode::computeOnComplex(
-    const std::complex<T> c, const std::complex<T> d,
-    Preferences::ComplexFormat complexFormat) {
-  assert(false);
-  return complexNAN<T>();
-}
-
-template <typename T>
-MatrixComplex<T> MultiplicationNode::computeOnMatrices(
-    const MatrixComplex<T> m, const MatrixComplex<T> n,
-    Preferences::ComplexFormat complexFormat) {
-  if (m.numberOfColumns() != n.numberOfRows()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  for (int i = 0; i < m.numberOfRows(); i++) {
-    for (int j = 0; j < n.numberOfColumns(); j++) {
-      std::complex<T> c(0.0);
-      for (int k = 0; k < m.numberOfColumns(); k++) {
-        c += m.complexAtIndex(i * m.numberOfColumns() + k) *
-             n.complexAtIndex(k * n.numberOfColumns() + j);
-      }
-      result.addChildAtIndexInPlace(Complex<T>::Builder(c),
-                                    i * n.numberOfColumns() + j,
-                                    result.numberOfChildren());
-    }
-  }
-  result.setDimensions(m.numberOfRows(), n.numberOfColumns());
-  return result;
-}
-
 // clang-format off
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
@@ -1568,19 +1536,5 @@ const OExpression Multiplication::Base(const OExpression e) {
   }
   return e;
 }
-
-template MatrixComplex<float> MultiplicationNode::computeOnComplexAndMatrix<
-    float>(std::complex<float> const, const MatrixComplex<float>,
-           Preferences::ComplexFormat);
-template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<
-    double>(std::complex<double> const, const MatrixComplex<double>,
-            Preferences::ComplexFormat);
-
-template std::complex<float> MultiplicationNode::computeOnComplex<float>(
-    const std::complex<float>, const std::complex<float>,
-    Preferences::ComplexFormat);
-template std::complex<double> MultiplicationNode::computeOnComplex<double>(
-    const std::complex<double>, const std::complex<double>,
-    Preferences::ComplexFormat);
 
 }  // namespace Poincare

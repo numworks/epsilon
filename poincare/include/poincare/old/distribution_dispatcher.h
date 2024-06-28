@@ -200,21 +200,6 @@ class DistributionDispatcherNode : public NAryExpressionNode {
     return LayoutShape::BoundaryPunctuation;
   }
 
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
-
   friend class DistributionDispatcher;
   void setType(DistributionMethod::Type f) { m_methodType = f; }
   void setDistribution(Distribution::Type d) { m_distributionType = d; }

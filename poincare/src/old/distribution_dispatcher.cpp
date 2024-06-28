@@ -127,37 +127,4 @@ OExpression DistributionDispatcher::shallowReduce(
   return *this;
 }
 
-template <typename T>
-Evaluation<T> DistributionDispatcherNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  return ApproximationHelper::Map<T>(
-      this, approximationContext,
-      [](const std::complex<T> *c, int numberOfComplexes,
-         Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
-        const DistributionDispatcherNode *self =
-            static_cast<DistributionDispatcherNode *>(ctx);
-        int childIndex = 0;
-        T abscissa[DistributionMethod::k_maxNumberOfParameters];
-        for (int i = 0;
-             i < DistributionMethod::numberOfParameters(self->m_methodType);
-             i++) {
-          abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
-        }
-        T parameters[Distribution::k_maxNumberOfParameters];
-        for (int i = 0;
-             i < Distribution::numberOfParameters(self->m_distributionType);
-             i++) {
-          parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
-        }
-        const DistributionMethod *function =
-            DistributionMethod::Get(self->m_methodType);
-        const Distribution *distribution =
-            Distribution::Get(self->m_distributionType);
-        return function->EvaluateAtAbscissa(abscissa, distribution, parameters);
-      },
-      ApproximationHelper::UndefinedOnBooleans, true,
-      static_cast<void *>(const_cast<DistributionDispatcherNode *>(this)));
-}
-
 }  // namespace Poincare

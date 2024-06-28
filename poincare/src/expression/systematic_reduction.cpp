@@ -81,7 +81,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
 
 bool SystematicReduction::Switch(Tree* e) {
   // This assert is quite costly, should be an assert level 2 ?
-  assert(Dimension::DeepCheckDimensions(e));
+  assert(Dimension::DeepCheck(e));
   if (!e->isNAry() && e->numberOfChildren() == 0) {
     // No childless tree have a reduction pattern.
     return false;

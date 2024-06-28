@@ -1090,7 +1090,7 @@ bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {
 }
 
 bool Unit::HasAngleDimension(NewExpression expression) {
-  assert(Dimension::DeepCheckDimensions(expression.tree()));
+  assert(Dimension::DeepCheck(expression.tree()));
   return Dimension::Get(expression.tree()).isAngleUnit();
 }
 

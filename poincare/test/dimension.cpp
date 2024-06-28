@@ -8,15 +8,14 @@ using namespace Poincare::Internal;
 bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
          Poincare::Context* ctx = nullptr) {
   Tree* e = TextToTree(input);
-  bool result =
-      Dimension::DeepCheckDimensions(e, ctx) && d == Dimension::Get(e, ctx);
+  bool result = Dimension::DeepCheck(e, ctx) && d == Dimension::Get(e, ctx);
   e->removeTree();
   return result;
 }
 
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
   Tree* e = TextToTree(input);
-  assert(Dimension::DeepCheckDimensions(e, ctx));
+  assert(Dimension::DeepCheck(e, ctx));
   bool result = Dimension::ListLength(e, ctx) == n;
   e->removeTree();
   return result;

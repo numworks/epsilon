@@ -851,7 +851,7 @@ void Unit::RemoveUnit(Tree* unit) {
 }
 
 void Unit::RemoveTemperatureUnit(Tree* root) {
-  assert(Dimension::DeepCheckDimensions(root));
+  assert(Dimension::DeepCheck(root));
   // Find and remove the unit.
   const Representative* representative = nullptr;
   for (Tree* child : root->selfAndDescendants()) {

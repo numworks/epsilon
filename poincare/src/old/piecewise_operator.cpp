@@ -28,17 +28,6 @@ OExpression PiecewiseOperatorNode::shallowReduce(
 }
 
 template <typename T>
-Evaluation<T> PiecewiseOperatorNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  // TODO: Distribute on lists
-  int i = indexOfFirstTrueCondition<T>(approximationContext);
-  if (i < 0) {
-    return Complex<T>::Undefined();
-  }
-  return childAtIndex(i)->approximate(T(), approximationContext);
-}
-
-template <typename T>
 int PiecewiseOperatorNode::indexOfFirstTrueCondition(
     const ApproximationContext& approximationContext) const {
   int n = numberOfChildren();
@@ -321,11 +310,6 @@ OExpression PiecewiseOperator::bubbleUpPiecewiseDependencies(
   return SimplificationHelper::reduceAfterBubblingUpDependencies(
       *this, dependencies, reductionContext);
 }
-
-template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> PiecewiseOperatorNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 template int PiecewiseOperatorNode::indexOfFirstTrueCondition<float>(
     const ApproximationContext& approximationContext) const;

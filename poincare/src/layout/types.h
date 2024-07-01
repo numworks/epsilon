@@ -46,6 +46,7 @@ NODE(CondensedSum, 3)
 // Diff(Symbol, SymbolValue, Derivand)
 NODE(Diff, 3, { bool cursorIsOnTheLeft; })
 
+// TODO: merge Diff and NthDiff like for expressions?
 // Diff(Symbol, SymbolValue, Derivand, Order)
 NODE(NthDiff, 4, {
   bool cursorIsOnTheLeft : 1;

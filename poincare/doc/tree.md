@@ -80,7 +80,7 @@ pointers. Moreover, the `const` keyword is used pervasively to differentiate
 `const Tree *` from `Tree *` to constrain signatures.
 
 
-Unlike the previous Poincare, Tree can only be iterated forward.  You can't
+Unlike the previous Poincare, `Tree` can only be iterated forward.  You can't
 access the previous child or the parent of a tree, unless you know a root tree
 above this parent and walk downward from there (this is what
 `parentOfDescendant` does).
@@ -143,7 +143,7 @@ for (const Tree * subTree : tree->selfAndDescendants()) {
 
 
 ## How to display a Tree ?
-The structure of a Tree can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with:
+The structure of a `Tree` can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with:
 - `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
   [Add][2]
@@ -168,7 +168,7 @@ The structure of a Tree can be inspected in DEBUG with several log functions, de
 
 ## How to create a Tree at runtime ?
 
-When you need a Tree depending on user content or computed values, you need to build it on the `TreeStack`.
+When you need a `Tree` depending on user content or computed values, you need to build it on the `TreeStack`.
 
 > [!NOTE]
 > The `TreeStack` is a dedicated range of memory where you can create
@@ -180,7 +180,7 @@ The low-level method is presented here, for a safer approach, read [How to creat
 
 ### Method 1: Pushing nodes
 
-The most basic way to create trees from scratch is to push nodes successively at the end of the TreeStack.
+The most basic way to create trees from scratch is to push nodes successively at the end of the `TreeStack`.
 The global object `SharedTreeStack` has push methods for each kind of node:
 
 ```cpp
@@ -220,8 +220,8 @@ cos(π+3.0)
 The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
 When doing so you should always keep in mind that the `TreeStack` is a stack and that removing or extending a tree will move the trees placed after it.
 
-When doing so you should always keep in mind that the TreeStack is a Stack and that removing or extending
-a Tree will move the other Trees down the stack.
+When doing so you should always keep in mind that the `TreeStack` is a Stack and that removing or extending
+a tree will move the other trees down the stack.
 
 ```cpp
 Tree * a = someTree->cloneTree();
@@ -266,7 +266,7 @@ You can now read the various `Tree` motions in [tree.h](/poincare/src/memory/tre
 references. Mind the difference between `moveBefore` and `moveAt` that are the
 same function tree-wise but not reference-wise.
 
-The `TreeStack` has a `log` method as well, that shows each `Tree` it contains and the references pointing to Trees.
+The `TreeStack` has a `log` method as well, that shows each tree it contains and the references pointing to trees.
 
 `(lldb) p Poincare::Internal::TreeStack::SharedTreeStack->log()`
 
@@ -335,7 +335,7 @@ assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
 ```
 
 To minimize the risk of mistakes, we created a wrapper allowing the use of such
-methods on TreeRef while preserving them.
+methods on `TreeRef` while preserving them.
 
 For the example above, just add:
 ```cpp
@@ -352,7 +352,7 @@ assert(b->isZero()); // Ok
 
 ### When to use TreeRef
 
-TreeRefs allow a safer and more readable Tree manipulation.
+TreeRefs allow a safer and more readable tree manipulation.
 
 The only requirement is to ensure that they are only used in methods:
 - Where efficiency isn't critical
@@ -360,19 +360,19 @@ The only requirement is to ensure that they are only used in methods:
 - Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
 - Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
 
-Also remember that there is a limit to the number of TreeRef used at the same time (`TreeStack::k_maxNumberOfReferences`).
+Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).
 
 
 ## How to create a Tree at compile time ?
 
 When you have a formula that does not need to change, you can define it at
-compile time (to be included in the flash) using a KTree.
+compile time (to be included in the flash) using a `KTree`.
 
 KTrees are a collective name for a collection of constexpr constructors defined in the headers
 [expression/k_tree.h](/poincare/src/expression/k_tree.h) and
 [layout/k_tree.h](/poincare/src/layout/k_tree.h).
 
-They have the name of the node prefixed by K and can be nested to create the Tree you would expect:
+They have the name of the node prefixed by K and can be nested to create the tree you would expect:
 
 ```cpp
 constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e)); // exp(2*i*π)
@@ -382,7 +382,7 @@ constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e)); // e
 
 Some specials literals with the suffix `_e` exist to write numbers in a readable way:
  - `23_e` is the integer 23
- - `-4_e/5_e` is the rational -4/5 (a single Tree with no children, unlike
+ - `-4_e/5_e` is the rational -4/5 (a single tree with no children, unlike
    Opposite(Division(4,5)))
  - `23.0_e` is a decimal
  - `23.0_fe` is a float
@@ -413,7 +413,7 @@ constexpr KTree twoPi = KMult(2_e, π_e);
 
 ### Using KTrees just for a node
 
-You can use a KTree constructor without the parentheses and children if you only need the node.
+You can use a `KTree` constructor without the parentheses and children if you only need the node.
 
 ```cpp
 KCos->cloneNode(); // equivalent to SharedTreeStack->pushCos()
@@ -442,7 +442,7 @@ The behavior is similar to `const char * name() { return "poincare"; }` where th
 The only role of the template machinery in k_tree.h is to set-up these type aliases where `KAdd(a, b)` expands to `KTree<Type::Add, 2, blocks of the type of a..., blocks of the type of b...>()`.
 
 As a consequence, you cannot build an array of different KTrees or declare a function that takes a
-KTree. However you can define a template that only accept KTrees
+`KTree`. However you can define a template that only accept KTrees
 using the concept that gathers them all like this:
 
 ```cpp

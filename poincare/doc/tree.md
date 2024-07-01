@@ -205,14 +205,16 @@ If you do only the first two, `expr` will silently point to a broken tree with g
 ### Method 2: Cloning trees
 
 Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
-you can interleave node pushes with tree creation methods to build a more complex structure.
+you can use both node pushes and tree creation methods to build a more complex structure.
 
 ```cpp
 Tree * expr2 = SharedTreeStack->pushCos();
 expr->cloneTree()
-// expr2->logSerialize() prints "cos(π+3.0)"
 ```
-
+```xml
+(lldb) expr2->logSerialize()
+cos(π+3.0)
+```
 
 ## How to reorganize Trees in the TreeStack ?
 The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.

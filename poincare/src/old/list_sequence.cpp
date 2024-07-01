@@ -29,24 +29,6 @@ size_t ListSequenceNode::serialize(char* buffer, size_t bufferSize,
       ListSequence::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> ListSequenceNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  ListComplex<T> list = ListComplex<T>::Builder();
-  T upperBound =
-      childAtIndex(2)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(upperBound) || upperBound < 1) {
-    return Complex<T>::Undefined();
-  }
-  for (int i = 1; i <= static_cast<int>(upperBound); i++) {
-    list.addChildAtIndexInPlace(approximateFirstChildWithArgument(
-                                    static_cast<T>(i), approximationContext),
-                                list.numberOfChildren(),
-                                list.numberOfChildren());
-  }
-  return std::move(list);
-}
-
 OExpression ListSequence::UntypedBuilder(OExpression children) {
   assert(children.otype() == ExpressionNode::Type::OList);
   if (children.childAtIndex(1).otype() != ExpressionNode::Type::Symbol) {

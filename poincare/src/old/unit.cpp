@@ -1100,12 +1100,6 @@ OExpression UnitNode::shallowBeautify(
   return OUnit(this).shallowBeautify();
 }
 
-template <typename T>
-Evaluation<T> UnitNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return Complex<T>::Undefined();
-}
-
 // OUnit
 OUnit OUnit::Builder(const OUnit::Representative* representative,
                      const Prefix* prefix) {
@@ -1517,10 +1511,5 @@ void OUnit::chooseBestRepresentativeAndPrefix(
     node()->setPrefix(bestPrefix);
   }
 }
-
-template Evaluation<float> UnitNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> UnitNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

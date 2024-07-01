@@ -164,9 +164,14 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
   TreeRef newParent = SharedTreeStack->pushRackLayout(0);
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
-    if (j == 1 && expression->isListStatWithCoefficients() &&
+    if (((j == 1 && expression->isListStatWithCoefficients()) ||
+         (j == 3 && expression->isNthDiff())) &&
         expression->nextNode()->isOne()) {
-      // Skip coefficient if default mean(L, 1) -> mean(L)
+      // TODO: factorise with PromoteBuiltin?
+      // TODO: factorise with 2D layouting?
+      /* Remove default parameters:
+       * - mean(L, 1) -> mean(L)
+       * - diff(f, x, y, 1) -> diff(f, x, y) */
       expression->nextNode()->removeTree();
       continue;
     }
@@ -418,7 +423,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
 #endif
       break;
     }
-    case Type::Diff:
     case Type::NthDiff:
       // TODO_PCJ createValidExpandedForm
       if (expression->lastChild()->isUserFunction() &&
@@ -426,16 +430,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           expression->lastChild()->child(0)->treeIsIdenticalTo(
               Symbol::k_systemSymbol)) {
         layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
-        int order = expression->isDiff()
-                        ? 1
-                        : Integer::Handler(expression->child(2)).to<int>();
+        int order = Integer::Handler(expression->child(2)).to<int>();
         if (order <= 2) {
           PushCodePoint(layoutParent, order == 1 ? '\'' : '"');
-          if (expression->isNthDiff()) {
-            expression->child(2)->removeTree();
-          }
+          expression->child(2)->removeTree();
         } else {
-          assert(expression->isNthDiff());
           TreeRef rack;
           if (m_linearMode) {
             PushCodePoint(layoutParent, '^');
@@ -456,12 +455,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {
-        TreeRef layout = (type.isDiff() ? KDiffL : KNthDiffL)->cloneNode();
-        if (type.isNthDiff()) {
-          // Handle the peculiar order of nth-derivative layout
-          // TODO fix order in derivative layout instead
-          expression->child(2)->moveTreeBeforeNode(expression->child(3));
-        }
+        TreeRef layout =
+            (expression->child(2)->isOne() ? KDiffL : KNthDiffL)->cloneNode();
+        // Handle the peculiar order of nth-derivative layout
+        // TODO fix order in derivative layout instead
+        expression->child(2)->moveTreeBeforeNode(expression->child(3));
         layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
       }

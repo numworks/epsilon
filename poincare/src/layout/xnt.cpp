@@ -77,7 +77,7 @@ constexpr struct {
   Type expressionType;
   const CodePoint* XNTcycle;
 } k_parameteredFunctions[] = {
-    {LayoutType::Diff, Type::Diff, k_defaultContinuousXNTCycle},
+    {LayoutType::Diff, Type::NthDiff, k_defaultContinuousXNTCycle},
     {LayoutType::NthDiff, Type::NthDiff, k_defaultContinuousXNTCycle},
     {LayoutType::Integral, Type::Integral, k_defaultContinuousXNTCycle},
     {LayoutType::Sum, Type::Sum, k_defaultDiscreteXNTCycle},

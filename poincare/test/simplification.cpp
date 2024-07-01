@@ -797,8 +797,8 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
 
-  Tree* e4 =
-      KDiff("x"_e, "y"_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))->cloneTree();
+  Tree* e4 = KNthDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KSet(KAbs("x"_e), "z"_e)))
+                 ->cloneTree();
   const Tree* r4 = KDep(1_e, KSet(KAbs("y"_e), "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));

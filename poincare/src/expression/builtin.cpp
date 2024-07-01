@@ -188,6 +188,8 @@ const Builtin* Builtin::GetSpecialIdentifier(Type type) {
 
 bool Builtin::checkNumberOfParameters(int n) const {
   switch (m_type) {
+    case Type::NthDiff:
+      return 3 <= n && n <= 4;
     case Type::Round:
     case Type::Mean:
     case Type::Variance:

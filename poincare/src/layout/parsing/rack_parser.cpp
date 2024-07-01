@@ -762,6 +762,9 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
     if (type.isListStatWithCoefficients()) {
       NAry::AddChild(parameterList, (1_e)->cloneTree());
     }
+    if (type == Type::NthDiff) {
+      NAry::AddChild(parameterList, (1_e)->cloneTree());
+    }
   }
   MoveNodeOverNode(parameterList,
                    builtin->pushNode(parameterList->numberOfChildren()));
@@ -869,8 +872,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     builtin = Builtin::GetReservedFunction(KLogarithm);
   } else if (numberOfParameters == 1 && builtin->type() == Type::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
-  } else if (numberOfParameters == 4 && builtin->type() == Type::Diff) {
-    builtin = Builtin::GetReservedFunction(KNthDiff);
   }
   assert(builtin);
 

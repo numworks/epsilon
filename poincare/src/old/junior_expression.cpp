@@ -310,8 +310,6 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::ConstantPhysics;
     case Type::Dependency:
       return ExpressionNode::Type::Dependency;
-    case Type::Diff:
-      return ExpressionNode::Type::Derivative;
     case Type::Div:
       return ExpressionNode::Type::Division;
     case Type::Factor:

@@ -109,7 +109,7 @@ LayoutShape LeftLayoutShape(const Tree* e) {
       // should be assert false ?
       return LeftLayoutShape(Dependency::Main(e));
 
-    case Type::Diff:
+    case Type::NthDiff:
       // why ? should be fraction ?
       return MoreLetters;
 
@@ -189,7 +189,7 @@ LayoutShape RightLayoutShape(const Tree* e) {
       // was not there
       return RightLayoutShape(Dependency::Main(e));
 
-    case Type::Diff:
+    case Type::NthDiff:
       return BoundaryPunctuation;
 
     case Type::Integral:

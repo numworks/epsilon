@@ -20,7 +20,6 @@ uint8_t Parametric::FunctionIndex(const Tree* e) {
 
 uint8_t Parametric::FunctionIndex(TypeBlock type) {
   switch (type) {
-    case Type::Diff:
     case Type::DiffLayout:
     case Type::ListSequence:
     case Type::ListSequenceLayout:
@@ -48,7 +47,6 @@ bool Parametric::IsFunctionIndex(int i, const Tree* e) {
 
 ComplexSign Parametric::VariableSign(const Tree* e) {
   switch (e->type()) {
-    case Type::Diff:
     case Type::NthDiff:
     case Type::Integral:
       return k_continuousVariableSign;

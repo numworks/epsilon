@@ -23,17 +23,6 @@ OExpression ListMinimumNode::shallowReduce(
   return ListMinimum(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListMinimumNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  ExpressionNode* child = childAtIndex(0);
-  if (child->otype() != ExpressionNode::Type::OList) {
-    return Complex<T>::Undefined();
-  }
-  return static_cast<ListNode*>(child)->extremumApproximation<T>(
-      approximationContext, true);
-}
-
 OExpression ListMinimum::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
   if (child.otype() != ExpressionNode::Type::OList ||
@@ -50,10 +39,5 @@ OExpression ListMinimum::shallowReduce(ReductionContext reductionContext) {
   replaceWithInPlace(result);
   return result;
 }
-
-template Evaluation<float> ListMinimumNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListMinimumNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

@@ -23,17 +23,6 @@ OExpression ListMaximumNode::shallowReduce(
   return ListMaximum(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListMaximumNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  ExpressionNode* child = childAtIndex(0);
-  if (child->otype() != ExpressionNode::Type::OList) {
-    return Complex<T>::Undefined();
-  }
-  return static_cast<ListNode*>(child)->extremumApproximation<T>(
-      approximationContext, false);
-}
-
 OExpression ListMaximum::shallowReduce(ReductionContext reductionContext) {
   OExpression child = childAtIndex(0);
   if (child.otype() != ExpressionNode::Type::OList ||
@@ -50,10 +39,5 @@ OExpression ListMaximum::shallowReduce(ReductionContext reductionContext) {
   replaceWithInPlace(result);
   return result;
 }
-
-template Evaluation<float> ListMaximumNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListMaximumNode::templatedApproximate<double>(
-    const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

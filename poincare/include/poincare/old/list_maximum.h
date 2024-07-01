@@ -29,20 +29,6 @@ class ListMaximumNode : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
-
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class ListMaximum : public ExpressionOneChild<ListMaximum, ListMaximumNode> {

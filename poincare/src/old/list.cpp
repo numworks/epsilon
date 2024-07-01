@@ -59,17 +59,6 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext,
   return returnIndex;
 }
 
-template <typename T>
-Evaluation<T> ListNode::extremumApproximation(
-    const ApproximationContext& approximationContext, bool minimum) {
-  int index = extremumIndex(approximationContext, minimum);
-  if (index < 0) {
-    return Complex<T>::Undefined();
-  }
-  return childAtIndex(index)->approximate(static_cast<T>(0),
-                                          approximationContext);
-}
-
 OExpression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return OList(this).shallowReduce(reductionContext);
 }
@@ -126,9 +115,4 @@ OExpression OList::extremum(const ReductionContext& reductionContext,
   }
   return childAtIndex(extremumIndex);
 }
-
-template Evaluation<float> ListNode::extremumApproximation<float>(
-    const ApproximationContext& approximationContext, bool minimum);
-template Evaluation<double> ListNode::extremumApproximation<double>(
-    const ApproximationContext& approximationContext, bool minimum);
 }  // namespace Poincare

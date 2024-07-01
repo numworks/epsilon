@@ -33,9 +33,6 @@ class ListNode : public ExpressionNode {
   // Helper functions
   int extremumIndex(const ApproximationContext& approximationContext,
                     bool minimum);
-  template <typename T>
-  Evaluation<T> extremumApproximation(
-      const ApproximationContext& approximationContext, bool minimum);
 
   /* See comment on NAryExpressionNode */
   uint16_t m_numberOfChildren;

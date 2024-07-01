@@ -68,7 +68,6 @@ class MatrixComplex final : public Evaluation<T> {
   static MatrixComplex Builder(std::complex<T> *operands, int numberOfRows,
                                int numberOfColumns);
   static MatrixComplex<T> Undefined();
-  static MatrixComplex<T> CreateIdentity(int dim);
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
   MatrixComplex<T> inverse() const { return node()->inverse(); }

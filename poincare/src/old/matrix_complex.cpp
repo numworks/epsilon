@@ -205,20 +205,6 @@ MatrixComplex<T> MatrixComplex<T>::Undefined() {
 }
 
 template <typename T>
-MatrixComplex<T> MatrixComplex<T>::CreateIdentity(int dim) {
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  for (int i = 0; i < dim; i++) {
-    for (int j = 0; j < dim; j++) {
-      Complex<T> c =
-          i == j ? Complex<T>::Builder(1.0) : Complex<T>::Builder(0.0);
-      result.addChildAtIndexInPlace(c, i * dim + j, i * dim + j);
-    }
-  }
-  result.setDimensions(dim, dim);
-  return result;
-}
-
-template <typename T>
 void MatrixComplex<T>::setDimensions(int rows, int columns) {
   setNumberOfRows(rows);
   setNumberOfColumns(columns);

@@ -9,10 +9,10 @@
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
 - [How to walk through a Tree ?](#how-to-walk-through-a-tree-)
 - [How to display a Tree ?](#how-to-display-a-tree-)
-- [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
 - [How to reorganize Trees in the TreeStack ?](#how-to-reorganize-trees-in-the-treestack-)
 - [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
+- [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
 - [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
 - [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
 - [How to transform a Tree using pattern matching ?](#how-to-transform-a-tree-using-pattern-matching-)
@@ -165,56 +165,6 @@ The structure of a `Tree` can be inspected in DEBUG with several log functions, 
   ```
   2+3
   ```
-
-## How to create a Tree at runtime ?
-
-When you need a `Tree` depending on user content or computed values, you need to build it on the `TreeStack`.
-
-> [!NOTE]
-> The `TreeStack` is a dedicated range of memory where you can create
-> and play with your trees temporarily. It is not intended for storage and can be
-> cleared by exceptions. You must save your trees elsewhere before you return to
-> the app’s code.
-
-The low-level method is presented here, for a safer approach, read [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-).
-
-### Method 1: Pushing nodes
-
-The most basic way to create trees from scratch is to push nodes successively at the end of the `TreeStack`.
-The global object `SharedTreeStack` has push methods for each kind of node:
-
-```cpp
-// pushing an Add (addition) node with two-children
-Tree * expr1 = SharedTreeStack->pushAdd(2);
-```
-```cpp
-// pushing Pi
-SharedTreeStack->pushPi();
-```
-```cpp
-// pushing a double
-SharedTreeStack->pushDoubleFloat(3.0);
-```
-
-You are responsible to create a valid tree structure using this method.
-
-If you do the three previous operations in that order, `expr1` will point to the tree `π+3.0`.
-
-If you do only the first two, `expr1` will silently point to a broken tree with garbage that will crash when used.
-
-### Method 2: Cloning trees
-
-Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
-you can use both node pushes and tree creation methods to build a more complex structure.
-
-```cpp
-Tree * expr2 = SharedTreeStack->pushCos();
-expr1->cloneTree()
-```
-```xml
-(lldb) expr2->logSerialize()
-cos(π+3.0)
-```
 
 ## How to reorganize Trees in the TreeStack ?
 The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
@@ -452,8 +402,57 @@ template <KTreeConcept KT> f(KT ktree) {
 ```
 </details>
 
+## How to create a Tree at runtime ?
 
-## How to create a Tree using pattern matching ?
+When you need a `Tree` depending on user content or computed values, you need to build it on the `TreeStack`.
+
+> [!NOTE]
+> The `TreeStack` is a dedicated range of memory where you can create
+> and play with your trees temporarily. It is not intended for storage and can be
+> cleared by exceptions. You must save your trees elsewhere before you return to
+> the app’s code.
+
+The low-level method is presented here, for a safer approach, read [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-).
+
+### Method 1: Pushing nodes
+
+The most basic way to create trees from scratch is to push nodes successively at the end of the `TreeStack`.
+The global object `SharedTreeStack` has push methods for each kind of node:
+
+```cpp
+// pushing an Add (addition) node with two-children
+Tree * expr1 = SharedTreeStack->pushAdd(2);
+```
+```cpp
+// pushing Pi
+SharedTreeStack->pushPi();
+```
+```cpp
+// pushing a double
+SharedTreeStack->pushDoubleFloat(3.0);
+```
+
+You are responsible to create a valid tree structure using this method.
+
+If you do the three previous operations in that order, `expr1` will point to the tree `π+3.0`.
+
+If you do only the first two, `expr1` will silently point to a broken tree with garbage that will crash when used.
+
+### Method 2: Cloning trees
+
+Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
+you can use both node pushes and tree creation methods to build a more complex structure.
+
+```cpp
+Tree * expr2 = SharedTreeStack->pushCos();
+expr1->cloneTree()
+```
+```xml
+(lldb) expr2->logSerialize()
+cos(π+3.0)
+```
+
+### Method 3: Using pattern matching
 
 If the tree you want to create has always the same structure where you need to customize some children, the safest way to build it is to use `PatternMaching::Create`.
 

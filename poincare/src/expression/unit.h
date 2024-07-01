@@ -114,6 +114,7 @@ class Representative {
   bool isOutputPrefixable() const {
     return m_outputPrefixable != Prefixable::None;
   }
+  virtual bool isImperial() const { return false; }
 #if 0
   size_ serialize(char* buffer, size_t bufferSize,, const Prefix* prefix) const;
 #endif

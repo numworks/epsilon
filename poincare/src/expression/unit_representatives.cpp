@@ -154,6 +154,11 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
+bool Distance::isImperial() const {
+  return this == &representatives.inch || this == &representatives.foot ||
+         this == &representatives.yard || this == &representatives.mile;
+}
+
 const Representative* Distance::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
@@ -260,6 +265,11 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
 }
 #endif
 
+bool Mass::isImperial() const {
+  return this == &representatives.ounce || this == &representatives.pound ||
+         this == &representatives.shortTon || this == &representatives.longTon;
+}
+
 const Representative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
@@ -350,6 +360,12 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
+bool Temperature::isImperial() const {
+  return this == &representatives.fahrenheit;
+}
+
+bool Surface::isImperial() const { return (this == &representatives.acre); }
+
 const Representative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
@@ -385,6 +401,14 @@ int Surface::setAdditionalExpressions(double value, Expression* dest,
   return 2;
 }
 #endif
+
+bool Volume::isImperial() const {
+  return this == &representatives.cup || this == &representatives.pint ||
+         this == &representatives.quart || this == &representatives.gallon ||
+         this == &representatives.teaSpoon ||
+         this == &representatives.tableSpoon ||
+         this == &representatives.fluidOnce;
+}
 
 const Representative* Volume::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,

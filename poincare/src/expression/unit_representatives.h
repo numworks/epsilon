@@ -90,6 +90,7 @@ class Distance : public Helper<Distance> {
     R mile;
   };
 
+  bool isImperial() const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
@@ -157,6 +158,7 @@ class Mass : public Helper<Mass> {
     R dalton;
   };
 
+  bool isImperial() const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
@@ -203,6 +205,7 @@ class Temperature : public Helper<Temperature> {
                                     const Representative* source,
                                     const Representative* target);
 #endif
+  bool isImperial() const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override {
@@ -462,6 +465,7 @@ class Surface : public Helper<Surface> {
     R acre;
   };
 
+  bool isImperial() const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
@@ -494,6 +498,7 @@ class Volume : public Helper<Volume> {
     R fluidOnce;
   };
 
+  bool isImperial() const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;

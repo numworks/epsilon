@@ -293,6 +293,9 @@ class Unit {
                                  UnitFormat unitFormat);
 
  private:
+  // From Kelvin value, return value in given temperature representative
+  static double KelvinValueToRepresentative(
+      double value, const Representative* representative);
   // Replace units and physical constants with their Basic SI value
   static bool ShallowRemoveUnit(Tree* e, void*);
   /* Remove subtrees that don't contain units. Return true if the entire tree

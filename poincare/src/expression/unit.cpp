@@ -883,6 +883,19 @@ void Unit::RemoveTemperatureUnit(Tree* root) {
        .KC = representative->ratioExpressionReduced()}));
 }
 
+double Unit::KelvinValueToRepresentative(double value,
+                                         const Representative* representative) {
+  if (representative == &Temperature::representatives.kelvin) {
+    return value;
+  }
+  assert(IsNonKelvinTemperature(representative));
+  bool isCelsius = (representative == &Temperature::representatives.celsius);
+  // A -> (A / ratio) - origin
+  return (value / representative->ratio()) -
+         (isCelsius ? Approximation::To<double>(Temperature::celsiusOrigin)
+                    : Approximation::To<double>(Temperature::fahrenheitOrigin));
+}
+
 Tree* Unit::Push(const Representative* unitRepresentative,
                  const Prefix* unitPrefix) {
   uint8_t repId = Representative::ToId(unitRepresentative);

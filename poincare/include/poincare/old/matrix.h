@@ -35,28 +35,11 @@ class MatrixNode final : public Array, public ExpressionNode {
   };
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,
                    int numberOfSignificantDigits = 0) const override;
-
- private:
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class OMatrix final : public OExpression {

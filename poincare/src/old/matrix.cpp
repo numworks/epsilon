@@ -86,19 +86,6 @@ size_t MatrixNode::serialize(char *buffer, size_t bufferSize,
   return std::min(currentChar, bufferSize - 1);
 }
 
-template <typename T>
-Evaluation<T> MatrixNode::templatedApproximate(
-    const ApproximationContext &approximationContext) const {
-  MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
-  for (ExpressionNode *c : children()) {
-    matrix.addChildAtIndexInPlace(c->approximate(T(), approximationContext),
-                                  matrix.numberOfChildren(),
-                                  matrix.numberOfChildren());
-  }
-  matrix.setDimensions(numberOfRows(), numberOfColumns());
-  return std::move(matrix);
-}
-
 // MATRIX
 
 void OMatrix::setDimensions(int rows, int columns) {

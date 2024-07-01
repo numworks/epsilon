@@ -185,7 +185,7 @@ The global object `SharedTreeStack` has push methods for each kind of node:
 
 ```cpp
 // pushing an Add (addition) node with two-children
-Tree * expr = SharedTreeStack->pushAdd(2);
+Tree * expr1 = SharedTreeStack->pushAdd(2);
 ```
 ```cpp
 // pushing Pi
@@ -198,9 +198,9 @@ SharedTreeStack->pushDoubleFloat(3.0);
 
 You are responsible to create a valid tree structure using this method.
 
-If you do the three previous operations in that order, `expr` will point to the tree `π+3.0`.
+If you do the three previous operations in that order, `expr1` will point to the tree `π+3.0`.
 
-If you do only the first two, `expr` will silently point to a broken tree with garbage that will crash when used.
+If you do only the first two, `expr1` will silently point to a broken tree with garbage that will crash when used.
 
 ### Method 2: Cloning trees
 
@@ -209,7 +209,7 @@ you can use both node pushes and tree creation methods to build a more complex s
 
 ```cpp
 Tree * expr2 = SharedTreeStack->pushCos();
-expr->cloneTree()
+expr1->cloneTree()
 ```
 ```xml
 (lldb) expr2->logSerialize()
@@ -458,7 +458,7 @@ template <KTreeConcept KT> f(KT ktree) {
 If the tree you want to create has always the same structure where you need to customize some children, the safest way to build it is to use `PatternMaching::Create`.
 
 ```cpp
-Tree * myTree = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
+Tree * expr3 = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
 ```
 
 The first argument is a pattern, a [constexpr tree](#how-to-create-a-tree-at-compile-time-) that may contain placeholders named `KA`,`KB`… up to `KH`.
@@ -481,9 +481,9 @@ expression.
 
 ```cpp
 PatternMatching::Context ctx;
-const Tree * someExpr = Cos(Add(2, 3));
-if (PatternMatching::Match(someExpr, KCos(KA), &ctx)) {
-  ctx->getTree(KA); // Points to Add inside someExpr
+const Tree * expr4 = Cos(Add(2, 3));
+if (PatternMatching::Match(expr4, KCos(KA), &ctx)) {
+  ctx->getTree(KA); // Points to Add inside expr4
 }
 ```
 
@@ -494,7 +494,7 @@ The functions `Match` and `Create` are combined in `MatchCreate` and `MatchRepla
 
 ```cpp
 // Apply simplification a + a -> 2 * a
-bool hasChanged = MatchReplace(expression, KAdd(KA, KA), KMult(2_e, KA));
+bool hasChanged = MatchReplace(tree, KAdd(KA, KA), KMult(2_e, KA));
 ```
 <details>
 <summary>Note</summary>
@@ -522,7 +522,7 @@ same suffix to insert these trees inside an n-ary in the create pattern.
 ```cpp
 // Apply simplification a*(b+c...)*d... -> a*b*d + a*(c...)*d...
 bool hasChanged = MatchReplaceSimplify(
-    myTree, KMult(KA, KAdd(KB, KC_p), KD_s),
+    tree, KMult(KA, KAdd(KB, KC_p), KD_s),
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```
 

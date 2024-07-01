@@ -118,7 +118,8 @@ There are three situations to distinguish:
   The range `MathematicalConstant` is included in the range `Number`.
   </details>
 
-- If you are more interested in the kind of mathematical object the tree represents as a whole, [Dimension analysis](../src/expression/dimension.h) is what you are looking for. `Dimension::Get(tree)` will tell you if your tree has a Scalar, Matrix, Unit, Point or Boolean dimension and `Dimension::ListLength(tree)` if it is a list of such objects.
+- If you want to know if your tree is a scalar, matrix, boolean, point or unit, use `Dimension::Get(tree)`.
+- You can have list of any dimension listed above, you can check the list length with `Dimension::ListLength(tree)`.
 
 
 ## How to walk through a Tree ?
@@ -177,7 +178,7 @@ When you need a Tree depending on user content or computed values, you need to b
 
 The low-level method is presented here, for a safer approach, read [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-).
 
-### Pushing nodes
+### Method 1: Pushing nodes
 
 The most basic way to create trees from scratch is to push nodes successively at the end of the TreeStack.
 The global object `SharedTreeStack` has push methods for each kind of node:
@@ -201,7 +202,7 @@ If you do the three previous operations in that order, `expr` will point to the 
 
 If you do only the first two, `expr` will silently point to a broken tree with garbage that will crash when used.
 
-### Cloning trees
+### Method 2: Cloning trees
 
 Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
 you can interleave node pushes with tree creation methods to build a more complex structure.
@@ -214,8 +215,8 @@ expr->cloneTree()
 
 
 ## How to reorganize Trees in the TreeStack ?
-The [Tree class](../src/memory/tree.h) offers a lot of methods to move non-const Tree in the TreeStack
-relatively to other Trees, clone them at a specific place, delete them and swap them.
+The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
+When doing so you should always keep in mind that the `TreeStack` is a stack and that removing or extending a tree will move the trees placed after it.
 
 When doing so you should always keep in mind that the TreeStack is a Stack and that removing or extending
 a Tree will move the other Trees down the stack.

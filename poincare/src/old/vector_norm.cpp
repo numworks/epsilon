@@ -25,21 +25,6 @@ size_t VectorNormNode::serialize(char* buffer, size_t bufferSize,
       VectorNorm::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> VectorNormNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  if (Poincare::Preferences::SharedPreferences()
-          ->examMode()
-          .forbidVectorNorm()) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
-}
-
 OExpression VectorNorm::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

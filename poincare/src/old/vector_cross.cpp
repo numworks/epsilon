@@ -25,28 +25,6 @@ size_t VectorCrossNode::serialize(char* buffer, size_t bufferSize,
       VectorCross::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> VectorCrossNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  if (Poincare::Preferences::SharedPreferences()
-          ->examMode()
-          .forbidVectorProduct()) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> input0 =
-      childAtIndex(0)->approximate(T(), approximationContext);
-  if (input0.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> input1 =
-      childAtIndex(1)->approximate(T(), approximationContext);
-  if (input1.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  return static_cast<MatrixComplex<T>&>(input0).cross(
-      static_cast<MatrixComplex<T>*>(&input1));
-}
-
 OExpression VectorCross::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

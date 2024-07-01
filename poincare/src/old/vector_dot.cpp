@@ -25,28 +25,6 @@ size_t VectorDotNode::serialize(char* buffer, size_t bufferSize,
       VectorDot::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> VectorDotNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  if (Poincare::Preferences::SharedPreferences()
-          ->examMode()
-          .forbidVectorProduct()) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> input0 =
-      childAtIndex(0)->approximate(T(), approximationContext);
-  if (input0.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  Evaluation<T> input1 =
-      childAtIndex(1)->approximate(T(), approximationContext);
-  if (input1.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return Complex<T>::Undefined();
-  }
-  return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input0).dot(
-      static_cast<MatrixComplex<T>*>(&input1)));
-}
-
 OExpression VectorDot::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

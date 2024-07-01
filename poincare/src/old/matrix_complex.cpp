@@ -139,50 +139,6 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
                                    m_numberOfColumns);
 }
 
-template <typename T>
-std::complex<T> MatrixComplexNode<T>::norm() const {
-  if (!isVector()) {
-    return std::complex<T>(NAN, NAN);
-  }
-  std::complex<T> sum = 0;
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber; i++) {
-    sum += std::norm(complexAtIndex(i));
-  }
-  return std::sqrt(sum);
-}
-
-template <typename T>
-std::complex<T> MatrixComplexNode<T>::dot(MatrixComplex<T> *e) const {
-  if (!isVector() || vectorType() != e->vectorType() ||
-      numberOfChildren() != e->numberOfChildren()) {
-    return std::complex<T>(NAN, NAN);
-  }
-  std::complex<T> sum = 0;
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber; i++) {
-    sum += complexAtIndex(i) * e->complexAtIndex(i);
-  }
-  return sum;
-}
-
-template <typename T>
-Evaluation<T> MatrixComplexNode<T>::cross(MatrixComplex<T> *e) const {
-  if (!isVector() || vectorType() != e->vectorType() ||
-      numberOfChildren() != 3 || e->numberOfChildren() != 3) {
-    return MatrixComplex<T>::Undefined();
-  }
-  std::complex<T> operandsCopy[3];
-  operandsCopy[0] = complexAtIndex(1) * e->complexAtIndex(2) -
-                    complexAtIndex(2) * e->complexAtIndex(1);
-  operandsCopy[1] = complexAtIndex(2) * e->complexAtIndex(0) -
-                    complexAtIndex(0) * e->complexAtIndex(2);
-  operandsCopy[2] = complexAtIndex(0) * e->complexAtIndex(1) -
-                    complexAtIndex(1) * e->complexAtIndex(0);
-  return MatrixComplex<T>::Builder(operandsCopy, numberOfRows(),
-                                   numberOfColumns());
-}
-
 // MATRIX COMPLEX REFERENCE
 
 template <typename T>

@@ -5,8 +5,14 @@
 
 namespace Poincare::Internal {
 
+static bool IsVector(const Tree* e) {
+  return e->isMatrix() &&
+         (Matrix::NumberOfRows(e) == 1 || Matrix::NumberOfColumns(e) == 1);
+}
+
 Tree* Vector::Norm(const Tree* e) {
   // Norm is defined on vectors only
+  assert(IsVector(e));
   int childrenNumber = e->numberOfChildren();
   Tree* result = KPow->cloneNode();
   Tree* sum = SharedTreeStack->pushAdd(childrenNumber);
@@ -26,6 +32,7 @@ Tree* Vector::Norm(const Tree* e) {
 
 Tree* Vector::Dot(const Tree* e1, const Tree* e2) {
   // Dot product is defined between two vectors of same size and type
+  assert(IsVector(e1) && IsVector(e2));
   assert(e1->numberOfChildren() == e2->numberOfChildren());
   int childrenNumber = e2->numberOfChildren();
   Tree* sum = SharedTreeStack->pushAdd(childrenNumber);
@@ -43,6 +50,7 @@ Tree* Vector::Dot(const Tree* e1, const Tree* e2) {
 
 Tree* Vector::Cross(const Tree* e1, const Tree* e2) {
   // Cross product is defined between two vectors of size 3 and of same type.
+  assert(IsVector(e1) && IsVector(e2));
   assert(e1->numberOfChildren() == 3 && e2->numberOfChildren() == 3);
   Tree* result = e1->cloneNode();
   for (int j = 0; j < 3; j++) {
@@ -62,5 +70,53 @@ Tree* Vector::Cross(const Tree* e1, const Tree* e2) {
   }
   return result;
 }
+
+#if 0
+// TODO_PCJ: approximations
+
+template <typename T>
+std::complex<T> MatrixComplexNode<T>::norm() const {
+  if (!isVector()) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
+    sum += std::norm(complexAtIndex(i));
+  }
+  return std::sqrt(sum);
+}
+
+template <typename T>
+std::complex<T> MatrixComplexNode<T>::dot(MatrixComplex<T> *e) const {
+  if (!isVector() || vectorType() != e->vectorType() ||
+      numberOfChildren() != e->numberOfChildren()) {
+    return std::complex<T>(NAN, NAN);
+  }
+  std::complex<T> sum = 0;
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber; i++) {
+    sum += complexAtIndex(i) * e->complexAtIndex(i);
+  }
+  return sum;
+}
+
+template <typename T>
+Evaluation<T> MatrixComplexNode<T>::cross(MatrixComplex<T> *e) const {
+  if (!isVector() || vectorType() != e->vectorType() ||
+      numberOfChildren() != 3 || e->numberOfChildren() != 3) {
+    return MatrixComplex<T>::Undefined();
+  }
+  std::complex<T> operandsCopy[3];
+  operandsCopy[0] = complexAtIndex(1) * e->complexAtIndex(2) -
+                    complexAtIndex(2) * e->complexAtIndex(1);
+  operandsCopy[1] = complexAtIndex(2) * e->complexAtIndex(0) -
+                    complexAtIndex(0) * e->complexAtIndex(2);
+  operandsCopy[2] = complexAtIndex(0) * e->complexAtIndex(1) -
+                    complexAtIndex(1) * e->complexAtIndex(0);
+  return MatrixComplex<T>::Builder(operandsCopy, numberOfRows(),
+                                   numberOfColumns());
+}
+#endif
 
 }  // namespace Poincare::Internal

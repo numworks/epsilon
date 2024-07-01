@@ -30,34 +30,12 @@ class ListNode : public ExpressionNode {
   // Simplification
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-
   // Helper functions
   int extremumIndex(const ApproximationContext& approximationContext,
                     bool minimum);
   template <typename T>
   Evaluation<T> extremumApproximation(
       const ApproximationContext& approximationContext, bool minimum);
-
- private:
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext) const {
-    return templatedApproximate<T>(approximationContext, true);
-  }
-  template <typename T>
-  Evaluation<T> templatedApproximate(
-      const ApproximationContext& approximationContext, bool keepUndef) const;
 
   /* See comment on NAryExpressionNode */
   uint16_t m_numberOfChildren;

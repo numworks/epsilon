@@ -74,20 +74,6 @@ OExpression ListNode::shallowReduce(const ReductionContext& reductionContext) {
   return OList(this).shallowReduce(reductionContext);
 }
 
-template <typename T>
-Evaluation<T> ListNode::templatedApproximate(
-    const ApproximationContext& approximationContext, bool keepUndef) const {
-  ListComplex<T> list = ListComplex<T>::Builder();
-  for (ExpressionNode* c : children()) {
-    Evaluation<T> eval = c->approximate(T(), approximationContext);
-    if (keepUndef || !eval.isUndefined()) {
-      int n = list.numberOfChildren();
-      list.addChildAtIndexInPlace(eval, n, n);
-    }
-  }
-  return std::move(list);
-}
-
 // OList
 
 OExpression OList::Ones(int length) {
@@ -140,11 +126,6 @@ OExpression OList::extremum(const ReductionContext& reductionContext,
   }
   return childAtIndex(extremumIndex);
 }
-
-template Evaluation<float> ListNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const;
 
 template Evaluation<float> ListNode::extremumApproximation<float>(
     const ApproximationContext& approximationContext, bool minimum);

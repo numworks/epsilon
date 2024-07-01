@@ -17,7 +17,7 @@ struct ProjectionContext {
   UnitFormat m_unitFormat = UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
   Poincare::Context* m_context = nullptr;
-  UnitDisplay m_unitDisplay = UnitDisplay::Deprecated;
+  UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
 };
 
 class Projection {

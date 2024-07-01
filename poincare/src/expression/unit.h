@@ -289,8 +289,7 @@ class Unit {
 
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
-                                 UnitDisplay unitDisplay,
-                                 UnitFormat unitFormat);
+                                 UnitDisplay unitDisplay);
 
  private:
   // From Kelvin value, return value in given temperature representative
@@ -302,9 +301,13 @@ class Unit {
    * has been removed. */
   static bool KeepUnitsOnly(Tree* e);
   TREE_REF_WRAP(KeepUnitsOnly);
-  // Old unit beautification, not taking input units into account.
-  static bool DeprecatedBeautify(Tree* e, Dimension dimension,
-                                 UnitFormat unitFormat);
+  // Return true if Imperial units should be used in output
+  static bool DisplayImperialUnits(const Tree* extractedUnits);
+  static void BuildMainOutput(Tree* e, TreeRef& extractedUnits,
+                              Dimension dimension);
+  // Without taking input units into account, select best unit for tree
+  static bool BuildAutomaticOutput(Tree* e, Dimension dimension,
+                                   UnitDisplay unitDisplay);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);

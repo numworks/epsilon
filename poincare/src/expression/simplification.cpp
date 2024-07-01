@@ -84,8 +84,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
   /* 4 - Handle Units */
   return Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
-                                         projectionContext->m_unitDisplay,
-                                         projectionContext->m_unitFormat) ||
+                                         projectionContext->m_unitDisplay) ||
          changed;
 }
 

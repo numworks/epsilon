@@ -50,8 +50,6 @@ enum class UnitDisplay : uint8_t {
   None,
   // Undef if input has non-angle unit dimension
   Forbidden,
-  // Old algorithm
-  Deprecated,
 };
 
 }  // namespace Poincare::Internal

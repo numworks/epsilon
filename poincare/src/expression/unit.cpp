@@ -815,6 +815,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   }
   // Convert value to base units
   double baseValue = *value * std::pow(GetValue(unit), exponent);
+  // TODO: Actually find the best prefix and representative
   const Prefix* bestPrefix = optimizePrefix ? Prefix::EmptyPrefix() : nullptr;
   const Representative* bestRepresentative =
       optimizeRepresentative ? GetRepresentative(unit)->standardRepresentative(
@@ -926,7 +927,7 @@ double Unit::GetValue(const Tree* unit) {
 
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
-                              UnitDisplay unitDisplay, UnitFormat unitFormat) {
+                              UnitDisplay unitDisplay) {
   if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
     // TODO_PCJ : Remove units that cancel themselves
     return false;
@@ -946,10 +947,10 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     RemoveTemperatureUnit(e);
   }
   Tree::ApplyShallowInDepth(e, ShallowRemoveUnit);
-  if (unitDisplay == UnitDisplay::Deprecated) {
-    // TODO: Remove UnitFormat once Deprecated display is removed.
+  if (unitDisplay == UnitDisplay::AutomaticMetric ||
+      unitDisplay == UnitDisplay::AutomaticImperial) {
     extractedUnits->removeTree();
-    DeprecatedBeautify(e, dimension, unitFormat);
+    BuildAutomaticOutput(e, dimension, unitDisplay);
     return true;
   }
   assert(extractedUnits && e->nextTree() == extractedUnits);
@@ -964,15 +965,12 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       extractedUnits->removeTree();
       e->cloneTreeOverTree(KUndef);
       return true;
+    case UnitDisplay::MainOutput:
+      BuildMainOutput(e, extractedUnits, dimension);
+      return true;
     case UnitDisplay::AutomaticInput:
       // extractedUnits might be of the form _mm*_Hz+(_m+_km)*_s^-1.
       // TODO: Implement the extraction of one of the terms to use it.
-    case UnitDisplay::MainOutput:
-      // TODO:
-    case UnitDisplay::AutomaticMetric:
-      // TODO
-    case UnitDisplay::AutomaticImperial:
-      // TODO
     case UnitDisplay::Decomposition:
       // TODO
     case UnitDisplay::Equivalent:
@@ -982,12 +980,87 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       e->cloneNodeAtNode(KMult.node<2>);
       return true;
     case UnitDisplay::None:
-    case UnitDisplay::Deprecated:
+    case UnitDisplay::AutomaticMetric:
+    case UnitDisplay::AutomaticImperial:
       // Silence warning
       break;
   }
   assert(false);
   return true;
+}
+
+// Find one or two units in expression, return false if there are more than two
+bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
+  assert(!*unit1 && !*unit2);
+  for (Tree* e : extractedUnits->selfAndDescendants()) {
+    if (e->isUnit() || e->isPhysicalConstant()) {
+      if (*unit2) {
+        return false;
+      }
+      (*unit1 ? *unit2 : *unit1) = e;
+    }
+  }
+  return true;
+}
+
+bool Unit::DisplayImperialUnits(const Tree* extractedUnits) {
+  bool hasImperialUnits = false;
+  for (const Tree* e : extractedUnits->selfAndDescendants()) {
+    if (e->isUnit()) {
+      if (GetRepresentative(e)->isImperial()) {
+        hasImperialUnits = true;
+      } else if (GetRepresentative(e) != &Volume::representatives.liter) {
+        // Use metric representatives if any other metric unit is involved.
+        return false;
+      }
+      // Liter representative is tolerated for imperial unit input.
+    }
+  }
+  return hasImperialUnits;
+}
+
+void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
+                           Dimension dimension) {
+  Tree* unit1 = nullptr;
+  Tree* unit2 = nullptr;
+  // If the input made of one single unit, preserve representative.
+  if (GetUnits(extractedUnits, &unit1, &unit2)) {
+    bool keepRepresentative = !unit2;
+    if (unit2 && dimension.unit.vector.isSpeed()) {
+      // Consider speed as a single unit.
+      keepRepresentative = true;
+      if (GetRepresentative(unit2)->siVector() == Distance::Dimension) {
+        // Swap both unit to optimize prefix on distance unit.
+        Tree* temp = unit2;
+        unit2 = unit1;
+        unit1 = temp;
+      }
+      keepRepresentative = true;
+    }
+    if (keepRepresentative) {
+      // Keep the same representative, find the best prefix.
+      double value = Approximation::RootTreeToReal<double>(e);
+      if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
+        value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
+      } else {
+        // TODO: Handle angle units at some point
+        // Correct the value since e is in basic SI
+        value /= Approximation::RootTreeToReal<double>(extractedUnits);
+        ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+            unit1, &value, UnitFormat::Metric, true, false);
+      }
+      e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
+      // Multiply value and extractedUnits.
+      e->cloneNodeAtNode(KMult.node<2>);
+      return;
+    }
+  }
+  // Fallback on automatic unit display.
+  UnitDisplay display = DisplayImperialUnits(extractedUnits)
+                            ? UnitDisplay::AutomaticImperial
+                            : UnitDisplay::AutomaticMetric;
+  extractedUnits->removeTree();
+  BuildAutomaticOutput(e, dimension, display);
 }
 
 bool Unit::ShallowRemoveUnit(Tree* e, void*) {
@@ -1081,8 +1154,8 @@ bool Unit::KeepUnitsOnly(Tree* e) {
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
  *           output 5°C, 41°F should output 41°F). */
-bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
-                              UnitFormat unitFormat) {
+bool Unit::BuildAutomaticOutput(Tree* e, Dimension dimension,
+                                UnitDisplay unitDisplay) {
   assert(dimension.isUnit() && !e->isUndefined());
   Units::SIVector vector = dimension.unit.vector;
   assert(!vector.isEmpty());
@@ -1096,8 +1169,10 @@ bool Unit::DeprecatedBeautify(Tree* e, Dimension dimension,
     vector.toBaseUnits();
     NAry::Flatten(units);
     NAry::SquashIfPossible(units);
-    Units::Unit::ChooseBestRepresentativeAndPrefixForValue(units, &value,
-                                                           unitFormat);
+    ChooseBestRepresentativeAndPrefixForValue(
+        units, &value,
+        unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric
+                                                    : UnitFormat::Imperial);
     Tree* approximated = SharedTreeStack->pushDoubleFloat(value);
     e->moveTreeOverTree(approximated);
   }

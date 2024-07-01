@@ -3,7 +3,7 @@
 >
 > Refer to the [External API](./external.md) if you want to use them in applications.
 
-## Summary
+## Table of contents
 
 - [What is a Tree ?](#what-is-a-tree-)
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
@@ -125,21 +125,25 @@ There are three situations to distinguish:
 ## How to walk through a Tree ?
 Once you have a tree pointer, you may iterate over its children or descendants with:
 ```cpp
-Tree * sibling = tree->nextTree();
+Tree * firstChild = tree->nextTree();
+Tree * secondChild = firstChild->nextTree();
+Tree * childN = tree->child(n);
 ```
 ```cpp
 const Tree * child = constTree->child(0);
 ```
 ```cpp
 for (Tree * child : tree->children()) {
-  ...
+  f(child);
 }
 ```
 ```cpp
 for (const Tree * subTree : tree->selfAndDescendants()) {
-  ...
+  f(subtree);
 }
 ```
+
+See more in [Iteration over child](./style_guide.md#iteration-over-child).
 
 
 ## How to display a Tree ?
@@ -494,7 +498,7 @@ Placeholders are cloned, so beware that they still live after the pattern matchi
 ## How to retrieve sub-trees using pattern matching ?
 
 `PatternMatching::Match` works the other way around and will fill a `PatternMatching::Context` if
-the tree you provide it fits the pattern.
+the tree fits the pattern.
 
 For instance you can match Cos(Add(2, 3)) against `KCos(KA)` and will
 obtain a Context where `ctx[KA]` points to the addition tree inside your

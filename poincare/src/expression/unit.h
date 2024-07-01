@@ -268,7 +268,8 @@ class Unit {
   static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                                 double exponent,
                                                 UnitFormat unitFormat,
-                                                bool optimizePrefix);
+                                                bool optimizePrefix,
+                                                bool optimizeRepresentative);
 
   static bool IsNonKelvinTemperature(const Representative* representative);
   // Remove units and Convert tree to Kelvin.

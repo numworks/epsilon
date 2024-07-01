@@ -486,7 +486,8 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
 
 // Return true if best representative and prefix has been chosen.
 static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-    Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix) {
+    Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix,
+    bool optimizeRepresentative) {
   double exponent = 1.f;
   Tree* factor = unit;
   if (factor->isPow()) {
@@ -507,7 +508,8 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     return false;
   }
   Unit::ChooseBestRepresentativeAndPrefix(factor, value, exponent, unitFormat,
-                                          optimizePrefix);
+                                          optimizePrefix,
+                                          optimizeRepresentative);
   return true;
 }
 
@@ -523,12 +525,12 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
     factor = units;
   }
   bool didOptimizePrefix =
-      ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
-                                                            unitFormat, true);
+      ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+          factor, value, unitFormat, true, true);
   for (int i = 1; i < numberOfFactors; i++) {
     didOptimizePrefix =
         ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-            units->child(i), value, unitFormat, !didOptimizePrefix) ||
+            units->child(i), value, unitFormat, !didOptimizePrefix, true) ||
         didOptimizePrefix;
   }
 }
@@ -796,7 +798,8 @@ Expression Unit::removeUnit(Expression* unit) {
 void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                              double exponent,
                                              UnitFormat unitFormat,
-                                             bool optimizePrefix) {
+                                             bool optimizePrefix,
+                                             bool optimizeRepresentative) {
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) ||
@@ -812,10 +815,11 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   }
   // Convert value to base units
   double baseValue = *value * std::pow(GetValue(unit), exponent);
-  const Prefix* bestPrefix = (optimizePrefix) ? Prefix::EmptyPrefix() : nullptr;
+  const Prefix* bestPrefix = optimizePrefix ? Prefix::EmptyPrefix() : nullptr;
   const Representative* bestRepresentative =
-      GetRepresentative(unit)->standardRepresentative(baseValue, exponent,
-                                                      unitFormat, &bestPrefix);
+      optimizeRepresentative ? GetRepresentative(unit)->standardRepresentative(
+                                   baseValue, exponent, unitFormat, &bestPrefix)
+                             : GetRepresentative(unit);
   if (!optimizePrefix) {
     bestPrefix = Prefix::EmptyPrefix();
   }

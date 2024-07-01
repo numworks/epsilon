@@ -296,6 +296,7 @@ class Unit {
   /* Remove subtrees that don't contain units. Return true if the entire tree
    * has been removed. */
   static bool KeepUnitsOnly(Tree* e);
+  TREE_REF_WRAP(KeepUnitsOnly);
   // Old unit beautification, not taking input units into account.
   static bool DeprecatedBeautify(Tree* e, Dimension dimension,
                                  UnitFormat unitFormat);

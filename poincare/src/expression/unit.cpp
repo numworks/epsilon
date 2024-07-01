@@ -935,11 +935,12 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     DeprecatedBeautify(e, dimension, unitFormat);
     return true;
   }
+  assert(extractedUnits && e->nextTree() == extractedUnits);
   bool treeRemoved = KeepUnitsOnly(extractedUnits);
   assert(!treeRemoved);
   (void)treeRemoved;
   // Take advantage of e being last tree.
-  assert(e->nextTree() == extractedUnits);
+  assert(extractedUnits);
   assert(dimension.unit.vector == Dimension::Get(extractedUnits).unit.vector);
   switch (unitDisplay) {
     case UnitDisplay::Forbidden:

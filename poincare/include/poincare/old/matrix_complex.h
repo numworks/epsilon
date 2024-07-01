@@ -49,7 +49,6 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
   std::complex<T> trace() const;
   std::complex<T> determinant() const;
   MatrixComplex<T> inverse() const;
-  MatrixComplex<T> transpose() const;
   MatrixComplex<T> ref(bool reduced) const;
 };
 
@@ -68,7 +67,6 @@ class MatrixComplex final : public Evaluation<T> {
   std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
   MatrixComplex<T> inverse() const { return node()->inverse(); }
-  MatrixComplex<T> transpose() const { return node()->transpose(); }
   MatrixComplex<T> ref(bool reduced) const { return node()->ref(reduced); }
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);

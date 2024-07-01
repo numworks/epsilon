@@ -28,20 +28,6 @@ size_t MatrixTransposeNode::serialize(
       MatrixTranspose::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> MatrixTransposeNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> transpose;
-  if (input.otype() == EvaluationNode<T>::Type::MatrixComplex) {
-    transpose = static_cast<MatrixComplex<T>&>(input).transpose();
-  } else {
-    transpose = input;
-  }
-  assert(!transpose.isUninitialized());
-  return transpose;
-}
-
 OExpression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

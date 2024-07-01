@@ -101,24 +101,6 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
 }
 
 template <typename T>
-MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
-  if (isUndefined()) {
-    return MatrixComplex<T>::Undefined();
-  }
-  // Intentionally swapping dimensions for transpose
-  MatrixComplex<T> result = MatrixComplex<T>::Builder();
-  for (int j = 0; j < numberOfColumns(); j++) {
-    for (int i = 0; i < numberOfRows(); i++) {
-      result.addChildAtIndexInPlace(
-          Complex<T>::Builder(complexAtIndex(i * numberOfColumns() + j)),
-          result.numberOfChildren(), result.numberOfChildren());
-    }
-  }
-  result.setDimensions(numberOfColumns(), numberOfRows());
-  return result;
-}
-
-template <typename T>
 MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
   // Compute OMatrix Row Echelon Form
   if (numberOfChildren() == 0 ||

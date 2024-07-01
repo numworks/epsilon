@@ -623,6 +623,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       } else if (e->isNorm()) {
         value = OutOfContext(Vector::Norm(m));
       } else {
+        assert(e->isTrace());
         value = OutOfContext(Matrix::Trace(m));
       }
       std::complex<T> v = ToComplex<T>(value);

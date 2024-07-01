@@ -46,7 +46,6 @@ class MatrixComplexNode final : public Array, public EvaluationNode<T> {
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 
   // OMatrix related functions
-  std::complex<T> trace() const;
   std::complex<T> determinant() const;
   MatrixComplex<T> inverse() const;
   MatrixComplex<T> ref(bool reduced) const;
@@ -64,7 +63,6 @@ class MatrixComplex final : public Evaluation<T> {
   static MatrixComplex Builder(std::complex<T> *operands, int numberOfRows,
                                int numberOfColumns);
   static MatrixComplex<T> Undefined();
-  std::complex<T> trace() const { return node()->trace(); }
   std::complex<T> determinant() const { return node()->determinant(); }
   MatrixComplex<T> inverse() const { return node()->inverse(); }
   MatrixComplex<T> ref(bool reduced) const { return node()->ref(reduced); }

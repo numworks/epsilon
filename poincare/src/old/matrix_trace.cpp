@@ -29,18 +29,6 @@ size_t MatrixTraceNode::serialize(char* buffer, size_t bufferSize,
       MatrixTrace::s_functionHelper.aliasesList().mainAlias());
 }
 
-template <typename T>
-Evaluation<T> MatrixTraceNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
-  if (input.otype() != EvaluationNode<T>::Type::MatrixComplex) {
-    return input;
-  }
-  Complex<T> result =
-      Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).trace());
-  return std::move(result);
-}
-
 OExpression MatrixTrace::shallowReduce(ReductionContext reductionContext) {
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(

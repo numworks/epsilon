@@ -41,22 +41,6 @@ OExpression MatrixComplexNode<T>::complexToExpression(
 }
 
 template <typename T>
-std::complex<T> MatrixComplexNode<T>::trace() const {
-  if (numberOfRows() != numberOfColumns() || numberOfRows() == 0) {
-    return std::complex<T>(NAN, NAN);
-  }
-  int dim = numberOfRows();
-  std::complex<T> c = std::complex<T>(0);
-  for (int i = 0; i < dim; i++) {
-    c += complexAtIndex(i * dim + i);
-    if (std::isnan(c.real()) || std::isnan(c.imag())) {
-      return std::complex<T>(NAN, NAN);
-    }
-  }
-  return c;
-}
-
-template <typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
   if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 ||
       numberOfChildren() > OMatrix::k_maxNumberOfChildren) {

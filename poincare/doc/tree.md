@@ -454,19 +454,41 @@ cos(π+3.0)
 
 ### Method 3: Using pattern matching
 
-If the tree you want to create has always the same structure where you need to customize some children, the safest way to build it is to use `PatternMaching::Create`.
+A safe way to build a tree is to use `PatternMaching::Create`.
 
 ```cpp
-Tree * expr3 = PatternMatching::Create(KAdd(1_e, KA), {.KA = otherTree});
+Tree * expr3 = PatternMatching::Create(KAdd(1_e, KA), {.KA = expr2});
+```
+```xml
+(lldb) expr3->logSerialize()
+1+cos(π+3.0)
 ```
 
 The first argument is a pattern, a [constexpr tree](#how-to-create-a-tree-at-compile-time-) that may contain placeholders named `KA`,`KB`… up to `KH`.
 
 The second argument is a `PatternMatching::Context` that associates any placeholder used in the pattern to a `const Tree*` to be cloned each time the pattern is encountered.
 
-The resulting tree will be pushed at the end of the `TreeStack`.
+The resulting tree is valid and will be pushed at the end of the `TreeStack`.
 
-If your pattern is a simplified tree and context values are simplified too, `CreateSimplify` will apply the systematic reduction as needed to make sure the result is simplified.
+If you need a simplified tree, use `CreateSimplify` with a pattern that is a simplified tree and context values that are simplified too.
+
+[!Note]
+
+Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
+
+```cpp
+Tree * expr4 = PatternMatching::Create(KAdd(1_e, i_e));
+```
+
+You can do instead:
+
+```cpp
+Tree * expr4 = (KAdd(1_e, i_e))->cloneTree();
+```
+
+[!Warning]
+
+Placeholders are cloned, so beware that they still live after the pattern matching: you might sometimes want to delete them using `tree->removeTree()`.
 
 
 ## How to retrieve sub-trees using pattern matching ?
@@ -480,9 +502,9 @@ expression.
 
 ```cpp
 PatternMatching::Context ctx;
-const Tree * expr4 = Cos(Add(2, 3));
-if (PatternMatching::Match(expr4, KCos(KA), &ctx)) {
-  ctx->getTree(KA); // Points to Add inside expr4
+const Tree * expr5 = Cos(Add(2, 3));
+if (PatternMatching::Match(expr5, KCos(KA), &ctx)) {
+  ctx->getTree(KA); // Points to Add inside expr5
 }
 ```
 

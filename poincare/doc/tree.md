@@ -93,9 +93,9 @@ depending of where your tree is or what are its siblings.
 
 There are three situations to distinguish:
 
-- If you want to test if your node is of a given type, say `Cos`, use the automatically defined `tree->isCos()` method. This is equivalent to `tree->type() == Type::Cos`.
+- If you want to test if a node has a given type, say `Cos`, use the automatically defined `tree->isCos()` method. This is equivalent to `tree->type() == Type::Cos`. You can also use `TypeBlock::IsCos(type)`.
 
-- If you want to test if the root belongs to a group of related types, there may be a range in types.h. For instance the range `Integer` gathers all node types that are used to represent integers and membership can be tested with `tree->isInteger()`. You may also test if a Type belongs to a range with `TypeBlock::IsInteger(type)`.
+- If you want to test if a node belongs to a group of related types (called a range), say `Integer`, use the automatically defined `tree->isInteger()` method. You can also use `TypeBlock::IsInteger(type)`.
   <details>
   <summary>Ranges declarations</summary>
    
@@ -142,7 +142,7 @@ for (const Tree * subTree : tree->selfAndDescendants()) {
 
 
 ## How to display a Tree ?
-The structure of a Tree can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with :
+The structure of a Tree can be inspected in DEBUG with several log functions, depending on the level of detail your are interested with:
 - `tree->logBlocks()` shows the block representation with each block displayed as `[interpretation]`
   ```
   [Add][2]
@@ -284,7 +284,7 @@ The `TreeStack` has a `log` method as well, that shows each `Tree` it contains a
 The `TreeStack` has a reference table, which is an array of node offsets. This
 array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
 
-In addition, offset can have a special value :
+In addition, offset can have a special value:
 - `TreeStack::ReferenceTable::InvalidatedOffset` indicates that the node doesn't
 exist anymore in the `TreeStack`.
 - `TreeStack::ReferenceTable::DeletedOffset` indicates that the `TreeRef`
@@ -410,17 +410,13 @@ constexpr KTree twoPi = KMult(2_e, π_e);
 
 ### Using KTrees just for a node
 
-You can use a KTree constructor without the parentheses and children if you need only the node.
+You can use a KTree constructor without the parentheses and children if you only need the node.
 
 ```cpp
 KCos->cloneNode(); // equivalent to SharedTreeStack->pushCos()
 ```
 
-> [!WARNING]
-> Only use methods like `cloneNode()` that expect node on standalone nodes. `cloneTree` would crash.
-
-
-If the node is n-ary you need to provide the number of arguments with `.node<nbChildren>`:
+If the node is n-ary, you need to provide the number of arguments with `.node<nbChildren>`:
 
 ```cpp
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
@@ -527,7 +523,7 @@ bool hasChanged = MatchReplaceSimplify(
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```
 
-Some more expressions matching `KMult(KA, KAdd(KB, KC_p), KD_s)` :
+More examples of expressions that match `KMult(KA, KAdd(KB, KC_p), KD_s)`:
 
 |expression|KA|KB|KC_p|KD_s|
 |-|-|-|-|-|

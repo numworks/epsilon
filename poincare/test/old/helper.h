@@ -97,7 +97,7 @@ void assert_parsed_expression_process_to(
 
 Poincare::Internal::Tree* parse_expression(const char* expression,
                                            Poincare::Context* context,
-                                           bool addParentheses,
+                                           bool addParentheses = false,
                                            bool parseForAssignment = false);
 
 void assert_parsed_expression_is(const char* expression,

@@ -132,7 +132,7 @@ void assert_parsed_expression_process_to(
   bool crash = false;
   ExceptionTry {
     assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *e = parse_expression(expression, &globalContext, false);
+    Tree *e = parse_expression(expression, &globalContext);
     Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
                                           angleUnit, unitFormat, target,
                                           symbolicComputation, unitConversion));
@@ -190,8 +190,8 @@ void assert_parse_to_same_expression(const char *expression1,
                                      const char *expression2) {
 #if 0
   Shared::GlobalContext context;
-  OExpression e1 = parse_expression(expression1, &context, false);
-  OExpression e2 = parse_expression(expression2, &context, false);
+  OExpression e1 = parse_expression(expression1, &context);
+  OExpression e2 = parse_expression(expression2, &context);
   quiz_assert(e1.isIdenticalTo(e2));
 #endif
 }
@@ -354,7 +354,7 @@ void assert_expression_parses_and_serializes_to(const char *expression,
                                                 const char *result) {
 #if 0
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   e.serialize(buffer, bufferSize);

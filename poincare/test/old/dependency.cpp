@@ -24,7 +24,7 @@ void assert_expression_simplify_to_with_dependencies(
   }
 
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   ReductionContext reductionContext(&globalContext, complexFormat, angleUnit,
                                     unitFormat, target, symbolicComputation,
                                     unitConversion);

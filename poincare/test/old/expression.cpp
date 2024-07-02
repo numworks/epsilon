@@ -107,8 +107,9 @@ QUIZ_CASE(poincare_expression_unit_constructor) {
 static inline void assert_number_of_numerical_values(const char* expression,
                                                      int result) {
   Shared::GlobalContext globalContext;
-  quiz_assert(parse_expression(expression, &globalContext, false)
-                  .numberOfNumericalValues() == result);
+  quiz_assert(
+      parse_expression(expression, &globalContext).numberOfNumericalValues() ==
+      result);
 }
 
 QUIZ_CASE(poincare_number_of_numerical_values) {
@@ -123,8 +124,8 @@ static inline void assert_generalizes_to_and_extract(const char* expression,
                                                      const char* generalized,
                                                      float value) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
-  OExpression g = parse_expression(generalized, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
+  OExpression g = parse_expression(generalized, &globalContext);
   float v = e.getNumericalValue();
   e.replaceNumericalValuesWithSymbol(Symbol::Builder('x'));
   quiz_assert(e.isIdenticalTo(g));

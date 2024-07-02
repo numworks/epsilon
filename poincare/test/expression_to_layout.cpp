@@ -9,7 +9,7 @@ using namespace Poincare::Internal::KTrees;
 
 void assert_parsed_expression_layouts_to(const char* expression,
                                          Layout expectedLayout) {
-  Internal::Tree* e = parse_expression(expression, nullptr, false);
+  Internal::Tree* e = parse_expression(expression, nullptr);
   Internal::Tree* l = Internal::Layouter::LayoutExpression(e);
   Layout el = Layout::Builder(l);
   quiz_assert_print_if_failure(el.isIdenticalTo(expectedLayout), expression);

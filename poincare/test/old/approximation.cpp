@@ -20,7 +20,7 @@ void assert_expression_approximates_to_scalar(
   Shared::GlobalContext globalContext;
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
-  Internal::Tree *e = parse_expression(expression, &globalContext, false);
+  Internal::Tree *e = parse_expression(expression, &globalContext);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
   T result = Internal::Approximation::RootTreeToReal<T>(e);
@@ -2212,7 +2212,7 @@ void assert_expression_approximates_with_value_for_symbol(
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
 #if 0
-  Internal::Tree *e = parse_expression(expression, &globalContext, false);
+  Internal::Tree *e = parse_expression(expression, &globalContext);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
   T result = e.approximateToScalarWithValueForSymbol<T>(symbol, symbolValue,

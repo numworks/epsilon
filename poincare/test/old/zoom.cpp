@@ -73,7 +73,7 @@ Coordinate2D<T> expressionEvaluator(T t, const void *model, Context *context) {
 void assert_points_of_interest_range_is(const char *expression,
                                         Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, &e, false,
                                    expressionEvaluator<double>);
@@ -136,8 +136,8 @@ void assert_intersections_range_is(const char *expression1,
                                    const char *expression2,
                                    Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  OExpression e1 = parse_expression(expression1, &context, false);
-  OExpression e2 = parse_expression(expression2, &context, false);
+  OExpression e1 = parse_expression(expression1, &context);
+  OExpression e2 = parse_expression(expression2, &context);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitIntersections(expressionEvaluator, &e1, expressionEvaluator,
                                 &e2);

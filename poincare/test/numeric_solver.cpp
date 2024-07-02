@@ -28,7 +28,7 @@ void assert_next_solution_is(const char* expression, Context* context,
                                .m_strategy = Strategy::ApproximateToFloat,
                                .m_context = context};
 
-  Tree* e = parse_expression(expression, context, false);
+  Tree* e = parse_expression(expression, context);
   Simplification::ToSystem(e, &projCtx);
   Approximation::PrepareFunctionForApproximation(e, "x",
                                                  projCtx.m_complexFormat);
@@ -47,7 +47,7 @@ void assert_next_solution_is(const char* expression, Context* context,
     default:
       assert(interest == Interest::Intersection);
       assert(otherExpression);
-      Tree* e2 = parse_expression(otherExpression, context, false);
+      Tree* e2 = parse_expression(otherExpression, context);
       Simplification::ToSystem(e2, &projCtx);
       Approximation::PrepareFunctionForApproximation(e2, "x",
                                                      projCtx.m_complexFormat);

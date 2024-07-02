@@ -559,12 +559,12 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
       OUnit::Builder(rep, OUnit::Prefix::EmptyPrefix())
           .serialize(buffer, bufferSize, DecimalMode,
                      Preferences::VeryShortNumberOfSignificantDigits);
-      OExpression unit = parse_expression(buffer, nullptr, false);
+      OExpression unit = parse_expression(buffer, nullptr);
       quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
                                    "Should be parsed as a OUnit");
       // Try without '_'. This need a context or everything without '_' is
       // understood as variable.
-      unit = parse_expression(buffer + 1, &context, false);
+      unit = parse_expression(buffer + 1, &context);
       quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
                                    "Should be parsed as a OUnit");
       if (rep->isInputPrefixable()) {
@@ -573,13 +573,13 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
           OUnit::Builder(rep, pre).serialize(
               buffer, bufferSize, DecimalMode,
               Preferences::VeryShortNumberOfSignificantDigits);
-          OExpression unit = parse_expression(buffer, nullptr, false);
+          OExpression unit = parse_expression(buffer, nullptr);
           quiz_assert_print_if_failure(
               unit.otype() == ExpressionNode::Type::OUnit,
               "Should be parsed as a OUnit");
           // Try without '_'. This need a context or everything without '_' is
           // understood as variable.
-          unit = parse_expression(buffer, &context, false);
+          unit = parse_expression(buffer, &context);
           quiz_assert_print_if_failure(
               unit.otype() == ExpressionNode::Type::OUnit,
               "Should be parsed as a OUnit");

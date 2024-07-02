@@ -16,8 +16,8 @@ void assert_roots_of_polynomial_are(const char* polynomial,
   ReductionContext reductionContext(&context, complexFormat, angleUnit,
                                     MetricUnitFormat, User);
 
-  OExpression polynomialExp = parse_expression(polynomial, &context, false)
-                                  .cloneAndReduce(reductionContext);
+  OExpression polynomialExp =
+      parse_expression(polynomial, &context).cloneAndReduce(reductionContext);
   OExpression coefficients[OExpression::k_maxNumberOfPolynomialCoefficients];
   int degree = polynomialExp.getPolynomialReducedCoefficients(
       symbol, coefficients, &context, complexFormat, angleUnit,

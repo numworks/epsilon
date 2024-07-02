@@ -12,7 +12,7 @@ CartesianConic buildCartesianConic(
     const char* expression,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  Expression e = parse_expression(expression, &globalContext);
   return CartesianConic(e, &globalContext, complexFormat);
 }
 
@@ -20,7 +20,7 @@ PolarConic buildPolarConic(
     const char* expression,
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext, false);
+  Expression e = parse_expression(expression, &globalContext);
   return PolarConic(e, &globalContext, complexFormat);
 }
 
@@ -31,7 +31,7 @@ ParametricConic buildParametricConic(
   // Prevent t from being interpreted as ton
   Poincare::VariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);
-  Expression e = parse_expression(expression, &tContext, false);
+  Expression e = parse_expression(expression, &tContext);
   return ParametricConic(e, &globalContext, complexFormat);
 }
 

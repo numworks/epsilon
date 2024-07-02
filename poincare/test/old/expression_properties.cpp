@@ -201,7 +201,7 @@ void assert_expression_has_property_or_not(const char* expression,
                                            Context* context,
                                            OExpression::ExpressionTest test,
                                            bool hasProperty) {
-  OExpression e = parse_expression(expression, context, false);
+  OExpression e = parse_expression(expression, context);
   quiz_assert_print_if_failure(
       e.recursivelyMatches(test, context) == hasProperty, expression);
 }
@@ -209,7 +209,7 @@ void assert_expression_has_property_or_not(const char* expression,
 void assert_expression_has_property_or_not(
     const char* expression, Context* context,
     OExpression::SimpleExpressionTest test, bool hasProperty) {
-  OExpression e = parse_expression(expression, context, false);
+  OExpression e = parse_expression(expression, context);
   quiz_assert_print_if_failure(
       e.recursivelyMatches(test, context) == hasProperty, expression);
 }
@@ -268,13 +268,13 @@ QUIZ_DISABLED_CASE(poincare_properties_is_matrix) {
 
 void assert_expression_is_deep_matrix(const char* expression) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   quiz_assert_print_if_failure(e.deepIsMatrix(&context), expression);
 }
 
 void assert_expression_is_not_deep_matrix(const char* expression) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
 }
 
@@ -318,7 +318,7 @@ void assert_reduced_expression_sign(
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   e = e.cloneAndReduce(ReductionContext(&globalContext, complexFormat,
                                         angleUnit, unitFormat,
                                         SystemForApproximation));
@@ -525,7 +525,7 @@ QUIZ_DISABLED_CASE(poincare_properties_set_sign_positive) {
 void assert_expression_is_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  OExpression e = parse_expression(expression, &context, false)
+  OExpression e = parse_expression(expression, &context)
                       .cloneAndReduce(ReductionContext(&context, Cartesian,
                                                        Radian, MetricUnitFormat,
                                                        SystemForApproximation));
@@ -535,7 +535,7 @@ void assert_expression_is_real(const char* expression) {
 void assert_expression_is_not_real(const char* expression) {
   Shared::GlobalContext context;
   // isReal can be call only on reduced expressions
-  OExpression e = parse_expression(expression, &context, false)
+  OExpression e = parse_expression(expression, &context)
                       .cloneAndReduce(ReductionContext(&context, Cartesian,
                                                        Radian, MetricUnitFormat,
                                                        SystemForApproximation));
@@ -685,7 +685,7 @@ void assert_expression_has_variables(const char* expression,
                                      const char* variables[],
                                      int trueNumberOfVariables) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   constexpr static int k_maxVariableSize =
       Poincare::SymbolAbstractNode::k_maxNameSize;
   char variableBuffer[OExpression::k_maxNumberOfVariables][k_maxVariableSize] =
@@ -809,7 +809,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     SymbolicComputation symbolicComputation =
         ReplaceAllDefinedSymbolsWithDefinition) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   e = e.cloneAndReduce(
       ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                        SystemForAnalysis, symbolicComputation));
@@ -819,7 +819,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
       symbolName, coefficientBuffer, &globalContext, complexFormat, Radian,
       unitFormat, symbolicComputation);
   for (int i = 0; i <= d; i++) {
-    OExpression f = parse_expression(coefficients[i], &globalContext, false);
+    OExpression f = parse_expression(coefficients[i], &globalContext);
     coefficientBuffer[i] = coefficientBuffer[i].cloneAndReduce(
         ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
                          SystemForAnalysis, symbolicComputation));
@@ -884,10 +884,10 @@ void assert_reduced_expression_unit_is(const char* expression,
   Shared::GlobalContext globalContext;
   ReductionContext redContext(&globalContext, Real, Degree, MetricUnitFormat,
                               SystemForApproximation);
-  OExpression e = parse_expression(expression, &globalContext, false);
+  OExpression e = parse_expression(expression, &globalContext);
   OExpression u1;
   e = e.cloneAndReduceAndRemoveUnit(redContext, &u1);
-  OExpression e2 = parse_expression(unit, &globalContext, false);
+  OExpression e2 = parse_expression(unit, &globalContext);
   OExpression u2;
   e2.cloneAndReduceAndRemoveUnit(redContext, &u2);
   quiz_assert_print_if_failure(
@@ -916,7 +916,7 @@ void assert_additional_results_compute_to(
       ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
   ApproximationContext approximationContext(reductionContext);
   OExpression units;
-  OExpression e = parse_expression(expression, &globalContext, false)
+  OExpression e = parse_expression(expression, &globalContext)
                       .cloneAndReduceAndRemoveUnit(reductionContext, &units);
   double value = e.approximateToScalar<double>(approximationContext);
 
@@ -1029,7 +1029,7 @@ QUIZ_DISABLED_CASE(poincare_expression_additional_results) {
 void assert_list_length_in_children_is(const char* definition,
                                        int targetLength) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(definition, &globalContext, false);
+  OExpression e = parse_expression(definition, &globalContext);
   quiz_assert_print_if_failure(e.lengthOfListChildren() == targetLength,
                                definition);
 }
@@ -1097,7 +1097,7 @@ QUIZ_CASE(poincare_expression_list_of_points) {
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   ApproximationContext approximationContext(&context, Cartesian, Degree);
   quiz_assert_print_if_failure(
       !isContinuous == e.isDiscontinuousBetweenValuesForSymbol(
@@ -1124,7 +1124,7 @@ void assert_is_linear_combination_of_pattern(
     const char* expression, OExpression::PatternTest testFunction,
     bool truthValue = true, const char* symbol = "x") {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
@@ -1137,7 +1137,7 @@ void assert_is_linear_pattern_of_sin_or_cos(
     const char* expression, bool acceptAddition, double coefficientBeforeCos,
     double coefficientBeforeSymbol, double angle, const char* symbol = "x") {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   ReductionContext reductionContext =
       ReductionContext::DefaultReductionContextForAnalysis(&context);
   e = e.cloneAndReduce(reductionContext);
@@ -1181,7 +1181,7 @@ QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
 
 void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context, false);
+  OExpression e = parse_expression(expression, &context);
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(

@@ -3,7 +3,6 @@
 
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
-#include <poincare/src/expression/order.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
@@ -36,7 +35,7 @@ inline void assert_node_equals_blocks(const Tree* node,
 
 inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   quiz_assert((tree0 == nullptr) == (tree1 == nullptr));
-  if (!Order::AreEqual(tree0, tree1)) {
+  if (!tree0->treeIsIdenticalTo(tree1)) {
 #if POINCARE_TREE_LOG
     tree0->logDiffWith(tree1);
 #endif

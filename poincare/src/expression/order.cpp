@@ -114,7 +114,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
 }
 
 bool Order::ContainsSubtree(const Tree* tree, const Tree* subtree) {
-  if (AreEqual(tree, subtree)) {
+  if (tree->treeIsIdenticalTo(subtree)) {
     return true;
   }
   for (const Tree* child : tree->children()) {

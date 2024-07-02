@@ -7,7 +7,6 @@
 #include "advanced_reduction.h"
 #include "k_tree.h"
 #include "number.h"
-#include "order.h"
 #include "rational.h"
 #include "set.h"
 #include "sign.h"
@@ -141,7 +140,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
     return Operation(polB, polA, type, operationMonomial,
                      operationMonomialAndReduce);
   }
-  if (!polB->isPolynomial() || !Order::AreEqual(x, Variable(polB))) {
+  if (!polB->isPolynomial() || !x->treeIsIdenticalTo(Variable(polB))) {
     polA =
         operationMonomial(polA, std::make_pair(polB, static_cast<uint8_t>(0)));
   } else {
@@ -198,7 +197,7 @@ Tree* Polynomial::MultiplicationMonomial(Tree* polynomial,
 static void extractDegreeAndLeadingCoefficient(Tree* pol, const Tree* x,
                                                uint8_t* degree,
                                                TreeRef* coefficient) {
-  if (pol->isPolynomial() && Order::AreEqual(x, Polynomial::Variable(pol))) {
+  if (pol->isPolynomial() && x->treeIsIdenticalTo(Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
     *coefficient = Polynomial::LeadingCoefficient(pol);
   } else {
@@ -428,7 +427,7 @@ Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
 
 std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     Tree* e, const Tree* variable) {
-  if (Order::AreEqual(e, variable)) {
+  if (e->treeIsIdenticalTo(variable)) {
     return std::make_pair(e->cloneTreeOverTree(1_e), static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx = PatternMatching::Context({.KA = variable});
@@ -465,18 +464,18 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
 bool IsInSetOrIsEqual(const Tree* e, const Tree* variables) {
   return variables.isSet() ?
     Set::Includes(variables, e) :
-    Compare::AreEqual(variables, e);
+    variables->treeIsIdenticalTo(e);
 }
 
 uint8_t Polynomial::Degree(const Tree* e, const Tree* variable) {
-  if (Compare::AreEqual(e, variable)) {
+  if (e->treeIsIdenticalTo(variable)) {
     return 1;
   }
   Type type = e.type();
   if (type == Type::Pow) {
     Tree* base = e.child(0);
     Tree* exponent = base.nextTree();
-    if (Integer::Is<uint8_t>(exponent) && Compare::AreEqual(base, variable)) {
+    if (Integer::Is<uint8_t>(exponent) && base->treeIsIdenticalTo(variable)) {
       return Integer::Handler(exponent).to<uint8_t>();
     }
   }
@@ -498,7 +497,7 @@ uint8_t Polynomial::Degree(const Tree* e, const Tree* variable) {
 TreeRef Polynomial::Coefficient(const Tree* e, const Tree* variable, uint8_t exponent) {
   Type type = e.type();
   if (e.isAdd()) {
-    if (Order::AreEqual(e, variable)) {
+    if (e->treeIsIdenticalTo( variable)) {
       return exponent == 1 ? 1_e : 0_e;
     }
     TreeRef addition = SharedTreeStack->pushAdd(0);
@@ -521,14 +520,14 @@ TreeRef Polynomial::Coefficient(const Tree* e, const Tree* variable, uint8_t exp
 }
 
 std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* e, const Tree* variable) {
-  if (Order::AreEqual(e, variable)) {
+  if (e->treeIsIdenticalTo( variable)) {
     return std::make_pair((1_e)->cloneTree(), 1);
   }
   Type type = e.type();
   if (type == Type::Pow) {
     Tree* base = e.child(0);
     Tree* exponent = base.nextTree();
-    if (Order::AreEqual(exponent, variable) && Integer::Is<uint8_t>(exponent)) {
+    if (exponent->treeIsIdenticalTo( variable) && Integer::Is<uint8_t>(exponent)) {
       assert(Integer::Handler(exponent).to<uint8_t>() > 1);
       return std::make_pair((1_e)->cloneTree(), Integer::Handler(exponent).to<uint8_t>());
     }

@@ -104,6 +104,8 @@ void assert_parsed_expression_is(const char* expression,
                                  Poincare::OExpression r,
                                  bool addParentheses = false,
                                  bool parseForAssignment = false);
+void assert_text_not_parsable(const char* text,
+                              Poincare::Context* context = nullptr);
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2);
 

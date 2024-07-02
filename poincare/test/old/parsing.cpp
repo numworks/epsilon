@@ -69,11 +69,6 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
-void assert_text_not_parsable(const char* text, Context* context = nullptr) {
-  Expression result = Expression::Parse(text, context);
-  quiz_assert_print_if_failure(result.isUninitialized(), text);
-}
-
 void assert_parsed_expression_with_user_parentheses_is(
     const char* expression, Poincare::OExpression r) {
   return assert_parsed_expression_is(expression, r, true);
@@ -738,7 +733,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_units) {
                                Symbol::Builder("s5", 2), second}));  // 3*s5*s
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
+QUIZ_CASE(poincare_parsing_identifiers) {
   // Custom variables without storage
   assert_parsed_expression_is("a", Symbol::Builder("a", 1));
   assert_parsed_expression_is("x", Symbol::Builder("x", 1));
@@ -938,8 +933,10 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
   assert_parsed_expression_is(
       "randint(1,2)",
       Randint::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
+  /* TODO PCJ
   assert_parsed_expression_is("randint(2)",
                               Randint::Builder(BasedInteger::Builder(2)));
+                              */
   assert_parsed_expression_is(
       "randintnorep(1,10,3)",
       RandintNoRepeat::Builder(BasedInteger::Builder(1),
@@ -1110,7 +1107,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_identifiers) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_derivative_apostrophe) {
+QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   OUnit apostropheUnit = OUnit::Builder(
       OUnit::k_angleRepresentatives + OUnit::k_arcMinuteRepresentativeIndex,
       OUnit::Prefix::EmptyPrefix());
@@ -1257,7 +1254,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_derivative_apostrophe) {
       "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013");
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_parse_store) {
+QUIZ_CASE(poincare_parsing_parse_store) {
   Expression ton = Expression::Parse("_t", nullptr);
   assert_parsed_expression_is("1→a", OStore::Builder(BasedInteger::Builder(1),
                                                      Symbol::Builder("a", 1)));
@@ -1311,7 +1308,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_parse_store) {
   assert_text_not_parsable("1→f(f)");
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_parse_unit_convert) {
+QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Expression ton = Expression::Parse("_t", nullptr);
   Expression kilogram = Expression::Parse("_kg", nullptr);
   Expression degree = Expression::Parse("_°", nullptr);
@@ -1359,7 +1356,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_parse_unit_convert) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_implicit_multiplication) {
+QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable(".1.2");
   assert_text_not_parsable("1 2");
   assert_parsed_expression_is("1x",

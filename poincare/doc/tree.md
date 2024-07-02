@@ -123,7 +123,7 @@ There are three situations to distinguish:
 ## How to walk through a Tree ?
 Once you have a tree pointer, you may iterate over its children or descendants with:
 ```cpp
-Tree * firstChild = tree->nextTree();
+Tree * firstChild = tree->nextNode();
 Tree * secondChild = firstChild->nextTree();
 Tree * childN = tree->child(n);
 ```
@@ -413,7 +413,7 @@ When you need a `Tree` depending on user content or computed values, you need to
 > cleared by exceptions. You must save your trees elsewhere before you return to
 > the app’s code.
 
-### Method 1: Pushing nodes
+### Pushing nodes
 
 The most basic way to create trees from scratch is to push nodes successively at the end of the `TreeStack`.
 The global object `SharedTreeStack` has push methods for each kind of node:
@@ -437,7 +437,7 @@ If you do the three previous operations in that order, `expr1` will point to the
 
 If you do only the first two, `expr1` will silently point to a broken tree with garbage that will crash when used.
 
-### Method 2: Cloning trees
+### Cloning trees
 
 Since all methods returning a new `Tree*` need to push it at the end of the `TreeStack`,
 you can use both node pushes and tree creation methods to build a more complex structure.
@@ -451,7 +451,7 @@ expr1->cloneTree()
 cos(π+3.0)
 ```
 
-### Method 3: Using pattern matching
+### Using pattern matching
 
 A safe way to build a tree is to use `PatternMaching::Create`.
 
@@ -474,8 +474,6 @@ If you need a simplified tree, use `CreateSimplify` with a pattern that is a sim
 > [!NOTE]
 > Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
 
-Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
-
 ```cpp
 Tree * expr4 = PatternMatching::Create(KAdd(1_e, i_e));
 ```
@@ -486,9 +484,8 @@ You can do instead:
 Tree * expr4 = KAdd(1_e, i_e)->cloneTree();
 ```
 
-[!Warning]
-
-Placeholders are cloned, so beware that they still live after the pattern matching: you might sometimes need to delete them using `tree->removeTree()`.
+> [!WARNING]
+> Placeholders are cloned, so beware that they still live after the pattern matching: you are responsible to delete them if necessary, using `tree->removeTree()`.
 
 
 ## How to retrieve sub-trees using pattern matching ?

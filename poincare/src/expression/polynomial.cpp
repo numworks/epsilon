@@ -441,7 +441,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     }
   }
   if (e->isMult()) {
-    for (Tree* child : e->indexedChildren()) {
+    for (Tree* child : e->children()) {
       auto [childCoefficient, childExponent] =
           ParseMonomial(child->cloneTree(), variable);
       if (childExponent > 0) {
@@ -534,7 +534,7 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* e, const
     }
   }
   if (type == Type::Mult) {
-  for (IndexedChild<Tree*> child :
+  for (IndexedChild<const Tree*> child :
        e->indexedChildren()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {

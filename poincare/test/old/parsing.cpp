@@ -32,6 +32,7 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
     }
     tokenTypes++;
   }
+  inputLayout->removeTree();
   constexpr int bufferSize = 2048;
   char information[bufferSize] = "";
   Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
@@ -550,9 +551,9 @@ QUIZ_CASE(poincare_parsing_constants) {
   }
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_units) {
+QUIZ_CASE(poincare_parsing_units) {
   // Units
-#if O
+#if 0
   Shared::GlobalContext context;
   for (int i = 0; i < OUnit::Representative::k_numberOfDimensions; i++) {
     const OUnit::Representative* dim =

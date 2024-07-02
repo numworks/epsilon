@@ -382,11 +382,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));
-    case Type::Abs:
-    case Type::Floor:
-    case Type::Ceil:
-    case Type::Sign:
-    // case Type::Sqrt: TODO: Handle _m^(1/2)
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
@@ -397,9 +392,14 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         clone->removeTree();
         return result;
       }
+    }
+    case Type::Abs:
+    case Type::Floor:
+    case Type::Ceil:
+    case Type::Sign:
+      // case Type::Sqrt: TODO: Handle _m^(1/2)
       unitsAllowed = true;
       break;
-    }
     case Type::Cos:
     case Type::Sin:
     case Type::Tan:

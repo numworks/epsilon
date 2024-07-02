@@ -45,6 +45,7 @@ struct Dimension {
   }
   static Dimension Unit(Units::SIVector vector,
                         const Units::Representative* representative) {
+    assert(!vector.isEmpty());
     return Dimension({.vector = vector, .representative = representative});
   }
   static Dimension Unit(const Tree* unit);
@@ -62,6 +63,10 @@ struct Dimension {
   bool isUnit() const { return type == DimensionType::Unit; }
   bool isBoolean() const { return type == DimensionType::Boolean; }
   bool isPoint() const { return type == DimensionType::Point; }
+  bool isScalarOrUnit() const {
+    return type == DimensionType::Scalar || type == DimensionType::Unit;
+  }
+
   bool isSquareMatrix() const {
     return isMatrix() && matrix.rows == matrix.cols;
   }

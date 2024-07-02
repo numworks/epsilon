@@ -303,10 +303,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       }
       const Tree* index = e->child(1);
       // TODO: Handle operations such as m^(1+1) or m^(-1*n) or m^(1/2) or m^0.5
-      return index->isInteger() ||
-             (index->isOpposite() && index->child(0)->isInteger()) ||
+      return index->isNumber() ||
+             (index->isOpposite() && index->child(0)->isNumber()) ||
              (index->isMult() && index->numberOfChildren() == 2 &&
-              index->child(0)->isMinusOne() && index->child(1)->isInteger());
+              index->child(0)->isMinusOne() && index->child(1)->isNumber());
     }
     case Type::Sum:
     case Type::Product:
@@ -493,8 +493,10 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
         Units::SIVector unitVector = Units::SIVector::Empty();
         unitVector.addAllCoefficients(dim.unit.vector,
                                       static_cast<int8_t>(index));
-        return Unit(unitVector, dim.unit.representative);
+        dim = unitVector.isEmpty() ? Scalar()
+                                   : Unit(unitVector, dim.unit.representative);
       }
+      return dim;
     }
     case Type::Abs:
     case Type::Opposite:

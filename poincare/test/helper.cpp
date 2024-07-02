@@ -10,9 +10,14 @@
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
-Tree* parse(const char* input, Poincare::Context* context) {
+Tree* parse(const char* input, Poincare::Context* context,
+            bool parseForAssignment) {
   Tree* inputLayout = RackFromText(input);
-  bool success = RackParser(inputLayout, context).parse() != nullptr;
+  RackParser parser(inputLayout, context, -1,
+                    parseForAssignment
+                        ? ParsingContext::ParsingMethod::Assignment
+                        : ParsingContext::ParsingMethod::Classic);
+  bool success = parser.parse() != nullptr;
   // quiz_assert(expression);
   inputLayout->removeTree();
   return success ? inputLayout : nullptr;

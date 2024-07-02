@@ -1605,7 +1605,7 @@ QUIZ_CASE(poincare_parsing_mixed_fraction) {
           Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_function_assignment) {
+QUIZ_CASE(poincare_parsing_function_assignment) {
   assert_parsed_expression_is(
       "f(x)=xy",
       Comparison::Builder(Multiplication::Builder(

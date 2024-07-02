@@ -224,53 +224,6 @@ class MultipleNodesIterator {
   };
 };
 
-class NodeIterator : public MultipleNodesIterator {
-  /* Ensure lighter syntax for one node iterator */
-
- private:
-  template <typename EditablePolicy>
-  class Iterator {
-   public:
-    Iterator(MultipleNodesIterator::Iterator<EditablePolicy, 1> iterator)
-        : m_iterator(iterator) {}
-    std::pair<typename EditablePolicy::NodeType, int> operator*() {
-      return std::pair((*m_iterator).first[0], (*m_iterator).second);
-    }
-    bool operator!=(Iterator& it) { return m_iterator != it.m_iterator; }
-    Iterator<EditablePolicy>& operator++() {
-      m_iterator.operator++();
-      return *this;
-    }
-
-   private:
-    MultipleNodesIterator::Iterator<EditablePolicy, 1> m_iterator;
-  };
-
- public:
-  template <typename EditablePolicy>
-  class ChildrenScanner {
-   public:
-    typedef typename EditablePolicy::NodeType NodeType;
-    ChildrenScanner(NodeType node)
-        : m_scanner(std::array<NodeType, 1>({node})) {}
-    Iterator<EditablePolicy> begin() const {
-      return Iterator<EditablePolicy>(m_scanner.begin());
-    }
-    Iterator<EditablePolicy> end() const {
-      return Iterator<EditablePolicy>(m_scanner.end());
-    }
-
-   protected:
-    MultipleNodesIterator::ChildrenScanner<EditablePolicy, 1> m_scanner;
-  };
-
-  template <typename EditablePolicy>
-  static ChildrenScanner<EditablePolicy> Children(
-      typename EditablePolicy::NodeType node) {
-    return ChildrenScanner<EditablePolicy>(node);
-  }
-};
-
 typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
 typedef MultipleNodesIterator::EditablePolicy Editable;
 

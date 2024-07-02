@@ -14,6 +14,18 @@
 namespace Poincare::Internal {
 
 int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
+  int cmp = memcmp(e1, e2, e1->treeSize());
+  if (cmp == 0) {
+    return 0;
+  }
+  int result = CompareDifferent(e1, e2, order);
+  // Fallback to cmp if no difference could be found.
+  result = result == 0 ? cmp : result;
+  // Sanitize result to -1, 0 or 1.
+  return result < 0 ? -1 : (result > 0 ? 1 : 0);
+}
+
+int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
   if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {
@@ -37,10 +49,7 @@ int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
     bool e1IsMatrix = Dimension::Get(e1).isMatrix();
     bool e2IsMatrix = Dimension::Get(e2).isMatrix();
     if (e1IsMatrix && e2IsMatrix) {
-      if (e1->treeIsIdenticalTo(e2)) {
-        return 0;
-      }
-      return e1 < e2 ? -1 : 1;
+      return e1 - e2;
     }
     if (e1IsMatrix || e2IsMatrix) {
       // Preserve all matrices to the right
@@ -53,7 +62,7 @@ int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
   if (type1 > type2) {
     /* We handle this case first to implement only the upper diagonal of the
      * comparison table. */
-    return -Compare(e2, e1, order);
+    return -CompareDifferent(e2, e1, order);
   }
   if ((type1.isNumber() && type2.isNumber())) {
     return CompareNumbers(e1, e2);
@@ -63,7 +72,7 @@ int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
      * will not benefit from this exception. */
     if (type1 == Type::Pow) {
       if (order == OrderType::Beautification) {
-        return -Compare(e1, e2, OrderType::System);
+        return -CompareDifferent(e1, e2, OrderType::System);
       }
       int comparePowerChild = Compare(e1->child(0), e2, order);
       if (comparePowerChild == 0) {
@@ -128,26 +137,18 @@ int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
   float approximation =
       Approximation::To<float>(e1) - Approximation::To<float>(e2);
   if (approximation == 0.0f || std::isnan(approximation)) {
-    if (e1->treeIsIdenticalTo(e2)) {
-      return 0;
-    }
     // Trees are different but float approximation is not precise enough.
-    double doubleApproximation =
+    double doubleApprox =
         Approximation::To<double>(e1) - Approximation::To<double>(e2);
-    if (doubleApproximation == 0) {
-      return 0;
-    }
-    return doubleApproximation > 0.0f ? 1 : -1;
+    return doubleApprox < 0.0 ? -1 : (doubleApprox > 0.0 ? 1 : 0);
   }
-  assert(!e1->treeIsIdenticalTo(e2));
-  return approximation > 0.0f ? 1 : -1;
+  return approximation < 0.0 ? -1 : (approximation > 0.0 ? 1 : 0);
 }
 
 int Order::CompareNames(const Tree* e1, const Tree* e2) {
   int stringComparison = strcmp(Symbol::GetName(e1), Symbol::GetName(e2));
   if (stringComparison == 0) {
-    int delta = Symbol::Length(e1) - Symbol::Length(e2);
-    return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
+    return Symbol::Length(e1) - Symbol::Length(e2);
   }
   return stringComparison;
 }
@@ -216,32 +217,12 @@ int Order::CompareChildren(const Tree* e1, const Tree* e2, bool backward) {
   if (comparison != 0) {
     return comparison;
   }
-  int numberOfChildren1 = e1->numberOfChildren();
-  int numberOfChildren2 = e2->numberOfChildren();
   // The NULL node is the least node type.
-  if (numberOfChildren1 < numberOfChildren2) {
-    return 1;
-  }
-  if (numberOfChildren2 < numberOfChildren1) {
-    return -1;
-  }
-  return 0;
+  return e2->numberOfChildren() - e1->numberOfChildren();
 }
 
 int Order::CompareLastChild(const Tree* e1, const Tree* e2) {
-  int comparisonWithChild = Compare(e1->lastChild(), e2);
-  if (comparisonWithChild != 0) {
-    return comparisonWithChild;
-  }
-  return 1;
-}
-
-bool Order::AreEqual(const Tree* e1, const Tree* e2) {
-  // treeIsIdenticalTo is faster since it uses memcmp
-  bool areEqual = e1->treeIsIdenticalTo(e2);
-  // Trees could be different but compare the same due to float imprecision.
-  assert(!areEqual || Compare(e1, e2) == 0);
-  return areEqual;
+  return Compare(e1->lastChild(), e2) == -1 ? -1 : 1;
 }
 
 }  // namespace Poincare::Internal

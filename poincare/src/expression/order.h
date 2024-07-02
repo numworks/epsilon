@@ -20,16 +20,22 @@ class Order {
     // TODO: add real comparison order (numerical)
   };
   /* Compare returns:
-   *  1 if block0 > block1
-   * -1 if block0 < block1
-   *  0 if block0 == block1
+   *  1 if e1 > e2
+   * -1 if e1 < e2
+   *  0 if e1 == e2 (trees are identical)
+   *  Order depends on OrderType and may not match order of approximation.
    */
   static int Compare(const Tree* e1, const Tree* e2,
                      OrderType order = OrderType::System);
-  static bool AreEqual(const Tree* e1, const Tree* e2);
+  static bool AreEqual(const Tree* e1, const Tree* e2) {
+    return e1->treeIsIdenticalTo(e2);
+  }
   static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 
  private:
+  // Compare two different trees. May return any int.
+  static int CompareDifferent(const Tree* e1, const Tree* e2,
+                              OrderType order = OrderType::System);
   static int CompareNumbers(const Tree* e1, const Tree* e2);
   static int CompareNames(const Tree* e1, const Tree* e2);
   static int CompareConstants(const Tree* e1, const Tree* e2);

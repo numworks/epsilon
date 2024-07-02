@@ -2,8 +2,10 @@
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/poincare_expressions.h>
+#include <poincare/print.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "helper.h"
 #include "tree/helpers.h"
@@ -14,18 +16,27 @@ using Internal::Token;
 using Internal::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
-  Internal::Rack* inputLayout = Internal::RackFromText(string);
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
+  bool bad = false;
+  Internal::Rack* inputLayout = Internal::RackFromText(string);
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
-    quiz_assert_print_if_failure(token.type() == *tokenTypes, string);
+    if (token.type() != *tokenTypes) {
+      bad = true;
+      break;
+    }
     if (token.type() == Token::Type::EndOfStream) {
-      return;
+      break;
     }
     tokenTypes++;
   }
+  constexpr int bufferSize = 2048;
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
+                                      bad ? "BAD" : "OK", string);
+  quiz_print(information);
 }
 
 void assert_tokenizes_as_number(const char* string) {
@@ -536,7 +547,7 @@ QUIZ_CASE(poincare_parsing_lists_access) {
   }
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_constants) {
+QUIZ_CASE(poincare_parsing_constants) {
   for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
     for (const char* constantNameAlias : info.m_aliasesList) {
       assert_tokenizes_as_constant(constantNameAlias);

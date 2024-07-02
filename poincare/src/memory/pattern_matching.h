@@ -1,6 +1,8 @@
 #ifndef POINCARE_MEMORY_PATTERN_MATCHING_H
 #define POINCARE_MEMORY_PATTERN_MATCHING_H
 
+#include <omg/always_false.h>
+
 #include <array>
 
 #include "k_tree.h"
@@ -88,6 +90,14 @@ class PatternMatching {
       static_assert(sizeof(m_trees) == sizeof(m_array));
     };
   };
+
+  template <KTreeConcept KT>
+  static bool Match(KT source, const Tree* pattern, Context* context) {
+    // Throw compile time error if source is a KTree
+    static_assert(OMG::always_false<KT>,
+                  "Match should not be called with a KTree as first argument, "
+                  "source and pattern have probably been mixed up");
+  }
 
   static bool Match(const Tree* source, const Tree* pattern, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),

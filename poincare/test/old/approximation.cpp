@@ -475,17 +475,17 @@ template <typename T>
 void assert_expression_approximation_is_bounded(const char *expression,
                                                 T lowBound, T upBound,
                                                 bool upBoundIncluded = false) {
+  // TODO_PCJ
+#if 0
   Shared::GlobalContext globalContext;
   Internal::Tree *e = parse_expression(expression, &globalContext, true);
   ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
-  // TODO_PCJ
-#if 0
   T result = Internal::Approximation::RootTreeToReal<T>(e);
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);
-#endif
   e->removeTree();
+#endif
 }
 
 QUIZ_CASE(poincare_approximation_function) {

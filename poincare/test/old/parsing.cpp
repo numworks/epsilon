@@ -102,7 +102,7 @@ QUIZ_CASE(poincare_parsing_tokenize_numbers) {
   assert_tokenizes_as_undefined_token("1ᴇ2ᴇ4");
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_memory_exhaustion) {
+QUIZ_CASE(poincare_parsing_memory_exhaustion) {
   // int initialPoolSize = pool_size();
   assert_parsed_expression_is(
       "2+3",
@@ -130,7 +130,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_memory_exhaustion) {
    * ruining everything */
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_parse_numbers) {
+QUIZ_CASE(poincare_parsing_parse_numbers) {
   // Parse decimal
   assert_parsed_expression_is("0", BasedInteger::Builder(0));
   assert_parsed_expression_is("0.1", Decimal::Builder(0.1));
@@ -1558,7 +1558,7 @@ QUIZ_CASE_DISABLED(poincare_parsing_adding_missing_parentheses) {
                                           BasedInteger::Builder(3))))));
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_mixed_fraction) {
+QUIZ_CASE(poincare_parsing_mixed_fraction) {
   assert_parsed_expression_is(
       "1 2/3",
       MixedFraction::Builder(BasedInteger::Builder(1),

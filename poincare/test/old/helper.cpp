@@ -175,15 +175,33 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
 void assert_parsed_expression_is(const char *expression,
                                  Poincare::OExpression r, bool addParentheses,
                                  bool parseForAssignment) {
+  k_total++;
   Shared::GlobalContext context;
-  Tree *parsed = parse_expression(expression, &context, addParentheses,
-                                  parseForAssignment);
-  Tree *expected = Internal::FromPoincareExpression(r);
-  quiz_assert_print_if_failure(parsed, expression);
-  quiz_assert_print_if_failure(expected, expression);
-  quiz_assert_print_if_failure(parsed->treeIsIdenticalTo(expected), expression);
-  expected->removeTree();
-  parsed->removeTree();
+  bool bad = false;
+  bool crash = false;
+  ExceptionTry {
+    assert(SharedTreeStack->numberOfTrees() == 0);
+    Tree *parsed = parse_expression(expression, &context, addParentheses,
+                                    parseForAssignment);
+    Tree *expected = Internal::FromPoincareExpression(r);
+    bad = !parsed || !expected || !parsed->treeIsIdenticalTo(expected);
+    expected->removeTree();
+    parsed->removeTree();
+  }
+  ExceptionCatch(type) {
+    SharedTreeStack->flush();
+    crash = true;
+  }
+  assert(SharedTreeStack->numberOfTrees() == 0);
+  k_bad += bad;
+  k_crash += crash;
+
+  constexpr int bufferSize = 2048;
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
+                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
+                                      expression);
+  quiz_print(information);
 }
 
 void assert_parse_to_same_expression(const char *expression1,

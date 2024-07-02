@@ -12,18 +12,19 @@ namespace Poincare::Internal {
 
 /* Usage
  *
-  * Iterator forwards concomittantly through 2 nodes' children
-
-
-  for (std::pair<std::array<TreeRef, 2>, int> indexedRefs :
- MultipleNodesIterator::Children<Editable,
- 2>(std::array<TreeRef, 2>({node0, node1}))) { TreeRef
- childOfNode0 = std::get<0>(indexedRefs)[0]; TreeRef childOfNode1 =
- std::get<0>(indexedRefs)[1]; int index = std::get<int>(indexedNode);
-    ...
-  }
-
- * */
+ * Iterator forwards concomittantly through 2 nodes' children
+ *
+ *
+ * for (std::pair<std::array<TreeRef, 2>, int> indexedRefs :
+ *      MultipleNodesIterator::Children<Editable, 2>(
+ *          std::array<TreeRef, 2>({node0, node1}))) {
+ *   TreeRef childOfNode0 = std::get<0>(indexedRefs)[0];
+ *   TreeRef childOfNode1 = std::get<0>(indexedRefs)[1];
+ *   int index = std::get<int>(indexedNode);
+ *   ...
+ * }
+ *
+ */
 
 class MultipleNodesIterator {
   /* Generic iterators, please choose:

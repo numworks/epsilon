@@ -151,10 +151,9 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       int numberOfChildren = derivand->numberOfChildren();
       assert(numberOfChildren > 1 && index < numberOfChildren);
       Tree* mult = SharedTreeStack->pushMult(numberOfChildren - 1);
-      for (std::pair<const Tree*, int> indexedNode :
-           NodeIterator::Children<NoEditable>(derivand)) {
-        if (indexedNode.second != index) {
-          indexedNode.first->cloneTree();
+      for (IndexedChild<const Tree*> child : derivand->indexedChildren()) {
+        if (child.index != index) {
+          child->cloneTree();
         }
       }
       SystematicReduction::ShallowReduce(mult);

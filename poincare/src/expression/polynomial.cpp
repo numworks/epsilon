@@ -373,15 +373,15 @@ Tree* PolynomialParser::GetVariables(const Tree* e) {
 Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
                                          size_t variableIndex) {
   const Tree* variable = nullptr;
-  for (std::pair<const Tree*, int> indexedVariable :
-       NodeIterator::Children<NoEditable>(variables)) {
-    if (std::get<int>(indexedVariable) < static_cast<int>(variableIndex)) {
+  for (IndexedChild<const Tree*> indexedVariable :
+       variables->indexedChildren()) {
+    if (indexedVariable.index < static_cast<int>(variableIndex)) {
       // Skip previously handled variable
       continue;
     }
     variableIndex += 1;
-    if (Order::ContainsSubtree(e, std::get<const Tree*>(indexedVariable))) {
-      variable = std::get<const Tree*>(indexedVariable);
+    if (Order::ContainsSubtree(e, indexedVariable)) {
+      variable = indexedVariable;
       break;
     }
   }
@@ -390,8 +390,8 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
     return e;
   }
   e = Parse(e, variable);
-  for (auto [child, index] : NodeIterator::Children<Editable>(e)) {
-    if (index == 0) {
+  for (IndexedChild<Tree*> child : e->indexedChildren()) {
+    if (child.index == 0) {
       // Pass variable child
       continue;
     }
@@ -442,7 +442,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     }
   }
   if (e->isMult()) {
-    for (auto [child, index] : NodeIterator::Children<Editable>(e)) {
+    for (Tree* child : e->indexedChildren()) {
       auto [childCoefficient, childExponent] =
           ParseMonomial(child->cloneTree(), variable);
       if (childExponent > 0) {
@@ -535,13 +535,13 @@ std::pair<TreeRef, uint8_t> Polynomial::MonomialCoefficient(const Tree* e, const
     }
   }
   if (type == Type::Mult) {
-    for (std::pair<const Tree *, int> indexedNode : NodeIterator::Children<NoEditable>(e)) {
-      Tree* child = std::get<const Tree *>(indexedNode);
+  for (IndexedChild<Tree*> child :
+       e->indexedChildren()) {
       auto [childCoefficient, childExponent] = MonomialCoefficient(child, variable);
       if (childExponent > 0) {
         // Warning: this algorithm relies on x^m*x^n --> x^(n+m) at basicReduction
         TreeRef multCopy = TreeRef::Clone(e);
-        multCopy.child(std::get<int>(indexedNode)).moveTreeOverTree(childCoefficient);
+        multCopy.child(child.index).moveTreeOverTree(childCoefficient);
         return std::make_pair(multCopy, childExponent);
       }
       childCoefficient.removeTree();

@@ -735,13 +735,13 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
   }
   offset = offset.translatedBy(p);
   int rowBaseline = 0;
-  for (auto [child, index] : NodeIterator::Children<NoEditable>(l)) {
-    if (!editing && grid->childIsPlaceholder(index)) {
+  for (IndexedChild<const Tree*> child : l->indexedChildren()) {
+    if (!editing && grid->childIsPlaceholder(child.index)) {
       continue;
     }
     const Rack* childRack = Rack::From(child);
-    int c = grid->columnAtChildIndex(index);
-    int r = grid->rowAtChildIndex(index);
+    int c = grid->columnAtChildIndex(child.index);
+    int r = grid->rowAtChildIndex(child.index);
 
     KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
                            : -grid->horizontalGridEntryMargin(s_font);
@@ -758,7 +758,7 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
     y += rowBaseline - Render::Baseline(childRack) +
          grid->verticalGridEntryMargin(s_font);
     KDPoint pc = KDPoint(x, y).translatedBy(offset);
-    if (grid->childIsPlaceholder(index)) {
+    if (grid->childIsPlaceholder(child.index)) {
       RackLayout::RenderNode(childRack, ctx, pc, true, true);
     } else {
       DrawRack(childRack, ctx, pc, style, selection, true);

@@ -514,10 +514,8 @@ QUIZ_CASE(pcj_node_iterator) {
   const Tree* children[] = {a, b, c};
 
   // Scan children forward
-  for (const std::pair<const Tree*, int> indexedNode :
-       NodeIterator::Children<NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<const Tree*>(indexedNode),
-                           children[std::get<int>(indexedNode)]);
+  for (IndexedChild<const Tree*> child : mult->indexedChildren()) {
+    assert_trees_are_equal(child, children[child.index]);
   }
 
   // Edit children forward
@@ -525,16 +523,12 @@ QUIZ_CASE(pcj_node_iterator) {
   KTree f = 7_e;
   KTree g = 8_e;
   const Tree* newChildren[] = {e, f, g};
-  for (std::pair<TreeRef, int> indexedRef :
-       NodeIterator::Children<Editable>(mult)) {
-    std::get<TreeRef>(indexedRef)
-        ->cloneTreeOverTree(newChildren[std::get<int>(indexedRef)]);
+  for (IndexedChild<Tree*> child : mult->indexedChildren()) {
+    child->cloneTreeOverTree(newChildren[child.index]);
   }
   // Check edition
-  for (const std::pair<const Tree*, int> indexedNode :
-       NodeIterator::Children<NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<const Tree*>(indexedNode),
-                           newChildren[std::get<int>(indexedNode)]);
+  for (IndexedChild<const Tree*> child : mult->indexedChildren()) {
+    assert_trees_are_equal(child, newChildren[child.index]);
   }
 
   constexpr KTree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
@@ -570,15 +564,11 @@ QUIZ_CASE(pcj_node_iterator) {
   }
   // Check edition
   const Tree* children1[] = {n10, n11, n6};
-  for (const std::pair<const Tree*, int> indexedNode :
-       NodeIterator::Children<NoEditable>(mult)) {
-    assert_trees_are_equal(std::get<const Tree*>(indexedNode),
-                           children1[std::get<int>(indexedNode)]);
+  for (IndexedChild<const Tree*> child : mult->indexedChildren()) {
+    assert_trees_are_equal(child, children1[child.index]);
   }
-  for (const std::pair<const Tree*, int> indexedNode :
-       NodeIterator::Children<NoEditable>(mult2)) {
-    assert_trees_are_equal(std::get<const Tree*>(indexedNode),
-                           newChildren2[std::get<int>(indexedNode)]);
+  for (IndexedChild<const Tree*> child : mult2->indexedChildren()) {
+    assert_trees_are_equal(child, newChildren2[child.index]);
   }
 }
 

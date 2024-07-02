@@ -57,13 +57,13 @@ void Tree::log(std::ostream& stream, bool recursive, bool verbose,
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (auto [child, index] : NodeIterator::Children<NoEditable>(this)) {
+    for (IndexedChild<const Tree*> child : indexedChildren()) {
       if (!tagIsClosed) {
         stream << ">\n";
         tagIsClosed = true;
       }
       child->log(stream, recursive, verbose, indentation + 1,
-                 comparison ? comparison->child(index) : comparison);
+                 comparison ? comparison->child(child.index) : comparison);
     }
   }
   if (tagIsClosed) {
@@ -320,9 +320,9 @@ const Tree* Tree::child(int i) const {
 }
 
 int Tree::indexOfChild(const Tree* child) const {
-  for (const auto [c, index] : NodeIterator::Children<NoEditable>(this)) {
-    if (child == c) {
-      return index;
+  for (IndexedChild<const Tree*> c : indexedChildren()) {
+    if (child == static_cast<const Tree*>(c)) {
+      return c.index;
     }
   }
   return -1;

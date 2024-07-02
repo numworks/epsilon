@@ -28,9 +28,8 @@ TreeRef Algebraic::Rationalize(TreeRef e) {
     return e;  // TODO return basicReduction
   }
   if (e->isMult()) {
-    for (std::pair<TreeRef, int> indexedNode :
-         NodeIterator::Children<Editable>(e)) {
-      Rationalize(std::get<TreeRef>(indexedNode));
+    for (Tree* child : e->children()) {
+      Rationalize(child);
     }
     return e;  // TODO return basicReduction
   }
@@ -45,9 +44,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef e) {
   assert(e->isAdd());
   TreeRef commonDenominator(KMult());
   // Step 1: We want to compute the common denominator, b*d
-  for (std::pair<TreeRef, int> indexedNode :
-       NodeIterator::Children<Editable>(e)) {
-    TreeRef child = std::get<TreeRef>(indexedNode);
+  for (Tree* child : e->children()) {
     child = Rationalize(child);
     TreeRef denominator = Denominator(SharedTreeStack->clone(child));
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
@@ -59,9 +56,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef e) {
   }
   /* Step 2: Turn the expression into the numerator. We start with this being
    * a/b+c/d and we want to create numerator = a/b*b*d + c/d*b*d = a*d + c*b */
-  for (std::pair<TreeRef, int> indexedNode :
-       NodeIterator::Children<Editable>(e)) {
-    TreeRef child = std::get<TreeRef>(indexedNode);
+  for (Tree* child : e->children()) {
     // Create Mult(child, commonDenominator) = a*b * b*d
     TreeRef multiplication(SharedTreeStack->pushMult(1));
     child->moveNodeBeforeNode(multiplication);
@@ -103,10 +98,8 @@ TreeRef Algebraic::NormalFormator(TreeRef e, bool numerator) {
     return e;
   }
   if (e->isMult()) {
-    for (std::pair<TreeRef, int> indexedNode :
-         NodeIterator::Children<Editable>(e)) {
-      TreeRef child = std::get<TreeRef>(indexedNode);
-      child = NormalFormator(child, numerator);
+    for (Tree* child : e->children()) {
+      NormalFormator(child, numerator);
     }
     // TODO basicReduction of e
   }

@@ -183,7 +183,7 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
   return result;
 }
 
-bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
+bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                          bool approximate) {
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
@@ -221,7 +221,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
         // Update best pivot
         bestPivot = pivot;
         iPivot = iPivot_temp;
-        if (reduced) {
+        if (reducedForm) {
           /* In reduced form, taking the first non null pivot is enough, and
            * more efficient. */
           break;
@@ -276,7 +276,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reduced, Tree** determinant,
       }
       divisor->cloneTreeOverTree(1_e);
 
-      int l = reduced ? 0 : h + 1;
+      int l = reducedForm ? 0 : h + 1;
       /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
        * non-reduced form is computed (ref), only rows below the pivot are
        * reduced, i > h as well */

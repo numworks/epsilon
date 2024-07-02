@@ -38,7 +38,7 @@ struct Matrix {
   static Tree* Multiplication(const Tree* matrix1, const Tree* matrix2,
                               bool approximate = false);
   static Tree* Transpose(const Tree* matrix);
-  static bool RowCanonize(Tree* matrix, bool reduced = true,
+  static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
                           bool approximate = false);
   static int Rank(const Tree* matrix);

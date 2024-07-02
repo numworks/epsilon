@@ -24,7 +24,7 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
     case Type::ListSequence:
     case Type::ListSequenceLayout:
       return 2;
-    case Type::NthDiff:
+    case Type::Diff:
     case Type::NthDiffLayout:
     case Type::Integral:
     case Type::IntegralLayout:
@@ -47,7 +47,7 @@ bool Parametric::IsFunctionIndex(int i, const Tree* e) {
 
 ComplexSign Parametric::VariableSign(const Tree* e) {
   switch (e->type()) {
-    case Type::NthDiff:
+    case Type::Diff:
     case Type::Integral:
       return k_continuousVariableSign;
     case Type::ListSequence:

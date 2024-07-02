@@ -99,7 +99,7 @@ bool SystematicReduction::Switch(Tree* e) {
       return Arithmetic::ReduceBinomial(e);
     case Type::Arg:
       return SystematicOperation::ReduceComplexArgument(e);
-    case Type::NthDiff:
+    case Type::Diff:
       return Derivation::Reduce(e);
     case Type::Dim:
       return SystematicOperation::ReduceDim(e);

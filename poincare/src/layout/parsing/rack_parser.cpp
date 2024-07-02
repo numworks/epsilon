@@ -762,7 +762,7 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
     if (type.isListStatWithCoefficients()) {
       NAry::AddChild(parameterList, (1_e)->cloneTree());
     }
-    if (type == Type::NthDiff) {
+    if (type == Type::Diff) {
       NAry::AddChild(parameterList, (1_e)->cloneTree());
     }
   }

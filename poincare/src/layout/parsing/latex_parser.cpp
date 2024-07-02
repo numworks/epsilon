@@ -197,7 +197,6 @@ Tree* LatexToLayout(const char* latexString) {
  *   CombinedCodePoints
  *   CondensedSum
  *   Diff
- *   NthDiff
  *   Product
  *   Sum
  *   ListSequence

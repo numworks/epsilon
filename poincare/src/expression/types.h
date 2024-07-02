@@ -206,8 +206,8 @@ NODE(Sum, 4)
 // Product(Symbol, LowerBound, UpperBound, Function)
 NODE(Product, 4)
 
-// NthDiff(Symbol, SymbolValue, Order, Derivand)
-NODE(NthDiff, 4)
+// Diff(Symbol, SymbolValue, Order, Derivand)
+NODE(Diff, 4)
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
 NODE(Integral, 4)

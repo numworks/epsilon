@@ -645,7 +645,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       PushPoincareExpression(exp.childAtIndex(0));
       return;
     case OT::Derivative:
-      SharedTreeStack->pushNthDiff();
+      SharedTreeStack->pushDiff();
       PushPoincareExpression(exp.childAtIndex(1));
       PushPoincareExpression(exp.childAtIndex(2));
       PushPoincareExpression(exp.childAtIndex(3));

@@ -28,7 +28,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
     if (child->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
       Tree* childSet = Dependencies(child);
       if (e->isParametric() && Parametric::FunctionIndex(e) == i) {
-        if (e->isNthDiff()) {
+        if (e->isDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
           const Tree* symbolValue = e->child(1);
           Variables::LeaveScopeWithReplacement(childSet, symbolValue, false);

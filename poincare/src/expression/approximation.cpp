@@ -562,7 +562,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       s_context->unshiftVariables();
       return result;
     }
-    case Type::NthDiff: {
+    case Type::Diff: {
       constexpr static int k_maxOrderForApproximation = 4;
       T orderReal = To<T>(e->child(2));
       if (orderReal != std::floor(orderReal)) {

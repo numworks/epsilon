@@ -109,7 +109,7 @@ constexpr auto KProduct = KFixedArity<4, Type::Product>();
 constexpr auto KIntegral = KFixedArity<4, Type::Integral>();
 constexpr auto KIntegralWithAlternatives =
     KFixedArity<6, Type::IntegralWithAlternatives>();
-constexpr auto KNthDiff = KFixedArity<4, Type::NthDiff>();
+constexpr auto KDiff = KFixedArity<4, Type::Diff>();
 
 constexpr auto KAdd = KNAry<Type::Add>();
 constexpr auto KMult = KNAry<Type::Mult>();

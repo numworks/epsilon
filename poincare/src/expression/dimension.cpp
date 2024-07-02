@@ -220,7 +220,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
             return false;
           }
           break;
-        case Type::NthDiff:
+        case Type::Diff:
         case Type::ListSequence:
           if (child.index != Parametric::FunctionIndex(e)) {
             return false;
@@ -477,7 +477,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Sum:
     case Type::Product:
     case Type::ListSequence:
-    case Type::NthDiff:
+    case Type::Diff:
       return Get(e->child(Parametric::FunctionIndex(e)), ctx);
     case Type::Dependency:
       return Get(Dependency::Main(e), ctx);

@@ -483,7 +483,7 @@ SystemExpression UserExpression::cloneAndReduce(
 
 SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
-  Tree* result = SharedTreeStack->pushNthDiff();
+  Tree* result = SharedTreeStack->pushDiff();
   SharedTreeStack->pushUserSymbol(symbolName);
   const Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Integer::Push(derivationOrder);

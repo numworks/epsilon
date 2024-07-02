@@ -165,7 +165,7 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
   NAry::AddChild(layoutParent, parenthesis);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (((j == 1 && expression->isListStatWithCoefficients()) ||
-         (j == 3 && expression->isNthDiff())) &&
+         (j == 3 && expression->isDiff())) &&
         expression->nextNode()->isOne()) {
       // TODO: factorise with PromoteBuiltin?
       // TODO: factorise with 2D layouting?
@@ -423,7 +423,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
 #endif
       break;
     }
-    case Type::NthDiff:
+    case Type::Diff:
       // TODO_PCJ createValidExpandedForm
       if (expression->lastChild()->isUserFunction() &&
           expression->lastChild()->child(0)->isUserSymbol() &&

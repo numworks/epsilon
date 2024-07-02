@@ -28,7 +28,7 @@ Type ExpressionType(LayoutType type) {
     case LayoutType::VectorNorm:
       return Type::Norm;
     case LayoutType::Diff:
-      return Type::NthDiff;
+      return Type::Diff;
     case LayoutType::Integral:
       return Type::Integral;
     case LayoutType::Product:

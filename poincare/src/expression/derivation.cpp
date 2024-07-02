@@ -15,7 +15,7 @@ namespace Poincare::Internal {
 
 bool Derivation::Reduce(Tree* e) {
   // Tree's children are expected to have been reduced beforehand.
-  assert(e->isNthDiff());
+  assert(e->isDiff());
   const Tree* symbol = e->child(0);
   const Tree* symbolValue = symbol->nextTree();
   const Tree* order = symbolValue->nextTree();
@@ -81,9 +81,9 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   /* Merge subsequent nested derivatives. Avoid infinite simplification loops.
    * diff(f(V0), x, V0, n) -> diff(f(V0), x, V0, n+1) */
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KNthDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
+  if (PatternMatching::Match(KDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
     Tree* result =
-        PatternMatching::Create(KNthDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
+        PatternMatching::Create(KDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
     SystematicReduction::ShallowReduce(result->child(2));
     return result;
   }
@@ -124,7 +124,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
       }
       /* Fallback to Diff(derivand)
        * f(V0+V1) -> diff(f(V0+V2), symbol, V0) */
-      Tree* preservedDerivative = SharedTreeStack->pushNthDiff();
+      Tree* preservedDerivative = SharedTreeStack->pushDiff();
       symbol->cloneTree();
       KVarX->cloneTree();
       (1_e)->cloneTree();

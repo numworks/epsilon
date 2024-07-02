@@ -238,11 +238,11 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
 static bool simplifyATrigOfTrig(Tree* e) {
   TypeBlock type = Type::Undef;
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KATrig(KTrig(KA, KB), KC), e, &ctx)) {
+  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
   } else if (PatternMatching::Match(
-                 KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))), e,
+                 e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
                  &ctx)) {
     // atan(sin/cos)
     type = Type::Tan;
@@ -384,14 +384,14 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     return true;
   }
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KExp(KMult(1_e / 2_e, KLn(3_e))), arg, &ctx)) {
+  if (PatternMatching::Match(arg, KExp(KMult(1_e / 2_e, KLn(3_e))), &ctx)) {
     // atan(√3) = π/3
     e->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
     return true;
   }
-  if (PatternMatching::Match(KExp(KMult(-1_e / 2_e, KLn(3_e))), arg, &ctx) ||
-      PatternMatching::Match(KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
-                             arg, &ctx)) {
+  if (PatternMatching::Match(arg, KExp(KMult(-1_e / 2_e, KLn(3_e))), &ctx) ||
+      PatternMatching::Match(
+          arg, KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), &ctx)) {
     // TODO_PCJ: we shouldn't have to test both x=1/√3 and x=√3/3
     // atan(1/√3) = π/6
     e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));

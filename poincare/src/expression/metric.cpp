@@ -25,7 +25,7 @@ int Metric::GetMetric(const Tree* e) {
     case Type::Exp: {
       // exp(A*ln(B)) -> Root(B,A) exception
       PatternMatching::Context ctx;
-      if (PatternMatching::Match(KExp(KMult(KA_s, KLn(KB))), e, &ctx)) {
+      if (PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
         if (!ctx.getTree(KA)->isHalf()) {
           result += GetMetric(ctx.getTree(KA));
         }

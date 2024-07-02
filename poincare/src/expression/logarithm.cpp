@@ -207,7 +207,7 @@ Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
 bool Logarithm::ContractLn(Tree* e) {
   PatternMatching::Context ctx;
   // A*ln(B) = ln(B^A) + i*(A*arg(B) - arg(B^A)) if A is an integer.
-  if (PatternMatching::Match(KMult(KA, KLn(KB)), e, &ctx) &&
+  if (PatternMatching::Match(e, KMult(KA, KLn(KB)), &ctx) &&
       ctx.getTree(KA)->isInteger()) {
     const Tree* a = ctx.getTree(KB);
     const Tree* b = ctx.getTree(KA);
@@ -219,7 +219,7 @@ bool Logarithm::ContractLn(Tree* e) {
     return true;
   }
   // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
-  if (PatternMatching::Match(KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s), e,
+  if (PatternMatching::Match(e, KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s),
                              &ctx)) {
     const Tree* a = ctx.getTree(KB);
     const Tree* b = ctx.getTree(KD);
@@ -240,7 +240,7 @@ bool Logarithm::ExpandLn(Tree* e) {
   }
   PatternMatching::Context ctx;
   // ln(A*B?) = ln(A) + ln(B) - i*(arg(A) + arg(B) - arg(AB))
-  if (PatternMatching::Match(KLn(KMult(KA, KB_p)), e, &ctx)) {
+  if (PatternMatching::Match(e, KLn(KMult(KA, KB_p)), &ctx)) {
     // Since KB_p can match multiple trees, we need them as a single tree.
     const Tree* a = ctx.getTree(KA);
     TreeRef b = PatternMatching::CreateSimplify(KMult(KB_p), ctx);
@@ -252,7 +252,7 @@ bool Logarithm::ExpandLn(Tree* e) {
     return true;
   }
   // ln(A^B) = B*ln(A) - i*( B*arg(A) - arg(A^B))
-  if (PatternMatching::Match(KLn(KPow(KA, KB)), e, &ctx)) {
+  if (PatternMatching::Match(e, KLn(KPow(KA, KB)), &ctx)) {
     const Tree* a = ctx.getTree(KA);
     const Tree* b = ctx.getTree(KB);
     TreeRef c = PushProductCorrection(a, b);

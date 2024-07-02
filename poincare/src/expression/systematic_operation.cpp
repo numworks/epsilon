@@ -442,7 +442,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     return true;
   }
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KExp(KMult(KA, KLn(KB))), e, &ctx) &&
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero())) {
     /* To ensure there is only one way of representing x^n. Also handle 0^y with
      * Power logic. */

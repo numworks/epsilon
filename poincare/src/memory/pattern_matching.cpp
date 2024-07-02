@@ -334,7 +334,7 @@ bool CanEarlyEscape(const Tree* pattern, const Tree* source) {
   return false;
 }
 
-bool PatternMatching::Match(const Tree* pattern, const Tree* source,
+bool PatternMatching::Match(const Tree* source, const Tree* pattern,
                             Context* context) {
   if (CanEarlyEscape(pattern, source)) {
     return false;
@@ -432,7 +432,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
 Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
                                    const Tree* structure) {
   Context ctx;
-  if (!Match(pattern, source, &ctx)) {
+  if (!Match(source, pattern, &ctx)) {
     return nullptr;
   }
   return Create(structure, ctx);
@@ -468,7 +468,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
   }
 
   // Step 1 - Match the pattern
-  if (!Match(pattern, source, &ctx)) {
+  if (!Match(source, pattern, &ctx)) {
     return false;
   }
   /* Following this example :

@@ -80,7 +80,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
   /* Merge subsequent nested derivatives. Avoid infinite simplification loops.
    * diff(f(V0), x, V0, n) -> diff(f(V0), x, V0, n+1) */
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KDiff(KA, KVarX, KB, KC), derivand, &ctx)) {
+  if (PatternMatching::Match(derivand, KDiff(KA, KVarX, KB, KC), &ctx)) {
     Tree* result =
         PatternMatching::Create(KDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
     SystematicReduction::ShallowReduce(result->child(2));

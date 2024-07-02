@@ -261,7 +261,7 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
   }
   // TODO_PCJ PercentAddition had a deepBeautify to preserve addition order
   PatternMatching::Context ctx;
-  if (!PatternMatching::Match(KPercentAddition(KA, KB), e, &ctx)) {
+  if (!PatternMatching::Match(e, KPercentAddition(KA, KB), &ctx)) {
     return false;
   }
   // A + B% -> A * (1 + B / 100)

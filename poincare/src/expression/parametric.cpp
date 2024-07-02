@@ -223,7 +223,7 @@ bool Parametric::ContractSum(Tree* e) {
    * -> - Sum(u(k), k, b+1, c) if b < c */
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
-          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))), e,
+          e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))),
           &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
@@ -245,7 +245,7 @@ bool Parametric::ContractSum(Tree* e) {
    * -> 0 if a = b (can be included in previous case and then will be reduced)
    * -> - Sum(u(k), k, b, a-1) if a > b */
   if (PatternMatching::Match(
-          KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))), e,
+          e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))),
           &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
@@ -276,8 +276,9 @@ bool Parametric::ContractProduct(Tree* e) {
    * -> 1 / Prod(u(k), k, b+1, c) if b < c */
   PatternMatching::Context ctx;
   if (PatternMatching::Match(
+          e,
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
-          e, &ctx)) {
+          &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
@@ -298,8 +299,9 @@ bool Parametric::ContractProduct(Tree* e) {
    * -> 1 if a = b (can be included in previous case and then will be reduced)
    * -> 1 / Prod(u(k), k, b, a-1) if a > b */
   if (PatternMatching::Match(
+          e,
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
-          e, &ctx)) {
+          &ctx)) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();

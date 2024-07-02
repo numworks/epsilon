@@ -89,7 +89,7 @@ class PatternMatching {
     };
   };
 
-  static bool Match(const Tree* pattern, const Tree* source, Context* context);
+  static bool Match(const Tree* source, const Tree* pattern, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),
                       bool simplify = false) {
     return CreateTree(structure, context, nullptr, simplify);

@@ -100,8 +100,8 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   // x*inf -> sign(x)*inf
   // except when x = -1,0,1 or sign (to avoid infinite loop)
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(KMult(KA, KInf), e, &ctx) ||
-      PatternMatching::Match(KMult(KInf, KA), e, &ctx)) {
+  if (PatternMatching::Match(e, KMult(KA, KInf), &ctx) ||
+      PatternMatching::Match(e, KMult(KInf, KA), &ctx)) {
     const Tree* x = ctx.getTree(KA);
     assert(!x->isZero() && !x->isOne());
     if (x->isMinusOne() || x->isSign()) {

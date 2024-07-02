@@ -393,7 +393,6 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate) {
 
 Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
-  assert(!std::isnan(exponent) && !std::isinf(exponent));
   if (exponent < 0) {
     Tree* result = Power(matrix, -exponent);
     // TODO is it worth to compute inverse first ?

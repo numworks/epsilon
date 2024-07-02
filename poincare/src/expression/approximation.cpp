@@ -462,7 +462,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Re: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
-      // TODO: why not use std::re(c)?
+      // TODO_PCJ: We used to ignore NAN imag part and return just c.real()
       // TODO: undef are not bubbled-up?
       std::complex<T> c = ToComplex<T>(e->child(0));
       return std::isnan(c.imag()) ? NAN : c.real();
@@ -537,16 +537,16 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Product: {
       const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
       std::complex<T> low = ToComplex<T>(lowerBoundChild);
-      assert(!std::isnan(low.real()) && !std::isnan(low.imag()));
       if (low.imag() != 0 || (int)low.real() != low.real()) {
         return NAN;
       }
+      assert(!std::isnan(low.real()) && !std::isnan(low.imag()));
       const Tree* upperBoundChild = lowerBoundChild->nextTree();
       std::complex<T> up = ToComplex<T>(upperBoundChild);
-      assert(!std::isnan(up.real()) && !std::isnan(up.imag()));
       if (up.imag() != 0 || (int)up.real() != up.real()) {
         return NAN;
       }
+      assert(!std::isnan(up.real()) && !std::isnan(up.imag()));
       int lowerBound = low.real();
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
@@ -663,7 +663,6 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       const Tree* index = e->child(1);
       assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
-      assert(!std::isnan(i));
       if (i < 0 || i >= Dimension::ListLength(values)) {
         return NAN;
       }
@@ -680,7 +679,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       assert(Integer::Is<uint8_t>(startIndex));
       assert(Integer::Is<uint8_t>(e->child(2)));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
-      assert(!std::isnan(start) && start >= 0);
+      assert(start >= 0);
       int old = s_context->m_listElement;
       s_context->m_listElement += start;
       std::complex<T> result = ToComplex<T>(values);

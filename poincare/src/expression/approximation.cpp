@@ -445,6 +445,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::LogBase: {
       std::complex<T> a = ToComplex<T>(e->child(0));
       std::complex<T> b = ToComplex<T>(e->child(1));
+      // TODO_PCJ: should we use log2 (we previously used log10)
       return a == static_cast<T>(0) || b == static_cast<T>(0)
                  ? NAN
                  : FloatDivision(std::log(a), std::log(b));

@@ -34,7 +34,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         Tree* e = static_cast<const Tree*>(data)->cloneTree();
         if (e->isStore()) {
           // Store is an expression only for convenience
-          e = e->child(0);
+          e->moveTreeOverTree(e->child(0));
         }
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =

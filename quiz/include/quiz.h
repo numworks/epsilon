@@ -14,16 +14,6 @@
 #endif
 
 #ifdef __cplusplus
-#define QUIZ_CASE_DISABLED(name)    \
-  extern "C" {                      \
-  void quiz_case_disabled_##name(); \
-  };                                \
-  void quiz_case_disabled_##name()
-#else
-#define QUIZ_CASE_DISABLED(name) void quiz_case_disabled_##name()
-#endif
-
-#ifdef __cplusplus
 extern "C" {
 #endif
 

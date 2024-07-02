@@ -139,9 +139,10 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
          * temperatures are allowed. */
         assert(dim.unit.vector.supportSize() == 1 &&
                dim.unit.vector.temperature == 1);
-        multiplication->moveTreeOverTree(PatternMatching::Create(
-            KMult(0_e, KA),
-            {.KA = Units::Unit::Push(dim.unit.representative)}));
+        multiplication->moveTreeOverTree(
+            Units::Unit::Push(dim.unit.representative));
+        multiplication->moveTreeOverTree(
+            PatternMatching::Create(KMult(0_e, KA), {.KA = multiplication}));
       } else {
         // Since all units are equivalent, use base SI.
         multiplication->moveTreeOverTree(dim.unit.vector.toBaseUnits());

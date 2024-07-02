@@ -13,7 +13,6 @@
 - [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
 - [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
-- [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-)
 - [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
 - [How to transform a Tree using pattern matching ?](#how-to-transform-a-tree-using-pattern-matching-)
 - [How to transform an n-ary Tree using pattern matching ?](#how-to-transform-an-n-ary-tree-using-pattern-matching-)
@@ -118,8 +117,7 @@ There are three situations to distinguish:
   The range `MathematicalConstant` is included in the range `Number`.
   </details>
 
-- If you want to know if your tree is a scalar, matrix, boolean, point or unit, use `Dimension::Get(tree)`.
-- You can have list of any dimension listed above, you can check the list length with `Dimension::ListLength(tree)`.
+- If you want to know the dimension of your expression (scalar, matrix, boolean, point or unit) use `Dimension::Get(tree)`. You can have a list of any dimension listed above, and you can check the list length with `Dimension::ListLength(tree)`.
 
 
 ## How to walk through a Tree ?
@@ -172,10 +170,9 @@ The structure of a `Tree` can be inspected in DEBUG with several log functions, 
 
 ## How to reorganize Trees in the TreeStack ?
 The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
-When doing so you should always keep in mind that the `TreeStack` is a stack and that removing or extending a tree will move the trees placed after it.
 
 When doing so you should always keep in mind that the `TreeStack` is a Stack and that removing or extending
-a tree will move the other trees down the stack.
+a tree will move the trees placed after it.
 
 ```cpp
 Tree * a = someTree->cloneTree();
@@ -416,8 +413,6 @@ When you need a `Tree` depending on user content or computed values, you need to
 > cleared by exceptions. You must save your trees elsewhere before you return to
 > the app’s code.
 
-The low-level method is presented here, for a safer approach, read [How to create a Tree using pattern matching ?](#how-to-create-a-tree-using-pattern-matching-).
-
 ### Method 1: Pushing nodes
 
 The most basic way to create trees from scratch is to push nodes successively at the end of the `TreeStack`.
@@ -451,7 +446,7 @@ you can use both node pushes and tree creation methods to build a more complex s
 Tree * expr2 = SharedTreeStack->pushCos();
 expr1->cloneTree()
 ```
-```xml
+```
 (lldb) expr2->logSerialize()
 cos(π+3.0)
 ```
@@ -463,7 +458,7 @@ A safe way to build a tree is to use `PatternMaching::Create`.
 ```cpp
 Tree * expr3 = PatternMatching::Create(KAdd(1_e, KA), {.KA = expr2});
 ```
-```xml
+```
 (lldb) expr3->logSerialize()
 1+cos(π+3.0)
 ```
@@ -476,7 +471,8 @@ The resulting tree is valid and will be pushed at the end of the `TreeStack`.
 
 If you need a simplified tree, use `CreateSimplify` with a pattern that is a simplified tree and context values that are simplified too.
 
-[!Note]
+> [!NOTE]
+> Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
 
 Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
 
@@ -487,12 +483,12 @@ Tree * expr4 = PatternMatching::Create(KAdd(1_e, i_e));
 You can do instead:
 
 ```cpp
-Tree * expr4 = (KAdd(1_e, i_e))->cloneTree();
+Tree * expr4 = KAdd(1_e, i_e)->cloneTree();
 ```
 
 [!Warning]
 
-Placeholders are cloned, so beware that they still live after the pattern matching: you might sometimes want to delete them using `tree->removeTree()`.
+Placeholders are cloned, so beware that they still live after the pattern matching: you might sometimes need to delete them using `tree->removeTree()`.
 
 
 ## How to retrieve sub-trees using pattern matching ?

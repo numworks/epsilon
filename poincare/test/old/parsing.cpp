@@ -1470,7 +1470,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
                                                  BasedInteger::Builder(2))));
 }
 
-QUIZ_CASE_DISABLED(poincare_parsing_adding_missing_parentheses) {
+QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is(
       "1+-2",
       Addition::Builder(

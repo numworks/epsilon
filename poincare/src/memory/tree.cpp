@@ -2,7 +2,6 @@
 
 #include <ion.h>
 
-#include "node_iterator.h"
 #include "tree_ref.h"
 
 #if POINCARE_POOL_VISUALIZATION

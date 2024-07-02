@@ -4,7 +4,6 @@
 #include <poincare/src/expression/k_tree.h>
 #include <string.h>
 
-#include "node_iterator.h"
 #include "pattern_matching.h"
 #include "tree_stack.h"
 

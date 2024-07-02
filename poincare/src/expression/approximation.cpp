@@ -5,7 +5,6 @@
 #include <omg/signaling_nan.h>
 #include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
-#include <poincare/src/memory/node_iterator.h>
 #include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
 

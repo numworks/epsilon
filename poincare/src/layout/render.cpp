@@ -4,7 +4,6 @@
 #include <escher/palette.h>
 #include <kandinsky/dot.h>
 #include <omg/unreachable.h>
-#include <poincare/src/memory/node_iterator.h>
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"

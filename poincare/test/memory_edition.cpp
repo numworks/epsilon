@@ -1,5 +1,4 @@
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/memory/node_iterator.h>
 
 #include "helper.h"
 

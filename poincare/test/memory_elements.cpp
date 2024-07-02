@@ -1,7 +1,7 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/memory/multiple_nodes_iterator.h>
 #include <poincare/src/memory/value_block.h>
 
 #include "helper.h"

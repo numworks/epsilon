@@ -5,7 +5,6 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/order.h>
 
-#include "node_iterator.h"
 #include "tree_ref.h"
 
 namespace Poincare::Internal {

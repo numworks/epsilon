@@ -1,6 +1,6 @@
 #include "order.h"
 
-#include <poincare/src/memory/node_iterator.h>
+#include <poincare/src/memory/multiple_nodes_iterator.h>
 #include <poincare/src/memory/type_block.h>
 
 #include "approximation.h"

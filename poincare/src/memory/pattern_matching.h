@@ -4,9 +4,9 @@
 #include <array>
 
 #include "k_tree.h"
-#include "node_iterator.h"
 #include "placeholder.h"
 #include "tree.h"
+#include "tree_ref.h"
 
 namespace Poincare::Internal {
 

@@ -18,25 +18,38 @@ namespace Poincare::Internal {
 void Indent(std::ostream& stream, int indentation);
 #endif
 
+class Tree;
 class TreeRef;
 
 template <typename T>  // T is Tree* or const Tree*
-class IndexedChild {
-  friend class Tree;
-  IndexedChild(T child) : m_child(nullptr), index(0) {
+struct IndexedChildBase {
+  IndexedChildBase(T child) : m_child(nullptr), index(0) {
     // Used as the end of the iterators
     assert(child == nullptr);
   }
-  IndexedChild(T child, int index) : m_child(child), index(index) {}
+  IndexedChildBase(T child, int index) : m_child(child), index(index) {}
 
- public:
-  bool operator==(const IndexedChild<T>& other) const = default;
-  bool operator!=(const IndexedChild<T>& other) const = default;
+  bool operator==(const IndexedChildBase<T>& other) const = default;
+  bool operator!=(const IndexedChildBase<T>& other) const = default;
   T operator->() const { return m_child; }
   operator T() { return m_child; }
 
   T m_child;
   uint16_t index;
+};
+
+template <typename T>  // T is Tree* or const Tree*
+struct IndexedChild;
+
+template <>
+struct IndexedChild<Tree*> : public IndexedChildBase<Tree*> {
+  using IndexedChildBase::IndexedChildBase;
+};
+template <>
+struct IndexedChild<const Tree*> : public IndexedChildBase<const Tree*> {
+  using IndexedChildBase::IndexedChildBase;
+  // Allow a IndexedChild<Tree*> to be turned into an IndexedChild<const Tree*>
+  IndexedChild(IndexedChild<Tree*> t) : IndexedChildBase(t.m_child, t.index) {}
 };
 
 /* A block is a byte-long object containing either a type or some value.

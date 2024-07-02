@@ -42,13 +42,6 @@ Tree* TreeRef::tree() const {
   return SharedTreeStack->nodeForIdentifier(m_identifier);
 }
 
-void TreeRef::recursivelyEdit(InPlaceTreeFunction treeFunction) {
-  for (auto [child, index] : NodeIterator::Children<Editable>(*this)) {
-    child.recursivelyEdit(treeFunction);
-  }
-  (*treeFunction)(*this);
-}
-
 void CloneNodeAtNode(TreeRef& target, const Tree* nodeToClone) {
   Tree* previousTarget = target;
   target->cloneNodeAtNode(nodeToClone);

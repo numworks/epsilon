@@ -141,6 +141,9 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* e) {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Dimension dim) {
+  /* TODO_PCJ: not all approximation methods comes here, but this assert should
+   * always be called when approximating. */
+  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (dim.isBoolean()) {
     return (ToBoolean<T>(e) ? KTrue : KFalse)->cloneTree();
   }

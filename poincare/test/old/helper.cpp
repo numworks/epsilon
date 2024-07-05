@@ -163,18 +163,14 @@ void assert_parsed_expression_process_to(
 }
 
 Internal::Tree *parse_expression(const char *expression, Context *context,
-                                 bool addParentheses, bool parseForAssignment) {
-  if (addParentheses) {
-    // TODO_PCJ (cf OExpression::addMissingParentheses)
-    return nullptr;
-  }
+                                 bool parseForAssignment) {
   Tree *result = parse(expression, context, parseForAssignment);
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }
 
 void assert_parsed_expression_is(const char *expression,
-                                 Poincare::OExpression r, bool addParentheses,
+                                 Poincare::OExpression r,
                                  bool parseForAssignment) {
   k_total++;
   Shared::GlobalContext context;
@@ -182,8 +178,7 @@ void assert_parsed_expression_is(const char *expression,
   bool crash = false;
   ExceptionTry {
     assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *parsed = parse_expression(expression, &context, addParentheses,
-                                    parseForAssignment);
+    Tree *parsed = parse_expression(expression, &context, parseForAssignment);
     Tree *expected = Internal::FromPoincareExpression(r);
     bad = !parsed || !expected || !parsed->treeIsIdenticalTo(expected);
     if (expected) {

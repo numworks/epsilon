@@ -72,7 +72,7 @@ void assert_tokenizes_as_undefined_token(const char* string) {
 
 void assert_parsed_expression_with_user_parentheses_is(
     const char* expression, Poincare::OExpression r) {
-  return assert_parsed_expression_is(expression, r, true);
+  return assert_parsed_expression_is(expression, r);
 }
 
 QUIZ_CASE(poincare_parsing_tokenize_numbers) {
@@ -1470,7 +1470,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
                                                  BasedInteger::Builder(2))));
 }
 
-QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
+QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is(
       "1+-2",
       Addition::Builder(
@@ -1620,7 +1620,7 @@ QUIZ_CASE(poincare_parsing_function_assignment) {
                           ComparisonNode::OperatorType::Equal,
                           Multiplication::Builder(Symbol::Builder("x", 1),
                                                   Symbol::Builder("y", 1))),
-      false, true);
+      true);
 
   /* Ensure y=ax is not understood as "y"="ax" but "y"="a"*"x" when parsing for
    * assignment. (The "parsing for assignment" should apply only to left
@@ -1631,7 +1631,7 @@ QUIZ_CASE(poincare_parsing_function_assignment) {
                           ComparisonNode::OperatorType::Equal,
                           Multiplication::Builder(Symbol::Builder("a", 1),
                                                   Symbol::Builder("x", 1))),
-      false, true);
+      true);
 
   // Without assignment "f(x)=4=3" is "Comparison(f*(x), equal, 4, equal, 3)"
   Comparison comparison = Comparison::Builder(
@@ -1650,7 +1650,7 @@ QUIZ_CASE(poincare_parsing_function_assignment) {
           Comparison::Builder(BasedInteger::Builder(4),
                               ComparisonNode::OperatorType::Equal,
                               BasedInteger::Builder(3))),
-      false, true);
+      true);
 }
 
 QUIZ_CASE(poincare_parsing_east_arrows) {

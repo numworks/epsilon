@@ -230,15 +230,6 @@ If the node is n-ary, you need to provide the number of arguments with `.node<nb
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 
-> [!WARNING]
-> Mind the difference between `cloneNode()` and `cloneTree()`.
-> ```cpp
-> Tree * clone1 = twoPi->cloneTree();  // nodes on TreeStack: ...[Mult][Two][Pi]
-> Tree * clone2 = clone1->cloneNode(); // nodes on TreeStack: ...[Mult][Two][Pi][Mult]
-> ```
-> `clone2` is not a valid tree: `clone2->nextTree()`, `clone2->cloneTree()` and `clone2->log()` will crash.
-> Read [style guide](./style_guide.md#distinguish-trees-from-nodes).
-
 ### Implementation details
 <details>
 <summary>Details</summary>
@@ -315,6 +306,16 @@ expr1->cloneTree()
 (lldb) expr2->logSerialize()
 cos(π+3.0)
 ```
+
+### Cloning nodes
+
+Similarly you can clone a node with `cloneNode` but mind the difference between:
+```cpp
+Tree * clone1 = twoPi->cloneTree();  // nodes on TreeStack: ...[Mult][Two][Pi]
+Tree * clone2 = clone1->cloneNode(); // nodes on TreeStack: ...[Mult][Two][Pi][Mult]
+```
+`clone2` is not a valid tree: `clone2->nextTree()`, `clone2->cloneTree()` and `clone2->log()` will crash.
+Read [style guide](./style_guide.md#distinguish-trees-from-nodes).
 
 ### Using pattern matching
 

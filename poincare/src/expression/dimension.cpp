@@ -168,6 +168,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
         return result;
       }
       // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
+      [[fallthrough]];
     }
     default: {
       // TODO sort lists first to optimize ListLength ?
@@ -392,6 +393,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         clone->removeTree();
         return result;
       }
+      [[fallthrough]];
     }
     case Type::Abs:
     case Type::Floor:

@@ -19,6 +19,7 @@ class Simplification {
   static bool PrepareForProjection(Tree* e,
                                    ProjectionContext* projectionContext);
   static bool ToSystem(Tree* e, ProjectionContext* projectionContext);
+  TREE_REF_WRAP_1(ToSystem, ProjectionContext*);
   static bool ReduceSystem(Tree* e, bool advanced);
   static bool TryApproximationStrategyAgain(
       Tree* e, ProjectionContext projectionContext);

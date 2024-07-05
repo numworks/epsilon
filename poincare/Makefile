@@ -202,7 +202,6 @@ tests_src += $(addprefix poincare/test/old/,\
   # range.cpp \
   # rational.cpp \
   # regularized_function.cpp \
-  # zoom.cpp \
 
 poincare_bench_src = $(addprefix poincare/src/,\
   init.cpp \
@@ -412,6 +411,7 @@ tests_src += $(addprefix poincare/test/,\
   set.cpp \
   sign.cpp \
   simplification.cpp \
+  zoom.cpp \
 )
 
 tests_src += $(poincare_src)

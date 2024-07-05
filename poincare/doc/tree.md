@@ -233,10 +233,11 @@ if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 > [!WARNING]
 > Mind the difference between `cloneNode()` and `cloneTree()`.
 > ```cpp
-> Tree * clone1 = twoPi->cloneTree();  // TreeStack: ...[Mult][Two][Pi]
-> Tree * clone2 = clone1->cloneNode(); // TreeStack: ...[Mult][Two][Pi][Mult]
+> Tree * clone1 = twoPi->cloneTree();  // nodes on TreeStack: ...[Mult][Two][Pi]
+> Tree * clone2 = clone1->cloneNode(); // nodes on TreeStack: ...[Mult][Two][Pi][Mult]
 > ```
 > `clone2` is not a valid tree: `clone1->nextTree()`, `clone2->cloneTree()` and `clone2->log()` will crash.
+> Read [style guide](./style_guide.md#distinguish-trees-from-nodes).
 
 ### Implementation details
 <details>

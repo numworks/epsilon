@@ -18,10 +18,6 @@ class Zoom {
   friend class ::ZoomTest;
 
  public:
-  constexpr static float k_smallUnitMantissa = 1.f;
-  constexpr static float k_mediumUnitMantissa = 2.f;
-  constexpr static float k_largeUnitMantissa = 5.f;
-
   template <typename T>
   using Function2DWithContext = Coordinate2D<T> (*)(T, const void*, Context*);
 

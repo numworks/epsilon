@@ -37,12 +37,9 @@ class CurveViewRange {
   /* The grid units is constrained to be a number of type: k*10^n with k = 1,2
    * or 5 and n a relative integer. The choice of x and y grid units depend on
    * the grid range.*/
-  constexpr static float k_smallGridUnitMantissa =
-      Poincare::Zoom::k_smallUnitMantissa;
-  constexpr static float k_mediumGridUnitMantissa =
-      Poincare::Zoom::k_mediumUnitMantissa;
-  constexpr static float k_largeGridUnitMantissa =
-      Poincare::Zoom::k_largeUnitMantissa;
+  constexpr static float k_smallGridUnitMantissa = 1.f;
+  constexpr static float k_mediumGridUnitMantissa = 2.f;
+  constexpr static float k_largeGridUnitMantissa = 5.f;
   float computeGridUnit(float minNumberOfUnits, float maxNumberOfUnits,
                         float range) const;
 };

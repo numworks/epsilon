@@ -98,7 +98,7 @@ static bool ReduceMultiplicationChildRec(Tree* child, int index,
 
 static bool ReduceMultiplicationWithInf(Tree* e) {
   // x*inf -> sign(x)*inf
-  // except when x = -1,0,1 or sign (to avoid infinite loop)
+  // Except when x = -1,0,1 or sign (to avoid infinite loop)
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KMult(KA, KInf), &ctx) ||
       PatternMatching::Match(e, KMult(KInf, KA), &ctx)) {
@@ -108,13 +108,14 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
       return false;
     }
   }
-  if (PatternMatching::MatchReplaceSimplify(
+  // Except when x is not scalar.
+  if (Dimension::Get(e).isScalar() &&
+      PatternMatching::MatchReplaceSimplify(
           e, KMult(KA_s, KInf, KB_s), KMult(KSign(KMult(KA_s, KB_s)), KInf))) {
     /* Warning: it works because sign(z)=undef if z is complex and we don't
      * handle i*inf.*/
     return true;
   }
-
   return false;
 }
 

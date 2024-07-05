@@ -114,7 +114,7 @@ class Representative {
   bool isOutputPrefixable() const {
     return m_outputPrefixable != Prefixable::None;
   }
-  virtual bool isImperial() const { return false; }
+  bool isImperial() const { return m_isImperial; }
 #if 0
   size_ serialize(char* buffer, size_t bufferSize,, const Prefix* prefix) const;
 #endif
@@ -131,11 +131,12 @@ class Representative {
   template <KTreeConcept T>
   constexpr Representative(Aliases rootSymbol, T ratioExpression,
                            Prefixable inputPrefixable,
-                           Prefixable outputPrefixable)
+                           Prefixable outputPrefixable, bool isImperial = false)
       : m_rootSymbols(rootSymbol),
         m_ratioExpression(ratioExpression),
         m_inputPrefixable(inputPrefixable),
-        m_outputPrefixable(outputPrefixable) {}
+        m_outputPrefixable(outputPrefixable),
+        m_isImperial(isImperial) {}
 
   const Representative* defaultFindBestRepresentative(
       double value, double exponent, const Representative* begin,
@@ -151,6 +152,7 @@ class Representative {
   const Tree* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
+  bool m_isImperial;
 };
 
 #if 0

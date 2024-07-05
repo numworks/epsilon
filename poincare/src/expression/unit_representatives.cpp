@@ -22,10 +22,10 @@ const Distance::Representatives<const Distance> Distance::representatives = {
     .lightYear = {"ly", KMult(299792458_e, 31557600_e), None, None},
     .parsec = {"pc", KMult(180_e, KDiv(3600_e, π_e), 149587870700_e), None,
                None},
-    .inch = {"in", 0.0254_e, None, None},
-    .foot = {"ft", KMult(12_e, 0.0254_e), None, None},
-    .yard = {"yd", KMult(36_e, 0.0254_e), None, None},
-    .mile = {"mi", KMult(63360_e, 0.0254_e), None, None}};
+    .inch = {"in", 0.0254_e, None, None, true},
+    .foot = {"ft", KMult(12_e, 0.0254_e), None, None, true},
+    .yard = {"yd", KMult(36_e, 0.0254_e), None, None, true},
+    .mile = {"mi", KMult(63360_e, 0.0254_e), None, None, true}};
 
 /* Only AngleRepresentative have non-float ratio expression because exact
  * result are expected. */
@@ -41,10 +41,12 @@ const Mass::Representatives<const Mass> Mass::representatives = {
     .kilogram = {"kg", 1_e, None, None},
     .gram = {"g", 0.001_e, All, Negative},
     .ton = {"t", 1000_e, PositiveLongScale, PositiveLongScale},
-    .ounce = {"oz", 0.028349523125_e, None, None},
-    .pound = {"lb", KMult(16_e, 0.028349523125_e), None, None},
-    .shortTon = {"shtn", KMult(2000_e, 16_e, 0.028349523125_e), None, None},
-    .longTon = {"lgtn", KMult(2240_e, 16_e, 0.028349523125_e), None, None},
+    .ounce = {"oz", 0.028349523125_e, None, None, true},
+    .pound = {"lb", KMult(16_e, 0.028349523125_e), None, None, true},
+    .shortTon = {"shtn", KMult(2000_e, 16_e, 0.028349523125_e), None, None,
+                 true},
+    .longTon = {"lgtn", KMult(2240_e, 16_e, 0.028349523125_e), None, None,
+                true},
     .dalton = {"Da", KDiv(KPow(10_e, -26_e), 6.02214076_e), All, All}};
 
 const Current::Representatives<const Current> Current::representatives = {
@@ -55,7 +57,7 @@ const Temperature::Representatives<const Temperature>
     Temperature::representatives = {
         .kelvin = {"K", 1_e, All, None},
         .celsius = {"°C", 1_e, None, None},
-        .fahrenheit = {"°F", 5_e / 9_e, None, None}};
+        .fahrenheit = {"°F", 5_e / 9_e, None, None, true}};
 
 const Tree* Temperature::celsiusOrigin = 273.15_e;
 const Tree* Temperature::fahrenheitOrigin = 459.67_e;
@@ -119,17 +121,17 @@ const CatalyticActivity::Representatives<const CatalyticActivity>
 
 const Surface::Representatives<const Surface> Surface::representatives = {
     .hectare = {"ha", 10000_e, None, None},
-    .acre = {"acre", 4046.8564224_e, None, None}};
+    .acre = {"acre", 4046.8564224_e, None, None, true}};
 
 const Volume::Representatives<const Volume> Volume::representatives = {
     .liter = {BuiltinsAliases::k_litersAliases, 0.001_e, All, Negative},
-    .cup = {"cup", KMult(8_e, 0.0000295735295625_e), None, None},
-    .pint = {"pt", KMult(16_e, 0.0000295735295625_e), None, None},
-    .quart = {"qt", KMult(32_e, 0.0000295735295625_e), None, None},
-    .gallon = {"gal", KMult(128_e, 0.0000295735295625_e), None, None},
-    .teaSpoon = {"tsp", 0.00000492892159375_e, None, None},
-    .tableSpoon = {"tbsp", KMult(3_e, 0.00000492892159375_e), None, None},
-    .fluidOnce = {"floz", 0.0000295735295625_e, None, None}};
+    .cup = {"cup", KMult(8_e, 0.0000295735295625_e), None, None, true},
+    .pint = {"pt", KMult(16_e, 0.0000295735295625_e), None, None, true},
+    .quart = {"qt", KMult(32_e, 0.0000295735295625_e), None, None, true},
+    .gallon = {"gal", KMult(128_e, 0.0000295735295625_e), None, None, true},
+    .teaSpoon = {"tsp", 0.00000492892159375_e, None, None, true},
+    .tableSpoon = {"tbsp", KMult(3_e, 0.00000492892159375_e), None, None, true},
+    .fluidOnce = {"floz", 0.0000295735295625_e, None, None, true}};
 
 const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
@@ -153,11 +155,6 @@ int Time::setAdditionalExpressions(double value, Expression* dest,
   return 1;
 }
 #endif
-
-bool Distance::isImperial() const {
-  return this == &representatives.inch || this == &representatives.foot ||
-         this == &representatives.yard || this == &representatives.mile;
-}
 
 const Representative* Distance::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
@@ -265,11 +262,6 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
 }
 #endif
 
-bool Mass::isImperial() const {
-  return this == &representatives.ounce || this == &representatives.pound ||
-         this == &representatives.shortTon || this == &representatives.longTon;
-}
-
 const Representative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
@@ -360,12 +352,6 @@ int Energy::setAdditionalExpressions(double value, Expression* dest,
 }
 #endif
 
-bool Temperature::isImperial() const {
-  return this == &representatives.fahrenheit;
-}
-
-bool Surface::isImperial() const { return (this == &representatives.acre); }
-
 const Representative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
@@ -401,14 +387,6 @@ int Surface::setAdditionalExpressions(double value, Expression* dest,
   return 2;
 }
 #endif
-
-bool Volume::isImperial() const {
-  return this == &representatives.cup || this == &representatives.pint ||
-         this == &representatives.quart || this == &representatives.gallon ||
-         this == &representatives.teaSpoon ||
-         this == &representatives.tableSpoon ||
-         this == &representatives.fluidOnce;
-}
 
 const Representative* Volume::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,

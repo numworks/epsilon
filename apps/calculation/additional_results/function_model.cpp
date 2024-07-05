@@ -2,7 +2,7 @@
 
 #include <apps/shared/function.h>
 #include <apps/shared/interactive_curve_view_range.h>
-#include <poincare/old/zoom.h>
+#include <poincare/numeric/zoom.h>
 
 #include <algorithm>
 

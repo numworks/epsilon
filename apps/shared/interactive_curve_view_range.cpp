@@ -4,8 +4,8 @@
 #include <ion.h>
 #include <omg/comparison.h>
 #include <omg/ieee754.h>
+#include <poincare/numeric/zoom.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/zoom.h>
 #include <poincare/preferences.h>
 #include <stddef.h>
 

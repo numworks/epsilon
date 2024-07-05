@@ -4,7 +4,7 @@
 #include <float.h>
 #include <ion/display.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/old/zoom.h>
+#include <poincare/numeric/zoom.h>
 #include <string.h>
 
 #include <algorithm>

@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/zoom.h>
+#include <poincare/numeric/zoom.h>
 
 #include <cmath>
 

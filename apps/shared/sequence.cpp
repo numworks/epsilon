@@ -5,13 +5,13 @@
 #include <float.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/numeric/zoom.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/sum.h>
-#include <poincare/old/zoom.h>
 #include <poincare/src/expression/sequence.h>
 #include <string.h>
 

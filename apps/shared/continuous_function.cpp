@@ -5,6 +5,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/roots.h>
+#include <poincare/numeric/zoom.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
@@ -21,7 +22,6 @@
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/undefined.h>
-#include <poincare/old/zoom.h>
 #include <poincare/print.h>
 
 #include <algorithm>

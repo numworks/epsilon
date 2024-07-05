@@ -70,11 +70,6 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
-void assert_parsed_expression_with_user_parentheses_is(
-    const char* expression, Poincare::OExpression r) {
-  return assert_parsed_expression_is(expression, r);
-}
-
 QUIZ_CASE(poincare_parsing_tokenize_numbers) {
   assert_tokenizes_as_number("1");
   assert_tokenizes_as_number("12");
@@ -1471,97 +1466,97 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
 }
 
 QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "1+-2",
       Addition::Builder(
           BasedInteger::Builder(1),
           Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "1--2",
       Subtraction::Builder(
           BasedInteger::Builder(1),
           Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "1+conj(-2)",
       Addition::Builder(BasedInteger::Builder(1),
                         Parenthesis::Builder(Conjugate::Builder(
                             Opposite::Builder(BasedInteger::Builder(2))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "1-conj(-2)",
       Subtraction::Builder(BasedInteger::Builder(1),
                            Parenthesis::Builder(Conjugate::Builder(
                                Opposite::Builder(BasedInteger::Builder(2))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "3conj(1+i)",
       Multiplication::Builder(
           BasedInteger::Builder(3),
           Parenthesis::Builder(Conjugate::Builder(Addition::Builder(
               BasedInteger::Builder(1), Constant::ComplexIBuilder())))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "2×-3",
       Multiplication::Builder(
           BasedInteger::Builder(2),
           Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "2×-3",
       Multiplication::Builder(
           BasedInteger::Builder(2),
           Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "--2", Opposite::Builder(Parenthesis::Builder(
                  Opposite::Builder(BasedInteger::Builder(2)))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "\u00122/3\u0013^2",
       Power::Builder(Parenthesis::Builder(Division::Builder(
                          BasedInteger::Builder(2), BasedInteger::Builder(3))),
                      BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "log(1+-2)",
       Logarithm::Builder(Addition::Builder(
           BasedInteger::Builder(1),
           Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
 
   // Conjugate expressions
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "conj(-3)+2",
       Addition::Builder(
           Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
           BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "2+conj(-3)",
       Addition::Builder(BasedInteger::Builder(2),
                         Parenthesis::Builder(Conjugate::Builder(
                             Opposite::Builder(BasedInteger::Builder(3))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "conj(-3)×2",
       Multiplication::Builder(
           Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
           BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "2×conj(-3)", Multiplication::Builder(
                         BasedInteger::Builder(2),
                         Parenthesis::Builder(Conjugate::Builder(
                             Opposite::Builder(BasedInteger::Builder(3))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "conj(-3)-2",
       Subtraction::Builder(
           Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
           BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "2-conj(-3)",
       Subtraction::Builder(BasedInteger::Builder(2),
                            Parenthesis::Builder(Conjugate::Builder(
                                Opposite::Builder(BasedInteger::Builder(3))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "conj(2+3)^2",
       Power::Builder(Parenthesis::Builder(Conjugate::Builder(Addition::Builder(
                          BasedInteger::Builder(2), BasedInteger::Builder(3)))),
                      BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "-conj(2+3)", Opposite::Builder(Parenthesis::Builder(Conjugate::Builder(
                         Addition::Builder(BasedInteger::Builder(2),
                                           BasedInteger::Builder(3))))));
-  assert_parsed_expression_with_user_parentheses_is(
+  assert_parsed_expression_is(
       "conj(2+3)!", Factorial::Builder(Parenthesis::Builder(Conjugate::Builder(
                         Addition::Builder(BasedInteger::Builder(2),
                                           BasedInteger::Builder(3))))));

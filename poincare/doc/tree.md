@@ -9,13 +9,13 @@
 - [How to know what Type a Tree has ?](#how-to-know-what-type-a-tree-has-)
 - [How to walk through a Tree ?](#how-to-walk-through-a-tree-)
 - [How to display a Tree ?](#how-to-display-a-tree-)
-- [How to reorganize Trees in the TreeStack ?](#how-to-reorganize-trees-in-the-treestack-)
-- [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
 - [How to create a Tree at compile time ?](#how-to-create-a-tree-at-compile-time-)
 - [How to create a Tree at runtime ?](#how-to-create-a-tree-at-runtime-)
 - [How to retrieve sub-trees using pattern matching ?](#how-to-retrieve-sub-trees-using-pattern-matching-)
 - [How to transform a Tree using pattern matching ?](#how-to-transform-a-tree-using-pattern-matching-)
 - [How to transform an n-ary Tree using pattern matching ?](#how-to-transform-an-n-ary-tree-using-pattern-matching-)
+- [How to reorganize Trees in the TreeStack ?](#how-to-reorganize-trees-in-the-treestack-)
+- [How to track Trees in the TreeStack ?](#how-to-track-trees-in-the-treestack-)
 
 
 ## What is a Tree ?
@@ -167,152 +167,6 @@ The structure of a `Tree` can be inspected in DEBUG with several log functions, 
   ```
   2+3
   ```
-
-## How to reorganize Trees in the TreeStack ?
-The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
-
-When doing so you should always keep in mind that the `TreeStack` is a Stack and that removing or extending
-a tree will move the trees placed after it.
-
-```cpp
-Tree * a = someTree->cloneTree();
-Tree * b = anotherTree->cloneTree();
-// a and b are now in the TreeStack with b just after a
-assert(a->nextTree() == b);
-
-a->removeTree();
-// the tree pointed to by a was just deleted from and the rest of the TreeStack after
-// it was shifted in the whole; since pointers are not aware of that, a now
-// points to the copy of anotherTree and b points at a corrupted place
-```
-
-
-## How to track Trees in the TreeStack ?
-
-A **`TreeRef`** is a smart pointer used to track a `Tree` as it moves inside the
-`TreeStack`. It is not needed in the `Pool` since nodes cannot be edited there.
-
-For this purpose, the `TreeStack` owns a table of all the alive `TreeRef` and
-updates each of them after each modification of a `Tree` inside the `TreeStack`. For this
-reason, `TreeRefs` are intended to be temporary and used sparingly where
-performance matters. You will often see function passing `TreeRefs &` to
-avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same `Tree`.
-
-All the methods on available on `Tree` are accessible on `TreeRef` as
-well. It should be easy to upgrade a `Tree *` into a `TreeRef` at any
-point when you want to track your `Tree` safely.
-
-```cpp
-TreeRef a = someTree->cloneTree();
-TreeRef b = anotherTree->cloneTree();
-// a and b are now in the TreeStack with b just after a
-assert(a->nextTree() == b);
-
-a->removeTree();
-// since we are now using tracking references, a is uninitialized after the
-// remove and b points to the anotherTree copy (which is now where a was)
-```
-
-You can now read the various `Tree` motions in [tree.h](/poincare/src/memory/tree.h) and see how they update
-references. Mind the difference between `moveBefore` and `moveAt` that are the
-same function tree-wise but not reference-wise.
-
-The `TreeStack` has a `log` method as well, that shows each tree it contains and the references pointing to trees.
-
-`(lldb) p Poincare::Internal::TreeStack::SharedTreeStack->log()`
-
-```xml
-<TreeStack>
-  <Reference id="0, ">
-    <Add numberOfChildren="2">
-      <Two value="2"/>
-      <IntegerPosShort value="3"/>
-    </Add>
-  </Reference>
-</TreeStack>
-```
-
-<details>
-<summary>Implementation details </summary>
-
-The `TreeStack` has a reference table, which is an array of node offsets. This
-array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
-
-In addition, offset can have a special value:
-- `TreeStack::ReferenceTable::InvalidatedOffset` indicates that the node doesn't
-exist anymore in the `TreeStack`.
-- `TreeStack::ReferenceTable::DeletedOffset` indicates that the `TreeRef`
-has been deleted.
-
-Each `TreeRef` has an identifier. It represents the index at which the
-`TreeRef`'s node offset can be found in the `TreeStack`'s reference
-table.
-
-Similarly, the identifier can be the special value
-`TreeStack::ReferenceTable::NoNodeIdentifier` to indicates that the `TreeRef` doesn't
-point to any tree.
-
-To retrieve the node pointed by an `TreeRef`, we just return the node in
-the `TreeStack` at the corresponding offset.
-
-Each time something is moved or changed in the `TreeStack`, all node offsets are
-updated (`TreeStack::ReferenceTable::updateNodes`).
-
-Once an `TreeRef` is destroyed, the corresponding node offset is set back
-to `TreeStack::ReferenceTable::DeletedOffset`.
-
-</details>
-
-### Wrappers
-
-Some methods manipulating `Tree *` may overwrite it with something else.
-
-This isn't an issue with `Tree *` since the tree still lives at the same place. Indeed, the method can only edit this specific tree and not other trees in the `TreeStack`.
-
-However, `TreeRef` will be invalidated.
-
-```cpp
-static void ReplaceTreeWithZero(Tree * tree) {
-  tree->cloneTreeOverTree(0_e);
-}
-
-Tree * a = someTree->clone();
-TreeRef b = a
-ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
-
-assert(a->isZero()); // Ok
-assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
-// been overwritten.
-```
-
-To minimize the risk of mistakes, we created a wrapper allowing the use of such
-methods on `TreeRef` while preserving them.
-
-For the example above, just add:
-```cpp
-static void ReplaceTreeWithZero(Tree * tree) {
-  tree->cloneTreeOverTree(0_e);
-}
-/* Create a static void ReplaceTreeWithZero(TreeRef& tree) calling the
- * original ReplaceTreeWithZero, and restoring the TreeRef to the
- * original Tree */
-EDITION_REF_WRAP(ReplaceTreeWithZero);
-// ...
-assert(b->isZero()); // Ok
-```
-
-### When to use TreeRef
-
-TreeRefs allow a safer and more readable tree manipulation.
-
-The only requirement is to ensure that they are only used in methods:
-- Where efficiency isn't critical
-- Expecting `TreeRef&` or `const Tree *`
-- Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
-- Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
-
-Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).
-
 
 ## How to create a Tree at compile time ?
 
@@ -562,3 +416,148 @@ More examples of expressions that match `KMult(KA, KAdd(KB, KC_p), KD_s)`:
 
 `(b+c)*d*π*2` or `a*b*c` would not match.
 
+
+## How to reorganize Trees in the TreeStack ?
+The [Tree class](../src/memory/tree.h) offers a lot of methods to move, clone, delete and swap trees in the `TreeStack`.
+
+When doing so you should always keep in mind that the `TreeStack` is a Stack and that removing or extending
+a tree will move the trees placed after it.
+
+```cpp
+Tree * a = someTree->cloneTree();
+Tree * b = anotherTree->cloneTree();
+// a and b are now in the TreeStack with b just after a
+assert(a->nextTree() == b);
+
+a->removeTree();
+// the tree pointed to by a was just deleted from and the rest of the TreeStack after
+// it was shifted in the whole; since pointers are not aware of that, a now
+// points to the copy of anotherTree and b points at a corrupted place
+```
+
+
+## How to track Trees in the TreeStack ?
+
+A **`TreeRef`** is a smart pointer used to track a `Tree` as it moves inside the
+`TreeStack`. It is not needed in the `Pool` since nodes cannot be edited there.
+
+For this purpose, the `TreeStack` owns a table of all the alive `TreeRef` and
+updates each of them after each modification of a `Tree` inside the `TreeStack`. For this
+reason, `TreeRefs` are intended to be temporary and used sparingly where
+performance matters. You will often see function passing `TreeRefs &` to
+avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same `Tree`.
+
+All the methods on available on `Tree` are accessible on `TreeRef` as
+well. It should be easy to upgrade a `Tree *` into a `TreeRef` at any
+point when you want to track your `Tree` safely.
+
+```cpp
+TreeRef a = someTree->cloneTree();
+TreeRef b = anotherTree->cloneTree();
+// a and b are now in the TreeStack with b just after a
+assert(a->nextTree() == b);
+
+a->removeTree();
+// since we are now using tracking references, a is uninitialized after the
+// remove and b points to the anotherTree copy (which is now where a was)
+```
+
+You can now read the various `Tree` motions in [tree.h](/poincare/src/memory/tree.h) and see how they update
+references. Mind the difference between `moveBefore` and `moveAt` that are the
+same function tree-wise but not reference-wise.
+
+The `TreeStack` has a `log` method as well, that shows each tree it contains and the references pointing to trees.
+
+`(lldb) p Poincare::Internal::TreeStack::SharedTreeStack->log()`
+
+```xml
+<TreeStack>
+  <Reference id="0, ">
+    <Add numberOfChildren="2">
+      <Two value="2"/>
+      <IntegerPosShort value="3"/>
+    </Add>
+  </Reference>
+</TreeStack>
+```
+
+<details>
+<summary>Implementation details </summary>
+
+The `TreeStack` has a reference table, which is an array of node offsets. This
+array has a maximal size (`TreeStack::k_maxNumberOfReferences`).
+
+In addition, offset can have a special value:
+- `TreeStack::ReferenceTable::InvalidatedOffset` indicates that the node doesn't
+exist anymore in the `TreeStack`.
+- `TreeStack::ReferenceTable::DeletedOffset` indicates that the `TreeRef`
+has been deleted.
+
+Each `TreeRef` has an identifier. It represents the index at which the
+`TreeRef`'s node offset can be found in the `TreeStack`'s reference
+table.
+
+Similarly, the identifier can be the special value
+`TreeStack::ReferenceTable::NoNodeIdentifier` to indicates that the `TreeRef` doesn't
+point to any tree.
+
+To retrieve the node pointed by an `TreeRef`, we just return the node in
+the `TreeStack` at the corresponding offset.
+
+Each time something is moved or changed in the `TreeStack`, all node offsets are
+updated (`TreeStack::ReferenceTable::updateNodes`).
+
+Once an `TreeRef` is destroyed, the corresponding node offset is set back
+to `TreeStack::ReferenceTable::DeletedOffset`.
+
+</details>
+
+### Wrappers
+
+Some methods manipulating `Tree *` may overwrite it with something else.
+
+This isn't an issue with `Tree *` since the tree still lives at the same place. Indeed, the method can only edit this specific tree and not other trees in the `TreeStack`.
+
+However, `TreeRef` will be invalidated.
+
+```cpp
+static void ReplaceTreeWithZero(Tree * tree) {
+  tree->cloneTreeOverTree(0_e);
+}
+
+Tree * a = someTree->clone();
+TreeRef b = a
+ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
+
+assert(a->isZero()); // Ok
+assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
+// been overwritten.
+```
+
+To minimize the risk of mistakes, we created a wrapper allowing the use of such
+methods on `TreeRef` while preserving them.
+
+For the example above, just add:
+```cpp
+static void ReplaceTreeWithZero(Tree * tree) {
+  tree->cloneTreeOverTree(0_e);
+}
+/* Create a static void ReplaceTreeWithZero(TreeRef& tree) calling the
+ * original ReplaceTreeWithZero, and restoring the TreeRef to the
+ * original Tree */
+EDITION_REF_WRAP(ReplaceTreeWithZero);
+// ...
+assert(b->isZero()); // Ok
+```
+
+### When to use TreeRef
+
+TreeRefs allow a safer and more readable tree manipulation.
+
+The only requirement is to ensure that they are only used in methods:
+- Where efficiency isn't critical
+- Expecting `TreeRef&` or `const Tree *`
+- Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
+- Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
+
+Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).

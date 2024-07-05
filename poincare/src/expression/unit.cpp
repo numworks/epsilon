@@ -1027,7 +1027,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
   // If the input made of one single unit, preserve representative.
   if (GetUnits(extractedUnits, &unit1, &unit2)) {
     bool keepRepresentative = !unit2;
-    if (unit2 && dimension.unit.vector.isSpeed()) {
+    if (unit2 && dimension.unit.vector == Speed::Dimension) {
       // Consider speed as a single unit.
       keepRepresentative = true;
       if (GetRepresentative(unit2)->siVector() == Distance::Dimension) {

@@ -42,9 +42,6 @@ struct SIVector {
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
-  constexpr bool isSpeed() const {
-    return supportSize() == 2 && distance == 1 && time == -1;
-  }
 
   static SIVector FromBaseUnits(const Tree* baseUnits);
   // Push SI units matching the vector

@@ -234,7 +234,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
 
 // Note: A complex function plotter can be used to fill in these methods.
 ComplexSign ComplexSign::Get(const Tree* e) {
-  assert(Dimension::Get(e).isScalar());
+  assert(Dimension::Get(e).isScalarOrUnit());
   if (e->isNumber()) {
     return ComplexSign(Number::Sign(e), Sign::Zero());
   } else if (e->isUserNamed()) {
@@ -292,6 +292,10 @@ ComplexSign ComplexSign::Get(const Tree* e) {
       return Get(Dependency::Main(e));
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
+    case Type::PhysicalConstant:
+    case Type::Unit:
+      // Units are considered equivalent to their SI ratio
+      return ComplexSign(Sign::Positive(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ACos:

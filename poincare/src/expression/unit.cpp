@@ -1024,17 +1024,14 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
                            Dimension dimension) {
   Tree* unit1 = nullptr;
   Tree* unit2 = nullptr;
-  // If the input made of one single unit, preserve representative.
+  // If the input is made of one single unit, preserve representative.
   if (GetUnits(extractedUnits, &unit1, &unit2)) {
     bool keepRepresentative = !unit2;
     if (unit2 && dimension.unit.vector == Speed::Dimension) {
       // Consider speed as a single unit.
-      keepRepresentative = true;
       if (GetRepresentative(unit2)->siVector() == Distance::Dimension) {
         // Swap both unit to optimize prefix on distance unit.
-        Tree* temp = unit2;
-        unit2 = unit1;
-        unit1 = temp;
+        std::swap(unit1, unit2);
       }
       keepRepresentative = true;
     }

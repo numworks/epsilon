@@ -1125,6 +1125,8 @@ bool Unit::KeepUnitsOnly(Tree* e) {
       didRemovedTree = KeepUnitsOnly(e);
       break;
     case Type::Round:
+    case Type::Floor:
+    case Type::Ceil:
       e->moveTreeOverTree(e->child(0));
       didRemovedTree = KeepUnitsOnly(e);
       break;

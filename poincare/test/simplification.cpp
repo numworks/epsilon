@@ -717,6 +717,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1234_g", "1234×_g");  // TODO: Fix prefix selection
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
+  simplifies_to("_s^-1", "1×_s^-1");
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");

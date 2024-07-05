@@ -230,6 +230,8 @@ If the node is n-ary, you need to provide the number of arguments with `.node<nb
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 
+For nodes with additional value blocks, you can find the push methods and their argument in [tree_stack.h](../src/memory/tree_stack.h).
+
 > [!WARNING]
 > Mind the difference between `cloneNode()` and `cloneTree()`.
 > ```cpp

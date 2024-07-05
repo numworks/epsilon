@@ -13,7 +13,10 @@ bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
   bool changed = PatternMatching::MatchReplace(
       e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
+  /* TODO: having only PowReal should be sufficient if the expression is duly
+   * projected */
   return PatternMatching::MatchReplace(e, KPowReal(KA, 1_e / 2_e), KSqrt(KA)) ||
+         PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
          /* TODO: e^ is better than exp because we have code to handle special

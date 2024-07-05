@@ -104,8 +104,8 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
       "√(x^2+1)-x", Range2D<float>(1.483, 1.483, 0.306, 0.306));
   assert_points_of_interest_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)",
                                      Range2D<float>(0, 5, -16.901, 5.046));
-  // TODO_PCJ: assert_points_of_interest_range_is(
-  // "1/x", Range2D<float>(-2.416, 2.416, -0.414, 0.414));
+  assert_points_of_interest_range_is(
+      "1/x", Range2D<float>(-2.416, 2.416, -0.414, 0.414));
   assert_points_of_interest_range_is(
       "1+(x+1)^(-4)", Range2D<float>(-3.073, 0.911, 1.053, 1.075));
   assert_points_of_interest_range_is(

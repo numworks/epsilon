@@ -128,7 +128,7 @@ Tree* v = u->nextTree()->cloneTreeBeforeNode(KUndef);
 
 ```cpp
 // Create a Undef Tree at the end of the TreeStack
-Tree* v = KUndef->clone();
+Tree* v = KUndef->cloneTree();
 // Edit v
 ```
 
@@ -284,7 +284,7 @@ tree->cloneTreeOverTree(KUndef);
 > This is broken:
 
 ```cpp
-KPow->clone(); // random bytes are copied as children
+KPow->cloneTree(); // random bytes are copied as children
 ```
 
 > [!TIP]

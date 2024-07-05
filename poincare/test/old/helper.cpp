@@ -165,10 +165,10 @@ void assert_parsed_expression_process_to(
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool addParentheses, bool parseForAssignment) {
   if (addParentheses) {
-    // TODO (cf OExpression::addMissingParentheses)
+    // TODO_PCJ (cf OExpression::addMissingParentheses)
     return nullptr;
   }
-  Tree *result = parse(expression, context);
+  Tree *result = parse(expression, context, parseForAssignment);
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }

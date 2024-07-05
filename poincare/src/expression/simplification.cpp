@@ -9,11 +9,6 @@
 
 namespace Poincare::Internal {
 
-bool ShouldApproximateOnSimplify(Dimension dimension) {
-  // Only angle units are expected not to be approximated.
-  return (dimension.isUnit() && !dimension.isAngleUnit());
-}
-
 bool RelaxProjectionContext(void* context) {
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
@@ -41,6 +36,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
             *static_cast<ProjectionContext*>(context);
         ToSystem(e, &projectionContext);
         ReduceSystem(e, true);
+        HandleUnits(e, &projectionContext);
         // TODO: Should be in ReduceSystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
         Beautification::DeepBeautify(e, projectionContext);
@@ -75,17 +71,10 @@ bool Simplification::PrepareForProjection(
 bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
-  /* 2 - Update strategy depending on dimension */
+  /* 2 - Update projection context */
   projectionContext->m_dimension = Dimension::Get(e);
-  if (ShouldApproximateOnSimplify(projectionContext->m_dimension)) {
-    projectionContext->m_strategy = Strategy::ApproximateToFloat;
-  }
   /* 3 - Project */
-  changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
-  /* 4 - Handle Units */
-  return Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
-                                         projectionContext->m_unitDisplay) ||
-         changed;
+  return Projection::DeepSystemProject(e, *projectionContext) || changed;
 }
 
 bool Simplification::ReduceSystem(Tree* e, bool advanced) {
@@ -95,6 +84,23 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
   }
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
+}
+
+bool Simplification::HandleUnits(Tree* e,
+                                 ProjectionContext* projectionContext) {
+  bool changed = false;
+  if (!e->isUndefined() &&
+      Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
+                                      projectionContext->m_unitDisplay)) {
+    ReduceSystem(e, false);
+    changed = true;
+  }
+  if (projectionContext->m_dimension.isUnit() &&
+      !projectionContext->m_dimension.isAngleUnit()) {
+    // Only angle units are expected not to be approximated.
+    projectionContext->m_strategy = Strategy::ApproximateToFloat;
+  }
+  return changed;
 }
 
 bool Simplification::TryApproximationStrategyAgain(

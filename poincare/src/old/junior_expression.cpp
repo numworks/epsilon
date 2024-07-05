@@ -438,6 +438,7 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::ToSystem(e, &context);
   Simplification::ReduceSystem(e, true);
+  Simplification::HandleUnits(e, &context);
   Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
   *reduceFailure = false;

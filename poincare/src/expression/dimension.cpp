@@ -303,7 +303,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         return false;
       }
       const Tree* index = e->child(1);
-      // TODO: Handle operations such as m^(1+1) or m^(-1*n) or m^(1/2) or m^0.5
       return index->isNumber() ||
              (index->isOpposite() && index->child(0)->isNumber()) ||
              (index->isMult() && index->numberOfChildren() == 2 &&
@@ -489,14 +488,21 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(e->child(1));
-        // TODO: Handle/forbid index > int8_t
-        assert(!std::isnan(index) &&
-               std::fabs(index) < static_cast<float>(INT8_MAX));
-        Units::SIVector unitVector = Units::SIVector::Empty();
-        unitVector.addAllCoefficients(dim.unit.vector,
-                                      static_cast<int8_t>(index));
-        dim = unitVector.isEmpty() ? Scalar()
-                                   : Unit(unitVector, dim.unit.representative);
+        if (index < INT8_MAX && index > INT8_MIN &&
+            std::round(index) == index && index != 0) {
+          // TODO: Handle/forbid index > int8_t
+          assert(!std::isnan(index) &&
+                 std::fabs(index) < static_cast<float>(INT8_MAX));
+          Units::SIVector unitVector = Units::SIVector::Empty();
+          unitVector.addAllCoefficients(dim.unit.vector,
+                                        static_cast<int8_t>(index));
+
+          dim = unitVector.isEmpty()
+                    ? Scalar()
+                    : Unit(unitVector, dim.unit.representative);
+        }
+        // Handle the unit as a scalar if the index is not an integer
+        // TODO_PCJ: Either forbid or ensure this is handled correctly
       }
       return dim;
     }

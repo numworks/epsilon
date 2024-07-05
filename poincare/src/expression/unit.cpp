@@ -944,6 +944,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     unitDisplay = UnitDisplay::AutomaticInput;
   }
   if (IsNonKelvinTemperature(dimension.unit.representative)) {
+    // Temperature units must be removed from root expression
     RemoveTemperatureUnit(e);
   }
   Tree::ApplyShallowInDepth(e, ShallowRemoveUnit);

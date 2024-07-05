@@ -141,6 +141,13 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Decimal::Project(e);
     changed = true;
   }
+  if (projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
+      e->isUnit() &&
+      !Units::Unit::IsNonKelvinTemperature(Units::Unit::GetRepresentative(e))) {
+    /* To prevent unnecessary mix of units
+     *(12_km / 6_mm)×_°C->(12 000 / 0.006)×_°C */
+    Units::Unit::RemoveUnit(e);
+  }
 
   // Project angles depending on context
   Internal::AngleUnit angleUnit = projectionContext->m_angleUnit;

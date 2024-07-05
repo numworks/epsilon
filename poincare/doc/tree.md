@@ -376,6 +376,14 @@ If the node is n-ary, you need to provide the number of arguments with `.node<nb
 if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 ```
 
+> [!WARNING]
+> Mind the difference between `cloneNode()` and `cloneTree()`.
+> ```cpp
+> Tree * clone1 = twoPi->cloneTree();  // TreeStack: ...[Mult][Two][Pi]
+> Tree * clone2 = clone1->cloneNode(); // TreeStack: ...[Mult][Two][Pi][Mult]
+> ```
+> `clone2` is not a valid tree: `clone1->nextTree()`, `clone2->cloneTree()` and `clone2->log()` will crash.
+
 ### Implementation details
 <details>
 <summary>Details</summary>

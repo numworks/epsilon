@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <ion.h>
-#include <math.h>
 #include <omg/comparison.h>
 #include <omg/ieee754.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
@@ -11,6 +10,7 @@
 #include <stddef.h>
 
 #include <algorithm>
+#include <cmath>
 
 using namespace Poincare;
 

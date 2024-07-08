@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <math.h>
 #include <poincare/layout.h>
 #include <poincare/old/arithmetic.h>
 #include <poincare/old/infinity.h>
@@ -9,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cmath>
 #include <utility>
 
 namespace Poincare {

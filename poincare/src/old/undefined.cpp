@@ -8,8 +8,9 @@
 #include <algorithm>
 
 extern "C" {
-#include <math.h>
 #include <string.h>
+
+#include <cmath>
 }
 
 namespace Poincare {

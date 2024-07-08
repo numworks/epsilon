@@ -4,8 +4,9 @@
 #include <poincare/old/symbol.h>
 
 extern "C" {
-#include <math.h>
 #include <string.h>
+
+#include <cmath>
 }
 
 namespace Poincare {

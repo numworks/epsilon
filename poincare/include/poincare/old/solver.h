@@ -1,8 +1,9 @@
 #ifndef POINCARE_SOLVER_H
 #define POINCARE_SOLVER_H
 
-#include <math.h>
 #include <omg/float.h>
+
+#include <cmath>
 
 #include "old_expression.h"
 

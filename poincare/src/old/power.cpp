@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <float.h>
 #include <ion.h>
-#include <math.h>
 #include <omg/float.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>

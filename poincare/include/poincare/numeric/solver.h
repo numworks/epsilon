@@ -1,7 +1,6 @@
 #ifndef POINCARE_NUMERIC_SOLVER_H
 #define POINCARE_NUMERIC_SOLVER_H
 
-#include <math.h>
 #include <omg/float.h>
 #include <omg/troolean.h>
 #include <poincare/coordinate_2D.h>
@@ -9,6 +8,7 @@
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>
+#include <cmath>
 
 namespace Poincare {
 class Context;

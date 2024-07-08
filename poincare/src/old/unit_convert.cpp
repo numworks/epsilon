@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <math.h>
 #include <omg/float.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/context.h>
@@ -12,6 +11,8 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit_convert.h>
 #include <stdlib.h>
+
+#include <cmath>
 
 namespace Poincare {
 

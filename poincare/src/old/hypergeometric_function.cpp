@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <math.h>
 #include <poincare/old/hypergeometric_function.h>
 
 #include <cmath>

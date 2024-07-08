@@ -1,4 +1,3 @@
-#include <math.h>
 #include <omg/signaling_nan.h>
 #include <quiz.h>
 

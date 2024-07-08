@@ -1,10 +1,10 @@
 #include <apps/apps_container_helper.h>
-#include <math.h>
 #include <poincare/old/random.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 
 #include <array>
+#include <cmath>
 
 #include "inference/models/statistic/goodness_test.h"
 #include "inference/models/statistic/homogeneity_test.h"

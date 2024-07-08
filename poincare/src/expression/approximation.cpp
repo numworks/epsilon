@@ -1,6 +1,5 @@
 #include "approximation.h"
 
-#include <math.h>
 #include <omg/float.h>
 #include <omg/signaling_nan.h>
 #include <omg/unreachable.h>
@@ -9,6 +8,7 @@
 #include <poincare/src/probability/distribution_method.h>
 
 #include <bit>
+#include <cmath>
 #include <complex>
 
 #include "arithmetic.h"

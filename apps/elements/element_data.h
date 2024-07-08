@@ -2,7 +2,6 @@
 #define ELEMENTS_ELEMENT_DATA
 
 #include <apps/i18n.h>
-#include <math.h>
 #include <stdint.h>
 
 namespace Elements {

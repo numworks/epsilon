@@ -1,9 +1,10 @@
 #include "random.h"
 
-#include <math.h>
 #include <poincare/old/random.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
+
+#include <cmath>
 
 #include "approximation.h"
 #include "dimension.h"

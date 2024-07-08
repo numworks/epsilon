@@ -1,8 +1,8 @@
-#include <math.h>
 #include <omg/float.h>
 #include <omg/unreachable.h>
 
 #include <bit>
+#include <cmath>
 #include <complex>
 
 #include "approximation.h"

@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <ion/circuit_breaker.h>
-#include <math.h>
 #include <poincare/expression.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/complex.h>
@@ -10,6 +9,8 @@
 #include <poincare/old/undefined.h>
 #include <poincare/src/expression/dimension.h>
 #include <stdlib.h>
+
+#include <cmath>
 
 namespace Poincare {
 

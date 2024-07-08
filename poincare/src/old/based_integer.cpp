@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <math.h>
 #include <poincare/layout.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/rational.h>
@@ -7,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <cmath>
 #include <utility>
 
 namespace Poincare {

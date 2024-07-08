@@ -163,12 +163,13 @@ poincare_src += $(addprefix poincare/src/old/,\
   zoom.cpp \
 )
 
-# TODO_PCJ: fix BAD and restore parsing.cpp
+
 tests_src += $(addprefix poincare/test/old/,\
   helper.cpp \
   approximation.cpp \
   derivative.cpp \
   expression_properties.cpp \
+  parsing.cpp \
   simplification.cpp \
 )
 

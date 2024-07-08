@@ -88,6 +88,7 @@ class App : public Responder {
   virtual void willOpenPage(ViewController* controller) {}
   virtual void didExitPage(ViewController* controller) {}
   virtual void storeValue(const char* text = "") {}
+  virtual void storeLayout(Poincare::Layout layout) {}
   virtual int numberOfTimers() { return 0; }
   virtual Timer* timerAtIndex(int i) {
     assert(false);

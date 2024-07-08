@@ -79,6 +79,18 @@ void StoreMenuController::setText(const char* text) {
   m_preventReload = false;
 }
 
+void StoreMenuController::setLayout(Poincare::Layout layout) {
+  m_preventReload = true;
+  m_cell.layoutField()->clearAndSetEditing(true);
+  m_cell.layoutField()->handleEventWithLayout(layout);
+  m_cell.layoutField()->handleEventWithText("→");
+  if (layout.isUninitialized()) {
+    m_cell.layoutField()->putCursorOnOneSide(OMG::Direction::Left());
+  }
+  m_stackViewController.setupActiveView();
+  m_preventReload = false;
+}
+
 void StoreMenuController::open() {
   App::app()->displayModalViewController(
       this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter,

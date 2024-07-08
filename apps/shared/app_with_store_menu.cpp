@@ -21,6 +21,14 @@ void AppWithStoreMenu::storeValue(const char* text) {
   m_storeMenuController.open();
 }
 
+void AppWithStoreMenu::storeLayout(Poincare::Layout layout) {
+  if (m_modalViewController.isDisplayingModal()) {
+    return;
+  }
+  m_storeMenuController.setLayout(layout);
+  m_storeMenuController.open();
+}
+
 bool AppWithStoreMenu::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() ==
          &m_storeMenuController;

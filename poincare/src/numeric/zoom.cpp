@@ -254,33 +254,24 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void* model1,
 
 void Zoom::fitConditions(const Tree* piecewise,
                          Function2DWithContext<float> fullFunction,
-                         const void* model, const char* symbol,
-                         ComplexFormat complexFormat, AngleUnit angleUnit,
-                         bool vertical) {
+                         const void* model, bool vertical) {
   struct ConditionsParameters {
     Zoom* zoom;
     const Tree* piecewise;
-    const char* symbol;
-    // const ApproximationContext &approximationContext;
     Function2DWithContext<float> fullFunction;
     const void* model;
     bool vertical;
   };
-  // ApproximationContext approximationContext(m_context, complexFormat,
-  // angleUnit);
-  const ConditionsParameters params = {
-      .zoom = this,
-      .piecewise = piecewise,
-      .symbol = symbol,
-      // .approximationContext = approximationContext,
-      .fullFunction = fullFunction,
-      .model = model,
-      .vertical = vertical};
+  const ConditionsParameters params = {.zoom = this,
+                                       .piecewise = piecewise,
+                                       .fullFunction = fullFunction,
+                                       .model = model,
+                                       .vertical = vertical};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
     const ConditionsParameters* params =
         static_cast<const ConditionsParameters*>(aux);
-    return static_cast<float>(Approximation::IndexOfActivePiecewiseBranchAt(
-        params->piecewise, t));  // TODO symbol
+    return static_cast<float>(
+        Approximation::IndexOfActivePiecewiseBranchAt(params->piecewise, t));
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,

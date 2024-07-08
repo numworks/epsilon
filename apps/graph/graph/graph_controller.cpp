@@ -198,9 +198,7 @@ Range2D<float> GraphController::optimalRange(
 #if 0  // TODO_PCJ
         zoom.fitConditions(
             static_cast<PiecewiseOperator &>(p), evaluator<float>,
-            f.operator->(), ContinuousFunction::k_unknownName,
-            Preferences::SharedPreferences()->complexFormat(),
-            Preferences::SharedPreferences()->angleUnit(), alongY);
+            f.operator->(), alongY);
 #else
         assert(false);
 #endif

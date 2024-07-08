@@ -77,9 +77,7 @@ class Zoom {
                         bool vertical = false);
   void fitConditions(const Tree* piecewise,
                      Function2DWithContext<float> fullFunction,
-                     const void* model, const char* symbol,
-                     ComplexFormat complexFormat, AngleUnit angleUnit,
-                     bool vertical = false);
+                     const void* model, bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext<float> f, const void* model,
                     bool cropOutliers, bool vertical = false);

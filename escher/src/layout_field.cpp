@@ -158,7 +158,7 @@ void LayoutField::scrollToCursor() {
 
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
-  insertLayoutAtCursor(newLayout);
+  insertLayoutAtCursor(newLayout, true);
 }
 
 Poincare::Context* LayoutField::context() const {

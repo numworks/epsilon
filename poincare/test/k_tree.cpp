@@ -124,6 +124,9 @@ QUIZ_CASE(pcj_k_rack) {
   quiz_assert(("a"_cl ^ "b"_l)->treeIsIdenticalTo("ab"_l));
   quiz_assert(("a"_l ^ "b"_cl)->treeIsIdenticalTo("ab"_l));
   quiz_assert(("a"_cl ^ "b"_cl)->treeIsIdenticalTo("ab"_l));
+  quiz_assert(("∞πa"_l)->treeIsIdenticalTo(
+      KRackL(KCodePointL<UCodePointInfinity>(),
+             KCodePointL<UCodePointGreekSmallLetterPi>(), KCodePointL<'a'>())));
 }
 
 QUIZ_CASE(pcj_k_tree_to_tree_pointer) {

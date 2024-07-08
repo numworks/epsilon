@@ -179,7 +179,9 @@ struct String {
   consteval size_t codePointSize() const {
     size_t n = 0;
     for (char c : m_data) {
-      if (!(c & 0b10000000) || ((c & 0b11100000) == 0b11000000)) {
+      assert((c & 0b11110000) != 0b11110000);  // TODO: handle larger codepoints
+      if (!(c & 0b10000000) || ((c & 0b11100000) == 0b11000000) ||
+          ((c & 0b11110000) == 0b11100000)) {
         n++;
       }
     }
@@ -191,15 +193,22 @@ struct String {
       char c = m_data[k];
       if (!(c & 0b10000000)) {
         k++;
-      } else {
-        assert((c & 0b11100000) == 0b11000000);
+      } else if ((c & 0b11100000) == 0b11000000) {
         k += 2;
+      } else {
+        assert((c & 0b11110000) == 0b11100000);
+        k += 3;
       }
     }
     if (!(m_data[k] & 0b10000000)) {
       return m_data[k];
     }
-    return (m_data[k] & 0b00011111) << 6 | (m_data[k + 1] & 0b00111111);
+    if ((m_data[k] & 0b11100000) == 0b11000000) {
+      return (m_data[k] & 0b00011111) << 6 | (m_data[k + 1] & 0b00111111);
+    }
+    assert((m_data[k] & 0b11110000) == 0b11100000);
+    return (m_data[k] & 0b00001111) << 12 | (m_data[k + 1] & 0b00111111) << 6 |
+           (m_data[k + 2] & 0b00111111);
   }
 };
 

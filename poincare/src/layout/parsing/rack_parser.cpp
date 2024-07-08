@@ -382,13 +382,15 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
           IntegerHandler::Parse(fractionalDigits, base)));
     }
     if (smallE != end) {
-      // Decimal * 10^exponent
-      Tree* mult = SharedTreeStack->pushMult(1);
-      SharedTreeStack->pushPow();
-      (10_e)->cloneTree();
-      Integer::Push(exponent, base);
-      leftHandSide->moveTreeAtNode(mult);
-      NAry::SetNumberOfChildren(leftHandSide, 2);
+      // Shift the decimal number by the exponent after the small E
+      int8_t exp =
+          IntegerHandler::Parse(exponent, OMG::Base::Decimal).to<int8_t>();
+      if (leftHandSide->isDecimal()) {
+        leftHandSide->setNodeValue(0, leftHandSide->nodeValue(0) - exp);
+      } else {
+        assert(leftHandSide->isInteger());
+        leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal(-exp));
+      }
     }
   }
 

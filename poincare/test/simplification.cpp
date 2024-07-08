@@ -1150,14 +1150,16 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 }
 
 QUIZ_CASE(pcj_decimal) {
-  Tree* tree = SharedTreeStack->pushDecimal(static_cast<int8_t>(-2));
+  Tree* tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
+  (-2_e)->cloneTree();
   ProjectionContext ctx = realCtx;
   Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
   QUIZ_ASSERT(tree->treeIsIdenticalTo(12400_e));
   tree->removeTree();
-  tree = SharedTreeStack->pushDecimal(static_cast<int8_t>(2));
+  tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
+  (2_e)->cloneTree();
   Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
   QUIZ_ASSERT(tree->treeIsIdenticalTo(KDiv(31_e, 25_e)));
 }

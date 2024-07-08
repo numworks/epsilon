@@ -131,7 +131,8 @@ NODE(Conj, 1)
 NODE(Csc, 1)
 NODE(Cos, 1)
 NODE(Cot, 1)
-NODE(Decimal, 1, { uint8_t digitsAfterZero; })
+// Decimal(Value, -Exponent)
+NODE(Decimal, 2)
 NODE(Distribution, NARY, {
   uint8_t distributionId;
   uint8_t methodId;

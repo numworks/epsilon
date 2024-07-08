@@ -372,7 +372,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
-      leftHandSide = SharedTreeStack->pushDecimal(offset);
+      leftHandSide = SharedTreeStack->pushDecimal();
       Tree* child =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       child->moveTreeOverTree(IntegerHandler::Multiplication(
@@ -380,16 +380,18 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       child->moveTreeOverTree(IntegerHandler::Addition(
           Integer::Handler(child),
           IntegerHandler::Parse(fractionalDigits, base)));
+      Integer::Push(offset);
     }
     if (smallE != end) {
       // Shift the decimal number by the exponent after the small E
-      int8_t exp =
-          IntegerHandler::Parse(exponent, OMG::Base::Decimal).to<int8_t>();
+      int exp = IntegerHandler::Parse(exponent, OMG::Base::Decimal).to<int>();
       if (leftHandSide->isDecimal()) {
-        leftHandSide->setNodeValue(0, leftHandSide->nodeValue(0) - exp);
+        int oldExp = Integer::Handler(leftHandSide->child(1)).to<int>();
+        leftHandSide->child(1)->moveTreeOverTree(Integer::Push(oldExp - exp));
       } else {
         assert(leftHandSide->isInteger());
-        leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal(-exp));
+        leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal());
+        Integer::Push(-exp);
       }
     }
   }

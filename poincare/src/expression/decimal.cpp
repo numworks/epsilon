@@ -3,6 +3,7 @@
 #include <poincare/old/serialization_helper.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 
@@ -15,11 +16,13 @@ namespace Poincare::Internal {
 
 void Decimal::Project(Tree* e) {
   assertValidDecimal(e);
-  // dec<n>(x) -> 10^(-n)*x
-  Tree* mult = SharedTreeStack->pushMult(1);
+  // dec(x, n) -> 10^(-n)*x
+  TreeRef mult = SharedTreeStack->pushMult(1);
   SharedTreeStack->pushPow();
   Integer::Push(10);
-  Integer::Push(-DecimalOffset(e));
+  SharedTreeStack->pushMult(2);
+  (-1_e)->cloneTree();
+  e->child(1)->detachTree();
   e->moveTreeOverNode(mult);
   NAry::SetNumberOfChildren(e, 2);
 }
@@ -52,7 +55,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   }
 
   // Compute the exponent
-  int exponent = Decimal::DecimalOffset(decimal);
+  int exponent = Integer::Handler(decimal->child(1)).to<int>();
 
   WorkingBuffer workingBuffer;
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1

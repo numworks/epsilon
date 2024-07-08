@@ -105,12 +105,6 @@ class TreeStack : public BlockStack {
 
   // Specialized pushers for nodes with additional value blocks
 
-  Tree* pushDecimal(uint8_t digitsAfterZero) {
-    Tree* result = pushBlock(Type::Decimal);
-    pushBlock(digitsAfterZero);
-    return result;
-  }
-
   Tree* pushSingleFloat(float value);
   Tree* pushDoubleFloat(double value);
 

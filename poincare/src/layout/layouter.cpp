@@ -579,6 +579,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         Decimal::Serialize(expression, buffer, std::size(buffer), m_floatMode,
                            m_numberOfSignificantDigits);
         expression->nextNode()->removeTree();
+        expression->nextNode()->removeTree();
       } else {
         Poincare::PrintFloat::ConvertFloatToText(
             FloatHelper::To(expression), buffer, std::size(buffer),

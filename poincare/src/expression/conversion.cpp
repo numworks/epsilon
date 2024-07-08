@@ -773,12 +773,13 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       int numberOfDigits = Poincare::Integer::NumberOfBase10DigitsWithoutSign(
           d.node()->unsignedMantissa());
       int8_t exponent = numberOfDigits - 1 - d.node()->exponent();
-      SharedTreeStack->pushDecimal(exponent);
+      SharedTreeStack->pushDecimal();
       Poincare::Integer mantissa = d.node()->unsignedMantissa();
       char buffer[100];
       mantissa.serialize(buffer, 100);
       UTF8Decoder decoder(buffer);
       IntegerHandler::Parse(decoder, OMG::Base::Decimal).pushOnTreeStack();
+      Integer::Push(exponent);
       return;
     }
     case OT::Sequence:

@@ -404,10 +404,10 @@ consteval auto operator"" _e() {
   constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
   constexpr auto digits = IntegerLiteral<IntegerValue(value, size)>();
   if constexpr (decimalPointIndex < size) {
-    return Concat<KTree<Type::Decimal,
-                        /* -1 for the . and -1 for the \0 */
-                        size - 2 - decimalPointIndex>,
-                  decltype(KTree(digits))>();
+    return Concat<KTree<Type::Decimal>,
+                  /* -1 for the . and -1 for the \0 */
+                  decltype(KTree(digits)),
+                  IntegerLiteral<size - 2 - decimalPointIndex>>();
   } else {
     return digits;
   }

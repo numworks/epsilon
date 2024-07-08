@@ -141,19 +141,17 @@ bool MainController::textFieldDidReceiveEvent(
 
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Var || event == Ion::Events::Sto) {
-    constexpr int bufferSize = Escher::TextField::MaxBufferSize();
-    char buffer[bufferSize];
-    buffer[0] = 0;
+    Poincare::Layout toStore;
 
     if (dataSource->field()->canBeStored(z)) {
-      dataSource->field()->getLayout(z).serializeForParsing(buffer, bufferSize);
+      toStore = dataSource->field()->getLayout(z);
     }
 
     if (event == Ion::Events::Var || event == Ion::Events::Sto) {
-      App::app()->storeValue(buffer);
-    } else if (strlen(buffer) > 0) {
+      App::app()->storeLayout(toStore);
+    } else if (!toStore.isUninitialized()) {
       assert(event == Ion::Events::Copy || event == Ion::Events::Cut);
-      Escher::Clipboard::SharedClipboard()->store(buffer, bufferSize);
+      Escher::Clipboard::SharedClipboard()->storeLayout(toStore);
     }
 
     return true;

@@ -7,7 +7,11 @@ NODE(VerticalOffset, 1, {
   bool isPrefix : 1;
 })
 
+// Small spaces around a "+" for instance
 NODE(OperatorSeparator)
+// Small space between a value and its unit
+NODE(UnitSeparator)
+// Small space between groups of three digits
 NODE(ThousandSeparator)
 
 RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandSeparatorLayout)

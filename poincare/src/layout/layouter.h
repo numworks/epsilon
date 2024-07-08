@@ -18,7 +18,8 @@ class Layouter {
 
   static bool AddThousandSeparators(Tree* rack);
 
-  // Recursively remove OperatorSeparators and ThousandSeparators in rack
+  /* Recursively remove OperatorSeparators and ThousandSeparators in rack
+   * and replace UnitSeparators with a middle dot. */
   static void StripSeparators(Tree* rack);
 
   static bool ImplicitAddition(const Tree* addition);

@@ -232,8 +232,9 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
     if (childIndex > 0) {
       if (!m_linearMode && multiplication && isUnit) {
         if (!previousWasUnit) {
-          if (Units::Unit::ForceMarginLeftOfUnit(child)) {
-            addSeparator(layoutParent);
+          if (m_addSeparators && Units::Unit::ForceMarginLeftOfUnit(child)) {
+            // Add small separator between 2 and m in "2 m"
+            NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
           }
         } else {
           PushCodePoint(layoutParent, UCodePointMiddleDot);
@@ -782,6 +783,9 @@ void Layouter::StripSeparators(Tree* rack) {
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {
+    if (child->isUnitSeparatorLayout()) {
+      child->cloneTreeOverTree(KCodePointL<UCodePointMiddleDot>());
+    }
     if (child->isSeparatorLayout()) {
       child->removeTree();
       n--;

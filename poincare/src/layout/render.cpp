@@ -184,6 +184,7 @@ KDSize Render::Size(const Layout* l) {
       height = 0;
       break;
     case LayoutType::OperatorSeparator:
+    case LayoutType::UnitSeparator:
       width = Escher::Metric::OperatorHorizontalMargin;
       height = 0;
       break;
@@ -462,6 +463,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       return KDPointZero;
     }
     case LayoutType::OperatorSeparator:
+    case LayoutType::UnitSeparator:
     case LayoutType::ThousandSeparator:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
@@ -567,6 +569,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
     case LayoutType::VerticalOffset:
       return 0;
     case LayoutType::OperatorSeparator:
+    case LayoutType::UnitSeparator:
     case LayoutType::ThousandSeparator:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
@@ -1271,6 +1274,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
     }
 
     case LayoutType::OperatorSeparator:
+    case LayoutType::UnitSeparator:
     case LayoutType::ThousandSeparator:
       return;
     case LayoutType::AsciiCodePoint:

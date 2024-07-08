@@ -187,6 +187,7 @@ Tree* LatexToLayout(const char* latexString) {
 
 /* Node with custom handling:
  *   OperatorSeparator -> suppressed in Latex
+ *   UnitSeparator -> suppressed in Latex
  *   ThousandSeparator -> replaced with ' '
  *
  * Node unimplemented (that are serialized instead):
@@ -209,7 +210,7 @@ Tree* LatexToLayout(const char* latexString) {
 
 char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
   for (const Tree* child : rack->children()) {
-    if (child->isOperatorSeparatorLayout()) {
+    if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout()) {
       // Invisible in latex
       continue;
     }

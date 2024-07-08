@@ -79,6 +79,9 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       }
       break;
     }
+    case LayoutType::UnitSeparator:
+      buffer = append("·", buffer, end);
+      break;
     case LayoutType::OperatorSeparator:
     case LayoutType::ThousandSeparator:
       break;

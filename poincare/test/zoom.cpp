@@ -11,7 +11,6 @@ using namespace Poincare::Internal;
 
 // When adding the graph window margins, this ratio gives an orthonormal window
 constexpr float k_normalRatio = 0.442358822;
-constexpr const char* k_symbol = "x";
 constexpr float k_rangeTolerance = 0.05f;
 constexpr float k_maxFloat = 1e8f;
 
@@ -76,11 +75,7 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model, Context* context) {
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  Tree* e = parse(expression, &context);
-  ProjectionContext ctx;
-  Simplification::ToSystem(e, &ctx);
-  Approximation::PrepareFunctionForApproximation(e, k_symbol,
-                                                 ComplexFormat::Real);
+  Tree* e = parseFunction(expression, &context);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, e, false,
                                    expressionEvaluator<double>);
@@ -145,16 +140,9 @@ void assert_intersections_range_is(const char* expression1,
                                    const char* expression2,
                                    Range2D<float> expectedRange) {
   Shared::GlobalContext context;
-  TreeRef e1 = parse(expression1, &context);
-  TreeRef e2 = parse(expression2, &context);
+  TreeRef e1 = parseFunction(expression1, &context);
+  TreeRef e2 = parseFunction(expression2, &context);
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
-  ProjectionContext ctx;
-  Simplification::ToSystem(e1, &ctx);
-  Simplification::ToSystem(e2, &ctx);
-  Approximation::PrepareFunctionForApproximation(e1, k_symbol,
-                                                 ComplexFormat::Real);
-  Approximation::PrepareFunctionForApproximation(e2, k_symbol,
-                                                 ComplexFormat::Real);
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
                                 e2);
   e1->removeTree();

@@ -5,6 +5,7 @@
 #include <poincare/preferences.h>
 #include <poincare/src/expression/order.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -153,5 +154,15 @@ const char* ApproximatedParsedIntegerString();
 Tree* TextToTree(const char* input, Poincare::Context* context = nullptr);
 
 void store(const char* storeExpression, Poincare::Context* ctx);
+
+inline Tree* parseFunction(const char* function, Poincare::Context* context) {
+  constexpr const char* k_symbol = "x";
+  ProjectionContext ctx;
+  Tree* e = parse(function, context);
+  Simplification::ToSystem(e, &ctx);
+  Approximation::PrepareFunctionForApproximation(e, k_symbol,
+                                                 ComplexFormat::Real);
+  return e;
+}
 
 #endif

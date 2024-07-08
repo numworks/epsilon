@@ -147,7 +147,7 @@ class PythonVariableBoxController
   const char* importationSourceNameFromNode(mp_parse_node_t& node);
   bool importationSourceIsModule(
       const char* sourceName,
-      const Escher::ToolboxMessageTree** moduleChildren = nullptr,
+      const Escher::ToolboxMessage** moduleChildren = nullptr,
       int* numberOfModuleChildren = nullptr);
   bool importationSourceIsScript(const char* sourceName,
                                  const char** scriptFullName,

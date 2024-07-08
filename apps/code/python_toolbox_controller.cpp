@@ -1050,7 +1050,7 @@ static_assert(catalogContainsAllChildren(TimeModuleChildren,
 PythonToolboxController::PythonToolboxController()
     : Toolbox(nullptr, rootModel()->label()) {}
 
-const ToolboxMessageTree* PythonToolboxController::moduleChildren(
+const ToolboxMessage* PythonToolboxController::moduleChildren(
     const char* name, int* numberOfNodes) const {
   for (const ToolboxMessage& tm : modulesChildren) {
     const ToolboxMessageTree& t =
@@ -1061,7 +1061,7 @@ const ToolboxMessageTree* PythonToolboxController::moduleChildren(
         *numberOfNodes = childrenCount;
       }
       assert(childrenCount > 0);
-      return static_cast<const ToolboxMessageTree*>(t.childAtIndex(0));
+      return reinterpret_cast<const ToolboxMessage*>(t.childAtIndex(0));
     }
   }
   return nullptr;

@@ -17,8 +17,8 @@ class PythonToolboxController : public Escher::Toolbox {
  public:
   // PythonToolboxController
   PythonToolboxController();
-  const Escher::ToolboxMessageTree* moduleChildren(const char* name,
-                                                   int* numberOfNodes) const;
+  const Escher::ToolboxMessage* moduleChildren(const char* name,
+                                               int* numberOfNodes) const;
 
   // Toolbox
   bool handleEvent(Ion::Events::Event event) override;

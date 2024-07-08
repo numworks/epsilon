@@ -892,7 +892,7 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
       return true;
     }
     int numberOfModuleChildren = 0;
-    const ToolboxMessageTree* moduleChildren = nullptr;
+    const ToolboxMessage* moduleChildren = nullptr;
     if (importationSourceIsModule(importationSourceName, &moduleChildren,
                                   &numberOfModuleChildren)) {
       if (!importFromModules) {
@@ -906,12 +906,14 @@ bool PythonVariableBoxController::addNodesFromImportMaybe(
         constexpr int numberOfNodesToSkip = 3;
         assert(numberOfModuleChildren > numberOfNodesToSkip);
         for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
-          const char* name = I18n::translate((moduleChildren + i)->label());
-          if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
-                               ScriptNode::Type::WithoutParentheses,
-                               k_importedOrigin, name, -1,
-                               importationSourceName,
-                               I18n::translate((moduleChildren + i)->text()))) {
+          const char* name =
+              I18n::translate((moduleChildren + i)->toMessageTree()->label());
+          if (addNodeIfMatches(
+                  textToAutocomplete, textToAutocompleteLength,
+                  ScriptNode::Type::WithoutParentheses, k_importedOrigin, name,
+                  -1, importationSourceName,
+                  I18n::translate(
+                      (moduleChildren + i)->toMessageTree()->text()))) {
             break;
           }
         }
@@ -969,9 +971,9 @@ const char* PythonVariableBoxController::importationSourceNameFromNode(
 }
 
 bool PythonVariableBoxController::importationSourceIsModule(
-    const char* sourceName, const ToolboxMessageTree** moduleChildren,
+    const char* sourceName, const ToolboxMessage** moduleChildren,
     int* numberOfModuleChildren) {
-  const ToolboxMessageTree* children =
+  const ToolboxMessage* children =
       App::app()->toolbox()->moduleChildren(sourceName, numberOfModuleChildren);
   if (moduleChildren != nullptr) {
     *moduleChildren = children;

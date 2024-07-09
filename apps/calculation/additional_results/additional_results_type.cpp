@@ -14,7 +14,7 @@
 using namespace Poincare;
 using namespace Shared;
 
-namespace Calculation {
+namespace Poincare::Internal {
 
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const UserExpression input, const UserExpression exactOutput,
@@ -132,8 +132,9 @@ bool AdditionalResultsType::HasDirectTrigo(
   assert(!exactOutput.hasUnit(true));
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-      input, exactOutput, globalContext, calculationPreferences);
+  Expression exactAngle =
+      Calculation::TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
+          input, exactOutput, globalContext, calculationPreferences);
   return !exactAngle.isUninitialized();
 }
 
@@ -172,7 +173,7 @@ bool AdditionalResultsType::HasUnit(
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,
            GlobalPreferences::SharedGlobalPreferences()->unitFormat()) ||
-       UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
+       Calculation::UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
     /* Sometimes with angle units, the reduction with UnitConversion::None
      * will be defined but not the reduction with UnitConversion::Default,
      * which will make the unit list controller crash.  */
@@ -191,7 +192,7 @@ bool AdditionalResultsType::HasVector(
     const Preferences::CalculationPreferences calculationPreferences) {
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm = VectorHelper::BuildVectorNorm(
+  Expression norm = Calculation::VectorHelper::BuildVectorNorm(
       exactOutput.clone(), globalContext, calculationPreferences);
   if (norm.isUninitialized()) {
     return false;
@@ -261,7 +262,7 @@ bool AdditionalResultsType::HasScientificNotation(
       calculationPreferences.displayMode,
       calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(
-      ScientificNotationHelper::ScientificLayout(
+      Calculation::ScientificNotationHelper::ScientificLayout(
           approximateOutput, globalContext, calculationPreferences),
       true);
 }
@@ -284,4 +285,4 @@ bool AdditionalResultsType::HasRational(const UserExpression exactOutput) {
           exactOutput.childAtIndex(0).isDivisionOfIntegers());
 }
 
-}  // namespace Calculation
+}  // namespace Poincare::Internal

@@ -62,6 +62,9 @@ QUIZ_CASE(pcj_layout_parse) {
   // TODO _l with non-ascii codepoints
   quiz_assert(is_parsable(
       KRackL(KCodePointL<'1'>(), KCodePointL<u'ᴇ'>(), KCodePointL<'2'>())));
+  assert_trees_are_equal(
+      RackParser("12.34"_l ^ KCodePointL<u'ᴇ'>() ^ "999"_l, nullptr).parse(),
+      KDecimal(1234_e, -997_e));
   quiz_assert(is_parsable("-1"_l));
   quiz_assert(is_parsable(".1"_l));
   quiz_assert(is_parsable("1+2+3+4+5+6"_l));

@@ -5,7 +5,10 @@
 
 #include "solver_algorithms.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+template <typename T>
+using Solver = Internal::Solver<T>;
 
 // HorizontalAsymptoteHelper
 
@@ -252,18 +255,18 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void* model1,
                 Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
-void Zoom::fitConditions(const Tree* piecewise,
+void Zoom::fitConditions(SystemFunction piecewise,
                          Function2DWithContext<float> fullFunction,
                          const void* model, bool vertical) {
   struct ConditionsParameters {
     Zoom* zoom;
-    const Tree* piecewise;
+    const Internal::Tree* piecewise;
     Function2DWithContext<float> fullFunction;
     const void* model;
     bool vertical;
   };
   const ConditionsParameters params = {.zoom = this,
-                                       .piecewise = piecewise,
+                                       .piecewise = piecewise.tree(),
                                        .fullFunction = fullFunction,
                                        .model = model,
                                        .vertical = vertical};
@@ -271,7 +274,8 @@ void Zoom::fitConditions(const Tree* piecewise,
     const ConditionsParameters* params =
         static_cast<const ConditionsParameters*>(aux);
     return static_cast<float>(
-        Approximation::IndexOfActivePiecewiseBranchAt(params->piecewise, t));
+        Internal::Approximation::IndexOfActivePiecewiseBranchAt(
+            params->piecewise, t));
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,
@@ -405,7 +409,7 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void* aux,
    * without using the costly Brent methods. */
   constexpr int k_numberOfIterations = 9;  // TODO Tune
   constexpr float k_goldenRatio =
-      static_cast<float>(SolverAlgorithms::k_goldenRatio);
+      static_cast<float>(Internal::SolverAlgorithms::k_goldenRatio);
 
   /* Define two points u and v such that a < u < v < b. Then, we can
    * determine wether the point of interest exists on [a,v] or [u,b].
@@ -747,4 +751,4 @@ void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {
                             m_maxFloat);
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

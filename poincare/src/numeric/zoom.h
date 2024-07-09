@@ -2,6 +2,7 @@
 #define POINCARE_NUMERIC_ZOOM_H
 
 #include <ion/display.h>
+#include <poincare/expression.h>
 #include <poincare/numeric/solver.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/context.h>
@@ -12,10 +13,12 @@
  * getters for those as it would weaken the Zoom API. */
 class ZoomTest;
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 class Zoom {
   friend class ::ZoomTest;
+  template <typename T>
+  using Solver = Internal::Solver<T>;
 
  public:
   template <typename T>
@@ -75,7 +78,7 @@ class Zoom {
   void fitIntersections(Function2DWithContext<float> f1, const void* model1,
                         Function2DWithContext<float> f2, const void* model2,
                         bool vertical = false);
-  void fitConditions(const Tree* piecewise,
+  void fitConditions(SystemFunction piecewise,
                      Function2DWithContext<float> fullFunction,
                      const void* model, bool vertical = false);
   /* This function will only touch the Y axis. */
@@ -195,6 +198,6 @@ class Zoom {
   int m_thresholdForFunctionsExceedingNbOfPoints;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

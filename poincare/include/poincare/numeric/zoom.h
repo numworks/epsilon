@@ -3,8 +3,4 @@
 
 #include <poincare/src/numeric/zoom.h>
 
-namespace Poincare {
-using Zoom = Poincare::Internal::Zoom;
-}
-
 #endif

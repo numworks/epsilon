@@ -111,12 +111,20 @@ static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {
   NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
 }
 
-void Layouter::addSeparator(Tree* layoutParent) {
+void Layouter::addOperatorSeparator(Tree* layoutParent) {
   if (!m_addSeparators) {
     return;
   }
   assert(!m_linearMode);
   NAry::AddChild(layoutParent, KOperatorSeparatorL->cloneTree());
+}
+
+void Layouter::addUnitSeparator(Tree* layoutParent) {
+  if (!m_addSeparators) {
+    return;
+  }
+  assert(!m_linearMode);
+  NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
 }
 
 void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
@@ -232,9 +240,9 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
     if (childIndex > 0) {
       if (!m_linearMode && multiplication && isUnit) {
         if (!previousWasUnit) {
-          if (m_addSeparators && Units::Unit::ForceMarginLeftOfUnit(child)) {
+          if (Units::Unit::ForceMarginLeftOfUnit(child)) {
             // Add small separator between 2 and m in "2 m"
-            NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
+            addUnitSeparator(layoutParent);
           }
         } else {
           PushCodePoint(layoutParent, UCodePointMiddleDot);
@@ -243,7 +251,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
         previousWasUnit = isUnit;
         continue;
       }
-      addSeparator(layoutParent);
+      addOperatorSeparator(layoutParent);
       if (op != UCodePointNull) {
         if (op == '+' && child->isOpposite()) {
           // Consume opposite block now and insert - instead of +
@@ -252,7 +260,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
         } else {
           PushCodePoint(layoutParent, op);
         }
-        addSeparator(layoutParent);
+        addOperatorSeparator(layoutParent);
       }
     }
     layoutExpression(layoutParent, child, OperatorPriority(type));
@@ -361,9 +369,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Sub:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(Type::Add));
-      addSeparator(layoutParent);
+      addOperatorSeparator(layoutParent);
       PushCodePoint(layoutParent, '-');
-      addSeparator(layoutParent);
+      addOperatorSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
@@ -609,9 +617,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Superior:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
-      addSeparator(layoutParent);
+      addOperatorSeparator(layoutParent);
       layoutText(layoutParent, Binary::ComparisonOperatorName(type));
-      addSeparator(layoutParent);
+      addOperatorSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       break;
@@ -784,6 +792,7 @@ void Layouter::StripSeparators(Tree* rack) {
   int i = 0;
   while (i < n) {
     if (child->isUnitSeparatorLayout()) {
+      // Replace UnitSeparators with a middle dot
       child->cloneTreeOverTree(KCodePointL<UCodePointMiddleDot>());
     }
     if (child->isSeparatorLayout()) {

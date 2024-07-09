@@ -31,7 +31,8 @@ class Layouter {
         m_addSeparators(addSeparators),
         m_numberOfSignificantDigits(numberOfSignificantDigits),
         m_floatMode(floatMode) {}
-  void addSeparator(Tree* layoutParent);
+  void addOperatorSeparator(Tree* layoutParent);
+  void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);
   void layoutText(TreeRef& layoutParent, const char* text);
   void layoutBuiltin(TreeRef& layoutParent, Tree* expression);

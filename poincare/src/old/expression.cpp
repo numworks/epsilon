@@ -551,12 +551,6 @@ bool OExpression::allChildrenAreReal(Context *context,
   return true;
 }
 
-bool OExpression::isBasedIntegerCappedBy(const char *stringInteger) const {
-  return otype() == ExpressionNode::Type::BasedInteger &&
-         (Integer::NaturalOrder(convert<BasedInteger>().integer(),
-                                Integer(stringInteger)) < 0);
-}
-
 bool OExpression::isDivisionOfIntegers() const {
   return otype() == ExpressionNode::Type::Division &&
          childAtIndex(0).otype() == ExpressionNode::Type::BasedInteger &&

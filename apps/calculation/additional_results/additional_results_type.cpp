@@ -4,6 +4,8 @@
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/unit.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/k_tree.h>
 
 #include "../calculation.h"
 #include "scientific_notation_helper.h"
@@ -267,13 +269,12 @@ bool AdditionalResultsType::HasScientificNotation(
       true);
 }
 
-bool AdditionalResultsType::HasInteger(const UserExpression exactOutput) {
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  constexpr const char* k_maximalIntegerWithAdditionalResults =
-      "10000000000000000";
-  return exactOutput.isBasedIntegerCappedBy(
-      k_maximalIntegerWithAdditionalResults);
+bool AdditionalResultsType::HasInteger(const Tree* exactOutput) {
+  assert(exactOutput);
+  // assert(!exactOutput.hasUnit());
+  return exactOutput->isPositiveInteger() &&
+         IntegerHandler::Compare(Integer::Handler(exactOutput),
+                                 Integer::Handler(10000000000000000_e)) < 0;
 }
 
 bool AdditionalResultsType::HasRational(const UserExpression exactOutput) {

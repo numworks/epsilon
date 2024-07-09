@@ -193,7 +193,6 @@ class OExpression : public PoolHandle {
   bool isParameteredExpression() const {
     return node()->isParameteredExpression();
   }
-  bool isBasedIntegerCappedBy(const char* integerString) const;
   bool isDivisionOfIntegers() const;
   bool isAlternativeFormOfRationalNumber() const;
   template <typename T>

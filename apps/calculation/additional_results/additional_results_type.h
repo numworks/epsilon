@@ -69,7 +69,7 @@ struct AdditionalResultsType {
       const Poincare::UserExpression approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences);
-  static bool HasInteger(const Poincare::UserExpression exactOutput);
+  static bool HasInteger(const Tree* exactOutput);
   static bool HasRational(const Poincare::UserExpression exactOutput);
 };
 

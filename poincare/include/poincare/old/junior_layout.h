@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_H
 
 #include <poincare/src/memory/block.h>
+#include <poincare/src/memory/k_tree_concept.h>
 
 #include "old_layout.h"
 
@@ -58,9 +59,9 @@ class JuniorLayout final : public OLayout {
     *this = Builder(tree);
   }
 
-  template <class C>
-  JuniorLayout(C c) : JuniorLayout(static_cast<const Internal::Tree*>(c)) {
-    static_assert(c.type().isRackLayout());
+  template <Internal::KTrees::KTreeConcept T>
+  JuniorLayout(T t) : JuniorLayout(static_cast<const Internal::Tree*>(t)) {
+    static_assert(t.type().isRackLayout());
   }
 
   JuniorLayout clone() const {

@@ -82,7 +82,6 @@ struct Dimension {
     return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
   }
 
-  constexpr static int k_unknownListLength = -2;
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
   static int ListLength(const Tree* e, Poincare::Context* ctx = nullptr);

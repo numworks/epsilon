@@ -89,7 +89,7 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
       return true;
     default: {
       assert(!e->isListToScalar());
-      int thisLength = k_unknownListLength;
+      int thisLength = k_nonListListLength;
       for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i] == k_nonListListLength) {
           continue;

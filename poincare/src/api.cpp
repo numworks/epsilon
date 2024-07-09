@@ -2,7 +2,7 @@
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/layout/layoutter.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
 
@@ -77,10 +77,10 @@ SystemExpression UserExpression::projected() const {
   // TODO: Pass context.
   Internal::ProjectionContext context;
   // TODO: Handle Store and UnitConversion like in Simplification::Simplify.
-  Internal::Tree* e = tree()->clone();
+  Internal::Tree* e = tree()->cloneTree();
   Internal::Simplification::PrepareForProjection(e, &context);
   Internal::Simplification::ToSystem(e, &context);
-  Internal::Simplification::SimplifySystem(e, false);
+  Internal::Simplification::ReduceSystem(e, false);
   Internal::Simplification::TryApproximationStrategyAgain(e, context);
   return SystemExpression::Builder(e, context.m_dimension.unit.vector);
 }
@@ -88,14 +88,14 @@ SystemExpression UserExpression::projected() const {
 /* SystemExpression */
 
 SystemExpression SystemExpression::Builder(
-    const Internal::Tree* tree, Internal::Units::DimensionVector dimension) {
+    const Internal::Tree* tree, Internal::Units::SIVector dimension) {
   JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
   static_cast<SystemExpression&>(result).setDimension(dimension);
   return static_cast<SystemExpression&>(result);
 }
 
 SystemExpression SystemExpression::Builder(
-    Internal::Tree* tree, Internal::Units::DimensionVector dimension) {
+    Internal::Tree* tree, Internal::Units::SIVector dimension) {
   JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
   static_cast<SystemExpression&>(result).setDimension(dimension);
   return static_cast<SystemExpression&>(result);
@@ -105,7 +105,7 @@ UserExpression SystemExpression::beautified() const {
   // TODO: Pass context.
   Internal::ProjectionContext context;
   context.m_dimension.unit.vector = m_dimension;
-  Internal::Tree* e = tree()->clone();
+  Internal::Tree* e = tree()->cloneTree();
   Internal::Beautification::DeepBeautify(e, context);
   return UserExpression::Builder(e);
 }

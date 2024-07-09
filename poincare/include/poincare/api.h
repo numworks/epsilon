@@ -59,8 +59,8 @@ class JuniorPoolHandle : public PoolHandle {
   /* Reference */
   JuniorPoolObject* node() const {
     assert(identifier() != PoolObject::NoNodeIdentifier &&
-           !PoolHandle::node()->isGhost());
-    return static_cast<JuniorPoolObject*>(PoolHandle::node());
+           !PoolHandle::object()->isGhost());
+    return static_cast<JuniorPoolObject*>(PoolHandle::object());
   }
 
   const Internal::Tree* tree() const {
@@ -154,10 +154,10 @@ class SystemExpression : public JuniorPoolHandle {
  public:
   // Builders
   static SystemExpression Builder(const Internal::Tree* tree,
-                                  Internal::Units::DimensionVector dimension);
+                                  Internal::Units::SIVector dimension);
   // Eat the tree
   static SystemExpression Builder(Internal::Tree* tree,
-                                  Internal::Units::DimensionVector dimension);
+                                  Internal::Units::SIVector dimension);
   /** Turn the expression back into a more user-friendly form.
    *
    * This includes:
@@ -178,12 +178,12 @@ class SystemExpression : public JuniorPoolHandle {
 
   SystemFunction preparedForApproximation(Symbol symbol);
 #endif
-  void setDimension(Internal::Units::DimensionVector dimension) {
+  void setDimension(Internal::Units::SIVector dimension) {
     m_dimension = dimension;
   }
 
  private:
-  Internal::Units::DimensionVector m_dimension;
+  Internal::Units::SIVector m_dimension;
 };
 
 #if 0

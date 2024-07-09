@@ -36,8 +36,11 @@ void assert_ranges_equal(Range1D<float> observed, Range1D<float> expected,
    *   peaks and valleys.
    * - searching for points of interest is done in single precision, without
    *   the use of Brent's methods to refine the points. */
-  quiz_assert_print_if_failure(observed.isValid() == expected.isValid(),
+  quiz_assert_print_if_failure(observed.isNan() == expected.isNan(),
                                errorMessage);
+  if (expected.isNan()) {
+    return;
+  }
   float dl = std::max(k_rangeTolerance * std::max(expected.length(),
                                                   std::fabs(expected.center())),
                       FLT_EPSILON);
@@ -84,8 +87,7 @@ void assert_points_of_interest_range_is(const char* expression,
 }
 
 QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
-  // TODO_PCJ assert that observed range is NAN,NAN,NAN,NAN
-  // assert_points_of_interest_range_is("1", Range2D<float>());
+  assert_points_of_interest_range_is("1", Range2D<float>());
   assert_points_of_interest_range_is("x", Range2D<float>(0, 0, 0, 0));
   assert_points_of_interest_range_is("x-30", Range2D<float>(30, 30, 0, 0));
   assert_points_of_interest_range_is("-11x+100",

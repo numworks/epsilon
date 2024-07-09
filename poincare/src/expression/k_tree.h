@@ -100,6 +100,7 @@ constexpr auto KSuperior = KBinary<Type::Superior>();
 constexpr auto KInferior = KBinary<Type::Inferior>();
 constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
 constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
+constexpr auto KDecimal = KBinary<Type::Decimal>();
 
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
 constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();

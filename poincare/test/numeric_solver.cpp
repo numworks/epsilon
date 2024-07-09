@@ -29,7 +29,7 @@ void assert_next_solution_is(const char* expression, Context* context,
                                .m_strategy = Strategy::ApproximateToFloat,
                                .m_context = context};
 
-  Tree* e = parseAndPrepareForApproximation(expression, context, projCtx);
+  Tree* e = parseAndPrepareForApproximation(expression, projCtx);
 
   Poincare::Coordinate2D<double> observed;
   switch (interest) {
@@ -45,8 +45,7 @@ void assert_next_solution_is(const char* expression, Context* context,
     default:
       assert(interest == Interest::Intersection);
       assert(otherExpression);
-      Tree* e2 =
-          parseAndPrepareForApproximation(otherExpression, context, projCtx);
+      Tree* e2 = parseAndPrepareForApproximation(otherExpression, projCtx);
       observed = solver->nextIntersection(e, e2);
   }
 

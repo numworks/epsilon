@@ -156,10 +156,9 @@ Tree* TextToTree(const char* input, Poincare::Context* context = nullptr);
 void store(const char* storeExpression, Poincare::Context* ctx);
 
 inline Tree* parseAndPrepareForApproximation(const char* function,
-                                             Poincare::Context* context,
                                              ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
-  Tree* e = parse(function, context);
+  Tree* e = parse(function, ctx.m_context);
   Simplification::ToSystem(e, &ctx);
   Approximation::PrepareFunctionForApproximation(e, k_symbol,
                                                  ComplexFormat::Real);

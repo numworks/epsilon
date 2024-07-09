@@ -193,7 +193,6 @@ class OExpression : public PoolHandle {
   bool isParameteredExpression() const {
     return node()->isParameteredExpression();
   }
-  bool isDivisionOfIntegers() const;
   bool isAlternativeFormOfRationalNumber() const;
   template <typename T>
   bool hasDefinedComplexApproximation(

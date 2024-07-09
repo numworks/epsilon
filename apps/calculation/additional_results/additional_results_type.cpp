@@ -6,6 +6,7 @@
 #include <poincare/preferences.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "../calculation.h"
 #include "scientific_notation_helper.h"
@@ -277,13 +278,15 @@ bool AdditionalResultsType::HasInteger(const Tree* exactOutput) {
                                  Integer::Handler(10000000000000000_e)) < 0;
 }
 
-bool AdditionalResultsType::HasRational(const UserExpression exactOutput) {
+bool AdditionalResultsType::HasRational(const Tree* exactOutput) {
   // Find forms like [12]/[23] or -[12]/[23]
-  assert(!exactOutput.isUninitialized());
-  assert(!exactOutput.hasUnit());
-  return exactOutput.isDivisionOfIntegers() ||
-         (exactOutput.type() == ExpressionNode::Type::Opposite &&
-          exactOutput.childAtIndex(0).isDivisionOfIntegers());
+  assert(exactOutput);
+  // assert(!exactOutput.hasUnit());
+  PatternMatching::Context ctx;
+  // TODO: this should be isRational before the beautification
+  return (PatternMatching::Match(exactOutput, KDiv(KA, KB), &ctx) ||
+          PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)), &ctx)) &&
+         ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
 }
 
 }  // namespace Poincare::Internal

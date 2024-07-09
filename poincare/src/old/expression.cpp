@@ -551,12 +551,6 @@ bool OExpression::allChildrenAreReal(Context *context,
   return true;
 }
 
-bool OExpression::isDivisionOfIntegers() const {
-  return otype() == ExpressionNode::Type::Division &&
-         childAtIndex(0).otype() == ExpressionNode::Type::BasedInteger &&
-         childAtIndex(1).otype() == ExpressionNode::Type::BasedInteger;
-}
-
 bool OExpression::isAlternativeFormOfRationalNumber() const {
   return isOfType({ExpressionNode::Type::Rational,
                    ExpressionNode::Type::BasedInteger,

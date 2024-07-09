@@ -14,12 +14,20 @@ Line = collections.namedtuple("Line", ["result", "input", "expected", "actual"])
 
 
 def parse_line(line):
-    type, input, expected, *remaining = line.split("\t")
+    type, input, *remaining = line.split("\t")
+    if len(remaining) > 0:
+        expected = remaining[0]
+    else:
+        expected = "GOOD"
     if type == "CRASH":
         actual = "CRASH"
-    if type == "BAD":
-        actual = remaining[0]
-    if type == "OK":
+    elif type == "BAD":
+        if len(remaining) > 1:
+            actual = remaining[1]
+        else:
+            actual = "BAD"
+    else:
+        assert type == "OK"
         actual = expected
     return Line(type, input, expected, actual)
 

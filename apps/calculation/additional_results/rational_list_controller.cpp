@@ -1,30 +1,27 @@
 #include "rational_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/based_integer.h>
-#include <poincare/old/integer.h>
+#include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/rational.h>
 #include <string.h>
 
 #include "../app.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 using namespace Shared;
 
 namespace Calculation {
 
-Integer extractInteger(const Expression e) {
-  if (e.type() == ExpressionNode::Type::Opposite) {
-    Integer i = extractInteger(e.childAtIndex(0));
-    i.setNegative(!i.isNegative());
+IntegerHandler extractInteger(const Tree* e) {
+  if (e->isOpposite()) {
+    IntegerHandler i = extractInteger(e->child(0));
+    i.setSign(i.sign() == NonStrictSign::Positive ? NonStrictSign::Negative
+                                                  : NonStrictSign::Positive);
     return i;
   }
-  assert(e.type() == ExpressionNode::Type::BasedInteger);
-#if 0  // TODO_PCJ
-  return static_cast<const BasedInteger &>(e).integer();
-#else
-  assert(false);
-  return Integer();
-#endif
+  assert(e->isInteger());
+  return Integer::Handler(e);
 }
 
 static bool isIntegerInput(Expression e) {
@@ -57,17 +54,25 @@ void RationalListController::computeAdditionalResults(
   bool negative = e.type() == ExpressionNode::Type::Opposite;
   Expression div = negative ? e.childAtIndex(0) : e;
   assert(div.type() == ExpressionNode::Type::Division);
-  Integer numerator = extractInteger(div.childAtIndex(0));
-  numerator.setNegative(negative != numerator.isNegative());
-  Integer denominator = extractInteger(div.childAtIndex(1));
+  IntegerHandler numerator = extractInteger(div.childAtIndex(0));
+  numerator.setSign(negative != (numerator.sign() == NonStrictSign::Negative)
+                        ? NonStrictSign::Negative
+                        : NonStrictSign::Positive);
+  IntegerHandler denominator = extractInteger(div.childAtIndex(1));
+  Expression rational =
+      Expression::Builder(Rational::Push(numerator, denominator));
+  SystemExpression mixedFraction =
+      SystemExpression::Builder(Rational::CreateMixedFraction(
+          rational,
+          GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
+              Preferences::MixedFractions::Enabled));
 
   int index = 0;
   m_layouts[index++] = PoincareHelpers::CreateLayout(
-      Integer::CreateMixedFraction(numerator, denominator),
-      App::app()->localContext());
-  m_layouts[index++] = PoincareHelpers::CreateLayout(
-      Integer::CreateEuclideanDivision(numerator, denominator),
-      App::app()->localContext());
+      mixedFraction.cloneAndBeautify({}), App::app()->localContext());
+  // m_layouts[index++] = PoincareHelpers::CreateLayout(
+  // Integer::CreateEuclideanDivision(numerator, denominator),
+  // App::app()->localContext());
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {
@@ -79,8 +84,8 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
-                                             int index) {
+Poincare::Layout RationalListController::layoutAtIndex(
+    Escher::HighlightCell* cell, int index) {
   return ExpressionsListController::layoutAtIndex(cell, index);
 #if 0  // TODO_PCJ
   if (index == 1) {

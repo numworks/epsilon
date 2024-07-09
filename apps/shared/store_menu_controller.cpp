@@ -67,18 +67,6 @@ void StoreMenuController::didBecomeFirstResponder() {
   m_cell.layoutField()->reload();
 }
 
-void StoreMenuController::setText(const char* text) {
-  m_preventReload = true;
-  m_cell.layoutField()->clearAndSetEditing(true);
-  m_cell.layoutField()->handleEventWithText(text, false, true);
-  m_cell.layoutField()->handleEventWithText("→");
-  if (text[0] == 0) {
-    m_cell.layoutField()->putCursorOnOneSide(OMG::Direction::Left());
-  }
-  m_stackViewController.setupActiveView();
-  m_preventReload = false;
-}
-
 void StoreMenuController::setLayout(Poincare::Layout layout) {
   m_preventReload = true;
   m_cell.layoutField()->clearAndSetEditing(true);

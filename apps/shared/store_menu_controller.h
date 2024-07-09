@@ -20,7 +20,6 @@ class StoreMenuController : public Escher::ModalViewController,
                             public MathLayoutFieldDelegate {
  public:
   StoreMenuController();
-  void setText(const char* text);
   void setLayout(Poincare::Layout layout);
 
   void open();

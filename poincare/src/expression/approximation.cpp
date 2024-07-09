@@ -768,8 +768,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       Tree* list = ToList<T>(e->child(0));
       TreeDatasetColumn<T> values(list);
       T median;
-      if (Dimension::ListLength(e->child(1)) !=
-          Dimension::k_nonListListLength) {
+      if (Dimension::IsList(e->child(1))) {
         Tree* weightsList = ToList<T>(e->child(1));
         TreeDatasetColumn<T> weights(weightsList);
         median = OutOfContext(StatisticsDataset<T>(&values, &weights).median());

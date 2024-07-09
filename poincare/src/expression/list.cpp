@@ -170,8 +170,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::Median: {
       // precision used for comparisons
       using T = double;
-      bool hasWeightList =
-          Dimension::ListLength(e->child(1)) != Dimension::k_nonListListLength;
+      bool hasWeightList = Dimension::IsList(e->child(1));
       Tree* valuesList = e->child(0);
       BubbleUp(valuesList, SystematicReduction::ShallowReduce);
       Tree* weigthsList = e->child(1);

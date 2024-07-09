@@ -402,6 +402,7 @@ Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate) {
     result->moveTreeOverTree(Inverse(result, approximate));
     return result;
   }
+  assert(exponent >= 0 || exponent % 2 == 0);
   if (exponent == 0) {
     Tree* result = Integer::Push(NumberOfRows(matrix));
     result->moveTreeOverTree(Identity(result));

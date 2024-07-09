@@ -223,7 +223,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
       if (buffer[0] != 0) {
         // We don't want to store an empty text in clipboard
-        Escher::Clipboard::SharedClipboard()->store(buffer);
+        Escher::Clipboard::SharedClipboard()->storeText(buffer);
       }
     } else {
       App::app()->storeLayout(Poincare::Layout::String(buffer));

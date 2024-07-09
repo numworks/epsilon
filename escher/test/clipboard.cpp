@@ -13,7 +13,7 @@ void assert_stored_text_is_parseable(Layout layout) {
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
   Clipboard* clipboard = Clipboard::SharedClipboard();
-  clipboard->store(buffer);
+  clipboard->storeText(buffer);
   Expression e = Expression::Parse(clipboard->storedText(), nullptr, false);
   Layout result =
       e.createLayout(Preferences::SharedPreferences()->displayMode(),

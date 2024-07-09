@@ -628,11 +628,11 @@ void AbstractTextField::removeWholeText() {
 
 bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
-    Clipboard::SharedClipboard()->store(text());
+    Clipboard::SharedClipboard()->storeText(text());
     return true;
   } else if (!selectionIsEmpty()) {
     const char* start = nonEditableContentView()->selectionLeft();
-    Clipboard::SharedClipboard()->store(
+    Clipboard::SharedClipboard()->storeText(
         start, nonEditableContentView()->selectionRight() - start);
     return true;
   }

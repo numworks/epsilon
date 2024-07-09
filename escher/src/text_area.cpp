@@ -221,7 +221,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       return false;
     }
     const char* start = contentView()->selectionLeft();
-    Escher::Clipboard::SharedClipboard()->store(
+    Escher::Clipboard::SharedClipboard()->storeText(
         start, contentView()->selectionRight() - start);
     if (event == Ion::Events::Cut) {
       deleteSelection();

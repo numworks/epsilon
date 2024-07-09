@@ -38,7 +38,7 @@ void ResultController::viewWillAppear() {
 
 bool ResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::SharedClipboard()->store(m_cell.text());
+    Escher::Clipboard::SharedClipboard()->storeText(m_cell.text());
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {

@@ -9,7 +9,7 @@ namespace Escher {
 class Clipboard {
  public:
   static Clipboard* SharedClipboard();
-  void store(const char* storedText, int length = -1);
+  void storeText(const char* text, int length = -1);
   void storeLayout(Poincare::Layout layout);
   const char* storedText();
   Poincare::Layout storedLayout();

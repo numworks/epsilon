@@ -12,7 +12,7 @@ namespace Code {
 void assert_clipboard_enters_and_exits_python(const char* string,
                                               const char* stringResult) {
   Clipboard* clipboard = Clipboard::sharedClipboard();
-  clipboard->store(string);
+  clipboard->storeText(string);
   clipboard->enterPython();
   quiz_assert(strcmp(clipboard->storedText(), stringResult) == 0);
   clipboard->exitPython();

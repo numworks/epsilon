@@ -46,7 +46,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
       App::app()->storeLayout(Poincare::Layout::String(copyBuffer));
     } else {
-      Escher::Clipboard::SharedClipboard()->store(copyBuffer);
+      Escher::Clipboard::SharedClipboard()->storeText(copyBuffer);
     }
     return true;
   }

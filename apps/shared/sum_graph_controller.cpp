@@ -79,7 +79,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
       App::app()->storeLayout(Layout::String(buffer));
     } else {
-      Escher::Clipboard::SharedClipboard()->store(buffer);
+      Escher::Clipboard::SharedClipboard()->storeText(buffer);
     }
     return true;
   }

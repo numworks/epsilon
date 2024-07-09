@@ -13,25 +13,25 @@ static Clipboard s_clipboard;
 
 Clipboard* Clipboard::SharedClipboard() { return &s_clipboard; }
 
-void Clipboard::store(const char* storedText, int length) {
+void Clipboard::storeText(const char* text, int length) {
   int maxSize = TextField::MaxBufferSize();
   if (length == -1 || length + 1 > maxSize) {
     // Make sure the text isn't truncated in the middle of a code point.
-    length = std::min(maxSize - 1, static_cast<int>(strlen(storedText)));
+    length = std::min(maxSize - 1, static_cast<int>(strlen(text)));
     /* length can't be greater than strlen(storedText) to prevent any out of
      * array bound access. */
     assert(  // to trigger fuzzer
         length == 0 ||
-        UTF8Decoder::IsTheEndOfACodePoint(&storedText[length - 1], storedText));
-    while (length > 0 && !UTF8Decoder::IsTheEndOfACodePoint(
-                             &storedText[length - 1], storedText)) {
+        UTF8Decoder::IsTheEndOfACodePoint(&text[length - 1], text));
+    while (length > 0 &&
+           !UTF8Decoder::IsTheEndOfACodePoint(&text[length - 1], text)) {
       length--;
     }
   }
   assert(length >= 0);
-  assert(length == 0 || UTF8Decoder::IsTheEndOfACodePoint(
-                            &storedText[length - 1], storedText));
-  strlcpy(m_textBuffer, storedText, length + 1);
+  assert(length == 0 ||
+         UTF8Decoder::IsTheEndOfACodePoint(&text[length - 1], text));
+  strlcpy(m_textBuffer, text, length + 1);
   Ion::Clipboard::write(m_textBuffer);
 }
 

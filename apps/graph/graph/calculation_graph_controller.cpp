@@ -29,7 +29,7 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::SharedClipboard()->store(
+    Escher::Clipboard::SharedClipboard()->storeText(
         m_bannerView->abscissaValue()->text());
     return true;
   }

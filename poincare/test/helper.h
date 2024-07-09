@@ -161,7 +161,7 @@ inline Tree* parseAndPrepareForApproximation(const char* function,
   Tree* e = parse(function, ctx.m_context);
   Simplification::ToSystem(e, &ctx);
   Approximation::PrepareFunctionForApproximation(e, k_symbol,
-                                                 ComplexFormat::Real);
+                                                 ctx.m_complexFormat);
   return e;
 }
 

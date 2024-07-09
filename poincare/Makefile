@@ -168,6 +168,7 @@ tests_src += $(addprefix poincare/test/old/,\
   approximation.cpp \
   derivative.cpp \
   expression_properties.cpp \
+  layout.cpp \
   parsing.cpp \
   simplification.cpp \
 )
@@ -190,7 +191,6 @@ tests_src += $(addprefix poincare/test/old/,\
   # helpers.cpp \
   # input_beautification.cpp \
   # integer.cpp \
-  # layout.cpp \
   # layout_cursor.cpp \
   # layout_serialization.cpp \
   # layout_to_expression.cpp \

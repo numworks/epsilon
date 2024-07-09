@@ -210,7 +210,7 @@ void assert_text_not_parsable(const char *text, Context *context) {
   bool crash = false;
   ExceptionTry {
     assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *parsed = parse_expression(text, context);
+    Tree *parsed = parse(text, context);
     bad = parsed;
     if (parsed) {
       parsed->removeTree();

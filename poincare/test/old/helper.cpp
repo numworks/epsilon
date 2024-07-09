@@ -441,13 +441,32 @@ void assert_expression_parses_and_serializes_to_itself(const char *expression) {
 }
 
 void assert_layout_serializes_to(Tree *layout, const char *serialization) {
-#if 0
+  k_total++;
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  layout.serializeForParsing(buffer, bufferSize);
-  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0,
-                               serialization);
-#endif
+  char result[bufferSize];
+  copy_without_system_chars(result, serialization);
+  bool bad = false;
+  bool crash = false;
+  ExceptionTry {
+    assert(SharedTreeStack->numberOfTrees() == 0);
+    *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
+    copy_without_system_chars(buffer, buffer);
+    bad = strcmp(buffer, result) != 0;
+  }
+  ExceptionCatch(type) {
+    SharedTreeStack->flush();
+    crash = true;
+  }
+  assert(SharedTreeStack->numberOfTrees() == 0);
+  k_bad += bad;
+  k_crash += crash;
+
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
+                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
+                                      serialization);
+  quiz_print(information);
 }
 
 void assert_expression_layouts_as(Tree *expression, Tree *layout) {

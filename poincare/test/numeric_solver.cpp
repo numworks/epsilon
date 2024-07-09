@@ -8,6 +8,7 @@
 #include <poincare/src/expression/simplification.h>
 
 #include "float_helper.h"
+#include "helper.h"
 #include "old/helper.h"
 
 using Poincare::Context;
@@ -28,10 +29,7 @@ void assert_next_solution_is(const char* expression, Context* context,
                                .m_strategy = Strategy::ApproximateToFloat,
                                .m_context = context};
 
-  Tree* e = parse_expression(expression, context);
-  Simplification::ToSystem(e, &projCtx);
-  Approximation::PrepareFunctionForApproximation(e, "x",
-                                                 projCtx.m_complexFormat);
+  Tree* e = parseFunction(expression, context);
 
   Poincare::Coordinate2D<double> observed;
   switch (interest) {
@@ -47,10 +45,7 @@ void assert_next_solution_is(const char* expression, Context* context,
     default:
       assert(interest == Interest::Intersection);
       assert(otherExpression);
-      Tree* e2 = parse_expression(otherExpression, context);
-      Simplification::ToSystem(e2, &projCtx);
-      Approximation::PrepareFunctionForApproximation(e2, "x",
-                                                     projCtx.m_complexFormat);
+      Tree* e2 = parseFunction(otherExpression, context);
       observed = solver->nextIntersection(e, e2);
   }
 

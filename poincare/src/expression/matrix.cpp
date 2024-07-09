@@ -394,10 +394,8 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate) {
 
 Tree* Matrix::Power(const Tree* matrix, int exponent, bool approximate) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
-  if (exponent < 0) {
-    if (exponent == INT_MIN) {
-      return matrix->cloneTree();
-    }
+  if (exponent < 0 && exponent != INT_MIN) {
+    // -INT_MIN is not possible
     assert(-exponent > 0);
     Tree* result = Power(matrix, -exponent);
     // TODO is it worth to compute inverse first ?

@@ -234,12 +234,36 @@ void assert_text_not_parsable(const char *text, Context *context) {
 
 void assert_parse_to_same_expression(const char *expression1,
                                      const char *expression2) {
-#if 0
+  k_total++;
   Shared::GlobalContext context;
-  OExpression e1 = parse_expression(expression1, &context);
-  OExpression e2 = parse_expression(expression2, &context);
-  quiz_assert(e1.isIdenticalTo(e2));
-#endif
+  bool bad = false;
+  bool crash = false;
+  ExceptionTry {
+    assert(SharedTreeStack->numberOfTrees() == 0);
+    Tree *e1 = parse_expression(expression1, &context);
+    Tree *e2 = parse_expression(expression2, &context);
+    bad = !e1 || !e2 || !e1->treeIsIdenticalTo(e2);
+    if (e2) {
+      e2->removeTree();
+    }
+    if (e1) {
+      e1->removeTree();
+    }
+  }
+  ExceptionCatch(type) {
+    SharedTreeStack->flush();
+    crash = true;
+  }
+  assert(SharedTreeStack->numberOfTrees() == 0);
+  k_bad += bad;
+  k_crash += crash;
+
+  constexpr int bufferSize = 2048;
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(
+      information, bufferSize, "%s\t%s same parsing as %s",
+      crash ? "CRASH" : (bad ? "BAD" : "OK"), expression1, expression2);
+  quiz_print(information);
 }
 
 void assert_reduce_and_store(const char *expression,

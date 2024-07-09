@@ -226,7 +226,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         Escher::Clipboard::SharedClipboard()->store(buffer);
       }
     } else {
-      App::app()->storeValue(buffer);
+      App::app()->storeLayout(Poincare::Layout::String(buffer));
     }
     return true;
   }

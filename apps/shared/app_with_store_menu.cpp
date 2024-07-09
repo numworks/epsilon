@@ -7,18 +7,10 @@ namespace Shared {
 
 bool AppWithStoreMenu::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-    storeValue();
+    storeLayout();
     return true;
   }
   return SharedApp::handleEvent(event);
-}
-
-void AppWithStoreMenu::storeValue(const char* text) {
-  if (m_modalViewController.isDisplayingModal()) {
-    return;
-  }
-  m_storeMenuController.setText(text);
-  m_storeMenuController.open();
 }
 
 void AppWithStoreMenu::storeLayout(Poincare::Layout layout) {

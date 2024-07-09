@@ -59,25 +59,17 @@ void LayoutField::ContentView::copySelection(Poincare::Context* context,
   Poincare::Internal::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
-      App::app()->storeValue();
+      App::app()->storeLayout();
     }
     return;
   }
-  constexpr size_t bufferSize = TextField::MaxBufferSize();
-  char buffer[bufferSize];
   Poincare::Internal::Tree* t = selection.cloneSelection();
   Layout layoutToParse = JuniorLayout::Builder(t);
-
-  layoutToParse.serializeParsedExpression(buffer, bufferSize,
-                                          /* TODO context */ nullptr);
-  if (buffer[0] == 0) {
-    layoutToParse.serializeForParsing(buffer, bufferSize);
-  }
-  if (buffer[0] == 0) {
+  if (layoutToParse.isUninitialized()) {
     return;
   }
   if (intoStoreMenu) {
-    App::app()->storeValue(buffer);
+    App::app()->storeLayout(layoutToParse);
   } else {
     Clipboard::SharedClipboard()->storeLayout(layoutToParse);
   }

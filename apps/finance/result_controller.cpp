@@ -42,7 +42,7 @@ bool ResultController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-    App::app()->storeValue(m_cell.text());
+    App::app()->storeLayout(Poincare::Layout::String(m_cell.text()));
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

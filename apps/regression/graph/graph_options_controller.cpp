@@ -140,13 +140,10 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     if (cell == &m_regressionEquationCell) {
       Layout l = m_regressionEquationCell.label()->layout();
       if (!l.isUninitialized()) {
-        constexpr int bufferSize = TextField::MaxBufferSize();
-        char buffer[bufferSize];
-        l.serializeParsedExpression(buffer, bufferSize, nullptr);
         if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-          App::app()->storeValue(buffer);
+          App::app()->storeLayout(l);
         } else {
-          Escher::Clipboard::SharedClipboard()->store(buffer);
+          Escher::Clipboard::SharedClipboard()->storeLayout(l);
         }
         return true;
       }

@@ -44,7 +44,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
         Poincare::Preferences::PrintFloatMode::Decimal,
         Poincare::Preferences::LargeNumberOfSignificantDigits);
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-      App::app()->storeValue(copyBuffer);
+      App::app()->storeLayout(Poincare::Layout::String(copyBuffer));
     } else {
       Escher::Clipboard::SharedClipboard()->store(copyBuffer);
     }

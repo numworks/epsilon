@@ -77,7 +77,7 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize,
                                                 precision);
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-      App::app()->storeValue(buffer);
+      App::app()->storeLayout(Layout::String(buffer));
     } else {
       Escher::Clipboard::SharedClipboard()->store(buffer);
     }

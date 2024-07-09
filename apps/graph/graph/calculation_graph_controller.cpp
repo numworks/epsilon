@@ -34,7 +34,8 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-    App::app()->storeValue(m_bannerView->abscissaValue()->text());
+    App::app()->storeLayout(
+        Layout::String(m_bannerView->abscissaValue()->text()));
     return true;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);

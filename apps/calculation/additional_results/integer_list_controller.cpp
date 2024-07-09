@@ -1,9 +1,7 @@
 #include "integer_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/based_integer.h>
-#include <poincare/old/factor.h>
-#include <poincare/old/integer.h>
+#include <poincare/k_tree.h>
 
 #include "../app.h"
 
@@ -31,29 +29,27 @@ void IntegerListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
   assert(AdditionalResultsType::HasInteger(exactOutput));
-#if 0  // TODO_PCJ
-  Integer integer = static_cast<const BasedInteger &>(exactOutput).integer();
-#else
-  assert(false);
-  Integer integer;
-#endif
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     if (baseAtIndex(index) == OMG::Base::Decimal) {
-      // TODO_PCJ only handle this one yet
       m_layouts[index] = exactOutput.createLayout(
           Preferences::PrintFloatMode::Decimal,
           Preferences::LargeNumberOfSignificantDigits, nullptr);
     } else {
+#if 0
+      // TODO_PCJ: serialize integer in binary and hexadecimal
       m_layouts[index] = integer.createLayout(baseAtIndex(index));
+#else
+      m_layouts[index] = Layout::String("TODO");
+#endif
     }
   }
   // Computing factorExpression
-  Expression factor = Factor::Builder(exactOutput.clone());
+  Expression factor = UserExpression::Create(KFactor(KA), {.KA = exactOutput});
   PoincareHelpers::CloneAndSimplify(
       &factor, App::app()->localContext(),
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  if (!factor.isUndefined() && !factor.isIdenticalTo(Rational::Builder(1)) &&
-      !factor.isIdenticalTo(Rational::Builder(0))) {
+  if (!factor.isUndefined() && !factor.tree()->treeIsIdenticalTo(1_e) &&
+      !factor.tree()->treeIsIdenticalTo(0_e)) {
     m_layouts[k_indexOfFactorExpression] =
         PoincareHelpers::CreateLayout(factor, App::app()->localContext());
   }

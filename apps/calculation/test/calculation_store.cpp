@@ -912,9 +912,10 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{i}", {}, &globalContext, &store);
-  /* TODO: Not working on windows
-   * assertCalculationAdditionalResultTypeHas("i^(2×e^(7i^(2×e^322)))", {},
-   *                                         &globalContext, &store);*/
+#ifndef PLATFORM_WINDOWS
+  assertCalculationAdditionalResultTypeHas("i^(2×e^(7i^(2×e^322)))", {},
+                                           &globalContext, &store);
+#endif
 
   assertCalculationAdditionalResultTypeHas("ln(3+4)", {}, &globalContext,
                                            &store);

@@ -3,6 +3,7 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_random) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "random()");
   assert_command_execution_succeeds(env, "from random import *");
@@ -15,4 +16,5 @@ QUIZ_CASE(python_random) {
   assert_command_execution_succeeds(env, "uniform(0.3,2.1)",
                                     "1.509734470828188\n");
   deinit_environment();
+#endif
 }

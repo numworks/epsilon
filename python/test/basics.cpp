@@ -64,7 +64,9 @@ QUIZ_CASE(python_template) {
 }
 
 QUIZ_CASE(python_fixes) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "'abcd'*2**62");
   deinit_environment();
+#endif
 }

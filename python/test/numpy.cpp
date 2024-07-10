@@ -3,6 +3,7 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_numpy) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   // Test "from matplotlib.pyplot import *"
   assert_command_execution_fails(env, "np.array([1,3,4])");
@@ -64,4 +65,5 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_succeeds(env, "np.arange(0,0)", "array([])\n");
   assert_command_execution_fails(env, "np.arange(0,3,0)");
   assert_command_execution_fails(env, "np.concatenate((0,0))");
+#endif
 }

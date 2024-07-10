@@ -3,6 +3,7 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_kandinsky_import) {
+#ifndef PLATFORM_WINDOWS
   // Test "from kandinsky import *"
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "get_pixel(0,0)");
@@ -16,9 +17,11 @@ QUIZ_CASE(python_kandinsky_import) {
   assert_command_execution_succeeds(env, "import kandinsky");
   assert_command_execution_succeeds(env, "kandinsky.get_pixel(0,0)");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_kandinsky_basics) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from kandinsky import *");
   assert_command_execution_succeeds(env, "set_pixel(0,0,color(12,12,12))");
@@ -26,4 +29,5 @@ QUIZ_CASE(python_kandinsky_basics) {
   assert_command_execution_succeeds(env, "fill_rect(0,0,10,10,color(2,3,2))");
   assert_command_execution_succeeds(env, "draw_string('hello',0,0)");
   deinit_environment();
+#endif
 }

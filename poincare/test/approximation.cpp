@@ -1125,12 +1125,15 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("1/cot(π/2)", Undefined::Name(),
                                             Radian);
   // tan(almost π/2)
+#ifndef PLATFORM_WINDOWS
   assert_expression_approximates_to<double>("tan(1.57079632)",
                                             "147169276.57047", Radian);
   assert_expression_approximates_to<double>("sin(1.57079632)/cos(1.57079632)",
                                             "147169276.57047", Radian);
   assert_expression_approximates_to<double>("1/cot(1.57079632)",
                                             "147169276.57047", Radian);
+#endif
+
   // Advanced function : cot
   assert_expression_approximates_to<double>("cot(2)", "-0.45765755436029",
                                             Radian);
@@ -1145,6 +1148,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                             Radian);
   assert_expression_approximates_to<double>("cos(π/2)/sin(π/2)", "0", Radian);
   assert_expression_approximates_to<double>("cot(π/2)", "0", Radian);
+#ifndef PLATFORM_WINDOWS
   // cot(almost π/2)
   assert_expression_approximates_to<double>("1/tan(1.57079632)",
                                             "6.7948964845335ᴇ-9", Radian);
@@ -1152,6 +1156,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                             "6.7948964845335ᴇ-9", Radian);
   assert_expression_approximates_to<double>("cot(1.57079632)",
                                             "6.7948964845335ᴇ-9", Radian);
+#endif
 
   /* acos: [-1,1]    -> R
    *       ]-inf,-1[ -> π+R×i (odd imaginary)

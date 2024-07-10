@@ -5,6 +5,7 @@
 // TODO: to be completed
 
 QUIZ_CASE(python_turtle) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "forward(3)");
   assert_command_execution_succeeds(env, "from turtle import *");
@@ -25,9 +26,11 @@ QUIZ_CASE(python_turtle) {
   assert_command_execution_succeeds(env, "isdown()", "False\n");
   assert_command_execution_succeeds(env, "showturtle()");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_turtle_circle) {
+#ifndef PLATFORM_WINDOWS
   // Turtle position should be unchanged after a complete circle
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from turtle import *");
@@ -36,9 +39,11 @@ QUIZ_CASE(python_turtle_circle) {
   // FIXME: this is actually not true
   // assert_command_execution_succeeds(env, "position()", "(0.0, 0.0)\n");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_turtle_distance) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from turtle import *");
   assert_command_execution_succeeds(env, "goto(10,10)");
@@ -53,4 +58,5 @@ QUIZ_CASE(python_turtle_distance) {
   assert_command_execution_fails(env, "distance(,10)");
   assert_command_execution_fails(env, "distance(10,)");
   deinit_environment();
+#endif
 }

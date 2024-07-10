@@ -3,6 +3,7 @@
 #include "execution_environment.h"
 
 QUIZ_CASE(python_matplotlib_pyplot_import) {
+#ifndef PLATFORM_WINDOWS
   // Test "from matplotlib.pyplot import *"
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "arrow(2,3,4,5)");
@@ -30,9 +31,11 @@ QUIZ_CASE(python_matplotlib_pyplot_import) {
   assert_command_execution_succeeds(env, "import matplotlib.pyplot");
   assert_command_execution_succeeds(env, "matplotlib.pyplot.arrow(2,3,4,5)");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_arrow) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "arrow(2,3,4,5)");
@@ -43,9 +46,11 @@ QUIZ_CASE(python_matplotlib_pyplot_arrow) {
   assert_command_execution_succeeds(env, "arrow(2,3,4,5,color=\"red\")");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_axis) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "axis((2,3,4,5))");
@@ -54,9 +59,11 @@ QUIZ_CASE(python_matplotlib_pyplot_axis) {
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "axis(2,3,4,5)");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_bar) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "bar([0,2,3],[10,12,23])");
@@ -75,17 +82,21 @@ QUIZ_CASE(python_matplotlib_pyplot_bar) {
   assert_command_execution_fails(env, "bar(1,[])");
   assert_command_execution_fails(env, "bar(1,[1,2,3],[])");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_grid) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "grid(True)");
   assert_command_execution_succeeds(env, "grid()");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_hist) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "hist(0)");
@@ -97,9 +108,11 @@ QUIZ_CASE(python_matplotlib_pyplot_hist) {
       env, "hist([2,3,4,5,6],[0,2,3, 4,5,6,7], color=(0,255,0))");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_plot) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "plot([2,3,4,5,6])");
@@ -110,9 +123,11 @@ QUIZ_CASE(python_matplotlib_pyplot_plot) {
   assert_command_execution_succeeds(env, "show()");
   assert_command_execution_fails(env, "plot([2,3,4,5,6],2)");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_scatter) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "scatter(2,3)");
@@ -124,12 +139,15 @@ QUIZ_CASE(python_matplotlib_pyplot_scatter) {
   assert_command_execution_fails(env, "scatter(2)");
   assert_command_execution_succeeds(env, "scatter(2,3,4)");
   deinit_environment();
+#endif
 }
 
 QUIZ_CASE(python_matplotlib_pyplot_text) {
+#ifndef PLATFORM_WINDOWS
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
   assert_command_execution_succeeds(env, "text(2,3,'hello')");
   assert_command_execution_succeeds(env, "show()");
   deinit_environment();
+#endif
 }

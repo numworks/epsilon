@@ -16,9 +16,9 @@
 
 namespace Poincare::Internal {
 
-/* The LayoutCursor has two main attributes: m_layout and m_position
+/* The LayoutCursor has two main attributes: m_rootLayout and m_position
  *
- * m_layout is an HorizontalLayout, the cursor is left of the child at index
+ * m_rootLayout is an HorizontalLayout, the cursor is left of the child at index
  * m_position. If m_position == layout.numberOfChildren(), the cursor is on the
  * right of the HorizontalLayout.
  *
@@ -28,8 +28,8 @@ namespace Poincare::Internal {
  *     -> m_position == 5 -> "01234|"
  *
  * Ex: l = HorizontalLayout("01234") and the cursor is at "012|34"
- * It CAN'T be m_layout = "3" and m_position = 0.
- * It MUST be m_layout = Horizontal("01234") and m_position = 3
+ * It CAN'T be m_rootLayout = "3" and m_position = 0.
+ * It MUST be m_rootLayout = Horizontal("01234") and m_position = 3
  *
  * */
 
@@ -145,19 +145,19 @@ class LayoutBufferCursor final : public LayoutCursor {
       Poincare::JuniorLayout rootLayout = Poincare::JuniorLayout(),
       Tree* layout = nullptr,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
-      : LayoutCursor(0, -1), m_layout(rootLayout) {
+      : LayoutCursor(0, -1), m_rootLayout(rootLayout) {
     if (layout) {
       setLayout(layout, sideOfLayout);
     }
   }
 
   bool isUninitialized() const {
-    return m_layout.isUninitialized() || LayoutCursor::isUninitialized();
+    return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
   }
 
-  Poincare::JuniorLayout layoutBuffer() { return m_layout; }
+  Poincare::JuniorLayout layoutBuffer() { return m_rootLayout; }
   Rack* rootNode() const override {
-    return static_cast<Rack*>(const_cast<Tree*>(m_layout.tree()));
+    return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }
   Rack* cursorNode() const override { return rootNode() + m_cursorNode; }
 
@@ -187,7 +187,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
   void performBackspace() { execute(&TreeStackCursor::performBackspace); }
   void invalidateSizesAndPositions() override {
-    m_layout->invalidAllSizesPositionsAndBaselines();
+    m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
 
   void beautifyLeft(Poincare::Context* context);
@@ -265,8 +265,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
   bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
 
-  // Buffer of cursor's layout
-  Poincare::JuniorLayout m_layout;
+  Poincare::JuniorLayout m_rootLayout;
   // Cursor's node
   int m_cursorNode;
 };

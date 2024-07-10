@@ -28,7 +28,7 @@ void LayoutCursor::safeSetLayout(Layout layout,
 
 void LayoutCursor::safeSetPosition(int position) {
   assert(position >= 0);
-  assert(position <= RightmostPossibleCursorPosition(m_layout));
+  assert(position <= RightmostPossibleCursorPosition(m_rootLayout));
   assert(!isSelecting());
   LayoutCursor previousCursor = *this;
   m_position = position;
@@ -884,9 +884,9 @@ bool LayoutCursor::verticalMoveWithoutSelection(
 bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
     EmptyRectangle::State state) {
   bool result = false;
-  if (m_layout.isHorizontal()) {
+  if (m_rootLayout.isHorizontal()) {
     result =
-        static_cast<HorizontalLayout &>(m_layout).setEmptyVisibility(state);
+        static_cast<HorizontalLayout &>(m_rootLayout).setEmptyVisibility(state);
   }
   Layout leftL = leftLayout();
   if (!leftL.isUninitialized() &&
@@ -912,7 +912,7 @@ bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
 
 #if 0
 void LayoutCursor::invalidateSizesAndPositions() {
-  Layout layoutToInvalidate = m_layout;
+  Layout layoutToInvalidate = m_rootLayout;
   while (!layoutToInvalidate.parent().isUninitialized()) {
     layoutToInvalidate = layoutToInvalidate.parent();
   }
@@ -932,15 +932,15 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     move(OMG::Direction::Left(), false, &dummy);
     return;
   }
-  TreeRef m_layout = m_cursorReference;
-  TreeRef parent = rootNode()->parentOfDescendant(m_layout);
+  TreeRef m_rootLayout = m_cursorReference;
+  TreeRef parent = rootNode()->parentOfDescendant(m_rootLayout);
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
     assert(parent && !parent->isRackLayout());
     Tree* parentRack = rootNode()->parentOfDescendant(parent, &m_position);
     Tree* detached = NAry::DetachChildAtIndex(parentRack, m_position);
-    detached->moveTreeOverTree(m_layout);
+    detached->moveTreeOverTree(m_rootLayout);
     NAry::AddOrMergeChildAtIndex(parentRack, detached, m_position);
     m_cursorReference = parentRack;
     return;
@@ -962,7 +962,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
     Tree* fraction = parent;
-    assert(fraction->isFractionLayout() && fraction->child(1) == m_layout);
+    assert(fraction->isFractionLayout() && fraction->child(1) == m_rootLayout);
     Tree* numerator = fraction->child(0);
     m_position = numerator->numberOfChildren();
     int indexOfFraction;
@@ -974,7 +974,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     // Remove Fraction Node
     detached->removeNode();
     // Merge denominator into numerator
-    NAry::AddOrMergeChild(detached, m_layout);
+    NAry::AddOrMergeChild(detached, m_rootLayout);
     NAry::AddOrMergeChildAtIndex(parentOfFraction, detached, indexOfFraction);
     m_cursorReference = parentOfFraction;
     return;
@@ -1161,9 +1161,9 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
                              editionCursor.cursorNodeOffset())));
         bufferCursor->applyTreeStackCursor(editionCursor);
         /* The resulting TreeStack tree will be loaded back into
-         * m_layoutBuffer and TreeStack will be flushed. */
+         * m_rootLayoutBuffer and TreeStack will be flushed. */
       },
-      &executionContext, data, &m_layout);
+      &executionContext, data, &m_rootLayout);
 }
 
 }  // namespace Poincare::Internal

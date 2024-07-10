@@ -6,7 +6,7 @@
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
 
-namespace Poincare {
+namespace Poincare::API {
 
 /* JuniorPoolObject */
 
@@ -111,4 +111,4 @@ UserExpression SystemExpression::beautified() const {
 /* SystemFunction */
 /* SystemParametricFunction */
 
-}  // namespace Poincare
+}  // namespace Poincare::API

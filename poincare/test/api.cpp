@@ -2,7 +2,7 @@
 #include <poincare/k_tree.h>
 #include <quiz.h>
 
-using namespace Poincare;
+using namespace Poincare::API;
 
 QUIZ_CASE(pcj_api) {
   UserExpression ue = UserExpression::Builder(KDiv(1_e, "x"_e));

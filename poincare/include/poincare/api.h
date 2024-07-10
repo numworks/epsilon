@@ -9,12 +9,14 @@
 
 #include "preferences.h"
 
-namespace Poincare {
-
-namespace Internal {
+namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
-}  // namespace Internal
+}  // namespace Poincare::Internal
+
+namespace Poincare::API {
+
+using Layout = Poincare::Layout;
 
 class UserExpression;
 class SystemExpression;
@@ -222,6 +224,6 @@ class SystemParametricFunction : private JuniorPoolHandle {
    don't forget to prepare for approx in a integral approx
  */
 
-}  // namespace Poincare
+}  // namespace Poincare::API
 
 #endif

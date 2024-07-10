@@ -184,6 +184,9 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
+  // if (e->isDependency() || e->isSet()) {
+  //   return true;
+  // }
   Dimension childDim[e->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
@@ -489,7 +492,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       if (dim.isUnit()) {
         float index = Approximation::To<float>(e->child(1));
         if (index < INT8_MAX && index > INT8_MIN &&
-            std::round(index) == index && index != 0) {
+            std::round(index) == index) {
           // TODO: Handle/forbid index > int8_t
           assert(!std::isnan(index) &&
                  std::fabs(index) < static_cast<float>(INT8_MAX));

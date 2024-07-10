@@ -16,21 +16,22 @@
 
 namespace Poincare::Internal {
 
-/* The LayoutCursor has two main attributes: m_rootLayout and m_position
+/* The LayoutCursor has 3 main attributes:
+ *   - m_rootLayout: the root rack Layout
+ *   - m_cursorNode: the rack Tree (descendant of the root rack tree) in which
+ *                   the cursor is
+ *   - m_position: the index of the child of m_cursorNode. The cursor is left of
+ *                 that child. If m_position == m_cursorNode->numberOfChildren()
+ *                 the cursor is on the right of the last child of m_cursorNode.
  *
- * m_rootLayout is an HorizontalLayout, the cursor is left of the child at index
- * m_position. If m_position == layout.numberOfChildren(), the cursor is on the
- * right of the HorizontalLayout.
- *
- * Ex: l = HorizontalLayout("01234")
+ * Ex: l = "01234"_l
  *     -> m_position == 0 -> "|01234"
  *     -> m_position == 2 -> "01|234"
  *     -> m_position == 5 -> "01234|"
  *
- * Ex: l = HorizontalLayout("01234") and the cursor is at "012|34"
- * It CAN'T be m_rootLayout = "3" and m_position = 0.
- * It MUST be m_rootLayout = Horizontal("01234") and m_position = 3
- *
+ * m_cursorNode must be a rack:
+ * It CAN'T be m_cursorNode = "3" and m_position = 0.
+ * It MUST be m_cursorNode = l and m_position = 3
  * */
 
 class LayoutCursor {

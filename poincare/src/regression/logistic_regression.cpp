@@ -1,7 +1,6 @@
 #include "logistic_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -18,11 +17,11 @@ Poincare::Layout LogisticRegression::templateLayout() const {
 Poincare::UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KExp(KMult(-1_e, KB, "x"_e))))),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = UserExpression::FromDouble(modelCoefficients[2])});
 }
 
 double LogisticRegression::evaluate(const double* modelCoefficients,

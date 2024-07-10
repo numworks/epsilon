@@ -1,7 +1,6 @@
 #include "power_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -14,10 +13,10 @@ Poincare::Layout PowerRegression::templateLayout() const {
 Poincare::UserExpression PowerRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^b
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KMult(KA, KPow("x"_e, KB)),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
 }  // namespace Poincare::Regression

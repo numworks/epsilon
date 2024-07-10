@@ -1,7 +1,6 @@
 #include "quartic_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -15,14 +14,14 @@ Poincare::Layout QuarticRegression::templateLayout() const {
 Poincare::UserExpression QuarticRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^4+b*x^3+c*x^2+d*x+e
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 4_e)), KMult(KB, KPow("x"_e, 3_e)),
            KMult(KC, KPow("x"_e, 2_e)), KMult(KD, "x"_e), KE),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
-       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3]),
-       .KE = Poincare::NewExpression::Builder<double>(modelCoefficients[4])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = UserExpression::FromDouble(modelCoefficients[2]),
+       .KD = UserExpression::FromDouble(modelCoefficients[3]),
+       .KE = UserExpression::FromDouble(modelCoefficients[4])});
 }
 
 double QuarticRegression::evaluate(const double* modelCoefficients,

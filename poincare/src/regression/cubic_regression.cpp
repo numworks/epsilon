@@ -1,7 +1,6 @@
 #include "cubic_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -15,13 +14,13 @@ Poincare::Layout CubicRegression::templateLayout() const {
 Poincare::UserExpression CubicRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^3+b*x^2+c*x+d
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 3_e)), KMult(KB, KPow("x"_e, 2_e)),
            KMult(KC, "x"_e), KD),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
-       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = UserExpression::FromDouble(modelCoefficients[2]),
+       .KD = UserExpression::FromDouble(modelCoefficients[3])});
 }
 
 double CubicRegression::evaluate(const double* modelCoefficients,

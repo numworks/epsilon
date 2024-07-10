@@ -1,7 +1,6 @@
 #include "trigonometric_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/numeric/statistics.h>
 #include <poincare/old/trigonometry.h>
@@ -21,12 +20,12 @@ static double toRadians() {
 Poincare::UserExpression TrigonometricRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*sin(bx+c)+d
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2]),
-       .KD = Poincare::NewExpression::Builder<double>(modelCoefficients[3])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = UserExpression::FromDouble(modelCoefficients[2]),
+       .KD = UserExpression::FromDouble(modelCoefficients[3])});
 }
 
 double TrigonometricRegression::evaluate(const double* modelCoefficients,

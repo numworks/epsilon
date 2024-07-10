@@ -1,6 +1,6 @@
 #include "affine_regression.h"
 
-#include <poincare/expression.h>
+#include <poincare/api.h>
 #include <poincare/k_tree.h>
 
 namespace Poincare::Regression {
@@ -8,10 +8,10 @@ namespace Poincare::Regression {
 Poincare::UserExpression AffineRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x+b
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, "x"_e), KB),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
 double AffineRegression::evaluate(const double* modelCoefficients,

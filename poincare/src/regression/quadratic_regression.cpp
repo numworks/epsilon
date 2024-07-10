@@ -1,6 +1,5 @@
 #include "quadratic_regression.h"
 
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -13,11 +12,11 @@ Poincare::Layout QuadraticRegression::templateLayout() const {
 Poincare::UserExpression QuadraticRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^2+b*x+c
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 2_e)), KMult(KB, "x"_e), KC),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1]),
-       .KC = Poincare::NewExpression::Builder<double>(modelCoefficients[2])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = UserExpression::FromDouble(modelCoefficients[2])});
 }
 
 double QuadraticRegression::evaluate(const double* modelCoefficients,

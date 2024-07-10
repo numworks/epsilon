@@ -1,6 +1,5 @@
 #include "proportional_regression.h"
 
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
 namespace Poincare::Regression {
@@ -8,9 +7,9 @@ namespace Poincare::Regression {
 Poincare::UserExpression ProportionalRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KMult(KA, "x"_e),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0])});
 }
 
 double ProportionalRegression::evaluate(const double* modelCoefficients,

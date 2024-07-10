@@ -1,7 +1,6 @@
 #include "logarithmic_regression.h"
 
 #include <assert.h>
-#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
 namespace Poincare::Regression {
@@ -9,10 +8,10 @@ namespace Poincare::Regression {
 Poincare::UserExpression LogarithmicRegression::privateExpression(
     const double* modelCoefficients) const {
   // a+b*ln(x)
-  return Poincare::NewExpression::Create(
+  return UserExpression::Create(
       KAdd(KA, KMult(KB, KLn("x"_e))),
-      {.KA = Poincare::NewExpression::Builder<double>(modelCoefficients[0]),
-       .KB = Poincare::NewExpression::Builder<double>(modelCoefficients[1])});
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
 }  // namespace Poincare::Regression

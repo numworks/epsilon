@@ -1,10 +1,8 @@
 #include "regression.h"
 
 #include <omg/float.h>
-#include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/solver.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -30,8 +28,8 @@ Layout Regression::equationLayout(
   }
   UserExpression equation = UserExpression::Create(
       KEqual(KA, KB),
-      {.KA = Symbol::Builder(ySymbol, strlen(ySymbol)), .KB = formula});
-  return equation.createLayout(displayMode, significantDigits, nullptr);
+      {.KA = UserExpression::FromSymbol(ySymbol), .KB = formula});
+  return equation.createLayout();  // displayMode, significantDigits, nullptr);
 }
 
 Poincare::UserExpression Regression::expression(

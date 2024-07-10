@@ -1,7 +1,7 @@
 #ifndef POINCARE_REGRESSION_REGRESSION_H
 #define POINCARE_REGRESSION_REGRESSION_H
 
-#include <poincare/expression.h>
+#include <poincare/api.h>
 #include <poincare/old/context.h>
 #include <stdint.h>
 

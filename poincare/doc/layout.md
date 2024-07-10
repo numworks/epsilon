@@ -107,7 +107,9 @@ Most of them have a constructor named K + the name of the associated builtin + L
 - `KSumL()` builds a sum layout
 - etc.
 
-Special case: You can use the operator `"foo"_l` to build a rack containing only codepoints.
+Special cases:
+- `"a"_cl` is a shortcut for `KCodePointL<'a'>()`
+- `"abc"_l` is a shortcut for `KRackL("a"_cl, "b"_cl, "c"_cl)`
 
 _See the [layout/k_tree.h file](../src/layout/k_tree.h) for the full list of all literals._
 
@@ -127,7 +129,7 @@ AbsLayout
 
 ### Concatenation
 
-You can use `^` to concatenate 2 racks, 2 layouts, or a rack and a layout.
+You can use `^` to concatenate 2 racks, 2 layouts, or a rack and a layout into a rack.
 
 #### Example
 This expression
@@ -144,6 +146,11 @@ Rack
 │     └─ 'c'
 ├─ '*'
 └─ '2'
+```
+
+Other example:
+```cpp
+const Tree * quadraticLayout = "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 ```
 
 ## Layouter

@@ -195,15 +195,7 @@ Some specials literals with the suffix `_e` exist to write numbers in a readable
 
 ### Layouts
 
-KTrees to create layouts work in a similar fashion with:
- - an L suffix to the constructors, e.g. `KRackL`, `KAbsL`
- - `"a"_cl` is a shortcut for KCodePointL<'a'>()
- - `"abc"_l` is a shortcut for KRackL("a"_cl, "b"_cl, "c"a"_cl)
- - `^` can concatenate layouts and racks into racks
-
-```cpp
-const Tree * quadraticLayout = "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
-```
+_See [Layout constexpr definition](./layout.md#constexpr-definition)_
 
 ### Reusing KTrees
 

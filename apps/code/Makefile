@@ -30,6 +30,7 @@ app_code_test_src = $(addprefix apps/code/,\
 tests_src += $(addprefix apps/code/test/,\
   clipboard.cpp \
   python_variable_box.cpp\
+  templates.cpp \
 )
 
 app_code_src += $(app_code_test_src)

@@ -54,15 +54,6 @@ QUIZ_CASE(python_built_in) {
   deinit_environment();
 }
 
-QUIZ_CASE(python_template) {
-  assert_script_execution_succeeds(Code::ScriptTemplate::Squares()->content());
-  assert_script_execution_succeeds(
-      Code::ScriptTemplate::Mandelbrot()->content());
-  assert_script_execution_succeeds(
-      Code::ScriptTemplate::Polynomial()->content());
-  assert_script_execution_succeeds(Code::ScriptTemplate::Parabola()->content());
-}
-
 QUIZ_CASE(python_fixes) {
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_fails(env, "'abcd'*2**62");

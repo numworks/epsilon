@@ -9,12 +9,13 @@
 #include "dataset_adapter.h"
 
 namespace Poincare::Regression {
+using namespace API;
 
 Poincare::Layout LogisticRegression::templateLayout() const {
   return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
 }
 
-Poincare::UserExpression LogisticRegression::privateExpression(
+UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
   return UserExpression::Create(

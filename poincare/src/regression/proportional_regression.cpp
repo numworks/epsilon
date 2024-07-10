@@ -4,7 +4,9 @@
 
 namespace Poincare::Regression {
 
-Poincare::UserExpression ProportionalRegression::privateExpression(
+using namespace API;
+
+UserExpression ProportionalRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x
   return UserExpression::Create(

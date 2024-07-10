@@ -5,13 +5,14 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
 Poincare::Layout QuarticRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("4"_l) ^ "+b·x"_l ^ KSuperscriptL("3"_l) ^
          "+c·x"_l ^ KSuperscriptL("2"_l) ^ "+d·x+e"_l;
 }
 
-Poincare::UserExpression QuarticRegression::privateExpression(
+UserExpression QuarticRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^4+b*x^3+c*x^2+d*x+e
   return UserExpression::Create(

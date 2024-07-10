@@ -5,6 +5,7 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
 Layout ExponentialRegression::templateLayout() const {
   return m_isAbxForm ? "a·b"_l ^ KSuperscriptL("x"_l)

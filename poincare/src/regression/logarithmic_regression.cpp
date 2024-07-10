@@ -4,8 +4,9 @@
 #include <poincare/k_tree.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
-Poincare::UserExpression LogarithmicRegression::privateExpression(
+UserExpression LogarithmicRegression::privateExpression(
     const double* modelCoefficients) const {
   // a+b*ln(x)
   return UserExpression::Create(

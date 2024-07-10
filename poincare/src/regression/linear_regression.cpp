@@ -5,6 +5,7 @@
 #include "dataset_adapter.h"
 
 namespace Poincare::Regression {
+using namespace API;
 
 UserExpression LinearRegression::privateExpression(
     const double* modelCoefficients) const {

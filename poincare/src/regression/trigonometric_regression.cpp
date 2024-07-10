@@ -11,13 +11,14 @@
 #include "dataset_adapter.h"
 
 namespace Poincare::Regression {
+using namespace API;
 
 static double toRadians() {
   return M_PI / Poincare::Trigonometry::PiInAngleUnit(
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
-Poincare::UserExpression TrigonometricRegression::privateExpression(
+UserExpression TrigonometricRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*sin(bx+c)+d
   return UserExpression::Create(

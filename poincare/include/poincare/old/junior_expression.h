@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <poincare/api.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
@@ -108,6 +109,10 @@ class JuniorExpression : public OExpression {
  public:
   JuniorExpression() {}
   JuniorExpression(const OExpression& other) { *this = other; }
+
+  JuniorExpression(const API::UserExpression& ue) {
+    *this = Builder(ue.tree());
+  }
 
   NewExpression clone() const {
     return static_cast<NewExpression>(OExpression::clone());

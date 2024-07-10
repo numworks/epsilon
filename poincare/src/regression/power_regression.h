@@ -11,7 +11,7 @@ class PowerRegression : public TransformedRegression {
   Poincare::Layout templateLayout() const override;
 
  private:
-  Poincare::UserExpression privateExpression(
+  Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   bool applyLnOnX() const override { return true; }
   bool applyLnOnY() const override { return true; }

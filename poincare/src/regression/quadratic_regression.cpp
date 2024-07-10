@@ -4,12 +4,13 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
 Poincare::Layout QuadraticRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 }
 
-Poincare::UserExpression QuadraticRegression::privateExpression(
+UserExpression QuadraticRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^2+b*x+c
   return UserExpression::Create(

@@ -18,7 +18,7 @@ class AffineRegression : public Regression {
                   double y, Poincare::Context* context) const override;
 
  protected:
-  Poincare::UserExpression privateExpression(
+  Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   virtual int slopeCoefficientIndex() const { return 0; }
   virtual int yInterceptCoefficientIndex() const { return 1; }

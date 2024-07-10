@@ -19,7 +19,7 @@ class LogisticRegression : public Regression {
                   double y, Poincare::Context* context) const override;
 
  private:
-  Poincare::UserExpression privateExpression(
+  Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   double partialDerivate(const double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;

@@ -11,8 +11,8 @@
 #include <cmath>
 
 using namespace Poincare::Internal;
-
 namespace Poincare::Regression {
+using namespace API;
 
 Layout Regression::templateLayout() const {
   const char* layoutString = formula() + sizeof("y=") - 1;
@@ -32,8 +32,7 @@ Layout Regression::equationLayout(
   return equation.createLayout();  // displayMode, significantDigits, nullptr);
 }
 
-Poincare::UserExpression Regression::expression(
-    const double* modelCoefficients) const {
+UserExpression Regression::expression(const double* modelCoefficients) const {
   for (int i = 0; i < numberOfCoefficients(); i++) {
     if (std::isnan(modelCoefficients[i])) {
       return UserExpression();

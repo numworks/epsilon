@@ -5,12 +5,13 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
 Poincare::Layout PowerRegression::templateLayout() const {
   return "a·x"_l ^ KSuperscriptL("b"_l);
 }
 
-Poincare::UserExpression PowerRegression::privateExpression(
+UserExpression PowerRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^b
   return UserExpression::Create(

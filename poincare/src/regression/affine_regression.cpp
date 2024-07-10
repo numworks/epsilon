@@ -4,8 +4,9 @@
 #include <poincare/k_tree.h>
 
 namespace Poincare::Regression {
+using namespace API;
 
-Poincare::UserExpression AffineRegression::privateExpression(
+UserExpression AffineRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x+b
   return UserExpression::Create(

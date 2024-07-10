@@ -52,7 +52,8 @@ class Regression {
       const double* modelCoefficients, const char* ySymbol,
       int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
-  Poincare::UserExpression expression(const double* modelCoefficients) const;
+  Poincare::API::UserExpression expression(
+      const double* modelCoefficients) const;
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
@@ -64,7 +65,7 @@ class Regression {
            Poincare::Context* context) const;
 
  protected:
-  virtual Poincare::UserExpression privateExpression(
+  virtual Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const = 0;
 
   // Fit

@@ -176,8 +176,6 @@ QUIZ_CASE(poincare_layout_power) {
   c3.addEmptySquarePowerLayout(nullptr);
   assert_layout_serializes_to(c3.rootNode(),
                               "((1^\u00122\u0013)^\u00122\u0013)");
-#if 0  // TODO_PCJ: fails
   quiz_assert(c3.cursorNode() == c3.rootNode()->child(0)->child(0) &&
-              c3.position() == c3.rootNode()->numberOfChildren());
-#endif
+              c3.position() == c3.cursorNode()->numberOfChildren());
 }

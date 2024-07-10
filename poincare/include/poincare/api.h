@@ -54,7 +54,7 @@ class JuniorPoolHandle : public PoolHandle {
   // Eat the tree
   static JuniorPoolHandle Builder(Internal::Tree* tree);
 
-  static JuniorExpression Create(const Internal::Tree* structure,
+  static JuniorPoolHandle Create(const Internal::Tree* structure,
                                  Internal::ContextTrees ctx);
 
   /* Reference */
@@ -67,6 +67,8 @@ class JuniorPoolHandle : public PoolHandle {
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
+
+  operator const Internal::Tree*() const { return tree(); }
 };
 
 #if 0
@@ -98,6 +100,14 @@ class UserExpression : public JuniorPoolHandle {
   static UserExpression Builder(const Internal::Tree* tree);
   // Eat the tree
   static UserExpression Builder(Internal::Tree* tree);
+
+  static UserExpression FromFloat(float v);
+  static UserExpression FromDouble(double v);
+  static UserExpression FromInt(int v);
+  static UserExpression FromSymbol(const char* name);
+
+  static UserExpression Create(const Internal::Tree* structure,
+                               Internal::ContextTrees ctx);
 
   /**
    * Create a layout to represent the expression
@@ -135,8 +145,11 @@ class UserExpression : public JuniorPoolHandle {
   void guessAndUpdateComplexFormat();
 
  private:
+#if 0
+  // TODO_PCJ: move in the object
   Internal::ComplexFormat m_complexFormat;
   Internal::ComplexFormat m_angleUnit;  // gathered under a Preference Context ?
+#endif
 };
 
 /**

@@ -4,6 +4,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare::API {
@@ -63,6 +64,29 @@ UserExpression UserExpression::Builder(const Internal::Tree* tree) {
 UserExpression UserExpression::Builder(Internal::Tree* tree) {
   JuniorPoolHandle result = JuniorPoolHandle::Builder(tree);
   return static_cast<UserExpression&>(result);
+}
+
+UserExpression UserExpression::Create(const Internal::Tree* structure,
+                                      Internal::ContextTrees ctx) {
+  return Builder(Internal::PatternMatching::Create(structure, ctx));
+}
+
+UserExpression UserExpression::FromFloat(float v) {
+  return Builder(Internal::SharedTreeStack->pushFloat(v));
+}
+
+UserExpression UserExpression::FromDouble(double v) {
+  return Builder(Internal::SharedTreeStack->pushFloat(v));
+}
+
+UserExpression UserExpression::FromInt(int v) {
+  return Builder(Internal::Integer::Push(v));
+}
+
+UserExpression UserExpression::FromSymbol(const char* name) {
+  size_t length = strlen(name);
+  return UserExpression::Builder(
+      Internal::SharedTreeStack->pushUserSymbol(name, length + 1));
 }
 
 Layout UserExpression::createLayout(bool linearMode) const {

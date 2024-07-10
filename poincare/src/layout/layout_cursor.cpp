@@ -19,10 +19,10 @@
 namespace Poincare::Internal {
 
 #if 0
-void LayoutCursor::safeSetLayout(Layout layout,
+void LayoutCursor::safeSetCursorNode(Layout cursorNode,
                                  OMG::HorizontalDirection sideOfLayout) {
   LayoutCursor previousCursor = *this;
-  setLayout(layout, sideOfLayout);
+  setCursorNode(cursorNode, sideOfLayout);
   // Invalidate memoized info ?
 }
 
@@ -167,7 +167,7 @@ bool LayoutBufferCursor::beautifyRightOfRack(Rack* rack,
 bool LayoutBufferCursor::TreeStackCursor::beautifyRightOfRack(
     Rack* targetRack, Poincare::Context* context) {
   LayoutBufferCursor::TreeStackCursor tempCursor = *this;
-  tempCursor.setLayout(targetRack, OMG::Direction::Right());
+  tempCursor.setCursorNode(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
                                                                    context);
 }
@@ -378,7 +378,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
 
   // - Step 9 - Point to required position
   if (!childToPoint.isUninitialized()) {
-    setLayout(childToPoint, OMG::Direction::Left());
+    setCursorNode(childToPoint, OMG::Direction::Left());
   }
 
   // - Step 10 - Balance brackets
@@ -574,8 +574,8 @@ void LayoutCursor::prepareForExitingPosition() {
   /* When exiting a grid, the gray columns and rows will disappear, so
    * before leaving the grid, set the cursor position to a layout that will
    * stay valid when the grid will be re-entered. */
-  setLayout(grid->child(grid->closestNonGrayIndex(childIndex)),
-            OMG::Direction::Right());
+  setCursorNode(grid->child(grid->closestNonGrayIndex(childIndex)),
+                OMG::Direction::Right());
 }
 
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
@@ -597,16 +597,17 @@ int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
 
 /* Private */
 
-void LayoutCursor::setLayout(Tree* l, OMG::HorizontalDirection sideOfLayout) {
-  if (!l->isRackLayout()) {
+void LayoutCursor::setCursorNode(Tree* cursorNode,
+                                 OMG::HorizontalDirection sideOfLayout) {
+  if (!cursorNode->isRackLayout()) {
     int indexInParent;
     Rack* parent =
-        Rack::From(rootRack()->parentOfDescendant(l, &indexInParent));
+        Rack::From(rootRack()->parentOfDescendant(cursorNode, &indexInParent));
     setCursorRack(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
     return;
   }
-  setCursorRack(Rack::From(l));
+  setCursorRack(Rack::From(cursorNode));
   m_position = sideOfLayout.isLeft() ? leftmostPosition() : rightmostPosition();
 }
 
@@ -629,7 +630,7 @@ Tree* LayoutCursor::parentLayout(int* index) const {
 
 void LayoutCursor::setCursorRack(Rack* l, int childIndex,
                                  OMG::HorizontalDirection side) {
-  setLayout(l->child(childIndex), side);
+  setCursorNode(l->child(childIndex), side);
 }
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
@@ -724,9 +725,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
      * / -10                                       / -10
      *
      * */
-    setLayout(nextLayout->child(newIndex), direction.isLeft()
-                                               ? OMG::Direction::Right()
-                                               : OMG::Direction::Left());
+    setCursorNode(nextLayout->child(newIndex), direction.isLeft()
+                                                   ? OMG::Direction::Right()
+                                                   : OMG::Direction::Left());
     return true;
   }
 
@@ -775,8 +776,8 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
         rootRack()->commonAncestor(cursorRack(), previousLayout);
     assert(layoutAncestor);
     // Down goes left to right and up goes right to left
-    setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
-                                               : OMG::Direction::Right());
+    setCursorNode(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
+                                                   : OMG::Direction::Right());
     m_startOfSelection = m_position + (direction.isUp() ? 1 : -1);
   }
   return moved;
@@ -859,9 +860,9 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     if (nextIndex != k_cantMoveIndex) {
       if (nextIndex == k_outsideIndex) {
         assert(currentPosition != PositionInLayout::Middle);
-        setLayout(parentLayout, currentPosition == PositionInLayout::Left
-                                    ? OMG::Direction::Left()
-                                    : OMG::Direction::Right());
+        setCursorNode(parentLayout, currentPosition == PositionInLayout::Left
+                                        ? OMG::Direction::Left()
+                                        : OMG::Direction::Right());
       } else {
         assert(!parentLayout->isRackLayout());
         // We assume the new cursor is the same whatever the font
@@ -995,7 +996,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     assert(currentRow > 0 && grid->numberOfColumns() >= 2);
     int newIndex =
         grid->indexAtRowColumn(currentRow - 1, grid->numberOfColumns() - 2);
-    setLayout(grid->child(newIndex), OMG::HorizontalDirection::Right());
+    setCursorNode(grid->child(newIndex), OMG::HorizontalDirection::Right());
     // TODO trigger beautification here ?
     return;
   }
@@ -1014,13 +1015,13 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
       grid->deleteColumnAtIndex(currentColumn);
     }
     int newChildIndex = grid->indexAtRowColumn(currentRow, currentColumn);
-    setLayout(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
+    setCursorNode(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
     return;
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setLayout(rootRack()->parentOfDescendant(m_cursorReference),
-              OMG::Direction::Right());
+    setCursorNode(rootRack()->parentOfDescendant(m_cursorReference),
+                  OMG::Direction::Right());
   }
   assert(m_cursorReference->isRackLayout() &&
          (m_cursorReference == rootRack() ||
@@ -1042,7 +1043,7 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   Grid* grid = Grid::From(parent);
   int newChildIndex =
       grid->removeTrailingEmptyRowOrColumnAtChildIndex(currentChildIndex);
-  setLayout(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
+  setCursorNode(grid->child(newChildIndex), OMG::HorizontalDirection::Left());
 }
 
 void LayoutCursor::collapseSiblingsOfLayout(Layout* l) {

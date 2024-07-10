@@ -55,7 +55,7 @@ class LayoutCursor {
   // Getters and setters
   virtual Rack* rootRack() const = 0;
   virtual Rack* cursorRack() const = 0;
-  void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
+  void setCursorNode(Tree* l, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
@@ -69,7 +69,8 @@ class LayoutCursor {
 
 #if 0
   // These will call didEnterCurrentPosition
-  void safeSetLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
+  void safeSetCursorNode(Layout cursorNode, OMG::HorizontalDirection sideOfLayout);
+  void safeSetPosition(int position);
 #endif
   void safeSetPosition(int position) { setPosition(position); }  // TODO_PCJ
 
@@ -141,14 +142,14 @@ class LayoutBufferCursor final : public LayoutCursor {
 
  public:
   /* This constructor either set the cursor at the leftMost or rightmost
-   * position in the layout. */
+   * position in the cursorNode. */
   LayoutBufferCursor(
       Poincare::JuniorLayout rootLayout = Poincare::JuniorLayout(),
-      Tree* layout = nullptr,
+      Tree* cursorNode = nullptr,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : LayoutCursor(0, -1), m_rootLayout(rootLayout) {
-    if (layout) {
-      setLayout(layout, sideOfLayout);
+    if (cursorNode) {
+      setCursorNode(cursorNode, sideOfLayout);
     }
   }
 

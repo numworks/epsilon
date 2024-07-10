@@ -1,7 +1,6 @@
 #include <poincare/api.h>
 #include <poincare/k_tree.h>
-
-#include "helper.h"
+#include <quiz.h>
 
 using namespace Poincare;
 
@@ -12,4 +11,6 @@ QUIZ_CASE(pcj_api) {
   se.tree()->log();
   UserExpression ue2 = se.beautified();
   ue2.tree()->log();
+  Layout l = ue2.createLayout();
+  l.tree()->log();
 }

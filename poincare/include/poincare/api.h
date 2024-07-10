@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_API_H
 #define POINCARE_EXPRESSION_API_H
 
+#include <poincare/layout.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
 #include <poincare/src/expression/dimension_vector.h>
@@ -14,8 +15,6 @@ namespace Internal {
 class Tree;
 struct ContextTrees;
 }  // namespace Internal
-
-class Layout;
 
 class UserExpression;
 class SystemExpression;
@@ -77,7 +76,6 @@ class NewLayout : private JuniorPoolHandle {
   /* TODO */
   UserExpression parse();
 };
-
 #endif
 
 /**
@@ -99,7 +97,6 @@ class UserExpression : public JuniorPoolHandle {
   // Eat the tree
   static UserExpression Builder(Internal::Tree* tree);
 
-#if 0
   /**
    * Create a layout to represent the expression
    *
@@ -113,8 +110,7 @@ class UserExpression : public JuniorPoolHandle {
    *   may be turned into a char * easily.
    *   Div(a,b) will be rendered as a/b instead of Fraction(a,b) for instance.
    */
-  Layout createLayout(bool linearMode) const;
-#endif
+  Layout createLayout(bool linearMode = false) const;
 
   /**
    * Turn the UserExpression into a SystemExpression
@@ -186,7 +182,6 @@ class SystemExpression : public JuniorPoolHandle {
   Internal::Units::SIVector m_dimension;
 };
 
-#if 0
 /**
  * Compute as much stuff as possible before grapher or solver.
  *
@@ -226,7 +221,6 @@ class SystemParametricFunction : private JuniorPoolHandle {
    derivative on function or SE ?
    don't forget to prepare for approx in a integral approx
  */
-#endif
 
 }  // namespace Poincare
 

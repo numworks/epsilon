@@ -65,13 +65,11 @@ UserExpression UserExpression::Builder(Internal::Tree* tree) {
   return static_cast<UserExpression&>(result);
 }
 
-#if 0
-NewLayout UserExpression::createLayout(bool linearMode) const {
+Layout UserExpression::createLayout(bool linearMode) const {
   // TODO: Pass other optional parameters
-  return NewLayout::Builder(
-      Internal::Layoutter::LayoutExpression(tree()->clone(), linearMode));
+  return Layout::Builder(
+      Internal::Layouter::LayoutExpression(tree()->cloneTree(), linearMode));
 }
-#endif
 
 SystemExpression UserExpression::projected() const {
   // TODO: Pass context.

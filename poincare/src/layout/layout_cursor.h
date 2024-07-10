@@ -17,7 +17,7 @@
 namespace Poincare::Internal {
 
 /* The LayoutCursor has 3 main attributes:
- *   - m_rootLayout: the root rack Layout
+ *   - m_rootLayout: the root rack Layout (only in LayoutBufferCursor)
  *   - m_cursorRack: the rack Tree (descendant of the root rack tree) in which
  *                   the cursor is
  *   - m_position: the index of the child of m_cursorRack. The cursor is left of

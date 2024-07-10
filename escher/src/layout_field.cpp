@@ -205,7 +205,7 @@ bool LayoutField::findXNT(char* buffer, size_t bufferSize, int xntIndex,
                                                xntIndex, cycleSize);
   }
   return Poincare::Internal::FindXNTSymbol2D(cursor()->cursorRack(),
-                                             cursor()->rootNode(), buffer,
+                                             cursor()->rootRack(), buffer,
                                              bufferSize, xntIndex, cycleSize);
 }
 
@@ -216,7 +216,7 @@ void LayoutField::removePreviousXNT() {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  m_contentView.cursor()->setLayout(m_contentView.cursor()->rootNode(), side);
+  m_contentView.cursor()->setLayout(m_contentView.cursor()->rootRack(), side);
 }
 
 void LayoutField::reload(KDSize previousSize) {

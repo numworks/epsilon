@@ -90,8 +90,8 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   c1.safeSetPosition(2);
   c1.addFractionLayoutAndCollapseSiblings(nullptr);
   quiz_assert(
-      c1.rootNode()->treeIsIdenticalTo(KFracL("12"_l, "34"_l) ^ "+5"_l));
-  quiz_assert(c1.cursorRack() == c1.rootNode()->child(0)->child(1) &&
+      c1.rootRack()->treeIsIdenticalTo(KFracL("12"_l, "34"_l) ^ "+5"_l));
+  quiz_assert(c1.cursorRack() == c1.rootRack()->child(0)->child(1) &&
               c1.position() == 0);
 
   /*                     |
@@ -102,8 +102,8 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   Poincare::Internal::LayoutBufferCursor c2(l2, l2.tree(),
                                             OMG::Direction::Left());
   c2.addFractionLayoutAndCollapseSiblings(nullptr);
-  quiz_assert(c2.rootNode()->treeIsIdenticalTo(KFracL(""_l, "34"_l) ^ "+5"_l));
-  quiz_assert(c2.cursorRack() == c2.rootNode()->child(0)->child(0) &&
+  quiz_assert(c2.rootRack()->treeIsIdenticalTo(KFracL(""_l, "34"_l) ^ "+5"_l));
+  quiz_assert(c2.cursorRack() == c2.rootRack()->child(0)->child(0) &&
               c2.position() == 0);
 
   /*
@@ -115,9 +115,9 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   Poincare::Internal::LayoutBufferCursor c3(l3, l3.tree());
   c3.safeSetPosition(2);
   c3.addFractionLayoutAndCollapseSiblings(nullptr);
-  quiz_assert(c3.rootNode()->treeIsIdenticalTo(KFracL("1"_l, "2"_l) ^
+  quiz_assert(c3.rootRack()->treeIsIdenticalTo(KFracL("1"_l, "2"_l) ^
                                                KFracL("3"_l, "4"_l)));
-  quiz_assert(c3.cursorRack() == c3.rootNode()->child(1)->child(1) &&
+  quiz_assert(c3.cursorRack() == c3.rootRack()->child(1)->child(1) &&
               c3.position() == 0);
 
   /*
@@ -130,8 +130,8 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   c4.safeSetPosition(l4.numberOfChildren() - 1);
 #if 0  // TODO_PCJ: fails
   c4.addFractionLayoutAndCollapseSiblings(nullptr);
-  quiz_assert(c4.rootNode()->treeIsIdenticalTo(KRackL(KFracL("sin(x)cos(x)"_l, "2"_l)));
-  quiz_assert(c4.cursorRack() == c4.rootNode()->child(0)->child(1) &&
+  quiz_assert(c4.rootRack()->treeIsIdenticalTo(KRackL(KFracL("sin(x)cos(x)"_l, "2"_l)));
+  quiz_assert(c4.cursorRack() == c4.rootRack()->child(0)->child(1) &&
               c4.position() == 0);
 #endif
 }
@@ -145,9 +145,9 @@ QUIZ_CASE(poincare_layout_power) {
   Layout l1 = "12"_l;
   Poincare::Internal::LayoutBufferCursor c1(l1, l1.tree());
   c1.addEmptySquarePowerLayout(nullptr);
-  quiz_assert(c1.rootNode()->treeIsIdenticalTo("12"_l ^ KSuperscriptL("2"_l)));
-  quiz_assert(c1.cursorRack() == c1.rootNode() &&
-              c1.position() == c1.rootNode()->numberOfChildren());
+  quiz_assert(c1.rootRack()->treeIsIdenticalTo("12"_l ^ KSuperscriptL("2"_l)));
+  quiz_assert(c1.cursorRack() == c1.rootRack() &&
+              c1.position() == c1.rootRack()->numberOfChildren());
 
   /*                        2|
    *  2|                ( 2) |
@@ -157,10 +157,10 @@ QUIZ_CASE(poincare_layout_power) {
   Layout l2 = KRackL("1"_cl, KSuperscriptL("2"_l));
   Poincare::Internal::LayoutBufferCursor c2(l2, l2.tree()->child(1));
   c2.addEmptySquarePowerLayout(nullptr);
-  quiz_assert(c2.rootNode()->treeIsIdenticalTo(
+  quiz_assert(c2.rootRack()->treeIsIdenticalTo(
       KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l)));
-  quiz_assert(c2.cursorRack() == c2.rootNode() &&
-              c2.position() == c2.rootNode()->numberOfChildren());
+  quiz_assert(c2.cursorRack() == c2.rootRack() &&
+              c2.position() == c2.rootRack()->numberOfChildren());
 
   /*                             (    2|)
    * ( 2)|                       (( 2) |)
@@ -171,8 +171,8 @@ QUIZ_CASE(poincare_layout_power) {
   bool dummy;
   c3.move(OMG::Direction::Left(), false, &dummy);
   c3.addEmptySquarePowerLayout(nullptr);
-  quiz_assert(c3.rootNode()->treeIsIdenticalTo(KRackL(KParenthesesL(
+  quiz_assert(c3.rootRack()->treeIsIdenticalTo(KRackL(KParenthesesL(
       KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l)))));
-  quiz_assert(c3.cursorRack() == c3.rootNode()->child(0)->child(0) &&
+  quiz_assert(c3.cursorRack() == c3.rootRack()->child(0)->child(0) &&
               c3.position() == c3.cursorRack()->numberOfChildren());
 }

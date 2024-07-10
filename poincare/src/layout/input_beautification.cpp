@@ -75,7 +75,7 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
   Tree* node = layoutCursor->cursorRack();
-  Tree* root = layoutCursor->rootNode();
+  Tree* root = layoutCursor->rootRack();
   int position = layoutCursor->position();
 
   Tree* h = nullptr;
@@ -371,7 +371,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   }
   int childIndex;
   TreeRef firstOrderDerivative =
-      layoutCursor->rootNode()->parentOfDescendant(rack, &childIndex);
+      layoutCursor->rootRack()->parentOfDescendant(rack, &childIndex);
   if (firstOrderDerivative.isUninitialized() ||
       !firstOrderDerivative->isDiffLayout() ||
       childIndex != Derivative::k_variableIndex ||
@@ -411,11 +411,11 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
   if (!CodePointLayout::IsCodePoint(comma, ',')) {
     return false;
   }
-  TreeRef parenthesis = rack->parent(layoutCursor->rootNode());
+  TreeRef parenthesis = rack->parent(layoutCursor->rootRack());
   if (parenthesis.isUninitialized() || !parenthesis->isParenthesesLayout()) {
     return false;
   }
-  TreeRef horizontalParent = parenthesis->parent(layoutCursor->rootNode());
+  TreeRef horizontalParent = parenthesis->parent(layoutCursor->rootRack());
   if (horizontalParent.isUninitialized() || !horizontalParent->isRackLayout()) {
     return false;
   }
@@ -443,7 +443,7 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
   if (result) {
     // Replace the cursor if it's in variable slot
     TreeRef parent =
-        layoutCursor->cursorRack()->parent(layoutCursor->rootNode());
+        layoutCursor->cursorRack()->parent(layoutCursor->rootRack());
     assert(!parent.isUninitialized() && parent->isSumLayout());
     if (parent->indexOfChild(layoutCursor->cursorRack()) ==
         Parametric::k_variableIndex) {
@@ -462,7 +462,7 @@ bool InputBeautification::CompareAndBeautifyIdentifier(
   Aliases patternAliases = beautificationRule.listOfBeautifiedAliases;
   int firstIndex;
   const Tree* rack2 =
-      layoutCursor->rootNode()->parentOfDescendant(firstLayout, &firstIndex);
+      layoutCursor->rootRack()->parentOfDescendant(firstLayout, &firstIndex);
   RackLayoutDecoder decoder(rack2, firstIndex, firstIndex + identifierLength);
   *comparisonResult = patternAliases.maxDifferenceWith(&decoder);
   if (*comparisonResult == 0) {

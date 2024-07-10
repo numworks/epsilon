@@ -53,7 +53,7 @@ class LayoutCursor {
   bool isUninitialized() const { return cursorRack() == nullptr; }
 
   // Getters and setters
-  virtual Rack* rootNode() const = 0;
+  virtual Rack* rootRack() const = 0;
   virtual Rack* cursorRack() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
@@ -105,7 +105,7 @@ class LayoutCursor {
   virtual void setCursorRack(Rack* rack) = 0;
   void setCursorRack(Rack* rack, int childIndex, OMG::HorizontalDirection side);
   int cursorRackOffset() const {
-    return cursorRack()->block() - rootNode()->block();
+    return cursorRack()->block() - rootRack()->block();
   }
 
   Layout* leftLayout() const;
@@ -157,10 +157,10 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
 
   Poincare::JuniorLayout rootLayout() { return m_rootLayout; }
-  Rack* rootNode() const override {
+  Rack* rootRack() const override {
     return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }
-  Rack* cursorRack() const override { return rootNode() + m_cursorRack; }
+  Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
   void addEmptyMatrixLayout(Poincare::Context* context);
@@ -201,10 +201,10 @@ class LayoutBufferCursor final : public LayoutCursor {
     TreeStackCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
       setCursorRack(
-          Rack::From(Tree::FromBlocks(rootNode()->block() + cursorOffset)));
+          Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
     }
 
-    Rack* rootNode() const override {
+    Rack* rootRack() const override {
       return static_cast<Rack*>(
           Tree::FromBlocks(SharedTreeStack->firstBlock()));
     }
@@ -262,7 +262,7 @@ class LayoutBufferCursor final : public LayoutCursor {
                const void* data = nullptr);
   void setCursorRack(Rack* rack) override {
     // Don't use rack here as it may be invalid during execute
-    m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootNode()));
+    m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));
   }
   bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
 

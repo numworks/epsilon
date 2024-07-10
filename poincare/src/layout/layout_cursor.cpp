@@ -68,7 +68,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorXOffset = 0;
   cursorXOffset =
       RackLayout::SizeBetweenIndexes(cursorRack(), 0, m_position).width();
-  return Render::AbsoluteOrigin(cursorRack(), rootNode())
+  return Render::AbsoluteOrigin(cursorRack(), rootRack())
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
@@ -106,7 +106,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   Rack* oldRack = cursorRack();
   bool moved = false;
   bool wasEmpty = RackLayout::IsEmpty(cursorRack());
-  const Tree* oldGridParent = mostNestedGridParent(cursorRack(), rootNode());
+  const Tree* oldGridParent = mostNestedGridParent(cursorRack(), rootRack());
   // Perform the actual move
   if (direction.isVertical()) {
     moved = verticalMove(direction);
@@ -119,7 +119,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     *shouldRedrawLayout =
         selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
         // Redraw to show/hide the empty gray squares of the parent grid
-        mostNestedGridParent(cursorRack(), rootNode()) != oldGridParent;
+        mostNestedGridParent(cursorRack(), rootRack()) != oldGridParent;
     if (cursorRack() != oldRack) {
       // Beautify the layout that was just left
       *shouldRedrawLayout =
@@ -352,8 +352,8 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
   assert(cursorRack()->isRackLayout() &&
-         (cursorRack() == rootNode() ||
-          !rootNode()->parentOfDescendant(cursorRack())->isRackLayout()));
+         (cursorRack() == rootRack() ||
+          !rootRack()->parentOfDescendant(cursorRack())->isRackLayout()));
   NAry::AddOrMergeChildAtIndex(cursorRack(), ref, m_position);
   assert(cursorRack()->isRackLayout());
 
@@ -584,7 +584,7 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   }
   int indexInParent;
   const Tree* parent =
-      rootNode()->parentOfDescendant(cursorRack(), &indexInParent);
+      rootRack()->parentOfDescendant(cursorRack(), &indexInParent);
   return parent && parent->isFractionLayout() && indexInParent == 0 &&
          parent->child(1)->numberOfChildren() == 0;
 }
@@ -601,7 +601,7 @@ void LayoutCursor::setLayout(Tree* l, OMG::HorizontalDirection sideOfLayout) {
   if (!l->isRackLayout()) {
     int indexInParent;
     Rack* parent =
-        Rack::From(rootNode()->parentOfDescendant(l, &indexInParent));
+        Rack::From(rootRack()->parentOfDescendant(l, &indexInParent));
     setCursorRack(parent);
     m_position = indexInParent + (sideOfLayout.isRight());
     return;
@@ -624,7 +624,7 @@ Layout* LayoutCursor::rightLayout() const {
 }
 
 Tree* LayoutCursor::parentLayout(int* index) const {
-  return rootNode()->parentOfDescendant(cursorRack(), index);
+  return rootRack()->parentOfDescendant(cursorRack(), index);
 }
 
 void LayoutCursor::setCursorRack(Rack* l, int childIndex,
@@ -751,7 +751,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    *
    * */
   int nextLayoutIndex;
-  Tree* parent = rootNode()->parentOfDescendant(nextLayout, &nextLayoutIndex);
+  Tree* parent = rootRack()->parentOfDescendant(nextLayout, &nextLayoutIndex);
   const Tree* previousLayout = cursorRack();
   setCursorRack(Rack::From(parent));
   m_position = nextLayoutIndex + (direction.isRight());
@@ -772,7 +772,7 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorRack()) {
     Tree* layoutAncestor =
-        rootNode()->commonAncestor(cursorRack(), previousLayout);
+        rootRack()->commonAncestor(cursorRack(), previousLayout);
     assert(layoutAncestor);
     // Down goes left to right and up goes right to left
     setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
@@ -873,8 +873,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
       }
       return true;
     }
-    Tree* rack = rootNode()->parentOfDescendant(parentLayout);
-    parentLayout = rootNode()->parentOfDescendant(rack, &childIndex);
+    Tree* rack = rootRack()->parentOfDescendant(parentLayout);
+    parentLayout = rootRack()->parentOfDescendant(rack, &childIndex);
     currentPosition = PositionInLayout::Middle;
   }
   return false;
@@ -925,7 +925,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
 void LayoutBufferCursor::TreeStackCursor::privateDelete(
     DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
-         m_cursorReference->block() != rootNode()->block());
+         m_cursorReference->block() != rootRack()->block());
 
   if (deletionMethod == DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -933,12 +933,12 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     return;
   }
   TreeRef m_rootLayout = m_cursorReference;
-  TreeRef parent = rootNode()->parentOfDescendant(m_rootLayout);
+  TreeRef parent = rootRack()->parentOfDescendant(m_rootLayout);
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
     assert(parent && !parent->isRackLayout());
-    Tree* parentRack = rootNode()->parentOfDescendant(parent, &m_position);
+    Tree* parentRack = rootRack()->parentOfDescendant(parent, &m_position);
     Tree* detached = NAry::DetachChildAtIndex(parentRack, m_position);
     detached->moveTreeOverTree(m_rootLayout);
     NAry::AddOrMergeChildAtIndex(parentRack, detached, m_position);
@@ -967,7 +967,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     m_position = numerator->numberOfChildren();
     int indexOfFraction;
     Tree* parentOfFraction =
-        rootNode()->parentOfDescendant(fraction, &indexOfFraction);
+        rootRack()->parentOfDescendant(fraction, &indexOfFraction);
     m_position += indexOfFraction;
     Tree* detached =
         NAry::DetachChildAtIndex(parentOfFraction, indexOfFraction);
@@ -1019,12 +1019,12 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setLayout(rootNode()->parentOfDescendant(m_cursorReference),
+    setLayout(rootRack()->parentOfDescendant(m_cursorReference),
               OMG::Direction::Right());
   }
   assert(m_cursorReference->isRackLayout() &&
-         (m_cursorReference == rootNode() ||
-          !rootNode()->parentOfDescendant(m_cursorReference)->isRackLayout()));
+         (m_cursorReference == rootRack() ||
+          !rootRack()->parentOfDescendant(m_cursorReference)->isRackLayout()));
   assert(m_position != 0);
   m_position--;
   NAry::RemoveChildAtIndex(m_cursorReference, m_position);
@@ -1115,11 +1115,11 @@ void LayoutBufferCursor::TreeStackCursor::
    * fraction.
    */
   Tree* currentLayout = cursorRack();
-  Tree* currentParent = currentLayout->parent(rootNode());
+  Tree* currentParent = currentLayout->parent(rootRack());
   while (currentParent && (currentParent->isRackLayout() ||
                            currentParent->isAutocompletedPair())) {
     currentLayout = currentParent;
-    currentParent = currentLayout->parent(rootNode());
+    currentParent = currentLayout->parent(rootRack());
   }
   // If the top bracket does not have an horizontal parent, create one
   assert(currentLayout->isRackLayout());
@@ -1134,7 +1134,7 @@ void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {
   /* We need a rack cast there since the pointed rack is set before the
    * actual content of the buffer is modified. */
   setCursorRack(static_cast<Rack*>(
-      Tree::FromBlocks(rootNode()->block() + cursor.cursorRackOffset())));
+      Tree::FromBlocks(rootRack()->block() + cursor.cursorRackOffset())));
 }
 
 void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
@@ -1147,7 +1147,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
             static_cast<ExecutionContext*>(context);
         LayoutBufferCursor* bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the TreeStack
-        SharedTreeStack->clone(executionContext->m_cursor->rootNode());
+        SharedTreeStack->clone(executionContext->m_cursor->rootRack());
         // Create a temporary cursor
         TreeStackCursor editionCursor = bufferCursor->createTreeStackCursor();
         // Perform the action
@@ -1157,7 +1157,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
         /* We need a rack cast there since the pointed rack is set before the
          * actual content of the buffer is modified. */
         bufferCursor->setCursorRack(static_cast<Rack*>(
-            Tree::FromBlocks(bufferCursor->rootNode()->block() +
+            Tree::FromBlocks(bufferCursor->rootRack()->block() +
                              editionCursor.cursorRackOffset())));
         bufferCursor->applyTreeStackCursor(editionCursor);
         /* The resulting TreeStack tree will be loaded back into

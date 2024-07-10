@@ -19,6 +19,15 @@ on:
       ios:
        type: boolean
        default: 'true'
+      web:
+       type: boolean
+       default: 'true'
+      device:
+       type: boolean
+       default: 'true'
+      linux:
+       type: boolean
+       default: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -43,6 +52,7 @@ jobs:
           path: output/release/simulator/android/epsilon.apk
   device:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    if: ${{ github.event.inputs.device == 'true' }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -99,6 +109,7 @@ jobs:
           path: output/release/simulator/windows/epsilon.exe
   web:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    if: ${{ github.event.inputs.web == 'true' }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -114,6 +125,7 @@ jobs:
           retention-days: 7
   linux:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    if: ${{ github.event.inputs.linux == 'true' }}
     steps:
       - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3

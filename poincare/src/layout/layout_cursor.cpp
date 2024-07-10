@@ -933,15 +933,15 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     move(OMG::Direction::Left(), false, &dummy);
     return;
   }
-  TreeRef m_rootLayout = m_cursorRack;
-  TreeRef parent = rootRack()->parentOfDescendant(m_rootLayout);
+  TreeRef layout = m_cursorRack;
+  TreeRef parent = rootRack()->parentOfDescendant(layout);
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
     assert(parent && !parent->isRackLayout());
     Tree* parentRack = rootRack()->parentOfDescendant(parent, &m_position);
     Tree* detached = NAry::DetachChildAtIndex(parentRack, m_position);
-    detached->moveTreeOverTree(m_rootLayout);
+    detached->moveTreeOverTree(layout);
     NAry::AddOrMergeChildAtIndex(parentRack, detached, m_position);
     m_cursorRack = parentRack;
     return;
@@ -963,7 +963,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
     Tree* fraction = parent;
-    assert(fraction->isFractionLayout() && fraction->child(1) == m_rootLayout);
+    assert(fraction->isFractionLayout() && fraction->child(1) == layout);
     Tree* numerator = fraction->child(0);
     m_position = numerator->numberOfChildren();
     int indexOfFraction;
@@ -975,7 +975,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     // Remove Fraction Node
     detached->removeNode();
     // Merge denominator into numerator
-    NAry::AddOrMergeChild(detached, m_rootLayout);
+    NAry::AddOrMergeChild(detached, layout);
     NAry::AddOrMergeChildAtIndex(parentOfFraction, detached, indexOfFraction);
     m_cursorRack = parentOfFraction;
     return;

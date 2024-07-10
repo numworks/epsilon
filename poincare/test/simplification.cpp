@@ -714,7 +714,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_mm+1_km", "1.000001×_km");
   // simplifies_to("2_month×7_dm", "3681720×_s×_m");
   simplifies_to("2×_m/_m", "2");
-  simplifies_to("1234_g", "1234×_g");  // TODO: Fix prefix selection
+  simplifies_to("1234_g", "1.234×_kg");
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^-1");
@@ -744,7 +744,7 @@ QUIZ_CASE(pcj_simplification_unit) {
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km");
-  simplifies_to("1ᴇ-9_s", "1ᴇ-9×_s");  // TODO: Fix prefix selection
+  simplifies_to("1ᴇ-9_s", "1×_ns");
 
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
@@ -752,7 +752,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   //   simplifies_to("1m+x", "m+x" / "undef");
 
   // UnitFormat
-  simplifies_to("1609.344_m", "1609.344×_m",
+  simplifies_to("1609.344_m", "1.609344×_km",
                 {.m_unitFormat = UnitFormat::Imperial});
 
   // Constants

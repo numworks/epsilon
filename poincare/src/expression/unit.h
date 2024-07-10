@@ -89,6 +89,15 @@ class Representative {
         value, exponent, representativesOfSameDimension(),
         representativesOfSameDimension() + numberOfRepresentatives(), prefix);
   }
+  virtual const Representative* standardRepresentative(
+      double value, double exponent, UnitFormat unitFormat,
+      const Prefix** prefix, const Representative* forcedRepr) const {
+    if (forcedRepr) {
+      return defaultFindBestRepresentative(value, exponent, forcedRepr,
+                                           forcedRepr + 1, prefix);
+    }
+    return standardRepresentative(value, exponent, unitFormat, prefix);
+  }
 #if 0
     /* hasSpecialAdditionalExpressions return true if the unit has special
      * forms suchas as splits (for time and imperial units) or common

@@ -280,6 +280,20 @@ const Representative* Mass::standardRepresentative(
       value, exponent, &representatives.kilogram, &representatives.ton, prefix);
 }
 
+const Representative* Mass::standardRepresentative(
+    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
+    const Representative* forcedRepr) const {
+  // Grams and kilograms are split in two representatives.
+  if (forcedRepr == &representatives.gram ||
+      forcedRepr == &representatives.kilogram) {
+    return defaultFindBestRepresentative(value, exponent,
+                                         &representatives.kilogram,
+                                         &representatives.gram + 1, prefix);
+  }
+  return Representative::standardRepresentative(value, exponent, unitFormat,
+                                                prefix, forcedRepr);
+}
+
 #if 0
 int Mass::setAdditionalExpressions(double value, Expression* dest,
                                    int availableLength,

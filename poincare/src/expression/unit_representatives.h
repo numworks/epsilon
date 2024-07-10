@@ -160,6 +160,9 @@ class Mass : public Helper<Mass> {
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const override;
+  const Representative* standardRepresentative(
+      double value, double exponent, UnitFormat unitFormat,
+      const Prefix** prefix, const Representative* forcedRepr) const override;
 #if 0
   bool hasSpecialAdditionalExpressions(double value,
                                        UnitFormat unitFormat) const override {

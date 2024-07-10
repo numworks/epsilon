@@ -815,12 +815,11 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   }
   // Convert value to base units
   double baseValue = *value * std::pow(GetValue(unit), exponent);
-  // TODO: Actually find the best prefix and representative
   const Prefix* bestPrefix = optimizePrefix ? Prefix::EmptyPrefix() : nullptr;
   const Representative* bestRepresentative =
-      optimizeRepresentative ? GetRepresentative(unit)->standardRepresentative(
-                                   baseValue, exponent, unitFormat, &bestPrefix)
-                             : GetRepresentative(unit);
+      GetRepresentative(unit)->standardRepresentative(
+          baseValue, exponent, unitFormat, &bestPrefix,
+          optimizeRepresentative ? nullptr : GetRepresentative(unit));
   if (!optimizePrefix) {
     bestPrefix = Prefix::EmptyPrefix();
   }

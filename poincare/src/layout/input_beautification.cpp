@@ -62,20 +62,20 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* node = layoutCursor->cursorRack();
+  Tree* cursorRack = layoutCursor->cursorRack();
   int position = layoutCursor->position();
   if (position == 0) {
     return false;
   }
   return TokenizeAndBeautifyIdentifiers(
-      node, position - 1, k_simpleIdentifiersRules,
+      cursorRack, position - 1, k_simpleIdentifiersRules,
       k_lenOfSimpleIdentifiersRules, context, layoutCursor);
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* node = layoutCursor->cursorRack();
-  Tree* root = layoutCursor->rootRack();
+  Tree* cursorRack = layoutCursor->cursorRack();
+  Tree* rootRack = layoutCursor->rootRack();
   int position = layoutCursor->position();
 
   Tree* h = nullptr;
@@ -88,20 +88,20 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
      * insertion. --> Beautify left of its parent
      * For example "sqrt(|4+5)" -> "|" is left of "|4+5", so
      * beautify left of the parenthesis ("sqrt()"). */
-    TreeRef insertedLayout = node->parent(root);
+    TreeRef insertedLayout = cursorRack->parent(rootRack);
     if (insertedLayout.isUninitialized()) {
       return false;
     }
-    TreeRef horizontalParent = insertedLayout->parent(root);
+    TreeRef horizontalParent = insertedLayout->parent(rootRack);
     if (horizontalParent.isUninitialized() ||
         !horizontalParent->isRackLayout()) {
       return false;
     }
     h = horizontalParent;
     insertedLayoutIndex = horizontalParent->indexOfChild(insertedLayout);
-  } else if (node->isRackLayout()) {
+  } else if (cursorRack->isRackLayout()) {
     insertedLayoutIndex = position - 1;
-    h = node;
+    h = cursorRack;
   } else {
     return false;
   }

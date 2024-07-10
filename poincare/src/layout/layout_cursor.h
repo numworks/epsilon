@@ -155,7 +155,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
   }
 
-  Poincare::JuniorLayout layoutBuffer() { return m_rootLayout; }
+  Poincare::JuniorLayout rootLayout() { return m_rootLayout; }
   Rack* rootNode() const override {
     return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }

@@ -786,7 +786,7 @@ static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
                                      LayoutBufferCursor* result) {
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
-  LayoutBufferCursor tempCursor(result->layoutBuffer(), rack);
+  LayoutBufferCursor tempCursor(result->rootLayout(), rack);
   int n = rack->numberOfChildren();
   for (int i = 0; i <= n; i++) {
     /* In order to favor the ends in case of equality, we test the first, the
@@ -808,7 +808,7 @@ static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
 
 static LayoutBufferCursor ClosestCursorInDescendantsOfRack(
     LayoutBufferCursor currentCursor, Tree* rack, KDFont::Size font) {
-  LayoutBufferCursor result = LayoutBufferCursor(currentCursor.layoutBuffer(),
+  LayoutBufferCursor result = LayoutBufferCursor(currentCursor.rootLayout(),
                                                  rack, OMG::Direction::Left());
   ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), rack, font,
                            &result);

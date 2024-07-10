@@ -111,7 +111,7 @@ Special cases:
 - `"a"_cl` is a shortcut for `KCodePointL<'a'>()`
 - `"abc"_l` is a shortcut for `KRackL("a"_cl, "b"_cl, "c"_cl)`
 
-_See the [layout/k_tree.h file](../src/layout/k_tree.h) for the full list of all literals._
+See the [layout/k_tree.h file](../src/layout/k_tree.h) for the full list of all literals.
 
 #### Example
 This expression

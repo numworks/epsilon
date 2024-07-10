@@ -195,7 +195,7 @@ Some specials literals with the suffix `_e` exist to write numbers in a readable
 
 ### Layouts
 
-_See [Layout constexpr definition](./layout.md#constexpr-definition)_
+See [Layout constexpr definition](./layout.md#constexpr-definition)
 
 ### Reusing KTrees
 

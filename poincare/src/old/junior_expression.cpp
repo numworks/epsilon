@@ -990,19 +990,6 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   return result;
 }
 
-// TODO_PCJ: Rework this and its usage
-template <typename T>
-int Poincare::Matrix::ArrayInverse(T* array, int numberOfRows,
-                                   int numberOfColumns) {
-  return OMatrix::ArrayInverse(array, numberOfRows, numberOfColumns);
-}
-
-template int Poincare::Matrix::ArrayInverse<double>(double*, int, int);
-template int Poincare::Matrix::ArrayInverse<std::complex<float>>(
-    std::complex<float>*, int, int);
-template int Poincare::Matrix::ArrayInverse<std::complex<double>>(
-    std::complex<double>*, int, int);
-
 /* Point */
 
 Point Point::Builder(NewExpression x, NewExpression y) {

@@ -1,5 +1,7 @@
 #include "helpers.h"
 
+#include <poincare/old/matrix.h>
+
 namespace Poincare::Internal {
 
 template <typename T>
@@ -18,5 +20,13 @@ void MatrixMultiplicationOnArrays(T* m, T* n, T* result, int mNumberOfColumns,
 
 template void MatrixMultiplicationOnArrays(double*, double*, double*, int, int,
                                            int);
+
+template <typename T>
+int MatrixInverseOnArrays(T* array, int numberOfRows, int numberOfColumns) {
+  return OMatrix::ArrayInverse(array, numberOfRows, numberOfColumns);
+}
+
+template int MatrixInverseOnArrays(double* array, int numberOfRows,
+                                   int numberOfColumns);
 
 }  // namespace Poincare::Internal

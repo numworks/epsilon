@@ -423,10 +423,6 @@ class Matrix final : public JuniorExpression {
   NewExpression matrixChild(int i, int j);
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
-  /* Inverse the array in-place. Array has to be given in the form
-   * array[row_index][column_index] */
-  template <typename T>
-  static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
 };
 
 class Point final : public JuniorExpression {

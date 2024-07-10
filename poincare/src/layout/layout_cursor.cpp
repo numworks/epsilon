@@ -1161,8 +1161,6 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
             Tree::FromBlocks(bufferCursor->rootRack()->block() +
                              editionCursor.cursorRackOffset())));
         bufferCursor->applyTreeStackCursor(editionCursor);
-        /* The resulting TreeStack tree will be loaded back into
-         * m_rootLayoutBuffer and TreeStack will be flushed. */
       },
       &executionContext, data, &m_rootLayout);
 }

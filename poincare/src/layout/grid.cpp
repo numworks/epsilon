@@ -15,8 +15,8 @@ bool Grid::isEditing() const {
     return false;
   }
   // TODO isEditing is called a lot, is nextTree too expensive ?
-  Tree* cursorNode = RackLayout::s_layoutCursor->cursorNode();
-  return this <= cursorNode && cursorNode < nextTree();
+  Tree* cursorRack = RackLayout::s_layoutCursor->cursorRack();
+  return this <= cursorRack && cursorRack < nextTree();
 }
 
 const Rack* Grid::childAt(uint8_t col, uint8_t row) const {

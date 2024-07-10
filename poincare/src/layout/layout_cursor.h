@@ -18,20 +18,20 @@ namespace Poincare::Internal {
 
 /* The LayoutCursor has 3 main attributes:
  *   - m_rootLayout: the root rack Layout
- *   - m_cursorNode: the rack Tree (descendant of the root rack tree) in which
+ *   - m_cursorRack: the rack Tree (descendant of the root rack tree) in which
  *                   the cursor is
- *   - m_position: the index of the child of m_cursorNode. The cursor is left of
- *                 that child. If m_position == m_cursorNode->numberOfChildren()
- *                 the cursor is on the right of the last child of m_cursorNode.
+ *   - m_position: the index of the child of m_cursorRack. The cursor is left of
+ *                 that child. If m_position == m_cursorRack->numberOfChildren()
+ *                 the cursor is on the right of the last child of m_cursorRack.
  *
  * Ex: l = "01234"_l
  *     -> m_position == 0 -> "|01234"
  *     -> m_position == 2 -> "01|234"
  *     -> m_position == 5 -> "01234|"
  *
- * m_cursorNode must be a rack:
- * It CAN'T be m_cursorNode = "3" and m_position = 0.
- * It MUST be m_cursorNode = l and m_position = 3
+ * m_cursorRack must be a rack:
+ * It CAN'T be m_cursorRack = "3" and m_position = 0.
+ * It MUST be m_cursorRack = l and m_position = 3
  * */
 
 class LayoutCursor {
@@ -50,11 +50,11 @@ class LayoutCursor {
       : m_position(position), m_startOfSelection(startOfSelection) {}
 
   // Definition
-  bool isUninitialized() const { return cursorNode() == nullptr; }
+  bool isUninitialized() const { return cursorRack() == nullptr; }
 
   // Getters and setters
   virtual Rack* rootNode() const = 0;
-  virtual Rack* cursorNode() const = 0;
+  virtual Rack* cursorRack() const = 0;
   void setLayout(Tree* layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
@@ -63,7 +63,7 @@ class LayoutCursor {
   // Warning: LayoutSelection contains a Tree* and must be used right away
   LayoutSelection selection() const {
     return isSelecting()
-               ? LayoutSelection(cursorNode(), m_startOfSelection, m_position)
+               ? LayoutSelection(cursorRack(), m_startOfSelection, m_position)
                : LayoutSelection();
   }
 
@@ -102,10 +102,10 @@ class LayoutCursor {
 #endif
 
  protected:
-  virtual void setCursorNode(Rack* node) = 0;
-  void setCursorNode(Rack* node, int childIndex, OMG::HorizontalDirection side);
-  int cursorNodeOffset() const {
-    return cursorNode()->block() - rootNode()->block();
+  virtual void setCursorRack(Rack* rack) = 0;
+  void setCursorRack(Rack* rack, int childIndex, OMG::HorizontalDirection side);
+  int cursorRackOffset() const {
+    return cursorRack()->block() - rootNode()->block();
   }
 
   Layout* leftLayout() const;
@@ -113,7 +113,7 @@ class LayoutCursor {
   Tree* parentLayout(int* index) const;
 
   int leftmostPosition() const { return 0; }
-  int rightmostPosition() const { return cursorNode()->numberOfChildren(); }
+  int rightmostPosition() const { return cursorRack()->numberOfChildren(); }
   bool horizontalMove(OMG::HorizontalDirection direction);
   bool verticalMove(OMG::VerticalDirection direction);
   bool verticalMoveWithoutSelection(OMG::VerticalDirection direction);
@@ -160,7 +160,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   Rack* rootNode() const override {
     return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }
-  Rack* cursorNode() const override { return rootNode() + m_cursorNode; }
+  Rack* cursorRack() const override { return rootNode() + m_cursorRack; }
 
   /* Layout insertion */
   void addEmptyMatrixLayout(Poincare::Context* context);
@@ -200,7 +200,7 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     TreeStackCursor(int position, int startOfSelection, int cursorOffset)
         : LayoutCursor(position, startOfSelection) {
-      setCursorNode(
+      setCursorRack(
           Rack::From(Tree::FromBlocks(rootNode()->block() + cursorOffset)));
     }
 
@@ -208,7 +208,7 @@ class LayoutBufferCursor final : public LayoutCursor {
       return static_cast<Rack*>(
           Tree::FromBlocks(SharedTreeStack->firstBlock()));
     }
-    Rack* cursorNode() const override {
+    Rack* cursorRack() const override {
       return static_cast<Rack*>(static_cast<Tree*>(m_cursorReference));
     }
 
@@ -231,8 +231,8 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
-    void setCursorNode(Rack* node) override {
-      m_cursorReference = TreeRef(node);
+    void setCursorRack(Rack* rack) override {
+      m_cursorReference = TreeRef(rack);
     }
     struct BeautifyContext {
       int m_rackOffset;
@@ -247,7 +247,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     TreeRef m_cursorReference;
   };
   TreeStackCursor createTreeStackCursor() const {
-    return TreeStackCursor(m_position, m_startOfSelection, cursorNodeOffset());
+    return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }
   void applyTreeStackCursor(TreeStackCursor cursor);
   typedef void (TreeStackCursor::*Action)(Poincare::Context* context,
@@ -260,15 +260,14 @@ class LayoutBufferCursor final : public LayoutCursor {
   };
   void execute(Action action, Poincare::Context* context = nullptr,
                const void* data = nullptr);
-  void setCursorNode(Rack* node) override {
-    // Don't use node here as it may be invalid during execute
-    m_cursorNode = node - Rack::From(static_cast<Tree*>(rootNode()));
+  void setCursorRack(Rack* rack) override {
+    // Don't use rack here as it may be invalid during execute
+    m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootNode()));
   }
   bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
 
   Poincare::JuniorLayout m_rootLayout;
-  // Cursor's node
-  int m_cursorNode;
+  int m_cursorRack;
 };
 
 }  // namespace Poincare::Internal

@@ -91,7 +91,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   c1.addFractionLayoutAndCollapseSiblings(nullptr);
   quiz_assert(
       c1.rootNode()->treeIsIdenticalTo(KFracL("12"_l, "34"_l) ^ "+5"_l));
-  quiz_assert(c1.cursorNode() == c1.rootNode()->child(0)->child(1) &&
+  quiz_assert(c1.cursorRack() == c1.rootNode()->child(0)->child(1) &&
               c1.position() == 0);
 
   /*                     |
@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
                                             OMG::Direction::Left());
   c2.addFractionLayoutAndCollapseSiblings(nullptr);
   quiz_assert(c2.rootNode()->treeIsIdenticalTo(KFracL(""_l, "34"_l) ^ "+5"_l));
-  quiz_assert(c2.cursorNode() == c2.rootNode()->child(0)->child(0) &&
+  quiz_assert(c2.cursorRack() == c2.rootNode()->child(0)->child(0) &&
               c2.position() == 0);
 
   /*
@@ -117,7 +117,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
   c3.addFractionLayoutAndCollapseSiblings(nullptr);
   quiz_assert(c3.rootNode()->treeIsIdenticalTo(KFracL("1"_l, "2"_l) ^
                                                KFracL("3"_l, "4"_l)));
-  quiz_assert(c3.cursorNode() == c3.rootNode()->child(1)->child(1) &&
+  quiz_assert(c3.cursorRack() == c3.rootNode()->child(1)->child(1) &&
               c3.position() == 0);
 
   /*
@@ -131,7 +131,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
 #if 0  // TODO_PCJ: fails
   c4.addFractionLayoutAndCollapseSiblings(nullptr);
   quiz_assert(c4.rootNode()->treeIsIdenticalTo(KRackL(KFracL("sin(x)cos(x)"_l, "2"_l)));
-  quiz_assert(c4.cursorNode() == c4.rootNode()->child(0)->child(1) &&
+  quiz_assert(c4.cursorRack() == c4.rootNode()->child(0)->child(1) &&
               c4.position() == 0);
 #endif
 }
@@ -146,7 +146,7 @@ QUIZ_CASE(poincare_layout_power) {
   Poincare::Internal::LayoutBufferCursor c1(l1, l1.tree());
   c1.addEmptySquarePowerLayout(nullptr);
   quiz_assert(c1.rootNode()->treeIsIdenticalTo("12"_l ^ KSuperscriptL("2"_l)));
-  quiz_assert(c1.cursorNode() == c1.rootNode() &&
+  quiz_assert(c1.cursorRack() == c1.rootNode() &&
               c1.position() == c1.rootNode()->numberOfChildren());
 
   /*                        2|
@@ -159,7 +159,7 @@ QUIZ_CASE(poincare_layout_power) {
   c2.addEmptySquarePowerLayout(nullptr);
   quiz_assert(c2.rootNode()->treeIsIdenticalTo(
       KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l)));
-  quiz_assert(c2.cursorNode() == c2.rootNode() &&
+  quiz_assert(c2.cursorRack() == c2.rootNode() &&
               c2.position() == c2.rootNode()->numberOfChildren());
 
   /*                             (    2|)
@@ -173,6 +173,6 @@ QUIZ_CASE(poincare_layout_power) {
   c3.addEmptySquarePowerLayout(nullptr);
   quiz_assert(c3.rootNode()->treeIsIdenticalTo(KRackL(KParenthesesL(
       KParenthesesL("1"_l ^ KSuperscriptL("2"_l)) ^ KSuperscriptL("2"_l)))));
-  quiz_assert(c3.cursorNode() == c3.rootNode()->child(0)->child(0) &&
-              c3.position() == c3.cursorNode()->numberOfChildren());
+  quiz_assert(c3.cursorRack() == c3.rootNode()->child(0)->child(0) &&
+              c3.position() == c3.cursorRack()->numberOfChildren());
 }

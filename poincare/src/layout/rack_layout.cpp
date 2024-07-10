@@ -24,7 +24,7 @@ KDCoordinate RackLayout::Baseline(const Rack* node) {
 }
 
 bool RackLayout::ShouldDrawEmptyBaseAt(const Rack* node, int p) {
-  return !(s_layoutCursor && s_layoutCursor->cursorNode() == node &&
+  return !(s_layoutCursor && s_layoutCursor->cursorRack() == node &&
            s_layoutCursor->position() == p);
 }
 
@@ -248,7 +248,7 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Rack* node) {
   if (!RackLayout::s_layoutCursor) {
     return true;
   }
-  if (node == s_layoutCursor->cursorNode()) {
+  if (node == s_layoutCursor->cursorRack()) {
     return false;
   }
   return true;

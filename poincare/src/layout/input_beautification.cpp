@@ -62,7 +62,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* node = layoutCursor->cursorNode();
+  Tree* node = layoutCursor->cursorRack();
   int position = layoutCursor->position();
   if (position == 0) {
     return false;
@@ -74,7 +74,7 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     LayoutCursor* layoutCursor, Poincare::Context* context) {
-  Tree* node = layoutCursor->cursorNode();
+  Tree* node = layoutCursor->cursorRack();
   Tree* root = layoutCursor->rootNode();
   int position = layoutCursor->position();
 
@@ -340,9 +340,9 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
   cursorForInsertion.setPosition(indexOfPipeKey);
   LayoutBufferCursor::TreeStackCursor::InsertLayoutContext data{toInsert};
   cursorForInsertion.insertLayout(nullptr, &data);
-  if (cursor->cursorNode() == rack &&
+  if (cursor->cursorRack() == rack &&
       cursor->position() == indexOfPipeKey + 1) {
-    cursor->setLayout(cursorForInsertion.cursorNode(),
+    cursor->setLayout(cursorForInsertion.cursorRack(),
                       OMG::Direction::Left());  // safe?
   }
   return true;
@@ -383,7 +383,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   NAry::RemoveChildAtIndex(rack, indexOfSuperscript);
   TreeRef inserted =
       firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
-  if (layoutCursor->cursorNode() == rack &&
+  if (layoutCursor->cursorRack() == rack &&
       layoutCursor->position() > rack->numberOfChildren()) {
     layoutCursor->setLayout(inserted, OMG::Direction::Right());
   }
@@ -443,9 +443,9 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
   if (result) {
     // Replace the cursor if it's in variable slot
     TreeRef parent =
-        layoutCursor->cursorNode()->parent(layoutCursor->rootNode());
+        layoutCursor->cursorRack()->parent(layoutCursor->rootNode());
     assert(!parent.isUninitialized() && parent->isSumLayout());
-    if (parent->indexOfChild(layoutCursor->cursorNode()) ==
+    if (parent->indexOfChild(layoutCursor->cursorRack()) ==
         Parametric::k_variableIndex) {
       layoutCursor->setLayout(parent->child(Parametric::k_lowerBoundIndex),
                               OMG::Direction::Left());
@@ -500,11 +500,11 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
 
   // Remove layout
   int numberOfRemovedLayouts = endIndex - startIndex + 1;
-  bool cursorIsInRemovedLayouts = layoutCursor->cursorNode() == rack &&
+  bool cursorIsInRemovedLayouts = layoutCursor->cursorRack() == rack &&
                                   layoutCursor->position() > startIndex &&
                                   layoutCursor->position() <= endIndex;
   bool cursorIsAfterRemovedLayouts =
-      layoutCursor->cursorNode() == rack && layoutCursor->position() > endIndex;
+      layoutCursor->cursorRack() == rack && layoutCursor->position() > endIndex;
   while (endIndex >= startIndex) {
     NAry::RemoveChildAtIndex(rack, endIndex);
     endIndex--;
@@ -557,7 +557,7 @@ bool InputBeautification::CreateParametersList(
   int parameterIndex = 0;
   Tree* currentParameter = KRackL()->cloneTree();
 
-  int cursorPosition = layoutCursor->cursorNode() == paramsString
+  int cursorPosition = layoutCursor->cursorRack() == paramsString
                            ? layoutCursor->position()
                            : -1;
   LayoutBufferCursor::TreeStackCursor newCursor =
@@ -602,7 +602,7 @@ bool InputBeautification::CreateParametersList(
   }
 
   if (!newCursor.isUninitialized()) {
-    layoutCursor->setLayout(newCursor.cursorNode(),
+    layoutCursor->setLayout(newCursor.cursorRack(),
                             OMG::HorizontalDirection::Left());
   }
   return true;

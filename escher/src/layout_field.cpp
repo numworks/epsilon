@@ -176,7 +176,7 @@ size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,
     *cursorOffset = -1;
   } else {
     memcpy(buffer, reinterpret_cast<char*>(layout().tree()), size);
-    *cursorOffset = reinterpret_cast<char*>(cursor()->cursorNode()) -
+    *cursorOffset = reinterpret_cast<char*>(cursor()->cursorRack()) -
                     reinterpret_cast<char*>(layout().tree());
     *position = cursor()->position();
   }
@@ -199,12 +199,12 @@ bool LayoutField::prepareToEdit() {
 bool LayoutField::findXNT(char* buffer, size_t bufferSize, int xntIndex,
                           size_t* cycleSize) {
   if (linearMode()) {
-    Poincare::Internal::RackLayoutDecoder decoder(cursor()->cursorNode(),
+    Poincare::Internal::RackLayoutDecoder decoder(cursor()->cursorRack(),
                                                   cursor()->position());
     return Poincare::Internal::FindXNTSymbol1D(decoder, buffer, bufferSize,
                                                xntIndex, cycleSize);
   }
-  return Poincare::Internal::FindXNTSymbol2D(cursor()->cursorNode(),
+  return Poincare::Internal::FindXNTSymbol2D(cursor()->cursorRack(),
                                              cursor()->rootNode(), buffer,
                                              bufferSize, xntIndex, cycleSize);
 }

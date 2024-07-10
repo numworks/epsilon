@@ -6,11 +6,11 @@ using namespace Poincare::API;
 
 QUIZ_CASE(pcj_api) {
   UserExpression ue = UserExpression::Builder(KDiv(1_e, "x"_e));
-  ue.tree()->log();
+  quiz_assert(ue.tree()->treeIsIdenticalTo(KDiv(1_e, "x"_e)));
   SystemExpression se = ue.projected();
-  se.tree()->log();
+  quiz_assert(se.tree()->treeIsIdenticalTo(KPow("x"_e, -1_e)));
   UserExpression ue2 = se.beautified();
-  ue2.tree()->log();
+  quiz_assert(ue2.tree()->treeIsIdenticalTo(KDiv(1_e, "x"_e)));
   Layout l = ue2.createLayout();
-  l.tree()->log();
+  quiz_assert(l.tree()->treeIsIdenticalTo(KRackL(KFracL("1"_l, "x"_l))));
 }

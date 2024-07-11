@@ -11,7 +11,7 @@ void assert_latex_layouts_to(const char* latex, const Tree* expectedLayout) {
   l->removeTree();
 }
 
-QUIZ_CASE(poincare_latex_to_layout) {
+QUIZ_CASE(pcj_latex_to_layout) {
   assert_latex_layouts_to("a-b", "a-b"_l);
   assert_latex_layouts_to("a\\ -{\\ b}", "a-b"_l);
   assert_latex_layouts_to("\\left(a-b\\right)+2",
@@ -39,7 +39,7 @@ void assert_layout_convert_to_latex(const Tree* l, const char* latex) {
                                latex);
 }
 
-QUIZ_CASE(poincare_layout_to_latex) {
+QUIZ_CASE(pcj_layout_to_latex) {
   assert_layout_convert_to_latex(
       KRackL(
           "1"_cl, "+"_cl,

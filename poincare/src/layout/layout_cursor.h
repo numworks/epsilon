@@ -206,7 +206,7 @@ class LayoutBufferCursor final : public LayoutCursor {
           Tree::FromBlocks(SharedTreeStack->firstBlock()));
     }
     Rack* cursorRack() const override {
-      return static_cast<Rack*>(static_cast<Tree*>(m_cursorRack));
+      return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
     }
 
     // TreeStackCursor Actions
@@ -228,7 +228,7 @@ class LayoutBufferCursor final : public LayoutCursor {
 
     void privateDelete(DeletionMethod deletionMethod,
                        bool deletionAppliedToParent);
-    void setCursorRack(Rack* rack) override { m_cursorRack = TreeRef(rack); }
+    void setCursorRack(Rack* rack) override { m_cursorRackRef = TreeRef(rack); }
     struct BeautifyContext {
       int m_rackOffset;
       mutable bool m_shouldRedraw;
@@ -239,7 +239,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     void beautifyLeftAction(Poincare::Context* context,
                             const void* /* no arg */);
 
-    TreeRef m_cursorRack;
+    TreeRef m_cursorRackRef;
   };
   TreeStackCursor createTreeStackCursor() const {
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());

@@ -554,7 +554,7 @@ void LayoutBufferCursor::TreeStackCursor::deleteAndResetSelection(
   int selectionLeftBound = selec.leftPosition();
   int selectionRightBound = selec.rightPosition();
   for (int i = selectionLeftBound; i < selectionRightBound; i++) {
-    NAry::RemoveChildAtIndex(m_cursorRack, selectionLeftBound);
+    NAry::RemoveChildAtIndex(m_cursorRackRef, selectionLeftBound);
   }
   m_position = selectionLeftBound;
   stopSelecting();
@@ -926,14 +926,14 @@ void LayoutCursor::invalidateSizesAndPositions() {
 void LayoutBufferCursor::TreeStackCursor::privateDelete(
     DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
-         m_cursorRack->block() != rootRack()->block());
+         m_cursorRackRef->block() != rootRack()->block());
 
   if (deletionMethod == DeletionMethod::MoveLeft) {
     bool dummy = false;
     move(OMG::Direction::Left(), false, &dummy);
     return;
   }
-  TreeRef layout = m_cursorRack;
+  TreeRef layout = m_cursorRackRef;
   TreeRef parent = rootRack()->parentOfDescendant(layout);
 
   if (deletionMethod == DeletionMethod::DeleteParent) {
@@ -943,7 +943,7 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     Tree* detached = NAry::DetachChildAtIndex(parentRack, m_position);
     detached->moveTreeOverTree(layout);
     NAry::AddOrMergeChildAtIndex(parentRack, detached, m_position);
-    m_cursorRack = parentRack;
+    m_cursorRackRef = parentRack;
     return;
   }
   if (deletionMethod == DeletionMethod::AutocompletedBracketPairMakeTemporary) {
@@ -977,14 +977,14 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
     // Merge denominator into numerator
     NAry::AddOrMergeChild(detached, layout);
     NAry::AddOrMergeChildAtIndex(parentOfFraction, detached, indexOfFraction);
-    m_cursorRack = parentOfFraction;
+    m_cursorRackRef = parentOfFraction;
     return;
   }
   if (deletionMethod == DeletionMethod::TwoRowsLayoutMoveFromLowertoUpper) {
     assert(deletionAppliedToParent);
     assert(parent->isBinomialLayout());
     int newIndex = Binomial::k_nIndex;
-    m_cursorRack = parent->child(newIndex);
+    m_cursorRackRef = parent->child(newIndex);
     m_position = rightmostPosition();
     return;
   }
@@ -1020,15 +1020,15 @@ void LayoutBufferCursor::TreeStackCursor::privateDelete(
   }
   assert(deletionMethod == DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setCursorNode(rootRack()->parentOfDescendant(m_cursorRack),
+    setCursorNode(rootRack()->parentOfDescendant(m_cursorRackRef),
                   OMG::Direction::Right());
   }
-  assert(m_cursorRack->isRackLayout() &&
-         (m_cursorRack == rootRack() ||
-          !rootRack()->parentOfDescendant(m_cursorRack)->isRackLayout()));
+  assert(m_cursorRackRef->isRackLayout() &&
+         (m_cursorRackRef == rootRack() ||
+          !rootRack()->parentOfDescendant(m_cursorRackRef)->isRackLayout()));
   assert(m_position != 0);
   m_position--;
-  NAry::RemoveChildAtIndex(m_cursorRack, m_position);
+  NAry::RemoveChildAtIndex(m_cursorRackRef, m_position);
 }
 
 void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
@@ -1126,7 +1126,7 @@ void LayoutBufferCursor::TreeStackCursor::
   assert(currentLayout->isRackLayout());
   TreeRef ref = cursorRack();
   AutocompletedPair::BalanceBrackets(currentLayout, ref, &m_position);
-  m_cursorRack = static_cast<Tree*>(ref);
+  m_cursorRackRef = static_cast<Tree*>(ref);
 }
 
 void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {

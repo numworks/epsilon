@@ -322,13 +322,13 @@ $(addprefix regression/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-  old/helper.cpp \
   old/approximation.cpp \
   old/derivative.cpp \
   old/distribution.cpp \
   old/erf_inv.cpp \
   old/expression_properties.cpp \
   old/expression_to_layout.cpp \
+  old/helper.cpp \
   old/layout.cpp \
   old/layout_serialization.cpp \
   old/layout_to_expression.cpp \

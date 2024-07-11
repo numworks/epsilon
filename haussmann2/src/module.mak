@@ -68,7 +68,7 @@ endef
 # ..._for_flavored_module, <module with dot-separated flavors>
 # $1 might be prefixed with an arch's directory.
 sources_for_flavored_module = $(call _flavor_filtered_module_variable,$1,SOURCES)
-sflags_for_flavored_module = $(call _flavor_filtered_module_variable,$1,SFLAGS)
+sflags_for_flavored_module = $(SFLAGS_$(call name_for_flavored_target,$1))
 ldflags_for_flavored_module = $(call _flavor_filtered_module_variable,$1,LDFLAGS)
 lddeps_for_flavored_module = $(call _flavor_filtered_module_variable,$1,LDDEPS)
 priority_targets_for_flavored_module = $(call _flavor_filtered_module_variable,$1,PRIORITY_TARGETS)

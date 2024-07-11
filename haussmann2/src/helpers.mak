@@ -50,9 +50,9 @@ HELP_OTHER_TARGET_$1 := $2
 )
 endef
 
-# Errors out if the path is absolute or contains returns to parent directory.
-# This is used in make clean to forbid removing a directory out of the building
-# tree.
+# Errors out if the path is absolute, or if it contains returns to parent
+# directory (e.g. a/../b). This is used in make clean to forbid removing a
+# directory out of the building tree.
 # assert_relative_descendant, <path>
 define assert_relative_descendant
 $(if $(filter /% ~/%,$1/.)$(findstring ..,$1/.),$(error "Error: the path cannot contain .. and must be relative"),)

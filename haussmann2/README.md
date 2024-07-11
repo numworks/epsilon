@@ -11,7 +11,7 @@ There are two types of targets:
 
 Build is controlled by variables that can be supplied on the command line:
 - `DEBUG`: 0 or 1
-- `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORMto become the name of the host environment.
+- `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORM to become the name of the host environment.
 - `VERBOSE`: set to 1 to print the commands as they are exectuted
 
 ## Including Haussmann in a project

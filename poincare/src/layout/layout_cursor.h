@@ -28,10 +28,6 @@ namespace Poincare::Internal {
  *     -> m_position == 0 -> "|01234"
  *     -> m_position == 2 -> "01|234"
  *     -> m_position == 5 -> "01234|"
- *
- * m_cursorRack must be a rack:
- * It CAN'T be m_cursorRack = "3" and m_position = 0.
- * It MUST be m_cursorRack = l and m_position = 3
  * */
 
 class LayoutCursor {

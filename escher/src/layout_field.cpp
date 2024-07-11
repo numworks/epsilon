@@ -216,8 +216,8 @@ void LayoutField::removePreviousXNT() {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  m_contentView.cursor()->setCursorNode(m_contentView.cursor()->rootRack(),
-                                        side);
+  m_contentView.cursor()->moveCursorToLayout(m_contentView.cursor()->rootRack(),
+                                             side);
 }
 
 void LayoutField::reload(KDSize previousSize) {

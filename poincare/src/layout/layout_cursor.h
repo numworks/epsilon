@@ -51,7 +51,7 @@ class LayoutCursor {
   // Getters and setters
   virtual Rack* rootRack() const = 0;
   virtual Rack* cursorRack() const = 0;
-  void setCursorNode(Tree* l, OMG::HorizontalDirection sideOfLayout);
+  void moveCursorToLayout(Tree* l, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   void setPosition(int position) { m_position = position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
@@ -145,7 +145,7 @@ class LayoutBufferCursor final : public LayoutCursor {
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : LayoutCursor(0, -1), m_rootLayout(rootLayout) {
     if (cursorNode) {
-      setCursorNode(cursorNode, sideOfLayout);
+      moveCursorToLayout(cursorNode, sideOfLayout);
     }
   }
 

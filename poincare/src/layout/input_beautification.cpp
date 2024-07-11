@@ -336,14 +336,14 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
   TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutBufferCursor::TreeStackCursor cursorForInsertion =
       *static_cast<LayoutBufferCursor::TreeStackCursor*>(cursor);
-  cursorForInsertion.setCursorNode(rack, OMG::Direction::Left());
+  cursorForInsertion.moveCursorToLayout(rack, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
   LayoutBufferCursor::TreeStackCursor::InsertLayoutContext data{toInsert};
   cursorForInsertion.insertLayout(nullptr, &data);
   if (cursor->cursorRack() == rack &&
       cursor->position() == indexOfPipeKey + 1) {
-    cursor->setCursorNode(cursorForInsertion.cursorRack(),
-                          OMG::Direction::Left());  // safe?
+    cursor->moveCursorToLayout(cursorForInsertion.cursorRack(),
+                               OMG::Direction::Left());  // safe?
   }
   return true;
 }
@@ -385,7 +385,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
       firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
   if (layoutCursor->cursorRack() == rack &&
       layoutCursor->position() > rack->numberOfChildren()) {
-    layoutCursor->setCursorNode(inserted, OMG::Direction::Right());
+    layoutCursor->moveCursorToLayout(inserted, OMG::Direction::Right());
   }
   firstOrderDerivative->cloneNodeOverNode(KNthDiffL);
   return true;
@@ -447,8 +447,8 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
     assert(!parent.isUninitialized() && parent->isSumLayout());
     if (parent->indexOfChild(layoutCursor->cursorRack()) ==
         Parametric::k_variableIndex) {
-      layoutCursor->setCursorNode(parent->child(Parametric::k_lowerBoundIndex),
-                                  OMG::Direction::Left());
+      layoutCursor->moveCursorToLayout(
+          parent->child(Parametric::k_lowerBoundIndex), OMG::Direction::Left());
     }
   }
   return result;
@@ -570,8 +570,8 @@ bool InputBeautification::CreateParametersList(
       return false;
     }
     if (cursorPosition == 0) {
-      newCursor.setCursorNode(currentParameter,
-                              OMG::HorizontalDirection::Left());
+      newCursor.moveCursorToLayout(currentParameter,
+                                   OMG::HorizontalDirection::Left());
     }
 
     TreeRef child = i < n ? paramsString->child(i) : nullptr;
@@ -603,8 +603,8 @@ bool InputBeautification::CreateParametersList(
   }
 
   if (!newCursor.isUninitialized()) {
-    layoutCursor->setCursorNode(newCursor.cursorRack(),
-                                OMG::HorizontalDirection::Left());
+    layoutCursor->moveCursorToLayout(newCursor.cursorRack(),
+                                     OMG::HorizontalDirection::Left());
   }
   return true;
 }

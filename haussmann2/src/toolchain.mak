@@ -1,6 +1,6 @@
 # Compiler commands and parameters
 
-PYTHON := $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
+PYTHON := $(if $(shell test -d '.venv' || echo 1),python3,.venv/bin/python3)
 
 HOSTCC := gcc
 HOSTCXX := g++

@@ -385,4 +385,6 @@ $(call create_module,poincare,1, \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )
 
-SFLAGS_poincare += -DPOINCARE_TREE_LOG=1:+logtrees
+ifneq ($(POINCARE_POOL_VISUALIZATION),0)
+SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
+endif

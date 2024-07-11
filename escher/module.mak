@@ -106,7 +106,9 @@ $(call create_module,escher,1,$(addprefix src/, \
   image/caret.png \
 )
 
-SFLAGS_escher += -DESCHER_VIEW_LOGGING=1:+logviews
+ifneq ($(ESCHER_VIEW_LOGGING),0)
+SFLAGS_escher += -DESCHER_VIEW_LOGGING=1
+endif
 
 # Inliner
 

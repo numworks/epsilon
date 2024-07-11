@@ -141,14 +141,10 @@ _sources_liba_test += $(addprefix test/, \
 )
 
 $(call create_module,liba,1, \
-  $(addsuffix :-bridge, \
-    $(addsuffix :+minimal,$(_sources_liba_minimal)) \
-    $(addsuffix :-minimal,$(_sources_liba_extended)) \
-    $(foreach f,armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f)))) \
-  src/bridge.c:+bridge \
+  $(addsuffix :+minimal,$(_sources_liba_minimal)) \
+  $(addsuffix :-minimal,$(_sources_liba_extended)) \
+  $(foreach f,armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f))) \
 )
-
-SFLAGS_liba += -Iliba/include/bridge:+bridge
 
 $(call all_objects_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w
 $(call all_objects_for,liba/src/external/openbsd/%.c): PRIORITY_SFLAGS := -Iliba/src/external/openbsd/include

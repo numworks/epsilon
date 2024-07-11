@@ -34,7 +34,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j4' }}
 
 jobs:
   android:

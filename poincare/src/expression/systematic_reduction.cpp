@@ -20,7 +20,7 @@ bool SystematicReduction::DeepReduce(Tree* e) {
    * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);
   // Never simplify any dependencies
-  if (!e->isSet()) {
+  if (!e->isDependencies()) {
     for (Tree* child : e->children()) {
       modified |= DeepReduce(child);
     }

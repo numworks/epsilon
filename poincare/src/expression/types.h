@@ -307,9 +307,13 @@ NODE(PhysicalConstant, 0, { uint8_t constantId; })
 
 // 9 - Order dependant expressions
 
-NODE(Dependency, 2)
 NODE(Piecewise, NARY)
-// Used in dependencies only, shall never be systematic simplified.
+
+// Dependency(expression, Dependencies)
+NODE(Dependency, 2)
+// Used in Dependency only, children should never be systematic simplified.
+NODE(Dependencies, NARY)
+
 NODE(Set, NARY)
 NODE(Parentheses, 1)
 NODE(Empty)

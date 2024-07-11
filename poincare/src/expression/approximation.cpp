@@ -1233,7 +1233,7 @@ bool Approximation::CanApproximate(const Tree* e,
                                    int firstNonApproximableVarId) {
   if (e->isRandomized() || e->isUserNamed() ||
       (e->isVar() && Variables::Id(e) >= firstNonApproximableVarId) ||
-      e->isSet()) {
+      e->isDependencies()) {
     return false;
   }
   int childIndex = 0;

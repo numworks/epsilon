@@ -76,7 +76,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
       return true;
     }
     // Use a dependency as a fallback.
-    return PatternMatching::MatchReplace(e, KA, KDep(0_e, KSet(KA)));
+    return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDependencies(KA)));
   }
   // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
@@ -91,7 +91,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
   // base^0 -> 1
   if (n->isZero()) {
     if (ComplexSign::Get(base).canBeNull()) {
-      return PatternMatching::MatchReplace(e, KA, KDep(1_e, KSet(KA)));
+      return PatternMatching::MatchReplace(e, KA, KDep(1_e, KDependencies(KA)));
     }
     e->cloneTreeOverTree(1_e);
     return true;
@@ -124,7 +124,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
       // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
       return PatternMatching::MatchReplaceSimplify(
           e, KPow(KPow(KA, KB), KC),
-          KDep(KPow(KA, KMult(KB, KC)), KSet(KPow(KA, KB))));
+          KDep(KPow(KA, KMult(KB, KC)), KDependencies(KPow(KA, KB))));
     }
     return PatternMatching::MatchReplaceSimplify(e, KPow(KPow(KA, KB), KC),
                                                  KPow(KA, KMult(KB, KC)));
@@ -225,7 +225,7 @@ bool SystematicOperation::ReduceLnReal(Tree* e) {
       childSign.canBeNonReal()) {
     // Child can be nonreal or negative, add a dependency in case.
     e->moveTreeOverTree(PatternMatching::Create(
-        KDep(KLn(KA), KSet(KLnReal(KA))), {.KA = e->child(0)}));
+        KDep(KLn(KA), KDependencies(KLnReal(KA))), {.KA = e->child(0)}));
     e = e->child(0);
   } else {
     // Safely fallback to complex logarithm.

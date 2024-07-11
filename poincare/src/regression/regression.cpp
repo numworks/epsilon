@@ -29,7 +29,10 @@ Layout Regression::equationLayout(
   UserExpression equation = UserExpression::Create(
       KEqual(KA, KB),
       {.KA = UserExpression::FromSymbol(ySymbol), .KB = formula});
-  return equation.createLayout();  // displayMode, significantDigits, nullptr);
+  return equation.createLayout({
+      .numberOfSignificantDigits = static_cast<int8_t>(significantDigits),
+      .floatMode = displayMode,
+  });
 }
 
 UserExpression Regression::expression(const double* modelCoefficients) const {

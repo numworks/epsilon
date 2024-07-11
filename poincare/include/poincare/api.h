@@ -71,6 +71,20 @@ class JuniorPoolHandle : public PoolHandle {
   operator const Internal::Tree*() const { return tree(); }
 };
 
+/**
+ * Settings when creating a layout from an expression
+ *
+ * @param linearMode Produce a rack layout containing only codepoints, that may
+ *   be turned into a char * easily.
+ *   Div(a,b) will be rendered as a/b instead of Fraction(a,b) for instance.
+ */
+
+struct LayoutFormat {
+  bool linearMode = false;
+  int8_t numberOfSignificantDigits = -1;
+  Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
+};
+
 #if 0
 /* TODO */
 class NewLayout : private JuniorPoolHandle {
@@ -117,12 +131,8 @@ class UserExpression : public JuniorPoolHandle {
    *   - Chose the suitable multiplication symbol and apply it everywhere
    *   - Insert separators everywhere if they are needed somewhere
    *     For instance thousand separators if a integer has >= 5 digits
-   *
-   * @param linearMode Produce a rack layout containing only codepoints, that
-   *   may be turned into a char * easily.
-   *   Div(a,b) will be rendered as a/b instead of Fraction(a,b) for instance.
    */
-  Layout createLayout(bool linearMode = false) const;
+  Layout createLayout(LayoutFormat format = {}) const;
 
   /**
    * Turn the UserExpression into a SystemExpression

@@ -89,10 +89,10 @@ UserExpression UserExpression::FromSymbol(const char* name) {
       Internal::SharedTreeStack->pushUserSymbol(name, length + 1));
 }
 
-Layout UserExpression::createLayout(bool linearMode) const {
-  // TODO: Pass other optional parameters
-  return Layout::Builder(
-      Internal::Layouter::LayoutExpression(tree()->cloneTree(), linearMode));
+Layout UserExpression::createLayout(LayoutFormat format) const {
+  return Layout::Builder(Internal::Layouter::LayoutExpression(
+      tree()->cloneTree(), format.linearMode, format.numberOfSignificantDigits,
+      format.floatMode));
 }
 
 SystemExpression UserExpression::projected() const {

@@ -2,7 +2,7 @@
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/layouter.h>
 
-#include "old/helper.h"
+#include "helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal::KTrees;

@@ -1,6 +1,6 @@
 #include <poincare/print.h>
 
-#include "helper.h"
+#include "../helper.h"
 
 using namespace Poincare;
 using enum Preferences::PrintFloatMode;

@@ -325,47 +325,47 @@ _sources_poincare_test := $(addprefix test/, \
   old/helper.cpp \
   old/approximation.cpp \
   old/derivative.cpp \
+  old/distribution.cpp \
+  old/erf_inv.cpp \
   old/expression_properties.cpp \
+  old/expression_to_layout.cpp \
   old/layout.cpp \
   old/layout_serialization.cpp \
+  old/layout_to_expression.cpp \
+  old/numeric_solver.cpp \
   old/parsing.cpp \
+  old/print.cpp \
+  old/print_float.cpp \
+  old/range.cpp \
+  old/regularized_function.cpp \
   old/simplification.cpp \
+  old/zoom.cpp \
   api.cpp \
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \
   dimension.cpp \
-  distribution.cpp \
   equation_solver.cpp \
-  erf_inv.cpp \
   expression_comparison.cpp \
-  expression_to_layout.cpp \
   float_helper.cpp \
   layout.cpp \
   helper.cpp \
   integer.cpp \
   k_tree.cpp \
   latex_parser.cpp \
-  layout_to_expression.cpp \
   match.cpp \
   matrix.cpp \
   memory_elements.cpp \
   memory_edition.cpp \
   n_ary.cpp \
-  numeric_solver.cpp \
   parse.cpp \
   polynomial.cpp \
   projection.cpp \
-  print.cpp \
-  print_float.cpp \
-  range.cpp \
   rational.cpp \
-  regularized_function.cpp \
   roots.cpp \
   set.cpp \
   sign.cpp \
   simplification.cpp \
-  zoom.cpp \
 )
 
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \

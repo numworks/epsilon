@@ -1,7 +1,7 @@
 #include <poincare/old/helpers.h>
 #include <poincare/range.h>
 
-#include "helper.h"
+#include "../helper.h"
 
 using namespace Poincare;
 

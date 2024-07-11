@@ -7,9 +7,9 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 
-#include "float_helper.h"
+#include "../float_helper.h"
+#include "../helper.h"
 #include "helper.h"
-#include "old/helper.h"
 
 using Poincare::Context;
 using Poincare::Preferences;

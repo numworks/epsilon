@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include "helper.h"
+#include "../helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;

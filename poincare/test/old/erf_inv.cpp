@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#include "float_helper.h"
+#include "../float_helper.h"
 
 using namespace Poincare::Internal;
 

@@ -327,6 +327,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/derivative.cpp \
   old/expression_properties.cpp \
   old/layout.cpp \
+  old/layout_serialization.cpp \
   old/parsing.cpp \
   old/simplification.cpp \
   api.cpp \

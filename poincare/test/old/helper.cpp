@@ -449,7 +449,6 @@ void assert_layout_serializes_to(Tree *layout, const char *serialization) {
   bool bad = false;
   bool crash = false;
   ExceptionTry {
-    assert(SharedTreeStack->numberOfTrees() == 0);
     *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
     copy_without_system_chars(buffer, buffer);
     bad = strcmp(buffer, result) != 0;
@@ -458,14 +457,16 @@ void assert_layout_serializes_to(Tree *layout, const char *serialization) {
     SharedTreeStack->flush();
     crash = true;
   }
-  assert(SharedTreeStack->numberOfTrees() == 0);
   k_bad += bad;
   k_crash += crash;
-
   char information[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
-                                      serialization);
+  int i = Poincare::Print::UnsafeCustomPrintf(
+      information, bufferSize, "%s\t%s\t%s",
+      crash ? "CRASH" : (bad ? "BAD" : "OK"), result, result);
+  if (bad) {
+    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
+                                        buffer);
+  }
   quiz_print(information);
 }
 

@@ -145,11 +145,13 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
         }
         if (layout->isPiecewiseLayout() &&
             child.index == layout->numberOfChildren() - 2) {
+          // last row is input row (contains 2 empty racks)
           break;
         }
         if (layout->isPiecewiseLayout() &&
             child.index == layout->numberOfChildren() - 3 &&
             child->numberOfChildren() == 0) {
+          // the condition of the "real" last row is empty
           break;
         }
         if (!firstChild) {

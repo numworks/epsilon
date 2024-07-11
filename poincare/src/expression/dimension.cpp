@@ -56,7 +56,6 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
       return childLength[0] >= 0 && childLength[1] == k_nonListListLength &&
              childLength[2] == k_nonListListLength;
     case Type::Set:
-    case Type::Dependencies:
     case Type::List: {
       for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i++] >= 0) {

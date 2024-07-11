@@ -47,6 +47,10 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
         return nullptr;
       }
       Tree* result = e->cloneNode();
+      if (e->isDependencies()) {
+        // Do not attempt to reduce conditions of dependency
+        reduction = [](Tree*) { return false; };
+      }
       for (const Tree* child : e->children()) {
         if (!GetElement(child, k, reduction)) {
           SharedTreeStack->dropBlocksFrom(result);

@@ -167,14 +167,14 @@ class LayoutBufferCursor final : public LayoutCursor {
   void addEmptyExponentialLayout(Poincare::Context* context);
   void addEmptyTenPowerLayout(Poincare::Context* context);
   void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
-  void insertText(const char* text, Poincare::Context* context,
+  void insertText(const char* text, Poincare::Context* context = nullptr,
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {
     TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
                                                          forceLeft, linearMode};
     execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Tree* l, Poincare::Context* context,
+  void insertLayout(const Tree* l, Poincare::Context* context = nullptr,
                     bool forceRight = false, bool forceLeft = false) {
     TreeStackCursor::InsertLayoutContext insertLayoutContext{l, forceRight,
                                                              forceLeft};

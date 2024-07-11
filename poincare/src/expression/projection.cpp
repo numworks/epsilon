@@ -160,12 +160,27 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
-    // acos(A) -> atrig(A, 0)
-    PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
-        // asin(A) -> atrig(A, 1)
-        PatternMatching::MatchReplace(e, KASin(KA), KATrig(KA, 1_e)) ||
-        // atan(A) -> atanRad(A)
-        PatternMatching::MatchReplace(e, KATan(KA), KATanRad(KA));
+    if (projectionContext->m_complexFormat == ComplexFormat::Real &&
+        !e->isATan()) {
+      // Only real functions asin and acos have a domain of definition
+      // acos(A) -> atrig(A, 0) if -1 <= A <= 1
+      PatternMatching::MatchReplace(
+          e, KACos(KA),
+          KDep(KATrig(KA, 0_e), KDependencies(KPiecewise(
+                                    1_e, KInferiorEqual(KAbs(KA), 1_e))))) ||
+          // asin(A) -> atrig(A, 1) if -1 <= A <= 1
+          PatternMatching::MatchReplace(
+              e, KASin(KA),
+              KDep(KATrig(KA, 1_e), KDependencies(KPiecewise(
+                                        1_e, KInferiorEqual(KAbs(KA), 1_e)))));
+    } else {
+      // acos(A) -> atrig(A, 0)
+      PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
+          // asin(A) -> atrig(A, 1)
+          PatternMatching::MatchReplace(e, KASin(KA), KATrig(KA, 1_e)) ||
+          // atan(A) -> atanRad(A)
+          PatternMatching::MatchReplace(e, KATan(KA), KATanRad(KA));
+    }
     if (angleUnit != Internal::AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
       e->moveTreeOverTree(PatternMatching::Create(

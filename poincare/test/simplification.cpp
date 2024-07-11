@@ -521,8 +521,8 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(-1)", "-π/4");
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
-  simplifies_to("sec(arcsec(x))", "dep(x,{1/x})");
-  simplifies_to("csc(arccsc(x))", "dep(x,{1/x})");
+  simplifies_to("sec(arcsec(x))", "dep(x,{1/x})", cartesianCtx);
+  simplifies_to("csc(arccsc(x))", "dep(x,{1/x})", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
@@ -929,19 +929,26 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
 
   simplifies_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
   simplifies_to("1/tan(3)", "cot(3)");
+  simplifies_to("tan(-x)", "-tan(x)");
 }
 
 QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
+  // acos and asin are nonreal out of [-1,1] in real mode
+  simplifies_to("cos(acos(3/7))", "3/7");
+  simplifies_to("cos(acos(9/7))", "undef");  // TODO: nonreal ?
+  simplifies_to("sin(asin(3/7))", "3/7");
+  simplifies_to("sin(asin(9/7))", "undef");  // TODO: nonreal ?
+
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^2+1),cos(arctan(x))}");
+                "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1),x,sin(arctan(x))}");
+                "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
   // TODO_PCJ: tan(atan) and atan(tan)
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,x/√(-x^2+1),tan(arctan(x))}");
-  simplifies_to("acos(cos(x))", "acos(cos(x))");
+                "{√(-x^2+1)/x,x/√(-x^2+1),tan(arctan(x))}", cartesianCtx);
+  simplifies_to("acos(cos(x))", "acos(cos(x))", cartesianCtx);
   simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
   simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
   simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
@@ -959,9 +966,11 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   // Other angle units :
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
-                {.m_angleUnit = AngleUnit::Degree});
+                {.m_complexFormat = ComplexFormat::Cartesian,
+                 .m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos(x))", "acos(cos(x))",
-                {.m_angleUnit = AngleUnit::Degree});
+                {.m_complexFormat = ComplexFormat::Cartesian,
+                 .m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos({cos(683), sin(683)})/200", "{117/200,183/200}",
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
@@ -974,7 +983,8 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
 #endif
   // TODO: Improve output with better advanced reduction.
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
-                {.m_angleUnit = AngleUnit::Degree});
+                {.m_complexFormat = ComplexFormat::Cartesian,
+                 .m_angleUnit = AngleUnit::Degree});
 #if 0
   // TODO: Add more exact values.
   simplifies_to(

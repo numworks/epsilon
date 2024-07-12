@@ -519,6 +519,13 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccsc(csc(π/6))", "π/6");
   simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(-1)", "-π/4");
+
+  simplifies_to("csc(arccsc(9/7))", "9/7");
+  simplifies_to("csc(arccsc(3/7))", "undef");
+  simplifies_to("csc(arccsc(3/7))", "3/7", cartesianCtx);
+  simplifies_to("sec(arcsec(9/7))", "9/7");
+  simplifies_to("sec(arcsec(3/7))", "undef");
+
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{1/x})", cartesianCtx);

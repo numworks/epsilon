@@ -27,6 +27,9 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   for (Tree* child : e->children()) {
     if (child->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
       Tree* childSet = Dependencies(child);
+      /* TODO_PCJ: bubble up across list operators in the same fashion as on
+       * parametrics
+       * */
       if (e->isParametric() && Parametric::FunctionIndex(e) == i) {
         if (e->isDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))

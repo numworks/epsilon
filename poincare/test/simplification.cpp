@@ -104,11 +104,11 @@ QUIZ_CASE(pcj_simplification_contraction) {
 }
 
 QUIZ_CASE(pcj_simplification_variables) {
-  QUIZ_ASSERT(Variables::GetUserSymbols(0_e)->treeIsIdenticalTo(KSet()));
+  assert_trees_are_equal(Variables::GetUserSymbols(0_e), KSet());
   const Tree* e = KMult(
       KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
-  QUIZ_ASSERT(Variables::GetUserSymbols(e)->treeIsIdenticalTo(
-      KSet("m"_e, "y"_e, "z"_e)));
+  assert_trees_are_equal(Variables::GetUserSymbols(e),
+                         KSet("m"_e, "y"_e, "z"_e));
 }
 
 QUIZ_CASE(pcj_replace_symbol_with_tree) {
@@ -792,7 +792,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KDependencies(0_e)), 4_e)->cloneTree();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KDependencies(0_e));
   Dependency::ShallowBubbleUpDependencies(e1);
-  QUIZ_ASSERT(e1->treeIsIdenticalTo(r1));
+  assert_trees_are_equal(e1, r1);
 
   Tree* e2 = KAdd(KDep(KMult(2_e, 3_e), KDependencies(0_e)), 4_e,
                   KDep(5_e, KDependencies(6_e)))
@@ -800,20 +800,20 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   const Tree* r2 =
       KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KDependencies(0_e, 6_e));
   Dependency::ShallowBubbleUpDependencies(e2);
-  QUIZ_ASSERT(e2->treeIsIdenticalTo(r2));
+  assert_trees_are_equal(e2, r2);
 
   ProjectionContext context;
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->cloneTree();
   const Tree* r3 = KDep(3_e, KDependencies(KPow("a"_e, 0_e)));
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
-  QUIZ_ASSERT(e3->treeIsIdenticalTo(r3));
+  assert_trees_are_equal(e3, r3);
 
   Tree* e4 =
       KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDependencies(KAbs("x"_e), "z"_e)))
           ->cloneTree();
   const Tree* r4 = KDep(1_e, KDependencies(KAbs("y"_e), "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
-  QUIZ_ASSERT(e4->treeIsIdenticalTo(r4));
+  assert_trees_are_equal(e4, r4);
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {
@@ -1177,11 +1177,11 @@ QUIZ_CASE(pcj_decimal) {
   (-2_e)->cloneTree();
   ProjectionContext ctx = realCtx;
   Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
-  QUIZ_ASSERT(tree->treeIsIdenticalTo(12400_e));
+  assert_trees_are_equal(tree, 12400_e);
   tree->removeTree();
   tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (2_e)->cloneTree();
   Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
-  QUIZ_ASSERT(tree->treeIsIdenticalTo(KDiv(31_e, 25_e)));
+  assert_trees_are_equal(tree, KDiv(31_e, 25_e));
 }

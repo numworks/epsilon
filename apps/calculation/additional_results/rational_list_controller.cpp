@@ -16,8 +16,7 @@ namespace Calculation {
 IntegerHandler extractInteger(const Tree* e) {
   if (e->isOpposite()) {
     IntegerHandler i = extractInteger(e->child(0));
-    i.setSign(i.sign() == NonStrictSign::Positive ? NonStrictSign::Negative
-                                                  : NonStrictSign::Positive);
+    i.setSign(InvertSign(i.sign()));
     return i;
   }
   assert(e->isInteger());
@@ -55,9 +54,9 @@ void RationalListController::computeAdditionalResults(
   Expression div = negative ? e.childAtIndex(0) : e;
   assert(div.type() == ExpressionNode::Type::Division);
   IntegerHandler numerator = extractInteger(div.childAtIndex(0));
-  numerator.setSign(negative != (numerator.sign() == NonStrictSign::Negative)
-                        ? NonStrictSign::Negative
-                        : NonStrictSign::Positive);
+  if (negative) {
+    numerator.setSign(InvertSign(numerator.sign()));
+  }
   IntegerHandler denominator = extractInteger(div.childAtIndex(1));
   Expression rational =
       Expression::Builder(Rational::Push(numerator, denominator));

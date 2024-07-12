@@ -309,9 +309,8 @@ NODE(PhysicalConstant, 0, { uint8_t constantId; })
 
 NODE(Piecewise, NARY)
 
-// Dependency(expression, Dependencies)
+// Dependency(expression, Dependencies(dep1, …, depN))
 NODE(Dependency, 2)
-// Used in Dependency only, children should never be systematic simplified.
 NODE(Dependencies, NARY)
 
 NODE(Set, NARY)

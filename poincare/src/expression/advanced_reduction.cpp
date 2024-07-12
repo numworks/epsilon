@@ -80,10 +80,6 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
   return true;
 }
 
-/* To skip dependencies in advanced reduction, we take advantage of the set
- * preceding them. This is the only place we use a set for now. If we end up
- * using it elsewhere, we should reconsider this and maybe swap Dependencies
- * children, so we can skip the first one. */
 bool SkipTree(const Tree* e) {
   return e->block() < SharedTreeStack->lastBlock() && e->isDependencies();
 }

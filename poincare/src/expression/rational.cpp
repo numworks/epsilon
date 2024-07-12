@@ -232,24 +232,6 @@ bool Rational::IsGreaterThanOne(const Tree* e) {
   return IntegerHandler::Compare(Numerator(e), Denominator(e)) > 0;
 }
 
-Tree* Rational::CreateEuclideanDivision(const Tree* e) {
-  IntegerHandler num = Numerator(e);
-  IntegerHandler den = Denominator(e);
-  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
-  TreeRef numTree = num.pushOnTreeStack();
-  TreeRef denTree = den.pushOnTreeStack();
-  TreeRef result = PatternMatching::Create(KEqual(KA, KAdd(KMult(KB, KC), KD)),
-                                           {.KA = numTree,
-                                            .KB = denTree,
-                                            .KC = division.quotient,
-                                            .KD = division.remainder});
-  denTree->removeTree();
-  numTree->removeTree();
-  division.remainder->removeTree();
-  division.quotient->removeTree();
-  return result;
-}
-
 Tree* Rational::CreateMixedFraction(const Tree* e,
                                     bool mixedFractionsAreEnabled) {
   IntegerHandler num = Numerator(e);

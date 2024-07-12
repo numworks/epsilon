@@ -2,7 +2,9 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <string.h>
 
 #include "../app.h"
@@ -41,6 +43,25 @@ static bool isFractionInput(Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
+// Take a rational a/b and create the euclidian division a=b*q+r
+static Tree* CreateEuclideanDivision(const Tree* e) {
+  IntegerHandler num = Rational::Numerator(e);
+  IntegerHandler den = Rational::Denominator(e);
+  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
+  TreeRef numTree = num.pushOnTreeStack();
+  TreeRef denTree = den.pushOnTreeStack();
+  TreeRef result = PatternMatching::Create(KEqual(KA, KAdd(KMult(KB, KC), KD)),
+                                           {.KA = numTree,
+                                            .KB = denTree,
+                                            .KC = division.quotient,
+                                            .KD = division.remainder});
+  denTree->removeTree();
+  numTree->removeTree();
+  division.remainder->removeTree();
+  division.quotient->removeTree();
+  return result;
+}
+
 void RationalListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
@@ -66,7 +87,7 @@ void RationalListController::computeAdditionalResults(
           GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
               Preferences::MixedFractions::Enabled));
   SystemExpression euclideanDiv =
-      SystemExpression::Builder(Rational::CreateEuclideanDivision(rational));
+      SystemExpression::Builder(CreateEuclideanDivision(rational));
 
   int index = 0;
   m_layouts[index++] = PoincareHelpers::CreateLayout(

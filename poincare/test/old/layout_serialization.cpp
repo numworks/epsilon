@@ -105,7 +105,7 @@ QUIZ_CASE(poincare_layout_serialization) {
                               "2^\x12x+5\x13");
 
   // Piecewise
-  Tree* p = SharedTreeStack->pushPiecewiseLayout(4, 2);
+  Tree *p = SharedTreeStack->pushPiecewiseLayout(4, 2);
   "3"_l->cloneTree();
   "2>3"_l->cloneTree();
   "2"_l->cloneTree();

@@ -179,9 +179,8 @@ struct String {
   consteval size_t codePointSize() const {
     size_t n = 0;
     for (char c : m_data) {
-      assert((c & 0b11110000) != 0b11110000);  // TODO: handle larger codepoints
-      if (!(c & 0b10000000) || ((c & 0b11100000) == 0b11000000) ||
-          ((c & 0b11110000) == 0b11100000)) {
+      // if not a continuation byte
+      if ((c & 0b11000000) != 0b10000000) {
         n++;
       }
     }
@@ -190,15 +189,10 @@ struct String {
   consteval char16_t codePointAt(std::size_t i) const {
     size_t k = 0;
     while (i--) {
-      char c = m_data[k];
-      if (!(c & 0b10000000)) {
+      do {
         k++;
-      } else if ((c & 0b11100000) == 0b11000000) {
-        k += 2;
-      } else {
-        assert((c & 0b11110000) == 0b11100000);
-        k += 3;
-      }
+        // skip continuation bytes
+      } while ((m_data[k] & 0b11000000) == 0b10000000);
     }
     if (!(m_data[k] & 0b10000000)) {
       return m_data[k];
@@ -206,9 +200,13 @@ struct String {
     if ((m_data[k] & 0b11100000) == 0b11000000) {
       return (m_data[k] & 0b00011111) << 6 | (m_data[k + 1] & 0b00111111);
     }
-    assert((m_data[k] & 0b11110000) == 0b11100000);
-    return (m_data[k] & 0b00001111) << 12 | (m_data[k + 1] & 0b00111111) << 6 |
-           (m_data[k + 2] & 0b00111111);
+    if ((m_data[k] & 0b11110000) == 0b11100000) {
+      return (m_data[k] & 0b00001111) << 12 |
+             (m_data[k + 1] & 0b00111111) << 6 | (m_data[k + 2] & 0b00111111);
+    }
+    assert((m_data[k] & 0b11111000) == 0b11110000);
+    return (m_data[k] & 0b00000111) << 18 | (m_data[k + 1] & 0b00111111) << 12 |
+           (m_data[k + 2] & 0b00111111) << 6 | (m_data[k + 3] & 0b00111111);
   }
 };
 

@@ -49,7 +49,7 @@ void assert_expression_layouts_and_serializes_to(OExpression expression,
       UserExpression(expression)
           .createLayout(DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits,
                         nullptr);
-#if O
+#if 0
   // TODO_PCJ ? should be adapted since system parentheses are gone
   assert_layout_serializes_to(layout, serialization);
 #endif

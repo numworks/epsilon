@@ -106,7 +106,7 @@ void quiz_print_failure_ratio() {
   quiz_print(buffer);
 }
 
-static void copy_without_system_chars(char *buffer, const char *input) {
+void copy_without_system_chars(char *buffer, const char *input) {
   while (char c = *input++) {
     if (c == 0x11) continue;
     if (c == 0x14) continue;
@@ -438,36 +438,6 @@ void assert_expression_parses_and_serializes_to(const char *expression,
 
 void assert_expression_parses_and_serializes_to_itself(const char *expression) {
   return assert_expression_parses_and_serializes_to(expression, expression);
-}
-
-void assert_layout_serializes_to(Tree *layout, const char *serialization) {
-  k_total++;
-  constexpr int bufferSize = 255;
-  char buffer[bufferSize];
-  char result[bufferSize];
-  copy_without_system_chars(result, serialization);
-  bool bad = false;
-  bool crash = false;
-  ExceptionTry {
-    *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
-    copy_without_system_chars(buffer, buffer);
-    bad = strcmp(buffer, result) != 0;
-  }
-  ExceptionCatch(type) {
-    SharedTreeStack->flush();
-    crash = true;
-  }
-  k_bad += bad;
-  k_crash += crash;
-  char information[bufferSize] = "";
-  int i = Poincare::Print::UnsafeCustomPrintf(
-      information, bufferSize, "%s\t%s\t%s",
-      crash ? "CRASH" : (bad ? "BAD" : "OK"), result, result);
-  if (bad) {
-    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
-                                        buffer);
-  }
-  quiz_print(information);
 }
 
 void assert_expression_layouts_as(Tree *expression, Tree *layout) {

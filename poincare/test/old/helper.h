@@ -79,6 +79,8 @@ void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 void quiz_reset_failure_ratio();
 void quiz_print_failure_ratio();
 
+void copy_without_system_chars(char* buffer, const char* input);
+
 typedef Poincare::Internal::Tree* (*ProcessExpression)(
     Poincare::Internal::Tree*, Poincare::ReductionContext reductionContext);
 
@@ -164,11 +166,6 @@ void assert_expression_serializes_and_parses_to_itself(
 void assert_expression_parses_and_serializes_to(const char* expression,
                                                 const char* result);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);
-
-// Layout serializing
-
-void assert_layout_serializes_to(Poincare::Internal::Tree* layout,
-                                 const char* serialization);
 
 // OExpression layouting
 

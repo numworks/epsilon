@@ -5,25 +5,36 @@
 
 using namespace Poincare::Internal;
 
-bool dim(const char* input, Dimension d = Dimension::Matrix(0, 0),
-         Poincare::Context* ctx = nullptr) {
+bool dim(const Tree* e, Dimension d, Poincare::Context* ctx = nullptr) {
+  return Dimension::DeepCheck(e, ctx) && d == Dimension::Get(e, ctx);
+}
+
+bool dim(const char* input, Dimension d, Poincare::Context* ctx = nullptr) {
   Tree* e = TextToTree(input);
-  bool result = Dimension::DeepCheck(e, ctx) && d == Dimension::Get(e, ctx);
+  bool result = dim(e, d, ctx);
   e->removeTree();
   return result;
+}
+
+bool len(const Tree* e, int n, Poincare::Context* ctx = nullptr) {
+  assert(Dimension::DeepCheck(e, ctx));
+  return Dimension::ListLength(e, ctx) == n;
 }
 
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
   Tree* e = TextToTree(input);
-  assert(Dimension::DeepCheck(e, ctx));
-  bool result = Dimension::ListLength(e, ctx) == n;
+  bool result = len(e, n, ctx);
   e->removeTree();
   return result;
 }
 
+bool hasInvalidDimOrLen(const Tree* e, Poincare::Context* ctx = nullptr) {
+  return !Dimension::DeepCheck(e, ctx);
+}
+
 bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
   Tree* e = TextToTree(input);
-  bool result = !Dimension::DeepCheck(e, ctx);
+  bool result = hasInvalidDimOrLen(e, ctx);
   e->removeTree();
   return result;
 }
@@ -35,14 +46,14 @@ QUIZ_CASE(pcj_dimension) {
   auto Point = Dimension::Point();
   QUIZ_ASSERT(dim("piecewise([[2]],True,[[3]])", Matrix(1, 1)));
 
-  QUIZ_ASSERT(!dim("[[1][[[2]]]]"));
-  QUIZ_ASSERT(!dim("[[1,2][3,4]]+[[2]]"));
-  QUIZ_ASSERT(!dim("cos([[2]])"));
-  QUIZ_ASSERT(!dim("1/[[1][3]]"));
-  QUIZ_ASSERT(!dim("product([[k,2]], k, 1, n)"));
-  QUIZ_ASSERT(!dim("(True, False)"));
-  QUIZ_ASSERT(!dim("{2,(1,3)}"));
-  QUIZ_ASSERT(!dim("randintnorep(1,10,-1)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1][[[2]]]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1,2][3,4]]+[[2]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("cos([[2]])"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("1/[[1][3]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("product([[k,2]], k, 1, n)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("(True, False)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{2,(1,3)}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("randintnorep(1,10,-1)"));
 
   QUIZ_ASSERT(dim("1", Scalar));
   QUIZ_ASSERT(dim("cos(sin(1+3))*2^3", Scalar));
@@ -58,15 +69,15 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("sequence(k,k,3)", Scalar));
 
   QUIZ_ASSERT(dim("{False, False}", Boolean));
-  QUIZ_ASSERT(!dim("1 + {False, False}"));
-  QUIZ_ASSERT(!dim("1 and {False, False}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("1 + {False, False}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("1 and {False, False}"));
   QUIZ_ASSERT(dim("True and {False, False}", Boolean));
   QUIZ_ASSERT(dim("True and False", Boolean));
   QUIZ_ASSERT(dim("True or (False xor True)", Boolean));
-  QUIZ_ASSERT(!dim("0 and False"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("0 and False"));
   QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
-  QUIZ_ASSERT(!dim("sort({True, False, True}"));
-  QUIZ_ASSERT(!dim("min({True, False, True}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("sort({True, False, True}"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("min({True, False, True}"));
   QUIZ_ASSERT(dim("{True, False, True} or {True, True, False}", Boolean));
 
   QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));
@@ -81,8 +92,8 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(len("{1,2,3,4}(0,5)", 4));
   QUIZ_ASSERT(len("{1,2,3,4}(0,0)", 0));
   QUIZ_ASSERT(len("{1,2,3,4}(6,4)", 0));
-  QUIZ_ASSERT(!dim("{1,2,3,4}(-2,5)"));
-  QUIZ_ASSERT(!dim("{1,2,3,4}(-2,-1)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{1,2,3,4}(-2,5)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{1,2,3,4}(-2,-1)"));
 
   QUIZ_ASSERT(dim("(2,3)", Point));
   QUIZ_ASSERT(dim("{(2,3)}", Point));
@@ -99,10 +110,10 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("dim({(1,3), (2,4)})", Scalar));
   QUIZ_ASSERT(dim("sort(diff({(x,2x),(1,2)}, x, y))", Point));
 
-  QUIZ_ASSERT(!dim("dep((1,2), {(1,3),3})"));
-  QUIZ_ASSERT(!dim("(1,2)+(1,3)"));
-  QUIZ_ASSERT(!dim("cos((1,2))"));
-  QUIZ_ASSERT(!dim("{(1,3), (2,4)}((2,4))"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("dep((1,2), {(1,3),3})"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("(1,2)+(1,3)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("cos((1,2))"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("{(1,3), (2,4)}((2,4))"));
 
   QUIZ_ASSERT(hasInvalidDimOrLen("{_m}"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{[[1]]}"));
@@ -111,22 +122,22 @@ QUIZ_CASE(pcj_dimension) {
 
   // Pow
   QUIZ_ASSERT(dim("[[1,2][3,4]]^3", Matrix(2, 2)));
-  QUIZ_ASSERT(!dim("[[1,3]]^3"));
-  QUIZ_ASSERT(!dim("[[1][3]]^3"));
-  QUIZ_ASSERT(!dim("[[1][3]]^[[4]]"));
-  QUIZ_ASSERT(!dim("[[1][3]]^[[4,5]]"));
-  QUIZ_ASSERT(!dim("3^[[4,5]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1,3]]^3"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1][3]]^3"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1][3]]^[[4]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1][3]]^[[4,5]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("3^[[4,5]]"));
 
   // Division
   QUIZ_ASSERT(dim("[[1,2]]/3", Matrix(1, 2)));
-  QUIZ_ASSERT(!dim("3/[[1,2]]"));
-  QUIZ_ASSERT(!dim("[[1][2]]/[[3][4]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("3/[[1,2]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1][2]]/[[3][4]]"));
 
   // Sub
   QUIZ_ASSERT(dim("[[1,2]]-[[3,4]]", Matrix(1, 2)));
-  QUIZ_ASSERT(!dim("[[1,2]]-[[3][4]]"));
-  QUIZ_ASSERT(!dim("[[1,2]]-3"));
-  QUIZ_ASSERT(!dim("1-[[3][4]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1,2]]-[[3][4]]"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("[[1,2]]-3"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("1-[[3][4]]"));
 
   Shared::GlobalContext globalContext;
   assert(

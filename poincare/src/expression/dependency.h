@@ -12,6 +12,7 @@ struct Dependency {
   }
   static const Tree* Dependencies(const Tree* e) {
     assert(e->isDependency());
+    assert(e->child(k_dependenciesIndex)->isDependencies());
     return e->child(k_dependenciesIndex);
   }
   static Tree* Main(Tree* e) {
@@ -20,6 +21,7 @@ struct Dependency {
   }
   static Tree* Dependencies(Tree* e) {
     assert(e->isDependency());
+    assert(e->child(k_dependenciesIndex)->isDependencies());
     return e->child(k_dependenciesIndex);
   }
   static bool ShallowBubbleUpDependencies(Tree* e);

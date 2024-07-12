@@ -16,6 +16,8 @@ using namespace Shared;
 namespace Calculation {
 
 IntegerHandler extractInteger(const Tree* e) {
+  /* TODO_PCJ: is this usage of IntegerHandler correct ?
+   * A quick experiment showed incorrect digits with large numbers ! */
   if (e->isOpposite()) {
     IntegerHandler i = extractInteger(e->child(0));
     i.setSign(InvertSign(i.sign()));

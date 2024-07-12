@@ -148,7 +148,7 @@ constexpr auto KLogicalNor = KBinary<Type::LogicalNor>();
 constexpr auto KLogicalNand = KBinary<Type::LogicalNand>();
 
 template <uint8_t Rows, uint8_t Cols>
-struct KMatrix {
+struct KMatrixHelper {
   template <KTreeConcept... CTS>
     requires(sizeof...(CTS) == Rows * Cols)
   consteval auto operator()(CTS...) const {
@@ -163,6 +163,9 @@ struct KMatrix {
     return nullptr;
   }
 };
+
+template <uint8_t Rows, uint8_t Cols>
+constexpr auto KMatrix = KMatrixHelper<Rows, Cols>();
 
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */

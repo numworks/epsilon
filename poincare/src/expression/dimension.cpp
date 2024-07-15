@@ -306,10 +306,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         return false;
       }
       const Tree* index = e->child(1);
-      return index->isNumber() ||
-             (index->isOpposite() && index->child(0)->isNumber()) ||
+      return index->isInteger() ||
+             (index->isOpposite() && index->child(0)->isInteger()) ||
              (index->isMult() && index->numberOfChildren() == 2 &&
-              index->child(0)->isMinusOne() && index->child(1)->isNumber());
+              index->child(0)->isMinusOne() && index->child(1)->isInteger());
     }
     case Type::Sum:
     case Type::Product:

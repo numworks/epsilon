@@ -7,6 +7,7 @@ using namespace Poincare::API;
 QUIZ_CASE(pcj_api) {
   UserExpression ue = UserExpression::Builder(KDiv(1_e, "x"_e));
   quiz_assert(ue.tree()->treeIsIdenticalTo(KDiv(1_e, "x"_e)));
+  // TODO_PCJ: this crashes on device tests, investigate
   SystemExpression se = ue.projected();
   quiz_assert(se.tree()->treeIsIdenticalTo(KPow("x"_e, -1_e)));
   UserExpression ue2 = se.beautified();

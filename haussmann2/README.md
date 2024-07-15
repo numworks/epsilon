@@ -2,6 +2,8 @@
 
 Shared build system between C++ projects, using makefiles.
 
+_Maintainer: GabrielNumworks_
+
 ## Building
 
 Run `make help` (or simply `make`) for a list of the main targets.

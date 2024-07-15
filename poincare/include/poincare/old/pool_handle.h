@@ -67,9 +67,6 @@ class PoolHandle {
   }
   int nodeRetainCount() const { return object()->retainCount(); }
   size_t size() const;
-#if PCJ_DELETE
-  size_t sizeOfNode() const { return object()->size(); }
-#endif
   void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
   bool isGhost() const { return object()->isGhost(); }

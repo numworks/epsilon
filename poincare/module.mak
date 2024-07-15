@@ -383,6 +383,19 @@ $(call create_module,poincare,1, \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )
 
+POINCARE_POOL_VISUALIZATION ?= 0
 ifneq ($(POINCARE_POOL_VISUALIZATION),0)
+POINCARE_TREE_LOG := 1
+SFLAGS_poincare += -DPOINCARE_POOL_VISUALIZATION=1
+endif
+
+POINCARE_TREE_LOG ?= 0
+ifeq ($(PLATFORM_TYPE),simulator)
+ifneq ($(DEBUG),0)
+POINCARE_TREE_LOG := 1
+endif
+endif
+
+ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif

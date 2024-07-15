@@ -50,7 +50,7 @@ $(call create_goal,userland, \
 $(call create_goal,userland_test, \
   apps.test \
   escher.test \
-  ion.userland.test \
+  ion.userland.consoledisplay.test \
   kandinsky.test \
   liba.aeabirt.armv7m.openbsd.test \
   libaxx.test \

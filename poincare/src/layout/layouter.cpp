@@ -348,9 +348,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   }
 
   switch (type) {
+    // TODO_PCJ: Restore Addition and Multiplication symbol in linear mode
     case Type::Add: {
-      CodePoint op =
-          ImplicitAddition(expression) ? UCodePointNull : CodePoint('+');
+      CodePoint op = ImplicitAddition(expression) && !m_linearMode
+                         ? UCodePointNull
+                         : CodePoint('+');
       layoutInfixOperator(layoutParent, expression, op);
       break;
     }

@@ -49,10 +49,9 @@ QUIZ_CASE(poincare_layout_cursor_insertion) {
 
   // cos()
   {
-    Poincare::Internal::LayoutBufferCursor c = insert_layout("cos()"_l);
-#if 0  // TODO_PCJ:
-    assert_cursor_position_is(c, c.rootRack()->child(0)->child(0), 0);
-#endif
+    Poincare::Internal::LayoutBufferCursor c =
+        insert_layout("cos"_l ^ KParenthesesL(KRackL()));
+    assert_cursor_position_is(c, c.rootRack()->child(3)->child(0), 0);
   }
 
   // ▯^▯

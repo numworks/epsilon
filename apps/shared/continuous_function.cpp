@@ -850,7 +850,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
-    if (result.deepIsPoint(context, true)) {
+    if (result.isPointOrListOfPoints(context)) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;

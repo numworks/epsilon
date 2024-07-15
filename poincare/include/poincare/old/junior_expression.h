@@ -289,7 +289,7 @@ class JuniorExpression : public OExpression {
   bool deepIsMatrix(Context* context = nullptr, bool canContainMatrices = true,
                     bool isReduced = true) const;
   bool deepIsList(Context* context) const;
-  bool deepIsPoint(Context* context, bool allowlists) const;
+  bool isPointOrListOfPoints(Context* context = nullptr) const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {

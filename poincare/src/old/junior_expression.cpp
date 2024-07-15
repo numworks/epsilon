@@ -853,12 +853,11 @@ bool NewExpression::deepIsList(Context* context) const {
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool UserExpression::deepIsPoint(Context* context, bool allowlists) const {
+bool UserExpression::isPointOrListOfPoints(Context* context) const {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
   return Dimension::DeepCheck(tree(), context) &&
-         Dimension::Get(tree(), context).isPoint() &&
-         (allowlists || !Dimension::IsList(tree(), context));
+         Dimension::Get(tree(), context).isPoint();
 }
 
 bool NewExpression::hasComplexI(Context* context,

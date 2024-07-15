@@ -112,7 +112,7 @@ class ContinuousFunction : public Function {
   Poincare::CartesianConic cartesianConicParameters(
       Poincare::Context* context) const;
   // Return the number of subcurves to plot.
-  int numberOfSubCurves(int includeDerivatives = false) const override {
+  int numberOfSubCurves(bool includeDerivatives = false) const override {
     return m_model.numberOfSubCurves(this) +
            includeDerivatives *
                (displayPlotFirstDerivative() + displayPlotSecondDerivative());

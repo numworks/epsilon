@@ -127,11 +127,9 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   if (f->properties().isCartesian()) {
     drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tStep,
                   discontinuityEvaluation, axis);
-
   } else if (f->properties().isPolar()) {
     drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStep,
               discontinuityEvaluation);
-
   } else if (f->properties().isScatterPlot()) {
     drawScatterPlot(ctx, rect, f.operator->());
   } else {

@@ -26,11 +26,12 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
-        Tree* e = static_cast<const Tree*>(data)->cloneTree();
-        if (e->isStore()) {
-          // Store is an expression only for convenience
-          e->moveTreeOverTree(e->child(0));
-        }
+        const Tree* dataTree = static_cast<const Tree*>(data);
+        bool isStore = dataTree->isStore();
+        /* Store is an expression only for convenience. Only first child is to
+         * be simplified. */
+        Tree* e =
+            isStore ? dataTree->child(0)->cloneTree() : dataTree->cloneTree();
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
@@ -40,6 +41,11 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         // TODO: Should be in ReduceSystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
         Beautification::DeepBeautify(e, projectionContext);
+        if (isStore) {
+          // Restore the store structure
+          dataTree->child(1)->cloneTree();
+          e->cloneNodeAtNode(dataTree);
+        }
       },
       projectionContext, e, RelaxProjectionContext);
   /* TODO: Due to projection/beautification cycles and multiple intermediary

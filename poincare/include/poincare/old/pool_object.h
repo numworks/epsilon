@@ -26,6 +26,10 @@
 
 namespace Poincare {
 
+/* TODO_PCJ: This marks methods that are bound to be removed with new Poincare
+ * Indeed, PoolObject will no longer be related, or have parents, or children.*/
+#define PCJ_DELETE 1
+
 #if __EMSCRIPTEN__
 /* Emscripten memory representation assumes loads and stores are aligned.
  * Because the Pool buffer is going to store double values, Node addresses
@@ -52,17 +56,22 @@ class PoolObject {
   virtual ~PoolObject() {}
   typedef PoolObject *(*const Initializer)(void *);
 
-  // Attributes
+// Attributes
+#if PCJ_DELETE
   void setParentIdentifier(uint16_t parentID) { m_parentIdentifier = parentID; }
   void deleteParentIdentifier() { m_parentIdentifier = NoNodeIdentifier; }
+#endif
   virtual size_t size() const = 0;
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
+#if PCJ_DELETE
   size_t deepSize(int realNumberOfChildren) const;
-
+#endif
   // Ghost
   virtual bool isGhost() const { return false; }
+#if PCJ_DELETE
   bool deepIsGhost() const;
+#endif
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
@@ -91,7 +100,8 @@ class PoolObject {
     return this >= PoolCheckpoint::TopmostEndOfPool();
   }
 
-  // Hierarchy
+// Hierarchy
+#if PCJ_DELETE
   PoolObject *parent() const;
   PoolObject *root();
   virtual int numberOfChildren() const = 0;
@@ -210,6 +220,7 @@ class PoolObject {
   DepthFirst<PoolObject> depthFirstChildren() const {
     return DepthFirst<PoolObject>(this);
   }
+#endif
 
   PoolObject *next() const {
     /* Simple version would be "return this + 1;", with pointer arithmetics
@@ -219,8 +230,10 @@ class PoolObject {
         reinterpret_cast<char *>(const_cast<PoolObject *>(this)) +
         Helpers::AlignedSize(size(), ByteAlignment));
   }
+#if PCJ_DELETE
   PoolObject *nextSibling() const;
   PoolObject *lastDescendant() const;
+#endif
 
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream &stream) const = 0;
@@ -242,12 +255,16 @@ class PoolObject {
         m_referenceCounter(0) {}
 
  private:
+#if PCJ_DELETE
   void updateParentIdentifierInChildren() const {
     changeParentIdentifierInChildren(m_identifier);
   }
   void changeParentIdentifierInChildren(uint16_t id) const;
+#endif
   uint16_t m_identifier;
+#if PCJ_DELETE
   uint16_t m_parentIdentifier;
+#endif
   int8_t m_referenceCounter;
 };
 

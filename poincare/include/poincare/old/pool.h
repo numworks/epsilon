@@ -14,6 +14,9 @@
 
 namespace Poincare {
 
+// TODO_PCJ: See comment in pool_object.h
+#define PCJ_DELETE 1
+
 class PoolHandle;
 
 class Pool final {
@@ -59,11 +62,12 @@ class Pool final {
   void *alloc(size_t size);
   void move(PoolObject *destination, PoolObject *source,
             int realNumberOfSourceChildren);
+#if PCJ_DELETE
   void moveChildren(PoolObject *destination, PoolObject *sourceParent);
   void removeChildren(PoolObject *node, int nodeNumberOfChildren);
   void removeChildrenAndDestroy(PoolObject *nodeToDestroy,
                                 int nodeNumberOfChildren);
-
+#endif
   PoolObject *deepCopy(PoolObject *node);
   PoolObject *copyTreeFromAddress(const void *address, size_t size);
 
@@ -126,6 +130,7 @@ class Pool final {
   };
   Nodes allNodes() { return Nodes(first()); }
 
+#if PCJ_DELETE
   class RootNodes final {
    public:
     RootNodes(PoolObject *node) : m_node(node) {}
@@ -144,6 +149,7 @@ class Pool final {
     PoolObject *m_node;
   };
   RootNodes roots() { return RootNodes(first()); }
+#endif
 
   // Pool memory
   void dealloc(PoolObject *ptr, size_t size);

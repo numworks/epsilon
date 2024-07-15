@@ -6,8 +6,12 @@
 #include "pool.h"
 
 namespace Poincare {
+
+// TODO_PCJ: See comment in pool_object.h
+#define PCJ_DELETE 1
+
 /* A PoolHandle references a PoolObject stored somewhere is the OExpression
- * Pool, and identified by its idenfier. Any method that can possibly move the
+ * Pool, and identified by its identifier. Any method that can possibly move the
  * object ("break the this") therefore needs to be implemented in the Handle
  * rather than the Node.
  */
@@ -63,11 +67,15 @@ class PoolHandle {
   }
   int nodeRetainCount() const { return object()->retainCount(); }
   size_t size() const;
+#if PCJ_DELETE
   size_t sizeOfNode() const { return object()->size(); }
+#endif
   void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
   bool isGhost() const { return object()->isGhost(); }
+#if PCJ_DELETE
   bool deepIsGhost() const { return object()->deepIsGhost(); }
+#endif
   bool isUninitialized() const {
     return m_identifier == PoolObject::NoNodeIdentifier;
   }
@@ -76,7 +84,8 @@ class PoolHandle {
            (object() == nullptr || object() >= treePoolCursor);
   }
 
-  /* Hierarchy */
+/* Hierarchy */
+#if PCJ_DELETE
   bool hasChild(PoolHandle t) const;
   bool hasSibling(PoolHandle t) const {
     return object()->hasSibling(t.object());
@@ -104,10 +113,12 @@ class PoolHandle {
   int numberOfDescendants(bool includeSelf) const {
     return object()->numberOfDescendants(includeSelf);
   }
+#endif
 
   /* Hierarchy operations */
   // Replace
   void replaceWithInPlace(PoolHandle t);
+#if PCJ_DELETE
   void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild);
   void replaceChildAtIndexInPlace(int oldChildIndex, PoolHandle newChild);
   void replaceChildAtIndexWithGhostInPlace(int index) {
@@ -119,6 +130,7 @@ class PoolHandle {
   void mergeChildrenAtIndexInPlace(PoolHandle t, int i);
   // Swap
   void swapChildrenInPlace(int i, int j);
+#endif
 
   /* Logging */
 #if POINCARE_TREE_LOG
@@ -129,6 +141,7 @@ class PoolHandle {
 
   static PoolHandle Builder(PoolObject::Initializer initializer, size_t size,
                             int numberOfChildren = -1);
+#if PCJ_DELETE
   static PoolHandle BuilderWithChildren(PoolObject::Initializer initializer,
                                         size_t size, const Tuple& children);
 
@@ -203,6 +216,8 @@ class PoolHandle {
     return Direct<PoolHandle, PoolObject>(*this);
   }
 
+#endif
+
  protected:
   /* Constructor */
   PoolHandle(const PoolObject* node);
@@ -214,6 +229,7 @@ class PoolHandle {
     }
   }
 
+#if PCJ_DELETE
   /* WARNING: if the children table is the result of a cast, the object
    * downcasted has to be the same size as a PoolHandle. */
   template <class T, class U>
@@ -222,6 +238,7 @@ class PoolHandle {
   static T FixedArityBuilder(const Tuple& children = {});
 
   static PoolHandle BuildWithGhostChildren(PoolObject* node);
+#endif
 
   void setIdentifierAndRetain(uint16_t newId);
   void setTo(const PoolHandle& tr);
@@ -230,7 +247,8 @@ class PoolHandle {
     return PoolObject::IsValidIdentifier(identifier);
   }
 
-  /* Hierarchy operations */
+/* Hierarchy operations */
+#if PCJ_DELETE
   // Add
   void addChildAtIndexInPlace(PoolHandle t, int index,
                               int currentNumberOfChildren);
@@ -238,16 +256,18 @@ class PoolHandle {
   void removeChildAtIndexInPlace(int i);
   void removeChildInPlace(PoolHandle t, int childNumberOfChildren);
   void removeChildrenInPlace(int currentNumberOfChildren);
-
+#endif
   uint16_t m_identifier;
 
  private:
   template <class U>
   static PoolHandle Builder();
 
+#if PCJ_DELETE
   void detachFromParent();
   // Add ghost children on layout construction
   void buildGhostChildren();
+#endif
   void release(uint16_t identifier);
 };
 

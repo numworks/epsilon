@@ -183,7 +183,7 @@ void ContinuousFunctionProperties::update(
      * - points for SymbolType::NoSymbol and SymbolType::T */
     if (analyzedExpression.deepIsMatrix(context, true, false) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         analyzedExpression.deepIsList(context)) ||
+         analyzedExpression.isList(context)) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          precomputedFunctionSymbol != SymbolType::T &&
          analyzedExpression.recursivelyMatches([](const NewExpression e) {

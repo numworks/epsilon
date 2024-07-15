@@ -535,7 +535,7 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 
 template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
-  assert(deepIsList(nullptr));
+  assert(isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
@@ -847,7 +847,7 @@ bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool NewExpression::deepIsList(Context* context) const {
+bool NewExpression::isList(Context* context) const {
   return Dimension::DeepCheck(tree(), context) &&
          Dimension::IsList(tree(), context);
 }

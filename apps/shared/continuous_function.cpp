@@ -629,7 +629,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      if (m_expression.deepIsList(nullptr)) {
+      if (m_expression.isList()) {
         SystemExpression list =
             m_expression.type() == ExpressionNode::Type::List
                 ? m_expression

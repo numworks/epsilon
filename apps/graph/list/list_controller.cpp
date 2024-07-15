@@ -87,7 +87,7 @@ bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
   return expression.type() != ExpressionNode::Type::Comparison &&
          (expression.type() != ExpressionNode::Type::Point ||
           symbol == Symbol::k_parametricSymbol) &&
-         !expression.deepIsList(nullptr);
+         !expression.isList();
 }
 
 bool ListController::completeEquation(LayoutField* equationField,

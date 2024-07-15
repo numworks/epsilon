@@ -32,10 +32,10 @@ void assert_expression_approximates_to_scalar(
   char information[bufferSize] = "";
   int used = Poincare::Print::UnsafeCustomPrintf(
       information, bufferSize, "%s\t%s\t%*.*ed", bad ? "BAD" : "OK", expression,
-      result, Preferences::PrintFloatMode::Decimal, 7);
+      approximation, Preferences::PrintFloatMode::Decimal, 7);
   if (bad) {
     Poincare::Print::UnsafeCustomPrintf(
-        information + used, bufferSize - used, "\t%*.*ed", approximation,
+        information + used, bufferSize - used, "\t%*.*ed", result,
         Preferences::PrintFloatMode::Decimal, 7);
   }
   quiz_print(information);

@@ -91,6 +91,7 @@ class PatternMatching {
     };
   };
 
+#ifndef PLATFORM_DEVICE
   template <KTreeConcept KT>
   static bool Match(KT source, const Tree* pattern, Context* context) {
     // Throw compile time error if source is a KTree
@@ -98,6 +99,7 @@ class PatternMatching {
                   "Match should not be called with a KTree as first argument, "
                   "source and pattern have probably been mixed up");
   }
+#endif
 
   static bool Match(const Tree* source, const Tree* pattern, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),

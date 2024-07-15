@@ -527,14 +527,15 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
+    assert(e.isPointOrListOfPoints());
     SystemExpression point;
-    if (NewExpression::IsPoint(e)) {
+    if (e.isPoint()) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
       }
       point = e;
     } else {
-      assert(e.type() == ExpressionNode::Type::List);
+      assert(e.isListOfPoints());
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
           tInt >= static_cast<List&>(e).numberOfChildren()) {
@@ -542,7 +543,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(!point.isUninitialized() && NewExpression::IsPoint(point));
+    assert(!point.isUninitialized() && point.isPoint());
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }

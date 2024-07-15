@@ -857,6 +857,16 @@ bool UserExpression::isPointOrListOfPoints(Context* context) const {
          Dimension::Get(tree(), context).isPoint();
 }
 
+// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
+bool UserExpression::isPoint(Context* context) const {
+  return isPointOrListOfPoints(context) && !Dimension::IsList(tree(), context);
+}
+
+// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
+bool UserExpression::isListOfPoints(Context* context) const {
+  return isPointOrListOfPoints(context) && Dimension::IsList(tree(), context);
+}
+
 bool NewExpression::hasComplexI(Context* context,
                                 SymbolicComputation replaceSymbols) const {
   return !isUninitialized() && recursivelyMatches(

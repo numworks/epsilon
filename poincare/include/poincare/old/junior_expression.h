@@ -289,6 +289,8 @@ class JuniorExpression : public OExpression {
   bool isMatrix(Context* context = nullptr) const;
   bool isList(Context* context = nullptr) const;
   bool isPointOrListOfPoints(Context* context = nullptr) const;
+  bool isPoint(Context* context = nullptr) const;
+  bool isListOfPoints(Context* context = nullptr) const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {
@@ -323,9 +325,6 @@ class JuniorExpression : public OExpression {
   static bool IsSymbolic(const NewExpression e) {
     assert(false);
     return false;
-  }
-  static bool IsPoint(const NewExpression e) {
-    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
   }
   static bool IsSequence(const NewExpression e) {
     return e.type() == ExpressionNode::Type::Sequence;

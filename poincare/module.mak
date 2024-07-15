@@ -173,7 +173,6 @@ $(addprefix old/, \
   xnt_helpers.cpp \
 ) \
 $(addprefix expression/, \
-  advanced_simplification.cpp \
   advanced_operation.cpp \
   advanced_reduction.cpp \
   algebraic.cpp \
@@ -331,7 +330,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/parsing.cpp \
   old/simplification.cpp \
   api.cpp \
-  latex_parser.cpp \
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \

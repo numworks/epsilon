@@ -53,10 +53,10 @@ SystemExpression Equation::Model::standardForm(
   } else if (simplifiedInput.recursivelyMatches(
                  [](const NewExpression e, Context* context) {
                    return e.isOfType({ExpressionNode::Type::Undefined,
-                                      ExpressionNode::Type::Infinity}) ||
-                          NewExpression::IsMatrix(e, context);
+                                      ExpressionNode::Type::Infinity});
                  },
-                 contextToUse)) {
+                 contextToUse) ||
+             simplifiedInput.isMatrix()) {
     returnedExpression = Undefined::Builder();
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0),

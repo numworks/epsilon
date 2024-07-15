@@ -35,12 +35,12 @@ These operations never need to be applied twice.
 - [Replace local symbols with variables](#local-symbols)
 - [Replace symbols and functions stored in context](#global-symbols)
 - [Ensure the expression has a valid dimension](#dimension-check)
-- [Extract units and adjust the approximation strategy](#extract-units)
 - [Project the expression, approximate depending on the strategy](#projection)
 - [Apply systematic reduction](#systematic-reduction)
 - [Bubble up lists, applying systematic reduction](#list-bubble-up)
 - [Apply advanced reduction](#advanced-Reduction)
 - [Simplify Dependencies](#simplify-dependencies)
+- [Extract and improve units ](#extract-units)
 - [Approximate again, depending on the strategy](#final-approximation)
 - [Beautify expression](#beautification)
 
@@ -128,16 +128,6 @@ This is done as early as possible so that all following steps can assume the dim
 
 Some issues such as NonReal, division by zero or other undefinitions can still arise later.
 
-## Extract units
-
-This is the only step where the projection context is altered.
-
-If the expression contains non-angular units, downgrade the [approximation strategy](#approximation-strategy).
-
-If the expression had units, also store them in the projection context. This will be used later when putting the units back during beautification.
-
-If the expression has non-Kelvin temperature units (°C or °F), convert the entire tree to Kelvins here. Such conversion must be done at root level.
-
 ## Approximation strategy
 
 The simplification algorithm handles two simplification strategies:
@@ -155,7 +145,7 @@ Most of the time, we use the `Default` strategy and let the simplification handl
 It is expected to:
 - Approximated everything that can be if strategy is `ApproximateToFloat`.
 - Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1))). It replace nodes not handled by reduction with other nodes handled by reduction.
-- Un-contextualize the expression (remove unit, complex format and angle units considerations from reduction algorithm)
+- Un-contextualize the expression (complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time
 
 ### Effects
@@ -174,7 +164,6 @@ $$
 
 | Match | Replace |
 |---|---|
-| unit | 1 |
 | decimal{n}(A) | 10^(-n)×A |
 | cos(A) | trig(A×RadToAngleUnit, 0) |
 | sin(A) | trig(A×RadToAngleUnit, 1) |
@@ -484,6 +473,14 @@ In this step, we remove useless dependencies from a dependency tree:
 - Remove dependencies that can be approximated to a value.
 - Replace the entire dependency with undef or nonreal if one of the dependencies is approximated to undef or nonreal.
 
+## Extract units
+
+At this step, units have been preserved throughout simplification.
+
+We extract the units, and find the best representative (`s` or `min` for example) and the best prefix (`mm` or `cm` for example) and replace it in the expression.
+
+If the expression has non-angle units, change the approximation strategy to `ApproximateToFloat`.
+
 ## Final approximation
 
 With an approximation strategy, we approximate again here in case previous steps unlocked new possible approximations.
@@ -514,10 +511,6 @@ Expressions such as PercentAddition are also beautified:
 $A+B\\%$ becomes $A*(1+\frac{B}{100})$.
 
 Rationals are turned into fractions, $0.25$ becoming $\frac{1}{4}$ for example.
-
-### Restore Unit
-
-The unit removed on projection is restored to the best prefix and representative.
 
 ### Restore Variable names
 

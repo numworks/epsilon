@@ -837,11 +837,7 @@ bool NewExpression::deepIsOfType(
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool NewExpression::deepIsMatrix(Context* context, bool canContainMatrices,
-                                 bool isReduced) const {
-  if (!canContainMatrices) {
-    return false;
-  }
+bool NewExpression::isMatrix(Context* context) const {
   return Dimension::DeepCheck(tree(), context) &&
          Dimension::Get(tree(), context).isMatrix();
 }

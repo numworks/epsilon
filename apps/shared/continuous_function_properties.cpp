@@ -181,7 +181,7 @@ void ContinuousFunctionProperties::update(
     /* Matrices, lists and points are not handled except:
      * - lists for SymbolType::NoSymbol
      * - points for SymbolType::NoSymbol and SymbolType::T */
-    if (analyzedExpression.deepIsMatrix(context, true, false) ||
+    if (analyzedExpression.isMatrix(context) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          analyzedExpression.isList(context)) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&

@@ -56,7 +56,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasVector(exactOutput, approximateOutput, calculationPreferences)) {
     return AdditionalResultsType{.vector = true};
   }
-  if (approximateOutput.deepIsMatrix()) {
+  if (approximateOutput.isMatrix()) {
     return HasMatrix(approximateOutput) ? AdditionalResultsType{.matrix = true}
                                         : AdditionalResultsType{.empty = true};
   }

@@ -161,7 +161,7 @@ class Representative {
   const Tree* m_ratioExpression;
   const Prefixable m_inputPrefixable;
   const Prefixable m_outputPrefixable;
-  bool m_isImperial;
+  const bool m_isImperial;
 };
 
 #if 0

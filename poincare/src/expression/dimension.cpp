@@ -184,9 +184,6 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
-  // if (e->isDependency() || e->isSet()) {
-  //   return true;
-  // }
   Dimension childDim[e->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;

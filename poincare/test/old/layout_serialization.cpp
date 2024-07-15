@@ -71,8 +71,6 @@ QUIZ_CASE(poincare_layout_serialization) {
                               "1/\u00122+3\u0013");
 #endif
 
-  // GridPair -> Tested by Matrix
-
   // Rack
   assert_layout_serializes_to(KRackL("a"_cl, "b"_cl, "c"_cl, "d"_cl), "abcd");
 
@@ -93,8 +91,6 @@ QUIZ_CASE(poincare_layout_serialization) {
   // Product
   assert_layout_serializes_to(KRackL(KProductL("x"_l, "2"_l, "3"_l, "f"_l)),
                               "product\u0012f,x,2,3\u0013");
-
-  // Sequence -> Tested by Sum and Product
 
   // Sum
   assert_layout_serializes_to(KRackL(KSumL("x"_l, "2"_l, "3"_l, "1+1"_l)),

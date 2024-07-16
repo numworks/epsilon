@@ -23,9 +23,17 @@ _sources_kandinsky_extended := $(addprefix src/, \
   framebuffer.cpp \
 ) $(_kandinsky_glyph_index)
 
+_sources_kandinsky_test := $(addprefix test/, \
+  color.cpp \
+  font.cpp \
+  rect.cpp \
+)
+
+
 $(call create_module,kandinsky,1, \
   $(_sources_kandinsky_minimal) \
   $(addsuffix :-minimal,$(_sources_kandinsky_extended)) \
+  $(addsuffix :+test,$(_sources_kandinsky_test)) \
 )
 
 # Rasterizer

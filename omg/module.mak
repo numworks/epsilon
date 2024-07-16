@@ -27,9 +27,15 @@ _sources_omg_lz4only := $(addprefix src/external/lz4/, \
   lz4hc.c \
 )
 
+_sources_omg_test := $(addprefix test/, \
+  bit_helper.cpp \
+  print.cpp \
+  signaling_nan.cpp \
+)
+
 $(call create_module,omg,1, \
   $(addsuffix :-lz4only, \
     $(addsuffix :-minimal,$(_sources_omg_all)) \
     $(foreach f,decompress print utf8,$(addsuffix :+$f,$(_sources_omg_$f)))) \
-  $(addsuffix :+lz4only,$(_sources_omg_lz4only)) \
+  $(foreach f,lz4only test,$(addsuffix :+$f,$(_sources_omg_$f))) \
 )

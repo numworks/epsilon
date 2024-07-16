@@ -127,6 +127,6 @@ $(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
 	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
 
 poincare_test: $(OUTPUT_DIRECTORY)/poincare.mjs
-	cp tests/poincare-api-test.mjs $(OUTPUT_DIRECTORY)
+	cp poincare/test/api-test.mjs $(OUTPUT_DIRECTORY)
 	cd $(OUTPUT_DIRECTORY) \
 	node poincare-api-test.mjs

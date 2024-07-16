@@ -22,7 +22,6 @@ class UserExpression;
 class SystemExpression;
 class SystemFunction;
 
-class Dimension;
 class Symbol;
 
 class JuniorPoolObject : PoolObject {

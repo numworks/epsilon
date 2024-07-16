@@ -11,7 +11,6 @@ _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
 # Run the simulator
-.PHONY: %.app.run
 %.app.run: $(_simulator_app)
 	open $^
 

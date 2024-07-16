@@ -14,6 +14,11 @@
 
 namespace Poincare::Internal {
 
+Token::Type TokenizerFailure(const char* reason) {
+  (void)reason;
+  return Token::Type::Undefined;
+}
+
 bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
   ParsingContext pContext(nullptr, ParsingContext::ParsingMethod::Assignment);
@@ -138,7 +143,7 @@ Token Tokenizer::popNumber() {
   }
 
   if (integralPartLength == 0 && fractionalPartLength == 0) {
-    return Token(Token::Type::Undefined);
+    return Token(TokenizerFailure("Number must have at least one digit"));
   }
 
   size_t exponentPartText = m_decoder.position();
@@ -148,7 +153,7 @@ Token Tokenizer::popNumber() {
     exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
-      return Token(Token::Type::Undefined);
+      return Token(TokenizerFailure("Exponent must have at least one digit"));
     }
   }
 
@@ -307,7 +312,7 @@ Token Tokenizer::popToken() {
     case UCodePointGreekSmallLetterPi:
       return Token(Token::Type::SpecialIdentifier, layout);
     default:
-      return Token(Token::Type::Undefined, layout);
+      return Token(TokenizerFailure("Unknown token."), layout);
   }
 }
 
@@ -445,8 +450,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     if (Units::Unit::CanParse(span, nullptr, nullptr)) {
       return Token::Type::Unit;
     }
-    // Only constants and units can be prefixed with a '_'
-    return Token::Type::Undefined;
+    return TokenizerFailure("Only constants and units can be prefixed with _");
   }
 #if 0
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
@@ -506,7 +510,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(span)) {
     return Token::Type::CustomIdentifier;
   }
-  return Token::Type::Undefined;
+  return TokenizerFailure("Unrecognized span.");
 }
 
 // ========== Implicit addition between units ==========

@@ -1056,7 +1056,7 @@ using namespace Poincare;
 void assert_is_list_of_points(const char* definition, Context* context,
                               bool truth = true) {
   UserExpression e = UserExpression::Builder(TextToTree(definition, context));
-  bool isListOfPoints = e.isList(context) && e.isPointOrListOfPoints(context);
+  bool isListOfPoints = e.dimension(context).isListOfPoints();
   quiz_assert_print_if_failure(isListOfPoints == truth, definition);
 }
 

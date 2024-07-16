@@ -82,12 +82,12 @@ void ListController::fillWithDefaultFunctionEquation(char* buffer,
 
 bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
                                             CodePoint symbol) {
+  Dimension dimension = expression.dimension();
   /* We do not want to complete equation if expression is already an
-   * (in)equation, a point or a list (of points). */
+   * (in)equation, a point or a list of points. */
   return expression.type() != ExpressionNode::Type::Comparison &&
-         (expression.type() != ExpressionNode::Type::Point ||
-          symbol == Symbol::k_parametricSymbol) &&
-         !expression.isList();
+         (!dimension.isPoint() || symbol == Symbol::k_parametricSymbol) &&
+         !dimension.isListOfPoints();
 }
 
 bool ListController::completeEquation(LayoutField* equationField,

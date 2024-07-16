@@ -48,7 +48,7 @@ class ScatterPlotIterable {
  private:
   ScatterPlotIterable(Poincare::SystemExpression e)
       : m_iterable(e), m_expression(e) {
-    assert(e.isPointOrListOfPoints());
+    assert(e.dimension().isPointOrListOfPoints());
   }
 
   static int ListLength(const Poincare::SystemExpression& e) {

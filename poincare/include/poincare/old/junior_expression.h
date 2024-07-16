@@ -311,11 +311,7 @@ class JuniorExpression : public OExpression {
 
   bool deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
                     Context* context = nullptr) const;
-  bool isMatrix(Context* context = nullptr) const;
-  bool isList(Context* context = nullptr) const;
-  bool isPointOrListOfPoints(Context* context = nullptr) const;
-  bool isPoint(Context* context = nullptr) const;
-  bool isListOfPoints(Context* context = nullptr) const;
+  Dimension dimension(Context* context = nullptr) const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {

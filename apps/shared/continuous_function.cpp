@@ -527,15 +527,15 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
-    assert(e.isPointOrListOfPoints());
+    assert(e.dimension().isPointOrListOfPoints());
     SystemExpression point;
-    if (e.isPoint()) {
+    if (e.dimension().isPoint()) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
       }
       point = e;
     } else {
-      assert(e.isListOfPoints());
+      assert(e.dimension().isListOfPoints());
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
           tInt >= static_cast<List&>(e).numberOfChildren()) {
@@ -543,7 +543,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(!point.isUninitialized() && point.isPoint());
+    assert(!point.isUninitialized() && point.dimension().isPoint());
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
@@ -630,7 +630,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * approximated in advance.
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
-      if (m_expression.isList()) {
+      if (m_expression.dimension().isListOfPoints()) {
         SystemExpression list =
             m_expression.type() == ExpressionNode::Type::List
                 ? m_expression
@@ -638,10 +638,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
         m_expression = m_expression.approximateListAndSort<double>()
                            .removeUndefListElements();
       } else {
-        assert(m_expression.type() == ExpressionNode::Type::Point ||
-               (m_expression.type() == ExpressionNode::Type::Dependency &&
-                m_expression.childAtIndex(0).type() ==
-                    ExpressionNode::Type::Point));
+        assert(m_expression.dimension().isPoint());
         m_expression = PoincareHelpers::Approximate<double>(
             m_expression, context,
             {.complexFormat = complexFormat, .angleUnit = angleUnit});
@@ -851,7 +848,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
-    if (result.isPointOrListOfPoints(context)) {
+    if (result.dimension(context).isPointOrListOfPoints()) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;

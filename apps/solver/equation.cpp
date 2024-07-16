@@ -56,7 +56,7 @@ SystemExpression Equation::Model::standardForm(
                                       ExpressionNode::Type::Infinity});
                  },
                  contextToUse) ||
-             simplifiedInput.isMatrix()) {
+             simplifiedInput.dimension().isMatrix()) {
     returnedExpression = Undefined::Builder();
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0),

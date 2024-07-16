@@ -593,7 +593,7 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 
 template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
-  assert(isList());
+  assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
@@ -894,37 +894,8 @@ bool NewExpression::deepIsOfType(
       &types);
 }
 
-// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool NewExpression::isMatrix(Context* context) const {
-  return Internal::Dimension::DeepCheck(tree(), context) &&
-         Internal::Dimension::Get(tree(), context).isMatrix() &&
-         !Internal::Dimension::IsList(tree(), context);
-}
-
-// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool NewExpression::isList(Context* context) const {
-  return Internal::Dimension::DeepCheck(tree(), context) &&
-         Internal::Dimension::IsList(tree(), context);
-}
-
-// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool UserExpression::isPointOrListOfPoints(Context* context) const {
-  /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
-   * this behavior ? */
-  return Internal::Dimension::DeepCheck(tree(), context) &&
-         Internal::Dimension::Get(tree(), context).isPoint();
-}
-
-// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool UserExpression::isPoint(Context* context) const {
-  return isPointOrListOfPoints(context) &&
-         !Internal::Dimension::IsList(tree(), context);
-}
-
-// TODO_PCJ: Remove checks in ProjectedExpression implementation of this
-bool UserExpression::isListOfPoints(Context* context) const {
-  return isPointOrListOfPoints(context) &&
-         Internal::Dimension::IsList(tree(), context);
+Poincare::Dimension NewExpression::dimension(Context* context) const {
+  return Poincare::Dimension(*this, context);
 }
 
 bool NewExpression::hasComplexI(Context* context,

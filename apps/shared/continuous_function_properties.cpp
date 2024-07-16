@@ -179,16 +179,14 @@ void ContinuousFunctionProperties::update(
     }
 
     /* Matrices, lists and points are not handled except:
-     * - lists for SymbolType::NoSymbol
+     * - lists of points for SymbolType::NoSymbol
      * - points for SymbolType::NoSymbol and SymbolType::T */
-    if (analyzedExpression.isMatrix(context) ||
+    Dimension dimension = analyzedExpression.dimension(context);
+    if (dimension.isMatrix() ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         analyzedExpression.isList(context)) ||
+         dimension.isListOfPoints()) ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         precomputedFunctionSymbol != SymbolType::T &&
-         analyzedExpression.recursivelyMatches([](const NewExpression e) {
-           return e.type() == ExpressionNode::Type::Point;
-         }))) {
+         precomputedFunctionSymbol != SymbolType::T && dimension.isPoint())) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }

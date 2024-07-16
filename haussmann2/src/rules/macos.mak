@@ -19,7 +19,7 @@ $(call document_extension,app.run,Start the simulator)
 
 # Reload the simulator
 %.app.reload: $(_simulator_app)
-	pgrep Epsilon && pkill -USR1 Epsilon || echo "No Epsilon executable running"
+	pgrep $(APP_NAME) && pkill -USR1 $(APP_NAME) || echo "No $(APP_NAME) executable running"
 	cmd="open $^ --args --load-state-file /tmp/numworks.reload.nws";\
 	eval $$cmd || $$cmd
 

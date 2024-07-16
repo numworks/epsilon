@@ -327,10 +327,6 @@ class JuniorExpression : public OExpression {
                        ExpressionNode::Type::Float,
                        ExpressionNode::Type::Double});
   }
-  static bool IsRandom(const NewExpression e) {
-    assert(false);
-    return false;
-  }
   static bool IsMatrix(const NewExpression e, Context* context) {
     assert(false);
     return false;
@@ -343,28 +339,8 @@ class JuniorExpression : public OExpression {
                        ExpressionNode::Type::PercentAddition});
   }
   static bool IsDiscontinuous(const NewExpression e, Context* context);
-  static bool IsSymbolic(const NewExpression e) {
-    assert(false);
-    return false;
-  }
   static bool IsSequence(const NewExpression e) {
     return e.type() == ExpressionNode::Type::Sequence;
-  }
-  static bool IsFactorial(const NewExpression e) {
-    return e.type() == ExpressionNode::Type::Factorial;
-  }
-
-  typedef bool (*PatternTest)(const NewExpression& e, Context* context,
-                              const char* symbol);
-  static bool IsRationalFraction(const NewExpression& e, Context* context,
-                                 const char* symbol) {
-    assert(false);
-    return false;
-  }
-  bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
-                                     const char* symbol) const {
-    assert(false);
-    return false;
   }
 
   bool isUndefined() const { return type() == ExpressionNode::Type::Undefined; }

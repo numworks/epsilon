@@ -1,4 +1,4 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/graph/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   app.cpp \
   graph/area_between_curves_graph_controller.cpp \
   graph/area_between_curves_parameter_controller.cpp \
@@ -29,11 +29,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/, \
   shared/function_parameter_controller.cpp \
   values/interval_parameter_selector_controller.cpp \
   values/values_controller.cpp \
+  graph_icon.png \
+) \
   test/caching.cpp:+test \
   test/helper.cpp:+test \
   test/function_names.cpp:+test \
   test/function_properties.cpp:+test \
-  graph_icon.png \
 )
 
 $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png)

@@ -1,75 +1,58 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/inference/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
-$(addprefix models/statistic/, \
-  interfaces/distributions.cpp \
-  interfaces/significance_tests.cpp \
-  chi2_test.cpp \
-  goodness_test.cpp \
-  homogeneity_test.cpp \
-  interval.cpp \
-  one_mean_statistic.cpp \
-  raw_data_statistic.cpp \
-  slope_t_interval.cpp \
-  slope_t_statistic.cpp \
-  slope_t_test.cpp \
-  statistic.cpp \
-  table.cpp \
-  test.cpp \
-  two_means_statistic.cpp \
-  two_proportions_z_test.cpp \
-) \
-$(addprefix shared/, \
-  dynamic_cells_data_source.cpp \
-) \
-$(addprefix statistic/chi_square/, \
-  categorical_type_controller.cpp \
-  homogeneity_data_source.cpp \
-  input_goodness_controller.cpp \
-  input_goodness_table_cell.cpp \
-  input_homogeneity_controller.cpp \
-  input_homogeneity_table_cell.cpp \
-  results_goodness_controller.cpp \
-  results_goodness_table_cell.cpp \
-  results_homogeneity_controller.cpp \
-  results_homogeneity_table_cell.cpp \
-) \
-$(addprefix statistic/interval/, \
-  interval_conclusion_view.cpp \
-  interval_curve_view.cpp \
-  interval_graph_controller.cpp \
-  interval_graph_view.cpp \
-) \
-$(addprefix statistic/store/, \
-  input_store_controller.cpp \
-  store_table_cell.cpp \
-) \
-$(addprefix statistic/test/, \
-  hypothesis_controller.cpp \
-  legend_view.cpp \
-  test_curve_view.cpp \
-  test_graph_controller.cpp \
-  test_graph_view.cpp \
-  zoom_hint_view.cpp \
-) \
-$(addprefix statistic/, \
-  categorical_cell.cpp \
-  categorical_controller.cpp \
-  categorical_table_cell.cpp \
-  comparison_operator_popup_data_source.cpp \
-  dataset_controller.cpp \
-  input_controller.cpp \
-  results_controller.cpp \
-  test_controller.cpp \
-  type_controller.cpp \
-) \
-$(addprefix test/, \
-  statistics.cpp:+test \
-) \
+  shared/dynamic_cells_data_source.cpp \
+  statistic/chi_square/categorical_type_controller.cpp \
+  statistic/chi_square/homogeneity_data_source.cpp \
+  statistic/chi_square/input_goodness_controller.cpp \
+  statistic/chi_square/input_goodness_table_cell.cpp \
+  statistic/chi_square/input_homogeneity_controller.cpp \
+  statistic/chi_square/input_homogeneity_table_cell.cpp \
+  statistic/chi_square/results_goodness_controller.cpp \
+  statistic/chi_square/results_goodness_table_cell.cpp \
+  statistic/chi_square/results_homogeneity_controller.cpp \
+  statistic/chi_square/results_homogeneity_table_cell.cpp \
+  statistic/interval/interval_conclusion_view.cpp \
+  statistic/interval/interval_curve_view.cpp \
+  statistic/interval/interval_graph_controller.cpp \
+  statistic/interval/interval_graph_view.cpp \
+  statistic/store/input_store_controller.cpp \
+  statistic/store/store_table_cell.cpp \
+  statistic/test/hypothesis_controller.cpp \
+  statistic/test/legend_view.cpp \
+  statistic/test/test_curve_view.cpp \
+  statistic/test/test_graph_controller.cpp \
+  statistic/test/test_graph_view.cpp \
+  statistic/test/zoom_hint_view.cpp \
+  statistic/categorical_cell.cpp \
+  statistic/categorical_controller.cpp \
+  statistic/categorical_table_cell.cpp \
+  statistic/comparison_operator_popup_data_source.cpp \
+  statistic/dataset_controller.cpp \
+  statistic/input_controller.cpp \
+  statistic/results_controller.cpp \
+  statistic/test_controller.cpp \
+  statistic/type_controller.cpp \
   inference_icon.png \
-$(addprefix images/, \
-  confidence_interval.png \
-  significance_test.png \
+  images/confidence_interval.png \
+  images/significance_test.png \
 ) \
+  models/statistic/chi2_test.cpp \
+  models/statistic/goodness_test.cpp \
+  models/statistic/homogeneity_test.cpp \
+  models/statistic/interfaces/distributions.cpp \
+  models/statistic/interfaces/significance_tests.cpp \
+  models/statistic/interval.cpp \
+  models/statistic/one_mean_statistic.cpp \
+  models/statistic/raw_data_statistic.cpp \
+  models/statistic/slope_t_interval.cpp \
+  models/statistic/slope_t_statistic.cpp \
+  models/statistic/slope_t_test.cpp \
+  models/statistic/statistic.cpp \
+  models/statistic/table.cpp \
+  models/statistic/test.cpp \
+  models/statistic/two_means_statistic.cpp \
+  models/statistic/two_proportions_z_test.cpp \
+  test/statistics.cpp:+test \
 )
 
 $(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_icon.png)

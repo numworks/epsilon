@@ -1,4 +1,4 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/calculation/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/calculation/,$(addsuffix :-test, \
   additional_results/additional_results_controller.cpp \
   additional_results/additional_results_type.cpp \
   additional_results/chained_expressions_list_controller.cpp \
@@ -37,7 +37,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/calculation/, \
   history_view_cell.cpp \
   layout_field.cpp \
   calculation_icon.png \
-)
+))
 
 $(eval $(call depends_on_image,$(PATH_apps)/calculation/app.cpp,$(PATH_apps)/calculation/calculation_icon.png))
 

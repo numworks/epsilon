@@ -1,28 +1,28 @@
 $(call create_module,apps,1, \
-  apps_container.cpp \
+  apps_container.cpp:-test \
   apps_container_helper.cpp:-test \
-  apps_container_launch_default.cpp:-onboarding \
-  apps_container_launch_on_boarding.cpp:+onboarding \
-  apps_container_prompt_beta.cpp:+beta \
-  apps_container_prompt_none.cpp:-beta:-update \
-  apps_container_prompt_update.cpp:+update \
-  apps_container_storage.cpp \
-  apps_window.cpp \
+  apps_container_launch_default.cpp:-onboarding:-test \
+  apps_container_launch_on_boarding.cpp:+onboarding:-test \
+  apps_container_prompt_beta.cpp:+beta:-test \
+  apps_container_prompt_none.cpp:-beta:-update:-test \
+  apps_container_prompt_update.cpp:+update:-test \
+  apps_container_storage.cpp:-test \
+  apps_window.cpp:-test \
   backlight_dimming_timer.cpp \
-  battery_timer.cpp \
-  battery_view.cpp \
+  battery_timer.cpp:-test \
+  battery_view.cpp:-test \
   empty_battery_window.cpp \
-  exam_pop_up_controller.cpp \
+  exam_pop_up_controller.cpp:-test \
   global_preferences.cpp \
   init.cpp:-test \
-  lock_view.cpp \
+  lock_view.cpp:-test \
   main.cpp:-test \
-  shift_alpha_lock_view.cpp \
-  suspend_timer.cpp \
-  title_bar_view.cpp \
+  shift_alpha_lock_view.cpp:-test \
+  suspend_timer.cpp:-test \
+  title_bar_view.cpp:-test \
   apps_container_helper_tests.cpp:+test \
   init_tests.cpp:+test \
-  exam_icon.png \
+  exam_icon.png:-test \
 )
 
 PRIVATE_SFLAGS_apps += -I$(PATH_apps)

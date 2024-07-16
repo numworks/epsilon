@@ -1,9 +1,9 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/home/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/home/,$(addsuffix :-test, \
   app.cpp \
   app_cell.cpp \
   controller.cpp \
   apps_layout.cpp \
-)
+))
 
 $(call i18n_without_universal,home/i18n/base)
 

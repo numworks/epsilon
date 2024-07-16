@@ -1,4 +1,4 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/elements/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/elements/,$(addsuffix :-test, \
   app.cpp \
   banner_view.cpp \
   data_field.cpp \
@@ -12,7 +12,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/elements/, \
   suggestion_text_field.cpp \
   table_layout.cpp \
   elements_icon.png \
-)
+))
 
 $(call depends_on_image,$(PATH_apps)/elements/app.cpp,$(PATH_apps)/elements/elements_icon.png)
 

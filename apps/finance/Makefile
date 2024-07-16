@@ -1,12 +1,13 @@
-SOURCES_apps += $(addprefix $(PATH_apps)/finance/, \
+SOURCES_apps += $(addprefix $(PATH_apps)/finance/,$(addsuffix :-test, \
   app.cpp \
-  data.cpp \
   interest_menu_controller.cpp \
   menu_controller.cpp \
   parameters_controller.cpp \
   result_controller.cpp \
-  test/finance.cpp:+test \
   finance_icon.png \
+) \
+  data.cpp \
+  test/finance.cpp:+test \
 )
 
 $(call depends_on_image,$(PATH_apps)/finance/app.cpp,$(PATH_apps)/finance/finance_icon.png)

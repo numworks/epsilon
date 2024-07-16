@@ -20,7 +20,7 @@ void fill_ring(RingBuffer<int, k_ringSize>* ringBuffer) {
   }
 }
 
-QUIZ_CASE(escher_ring_buffer) {
+QUIZ_CASE(ion_ring_buffer) {
   RingBuffer<int, k_ringSize> ringBuffer;
 
   fill_ring(&ringBuffer);

@@ -1,4 +1,14 @@
-$(call create_module,ion,1,)
+$(call create_module,ion,1, $(patsubst %, test/%:+test, \
+  crc32.cpp \
+  events.cpp \
+  exam_bytes.cpp \
+  exam_mode.cpp \
+  keyboard.cpp \
+  ring_buffer.cpp  \
+  storage.cpp  \
+  utf8_decoder.cpp \
+  utf8_helper.cpp \
+))
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \

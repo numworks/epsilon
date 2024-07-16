@@ -10,6 +10,13 @@ _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
 
 include $(PATH_haussmann)/src/rules/shared.apple.mak
 
+# Run the simulator
+.PHONY: %.app.run
+%.app.run: $(_simulator_app)
+	open $^
+
+$(call document_extension,app.run,Start the simulator)
+
 $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	cp $< $@

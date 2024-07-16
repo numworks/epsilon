@@ -17,6 +17,14 @@ include $(PATH_haussmann)/src/rules/shared.apple.mak
 
 $(call document_extension,app.run,Start the simulator)
 
+# Reload the simulator
+%.app.reload: $(_simulator_app)
+	pgrep Epsilon && pkill -USR1 Epsilon || echo "No Epsilon executable running"
+	cmd="open $^ --args --load-state-file /tmp/numworks.reload.nws";\
+	eval $$cmd || $$cmd
+
+$(call document_extension,app.reload,Refresh a running simulator)
+
 $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	cp $< $@

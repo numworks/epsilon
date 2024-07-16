@@ -162,8 +162,7 @@ ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int index) {
       return ParameterRepresentation{x, I18n::Message::SampleMean};
     }
     case ParamsOrder::s: {
-      Layout sigma = KRackL(KCodePointL<UCodePointGreekSmallLetterSigma>());
-      return ParameterRepresentation{sigma, I18n::Message::PopulationStd};
+      return ParameterRepresentation{"σ"_l, I18n::Message::PopulationStd};
     }
     case ParamsOrder::n: {
       return ParameterRepresentation{"n"_l, I18n::Message::SampleSize};

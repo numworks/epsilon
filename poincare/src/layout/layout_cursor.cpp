@@ -396,13 +396,11 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
 }
 
 void LayoutBufferCursor::addEmptyExponentialLayout(Poincare::Context* context) {
-  insertLayout(KRackL("e"_cl, KSuperscriptL(""_l)), context, false, false);
+  insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyTenPowerLayout(Poincare::Context* context) {
-  insertLayout(KRackL(KCodePointL<UCodePointMultiplicationSign>(), "1"_cl,
-                      "0"_cl, KSuperscriptL(""_l)),
-               context, false, false);
+  insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
 }
 
 void LayoutBufferCursor::addEmptyMatrixLayout(Poincare::Context* context) {

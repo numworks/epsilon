@@ -56,13 +56,9 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::Decimal:
       return "0.1234"_l;
     case I18n::Message::Scientific:
-      // TODO handle small E in rack literals
-      // return "1.234ᴇ-1"_l;
-      return "1.234"_l ^ KCodePointL<UCodePointLatinLetterSmallCapitalE>() ^
-             "-1"_l;
+      return "1.234ᴇ-1"_l;
     case I18n::Message::Engineering:
-      return "123.4"_l ^ KCodePointL<UCodePointLatinLetterSmallCapitalE>() ^
-             "-3"_l;
+      return "123.4ᴇ-3"_l;
 
     // Edition mode
     case I18n::Message::Edition2D:

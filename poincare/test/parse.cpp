@@ -42,9 +42,7 @@ QUIZ_CASE(pcj_layout_tokenize) {
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
               token.length() == 7);
 
-  token =
-      Tokenizer(Rack::From("12"_l ^ KCodePointL<u'ᴇ'>() ^ "-34"_l), &context)
-          .popToken();
+  token = Tokenizer(Rack::From("12ᴇ-34"_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
 }
 
@@ -60,11 +58,9 @@ QUIZ_CASE(pcj_layout_parse) {
                          KPow(2_e, KPow(KParentheses(KAdd(3_e, 1_e)), 4_e)));
   quiz_assert(is_parsable("12(123 +  0x2a+2*0b0101)"_l));
   // TODO _l with non-ascii codepoints
-  quiz_assert(is_parsable(
-      KRackL(KCodePointL<'1'>(), KCodePointL<u'ᴇ'>(), KCodePointL<'2'>())));
-  assert_trees_are_equal(
-      RackParser("12.34"_l ^ KCodePointL<u'ᴇ'>() ^ "999"_l, nullptr).parse(),
-      KDecimal(1234_e, -997_e));
+  quiz_assert(is_parsable("1ᴇ2"_l));
+  assert_trees_are_equal(RackParser("12.34ᴇ999"_l, nullptr).parse(),
+                         KDecimal(1234_e, -997_e));
   quiz_assert(is_parsable("-1"_l));
   quiz_assert(is_parsable(".1"_l));
   quiz_assert(is_parsable("1+2+3+4+5+6"_l));

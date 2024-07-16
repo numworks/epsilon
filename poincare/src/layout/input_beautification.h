@@ -79,10 +79,9 @@ class InputBeautification {
       {"<=", 0,
        [](TreeRef* parameters) -> Tree* {
          // TODO factorize the comparison operators once we have them in PCJ
-         return KCodePointL<u'≤'>()->cloneTree();
+         return "≤"_cl->cloneTree();
        }},
-      {">=", 0,
-       [](TreeRef* parameters) { return KCodePointL<u'≥'>()->cloneTree(); }},
+      {">=", 0, [](TreeRef* parameters) { return "≥"_cl->cloneTree(); }},
       {"!=", 0,
        [](TreeRef* parameters) {
          // ≠
@@ -91,31 +90,19 @@ class InputBeautification {
              ->cloneTree();
        }},
       // Special char
-      {"->", 0,
-       [](TreeRef* parameters) {
-         return KCodePointL<UCodePointRightwardsArrow>()->cloneTree();
-       }},
-      {"*", 0,
-       [](TreeRef* parameters) {
-         return KCodePointL<UCodePointMultiplicationSign>()->cloneTree();
-       }},
+      {"->", 0, [](TreeRef* parameters) { return "→"_cl->cloneTree(); }},
+      {"*", 0, [](TreeRef* parameters) { return "×"_cl->cloneTree(); }},
       {"''", 0,
        [](TreeRef* parameters) { return KCodePointL<u'"'>()->cloneTree(); }},
   };
 
   constexpr static BeautificationRule k_infRule = {
-      "inf", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointInfinity>()->cloneTree();
-      }};
+      "inf", 0, [](TreeRef* parameters) { return "∞"_cl->cloneTree(); }};
 
   constexpr static BeautificationRule k_piRule = {
-      "pi", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointGreekSmallLetterPi>()->cloneTree();
-      }};
+      "pi", 0, [](TreeRef* parameters) { return "π"_cl->cloneTree(); }};
   constexpr static BeautificationRule k_thetaRule = {
-      "theta", 0, [](TreeRef* parameters) {
-        return KCodePointL<UCodePointGreekSmallLetterTheta>()->cloneTree();
-      }};
+      "theta", 0, [](TreeRef* parameters) { return "θ"_cl->cloneTree(); }};
 
   constexpr static BeautificationRule k_absoluteValueRule =
       ruleHelper<Type::Abs, Type::AbsLayout>();
@@ -161,7 +148,7 @@ class InputBeautification {
       {/* exp( */
        "exp", 1,
        [](TreeRef* parameters) -> Tree* {
-         TreeRef exp = KRackL("e"_cl, KSuperscriptL(KRackL()))->cloneTree();
+         TreeRef exp = ("e"_l ^ KSuperscriptL(""_l))->cloneTree();
          exp->child(1)->child(0)->moveTreeOverTree(parameters[0]);
          return exp;
        }},

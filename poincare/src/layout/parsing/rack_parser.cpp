@@ -33,7 +33,7 @@ namespace Poincare::Internal {
 Tree* RackParser::parse() {
   ExceptionTry {
     for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
-      if (child->treeIsIdenticalTo(KCodePointL<UCodePointRightwardsArrow>())) {
+      if (child->treeIsIdenticalTo("→"_cl)) {
         return parseExpressionWithRightwardsArrow(child.index);
       }
     }

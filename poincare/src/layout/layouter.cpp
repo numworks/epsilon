@@ -796,7 +796,7 @@ void Layouter::StripSeparators(Tree* rack) {
   while (i < n) {
     if (child->isUnitSeparatorLayout()) {
       // Replace UnitSeparators with a middle dot
-      child->cloneTreeOverTree(KCodePointL<UCodePointMiddleDot>());
+      child->cloneTreeOverTree("·"_cl);
     }
     if (child->isSeparatorLayout()) {
       child->removeTree();

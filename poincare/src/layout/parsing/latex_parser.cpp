@@ -59,7 +59,7 @@ constexpr static LatexToken k_tokens[] = {
        return l->isCodePointLayout() &&
               CodePointLayout::GetCodePoint(l) == UCodePointMiddleDot;
      },
-     []() -> Tree* { return KCodePointL<UCodePointMiddleDot>()->cloneTree(); }},
+     []() -> Tree* { return "·"_cl->cloneTree(); }},
     // Parenthesis
     {parenthesisToken, std::size(parenthesisToken),
      [](const Tree* l) -> bool { return l->isParenthesesLayout(); },

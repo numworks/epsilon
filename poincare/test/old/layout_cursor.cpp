@@ -377,7 +377,7 @@ QUIZ_CASE(poincare_layout_power) {
    *
    * */
   {
-    Layout l = KRackL("1"_cl, KSuperscriptL("2"_l));
+    Layout l = "1"_l ^ KSuperscriptL("2"_l);
     Poincare::Internal::LayoutBufferCursor c(l, l.tree()->child(1));
     c.addEmptySquarePowerLayout(nullptr);
     assert_cursor_is(
@@ -390,7 +390,7 @@ QUIZ_CASE(poincare_layout_power) {
    * (1 )| -> "Left" "Square" -> ((1 ) |)
    * */
   {
-    Layout l = KRackL(KParenthesesL(KRackL("1"_cl, KSuperscriptL("2"_l))));
+    Layout l = KRackL(KParenthesesL("1"_l ^ KSuperscriptL("2"_l)));
     Poincare::Internal::LayoutBufferCursor c(l, l.tree());
     bool dummy;
     c.move(OMG::Direction::Left(), false, &dummy);

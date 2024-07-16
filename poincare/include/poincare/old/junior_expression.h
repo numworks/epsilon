@@ -3,6 +3,7 @@
 
 #include <poincare/api.h>
 #include <poincare/point_or_scalar.h>
+#include <poincare/src/expression/dimension_type.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 
@@ -36,6 +37,30 @@ using SystemFunction = NoContextExpression;
 using SystemFunctionScalar = SystemFunction;
 // SystemFunction with Point approximation
 using SystemFunctionPoint = SystemFunction;
+
+class Dimension {
+ public:
+  Dimension(const NewExpression e, Context* context = nullptr);
+
+  bool isScalar();
+  bool isMatrix();
+  bool isUnit();
+  bool isBoolean();
+  bool isPoint();
+
+  bool isList();
+  bool isListOfScalars();
+  bool isListOfUnits();
+  bool isListOfBooleans();
+  bool isListOfPoints();
+
+  bool isPointOrListOfPoints();
+
+ private:
+  Internal::DimensionType m_type;
+  bool m_isList;
+  bool m_dimensioned;
+};
 
 class JuniorExpressionNode final : public ExpressionNode {
   friend class JuniorExpression;

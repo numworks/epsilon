@@ -39,6 +39,63 @@ namespace Poincare {
 
 using namespace Internal;
 
+/* Dimension */
+
+Poincare::Dimension::Dimension(const NewExpression e, Context* context)
+    : m_type(DimensionType::Scalar), m_isList(false), m_dimensioned(false) {
+  // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
+  if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
+    return;
+  }
+  m_type = Internal::Dimension::Get(e.tree(), context).type;
+  m_isList = Internal::Dimension::IsList(e.tree(), context);
+  m_dimensioned = true;
+}
+
+bool Poincare::Dimension::isScalar() {
+  return m_dimensioned && !m_isList && m_type == DimensionType::Scalar;
+}
+
+bool Poincare::Dimension::isMatrix() {
+  return m_dimensioned && !m_isList && m_type == DimensionType::Matrix;
+}
+
+bool Poincare::Dimension::isUnit() {
+  return m_dimensioned && !m_isList && m_type == DimensionType::Unit;
+}
+
+bool Poincare::Dimension::isBoolean() {
+  return m_dimensioned && !m_isList && m_type == DimensionType::Boolean;
+}
+
+bool Poincare::Dimension::isPoint() {
+  /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
+   * this behavior ? */
+  return m_dimensioned && !m_isList && m_type == DimensionType::Point;
+}
+
+bool Poincare::Dimension::isList() { return m_dimensioned && m_isList; }
+
+bool Poincare::Dimension::isListOfScalars() {
+  return m_dimensioned && m_isList && m_type == DimensionType::Scalar;
+}
+
+bool Poincare::Dimension::isListOfUnits() {
+  return m_dimensioned && m_isList && m_type == DimensionType::Unit;
+}
+
+bool Poincare::Dimension::isListOfBooleans() {
+  return m_dimensioned && m_isList && m_type == DimensionType::Boolean;
+}
+
+bool Poincare::Dimension::isListOfPoints() {
+  return m_dimensioned && m_isList && m_type == DimensionType::Point;
+}
+
+bool Poincare::Dimension::isPointOrListOfPoints() {
+  return m_dimensioned && m_type == DimensionType::Point;
+}
+
 /* JuniorExpressionNode */
 
 JuniorExpressionNode::JuniorExpressionNode(const Tree* tree, size_t treeSize) {
@@ -500,8 +557,9 @@ SystemExpression SystemExpression::getReducedDerivative(
 SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
                                                    bool scalarsOnly) const {
   Tree* result = tree()->cloneTree();
-  Dimension dimension = Dimension::Get(tree());
-  if ((scalarsOnly && (!dimension.isScalar() || Dimension::IsList(tree()))) ||
+  Internal::Dimension dimension = Internal::Dimension::Get(tree());
+  if ((scalarsOnly &&
+       (!dimension.isScalar() || Internal::Dimension::IsList(tree()))) ||
       (!dimension.isScalar() && !dimension.isPoint())) {
     result->cloneTreeOverTree(KUndef);
   } else {
@@ -838,33 +896,35 @@ bool NewExpression::deepIsOfType(
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool NewExpression::isMatrix(Context* context) const {
-  return Dimension::DeepCheck(tree(), context) &&
-         Dimension::Get(tree(), context).isMatrix() &&
-         !Dimension::IsList(tree(), context);
+  return Internal::Dimension::DeepCheck(tree(), context) &&
+         Internal::Dimension::Get(tree(), context).isMatrix() &&
+         !Internal::Dimension::IsList(tree(), context);
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool NewExpression::isList(Context* context) const {
-  return Dimension::DeepCheck(tree(), context) &&
-         Dimension::IsList(tree(), context);
+  return Internal::Dimension::DeepCheck(tree(), context) &&
+         Internal::Dimension::IsList(tree(), context);
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool UserExpression::isPointOrListOfPoints(Context* context) const {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  return Dimension::DeepCheck(tree(), context) &&
-         Dimension::Get(tree(), context).isPoint();
+  return Internal::Dimension::DeepCheck(tree(), context) &&
+         Internal::Dimension::Get(tree(), context).isPoint();
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool UserExpression::isPoint(Context* context) const {
-  return isPointOrListOfPoints(context) && !Dimension::IsList(tree(), context);
+  return isPointOrListOfPoints(context) &&
+         !Internal::Dimension::IsList(tree(), context);
 }
 
 // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
 bool UserExpression::isListOfPoints(Context* context) const {
-  return isPointOrListOfPoints(context) && Dimension::IsList(tree(), context);
+  return isPointOrListOfPoints(context) &&
+         Internal::Dimension::IsList(tree(), context);
 }
 
 bool NewExpression::hasComplexI(Context* context,
@@ -907,7 +967,7 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
 
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
-         Dimension::Get(tree()).isSimpleAngleUnit();
+         Internal::Dimension::Get(tree()).isSimpleAngleUnit();
 }
 
 bool NewExpression::isInRadians(Context* context) const {
@@ -919,7 +979,7 @@ bool NewExpression::isInRadians(Context* context) const {
       cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
-         Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
+         Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
@@ -1082,8 +1142,8 @@ bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {
 }
 
 bool Unit::HasAngleDimension(NewExpression expression) {
-  assert(Dimension::DeepCheck(expression.tree()));
-  return Dimension::Get(expression.tree()).isAngleUnit();
+  assert(Internal::Dimension::DeepCheck(expression.tree()));
+  return Internal::Dimension::Get(expression.tree()).isAngleUnit();
 }
 
 template SystemExpression JuniorExpressionNode::approximateToTree<float>(

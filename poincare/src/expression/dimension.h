@@ -4,6 +4,7 @@
 #include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
 
+#include "dimension_type.h"
 #include "unit_representatives.h"
 
 namespace Poincare::Internal {
@@ -20,14 +21,6 @@ struct UnitDimension {
 };
 
 struct Dimension {
-  enum class DimensionType {
-    Scalar,
-    Matrix,
-    Unit,
-    Boolean,
-    Point,
-  };
-
   constexpr Dimension(DimensionType type = DimensionType::Scalar)
       : type(type), matrix({0, 0}) {
     assert(type == DimensionType::Scalar || type == DimensionType::Boolean ||

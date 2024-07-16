@@ -6,10 +6,14 @@ $(call create_module,quiz,1,$(addprefix src/, \
   test_symbols.c \
 ))
 
+
+# List of the files that may contain a QUIZ_CASE and should cause test_symbols.c
+# to be rebuilt. It is coarser than using goals but it is hard to have
+# prerequisites that depend on the current goal.
+_test_sources := $(shell git ls-files -- "*/test/**.c" "*/test/**.cpp")
+
 # TODO Requires :+test to be the last taste
-# TODO Force remake because it's hard to have prerequisites that depend on the
-# current goal
-$(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.
 	$(call rule_label,AWK)
 	awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
 		$(foreach m,$(filter-out quiz quiz.%,$(MODULES_$(GOAL))), \

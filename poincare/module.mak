@@ -182,6 +182,7 @@ $(addprefix expression/, \
   approximation_derivative.cpp \
   approximation_helpers.cpp \
   approximation_integral.cpp \
+  approximation_matrix.cpp \
   approximation_prepare.cpp \
   approximation_power.cpp \
   approximation_trigonometry.cpp \

@@ -614,23 +614,22 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
 
     /* Matrices */
     case Type::Norm:
-    case Type::Trace:
     case Type::Det: {
       Tree* m = ToMatrix<T>(e->child(0));
       Tree* value;
       if (e->isDet()) {
         OutOfContext(Matrix::RowCanonize(m, true, &value, true));
-      } else if (e->isNorm()) {
-        value = OutOfContext(Vector::Norm(m));
       } else {
-        assert(e->isTrace());
-        value = OutOfContext(Matrix::Trace(m));
+        assert(e->isNorm());
+        value = OutOfContext(Vector::Norm(m));
       }
       std::complex<T> v = ToComplex<T>(value);
       value->removeTree();
       m->removeTree();
       return v;
     }
+    case Type::Trace:
+      return ApproximateTrace<T>(e->child(0));
     case Type::Dot: {
       // TODO use complex conjugate ?
       Tree* u = ToMatrix<T>(e->child(0));

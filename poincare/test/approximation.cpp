@@ -105,6 +105,10 @@ QUIZ_CASE(pcj_approximation_list) {
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
 }
 
+QUIZ_CASE(pcj_approximation_matrix) {
+  approximates_to<float>("trace([[1,2][4,3]])", "4");
+}
+
 QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("inf", "∞");
   approximates_to<float>("inf*1", "∞");

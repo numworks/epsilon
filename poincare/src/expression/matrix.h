@@ -30,7 +30,7 @@ struct Matrix {
   }
   static Tree* Zero(MatrixDimension d);
   static Tree* Identity(const Tree* n);
-  static Tree* Trace(const Tree* matrix, bool approximate = false);
+  static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* matrix1, const Tree* matrix2,
                         bool approximate = false);
   static Tree* ScalarMultiplication(const Tree* scalar, const Tree* matrix,

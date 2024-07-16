@@ -200,6 +200,9 @@ class Approximation final {
   static const Tree* SelectPiecewiseBranch(const Tree* piecewise);
 
   template <typename T>
+  static std::complex<T> ApproximateTrace(const Tree* matrix);
+
+  template <typename T>
   static bool IsIntegerRepresentationAccurate(T x);
   template <typename T>
   static T PositiveIntegerApproximation(T c);

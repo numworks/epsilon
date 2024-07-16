@@ -40,7 +40,7 @@ Tree* Matrix::Identity(const Tree* n) {
   return result;
 }
 
-Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
+Tree* Matrix::Trace(const Tree* matrix) {
   int n = NumberOfRows(matrix);
   assert(n == NumberOfColumns(matrix));
   Tree* result = SharedTreeStack->pushAdd(n);
@@ -52,33 +52,9 @@ Tree* Matrix::Trace(const Tree* matrix, bool approximate) {
     }
   }
   child->cloneTree();
-  if (approximate) {
-    Approximation::ApproximateToComplexTree(result);
-  } else {
-    SystematicReduction::ShallowReduce(result);
-  }
+  SystematicReduction::ShallowReduce(result);
   return result;
 }
-
-#if 0
-TODO_PCJ: approximation
-
-template <typename T>
-std::complex<T> MatrixComplexNode<T>::trace() const {
-  if (numberOfRows() != numberOfColumns() || numberOfRows() == 0) {
-    return std::complex<T>(NAN, NAN);
-  }
-  int dim = numberOfRows();
-  std::complex<T> c = std::complex<T>(0);
-  for (int i = 0; i < dim; i++) {
-    c += complexAtIndex(i * dim + i);
-    if (std::isnan(c.real()) || std::isnan(c.imag())) {
-      return std::complex<T>(NAN, NAN);
-    }
-  }
-  return c;
-}
-#endif
 
 Tree* Matrix::Transpose(const Tree* matrix) {
   uint8_t rows = NumberOfRows(matrix);

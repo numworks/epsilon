@@ -107,6 +107,7 @@ QUIZ_CASE(pcj_approximation_list) {
 
 QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("trace([[1,2][4,3]])", "4");
+  approximates_to<float>("identity(3)", "[[1,0,0][0,1,0][0,0,1]]");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {

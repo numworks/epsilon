@@ -1167,6 +1167,8 @@ Tree* Approximation::ToMatrix(const Tree* e) {
                                    : OutOfContext(Matrix::Transpose(result)));
       return result;
     }
+    case Type::Identity:
+      return Matrix::Identity(e->child(0));
     case Type::Ref:
     case Type::Rref: {
       Tree* result = ToMatrix<T>(e->child(0));

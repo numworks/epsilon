@@ -38,3 +38,11 @@ ARFLAGS := rcs
 LDFLAGS :=
 
 include $(PATH_haussmann)/src/toolchains/$(TOOLCHAIN).mak
+
+# Set CCACHE=1 in your make command if you want to use ccache to fasten builds
+CCACHE ?= 0
+ifeq ($(CCACHE),1)
+CC := ccache $(CC)
+CXX := ccache $(CXX)
+AR := ccache $(AR)
+endif

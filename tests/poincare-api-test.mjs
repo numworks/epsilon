@@ -5,7 +5,7 @@ import fs from 'fs'
 var wasmFile = fs.readFileSync('./poincare.wasm');
 const wasmBinary = new Uint8Array(wasmFile);
 
-var Poincare = InitPoincare({ wasmBinary: wasmBinary });
+var Poincare = await InitPoincare({ wasmBinary: wasmBinary });
 
 class ArraySeries extends Poincare.PCR_Series.extend("PCR_Series", {}) {
   constructor(x, y) {

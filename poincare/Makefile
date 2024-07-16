@@ -25,10 +25,6 @@ $(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
 $(call import_module,python,python)
 
-# Build with minimal apps, notably to avoid having to build python
-# TODO This should require neither escher nor the apps
-EPSILON_APPS := settings
-$(call import_module,apps,apps)
 
 # FIXME Fake a module with enough glue to build. Eventually, we should be able
 # to build poincarejs without ion.
@@ -105,7 +101,7 @@ LDFLAGS_poincarejs += \
 
 # Rules
 
-$(call create_goal,epsilon, \
+$(call create_goal,poincare, \
   apps \
   escher \
   kandinsky \
@@ -121,7 +117,16 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
-$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/epsilon.js
+$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 	@ :
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,epsilon.js poincare.d.ts .version.json))
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts .version.json))
+
+# Node expects modules to end with .mjs
+$(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
+	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
+
+poincare_test: $(OUTPUT_DIRECTORY)/poincare.mjs
+	cp tests/poincare-api-test.mjs $(OUTPUT_DIRECTORY)
+	cd $(OUTPUT_DIRECTORY) \
+	node poincare-api-test.mjs

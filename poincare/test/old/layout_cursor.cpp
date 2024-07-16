@@ -254,10 +254,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
     Poincare::Internal::LayoutBufferCursor c(l, l.tree(),
                                              OMG::Direction::Left());
     c.insertLayout(KCurlyBracesL(KRackL()));
-#if 0  // TODO_PCJ
     assert_cursor_is(c, KCurlyBracesL(KRackL()) ^ KCurlyBracesL(KRackL()),
                      c.rootRack()->child(0)->child(0), 0);
-#endif
   }
 
   /*

@@ -333,7 +333,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
   // - Step 6 - Find position to point to if layout will be merged
   TreeStackCursor previousCursor = *this;
   TreeRef childToPoint;
-  if (ref->numberOfChildren() != 1) {
+  if (ref->numberOfChildren() > 0) {
     childToPoint = (forceRight || forceLeft)
                        ? nullptr
                        : CursorMotion::DeepChildToPointToWhenInserting(ref);

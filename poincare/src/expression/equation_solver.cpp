@@ -1,5 +1,6 @@
 #include "equation_solver.h"
 
+#include <poincare/numeric/roots.h>
 #include <poincare/numeric/solver.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -365,6 +366,47 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   // Constant term is remaining [Coeff0].
   Tree* constant = eq->detachTree();
   NAry::AddChild(result, constant);
+  return result;
+}
+
+Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
+                                      uint8_t n, Context context,
+                                      Error* error) {
+  constexpr static int k_maxPolynomialDegree = 3;
+  constexpr static int k_maxNumberOfPolynomialCoefficients =
+      k_maxPolynomialDegree + 1;
+
+  assert(simplifiedEquationSet->isList() &&
+         simplifiedEquationSet->numberOfChildren() == 1);
+  assert(n == 1);
+  Tree* equation = simplifiedEquationSet->child(0)->cloneTree();
+  Tree* polynomial = PolynomialParser::Parse(
+      equation, Variables::Variable(0, ComplexSign::Unknown()));
+  const Tree* coefficients[k_maxNumberOfPolynomialCoefficients] = {};
+
+  int degree = Polynomial::Degree(polynomial);
+  if (degree > k_maxPolynomialDegree) {
+    SharedTreeStack->dropBlocksFrom(equation);
+    return nullptr;
+  }
+
+  int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
+  const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
+  for (int i = 0; i < numberOfTerms; i++) {
+    int exponent = Polynomial::ExponentAtIndex(polynomial, i);
+    if (exponent < k_maxNumberOfPolynomialCoefficients) {
+      coefficients[exponent] = coefficient;
+    }
+    coefficient = coefficient->nextTree();
+  }
+  for (const Tree*& coef : coefficients) {
+    if (coef == nullptr) {
+      coef = 0_e;
+    }
+  }
+  TreeRef result =
+      Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0]);
+  polynomial->removeTree();
   return result;
 }
 

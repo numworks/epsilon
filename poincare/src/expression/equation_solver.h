@@ -61,11 +61,8 @@ class EquationSolver {
   // Return list of solutions for a polynomial equation.
   static Tree* SolvePolynomial(const Tree* equationsSet,
                                uint8_t numberOfVariables, Context context,
-                               Error* error) {
-    // TODO: Implement
-    *error = Error::EquationUndefined;
-    return nullptr;
-  }
+                               Error* error);
+
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
                                      uint8_t numberOfVariables,

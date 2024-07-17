@@ -102,7 +102,6 @@ LDFLAGS_poincarejs += \
 # Rules
 
 $(call create_goal,poincare, \
-  apps \
   escher \
   kandinsky \
   omg \
@@ -122,11 +121,15 @@ $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 
 $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts .version.json))
 
+$(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
+
 # Node expects modules to end with .mjs
 $(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
 	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
 
-poincare_test: $(OUTPUT_DIRECTORY)/poincare.mjs
+poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs
 	cp poincare/test/api-test.mjs $(OUTPUT_DIRECTORY)
 	cd $(OUTPUT_DIRECTORY) \
 	node poincare-api-test.mjs
+
+$(call document_other_target,poincare.js.run,Test poincare.js using node)

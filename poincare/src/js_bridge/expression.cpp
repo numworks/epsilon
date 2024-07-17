@@ -26,6 +26,11 @@ SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
   return expression->getSystemFunction(var.c_str(), true);
 }
 
+double ApproximateToScalarWithValue(const JuniorExpression& expr,
+                                    double value) {
+  return expr.approximateToScalarWithValue(value);
+}
+
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
       .function("isUninitialized", &PoolHandle::isUninitialized);
@@ -43,8 +48,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("approximateToTree",
                 &JuniorExpression::approximateToTree<double>,
                 allow_raw_pointers())
-      .function("approximateToScalarWithValue",
-                &JuniorExpression::approximateToScalarWithValue<double>);
+      .function("approximateToScalarWithValue", &ApproximateToScalarWithValue);
 }
 
 }  // namespace Poincare::JSBridge

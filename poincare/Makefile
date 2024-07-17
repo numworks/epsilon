@@ -126,8 +126,11 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
+# Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
+#   This bit of code is never reached and makes cypress fail because the URL can't be resolved
+# Doing it in the .ts rule is a hack
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
-	@ :
+	sed -i '' 's/new URL("poincare.wasm",import.meta.url).href/""/g' $(OUTPUT_DIRECTORY)/poincare.js
 	sed -i '' 's/MainModule/PoincareInstance/g' $@
 
 

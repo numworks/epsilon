@@ -81,25 +81,55 @@ class App : public Shared::SharedApp {
   Escher::StackViewController::Default m_codeStackViewController;
   PythonToolboxController m_toolbox;
   PythonVariableBoxController m_variableBox;
+
 #if PLATFORM_DEVICE
-  /* On the device, we reach 64K of heap by repurposing the unused tree pool.
-   * The linker must make sure that the pool and the apps buffer are
-   * contiguous. */
+  /* On the device, we reach 64K of heap by repurposing both the unused Poincare
+   * Pool and TreeStack. The linker must make sure that the apps buffer, the
+   * Pool and the TreeStack are contiguous. */
+
+  /* The python heap is made of the Pool, the TreeStack, plus
+   * an additional buffer in the python app space to reach 64KiB. We declare
+   * the buffer with the length necessary to reach this size, but in practice
+   * the heap uses more space in the Apps buffer if Code is not the
+   * largest app. In the linker script, we declare the Pool location in memory
+   * right after the Apps buffer, and the TreeStack location right after the
+   * Pool. */
+  constexpr static int maybe_negative_size =
+      k_pythonHeapSize - sizeof(Poincare::Pool) -
+      sizeof(Poincare::Internal::TreeStack);
+  constexpr static size_t k_pythonHeapExtensionSize =
+      maybe_negative_size < 0 ? 0 : static_cast<size_t>(maybe_negative_size);
+  char m_pythonHeap[k_pythonHeapExtensionSize];
+
   char* pythonHeap() {
-    /* The python heap will be made of the pool plus an additional buffer to
-     * reach 64KiB. We declare the buffer with the length necessary to reach
-     * this size, but in practice the heap will use more space in the Apps
-     * buffer if Code is not the largest app.
-     * We must also make sure in the linker script that the pool is located
-     * right after the Apps buffer. */
+    // ensure the address of the python heap is before the Pool. If the python
+    // Code app is not the biggest app, there will be some extra space between
+    // the python heap space and the pool start.
+    assert(static_cast<char*>(m_pythonHeap) + k_pythonHeapExtensionSize <=
+           static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)));
+
+    // ensure the Pool and the TreeStack are contiguous in memory (with a small
+    // margin of 8 bytes due to memory alignment)
+    constexpr size_t alignment_margin = 8;
+    assert(static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)) +
+               sizeof(Poincare::Pool) <
+           static_cast<char*>(
+               static_cast<void*>(Poincare::Internal::SharedTreeStack)));
+    assert(static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)) +
+               sizeof(Poincare::Pool) + alignment_margin >=
+           static_cast<char*>(
+               static_cast<void*>(Poincare::Internal::SharedTreeStack)));
+
+    // ensure the address of {heap start +  heap size} does not exceed the end
+    // of the TreeStack space
     assert(static_cast<char*>(m_pythonHeap + k_pythonHeapSize) <=
-           static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)) +
-               sizeof(Poincare::Pool));
+           static_cast<char*>(
+               static_cast<void*>(Poincare::Internal::SharedTreeStack)) +
+               sizeof(Poincare::Internal::TreeStack));
+
     return m_pythonHeap;
   }
-  constexpr static int k_pythonHeapExtensionSize =
-      k_pythonHeapSize - sizeof(Poincare::Pool);
-  char m_pythonHeap[k_pythonHeapExtensionSize];
+
 #else
   char* pythonHeap() { return m_pythonHeap; }
   char m_pythonHeap[k_pythonHeapSize];

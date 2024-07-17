@@ -132,9 +132,11 @@ bool App::textInputDidReceiveEvent(EditableField* textInput,
 
 void App::initPythonWithUser(const void* pythonUser) {
   if (!m_pythonUser) {
-    /* Tree pool will be used as an extension of the heap. */
+    /* The Poincare Pool and TreeStack are used as an extension of the heap. */
     assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
     Poincare::Pool::sharedPool.deinit();
+    assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
+    Poincare::Internal::TreeStack::SharedTreeStack.deinit();
 
     char* heap = pythonHeap();
     MicroPython::init(heap, heap + k_pythonHeapSize);
@@ -146,9 +148,11 @@ void App::deinitPython() {
   if (m_pythonUser) {
     MicroPython::deinit();
     m_pythonUser = nullptr;
-    /* Re-construct the tree pool, which might have been ovewritten by the heap.
+    /* Re-construct the pool and the tree stack, which might have been
+     * ovewritten by the heap.
      */
     Poincare::Pool::sharedPool.init();
+    Poincare::Internal::TreeStack::SharedTreeStack.init();
   }
 }
 

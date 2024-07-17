@@ -51,9 +51,9 @@ class EquationSolver {
   static Tree* PrivateExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error);
-  static void ProjectAndSimplify(Tree* equationsSet,
-                                 ProjectionContext projectionContext,
-                                 Error* error);
+  static void ProjectAndReduce(Tree* equationsSet,
+                               ProjectionContext projectionContext,
+                               Error* error);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
                                  uint8_t numberOfVariables, Context context,

@@ -493,8 +493,8 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
       .m_context = reductionContext->context()};
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  Simplification::ToSystem(e, &context);
-  Simplification::ReduceSystem(e, true);
+  Simplification::ProjectAndReduce(e, &context, true);
+  // TODO_PCJ: Either factorize or move this to beautification
   Simplification::HandleUnits(e, &context);
   Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.

@@ -63,15 +63,15 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         ProjectionContext projectionContext,
                                         Error* error) {
   /* Clone and simplify the equations */
-  Tree* simplifiedEquationSet = equationsSet->cloneTree();
-  ProjectAndSimplify(simplifiedEquationSet, projectionContext, error);
+  Tree* reducedEquationSet = equationsSet->cloneTree();
+  ProjectAndReduce(reducedEquationSet, projectionContext, error);
   if (*error != Error::NoError) {
-    simplifiedEquationSet->removeTree();
+    reducedEquationSet->removeTree();
     return nullptr;
   }
 
   /* Count and collect used and replaced UserSymbols */
-  Tree* userSymbols = Variables::GetUserSymbols(simplifiedEquationSet);
+  Tree* userSymbols = Variables::GetUserSymbols(reducedEquationSet);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
   Tree* replacedSymbols = Set::Difference(
       Variables::GetUserSymbols(equationsSet), userSymbols->cloneTree());
@@ -85,29 +85,29 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   replacedSymbols->removeTree();
 
   /* Replace UserSymbols with variables for easier solution handling */
-  SwapTreesPointers(&simplifiedEquationSet, &userSymbols);
+  SwapTreesPointers(&reducedEquationSet, &userSymbols);
   int i = 0;
   for (const Tree* variable : userSymbols->children()) {
-    Variables::ReplaceSymbol(simplifiedEquationSet, variable, i++,
+    Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
                              ComplexSign::Unknown());
   }
 
   /* Find equation's results */
   TreeRef result;
   assert(*error == Error::NoError);
-  result = SolveLinearSystem(simplifiedEquationSet, numberOfVariables, *context,
-                             error);
+  result =
+      SolveLinearSystem(reducedEquationSet, numberOfVariables, *context, error);
   if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
-    result = SolvePolynomial(simplifiedEquationSet, numberOfVariables, *context,
-                             error);
+    result =
+        SolvePolynomial(reducedEquationSet, numberOfVariables, *context, error);
     if (*error == Error::RequireApproximateSolution) {
       // TODO: Handle GeneralMonovariable solving.
       assert(result.isUninitialized());
     }
   }
-  simplifiedEquationSet->removeTree();
+  reducedEquationSet->removeTree();
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
@@ -221,16 +221,15 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
   return resultList;
 }
 
-void EquationSolver::ProjectAndSimplify(Tree* equationsSet,
-                                        ProjectionContext projectionContext,
-                                        Error* error) {
+void EquationSolver::ProjectAndReduce(Tree* equationsSet,
+                                      ProjectionContext projectionContext,
+                                      Error* error) {
   assert(*error == Error::NoError);
-  Simplification::ToSystem(equationsSet, &projectionContext);
+  Simplification::ProjectAndReduce(equationsSet, &projectionContext, true);
   if (projectionContext.m_dimension.isUnit()) {
     *error = Error::EquationUndefined;
     return;
   }
-  Simplification::ReduceSystem(equationsSet, true);
   // Need to call Simplification::TryApproximationStrategyAgain otherwise.
   assert(projectionContext.m_strategy == Strategy::Default);
   if (equationsSet->isUndefined()) {
@@ -239,16 +238,16 @@ void EquationSolver::ProjectAndSimplify(Tree* equationsSet,
   }
 }
 
-Tree* EquationSolver::SolveLinearSystem(const Tree* simplifiedEquationSet,
+Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
                                         uint8_t n, Context context,
                                         Error* error) {
   context.exactResults = true;
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
-  uint8_t rows = simplifiedEquationSet->numberOfChildren();
+  uint8_t rows = reducedEquationSet->numberOfChildren();
   Tree* matrix = SharedTreeStack->pushMatrix(0, 0);
   // Create the matrix (A|b) for the equation Ax=b;
-  for (const Tree* equation : simplifiedEquationSet->children()) {
+  for (const Tree* equation : reducedEquationSet->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n, context);
     if (!coefficients) {
       *error = Error::NonLinearSystem;

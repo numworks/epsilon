@@ -83,8 +83,7 @@ int Degree::Get(const Tree* e, const Tree* symbol,
   }
   // Project, simplify and expand the expression for a more accurate degree.
   Tree* clone = e->cloneTree();
-  Simplification::ToSystem(clone, &projectionContext);
-  Simplification::ReduceSystem(clone, false);
+  Simplification::ProjectAndReduce(clone, &projectionContext, false);
   AdvancedReduction::DeepExpand(clone);
   int degree = PrivateGet(clone, symbol);
   clone->removeTree();

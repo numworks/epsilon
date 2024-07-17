@@ -35,8 +35,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
-        ToSystem(e, &projectionContext);
-        ReduceSystem(e, true);
+        ProjectAndReduce(e, &projectionContext, true);
         HandleUnits(e, &projectionContext);
         // TODO: Should be in ReduceSystem but projectionContext is needed.
         TryApproximationStrategyAgain(e, projectionContext);
@@ -52,6 +51,13 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
    * steps, keeping track of a changed status is unreliable. We could compare
    * CRC instead. */
   return true;
+}
+
+bool Simplification::ProjectAndReduce(Tree* e,
+                                      ProjectionContext* projectionContext,
+                                      bool advanced) {
+  ToSystem(e, projectionContext);
+  ReduceSystem(e, advanced);
 }
 
 bool Simplification::PrepareForProjection(

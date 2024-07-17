@@ -100,9 +100,7 @@ SystemExpression UserExpression::projected() const {
   Internal::ProjectionContext context;
   // TODO: Handle Store and UnitConversion like in Simplification::Simplify.
   Internal::Tree* e = tree()->cloneTree();
-  Internal::Simplification::PrepareForProjection(e, &context);
-  Internal::Simplification::ToSystem(e, &context);
-  Internal::Simplification::ReduceSystem(e, false);
+  Internal::Simplification::ProjectAndReduce(e, &context, false);
   Internal::Simplification::TryApproximationStrategyAgain(e, context);
   return SystemExpression::Builder(e, context.m_dimension.unit.vector);
 }

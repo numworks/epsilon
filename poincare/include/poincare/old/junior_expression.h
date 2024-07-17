@@ -427,7 +427,10 @@ class Matrix final : public JuniorExpression {
 
 class Point final : public JuniorExpression {
  public:
-  static Point Builder(NewExpression x, NewExpression y);
+  static Point Builder(const Internal::Tree* x, const Internal::Tree* y);
+  static Point Builder(const NewExpression x, const NewExpression y) {
+    return Builder(x.tree(), y.tree());
+  }
   template <typename T>
   Coordinate2D<T> approximate2D(
       const ApproximationContext& approximationContext);

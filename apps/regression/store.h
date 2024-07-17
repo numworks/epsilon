@@ -1,6 +1,7 @@
 #ifndef REGRESSION_STORE_H
 #define REGRESSION_STORE_H
 
+#include <apps/global_preferences.h>
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/linear_regression_store.h>

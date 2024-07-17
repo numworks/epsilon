@@ -1027,10 +1027,10 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
 
 /* Point */
 
-Point Point::Builder(NewExpression x, NewExpression y) {
+Point Point::Builder(const Tree* x, const Tree* y) {
   Tree* tree = KPoint->cloneNode();
-  x.tree()->cloneTree();
-  y.tree()->cloneTree();
+  x->cloneTree();
+  y->cloneTree();
   NewExpression temp = NewExpression::Builder(tree);
   return static_cast<Point&>(temp);
 }

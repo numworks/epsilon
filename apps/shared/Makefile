@@ -42,6 +42,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   plot_view_plots.cpp \
   range_parameter_controller.cpp \
   round_cursor_view.cpp \
+  scatter_plot_helper.cpp \
   shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
   single_interactive_curve_view_range_controller.cpp \

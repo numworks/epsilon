@@ -6,9 +6,6 @@ ifeq ($(shell find . -maxdepth 1 -name '.git'),)
 $(error For now, this makefile should be run from the root of epsilon. Use "make -f poincare/Makefile ..." instead)
 endif
 
-.PHONY: true_default
-true_default: poincarejs.zip
-
 PATH_haussmann := haussmann
 APP_NAME := InitPoincare
 APP_VERSION := 0.0.0

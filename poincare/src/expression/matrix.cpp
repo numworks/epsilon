@@ -314,6 +314,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     }
     *determinant = det;
   }
+  if (!approximate) {
+    SystematicReduction::ShallowReduce(matrix);
+  }
   return true;
 }
 

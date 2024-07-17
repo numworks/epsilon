@@ -36,10 +36,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
         ProjectAndReduce(e, &projectionContext, true);
-        HandleUnits(e, &projectionContext);
-        // TODO: Should be in ReduceSystem but projectionContext is needed.
-        TryApproximationStrategyAgain(e, projectionContext);
-        Beautification::DeepBeautify(e, projectionContext);
+        BeautifyReduced(e, &projectionContext);
         if (isStore) {
           // Restore the store structure
           dataTree->child(1)->cloneTree();
@@ -56,8 +53,17 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
 bool Simplification::ProjectAndReduce(Tree* e,
                                       ProjectionContext* projectionContext,
                                       bool advanced) {
+  assert(!e->isStore());
   ToSystem(e, projectionContext);
   ReduceSystem(e, advanced);
+}
+
+bool Simplification::BeautifyReduced(Tree* e,
+                                     ProjectionContext* projectionContext) {
+  assert(!e->isStore());
+  HandleUnits(e, projectionContext);
+  TryApproximationStrategyAgain(e, *projectionContext);
+  Beautification::DeepBeautify(e, *projectionContext);
 }
 
 bool Simplification::PrepareForProjection(

@@ -494,9 +494,6 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::ProjectAndReduce(e, &context, true);
-  // TODO_PCJ: Either factorize or move this to beautification
-  Simplification::HandleUnits(e, &context);
-  Simplification::TryApproximationStrategyAgain(e, context);
   // TODO_PCJ: Like SimplifyWithAdaptiveStrategy, handle treeStack overflows.
   *reduceFailure = false;
   SystemExpression simplifiedExpression = Builder(e);
@@ -653,7 +650,7 @@ UserExpression ProjectedExpression::cloneAndBeautify(
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
   Tree* e = tree()->cloneTree();
-  Beautification::DeepBeautify(e, context);
+  Simplification::BeautifyReduced(e, &context);
   return Builder(e);
 }
 

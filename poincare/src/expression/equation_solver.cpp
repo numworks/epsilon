@@ -6,7 +6,6 @@
 #include <poincare/src/numeric/zoom.h>
 
 #include "advanced_reduction.h"
-#include "beautification.h"
 #include "float.h"
 #include "list.h"
 #include "matrix.h"
@@ -119,7 +118,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Beautify result */
   if (!result.isUninitialized()) {
-    Beautification::DeepBeautify(result, projectionContext);
+    Simplification::BeautifyReduced(result, &projectionContext);
   }
 
   return result;
@@ -230,8 +229,6 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
     *error = Error::EquationUndefined;
     return;
   }
-  // Need to call Simplification::TryApproximationStrategyAgain otherwise.
-  assert(projectionContext.m_strategy == Strategy::Default);
   if (equationsSet->isUndefined()) {
     *error = equationsSet->isNonReal() ? Error::EquationNonreal
                                        : Error::EquationUndefined;

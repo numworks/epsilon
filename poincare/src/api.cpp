@@ -1,5 +1,4 @@
 #include <poincare/api.h>
-#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
@@ -101,7 +100,6 @@ SystemExpression UserExpression::projected() const {
   // TODO: Handle Store and UnitConversion like in Simplification::Simplify.
   Internal::Tree* e = tree()->cloneTree();
   Internal::Simplification::ProjectAndReduce(e, &context, false);
-  Internal::Simplification::TryApproximationStrategyAgain(e, context);
   return SystemExpression::Builder(e, context.m_dimension.unit.vector);
 }
 
@@ -126,7 +124,7 @@ UserExpression SystemExpression::beautified() const {
   Internal::ProjectionContext context;
   context.m_dimension.unit.vector = m_dimension;
   Internal::Tree* e = tree()->cloneTree();
-  Internal::Beautification::DeepBeautify(e, context);
+  Internal::Simplification::BeautifyReduced(e, &context);
   return UserExpression::Builder(e);
 }
 

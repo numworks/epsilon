@@ -1,5 +1,4 @@
-$(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
-$(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -fstack-protector-strong
+# Firmware component - bootloader
 
 $(call create_goal,bootloader, \
   ion.bootloader \
@@ -10,6 +9,10 @@ $(call create_goal,bootloader, \
   omg.minimal.decompress \
 ,bootloader, \
 )
+
+$(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
+
+# Firmware component - kernel
 
 ifeq ($(ASSERTIONS),0)
 $(call create_goal,kernel, \
@@ -31,12 +34,16 @@ $(call create_goal,kernel, \
 )
 endif
 
+$(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -fstack-protector-strong
+
 ifneq ($(DEBUG),0)
 # Kernel without optimization is too large to fit in its 64k section.
 $(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -Os
 
 HELP_GOAL_kernel := In debug mode the kernel is built with -Os to fit in its section
 endif
+
+# Firmware component - userland
 
 $(call create_goal,userland, \
   apps \
@@ -63,6 +70,8 @@ $(call create_goal,userland_test, \
   quiz \
 )
 
+# Firmware component - flasher
+
 $(call create_goal,flasher, \
   ion.flasher \
   kandinsky.minimal \
@@ -78,7 +87,13 @@ else
 flasher%flash: DFULEAVE := 0x20030000
 endif
 
+# Firmware component - bench
+
+# TODO
+
+
 # Rules for the composite DFUs made of several ELFs (e.g. epsilon.onboarding.dfu ...)
+
 # rule_for_composite_dfu, <name>, <prerequisites, with optional % for the flavors>
 define rule_for_composite_dfu
 $(eval \

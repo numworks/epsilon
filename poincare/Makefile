@@ -7,7 +7,7 @@ $(error For now, this makefile should be run from the root of epsilon. Use "make
 endif
 
 PATH_haussmann := haussmann
-APP_NAME := InitPoincare
+APP_NAME := Poincare
 APP_VERSION := 0.0.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
@@ -86,6 +86,19 @@ PRIVATE_SFLAGS_poincarejs += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
+
+# Make the module initialization synchronous
+LDFLAGS_poincarejs += -s WASM_ASYNC_COMPILATION=0 \
+
+
+# We remove 'node' from the environment because it is not working
+# with the combination of WASM_ASYNC_COMPILATION=0 and EXPORT_ES6=1
+# poincare.js can still be used with node though, probably because
+# there is no behaviour like fetching data that require to differentiate
+# the environments.
+LDFLAGS_poincarejs += -s ENVIRONMENT='web,webview,worker' \
+
+
 # Generate ts types file
 # For this to work, go to emsdk/upstream/emscripten and run:
 # > npm install typescript
@@ -115,6 +128,8 @@ $(OUTPUT_DIRECTORY)/.version.json:
 
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 	@ :
+	sed -i '' 's/MainModule/PoincareInstance/g' $@
+
 
 $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts .version.json))
 

@@ -16,6 +16,14 @@ using namespace Shared;
 
 namespace Calculation {
 
+JuniorLayout CreateBeautifiedLayout(Tree* expression, ProjectionContext* ctx) {
+  Simplification::BeautifyReduced(expression, ctx);
+  return JuniorLayout::Builder(Layouter::LayoutExpression(
+      expression, false,
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
+      Poincare::Preferences::SharedPreferences()->displayMode()));
+}
+
 // TODO_PCJ: Move part of this in Poincare
 void MatrixListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
@@ -42,10 +50,6 @@ void MatrixListController::computeAdditionalResults(
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
     .m_context = App::app()->localContext()
   };
-  Poincare::Preferences::PrintFloatMode displayMode =
-      Poincare::Preferences::SharedPreferences()->displayMode();
-  uint8_t numberOfSignificantDigits =
-      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
 
   // The expression must be reduced to call methods such as determinant or trace
   assert(approximateOutput.tree()->isMatrix());
@@ -54,11 +58,11 @@ void MatrixListController::computeAdditionalResults(
           .tree()
           ->cloneTree();
   Simplification::ProjectAndReduce(matrix, &ctx, false);
-
   bool mIsSquared = Internal::Matrix::NumberOfRows(matrix) ==
                     Internal::Matrix::NumberOfColumns(matrix);
   size_t index = 0;
   size_t messageIndex = 0;
+
   // 1. Matrix determinant if square matrix
   if (mIsSquared) {
     /* Determinant is reduced so that a null determinant can be detected.
@@ -71,47 +75,39 @@ void MatrixListController::computeAdditionalResults(
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
 
-    Simplification::BeautifyReduced(determinant, &ctx);
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
-        determinant, false, numberOfSignificantDigits, displayMode));
-
+    m_layouts[index++] = CreateBeautifiedLayout(determinant, &ctx);
     matrixClone->removeTree();
+
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       // TODO: Handle a determinant that can be null.
       Tree* inverse = Internal::Matrix::Inverse(matrix, false);
-      Simplification::BeautifyReduced(inverse, &ctx);
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
-          inverse, false, numberOfSignificantDigits, displayMode));
+      m_layouts[index++] = CreateBeautifiedLayout(inverse, &ctx);
     }
   }
+
   // 3. Matrix row echelon form
   messageIndex = 2;
   Tree* reducedRowEchelonForm = matrix->cloneTree();
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
   // preserve reducedRowEchelonForm for next step.
   Tree* rowEchelonForm = reducedRowEchelonForm->cloneTree();
-  Simplification::BeautifyReduced(rowEchelonForm, &ctx);
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
-      rowEchelonForm, false, numberOfSignificantDigits, displayMode));
+  m_layouts[index++] = CreateBeautifiedLayout(rowEchelonForm, &ctx);
 
   /* 4. Matrix reduced row echelon form
    *    it can be computed from row echelon form to save computation time.*/
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
-  Simplification::BeautifyReduced(reducedRowEchelonForm, &ctx);
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
-      reducedRowEchelonForm, false, numberOfSignificantDigits, displayMode));
+  m_layouts[index++] = CreateBeautifiedLayout(reducedRowEchelonForm, &ctx);
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = JuniorLayout::Builder(
-        Layouter::LayoutExpression(Internal::Matrix::Trace(matrix), false,
-                                   numberOfSignificantDigits, displayMode));
+    m_layouts[index++] =
+        CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
   }
   matrix->removeTree();
 }

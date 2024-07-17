@@ -74,7 +74,7 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
       m_bufferDestructor(nullptr) {}
 
 void App::didBecomeActive(Window* window) {
-  Ion::RingBuffer<Escher::ViewController*,
+  OMG::RingBuffer<Escher::ViewController*,
                   LargeStackViewController::k_maxNumberOfChildren>* queue =
       snapshot()->pageQueue();
   int queueLength = queue->length();

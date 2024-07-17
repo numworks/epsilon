@@ -3,7 +3,7 @@
 
 #include <apps/shared/math_app.h>
 #include <escher/stack_view_controller.h>
-#include <ion/ring_buffer.h>
+#include <omg/ring_buffer.h>
 
 #include "models/distribution_buffer.h"
 #include "probability/distribution_controller.h"
@@ -38,12 +38,12 @@ class App : public Shared::MathApp {
     }
 
     constexpr static int k_maxNumberOfPages = 3;
-    Ion::RingBuffer<Escher::ViewController*, k_maxNumberOfPages>* pageQueue() {
+    OMG::RingBuffer<Escher::ViewController*, k_maxNumberOfPages>* pageQueue() {
       return &m_pageQueue;
     }
 
    private:
-    Ion::RingBuffer<Escher::ViewController*, k_maxNumberOfPages> m_pageQueue;
+    OMG::RingBuffer<Escher::ViewController*, k_maxNumberOfPages> m_pageQueue;
     DistributionBuffer m_distributionBuffer;
   };
 

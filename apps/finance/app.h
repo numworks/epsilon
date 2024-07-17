@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/math_app.h>
 #include <escher/stack_view_controller.h>
+#include <omg/ring_buffer.h>
 
 #include "data.h"
 #include "interest_menu_controller.h"
@@ -35,13 +36,13 @@ class App : public Shared::MathApp {
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;
     void reset() override;
-    Ion::RingBuffer<Escher::ViewController*, k_maxDepth>* pageQueue() {
+    OMG::RingBuffer<Escher::ViewController*, k_maxDepth>* pageQueue() {
       return &m_pageQueue;
     }
     Data* data() { return &m_data; }
 
    private:
-    Ion::RingBuffer<Escher::ViewController*, k_maxDepth> m_pageQueue;
+    OMG::RingBuffer<Escher::ViewController*, k_maxDepth> m_pageQueue;
     Data m_data;
   };
   TELEMETRY_ID("Finance");

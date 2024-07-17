@@ -2,7 +2,7 @@
 #define ION_SHARED_KEYBOARD_QUEUE_H
 
 #include <ion/keyboard.h>
-#include <ion/ring_buffer.h>
+#include <omg/ring_buffer.h>
 
 namespace Ion {
 namespace Keyboard {
@@ -26,7 +26,7 @@ class Queue {
   void didFlush(bool resetPending);
   void handleBusyState();
 
-  RingBuffer<State, k_maximalNumberOfStates> m_buffer;
+  OMG::RingBuffer<State, k_maximalNumberOfStates> m_buffer;
   /* The push method is called from a high-priority interruption, and can as
    * such be executed in the middle of a pop or reset. Conversely, pop and
    * reset are called from low-priority interrupts (svcall and pendsv

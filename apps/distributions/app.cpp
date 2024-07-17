@@ -29,7 +29,7 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
                             StackViewController::Style::GrayGradation) {}
 
 void App::didBecomeActive(Window* window) {
-  Ion::RingBuffer<Escher::ViewController*, Snapshot::k_maxNumberOfPages>*
+  OMG::RingBuffer<Escher::ViewController*, Snapshot::k_maxNumberOfPages>*
       queue = snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController* currentController = &m_distributionController;

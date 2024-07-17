@@ -6,6 +6,7 @@
 #include <apps/shared/function_graph_controller.h>
 #include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/round_cursor_view.h>
+#include <omg/ring_buffer.h>
 
 #include "banner_view.h"
 #include "curve_parameter_controller.h"
@@ -142,7 +143,7 @@ class GraphController : public Shared::FunctionGraphController,
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
   constexpr static int k_numberOfCaches = 5;
-  Ion::RingBuffer<PointsOfInterestCache, k_numberOfCaches> m_pointsOfInterest;
+  OMG::RingBuffer<PointsOfInterestCache, k_numberOfCaches> m_pointsOfInterest;
 };
 
 }  // namespace Graph

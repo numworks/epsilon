@@ -4,7 +4,6 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   exam_bytes.cpp \
   exam_mode.cpp \
   keyboard.cpp \
-  ring_buffer.cpp  \
   storage.cpp  \
   utf8_decoder.cpp \
   utf8_helper.cpp \

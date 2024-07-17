@@ -1,10 +1,10 @@
-#ifndef ION_RING_BUFFER_H
-#define ION_RING_BUFFER_H
+#ifndef OMG_RING_BUFFER_H
+#define OMG_RING_BUFFER_H
 
 #include <assert.h>
 #include <stddef.h>
 
-namespace Ion {
+namespace OMG {
 
 // All implementations are in header to avoid having to specify templates
 
@@ -60,6 +60,6 @@ class RingBuffer {
   int m_length;
 };
 
-}  // namespace Ion
+}  // namespace OMG
 
 #endif

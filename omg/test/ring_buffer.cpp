@@ -1,8 +1,8 @@
-#include <ion/ring_buffer.h>
+#include <omg/ring_buffer.h>
 #include <quiz.h>
 #include <string.h>
 
-using namespace Ion;
+using namespace OMG;
 
 constexpr int k_ringSize = 6;
 
@@ -20,7 +20,7 @@ void fill_ring(RingBuffer<int, k_ringSize>* ringBuffer) {
   }
 }
 
-QUIZ_CASE(ion_ring_buffer) {
+QUIZ_CASE(omg_ring_buffer) {
   RingBuffer<int, k_ringSize> ringBuffer;
 
   fill_ring(&ringBuffer);

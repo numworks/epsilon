@@ -6,7 +6,7 @@
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
-#include <ion/ring_buffer.h>
+#include <omg/ring_buffer.h>
 
 #include "models/statistic_buffer.h"
 #include "shared/dynamic_cells_data_source.h"
@@ -51,7 +51,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
     Statistic* statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController*,
+    OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>*
     pageQueue() {
       return &m_pageQueue;
@@ -60,7 +60,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
    private:
     friend App;
     // TODO: optimize size of Stack
-    Ion::RingBuffer<Escher::ViewController*,
+    OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>
         m_pageQueue;
     StatisticBuffer m_statisticBuffer;

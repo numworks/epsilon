@@ -32,7 +32,7 @@ void App::Snapshot::reset() {
 }
 
 void App::didBecomeActive(Escher::Window* window) {
-  Ion::RingBuffer<Escher::ViewController*, Snapshot::k_maxDepth>* queue =
+  OMG::RingBuffer<Escher::ViewController*, Snapshot::k_maxDepth>* queue =
       snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController* currentController = &m_menuController;

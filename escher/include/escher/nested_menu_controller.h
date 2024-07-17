@@ -13,7 +13,7 @@
 #include <escher/selectable_list_view.h>
 #include <escher/stack_view_controller.h>
 #include <ion.h>
-#include <ion/ring_buffer.h>
+#include <omg/ring_buffer.h>
 
 namespace Escher {
 
@@ -67,7 +67,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
   virtual NodeCell* nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableListView m_selectableListView;
-  Ion::RingBuffer<StackState, k_maxModelTreeDepth>* stack() { return &m_stack; }
+  OMG::RingBuffer<StackState, k_maxModelTreeDepth>* stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
   virtual bool isToolbox() const { return false; }
 
@@ -126,7 +126,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
   void willOpenPage(ViewController* controller) const override {}
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
-  Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
+  OMG::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
   int m_savedChecksum;
   constexpr static int k_nestedMenuStackDepth = 1;
 };

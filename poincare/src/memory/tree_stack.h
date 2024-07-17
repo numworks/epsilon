@@ -30,9 +30,6 @@ class TreeStack : public BlockStack {
  public:
   using BlockStack::BlockStack;
 
-  constexpr static int k_maxNumberOfBlocks = 1024 * 16;
-  constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
-
   static OMG::GlobalBox<TreeStack> SharedTreeStack;
 
   size_t numberOfTrees() const;

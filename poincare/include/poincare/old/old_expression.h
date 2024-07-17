@@ -178,7 +178,6 @@ class OExpression : public PoolHandle {
     return node()->isNull(context);
   }
   bool isUndefined() const { return node()->isUndefined(); }
-  bool allChildrenAreUndefined();
   bool allChildrenAreReal(Context* context,
                           bool canContainMatrices = true) const;
   bool isNumber() const { return node()->isNumber(); }

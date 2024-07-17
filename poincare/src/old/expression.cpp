@@ -529,16 +529,6 @@ bool OExpression::getLinearCoefficients(
   return !isMultivariablePolynomial;
 }
 
-bool OExpression::allChildrenAreUndefined() {
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    if (!childAtIndex(i).isUndefined()) {
-      return false;
-    }
-  }
-  return true;
-}
-
 bool OExpression::allChildrenAreReal(Context *context,
                                      bool canContainMatrices) const {
   int n = numberOfChildren();

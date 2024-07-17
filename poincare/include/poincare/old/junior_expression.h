@@ -343,6 +343,7 @@ class JuniorExpression : public OExpression {
     return e.type() == ExpressionNode::Type::Sequence;
   }
 
+  bool allChildrenAreUndefined() const;
   bool isUndefined() const { return type() == ExpressionNode::Type::Undefined; }
   bool hasComplexI(
       Context* context,

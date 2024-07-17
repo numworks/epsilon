@@ -958,6 +958,11 @@ bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
 }
 
+bool NewExpression::allChildrenAreUndefined() const {
+  return !tree()->hasChildSatisfying(
+      [](const Tree* e) { return !e->isUndefined(); });
+}
+
 /* Matrix */
 
 Poincare::Matrix Poincare::Matrix::Builder() {

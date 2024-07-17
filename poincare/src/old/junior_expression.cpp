@@ -42,58 +42,58 @@ using namespace Internal;
 /* Dimension */
 
 Poincare::Dimension::Dimension(const NewExpression e, Context* context)
-    : m_type(DimensionType::Scalar), m_isList(false), m_dimensioned(false) {
+    : m_type(DimensionType::Scalar), m_isList(false), m_isValid(false) {
   // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;
   }
   m_type = Internal::Dimension::Get(e.tree(), context).type;
   m_isList = Internal::Dimension::IsList(e.tree(), context);
-  m_dimensioned = true;
+  m_isValid = true;
 }
 
 bool Poincare::Dimension::isScalar() {
-  return m_dimensioned && !m_isList && m_type == DimensionType::Scalar;
+  return m_isValid && !m_isList && m_type == DimensionType::Scalar;
 }
 
 bool Poincare::Dimension::isMatrix() {
-  return m_dimensioned && !m_isList && m_type == DimensionType::Matrix;
+  return m_isValid && !m_isList && m_type == DimensionType::Matrix;
 }
 
 bool Poincare::Dimension::isUnit() {
-  return m_dimensioned && !m_isList && m_type == DimensionType::Unit;
+  return m_isValid && !m_isList && m_type == DimensionType::Unit;
 }
 
 bool Poincare::Dimension::isBoolean() {
-  return m_dimensioned && !m_isList && m_type == DimensionType::Boolean;
+  return m_isValid && !m_isList && m_type == DimensionType::Boolean;
 }
 
 bool Poincare::Dimension::isPoint() {
   /* TODO_PCJ: This method used to allow (undef, x) with x undefined. Restore
    * this behavior ? */
-  return m_dimensioned && !m_isList && m_type == DimensionType::Point;
+  return m_isValid && !m_isList && m_type == DimensionType::Point;
 }
 
-bool Poincare::Dimension::isList() { return m_dimensioned && m_isList; }
+bool Poincare::Dimension::isList() { return m_isValid && m_isList; }
 
 bool Poincare::Dimension::isListOfScalars() {
-  return m_dimensioned && m_isList && m_type == DimensionType::Scalar;
+  return m_isValid && m_isList && m_type == DimensionType::Scalar;
 }
 
 bool Poincare::Dimension::isListOfUnits() {
-  return m_dimensioned && m_isList && m_type == DimensionType::Unit;
+  return m_isValid && m_isList && m_type == DimensionType::Unit;
 }
 
 bool Poincare::Dimension::isListOfBooleans() {
-  return m_dimensioned && m_isList && m_type == DimensionType::Boolean;
+  return m_isValid && m_isList && m_type == DimensionType::Boolean;
 }
 
 bool Poincare::Dimension::isListOfPoints() {
-  return m_dimensioned && m_isList && m_type == DimensionType::Point;
+  return m_isValid && m_isList && m_type == DimensionType::Point;
 }
 
 bool Poincare::Dimension::isPointOrListOfPoints() {
-  return m_dimensioned && m_type == DimensionType::Point;
+  return m_isValid && m_type == DimensionType::Point;
 }
 
 /* JuniorExpressionNode */

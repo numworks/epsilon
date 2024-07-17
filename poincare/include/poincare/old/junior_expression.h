@@ -59,7 +59,7 @@ class Dimension {
  private:
   Internal::DimensionType m_type;
   bool m_isList;
-  bool m_dimensioned;
+  bool m_isValid;
 };
 
 class JuniorExpressionNode final : public ExpressionNode {

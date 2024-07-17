@@ -11,7 +11,7 @@ $(call create_goal,bootloader, \
 ,bootloader, \
 )
 
-ifeq ($(DEBUG),0)
+ifeq ($(ASSERTIONS),0)
 $(call create_goal,kernel, \
   ion.kernel \
   kandinsky.minimal \
@@ -28,11 +28,14 @@ $(call create_goal,kernel, \
   libaxx \
   omg.minimal.decompress.utf8 \
 ,kernel, \
-In debug mode the kernel is built with -Os to fit in its section \
 )
+endif
 
+ifneq ($(DEBUG),0)
 # Kernel without optimization is too large to fit in its 64k section.
 $(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -Os
+
+HELP_GOAL_kernel := In debug mode the kernel is built with -Os to fit in its section
 endif
 
 $(call create_goal,userland, \

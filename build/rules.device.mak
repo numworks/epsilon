@@ -41,7 +41,7 @@ endif
 $(call create_goal,userland, \
   apps \
   escher \
-  ion.userland \
+  ion.userland$(if $(filter 0,$(ASSERTIONS)),,.consoledisplay) \
   kandinsky \
   liba.aeabirt.armv7m.openbsd \
   libaxx \

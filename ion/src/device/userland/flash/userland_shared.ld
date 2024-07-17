@@ -107,6 +107,7 @@ SECTIONS {
     _external_apps_RAM_start = .;
     KEEP(*(.bss.$app_buffer))
     KEEP(*(.bss.$poincare_pool))
+    KEEP(*(.bss.$tree_stack))
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;

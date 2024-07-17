@@ -30,7 +30,11 @@ class TreeStack : public BlockStack {
  public:
   using BlockStack::BlockStack;
 
-  static OMG::GlobalBox<TreeStack> SharedTreeStack;
+  static OMG::GlobalBox<TreeStack> SharedTreeStack
+#if PLATFORM_DEVICE
+      __attribute__((section(".bss.$tree_stack")))
+#endif
+      ;
 
   size_t numberOfTrees() const;
 

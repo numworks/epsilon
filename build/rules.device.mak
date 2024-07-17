@@ -12,6 +12,15 @@ $(call create_goal,bootloader, \
 
 $(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
 
+ifneq ($(DEBUG),0)
+ifneq ($(PLATFORM),n0120)
+# Kernel without optimization is too large to fit in its 64k section.
+$(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -Os
+
+HELP_GOAL_bootloader := In debug mode the bootloader is built with -Os to fit in its section
+endif
+endif
+
 # Firmware component - kernel
 
 ifeq ($(ASSERTIONS),0)

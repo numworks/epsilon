@@ -21,8 +21,8 @@ _sources_poincare_checkpoint := $(addprefix src/, \
   old/pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
 
-_sources_poincare_storage := $(addprefix src/old/, \
-  preferences_in_storage.cpp:-nostorage \
+_sources_poincare_storage := $(addprefix src/, \
+  old/preferences_in_storage.cpp:-nostorage \
   preferences_no_storage.cpp:+nostorage \
 )
 

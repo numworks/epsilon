@@ -128,9 +128,9 @@ _sources_python_extmod := $(addprefix src/extmod/, \
 )
 
 _sources_python_port := $(addprefix port/, \
-  port.c \
+  port.cpp \
   builtins.c \
-  helpers.c \
+  helpers.cpp \
   mphalport.c \
 $(addprefix mod/, \
   ion/modion.cpp \
@@ -160,7 +160,7 @@ $(addprefix mod/, \
   numpy/stats.c \
   numpy/transform.c \
   numpy/vector.c \
-  time/modtime.c \
+  time/modtime.cpp \
   time/modtime_table.c \
   turtle/modturtle.cpp \
   turtle/modturtle_table.c \

@@ -80,7 +80,7 @@ _sources_liba_openbsd := $(addprefix src/external/openbsd/, \
   k_tan.c \
   k_tanf.c \
   s_asinh.c \
-  s_asinhf.o\
+  s_asinhf.c \
   s_atan.c \
   s_atanf.c \
   s_ceil.c \
@@ -92,7 +92,7 @@ _sources_liba_openbsd := $(addprefix src/external/openbsd/, \
   s_erf.c \
   s_erff.c \
   s_expm1.c \
-  s_expm1f.o\
+  s_expm1f.c \
   s_fabs.c \
   s_fabsf.c \
   s_floor.c \

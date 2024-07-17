@@ -27,7 +27,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   even_odd_editable_text_cell.cpp \
   even_odd_expression_cell.cpp \
   even_odd_message_text_cell.cpp \
-  explicit_list_view_data_source.h \
+  explicit_list_view_data_source.cpp \
   expression_input_bar.cpp \
   layout_view.cpp \
   gauge_view.cpp \

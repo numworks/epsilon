@@ -5,8 +5,6 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   exam_mode.cpp \
   keyboard.cpp \
   storage.cpp  \
-  utf8_decoder.cpp \
-  utf8_helper.cpp \
 ))
 
 PRIVATE_SFLAGS_ion += \

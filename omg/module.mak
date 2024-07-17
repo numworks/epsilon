@@ -32,6 +32,8 @@ _sources_omg_test := $(addprefix test/, \
   print.cpp \
   ring_buffer.cpp \
   signaling_nan.cpp \
+  utf8_decoder.cpp \
+	utf8_helper.cpp \
 )
 
 $(call create_module,omg,1, \

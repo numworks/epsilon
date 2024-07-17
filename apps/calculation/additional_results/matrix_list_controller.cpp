@@ -2,21 +2,21 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/determinant.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/matrix_inverse.h>
-#include <poincare/old/matrix_reduced_row_echelon_form.h>
-#include <poincare/old/matrix_row_echelon_form.h>
-#include <poincare/old/matrix_trace.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/layout/layouter.h>
+#include <poincare/src/memory/tree.h>
 #include <string.h>
 
 #include "../app.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 using namespace Shared;
 
 namespace Calculation {
 
+// TODO_PCJ: Move part of this in Poincare
 void MatrixListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
@@ -25,26 +25,38 @@ void MatrixListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Context* context = App::app()->localContext();
-  /* Change complex format to avoid all additional expressions to be
-   * "nonreal" (with [i] for instance). As additional results are computed
-   * from the output, which is built taking ComplexFormat into account, there
-   * are no risks of displaying additional results on an nonreal output. */
-  ComputationContext computationContext(
-      context,
-      complexFormat() == Preferences::ComplexFormat::Real
-          ? Preferences::ComplexFormat::Cartesian
-          : complexFormat(),
-      angleUnit());
+  ProjectionContext ctx = {
+#if 0  // TODO_PCJ: Should this be applied ?
+    /* Change complex format to avoid all additional expressions to be
+     * "nonreal" (with [i] for instance). As additional results are computed
+     * from the output, which is built taking ComplexFormat into account, there
+     * are no risks of displaying additional results on an nonreal output. */
+    .m_complexFormat = complexFormat() == Preferences::ComplexFormat::Real
+                           ? Preferences::ComplexFormat::Cartesian
+                           : complexFormat(),
+#else
+    .m_complexFormat = complexFormat(),
+#endif
+    .m_angleUnit = angleUnit(),
+    .m_symbolic =
+        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+    .m_context = App::app()->localContext()
+  };
+  Poincare::Preferences::PrintFloatMode displayMode =
+      Poincare::Preferences::SharedPreferences()->displayMode();
+  uint8_t numberOfSignificantDigits =
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
 
   // The expression must be reduced to call methods such as determinant or trace
-  assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
-  Expression clone = exactOutput.type() == ExpressionNode::Type::Matrix
-                         ? exactOutput.clone()
-                         : approximateOutput.clone();
-  Matrix matrix = static_cast<const Matrix&>(clone);
+  assert(approximateOutput.tree()->isMatrix());
+  Tree* matrix =
+      (exactOutput.tree()->isMatrix() ? exactOutput : approximateOutput)
+          .tree()
+          ->cloneTree();
+  Simplification::ProjectAndReduce(matrix, &ctx, false);
 
-  bool mIsSquared = matrix.numberOfRows() == matrix.numberOfColumns();
+  bool mIsSquared = Internal::Matrix::NumberOfRows(matrix) ==
+                    Internal::Matrix::NumberOfColumns(matrix);
   size_t index = 0;
   size_t messageIndex = 0;
   // 1. Matrix determinant if square matrix
@@ -52,44 +64,56 @@ void MatrixListController::computeAdditionalResults(
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(matrix);
-    PoincareHelpers::CloneAndSimplify(
-        &determinant, context,
-        {.complexFormat = complexFormat(),
-         .angleUnit = angleUnit(),
-         .target = ReductionTarget::SystemForApproximation,
-         .symbolicComputation =
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
+    Tree* determinant;
+    Tree* matrixClone = matrix->cloneTree();
+    Internal::Matrix::RowCanonize(matrixClone, true, &determinant, false);
+    // determinant has
+    bool determinantIsUndefinedOrNull =
+        determinant->isUndefined() || determinant->isZero();
+
+    Simplification::BeautifyReduced(determinant, &ctx);
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] =
-        getExactLayoutFromExpression(determinant, computationContext);
+    m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
+        determinant, false, numberOfSignificantDigits, displayMode));
+
+    matrixClone->removeTree();
     /* 2. Matrix inverse if invertible matrix
      * A squared matrix is invertible if and only if determinant is non null */
-    if (!determinant.isUndefined() &&
-        determinant.isNull(context) != OMG::Troolean::True) {
-      // TODO: Handle ExpressionNode::NullStatus::Unknown
+    if (!determinantIsUndefinedOrNull) {
+      // TODO: Handle a determinant that can be null.
+      Tree* inverse = Internal::Matrix::Inverse(matrix, false);
+      Simplification::BeautifyReduced(inverse, &ctx);
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index++] = getExactLayoutFromExpression(
-          MatrixInverse::Builder(matrix), computationContext);
+      m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
+          inverse, false, numberOfSignificantDigits, displayMode));
     }
   }
   // 3. Matrix row echelon form
   messageIndex = 2;
-  Expression rowEchelonForm = MatrixRowEchelonForm::Builder(matrix);
+  Tree* reducedRowEchelonForm = matrix->cloneTree();
+  Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
+  // preserve reducedRowEchelonForm for next step.
+  Tree* rowEchelonForm = reducedRowEchelonForm->cloneTree();
+  Simplification::BeautifyReduced(rowEchelonForm, &ctx);
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] =
-      getExactLayoutFromExpression(rowEchelonForm, computationContext);
+  m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
+      rowEchelonForm, false, numberOfSignificantDigits, displayMode));
+
   /* 4. Matrix reduced row echelon form
    *    it can be computed from row echelon form to save computation time.*/
+  Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
+  Simplification::BeautifyReduced(reducedRowEchelonForm, &ctx);
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = getExactLayoutFromExpression(
-      MatrixReducedRowEchelonForm::Builder(rowEchelonForm), computationContext);
+  m_layouts[index++] = JuniorLayout::Builder(Layouter::LayoutExpression(
+      reducedRowEchelonForm, false, numberOfSignificantDigits, displayMode));
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
     m_indexMessageMap[index] = messageIndex++;
-    m_layouts[index++] = getExactLayoutFromExpression(
-        MatrixTrace::Builder(matrix), computationContext);
+    m_layouts[index++] = JuniorLayout::Builder(
+        Layouter::LayoutExpression(Internal::Matrix::Trace(matrix), false,
+                                   numberOfSignificantDigits, displayMode));
   }
+  matrix->removeTree();
 }
 
 I18n::Message MatrixListController::messageAtIndex(int index) {

@@ -185,6 +185,7 @@ void ContinuousFunctionProperties::update(
     if (dimension.isMatrix() ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          dimension.isListOfPoints()) ||
+        dimension.isList() ||
         (precomputedFunctionSymbol != SymbolType::NoSymbol &&
          precomputedFunctionSymbol != SymbolType::T && dimension.isPoint())) {
       setErrorStatusAndUpdateCaption(Status::Undefined);

@@ -11,6 +11,7 @@ namespace Poincare::Internal {
 
 class Layouter {
  public:
+  // Eats expression to built its layout inplace.
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
                                 int numberOfSignificantDigits = -1,
                                 Preferences::PrintFloatMode floatMode =

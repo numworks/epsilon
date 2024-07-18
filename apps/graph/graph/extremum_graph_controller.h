@@ -15,8 +15,9 @@ class MinimumGraphController : public CalculationGraphController {
   TELEMETRY_ID("Minimum");
 
  private:
-  Poincare::Solver<double>::Interest specialInterest() const override {
-    return Poincare::Solver<double>::Interest::LocalMinimum;
+  Poincare::Internal::Solver<double>::Interest specialInterest()
+      const override {
+    return Poincare::Internal::Solver<double>::Interest::LocalMinimum;
   }
 };
 
@@ -30,8 +31,9 @@ class MaximumGraphController : public CalculationGraphController {
   TELEMETRY_ID("Maximum");
 
  private:
-  Poincare::Solver<double>::Interest specialInterest() const override {
-    return Poincare::Solver<double>::Interest::LocalMaximum;
+  Poincare::Internal::Solver<double>::Interest specialInterest()
+      const override {
+    return Poincare::Internal::Solver<double>::Interest::LocalMaximum;
   }
 };
 

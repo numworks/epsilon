@@ -23,7 +23,7 @@ const char* AreaBetweenCurvesGraphController::title() {
 void AreaBetweenCurvesGraphController::viewWillAppear() {
   IntegralGraphController::viewWillAppear();
   static_cast<GraphView*>(m_graphView)
-      ->setInterest(Solver<double>::Interest::Intersection);
+      ->setInterest(Internal::Solver<double>::Interest::Intersection);
 }
 
 void AreaBetweenCurvesGraphController::viewDidDisappear() {
@@ -57,8 +57,9 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
       App::app()
           ->graphController()
           ->pointsOfInterestForRecord(selectedRecord())
-          ->firstPointInDirection(position, nextSnap,
-                                  Solver<double>::Interest::Intersection)
+          ->firstPointInDirection(
+              position, nextSnap,
+              Internal::Solver<double>::Interest::Intersection)
           .xy();
   if (std::isfinite(nextIntersection.x())) {
     return nextIntersection.x();

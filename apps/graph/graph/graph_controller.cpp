@@ -42,7 +42,7 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.setTangentDisplay(false);
-  m_view.setInterest(Solver<double>::Interest::None);
+  m_view.setInterest(Internal::Solver<double>::Interest::None);
   m_cursorView.resetMemoization();
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
@@ -540,29 +540,33 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   /* The interests are sorted from most important to lowest, in case there is
    * not enough space on the banner to display all of them. */
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
+          cursor->x(), cursor->y(),
+          Internal::Solver<double>::Interest::LocalMinimum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Minimum, &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum)) {
+          cursor->x(), cursor->y(),
+          Internal::Solver<double>::Interest::LocalMaximum)) {
     assert(!function->isAlongY());
     bannerView()->addInterestMessage(I18n::Message::Maximum, &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::Intersection)) {
+          cursor->x(), cursor->y(),
+          Internal::Solver<double>::Interest::Intersection)) {
     bannerView()->addInterestMessage(I18n::Message::Intersection,
                                      &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::Root)) {
+          cursor->x(), cursor->y(), Internal::Solver<double>::Interest::Root)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::LineYInterceptDescription
                              : I18n::Message::Zero,
         &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursor->x(), cursor->y(), Solver<double>::Interest::YIntercept)) {
+          cursor->x(), cursor->y(),
+          Internal::Solver<double>::Interest::YIntercept)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::Zero
                              : I18n::Message::LineYInterceptDescription,

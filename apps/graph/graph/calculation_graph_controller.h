@@ -5,7 +5,7 @@
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <omg/ring_buffer.h>
-#include <poincare/old/point_of_interest.h>
+#include <poincare/numeric/point_of_interest.h>
 
 #include "banner_view.h"
 #include "graph_view.h"
@@ -46,8 +46,8 @@ class CalculationGraphController
   Shared::ContinuousFunctionStore* functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(
       double start, OMG::HorizontalDirection direction);
-  virtual Poincare::Solver<double>::Interest specialInterest() const {
-    return Poincare::Solver<double>::Interest::None;
+  virtual Poincare::Internal::Solver<double>::Interest specialInterest() const {
+    return Poincare::Internal::Solver<double>::Interest::None;
   }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(
       double start, double max, Poincare::Context* context) {

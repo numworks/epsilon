@@ -61,8 +61,8 @@ Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
     double start, double max, Poincare::Context* context) {
   PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, context);
   if (!p.isUninitialized()) {
-    assert(sizeof(p.data()) == sizeof(Ion::Storage::Record));
-    uint32_t data = p.data();
+    assert(sizeof(p.data) == sizeof(Ion::Storage::Record));
+    uint32_t data = p.data;
     m_intersectedRecord = *reinterpret_cast<Ion::Storage::Record*>(&data);
   }
   return p.xy();

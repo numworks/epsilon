@@ -35,7 +35,7 @@ class GraphView : public Shared::FunctionGraphView,
   void setFocus(bool focus) override;
   Shared::ContinuousFunctionStore* functionStore() const override;
 
-  void setInterest(Poincare::Solver<double>::Interest interest) {
+  void setInterest(Poincare::Internal::Solver<double>::Interest interest) {
     m_interest = interest;
   }
   void resumePointsOfInterestDrawing();
@@ -80,7 +80,7 @@ class GraphView : public Shared::FunctionGraphView,
   mutable int m_areaIndex;
   mutable int m_nextPointOfInterestIndex;
 
-  Poincare::Solver<double>::Interest m_interest;
+  Poincare::Internal::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;
   bool m_tangentDisplay;
 };

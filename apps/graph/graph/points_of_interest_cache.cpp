@@ -15,13 +15,6 @@ namespace Graph {
 
 // PointsOfInterestCache
 
-PointsOfInterestCache PointsOfInterestCache::clone() const {
-  PointsOfInterestCache result = *this;
-  SystemExpression cloneList = result.list().clone();
-  result.m_list.setList(static_cast<Poincare::List&>(cloneList));
-  return result;
-}
-
 void PointsOfInterestCache::setBounds(float start, float end) {
   assert(start <= end);
 
@@ -58,14 +51,14 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
 }
 
 int PointsOfInterestCache::numberOfPoints(
-    Poincare::Solver<double>::Interest interest) const {
+    Internal::Solver<double>::Interest interest) const {
   int n = numberOfPoints();
-  if (interest == Poincare::Solver<double>::Interest::None) {
+  if (interest == Poincare::Internal::Solver<double>::Interest::None) {
     return n;
   }
   int result = 0;
   for (int i = 0; i < n; i++) {
-    if (pointAtIndex(i).interest() == interest) {
+    if (pointAtIndex(i).interest == interest) {
       result++;
     }
   }
@@ -73,7 +66,7 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double start, double end, Solver<double>::Interest interest,
+    double start, double end, Internal::Solver<double>::Interest interest,
     int subCurveIndex) {
   if (start == end) {
     return PointOfInterest();
@@ -89,29 +82,29 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
-    if (direction * p.abscissa() <= direction * start) {
+    if (direction * p.abscissa <= direction * start) {
       continue;
     }
-    if (direction * p.abscissa() >= direction * end) {
+    if (direction * p.abscissa >= direction * end) {
       break;
     }
-    if ((interest == Solver<double>::Interest::None ||
-         interest == p.interest()) &&
-        p.subCurveIndex() == subCurveIndex) {
+    if ((interest == Internal::Solver<double>::Interest::None ||
+         interest == p.interest) &&
+        p.subCurveIndex == subCurveIndex) {
       return p;
     }
   }
-  return PointOfInterest();
+  return PointOfInterest{.abscissa = NAN};
 }
 
 bool PointsOfInterestCache::hasInterestAtCoordinates(
-    double x, double y, Solver<double>::Interest interest) const {
+    double x, double y, Internal::Solver<double>::Interest interest) const {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
     if (p.x() == x && p.y() == y &&
-        (interest == Solver<double>::Interest::None ||
-         p.interest() == interest)) {
+        (interest == Internal::Solver<double>::Interest::None ||
+         p.interest == interest)) {
       return true;
     }
   }
@@ -119,10 +112,10 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(
 }
 
 bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
-    double x, double y, Poincare::Solver<double>::Interest interest,
+    double x, double y, Poincare::Internal::Solver<double>::Interest interest,
     bool allInterestsAreDisplayed) const {
   if (!canDisplayPoints(allInterestsAreDisplayed
-                            ? Poincare::Solver<double>::Interest::None
+                            ? Poincare::Internal::Solver<double>::Interest::None
                             : interest)) {
     // Ignore interest point if it is not displayed.
     return false;
@@ -141,15 +134,18 @@ float PointsOfInterestCache::step() const {
 
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
+  m_list.filterOutOfBounds(m_start, m_end);
 
+#if 0
   int initialNumberOfPoints = numberOfPoints();
   for (int i = initialNumberOfPoints - 1; i >= 0; i--) {
-    float x = static_cast<float>(pointAtIndex(i).abscissa());
+    float x = static_cast<float>(pointAtIndex(i).abscissa);
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
       m_interestingPointsOverflowPool = false;
     }
   }
+#endif
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
@@ -165,7 +161,8 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
       CircuitBreakerCheckpoint checkpoint(
           Ion::CircuitBreaker::CheckpointType::AnyKey);
       if (!allowUserInterruptions || CircuitBreakerRun(checkpoint)) {
-        cacheClone = clone();
+        // FIXME This whole ExceptionCheckpoint is outdated, redraft
+        cacheClone = *this;
         if (m_computedEnd < m_end) {
           cacheClone.computeBetween(
               m_computedEnd,
@@ -207,7 +204,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
 #if 1  // TODO_PCJ
   return;
 #else
-  float searchStep = Solver<double>::MaximalStep(m_start - m_end);
+  float searchStep = Internal::Solver<double>::MaximalStep(m_start - m_end);
 
   ContinuousFunctionStore* store = App::app()->functionStore();
   Context* context = App::app()->localContext();
@@ -223,8 +220,8 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
         if (f->isAlongY()) {
           xy = Coordinate2D<double>(xy.y(), xy.x());
         }
-        append(xy.x(), xy.y(), Solver<double>::Interest::YIntercept, 0,
-               curveIndex);
+        append(xy.x(), xy.y(), Internal::Solver<double>::Interest::YIntercept,
+               0, curveIndex);
       }
     }
   }
@@ -240,7 +237,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       // Do not compute min and max since they would appear left/rightmost
       continue;
     }
-    Solver<double> solver = PoincareHelpers::Solver<double>(
+    Internal::Solver<double> solver = PoincareHelpers::Solver<double>(
         start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
@@ -275,7 +272,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       continue;
     }
     SystemFunction e2 = g->expressionApproximated(context);
-    Solver<double> solver = PoincareHelpers::Solver<double>(
+    Internal::Solver<double> solver = PoincareHelpers::Solver<double>(
         start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
@@ -290,7 +287,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
         continue;
       }
       append(intersection.x(), intersection.y(),
-             Solver<double>::Interest::Intersection,
+             Internal::Solver<double>::Interest::Intersection,
              *reinterpret_cast<uint32_t*>(&record));
     }
   }
@@ -298,12 +295,13 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
 }
 
 void PointsOfInterestCache::append(double x, double y,
-                                   Solver<double>::Interest interest,
+                                   Internal::Solver<double>::Interest interest,
                                    uint32_t data, int subCurveIndex) {
   assert(std::isfinite(x) && std::isfinite(y));
   ExpiringPointer<ContinuousFunction> f =
       App::app()->functionStore()->modelForRecord(m_record);
-  m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);
+  m_list.append({x, y, data, interest, f->isAlongY(),
+                 static_cast<uint8_t>(subCurveIndex)});
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(

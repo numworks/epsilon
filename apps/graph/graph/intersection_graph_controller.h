@@ -15,8 +15,9 @@ class IntersectionGraphController : public CalculationGraphController {
 
  private:
   void reloadBannerView() override;
-  Poincare::Solver<double>::Interest specialInterest() const override {
-    return Poincare::Solver<double>::Interest::Intersection;
+  Poincare::Internal::Solver<double>::Interest specialInterest()
+      const override {
+    return Poincare::Internal::Solver<double>::Interest::Intersection;
   }
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
       double start, double max, Poincare::Context* context) override;

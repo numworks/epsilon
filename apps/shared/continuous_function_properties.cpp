@@ -178,16 +178,18 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
-    /* Matrices, lists and points are not handled except:
-     * - lists of points for SymbolType::NoSymbol
-     * - points for SymbolType::NoSymbol and SymbolType::T */
+    /* Some dimensions are not handled:
+     * - matrix
+     * - list except list of points for SymbolType::NoSymbol
+     * - point except for SymbolType::NoSymbol and SymbolType::T */
     Dimension dimension = analyzedExpression.dimension(context);
     if (dimension.isMatrix() ||
-        (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         dimension.isListOfPoints()) ||
-        dimension.isList() ||
-        (precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         precomputedFunctionSymbol != SymbolType::T && dimension.isPoint())) {
+        (dimension.isList() &&
+         precomputedFunctionSymbol != SymbolType::NoSymbol &&
+         !dimension.isListOfPoints()) ||
+        (dimension.isPoint() &&
+         precomputedFunctionSymbol != SymbolType::NoSymbol &&
+         precomputedFunctionSymbol != SymbolType::T)) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }

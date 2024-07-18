@@ -12,3 +12,6 @@ PRIVATE_SFLAGS_ion += \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
 include $(PATH_ion)/shared.$(PLATFORM_TYPE).mak
+
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_ion)): $(KANDINSKY_fonts_dependencies)

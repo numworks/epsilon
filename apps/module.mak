@@ -64,4 +64,5 @@ $(call i18n_without_universal,variables)
 include $(patsubst %,$(PATH_apps)/%/Makefile,shared home on_boarding hardware_test usb $(EPSILON_APPS))
 
 $(call assert_defined,PYTHON_QSTRDEFS)
-$(call all_objects_for,$(SOURCES_apps)): $(PYTHON_QSTRDEFS)
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_apps)): $(PYTHON_QSTRDEFS) $(OUTPUT_DIRECTORY)/$(PATH_apps)/i18n.h $(KANDINSKY_fonts_dependencies)

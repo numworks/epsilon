@@ -94,4 +94,3 @@ $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash/board.ld: $(PATH_ion)/sr
 	$(call rule_label,AWK)
 	$(CXX) $(SFLAGS) -E $< -o $(@:.ld=.h)
 	awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@
-

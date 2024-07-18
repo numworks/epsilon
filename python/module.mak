@@ -238,4 +238,5 @@ $(PYTHON_QSTRDEFS): $(PATH_python)/port/genhdr/qstrdefs.in.h $(PATH_python)/src/
 	$(call rule_label,QSTRDAT)
 	$(PYTHON) $(filter %.py,$^) $< > $@
 
-$(call all_objects_for,$(SOURCES_python)): $(PYTHON_QSTRDEFS)
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_python)): $(PYTHON_QSTRDEFS) $(KANDINSKY_fonts_dependencies)

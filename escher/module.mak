@@ -114,6 +114,9 @@ ifneq ($(ESCHER_VIEW_LOGGING),0)
 SFLAGS_escher += -DESCHER_VIEW_LOGGING=1
 endif
 
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_escher)): $(KANDINSKY_fonts_dependencies)
+
 # Inliner
 
 _escher_inliner := $(TOOLS_DIRECTORY)/inliner.bin

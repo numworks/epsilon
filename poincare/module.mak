@@ -386,6 +386,9 @@ $(call create_module,poincare,1, \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )
 
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_poincare)): $(KANDINSKY_fonts_dependencies)
+
 POINCARE_POOL_VISUALIZATION ?= 0
 ifneq ($(POINCARE_POOL_VISUALIZATION),0)
 POINCARE_TREE_LOG := 1

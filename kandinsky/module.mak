@@ -5,6 +5,8 @@ _sources_kandinsky_fonts := $(addprefix fonts/, \
   SmallFont.ttf \
 )
 
+KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/%.h,$(_sources_kandinsky_fonts))
+
 _sources_kandinsky_minimal := $(addprefix src/, \
   color.cpp \
   font.cpp \
@@ -29,12 +31,13 @@ _sources_kandinsky_test := $(addprefix test/, \
   rect.cpp \
 )
 
-
 $(call create_module,kandinsky,1, \
   $(_sources_kandinsky_minimal) \
   $(addsuffix :-minimal,$(_sources_kandinsky_extended)) \
   $(addsuffix :+test,$(_sources_kandinsky_test)) \
 )
+
+$(call all_objects_for,$(SOURCES_kandinsky)): $(KANDINSKY_fonts_dependencies)
 
 # Rasterizer
 
@@ -56,8 +59,6 @@ $(call create_tool,rasterizer, \
   omg.lz4only \
   kandinsky_rasterizer \
 )
-
-PRIORITY_TARGETS_kandinsky += $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/,$(addsuffix .h,$(basename $(_sources_kandinsky_fonts))))
 
 $(_kandinsky_rasterizer): TOOLS_CFLAGS += $(_cflags_kandinsky_rasterizer)
 $(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)

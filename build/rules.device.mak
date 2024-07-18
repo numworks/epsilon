@@ -14,10 +14,11 @@ $(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
 
 ifneq ($(DEBUG),0)
 ifneq ($(PLATFORM),n0120)
-# Kernel without optimization is too large to fit in its 64k section.
+# Bootloader without optimization is larger than the 64k of the STM32F7 internal
+# flash
 $(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -Os
 
-HELP_GOAL_bootloader := In debug mode the bootloader is built with -Os to fit in its section
+HELP_GOAL_bootloader := In debug mode the bootloader is built with -Os to fit in STM32F7 internal flash
 endif
 endif
 

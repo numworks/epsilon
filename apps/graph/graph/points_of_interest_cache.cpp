@@ -135,17 +135,6 @@ float PointsOfInterestCache::step() const {
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
   m_list.filterOutOfBounds(m_start, m_end);
-
-#if 0
-  int initialNumberOfPoints = numberOfPoints();
-  for (int i = initialNumberOfPoints - 1; i >= 0; i--) {
-    float x = static_cast<float>(pointAtIndex(i).abscissa);
-    if (x < m_start || m_end < x) {
-      m_list.list().removeChildAtIndexInPlace(i);
-      m_interestingPointsOverflowPool = false;
-    }
-  }
-#endif
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {

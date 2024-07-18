@@ -1,5 +1,7 @@
 #include <omg/list.h>
 #include <poincare/numeric/point_of_interest.h>
+#include <poincare/src/expression/list.h>
+#include <poincare/src/memory/n_ary.h>
 
 namespace Poincare {
 
@@ -61,6 +63,18 @@ void PointsOfInterestList::sort() {
         return pointInTree(l, i)->abscissa >= pointInTree(l, j)->abscissa;
       },
       editableList, numberOfPoints());
+  m_list = API::JuniorPoolHandle::Builder(editableList);
+}
+
+void PointsOfInterestList::filterOutOfBounds(double start, double end) {
+  Internal::Tree* editableList = Internal::List::PushEmpty();
+  for (const Internal::Tree* child : m_list.tree()->children()) {
+    Internal::CustomTypeStructs::PointOfInterestNode p = *reinterpret_cast<
+        const Internal::CustomTypeStructs::PointOfInterestNode*>(child);
+    if (start <= p.abscissa && p.abscissa <= end) {
+      Internal::NAry::AddChild(editableList, child->cloneTree());
+    }
+  }
   m_list = API::JuniorPoolHandle::Builder(editableList);
 }
 

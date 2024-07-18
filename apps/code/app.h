@@ -109,7 +109,7 @@ class App : public Shared::SharedApp {
     /* Ensure the address of the python heap is before the Pool. If the python
       Code app is not the biggest app, there will be some extra space between
       the python heap space and the pool start. */
-    assert(static_cast<char*>(m_pythonHeap) + k_pythonHeapExtensionSize <=
+    assert(m_pythonHeap + k_pythonHeapExtensionSize <=
            static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)));
 
     /* Ensure the Pool and the TreeStack are contiguous in memory (with a
@@ -126,7 +126,7 @@ class App : public Shared::SharedApp {
 
     /* Ensure the address of {heap start +  heap size} does not exceed the end
      of the TreeStack space */
-    assert(static_cast<char*>(m_pythonHeap + k_pythonHeapSize) <=
+    assert(m_pythonHeap + k_pythonHeapSize <=
            static_cast<char*>(
                static_cast<void*>(Poincare::Internal::SharedTreeStack)) +
                sizeof(Poincare::Internal::TreeStack));

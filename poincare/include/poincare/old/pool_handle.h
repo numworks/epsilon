@@ -209,10 +209,6 @@ class PoolHandle {
     int m_firstIndex;
   };
 
-  Direct<PoolHandle, PoolObject> directChildren() const {
-    return Direct<PoolHandle, PoolObject>(*this);
-  }
-
 #endif
 
  protected:

@@ -564,10 +564,6 @@ class OExpression : public PoolHandle {
   typedef std::initializer_list<OExpression> Tuple;
 
   /* Iterator */
-  friend Direct<OExpression, ExpressionNode>;
-  Direct<OExpression, ExpressionNode> directChildren() const {
-    return Direct<OExpression, ExpressionNode>(*this);
-  }
   template <typename U>
   Evaluation<U> approximateToEvaluation(
       const ApproximationContext& approximationContext) const;

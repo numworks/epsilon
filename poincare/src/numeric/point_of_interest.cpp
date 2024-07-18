@@ -11,12 +11,11 @@ const Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(
     const Internal::Tree* t, int i) {
   assert(t->isList());
   assert(0 <= i && i < t->numberOfChildren());
-  const Internal::CustomTypeStructs::PointOfInterestNode* p =
-      reinterpret_cast<const Internal::CustomTypeStructs::PointOfInterestNode*>(
-          t->nextNode()) +
-      i;
-  assert(reinterpret_cast<const Internal::Tree*>(p) == t->child(i));
-  return p;
+  const Internal::Tree* p =
+      t->nextNode() + i * Internal::TypeBlock::NumberOfMetaBlocks(
+                              Internal::Type::PointOfInterest);
+  return reinterpret_cast<
+      const Internal::CustomTypeStructs::PointOfInterestNode*>(p + 1);
 }
 
 Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(Internal::Tree* t,
@@ -70,7 +69,7 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
   Internal::Tree* editableList = Internal::List::PushEmpty();
   for (const Internal::Tree* child : m_list.tree()->children()) {
     Internal::CustomTypeStructs::PointOfInterestNode p = *reinterpret_cast<
-        const Internal::CustomTypeStructs::PointOfInterestNode*>(child);
+        const Internal::CustomTypeStructs::PointOfInterestNode*>(child + 1);
     if (start <= p.abscissa && p.abscissa <= end) {
       Internal::NAry::AddChild(editableList, child->cloneTree());
     }

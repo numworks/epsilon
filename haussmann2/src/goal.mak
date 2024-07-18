@@ -28,6 +28,7 @@ ALL_GOALS += $1
 $(if $(filter-out $(ALL_SPECIAL_SUBDIRECTORIES),$3),$(error $3 should have been added to ALL_SPECIAL_SUBDIRECTORIES prior to including haussmann),)
 MODULES_$1 := $2
 HELP_GOAL_$1 := $4
+LD_WRAPPER_$1 ?= $$1
 
 $(call all_targets_named,$(if $3,$3/,)$1%$(EXECUTABLE_EXTENSION)): GOAL := $1
 $(call all_targets_named,$(if $3,$3/,)$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))

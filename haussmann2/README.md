@@ -56,6 +56,9 @@ When building a goal, the list of modules indicate which source files and which 
 > [!CAUTION]
 > Because of some limitations, the subdirectory argument must be declared by adding its name to the variable `ALL_SPECIAL_SUBDIRECTORIES` prior to including Haussmann.
 
+> [!TIP]
+> If you need to apply some pre- or post-processing to the linker's output, you can redefine the `LD_WRAPPER_<goal>` variable. Inside, `$1` will stand for the default recipe.
+
 ## Using modules
 
 A module is a collection of files and flags, grouped into several variables:

@@ -15,11 +15,11 @@ $(OUTPUT_ROOT)%/.:
 # Rules for executable applications
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) $$(call lddeps_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
-	$(LD) \
+	$(call LD_WRAPPER_$(GOAL),$(LD) \
 		$(PRIORITY_SFLAGS) $(SFLAGS) \
 		$(foreach l,$(filter %.a,$^),$(call objects_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l))) \
 		$(call ldflags_for_flavored_goal,$*) \
-		-o $@
+		-o $@)
 
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 

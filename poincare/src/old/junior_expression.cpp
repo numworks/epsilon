@@ -806,14 +806,16 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
                                    context, auxiliary, ignoredSymbols);
   }
 
-  const int childrenCount = this->numberOfChildren();
+  /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
+   * the pool to be recursivelyMatched. We do so so that ExpressionTrinaryTest
+   * can use Expression API. */
+  const int childrenCount = tree()->numberOfChildren();
   bool isParametered = tree()->isParametric();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
   for (int i = childrenCount - 1; i >= 0; i--) {
     if (isParametered && i == Parametric::k_variableIndex) {
       continue;
     }
-    // TODO: There's no need to clone the juniorExpression here.
     NewExpression childToAnalyze = childAtIndex(i);
     bool matches;
     if (isParametered && i == Parametric::FunctionIndex(tree())) {

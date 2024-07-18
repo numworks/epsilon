@@ -47,7 +47,6 @@ class NAryExpression : public OExpression {
   using PoolHandle::addChildAtIndexInPlace;
   using PoolHandle::removeChildAtIndexInPlace;
   using PoolHandle::removeChildInPlace;
-  using PoolHandle::removeChildrenInPlace;
   OExpression squashUnaryHierarchyInPlace() {
     return node()->squashUnaryHierarchyInPlace();
   }

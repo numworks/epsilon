@@ -652,7 +652,6 @@ class OExpression : public PoolHandle {
                               int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;
   void removeChildInPlace(PoolHandle t, int childNumberOfChildren) = delete;
-  void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
   /* getPolynomialCoefficients fills the table coefficients with the expressions

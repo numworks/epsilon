@@ -252,7 +252,6 @@ class PoolHandle {
   // Remove puts a child at the end of the pool
   void removeChildAtIndexInPlace(int i);
   void removeChildInPlace(PoolHandle t, int childNumberOfChildren);
-  void removeChildrenInPlace(int currentNumberOfChildren);
 #endif
   uint16_t m_identifier;
 

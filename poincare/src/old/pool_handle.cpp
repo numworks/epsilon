@@ -208,12 +208,6 @@ void PoolHandle::removeChildInPlace(PoolHandle t, int childNumberOfChildren) {
   object()->incrementNumberOfChildren(-1);
 }
 
-void PoolHandle::removeChildrenInPlace(int currentNumberOfChildren) {
-  assert(!isUninitialized());
-  deleteParentIdentifierInChildren();
-  Pool::sharedPool->removeChildren(object(), currentNumberOfChildren);
-}
-
 /* Private */
 
 void PoolHandle::detachFromParent() {

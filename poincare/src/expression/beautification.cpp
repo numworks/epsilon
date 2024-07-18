@@ -102,9 +102,10 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-void Beautification::SplitMultiplication(const Tree* e, TreeRef& numerator,
-                                         TreeRef& denominator,
-                                         bool* needOpposite, bool* needI) {
+// Get numerator, denominator, opposite (if needed), complex I (if needed)
+void GetDivisionComponents(const Tree* e, TreeRef& numerator,
+                           TreeRef& denominator, bool* needOpposite,
+                           bool* needI) {
   assert(needOpposite && needI);
   numerator = SharedTreeStack->pushMult(0);
   denominator = SharedTreeStack->pushMult(0);
@@ -179,7 +180,7 @@ bool Beautification::BeautifyIntoDivision(Tree* e) {
   TreeRef den;
   bool needOpposite = false;
   bool needI = false;
-  SplitMultiplication(e, num, den, &needOpposite, &needI);
+  GetDivisionComponents(e, num, den, &needOpposite, &needI);
   if (den->isOne() && !needOpposite) {
     // no need to apply needI if den->isOne
     num->removeTree();

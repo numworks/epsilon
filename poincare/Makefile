@@ -133,7 +133,7 @@ $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 	sed -i '' 's/new URL("poincare.wasm",import.meta.url).href/""/g' $(OUTPUT_DIRECTORY)/poincare.js
 	sed -i '' 's/MainModule/PoincareInstance/g' $@
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts .version.json))
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json))
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 

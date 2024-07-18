@@ -108,6 +108,8 @@ $(call create_module,escher,1,$(addprefix src/, \
   test/layout_field.cpp:+test \
 )
 
+ESCHER_VIEW_LOGGING ?= 0
+
 ifneq ($(ESCHER_VIEW_LOGGING),0)
 SFLAGS_escher += -DESCHER_VIEW_LOGGING=1
 endif

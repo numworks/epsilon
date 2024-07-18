@@ -32,8 +32,6 @@ HELP_GOAL_$1 := $4
 $(call all_targets_named,$(if $3,$3/,)$1%$(EXECUTABLE_EXTENSION)): GOAL := $1
 $(call all_targets_named,$(if $3,$3/,)$1%$(EXECUTABLE_EXTENSION)): SFLAGS += $$(foreach m,$2,$$(call sflags_for_flavored_module,$$m))
 
-$$(call all_objects_for,$$(call all_potential_sources,$1)): $$(foreach m,$2,$$(call priority_targets_for_flavored_module,$$m))
-
 $1%: $(call all_targets_named,$(if $3,$3/,)$1%)
 	@ :
 )

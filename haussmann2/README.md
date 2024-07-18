@@ -66,7 +66,6 @@ A module is a collection of files and flags, grouped into several variables:
 - `PRIVATE_SFLAGS_<module>`: on the other hand, those flags are only used when building the objects of this module.
 - `LDFLAGS_<module>`: flags used for linking executables using this module.
 - `LDDEPS_<module>`: linked executables using this module will depend on those non-sources files (e.g. linker scripts).
-- `PRIORITY_TARGETS_<module>`: those files will be created before the others in the goal using this module.
 
 Modules are typically created in their own subdirectory, using a file named `module.mak`. The function `import_module` takes the path of the module and include the `module.mak` file if found.
 

@@ -86,14 +86,8 @@ ProjectionContext Projection::ContextFromSettings() {
 
 bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
-  bool changed = false;
-  if (projectionContext.m_strategy == Strategy::ApproximateToFloat) {
-    changed =
-        Approximation::ApproximateAndReplaceEveryScalar(e, &projectionContext);
-  }
-  changed =
-      Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext) ||
-      changed;
+  bool changed =
+      Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext);
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }

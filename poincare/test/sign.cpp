@@ -275,10 +275,8 @@ QUIZ_CASE(pcj_sign_methods) {
 void assert_sign(const char* input, ComplexSign expectedSign,
                  ComplexFormat complexFormat = ComplexFormat::Cartesian) {
   Tree* expression = TextToTree(input);
-  /* TODO_PCJ: Factorize this with Simplification::Simplify to have properly
-   * projected variables, random trees, ... */
-  Projection::DeepSystemProject(expression, {.m_complexFormat = complexFormat});
-  SystematicReduction::DeepReduce(expression);
+  ProjectionContext ctx = {.m_complexFormat = complexFormat};
+  Simplification::ProjectAndReduce(expression, &ctx, false);
   bool result = ComplexSign::Get(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {

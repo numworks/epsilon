@@ -7,10 +7,6 @@
 
 namespace Poincare::Internal {
 
-/* TODO: Implement PolynomialInterpretation. Prepare the expression for
- * Polynomial interpretation (expand TranscendentalOnRationals and algebraic
- * trees.) */
-
 class Simplification {
  public:
   static bool SimplifyWithAdaptiveStrategy(
@@ -29,8 +25,7 @@ class Simplification {
 
  private:
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
-  static bool TryApproximationStrategyAgain(
-      Tree* e, ProjectionContext projectionContext);
+  static bool ApplyStrategy(Tree* e, Strategy strategy, bool reduceIfSuccess);
 };
 
 }  // namespace Poincare::Internal

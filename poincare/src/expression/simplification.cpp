@@ -56,13 +56,14 @@ void Simplification::ProjectAndReduce(Tree* e,
   assert(!e->isStore());
   ToSystem(e, projectionContext);
   ReduceSystem(e, advanced);
+  // Non-approximated numbers or node may have appeared during reduction.
+  ApplyStrategy(e, projectionContext->m_strategy, true);
 }
 
 void Simplification::BeautifyReduced(Tree* e,
                                      ProjectionContext* projectionContext) {
   assert(!e->isStore());
   HandleUnits(e, projectionContext);
-  TryApproximationStrategyAgain(e, *projectionContext);
   Beautification::DeepBeautify(e, *projectionContext);
 }
 
@@ -91,8 +92,11 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Update projection context */
   projectionContext->m_dimension = Dimension::Get(e);
-  /* 3 - Project */
-  return Projection::DeepSystemProject(e, *projectionContext) || changed;
+  /* 3 - Apply projection strategy */
+  changed = ApplyStrategy(e, projectionContext->m_strategy, false) || changed;
+  /* 4 - Project */
+  changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
+  return changed;
 }
 
 bool Simplification::ReduceSystem(Tree* e, bool advanced) {
@@ -117,19 +121,21 @@ bool Simplification::HandleUnits(Tree* e,
       !projectionContext->m_dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
+    ApplyStrategy(e, projectionContext->m_strategy, true);
   }
   return changed;
 }
 
-bool Simplification::TryApproximationStrategyAgain(
-    Tree* e, ProjectionContext projectionContext) {
-  // Approximate again in case exact numbers appeared during simplification.
-  if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
+bool Simplification::ApplyStrategy(Tree* e, Strategy strategy,
+                                   bool reduceIfSuccess) {
+  if (strategy != Strategy::ApproximateToFloat ||
       !Approximation::ApproximateAndReplaceEveryScalar(e)) {
     return false;
   }
-  // NAries could be sorted again, some children may be merged.
-  SystematicReduction::DeepReduce(e);
+  if (reduceIfSuccess) {
+    // NAries could be sorted again, some children may be merged.
+    SystematicReduction::DeepReduce(e);
+  }
   return true;
 }
 

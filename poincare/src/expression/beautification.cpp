@@ -10,6 +10,7 @@
 #include "arithmetic.h"
 #include "context.h"
 #include "float.h"
+#include "infinity.h"
 #include "number.h"
 #include "projection.h"
 #include "rational.h"
@@ -76,6 +77,7 @@ Tree* Factor(Tree* e, int index) {
 
 const Tree* Factor(const Tree* e, int index) {
   if (e->isMult()) {
+    assert(e->numberOfChildren() > index);
     return e->child(index);
   }
   return e;
@@ -83,6 +85,7 @@ const Tree* Factor(const Tree* e, int index) {
 
 int NumberOfFactors(const Tree* e) {
   if (e->isMult()) {
+    assert(e->numberOfChildren() > 0);
     return e->numberOfChildren();
   }
   return 1;
@@ -142,11 +145,16 @@ void Beautification::SplitMultiplication(const Tree* e, TreeRef& numerator,
       }
     } else if (factor->isPow() || factor->isPowReal()) {
       Tree* pow = factor->cloneTree();
-      // preserve m^(-2) and e^(-2)
-      if (!pow->child(0)->isUnit() && !pow->child(0)->isEulerE() &&
-          MakePositiveAnyNegativeNumeralFactor(pow->child(1))) {
-        if (pow->child(1)->isOne()) {
-          pow->moveTreeOverTree(pow->child(0));
+      Tree* base = pow->child(0);
+      Tree* exponent = base->nextTree();
+      /* Preserve m^(-2) and e^(-2) and x^(-inf)
+       * Indeed x^(-inf) can be different from 1/x^inf
+       * for example (-2)^inf is undef but (-2)^-inf is 0 (and not undef) */
+      assert(!Infinity::IsPlusOrMinusInfinity(exponent));
+      if (!base->isUnit() && !base->isEulerE() &&
+          MakePositiveAnyNegativeNumeralFactor(exponent)) {
+        if (exponent->isOne()) {
+          pow->moveTreeOverTree(base);
         }
         factorsDenominator = pow;
       } else {

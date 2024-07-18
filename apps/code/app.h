@@ -94,22 +94,26 @@ class App : public Shared::SharedApp {
    * largest app. In the linker script, we declare the Pool location in memory
    * right after the Apps buffer, and the TreeStack location right after the
    * Pool. */
-  constexpr static int maybe_negative_size =
-      k_pythonHeapSize - sizeof(Poincare::Pool) -
-      sizeof(Poincare::Internal::TreeStack);
+
+  constexpr static size_t k_pythonHeapExtensionFromPoincare =
+      sizeof(Poincare::Pool) + sizeof(Poincare::Internal::TreeStack);
+
   constexpr static size_t k_pythonHeapExtensionSize =
-      maybe_negative_size < 0 ? 0 : static_cast<size_t>(maybe_negative_size);
+      k_pythonHeapSize < k_pythonHeapExtensionFromPoincare
+          ? 0
+          : k_pythonHeapSize - k_pythonHeapExtensionFromPoincare;
+
   char m_pythonHeap[k_pythonHeapExtensionSize];
 
   char* pythonHeap() {
-    // ensure the address of the python heap is before the Pool. If the python
-    // Code app is not the biggest app, there will be some extra space between
-    // the python heap space and the pool start.
+    /* Ensure the address of the python heap is before the Pool. If the python
+      Code app is not the biggest app, there will be some extra space between
+      the python heap space and the pool start. */
     assert(static_cast<char*>(m_pythonHeap) + k_pythonHeapExtensionSize <=
            static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)));
 
-    // ensure the Pool and the TreeStack are contiguous in memory (with a small
-    // margin of 8 bytes due to memory alignment)
+    /* Ensure the Pool and the TreeStack are contiguous in memory (with a
+      small margin of 8 bytes due to memory alignment) */
     constexpr size_t alignment_margin = 8;
     assert(static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)) +
                sizeof(Poincare::Pool) <
@@ -120,8 +124,8 @@ class App : public Shared::SharedApp {
            static_cast<char*>(
                static_cast<void*>(Poincare::Internal::SharedTreeStack)));
 
-    // ensure the address of {heap start +  heap size} does not exceed the end
-    // of the TreeStack space
+    /* Ensure the address of {heap start +  heap size} does not exceed the end
+     of the TreeStack space */
     assert(static_cast<char*>(m_pythonHeap + k_pythonHeapSize) <=
            static_cast<char*>(
                static_cast<void*>(Poincare::Internal::SharedTreeStack)) +

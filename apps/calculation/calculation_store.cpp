@@ -150,7 +150,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
           inputExpression, &exactOutputExpression, &approximateOutputExpression,
           context,
           // TODO_PCJ: Was ReplaceAllSymbolsWithDefinitionsOrUndefined.
-          {.symbolicComputation =
+          {.updateComplexFormatWithExpression = true,
+           .symbolicComputation =
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition});
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());

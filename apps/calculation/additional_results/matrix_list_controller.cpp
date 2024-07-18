@@ -34,22 +34,11 @@ void MatrixListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   ProjectionContext ctx = {
-#if 0  // TODO_PCJ: Should this be applied ?
-    /* Change complex format to avoid all additional expressions to be
-     * "nonreal" (with [i] for instance). As additional results are computed
-     * from the output, which is built taking ComplexFormat into account, there
-     * are no risks of displaying additional results on an nonreal output. */
-    .m_complexFormat = complexFormat() == Preferences::ComplexFormat::Real
-                           ? Preferences::ComplexFormat::Cartesian
-                           : complexFormat(),
-#else
-    .m_complexFormat = complexFormat(),
-#endif
-    .m_angleUnit = angleUnit(),
-    .m_symbolic =
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-    .m_context = App::app()->localContext()
-  };
+      .m_complexFormat = complexFormat(),
+      .m_angleUnit = angleUnit(),
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = App::app()->localContext()};
 
   // The expression must be reduced to call methods such as determinant or trace
   assert(approximateOutput.tree()->isMatrix());

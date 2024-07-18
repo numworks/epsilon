@@ -308,11 +308,15 @@ void HistoryController::handleOK() {
   UserExpression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
 
-  /* Reuse the same complex format and angle unit as when the calculation was
-   * computed. */
+  /* Reuse the same angle unit and update complexFormat as when the calculation
+   * was computed. */
+  Poincare::Preferences::CalculationPreferences preferences =
+      selectedCalculation->calculationPreferences();
+  preferences.complexFormat =
+      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+          preferences.complexFormat, i, context);
   m_additionalResultsController.openAdditionalResults(
-      selectedCalculation->additionalResultsType(), i, e, a,
-      selectedCalculation->calculationPreferences());
+      selectedCalculation->additionalResultsType(), i, e, a, preferences);
 }
 
 }  // namespace Calculation

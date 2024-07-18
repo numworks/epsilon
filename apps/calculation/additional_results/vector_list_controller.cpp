@@ -26,7 +26,12 @@ void VectorListController::computeAdditionalResults(
 
   Context* context = App::app()->localContext();
   ComputationContext computationContext(context, complexFormat(), angleUnit());
+#if ASSERTIONS
+  Poincare::Internal::ComplexFormat previousFormat =
+      computationContext.complexFormat();
   computationContext.updateComplexFormat(exactOutput);
+  assert(previousFormat == computationContext.complexFormat());
+#endif
 
   setShowIllustration(false);
   size_t index = 0;

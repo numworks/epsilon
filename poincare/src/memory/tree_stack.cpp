@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omg/memory.h>
+#include <poincare/numeric/point_of_interest.h>
 #include <poincare/old/junior_layout.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/physical_constant.h>
@@ -158,11 +159,16 @@ Tree* TreeStack::pushRackLayout(int nbChildren) {
   return result;
 }
 
-Tree* TreeStack::pushPointOfInterest(
-    CustomTypeStructs::PointOfInterestNode data) {
+Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
+                                     uint32_t data, uint8_t interest,
+                                     bool inverted, uint8_t subCurveIndex) {
   Tree* result = pushBlock(Type::PointOfInterest);
+  PointOfInterest p = {
+      abscissa, ordinate,
+      data,     static_cast<Internal::Solver<double>::Interest>(interest),
+      inverted, subCurveIndex};
   // Copy content of data as if it was blocks
-  insertBlocks(lastBlock(), reinterpret_cast<Block*>(&data),
+  insertBlocks(lastBlock(), reinterpret_cast<Block*>(&p),
                sizeof(CustomTypeStructs::PointOfInterestNode));
   return result;
 }
@@ -230,7 +236,8 @@ void TreeStack::execute(ActionWithContext action, void* context,
     ExceptionTry {
       assert(numberOfTrees() == treesNumber);
       action(context, data);
-      // Prevent edition action from leaking: an action create at most one tree.
+      // Prevent edition action from leaking: an action create at most one
+      // tree.
       assert(numberOfTrees() <= treesNumber + 1);
       // Ensure the result tree doesn't exceeds the expected size.
       if (size() - previousSize > maxSize) {

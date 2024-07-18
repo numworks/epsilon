@@ -43,7 +43,7 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
    * tree. */
   PointOfInterest result;
   assert(sizeof(result) ==
-         sizeof(Internal::CustomTypeStructs::PointOfInterestNode) - 1);
+         sizeof(Internal::CustomTypeStructs::PointOfInterestNode));
   memcpy(&result, pointInTree(m_list.tree(), i), sizeof(result));
   return result;
 }
@@ -75,6 +75,17 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
       Internal::NAry::AddChild(editableList, child->cloneTree());
     }
   }
+  m_list = API::JuniorPoolHandle::Builder(editableList);
+}
+
+void PointsOfInterestList::append(PointOfInterest p) {
+  // FIXME This can overflow the pool and stack
+  Internal::Tree* editableList = m_list.tree()->cloneTree();
+  Internal::Tree* newPoint =
+      Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
+          p.abscissa, p.ordinate, p.data, static_cast<uint8_t>(p.interest),
+          p.inverted, p.subCurveIndex);
+  Internal::NAry::AddChild(editableList, newPoint);
   m_list = API::JuniorPoolHandle::Builder(editableList);
 }
 

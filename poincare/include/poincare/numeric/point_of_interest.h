@@ -29,7 +29,7 @@ class PointsOfInterestList {
   PointOfInterest pointAtIndex(int) const;
   void sort();
   void filterOutOfBounds(double start, double end);
-  void append(PointOfInterest) {}  // TODO
+  void append(PointOfInterest);
 
  private:
   API::JuniorPoolHandle m_list;

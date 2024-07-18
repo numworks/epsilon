@@ -157,7 +157,9 @@ class TreeStack : public BlockStack {
 
   Tree* pushRackLayout(int nbChildren);
 
-  Tree* pushPointOfInterest(CustomTypeStructs::PointOfInterestNode data);
+  Tree* pushPointOfInterest(double abscissa, double ordinate, uint32_t data,
+                            uint8_t interest, bool inverted,
+                            uint8_t subCurveIndex);
 
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }

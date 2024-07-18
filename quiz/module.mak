@@ -23,3 +23,6 @@ $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.
 		> $@
 
 $(call all_objects_for,$(PATH_quiz)/src/test_symbols.c): SFLAGS += -I$(PATH_quiz)/src
+
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_quiz)): $(KANDINSKY_fonts_dependencies)

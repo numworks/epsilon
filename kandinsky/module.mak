@@ -38,6 +38,9 @@ $(call create_module,kandinsky,1, \
 )
 
 $(call all_objects_for,$(SOURCES_kandinsky)): $(KANDINSKY_fonts_dependencies)
+# FIXME Tests in OMG should not require kandinsky
+$(call assert_defined,PATH_omg)
+$(call all_objects_for,$(PATH_omg)/test/print.cpp): $(KANDINSKY_fonts_dependencies)
 
 # Rasterizer
 

@@ -24,10 +24,16 @@ $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_go
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 
 # Rules for modules as static libraries
+# Because of some quirks with how make selects rules, AR may be called event if
+# some .o cannot be built. It will end up throwing an error that stops make but
+# the .a might still be created. As such, we need to remove it manually and
+# propagate the error.
+# FIXME Generating .a might cause some problem with recompilation and is not
+# required anymore, find somewhere else to check for locks.
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
 	$(call check_locks,$(call name_for_flavored_target,$*))
 	$(call rule_label,AR)
-	$(AR) $(ARFLAGS) $@ $^
+	$(AR) $(ARFLAGS) $@ $^ || (rm -f $@; false)
 
 # Rules for object files
 $(call rule_for_object, \

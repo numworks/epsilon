@@ -10,7 +10,9 @@ $(call create_module,quiz,1,$(addprefix src/, \
 # List of the files that may contain a QUIZ_CASE and should cause test_symbols.c
 # to be rebuilt. It is coarser than using goals but it is hard to have
 # prerequisites that depend on the current goal.
-_test_sources := $(shell find . ! -path "./output/**" \( -path "**/test/**.c" -or -path "**/test/**.cpp" \))
+# TODO: Each app has to be nammed here to avoid (slowly) searching in output.
+#       Find a better solution.
+_test_sources := $(shell find apps escher ion kandinsky liba libaxx omg poincare python -path "**/test/**.c" -or -path "**/test/**.cpp" \)
 
 # TODO Requires :+test to be the last taste
 $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.

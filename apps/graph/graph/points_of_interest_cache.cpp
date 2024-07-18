@@ -139,40 +139,25 @@ void PointsOfInterestCache::stripOutOfBounds() {
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
   // Clone the cache to prevent modifying the pool before the checkpoint
-  PointsOfInterestCache cacheClone;
-  {
-    /* Always use an ExceptionCheckpoint in case cloning or computing interest
-     * points overflows the pool. */
-    ExceptionCheckpoint ecp;
-    if (ExceptionRun(ecp)) {
-      /* If allowed, use a CircuitBreakerCheckpoint so that computation can be
-       * interrupted to allow plot navigation in parallel of computation. */
-      CircuitBreakerCheckpoint checkpoint(
-          Ion::CircuitBreaker::CheckpointType::AnyKey);
-      if (!allowUserInterruptions || CircuitBreakerRun(checkpoint)) {
-        // FIXME This whole ExceptionCheckpoint is outdated, redraft
-        cacheClone = *this;
-        if (m_computedEnd < m_end) {
-          cacheClone.computeBetween(
-              m_computedEnd,
-              std::clamp(m_computedEnd + step(), m_start, m_end));
-        } else if (m_computedStart > m_start) {
-          cacheClone.computeBetween(
-              std::clamp(m_computedStart - step(), m_start, m_end),
-              m_computedStart);
-        }
-      } else {
-        tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
-        return false;
-      }
-    } else {
-      // TODO: Notify the user that the pool is full
-      m_interestingPointsOverflowPool = true;
-      tidyDownstreamPoolFrom(ecp.endOfPoolBeforeCheckpoint());
-      return false;
+  /* Always use an ExceptionCheckpoint in case cloning or computing interest
+   * points overflows the pool. */
+  /* If allowed, use a CircuitBreakerCheckpoint so that computation can be
+   * interrupted to allow plot navigation in parallel of computation. */
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::AnyKey);
+  if (!allowUserInterruptions || CircuitBreakerRun(checkpoint)) {
+    // FIXME This whole ExceptionCheckpoint is outdated, redraft
+    if (m_computedEnd < m_end) {
+      computeBetween(m_computedEnd,
+                     std::clamp(m_computedEnd + step(), m_start, m_end));
+    } else if (m_computedStart > m_start) {
+      computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
+                     m_computedStart);
     }
+  } else {
+    tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
+    return false;
   }
-  *this = cacheClone;
   return true;
 }
 

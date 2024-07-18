@@ -135,7 +135,6 @@ $(addprefix old/, \
   piecewise_operator.cpp \
   point.cpp \
   point_evaluation.cpp \
-  point_of_interest.cpp \
   polynomial.cpp \
   power.cpp \
   product.cpp \
@@ -271,6 +270,7 @@ $(addprefix numeric/, \
   beta_function.cpp \
   erf_inv.cpp \
   helpers.cpp \
+  point_of_interest.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   roots.cpp \

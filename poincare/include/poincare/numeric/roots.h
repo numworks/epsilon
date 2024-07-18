@@ -11,8 +11,11 @@ class Roots {
  public:
   // Return the only root.
   static Tree* Linear(const Tree* a, const Tree* b);
-  // Return the only root or a list of two roots, in decreasing order
-  static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c);
+  /* Return the only root or a list of two roots, in decreasing order
+   *   delta can be provided or will be computed */
+  static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
+                         const Tree* delta = nullptr);
+  static Tree* QuadraticDelta(const Tree* a, const Tree* b, const Tree* c);
 #if 0
   static int LinearPolynomialRoots(OExpression a, OExpression b,
                                    OExpression* root,

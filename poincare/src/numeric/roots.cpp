@@ -12,24 +12,33 @@ Tree* Roots::Linear(const Tree* a, const Tree* b) {
                                          {.KA = a, .KB = b});
 }
 
-Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
-  assert(a && b && c);
+Tree* Roots::QuadraticDelta(const Tree* a, const Tree* b, const Tree* c) {
   // Δ=B^2-4AC
-  Tree* delta = PatternMatching::CreateSimplify(
+  return PatternMatching::CreateSimplify(
       KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
+}
+
+Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
+                       const Tree* delta) {
+  assert(a && b && c);
+  if (!delta) {
+    Tree* delta = Roots::QuadraticDelta(a, b, c);
+    TreeRef solutions = Roots::Quadratic(a, b, c, delta);
+    delta->removeTree();
+    return solutions;
+  }
 
   if (delta->isUndefined()) {
-    return delta;
+    return delta->cloneTree();
   }
   // TODO: Approximate if unsure
   ComplexSign deltaSign = GetComplexSign(delta);
   if (deltaSign.isNull()) {
-    delta->removeTree();
     // -B/2A
     return PatternMatching::CreateSimplify(
         KMult(-1_e / 2_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
   }
-  SharedTreeStack->pushList(2);
+  Tree* solutions = SharedTreeStack->pushList(2);
   // {(-B+√Δ)/2A, -(B+√Δ)/2A}
   Tree* root1 = PatternMatching::CreateSimplify(
       KMult(1_e / 2_e, KAdd(KMult(-1_e, KB), KExp(KMult(1_e / 2_e, KLn(KC)))),
@@ -45,9 +54,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
     // Switch roots for a consistent order
     root1->detachTree();
   }
-  // Remove Δ tree and return the next one (list of roots)
-  delta->removeTree();
-  return delta;
+  return solutions;
 }
 
 #if 0

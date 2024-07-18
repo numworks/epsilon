@@ -50,7 +50,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   return true;
 }
 
-bool Simplification::ProjectAndReduce(Tree* e,
+void Simplification::ProjectAndReduce(Tree* e,
                                       ProjectionContext* projectionContext,
                                       bool advanced) {
   assert(!e->isStore());
@@ -58,7 +58,7 @@ bool Simplification::ProjectAndReduce(Tree* e,
   ReduceSystem(e, advanced);
 }
 
-bool Simplification::BeautifyReduced(Tree* e,
+void Simplification::BeautifyReduced(Tree* e,
                                      ProjectionContext* projectionContext) {
   assert(!e->isStore());
   HandleUnits(e, projectionContext);

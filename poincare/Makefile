@@ -119,6 +119,7 @@ $(call create_goal,poincare, \
   poincarejs \
 )
 
+.PHONY: $(OUTPUT_DIRECTORY)/.version.json
 $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '{' > $@
 	@echo '  "version": "$(APP_VERSION)",' >> $@

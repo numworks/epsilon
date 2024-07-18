@@ -175,9 +175,6 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     m_computedEnd = end;
   }
 
-#if 1  // TODO_PCJ
-  return;
-#else
   float searchStep = Internal::Solver<double>::MaximalStep(m_start - m_end);
 
   ContinuousFunctionStore* store = App::app()->functionStore();
@@ -200,22 +197,22 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     }
   }
 
-  typedef Coordinate2D<double> (Solver<double>::*NextSolution)(
-      const SystemFunction& e);
-  NextSolution methodsNext[] = {&Solver<double>::nextRoot,
-                                &Solver<double>::nextMinimum,
-                                &Solver<double>::nextMaximum};
+  using NextSolution =
+      Coordinate2D<double> (Internal::Solver<double>::*)(const Internal::Tree*);
+  NextSolution methodsNext[] = {&Internal::Solver<double>::nextRoot,
+                                &Internal::Solver<double>::nextMinimum,
+                                &Internal::Solver<double>::nextMaximum};
   for (NextSolution next : methodsNext) {
-    if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) &&
+    if (next !=
+            static_cast<NextSolution>(&Internal::Solver<double>::nextRoot) &&
         f->isAlongY()) {
       // Do not compute min and max since they would appear left/rightmost
       continue;
     }
-    Internal::Solver<double> solver = PoincareHelpers::Solver<double>(
-        start, end, ContinuousFunction::k_unknownName, context);
+    Internal::Solver<double> solver(start, end, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
-    solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
+    solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
     Coordinate2D<double> solution;
     while (std::isfinite(
         (solution = (solver.*next)(e)).x())) {  // assignment in condition
@@ -246,13 +243,11 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       continue;
     }
     SystemFunction e2 = g->expressionApproximated(context);
-    Internal::Solver<double> solver = PoincareHelpers::Solver<double>(
-        start, end, ContinuousFunction::k_unknownName, context);
+    Internal::Solver<double> solver(start, end, context);
     solver.setSearchStep(searchStep);
     solver.stretch();
-    SystemFunction diff;
     Coordinate2D<double> intersection;
-    while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff))
+    while (std::isfinite((intersection = solver.nextIntersection(e, e2))
                              .x())) {  // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
       /* Ensure that the intersection is in [start, end), even if the interval
@@ -265,7 +260,6 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
              *reinterpret_cast<uint32_t*>(&record));
     }
   }
-#endif
 }
 
 void PointsOfInterestCache::append(double x, double y,

@@ -27,16 +27,14 @@ Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(Internal::Tree* t,
 }  // namespace
 
 void PointsOfInterestList::moveToStack() {
-  assert(!m_stackList);
-  assert(!isUninitialized());
+  assert(inPool());
   assert(Internal::TreeStack::SharedTreeStack->numberOfTrees() == 0);
   m_stackList = m_poolList.tree()->cloneTree();
   m_poolList = {};
 }
 
 void PointsOfInterestList::moveToPool() {
-  assert(isUninitialized());
-  assert(m_stackList);
+  assert(inStack());
   m_poolList = API::JuniorPoolHandle::Builder(m_stackList);
   m_stackList = nullptr;
   assert(Internal::TreeStack::SharedTreeStack->numberOfTrees() == 0);
@@ -53,7 +51,7 @@ int PointsOfInterestList::numberOfPoints() const {
 }
 
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
-  assert(!m_stackList);
+  assert(inPool());
   assert(0 <= i && i < numberOfPoints());
   /* The list is supposed to only contain PointOfInterestNodes, take advantage
    * of this to fetch the child with pointer arithmetic instead of walking the
@@ -84,8 +82,7 @@ void PointsOfInterestList::sort() {
 }
 
 void PointsOfInterestList::filterOutOfBounds(double start, double end) {
-  assert(!m_stackList);
-  assert(!isUninitialized());
+  assert(inPool());
   m_stackList = Internal::List::PushEmpty();
   for (const Internal::Tree* child : m_poolList.tree()->children()) {
     Internal::CustomTypeStructs::PointOfInterestNode p = *reinterpret_cast<

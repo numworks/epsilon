@@ -37,6 +37,10 @@ class PointsOfInterestList {
   void append(PointOfInterest);
 
  private:
+  // Used in assertions to make sure the list is never duplicated
+  bool inPool() const { return !m_stackList && !isUninitialized(); }
+  bool inStack() const { return m_stackList && isUninitialized(); }
+
   Internal::Tree* m_stackList;
   API::JuniorPoolHandle m_poolList;
 };

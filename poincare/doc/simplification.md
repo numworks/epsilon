@@ -49,7 +49,9 @@ These operations never need to be applied twice.
 Since the next steps may duplicate parts of the expression, we need to seed each random node because a duplicated random node should evaluate to the same random number.
 
 For example, with this projection, both random should always approximate to the same value.
-$$sinh(random())=\frac{e^{random()}-e^{-random()}}{2}$$
+```math
+sinh(random())=\frac{e^{random()}-e^{-random()}}{2}
+```
 
 Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
 
@@ -87,7 +89,7 @@ For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
 
 During our simplification algorithms, the global user symbols and functions are considered to be scalar.
 
-This allows for simplifications such as $x*y*x=x^2*y$, which wouldn't be possible if x was a matrix.
+This allows for simplifications such as $`x*y*x=x^{2}*y`$, which wouldn't be possible if x was a matrix.
 
 Matrices could still be stored in variables, but it would be replaced on projection.
 
@@ -131,8 +133,14 @@ Some issues such as NonReal, division by zero or other undefinitions can still a
 ## Approximation strategy
 
 The simplification algorithm handles two simplification strategies:
- - `Default`: Default strategy. $$ln(2)*x+\frac{1}{3}+random()*\pi$$
- - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated). $$0.693*x+0.333+random()*3.14$$
+ - `Default`: Default strategy.
+```math
+ln(2)*x+\frac{1}{3}+random()*\pi
+```
+ - `ApproximateToFloat`: Everything that can be approximated to a float is approximated (everything but variables, random, expressions having children that cannot be approximated).
+```math
+0.693*x+0.333+random()*3.14
+```
 
 `ApproximateToFloat` strategy is less demanding in term of tree size, but the quality of the simplification will downgrade compared to the `Default` one.
 

@@ -138,31 +138,32 @@ void PointsOfInterestCache::stripOutOfBounds() {
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
+  bool success;
   {
     CircuitBreakerCheckpoint cbcp(Ion::CircuitBreaker::CheckpointType::AnyKey);
     if (!allowUserInterruptions || CircuitBreakerRun(cbcp)) {
       if (m_computedEnd < m_end) {
-        computeBetween(m_computedEnd,
-                       std::clamp(m_computedEnd + step(), m_start, m_end));
+        success = computeBetween(
+            m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
       } else if (m_computedStart > m_start) {
-        computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
-                       m_computedStart);
+        success =
+            computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
+                           m_computedStart);
       }
     } else {
-      // TODO Pool should not have been modified
       tidyDownstreamPoolFrom(cbcp.endOfPoolBeforeCheckpoint());
       m_list.dropStash();
       return false;
     }
   }
-  if (!m_list.commit()) {
+  if (!success || !m_list.commit()) {
     m_interestingPointsOverflowPool = true;
     return false;
   }
   return true;
 }
 
-void PointsOfInterestCache::computeBetween(float start, float end) {
+bool PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_record.isNull());
   assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
   assert(!m_list.isUninitialized());
@@ -192,8 +193,11 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
         if (f->isAlongY()) {
           xy = Coordinate2D<double>(xy.y(), xy.x());
         }
-        append(xy.x(), xy.y(), Internal::Solver<double>::Interest::YIntercept,
-               0, curveIndex);
+        if (!append(xy.x(), xy.y(),
+                    Internal::Solver<double>::Interest::YIntercept, 0,
+                    curveIndex)) {
+          return false;
+        }
       }
     }
   }
@@ -222,7 +226,9 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       if (!solution.xIsIn(start, end, true, false)) {
         continue;
       }
-      append(solution.x(), solution.y(), solver.lastInterest());
+      if (!append(solution.x(), solution.y(), solver.lastInterest())) {
+        return false;
+      }
     }
   }
 
@@ -230,7 +236,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
    * ContinuousFunction object each time a new function is intersected
    * is very slow. */
   if (store->memoizationOverflows() || !f->shouldDisplayIntersections()) {
-    return;
+    return false;
   }
 
   int n = store->numberOfActiveFunctions();
@@ -256,21 +262,24 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       if (!intersection.xIsIn(start, end, true, false)) {
         continue;
       }
-      append(intersection.x(), intersection.y(),
-             Internal::Solver<double>::Interest::Intersection,
-             *reinterpret_cast<uint32_t*>(&record));
+      if (!append(intersection.x(), intersection.y(),
+                  Internal::Solver<double>::Interest::Intersection,
+                  *reinterpret_cast<uint32_t*>(&record))) {
+        return false;
+      }
     }
   }
+  return true;
 }
 
-void PointsOfInterestCache::append(double x, double y,
+bool PointsOfInterestCache::append(double x, double y,
                                    Internal::Solver<double>::Interest interest,
                                    uint32_t data, int subCurveIndex) {
   assert(std::isfinite(x) && std::isfinite(y));
   ExpiringPointer<ContinuousFunction> f =
       App::app()->functionStore()->modelForRecord(m_record);
-  m_list.stash({x, y, data, interest, f->isAlongY(),
-                static_cast<uint8_t>(subCurveIndex)});
+  return m_list.stash({x, y, data, interest, f->isAlongY(),
+                       static_cast<uint8_t>(subCurveIndex)});
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(

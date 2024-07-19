@@ -79,17 +79,27 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
   m_list = API::JuniorPoolHandle::Builder(editableList);
 }
 
-void PointsOfInterestList::stash(PointOfInterest p) {
-  // FIXME Can overflow
-  if (isStashEmpty()) {
-    m_stash = Internal::List::PushEmpty();
-  }
-
-  Internal::Tree* newPoint =
-      Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
+bool PointsOfInterestList::stash(PointOfInterest p) {
+  Internal::Tree* newPoint;
+  {
+    using namespace Internal;
+    ExceptionTry {
+      if (isStashEmpty()) {
+        m_stash = Internal::List::PushEmpty();
+      }
+      newPoint = Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
           p.abscissa, p.ordinate, p.data, static_cast<uint8_t>(p.interest),
           p.inverted, p.subCurveIndex);
+    }
+    ExceptionCatch(type) {
+      if (type != ExceptionType::TreeStackOverflow) {
+        TreeStackCheckpoint::Raise(type);
+      }
+      return false;
+    }
+  }
   Internal::NAry::AddChild(m_stash, newPoint);
+  return true;
 }
 
 void PointsOfInterestList::dropStash() {

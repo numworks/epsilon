@@ -32,7 +32,7 @@ class PointsOfInterestList {
   PointOfInterest pointAtIndex(int) const;
   void sort();
   void filterOutOfBounds(double start, double end);
-  void stash(PointOfInterest);
+  bool stash(PointOfInterest);
   void dropStash();
   bool commit();
 

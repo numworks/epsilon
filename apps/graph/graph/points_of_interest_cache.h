@@ -66,8 +66,8 @@ class PointsOfInterestCache {
   float step() const;
 
   void stripOutOfBounds();
-  void computeBetween(float start, float end);
-  void append(double x, double y, Poincare::Internal::Solver<double>::Interest,
+  bool computeBetween(float start, float end);
+  bool append(double x, double y, Poincare::Internal::Solver<double>::Interest,
               uint32_t data = 0, int subCurveIndex = 0);
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) const;
 

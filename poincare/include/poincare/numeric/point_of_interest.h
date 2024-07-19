@@ -23,26 +23,25 @@ struct PointOfInterest {
 
 class PointsOfInterestList {
  public:
-  PointsOfInterestList() : m_stackList(nullptr), m_poolList() {}
+  PointsOfInterestList() : m_stash(nullptr), m_list{} {}
 
-  void init() { m_poolList = API::JuniorPoolHandle::Builder(KList()); }
-  bool isUninitialized() const { return m_poolList.isUninitialized(); }
-  void moveToStack();
-  void moveToPool();
+  void init() { m_list = API::JuniorPoolHandle::Builder(KList()); }
+  bool isUninitialized() const { return m_list.isUninitialized(); }
 
   int numberOfPoints() const;
   PointOfInterest pointAtIndex(int) const;
   void sort();
   void filterOutOfBounds(double start, double end);
-  void append(PointOfInterest);
+  void stash(PointOfInterest);
+  void dropStash();
+  bool commit();
 
  private:
-  // Used in assertions to make sure the list is never duplicated
-  bool inPool() const { return !m_stackList && !isUninitialized(); }
-  bool inStack() const { return m_stackList && isUninitialized(); }
+  bool isStashEmpty() const { return !m_stash; }
 
-  Internal::Tree* m_stackList;
-  API::JuniorPoolHandle m_poolList;
+  // FIXME Assess wether it's ok to keep as Tree* or needs to be a TreeRef.
+  Internal::Tree* m_stash;
+  API::JuniorPoolHandle m_list;
 };
 
 }  // namespace Poincare

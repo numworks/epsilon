@@ -138,24 +138,25 @@ void PointsOfInterestCache::stripOutOfBounds() {
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
-  // Clone the cache to prevent modifying the pool before the checkpoint
-  /* Always use an ExceptionCheckpoint in case cloning or computing interest
-   * points overflows the pool. */
-  /* If allowed, use a CircuitBreakerCheckpoint so that computation can be
-   * interrupted to allow plot navigation in parallel of computation. */
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::AnyKey);
-  if (!allowUserInterruptions || CircuitBreakerRun(checkpoint)) {
-    // FIXME This whole ExceptionCheckpoint is outdated, redraft
-    if (m_computedEnd < m_end) {
-      computeBetween(m_computedEnd,
-                     std::clamp(m_computedEnd + step(), m_start, m_end));
-    } else if (m_computedStart > m_start) {
-      computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
-                     m_computedStart);
+  {
+    CircuitBreakerCheckpoint cbcp(Ion::CircuitBreaker::CheckpointType::AnyKey);
+    if (!allowUserInterruptions || CircuitBreakerRun(cbcp)) {
+      if (m_computedEnd < m_end) {
+        computeBetween(m_computedEnd,
+                       std::clamp(m_computedEnd + step(), m_start, m_end));
+      } else if (m_computedStart > m_start) {
+        computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
+                       m_computedStart);
+      }
+    } else {
+      // TODO Pool should not have been modified
+      tidyDownstreamPoolFrom(cbcp.endOfPoolBeforeCheckpoint());
+      m_list.dropStash();
+      return false;
     }
-  } else {
-    tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
+  }
+  if (!m_list.commit()) {
+    m_interestingPointsOverflowPool = true;
     return false;
   }
   return true;
@@ -268,8 +269,8 @@ void PointsOfInterestCache::append(double x, double y,
   assert(std::isfinite(x) && std::isfinite(y));
   ExpiringPointer<ContinuousFunction> f =
       App::app()->functionStore()->modelForRecord(m_record);
-  m_list.append({x, y, data, interest, f->isAlongY(),
-                 static_cast<uint8_t>(subCurveIndex)});
+  m_list.stash({x, y, data, interest, f->isAlongY(),
+                static_cast<uint8_t>(subCurveIndex)});
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(

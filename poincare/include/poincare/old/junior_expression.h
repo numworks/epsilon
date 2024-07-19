@@ -253,6 +253,9 @@ class JuniorExpression : public OExpression {
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue);
 
+  /* Fills the table coefficients with the expressions of the first 3 polynomial
+   * coefficients and returns the  polynomial degree. It is supposed to be
+   * called on a reduced expression. coefficients has up to 3 entries.  */
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        SystemExpression coefficients[],
                                        Context* context,
@@ -261,12 +264,6 @@ class JuniorExpression : public OExpression {
                                        Preferences::UnitFormat unitFormat,
                                        SymbolicComputation symbolicComputation,
                                        bool keepDependencies = false) const;
-  /* getPolynomialCoefficients fills the table coefficients with the expressions
-   * of the first 3 polynomial coefficients and returns the  polynomial degree.
-   * It is supposed to be called on a reduced expression.
-   * coefficients has up to 3 entries.  */
-  int getPolynomialCoefficients(Context* context, const char* symbolName,
-                                SystemExpression coefficients[]) const;
 
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,

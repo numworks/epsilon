@@ -658,52 +658,27 @@ bool NewExpression::derivate(const ReductionContext& reductionContext,
   return false;
 }
 
-int SystemExpression::getPolynomialCoefficients(
-    Context* context, const char* symbolName,
-    SystemExpression coefficients[]) const {
-  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-  Tree* poly = tree()->cloneTree();
-  AdvancedReduction::DeepExpand(poly);
-  // PolynomialParser::Parse eats given tree
-  poly = PolynomialParser::Parse(poly, symbol);
-  if (!poly->isPolynomial()) {
-    coefficients[0] = Builder(poly);
-    symbol->removeTree();
-    return 0;
-  }
-  int degree = Polynomial::Degree(poly);
-  int indexExponent = 0;
-  int numberOfTerms = Polynomial::NumberOfTerms(poly);
-  for (int i = degree; i >= 0; i--) {
-    if (indexExponent < numberOfTerms &&
-        i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
-      coefficients[i] = Builder(poly->child(indexExponent + 1)->cloneTree());
-      indexExponent++;
-    } else {
-      coefficients[i] = Builder(SharedTreeStack->pushZero());
-    }
-  }
-  assert(indexExponent == numberOfTerms);
-  poly->removeTree();
-  symbol->removeTree();
-  return degree;
-}
-
 int SystemExpression::getPolynomialReducedCoefficients(
     const char* symbolName, SystemExpression coefficients[], Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     bool keepDependencies) const {
-  int degree = getPolynomialCoefficients(context, symbolName, coefficients);
-  for (int i = 0; i <= degree; i++) {
-    coefficients[i] = coefficients[i].cloneAndReduce(ReductionContext(
-        context, complexFormat, angleUnit, unitFormat,
-        ReductionTarget::SystemForApproximation, symbolicComputation));
-    if (!keepDependencies &&
-        coefficients[i].type() == ExpressionNode::Type::Dependency) {
-      coefficients[i] = coefficients[i].childAtIndex(0);
-    }
+  // TODO_PCJ: handle symbolicComputation
+  Tree* coefList = PolynomialParser::GetCoefficients(tree(), symbolName);
+  if (!coefList) {
+    return -1;
   }
+  int degree = coefList->numberOfChildren() - 1;
+  assert(degree >= 0);
+  for (IndexedChild<Tree*> child : coefList->indexedChildren()) {
+    Tree* coef = child->cloneTree();
+    Simplification::ReduceSystem(coef, false);
+    if (!keepDependencies && coef->isDependency()) {
+      coef = coef->child(0);
+    }
+    coefficients[degree - child.index] = Builder(coef);
+  }
+  coefList->removeTree();
   return degree;
 }
 

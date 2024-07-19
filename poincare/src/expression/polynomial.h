@@ -34,6 +34,10 @@ class Polynomial final {
   friend class PolynomialParser;
 
  public:
+  constexpr static int k_maxPolynomialDegree = 3;
+  constexpr static int k_maxNumberOfPolynomialCoefficients =
+      k_maxPolynomialDegree + 1;
+
   static Tree* PushEmpty(const Tree* variable);
   static Tree* PushMonomial(const Tree* variable, uint8_t exponent,
                             const Tree* coefficient = nullptr);
@@ -106,6 +110,7 @@ class PolynomialParser final {
   static Tree* RecursivelyParse(Tree* e, const Tree* variables,
                                 size_t variableIndex = 0);
   static Tree* Parse(Tree* e, const Tree* variable);
+  static Tree* GetCoefficients(const Tree* e, const char* symbolName);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);

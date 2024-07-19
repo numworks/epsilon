@@ -460,6 +460,41 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   return std::make_pair(e, static_cast<uint8_t>(0));
 }
 
+Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  Tree* poly = e->cloneTree();
+  AdvancedReduction::DeepExpand(poly);
+  poly = Parse(poly, symbol);
+  if (!poly->isPolynomial()) {
+    TreeRef result = SharedTreeStack->pushList(0);
+    NAry::AddChild(result, poly);
+    symbol->removeTree();
+    return result;
+  }
+  int degree = Polynomial::Degree(poly);
+  if (degree > Polynomial::k_maxPolynomialDegree) {
+    poly->removeTree();
+    symbol->removeTree();
+    return nullptr;
+  }
+  TreeRef result = SharedTreeStack->pushList(0);
+  int indexExponent = 0;
+  int numberOfTerms = Polynomial::NumberOfTerms(poly);
+  for (int i = degree; i >= 0; i--) {
+    if (indexExponent < numberOfTerms &&
+        i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
+      NAry::AddChild(result, poly->child(indexExponent + 1)->cloneTree());
+      indexExponent++;
+    } else {
+      NAry::AddChild(result, SharedTreeStack->pushZero());
+    }
+  }
+  assert(indexExponent == numberOfTerms);
+  poly->removeTree();
+  symbol->removeTree();
+  return result;
+}
+
 #if 0
 bool IsInSetOrIsEqual(const Tree* e, const Tree* variables) {
   return variables.isSet() ?

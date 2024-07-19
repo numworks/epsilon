@@ -8,7 +8,7 @@
 namespace Poincare {
 
 struct PointOfInterest {
-  double abscissa;
+  double abscissa = NAN;
   double ordinate;
   uint32_t data;
   Internal::Solver<double>::Interest interest;

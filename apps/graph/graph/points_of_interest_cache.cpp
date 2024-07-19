@@ -94,7 +94,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
       return p;
     }
   }
-  return PointOfInterest{.abscissa = NAN};
+  return PointOfInterest{};
 }
 
 bool PointsOfInterestCache::hasInterestAtCoordinates(

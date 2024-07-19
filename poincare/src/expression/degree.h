@@ -12,6 +12,8 @@ class Degree {
   // Return polynomial degree of any un-projected expression on given symbol.
   static int Get(const Tree* e, const Tree* symbol,
                  ProjectionContext projectionContext);
+  static int Get(const Tree* e, const char* symbolName,
+                 ProjectionContext projectionContext);
   constexpr static int k_unknown = -1;
 
  private:

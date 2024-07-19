@@ -218,12 +218,9 @@ const Tree* JuniorExpressionNode::tree() const {
 
 int JuniorExpressionNode::polynomialDegree(Context* context,
                                            const char* symbolName) const {
-  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   // TODO_PCJ: Pass at least ComplexFormat and SymbolicComputation
   ProjectionContext projectionContext = {.m_context = context};
-  int degree = Degree::Get(tree(), symbol, projectionContext);
-  symbol->removeTree();
-  return degree;
+  return Degree::Get(tree(), symbolName, projectionContext);
 }
 
 /* JuniorExpression */

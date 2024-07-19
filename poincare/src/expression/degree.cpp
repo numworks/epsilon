@@ -89,3 +89,11 @@ int Degree::Get(const Tree* e, const Tree* symbol,
   clone->removeTree();
   return degree;
 }
+
+int Degree::Get(const Tree* e, const char* symbolName,
+                ProjectionContext projectionContext) {
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  int degree = Degree::Get(e, symbol, projectionContext);
+  symbol->removeTree();
+  return degree;
+}

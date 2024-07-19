@@ -296,13 +296,12 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     /* The rank is equal to the number of variables: the system has n
      * solutions, and after canonization their values are the first n values on
      * the last column. */
-    uint8_t variableId = 0;
     Tree* child = matrix->child(0);
     for (uint8_t row = 0; row < rows; row++) {
       for (uint8_t col = 0; col < cols; col++) {
         if (row < n && col == cols - 1) {
           if (*error == Error::NoError) {
-            *error = RegisterSolution(child, variableId++, context);
+            *error = EnhanceSolution(child, context);
             // Continue anyway to preserve TreeStack integrity
           }
           child = child->nextTree();
@@ -419,31 +418,24 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   TreeRef solutionList = Roots::Quadratic(coefficients[2], coefficients[1],
                                           coefficients[0], delta);
   polynomial->removeTree();
-#if 0
-  for (const Tree* solution : solutionList->children()) {
+  for (Tree* solution : solutionList->children()) {
     // TODO_PCJ: restore dependencies handling here
-    RegisterSolution(solution->cloneTree(), 0, context);
+    EnhanceSolution(solution, context);
   }
-#endif
   NAry::AddChild(solutionList, delta);
   *error = Error::NoError;
   return solutionList;
 }
 
-EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
-                                                       uint8_t variableId,
-                                                       Context* context) {
+EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
+                                                      Context* context) {
   /* TODO:
-   * - Implement equations. Here a x=2 solution will register as x-2.
    * - Handle exact results being forbidden.
    * - Pass more context.
    * - Handle Nonreal and Undefined solutions.
    * - Handle approximate display.
    */
   // TODO: Use user settings for a RealUnkown sign ?
-  solution->moveTreeBeforeNode(
-      SharedTreeStack->pushVar(variableId, ComplexSign::Unknown()));
-  solution->moveNodeBeforeNode(SharedTreeStack->pushAdd(2));
   Simplification::ReduceSystem(solution, true);
   return Error::NoError;
 }

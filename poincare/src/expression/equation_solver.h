@@ -78,8 +78,7 @@ class EquationSolver {
                                      uint8_t numberOfVariables,
                                      Context* context);
   // Prepare a solution before display
-  static Error RegisterSolution(Tree* solution, uint8_t variableId,
-                                Context* context);
+  static Error EnhanceSolution(Tree* solution, Context* context);
 };
 
 }  // namespace Poincare::Internal

@@ -36,7 +36,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
   if (deltaSign.isNull()) {
     // -B/2A
     return PatternMatching::CreateSimplify(
-        KMult(-1_e / 2_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+        KList(KMult(-1_e / 2_e, KB, KPow(KA, -1_e))), {.KA = a, .KB = b});
   }
   Tree* solutions = SharedTreeStack->pushList(2);
   // {(-B+√Δ)/2A, -(B+√Δ)/2A}

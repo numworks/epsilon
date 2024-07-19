@@ -11,7 +11,7 @@ class Roots {
  public:
   // Return the only root.
   static Tree* Linear(const Tree* a, const Tree* b);
-  /* Return the only root or a list of two roots, in decreasing order
+  /* Return a list of one or two roots, in decreasing order
    *   delta can be provided or will be computed */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
                          const Tree* delta = nullptr);

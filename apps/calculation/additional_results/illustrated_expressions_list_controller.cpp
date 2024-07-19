@@ -6,6 +6,7 @@
 #include <poincare/old/rational.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/trigonometry.h>
+#include <poincare/src/expression/projection.h>
 
 #include "../app.h"
 #include "additional_result_cell.h"
@@ -83,15 +84,16 @@ Layout IllustratedExpressionsListController::layoutAtIndex(HighlightCell* cell,
   return ChainedExpressionsListController::layoutAtIndex(cell, index - 1);
 }
 
+// Create layout for formula, simplified expression and approximated expression.
 void IllustratedExpressionsListController::setLineAtIndex(
-    int index, Expression formula, Expression expression,
-    const ComputationContext& computationContext) {
-  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
-      formula, computationContext.context());
+    int index, UserExpression formula, UserExpression expression,
+    Internal::ProjectionContext* ctx) {
+  m_layouts[index] =
+      Shared::PoincareHelpers::CreateLayout(formula, ctx->m_context);
   Layout approximated;
-  m_exactLayouts[index] = getExactLayoutFromExpression(
-      expression, computationContext, &approximated);
+  m_exactLayouts[index] =
+      getExactLayoutFromExpression(expression, ctx, &approximated);
   m_approximatedLayouts[index] = approximated;
-};
+}
 
 }  // namespace Calculation

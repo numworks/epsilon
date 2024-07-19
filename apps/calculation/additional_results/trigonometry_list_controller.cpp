@@ -5,6 +5,7 @@
 #include <poincare/layout.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/old/trigonometry.h>
+#include <poincare/src/expression/projection.h>
 
 #include "../app.h"
 #include "trigonometry_helper.h"
@@ -25,7 +26,12 @@ void TrigonometryListController::computeAdditionalResults(
                                                  m_calculationPreferences)));
 
   Context* context = App::app()->localContext();
-  ComputationContext computationContext(context, complexFormat(), angleUnit());
+  Internal::ProjectionContext ctx = {
+      .m_complexFormat = complexFormat(),
+      .m_angleUnit = angleUnit(),
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = context};
 
   size_t index = 0;
 
@@ -106,23 +112,21 @@ void TrigonometryListController::computeAdditionalResults(
 
   Expression radians = Unit::Builder(Preferences::AngleUnit::Radian);
   m_exactLayouts[index] = getExactLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), radians),
-      computationContext);
+      UnitConvert::Builder(exactAngleWithUnit.clone(), radians), &ctx);
 
   Expression degrees = Unit::Builder(Preferences::AngleUnit::Degree);
   m_approximatedLayouts[index] = getExactLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees),
-      computationContext);
+      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees), &ctx);
 
   Expression theta = Symbol::Builder(k_symbol);
   setLineAtIndex(++index, Cosine::Builder(theta),
-                 Cosine::Builder(exactAngle.clone()), computationContext);
+                 Cosine::Builder(exactAngle.clone()), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Sine::Builder(theta),
-                 Sine::Builder(exactAngle.clone()), computationContext);
+                 Sine::Builder(exactAngle.clone()), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Tangent::Builder(theta),
-                 Tangent::Builder(exactAngle.clone()), computationContext);
+                 Tangent::Builder(exactAngle.clone()), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration

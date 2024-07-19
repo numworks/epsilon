@@ -1,3 +1,5 @@
+#include <poincare/src/expression/projection.h>
+
 #include "../app.h"
 #include "../edit_expression_controller.h"
 
@@ -138,27 +140,21 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::getExactLayoutFromExpression(
-    Expression e, const ComputationContext& computationContext,
-    Layout* approximate) {
+    UserExpression e, Internal::ProjectionContext* ctx, Layout* approximate) {
   assert(!e.isUninitialized());
   Expression approximateExpression, exactExpression;
-  PoincareHelpers::CloneAndSimplifyAndApproximate(
-      e, &exactExpression, &approximateExpression, computationContext.context(),
-      {.complexFormat = computationContext.complexFormat(),
-       .angleUnit = computationContext.angleUnit(),
-       .updateComplexFormatWithExpression = false,
-       .symbolicComputation =
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
+  ctx->m_symbolic =
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+  e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
+                                   ctx);
   assert(!approximateExpression.isUninitialized());
-  Layout approximateLayout = PoincareHelpers::CreateLayout(
-      approximateExpression, computationContext.context());
-  Layout exactLayout = exactExpression.isUninitialized()
-                           ? approximateLayout
-                           : PoincareHelpers::CreateLayout(
-                                 exactExpression, computationContext.context());
+  Layout approximateLayout =
+      PoincareHelpers::CreateLayout(approximateExpression, ctx->m_context);
+  Layout exactLayout =
+      exactExpression.isUninitialized()
+          ? approximateLayout
+          : PoincareHelpers::CreateLayout(exactExpression, ctx->m_context);
   if (approximate) {
-    /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
-     * String("-1") */
     *approximate = exactLayout.isIdenticalTo(approximateLayout, true)
                        ? Layout()
                        : approximateLayout;

@@ -8,6 +8,7 @@
 #include <poincare/old/real_part.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/src/expression/projection.h>
 
 #include "../app.h"
 #include "complex_list_controller.h"
@@ -26,28 +27,33 @@ void ComplexListController::computeAdditionalResults(
    * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(approximateOutput,
                                            m_calculationPreferences));
-  ComputationContext computationContext(App::app()->localContext(),
-                                        Preferences::ComplexFormat::Cartesian,
-                                        angleUnit());
-  ApproximationContext approximationContext(computationContext);
+  assert(complexFormat() != Preferences::ComplexFormat::Real);
+  Context* context = App::app()->localContext();
+  Internal::ProjectionContext ctx = {
+      .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+      .m_angleUnit = angleUnit(),
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = context};
 
   // Fill Calculation Store
   Expression e = exactOutput.clone();
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
-  computationContext.setComplextFormat(complexFormToDisplay());
-  setLineAtIndex(index++, z, e, computationContext);
-  computationContext.setComplextFormat(Preferences::ComplexFormat::Cartesian);
+  ctx.m_complexFormat = complexFormToDisplay();
+  setLineAtIndex(index++, z, e, &ctx);
+  ctx.m_complexFormat = Preferences::ComplexFormat::Cartesian;
   setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),
-                 computationContext);
+                 &ctx);
   setLineAtIndex(index++, ComplexArgument::Builder(z),
-                 ComplexArgument::Builder(e), computationContext);
-  setLineAtIndex(index++, RealPart::Builder(z), RealPart::Builder(e),
-                 computationContext);
+                 ComplexArgument::Builder(e), &ctx);
+  setLineAtIndex(index++, RealPart::Builder(z), RealPart::Builder(e), &ctx);
   setLineAtIndex(index++, ImaginaryPart::Builder(z), ImaginaryPart::Builder(e),
-                 computationContext);
+                 &ctx);
 
   // Set Complex illustration
+  ApproximationContext approximationContext(context, ctx.m_complexFormat,
+                                            ctx.m_angleUnit);
   double realPart;
   double imagPart;
   bool hasComplexApprox =

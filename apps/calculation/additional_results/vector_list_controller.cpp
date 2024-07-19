@@ -5,6 +5,7 @@
 #include <omg/round.h>
 #include <poincare/layout.h>
 #include <poincare/old/poincare_expressions.h>
+#include <poincare/src/expression/projection.h>
 #include <string.h>
 
 #include "../app.h"
@@ -25,13 +26,15 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context* context = App::app()->localContext();
-  ComputationContext computationContext(context, complexFormat(), angleUnit());
-#if ASSERTIONS
-  Poincare::Internal::ComplexFormat previousFormat =
-      computationContext.complexFormat();
-  computationContext.updateComplexFormat(exactOutput);
-  assert(previousFormat == computationContext.complexFormat());
-#endif
+  assert(complexFormat() ==
+         Preferences::UpdatedComplexFormatWithExpressionInput(
+             complexFormat(), exactOutput, context));
+  Internal::ProjectionContext ctx = {
+      .m_complexFormat = complexFormat(),
+      .m_angleUnit = angleUnit(),
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = context};
 
   setShowIllustration(false);
   size_t index = 0;
@@ -41,7 +44,7 @@ void VectorListController::computeAdditionalResults(
   Expression norm = VectorHelper::BuildVectorNorm(exactClone, context,
                                                   m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  setLineAtIndex(index++, Expression(), norm, computationContext);
+  setLineAtIndex(index++, Expression(), norm, &ctx);
 
   // 2. Normalized vector
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(
@@ -62,7 +65,7 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  setLineAtIndex(index++, Expression(), normalized, computationContext);
+  setLineAtIndex(index++, Expression(), normalized, &ctx);
 
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
@@ -76,8 +79,7 @@ void VectorListController::computeAdditionalResults(
   Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
   if (normalized.childAtIndex(1).isPositive(context) == OMG::Troolean::False) {
     angle = Subtraction::Builder(
-        Trigonometry::AnglePeriodInAngleUnit(computationContext.angleUnit()),
-        angle);
+        Trigonometry::AnglePeriodInAngleUnit(ctx.m_angleUnit), angle);
   }
   float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
       angle, context,
@@ -87,7 +89,7 @@ void VectorListController::computeAdditionalResults(
   }
   setLineAtIndex(index++,
                  Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
-                 angle, computationContext);
+                 angle, &ctx);
 
   // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(

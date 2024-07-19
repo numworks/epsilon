@@ -26,16 +26,34 @@ Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(Internal::Tree* t,
 
 }  // namespace
 
+void PointsOfInterestList::moveToStack() {
+  assert(!m_stackList);
+  assert(!isUninitialized());
+  assert(Internal::TreeStack::SharedTreeStack->numberOfTrees() == 0);
+  m_stackList = m_poolList.tree()->cloneTree();
+  m_poolList = {};
+}
+
+void PointsOfInterestList::moveToPool() {
+  assert(isUninitialized());
+  assert(m_stackList);
+  m_poolList = API::JuniorPoolHandle::Builder(m_stackList);
+  m_stackList = nullptr;
+  assert(Internal::TreeStack::SharedTreeStack->numberOfTrees() == 0);
+}
+
 int PointsOfInterestList::numberOfPoints() const {
-  if (m_list.isUninitialized()) {
+  assert(!m_stackList);
+  if (m_poolList.isUninitialized()) {
     return 0;
   }
-  const Internal::Tree* t = m_list.tree();
+  const Internal::Tree* t = m_poolList.tree();
   assert(t->isList());
   return t->numberOfChildren();
 }
 
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
+  assert(!m_stackList);
   assert(0 <= i && i < numberOfPoints());
   /* The list is supposed to only contain PointOfInterestNodes, take advantage
    * of this to fetch the child with pointer arithmetic instead of walking the
@@ -43,12 +61,12 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   PointOfInterest result;
   assert(sizeof(result) ==
          sizeof(Internal::CustomTypeStructs::PointOfInterestNode));
-  memcpy(&result, pointInTree(m_list.tree(), i), sizeof(result));
+  memcpy(&result, pointInTree(m_poolList.tree(), i), sizeof(result));
   return result;
 }
 
 void PointsOfInterestList::sort() {
-  Internal::Tree* editableList = m_list.tree()->cloneTree();
+  moveToStack();
   OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
@@ -61,31 +79,34 @@ void PointsOfInterestList::sort() {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
         return pointInTree(l, i)->abscissa >= pointInTree(l, j)->abscissa;
       },
-      editableList, numberOfPoints());
-  m_list = API::JuniorPoolHandle::Builder(editableList);
+      m_stackList, m_stackList->numberOfChildren());
+  moveToPool();
 }
 
 void PointsOfInterestList::filterOutOfBounds(double start, double end) {
-  Internal::Tree* editableList = Internal::List::PushEmpty();
-  for (const Internal::Tree* child : m_list.tree()->children()) {
+  assert(!m_stackList);
+  assert(!isUninitialized());
+  m_stackList = Internal::List::PushEmpty();
+  for (const Internal::Tree* child : m_poolList.tree()->children()) {
     Internal::CustomTypeStructs::PointOfInterestNode p = *reinterpret_cast<
         const Internal::CustomTypeStructs::PointOfInterestNode*>(child + 1);
     if (start <= p.abscissa && p.abscissa <= end) {
-      Internal::NAry::AddChild(editableList, child->cloneTree());
+      Internal::NAry::AddChild(m_stackList, child->cloneTree());
     }
   }
-  m_list = API::JuniorPoolHandle::Builder(editableList);
+  m_poolList = {};
+  moveToPool();
 }
 
 void PointsOfInterestList::append(PointOfInterest p) {
   // FIXME This can overflow the pool and stack
-  Internal::Tree* editableList = m_list.tree()->cloneTree();
+  moveToStack();
   Internal::Tree* newPoint =
       Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
           p.abscissa, p.ordinate, p.data, static_cast<uint8_t>(p.interest),
           p.inverted, p.subCurveIndex);
-  Internal::NAry::AddChild(editableList, newPoint);
-  m_list = API::JuniorPoolHandle::Builder(editableList);
+  Internal::NAry::AddChild(m_stackList, newPoint);
+  moveToPool();
 }
 
 }  // namespace Poincare

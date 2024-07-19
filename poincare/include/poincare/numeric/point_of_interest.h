@@ -23,8 +23,13 @@ struct PointOfInterest {
 
 class PointsOfInterestList {
  public:
-  void init() { m_list = API::JuniorPoolHandle::Builder(KList()); }
-  bool isUninitialized() const { return m_list.isUninitialized(); }
+  PointsOfInterestList() : m_stackList(nullptr), m_poolList() {}
+
+  void init() { m_poolList = API::JuniorPoolHandle::Builder(KList()); }
+  bool isUninitialized() const { return m_poolList.isUninitialized(); }
+  void moveToStack();
+  void moveToPool();
+
   int numberOfPoints() const;
   PointOfInterest pointAtIndex(int) const;
   void sort();
@@ -32,7 +37,8 @@ class PointsOfInterestList {
   void append(PointOfInterest);
 
  private:
-  API::JuniorPoolHandle m_list;
+  Internal::Tree* m_stackList;
+  API::JuniorPoolHandle m_poolList;
 };
 
 }  // namespace Poincare

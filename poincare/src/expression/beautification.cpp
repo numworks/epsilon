@@ -282,7 +282,7 @@ bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
   if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
-    TurnToPolarForm(e, projectionContext.m_dimension);
+    TurnIntoPolarForm(e, projectionContext.m_dimension);
   }
   bool changed =
       DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy);
@@ -403,7 +403,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       changed;
 }
 
-bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
+bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   if (e->isUndefined()) {
     return false;
   }
@@ -411,7 +411,7 @@ bool Beautification::TurnToPolarForm(Tree* e, Dimension dim) {
   if (e->isMatrix() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
-      changed |= TurnToPolarForm(child, Dimension::Scalar());
+      changed |= TurnIntoPolarForm(child, Dimension::Scalar());
     }
     return changed;
   }

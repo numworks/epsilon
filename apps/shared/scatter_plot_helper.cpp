@@ -35,7 +35,7 @@ ScatterPlotIterable::Iterator ScatterPlotIterable::end() const {
 int ScatterPlotIterable::length() const {
   return m_expression.isUndefined() ? 0
          : m_expression.dimension().isListOfPoints()
-             ? m_expression.numberOfChildren()
+             ? m_expression.tree()->numberOfChildren()
              : 1;
 }
 

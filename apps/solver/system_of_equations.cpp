@@ -29,7 +29,6 @@ namespace Solver {
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
-  EquationSolver::Context solverContext;
   Error error = Error::NoError;
 
   // Copy equations on the EditionPool
@@ -46,7 +45,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   }
 
   Internal::Tree* result =
-      EquationSolver::ExactSolve(equations, &solverContext, {}, &error);
+      EquationSolver::ExactSolve(equations, &m_solverContext, {}, &error);
 
   if (error == Error::NoError) {
     assert(result);
@@ -56,10 +55,10 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_hasMoreSolutions = false;
     m_numberOfSolutions = result->numberOfChildren();
     m_numberOfSolvingVariables = m_numberOfSolutions;
-    m_overrideUserVariables = solverContext.overrideUserVariables;
-    m_numberOfUserVariables = solverContext.numberOfUserVariables;
+    m_overrideUserVariables = m_solverContext.overrideUserVariables;
+    m_numberOfUserVariables = m_solverContext.numberOfUserVariables;
     // Copy user variables
-    memcpy(m_userVariables, solverContext.userVariables, sizeof(char[6][10]));
+    memcpy(m_userVariables, m_solverContext.userVariables, sizeof(char[6][10]));
     // Copy solutions
     for (int i = 0; const Internal::Tree* solution : result->children()) {
       Poincare::Expression exact = Poincare::UserExpression::Builder(solution);

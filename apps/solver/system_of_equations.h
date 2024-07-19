@@ -49,11 +49,9 @@ class SystemOfEquations {
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
     // Variable is now displayed in the equation solution
-    return "0=";
-#if 0
-    assert(index < m_numberOfSolvingVariables && m_variables[index][0] != '\0');
-    return m_variables[index];
-#endif
+    assert(index < m_numberOfSolvingVariables &&
+           m_solverContext.variables[index][0] != '\0');
+    return m_solverContext.variables[index];
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
   const char* userVariable(size_t index) const {
@@ -139,6 +137,7 @@ class SystemOfEquations {
   bool m_overrideUserVariables;
   bool m_hasMoreSolutions;
   bool m_autoApproximateSolvingRange;
+  Poincare::Internal::EquationSolver::Context m_solverContext;
 };
 
 }  // namespace Solver

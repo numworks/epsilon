@@ -19,6 +19,8 @@ class EquationSolver {
     bool overrideUserVariables = false;
     bool exactResults = true;
     bool hasMoreSolutions = false;
+    int numberOfVariables = 0;
+    char variables[6][Symbol::k_maxNameSize];
     // Context used for apps/solver compatibility
     int numberOfUserVariables = 0;
     char userVariables[6][Symbol::k_maxNameSize];

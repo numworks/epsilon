@@ -112,8 +112,12 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    for (const Tree* variable : userSymbols->children()) {
-      Variables::LeaveScopeWithReplacement(result, variable, false);
+    int i = 0;
+    for (const Tree* symbol : userSymbols->children()) {
+      assert(i < 6);
+      Symbol::CopyName(symbol, context->variables[i++],
+                       Symbol::k_maxNameLength);
+      Variables::LeaveScopeWithReplacement(result, symbol, false);
     }
   }
   userSymbols->removeTree();

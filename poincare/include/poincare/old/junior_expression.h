@@ -12,6 +12,8 @@
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
+// TODO_PCJ: Expose ProjectionContext
+struct ProjectionContext;
 }  // namespace Poincare::Internal
 
 namespace Poincare {
@@ -202,6 +204,10 @@ class JuniorExpression : public OExpression {
       SystemExpression* approximatedExpression,
       const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
+  void cloneAndSimplifyAndApproximate(
+      SystemExpression* simplifiedExpression,
+      SystemExpression* approximatedExpression,
+      Internal::ProjectionContext* context) const;
   SystemExpression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure,
       bool approximateDuringReduction = false) const;

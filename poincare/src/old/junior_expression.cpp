@@ -456,8 +456,6 @@ void UserExpression::cloneAndSimplifyAndApproximate(
     SystemExpression* approximatedExpression,
     const ReductionContext& reductionContext,
     bool approximateKeepingSymbols) const {
-  assert(simplifiedExpression && simplifiedExpression->isUninitialized());
-  assert(!approximatedExpression || approximatedExpression->isUninitialized());
   assert(reductionContext.target() == ReductionTarget::User);
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
@@ -467,11 +465,21 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
+  return cloneAndSimplifyAndApproximate(simplifiedExpression,
+                                        approximatedExpression, &context);
+}
+
+void UserExpression::cloneAndSimplifyAndApproximate(
+    SystemExpression* simplifiedExpression,
+    SystemExpression* approximatedExpression,
+    Internal::ProjectionContext* context) const {
+  assert(simplifiedExpression && simplifiedExpression->isUninitialized());
+  assert(!approximatedExpression || approximatedExpression->isUninitialized());
   Tree* e = tree()->cloneTree();
-  Simplification::SimplifyWithAdaptiveStrategy(e, &context);
+  Simplification::SimplifyWithAdaptiveStrategy(e, context);
   if (approximatedExpression) {
     *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
-        e, context.m_angleUnit, context.m_complexFormat));
+        e, context->m_angleUnit, context->m_complexFormat));
   }
   *simplifiedExpression = Builder(e);
   return;

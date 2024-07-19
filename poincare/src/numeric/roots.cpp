@@ -58,6 +58,32 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
   return solutions;
 }
 
+Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
+                               const Tree* d) {
+  // Δ = b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
+  return PatternMatching::CreateSimplify(
+      KAdd(KMult(KPow(KB, 2_e), KPow(KC, 2_e)), KMult(18_e, KA, KB, KC, KD),
+           KMult(-27_e, KPow(KA, 2_e), KPow(KD, 2_e)),
+           KMult(-4_e, KA, KPow(KC, 3_e)), KMult(-4_e, KD, KPow(KB, 3_e))),
+      {.KA = a, .KB = b, .KC = c, .KD = d});
+}
+
+Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
+                   const Tree* discriminant) {
+  assert(a && b && c && d);
+  if (!discriminant) {
+    Tree* discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    TreeRef solutions = Roots::Cubic(a, b, c, d, discriminant);
+    discriminant->removeTree();
+    return solutions;
+  }
+  if (discriminant->isUndefined()) {
+    return KList()->cloneTree();
+  }
+  // TODO_PCJ
+  return KList(1_e, 2_e, 3_e)->cloneTree();
+}
+
 #if 0
 
 int Polynomial::LinearPolynomialRoots(OExpression a, OExpression b,

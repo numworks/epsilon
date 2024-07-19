@@ -17,6 +17,12 @@ class Roots {
                          const Tree* discriminant = nullptr);
   static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
                                      const Tree* c);
+
+  static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
+                     const Tree* discriminant = nullptr);
+  static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
+                                 const Tree* d);
+
 #if 0
   static int LinearPolynomialRoots(OExpression a, OExpression b,
                                    OExpression* root,

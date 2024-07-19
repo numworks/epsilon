@@ -50,9 +50,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   if (error == Error::NoError) {
     assert(result);
     // Update member variables for LinearSystem
-    m_type = Type::LinearSystem;
-    m_degree = 1;
-    m_hasMoreSolutions = false;
+    m_type = m_solverContext.type;
+    m_degree = m_solverContext.degree;
+    m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
     m_numberOfSolutions = result->numberOfChildren();
     m_numberOfSolvingVariables = m_numberOfSolutions;
     m_overrideUserVariables = m_solverContext.overrideUserVariables;

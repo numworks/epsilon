@@ -97,13 +97,14 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   TreeRef result;
   assert(*error == Error::NoError);
   result =
-      SolveLinearSystem(reducedEquationSet, numberOfVariables, *context, error);
+      SolveLinearSystem(reducedEquationSet, numberOfVariables, context, error);
   if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
     result =
-        SolvePolynomial(reducedEquationSet, numberOfVariables, *context, error);
+        SolvePolynomial(reducedEquationSet, numberOfVariables, context, error);
     if (*error == Error::RequireApproximateSolution) {
+      context->type = Type::GeneralMonovariable;
       // TODO: Handle GeneralMonovariable solving.
       assert(result.isUninitialized());
     }
@@ -242,9 +243,12 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
 }
 
 Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
-                                        uint8_t n, Context context,
+                                        uint8_t n, Context* context,
                                         Error* error) {
-  context.exactResults = true;
+  context->exactResults = true;
+  context->type = Type::LinearSystem;
+  context->degree = 1;
+
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
   uint8_t rows = reducedEquationSet->numberOfChildren();
@@ -318,7 +322,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
                                             uint8_t numberOfVariables,
-                                            Context context) {
+                                            Context* context) {
   TreeRef result = SharedTreeStack->pushList(0);
   TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
@@ -374,7 +378,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
 }
 
 Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
-                                      uint8_t n, Context context,
+                                      uint8_t n, Context* context,
                                       Error* error) {
   constexpr static int k_maxPolynomialDegree = 3;
   constexpr static int k_maxNumberOfPolynomialCoefficients =
@@ -393,6 +397,8 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
   }
+  context->type = Type::PolynomialMonovariable;
+  context->degree = degree;
 
   int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
@@ -426,7 +432,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
 
 EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,
                                                        uint8_t variableId,
-                                                       Context context) {
+                                                       Context* context) {
   /* TODO:
    * - Implement equations. Here a x=2 solution will register as x-2.
    * - Handle exact results being forbidden.

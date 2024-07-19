@@ -14,16 +14,10 @@ namespace Poincare::Internal {
 
 class EquationSolver {
  public:
-  struct Context {
-    // If true, defined userVariables are ignored.
-    bool overrideUserVariables = false;
-    bool exactResults = true;
-    bool hasMoreSolutions = false;
-    int numberOfVariables = 0;
-    char variables[6][Symbol::k_maxNameSize];
-    // Context used for apps/solver compatibility
-    int numberOfUserVariables = 0;
-    char userVariables[6][Symbol::k_maxNameSize];
+  enum class Type : uint8_t {
+    LinearSystem,
+    PolynomialMonovariable,
+    GeneralMonovariable,
   };
 
   enum class Error {
@@ -34,6 +28,20 @@ class EquationSolver {
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,
     DisabledInExamMode,  // TODO rebased from poincare
+  };
+
+  struct Context {
+    Type type;
+    int8_t degree;
+    // If true, defined userVariables are ignored.
+    bool overrideUserVariables = false;
+    bool exactResults = true;
+    bool hasMoreSolutions = false;
+    int numberOfVariables = 0;
+    char variables[6][Symbol::k_maxNameSize];
+    // Context used for apps/solver compatibility
+    int numberOfUserVariables = 0;
+    char userVariables[6][Symbol::k_maxNameSize];
   };
 
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
@@ -58,20 +66,20 @@ class EquationSolver {
                                Error* error);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
-                                 uint8_t numberOfVariables, Context context,
+                                 uint8_t numberOfVariables, Context* context,
                                  Error* error);
   // Return list of solutions for a polynomial equation.
   static Tree* SolvePolynomial(const Tree* equationsSet,
-                               uint8_t numberOfVariables, Context context,
+                               uint8_t numberOfVariables, Context* context,
                                Error* error);
 
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
                                      uint8_t numberOfVariables,
-                                     Context context);
+                                     Context* context);
   // Prepare a solution before display
   static Error RegisterSolution(Tree* solution, uint8_t variableId,
-                                Context context);
+                                Context* context);
 };
 
 }  // namespace Poincare::Internal

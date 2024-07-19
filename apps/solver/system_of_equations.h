@@ -27,11 +27,7 @@ namespace Solver {
 
 class SystemOfEquations {
  public:
-  enum class Type : uint8_t {
-    LinearSystem,
-    PolynomialMonovariable,
-    GeneralMonovariable,
-  };
+  using Type = Poincare::Internal::EquationSolver::Type;
 
   using Error = Poincare::Internal::EquationSolver::Error;
 

@@ -1223,8 +1223,11 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
  * need the index */
 template <typename T>
 int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
-  s_context->setLocalValue(x);
+  assert(!s_context);
+  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
+  s_context = &context;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise);
+  s_context = nullptr;
   if (branch == KUndef) {
     return -1;
   }

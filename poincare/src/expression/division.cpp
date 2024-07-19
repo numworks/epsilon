@@ -117,6 +117,30 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   NAry::SquashIfPossible(denominator);
 }
 
+void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
+                                          TreeRef& denominator) {
+  bool needOpposite = false;
+  bool needI = false;
+  GetDivisionComponents(e, numerator, denominator, &needOpposite, &needI);
+  if (!needOpposite && !needI) {
+    return;
+  }
+  if (!numerator->isMult()) {
+    if (numerator->isOne()) {
+      numerator->cloneNodeOverNode(KMult.node<0>);
+    } else {
+      numerator->cloneNodeAtNode(KMult.node<1>);
+    }
+  }
+  if (needOpposite) {
+    NAry::AddChild(numerator, (-1_e)->cloneTree());
+  }
+  if (needI) {
+    NAry::AddChild(numerator, (i_e)->cloneTree());
+  }
+  NAry::SquashIfPossible(numerator);
+}
+
 bool Division::BeautifyIntoDivision(Tree* e) {
   TreeRef num;
   TreeRef den;

@@ -76,6 +76,9 @@ class Calculation {
   Poincare::Preferences::ComplexFormat complexFormat() const {
     return m_calculationPreferences.complexFormat;
   }
+  void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
+    m_calculationPreferences.complexFormat = complexFormat;
+  }
   uint8_t numberOfSignificantDigits() const {
     return m_calculationPreferences.numberOfSignificantDigits;
   }

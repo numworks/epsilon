@@ -307,16 +307,16 @@ void HistoryController::handleOK() {
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
+  assert(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+             selectedCalculation->calculationPreferences().complexFormat, i,
+             context) ==
+         selectedCalculation->calculationPreferences().complexFormat);
 
-  /* Reuse the same angle unit and update complexFormat as when the calculation
+  /* Reuse the same angle unit and updated complexFormat as when the calculation
    * was computed. */
-  Poincare::Preferences::CalculationPreferences preferences =
-      selectedCalculation->calculationPreferences();
-  preferences.complexFormat =
-      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          preferences.complexFormat, i, context);
   m_additionalResultsController.openAdditionalResults(
-      selectedCalculation->additionalResultsType(), i, e, a, preferences);
+      selectedCalculation->additionalResultsType(), i, e, a,
+      selectedCalculation->calculationPreferences());
 }
 
 }  // namespace Calculation

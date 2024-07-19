@@ -107,6 +107,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
+  Poincare::Preferences::ComplexFormat complexFormat =
+      Poincare::Preferences::SharedPreferences()->complexFormat();
   m_inUsePreferences = *Preferences::SharedPreferences();
   char* cursor = endOfCalculations();
   Calculation* current;
@@ -124,14 +126,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
        * variable assignment. */
       VariableContext ansContext = createAnsContext(context);
 
-      // Push a new, empty Calculation
+      /* Push a new, empty Calculation */
       current = reinterpret_cast<Calculation*>(cursor);
       cursor = pushEmptyCalculation(
           cursor,
           Poincare::Preferences::SharedPreferences()->calculationPreferences());
       assert(cursor != k_pushError);
 
-      // Push the input
+      /* Push the input */
       UserExpression inputExpression =
           UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
@@ -144,19 +146,25 @@ ExpiringPointer<Calculation> CalculationStore::push(
       current->m_inputTreeSize = nextCursor - cursor;
       cursor = nextCursor;
 
-      // Parse and compute the expression
+      /* Parse and compute the expression */
       assert(!inputExpression.isUninitialized());
+      // Update complexFormat with input expression
+      complexFormat =
+          Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+              complexFormat, inputExpression, context);
       PoincareHelpers::CloneAndSimplifyAndApproximate(
           inputExpression, &exactOutputExpression, &approximateOutputExpression,
           context,
-          // TODO_PCJ: Was ReplaceAllSymbolsWithDefinitionsOrUndefined.
-          {.updateComplexFormatWithExpression = true,
+          {.complexFormat = complexFormat,
+           // Complex format has already been updated
+           .updateComplexFormatWithExpression = false,
+           // TODO_PCJ: Was ReplaceAllSymbolsWithDefinitionsOrUndefined.
            .symbolicComputation =
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition});
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 
-      // Post-processing of store expression
+      /* Post-processing of store expression */
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
@@ -247,6 +255,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   Calculation* newCalculation =
       reinterpret_cast<Calculation*>(endOfCalculations());
 
+  newCalculation->setComplexFormat(complexFormat);
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
    * of the store, updating it only at the end of the push ensures that,

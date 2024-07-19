@@ -208,7 +208,7 @@ JuniorExpression SymbolAbstract::Expand(
                                                  symbolicComputation);
   if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
     e = JuniorExpression::Create(KDep(KA, KDependencies(KB)),
-                                 {.KA = e, .KB = e.childAtIndex(0)});
+                                 {.KA = e, .KB = symbol.tree()->child(0)});
   }
   return e;
 }

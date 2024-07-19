@@ -9,21 +9,27 @@ namespace Poincare {
 
 namespace {
 
-const Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(
-    const Internal::Tree* t, int i) {
+const Internal::Tree* pointAddressInTree(const Internal::Tree* t, int i) {
   assert(t->isList());
   assert(0 <= i && i < t->numberOfChildren());
-  const Internal::Tree* p =
-      t->nextNode() + i * Internal::TypeBlock::NumberOfMetaBlocks(
-                              Internal::Type::PointOfInterest);
-  return reinterpret_cast<
-      const Internal::CustomTypeStructs::PointOfInterestNode*>(p + 1);
+  /* The list is supposed to only contain PointOfInterestNodes, take advantage
+   * of this to fetch the child with pointer arithmetic instead of walking the
+   * tree. */
+  return t->nextNode() + i * Internal::TypeBlock::NumberOfMetaBlocks(
+                                 Internal::Type::PointOfInterest);
 }
 
-Internal::CustomTypeStructs::PointOfInterestNode* pointInTree(Internal::Tree* t,
-                                                              int i) {
-  return const_cast<Internal::CustomTypeStructs::PointOfInterestNode*>(
-      pointInTree(const_cast<const Internal::Tree*>(t), i));
+Internal::Tree* pointAddressInTree(Internal::Tree* t, int i) {
+  return const_cast<Internal::Tree*>(
+      pointAddressInTree(const_cast<const Internal::Tree*>(t), i));
+}
+
+PointOfInterest pointFromTree(const Internal::Tree* t) {
+  PointOfInterest result;
+  assert(sizeof(result) ==
+         sizeof(Internal::CustomTypeStructs::PointOfInterestNode));
+  memcpy(&result, t + 1 /* skip the TypeBlock */, sizeof(result));
+  return result;
 }
 
 }  // namespace
@@ -41,14 +47,7 @@ int PointsOfInterestList::numberOfPoints() const {
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   assert(isStashEmpty());
   assert(0 <= i && i < numberOfPoints());
-  /* The list is supposed to only contain PointOfInterestNodes, take advantage
-   * of this to fetch the child with pointer arithmetic instead of walking the
-   * tree. */
-  PointOfInterest result;
-  assert(sizeof(result) ==
-         sizeof(Internal::CustomTypeStructs::PointOfInterestNode));
-  memcpy(&result, pointInTree(m_list.tree(), i), sizeof(result));
-  return result;
+  return pointFromTree(pointAddressInTree(m_list.tree(), i));
 }
 
 void PointsOfInterestList::sort() {
@@ -57,14 +56,12 @@ void PointsOfInterestList::sort() {
   OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
-        Internal::CustomTypeStructs::PointOfInterestNode temp =
-            *pointInTree(l, i);
-        *pointInTree(l, i) = *pointInTree(l, j);
-        *pointInTree(l, j) = temp;
+        pointAddressInTree(l, i)->swapWithTree(pointAddressInTree(l, j));
       },
       [](int i, int j, void* ctx, int n) {
         Internal::Tree* l = static_cast<Internal::Tree*>(ctx);
-        return pointInTree(l, i)->abscissa >= pointInTree(l, j)->abscissa;
+        return pointFromTree(pointAddressInTree(l, i)).abscissa >=
+               pointFromTree(pointAddressInTree(l, j)).abscissa;
       },
       editableList, numberOfPoints());
   m_list = API::JuniorPoolHandle::Builder(editableList);
@@ -74,8 +71,7 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
   assert(isStashEmpty());
   Internal::Tree* editableList = Internal::List::PushEmpty();
   for (const Internal::Tree* child : m_list.tree()->children()) {
-    Internal::CustomTypeStructs::PointOfInterestNode p = *reinterpret_cast<
-        const Internal::CustomTypeStructs::PointOfInterestNode*>(child + 1);
+    PointOfInterest p = pointFromTree(child);
     if (start <= p.abscissa && p.abscissa <= end) {
       Internal::NAry::AddChild(editableList, child->cloneTree());
     }

@@ -12,27 +12,28 @@ Tree* Roots::Linear(const Tree* a, const Tree* b) {
                                          {.KA = a, .KB = b});
 }
 
-Tree* Roots::QuadraticDelta(const Tree* a, const Tree* b, const Tree* c) {
+Tree* Roots::QuadraticDiscriminant(const Tree* a, const Tree* b,
+                                   const Tree* c) {
   // Δ=B^2-4AC
   return PatternMatching::CreateSimplify(
       KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
 }
 
 Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
-                       const Tree* delta) {
+                       const Tree* discriminant) {
   assert(a && b && c);
-  if (!delta) {
-    Tree* delta = Roots::QuadraticDelta(a, b, c);
-    TreeRef solutions = Roots::Quadratic(a, b, c, delta);
-    delta->removeTree();
+  if (!discriminant) {
+    Tree* discriminant = Roots::QuadraticDiscriminant(a, b, c);
+    TreeRef solutions = Roots::Quadratic(a, b, c, discriminant);
+    discriminant->removeTree();
     return solutions;
   }
 
-  if (delta->isUndefined()) {
-    return delta->cloneTree();
+  if (discriminant->isUndefined()) {
+    return discriminant->cloneTree();
   }
   // TODO: Approximate if unsure
-  ComplexSign deltaSign = GetComplexSign(delta);
+  ComplexSign deltaSign = GetComplexSign(discriminant);
   if (deltaSign.isNull()) {
     // -B/2A
     return PatternMatching::CreateSimplify(
@@ -43,11 +44,11 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
   Tree* root1 = PatternMatching::CreateSimplify(
       KMult(1_e / 2_e, KAdd(KMult(-1_e, KB), KExp(KMult(1_e / 2_e, KLn(KC)))),
             KPow(KA, -1_e)),
-      {.KA = a, .KB = b, .KC = delta});
+      {.KA = a, .KB = b, .KC = discriminant});
   PatternMatching::CreateSimplify(
       KMult(-1_e / 2_e, KAdd(KB, KExp(KMult(1_e / 2_e, KLn(KC)))),
             KPow(KA, -1_e)),
-      {.KA = a, .KB = b, .KC = delta});
+      {.KA = a, .KB = b, .KC = discriminant});
   // TODO: Approximate if unsure
   ComplexSign aSign = GetComplexSign(a);
   if (aSign.isReal() && aSign.realSign().isNegative()) {

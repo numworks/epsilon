@@ -413,16 +413,16 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
       coef = 0_e;
     }
   }
-  TreeRef delta =
-      Roots::QuadraticDelta(coefficients[2], coefficients[1], coefficients[0]);
+  TreeRef discriminant = Roots::QuadraticDiscriminant(
+      coefficients[2], coefficients[1], coefficients[0]);
   TreeRef solutionList = Roots::Quadratic(coefficients[2], coefficients[1],
-                                          coefficients[0], delta);
+                                          coefficients[0], discriminant);
   polynomial->removeTree();
   for (Tree* solution : solutionList->children()) {
     // TODO_PCJ: restore dependencies handling here
     EnhanceSolution(solution, context);
   }
-  NAry::AddChild(solutionList, delta);
+  NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;
   return solutionList;
 }

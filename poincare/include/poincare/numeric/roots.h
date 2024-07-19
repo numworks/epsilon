@@ -14,8 +14,9 @@ class Roots {
   /* Return a list of one or two roots, in decreasing order
    *   delta can be provided or will be computed */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
-                         const Tree* delta = nullptr);
-  static Tree* QuadraticDelta(const Tree* a, const Tree* b, const Tree* c);
+                         const Tree* discriminant = nullptr);
+  static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
+                                     const Tree* c);
 #if 0
   static int LinearPolynomialRoots(OExpression a, OExpression b,
                                    OExpression* root,

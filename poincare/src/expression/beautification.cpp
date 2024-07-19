@@ -171,8 +171,8 @@ void GetDivisionComponents(const Tree* e, TreeRef& numerator,
       NAry::AddChild(numerator, factorsNumerator);
     }
   }
-  NAry::SquashIfEmpty(numerator) || NAry::SquashIfUnary(numerator);
-  NAry::SquashIfEmpty(denominator) || NAry::SquashIfUnary(denominator);
+  NAry::SquashIfPossible(numerator);
+  NAry::SquashIfPossible(denominator);
 }
 
 bool Beautification::BeautifyIntoDivision(Tree* e) {

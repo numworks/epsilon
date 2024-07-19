@@ -45,8 +45,8 @@ class IllustratedExpressionsListController
   constexpr static uint8_t k_expressionCellType = 1;
   void setShowIllustration(bool showIllustration);
   /* Helper to add a line in the format func(arg) = exact ~ approx */
-  void setLineAtIndex(int index, Poincare::UserExpression formula,
-                      Poincare::UserExpression expression,
+  void setLineAtIndex(int index, const Poincare::UserExpression formula,
+                      const Poincare::UserExpression expression,
                       Poincare::Internal::ProjectionContext* ctx);
 
  private:

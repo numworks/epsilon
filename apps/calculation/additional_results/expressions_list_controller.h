@@ -55,7 +55,8 @@ class ExpressionsListController
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 5;
   Poincare::Layout getExactLayoutFromExpression(
-      Poincare::UserExpression e, Poincare::Internal::ProjectionContext* ctx,
+      const Poincare::UserExpression e,
+      Poincare::Internal::ProjectionContext* ctx,
       Poincare::Layout* approximatedLayout = nullptr);
   Poincare::Preferences::AngleUnit angleUnit() const {
     return m_calculationPreferences.angleUnit;

@@ -404,10 +404,20 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
       coef = 0_e;
     }
   }
-  TreeRef result =
-      Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0]);
+  TreeRef delta =
+      Roots::QuadraticDelta(coefficients[2], coefficients[1], coefficients[0]);
+  TreeRef solutionList = Roots::Quadratic(coefficients[2], coefficients[1],
+                                          coefficients[0], delta);
   polynomial->removeTree();
-  return result;
+#if 0
+  for (const Tree* solution : solutionList->children()) {
+    // TODO_PCJ: restore dependencies handling here
+    RegisterSolution(solution->cloneTree(), 0, context);
+  }
+#endif
+  NAry::AddChild(solutionList, delta);
+  *error = Error::NoError;
+  return solutionList;
 }
 
 EquationSolver::Error EquationSolver::RegisterSolution(Tree* solution,

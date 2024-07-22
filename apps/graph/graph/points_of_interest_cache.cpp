@@ -169,10 +169,18 @@ struct PointSearchContext {
   const float start, end;
   ExpiringPointer<ContinuousFunction> function;
   Context* const context;
+  Internal::Solver<double> solver;
+  float searchStep;
 
   size_t currentProvider = 0;
   int counter = 0;
-  Internal::Solver<double>* solver = nullptr;
+
+  void reinitSolver() {
+    solver = {start, end, context};
+    solver.stretch();
+    solver.setSearchStep(searchStep);
+    solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
+  }
 };
 
 PointOfInterest findYIntercept(void* searchContext) {
@@ -199,11 +207,45 @@ PointOfInterest findYIntercept(void* searchContext) {
   return PointOfInterest{};
 }
 
+PointOfInterest findRootOrExtremum(void* searchContext) {
+  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
+
+  using NextSolution =
+      Coordinate2D<double> (Internal::Solver<double>::*)(const Internal::Tree*);
+  NextSolution methodsNext[] = {&Internal::Solver<double>::nextRoot,
+                                &Internal::Solver<double>::nextMinimum,
+                                &Internal::Solver<double>::nextMaximum};
+  while (ctx->counter < std::size(methodsNext)) {
+    NextSolution next = methodsNext[ctx->counter];
+    if (next !=
+            static_cast<NextSolution>(&Internal::Solver<double>::nextRoot) &&
+        ctx->function->isAlongY()) {
+      // Do not compute min and max since they would appear left/rightmost
+      ++ctx->counter;
+      continue;
+    }
+    Coordinate2D<double> solution = (ctx->solver.*next)(
+        ctx->function->expressionApproximated(ctx->context));
+    if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+      return {solution.x(),
+              solution.y(),
+              0,
+              ctx->solver.lastInterest(),
+              ctx->function->isAlongY(),
+              0};
+    }
+    ++ctx->counter;
+    ctx->reinitSolver();
+  }
+  return PointOfInterest{};
+}
+
 PointOfInterest findPoints(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
   // TODO
-  constexpr PointsOfInterestList::Provider providers[] = {findYIntercept};
+  constexpr PointsOfInterestList::Provider providers[] = {findYIntercept,
+                                                          findRootOrExtremum};
 
   for (; ctx->currentProvider < std::size(providers); ctx->currentProvider++) {
     PointOfInterest p = providers[ctx->currentProvider](ctx);
@@ -234,11 +276,18 @@ API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
   }
 
   ContinuousFunctionStore* store = App::app()->functionStore();
+  Context* context = App::app()->localContext();
 
-  PointSearchContext searchContext{.start = start,
-                                   .end = end,
-                                   .function = store->modelForRecord(m_record),
-                                   .context = App::app()->localContext()};
+  PointSearchContext searchContext{
+      .start = start,
+      .end = end,
+      .function = store->modelForRecord(m_record),
+      .context = context,
+      .solver = {start, end, context},
+      .searchStep = static_cast<float>(
+          Internal::Solver<double>::MaximalStep(m_start - m_end)),
+  };
+  searchContext.reinitSolver();
 
   return PointsOfInterestList::BuildStash(findPoints, &searchContext);
 }

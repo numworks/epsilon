@@ -236,8 +236,7 @@ void TreeStack::execute(ActionWithContext action, void* context,
     ExceptionTry {
       assert(numberOfTrees() == treesNumber);
       action(context, data);
-      // Prevent edition action from leaking: an action create at most one
-      // tree.
+      // Prevent edition action from leaking: an action create at most one tree.
       assert(numberOfTrees() <= treesNumber + 1);
       // Ensure the result tree doesn't exceeds the expected size.
       if (size() - previousSize > maxSize) {

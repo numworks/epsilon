@@ -13,20 +13,22 @@ class Trigonometry final {
     Cosine = 0,
     Sine = 1,
   };
-  static Expression AnglePeriodInAngleUnit(Preferences::AngleUnit angleUnit);
-  static Expression PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit);
-  static bool IsDirectTrigonometryFunction(const Expression& e);
-  static bool IsInverseTrigonometryFunction(const Expression& e);
-  static bool IsAdvancedTrigonometryFunction(const Expression& e);
-  static bool IsInverseAdvancedTrigonometryFunction(const Expression& e);
-  static bool AreInverseFunctions(const Expression& directFunction,
-                                  const Expression& inverseFunction);
+  static UserExpression AnglePeriodInAngleUnit(
+      Preferences::AngleUnit angleUnit);
+  static UserExpression PiExpressionInAngleUnit(
+      Preferences::AngleUnit angleUnit);
+  static bool IsDirectTrigonometryFunction(const UserExpression& e);
+  static bool IsInverseTrigonometryFunction(const UserExpression& e);
+  static bool IsAdvancedTrigonometryFunction(const UserExpression& e);
+  static bool IsInverseAdvancedTrigonometryFunction(const UserExpression& e);
+  static bool AreInverseFunctions(const UserExpression& directFunction,
+                                  const UserExpression& inverseFunction);
   /* Returns a (unreduced) division between pi in each unit, or 1 if the units
    * are the same. */
-  static Expression UnitConversionFactor(Preferences::AngleUnit fromUnit,
-                                         Preferences::AngleUnit toUnit);
-  static bool ExpressionIsEquivalentToTangent(const Expression& e);
-  static bool ExpressionIsEquivalentToInverseOfTangent(const Expression& e);
+  static UserExpression UnitConversionFactor(Preferences::AngleUnit fromUnit,
+                                             Preferences::AngleUnit toUnit);
+  static bool ExpressionIsEquivalentToTangent(const UserExpression& e);
+  static bool ExpressionIsEquivalentToInverseOfTangent(const UserExpression& e);
   // TODO_PCJ: Delete these method
 #if 0
   static Expression ShallowReduceDirectFunction(
@@ -44,11 +46,11 @@ class Trigonometry final {
   /* Turn cos(4) into cos(4rad) if the angle unit is rad and cos(π) into
    * cos(π°) if the angle unit is deg, to notify the user of the current
    * angle unit she is using if she's forgetting to switch the angle unit */
-  static Expression DeepAddAngleUnitToAmbiguousDirectFunctions(
-      Expression& e, Preferences::AngleUnit angleUnit);
+  static UserExpression DeepAddAngleUnitToAmbiguousDirectFunctions(
+      UserExpression& e, Preferences::AngleUnit angleUnit);
 
  private:
-  static bool ExpressionIsTangentOrInverseOfTangent(const Expression& e,
+  static bool ExpressionIsTangentOrInverseOfTangent(const UserExpression& e,
                                                     bool inverse);
 };
 

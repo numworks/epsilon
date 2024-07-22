@@ -44,7 +44,7 @@ namespace Poincare {
 /* The values must be in the order defined in poincare/preferences:
  * Radians / Degrees / Gradians */
 
-Expression Trigonometry::PiExpressionInAngleUnit(
+UserExpression Trigonometry::PiExpressionInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
     case Preferences::AngleUnit::Radian:
@@ -58,37 +58,38 @@ Expression Trigonometry::PiExpressionInAngleUnit(
   }
 }
 
-Expression Trigonometry::AnglePeriodInAngleUnit(
+UserExpression Trigonometry::AnglePeriodInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   return Multiplication::Builder(
       Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
 }
 
-bool Trigonometry::IsDirectTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsDirectTrigonometryFunction(const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
                      ExpressionNode::Type::Tangent});
 }
 
-bool Trigonometry::IsInverseTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseTrigonometryFunction(const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::ArcCosine,
                      ExpressionNode::Type::ArcSine,
                      ExpressionNode::Type::ArcTangent});
 }
 
-bool Trigonometry::IsAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsAdvancedTrigonometryFunction(const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::Secant,
                      ExpressionNode::Type::Cosecant,
                      ExpressionNode::Type::Cotangent});
 }
 
-bool Trigonometry::IsInverseAdvancedTrigonometryFunction(const Expression& e) {
+bool Trigonometry::IsInverseAdvancedTrigonometryFunction(
+    const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::ArcSecant,
                      ExpressionNode::Type::ArcCosecant,
                      ExpressionNode::Type::ArcCotangent});
 }
 
-bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
-                                       const Expression& inverseFunction) {
+bool Trigonometry::AreInverseFunctions(const UserExpression& directFunction,
+                                       const UserExpression& inverseFunction) {
   if (!IsDirectTrigonometryFunction(directFunction)) {
     return false;
   }
@@ -108,8 +109,8 @@ bool Trigonometry::AreInverseFunctions(const Expression& directFunction,
   return inverseFunction.type() == correspondingType;
 }
 
-Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit,
-                                              Preferences::AngleUnit toUnit) {
+UserExpression Trigonometry::UnitConversionFactor(
+    Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
   if (fromUnit == toUnit) {
     // Just an optimisation to gain some time at reduction
     return Rational::Builder(1);
@@ -118,8 +119,8 @@ Expression Trigonometry::UnitConversionFactor(Preferences::AngleUnit fromUnit,
                            PiExpressionInAngleUnit(fromUnit));
 }
 
-bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression& e,
-                                                         bool inverse) {
+bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(
+    const UserExpression& e, bool inverse) {
   // We look for (sin(x) * cos(x)^-1) or (sin(x)^-1 * cos(x))
   assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
   ExpressionNode::Type numeratorType =
@@ -144,12 +145,12 @@ bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression& e,
   return false;
 }
 
-bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression& e) {
+bool Trigonometry::ExpressionIsEquivalentToTangent(const UserExpression& e) {
   return ExpressionIsTangentOrInverseOfTangent(e, false);
 }
 
 bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(
-    const Expression& e) {
+    const UserExpression& e) {
   return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
@@ -653,14 +654,14 @@ Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
 }
 #endif
 
-static Expression AddAngleUnitToDirectFunctionIfNeeded(
-    Expression& e, Preferences::AngleUnit angleUnit) {
+static UserExpression AddAngleUnitToDirectFunctionIfNeeded(
+    UserExpression& e, Preferences::AngleUnit angleUnit) {
   assert(Trigonometry::IsDirectTrigonometryFunction(e) ||
          Trigonometry::IsAdvancedTrigonometryFunction(e));
 
   assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
 
-  Expression child = e.childAtIndex(0);
+  UserExpression child = e.childAtIndex(0);
 
   if (child.isZero()) {
     return e;
@@ -669,7 +670,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
   bool containsPi = false;
   bool containsOtherChildrenThanCombinationOfNumberAndPi =
       child.recursivelyMatches(
-          [](const Expression e, Context* context, void* auxiliary) {
+          [](const UserExpression e, Context* context, void* auxiliary) {
             if (e.tree()->type() == Internal::Type::Pi) {
               bool* containsPi = static_cast<bool*>(auxiliary);
               *containsPi = true;
@@ -701,25 +702,25 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
     return e;
   }
 
-  Expression unit = Unit::Builder(angleUnit);
+  UserExpression unit = Unit::Builder(angleUnit);
   if (child.isOfType({ExpressionNode::Type::Addition,
                       ExpressionNode::Type::Subtraction})) {
     child = Parenthesis::Builder(child);
   }
-  Expression newChild = Multiplication::Builder(child, unit);
+  UserExpression newChild = Multiplication::Builder(child, unit);
   e.replaceChildAtIndexInPlace(0, newChild);
   return e;
 }
 
-Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-    Expression& e, Preferences::AngleUnit angleUnit) {
+UserExpression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    UserExpression& e, Preferences::AngleUnit angleUnit) {
   if (IsDirectTrigonometryFunction(e) || IsAdvancedTrigonometryFunction(e)) {
     e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
     return e;
   }
   int nChildren = e.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    Expression child = e.childAtIndex(i);
+    UserExpression child = e.childAtIndex(i);
     DeepAddAngleUnitToAmbiguousDirectFunctions(child, angleUnit);
   }
   return e;

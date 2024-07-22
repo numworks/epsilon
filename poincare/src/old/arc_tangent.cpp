@@ -25,10 +25,13 @@ size_t ArcTangentNode::serialize(char* buffer, size_t bufferSize,
       ArcTangent::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression ArcTangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  ArcTangent e = ArcTangent(this);
-  return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // ArcTangent e = ArcTangent(this);
+  // return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcTangentNode::derivate(const ReductionContext& reductionContext,

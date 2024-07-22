@@ -1039,6 +1039,8 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
 }
 
 OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
+// TODO_PCJ: Delete this method once every logic has been imported in Poincare
+#if 0
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
   OExpression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
@@ -1082,6 +1084,7 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
     m.addChildAtIndexInPlace(*this, 1, 1);
     return std::move(m);
   }
+#endif
 
   return *this;
 }

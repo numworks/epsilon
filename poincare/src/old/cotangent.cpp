@@ -23,10 +23,13 @@ size_t CotangentNode::serialize(char* buffer, size_t bufferSize,
       Cotangent::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression CotangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  Cotangent e = Cotangent(this);
-  return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // Cotangent e = Cotangent(this);
+  // return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }
 
 }  // namespace Poincare

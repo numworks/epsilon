@@ -23,9 +23,12 @@ size_t SineNode::serialize(char* buffer, size_t bufferSize,
       Sine::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression SineNode::shallowReduce(const ReductionContext& reductionContext) {
-  Sine e = Sine(this);
-  return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // Sine e = Sine(this);
+  // return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool SineNode::derivate(const ReductionContext& reductionContext, Symbol symbol,

@@ -25,11 +25,14 @@ size_t ArcCotangentNode::serialize(char* buffer, size_t bufferSize,
       ArcCotangent::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression ArcCotangentNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  ArcCotangent e = ArcCotangent(this);
-  return Trigonometry::ShallowReduceInverseAdvancedFunction(e,
-                                                            reductionContext);
+  assert(false);
+  return this;
+  // ArcCotangent e = ArcCotangent(this);
+  // return Trigonometry::ShallowReduceInverseAdvancedFunction(e,
+  //                                                           reductionContext);
 }
 
 bool ArcCotangentNode::derivate(const ReductionContext& reductionContext,

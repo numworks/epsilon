@@ -42,18 +42,6 @@ namespace Poincare {
 /* The values must be in the order defined in poincare/preferences:
  * Radians / Degrees / Gradians */
 
-static int PiDivisor(Preferences::AngleUnit angleUnit) {
-  switch (angleUnit) {
-    case Preferences::AngleUnit::Radian:
-      return 1;
-    case Preferences::AngleUnit::Degree:
-      return 180;
-    default:
-      assert(angleUnit == Preferences::AngleUnit::Gradian);
-      return 200;
-  }
-}
-
 Expression Trigonometry::PiExpressionInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
@@ -180,6 +168,20 @@ bool Trigonometry::ExpressionIsEquivalentToTangent(const Expression& e) {
 bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(
     const Expression& e) {
   return ExpressionIsTangentOrInverseOfTangent(e, true);
+}
+
+// TODO_PCJ: Delete these method
+#if 0
+static int PiDivisor(Preferences::AngleUnit angleUnit) {
+  switch (angleUnit) {
+    case Preferences::AngleUnit::Radian:
+      return 1;
+    case Preferences::AngleUnit::Degree:
+      return 180;
+    default:
+      assert(angleUnit == Preferences::AngleUnit::Gradian);
+      return 200;
+  }
 }
 
 Expression Trigonometry::ShallowReduceDirectFunction(
@@ -666,6 +668,7 @@ Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
   e.replaceWithInPlace(result);
   return result;
 }
+#endif
 
 template <typename T>
 std::complex<T> Trigonometry::ConvertToRadian(

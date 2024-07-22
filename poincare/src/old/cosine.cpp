@@ -24,10 +24,13 @@ size_t CosineNode::serialize(char* buffer, size_t bufferSize,
       Cosine::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression CosineNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  Cosine e = Cosine(this);
-  return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // Cosine e = Cosine(this);
+  // return Trigonometry::ShallowReduceDirectFunction(e, reductionContext);
 }
 
 bool CosineNode::derivate(const ReductionContext& reductionContext,

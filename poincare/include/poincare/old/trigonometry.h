@@ -30,6 +30,8 @@ class Trigonometry final {
                                          Preferences::AngleUnit toUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression& e);
   static bool ExpressionIsEquivalentToInverseOfTangent(const Expression& e);
+  // TODO_PCJ: Delete these method
+#if 0
   static Expression ShallowReduceDirectFunction(
       Expression& e, ReductionContext reductionContext);
   static Expression ShallowReduceInverseFunction(
@@ -40,6 +42,7 @@ class Trigonometry final {
       Expression& e, ReductionContext reductionContext);
   static Expression ReplaceWithAdvancedFunction(Expression& e,
                                                 Expression& denominator);
+#endif
 
   template <typename T>
   static std::complex<T> ConvertToRadian(const std::complex<T> c,

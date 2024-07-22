@@ -22,10 +22,13 @@ size_t SecantNode::serialize(char* buffer, size_t bufferSize,
       Secant::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression SecantNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  Secant e = Secant(this);
-  return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // Secant e = Secant(this);
+  // return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
 }
 
 }  // namespace Poincare

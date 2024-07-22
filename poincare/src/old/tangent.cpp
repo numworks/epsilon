@@ -41,19 +41,22 @@ OExpression TangentNode::unaryFunctionDifferential(
   return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
+// TODO_PCJ: Delete this method
 OExpression Tangent::shallowReduce(ReductionContext reductionContext) {
-  OExpression newExpression =
-      Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
-  if (newExpression.otype() == ExpressionNode::Type::Tangent) {
-    Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
-    Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
-    Division d = Division::Builder(s, c);
-    s.shallowReduce(reductionContext);
-    c.shallowReduce(reductionContext);
-    newExpression.replaceWithInPlace(d);
-    return d.shallowReduce(reductionContext);
-  }
-  return newExpression;
+  assert(false);
+  return OExpression();
+  // OExpression newExpression =
+  //     Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
+  // if (newExpression.otype() == ExpressionNode::Type::Tangent) {
+  //   Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
+  //   Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
+  //   Division d = Division::Builder(s, c);
+  //   s.shallowReduce(reductionContext);
+  //   c.shallowReduce(reductionContext);
+  //   newExpression.replaceWithInPlace(d);
+  //   return d.shallowReduce(reductionContext);
+  // }
+  // return newExpression;
 }
 
 bool Tangent::derivate(const ReductionContext& reductionContext, Symbol symbol,

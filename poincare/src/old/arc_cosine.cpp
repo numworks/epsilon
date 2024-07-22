@@ -27,10 +27,13 @@ size_t ArcCosineNode::serialize(char* buffer, size_t bufferSize,
       ArcCosine::s_functionHelper.aliasesList().mainAlias());
 }
 
+// TODO_PCJ: Delete this method
 OExpression ArcCosineNode::shallowReduce(
     const ReductionContext& reductionContext) {
-  ArcCosine e = ArcCosine(this);
-  return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
+  assert(false);
+  return this;
+  // ArcCosine e = ArcCosine(this);
+  // return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
 }
 
 bool ArcCosineNode::derivate(const ReductionContext& reductionContext,

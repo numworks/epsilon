@@ -472,7 +472,7 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
     return result;
   }
   int degree = Polynomial::Degree(poly);
-  if (degree > Polynomial::k_maxPolynomialDegree) {
+  if (degree < 0 || degree > Polynomial::k_maxPolynomialDegree) {
     poly->removeTree();
     symbol->removeTree();
     return nullptr;

@@ -22,24 +22,20 @@ struct PointOfInterest {
 
 class PointsOfInterestList {
  public:
-  PointsOfInterestList() : m_stash(nullptr), m_list{} {}
-
   void init();
   bool isUninitialized() const { return m_list.isUninitialized(); }
-
   int numberOfPoints() const;
   PointOfInterest pointAtIndex(int) const;
+
+  using Provider = PointOfInterest (*)(void*);
+  static API::JuniorPoolHandle BuildStash(Provider, void* providerContext);
+  /* Consume the argument, and steal its children. */
+  bool merge(API::JuniorPoolHandle&);
+
   void sort();
   void filterOutOfBounds(double start, double end);
-  bool stash(PointOfInterest);
-  void dropStash();
-  bool commit();
 
  private:
-  bool isStashEmpty() const { return !m_stash; }
-
-  // FIXME Assess wether it's ok to keep as Tree* or needs to be a TreeRef.
-  Internal::Tree* m_stash;
   API::JuniorPoolHandle m_list;
 };
 

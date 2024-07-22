@@ -5,6 +5,7 @@
 #include <poincare/old/exception_checkpoint.h>
 
 #include <algorithm>
+#include <array>
 
 #include "../app.h"
 
@@ -138,31 +139,111 @@ void PointsOfInterestCache::stripOutOfBounds() {
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
-  bool success;
+  API::JuniorPoolHandle newPoints;
   {
     CircuitBreakerCheckpoint cbcp(Ion::CircuitBreaker::CheckpointType::AnyKey);
     if (!allowUserInterruptions || CircuitBreakerRun(cbcp)) {
       if (m_computedEnd < m_end) {
-        success = computeBetween(
+        newPoints = computeBetween(
             m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
       } else if (m_computedStart > m_start) {
-        success =
+        newPoints =
             computeBetween(std::clamp(m_computedStart - step(), m_start, m_end),
                            m_computedStart);
       }
     } else {
       tidyDownstreamPoolFrom(cbcp.endOfPoolBeforeCheckpoint());
-      m_list.dropStash();
       return false;
     }
   }
-  if (!success || !m_list.commit()) {
+  if (newPoints.isUninitialized() || !m_list.merge(newPoints)) {
     m_interestingPointsOverflowPool = true;
     return false;
   }
   return true;
 }
 
+namespace {
+
+struct PointSearchContext {
+  const float start, end;
+  ExpiringPointer<ContinuousFunction> function;
+  Context* const context;
+
+  size_t currentProvider = 0;
+  int counter = 0;
+  Internal::Solver<double>* solver = nullptr;
+};
+
+PointOfInterest findYIntercept(void* searchContext) {
+  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
+  if (ctx->start < 0.f && 0.f < ctx->end) {
+    int n = ctx->function->numberOfSubCurves();
+    while (ctx->counter < n) {
+      uint8_t subCurve = ctx->counter++;
+      Coordinate2D<double> xy =
+          ctx->function->evaluateXYAtParameter(0., ctx->context, subCurve);
+      if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
+        if (ctx->function->isAlongY()) {
+          xy = Coordinate2D<double>(xy.y(), xy.x());
+        }
+        return {xy.x(),
+                xy.y(),
+                0,
+                Internal::Solver<double>::Interest::YIntercept,
+                ctx->function->isAlongY(),
+                static_cast<uint8_t>(subCurve)};
+      }
+    }
+  }
+  return PointOfInterest{};
+}
+
+PointOfInterest findPoints(void* searchContext) {
+  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
+
+  // TODO
+  constexpr PointsOfInterestList::Provider providers[] = {findYIntercept};
+
+  for (; ctx->currentProvider < std::size(providers); ctx->currentProvider++) {
+    PointOfInterest p = providers[ctx->currentProvider](ctx);
+    if (!p.isUninitialized()) {
+      return p;
+    }
+    ctx->counter = 0;
+  }
+
+  return PointOfInterest{};
+}
+
+}  // namespace
+
+API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
+                                                            float end) {
+  assert(!m_record.isNull());
+  assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
+  assert(!m_list.isUninitialized());
+  assert((end == m_computedStart && start < m_computedStart) ||
+         (start == m_computedEnd && end > m_computedEnd));
+  assert(start >= m_start && end <= m_end);
+
+  if (start < m_computedStart) {
+    m_computedStart = start;
+  } else if (end > m_computedEnd) {
+    m_computedEnd = end;
+  }
+
+  ContinuousFunctionStore* store = App::app()->functionStore();
+
+  PointSearchContext searchContext{.start = start,
+                                   .end = end,
+                                   .function = store->modelForRecord(m_record),
+                                   .context = App::app()->localContext()};
+
+  return PointsOfInterestList::BuildStash(findPoints, &searchContext);
+}
+
+#if 0
 bool PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_record.isNull());
   assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
@@ -281,6 +362,7 @@ bool PointsOfInterestCache::append(double x, double y,
   return m_list.stash({x, y, data, interest, f->isAlongY(),
                        static_cast<uint8_t>(subCurveIndex)});
 }
+#endif
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
     PoolObject* treePoolCursor) const {

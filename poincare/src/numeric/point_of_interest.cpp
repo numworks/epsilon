@@ -43,7 +43,6 @@ void PointsOfInterestList::init() {
 }
 
 int PointsOfInterestList::numberOfPoints() const {
-  assert(isStashEmpty());
   if (m_list.isUninitialized()) {
     return 0;
   }
@@ -53,13 +52,11 @@ int PointsOfInterestList::numberOfPoints() const {
 }
 
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
-  assert(isStashEmpty());
   assert(0 <= i && i < numberOfPoints());
   return pointFromTree(pointAddressInTree(m_list.tree(), i));
 }
 
 void PointsOfInterestList::sort() {
-  assert(isStashEmpty());
   Internal::Tree* editableList = m_list.tree()->cloneTree();
   OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {
@@ -76,7 +73,6 @@ void PointsOfInterestList::sort() {
 }
 
 void PointsOfInterestList::filterOutOfBounds(double start, double end) {
-  assert(isStashEmpty());
   Internal::Tree* editableList = Internal::List::PushEmpty();
   for (const Internal::Tree* child : m_list.tree()->children()) {
     PointOfInterest p = pointFromTree(child);
@@ -87,69 +83,50 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
   m_list = API::JuniorPoolHandle::Builder(editableList);
 }
 
-bool PointsOfInterestList::stash(PointOfInterest p) {
-  Internal::Tree* newPoint;
+API::JuniorPoolHandle PointsOfInterestList::BuildStash(Provider provider,
+                                                       void* providerContext) {
+  Internal::Tree* stash;
   {
     using namespace Internal;
     ExceptionTry {
-      if (isStashEmpty()) {
-        m_stash = Internal::List::PushEmpty();
+      stash = List::PushEmpty();
+      PointOfInterest point;
+      while (!(point = provider(providerContext)).isUninitialized()) {
+        Tree* pointTree =
+            Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
+                point.abscissa, point.ordinate, point.data,
+                static_cast<uint8_t>(point.interest), point.inverted,
+                point.subCurveIndex);
+        NAry::AddChild(stash, pointTree);
       }
-      newPoint = Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
-          p.abscissa, p.ordinate, p.data, static_cast<uint8_t>(p.interest),
-          p.inverted, p.subCurveIndex);
     }
     ExceptionCatch(type) {
       if (type != ExceptionType::TreeStackOverflow) {
         TreeStackCheckpoint::Raise(type);
       }
-      return false;
+      return {};
     }
   }
-  Internal::NAry::AddChild(m_stash, newPoint);
-  return true;
-}
 
-void PointsOfInterestList::dropStash() {
-  if (!isStashEmpty()) {
-    m_stash->removeTree();
-    m_stash = nullptr;
-  }
-}
-
-bool PointsOfInterestList::commit() {
-  if (isStashEmpty()) {
-    return true;
-  }
-
-  /* Move the stash in pool with the main list in a three-steps process, to
-   * properly dance around checkpoints:
-   *   1. move stash in pool in its own object
-   *   2. merge list and stash together in the stack
-   *   3. move the merged list back to the pool for safekeeping
-   * This order ensures that the pool never contains the same data twice, while
-   * also preserving the original list in case of a Raise. */
-
-  API::JuniorPoolHandle pooledStash;
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      pooledStash = API::JuniorPoolHandle::Builder(m_stash);
-      assert(!pooledStash.isUninitialized());
-      m_stash = nullptr;
+      return API::JuniorPoolHandle::Builder(stash);
     } else {
-      dropStash();
-      return false;
+      return {};
     }
   }
-  assert(!pooledStash.isUninitialized());
+}
 
+bool PointsOfInterestList::merge(API::JuniorPoolHandle& stash) {
+  assert(!stash.isUninitialized());
+  // Merge list and stash together in the stack.
   Internal::Tree* stackedList;
   {
     using namespace Internal;
     ExceptionTry {
       stackedList = m_list.tree()->cloneTree();
-      Tree* stackedStash = pooledStash.tree()->cloneTree();
+      Tree* stackedStash = stash.tree()->cloneTree();
       NAry::AddOrMergeChild(stackedList, stackedStash);
     }
     ExceptionCatch(type) {
@@ -159,11 +136,12 @@ bool PointsOfInterestList::commit() {
       return false;
     }
   }
-
-  /* No need for a checkpoint, since the combined pool object is smaller than
-   * both list and stash separate. */
+  assert(stackedList->isList() &&
+         !stackedList->hasChildSatisfying(
+             [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));
+  /* No need for a checkpoint, since the combined pool object is smaller
+   * than both list and stash separate. */
   m_list = API::JuniorPoolHandle::Builder(stackedList);
-
   return true;
 }
 

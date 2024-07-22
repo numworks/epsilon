@@ -16,8 +16,11 @@ const Internal::Tree* pointAddressInTree(const Internal::Tree* t, int i) {
   /* The list is supposed to only contain PointOfInterestNodes, take advantage
    * of this to fetch the child with pointer arithmetic instead of walking the
    * tree. */
-  return t->nextNode() + i * Internal::TypeBlock::NumberOfMetaBlocks(
-                                 Internal::Type::PointOfInterest);
+  const Internal::Tree* result =
+      t->nextNode() + i * Internal::TypeBlock::NumberOfMetaBlocks(
+                              Internal::Type::PointOfInterest);
+  assert(result == t->child(i));
+  return result;
 }
 
 Internal::Tree* pointAddressInTree(Internal::Tree* t, int i) {

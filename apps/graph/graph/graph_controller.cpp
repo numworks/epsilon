@@ -179,23 +179,11 @@ Range2D<float> GraphController::optimalRange(
        * FIXME For simplicity's sake, only the first piecewise operator will
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
-      SystemFunction p;
-      NewExpression::ExpressionTestAuxiliary yieldPiecewise =
-          [](const NewExpression e, Context*, void* auxiliary) {
-            if (e.type() == ExpressionNode::Type::PiecewiseOperator) {
-              *static_cast<NewExpression*>(auxiliary) = e;
-              return true;
-            } else {
-              return false;
-            }
-          };
-      if (f->expressionApproximated(context).recursivelyMatches(
-              yieldPiecewise, context,
-              SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-              &p)) {
-        assert(!p.isUninitialized() &&
-               p.type() == ExpressionNode::Type::PiecewiseOperator);
-        zoom.fitConditions(f->expressionApproximated(context), evaluator<float>,
+      const Internal::Tree* piecewise =
+          f->expressionApproximated(context).tree()->hasDescendantSatisfying(
+              [](const Internal::Tree* t) { return t->isPiecewise(); });
+      if (piecewise) {
+        zoom.fitConditions(SystemFunction::Builder(piecewise), evaluator<float>,
                            f.operator->(), alongY);
       }
 

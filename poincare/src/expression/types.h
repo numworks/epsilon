@@ -112,6 +112,49 @@ NODE(RandIntNoRep, 3, { uint8_t seed; })
 
 RANGE(Randomized, Random, RandIntNoRep)
 
+NODE(Cos, 1)
+NODE(Tan, 1)
+NODE(Sin, 1)
+// Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
+NODE(Trig, 2)
+
+RANGE(DirectTrigonometryFunction, Cos, Trig)
+
+NODE(ACos, 1)
+NODE(ATan, 1)
+NODE(ASin, 1)
+NODE(ATrig, 2)
+NODE(ATanRad, 1)
+
+RANGE(IndirectTrigonometryFunction, ACos, ATanRad)
+RANGE(TrigonometryFunction, Cos, ATanRad)
+
+NODE(Sec, 1)
+NODE(Csc, 1)
+NODE(Cot, 1)
+
+RANGE(DirectAdvancedTrigonometryFunction, Sec, Cot)
+
+NODE(ASec, 1)
+NODE(ACsc, 1)
+NODE(ACot, 1)
+
+RANGE(IndirectAdvancedTrigonometryFunction, ASec, ACot)
+RANGE(AdvancedTrigonometryFunction, Sec, ACot)
+
+NODE(CosH, 1)
+NODE(SinH, 1)
+NODE(TanH, 1)
+
+RANGE(DirectHyperbolicTrigonometryFunction, CosH, TanH)
+
+NODE(ArCosH, 1)
+NODE(ArSinH, 1)
+NODE(ArTanH, 1)
+
+RANGE(IndirectHyperbolicTrigonometryFunction, ArCosH, ArTanH)
+RANGE(HyperbolicTrigonometryFunction, CosH, ArTanH)
+
 // Ln(value)
 NODE(Ln, 1)
 // LnReal(value)
@@ -126,22 +169,11 @@ RANGE(Logarithm, Ln, LogBase)
 // 3 - Other expressions in Alphabetic order
 
 NODE(Abs, 1)
-NODE(ACos, 1)
-NODE(ACot, 1)
-NODE(ACsc, 1)
-NODE(ASec, 1)
-NODE(ASin, 1)
-NODE(ATan, 1)
-NODE(ATanRad, 1)
-NODE(ATrig, 2)
 NODE(Binomial, 2)
 NODE(Ceil, 1)
 NODE(ComplexI)
 NODE(Arg, 1)
 NODE(Conj, 1)
-NODE(Csc, 1)
-NODE(Cos, 1)
-NODE(Cot, 1)
 // Decimal(Value, -Exponent)
 NODE(Decimal, 2)
 NODE(Distribution, NARY, {
@@ -155,12 +187,6 @@ NODE(Factor, 1)
 NODE(Floor, 1)
 NODE(Frac, 1)
 NODE(GCD, NARY)
-NODE(ArCosH, 1)
-NODE(ArSinH, 1)
-NODE(ArTanH, 1)
-NODE(CosH, 1)
-NODE(SinH, 1)
-NODE(TanH, 1)
 NODE(Im, 1)
 NODE(Inf)
 NODE(LCM, NARY)
@@ -186,15 +212,10 @@ NODE(Quo, 2)
 NODE(Re, 1)
 NODE(Rem, 2)
 NODE(Round, 2)
-NODE(Sec, 1)
 NODE(Sign, 1)
-NODE(Sin, 1)
 NODE(Sqrt, 1)
 NODE(Root, 2)
 NODE(Sub, 2)
-NODE(Tan, 1)
-// Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
-NODE(Trig, 2)
 NODE(TrigDiff, 2)
 NODE(Var, 0, {
   uint8_t id;

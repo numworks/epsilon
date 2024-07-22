@@ -97,7 +97,8 @@ class Approximation final {
   template <typename T>
   static bool ToBoolean(const Tree* e);
 
-  // tree must be of list dimension.
+  /* tree must be of list dimension.
+  The returned tree is either a list of scalars or a list of points. */
   template <typename T>
   static Tree* ToList(const Tree* e);
 

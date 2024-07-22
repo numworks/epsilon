@@ -1046,12 +1046,17 @@ bool Approximation::ToBoolean(const Tree* e) {
 
 template <typename T>
 Tree* Approximation::ToList(const Tree* e) {
+  Dimension dimension = Dimension::Get(e);
   int length = Dimension::ListLength(e);
   int old = s_context->m_listElement;
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
-    ToBeautifiedComplex<T>(e);
+    if (dimension.isPoint()) {
+      ToPoint<T>(e);
+    } else {
+      ToBeautifiedComplex<T>(e);
+    }
   }
   s_context->m_listElement = old;
   return list;

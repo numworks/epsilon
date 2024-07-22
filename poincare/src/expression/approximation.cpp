@@ -1203,6 +1203,7 @@ Tree* Approximation::ToMatrix(const Tree* e) {
 
 template <typename T>
 const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
+  assert(piecewise->isPiecewise());
   int n = piecewise->numberOfChildren();
   int i = 0;
   const Tree* child = piecewise->child(0);
@@ -1224,6 +1225,7 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise) {
 template <typename T>
 int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(!s_context);
+  assert(piecewise->isPiecewise());
   Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
   s_context = &context;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise);

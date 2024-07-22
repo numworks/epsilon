@@ -22,7 +22,7 @@ static UserExpression enhancePushedExpression(UserExpression expression) {
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
   if (!Preferences::SharedPreferences()->examMode().forbidUnits()) {
-    expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
         expression, Preferences::SharedPreferences()->angleUnit());
   }
   return expression;

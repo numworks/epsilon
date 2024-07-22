@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <omg/float.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arc_cosine.h>
 #include <poincare/old/arc_sine.h>
@@ -34,7 +35,9 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/unit_representatives.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 
 #include <cmath>
@@ -654,76 +657,75 @@ Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
 }
 #endif
 
-static UserExpression AddAngleUnitToDirectFunctionIfNeeded(
-    UserExpression& e, Preferences::AngleUnit angleUnit) {
-  assert(Trigonometry::IsDirectTrigonometryFunction(e) ||
-         Trigonometry::IsAdvancedTrigonometryFunction(e));
+static void AddAngleUnitToDirectFunctionIfNeeded(
+    Internal::Tree* e, Preferences::AngleUnit angleUnit) {
+  assert(e->isDirectTrigonometryFunction() ||
+         e->isAdvancedTrigonometryFunction());
 
-  assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
+  Internal::Tree* child = e->child(0);
 
-  UserExpression child = e.childAtIndex(0);
-
-  if (child.isZero()) {
-    return e;
+  if (child->isZero()) {
+    return;
   }
 
-  bool containsPi = false;
-  bool containsOtherChildrenThanCombinationOfNumberAndPi =
-      child.recursivelyMatches(
-          [](const UserExpression e, Context* context, void* auxiliary) {
-            if (e.tree()->type() == Internal::Type::Pi) {
-              bool* containsPi = static_cast<bool*>(auxiliary);
-              *containsPi = true;
-              return OMG::Troolean::False;
-            }
-            if (e.isNumber()) {
-              return OMG::Troolean::False;
-            }
-            if (e.isOfType({ExpressionNode::Type::Addition,
-                            ExpressionNode::Type::Subtraction,
-                            ExpressionNode::Type::Multiplication,
-                            ExpressionNode::Type::Division,
-                            ExpressionNode::Type::Power})) {
-              return OMG::Troolean::Unknown;
-            }
-            // Stop search if the expression is not one of the above
-            return OMG::Troolean::True;
-          },
-          nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
-          static_cast<void*>(&containsPi));
-
-  if (containsOtherChildrenThanCombinationOfNumberAndPi) {
-    return e;
+  if (child->hasDescendantSatisfying([](const Internal::Tree* e) {
+        switch (e->type()) {
+          case Internal::Type::Pi:
+          case Internal::Type::Add:
+          case Internal::Type::Sub:
+          case Internal::Type::Mult:
+          case Internal::Type::Div:
+          case Internal::Type::Pow:
+            return false;
+          default:
+            return !e->isNumber();
+        }
+      })) {
+    return;
   }
 
-  if (containsPi == (angleUnit == Preferences::AngleUnit::Radian)) {
+  if ((angleUnit == Preferences::AngleUnit::Radian) ==
+      child->hasDescendantSatisfying(
+          [](const Internal::Tree* e) { return e->isPi(); })) {
     /* Do not add angle units if the child contains Pi and the angle is in Rad
      * or if the child does not contain Pi and the angle unit is other. */
-    return e;
+    return;
   }
 
-  UserExpression unit = Unit::Builder(angleUnit);
-  if (child.isOfType({ExpressionNode::Type::Addition,
-                      ExpressionNode::Type::Subtraction})) {
-    child = Parenthesis::Builder(child);
+  if (child->isAdd() || child->isSub()) {
+    child->cloneNodeAtNode(KParentheses);
   }
-  UserExpression newChild = Multiplication::Builder(child, unit);
-  e.replaceChildAtIndexInPlace(0, newChild);
-  return e;
+
+  Internal::TreeRef unit = Internal::Units::Unit::Push(
+      angleUnit == Preferences::AngleUnit::Radian
+          ? &Internal::Units::Angle::representatives.radian
+      : angleUnit == Preferences::AngleUnit::Degree
+          ? &Internal::Units::Angle::representatives.degree
+          : &Internal::Units::Angle::representatives.gradian,
+      Internal::Units::Prefix::EmptyPrefix());
+
+  child->moveTreeOverTree(Internal::PatternMatching::Create(
+      KMult(KA, KB), {.KA = child, .KB = unit}));
+  unit->removeTree();
 }
 
-UserExpression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+void PrivateDeepAddAngleUnitToAmbiguousDirectFunctions(
+    Internal::Tree* e, Preferences::AngleUnit angleUnit) {
+  if (e->isDirectTrigonometryFunction() ||
+      e->isDirectAdvancedTrigonometryFunction()) {
+    return AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
+  }
+  for (Internal::Tree* child : e->children()) {
+    PrivateDeepAddAngleUnitToAmbiguousDirectFunctions(child, angleUnit);
+  }
+}
+
+void Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     UserExpression& e, Preferences::AngleUnit angleUnit) {
-  if (IsDirectTrigonometryFunction(e) || IsAdvancedTrigonometryFunction(e)) {
-    e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
-    return e;
-  }
-  int nChildren = e.numberOfChildren();
-  for (int i = 0; i < nChildren; i++) {
-    UserExpression child = e.childAtIndex(i);
-    DeepAddAngleUnitToAmbiguousDirectFunctions(child, angleUnit);
-  }
-  return e;
+  Internal::Tree* clone = e.tree()->cloneTree();
+  PrivateDeepAddAngleUnitToAmbiguousDirectFunctions(clone, angleUnit);
+  e = UserExpression::Builder(clone);
+  return;
 }
 
 }  // namespace Poincare

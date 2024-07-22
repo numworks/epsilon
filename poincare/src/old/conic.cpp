@@ -5,8 +5,8 @@
 #include <poincare/old/multiplication.h>
 #include <poincare/old/polynomial.h>
 #include <poincare/old/power.h>
-#include <poincare/old/trigonometry.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/trigonometry.h>
 
 #include <algorithm>
 
@@ -446,14 +446,16 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 
   /* Detect the pattern r = cos/sin(theta)
    * TODO: Detect r=cos(theta)+2sin(theta) */
+#if 0  // TODO_PCJ
   double coefBeforeTheta;
-  if (Trigonometry::DetectLinearPatternOfCosOrSin(
-          reducedExpression, reductionContext, theta, false, nullptr,
-          &coefBeforeTheta) &&
+  if (Trigonometry::DetectLinearPatternOfTrig(
+          reducedExpression, context, theta, nullptr,
+          &coefBeforeTheta, false) &&
       coefBeforeTheta == 1.0) {
     m_shape = Shape::Circle;
     return;
   }
+#endif
 
   // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
   Expression numerator, denominator;
@@ -478,15 +480,17 @@ PolarConic::PolarConic(const Expression& e, Context* context,
   }
 
   // Check that the denominator is of the form a+b+c+k*cos(theta + p)
+#if 0  // TODO_PCJ
   double coefficientBeforeCos;
   double coefficientBeforeTheta;
-  if (!Trigonometry::DetectLinearPatternOfCosOrSin(
-          denominator, reductionContext, theta, true, &coefficientBeforeCos,
-          &coefficientBeforeTheta) ||
+  if (!Trigonometry::DetectLinearPatternOfTrig(
+          denominator, context, theta, &coefficientBeforeCos,
+          &coefficientBeforeTheta, true) ||
       coefficientBeforeTheta != 1.0) {
     m_shape = Shape::Undefined;
     return;
   }
+#endif
 
   /* Denominator can be of the form a+b*cos(theta) and needs to be turned
    * into 1 + (b/a)*cos(theta) */
@@ -510,6 +514,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
     }
   }
 
+#if 0  // TODO_PCJ
   // All theta terms should have been removed
   assert(denominator.polynomialDegree(context, theta) == 0);
   ApproximationContext approximationContext(reductionContext);
@@ -526,6 +531,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
     assert(std::isnan(absValueCoefficient));
     m_shape = Shape::Undefined;
   }
+#endif
 }
 
 ParametricConic::ParametricConic(const Expression& e, Context* context,
@@ -586,13 +592,15 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
    * Hyperbola: (x , y) = (A*sec(B*t+C)+D , G*tan(B*t+E)+F)
    * */
 
+#if 0  // TODO_PCJ
+
   // Detect if x(t) = a*cos(b*t+c)+d, same for y(t)
   double xCoefficientBeforeCos;
   double xCoefficientBeforeSymbol;
   double xAngle;
-  if (!Trigonometry::DetectLinearPatternOfCosOrSin(
-          xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos,
-          &xCoefficientBeforeSymbol, &xAngle)) {
+  if (!Trigonometry::DetectLinearPatternOfTrig(
+          xOfT, context, symbol, &xCoefficientBeforeCos,
+          &xCoefficientBeforeSymbol, &xAngle, true)) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -600,9 +608,9 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
   double yCoefficientBeforeCos;
   double yCoefficientBeforeSymbol;
   double yAngle;
-  if (!Trigonometry::DetectLinearPatternOfCosOrSin(
-          yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos,
-          &yCoefficientBeforeSymbol, &yAngle)) {
+  if (!Trigonometry::DetectLinearPatternOfTrig(
+          yOfT, context, symbol, &yCoefficientBeforeCos,
+          &yCoefficientBeforeSymbol, &yAngle, true)) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -618,6 +626,7 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
       return;
     }
   }
+#endif
   m_shape = Shape::Undefined;
 }
 

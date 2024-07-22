@@ -1145,9 +1145,9 @@ void assert_is_linear_pattern_of_sin_or_cos(
   double computedCoefBeforeSymbol;
   double computedAngle;
   quiz_assert_print_if_failure(
-      Trigonometry::DetectLinearPatternOfCosOrSin(
-          e, reductionContext, symbol, acceptAddition, &computedCoefBeforeCos,
-          &computedCoefBeforeSymbol, &computedAngle),
+      Trigonometry::DetectLinearPatternOfTrig(
+          e, &context, symbol, &computedCoefBeforeCos,
+          &computedCoefBeforeSymbol, &computedAngle, acceptAddition),
       expression);
   quiz_assert_print_if_failure(computedCoefBeforeCos == coefficientBeforeCos,
                                expression);

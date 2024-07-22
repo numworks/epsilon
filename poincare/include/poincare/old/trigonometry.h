@@ -47,22 +47,6 @@ class Trigonometry final {
   static std::complex<T> ConvertRadianToAngleUnit(
       const std::complex<T> c, Preferences::AngleUnit angleUnit);
 
-  /* Detect if expression is of the form A*cosOrSin(Bx+C) + K
-   * The return coefficient is A.
-   * The returned angle is the value between 0 and 2pi such as the expression
-   * is of the form A*cos(Bx+angle) + K
-   * K can be non-null only if acceptAddition = true
-   *
-   * TODO: This function is very specific and used only in poincare/conic.cpp
-   * and shared/continuous_function_properties.cpp to detect some precise
-   * function patterns. It needs a refactor and could maybe be factorized with
-   * OExpression::isLinearCombinationOfFunction */
-  static bool DetectLinearPatternOfCosOrSin(
-      const OExpression& e, ReductionContext reductionContext,
-      const char* symbol, bool acceptConstantTerm,
-      double* coefficientBeforeCos = nullptr,
-      double* coefficientBeforeSymbol = nullptr, double* angle = nullptr);
-
   /* Turn cos(4) into cos(4rad) if the angle unit is rad and cos(π) into
    * cos(π°) if the angle unit is deg, to notify the user of the current
    * angle unit she is using if she's forgetting to switch the angle unit */

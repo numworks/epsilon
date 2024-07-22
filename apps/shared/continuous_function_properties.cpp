@@ -6,7 +6,7 @@
 #include <poincare/old/division.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
-#include <poincare/old/trigonometry.h>
+#include <poincare/src/expression/trigonometry.h>
 
 #include "continuous_function.h"
 
@@ -513,9 +513,9 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
        numerator.polynomialDegree(reductionContext.context(),
                                   Function::k_unknownName) == 0) &&
       !denominator.isUninitialized() &&
-      Trigonometry::DetectLinearPatternOfCosOrSin(
-          denominator, reductionContext, Function::k_unknownName, false,
-          nullptr, &coefficientBeforeTheta, &angle) &&
+      Poincare::Internal::Trigonometry::DetectLinearPatternOfTrig(
+          denominator, context, Function::k_unknownName, nullptr,
+          &coefficientBeforeTheta, &angle, false) &&
       std::abs(coefficientBeforeTheta) == 1.0) {
     double positiveAngle = std::fabs(angle);
     if (positiveAngle == 0.0 || positiveAngle == M_PI) {

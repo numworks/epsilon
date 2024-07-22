@@ -1,11 +1,15 @@
 #include "trigonometry.h"
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "degree.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "number.h"
 #include "order.h"
+#include "polynomial.h"
+#include "projection.h"
 #include "rational.h"
 #include "systematic_reduction.h"
 
@@ -433,5 +437,95 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
 
 /* TODO: Maybe expand arccos(x) = π/2 - arcsin(x).
  * Beware of infinite expansion. */
+
+// Detect a·cos(b·x+c) + k
+bool Trigonometry::DetectLinearPatternOfTrig(const Tree* e,
+                                             Poincare::Context* context,
+                                             const char* symbol, double* a,
+                                             double* b, double* c,
+                                             bool acceptConstantTerm) {
+  // TODO_PCJ: Trees need to be projected (for approx, and because we look for
+  // Trig nodes)
+  // e.getSystemFunction(Shared::Function::k_unknownName); // plus haut ? (vu
+  // qu'on a déjà le precomputed funtion symbol)
+
+  assert(a && b && c);
+  ProjectionContext projectionContext = {.m_context = context};
+
+  // Detect a·cos(b·x+c) + d·cos(b·x+c) + k
+  if (e->isAdd()) {
+    *a = 0.0;
+    bool cosFound = false;
+    for (const Tree* child : e->children()) {
+      double tempA, tempB, tempC;
+      if (!DetectLinearPatternOfTrig(child, context, symbol, &tempA, &tempB,
+                                     &tempC, acceptConstantTerm)) {
+        if (acceptConstantTerm &&
+            Degree::Get(child, symbol, projectionContext) == 0) {
+          continue;
+        }
+        return false;
+      }
+      if (cosFound) {
+        if (tempB != *b || tempC != *c) {
+          return false;
+        }
+      } else {
+        cosFound = true;
+        *b = tempB;
+        *c = tempC;
+      }
+      *a += tempA;
+    }
+    return cosFound;
+  }
+
+  // Detect a·trig(b·x+c)
+  if (e->isMult()) {
+    assert(e->numberOfChildren() > 1);
+    int indexOfCos = -1;
+    for (IndexedChild<const Tree*> child : e->indexedChildren()) {
+      if (DetectLinearPatternOfTrig(child, context, symbol, a, b, c, false)) {
+        indexOfCos = child.index;
+        break;
+      }
+    }
+    if (indexOfCos < 0) {
+      return false;
+    }
+    Tree* eWithoutCos = e->cloneTree();
+    NAry::RemoveChildAtIndex(eWithoutCos, indexOfCos);
+    if (Degree::Get(eWithoutCos, symbol, projectionContext) != 0) {
+      return false;
+    }
+    *a *= Approximation::To<double>(eWithoutCos);
+    return true;
+  }
+
+  // Detect trig(b·x+c)
+  if (e->isTrig()) {
+    const Tree* child = e->child(0);
+    int type = Integer::Handler(child->nextTree()).to<uint8_t>();
+    if (Degree::Get(child, symbol, projectionContext) != 1) {
+      return false;
+    }
+
+    Tree* coefList = PolynomialParser::GetCoefficients(child, symbol);
+    assert(coefList->numberOfChildren() == 2);
+    // b·x+c
+    Tree* bTree = coefList->child(0);
+    Tree* cTree = bTree->nextTree();
+    assert(bTree && cTree);
+
+    *a = type <= 1 ? 1.0 : -1.0;
+    *b = Approximation::To<double>(bTree);
+    *c = Approximation::To<double>(cTree) - (type % 2 == 1) * M_PI_2;
+    *c = std::fmod(*c, 2 * M_PI);
+    coefList->removeTree();
+    return true;
+  }
+
+  return false;
+}
 
 }  // namespace Poincare::Internal

@@ -199,6 +199,7 @@ $(addprefix expression/, \
   division.cpp \
   equation_solver.cpp \
   float_helper.cpp \
+  function_properties.cpp \
   infinity.cpp \
   integer.cpp \
   integer_serialization.cpp \

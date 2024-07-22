@@ -6,6 +6,7 @@
 #include <poincare/old/division.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
+#include <poincare/src/expression/function_properties.h>
 #include <poincare/src/expression/trigonometry.h>
 
 #include "continuous_function.h"
@@ -487,47 +488,32 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 
   setCurveParameterType(CurveParameterType::Polar);
 
-  /* Detect polar lines
-   * 1/sinOrCos(theta + B) --> Line
-   * 1/cos(theta) --> Vertical line
-   * 1/cos(theta + pi/2) --> Horizontal line
-   */
-  ReductionContext reductionContext =
-      ReductionContext::DefaultReductionContextForAnalysis(context);
-  SystemExpression denominator, numerator;
-  if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
-#if 0  // TODO_PCJ
-    static_cast<const Multiplication&>(analyzedExpression)
-        .splitIntoNormalForm(numerator, denominator, reductionContext);
-#else
-    assert(false);
-#endif
-  } else if (analyzedExpression.type() == ExpressionNode::Type::Power &&
-             analyzedExpression.childAtIndex(1).isMinusOne()) {
-    denominator = analyzedExpression.childAtIndex(0);
-  }
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = Internal::ComplexFormat::Cartesian,
+      .m_angleUnit = Internal::AngleUnit::Radian,
+      .m_unitFormat = Internal::UnitFormat::Metric,
+      .m_symbolic =
+          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = context,
+      .m_unitDisplay = Internal::UnitDisplay::None,
+  };
 
-  double angle = 0.0;
-  double coefficientBeforeTheta = 1.0;
-  if ((numerator.isUninitialized() ||
-       numerator.polynomialDegree(reductionContext.context(),
-                                  Function::k_unknownName) == 0) &&
-      !denominator.isUninitialized() &&
-      Poincare::Internal::Trigonometry::DetectLinearPatternOfTrig(
-          denominator, context, Function::k_unknownName, nullptr,
-          &coefficientBeforeTheta, &angle, false) &&
-      std::abs(coefficientBeforeTheta) == 1.0) {
-    double positiveAngle = std::fabs(angle);
-    if (positiveAngle == 0.0 || positiveAngle == M_PI) {
+  // Detect polar lines
+  Internal::FunctionProperties::LineType lineType =
+      Internal::FunctionProperties::PolarLineType(
+          analyzedExpression, Function::k_unknownName, projectionContext);
+  switch (lineType) {
+    case Internal::FunctionProperties::LineType::Vertical:
       setCaption(I18n::Message::PolarVerticalLineType);
       return;
-    }
-    if (positiveAngle == M_PI_2 || positiveAngle == M_PI + M_PI_2) {
+    case Internal::FunctionProperties::LineType::Horizontal:
       setCaption(I18n::Message::PolarHorizontalLineType);
       return;
-    }
-    setCaption(I18n::Message::PolarLineType);
-    return;
+    case Internal::FunctionProperties::LineType::Diagonal:
+      setCaption(I18n::Message::PolarLineType);
+      return;
+    default:
+      assert(lineType == Internal::FunctionProperties::LineType::None);
   }
 
   // Detect polar conics

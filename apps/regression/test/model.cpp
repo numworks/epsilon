@@ -3,8 +3,8 @@
 #include <apps/shared/global_context.h>
 #include <apps/shared/store_context.h>
 #include <assert.h>
+#include <poincare/new_trigonometry.h>
 #include <poincare/old/helpers.h>
-#include <poincare/old/trigonometry.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -398,8 +398,8 @@ void assert_trigonometric_regression_is(
   for (int i = 0; i < 3; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
     Poincare::Preferences::SharedPreferences()->setAngleUnit(unit);
-    double unitFactor = Trigonometry::PiInAngleUnit(unit) /
-                        Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
+    double unitFactor = NewTrigonometry::PiInAngleUnit(unit) /
+                        NewTrigonometry::PiInAngleUnit(trueCoeffcientsUnit);
     // True coefficients b and c are converted to the tested angle unit
     double coefficientsUnit[] = {
         trueCoefficients[0], trueCoefficients[1] * unitFactor,

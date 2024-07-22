@@ -1,6 +1,7 @@
 _sources_poincare_minimal := $(addprefix src/, \
   api.cpp \
   init.cpp \
+  new_trigonometry.cpp \
   preferences.cpp \
   print_float.cpp \
   old/helpers.cpp \

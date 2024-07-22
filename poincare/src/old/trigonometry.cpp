@@ -56,25 +56,6 @@ Expression Trigonometry::PiExpressionInAngleUnit(
   }
 }
 
-double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
-  switch (angleUnit) {
-    case Preferences::AngleUnit::Radian:
-      return M_PI;
-    case Preferences::AngleUnit::Degree:
-      return 180.0;
-    default:
-      assert(angleUnit == Preferences::AngleUnit::Gradian);
-      return 200.0;
-  }
-}
-
-double Trigonometry::ConvertAngleToRadian(double angle,
-                                          Preferences::AngleUnit angleUnit) {
-  return angleUnit != Preferences::AngleUnit::Radian
-             ? angle * M_PI / Trigonometry::PiInAngleUnit(angleUnit)
-             : angle;
-}
-
 Expression Trigonometry::AnglePeriodInAngleUnit(
     Preferences::AngleUnit angleUnit) {
   return Multiplication::Builder(
@@ -670,26 +651,6 @@ Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
 }
 #endif
 
-template <typename T>
-std::complex<T> Trigonometry::ConvertToRadian(
-    const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (angleUnit != Preferences::AngleUnit::Radian) {
-    return c *
-           std::complex<T>((T)M_PI / (T)Trigonometry::PiInAngleUnit(angleUnit));
-  }
-  return c;
-}
-
-template <typename T>
-std::complex<T> Trigonometry::ConvertRadianToAngleUnit(
-    const std::complex<T> c, Preferences::AngleUnit angleUnit) {
-  if (angleUnit != Preferences::AngleUnit::Radian) {
-    return c *
-           std::complex<T>((T)Trigonometry::PiInAngleUnit(angleUnit) / (T)M_PI);
-  }
-  return c;
-}
-
 static Expression AddAngleUnitToDirectFunctionIfNeeded(
     Expression& e, Preferences::AngleUnit angleUnit) {
   assert(Trigonometry::IsDirectTrigonometryFunction(e) ||
@@ -764,14 +725,5 @@ Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
   }
   return e;
 }
-
-template std::complex<float> Trigonometry::ConvertToRadian<float>(
-    std::complex<float>, Preferences::AngleUnit);
-template std::complex<double> Trigonometry::ConvertToRadian<double>(
-    std::complex<double>, Preferences::AngleUnit);
-template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(
-    std::complex<float>, Preferences::AngleUnit);
-template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(
-    std::complex<double>, Preferences::AngleUnit);
 
 }  // namespace Poincare

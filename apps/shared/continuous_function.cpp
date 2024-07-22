@@ -4,6 +4,7 @@
 #include <escher/palette.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/cosine.h>
@@ -20,7 +21,6 @@
 #include <poincare/old/sine.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/symbol_abstract.h>
-#include <poincare/old/trigonometry.h>
 #include <poincare/old/undefined.h>
 #include <poincare/print.h>
 
@@ -445,7 +445,7 @@ float ContinuousFunction::autoTMax() const {
              ? INFINITY
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
-                    : 2.f * Trigonometry::PiInAngleUnit(
+                    : 2.f * NewTrigonometry::PiInAngleUnit(
                                 Preferences::SharedPreferences()->angleUnit()));
 }
 
@@ -511,7 +511,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   assert(thisProperties.isPolar() || thisProperties.isInversePolar());
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
   const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
-                  Trigonometry::PiInAngleUnit(
+                  NewTrigonometry::PiInAngleUnit(
                       Poincare::Preferences::SharedPreferences()->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }

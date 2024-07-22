@@ -4,6 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
 #include <poincare/layout.h>
+#include <poincare/new_trigonometry.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
@@ -105,7 +106,7 @@ void VectorListController::computeAdditionalResults(
   }
   m_model.setVector(xApproximation, yApproximation);
   angleApproximation =
-      Trigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
+      NewTrigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
   m_model.setAngle(angleApproximation);
   setShowIllustration(true);
 }

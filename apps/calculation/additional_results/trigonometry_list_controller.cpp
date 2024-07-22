@@ -110,23 +110,26 @@ void TrigonometryListController::computeAdditionalResults(
   Expression exactAngleWithUnit =
       Multiplication::Builder(exactAngle.clone(), Unit::Builder(angleUnit()));
 
-  Expression radians = Unit::Builder(Preferences::AngleUnit::Radian);
+  UserExpression radianExpr = Unit::Builder(Preferences::AngleUnit::Radian);
+  UserExpression degreeExpr = Unit::Builder(Preferences::AngleUnit::Degree);
   m_exactLayouts[index] = getExactLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), radians), &ctx);
-
-  Expression degrees = Unit::Builder(Preferences::AngleUnit::Degree);
+      UserExpression::Create(KUnitConversion(KA, KB),
+                             {.KA = exactAngleWithUnit, .KB = radianExpr}),
+      &ctx);
   m_approximatedLayouts[index] = getExactLayoutFromExpression(
-      UnitConvert::Builder(exactAngleWithUnit.clone(), degrees), &ctx);
+      UserExpression::Create(KUnitConversion(KA, KB),
+                             {.KA = exactAngleWithUnit, .KB = degreeExpr}),
+      &ctx);
 
-  Expression theta = Symbol::Builder(k_symbol);
-  setLineAtIndex(++index, Cosine::Builder(theta),
-                 Cosine::Builder(exactAngle.clone()), &ctx);
+  constexpr KTree k_symbol = "θ"_e;
+  setLineAtIndex(++index, UserExpression::Create(KCos(k_symbol), {}),
+                 UserExpression::Create(KCos(KA), {.KA = exactAngle}), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
-  setLineAtIndex(++index, Sine::Builder(theta),
-                 Sine::Builder(exactAngle.clone()), &ctx);
+  setLineAtIndex(++index, UserExpression::Create(KSin(k_symbol), {}),
+                 UserExpression::Create(KSin(KA), {.KA = exactAngle}), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
-  setLineAtIndex(++index, Tangent::Builder(theta),
-                 Tangent::Builder(exactAngle.clone()), &ctx);
+  setLineAtIndex(++index, UserExpression::Create(KTan(k_symbol), {}),
+                 UserExpression::Create(KTan(KA), {.KA = exactAngle}), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration

@@ -668,17 +668,19 @@ int SystemExpression::getPolynomialReducedCoefficients(
   if (!coefList) {
     return -1;
   }
-  int degree = coefList->numberOfChildren() - 1;
+  int nChildren = coefList->numberOfChildren();
+  int degree = nChildren - 1;
   assert(degree >= 0);
-  for (IndexedChild<Tree*> child : coefList->indexedChildren()) {
-    Tree* coef = child->cloneTree();
-    Simplification::ReduceSystem(coef, false);
-    if (!keepDependencies && coef->isDependency()) {
-      coef->moveTreeOverTree(coef->child(0));
+
+  Tree* child = coefList->nextNode();
+  for (int i = 0; i < nChildren; i++) {
+    Simplification::ReduceSystem(child, false);
+    if (!keepDependencies && child->isDependency()) {
+      child->moveTreeOverTree(child->child(0));
     }
-    coefficients[degree - child.index] = Builder(coef);
+    coefficients[degree - i] = Builder(child);
   }
-  coefList->removeTree();
+  coefList->removeNode();
   return degree;
 }
 

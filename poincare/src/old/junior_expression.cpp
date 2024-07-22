@@ -674,7 +674,7 @@ int SystemExpression::getPolynomialReducedCoefficients(
     Tree* coef = child->cloneTree();
     Simplification::ReduceSystem(coef, false);
     if (!keepDependencies && coef->isDependency()) {
-      coef = coef->child(0);
+      coef->moveTreeOverTree(coef->child(0));
     }
     coefficients[degree - child.index] = Builder(coef);
   }

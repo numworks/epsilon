@@ -1,4 +1,5 @@
 #include <omg/list.h>
+#include <poincare/k_tree.h>
 #include <poincare/numeric/point_of_interest.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/src/expression/list.h>
@@ -33,6 +34,10 @@ PointOfInterest pointFromTree(const Internal::Tree* t) {
 }
 
 }  // namespace
+
+void PointsOfInterestList::init() {
+  m_list = API::JuniorPoolHandle::Builder(KList());
+}
 
 int PointsOfInterestList::numberOfPoints() const {
   assert(isStashEmpty());

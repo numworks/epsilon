@@ -2,7 +2,6 @@
 #define POINCARE_NUMERIC_POINT_OF_INTEREST_H
 
 #include <poincare/api.h>
-#include <poincare/k_tree.h>
 #include <poincare/numeric/solver.h>
 
 namespace Poincare {
@@ -25,7 +24,7 @@ class PointsOfInterestList {
  public:
   PointsOfInterestList() : m_stash(nullptr), m_list{} {}
 
-  void init() { m_list = API::JuniorPoolHandle::Builder(KList()); }
+  void init();
   bool isUninitialized() const { return m_list.isUninitialized(); }
 
   int numberOfPoints() const;

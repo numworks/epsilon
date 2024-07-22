@@ -167,13 +167,15 @@ namespace {
 
 struct PointSearchContext {
   const float start, end;
-  ExpiringPointer<ContinuousFunction> function;
   Context* const context;
+  ContinuousFunctionStore* const store;
+  const float searchStep;
   Internal::Solver<double> solver;
-  float searchStep;
+  Ion::Storage::Record record;
 
   size_t currentProvider = 0;
   int counter = 0;
+  SystemFunction memoizedOtherFunction;
 
   void reinitSolver() {
     solver = {start, end, context};
@@ -181,25 +183,29 @@ struct PointSearchContext {
     solver.setSearchStep(searchStep);
     solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
   }
+  ExpiringPointer<ContinuousFunction> model() const {
+    return store->modelForRecord(record);
+  }
 };
 
 PointOfInterest findYIntercept(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
   if (ctx->start < 0.f && 0.f < ctx->end) {
-    int n = ctx->function->numberOfSubCurves();
+    ExpiringPointer<ContinuousFunction> f = ctx->model();
+    int n = f->numberOfSubCurves();
     while (ctx->counter < n) {
       uint8_t subCurve = ctx->counter++;
       Coordinate2D<double> xy =
-          ctx->function->evaluateXYAtParameter(0., ctx->context, subCurve);
+          f->evaluateXYAtParameter(0., ctx->context, subCurve);
       if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
-        if (ctx->function->isAlongY()) {
+        if (f->isAlongY()) {
           xy = Coordinate2D<double>(xy.y(), xy.x());
         }
         return {xy.x(),
                 xy.y(),
                 0,
                 Internal::Solver<double>::Interest::YIntercept,
-                ctx->function->isAlongY(),
+                f->isAlongY(),
                 static_cast<uint8_t>(subCurve)};
       }
     }
@@ -210,6 +216,7 @@ PointOfInterest findYIntercept(void* searchContext) {
 PointOfInterest findRootOrExtremum(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
+  ExpiringPointer<ContinuousFunction> f = ctx->model();
   using NextSolution =
       Coordinate2D<double> (Internal::Solver<double>::*)(const Internal::Tree*);
   NextSolution methodsNext[] = {&Internal::Solver<double>::nextRoot,
@@ -219,19 +226,19 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
     NextSolution next = methodsNext[ctx->counter];
     if (next !=
             static_cast<NextSolution>(&Internal::Solver<double>::nextRoot) &&
-        ctx->function->isAlongY()) {
+        f->isAlongY()) {
       // Do not compute min and max since they would appear left/rightmost
       ++ctx->counter;
       continue;
     }
-    Coordinate2D<double> solution = (ctx->solver.*next)(
-        ctx->function->expressionApproximated(ctx->context));
+    Coordinate2D<double> solution =
+        (ctx->solver.*next)(f->expressionApproximated(ctx->context));
     if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
       return {solution.x(),
               solution.y(),
               0,
               ctx->solver.lastInterest(),
-              ctx->function->isAlongY(),
+              f->isAlongY(),
               0};
     }
     ++ctx->counter;
@@ -240,12 +247,54 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
   return PointOfInterest{};
 }
 
+PointOfInterest findIntersections(void* searchContext) {
+  PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
+  /* Do not compute intersections if store is full because re-creating a
+   * ContinuousFunction object each time a new function is intersected
+   * is very slow. */
+  ExpiringPointer<ContinuousFunction> f = ctx->model();
+  if ((ctx->store->memoizationOverflows() ||
+       !f->shouldDisplayIntersections())) {
+    return PointOfInterest{};
+  }
+  int n = ctx->store->numberOfActiveFunctions();
+  SystemFunction e = f->expressionApproximated(ctx->context);
+  bool alongY = f->isAlongY();
+  while (ctx->counter < n) {
+    int otherFunctionIndex = ctx->counter;
+    if (ctx->memoizedOtherFunction.isUninitialized()) {
+      Ion::Storage::Record otherRecord =
+          ctx->store->recordAtIndex(otherFunctionIndex);
+      if (ctx->record == otherRecord) {
+        ++ctx->counter;
+        continue;
+      }
+      ExpiringPointer<ContinuousFunction> g =
+          ctx->store->modelForRecord(otherRecord);
+      if (!g->shouldDisplayIntersections()) {
+        ++ctx->counter;
+        continue;
+      }
+      ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
+    }
+    Coordinate2D<double> solution =
+        ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction);
+    if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+      return {
+          solution.x(), solution.y(), 0, ctx->solver.lastInterest(), alongY, 0};
+    }
+    ++ctx->counter;
+    ctx->reinitSolver();
+  }
+
+  return PointOfInterest{};
+}
+
 PointOfInterest findPoints(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
-  // TODO
-  constexpr PointsOfInterestList::Provider providers[] = {findYIntercept,
-                                                          findRootOrExtremum};
+  constexpr PointsOfInterestList::Provider providers[] = {
+      findYIntercept, findRootOrExtremum, findIntersections};
 
   for (; ctx->currentProvider < std::size(providers); ctx->currentProvider++) {
     PointOfInterest p = providers[ctx->currentProvider](ctx);
@@ -281,137 +330,17 @@ API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
   PointSearchContext searchContext{
       .start = start,
       .end = end,
-      .function = store->modelForRecord(m_record),
       .context = context,
-      .solver = {start, end, context},
+      .store = store,
       .searchStep = static_cast<float>(
           Internal::Solver<double>::MaximalStep(m_start - m_end)),
+      .solver = {start, end, context},
+      .record = m_record,
   };
   searchContext.reinitSolver();
 
   return PointsOfInterestList::BuildStash(findPoints, &searchContext);
 }
-
-#if 0
-bool PointsOfInterestCache::computeBetween(float start, float end) {
-  assert(!m_record.isNull());
-  assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
-  assert(!m_list.isUninitialized());
-  assert((end == m_computedStart && start < m_computedStart) ||
-         (start == m_computedEnd && end > m_computedEnd));
-  assert(start >= m_start && end <= m_end);
-
-  if (start < m_computedStart) {
-    m_computedStart = start;
-  } else if (end > m_computedEnd) {
-    m_computedEnd = end;
-  }
-
-  float searchStep = Internal::Solver<double>::MaximalStep(m_start - m_end);
-
-  ContinuousFunctionStore* store = App::app()->functionStore();
-  Context* context = App::app()->localContext();
-  ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
-  SystemFunction e = f->expressionApproximated(context);
-
-  if (start < 0.f && 0.f < end) {
-    for (int curveIndex = 0; curveIndex < f->numberOfSubCurves();
-         curveIndex++) {
-      Coordinate2D<double> xy =
-          f->evaluateXYAtParameter(0., context, curveIndex);
-      if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
-        if (f->isAlongY()) {
-          xy = Coordinate2D<double>(xy.y(), xy.x());
-        }
-        if (!append(xy.x(), xy.y(),
-                    Internal::Solver<double>::Interest::YIntercept, 0,
-                    curveIndex)) {
-          return false;
-        }
-      }
-    }
-  }
-
-  using NextSolution =
-      Coordinate2D<double> (Internal::Solver<double>::*)(const Internal::Tree*);
-  NextSolution methodsNext[] = {&Internal::Solver<double>::nextRoot,
-                                &Internal::Solver<double>::nextMinimum,
-                                &Internal::Solver<double>::nextMaximum};
-  for (NextSolution next : methodsNext) {
-    if (next !=
-            static_cast<NextSolution>(&Internal::Solver<double>::nextRoot) &&
-        f->isAlongY()) {
-      // Do not compute min and max since they would appear left/rightmost
-      continue;
-    }
-    Internal::Solver<double> solver(start, end, context);
-    solver.setSearchStep(searchStep);
-    solver.stretch();
-    solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
-    Coordinate2D<double> solution;
-    while (std::isfinite(
-        (solution = (solver.*next)(e)).x())) {  // assignment in condition
-      /* Ensure that the solution is in [start, end), even if the interval was
-       * stretched. */
-      if (!solution.xIsIn(start, end, true, false)) {
-        continue;
-      }
-      if (!append(solution.x(), solution.y(), solver.lastInterest())) {
-        return false;
-      }
-    }
-  }
-
-  /* Do not compute intersections if store is full because re-creating a
-   * ContinuousFunction object each time a new function is intersected
-   * is very slow. */
-  if (store->memoizationOverflows() || !f->shouldDisplayIntersections()) {
-    return false;
-  }
-
-  int n = store->numberOfActiveFunctions();
-  for (int i = 0; i < n; i++) {
-    Ion::Storage::Record record = store->activeRecordAtIndex(i);
-    if (record == m_record) {
-      continue;
-    }
-    ExpiringPointer<ContinuousFunction> g = store->modelForRecord(record);
-    if (!g->shouldDisplayIntersections()) {
-      continue;
-    }
-    SystemFunction e2 = g->expressionApproximated(context);
-    Internal::Solver<double> solver(start, end, context);
-    solver.setSearchStep(searchStep);
-    solver.stretch();
-    Coordinate2D<double> intersection;
-    while (std::isfinite((intersection = solver.nextIntersection(e, e2))
-                             .x())) {  // assignment in condition
-      assert(sizeof(record) == sizeof(uint32_t));
-      /* Ensure that the intersection is in [start, end), even if the interval
-       * was stretched. */
-      if (!intersection.xIsIn(start, end, true, false)) {
-        continue;
-      }
-      if (!append(intersection.x(), intersection.y(),
-                  Internal::Solver<double>::Interest::Intersection,
-                  *reinterpret_cast<uint32_t*>(&record))) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-bool PointsOfInterestCache::append(double x, double y,
-                                   Internal::Solver<double>::Interest interest,
-                                   uint32_t data, int subCurveIndex) {
-  assert(std::isfinite(x) && std::isfinite(y));
-  ExpiringPointer<ContinuousFunction> f =
-      App::app()->functionStore()->modelForRecord(m_record);
-  return m_list.stash({x, y, data, interest, f->isAlongY(),
-                       static_cast<uint8_t>(subCurveIndex)});
-}
-#endif
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
     PoolObject* treePoolCursor) const {

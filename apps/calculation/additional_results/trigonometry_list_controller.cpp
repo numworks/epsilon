@@ -1,14 +1,15 @@
 #include "trigonometry_list_controller.h"
 
 #include <apps/shared/expression_display_permissions.h>
-#include <apps/shared/poincare_helpers.h>
+#include <poincare/additional_result_helper.h>
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/poincare_expressions.h>
-#include <poincare/old/trigonometry.h>
+#include <poincare/old/undefined.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"
-#include "trigonometry_helper.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -33,85 +34,25 @@ void TrigonometryListController::computeAdditionalResults(
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       .m_context = context};
 
-  size_t index = 0;
-
-  Expression period = Trigonometry::AnglePeriodInAngleUnit(angleUnit());
-
-  // Find the angle
-  Expression exactAngle, approximateAngle;
-  if (m_directTrigonometry) {
-    exactAngle = TrigonometryHelper::ExtractExactAngleFromDirectTrigo(
-                     input, exactOutput, context, m_calculationPreferences)
-                     .clone();
-    approximateAngle = Expression();
-  } else {
-    exactAngle = exactOutput.clone();
-    approximateAngle = approximateOutput.clone();
-    assert(!approximateAngle.isUninitialized() &&
-           !approximateAngle.isUndefined());
-    if (approximateAngle.isPositive(context) == OMG::Troolean::False) {
-      // If the approximate angle is in [-π, π], set it in [0, 2π]
-      approximateAngle = Addition::Builder(period.clone(), approximateAngle);
-    }
-  }
-  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
-
-  /* Set exact angle in [0, 2π].
-   * Use the reduction of frac part to compute modulo. */
-  Expression simplifiedAngle;
-  simplifiedAngle = Multiplication::Builder(
-      FracPart::Builder(Division::Builder(exactAngle, period.clone())),
-      period.clone());
-  PoincareHelpers::CloneAndSimplify(
-      &simplifiedAngle, context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  assert(simplifiedAngle.isUninitialized() || !simplifiedAngle.isUndefined());
-
-  /* Approximate the angle if:
-   * - The reduction failed
-   * - The fractional part could not be reduced (because the angle is not a
-   * multiple of pi)
-   * - Displaying the exact expression is forbidden. */
-  if (simplifiedAngle.isUninitialized() ||
-      simplifiedAngle.deepIsOfType({ExpressionNode::Type::FracPart}) ||
-      ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          exactAngle, simplifiedAngle, approximateAngle, context)) {
-    if (m_directTrigonometry) {
-      assert(approximateAngle.isUninitialized());
-      /* Do not approximate the FracPart, which could lead to truncation error
-       * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
-       * the same sine and cosine. */
-      approximateAngle =
-          ArcCosine::Builder(Cosine::Builder(exactAngle.clone()));
-      /* acos has its values in [0,π[, use the sign of the sine to find the
-       * right semicircle. */
-      if (PoincareHelpers::ApproximateToScalar<double>(
-              Sine::Builder(exactAngle), context,
-              {.complexFormat = complexFormat(), .angleUnit = angleUnit()}) <
-          0) {
-        approximateAngle =
-            Subtraction::Builder(period.clone(), approximateAngle);
-      }
-    }
-    assert(!approximateAngle.isUninitialized());
-    approximateAngle = PoincareHelpers::Approximate<double>(
-        approximateAngle, context,
-        {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-    exactAngle = approximateAngle;
-    m_isStrictlyEqual[index] = false;
-  } else {
-    exactAngle = simplifiedAngle;
-    m_isStrictlyEqual[index] = true;
-  }
-  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
-
-  m_layouts[index] = Layout::String("θ");
-
-  Expression exactAngleWithUnit =
-      Multiplication::Builder(exactAngle.clone(), Unit::Builder(angleUnit()));
+  UserExpression exactAngle;
+  UserExpression approximateAngle;
+  float approximatedAngle;
+  AdditionalResultHelper::TrigonometryAngleHelper(
+      input, exactOutput, approximateOutput, m_directTrigonometry,
+      m_calculationPreferences, &ctx, exactAngle, &approximatedAngle,
+      m_isStrictlyEqual + 0);
 
   UserExpression radianExpr = Unit::Builder(Preferences::AngleUnit::Radian);
   UserExpression degreeExpr = Unit::Builder(Preferences::AngleUnit::Degree);
+  UserExpression exactAngleWithUnit = UserExpression::Create(
+      KMult(KA, KB),
+      {.KA = exactAngle,
+       .KB = angleUnit() == Preferences::AngleUnit::Radian ? radianExpr
+                                                           : degreeExpr});
+
+  size_t index = 0;
+  m_layouts[index] = Layout::String("θ");
+
   m_exactLayouts[index] = getExactLayoutFromExpression(
       UserExpression::Create(KUnitConversion(KA, KB),
                              {.KA = exactAngleWithUnit, .KB = radianExpr}),
@@ -132,16 +73,8 @@ void TrigonometryListController::computeAdditionalResults(
                  UserExpression::Create(KTan(KA), {.KA = exactAngle}), &ctx);
   updateIsStrictlyEqualAtIndex(index, context);
 
-  // Set illustration
-  /* m_model ask for a float angle but we compute the angle in double and then
-   * cast it to float because approximation in float can overflow during the
-   * computation. The angle should be between 0 and 2*pi so the approximation in
-   * double is castable in float. */
-  float angle = static_cast<float>(PoincareHelpers::ApproximateToScalar<double>(
-      approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-      context, {.complexFormat = complexFormat(), .angleUnit = angleUnit()}));
-  angle = Trigonometry::ConvertAngleToRadian(angle, angleUnit());
-  m_model.setAngle(angle);
+  /* Set illustration */
+  m_model.setAngle(approximatedAngle);
   setShowIllustration(true);
 }
 

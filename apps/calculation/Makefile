@@ -19,7 +19,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/calculation/,$(addsuffix :-test, \
   additional_results/scientific_notation_list_controller.cpp \
   additional_results/scrollable_three_layouts_view.cpp \
   additional_results/trigonometry_graph_cell.cpp \
-  additional_results/trigonometry_helper.cpp \
   additional_results/trigonometry_list_controller.cpp \
   additional_results/trigonometry_model.cpp \
   additional_results/unit_comparison_helper.cpp \

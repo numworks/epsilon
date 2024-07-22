@@ -106,11 +106,11 @@ NODE(UserSequence, 1, {
 
 RANGE(UserNamed, UserSymbol, UserSequence)
 
-NODE(Var, 0, {
-  uint8_t id;
-  uint8_t sign;
-})
-NODE(Inf)
+NODE(Random, 0, { uint8_t seed; })
+NODE(RandInt, 2, { uint8_t seed; })
+NODE(RandIntNoRep, 3, { uint8_t seed; })
+
+RANGE(Randomized, Random, RandIntNoRep)
 
 // Ln(value)
 NODE(Ln, 1)
@@ -162,6 +162,7 @@ NODE(CosH, 1)
 NODE(SinH, 1)
 NODE(TanH, 1)
 NODE(Im, 1)
+NODE(Inf)
 NODE(LCM, NARY)
 NODE(MixedFraction, 2)
 NODE(Opposite, 1)
@@ -182,12 +183,6 @@ NODE(Polynomial, NARY)
 NODE(PowReal, 2)
 NODE(Quo, 2)
 
-NODE(Random, 0, { uint8_t seed; })
-NODE(RandInt, 2, { uint8_t seed; })
-NODE(RandIntNoRep, 3, { uint8_t seed; })
-
-RANGE(Randomized, Random, RandIntNoRep)
-
 NODE(Re, 1)
 NODE(Rem, 2)
 NODE(Round, 2)
@@ -201,6 +196,10 @@ NODE(Tan, 1)
 // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
 NODE(Trig, 2)
 NODE(TrigDiff, 2)
+NODE(Var, 0, {
+  uint8_t id;
+  uint8_t sign;
+})
 
 // 4 - Parametric types
 

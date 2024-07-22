@@ -19,7 +19,6 @@ class ComplexListController : public IllustratedExpressionsListController {
       const Poincare::UserExpression approximateOutput) override;
 
  private:
-  constexpr static CodePoint k_symbol = 'z';
   IllustrationCell* illustrationCell() override { return &m_complexGraphCell; }
   I18n::Message messageAtIndex(int index) override;
   Poincare::Preferences::ComplexFormat complexFormToDisplay() const;

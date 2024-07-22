@@ -1,13 +1,8 @@
 #include "complex_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/absolute_value.h>
-#include <poincare/old/complex_argument.h>
-#include <poincare/old/imaginary_part.h>
-#include <poincare/old/real_part.h>
-#include <poincare/old/symbol.h>
-#include <poincare/old/variable_context.h>
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"
@@ -37,19 +32,20 @@ void ComplexListController::computeAdditionalResults(
       .m_context = context};
 
   // Fill Calculation Store
-  Expression e = exactOutput.clone();
-  Expression z = Symbol::Builder(k_symbol);
+  constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
   ctx.m_complexFormat = complexFormToDisplay();
-  setLineAtIndex(index++, z, e, &ctx);
+  setLineAtIndex(index++, UserExpression::Create(k_symbol, {}), exactOutput,
+                 &ctx);
   ctx.m_complexFormat = Preferences::ComplexFormat::Cartesian;
-  setLineAtIndex(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e),
-                 &ctx);
-  setLineAtIndex(index++, ComplexArgument::Builder(z),
-                 ComplexArgument::Builder(e), &ctx);
-  setLineAtIndex(index++, RealPart::Builder(z), RealPart::Builder(e), &ctx);
-  setLineAtIndex(index++, ImaginaryPart::Builder(z), ImaginaryPart::Builder(e),
-                 &ctx);
+  setLineAtIndex(index++, UserExpression::Create(KAbs(k_symbol), {}),
+                 UserExpression::Create(KAbs(KA), {.KA = exactOutput}), &ctx);
+  setLineAtIndex(index++, UserExpression::Create(KArg(k_symbol), {}),
+                 UserExpression::Create(KArg(KA), {.KA = exactOutput}), &ctx);
+  setLineAtIndex(index++, UserExpression::Create(KRe(k_symbol), {}),
+                 UserExpression::Create(KRe(KA), {.KA = exactOutput}), &ctx);
+  setLineAtIndex(index++, UserExpression::Create(KIm(k_symbol), {}),
+                 UserExpression::Create(KIm(KA), {.KA = exactOutput}), &ctx);
 
   // Set Complex illustration
   ApproximationContext approximationContext(context, ctx.m_complexFormat,

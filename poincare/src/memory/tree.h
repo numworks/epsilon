@@ -395,8 +395,8 @@ class Tree : public TypeBlock {
   ConstAncestors ancestors(const Tree* root) const { return {root, this}; }
 
   using Predicate = bool (*)(const Tree*);
-  bool hasDescendantSatisfying(Predicate predicate) const;
-  bool hasChildSatisfying(Predicate predicate) const;
+  const Tree* hasDescendantSatisfying(Predicate predicate) const;
+  const Tree* hasChildSatisfying(Predicate predicate) const;
 
  private:
   bool replaceWith(const Tree* target, const Tree* replacement);

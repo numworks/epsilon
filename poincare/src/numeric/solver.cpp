@@ -611,7 +611,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
     /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
      * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
      * expression is projected. */
-    return e->hasDescendantSatisfying([](const Tree* e) {
+    return nullptr != e->hasDescendantSatisfying([](const Tree* e) {
       T exponent = k_NAN;
       if (e->type() == Type::Sqrt) {
         exponent = static_cast<T>(0.5);

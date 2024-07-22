@@ -384,22 +384,22 @@ bool Tree::replaceWith(const Tree* target, const Tree* replacement) {
   return false;
 }
 
-bool Tree::hasDescendantSatisfying(Predicate predicate) const {
+const Tree* Tree::hasDescendantSatisfying(Predicate predicate) const {
   for (const Tree* d : selfAndDescendants()) {
     if (predicate(d)) {
-      return true;
+      return d;
     }
   }
-  return false;
+  return nullptr;
 }
 
-bool Tree::hasChildSatisfying(Predicate predicate) const {
+const Tree* Tree::hasChildSatisfying(Predicate predicate) const {
   for (const Tree* d : children()) {
     if (predicate(d)) {
-      return true;
+      return d;
     }
   }
-  return false;
+  return nullptr;
 }
 
 Tree* Tree::cloneTree() const { return SharedTreeStack->clone(this); }

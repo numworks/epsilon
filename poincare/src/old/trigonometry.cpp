@@ -34,6 +34,8 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/preferences.h>
+#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/tree.h>
 
 #include <cmath>
 
@@ -668,8 +670,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
   bool containsOtherChildrenThanCombinationOfNumberAndPi =
       child.recursivelyMatches(
           [](const Expression e, Context* context, void* auxiliary) {
-            if (e.type() == ExpressionNode::Type::ConstantMaths &&
-                static_cast<const Constant&>(e).isPi()) {
+            if (e.tree()->type() == Internal::Type::Pi) {
               bool* containsPi = static_cast<bool*>(auxiliary);
               *containsPi = true;
               return OMG::Troolean::False;
@@ -700,9 +701,7 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
     return e;
   }
 
-  OUnit unit = OUnit::Builder(
-      UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
-          angleUnit));
+  Expression unit = Unit::Builder(angleUnit);
   if (child.isOfType({ExpressionNode::Type::Addition,
                       ExpressionNode::Type::Subtraction})) {
     child = Parenthesis::Builder(child);

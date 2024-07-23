@@ -180,7 +180,7 @@ Range2D<float> GraphController::optimalRange(
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
       const Internal::Tree* piecewise =
-          f->expressionApproximated(context).tree()->hasDescendantSatisfying(
+          f->expressionApproximated(context).tree()->firstDescendantSatisfying(
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
         zoom.fitConditions(SystemFunction::Builder(piecewise), evaluator<float>,

@@ -384,7 +384,7 @@ bool Tree::replaceWith(const Tree* target, const Tree* replacement) {
   return false;
 }
 
-const Tree* Tree::hasDescendantSatisfying(Predicate predicate) const {
+const Tree* Tree::firstDescendantSatisfying(Predicate predicate) const {
   for (const Tree* d : selfAndDescendants()) {
     if (predicate(d)) {
       return d;
@@ -393,7 +393,7 @@ const Tree* Tree::hasDescendantSatisfying(Predicate predicate) const {
   return nullptr;
 }
 
-const Tree* Tree::hasChildSatisfying(Predicate predicate) const {
+const Tree* Tree::firstChildSatisfying(Predicate predicate) const {
   for (const Tree* d : children()) {
     if (predicate(d)) {
       return d;

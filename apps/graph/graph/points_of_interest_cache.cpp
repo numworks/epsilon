@@ -231,15 +231,23 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
       continue;
     }
     ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
-    Coordinate2D<double> solution =
-        (ctx->solver.*next)(f->expressionApproximated(ctx->context));
-    if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
-      return {solution.x(),
-              solution.y(),
-              0,
-              ctx->solver.lastInterest(),
-              f->isAlongY(),
-              0};
+    Coordinate2D<double> solution;
+    while (
+        std::isfinite((solution = (ctx->solver.*next)(f->expressionApproximated(
+                           ctx->context)) /* assignment in expression */)
+                          .x())) {
+      /* Loop over finite solutions to exhaust solutions out of the interval
+       * without returning NAN. */
+      if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+        return {
+            solution.x(),
+            solution.y(),
+            0,
+            ctx->solver.lastInterest(),
+            f->isAlongY(),
+            0,
+        };
+      }
     }
     ++ctx->counter;
     ctx->reinitSolver();
@@ -278,11 +286,22 @@ PointOfInterest findIntersections(void* searchContext) {
       ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
     }
     ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Precise);
-    Coordinate2D<double> solution =
-        ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction);
-    if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
-      return {
-          solution.x(), solution.y(), 0, ctx->solver.lastInterest(), alongY, 0};
+    Coordinate2D<double> solution;
+    while (std::isfinite(
+        (solution = ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction))
+            .x())) {
+      /* Loop over finite solutions to exhaust solutions out of the interval
+       * without returning NAN. */
+      if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+        return {
+            solution.x(),
+            solution.y(),
+            0,
+            ctx->solver.lastInterest(),
+            alongY,
+            0,
+        };
+      }
     }
     ++ctx->counter;
     ctx->memoizedOtherFunction = SystemFunction{};

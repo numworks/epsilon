@@ -23,11 +23,11 @@ FunctionProperties::LineType FunctionProperties::PolarLineType(
   Division::GetNumeratorAndDenominator(tree, numerator, denominator);
   assert(numerator && denominator);
   double a, b, c;
-  bool polarLine = Degree::Get(numerator, symbol, projectionContext) == 0 &&
-                   Trigonometry::DetectLinearPatternOfTrig(
-                       denominator, projectionContext.m_context, symbol, &a, &b,
-                       &c, false) &&
-                   std::abs(b) == 1.0;
+  bool polarLine =
+      Degree::Get(numerator, symbol, projectionContext) == 0 &&
+      Trigonometry::DetectLinearPatternOfTrig(denominator, projectionContext,
+                                              symbol, &a, &b, &c, false) &&
+      std::abs(b) == 1.0;
   numerator->removeTree();
   denominator->removeTree();
 

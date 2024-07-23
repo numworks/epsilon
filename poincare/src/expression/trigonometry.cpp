@@ -439,18 +439,15 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
  * Beware of infinite expansion. */
 
 // Detect a·cos(b·x+c) + k
-bool Trigonometry::DetectLinearPatternOfTrig(const Tree* e,
-                                             Poincare::Context* context,
-                                             const char* symbol, double* a,
-                                             double* b, double* c,
-                                             bool acceptConstantTerm) {
+bool Trigonometry::DetectLinearPatternOfTrig(
+    const Tree* e, ProjectionContext projectionContext, const char* symbol,
+    double* a, double* b, double* c, bool acceptConstantTerm) {
   // TODO_PCJ: Trees need to be projected (for approx, and because we look for
   // Trig nodes)
   // e.getSystemFunction(Shared::Function::k_unknownName); // plus haut ? (vu
   // qu'on a déjà le precomputed funtion symbol)
 
   assert(a && b && c);
-  ProjectionContext projectionContext = {.m_context = context};
 
   // Detect a·cos(b·x+c) + d·cos(b·x+c) + k
   if (e->isAdd()) {
@@ -458,8 +455,8 @@ bool Trigonometry::DetectLinearPatternOfTrig(const Tree* e,
     bool cosFound = false;
     for (const Tree* child : e->children()) {
       double tempA, tempB, tempC;
-      if (!DetectLinearPatternOfTrig(child, context, symbol, &tempA, &tempB,
-                                     &tempC, acceptConstantTerm)) {
+      if (!DetectLinearPatternOfTrig(child, projectionContext, symbol, &tempA,
+                                     &tempB, &tempC, acceptConstantTerm)) {
         if (acceptConstantTerm &&
             Degree::Get(child, symbol, projectionContext) == 0) {
           continue;
@@ -485,7 +482,8 @@ bool Trigonometry::DetectLinearPatternOfTrig(const Tree* e,
     assert(e->numberOfChildren() > 1);
     int indexOfCos = -1;
     for (IndexedChild<const Tree*> child : e->indexedChildren()) {
-      if (DetectLinearPatternOfTrig(child, context, symbol, a, b, c, false)) {
+      if (DetectLinearPatternOfTrig(child, projectionContext, symbol, a, b, c,
+                                    false)) {
         indexOfCos = child.index;
         break;
       }

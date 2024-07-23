@@ -4,6 +4,8 @@
 #include <poincare/old/context.h>
 #include <poincare/src/memory/tree_ref.h>
 
+#include "projection.h"
+
 namespace Poincare::Internal {
 
 class Trigonometry final {
@@ -28,7 +30,7 @@ class Trigonometry final {
    * k can be non-null only if acceptAddition = true
    * TODO: factorize with OExpression::isLinearCombinationOfFunction? */
   static bool DetectLinearPatternOfTrig(const Tree* e,
-                                        Poincare::Context* context,
+                                        ProjectionContext projectionContext,
                                         const char* symbol, double* a,
                                         double* b, double* c,
                                         bool acceptConstantTerm);

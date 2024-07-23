@@ -75,7 +75,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("True or (False xor True)", Boolean));
   QUIZ_ASSERT(hasInvalidDimOrLen("0 and False"));
   QUIZ_ASSERT(dim("0 < 3 and False", Boolean));
-  QUIZ_ASSERT(hasInvalidDimOrLen("sort({True, False, True})"));
+  QUIZ_ASSERT(dim("sort({True, False, True})", Boolean));
   QUIZ_ASSERT(hasInvalidDimOrLen("min({True, False, True})"));
   QUIZ_ASSERT(dim("{True, False, True} or {True, True, False}", Boolean));
 

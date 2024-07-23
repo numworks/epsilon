@@ -179,9 +179,8 @@ struct PointSearchContext {
 
   void reinitSolver() {
     solver = {start, end, context};
-    solver.stretch();
     solver.setSearchStep(searchStep);
-    solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
+    solver.stretch();
   }
   ExpiringPointer<ContinuousFunction> model() const {
     return store->modelForRecord(record);
@@ -231,6 +230,7 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
       ++ctx->counter;
       continue;
     }
+    ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
     Coordinate2D<double> solution =
         (ctx->solver.*next)(f->expressionApproximated(ctx->context));
     if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
@@ -277,6 +277,7 @@ PointOfInterest findIntersections(void* searchContext) {
       }
       ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
     }
+    ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Precise);
     Coordinate2D<double> solution =
         ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction);
     if (solution.xIsIn(ctx->start, ctx->end, true, false)) {

@@ -1158,11 +1158,11 @@ void assert_is_linear_pattern_of_sin_or_cos(
 
 QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern("1+(1/x)",
-                                          &OExpression::IsRationalFraction);
+                                          &Division::IsRationalFraction);
   assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
-                                          &OExpression::IsRationalFraction);
+                                          &Division::IsRationalFraction);
   assert_is_linear_combination_of_pattern(
-      "x^0.5", &OExpression::IsRationalFraction, false);
+      "x^0.5", &Division::IsRationalFraction, false);
 
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",

@@ -3,6 +3,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree.h>
 
+#include "degree.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "number.h"
@@ -170,6 +171,21 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   }
   e->moveTreeOverTree(num);
   return true;
+}
+
+bool Division::IsRationalFraction(const Tree* e, const char* symbol,
+                                  ProjectionContext projectionContext) {
+  if (!e->isMult() && !e->isPow()) {
+    return false;
+  }
+  TreeRef numerator, denominator;
+  Division::GetNumeratorAndDenominator(e, numerator, denominator);
+  assert(numerator && denominator);
+  int numeratorDegree = Degree::Get(numerator, symbol, projectionContext);
+  int denominatorDegree = Degree::Get(denominator, symbol, projectionContext);
+  numerator->removeTree();
+  denominator->removeTree();
+  return denominatorDegree >= 0 && numeratorDegree >= 0;
 }
 
 }  // namespace Poincare::Internal

@@ -358,7 +358,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
   // f(x) = polynomial/polynomial
   if (analyzedExpression.isLinearCombinationOfFunction(
-          context, &NewExpression::IsRationalFraction,
+          context, &Division::IsRationalFraction,
           Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
     return;

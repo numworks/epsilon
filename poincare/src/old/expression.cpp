@@ -368,38 +368,6 @@ bool OExpression::IsSymbolic(const OExpression e) {
                      ExpressionNode::Type::Sequence});
 }
 
-bool OExpression::IsRationalFraction(const OExpression &e, Context *context,
-                                     const char *symbol) {
-  if (!e.isOfType({ExpressionNode::Type::Multiplication,
-                   ExpressionNode::Type::Power})) {
-    return false;
-  }
-
-  ReductionContext reductionContext =
-      ReductionContext::DefaultReductionContextForAnalysis(context);
-
-  OExpression numerator, denominator;
-
-  if (e.otype() == ExpressionNode::Type::Power) {
-    denominator = e.denominator(reductionContext);
-    if (denominator.isUninitialized()) {
-      numerator = e;
-    }
-  } else {
-    assert(e.otype() == ExpressionNode::Type::Multiplication);
-    static_cast<const Multiplication &>(e).splitIntoNormalForm(
-        numerator, denominator, reductionContext);
-  }
-
-  int numeratorDegree = numerator.isUninitialized()
-                            ? 0
-                            : numerator.polynomialDegree(context, symbol);
-  int denominatorDegree = denominator.isUninitialized()
-                              ? 0
-                              : denominator.polynomialDegree(context, symbol);
-  return denominatorDegree >= 0 && numeratorDegree >= 0;
-}
-
 bool OExpression::isLinearCombinationOfFunction(Context *context,
                                                 PatternTest testFunction,
                                                 const char *symbol) const {

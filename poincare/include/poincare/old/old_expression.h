@@ -293,8 +293,6 @@ class OExpression : public PoolHandle {
 
   typedef bool (*PatternTest)(const OExpression& e, Context* context,
                               const char* symbol);
-  static bool IsRationalFraction(const OExpression& e, Context* context,
-                                 const char* symbol);
   bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
                                      const char* symbol) const;
   bool deepIsSymbolic(Context* context,

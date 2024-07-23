@@ -15,6 +15,10 @@
  *  - An equation type (>, =, <=, etc.)
  * */
 
+namespace Poincare::Internal {
+struct ProjectionContext;
+}
+
 namespace Shared {
 
 class ContinuousFunctionProperties {
@@ -233,7 +237,7 @@ class ContinuousFunctionProperties {
   // Update
   void setCartesianFunctionProperties(
       const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Context* context);
+      Poincare::Internal::ProjectionContext projectionContext);
   void setCartesianEquationProperties(
       const Poincare::SystemExpression& analyzedExpression,
       Poincare::Context* context,
@@ -241,12 +245,10 @@ class ContinuousFunctionProperties {
       OMG::Troolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
       const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Context* context,
-      Poincare::Preferences::ComplexFormat complexFormat);
+      Poincare::Internal::ProjectionContext projectionContext);
   void setParametricFunctionProperties(
       const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Context* context,
-      Poincare::Preferences::ComplexFormat complexFormat);
+      Poincare::Internal::ProjectionContext projectionContext);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(

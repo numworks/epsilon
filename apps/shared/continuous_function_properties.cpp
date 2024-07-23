@@ -193,16 +193,26 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
+    Internal::ProjectionContext projectionContext = {
+        .m_complexFormat = Internal::ComplexFormat::Cartesian,
+        .m_angleUnit = Internal::AngleUnit::Radian,
+        .m_unitFormat = Internal::UnitFormat::Metric,
+        .m_symbolic = Internal::SymbolicComputation::
+            ReplaceAllDefinedSymbolsWithDefinition,
+        .m_context = context,
+        .m_unitDisplay = Internal::UnitDisplay::None,
+    };
+
     switch (precomputedFunctionSymbol) {
       case SymbolType::X: {
-        setCartesianFunctionProperties(analyzedExpression, context);
+        setCartesianFunctionProperties(analyzedExpression, projectionContext);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::Function);
         }
         return;
       }
       case SymbolType::Theta: {
-        setPolarFunctionProperties(analyzedExpression, context, complexFormat);
+        setPolarFunctionProperties(analyzedExpression, projectionContext);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::PolarEquationType);
         }
@@ -215,8 +225,7 @@ void ContinuousFunctionProperties::update(
         return;
       }
       case SymbolType::T: {
-        setParametricFunctionProperties(analyzedExpression, context,
-                                        complexFormat);
+        setParametricFunctionProperties(analyzedExpression, projectionContext);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::ParametricEquationType);
         }
@@ -288,22 +297,13 @@ void ContinuousFunctionProperties::update(
 }
 
 void ContinuousFunctionProperties::setCartesianFunctionProperties(
-    const SystemExpression& analyzedExpression, Context* context) {
+    const SystemExpression& analyzedExpression,
+    Internal::ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-  assert(analyzedExpression.dimension(context).isScalar());
+  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
-
-  Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = Internal::ComplexFormat::Cartesian,
-      .m_angleUnit = Internal::AngleUnit::Radian,
-      .m_unitFormat = Internal::UnitFormat::Metric,
-      .m_symbolic =
-          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      .m_context = context,
-      .m_unitDisplay = Internal::UnitDisplay::None,
-  };
 
   Internal::FunctionProperties::FunctionType type =
       Internal::FunctionProperties::CartesianFunctionType(
@@ -432,23 +432,14 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 }
 
 void ContinuousFunctionProperties::setPolarFunctionProperties(
-    const SystemExpression& analyzedExpression, Context* context,
-    Preferences::ComplexFormat complexFormat) {
+    const SystemExpression& analyzedExpression,
+    Internal::ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
-  assert(analyzedExpression.dimension(context).isPointOrListOfPoints());
+  assert(analyzedExpression.dimension(projectionContext.m_context)
+             .isPointOrListOfPoints());
 
   setCurveParameterType(CurveParameterType::Polar);
-
-  Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = Internal::ComplexFormat::Cartesian,
-      .m_angleUnit = Internal::AngleUnit::Radian,
-      .m_unitFormat = Internal::UnitFormat::Metric,
-      .m_symbolic =
-          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      .m_context = context,
-      .m_unitDisplay = Internal::UnitDisplay::None,
-  };
 
   // Detect polar lines
   Internal::FunctionProperties::LineType lineType =
@@ -469,8 +460,9 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   }
 
   // Detect polar conics
-  PolarConic conicProperties = PolarConic(
-      analyzedExpression, context, complexFormat, Function::k_unknownName);
+  PolarConic conicProperties =
+      PolarConic(analyzedExpression, projectionContext.m_context,
+                 projectionContext.m_complexFormat, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:
@@ -493,23 +485,13 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 
 void ContinuousFunctionProperties::setParametricFunctionProperties(
     const Poincare::SystemExpression& analyzedExpression,
-    Poincare::Context* context, Preferences::ComplexFormat complexFormat) {
+    Internal::ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isParametric());
-  assert(analyzedExpression.dimension(context).isPoint());
+  assert(analyzedExpression.dimension(projectionContext.m_context).isPoint());
 
   setCurveParameterType(CurveParameterType::Parametric);
   setCaption(I18n::Message::ParametricEquationType);
-
-  Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = Internal::ComplexFormat::Cartesian,
-      .m_angleUnit = Internal::AngleUnit::Radian,
-      .m_unitFormat = Internal::UnitFormat::Metric,
-      .m_symbolic =
-          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      .m_context = context,
-      .m_unitDisplay = Internal::UnitDisplay::None,
-  };
 
   // Detect parametric lines
   Internal::FunctionProperties::LineType lineType =
@@ -536,7 +518,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
 
   // Detect parametric conics
   ParametricConic conicProperties = ParametricConic(
-      analyzedExpression, context, complexFormat, Function::k_unknownName);
+      analyzedExpression, projectionContext.m_context,
+      projectionContext.m_complexFormat, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:

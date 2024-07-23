@@ -374,6 +374,7 @@ _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
   computation_context.cpp \
   expression.cpp \
   regression.cpp \
+  solver.cpp \
   tree_converter.cpp \
 )
 

@@ -1052,11 +1052,7 @@ Tree* Approximation::ToList(const Tree* e) {
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     s_context->m_listElement = i;
-    if (dimension.isPoint()) {
-      ToPoint<T>(e);
-    } else {
-      ToBeautifiedComplex<T>(e);
-    }
+    ToTree<T>(e, dimension);
   }
   s_context->m_listElement = old;
   return list;

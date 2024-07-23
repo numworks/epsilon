@@ -1,6 +1,7 @@
 #include "continuous_function_properties.h"
 
 #include <apps/shared/expression_display_permissions.h>
+#include <omg/unreachable.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/division.h>
@@ -192,46 +193,44 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
-    if (precomputedFunctionSymbol == SymbolType::X) {
-      setCartesianFunctionProperties(analyzedExpression, context);
-      if (genericCaptionOnly) {
-        setCaption(I18n::Message::Function);
+    switch (precomputedFunctionSymbol) {
+      case SymbolType::X: {
+        setCartesianFunctionProperties(analyzedExpression, context);
+        if (genericCaptionOnly) {
+          setCaption(I18n::Message::Function);
+        }
+        return;
       }
-      return;
-    }
-
-    assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
-
-    if (precomputedFunctionSymbol == SymbolType::T) {
-      setParametricFunctionProperties(analyzedExpression, context,
-                                      complexFormat);
-      if (genericCaptionOnly) {
-        setCaption(I18n::Message::ParametricEquationType);
+      case SymbolType::Theta: {
+        setPolarFunctionProperties(analyzedExpression, context, complexFormat);
+        if (genericCaptionOnly) {
+          setCaption(I18n::Message::PolarEquationType);
+        }
+        return;
       }
-      return;
+      case SymbolType::Radius: {
+        // TODO: Inverse polar could also be analyzed
+        setCaption(I18n::Message::PolarEquationType);
+        setCurveParameterType(CurveParameterType::InversePolar);
+        return;
+      }
+      case SymbolType::T: {
+        setParametricFunctionProperties(analyzedExpression, context,
+                                        complexFormat);
+        if (genericCaptionOnly) {
+          setCaption(I18n::Message::ParametricEquationType);
+        }
+        return;
+      }
+      case SymbolType::NoSymbol: {
+        setCaption(dimension.isPoint() ? I18n::Message::PointType
+                                       : I18n::Message::ListOfPointsType);
+        setCurveParameterType(CurveParameterType::ScatterPlot);
+        return;
+      }
+      default:
+        OMG::unreachable();
     }
-
-    if (precomputedFunctionSymbol == SymbolType::Radius) {
-      // TODO: Inverse polar could also be analyzed
-      setCaption(I18n::Message::PolarEquationType);
-      setCurveParameterType(CurveParameterType::InversePolar);
-      return;
-    }
-
-    if (precomputedFunctionSymbol == SymbolType::NoSymbol) {
-      setCaption(analyzedExpression.type() == ExpressionNode::Type::Point
-                     ? I18n::Message::PointType
-                     : I18n::Message::ListOfPointsType);
-      setCurveParameterType(CurveParameterType::ScatterPlot);
-      return;
-    }
-
-    assert(precomputedFunctionSymbol == SymbolType::Theta);
-    setPolarFunctionProperties(analyzedExpression, context, complexFormat);
-    if (genericCaptionOnly) {
-      setCaption(I18n::Message::PolarEquationType);
-    }
-    return;
   }
 
   // Compute equation's degree regarding x.

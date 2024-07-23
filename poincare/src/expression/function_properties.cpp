@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/n_ary.h>
 
+#include "beautification.h"
 #include "degree.h"
 #include "division.h"
 #include "simplification.h"
@@ -204,13 +205,18 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
   }
 
   // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
-  if (IsLinearCombinationOfFunction(
-          tree, symbol, projectionContext,
-          [](const Tree* e, const char* symbol,
-             ProjectionContext projectionContext) {
-            return e->isTrig() &&  // TODO_PCJ: also tangent
-                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
-          })) {
+  Tree* clone = tree->cloneTree();
+  // We beautify to detect tan
+  Beautification::DeepBeautify(clone, projectionContext);
+  bool isTrig = IsLinearCombinationOfFunction(
+      clone, symbol, projectionContext,
+      [](const Tree* e, const char* symbol,
+         ProjectionContext projectionContext) {
+        return (e->isCos() || e->isSin() || e->isTan()) &&
+               Degree::Get(e->child(0), symbol, projectionContext) == 1;
+      });
+  clone->removeTree();
+  if (isTrig) {
     return FunctionType::Trigonometric;
   }
 

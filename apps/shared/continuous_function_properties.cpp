@@ -179,18 +179,15 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
-    /* Some dimensions are not handled:
-     * - matrix
-     * - list except list of points for SymbolType::NoSymbol
-     * - point except for SymbolType::NoSymbol and SymbolType::T */
+    // Check dimension
     Dimension dimension = analyzedExpression.dimension(context);
-    if (dimension.isMatrix() ||
-        (dimension.isList() &&
-         precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         !dimension.isListOfPoints()) ||
-        (dimension.isPoint() &&
-         precomputedFunctionSymbol != SymbolType::NoSymbol &&
-         precomputedFunctionSymbol != SymbolType::T)) {
+    if (((precomputedFunctionSymbol == SymbolType::X ||
+          precomputedFunctionSymbol == SymbolType::Theta ||
+          precomputedFunctionSymbol == SymbolType::Radius) &&
+         !dimension.isScalar()) ||
+        (precomputedFunctionSymbol == SymbolType::T && !dimension.isPoint()) ||
+        (precomputedFunctionSymbol == SymbolType::NoSymbol &&
+         !dimension.isPointOrListOfPoints())) {
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }
@@ -206,11 +203,6 @@ void ContinuousFunctionProperties::update(
     assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
 
     if (precomputedFunctionSymbol == SymbolType::T) {
-      if (analyzedExpression.type() != ExpressionNode::Type::Point) {
-        // Invalid parametric format
-        setErrorStatusAndUpdateCaption(Status::Unhandled);
-        return;
-      }
       setParametricFunctionProperties(analyzedExpression, context,
                                       complexFormat);
       if (genericCaptionOnly) {

@@ -1,6 +1,7 @@
 #include <emscripten/bind.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/junior_expression.h>
+#include <poincare/src/memory/tree.h>
 
 #include <string>
 using namespace emscripten;
@@ -37,9 +38,14 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<OExpression, base<PoolHandle>>("PCR_OExpression");
   class_<JuniorExpression, base<OExpression>>("PCR_Expression")
       .constructor<>()
+      .class_function("Builder",
+                      select_overload<NewExpression(const Internal::Tree*)>(
+                          &JuniorExpression::Builder),
+                      allow_raw_pointers())
       .class_function("ParseLatex", &ParseLatexFromString)
       .class_function("ExactAndApproximateExpressionsAreEqual",
                       &OExpression::ExactAndApproximateExpressionsAreEqual)
+      .function("tree", &JuniorExpression::tree, allow_raw_pointers())
       .function("toLatex", &toLatexString, allow_raw_pointers())
       .function("cloneAndReduce", &JuniorExpression::cloneAndReduce)
       .function("cloneAndBeautify", &JuniorExpression::cloneAndBeautify)

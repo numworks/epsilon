@@ -1,6 +1,5 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-#include <poincare/old/junior_expression.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 
@@ -13,16 +12,15 @@ namespace Poincare::JSBridge {
  * */
 EMSCRIPTEN_DECLARE_VAL_TYPE(Uint8Array);
 
-// TODO: This method should be differentiated from each type of expression
-/* Copy Javascript Uint8Array bytes on the tree stack and then build an
- * expression from it */
-JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree) {
+/* Copies Javascript Uint8Array bytes on the tree stack and then build
+ * a tree from it */
+Internal::Tree* Uint8ArrayToPCRTree(const Uint8Array& jsTree) {
   size_t treeSize = jsTree["length"].as<size_t>();
   if (treeSize == 0) {
-    return JuniorExpression();
+    return nullptr;
   }
 
-  // Copy the tree on the stack
+  // Copies the tree on the stack
   /* The Uint8Array is copied block per block on the stack because I couldn't
    * find an easy way to access the raw address of the external tree buffer.
    * I tried to use `jsTree["buffer"].as<uint8_t*>` but emscripten wouldn't let
@@ -33,13 +31,11 @@ JuniorExpression Uint8ArrayToExpression(const Uint8Array& jsTree) {
     stack->insertBlock(destination + i,
                        Internal::Block(jsTree[i].as<uint8_t>()), true);
   }
-  Internal::Tree* tree = Internal::Tree::FromBlocks(destination);
-  return JuniorExpression::Builder(tree);
+  return Internal::Tree::FromBlocks(destination);
 }
 
-// Create a JavaScript Uint8Array from the given expression tree
-Uint8Array ExpressionToUint8Array(const JuniorExpression expression) {
-  const Internal::Tree* tree = expression.tree();
+// Create a JavaScript Uint8Array from the given tree
+Uint8Array PCRTreeToUint8Array(const Internal::Tree* tree) {
   if (!tree) {
     // Equivalent to the js code "new Uint8Array()"
     return Uint8Array(val::global("Uint8Array").new_());
@@ -54,8 +50,10 @@ Uint8Array ExpressionToUint8Array(const JuniorExpression expression) {
 
 EMSCRIPTEN_BINDINGS(tree_converter) {
   register_type<Uint8Array>("Uint8Array");
-  function("Uint8ArrayToPCRExpression", &Uint8ArrayToExpression);
-  function("PCRExpressionToUint8Array", &ExpressionToUint8Array);
+  class_<Internal::Tree>("PCR_Tree")
+      .class_function("FromUint8Array", &Uint8ArrayToPCRTree,
+                      allow_raw_pointers())
+      .function("toUint8Array", &PCRTreeToUint8Array, allow_raw_pointers());
 }
 
 }  // namespace Poincare::JSBridge

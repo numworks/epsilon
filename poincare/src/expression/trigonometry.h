@@ -28,7 +28,7 @@ class Trigonometry final {
   /* Detect if expression is of the form a·cos(b·x+c) + k
    * with c between 0 and 2π
    * k can be non-null only if acceptAddition = true
-   * TODO: factorize with OExpression::isLinearCombinationOfFunction? */
+   * TODO: factorize with IsLinearCombinationOfFunction? */
   static bool DetectLinearPatternOfTrig(const Tree* e,
                                         ProjectionContext projectionContext,
                                         const char* symbol, double* a,

@@ -17,6 +17,12 @@ class FunctionProperties {
   static LineType ParametricLineType(const SystemExpression& e,
                                      const char* symbol,
                                      ProjectionContext projectionContext);
+
+ private:
+  typedef bool (*PatternTest)(const Tree*, const char*, ProjectionContext);
+  static bool IsLinearCombinationOfFunction(const Tree* e, const char* symbol,
+                                            ProjectionContext projectionContext,
+                                            PatternTest testFunction);
 };
 
 }  // namespace Poincare::Internal

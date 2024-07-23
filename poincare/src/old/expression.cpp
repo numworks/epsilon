@@ -368,48 +368,6 @@ bool OExpression::IsSymbolic(const OExpression e) {
                      ExpressionNode::Type::Sequence});
 }
 
-bool OExpression::isLinearCombinationOfFunction(Context *context,
-                                                PatternTest testFunction,
-                                                const char *symbol) const {
-  if (testFunction(*this, context, symbol) ||
-      polynomialDegree(context, symbol) == 0) {
-    return true;
-  }
-  if (otype() == ExpressionNode::Type::Addition) {
-    int n = numberOfChildren();
-    assert(n > 0);
-    for (int i = 0; i < n; i++) {
-      if (!childAtIndex(i).isLinearCombinationOfFunction(context, testFunction,
-                                                         symbol)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  if (otype() == ExpressionNode::Type::Multiplication) {
-    int n = numberOfChildren();
-    assert(n > 0);
-    bool patternHasAlreadyBeenDetected = false;
-    for (int i = 0; i < n; i++) {
-      OExpression currentChild = childAtIndex(i);
-      bool childIsConstant =
-          currentChild.polynomialDegree(context, symbol) == 0;
-      bool childIsPattern = currentChild.isLinearCombinationOfFunction(
-          context, testFunction, symbol);
-      if (!childIsConstant &&
-          (!childIsPattern || patternHasAlreadyBeenDetected)) {
-        /* The coefficient must have a degree 0 if it's not the pattern
-         * and there can't be a multiplication of the pattern with itself */
-        return false;
-      }
-      patternHasAlreadyBeenDetected =
-          patternHasAlreadyBeenDetected || (childIsPattern && !childIsConstant);
-    }
-    return patternHasAlreadyBeenDetected;
-  }
-  return false;
-}
-
 bool containsVariables(const OExpression e, char *variables,
                        int maxVariableSize) {
   if (e.otype() == ExpressionNode::Type::Symbol) {

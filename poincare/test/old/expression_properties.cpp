@@ -1128,7 +1128,7 @@ void assert_is_linear_combination_of_pattern(
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      e.isLinearCombinationOfFunction(&context, testFunction, symbol) ==
+      IsLinearCombinationOfFunction(e, symbol, &context, testFunction) ==
           truthValue,
       expression);
 }

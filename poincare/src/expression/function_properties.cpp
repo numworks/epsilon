@@ -111,4 +111,41 @@ FunctionProperties::LineType FunctionProperties::ParametricLineType(
   return LineType::None;
 }
 
+bool FunctionProperties::IsLinearCombinationOfFunction(
+    const Tree* e, const char* symbol, ProjectionContext projectionContext,
+    PatternTest testFunction) {
+  if (testFunction(e, symbol, projectionContext) ||
+      Degree::Get(e, symbol, projectionContext) == 0) {
+    return true;
+  }
+  if (e->isAdd()) {
+    for (const Tree* child : e->children()) {
+      if (!IsLinearCombinationOfFunction(child, symbol, projectionContext,
+                                         testFunction)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (e->isMult()) {
+    bool patternFound = false;
+    for (const Tree* child : e->children()) {
+      if (Degree::Get(child, symbol, projectionContext) == 0) {
+        continue;
+      }
+      if (IsLinearCombinationOfFunction(child, symbol, projectionContext,
+                                        testFunction)) {
+        if (patternFound) {
+          return false;
+        }
+        patternFound = true;
+      } else {
+        return false;
+      }
+    }
+    return patternFound;
+  }
+  return false;
+}
+
 }  // namespace Poincare::Internal

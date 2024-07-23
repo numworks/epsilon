@@ -291,10 +291,6 @@ class OExpression : public PoolHandle {
     return e.otype() == ExpressionNode::Type::Factorial;
   }
 
-  typedef bool (*PatternTest)(const OExpression& e, Context* context,
-                              const char* symbol);
-  bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
-                                     const char* symbol) const;
   bool deepIsSymbolic(Context* context,
                       SymbolicComputation replaceSymbols) const;
 

@@ -285,6 +285,7 @@ PointOfInterest findIntersections(void* searchContext) {
           solution.x(), solution.y(), 0, ctx->solver.lastInterest(), alongY, 0};
     }
     ++ctx->counter;
+    ctx->memoizedOtherFunction = SystemFunction{};
     ctx->reinitSolver();
   }
 

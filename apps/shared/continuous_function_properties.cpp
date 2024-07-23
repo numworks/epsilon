@@ -291,6 +291,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
     const SystemExpression& analyzedExpression, Context* context) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
+  assert(analyzedExpression.dimension(context).isScalar());
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
@@ -391,6 +392,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
     int xDeg, int yDeg, OMG::Troolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
+  assert(analyzedExpression.dimension(context).isScalar());
 
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
@@ -476,6 +478,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
     Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
+  assert(analyzedExpression.dimension(context).isPointOrListOfPoints());
 
   setCurveParameterType(CurveParameterType::Polar);
 
@@ -535,8 +538,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
     Poincare::Context* context, Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isParametric());
-  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
-  assert(!analyzedExpression.hasMatrixOrListChild(context, false));
+  assert(analyzedExpression.dimension(context).isPoint());
 
   setCurveParameterType(CurveParameterType::Parametric);
   setCaption(I18n::Message::ParametricEquationType);

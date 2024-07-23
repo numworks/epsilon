@@ -543,61 +543,40 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   setCurveParameterType(CurveParameterType::Parametric);
   setCaption(I18n::Message::ParametricEquationType);
 
-  // Detect lines
-  const SystemExpression xOfT = analyzedExpression.childAtIndex(0);
-  const SystemExpression yOfT = analyzedExpression.childAtIndex(1);
-  int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
-  int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
-  if (degOfTinX == 0) {
-    if (degOfTinY == 0) {
-      // The curve is a dot
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = Internal::ComplexFormat::Cartesian,
+      .m_angleUnit = Internal::AngleUnit::Radian,
+      .m_unitFormat = Internal::UnitFormat::Metric,
+      .m_symbolic =
+          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = context,
+      .m_unitDisplay = Internal::UnitDisplay::None,
+  };
+
+  // Detect parametric lines
+  Internal::FunctionProperties::LineType lineType =
+      Internal::FunctionProperties::ParametricLineType(
+          analyzedExpression, Function::k_unknownName, projectionContext);
+  switch (lineType) {
+    case Internal::FunctionProperties::LineType::Vertical:
+      /* The same text as cartesian equation is used because the caption
+       * "Parametric equation of a vertical line" is too long to fit
+       * the 37 max chars limit in every language.
+       * This can be changed later if more chars are available. */
+      setCaption(I18n::Message::VerticalLineType);
       return;
-    }
-    /* The same text as cartesian equation is used because the caption
-     * "Parametric equation of a vertical line" is too long to fit
-     * the 37 max chars limit in every language.
-     * This can be changed later if more chars are available. */
-    setCaption(I18n::Message::VerticalLineType);
-    return;
-  }
-  if (degOfTinY == 0) {
-    assert(degOfTinX != 0);
-    /* Same comment as above. */
-    setCaption(I18n::Message::HorizontalLineType);
-    return;
-  }
-  if (degOfTinX == 1 && degOfTinY == 1) {
-    setCaption(I18n::Message::ParametricLineType);
-    return;
-  }
-  assert(degOfTinX != 0 && degOfTinY != 0);
-  SystemExpression variableX = xOfT.clone();
-  if (variableX.type() == ExpressionNode::Type::Addition) {
-#if 0  // TODO_PCJ
-    static_cast<Addition&>(variableX).removeConstantTerms(
-        context, Function::k_unknownName);
-#else
-    assert(false);
-#endif
-  }
-  SystemExpression variableY = yOfT.clone();
-  if (variableY.type() == ExpressionNode::Type::Addition) {
-#if 0  // TODO_PCJ
-    static_cast<Addition&>(variableY).removeConstantTerms(
-        context, Function::k_unknownName);
-#else
-    assert(false);
-#endif
-  }
-  SystemExpression quotient = Division::Builder(variableX, variableY);
-  quotient = quotient.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(context));
-  if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
-    setCaption(I18n::Message::ParametricLineType);
-    return;
+    case Internal::FunctionProperties::LineType::Horizontal:
+      /* Same comment as above. */
+      setCaption(I18n::Message::HorizontalLineType);
+      return;
+    case Internal::FunctionProperties::LineType::Diagonal:
+      setCaption(I18n::Message::ParametricLineType);
+      return;
+    default:
+      assert(lineType == Internal::FunctionProperties::LineType::None);
   }
 
-  // Detect polar conics
+  // Detect parametric conics
   ParametricConic conicProperties = ParametricConic(
       analyzedExpression, context, complexFormat, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);

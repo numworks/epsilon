@@ -14,6 +14,9 @@ class FunctionProperties {
 
   static LineType PolarLineType(const SystemExpression& e, const char* symbol,
                                 ProjectionContext projectionContext);
+  static LineType ParametricLineType(const SystemExpression& e,
+                                     const char* symbol,
+                                     ProjectionContext projectionContext);
 };
 
 }  // namespace Poincare::Internal

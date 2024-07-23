@@ -150,18 +150,6 @@ int Addition::getPolynomialCoefficients(Context* context,
   return deg;
 }
 
-OExpression Addition::removeConstantTerms(Context* context,
-                                          const char* symbolName) {
-  for (int i = 0; i < numberOfChildren(); i++) {
-    if (childAtIndex(i).polynomialDegree(context, symbolName) == 0) {
-      removeChildAtIndexInPlace(i);
-      i--;
-    }
-  }
-  assert(numberOfChildren() != 0);
-  return *this;
-}
-
 OExpression Addition::shallowBeautify(
     const ReductionContext& reductionContext) {
   /* Step 1 : Sort children in decreasing order of degree.

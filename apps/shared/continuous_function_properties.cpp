@@ -295,95 +295,53 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
-  // f(x) = piecewise(...)
-  if (analyzedExpression.deepIsOfType({ExpressionNode::Type::PiecewiseOperator},
-                                      context)) {
-    setCaption(I18n::Message::PiecewiseType);
-    return;
-  }
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = Internal::ComplexFormat::Cartesian,
+      .m_angleUnit = Internal::AngleUnit::Radian,
+      .m_unitFormat = Internal::UnitFormat::Metric,
+      .m_symbolic =
+          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = context,
+      .m_unitDisplay = Internal::UnitDisplay::None,
+  };
 
-  int xDeg =
-      analyzedExpression.polynomialDegree(context, Function::k_unknownName);
-  // f(x) = a
-  if (xDeg == 0) {
-    setCaption(I18n::Message::ConstantType);
-    return;
-  }
-
-  // f(x) = a*x + b
-  if (xDeg == 1) {
-    if (analyzedExpression.type() == ExpressionNode::Type::Addition) {
+  Internal::FunctionProperties::FunctionType type =
+      Internal::FunctionProperties::CartesianFunctionType(
+          analyzedExpression, Function::k_unknownName, projectionContext);
+  switch (type) {
+    case Internal::FunctionProperties::FunctionType::Piecewise:
+      setCaption(I18n::Message::PiecewiseType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Constant:
+      setCaption(I18n::Message::ConstantType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Affine:
       setCaption(I18n::Message::AffineType);
-    } else {
+      return;
+    case Internal::FunctionProperties::FunctionType::Linear:
       setCaption(I18n::Message::LinearType);
-    }
-    return;
+      return;
+    case Internal::FunctionProperties::FunctionType::Polynomial:
+      setCaption(I18n::Message::PolynomialType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Logarithmic:
+      setCaption(I18n::Message::LogarithmicType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Exponential:
+      setCaption(I18n::Message::ExponentialType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Rational:
+      setCaption(I18n::Message::RationalType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Trigonometric:
+      setCaption(I18n::Message::TrigonometricType);
+      return;
+    case Internal::FunctionProperties::FunctionType::Default:
+      setCaption(I18n::Message::Function);
+      return;
+    default:
+      OMG::unreachable();
   }
-
-  // f(x) = a*x^n + b*x^ + ... + z
-  if (xDeg > 1) {
-    setCaption(I18n::Message::PolynomialType);
-    return;
-  }
-
-#if 0  // TODO_PCJ
-  // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
-  if (analyzedExpression.isLinearCombinationOfFunction(
-          context,
-          [](const NewExpression& e, Context* context, const char* symbol) {
-            return e.type() == ExpressionNode::Type::Logarithm &&
-                   e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
-          },
-          Function::k_unknownName)) {
-    setCaption(I18n::Message::LogarithmicType);
-    return;
-  }
-
-  // f(x) = a*exp(b*x+c) + d
-  if (analyzedExpression.isLinearCombinationOfFunction(
-          context,
-          [](const NewExpression& e, Context* context, const char* symbol) {
-            if (e.type() != ExpressionNode::Type::Power) {
-              return false;
-            }
-            NewExpression base = e.childAtIndex(0);
-            return base.type() == ExpressionNode::Type::ConstantMaths &&
-                   static_cast<Constant&>(base).isExponentialE() &&
-                   e.childAtIndex(1).polynomialDegree(context, symbol) == 1;
-          },
-          Function::k_unknownName)) {
-    setCaption(I18n::Message::ExponentialType);
-    return;
-  }
-
-  // f(x) = polynomial/polynomial
-  if (analyzedExpression.isLinearCombinationOfFunction(
-          context, &Division::IsRationalFraction,
-          Function::k_unknownName)) {
-    setCaption(I18n::Message::RationalType);
-    return;
-  }
-
-  // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
-  ReductionContext reductionContext =
-      ReductionContext::DefaultReductionContextForAnalysis(context);
-  // tan(x) is reduced to sin(x)/cos(x) unless the target is User
-  reductionContext.setTarget(ReductionTarget::User);
-  SystemExpression userReducedExpression =
-      analyzedExpression.cloneAndReduce(reductionContext);
-  if (userReducedExpression.isLinearCombinationOfFunction(
-          context,
-          [](const NewExpression& e, Context* context, const char* symbol) {
-            return Poincare::Trigonometry::IsDirectTrigonometryFunction(e) &&
-                   e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
-          },
-          Function::k_unknownName)) {
-    setCaption(I18n::Message::TrigonometricType);
-    return;
-  }
-#endif
-  // Others
-  setCaption(I18n::Message::Function);
 }
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(

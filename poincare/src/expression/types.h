@@ -112,6 +112,17 @@ NODE(Var, 0, {
 })
 NODE(Inf)
 
+// Ln(value)
+NODE(Ln, 1)
+// LnReal(value)
+NODE(LnReal, 1)
+// Log(value)
+NODE(Log, 1)
+// LogBase(value, base)
+NODE(LogBase, 2)
+
+RANGE(Logarithm, Ln, LogBase)
+
 // 3 - Other expressions in Alphabetic order
 
 NODE(Abs, 1)
@@ -152,14 +163,6 @@ NODE(SinH, 1)
 NODE(TanH, 1)
 NODE(Im, 1)
 NODE(LCM, NARY)
-// Ln(value)
-NODE(Ln, 1)
-// LnReal(value)
-NODE(LnReal, 1)
-// Log(value)
-NODE(Log, 1)
-// LogBase(value, base)
-NODE(LogBase, 2)
 NODE(MixedFraction, 2)
 NODE(Opposite, 1)
 NODE(PercentSimple, 1)

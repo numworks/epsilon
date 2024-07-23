@@ -18,6 +18,23 @@ class FunctionProperties {
                                      const char* symbol,
                                      ProjectionContext projectionContext);
 
+  enum class FunctionType {
+    Piecewise,
+    Constant,
+    Affine,
+    Linear,
+    Polynomial,
+    Logarithmic,
+    Exponential,
+    Rational,
+    Trigonometric,
+    Default
+  };
+
+  static FunctionType CartesianFunctionType(
+      const SystemExpression& e, const char* symbol,
+      ProjectionContext projectionContext);
+
  private:
   typedef bool (*PatternTest)(const Tree*, const char*, ProjectionContext);
   static bool IsLinearCombinationOfFunction(const Tree* e, const char* symbol,

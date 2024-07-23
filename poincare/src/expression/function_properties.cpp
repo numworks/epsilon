@@ -148,4 +148,73 @@ bool FunctionProperties::IsLinearCombinationOfFunction(
   return false;
 }
 
+FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
+    const SystemExpression& e, const char* symbol,
+    ProjectionContext projectionContext) {
+  const Tree* tree = e.tree();
+
+  // f(x) = piecewise(...)
+  if (tree->hasDescendantSatisfying(
+          [](const Internal::Tree* t) { return t->isPiecewise(); })) {
+    return FunctionType::Piecewise;
+  }
+
+  int xDeg = Degree::Get(tree, symbol, projectionContext);
+  // f(x) = a
+  if (xDeg == 0) {
+    return FunctionType::Constant;
+  }
+
+  // f(x) = a·x + b
+  if (xDeg == 1) {
+    return tree->isAdd() ? FunctionType::Affine : FunctionType::Linear;
+  }
+
+  // f(x) = a·x^n + b·x^ + ... + z
+  if (xDeg > 1) {
+    return FunctionType::Polynomial;
+  }
+
+  // f(x) = a·logM(b·x+c) + d·logN(e·x+f) + ... + z
+  if (IsLinearCombinationOfFunction(
+          tree, symbol, projectionContext,
+          [](const Tree* e, const char* symbol,
+             ProjectionContext projectionContext) {
+            return e->isLogarithm() &&
+                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
+          })) {
+    return FunctionType::Logarithmic;
+  }
+
+  // f(x) = a·exp(b·x+c) + d·exp(e·x+f) + ... + z
+  if (IsLinearCombinationOfFunction(
+          tree, symbol, projectionContext,
+          [](const Tree* e, const char* symbol,
+             ProjectionContext projectionContext) {
+            return e->isExp() &&
+                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
+          })) {
+    return FunctionType::Exponential;
+  }
+
+  // f(x) = polynomial / polynomial
+  if (IsLinearCombinationOfFunction(tree, symbol, projectionContext,
+                                    Division::IsRationalFraction)) {
+    return FunctionType::Rational;
+  }
+
+  // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
+  if (IsLinearCombinationOfFunction(
+          tree, symbol, projectionContext,
+          [](const Tree* e, const char* symbol,
+             ProjectionContext projectionContext) {
+            return e->isTrig() &&  // TODO_PCJ: also tangent
+                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
+          })) {
+    return FunctionType::Trigonometric;
+  }
+
+  return FunctionType::Default;
+}
+
 }  // namespace Poincare::Internal

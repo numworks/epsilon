@@ -663,7 +663,16 @@ int SystemExpression::getPolynomialReducedCoefficients(
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     bool keepDependencies) const {
-  // TODO_PCJ: handle symbolicComputation
+#if ASSERTIONS
+  Tree* clone = tree()->cloneTree();
+  assert(!Internal::Projection::DeepReplaceUserNamed(
+      clone, {.m_complexFormat = complexFormat,
+              .m_angleUnit = angleUnit,
+              .m_unitFormat = unitFormat,
+              .m_symbolic = symbolicComputation,
+              .m_context = context}));
+  clone->removeTree();
+#endif
   Tree* coefList = PolynomialParser::GetCoefficients(tree(), symbolName);
   if (!coefList) {
     return -1;

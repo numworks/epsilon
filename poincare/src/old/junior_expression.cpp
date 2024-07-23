@@ -665,6 +665,11 @@ int SystemExpression::getPolynomialReducedCoefficients(
     bool keepDependencies) const {
 #if ASSERTIONS
   Tree* clone = tree()->cloneTree();
+  /* If this assert fails, we would need to project all userVariables
+   * replacements, but it can't be done independently from the full expression
+   * (ex: with random). An easy solution could be to beautify then
+   * re-project (with symbolicComputation and maybe systematic simplify) the
+   * full expression. */
   assert(!Internal::Projection::DeepReplaceUserNamed(
       clone, {.m_complexFormat = complexFormat,
               .m_angleUnit = angleUnit,

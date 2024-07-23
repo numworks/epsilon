@@ -102,7 +102,9 @@ QUIZ_CASE(pcj_approximation_power) {
 QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
   approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
-  // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
+  approximates_to<float>("sort({1,3,4,2})", "{1,2,3,4}");
+  approximates_to<float>("sort({(3,2),(1,0)})", "{(1,0),(3,2)}");
+  // approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
 }
 
 QUIZ_CASE(pcj_approximation_matrix) {

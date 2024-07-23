@@ -122,7 +122,9 @@ class Solver {
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */
   void stretch();
-  void setSearchStep(T step) { m_maximalXStep = step; }
+  void setSearchStep(T step) {
+    m_maximalXStep = std::max(step, k_minimalPracticalStep);
+  }
   void setGrowthSpeed(GrowthSpeed speed) { m_growthSpeed = speed; }
 
  private:

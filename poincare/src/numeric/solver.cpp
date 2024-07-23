@@ -17,12 +17,13 @@ template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, Context* context)
     : m_xStart(xStart),
       m_xEnd(xEnd),
-      m_maximalXStep(MaximalStep(xEnd - xStart)),
       m_yResult(k_NAN),
       m_context(context),
       m_lastInterest(Interest::None),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
-                                                : GrowthSpeed::Fast) {}
+                                                : GrowthSpeed::Fast) {
+  setSearchStep(MaximalStep(xEnd - xStart));
+}
 
 template <typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
@@ -427,8 +428,7 @@ bool Solver<T>::FunctionSeemsConstantOnTheInterval(
 template <typename T>
 T Solver<T>::MaximalStep(T intervalAmplitude) {
   constexpr T minimalNumberOfSteps = static_cast<T>(100.);
-  return std::max(k_minimalPracticalStep,
-                  std::fabs(intervalAmplitude) / minimalNumberOfSteps);
+  return std::fabs(intervalAmplitude) / minimalNumberOfSteps;
 }
 
 template <typename T>

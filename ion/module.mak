@@ -11,6 +11,12 @@ PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
+ION_LOG_EVENTS_NAME ?= $(DEBUG)
+
+ifneq ($(ION_LOG_EVENTS_NAME),0)
+SFLAGS_ion += -DION_LOG_EVENTS_NAME=1
+endif
+
 include $(PATH_ion)/shared.$(PLATFORM_TYPE).mak
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)

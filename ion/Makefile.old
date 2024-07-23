@@ -64,7 +64,7 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   storage/record.cpp \
 )
 
-ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
+ifeq ($(ION_LOG_EVENTS_NAME),1)
 ion_device_userland_src += ion/src/shared/layout_events.cpp
 endif
 

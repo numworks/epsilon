@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/run_loop.h>
 #include <kandinsky/font.h>
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
 #include <ion/console.h>
 #include <ion/keyboard/layout_events.h>
 #endif
@@ -70,7 +70,7 @@ bool RunLoop::step() {
     Ion::Console::writeChar(static_cast<uint8_t>(event));
 #endif
 
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
     if (Ion::Events::LogEvents()) {
       const char* name = event.name();
       if (name != nullptr) {

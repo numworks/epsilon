@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <ion.h>
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
 #include <ion/keyboard/layout_events.h>
 #endif
 #include <ion/src/shared/init.h>
@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
                                                               true);
   }
 
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
   bool doNotLogEvents = args.popFlag("--hide-events");
   if (doNotLogEvents) {
     Ion::Events::SetLogEvents(false);

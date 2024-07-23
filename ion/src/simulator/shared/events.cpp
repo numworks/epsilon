@@ -17,7 +17,7 @@
 #include "haptics.h"
 #include "ion/src/simulator/shared/clipboard_helper.h"
 
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
 #include <ion/console.h>
 #endif
 
@@ -87,14 +87,14 @@ Event getEvent(int* timeout) {
   if (sSourceJournal != nullptr) {
     if (sSourceJournal->isEmpty()) {
       sSourceJournal = nullptr;
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
       if (Ion::Events::LogEvents()) {
         Ion::Console::writeLine("----- STATE FILE FULLY LOADED -----");
       }
 #endif
     } else {
       nextEvent = sSourceJournal->popEvent();
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
       if (Ion::Events::LogEvents()) {
         Ion::Console::writeLine("(From state file) ", false);
       }

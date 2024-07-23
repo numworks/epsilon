@@ -21,7 +21,7 @@ inline const char* Event::name() const {
 }
 #endif
 
-#if ESCHER_LOG_EVENTS_NAME
+#if ION_LOG_EVENTS_NAME
 bool LogEvents();
 bool SetLogEvents(bool logEvents);
 #endif

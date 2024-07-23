@@ -91,6 +91,10 @@ FunctionProperties::LineType FunctionProperties::ParametricLineType(
     return LineType::Diagonal;
   }
   assert(degOfTinX != 0 && degOfTinY != 0);
+  if (degOfTinX != degOfTinY) {
+    // quotient can't be independent on t
+    return LineType::None;
+  }
   Tree* quotient = SharedTreeStack->pushMult(2);
   Tree* variableX = xOfT->cloneTree();
   removeConstantTermsInAddition(variableX, symbol, projectionContext);

@@ -1092,13 +1092,7 @@ bool Boolean::value() const {
 /* Unit */
 
 NewExpression Unit::Builder(Preferences::AngleUnit angleUnit) {
-  return NewExpression::Builder(
-      Units::Unit::Push(angleUnit == Preferences::AngleUnit::Radian
-                            ? &Units::Angle::representatives.radian
-                        : angleUnit == Preferences::AngleUnit::Degree
-                            ? &Units::Angle::representatives.degree
-                            : &Units::Angle::representatives.gradian,
-                        Units::Prefix::EmptyPrefix()));
+  return NewExpression::Builder(Units::Unit::Push(angleUnit));
 }
 
 bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {

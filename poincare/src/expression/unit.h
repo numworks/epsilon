@@ -290,6 +290,7 @@ class Unit {
   // Push Unit
   static Tree* Push(const Representative* unitRepresentative,
                     const Prefix* unitPrefix = Prefix::EmptyPrefix());
+  static Tree* Push(AngleUnit angleUnit);
   static const Representative* GetRepresentative(const Tree* unit);
   static void SetRepresentative(Tree* unit,
                                 const Representative* representative);

@@ -903,6 +903,14 @@ Tree* Unit::Push(const Representative* unitRepresentative,
   return SharedTreeStack->pushUnit(repId, preId);
 }
 
+Tree* Unit::Push(AngleUnit angleUnit) {
+  return Push(angleUnit == AngleUnit::Radian ? &Angle::representatives.radian
+              : angleUnit == AngleUnit::Degree
+                  ? &Angle::representatives.degree
+                  : &Angle::representatives.gradian,
+              Prefix::EmptyPrefix());
+}
+
 const Representative* Unit::GetRepresentative(const Tree* unit) {
   return Representative::FromId(unit->nodeValue(0));
 }

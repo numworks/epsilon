@@ -12,9 +12,10 @@ class FunctionProperties {
  public:
   enum class LineType { Vertical, Horizontal, Diagonal, None };
 
-  static LineType PolarLineType(const SystemExpression& e, const char* symbol,
+  static LineType PolarLineType(const SystemExpression& analyzedExpression,
+                                const char* symbol,
                                 ProjectionContext projectionContext);
-  static LineType ParametricLineType(const SystemExpression& e,
+  static LineType ParametricLineType(const SystemExpression& analyzedExpression,
                                      const char* symbol,
                                      ProjectionContext projectionContext);
 
@@ -32,7 +33,7 @@ class FunctionProperties {
   };
 
   static FunctionType CartesianFunctionType(
-      const SystemExpression& e, const char* symbol,
+      const SystemExpression& analyzedExpression, const char* symbol,
       ProjectionContext projectionContext);
 
  private:

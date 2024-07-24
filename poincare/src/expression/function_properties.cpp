@@ -11,23 +11,24 @@
 namespace Poincare::Internal {
 
 FunctionProperties::LineType FunctionProperties::PolarLineType(
-    const SystemExpression& e, const char* symbol,
+    const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
-  assert(e.type() != ExpressionNode::Type::Dependency);
-  assert(e.dimension(projectionContext.m_context).isPointOrListOfPoints());
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.dimension(projectionContext.m_context)
+             .isPointOrListOfPoints());
 
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line */
 
-  const Tree* tree = e.tree();
-  if (!tree->isMult() && !tree->isPow()) {
+  const Tree* e = analyzedExpression.tree();
+  if (!e->isMult() && !e->isPow()) {
     return LineType::None;
   }
 
   TreeRef numerator, denominator;
-  Division::GetNumeratorAndDenominator(tree, numerator, denominator);
+  Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
   double a, b, c;
   bool polarLine =
@@ -74,12 +75,12 @@ void removeConstantTermsInAddition(Tree* e, const char* symbol,
 }
 
 FunctionProperties::LineType FunctionProperties::ParametricLineType(
-    const SystemExpression& e, const char* symbol,
+    const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
-  assert(e.type() != ExpressionNode::Type::Dependency);
-  assert(e.dimension(projectionContext.m_context).isPoint());
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.dimension(projectionContext.m_context).isPoint());
 
-  const Tree* xOfT = e.tree()->child(0);
+  const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
   int degOfTinX = Degree::Get(xOfT, symbol, projectionContext);
   int degOfTinY = Degree::Get(yOfT, symbol, projectionContext);
@@ -156,20 +157,20 @@ bool FunctionProperties::IsLinearCombinationOfFunction(
 }
 
 FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
-    const SystemExpression& e, const char* symbol,
+    const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
-  assert(e.type() != ExpressionNode::Type::Dependency);
-  assert(e.dimension(projectionContext.m_context).isScalar());
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
-  const Tree* tree = e.tree();
+  const Tree* e = analyzedExpression.tree();
 
   // f(x) = piecewise(...)
-  if (tree->hasDescendantSatisfying(
+  if (e->hasDescendantSatisfying(
           [](const Internal::Tree* t) { return t->isPiecewise(); })) {
     return FunctionType::Piecewise;
   }
 
-  int xDeg = Degree::Get(tree, symbol, projectionContext);
+  int xDeg = Degree::Get(e, symbol, projectionContext);
   // f(x) = a
   if (xDeg == 0) {
     return FunctionType::Constant;
@@ -177,7 +178,7 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = a·x + b
   if (xDeg == 1) {
-    return tree->isAdd() ? FunctionType::Affine : FunctionType::Linear;
+    return e->isAdd() ? FunctionType::Affine : FunctionType::Linear;
   }
 
   // f(x) = a·x^n + b·x^ + ... + z
@@ -187,7 +188,7 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = a·logM(b·x+c) + d·logN(e·x+f) + ... + z
   if (IsLinearCombinationOfFunction(
-          tree, symbol, projectionContext,
+          e, symbol, projectionContext,
           [](const Tree* e, const char* symbol,
              ProjectionContext projectionContext) {
             return e->isLogarithm() &&
@@ -198,7 +199,7 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = a·exp(b·x+c) + d·exp(e·x+f) + ... + z
   if (IsLinearCombinationOfFunction(
-          tree, symbol, projectionContext,
+          e, symbol, projectionContext,
           [](const Tree* e, const char* symbol,
              ProjectionContext projectionContext) {
             return e->isExp() &&
@@ -208,13 +209,13 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
   }
 
   // f(x) = polynomial / polynomial
-  if (IsLinearCombinationOfFunction(tree, symbol, projectionContext,
+  if (IsLinearCombinationOfFunction(e, symbol, projectionContext,
                                     Division::IsRationalFraction)) {
     return FunctionType::Rational;
   }
 
   // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
-  Tree* clone = tree->cloneTree();
+  Tree* clone = e->cloneTree();
   // We beautify to detect tan
   Beautification::DeepBeautify(clone, projectionContext);
   bool isTrig = IsLinearCombinationOfFunction(

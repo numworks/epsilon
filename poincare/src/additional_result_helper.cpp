@@ -5,18 +5,24 @@
 #include <poincare/new_trigonometry.h>
 #include <poincare/old/arc_cosine.h>
 #include <poincare/old/cosine.h>
-#include <poincare/old/multiplication.h>
 #include <poincare/old/sine.h>
 #include <poincare/old/subtraction.h>
+#include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/unit.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 namespace Poincare {
+
+using namespace Internal;
 
 void AdditionalResultHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
-    Internal::ProjectionContext* ctx, UserExpression& exactAngle,
+    ProjectionContext* ctx, UserExpression& exactAngle,
     float* approximatedAngle, bool* angleIsExact) {
   // TODO: Move this in additional_result_helper, use Trees and new Trigonometry
   UserExpression period =
@@ -102,8 +108,10 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
-  assert(!input.hasUnit(true));
-  assert(!exactOutput.hasUnit(true));
+  const Tree* inputTree = input.tree();
+  const Tree* exactTree = exactOutput.tree();
+  assert(Internal::Dimension::Get(exactTree).isScalar() ||
+         Internal::Dimension::Get(exactTree).isAngleUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:
    * - > input: cos(60)
@@ -113,50 +121,66 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
    * However if the result is complex, it is treated as a complex result.
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
-  assert(!exactOutput.isScalarComplex(calculationPreferences));
-  UserExpression directTrigoFunction;
-  if (Trigonometry::IsDirectTrigonometryFunction(input) &&
-      !input.deepIsSymbolic(context,
-                            SymbolicComputation::DoNotReplaceAnySymbol)) {
+  const Tree* directTrigoFunction;
+  if (inputTree->isDirectTrigonometryFunction() &&
+      !inputTree->hasChildSatisfying(
+          [](const Tree* e) { return e->isUserNamed(); })) {
     /* Do not display trigonometric additional informations, in case the symbol
      * value is later modified/deleted in the storage and can't be retrieved.
      * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
      * inconsistent. And if x is deleted, it crashes. */
-    directTrigoFunction = input;
-  } else if (Trigonometry::IsDirectTrigonometryFunction(exactOutput)) {
-    directTrigoFunction = exactOutput;
+    directTrigoFunction = inputTree;
+  } else if (exactTree->isDirectTrigonometryFunction()) {
+    directTrigoFunction = exactTree;
   } else {
     return UserExpression();
   }
-  assert(!directTrigoFunction.isUninitialized() &&
-         !directTrigoFunction.isUndefined());
-  UserExpression exactAngle = directTrigoFunction.childAtIndex(0);
-  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
-  assert(!exactAngle.hasUnit(true));
+  assert(directTrigoFunction && !directTrigoFunction->isUndefined());
+
+  Tree* exactAngle = directTrigoFunction->child(0)->cloneTree();
+  assert(exactAngle && !exactAngle->isUndefined());
+  Internal::Dimension exactAngleDimension =
+      Internal::Dimension::Get(exactAngle);
+  assert(exactAngleDimension.isScalar() || exactAngleDimension.isAngleUnit());
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  UserExpression unit;
-  Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &exactAngle, &unit, context,
-      {.complexFormat = complexFormat, .angleUnit = angleUnit});
-  if (!unit.isUninitialized()) {
-    assert(Unit::IsPureAngleUnit(unit, true));
-    /* After a reduction, all angle units are converted to radians, so we
-     * convert exactAngle again here to fit the angle unit that will be used
-     * in reductions below. */
-    exactAngle = Multiplication::Builder(
-        exactAngle, Trigonometry::UnitConversionFactor(
-                        Preferences::AngleUnit::Radian, angleUnit));
+  AngleUnit angleUnit = calculationPreferences.angleUnit;
+  ProjectionContext projCtx = {
+      .m_angleUnit = angleUnit,
+      .m_complexFormat = complexFormat,
+      .m_context = context,
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+  };
+
+  /* TODO: A simplification could be avoided by calling
+   * SimplifyWithAdaptiveStrategy steps, and handle units right after
+   * projection. */
+  Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
+  if (exactAngleDimension.isAngleUnit()) {
+    assert(directTrigoFunction->isDirectTrigonometryFunction());
+    /* When removing units, angle units are converted to radians, so we
+     * manually add the conversion ratio back to preserve the input angleUnit.
+     */
+    // exactAngle * angleUnitRatio / RadianUnitRatio
+    exactAngle->cloneNodeAtNode(KMult.node<3>);
+    Units::Unit::Push(angleUnit);
+    KPow->cloneNode();
+    Units::Unit::Push(AngleUnit::Radian);
+    (-1_e)->cloneTree();
+    // Remove units
+    Tree::ApplyShallowInDepth(exactAngle, Units::Unit::ShallowRemoveUnit);
+    // Simplify again
+    Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
   }
-  // The angle must be real.
-  if (!std::isfinite(Shared::PoincareHelpers::ApproximateToScalar<double>(
-          exactAngle, context,
-          {.complexFormat = complexFormat, .angleUnit = angleUnit}))) {
+
+  // The angle must be real and finite.
+  if (!std::isfinite(Approximation::RootTreeToReal<float>(exactAngle, angleUnit,
+                                                          complexFormat))) {
+    exactAngle->removeTree();
     return UserExpression();
   }
-  assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
-  return exactAngle;
+  return UserExpression::Builder(exactAngle);
 }
 
 }  // namespace Poincare

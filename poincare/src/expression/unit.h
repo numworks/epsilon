@@ -287,6 +287,8 @@ class Unit {
   static void RemoveTemperatureUnit(Tree* root);
   // Replace with SI ratio only.
   static void RemoveUnit(Tree* unit);
+  // Replace units and physical constants with their Basic SI value
+  static bool ShallowRemoveUnit(Tree* e, void*);
   // Push Unit
   static Tree* Push(const Representative* unitRepresentative,
                     const Prefix* unitPrefix = Prefix::EmptyPrefix());
@@ -307,8 +309,6 @@ class Unit {
   // From Kelvin value, return value in given temperature representative
   static double KelvinValueToRepresentative(
       double value, const Representative* representative);
-  // Replace units and physical constants with their Basic SI value
-  static bool ShallowRemoveUnit(Tree* e, void*);
   /* Remove subtrees that don't contain units. Return true if the entire tree
    * has been removed. */
   static bool KeepUnitsOnly(Tree* e);

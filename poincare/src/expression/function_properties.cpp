@@ -13,6 +13,9 @@ namespace Poincare::Internal {
 FunctionProperties::LineType FunctionProperties::PolarLineType(
     const SystemExpression& e, const char* symbol,
     ProjectionContext projectionContext) {
+  assert(e.type() != ExpressionNode::Type::Dependency);
+  assert(e.dimension(projectionContext.m_context).isPointOrListOfPoints());
+
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line
    * 1/cos(theta) --> Vertical line
@@ -73,6 +76,9 @@ void removeConstantTermsInAddition(Tree* e, const char* symbol,
 FunctionProperties::LineType FunctionProperties::ParametricLineType(
     const SystemExpression& e, const char* symbol,
     ProjectionContext projectionContext) {
+  assert(e.type() != ExpressionNode::Type::Dependency);
+  assert(e.dimension(projectionContext.m_context).isPoint());
+
   const Tree* xOfT = e.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
   int degOfTinX = Degree::Get(xOfT, symbol, projectionContext);
@@ -152,6 +158,9 @@ bool FunctionProperties::IsLinearCombinationOfFunction(
 FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
     const SystemExpression& e, const char* symbol,
     ProjectionContext projectionContext) {
+  assert(e.type() != ExpressionNode::Type::Dependency);
+  assert(e.dimension(projectionContext.m_context).isScalar());
+
   const Tree* tree = e.tree();
 
   // f(x) = piecewise(...)

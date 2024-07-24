@@ -561,22 +561,22 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
 }
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(
-    const SystemExpression equation, const char* symbolName, Context* context,
-    Preferences::ComplexFormat complexFormat,
+    const SystemExpression analyzedExpression, const char* symbol,
+    Context* context, Preferences::ComplexFormat complexFormat,
     OMG::Troolean* highestDegreeCoefficientIsPositive) {
   Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
   SystemExpression
       coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Symbols will be replaced anyway to compute isNull
-  int degree = equation.getPolynomialReducedCoefficients(
-      symbolName, coefficients, context, complexFormat, angleUnit,
+  int degree = analyzedExpression.getPolynomialReducedCoefficients(
+      symbol, coefficients, context, complexFormat, angleUnit,
       k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   // Degree should be >= 0 but reduction failure may result in a -1 degree.
   assert(degree <= Expression::k_maxPolynomialDegree);
   ApproximationContext approximationContext(context, complexFormat, angleUnit);
-  if (highestDegreeCoefficientIsPositive != nullptr && degree >= 0) {
+  if (highestDegreeCoefficientIsPositive && degree >= 0) {
     OMG::Troolean isPositive = coefficients[degree].isPositive(context);
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.

@@ -8,6 +8,7 @@
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/src/expression/function_properties.h>
+#include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/trigonometry.h>
 
 #include "continuous_function.h"
@@ -169,6 +170,16 @@ void ContinuousFunctionProperties::update(
     }
   }
 
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = Internal::ComplexFormat::Cartesian,
+      .m_angleUnit = Internal::AngleUnit::Radian,
+      .m_unitFormat = Internal::UnitFormat::Metric,
+      .m_symbolic =
+          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_context = context,
+      .m_unitDisplay = Internal::UnitDisplay::None,
+  };
+
   // Compute equation's degree regarding y.
   int yDeg = analyzedExpression.polynomialDegree(context, k_ordinateName);
   if (!isCartesianEquation) {
@@ -192,16 +203,6 @@ void ContinuousFunctionProperties::update(
       setErrorStatusAndUpdateCaption(Status::Undefined);
       return;
     }
-
-    Internal::ProjectionContext projectionContext = {
-        .m_complexFormat = Internal::ComplexFormat::Cartesian,
-        .m_angleUnit = Internal::AngleUnit::Radian,
-        .m_unitFormat = Internal::UnitFormat::Metric,
-        .m_symbolic = Internal::SymbolicComputation::
-            ReplaceAllDefinedSymbolsWithDefinition,
-        .m_context = context,
-        .m_unitDisplay = Internal::UnitDisplay::None,
-    };
 
     switch (precomputedFunctionSymbol) {
       case SymbolType::X: {
@@ -257,8 +258,9 @@ void ContinuousFunctionProperties::update(
   const char* symbolName =
       willBeAlongX ? k_ordinateName : Function::k_unknownName;
   OMG::Troolean highestCoefficientIsPositive = OMG::Troolean::Unknown;
-  if (!HasNonNullCoefficients(analyzedExpression, symbolName, context,
-                              complexFormat, &highestCoefficientIsPositive)) {
+  if (!Poincare::Internal::PolynomialParser::HasNonNullCoefficients(
+          analyzedExpression.tree(), symbolName, projectionContext,
+          &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
@@ -558,52 +560,6 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
              },
              nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
              static_cast<void*>(&symbol));
-}
-
-bool ContinuousFunctionProperties::HasNonNullCoefficients(
-    const SystemExpression analyzedExpression, const char* symbol,
-    Context* context, Preferences::ComplexFormat complexFormat,
-    OMG::Troolean* highestDegreeCoefficientIsPositive) {
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  SystemExpression
-      coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Symbols will be replaced anyway to compute isNull
-  int degree = analyzedExpression.getPolynomialReducedCoefficients(
-      symbol, coefficients, context, complexFormat, angleUnit,
-      k_defaultUnitFormat,
-      SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  // Degree should be >= 0 but reduction failure may result in a -1 degree.
-  assert(degree <= Expression::k_maxPolynomialDegree);
-  ApproximationContext approximationContext(context, complexFormat, angleUnit);
-  if (highestDegreeCoefficientIsPositive && degree >= 0) {
-    OMG::Troolean isPositive = coefficients[degree].isPositive(context);
-    if (isPositive == OMG::Troolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[degree].approximateToScalar<double>(
-          approximationContext);
-      if (!std::isnan(approximation) && approximation != 0.0) {
-        isPositive = OMG::BoolToTroolean(approximation > 0.0);
-      }
-    }
-    *highestDegreeCoefficientIsPositive = isPositive;
-  }
-  // Look for a NonNull coefficient.
-  for (int d = 0; d <= degree; d++) {
-    OMG::Troolean isNull = coefficients[d].isNull(context);
-    if (isNull == OMG::Troolean::False) {
-      return true;
-    }
-    if (isNull == OMG::Troolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation =
-          coefficients[d].approximateToScalar<double>(approximationContext);
-      if (!std::isnan(approximation) && approximation != 0.0) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 }  // namespace Shared

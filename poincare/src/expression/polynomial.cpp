@@ -518,6 +518,47 @@ Tree* PolynomialParser::GetReducedCoefficients(const Tree* e,
   return coefList;
 }
 
+bool PolynomialParser::HasNonNullCoefficients(
+    const Tree* e, const char* symbol, ProjectionContext projectionContext,
+    OMG::Troolean* highestDegreeCoefficientIsPositive) {
+  Tree* coefList = GetReducedCoefficients(e, symbol, true, false);
+  if (!coefList) {
+    return false;
+  }
+  int degree = coefList->numberOfChildren() - 1;
+  assert(0 <= degree && degree <= Polynomial::k_maxPolynomialDegree);
+
+  for (Tree* child : coefList->children()) {
+    ComplexSign sign = ComplexSign::Get(child);
+    assert(sign.isReal());
+    OMG::Troolean isNull = sign.realSign().trooleanIsNull();
+    if (isNull == OMG::Troolean::Unknown) {
+      // Approximate for a better estimation. Nan if coefficient depends on x/y.
+      double approximation = Approximation::To<double>(child);
+      if (!std::isnan(approximation)) {
+        isNull = OMG::BoolToTroolean(approximation != 0.0);
+      }
+    }
+    if (isNull == OMG::Troolean::False) {
+      if (highestDegreeCoefficientIsPositive) {
+        OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
+        if (isPositive == OMG::Troolean::Unknown) {
+          // Same comment as above
+          double approximation = Approximation::To<double>(child);
+          if (!std::isnan(approximation)) {
+            isPositive = OMG::BoolToTroolean(approximation > 0.0);
+          }
+        }
+        *highestDegreeCoefficientIsPositive = isPositive;
+      }
+      coefList->removeTree();
+      return true;
+    }
+  }
+  coefList->removeTree();
+  return false;
+}
+
 #if 0
 bool IsInSetOrIsEqual(const Tree* e, const Tree* variables) {
   return variables.isSet() ?

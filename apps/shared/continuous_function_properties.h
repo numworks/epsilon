@@ -250,12 +250,6 @@ class ContinuousFunctionProperties {
       const Poincare::SystemExpression& analyzedExpression,
       Poincare::Internal::ProjectionContext projectionContext);
 
-  // If equation has a NonNull coeff. Can also compute last coeff sign.
-  static bool HasNonNullCoefficients(
-      const Poincare::SystemExpression analyzedExpression, const char* symbol,
-      Poincare::Context* context,
-      Poincare::Preferences::ComplexFormat complexFormat,
-      OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::SystemExpression equation,
                                  CodePoint symbol);

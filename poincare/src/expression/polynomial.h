@@ -5,6 +5,7 @@
 
 #include "integer.h"
 #include "k_tree.h"
+#include "projection.h"
 
 namespace Poincare::Internal {
 
@@ -116,6 +117,9 @@ class PolynomialParser final {
   static Tree* GetReducedCoefficients(const Tree* e, const char* symbolName,
                                       bool keepDependencies = false,
                                       bool ascendingDegree = true);
+  static bool HasNonNullCoefficients(
+      const Tree* e, const char* symbol, ProjectionContext projectionContext,
+      OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);

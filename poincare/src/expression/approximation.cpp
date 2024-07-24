@@ -1018,6 +1018,15 @@ bool Approximation::ToBoolean(const Tree* e) {
   if (e->isParentheses()) {
     return ToBoolean<T>(e->child(0));
   }
+  if (e->isListSort()) {
+    /* TODO we are computing all elements and sorting the list for all
+     * elements, this is awful */
+    Tree* list = ToList<T>(e->child(0));
+    OutOfContext(NAry::Sort(list));
+    bool result = ToBoolean<T>(list);
+    list->removeTree();
+    return result;
+  }
   assert(e->isLogicalOperator());
   bool a = ToBoolean<T>(e->child(0));
   if (e->isLogicalNot()) {

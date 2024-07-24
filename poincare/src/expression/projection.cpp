@@ -7,6 +7,7 @@
 #include "decimal.h"
 #include "physical_constant.h"
 #include "symbol.h"
+#include "unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -135,8 +136,8 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Decimal::Project(e);
     changed = true;
   }
-  if (projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
-      e->isUnit() &&
+  if (e->isUnit() &&
+      projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
       !Units::Unit::IsNonKelvinTemperature(Units::Unit::GetRepresentative(e))) {
     /* To prevent unnecessary mix of units
      * (12_km / 6_mm)×_°C -> (12 000 / 0.006)×_°C */
@@ -145,13 +146,22 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 
   // Project angles depending on context
   Internal::AngleUnit angleUnit = projectionContext->m_angleUnit;
-  if (e->isOfType({Type::Sin, Type::Cos, Type::Tan}) &&
-      angleUnit != Internal::AngleUnit::Radian) {
+  if (e->isOfType({Type::Sin, Type::Cos, Type::Tan})) {
+    /* In degree, cos(23°) and cos(23) -> trig(23×π/180, 0)
+     * but        cos(23rad)           -> trig(23      , 0) */
     Tree* child = e->child(0);
-    child->moveTreeOverTree(PatternMatching::Create(
-        KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
-    changed = true;
-  } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
+    Dimension childDim = Dimension::Get(child);
+    if (childDim.isAngleUnit()) {
+      // Remove all units to fall back to radian
+      changed = Tree::ApplyShallowInDepth(e, Units::Unit::ShallowRemoveUnit);
+    } else if (angleUnit != Internal::AngleUnit::Radian) {
+      child->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
+      changed = true;
+    }
+  }
+
+  if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     if (projectionContext->m_complexFormat == ComplexFormat::Real &&

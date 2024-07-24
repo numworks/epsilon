@@ -296,7 +296,7 @@ PointOfInterest findIntersections(void* searchContext) {
         return {
             solution.x(),
             solution.y(),
-            *reinterpret_cast<uint32_t*>(&ctx->otherRecord),
+            static_cast<uint32_t>(ctx->otherRecord),
             ctx->solver.lastInterest(),
             alongY,
             0,

@@ -22,7 +22,7 @@ void LogIndent() {
 
 #endif
 
-AdvancedReduction::Path AdvancedReduction::findBestReduction(const Tree* e) {
+AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
@@ -50,7 +50,7 @@ AdvancedReduction::Path AdvancedReduction::findBestReduction(const Tree* e) {
 
 bool AdvancedReduction::Reduce(Tree* e) {
   ExceptionTry {
-    Path best_path = findBestReduction(e);
+    Path best_path = FindBestReduction(e);
     return best_path.apply(e);
   }
 
@@ -80,8 +80,7 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
       if (m_depth[i] <= depth) {
         return false;
       }
-      // There might be new nodes to explore if more resources are
-      // available.
+      // There might be new nodes to explore if more resources are available.
       m_depth[i] = depth;
       return true;
     }
@@ -123,8 +122,7 @@ const Tree* NextNode(const Tree* e) {
 
 bool AdvancedReduction::Direction::canApply(const Tree* e,
                                             const Tree* root) const {
-  // Optimization: No trees are expected after root, so we can use
-  // lastBlock()
+  // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(!isNextNode() ||
          (NextNode(e)->block() < SharedTreeStack->lastBlock()) ==
              NextNode(e)->hasAncestor(root, false));
@@ -262,8 +260,8 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         // No need to recompute hash if root did not change.
         hash = ctx->m_root->hash();
       }
-      /* If unchanged or unexplored, recursively advanced reduce. Otherwise,
-       * do not go further. */
+      /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
+       * not go further. */
       if (!rootChanged ||
           ctx->m_crcCollection.add(hash, ctx->m_path.length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
@@ -383,8 +381,8 @@ bool AdvancedReduction::DeepExpand(Tree* e) {
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
    * We push a temporary tree to preserve TreeRef.
-   * TODO: Maybe find a solution for this unintuitive workaround, the same
-   * hack is used in Projection::DeepReplaceUserNamed. */
+   * TODO: Maybe find a solution for this unintuitive workaround, the same hack
+   * is used in Projection::DeepReplaceUserNamed. */
   TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
   Tree* target = e;
   while (target->block() < nextTree->block()) {

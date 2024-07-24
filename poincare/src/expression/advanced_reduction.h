@@ -126,13 +126,12 @@ class AdvancedReduction {
     bool m_mustResetRoot;
   };
 
-  static Path findBestReduction(const Tree* e);
+  [[nodiscard]] static Path FindBestReduction(const Tree* e);
 
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
   static bool ReduceRec(Tree* e, Context* ctx);
-  // Bottom-up ShallowReduce starting from tree. Output is unrelated to
-  // change.
+  // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 
   /* Expand/Contract operations */

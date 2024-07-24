@@ -6,6 +6,10 @@
 #include <omg/troolean.h>
 #include <stdint.h>
 
+#include <cmath>
+#include <complex>
+#include <type_traits>
+
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif
@@ -125,7 +129,7 @@ class Sign {
   }
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
 
-  static Sign Get(const Tree* e);
+  [[nodiscard]] static Sign Get(const Tree* e);
 
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {
@@ -202,7 +206,7 @@ class ComplexSign {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }
 
-  static ComplexSign Get(const Tree* e);
+  [[nodiscard]] static ComplexSign Get(const Tree* e);
 
   /* Sign of e1 - e2 so that e1 < e2 <=> SignOfDifference(e1, e2) < 0 and so on.
    * Beware that the difference may be real while the trees were complexes. */
@@ -222,6 +226,34 @@ class ComplexSign {
 
 static_assert(sizeof(Sign) == sizeof(uint8_t));
 static_assert(sizeof(ComplexSign) == sizeof(uint8_t));
+
+template <typename T>
+bool AreConsistent(const Sign& sign, const T& value) {
+  static_assert(std::is_arithmetic<T>());
+  if (std::isnan(value)) {
+    return true;
+  }
+  if ((value < 0 and !sign.canBeStrictlyNegative()) or
+      (value > 0 and !sign.canBeStrictlyPositive()) or
+      (value == 0 and !sign.canBeNull()) or
+      ((std::floor(value) != value) and !sign.canBeNonInteger())) {
+    return false;
+  }
+  return true;
+}
+
+template <typename T>
+inline static bool AreConsistent(const ComplexSign& sign,
+                                 const std::complex<T>& value) {
+  if (std::isnan(value.imag()) or std::isnan(value.real())) {
+    return true;
+  }
+  if (value.imag() != 0 and !sign.canBeNonReal()) {
+    return false;
+  }
+  return AreConsistent(sign.realSign(), value.real()) and
+         AreConsistent(sign.imagSign(), value.imag());
+}
 
 // TODO : Sign could be used here instead.
 

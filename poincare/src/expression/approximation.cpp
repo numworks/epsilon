@@ -21,6 +21,7 @@
 #include "list.h"
 #include "matrix.h"
 #include "physical_constant.h"
+#include "poincare/src/expression/sign.h"
 #include "random.h"
 #include "rational.h"
 #include "symbol.h"
@@ -323,6 +324,11 @@ bool UndefDependencies(const Tree* dep) {
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
+
+  if (Dimension::Get(e).isScalarOrUnit()) {
+    assert(AreConsistent(ComplexSign::Get(e), value));
+  }
+
   if (s_context && value.imag() != 0) {
     s_context->m_encounteredComplex = true;
   }

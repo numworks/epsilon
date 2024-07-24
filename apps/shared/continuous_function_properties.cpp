@@ -2,14 +2,8 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <omg/unreachable.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/division.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/multiplication.h>
 #include <poincare/src/expression/function_properties.h>
 #include <poincare/src/expression/polynomial.h>
-#include <poincare/src/expression/trigonometry.h>
 
 #include "continuous_function.h"
 

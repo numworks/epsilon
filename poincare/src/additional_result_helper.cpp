@@ -147,11 +147,11 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
       calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   ProjectionContext projCtx = {
-      .m_angleUnit = angleUnit,
       .m_complexFormat = complexFormat,
-      .m_context = context,
+      .m_angleUnit = angleUnit,
       .m_symbolic =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = context,
   };
 
   /* TODO: A simplification could be avoided by calling

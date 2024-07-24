@@ -93,6 +93,9 @@ The other variables of the module need to be edited by hand.
 > [!TIP]
 > A module does not always require a `module.mak` file, but make sure `import_module` is called before `create_module`, as the prior will define `PATH_<module>` used by the latter.
 
+> [!NOTE]
+> When creating a shared module in its own repository, don't forget to give Read access to user ShellyAnnNumworks, in order to allow CI to fetch the submodule.
+
 ## Flavors and tastes
 
 Tastes modify the sources that are built depending on the flavors passed to

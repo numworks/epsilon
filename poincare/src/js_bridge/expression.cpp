@@ -23,8 +23,14 @@ std::string toLatexString(const UserExpression* expression) {
 }
 
 SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
-                                           std::string var) {
-  return expression->getSystemFunction(var.c_str(), true);
+                                           std::string symbolName) {
+  return expression->getSystemFunction(symbolName.c_str(), true);
+}
+
+SystemExpression getReducedDerivativeFromString(
+    const SystemExpression* expression, std::string symbolName,
+    int derivationOrder) {
+  return expression->getReducedDerivative(symbolName.c_str(), derivationOrder);
 }
 
 double ApproximateToScalarWithValue(const JuniorExpression& expr,
@@ -50,6 +56,8 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("cloneAndReduce", &JuniorExpression::cloneAndReduce)
       .function("cloneAndBeautify", &JuniorExpression::cloneAndBeautify)
       .function("getSystemFunction", &getSystemFunctionFromString,
+                allow_raw_pointers())
+      .function("getReducedDerivative", getReducedDerivativeFromString,
                 allow_raw_pointers())
       .function("approximateToTree",
                 &JuniorExpression::approximateToTree<double>,

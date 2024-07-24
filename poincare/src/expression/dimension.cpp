@@ -361,7 +361,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::UnitConversion:
       assert(childDim[1].isUnit());
       return childDim[0] == childDim[1] ||
-             (childDim[1].isAngleUnit() && childDim[0].isScalar());
+             (childDim[1].isSimpleAngleUnit() && childDim[0].isScalar());
     case Type::Dependency:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
       return true;

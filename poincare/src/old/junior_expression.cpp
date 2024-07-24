@@ -1127,7 +1127,7 @@ bool Unit::IsPureAngleUnit(NewExpression expression, bool isRadian) {
 
 bool Unit::HasAngleDimension(NewExpression expression) {
   assert(Internal::Dimension::DeepCheck(expression.tree()));
-  return Internal::Dimension::Get(expression.tree()).isAngleUnit();
+  return Internal::Dimension::Get(expression.tree()).isSimpleAngleUnit();
 }
 
 template SystemExpression JuniorExpressionNode::approximateToTree<float>(

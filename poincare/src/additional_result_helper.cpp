@@ -111,7 +111,7 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
   assert(Internal::Dimension::Get(exactTree).isScalar() ||
-         Internal::Dimension::Get(exactTree).isAngleUnit());
+         Internal::Dimension::Get(exactTree).isSimpleAngleUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:
    * - > input: cos(60)
@@ -141,7 +141,8 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
   assert(exactAngle && !exactAngle->isUndefined());
   Internal::Dimension exactAngleDimension =
       Internal::Dimension::Get(exactAngle);
-  assert(exactAngleDimension.isScalar() || exactAngleDimension.isAngleUnit());
+  assert(exactAngleDimension.isScalar() ||
+         exactAngleDimension.isSimpleAngleUnit());
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
@@ -157,7 +158,7 @@ UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
    * SimplifyWithAdaptiveStrategy steps, and handle units right after
    * projection. */
   Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
-  if (exactAngleDimension.isAngleUnit()) {
+  if (exactAngleDimension.isSimpleAngleUnit()) {
     assert(directTrigoFunction->isDirectTrigonometryFunction());
     /* When removing units, angle units are converted to radians, so we
      * manually add the conversion ratio back to preserve the input angleUnit.

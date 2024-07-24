@@ -151,7 +151,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
      * but        cos(23rad)           -> trig(23      , 0) */
     Tree* child = e->child(0);
     Dimension childDim = Dimension::Get(child);
-    if (childDim.isAngleUnit()) {
+    if (childDim.isSimpleAngleUnit()) {
       // Remove all units to fall back to radian
       changed = Tree::ApplyShallowInDepth(e, Units::Unit::ShallowRemoveUnit);
     } else if (angleUnit != Internal::AngleUnit::Radian) {

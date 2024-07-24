@@ -110,9 +110,12 @@ class PolynomialParser final {
   static Tree* RecursivelyParse(Tree* e, const Tree* variables,
                                 size_t variableIndex = 0);
   static Tree* Parse(Tree* e, const Tree* variable);
-  static Tree* GetCoefficients(const Tree* e, const char* symbolName);
+
+  static Tree* GetCoefficients(const Tree* e, const char* symbolName,
+                               bool ascendingDegree = true);
   static Tree* GetReducedCoefficients(const Tree* e, const char* symbolName,
-                                      bool keepDependencies = false);
+                                      bool keepDependencies = false,
+                                      bool ascendingDegree = true);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);

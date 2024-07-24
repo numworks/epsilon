@@ -461,7 +461,8 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   return std::make_pair(e, static_cast<uint8_t>(0));
 }
 
-Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
+Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName,
+                                        bool ascendingDegree) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Tree* poly = e->cloneTree();
   AdvancedReduction::DeepExpand(poly);
@@ -479,18 +480,21 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
     return nullptr;
   }
   TreeRef result = SharedTreeStack->pushList(0);
-  int indexExponent = 0;
   int numberOfTerms = Polynomial::NumberOfTerms(poly);
-  for (int i = degree; i >= 0; i--) {
-    if (indexExponent < numberOfTerms &&
+  int indexExponent = ascendingDegree ? numberOfTerms - 1 : 0;
+  int step = ascendingDegree ? 1 : -1;
+  int start = ascendingDegree ? 0 : degree;
+  int end = ascendingDegree ? degree : 0;
+  for (int i = start; i * step <= end * step; i += step) {
+    if (0 <= indexExponent && indexExponent < numberOfTerms &&
         i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
       NAry::AddChild(result, poly->child(indexExponent + 1)->cloneTree());
-      indexExponent++;
+      indexExponent -= step;
     } else {
       NAry::AddChild(result, SharedTreeStack->pushZero());
     }
   }
-  assert(indexExponent == numberOfTerms);
+  assert(indexExponent == ascendingDegree ? -1 : numberOfTerms);
   poly->removeTree();
   symbol->removeTree();
   return result;
@@ -498,8 +502,10 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
 
 Tree* PolynomialParser::GetReducedCoefficients(const Tree* e,
                                                const char* symbolName,
-                                               bool keepDependencies) {
-  Tree* coefList = PolynomialParser::GetCoefficients(e, symbolName);
+                                               bool keepDependencies,
+                                               bool ascendingDegree) {
+  Tree* coefList =
+      PolynomialParser::GetCoefficients(e, symbolName, ascendingDegree);
   if (!coefList) {
     return nullptr;
   }

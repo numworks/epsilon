@@ -508,7 +508,7 @@ bool Trigonometry::DetectLinearPatternOfTrig(
       return false;
     }
 
-    Tree* coefList = PolynomialParser::GetCoefficients(child, symbol);
+    Tree* coefList = PolynomialParser::GetCoefficients(child, symbol, false);
     assert(coefList->numberOfChildren() == 2);
     // b·x+c
     Tree* bTree = coefList->child(0);

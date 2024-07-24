@@ -175,6 +175,7 @@ struct PointSearchContext {
 
   size_t currentProvider = 0;
   int counter = 0;
+  Ion::Storage::Record otherRecord;
   SystemFunction memoizedOtherFunction;
 
   void reinitSolver() {
@@ -271,14 +272,13 @@ PointOfInterest findIntersections(void* searchContext) {
   while (ctx->counter < n) {
     int otherFunctionIndex = ctx->counter;
     if (ctx->memoizedOtherFunction.isUninitialized()) {
-      Ion::Storage::Record otherRecord =
-          ctx->store->recordAtIndex(otherFunctionIndex);
-      if (ctx->record == otherRecord) {
+      ctx->otherRecord = ctx->store->recordAtIndex(otherFunctionIndex);
+      if (ctx->record == ctx->otherRecord) {
         ++ctx->counter;
         continue;
       }
       ExpiringPointer<ContinuousFunction> g =
-          ctx->store->modelForRecord(otherRecord);
+          ctx->store->modelForRecord(ctx->otherRecord);
       if (!g->shouldDisplayIntersections()) {
         ++ctx->counter;
         continue;
@@ -296,7 +296,7 @@ PointOfInterest findIntersections(void* searchContext) {
         return {
             solution.x(),
             solution.y(),
-            0,
+            *reinterpret_cast<uint32_t*>(&ctx->otherRecord),
             ctx->solver.lastInterest(),
             alongY,
             0,

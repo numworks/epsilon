@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <omg/bit_helper.h>
+#include <omg/troolean.h>
 #include <stdint.h>
 
 #if POINCARE_TREE_LOG
@@ -63,6 +64,21 @@ class Sign {
   // It's either strictly positive, strictly negative or null.
   constexpr bool isKnown() const {
     return isZero() || isStrictlyPositive() || isStrictlyNegative();
+  }
+  constexpr OMG::Troolean trooleanIsZero() const {
+    return !canBeNull() ? OMG::Troolean::False
+           : isZero()   ? OMG::Troolean::True
+                        : OMG::Troolean::Unknown;
+  }
+  constexpr OMG::Troolean trooleanIsStrictlyPositive() const {
+    return !canBeStrictlyPositive() ? OMG::Troolean::False
+           : isStrictlyPositive()   ? OMG::Troolean::True
+                                    : OMG::Troolean::Unknown;
+  }
+  constexpr OMG::Troolean trooleanIsStrictlyNegative() const {
+    return !canBeStrictlyNegative() ? OMG::Troolean::False
+           : isStrictlyNegative()   ? OMG::Troolean::True
+                                    : OMG::Troolean::Unknown;
   }
 
   bool operator==(const Sign&) const = default;

@@ -421,6 +421,30 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::Sequence;
     case Type::Parentheses:
       return ExpressionNode::Type::Parenthesis;
+    case Type::Cos:
+      return ExpressionNode::Type::Cosine;
+    case Type::Sin:
+      return ExpressionNode::Type::Sine;
+    case Type::Tan:
+      return ExpressionNode::Type::Tangent;
+    case Type::ACos:
+      return ExpressionNode::Type::ArcCosine;
+    case Type::ASin:
+      return ExpressionNode::Type::ArcSine;
+    case Type::ATan:
+      return ExpressionNode::Type::ArcTangent;
+    case Type::Sec:
+      return ExpressionNode::Type::Secant;
+    case Type::Csc:
+      return ExpressionNode::Type::Cosecant;
+    case Type::Cot:
+      return ExpressionNode::Type::Cotangent;
+    case Type::ASec:
+      return ExpressionNode::Type::ArcSecant;
+    case Type::ACsc:
+      return ExpressionNode::Type::ArcCosecant;
+    case Type::ACot:
+      return ExpressionNode::Type::ArcCotangent;
 #if 0
       // No perfect Internal equivalents
       return ExpressionNode::Type::Comparison;

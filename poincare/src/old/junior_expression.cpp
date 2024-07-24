@@ -683,12 +683,11 @@ int SystemExpression::getPolynomialReducedCoefficients(
   if (!coefList) {
     return -1;
   }
-  int nChildren = coefList->numberOfChildren();
-  int degree = nChildren - 1;
+  int degree = coefList->numberOfChildren() - 1;
   assert(degree >= 0);
 
   Tree* child = coefList->nextNode();
-  for (int i = 0; i < nChildren; i++) {
+  for (int i = 0; i <= degree; i++) {
     coefficients[degree - i] = Builder(child);
   }
   coefList->removeNode();

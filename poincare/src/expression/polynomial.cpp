@@ -10,6 +10,7 @@
 #include "rational.h"
 #include "set.h"
 #include "sign.h"
+#include "simplification.h"
 #include "systematic_reduction.h"
 
 namespace Poincare::Internal {
@@ -493,6 +494,22 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   poly->removeTree();
   symbol->removeTree();
   return result;
+}
+
+Tree* PolynomialParser::GetReducedCoefficients(const Tree* e,
+                                               const char* symbolName,
+                                               bool keepDependencies) {
+  Tree* coefList = PolynomialParser::GetCoefficients(e, symbolName);
+  if (!coefList) {
+    return nullptr;
+  }
+  for (Tree* child : coefList->children()) {
+    Simplification::ReduceSystem(child, false);
+    if (!keepDependencies && child->isDependency()) {
+      child->moveTreeOverTree(child->child(0));
+    }
+  }
+  return coefList;
 }
 
 #if 0

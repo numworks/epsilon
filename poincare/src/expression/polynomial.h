@@ -111,6 +111,8 @@ class PolynomialParser final {
                                 size_t variableIndex = 0);
   static Tree* Parse(Tree* e, const Tree* variable);
   static Tree* GetCoefficients(const Tree* e, const char* symbolName);
+  static Tree* GetReducedCoefficients(const Tree* e, const char* symbolName,
+                                      bool keepDependencies = false);
 
  private:
   static void AddVariable(Tree* set, const Tree* variable);

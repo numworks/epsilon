@@ -678,7 +678,8 @@ int SystemExpression::getPolynomialReducedCoefficients(
               .m_context = context}));
   clone->removeTree();
 #endif
-  Tree* coefList = PolynomialParser::GetCoefficients(tree(), symbolName);
+  Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
+                                                            keepDependencies);
   if (!coefList) {
     return -1;
   }
@@ -688,10 +689,6 @@ int SystemExpression::getPolynomialReducedCoefficients(
 
   Tree* child = coefList->nextNode();
   for (int i = 0; i < nChildren; i++) {
-    Simplification::ReduceSystem(child, false);
-    if (!keepDependencies && child->isDependency()) {
-      child->moveTreeOverTree(child->child(0));
-    }
     coefficients[degree - i] = Builder(child);
   }
   coefList->removeNode();

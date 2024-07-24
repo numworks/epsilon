@@ -69,35 +69,27 @@ struct LatexToken {
   const LayoutConstructor constructor;
 };
 
-#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
-  {                                                            \
-    LATEX, std::size(LATEX),                                   \
-        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
-        []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
-  }
+#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)         \
+  {LATEX, std::size(LATEX),                              \
+   [](const Tree* t) -> bool { return t->IS_LAYOUT(); }, \
+   []() -> Tree* { return KTREE(KRackL())->cloneTree(); }}
 
-#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)                      \
-  {                                                                      \
-    LATEX, std::size(LATEX),                                             \
-        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
-        []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
-  }
+#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)      \
+  {LATEX, std::size(LATEX),                              \
+   [](const Tree* t) -> bool { return t->IS_LAYOUT(); }, \
+   []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); }}
 
-#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                               \
-  {                                                                     \
-    LATEX, std::size(LATEX),                                            \
-        [](const Tree* t) -> bool {                                     \
-          return t->isCodePointLayout() &&                              \
-                 CodePointLayout::GetCodePoint(t) == CODEPOINT;         \
-        },                                                              \
-        []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
-  }
+#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                  \
+  {LATEX, std::size(LATEX),                                \
+   [](const Tree* t) -> bool {                             \
+     return t->isCodePointLayout() &&                      \
+            CodePointLayout::GetCodePoint(t) == CODEPOINT; \
+   },                                                      \
+   []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); }}
 
-#define DO_NOTHING_TOKEN(LATEX)                                           \
-  {                                                                       \
-    LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
-        []() -> Tree* { return nullptr; }                                 \
-  }
+#define DO_NOTHING_TOKEN(LATEX)                                          \
+  {LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
+   []() -> Tree* { return nullptr; }}
 
 constexpr static LatexToken k_tokens[] = {
     // Parenthesis
@@ -285,16 +277,27 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
       }
 
       int i = 0;
+      tokenFound = true;
+      bool isCodePoint = token.descriptionLength == 1;
+
       while (true) {
         const char* delimiter = token.description[i];
         size_t delimiterLength = strlen(delimiter);
-        if (buffer + delimiterLength >= end) {
+        if (buffer + delimiterLength + isCodePoint >= end) {
           // Buffer is too short
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         memcpy(buffer, delimiter, delimiterLength);
         buffer += delimiterLength;
         if (i == token.descriptionLength - 1) {
+          if (isCodePoint) {
+            /* Add a space after code points:
+             * 3\cdotcos -> NO
+             * 3\cdot cos -> YES
+             **/
+            *buffer = ' ';
+            buffer += 1;
+          }
           *buffer = 0;
           break;
         }
@@ -304,7 +307,6 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
             Rack::From(child->child(indexOfChildInLayout)), buffer, end);
         i += 2;
       }
-      tokenFound = true;
     }
 
     if (tokenFound) {

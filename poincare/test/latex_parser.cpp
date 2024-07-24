@@ -68,5 +68,5 @@ QUIZ_CASE(pcj_layout_to_latex) {
           KCodePointL<UCodePointMultiplicationSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
           KCodePointL<UCodePointInfinity>(),
-      "\\le\\ge\\cdot\\times\\to\\infty");
+      "\\le \\ge \\cdot \\times \\to \\infty ");
 }

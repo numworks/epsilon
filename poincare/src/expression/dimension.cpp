@@ -245,7 +245,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     assert(childDim[child.index].isSanitized());
   }
   bool unitsAllowed = false;
-  bool angleUnitsAllowed = false;
+  bool angleUnitsAllowed = e->isDirectTrigonometryFunction() ||
+                           e->isDirectAdvancedTrigonometryFunction();
   switch (e->type()) {
     case Type::Add:
     case Type::Sub:
@@ -400,12 +401,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::Sign:
       // case Type::Sqrt: TODO: Handle _m^(1/2)
       unitsAllowed = true;
-      break;
-    case Type::Cos:
-    case Type::Sin:
-    case Type::Tan:
-    case Type::Trig:
-      angleUnitsAllowed = true;
       break;
     case Type::Matrix:
       break;
@@ -572,10 +567,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       // TODO: Maybe scalar ?
       return Get(e->child(0), ctx);
     }
-    case Type::ACos:
-    case Type::ASin:
-    case Type::ATan:
-      // Note: Angle units could be returned here.
     default:
       if (e->isLogicalOperatorOrBoolean() || e->isComparison()) {
         return Boolean();

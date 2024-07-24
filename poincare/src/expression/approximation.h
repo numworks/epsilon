@@ -97,7 +97,7 @@ class Approximation final {
   template <typename T>
   static bool ToBoolean(const Tree* e);
 
-  // tree must be a list.
+  // Input tree e must have a positive ListLength
   template <typename T>
   static Tree* ToList(const Tree* e);
 

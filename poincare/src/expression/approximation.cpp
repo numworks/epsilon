@@ -1057,6 +1057,7 @@ template <typename T>
 Tree* Approximation::ToList(const Tree* e) {
   Dimension dimension = Dimension::Get(e);
   int length = Dimension::ListLength(e);
+  assert(length != Dimension::k_nonListListLength);
   int old = s_context->m_listElement;
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {

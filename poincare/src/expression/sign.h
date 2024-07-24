@@ -47,7 +47,7 @@ class Sign {
   constexpr bool canBeNonNull() const {
     return m_canBeStrictlyPositive || m_canBeStrictlyNegative;
   }
-  constexpr bool isZero() const { return !canBeNonNull(); }
+  constexpr bool isNull() const { return !canBeNonNull(); }
   constexpr bool isInteger() const { return !canBeNonInteger(); }
   constexpr bool isStrictlyPositive() const {
     return !(m_canBeNull || m_canBeStrictlyNegative);
@@ -63,11 +63,11 @@ class Sign {
   }
   // It's either strictly positive, strictly negative or null.
   constexpr bool isKnown() const {
-    return isZero() || isStrictlyPositive() || isStrictlyNegative();
+    return isNull() || isStrictlyPositive() || isStrictlyNegative();
   }
-  constexpr OMG::Troolean trooleanIsZero() const {
+  constexpr OMG::Troolean trooleanIsNull() const {
     return !canBeNull() ? OMG::Troolean::False
-           : isZero()   ? OMG::Troolean::True
+           : isNull()   ? OMG::Troolean::True
                         : OMG::Troolean::Unknown;
   }
   constexpr OMG::Troolean trooleanIsStrictlyPositive() const {
@@ -159,11 +159,11 @@ class ComplexSign {
   constexpr Sign realSign() const { return Sign(m_realValue); }
   constexpr Sign imagSign() const { return Sign(m_imagValue); }
 
-  constexpr bool isReal() const { return imagSign().isZero(); }
-  constexpr bool isPureIm() const { return realSign().isZero(); }
+  constexpr bool isReal() const { return imagSign().isNull(); }
+  constexpr bool isPureIm() const { return realSign().isNull(); }
   constexpr bool isNonReal() const { return !imagSign().canBeNull(); }
   constexpr bool canBeNonReal() const { return imagSign().canBeNonNull(); }
-  constexpr bool isZero() const { return isReal() && isPureIm(); }
+  constexpr bool isNull() const { return isReal() && isPureIm(); }
   constexpr bool isPure() const { return isReal() || isPureIm(); }
   // Anything is possible
   constexpr bool isUnknown() const {

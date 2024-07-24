@@ -6,7 +6,7 @@
 #include "helper.h"
 using namespace Poincare::Internal;
 
-static_assert(Sign::Zero().isZero() && Sign::Zero().isInteger());
+static_assert(Sign::Zero().isNull() && Sign::Zero().isInteger());
 static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());
 static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==

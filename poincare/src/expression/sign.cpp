@@ -81,7 +81,7 @@ Sign Sign::Get(const Tree* e) {
 
 #if POINCARE_TREE_LOG
 void Sign::log(std::ostream& stream, bool endOfLine) const {
-  if (isZero()) {
+  if (isNull()) {
     stream << "Zero";
   } else {
     if (!m_canBeNonInteger) {
@@ -112,7 +112,7 @@ ComplexSign RelaxIntegerProperty(ComplexSign s) {
 }
 
 ComplexSign Abs(ComplexSign s) {
-  return ComplexSign(Sign(s.canBeNull(), !s.isZero(), false,
+  return ComplexSign(Sign(s.canBeNull(), !s.isNull(), false,
                           s.canBeNonInteger() || !s.isPure()),
                      Sign::Zero());
 }
@@ -213,11 +213,11 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
     return ComplexSign::Unknown();
   }
-  if (base.isZero()) {
+  if (base.isNull()) {
     // 0^exp = 0
     return ComplexSign::Zero();
   }
-  if (exp.isZero()) {
+  if (exp.isNull()) {
     // base^0 = 1
     return ComplexSign::RealStrictlyPositiveInteger();
   }
@@ -245,7 +245,7 @@ ComplexSign ComplexSign::Get(const Tree* e) {
       ComplexSign s = RealStrictlyPositiveInteger();  // 1
       for (const Tree* c : e->children()) {
         s = Mult(s, Get(c));
-        if (s.isUnknown() || s.isZero()) {
+        if (s.isUnknown() || s.isNull()) {
           break;
         }
       }

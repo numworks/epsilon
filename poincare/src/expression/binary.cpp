@@ -148,7 +148,7 @@ bool Binary::ReduceComparison(Tree* e) {
   const Tree* result = nullptr;
   if (!e->isInequality()) {
     // = or !=
-    if (complexSign.isZero()) {
+    if (complexSign.isNull()) {
       result = e->isEqual() ? KTrue : KFalse;
     } else if (!complexSign.canBeNull()) {
       result = e->isEqual() ? KFalse : KTrue;

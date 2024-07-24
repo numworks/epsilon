@@ -76,7 +76,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   }
 
   // If a=b, no need to wait for advanced reduction to explicit
-  if (sign.realSign().isZero()) {
+  if (sign.realSign().isNull()) {
     return Explicit(e);
   }
 
@@ -227,10 +227,10 @@ bool Parametric::ContractSum(Tree* e) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
       Tree* result =
-          realSign.isZero() || realSign.isStrictlyPositive()
+          realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateSimplify(KSum(KA, KAdd(KF, 1_e), KC, KD),
                                                 ctx)
               : PatternMatching::CreateSimplify(
@@ -249,10 +249,10 @@ bool Parametric::ContractSum(Tree* e) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
       Tree* result =
-          realSign.isZero() || realSign.isStrictlyNegative()
+          realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateSimplify(
                     KSum(KA, KB, KAdd(KF, -1_e), KD), ctx)
               : PatternMatching::CreateSimplify(
@@ -281,10 +281,10 @@ bool Parametric::ContractProduct(Tree* e) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
       Tree* result =
-          realSign.isZero() || realSign.isStrictlyPositive()
+          realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateSimplify(
                     KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
               : PatternMatching::CreateSimplify(
@@ -304,10 +304,10 @@ bool Parametric::ContractProduct(Tree* e) {
     ComplexSign sign =
         ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
-    if (sign.isReal() && (realSign.isZero() || realSign.isStrictlyPositive() ||
+    if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
       Tree* result =
-          realSign.isZero() || realSign.isStrictlyNegative()
+          realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateSimplify(
                     KProduct(KA, KB, KAdd(KF, -1_e), KD), ctx)
               : PatternMatching::CreateSimplify(

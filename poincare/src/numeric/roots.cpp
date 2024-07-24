@@ -23,7 +23,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
   }
   // TODO: Approximate if unsure
   ComplexSign deltaSign = ComplexSign::Get(delta);
-  if (deltaSign.isZero()) {
+  if (deltaSign.isNull()) {
     delta->removeTree();
     // -B/2A
     return PatternMatching::CreateSimplify(

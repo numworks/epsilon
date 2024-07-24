@@ -58,7 +58,7 @@ bool Number::SetSign(Tree* e, NonStrictSign sign) {
   } else if (e->isFloat()) {
     return FloatHelper::SetSign(e, NonStrictSign::Positive);
   }
-  assert(Number::Sign(e).isZero() ||
+  assert(Number::Sign(e).isNull() ||
          Number::Sign(e).isPositive() == (sign == NonStrictSign::Positive));
   return false;
 }

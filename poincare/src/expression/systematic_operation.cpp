@@ -246,8 +246,8 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   }
   // TODO: Maybe move this in advanced reduction
   Sign imagSign = childSign.imagSign();
-  if (realSign.isZero() && imagSign.isKnown()) {
-    if (imagSign.isZero()) {
+  if (realSign.isNull() && imagSign.isKnown()) {
+    if (imagSign.isNull()) {
       // atan2(0, 0) = undef
       e->cloneTreeOverTree(KOutOfDefinition);
       return true;
@@ -353,7 +353,7 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   const Tree* child = e->child(0);
   ComplexSign sign = ComplexSign::Get(child);
   const Tree* result;
-  if (sign.isZero()) {
+  if (sign.isNull()) {
     result = 0_e;
   } else if (!sign.isReal()) {
     // Could use sign(z) = exp(i*arg(z)) but sign(z) is preferred. Advanced ?

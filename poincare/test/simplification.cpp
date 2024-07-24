@@ -83,13 +83,12 @@ QUIZ_CASE(pcj_simplification_contraction) {
       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
       KMult(1_e / 2_e, KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
                             KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
-  contract_to(
-      KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e), KExp("y"_e),
-            KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
-
-      KMult(1_e / 2_e, KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e)),
-            KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
-                 KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
+  contract_to(KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e), KExp("y"_e),
+                    KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
+              KMult(1_e / 2_e,
+                    KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                         KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e)),
+                    KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e))));
   contract_to(KMult(KAbs("a"_e), KAbs(KMult("b"_e, "c"_e)), KAbs("d"_e),
                     KAbs(KMult("e"_e, "f"_e))),
 
@@ -223,7 +222,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
   simplifies_to("diff(sin(ln(x)), x, y)",
-                "dep(cos(ln(y))/y,{ln(y),sin(ln(y))})");
+                "dep(cos(ln(y))/y,{sin(ln(y)),ln(y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
                 "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
@@ -534,8 +533,8 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
 
-  simplifies_to("sin(x)*(cos(x)^-1)*ln(x)", "dep(ln(x)×tan(x),{ln(x)})");
-  simplifies_to("ln(x)*tan(x)", "dep(ln(x)×tan(x),{ln(x)})");
+  simplifies_to("sin(x)*(cos(x)^-1)*ln(x)", "dep(tan(x)×ln(x),{ln(x)})");
+  simplifies_to("ln(x)*tan(x)", "dep(tan(x)×ln(x),{ln(x)})");
   simplifies_to("sin(x)*(cos(y)^-1)*(cos(x)^-1)*sin(y)", "tan(x)×tan(y)");
 }
 

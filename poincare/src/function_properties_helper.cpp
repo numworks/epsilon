@@ -7,7 +7,9 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+using namespace Internal;
 
 FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol,
@@ -240,4 +242,4 @@ FunctionPropertiesHelper::CartesianFunctionType(
   return FunctionType::Default;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

@@ -5,7 +5,7 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree_ref.h>
 
-namespace Poincare::Internal {
+namespace Poincare {
 
 class FunctionPropertiesHelper {
  public:
@@ -13,10 +13,10 @@ class FunctionPropertiesHelper {
 
   static LineType PolarLineType(const SystemExpression& analyzedExpression,
                                 const char* symbol,
-                                ProjectionContext projectionContext);
-  static LineType ParametricLineType(const SystemExpression& analyzedExpression,
-                                     const char* symbol,
-                                     ProjectionContext projectionContext);
+                                Internal::ProjectionContext projectionContext);
+  static LineType ParametricLineType(
+      const SystemExpression& analyzedExpression, const char* symbol,
+      Internal::ProjectionContext projectionContext);
 
   enum class FunctionType {
     Piecewise,
@@ -33,14 +33,15 @@ class FunctionPropertiesHelper {
 
   static FunctionType CartesianFunctionType(
       const SystemExpression& analyzedExpression, const char* symbol,
-      ProjectionContext projectionContext);
+      Internal::ProjectionContext projectionContext);
 
-  typedef bool (*PatternTest)(const Tree*, const char*, ProjectionContext);
-  static bool IsLinearCombinationOfFunction(const Tree* e, const char* symbol,
-                                            ProjectionContext projectionContext,
-                                            PatternTest testFunction);
+  typedef bool (*PatternTest)(const Internal::Tree*, const char*,
+                              Internal::ProjectionContext);
+  static bool IsLinearCombinationOfFunction(
+      const Internal::Tree* e, const char* symbol,
+      Internal::ProjectionContext projectionContext, PatternTest testFunction);
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

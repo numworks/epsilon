@@ -42,24 +42,23 @@ void TrigonometryListController::computeAdditionalResults(
       m_calculationPreferences, &ctx, exactAngle, &approximatedAngle,
       m_isStrictlyEqual + 0);
 
-  UserExpression radianExpr = Unit::Builder(Preferences::AngleUnit::Radian);
-  UserExpression degreeExpr = Unit::Builder(Preferences::AngleUnit::Degree);
   UserExpression exactAngleWithUnit = UserExpression::Create(
-      KMult(KA, KB),
-      {.KA = exactAngle,
-       .KB = angleUnit() == Preferences::AngleUnit::Radian ? radianExpr
-                                                           : degreeExpr});
+      KMult(KA, KB), {.KA = exactAngle, .KB = Unit::Builder(angleUnit())});
 
   size_t index = 0;
   m_layouts[index] = Layout::String("θ");
 
   m_exactLayouts[index] = getExactLayoutFromExpression(
-      UserExpression::Create(KUnitConversion(KA, KB),
-                             {.KA = exactAngleWithUnit, .KB = radianExpr}),
+      UserExpression::Create(
+          KUnitConversion(KA, KB),
+          {.KA = exactAngleWithUnit,
+           .KB = Unit::Builder(Preferences::AngleUnit::Radian)}),
       &ctx);
   m_approximatedLayouts[index] = getExactLayoutFromExpression(
-      UserExpression::Create(KUnitConversion(KA, KB),
-                             {.KA = exactAngleWithUnit, .KB = degreeExpr}),
+      UserExpression::Create(
+          KUnitConversion(KA, KB),
+          {.KA = exactAngleWithUnit,
+           .KB = Unit::Builder(Preferences::AngleUnit::Degree)}),
       &ctx);
 
   constexpr KTree k_symbol = "θ"_e;

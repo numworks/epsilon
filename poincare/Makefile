@@ -14,6 +14,11 @@ DEBUG ?= 0
 PLATFORM ?= foxglove
 include $(PATH_haussmann)/Makefile
 
+ASSERTIONS ?= $(DEBUG)
+
+SFLAGS += \
+  -DASSERTIONS=$(ASSERTIONS)
+
 # Modules
 
 $(call import_module,omg,omg)

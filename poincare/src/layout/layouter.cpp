@@ -469,9 +469,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       } else {
         TreeRef layout =
             (expression->child(2)->isOne() ? KDiffL : KNthDiffL)->cloneNode();
-        // Handle the peculiar order of nth-derivative layout
-        // TODO fix order in derivative layout instead
-        expression->child(2)->moveTreeBeforeNode(expression->child(3));
         layoutChildrenAsRacks(expression);
         NAry::AddChild(layoutParent, layout);
       }

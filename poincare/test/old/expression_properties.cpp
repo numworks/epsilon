@@ -1048,8 +1048,8 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/function_properties_helper.h>
 #include <poincare/src/expression/division.h>
-#include <poincare/src/expression/function_properties.h>
 #include <poincare/src/expression/trigonometry.h>
 
 #include "../helper.h"
@@ -1130,14 +1130,14 @@ QUIZ_DISABLED_CASE(poincare_expression_continuous) {
 #include <poincare/src/expression/degree.h>
 
 void assert_is_linear_combination_of_pattern(
-    const char* expression, FunctionProperties::PatternTest testFunction,
+    const char* expression, FunctionPropertiesHelper::PatternTest testFunction,
     bool truthValue = true, const char* symbol = "x") {
   Shared::GlobalContext context;
   Expression e = Expression::Builder(parse_expression(expression, &context));
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      FunctionProperties::IsLinearCombinationOfFunction(
+      FunctionPropertiesHelper::IsLinearCombinationOfFunction(
           e, symbol, {.m_context = &context}, testFunction) == truthValue,
       expression);
 }

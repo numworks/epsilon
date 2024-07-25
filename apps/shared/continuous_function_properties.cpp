@@ -2,7 +2,7 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <omg/unreachable.h>
-#include <poincare/src/expression/function_properties.h>
+#include <poincare/function_properties_helper.h>
 #include <poincare/src/expression/polynomial.h>
 
 #include "continuous_function.h"
@@ -303,38 +303,38 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
-  Internal::FunctionProperties::FunctionType type =
-      Internal::FunctionProperties::CartesianFunctionType(
+  Internal::FunctionPropertiesHelper::FunctionType type =
+      Internal::FunctionPropertiesHelper::CartesianFunctionType(
           analyzedExpression, Function::k_unknownName, projectionContext);
   switch (type) {
-    case Internal::FunctionProperties::FunctionType::Piecewise:
+    case Internal::FunctionPropertiesHelper::FunctionType::Piecewise:
       setCaption(I18n::Message::PiecewiseType);
       return;
-    case Internal::FunctionProperties::FunctionType::Constant:
+    case Internal::FunctionPropertiesHelper::FunctionType::Constant:
       setCaption(I18n::Message::ConstantType);
       return;
-    case Internal::FunctionProperties::FunctionType::Affine:
+    case Internal::FunctionPropertiesHelper::FunctionType::Affine:
       setCaption(I18n::Message::AffineType);
       return;
-    case Internal::FunctionProperties::FunctionType::Linear:
+    case Internal::FunctionPropertiesHelper::FunctionType::Linear:
       setCaption(I18n::Message::LinearType);
       return;
-    case Internal::FunctionProperties::FunctionType::Polynomial:
+    case Internal::FunctionPropertiesHelper::FunctionType::Polynomial:
       setCaption(I18n::Message::PolynomialType);
       return;
-    case Internal::FunctionProperties::FunctionType::Logarithmic:
+    case Internal::FunctionPropertiesHelper::FunctionType::Logarithmic:
       setCaption(I18n::Message::LogarithmicType);
       return;
-    case Internal::FunctionProperties::FunctionType::Exponential:
+    case Internal::FunctionPropertiesHelper::FunctionType::Exponential:
       setCaption(I18n::Message::ExponentialType);
       return;
-    case Internal::FunctionProperties::FunctionType::Rational:
+    case Internal::FunctionPropertiesHelper::FunctionType::Rational:
       setCaption(I18n::Message::RationalType);
       return;
-    case Internal::FunctionProperties::FunctionType::Trigonometric:
+    case Internal::FunctionPropertiesHelper::FunctionType::Trigonometric:
       setCaption(I18n::Message::TrigonometricType);
       return;
-    case Internal::FunctionProperties::FunctionType::Default:
+    case Internal::FunctionPropertiesHelper::FunctionType::Default:
       setCaption(I18n::Message::Function);
       return;
     default:
@@ -440,21 +440,21 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   setCurveParameterType(CurveParameterType::Polar);
 
   // Detect polar lines
-  Internal::FunctionProperties::LineType lineType =
-      Internal::FunctionProperties::PolarLineType(
+  Internal::FunctionPropertiesHelper::LineType lineType =
+      Internal::FunctionPropertiesHelper::PolarLineType(
           analyzedExpression, Function::k_unknownName, projectionContext);
   switch (lineType) {
-    case Internal::FunctionProperties::LineType::Vertical:
+    case Internal::FunctionPropertiesHelper::LineType::Vertical:
       setCaption(I18n::Message::PolarVerticalLineType);
       return;
-    case Internal::FunctionProperties::LineType::Horizontal:
+    case Internal::FunctionPropertiesHelper::LineType::Horizontal:
       setCaption(I18n::Message::PolarHorizontalLineType);
       return;
-    case Internal::FunctionProperties::LineType::Diagonal:
+    case Internal::FunctionPropertiesHelper::LineType::Diagonal:
       setCaption(I18n::Message::PolarLineType);
       return;
     default:
-      assert(lineType == Internal::FunctionProperties::LineType::None);
+      assert(lineType == Internal::FunctionPropertiesHelper::LineType::None);
   }
 
   // Detect polar conics
@@ -492,26 +492,26 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   setCaption(I18n::Message::ParametricEquationType);
 
   // Detect parametric lines
-  Internal::FunctionProperties::LineType lineType =
-      Internal::FunctionProperties::ParametricLineType(
+  Internal::FunctionPropertiesHelper::LineType lineType =
+      Internal::FunctionPropertiesHelper::ParametricLineType(
           analyzedExpression, Function::k_unknownName, projectionContext);
   switch (lineType) {
-    case Internal::FunctionProperties::LineType::Vertical:
+    case Internal::FunctionPropertiesHelper::LineType::Vertical:
       /* The same text as cartesian equation is used because the caption
        * "Parametric equation of a vertical line" is too long to fit
        * the 37 max chars limit in every language.
        * This can be changed later if more chars are available. */
       setCaption(I18n::Message::VerticalLineType);
       return;
-    case Internal::FunctionProperties::LineType::Horizontal:
+    case Internal::FunctionPropertiesHelper::LineType::Horizontal:
       /* Same comment as above. */
       setCaption(I18n::Message::HorizontalLineType);
       return;
-    case Internal::FunctionProperties::LineType::Diagonal:
+    case Internal::FunctionPropertiesHelper::LineType::Diagonal:
       setCaption(I18n::Message::ParametricLineType);
       return;
     default:
-      assert(lineType == Internal::FunctionProperties::LineType::None);
+      assert(lineType == Internal::FunctionPropertiesHelper::LineType::None);
   }
 
   // Detect parametric conics

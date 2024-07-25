@@ -1,14 +1,13 @@
-#ifndef POINCARE_EXPRESSION_FUNCTION_PROPERTIES_H
-#define POINCARE_EXPRESSION_FUNCTION_PROPERTIES_H
+#ifndef POINCARE_EXPRESSION_FUNCTION_PROPERTIES_HELPER_H
+#define POINCARE_EXPRESSION_FUNCTION_PROPERTIES_HELPER_H
 
 #include <poincare/old/junior_expression.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree_ref.h>
-
-#include "projection.h"
 
 namespace Poincare::Internal {
 
-class FunctionProperties {
+class FunctionPropertiesHelper {
  public:
   enum class LineType { Vertical, Horizontal, Diagonal, None };
 

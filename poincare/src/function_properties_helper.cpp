@@ -1,17 +1,15 @@
-#include "function_properties.h"
-
+#include <poincare/function_properties_helper.h>
+#include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/degree.h>
+#include <poincare/src/expression/division.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "beautification.h"
-#include "degree.h"
-#include "division.h"
-#include "simplification.h"
-#include "trigonometry.h"
-
 namespace Poincare::Internal {
 
-FunctionProperties::LineType FunctionProperties::PolarLineType(
+FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
@@ -74,7 +72,7 @@ void removeConstantTermsInAddition(Tree* e, const char* symbol,
   NAry::SquashIfPossible(e);
 }
 
-FunctionProperties::LineType FunctionProperties::ParametricLineType(
+FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
     const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
@@ -122,7 +120,7 @@ FunctionProperties::LineType FunctionProperties::ParametricLineType(
   return LineType::None;
 }
 
-bool FunctionProperties::IsLinearCombinationOfFunction(
+bool FunctionPropertiesHelper::IsLinearCombinationOfFunction(
     const Tree* e, const char* symbol, ProjectionContext projectionContext,
     PatternTest testFunction) {
   if (testFunction(e, symbol, projectionContext) ||
@@ -159,7 +157,8 @@ bool FunctionProperties::IsLinearCombinationOfFunction(
   return false;
 }
 
-FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
+FunctionPropertiesHelper::FunctionType
+FunctionPropertiesHelper::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);

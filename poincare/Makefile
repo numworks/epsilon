@@ -148,11 +148,22 @@ postprocess_poincare_js: $(OUTPUT_DIRECTORY)/poincare.js
 		-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' $(OUTPUT_DIRECTORY)/poincare.js
 	sed -i '' 's/MainModule/PoincareInstance/g' $(OUTPUT_DIRECTORY)/poincare.d.ts
 
-# Allows poincarejs.zip to know that these depend on poincare.js
-$(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
-$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
+# TODO: Restore this. Not working because of postprocess_poincare_js
+# $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json) postprocess_poincare_js)
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json) postprocess_poincare_js)
+# NOTE: Restore when "call create_zip" is restored
+# Allows poincarejs.zip to know that these depend on poincare.js
+# $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
+# $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
+
+# This replaces "call create_zip"
+$(OUTPUT_DIRECTORY)/poincarejs.zip: $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/.version.json postprocess_poincare_js
+	cd $(OUTPUT_DIRECTORY) && \
+	rm -rf poincarejs && \
+	mkdir poincarejs && \
+	cp poincare.js poincare.d.ts poincare.wasm .version.json poincarejs/ && \
+	zip -r -9 -j poincarejs.zip poincarejs > /dev/null && \
+	rm -rf poincarejs
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 

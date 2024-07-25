@@ -503,7 +503,8 @@ bool Trigonometry::DetectLinearPatternOfTrig(
   // Detect trig(b·x+c)
   if (e->isTrig()) {
     const Tree* child = e->child(0);
-    int type = Integer::Handler(child->nextTree()).to<uint8_t>();
+    assert(child->nextTree()->isZero() || child->nextTree()->isOne());
+    bool isSin = child->nextTree()->isOne();
     if (Degree::Get(child, symbol, projectionContext) != 1) {
       return false;
     }
@@ -515,9 +516,9 @@ bool Trigonometry::DetectLinearPatternOfTrig(
     Tree* cTree = bTree->nextTree();
     assert(bTree && cTree);
 
-    *a = type <= 1 ? 1.0 : -1.0;
+    *a = 1.0;
     *b = Approximation::To<double>(bTree);
-    *c = Approximation::To<double>(cTree) - (type % 2 == 1) * M_PI_2;
+    *c = Approximation::To<double>(cTree) - isSin * M_PI_2;
     *c = std::fmod(*c, 2 * M_PI);
     coefList->removeTree();
     return true;

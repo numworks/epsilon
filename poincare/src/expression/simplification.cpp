@@ -1,6 +1,7 @@
 #include "simplification.h"
 
 #include <omg/float.h>
+#include <poincare/cas.h>
 
 #include "advanced_reduction.h"
 #include "beautification.h"
@@ -54,20 +55,36 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   SharedTreeStack->executeAndReplaceTree(
       [](void* context, const void* data) {
         const Tree* dataTree = static_cast<const Tree*>(data);
-        bool isStore = dataTree->isStore();
-        /* Store is an expression only for convenience. Only first child is to
-         * be simplified. */
-        Tree* e =
-            isStore ? dataTree->child(0)->cloneTree() : dataTree->cloneTree();
         // Copy ProjectionContext to avoid altering the original
         ProjectionContext projectionContext =
             *static_cast<ProjectionContext*>(context);
+
+        bool isStore = dataTree->isStore();
+        Tree* e;
+        if (isStore) {
+          const Tree* firstChild = dataTree->child(0);
+          if (firstChild->nextTree()->isUserFunction()) {
+            if (CAS::Enabled()) {
+              projectionContext.m_symbolic =
+                  SymbolicComputation::DoNotReplaceAnySymbol;
+            } else {
+              dataTree->cloneTree();
+              return;
+            }
+          }
+          /* Store is an expression only for convenience. Only first child is to
+           * be simplified. */
+          e = firstChild->cloneTree();
+        } else {
+          e = dataTree->cloneTree();
+        }
+
         ProjectAndReduce(e, &projectionContext, true);
         BeautifyReduced(e, &projectionContext);
+
         if (isStore) {
-          // Restore the store structure
-          dataTree->child(1)->cloneTree();
           e->cloneNodeAtNode(dataTree);
+          dataTree->child(1)->cloneTree();
         }
       },
       projectionContext, e, RelaxProjectionContext);

@@ -501,7 +501,7 @@ constexpr ToolboxMessage unitChildren[] = {
 
 constexpr ToolboxMessage calculChildren[] = {
     ToolboxMessageMath(
-        KRackL(KDiffL("x"_l, "a"_l, "f"_l ^ KParenthesesL("x"_l))),
+        KRackL(KDiffL("x"_l, "a"_l, "1"_l, "f"_l ^ KParenthesesL("x"_l))),
         I18n::Message::DerivateNumber),
     ToolboxMessageMath(
         KRackL(KNthDiffL("x"_l, "a"_l, "f"_l ^ KParenthesesL("x"_l), "n"_l)),

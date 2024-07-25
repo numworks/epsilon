@@ -101,15 +101,14 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       buffer = append("]", buffer, end);
       break;
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       buffer = append("diff(", buffer, end);
       buffer = serializer(layout->child(2), buffer, end);
       buffer = append(",", buffer, end);
       buffer = serializer(layout->child(0), buffer, end);
       buffer = append(",", buffer, end);
       buffer = serializer(layout->child(1), buffer, end);
-      if (layout->isNthDiffLayout()) {
+      if (layout->toDiffLayoutNode()->isNthDerivative) {
         buffer = append(",", buffer, end);
         buffer = serializer(layout->child(3), buffer, end);
       }

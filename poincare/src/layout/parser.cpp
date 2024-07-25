@@ -61,7 +61,6 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
-    case LayoutType::NthDiff:
       assert(false);
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {

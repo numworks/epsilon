@@ -35,8 +35,8 @@ constexpr auto KCurlyBracesRightTempL = KUnary<Type::CurlyBracesLayout, 2>();
 constexpr auto KCurlyBracesTempL = KUnary<Type::CurlyBracesLayout, 3>();
 
 constexpr auto KCondensedSumL = KFixedArity<3, Type::CondensedSumLayout>();
-constexpr auto KDiffL = KFixedArity<3, Type::DiffLayout, 0>();
-constexpr auto KNthDiffL = KFixedArity<4, Type::NthDiffLayout, 0>();
+constexpr auto KDiffL = KFixedArity<4, Type::DiffLayout, 0, 0>();
+constexpr auto KNthDiffL = KFixedArity<4, Type::DiffLayout, 0, 0xFF>();
 constexpr auto KIntegralL = KFixedArity<4, Type::IntegralLayout>();
 constexpr auto KProductL = KFixedArity<4, Type::ProductLayout>();
 constexpr auto KSumL = KFixedArity<4, Type::SumLayout>();

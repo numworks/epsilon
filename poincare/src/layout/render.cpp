@@ -66,8 +66,7 @@ KDSize Render::Size(const Layout* l) {
                                       superscriptSize.height());
       break;
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       /* The derivative layout could overflow KDCoordinate if the variable or
        * the order layouts are too large. Since they are duplicated, if there
@@ -332,8 +331,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       }
       return KDPoint(x, y);
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       KDCoordinate baseline = Baseline(l);
       if (childIndex == k_variableIndex) {
@@ -511,8 +509,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
       assert(s_font == KDFont::Size::Small);
       return Baseline(l->child(0)) +
              std::max(0, Height(l->child(2)) - Height(l->child(0)) / 2);
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       /* The total baseline is the maximum of the baselines of the children.
        * The two candidates are the fraction: d/dx, and the parenthesis pair
@@ -1000,8 +997,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       }
       return;
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       KDCoordinate baseline = Baseline(l);
 
@@ -1063,7 +1059,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       DrawRack(l->child(k_variableIndex), ctx, copyPosition.translatedBy(p),
                style, {});
 
-      if (l->isNthDiffLayout()) {
+      if (l->toDiffLayoutNode()->isNthDerivative) {
         // Draw the copy of the order
         KDPoint copyPosition =
             GetOrderSlot(l) == OrderSlot::Denominator

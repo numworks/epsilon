@@ -20,12 +20,11 @@ uint8_t Parametric::FunctionIndex(const Tree* e) {
 
 uint8_t Parametric::FunctionIndex(TypeBlock type) {
   switch (type) {
-    case Type::DiffLayout:
     case Type::ListSequence:
     case Type::ListSequenceLayout:
       return 2;
     case Type::Diff:
-    case Type::NthDiffLayout:
+    case Type::DiffLayout:
     case Type::Integral:
     case Type::IntegralLayout:
     case Type::Sum:

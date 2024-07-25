@@ -38,8 +38,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       int step = direction.isLeft() ? -1 : 1;
       return currentIndex + step;
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       if (l->isDiffLayout()) {
         if (currentIndex == k_derivandIndex) {
@@ -215,8 +214,7 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       }
       return k_cantMoveIndex;
     }
-    case LayoutType::Diff:
-    case LayoutType::NthDiff: {
+    case LayoutType::Diff: {
       using namespace Derivative;
       if (l->isDiffLayout()) {
         if (direction.isDown() && currentIndex == k_derivandIndex &&
@@ -365,7 +363,6 @@ int CursorMotion::IndexToPointToWhenInserting(const Tree* l) {
     case LayoutType::Integral:
       return Integral::k_lowerBoundIndex;
     case LayoutType::Diff:
-    case LayoutType::NthDiff:
       return Derivative::k_derivandIndex;
     case LayoutType::ListSequence:
       return ListSequence::k_functionIndex;
@@ -434,7 +431,6 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     case LayoutType::Conj:
       return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
     case LayoutType::Diff:
-    case LayoutType::NthDiff:
       return StandardDeletionMethodForLayoutContainingArgument(
           childIndex, Derivative::k_derivandIndex);
     case LayoutType::Integral:

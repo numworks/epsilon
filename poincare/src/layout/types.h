@@ -47,14 +47,13 @@ RANGE(Pair, AbsLayout, CurlyBracesLayout)
 // CondensedSum(sumSymbol, start, end)
 NODE(CondensedSum, 3)
 
-// Diff(Symbol, SymbolValue, Derivand)
-NODE(Diff, 3, { bool cursorIsOnTheLeft; })
-
-// TODO: merge Diff and NthDiff like for expressions?
 // Diff(Symbol, SymbolValue, Derivand, Order)
-NODE(NthDiff, 4, {
+/* FIXME isNthDerivative wastes an extra metablock so it can be initialized by
+ * the ktree */
+NODE(Diff, 4, {
   bool cursorIsOnTheLeft : 1;
   bool cursorIsOnTheBottom : 1;
+  bool isNthDerivative;
 })
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand)

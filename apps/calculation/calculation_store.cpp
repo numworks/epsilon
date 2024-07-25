@@ -1,6 +1,7 @@
 #include "calculation_store.h"
 
 #include <apps/shared/expression_display_permissions.h>
+#include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/rational.h>
@@ -154,12 +155,17 @@ ExpiringPointer<Calculation> CalculationStore::push(
       PoincareHelpers::CloneAndSimplifyAndApproximate(
           inputExpression, &exactOutputExpression, &approximateOutputExpression,
           context,
-          {.complexFormat = complexFormat,
-           // Complex format has already been updated
-           .updateComplexFormatWithExpression = false,
-           // TODO_PCJ: Was ReplaceAllSymbolsWithDefinitionsOrUndefined.
-           .symbolicComputation =
-               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition});
+          {
+              .complexFormat = complexFormat,
+              // Complex format has already been updated
+              .updateComplexFormatWithExpression = false,
+              .symbolicComputation =
+                  CAS::Enabled()
+                      ? SymbolicComputation::
+                            ReplaceAllDefinedSymbolsWithDefinition
+                      : SymbolicComputation::
+                            ReplaceAllSymbolsWithDefinitionsOrUndefined,
+          });
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 

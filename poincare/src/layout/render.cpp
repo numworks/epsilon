@@ -691,6 +691,10 @@ void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
   assert(l->numberOfChildren() <= 4);
   RenderNode(l, ctx, p, style);
   for (IndexedChild<const Tree*> child : l->indexedChildren()) {
+    if (l->isDiffLayout() && !l->toDiffLayoutNode()->isNthDerivative &&
+        child.index == Derivative::k_orderIndex) {
+      continue;
+    }
     DrawRack(Rack::From(child), ctx,
              PositionOfChild(l, child.index).translatedBy(p), style, selection,
              !l->isAutocompletedPair());

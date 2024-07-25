@@ -180,6 +180,7 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = a·x + b
   if (xDeg == 1) {
+    // TODO: what if e is not an Add but is affine?
     return e->isAdd() ? FunctionType::Affine : FunctionType::Linear;
   }
 

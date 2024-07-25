@@ -13,6 +13,8 @@ namespace Poincare::Internal {
 /* A stack of Blocks (= bytes) with motion tracking references. */
 
 class BlockStack {
+  friend class TreeStackCheckpoint;
+
  public:
   constexpr static int k_maxNumberOfBlocks = 1024 * 16;
   constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
@@ -99,6 +101,8 @@ class BlockStack {
     void invalidateIdentifiersAfterBlock(const Block* block);
     bool isFull() { return m_length == BlockStack::k_maxNumberOfReferences; }
     bool reset();
+    void resetLength(uint16_t length) { m_length = length; }
+    uint16_t length() const { return m_length; }
 #if POINCARE_TREE_LOG
     void logIdsForNode(std::ostream& stream, const Block* node) const;
 #endif
@@ -113,6 +117,8 @@ class BlockStack {
     BlockStack* m_pool;
     uint16_t m_nodeOffsetForIdentifier[BlockStack::k_maxNumberOfReferences];
   };
+
+  ReferenceTable* referenceTable() { return &m_referenceTable; }
 
   /* If we end up needing too many TreeRef, we could ref-count  them in
    * m_referenceTable and implement a destructor on TreeRef. */

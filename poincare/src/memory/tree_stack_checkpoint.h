@@ -77,6 +77,10 @@ class TreeStackCheckpoint final {
   /* TODO: Assert no operation are performed on the Edition pool on blocks below
    * s_topmostTreeStackCheckpoint->m_rightmostBlock. */
   Block* m_rightmostBlock;
+  /* We need to track the number of references to restore it on rollback
+   * independently since TreeRefs created inside the Try pointing to old
+   * elements would leak in the table. */
+  uint16_t m_savedReferenceLength;
 };
 
 }  // namespace Poincare::Internal

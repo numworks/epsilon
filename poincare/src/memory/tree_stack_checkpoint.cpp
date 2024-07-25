@@ -10,7 +10,9 @@ TreeStackCheckpoint* TreeStackCheckpoint::s_topmostTreeStackCheckpoint;
 ExceptionType TreeStackCheckpoint::s_exceptionType = ExceptionType::None;
 
 TreeStackCheckpoint::TreeStackCheckpoint(Block* rightmostBlock)
-    : m_parent(s_topmostTreeStackCheckpoint), m_rightmostBlock(rightmostBlock) {
+    : m_parent(s_topmostTreeStackCheckpoint),
+      m_rightmostBlock(rightmostBlock),
+      m_savedReferenceLength(SharedTreeStack->referenceTable()->length()) {
   assert(s_exceptionType == ExceptionType::None);
 }
 
@@ -28,6 +30,7 @@ void TreeStackCheckpoint::rollback() {
   /* Flush everything changed on the SharedTreeStack because it may be
    * corrupted. */
   SharedTreeStack->flushFromBlock(m_rightmostBlock);
+  SharedTreeStack->referenceTable()->resetLength(m_savedReferenceLength);
   longjmp(m_jumpBuffer, 1);
 }
 

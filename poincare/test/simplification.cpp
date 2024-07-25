@@ -225,7 +225,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sin(ln(x)), x, y)",
                 "dep(cos(ln(y))/y,{ln(y),sin(ln(y))})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep(e^(3×y)×(3×ln(y)×y^4+(1+4×ln(y))×y^3),{ln(y)})");
+                "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   /* TODO: Should be unreal but returns undef because dependency lnReal(-1)

@@ -54,9 +54,9 @@ QUIZ_CASE(poincare_layout_serialization) {
   assert_layout_serializes_to(KRackL(KCurlyBracesL(KRackL())), "{}");
 
   // Diff
-  assert_layout_serializes_to(KRackL(KDiffL("x"_l, "a"_l, "f"_l)),
+  assert_layout_serializes_to(KRackL(KDiffL("x"_l, "a"_l, "1"_l, "f"_l)),
                               "diff\u0012f,x,a\u0013");
-  assert_layout_serializes_to(KRackL(KNthDiffL("x"_l, "a"_l, "f"_l, "n"_l)),
+  assert_layout_serializes_to(KRackL(KNthDiffL("x"_l, "a"_l, "n"_l, "f"_l)),
                               "diff\u0012f,x,a,n\u0013");
 
   // Empty

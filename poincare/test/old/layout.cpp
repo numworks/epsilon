@@ -37,8 +37,8 @@ QUIZ_CASE(poincare_layout_constructors) {
                               {.KA = e21, .KB = e22, .KC = e23, .KD = e24});
   Layout e26 = Layout::Create(KRackL(KSuperscriptL(KA)), {.KA = e25});
   Layout e27 = "t"_l;
-  Layout e28 = Layout::Create(KRackL(KDiffL(KA, KB, KC)),
-                              {.KA = e15, .KB = e27, .KC = e26});
+  Layout e28 = Layout::Create(KRackL(KDiffL(KA, KB, KC, KD)),
+                              {.KA = e15, .KB = e27, .KC = e0, .KD = e26});
   Layout e29 = Layout::Create(KRackL(KNthDiffL(KA, KB, KC, KD)),
                               {.KA = e15, .KB = e27, .KC = e26, .KD = e21});
   Layout e30 = "Hé"_l;

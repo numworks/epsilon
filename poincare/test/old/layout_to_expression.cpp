@@ -210,7 +210,8 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   assert_parsed_layout_is(l, e);
 
   // diff(1/Var, Var, cos(2))
-  l = KRackL(KDiffL("Var"_l, "cos(2)"_l, KRackL(KFracL("1"_l, "Var"_l))));
+  l = KRackL(
+      KDiffL("Var"_l, "cos(2)"_l, "1"_l, KRackL(KFracL("1"_l, "Var"_l))));
   e = Derivative::Builder(
       Division::Builder(BasedInteger::Builder(1), Symbol::Builder("Var", 3)),
       Symbol::Builder("Var", 3), Cosine::Builder(BasedInteger::Builder(2)),
@@ -221,7 +222,7 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
 
   // diff(1/Var, Var, cos(2), 2)
   l = KRackL(
-      KNthDiffL("Var"_l, "cos(2)"_l, KRackL(KFracL("1"_l, "Var"_l)), "2"_l));
+      KNthDiffL("Var"_l, "cos(2)"_l, "2"_l, KRackL(KFracL("1"_l, "Var"_l))));
   e = Derivative::Builder(
       Division::Builder(BasedInteger::Builder(1), Symbol::Builder("Var", 3)),
       Symbol::Builder("Var", 3), Cosine::Builder(BasedInteger::Builder(2)),

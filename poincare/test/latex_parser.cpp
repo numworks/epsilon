@@ -59,7 +59,7 @@ QUIZ_CASE(pcj_layout_to_latex) {
   assert_layout_convert_to_latex("12"_l ^ KThousandSeparatorL ^ "345"_l,
                                  "12\\ 345");
   assert_layout_convert_to_latex(
-      KRackL(KDiffL("t"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))),
+      KRackL(KDiffL("t"_l, "2"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))),
       "diff(t^{3},t,2)");
   assert_layout_convert_to_latex(
       KCodePointL<UCodePointInferiorEqual>() ^

@@ -27,7 +27,6 @@ $(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
 $(call import_module,python,python)
 
-
 # FIXME Fake a module with enough glue to build. Eventually, we should be able
 # to build poincarejs without ion.
 $(call import_module,poincarejs,.)
@@ -91,10 +90,8 @@ PRIVATE_SFLAGS_poincarejs += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
-
 # Make the module initialization synchronous
 LDFLAGS_poincarejs += -s WASM_ASYNC_COMPILATION=0 \
-
 
 # We remove 'node' from the environment because it is not working
 # with the combination of WASM_ASYNC_COMPILATION=0 and EXPORT_ES6=1
@@ -102,7 +99,6 @@ LDFLAGS_poincarejs += -s WASM_ASYNC_COMPILATION=0 \
 # there is no behaviour like fetching data that require to differentiate
 # the environments.
 LDFLAGS_poincarejs += -s ENVIRONMENT='web,webview,worker' \
-
 
 # Generate ts types file
 # For this to work, go to emsdk/upstream/emscripten and run:
@@ -113,6 +109,9 @@ LDFLAGS_poincarejs += --emit-tsd poincare.d.ts
 LDFLAGS_poincarejs += \
   -lembind \
   -s EXPORT_ES6=1 \
+
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_poincarejs)): $(KANDINSKY_fonts_dependencies)
 
 # Rules
 
@@ -130,7 +129,6 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "commit": "$(PATCH_LEVEL)",' >> $@
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
-
 
 # postprocess_poincare_js should be called after building poincare.js. It:
 # - Replaces "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
@@ -176,6 +174,3 @@ poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs
 	cd $(OUTPUT_DIRECTORY)/ && node api-test.mjs
 
 $(call document_other_target,poincare.js.run,Test poincare.js using node)
-
-$(call assert_defined,KANDINSKY_fonts_dependencies)
-$(call all_objects_for,$(SOURCES_poincarejs)): $(KANDINSKY_fonts_dependencies)

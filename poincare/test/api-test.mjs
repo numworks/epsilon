@@ -117,7 +117,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
 
     const systemFunction = reducedExpression.getSystemFunction('x');
     assert.ok(!systemFunction.isUninitialized());
-    assert.equal(systemFunction.approximateToScalarWithValue("3"), 4);
+    assert.equal(systemFunction.approximateToScalarWithValue(3), 4);
 
     const firstDerivative = reducedExpression.getReducedDerivative('x', 1).cloneAndBeautify(reductionContext);
     assert.ok(!firstDerivative.isUninitialized());

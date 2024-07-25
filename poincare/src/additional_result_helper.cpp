@@ -22,7 +22,7 @@ void AdditionalResultHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
-    ProjectionContext* ctx, UserExpression& exactAngle,
+    const ProjectionContext* ctx, UserExpression& exactAngle,
     float* approximatedAngle, bool* angleIsExact) {
   // TODO: Move this in additional_result_helper, use Trees and new Trigonometry
   UserExpression period =

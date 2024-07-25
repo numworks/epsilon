@@ -140,14 +140,15 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
 }
 
 Layout ExpressionsListController::getExactLayoutFromExpression(
-    const UserExpression e, Internal::ProjectionContext* ctx,
+    const UserExpression e, const Internal::ProjectionContext* ctx,
     Layout* approximate) {
   assert(!e.isUninitialized());
   Expression approximateExpression, exactExpression;
-  ctx->m_symbolic =
+  Internal::ProjectionContext tempCtx = *ctx;
+  tempCtx.m_symbolic =
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   ctx);
+                                   &tempCtx);
   assert(!approximateExpression.isUninitialized());
   Layout approximateLayout =
       PoincareHelpers::CreateLayout(approximateExpression, ctx->m_context);

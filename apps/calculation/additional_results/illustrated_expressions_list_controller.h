@@ -47,7 +47,7 @@ class IllustratedExpressionsListController
   /* Helper to add a line in the format func(arg) = exact ~ approx */
   void setLineAtIndex(int index, const Poincare::UserExpression formula,
                       const Poincare::UserExpression expression,
-                      Poincare::Internal::ProjectionContext* ctx);
+                      const Poincare::Internal::ProjectionContext* ctx);
 
  private:
   Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,

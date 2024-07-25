@@ -11,7 +11,7 @@ class AdditionalResultHelper final {
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Poincare::Preferences::CalculationPreferences calculationPreferences,
-      Internal::ProjectionContext* ctx, UserExpression& exactAngle,
+      const Internal::ProjectionContext* ctx, UserExpression& exactAngle,
       float* approximatedAngle, bool* angleIsExact);
   static UserExpression ExtractExactAngleFromDirectTrigo(
       const UserExpression input, const UserExpression exactOutput,

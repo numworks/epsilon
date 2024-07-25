@@ -444,8 +444,6 @@ bool Trigonometry::DetectLinearPatternOfTrig(
     double* a, double* b, double* c, bool acceptConstantTerm) {
   // TODO_PCJ: Trees need to be projected (for approx, and because we look for
   // Trig nodes)
-  // e.getSystemFunction(Shared::Function::k_unknownName); // plus haut ? (vu
-  // qu'on a déjà le precomputed funtion symbol)
 
   assert(a && b && c);
 

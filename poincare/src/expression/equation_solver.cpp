@@ -3,6 +3,7 @@
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/solver.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric/zoom.h>
 
@@ -262,6 +263,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       return nullptr;
     }
     assert(coefficients->numberOfChildren() == cols);
+    // Invert constant because Ax=b is represented by Ax-b
+    Tree* constant = coefficients->lastChild();
+    PatternMatching::MatchReplaceSimplify(constant, KA, KMult(-1_e, KA));
     coefficients->removeNode();
     Matrix::SetNumberOfColumns(matrix, cols);
     Matrix::SetNumberOfRows(matrix, Matrix::NumberOfRows(matrix) + 1);

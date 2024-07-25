@@ -1,5 +1,5 @@
 _sources_poincare_minimal := $(addprefix src/, \
-  additional_result_helper.cpp \
+  additional_results_helper.cpp \
   api.cpp \
   init.cpp \
   new_trigonometry.cpp \

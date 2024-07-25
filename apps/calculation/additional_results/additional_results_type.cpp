@@ -1,7 +1,7 @@
 #include "additional_results_type.h"
 
 #include <apps/apps_container_helper.h>
-#include <poincare/additional_result_helper.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/integer.h>
@@ -135,7 +135,7 @@ bool AdditionalResultsType::HasDirectTrigo(
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle =
-      AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
+      AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
           input, exactOutput, globalContext, calculationPreferences);
   return !exactAngle.isUninitialized();
 }

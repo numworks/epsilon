@@ -1,11 +1,11 @@
-#ifndef POINCARE_ADDITIONAL_RESULT_HELPER_H
-#define POINCARE_ADDITIONAL_RESULT_HELPER_H
+#ifndef POINCARE_ADDITIONAL_RESULTS_HELPER_H
+#define POINCARE_ADDITIONAL_RESULTS_HELPER_H
 
 #include <poincare/expression.h>
 
 namespace Poincare {
 
-class AdditionalResultHelper final {
+class AdditionalResultsHelper final {
  public:
   static void TrigonometryAngleHelper(
       const UserExpression input, const UserExpression exactOutput,

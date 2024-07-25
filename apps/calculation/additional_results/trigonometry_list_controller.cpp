@@ -1,7 +1,7 @@
 #include "trigonometry_list_controller.h"
 
 #include <apps/shared/expression_display_permissions.h>
-#include <poincare/additional_result_helper.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -37,7 +37,7 @@ void TrigonometryListController::computeAdditionalResults(
   UserExpression exactAngle;
   UserExpression approximateAngle;
   float approximatedAngle;
-  AdditionalResultHelper::TrigonometryAngleHelper(
+  AdditionalResultsHelper::TrigonometryAngleHelper(
       input, exactOutput, approximateOutput, m_directTrigonometry,
       m_calculationPreferences, &ctx, exactAngle, &approximatedAngle,
       m_isStrictlyEqual + 0);

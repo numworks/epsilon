@@ -1,6 +1,6 @@
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/additional_result_helper.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/old/arc_cosine.h>
@@ -18,7 +18,7 @@ namespace Poincare {
 
 using namespace Internal;
 
-void AdditionalResultHelper::TrigonometryAngleHelper(
+void AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
@@ -104,7 +104,7 @@ void AdditionalResultHelper::TrigonometryAngleHelper(
                                                              ctx->m_angleUnit);
 }
 
-UserExpression AdditionalResultHelper::ExtractExactAngleFromDirectTrigo(
+UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {

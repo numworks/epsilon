@@ -131,21 +131,33 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
+
+# postprocess_poincare_js should be called after building poincare.js. It:
+# - Replaces "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
+#    > This bit of code is never reached and makes cypress fail because the URL can't be resolved
+#    > NOTE; There is a .* inside the regexp because in DEBUG=1 there is a space
+# - Removes 2 errors thrown when building poincare.mjs in DEBUG=1
+#    > This is needed because we removed 'node' from the ENVIRONMENT.
+#    > See comment about ENVIRONMENT above.
+# - Renames the "MainModule" type to "PoincareInstance".
+#
+# WARNING: This is a bit hacky, especially the part where the errors are removed.
+postprocess_poincare_js: $(OUTPUT_DIRECTORY)/poincare.js
+	sed -i '' -e 's/new URL("poincare.wasm",.*import\.meta\.url)\.href/""/g' \
+		-e 's/throw new Error("environment detection error");//g' \
+		-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' $(OUTPUT_DIRECTORY)/poincare.js
+	sed -i '' 's/MainModule/PoincareInstance/g' $(OUTPUT_DIRECTORY)/poincare.d.ts
+
+# Allows poincarejs.zip to know that these depend on poincare.js
 $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
-	sed -i '' 's/new URL("poincare.wasm",import.meta.url).href/""/g' $^
-
-# Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
-#   This bit of code is never reached and makes cypress fail because the URL can't be resolved
-# Doing it in the .ts rule is a hack
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
-	sed -i '' 's/MainModule/PoincareInstance/g' $@
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json))
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json) postprocess_poincare_js)
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 
 # Node expects modules to end with .mjs
-$(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
+$(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js postprocess_poincare_js
 	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
 
 poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs

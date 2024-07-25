@@ -53,8 +53,8 @@ bool AdvancedReduction::Reduce(Tree* e) {
   Path best_path{};
   ExceptionTry { best_path = FindBestReduction(e); }
   ExceptionCatch(type) {
-    if (not(type == ExceptionType::TreeStackOverflow or
-            type == ExceptionType::IntegerOverflow)) {
+    if (!(type == ExceptionType::TreeStackOverflow ||
+          type == ExceptionType::IntegerOverflow)) {
       TreeStackCheckpoint::Raise(type);
     }
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1

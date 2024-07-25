@@ -69,27 +69,34 @@ struct LatexToken {
   const LayoutConstructor constructor;
 };
 
-#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)         \
-  {LATEX, std::size(LATEX),                              \
-   [](const Tree* t) -> bool { return t->IS_LAYOUT(); }, \
-   []() -> Tree* { return KTREE(KRackL())->cloneTree(); }}
+#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
+  {                                                            \
+    LATEX, std::size(LATEX),                                   \
+        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
+        []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
+  }
 
-#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)      \
-  {LATEX, std::size(LATEX),                              \
-   [](const Tree* t) -> bool { return t->IS_LAYOUT(); }, \
-   []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); }}
+#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)                      \
+  {                                                                      \
+    LATEX, std::size(LATEX),                                             \
+        [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
+        []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
+  }
 
-#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                  \
-  {LATEX, std::size(LATEX),                                \
-   [](const Tree* t) -> bool {                             \
-     return t->isCodePointLayout() &&                      \
-            CodePointLayout::GetCodePoint(t) == CODEPOINT; \
-   },                                                      \
-   []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); }}
+#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                               \
+  {                                                                     \
+    LATEX, std::size(LATEX),                                            \
+        [](const Tree* t) -> bool {                                     \
+          return CodePointLayout::IsCodePoint(t, CODEPOINT);            \
+        },                                                              \
+        []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
+  }
 
-#define DO_NOTHING_TOKEN(LATEX)                                          \
-  {LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
-   []() -> Tree* { return nullptr; }}
+#define DO_NOTHING_TOKEN(LATEX)                                           \
+  {                                                                       \
+    LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
+        []() -> Tree* { return nullptr; }                                 \
+  }
 
 constexpr static LatexToken k_tokens[] = {
     // Parenthesis

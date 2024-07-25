@@ -34,12 +34,6 @@ class FunctionPropertiesHelper {
   static FunctionType CartesianFunctionType(
       const SystemExpression& analyzedExpression, const char* symbol,
       Internal::ProjectionContext projectionContext);
-
-  typedef bool (*PatternTest)(const Internal::Tree*, const char*,
-                              Internal::ProjectionContext);
-  static bool IsLinearCombinationOfFunction(
-      const Internal::Tree* e, const char* symbol,
-      Internal::ProjectionContext projectionContext, PatternTest testFunction);
 };
 
 }  // namespace Poincare

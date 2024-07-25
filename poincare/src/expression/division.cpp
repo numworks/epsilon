@@ -173,19 +173,4 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   return true;
 }
 
-bool Division::IsFractionOfPolynomials(const Tree* e, const char* symbol,
-                                       ProjectionContext projectionContext) {
-  if (!e->isMult() && !e->isPow()) {
-    return false;
-  }
-  TreeRef numerator, denominator;
-  Division::GetNumeratorAndDenominator(e, numerator, denominator);
-  assert(numerator && denominator);
-  int numeratorDegree = Degree::Get(numerator, symbol, projectionContext);
-  int denominatorDegree = Degree::Get(denominator, symbol, projectionContext);
-  numerator->removeTree();
-  denominator->removeTree();
-  return denominatorDegree >= 0 && numeratorDegree >= 0;
-}
-
 }  // namespace Poincare::Internal

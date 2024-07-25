@@ -448,7 +448,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
    * TODO: Detect r=cos(theta)+2sin(theta) */
 #if 0  // TODO_PCJ
   double coefBeforeTheta;
-  if (Trigonometry::DetectLinearPatternOfTrig(
+  if (DetectLinearPatternOfTrig(
           reducedExpression, context, theta, nullptr,
           &coefBeforeTheta, false) &&
       coefBeforeTheta == 1.0) {
@@ -483,7 +483,7 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 #if 0  // TODO_PCJ
   double coefficientBeforeCos;
   double coefficientBeforeTheta;
-  if (!Trigonometry::DetectLinearPatternOfTrig(
+  if (!DetectLinearPatternOfTrig(
           denominator, context, theta, &coefficientBeforeCos,
           &coefficientBeforeTheta, true) ||
       coefficientBeforeTheta != 1.0) {
@@ -598,7 +598,7 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
   double xCoefficientBeforeCos;
   double xCoefficientBeforeSymbol;
   double xAngle;
-  if (!Trigonometry::DetectLinearPatternOfTrig(
+  if (!DetectLinearPatternOfTrig(
           xOfT, context, symbol, &xCoefficientBeforeCos,
           &xCoefficientBeforeSymbol, &xAngle, true)) {
     m_shape = Shape::Undefined;
@@ -608,7 +608,7 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
   double yCoefficientBeforeCos;
   double yCoefficientBeforeSymbol;
   double yAngle;
-  if (!Trigonometry::DetectLinearPatternOfTrig(
+  if (!DetectLinearPatternOfTrig(
           yOfT, context, symbol, &yCoefficientBeforeCos,
           &yCoefficientBeforeSymbol, &yAngle, true)) {
     m_shape = Shape::Undefined;

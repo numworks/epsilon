@@ -1051,6 +1051,7 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <poincare/function_properties_helper.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/trigonometry.h>
+#include <poincare/src/function_properties/helper.h>
 
 #include "../helper.h"
 #include "helper.h"
@@ -1129,16 +1130,17 @@ QUIZ_DISABLED_CASE(poincare_expression_continuous) {
 
 #include <poincare/src/expression/degree.h>
 
-void assert_is_linear_combination_of_pattern(
-    const char* expression, FunctionPropertiesHelper::PatternTest testFunction,
-    bool truthValue = true, const char* symbol = "x") {
+void assert_is_linear_combination_of_pattern(const char* expression,
+                                             PatternTest testFunction,
+                                             bool truthValue = true,
+                                             const char* symbol = "x") {
   Shared::GlobalContext context;
   Expression e = Expression::Builder(parse_expression(expression, &context));
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      FunctionPropertiesHelper::IsLinearCombinationOfFunction(
-          e, symbol, {.m_context = &context}, testFunction) == truthValue,
+      IsLinearCombinationOfFunction(e, symbol, {.m_context = &context},
+                                    testFunction) == truthValue,
       expression);
 }
 
@@ -1157,7 +1159,7 @@ void assert_is_linear_pattern_of_sin_or_cos(const char* expression,
   double computedCoefBeforeSymbol;
   double computedAngle;
   quiz_assert_print_if_failure(
-      Trigonometry::DetectLinearPatternOfTrig(
+      DetectLinearPatternOfTrig(
           e, {.m_context = &context}, symbol, &computedCoefBeforeCos,
           &computedCoefBeforeSymbol, &computedAngle, acceptConstantTerm),
       expression);
@@ -1169,12 +1171,11 @@ void assert_is_linear_pattern_of_sin_or_cos(const char* expression,
 }
 
 QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
-  assert_is_linear_combination_of_pattern("1+(1/x)",
-                                          &Division::IsFractionOfPolynomials);
+  assert_is_linear_combination_of_pattern("1+(1/x)", &IsFractionOfPolynomials);
   assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
-                                          &Division::IsFractionOfPolynomials);
-  assert_is_linear_combination_of_pattern(
-      "x^0.5", &Division::IsFractionOfPolynomials, false);
+                                          &IsFractionOfPolynomials);
+  assert_is_linear_combination_of_pattern("x^0.5", &IsFractionOfPolynomials,
+                                          false);
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",
       [](const Tree* e, const char* symbol, ProjectionContext ctx) {

@@ -1,11 +1,12 @@
 #include <poincare/function_properties_helper.h>
-#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+
+#include "helper.h"
 
 namespace Poincare {
 
@@ -31,11 +32,10 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
   double a, b, c;
-  bool polarLine =
-      Degree::Get(numerator, symbol, projectionContext) == 0 &&
-      Trigonometry::DetectLinearPatternOfTrig(denominator, projectionContext,
-                                              symbol, &a, &b, &c, false) &&
-      std::abs(b) == 1.0;
+  bool polarLine = Degree::Get(numerator, symbol, projectionContext) == 0 &&
+                   DetectLinearPatternOfTrig(denominator, projectionContext,
+                                             symbol, &a, &b, &c, false) &&
+                   std::abs(b) == 1.0;
   numerator->removeTree();
   denominator->removeTree();
 
@@ -51,27 +51,6 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
     return LineType::Diagonal;
   }
   return LineType::None;
-}
-
-void removeConstantTermsInAddition(Tree* e, const char* symbol,
-                                   ProjectionContext projectionContext) {
-  if (!e->isAdd()) {
-    return;
-  }
-  const int n = e->numberOfChildren();
-  int nRemoved = 0;
-  Tree* child = e->child(0);
-  for (int i = 0; i < n; i++) {
-    if (Degree::Get(child, symbol, projectionContext) == 0) {
-      child->removeTree();
-      nRemoved++;
-    } else {
-      child = child->nextTree();
-    }
-  }
-  assert(nRemoved <= n);
-  NAry::SetNumberOfChildren(e, n - nRemoved);
-  NAry::SquashIfPossible(e);
 }
 
 FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
@@ -107,10 +86,10 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
    * so we create x(t) * y(t)^-1 */
   Tree* quotient = SharedTreeStack->pushMult(2);
   Tree* variableX = xOfT->cloneTree();
-  removeConstantTermsInAddition(variableX, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableX, symbol, projectionContext);
   SharedTreeStack->pushPow();
   Tree* variableY = yOfT->cloneTree();
-  removeConstantTermsInAddition(variableY, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableY, symbol, projectionContext);
   (-1_e)->cloneTree();
   Simplification::ReduceSystem(quotient, false);
   bool diag = Degree::Get(quotient, symbol, projectionContext) == 0;
@@ -119,43 +98,6 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
     return LineType::Diagonal;
   }
   return LineType::None;
-}
-
-bool FunctionPropertiesHelper::IsLinearCombinationOfFunction(
-    const Tree* e, const char* symbol, ProjectionContext projectionContext,
-    PatternTest testFunction) {
-  if (testFunction(e, symbol, projectionContext) ||
-      Degree::Get(e, symbol, projectionContext) == 0) {
-    return true;
-  }
-  if (e->isAdd()) {
-    for (const Tree* child : e->children()) {
-      if (!IsLinearCombinationOfFunction(child, symbol, projectionContext,
-                                         testFunction)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  if (e->isMult()) {
-    bool patternFound = false;
-    for (const Tree* child : e->children()) {
-      if (Degree::Get(child, symbol, projectionContext) == 0) {
-        continue;
-      }
-      if (IsLinearCombinationOfFunction(child, symbol, projectionContext,
-                                        testFunction)) {
-        if (patternFound) {
-          return false;
-        }
-        patternFound = true;
-      } else {
-        return false;
-      }
-    }
-    return patternFound;
-  }
-  return false;
 }
 
 FunctionPropertiesHelper::FunctionType
@@ -214,7 +156,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
 
   // f(x) = polynomial / polynomial
   if (IsLinearCombinationOfFunction(e, symbol, projectionContext,
-                                    Division::IsFractionOfPolynomials)) {
+                                    IsFractionOfPolynomials)) {
     return FunctionType::Rational;
   }
 

@@ -102,6 +102,9 @@ FunctionProperties::LineType FunctionProperties::ParametricLineType(
     // quotient can't be independent on t
     return LineType::None;
   }
+  /* Remove constant terms in x(t) and y(t) and build x(t) / y(t)
+   * Reduction doesn't handle Division (removed at projection)
+   * so we create x(t) * y(t)^-1 */
   Tree* quotient = SharedTreeStack->pushMult(2);
   Tree* variableX = xOfT->cloneTree();
   removeConstantTermsInAddition(variableX, symbol, projectionContext);

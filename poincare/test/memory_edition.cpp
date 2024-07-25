@@ -1,4 +1,5 @@
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "helper.h"
 
@@ -203,4 +204,39 @@ QUIZ_CASE(pcj_tree_comments) {
   QUIZ_ASSERT(u->treeIsIdenticalTo("aaaa"_e) && v->treeIsIdenticalTo("ccc"_e) &&
               v->nextNode()->treeIsIdenticalTo("bb"_e) &&
               v->nextNode()->nextNode() == u);
+}
+
+QUIZ_CASE(pcj_tree_stack_drop_blocks_from) {
+  Tree* a = KCos(2_e)->cloneTree();
+  {
+    Tree* b = KCos(2_e)->cloneTree();
+    Tree* c = KSin(2_e)->cloneTree();
+    (void)c;
+    SharedTreeStack->dropBlocksFrom(b);
+  }
+  assert(a->nextTree()->block() == SharedTreeStack->lastBlock());
+  {
+    TreeRef b = KCos(2_e)->cloneTree();
+    TreeRef ra = a;
+    TreeRef c = KSin(2_e)->cloneTree();
+    SharedTreeStack->dropBlocksFrom(b);
+    assert(static_cast<Tree*>(ra) == a);
+  }
+  assert(a->nextTree()->block() == SharedTreeStack->lastBlock());
+}
+
+QUIZ_CASE(pcj_tree_stack_checkpoint_raise) {
+  Tree* a = KCos(2_e)->cloneTree();
+  ExceptionTry {
+    TreeRef b = KCos(2_e)->cloneTree();
+    TreeRef ra = a;
+    TreeRef c = KSin(2_e)->cloneTree();
+    TreeStackCheckpoint::Raise(ExceptionType::Other);
+  }
+  ExceptionCatch(exc) {}
+  assert(a->nextTree()->block() == SharedTreeStack->lastBlock());
+  {
+    TreeRef b = KCos(2_e)->cloneTree();
+    b->removeTree();
+  }
 }

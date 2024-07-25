@@ -1,10 +1,10 @@
 #include "advanced_reduction.h"
 
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "k_tree.h"
 #include "metric.h"
-#include "poincare/src/memory/tree_stack_checkpoint.h"
 #include "systematic_reduction.h"
 
 namespace Poincare::Internal {
@@ -40,29 +40,38 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 #endif
   ReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
+
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
-  std::cout << "Final result (" << ctx.m_bestMetric << ") is : ";
-  e->logSerialize();
+  std::cout << "Best path metric is: " << ctx.m_bestMetric;
 #endif
+
   return std::move(ctx.m_bestPath);
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
-  ExceptionTry {
-    Path best_path = FindBestReduction(e);
-    return best_path.apply(e);
-  }
-
-  ExceptionCatch(type) {
-    if (type != ExceptionType::TreeStackOverflow) {
-      TreeStackCheckpoint::Raise(type);
-    }
+  Path best_path = [](const Tree* e) {
+    ExceptionTry { return FindBestReduction(e); }
+    ExceptionCatch(type) {
+      if (not(type == ExceptionType::TreeStackOverflow or
+              type == ExceptionType::IntegerOverflow)) {
+        TreeStackCheckpoint::Raise(type);
+      }
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-    std::cout << "\nTree stack overflow,  advanced reduction failed.\n";
+      s_indent = 0;
+      std::cout << "\nTree stack overflow,  advanced reduction failed.\n";
 #endif
-  }
-  return false;
+    }
+    return Path{};
+  }(e);
+
+  bool result = best_path.apply(e);
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+  s_indent = 0;
+  std::cout << "Final tree is : ";
+  e->logSerialize();
+#endif
+  return result;
 }
 
 bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {

@@ -111,8 +111,10 @@ class InputBeautification {
       "diff", 3, [](TreeRef* parameters) -> Tree* {
         TreeRef diff = SharedTreeStack->pushBlock(Type::DiffLayout);
         SharedTreeStack->pushBlock(0);
+        SharedTreeStack->pushBlock(0);
         parameters[1]->detachTree();
         parameters[2]->detachTree();
+        "1"_l->cloneTree();
         parameters[0]->detachTree();
         if (RackLayout::IsEmpty(parameters[1])) {
           NAry::AddChildAtIndex(parameters[1], "x"_cl->cloneTree(), 0);

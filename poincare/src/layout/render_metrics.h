@@ -304,14 +304,14 @@ constexpr KDCoordinate k_barWidth = 1;
 constexpr const char* k_dString = "d";
 
 inline KDCoordinate OrderHeightOffset(const Layout* node, KDFont::Size font) {
-  if (node->isDiffLayout()) {
+  if (node->isDiffLayout() && !node->toDiffLayoutNode()->isNthDerivative) {
     return 0;
   }
   return Height(node->child(k_orderIndex)) - VerticalOffset::k_indiceHeight;
 }
 
 inline KDCoordinate OrderWidth(const Layout* node, KDFont::Size font) {
-  if (node->isDiffLayout()) {
+  if (node->isDiffLayout() && !node->toDiffLayoutNode()->isNthDerivative) {
     return 0;
   }
   return Width(node->child(k_orderIndex));

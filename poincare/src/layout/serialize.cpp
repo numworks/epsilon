@@ -6,6 +6,7 @@
 
 #include "code_point_layout.h"
 #include "grid.h"
+#include "indices.h"
 #include "vertical_offset.h"
 
 namespace Poincare::Internal {
@@ -103,14 +104,18 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
     }
     case LayoutType::Diff: {
       buffer = append("diff(", buffer, end);
-      buffer = serializer(layout->child(2), buffer, end);
+      buffer =
+          serializer(layout->child(Derivative::k_derivandIndex), buffer, end);
       buffer = append(",", buffer, end);
-      buffer = serializer(layout->child(0), buffer, end);
+      buffer =
+          serializer(layout->child(Derivative::k_variableIndex), buffer, end);
       buffer = append(",", buffer, end);
-      buffer = serializer(layout->child(1), buffer, end);
+      buffer =
+          serializer(layout->child(Derivative::k_abscissaIndex), buffer, end);
       if (layout->toDiffLayoutNode()->isNthDerivative) {
         buffer = append(",", buffer, end);
-        buffer = serializer(layout->child(3), buffer, end);
+        buffer =
+            serializer(layout->child(Derivative::k_orderIndex), buffer, end);
       }
       buffer = append(")", buffer, end);
       break;

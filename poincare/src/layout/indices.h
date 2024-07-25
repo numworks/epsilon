@@ -33,8 +33,8 @@ constexpr static int k_argumentIndex = 3;
 namespace Derivative {
 constexpr static int k_variableIndex = 0;
 constexpr static int k_abscissaIndex = 1;
-constexpr static int k_derivandIndex = 2;
-constexpr static int k_orderIndex = 3;
+constexpr static int k_orderIndex = 2;
+constexpr static int k_derivandIndex = 3;
 
 enum class VariableSlot : bool { Fraction, Assignment };
 // Denominator is first for 0 in the mask in Derivative to work out of the box

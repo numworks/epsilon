@@ -381,8 +381,8 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   }
   TreeRef derivativeOrder = superscript->child(0);
   NAry::RemoveChildAtIndex(rack, indexOfSuperscript);
-  TreeRef inserted =
-      firstOrderDerivative->nextTree()->cloneTreeBeforeNode(derivativeOrder);
+  TreeRef inserted = firstOrderDerivative->child(Derivative::k_orderIndex)
+                         ->cloneTreeOverTree(derivativeOrder);
   if (layoutCursor->cursorRack() == rack &&
       layoutCursor->position() > rack->numberOfChildren()) {
     layoutCursor->moveCursorToLayout(inserted, OMG::Direction::Right());

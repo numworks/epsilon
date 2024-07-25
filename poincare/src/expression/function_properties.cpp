@@ -212,7 +212,7 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = polynomial / polynomial
   if (IsLinearCombinationOfFunction(e, symbol, projectionContext,
-                                    Division::IsRationalFraction)) {
+                                    Division::IsFractionOfPolynomials)) {
     return FunctionType::Rational;
   }
 

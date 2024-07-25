@@ -12,8 +12,8 @@ class Division {
   static bool BeautifyIntoDivision(Tree* e);
   static void GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
                                          TreeRef& denominator);
-  static bool IsRationalFraction(const Tree* e, const char* symbol,
-                                 ProjectionContext projectionContext);
+  static bool IsFractionOfPolynomials(const Tree* e, const char* symbol,
+                                      ProjectionContext projectionContext);
 
  private:
   static void GetDivisionComponents(const Tree* e, TreeRef& numerator,

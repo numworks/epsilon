@@ -173,8 +173,8 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   return true;
 }
 
-bool Division::IsRationalFraction(const Tree* e, const char* symbol,
-                                  ProjectionContext projectionContext) {
+bool Division::IsFractionOfPolynomials(const Tree* e, const char* symbol,
+                                       ProjectionContext projectionContext) {
   if (!e->isMult() && !e->isPow()) {
     return false;
   }

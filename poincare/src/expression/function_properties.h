@@ -36,7 +36,6 @@ class FunctionProperties {
       const SystemExpression& analyzedExpression, const char* symbol,
       ProjectionContext projectionContext);
 
- private:
   typedef bool (*PatternTest)(const Tree*, const char*, ProjectionContext);
   static bool IsLinearCombinationOfFunction(const Tree* e, const char* symbol,
                                             ProjectionContext projectionContext,

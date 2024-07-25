@@ -1048,10 +1048,15 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/src/expression/division.h>
+#include <poincare/src/expression/function_properties.h>
+#include <poincare/src/expression/trigonometry.h>
 
 #include "../helper.h"
+#include "helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 
 void assert_is_list_of_points(const char* definition, Context* context,
                               bool truth = true) {
@@ -1120,24 +1125,31 @@ QUIZ_DISABLED_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
 }
 
+#endif
+
+#include <poincare/src/expression/degree.h>
+
 void assert_is_linear_combination_of_pattern(
-    const char* expression, OExpression::PatternTest testFunction,
+    const char* expression, FunctionProperties::PatternTest testFunction,
     bool truthValue = true, const char* symbol = "x") {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
+  Expression e = Expression::Builder(parse_expression(expression, &context));
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      IsLinearCombinationOfFunction(e, symbol, &context, testFunction) ==
-          truthValue,
+      FunctionProperties::IsLinearCombinationOfFunction(
+          e, symbol, {.m_context = &context}, testFunction) == truthValue,
       expression);
 }
 
-void assert_is_linear_pattern_of_sin_or_cos(
-    const char* expression, bool acceptAddition, double coefficientBeforeCos,
-    double coefficientBeforeSymbol, double angle, const char* symbol = "x") {
+void assert_is_linear_pattern_of_sin_or_cos(const char* expression,
+                                            bool acceptConstantTerm,
+                                            double coefficientBeforeCos,
+                                            double coefficientBeforeSymbol,
+                                            double angle,
+                                            const char* symbol = "x") {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
+  Expression e = Expression::Builder(parse_expression(expression, &context));
   ReductionContext reductionContext =
       ReductionContext::DefaultReductionContextForAnalysis(&context);
   e = e.cloneAndReduce(reductionContext);
@@ -1146,8 +1158,8 @@ void assert_is_linear_pattern_of_sin_or_cos(
   double computedAngle;
   quiz_assert_print_if_failure(
       Trigonometry::DetectLinearPatternOfTrig(
-          e, &context, symbol, &computedCoefBeforeCos,
-          &computedCoefBeforeSymbol, &computedAngle, acceptAddition),
+          e, {.m_context = &context}, symbol, &computedCoefBeforeCos,
+          &computedCoefBeforeSymbol, &computedAngle, acceptConstantTerm),
       expression);
   quiz_assert_print_if_failure(computedCoefBeforeCos == coefficientBeforeCos,
                                expression);
@@ -1156,19 +1168,17 @@ void assert_is_linear_pattern_of_sin_or_cos(
   quiz_assert_print_if_failure(computedAngle == angle, expression);
 }
 
-QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
+QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_combination_of_pattern("1+(1/x)",
                                           &Division::IsRationalFraction);
   assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
                                           &Division::IsRationalFraction);
-  assert_is_linear_combination_of_pattern(
-      "x^0.5", &Division::IsRationalFraction, false);
-
+  assert_is_linear_combination_of_pattern("x^0.5",
+                                          &Division::IsRationalFraction, false);
   assert_is_linear_combination_of_pattern(
       "4log(6x)+3cos(1)-πlog(2x-4)",
-      [](const OExpression& e, Context* context, const char* symbol) {
-        return e.otype() == ExpressionNode::Type::LogBase &&
-               e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
+      [](const Tree* e, const char* symbol, ProjectionContext ctx) {
+        return e->isLogarithm() && Degree::Get(e->child(0), symbol, ctx) == 1;
       });
 
   assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)", false, 5.0, 3.0, 2.0);
@@ -1178,6 +1188,8 @@ QUIZ_DISABLED_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_pattern_of_sin_or_cos("sin(x)", true, 1.0, 1.0,
                                          -1.0 * M_PI_2);
 }
+
+#if 0
 
 void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   Shared::GlobalContext context;

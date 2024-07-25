@@ -159,9 +159,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
           KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
       changed = true;
     }
-  }
-
-  if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
+  } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
     if (projectionContext->m_complexFormat == ComplexFormat::Real &&

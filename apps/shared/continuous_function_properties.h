@@ -240,9 +240,8 @@ class ContinuousFunctionProperties {
       Poincare::Internal::ProjectionContext projectionContext);
   void setCartesianEquationProperties(
       const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Context* context,
-      Poincare::Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
-      OMG::Troolean highestCoefficientIsPositive);
+      Poincare::Internal::ProjectionContext projectionContext, int xDeg,
+      int yDeg, OMG::Troolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
       const Poincare::SystemExpression& analyzedExpression,
       Poincare::Internal::ProjectionContext projectionContext);

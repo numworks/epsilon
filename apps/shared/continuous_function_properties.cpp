@@ -285,8 +285,8 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  setCartesianEquationProperties(analyzedExpression, context, complexFormat,
-                                 xDeg, yDeg, highestCoefficientIsPositive);
+  setCartesianEquationProperties(analyzedExpression, projectionContext, xDeg,
+                                 yDeg, highestCoefficientIsPositive);
   if (genericCaptionOnly) {
     setCaption(I18n::Message::Equation);
   }
@@ -342,11 +342,11 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
     const Poincare::SystemExpression& analyzedExpression,
-    Poincare::Context* context, Preferences::ComplexFormat complexFormat,
-    int xDeg, int yDeg, OMG::Troolean highestCoefficientIsPositive) {
+    Internal::ProjectionContext projectionContext, int xDeg, int yDeg,
+    OMG::Troolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-  assert(analyzedExpression.dimension(context).isScalar());
+  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
@@ -406,7 +406,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
     CartesianConic equationConic = CartesianConic(
-        analyzedExpression, context, complexFormat, Function::k_unknownName);
+        analyzedExpression, projectionContext.m_context,
+        projectionContext.m_complexFormat, Function::k_unknownName);
     setConicShape(equationConic.conicType().shape);
     switch (conicShape()) {
       case Conic::Shape::Hyperbola:

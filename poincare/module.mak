@@ -231,6 +231,9 @@ $(addprefix expression/, \
   variables.cpp \
   vector.cpp \
 ) \
+$(addprefix function_properties/, \
+  function_properties_helper.cpp \
+) \
 $(addprefix layout/, \
   app_helpers.cpp \
   autocompleted_pair.cpp \
@@ -319,7 +322,6 @@ $(addprefix regression/, \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
 ) \
-  function_properties_helper.cpp \
   print.cpp \
   range.cpp \
 )

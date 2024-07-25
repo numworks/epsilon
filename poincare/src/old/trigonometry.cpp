@@ -696,13 +696,7 @@ static void AddAngleUnitToDirectFunctionIfNeeded(
     child->cloneNodeAtNode(KParentheses);
   }
 
-  Internal::TreeRef unit = Internal::Units::Unit::Push(
-      angleUnit == Preferences::AngleUnit::Radian
-          ? &Internal::Units::Angle::representatives.radian
-      : angleUnit == Preferences::AngleUnit::Degree
-          ? &Internal::Units::Angle::representatives.degree
-          : &Internal::Units::Angle::representatives.gradian,
-      Internal::Units::Prefix::EmptyPrefix());
+  Internal::TreeRef unit = Internal::Units::Unit::Push(angleUnit);
 
   child->moveTreeOverTree(Internal::PatternMatching::Create(
       KMult(KA, KB), {.KA = child, .KB = unit}));

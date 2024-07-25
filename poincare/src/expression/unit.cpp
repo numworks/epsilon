@@ -904,10 +904,7 @@ Tree* Unit::Push(const Representative* unitRepresentative,
 }
 
 Tree* Unit::Push(AngleUnit angleUnit) {
-  return Push(angleUnit == AngleUnit::Radian ? &Angle::representatives.radian
-              : angleUnit == AngleUnit::Degree
-                  ? &Angle::representatives.degree
-                  : &Angle::representatives.gradian,
+  return Push(Angle::DefaultRepresentativeForAngleUnit(angleUnit),
               Prefix::EmptyPrefix());
 }
 

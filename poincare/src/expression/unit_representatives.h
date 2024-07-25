@@ -120,6 +120,9 @@ class Angle : public Helper<Angle> {
     R gradian;
   };
 
+  static const Representative* DefaultRepresentativeForAngleUnit(
+      AngleUnit angleUnit);
+
 #if 0
   // Returns a beautified expression
   Tree* convertInto(Tree* value, const Representative* other,

@@ -1,5 +1,7 @@
 #include "unit_representatives.h"
 
+#include <omg/unreachable.h>
+
 #include "unit.h"
 
 namespace Poincare::Internal {
@@ -261,6 +263,20 @@ int Angle::setAdditionalExpressionsWithExactValue(Expression exactValue,
   return numberOfResults;
 }
 #endif
+
+const Representative* Angle::DefaultRepresentativeForAngleUnit(
+    AngleUnit angleUnit) {
+  switch (angleUnit) {
+    case AngleUnit::Degree:
+      return &representatives.degree;
+    case AngleUnit::Radian:
+      return &representatives.radian;
+    case AngleUnit::Gradian:
+      return &representatives.gradian;
+    default:
+      OMG::unreachable();
+  }
+}
 
 const Representative* Mass::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,

@@ -12,6 +12,7 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/unit_representatives.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 namespace Poincare {
@@ -106,6 +107,22 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
                                                              ctx->m_angleUnit);
 }
 
+/* Returns a (unreduced) division between pi in each unit, or 1 if the units
+ * are the same. */
+Tree* PushUnitConversionFactor(Preferences::AngleUnit fromUnit,
+                               Preferences::AngleUnit toUnit) {
+  if (fromUnit == toUnit) {
+    // Just an optimisation to gain some time at reduction
+    return (1_e)->cloneTree();
+  }
+  return PatternMatching::Create(
+      KDiv(KA, KB),
+      {.KA = Units::Angle::DefaultRepresentativeForAngleUnit(toUnit)
+                 ->ratioExpressionReduced(),
+       .KB = Units::Angle::DefaultRepresentativeForAngleUnit(fromUnit)
+                 ->ratioExpressionReduced()});
+}
+
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
@@ -169,13 +186,9 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
      * manually add the conversion ratio back to preserve the input angleUnit.
      */
     // exactAngle * angleUnitRatio / RadianUnitRatio
-    exactAngle->cloneNodeAtNode(KMult.node<3>);
-    Units::Unit::Push(angleUnit);
-    KPow->cloneNode();
-    Units::Unit::Push(AngleUnit::Radian);
-    (-1_e)->cloneTree();
-    // Remove units
     Tree::ApplyShallowInDepth(exactAngle, Units::Unit::ShallowRemoveUnit);
+    exactAngle->cloneNodeAtNode(KMult.node<2>);
+    PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
     // Simplify again
     Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
   }

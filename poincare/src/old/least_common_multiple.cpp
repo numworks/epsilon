@@ -48,6 +48,7 @@ OExpression LeastCommonMultiple::shallowBeautify(Context* context) {
 
 OExpression LeastCommonMultiple::shallowReduce(
     ReductionContext reductionContext) {
+#if 0  // TODO_PCJ: Delete this method
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
@@ -78,6 +79,9 @@ OExpression LeastCommonMultiple::shallowReduce(
 
   replaceWithInPlace(result);
   return result;
+#else
+  return *this;
+#endif
 }
 
 template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(

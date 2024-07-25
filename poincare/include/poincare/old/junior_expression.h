@@ -250,6 +250,14 @@ class JuniorExpression : public OExpression {
       const char* text, Context* context,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  template <typename T>
+  /* Return true when both real and imaginary approximation are defined and
+   * imaginary part is not null. */
+  bool hasDefinedComplexApproximation(
+      const ApproximationContext& approximationContext,
+      T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
+  bool isScalarComplex(
+      Preferences::CalculationPreferences calculationPreferences) const;
 
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ

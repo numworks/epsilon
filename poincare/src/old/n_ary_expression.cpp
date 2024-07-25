@@ -64,6 +64,7 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
+#if 0  // TODO_PCJ: Delete this method
 OExpression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
     const ReductionContext& reductionContext) {
   int childrenNumber = numberOfChildren();
@@ -103,6 +104,7 @@ OExpression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
   }
   return OExpression();
 }
+#endif
 
 OExpression NAryExpression::combineComplexCartesians(
     ComplexOperator complexOperator, ReductionContext reductionContext) {

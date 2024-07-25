@@ -478,52 +478,6 @@ bool OExpression::isAlternativeFormOfRationalNumber() const {
           childAtIndex(0).isAlternativeFormOfRationalNumber());
 }
 
-template <typename T>
-bool OExpression::hasDefinedComplexApproximation(
-    const ApproximationContext &approximationContext, T *returnRealPart,
-    T *returnImagPart) const {
-  if (approximationContext.complexFormat() ==
-      Preferences::ComplexFormat::Real) {
-    return false;
-  }
-  /* We return true when both real and imaginary approximation are defined and
-   * imaginary part is not null. */
-  Evaluation<T> approximation = node()->approximate(T(), approximationContext);
-  if (approximation.otype() != EvaluationNode<T>::Type::Complex) {
-    return false;
-  }
-  Complex<T> z = static_cast<Complex<T> &>(approximation);
-  T b = z.imag();
-  if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
-    return false;
-  }
-  T a = z.real();
-  if (std::isinf(a) || std::isnan(a)) {
-    return false;
-  }
-  if (returnRealPart) {
-    *returnRealPart = a;
-  }
-  if (returnImagPart) {
-    *returnImagPart = b;
-  }
-  return true;
-}
-
-bool OExpression::isScalarComplex(
-    Preferences::CalculationPreferences calculationPreferences) const {
-  Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat;
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  ApproximationContext approximationContext(nullptr, complexFormat, angleUnit);
-  approximationContext.updateComplexFormat(*this);
-  if (hasDefinedComplexApproximation<double>(approximationContext)) {
-    assert(!hasUnit());
-    return true;
-  }
-  return false;
-}
-
 bool OExpression::involvesDiscontinuousFunction(Context *context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
@@ -1899,12 +1853,5 @@ template double OExpression::approximateToScalarWithValueForSymbol(
 
 template OExpression OExpression::approximateKeepingUnits<double>(
     const ReductionContext &reductionContext) const;
-
-template bool OExpression::hasDefinedComplexApproximation<float>(
-    const ApproximationContext &approximationContext, float *returnRealPart,
-    float *returnImagPart) const;
-template bool OExpression::hasDefinedComplexApproximation<double>(
-    const ApproximationContext &approximationContext, double *returnRealPart,
-    double *returnImagPart) const;
 
 }  // namespace Poincare

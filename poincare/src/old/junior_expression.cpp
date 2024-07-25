@@ -9,6 +9,7 @@
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/conversion.h>
@@ -34,6 +35,8 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
+
+#include <complex>
 
 namespace Poincare {
 
@@ -612,6 +615,60 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
 }
 
 template <typename T>
+bool UserExpression::hasDefinedComplexApproximation(
+    const ApproximationContext& approximationContext, T* returnRealPart,
+    T* returnImagPart) const {
+  if (approximationContext.complexFormat() ==
+      Preferences::ComplexFormat::Real) {
+    return false;
+  }
+  ProjectionContext projCtx = {
+      .m_complexFormat = approximationContext.complexFormat(),
+      .m_angleUnit = approximationContext.angleUnit(),
+      .m_context = approximationContext.context()};
+  Tree* e = tree()->cloneTree();
+  Simplification::ToSystem(e, &projCtx);
+  if (!projCtx.m_dimension.isScalar() ||
+      Internal::Dimension::ListLength(e) !=
+          Internal::Dimension::k_nonListListLength) {
+    e->removeTree();
+    return false;
+  }
+  Approximation::PrepareExpressionForApproximation(e, projCtx.m_complexFormat);
+  std::complex<T> z = Approximation::RootPreparedToComplex<T>(e);
+  e->removeTree();
+  T b = z.imag();
+  if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
+    return false;
+  }
+  T a = z.real();
+  if (std::isinf(a) || std::isnan(a)) {
+    return false;
+  }
+  if (returnRealPart) {
+    *returnRealPart = a;
+  }
+  if (returnImagPart) {
+    *returnImagPart = b;
+  }
+  return true;
+}
+
+bool UserExpression::isScalarComplex(
+    Preferences::CalculationPreferences calculationPreferences) const {
+  Preferences::ComplexFormat complexFormat =
+      calculationPreferences.complexFormat;
+  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
+  ApproximationContext approximationContext(nullptr, complexFormat, angleUnit);
+  approximationContext.updateComplexFormat(*this);
+  if (hasDefinedComplexApproximation<double>(approximationContext)) {
+    assert(!hasUnit());
+    return true;
+  }
+  return false;
+}
+
+template <typename T>
 PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {
   return Internal::Approximation::RootPreparedToPointOrScalar<T>(tree(), x);
@@ -1169,10 +1226,13 @@ template double SystemFunction::approximateToScalarWithValue<double>(double,
                                                                      int) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
-    const char* text, Context* context,
-    SymbolicComputation symbolicComputation);
+    const char*, Context*, SymbolicComputation);
 template double UserExpression::ParseAndSimplifyAndApproximateToScalar<double>(
-    const char* text, Context* context,
-    SymbolicComputation symbolicComputation);
+    const char*, Context*, SymbolicComputation);
+
+template bool UserExpression::hasDefinedComplexApproximation<float>(
+    const ApproximationContext&, float*, float*) const;
+template bool UserExpression::hasDefinedComplexApproximation<double>(
+    const ApproximationContext&, double*, double*) const;
 
 }  // namespace Poincare

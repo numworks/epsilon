@@ -48,6 +48,7 @@ OExpression GreatCommonDivisor::shallowBeautify(Context* context) {
 
 OExpression GreatCommonDivisor::shallowReduce(
     ReductionContext reductionContext) {
+#if 0  // TODO_PCJ: Delete this method
   {
     OExpression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
@@ -78,6 +79,9 @@ OExpression GreatCommonDivisor::shallowReduce(
 
   replaceWithInPlace(result);
   return result;
+#else
+  return *this;
+#endif
 }
 
 template Evaluation<float> GreatCommonDivisorNode::templatedApproximate<float>(

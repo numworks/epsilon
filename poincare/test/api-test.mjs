@@ -199,4 +199,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
 ])
 .then(() => {
   console.log('\n> All tests completed!\nTotal: ' + nTests + '\nSuccess: ' + nSuccess + '\nFails: ' + (nTests - nSuccess));
+  if (nSuccess < nTests) {
+    process.exitCode = 1;
+  }
 });

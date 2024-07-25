@@ -165,7 +165,7 @@ void ContinuousFunctionProperties::update(
   }
 
   Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = Internal::ComplexFormat::Cartesian,
+      .m_complexFormat = complexFormat,
       .m_angleUnit = Internal::AngleUnit::Radian,
       .m_unitFormat = Internal::UnitFormat::Metric,
       .m_symbolic =

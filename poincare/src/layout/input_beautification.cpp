@@ -380,9 +380,10 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     return false;
   }
   TreeRef derivativeOrder = superscript->child(0);
-  NAry::RemoveChildAtIndex(rack, indexOfSuperscript);
+  superscript = NAry::DetachChildAtIndex(rack, indexOfSuperscript);
   TreeRef inserted = firstOrderDerivative->child(Derivative::k_orderIndex)
-                         ->cloneTreeOverTree(derivativeOrder);
+                         ->moveTreeOverTree(derivativeOrder);
+  superscript->removeNode();
   if (layoutCursor->cursorRack() == rack &&
       layoutCursor->position() > rack->numberOfChildren()) {
     layoutCursor->moveCursorToLayout(inserted, OMG::Direction::Right());

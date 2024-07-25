@@ -40,7 +40,7 @@ void TrigonometryListController::computeAdditionalResults(
   AdditionalResultsHelper::TrigonometryAngleHelper(
       input, exactOutput, approximateOutput, m_directTrigonometry,
       m_calculationPreferences, &ctx, exactAngle, &approximatedAngle,
-      m_isStrictlyEqual + 0);
+      &(m_isStrictlyEqual[0]));
 
   UserExpression exactAngleWithUnit = UserExpression::Create(
       KMult(KA, KB), {.KA = exactAngle, .KB = Unit::Builder(angleUnit())});

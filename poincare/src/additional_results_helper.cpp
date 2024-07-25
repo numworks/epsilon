@@ -25,7 +25,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     const ProjectionContext* ctx, UserExpression& exactAngle,
     float* approximatedAngle, bool* angleIsExact) {
-  // TODO: Move this in additional_result_helper, use Trees and new Trigonometry
+  assert(approximatedAngle && angleIsExact);
   UserExpression period =
       Trigonometry::AnglePeriodInAngleUnit(ctx->m_angleUnit);
   UserExpression approximateAngle;
@@ -88,6 +88,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     *angleIsExact = false;
   } else {
     exactAngle = simplifiedAngle;
+    *angleIsExact = true;
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
@@ -111,6 +112,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const Preferences::CalculationPreferences calculationPreferences) {
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
+  assert(Internal::Dimension::Get(inputTree).isScalar() ||
+         Internal::Dimension::Get(inputTree).isSimpleAngleUnit());
   assert(Internal::Dimension::Get(exactTree).isScalar() ||
          Internal::Dimension::Get(exactTree).isSimpleAngleUnit());
   /* Trigonometry additional results are displayed if either input or output is
@@ -159,7 +162,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
    * SimplifyWithAdaptiveStrategy steps, and handle units right after
    * projection. */
   Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
-  if (exactAngleDimension.isSimpleAngleUnit()) {
+  if (exactAngleDimension.isUnit()) {
+    assert(exactAngleDimension.isSimpleAngleUnit());
     assert(directTrigoFunction->isDirectTrigonometryFunction());
     /* When removing units, angle units are converted to radians, so we
      * manually add the conversion ratio back to preserve the input angleUnit.

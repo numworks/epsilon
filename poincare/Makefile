@@ -130,43 +130,34 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
-# postprocess_poincare_js should be called after building poincare.js. It:
-# - Replaces "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
+# Post-process poincare.js:
+# - Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
 #    > This bit of code is never reached and makes cypress fail because the URL can't be resolved
 #    > NOTE; There is a .* inside the regexp because in DEBUG=1 there is a space
-# - Removes 2 errors thrown when building poincare.mjs in DEBUG=1
+# - Remove 2 errors thrown when building poincare.mjs in DEBUG=1
 #    > This is needed because we removed 'node' from the ENVIRONMENT.
 #    > See comment about ENVIRONMENT above.
-# - Renames the "MainModule" type to "PoincareInstance".
-#
-# WARNING: This is a bit hacky, especially the part where the errors are removed.
-postprocess_poincare_js: $(OUTPUT_DIRECTORY)/poincare.js
-	sed -i '' -e 's/new URL("poincare.wasm",.*import\.meta\.url)\.href/""/g' \
-		-e 's/throw new Error("environment detection error");//g' \
-		-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' $(OUTPUT_DIRECTORY)/poincare.js
-	sed -i '' 's/MainModule/PoincareInstance/g' $(OUTPUT_DIRECTORY)/poincare.d.ts
+# - Rename the "MainModule" type to "PoincareInstance".
+define LD_WRAPPER_poincare
+$1
+sed -i '' \
+	-e 's/new URL("poincare.wasm",.*import\.meta\.url)\.href/""/g' \
+	-e 's/throw new Error("environment detection error");//g' \
+	-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' \
+	$@
+sed -i '' 's/MainModule/PoincareInstance/g' $(OUTPUT_DIRECTORY)/poincare.d.ts
+endef
 
-# TODO: Restore this. Not working because of postprocess_poincare_js
-# $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json) postprocess_poincare_js)
+# Byproducts of building poincare.js
+$(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
+$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 
-# NOTE: Restore when "call create_zip" is restored
-# Allows poincarejs.zip to know that these depend on poincare.js
-# $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
-# $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
-
-# This replaces "call create_zip"
-$(OUTPUT_DIRECTORY)/poincarejs.zip: $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/.version.json postprocess_poincare_js
-	cd $(OUTPUT_DIRECTORY) && \
-	rm -rf poincarejs && \
-	mkdir poincarejs && \
-	cp poincare.js poincare.d.ts poincare.wasm .version.json poincarejs/ && \
-	zip -r -9 -j poincarejs.zip poincarejs > /dev/null && \
-	rm -rf poincarejs
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json))
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 
 # Node expects modules to end with .mjs
-$(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js postprocess_poincare_js
+$(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
 	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
 
 poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs

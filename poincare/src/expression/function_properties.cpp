@@ -1,6 +1,7 @@
 #include "function_properties.h"
 
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include "beautification.h"
 #include "degree.h"
@@ -219,13 +220,17 @@ FunctionProperties::FunctionType FunctionProperties::CartesianFunctionType(
 
   // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
   Tree* clone = e->cloneTree();
-  // We beautify to detect tan
-  Beautification::DeepBeautify(clone, projectionContext);
+  /* tan doesn't exist in system expressions
+   * trig(A,1)/trig(A,0) -> tan(A) */
+  PatternMatching::MatchReplace(
+      clone,
+      KMult(KA_s, KPow(KTrig(KB, 0_e), -1_e), KC_s, KTrig(KB, 1_e), KD_s),
+      KMult(KA_s, KC_s, KTan(KB), KD_s));
   bool isTrig = IsLinearCombinationOfFunction(
       clone, symbol, projectionContext,
       [](const Tree* e, const char* symbol,
          ProjectionContext projectionContext) {
-        return (e->isCos() || e->isSin() || e->isTan()) &&
+        return (e->isTrig() || e->isTan()) &&
                Degree::Get(e->child(0), symbol, projectionContext) == 1;
       });
   clone->removeTree();

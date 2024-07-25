@@ -167,7 +167,7 @@ void BlockStack::flushFromBlock(const Block* block) {
    * to leave the stack in a state similar to what would have happened with no
    * raise. */
   m_size = block - m_blocks;
-  m_referenceTable.deleteIdentifiersAfterBlock(block);
+  m_referenceTable.invalidateIdentifiersAfterBlock(block);
 #if POINCARE_POOL_VISUALIZATION
   Log("flushFromBlock", block);
 #endif
@@ -249,7 +249,7 @@ void BlockStack::ReferenceTable::updateNodes(AlterSelectedBlock function,
   }
 }
 
-void BlockStack::ReferenceTable::deleteIdentifiersAfterBlock(
+void BlockStack::ReferenceTable::invalidateIdentifiersAfterBlock(
     const Block* block) {
   Block* first = static_cast<Block*>(m_pool->firstBlock());
   assert(block >= first && block <= first + UINT16_MAX);
@@ -257,7 +257,7 @@ void BlockStack::ReferenceTable::deleteIdentifiersAfterBlock(
   for (int i = 0; i < m_length; i++) {
     if (m_nodeOffsetForIdentifier[i] != DeletedOffset &&
         m_nodeOffsetForIdentifier[i] >= maxOffset) {
-      deleteIdentifier(i);
+      m_nodeOffsetForIdentifier[i] = InvalidatedOffset;
     }
   }
 }

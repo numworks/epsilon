@@ -96,7 +96,7 @@ class BlockStack {
     void updateNodes(AlterSelectedBlock function,
                      const Block* contextSelection1,
                      const Block* contextSelection2, int contextAlteration);
-    void deleteIdentifiersAfterBlock(const Block* block);
+    void invalidateIdentifiersAfterBlock(const Block* block);
     bool isFull() { return m_length == BlockStack::k_maxNumberOfReferences; }
     bool reset();
 #if POINCARE_TREE_LOG

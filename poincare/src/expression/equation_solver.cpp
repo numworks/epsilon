@@ -422,6 +422,17 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
     // TODO_PCJ: restore dependencies handling here
     EnhanceSolution(solution, context);
   }
+  if (Preferences::SharedPreferences()->complexFormat() ==
+      ComplexFormat::Real) {
+    for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
+      Tree* solution = solutionList->child(i);
+      ComplexSign sign = GetComplexSign(solution);
+      // TODO: approximate if unknown
+      if (!sign.isReal()) {
+        NAry::RemoveChildAtIndex(solutionList, i);
+      }
+    }
+  }
   NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;
   return solutionList;

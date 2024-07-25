@@ -119,7 +119,6 @@ $(call create_goal,poincare, \
   poincarejs \
 )
 
-.PHONY: $(OUTPUT_DIRECTORY)/.version.json
 $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '{' > $@
 	@echo '  "version": "$(APP_VERSION)",' >> $@
@@ -127,11 +126,13 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
+$(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
+	sed -i '' 's/new URL("poincare.wasm",import.meta.url).href/""/g' $^
+
 # Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
 #   This bit of code is never reached and makes cypress fail because the URL can't be resolved
 # Doing it in the .ts rule is a hack
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
-	sed -i '' 's/new URL("poincare.wasm",import.meta.url).href/""/g' $(OUTPUT_DIRECTORY)/poincare.js
 	sed -i '' 's/MainModule/PoincareInstance/g' $@
 
 $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json))
@@ -147,3 +148,6 @@ poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs
 	cd $(OUTPUT_DIRECTORY)/ && node api-test.mjs
 
 $(call document_other_target,poincare.js.run,Test poincare.js using node)
+
+$(call assert_defined,KANDINSKY_fonts_dependencies)
+$(call all_objects_for,$(SOURCES_poincarejs)): $(KANDINSKY_fonts_dependencies)

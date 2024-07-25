@@ -1,5 +1,4 @@
 _sources_poincare_minimal := $(addprefix src/, \
-  additional_results_helper.cpp \
   api.cpp \
   init.cpp \
   new_trigonometry.cpp \
@@ -321,6 +320,7 @@ $(addprefix regression/, \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
 ) \
+  additional_results_helper.cpp \
   function_properties_helper.cpp \
   print.cpp \
   range.cpp \

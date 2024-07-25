@@ -214,6 +214,7 @@ void ContinuousFunctionProperties::update(
         return;
       }
       case SymbolType::Radius: {
+        assert(dimension.isScalar());
         // TODO: Inverse polar could also be analyzed
         setCaption(I18n::Message::PolarEquationType);
         setCurveParameterType(CurveParameterType::InversePolar);
@@ -227,6 +228,7 @@ void ContinuousFunctionProperties::update(
         return;
       }
       case SymbolType::NoSymbol: {
+        assert(dimension.isPointOrListOfPoints());
         setCaption(dimension.isPoint() ? I18n::Message::PointType
                                        : I18n::Message::ListOfPointsType);
         setCurveParameterType(CurveParameterType::ScatterPlot);
@@ -433,8 +435,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
     Internal::ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
-  assert(analyzedExpression.dimension(projectionContext.m_context)
-             .isPointOrListOfPoints());
+  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   setCurveParameterType(CurveParameterType::Polar);
 

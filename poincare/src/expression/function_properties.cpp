@@ -14,8 +14,7 @@ FunctionProperties::LineType FunctionProperties::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(analyzedExpression.dimension(projectionContext.m_context)
-             .isPointOrListOfPoints());
+  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line

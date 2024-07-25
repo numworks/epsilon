@@ -1,5 +1,7 @@
 _sources_poincare_minimal := $(addprefix src/, \
   api.cpp \
+  cas_disabled.cpp:-cas \
+  cas_enabled.cpp:+cas \
   init.cpp \
   new_trigonometry.cpp \
   preferences.cpp \

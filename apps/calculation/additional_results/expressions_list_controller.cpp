@@ -157,6 +157,7 @@ Layout ExpressionsListController::getExactLayoutFromExpression(
           ? approximateLayout
           : PoincareHelpers::CreateLayout(exactExpression, ctx->m_context);
   if (approximate) {
+    /* Make it editable to compare equivalent layouts. */
     *approximate = exactLayout.isIdenticalTo(approximateLayout, true)
                        ? Layout()
                        : approximateLayout;

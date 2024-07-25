@@ -14,7 +14,7 @@ namespace Calculation {
 namespace ScientificNotationHelper {
 
 Poincare::Layout ScientificLayout(
-    const UserExpression approximateExpression, Context* context,
+    const UserExpression approximateOutput, Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
@@ -25,7 +25,7 @@ Poincare::Layout ScientificLayout(
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       .m_context = context};
 
-  Tree* e = approximateExpression.tree()->cloneTree();
+  Tree* e = approximateOutput.tree()->cloneTree();
   Simplification::ProjectAndReduce(e, &ctx, false);
   assert(!ctx.m_dimension.isUnit());
   Simplification::BeautifyReduced(e, &ctx);

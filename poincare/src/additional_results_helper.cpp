@@ -18,6 +18,7 @@ namespace Poincare {
 
 using namespace Internal;
 
+// TODO_PCJ: Convert this method to Poincare internal API
 void AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,

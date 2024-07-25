@@ -50,20 +50,19 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
-  Path best_path = [](const Tree* e) {
-    ExceptionTry { return FindBestReduction(e); }
-    ExceptionCatch(type) {
-      if (not(type == ExceptionType::TreeStackOverflow or
-              type == ExceptionType::IntegerOverflow)) {
-        TreeStackCheckpoint::Raise(type);
-      }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      s_indent = 0;
-      std::cout << "\nTree stack overflow,  advanced reduction failed.\n";
-#endif
+  Path best_path{};
+  ExceptionTry { best_path = FindBestReduction(e); }
+  ExceptionCatch(type) {
+    if (not(type == ExceptionType::TreeStackOverflow or
+            type == ExceptionType::IntegerOverflow)) {
+      TreeStackCheckpoint::Raise(type);
     }
-    return Path{};
-  }(e);
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+    s_indent = 0;
+    std::cout << "\nTree stack overflow,  advanced reduction failed.\n";
+#endif
+    best_path = {};
+  }
 
   bool result = best_path.apply(e);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1

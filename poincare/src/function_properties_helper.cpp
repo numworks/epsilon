@@ -77,8 +77,7 @@ void removeConstantTermsInAddition(Tree* e, const char* symbol,
 FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
     const SystemExpression& analyzedExpression, const char* symbol,
     ProjectionContext projectionContext) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(analyzedExpression.dimension(projectionContext.m_context).isPoint());
+  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();

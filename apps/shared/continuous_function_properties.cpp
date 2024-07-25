@@ -484,9 +484,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 void ContinuousFunctionProperties::setParametricFunctionProperties(
     const Poincare::SystemExpression& analyzedExpression,
     Internal::ProjectionContext projectionContext) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
   assert(isEnabled() && isParametric());
-  assert(analyzedExpression.dimension(projectionContext.m_context).isPoint());
 
   setCurveParameterType(CurveParameterType::Parametric);
   setCaption(I18n::Message::ParametricEquationType);

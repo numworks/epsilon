@@ -109,9 +109,7 @@ class InputBeautification {
 
   constexpr static BeautificationRule k_derivativeRule = {
       "diff", 3, [](TreeRef* parameters) -> Tree* {
-        TreeRef diff = SharedTreeStack->pushBlock(Type::DiffLayout);
-        SharedTreeStack->pushBlock(0);
-        SharedTreeStack->pushBlock(0);
+        TreeRef diff = KDiffL->cloneNode();
         parameters[1]->detachTree();
         parameters[2]->detachTree();
         "1"_l->cloneTree();

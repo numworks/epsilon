@@ -113,7 +113,8 @@ bool Simplification::HandleUnits(Tree* e,
   bool changed = false;
   if (!e->isUndefined() &&
       Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
-                                      projectionContext->m_unitDisplay)) {
+                                      projectionContext->m_unitDisplay,
+                                      projectionContext->m_angleUnit)) {
     ReduceSystem(e, false);
     changed = true;
   }

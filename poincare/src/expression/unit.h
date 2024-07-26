@@ -303,7 +303,7 @@ class Unit {
 
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
-                                 UnitDisplay unitDisplay);
+                                 UnitDisplay unitDisplay, AngleUnit angleUnit);
 
  private:
   // From Kelvin value, return value in given temperature representative

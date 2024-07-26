@@ -941,7 +941,7 @@ double Unit::GetValue(const Tree* unit) {
 
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
-                              UnitDisplay unitDisplay) {
+                              UnitDisplay unitDisplay, AngleUnit angleUnit) {
   if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
     // TODO_PCJ : Remove units that cancel themselves
     return false;

@@ -17,10 +17,9 @@ static inline double positiveModulo(double i, double n) {
 }
 
 // Detect a·cos(b·x+c) + k
-bool detectLinearPatternOfTrig(const Tree* e,
-                               ProjectionContext projectionContext,
-                               const char* symbol, double* a, double* b,
-                               double* c, bool acceptConstantTerm) {
+bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
+    const Tree* e, ProjectionContext projectionContext, const char* symbol,
+    double* a, double* b, double* c, bool acceptConstantTerm) {
   // TODO_PCJ: Trees need to be projected (for approx, and because we look for
   // Trig nodes)
 
@@ -32,7 +31,7 @@ bool detectLinearPatternOfTrig(const Tree* e,
     bool cosFound = false;
     for (const Tree* child : e->children()) {
       double tempA, tempB, tempC;
-      if (!detectLinearPatternOfTrig(child, projectionContext, symbol, &tempA,
+      if (!DetectLinearPatternOfTrig(child, projectionContext, symbol, &tempA,
                                      &tempB, &tempC, acceptConstantTerm)) {
         if (acceptConstantTerm &&
             Degree::Get(child, symbol, projectionContext) == 0) {
@@ -59,7 +58,7 @@ bool detectLinearPatternOfTrig(const Tree* e,
     assert(e->numberOfChildren() > 1);
     int indexOfCos = -1;
     for (IndexedChild<const Tree*> child : e->indexedChildren()) {
-      if (detectLinearPatternOfTrig(child, projectionContext, symbol, a, b, c,
+      if (DetectLinearPatternOfTrig(child, projectionContext, symbol, a, b, c,
                                     false)) {
         indexOfCos = child.index;
         break;
@@ -127,7 +126,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   assert(numerator && denominator);
   double a, b, c;
   bool polarLine = Degree::Get(numerator, symbol, projectionContext) == 0 &&
-                   detectLinearPatternOfTrig(denominator, projectionContext,
+                   DetectLinearPatternOfTrig(denominator, projectionContext,
                                              symbol, &a, &b, &c, false) &&
                    std::abs(b) == 1.0;
   numerator->removeTree();
@@ -147,8 +146,8 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   return LineType::None;
 }
 
-void removeConstantTermsInAddition(Tree* e, const char* symbol,
-                                   ProjectionContext projectionContext) {
+void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
+    Tree* e, const char* symbol, ProjectionContext projectionContext) {
   if (!e->isAdd()) {
     return;
   }
@@ -201,10 +200,10 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
    * so we create x(t) * y(t)^-1 */
   Tree* quotient = SharedTreeStack->pushMult(2);
   Tree* variableX = xOfT->cloneTree();
-  removeConstantTermsInAddition(variableX, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableX, symbol, projectionContext);
   SharedTreeStack->pushPow();
   Tree* variableY = yOfT->cloneTree();
-  removeConstantTermsInAddition(variableY, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableY, symbol, projectionContext);
   (-1_e)->cloneTree();
   Simplification::ReduceSystem(quotient, false);
   bool diag = Degree::Get(quotient, symbol, projectionContext) == 0;

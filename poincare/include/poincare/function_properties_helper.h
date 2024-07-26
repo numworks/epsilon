@@ -36,6 +36,16 @@ class FunctionPropertiesHelper {
   static FunctionType CartesianFunctionType(
       const SystemExpression& analyzedExpression, const char* symbol,
       Internal::ProjectionContext projectionContext);
+
+  // TODO_PCJ: hide method from API
+  static void RemoveConstantTermsInAddition(
+      Internal::Tree* e, const char* symbol,
+      Internal::ProjectionContext projectionContext);
+  // TODO_PCJ: hide method from API
+  static bool DetectLinearPatternOfTrig(
+      const Internal::Tree* e, Internal::ProjectionContext projectionContext,
+      const char* symbol, double* a, double* b, double* c,
+      bool acceptConstantTerm);
 };
 
 }  // namespace Poincare

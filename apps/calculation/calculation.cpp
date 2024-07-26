@@ -172,7 +172,6 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (approximatedOutputTree()->isUndefined()) {
     assert(!approximatedOutputTree()->isNonReal());
-    // TODO_PCJ: This allow the display of exact pcj results, regulate it.
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
              inputExp.recursivelyMatches(NewExpression::IsApproximate,

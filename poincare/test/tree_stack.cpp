@@ -54,7 +54,7 @@ QUIZ_CASE(pcj_tree_stack) {
   quiz_assert(!pool->contains(pool->blockAtIndex(5)));
 }
 
-QUIZ_CASE(pcj_edition_reference) {
+QUIZ_CASE(pcj_tree_ref) {
   SharedTreeStack->flush();
 
   constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
@@ -136,7 +136,7 @@ QUIZ_CASE(pcj_edition_reference) {
       {KMult(13_e, 3_e, 4_e), k_subExpr1, 9_e, KAdd(1_e, 2_e)});
 }
 
-QUIZ_CASE(pcj_edition_reference_reallocation) {
+QUIZ_CASE(pcj_tree_ref_reallocation) {
   SharedTreeStack->flush();
   TreeRef reference0(KAdd(1_e, 1_e));
   TreeRef referenceSub0(reference0->child(0));
@@ -151,7 +151,7 @@ QUIZ_CASE(pcj_edition_reference_reallocation) {
   TreeRef reference2(2_e);
 }
 
-QUIZ_CASE(pcj_edition_reference_destructor) {
+QUIZ_CASE(pcj_tree_ref_destructor) {
   SharedTreeStack->flush();
   {
     TreeRef ref0(0_e);
@@ -176,7 +176,8 @@ QUIZ_CASE(pcj_edition_reference_destructor) {
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 3);
 }
 
-QUIZ_CASE(pcj_tree_comments) {
+QUIZ_CASE(pcj_tree_motions) {
+  // These tests should match the comments in tree.h
   TreeRef u, v;
   auto setup = [&]() {
     u = "aaaa"_e->cloneTree();

@@ -360,7 +360,6 @@ _sources_poincare_test := $(addprefix test/, \
   match.cpp \
   matrix.cpp \
   memory_elements.cpp \
-  memory_edition.cpp \
   n_ary.cpp \
   parse.cpp \
   polynomial.cpp \
@@ -370,6 +369,7 @@ _sources_poincare_test := $(addprefix test/, \
   set.cpp \
   sign.cpp \
   simplification.cpp \
+  tree_stack.cpp \
 )
 
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \

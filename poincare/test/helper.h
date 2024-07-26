@@ -65,7 +65,7 @@ inline void assert_pool_tree_size_is(size_t size) {
   return assert_pool_size_is(size, &TreeStack::numberOfTrees);
 }
 
-inline void reset_pool() { SharedTreeStack->flush(); }
+inline void flush_stack() { SharedTreeStack->flush(); }
 
 inline void assert_tree_stack_contains(
     std::initializer_list<const Tree*> nodes) {

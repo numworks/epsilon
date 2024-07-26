@@ -142,7 +142,7 @@ static void assert_add_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_addition) {
@@ -175,7 +175,7 @@ static void assert_sub_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Subtraction(CreateIntegerHandler(a),
                                           CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_subtraction) {
@@ -212,7 +212,7 @@ static void assert_mult_to(const char* a, const char* b, const char* c) {
   quiz_assert(IntegerHandler::Multiplication(CreateIntegerHandler(a),
                                              CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_multiplication) {
@@ -235,15 +235,15 @@ static void assert_div_to(const char* a, const char* b, const char* q,
       CreateIntegerHandler(a), CreateIntegerHandler(b));
   quiz_assert(quotient->treeIsIdenticalTo(CreateInteger(q)) &&
               remainder->treeIsIdenticalTo(CreateInteger(r)));
-  reset_pool();
+  flush_stack();
   quiz_assert(
       IntegerHandler::Quotient(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(q)));
-  reset_pool();
+  flush_stack();
   quiz_assert(IntegerHandler::Remainder(CreateIntegerHandler(a),
                                         CreateIntegerHandler(b))
                   ->treeIsIdenticalTo(CreateInteger(r)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_divide) {
@@ -289,7 +289,7 @@ static void assert_pow_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_pow) {
@@ -305,7 +305,7 @@ QUIZ_CASE(pcj_integer_pow) {
 static void assert_factorial_to(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Factorial(CreateIntegerHandler(a))
                   ->treeIsIdenticalTo(CreateInteger(b)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_factorial) {
@@ -321,7 +321,7 @@ static void assert_gcd_to(const char* a, const char* b, const char* c) {
   quiz_assert(
       IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
           ->treeIsIdenticalTo(CreateInteger(c)));
-  reset_pool();
+  flush_stack();
 }
 
 QUIZ_CASE(pcj_integer_gcd) {

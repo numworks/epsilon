@@ -58,7 +58,7 @@ static inline void ion_main_inner(const char* testFilter) {
     // TODO: clean when removing Pool
     int initialPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
-    reset_pool();
+    flush_stack();
     Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
     quiz_reset_failure_ratio();
     c();

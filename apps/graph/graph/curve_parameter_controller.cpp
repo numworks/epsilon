@@ -76,6 +76,7 @@ const char* CurveParameterController::title() {
 }
 
 bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
+  // TODO(lorene): row as a ParameterIndex
   assert(0 <= row && row <= k_numberOfParameterRows);
   ParameterIndex index = static_cast<ParameterIndex>(row);
   switch (index) {
@@ -85,6 +86,7 @@ bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
       return true;
     default:
       assert(index == ParameterIndex::Image2 ||
+             index == ParameterIndex::Image3 ||
              index == ParameterIndex::FirstDerivative2 ||
              index == ParameterIndex::SecondDerivative2);
       return false;
@@ -92,6 +94,7 @@ bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
 }
 
 int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
+  // TODO(lorene): row as a ParameterIndex
   assert(0 <= row && row <= k_numberOfParameterRows);
   ParameterIndex index = static_cast<ParameterIndex>(row);
   switch (index) {
@@ -99,6 +102,7 @@ int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
       return -1;
     case ParameterIndex::Image1:
     case ParameterIndex::Image2:
+    case ParameterIndex::Image3:
       return 0;
     case ParameterIndex::FirstDerivative1:
     case ParameterIndex::FirstDerivative2:
@@ -111,6 +115,7 @@ int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
 }
 
 void CurveParameterController::fillParameterCellAtRow(int row) {
+  // TODO(lorene): row as a ParameterIndex
   if (row >= k_numberOfParameterRows) {
     return;
   }
@@ -127,7 +132,14 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   } else {
     bool firstComponent = parameterAtRowIsFirstComponent(row);
     int derivationOrder = derivationOrderOfParameterAtRow(row);
-    if (properties.isParametric()) {
+    // TODO(lorene): make a dedicated function without hardcoded values
+    if (properties.isPolar() && (row == 2 || row == 3)) {
+      if (row == 2) {
+        SerializationHelper::CodePoint(buffer, bufferSize, 'x');
+      } else {
+        SerializationHelper::CodePoint(buffer, bufferSize, 'y');
+      }
+    } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
           function().pointer(), buffer, bufferSize, firstComponent,
           derivationOrder);
@@ -271,14 +283,16 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell here (and not in
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
-  bool isParametric = function()->properties().isParametric();
+  const bool isParametric = function()->properties().isParametric();
+  const bool isPolar = function()->properties().isPolar();
   bool displayImage, displayValueFirstDerivative, displayValueSecondDerivative;
   function()->valuesToDisplayOnDerivativeCurve(m_derivationOrder, &displayImage,
                                                &displayValueFirstDerivative,
                                                &displayValueSecondDerivative);
   parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
   parameterCell(ParameterIndex::Image2)
-      ->setVisible(isParametric && displayImage);
+      ->setVisible((isParametric || isPolar) && displayImage);
+  parameterCell(ParameterIndex::Image3)->setVisible(isPolar && displayImage);
   parameterCell(ParameterIndex::FirstDerivative1)
       ->setVisible(displayValueFirstDerivative);
   parameterCell(ParameterIndex::FirstDerivative2)

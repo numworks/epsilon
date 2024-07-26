@@ -53,6 +53,7 @@ class CurveParameterController
     Abscissa = 0,
     Image1,
     Image2,
+    Image3,
     FirstDerivative1,
     FirstDerivative2,
     SecondDerivative1,

@@ -194,7 +194,11 @@ class ContinuousFunctionProperties {
            equationType() == Poincare::ComparisonJunior::Operator::Inferior;
   }
 
-  int numberOfCurveParameters() const { return isParametric() ? 3 : 2; }
+  int numberOfCurveParameters() const {
+    if (isParametric()) return 3;
+    if (isPolar()) return 4;
+    return 2;
+  }
   bool parameterAtIndexIsEditable(int index) const;
   bool parameterAtIndexIsPreimage(int index) const;
 

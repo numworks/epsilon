@@ -15,6 +15,7 @@ using namespace Poincare::CodePoints;
 namespace Shared {
 
 bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
+  // TODO(lorene): use a ParameterIndex input type to avoid hardcoded int values
   assert(isEnabled());
   assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();
@@ -35,6 +36,7 @@ bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
 }
 
 bool ContinuousFunctionProperties::parameterAtIndexIsPreimage(int index) const {
+  // TODO(lorene): use a ParameterIndex input type to avoid hardcoded int values
   assert(isEnabled());
   assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();

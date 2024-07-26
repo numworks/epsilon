@@ -53,7 +53,8 @@ enum class ExceptionType : int {
   // Misc
   ParseFail,  // Used by parser, TODO: Use more distinct errors.
   SortFail,   // NAry::Sort encountered unsortable types with respect to Order
-  Other,      // Used internally for Unit tests.
+  NonPolynomial,  // Used by polynomial parser
+  Other,          // Used internally for Unit tests.
 };
 
 class TreeStackCheckpoint final {

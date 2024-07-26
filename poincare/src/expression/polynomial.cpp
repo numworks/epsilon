@@ -1,7 +1,9 @@
 #include "polynomial.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/memory/value_block.h>
 
 #include "advanced_reduction.h"
@@ -403,29 +405,40 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
   assert(!AdvancedReduction::DeepExpand(e) && !e->isDep());
-  TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = e->type();
-  if (type == Type::Add) {
-    for (int i = 0; i < e->numberOfChildren(); i++) {
-      /* We deplete the addition from its children as we scan it so we can
-       * always take the first child. */
-      Tree* child = e->child(0);
-      auto parsedChild = ParseMonomial(child, variable);
-      polynomial = Polynomial::AddMonomial(polynomial, parsedChild);
+  ExceptionTry {
+    TreeRef polynomial;
+    polynomial = Polynomial::PushEmpty(variable);
+    if (type == Type::Add) {
+      for (int i = 0; i < e->numberOfChildren(); i++) {
+        /* We deplete the addition from its children as we scan it so we can
+         * always take the first child. */
+        Tree* child = e->child(0);
+        auto parsedChild = ParseMonomial(child, variable);
+        polynomial = Polynomial::AddMonomial(polynomial, parsedChild);
+      }
+      polynomial = Polynomial::Sanitize(polynomial);
+      // Addition node has been emptied from children
+      e->moveTreeOverNode(polynomial);
+    } else {
+      // Move polynomial next to e before it's parsed (and likely
+      // replaced)
+      TreeRef eRef(e);
+      eRef->moveTreeBeforeNode(polynomial);
+      polynomial =
+          Polynomial::AddMonomial(polynomial, ParseMonomial(eRef, variable));
+      polynomial = Polynomial::Sanitize(polynomial);
     }
-    polynomial = Polynomial::Sanitize(polynomial);
-    // Addition node has been emptied from children
-    e->moveTreeOverNode(polynomial);
-  } else {
-    // Move polynomial next to e before it's parsed (and likely
-    // replaced)
-    TreeRef eRef(e);
-    eRef->moveTreeBeforeNode(polynomial);
-    polynomial =
-        Polynomial::AddMonomial(polynomial, ParseMonomial(eRef, variable));
-    polynomial = Polynomial::Sanitize(polynomial);
+    return polynomial;
   }
-  return polynomial;
+  ExceptionCatch(exception) {
+    if (exception == ExceptionType::NonPolynomial) {
+      return nullptr;
+    }
+    TreeStackCheckpoint::Raise(exception);
+  }
+  OMG::unreachable();
+  return nullptr;
 }
 
 std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
@@ -458,8 +471,9 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
       childCoefficient->removeTree();
     }
   }
-  // Assertion results from IsPolynomial = true
-  assert(!Order::ContainsSubtree(e, variable));
+  if (Order::ContainsSubtree(e, variable)) {
+    TreeStackCheckpoint::Raise(ExceptionType::NonPolynomial);
+  }
   return std::make_pair(e, static_cast<uint8_t>(0));
 }
 

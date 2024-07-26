@@ -43,28 +43,6 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   }
 }
 
-using FunctionSize = size_t (TreeStack::*)() const;
-inline void assert_pool_size_is(size_t size, FunctionSize functionSize) {
-#if POINCARE_TREE_LOG
-  if ((SharedTreeStack->*functionSize)() != size) {
-    std::cout << "Expected edition Pool of size " << size << " but got "
-              << (SharedTreeStack->*functionSize)() << std::endl;
-    SharedTreeStack->log(std::cout, TreeStack::LogFormat::Tree, true);
-    quiz_assert(false);
-  }
-#else
-  quiz_assert((SharedTreeStack->*functionSize)() == size);
-#endif
-}
-
-inline void assert_pool_block_sizes_is(size_t size) {
-  return assert_pool_size_is(size, &TreeStack::size);
-}
-
-inline void assert_pool_tree_size_is(size_t size) {
-  return assert_pool_size_is(size, &TreeStack::numberOfTrees);
-}
-
 inline void flush_stack() { SharedTreeStack->flush(); }
 
 inline void assert_tree_stack_contains(

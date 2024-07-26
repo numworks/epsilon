@@ -18,7 +18,7 @@ QUIZ_CASE(pcj_block) {
   SharedTreeStack->pushBlock(ValueBlock(4));
   SharedTreeStack->pushBlock(ValueBlock(-4));
   SharedTreeStack->pushBlock(Type::Zero);
-  assert_pool_block_sizes_is(6);
+  quiz_assert(SharedTreeStack->size() == 6);
 
   // Block navigation
   quiz_assert(*firstBlock->nextNth(5) == *firstBlock);

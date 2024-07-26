@@ -2,6 +2,7 @@
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/memory/n_ary.h>

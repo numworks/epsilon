@@ -2,10 +2,12 @@
 #define POINCARE_FUNCTION_PROPERTIES_HELPER_H
 
 #include <poincare/old/junior_expression.h>
-#include <poincare/src/expression/projection.h>
-#include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare {
+
+namespace Internal {
+struct ProjectionContext;
+}
 
 class FunctionPropertiesHelper {
  public:

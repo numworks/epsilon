@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/function_properties_helper.h>
+#include <poincare/src/expression/projection.h>
 #include <quiz.h>
 
 #include "helper.h"

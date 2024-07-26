@@ -71,9 +71,11 @@ bool detectLinearPatternOfTrig(const Tree* e,
     Tree* eWithoutCos = e->cloneTree();
     NAry::RemoveChildAtIndex(eWithoutCos, indexOfCos);
     if (Degree::Get(eWithoutCos, symbol, projectionContext) != 0) {
+      eWithoutCos->removeTree();
       return false;
     }
     *a *= Approximation::To<double>(eWithoutCos);
+    eWithoutCos->removeTree();
     return true;
   }
 

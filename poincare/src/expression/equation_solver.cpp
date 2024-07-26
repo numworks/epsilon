@@ -138,12 +138,8 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
   return Coordinate2D<T>(t, Approximation::RootPreparedToReal(e, t));
 }
 
-Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
+Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
                                                   Context* context) {
-  // TODO: standard form should do the prepare for approx equations
-  Tree* equationStandardForm = equationSet->child(0)->cloneTree();
-  Approximation::PrepareFunctionForApproximation(equationStandardForm, "x",
-                                                 ComplexFormat::Real);
   constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
   constexpr float k_yxRatio = 3.06f / 5.76f;
@@ -154,7 +150,7 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
                  k_maxFloatForAutoApproximateSolvingRange);
   zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
                            k_maxNumberOfApproximateSolutions / 2);
-  const void* model = static_cast<const void*>(equationStandardForm);
+  const void* model = static_cast<const void*>(preparedEquation);
   bool finiteNumberOfSolutions = true;
   bool didFitRoots = zoom.fitRoots(evaluator<float>, model, false,
                                    evaluator<double>, &finiteNumberOfSolutions);
@@ -177,7 +173,6 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* equationSet,
     finalRange.stretchEachBoundBy(securityMargin,
                                   k_maxFloatForAutoApproximateSolvingRange);
   }
-  equationStandardForm->removeTree();
   return {finalRange.min(), finalRange.max()};
 }
 
@@ -187,17 +182,11 @@ static void registerSolution(Tree* list, double f) {
   }
 }
 
-Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
+Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
                                        Range1D<double> range,
                                        Context* context) {
-  // assert(m_type == Type::GeneralMonovariable);
-  // assert(m_numberOfSolvingVariables == 1);
-
-  Tree* undevelopedExpression = equationsSet->child(0)->cloneTree();
-  // equationStandardFormForApproximateSolve(context);
-  Approximation::PrepareFunctionForApproximation(undevelopedExpression, "x",
-                                                 ComplexFormat::Real);
-  // int numberOfSolutions = 0;
+  assert(context->type == Type::GeneralMonovariable);
+  assert(context->numberOfVariables == 1);
 
   assert(range.isValid());
   Solver<double> solver =
@@ -207,7 +196,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
   TreeRef resultList = List::PushEmpty();
 
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
-    double root = solver.nextRoot(undevelopedExpression).x();
+    double root = solver.nextRoot(preparedEquation).x();
     if (root < range.min()) {
       i--;
       continue;
@@ -224,7 +213,6 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
       registerSolution(resultList, root);
     }
   }
-  undevelopedExpression->removeTree();
   return resultList;
 }
 

@@ -50,11 +50,11 @@ class EquationSolver {
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,
                           ProjectionContext projectionContext, Error* error);
 
-  static Range1D<double> AutomaticInterval(const Tree* equationSet,
+  static Range1D<double> AutomaticInterval(const Tree* preparedEquation,
                                            Context* context);
 
-  static Tree* ApproximateSolve(const Tree* equationsSet, Range1D<double> range,
-                                Context* context);
+  static Tree* ApproximateSolve(const Tree* preparedEquation,
+                                Range1D<double> range, Context* context);
 
  private:
   // Return list of exact solutions.

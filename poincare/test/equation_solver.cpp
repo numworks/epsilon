@@ -86,20 +86,18 @@ QUIZ_CASE(pcj_equation_solver) {
 #endif
 }
 
-void check_range(std::initializer_list<const char*> inputs, double min,
-                 double max) {
-  Tree* equationSet = Poincare::Internal::List::PushEmpty();
-  for (const char* equation : inputs) {
-    NAry::AddChild(equationSet, parse(equation));
-  }
+void check_range(const char* input, double min, double max) {
+  Tree* equation = parse(input);
+  Approximation::PrepareFunctionForApproximation(equation, "x",
+                                                 ComplexFormat::Real);
   EquationSolver::Context context = EquationSolver::Context();
   Poincare::Range1D<double> range =
-      EquationSolver::AutomaticInterval(equationSet, &context);
+      EquationSolver::AutomaticInterval(equation, &context);
   quiz_assert(range.min() == min);
   quiz_assert(range.max() == max);
 }
 
 QUIZ_CASE(pcj_equation_solver_auto_range) {
   // TODO: import all tests from solver app
-  check_range({"cos(x)-0"}, -15.5654296875, 15.5654296875);
+  check_range("cos(x)-0", -15.5654296875, 15.5654296875);
 }

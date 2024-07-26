@@ -528,29 +528,34 @@ bool PolynomialParser::HasNonNullCoefficients(
   int degree = coefList->numberOfChildren() - 1;
   assert(0 <= degree && degree <= Polynomial::k_maxPolynomialDegree);
 
-  for (Tree* child : coefList->children()) {
+  if (highestDegreeCoefficientIsPositive) {
+    const Tree* child = coefList->child(0);
+    ComplexSign sign = ComplexSign::Get(child);
+    assert(sign.isReal());
+    assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
+    OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
+    if (isPositive == OMG::Troolean::Unknown) {
+      // Approximate for a better estimation. Nan if coefficient depends on x/y.
+      double approximation = Approximation::To<double>(child);
+      if (!std::isnan(approximation)) {
+        isPositive = OMG::BoolToTroolean(approximation > 0.0);
+      }
+    }
+    *highestDegreeCoefficientIsPositive = isPositive;
+  }
+
+  for (const Tree* child : coefList->children()) {
     ComplexSign sign = ComplexSign::Get(child);
     assert(sign.isReal());
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
+      // Same comment as above
       double approximation = Approximation::To<double>(child);
       if (!std::isnan(approximation)) {
         isNull = OMG::BoolToTroolean(approximation != 0.0);
       }
     }
     if (isNull == OMG::Troolean::False) {
-      if (highestDegreeCoefficientIsPositive) {
-        OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
-        if (isPositive == OMG::Troolean::Unknown) {
-          // Same comment as above
-          double approximation = Approximation::To<double>(child);
-          if (!std::isnan(approximation)) {
-            isPositive = OMG::BoolToTroolean(approximation > 0.0);
-          }
-        }
-        *highestDegreeCoefficientIsPositive = isPositive;
-      }
       coefList->removeTree();
       return true;
     }

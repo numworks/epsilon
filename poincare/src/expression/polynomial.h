@@ -46,6 +46,7 @@ class Polynomial final {
   // Getters
   static uint8_t ExponentAtIndex(const Tree* polynomial, int index);
   static uint8_t Degree(const Tree* polynomial) {
+    assert(polynomial->isPolynomial());
     return ExponentAtIndex(polynomial, 0);
   }
   static Tree* LeadingCoefficient(Tree* polynomial) {

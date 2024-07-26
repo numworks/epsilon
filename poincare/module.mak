@@ -178,6 +178,7 @@ $(addprefix expression/, \
   algebraic.cpp \
   aliases.cpp \
   arithmetic.cpp \
+  app_helpers.cpp \
   approximation.cpp \
   approximation_derivative.cpp \
   approximation_helpers.cpp \

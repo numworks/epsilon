@@ -112,11 +112,10 @@ class PolynomialParser final {
                                 size_t variableIndex = 0);
   static Tree* Parse(Tree* e, const Tree* variable);
 
-  static Tree* GetCoefficients(const Tree* e, const char* symbolName,
-                               bool ascendingDegree = true);
+  // Child at index i is the coef for degree i
+  static Tree* GetCoefficients(const Tree* e, const char* symbolName);
   static Tree* GetReducedCoefficients(const Tree* e, const char* symbolName,
-                                      bool keepDependencies = false,
-                                      bool ascendingDegree = true);
+                                      bool keepDependencies = false);
   static bool HasNonNullCoefficients(
       const Tree* e, const char* symbol, ProjectionContext projectionContext,
       OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);

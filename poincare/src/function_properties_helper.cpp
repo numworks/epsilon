@@ -86,11 +86,11 @@ bool detectLinearPatternOfTrig(const Tree* e,
       return false;
     }
 
-    Tree* coefList = PolynomialParser::GetCoefficients(child, symbol, false);
+    Tree* coefList = PolynomialParser::GetCoefficients(child, symbol);
     assert(coefList->numberOfChildren() == 2);
     // b·x+c
-    Tree* bTree = coefList->child(0);
-    Tree* cTree = bTree->nextTree();
+    Tree* cTree = coefList->child(0);
+    Tree* bTree = cTree->nextTree();
     assert(bTree && cTree);
 
     *a = 1.0;

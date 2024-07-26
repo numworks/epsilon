@@ -515,8 +515,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
 
   // Detect parametric conics
   ParametricConic conicProperties = ParametricConic(
-      analyzedExpression, projectionContext.m_context,
-      projectionContext.m_complexFormat, Function::k_unknownName);
+      analyzedExpression, projectionContext, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:

@@ -32,6 +32,7 @@ ParametricConic buildParametricConic(
   Poincare::VariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);
   Expression e = parse_expression(expression, &tContext);
+  // TODO: project to have system expression
   return ParametricConic(e, &globalContext, complexFormat);
 }
 

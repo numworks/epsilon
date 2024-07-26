@@ -6,6 +6,10 @@
 
 namespace Poincare {
 
+namespace Internal {
+struct ProjectionContext;
+}
+
 class Conic {
  public:
   enum class Shape : uint8_t {
@@ -143,8 +147,8 @@ class PolarConic : public Conic {
 
 class ParametricConic : public Conic {
  public:
-  ParametricConic(const Expression& e, Context* context,
-                  Preferences::ComplexFormat complexFormat,
+  ParametricConic(const SystemExpression& analyzedExpression,
+                  Internal::ProjectionContext projectionContext,
                   const char* symbol = "t");
 
  private:

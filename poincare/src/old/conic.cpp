@@ -1,3 +1,4 @@
+#include <poincare/function_properties_helper.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/conic.h>
 #include <poincare/old/division.h>
@@ -6,7 +7,10 @@
 #include <poincare/old/polynomial.h>
 #include <poincare/old/power.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/trigonometry.h>
+#include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 
@@ -14,6 +18,8 @@
  * To limit the approximation errors that may rise from these comparisons, we
  * round the values of coefficients to 0 (or 1) before and after manipulating
  * them. */
+
+using namespace Poincare::Internal;
 
 namespace Poincare {
 
@@ -534,24 +540,14 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 #endif
 }
 
-ParametricConic::ParametricConic(const Expression& e, Context* context,
-                                 Preferences::ComplexFormat complexFormat,
-                                 const char* symbol) {
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  // Reduce Conic for analysis
-  ReductionContext reductionContext =
-      ReductionContext(context, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForAnalysis);
-  Expression reducedExpression = e.cloneAndReduce(reductionContext);
-  assert(reducedExpression.type() == ExpressionNode::Type::Point);
+ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
+                                 ProjectionContext ctx, const char* symbol) {
+  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
 
-  const Expression xOfT = reducedExpression.childAtIndex(0);
-  const Expression yOfT = reducedExpression.childAtIndex(1);
-
-  int degOfTinX = xOfT.polynomialDegree(context, symbol);
-  int degOfTinY = yOfT.polynomialDegree(context, symbol);
+  const Tree* xOfT = analyzedExpression.tree()->child(0);
+  const Tree* yOfT = xOfT->nextTree();
+  int degOfTinX = Degree::Get(xOfT, symbol, ctx);
+  int degOfTinY = Degree::Get(yOfT, symbol, ctx);
 
   if ((degOfTinX == 1 && degOfTinY == 2) ||
       (degOfTinX == 2 && degOfTinY == 1)) {
@@ -559,21 +555,27 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
     return;
   }
 
-  /* Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
-   * TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d) */
-  Expression quotientWithXSquared = Division::Builder(
-      Power::Builder(xOfT.clone(), Rational::Builder(2)), yOfT.clone());
-  quotientWithXSquared = quotientWithXSquared.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(context));
-  if (quotientWithXSquared.polynomialDegree(context, symbol) == 0) {
-    m_shape = Shape::Parabola;
-    return;
+  // Detect parabola (x, y) = (a·f(t)+c, b·f(t)^2+d)
+  Tree* variableX = xOfT->cloneTree();
+  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableX, symbol,
+                                                          ctx);
+  Tree* variableY = yOfT->cloneTree();
+  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableY, symbol,
+                                                          ctx);
+
+  Tree* quotient = PatternMatching::CreateSimplify(
+      KMult(KPow(KA, 2_e), KPow(KB, -1_e)), {.KA = variableX, .KB = variableY});
+  bool parabola = Degree::Get(quotient, symbol, ctx) == 0;
+  if (!parabola) {
+    quotient->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KPow(KB, -1_e)),
+                                        {.KA = variableY, .KB = variableX}));
+    parabola = Degree::Get(quotient, symbol, ctx) == 0;
   }
-  Expression quotientWithYSquared = Division::Builder(
-      Power::Builder(yOfT.clone(), Rational::Builder(2)), xOfT.clone());
-  quotientWithYSquared = quotientWithYSquared.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(context));
-  if (quotientWithYSquared.polynomialDegree(context, symbol) == 0) {
+  quotient->removeTree();
+  variableY->removeTree();
+  variableX->removeTree();
+  if (parabola) {
     m_shape = Shape::Parabola;
     return;
   }
@@ -584,49 +586,30 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
   }
 
   /* Detect other conics:
-   * Circle: (x , y) = (A*cos(B*t+C)+K , A*sin(B*t+C)+L)
-   * Ellipse: (x , y) = (A*cos(B*t+C)+K , D*cos(B*t+E)+L)
-   * with C != E
-   *
-   * TODO: Hyperbolas are not detected for now.
-   * Hyperbola: (x , y) = (A*sec(B*t+C)+D , G*tan(B*t+E)+F)
-   * */
+   * Circle: (x, y) = (a·cos(b·t+c)+k , a·sin(b·t+c)+l)
+   * Ellipse: (x, y) = (a·cos(b·t+c)+k , d·cos(b·t+e)+l) with c != e
+   * TODO: Hyperbola: (x, y) = (a·sec(b·t+c)+k , g·tan(c·t+e)+l)
+   */
 
-#if 0  // TODO_PCJ
-
-  // Detect if x(t) = a*cos(b*t+c)+d, same for y(t)
-  double xCoefficientBeforeCos;
-  double xCoefficientBeforeSymbol;
-  double xAngle;
-  if (!detectLinearPatternOfTrig(
-          xOfT, context, symbol, &xCoefficientBeforeCos,
-          &xCoefficientBeforeSymbol, &xAngle, true)) {
+  // Detect if x(t) = a·cos(b·t+c)+k, same for y(t)
+  double aX, bX, cX, aY, bY, cY;
+  if (!FunctionPropertiesHelper::DetectLinearPatternOfTrig(
+          xOfT, ctx, symbol, &aX, &bX, &cX, true) ||
+      !FunctionPropertiesHelper::DetectLinearPatternOfTrig(
+          yOfT, ctx, symbol, &aY, &bY, &cY, true)) {
     m_shape = Shape::Undefined;
     return;
   }
-
-  double yCoefficientBeforeCos;
-  double yCoefficientBeforeSymbol;
-  double yAngle;
-  if (!detectLinearPatternOfTrig(
-          yOfT, context, symbol, &yCoefficientBeforeCos,
-          &yCoefficientBeforeSymbol, &yAngle, true)) {
-    m_shape = Shape::Undefined;
-    return;
-  }
-
-  if (yCoefficientBeforeSymbol == xCoefficientBeforeSymbol) {
-    if (std::fabs(yCoefficientBeforeCos) == std::fabs(xCoefficientBeforeCos) &&
-        std::fabs(xAngle - yAngle) == M_PI_2) {
+  if (bY == bX) {
+    if (std::fabs(aY) == std::fabs(aX) && std::fabs(cX - cY) == M_PI_2) {
       m_shape = Shape::Circle;
       return;
     }
-    if (xAngle != yAngle) {
+    if (cX != cY) {
       m_shape = Shape::Ellipse;
       return;
     }
   }
-#endif
   m_shape = Shape::Undefined;
 }
 

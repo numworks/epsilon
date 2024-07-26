@@ -47,6 +47,9 @@ QUIZ_CASE(graph_cartesian_function_type) {
   assert_cartesian_function_type_is(
       "cos(3x)+2sin(x+1)-tan(4x)",
       FunctionPropertiesHelper::FunctionType::Trigonometric);
+  assert_cartesian_function_type_is(
+      "4tan(3x)-tan(x+1)",
+      FunctionPropertiesHelper::FunctionType::Trigonometric);
 }
 
 void assert_polar_line_type_is(

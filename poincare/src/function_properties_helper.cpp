@@ -331,12 +331,14 @@ FunctionPropertiesHelper::CartesianFunctionType(
   Tree* clone = e->cloneTree();
   /* tan doesn't exist in system expressions
    * trig(A,1)/trig(A,0) -> tan(A) */
-  PatternMatching::MatchReplace(
+
+  while (PatternMatching::MatchReplace(
       clone,
       KAdd(KA_s,
            KMult(KB_s, KPow(KTrig(KC, 0_e), -1_e), KD_s, KTrig(KC, 1_e), KE_s),
            KF_s),
-      KAdd(KA_s, KMult(KB_s, KD_s, KTan(KC), KE_s), KF_s));
+      KAdd(KA_s, KMult(KB_s, KD_s, KTan(KC), KE_s), KF_s))) {
+  }
   bool isTrig = isLinearCombinationOfFunction(
       clone, symbol, projectionContext,
       [](const Tree* e, const char* symbol,

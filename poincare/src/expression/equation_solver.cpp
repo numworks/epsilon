@@ -336,6 +336,11 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
         eq, Variables::Variable(i, ComplexSign::Unknown()));
+    if (!polynomial) {
+      // equation is not polynomial
+      SharedTreeStack->dropBlocksFrom(result);
+      return nullptr;
+    }
     if (!polynomial->isPolynomial()) {
       // eq did not depend on variable. Continue.
       eq = polynomial;
@@ -393,8 +398,13 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   Tree* equation = simplifiedEquationSet->child(0)->cloneTree();
   Tree* polynomial = PolynomialParser::Parse(
       equation, Variables::Variable(0, ComplexSign::Unknown()));
-  const Tree* coefficients[k_maxNumberOfPolynomialCoefficients] = {};
+  if (!polynomial) {
+    *error = Error::RequireApproximateSolution;
+    SharedTreeStack->dropBlocksFrom(equation);
+    return nullptr;
+  }
 
+  const Tree* coefficients[k_maxNumberOfPolynomialCoefficients] = {};
   int degree = Polynomial::Degree(polynomial);
   if (degree > k_maxPolynomialDegree) {
     SharedTreeStack->dropBlocksFrom(equation);

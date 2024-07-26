@@ -420,12 +420,6 @@ QUIZ_CASE(pcj_type_block) {
   }
 }
 
-void assert_tree_equals_blocks(const Tree* node,
-                               std::initializer_list<Block> blocks) {
-  assert_node_equals_blocks(node, blocks);
-  quiz_assert(blocks.size() == node->treeSize());
-}
-
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(0_e, {TypeBlock(Type::Zero)});
   assert_tree_equals_blocks(1_e, {TypeBlock(Type::One)});
@@ -496,11 +490,11 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {
-  assert_node_equals_blocks(
+  assert_tree_equals_blocks(
       Integer::Push(1232424242),
       {TypeBlock(Type::IntegerPosBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});
-  assert_node_equals_blocks(
+  assert_tree_equals_blocks(
       Integer::Push(-1232424242),
       {TypeBlock(Type::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49)});

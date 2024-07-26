@@ -23,14 +23,14 @@ void process_tree_and_compare(const char* input, const char* output,
 
 void quiz_assert_print_if_failure(bool test, const char* information);
 
-inline void assert_node_equals_blocks(const Tree* node,
+inline void assert_tree_equals_blocks(const Tree* tree,
                                       std::initializer_list<Block> blocks) {
-  const Block* block = node->block();
+  const Block* block = tree->block();
   for (Block b : blocks) {
     quiz_assert(*block == b);
     block = block->next();
   }
-  quiz_assert(node->treeSize() == blocks.size());
+  quiz_assert(tree->treeSize() == blocks.size());
 }
 
 inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
@@ -46,11 +46,11 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
 inline void flush_stack() { SharedTreeStack->flush(); }
 
 inline void assert_tree_stack_contains(
-    std::initializer_list<const Tree*> nodes) {
+    std::initializer_list<const Tree*> trees) {
   quiz_assert(SharedTreeStack->size() > 0);
   Tree* tree = Tree::FromBlocks(SharedTreeStack->firstBlock());
-  for (const Tree* n : nodes) {
-    assert_trees_are_equal(n, tree);
+  for (const Tree* t : trees) {
+    assert_trees_are_equal(t, tree);
     tree = tree->nextTree();
   }
   quiz_assert(tree->block() == SharedTreeStack->lastBlock());

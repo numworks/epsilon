@@ -176,9 +176,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       .m_context = context,
   };
 
-  /* TODO: A simplification could be avoided by calling
-   * SimplifyWithAdaptiveStrategy steps, and handle units right after
-   * projection. */
+  /* TODO: Second SimplifyWithAdaptiveStrategy could be avoided by calling
+   * intermediate steps, and handle units right after projection. */
   Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
   if (exactAngleDimension.isUnit()) {
     assert(exactAngleDimension.isSimpleAngleUnit());

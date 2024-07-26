@@ -12,7 +12,7 @@ $(call create_module,quiz,1,$(addprefix src/, \
 # prerequisites that depend on the current goal.
 # TODO: Each app has to be nammed here to avoid (slowly) searching in output.
 #       Find a better solution.
-_test_sources := $(shell find apps escher ion kandinsky liba libaxx omg poincare python -path "**/test/**.c" -or -path "**/test/**.cpp" \)
+_test_sources := $(shell find apps escher ion kandinsky liba libaxx omg poincare python -path "**/test/**.c" -or -path "**/test/**.cpp")
 
 # TODO Requires :+test to be the last taste
 $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.

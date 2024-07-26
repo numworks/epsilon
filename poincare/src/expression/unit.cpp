@@ -382,6 +382,15 @@ const Prefix* Representative::findBestPrefix(double value,
   return res;
 }
 
+Tree* Representative::pushReducedRatioExpression() const {
+  Tree* result = ratioExpression()->cloneTree();
+  /* Representatives's ratio expressions are quite simple and not dependant on
+   * any context. */
+  ProjectionContext ctx;
+  Simplification::ProjectAndReduce(result, &ctx, false);
+  return result;
+}
+
 #if 0
 // UnitNode
 Expression removeUnit(Expression* unit) { return Unit(this).removeUnit(unit); }
@@ -847,7 +856,7 @@ void Unit::RemoveUnit(Tree* unit) {
   // Temperature units should have been escaped before.
   assert(!IsNonKelvinTemperature(representative));
   Tree* result = SharedTreeStack->pushMult(2);
-  representative->ratioExpressionReduced()->cloneTree();
+  representative->pushReducedRatioExpression();
   SharedTreeStack->pushPow();
   Integer::Push(10);
   Integer::Push(GetPrefix(unit)->exponent());
@@ -875,12 +884,13 @@ void Unit::RemoveTemperatureUnit(Tree* root) {
   assert(IsNonKelvinTemperature(representative));
   bool isCelsius = (representative == &Temperature::representatives.celsius);
   // A -> (A + origin) * ratio
+  TreeRef ratio = representative->pushReducedRatioExpression();
   root->moveTreeOverTree(PatternMatching::Create(
-      KMult(KAdd(KA, KB), KC),
-      {.KA = root,
-       .KB = isCelsius ? Temperature::celsiusOrigin
-                       : Temperature::fahrenheitOrigin,
-       .KC = representative->ratioExpressionReduced()}));
+      KMult(KAdd(KA, KB), KC), {.KA = root,
+                                .KB = isCelsius ? Temperature::celsiusOrigin
+                                                : Temperature::fahrenheitOrigin,
+                                .KC = ratio}));
+  ratio->removeTree();
 }
 
 double Unit::KelvinValueToRepresentative(double value,
@@ -1068,10 +1078,8 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
 bool Unit::ShallowRemoveUnit(Tree* e, void*) {
   switch (e->type()) {
     case Type::Unit:
-      /* RemoveUnit replace with SI ratio expression. We could use GetValue, but
-       * angle units must remain exact. A projection is therefore necessary. */
+      // RemoveUnit replace with SI ratio expression.
       RemoveUnit(e);
-      Projection::DeepSystemProject(e);
       return true;
     case Type::PhysicalConstant: {
       e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(

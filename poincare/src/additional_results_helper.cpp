@@ -118,9 +118,9 @@ Tree* PushUnitConversionFactor(Preferences::AngleUnit fromUnit,
   return PatternMatching::Create(
       KDiv(KA, KB),
       {.KA = Units::Angle::DefaultRepresentativeForAngleUnit(toUnit)
-                 ->ratioExpressionReduced(),
+                 ->ratioExpression(),
        .KB = Units::Angle::DefaultRepresentativeForAngleUnit(fromUnit)
-                 ->ratioExpressionReduced()});
+                 ->ratioExpression()});
 }
 
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(

@@ -114,9 +114,7 @@ class Representative {
 #endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
-  double ratio() const {
-    return Approximation::To<double>(ratioExpressionReduced());
-  }
+  double ratio() const { return Approximation::To<double>(ratioExpression()); }
   bool isInputPrefixable() const {
     return m_inputPrefixable != Prefixable::None;
   }
@@ -133,7 +131,9 @@ class Representative {
   bool canParse(const char* symbol, size_t length, const Prefix** prefix) const;
   bool canPrefix(const Prefix* prefix, bool input) const;
   const Prefix* findBestPrefix(double value, double exponent) const;
-  const Tree* ratioExpressionReduced() const { return m_ratioExpression; }
+  const Tree* ratioExpression() const { return m_ratioExpression; }
+  // Push reduced ratio expression on TreeStack
+  Tree* pushReducedRatioExpression() const;
 
  protected:
   // TODO it may be marked consteval with Clang but not with GCC
@@ -285,9 +285,9 @@ class Unit {
   static bool IsNonKelvinTemperature(const Representative* representative);
   // Remove units and Convert tree to Kelvin.
   static void RemoveTemperatureUnit(Tree* root);
-  // Replace with SI ratio only.
+  // Replace with reduced SI ratio only.
   static void RemoveUnit(Tree* unit);
-  // Replace units and physical constants with their Basic SI value
+  // Replace units and physical constants with their reduced Basic SI value
   static bool ShallowRemoveUnit(Tree* e, void*);
   // Push Unit
   static Tree* Push(const Representative* unitRepresentative,

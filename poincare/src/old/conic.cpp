@@ -1,14 +1,15 @@
 #include <poincare/function_properties_helper.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/conic.h>
-#include <poincare/old/division.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/polynomial.h>
 #include <poincare/old/power.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/degree.h>
+#include <poincare/src/expression/division.h>
 #include <poincare/src/expression/trigonometry.h>
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 
@@ -427,106 +428,65 @@ double CartesianConic::getRadius() const {
   return std::sqrt(1 / m_a);
 }
 
-PolarConic::PolarConic(const Expression& e, Context* context,
-                       Preferences::ComplexFormat complexFormat,
-                       const char* theta) {
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  // Reduce Conic for analysis
-  ReductionContext reductionContext =
-      ReductionContext(context, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForAnalysis);
-  Expression reducedExpression = e.cloneAndReduce(reductionContext);
+PolarConic::PolarConic(const SystemExpression& analyzedExpression,
+                       ProjectionContext ctx, const char* symbol) {
+  const Tree* e = analyzedExpression.tree();
 
   // Detect the pattern r = a
-  int thetaDeg = reducedExpression.polynomialDegree(context, theta);
-  if (thetaDeg == 0) {
+  int deg = Degree::Get(e, symbol, ctx);
+  if (deg == 0) {
     m_shape = Shape::Circle;
     return;
   }
-  if (thetaDeg > 0) {
+  if (deg > 0) {
     m_shape = Shape::Undefined;
     return;
   }
 
-  /* Detect the pattern r = cos/sin(theta)
-   * TODO: Detect r=cos(theta)+2sin(theta) */
-#if 0  // TODO_PCJ
-  double coefBeforeTheta;
-  if (detectLinearPatternOfTrig(
-          reducedExpression, context, theta, nullptr,
-          &coefBeforeTheta, false) &&
-      coefBeforeTheta == 1.0) {
+  /* Detect the pattern r = a·cosOrSin(θ+c)
+   * TODO: Detect r=cos(θ)+2sin(θ) */
+  double a, b, c;
+  if (FunctionPropertiesHelper::DetectLinearPatternOfTrig(e, ctx, symbol, &a,
+                                                          &b, &c, false) &&
+      b == 1.0) {
     m_shape = Shape::Circle;
     return;
   }
-#endif
 
-  // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
-  Expression numerator, denominator;
-  if (reducedExpression.type() == ExpressionNode::Type::Multiplication) {
-#if 0  // TODO_PCJ
-    static_cast<Multiplication&>(reducedExpression)
-        .splitIntoNormalForm(numerator, denominator, reductionContext);
-#else
+  // Detect the pattern (d·e)/(1±e·cos(θ+c)) where e is the eccentricity
+  TreeRef numerator, denominator;
+  Division::GetNumeratorAndDenominator(e, numerator, denominator);
+  assert(numerator && denominator);
+  bool ok = Degree::Get(numerator, symbol, ctx) == 0 && denominator->isAdd() &&
+            FunctionPropertiesHelper::DetectLinearPatternOfTrig(
+                denominator, ctx, symbol, &a, &b, &c, true) &&
+            b == 1.0;
+  numerator->removeTree();
+  if (!ok) {
     m_shape = Shape::Undefined;
-    return;
-#endif
-  } else if (reducedExpression.type() == ExpressionNode::Type::Power &&
-             reducedExpression.childAtIndex(1).isMinusOne()) {
-    denominator = reducedExpression.childAtIndex(0);
-  }
-
-  if (denominator.isUninitialized() ||
-      (!numerator.isUninitialized() &&
-       numerator.polynomialDegree(context, theta) != 0)) {
-    m_shape = Shape::Undefined;
-    return;
-  }
-
-  // Check that the denominator is of the form a+b+c+k*cos(theta + p)
-#if 0  // TODO_PCJ
-  double coefficientBeforeCos;
-  double coefficientBeforeTheta;
-  if (!detectLinearPatternOfTrig(
-          denominator, context, theta, &coefficientBeforeCos,
-          &coefficientBeforeTheta, true) ||
-      coefficientBeforeTheta != 1.0) {
-    m_shape = Shape::Undefined;
-    return;
-  }
-#endif
-
-  /* Denominator can be of the form a+b*cos(theta) and needs to be turned
-   * into 1 + (b/a)*cos(theta) */
-  denominator = denominator.cloneAndReduce(reductionContext);
-  if (denominator.type() != ExpressionNode::Type::Addition) {
-    m_shape = Shape::Undefined;
+    denominator->removeTree();
     return;
   }
 
   // Remove the cos term of the denominator
-  int nChildren = denominator.numberOfChildren();
-  // Go backwards to prevent corrupting the loop when removing children
-  for (int i = nChildren - 1; i >= 0; i--) {
-    if (denominator.childAtIndex(i).polynomialDegree(context, theta) != 0) {
-#if 0  // TODO_PCJ
-      static_cast<Addition&>(denominator).removeChildAtIndexInPlace(i);
-#else
-      m_shape = Shape::Undefined;
-      return;
-#endif
+  int nChildren = denominator->numberOfChildren();
+  Tree* child = denominator->child(0);
+  int nRemoved = 0;
+  for (int i = 0; i < nChildren; i++) {
+    if (Degree::Get(child, symbol, ctx) != 0) {
+      child->removeTree();
+      nRemoved++;
+    } else {
+      child = child->nextTree();
     }
   }
+  assert(0 < nRemoved && nRemoved < nChildren);
+  NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
+  double k = Approximation::To<double>(denominator);
+  denominator->removeTree();
 
-#if 0  // TODO_PCJ
-  // All theta terms should have been removed
-  assert(denominator.polynomialDegree(context, theta) == 0);
-  ApproximationContext approximationContext(reductionContext);
-  coefficientBeforeCos /=
-      denominator.approximateToScalar<double>(approximationContext);
-  double absValueCoefficient = std::fabs(coefficientBeforeCos);
+  // Turn a·cos(θ+c)+k into (a/k)·cos(θ+c)+1
+  double absValueCoefficient = std::fabs(a / k);
   if (absValueCoefficient < 1.0) {
     m_shape = Shape::Ellipse;
   } else if (absValueCoefficient > 1.0) {
@@ -537,7 +497,6 @@ PolarConic::PolarConic(const Expression& e, Context* context,
     assert(std::isnan(absValueCoefficient));
     m_shape = Shape::Undefined;
   }
-#endif
 }
 
 ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,

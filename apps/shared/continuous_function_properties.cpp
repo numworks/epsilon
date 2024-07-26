@@ -458,9 +458,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   }
 
   // Detect polar conics
-  PolarConic conicProperties =
-      PolarConic(analyzedExpression, projectionContext.m_context,
-                 projectionContext.m_complexFormat, Function::k_unknownName);
+  PolarConic conicProperties = PolarConic(analyzedExpression, projectionContext,
+                                          Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:

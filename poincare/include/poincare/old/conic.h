@@ -136,8 +136,9 @@ class CartesianConic : public Conic {
 
 class PolarConic : public Conic {
  public:
-  PolarConic(const Expression& e, Context* context,
-             Preferences::ComplexFormat complexFormat, const char* theta = "θ");
+  PolarConic(const SystemExpression& analyzedExpression,
+             Internal::ProjectionContext projectionContext,
+             const char* symbol = "θ");
 
  private:
   CoordinateType coordinateType() const override {

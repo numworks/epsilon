@@ -53,6 +53,7 @@ class EquationSolver {
   static Range1D<double> AutomaticInterval(const Tree* preparedEquation,
                                            Context* context);
 
+  // Return a List of DoubleFloat
   static Tree* ApproximateSolve(const Tree* preparedEquation,
                                 Range1D<double> range, Context* context);
 

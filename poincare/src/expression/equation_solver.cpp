@@ -176,12 +176,6 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
   return {finalRange.min(), finalRange.max()};
 }
 
-static void registerSolution(Tree* list, double f) {
-  if (std::isfinite(f)) {
-    NAry::AddChild(list, SharedTreeStack->pushFloat(f));
-  }
-}
-
 Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
                                        Range1D<double> range,
                                        Context* context) {
@@ -210,7 +204,9 @@ Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
       if (std::isnan(root)) {
         break;
       }
-      registerSolution(resultList, root);
+      if (std::isfinite(root)) {
+        NAry::AddChild(resultList, SharedTreeStack->pushFloat(root));
+      }
     }
   }
   return resultList;

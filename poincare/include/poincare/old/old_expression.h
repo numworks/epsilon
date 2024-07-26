@@ -376,9 +376,6 @@ class OExpression : public PoolHandle {
   bool containsSameDependency(const OExpression e,
                               const ReductionContext& reductionContext) const;
 
-  static bool ExactAndApproximateExpressionsAreEqual(
-      OExpression exactExpression, OExpression approximateExpression);
-
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,

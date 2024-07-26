@@ -9,6 +9,7 @@
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/app_helpers.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/continuity.h>
@@ -681,6 +682,12 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
   return SystemExpression::Builder(clone);
+}
+
+bool SystemExpression::ExactAndApproximateExpressionsAreEqual(
+    SystemExpression exactExpression, SystemExpression approximateExpression) {
+  return AppHelpers::ExactAndApproximateExpressionsAreEqual(
+      exactExpression, approximateExpression);
 }
 
 SystemExpression SystemExpression::removeUndefListElements() const {

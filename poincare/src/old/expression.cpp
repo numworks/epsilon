@@ -918,64 +918,6 @@ bool OExpression::containsSameDependency(
   return false;
 }
 
-bool OExpression::ExactAndApproximateExpressionsAreEqual(
-    OExpression exactExpression, OExpression approximateExpression) {
-  assert(!exactExpression.isUninitialized());
-  assert(!approximateExpression.isUninitialized());
-  /* exactExpression shouldn't be displayed if approximateExpression is
-   * undefined. Since this method is recursive, only assert at the root of the
-   * expression. */
-  assert(!approximateExpression.parent().isUninitialized() ||
-         approximateExpression.otype() != ExpressionNode::Type::Undefined);
-
-  // TODO_PCJ: Port this method to JuniorExpression
-  if (exactExpression.otype() == ExpressionNode::Type::JuniorExpression ||
-      approximateExpression.otype() == ExpressionNode::Type::JuniorExpression) {
-    return false;
-  }
-
-  /* Turn floats and doubles into decimal so that they can be compared to
-   * rationals. */
-  if (approximateExpression.otype() == ExpressionNode::Type::Double) {
-    approximateExpression = Decimal::Builder(
-        static_cast<Float<double> &>(approximateExpression).value());
-  } else if (approximateExpression.otype() == ExpressionNode::Type::Float) {
-    approximateExpression = Decimal::Builder(
-        static_cast<Float<float> &>(approximateExpression).value());
-  }
-
-  if (approximateExpression.isAlternativeFormOfRationalNumber() &&
-      exactExpression.isAlternativeFormOfRationalNumber()) {
-    /* The only case of exact and approximate expressions being different
-     * but still equal, is when a rational is equal to a decimal.
-     * Ex: 1/2 == 0.5 */
-    ReductionContext reductionContext = ReductionContext();
-    OExpression exp0 = exactExpression.clone().deepReduce(reductionContext);
-    OExpression exp1 =
-        approximateExpression.clone().deepReduce(reductionContext);
-    return exp0.isIdenticalTo(exp1);
-  }
-
-  if (exactExpression.otype() != approximateExpression.otype() ||
-      exactExpression.numberOfChildren() !=
-          approximateExpression.numberOfChildren()) {
-    return false;
-  }
-
-  /* Check deeply for equality, because the expression can be a list, a matrix
-   * or a complex composed of rationals.
-   * Ex: 1 + i/2 == 1 + 0.5i */
-  int nChildren = exactExpression.numberOfChildren();
-  for (int i = 0; i < nChildren; i++) {
-    if (!ExactAndApproximateExpressionsAreEqual(
-            exactExpression.childAtIndex(i),
-            approximateExpression.childAtIndex(i))) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /* Layout Helper */
 
 Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,

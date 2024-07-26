@@ -670,7 +670,6 @@ static void AddAngleUnitToDirectFunctionIfNeeded(
 
   if (child->hasDescendantSatisfying([](const Internal::Tree* e) {
         switch (e->type()) {
-          case Internal::Type::Pi:
           case Internal::Type::Add:
           case Internal::Type::Sub:
           case Internal::Type::Mult:

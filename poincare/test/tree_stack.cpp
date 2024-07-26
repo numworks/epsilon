@@ -211,8 +211,7 @@ QUIZ_CASE(pcj_tree_stack_drop_blocks_from) {
   Tree* a = KCos(2_e)->cloneTree();
   {
     Tree* b = KCos(2_e)->cloneTree();
-    Tree* c = KSin(2_e)->cloneTree();
-    (void)c;
+    KSin(2_e)->cloneTree();
     SharedTreeStack->dropBlocksFrom(b);
   }
   assert(a->nextTree()->block() == SharedTreeStack->lastBlock());

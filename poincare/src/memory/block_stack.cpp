@@ -262,15 +262,6 @@ void BlockStack::ReferenceTable::invalidateIdentifiersAfterBlock(
   }
 }
 
-bool BlockStack::ReferenceTable::reset() {
-  if (m_length == 0) {
-    // We can't reset an empty table
-    return false;
-  }
-  m_length = 0;
-  return true;
-}
-
 #if POINCARE_TREE_LOG
 
 void BlockStack::ReferenceTable::logIdsForNode(std::ostream& stream,

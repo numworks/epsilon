@@ -100,8 +100,13 @@ class BlockStack {
                      const Block* contextSelection2, int contextAlteration);
     void invalidateIdentifiersAfterBlock(const Block* block);
     bool isFull() { return m_length == BlockStack::k_maxNumberOfReferences; }
-    bool reset();
-    void resetLength(uint16_t length) { m_length = length; }
+    void reset() { resetLength(0); }
+    /* Restoring length to a previous value has the same effect as deleting all
+     * the references that where introduced in between. */
+    void resetLength(uint16_t length) {
+      assert(length <= m_length);
+      m_length = length;
+    }
     uint16_t length() const { return m_length; }
 #if POINCARE_TREE_LOG
     void logIdsForNode(std::ostream& stream, const Block* node) const;

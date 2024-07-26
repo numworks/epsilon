@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/function_properties_helper.h>
 #include <quiz.h>
 
 #include "helper.h"
@@ -7,6 +8,74 @@ using namespace Shared;
 using namespace Poincare;
 
 namespace Graph {
+
+void assert_cartesian_function_type_is(
+    const char* expression,
+    FunctionPropertiesHelper::FunctionType expectedType) {
+  const char* symbol = "x";
+  Shared::GlobalContext context;
+  Expression e = Expression::Builder(parse_expression(expression, &context));
+  e = e.cloneAndReduce(
+      ReductionContext::DefaultReductionContextForAnalysis(&context));
+  FunctionPropertiesHelper::FunctionType type =
+      FunctionPropertiesHelper::CartesianFunctionType(e, symbol, {});
+  quiz_assert_print_if_failure(type == expectedType, expression);
+}
+
+QUIZ_CASE(graph_cartesian_function_type) {
+  assert_cartesian_function_type_is(
+      "cos(3x)+2sin(x+1)-tan(4x)",
+      FunctionPropertiesHelper::FunctionType::Trigonometric);
+  assert_cartesian_function_type_is(
+      "4cos(log(3))", FunctionPropertiesHelper::FunctionType::Constant);
+  assert_cartesian_function_type_is(
+      "3x", FunctionPropertiesHelper::FunctionType::Linear);
+  assert_cartesian_function_type_is(
+      "1+x", FunctionPropertiesHelper::FunctionType::Affine);
+  assert_cartesian_function_type_is(
+      "1+(1/x)", FunctionPropertiesHelper::FunctionType::Rational);
+  assert_cartesian_function_type_is(
+      "(πx^2-3x^5)/(1-x)", FunctionPropertiesHelper::FunctionType::Rational);
+  assert_cartesian_function_type_is(
+      "x^0.5", FunctionPropertiesHelper::FunctionType::Default);
+  assert_cartesian_function_type_is(
+      "4log(6x)+3cos(1)-πlog(2x-4)",
+      FunctionPropertiesHelper::FunctionType::Logarithmic);
+  assert_cartesian_function_type_is(
+      "tan(3x)", FunctionPropertiesHelper::FunctionType::Trigonometric);
+  assert_cartesian_function_type_is(
+      "cos(3x)+2sin(x+1)-tan(4x)",
+      FunctionPropertiesHelper::FunctionType::Trigonometric);
+}
+
+void assert_polar_line_type_is(
+    const char* expression, FunctionPropertiesHelper::LineType expectedType) {
+  const char* symbol = "θ";
+  Shared::GlobalContext context;
+  Expression e = Expression::Builder(parse_expression(expression, &context));
+  e = e.cloneAndReduce(
+      ReductionContext::DefaultReductionContextForAnalysis(&context));
+  FunctionPropertiesHelper::LineType type =
+      FunctionPropertiesHelper::PolarLineType(e, symbol, {});
+  quiz_assert_print_if_failure(type == expectedType, expression);
+}
+
+QUIZ_CASE(graph_polar_line_type) {
+  assert_polar_line_type_is("1/cos(θ)",
+                            FunctionPropertiesHelper::LineType::Vertical);
+  assert_polar_line_type_is("1/sin(θ)",
+                            FunctionPropertiesHelper::LineType::Horizontal);
+  assert_polar_line_type_is("1/cos(θ+π/2)",
+                            FunctionPropertiesHelper::LineType::Horizontal);
+  assert_polar_line_type_is("1/cos(θ-π/2)",
+                            FunctionPropertiesHelper::LineType::Horizontal);
+  assert_polar_line_type_is("1/sin(θ+4)",
+                            FunctionPropertiesHelper::LineType::Diagonal);
+  assert_polar_line_type_is("1/(1+cos(θ))",
+                            FunctionPropertiesHelper::LineType::None);
+  assert_polar_line_type_is("1/(cos(3θ))",
+                            FunctionPropertiesHelper::LineType::None);
+}
 
 struct FunctionProperties {
   ContinuousFunctionProperties::Status m_status =

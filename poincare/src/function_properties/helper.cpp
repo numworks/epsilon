@@ -80,6 +80,10 @@ bool IsLinearCombinationOfFunction(const Tree* e, const char* symbol,
   return false;
 }
 
+static inline double positiveModulo(double i, double n) {
+  return std::fmod(std::fmod(i, n) + n, n);
+}
+
 // Detect a·cos(b·x+c) + k
 bool DetectLinearPatternOfTrig(const Tree* e,
                                ProjectionContext projectionContext,
@@ -160,7 +164,7 @@ bool DetectLinearPatternOfTrig(const Tree* e,
     *a = 1.0;
     *b = Approximation::To<double>(bTree);
     *c = Approximation::To<double>(cTree) - isSin * M_PI_2;
-    *c = std::fmod(*c, 2 * M_PI);
+    *c = positiveModulo(*c, 2 * M_PI);
     coefList->removeTree();
     return true;
   }

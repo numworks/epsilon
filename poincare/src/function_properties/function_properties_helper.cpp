@@ -166,8 +166,10 @@ FunctionPropertiesHelper::CartesianFunctionType(
    * trig(A,1)/trig(A,0) -> tan(A) */
   PatternMatching::MatchReplace(
       clone,
-      KMult(KA_s, KPow(KTrig(KB, 0_e), -1_e), KC_s, KTrig(KB, 1_e), KD_s),
-      KMult(KA_s, KC_s, KTan(KB), KD_s));
+      KAdd(KA_s,
+           KMult(KB_s, KPow(KTrig(KC, 0_e), -1_e), KD_s, KTrig(KC, 1_e), KE_s),
+           KF_s),
+      KAdd(KA_s, KMult(KB_s, KD_s, KTan(KC), KE_s), KF_s));
   bool isTrig = IsLinearCombinationOfFunction(
       clone, symbol, projectionContext,
       [](const Tree* e, const char* symbol,

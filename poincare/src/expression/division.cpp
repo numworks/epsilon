@@ -128,9 +128,9 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
   }
   if (!numerator->isMult()) {
     if (numerator->isOne()) {
-      numerator->cloneNodeOverNode(KMult.node<0>);
+      CloneNodeOverNode(numerator, KMult.node<0>);
     } else {
-      numerator->cloneNodeAtNode(KMult.node<1>);
+      CloneNodeAtNode(numerator, KMult.node<1>);
     }
   }
   if (needOpposite) {

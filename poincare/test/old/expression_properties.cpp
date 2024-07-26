@@ -1048,16 +1048,10 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
-#include <poincare/function_properties_helper.h>
-#include <poincare/src/expression/division.h>
-#include <poincare/src/expression/trigonometry.h>
-#include <poincare/src/function_properties/helper.h>
 
 #include "../helper.h"
-#include "helper.h"
 
 using namespace Poincare;
-using namespace Poincare::Internal;
 
 void assert_is_list_of_points(const char* definition, Context* context,
                               bool truth = true) {
@@ -1125,72 +1119,6 @@ QUIZ_DISABLED_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+random()", 2.43f, 2.45f, false);
   assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
 }
-
-#endif
-
-#include <poincare/src/expression/degree.h>
-
-void assert_is_linear_combination_of_pattern(const char* expression,
-                                             PatternTest testFunction,
-                                             bool truthValue = true,
-                                             const char* symbol = "x") {
-  Shared::GlobalContext context;
-  Expression e = Expression::Builder(parse_expression(expression, &context));
-  e = e.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(&context));
-  quiz_assert_print_if_failure(
-      IsLinearCombinationOfFunction(e, symbol, {.m_context = &context},
-                                    testFunction) == truthValue,
-      expression);
-}
-
-void assert_is_linear_pattern_of_sin_or_cos(const char* expression,
-                                            bool acceptConstantTerm,
-                                            double coefficientBeforeCos,
-                                            double coefficientBeforeSymbol,
-                                            double angle,
-                                            const char* symbol = "x") {
-  Shared::GlobalContext context;
-  Expression e = Expression::Builder(parse_expression(expression, &context));
-  ReductionContext reductionContext =
-      ReductionContext::DefaultReductionContextForAnalysis(&context);
-  e = e.cloneAndReduce(reductionContext);
-  double computedCoefBeforeCos;
-  double computedCoefBeforeSymbol;
-  double computedAngle;
-  quiz_assert_print_if_failure(
-      DetectLinearPatternOfTrig(
-          e, {.m_context = &context}, symbol, &computedCoefBeforeCos,
-          &computedCoefBeforeSymbol, &computedAngle, acceptConstantTerm),
-      expression);
-  quiz_assert_print_if_failure(computedCoefBeforeCos == coefficientBeforeCos,
-                               expression);
-  quiz_assert_print_if_failure(
-      computedCoefBeforeSymbol == coefficientBeforeSymbol, expression);
-  quiz_assert_print_if_failure(computedAngle == angle, expression);
-}
-
-QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
-  assert_is_linear_combination_of_pattern("1+(1/x)", &IsFractionOfPolynomials);
-  assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)",
-                                          &IsFractionOfPolynomials);
-  assert_is_linear_combination_of_pattern("x^0.5", &IsFractionOfPolynomials,
-                                          false);
-  assert_is_linear_combination_of_pattern(
-      "4log(6x)+3cos(1)-πlog(2x-4)",
-      [](const Tree* e, const char* symbol, ProjectionContext ctx) {
-        return e->isLogarithm() && Degree::Get(e->child(0), symbol, ctx) == 1;
-      });
-
-  assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)", false, 5.0, 3.0, 2.0);
-  assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)+π*cos(3x+2)", false,
-                                         8.1415926535897931, 3.0, 2.0);
-  assert_is_linear_pattern_of_sin_or_cos("1-cos(3x+2)/5", true, -0.2, 3.0, 2.0);
-  assert_is_linear_pattern_of_sin_or_cos("sin(x)", true, 1.0, 1.0,
-                                         -1.0 * M_PI_2);
-}
-
-#if 0
 
 void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   Shared::GlobalContext context;

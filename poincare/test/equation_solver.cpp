@@ -54,19 +54,18 @@ QUIZ_CASE(pcj_equation_solver) {
           "sys"));
   ProjectionContext projCtx = {.m_context = &globalContext};
 
-  check_solutions({"x-3+y", "y-x+1"}, {"x-2", "y-1"}, projCtx);
-  check_solutions({"x+x"}, {"x"}, projCtx);
-  check_solutions({"x+x+1"}, {"x+1/2"}, projCtx);
-  check_solutions({"x+y", "y+x", "y-x+2"}, {"x-1", "y+1"}, projCtx);
+  check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
+  check_solutions({"x+x"}, {"0"}, projCtx);
+  check_solutions({"x+x+1"}, {"-1/2"}, projCtx);
+  check_solutions({"x+y", "y+x", "y-x+2"}, {"1", "-1"}, projCtx);
   check_solutions({"1"}, {}, projCtx);
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
-                  {"a+1/6", "b+1/6", "c+1/6", "d+1/6", "f+1/6", "g+1/6"},
-                  projCtx);
+                  {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
   // User variables
   store("2→a", &globalContext);
-  check_solutions({"a*x-2"}, {"x-1"}, projCtx);
-  check_solutions({"a+x-2", "x"}, {"x"}, projCtx);
-  check_solutions({"a+x-3", "x"}, {"a-3", "x"}, projCtx);
+  check_solutions({"a*x-2"}, {"1"}, projCtx);
+  check_solutions({"a+x-2", "x"}, {"0"}, projCtx);
+  check_solutions({"a+x-3", "x"}, {"3", "0"}, projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Errors
   check_solutions({"x+y+z", "x-y"}, {}, projCtx,

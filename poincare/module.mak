@@ -233,7 +233,6 @@ $(addprefix expression/, \
 ) \
 $(addprefix function_properties/, \
   function_properties_helper.cpp \
-  helper.cpp \
 ) \
 $(addprefix layout/, \
   app_helpers.cpp \

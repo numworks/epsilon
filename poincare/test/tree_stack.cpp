@@ -6,52 +6,52 @@
 using namespace Poincare::Internal;
 
 QUIZ_CASE(pcj_tree_stack) {
-  TreeStack* pool = SharedTreeStack;
-  pool->flush();
+  TreeStack* stack = SharedTreeStack;
+  stack->flush();
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Tree* handingNode = k_expression;
-  Tree* editedNode = pool->clone(handingNode);
-  quiz_assert(pool->size() == handingNode->treeSize());
-  quiz_assert(pool->numberOfTrees() == 1);
-  quiz_assert(pool->isRootBlock(editedNode->block()));
-  quiz_assert(!pool->isRootBlock(editedNode->child(1)->block()));
+  Tree* editedNode = stack->clone(handingNode);
+  quiz_assert(stack->size() == handingNode->treeSize());
+  quiz_assert(stack->numberOfTrees() == 1);
+  quiz_assert(stack->isRootBlock(editedNode->block()));
+  quiz_assert(!stack->isRootBlock(editedNode->child(1)->block()));
 
   // References
-  quiz_assert(pool->nodeForIdentifier(pool->referenceNode(editedNode)) ==
+  quiz_assert(stack->nodeForIdentifier(stack->referenceNode(editedNode)) ==
               editedNode);
 
-  editedNode = pool->clone(handingNode);
-  quiz_assert(pool->isRootBlock(editedNode->block()));
-  pool->flush();
-  quiz_assert(pool->size() == 0);
+  editedNode = stack->clone(handingNode);
+  quiz_assert(stack->isRootBlock(editedNode->block()));
+  stack->flush();
+  quiz_assert(stack->size() == 0);
 
-  pool->pushZero();
-  pool->pushOne();
-  quiz_assert(*pool->firstBlock() == Type::Zero &&
-              *(pool->lastBlock() - 1) == Type::One && pool->size() == 2);
-  pool->popBlock();
-  quiz_assert(*(pool->lastBlock() - 1) == Type::Zero && pool->size() == 1);
-  pool->replaceBlock(pool->firstBlock(), Type::Two);
-  quiz_assert(*pool->blockAtIndex(0) == Type::Two);
-  pool->insertBlock(pool->firstBlock(), Type::One);
-  quiz_assert(*pool->firstBlock() == Type::One && pool->size() == 2);
-  pool->insertBlocks(pool->blockAtIndex(2), pool->blockAtIndex(0), 2);
-  quiz_assert(*(pool->blockAtIndex(2)) == Type::One &&
-              *(pool->blockAtIndex(3)) == Type::Two && pool->size() == 4);
-  pool->removeBlocks(pool->firstBlock(), 3);
-  quiz_assert(*(pool->firstBlock()) == Type::Two && pool->size() == 1);
-  pool->pushZero();
-  pool->pushOne();
-  pool->pushHalf();
+  stack->pushZero();
+  stack->pushOne();
+  quiz_assert(*stack->firstBlock() == Type::Zero &&
+              *(stack->lastBlock() - 1) == Type::One && stack->size() == 2);
+  stack->popBlock();
+  quiz_assert(*(stack->lastBlock() - 1) == Type::Zero && stack->size() == 1);
+  stack->replaceBlock(stack->firstBlock(), Type::Two);
+  quiz_assert(*stack->blockAtIndex(0) == Type::Two);
+  stack->insertBlock(stack->firstBlock(), Type::One);
+  quiz_assert(*stack->firstBlock() == Type::One && stack->size() == 2);
+  stack->insertBlocks(stack->blockAtIndex(2), stack->blockAtIndex(0), 2);
+  quiz_assert(*(stack->blockAtIndex(2)) == Type::One &&
+              *(stack->blockAtIndex(3)) == Type::Two && stack->size() == 4);
+  stack->removeBlocks(stack->firstBlock(), 3);
+  quiz_assert(*(stack->firstBlock()) == Type::Two && stack->size() == 1);
+  stack->pushZero();
+  stack->pushOne();
+  stack->pushHalf();
   //[ 2 0 1 1/2 ]--> [ 2 1 1/2 0 ]
-  pool->moveBlocks(pool->firstBlock() + 1, pool->blockAtIndex(2), 2);
-  quiz_assert(*(pool->blockAtIndex(0)) == Type::Two &&
-              *(pool->blockAtIndex(1)) == Type::One &&
-              *(pool->blockAtIndex(2)) == Type::Half &&
-              *(pool->blockAtIndex(3)) == Type::Zero && pool->size() == 4);
-  quiz_assert(pool->contains(pool->blockAtIndex(2)));
-  quiz_assert(!pool->contains(pool->blockAtIndex(5)));
+  stack->moveBlocks(stack->firstBlock() + 1, stack->blockAtIndex(2), 2);
+  quiz_assert(*(stack->blockAtIndex(0)) == Type::Two &&
+              *(stack->blockAtIndex(1)) == Type::One &&
+              *(stack->blockAtIndex(2)) == Type::Half &&
+              *(stack->blockAtIndex(3)) == Type::Zero && stack->size() == 4);
+  quiz_assert(stack->contains(stack->blockAtIndex(2)));
+  quiz_assert(!stack->contains(stack->blockAtIndex(5)));
 }
 
 QUIZ_CASE(pcj_tree_ref) {

@@ -5,20 +5,14 @@
 
 namespace Poincare {
 
-namespace Internal {
-struct ProjectionContext;
-}
-
 class FunctionPropertiesHelper {
  public:
   enum class LineType { Vertical, Horizontal, Diagonal, None };
 
   static LineType PolarLineType(const SystemExpression& analyzedExpression,
-                                const char* symbol,
-                                Internal::ProjectionContext projectionContext);
-  static LineType ParametricLineType(
-      const SystemExpression& analyzedExpression, const char* symbol,
-      Internal::ProjectionContext projectionContext);
+                                const char* symbol);
+  static LineType ParametricLineType(const SystemExpression& analyzedExpression,
+                                     const char* symbol);
 
   enum class FunctionType {
     Piecewise,
@@ -34,8 +28,7 @@ class FunctionPropertiesHelper {
   };
 
   static FunctionType CartesianFunctionType(
-      const SystemExpression& analyzedExpression, const char* symbol,
-      Internal::ProjectionContext projectionContext);
+      const SystemExpression& analyzedExpression, const char* symbol);
 
   // TODO_PCJ: hide method from API
   static void RemoveConstantTermsInAddition(Internal::Tree* e,

@@ -19,7 +19,7 @@ void assert_cartesian_function_type_is(
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   FunctionPropertiesHelper::FunctionType type =
-      FunctionPropertiesHelper::CartesianFunctionType(e, symbol, {});
+      FunctionPropertiesHelper::CartesianFunctionType(e, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
 }
 
@@ -60,7 +60,7 @@ void assert_polar_line_type_is(
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   FunctionPropertiesHelper::LineType type =
-      FunctionPropertiesHelper::PolarLineType(e, symbol, {});
+      FunctionPropertiesHelper::PolarLineType(e, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
 }
 

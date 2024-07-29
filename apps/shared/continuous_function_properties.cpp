@@ -303,8 +303,8 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
   FunctionPropertiesHelper::FunctionType type =
-      FunctionPropertiesHelper::CartesianFunctionType(
-          analyzedExpression, Function::k_unknownName, projectionContext);
+      FunctionPropertiesHelper::CartesianFunctionType(analyzedExpression,
+                                                      Function::k_unknownName);
   switch (type) {
     case FunctionPropertiesHelper::FunctionType::Piecewise:
       setCaption(I18n::Message::PiecewiseType);
@@ -440,8 +440,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 
   // Detect polar lines
   FunctionPropertiesHelper::LineType lineType =
-      FunctionPropertiesHelper::PolarLineType(
-          analyzedExpression, Function::k_unknownName, projectionContext);
+      FunctionPropertiesHelper::PolarLineType(analyzedExpression,
+                                              Function::k_unknownName);
   switch (lineType) {
     case FunctionPropertiesHelper::LineType::Vertical:
       setCaption(I18n::Message::PolarVerticalLineType);
@@ -490,8 +490,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
 
   // Detect parametric lines
   FunctionPropertiesHelper::LineType lineType =
-      FunctionPropertiesHelper::ParametricLineType(
-          analyzedExpression, Function::k_unknownName, projectionContext);
+      FunctionPropertiesHelper::ParametricLineType(analyzedExpression,
+                                                   Function::k_unknownName);
   switch (lineType) {
     case FunctionPropertiesHelper::LineType::Vertical:
       /* The same text as cartesian equation is used because the caption

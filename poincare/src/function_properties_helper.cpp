@@ -2,7 +2,6 @@
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>
-#include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/memory/n_ary.h>
@@ -104,10 +103,8 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
 }
 
 FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
-    const SystemExpression& analyzedExpression, const char* symbol,
-    ProjectionContext projectionContext) {
+    const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line
@@ -166,8 +163,7 @@ void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
 }
 
 FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
-    const SystemExpression& analyzedExpression, const char* symbol,
-    ProjectionContext projectionContext) {
+    const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
@@ -263,10 +259,8 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
 
 FunctionPropertiesHelper::FunctionType
 FunctionPropertiesHelper::CartesianFunctionType(
-    const SystemExpression& analyzedExpression, const char* symbol,
-    ProjectionContext projectionContext) {
+    const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
-  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   const Tree* e = analyzedExpression.tree();
 

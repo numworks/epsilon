@@ -21,9 +21,9 @@
 #include "list.h"
 #include "matrix.h"
 #include "physical_constant.h"
-#include "poincare/src/expression/sign.h"
 #include "random.h"
 #include "rational.h"
+#include "sign.h"
 #include "symbol.h"
 #include "undefined.h"
 #include "unit.h"
@@ -325,9 +325,8 @@ template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
 
-  if (Dimension::Get(e).isScalarOrUnit()) {
-    assert(AreConsistent(ComplexSign::Get(e), value));
-  }
+  assert(!Dimension::Get(e).isScalarOrUnit() ||
+         AreConsistent(ComplexSign::Get(e), value));
 
   if (s_context && value.imag() != 0) {
     s_context->m_encounteredComplex = true;

@@ -10,8 +10,8 @@
  */
 
 #include <apps/i18n.h>
+#include <poincare/function_properties/conic.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/conic.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>

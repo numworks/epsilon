@@ -5,8 +5,8 @@
 #include <omg/bit_helper.h>
 #include <omg/troolean.h>
 #include <poincare/expression.h>
+#include <poincare/function_properties/conic.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/conic.h>
 #include <poincare/old/helpers.h>
 #include <poincare/old/symbol.h>
 

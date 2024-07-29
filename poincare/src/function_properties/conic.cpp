@@ -1,5 +1,5 @@
-#include <poincare/function_properties_helper.h>
-#include <poincare/old/conic.h>
+#include <poincare/function_properties/conic.h>
+#include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>

@@ -10,7 +10,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/storage/file_system.h>
-#include <poincare/old/conic.h>
+#include <poincare/function_properties/conic.h>
 
 namespace Graph {
 

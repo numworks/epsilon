@@ -50,7 +50,6 @@ $(addprefix old/, \
   complex_argument.cpp \
   complex_cartesian.cpp \
   computation_context.cpp \
-  conic.cpp \
   conjugate.cpp \
   constant.cpp \
   context.cpp \
@@ -232,6 +231,10 @@ $(addprefix expression/, \
   variables.cpp \
   vector.cpp \
 ) \
+$(addprefix function_properties/, \
+  conic.cpp \
+  function_type.cpp \
+) \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
   layout.cpp \
@@ -324,7 +327,6 @@ $(addprefix regression/, \
   trigonometric_regression.cpp \
 ) \
   additional_results_helper.cpp \
-  function_properties_helper.cpp \
   print.cpp \
   range.cpp \
 )

@@ -2,7 +2,7 @@
 
 #include <apps/shared/expression_display_permissions.h>
 #include <omg/unreachable.h>
-#include <poincare/function_properties_helper.h>
+#include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/polynomial.h>
 
 #include "continuous_function.h"

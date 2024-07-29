@@ -1,6 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
-#include <poincare/old/conic.h>
+#include <poincare/function_properties/conic.h>
 
 #include "helper.h"
 

@@ -12,6 +12,7 @@
 #include <poincare/old/polynomial.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/projection.h>
@@ -62,9 +63,22 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     // Copy solutions
     for (int i = 0; const Internal::Tree* solution : result->children()) {
       Poincare::Expression exact = Poincare::UserExpression::Builder(solution);
+      Poincare::Expression reduced = exact.cloneAndReduce({});
       Poincare::Layout exactLayout =
           PoincareHelpers::CreateLayout(exact, context);
-      m_solutions[i++] = Solution(exactLayout, Poincare::Layout(), NAN, true);
+      ApproximationContext ctx(context);
+      Poincare::Expression approximated =
+          reduced.approximateToTree<double>(ctx);
+      Poincare::Layout approximatedLayout =
+          PoincareHelpers::CreateLayout(approximated, context);
+      if (exactLayout.isIdenticalTo(approximatedLayout)) {
+        approximatedLayout = Poincare::Layout();
+      }
+
+      m_solutions[i++] =
+          Solution(exactLayout, approximatedLayout, NAN,
+                   Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+                       reduced, approximated));
     }
     result->removeTree();
   }

@@ -701,6 +701,13 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(2)*√(7)-√(14)", "0");
   simplifies_to("x^(1-y^0)", "dep(1,{x^0,y^0})");
   simplifies_to("i^5+i^10+i^15+i^20", "0");
+
+  simplifies_to("2/√(2)", "√(2)");
+  simplifies_to("4/√(2)", "2*√(2)");
+  simplifies_to("1/√(2) - √(2)/2", "0");
+  // TODO: metric issue, one form should be preferred
+  simplifies_to("1/√(2)", "1/√(2)");
+  simplifies_to("√(2)/2", "√(2)/2");
 }
 
 QUIZ_CASE(pcj_simplification_float) {
@@ -927,8 +934,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "-(-1+√(3))/(2×√(2))");
-  simplifies_to("cos(13×π/12)", "-(1+√(3))/(2×√(2))");
+  simplifies_to("cos(7×π/12)", "-(√(2)×(-1+√(3)))/4");
+  simplifies_to("cos(13×π/12)", "-(√(2)×(1+√(3)))/4");
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "1/√(2)");

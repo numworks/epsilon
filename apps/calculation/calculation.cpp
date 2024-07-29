@@ -282,8 +282,16 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
            .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
+    /* TODO: what we really need is to project the user expressions because they
+     * are results and are already reduced. */
+    SystemExpression exactOutputReduced = PoincareHelpers::CloneAndReduce(
+        exactOutputExpression, context,
+        {.complexFormat = complexFormat(),
+         .angleUnit = angleUnit(),
+         .symbolicComputation =
+             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
     m_equalSign = UserExpression::ExactAndApproximateExpressionsAreEqual(
-                      exactOutputExpression,
+                      exactOutputReduced,
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal
                       : EqualSign::Approximation;

@@ -162,8 +162,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
 }
 
 Poincare::Context* LayoutField::context() const {
-  return nullptr;
-  // return m_delegate ? m_delegate->context() : nullptr;
+  return m_delegate ? m_delegate->context() : nullptr;
 }
 
 size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,

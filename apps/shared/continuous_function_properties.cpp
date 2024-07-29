@@ -164,16 +164,6 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = Internal::AngleUnit::Radian,
-      .m_unitFormat = Internal::UnitFormat::Metric,
-      .m_symbolic =
-          Internal::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      .m_context = context,
-      .m_unitDisplay = Internal::UnitDisplay::None,
-  };
-
   // Compute equation's degree regarding y.
   int yDeg = analyzedExpression.polynomialDegree(k_ordinateName);
   if (!isCartesianEquation) {
@@ -200,14 +190,16 @@ void ContinuousFunctionProperties::update(
 
     switch (precomputedFunctionSymbol) {
       case SymbolType::X: {
-        setCartesianFunctionProperties(analyzedExpression, projectionContext);
+        assert(dimension.isScalar());
+        setCartesianFunctionProperties(analyzedExpression);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::Function);
         }
         return;
       }
       case SymbolType::Theta: {
-        setPolarFunctionProperties(analyzedExpression, projectionContext);
+        assert(dimension.isScalar());
+        setPolarFunctionProperties(analyzedExpression);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::PolarEquationType);
         }
@@ -221,7 +213,8 @@ void ContinuousFunctionProperties::update(
         return;
       }
       case SymbolType::T: {
-        setParametricFunctionProperties(analyzedExpression, projectionContext);
+        assert(dimension.isPoint());
+        setParametricFunctionProperties(analyzedExpression);
         if (genericCaptionOnly) {
           setCaption(I18n::Message::ParametricEquationType);
         }
@@ -286,19 +279,18 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  setCartesianEquationProperties(analyzedExpression, projectionContext, xDeg,
-                                 yDeg, highestCoefficientIsPositive);
+  assert(analyzedExpression.dimension(context).isScalar());
+  setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
+                                 highestCoefficientIsPositive);
   if (genericCaptionOnly) {
     setCaption(I18n::Message::Equation);
   }
 }
 
 void ContinuousFunctionProperties::setCartesianFunctionProperties(
-    const SystemExpression& analyzedExpression,
-    Internal::ProjectionContext projectionContext) {
+    const SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
@@ -342,12 +334,10 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 }
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
-    const Poincare::SystemExpression& analyzedExpression,
-    Internal::ProjectionContext projectionContext, int xDeg, int yDeg,
+    const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
     OMG::Troolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
@@ -429,11 +419,9 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 }
 
 void ContinuousFunctionProperties::setPolarFunctionProperties(
-    const SystemExpression& analyzedExpression,
-    Internal::ProjectionContext projectionContext) {
+    const SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
-  assert(analyzedExpression.dimension(projectionContext.m_context).isScalar());
 
   setCurveParameterType(CurveParameterType::Polar);
 
@@ -479,8 +467,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 }
 
 void ContinuousFunctionProperties::setParametricFunctionProperties(
-    const Poincare::SystemExpression& analyzedExpression,
-    Internal::ProjectionContext projectionContext) {
+    const Poincare::SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
   assert(isEnabled() && isParametric());
 

@@ -15,10 +15,6 @@
  *  - An equation type (>, =, <=, etc.)
  * */
 
-namespace Poincare::Internal {
-struct ProjectionContext;
-}
-
 namespace Shared {
 
 class ContinuousFunctionProperties {
@@ -236,18 +232,14 @@ class ContinuousFunctionProperties {
  private:
   // Update
   void setCartesianFunctionProperties(
-      const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Internal::ProjectionContext projectionContext);
+      const Poincare::SystemExpression& analyzedExpression);
   void setCartesianEquationProperties(
-      const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Internal::ProjectionContext projectionContext, int xDeg,
-      int yDeg, OMG::Troolean highestCoefficientIsPositive);
+      const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
+      OMG::Troolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
-      const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Internal::ProjectionContext projectionContext);
+      const Poincare::SystemExpression& analyzedExpression);
   void setParametricFunctionProperties(
-      const Poincare::SystemExpression& analyzedExpression,
-      Poincare::Internal::ProjectionContext projectionContext);
+      const Poincare::SystemExpression& analyzedExpression);
 
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::SystemExpression equation,

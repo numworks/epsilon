@@ -100,10 +100,10 @@ class BlockStack {
                      const Block* contextSelection2, int contextAlteration);
     void invalidateIdentifiersAfterBlock(const Block* block);
     bool isFull() { return m_length == BlockStack::k_maxNumberOfReferences; }
-    void reset() { resetLength(0); }
+    void reset() { setLength(0); }
     /* Restoring length to a previous value has the same effect as deleting all
      * the references that where introduced in between. */
-    void resetLength(uint16_t length) {
+    void setLength(uint16_t length) {
       assert(length <= m_length);
       m_length = length;
     }

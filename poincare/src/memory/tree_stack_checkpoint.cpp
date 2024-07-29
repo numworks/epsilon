@@ -30,7 +30,7 @@ void TreeStackCheckpoint::rollback() {
   /* Flush everything changed on the SharedTreeStack because it may be
    * corrupted. */
   SharedTreeStack->flushFromBlock(m_rightmostBlock);
-  SharedTreeStack->referenceTable()->resetLength(m_savedReferenceLength);
+  SharedTreeStack->referenceTable()->setLength(m_savedReferenceLength);
   longjmp(m_jumpBuffer, 1);
 }
 

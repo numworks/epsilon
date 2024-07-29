@@ -160,8 +160,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(inputExp)) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (exactAndApproximatedAreEqual() ||
-             exactOutputTree()->isUndefined() ||
+  } else if (exactOutputTree()->isUndefined() ||
              approximatedOutputTree()->isNonReal() ||
              // Other conditions are factorized in ExpressionDisplayPermissions
              ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
@@ -240,6 +239,12 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
         ExceptionCheckpoint::Raise();
       }
     }
+  }
+
+  // Hide exact output layout if identical to approximate
+  if (displayOutput(context) != DisplayOutput::ExactOnly &&
+      exactOutput->isIdenticalTo(*approximateOutput)) {
+    forceDisplayOutput(DisplayOutput::ApproximateOnly);
   }
 }
 

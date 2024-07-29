@@ -8,6 +8,7 @@
 #include <poincare/preferences.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
+#include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/trigonometry.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -34,7 +35,8 @@ double smallestPositive(double x, double y) {
   return (x > 0.0) ? x : y;
 }
 
-CartesianConic::CartesianConic(const Expression e, Context* context,
+CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
+                               Context* context,
                                Preferences::ComplexFormat complexFormat,
                                const char* x, const char* y)
     : Conic(),
@@ -47,71 +49,79 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
       m_cx(0.0),
       m_cy(0.0),
       m_r(0.0) {
-  /* Expression e represents an equation of the form :
-   * A*x^2 + B*x*y + C*y^2 + D*x + E*y + F = 0
+  /* Expression analyzedExpression represents an equation of the form:
+   * a·x^2 + b·x·y + c·y^2 + d·x + e·y + f = 0
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  SymbolicComputation symbolicComputation =
-      SymbolicComputation::DoNotReplaceAnySymbol;
-  ApproximationContext approximationContext(context, complexFormat, angleUnit);
-  // Reduce Conic for analysis
-  Expression reducedExpression = e.cloneAndReduce(
-      ReductionContext(context, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForAnalysis));
-  // Extracting y parameters : C, B+E and A+D+F
-  Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
-  int dy = reducedExpression.getPolynomialReducedCoefficients(
-      y, coefficientsY, context, complexFormat, angleUnit, unitFormat,
-      symbolicComputation);
-  if (dy > 2 || dy < 1) {
+
+  const Tree* e = analyzedExpression.tree();
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = Internal::AngleUnit::Radian,
+      .m_unitFormat = Internal::UnitFormat::Metric,
+      .m_symbolic = Internal::SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_context = context,
+      .m_unitDisplay = Internal::UnitDisplay::None,
+  };
+
+  int dy = Degree::Get(e, y, projectionContext);
+  if (dy < 1 || dy > 2) {
     m_shape = Shape::Undefined;
     return;
   }
-  Expression coefficientsX[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Extract C term
+  Tree* coefListY = PolynomialParser::GetReducedCoefficients(e, y);
+  assert(coefListY && dy == coefListY->numberOfChildren() - 1);
+
+  // Extract c
   if (dy == 2) {
-    // Ensure coefficient C does not depend on x
-    int dx = coefficientsY[2].getPolynomialReducedCoefficients(
-        x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
-        symbolicComputation);
-    if (dx != 0) {
+    Tree* c = coefListY->child(2);
+    // Ensure coefficient c does not depend on x
+    if (Degree::Get(c, x, projectionContext) != 0) {
       m_shape = Shape::Undefined;
+      coefListY->removeTree();
       return;
     }
-    m_c = coefficientsY[2].approximateToScalar<double>(approximationContext);
+    m_c = Approximation::To<double>(c);
   }
-  // Extract B and E terms
-  int dx = coefficientsY[1].getPolynomialReducedCoefficients(
-      x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
-      symbolicComputation);
-  if (dx > 1 || dx < 0) {
+
+  // Extract b and e
+  Tree* be = coefListY->child(1);
+  int dx = Degree::Get(be, x, projectionContext);
+  if (dx < 0 || dx > 1) {
     m_shape = Shape::Undefined;
+    coefListY->removeTree();
     return;
   }
+  Tree* coefListX = PolynomialParser::GetReducedCoefficients(be, x);
+  assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
-    m_b = coefficientsX[1].approximateToScalar<double>(approximationContext);
+    m_b = Approximation::To<double>(coefListX->child(1));
   }
-  m_e = coefficientsX[0].approximateToScalar<double>(approximationContext);
-  // Extract A, D and F terms
-  dx = coefficientsY[0].getPolynomialReducedCoefficients(
-      x, coefficientsX, context, complexFormat, angleUnit, unitFormat,
-      symbolicComputation);
+  m_e = Approximation::To<double>(coefListX->child(0));
+  coefListX->removeTree();
+
+  // Extract a, d and f
+  Tree* adf = coefListY->child(0);
+  dx = Degree::Get(adf, x, projectionContext);
   if (dx > 2 || dx < 0 || (dx < 2 && dy < 2 && m_b == 0.0) ||
       (dx == 0 && m_b == 0.0)) {
     // A conic must have at least 1 squared term, 1 x term and 1 y term.
     m_shape = Shape::Undefined;
+    coefListY->removeTree();
     return;
   }
+  coefListX = PolynomialParser::GetReducedCoefficients(adf, x);
+  assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
-    m_a = coefficientsX[2].approximateToScalar<double>(approximationContext);
+    m_a = Approximation::To<double>(coefListX->child(2));
   }
   if (dx >= 1) {
-    m_d = coefficientsX[1].approximateToScalar<double>(approximationContext);
+    m_d = Approximation::To<double>(coefListX->child(1));
   }
-  m_f = coefficientsX[0].approximateToScalar<double>(approximationContext);
+  m_f = Approximation::To<double>(coefListX->child(0));
+  coefListX->removeTree();
+  coefListY->removeTree();
+
   // Round the coefficients to 0 if they are negligible against the other ones
   roundCoefficientsIfNegligible();
   if (!isConic()) {

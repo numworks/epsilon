@@ -13,6 +13,7 @@ CartesianConic buildCartesianConic(
     Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext);
+  // TODO: project to have system expression
   return CartesianConic(e, &globalContext, complexFormat);
 }
 

@@ -79,7 +79,7 @@ class Conic {
 class CartesianConic : public Conic {
  public:
   // Extract A,B,C,D,E,F parameters
-  CartesianConic(const Expression e, Context* context,
+  CartesianConic(const SystemExpression& analyzedExpression, Context* context,
                  Preferences::ComplexFormat complexFormat, const char* x = "x",
                  const char* y = "y");
   double getEccentricity() const override;

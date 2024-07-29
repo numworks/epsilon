@@ -189,8 +189,7 @@ class ExpressionNode : public PoolObject {
   }
   /*!*/ virtual OExpression replaceSymbolWithExpression(
       const SymbolAbstract& symbol, const OExpression& expression);
-  /*!*/ virtual int polynomialDegree(Context* context,
-                                     const char* symbolName) const;
+  int polynomialDegree(Context* context, const char* symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
                                               OExpression coefficients[]) const;

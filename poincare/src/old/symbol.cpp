@@ -193,7 +193,7 @@ bool Symbol::derivate(const ReductionContext& reductionContext, Symbol symbol,
 
 int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
                                       OExpression coefficients[]) const {
-  int deg = polynomialDegree(context, symbolName);
+  int deg = polynomialDegree(symbolName);
   if (deg == 1) {
     coefficients[0] = Rational::Builder(0);
     coefficients[1] = Rational::Builder(1);

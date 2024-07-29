@@ -651,10 +651,10 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(
-          context, ContinuousFunctionProperties::k_ordinateName);
+          ContinuousFunctionProperties::k_ordinateName);
       bool willBeAlongX = true;
       if (yDegree < 1 || yDegree > 2) {
-        int xDegree = m_expression.polynomialDegree(context, k_unknownName);
+        int xDegree = m_expression.polynomialDegree(k_unknownName);
         if (xDegree < 1 || xDegree > 2) {
           // Such degrees of equation in y and x are not handled.
           m_expression = Undefined::Builder();

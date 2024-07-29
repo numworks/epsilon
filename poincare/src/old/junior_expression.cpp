@@ -740,8 +740,7 @@ bool NewExpression::derivate(const ReductionContext& reductionContext,
   return false;
 }
 
-int SystemExpression::polynomialDegree(Context* context,
-                                       const char* symbolName) const {
+int SystemExpression::polynomialDegree(const char* symbolName) const {
   return Degree::Get(tree(), symbolName);
 }
 

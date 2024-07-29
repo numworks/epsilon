@@ -175,7 +175,7 @@ void ContinuousFunctionProperties::update(
   };
 
   // Compute equation's degree regarding y.
-  int yDeg = analyzedExpression.polynomialDegree(context, k_ordinateName);
+  int yDeg = analyzedExpression.polynomialDegree(k_ordinateName);
   if (!isCartesianEquation) {
     // There should be no y symbol. Inequations are handled on cartesians only
     if (yDeg > 0 ||
@@ -240,8 +240,7 @@ void ContinuousFunctionProperties::update(
   }
 
   // Compute equation's degree regarding x.
-  int xDeg =
-      analyzedExpression.polynomialDegree(context, Function::k_unknownName);
+  int xDeg = analyzedExpression.polynomialDegree(Function::k_unknownName);
 
   bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));

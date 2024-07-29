@@ -234,6 +234,7 @@ $(addprefix expression/, \
 $(addprefix function_properties/, \
   conic.cpp \
   function_type.cpp \
+  helper.cpp \
 ) \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \

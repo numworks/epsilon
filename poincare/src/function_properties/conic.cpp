@@ -1,5 +1,4 @@
 #include <poincare/function_properties/conic.h>
-#include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>
@@ -9,6 +8,8 @@
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>
+
+#include "helper.h"
 
 /* Double comparison is extensively used in Conics's methods for performances.
  * To limit the approximation errors that may rise from these comparisons, we
@@ -440,8 +441,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   /* Detect the pattern r = a·cosOrSin(θ+c)
    * TODO: Detect r=cos(θ)+2sin(θ) */
   double a, b, c;
-  if (FunctionType::DetectLinearPatternOfTrig(e, symbol, &a, &b, &c, false) &&
-      b == 1.0) {
+  if (DetectLinearPatternOfTrig(e, symbol, &a, &b, &c, false) && b == 1.0) {
     m_shape = Shape::Circle;
     return;
   }
@@ -451,8 +451,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
   bool ok = Degree::Get(numerator, symbol) == 0 && denominator->isAdd() &&
-            FunctionType::DetectLinearPatternOfTrig(denominator, symbol, &a, &b,
-                                                    &c, true) &&
+            DetectLinearPatternOfTrig(denominator, symbol, &a, &b, &c, true) &&
             b == 1.0;
   numerator->removeTree();
   if (!ok) {
@@ -509,9 +508,9 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   // Detect parabola (x, y) = (a·f(t)+c, b·f(t)^2+d)
   Tree* variableX = xOfT->cloneTree();
-  FunctionType::RemoveConstantTermsInAddition(variableX, symbol);
+  RemoveConstantTermsInAddition(variableX, symbol);
   Tree* variableY = yOfT->cloneTree();
-  FunctionType::RemoveConstantTermsInAddition(variableY, symbol);
+  RemoveConstantTermsInAddition(variableY, symbol);
 
   Tree* quotient = PatternMatching::CreateSimplify(
       KMult(KPow(KA, 2_e), KPow(KB, -1_e)), {.KA = variableX, .KB = variableY});
@@ -543,10 +542,8 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   // Detect if x(t) = a·cos(b·t+c)+k, same for y(t)
   double aX, bX, cX, aY, bY, cY;
-  if (!FunctionType::DetectLinearPatternOfTrig(xOfT, symbol, &aX, &bX, &cX,
-                                               true) ||
-      !FunctionType::DetectLinearPatternOfTrig(yOfT, symbol, &aY, &bY, &cY,
-                                               true)) {
+  if (!DetectLinearPatternOfTrig(xOfT, symbol, &aX, &bX, &cX, true) ||
+      !DetectLinearPatternOfTrig(yOfT, symbol, &aY, &bY, &cY, true)) {
     m_shape = Shape::Undefined;
     return;
   }

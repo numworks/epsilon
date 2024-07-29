@@ -29,15 +29,6 @@ class FunctionType {
 
   static CartesianType CartesianFunctionType(
       const SystemExpression& analyzedExpression, const char* symbol);
-
-  // TODO_PCJ: hide method from API
-  static void RemoveConstantTermsInAddition(Internal::Tree* e,
-                                            const char* symbol);
-  // TODO_PCJ: hide method from API
-  static bool DetectLinearPatternOfTrig(const Internal::Tree* e,
-                                        const char* symbol, double* a,
-                                        double* b, double* c,
-                                        bool acceptConstantTerm);
 };
 
 }  // namespace Poincare

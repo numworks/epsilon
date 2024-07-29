@@ -80,7 +80,9 @@ class CurveParameterController
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(const ParameterIndex& index, double f);
   void fillParameterCellAtRow(int row) override;
+  bool parameterAtIndexIsPreimage(const ParameterIndex& index) const;
   bool parameterAtIndexIsFirstComponent(const ParameterIndex& index) const;
+  bool parameterAtIndexIsEditable(const ParameterIndex& index) const;
   int derivationOrderOfParameterAtIndex(const ParameterIndex& index) const;
   Escher::StackViewController* stackController() const;
 

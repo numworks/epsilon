@@ -200,10 +200,11 @@ class ContinuousFunctionProperties {
     return 2;
   }
 
-  // TODO(lorene): move to Graph, use a ParameterIndex input type
-  bool parameterAtIndexIsEditable(int index) const;
-  // TODO(lorene): move to Graph, use a ParameterIndex input type
-  bool parameterAtIndexIsPreimage(int index) const;
+  enum class EditableParametersType : uint8_t { Abscissa, Image, Both, None };
+
+  EditableParametersType editableParameters() const;
+
+  bool canHavePreimage() const;
 
   CodePoint symbol() const;
 

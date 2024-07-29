@@ -75,6 +75,12 @@ const char* CurveParameterController::title() {
   return m_title;
 }
 
+bool CurveParameterController::parameterAtIndexIsPreimage(
+    const ParameterIndex& index) const {
+  return index == ParameterIndex::Image1 &&
+         function()->properties().canHavePreimage();
+}
+
 bool CurveParameterController::parameterAtIndexIsFirstComponent(
     const ParameterIndex& index) const {
   switch (index) {
@@ -87,6 +93,22 @@ bool CurveParameterController::parameterAtIndexIsFirstComponent(
              index == ParameterIndex::Image3 ||
              index == ParameterIndex::FirstDerivative2 ||
              index == ParameterIndex::SecondDerivative2);
+      return false;
+  }
+}
+
+bool CurveParameterController::parameterAtIndexIsEditable(
+    const ParameterIndex& index) const {
+  switch (function()->properties().editableParameters()) {
+    case ContinuousFunctionProperties::EditableParametersType::Abscissa:
+      return (index == ParameterIndex::Abscissa);
+    case ContinuousFunctionProperties::EditableParametersType::Image:
+      return (index == ParameterIndex::Image1);
+    case ContinuousFunctionProperties::EditableParametersType::Both:
+      return (index == ParameterIndex::Abscissa) ||
+             (index == ParameterIndex::Image1);
+    case ContinuousFunctionProperties::EditableParametersType::None:
+    default:
       return false;
   }
 }
@@ -120,7 +142,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   ContinuousFunctionProperties properties = function()->properties();
   if (row < properties.numberOfCurveParameters()) {
     m_parameterCells[row].setEditable(
-        properties.parameterAtIndexIsEditable(row));
+        parameterAtIndexIsEditable(parameter_index));
   }
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
@@ -192,9 +214,7 @@ double CurveParameterController::parameterAtIndex(int index) {
 
 bool CurveParameterController::confirmParameterAtIndex(
     const ParameterIndex& index, double f) {
-  // TODO(lorene): static_cast will not be needed
-  if (function()->properties().parameterAtIndexIsPreimage(
-          static_cast<int>(index))) {
+  if (parameterAtIndexIsPreimage(index)) {
     m_preimageGraphController.setImage(f);
     return true;
   }
@@ -223,8 +243,8 @@ bool CurveParameterController::textFieldDidFinishEditing(
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
 
-  // TODO(lorene): static_cast of row to a ParameterIndex
-  if (function()->properties().parameterAtIndexIsPreimage(row)) {
+  assert(0 <= row && row <= k_numberOfParameterRows);
+  if (parameterAtIndexIsPreimage(static_cast<ParameterIndex>(row))) {
     stack->push(&m_preimageGraphController);
   }
   return true;

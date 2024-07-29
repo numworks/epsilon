@@ -457,8 +457,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   }
 
   // Detect polar conics
-  PolarConic conicProperties = PolarConic(analyzedExpression, projectionContext,
-                                          Function::k_unknownName);
+  PolarConic conicProperties =
+      PolarConic(analyzedExpression, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:
@@ -512,8 +512,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
 
   // Detect parametric conics
-  ParametricConic conicProperties = ParametricConic(
-      analyzedExpression, projectionContext, Function::k_unknownName);
+  ParametricConic conicProperties =
+      ParametricConic(analyzedExpression, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:

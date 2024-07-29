@@ -55,14 +55,6 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
    * We then compute the conic's type and canonize the coefficients. */
 
   const Tree* e = analyzedExpression.tree();
-  Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = Internal::AngleUnit::Radian,
-      .m_unitFormat = Internal::UnitFormat::Metric,
-      .m_symbolic = Internal::SymbolicComputation::DoNotReplaceAnySymbol,
-      .m_context = context,
-      .m_unitDisplay = Internal::UnitDisplay::None,
-  };
 
   int dy = Degree::Get(e, y);
   if (dy < 1 || dy > 2) {
@@ -439,7 +431,7 @@ double CartesianConic::getRadius() const {
 }
 
 PolarConic::PolarConic(const SystemExpression& analyzedExpression,
-                       ProjectionContext ctx, const char* symbol) {
+                       const char* symbol) {
   const Tree* e = analyzedExpression.tree();
 
   // Detect the pattern r = a
@@ -510,7 +502,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
 }
 
 ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
-                                 ProjectionContext ctx, const char* symbol) {
+                                 const char* symbol) {
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);

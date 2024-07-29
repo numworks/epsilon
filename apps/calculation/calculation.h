@@ -44,9 +44,24 @@ class Calculation {
     Unknown,
     ExactOnly,
     ApproximateOnly,
+    /* ApproximateIsIdenticalToExact has the same display behavior as
+     * ApproximateOnly but exact output may be used by Ans or additional
+     * results */
+    ApproximateIsIdenticalToExact,
     ExactAndApproximate,
     ExactAndApproximateToggle
   };
+
+  static bool CanDisplayExact(DisplayOutput d) {
+    assert(d != DisplayOutput::Unknown);
+    return d != DisplayOutput::ApproximateOnly &&
+           d != DisplayOutput::ApproximateIsIdenticalToExact;
+  }
+
+  static bool CanDisplayApproximate(DisplayOutput d) {
+    assert(d != DisplayOutput::Unknown);
+    return d != DisplayOutput::ExactOnly;
+  }
 
   enum class NumberOfSignificantDigits { Maximal, UserDefined };
 
@@ -115,9 +130,6 @@ class Calculation {
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
-  static bool DisplaysExact(DisplayOutput d) {
-    return d != DisplayOutput::ApproximateOnly;
-  }
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   const Poincare::Internal::Tree* inputTree() const {

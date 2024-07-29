@@ -57,11 +57,10 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
       Calculation::NumberOfSignificantDigits::Maximal);
   UserExpression ansExpr;
   if (mostRecentCalculation->displayOutput(context) ==
-          Calculation::DisplayOutput::ApproximateOnly &&
-      (!mostRecentCalculation->exactAndApproximatedAreEqual() ||
-       exactOutput.isUndefined())) {
+          Calculation::DisplayOutput::ApproximateOnly ||
+      exactOutput.isUndefined()) {
     /* Case 1.
-     * If exact output was hidden, is   should not be accessible using Ans.
+     * If exact output was hidden, it should not be accessible using Ans.
      * Return input instead so that no precision is lost.
      * Except if the exact output is equal to its approximation and is neither
      * Nonreal nor Undefined, in which case the exact output can be used as Ans

@@ -195,7 +195,7 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
 
   // Create the exact output layout
   *exactOutput = Layout();
-  if (DisplaysExact(displayOutput(context))) {
+  if (CanDisplayExact(displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
     *exactOutput = createExactOutputLayout(&couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
@@ -216,9 +216,7 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
   }
 
   // Create the approximate output layout
-  if (displayOutput(context) == DisplayOutput::ExactOnly) {
-    *approximateOutput = *exactOutput;
-  } else {
+  if (CanDisplayApproximate(displayOutput(context))) {
     bool couldNotCreateApproximateLayout = false;
     *approximateOutput =
         createApproximateOutputLayout(&couldNotCreateApproximateLayout);
@@ -242,9 +240,10 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
   }
 
   // Hide exact output layout if identical to approximate
-  if (displayOutput(context) != DisplayOutput::ExactOnly &&
+  if (CanDisplayExact(displayOutput(context)) &&
+      CanDisplayApproximate(displayOutput(context)) &&
       exactOutput->isIdenticalTo(*approximateOutput)) {
-    forceDisplayOutput(DisplayOutput::ApproximateOnly);
+    forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
   }
 }
 
@@ -316,9 +315,9 @@ void Calculation::fillExpressionsForAdditionalResults(
   *input = this->input();
   *approximateOutput =
       this->approximateOutput(NumberOfSignificantDigits::Maximal);
-  *exactOutput = DisplaysExact(displayOutput(globalContext))
-                     ? this->exactOutput()
-                     : *approximateOutput;
+  *exactOutput = displayOutput(globalContext) == DisplayOutput::ApproximateOnly
+                     ? *approximateOutput
+                     : this->exactOutput();
 }
 
 AdditionalResultsType Calculation::additionalResultsType() {

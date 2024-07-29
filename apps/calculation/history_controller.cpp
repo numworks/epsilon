@@ -294,7 +294,7 @@ void HistoryController::handleOK() {
       editController->insertLayout(
           calculation->createApproximateOutputLayout(&dummy));
     } else {
-      assert(displayOutput != Calculation::DisplayOutput::ApproximateOnly);
+      assert(Calculation::CanDisplayApproximate(displayOutput));
       editController->insertLayout(
           calculation->createExactOutputLayout(&dummy));
     }

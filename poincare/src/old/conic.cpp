@@ -1,11 +1,5 @@
 #include <poincare/function_properties_helper.h>
-#include <poincare/old/addition.h>
 #include <poincare/old/conic.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/multiplication.h>
-#include <poincare/old/polynomial.h>
-#include <poincare/old/power.h>
-#include <poincare/preferences.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>

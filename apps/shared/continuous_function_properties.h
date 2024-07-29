@@ -231,14 +231,14 @@ class ContinuousFunctionProperties {
 
  private:
   // Update
-  void setCartesianFunctionProperties(
+  I18n::Message captionForCartesianFunction(
       const Poincare::SystemExpression& analyzedExpression);
   void setCartesianEquationProperties(
       const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
       OMG::Troolean highestCoefficientIsPositive);
-  void setPolarFunctionProperties(
+  I18n::Message captionForPolarFunction(
       const Poincare::SystemExpression& analyzedExpression);
-  void setParametricFunctionProperties(
+  I18n::Message captionForParametricFunction(
       const Poincare::SystemExpression& analyzedExpression);
 
   // If equation should be allowed when implicit plots are forbidden.

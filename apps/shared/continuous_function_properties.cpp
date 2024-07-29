@@ -191,7 +191,8 @@ void ContinuousFunctionProperties::update(
     switch (precomputedFunctionSymbol) {
       case SymbolType::X: {
         assert(dimension.isScalar());
-        setCartesianFunctionProperties(analyzedExpression);
+        setCurveParameterType(CurveParameterType::CartesianFunction);
+        setCaption(captionForCartesianFunction(analyzedExpression));
         if (genericCaptionOnly) {
           setCaption(I18n::Message::Function);
         }
@@ -199,7 +200,8 @@ void ContinuousFunctionProperties::update(
       }
       case SymbolType::Theta: {
         assert(dimension.isScalar());
-        setPolarFunctionProperties(analyzedExpression);
+        setCurveParameterType(CurveParameterType::Polar);
+        setCaption(captionForPolarFunction(analyzedExpression));
         if (genericCaptionOnly) {
           setCaption(I18n::Message::PolarEquationType);
         }
@@ -208,13 +210,14 @@ void ContinuousFunctionProperties::update(
       case SymbolType::Radius: {
         assert(dimension.isScalar());
         // TODO: Inverse polar could also be analyzed
-        setCaption(I18n::Message::PolarEquationType);
         setCurveParameterType(CurveParameterType::InversePolar);
+        setCaption(I18n::Message::PolarEquationType);
         return;
       }
       case SymbolType::T: {
         assert(dimension.isPoint());
-        setParametricFunctionProperties(analyzedExpression);
+        setCurveParameterType(CurveParameterType::Parametric);
+        setCaption(captionForParametricFunction(analyzedExpression));
         if (genericCaptionOnly) {
           setCaption(I18n::Message::ParametricEquationType);
         }
@@ -287,47 +290,34 @@ void ContinuousFunctionProperties::update(
   }
 }
 
-void ContinuousFunctionProperties::setCartesianFunctionProperties(
+I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
     const SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-
-  setCurveParameterType(CurveParameterType::CartesianFunction);
-
   FunctionPropertiesHelper::FunctionType type =
       FunctionPropertiesHelper::CartesianFunctionType(analyzedExpression,
                                                       Function::k_unknownName);
   switch (type) {
     case FunctionPropertiesHelper::FunctionType::Piecewise:
-      setCaption(I18n::Message::PiecewiseType);
-      return;
+      return I18n::Message::PiecewiseType;
     case FunctionPropertiesHelper::FunctionType::Constant:
-      setCaption(I18n::Message::ConstantType);
-      return;
+      return I18n::Message::ConstantType;
     case FunctionPropertiesHelper::FunctionType::Affine:
-      setCaption(I18n::Message::AffineType);
-      return;
+      return I18n::Message::AffineType;
     case FunctionPropertiesHelper::FunctionType::Linear:
-      setCaption(I18n::Message::LinearType);
-      return;
+      return I18n::Message::LinearType;
     case FunctionPropertiesHelper::FunctionType::Polynomial:
-      setCaption(I18n::Message::PolynomialType);
-      return;
+      return I18n::Message::PolynomialType;
     case FunctionPropertiesHelper::FunctionType::Logarithmic:
-      setCaption(I18n::Message::LogarithmicType);
-      return;
+      return I18n::Message::LogarithmicType;
     case FunctionPropertiesHelper::FunctionType::Exponential:
-      setCaption(I18n::Message::ExponentialType);
-      return;
+      return I18n::Message::ExponentialType;
     case FunctionPropertiesHelper::FunctionType::Rational:
-      setCaption(I18n::Message::RationalType);
-      return;
+      return I18n::Message::RationalType;
     case FunctionPropertiesHelper::FunctionType::Trigonometric:
-      setCaption(I18n::Message::TrigonometricType);
-      return;
+      return I18n::Message::TrigonometricType;
     case FunctionPropertiesHelper::FunctionType::Default:
-      setCaption(I18n::Message::Function);
-      return;
+      return I18n::Message::Function;
     default:
       OMG::unreachable();
   }
@@ -418,12 +408,10 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
   }
 }
 
-void ContinuousFunctionProperties::setPolarFunctionProperties(
+I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
     const SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isPolar());
-
-  setCurveParameterType(CurveParameterType::Polar);
 
   // Detect polar lines
   FunctionPropertiesHelper::LineType lineType =
@@ -431,14 +419,11 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
                                               Function::k_unknownName);
   switch (lineType) {
     case FunctionPropertiesHelper::LineType::Vertical:
-      setCaption(I18n::Message::PolarVerticalLineType);
-      return;
+      return I18n::Message::PolarVerticalLineType;
     case FunctionPropertiesHelper::LineType::Horizontal:
-      setCaption(I18n::Message::PolarHorizontalLineType);
-      return;
+      return I18n::Message::PolarHorizontalLineType;
     case FunctionPropertiesHelper::LineType::Diagonal:
-      setCaption(I18n::Message::PolarLineType);
-      return;
+      return I18n::Message::PolarLineType;
     default:
       assert(lineType == FunctionPropertiesHelper::LineType::None);
   }
@@ -449,30 +434,23 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:
-      setCaption(I18n::Message::PolarHyperbolaType);
-      return;
+      return I18n::Message::PolarHyperbolaType;
     case Conic::Shape::Parabola:
-      setCaption(I18n::Message::PolarParabolaType);
-      return;
+      return I18n::Message::PolarParabolaType;
     case Conic::Shape::Ellipse:
-      setCaption(I18n::Message::PolarEllipseType);
-      return;
+      return I18n::Message::PolarEllipseType;
     case Conic::Shape::Circle:
-      setCaption(I18n::Message::PolarCircleType);
-      return;
+      return I18n::Message::PolarCircleType;
     default:
       // A conic could not be identified.
-      setCaption(I18n::Message::PolarEquationType);
+      return I18n::Message::PolarEquationType;
   }
 }
 
-void ContinuousFunctionProperties::setParametricFunctionProperties(
+I18n::Message ContinuousFunctionProperties::captionForParametricFunction(
     const Poincare::SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
   assert(isEnabled() && isParametric());
-
-  setCurveParameterType(CurveParameterType::Parametric);
-  setCaption(I18n::Message::ParametricEquationType);
 
   // Detect parametric lines
   FunctionPropertiesHelper::LineType lineType =
@@ -484,15 +462,12 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
        * "Parametric equation of a vertical line" is too long to fit
        * the 37 max chars limit in every language.
        * This can be changed later if more chars are available. */
-      setCaption(I18n::Message::VerticalLineType);
-      return;
+      return I18n::Message::VerticalLineType;
     case FunctionPropertiesHelper::LineType::Horizontal:
       /* Same comment as above. */
-      setCaption(I18n::Message::HorizontalLineType);
-      return;
+      return I18n::Message::HorizontalLineType;
     case FunctionPropertiesHelper::LineType::Diagonal:
-      setCaption(I18n::Message::ParametricLineType);
-      return;
+      return I18n::Message::ParametricLineType;
     default:
       assert(lineType == FunctionPropertiesHelper::LineType::None);
   }
@@ -502,21 +477,17 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
       ParametricConic(analyzedExpression, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
-    case Conic::Shape::Hyperbola:
-      // For now, these are not detected and there is no caption for it.
-      assert(false);
-      return;
     case Conic::Shape::Parabola:
-      setCaption(I18n::Message::ParametricParabolaType);
-      return;
+      return I18n::Message::ParametricParabolaType;
     case Conic::Shape::Ellipse:
-      setCaption(I18n::Message::ParametricEllipseType);
-      return;
+      return I18n::Message::ParametricEllipseType;
     case Conic::Shape::Circle:
-      setCaption(I18n::Message::ParametricCircleType);
-      return;
-    default:;
+      return I18n::Message::ParametricCircleType;
+    default:
+      // For now, these are not detected and there is no caption for it.
+      assert(conicShape() != Conic::Shape::Hyperbola);
       // A conic could not be identified.
+      return I18n::Message::ParametricEquationType;
   }
 }
 

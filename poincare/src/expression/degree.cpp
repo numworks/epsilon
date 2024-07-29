@@ -75,25 +75,22 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
   return degree;
 }
 
-int Degree::Get(const Tree* e, const Tree* symbol,
-                ProjectionContext projectionContext) {
+int Degree::Get(const Tree* e, const Tree* symbol) {
   assert(symbol->isUserSymbol());
   if (e->isStore() || e->isUnitConversion()) {
     return k_unknown;
   }
-  // Project, simplify and expand the expression for a more accurate degree.
+  // Expand the expression for a more accurate degree.
   Tree* clone = e->cloneTree();
-  Simplification::ProjectAndReduce(clone, &projectionContext, false);
   AdvancedReduction::DeepExpand(clone);
   int degree = PrivateGet(clone, symbol);
   clone->removeTree();
   return degree;
 }
 
-int Degree::Get(const Tree* e, const char* symbolName,
-                ProjectionContext projectionContext) {
+int Degree::Get(const Tree* e, const char* symbolName) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-  int degree = Degree::Get(e, symbol, projectionContext);
+  int degree = Degree::Get(e, symbol);
   symbol->removeTree();
   return degree;
 }

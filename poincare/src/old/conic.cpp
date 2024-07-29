@@ -64,7 +64,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       .m_unitDisplay = Internal::UnitDisplay::None,
   };
 
-  int dy = Degree::Get(e, y, projectionContext);
+  int dy = Degree::Get(e, y);
   if (dy < 1 || dy > 2) {
     m_shape = Shape::Undefined;
     return;
@@ -76,7 +76,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   if (dy == 2) {
     Tree* c = coefListY->child(2);
     // Ensure coefficient c does not depend on x
-    if (Degree::Get(c, x, projectionContext) != 0) {
+    if (Degree::Get(c, x) != 0) {
       m_shape = Shape::Undefined;
       coefListY->removeTree();
       return;
@@ -86,7 +86,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
 
   // Extract b and e
   Tree* be = coefListY->child(1);
-  int dx = Degree::Get(be, x, projectionContext);
+  int dx = Degree::Get(be, x);
   if (dx < 0 || dx > 1) {
     m_shape = Shape::Undefined;
     coefListY->removeTree();
@@ -102,7 +102,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
 
   // Extract a, d and f
   Tree* adf = coefListY->child(0);
-  dx = Degree::Get(adf, x, projectionContext);
+  dx = Degree::Get(adf, x);
   if (dx > 2 || dx < 0 || (dx < 2 && dy < 2 && m_b == 0.0) ||
       (dx == 0 && m_b == 0.0)) {
     // A conic must have at least 1 squared term, 1 x term and 1 y term.
@@ -443,7 +443,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   const Tree* e = analyzedExpression.tree();
 
   // Detect the pattern r = a
-  int deg = Degree::Get(e, symbol, ctx);
+  int deg = Degree::Get(e, symbol);
   if (deg == 0) {
     m_shape = Shape::Circle;
     return;
@@ -467,7 +467,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   TreeRef numerator, denominator;
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
-  bool ok = Degree::Get(numerator, symbol, ctx) == 0 && denominator->isAdd() &&
+  bool ok = Degree::Get(numerator, symbol) == 0 && denominator->isAdd() &&
             FunctionPropertiesHelper::DetectLinearPatternOfTrig(
                 denominator, ctx, symbol, &a, &b, &c, true) &&
             b == 1.0;
@@ -483,7 +483,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   Tree* child = denominator->child(0);
   int nRemoved = 0;
   for (int i = 0; i < nChildren; i++) {
-    if (Degree::Get(child, symbol, ctx) != 0) {
+    if (Degree::Get(child, symbol) != 0) {
       child->removeTree();
       nRemoved++;
     } else {
@@ -515,8 +515,8 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
-  int degOfTinX = Degree::Get(xOfT, symbol, ctx);
-  int degOfTinY = Degree::Get(yOfT, symbol, ctx);
+  int degOfTinX = Degree::Get(xOfT, symbol);
+  int degOfTinY = Degree::Get(yOfT, symbol);
 
   if ((degOfTinX == 1 && degOfTinY == 2) ||
       (degOfTinX == 2 && degOfTinY == 1)) {
@@ -534,12 +534,12 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   Tree* quotient = PatternMatching::CreateSimplify(
       KMult(KPow(KA, 2_e), KPow(KB, -1_e)), {.KA = variableX, .KB = variableY});
-  bool parabola = Degree::Get(quotient, symbol, ctx) == 0;
+  bool parabola = Degree::Get(quotient, symbol) == 0;
   if (!parabola) {
     quotient->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KPow(KB, -1_e)),
                                         {.KA = variableY, .KB = variableX}));
-    parabola = Degree::Get(quotient, symbol, ctx) == 0;
+    parabola = Degree::Get(quotient, symbol) == 0;
   }
   quotient->removeTree();
   variableY->removeTree();

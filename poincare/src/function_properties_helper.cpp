@@ -33,8 +33,7 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
       double tempA, tempB, tempC;
       if (!DetectLinearPatternOfTrig(child, projectionContext, symbol, &tempA,
                                      &tempB, &tempC, acceptConstantTerm)) {
-        if (acceptConstantTerm &&
-            Degree::Get(child, symbol, projectionContext) == 0) {
+        if (acceptConstantTerm && Degree::Get(child, symbol) == 0) {
           continue;
         }
         return false;
@@ -69,7 +68,7 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
     }
     Tree* eWithoutCos = e->cloneTree();
     NAry::RemoveChildAtIndex(eWithoutCos, indexOfCos);
-    if (Degree::Get(eWithoutCos, symbol, projectionContext) != 0) {
+    if (Degree::Get(eWithoutCos, symbol) != 0) {
       eWithoutCos->removeTree();
       return false;
     }
@@ -83,7 +82,7 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
     const Tree* child = e->child(0);
     assert(child->nextTree()->isZero() || child->nextTree()->isOne());
     bool isSin = child->nextTree()->isOne();
-    if (Degree::Get(child, symbol, projectionContext) != 1) {
+    if (Degree::Get(child, symbol) != 1) {
       return false;
     }
 
@@ -125,7 +124,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
   double a, b, c;
-  bool polarLine = Degree::Get(numerator, symbol, projectionContext) == 0 &&
+  bool polarLine = Degree::Get(numerator, symbol) == 0 &&
                    DetectLinearPatternOfTrig(denominator, projectionContext,
                                              symbol, &a, &b, &c, false) &&
                    std::abs(b) == 1.0;
@@ -155,7 +154,7 @@ void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
   int nRemoved = 0;
   Tree* child = e->child(0);
   for (int i = 0; i < n; i++) {
-    if (Degree::Get(child, symbol, projectionContext) == 0) {
+    if (Degree::Get(child, symbol) == 0) {
       child->removeTree();
       nRemoved++;
     } else {
@@ -174,8 +173,8 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
-  int degOfTinX = Degree::Get(xOfT, symbol, projectionContext);
-  int degOfTinY = Degree::Get(yOfT, symbol, projectionContext);
+  int degOfTinX = Degree::Get(xOfT, symbol);
+  int degOfTinY = Degree::Get(yOfT, symbol);
   if (degOfTinX == 0) {
     if (degOfTinY == 0) {
       // The curve is a dot
@@ -206,7 +205,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
   RemoveConstantTermsInAddition(variableY, symbol, projectionContext);
   (-1_e)->cloneTree();
   Simplification::ReduceSystem(quotient, false);
-  bool diag = Degree::Get(quotient, symbol, projectionContext) == 0;
+  bool diag = Degree::Get(quotient, symbol) == 0;
   quotient->removeTree();
   if (diag) {
     return LineType::Diagonal;
@@ -222,8 +221,8 @@ bool isFractionOfPolynomials(const Tree* e, const char* symbol,
   TreeRef numerator, denominator;
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
-  int numeratorDegree = Degree::Get(numerator, symbol, projectionContext);
-  int denominatorDegree = Degree::Get(denominator, symbol, projectionContext);
+  int numeratorDegree = Degree::Get(numerator, symbol);
+  int denominatorDegree = Degree::Get(denominator, symbol);
   numerator->removeTree();
   denominator->removeTree();
   return denominatorDegree >= 0 && numeratorDegree >= 0;
@@ -235,7 +234,7 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
                                    ProjectionContext projectionContext,
                                    PatternTest testFunction) {
   if (testFunction(e, symbol, projectionContext) ||
-      Degree::Get(e, symbol, projectionContext) == 0) {
+      Degree::Get(e, symbol) == 0) {
     return true;
   }
   if (e->isAdd()) {
@@ -250,7 +249,7 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
   if (e->isMult()) {
     bool patternFound = false;
     for (const Tree* child : e->children()) {
-      if (Degree::Get(child, symbol, projectionContext) == 0) {
+      if (Degree::Get(child, symbol) == 0) {
         continue;
       }
       if (isLinearCombinationOfFunction(child, symbol, projectionContext,
@@ -283,7 +282,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
     return FunctionType::Piecewise;
   }
 
-  int xDeg = Degree::Get(e, symbol, projectionContext);
+  int xDeg = Degree::Get(e, symbol);
   // f(x) = a
   if (xDeg == 0) {
     return FunctionType::Constant;
@@ -305,8 +304,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
           e, symbol, projectionContext,
           [](const Tree* e, const char* symbol,
              ProjectionContext projectionContext) {
-            return e->isLogarithm() &&
-                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
+            return e->isLogarithm() && Degree::Get(e->child(0), symbol) == 1;
           })) {
     return FunctionType::Logarithmic;
   }
@@ -316,8 +314,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
           e, symbol, projectionContext,
           [](const Tree* e, const char* symbol,
              ProjectionContext projectionContext) {
-            return e->isExp() &&
-                   Degree::Get(e->child(0), symbol, projectionContext) == 1;
+            return e->isExp() && Degree::Get(e->child(0), symbol) == 1;
           })) {
     return FunctionType::Exponential;
   }
@@ -345,7 +342,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
       [](const Tree* e, const char* symbol,
          ProjectionContext projectionContext) {
         return (e->isTrig() || e->isTan()) &&
-               Degree::Get(e->child(0), symbol, projectionContext) == 1;
+               Degree::Get(e->child(0), symbol) == 1;
       });
   clone->removeTree();
   if (isTrig) {

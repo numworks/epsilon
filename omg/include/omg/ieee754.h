@@ -19,6 +19,14 @@ namespace OMG {
 template <typename T>
 class IEEE754 final {
  public:
+  /* The largest integer such that all smaller integers can be stored without
+   * any precision loss in IEEE754 double representation is 2^53 as the
+   * mantissa is stored on 53 bits (2^308 can be stored exactly in IEEE754
+   * representation but some smaller integers can't - like 2^308-1).
+   * With single representation, it's 2^24 */
+  constexpr static T largestExactInteger() {
+    return sizeof(T) == sizeof(float) ? 16777216.0 : 9007199254740992.0;
+  }
   constexpr static uint16_t exponentOffset() {
     return (1 << (k_exponentNbBits - 1)) - 1;
   }
@@ -77,6 +85,23 @@ class IEEE754 final {
     }
     return exponentBase10;
   }
+  // static uint64_t mantissa(T f) {
+  //   uint_float u;
+  //   u.f = f;
+  //   constexpr uint64_t oneOnMantissaBits =
+  //       (static_cast<uint64_t>(1) << k_mantissaNbBits) - 1;
+  //   return (u.ui &
+  //           oneOnMantissaBits);  // << (size() - k_mantissaNbBits - 1);???
+  // }
+  // /* Return the integer representation of a float representation without
+  //  * precision lost */
+  // static int64_t integer(T f) {
+  //   assert(std::round(f) == f && std::abs(f) <=
+  //   k_largestExactIEEE754Integer); int exp = OMG::IEEE754<T>::exponent(f);
+  //   uint64_t mantissa = OMG::IEEE754<T>::mantissa(f);
+  //   return (mantissa + (static_cast<uint64_t>(1) << k_mantissaNbBits)) *
+  //          (static_cast<uint64_t>(1) << (exp - k_mantissaNbBits));
+  // }
 
   constexpr static size_t k_signNbBits = 1;
   constexpr static size_t k_exponentNbBits =

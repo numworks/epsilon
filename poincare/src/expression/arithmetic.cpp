@@ -1,12 +1,14 @@
 #include "arithmetic.h"
 
 #include <limits.h>
+#include <omg/ieee754.h>
 #include <omg/troolean.h>
 #include <poincare/old/approximation_helper.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "approximation.h"
+#include "dimension.h"
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"
@@ -61,13 +63,27 @@ bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
 
 bool Arithmetic::ReduceFloor(Tree* e) {
   Tree* child = e->child(0);
-  if (!child->isRational()) {
+  if (child->isRational()) {
+    DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
+                                                  Rational::Denominator(child));
+    div.remainder->removeTree();
+    e->moveTreeOverTree(div.quotient);
+    return true;
+  }
+  // Reduce using approximation if possible.
+  assert(Dimension::Get(child).isScalar());
+  // TODO_PCJ: Use double instead of float (requires Integer::Push(uint64_t)).
+  float approx = Approximation::To<float>(e);
+  assert(approx == std::round(approx));
+  static_assert(OMG::IEEE754<float>::largestExactInteger() <= UINT32_MAX);
+  if (std::isnan(approx) ||
+      std::fabs(approx) > OMG::IEEE754<float>::largestExactInteger()) {
     return false;
   }
-  DivisionResult div = IntegerHandler::Division(Rational::Numerator(child),
-                                                Rational::Denominator(child));
-  div.remainder->removeTree();
-  e->moveTreeOverTree(div.quotient);
+  /* If Approx is smaller than the largest integer such as all smaller integers
+   * can be exactly represented in IEEE754, approx is the exact result (no
+   * precision were loss). */
+  e->moveTreeOverTree(Integer::Push(static_cast<uint32_t>(approx)));
   return true;
 }
 

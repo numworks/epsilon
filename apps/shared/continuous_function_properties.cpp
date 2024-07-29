@@ -294,29 +294,28 @@ I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
     const SystemExpression& analyzedExpression) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(isEnabled() && isCartesian());
-  FunctionPropertiesHelper::FunctionType type =
-      FunctionPropertiesHelper::CartesianFunctionType(analyzedExpression,
-                                                      Function::k_unknownName);
+  FunctionType::CartesianType type = FunctionType::CartesianFunctionType(
+      analyzedExpression, Function::k_unknownName);
   switch (type) {
-    case FunctionPropertiesHelper::FunctionType::Piecewise:
+    case FunctionType::CartesianType::Piecewise:
       return I18n::Message::PiecewiseType;
-    case FunctionPropertiesHelper::FunctionType::Constant:
+    case FunctionType::CartesianType::Constant:
       return I18n::Message::ConstantType;
-    case FunctionPropertiesHelper::FunctionType::Affine:
+    case FunctionType::CartesianType::Affine:
       return I18n::Message::AffineType;
-    case FunctionPropertiesHelper::FunctionType::Linear:
+    case FunctionType::CartesianType::Linear:
       return I18n::Message::LinearType;
-    case FunctionPropertiesHelper::FunctionType::Polynomial:
+    case FunctionType::CartesianType::Polynomial:
       return I18n::Message::PolynomialType;
-    case FunctionPropertiesHelper::FunctionType::Logarithmic:
+    case FunctionType::CartesianType::Logarithmic:
       return I18n::Message::LogarithmicType;
-    case FunctionPropertiesHelper::FunctionType::Exponential:
+    case FunctionType::CartesianType::Exponential:
       return I18n::Message::ExponentialType;
-    case FunctionPropertiesHelper::FunctionType::Rational:
+    case FunctionType::CartesianType::Rational:
       return I18n::Message::RationalType;
-    case FunctionPropertiesHelper::FunctionType::Trigonometric:
+    case FunctionType::CartesianType::Trigonometric:
       return I18n::Message::TrigonometricType;
-    case FunctionPropertiesHelper::FunctionType::Default:
+    case FunctionType::CartesianType::Default:
       return I18n::Message::Function;
     default:
       OMG::unreachable();
@@ -414,18 +413,17 @@ I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
   assert(isEnabled() && isPolar());
 
   // Detect polar lines
-  FunctionPropertiesHelper::LineType lineType =
-      FunctionPropertiesHelper::PolarLineType(analyzedExpression,
-                                              Function::k_unknownName);
+  FunctionType::LineType lineType =
+      FunctionType::PolarLineType(analyzedExpression, Function::k_unknownName);
   switch (lineType) {
-    case FunctionPropertiesHelper::LineType::Vertical:
+    case FunctionType::LineType::Vertical:
       return I18n::Message::PolarVerticalLineType;
-    case FunctionPropertiesHelper::LineType::Horizontal:
+    case FunctionType::LineType::Horizontal:
       return I18n::Message::PolarHorizontalLineType;
-    case FunctionPropertiesHelper::LineType::Diagonal:
+    case FunctionType::LineType::Diagonal:
       return I18n::Message::PolarLineType;
     default:
-      assert(lineType == FunctionPropertiesHelper::LineType::None);
+      assert(lineType == FunctionType::LineType::None);
   }
 
   // Detect polar conics
@@ -453,23 +451,22 @@ I18n::Message ContinuousFunctionProperties::captionForParametricFunction(
   assert(isEnabled() && isParametric());
 
   // Detect parametric lines
-  FunctionPropertiesHelper::LineType lineType =
-      FunctionPropertiesHelper::ParametricLineType(analyzedExpression,
-                                                   Function::k_unknownName);
+  FunctionType::LineType lineType = FunctionType::ParametricLineType(
+      analyzedExpression, Function::k_unknownName);
   switch (lineType) {
-    case FunctionPropertiesHelper::LineType::Vertical:
+    case FunctionType::LineType::Vertical:
       /* The same text as cartesian equation is used because the caption
        * "Parametric equation of a vertical line" is too long to fit
        * the 37 max chars limit in every language.
        * This can be changed later if more chars are available. */
       return I18n::Message::VerticalLineType;
-    case FunctionPropertiesHelper::LineType::Horizontal:
+    case FunctionType::LineType::Horizontal:
       /* Same comment as above. */
       return I18n::Message::HorizontalLineType;
-    case FunctionPropertiesHelper::LineType::Diagonal:
+    case FunctionType::LineType::Diagonal:
       return I18n::Message::ParametricLineType;
     default:
-      assert(lineType == FunctionPropertiesHelper::LineType::None);
+      assert(lineType == FunctionType::LineType::None);
   }
 
   // Detect parametric conics

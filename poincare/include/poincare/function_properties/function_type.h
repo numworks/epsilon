@@ -1,11 +1,11 @@
-#ifndef POINCARE_FUNCTION_PROPERTIES_HELPER_H
-#define POINCARE_FUNCTION_PROPERTIES_HELPER_H
+#ifndef POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
+#define POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
 
 #include <poincare/old/junior_expression.h>
 
 namespace Poincare {
 
-class FunctionPropertiesHelper {
+class FunctionType {
  public:
   enum class LineType { Vertical, Horizontal, Diagonal, None };
 
@@ -14,7 +14,7 @@ class FunctionPropertiesHelper {
   static LineType ParametricLineType(const SystemExpression& analyzedExpression,
                                      const char* symbol);
 
-  enum class FunctionType {
+  enum class CartesianType {
     Piecewise,
     Constant,
     Affine,
@@ -27,7 +27,7 @@ class FunctionPropertiesHelper {
     Default
   };
 
-  static FunctionType CartesianFunctionType(
+  static CartesianType CartesianFunctionType(
       const SystemExpression& analyzedExpression, const char* symbol);
 
   // TODO_PCJ: hide method from API

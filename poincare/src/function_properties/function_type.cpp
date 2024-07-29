@@ -16,9 +16,9 @@ static inline double positiveModulo(double i, double n) {
 }
 
 // Detect a·cos(b·x+c) + k
-bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
-    const Tree* e, const char* symbol, double* a, double* b, double* c,
-    bool acceptConstantTerm) {
+bool FunctionType::DetectLinearPatternOfTrig(const Tree* e, const char* symbol,
+                                             double* a, double* b, double* c,
+                                             bool acceptConstantTerm) {
   // TODO_PCJ: Trees need to be projected (for approx, and because we look for
   // Trig nodes)
 
@@ -102,7 +102,7 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
   return false;
 }
 
-FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
+FunctionType::LineType FunctionType::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
 
@@ -141,8 +141,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   return LineType::None;
 }
 
-void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
-    Tree* e, const char* symbol) {
+void FunctionType::RemoveConstantTermsInAddition(Tree* e, const char* symbol) {
   if (!e->isAdd()) {
     return;
   }
@@ -162,7 +161,7 @@ void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
   NAry::SquashIfPossible(e);
 }
 
-FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
+FunctionType::LineType FunctionType::ParametricLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() == ExpressionNode::Type::Point);
 
@@ -257,8 +256,7 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
   return false;
 }
 
-FunctionPropertiesHelper::FunctionType
-FunctionPropertiesHelper::CartesianFunctionType(
+FunctionType::CartesianType FunctionType::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
 
@@ -267,24 +265,24 @@ FunctionPropertiesHelper::CartesianFunctionType(
   // f(x) = piecewise(...)
   if (e->hasDescendantSatisfying(
           [](const Internal::Tree* t) { return t->isPiecewise(); })) {
-    return FunctionType::Piecewise;
+    return CartesianType::Piecewise;
   }
 
   int xDeg = Degree::Get(e, symbol);
   // f(x) = a
   if (xDeg == 0) {
-    return FunctionType::Constant;
+    return CartesianType::Constant;
   }
 
   // f(x) = a·x + b
   if (xDeg == 1) {
     // TODO: what if e is not an Add but is affine?
-    return e->isAdd() ? FunctionType::Affine : FunctionType::Linear;
+    return e->isAdd() ? CartesianType::Affine : CartesianType::Linear;
   }
 
   // f(x) = a·x^n + b·x^ + ... + z
   if (xDeg > 1) {
-    return FunctionType::Polynomial;
+    return CartesianType::Polynomial;
   }
 
   // f(x) = a·logM(b·x+c) + d·logN(e·x+f) + ... + z
@@ -292,7 +290,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
           e, symbol, [](const Tree* e, const char* symbol) {
             return e->isLogarithm() && Degree::Get(e->child(0), symbol) == 1;
           })) {
-    return FunctionType::Logarithmic;
+    return CartesianType::Logarithmic;
   }
 
   // f(x) = a·exp(b·x+c) + d·exp(e·x+f) + ... + z
@@ -300,12 +298,12 @@ FunctionPropertiesHelper::CartesianFunctionType(
           e, symbol, [](const Tree* e, const char* symbol) {
             return e->isExp() && Degree::Get(e->child(0), symbol) == 1;
           })) {
-    return FunctionType::Exponential;
+    return CartesianType::Exponential;
   }
 
   // f(x) = polynomial / polynomial
   if (isLinearCombinationOfFunction(e, symbol, isFractionOfPolynomials)) {
-    return FunctionType::Rational;
+    return CartesianType::Rational;
   }
 
   // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
@@ -327,10 +325,10 @@ FunctionPropertiesHelper::CartesianFunctionType(
       });
   clone->removeTree();
   if (isTrig) {
-    return FunctionType::Trigonometric;
+    return CartesianType::Trigonometric;
   }
 
-  return FunctionType::Default;
+  return CartesianType::Default;
 }
 
 }  // namespace Poincare

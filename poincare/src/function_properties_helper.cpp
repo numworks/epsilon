@@ -146,7 +146,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
 }
 
 void FunctionPropertiesHelper::RemoveConstantTermsInAddition(
-    Tree* e, const char* symbol, ProjectionContext projectionContext) {
+    Tree* e, const char* symbol) {
   if (!e->isAdd()) {
     return;
   }
@@ -199,10 +199,10 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
    * so we create x(t) * y(t)^-1 */
   Tree* quotient = SharedTreeStack->pushMult(2);
   Tree* variableX = xOfT->cloneTree();
-  RemoveConstantTermsInAddition(variableX, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableX, symbol);
   SharedTreeStack->pushPow();
   Tree* variableY = yOfT->cloneTree();
-  RemoveConstantTermsInAddition(variableY, symbol, projectionContext);
+  RemoveConstantTermsInAddition(variableY, symbol);
   (-1_e)->cloneTree();
   Simplification::ReduceSystem(quotient, false);
   bool diag = Degree::Get(quotient, symbol) == 0;

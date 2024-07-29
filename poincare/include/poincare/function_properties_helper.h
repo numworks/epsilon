@@ -38,9 +38,8 @@ class FunctionPropertiesHelper {
       Internal::ProjectionContext projectionContext);
 
   // TODO_PCJ: hide method from API
-  static void RemoveConstantTermsInAddition(
-      Internal::Tree* e, const char* symbol,
-      Internal::ProjectionContext projectionContext);
+  static void RemoveConstantTermsInAddition(Internal::Tree* e,
+                                            const char* symbol);
   // TODO_PCJ: hide method from API
   static bool DetectLinearPatternOfTrig(
       const Internal::Tree* e, Internal::ProjectionContext projectionContext,

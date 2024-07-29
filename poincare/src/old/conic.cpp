@@ -526,11 +526,9 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   // Detect parabola (x, y) = (a·f(t)+c, b·f(t)^2+d)
   Tree* variableX = xOfT->cloneTree();
-  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableX, symbol,
-                                                          ctx);
+  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableX, symbol);
   Tree* variableY = yOfT->cloneTree();
-  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableY, symbol,
-                                                          ctx);
+  FunctionPropertiesHelper::RemoveConstantTermsInAddition(variableY, symbol);
 
   Tree* quotient = PatternMatching::CreateSimplify(
       KMult(KPow(KA, 2_e), KPow(KB, -1_e)), {.KA = variableX, .KB = variableY});

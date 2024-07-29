@@ -157,7 +157,7 @@ void assert_expression_simplifies_approximates_to(
 // OExpression serializing
 
 void assert_expression_serializes_to(
-    Poincare::Internal::Tree* expression, const char* serialization,
+    const Poincare::Internal::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7);
 

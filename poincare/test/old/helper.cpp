@@ -393,22 +393,23 @@ void assert_expression_simplifies_approximates_to(
 #endif
 }
 
-void assert_expression_serializes_to(Tree *expression,
+void assert_expression_serializes_to(const Tree *expression,
                                      const char *serialization,
                                      Preferences::PrintFloatMode mode,
                                      int numberOfSignificantDigits) {
-#if 0
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
+  Tree *layout = Internal::Layouter::LayoutExpression(
+      expression->cloneTree(), true, numberOfSignificantDigits, mode);
+  Serialize(layout, buffer, buffer + bufferSize);
   bool test = strcmp(serialization, buffer) == 0;
+  layout->removeTree();
   char information[bufferSize] = "";
   if (!test) {
     build_failure_infos(information, bufferSize, "serialized expression",
                         buffer, serialization);
   }
   quiz_assert_print_if_failure(test, information);
-#endif
 }
 
 void assert_expression_serializes_and_parses_to_itself(

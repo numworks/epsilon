@@ -406,9 +406,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
-    CartesianConic equationConic = CartesianConic(
-        analyzedExpression, projectionContext.m_context,
-        projectionContext.m_complexFormat, Function::k_unknownName);
+    CartesianConic equationConic =
+        CartesianConic(analyzedExpression, Function::k_unknownName);
     setConicShape(equationConic.conicType().shape);
     switch (conicShape()) {
       case Conic::Shape::Hyperbola:

@@ -75,9 +75,8 @@ class Conic {
 class CartesianConic : public Conic {
  public:
   // Extract A,B,C,D,E,F parameters
-  CartesianConic(const SystemExpression& analyzedExpression, Context* context,
-                 Preferences::ComplexFormat complexFormat, const char* x = "x",
-                 const char* y = "y");
+  CartesianConic(const SystemExpression& analyzedExpression,
+                 const char* x = "x", const char* y = "y");
   double getEccentricity() const override;
   void getCenter(double* cx, double* cy) const override;
   double getSemiMajorAxis() const override;

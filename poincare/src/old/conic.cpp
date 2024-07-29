@@ -36,8 +36,6 @@ double smallestPositive(double x, double y) {
 }
 
 CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
-                               Context* context,
-                               Preferences::ComplexFormat complexFormat,
                                const char* x, const char* y)
     : Conic(),
       m_a(0.0),

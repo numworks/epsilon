@@ -225,8 +225,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
 CartesianConic ContinuousFunction::cartesianConicParameters(
     Context* context) const {
   assert(properties().isConic() && properties().isCartesian());
-  return CartesianConic(expressionReducedForAnalysis(context), context,
-                        complexFormat(context), k_unknownName);
+  return CartesianConic(expressionReducedForAnalysis(context), k_unknownName);
 }
 
 KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {

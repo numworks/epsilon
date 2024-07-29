@@ -456,8 +456,8 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   /* Detect the pattern r = a·cosOrSin(θ+c)
    * TODO: Detect r=cos(θ)+2sin(θ) */
   double a, b, c;
-  if (FunctionPropertiesHelper::DetectLinearPatternOfTrig(e, ctx, symbol, &a,
-                                                          &b, &c, false) &&
+  if (FunctionPropertiesHelper::DetectLinearPatternOfTrig(e, symbol, &a, &b, &c,
+                                                          false) &&
       b == 1.0) {
     m_shape = Shape::Circle;
     return;
@@ -469,7 +469,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   assert(numerator && denominator);
   bool ok = Degree::Get(numerator, symbol) == 0 && denominator->isAdd() &&
             FunctionPropertiesHelper::DetectLinearPatternOfTrig(
-                denominator, ctx, symbol, &a, &b, &c, true) &&
+                denominator, symbol, &a, &b, &c, true) &&
             b == 1.0;
   numerator->removeTree();
   if (!ok) {
@@ -560,10 +560,10 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
 
   // Detect if x(t) = a·cos(b·t+c)+k, same for y(t)
   double aX, bX, cX, aY, bY, cY;
-  if (!FunctionPropertiesHelper::DetectLinearPatternOfTrig(
-          xOfT, ctx, symbol, &aX, &bX, &cX, true) ||
-      !FunctionPropertiesHelper::DetectLinearPatternOfTrig(
-          yOfT, ctx, symbol, &aY, &bY, &cY, true)) {
+  if (!FunctionPropertiesHelper::DetectLinearPatternOfTrig(xOfT, symbol, &aX,
+                                                           &bX, &cX, true) ||
+      !FunctionPropertiesHelper::DetectLinearPatternOfTrig(yOfT, symbol, &aY,
+                                                           &bY, &cY, true)) {
     m_shape = Shape::Undefined;
     return;
   }

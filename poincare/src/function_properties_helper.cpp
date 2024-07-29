@@ -18,8 +18,8 @@ static inline double positiveModulo(double i, double n) {
 
 // Detect a·cos(b·x+c) + k
 bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
-    const Tree* e, ProjectionContext projectionContext, const char* symbol,
-    double* a, double* b, double* c, bool acceptConstantTerm) {
+    const Tree* e, const char* symbol, double* a, double* b, double* c,
+    bool acceptConstantTerm) {
   // TODO_PCJ: Trees need to be projected (for approx, and because we look for
   // Trig nodes)
 
@@ -31,8 +31,8 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
     bool cosFound = false;
     for (const Tree* child : e->children()) {
       double tempA, tempB, tempC;
-      if (!DetectLinearPatternOfTrig(child, projectionContext, symbol, &tempA,
-                                     &tempB, &tempC, acceptConstantTerm)) {
+      if (!DetectLinearPatternOfTrig(child, symbol, &tempA, &tempB, &tempC,
+                                     acceptConstantTerm)) {
         if (acceptConstantTerm && Degree::Get(child, symbol) == 0) {
           continue;
         }
@@ -57,8 +57,7 @@ bool FunctionPropertiesHelper::DetectLinearPatternOfTrig(
     assert(e->numberOfChildren() > 1);
     int indexOfCos = -1;
     for (IndexedChild<const Tree*> child : e->indexedChildren()) {
-      if (DetectLinearPatternOfTrig(child, projectionContext, symbol, a, b, c,
-                                    false)) {
+      if (DetectLinearPatternOfTrig(child, symbol, a, b, c, false)) {
         indexOfCos = child.index;
         break;
       }
@@ -124,10 +123,10 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::PolarLineType(
   Division::GetNumeratorAndDenominator(e, numerator, denominator);
   assert(numerator && denominator);
   double a, b, c;
-  bool polarLine = Degree::Get(numerator, symbol) == 0 &&
-                   DetectLinearPatternOfTrig(denominator, projectionContext,
-                                             symbol, &a, &b, &c, false) &&
-                   std::abs(b) == 1.0;
+  bool polarLine =
+      Degree::Get(numerator, symbol) == 0 &&
+      DetectLinearPatternOfTrig(denominator, symbol, &a, &b, &c, false) &&
+      std::abs(b) == 1.0;
   numerator->removeTree();
   denominator->removeTree();
 

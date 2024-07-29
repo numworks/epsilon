@@ -213,8 +213,7 @@ FunctionPropertiesHelper::LineType FunctionPropertiesHelper::ParametricLineType(
   return LineType::None;
 }
 
-bool isFractionOfPolynomials(const Tree* e, const char* symbol,
-                             ProjectionContext projectionContext) {
+bool isFractionOfPolynomials(const Tree* e, const char* symbol) {
   if (!e->isMult() && !e->isPow()) {
     return false;
   }
@@ -228,13 +227,12 @@ bool isFractionOfPolynomials(const Tree* e, const char* symbol,
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }
 
-typedef bool (*PatternTest)(const Tree*, const char*, ProjectionContext);
+typedef bool (*PatternTest)(const Tree*, const char*);
 
 bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
                                    ProjectionContext projectionContext,
                                    PatternTest testFunction) {
-  if (testFunction(e, symbol, projectionContext) ||
-      Degree::Get(e, symbol) == 0) {
+  if (testFunction(e, symbol) || Degree::Get(e, symbol) == 0) {
     return true;
   }
   if (e->isAdd()) {
@@ -301,9 +299,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
 
   // f(x) = a·logM(b·x+c) + d·logN(e·x+f) + ... + z
   if (isLinearCombinationOfFunction(
-          e, symbol, projectionContext,
-          [](const Tree* e, const char* symbol,
-             ProjectionContext projectionContext) {
+          e, symbol, projectionContext, [](const Tree* e, const char* symbol) {
             return e->isLogarithm() && Degree::Get(e->child(0), symbol) == 1;
           })) {
     return FunctionType::Logarithmic;
@@ -311,9 +307,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
 
   // f(x) = a·exp(b·x+c) + d·exp(e·x+f) + ... + z
   if (isLinearCombinationOfFunction(
-          e, symbol, projectionContext,
-          [](const Tree* e, const char* symbol,
-             ProjectionContext projectionContext) {
+          e, symbol, projectionContext, [](const Tree* e, const char* symbol) {
             return e->isExp() && Degree::Get(e->child(0), symbol) == 1;
           })) {
     return FunctionType::Exponential;
@@ -338,9 +332,7 @@ FunctionPropertiesHelper::CartesianFunctionType(
       KAdd(KA_s, KMult(KB_s, KD_s, KTan(KC), KE_s), KF_s))) {
   }
   bool isTrig = isLinearCombinationOfFunction(
-      clone, symbol, projectionContext,
-      [](const Tree* e, const char* symbol,
-         ProjectionContext projectionContext) {
+      clone, symbol, projectionContext, [](const Tree* e, const char* symbol) {
         return (e->isTrig() || e->isTan()) &&
                Degree::Get(e->child(0), symbol) == 1;
       });

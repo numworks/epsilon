@@ -512,7 +512,7 @@ Tree* PolynomialParser::GetReducedCoefficients(const Tree* e,
 }
 
 bool PolynomialParser::HasNonNullCoefficients(
-    const Tree* e, const char* symbol, ProjectionContext projectionContext,
+    const Tree* e, const char* symbol,
     OMG::Troolean* highestDegreeCoefficientIsPositive) {
   Tree* coefList = GetReducedCoefficients(e, symbol, true);
   if (!coefList) {

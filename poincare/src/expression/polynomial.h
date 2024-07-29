@@ -117,7 +117,7 @@ class PolynomialParser final {
   static Tree* GetReducedCoefficients(const Tree* e, const char* symbolName,
                                       bool keepDependencies = false);
   static bool HasNonNullCoefficients(
-      const Tree* e, const char* symbol, ProjectionContext projectionContext,
+      const Tree* e, const char* symbol,
       OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);
 
  private:

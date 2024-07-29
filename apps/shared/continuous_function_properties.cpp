@@ -254,7 +254,7 @@ void ContinuousFunctionProperties::update(
       willBeAlongX ? k_ordinateName : Function::k_unknownName;
   OMG::Troolean highestCoefficientIsPositive = OMG::Troolean::Unknown;
   if (!Poincare::Internal::PolynomialParser::HasNonNullCoefficients(
-          analyzedExpression.tree(), symbolName, projectionContext,
+          analyzedExpression.tree(), symbolName,
           &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
     setErrorStatusAndUpdateCaption(Status::Unhandled);

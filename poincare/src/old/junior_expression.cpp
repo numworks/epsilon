@@ -219,12 +219,6 @@ const Tree* JuniorExpressionNode::tree() const {
   return Tree::FromBlocks(m_blocks);
 }
 
-int JuniorExpressionNode::polynomialDegree(Context* context,
-                                           const char* symbolName) const {
-  // TODO_PCJ: method of SystemExpression
-  return Degree::Get(tree(), symbolName);
-}
-
 /* JuniorExpression */
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
@@ -744,6 +738,11 @@ bool NewExpression::derivate(const ReductionContext& reductionContext,
   // TODO_PCJ: Remove
   assert(false);
   return false;
+}
+
+int SystemExpression::polynomialDegree(Context* context,
+                                       const char* symbolName) const {
+  return Degree::Get(tree(), symbolName);
 }
 
 int SystemExpression::getPolynomialReducedCoefficients(

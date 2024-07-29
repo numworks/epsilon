@@ -87,7 +87,6 @@ class JuniorExpressionNode final : public ExpressionNode {
   // OMG::Troolean isNull(Context* context) const override;
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
-  int polynomialDegree(Context* context, const char* symbolName) const override;
 
   // Approximation
   Evaluation<float> approximate(
@@ -267,6 +266,7 @@ class JuniorExpression : public OExpression {
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue);
 
+  int polynomialDegree(Context* context, const char* symbolName) const;
   /* Fills the table coefficients with the expressions of the first 3 polynomial
    * coefficients and returns the  polynomial degree. It is supposed to be
    * called on a reduced expression. coefficients has up to 3 entries.  */

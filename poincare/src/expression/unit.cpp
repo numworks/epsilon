@@ -981,7 +981,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       e->cloneTreeOverTree(KUndef);
       return true;
     case UnitDisplay::MainOutput:
-      BuildMainOutput(e, extractedUnits, dimension);
+      BuildMainOutput(e, extractedUnits, dimension, angleUnit);
       return true;
     case UnitDisplay::AutomaticInput:
       // extractedUnits might be of the form _mm*_Hz+(_m+_km)*_s^-1.
@@ -1035,7 +1035,26 @@ bool Unit::DisplayImperialUnits(const Tree* extractedUnits) {
 }
 
 void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
-                           Dimension dimension) {
+                           Dimension dimension, AngleUnit angleUnit) {
+  if (dimension.isAngleUnit()) {
+    // Replace extractedUnits to target angle unit.
+    Tree* newExtractedUnits = KPow->cloneNode();
+    Unit::Push(angleUnit);
+    Integer::Push(dimension.unit.vector.angle);
+    assert(Dimension::Get(newExtractedUnits) == Dimension::Get(extractedUnits));
+    MoveTreeOverTree(extractedUnits, newExtractedUnits);
+    // e is basic SI and needs to be converted back to target unit.
+    TreeRef ratio = Units::Angle::DefaultRepresentativeForAngleUnit(angleUnit)
+                        ->pushReducedRatioExpression();
+    e->moveTreeOverTree(PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
+                                                {.KA = e, .KB = ratio}));
+    ratio->removeTree();
+    Simplification::ReduceSystem(e, false);
+    // Multiply value and extractedUnits.
+    e->cloneNodeAtNode(KMult.node<2>);
+    return;
+  }
+
   Tree* unit1 = nullptr;
   Tree* unit2 = nullptr;
   // If the input is made of one single unit, preserve representative.
@@ -1050,12 +1069,12 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
       keepRepresentative = true;
     }
     if (keepRepresentative) {
+      assert(!dimension.isAngleUnit());
       // Keep the same representative, find the best prefix.
       double value = Approximation::RootTreeToReal<double>(e);
       if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
         value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
       } else {
-        // TODO: Handle angle units at some point
         // Correct the value since e is in basic SI
         value /= Approximation::RootTreeToReal<double>(extractedUnits);
         ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(

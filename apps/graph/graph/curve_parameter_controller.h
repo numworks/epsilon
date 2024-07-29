@@ -64,22 +64,24 @@ class CurveParameterController
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
-  ParameterCell* parameterCell(ParameterIndex index) {
+  ParameterCell* parameterCell(const ParameterIndex& index) {
     return &m_parameterCells[static_cast<int>(index)];
   }
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override {
-    return confirmParameterAtIndex(parameterIndex, f);
+    assert(0 <= parameterIndex && parameterIndex <= k_numberOfParameterRows);
+    return confirmParameterAtIndex(static_cast<ParameterIndex>(parameterIndex),
+                                   f);
   }
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtRow(int row) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  bool confirmParameterAtIndex(int parameterIndex, double f);
+  bool confirmParameterAtIndex(const ParameterIndex& index, double f);
   void fillParameterCellAtRow(int row) override;
-  bool parameterAtRowIsFirstComponent(int row) const;
-  int derivationOrderOfParameterAtRow(int row) const;
+  bool parameterAtIndexIsFirstComponent(const ParameterIndex& index) const;
+  int derivationOrderOfParameterAtIndex(const ParameterIndex& index) const;
   Escher::StackViewController* stackController() const;
 
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,

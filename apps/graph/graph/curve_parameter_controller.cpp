@@ -75,10 +75,8 @@ const char* CurveParameterController::title() {
   return m_title;
 }
 
-bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
-  // TODO(lorene): row as a ParameterIndex
-  assert(0 <= row && row <= k_numberOfParameterRows);
-  ParameterIndex index = static_cast<ParameterIndex>(row);
+bool CurveParameterController::parameterAtIndexIsFirstComponent(
+    const ParameterIndex& index) const {
   switch (index) {
     case ParameterIndex::Image1:
     case ParameterIndex::FirstDerivative1:
@@ -93,10 +91,8 @@ bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
   }
 }
 
-int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
-  // TODO(lorene): row as a ParameterIndex
-  assert(0 <= row && row <= k_numberOfParameterRows);
-  ParameterIndex index = static_cast<ParameterIndex>(row);
+int CurveParameterController::derivationOrderOfParameterAtIndex(
+    const ParameterIndex& index) const {
   switch (index) {
     case ParameterIndex::Abscissa:
       return -1;
@@ -115,10 +111,12 @@ int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
 }
 
 void CurveParameterController::fillParameterCellAtRow(int row) {
-  // TODO(lorene): row as a ParameterIndex
+  assert(row >= 0);
   if (row >= k_numberOfParameterRows) {
     return;
   }
+  ParameterIndex parameter_index = static_cast<ParameterIndex>(row);
+
   ContinuousFunctionProperties properties = function()->properties();
   if (row < properties.numberOfCurveParameters()) {
     m_parameterCells[row].setEditable(
@@ -127,17 +125,18 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
   char buffer[bufferSize];
-  if (row == static_cast<int>(ParameterIndex::Abscissa)) {
+  if (parameter_index == ParameterIndex::Abscissa) {
     UTF8Helper::WriteCodePoint(buffer, bufferSize, properties.symbol());
   } else {
-    bool firstComponent = parameterAtRowIsFirstComponent(row);
-    int derivationOrder = derivationOrderOfParameterAtRow(row);
-    // TODO(lorene): make a dedicated function without hardcoded values
-    if (properties.isPolar() && (row == 2 || row == 3)) {
-      if (row == 2) {
-        SerializationHelper::CodePoint(buffer, bufferSize, 'x');
+    bool firstComponent = parameterAtIndexIsFirstComponent(parameter_index);
+    int derivationOrder = derivationOrderOfParameterAtIndex(parameter_index);
+    if (properties.isPolar() && (parameter_index == ParameterIndex::Image2 ||
+                                 parameter_index == ParameterIndex::Image3)) {
+      // TODO(lorene): do not hardcode 'x' and 'y"
+      if (parameter_index == ParameterIndex::Image2) {
+        UTF8Helper::WriteCodePoint(buffer, bufferSize, 'x');
       } else {
-        SerializationHelper::CodePoint(buffer, bufferSize, 'y');
+        UTF8Helper::WriteCodePoint(buffer, bufferSize, 'y');
       }
     } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
@@ -153,12 +152,15 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 }
 
 double CurveParameterController::parameterAtIndex(int index) {
+  assert(0 <= index && index <= k_numberOfParameterRows);
+  ParameterIndex parameter_index = static_cast<ParameterIndex>(index);
+
   Poincare::Context* ctx = App::app()->localContext();
-  int derivationOrder = derivationOrderOfParameterAtRow(index);
+  int derivationOrder = derivationOrderOfParameterAtIndex(parameter_index);
   if (derivationOrder >= 1) {
     assert(derivationOrder == 1 || derivationOrder == 2);
     assert(function()->canDisplayDerivative());
-    bool firstComponent = parameterAtRowIsFirstComponent(index);
+    bool firstComponent = parameterAtIndexIsFirstComponent(parameter_index);
     PointOrScalar<double> derivative =
         function()->approximateDerivative<double>(m_cursor->t(), ctx,
                                                   derivationOrder);
@@ -188,9 +190,11 @@ double CurveParameterController::parameterAtIndex(int index) {
   return function()->evaluateCurveParameter(index, t, x, y, ctx);
 }
 
-bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
-                                                       double f) {
-  if (function()->properties().parameterAtIndexIsPreimage(parameterIndex)) {
+bool CurveParameterController::confirmParameterAtIndex(
+    const ParameterIndex& index, double f) {
+  // TODO(lorene): static_cast will not be needed
+  if (function()->properties().parameterAtIndexIsPreimage(
+          static_cast<int>(index))) {
     m_preimageGraphController.setImage(f);
     return true;
   }
@@ -210,7 +214,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
 
 bool CurveParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
-  int index = selectedRow();
+  int row = selectedRow();
   if (!ExplicitFloatParameterController::textFieldDidFinishEditing(textField,
                                                                    event)) {
     return false;
@@ -218,7 +222,9 @@ bool CurveParameterController::textFieldDidFinishEditing(
   StackViewController* stack = stackController();
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  if (function()->properties().parameterAtIndexIsPreimage(index)) {
+
+  // TODO(lorene): static_cast of row to a ParameterIndex
+  if (function()->properties().parameterAtIndexIsPreimage(row)) {
     stack->push(&m_preimageGraphController);
   }
   return true;

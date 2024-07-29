@@ -225,7 +225,6 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
                                                   double cursorX,
                                                   double cursorY,
                                                   Context* context) const {
-  // TODO(lorene): index -> ParameterIndex
   switch (properties().symbolType()) {
     case ContinuousFunctionProperties::SymbolType::T:
       return index == 0   ? cursorT

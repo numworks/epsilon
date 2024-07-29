@@ -199,7 +199,10 @@ class ContinuousFunctionProperties {
     if (isPolar()) return 4;
     return 2;
   }
+
+  // TODO(lorene): move to Graph, use a ParameterIndex input type
   bool parameterAtIndexIsEditable(int index) const;
+  // TODO(lorene): move to Graph, use a ParameterIndex input type
   bool parameterAtIndexIsPreimage(int index) const;
 
   CodePoint symbol() const;

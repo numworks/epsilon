@@ -286,8 +286,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
            .symbolicComputation = SymbolicComputation::
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
-    /* TODO: what we really need is to project the user expressions because they
-     * are results and are already reduced. */
+    // TODO: should we save the system expression in exact output instead ?
     SystemExpression exactOutputReduced = PoincareHelpers::CloneAndReduce(
         exactOutputExpression, context,
         {.complexFormat = complexFormat(),

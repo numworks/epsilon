@@ -1,14 +1,12 @@
-#include "app_helpers.h"
-
+#include <poincare/helpers/layout.h>
 #include <poincare/old/junior_layout.h>
+#include <poincare/src/layout/autocompleted_pair.h>
+#include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/n_ary.h>
 
-#include "autocompleted_pair.h"
-#include "code_point_layout.h"
-#include "k_tree.h"
-
-namespace Poincare::Internal {
-namespace AppHelpers {
+namespace Poincare::LayoutHelpers {
+using namespace Poincare::Internal;
 
 void MakeRightMostParenthesisTemporary(Tree* l) {
   if (!l->isRackLayout() || l->numberOfChildren() == 0) {
@@ -79,5 +77,4 @@ bool IsSanitizedRack(const Internal::Tree* rack) {
   return true;
 }
 
-}  // namespace AppHelpers
-}  // namespace Poincare::Internal
+}  // namespace Poincare::LayoutHelpers

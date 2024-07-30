@@ -5,13 +5,13 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
-#include <poincare/src/layout/app_helpers.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
@@ -336,7 +336,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
    * be analyzed to know if the parenthesis should be made temporary or not.
    * */
   if (!forceCursorRightOfText) {
-    Poincare::Internal::AppHelpers::MakeRightMostParenthesisTemporary(
+    Poincare::LayoutHelpers::MakeRightMostParenthesisTemporary(
         static_cast<JuniorLayout&>(resultLayout).tree());
   }
 

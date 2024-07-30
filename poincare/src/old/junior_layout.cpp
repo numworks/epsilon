@@ -1,7 +1,7 @@
 #include <assert.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/junior_layout.h>
-#include <poincare/src/layout/app_helpers.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/layouter.h>
@@ -10,8 +10,6 @@
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
-
-#include <algorithm>
 
 namespace Poincare {
 
@@ -68,7 +66,7 @@ JuniorLayout JuniorLayout::Builder(const Internal::Tree* tree) {
   if (!tree) {
     return JuniorLayout();
   }
-  assert(Internal::AppHelpers::IsSanitizedRack(tree));
+  assert(LayoutHelpers::IsSanitizedRack(tree));
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(JuniorLayoutNode) + size);
   JuniorLayoutNode* node = new (bufferNode) JuniorLayoutNode(tree, size);
@@ -87,7 +85,7 @@ JuniorLayout JuniorLayout::Builder(Internal::Tree* tree) {
 JuniorLayout JuniorLayout::Create(const Internal::Tree* structure,
                                   Internal::ContextTrees ctx) {
   Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
-  Internal::AppHelpers::SanitizeRack(tree);
+  LayoutHelpers::SanitizeRack(tree);
   return Builder(tree);
 }
 
@@ -154,7 +152,7 @@ JuniorLayout JuniorLayout::cloneWithoutMargins() {
 JuniorLayout JuniorLayout::cloneWithoutChildrenRacks() {
   Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
-  Internal::AppHelpers::DeleteChildrenRacks(clone);
+  LayoutHelpers::DeleteChildrenRacks(clone);
   return JuniorLayout::Builder(clone);
 }
 

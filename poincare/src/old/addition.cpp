@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/complex_cartesian.h>
@@ -14,7 +15,6 @@
 #include <poincare/old/subtraction.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
-#include <poincare/src/layout/app_helpers.h>
 
 #include <utility>
 
@@ -79,7 +79,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
    * If it's the case, return false, since implicit
    * addition should not contain any 'ᴇ'.
    * */
-  if (Internal::AppHelpers::ContainsSmallCapitalE(l.tree())) {
+  if (LayoutHelpers::ContainsSmallCapitalE(l.tree())) {
     return false;
   }
   // Step 2: Check if units can be implicitly added

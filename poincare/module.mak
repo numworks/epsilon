@@ -234,9 +234,9 @@ $(addprefix expression/, \
 ) \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
+  layout.cpp \
 ) \
 $(addprefix layout/, \
-  app_helpers.cpp \
   autocompleted_pair.cpp \
   code_point_layout.cpp \
   cursor_motion.cpp \

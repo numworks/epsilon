@@ -22,31 +22,34 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact) {
   assert(approximatedAngle && angleIsExact);
   const Tree* period = Angle::Period(ctx->m_angleUnit);
-  TreeRef approximateAngleTree;
   // Find the angle
   if (directTrigonometry) {
     exactAngle = ExtractExactAngleFromDirectTrigo(
         input, exactOutput, ctx->m_context, calculationPreferences);
   } else {
     exactAngle = exactOutput;
-    approximateAngleTree = approximateOutput.tree()->cloneTree();
-    assert(approximateAngleTree && !approximateAngleTree->isUndefined());
-    if (Sign::Get(approximateAngleTree).isStrictlyNegative()) {
-      // If the approximate angle is in [-π, π], set it in [0, 2π]
-      approximateAngleTree = PatternMatching::Create(
-          KAdd(KA, KB), {.KA = period, .KB = approximateAngleTree});
-    }
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
   /* Set exact angle in [0, 2π].
    * Use the reduction of frac part to compute modulo. */
-  TreeRef simplifiedAngle = PatternMatching::Create(
+  Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   ProjectionContext contextCopy = *ctx;
   Simplification::SimplifyWithAdaptiveStrategy(simplifiedAngle, &contextCopy);
   // Reduction is not expected to have failed
-  assert(!simplifiedAngle.isUninitialized());
+  assert(simplifiedAngle);
+
+  Tree* approximateAngleTree = nullptr;
+  if (!directTrigonometry) {
+    approximateAngleTree = approximateOutput.tree()->cloneTree();
+    assert(approximateAngleTree && !approximateAngleTree->isUndefined());
+    if (Sign::Get(approximateAngleTree).isStrictlyNegative()) {
+      // If the approximate angle is in [-π, π], set it in [0, 2π]
+      approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
+          KAdd(KA, KB), {.KA = period, .KB = approximateAngleTree}));
+    }
+  }
 
   /* Approximate the angle if:
    * - The fractional part could not be reduced (because the angle is not a
@@ -61,7 +64,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
               static_cast<const Tree*>(approximateAngleTree)),
           ctx->m_context)) {
     if (directTrigonometry) {
-      assert(approximateAngleTree.isUninitialized());
+      assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
        * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
        * the same sine and cosine. */
@@ -74,13 +77,12 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
                               sine, ctx->m_angleUnit, ctx->m_complexFormat) < 0;
       sine->removeTree();
       if (removePeriod) {
-        approximateAngleTree = PatternMatching::Create(
-            KSub(KA, KB), {.KA = period, .KB = approximateAngleTree});
+        approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
+            KSub(KA, KB), {.KA = period, .KB = approximateAngleTree}));
       }
     }
-    assert(!approximateAngleTree.isUninitialized());
-    MoveTreeOverTree(
-        approximateAngleTree,
+    assert(approximateAngleTree);
+    approximateAngleTree->moveTreeOverTree(
         Approximation::RootTreeToTree<double>(
             approximateAngleTree, ctx->m_angleUnit, ctx->m_complexFormat));
     exactAngle =
@@ -98,13 +100,12 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * computation. The angle should be between 0 and 2*pi so the approximation in
    * double is castable in float. */
   *approximatedAngle = static_cast<float>(Approximation::RootTreeToReal<double>(
-      approximateAngleTree.isUninitialized() ? simplifiedAngle
-                                             : approximateAngleTree,
+      approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       ctx->m_angleUnit, ctx->m_complexFormat));
-  simplifiedAngle->removeTree();
-  if (!approximateAngleTree.isUninitialized()) {
+  if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
+  simplifiedAngle->removeTree();
   *approximatedAngle = NewTrigonometry::ConvertAngleToRadian(*approximatedAngle,
                                                              ctx->m_angleUnit);
 }

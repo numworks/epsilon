@@ -5,8 +5,7 @@
 #include <poincare/src/memory/multiple_nodes_iterator.h>
 #include <poincare/src/memory/tree.h>
 
-namespace Poincare {
-using namespace Internal;
+namespace Poincare::Internal {
 
 bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
                                                    const Tree* approximated) {
@@ -61,4 +60,4 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
   return true;
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

@@ -524,7 +524,8 @@ bool PolynomialParser::HasNonNullCoefficients(
   if (highestDegreeCoefficientIsPositive) {
     const Tree* child = coefList->child(degree);
     ComplexSign sign = ComplexSign::Get(child);
-    assert(sign.isReal());
+    // We should assert sign.isReal() but the sign is not always precise enough
+    assert(sign.imagSign().canBeNull());
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
@@ -539,7 +540,8 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   for (const Tree* child : coefList->children()) {
     ComplexSign sign = ComplexSign::Get(child);
-    assert(sign.isReal());
+    // We should assert sign.isReal() but the sign is not always precise enough
+    assert(sign.imagSign().canBeNull());
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above

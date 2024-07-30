@@ -31,7 +31,7 @@ jobs:
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f distributions
       # - run: output/release/linux/test.bin --headless --limit-stack-usage -f escher
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f finance
-      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f graph
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f graph
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f ion
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f kandinsky
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f liba

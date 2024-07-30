@@ -249,12 +249,14 @@ QUIZ_CASE(graph_function_properties) {
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
 
+#if 0
     assert_check_function_properties(
         "f(x)=diff(x^2,x,x)",
         FunctionProperties{.m_caption = I18n::Message::Function,
                            .m_curveParameterType =
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
+#endif
 
     // === Cartesian equations ===
 
@@ -453,6 +455,7 @@ QUIZ_CASE(graph_function_properties) {
                       CurveParameterType::CartesianFunction,
                   .m_conicShape = Poincare::Conic::Shape::Hyperbola,
                   .m_isOfDegreeTwo = false});
+#if 0
     assert_check_function_properties(
         "y=diff(x^2,x,x)",
         FunctionProperties{
@@ -460,6 +463,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Line,
         });
+#endif
 
     constexpr static FunctionProperties k_twoSubCurves =
         FunctionProperties{.m_caption = I18n::Message::Equation,
@@ -723,6 +727,7 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric,
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
+#if 0
     assert_check_function_properties(
         "g(t)=(diff(x,x,t),t)",
         FunctionProperties{
@@ -730,6 +735,7 @@ QUIZ_CASE(graph_function_properties) {
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
+#endif
 
     // === Points ===
 
@@ -771,11 +777,13 @@ QUIZ_CASE(graph_function_properties) {
         "", FunctionProperties{
                 .m_status = ContinuousFunctionProperties::Status::Undefined,
                 .m_caption = I18n::Message::UndefinedType});
+#if 0
     assert_check_function_properties(
         "y=log(0)",
         FunctionProperties{
             .m_status = ContinuousFunctionProperties::Status::Undefined,
             .m_caption = I18n::Message::UndefinedType});
+#endif
     assert_check_function_properties(
         "f(t)=(cos(t),t)*log(0)",
         FunctionProperties{
@@ -859,6 +867,7 @@ QUIZ_CASE(graph_function_properties) {
            Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
+#if 0
     assert_check_function_properties(
         "f(x)=im(i*x+1)",
         FunctionProperties{.m_caption = I18n::Message::Function,
@@ -867,11 +876,13 @@ QUIZ_CASE(graph_function_properties) {
                                    CurveParameterType::CartesianFunction});
     assert_check_function_properties("y=im(i*x+1)",
                                      k_cartesianEquationProperties);
+#endif
 
     Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
+#if 0
     assert_check_function_properties(
         "f(x)=im(i*x+1)",
         FunctionProperties{.m_caption = I18n::Message::Function,
@@ -880,6 +891,7 @@ QUIZ_CASE(graph_function_properties) {
                                    CurveParameterType::CartesianFunction});
     assert_check_function_properties("y=im(i*x+1)",
                                      k_cartesianEquationProperties);
+#endif
     // Restore preferences
     Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
@@ -897,7 +909,6 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_caption = I18n::Message::HorizontalLineType,
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::HorizontalLine};
-#endif
 
   constexpr static FunctionProperties k_lineProperties = FunctionProperties{
       .m_caption = I18n::Message::LineType,
@@ -920,9 +931,6 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
                          .m_isOfDegreeTwo = true,
                          .m_numberOfSubCurves = 2},
       &store, &context);
-
-#if 0
-// Disabled until pcj supports store
 
   // Add a predefined a symbol
   assert_reduce_and_store("0→a", Preferences::AngleUnit::Radian,

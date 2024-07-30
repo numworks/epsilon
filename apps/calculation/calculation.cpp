@@ -294,7 +294,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
          .angleUnit = angleUnit(),
          .symbolicComputation =
              SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
-    m_equalSign = Poincare::ExactAndApproximateExpressionsAreEqual(
+    m_equalSign = Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
                       exactOutputReduced,
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal

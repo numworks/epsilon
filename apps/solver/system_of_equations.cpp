@@ -643,8 +643,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateBuffer, ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (Poincare::ExactAndApproximateExpressionsAreEqual(exact,
-                                                                approximate)) {
+    } else if (Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+                   exact, approximate)) {
       exactAndApproximateAreEqual = true;
     }
   }

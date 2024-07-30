@@ -8,8 +8,8 @@
 namespace Poincare {
 using namespace Internal;
 
-bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
-                                            const Tree* approximated) {
+bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
+                                                   const Tree* approximated) {
   assert(exact && approximated);
   assert(!approximated->isUndefined());
   assert(Simplification::IsSystem(exact) &&
@@ -48,7 +48,8 @@ bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
   }
   const Tree* approxChild = approximated->nextNode();
   for (const Tree* exactChild : exact->children()) {
-    if (!ExactAndApproximateExpressionsAreEqual(exactChild, approxChild)) {
+    if (!ExactAndApproximateExpressionsAreStriclyEqual(exactChild,
+                                                       approxChild)) {
       return false;
     }
     approxChild = approxChild->nextTree();

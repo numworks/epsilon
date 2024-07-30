@@ -7,8 +7,8 @@ class Tree;
 }
 
 // Exact and approximated must be system expressions
-bool ExactAndApproximateExpressionsAreEqual(const Internal::Tree* exact,
-                                            const Internal::Tree* approximated);
+bool ExactAndApproximateExpressionsAreStriclyEqual(
+    const Internal::Tree* exact, const Internal::Tree* approximated);
 
 }  // namespace Poincare
 

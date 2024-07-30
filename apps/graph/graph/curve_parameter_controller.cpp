@@ -136,46 +136,46 @@ int CurveParameterController::derivationOrderOfParameterAtIndex(
 
 double CurveParameterController::evaluateCurveAt(const ParameterIndex& index,
                                                  Context* context) const {
-  double cursor_t = m_cursor->t();
-  double cursor_x = m_cursor->x();
-  double cursor_y = m_cursor->y();
+  double cursorT = m_cursor->t();
+  double cursorX = m_cursor->x();
+  double cursorY = m_cursor->y();
 
   if (function()->properties().isScatterPlot() &&
-      (cursor_t != std::round(cursor_t) ||
-       cursor_t >= function()->iterateScatterPlot(context).length())) {
+      (cursorT != std::round(cursorT) ||
+       cursorT >= function()->iterateScatterPlot(context).length())) {
     /* FIXME This will display the first point of a multi-point scatter plot
      * when accessed through the Calculate button, which is not super useful,
      * but there is no real alternative barring some UX changes. */
-    cursor_t = 0.;
+    cursorT = 0.;
     Poincare::Coordinate2D<double> xy =
-        function()->evaluateXYAtParameter(cursor_t, context);
-    cursor_x = xy.x();
-    cursor_y = xy.y();
+        function()->evaluateXYAtParameter(cursorT, context);
+    cursorX = xy.x();
+    cursorY = xy.y();
   }
 
   switch (function()->properties().symbolType()) {
     case ContinuousFunctionProperties::SymbolType::T:
-      return (index == ParameterIndex::Abscissa) ? cursor_t
+      return (index == ParameterIndex::Abscissa) ? cursorT
              : index == ParameterIndex::Image1
-                 ? function()->evaluateXYAtParameter(cursor_t, context).x()
-                 : function()->evaluateXYAtParameter(cursor_t, context).y();
+                 ? function()->evaluateXYAtParameter(cursorT, context).x()
+                 : function()->evaluateXYAtParameter(cursorT, context).y();
     case ContinuousFunctionProperties::SymbolType::Theta:
     case ContinuousFunctionProperties::SymbolType::Radius: {
       switch (index) {
         case ParameterIndex::Abscissa:
-          return cursor_t;
+          return cursorT;
         case ParameterIndex::Image1:
-          return function()->evaluate2DAtParameter(cursor_t, context).y();
+          return function()->evaluate2DAtParameter(cursorT, context).y();
         case ParameterIndex::Image2:
-          return function()->evaluateXYAtParameter(cursor_t, context).x();
+          return function()->evaluateXYAtParameter(cursorT, context).x();
         case ParameterIndex::Image3:
-          return function()->evaluateXYAtParameter(cursor_t, context).y();
+          return function()->evaluateXYAtParameter(cursorT, context).y();
         default:
           OMG::unreachable();
       }
     }
     default:
-      return index == ParameterIndex::Abscissa ? cursor_x : cursor_y;
+      return index == ParameterIndex::Abscissa ? cursorX : cursorY;
   }
 }
 

@@ -34,6 +34,18 @@ class Angle {
     }
     OMG::unreachable();
   }
+
+  static const Tree* Period(AngleUnit angleUnit) {
+    switch (angleUnit) {
+      case AngleUnit::Degree:
+        return 360_e;
+      case AngleUnit::Radian:
+        return KMult(2_e, π_e);
+      case AngleUnit::Gradian:
+        return 400_e;
+    }
+    OMG::unreachable();
+  }
 };
 
 }  // namespace Poincare::Internal

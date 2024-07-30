@@ -1,12 +1,6 @@
-#include <apps/shared/expression_display_permissions.h>
-#include <apps/shared/poincare_helpers.h>
 #include <poincare/additional_results_helper.h>
-#include <poincare/k_tree.h>
 #include <poincare/new_trigonometry.h>
-#include <poincare/old/arc_cosine.h>
-#include <poincare/old/cosine.h>
-#include <poincare/old/sine.h>
-#include <poincare/old/subtraction.h>
+#include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
@@ -19,30 +13,27 @@ namespace Poincare {
 
 using namespace Internal;
 
-// TODO_PCJ: Convert this method to Poincare internal API
 void AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
-    const ProjectionContext* ctx, UserExpression& exactAngle,
-    float* approximatedAngle, bool* angleIsExact) {
+    const ProjectionContext* ctx,
+    ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation,
+    UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact) {
   assert(approximatedAngle && angleIsExact);
-  UserExpression period =
-      Trigonometry::AnglePeriodInAngleUnit(ctx->m_angleUnit);
-  UserExpression approximateAngle;
+  const Tree* period = Angle::Period(ctx->m_angleUnit);
+  TreeRef approximateAngle;
   // Find the angle
   if (directTrigonometry) {
     exactAngle = ExtractExactAngleFromDirectTrigo(
         input, exactOutput, ctx->m_context, calculationPreferences);
-    approximateAngle = UserExpression();
   } else {
     exactAngle = exactOutput;
-    approximateAngle = approximateOutput;
-    assert(!approximateAngle.isUninitialized() &&
-           !approximateAngle.isUndefined());
-    if (approximateAngle.isPositive(ctx->m_context) == OMG::Troolean::False) {
+    approximateAngle = approximateOutput.tree()->cloneTree();
+    assert(approximateAngle && !approximateAngle->isUndefined());
+    if (Sign::Get(approximateAngle).isStrictlyNegative()) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
-      approximateAngle = UserExpression::Create(
+      approximateAngle = PatternMatching::Create(
           KAdd(KA, KB), {.KA = period, .KB = approximateAngle});
     }
   }
@@ -50,45 +41,52 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
 
   /* Set exact angle in [0, 2π].
    * Use the reduction of frac part to compute modulo. */
-  UserExpression simplifiedAngle = UserExpression::Create(
+  TreeRef simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  Shared::PoincareHelpers::CloneAndSimplify(
-      &simplifiedAngle, ctx->m_context,
-      {.complexFormat = ctx->m_complexFormat, .angleUnit = ctx->m_angleUnit});
-  assert(simplifiedAngle.isUninitialized() || !simplifiedAngle.isUndefined());
+  ProjectionContext contextCopy = *ctx;
+  Simplification::SimplifyWithAdaptiveStrategy(simplifiedAngle, &contextCopy);
+  // Reduction is not expected to have failed
+  assert(!simplifiedAngle.isUninitialized());
 
   /* Approximate the angle if:
-   * - The reduction failed
    * - The fractional part could not be reduced (because the angle is not a
    * multiple of pi)
    * - Displaying the exact expression is forbidden. */
-  if (simplifiedAngle.isUninitialized() ||
-      simplifiedAngle.deepIsOfType({ExpressionNode::Type::FracPart}) ||
-      Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          exactAngle, simplifiedAngle, approximateAngle, ctx->m_context)) {
+  if (simplifiedAngle->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isFrac(); }) ||
+      shouldOnlyDisplayApproximation(
+          exactAngle,
+          UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
+          UserExpression::Builder(static_cast<const Tree*>(approximateAngle)),
+          ctx->m_context)) {
     if (directTrigonometry) {
       assert(approximateAngle.isUninitialized());
       /* Do not approximate the FracPart, which could lead to truncation error
        * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
        * the same sine and cosine. */
-      approximateAngle = ArcCosine::Builder(Cosine::Builder(exactAngle));
+      approximateAngle =
+          PatternMatching::Create(KACos(KCos(KA)), {.KA = exactAngle});
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
-      if (Shared::PoincareHelpers::ApproximateToScalar<double>(
-              Sine::Builder(exactAngle), ctx->m_context,
-              {.complexFormat = ctx->m_complexFormat,
-               .angleUnit = ctx->m_angleUnit}) < 0) {
-        approximateAngle = Subtraction::Builder(period, approximateAngle);
+      Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
+      bool removePeriod = Approximation::RootTreeToReal<double>(
+                              sine, ctx->m_angleUnit, ctx->m_complexFormat) < 0;
+      sine->removeTree();
+      if (removePeriod) {
+        approximateAngle = PatternMatching::Create(
+            KSub(KA, KB), {.KA = period, .KB = approximateAngle});
       }
     }
     assert(!approximateAngle.isUninitialized());
-    approximateAngle = Shared::PoincareHelpers::Approximate<double>(
-        approximateAngle, ctx->m_context,
-        {.complexFormat = ctx->m_complexFormat, .angleUnit = ctx->m_angleUnit});
-    exactAngle = approximateAngle;
+    MoveTreeOverTree(approximateAngle, Approximation::RootTreeToTree<double>(
+                                           approximateAngle, ctx->m_angleUnit,
+                                           ctx->m_complexFormat));
+    exactAngle =
+        UserExpression::Builder(static_cast<const Tree*>(approximateAngle));
     *angleIsExact = false;
   } else {
-    exactAngle = simplifiedAngle;
+    exactAngle =
+        UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle));
     *angleIsExact = true;
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
@@ -97,12 +95,13 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * cast it to float because approximation in float can overflow during the
    * computation. The angle should be between 0 and 2*pi so the approximation in
    * double is castable in float. */
-  *approximatedAngle =
-      static_cast<float>(Shared::PoincareHelpers::ApproximateToScalar<double>(
-          approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
-          ctx->m_context,
-          {.complexFormat = ctx->m_complexFormat,
-           .angleUnit = ctx->m_angleUnit}));
+  *approximatedAngle = static_cast<float>(Approximation::RootTreeToReal<double>(
+      approximateAngle.isUninitialized() ? simplifiedAngle : approximateAngle,
+      ctx->m_angleUnit, ctx->m_complexFormat));
+  simplifiedAngle->removeTree();
+  if (!approximateAngle.isUninitialized()) {
+    approximateAngle->removeTree();
+  }
   *approximatedAngle = NewTrigonometry::ConvertAngleToRadian(*approximatedAngle,
                                                              ctx->m_angleUnit);
 }

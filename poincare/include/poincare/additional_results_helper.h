@@ -7,12 +7,19 @@ namespace Poincare {
 
 class AdditionalResultsHelper final {
  public:
+  /* Shared::ShouldOnlyDisplayApproximation is used in TrigonometryAngleHelper
+   * and passed here as parameter. */
+  typedef bool (*ShouldOnlyDisplayApproximation)(
+      UserExpression input, UserExpression exactOutput,
+      UserExpression approximateOutput, Context* context);
   static void TrigonometryAngleHelper(
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Poincare::Preferences::CalculationPreferences calculationPreferences,
-      const Internal::ProjectionContext* ctx, UserExpression& exactAngle,
-      float* approximatedAngle, bool* angleIsExact);
+      const Internal::ProjectionContext* ctx,
+      ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation,
+      UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact);
+
   static UserExpression ExtractExactAngleFromDirectTrigo(
       const UserExpression input, const UserExpression exactOutput,
       Context* context,

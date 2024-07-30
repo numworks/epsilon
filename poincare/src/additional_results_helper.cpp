@@ -99,6 +99,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * cast it to float because approximation in float can overflow during the
    * computation. The angle should be between 0 and 2*pi so the approximation in
    * double is castable in float. */
+  assert(approximateAngleTree ||
+         simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
   *approximatedAngle = static_cast<float>(Approximation::RootTreeToReal<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       ctx->m_angleUnit, ctx->m_complexFormat));

@@ -3,6 +3,7 @@
 #include <apps/shared/expression_display_permissions.h>
 #include <poincare/additional_results_helper.h>
 #include <poincare/expression.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/undefined.h>
@@ -97,7 +98,7 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
       exactBuffer, ::Constant::MaxSerializedExpressionSize);
   assert(strcmp(exactBuffer, approximateBuffer) != 0);
   m_isStrictlyEqual[index] =
-      UserExpression::ExactAndApproximateExpressionsAreEqual(
+      Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
           UserExpression::Parse(exactBuffer, context),
           UserExpression::Parse(approximateBuffer, context));
 }

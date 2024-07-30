@@ -10,6 +10,7 @@
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
 #include "omg/unreachable.h"
+#include "poincare/code_points.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -215,11 +216,12 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     int derivationOrder = derivationOrderOfParameterAtIndex(index);
     if (properties.isPolar() &&
         (index == ParameterIndex::Image2 || index == ParameterIndex::Image3)) {
-      // TODO(lorene): do not hardcode 'x' and 'y"
       if (index == ParameterIndex::Image2) {
-        UTF8Helper::WriteCodePoint(buffer, bufferSize, 'x');
+        UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                   Poincare::CodePoints::k_cartesianSymbol);
       } else {
-        UTF8Helper::WriteCodePoint(buffer, bufferSize, 'y');
+        UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                   Poincare::CodePoints::k_ordinateSymbol);
       }
     } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(

@@ -5,6 +5,7 @@
 #include "sign.h"
 #include "simplification.h"
 #include "symbol.h"
+#include "systematic_reduction.h"
 
 using namespace Poincare::Internal;
 
@@ -82,6 +83,7 @@ int Degree::Get(const Tree* e, const Tree* symbol) {
   }
   // Expand the expression for a more accurate degree.
   Tree* clone = e->cloneTree();
+  SystematicReduction::DeepReduce(clone);
   AdvancedReduction::DeepExpand(clone);
   int degree = PrivateGet(clone, symbol);
   clone->removeTree();

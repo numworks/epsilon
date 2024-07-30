@@ -334,6 +334,7 @@ $(addprefix regression/, \
 
 _sources_poincare_test := $(addprefix test/, \
   old/approximation.cpp \
+  old/conics.cpp \
   old/derivative.cpp \
   old/distribution.cpp \
   old/erf_inv.cpp \

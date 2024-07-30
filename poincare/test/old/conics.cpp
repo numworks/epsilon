@@ -1,41 +1,43 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/function_properties/conic.h>
+#include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 using Shape = Conic::Shape;
 using CoordinateType = Conic::CoordinateType;
 
-CartesianConic buildCartesianConic(
-    const char* expression,
-    Preferences::ComplexFormat complexFormat = Cartesian) {
+CartesianConic buildCartesianConic(const char* expression) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext);
-  // TODO: project to have system expression
-  return CartesianConic(e);
+  ProjectionContext projContext = {.m_context = &globalContext,
+                                   .m_complexFormat = ComplexFormat::Cartesian};
+  Tree* e = parse_expression(expression, &globalContext);
+  Simplification::ProjectAndReduce(e, &projContext, false);
+  return CartesianConic(Expression::Builder(e));
 }
 
-PolarConic buildPolarConic(
-    const char* expression,
-    Preferences::ComplexFormat complexFormat = Cartesian) {
+PolarConic buildPolarConic(const char* expression) {
   Shared::GlobalContext globalContext;
-  Expression e = parse_expression(expression, &globalContext);
-  // TODO: project to have system expression
-  return PolarConic(e, &globalContext, complexFormat);
+  ProjectionContext projContext = {.m_context = &globalContext,
+                                   .m_complexFormat = ComplexFormat::Cartesian};
+  Tree* e = parse_expression(expression, &globalContext);
+  Simplification::ProjectAndReduce(e, &projContext, false);
+  return PolarConic(Expression::Builder(e));
 }
 
-ParametricConic buildParametricConic(
-    const char* expression,
-    Preferences::ComplexFormat complexFormat = Cartesian) {
+ParametricConic buildParametricConic(const char* expression) {
   Shared::GlobalContext globalContext;
+  ProjectionContext projContext = {.m_context = &globalContext,
+                                   .m_complexFormat = ComplexFormat::Cartesian};
   // Prevent t from being interpreted as ton
   Poincare::VariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);
-  Expression e = parse_expression(expression, &tContext);
-  // TODO: project to have system expression
-  return ParametricConic(e, &globalContext, complexFormat);
+  Tree* e = parse_expression(expression, &tContext);
+  Simplification::ProjectAndReduce(e, &projContext, false);
+  return ParametricConic(Expression::Builder(e));
 }
 
 void quiz_assert_shape(const char* expression, CoordinateType type,
@@ -256,7 +258,7 @@ QUIZ_CASE(poincare_conics_polar_shape) {
   quiz_assert_polar_shape("4.1cos(θ+2)", Shape::Circle);
   quiz_assert_polar_shape("cos(3θ)", Shape::Undefined);
   quiz_assert_polar_shape("(π+2)cos(θ)", Shape::Circle);
-  /* Not implemented:
+  /* TODO: Not implemented:
    * quiz_assert_polar_shape("-5cos(θ) + 2sin(θ)", Shape::Circle);
    */
 
@@ -276,7 +278,7 @@ QUIZ_CASE(poincare_conics_parametric_shape) {
   quiz_assert_parametric_shape("(cos(t),t)", Shape::Undefined);
   quiz_assert_parametric_shape("(4t^2-2t+3,-t+1)", Shape::Parabola);
   quiz_assert_parametric_shape("(0.2ln(t),-8ln(t)^2)", Shape::Parabola);
-  /* Not implemented:
+  /* TODO: Not implemented:
    * quiz_assert_parametric_shape("(0.2ln(t),-(π+2)ln(t)^2)",
    Shape::Parabola);
    * quiz_assert_parametric_shape("(0.2ln(t)+3,-(π+2)ln(t)^2+5)",
@@ -290,7 +292,7 @@ QUIZ_CASE(poincare_conics_parametric_shape) {
                                Shape::Ellipse);
   quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(5t+2)+0.1)",
                                Shape::Undefined);
-  /* Not implemented:
+  /* TODO: Not implemented:
    * quiz_assert_parametric_shape("(A*sec(B*t+C)+D,G*tan(B*t+E)+F)",
                                   Shape::Hyperbola); */
 }

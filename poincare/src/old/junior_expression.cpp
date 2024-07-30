@@ -1,3 +1,4 @@
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
@@ -9,7 +10,6 @@
 #include <poincare/old/point_evaluation.h>
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/advanced_reduction.h>
-#include <poincare/src/expression/app_helpers.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/continuity.h>
@@ -686,8 +686,8 @@ SystemExpression SystemExpression::approximateListAndSort() const {
 
 bool SystemExpression::ExactAndApproximateExpressionsAreEqual(
     SystemExpression exactExpression, SystemExpression approximateExpression) {
-  return AppHelpers::ExactAndApproximateExpressionsAreEqual(
-      exactExpression, approximateExpression);
+  return ExactAndApproximateExpressionsAreEqual(exactExpression,
+                                                approximateExpression);
 }
 
 SystemExpression SystemExpression::removeUndefListElements() const {

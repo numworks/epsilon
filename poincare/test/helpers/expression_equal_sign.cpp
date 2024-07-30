@@ -1,9 +1,9 @@
-#include <poincare/src/expression/app_helpers.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/src/expression/k_tree.h>
 
-#include "helper.h"
+#include "../helper.h"
 
-using namespace Poincare::AppHelpers;
+using namespace Poincare;
 
 QUIZ_CASE(pcj_exact_and_approximate_are_equal) {
   QUIZ_ASSERT(ExactAndApproximateExpressionsAreEqual(2_e, 2.0_fe));

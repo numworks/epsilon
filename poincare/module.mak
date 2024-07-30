@@ -178,7 +178,6 @@ $(addprefix expression/, \
   algebraic.cpp \
   aliases.cpp \
   arithmetic.cpp \
-  app_helpers.cpp \
   approximation.cpp \
   approximation_derivative.cpp \
   approximation_helpers.cpp \
@@ -232,6 +231,9 @@ $(addprefix expression/, \
   unit_representatives.cpp \
   variables.cpp \
   vector.cpp \
+) \
+$(addprefix helpers/, \
+  expression_equal_sign.cpp \
 ) \
 $(addprefix layout/, \
   app_helpers.cpp \
@@ -348,7 +350,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/simplification.cpp \
   old/zoom.cpp \
   api.cpp \
-  app_helpers.cpp \
   approximation.cpp \
   beautification.cpp \
   comparison.cpp \
@@ -374,6 +375,9 @@ _sources_poincare_test := $(addprefix test/, \
   sign.cpp \
   simplification.cpp \
   tree_stack.cpp \
+$(addprefix helpers/, \
+  expression_equal_sign.cpp \
+) \
 )
 
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \

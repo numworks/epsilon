@@ -1,14 +1,12 @@
-#include "app_helpers.h"
-
+#include <poincare/helpers/expression_equal_sign.h>
+#include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/multiple_nodes_iterator.h>
 #include <poincare/src/memory/tree.h>
 
-#include "simplification.h"
-
-using namespace Poincare::Internal;
-namespace Poincare::AppHelpers {
+namespace Poincare {
+using namespace Internal;
 
 bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
                                             const Tree* approximated) {
@@ -62,4 +60,4 @@ bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
   return true;
 }
 
-}  // namespace Poincare::AppHelpers
+}  // namespace Poincare

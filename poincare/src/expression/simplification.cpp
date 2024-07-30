@@ -99,6 +99,16 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   return changed;
 }
 
+#if ASSERTIONS
+bool Simplification::IsSystem(const Tree* e) {
+  Tree* c = e->cloneTree();
+  ProjectionContext ctx;
+  bool changed = ToSystem(c, &ctx);
+  c->removeTree();
+  return !changed;
+}
+#endif
+
 bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;

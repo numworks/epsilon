@@ -21,6 +21,9 @@ class Simplification {
                                    ProjectionContext* projectionContext);
   static bool ToSystem(Tree* e, ProjectionContext* projectionContext);
   TREE_REF_WRAP_1(ToSystem, ProjectionContext*);
+#if ASSERTIONS
+  static bool IsSystem(const Tree* e);
+#endif
   static bool ReduceSystem(Tree* e, bool advanced);
 
  private:

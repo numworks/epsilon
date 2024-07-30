@@ -13,7 +13,7 @@ namespace Poincare {
 
 using namespace Internal;
 
-static inline double positiveModulo(double i, double n) {
+double PositiveModulo(double i, double n) {
   return std::fmod(std::fmod(i, n) + n, n);
 }
 
@@ -95,7 +95,7 @@ bool DetectLinearPatternOfTrig(const Tree* e, const char* symbol, double* a,
     *a = 1.0;
     *b = Approximation::To<double>(bTree);
     *c = Approximation::To<double>(cTree) - isSin * M_PI_2;
-    *c = positiveModulo(*c, 2 * M_PI);
+    *c = PositiveModulo(*c, 2 * M_PI);
     coefList->removeTree();
     return true;
   }

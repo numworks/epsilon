@@ -550,7 +550,8 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
     return;
   }
   if (bY == bX) {
-    if (std::fabs(aY) == std::fabs(aX) && std::fabs(cX - cY) == M_PI_2) {
+    if (std::fabs(aY) == std::fabs(aX) &&
+        PositiveModulo(cX - cY, M_PI) == M_PI_2) {
       m_shape = Shape::Circle;
       return;
     }

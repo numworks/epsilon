@@ -284,6 +284,7 @@ QUIZ_CASE(poincare_conics_parametric_shape) {
    * quiz_assert_parametric_shape("(0.2ln(t)+3,-(π+2)ln(t)^2+5)",
    Shape::Parabola); */
 
+  quiz_assert_parametric_shape("(cos(t),sin(t))", Shape::Circle);
   quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(-t+3)+0.1)", Shape::Circle);
   quiz_assert_parametric_shape("(2sin(-t+3)+π,2cos(-t+3)+0.1)", Shape::Circle);
   quiz_assert_parametric_shape("(2cos(-t+3)+π,2sin(-t+2)+0.1)", Shape::Ellipse);

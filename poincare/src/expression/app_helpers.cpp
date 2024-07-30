@@ -43,7 +43,9 @@ bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: 1 + i/2 == 1 + 0.5i */
-  assert(exact->numberOfChildren() == approximated->numberOfChildren());
+  if (exact->numberOfChildren() != approximated->numberOfChildren()) {
+    return false;
+  }
   const Tree* approxChild = approximated->nextNode();
   for (const Tree* exactChild : exact->children()) {
     if (!ExactAndApproximateExpressionsAreEqual(exactChild, approxChild)) {

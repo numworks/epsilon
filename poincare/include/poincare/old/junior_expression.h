@@ -259,9 +259,6 @@ class JuniorExpression : public OExpression {
   bool isScalarComplex(
       Preferences::CalculationPreferences calculationPreferences) const;
 
-  static bool ExactAndApproximateExpressionsAreEqual(
-      SystemExpression exactExpression, SystemExpression approximateExpression);
-
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ
     assert(false);

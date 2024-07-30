@@ -1,4 +1,3 @@
-#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
@@ -682,12 +681,6 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
   return SystemExpression::Builder(clone);
-}
-
-bool SystemExpression::ExactAndApproximateExpressionsAreEqual(
-    SystemExpression exactExpression, SystemExpression approximateExpression) {
-  return ExactAndApproximateExpressionsAreEqual(exactExpression,
-                                                approximateExpression);
 }
 
 SystemExpression SystemExpression::removeUndefListElements() const {

@@ -5,6 +5,7 @@
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/matrix.h>
@@ -642,8 +643,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateBuffer, ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (UserExpression::ExactAndApproximateExpressionsAreEqual(
-                   exact, approximate)) {
+    } else if (Poincare::ExactAndApproximateExpressionsAreEqual(exact,
+                                                                approximate)) {
       exactAndApproximateAreEqual = true;
     }
   }

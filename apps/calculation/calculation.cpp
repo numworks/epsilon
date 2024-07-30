@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/expression_display_permissions.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/expression_node.h>
 #include <poincare/old/nonreal.h>
@@ -293,7 +294,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
          .angleUnit = angleUnit(),
          .symbolicComputation =
              SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
-    m_equalSign = UserExpression::ExactAndApproximateExpressionsAreEqual(
+    m_equalSign = Poincare::ExactAndApproximateExpressionsAreEqual(
                       exactOutputReduced,
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal

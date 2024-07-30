@@ -49,6 +49,7 @@ class CurveParameterController
  private:
   using ParameterCell = Escher::MenuCellWithEditableText<
       Escher::OneLineBufferTextView<KDFont::Size::Large>>;
+
   enum class ParameterIndex {
     Abscissa = 0,
     Image1,
@@ -84,6 +85,11 @@ class CurveParameterController
   bool parameterAtIndexIsFirstComponent(const ParameterIndex& index) const;
   bool parameterAtIndexIsEditable(const ParameterIndex& index) const;
   int derivationOrderOfParameterAtIndex(const ParameterIndex& index) const;
+  double evaluateCurveAt(const ParameterIndex& index,
+                         Poincare::Context* context) const;
+  double evaluateDerivativeAt(const ParameterIndex& index, int derivationOrder,
+                              Poincare::Context* context) const;
+
   Escher::StackViewController* stackController() const;
 
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,

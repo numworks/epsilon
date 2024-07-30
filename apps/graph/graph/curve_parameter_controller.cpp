@@ -9,6 +9,7 @@
 #include "../app.h"
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
+#include "omg/unreachable.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -132,30 +133,90 @@ int CurveParameterController::derivationOrderOfParameterAtIndex(
   }
 }
 
+double CurveParameterController::evaluateCurveAt(const ParameterIndex& index,
+                                                 Context* context) const {
+  double cursor_t = m_cursor->t();
+  double cursor_x = m_cursor->x();
+  double cursor_y = m_cursor->y();
+
+  if (function()->properties().isScatterPlot() &&
+      (cursor_t != std::round(cursor_t) ||
+       cursor_t >= function()->iterateScatterPlot(context).length())) {
+    /* FIXME This will display the first point of a multi-point scatter plot
+     * when accessed through the Calculate button, which is not super useful,
+     * but there is no real alternative barring some UX changes. */
+    cursor_t = 0.;
+    Poincare::Coordinate2D<double> xy =
+        function()->evaluateXYAtParameter(cursor_t, context);
+    cursor_x = xy.x();
+    cursor_y = xy.y();
+  }
+
+  switch (function()->properties().symbolType()) {
+    case ContinuousFunctionProperties::SymbolType::T:
+      return (index == ParameterIndex::Abscissa) ? cursor_t
+             : index == ParameterIndex::Image1
+                 ? function()->evaluateXYAtParameter(cursor_t, context).x()
+                 : function()->evaluateXYAtParameter(cursor_t, context).y();
+    case ContinuousFunctionProperties::SymbolType::Theta:
+    case ContinuousFunctionProperties::SymbolType::Radius: {
+      switch (index) {
+        case ParameterIndex::Abscissa:
+          return cursor_t;
+        case ParameterIndex::Image1:
+          return function()->evaluate2DAtParameter(cursor_t, context).y();
+        case ParameterIndex::Image2:
+          return function()->evaluateXYAtParameter(cursor_t, context).x();
+        case ParameterIndex::Image3:
+          return function()->evaluateXYAtParameter(cursor_t, context).y();
+        default:
+          OMG::unreachable();
+      }
+    }
+    default:
+      return index == ParameterIndex::Abscissa ? cursor_x : cursor_y;
+  }
+}
+
+double CurveParameterController::evaluateDerivativeAt(
+    const ParameterIndex& index, int derivationOrder, Context* context) const {
+  assert(derivationOrder == 1 || derivationOrder == 2);
+  assert(function()->canDisplayDerivative());
+  bool firstComponent = parameterAtIndexIsFirstComponent(index);
+  PointOrScalar<double> derivative = function()->approximateDerivative<double>(
+      m_cursor->t(), context, derivationOrder);
+  if (derivative.isScalar()) {
+    assert(firstComponent);
+    return derivative.toScalar();
+  }
+  assert(derivative.isPoint());
+  Coordinate2D<double> xy = derivative.toPoint();
+  return firstComponent ? xy.x() : xy.y();
+}
+
 void CurveParameterController::fillParameterCellAtRow(int row) {
   assert(row >= 0);
   if (row >= k_numberOfParameterRows) {
     return;
   }
-  ParameterIndex parameter_index = static_cast<ParameterIndex>(row);
+  ParameterIndex index = static_cast<ParameterIndex>(row);
 
   ContinuousFunctionProperties properties = function()->properties();
   if (row < properties.numberOfCurveParameters()) {
-    m_parameterCells[row].setEditable(
-        parameterAtIndexIsEditable(parameter_index));
+    m_parameterCells[row].setEditable(parameterAtIndexIsEditable(index));
   }
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
   char buffer[bufferSize];
-  if (parameter_index == ParameterIndex::Abscissa) {
+  if (index == ParameterIndex::Abscissa) {
     UTF8Helper::WriteCodePoint(buffer, bufferSize, properties.symbol());
   } else {
-    bool firstComponent = parameterAtIndexIsFirstComponent(parameter_index);
-    int derivationOrder = derivationOrderOfParameterAtIndex(parameter_index);
-    if (properties.isPolar() && (parameter_index == ParameterIndex::Image2 ||
-                                 parameter_index == ParameterIndex::Image3)) {
+    bool firstComponent = parameterAtIndexIsFirstComponent(index);
+    int derivationOrder = derivationOrderOfParameterAtIndex(index);
+    if (properties.isPolar() &&
+        (index == ParameterIndex::Image2 || index == ParameterIndex::Image3)) {
       // TODO(lorene): do not hardcode 'x' and 'y"
-      if (parameter_index == ParameterIndex::Image2) {
+      if (index == ParameterIndex::Image2) {
         UTF8Helper::WriteCodePoint(buffer, bufferSize, 'x');
       } else {
         UTF8Helper::WriteCodePoint(buffer, bufferSize, 'y');
@@ -175,41 +236,14 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 
 double CurveParameterController::parameterAtIndex(int index) {
   assert(0 <= index && index <= k_numberOfParameterRows);
-  ParameterIndex parameter_index = static_cast<ParameterIndex>(index);
+  ParameterIndex parameterIndex = static_cast<ParameterIndex>(index);
 
-  Poincare::Context* ctx = App::app()->localContext();
-  int derivationOrder = derivationOrderOfParameterAtIndex(parameter_index);
+  int derivationOrder = derivationOrderOfParameterAtIndex(parameterIndex);
   if (derivationOrder >= 1) {
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    assert(function()->canDisplayDerivative());
-    bool firstComponent = parameterAtIndexIsFirstComponent(parameter_index);
-    PointOrScalar<double> derivative =
-        function()->approximateDerivative<double>(m_cursor->t(), ctx,
-                                                  derivationOrder);
-    if (derivative.isScalar()) {
-      assert(firstComponent);
-      return derivative.toScalar();
-    }
-    assert(derivative.isPoint());
-    Coordinate2D<double> xy = derivative.toPoint();
-    return firstComponent ? xy.x() : xy.y();
+    return evaluateDerivativeAt(parameterIndex, derivationOrder,
+                                App::app()->localContext());
   }
-  double t = m_cursor->t();
-  double x = m_cursor->x();
-  double y = m_cursor->y();
-  if (function()->properties().isScatterPlot() &&
-      (t != std::round(t) ||
-       t >= function()->iterateScatterPlot(ctx).length())) {
-    /* FIXME This will display the first point of a multi-point scatter plot
-     * when accessed through the Calculate button, which is not super useful,
-     * but there is no real alternative barring some UX changes. */
-    t = 0.;
-    Poincare::Coordinate2D<double> xy =
-        function()->evaluateXYAtParameter(t, ctx);
-    x = xy.x();
-    y = xy.y();
-  }
-  return function()->evaluateCurveParameter(index, t, x, y, ctx);
+  return evaluateCurveAt(parameterIndex, App::app()->localContext());
 }
 
 bool CurveParameterController::confirmParameterAtIndex(

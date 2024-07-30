@@ -15,7 +15,6 @@
 #include <algorithm>
 
 #include "global_context.h"
-#include "omg/unreachable.h"
 #include "poincare_helpers.h"
 
 using namespace Poincare;
@@ -219,36 +218,6 @@ CartesianConic ContinuousFunction::cartesianConicParameters(
 
 KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
   return color(derivationOrderFromSubCurveIndex(subCurveIndex));
-}
-
-double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
-                                                  double cursorX,
-                                                  double cursorY,
-                                                  Context* context) const {
-  switch (properties().symbolType()) {
-    case ContinuousFunctionProperties::SymbolType::T:
-      return index == 0   ? cursorT
-             : index == 1 ? evaluateXYAtParameter(cursorT, context).x()
-                          : evaluateXYAtParameter(cursorT, context).y();
-    case ContinuousFunctionProperties::SymbolType::Theta:
-    case ContinuousFunctionProperties::SymbolType::Radius: {
-      // TODO(lorene): switch-case on ParameterIndex
-      switch (index) {
-        case 0:
-          return cursorT;
-        case 1:
-          return evaluate2DAtParameter(cursorT, context).y();
-        case 2:
-          return evaluateXYAtParameter(cursorT, context).x();
-        case 3:
-          return evaluateXYAtParameter(cursorT, context).y();
-        default:
-          OMG::unreachable();
-      }
-    }
-    default:
-      return index == 0 ? cursorX : cursorY;
-  }
 }
 
 void ContinuousFunction::updateModel(Context* context, bool wasCartesian) {

@@ -992,6 +992,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       // TODO
     case UnitDisplay::BasicSI:
       MoveTreeOverTree(extractedUnits, dimension.unit.vector.toBaseUnits());
+      assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       return true;
     case UnitDisplay::None:
@@ -1051,6 +1052,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
     ratio->removeTree();
     Simplification::ReduceSystem(e, false);
     // Multiply value and extractedUnits.
+    assert(e->nextTree() == extractedUnits);
     e->cloneNodeAtNode(KMult.node<2>);
     return;
   }
@@ -1082,6 +1084,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
       }
       e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
       // Multiply value and extractedUnits.
+      assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       return;
     }

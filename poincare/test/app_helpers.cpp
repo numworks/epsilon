@@ -7,6 +7,7 @@ using namespace Poincare::AppHelpers;
 
 QUIZ_CASE(pcj_exact_and_approximate_are_equal) {
   QUIZ_ASSERT(ExactAndApproximateExpressionsAreEqual(2_e, 2.0_fe));
+  QUIZ_ASSERT(ExactAndApproximateExpressionsAreEqual(-2_e, -2.0_fe));
   QUIZ_ASSERT(ExactAndApproximateExpressionsAreEqual(1_e / 2_e, 0.5_fe));
   QUIZ_ASSERT(
       !ExactAndApproximateExpressionsAreEqual(1_e / 3_e, 0.3333333333333_fe));

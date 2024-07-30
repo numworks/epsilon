@@ -48,6 +48,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
    * We then compute the conic's type and canonize the coefficients. */
 
   const Tree* e = analyzedExpression.tree();
+  assert(!e->isDependency());
 
   int dy = Degree::Get(e, y);
   if (dy < 1 || dy > 2) {
@@ -426,6 +427,7 @@ double CartesianConic::getRadius() const {
 PolarConic::PolarConic(const SystemExpression& analyzedExpression,
                        const char* symbol) {
   const Tree* e = analyzedExpression.tree();
+  assert(!e->isDependency());
 
   // Detect the pattern r = a
   int deg = Degree::Get(e, symbol);

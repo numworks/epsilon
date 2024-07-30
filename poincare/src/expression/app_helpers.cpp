@@ -14,6 +14,8 @@ bool ExactAndApproximateExpressionsAreEqual(const Tree* exact,
                                             const Tree* approximated) {
   assert(exact && approximated);
   assert(!approximated->isUndefined());
+  assert(Simplification::IsSystem(exact) &&
+         Simplification::IsSystem(approximated));
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */

@@ -10,7 +10,7 @@ class Tree;
 
 namespace AppHelpers {
 
-// Expects system expressions ?
+// Exact and approximated must be system expressions
 bool ExactAndApproximateExpressionsAreEqual(const Internal::Tree* exact,
                                             const Internal::Tree* approximated);
 

@@ -8,21 +8,21 @@
 namespace Poincare::Internal {
 
 bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
-                                                   const Tree* approximated) {
-  assert(exact && approximated);
-  assert(!approximated->isUndefined());
+                                                   const Tree* approximate) {
+  assert(exact && approximate);
+  assert(!approximate->isUndefined());
   assert(Simplification::IsSystem(exact) &&
-         Simplification::IsSystem(approximated));
+         Simplification::IsSystem(approximate));
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */
-  if (exact->isRational() && approximated->isFloat()) {
+  if (exact->isRational() && approximate->isFloat()) {
     /* Using parsing is the safest way to create a Decimal that will be the same
      * as what the user will read. */
     /* TODO: We need to be careful to the number of significants digits 1/16 ~=
      * 0.63 with 2 digits. But until now the app will call this with the
      * truncated float. */
-    Tree* layout = Layouter::LayoutExpression(approximated->cloneTree());
+    Tree* layout = Layouter::LayoutExpression(approximate->cloneTree());
     Tree* parsed = Parser::Parse(layout, nullptr);
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
            (parsed->isOpposite() && parsed->child(0)->isRationalOrFloat() ||
@@ -35,17 +35,17 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
     return result;
   }
 
-  if (exact->type() != approximated->type()) {
+  if (exact->type() != approximate->type()) {
     return false;
   }
 
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: 1 + i/2 == 1 + 0.5i */
-  if (exact->numberOfChildren() != approximated->numberOfChildren()) {
+  if (exact->numberOfChildren() != approximate->numberOfChildren()) {
     return false;
   }
-  const Tree* approxChild = approximated->nextNode();
+  const Tree* approxChild = approximate->nextNode();
   for (const Tree* exactChild : exact->children()) {
     if (!ExactAndApproximateExpressionsAreStriclyEqual(exactChild,
                                                        approxChild)) {
@@ -56,7 +56,7 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
 
   /* The node content is ignored but should not matter, unless exact can be a
    * float. */
-  assert(exact->nodeIsIdenticalTo(approximated));
+  assert(exact->nodeIsIdenticalTo(approximate));
   return true;
 }
 

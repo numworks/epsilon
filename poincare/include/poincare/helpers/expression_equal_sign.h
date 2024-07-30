@@ -9,14 +9,14 @@ class Tree;
 
 // Exact and approximated must be system expressions
 bool ExactAndApproximateExpressionsAreStriclyEqual(
-    const Internal::Tree* exact, const Internal::Tree* approximated);
+    const Internal::Tree* exact, const Internal::Tree* approximate);
 }  // namespace Internal
 
 // Exact and approximated must be system expressions
 inline bool ExactAndApproximateExpressionsAreStriclyEqual(
-    SystemExpression exact, SystemExpression approximated) {
+    SystemExpression exact, SystemExpression approximate) {
   return Internal::ExactAndApproximateExpressionsAreStriclyEqual(exact,
-                                                                 approximated);
+                                                                 approximate);
 }
 
 }  // namespace Poincare

@@ -869,7 +869,6 @@ QUIZ_CASE(graph_function_properties) {
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {
-#if 0
   constexpr static FunctionProperties k_horizontalLineProperties =
       FunctionProperties{
           .m_caption = I18n::Message::HorizontalLineType,
@@ -924,6 +923,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   assert_reduce_and_store("1→y", Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
+#if 0
   assert_check_function_properties("y=x", k_lineProperties, &store, &context);
 
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

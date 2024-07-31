@@ -808,6 +808,18 @@ NewExpression NewExpression::replaceSymbolWithExpression(
   return *this;
 }
 
+bool UserExpression::replaceSymbols(Poincare::Context* context,
+                                    SymbolicComputation symbolic) {
+  /* Caution: must be called on an unprojected expression!
+   * Indeed, the projection of the replacements has to be done at the same time
+   * as the rest of the expression (otherwise inconsistencies could appear like
+   * with random for example). */
+  Tree* clone = tree()->cloneTree();
+  bool didReplace = Projection::DeepReplaceUserNamed(clone, context, symbolic);
+  *this = NewExpression::Builder(clone);
+  return didReplace;
+}
+
 static bool IsIgnoredSymbol(const NewExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
   if (e->type() != ExpressionNode::Type::Symbol) {

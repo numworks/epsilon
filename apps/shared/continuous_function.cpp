@@ -852,7 +852,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
-      result = NewExpression::ExpressionWithoutSymbols(result, context);
+      result.replaceSymbols(context);
       if (!result.isUninitialized()) {
         // Result is not circularly defined.
         return result;
@@ -928,7 +928,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
-  result = NewExpression::ExpressionWithoutSymbols(result, context);
+  result.replaceSymbols(context);
+
   if (result.isUninitialized()) {
     // result was Circularly defined
     return Undefined::Builder();

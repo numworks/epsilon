@@ -288,6 +288,10 @@ class JuniorExpression : public OExpression {
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
                                             const NewExpression& expression,
                                             bool onlySecondTerm = false);
+  bool replaceSymbols(
+      Poincare::Context* context,
+      SymbolicComputation symbolic =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   typedef OMG::Troolean (*ExpressionTrinaryTest)(const NewExpression e,
                                                  Context* context,

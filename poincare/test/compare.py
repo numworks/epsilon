@@ -50,12 +50,20 @@ def main():
         sys.exit(1)
 
     fixed, broken, changed = [], [], []
+    totalOK, totalBAD, totalCRASH = 0, 0, 0
     for old, new in zip(before, after):
         if not old:
             continue
         old = parse_line(old)
         new = parse_line(new)
         assert old.input == new.input
+
+        if new.result == "OK":
+            totalOK += 1
+        elif new.result == "BAD":
+            totalBAD += 1
+        elif new.result == "CRASH":
+            totalCRASH += 1
 
         if new == old:
             continue
@@ -87,6 +95,17 @@ def main():
             print(item)
         if args.markdown:
             print(f"</pre></details>")
+
+    if args.markdown:
+        print(f"<details><summary>Overall status</summary>")
+        print("")
+        print(f"```mermaid")
+        print(f"pie showdata")
+        for total, name in (totalOK, "OK"), (totalBAD, "BAD"), (totalCRASH, "CRASH"):
+            print('"', name, '" : ', total)
+        print(f"```")
+        print("")
+        print(f"</details>")
 
 
 if __name__ == "__main__":

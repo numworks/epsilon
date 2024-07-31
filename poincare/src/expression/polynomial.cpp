@@ -525,8 +525,11 @@ bool PolynomialParser::HasNonNullCoefficients(
   if (highestDegreeCoefficientIsPositive) {
     const Tree* child = coefList->child(degree);
     ComplexSign sign = ComplexSign::Get(child);
-    // We should assert sign.isReal() but the sign is not always precise enough
-    assert(sign.imagSign().canBeNull());
+    /* We should assert sign.isReal() but the sign is not always precise enough,
+     * so check approximation is real. */
+    assert(Dimension::Get(child).isScalar() &&
+           (Approximation::ToComplex<double>(child).imag() == 0 ||
+            std::isnan(Approximation::ToComplex<double>(child).imag())));
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
@@ -541,8 +544,11 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   for (const Tree* child : coefList->children()) {
     ComplexSign sign = ComplexSign::Get(child);
-    // We should assert sign.isReal() but the sign is not always precise enough
-    assert(sign.imagSign().canBeNull());
+    /* We should assert sign.isReal() but the sign is not always precise enough,
+     * so check approximation is real. */
+    assert(Dimension::Get(child).isScalar() &&
+           (Approximation::ToComplex<double>(child).imag() == 0 ||
+            std::isnan(Approximation::ToComplex<double>(child).imag())));
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above

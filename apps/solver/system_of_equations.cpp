@@ -66,19 +66,26 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
       Poincare::Expression reduced = exact.cloneAndReduce({});
       Poincare::Layout exactLayout =
           PoincareHelpers::CreateLayout(exact, context);
-      ApproximationContext ctx(context);
-      Poincare::Expression approximated =
-          reduced.approximateToTree<double>(ctx);
-      Poincare::Layout approximatedLayout =
-          PoincareHelpers::CreateLayout(approximated, context);
-      if (exactLayout.isIdenticalTo(approximatedLayout)) {
-        approximatedLayout = Poincare::Layout();
+      Poincare::Layout approximatedLayout;
+      bool areStriclyEqual = false;
+      if (!m_hasMoreSolutions) {
+        /* TODO: even if some variables depend on t, others may be worth to
+         * approximate, alternatively approx everything with ReplaceScalars */
+        ApproximationContext ctx(context);
+        Poincare::Expression approximated =
+            reduced.approximateToTree<double>(ctx);
+        Internal::ProjectionContext projCtx;  // TODO: pass arguments
+        areStriclyEqual =
+            Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
+                reduced, approximated, &projCtx);
+        approximatedLayout =
+            PoincareHelpers::CreateLayout(approximated, context);
+        if (exactLayout.isIdenticalTo(approximatedLayout)) {
+          approximatedLayout = Poincare::Layout();
+        }
       }
-
       m_solutions[i++] =
-          Solution(exactLayout, approximatedLayout, NAN,
-                   Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
-                       reduced, approximated));
+          Solution(exactLayout, approximatedLayout, NAN, areStriclyEqual);
     }
     result->removeTree();
   }

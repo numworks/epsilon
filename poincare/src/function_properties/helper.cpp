@@ -9,7 +9,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-namespace Poincare {
+namespace Poincare::Internal {
 
 using namespace Internal;
 
@@ -123,4 +123,4 @@ void RemoveConstantTermsInAddition(Tree* e, const char* symbol) {
   NAry::SquashIfPossible(e);
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

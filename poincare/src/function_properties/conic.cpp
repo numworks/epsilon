@@ -60,7 +60,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
 
   // Extract c
   if (dy == 2) {
-    Tree* c = coefListY->child(2);
+    const Tree* c = coefListY->child(2);
     // Ensure coefficient c does not depend on x
     if (Degree::Get(c, x) != 0) {
       m_shape = Shape::Undefined;
@@ -71,7 +71,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   }
 
   // Extract b and e
-  Tree* be = coefListY->child(1);
+  const Tree* be = coefListY->child(1);
   int dx = Degree::Get(be, x);
   if (dx < 0 || dx > 1) {
     m_shape = Shape::Undefined;
@@ -87,7 +87,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   coefListX->removeTree();
 
   // Extract a, d and f
-  Tree* adf = coefListY->child(0);
+  const Tree* adf = coefListY->child(0);
   dx = Degree::Get(adf, x);
   if (dx > 2 || dx < 0 || (dx < 2 && dy < 2 && m_b == 0.0) ||
       (dx == 0 && m_b == 0.0)) {

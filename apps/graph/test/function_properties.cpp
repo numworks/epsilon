@@ -447,15 +447,7 @@ QUIZ_CASE(graph_function_properties) {
                       CurveParameterType::CartesianFunction,
                   .m_conicShape = Poincare::Conic::Shape::Hyperbola,
                   .m_isOfDegreeTwo = false});
-#if 0
-    assert_check_function_properties(
-        "y=diff(x^2,x,x)",
-        FunctionProperties{
-            .m_caption = I18n::Message::Equation,
-            .m_curveParameterType =
-                ContinuousFunctionProperties::CurveParameterType::Line,
-        });
-#endif
+    assert_check_function_properties("y=diff(x^2,x,x)", k_lineProperties);
 
     constexpr static FunctionProperties k_twoSubCurves =
         FunctionProperties{.m_caption = I18n::Message::Equation,

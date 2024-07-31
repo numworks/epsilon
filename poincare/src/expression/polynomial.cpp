@@ -463,7 +463,8 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
 
 Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-  Tree* poly = e->cloneTree();
+  // TODO: add dependency on each coef?
+  Tree* poly = e->isDependency() ? e->child(0)->cloneTree() : e->cloneTree();
   AdvancedReduction::DeepExpand(poly);
   poly = Parse(poly, symbol);
   if (!poly->isPolynomial()) {

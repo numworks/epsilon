@@ -6,7 +6,9 @@
 #include <string.h>
 
 #include "block_stack.h"
+#include "poincare/old/junior_layout.h"
 #include "tree.h"
+#include "tree_stack_checkpoint.h"
 #include "type_block.h"
 #if POINCARE_TREE_LOG
 #include <iostream>
@@ -171,17 +173,6 @@ class TreeStack : public BlockStack {
     return Tree::FromBlocks(blockForIdentifier(id));
   }
 
-  /* TODO: move execute and relax out of this class ? */
-
-  typedef void (*ActionWithContext)(void* context, const void* data);
-  typedef bool (*Relax)(void* context);
-  constexpr static Relax k_defaultRelax = [](void* context) { return false; };
-  void executeAndStoreLayout(ActionWithContext action, void* context,
-                             const void* data, Poincare::JuniorLayout* layout,
-                             Relax relax = k_defaultRelax);
-  void executeAndReplaceTree(ActionWithContext action, void* context,
-                             Tree* data, Relax relax = k_defaultRelax);
-
   /* We delete the assignment operator because copying without care the
    * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
   TreeStack& operator=(TreeStack&&) = delete;
@@ -205,11 +196,97 @@ class TreeStack : public BlockStack {
     return Tree::ConstTrees(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }
 
-  void execute(ActionWithContext action, void* context, const void* data,
-               size_t maxSize, Relax relax = k_defaultRelax);
-
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
+
+  /* TODO: move execute and relax out of this class ? */
+  template <typename ContextT>
+  constexpr static bool DefaultRelax(ContextT* context) {
+    return false;
+  }
+
+  // Execute an action with arbitrary input parameters types (ParametersTs...)
+  template <typename ActionT, typename RelaxT, typename ContextT,
+            typename... ParametersTs>
+  void execute(ActionT action, ContextT* context, std::size_t maxSize,
+               RelaxT relax, ParametersTs... action_parameters) {
+#if ASSERTIONS
+    size_t treesNumber = numberOfTrees();
+#endif
+    size_t previousSize = size();
+    while (true) {
+      ExceptionTry {
+        assert(numberOfTrees() == treesNumber);
+        action(action_parameters...);
+        // Prevent edition action from leaking: an action create at most one
+        // tree.
+        assert(numberOfTrees() <= treesNumber + 1);
+        // Ensure the result tree doesn't exceeds the expected size.
+        if (size() - previousSize > maxSize) {
+          TreeStackCheckpoint::Raise(ExceptionType::RelaxContext);
+        }
+        return;
+      }
+      ExceptionCatch(type) {
+        assert(numberOfTrees() == treesNumber);
+        switch (type) {
+          case ExceptionType::TreeStackOverflow:
+          case ExceptionType::IntegerOverflow:
+          case ExceptionType::RelaxContext:
+            if (relax(context)) {
+              continue;
+            }
+          default:
+            TreeStackCheckpoint::Raise(type);
+        }
+      }
+    }
+  }
+
+  // Execute an action with input parameters types (Tree*, ContextT*,
+  // ParametersTs...)
+  template <typename ActionT, typename ContextT, typename RelaxT,
+            typename... ParametersTs>
+  void execute(ActionT action, Tree* tree, ContextT* context,
+               std::size_t maxSize, RelaxT relax,
+               ParametersTs... extra_parameters) {
+    return execute(action, context, maxSize, relax, tree, context,
+                   extra_parameters...);
+  }
+
+  // Execute an action with input parameters (ContextT*, const DataT*)
+  template <typename ActionT, typename ContextT, typename RelaxT,
+            typename DataT>
+  void execute(ActionT action, ContextT* context, const DataT* data,
+               std::size_t maxSize, RelaxT relax) {
+    return execute(action, context, maxSize, relax, context, data);
+  }
+
+ public:
+  template <typename ActionT, typename ContextT, typename DataT>
+  void executeAndStoreLayout(ActionT action, ContextT* context,
+                             const DataT* data,
+                             Poincare::JuniorLayout* layout) {
+    assert(numberOfTrees() == 0);
+    execute(action, context, data, k_maxNumberOfBlocks, DefaultRelax<ContextT>);
+    assert(Tree::FromBlocks(firstBlock())->isRackLayout());
+    *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
+    flush();
+  }
+
+  template <typename ActionT, typename ContextT, typename RelaxT,
+            typename... ParametersTs>
+  void executeAndReplaceTree(ActionT action, Tree* tree, ContextT* context,
+                             RelaxT relax, ParametersTs... parameters) {
+    assert(context);
+    // Copy context to avoid altering the original
+    ContextT* contextCopy = static_cast<ContextT*>(context);
+    Block* previousLastBlock = lastBlock();
+    execute(action, tree, contextCopy, k_maxNumberOfBlocks, relax,
+            parameters...);
+    assert(previousLastBlock != lastBlock());
+    tree->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
+  }
 };
 
 #define SharedTreeStack TreeStack::SharedTreeStack

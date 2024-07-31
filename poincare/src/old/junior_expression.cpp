@@ -536,7 +536,7 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
       .m_context = reductionContext->context()};
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  Simplification::ProjectAndAdvanceReduceWithAdaptiveStrategy(e, &context);
+  Simplification::ProjectAndReduceWithAdaptiveStrategy(e, &context, true);
   *reduceFailure = false;
   SystemExpression simplifiedExpression = Builder(e);
 #if 0

@@ -3,13 +3,10 @@
 #include <assert.h>
 #include <omg/memory.h>
 #include <poincare/numeric/point_of_interest.h>
-#include <poincare/old/junior_layout.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/physical_constant.h>
 
 #include <algorithm>
-
-#include "tree_stack_checkpoint.h"
 
 #if POINCARE_POOL_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
@@ -173,25 +170,6 @@ Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
   return result;
 }
 
-void TreeStack::executeAndStoreLayout(ActionWithContext action, void* context,
-                                      const void* data,
-                                      Poincare::JuniorLayout* layout,
-                                      Relax relax) {
-  assert(numberOfTrees() == 0);
-  execute(action, context, data, k_maxNumberOfBlocks, relax);
-  assert(Tree::FromBlocks(firstBlock())->isRackLayout());
-  *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
-  flush();
-}
-
-void TreeStack::executeAndReplaceTree(ActionWithContext action, void* context,
-                                      Tree* data, Relax relax) {
-  Block* previousLastBlock = lastBlock();
-  execute(action, context, data, k_maxNumberOfBlocks, relax);
-  assert(previousLastBlock != lastBlock());
-  data->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
-}
-
 #if POINCARE_TREE_LOG
 
 void TreeStack::logNode(std::ostream& stream, const Tree* node, bool recursive,
@@ -225,39 +203,5 @@ void TreeStack::log(std::ostream& stream, LogFormat format, bool verbose,
 }
 
 #endif
-
-void TreeStack::execute(ActionWithContext action, void* context,
-                        const void* data, size_t maxSize, Relax relax) {
-#if ASSERTIONS
-  size_t treesNumber = numberOfTrees();
-#endif
-  size_t previousSize = size();
-  while (true) {
-    ExceptionTry {
-      assert(numberOfTrees() == treesNumber);
-      action(context, data);
-      // Prevent edition action from leaking: an action create at most one tree.
-      assert(numberOfTrees() <= treesNumber + 1);
-      // Ensure the result tree doesn't exceeds the expected size.
-      if (size() - previousSize > maxSize) {
-        TreeStackCheckpoint::Raise(ExceptionType::RelaxContext);
-      }
-      return;
-    }
-    ExceptionCatch(type) {
-      assert(numberOfTrees() == treesNumber);
-      switch (type) {
-        case ExceptionType::TreeStackOverflow:
-        case ExceptionType::IntegerOverflow:
-        case ExceptionType::RelaxContext:
-          if (relax(context)) {
-            continue;
-          }
-        default:
-          TreeStackCheckpoint::Raise(type);
-      }
-    }
-  }
-}
 
 }  // namespace Poincare::Internal

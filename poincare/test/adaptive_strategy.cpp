@@ -13,8 +13,8 @@ void project_and_reduce(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::ProjectAndAdvanceReduceWithAdaptiveStrategy(
-            tree, &projectionContext);
+        Simplification::ProjectAndReduceWithAdaptiveStrategy(
+            tree, &projectionContext, true);
       },
       projectionContext);
 }

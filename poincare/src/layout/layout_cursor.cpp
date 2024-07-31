@@ -1146,7 +1146,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
   ExecutionContext executionContext{this, action, cursorRackOffset(), context};
   // Perform Action within an execution
   SharedTreeStack->executeAndStoreLayout(
-      [](void* context, const void* data) {
+      [](ExecutionContext* context, const void* data) {
         ExecutionContext* executionContext =
             static_cast<ExecutionContext*>(context);
         LayoutBufferCursor* bufferCursor = executionContext->m_cursor;

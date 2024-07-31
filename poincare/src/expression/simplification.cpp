@@ -50,62 +50,62 @@ bool RelaxProjectionContext(void* context) {
 
 bool Simplification::SimplifyWithAdaptiveStrategy(
     Tree* e, ProjectionContext* projectionContext) {
-  assert(projectionContext);
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
-  SharedTreeStack->executeAndReplaceTree(
-      [](void* context, const void* data) {
-        const Tree* dataTree = static_cast<const Tree*>(data);
-        // Copy ProjectionContext to avoid altering the original
-        ProjectionContext projectionContext =
-            *static_cast<ProjectionContext*>(context);
-
-        bool isStore = dataTree->isStore();
-        Tree* e;
-        if (isStore) {
-          const Tree* firstChild = dataTree->child(0);
-          if (firstChild->nextTree()->isUserFunction()) {
-            if (CAS::Enabled()) {
-              projectionContext.m_symbolic =
-                  SymbolicComputation::DoNotReplaceAnySymbol;
-            } else {
-              dataTree->cloneTree();
-              return;
-            }
-          }
-          /* Store is an expression only for convenience. Only first child is to
-           * be simplified. */
-          e = firstChild->cloneTree();
-        } else {
-          e = dataTree->cloneTree();
-        }
-
-        ProjectAndReduce(e, &projectionContext, true);
-        BeautifyReduced(e, &projectionContext);
-
-        if (isStore) {
-          dataTree->child(1)->cloneTree();
-          e->cloneNodeAtNode(dataTree);
-        }
-      },
-      projectionContext, e, RelaxProjectionContext);
+  SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
+                                         RelaxProjectionContext);
   /* TODO: Due to projection/beautification cycles and multiple intermediary
    * steps, keeping track of a changed status is unreliable. We could compare
    * CRC instead. */
   return true;
 }
 
-void Simplification::ProjectAndAdvanceReduceWithAdaptiveStrategy(
-    Tree* e, ProjectionContext* projectionContext) {
-  SharedTreeStack->executeAndReplaceTree(
-      [](void* context, const void* data) {
-        const Tree* dataTree = static_cast<const Tree*>(data);
-        Tree* e = dataTree->cloneTree();
-        // Copy ProjectionContext to avoid altering the original
-        ProjectionContext projectionContext =
-            *static_cast<ProjectionContext*>(context);
-        ProjectAndReduce(e, &projectionContext, true);
-      },
-      projectionContext, e, RelaxProjectionContext);
+void Simplification::ProjectAndReduceWithAdaptiveStrategy(
+    Tree* e, ProjectionContext* projectionContext, bool advanced) {
+  SharedTreeStack->executeAndReplaceTree(ApplyProjectAndReduce, e,
+                                         projectionContext,
+                                         RelaxProjectionContext, advanced);
+}
+
+void Simplification::ApplySimplify(const Tree* dataTree,
+                                   ProjectionContext* projectionContext) {
+  /* Store is an expression only for convenience. Only first child is to
+   * be simplified. */
+  bool isStore = dataTree->isStore();
+  Tree* e;
+  if (isStore) {
+    const Tree* firstChild = dataTree->child(0);
+    if (firstChild->nextTree()->isUserFunction()) {
+      if (CAS::Enabled()) {
+        projectionContext->m_symbolic =
+            SymbolicComputation::DoNotReplaceAnySymbol;
+      } else {
+        dataTree->cloneTree();
+        return;
+      }
+    }
+    /* Store is an expression only for convenience. Only first child is to
+     * be simplified. */
+    e = firstChild->cloneTree();
+  } else {
+    e = dataTree->cloneTree();
+  }
+
+  ProjectAndReduce(e, projectionContext, true);
+  BeautifyReduced(e, projectionContext);
+
+  if (isStore) {
+    // Restore the store structure
+    dataTree->child(1)->cloneTree();
+    e->cloneNodeAtNode(dataTree);
+  }
+}
+
+void Simplification::ApplyProjectAndReduce(const Tree* dataTree,
+                                           ProjectionContext* projectionContext,
+                                           bool advanced) {
+  assert(!dataTree->isStore());
+  Tree* treeClone = dataTree->cloneTree();
+  ProjectAndReduce(treeClone, projectionContext, advanced);
 }
 
 void Simplification::ProjectAndReduce(Tree* e,

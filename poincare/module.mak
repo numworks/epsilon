@@ -356,6 +356,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/regularized_function.cpp \
   old/simplification.cpp \
   old/zoom.cpp \
+  adaptive_strategy.cpp \
   api.cpp \
   approximation.cpp \
   beautification.cpp \

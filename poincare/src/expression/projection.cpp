@@ -12,8 +12,9 @@
 
 namespace Poincare::Internal {
 
-bool Projection::DeepReplaceUserNamed(Tree* e, ProjectionContext ctx) {
-  if (ctx.m_symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
+bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
+                                      SymbolicComputation symbolic) {
+  if (symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
     return false;
   }
   bool changed = false;
@@ -28,15 +29,15 @@ bool Projection::DeepReplaceUserNamed(Tree* e, ProjectionContext ctx) {
       static_assert(Parametric::k_variableIndex == 0);
       e = e->nextNode()->nextTree();
     }
-    changed = ShallowReplaceUserNamed(e, ctx) || changed;
+    changed = ShallowReplaceUserNamed(e, context, symbolic) || changed;
     e = e->nextNode();
   }
   nextTree->removeTree();
   return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx) {
-  SymbolicComputation symbolic = ctx.m_symbolic;
+bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
+                                         SymbolicComputation symbolic) {
   assert(symbolic != SymbolicComputation::DoNotReplaceAnySymbol);
   bool eIsUserFunction = e->isUserFunction();
   if (!eIsUserFunction &&
@@ -51,7 +52,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx) {
   }
   // Get Definition
   const Tree* definition =
-      ctx.m_context ? ctx.m_context->treeForSymbolIdentifier(e) : nullptr;
+      context ? context->treeForSymbolIdentifier(e) : nullptr;
   if (symbolic ==
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
       !definition) {
@@ -69,7 +70,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx) {
     e->cloneTreeOverTree(definition);
   }
   // Replace node again in case it has been replaced with another symbol
-  ShallowReplaceUserNamed(e, ctx);
+  ShallowReplaceUserNamed(e, context, symbolic);
   return true;
 }
 

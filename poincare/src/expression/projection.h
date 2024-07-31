@@ -23,7 +23,8 @@ struct ProjectionContext {
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
-  static bool DeepReplaceUserNamed(Tree* e, ProjectionContext ctx);
+  static bool DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
+                                   SymbolicComputation symbolic);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
   TREE_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
@@ -36,7 +37,8 @@ class Projection {
   static bool IsForbidden(const Tree* e);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree* e, ProjectionContext ctx);
+  static bool ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
+                                      SymbolicComputation symbolic);
   static bool ShallowSystemProject(Tree* e, void* ctx);
 };
 

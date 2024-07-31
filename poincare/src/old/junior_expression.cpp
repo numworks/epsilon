@@ -756,12 +756,8 @@ int SystemExpression::getPolynomialReducedCoefficients(
    * (ex: with random). An easy solution could be to beautify then
    * re-project (with symbolicComputation and maybe systematic simplify) the
    * full expression. */
-  assert(!Internal::Projection::DeepReplaceUserNamed(
-      clone, {.m_complexFormat = complexFormat,
-              .m_angleUnit = angleUnit,
-              .m_unitFormat = unitFormat,
-              .m_symbolic = symbolicComputation,
-              .m_context = context}));
+  assert(!Internal::Projection::DeepReplaceUserNamed(clone, context,
+                                                     symbolicComputation));
   clone->removeTree();
 #endif
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,

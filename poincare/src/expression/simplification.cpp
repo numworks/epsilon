@@ -75,7 +75,8 @@ bool Simplification::PrepareForProjection(
   // Replace functions and variable before dimension check
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace local variables before user named
-  if (Projection::DeepReplaceUserNamed(e, *projectionContext)) {
+  if (Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
+                                       projectionContext->m_symbolic)) {
     // Seed random nodes that may have appeared after replacing.
     maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
     changed = true;

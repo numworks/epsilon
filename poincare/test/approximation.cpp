@@ -256,6 +256,12 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<float>("arccsc(0)", "undef");
 }
 
+QUIZ_CASE(pcj_approximation_arithmetic) {
+  approximates_to<float>("floor(π)", "3");
+  approximates_to<float>("log(floor(2^64),2)", "64");
+  approximates_to<float>("floor(1+i)", "undef");
+}
+
 QUIZ_CASE(pcj_approximation_decimal) {
   approximates_to(283495231345_e, 283495231345.f);
   approximates_to(283495231345._e, 283495231345.f);

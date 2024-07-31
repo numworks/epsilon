@@ -197,8 +197,8 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   // Sort order
-  simplifies_to("π*floor(π)/π", "floor(π)");
-  simplifies_to("π+floor(π)-π", "floor(π)");
+  simplifies_to("π*atan(π)/π", "atan(π)");
+  simplifies_to("π+atan(π)-π", "atan(π)");
   simplifies_to("π*(-π)/π", "-π");
   simplifies_to("π+1/π-π", "1/π");
 
@@ -548,6 +548,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("sign(-2)", "-1");
   simplifies_to("ceil(8/3)", "3");
   simplifies_to("frac(8/3)", "2/3");
+  simplifies_to("floor(8/3)", "2");
   simplifies_to("round(1/3,2)", "33/100");
   simplifies_to("round(3.3_m)", "3×_m");
   // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
@@ -557,6 +558,17 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("binomial(4,2)", "6");
   simplifies_to("1 2/3", "5/3");
   simplifies_to("-1 2/3", "-5/3");
+
+  simplifies_to("floor({1.3,3.9})", "{1,3}");
+  // TODO: Approximation is undef
+  simplifies_to("ceil(1+i)", "ceil(1+i)");
+  // Reductions using approximation
+  simplifies_to("floor(π)", "3");
+  simplifies_to("frac(π+1)+floor(π+0.1)", "π");
+  simplifies_to("log(ceil(2^15+π)-4,2)", "15");
+  simplifies_to("frac(2^24+π)-π", "16777216-floor(16777216+π)");
+  simplifies_to("log(floor(2^54+π)-3, 2)",
+                "ln(-3+floor(18014398509481984+π))/ln(2)");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

@@ -70,20 +70,27 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     e->moveTreeOverTree(div.quotient);
     return true;
   }
+
+  if (!Dimension::Get(child).isScalar() || Dimension::IsList(child)) {
+    return false;
+  }
+  /* TODO: Escape to undef if child is complex, instead of relying on final
+   * approximation. */
   // Reduce using approximation if possible.
-  assert(Dimension::Get(child).isScalar());
   // TODO_PCJ: Use double instead of float (requires Integer::Push(uint64_t)).
   float approx = Approximation::To<float>(e);
-  assert(approx == std::round(approx));
   static_assert(OMG::IEEE754<float>::largestExactInteger() <= UINT32_MAX);
   if (std::isnan(approx) ||
       std::fabs(approx) > OMG::IEEE754<float>::largestExactInteger()) {
     return false;
   }
+  assert(approx == std::round(approx));
   /* If Approx is smaller than the largest integer such as all smaller integers
    * can be exactly represented in IEEE754, approx is the exact result (no
    * precision were loss). */
-  e->moveTreeOverTree(Integer::Push(static_cast<uint32_t>(approx)));
+  /* TODO : While this ensure exact integer representation, exact decimals are
+   * also expected here, this limit should be lowered. */
+  e->moveTreeOverTree(Integer::Push(static_cast<int32_t>(approx)));
   return true;
 }
 

@@ -784,6 +784,13 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("6×0×_°F", "0×_°F", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("0×_K", "0×_K");
   simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_kg×_K×_s^2");
+
+  // Angles
+  simplifies_to("360×_°", "2×π×_rad");
+  simplifies_to("π×π×_rad", "_rad×π^2");
+  simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
+  simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

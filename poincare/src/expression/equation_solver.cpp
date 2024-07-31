@@ -34,6 +34,9 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
     return result;
   }
   assert((result == nullptr) || (result->numberOfChildren() == 0));
+  if (result) {
+    result->removeTree();
+  }
 
   Error secondError = Error::NoError;
   context->overrideUserVariables = true;

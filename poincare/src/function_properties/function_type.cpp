@@ -16,6 +16,7 @@ using namespace Internal;
 FunctionType::LineType FunctionType::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.dimension().isScalar());
 
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line
@@ -150,6 +151,7 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
 FunctionType::CartesianType FunctionType::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(analyzedExpression.dimension().isScalar());
 
   const Tree* e = analyzedExpression.tree();
 

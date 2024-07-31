@@ -13,6 +13,9 @@ class Simplification {
       Tree* e, ProjectionContext* projectionContext);
   TREE_REF_WRAP_1(SimplifyWithAdaptiveStrategy, ProjectionContext*);
 
+  static void ProjectAndAdvanceReduceWithAdaptiveStrategy(
+      Tree* e, ProjectionContext* projectionContext);
+
   // Simplification steps
   static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext,
                                bool advanced);

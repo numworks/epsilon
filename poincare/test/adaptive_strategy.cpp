@@ -13,7 +13,8 @@ void project_and_reduce(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::ProjectAndReduce(tree, &projectionContext, true);
+        Simplification::ProjectAndAdvanceReduceWithAdaptiveStrategy(
+            tree, &projectionContext);
       },
       projectionContext);
 }
@@ -29,9 +30,12 @@ void simplify(const char* input, const char* output,
       projectionContext);
 }
 
-QUIZ_CASE(pcj_adaptive_strategy) {
+QUIZ_CASE(pcj_adaptive_strategy_simplify) {
   simplify("2^2^2", "16");
   simplify("2^2^2^2^2^2^2", "∞");
+}
+
+QUIZ_CASE(pcj_adaptive_strategy_project_reduce) {
   project_and_reduce("2^2^2", "16");
-  project_and_reduce("2^2^2^2^2^2^2", "inf");
+  project_and_reduce("2^2^2^2^2^2^2", "∞");
 }

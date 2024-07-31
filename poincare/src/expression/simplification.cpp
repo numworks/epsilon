@@ -94,6 +94,20 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   return true;
 }
 
+void Simplification::ProjectAndAdvanceReduceWithAdaptiveStrategy(
+    Tree* e, ProjectionContext* projectionContext) {
+  SharedTreeStack->executeAndReplaceTree(
+      [](void* context, const void* data) {
+        const Tree* dataTree = static_cast<const Tree*>(data);
+        Tree* e = dataTree->cloneTree();
+        // Copy ProjectionContext to avoid altering the original
+        ProjectionContext projectionContext =
+            *static_cast<ProjectionContext*>(context);
+        ProjectAndReduce(e, &projectionContext, true);
+      },
+      projectionContext, e, RelaxProjectionContext);
+}
+
 void Simplification::ProjectAndReduce(Tree* e,
                                       ProjectionContext* projectionContext,
                                       bool advanced) {

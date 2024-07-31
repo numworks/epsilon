@@ -259,19 +259,18 @@ template <typename T>
 inline static bool AreConsistent(const Sign& sign, const T& value) {
   static_assert(std::is_arithmetic<T>());
 
-  return (((value > 0 && sign.canBeStrictlyPositive()) ||
+  return std::isnan(value) ||
+         (((value > 0 && sign.canBeStrictlyPositive()) ||
            (value < 0 && sign.canBeStrictlyNegative()) ||
            (value == 0 && sign.canBeNull())) &&
-          (sign.canBeNonInteger() || (std::floor(value) == value))) ||
-         std::isnan(value);
+          (sign.canBeNonInteger() || (std::floor(value) == value)));
 }
 
 template <typename T>
 inline static bool AreConsistent(const ComplexSign& sign,
                                  const std::complex<T>& value) {
   return AreConsistent(sign.realSign(), value.real()) &&
-         AreConsistent(sign.imagSign(), value.imag()) &&
-         (sign.canBeNonReal() || value.imag() == 0 || std::isnan(value.imag()));
+         AreConsistent(sign.imagSign(), value.imag());
 }
 
 }  // namespace Poincare::Internal

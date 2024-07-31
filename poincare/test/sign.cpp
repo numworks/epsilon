@@ -307,11 +307,10 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("5+i*y",
               ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Unknown()));
   assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
-  assert_sign("x^2", ComplexSign(Sign::Positive(), Sign::Zero()));
-  assert_sign("x^2+y^2", ComplexSign(Sign::Positive(), Sign::Zero()));
-  assert_sign("0.5*ln(x^2+y^2)", ComplexSign(Sign::Unknown(), Sign::Zero()));
-  assert_sign("e^(0.5*ln(x^2+y^2))",
-              ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
+  assert_sign("x^2", Sign::Positive());
+  assert_sign("x^2+y^2", Sign::Positive());
+  assert_sign("0.5*ln(x^2+y^2)", Sign::Unknown());
+  assert_sign("e^(0.5*ln(x^2+y^2))", Sign::StrictlyPositive());
   assert_sign("(abs(x)+i)*abs(abs(x)-i)",
               ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
@@ -321,8 +320,8 @@ QUIZ_CASE(pcj_sign) {
 
   // cos
   assert_sign("cos(3)", Sign::Unknown());
-  assert_sign("cos(2i)", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
-  assert_sign("cos(-2i)", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
+  assert_sign("cos(2i)", Sign::StrictlyPositive());
+  assert_sign("cos(-2i)", Sign::StrictlyPositive());
   assert_sign("cos(3+2i)", ComplexSign::Unknown());
 
   // sin
@@ -332,8 +331,8 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("sin(3+2i)", ComplexSign::Unknown());
 
   // ln
-  assert_sign("ln(0)", ComplexSign(Sign::Unknown(), Sign::Zero()));
-  assert_sign("ln(3)", ComplexSign(Sign::Unknown(), Sign::Zero()));
+  assert_sign("ln(0)", Sign::Unknown());
+  assert_sign("ln(3)", Sign::Unknown());
   assert_sign("ln(-3)", ComplexSign(Sign::Unknown(), Sign::StrictlyPositive()));
   assert_sign("ln(ln(3))", ComplexSign(Sign::Unknown(), Sign::Positive()));
   assert_sign("ln(4+i)",
@@ -348,6 +347,6 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("(5-i)^(-1)", ComplexSign(Sign::Unknown(), Sign::Unknown()));
 
   // inf
-  assert_sign("inf", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()));
-  assert_sign("-inf", ComplexSign(Sign::StrictlyNegative(), Sign::Zero()));
+  assert_sign("inf", Sign::StrictlyPositive());
+  assert_sign("-inf", Sign::StrictlyNegative());
 }

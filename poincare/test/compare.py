@@ -100,6 +100,9 @@ def main():
         print(f"<details><summary>Overall status</summary>")
         print("")
         print(f"```mermaid")
+        print(
+            "%%{init: { 'themeVariables': { 'pie1': '#50C102', 'pie2': '#FFB734', 'pie3': '#FF000c'}}}%%"
+        )
         print(f"pie showdata")
         for total, name in (totalOK, "OK"), (totalBAD, "BAD"), (totalCRASH, "CRASH"):
             print('"', name, '" : ', total)

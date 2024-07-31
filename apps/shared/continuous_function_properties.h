@@ -195,9 +195,7 @@ class ContinuousFunctionProperties {
   }
 
   int numberOfCurveParameters() const {
-    if (isParametric()) return 3;
-    if (isPolar()) return 4;
-    return 2;
+    return isParametric() ? 3 : isPolar() ? 4 : 2;
   }
 
   enum class EditableParametersType : uint8_t { Abscissa, Image, Both, None };

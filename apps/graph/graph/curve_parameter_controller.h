@@ -65,7 +65,7 @@ class CurveParameterController
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
-  ParameterCell* parameterCell(const ParameterIndex& index) {
+  ParameterCell* parameterCell(ParameterIndex index) {
     return &m_parameterCells[static_cast<int>(index)];
   }
   double parameterAtIndex(int index) override;
@@ -79,15 +79,15 @@ class CurveParameterController
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtRow(int row) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  bool confirmParameterAtIndex(const ParameterIndex& index, double f);
+  bool confirmParameterAtIndex(ParameterIndex index, double f);
   void fillParameterCellAtRow(int row) override;
-  bool parameterAtIndexIsPreimage(const ParameterIndex& index) const;
-  bool parameterAtIndexIsFirstComponent(const ParameterIndex& index) const;
-  bool parameterAtIndexIsEditable(const ParameterIndex& index) const;
-  int derivationOrderOfParameterAtIndex(const ParameterIndex& index) const;
-  double evaluateCurveAt(const ParameterIndex& index,
+  bool parameterAtIndexIsPreimage(ParameterIndex index) const;
+  bool parameterAtIndexIsFirstComponent(ParameterIndex index) const;
+  bool parameterAtIndexIsEditable(ParameterIndex index) const;
+  int derivationOrderOfParameterAtIndex(ParameterIndex index) const;
+  double evaluateCurveAt(ParameterIndex index,
                          Poincare::Context* context) const;
-  double evaluateDerivativeAt(const ParameterIndex& index, int derivationOrder,
+  double evaluateDerivativeAt(ParameterIndex index, int derivationOrder,
                               Poincare::Context* context) const;
 
   Escher::StackViewController* stackController() const;

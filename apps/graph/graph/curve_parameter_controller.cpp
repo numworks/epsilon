@@ -3,14 +3,13 @@
 #include <apps/i18n.h>
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
+#include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "../app.h"
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
-#include "omg/unreachable.h"
-#include "poincare/code_points.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -78,29 +77,30 @@ const char* CurveParameterController::title() {
 }
 
 bool CurveParameterController::parameterAtIndexIsPreimage(
-    const ParameterIndex& index) const {
+    ParameterIndex index) const {
   return index == ParameterIndex::Image1 &&
          function()->properties().canHavePreimage();
 }
 
 bool CurveParameterController::parameterAtIndexIsFirstComponent(
-    const ParameterIndex& index) const {
+    ParameterIndex index) const {
   switch (index) {
     case ParameterIndex::Image1:
     case ParameterIndex::FirstDerivative1:
     case ParameterIndex::SecondDerivative1:
       return true;
-    default:
-      assert(index == ParameterIndex::Image2 ||
-             index == ParameterIndex::Image3 ||
-             index == ParameterIndex::FirstDerivative2 ||
-             index == ParameterIndex::SecondDerivative2);
+    case ParameterIndex::Image2:
+    case ParameterIndex::Image3:
+    case ParameterIndex::FirstDerivative2:
+    case ParameterIndex::SecondDerivative2:
       return false;
+    default:
+      OMG::unreachable();
   }
 }
 
 bool CurveParameterController::parameterAtIndexIsEditable(
-    const ParameterIndex& index) const {
+    ParameterIndex index) const {
   switch (function()->properties().editableParameters()) {
     case ContinuousFunctionProperties::EditableParametersType::Abscissa:
       return (index == ParameterIndex::Abscissa);
@@ -110,13 +110,12 @@ bool CurveParameterController::parameterAtIndexIsEditable(
       return (index == ParameterIndex::Abscissa) ||
              (index == ParameterIndex::Image1);
     case ContinuousFunctionProperties::EditableParametersType::None:
-    default:
       return false;
   }
 }
 
 int CurveParameterController::derivationOrderOfParameterAtIndex(
-    const ParameterIndex& index) const {
+    ParameterIndex index) const {
   switch (index) {
     case ParameterIndex::Abscissa:
       return -1;
@@ -134,7 +133,7 @@ int CurveParameterController::derivationOrderOfParameterAtIndex(
   }
 }
 
-double CurveParameterController::evaluateCurveAt(const ParameterIndex& index,
+double CurveParameterController::evaluateCurveAt(ParameterIndex index,
                                                  Context* context) const {
   double cursorT = m_cursor->t();
   double cursorX = m_cursor->x();
@@ -179,8 +178,9 @@ double CurveParameterController::evaluateCurveAt(const ParameterIndex& index,
   }
 }
 
-double CurveParameterController::evaluateDerivativeAt(
-    const ParameterIndex& index, int derivationOrder, Context* context) const {
+double CurveParameterController::evaluateDerivativeAt(ParameterIndex index,
+                                                      int derivationOrder,
+                                                      Context* context) const {
   assert(derivationOrder == 1 || derivationOrder == 2);
   assert(function()->canDisplayDerivative());
   bool firstComponent = parameterAtIndexIsFirstComponent(index);
@@ -216,13 +216,10 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
     int derivationOrder = derivationOrderOfParameterAtIndex(index);
     if (properties.isPolar() &&
         (index == ParameterIndex::Image2 || index == ParameterIndex::Image3)) {
-      if (index == ParameterIndex::Image2) {
-        UTF8Helper::WriteCodePoint(buffer, bufferSize,
-                                   Poincare::CodePoints::k_cartesianSymbol);
-      } else {
-        UTF8Helper::WriteCodePoint(buffer, bufferSize,
-                                   Poincare::CodePoints::k_ordinateSymbol);
-      }
+      UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                 (index == ParameterIndex::Image2)
+                                     ? Poincare::CodePoints::k_cartesianSymbol
+                                     : Poincare::CodePoints::k_ordinateSymbol);
     } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
           function().pointer(), buffer, bufferSize, firstComponent,
@@ -248,8 +245,8 @@ double CurveParameterController::parameterAtIndex(int index) {
   return evaluateCurveAt(parameterIndex, App::app()->localContext());
 }
 
-bool CurveParameterController::confirmParameterAtIndex(
-    const ParameterIndex& index, double f) {
+bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
+                                                       double f) {
   if (parameterAtIndexIsPreimage(index)) {
     m_preimageGraphController.setImage(f);
     return true;

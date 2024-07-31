@@ -165,6 +165,16 @@ QUIZ_CASE(graph_function_properties) {
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 
+  constexpr static FunctionProperties k_linearProperties = FunctionProperties{
+      .m_caption = I18n::Message::LinearType,
+      .m_curveParameterType =
+          ContinuousFunctionProperties::CurveParameterType::CartesianFunction};
+
+  constexpr static FunctionProperties k_lineProperties = FunctionProperties{
+      .m_caption = I18n::Message::LineType,
+      .m_curveParameterType =
+          ContinuousFunctionProperties::CurveParameterType::Line};
+
   for (const ExamMode examMode : examModes) {
     Preferences::SharedPreferences()->setExamMode(examMode);
     bool noInequations = examMode.forbidInequalityGraphing();
@@ -186,12 +196,7 @@ QUIZ_CASE(graph_function_properties) {
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
 
-    assert_check_function_properties(
-        "f(x)=-2x/(1+π)",
-        FunctionProperties{.m_caption = I18n::Message::LinearType,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
+    assert_check_function_properties("f(x)=-2x/(1+π)", k_linearProperties);
 
     assert_check_function_properties(
         "f(x)=-(2x-4/(1+π))",
@@ -249,14 +254,7 @@ QUIZ_CASE(graph_function_properties) {
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
 
-#if 0
-    assert_check_function_properties(
-        "f(x)=diff(x^2,x,x)",
-        FunctionProperties{.m_caption = I18n::Message::Function,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
-#endif
+    assert_check_function_properties("f(x)=diff(x^2,x,x)", k_linearProperties);
 
     // === Cartesian equations ===
 
@@ -275,13 +273,7 @@ QUIZ_CASE(graph_function_properties) {
         .m_caption = I18n::Message::Disabled};
 
     assert_check_function_properties(
-        "y+x+1=0",
-        noImplicitPlot
-            ? k_bannedProperties
-            : FunctionProperties{
-                  .m_caption = I18n::Message::LineType,
-                  .m_curveParameterType =
-                      ContinuousFunctionProperties::CurveParameterType::Line});
+        "y+x+1=0", noImplicitPlot ? k_bannedProperties : k_lineProperties);
 
     constexpr static FunctionProperties k_horizontalLineProperties =
         FunctionProperties{.m_caption = I18n::Message::HorizontalLineType,
@@ -727,15 +719,13 @@ QUIZ_CASE(graph_function_properties) {
                 ContinuousFunctionProperties::CurveParameterType::Parametric,
             .m_conicShape = Poincare::Conic::Shape::Circle});
 
-#if 0
     assert_check_function_properties(
         "g(t)=(diff(x,x,t),t)",
         FunctionProperties{
-            .m_caption = I18n::Message::ParametricEquationType,
+            .m_caption = I18n::Message::VerticalLineType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Parametric});
-#endif
 
     // === Points ===
 
@@ -867,31 +857,15 @@ QUIZ_CASE(graph_function_properties) {
            Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
-#if 0
-    assert_check_function_properties(
-        "f(x)=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::Function,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
-    assert_check_function_properties("y=im(i*x+1)",
-                                     k_cartesianEquationProperties);
-#endif
+    assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
+    assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
 
     Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
-#if 0
-    assert_check_function_properties(
-        "f(x)=im(i*x+1)",
-        FunctionProperties{.m_caption = I18n::Message::Function,
-                           .m_curveParameterType =
-                               ContinuousFunctionProperties::
-                                   CurveParameterType::CartesianFunction});
-    assert_check_function_properties("y=im(i*x+1)",
-                                     k_cartesianEquationProperties);
-#endif
+    assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
+    assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
     // Restore preferences
     Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);

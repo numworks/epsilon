@@ -593,6 +593,12 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
   return JuniorExpression::Builder(result);
 }
 
+template <typename T>
+T UserExpression::approximateUserToScalar(AngleUnit angleUnit,
+                                          ComplexFormat complexFormat) const {
+  return Approximation::RootTreeToReal<T>(tree(), angleUnit, complexFormat);
+}
+
 /* TODO_PCJ: This cannot be called on system expressions, but rather on
  * ScalarSystemFunction */
 template <typename T>
@@ -1222,5 +1228,10 @@ template bool UserExpression::hasDefinedComplexApproximation<float>(
     const ApproximationContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     const ApproximationContext&, double*, double*) const;
+
+template float UserExpression::approximateUserToScalar<float>(
+    Preferences::AngleUnit, Preferences::ComplexFormat) const;
+template double UserExpression::approximateUserToScalar<double>(
+    Preferences::AngleUnit, Preferences::ComplexFormat) const;
 
 }  // namespace Poincare

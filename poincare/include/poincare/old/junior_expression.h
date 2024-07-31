@@ -230,6 +230,10 @@ class JuniorExpression : public OExpression {
    * If scalarsOnly = true, returns undef if it's a point or a list. */
   SystemFunction getSystemFunction(const char* symbolName,
                                    bool scalarsOnly = false) const;
+  // Approximate to scalar any scalar expression
+  template <typename T>
+  T approximateUserToScalar(Preferences::AngleUnit angleUnit,
+                            Preferences::ComplexFormat complexFormat) const;
   // Approximate to scalar replacing Var0 with value.
   template <typename T>
   T approximateToScalarWithValue(T x, int listElement = -1) const;

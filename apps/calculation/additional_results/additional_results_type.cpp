@@ -8,6 +8,8 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include <cmath>
+
 #include "../calculation.h"
 #include "scientific_notation_helper.h"
 #include "unit_comparison_helper.h"
@@ -153,7 +155,18 @@ bool AdditionalResultsType::HasInverseTrigo(
 bool AdditionalResultsType::HasUnit(
     const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
+  // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
+  // Assume units that cancel themselves have been removed by simplification.
+  assert(exactOutput.dimension().isUnit());
+  double value = exactOutput.approximateUserToScalar<double>(
+      calculationPreferences.angleUnit, calculationPreferences.complexFormat);
+  /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
+   * display if approximation is finite. We should simplify with each relevant
+   * UnitDisplay and return false if all of them produce the same as
+   * exactOutput. */
+  return std::isfinite(value);
+#if 0
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =
@@ -187,6 +200,7 @@ bool AdditionalResultsType::HasUnit(
     return !unit.isUninitialized();
   }
   return false;
+#endif
 }
 
 bool AdditionalResultsType::HasVector(

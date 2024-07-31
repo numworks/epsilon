@@ -4,20 +4,9 @@
 #include <poincare/expression.h>
 
 namespace Poincare {
-namespace Internal {
-class Tree;
-
 // Exact and approximated must be system expressions
 bool ExactAndApproximateExpressionsAreStriclyEqual(
-    const Internal::Tree* exact, const Internal::Tree* approximate);
-}  // namespace Internal
-
-// Exact and approximated must be system expressions
-inline bool ExactAndApproximateExpressionsAreStriclyEqual(
-    SystemExpression exact, SystemExpression approximate) {
-  return Internal::ExactAndApproximateExpressionsAreStriclyEqual(exact,
-                                                                 approximate);
-}
+    SystemExpression exact, SystemExpression approximate);
 
 }  // namespace Poincare
 

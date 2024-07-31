@@ -1,5 +1,5 @@
-#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/helpers/expression_equal_sign.h>
 
 #include "../helper.h"
 

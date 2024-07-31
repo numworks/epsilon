@@ -80,6 +80,11 @@ class EquationSolver {
                                      Context* context);
   // Prepare a solution before display
   static Error EnhanceSolution(Tree* solution, Context* context);
+
+  constexpr static char k_parameterPrefix = 't';
+  static uint32_t TagParametersUsedAsVariables(const Context* context);
+  static void TagVariableIfParameter(const char* name, uint32_t* tags,
+                                     const Context* context);
 };
 
 }  // namespace Poincare::Internal

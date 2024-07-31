@@ -238,6 +238,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   uint8_t cols = n + 1;
   uint8_t rows = reducedEquationSet->numberOfChildren();
   Tree* matrix = SharedTreeStack->pushMatrix(0, 0);
+  int m = reducedEquationSet->numberOfChildren();
+
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : reducedEquationSet->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n, context);
@@ -280,31 +282,116 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
     coefficient = coefficient->nextTree();
   }
-  if (rank == n && n > 0) {
-    /* The rank is equal to the number of variables: the system has n
-     * solutions, and after canonization their values are the first n values on
-     * the last column. */
-    Tree* child = matrix->child(0);
-    for (uint8_t row = 0; row < rows; row++) {
-      for (uint8_t col = 0; col < cols; col++) {
-        if (row < n && col == cols - 1) {
-          if (*error == Error::NoError) {
-            *error = EnhanceSolution(child, context);
-            // Continue anyway to preserve TreeStack integrity
+
+  /* Use a context without t to avoid replacing the t? parameters with a value
+   * if the user stored something in them but they are not used by the
+   * system.
+   * It is declared here as it needs to be accessible when registering the
+   * solutions at the end. */
+  // ContextWithoutT noTContext(context);
+
+  if (rank != n || n <= 0) {
+    /* The system is insufficiently qualified: bind the value of n-rank
+     * variables to parameters. */
+    context->hasMoreSolutions = true;
+
+    // context = &noTContext;
+
+    // 't' + 2 digits + '\0'
+    constexpr size_t parameterNameSize = 1 + 2 + 1;
+    char parameterName[parameterNameSize] = {k_parameterPrefix};
+    size_t parameterIndex = n - rank == 1 ? 0 : 1;
+    uint32_t usedParameterIndices = TagParametersUsedAsVariables(context);
+
+    int variable = n - 1;
+    int row = m - 1;
+    int firstVariableInRow = -1;
+    while (variable >= 0) {
+      // Find the first variable with a non-null coefficient in the current row
+      if (row >= 0) {
+        for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
+          if (!Matrix::Child(matrix, row, col)->isZero()) {
+            firstVariableInRow = col;
           }
-          child = child->nextTree();
-        } else {
-          child->removeTree();
+        }
+
+        if (firstVariableInRow < 0 || firstVariableInRow == variable) {
+          /* If firstVariableInRow < 0, the row is null and provides no
+           * information. If variable is the first with a non-null coefficient,
+           * the current row uniquely qualifies it, no need to bind a parameter
+           * to it. */
+          row--;
+          if (firstVariableInRow == variable) {
+            variable--;
+          }
+          firstVariableInRow = -1;
+          continue;
         }
       }
+      /* If row < 0, there are still unbound variables after scanning all the
+       * row, so simply bind them all. */
+
+      assert(firstVariableInRow < variable);
+      /* No row uniquely qualifies the current variable, bind it to a parameter.
+       * Add the row variable=parameter to increase the rank of the system. */
+      for (int i = 0; i < n; i++) {
+        (i == variable ? 1_e : 0_e)->cloneTree();
+      }
+
+      // Generate a unique identifier t? that does not collide with variables.
+      while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
+        parameterIndex++;
+        assert(parameterIndex <
+               OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
+      }
+      size_t parameterNameLength =
+          parameterIndex == 0
+              ? 1
+              : 1 + OMG::Print::IntLeft(parameterIndex, parameterName + 1,
+                                        parameterNameSize - 2);
+      parameterIndex++;
+      assert(parameterNameLength >= 1 &&
+             parameterNameLength < parameterNameSize);
+      parameterName[parameterNameLength] = 0;
+      SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+      Matrix::SetDimensions(matrix, ++m, n + 1);
+      variable--;
     }
-    matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
-    return matrix;
+
+    /* forceCanonization = true so that canonization still happens even if
+     * t.approximate() is NAN. If other children of ab have an undef
+     * approximation, the previous rank computation would already have returned
+     * -1. */
+    rank = Matrix::CanonizeAndRank(matrix);  // TODO_PCJ force cano flag ?
+    if (rank == -1) {
+      *error = Error::EquationUndefined;
+      matrix->removeTree();
+      return nullptr;
+    }
   }
-  // TODO: Introduce temporary variables to formally solve the system.
-  matrix->removeTree();
-  *error = Error::TooManyVariables;
-  return nullptr;
+  assert(rank == n && n > 0);
+
+  // TODO: Make sure the solution satisfies dependencies in equations
+
+  /* The rank is equal to the number of variables: the system has n
+   * solutions, and after canonization their values are the first n values on
+   * the last column. */
+  Tree* child = matrix->child(0);
+  for (uint8_t row = 0; row < n; row++) {
+    for (uint8_t col = 0; col < cols; col++) {
+      if (col == cols - 1) {
+        if (*error == Error::NoError) {
+          *error = EnhanceSolution(child, context);
+          // Continue anyway to preserve TreeStack integrity
+        }
+        child = child->nextTree();
+      } else {
+        child->removeTree();
+      }
+    }
+  }
+  matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
+  return matrix;
 }
 
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
@@ -447,6 +534,41 @@ EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
   // TODO: Use user settings for a RealUnkown sign ?
   Simplification::ReduceSystem(solution, true);
   return Error::NoError;
+}
+
+uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
+  uint32_t tags = 0;
+  for (size_t i = 0; i < context->numberOfVariables; i++) {
+    TagVariableIfParameter(context->variables[i], &tags, context);
+  }
+  for (size_t i = 0; i < context->numberOfUserVariables; i++) {
+    TagVariableIfParameter(context->userVariables[i], &tags, context);
+  }
+  return tags;
+}
+
+void EquationSolver::TagVariableIfParameter(const char* variable,
+                                            uint32_t* tags,
+                                            const Context* context) {
+  if (variable[0] != k_parameterPrefix) {
+    return;
+  }
+  if (variable[1] == '\0') {
+    OMG::BitHelper::setBitAtIndex(*tags, 0, true);
+    return;
+  }
+  size_t maxIndex = OMG::BitHelper::numberOfBitsIn(*tags);
+  size_t maxNumberOfDigits =
+      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, maxIndex);
+  size_t index = 0;
+  for (size_t digit = 1; digit < 1 + maxNumberOfDigits &&
+                         '0' <= variable[digit] && variable[digit] <= '9';
+       digit++) {
+    index = 10 * index + (variable[digit] - '0');
+  }
+  if (index > 0 && index < maxIndex) {
+    OMG::BitHelper::setBitAtIndex(*tags, index, true);
+  }
 }
 
 }  // namespace Poincare::Internal

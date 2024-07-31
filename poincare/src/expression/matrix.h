@@ -20,6 +20,10 @@ struct Matrix {
   static void SetNumberOfColumns(Tree* matrix, uint8_t cols) {
     matrix->setNodeValue(1, cols);
   }
+  static void SetDimensions(Tree* matrix, uint8_t rows, uint8_t cols) {
+    SetNumberOfRows(matrix, rows);
+    SetNumberOfColumns(matrix, cols);
+  }
   static Tree* Child(Tree* matrix, uint8_t row, uint8_t col) {
     assert(col < NumberOfColumns(matrix));
     return matrix->child(row * NumberOfColumns(matrix) + col);

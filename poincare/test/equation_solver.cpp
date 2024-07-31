@@ -68,8 +68,6 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"a+x-3", "x"}, {"3", "0"}, projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Errors
-  check_solutions({"x+y+z", "x-y"}, {}, projCtx,
-                  EquationSolver::Error::TooManyVariables);
   check_solutions({"x^2", "y"}, {}, projCtx,
                   EquationSolver::Error::NonLinearSystem);
   check_solutions({"y*(1+x)", "y-1"}, {}, projCtx,

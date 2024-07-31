@@ -24,7 +24,7 @@ class IEEE754 final {
    * mantissa is stored on 52 bits (2^308 can be stored exactly in IEEE754
    * representation but some smaller integers can't - like 2^308-1).
    * With single representation, it's 2^24 */
-  constexpr static T largestExactInteger() {
+  constexpr static T NonExactIntegerLimit() {
     return sizeof(T) == sizeof(float) ? 16777216.0 : 9007199254740992.0;
   }
   constexpr static uint16_t exponentOffset() {

@@ -759,7 +759,7 @@ QUIZ_CASE(graph_function_properties) {
         "", FunctionProperties{
                 .m_status = ContinuousFunctionProperties::Status::Undefined,
                 .m_caption = I18n::Message::UndefinedType});
-#if 0
+#if 0  // TODO_PCJ
     assert_check_function_properties(
         "y=log(0)",
         FunctionProperties{

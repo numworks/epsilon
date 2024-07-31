@@ -441,6 +441,8 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::ArcCosecant;
     case Type::ACot:
       return ExpressionNode::Type::ArcCotangent;
+    case Type::Unit:
+      return ExpressionNode::Type::Unit;
 #if 0
       // No perfect Internal equivalents
       return ExpressionNode::Type::Comparison;
@@ -1007,15 +1009,7 @@ bool NewExpression::isPureAngleUnit() const {
 }
 
 bool NewExpression::isInRadians(Context* context) const {
-  NewExpression units;
-  ReductionContext reductionContext;
-  reductionContext.setContext(context);
-  reductionContext.setUnitConversion(UnitConversion::None);
-  NewExpression thisClone =
-      cloneAndReduceAndRemoveUnit(reductionContext, &units);
-  return !units.isUninitialized() &&
-         units.type() == ExpressionNode::Type::Unit &&
-         Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
+  return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {

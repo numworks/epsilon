@@ -46,6 +46,7 @@ class Dimension {
 
   bool isScalar();
   bool isMatrix();
+  bool isVector();
   bool isUnit();
   bool isBoolean();
   bool isPoint();
@@ -59,6 +60,7 @@ class Dimension {
   bool isPointOrListOfPoints();
 
  private:
+  Internal::MatrixDimension m_matrixDimension;
   Internal::DimensionType m_type;
   bool m_isList;
   bool m_isValid;

@@ -1,8 +1,7 @@
 #include "vector_helper.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/vector_norm.h>
+#include <poincare/k_tree.h>
 
 #include "vector_list_controller.h"
 
@@ -13,26 +12,23 @@ namespace Calculation {
 
 namespace VectorHelper {
 
-Expression BuildVectorNorm(
+UserExpression BuildVectorNorm(
     const UserExpression exactOutput, Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(!exactOutput.isUninitialized());
   assert(!exactOutput.hasUnit(true));
-  if (exactOutput.type() != ExpressionNode::Type::Matrix ||
-      !static_cast<const Matrix&>(exactOutput).isVector()) {
-    return Expression();
+  if (!exactOutput.dimension().isVector()) {
+    return UserExpression();
   }
-  Expression norm = VectorNorm::Builder(exactOutput);
-  Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat;
-  Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
+
+  UserExpression norm = UserExpression::Create(KNorm(KA), {.KA = exactOutput});
   PoincareHelpers::CloneAndSimplify(
       &norm, context,
-      {.complexFormat = complexFormat,
-       .angleUnit = angleUnit,
+      {.complexFormat = calculationPreferences.complexFormat,
+       .angleUnit = calculationPreferences.angleUnit,
        .target = VectorListController::k_target,
        .symbolicComputation = VectorListController::k_symbolicComputation});
-  return norm.isUninitialized() || norm.isUndefined() ? Expression() : norm;
+  return norm.isUninitialized() || norm.isUndefined() ? UserExpression() : norm;
 }
 
 }  // namespace VectorHelper

@@ -72,6 +72,7 @@ constexpr auto KPercentSimple = KUnary<Type::PercentSimple>();
 constexpr auto KParentheses = KUnary<Type::Parentheses>();
 constexpr auto KSign = KUnary<Type::Sign>();
 constexpr auto KFactor = KUnary<Type::Factor>();
+constexpr auto KNorm = KUnary<Type::Norm>();
 
 constexpr auto KATrig = KBinary<Type::ATrig>();
 constexpr auto KLogarithm = KBinary<Type::LogBase>();

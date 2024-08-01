@@ -51,8 +51,12 @@ Poincare::Dimension::Dimension(const NewExpression e, Context* context)
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;
   }
-  m_type = Internal::Dimension::Get(e.tree(), context).type;
+  Internal::Dimension dimension = Internal::Dimension::Get(e.tree(), context);
+  m_type = dimension.type;
   m_isList = Internal::Dimension::IsList(e.tree(), context);
+  if (m_type == DimensionType::Matrix) {
+    m_matrixDimension = dimension.matrix;
+  }
   m_isValid = true;
 }
 
@@ -62,6 +66,12 @@ bool Poincare::Dimension::isScalar() {
 
 bool Poincare::Dimension::isMatrix() {
   return m_isValid && !m_isList && m_type == DimensionType::Matrix;
+}
+
+bool Poincare::Dimension::isVector() {
+  // return isMatrix() && m_type.matrix().isVector();
+  return isMatrix() &&
+         (m_matrixDimension.rows == 1 || m_matrixDimension.cols == 1);
 }
 
 bool Poincare::Dimension::isUnit() {

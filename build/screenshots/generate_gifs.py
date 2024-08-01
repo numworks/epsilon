@@ -29,7 +29,7 @@ def main():
     output_folder = "generate_gifs_output"
     clean_or_create_folder(output_folder)
 
-    regex = dataset() + "/" + args.filter + "*"
+    regex = default_dataset + "/" + args.filter + "*"
     print("Generating gifs of all scenarios matching " + regex)
     print("------------------------------")
 

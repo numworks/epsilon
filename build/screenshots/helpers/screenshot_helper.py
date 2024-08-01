@@ -6,13 +6,11 @@ from helpers.print_format import *
 from helpers.gif_helper import *
 from helpers.miscellaneous import *
 
-
-def dataset():
-    return "tests/screenshots_dataset"
+default_dataset = "tests/screenshots_dataset"
 
 
-def folder(scenario_name):
-    return os.path.join(dataset(), scenario_name)
+def folder(scenario_name, dataset=default_dataset):
+    return os.path.join(dataset, scenario_name)
 
 
 def folder_images(folder):

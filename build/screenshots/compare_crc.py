@@ -37,6 +37,12 @@ parser.add_argument(
     default=0,
     help="Update crc32 of failed scenari.",
 )
+parser.add_argument(
+    "-d",
+    "--dataset",
+    type=existing_directory,
+    help="Dataset to test",
+)
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
@@ -53,6 +59,12 @@ def main():
     # Parse args
     args = parser.parse_args()
 
+    # Get dataset
+    if args.dataset is None:
+        dataset = default_dataset
+    else:
+        dataset = args.dataset
+
     # Create output folder
     output_folder = "compare_crc_output"
     clean_or_create_folder(output_folder)
@@ -64,11 +76,11 @@ def main():
     computed_crc32_list = []
 
     with ThreadPoolExecutor(max_workers=8) as pool:
-        for scenario_name in sorted(os.listdir(dataset())):
+        for scenario_name in sorted(os.listdir(dataset)):
             if not re.match(args.filter, scenario_name):
                 continue
 
-            scenario_folder = folder(scenario_name)
+            scenario_folder = folder(scenario_name, dataset)
             if not os.path.isdir(scenario_folder):
                 continue
 
@@ -93,7 +105,7 @@ def main():
     fails = 0
     count = 0
     for scenario_name, computed_crc32 in computed_crc32_list:
-        scenario_folder = folder(scenario_name)
+        scenario_folder = folder(scenario_name, dataset)
         assert os.path.isdir(scenario_folder)
         state_file = get_file_with_extension(scenario_folder, ".nws")
         assert state_file != ""

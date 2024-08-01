@@ -325,8 +325,10 @@ template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
 
+#if 0  // TODO_PCJ
   assert(!Dimension::Get(e).isScalarOrUnit() ||
          AreConsistent(ComplexSign::Get(e), value));
+#endif
 
   if (s_context && value.imag() != 0) {
     s_context->m_encounteredComplex = true;

@@ -1,6 +1,7 @@
 #include "pattern_matching.h"
 
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/systematic_reduction.h>
 
 #include "n_ary.h"

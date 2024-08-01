@@ -1,6 +1,7 @@
 #include "helper.h"
 
 #include <poincare/function_properties/function_type.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>

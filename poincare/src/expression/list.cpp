@@ -4,6 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/statistics_dataset.h>
 
+#include "approximation.h"
 #include "k_tree.h"
 #include "rational.h"
 #include "systematic_reduction.h"

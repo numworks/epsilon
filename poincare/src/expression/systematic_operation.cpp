@@ -4,7 +4,9 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
+#include "approximation.h"
 #include "infinity.h"
+#include "k_tree.h"
 #include "list.h"
 #include "rational.h"
 #include "systematic_reduction.h"

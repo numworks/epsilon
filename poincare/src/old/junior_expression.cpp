@@ -25,6 +25,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/unit_representatives.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>

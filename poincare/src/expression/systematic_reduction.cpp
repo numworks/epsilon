@@ -2,10 +2,12 @@
 
 #include <poincare/src/memory/n_ary.h>
 
+#include "approximation.h"
 #include "arithmetic.h"
 #include "binary.h"
 #include "dependency.h"
 #include "derivation.h"
+#include "k_tree.h"
 #include "list.h"
 #include "logarithm.h"
 #include "matrix.h"

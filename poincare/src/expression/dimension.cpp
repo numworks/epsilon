@@ -1,5 +1,8 @@
 #include "dimension.h"
 
+#include <poincare/old/context.h>
+#include <poincare/src/memory/tree.h>
+
 #include <algorithm>
 
 #include "approximation.h"
@@ -9,6 +12,7 @@
 #include "parametric.h"
 #include "physical_constant.h"
 #include "symbol.h"
+#include "unit_representatives.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -111,6 +115,14 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     }
   }
   return true;
+}
+
+bool Dimension::isSimpleRadianAngleUnit() const {
+  return isSimpleAngleUnit() &&
+         unit.representative == &Units::Angle::representatives.radian;
+}
+bool Dimension::hasNonKelvinTemperatureUnit() const {
+  return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
 }
 
 int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
@@ -588,34 +600,6 @@ bool Dimension::operator==(const Dimension& other) const {
             unit.representative == other.unit.representative);
   }
   return true;
-}
-
-void Dimension::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
-  assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
-  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  int length = Dimension::ListLength(e);
-  if (length >= 0) {
-    // Push ListSequence instead of a list to delay its expansion.
-    SharedTreeStack->pushListSequence();
-    KVarK->cloneTree();
-    Integer::Push(length);
-  }
-  Dimension dim = Dimension::Get(e);
-  if (dim.isMatrix()) {
-    int nRows = dim.matrix.rows;
-    int nCols = dim.matrix.cols;
-    SharedTreeStack->pushMatrix(nRows, nCols);
-    for (int i = 0; i < nRows * nCols; i++) {
-      SharedTreeStack->pushBlock(type);
-    }
-  } else if (dim.isPoint()) {
-    SharedTreeStack->pushPoint();
-    SharedTreeStack->pushBlock(type);
-    SharedTreeStack->pushBlock(type);
-  } else {
-    SharedTreeStack->pushBlock(type);
-  }
-  e->moveTreeOverTree(result);
 }
 
 }  // namespace Poincare::Internal

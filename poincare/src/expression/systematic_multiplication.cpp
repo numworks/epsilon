@@ -2,11 +2,13 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "infinity.h"
+#include "k_tree.h"
 #include "matrix.h"
 #include "number.h"
 #include "rational.h"
 #include "systematic_operation.h"
 #include "systematic_reduction.h"
+#include "unit.h"
 
 namespace Poincare::Internal {
 

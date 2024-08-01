@@ -4,6 +4,8 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include "dimension.h"
+#include "integer.h"
+#include "k_tree.h"
 
 namespace Poincare::Internal {
 
@@ -16,6 +18,34 @@ bool Undefined::CanBeUndefined(const Tree* e) {
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
   return !CanBeUndefined(e) || (e->isPiecewise() && childIndex % 2 == 0) ||
          (e->isListSequence() && childIndex == 2);
+}
+
+void ReplaceTreeWithDimensionedType(Tree* e, Type type) {
+  assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  int length = Dimension::ListLength(e);
+  if (length >= 0) {
+    // Push ListSequence instead of a list to delay its expansion.
+    SharedTreeStack->pushListSequence();
+    KVarK->cloneTree();
+    Integer::Push(length);
+  }
+  Dimension dim = Dimension::Get(e);
+  if (dim.isMatrix()) {
+    int nRows = dim.matrix.rows;
+    int nCols = dim.matrix.cols;
+    SharedTreeStack->pushMatrix(nRows, nCols);
+    for (int i = 0; i < nRows * nCols; i++) {
+      SharedTreeStack->pushBlock(type);
+    }
+  } else if (dim.isPoint()) {
+    SharedTreeStack->pushPoint();
+    SharedTreeStack->pushBlock(type);
+    SharedTreeStack->pushBlock(type);
+  } else {
+    SharedTreeStack->pushBlock(type);
+  }
+  e->moveTreeOverTree(result);
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
@@ -32,7 +62,7 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   if (worstType == Type::Zero) {
     return false;
   }
-  Dimension::ReplaceTreeWithDimensionedType(e, worstType);
+  ReplaceTreeWithDimensionedType(e, worstType);
   return true;
 }
 

@@ -6,6 +6,7 @@
 #include <poincare/src/numeric/zoom.h>
 
 #include "advanced_reduction.h"
+#include "approximation.h"
 #include "float.h"
 #include "list.h"
 #include "matrix.h"

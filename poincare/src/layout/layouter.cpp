@@ -12,6 +12,7 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/unit.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/placeholder.h>

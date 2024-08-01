@@ -5,8 +5,11 @@
 #include "advanced_reduction.h"
 #include "beautification.h"
 #include "dependency.h"
+#include "k_tree.h"
 #include "list.h"
+#include "random.h"
 #include "systematic_reduction.h"
+#include "unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

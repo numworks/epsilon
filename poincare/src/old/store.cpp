@@ -8,6 +8,7 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/memory/tree.h>
 #include <stdlib.h>
 
 #include <cmath>

@@ -1,24 +1,15 @@
 #ifndef POINCARE_EXPRESSION_DIMENSION_H
 #define POINCARE_EXPRESSION_DIMENSION_H
 
-#include <poincare/old/context.h>
-#include <poincare/src/memory/tree.h>
-
 #include "dimension_type.h"
-#include "unit_representatives.h"
 
-namespace Poincare::Internal {
+namespace Poincare {
 
-struct MatrixDimension {
-  uint8_t rows;
-  uint8_t cols;
-};
+class Context;
 
-struct UnitDimension {
-  Units::SIVector vector;
-  // Only one representative is needed for now.
-  const Units::Representative* representative;
-};
+namespace Internal {
+
+class Tree;
 
 struct Dimension {
   constexpr Dimension(DimensionType type = DimensionType::Scalar)
@@ -72,13 +63,8 @@ struct Dimension {
   bool isSimpleAngleUnit() const {
     return isAngleUnit() && unit.vector.angle == 1;
   }
-  bool isSimpleRadianAngleUnit() const {
-    return isSimpleAngleUnit() &&
-           unit.representative == &Units::Angle::representatives.radian;
-  }
-  bool hasNonKelvinTemperatureUnit() const {
-    return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
-  }
+  bool isSimpleRadianAngleUnit() const;
+  bool hasNonKelvinTemperatureUnit() const;
 
   constexpr static int k_nonListListLength = -1;
   // Return k_nonListListLength if tree isn't a list.
@@ -90,8 +76,6 @@ struct Dimension {
   static bool DeepCheck(const Tree* e, Poincare::Context* ctx = nullptr) {
     return DeepCheckDimensions(e, ctx) && DeepCheckListLength(e, ctx);
   }
-
-  static void ReplaceTreeWithDimensionedType(Tree* e, Type type);
 
   DimensionType type;
   union {
@@ -106,6 +90,8 @@ struct Dimension {
                                   Poincare::Context* ctx = nullptr);
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Internal
+
+}  // namespace Poincare
 
 #endif

@@ -5,6 +5,7 @@
 #include <poincare/src/memory/value_block.h>
 
 #include "advanced_reduction.h"
+#include "approximation.h"
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"

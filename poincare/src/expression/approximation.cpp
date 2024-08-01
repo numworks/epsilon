@@ -27,6 +27,7 @@
 #include "symbol.h"
 #include "undefined.h"
 #include "unit.h"
+#include "unit_representatives.h"
 #include "variables.h"
 #include "vector.h"
 

@@ -201,20 +201,19 @@ FunctionType::CartesianType FunctionType::CartesianFunctionType(
 
   // f(x) = cos(b·x+c) + sin(e·x+f) + tan(h·x+i) + ... + z
   Tree* clone = e->cloneTree();
-  /* tan doesn't exist in system expressions
-   * trig(A,1)/trig(A,0) -> tan(A) */
-
+  /* tan doesn't exist in system expressions, replace sin/cos with cos to detect
+   * it in linear combination (we can't replace it with tan because
+   * isLinearCombinationOfFunction must be computed on system expressions). */
   while (PatternMatching::MatchReplace(
       clone,
       KAdd(KA_s,
            KMult(KB_s, KPow(KTrig(KC, 0_e), -1_e), KD_s, KTrig(KC, 1_e), KE_s),
            KF_s),
-      KAdd(KA_s, KMult(KB_s, KD_s, KTan(KC), KE_s), KF_s))) {
+      KAdd(KA_s, KMult(KB_s, KD_s, KTrig(KC, 0_e), KE_s), KF_s))) {
   }
   bool isTrig = isLinearCombinationOfFunction(
       clone, symbol, [](const Tree* e, const char* symbol) {
-        return (e->isTrig() || e->isTan()) &&
-               Degree::Get(e->child(0), symbol) == 1;
+        return e->isTrig() && Degree::Get(e->child(0), symbol) == 1;
       });
   clone->removeTree();
   if (isTrig) {

@@ -1,9 +1,5 @@
 #include "scrollable_three_layouts_view.h"
 
-#include <poincare/old/exception_checkpoint.h>
-
-#include "../app.h"
-
 using namespace Escher;
 using namespace Poincare;
 

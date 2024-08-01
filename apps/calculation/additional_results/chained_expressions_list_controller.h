@@ -2,7 +2,7 @@
 #define CALCULATION_CHAINED_EXPRESSIONS_LIST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <poincare/expression.h>
+#include <poincare/layout.h>
 
 #include "chainable_expressions_list_controller.h"
 

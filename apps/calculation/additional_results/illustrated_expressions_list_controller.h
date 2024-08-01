@@ -2,7 +2,6 @@
 #define CALCULATION_ILLUSTRATED_EXPRESSIONS_LIST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <poincare/old/variable_context.h>
 
 #include "../calculation_store.h"
 #include "chained_expressions_list_controller.h"

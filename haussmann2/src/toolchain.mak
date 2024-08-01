@@ -15,8 +15,12 @@ SFLAGS := \
   -MP \
   -Wall
 
+ifeq ($(ASSERTIONS),0)
+SFLAGS += -DNDEBUG
+endif
+
 ifeq ($(DEBUG),0)
-SFLAGS += -Os -DNDEBUG
+SFLAGS += -Os
 else
 SFLAGS += -O0 -g
 endif

@@ -274,7 +274,7 @@ bool AdditionalResultsType::HasScientificNotation(
           Preferences::PrintFloatMode::Scientific) {
     return false;
   }
-  Layout historyResult = approximateOutput.createLayout(
+  Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
       calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(

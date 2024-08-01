@@ -2,10 +2,12 @@
 
 #include <apps/i18n.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/unit.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/unit_representatives.h>
 
 #include <array>
 #include <cmath>
@@ -13,6 +15,7 @@
 #include "../app.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal::Units;
 using namespace Shared;
 
 namespace Calculation {
@@ -454,32 +457,32 @@ constexpr static const ReferenceValue k_volumeReferences[] = {
 
 constexpr static const int k_numberOfReferenceTables = 8;
 constexpr static const struct {
-  ReferenceUnit unit;
+  ReferenceUnit reference;
   const ReferenceValue* referenceTable;
   size_t tableLength;
 } k_referenceTables[] = {
-    {ReferenceUnit({"_m", "_m"}), k_lengthReferences,
+    {ReferenceUnit({Distance::Dimension}), k_lengthReferences,
      std::size(k_lengthReferences)},
-    {ReferenceUnit({"_s", "_s"}), k_timeReferences,
+    {ReferenceUnit({Time::Dimension}), k_timeReferences,
      std::size(k_timeReferences)},
-    {ReferenceUnit({"_kg", "_kg"}), k_massReferences,
+    {ReferenceUnit({Mass::Dimension}), k_massReferences,
      std::size(k_massReferences)},
-    {ReferenceUnit({"_m^2", "_m^2"}), k_areaReferences,
+    {ReferenceUnit({Surface::Dimension}), k_areaReferences,
      std::size(k_areaReferences)},
-    {ReferenceUnit({"_m^3", "_m^3"}), k_volumeReferences,
+    {ReferenceUnit({Volume::Dimension}), k_volumeReferences,
      std::size(k_volumeReferences)},
-    {ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), k_powerReferences,
-     std::size(k_powerReferences)},
-    {ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}),
-     k_velocityReferences, std::size(k_velocityReferences)},
-    {ReferenceUnit({"_kg×_m^\u0012-1\u0013×_s^\u0012-2\u0013", "_Pa"}),
+    {ReferenceUnit({Power::Dimension, &Power::representatives.watt}),
+     k_powerReferences, std::size(k_powerReferences)},
+    {ReferenceUnit({Speed::Dimension}), k_velocityReferences,
+     std::size(k_velocityReferences)},
+    {ReferenceUnit({Pressure::Dimension, &Pressure::representatives.pascal}),
      k_pressureReferences, std::size(k_pressureReferences)}};
 
 static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
               "Wrong number of reference tables or missing reference table");
 
 int FindUpperAndLowerReferenceValues(
-    double inputValue, Expression orderedSIUnit,
+    double inputValue, Internal::Units::SIVector siVector,
     const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
   /* 1. Find table of corresponding unit.
@@ -487,13 +490,10 @@ int FindUpperAndLowerReferenceValues(
    * in right order, the comparison won't work.
    * Units you can use are listed in k_referenceTables.*/
   const ReferenceValue* referenceTable = nullptr;
-  char unitBuffer[k_sizeOfUnitBuffer];
-  assert(!orderedSIUnit.isUninitialized());
-  PoincareHelpers::Serialize(orderedSIUnit, unitBuffer, k_sizeOfUnitBuffer);
+  assert(!siVector.isEmpty());
   int referenceTableIndex = 0;
   while (referenceTableIndex < k_numberOfReferenceTables) {
-    if (strncmp(unitBuffer, k_referenceTables[referenceTableIndex].unit.SIUnit,
-                k_sizeOfUnitBuffer) == 0) {
+    if (siVector == k_referenceTables[referenceTableIndex].reference.siVector) {
       referenceTable = k_referenceTables[referenceTableIndex].referenceTable;
       break;
     }
@@ -545,10 +545,12 @@ int FindUpperAndLowerReferenceValues(
   return numberOfReferencesFound;
 }
 
+#if 0
 bool ShouldDisplayUnitComparison(double inputValue, Poincare::Expression unit) {
   return FindUpperAndLowerReferenceValues(inputValue, unit, nullptr, nullptr) >
          0;
 }
+#endif
 
 void FillRatioBuffer(double ratio, char* textBuffer, int bufferSize) {
   assert(bufferSize <= k_sizeOfUnitComparisonBuffer && bufferSize > 0);
@@ -585,12 +587,22 @@ UserExpression BuildComparisonExpression(double value,
                                          int tableIndex) {
   assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);
-  UserExpression unit = Poincare::UserExpression::Parse(
-      k_referenceTables[tableIndex].unit.displayedUnit,
-      App::app()->localContext());
-  return Multiplication::Builder(
-      NewExpression::Builder<double>(ratio),
-      NewExpression::Builder<double>(referenceValue->value), unit);
+  ReferenceUnit referenceUnit = k_referenceTables[tableIndex].reference;
+  UserExpression unit =
+      UserExpression::Builder(referenceUnit.outputRepresentative
+                                  ? Poincare::Internal::Units::Unit::Push(
+                                        referenceUnit.outputRepresentative)
+                                  : referenceUnit.siVector.toBaseUnits());
+  // outputRepresentative are expected to be equivalent to SI units.
+  assert(
+      !referenceUnit.outputRepresentative ||
+      referenceUnit.outputRepresentative->ratioExpression()->treeIsIdenticalTo(
+          1_e));
+  return UserExpression::Create(
+      KMult(KA, KB, KC),
+      {.KA = UserExpression::Builder<double>(ratio),
+       .KB = NewExpression::Builder<double>(referenceValue->value),
+       .KC = unit});
 }
 
 }  // namespace UnitComparison

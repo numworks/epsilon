@@ -53,7 +53,7 @@ class ExpressionsListController
 
  protected:
   constexpr static int k_expressionCellType = 0;
-  constexpr static int k_maxNumberOfRows = 5;
+  constexpr static int k_maxNumberOfRows = 6;
   Poincare::Layout getExactLayoutFromExpression(
       const Poincare::UserExpression e,
       const Poincare::Internal::ProjectionContext* ctx,

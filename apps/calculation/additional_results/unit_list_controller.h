@@ -36,7 +36,7 @@ class UnitListController : public ExpressionsListController {
 
  private:
   constexpr static int k_bufferCellType = 1;
-  constexpr static int k_maxNumberOfExpressionCells = 5;
+  constexpr static int k_maxNumberOfExpressionCells = 6;
   static_assert(k_maxNumberOfExpressionCells ==
                 ExpressionsListController::k_maxNumberOfRows);
   constexpr static int k_maxNumberOfBufferCells = 2;

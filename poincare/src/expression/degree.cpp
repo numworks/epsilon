@@ -77,6 +77,7 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
 }
 
 int Degree::Get(const Tree* e, const Tree* symbol) {
+  assert(Simplification::IsSystem(e));
   assert(symbol->isUserSymbol());
   if (e->isStore() || e->isUnitConversion()) {
     return k_unknown;

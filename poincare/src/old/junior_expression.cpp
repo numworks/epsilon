@@ -474,8 +474,8 @@ bool NewExpression::isOfType(
 }
 
 void UserExpression::cloneAndSimplifyAndApproximate(
-    SystemExpression* simplifiedExpression,
-    SystemExpression* approximatedExpression,
+    UserExpression* simplifiedExpression,
+    UserExpression* approximatedExpression,
     const ReductionContext& reductionContext,
     bool approximateKeepingSymbols) const {
   assert(reductionContext.target() == ReductionTarget::User);
@@ -492,8 +492,8 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 }
 
 void UserExpression::cloneAndSimplifyAndApproximate(
-    SystemExpression* simplifiedExpression,
-    SystemExpression* approximatedExpression,
+    UserExpression* simplifiedExpression,
+    UserExpression* approximatedExpression,
     Internal::ProjectionContext* context) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximatedExpression || approximatedExpression->isUninitialized());

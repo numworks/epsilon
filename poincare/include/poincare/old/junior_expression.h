@@ -204,13 +204,13 @@ class JuniorExpression : public OExpression {
   }
 
   void cloneAndSimplifyAndApproximate(
-      SystemExpression* simplifiedExpression,
-      SystemExpression* approximatedExpression,
+      UserExpression* simplifiedExpression,
+      UserExpression* approximatedExpression,
       const ReductionContext& reductionContext,
       bool approximateKeepingSymbols = false) const;
   void cloneAndSimplifyAndApproximate(
-      SystemExpression* simplifiedExpression,
-      SystemExpression* approximatedExpression,
+      UserExpression* simplifiedExpression,
+      UserExpression* approximatedExpression,
       Internal::ProjectionContext* context) const;
   SystemExpression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure,

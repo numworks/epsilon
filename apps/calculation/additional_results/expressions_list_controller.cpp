@@ -143,7 +143,7 @@ Layout ExpressionsListController::getExactLayoutFromExpression(
     const UserExpression e, const Internal::ProjectionContext* ctx,
     Layout* approximate) {
   assert(!e.isUninitialized());
-  Expression approximateExpression, exactExpression;
+  UserExpression approximateExpression, exactExpression;
   Internal::ProjectionContext tempCtx = *ctx;
   tempCtx.m_symbolic =
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;

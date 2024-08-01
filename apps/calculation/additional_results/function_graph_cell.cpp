@@ -13,6 +13,8 @@ using namespace Shared;
 using namespace Poincare;
 using namespace Escher;
 
+// TODO_PCJ : Update this to use the new Expression API
+
 namespace Calculation {
 
 template <size_t N>

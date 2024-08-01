@@ -6,6 +6,7 @@ APP_VERSION := 23.1.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= n0110
+ASSERTIONS ?= $(DEBUG)
 
 ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel
 
@@ -13,7 +14,6 @@ include $(PATH_haussmann)/Makefile
 
 # Further configuration
 
-ASSERTIONS ?= $(DEBUG)
 EXTERNAL_APPS_API_LEVEL ?= 0
 
 SFLAGS += \

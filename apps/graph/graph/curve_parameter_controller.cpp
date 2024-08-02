@@ -10,6 +10,7 @@
 #include "../app.h"
 #include "apps/shared/color_names.h"
 #include "graph_controller.h"
+#include "shared/grid_type_controller.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -350,8 +351,14 @@ void CurveParameterController::viewWillAppear() {
                                                &displayValueSecondDerivative);
   parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
   parameterCell(ParameterIndex::Image2)
-      ->setVisible((isParametric || isPolar) && displayImage);
-  parameterCell(ParameterIndex::Image3)->setVisible(isPolar && displayImage);
+      ->setVisible((isParametric ||
+                    (isPolar && m_graphRange->gridType() ==
+                                    GridTypeController::GridType::Cartesian)) &&
+                   displayImage);
+  parameterCell(ParameterIndex::Image3)
+      ->setVisible((isPolar && m_graphRange->gridType() ==
+                                   GridTypeController::GridType::Cartesian) &&
+                   displayImage);
   parameterCell(ParameterIndex::FirstDerivative1)
       ->setVisible(displayValueFirstDerivative);
   parameterCell(ParameterIndex::FirstDerivative2)

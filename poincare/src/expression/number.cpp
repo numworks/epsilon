@@ -1,5 +1,7 @@
 #include "number.h"
 
+#include <cmath>
+
 #include "approximation.h"
 #include "float_helper.h"
 #include "rational.h"
@@ -42,6 +44,9 @@ Sign Number::Sign(const Tree* e) {
     case Type::DoubleFloat:
     case Type::SingleFloat: {
       double value = FloatHelper::To(e);
+      if (std::isnan(value)) {
+        return Sign::Unknown();
+      }
       // Floats are not considered integer since they may have been rounded
       return Internal::Sign(value == 0, value > 0, value < 0, true);
     }

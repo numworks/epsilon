@@ -358,9 +358,7 @@ class JuniorExpression : public OExpression {
     assert(false);
     return false;
   }
-  static bool IsInfinity(const NewExpression e) {
-    return e.isOfType({ExpressionNode::Type::Infinity});
-  }
+  static bool IsInfinity(const SystemExpression e);
   static bool IsPercent(const NewExpression e) {
     return e.isOfType({ExpressionNode::Type::PercentSimple,
                        ExpressionNode::Type::PercentAddition});

@@ -3,19 +3,20 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
-#include <poincare/old/poincare_expressions.h>
+#include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
 
 #include "../app.h"
+#include "poincare/old/junior_expression.h"
+#include "poincare/src/expression/sign.h"
 #include "vector_helper.h"
 
 using namespace Poincare;
 using namespace Shared;
-
-// TODO_PCJ : Update this to use the new Expression API
 
 namespace Calculation {
 
@@ -41,23 +42,26 @@ void VectorListController::computeAdditionalResults(
 
   setShowIllustration(false);
   size_t index = 0;
-  Expression exactClone = exactOutput.clone();
+  UserExpression exactClone = exactOutput.clone();
 
   // 1. Vector norm
-  Expression norm = VectorHelper::BuildVectorNorm(exactClone, context,
-                                                  m_calculationPreferences);
+  UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, context,
+                                                      m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
-  setLineAtIndex(index++, Expression(), norm, &ctx);
+  setLineAtIndex(index++, UserExpression(), norm, &ctx);
 
-  // 2. Normalized vector
-  Expression approximatedNorm = PoincareHelpers::Approximate<double>(
+  // 2. Normalized vector --> pourquoi pas avant ?
+  SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  if (approximatedNorm.isNull(context) != OMG::Troolean::False ||
-      NewExpression::IsInfinity(approximatedNorm)) {
+  Internal::ComplexSign sign =
+      Internal::ComplexSign::Get(approximatedNorm.tree());
+  if (!sign.isReal() || sign.canBeNull() ||
+      SystemExpression::IsInfinity(approximatedNorm)) {
     return;
   }
-  Expression normalized = Division::Builder(exactClone, norm);
+  UserExpression normalized =
+      UserExpression::Create(KDiv(KA, KB), {.KA = exactClone, .KB = norm});
   PoincareHelpers::CloneAndSimplify(
       &normalized, context,
       {.complexFormat = complexFormat(),
@@ -68,22 +72,25 @@ void VectorListController::computeAdditionalResults(
     // The reduction might have failed
     return;
   }
-  setLineAtIndex(index++, Expression(), normalized, &ctx);
+  setLineAtIndex(index++, UserExpression(), normalized, &ctx);
 
   // 3. Angle with x-axis
   assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
   Matrix vector = static_cast<const Matrix&>(approximateOutput);
   assert(vector.isVector());
-  if (vector.numberOfChildren() != 2) {
+  if (vector.tree()->numberOfChildren() != 2) {
     // Vector is not 2D
     return;
   }
-  assert(normalized.numberOfChildren() == 2);
-  Expression angle = ArcCosine::Builder(normalized.cloneChildAtIndex(0));
-  if (normalized.cloneChildAtIndex(1).isPositive(context) ==
-      OMG::Troolean::False) {
-    angle = Subtraction::Builder(
-        Trigonometry::AnglePeriodInAngleUnit(ctx.m_angleUnit), angle);
+  assert(normalized.tree()->numberOfChildren() == 2);
+  UserExpression angle = UserExpression::Create(
+      KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
+  sign = Internal::ComplexSign::Get(normalized.tree()->child(1));
+  if (sign.isReal() && sign.realSign().canBeStrictlyNegative() &&
+      !sign.realSign().canBeStrictlyPositive()) {
+    angle = UserExpression::Create(
+        KSub(KA, KB),
+        {.KA = Internal::Angle::Period(ctx.m_angleUnit), .KB = angle});
   }
   float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
       angle, context,

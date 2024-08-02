@@ -214,7 +214,7 @@ bool AdditionalResultsType::HasVector(
     return false;
   }
   assert(!norm.isUndefined());
-  int nChildren = approximateOutput.numberOfChildren();
+  int nChildren = approximateOutput.tree()->numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
     if (approximateOutput.cloneChildAtIndex(i).isScalarComplex(
             calculationPreferences)) {

@@ -16,6 +16,7 @@
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/float_helper.h>
+#include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/order.h>
@@ -1037,6 +1038,10 @@ bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
 
 bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
+}
+
+bool SystemExpression::IsInfinity(const SystemExpression e) {
+  return Infinity::IsPlusOrMinusInfinity(e.tree());
 }
 
 bool NewExpression::allChildrenAreUndefined() const {

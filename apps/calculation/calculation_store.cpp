@@ -169,7 +169,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         storeExpression = exactOutputExpression;
         UserExpression exactStoredExpression =
             static_cast<Store&>(storeExpression).value();
-#if 0
+#if 0  // TODO_PCJ
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
                 exactStoredExpression, context);

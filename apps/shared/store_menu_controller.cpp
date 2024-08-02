@@ -132,7 +132,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
       KStore(KA, KB), {.KA = reducedValue, .KB = input.childAtIndex(1)});
   bool isVariable =
       reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
-#if 0
+#if 0  // TODO_PCJ
   UserExpression leftHandSideApproximation =
       PoincareHelpers::ApproximateKeepingUnits<double>(
           reducedExp.childAtIndex(0), context);

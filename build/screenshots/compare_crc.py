@@ -20,7 +20,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "-n",
-    "--noscreenshots",
+    "--no-screenshots",
     action="store_true",
     default=0,
     help="Do not take screenshots at each step of failed scenarios.",
@@ -146,7 +146,7 @@ def main():
             print("Comparing crc32 of", scenario_name, bold(red("FAILED")))
 
         # Take screenshot at each step
-        if not success and not args.noscreenshots:
+        if not success and not args.no_screenshots:
             # Create output subfolder
             output_scenario_folder = os.path.join(output_folder, scenario_name)
             os.mkdir(output_scenario_folder)

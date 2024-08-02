@@ -494,7 +494,7 @@ bool AdvancedReduction::DeepContract(Tree* e) {
 }
 
 bool AdvancedReduction::DeepExpand(Tree* e) {
-  // Tree::ApplyShallowTopDown could be used but we need to skip sets
+  // Tree::ApplyShallowTopDown could be used but we need to skip dependencies
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
    * We push a temporary tree to preserve TreeRef.
@@ -532,11 +532,12 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
    *                              = exp(A+B+C)*|D*E|
    * Most expansion operations have to handle themselves smartly.
    * exp(A+B+C) = exp(A)*exp(B)*exp(C) */
-  int failures = 0;
+  int consecutiveFailures = 0;
   int i = 0;
   assert(!SystematicReduction::DeepReduce(e));
-  while (failures < numberOfOperations) {
-    failures = operations[i % numberOfOperations](e) ? 0 : failures + 1;
+  while (consecutiveFailures < numberOfOperations) {
+    consecutiveFailures =
+        operations[i % numberOfOperations](e) ? 0 : consecutiveFailures + 1;
     // EveryOperation should preserve e's reduced status
     assert(!SystematicReduction::DeepReduce(e));
     i++;

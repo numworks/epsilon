@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
-#include <float.h>
+#include <omg/float.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -264,7 +264,9 @@ inline static bool AreConsistent(const Sign& sign, const T& value) {
          (((value > 0 && sign.canBeStrictlyPositive()) ||
            (value < 0 && sign.canBeStrictlyNegative()) ||
            (value == 0 && sign.canBeNull())) &&
-          (sign.canBeNonInteger() || (std::floor(value) == value)));
+          (sign.canBeNonInteger() ||
+           OMG::Float::RoughlyEqual<T>(value, std::floor(value),
+                                       OMG::Float::EpsilonLax<T>())));
 }
 template <typename T>
 inline static bool AreConsistent(const ComplexSign& sign,

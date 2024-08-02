@@ -536,8 +536,12 @@ bool AdvancedReduction::TryAllOperations(Tree* e,
   int i = 0;
   assert(!SystematicReduction::DeepReduce(e));
   while (consecutiveFailures < numberOfOperations) {
-    consecutiveFailures =
-        operations[i % numberOfOperations](e) ? 0 : consecutiveFailures + 1;
+#if ASSERTIONS
+    uint32_t hash = e->hash();
+#endif
+    bool changed = operations[i % numberOfOperations](e);
+    assert(changed || hash == e->hash());
+    consecutiveFailures = changed ? 0 : consecutiveFailures + 1;
     // EveryOperation should preserve e's reduced status
     assert(!SystematicReduction::DeepReduce(e));
     i++;

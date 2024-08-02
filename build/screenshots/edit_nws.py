@@ -25,7 +25,6 @@ parser.add_argument(
     "-c",
     "--copy",
     action="store_true",
-    default=0,
     help="Use this flag if you want to create a copy instead of editing you original nws",
 )
 

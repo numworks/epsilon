@@ -22,7 +22,6 @@ parser.add_argument(
     "-n",
     "--no-screenshots",
     action="store_true",
-    default=0,
     help="Do not take screenshots at each step of failed scenarios.",
 )
 parser.add_argument(
@@ -41,7 +40,6 @@ parser.add_argument(
     "-u",
     "--update",
     action="store_true",
-    default=0,
     help="Update crc32 of failed scenarios.",
 )
 parser.add_argument(

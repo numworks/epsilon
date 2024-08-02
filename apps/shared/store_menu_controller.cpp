@@ -132,9 +132,14 @@ bool StoreMenuController::parseAndStore(const char* text) {
       KStore(KA, KB), {.KA = reducedValue, .KB = input.childAtIndex(1)});
   bool isVariable =
       reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
+#if 0
   UserExpression leftHandSideApproximation =
       PoincareHelpers::ApproximateKeepingUnits<double>(
           reducedExp.childAtIndex(0), context);
+#else
+  UserExpression leftHandSideApproximation =
+      PoincareHelpers::Approximate<double>(reducedExp.childAtIndex(0), context);
+#endif
   if (isVariable &&
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
           input, reducedExp.childAtIndex(0), leftHandSideApproximation,

@@ -169,9 +169,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
         storeExpression = exactOutputExpression;
         UserExpression exactStoredExpression =
             static_cast<Store&>(storeExpression).value();
+#if 0
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
                 exactStoredExpression, context);
+#else
+        approximateOutputExpression = PoincareHelpers::Approximate<double>(
+            exactStoredExpression, context);
+#endif
         if (static_cast<Store&>(storeExpression).symbol().type() ==
                 ExpressionNode::Type::Symbol &&
             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(

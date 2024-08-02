@@ -896,9 +896,13 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
     } else {
-      /* Function in first half of the equation refer to an already defined one.
-       * Replace the symbol. */
-      leftExpression.replaceChildAtIndexInPlace(0, Symbol::SystemSymbol());
+      /* Function in left part of the equation refer to an already defined one.
+       * Replace the symbol in the left part too. */
+      assert(leftExpression.childAtIndex(0).isIdenticalTo(
+          Symbol::Builder(k_cartesianSymbol)));
+      result =
+          ExpressionModel::ReplaceSymbolWithUnknown(result, k_cartesianSymbol);
+      leftExpression = result.childAtIndex(0);
     }
   } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
              leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {

@@ -134,10 +134,14 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const Preferences::CalculationPreferences calculationPreferences) {
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
-  assert(Internal::Dimension::Get(inputTree).isScalar() ||
-         Internal::Dimension::Get(inputTree).isSimpleAngleUnit());
-  assert(Internal::Dimension::Get(exactTree).isScalar() ||
-         Internal::Dimension::Get(exactTree).isSimpleAngleUnit());
+  Internal::Dimension dimension = Internal::Dimension::Get(inputTree);
+
+  assert(dimension == Internal::Dimension::Get(exactTree));
+  assert(!dimension.isUnit() || dimension.isSimpleAngleUnit());
+
+  if (!dimension.isScalarOrUnit() || Internal::Dimension::IsList(exactTree)) {
+    return UserExpression();
+  }
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:
    * - > input: cos(60)

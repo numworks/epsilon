@@ -95,7 +95,7 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  int numberOfSignificantDigits,
                                  Preferences::PrintFloatMode floatMode,
                                  OMG::Base base) {
-  assert(expression->isExpression());
+  assert(expression->isExpression() || expression->isPlaceholder());
   /* expression lives before layoutParent in the TreeStack and will be
    * destroyed in the process. An TreeRef is necessary to keep track of
    * layoutParent's root. */

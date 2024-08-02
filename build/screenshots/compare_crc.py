@@ -23,26 +23,26 @@ parser.add_argument(
     "--noscreenshots",
     action="store_true",
     default=0,
-    help="Do not take screenshots at each step of failed scenari.",
+    help="Do not take screenshots at each step of failed scenarios.",
 )
 parser.add_argument(
     "-r",
     "--ref",
     type=existing_file,
-    help="epsilon reference executable, only used for failed scenari to generate screenshots at each step",
+    help="epsilon reference executable, only used for failed scenarios to generate screenshots at each step",
 )
 parser.add_argument(
     "-f",
     "--filter",
     default="",
-    help="Specify a regular expression to filter scenari by name.",
+    help="Specify a regular expression to filter scenarios by name.",
 )
 parser.add_argument(
     "-u",
     "--update",
     action="store_true",
     default=0,
-    help="Update crc32 of failed scenari.",
+    help="Update crc32 of failed scenarios.",
 )
 parser.add_argument(
     "-d",
@@ -187,7 +187,7 @@ def main():
     print("==============================")
     if ignored > 0:
         print(ignored, "folders ignored")
-    print(count, "scenari tested")
+    print(count, "scenarios tested")
     if fails > 0:
         print(fails, "failed")
     else:

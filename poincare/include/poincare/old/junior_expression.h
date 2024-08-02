@@ -84,9 +84,15 @@ class JuniorExpressionNode final : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::JuniorExpression; }
-  // TODO_PCJ: Plug in approximation
-  // OMG::Troolean isPositive(Context* context) const override;
-  // OMG::Troolean isNull(Context* context) const override;
+  // Unimplemented. Use Internal::Sign API on SystemExpression's trees only.
+  OMG::Troolean isPositive(Context* context) const override {
+    assert(false);
+    return OMG::Troolean::Unknown;
+  }
+  OMG::Troolean isNull(Context* context) const override {
+    assert(false);
+    return OMG::Troolean::Unknown;
+  }
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 

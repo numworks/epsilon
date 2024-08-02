@@ -170,12 +170,6 @@ class UnitNode final : public ExpressionNode {
   constexpr static int k_numberOfBaseUnits = 8;
 
   // Expression Properties
-  OMG::Troolean isPositive(Context* context) const override {
-    return OMG::Troolean::True;
-  }
-  OMG::Troolean isNull(Context* context) const override {
-    return OMG::Troolean::False;
-  }
   Expression removeUnit(Expression* unit) override;
 
   /* Layout */

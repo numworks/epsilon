@@ -54,13 +54,21 @@ SFLAGS_ion += \
 
 # Simulator backgrounds - begin
 
-_ion_simulator_background := $(PATH_ion)/src/simulator/assets/background-with-shadow.webp
+$(call assert_defined,ION_LAYOUT_VARIANT)
+
+_ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_LAYOUT_VARIANT)/background-with-shadow.webp
 _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)
+
+_ion_simulator_background_crop_epsilon := 1005x1975+93+13
+_ion_simulator_background_resize_epsilon := 1160x2220
 
 # FIXME Sizes and offsets should be parameterized
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
-	convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
+	convert \
+		-crop $(_ion_simulator_background_crop_$(ION_LAYOUT_VARIANT)) \
+		-resize $(_ion_simulator_background_resize_$(ION_LAYOUT_VARIANT)) \
+		$< $@
 
 # Simulator backgrounds - end
 
@@ -91,7 +99,7 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
-$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout/$(ION_LAYOUT_VARIANT).json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)

@@ -21,3 +21,5 @@ SFLAGS += \
   -DEPSILON_GETOPT=$(EPSILON_GETOPT) \
   -DEPSILON_TELEMETRY=$(EPSILON_TELEMETRY)
 
+# Select the simulator layout
+ION_LAYOUT_VARIANT := epsilon

@@ -77,8 +77,9 @@ void VectorListController::computeAdditionalResults(
     return;
   }
   assert(normalized.numberOfChildren() == 2);
-  Expression angle = ArcCosine::Builder(normalized.childAtIndex(0));
-  if (normalized.childAtIndex(1).isPositive(context) == OMG::Troolean::False) {
+  Expression angle = ArcCosine::Builder(normalized.cloneChildAtIndex(0));
+  if (normalized.cloneChildAtIndex(1).isPositive(context) ==
+      OMG::Troolean::False) {
     angle = Subtraction::Builder(
         Trigonometry::AnglePeriodInAngleUnit(ctx.m_angleUnit), angle);
   }
@@ -94,10 +95,10 @@ void VectorListController::computeAdditionalResults(
 
   // 4. Illustration
   float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.childAtIndex(0), context,
+      vector.cloneChildAtIndex(0), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.childAtIndex(1), context,
+      vector.cloneChildAtIndex(1), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&

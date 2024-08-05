@@ -552,7 +552,7 @@ static void simplifyAndApproximateSolution(
      * ComplexCartesian here, which may have triggered further reduction and
      * the creation of a dependency.
      * We remove that dependency in order to create layouts. */
-    *exact = exact->childAtIndex(0);
+    *exact = exact->cloneChildAtIndex(0);
   }
 }
 

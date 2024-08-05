@@ -84,6 +84,12 @@ class JuniorLayout final : public OLayout {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }
 
+  JuniorLayout childAtIndex(int i) const {
+    // JuniorLayout cannot have parents or children JuniorLayouts.
+    assert(false);
+    return JuniorLayout();
+  }
+
   JuniorLayout cloneWithoutMargins();
 
   // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))

@@ -39,7 +39,7 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
   if (!seq->fullName()) {
     return NewExpression::Builder<double>(result);
   }
-  UserExpression rankExpression = symbol.childAtIndex(0).clone();
+  const UserExpression rankExpression = symbol.cloneChildAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
    * that are contained in the rank expression. */
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(

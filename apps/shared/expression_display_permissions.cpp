@@ -9,7 +9,7 @@ namespace Shared {
 namespace ExpressionDisplayPermissions {
 
 static bool neverDisplayExactExpressionOfApproximation(
-    UserExpression approximateOutput, Context* context) {
+    const UserExpression approximateOutput, Context* context) {
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
@@ -21,7 +21,8 @@ static bool neverDisplayExactExpressionOfApproximation(
          !approximateOutput.isInRadians(context);
 }
 
-bool NeverDisplayReductionOfInput(UserExpression input, Context* context) {
+bool NeverDisplayReductionOfInput(const UserExpression input,
+                                  Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
@@ -43,7 +44,7 @@ bool NeverDisplayReductionOfInput(UserExpression input, Context* context) {
       context);
 }
 
-static bool isPrimeFactorization(UserExpression expression) {
+static bool isPrimeFactorization(const UserExpression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
   return !expression.recursivelyMatches([](const NewExpression e) {
@@ -51,26 +52,28 @@ static bool isPrimeFactorization(UserExpression expression) {
            !(e.type() == ExpressionNode::Type::BasedInteger ||
              e.type() == ExpressionNode::Type::Multiplication ||
              (e.type() == ExpressionNode::Type::Power &&
-              e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger &&
-              e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
+              e.cloneChildAtIndex(0).type() ==
+                  ExpressionNode::Type::BasedInteger &&
+              e.cloneChildAtIndex(1).type() ==
+                  ExpressionNode::Type::BasedInteger));
   });
 }
 
-static bool exactExpressionIsForbidden(UserExpression exactOutput) {
+static bool exactExpressionIsForbidden(const UserExpression exactOutput) {
   if (!Preferences::SharedPreferences()->examMode().forbidExactResults()) {
     return false;
   }
   if (exactOutput.type() == ExpressionNode::Type::Opposite) {
-    return exactExpressionIsForbidden(exactOutput.childAtIndex(0));
+    return exactExpressionIsForbidden(exactOutput.cloneChildAtIndex(0));
   }
   bool isFraction = exactOutput.type() == ExpressionNode::Type::Division &&
-                    exactOutput.childAtIndex(0).isNumber() &&
-                    exactOutput.childAtIndex(1).isNumber();
+                    exactOutput.cloneChildAtIndex(0).isNumber() &&
+                    exactOutput.cloneChildAtIndex(1).isNumber();
   return !(exactOutput.isNumber() || isFraction ||
            isPrimeFactorization(exactOutput));
 }
 
-static bool neverDisplayExactOutput(UserExpression exactOutput,
+static bool neverDisplayExactOutput(const UserExpression exactOutput,
                                     Context* context) {
   if (exactOutput.isUninitialized()) {
     return false;
@@ -97,9 +100,9 @@ static bool neverDisplayExactOutput(UserExpression exactOutput,
       exactOutput.hasUnit(true);
 }
 
-bool ShouldOnlyDisplayApproximation(UserExpression input,
-                                    UserExpression exactOutput,
-                                    UserExpression approximateOutput,
+bool ShouldOnlyDisplayApproximation(const UserExpression input,
+                                    const UserExpression exactOutput,
+                                    const UserExpression approximateOutput,
                                     Context* context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||

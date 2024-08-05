@@ -325,7 +325,7 @@ NewExpression NewExpression::Juniorize(OExpression e) {
   return Builder(FromPoincareExpression(e));
 }
 
-NewExpression NewExpression::childAtIndex(int i) const {
+NewExpression NewExpression::cloneChildAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));
 }
@@ -848,8 +848,8 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
   ExpressionNode::Type t = type();
   if (t == ExpressionNode::Type::Dependency ||
       t == ExpressionNode::Type::Store) {
-    return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols,
-                                              auxiliary, ignoredSymbols);
+    return cloneChildAtIndex(0).recursivelyMatches(
+        test, context, replaceSymbols, auxiliary, ignoredSymbols);
   }
   if (t == ExpressionNode::Type::Symbol ||
       t == ExpressionNode::Type::Function) {
@@ -882,10 +882,10 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
     if (isParametered && i == Parametric::k_variableIndex) {
       continue;
     }
-    NewExpression childToAnalyze = childAtIndex(i);
+    NewExpression childToAnalyze = cloneChildAtIndex(i);
     bool matches;
     if (isParametered && i == Parametric::FunctionIndex(tree())) {
-      NewExpression symbolExpr = childAtIndex(Parametric::k_variableIndex);
+      NewExpression symbolExpr = cloneChildAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
       matches = childToAnalyze.recursivelyMatches(
@@ -1119,9 +1119,9 @@ Coordinate2D<T> Point::approximate2D(
 Poincare::Layout Point::create2DLayout(
     Preferences::PrintFloatMode floatDisplayMode, int significantDigits,
     Context* context) const {
-  Poincare::Layout child0 = childAtIndex(0).createLayout(
+  Poincare::Layout child0 = cloneChildAtIndex(0).createLayout(
       floatDisplayMode, significantDigits, context);
-  Poincare::Layout child1 = childAtIndex(1).createLayout(
+  Poincare::Layout child1 = cloneChildAtIndex(1).createLayout(
       floatDisplayMode, significantDigits, context);
   return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
 }

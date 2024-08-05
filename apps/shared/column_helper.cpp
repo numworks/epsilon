@@ -158,13 +158,13 @@ StoreColumnHelper::privateFillColumnWithFormula(const char* text, int* series,
   }
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
-    UserExpression leftOfEqual = formula.childAtIndex(0);
+    const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
-      Symbol symbolLeftOfEqual = static_cast<Symbol&>(leftOfEqual);
+      const Symbol symbolLeftOfEqual = static_cast<const Symbol&>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
                                 strlen(symbolLeftOfEqual.name()), series,
                                 column)) {
-        formula = formula.childAtIndex(1);
+        formula = formula.cloneChildAtIndex(1);
         isValidEquality = true;
       }
     }
@@ -201,7 +201,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const char* text, int* series,
     int formulaNumberOfChildren =
         static_cast<List&>(formula).numberOfChildren();
     for (int i = 0; i < formulaNumberOfChildren; i++) {
-      if (!formula.childAtIndex(i).isUndefined()) {
+      if (!formula.cloneChildAtIndex(i).isUndefined()) {
         allChildrenAreUndefined = false;
         break;
       }

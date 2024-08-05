@@ -126,23 +126,24 @@ bool StoreMenuController::parseAndStore(const char* text) {
     openAbortWarning();
     return false;
   }
-  UserExpression reducedValue = input.childAtIndex(0);
+  UserExpression reducedValue = input.cloneChildAtIndex(0);
   PoincareHelpers::CloneAndSimplify(&reducedValue, context);
   UserExpression reducedExp = UserExpression::Create(
-      KStore(KA, KB), {.KA = reducedValue, .KB = input.childAtIndex(1)});
+      KStore(KA, KB), {.KA = reducedValue, .KB = input.cloneChildAtIndex(1)});
   bool isVariable =
-      reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
+      reducedExp.cloneChildAtIndex(1).type() == ExpressionNode::Type::Symbol;
 #if 0  // TODO_PCJ
   UserExpression leftHandSideApproximation =
       PoincareHelpers::ApproximateKeepingUnits<double>(
-          reducedExp.childAtIndex(0), context);
+          reducedExp.cloneChildAtIndex(0), context);
 #else
   UserExpression leftHandSideApproximation =
-      PoincareHelpers::Approximate<double>(reducedExp.childAtIndex(0), context);
+      PoincareHelpers::Approximate<double>(reducedExp.cloneChildAtIndex(0),
+                                           context);
 #endif
   if (isVariable &&
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          input, reducedExp.childAtIndex(0), leftHandSideApproximation,
+          input, reducedExp.cloneChildAtIndex(0), leftHandSideApproximation,
           context)) {
     reducedExp.replaceChildAtIndexInPlace(0, leftHandSideApproximation);
   }

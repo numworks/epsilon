@@ -179,7 +179,12 @@ class JuniorExpression : public OExpression {
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
-  NewExpression childAtIndex(int i) const;
+  NewExpression childAtIndex(int i) const {
+    // JuniorExpression cannot have parents or children JuniorExpressions.
+    assert(false);
+    return NewExpression();
+  }
+  NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
   ExpressionNode::Type type() const;
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;

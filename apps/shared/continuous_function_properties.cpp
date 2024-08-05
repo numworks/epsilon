@@ -152,16 +152,16 @@ void ContinuousFunctionProperties::update(
     return;
   }
 
-  SystemExpression analyzedExpression = reducedEquation;
-  if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
-    // Do not handle dependencies for now.
-    analyzedExpression = reducedEquation.childAtIndex(0);
-
+  // Do not handle dependencies for now.
+  const SystemExpression analyzedExpression =
+      (reducedEquation.type() == ExpressionNode::Type::Dependency)
+          ? reducedEquation.cloneChildAtIndex(0)
+          : reducedEquation;
+  if (reducedEquation.type() == ExpressionNode::Type::Dependency &&
+      analyzedExpression.type() == ExpressionNode::Type::Dependency) {
     // If there is still a dependency, it means that the reduction failed.
-    if (analyzedExpression.type() == ExpressionNode::Type::Dependency) {
-      setErrorStatusAndUpdateCaption(Status::Unhandled);
-      return;
-    }
+    setErrorStatusAndUpdateCaption(Status::Unhandled);
+    return;
   }
 
   // Compute equation's degree regarding y.
@@ -494,8 +494,8 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return equation.type() == ExpressionNode::Type::Comparison &&
-         equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
-         !equation.childAtIndex(1).recursivelyMatches(
+         equation.cloneChildAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
+         !equation.cloneChildAtIndex(1).recursivelyMatches(
              [](const NewExpression e, Context* context, void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);

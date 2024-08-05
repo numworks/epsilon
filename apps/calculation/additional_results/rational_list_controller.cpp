@@ -27,21 +27,21 @@ IntegerHandler extractInteger(const Tree* e) {
   return Integer::Handler(e);
 }
 
-static bool isIntegerInput(Expression e) {
+static bool isIntegerInput(const Expression e) {
   return (e.type() == ExpressionNode::Type::BasedInteger ||
           (e.type() == ExpressionNode::Type::Opposite &&
-           isIntegerInput(e.childAtIndex(0))));
+           isIntegerInput(e.cloneChildAtIndex(0))));
 }
 
-static bool isFractionInput(Expression e) {
+static bool isFractionInput(const Expression e) {
   if (e.type() == ExpressionNode::Type::Opposite) {
-    return isFractionInput(e.childAtIndex(0));
+    return isFractionInput(e.cloneChildAtIndex(0));
   }
   if (e.type() != ExpressionNode::Type::Division) {
     return false;
   }
-  Expression num = e.childAtIndex(0);
-  Expression den = e.childAtIndex(1);
+  Expression num = e.cloneChildAtIndex(0);
+  Expression den = e.cloneChildAtIndex(1);
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
@@ -74,13 +74,13 @@ void RationalListController::computeAdditionalResults(
                 "k_maxNumberOfRows must be greater than 2");
 
   bool negative = e.type() == ExpressionNode::Type::Opposite;
-  Expression div = negative ? e.childAtIndex(0) : e;
+  const Expression div = negative ? e.cloneChildAtIndex(0) : e;
   assert(div.type() == ExpressionNode::Type::Division);
-  IntegerHandler numerator = extractInteger(div.childAtIndex(0));
+  IntegerHandler numerator = extractInteger(div.cloneChildAtIndex(0));
   if (negative) {
     numerator.setSign(InvertSign(numerator.sign()));
   }
-  IntegerHandler denominator = extractInteger(div.childAtIndex(1));
+  IntegerHandler denominator = extractInteger(div.cloneChildAtIndex(1));
   Expression rational =
       Expression::Builder(Rational::Push(numerator, denominator));
   SystemExpression mixedFraction =

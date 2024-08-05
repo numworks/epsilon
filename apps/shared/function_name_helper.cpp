@@ -101,9 +101,9 @@ bool ParametricComponentsNameError(UserExpression expression,
     // The user is not defining a function
     return false;
   }
-  UserExpression function = expression.childAtIndex(0);
-  UserExpression functionSymbol = function.childAtIndex(0);
-  UserExpression point = expression.childAtIndex(1);
+  const UserExpression function = expression.cloneChildAtIndex(0);
+  const UserExpression functionSymbol = function.cloneChildAtIndex(0);
+  const UserExpression point = expression.cloneChildAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
       point.type() != ExpressionNode::Type::Point) {
@@ -113,7 +113,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char functionName[bufferSize];
   assert(function.type() == ExpressionNode::Type::Function);
-  strlcpy(functionName, static_cast<Poincare::Function&>(function).name(),
+  strlcpy(functionName, static_cast<const Poincare::Function&>(function).name(),
           bufferSize);
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);

@@ -130,8 +130,8 @@ bool GlobalContext::setExpressionForSymbolAbstract(
            Ion::Storage::Record::ErrorStatus::None;
   }
   assert(symbol.type() == ExpressionNode::Type::Function &&
-         symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
-  UserExpression childSymbol = symbol.childAtIndex(0);
+         symbol.cloneChildAtIndex(0).type() == ExpressionNode::Type::Symbol);
+  const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -156,7 +156,7 @@ const UserExpression GlobalContext::expressionForSymbolAndRecord(
   if (symbol.type() == ExpressionNode::Type::Symbol) {
     return ExpressionForUserNamed(r);
   } else if (symbol.type() == ExpressionNode::Type::Function) {
-    return ExpressionForFunction(symbol.childAtIndex(0), r);
+    return ExpressionForFunction(symbol.cloneChildAtIndex(0), r);
   }
   assert(symbol.type() == ExpressionNode::Type::Sequence);
   return expressionForSequence(symbol, r, ctx);
@@ -201,7 +201,7 @@ const UserExpression GlobalContext::expressionForSequence(
   /* An function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  UserExpression rank = symbol.childAtIndex(0).clone();
+  UserExpression rank = symbol.cloneChildAtIndex(0);
   bool rankIsInteger = false;
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
@@ -356,7 +356,7 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
                                      size_t bufferSize, const UserExpression& e,
                                      bool first) {
   assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point);
-  UserExpression child = e.childAtIndex(first ? 0 : 1).clone();
+  UserExpression child = e.cloneChildAtIndex(first ? 0 : 1);
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
   child.storeWithNameAndExtension(baseName,

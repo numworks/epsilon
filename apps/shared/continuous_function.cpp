@@ -540,7 +540,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
           tInt >= static_cast<List&>(e).numberOfChildren()) {
         return Coordinate2D<T>();
       }
-      point = point = e.childAtIndex(tInt);
+      point = e.cloneChildAtIndex(tInt);
     }
     assert(!point.isUninitialized() && point.dimension().isPoint());
     if (point.isUndefined()) {
@@ -630,10 +630,6 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
       if (m_expression.dimension().isListOfPoints()) {
-        SystemExpression list =
-            m_expression.type() == ExpressionNode::Type::List
-                ? m_expression
-                : m_expression.childAtIndex(0);
         m_expression = m_expression.approximateListAndSort<double>()
                            .removeUndefListElements();
       } else {
@@ -806,7 +802,7 @@ UserExpression ContinuousFunction::Model::expressionClone(
   if (e.isUninitialized()) {
     return e;
   }
-  return e.childAtIndex(1);
+  return e.cloneChildAtIndex(1);
 }
 
 UserExpression ContinuousFunction::Model::originalEquation(
@@ -824,11 +820,11 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
   if (!ComparisonNode::IsBinaryEquality(e)) {
     return false;
   }
-  UserExpression leftExpression = e.childAtIndex(0);
+  const UserExpression leftExpression = e.cloneChildAtIndex(0);
   if (leftExpression.type() != ExpressionNode::Type::Function) {
     return false;
   }
-  UserExpression functionSymbol = leftExpression.childAtIndex(0);
+  const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
   return functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)) ||
          functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)) ||
          functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol));
@@ -871,7 +867,9 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     *computedEquationType = equationType;
   }
   bool isUnnamedFunction = true;
-  UserExpression leftExpression = result.childAtIndex(0);
+  /* TODO_PCJ: leftExpression is later changed and should not be a clone of
+   * result's child. */
+  UserExpression leftExpression = result.cloneChildAtIndex(0);
 
   if (IsFunctionAssignment(result)) {
     // Ensure that function name is either record's name, or free
@@ -882,7 +880,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
-      UserExpression functionSymbol = leftExpression.childAtIndex(0);
+      const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
         tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::T;
@@ -893,7 +891,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
             functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)));
         tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::X;
       }
-      result = result.childAtIndex(1);
+      result = result.cloneChildAtIndex(1);
       isUnnamedFunction = false;
     } else {
       /* Function in left part of the equation refer to an already defined one.
@@ -907,7 +905,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     }
   } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
              leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
-    result = result.childAtIndex(1);
+    result = result.cloneChildAtIndex(1);
     tempFunctionSymbol =
         leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))
             ? ContinuousFunctionProperties::SymbolType::Radius
@@ -922,7 +920,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   if (isUnnamedFunction) {
     result = Expression::Create(
-        KSub(KA, KB), {.KA = leftExpression, .KB = result.childAtIndex(1)});
+        KSub(KA, KB),
+        {.KA = leftExpression, .KB = result.cloneChildAtIndex(1)});
     /* Replace all y symbols with UCodePointTemporaryUnknown so that they are
      * not replaced if they had a predefined value. This will not replace the y
      * symbols nested in function, which is not a supported behavior anyway.
@@ -984,9 +983,9 @@ SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
           SystemExpression::CreateReduce(
               KMult(KA, KPow(KB, -1_e)),
               {
-                  .KA = expression.childAtIndex(1).getReducedDerivative(
+                  .KA = expression.cloneChildAtIndex(1).getReducedDerivative(
                       k_unknownName),
-                  .KB = expression.childAtIndex(0).getReducedDerivative(
+                  .KB = expression.cloneChildAtIndex(0).getReducedDerivative(
                       k_unknownName),
               })
               .getSystemFunction(k_unknownName);
@@ -1011,9 +1010,9 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
   }
   if (record->hasExtension(Ion::Storage::functionExtension)) {
     if (IsFunctionAssignment(newExpression)) {
-      UserExpression function = newExpression.childAtIndex(0);
+      const UserExpression function = newExpression.cloneChildAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
-          record, static_cast<SymbolAbstract&>(function).name(),
+          record, static_cast<const SymbolAbstract&>(function).name(),
           Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;
@@ -1055,8 +1054,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
   }
   // Check if the equation is of the form f(x)=...
   if (IsFunctionAssignment(expressionToStore)) {
-    UserExpression functionSymbol =
-        expressionToStore.childAtIndex(0).childAtIndex(0);
+    const UserExpression functionSymbol =
+        expressionToStore.cloneChildAtIndex(0).cloneChildAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ
     assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
     // Override the symbol so that it can be replaced in the right expression
@@ -1077,7 +1076,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
                  AliasesLists::k_thetaAliases.contains(
                      static_cast<const Symbol&>(e).name());
         })) {
-      symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
+      symbol = expressionToStore.cloneChildAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))
                    ? k_radiusSymbol
                    : k_polarSymbol;

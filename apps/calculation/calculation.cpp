@@ -149,7 +149,7 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
   return input.type() == ExpressionNode::Type::Store &&
-         input.childAtIndex(1).type() == ExpressionNode::Type::Function;
+         input.cloneChildAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context* context) {

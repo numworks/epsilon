@@ -59,8 +59,9 @@ SystemExpression Equation::Model::standardForm(
              simplifiedInput.dimension().isMatrix()) {
     returnedExpression = Undefined::Builder();
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
-    returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0),
-                                              simplifiedInput.childAtIndex(1));
+    returnedExpression =
+        Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
+                             simplifiedInput.cloneChildAtIndex(1));
     ReductionContext reductionContext =
         PoincareHelpers::ReductionContextForParameters(
             expressionInputWithoutFunctions, contextToUse,

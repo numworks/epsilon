@@ -202,7 +202,7 @@ bool AdditionalResultsType::HasVector(
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (approximateOutput.childAtIndex(i).isScalarComplex(
+    if (approximateOutput.cloneChildAtIndex(i).isScalarComplex(
             calculationPreferences)) {
       return false;
     }
@@ -221,7 +221,7 @@ static bool expressionIsInterestingFunction(const Expression e) {
   assert(!e.isUninitialized());
   if (e.isOfType({ExpressionNode::Type::Opposite,
                   ExpressionNode::Type::Parenthesis})) {
-    return expressionIsInterestingFunction(e.childAtIndex(0));
+    return expressionIsInterestingFunction(e.cloneChildAtIndex(0));
   }
   return !e.isNumber() &&
          !e.isOfType({ExpressionNode::Type::ConstantMaths,

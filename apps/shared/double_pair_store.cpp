@@ -143,7 +143,7 @@ bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
       continue;
     }
     double evaluation = PoincareHelpers::ApproximateToScalar<double>(
-        list.childAtIndex(j), m_context);
+        list.cloneChildAtIndex(j), m_context);
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   return updateSeries(series, delayUpdate);

@@ -81,10 +81,10 @@ class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
 
 class Store final : public JuniorExpression {
  public:
-  JuniorExpression value() const { return childAtIndex(0); }
-  SymbolAbstract symbol() const {
-    JuniorExpression e = childAtIndex(1);
-    return static_cast<SymbolAbstract&>(e);
+  const JuniorExpression value() const { return cloneChildAtIndex(0); }
+  const SymbolAbstract symbol() const {
+    const JuniorExpression e = cloneChildAtIndex(1);
+    return static_cast<const SymbolAbstract&>(e);
   }
   bool storeValueForSymbol(Context* context) const;
 };

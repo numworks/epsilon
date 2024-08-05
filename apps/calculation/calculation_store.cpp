@@ -71,7 +71,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
       /* Case 1.1 If the input is a store expression, keep only the first child
        * of the input in Ans because the whole store can't be used in a
        * calculation. */
-      ansExpr = ansExpr.childAtIndex(0);
+      ansExpr = ansExpr.cloneChildAtIndex(0);
     }
   } else if (input.recursivelyMatches(NewExpression::IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
@@ -184,7 +184,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
                 approximateOutputExpression, context)) {
           storeExpression = NewExpression::Create(
               KStore(KA, KB), {.KA = approximateOutputExpression,
-                               .KB = storeExpression.childAtIndex(1)});
+                               .KB = storeExpression.cloneChildAtIndex(1)});
         }
         assert(static_cast<Store&>(storeExpression).symbol().type() !=
                    ExpressionNode::Type::Symbol ||

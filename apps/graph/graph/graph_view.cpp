@@ -67,19 +67,19 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   assert(f->numberOfSubCurves() <= 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {
     if (e.type() == ExpressionNode::Type::Dependency) {
-      e = e.childAtIndex(0);
+      e = e.cloneChildAtIndex(0);
     }
     bool isUndefined = e.isUndefined();
     if (!isUndefined && e.type() == ExpressionNode::Type::Point) {
       assert(f->properties().isParametric() || f->properties().isScatterPlot());
-      isUndefined =
-          e.childAtIndex(0).isUndefined() || e.childAtIndex(1).isUndefined();
+      isUndefined = e.cloneChildAtIndex(0).isUndefined() ||
+                    e.cloneChildAtIndex(1).isUndefined();
     }
     if (!isUndefined && f->numberOfSubCurves() == 2) {
       assert(e.type() == ExpressionNode::Type::List);
       assert(static_cast<List&>(e).numberOfChildren() == 2);
-      isUndefined =
-          e.childAtIndex(0).isUndefined() && e.childAtIndex(1).isUndefined();
+      isUndefined = e.cloneChildAtIndex(0).isUndefined() &&
+                    e.cloneChildAtIndex(1).isUndefined();
     }
     if (isUndefined) {
       // There is no need to plot anything.

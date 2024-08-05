@@ -199,12 +199,6 @@ class TreeStack : public BlockStack {
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
 
-  /* TODO: move execute and relax out of this class ? */
-  template <typename ContextT>
-  constexpr static bool DefaultRelax(ContextT* context) {
-    return false;
-  }
-
   // Execute an action with arbitrary input parameters types (ParametersTs...)
   template <typename ActionT, typename RelaxT, typename ContextT,
             typename... ParametersTs>
@@ -254,24 +248,13 @@ class TreeStack : public BlockStack {
                    extra_parameters...);
   }
 
+ public:
   // Execute an action with input parameters (ContextT*, const DataT*)
   template <typename ActionT, typename ContextT, typename RelaxT,
             typename DataT>
   void execute(ActionT action, ContextT* context, const DataT* data,
                std::size_t maxSize, RelaxT relax) {
     return execute(action, context, maxSize, relax, context, data);
-  }
-
- public:
-  template <typename ActionT, typename ContextT, typename DataT>
-  void executeAndStoreLayout(ActionT action, ContextT* context,
-                             const DataT* data,
-                             Poincare::JuniorLayout* layout) {
-    assert(numberOfTrees() == 0);
-    execute(action, context, data, k_maxNumberOfBlocks, DefaultRelax<ContextT>);
-    assert(Tree::FromBlocks(firstBlock())->isRackLayout());
-    *layout = Poincare::JuniorLayout::Builder(Tree::FromBlocks(firstBlock()));
-    flush();
   }
 
   template <typename ActionT, typename ContextT, typename RelaxT,

@@ -13,6 +13,7 @@
 #include "input_beautification.h"
 #include "k_tree.h"
 #include "layout_cursor.h"
+#include "poincare/src/memory/tree_stack.h"
 #include "rack_layout.h"
 #include "render.h"
 
@@ -1144,28 +1145,39 @@ void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {
 void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
                                  const void* data) {
   ExecutionContext executionContext{this, action, cursorRackOffset(), context};
-  // Perform Action within an execution
-  SharedTreeStack->executeAndStoreLayout(
-      [](ExecutionContext* context, const void* data) {
-        ExecutionContext* executionContext =
-            static_cast<ExecutionContext*>(context);
-        LayoutBufferCursor* bufferCursor = executionContext->m_cursor;
-        // Clone layoutBuffer into the TreeStack
-        SharedTreeStack->clone(executionContext->m_cursor->rootRack());
-        // Create a temporary cursor
-        TreeStackCursor editionCursor = bufferCursor->createTreeStackCursor();
-        // Perform the action
-        (editionCursor.*(executionContext->m_action))(
-            executionContext->m_context, data);
-        // Apply the changes
-        /* We need a rack cast there since the pointed rack is set before the
-         * actual content of the buffer is modified. */
-        bufferCursor->setCursorRack(static_cast<Rack*>(
-            Tree::FromBlocks(bufferCursor->rootRack()->block() +
-                             editionCursor.cursorRackOffset())));
-        bufferCursor->applyTreeStackCursor(editionCursor);
-      },
-      &executionContext, data, &m_rootLayout);
+  assert(SharedTreeStack->numberOfTrees() == 0);
+
+  ExceptionTry {
+    LayoutBufferCursor* bufferCursor = executionContext.m_cursor;
+    // Clone layoutBuffer into the TreeStack
+    SharedTreeStack->clone(executionContext.m_cursor->rootRack());
+    // Create a temporary cursor
+    TreeStackCursor editionCursor = bufferCursor->createTreeStackCursor();
+    // Perform the action
+    (editionCursor.*(executionContext.m_action))(executionContext.m_context,
+                                                 data);
+    // Apply the changes
+    /* We need a rack cast there since the pointed rack is set before the
+     * actual content of the buffer is modified. */
+    bufferCursor->setCursorRack(static_cast<Rack*>(Tree::FromBlocks(
+        bufferCursor->rootRack()->block() + editionCursor.cursorRackOffset())));
+    bufferCursor->applyTreeStackCursor(editionCursor);
+  }
+  ExceptionCatch(type) {
+    assert(SharedTreeStack->numberOfTrees() == 0);
+    switch (type) {
+      case ExceptionType::TreeStackOverflow:
+      case ExceptionType::IntegerOverflow:
+        return;
+      default:
+        TreeStackCheckpoint::Raise(type);
+    }
+  }
+
+  assert(Tree::FromBlocks(SharedTreeStack->firstBlock())->isRackLayout());
+  m_rootLayout = Poincare::JuniorLayout::Builder(
+      Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  SharedTreeStack->flush();
 }
 
 }  // namespace Poincare::Internal

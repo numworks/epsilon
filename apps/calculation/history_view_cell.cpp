@@ -313,8 +313,15 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximateToggle);
-  m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
-                                    approximateOutputLayout);
+
+  if (approximateOutputLayout.isUninitialized()) {
+    // The scrollable view expects the right layout to be defined, use exact
+    assert(!exactOutputLayout.isUninitialized());
+    m_scrollableOutputView.setLayouts(Layout(), Layout(), exactOutputLayout);
+  } else {
+    m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
+                                      approximateOutputLayout);
+  }
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
       calculation->equalSign(context) == Calculation::EqualSign::Equal);
   updateExpanded(expanded);

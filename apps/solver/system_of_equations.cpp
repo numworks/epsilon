@@ -14,8 +14,10 @@
 #include <poincare/old/variable_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -28,25 +30,28 @@ using namespace Shared;
 
 namespace Solver {
 
-SystemOfEquations::Error SystemOfEquations::exactSolve(
-    Poincare::Context* context) {
-  Error error = Error::NoError;
-
-  // Copy equations on the EditionPool
-  Internal::Tree* equations = Internal::List::PushEmpty();
-  int nEquations = m_store->numberOfDefinedModels();
+Internal::Tree* equationSet(const EquationStore* store) {
+  Internal::Tree* equationSet = Internal::List::PushEmpty();
+  int nEquations = store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
     ExpiringPointer<Equation> equation =
-        m_store->modelForRecord(m_store->definedRecordAtIndex(i));
+        store->modelForRecord(store->definedRecordAtIndex(i));
     Poincare::Expression equationExpression = equation->expressionClone();
     Internal::Tree* equal = equationExpression.tree()->cloneTree();
     Internal::PatternMatching::MatchReplace(equal, KEqual(KA, KB),
                                             KSub(KA, KB));
-    Internal::NAry::AddChild(equations, equal);
+    Internal::NAry::AddChild(equationSet, equal);
   }
+  return equationSet;
+}
 
+SystemOfEquations::Error SystemOfEquations::exactSolve(
+    Poincare::Context* context) {
+  Error error = Error::NoError;
+
+  Internal::Tree* set = equationSet(m_store);
   Internal::Tree* result =
-      EquationSolver::ExactSolve(equations, &m_solverContext, {}, &error);
+      EquationSolver::ExactSolve(set, &m_solverContext, {}, &error);
 
   if (error == Error::NoError) {
     assert(result);
@@ -96,7 +101,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
   }
 #endif
-  equations->removeTree();
+  set->removeTree();
   return error;
 }
 
@@ -198,6 +203,46 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
 }
 
 void SystemOfEquations::approximateSolve(Context* context) {
+  Internal::Tree* set = equationSet(m_store);
+  assert(set->numberOfChildren() == 1);
+  Internal::Tree* equation = set->child(0);
+  m_solverContext.numberOfVariables = 1;
+  Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
+  assert(variables->numberOfChildren() == 1);
+  Internal::Symbol::CopyName(variables->child(0), m_solverContext.variables[0],
+                             10);
+  variables->removeTree();
+  Internal::ProjectionContext ctx;
+  Internal::Simplification::ToSystem(equation, &ctx);
+  Internal::Approximation::PrepareFunctionForApproximation(
+      equation, m_solverContext.variables[0], Preferences::ComplexFormat::Real);
+  Internal::Tree* result = Poincare::Internal::EquationSolver::ApproximateSolve(
+      equation, m_approximateSolvingRange, &m_solverContext);
+
+  assert(result);
+  // Update member variables for LinearSystem
+  m_type = m_solverContext.type;
+  m_degree = m_solverContext.degree;
+  m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
+  m_numberOfSolutions = result->numberOfChildren();
+  m_numberOfSolvingVariables = 1;
+  m_overrideUserVariables = m_solverContext.overrideUserVariables;
+  m_numberOfUserVariables = m_solverContext.numberOfUserVariables;
+  // Copy user variables
+  memcpy(m_userVariables, m_solverContext.userVariables, sizeof(char[6][10]));
+  memcpy(m_variables[0], "x", strlen("x"));
+  // Copy solutions
+  for (int i = 0; const Internal::Tree* solution : result->children()) {
+    m_solutions[i++] =
+        Solution(Poincare::Layout(), Poincare::Layout(),
+                 Poincare::Internal::FloatHelper::To(solution), false);
+  }
+  result->removeTree();
+  set->removeTree();
+}
+
+#if 0
+void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfSolvingVariables == 1);
 
@@ -231,6 +276,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
     }
   }
 }
+#endif
 
 void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   for (int i = 0; i < k_maxNumberOfSolutions; i++) {

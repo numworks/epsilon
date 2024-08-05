@@ -457,6 +457,8 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::ArcCotangent;
     case Type::Unit:
       return ExpressionNode::Type::Unit;
+    case Type::Diff:
+      return ExpressionNode::Type::Derivative;
 #if 0
       // No perfect Internal equivalents
       return ExpressionNode::Type::Comparison;

@@ -5,6 +5,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/decimal.h>
@@ -170,16 +171,11 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
-#if 0  // TODO_PCJ
-  KDSize layoutSize = Point2DLayoutNode::SizeGivenChildSize(
+  KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::SharedPreferences()->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
       KDFont::GlyphHeight(k_cellFont));
-#else
-  KDSize layoutSize = KDSizeZero;
-  assert(false);
-#endif
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
 }
 

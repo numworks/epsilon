@@ -3,6 +3,7 @@
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/render_metrics.h>
 #include <poincare/src/memory/n_ary.h>
 
 namespace Poincare::LayoutHelpers {
@@ -75,6 +76,10 @@ bool IsSanitizedRack(const Internal::Tree* rack) {
     }
   }
   return true;
+}
+
+KDSize Point2DSizeGivenChildSize(KDCoordinate width, KDCoordinate height) {
+  return Point2D::SizeGivenChildSize(width, height);
 }
 
 }  // namespace Poincare::LayoutHelpers

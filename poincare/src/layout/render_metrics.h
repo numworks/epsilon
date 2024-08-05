@@ -617,6 +617,14 @@ inline KDCoordinate LowerMargin(const Layout* node, KDFont::Size font) {
 }
 }  // namespace TwoRows
 
+namespace Point2D {
+constexpr KDSize SizeGivenChildSize(KDCoordinate width, KDCoordinate height) {
+  return KDSize(width + 2 * Parenthesis::k_parenthesisWidth,
+                2 * height + TwoRows::k_point2DRowsSeparator +
+                    2 * Parenthesis::VerticalMargin(height));
+}
+}  // namespace Point2D
+
 namespace ListSequence {
 constexpr KDCoordinate k_variableHorizontalMargin = 1;
 constexpr KDCoordinate k_variableBaselineOffset = 2;

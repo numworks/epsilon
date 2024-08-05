@@ -1,6 +1,8 @@
 #ifndef POINCARE_HELPERS_LAYOUT_H
 #define POINCARE_HELPERS_LAYOUT_H
 
+#include <kandinsky/size.h>
+
 namespace Poincare::Internal {
 class Tree;
 }
@@ -18,6 +20,8 @@ bool ContainsSmallCapitalE(const Internal::Tree* rack);
 void SanitizeRack(Internal::Tree* rack);
 
 bool IsSanitizedRack(const Internal::Tree* rack);
+
+KDSize Point2DSizeGivenChildSize(KDCoordinate width, KDCoordinate height);
 
 }  // namespace Poincare::LayoutHelpers
 

@@ -23,7 +23,7 @@ class EquationSolver {
   enum class Error {
     NoError = 0,
     EquationUndefined = 1,
-    EquationNonreal = 2,
+    EquationNonReal = 2,
     TooManyVariables = 3,
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,

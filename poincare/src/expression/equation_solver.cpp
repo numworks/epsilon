@@ -225,7 +225,7 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
     return;
   }
   if (equationsSet->isUndefined()) {
-    *error = equationsSet->isNonReal() ? Error::EquationNonreal
+    *error = equationsSet->isNonReal() ? Error::EquationNonReal
                                        : Error::EquationUndefined;
   }
 }

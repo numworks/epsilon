@@ -12,7 +12,7 @@
 #define bring_in(prefix, value) static const prefix value = prefix::value;
 
 bring_in(Solver::SystemOfEquations::Error, EquationUndefined);
-bring_in(Solver::SystemOfEquations::Error, EquationNonreal);
+bring_in(Solver::SystemOfEquations::Error, EquationNonReal);
 bring_in(Solver::SystemOfEquations::Error, NoError);
 bring_in(Solver::SystemOfEquations::Error, NonLinearSystem);
 bring_in(Solver::SystemOfEquations::Error, RequireApproximateSolution);

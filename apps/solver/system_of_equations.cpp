@@ -80,7 +80,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
         Poincare::Expression approximated =
             reduced.approximateToTree<double>(ctx);
         if (approximated.tree()->isNonReal()) {
-          return Error::EquationNonreal;
+          return Error::EquationNonReal;
         }
         Internal::ProjectionContext projCtx;  // TODO: pass arguments
         areStriclyEqual =
@@ -396,7 +396,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
                       ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
     } else if (simplifiedEquations[i].isNonReal()) {
-      return Error::EquationNonreal;
+      return Error::EquationNonReal;
     }
 
     m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
@@ -680,7 +680,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
 
     Error error = registerSolution(x[i], context, type);
     // Ignore EquationNonreal error on solutions since delta may still be real.
-    if (error != Error::NoError && error != Error::EquationNonreal) {
+    if (error != Error::NoError && error != Error::EquationNonReal) {
       return error;
     }
   }
@@ -769,7 +769,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     }
   }
   if (approximate.isNonReal()) {
-    return Error::EquationNonreal;
+    return Error::EquationNonReal;
   }
   if (type != SolutionType::Formal && approximate.isUndefined()) {
     return Error::EquationUndefined;

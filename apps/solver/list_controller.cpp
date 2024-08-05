@@ -187,7 +187,7 @@ void ListController::resolveEquations() {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
         return;
-      case Error::EquationNonreal:
+      case Error::EquationNonReal:
         App::app()->displayWarning(I18n::Message::NonrealEquation);
         return;
       case Error::TooManyVariables:

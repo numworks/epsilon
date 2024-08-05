@@ -128,7 +128,10 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    return ComputeNotPrincipalRealRootOfRationalPow(c, p, q);
+    std::complex<T> result = ComputeNotPrincipalRealRootOfRationalPow(c, p, q);
+    if (!std::isnan(result.real()) && !std::isnan(result.imag())) {
+      return result;
+    }
   }
 defaultApproximation:
   return ComputeComplexPower<T>(c, ToComplex<T>(exponent), complexFormat);

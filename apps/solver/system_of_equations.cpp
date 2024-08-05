@@ -12,6 +12,7 @@
 #include <poincare/old/polynomial.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
+#include <poincare/src/expression/projection.h>
 
 #include "app.h"
 
@@ -641,10 +642,11 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
                                     ::Constant::MaxSerializedExpressionSize);
     approximateLayout.serializeForParsing(
         approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+    Internal::ProjectionContext ctx;  // TODO: pass arguments
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
     } else if (Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
-                   exact, approximate)) {
+                   exact, approximate, &ctx)) {
       exactAndApproximateAreEqual = true;
     }
   }

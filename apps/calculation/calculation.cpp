@@ -7,6 +7,7 @@
 #include <poincare/old/expression_node.h>
 #include <poincare/old/nonreal.h>
 #include <poincare/old/undefined.h>
+#include <poincare/src/expression/projection.h>
 #include <string.h>
 
 #include <algorithm>
@@ -289,11 +290,14 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
     }
     // TODO: should we save the system expression in exact output instead ?
     // TODO: need to pass projection context
-    m_equalSign = Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
-                      exactOutputExpression,
-                      approximateOutput(NumberOfSignificantDigits::UserDefined))
-                      ? EqualSign::Equal
-                      : EqualSign::Approximation;
+    Internal::ProjectionContext ctx{.m_complexFormat = complexFormat(),
+                                    .m_angleUnit = angleUnit()};
+    m_equalSign =
+        Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+            exactOutputExpression,
+            approximateOutput(NumberOfSignificantDigits::UserDefined), &ctx)
+            ? EqualSign::Equal
+            : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

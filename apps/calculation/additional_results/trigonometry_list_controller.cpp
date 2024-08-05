@@ -97,10 +97,11 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
   m_exactLayouts[index].serializeForParsing(
       exactBuffer, ::Constant::MaxSerializedExpressionSize);
   assert(strcmp(exactBuffer, approximateBuffer) != 0);
+  Internal::ProjectionContext ctx;  // TODO: pass parameters to context
   m_isStrictlyEqual[index] =
       Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
           UserExpression::Parse(exactBuffer, context),
-          UserExpression::Parse(approximateBuffer, context));
+          UserExpression::Parse(approximateBuffer, context), &ctx);
 }
 
 void TrigonometryListController::fillCellForRow(Escher::HighlightCell* cell,

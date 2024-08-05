@@ -4,8 +4,9 @@
 #include <poincare/expression.h>
 
 namespace Poincare {
-bool ExactAndApproximateExpressionsAreStriclyEqual(UserExpression exact,
-                                                   UserExpression approximate);
+bool ExactAndApproximateExpressionsAreStriclyEqual(
+    UserExpression exact, UserExpression approximate,
+    Internal::ProjectionContext* ctx);
 
 }  // namespace Poincare
 

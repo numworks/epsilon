@@ -249,10 +249,6 @@ class Unit {
 #if 0
   static bool ShouldDisplayAdditionalOutputs(double value, const Tree* unit,
                                              UnitFormat unitFormat);
-  static int SetAdditionalExpressions(const Tree* units, double value,
-                                      Tree* dest, int availableLength,
-                                      const ReductionContext& reductionContext,
-                                      const Tree exactOutput);
   static Tree* BuildSplit(double value, const Unit* units, int length,
                           const ReductionContext& reductionContext);
   static Tree* ConvertTemperatureUnits(

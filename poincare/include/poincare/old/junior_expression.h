@@ -493,13 +493,6 @@ class Unit final {
     assert(false);
     return false;
   }
-  static int SetAdditionalExpressions(OExpression units, double value,
-                                      OExpression* dest, int availableLength,
-                                      const ReductionContext& reductionContext,
-                                      const OExpression exactOutput) {
-    assert(false);
-    return 0;
-  }
 };
 
 }  // namespace Poincare

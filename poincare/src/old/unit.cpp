@@ -1191,39 +1191,6 @@ bool OUnit::ShouldDisplayAdditionalOutputs(double value, OExpression unit,
          unit.recursivelyMatches(isNonBase);
 }
 
-int OUnit::SetAdditionalExpressions(OExpression units, double value,
-                                    OExpression* dest, int availableLength,
-                                    const ReductionContext& reductionContext,
-                                    const OExpression exactOutput) {
-  if (units.isUninitialized()) {
-    return 0;
-  }
-  const Representative* representative =
-      units.otype() == ExpressionNode::Type::OUnit
-          ? static_cast<OUnit&>(units).node()->representative()
-          : UnitNode::Representative::RepresentativeForDimension(
-                UnitNode::DimensionVector::FromBaseUnits(units));
-  if (!representative) {
-    return 0;
-  }
-  if (representative->dimensionVector() ==
-      AngleRepresentative::Default().dimensionVector()) {
-    /* Angles are the only unit where we want to display the exact value. */
-    OExpression unit;
-    ReductionContext childContext = reductionContext;
-    childContext.setUnitConversion(UnitConversion::None);
-    OExpression exactValue =
-        exactOutput.cloneAndReduceAndRemoveUnit(childContext, &unit);
-    assert(unit.otype() == ExpressionNode::Type::OUnit);
-    return static_cast<const AngleRepresentative*>(
-               static_cast<OUnit&>(unit).representative())
-        ->setAdditionalExpressionsWithExactValue(
-            exactValue, value, dest, availableLength, reductionContext);
-  }
-  return representative->setAdditionalExpressions(value, dest, availableLength,
-                                                  reductionContext);
-}
-
 OExpression OUnit::BuildSplit(double value, const OUnit* units, int length,
                               const ReductionContext& reductionContext) {
   assert(!std::isnan(value));

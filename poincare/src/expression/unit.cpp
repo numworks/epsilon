@@ -564,39 +564,6 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
          unit.recursivelyMatches(isNonBase);
 }
 
-int Unit::SetAdditionalExpressions(Expression units, double value,
-                                   Expression* dest, int availableLength,
-                                   const ReductionContext& reductionContext,
-                                   Expression exactOutput) {
-  if (units.isUninitialized()) {
-    return 0;
-  }
-  const Representative* representative =
-      units.type() == ExpressionNode::Type::Unit
-          ? static_cast<Unit&>(units).node()->representative()
-          : Representative::RepresentativeForDimension(
-                SIVector::FromBaseUnits(units));
-  if (!representative) {
-    return 0;
-  }
-  if (representative->siVector() ==
-      AngleRepresentative::Dimension) {
-    /* Angles are the only unit where we want to display the exact value. */
-    Expression exactValue = exactOutput.cloneTree();
-    Expression unit;
-    ReductionContext childContext = reductionContext;
-    childContext.setUnitConversion(UnitConversion::None);
-    exactValue = exactValue.reduceAndRemoveUnit(childContext, &unit);
-    assert(unit.type() == ExpressionNode::Type::Unit);
-    return static_cast<const AngleRepresentative*>(
-               static_cast<Unit&>(unit).representative())
-        ->setAdditionalExpressionsWithExactValue(
-            exactValue, value, dest, availableLength, reductionContext);
-  }
-  return representative->setAdditionalExpressions(value, dest, availableLength,
-                                                  reductionContext);
-}
-
 Expression Unit::BuildSplit(double value, const Unit* units, int length,
                             const ReductionContext& reductionContext) {
   assert(!std::isnan(value));

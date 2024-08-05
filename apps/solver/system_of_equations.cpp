@@ -645,7 +645,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     Internal::ProjectionContext ctx;  // TODO: pass arguments
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
-    } else if (Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+    } else if (Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
                    exact, approximate, &ctx)) {
       exactAndApproximateAreEqual = true;
     }

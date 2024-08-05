@@ -99,7 +99,7 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
   assert(strcmp(exactBuffer, approximateBuffer) != 0);
   Internal::ProjectionContext ctx;  // TODO: pass parameters to context
   m_isStrictlyEqual[index] =
-      Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+      Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
           UserExpression::Parse(exactBuffer, context),
           UserExpression::Parse(approximateBuffer, context), &ctx);
 }

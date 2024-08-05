@@ -293,7 +293,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
     Internal::ProjectionContext ctx{.m_complexFormat = complexFormat(),
                                     .m_angleUnit = angleUnit()};
     m_equalSign =
-        Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
+        Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
             exactOutputExpression,
             approximateOutput(NumberOfSignificantDigits::UserDefined), &ctx)
             ? EqualSign::Equal

@@ -62,7 +62,7 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
 }
 }  // namespace Internal
 
-bool ExactAndApproximateExpressionsAreStriclyEqual(
+bool ExactAndApproximateExpressionsAreStrictlyEqual(
     UserExpression exact, UserExpression approximate,
     Internal::ProjectionContext* ctx) {
   // Exact is projected and reduced to turn divs into rationals

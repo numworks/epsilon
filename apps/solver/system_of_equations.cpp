@@ -79,6 +79,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
         ApproximationContext ctx(context);
         Poincare::Expression approximated =
             reduced.approximateToTree<double>(ctx);
+        if (approximated.tree()->isNonReal()) {
+          return Error::EquationNonreal;
+        }
         Internal::ProjectionContext projCtx;  // TODO: pass arguments
         areStriclyEqual =
             Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(

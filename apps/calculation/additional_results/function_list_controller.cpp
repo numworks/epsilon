@@ -27,10 +27,9 @@ void FunctionListController::computeAdditionalResults(
   Context* context = App::app()->localContext();
 
   float abscissa;
-  constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
   UserExpression inputClone =
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
-          input, &abscissa, k_unknownName);
+          input, &abscissa, k_symbolName);
 
   SystemFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
@@ -38,7 +37,7 @@ void FunctionListController::computeAdditionalResults(
           {.complexFormat = complexFormat(),
            .angleUnit = angleUnit(),
            .target = ReductionTarget::SystemForApproximation})
-          .getSystemFunction(k_unknownName, true);
+          .getSystemFunction(k_symbolName, true);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.
@@ -51,13 +50,9 @@ void FunctionListController::computeAdditionalResults(
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = Layout::Create(
-      KA ^ KB,
-      {.KA = Layout::String("y="),
-       .KB = Layout(inputClone
-                        .replaceSymbolWithExpression(Symbol::SystemSymbol(),
-                                                     Symbol::Builder(k_symbol))
-                        .createLayout(displayMode(),
-                                      numberOfSignificantDigits(), context))});
+      KA ^ KB, {.KA = Layout::String("y="),
+                .KB = Layout(inputClone.createLayout(
+                    displayMode(), numberOfSignificantDigits(), context))});
   setShowIllustration(true);
 }
 

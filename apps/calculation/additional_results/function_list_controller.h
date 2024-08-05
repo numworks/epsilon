@@ -22,8 +22,8 @@ class FunctionListController : public IllustratedExpressionsListController {
   void viewDidDisappear() override;
 
  private:
-  static constexpr CodePoint k_symbol =
-      Shared::ContinuousFunctionProperties::k_cartesianSymbol;
+  constexpr static char k_symbolName[2] = {
+      Shared::ContinuousFunctionProperties::k_cartesianSymbol, '\0'};
   constexpr static int k_maxNumberOfOutputRows = 1;
 
   IllustrationCell* illustrationCell() override { return &m_graphCell; }

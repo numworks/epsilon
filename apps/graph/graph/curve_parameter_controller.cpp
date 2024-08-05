@@ -1,16 +1,16 @@
 #include "curve_parameter_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/color_names.h>
 #include <apps/shared/function_name_helper.h>
+#include <apps/shared/grid_type_controller.h>
 #include <assert.h>
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "../app.h"
-#include "apps/shared/color_names.h"
 #include "graph_controller.h"
-#include "shared/grid_type_controller.h"
 
 using namespace Shared;
 using namespace Escher;

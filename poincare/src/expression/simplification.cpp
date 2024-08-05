@@ -1,9 +1,8 @@
 #include "simplification.h"
 
-#include <complex>
+#include <omg/float.h>
 
 #include "advanced_reduction.h"
-#include "approximation.h"
 #include "beautification.h"
 #include "dependency.h"
 #include "list.h"
@@ -11,6 +10,28 @@
 #include "variables.h"
 
 namespace Poincare::Internal {
+
+#if ASSERTIONS
+template <typename T>
+inline static bool AreConsistent(const Sign& sign, const T& value) {
+  static_assert(std::is_arithmetic<T>());
+
+  return std::isnan(value) ||
+         (((value > 0 && sign.canBeStrictlyPositive()) ||
+           (value < 0 && sign.canBeStrictlyNegative()) ||
+           (value == 0 && sign.canBeNull())) &&
+          (sign.canBeNonInteger() ||
+           OMG::Float::RoughlyEqual<T>(value, std::round(value),
+                                       100 * OMG::Float::EpsilonLax<T>())));
+}
+template <typename T>
+inline static bool AreConsistent(const ComplexSign& sign,
+                                 const std::complex<T>& value) {
+  return std::isnan(value.real()) || std::isnan(value.imag()) ||
+         (AreConsistent(sign.realSign(), value.real()) &&
+          AreConsistent(sign.imagSign(), value.imag()));
+}
+#endif
 
 bool RelaxProjectionContext(void* context) {
   ProjectionContext* projectionContext =
@@ -123,12 +144,20 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool result = Dependency::DeepRemoveUselessDependencies(e) || changed;
 
 #if ASSERTIONS
+  /* The following block verifies that the ComplexSign logic is correct, by
+    checking that the ComplexSign of the tree is consistent with the tree
+    approximation. */
   if (Dimension::Get(e).isScalar() && !Dimension::IsList(e)) {
-    Tree* approximated_tree = Approximation::RootTreeToTree<double>(e);
+    /* FIXME: The tree approximation is computed in two steps: first calling
+     * RootTreeToTree to have a proper management of Approximation::s_context,
+     * then by applying ToComplex on the resulting tree. It would be better to
+     * have a single function that approximates a tree to a scalar value while
+     * also providing a safe approximation context. */
+    Tree* approximatedTree = Approximation::RootTreeToTree<double>(e);
     std::complex<double> value =
-        Approximation::ToComplex<double>(approximated_tree);
+        Approximation::ToComplex<double>(approximatedTree);
     assert(AreConsistent(ComplexSign::Get(e), value));
-    approximated_tree->removeTree();
+    approximatedTree->removeTree();
   }
 #endif
 

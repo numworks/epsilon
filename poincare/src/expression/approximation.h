@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
-#include <omg/float.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -254,28 +253,6 @@ class Approximation final {
   static Context* s_context;
   static Random::Context* s_randomContext;
 };
-
-#if ASSERTIONS
-template <typename T>
-inline static bool AreConsistent(const Sign& sign, const T& value) {
-  static_assert(std::is_arithmetic<T>());
-
-  return std::isnan(value) ||
-         (((value > 0 && sign.canBeStrictlyPositive()) ||
-           (value < 0 && sign.canBeStrictlyNegative()) ||
-           (value == 0 && sign.canBeNull())) &&
-          (sign.canBeNonInteger() ||
-           OMG::Float::RoughlyEqual<T>(value, std::round(value),
-                                       100 * OMG::Float::EpsilonLax<T>())));
-}
-template <typename T>
-inline static bool AreConsistent(const ComplexSign& sign,
-                                 const std::complex<T>& value) {
-  return std::isnan(value.real()) || std::isnan(value.imag()) ||
-         (AreConsistent(sign.realSign(), value.real()) &&
-          AreConsistent(sign.imagSign(), value.imag()));
-}
-#endif
 
 }  // namespace Poincare::Internal
 

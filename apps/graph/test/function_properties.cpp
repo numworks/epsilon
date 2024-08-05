@@ -935,7 +935,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
   store.removeAll();
 
-#if 0
+#if 0  // TODO_PCJ
   // For derivatives
   addFunction("f(x)=3x", &store, &context);
   assert_same_function_properties("f1(x)=f'(x)", "f2(x)=diff(f(x),x,x)",

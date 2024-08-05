@@ -1,9 +1,4 @@
-#include <apps/shared/global_context.h>
 #include <poincare/old/junior_expression.h>
-
-#include <algorithm>
-#include <cmath>
-#include <string_view>
 
 #include "helper.h"
 

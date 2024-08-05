@@ -4,7 +4,6 @@
 #include <poincare/src/memory/tree.h>
 
 #include "projection.h"
-#include "stdbool.h"
 
 namespace Poincare::Internal {
 

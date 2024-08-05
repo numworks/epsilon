@@ -1,20 +1,15 @@
 #include "function_model.h"
 
-#include <apps/shared/function.h>
 #include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/numeric/zoom.h>
 
 #include <algorithm>
 
-#include "../app.h"
-
 using namespace Poincare;
 
 namespace Calculation {
 
-static Context* context() { return App::app()->localContext(); }
-
-void FunctionModel::setParameters(Expression function, float abscissa,
+void FunctionModel::setParameters(SystemFunction function, float abscissa,
                                   float ordinate) {
   // We do not want to display additional results for sequences.
   assert(!function.recursivelyMatches(NewExpression::IsSequence));
@@ -34,16 +29,14 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value,
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
-  const Expression* f = static_cast<const Expression*>(model);
-  return Coordinate2D<T>(
-      t, Shared::PoincareHelpers::ApproximateWithValueForSymbol<T>(
-             *f, Shared::Function::k_unknownName, t, context));
+static Coordinate2D<T> evaluator(T t, const void* model, Context*) {
+  const SystemFunction* f = static_cast<const SystemFunction*>(model);
+  return Coordinate2D<T>(t, f->approximateToScalarWithValue(t));
 }
 
 void FunctionModel::recomputeViewRange() {
   constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
-  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, context(), k_maxFloat);
+  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, nullptr, k_maxFloat);
 
   // fitPointsOfInterest is not suited for sequences
   assert(!m_function.recursivelyMatches(NewExpression::IsSequence));

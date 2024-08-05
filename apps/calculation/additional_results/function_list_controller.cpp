@@ -7,9 +7,6 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/symbol.h>
 #include <string.h>
 
 #include "../app.h"
@@ -18,8 +15,6 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Calculation {
-
-// TODO_PCJ : Update this to use the new Expression API
 
 void FunctionListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
@@ -37,12 +32,13 @@ void FunctionListController::computeAdditionalResults(
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
           input, &abscissa, k_unknownName);
 
-  Expression simplifiedExpression = inputClone;
-  PoincareHelpers::CloneAndSimplify(
-      &simplifiedExpression, context,
-      {.complexFormat = complexFormat(),
-       .angleUnit = angleUnit(),
-       .target = ReductionTarget::SystemForApproximation});
+  SystemFunction simplifiedExpression =
+      PoincareHelpers::CloneAndReduce(
+          inputClone, context,
+          {.complexFormat = complexFormat(),
+           .angleUnit = angleUnit(),
+           .target = ReductionTarget::SystemForApproximation})
+          .getSystemFunction(k_unknownName, true);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

@@ -1,19 +1,14 @@
 #include "function_graph_cell.h"
 
-#include <poincare/old/context.h>
+#include <poincare/expression.h>
 #include <poincare/print.h>
 
-#include <cmath>
-
-#include "../app.h"
 #include "escher/palette.h"
 #include "kandinsky/color.h"
 
 using namespace Shared;
 using namespace Poincare;
 using namespace Escher;
-
-// TODO_PCJ : Update this to use the new Expression API
 
 namespace Calculation {
 
@@ -72,29 +67,24 @@ bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect) const {
-  assert(!m_model->function().recursivelyMatches(NewExpression::IsSequence));
+  SystemFunction function = m_model->function();
+  assert(!function.recursivelyMatches(NewExpression::IsSequence));
+
+  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
+    SystemFunction* e = (Expression*)model;
+    return Coordinate2D<float>(t, e->approximateToScalarWithValue(t));
+  };
+
+  // Draw the curve
+  CurveDrawing plot(Curve2D(evaluateFunction, &function), nullptr,
+                    m_model->xMin(), m_model->xMax(), plotView->pixelWidth(),
+                    k_color);
+  plot.draw(plotView, ctx, rect);
 
   // Since exp(-2.5) is generalized as exp(-x), x cannot be negative
   float x = m_model->abscissa();
   assert(x >= 0);
   float y = m_model->ordinate();
-
-  Expression function = m_model->function();
-  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
-                                                 void* context) {
-    Expression* e = (Expression*)model;
-    Context* c = (Context*)context;
-    constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
-    return Coordinate2D<float>(
-        t, PoincareHelpers::ApproximateWithValueForSymbol<float>(
-               *e, k_unknownName, t, c));
-  };
-
-  // Draw the curve
-  CurveDrawing plot(Curve2D(evaluateFunction, &function),
-                    App::app()->localContext(), m_model->xMin(),
-                    m_model->xMax(), plotView->pixelWidth(), k_color);
-  plot.draw(plotView, ctx, rect);
 
   // Draw the dot
   plotView->drawDot(ctx, rect, Dots::Size::Large, {x, y}, k_color);

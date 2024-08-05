@@ -7,6 +7,7 @@ namespace Poincare {
 
 class AdditionalResultsHelper final {
  public:
+  /* Trigonometry additional results */
   /* Shared::ShouldOnlyDisplayApproximation is used in TrigonometryAngleHelper
    * and passed here as parameter. */
   typedef bool (*ShouldOnlyDisplayApproximation)(
@@ -24,6 +25,11 @@ class AdditionalResultsHelper final {
       const UserExpression input, const UserExpression exactOutput,
       Context* context,
       const Preferences::CalculationPreferences calculationPreferences);
+
+  /* Function additional results */
+  static bool HasSingleNumericalValue(const UserExpression input);
+  static UserExpression CloneReplacingNumericalValuesWithSymbol(
+      const UserExpression input, float* value, const char* symbol);
 };
 
 }  // namespace Poincare

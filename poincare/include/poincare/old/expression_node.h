@@ -177,7 +177,6 @@ class ExpressionNode : public PoolObject {
   }
   bool isSystemSymbol() const;
 
-  int numberOfNumericalValues() const;
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by
    * mathematical rules:
    * +(2,-1) --> 2+(-1)

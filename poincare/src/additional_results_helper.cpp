@@ -211,4 +211,55 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   return UserExpression::Builder(exactAngle);
 }
 
+// Dummy tree used to escape getNumericalValueTree
+const Tree* errorTree = KUndef;
+
+// Return the only numerical value found in e, nullptr if there are none or more
+const Tree* getNumericalValueTree(const Tree* e) {
+  assert(!e->isDependency());
+  // Escape if e has a random node, a user symbol or inf
+  if (e->isRandomized() || e->isUserSymbol() || e->isInf()) {
+    return errorTree;
+  }
+  // e is not a constant so that e^2 -> e^x
+  if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
+    return std::isfinite(Approximation::To<float>(e)) ? e : nullptr;
+  }
+  const Tree* result = nullptr;
+  for (const Tree* child : e->children()) {
+    const Tree* newResult = getNumericalValueTree(child);
+    if (newResult) {
+      // Return nullptr if there are more than one numerical values
+      if (result) {
+        // Ignore the exponent if base is numerical value so that 2^3 -> x^3
+        return (newResult == errorTree || !(e->isPow() || e->isPowReal()))
+                   ? errorTree
+                   : result;
+      }
+      result = newResult;
+    }
+  }
+  return result;
+}
+
+const Tree* rootGetNumericalValueTree(const Tree* e) {
+  const Tree* numericalValueTree = getNumericalValueTree(e);
+  return numericalValueTree != errorTree ? numericalValueTree : nullptr;
+}
+
+bool AdditionalResultsHelper::HasSingleNumericalValue(
+    const UserExpression input) {
+  return rootGetNumericalValueTree(input.tree()) != nullptr;
+}
+
+UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
+    const UserExpression input, float* value, const char* symbol) {
+  Tree* clone = input.tree()->cloneTree();
+  Tree* numericalValue = const_cast<Tree*>(rootGetNumericalValueTree(clone));
+  assert(numericalValue);
+  *value = Approximation::To<float>(numericalValue);
+  numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
+  return UserExpression::Builder(clone);
+}
+
 }  // namespace Poincare

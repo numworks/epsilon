@@ -246,7 +246,7 @@ static bool expressionIsInterestingFunction(const Expression e) {
                           ExpressionNode::Type::ImaginaryPart,
                           ExpressionNode::Type::ComplexArgument,
                           ExpressionNode::Type::Conjugate}) &&
-         e.numberOfNumericalValues() == 1;
+         AdditionalResultsHelper::HasSingleNumericalValue(e);
 }
 
 bool AdditionalResultsType::HasFunction(

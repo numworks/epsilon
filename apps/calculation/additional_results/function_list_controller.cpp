@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/code_point.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -30,10 +31,11 @@ void FunctionListController::computeAdditionalResults(
 
   Context* context = App::app()->localContext();
 
-  Expression inputClone = input.clone();
-  float abscissa = inputClone.getNumericalValue();
-  Symbol variable = Symbol::SystemSymbol();
-  inputClone.replaceNumericalValuesWithSymbol(variable);
+  float abscissa;
+  constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
+  UserExpression inputClone =
+      AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
+          input, &abscissa, k_unknownName);
 
   Expression simplifiedExpression = inputClone;
   PoincareHelpers::CloneAndSimplify(
@@ -55,11 +57,11 @@ void FunctionListController::computeAdditionalResults(
   m_layouts[0] = Layout::Create(
       KA ^ KB,
       {.KA = Layout::String("y="),
-       .KB = Layout(
-           inputClone
-               .replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol))
-               .createLayout(displayMode(), numberOfSignificantDigits(),
-                             context))});
+       .KB = Layout(inputClone
+                        .replaceSymbolWithExpression(Symbol::SystemSymbol(),
+                                                     Symbol::Builder(k_symbol))
+                        .createLayout(displayMode(),
+                                      numberOfSignificantDigits(), context))});
   setShowIllustration(true);
 }
 

@@ -335,16 +335,6 @@ class OExpression : public PoolHandle {
     return node()->replaceSymbolWithExpression(symbol, expression);
   }
 
-  // These three functions are helpers for the function additional results
-  int numberOfNumericalValues() const {
-    return node()->numberOfNumericalValues();
-  }
-  /* Generalizes an expression to a function, by replacing numerical values with
-   * a symbol. Beware that 2^3 is generalized as x^3, not x^x. */
-  void replaceNumericalValuesWithSymbol(Symbol x);
-  /* Return any numerical value in the expression. */
-  float getNumericalValue() const;
-
   /* Units */
   // Call this method on properly reduced expressions only
   OExpression removeUnit(OExpression* unit) { return node()->removeUnit(unit); }

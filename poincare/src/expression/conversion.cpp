@@ -821,7 +821,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
           static_cast<Poincare::Float<double>&>(exp).value());
       return;
     case OT::Infinity: {
-      if (exp.isIdenticalTo(Poincare::Infinity::Builder(false))) {
+      if (exp.isPositive(nullptr) == OMG::Troolean::False) {
         SharedTreeStack->pushOpposite();
       }
       SharedTreeStack->pushInf();

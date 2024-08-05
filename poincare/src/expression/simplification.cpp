@@ -1,5 +1,7 @@
 #include "simplification.h"
 
+#include <complex>
+
 #include "advanced_reduction.h"
 #include "approximation.h"
 #include "beautification.h"
@@ -121,10 +123,12 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool result = Dependency::DeepRemoveUselessDependencies(e) || changed;
 
 #if ASSERTIONS
-  if (Dimension::Get(e).isScalar() && !e->isList() && !e->isDiff() &&
-      !e->isIntegral()) {
-    assert(AreConsistent(ComplexSign::Get(e),
-                         Approximation::ToComplex<double>(e)));
+  if (Dimension::Get(e).isScalar() && !Dimension::IsList(e)) {
+    Tree* approximated_tree = Approximation::RootTreeToTree<double>(e);
+    std::complex<double> value =
+        Approximation::ToComplex<double>(approximated_tree);
+    assert(AreConsistent(ComplexSign::Get(e), value));
+    approximated_tree->removeTree();
   }
 #endif
 

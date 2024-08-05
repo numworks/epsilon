@@ -67,7 +67,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   curve_view_range.cpp \
   dots.cpp \
   double_pair_store.cpp \
-  expression_display_permissions.cpp \
   expression_model.cpp \
   expression_model_handle.cpp \
   expression_model_store.cpp \

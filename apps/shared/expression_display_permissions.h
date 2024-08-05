@@ -1,20 +1,24 @@
 #ifndef SHARED_UTILS_H
 #define SHARED_UTILS_H
 
-#include <poincare/expression.h>
+#include <poincare/cas.h>
 
 namespace Shared {
 
 namespace ExpressionDisplayPermissions {
 
 // This needs to be exposed for the solver
-bool NeverDisplayReductionOfInput(Poincare::UserExpression input,
-                                  Poincare::Context* context);
+inline bool NeverDisplayReductionOfInput(Poincare::UserExpression input,
+                                         Poincare::Context* context) {
+  return Poincare::CAS::NeverDisplayReductionOfInput(input.tree(), context);
+}
 
-bool ShouldOnlyDisplayApproximation(Poincare::UserExpression input,
-                                    Poincare::UserExpression exactOutput,
-                                    Poincare::UserExpression approximateOutput,
-                                    Poincare::Context* context);
+inline bool ShouldOnlyDisplayApproximation(
+    Poincare::UserExpression input, Poincare::UserExpression exactOutput,
+    Poincare::UserExpression approximateOutput, Poincare::Context* context) {
+  return Poincare::CAS::ShouldOnlyDisplayApproximation(
+      input.tree(), exactOutput.tree(), approximateOutput.tree(), context);
+}
 
 }  // namespace ExpressionDisplayPermissions
 

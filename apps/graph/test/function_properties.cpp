@@ -260,7 +260,12 @@ QUIZ_CASE(graph_function_properties) {
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
 
-    assert_check_function_properties("f(x)=diff(x^2,x,x)", k_linearProperties);
+    assert_check_function_properties(
+        "f(x)=diff(x^2,x,x)",
+        FunctionProperties{.m_caption = I18n::Message::Function,
+                           .m_curveParameterType =
+                               ContinuousFunctionProperties::
+                                   CurveParameterType::CartesianFunction});
 
     // === Cartesian equations ===
 
@@ -453,7 +458,12 @@ QUIZ_CASE(graph_function_properties) {
                       CurveParameterType::CartesianFunction,
                   .m_conicShape = Poincare::Conic::Shape::Hyperbola,
                   .m_isOfDegreeTwo = false});
-    assert_check_function_properties("y=diff(x^2,x,x)", k_lineProperties);
+    assert_check_function_properties(
+        "y=diff(x^2,x,x)",
+        FunctionProperties{
+            .m_caption = I18n::Message::Equation,
+            .m_curveParameterType =
+                ContinuousFunctionProperties::CurveParameterType::Line});
 
     constexpr static FunctionProperties k_twoSubCurves =
         FunctionProperties{.m_caption = I18n::Message::Equation,
@@ -720,7 +730,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties(
         "g(t)=(diff(x,x,t),t)",
         FunctionProperties{
-            .m_caption = I18n::Message::VerticalLineType,
+            .m_caption = I18n::Message::ParametricEquationType,
             .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
             .m_curveParameterType =
                 ContinuousFunctionProperties::CurveParameterType::Parametric});

@@ -62,9 +62,20 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
 }
 }  // namespace Internal
 
-bool ExactAndApproximateExpressionsAreStriclyEqual(
-    SystemExpression exact, SystemExpression approximate) {
-  return Internal::ExactAndApproximateExpressionsAreStriclyEqual(exact,
-                                                                 approximate);
+bool ExactAndApproximateExpressionsAreStriclyEqual(UserExpression exact,
+                                                   UserExpression approximate) {
+  Internal::ProjectionContext ctx;
+  // Exact is projected and reduced to turn divs into rationals
+  Internal::Tree* exactProjected = exact.tree()->cloneTree();
+  Internal::Simplification::ToSystem(exactProjected, &ctx);
+  Internal::Simplification::ReduceSystem(exactProjected, false);
+  // Approximate is projected to turn Pow(e, …) into Exp(…)
+  Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
+  Internal::Simplification::ToSystem(approximateProjected, &ctx);
+  bool result = Internal::ExactAndApproximateExpressionsAreStriclyEqual(
+      exactProjected, approximateProjected);
+  approximateProjected->removeTree();
+  exactProjected->removeTree();
+  return result;
 }
 }  // namespace Poincare

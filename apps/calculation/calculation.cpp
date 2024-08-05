@@ -288,14 +288,9 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
                ReplaceAllSymbolsWithDefinitionsOrUndefined});
     }
     // TODO: should we save the system expression in exact output instead ?
-    SystemExpression exactOutputReduced = PoincareHelpers::CloneAndReduce(
-        exactOutputExpression, context,
-        {.complexFormat = complexFormat(),
-         .angleUnit = angleUnit(),
-         .symbolicComputation =
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
+    // TODO: need to pass projection context
     m_equalSign = Poincare::ExactAndApproximateExpressionsAreStriclyEqual(
-                      exactOutputReduced,
+                      exactOutputExpression,
                       approximateOutput(NumberOfSignificantDigits::UserDefined))
                       ? EqualSign::Equal
                       : EqualSign::Approximation;

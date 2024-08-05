@@ -429,8 +429,11 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 }
 
 bool LayoutField::handleEventWithLayout(Layout layout) {
+  KDSize previousSize = minimalSizeForOptimalDisplay();
   insertLayoutAtCursor(layout);
-  return true;
+  // TODO: insertLayoutAtCursor should return a bool, insertion could fail
+  bool didHandle = true;
+  return didHandleEvent(didHandle, didHandle, true, previousSize);
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,

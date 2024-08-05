@@ -161,6 +161,30 @@ void SystemOfEquations::setApproximateSolvingRange(
 }
 
 void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
+  // TODO: factor with approximateSolve to avoid preparing the equation twice
+  Internal::Tree* set = equationSet(m_store);
+  assert(set->numberOfChildren() == 1);
+  Internal::Tree* equation = set->child(0);
+  m_solverContext.numberOfVariables = 1;
+  Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
+  assert(variables->numberOfChildren() == 1);
+  Internal::Symbol::CopyName(variables->child(0), m_solverContext.variables[0],
+                             10);
+  variables->removeTree();
+  Internal::ProjectionContext ctx;
+  Internal::Simplification::ToSystem(equation, &ctx);
+  Internal::Approximation::PrepareFunctionForApproximation(
+      equation, m_solverContext.variables[0], Preferences::ComplexFormat::Real);
+
+  m_approximateSolvingRange =
+      Poincare::Internal::EquationSolver::AutomaticInterval(equation,
+                                                            &m_solverContext);
+  m_autoApproximateSolvingRange = true;
+  m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
+}
+
+#if 0
+void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   SystemExpression equationStandardForm =
       equationStandardFormForApproximateSolve(context);
   constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
@@ -201,6 +225,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
       Range1D<double>(static_cast<double>(finalRange.min()),
                       static_cast<double>(finalRange.max()));
 }
+#endif
 
 void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* set = equationSet(m_store);

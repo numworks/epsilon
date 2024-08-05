@@ -159,14 +159,14 @@ bool AdditionalResultsType::HasUnit(
   assert(exactOutput.hasUnit());
   // Assume units that cancel themselves have been removed by simplification.
   assert(exactOutput.dimension().isUnit());
-  double value = exactOutput.approximateUserToScalar<double>(
+  double value = exactOutput.approximateUserExpressionToScalar<double>(
       calculationPreferences.angleUnit, calculationPreferences.complexFormat);
   /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
-   * display if approximation is finite. We should simplify with each relevant
-   * UnitDisplay and return false if all of them produce the same as
-   * exactOutput. */
+   * display if approximation is finite. We should simplify the exact output
+   * with each relevant UnitDisplay and return false if all of them produce the
+   * same as exactOutput. */
   return std::isfinite(value);
-#if 0
+#if 0  // TODO_PCJ
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   Preferences::ComplexFormat complexFormat =

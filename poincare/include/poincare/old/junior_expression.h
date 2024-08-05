@@ -234,8 +234,9 @@ class JuniorExpression : public OExpression {
                                    bool scalarsOnly = false) const;
   // Approximate to scalar any scalar expression
   template <typename T>
-  T approximateUserToScalar(Preferences::AngleUnit angleUnit,
-                            Preferences::ComplexFormat complexFormat) const;
+  T approximateUserExpressionToScalar(
+      Preferences::AngleUnit angleUnit,
+      Preferences::ComplexFormat complexFormat) const;
   // Approximate to scalar replacing Var0 with value.
   template <typename T>
   T approximateToScalarWithValue(T x, int listElement = -1) const;

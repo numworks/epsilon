@@ -69,7 +69,6 @@ bool Poincare::Dimension::isMatrix() {
 }
 
 bool Poincare::Dimension::isVector() {
-  // return isMatrix() && m_type.matrix().isVector();
   return isMatrix() &&
          (m_matrixDimension.rows == 1 || m_matrixDimension.cols == 1);
 }
@@ -605,8 +604,8 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
 }
 
 template <typename T>
-T UserExpression::approximateUserToScalar(AngleUnit angleUnit,
-                                          ComplexFormat complexFormat) const {
+T UserExpression::approximateUserExpressionToScalar(
+    AngleUnit angleUnit, ComplexFormat complexFormat) const {
   return Approximation::RootTreeToReal<T>(tree(), angleUnit, complexFormat);
 }
 
@@ -1240,9 +1239,9 @@ template bool UserExpression::hasDefinedComplexApproximation<float>(
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     const ApproximationContext&, double*, double*) const;
 
-template float UserExpression::approximateUserToScalar<float>(
+template float UserExpression::approximateUserExpressionToScalar<float>(
     Preferences::AngleUnit, Preferences::ComplexFormat) const;
-template double UserExpression::approximateUserToScalar<double>(
+template double UserExpression::approximateUserExpressionToScalar<double>(
     Preferences::AngleUnit, Preferences::ComplexFormat) const;
 
 }  // namespace Poincare

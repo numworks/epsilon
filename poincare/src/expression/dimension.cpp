@@ -121,6 +121,7 @@ bool Dimension::isSimpleRadianAngleUnit() const {
   return isSimpleAngleUnit() &&
          unit.representative == &Units::Angle::representatives.radian;
 }
+
 bool Dimension::hasNonKelvinTemperatureUnit() const {
   return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
 }

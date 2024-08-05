@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "block_stack.h"
-#include "poincare/old/junior_layout.h"
 #include "tree.h"
 #include "tree_stack_checkpoint.h"
 #include "type_block.h"
@@ -199,11 +198,13 @@ class TreeStack : public BlockStack {
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
 
-  // Execute an action with arbitrary input parameters types (ParametersTs...)
+  // Execute an action with input parameters types (Tree*, ContextT*,
+  // ParametersTs...)
   template <typename ActionT, typename RelaxT, typename ContextT,
             typename... ParametersTs>
-  void execute(ActionT action, ContextT* context, std::size_t maxSize,
-               RelaxT relax, ParametersTs... action_parameters) {
+  void execute(ActionT action, Tree* tree, ContextT* context,
+               std::size_t maxSize, RelaxT relax,
+               ParametersTs... extraParameters) {
 #if ASSERTIONS
     size_t treesNumber = numberOfTrees();
 #endif
@@ -211,7 +212,7 @@ class TreeStack : public BlockStack {
     while (true) {
       ExceptionTry {
         assert(numberOfTrees() == treesNumber);
-        action(action_parameters...);
+        action(tree, context, extraParameters...);
         // Prevent edition action from leaking: an action create at most one
         // tree.
         assert(numberOfTrees() <= treesNumber + 1);
@@ -237,36 +238,18 @@ class TreeStack : public BlockStack {
     }
   }
 
-  // Execute an action with input parameters types (Tree*, ContextT*,
-  // ParametersTs...)
-  template <typename ActionT, typename ContextT, typename RelaxT,
-            typename... ParametersTs>
-  void execute(ActionT action, Tree* tree, ContextT* context,
-               std::size_t maxSize, RelaxT relax,
-               ParametersTs... extra_parameters) {
-    return execute(action, context, maxSize, relax, tree, context,
-                   extra_parameters...);
-  }
-
  public:
-  // Execute an action with input parameters (ContextT*, const DataT*)
-  template <typename ActionT, typename ContextT, typename RelaxT,
-            typename DataT>
-  void execute(ActionT action, ContextT* context, const DataT* data,
-               std::size_t maxSize, RelaxT relax) {
-    return execute(action, context, maxSize, relax, context, data);
-  }
-
   template <typename ActionT, typename ContextT, typename RelaxT,
             typename... ParametersTs>
-  void executeAndReplaceTree(ActionT action, Tree* tree, ContextT* context,
-                             RelaxT relax, ParametersTs... parameters) {
+  void executeAndReplaceTree(ActionT action, Tree* tree,
+                             const ContextT* context, RelaxT relax,
+                             ParametersTs... extraParameters) {
     assert(context);
     // Copy context to avoid altering the original
-    ContextT* contextCopy = static_cast<ContextT*>(context);
+    ContextT contextCopy = *context;
     Block* previousLastBlock = lastBlock();
-    execute(action, tree, contextCopy, k_maxNumberOfBlocks, relax,
-            parameters...);
+    execute(action, tree, &contextCopy, k_maxNumberOfBlocks, relax,
+            extraParameters...);
     assert(previousLastBlock != lastBlock());
     tree->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
   }

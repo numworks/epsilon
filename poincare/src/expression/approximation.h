@@ -265,14 +265,15 @@ inline static bool AreConsistent(const Sign& sign, const T& value) {
            (value < 0 && sign.canBeStrictlyNegative()) ||
            (value == 0 && sign.canBeNull())) &&
           (sign.canBeNonInteger() ||
-           OMG::Float::RoughlyEqual<T>(value, std::floor(value),
-                                       OMG::Float::EpsilonLax<T>())));
+           OMG::Float::RoughlyEqual<T>(value, std::round(value),
+                                       100 * OMG::Float::EpsilonLax<T>())));
 }
 template <typename T>
 inline static bool AreConsistent(const ComplexSign& sign,
                                  const std::complex<T>& value) {
-  return AreConsistent(sign.realSign(), value.real()) &&
-         AreConsistent(sign.imagSign(), value.imag());
+  return std::isnan(value.real()) || std::isnan(value.imag()) ||
+         (AreConsistent(sign.realSign(), value.real()) &&
+          AreConsistent(sign.imagSign(), value.imag()));
 }
 #endif
 

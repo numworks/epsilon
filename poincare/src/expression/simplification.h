@@ -16,12 +16,6 @@ class Simplification {
   static void ProjectAndReduceWithAdaptiveStrategy(
       Tree* e, ProjectionContext* projectionContext, bool advanced);
 
-  static void ApplySimplify(const Tree* dataTree,
-                            ProjectionContext* projectionContext);
-  static void ApplyProjectAndReduce(const Tree* dataTree,
-                                    ProjectionContext* projectionContext,
-                                    bool advanced);
-
   // Simplification steps
   static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext,
                                bool advanced);
@@ -36,6 +30,12 @@ class Simplification {
   static bool ReduceSystem(Tree* e, bool advanced);
 
  private:
+  static void ApplySimplify(const Tree* dataTree,
+                            ProjectionContext* projectionContext);
+  static void ApplyProjectAndReduce(const Tree* dataTree,
+                                    ProjectionContext* projectionContext,
+                                    bool advanced);
+
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
   static bool ApplyStrategy(Tree* e, Strategy strategy, bool reduceIfSuccess);
 };

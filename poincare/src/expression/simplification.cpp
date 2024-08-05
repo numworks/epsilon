@@ -1,6 +1,7 @@
 #include "simplification.h"
 
 #include "advanced_reduction.h"
+#include "approximation.h"
 #include "beautification.h"
 #include "dependency.h"
 #include "list.h"
@@ -117,7 +118,17 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
   }
-  return Dependency::DeepRemoveUselessDependencies(e) || changed;
+  bool result = Dependency::DeepRemoveUselessDependencies(e) || changed;
+
+#if ASSERTIONS
+  if (Dimension::Get(e).isScalar() && !e->isList() && !e->isDiff() &&
+      !e->isIntegral()) {
+    assert(AreConsistent(ComplexSign::Get(e),
+                         Approximation::ToComplex<double>(e)));
+  }
+#endif
+
+  return result;
 }
 
 bool Simplification::HandleUnits(Tree* e,

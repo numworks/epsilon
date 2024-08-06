@@ -379,11 +379,11 @@ void GlobalContext::StoreParametricComponentsOfRecord(
 double GlobalContext::approximateSequenceAtRank(const char* identifier,
                                                 int rank) const {
   int index = sequenceStore->SequenceIndexForName(identifier[0]);
-  Sequence sequence = sequenceStore->sequenceAtIndex(index);
+  Sequence* sequence = m_sequenceContext.sequenceAtNameIndex(index);
   double result = sequenceCache->storedValueOfSequenceAtRank(index, rank);
   if (OMG::IsSignalingNan(result)) {
     // compute value if not in cache
-    result = sequence.approximateAtRank(rank, sequenceCache);
+    result = sequence->approximateAtRank(rank, sequenceCache);
   }
   return result;
 }

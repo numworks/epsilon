@@ -33,6 +33,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
   void resetCache() { cache()->resetCache(); }
+  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 
  private:
   constexpr static int k_numberOfSequences =
@@ -42,7 +43,6 @@ class SequenceContext : public Poincare::ContextWithParent {
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
   Poincare::Internal::SequenceCache* cache();
-  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
   SequenceStore* m_sequenceStore;
 };
 

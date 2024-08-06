@@ -59,9 +59,13 @@ _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/asse
 
 _ion_simulator_background_crop_epsilon := 1005x1975+93+13
 _ion_simulator_background_resize_epsilon := 1160x2220
+_ion_simulator_perfect_height_epsilon := 888
 
-_ion_simulator_background_crop_scandium := 2839x4523+916+823
-_ion_simulator_background_resize_scandium := 1160x1848
+_ion_simulator_background_crop_scandium := 2791x4450+940+880
+_ion_simulator_background_resize_scandium := 1160x1850
+_ion_simulator_perfect_height_scandium := 730
+
+PRIVATE_SFLAGS_ion += -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_LAYOUT_VARIANT))
 
 # FIXME Sizes and offsets should be parameterized
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.

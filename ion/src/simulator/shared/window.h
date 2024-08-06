@@ -8,7 +8,7 @@ namespace Simulator {
 namespace Window {
 
 constexpr static int perfectWidth = 458;
-constexpr static int perfectHeight = 888;
+constexpr static int perfectHeight = ION_SIMULATOR_PERFECT_HEIGHT;
 
 void init();
 void shutdown();

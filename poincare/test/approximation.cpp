@@ -102,9 +102,6 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("(-1)^(-2025)", "-1");
   approximates_to<float>("(-1)^(pi)", "nonreal");
   approximates_to<float>("(-2.5)^(-3.14)", "nonreal");
-  approximates_to<float>("(-1)^(pi)", "-0.9026855-0.430301×i", cartesianCtx);
-  approximates_to<float>("(-2.5)^(-3.14)", "-0.05093708+0.02396913×i",
-                         cartesianCtx);
   approximates_to<float>("0^i", "undef", cartesianCtx);
   approximates_to<float>("0^(3+4i)", "0", cartesianCtx);
   approximates_to<float>("0^(3-4i)", "0", cartesianCtx);

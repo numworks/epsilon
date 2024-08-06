@@ -93,6 +93,18 @@ QUIZ_CASE(pcj_approximation_replace) {
 
 QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^0", "undef");
+  approximates_to<float>("0^0.5", "0");
+  approximates_to<float>("0^(-0.5)", "undef");
+  approximates_to<float>("0^(-2)", "undef");
+  approximates_to<float>("0^(-2.5)", "undef");
+  approximates_to<float>("0^(-3)", "undef");
+  approximates_to<float>("(-1)^(-2024)", "1");
+  approximates_to<float>("(-1)^(-2025)", "-1");
+  approximates_to<float>("(-1)^(pi)", "nonreal");
+  approximates_to<float>("(-2.5)^(-3.14)", "nonreal");
+  approximates_to<float>("(-1)^(pi)", "-0.9026855-0.430301×i", cartesianCtx);
+  approximates_to<float>("(-2.5)^(-3.14)", "-0.05093708+0.02396913×i",
+                         cartesianCtx);
   approximates_to<float>("0^i", "undef", cartesianCtx);
   approximates_to<float>("0^(3+4i)", "0", cartesianCtx);
   approximates_to<float>("0^(3-4i)", "0", cartesianCtx);
@@ -157,8 +169,10 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("(-inf)^7", "-∞");
   approximates_to<float>("inf^-6", "0");
   approximates_to<float>("(-inf)^-6", "0");
-  // TODO_PCJ: approximates_to<float>("inf^0", "undef");
-  // TODO_PCJ: approximates_to<float>("(-inf)^0", "undef");
+  approximates_to<float>("inf^-7", "0");
+  approximates_to<float>("(-inf)^-7", "0");
+  approximates_to<float>("inf^0", "undef");
+  approximates_to<float>("(-inf)^0", "undef");
   approximates_to<float>("inf^inf", "∞");
   approximates_to<float>("inf^(-inf)", "0");
   approximates_to<float>("(-inf)^inf", "undef");  // complex inf

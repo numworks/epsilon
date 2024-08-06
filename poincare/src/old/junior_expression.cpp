@@ -1040,7 +1040,7 @@ bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
 }
 
-bool SystemExpression::IsInfinity(const SystemExpression e) {
+bool SystemExpression::IsPlusOrMinusInfinity(const SystemExpression e) {
   return Infinity::IsPlusOrMinusInfinity(e.tree());
 }
 

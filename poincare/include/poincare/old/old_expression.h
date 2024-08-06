@@ -266,7 +266,7 @@ class OExpression : public PoolHandle {
   }
   static bool IsRandom(const OExpression e);
   static bool IsMatrix(const OExpression e, Context* context);
-  static bool IsInfinity(const OExpression e) {
+  static bool IsPlusOrMinusInfinity(const OExpression e) {
     return e.isOfType({ExpressionNode::Type::Infinity});
   }
   static bool IsPercent(const OExpression e) {

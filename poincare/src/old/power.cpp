@@ -421,8 +421,8 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
     /* Step 3.2: index is infinity
      * if x=+-1 or x is complex: x^+inf or x^-inf -> undef */
     trivialResult = Undefined::Builder();
-  } else if (base.isOne() &&
-             !index.recursivelyMatches(OExpression::IsInfinity, context)) {
+  } else if (base.isOne() && !index.recursivelyMatches(
+                                 OExpression::IsPlusOrMinusInfinity, context)) {
     /* Step 3.3: base is 1
      * 1^x -> 1 */
     trivialResult = Rational::Builder(1);

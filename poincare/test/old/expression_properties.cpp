@@ -289,12 +289,12 @@ QUIZ_DISABLED_CASE(poincare_properties_deep_is_matrix) {
 
 QUIZ_DISABLED_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
-  assert_expression_has_property("3.4+inf", &context, OExpression::IsInfinity);
+  assert_expression_has_property("3.4+inf", &context, OExpression::IsPlusOrMinusInfinity);
   assert_expression_has_not_property("2.3+1", &context,
-                                     OExpression::IsInfinity);
-  assert_expression_has_not_property("a", &context, OExpression::IsInfinity);
+                                     OExpression::IsPlusOrMinusInfinity);
+  assert_expression_has_not_property("a", &context, OExpression::IsPlusOrMinusInfinity);
   assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context, OExpression::IsInfinity);
+  assert_expression_has_property("a", &context, OExpression::IsPlusOrMinusInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
@@ -306,9 +306,9 @@ QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   assert_expression_has_property("diff(y^2+x^2,x,3)", &context,
                                  OExpression::IsSymbolic);
   assert_reduce_and_store("1+inf→x");
-  assert_expression_has_property("x", &context, OExpression::IsInfinity);
+  assert_expression_has_property("x", &context, OExpression::IsPlusOrMinusInfinity);
   assert_expression_has_not_property("diff(x^2,x,3)", &context,
-                                     OExpression::IsInfinity);
+                                     OExpression::IsPlusOrMinusInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 

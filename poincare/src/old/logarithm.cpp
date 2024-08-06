@@ -243,10 +243,11 @@ OExpression Logarithm::simpleShallowReduce(
   }
   // log(x,x) = 1 with x != inf, and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
-    OExpression result = c.recursivelyMatches(OExpression::IsInfinity,
-                                              reductionContext.context())
-                             ? Undefined::Builder().convert<OExpression>()
-                             : Rational::Builder(1).convert<OExpression>();
+    OExpression result =
+        c.recursivelyMatches(OExpression::IsPlusOrMinusInfinity,
+                             reductionContext.context())
+            ? Undefined::Builder().convert<OExpression>()
+            : Rational::Builder(1).convert<OExpression>();
     replaceWithInPlace(result);
     return result;
   }

@@ -57,7 +57,7 @@ void VectorListController::computeAdditionalResults(
   Internal::ComplexSign sign =
       Internal::ComplexSign::Get(approximatedNorm.tree());
   if (!sign.isReal() || sign.canBeNull() ||
-      SystemExpression::IsInfinity(approximatedNorm)) {
+      SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
     return;
   }
   UserExpression normalized =

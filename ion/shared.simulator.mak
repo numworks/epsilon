@@ -7,7 +7,7 @@ $(addprefix shared/, \
   exam_mode.cpp \
   keyboard_queue.cpp \
   keyboard.cpp \
-  layout_events.cpp \
+  layout_events/$(ION_LAYOUT_VARIANT)/layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record.cpp \
@@ -53,8 +53,6 @@ SFLAGS_ion += \
   -DION_EVENTS_JOURNAL
 
 # Simulator backgrounds - begin
-
-$(call assert_defined,ION_LAYOUT_VARIANT)
 
 _ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_LAYOUT_VARIANT)/background-with-shadow.webp
 _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)

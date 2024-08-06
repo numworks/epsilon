@@ -1,3 +1,5 @@
+$(call assert_defined,ION_LAYOUT_VARIANT)
+
 $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   crc32.cpp \
   events.cpp \
@@ -6,6 +8,8 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   keyboard.cpp \
   storage.cpp  \
 ))
+
+SFLAGS_ion += -I$(PATH_ion)/include/ion/keyboard/$(ION_LAYOUT_VARIANT)
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \

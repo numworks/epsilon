@@ -22,6 +22,9 @@ SFLAGS += \
 
 include build/config.$(PLATFORM_TYPE).mak
 
+# Select the simulator layout
+ION_LAYOUT_VARIANT := epsilon
+
 # Import modules
 
 $(call import_module,liba,liba)

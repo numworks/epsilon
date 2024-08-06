@@ -7,7 +7,7 @@ extern "C" {
 #include <stdint.h>
 }
 
-#include <ion/keyboard/layout_keyboard.h>
+#include <ion/layout_keyboard.h>
 
 namespace Ion {
 namespace Keyboard {

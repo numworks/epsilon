@@ -15,8 +15,13 @@ def import_events_names(path, array):
             array.append(line[1:-3])  # "Left",\n
 
 
-import_events_names("ion/src/shared/events_names.inc", events_names)
-import_events_names("ion/src/shared/events_names_extended.inc", events_names_extended)
+import_events_names(
+    "ion/src/shared/layout_events/epsilon/events_names.inc", events_names
+)
+import_events_names(
+    "ion/src/shared/layout_events/epsilon/events_names_extended.inc",
+    events_names_extended,
+)
 
 events_names += [""] * (256 - len(events_names))
 events_ids = {events_names[i]: i for i in range(256) if events_names[i]}

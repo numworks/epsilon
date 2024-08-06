@@ -212,27 +212,27 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 }
 
 // Return the only numerical value found in e, nullptr if there are none or more
-const Tree* getNumericalValueTree(const Tree* e, bool* escape) {
-  assert(!*escape);
+const Tree* getNumericalValueTree(const Tree* e, bool* error) {
+  assert(!*error);
   assert(!e->isDependency());
   // Escape if e has a random node, a user symbol or inf
   if (e->isRandomized() || e->isUserSymbol() || e->isInf()) {
-    *escape = true;
+    *error = true;
     return nullptr;
   }
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
     if (!std::isfinite(Approximation::To<float>(e))) {
-      *escape = true;
+      *error = true;
       return nullptr;
     }
-    assert(!*escape);
+    assert(!*error);
     return e;
   }
   const Tree* result = nullptr;
   for (const Tree* child : e->children()) {
-    const Tree* newResult = getNumericalValueTree(child, escape);
-    if (*escape) {
+    const Tree* newResult = getNumericalValueTree(child, error);
+    if (*error) {
       return nullptr;
     }
     if (newResult) {
@@ -240,31 +240,31 @@ const Tree* getNumericalValueTree(const Tree* e, bool* escape) {
       if (result) {
         if (e->isPow() || e->isPowReal()) {
           // Ignore the exponent if base is numerical value so that 2^3 -> x^3
-          assert(!*escape);
+          assert(!*error);
           return result;
         }
-        *escape = true;
+        *error = true;
         return nullptr;
       }
       result = newResult;
     }
   }
-  assert(!*escape);
+  assert(!*error);
   return result;
 }
 
 bool AdditionalResultsHelper::HasSingleNumericalValue(
     const UserExpression input) {
-  bool escaped = false;
-  return getNumericalValueTree(input.tree(), &escaped) != nullptr;
+  bool dummy = false;
+  return getNumericalValueTree(input.tree(), &dummy) != nullptr;
 }
 
 UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
     const UserExpression input, const char* symbol, float* value) {
   Tree* clone = input.tree()->cloneTree();
-  bool escaped = false;
+  bool dummy = false;
   Tree* numericalValue =
-      const_cast<Tree*>(getNumericalValueTree(clone, &escaped));
+      const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
   *value = Approximation::To<float>(numericalValue);
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));

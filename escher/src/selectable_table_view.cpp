@@ -195,8 +195,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!cell) {
       return false;
     }
-    constexpr size_t bufferSize = TextField::MaxBufferSize();
-    char buffer[bufferSize] = "";
+    Poincare::Layout toStore;
     // Step 1: Determine text to store
     const char* text = cell->text();
     Poincare::Layout layout = cell->layout();
@@ -205,28 +204,22 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     }
     if (dataSource()->canStoreCellAtLocation(selectedColumn(), selectedRow())) {
       if (text) {
-        strlcpy(buffer, text, bufferSize);
+        if (text[0] != '\0') {
+          toStore = Poincare::Layout::String(text);
+        }
       } else {
         assert(!layout.isUninitialized());
-        if (layout.serializeParsedExpression(
-                buffer, bufferSize,
-                m_delegate ? m_delegate->context() : nullptr) ==
-            bufferSize - 1) {
-          /* The layout is too large to be serialized in the buffer. Returning
-           * false will open an empty store which is better than a broken
-           * text. */
-          return false;
-        };
-      }
+        toStore = layout;
+      };
     }
     // Step 2: Determine where to store it
     if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-      if (buffer[0] != 0) {
+      if (!toStore.isUninitialized()) {
         // We don't want to store an empty text in clipboard
-        Escher::Clipboard::SharedClipboard()->storeText(buffer);
+        Escher::Clipboard::SharedClipboard()->storeLayout(toStore);
       }
     } else {
-      App::app()->storeLayout(Poincare::Layout::String(buffer));
+      App::app()->storeLayout(toStore);
     }
     return true;
   }

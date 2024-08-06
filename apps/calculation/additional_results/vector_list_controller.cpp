@@ -56,7 +56,8 @@ void VectorListController::computeAdditionalResults(
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   Internal::ComplexSign sign =
       Internal::ComplexSign::Get(approximatedNorm.tree());
-  if (!sign.isReal() || sign.canBeNull() ||
+  assert(sign.isReal() && !sign.realSign().canBeStrictlyNegative());
+  if (sign.canBeNull() ||
       SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
     return;
   }
@@ -86,7 +87,9 @@ void VectorListController::computeAdditionalResults(
   UserExpression angle = UserExpression::Create(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
   sign = Internal::ComplexSign::Get(normalized.tree()->child(1));
-  if (sign.isReal() && sign.realSign().canBeStrictlyNegative() &&
+  // HasVector should be false if any vector's child is complex.
+  assert(sign.isReal());
+  if (sign.realSign().canBeStrictlyNegative() &&
       !sign.realSign().canBeStrictlyPositive()) {
     angle = UserExpression::Create(
         KSub(KA, KB),

@@ -67,7 +67,6 @@ _ion_simulator_perfect_height_scandium := 730
 
 PRIVATE_SFLAGS_ion += -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_LAYOUT_VARIANT))
 
-# FIXME Sizes and offsets should be parameterized
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
 	convert \

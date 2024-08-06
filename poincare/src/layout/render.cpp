@@ -287,13 +287,14 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       using namespace TwoRows;
       KDSize size = Size(l);
       KDCoordinate horizontalCenter = size.width() / 2;
-      if (childIndex == 0) {
-        return KDPoint(horizontalCenter - Width(l->child(0)) / 2,
+      if (childIndex == k_upperIndex) {
+        return KDPoint(horizontalCenter - Width(UpperLayout(l)) / 2,
                        UpperMargin(l, s_font));
       }
+      assert(childIndex == k_lowerIndex);
       return KDPoint(
-          horizontalCenter - Width(l->child(1)) / 2,
-          size.height() - Height(l->child(1)) - LowerMargin(l, s_font));
+          horizontalCenter - Width(LowerLayout(l)) / 2,
+          size.height() - Height(LowerLayout(l)) - LowerMargin(l, s_font));
     }
     case LayoutType::Conj: {
       return KDPoint(
@@ -915,7 +916,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDCoordinate childHeight = RowsHeight(l, s_font);
       KDCoordinate rightParenthesisPointX =
           RowsWidth(l, s_font) + Parenthesis::k_parenthesisWidth;
+      // Draw left parenthesis
       RenderParenthesisWithChildHeight(true, childHeight, ctx, p, style);
+      // Draw right parenthesis
       RenderParenthesisWithChildHeight(
           false, childHeight, ctx,
           p.translatedBy(KDPoint(rightParenthesisPointX, 0)), style);
@@ -923,8 +926,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
     }
     case LayoutType::Point2D: {
       using namespace TwoRows;
-      KDCoordinate upperLayoutHeight = Height(l->child(0));
-      KDCoordinate lowerLayoutHeight = Height(l->child(1));
+      KDCoordinate upperLayoutHeight = Height(UpperLayout(l));
+      KDCoordinate lowerLayoutHeight = Height(LowerLayout(l));
       KDCoordinate right =
           Parenthesis::k_parenthesisWidth + RowsWidth(l, style.font);
       KDCoordinate bottom = upperLayoutHeight + k_point2DRowsSeparator;

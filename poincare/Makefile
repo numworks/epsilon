@@ -19,6 +19,10 @@ ASSERTIONS ?= $(DEBUG)
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS)
 
+ifeq ($(ASSERTIONS),0)
+SFLAGS += -DNDEBUG
+endif
+
 # Modules
 
 $(call import_module,omg,omg)

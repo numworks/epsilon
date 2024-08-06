@@ -214,15 +214,13 @@ def print_keys(f, background_values):
         ["SmallSquircle", list(range(12, 30))],
         [
             "LargeSquircle",
-            list(range(30, 35))
-            + list(range(36, 41))
-            + list(range(42, 47))
-            + list(range(48, 53)),
+            list(range(30, 53)),
         ],
     ]
     for k in keys:
         for v in k[1]:
-            print_key(f, key_values[str(v)], k[0])
+            if str(v) in key_values:
+                print_key(f, key_values[str(v)], k[0])
 
 
 def print_after_keys(f):

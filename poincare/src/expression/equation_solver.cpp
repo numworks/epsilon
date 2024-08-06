@@ -17,6 +17,7 @@
 #include "sign.h"
 #include "simplification.h"
 #include "symbol.h"
+#include "systematic_reduction.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -406,6 +407,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
+  SystematicReduction::DeepReduce(eq);
   AdvancedReduction::DeepExpand(eq);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
@@ -472,6 +474,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
          simplifiedEquationSet->numberOfChildren() == 1);
   assert(n == 1);
   Tree* equation = simplifiedEquationSet->child(0)->cloneTree();
+  // TODO: expansion should be done only once
+  SystematicReduction::DeepReduce(equation);
+  AdvancedReduction::DeepExpand(equation);
   Tree* polynomial = PolynomialParser::Parse(
       equation, Variables::Variable(0, ComplexSign::Unknown()));
   if (!polynomial) {

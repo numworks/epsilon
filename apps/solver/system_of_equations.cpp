@@ -160,6 +160,7 @@ void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_autoApproximateSolvingRange = false;
   m_hasMoreSolutions = false;
+  m_solverContext.hasMoreSolutions = false;
   m_approximateSolvingRange = approximateSolvingRange;
 }
 

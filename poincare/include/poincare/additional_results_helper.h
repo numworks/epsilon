@@ -29,7 +29,7 @@ class AdditionalResultsHelper final {
   /* Function additional results */
   static bool HasSingleNumericalValue(const UserExpression input);
   static UserExpression CloneReplacingNumericalValuesWithSymbol(
-      const UserExpression input, float* value, const char* symbol);
+      const UserExpression input, const char* symbol, float* value);
 };
 
 }  // namespace Poincare

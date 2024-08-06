@@ -260,7 +260,7 @@ bool AdditionalResultsHelper::HasSingleNumericalValue(
 }
 
 UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
-    const UserExpression input, float* value, const char* symbol) {
+    const UserExpression input, const char* symbol, float* value) {
   Tree* clone = input.tree()->cloneTree();
   bool escaped = false;
   Tree* numericalValue =

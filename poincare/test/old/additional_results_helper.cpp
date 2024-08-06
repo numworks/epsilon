@@ -31,8 +31,8 @@ static inline void assert_generalizes_to_and_extract(const char* expression,
   UserExpression g = UserExpression::Builder(TextToTree(generalized));
   float v;
   UserExpression f =
-      AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(e, &v,
-                                                                       "x");
+      AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(e, "x",
+                                                                       &v);
   quiz_assert(value == v);
   quiz_assert(g.isIdenticalTo(f));
 }

@@ -29,7 +29,7 @@ void FunctionListController::computeAdditionalResults(
   float abscissa;
   UserExpression inputClone =
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
-          input, &abscissa, k_symbolName);
+          input, k_symbolName, &abscissa);
 
   SystemFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(

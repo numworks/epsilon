@@ -428,9 +428,10 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
                         previousSize);
 }
 
-bool LayoutField::handleEventWithLayout(Layout layout) {
+bool LayoutField::handleEventWithLayout(Layout layout,
+                                        bool forceCursorRightOfText) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  insertLayoutAtCursor(layout);
+  insertLayoutAtCursor(layout, forceCursorRightOfText);
   // TODO: insertLayoutAtCursor should return a bool, insertion could fail
   bool didHandle = true;
   return didHandleEvent(didHandle, didHandle, true, previousSize);

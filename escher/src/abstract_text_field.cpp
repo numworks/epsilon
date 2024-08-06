@@ -610,11 +610,12 @@ bool AbstractTextField::handleEventWithText(const char* eventText,
   return false;
 }
 
-bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout) {
-  size_t bufferSize = MaxBufferSize();
+bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout,
+                                              bool forceCursorRightOfText) {
+  constexpr size_t bufferSize = MaxBufferSize();
   char buffer[bufferSize];
   layout.serializeForParsing(buffer, bufferSize);
-  return handleEventWithText(buffer);
+  return handleEventWithText(buffer, false, forceCursorRightOfText);
 }
 
 void AbstractTextField::removeWholeText() {

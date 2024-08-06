@@ -49,7 +49,8 @@ class LayoutField : public EditableField {
   /* Responder */
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
-  bool handleEventWithLayout(Poincare::Layout layout) override;
+  bool handleEventWithLayout(Poincare::Layout layout,
+                             bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
   void didBecomeFirstResponder() override;

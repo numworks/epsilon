@@ -35,7 +35,8 @@ class AbstractTextField : public TextInput {
   // EditableField
   bool handleEventWithText(const char* text, bool indentation = false,
                            bool forceCursorRightOfText = false) override;
-  bool handleEventWithLayout(Poincare::Layout layout) override;
+  bool handleEventWithLayout(Poincare::Layout layout,
+                             bool forceCursorRightOfText = false) override;
   void setEditing(bool isEditing) {
     assert(!isEditing || isEditable());
     contentView()->setEditing(isEditing);

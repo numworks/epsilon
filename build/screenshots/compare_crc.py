@@ -51,13 +51,10 @@ parser.add_argument(
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
-    try:
-        p = compute_crc32_process(state_file, executable)
-        p.wait()
-        print("Computing crc32 of", scenario_name)
-        computed_crc32_list.append((scenario_name, find_crc32_in_log(p.stdout)))
-    except:  # Handle Interrupt exceptions
-        sys.exit(1)
+    p = compute_crc32_process(state_file, executable)
+    p.wait()
+    print("Computing crc32 of", scenario_name)
+    computed_crc32_list.append((scenario_name, find_crc32_in_log(p.stdout)))
 
 
 def main():
@@ -80,29 +77,35 @@ def main():
     ignored = 0
     computed_crc32_list = []
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        for scenario_name in sorted(os.listdir(dataset)):
-            if not re.match(args.filter, scenario_name):
-                continue
+    try:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            for scenario_name in sorted(os.listdir(dataset)):
+                if not re.match(args.filter, scenario_name):
+                    continue
 
-            scenario_folder = folder(scenario_name, dataset)
-            if not os.path.isdir(scenario_folder):
-                continue
+                scenario_folder = folder(scenario_name, dataset)
+                if not os.path.isdir(scenario_folder):
+                    continue
 
-            print("Collecting data from", scenario_folder)
-            state_file = get_file_with_extension(scenario_folder, ".nws")
-            reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
-            if state_file == "" or reference_crc32_file == "":
-                ignored = ignored + 1
-                continue
+                print("Collecting data from", scenario_folder)
+                state_file = get_file_with_extension(scenario_folder, ".nws")
+                reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
+                if state_file == "" or reference_crc32_file == "":
+                    ignored = ignored + 1
+                    continue
 
-            pool.submit(
-                run_test,
-                scenario_name,
-                state_file,
-                args.executable,
-                computed_crc32_list,
-            )
+                pool.submit(
+                    run_test,
+                    scenario_name,
+                    state_file,
+                    args.executable,
+                    computed_crc32_list,
+                )
+
+    except KeyboardInterrupt:
+        pool.shutdown(cancel_futures=True)
+        print("^C")
+        sys.exit(1)
 
     # Compare with ref
     print("\nComparing crc32")

@@ -77,6 +77,7 @@ QUIZ_CASE(pcj_approximation) {
   approximates_to(KPowReal(-1_e, 2_e), 1.f);
   approximates_to(KSum("k"_e, 1_e, 3_e, KVarK), 6.f);
   approximates_to("x"_e, NAN);
+  approximates_to(KPow(e_e, 3_e / 2_e), 4.481689f);
 }
 
 QUIZ_CASE(pcj_approximation_replace) {

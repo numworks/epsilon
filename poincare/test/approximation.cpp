@@ -73,7 +73,7 @@ QUIZ_CASE(pcj_approximation) {
   approximates_to(KSin(π_e), 0.f);
   approximates_to(KTan(0_e), 0.f);
   approximates_to(KPowReal(1_e, KDiv(1_e, 3_e)), 1.f);
-  approximates_to(KPowReal(-1_e, KDiv(1_e, 3_e)), NAN);
+  approximates_to(KPowReal(-1_e, KDiv(1_e, 3_e)), -1.f);
   approximates_to(KPowReal(-1_e, 2_e), 1.f);
   approximates_to(KSum("k"_e, 1_e, 3_e, KVarK), 6.f);
   approximates_to("x"_e, NAN);

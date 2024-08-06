@@ -862,25 +862,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Decimal:
       return child[0] * std::pow(static_cast<T>(10.0), -child[1]);
     case Type::PowReal: {
-      T a = child[0];
-      T b = child[1];
-      if ((std::fabs(a) == INFINITY && b == static_cast<T>(0.0)) ||
-          (std::fabs(a) == static_cast<T>(1.0) && std::fabs(b) == INFINITY)) {
-        /* std::pow(±Inf,0) = std::pow(±1,±Inf) = 1 but we want undef. */
-        return NAN;
-      }
-      if ((a == -INFINITY && b == INFINITY) ||
-          (a < static_cast<T>(-1.0) && b == INFINITY) ||
-          (static_cast<T>(-1.0) < a && a <= static_cast<T>(0.0) &&
-           b == -INFINITY)) {
-        /* (-inf)^inf, a^inf with a <-1 and a^(-inf) with -1 < a <= 0 should be
-         * approximated to complex infinity but we do not handle it for now. */
-        return NAN;
-      }
-      /* PowerReal could not be reduced, b's reductions cannot be safely
-       * interpreted as a rational. As a consequence, return NAN if a is
-       * negative and b isn't an integer. */
-      return (a < 0.0 && b != std::round(b)) ? NAN : std::pow(a, b);
+      return ApproximatePower<T>(e, ComplexFormat::Real);
     }
     case Type::Sign: {
       // TODO why no epsilon in Poincare ?

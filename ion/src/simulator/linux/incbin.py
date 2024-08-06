@@ -21,11 +21,11 @@ def asset_basename_symbol(asset):
 
 
 def print_asset(f, asset):
-    asset_basename = asset_basename_symbol(asset)
+    asset_basename = asset_basename_symbol(os.path.basename(asset))
     f.write(".global _ion_simulator_" + asset_basename + "_start\n")
     f.write(".global _ion_simulator_" + asset_basename + "_end\n")
     f.write("_ion_simulator_" + asset_basename + "_start:\n")
-    f.write('    .incbin "ion/src/simulator/assets/' + asset + '"\n')
+    f.write('    .incbin "' + asset + '"\n')
     f.write("_ion_simulator_" + asset_basename + "_end:\n\n")
 
 
@@ -89,4 +89,4 @@ def print_header(files, path):
 if args.o.endswith(".s"):
     print_assembly(args.assets, args.o)
 if args.o.endswith(".h"):
-    print_header(args.assets, args.o)
+    print_header([os.path.basename(a) for a in args.assets], args.o)

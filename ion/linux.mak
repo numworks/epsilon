@@ -38,6 +38,6 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
 
 $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/linux/,assets.s platform_images.h): $(_ion_simulator_assets) | $$(@D)/.
 	$(call rule_label,INCBIN)
-	$(PYTHON) $(PATH_ion)/src/simulator/linux/incbin.py $(notdir $^) -o $@
+	$(PYTHON) $(PATH_ion)/src/simulator/linux/incbin.py $^ -o $@
 
 $(call all_objects_for,$(PATH_ion)/src/simulator/linux/platform_images.cpp): $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/linux/platform_images.h

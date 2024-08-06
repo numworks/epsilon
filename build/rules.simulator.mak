@@ -49,7 +49,7 @@ $(call document_other_target,htmlpack.<flavors>.zip)
 epsilon%html: $(OUTPUT_DIRECTORY)/epsilon%html
 	@ :
 
-$(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js ion/src/simulator/web/simulator.html app/assets/background.jpg) ion/src/simulator/assets/epsilon/background-with-shadow.webp ion/src/simulator/web/inline.py
+$(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js ion/src/simulator/web/simulator.html app/assets/background.jpg) ion/src/simulator/assets/scandium/background-with-shadow.webp ion/src/simulator/web/inline.py
 	$(call rule_label,INLINE)
 	$(PYTHON) $(filter %.py,$^) \
 		--script $(filter %.js,$^) \

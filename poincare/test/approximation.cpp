@@ -17,7 +17,8 @@ constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::RootTreeToReal<T>(n);
-  bool result = OMG::Float::RoughlyEqual<T>(approx, f, FLT_EPSILON, true);
+  bool result =
+      OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
   if (!result) {
     std::cout << "Approximation test failure with: \n";

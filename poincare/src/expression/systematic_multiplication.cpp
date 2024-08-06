@@ -25,9 +25,12 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
       merge = KUndef->cloneTree();
     } else {
       if (Dimension::Get(next).isScalar() && !Dimension::IsList(next)) {
-        // 0 * x -> 0
-        next->removeTree();
-        return true;
+        if (!std::isnan(Approximation::To<float>(next))) {
+          // 0 * x -> 0
+          next->removeTree();
+          return true;
+        }
+        // TODO: else: 0 * x -> dep(0,{x})
       }
     }
   }

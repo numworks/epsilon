@@ -618,10 +618,10 @@ inline KDCoordinate LowerMargin(const Layout* node, KDFont::Size font) {
 }  // namespace TwoRows
 
 namespace Point2D {
-constexpr KDSize SizeGivenChildSize(KDCoordinate width, KDCoordinate height) {
-  return KDSize(width + 2 * Parenthesis::k_parenthesisWidth,
-                2 * height + TwoRows::k_point2DRowsSeparator +
-                    2 * Parenthesis::VerticalMargin(height));
+constexpr KDSize SizeGivenChildSize(KDSize childSize) {
+  return KDSize(childSize.width() + 2 * Parenthesis::k_parenthesisWidth,
+                2 * childSize.height() + TwoRows::k_point2DRowsSeparator +
+                    2 * Parenthesis::VerticalMargin(childSize.height()));
 }
 }  // namespace Point2D
 

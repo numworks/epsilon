@@ -171,11 +171,11 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
-  KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(
+  KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(KDSize(
       PrintFloat::glyphLengthForFloatWithPrecision(
           Preferences::SharedPreferences()->numberOfSignificantDigits()) *
           KDFont::GlyphWidth(k_cellFont),
-      KDFont::GlyphHeight(k_cellFont));
+      KDFont::GlyphHeight(k_cellFont)));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
 }
 

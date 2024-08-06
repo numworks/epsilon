@@ -21,7 +21,7 @@ void SanitizeRack(Internal::Tree* rack);
 
 bool IsSanitizedRack(const Internal::Tree* rack);
 
-KDSize Point2DSizeGivenChildSize(KDCoordinate width, KDCoordinate height);
+KDSize Point2DSizeGivenChildSize(KDSize childSize);
 
 }  // namespace Poincare::LayoutHelpers
 

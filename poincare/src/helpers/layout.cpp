@@ -78,8 +78,8 @@ bool IsSanitizedRack(const Internal::Tree* rack) {
   return true;
 }
 
-KDSize Point2DSizeGivenChildSize(KDCoordinate width, KDCoordinate height) {
-  return Point2D::SizeGivenChildSize(width, height);
+KDSize Point2DSizeGivenChildSize(KDSize childSize) {
+  return Point2D::SizeGivenChildSize(childSize);
 }
 
 }  // namespace Poincare::LayoutHelpers

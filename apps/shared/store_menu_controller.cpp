@@ -70,7 +70,7 @@ void StoreMenuController::didBecomeFirstResponder() {
 void StoreMenuController::setLayout(Poincare::Layout layout) {
   m_preventReload = true;
   m_cell.layoutField()->clearAndSetEditing(true);
-  m_cell.layoutField()->handleEventWithLayout(layout);
+  m_cell.layoutField()->handleEventWithLayout(layout, true);
   m_cell.layoutField()->handleEventWithText("→");
   if (layout.isUninitialized()) {
     m_cell.layoutField()->putCursorOnOneSide(OMG::Direction::Left());

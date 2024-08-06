@@ -333,7 +333,7 @@ $(addprefix regression/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-	old/additional_results_helper.cpp \
+  old/additional_results_helper.cpp \
   old/approximation.cpp \
   old/conics.cpp \
   old/derivative.cpp \

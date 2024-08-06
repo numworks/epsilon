@@ -220,7 +220,7 @@ const Tree* getNumericalValueTree(const Tree* e, bool* escape) {
     *escape = true;
     return nullptr;
   }
-  // e is not a constant so that e^2 -> e^x
+  // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
     if (!std::isfinite(Approximation::To<float>(e))) {
       *escape = true;

@@ -50,7 +50,7 @@ void VectorListController::computeAdditionalResults(
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, UserExpression(), norm, &ctx);
 
-  // 2. Normalized vector --> pourquoi pas avant ?
+  // 2. Normalized vector
   SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});

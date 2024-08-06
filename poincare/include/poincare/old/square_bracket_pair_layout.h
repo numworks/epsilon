@@ -17,10 +17,6 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
                          backgroundColor, k_minVerticalMargin, k_bracketWidth,
                          k_renderTopBar, k_renderBottomBar, k_renderDoubleBar);
   }
-  static KDSize SizeGivenChildSize(KDSize childSize) {
-    return KDSize(2 * k_bracketWidth + childSize.width(),
-                  Height(childSize.height(), k_minVerticalMargin));
-  }
   static KDPoint ChildOffset(KDCoordinate childHeight) {
     return BracketPairLayoutNode::ChildOffset(k_minVerticalMargin,
                                               k_bracketWidth, childHeight);

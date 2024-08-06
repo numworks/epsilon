@@ -9,12 +9,6 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
  public:
   using TwoRowsLayoutNode::TwoRowsLayoutNode;
 
-  static KDSize SizeGivenChildSize(KDCoordinate width, KDCoordinate height) {
-    return KDSize(width + 2 * k_parenthesisWidth,
-                  2 * height + k_rowsSeparator +
-                      2 * ParenthesisLayoutNode::VerticalMargin(height));
-  }
-
   // Layout
   Type otype() const override { return Type::Point2DLayout; }
 

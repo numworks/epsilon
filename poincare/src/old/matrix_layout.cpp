@@ -102,7 +102,8 @@ bool MatrixLayoutNode::isEditing() const {
 }
 
 KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
-  return SquareBracketPairLayoutNode::SizeGivenChildSize(gridSize(font));
+  assert(false);
+  return 0;
 }
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {

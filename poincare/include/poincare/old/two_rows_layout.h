@@ -31,28 +31,6 @@ class TwoRowsLayoutNode : public LayoutNode {
  protected:
   constexpr static KDCoordinate k_parenthesisWidth =
       ParenthesisLayoutNode::k_parenthesisWidth;
-
-  // LayoutNode
-  KDSize computeSize(KDFont::Size font) override;
-  KDCoordinate computeBaseline(KDFont::Size font) override;
-  KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
-
-  KDCoordinate rowsWidth(KDFont::Size font) {
-    return std::max(upperLayout()->layoutSize(font).width(),
-                    lowerLayout()->layoutSize(font).width());
-  }
-  KDCoordinate rowsHeight(KDFont::Size font) {
-    return upperLayout()->layoutSize(font).height() + rowsSeparator() +
-           lowerLayout()->layoutSize(font).height();
-  }
-  LayoutNode* upperLayout() const { return childAtIndex(k_upperLayoutIndex); }
-  LayoutNode* lowerLayout() const { return childAtIndex(k_lowerLayoutIndex); }
-
-  virtual KDCoordinate upperMargin(KDFont::Size font) { return 0; }
-  virtual KDCoordinate lowerMargin(KDFont::Size font) { return 0; }
-  virtual KDCoordinate rowsSeparator() {
-    return GridLayoutNode::k_gridEntryMargin;
-  }
 };
 
 }  // namespace Poincare

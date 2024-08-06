@@ -40,28 +40,4 @@ TwoRowsLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
   return DeletionMethod::MoveLeft;
 }
 
-KDSize TwoRowsLayoutNode::computeSize(KDFont::Size font) {
-  return KDSize(rowsWidth(font) + 2 * k_parenthesisWidth,
-                rowsHeight(font) + upperMargin(font) + lowerMargin(font));
-}
-
-KDCoordinate TwoRowsLayoutNode::computeBaseline(KDFont::Size font) {
-  return (rowsHeight(font) + 1) / 2;
-}
-
-KDPoint TwoRowsLayoutNode::positionOfChild(LayoutNode* child,
-                                           KDFont::Size font) {
-  KDSize size = computeSize(font);
-  KDCoordinate horizontalCenter = size.width() / 2;
-  if (child == upperLayout()) {
-    return KDPoint(
-        horizontalCenter - upperLayout()->layoutSize(font).width() / 2,
-        upperMargin(font));
-  }
-  assert(child == lowerLayout());
-  return KDPoint(horizontalCenter - lowerLayout()->layoutSize(font).width() / 2,
-                 size.height() - lowerLayout()->layoutSize(font).height() -
-                     lowerMargin(font));
-}
-
 }  // namespace Poincare

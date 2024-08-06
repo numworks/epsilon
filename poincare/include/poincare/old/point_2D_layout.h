@@ -24,20 +24,6 @@ class Point2DLayoutNode final : public TwoRowsLayoutNode {
     stream << "Point2DLayout";
   }
 #endif
-
- private:
-  constexpr static KDCoordinate k_rowsSeparator = 2;
-
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
-  KDCoordinate upperMargin(KDFont::Size font) override {
-    return ParenthesisLayoutNode::VerticalMargin(
-        upperLayout()->layoutSize(font).height());
-  }
-  KDCoordinate lowerMargin(KDFont::Size font) override {
-    return ParenthesisLayoutNode::VerticalMargin(
-        lowerLayout()->layoutSize(font).height());
-  }
-  KDCoordinate rowsSeparator() override { return k_rowsSeparator; }
 };
 
 class Point2DLayout final

@@ -24,9 +24,6 @@ class BinomialCoefficientLayoutNode final : public TwoRowsLayoutNode {
     stream << "BinomialCoefficientLayout";
   }
 #endif
-
- private:
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
 class BinomialCoefficientLayout final

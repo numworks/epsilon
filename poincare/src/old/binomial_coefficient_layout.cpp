@@ -17,18 +17,4 @@ size_t BinomialCoefficientLayoutNode::serialize(
       SerializationHelper::ParenthesisType::System);
 }
 
-void BinomialCoefficientLayoutNode::render(KDContext* ctx, KDPoint p,
-                                           KDGlyph::Style style) {
-  // Render the parentheses.
-  KDCoordinate childHeight = rowsHeight(style.font);
-  KDCoordinate rightParenthesisPointX =
-      rowsWidth(style.font) + k_parenthesisWidth;
-  ParenthesisLayoutNode::RenderWithChildHeight(
-      true, childHeight, ctx, p, style.glyphColor, style.backgroundColor);
-  ParenthesisLayoutNode::RenderWithChildHeight(
-      false, childHeight, ctx,
-      p.translatedBy(KDPoint(rightParenthesisPointX, 0)), style.glyphColor,
-      style.backgroundColor);
-}
-
 }  // namespace Poincare

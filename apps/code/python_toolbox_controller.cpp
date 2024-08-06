@@ -1002,11 +1002,22 @@ constexpr ToolboxMessageTree catalogChildren[] = {
                              I18n::Message::PythonZeros),
 };
 
-constexpr ToolboxMessageTree functionsChildren[] = {
+constexpr ToolboxMessageTree functionsAndClassesChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandDefWithArg,
                              I18n::Message::Default, false,
                              I18n::Message::PythonCommandDef),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandReturn,
+                             I18n::Message::Default),
+
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandClassWithArg,
+                             I18n::Message::Default, false,
+                             I18n::Message::PythonCommandClass),
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandInitDefWithArg,
+                             I18n::Message::Default, false,
+                             I18n::Message::PythonCommandInitDef),
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandClassSelf,
+                             I18n::Message::Default),
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandStaticMethodDecorator,
                              I18n::Message::Default)};
 
 constexpr ToolboxMessageTree menu[] = {
@@ -1014,7 +1025,7 @@ constexpr ToolboxMessageTree menu[] = {
                              loopsAndTestsChildren),
     ToolboxMessageTree::Node(I18n::Message::Modules, modulesChildren),
     ToolboxMessageTree::Node(I18n::Message::Catalog, catalogChildren),
-    ToolboxMessageTree::Node(I18n::Message::Functions, functionsChildren)};
+    ToolboxMessageTree::Node(I18n::Message::FunctionsAndClasses, functionsAndClassesChildren)};
 
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);

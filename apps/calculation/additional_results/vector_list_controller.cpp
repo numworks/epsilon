@@ -86,7 +86,13 @@ void VectorListController::computeAdditionalResults(
   assert(normalized.tree()->numberOfChildren() == 2);
   UserExpression angle = UserExpression::Create(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
-  sign = Internal::ComplexSign::Get(normalized.tree()->child(1));
+  /* TODO_PCJ: We used to compute sign on UserExpression, but ComplexSign needs
+   * a reduced expression. We use approximation here but could also reduce the
+   * expression. */
+  SystemExpression yApprox = PoincareHelpers::Approximate<double>(
+      normalized.cloneChildAtIndex(1), context,
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+  sign = Internal::ComplexSign::Get(yApprox.tree());
   // HasVector should be false if any vector's child is complex.
   assert(sign.isReal());
   if (sign.realSign().canBeStrictlyNegative() &&

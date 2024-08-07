@@ -1,6 +1,8 @@
 #include <emscripten/bind.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/junior_expression.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 
 #include <string>
@@ -38,6 +40,16 @@ double ApproximateToScalarWithValue(const JuniorExpression& expr,
   return expr.approximateToScalarWithValue(value);
 }
 
+bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
+    const JuniorExpression& exact, const JuniorExpression& approximate,
+    Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit) {
+  Internal::ProjectionContext ctx{.m_complexFormat = complexFormat,
+                                  .m_angleUnit = angleUnit};
+  return ExactAndApproximateExpressionsAreStrictlyEqual(exact, approximate,
+                                                        &ctx);
+}
+
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
       .function("isUninitialized", &PoolHandle::isUninitialized);
@@ -49,8 +61,8 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
                           &JuniorExpression::Builder),
                       allow_raw_pointers())
       .class_function("ParseLatex", &ParseLatexFromString)
-      .class_function("ExactAndApproximateExpressionsAreEqual",
-                      &OExpression::ExactAndApproximateExpressionsAreEqual)
+      .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
+                      &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("tree", &JuniorExpression::tree, allow_raw_pointers())
       .function("toLatex", &toLatexString, allow_raw_pointers())
       .function("cloneAndReduce", &JuniorExpression::cloneAndReduce)

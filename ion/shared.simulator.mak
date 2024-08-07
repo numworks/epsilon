@@ -7,7 +7,7 @@ $(addprefix shared/, \
   exam_mode.cpp \
   keyboard_queue.cpp \
   keyboard.cpp \
-  layout_events/$(ION_LAYOUT_VARIANT)/layout_events.cpp \
+  layout_events/$(ION_layout_variant)/layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record.cpp \
@@ -54,7 +54,7 @@ SFLAGS_ion += \
 
 # Simulator backgrounds - begin
 
-_ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_LAYOUT_VARIANT)/background-with-shadow.webp
+_ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp
 _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)
 
 _ion_simulator_background_crop_epsilon := 1005x1975+93+13
@@ -65,13 +65,13 @@ _ion_simulator_background_crop_scandium := 2791x4450+940+880
 _ion_simulator_background_resize_scandium := 1160x1850
 _ion_simulator_perfect_height_scandium := 730
 
-PRIVATE_SFLAGS_ion += -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_LAYOUT_VARIANT))
+PRIVATE_SFLAGS_ion += -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_layout_variant))
 
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
 	convert \
-		-crop $(_ion_simulator_background_crop_$(ION_LAYOUT_VARIANT)) \
-		-resize $(_ion_simulator_background_resize_$(ION_LAYOUT_VARIANT)) \
+		-crop $(_ion_simulator_background_crop_$(ION_layout_variant)) \
+		-resize $(_ion_simulator_background_resize_$(ION_layout_variant)) \
 		$< $@
 
 # Simulator backgrounds - end
@@ -103,7 +103,7 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
-$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout/$(ION_LAYOUT_VARIANT).json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout/$(ION_layout_variant).json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)

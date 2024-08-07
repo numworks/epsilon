@@ -1,4 +1,4 @@
-$(call assert_defined,ION_LAYOUT_VARIANT)
+$(call assert_defined,ION_layout_variant)
 
 $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   crc32.cpp \
@@ -15,9 +15,9 @@ _ion_display_width_scandium = 203
 _ion_display_height_scandium = 81
 
 SFLAGS_ion += \
-  -I$(PATH_ion)/include/ion/keyboard/$(ION_LAYOUT_VARIANT) \
-  -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_LAYOUT_VARIANT)) \
-  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_LAYOUT_VARIANT))
+  -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \
+  -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
+  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant))
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \

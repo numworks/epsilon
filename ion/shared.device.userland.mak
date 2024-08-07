@@ -68,7 +68,7 @@ $(addprefix shared/, \
   $(_sources_ion_userland_svc)
 
 ifneq ($(ION_LOG_EVENTS_NAME),0)
-_sources_ion_userland += shared/layout_events/$(ION_LAYOUT_VARIANT)/layout_events.cpp
+_sources_ion_userland += shared/layout_events/$(ION_layout_variant)/layout_events.cpp
 endif
 
 $(call all_objects_for,$(addprefix $(PATH_ion)/src/,$(_sources_ion_userland_svc))): SFLAGS += -fno-lto

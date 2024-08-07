@@ -6,7 +6,7 @@ $(addprefix shared/, \
   events_modifier.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
-  layout_events/$(ION_LAYOUT_VARIANT)/layout_events.cpp \
+  layout_events/$(ION_layout_variant)/layout_events.cpp \
 ) \
 $(addprefix device/shared/boot/, \
   rt0.cpp \

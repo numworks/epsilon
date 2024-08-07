@@ -1,18 +1,17 @@
+$(call assert_defined,KANDINSKY_font_variant)
+
 KANDINSKY_codepoints := $(PATH_kandinsky)/fonts/code_points.h
 
-_sources_kandinsky_fonts := $(addprefix fonts/, \
-  LargeFont.ttf \
-  SmallFont.ttf \
-)
+_sources_kandinsky_fonts := LargeFont.ttf SmallFont.ttf
 
-KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/%.h,$(_sources_kandinsky_fonts))
+KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/%.h,$(_sources_kandinsky_fonts))
 
 _sources_kandinsky_minimal := $(addprefix src/, \
   color.cpp \
   font.cpp \
   point.cpp \
   rect.cpp \
-) $(_sources_kandinsky_fonts)
+) $(addprefix fonts/$(KANDINSKY_font_variant)/,$(_sources_kandinsky_fonts))
 
 _kandinsky_glyph_index := fonts/codepoint_to_glyph_index.cpp
 
@@ -71,13 +70,27 @@ $(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)
 # raster_font, <name>, <size>, <packed width>, <packed height>
 define raster_font
 $(eval \
-$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp: $(PATH_kandinsky)/fonts/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp: $(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
 	$$(call rule_label,RASTER)
-	$(_kandinsky_rasterizer) $$< $2 $2 $3 $4 $1 $$(basename $$@).h $$@ $$(dir $$@)/$(notdir $(_kandinsky_glyph_index)) $$(if $(_has_libpng),$$(basename $$@).png,)
+	$(_kandinsky_rasterizer) \
+		$$< \
+		$2 $2 $3 $4 \
+		$1 \
+		$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.h \
+		$$@ \
+		$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(notdir $(_kandinsky_glyph_index)) \
+		$$(if $(_has_libpng),$$(basename $$@).png,)
 
-$(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.cpp
+$(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp
 )
 endef
 
+ifeq ($(KANDINSKY_font_variant),epsilon)
 $(call raster_font,SmallFont,12,7,14)
 $(call raster_font,LargeFont,16,10,18)
+endif
+ifeq ($(KANDINSKY_font_variant),scandium)
+$(call raster_font,SmallFont,12,8,13)
+$(call raster_font,LargeFont,16,10,18)
+endif
+

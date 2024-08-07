@@ -63,15 +63,16 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
 }  // namespace Internal
 
 bool ExactAndApproximateExpressionsAreStrictlyEqual(
-    UserExpression exact, UserExpression approximate,
-    Internal::ProjectionContext* ctx) {
+    const UserExpression exact, const UserExpression approximate,
+    const Internal::ProjectionContext* ctx) {
+  Internal::ProjectionContext ctxCopy = *ctx;
   // Exact is projected and reduced to turn divs into rationals
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
-  Internal::Simplification::ToSystem(exactProjected, ctx);
+  Internal::Simplification::ToSystem(exactProjected, &ctxCopy);
   Internal::Simplification::ReduceSystem(exactProjected, false);
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
-  Internal::Simplification::ToSystem(approximateProjected, ctx);
+  Internal::Simplification::ToSystem(approximateProjected, &ctxCopy);
   bool result = Internal::ExactAndApproximateExpressionsAreStriclyEqual(
       exactProjected, approximateProjected);
   approximateProjected->removeTree();

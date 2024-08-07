@@ -5,8 +5,8 @@
 
 namespace Poincare {
 bool ExactAndApproximateExpressionsAreStrictlyEqual(
-    UserExpression exact, UserExpression approximate,
-    Internal::ProjectionContext* ctx);
+    const UserExpression exact, const UserExpression approximate,
+    const Internal::ProjectionContext* ctx);
 
 }  // namespace Poincare
 

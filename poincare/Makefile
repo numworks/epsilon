@@ -142,14 +142,23 @@ $(OUTPUT_DIRECTORY)/.version.json:
 #    > This is needed because we removed 'node' from the ENVIRONMENT.
 #    > See comment about ENVIRONMENT above.
 # - Rename the "MainModule" type to "PoincareInstance".
+# - Remove the default exports
+# - Append the content of poincare-partial.js to poincare.js and
+# 	poincare-partial.d.ts to poincare.d.ts
 define LD_WRAPPER_poincare
 $1
 sed -i '' \
 	-e 's/new URL("poincare.wasm",.*import\.meta\.url)\.href/""/g' \
 	-e 's/throw new Error("environment detection error");//g' \
 	-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' \
+	-e 's/export default Poincare;//g' \
 	$@
-sed -i '' 's/MainModule/PoincareInstance/g' $(OUTPUT_DIRECTORY)/poincare.d.ts
+sed -i '' \
+	-e 's/MainModule/PoincareInstance/g' \
+	-e 's/export default function PoincareInstanceFactory (options?: unknown): PoincareInstance;//g' \
+	$(OUTPUT_DIRECTORY)/poincare.d.ts
+cat poincare/poincarejs/poincare-partial.js >> $@
+cat poincare/poincarejs/poincare-partial.d.ts >> $(OUTPUT_DIRECTORY)/poincare.d.ts
 endef
 
 # Byproducts of building poincare.js

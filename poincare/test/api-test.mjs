@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict'
-import Poincare from './poincare.mjs'
+import { CompilePoincareModuleFromFileSync, UsePoincare } from './poincare.mjs'
 import fs from 'fs'
 
 console.log('> Initializing Poincare');
 
-var wasmFile = fs.readFileSync('./poincare.wasm');
-const wasmBinary = new Uint8Array(wasmFile);
+CompilePoincareModuleFromFileSync('./poincare.wasm');
 
 console.log('> Starting tests\n');
 
@@ -14,21 +13,22 @@ let nSuccess = 0;
 
 async function testCase(featureName, testFunction) {
   // Create a new Poincare instance
-  const poincare = await Poincare({ wasmBinary: wasmBinary });
-  nTests += 1;
-  let success = true;
-  let error = null;
-  try {
-    await testFunction(poincare);
-    nSuccess += 1;
-  } catch (e) {
-    error = e;
-    success = false;
-  }
-  console.log((success ? '✅ '  : '❌ ') + "Test: " + featureName);
-  if (!success) {
-    console.log(error);
-  }
+  UsePoincare(async (poincare) => {
+    nTests += 1;
+    let success = true;
+    let error = null;
+    try {
+      await testFunction(poincare);
+      nSuccess += 1;
+    } catch (e) {
+      error = e;
+      success = false;
+    }
+    console.log((success ? '✅ '  : '❌ ') + "Test: " + featureName);
+    if (!success) {
+      console.log(error);
+    }
+  });
 }
 
 Promise.all([ // Wait for all tests to complete before logging end message
@@ -136,13 +136,13 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.deepEqual(storedTree, expectedTree);
 
     // Reinstantiate in a new Poincare instance
-    const newPoincare = await Poincare({ wasmBinary: wasmBinary });
-
-    const newExpression = newPoincare.PCR_Expression.Builder(
-      newPoincare.PCR_Tree.FromUint8Array(storedTree),
-    );
-    assert.ok(!newExpression.isUninitialized());
-    assert.equal(expression.toLatex(), "1+2");
+    UsePoincare((newPoincare) => {
+      const newExpression = newPoincare.PCR_Expression.Builder(
+        newPoincare.PCR_Tree.FromUint8Array(storedTree),
+      );
+      assert.ok(!newExpression.isUninitialized());
+      assert.equal(expression.toLatex(), "1+2");
+    });
   }),
 
   testCase("Solver - Min, Max, Root", async (poincare) => {

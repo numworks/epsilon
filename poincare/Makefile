@@ -12,6 +12,7 @@ APP_VERSION := 0.0.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= foxglove
+EMIT_TSD ?= 1
 include $(PATH_haussmann)/Makefile
 
 ASSERTIONS ?= $(DEBUG)
@@ -108,7 +109,9 @@ LDFLAGS_poincarejs += -s ENVIRONMENT='web,webview,worker' \
 # For this to work, go to emsdk/upstream/emscripten and run:
 # > npm install typescript
 # See https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#typescript-definitions
+ifeq ($(EMIT_TSD),1)
 LDFLAGS_poincarejs += --emit-tsd poincare.d.ts
+endif
 
 LDFLAGS_poincarejs += \
   -lembind \
@@ -137,38 +140,23 @@ $(OUTPUT_DIRECTORY)/.version.json:
 $(OUTPUT_DIRECTORY)/README.md:
 	cp poincare/poincarejs/docs.md $@
 
-# Post-process poincare.js:
-# - Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
-#    > This bit of code is never reached and makes cypress fail because the URL can't be resolved
-#    > NOTE: There is a .* inside the regexp because in DEBUG=1 there is a space
-# - Remove 2 errors thrown when building poincare.mjs in DEBUG=1
-#    > This is needed because we removed 'node' from the ENVIRONMENT.
-#    > See comment about ENVIRONMENT above.
-# - Rename the "MainModule" type to "PoincareInstance".
-# - Remove the default exports
-# - Append the content of poincare-partial.js to poincare.js and
-# 	poincare-partial.d.ts to poincare.d.ts
+# Post process poincare.js and poincare.d.ts
 define LD_WRAPPER_poincare
-$1
-sed -i '' \
-	-e 's/new URL("poincare.wasm",.*import\.meta\.url)\.href/""/g' \
-	-e 's/throw new Error("environment detection error");//g' \
-	-e 's/assert(!ENVIRONMENT_IS_NODE, "node environment detected but not enabled at build time.  Add `node` to `-sENVIRONMENT` to enable.");//g' \
-	-e 's/export default Poincare;//g' \
-	$@
-sed -i '' \
-	-e 's/MainModule/PoincareInstance/g' \
-	-e 's/export default function PoincareInstanceFactory (options?: unknown): PoincareInstance;//g' \
-	$(OUTPUT_DIRECTORY)/poincare.d.ts
-cat poincare/poincarejs/poincare-partial.js >> $@
-cat poincare/poincarejs/poincare-partial.d.ts >> $(OUTPUT_DIRECTORY)/poincare.d.ts
+	$1
+	./poincare/poincarejs/post_process_poincarejs.sh $(OUTPUT_DIRECTORY)
 endef
 
 # Byproducts of building poincare.js
 $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json README.md))
+ZIPPED_FILES := poincare.js poincare.wasm .version.json README.md
+# Add .d.ts file if EMIT_TSD is set to 1
+ifeq ($(EMIT_TSD),1)
+    ZIPPED_FILES := $(ZIPPED_FILES) poincare.d.ts
+endif
+
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,$(ZIPPED_FILES)))
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 

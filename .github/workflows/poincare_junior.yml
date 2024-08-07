@@ -45,3 +45,16 @@ jobs:
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f shared
       # - run: output/release/linux/test.bin --headless --limit-stack-usage -f solver
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f statistics
+  poincarejs:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - uses: numworks/setup-emscripten@latest
+        with:
+          sdk: 3.1.60
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          submodules: ${{ secrets.PAT != null }}
+      - run: build/setup.sh --only-simulator
+      # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
+      - run: make -j8 -f poincare/Makefile PLATFORM=foxglove EMIT_TSD=0 poincare.js.run

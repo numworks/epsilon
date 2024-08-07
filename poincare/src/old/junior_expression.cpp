@@ -47,10 +47,10 @@ using namespace Internal;
 /* Dimension */
 
 Poincare::Dimension::Dimension(const NewExpression e, Context* context)
-    : m_type(DimensionType::Scalar),
+    : m_matrixDimension({.rows = 0, .cols = 0}),
+      m_type(DimensionType::Scalar),
       m_isList(false),
-      m_isValid(false),
-      m_matrixDimension({.rows = 0, .cols = 0}) {
+      m_isValid(false) {
   // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;

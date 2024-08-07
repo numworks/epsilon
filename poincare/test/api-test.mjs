@@ -6,20 +6,20 @@ console.log('> Initializing Poincare');
 
 var wasmFile = fs.readFileSync('./poincare.wasm');
 const wasmBinary = new Uint8Array(wasmFile);
-var poincare;
+
 console.log('> Starting tests\n');
 
 let nTests = 0;
 let nSuccess = 0;
 
 async function testCase(featureName, testFunction) {
-  // Recreate a new Poincare instance
-  poincare = await InitPoincare({ wasmBinary: wasmBinary });
+  // Create a new Poincare instance
+  const poincare = await InitPoincare({ wasmBinary: wasmBinary });
   nTests += 1;
   let success = true;
   let error = null;
   try {
-    await testFunction();
+    await testFunction(poincare);
     nSuccess += 1;
   } catch (e) {
     error = e;
@@ -32,7 +32,7 @@ async function testCase(featureName, testFunction) {
 }
 
 Promise.all([ // Wait for all tests to complete before logging end message
-  testCase("Regression - Linear", async () => {
+  testCase("Regression - Linear", async (poincare) => {
     class ArraySeries extends poincare.PCR_Series.extend("PCR_Series", {}) {
       constructor(x, y) {
         super()
@@ -63,7 +63,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.equal(prediction, 27.06060830556268);
   }),
 
-  testCase("Expression - Parse, Reduce, Approximate", async () => {
+  testCase("Expression - Parse, Reduce, Approximate", async (poincare) => {
     const userExpression = poincare.PCR_Expression.ParseLatex("\\frac{6}{9}");
 
     assert.ok(!userExpression.isUninitialized());
@@ -96,7 +96,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.equal(userApproximateExpression.toLatex(), "0.6666667");
   }),
 
-  testCase("Expression - System Function, Derivative", async () => {
+  testCase("Expression - System Function, Derivative", async (poincare) => {
     const userExpression = poincare.PCR_Expression.ParseLatex("x^{2}-2x+1");
 
     assert.ok(!userExpression.isUninitialized());
@@ -128,7 +128,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.equal(secondDerivative.toLatex(), "dep\\left(2,\\left(x^{2}\\right)\\right)");
   }),
 
-  testCase("Expression - Retrieve tree from CPP heap", async () => {
+  testCase("Expression - Retrieve tree from CPP heap", async (poincare) => {
     const expression = poincare.PCR_Expression.ParseLatex("1+2");
     assert.ok(!expression.isUninitialized());
     const storedTree = expression.tree().toUint8Array();
@@ -136,16 +136,16 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.deepEqual(storedTree, expectedTree);
 
     // Reinstantiate in a new Poincare instance
-    poincare = await InitPoincare({ wasmBinary: wasmBinary });
+    const newPoincare = await InitPoincare({ wasmBinary: wasmBinary });
 
-    const newExpression = poincare.PCR_Expression.Builder(
-      poincare.PCR_Tree.FromUint8Array(storedTree),
+    const newExpression = newPoincare.PCR_Expression.Builder(
+      newPoincare.PCR_Tree.FromUint8Array(storedTree),
     );
     assert.ok(!newExpression.isUninitialized());
     assert.equal(expression.toLatex(), "1+2");
   }),
 
-  testCase("Solver - Min, Max, Root", async () => {
+  testCase("Solver - Min, Max, Root", async (poincare) => {
     const emptyContext = new poincare.PCR_EmptyContext();
     const reductionContext = new poincare.PCR_ReductionContext(
       emptyContext,

@@ -6,6 +6,7 @@
 
 #include "advanced_reduction.h"
 #include "approximation.h"
+#include "dependency.h"
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
@@ -464,9 +465,11 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
 
 Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  Tree* poly = e->cloneTree();
   // TODO: add dependency on each coef?
-  Tree* poly = e->isDep() ? e->child(0)->cloneTree() : e->cloneTree();
+  Dependency::RemoveDependencies(poly);
   AdvancedReduction::DeepExpand(poly);
+  Dependency::RemoveDependencies(poly);
   poly = Parse(poly, symbol);
   if (!poly->isPolynomial()) {
     TreeRef result = SharedTreeStack->pushList(0);

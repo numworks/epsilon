@@ -89,11 +89,12 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
 
 bool CAS::Enabled() { return false; }
 
-bool CAS::NeverDisplayReductionOfInput(const Tree* input, Context* context) {
-  if (!input) {
+bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
+                                       Context* context) {
+  if (input.isUninitialized()) {
     return false;
   }
-  for (const Tree* t : input->selfAndDescendants()) {
+  for (const Tree* t : input.tree()->selfAndDescendants()) {
     if (t->isOfType({
             Type::PhysicalConstant,
             Type::RandInt,
@@ -114,14 +115,14 @@ bool CAS::NeverDisplayReductionOfInput(const Tree* input, Context* context) {
   return false;
 }
 
-bool CAS::ShouldOnlyDisplayApproximation(const Tree* input,
-                                         const Tree* exactOutput,
-                                         const Tree* approximateOutput,
-                                         Context* context) {
+bool CAS::ShouldOnlyDisplayApproximation(
+    const UserExpression& input, const UserExpression& exactOutput,
+    const UserExpression& approximateOutput, Context* context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||
-         (approximateOutput && neverDisplayExactExpressionOfApproximation(
-                                   approximateOutput, context));
+         (!approximateOutput.isUninitialized() &&
+          neverDisplayExactExpressionOfApproximation(approximateOutput,
+                                                     context));
 }
 
 }  // namespace Poincare

@@ -10,14 +10,14 @@ namespace ExpressionDisplayPermissions {
 // This needs to be exposed for the solver
 inline bool NeverDisplayReductionOfInput(Poincare::UserExpression input,
                                          Poincare::Context* context) {
-  return Poincare::CAS::NeverDisplayReductionOfInput(input.tree(), context);
+  return Poincare::CAS::NeverDisplayReductionOfInput(input, context);
 }
 
 inline bool ShouldOnlyDisplayApproximation(
     Poincare::UserExpression input, Poincare::UserExpression exactOutput,
     Poincare::UserExpression approximateOutput, Poincare::Context* context) {
   return Poincare::CAS::ShouldOnlyDisplayApproximation(
-      input.tree(), exactOutput.tree(), approximateOutput.tree(), context);
+      input, exactOutput, approximateOutput, context);
 }
 
 }  // namespace ExpressionDisplayPermissions

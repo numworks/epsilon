@@ -2,9 +2,9 @@
 
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
-#include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
+#include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/empty_context.h>
@@ -571,8 +571,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   while (i < nEquations && !forbidExactSolution) {
     ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
-    if (ExpressionDisplayPermissions::NeverDisplayReductionOfInput(
-            equation->expressionClone(), context)) {
+    if (CAS::NeverDisplayReductionOfInput(equation->expressionClone(),
+                                          context)) {
       forbidExactSolution = true;
     }
     i++;
@@ -600,8 +600,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     displayExactSolution =
         approximateDuringReduction ||
         (!forbidExactSolution &&
-         !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-             e, exact, approximate, context));
+         !CAS::ShouldOnlyDisplayApproximation(e, exact, approximate, context));
     displayApproximateSolution = type != SolutionType::Formal;
     if (!displayApproximateSolution && !displayExactSolution) {
       /* Happens if the formal solution has no permission to be displayed.

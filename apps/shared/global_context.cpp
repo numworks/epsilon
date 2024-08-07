@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
+#include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/function.h>
 #include <poincare/old/rational.h>
@@ -11,7 +12,6 @@
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"
-#include "expression_display_permissions.h"
 #include "function_name_helper.h"
 #include "poincare_helpers.h"
 #include "sequence.h"
@@ -230,9 +230,7 @@ const UserExpression GlobalContext::expressionForSequence(
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
     UserExpression& expression, const SymbolAbstract& symbol,
     Ion::Storage::Record previousRecord) {
-  bool storeApproximation =
-      ExpressionDisplayPermissions::NeverDisplayReductionOfInput(expression,
-                                                                 this);
+  bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
   PoincareHelpers::ReductionParameters params = {
       .symbolicComputation =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
@@ -249,8 +247,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
 #endif
   // Do not store exact derivative, etc.
   if (storeApproximation ||
-      ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          UserExpression(), expression, approximation, this)) {
+      CAS::ShouldOnlyDisplayApproximation(UserExpression(), expression,
+                                          approximation, this)) {
     expression = approximation;
   }
   ExpressionNode::Type type = expression.type();

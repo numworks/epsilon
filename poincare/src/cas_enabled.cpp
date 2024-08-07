@@ -4,15 +4,15 @@ namespace Poincare {
 
 bool CAS::Enabled() { return true; }
 
-bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
-                                       Context* context) {
+bool CAS::NeverDisplayReductionOfInput(UserExpression input, Context* context) {
   // FIXME Implement CAS
   return false;
 }
 
-bool CAS::ShouldOnlyDisplayApproximation(
-    const Internal::Tree* input, const Internal::Tree* exactOutput,
-    const Internal::Tree* approximateOutput, Context* context) {
+bool CAS::ShouldOnlyDisplayApproximation(UserExpression input,
+                                         UserExpression exactOutput,
+                                         UserExpression approximateOutput,
+                                         Context* context) {
   // FIXME Implement CAS
   return false;
 }

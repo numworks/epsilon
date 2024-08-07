@@ -1,6 +1,5 @@
 #include "calculation_store.h"
 
-#include <apps/shared/expression_display_permissions.h>
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
@@ -185,7 +184,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 #endif
         if (static_cast<Store&>(storeExpression).symbol().type() ==
                 ExpressionNode::Type::Symbol &&
-            ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+            CAS::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,
                 approximateOutputExpression, context)) {
           storeExpression = NewExpression::Create(

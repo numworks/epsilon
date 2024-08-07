@@ -9,11 +9,11 @@ class CAS {
  public:
   static bool Enabled();
 
-  static bool NeverDisplayReductionOfInput(const UserExpression& input,
-                                           Context*);
-  static bool ShouldOnlyDisplayApproximation(
-      const UserExpression& input, const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, Context*);
+  static bool NeverDisplayReductionOfInput(UserExpression input, Context*);
+  static bool ShouldOnlyDisplayApproximation(UserExpression input,
+                                             UserExpression exactOutput,
+                                             UserExpression approximateOutput,
+                                             Context*);
 };
 
 }  // namespace Poincare

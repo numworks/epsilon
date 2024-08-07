@@ -1,7 +1,7 @@
 #include "continuous_function_properties.h"
 
-#include <apps/shared/expression_display_permissions.h>
 #include <omg/unreachable.h>
+#include <poincare/cas.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/polynomial.h>
 
@@ -140,9 +140,8 @@ void ContinuousFunctionProperties::update(
   /* We do not care about reduced expression since it is never shown to the
    * user. We do not care (neither have) an approximate expression. Indeed we
    * only check display permissions for input expression.*/
-  bool genericCaptionOnly =
-      Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          inputEquation, UserExpression(), UserExpression(), context);
+  bool genericCaptionOnly = CAS::ShouldOnlyDisplayApproximation(
+      inputEquation, UserExpression(), UserExpression(), context);
 
   setHideDetails(genericCaptionOnly);
 

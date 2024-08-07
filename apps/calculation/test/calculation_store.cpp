@@ -1,9 +1,9 @@
 #include "../calculation_store.h"
 
 #include <apps/calculation/additional_results/additional_results_type.h>
-#include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
+#include <poincare/cas.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
@@ -193,7 +193,7 @@ QUIZ_CASE(calculation_ans) {
 
   Preferences::SharedPreferences()->setExamMode(
       ExamMode(ExamMode::Ruleset::Dutch));
-  assert(Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+  assert(CAS::ShouldOnlyDisplayApproximation(
       SquareRoot::Builder(Rational::Builder(2)),
       SquareRoot::Builder(Rational::Builder(2)), Expression(), nullptr));
 

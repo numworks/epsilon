@@ -89,8 +89,7 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
 
 bool CAS::Enabled() { return false; }
 
-bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
-                                       Context* context) {
+bool CAS::NeverDisplayReductionOfInput(UserExpression input, Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
@@ -115,9 +114,10 @@ bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
   return false;
 }
 
-bool CAS::ShouldOnlyDisplayApproximation(
-    const UserExpression& input, const UserExpression& exactOutput,
-    const UserExpression& approximateOutput, Context* context) {
+bool CAS::ShouldOnlyDisplayApproximation(UserExpression input,
+                                         UserExpression exactOutput,
+                                         UserExpression approximateOutput,
+                                         Context* context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||
          (!approximateOutput.isUninitialized() &&

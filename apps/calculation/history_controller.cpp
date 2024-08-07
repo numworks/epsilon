@@ -1,6 +1,5 @@
 #include "history_controller.h"
 
-#include <apps/shared/expression_display_permissions.h>
 #include <assert.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/exception_checkpoint.h>

@@ -2,7 +2,6 @@
 
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
-#include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/polynomial.h>

@@ -2,11 +2,11 @@
 
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
+#include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/store.h>
 
 #include "app_with_store_menu.h"
-#include "expression_display_permissions.h"
 #include "poincare_helpers.h"
 
 using namespace Poincare;
@@ -141,10 +141,9 @@ bool StoreMenuController::parseAndStore(const char* text) {
       PoincareHelpers::Approximate<double>(reducedExp.cloneChildAtIndex(0),
                                            context);
 #endif
-  if (isVariable &&
-      ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          input, reducedExp.cloneChildAtIndex(0), leftHandSideApproximation,
-          context)) {
+  if (isVariable && CAS::ShouldOnlyDisplayApproximation(
+                        input, reducedExp.cloneChildAtIndex(0),
+                        leftHandSideApproximation, context)) {
     reducedExp.replaceChildAtIndexInPlace(0, leftHandSideApproximation);
   }
   Store store = static_cast<Store&>(reducedExp);

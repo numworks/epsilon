@@ -1,10 +1,10 @@
 #include "values_controller.h"
 
 #include <apps/constant.h>
-#include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <poincare/cas.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
@@ -394,8 +394,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     UserExpression approximation =
         PoincareHelpers::Approximate<double>(result, context);
     if (simplificationFailure || !m_exactValuesAreActivated ||
-        ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-            function->originalEquation(), result, approximation, context)) {
+        CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
+                                            result, approximation, context)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = approximation;
     }

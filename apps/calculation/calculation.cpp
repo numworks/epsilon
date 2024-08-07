@@ -1,7 +1,7 @@
 #include "calculation.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/shared/expression_display_permissions.h>
+#include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/expression_node.h>
@@ -164,8 +164,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (exactOutputTree()->isUndefined() ||
              approximatedOutputTree()->isNonReal() ||
-             // Other conditions are factorized in ExpressionDisplayPermissions
-             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+             // Other conditions are factorized in CAS
+             CAS::ShouldOnlyDisplayApproximation(
                  inputExp, outputExp,
                  approximateOutput(NumberOfSignificantDigits::UserDefined),
                  context)) {

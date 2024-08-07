@@ -204,9 +204,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     }
     if (dataSource()->canStoreCellAtLocation(selectedColumn(), selectedRow())) {
       if (text) {
-        if (text[0] != '\0') {
-          toStore = Poincare::Layout::String(text);
-        }
+        toStore = Poincare::Layout::String(text);
       } else {
         assert(!layout.isUninitialized());
         toStore = layout;
@@ -219,6 +217,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         Escher::Clipboard::SharedClipboard()->storeLayout(toStore);
       }
     } else {
+      assert(event == Ion::Events::Sto || event == Ion::Events::Var);
       App::app()->storeLayout(toStore);
     }
     return true;

@@ -138,6 +138,11 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
+  if (searched->isLn() && container->isLnReal() &&
+      searched->child(0)->treeIsIdenticalTo(container->child(0))) {
+    // lnReal(x) contains ln(x)
+    return true;
+  }
   // TODO_PCJ if power and same type of power return true
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {

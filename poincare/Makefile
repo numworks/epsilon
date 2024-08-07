@@ -134,6 +134,9 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
+$(OUTPUT_DIRECTORY)/README.md:
+	cp poincare/poincarejs/docs.md $@
+
 # Post-process poincare.js:
 # - Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
 #    > This bit of code is never reached and makes cypress fail because the URL can't be resolved
@@ -165,7 +168,7 @@ endef
 $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 
-$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json))
+$(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,poincare.js poincare.d.ts poincare.wasm .version.json README.md))
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
 

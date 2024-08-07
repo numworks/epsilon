@@ -226,6 +226,15 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
                 KMult(KA_s, KLogBase(KC, KB), KD_s));
 #endif
 
+  // ln(A)       * ln(10)^(-1) -> log(A)
+  // ln(10)^(-1) * ln(A)       -> log(A)
+  changed = PatternMatching::MatchReplace(
+                e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
+                KMult(KA_s, KLog(KB), KC_s)) ||
+            PatternMatching::MatchReplace(
+                e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
+                KMult(KA_s, KLog(KB), KC_s));
+
   int n = e->numberOfChildren();
   while (
       // sin(A)/cos(A) -> tan(A)

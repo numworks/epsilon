@@ -6,8 +6,8 @@
 namespace Ion {
 namespace Display {
 
-constexpr int Width = 320;
-constexpr int Height = 240;
+constexpr int Width = ION_DISPLAY_WIDTH;
+constexpr int Height = ION_DISPLAY_HEIGHT;
 constexpr KDRect Rect = KDRect(0, 0, Width, Height);
 
 constexpr int WidthInTenthOfMillimeter = 576;

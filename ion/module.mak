@@ -9,7 +9,15 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   storage.cpp  \
 ))
 
-SFLAGS_ion += -I$(PATH_ion)/include/ion/keyboard/$(ION_LAYOUT_VARIANT)
+_ion_display_width_epsilon = 320
+_ion_display_height_epsilon = 240
+_ion_display_width_scandium = 203
+_ion_display_height_scandium = 81
+
+SFLAGS_ion += \
+  -I$(PATH_ion)/include/ion/keyboard/$(ION_LAYOUT_VARIANT) \
+  -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_LAYOUT_VARIANT)) \
+  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_LAYOUT_VARIANT))
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \

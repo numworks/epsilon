@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import InitPoincare from './poincare.mjs'
+import Poincare from './poincare.mjs'
 import fs from 'fs'
 
 console.log('> Initializing Poincare');
@@ -14,7 +14,7 @@ let nSuccess = 0;
 
 async function testCase(featureName, testFunction) {
   // Create a new Poincare instance
-  const poincare = await InitPoincare({ wasmBinary: wasmBinary });
+  const poincare = await Poincare({ wasmBinary: wasmBinary });
   nTests += 1;
   let success = true;
   let error = null;
@@ -136,7 +136,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.deepEqual(storedTree, expectedTree);
 
     // Reinstantiate in a new Poincare instance
-    const newPoincare = await InitPoincare({ wasmBinary: wasmBinary });
+    const newPoincare = await Poincare({ wasmBinary: wasmBinary });
 
     const newExpression = newPoincare.PCR_Expression.Builder(
       newPoincare.PCR_Tree.FromUint8Array(storedTree),

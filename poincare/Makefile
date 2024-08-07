@@ -137,7 +137,7 @@ $(OUTPUT_DIRECTORY)/.version.json:
 # Post-process poincare.js:
 # - Replace "new URL("poincare.wasm",import.meta.url).href" by "" in poincare.js
 #    > This bit of code is never reached and makes cypress fail because the URL can't be resolved
-#    > NOTE; There is a .* inside the regexp because in DEBUG=1 there is a space
+#    > NOTE: There is a .* inside the regexp because in DEBUG=1 there is a space
 # - Remove 2 errors thrown when building poincare.mjs in DEBUG=1
 #    > This is needed because we removed 'node' from the ENVIRONMENT.
 #    > See comment about ENVIRONMENT above.

@@ -2,11 +2,11 @@
 #define CALCULATION_FUNCTION_GRAPH_CELL_H
 
 #include <apps/shared/plot_view_policies.h>
+#include <kandinsky/rect.h>
 #include <poincare/preferences.h>
 
 #include "function_model.h"
 #include "illustration_cell.h"
-#include "kandinsky/rect.h"
 
 namespace Calculation {
 

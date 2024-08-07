@@ -3,7 +3,6 @@
 
 #include <apps/i18n.h>
 #include <poincare/expression.h>
-#include <poincare/old/unit.h>
 #include <poincare/src/expression/dimension_vector.h>
 #include <poincare/src/expression/unit.h>
 

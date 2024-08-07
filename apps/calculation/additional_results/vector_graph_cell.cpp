@@ -1,9 +1,10 @@
 #include "vector_graph_cell.h"
 
+#include <escher/palette.h>
+#include <kandinsky/color.h>
+
 #include <cmath>
 
-#include "escher/palette.h"
-#include "kandinsky/color.h"
 #include "vector_model.h"
 
 using namespace Shared;

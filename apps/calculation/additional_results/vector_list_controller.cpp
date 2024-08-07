@@ -8,11 +8,10 @@
 #include <poincare/new_trigonometry.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/sign.h>
 #include <string.h>
 
 #include "../app.h"
-#include "poincare/old/junior_expression.h"
-#include "poincare/src/expression/sign.h"
 #include "vector_helper.h"
 
 using namespace Poincare;

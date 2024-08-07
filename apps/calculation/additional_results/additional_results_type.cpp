@@ -2,10 +2,10 @@
 
 #include <apps/apps_container_helper.h>
 #include <poincare/additional_results_helper.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/integer.h>
-#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include <cmath>

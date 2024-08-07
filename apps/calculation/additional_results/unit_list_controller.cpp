@@ -1,7 +1,6 @@
 #include "unit_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/unit_convert.h>
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"

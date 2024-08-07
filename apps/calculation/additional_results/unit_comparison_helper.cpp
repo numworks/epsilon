@@ -3,9 +3,7 @@
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/multiplication.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/unit.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/unit_representatives.h>
 

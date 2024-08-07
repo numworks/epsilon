@@ -86,6 +86,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       Symbol::CopyName(variable, context->userVariables[i++],
                        Symbol::k_maxNameSize);
     }
+    context->numberOfUserVariables = replacedSymbols->numberOfChildren();
   }
   replacedSymbols->removeTree();
 
@@ -357,6 +358,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
              parameterNameLength < parameterNameSize);
       parameterName[parameterNameLength] = 0;
       SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+      rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
       variable--;
     }
@@ -380,9 +382,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
    * solutions, and after canonization their values are the first n values on
    * the last column. */
   Tree* child = matrix->child(0);
-  for (uint8_t row = 0; row < n; row++) {
+  for (uint8_t row = 0; row < rows; row++) {
     for (uint8_t col = 0; col < cols; col++) {
-      if (col == cols - 1) {
+      if (row < n && col == cols - 1) {
         if (*error == Error::NoError) {
           *error = EnhanceSolution(child, context);
           // Continue anyway to preserve TreeStack integrity

@@ -50,8 +50,8 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   Error error = Error::NoError;
 
   Internal::Tree* set = equationSet(m_store);
-  Internal::Tree* result =
-      EquationSolver::ExactSolve(set, &m_solverContext, {}, &error);
+  Internal::Tree* result = EquationSolver::ExactSolve(
+      set, &m_solverContext, {.m_context = context}, &error);
 
   if (error == Error::NoError) {
     assert(result);

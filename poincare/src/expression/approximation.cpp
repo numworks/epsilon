@@ -421,7 +421,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       /* If the complexFormat is Real, we look for nthroot of form root(x,q)
        * with x real and q integer because they might have a real form which
        * does not correspond to the principale angle. */
-      if (s_context->m_complexFormat == Preferences::ComplexFormat::Real &&
+      if (s_context &&
+          s_context->m_complexFormat == Preferences::ComplexFormat::Real &&
           exp.imag() == 0.0 && std::round(exp.real()) == exp.real()) {
         // root(x, q) with q integer and x real
         std::complex<T> result =
@@ -430,8 +431,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
           return result;
         }
       }
-      return ComputeComplexPower<T>(base, std::complex<T>(1.0) / (exp),
-                                    s_context->m_complexFormat);
+      return ComputeComplexPower<T>(
+          base, std::complex<T>(1.0) / (exp),
+          s_context ? s_context->m_complexFormat : ComplexFormat::Cartesian);
     }
     case Type::Exp:
       return std::exp(ToComplex<T>(e->child(0)));
@@ -494,8 +496,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::ASec:
     case Type::ACsc:
     case Type::ACot:
-      return TrigonometricToComplex(e->type(), ToComplex<T>(e->child(0)),
-                                    s_context->m_angleUnit);
+      return TrigonometricToComplex(
+          e->type(), ToComplex<T>(e->child(0)),
+          s_context ? s_context->m_angleUnit : AngleUnit::Radian);
     case Type::SinH:
     case Type::CosH:
     case Type::TanH:
@@ -557,6 +560,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       int lowerBound = low.real();
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
+      assert(s_context);
       s_context->shiftVariables();
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
@@ -605,6 +609,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       if (std::isnan(at.real()) || at.imag() != 0) {
         return NAN;
       }
+      assert(s_context);
       s_context->shiftVariables();
       T result = ApproximateDerivative(derivand, at.real(), order);
       s_context->unshiftVariables();
@@ -645,16 +650,16 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return result;
     }
     case Type::Point:
-      assert(s_context->m_pointElement != -1);
+      assert(s_context && s_context->m_pointElement != -1);
       return ToComplex<T>(e->child(s_context->m_pointElement));
     /* Lists */
     case Type::List:
-      assert(s_context->m_listElement != -1);
+      assert(s_context && s_context->m_listElement != -1);
       return ToComplex<T>(e->child(s_context->m_listElement));
     case Type::ListSequence: {
+      assert(s_context && s_context->m_listElement != -1);
       s_context->shiftVariables();
       // epsilon sequences starts at one
-      assert(s_context->m_listElement != -1);
       s_context->setLocalValue(s_context->m_listElement + 1);
       std::complex<T> result = ToComplex<T>(e->child(2));
       s_context->unshiftVariables();
@@ -672,6 +677,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       if (i < 0 || i >= Dimension::ListLength(values)) {
         return NAN;
       }
+      assert(s_context);
       int old = s_context->m_listElement;
       s_context->m_listElement = i;
       std::complex<T> result = ToComplex<T>(values);
@@ -679,7 +685,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return result;
     }
     case Type::ListSlice: {
-      assert(s_context->m_listElement != -1);
+      assert(s_context && s_context->m_listElement != -1);
       const Tree* values = e->child(0);
       const Tree* startIndex = e->child(1);
       assert(Integer::Is<uint8_t>(startIndex));
@@ -694,6 +700,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     }
     case Type::ListSum:
     case Type::ListProduct: {
+      assert(s_context);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values);
       int old = s_context->m_listElement;
@@ -708,6 +715,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     }
     case Type::Min:
     case Type::Max: {
+      assert(s_context);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values);
       int old = s_context->m_listElement;
@@ -730,6 +738,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::StdDev:
     case Type::SampleStdDev:
     case Type::Variance: {
+      assert(s_context);
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
       int length = Dimension::ListLength(values);
@@ -1015,7 +1024,7 @@ bool Approximation::ToBoolean(const Tree* e) {
     return ToBoolean<T>(SelectPiecewiseBranch<T>(e));
   }
   if (e->isList()) {
-    assert(s_context->m_listElement != -1);
+    assert(s_context && s_context->m_listElement != -1);
     return ToBoolean<T>(e->child(s_context->m_listElement));
   }
   if (e->isParentheses()) {
@@ -1058,6 +1067,7 @@ bool Approximation::ToBoolean(const Tree* e) {
 
 template <typename T>
 Tree* Approximation::ToList(const Tree* e) {
+  assert(s_context);
   Dimension dimension = Dimension::Get(e);
   int length = Dimension::ListLength(e);
   assert(length != Dimension::k_nonListListLength);
@@ -1073,6 +1083,7 @@ Tree* Approximation::ToList(const Tree* e) {
 
 template <typename T>
 Tree* Approximation::ToPoint(const Tree* e) {
+  assert(s_context);
   int old = s_context->m_pointElement;
   Tree* point = SharedTreeStack->pushPoint();
   s_context->m_pointElement = 0;

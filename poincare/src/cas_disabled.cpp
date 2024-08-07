@@ -93,25 +93,22 @@ bool CAS::NeverDisplayReductionOfInput(UserExpression input, Context* context) {
   if (input.isUninitialized()) {
     return false;
   }
-  for (const Tree* t : input.tree()->selfAndDescendants()) {
-    if (t->isOfType({
-            Type::PhysicalConstant,
-            Type::RandInt,
-            Type::RandIntNoRep,
-            Type::Random,
-            Type::Round,
-            Type::Frac,
-            Type::Integral,
-            Type::Product,
-            Type::Sum,
-            Type::Diff,
-            Type::Distribution,
-        }) ||
-        t->isSequence()) {
-      return true;
-    }
-  }
-  return false;
+  return input.tree()->hasDescendantSatisfying([](const Tree* t) {
+    return t->isOfType({
+               Type::PhysicalConstant,
+               Type::RandInt,
+               Type::RandIntNoRep,
+               Type::Random,
+               Type::Round,
+               Type::Frac,
+               Type::Integral,
+               Type::Product,
+               Type::Sum,
+               Type::Diff,
+               Type::Distribution,
+           }) ||
+           t->isSequence();
+  });
 }
 
 bool CAS::ShouldOnlyDisplayApproximation(UserExpression input,

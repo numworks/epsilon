@@ -48,11 +48,13 @@ QUIZ_CASE(pcj_simplification_expansion) {
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
             KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
   expand_to(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e),
-            KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
-                 KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))));
+            KDep(KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
+                      KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))),
+                 KDepList(KTrig(KAdd("x"_e, "y"_e), 1_e))));
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
             KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
-  expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
+  expand_to(KLn(KMult(2_e, π_e)),
+            KDep(KAdd(KLn(2_e), KLn(π_e)), KDepList(i_e)));
   // Algebraic expand
   // A?*(B+C)*D? = A*D*B + A*D*C
   expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
@@ -146,7 +148,7 @@ void simplifies_to(const char* input, const char* output,
 
 QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x", "x");
-  simplifies_to("x-x", "0");
+  simplifies_to("x-x", "dep(0,{x})");
   simplifies_to("2+2", "4");
   simplifies_to("(2×3(2^2)) + 2×2", "28");
   simplifies_to("36/8", "9/2");
@@ -174,7 +176,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x))", "x", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "2×x", cartesianCtx);
-  simplifies_to("x+1+(-1)(x+1)", "0");
+  simplifies_to("x+1+(-1)(x+1)", "dep(0,{x})");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
   simplifies_to("98765000", "98765000");
@@ -212,7 +214,8 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)",
+                "dep(0,{abs(a),abs(b),abs(c)})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
 }
 
@@ -304,12 +307,12 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("i×im(x)+re(x)", "x");
 
   store("x→f(x)", &globalContext);
-  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
-  simplifies_to("re(conj(f(x)))-re(f(x))", "0", ctx);
-  simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
-  simplifies_to("re(f(x)+y)-y", "re(f(x))", ctx);
-  simplifies_to("re(i×f(y))+im(f(y))", "0", ctx);
-  simplifies_to("im(i×f(y))", "re(f(y))", ctx);
+  simplifies_to("i×im(f(x))+re(f(x))", "dep(f(x),{im(f(x))})", ctx);
+  simplifies_to("re(conj(f(x)))-re(f(x))", "dep(0,{re(f(x))})", ctx);
+  simplifies_to("conj(conj(f(x)))", "dep(f(x),{im(f(x))})", ctx);
+  simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
+  simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{im(f(y)),re(f(y))})", ctx);
+  // TODO_PCJ: simplifies_to("im(i×f(y))", "re(f(y))", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
   simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",
@@ -473,7 +476,7 @@ QUIZ_CASE(pcj_simplification_factorial) {
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
-  simplifies_to("cosh(-x)+sinh(x)", "e^x");
+  simplifies_to("cosh(-x)+sinh(x)", "dep(e^x,{e^(-x)})");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
 #endif
@@ -481,11 +484,10 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
                 "(1+e^(2×x))^2)×(-1+e^(4×x)))/(2×(1+e^(4×x)))");
-  // TODO: Should simplify to log(5+2√(6))
-  simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
+  simplifies_to("arcosh(5)", "ln(5+2×√(6))", cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("arsinh(sinh(x))",
-                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
+  simplifies_to("arsinh(sinh(x))", "ln((e^x-e^(-x))/2+√((e^x-e^(-x))^2/4+1))",
+                cartesianCtx);
   // TODO: Should simplify to x and overflow the pool
   // simplifies_to(
   //     "artanh(tanh(x))",
@@ -553,7 +555,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("round(3.3_m)", "3×_m");
   // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
   simplifies_to("ceil(-x)", "-floor(x)");
-  simplifies_to("floor(x)+frac(x)", "x");
+  simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
   simplifies_to("permute(4,2)", "12");
   simplifies_to("binomial(4,2)", "6");
   simplifies_to("1 2/3", "5/3");
@@ -717,7 +719,8 @@ QUIZ_CASE(pcj_simplification_float) {
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π+x", "x+4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("cos(x-x)", "dep(1,{x})",
+                {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("random()-random()", "random()-1×random()",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("y^3*x^-2", "y^3/x^2",
@@ -937,10 +940,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "1/√(2)");
-  simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
-  simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
-  simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
-  simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
+  // TODO: dependencies could be optimized
+  simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "dep(cos(y),{cos(3×y)})");
+  simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "dep(sin(y),{sin(3×y)})");
+  simplifies_to("2×cos(2y)×sin(y)+sin(y)", "dep(sin(3×y),{sin(y)})");
+  simplifies_to("2×cos(2y)×cos(y)-cos(y)", "dep(cos(3×y),{cos(y)})");
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
@@ -970,7 +974,8 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   simplifies_to("sin(asin(9/7))", "undef");  // TODO: nonreal ?
 
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "0", cartesianCtx);
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
+                "dep(0,{√(-x^2/(x^2+1)+1)})", cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
@@ -1056,7 +1061,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
 #endif
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
+  simplifies_to("2*a+b*(a+c)-b*c", "dep(a×(b+2),{c})");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
 #endif
@@ -1090,7 +1095,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
 #endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "0", cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+                "dep(0,{ln(abs(x)×√(y^2))})", cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);
@@ -1150,7 +1156,7 @@ QUIZ_CASE(pcj_simplification_function) {
   };
   simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
-  simplifies_to("f(y)+f(x)-f(x)", "f(y)");
+  simplifies_to("f(y)+f(x)-f(x)", "dep(f(y),{f(x)})");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

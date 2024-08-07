@@ -125,6 +125,11 @@ Promise.all([ // Wait for all tests to complete before logging end message
     const secondDerivative = reducedExpression.getReducedDerivative('x', 2).cloneAndBeautify(reductionContext);
     assert.ok(!secondDerivative.isUninitialized());
     assert.equal(secondDerivative.toLatex(), "dep\\left(2,\\left(x^{2}\\right)\\right)");
+
+    const lowerBound = poincare.PCR_Expression.ParseLatex("0").cloneAndReduce(reductionContext);
+    const upperBound = poincare.PCR_Expression.ParseLatex("1").cloneAndReduce(reductionContext);
+    const integral = systemFunction.approximateIntegralToScalar(lowerBound, upperBound);
+    assert.equal(integral, 0.3333333333333333);
   }),
 
   testCase("Expression - Retrieve tree from CPP heap", async (poincare) => {

@@ -74,7 +74,9 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("approximateToTree",
                 &JuniorExpression::approximateToTree<double>,
                 allow_raw_pointers())
-      .function("approximateToScalarWithValue", &ApproximateToScalarWithValue);
+      .function("approximateToScalarWithValue", &ApproximateToScalarWithValue)
+      .function("approximateIntegralToScalar",
+                &JuniorExpression::approximateIntegralToScalar<double>);
 }
 
 }  // namespace Poincare::JSBridge

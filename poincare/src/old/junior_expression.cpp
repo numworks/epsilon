@@ -691,6 +691,20 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 }
 
 template <typename T>
+T SystemFunction::approximateIntegralToScalar(
+    const SystemExpression& lowerBound,
+    const SystemExpression& upperBound) const {
+  Tree* integralTree = PatternMatching::Create(
+      KIntegral("x"_e, KA, KB, KC),
+      {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()});
+  Approximation::PrepareExpressionForApproximation(integralTree,
+                                                   ComplexFormat::Real);
+  T result = Approximation::RootPreparedToReal<T>(integralTree, NAN);
+  integralTree->removeTree();
+  return result;
+}
+
+template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
@@ -1239,6 +1253,13 @@ template float SystemFunction::approximateToScalarWithValue<float>(float,
                                                                    int) const;
 template double SystemFunction::approximateToScalarWithValue<double>(double,
                                                                      int) const;
+
+template float SystemFunction::approximateIntegralToScalar<float>(
+    const SystemExpression& upperBound,
+    const SystemExpression& lowerBound) const;
+template double SystemFunction::approximateIntegralToScalar<double>(
+    const SystemExpression& upperBound,
+    const SystemExpression& lowerBound) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
     const char*, Context*, SymbolicComputation);

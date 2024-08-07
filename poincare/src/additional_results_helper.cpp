@@ -236,13 +236,14 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
       return nullptr;
     }
     if (newResult) {
-      // Return nullptr if there are more than one numerical values
       if (result) {
         if (e->isPow() || e->isPowReal()) {
-          // Ignore the exponent if base is numerical value so that 2^3 -> x^3
+          /* Ignore the exponent (newResult) if base (result) has a numerical
+           * value so that 2^3 -> x^3 */
           assert(!*error);
           return result;
         }
+        // Return nullptr if there are more than one numerical values
         *error = true;
         return nullptr;
       }

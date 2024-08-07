@@ -1,4 +1,4 @@
-#include <poincare/src/expression/projection.h>
+#include "expressions_list_controller.h"
 
 #include "../app.h"
 #include "../edit_expression_controller.h"
@@ -76,6 +76,7 @@ void ExpressionsListController::tidy() {
     m_layouts[i] = Layout();
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
+    m_isStrictlyEqual[i] = true;
   }
 }
 
@@ -100,6 +101,8 @@ void ExpressionsListController::fillCellForRow(HighlightCell* cell, int row) {
   myCell->label()->setLayouts(m_layouts[row], m_exactLayouts[row],
                               m_approximatedLayouts[row]);
   myCell->subLabel()->setMessage(messageAtIndex(row));
+  myCell->label()->setExactAndApproximateAreStriclyEqual(
+      m_isStrictlyEqual[row]);
 }
 
 int ExpressionsListController::numberOfRows() const {
@@ -137,32 +140,6 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
   }
   assert(!layout.isUninitialized());
   return layout;
-}
-
-Layout ExpressionsListController::getExactLayoutFromExpression(
-    const UserExpression e, const Internal::ProjectionContext* ctx,
-    Layout* approximate) {
-  assert(!e.isUninitialized());
-  UserExpression approximateExpression, exactExpression;
-  Internal::ProjectionContext tempCtx = *ctx;
-  tempCtx.m_symbolic =
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
-  e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   &tempCtx);
-  assert(!approximateExpression.isUninitialized());
-  Layout approximateLayout =
-      PoincareHelpers::CreateLayout(approximateExpression, ctx->m_context);
-  Layout exactLayout =
-      exactExpression.isUninitialized()
-          ? approximateLayout
-          : PoincareHelpers::CreateLayout(exactExpression, ctx->m_context);
-  if (approximate) {
-    /* Make it editable to compare equivalent layouts. */
-    *approximate = exactLayout.isIdenticalTo(approximateLayout, true)
-                       ? Layout()
-                       : approximateLayout;
-  }
-  return exactLayout;
 }
 
 }  // namespace Calculation

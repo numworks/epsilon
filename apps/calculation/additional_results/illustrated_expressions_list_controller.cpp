@@ -1,6 +1,7 @@
 #include "illustrated_expressions_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/src/expression/projection.h>
 
 #include "../app.h"
@@ -86,9 +87,42 @@ void IllustratedExpressionsListController::setLineAtIndex(
   m_layouts[index] =
       Shared::PoincareHelpers::CreateLayout(formula, ctx->m_context);
   Layout approximated;
-  m_exactLayouts[index] =
-      getExactLayoutFromExpression(expression, ctx, &approximated);
-  m_approximatedLayouts[index] = approximated;
+  m_exactLayouts[index] = GetExactLayoutFromExpression(
+      expression, ctx, &(m_approximatedLayouts[index]),
+      &(m_isStrictlyEqual[index]));
+}
+
+Layout IllustratedExpressionsListController::GetExactLayoutFromExpression(
+    const UserExpression e, const Internal::ProjectionContext* ctx,
+    Layout* approximate, bool* isStrictlyEqual) {
+  assert(!e.isUninitialized());
+  UserExpression approximateExpression, exactExpression;
+  Internal::ProjectionContext tempCtx = *ctx;
+  tempCtx.m_symbolic =
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+  e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
+                                   &tempCtx);
+  assert(!approximateExpression.isUninitialized());
+  Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
+      approximateExpression, ctx->m_context);
+  Layout exactLayout = exactExpression.isUninitialized()
+                           ? approximateLayout
+                           : Shared::PoincareHelpers::CreateLayout(
+                                 exactExpression, ctx->m_context);
+  if (approximate) {
+    /* Make it editable to compare equivalent layouts. */
+    if (exactLayout.isIdenticalTo(approximateLayout, true)) {
+      *approximate = Layout();
+    } else {
+      *approximate = approximateLayout;
+      if (isStrictlyEqual) {
+        *isStrictlyEqual =
+            Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
+                exactExpression, approximateExpression, ctx);
+      }
+    }
+  }
+  return exactLayout;
 }
 
 }  // namespace Calculation

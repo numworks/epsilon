@@ -54,10 +54,6 @@ class ExpressionsListController
  protected:
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 6;
-  Poincare::Layout getExactLayoutFromExpression(
-      const Poincare::UserExpression e,
-      const Poincare::Internal::ProjectionContext* ctx,
-      Poincare::Layout* approximatedLayout = nullptr);
   Poincare::Preferences::AngleUnit angleUnit() const {
     return m_calculationPreferences.angleUnit;
   }
@@ -75,6 +71,7 @@ class ExpressionsListController
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_approximatedLayouts[k_maxNumberOfRows];
+  bool m_isStrictlyEqual[k_maxNumberOfRows];
   AdditionalResultCell m_cells[k_maxNumberOfRows];
 
   class InnerListController : public ViewController {

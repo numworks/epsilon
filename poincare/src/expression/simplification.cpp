@@ -83,8 +83,8 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
         BeautifyReduced(e, &projectionContext);
 
         if (isStore) {
-          e->cloneNodeAtNode(dataTree);
           dataTree->child(1)->cloneTree();
+          e->cloneNodeAtNode(dataTree);
         }
       },
       projectionContext, e, RelaxProjectionContext);

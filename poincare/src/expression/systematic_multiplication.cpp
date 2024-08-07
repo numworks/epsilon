@@ -16,7 +16,8 @@ const Tree* Base(const Tree* e) { return e->isPow() ? e->child(0) : e; }
 
 const Tree* Exponent(const Tree* e) { return e->isPow() ? e->child(1) : 1_e; }
 
-static bool MergeMultiplicationChildWithNext(Tree* child) {
+static bool MergeMultiplicationChildWithNext(Tree* child,
+                                             int* numberOfDependencies) {
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (child->isZero()) {
@@ -28,9 +29,12 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
         if (!std::isnan(Approximation::To<float>(next))) {
           // 0 * x -> 0
           next->removeTree();
-          return true;
+        } else {
+          // 0 * x -> dep(0,{x})
+          next->detachTree();
+          (*numberOfDependencies)++;
         }
-        // TODO: else: 0 * x -> dep(0,{x})
+        return true;
       }
     }
   }
@@ -64,12 +68,13 @@ static bool MergeMultiplicationChildWithNext(Tree* child) {
 }
 
 static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
-                                            int* numberOfSiblings) {
+                                            int* numberOfSiblings,
+                                            int* numberOfDependencies) {
   assert(*numberOfSiblings > 0);
   bool changed = false;
   while (index < *numberOfSiblings) {
     if (!(index + 1 < *numberOfSiblings &&
-          MergeMultiplicationChildWithNext(child))) {
+          MergeMultiplicationChildWithNext(child, numberOfDependencies))) {
       // Child is neither 0, 1 and can't be merged with next child (or is last).
       return changed;
     }
@@ -82,20 +87,22 @@ static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
 
 static bool ReduceMultiplicationChildRec(Tree* child, int index,
                                          int* numberOfSiblings,
-                                         bool* multiplicationChanged) {
+                                         bool* multiplicationChanged,
+                                         int* numberOfDependencies) {
   assert(*numberOfSiblings > 0);
   assert(index < *numberOfSiblings);
   // Merge child with right siblings as much as possible.
-  bool childChanged =
-      MergeMultiplicationChildrenFrom(child, index, numberOfSiblings);
+  bool childChanged = MergeMultiplicationChildrenFrom(
+      child, index, numberOfSiblings, numberOfDependencies);
   // Simplify starting from next child.
   if (index + 1 < *numberOfSiblings &&
       ReduceMultiplicationChildRec(child->nextTree(), index + 1,
-                                   numberOfSiblings, multiplicationChanged)) {
+                                   numberOfSiblings, multiplicationChanged,
+                                   numberOfDependencies)) {
     // Next child changed, child may now merge with it.
-    childChanged =
-        MergeMultiplicationChildrenFrom(child, index, numberOfSiblings) ||
-        childChanged;
+    childChanged = MergeMultiplicationChildrenFrom(
+                       child, index, numberOfSiblings, numberOfDependencies) ||
+                   childChanged;
   }
   *multiplicationChanged = *multiplicationChanged || childChanged;
   return childChanged;
@@ -130,9 +137,22 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
   assert(n > 1);
   /* Recursively merge children.
    * Keep track of n and changed status. */
-  ReduceMultiplicationChildRec(multiplication->child(0), 0, &n, &changed);
+  int numberOfDependencies = 0;
+  TreeRef depList = SharedTreeStack->pushDepList(numberOfDependencies);
+  ReduceMultiplicationChildRec(multiplication->child(0), 0, &n, &changed,
+                               &numberOfDependencies);
   assert(n > 0);
   NAry::SetNumberOfChildren(multiplication, n);
+  if (numberOfDependencies > 0) {
+    NAry::SetNumberOfChildren(depList, numberOfDependencies);
+    // TODO: create moveTreeAfterNode
+    multiplication->nextTree()->moveTreeBeforeNode(depList);
+    multiplication->cloneNodeAtNode(KDep);
+    multiplication = multiplication->nextNode();
+  } else {
+    depList->removeTree();
+  }
+
   if (multiplication->child(0)->isZero()) {
     Dimension dim = Dimension::Get(multiplication);
     if (dim.isUnit()) {

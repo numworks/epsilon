@@ -38,8 +38,8 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{2x+z, 4y-1}", "(-4×y+1)/(2×x+z)");
   assert_roots_are("{1, -2, 1}", "{1}");
   assert_roots_are("{π, -2π, π}", "{1}");
-  assert_roots_are("{1, -1, -6}", "{3,-2}");
+  assert_roots_are("{1, -1, -6}", "{-2,3}");
   assert_roots_are("{1,-x-1,x}",
-                   "{(x+1+√(x^2-2×x+1))/2,-(-x-1+√(x^2-2×x+1))/2}");
-  assert_roots_are("{1, 0, 1}", "{i,-i}");
+                   "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2}");
+  assert_roots_are("{1, 0, 1}", "{-i,i}");
 }

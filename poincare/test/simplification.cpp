@@ -224,8 +224,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
-  simplifies_to("diff(sin(ln(x)), x, y)",
-                "dep(cos(ln(y))/y,{sin(ln(y)),ln(y)})");
+  simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{ln(y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
                 "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");

@@ -5,6 +5,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "advanced_reduction.h"
+#include "dependency.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "matrix.h"
@@ -338,7 +339,9 @@ bool Parametric::Explicit(Tree* e) {
   const Tree* child = upperBound->nextTree();
   Tree* boundsDifference = PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
+  Dependency::RemoveDependencies(boundsDifference);
   AdvancedReduction::DeepExpand(boundsDifference);
+  Dependency::RemoveDependencies(boundsDifference);
   // TODO: larger type than uint8
   if (!Integer::Is<uint8_t>(boundsDifference)) {
     boundsDifference->removeTree();

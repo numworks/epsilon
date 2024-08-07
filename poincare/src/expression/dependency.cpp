@@ -233,4 +233,12 @@ bool Dependency::DeepRemoveUselessDependencies(Tree* e) {
   return changed;
 }
 
+bool Dependency::RemoveDependencies(Tree* e) {
+  if (e->isDep()) {
+    e->moveTreeOverTree(e->child(0));
+    return true;
+  }
+  return false;
+}
+
 }  // namespace Poincare::Internal

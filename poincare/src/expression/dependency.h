@@ -26,6 +26,7 @@ struct Dependency {
   }
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);
+  static bool RemoveDependencies(Tree* e);
 
  private:
   constexpr static int k_mainIndex = 0;

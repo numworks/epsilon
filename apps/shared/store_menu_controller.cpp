@@ -72,7 +72,7 @@ void StoreMenuController::setLayout(Poincare::Layout layout) {
   m_cell.layoutField()->clearAndSetEditing(true);
   m_cell.layoutField()->handleEventWithLayout(layout, true);
   m_cell.layoutField()->handleEventWithText("→");
-  if (layout.isUninitialized()) {
+  if (layout.isUninitialized() || layout.tree()->treeIsIdenticalTo(""_l)) {
     m_cell.layoutField()->putCursorOnOneSide(OMG::Direction::Left());
   }
   m_stackViewController.setupActiveView();

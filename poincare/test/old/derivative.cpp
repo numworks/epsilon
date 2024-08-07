@@ -43,18 +43,13 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression(
       "diff(log(x),x,x)", "\u0014dep(1/\u0012x×ln(10)\u0013,{log(x)})");
 
+  assert_reduces_to_formal_expression("diff(sin(x),x,x)", "cos(x)");
   assert_reduces_to_formal_expression("diff(sin(x),x,x)",
-                                      "\u0014dep(cos(x),{sin(x)})");
-  assert_reduces_to_formal_expression(
-      "diff(sin(x),x,x)", "\u0014dep(\u0012π×cos(x)\u0013/180,{sin(x)})",
-      Degree);
+                                      "\u0012π×cos(x)\u0013/180", Degree);
+  assert_reduces_to_formal_expression("diff(cos(x),x,x)", "-sin(x)");
   assert_reduces_to_formal_expression("diff(cos(x),x,x)",
-                                      "\u0014dep(-sin(x),{cos(x)})");
-  assert_reduces_to_formal_expression(
-      "diff(cos(x),x,x)", "\u0014dep(-\u0012π×sin(x)\u0013/200,{cos(x)})",
-      Gradian);
-  assert_reduces_to_formal_expression("diff(tan(x),x,x)",
-                                      "\u0014dep(tan(x)^2+1,{sec(x),sin(x)})");
+                                      "-\u0012π×sin(x)\u0013/200", Gradian);
+  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "tan(x)^2+1");
 #if TODO_PCJ
   assert_reduces_to_formal_expression(
       "diff(tan(x),x,x)",
@@ -145,8 +140,7 @@ QUIZ_CASE(poincare_derivative_formal) {
 
 QUIZ_CASE(poincare_derivative_formal_higher_order) {
   assert_reduces_to_formal_expression("diff(x^3,x,x,2)", "6×x");
-  assert_reduces_to_formal_expression("diff(cos(x),x,x,3)",
-                                      "\u0014dep(sin(x),{cos(x)})");
+  assert_reduces_to_formal_expression("diff(cos(x),x,x,3)", "sin(x)");
   assert_reduces_to_formal_expression("diff(x^5+1,x,x,10)", "\u0014dep(0,{x})");
   assert_reduces_to_formal_expression("diff(e^(2x),x,x,8)",
                                       "256×e^\u00122×x\u0013");

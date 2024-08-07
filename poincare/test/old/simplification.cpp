@@ -320,7 +320,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
   assert_parsed_expression_simplify_to("2^x×2^(-x)", "\u0014dep(1,{x})",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("y^x×y^(-x)", "\u0014dep(1,{x,1/y})",
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "\u0014dep(1,{x,ln(y)})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x/√(x)", "\u0014dep(√(x),{1/√(x)})",
                                        SystemForAnalysis);
@@ -2353,7 +2353,7 @@ QUIZ_CASE(poincare_simplification_mix) {
       "45×cos(2)",
       "-3×P×Q×R+4×P×Q+cos(3)×ln(5)+ln(3)-40×cos(2)");
   assert_parsed_expression_simplify_to("2×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1+0",
-                                       "7×P+6×ln(5)+3×cos(2)+4");
+                                       "7×P+4+3×cos(2)+6×ln(5)");
   assert_parsed_expression_simplify_to(
       "2.3×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1.2+0.235",
       "\u00121460×P+1200×ln(5)+600×cos(2)+887\u0013/200");

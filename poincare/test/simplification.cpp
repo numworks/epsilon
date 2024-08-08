@@ -541,11 +541,18 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
 }
 
 QUIZ_CASE(pcj_simplification_arithmetic) {
+  simplifies_to("factor(0)", "0");
+  simplifies_to("factor(1)", "1");
+  simplifies_to("factor(23)", "23");
+  simplifies_to("factor(42*3)", "2×3^2×7");
+  simplifies_to("factor(-12)", "-2^2×3");
+  simplifies_to("factor(-4/17)", "-2^2/17");
+  simplifies_to("factor(2π)", "undef");
+
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
   simplifies_to("gcd(14,28,21)", "7");
   simplifies_to("lcm(14,6)", "42");
-  simplifies_to("factor(42*3)", "2×3^2×7");
   simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
   simplifies_to("sign(-2)", "-1");
   simplifies_to("ceil(8/3)", "3");

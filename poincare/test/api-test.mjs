@@ -23,21 +23,22 @@ async function testCase(featureName, testFunction) {
       error = e;
       success = false;
     }
-    console.log((success ? '✅ '  : '❌ ') + "Test: " + featureName);
+    console.log((success ? '✅ ' : '❌ ') + 'Test: ' + featureName);
     if (!success) {
       console.log(error);
     }
   });
 }
 
-Promise.all([ // Wait for all tests to complete before logging end message
-  testCase("Regression - Linear", async (poincare) => {
-    class ArraySeries extends poincare.PCR_Series.extend("PCR_Series", {}) {
+Promise.all([
+  // Wait for all tests to complete before logging end message
+  testCase('Regression - Linear', async (poincare) => {
+    class ArraySeries extends poincare.PCR_Series.extend('PCR_Series', {}) {
       constructor(x, y) {
-        super()
-        assert.equal(x.length, y.length)
-        this.x = x
-        this.y = y
+        super();
+        assert.equal(x.length, y.length);
+        this.x = x;
+        this.y = y;
       }
       getX(i) {
         return this.x[i];
@@ -50,20 +51,19 @@ Promise.all([ // Wait for all tests to complete before logging end message
       }
     }
 
-    var series = new ArraySeries([1.0, 8.0, 14.0, 79.0],
-                                [-3.581, 20.296, 40.676, 261.623]);
+    var series = new ArraySeries([1.0, 8.0, 14.0, 79.0], [-3.581, 20.296, 40.676, 261.623]);
     var regression = new poincare.PCR_Regression(poincare.RegressionType.LinearAxpb);
     var coefficients = regression.fit(series);
 
-    assert.deepEqual(coefficients, [ 3.3995413996411177, -6.934805690848492, NaN, NaN, NaN ])
+    assert.deepEqual(coefficients, [3.3995413996411177, -6.934805690848492, NaN, NaN, NaN]);
 
     var prediction = regression.evaluate(coefficients, 10);
 
     assert.equal(prediction, 27.06060830556268);
   }),
 
-  testCase("Expression - Parse, Reduce, Approximate", async (poincare) => {
-    const userExpression = poincare.BuildExpression.FromLatex("\\frac{6}{9}");
+  testCase('Expression - Parse, Reduce, Approximate', async (poincare) => {
+    const userExpression = poincare.BuildExpression.FromLatex('\\frac{6}{9}');
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -83,20 +83,20 @@ Promise.all([ // Wait for all tests to complete before logging end message
 
     const userReducedExpression = reducedExpression.cloneAndBeautify(reductionContext);
     assert.ok(!userReducedExpression.isUninitialized());
-    assert.equal(userReducedExpression.toLatex(), "\\frac{2}{3}");
+    assert.equal(userReducedExpression.toLatex(), '\\frac{2}{3}');
 
     const approximationContext =
-    poincare.PCR_ApproximationContext.FromReductionContext(reductionContext);
+      poincare.PCR_ApproximationContext.FromReductionContext(reductionContext);
     const userApproximateExpression = reducedExpression
       .approximateToTree(approximationContext)
       .cloneAndBeautify(reductionContext);
 
     assert.ok(!userApproximateExpression.isUninitialized());
-    assert.equal(userApproximateExpression.toLatex(), "0.6666667");
+    assert.equal(userApproximateExpression.toLatex(), '0.6666667');
   }),
 
-  testCase("Expression - System Function, Derivative", async (poincare) => {
-    const userExpression = poincare.BuildExpression.FromLatex("x^{2}-2x+1");
+  testCase('Expression - System Function, Derivative', async (poincare) => {
+    const userExpression = poincare.BuildExpression.FromLatex('x^{2}-2x+1');
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -118,13 +118,17 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.ok(!systemFunction.isUninitialized());
     assert.equal(systemFunction.approximateToScalarWithValue(3), 4);
 
-    const firstDerivative = reducedExpression.getReducedDerivative('x', 1).cloneAndBeautify(reductionContext);
+    const firstDerivative = reducedExpression
+      .getReducedDerivative('x', 1)
+      .cloneAndBeautify(reductionContext);
     assert.ok(!firstDerivative.isUninitialized());
-    assert.equal(firstDerivative.toLatex(), "dep\\left(2x-2,\\left(x^{2}\\right)\\right)");
+    assert.equal(firstDerivative.toLatex(), 'dep\\left(2x-2,\\left(x^{2}\\right)\\right)');
 
-    const secondDerivative = reducedExpression.getReducedDerivative('x', 2).cloneAndBeautify(reductionContext);
+    const secondDerivative = reducedExpression
+      .getReducedDerivative('x', 2)
+      .cloneAndBeautify(reductionContext);
     assert.ok(!secondDerivative.isUninitialized());
-    assert.equal(secondDerivative.toLatex(), "dep\\left(2,\\left(x^{2}\\right)\\right)");
+    assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x^{2}\\right)\\right)');
 
     const lowerBound = poincare.BuildExpression.Int(0);
     const upperBound = poincare.BuildExpression.Int(1);
@@ -132,8 +136,8 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.equal(integral, 0.3333333333333333);
   }),
 
-  testCase("Expression - Retrieve tree from CPP heap", async (poincare) => {
-    const expression = poincare.BuildExpression.FromLatex("1+2");
+  testCase('Expression - Retrieve tree from CPP heap', async (poincare) => {
+    const expression = poincare.BuildExpression.FromLatex('1+2');
     assert.ok(!expression.isUninitialized());
     const storedTree = expression.tree().toUint8Array();
     const expectedTree = new Uint8Array([19, 2, 6, 7]);
@@ -145,18 +149,21 @@ Promise.all([ // Wait for all tests to complete before logging end message
         newPoincare.PCR_Tree.FromUint8Array(storedTree),
       );
       assert.ok(!newExpression.isUninitialized());
-      assert.equal(expression.toLatex(), "1+2");
+      assert.equal(expression.toLatex(), '1+2');
     });
   }),
 
-  testCase("Expression builder", async (poincare) => {
-    const expression = poincare.BuildExpression.FromPattern("Pow(Add(Mult(MinusOne,K0),K1),Pi)", poincare.BuildExpression.Int(2), poincare.BuildExpression.Float(1e-3));
+  testCase('Expression builder', async (poincare) => {
+    const expression = poincare.BuildExpression.FromPattern(
+      'Pow(Add(Mult(MinusOne,K0),K1),Pi)',
+      poincare.BuildExpression.Int(2),
+      poincare.BuildExpression.Float(1e-3),
+    );
     assert.ok(!expression.isUninitialized());
-    assert.equal(expression.toLatex(),"\\left(-1\\times 2+0.001\\right)^{π}");
+    assert.equal(expression.toLatex(), '\\left(-1\\times 2+0.001\\right)^{π}');
   }),
 
-
-  testCase("Solver - Min, Max, Root", async (poincare) => {
+  testCase('Solver - Min, Max, Root', async (poincare) => {
     const emptyContext = new poincare.PCR_EmptyContext();
     const reductionContext = new poincare.PCR_ReductionContext(
       emptyContext,
@@ -206,9 +213,15 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.ok(Number.isNaN(firstMax.x()));
     assert.ok(Number.isNaN(firstMax.y()));
   }),
-])
-.then(() => {
-  console.log('\n> All tests completed!\nTotal: ' + nTests + '\nSuccess: ' + nSuccess + '\nFails: ' + (nTests - nSuccess));
+]).then(() => {
+  console.log(
+    '\n> All tests completed!\nTotal: ' +
+      nTests +
+      '\nSuccess: ' +
+      nSuccess +
+      '\nFails: ' +
+      (nTests - nSuccess),
+  );
   if (nSuccess < nTests) {
     process.exitCode = 1;
   }

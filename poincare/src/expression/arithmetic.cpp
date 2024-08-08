@@ -369,6 +369,7 @@ static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     7883, 7901, 7907, 7919};
 
 Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
+  assert(m.sign() == NonStrictSign::Positive);
   WorkingBuffer workingBuffer;
   uint8_t* const localStart = workingBuffer.localStart();
   FactorizedInteger result;

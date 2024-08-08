@@ -45,7 +45,10 @@ struct TreePatternBuilder {
   CustomBuilder customBuilder = nullptr;
 };
 
-#define BUILDER(TYPE) {#TYPE, Type::TYPE}
+#define BUILDER(TYPE) \
+  {                   \
+#TYPE, Type::TYPE \
+  }
 
 // This list is filled with all the types in expression/types.h
 constexpr TreePatternBuilder treePatternBuilders[] = {

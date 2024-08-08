@@ -306,6 +306,10 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
   m.setSign(NonStrictSign::Positive);
   Arithmetic::FactorizedInteger factorization =
       Arithmetic::PrimeFactorization(m);
+  if (factorization.numberOfFactors ==
+      Arithmetic::FactorizedInteger::k_factorizationFailed) {
+    return nullptr;
+  }
   if (escapeIfPrime && (factorization.numberOfFactors == 0 ||
                         (factorization.numberOfFactors == 1 &&
                          factorization.coefficients[0] == 1))) {

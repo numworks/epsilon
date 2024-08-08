@@ -13,7 +13,8 @@ class Arithmetic {
     constexpr static int k_maxNumberOfFactors = 32;
     uint16_t factors[k_maxNumberOfFactors];
     uint8_t coefficients[k_maxNumberOfFactors];
-    uint8_t numberOfFactors = 0;
+    constexpr static int k_factorizationFailed = -1;
+    int8_t numberOfFactors = 0;
   };
 
   static bool ReduceFactorial(Tree* e);

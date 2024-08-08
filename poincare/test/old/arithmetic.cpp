@@ -179,12 +179,12 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   int coefficients5[1] = {1};
   assert_prime_factorization_equals_to(IntegerHandler(10007), factors5,
                                        coefficients5, 1);
-#if 0  // TODO_PCJ fixme
+
   int factors6[0] = {};
   int coefficients6[0] = {};
-  assert_prime_factorization_equals_to(IntegerHandler(10007 * 10007),
-  factors6, coefficients6, -2);
-#endif
+  assert_prime_factorization_equals_to(
+      IntegerHandler(10007 * 10007), factors6, coefficients6,
+      Arithmetic::FactorizedInteger::k_factorizationFailed);
 
   int factors7[0] = {};
   int coefficients7[0] = {};

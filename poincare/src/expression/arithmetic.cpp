@@ -423,7 +423,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     /* tooManyFactors or factorTooLarge. In the later case, we do not want to
      * break i in prime factor because it takes too much time: the prime factor
      * that should be tested is above k_biggestPrimeFactor. */
-    result.numberOfFactors = 0;
+    result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
     return result;
   }
   assert(m.is<uint16_t>());
@@ -435,7 +435,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
 
 Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   FactorizedInteger result = PrimeFactorization(m);
-  if (result.numberOfFactors == 0) {
+  if (result.numberOfFactors == FactorizedInteger::k_factorizationFailed) {
     return KUndefUnhandled->cloneTree();
   }
   assert(result.numberOfFactors);  // TODO #85

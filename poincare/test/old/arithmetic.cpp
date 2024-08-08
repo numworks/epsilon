@@ -114,31 +114,45 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
 }
 #endif
 
+IntegerHandler ParseHandler(const char* str) {
+  UTF8Decoder decoder(str);
+  return IntegerHandler::Parse(decoder, OMG::Base::Decimal);
+}
+
 QUIZ_CASE(poincare_arithmetic_gcd) {
 #if 0
-  assert_gcd_equals_to(Integer(11), Integer(121), Integer(11));
-  assert_gcd_equals_to(Integer(-256), Integer(321), Integer(1));
-  assert_gcd_equals_to(Integer(-8), Integer(-40), Integer(8));
-  assert_gcd_equals_to(Integer("1234567899876543456"),
-                       Integer("234567890098765445678"), Integer(2));
-  assert_gcd_equals_to(Integer("45678998789"), Integer("1461727961248"),
-                       Integer("45678998789"));
+  assert_gcd_equals_to(IntegerHandler(11), IntegerHandler(121),
+                       IntegerHandler(11));
+  assert_gcd_equals_to(IntegerHandler(-256), IntegerHandler(321),
+                       IntegerHandler(1));
+  assert_gcd_equals_to(IntegerHandler(-8), IntegerHandler(-40),
+                       IntegerHandler(8));
+  assert_gcd_equals_to(ParseHandler("1234567899876543456"),
+                       ParseHandler("234567890098765445678"),
+                       IntegerHandler(2));
+  assert_gcd_equals_to(ParseHandler("45678998789"),
+                       ParseHandler("1461727961248"),
+                       ParseHandler("45678998789"));
 #endif
 }
 
 QUIZ_CASE(poincare_arithmetic_lcm) {
 #if 0
-  assert_lcm_equals_to(Integer(11), Integer(121), Integer(121));
-  assert_lcm_equals_to(Integer(-31), Integer(52), Integer(1612));
-  assert_lcm_equals_to(Integer(-8), Integer(-40), Integer(40));
-  assert_lcm_equals_to(Integer("1234567899876543456"),
-                       Integer("234567890098765445678"),
-                       Integer("144794993728852353909143567804987191584"));
+  assert_lcm_equals_to(IntegerHandler(11), IntegerHandler(121),
+                       IntegerHandler(121));
+  assert_lcm_equals_to(IntegerHandler(-31), IntegerHandler(52),
+                       IntegerHandler(1612));
+  assert_lcm_equals_to(IntegerHandler(-8), IntegerHandler(-40),
+                       IntegerHandler(40));
+  assert_lcm_equals_to(ParseHandler("1234567899876543456"),
+                       ParseHandler("234567890098765445678"),
+                       ParseHandler("144794993728852353909143567804987191584"));
   // Inputs are extractable, but not the output.
-  assert_lcm_equals_to(Integer(24278576), Integer(23334),
-                       Integer("283258146192"));
-  assert_lcm_equals_to(Integer("45678998789"), Integer("1461727961248"),
-                       Integer("1461727961248"));
+  assert_lcm_equals_to(IntegerHandler(24278576), IntegerHandler(23334),
+                       ParseHandler("283258146192"));
+  assert_lcm_equals_to(ParseHandler("45678998789"),
+                       ParseHandler("1461727961248"),
+                       ParseHandler("1461727961248"));
 #endif
 }
 
@@ -159,9 +173,8 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
 #if 0  // TODO_PCJ: fixme
   int factors3[7] = {3, 7, 11, 13, 19, 3607, 3803};
   int coefficients3[7] = {4, 2, 2, 2, 2, 2, 2};
-  UTF8Decoder d("5513219850886344455940081");
   assert_prime_factorization_equals_to(
-      IntegerHandler::Parse(d, OMG::Base::Decimal), factors3, coefficients3, 7);
+      ParseHandler("5513219850886344455940081"), factors3, coefficients3, 7);
 #endif
 
   int factors4[2] = {8017, 8039};

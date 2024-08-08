@@ -43,27 +43,27 @@ void assert_gcd_equals_to(IntegerHandler a, IntegerHandler b,
   }
 }
 
-#if 0
-void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
+void assert_lcm_equals_to(IntegerHandler a, IntegerHandler b,
+                          IntegerHandler c) {
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
-  Integer args[2] = {a, b};
+  IntegerHandler args[2] = {a, b};
   fill_buffer_with(failInformationBuffer, bufferSize, "lcm(", args, 2);
-  Integer lcm = Arithmetic::LCM(a, b);
-  quiz_assert_print_if_failure(lcm.isEqualTo(c), failInformationBuffer);
-  if (a.isExtractable() && b.isExtractable()) {
+  IntegerHandler lcm = Integer::Handler(IntegerHandler::LCM(a, b));
+  quiz_assert_print_if_failure(IntegerHandler::Compare(lcm, c) == 0,
+                               failInformationBuffer);
+  if (a.is<int>() && b.is<int>()) {
     // Test Arithmetic::LCM(int, int) if possible
     bool isUndefined = false;
-    a.setNegative(false);
-    b.setNegative(false);
-    int extractedLcm =
-        Arithmetic::LCM(a.extractedInt(), b.extractedInt(), &isUndefined);
-    quiz_assert_print_if_failure(
-        c.isExtractable() ? extractedLcm == c.extractedInt() : isUndefined,
-        failInformationBuffer);
+    a.setSign(NonStrictSign::Positive);
+    b.setSign(NonStrictSign::Positive);
+    int extractedLcm = Arithmetic::LCM(a.to<int>(), b.to<int>(), &isUndefined);
+    if (c.is<int>()) {
+      quiz_assert_print_if_failure(extractedLcm == c.to<int>(),
+                                   failInformationBuffer);
+    }
   }
 }
-#endif
 
 void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
                                           int* coefficients, int length) {
@@ -137,13 +137,13 @@ QUIZ_CASE(poincare_arithmetic_gcd) {
 }
 
 QUIZ_CASE(poincare_arithmetic_lcm) {
-#if 0
   assert_lcm_equals_to(IntegerHandler(11), IntegerHandler(121),
                        IntegerHandler(121));
   assert_lcm_equals_to(IntegerHandler(-31), IntegerHandler(52),
                        IntegerHandler(1612));
   assert_lcm_equals_to(IntegerHandler(-8), IntegerHandler(-40),
                        IntegerHandler(40));
+#if 0
   assert_lcm_equals_to(ParseHandler("1234567899876543456"),
                        ParseHandler("234567890098765445678"),
                        ParseHandler("144794993728852353909143567804987191584"));

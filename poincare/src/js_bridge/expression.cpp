@@ -11,11 +11,6 @@ using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
-UserExpression ParseLatexFromString(std::string latex) {
-  EmptyContext context;
-  return JuniorExpression::ParseLatex(latex.c_str(), &context);
-}
-
 std::string toLatexString(const UserExpression* expression,
                           int numberOfSignificantDigits) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
@@ -63,11 +58,6 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<OExpression, base<PoolHandle>>("PCR_OExpression");
   class_<JuniorExpression, base<OExpression>>("PCR_Expression")
       .constructor<>()
-      .class_function("Builder",
-                      select_overload<NewExpression(const Tree*)>(
-                          &JuniorExpression::Builder),
-                      allow_raw_pointers())
-      .class_function("ParseLatex", &ParseLatexFromString)
       .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("tree", &JuniorExpression::tree, allow_raw_pointers())

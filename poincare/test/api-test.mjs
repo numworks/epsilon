@@ -63,7 +63,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
   }),
 
   testCase("Expression - Parse, Reduce, Approximate", async (poincare) => {
-    const userExpression = poincare.PCR_Expression.ParseLatex("\\frac{6}{9}");
+    const userExpression = poincare.BuildExpression.FromLatex("\\frac{6}{9}");
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -96,7 +96,7 @@ Promise.all([ // Wait for all tests to complete before logging end message
   }),
 
   testCase("Expression - System Function, Derivative", async (poincare) => {
-    const userExpression = poincare.PCR_Expression.ParseLatex("x^{2}-2x+1");
+    const userExpression = poincare.BuildExpression.FromLatex("x^{2}-2x+1");
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -126,14 +126,14 @@ Promise.all([ // Wait for all tests to complete before logging end message
     assert.ok(!secondDerivative.isUninitialized());
     assert.equal(secondDerivative.toLatex(), "dep\\left(2,\\left(x^{2}\\right)\\right)");
 
-    const lowerBound = poincare.PCR_Expression.ParseLatex("0").cloneAndReduce(reductionContext);
-    const upperBound = poincare.PCR_Expression.ParseLatex("1").cloneAndReduce(reductionContext);
+    const lowerBound = poincare.BuildExpression.Int(0);
+    const upperBound = poincare.BuildExpression.Int(1);
     const integral = systemFunction.approximateIntegralToScalar(lowerBound, upperBound);
     assert.equal(integral, 0.3333333333333333);
   }),
 
   testCase("Expression - Retrieve tree from CPP heap", async (poincare) => {
-    const expression = poincare.PCR_Expression.ParseLatex("1+2");
+    const expression = poincare.BuildExpression.FromLatex("1+2");
     assert.ok(!expression.isUninitialized());
     const storedTree = expression.tree().toUint8Array();
     const expectedTree = new Uint8Array([19, 2, 6, 7]);
@@ -141,13 +141,20 @@ Promise.all([ // Wait for all tests to complete before logging end message
 
     // Reinstantiate in a new Poincare instance
     UsePoincare((newPoincare) => {
-      const newExpression = newPoincare.PCR_Expression.Builder(
+      const newExpression = newPoincare.BuildExpression.FromTree(
         newPoincare.PCR_Tree.FromUint8Array(storedTree),
       );
       assert.ok(!newExpression.isUninitialized());
       assert.equal(expression.toLatex(), "1+2");
     });
   }),
+
+  testCase("Expression builder", async (poincare) => {
+    const expression = poincare.BuildExpression.FromPattern("Pow(Add(Mult(MinusOne,K0),K1),Pi)", poincare.BuildExpression.Int(2), poincare.BuildExpression.Float(1e-3));
+    assert.ok(!expression.isUninitialized());
+    assert.equal(expression.toLatex(),"\\left(-1\\times 2+0.001\\right)^{π}");
+  }),
+
 
   testCase("Solver - Min, Max, Root", async (poincare) => {
     const emptyContext = new poincare.PCR_EmptyContext();
@@ -161,11 +168,10 @@ Promise.all([ // Wait for all tests to complete before logging end message
       poincare.UnitConversion.Default,
     );
 
-    const systemFunctionTree =
-      poincare.PCR_Expression
-        .ParseLatex("(x-4)(x+2)")
-        .cloneAndReduce(reductionContext)
-        .getSystemFunction('x').tree();
+    const systemFunctionTree = poincare.BuildExpression.FromLatex('(x-4)(x+2)')
+      .cloneAndReduce(reductionContext)
+      .getSystemFunction('x')
+      .tree();
 
     let solver;
     function resetSolver() {

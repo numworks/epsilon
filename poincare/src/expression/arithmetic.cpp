@@ -466,9 +466,19 @@ bool Arithmetic::BeautifyFactor(Tree* e) {
     return true;
   }
   Tree* child = e->child(0);
-  assert(child->isInteger() && Integer::Sign(child) == NonStrictSign::Positive);
+  assert(child->isInteger());
+  if (child->isZero() || child->isOne()) {
+    // Factor is an extended prime factorization
+    e->moveTreeOverTree(child);
+    return true;
+  }
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  PushPrimeFactorization(Integer::Handler(child));
+  IntegerHandler handler = Integer::Handler(child);
+  if (handler.sign() == NonStrictSign::Negative) {
+    SharedTreeStack->pushOpposite();
+    handler.setSign(NonStrictSign::Positive);
+  }
+  PushPrimeFactorization(handler);
   e->moveTreeOverTree(result);
   return true;
 }

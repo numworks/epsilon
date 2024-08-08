@@ -105,7 +105,7 @@ LayoutShape LeftLayoutShape(const Tree* e) {
     case Type::DoubleFloat:
       return Decimal;
 
-    case Type::Dependency:
+    case Type::Dep:
       // should be assert false ?
       return LeftLayoutShape(Dependency::Main(e));
 
@@ -184,7 +184,7 @@ LayoutShape RightLayoutShape(const Tree* e) {
     case Type::Sub:
       return RightLayoutShape(e->child(0));
 
-    case Type::Dependency:
+    case Type::Dep:
       // should be assert false ?
       // was not there
       return RightLayoutShape(Dependency::Main(e));

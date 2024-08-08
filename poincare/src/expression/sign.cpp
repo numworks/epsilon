@@ -288,7 +288,7 @@ ComplexSign ComplexSign::Get(const Tree* e) {
       return ArcTangent(Get(e->child(0)));
     case Type::Arg:
       return ComplexArgument(Get(e->child(0)));
-    case Type::Dependency:
+    case Type::Dep:
       return Get(Dependency::Main(e));
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());

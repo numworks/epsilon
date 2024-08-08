@@ -53,7 +53,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   for (const Tree* child : e->children()) {
     if (child->isFloat()) {
       bubbleUpFloat = true;
-    } else if (child->isDependency()) {
+    } else if (child->isDep()) {
       bubbleUpDependency = true;
     } else if (child->isUndefined()) {
       bubbleUpUndef = true;
@@ -71,7 +71,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   }
 
   if (bubbleUpDependency && Dependency::ShallowBubbleUpDependencies(e)) {
-    assert(e->isDependency());
+    assert(e->isDep());
     /* e->child(0) may now be reduced again. This could unlock further
      * simplifications. */
     ShallowReduce(e->child(0)) && ShallowReduce(e);

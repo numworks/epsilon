@@ -37,7 +37,7 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
       return childDegree;
     }
     switch (e->type()) {
-      case Type::Dependency:
+      case Type::Dep:
         assert(i == 0);
         return childDegree;
       case Type::Add:

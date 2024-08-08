@@ -372,7 +372,7 @@ ExpressionNode::Type NewExpression::type() const {
       return ExpressionNode::Type::Conjugate;
     case Type::PhysicalConstant:
       return ExpressionNode::Type::ConstantPhysics;
-    case Type::Dependency:
+    case Type::Dep:
       return ExpressionNode::Type::Dependency;
     case Type::Div:
       return ExpressionNode::Type::Division;

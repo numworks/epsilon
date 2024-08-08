@@ -14,8 +14,8 @@
 namespace Poincare::Internal {
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
-  if (e->isDependency()) {
-    if (!Main(e)->isDependency()) {
+  if (e->isDep()) {
+    if (!Main(e)->isDep()) {
       return false;
     }
     Set::Union(Dependencies(Main(e)), Dependencies(e));
@@ -25,7 +25,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   TreeRef finalSet = KDependencies()->cloneTree();
   int i = 0;
   for (Tree* child : e->children()) {
-    if (child->isDependency() && !Undefined::CanHaveUndefinedChild(e, i)) {
+    if (child->isDep() && !Undefined::CanHaveUndefinedChild(e, i)) {
       Tree* childSet = Dependencies(child);
       /* TODO_PCJ: bubble up across list operators in the same fashion as on
        * parametrics
@@ -184,7 +184,7 @@ bool RemoveUselessDependencies(Tree* dep) {
 
   // ShallowReduce to remove defined dependencies ({x+3}->{x, 3}->{x})
   RemoveDefinedDependencies(dep);
-  if (!dep->isDependency()) {
+  if (!dep->isDep()) {
     return true;
   }
 
@@ -227,7 +227,7 @@ bool Dependency::DeepRemoveUselessDependencies(Tree* e) {
   for (Tree* child : e->children()) {
     changed |= DeepRemoveUselessDependencies(child);
   }
-  if (e->isDependency()) {
+  if (e->isDep()) {
     changed |= RemoveUselessDependencies(e);
   }
   return changed;

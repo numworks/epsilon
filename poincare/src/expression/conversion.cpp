@@ -208,7 +208,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* e) {
             ToPoincareExpression(e->child(1)),
             ToPoincareExpression(e->child(2)));
       }
-      case Type::Dependency: {
+      case Type::Dep: {
         assert(Dependency::Dependencies(e)->isDependencies());
         Poincare::OList listOfDependencies = Poincare::OList::Builder();
         for (const Tree* child : Dependency::Dependencies(e)->children()) {

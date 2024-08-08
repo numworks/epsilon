@@ -821,7 +821,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return DistributionMethod::Get(method)->EvaluateAtAbscissa(
           abscissa, Distribution::Get(distribution), parameters);
     }
-    case Type::Dependency: {
+    case Type::Dep: {
       return UndefDependencies(e) ? NAN : ToComplex<T>(Dependency::Main(e));
     }
     /* Handle units as their scalar value in basic SI so prefix and
@@ -1035,7 +1035,7 @@ bool Approximation::ToBoolean(const Tree* e) {
   if (e->isLogicalNot()) {
     return !a;
   }
-  if (e->isDependency()) {
+  if (e->isDep()) {
     // TODO: Undefined boolean return false for now.
     return !UndefDependencies(e) && a;
   }
@@ -1207,7 +1207,7 @@ Tree* Approximation::ToMatrix(const Tree* e) {
     }
     case Type::Piecewise:
       return ToMatrix<T>(SelectPiecewiseBranch<T>(e));
-    case Type::Dependency:
+    case Type::Dep:
       return UndefDependencies(e) ? KUndef->cloneTree()
                                   : ToMatrix<T>(Dependency::Main(e));
     default:;

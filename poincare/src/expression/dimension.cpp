@@ -217,7 +217,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       }
       hasUnitChild = true;
     }
-    if (!e->isPiecewise() && !e->isParentheses() && !e->isDependency() &&
+    if (!e->isPiecewise() && !e->isParentheses() && !e->isDep() &&
         !e->isList() && !e->isListSort() &&
         childDim[child.index].isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
@@ -245,7 +245,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
           }
           break;
         case Type::Dim:
-        case Type::Dependency:
+        case Type::Dep:
         case Type::Set:
         case Type::Dependencies:
         case Type::List:
@@ -375,7 +375,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       assert(childDim[1].isUnit());
       return childDim[0] == childDim[1] ||
              (childDim[1].isSimpleAngleUnit() && childDim[0].isScalar());
-    case Type::Dependency:
+    case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
       return true;
     case Type::Set:
@@ -489,7 +489,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::ListSequence:
     case Type::Diff:
       return Get(e->child(Parametric::FunctionIndex(e)), ctx);
-    case Type::Dependency:
+    case Type::Dep:
       return Get(Dependency::Main(e), ctx);
     case Type::PowMatrix:
     case Type::PowReal:

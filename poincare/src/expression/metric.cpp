@@ -33,7 +33,7 @@ int Metric::GetMetric(const Tree* e) {
       }
       break;
     }
-    case Type::Dependency:
+    case Type::Dep:
       return result + GetMetric(Dependency::Main(e));
     case Type::Trig:
     case Type::ATrig:

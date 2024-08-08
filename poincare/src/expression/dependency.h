@@ -7,20 +7,20 @@ namespace Poincare::Internal {
 
 struct Dependency {
   static const Tree* Main(const Tree* e) {
-    assert(e->isDependency());
+    assert(e->isDep());
     return e->child(k_mainIndex);
   }
   static const Tree* Dependencies(const Tree* e) {
-    assert(e->isDependency());
+    assert(e->isDep());
     assert(e->child(k_dependenciesIndex)->isDependencies());
     return e->child(k_dependenciesIndex);
   }
   static Tree* Main(Tree* e) {
-    assert(e->isDependency());
+    assert(e->isDep());
     return e->child(k_mainIndex);
   }
   static Tree* Dependencies(Tree* e) {
-    assert(e->isDependency());
+    assert(e->isDep());
     assert(e->child(k_dependenciesIndex)->isDependencies());
     return e->child(k_dependenciesIndex);
   }

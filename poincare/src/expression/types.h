@@ -332,8 +332,8 @@ NODE(PhysicalConstant, 0, { uint8_t constantId; })
 
 NODE(Piecewise, NARY)
 
-// Dependency(expression, Dependencies(dep1, …, depN))
-NODE(Dependency, 2)
+// Dep(expression, Dependencies(dep1, …, depN))
+NODE(Dep, 2)
 NODE(Dependencies, NARY)
 
 NODE(Set, NARY)

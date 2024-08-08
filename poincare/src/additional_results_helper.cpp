@@ -214,7 +214,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 // Return the only numerical value found in e, nullptr if there are none or more
 const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   assert(!*error);
-  assert(!e->isDependency());
+  assert(!e->isDep());
   // Escape if e has a random node, a user symbol or inf
   if (e->isRandomized() || e->isUserSymbol() || e->isInf()) {
     *error = true;

@@ -33,11 +33,12 @@ class Sign {
     // By ensuring its members can't be modified, a Sign is always valid.
     assert(isValid());
   }
-  constexpr Sign(uint8_t value)
-      : Sign(OMG::BitHelper::getBitRange(value, 0, 0),
-             OMG::BitHelper::getBitRange(value, 1, 1),
-             OMG::BitHelper::getBitRange(value, 2, 2),
-             OMG::BitHelper::getBitRange(value, 3, 3)) {}
+  constexpr static Sign FromValue(uint8_t value) {
+    return Sign(OMG::BitHelper::getBitRange(value, 0, 0),
+                OMG::BitHelper::getBitRange(value, 1, 1),
+                OMG::BitHelper::getBitRange(value, 2, 2),
+                OMG::BitHelper::getBitRange(value, 3, 3));
+  }
 
   constexpr bool canBeNull() const { return m_canBeNull; }
   constexpr bool canBeStrictlyPositive() const {
@@ -151,14 +152,16 @@ class ComplexSign {
  public:
   constexpr ComplexSign(Sign realSign, Sign imagSign)
       : m_realValue(realSign.getValue()), m_imagValue(imagSign.getValue()) {}
-  constexpr ComplexSign(uint8_t value)
-      : m_realValue(OMG::BitHelper::getBitRange(value, 3, 0)),
-        m_imagValue(OMG::BitHelper::getBitRange(value, 7, 4)) {}
+  constexpr static ComplexSign FromValue(uint8_t value) {
+    return ComplexSign(
+        Sign::FromValue(OMG::BitHelper::getBitRange(value, 3, 0)),
+        Sign::FromValue(OMG::BitHelper::getBitRange(value, 7, 4)));
+  }
 
   constexpr uint8_t getValue() const { return m_realValue | m_imagValue << 4; }
 
-  constexpr Sign realSign() const { return Sign(m_realValue); }
-  constexpr Sign imagSign() const { return Sign(m_imagValue); }
+  constexpr Sign realSign() const { return Sign::FromValue(m_realValue); }
+  constexpr Sign imagSign() const { return Sign::FromValue(m_imagValue); }
 
   constexpr bool isReal() const { return imagSign().isNull(); }
   constexpr bool isPureIm() const { return realSign().isNull(); }

@@ -9,13 +9,13 @@ using namespace Poincare;
 using namespace Poincare::Internal;
 
 static_assert(Sign::Zero().isNull() && Sign::Zero().isInteger());
-static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
+static_assert(ComplexSign::FromValue(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());
-static_assert(ComplexSign(ComplexSign::RealInteger().getValue()) ==
+static_assert(ComplexSign::FromValue(ComplexSign::RealInteger().getValue()) ==
               ComplexSign::RealInteger());
-static_assert(ComplexSign(ComplexSign::RealUnknown().getValue()) ==
+static_assert(ComplexSign::FromValue(ComplexSign::RealUnknown().getValue()) ==
               ComplexSign::RealUnknown());
-static_assert(ComplexSign(ComplexSign::Unknown().getValue()) ==
+static_assert(ComplexSign::FromValue(ComplexSign::Unknown().getValue()) ==
               ComplexSign::Unknown());
 static_assert(ComplexSign::Unknown().isUnknown());
 static_assert(ComplexSign::RealUnknown().isReal());

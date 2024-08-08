@@ -1,5 +1,5 @@
-#ifndef POINCARE_EXPRESSION_SIGN_H
-#define POINCARE_EXPRESSION_SIGN_H
+#ifndef POINCARE_SIGN_H
+#define POINCARE_SIGN_H
 
 #include <assert.h>
 #include <omg/bit_helper.h>
@@ -14,8 +14,7 @@
 #include <iostream>
 #endif
 
-namespace Poincare::Internal {
-class Tree;
+namespace Poincare {
 
 /* Note: The expressions handled here are assumed to have been systematic
  * reduced beforehand. Otherwise, we would have to deal with unprojected
@@ -129,8 +128,6 @@ class Sign {
   }
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
 
-  static Sign Get(const Tree* e);
-
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {
     log(std::cout, endOfLine);
@@ -206,12 +203,6 @@ class ComplexSign {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }
 
-  static ComplexSign Get(const Tree* e);
-
-  /* Sign of e1 - e2 so that e1 < e2 <=> SignOfDifference(e1, e2) < 0 and so on.
-   * Beware that the difference may be real while the trees were complexes. */
-  static ComplexSign SignOfDifference(const Tree* e1, const Tree* e2);
-
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {
     log(std::cout, endOfLine);
@@ -241,6 +232,6 @@ inline NonStrictSign InvertSign(NonStrictSign sign) {
   return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

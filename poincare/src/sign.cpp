@@ -1,15 +1,13 @@
-#include "sign.h"
-
+#include <poincare/sign.h>
+#include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/number.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "advanced_reduction.h"
-#include "dependency.h"
-#include "dimension.h"
-#include "number.h"
-#include "symbol.h"
-#include "variables.h"
-
-namespace Poincare::Internal {
+namespace Poincare {
 
 /* Must at least handle Additions, Multiplications, Numbers and Real/Imaginary
  * parts so that any simplified complex is sanitized. Also handle Exp, Ln and
@@ -22,26 +20,26 @@ Sign RelaxIntegerProperty(Sign s) {
               s.canBeStrictlyNegative());
 }
 
-Sign DecimalFunction(Sign s, Type type) {
+Sign DecimalFunction(Sign s, Internal::Type type) {
   bool canBeNull = s.canBeNull();
   bool canBeStrictlyPositive = s.canBeStrictlyPositive();
   bool canBeStrictlyNegative = s.canBeStrictlyNegative();
   bool canBeNonInteger = s.canBeNonInteger();
   switch (type) {
-    case Type::Ceil:
+    case Internal::Type::Ceil:
       canBeNull |= canBeStrictlyNegative && canBeNonInteger;
       canBeNonInteger = false;
       break;
-    case Type::Floor:
+    case Internal::Type::Floor:
       canBeNull |= canBeStrictlyPositive && canBeNonInteger;
       canBeNonInteger = false;
       break;
-    case Type::Frac:
+    case Internal::Type::Frac:
       canBeNull = true;
       canBeStrictlyPositive = canBeNonInteger;
       canBeStrictlyNegative = false;
       break;
-    case Type::Round:
+    case Internal::Type::Round:
       canBeNull = true;
       break;
     default:
@@ -72,11 +70,6 @@ Sign Add(Sign s1, Sign s2) {
               s1.canBeStrictlyPositive() || s2.canBeStrictlyPositive(),
               s1.canBeStrictlyNegative() || s2.canBeStrictlyNegative(),
               s1.canBeNonInteger() || s2.canBeNonInteger());
-}
-
-Sign Sign::Get(const Tree* e) {
-  assert(ComplexSign::Get(e).isReal());
-  return ComplexSign::Get(e).realSign();
 }
 
 #if POINCARE_TREE_LOG
@@ -182,7 +175,7 @@ ComplexSign Ln(ComplexSign s) {
   return ComplexSign(Sign::Unknown(), ComplexArgument(s).realSign());
 }
 
-ComplexSign DecimalFunction(ComplexSign s, Type type) {
+ComplexSign DecimalFunction(ComplexSign s, Internal::Type type) {
   return ComplexSign(DecimalFunction(s.realSign(), type),
                      DecimalFunction(s.imagSign(), type));
 }
@@ -232,8 +225,10 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   return ComplexSign(sign, sign);
 }
 
+namespace Internal {
+
 // Note: A complex function plotter can be used to fill in these methods.
-ComplexSign ComplexSign::Get(const Tree* e) {
+ComplexSign GetComplexSign(const Tree* e) {
   assert(Dimension::Get(e).isScalarOrUnit());
   if (e->isNumber()) {
     return ComplexSign(Number::Sign(e), Sign::Zero());
@@ -242,9 +237,9 @@ ComplexSign ComplexSign::Get(const Tree* e) {
   }
   switch (e->type()) {
     case Type::Mult: {
-      ComplexSign s = RealStrictlyPositiveInteger();  // 1
+      ComplexSign s = ComplexSign::RealStrictlyPositiveInteger();  // 1
       for (const Tree* c : e->children()) {
-        s = Mult(s, Get(c));
+        s = Mult(s, GetComplexSign(c));
         if (s.isUnknown() || s.isNull()) {
           break;
         }
@@ -252,9 +247,9 @@ ComplexSign ComplexSign::Get(const Tree* e) {
       return s;
     }
     case Type::Add: {
-      ComplexSign s = Zero();
+      ComplexSign s = ComplexSign::Zero();
       for (const Tree* c : e->children()) {
-        s = Add(s, Get(c));
+        s = Add(s, GetComplexSign(c));
         if (s.isUnknown()) {
           break;
         }
@@ -263,33 +258,34 @@ ComplexSign ComplexSign::Get(const Tree* e) {
     }
     case Type::PowReal:
     case Type::Pow:
-      return Power(Get(e->child(0)), Get(e->child(1)), e->child(1)->isTwo());
+      return Power(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)),
+                   e->child(1)->isTwo());
     case Type::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::Positive(), Sign::Zero());
     case Type::Abs:
-      return Abs(Get(e->child(0)));
+      return Abs(GetComplexSign(e->child(0)));
     case Type::Exp:
-      return Exponential(Get(e->child(0)));
+      return Exponential(GetComplexSign(e->child(0)));
     case Type::Ln:
-      return Ln(Get(e->child(0)));
+      return Ln(GetComplexSign(e->child(0)));
     case Type::Re:
-      return ComplexSign(Get(e->child(0)).realSign(), Sign::Zero());
+      return ComplexSign(GetComplexSign(e->child(0)).realSign(), Sign::Zero());
     case Type::Im:
-      return ComplexSign(Get(e->child(0)).imagSign(), Sign::Zero());
+      return ComplexSign(GetComplexSign(e->child(0)).imagSign(), Sign::Zero());
     case Type::Var:
       return Variables::GetComplexSign(e);
     case Type::ComplexI:
       return ComplexSign(Sign::Zero(), Sign::StrictlyPositiveInteger());
     case Type::Trig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
-      return Trig(Get(e->child(0)), e->child(1)->isOne());
+      return Trig(GetComplexSign(e->child(0)), e->child(1)->isOne());
     case Type::ATanRad:
-      return ArcTangent(Get(e->child(0)));
+      return ArcTangent(GetComplexSign(e->child(0)));
     case Type::Arg:
-      return ComplexArgument(Get(e->child(0)));
+      return ComplexArgument(GetComplexSign(e->child(0)));
     case Type::Dep:
-      return Get(Dependency::Main(e));
+      return GetComplexSign(Dependency::Main(e));
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
     case Type::PhysicalConstant:
@@ -299,43 +295,51 @@ ComplexSign ComplexSign::Get(const Tree* e) {
 #if 0
     // Activate these cases if necessary
     case Type::ACos:
-      return ArcCosine(Get(e->child(0)));
+      return ArcCosine(GetComplexSign(e->child(0)));
     case Type::ASin:
-      return ArcSine(Get(e->child(0)));
+      return ArcSine(GetComplexSign(e->child(0)));
     case Type::ATan:
-      return ArcTangent(Get(e->child(0)));
+      return ArcTangent(GetComplexSign(e->child(0)));
     case Type::Fact:
-      assert(Get(e->child(0)) == ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
-      return RealStrictlyPositiveInteger();
+      assert(GetComplexSign(e->child(0)) ==
+             ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
+      return ComplexSign::RealStrictlyPositiveInteger();
     case Type::Ceil:
     case Type::Floor:
     case Type::Frac:
     case Type::Round:
-      return DecimalFunction(Get(e->child(0)), e->type());
+      return DecimalFunction(GetComplexSign(e->child(0)), e->type());
     case Type::PercentSimple:
-      return RelaxIntegerProperty(Get(e->child(0)));
+      return RelaxIntegerProperty(GetComplexSign(e->child(0)));
     case Type::MixedFraction:
-      return Add(Get(e->child(0)), Get(e->child(1)));
-    case Type::Parenthesis:
-      return Get(e->child(0));
+      return Add(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
+    case Type::Parentheses:
+      return GetComplexSign(e->child(0));
 #endif
     default:
-      return Unknown();
+      return ComplexSign::Unknown();
   }
 }
 
-ComplexSign ComplexSign::SignOfDifference(const Tree* e1, const Tree* e2) {
+Sign GetSign(const Tree* e) {
+  assert(GetComplexSign(e).isReal());
+  return GetComplexSign(e).realSign();
+}
+
+ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
   Tree* difference = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
                                                      {.KA = e1, .KB = e2});
-  ComplexSign result = Get(difference);
+  ComplexSign result = GetComplexSign(difference);
   if (AdvancedReduction::DeepExpand(difference)) {
-    /* We do not use advance reduction here but it might be usefull to expand
+    /* We do not use advance reduction here but it might be useful to expand
      * Mult since we are creating an Add with Mult */
-    result = result && Get(difference);
+    result = result && GetComplexSign(difference);
   }
   difference->removeTree();
   return result;
 }
+
+}  // namespace Internal
 
 #if POINCARE_TREE_LOG
 void ComplexSign::log(std::ostream& stream, bool endOfLine) const {
@@ -350,4 +354,4 @@ void ComplexSign::log(std::ostream& stream, bool endOfLine) const {
 }
 #endif
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare

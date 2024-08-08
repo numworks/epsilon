@@ -448,6 +448,7 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
     }
   }
   NAry::SetNumberOfChildren(mult, result.numberOfFactors);
+  NAry::SquashIfPossible(mult);
   return mult;
 }
 

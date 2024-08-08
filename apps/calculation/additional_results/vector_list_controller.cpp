@@ -6,9 +6,9 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
+#include <poincare/sign.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/projection.h>
-#include <poincare/src/expression/sign.h>
 #include <string.h>
 
 #include "../app.h"
@@ -53,7 +53,7 @@ void VectorListController::computeAdditionalResults(
   SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  ComplexSign sign = Internal::GetComplexSign(approximatedNorm.tree());
+  ComplexSign sign = approximatedNorm.complexSign();
   assert(sign.isReal() && !sign.realSign().canBeStrictlyNegative());
   if (sign.canBeNull() ||
       SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
@@ -89,7 +89,7 @@ void VectorListController::computeAdditionalResults(
   SystemExpression yApprox = PoincareHelpers::Approximate<double>(
       normalized.cloneChildAtIndex(1), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  sign = Internal::GetComplexSign(yApprox.tree());
+  sign = yApprox.complexSign();
   // HasVector should be false if any vector's child is complex.
   assert(sign.isReal());
   if (sign.realSign().canBeStrictlyNegative() &&

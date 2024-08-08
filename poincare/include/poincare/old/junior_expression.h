@@ -3,6 +3,7 @@
 
 #include <poincare/api.h>
 #include <poincare/point_or_scalar.h>
+#include <poincare/sign.h>
 #include <poincare/src/expression/dimension_type.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
@@ -345,6 +346,9 @@ class JuniorExpression : public OExpression {
   bool deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
                     Context* context = nullptr) const;
   Dimension dimension(Context* context = nullptr) const;
+
+  // ComplexSign of a SystematicExpression
+  ComplexSign complexSign() const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {

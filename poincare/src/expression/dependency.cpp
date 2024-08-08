@@ -242,7 +242,7 @@ bool Dependency::DeepRemoveUselessDependencies(Tree* e) {
 
 bool Dependency::RemoveDependencies(Tree* e) {
   if (e->isDep()) {
-    e->moveTreeOverTree(e->child(0));
+    e->moveTreeOverTree(Main(e));
     return true;
   }
   return false;

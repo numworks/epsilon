@@ -58,9 +58,9 @@ class IntegerHandler;
 
 class WorkingBuffer {
   /* To compute operations between Integers, we need an array where to store the
-   * intermediate result digits. Instead of allocating it on the stack which
+   * intermediate result digits. Instead of allocating it on the C stack which
    * could eventually lead to a stack overflow, we use the remaining space of
-   * the edition pool. In case of overflow, we raise an exception in order to
+   * the tree stack. In case of overflow, we raise an exception in order to
    * restart after freeing some cached trees. */
 
  public:
@@ -108,6 +108,7 @@ class IntegerHandler final {
   friend class WorkingBuffer;
   friend class Arithmetic;
   friend class Decimal;
+  friend class Integer;
 
  public:
   IntegerHandler(const uint8_t* digits = nullptr, uint8_t numberOfDigits = 0,
@@ -125,8 +126,6 @@ class IntegerHandler final {
         // TODO: should we represent -0?
         m_sign(value == 0 ? NonStrictSign::Positive : sign),
         m_numberOfDigits(OMG::Arithmetic::NumberOfDigits(value)) {}
-
-  static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base);
 
   template <typename T>
   static IntegerHandler Allocate(size_t size, WorkingBuffer* buffer);
@@ -219,12 +218,14 @@ class IntegerHandler final {
       1 << sizeof(uint8_t) * OMG::BitHelper::k_numberOfBitsInByte;
   static int8_t Ucmp(const IntegerHandler& a,
                      const IntegerHandler& b);  // -1, 0, or 1
-  /* Warning: Usum, Sum, Mult, Udiv return IntegerHandler whose digits pointer
-   * is static working buffers. We could return TreeRef but we save the
-   * projection onto the right node type for public methods.
+  /* Warning: Parse, Usum, Sum, Mult, Udiv, GCD return IntegerHandler whose
+   * digits pointer is static working buffers. We could return Trees but we save
+   * the projection onto the right node type for public methods.
    * The buffer holding one of the IntegerHandler a or b can be used as the
    * workingBuffer because we read a and b digits before filling the working
    * buffer. */
+  static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base,
+                              WorkingBuffer* workingBuffer);
   static IntegerHandler Usum(const IntegerHandler& a, const IntegerHandler& b,
                              bool subtract, WorkingBuffer* workingBuffer,
                              bool oneDigitOverflow = false);
@@ -282,11 +283,15 @@ class Integer {
   static Tree* Push(const char* digits, size_t length,
                     OMG::Base base = OMG::Base::Decimal) {
     UTF8Decoder decoder(digits, digits, digits + length);
-    return IntegerHandler::Parse(decoder, base).pushOnTreeStack();
+    WorkingBuffer workingBuffer;
+    return IntegerHandler::Parse(decoder, base, &workingBuffer)
+        .pushOnTreeStack();
   }
   static Tree* Push(UnicodeDecoder& decoder,
                     OMG::Base base = OMG::Base::Decimal) {
-    return IntegerHandler::Parse(decoder, base).pushOnTreeStack();
+    WorkingBuffer workingBuffer;
+    return IntegerHandler::Parse(decoder, base, &workingBuffer)
+        .pushOnTreeStack();
   }
   static Tree* Push(native_int_t value) {
     return IntegerHandler(value).pushOnTreeStack();

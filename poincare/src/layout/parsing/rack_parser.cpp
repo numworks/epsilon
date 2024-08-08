@@ -362,8 +362,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     RackLayoutDecoder integerDigits(rack, start,
                                     std::min(smallE, decimalPoint));
     RackLayoutDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
-    RackLayoutDecoder exponent(rack, smallE + 1,
-                               end);  // TODO may have a minus sign
+    RackLayoutDecoder exponentDigits(rack, smallE + 1, end);
 
     if (decimalPoint == end || smallE == decimalPoint + 1) {
       // Decimal integer
@@ -373,25 +372,35 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       assert(offset > 0);
       // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
       leftHandSide = SharedTreeStack->pushDecimal();
-      Tree* child =
+      Tree* integerPart = Integer::Push(integerDigits, base);
+      Tree* fractionalPart = Integer::Push(fractionalDigits, base);
+      Tree* result =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
-      child->moveTreeOverTree(IntegerHandler::Multiplication(
-          Integer::Handler(child), IntegerHandler::Parse(integerDigits, base)));
-      child->moveTreeOverTree(IntegerHandler::Addition(
-          Integer::Handler(child),
-          IntegerHandler::Parse(fractionalDigits, base)));
+      result->moveTreeOverTree(IntegerHandler::Multiplication(
+          Integer::Handler(result), Integer::Handler(integerPart)));
+      result->moveTreeOverTree(IntegerHandler::Addition(
+          Integer::Handler(result), Integer::Handler(fractionalPart)));
+      fractionalPart->removeTree();
+      integerPart->removeTree();
       Integer::Push(offset);
     }
     if (smallE != end) {
       // Shift the decimal number by the exponent after the small E
-      int exp = IntegerHandler::Parse(exponent, OMG::Base::Decimal).to<int>();
+      Tree* expTree = Integer::Push(exponentDigits, OMG::Base::Decimal);
+      IntegerHandler expHandler = Integer::Handler(expTree);
+      if (!expHandler.is<int>()) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      int expValue = expHandler.to<int>();
+      expTree->removeTree();
       if (leftHandSide->isDecimal()) {
         int oldExp = Integer::Handler(leftHandSide->child(1)).to<int>();
-        leftHandSide->child(1)->moveTreeOverTree(Integer::Push(oldExp - exp));
+        leftHandSide->child(1)->moveTreeOverTree(
+            Integer::Push(oldExp - expValue));
       } else {
         assert(leftHandSide->isInteger());
         leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal());
-        Integer::Push(-exp);
+        Integer::Push(-expValue);
       }
     }
   }

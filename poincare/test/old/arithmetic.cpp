@@ -116,7 +116,7 @@ void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
 
 IntegerHandler ParseHandler(const char* str) {
   UTF8Decoder decoder(str);
-  return IntegerHandler::Parse(decoder, OMG::Base::Decimal);
+  return Integer::Handler(Integer::Push(decoder, OMG::Base::Decimal));
 }
 
 QUIZ_CASE(poincare_arithmetic_gcd) {
@@ -126,14 +126,12 @@ QUIZ_CASE(poincare_arithmetic_gcd) {
                        IntegerHandler(1));
   assert_gcd_equals_to(IntegerHandler(-8), IntegerHandler(-40),
                        IntegerHandler(8));
-#if 0  // TODO_PCJ: fixme
   assert_gcd_equals_to(ParseHandler("1234567899876543456"),
                        ParseHandler("234567890098765445678"),
                        IntegerHandler(2));
   assert_gcd_equals_to(ParseHandler("45678998789"),
                        ParseHandler("1461727961248"),
                        ParseHandler("45678998789"));
-#endif
 }
 
 QUIZ_CASE(poincare_arithmetic_lcm) {
@@ -143,7 +141,6 @@ QUIZ_CASE(poincare_arithmetic_lcm) {
                        IntegerHandler(1612));
   assert_lcm_equals_to(IntegerHandler(-8), IntegerHandler(-40),
                        IntegerHandler(40));
-#if 0
   assert_lcm_equals_to(ParseHandler("1234567899876543456"),
                        ParseHandler("234567890098765445678"),
                        ParseHandler("144794993728852353909143567804987191584"));
@@ -153,7 +150,6 @@ QUIZ_CASE(poincare_arithmetic_lcm) {
   assert_lcm_equals_to(ParseHandler("45678998789"),
                        ParseHandler("1461727961248"),
                        ParseHandler("1461727961248"));
-#endif
 }
 
 QUIZ_CASE(poincare_arithmetic_factorization) {
@@ -170,12 +166,10 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   assert_prime_factorization_equals_to(IntegerHandler(122500), factors2,
                                        coefficients2, 3);
 
-#if 0  // TODO_PCJ: fixme
   int factors3[7] = {3, 7, 11, 13, 19, 3607, 3803};
   int coefficients3[7] = {4, 2, 2, 2, 2, 2, 2};
   assert_prime_factorization_equals_to(
       ParseHandler("5513219850886344455940081"), factors3, coefficients3, 7);
-#endif
 
   int factors4[2] = {8017, 8039};
   int coefficients4[2] = {1, 1};

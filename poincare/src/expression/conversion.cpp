@@ -778,8 +778,7 @@ void PushPoincareExpression(Poincare::OExpression exp) {
       Poincare::Integer mantissa = d.node()->unsignedMantissa();
       char buffer[100];
       mantissa.serialize(buffer, 100);
-      UTF8Decoder decoder(buffer);
-      IntegerHandler::Parse(decoder, OMG::Base::Decimal).pushOnTreeStack();
+      Integer::Push(buffer, 100);
       Integer::Push(exponent);
       return;
     }

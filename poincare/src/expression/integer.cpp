@@ -68,7 +68,8 @@ void WorkingBuffer::garbageCollect(
 
 /* IntegerHandler */
 
-IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base) {
+IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base,
+                                     WorkingBuffer* workingBuffer) {
   NonStrictSign sign = NonStrictSign::Positive;
   if (decoder.nextCodePoint() == '-') {
     sign = NonStrictSign::Negative;
@@ -77,16 +78,15 @@ IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base) {
   }
   IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
-  WorkingBuffer workingBuffer;
-  uint8_t* const localStart = workingBuffer.localStart();
+  uint8_t* const localStart = workingBuffer->localStart();
   while (CodePoint codePoint = decoder.nextCodePoint()) {
-    IntegerHandler multiplication = Mult(result, baseInteger, &workingBuffer);
-    workingBuffer.garbageCollect({&baseInteger, &multiplication}, localStart);
+    IntegerHandler multiplication = Mult(result, baseInteger, workingBuffer);
+    workingBuffer->garbageCollect({&baseInteger, &multiplication}, localStart);
     IntegerHandler digit =
         IntegerHandler(OMG::Print::DigitForCharacter(codePoint));
     digit.setSign(sign);
-    result = Sum(multiplication, digit, false, &workingBuffer);
-    workingBuffer.garbageCollect({&baseInteger, &result}, localStart);
+    result = Sum(multiplication, digit, false, workingBuffer);
+    workingBuffer->garbageCollect({&baseInteger, &result}, localStart);
   }
   return result;
 }

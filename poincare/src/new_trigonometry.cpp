@@ -1,4 +1,5 @@
 #include <poincare/new_trigonometry.h>
+#include <poincare/src/expression/angle.h>
 
 namespace Poincare {
 
@@ -37,6 +38,10 @@ std::complex<T> NewTrigonometry::ConvertRadianToAngleUnit(
     return c * std::complex<T>((T)PiInAngleUnit(angleUnit) / (T)M_PI);
   }
   return c;
+}
+
+UserExpression NewTrigonometry::Period(Preferences::AngleUnit angleUnit) {
+  return UserExpression::Builder(Internal::Angle::Period(angleUnit));
 }
 
 template std::complex<float> NewTrigonometry::ConvertToRadian<float>(

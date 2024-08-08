@@ -11,22 +11,21 @@
 #include "dataset_adapter.h"
 
 namespace Poincare::Regression {
-using namespace API;
 
 static double toRadians() {
   return M_PI / Poincare::NewTrigonometry::PiInAngleUnit(
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
-UserExpression TrigonometricRegression::privateExpression(
+API::UserExpression TrigonometricRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*sin(bx+c)+d
-  return UserExpression::Create(
+  return API::UserExpression::Create(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1]),
-       .KC = UserExpression::FromDouble(modelCoefficients[2]),
-       .KD = UserExpression::FromDouble(modelCoefficients[3])});
+      {.KA = API::UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = API::UserExpression::FromDouble(modelCoefficients[1]),
+       .KC = API::UserExpression::FromDouble(modelCoefficients[2]),
+       .KD = API::UserExpression::FromDouble(modelCoefficients[3])});
 }
 
 double TrigonometricRegression::evaluate(const double* modelCoefficients,

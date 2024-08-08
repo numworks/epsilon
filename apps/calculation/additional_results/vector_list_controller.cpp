@@ -7,7 +7,6 @@
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/sign.h>
-#include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
 
@@ -96,7 +95,7 @@ void VectorListController::computeAdditionalResults(
       !sign.realSign().canBeStrictlyPositive()) {
     angle = UserExpression::Create(
         KSub(KA, KB),
-        {.KA = Internal::Angle::Period(ctx.m_angleUnit), .KB = angle});
+        {.KA = NewTrigonometry::Period(ctx.m_angleUnit), .KB = angle});
   }
   float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
       angle, context,

@@ -2,6 +2,7 @@
 #define POINCARE_NEW_TRIGONOMETRY_H
 
 #include <complex.h>
+#include <poincare/expression.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
@@ -18,6 +19,7 @@ class NewTrigonometry final {
   template <typename T>
   static std::complex<T> ConvertRadianToAngleUnit(
       const std::complex<T> c, Preferences::AngleUnit angleUnit);
+  static UserExpression Period(Preferences::AngleUnit angleUnit);
 };
 
 }  // namespace Poincare

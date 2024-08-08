@@ -8,7 +8,7 @@ DEBUG ?= 0
 PLATFORM ?= n0110
 ASSERTIONS ?= $(DEBUG)
 
-ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel
+ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 
 include $(PATH_haussmann)/Makefile
 

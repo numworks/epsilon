@@ -27,6 +27,8 @@ $(call create_goal,test, \
   sdl \
 )
 
+include build/coverage.mak
+
 ifeq ($(PLATFORM),web)
 $(call create_zip,epsilon%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
   epsilon%js \

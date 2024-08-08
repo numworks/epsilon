@@ -7,6 +7,7 @@
 
 #include <string>
 using namespace emscripten;
+using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
@@ -44,8 +45,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
     const JuniorExpression& exact, const JuniorExpression& approximate,
     Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
-  Internal::ProjectionContext ctx{.m_complexFormat = complexFormat,
-                                  .m_angleUnit = angleUnit};
+  ProjectionContext ctx{.m_complexFormat = complexFormat,
+                        .m_angleUnit = angleUnit};
   return ExactAndApproximateExpressionsAreStrictlyEqual(exact, approximate,
                                                         &ctx);
 }
@@ -57,7 +58,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<JuniorExpression, base<OExpression>>("PCR_Expression")
       .constructor<>()
       .class_function("Builder",
-                      select_overload<NewExpression(const Internal::Tree*)>(
+                      select_overload<NewExpression(const Tree*)>(
                           &JuniorExpression::Builder),
                       allow_raw_pointers())
       .class_function("ParseLatex", &ParseLatexFromString)

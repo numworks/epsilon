@@ -4,6 +4,7 @@
 #include <poincare/src/memory/tree_stack.h>
 
 using namespace emscripten;
+using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
@@ -14,7 +15,7 @@ EMSCRIPTEN_DECLARE_VAL_TYPE(Uint8Array);
 
 /* Copies Javascript Uint8Array bytes on the tree stack and then build
  * a tree from it */
-Internal::Tree* Uint8ArrayToPCRTree(const Uint8Array& jsTree) {
+Tree* Uint8ArrayToPCRTree(const Uint8Array& jsTree) {
   size_t treeSize = jsTree["length"].as<size_t>();
   if (treeSize == 0) {
     return nullptr;
@@ -25,17 +26,16 @@ Internal::Tree* Uint8ArrayToPCRTree(const Uint8Array& jsTree) {
    * find an easy way to access the raw address of the external tree buffer.
    * I tried to use `jsTree["buffer"].as<uint8_t*>` but emscripten wouldn't let
    * me access the pointer. */
-  Internal::TreeStack* stack = Internal::TreeStack::SharedTreeStack;
-  Internal::Block* destination = stack->lastBlock();
+  TreeStack* stack = TreeStack::SharedTreeStack;
+  Block* destination = stack->lastBlock();
   for (int i = 0; i < treeSize; i++) {
-    stack->insertBlock(destination + i,
-                       Internal::Block(jsTree[i].as<uint8_t>()), true);
+    stack->insertBlock(destination + i, Block(jsTree[i].as<uint8_t>()), true);
   }
-  return Internal::Tree::FromBlocks(destination);
+  return Tree::FromBlocks(destination);
 }
 
 // Create a JavaScript Uint8Array from the given tree
-Uint8Array PCRTreeToUint8Array(const Internal::Tree* tree) {
+Uint8Array PCRTreeToUint8Array(const Tree* tree) {
   if (!tree) {
     // Equivalent to the js code "new Uint8Array()"
     return Uint8Array(val::global("Uint8Array").new_());
@@ -50,7 +50,7 @@ Uint8Array PCRTreeToUint8Array(const Internal::Tree* tree) {
 
 EMSCRIPTEN_BINDINGS(tree_converter) {
   register_type<Uint8Array>("Uint8Array");
-  class_<Internal::Tree>("PCR_Tree")
+  class_<Tree>("PCR_Tree")
       .class_function("FromUint8Array", &Uint8ArrayToPCRTree,
                       allow_raw_pointers())
       .function("toUint8Array", &PCRTreeToUint8Array, allow_raw_pointers());

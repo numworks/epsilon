@@ -528,7 +528,7 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   if (highestDegreeCoefficientIsPositive) {
     const Tree* child = coefList->child(degree);
-    ComplexSign sign = ComplexSign::Get(child);
+    ComplexSign sign = GetComplexSign(child);
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
     assert(Dimension::Get(child).isScalar() &&
@@ -547,7 +547,7 @@ bool PolynomialParser::HasNonNullCoefficients(
   }
 
   for (const Tree* child : coefList->children()) {
-    ComplexSign sign = ComplexSign::Get(child);
+    ComplexSign sign = GetComplexSign(child);
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
     assert(Dimension::Get(child).isScalar() &&

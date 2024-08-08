@@ -1,9 +1,8 @@
 #ifndef POINCARE_EXPRESSION_NUMBER_H
 #define POINCARE_EXPRESSION_NUMBER_H
 
+#include <poincare/sign.h>
 #include <poincare/src/memory/tree_ref.h>
-
-#include "sign.h"
 
 namespace Poincare::Internal {
 
@@ -19,7 +18,7 @@ class Number {
 
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Multiplication(const Tree* e1, const Tree* e2);
-  static Internal::Sign Sign(const Tree* e);
+  static Poincare::Sign Sign(const Tree* e);
   static bool SetSign(Tree* e, NonStrictSign sign);
 };
 

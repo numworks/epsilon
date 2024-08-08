@@ -11,6 +11,7 @@
 #include "polynomial.h"
 #include "projection.h"
 #include "rational.h"
+#include "sign.h"
 #include "systematic_reduction.h"
 
 namespace Poincare::Internal {
@@ -307,7 +308,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   }
   const Tree* arg = e->child(0);
   bool isAsin = arg->nextTree()->isOne();
-  ComplexSign argSign = ComplexSign::Get(arg);
+  ComplexSign argSign = GetComplexSign(arg);
   if (argSign.isNull()) {
     e->cloneTreeOverTree(isAsin ? 0_e : KMult(1_e / 2_e, π_e));
     return true;

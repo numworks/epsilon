@@ -23,7 +23,6 @@
 #include "physical_constant.h"
 #include "random.h"
 #include "rational.h"
-#include "sign.h"
 #include "symbol.h"
 #include "undefined.h"
 #include "unit.h"

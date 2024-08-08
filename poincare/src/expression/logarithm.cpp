@@ -152,8 +152,8 @@ class PiInterval {
 bool CanGetArgSumModulo(const Tree* a, const Tree* b, int* k) {
   // a and b are not always known, find an interval for the sum of their arg.
   assert(!a->isZero() && !b->isZero());
-  PiInterval interval = PiInterval::Add(PiInterval::Arg(ComplexSign::Get(a)),
-                                        PiInterval::Arg(ComplexSign::Get(b)));
+  PiInterval interval = PiInterval::Add(PiInterval::Arg(GetComplexSign(a)),
+                                        PiInterval::Arg(GetComplexSign(b)));
   assert(interval.maxK() <= 1 && interval.minK() >= -1);
   *k = interval.maxK();
   return *k == interval.minK();
@@ -164,7 +164,7 @@ bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
   assert(b->isInteger() && !a->isZero() && !b->isOne());
   int bValue = Integer::Handler(b).to<int>();
   PiInterval interval =
-      PiInterval::Mult(PiInterval::Arg(ComplexSign::Get(a)), bValue);
+      PiInterval::Mult(PiInterval::Arg(GetComplexSign(a)), bValue);
   *k = interval.maxK();
   return *k == interval.minK();
 }

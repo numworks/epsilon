@@ -84,7 +84,7 @@ class JuniorExpressionNode final : public ExpressionNode {
 
   // Properties
   Type otype() const override { return Type::JuniorExpression; }
-  // Unimplemented. Use Internal::Sign API on SystemExpression's trees only.
+  // Unimplemented. Use Sign API on SystemExpression's trees only.
   OMG::Troolean isPositive(Context* context) const override {
     assert(false);
     return OMG::Troolean::Unknown;

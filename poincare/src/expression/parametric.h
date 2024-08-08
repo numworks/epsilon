@@ -1,9 +1,8 @@
 #ifndef POINCARE_EXPRESSION_PARAMETRIC_H
 #define POINCARE_EXPRESSION_PARAMETRIC_H
 
+#include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
-
-#include "sign.h"
 
 namespace Poincare::Internal {
 

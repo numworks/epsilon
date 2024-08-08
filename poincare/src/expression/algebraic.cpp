@@ -1,11 +1,11 @@
 #include "algebraic.h"
 
+#include <poincare/sign.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include "k_tree.h"
 #include "number.h"
 #include "rational.h"
-#include "sign.h"
 #include "systematic_reduction.h"
 
 namespace Poincare::Internal {

@@ -22,7 +22,6 @@
 #include <poincare/src/expression/order.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/polynomial.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/unit.h>

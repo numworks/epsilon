@@ -4,6 +4,8 @@
 #include <poincare/src/expression/variables.h>
 
 #include "helper.h"
+
+using namespace Poincare;
 using namespace Poincare::Internal;
 
 static_assert(Sign::Zero().isNull() && Sign::Zero().isInteger());
@@ -20,13 +22,13 @@ static_assert(ComplexSign::RealUnknown().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
               ComplexSign::RealInteger().isInteger());
 
-namespace Poincare::Internal {
+namespace Poincare {
 extern Sign RelaxIntegerProperty(Sign s);
 extern Sign DecimalFunction(Sign s, Type type);
 extern Sign Opposite(Sign s);
 extern Sign Mult(Sign s1, Sign s2);
 extern Sign Add(Sign s1, Sign s2);
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 QUIZ_CASE(pcj_sign_methods) {
   // OR operator
@@ -277,13 +279,13 @@ void assert_sign(const char* input, ComplexSign expectedSign,
   Tree* expression = TextToTree(input);
   ProjectionContext ctx = {.m_complexFormat = complexFormat};
   Simplification::ProjectAndReduce(expression, &ctx, false);
-  bool result = ComplexSign::Get(expression) == expectedSign;
+  bool result = GetComplexSign(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {
     std::cout << input << " -> ";
     expression->logSerialize();
     std::cout << "\t\t\tWrong Sign: ";
-    ComplexSign::Get(expression).log();
+    GetComplexSign(expression).log();
     std::cout << "\t\t\tInstead of: ";
     expectedSign.log();
   }

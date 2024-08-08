@@ -1,8 +1,8 @@
 #include <poincare/old/serialization_helper.h>
 #include <poincare/print_float.h>
+#include <poincare/sign.h>
 
 #include "integer.h"
-#include "sign.h"
 
 using Poincare::Preferences;
 using Poincare::PrintFloat;

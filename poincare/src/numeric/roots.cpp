@@ -22,7 +22,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
     return delta;
   }
   // TODO: Approximate if unsure
-  ComplexSign deltaSign = ComplexSign::Get(delta);
+  ComplexSign deltaSign = GetComplexSign(delta);
   if (deltaSign.isNull()) {
     delta->removeTree();
     // -B/2A
@@ -40,7 +40,7 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c) {
             KPow(KA, -1_e)),
       {.KA = a, .KB = b, .KC = delta});
   // TODO: Approximate if unsure
-  ComplexSign aSign = ComplexSign::Get(a);
+  ComplexSign aSign = GetComplexSign(a);
   if (aSign.isReal() && aSign.realSign().isNegative()) {
     // Switch roots for a consistent order
     root1->detachTree();

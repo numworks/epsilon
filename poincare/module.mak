@@ -6,6 +6,7 @@ _sources_poincare_minimal := $(addprefix src/, \
   new_trigonometry.cpp \
   preferences.cpp \
   print_float.cpp \
+  sign.cpp \
   old/helpers.cpp \
   old/integer.cpp \
   old/serialization_helper.cpp \
@@ -219,7 +220,6 @@ $(addprefix expression/, \
   sequence.cpp \
   sequence_cache.cpp \
   set.cpp \
-  sign.cpp \
   simplification.cpp \
   symbol.cpp \
   systematic_addition.cpp \

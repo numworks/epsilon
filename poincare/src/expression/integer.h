@@ -4,10 +4,9 @@
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
 #include <omg/utf8_decoder.h>
+#include <poincare/sign.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
-
-#include "sign.h"
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

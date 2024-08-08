@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "list.h"
 #include "random.h"
+#include "sign.h"
 #include "systematic_reduction.h"
 #include "unit.h"
 #include "variables.h"
@@ -192,7 +193,7 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
     Tree* approximatedTree = Approximation::RootTreeToTree<double>(e);
     std::complex<double> value =
         Approximation::ToComplex<double>(approximatedTree);
-    assert(AreConsistent(ComplexSign::Get(e), value));
+    assert(AreConsistent(GetComplexSign(e), value));
     approximatedTree->removeTree();
   }
 #endif

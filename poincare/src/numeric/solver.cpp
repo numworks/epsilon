@@ -144,7 +144,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       return nextRoot(e->child(0));
 
     default:
-      if (!ComplexSign::Get(e).canBeNull()) {
+      if (!GetComplexSign(e).canBeNull()) {
         registerSolution(Coordinate2D<T>(), Interest::None);
         return Coordinate2D<T>();
       }

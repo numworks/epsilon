@@ -2,12 +2,12 @@
 #define POINCARE_EXPRESSION_K_TREE_H
 
 #include <omg/arithmetic.h>
+#include <poincare/sign.h>
 #include <poincare/src/memory/k_tree.h>
 
 #include <bit>
 
 #include "parametric.h"
-#include "sign.h"
 
 namespace Poincare::Internal {
 namespace KTrees {

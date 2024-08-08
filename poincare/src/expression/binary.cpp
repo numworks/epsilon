@@ -6,6 +6,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "k_tree.h"
+#include "sign.h"
 
 namespace Poincare::Internal {
 
@@ -132,8 +133,8 @@ bool Binary::ReduceComparison(Tree* e) {
   assert(e->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
   if (e->isInequality()) {
-    ComplexSign signA = ComplexSign::Get(e->child(0));
-    ComplexSign signB = ComplexSign::Get(e->child(1));
+    ComplexSign signA = GetComplexSign(e->child(0));
+    ComplexSign signB = GetComplexSign(e->child(1));
     if (signA.isNonReal() || signB.isNonReal()) {
       e->cloneTreeOverTree(KBadType);
       return true;
@@ -143,8 +144,7 @@ bool Binary::ReduceComparison(Tree* e) {
       return false;
     }
   }
-  ComplexSign complexSign =
-      ComplexSign::SignOfDifference(e->child(0), e->child(1));
+  ComplexSign complexSign = ComplexSignOfDifference(e->child(0), e->child(1));
   const Tree* result = nullptr;
   if (!e->isInequality()) {
     // = or !=

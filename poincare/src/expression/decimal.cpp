@@ -10,7 +10,6 @@
 #include <algorithm>
 
 #include "integer.h"
-#include "sign.h"
 
 namespace Poincare::Internal {
 

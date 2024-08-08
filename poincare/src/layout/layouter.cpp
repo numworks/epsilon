@@ -859,7 +859,7 @@ bool Layouter::ImplicitAddition(const Tree* addition) {
           child->child(1)->isUnit())) {
       return false;
     }
-    ComplexSign sign = ComplexSign::Get(child->child(0));
+    ComplexSign sign = GetComplexSign(child->child(0));
     if (!sign.isReal() || !sign.realSign().isPositive()) {
       return false;
     }

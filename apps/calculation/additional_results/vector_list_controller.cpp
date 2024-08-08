@@ -53,8 +53,7 @@ void VectorListController::computeAdditionalResults(
   SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  Internal::ComplexSign sign =
-      Internal::ComplexSign::Get(approximatedNorm.tree());
+  ComplexSign sign = Internal::GetComplexSign(approximatedNorm.tree());
   assert(sign.isReal() && !sign.realSign().canBeStrictlyNegative());
   if (sign.canBeNull() ||
       SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
@@ -90,7 +89,7 @@ void VectorListController::computeAdditionalResults(
   SystemExpression yApprox = PoincareHelpers::Approximate<double>(
       normalized.cloneChildAtIndex(1), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  sign = Internal::ComplexSign::Get(yApprox.tree());
+  sign = Internal::GetComplexSign(yApprox.tree());
   // HasVector should be false if any vector's child is complex.
   assert(sign.isReal());
   if (sign.realSign().canBeStrictlyNegative() &&

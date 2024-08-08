@@ -10,7 +10,7 @@ OMG::Troolean Domain::ExpressionIsIn(const Tree* e, Type type) {
     return OMG::Troolean::False;
   }
 
-  ComplexSign sign = ComplexSign::Get(e);
+  ComplexSign sign = GetComplexSign(e);
 
   if (!sign.isReal()) {
     return OMG::Troolean::Unknown;

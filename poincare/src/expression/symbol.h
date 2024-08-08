@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSION_SYMBOL_H
 #define POINCARE_EXPRESSION_SYMBOL_H
 
+#include <poincare/sign.h>
+
 #include "context.h"
 #include "k_tree.h"
 
 namespace Poincare::Internal {
-
-class ComplexSign;
 
 class Symbol final {
  public:

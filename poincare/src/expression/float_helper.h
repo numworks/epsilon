@@ -2,12 +2,11 @@
 #define POINCARE_EXPRESSION_FLOAT_HELPER_H
 
 #include <omg/bit_helper.h>
+#include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include <bit>
-
-#include "sign.h"
 
 namespace Poincare::Internal {
 

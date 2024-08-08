@@ -1,11 +1,12 @@
+#include <poincare/sign.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <quiz.h>
 
 #include "helper.h"
 
+using namespace Poincare;
 using namespace Poincare::Internal;
 
 static Tree* CreateInteger(const char* digits) {

@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "list.h"
 #include "rational.h"
+#include "sign.h"
 #include "systematic_reduction.h"
 
 namespace Poincare::Internal {
@@ -20,7 +21,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
   TreeRef n = base->nextTree();
   if (Infinity::IsPlusOrMinusInfinity(n) &&
       (base->isOne() || base->isMinusOne() ||
-       ComplexSign::Get(base).isNonReal())) {
+       GetComplexSign(base).isNonReal())) {
     // (±1)^(±inf) -> undef
     // complex^(±inf) -> undef
     e->cloneTreeOverTree(KUndef);
@@ -38,7 +39,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
       e->cloneTreeOverTree(KUndef);
       return true;
     }
-    ComplexSign nSign = ComplexSign::Get(n);
+    ComplexSign nSign = GetComplexSign(n);
     if (nSign.isNonReal()) {
       // (±inf)^i -> undef
       e->cloneTreeOverTree(KUndef);
@@ -66,7 +67,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
     }
   }
   if (base->isZero()) {
-    ComplexSign indexSign = ComplexSign::Get(n);
+    ComplexSign indexSign = GetComplexSign(n);
     if (indexSign.realSign().isStrictlyPositive()) {
       // 0^x is always defined.
       e->cloneTreeOverTree(0_e);
@@ -92,7 +93,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
   }
   // base^0 -> 1
   if (n->isZero()) {
-    if (ComplexSign::Get(base).canBeNull()) {
+    if (GetComplexSign(base).canBeNull()) {
       return PatternMatching::MatchReplace(e, KA, KDep(1_e, KDepList(KA)));
     }
     e->cloneTreeOverTree(1_e);
@@ -118,8 +119,8 @@ bool SystematicOperation::ReducePower(Tree* e) {
   if (base->isPow()) {
     TreeRef p = base->child(1);
     assert(p->nextTree() == static_cast<Tree*>(n));
-    ComplexSign nSign = ComplexSign::Get(n);
-    ComplexSign pSign = ComplexSign::Get(p);
+    ComplexSign nSign = GetComplexSign(n);
+    ComplexSign pSign = GetComplexSign(p);
     assert(nSign.isReal() && pSign.isReal());
     if (nSign.realSign().canBeStrictlyNegative() &&
         pSign.realSign().canBeStrictlyNegative()) {
@@ -168,8 +169,8 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
    */
   Tree* x = e->child(0);
   Tree* y = x->nextTree();
-  ComplexSign xSign = ComplexSign::Get(x);
-  ComplexSign ySign = ComplexSign::Get(y);
+  ComplexSign xSign = GetComplexSign(x);
+  ComplexSign ySign = GetComplexSign(y);
   if (Infinity::IsPlusOrMinusInfinity(x) ||
       Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger() ||
       (xSign.isReal() && xSign.realSign().isPositive())) {
@@ -217,7 +218,7 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
 bool SystematicOperation::ReduceLnReal(Tree* e) {
   assert(e->isLnReal());
   // Under real mode, input ln(x) must return nonreal if x < 0
-  ComplexSign childSign = ComplexSign::Get(e->child(0));
+  ComplexSign childSign = GetComplexSign(e->child(0));
   if (childSign.realSign().isStrictlyNegative() || childSign.isNonReal()) {
     // Child can't be real, positive or null
     e->cloneTreeOverTree(KNonReal);
@@ -240,7 +241,7 @@ bool SystematicOperation::ReduceLnReal(Tree* e) {
 bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
   const Tree* child = e->child(0);
-  ComplexSign childSign = ComplexSign::Get(child);
+  ComplexSign childSign = GetComplexSign(child);
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
   if (!realSign.isKnown()) {
@@ -279,7 +280,7 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   assert(e->isRe() || e->isIm());
   bool isRe = e->isRe();
   Tree* child = e->child(0);
-  ComplexSign childSign = ComplexSign::Get(child);
+  ComplexSign childSign = GetComplexSign(child);
   if (childSign.isPure()) {
     if (isRe != childSign.isReal()) {
       // re(x) = 0 or im(x) = 0
@@ -304,7 +305,7 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   int nbChildrenOut = 0;
   Tree* elem = child->child(0);
   for (int i = 0; i < nbChildren; i++) {
-    ComplexSign elemSign = ComplexSign::Get(elem);
+    ComplexSign elemSign = GetComplexSign(elem);
     if (elemSign.isPure()) {
       if (isRe != elemSign.isReal()) {
         // re(x) = 0 or im(x) = 0
@@ -353,7 +354,7 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
 bool SystematicOperation::ReduceSign(Tree* e) {
   assert(e->isSign());
   const Tree* child = e->child(0);
-  ComplexSign sign = ComplexSign::Get(child);
+  ComplexSign sign = GetComplexSign(child);
   const Tree* result;
   if (sign.isNull()) {
     result = 0_e;
@@ -465,7 +466,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
     assert(!ReduceAbs(e));
     return true;
   }
-  ComplexSign complexSign = ComplexSign::Get(child);
+  ComplexSign complexSign = GetComplexSign(child);
   if (!complexSign.isPure()) {
     return false;
   }

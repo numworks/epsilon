@@ -14,7 +14,7 @@
 #endif
 
 // TODO: used only for pushVar
-#include <poincare/src/expression/sign.h>
+#include <poincare/sign.h>
 
 namespace Poincare {
 class JuniorLayout;

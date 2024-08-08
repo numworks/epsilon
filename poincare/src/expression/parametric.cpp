@@ -64,7 +64,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   bool isSum = e->isSum();
   Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
-  ComplexSign sign = ComplexSign::SignOfDifference(lowerBound, upperBound);
+  ComplexSign sign = ComplexSignOfDifference(lowerBound, upperBound);
   // TODO: what about when bounds are not integer but diff is integer ?
   if (!sign.isReal()) {
     return false;
@@ -226,7 +226,7 @@ bool Parametric::ContractSum(Tree* e) {
           e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KB, KF, KD))),
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
+        ComplexSignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -248,7 +248,7 @@ bool Parametric::ContractSum(Tree* e) {
           e, KAdd(KSum(KA, KB, KC, KD), KMult(-1_e, KSum(KE, KF, KC, KD))),
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
+        ComplexSignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -280,7 +280,7 @@ bool Parametric::ContractProduct(Tree* e) {
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KB, KF, KD), -1_e)),
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
+        ComplexSignOfDifference(ctx.getTree(KC), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {
@@ -303,7 +303,7 @@ bool Parametric::ContractProduct(Tree* e) {
           KMult(KProduct(KA, KB, KC, KD), KPow(KProduct(KE, KF, KC, KD), -1_e)),
           &ctx)) {
     ComplexSign sign =
-        ComplexSign::SignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
+        ComplexSignOfDifference(ctx.getTree(KB), ctx.getTree(KF));
     Sign realSign = sign.realSign();
     if (sign.isReal() && (realSign.isNull() || realSign.isStrictlyPositive() ||
                           realSign.isStrictlyNegative())) {

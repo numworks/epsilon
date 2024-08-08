@@ -269,12 +269,12 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   for (uint8_t row = 0; row < rows; row++) {
     bool allCoefficientsNull = true;
     for (uint8_t col = 0; col < n; col++) {
-      if (allCoefficientsNull && !Sign::Get(coefficient).isNull()) {
+      if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
         allCoefficientsNull = false;
       }
       coefficient = coefficient->nextTree();
     }
-    if (allCoefficientsNull && !Sign::Get(coefficient).isNull()) {
+    if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
       /* Row j describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();

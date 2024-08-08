@@ -1,11 +1,12 @@
+#include <poincare/sign.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
-#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <quiz.h>
 
 #include "helper.h"
 
+using namespace Poincare;
 using namespace Poincare::Internal;
 
 static bool integer_handler_same_absolute_value(IntegerHandler a,

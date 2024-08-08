@@ -1,10 +1,9 @@
 #include "symbol.h"
 
+#include <poincare/sign.h>
 #include <string.h>
 
 #include <algorithm>
-
-#include "sign.h"
 
 namespace Poincare::Internal {
 

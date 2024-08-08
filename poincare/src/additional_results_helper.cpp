@@ -4,6 +4,7 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/expression/unit_representatives.h>
@@ -44,7 +45,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   if (!directTrigonometry) {
     approximateAngleTree = approximateOutput.tree()->cloneTree();
     assert(approximateAngleTree && !approximateAngleTree->isUndefined());
-    if (Sign::Get(approximateAngleTree).isStrictlyNegative()) {
+    if (GetSign(approximateAngleTree).isStrictlyNegative()) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
       approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
           KAdd(KA, KB), {.KA = period, .KB = approximateAngleTree}));

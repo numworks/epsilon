@@ -1,10 +1,10 @@
 #ifndef POINCARE_EXPRESSION_RATIONAL_H
 #define POINCARE_EXPRESSION_RATIONAL_H
 
+#include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 
 #include "integer.h"
-#include "sign.h"
 
 namespace Poincare::Internal {
 
@@ -21,8 +21,8 @@ class Rational final {
   }
   static IntegerHandler Numerator(const Tree* e);
   static IntegerHandler Denominator(const Tree* e);
-  static Internal::Sign Sign(const Tree* e) {
-    return Internal::Sign(e->isZero(), e->isStrictlyPositiveRational(),
+  static Poincare::Sign Sign(const Tree* e) {
+    return Poincare::Sign(e->isZero(), e->isStrictlyPositiveRational(),
                           e->isStrictlyNegativeRational(), !e->isInteger());
   }
   static bool SetSign(Tree* e, NonStrictSign sign);

@@ -76,7 +76,7 @@ void ExpressionsListController::tidy() {
     m_layouts[i] = Layout();
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
-    m_isStrictlyEqual[i] = true;
+    m_isStrictlyEqual[i] = false;
   }
 }
 

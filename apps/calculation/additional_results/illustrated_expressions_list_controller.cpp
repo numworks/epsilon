@@ -86,7 +86,6 @@ void IllustratedExpressionsListController::setLineAtIndex(
     const Internal::ProjectionContext* ctx) {
   m_layouts[index] =
       Shared::PoincareHelpers::CreateLayout(formula, ctx->m_context);
-  Layout approximated;
   m_exactLayouts[index] = GetExactLayoutFromExpression(
       expression, ctx, &(m_approximatedLayouts[index]),
       &(m_isStrictlyEqual[index]));
@@ -110,8 +109,13 @@ Layout IllustratedExpressionsListController::GetExactLayoutFromExpression(
                            : Shared::PoincareHelpers::CreateLayout(
                                  exactExpression, ctx->m_context);
   if (approximate) {
+    if (approximateExpression.isUndefined()) {
+      // Hide exact layout if approximation is undef (e.g tan(1.5707963267949))
+      exactLayout = Layout();
+      *approximate = approximateLayout;
+    }
     /* Make it editable to compare equivalent layouts. */
-    if (exactLayout.isIdenticalTo(approximateLayout, true)) {
+    else if (exactLayout.isIdenticalTo(approximateLayout, true)) {
       *approximate = Layout();
     } else {
       *approximate = approximateLayout;

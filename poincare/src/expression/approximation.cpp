@@ -1289,10 +1289,6 @@ bool Approximation::CanApproximate(const Tree* e,
   return true;
 }
 
-bool IsNonListScalar(const Tree* e) {
-  return Dimension::Get(e).isScalar() && !Dimension::IsList(e);
-}
-
 bool SkipApproximation(TypeBlock type) {
   return type.isFloat() || type.isComplexI();
 }
@@ -1328,7 +1324,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   s_context = &context;
   uint32_t hash = e->hash();
   bool result = false;
-  if (CanApproximate(e) && IsNonListScalar(e)) {
+  if (CanApproximate(e) && Dimension::IsNonListScalar(e)) {
     e->moveTreeOverTree(ToTree<double>(e, Dimension()));
     result = true;
   } else {
@@ -1342,14 +1338,14 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
 }
 
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* e) {
-  assert(!CanApproximate(e) || !IsNonListScalar(e));
+  assert(!CanApproximate(e) || !Dimension::IsNonListScalar(e));
   bool changed = false;
   int childIndex = 0;
   for (Tree* child : e->children()) {
     if (SkipApproximation(child->type(), e->type(), childIndex++)) {
       continue;
     }
-    if (CanApproximate(child) && IsNonListScalar(child)) {
+    if (CanApproximate(child) && Dimension::IsNonListScalar(child)) {
       child->moveTreeOverTree(ToTree<double>(child, Dimension()));
       changed = true;
     } else {

@@ -76,6 +76,9 @@ struct Dimension {
   static bool DeepCheck(const Tree* e, Poincare::Context* ctx = nullptr) {
     return DeepCheckDimensions(e, ctx) && DeepCheckListLength(e, ctx);
   }
+  static bool IsNonListScalar(const Tree* e) {
+    return Get(e).isScalar() && !IsList(e);
+  }
 
   DimensionType type;
   union {

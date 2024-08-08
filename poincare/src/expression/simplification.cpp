@@ -167,7 +167,7 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   /* The following block verifies that the ComplexSign logic is correct, by
     checking that the ComplexSign of the tree is consistent with the tree
     approximation. */
-  if (Dimension::Get(e).isScalar() && !Dimension::IsList(e)) {
+  if (Dimension::IsNonListScalar(e)) {
     /* FIXME: The tree approximation is computed in two steps: first calling
      * RootTreeToTree to have a proper management of Approximation::s_context,
      * then by applying ToComplex on the resulting tree. It would be better to

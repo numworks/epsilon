@@ -191,6 +191,11 @@ bool IntegerHandler::is<int8_t>() const {
 }
 
 template <>
+bool IntegerHandler::is<uint16_t>() const {
+  return isUnsignedType<uint16_t>();
+}
+
+template <>
 bool IntegerHandler::is<int>() const {
   return isSignedType<int>();
 }

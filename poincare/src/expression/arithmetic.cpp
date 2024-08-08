@@ -425,7 +425,8 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     result.numberOfFactors = 0;
     return result;
   }
-  result.factors[t] = m.to<float>();  // TODO use uint16 when rebased
+  assert(m.is<uint16_t>());
+  result.factors[t] = m.to<int>();
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;
   return result;

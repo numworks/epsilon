@@ -170,10 +170,10 @@ RANGE(Logarithm, Ln, LogBase)
 // 3 - Other expressions in Alphabetic order
 
 NODE(Abs, 1)
+NODE(Arg, 1)
 NODE(Binomial, 2)
 NODE(Ceil, 1)
 NODE(ComplexI)
-NODE(Arg, 1)
 NODE(Conj, 1)
 // Decimal(Value, -Exponent)
 NODE(Decimal, 2)

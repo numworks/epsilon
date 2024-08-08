@@ -139,10 +139,13 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
     return true;
   }
   if (((searched->isLn() && container->isLnReal()) ||
+       (searched->isPow() && container->isPowReal() &&
+        searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
        (searched->isTrig() && container->isTrig())) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
-    // lnReal(x) contains ln(x)
-    // sin(x) contains cos(x) and inversely
+    /* lnReal(x) contains ln(x)
+     * powReal(x,y) contains pow(x,y)
+     * sin(x) contains cos(x) and inversely */
     return true;
   }
   // TODO_PCJ if power and same type of power return true

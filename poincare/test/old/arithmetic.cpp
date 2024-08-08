@@ -23,27 +23,27 @@ void fill_buffer_with(char* buffer, size_t bufferSize, const char* functionName,
   strlcpy(buffer + numberOfChar, ")", bufferSize - numberOfChar);
 }
 
-#if 0
-void assert_gcd_equals_to(Integer a, Integer b, Integer c) {
+void assert_gcd_equals_to(IntegerHandler a, IntegerHandler b,
+                          IntegerHandler c) {
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
-  Integer args[2] = {a, b};
+  IntegerHandler args[2] = {a, b};
   fill_buffer_with(failInformationBuffer, bufferSize, "gcd(", args, 2);
-  Integer gcd = Arithmetic::GCD(a, b);
-  quiz_assert_print_if_failure(gcd.isEqualTo(c), failInformationBuffer);
-  if (a.isExtractable() && b.isExtractable()) {
+  IntegerHandler gcd = Integer::Handler(IntegerHandler::GCD(a, b));
+  quiz_assert_print_if_failure(IntegerHandler::Compare(gcd, c) == 0,
+                               failInformationBuffer);
+  if (a.is<int>() && b.is<int>()) {
     // Test Arithmetic::GCD(int, int) if possible
-    bool isUndefined = false;
-    a.setNegative(false);
-    b.setNegative(false);
-    int extractedGcd =
-        Arithmetic::GCD(a.extractedInt(), b.extractedInt(), &isUndefined);
+    a.setSign(NonStrictSign::Positive);
+    b.setSign(NonStrictSign::Positive);
+    int extractedGcd = Arithmetic::GCD(a.to<int>(), b.to<int>());
     quiz_assert_print_if_failure(
-        c.isExtractable() ? extractedGcd == c.extractedInt() : isUndefined,
+        c.is<int>() ? extractedGcd == c.to<int>() : true,
         failInformationBuffer);
   }
 }
 
+#if 0
 void assert_lcm_equals_to(Integer a, Integer b, Integer c) {
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
@@ -120,13 +120,13 @@ IntegerHandler ParseHandler(const char* str) {
 }
 
 QUIZ_CASE(poincare_arithmetic_gcd) {
-#if 0
   assert_gcd_equals_to(IntegerHandler(11), IntegerHandler(121),
                        IntegerHandler(11));
   assert_gcd_equals_to(IntegerHandler(-256), IntegerHandler(321),
                        IntegerHandler(1));
   assert_gcd_equals_to(IntegerHandler(-8), IntegerHandler(-40),
                        IntegerHandler(8));
+#if 0  // TODO_PCJ: fixme
   assert_gcd_equals_to(ParseHandler("1234567899876543456"),
                        ParseHandler("234567890098765445678"),
                        IntegerHandler(2));

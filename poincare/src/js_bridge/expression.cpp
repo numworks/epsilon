@@ -16,13 +16,19 @@ UserExpression ParseLatexFromString(std::string latex) {
   return JuniorExpression::ParseLatex(latex.c_str(), &context);
 }
 
-std::string toLatexString(const UserExpression* expression) {
+std::string toLatexString(const UserExpression* expression,
+                          int numberOfSignificantDigits) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
   expression->toLatex(buffer, k_bufferSize,
-                      Preferences::PrintFloatMode::Decimal, 7, &context);
+                      Preferences::PrintFloatMode::Decimal,
+                      numberOfSignificantDigits, &context);
   return std::string(buffer, strlen(buffer));
+}
+
+std::string toLatexStringWith7Digits(const UserExpression* expression) {
+  return toLatexString(expression, 7);
 }
 
 SystemFunction getSystemFunctionFromString(const SystemExpression* expression,
@@ -66,6 +72,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("tree", &JuniorExpression::tree, allow_raw_pointers())
       .function("toLatex", &toLatexString, allow_raw_pointers())
+      .function("toLatex", &toLatexStringWith7Digits, allow_raw_pointers())
       .function("cloneAndReduce", &JuniorExpression::cloneAndReduce)
       .function("cloneAndBeautify", &JuniorExpression::cloneAndBeautify)
       .function("getSystemFunction", &getSystemFunctionFromString,

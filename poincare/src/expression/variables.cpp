@@ -152,7 +152,7 @@ void Variables::ReplaceUserFunctionOrSequenceWithTree(Tree* e,
   e->cloneTreeOverTree(replacement);
   if (!e->deepReplaceWith(KUnknownSymbol, evaluateAt)) {
     // If f(x) does not depend on x, add a dependency on x
-    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDependencies(KB)),
+    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
                                                 {.KA = e, .KB = evaluateAt}));
   }
   evaluateAt->removeTree();

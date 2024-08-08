@@ -69,10 +69,10 @@ QUIZ_CASE(pcj_simplification_expansion) {
                  KMult(2_e, "x"_e, "z"_e), KMult(2_e, "y"_e, "z"_e),
                  KPow("z"_e, 2_e)));
   expand_to(KList(KDep(KMult("a"_e, KAdd("b"_e, "c"_e)),
-                       KDependencies(KMult("a"_e, KAdd("b"_e, "c"_e)))),
+                       KDepList(KMult("a"_e, KAdd("b"_e, "c"_e)))),
                   KMult("a"_e, KAdd("b"_e, "c"_e))),
             KList(KDep(KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e)),
-                       KDependencies(KMult("a"_e, KAdd("b"_e, "c"_e)))),
+                       KDepList(KMult("a"_e, KAdd("b"_e, "c"_e)))),
                   KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e))));
 }
 
@@ -814,29 +814,27 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("[[1,undef]]", "[[1,undef]]");
   simplifies_to("(1,undef)", "(1,undef)");
 
-  Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KDependencies(0_e)), 4_e)->cloneTree();
-  const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KDependencies(0_e));
+  Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KDepList(0_e)), 4_e)->cloneTree();
+  const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KDepList(0_e));
   Dependency::ShallowBubbleUpDependencies(e1);
   assert_trees_are_equal(e1, r1);
 
-  Tree* e2 = KAdd(KDep(KMult(2_e, 3_e), KDependencies(0_e)), 4_e,
-                  KDep(5_e, KDependencies(6_e)))
-                 ->cloneTree();
-  const Tree* r2 =
-      KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KDependencies(0_e, 6_e));
+  Tree* e2 =
+      KAdd(KDep(KMult(2_e, 3_e), KDepList(0_e)), 4_e, KDep(5_e, KDepList(6_e)))
+          ->cloneTree();
+  const Tree* r2 = KDep(KAdd(KMult(2_e, 3_e), 4_e, 5_e), KDepList(0_e, 6_e));
   Dependency::ShallowBubbleUpDependencies(e2);
   assert_trees_are_equal(e2, r2);
 
   ProjectionContext context;
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->cloneTree();
-  const Tree* r3 = KDep(3_e, KDependencies(KPow("a"_e, 0_e)));
+  const Tree* r3 = KDep(3_e, KDepList(KPow("a"_e, 0_e)));
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   assert_trees_are_equal(e3, r3);
 
-  Tree* e4 =
-      KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDependencies(KAbs("x"_e), "z"_e)))
-          ->cloneTree();
-  const Tree* r4 = KDep(1_e, KDependencies(KAbs("y"_e), "z"_e));
+  Tree* e4 = KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDepList(KAbs("x"_e), "z"_e)))
+                 ->cloneTree();
+  const Tree* r4 = KDep(1_e, KDepList(KAbs("y"_e), "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   assert_trees_are_equal(e4, r4);
 }

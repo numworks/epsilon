@@ -120,17 +120,16 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*[[1]]"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{2}*_m"));
 
-  QUIZ_ASSERT(dim(KDep(1_e, KDependencies(1_e, 2_e)), Scalar));
+  QUIZ_ASSERT(dim(KDep(1_e, KDepList(1_e, 2_e)), Scalar));
+  QUIZ_ASSERT(dim(KDep(KMatrix<1, 1>(1_e), KDepList(1_e, 2_e)), Matrix(1, 1)));
   QUIZ_ASSERT(
-      dim(KDep(KMatrix<1, 1>(1_e), KDependencies(1_e, 2_e)), Matrix(1, 1)));
-  QUIZ_ASSERT(
-      len(KDep(1_e, KDependencies(1_e, KList(1_e, 2_e), KList(1_e, 2_e))), 2));
+      len(KDep(1_e, KDepList(1_e, KList(1_e, 2_e), KList(1_e, 2_e))), 2));
   QUIZ_ASSERT(len(
-      KDep(KList(1_e, 2_e), KDependencies(1_e, KListSequence("k"_e, 2_e, KVarK),
-                                          KList(1_e, 2_e))),
+      KDep(KList(1_e, 2_e),
+           KDepList(1_e, KListSequence("k"_e, 2_e, KVarK), KList(1_e, 2_e))),
       2));
   QUIZ_ASSERT(hasInvalidDimOrLen(
-      KDep(1_e, KDependencies(1_e, KList(1_e, 2_e), KList(1_e, 2_e, 3_e)))));
+      KDep(1_e, KDepList(1_e, KList(1_e, 2_e), KList(1_e, 2_e, 3_e)))));
 
   // Pow
   QUIZ_ASSERT(dim("[[1,2][3,4]]^3", Matrix(2, 2)));

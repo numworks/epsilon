@@ -117,7 +117,7 @@ constexpr auto KAdd = KNAry<Type::Add>();
 constexpr auto KMult = KNAry<Type::Mult>();
 constexpr auto KList = KNAry<Type::List>();
 constexpr auto KSet = KNAry<Type::Set>();
-constexpr auto KDependencies = KNAry<Type::Dependencies>();
+constexpr auto KDepList = KNAry<Type::DepList>();
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 
 template <uint8_t Id, uint8_t sign>

@@ -22,7 +22,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
     e->removeNode();
     return true;
   }
-  TreeRef finalSet = KDependencies()->cloneTree();
+  TreeRef finalSet = KDepList()->cloneTree();
   int i = 0;
   for (Tree* child : e->children()) {
     if (child->isDep() && !Undefined::CanHaveUndefinedChild(e, i)) {
@@ -44,7 +44,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
            *   (especially difficult in the advanced and systematic reduction).
            */
           int numberOfDependencies = childSet->numberOfChildren();
-          TreeRef set = SharedTreeStack->pushDependencies(numberOfDependencies);
+          TreeRef set = SharedTreeStack->pushDepList(numberOfDependencies);
           for (int j = 0; j < numberOfDependencies; j++) {
             if (Variables::HasVariable(childSet->child(0),
                                        Parametric::k_localVariableId)) {
@@ -151,7 +151,7 @@ bool RemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
   // TODO: This function uses Set as an Nary which is an implementation detail
-  assert(set->isDependencies());
+  assert(set->isDepList());
   bool changed = false;
   Tree* depI = set->child(0);
   for (int i = 0; i < set->numberOfChildren(); i++) {

@@ -332,9 +332,9 @@ NODE(PhysicalConstant, 0, { uint8_t constantId; })
 
 NODE(Piecewise, NARY)
 
-// Dep(expression, Dependencies(dep1, …, depN))
+// Dep(expression, DepList(dep1, …, depN))
 NODE(Dep, 2)
-NODE(Dependencies, NARY)
+NODE(DepList, NARY)
 
 NODE(Set, NARY)
 NODE(Parentheses, 1)

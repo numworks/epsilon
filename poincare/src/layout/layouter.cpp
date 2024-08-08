@@ -72,7 +72,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
 
     case Type::Point:
     case Type::Set:
-    case Type::Dependencies:
+    case Type::DepList:
     case Type::List:
       return 18;
     case Type::Store:
@@ -627,7 +627,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     case Type::List:
     case Type::Set:
-    case Type::Dependencies:
+    case Type::DepList:
     case Type::Point:
       if (m_linearMode) {
         PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');

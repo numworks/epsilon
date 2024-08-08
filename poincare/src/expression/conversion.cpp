@@ -209,7 +209,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* e) {
             ToPoincareExpression(e->child(2)));
       }
       case Type::Dep: {
-        assert(Dependency::Dependencies(e)->isDependencies());
+        assert(Dependency::Dependencies(e)->isDepList());
         Poincare::OList listOfDependencies = Poincare::OList::Builder();
         for (const Tree* child : Dependency::Dependencies(e)->children()) {
           listOfDependencies.addChildAtIndexInPlace(ToPoincareExpression(child),
@@ -333,7 +333,7 @@ Poincare::OExpression ToPoincareExpression(const Tree* e) {
       return Poincare::Sequence::Builder(Symbol::GetName(e), Symbol::Length(e),
                                          ToPoincareExpression(e->child(0)));
     case Type::Set:
-    case Type::Dependencies:
+    case Type::DepList:
     case Type::Polynomial:
     default:
       return Poincare::Undefined::Builder();

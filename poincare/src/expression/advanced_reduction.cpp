@@ -107,7 +107,7 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
 }
 
 bool SkipTree(const Tree* e) {
-  return e->block() < SharedTreeStack->lastBlock() && e->isDependencies();
+  return e->block() < SharedTreeStack->lastBlock() && e->isDepList();
 }
 
 Tree* NextNode(Tree* e) {
@@ -372,7 +372,7 @@ bool AdvancedReduction::UpwardSystematicReduce(Tree* root, const Tree* tree) {
 /* Expand/Contract operations */
 
 bool AdvancedReduction::DeepContract(Tree* e) {
-  if (e->isDependencies()) {
+  if (e->isDepList()) {
     // Never contract anything in dependency's dependencies set.
     return false;
   }
@@ -394,7 +394,7 @@ bool AdvancedReduction::DeepExpand(Tree* e) {
   TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
   Tree* target = e;
   while (target->block() < nextTree->block()) {
-    if (target->isDependencies()) {
+    if (target->isDepList()) {
       // Never expand anything in dependency's dependencies set.
       target = target->nextTree();
     }

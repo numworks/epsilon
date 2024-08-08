@@ -61,7 +61,7 @@ bool Derivation::Reduce(Tree* e) {
   // Add a dependency on initial derivand if anything has been derived.
   if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
-    SharedTreeStack->pushDependencies(1);
+    SharedTreeStack->pushDepList(1);
     Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
                                          symbolValue, false);
     derivative->cloneNodeAtNode(KDep);

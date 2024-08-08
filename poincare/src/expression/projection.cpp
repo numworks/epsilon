@@ -169,13 +169,13 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
       PatternMatching::MatchReplace(
           e, KACos(KA),
-          KDep(KATrig(KA, 0_e), KDependencies(KPiecewise(
-                                    1_e, KInferiorEqual(KAbs(KA), 1_e))))) ||
+          KDep(KATrig(KA, 0_e),
+               KDepList(KPiecewise(1_e, KInferiorEqual(KAbs(KA), 1_e))))) ||
           // asin(A) -> atrig(A, 1) if -1 <= A <= 1
           PatternMatching::MatchReplace(
               e, KASin(KA),
-              KDep(KATrig(KA, 1_e), KDependencies(KPiecewise(
-                                        1_e, KInferiorEqual(KAbs(KA), 1_e)))));
+              KDep(KATrig(KA, 1_e),
+                   KDepList(KPiecewise(1_e, KInferiorEqual(KAbs(KA), 1_e)))));
     } else {
       // acos(A) -> atrig(A, 0)
       PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||

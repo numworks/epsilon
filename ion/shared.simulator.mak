@@ -91,8 +91,6 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/shared/, \
   screenshot.cpp \
   platform_files.cpp \
 )
-# TODO Move to eadk module?
-SOURCES_ion += eadk/src/simulator.cpp
 SFLAGS_ion += -DION_SIMULATOR_FILES=1
 # Export symbols so that dlopen-ing NWB files can use eadk_external_data and eadk_external_data_size
 LDFLAGS_ion += $(LD_EXPORT_SYMBOLS_FLAG)

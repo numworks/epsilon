@@ -2,6 +2,7 @@ $(call import_module,sdl,ion/src/simulator/external)
 
 $(call create_goal,epsilon, \
   apps \
+  eadk \
   escher \
   ion \
   kandinsky \
@@ -14,6 +15,7 @@ $(call create_goal,epsilon, \
 
 $(call create_goal,test, \
   apps.test \
+  eadk \
   escher.test \
   ion.test \
   kandinsky.test \

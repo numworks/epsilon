@@ -3,9 +3,6 @@
 
 #include <apps/i18n.h>
 #include <poincare/expression.h>
-#include <poincare/src/expression/dimension_vector.h>
-#include <poincare/src/expression/unit.h>
-// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
 
 namespace Calculation {
 
@@ -19,12 +16,6 @@ constexpr static int k_sizeOfUnitComparisonBuffer = 5;
 constexpr static int k_numberOfSignicativeDigits = 2;
 constexpr static float k_maxPercentageRatioDisplay = 1.05;
 
-struct ReferenceUnit {
-  Poincare::Internal::Units::SIVector siVector;
-  const Poincare::Internal::Units::Representative* outputRepresentative =
-      nullptr;
-};
-
 struct ReferenceValue {
   I18n::Message title1;
   I18n::Message title2;
@@ -33,8 +24,8 @@ struct ReferenceValue {
 };
 
 int FindUpperAndLowerReferenceValues(
-    double inputValue, Poincare::Internal::Units::SIVector siVector,
-    const ReferenceValue** returnReferenceValues,
+    double inputValue, Poincare::UserExpression approximatedSIExpression,
+    Poincare::Context* context, const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex);
 #if 0
 bool ShouldDisplayUnitComparison(double inputValue,

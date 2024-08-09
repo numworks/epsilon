@@ -9,7 +9,6 @@
 
 #include "../calculation.h"
 #include "scientific_notation_helper.h"
-#include "unit_comparison_helper.h"
 #include "vector_helper.h"
 
 using namespace Poincare;

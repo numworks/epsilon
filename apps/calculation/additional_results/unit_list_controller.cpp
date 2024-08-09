@@ -91,6 +91,8 @@ void UnitListController::computeAdditionalResults(
     expressions[i] = Expression();
   }
 
+  // TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
+
   // Build an expression for each relevant unit display mode
   int numberOfExpressions = 0;
   ctx.m_unitDisplay = (unitFormat == Preferences::UnitFormat::Metric)
@@ -171,10 +173,8 @@ void UnitListController::computeAdditionalResults(
           angleUnit(), complexFormat());
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
-      m_SIValue,
-      Internal::Dimension::Get(approximatedSIExpression.tree(), context)
-          .unit.vector,
-      m_referenceValues, &m_tableIndexForComparison);
+      m_SIValue, approximatedSIExpression, context, m_referenceValues,
+      &m_tableIndexForComparison);
 
   assert(m_numberOfExpressionCells + m_numberOfBufferCells > 0);
 }

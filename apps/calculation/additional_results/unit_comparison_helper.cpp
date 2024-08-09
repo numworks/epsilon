@@ -5,6 +5,9 @@
 #include <poincare/k_tree.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/dimension_vector.h>
+#include <poincare/src/expression/unit.h>
 #include <poincare/src/expression/unit_representatives.h>
 
 #include <array>
@@ -20,6 +23,12 @@ using namespace Shared;
 namespace Calculation {
 
 namespace UnitComparison {
+
+struct ReferenceUnit {
+  Poincare::Internal::Units::SIVector siVector;
+  const Poincare::Internal::Units::Representative* outputRepresentative =
+      nullptr;
+};
 
 /* If you add new reference values, they always need to be
  *  sorted in increasing order.
@@ -481,9 +490,12 @@ static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
               "Wrong number of reference tables or missing reference table");
 
 int FindUpperAndLowerReferenceValues(
-    double inputValue, Internal::Units::SIVector siVector,
-    const ReferenceValue** returnReferenceValues,
+    double inputValue, UserExpression approximatedSIExpression,
+    Context* context, const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
+  Poincare::Internal::Units::SIVector siVector =
+      Internal::Dimension::Get(approximatedSIExpression.tree(), context)
+          .unit.vector;
   /* 1. Find table of corresponding unit.
    * WARNING : if you call this method with a unit that is not an SI unit,
    * in right order, the comparison won't work.

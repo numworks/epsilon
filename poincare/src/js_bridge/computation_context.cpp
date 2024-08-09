@@ -8,6 +8,17 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
+ReductionContext DefaultReductionContext(Context* ctx, bool keepSymbols) {
+  return ReductionContext(
+      ctx, Preferences::ComplexFormat::Cartesian,
+      Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric,
+      ReductionTarget::User,
+      keepSymbols
+          ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+          : SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      UnitConversion::Default);
+}
+
 EMSCRIPTEN_BINDINGS(computation_context) {
   enum_<Preferences::ComplexFormat>("ComplexFormat")
       .value("Real", Preferences::ComplexFormat::Real)
@@ -49,7 +60,9 @@ EMSCRIPTEN_BINDINGS(computation_context) {
   class_<ReductionContext, base<ComputationContext>>("PCR_ReductionContext")
       .constructor<Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
                    Preferences::UnitFormat, ReductionTarget,
-                   SymbolicComputation, UnitConversion>();
+                   SymbolicComputation, UnitConversion>()
+      .class_function("Default", &DefaultReductionContext,
+                      allow_raw_pointers());
 }
 
 }  // namespace Poincare::JSBridge

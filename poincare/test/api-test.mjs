@@ -68,15 +68,7 @@ Promise.all([
     assert.ok(!userExpression.isUninitialized());
 
     const emptyContext = new poincare.PCR_EmptyContext();
-    const reductionContext = new poincare.PCR_ReductionContext(
-      emptyContext,
-      poincare.ComplexFormat.Cartesian,
-      poincare.AngleUnit.Radian,
-      poincare.UnitFormat.Metric,
-      poincare.ReductionTarget.SystemForAnalysis,
-      poincare.SymbolicComputation.ReplaceAllDefinedSymbolsWithDefinition,
-      poincare.UnitConversion.Default,
-    );
+    const reductionContext = poincare.PCR_ReductionContext.Default(emptyContext, false);
 
     const reducedExpression = userExpression.cloneAndReduce(reductionContext);
     assert.ok(!reducedExpression.isUninitialized());
@@ -99,15 +91,7 @@ Promise.all([
     assert.ok(!userExpression.isUninitialized());
 
     const emptyContext = new poincare.PCR_EmptyContext();
-    const reductionContext = new poincare.PCR_ReductionContext(
-      emptyContext,
-      poincare.ComplexFormat.Cartesian,
-      poincare.AngleUnit.Radian,
-      poincare.UnitFormat.Metric,
-      poincare.ReductionTarget.SystemForAnalysis,
-      poincare.SymbolicComputation.ReplaceAllDefinedSymbolsWithDefinition,
-      poincare.UnitConversion.Default,
-    );
+    const reductionContext = poincare.PCR_ReductionContext.Default(emptyContext, true);
 
     const reducedExpression = userExpression.cloneAndReduce(reductionContext);
     assert.ok(!reducedExpression.isUninitialized());
@@ -161,15 +145,7 @@ Promise.all([
 
   testCase('Solver - Min, Max, Root', async (poincare) => {
     const emptyContext = new poincare.PCR_EmptyContext();
-    const reductionContext = new poincare.PCR_ReductionContext(
-      emptyContext,
-      poincare.ComplexFormat.Cartesian,
-      poincare.AngleUnit.Radian,
-      poincare.UnitFormat.Metric,
-      poincare.ReductionTarget.SystemForAnalysis,
-      poincare.SymbolicComputation.ReplaceAllDefinedSymbolsWithDefinition,
-      poincare.UnitConversion.Default,
-    );
+    const reductionContext = poincare.PCR_ReductionContext.Default(emptyContext, true);
 
     const systemFunction = poincare.BuildExpression.FromLatex('(x-4)(x+2)')
       .cloneAndReduce(reductionContext)

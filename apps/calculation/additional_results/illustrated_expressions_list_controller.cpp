@@ -109,6 +109,7 @@ Layout IllustratedExpressionsListController::GetExactLayoutFromExpression(
                            : Shared::PoincareHelpers::CreateLayout(
                                  exactExpression, ctx->m_context);
   if (approximate) {
+    // TODO_PCJ: Factorize with ExpressionDisplayPermissions
     if (approximateExpression.isUndefined()) {
       // Hide exact layout if approximation is undef (e.g tan(1.5707963267949))
       exactLayout = Layout();

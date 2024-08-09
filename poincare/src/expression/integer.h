@@ -4,7 +4,7 @@
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/sign.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
 

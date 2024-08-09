@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_NUMBER_H
 #define POINCARE_EXPRESSION_NUMBER_H
 
-#include <poincare/sign.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {

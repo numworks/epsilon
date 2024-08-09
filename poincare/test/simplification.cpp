@@ -311,7 +311,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("conj(conj(f(x)))", "dep(f(x),{im(f(x))})", ctx);
   simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
   simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{im(f(y)),re(f(y))})", ctx);
-  // TODO_PCJ: simplifies_to("im(i×f(y))", "re(f(y))", ctx);
+  // TODO_PCJ: should reduce to re(f(y))
+  simplifies_to("im(i×f(y))", "im(f(y)×i)", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
   simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",

@@ -85,10 +85,8 @@ Promise.all([
     assert.ok(!userReducedExpression.isUninitialized());
     assert.equal(userReducedExpression.toLatex(), '\\frac{2}{3}');
 
-    const approximationContext =
-      poincare.PCR_ApproximationContext.FromReductionContext(reductionContext);
     const userApproximateExpression = reducedExpression
-      .approximateToTree(approximationContext)
+      .approximateToTree()
       .cloneAndBeautify(reductionContext);
 
     assert.ok(!userApproximateExpression.isUninitialized());

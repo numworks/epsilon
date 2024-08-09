@@ -691,6 +691,16 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 }
 
 template <typename T>
+T SystemExpression::approximateToScalarJunior() const {
+  Tree* clonedTree = tree()->cloneTree();
+  Approximation::PrepareExpressionForApproximation(clonedTree,
+                                                   ComplexFormat::Real);
+  T result = Approximation::RootPreparedToReal<T>(clonedTree, NAN);
+  clonedTree->removeTree();
+  return result;
+}
+
+template <typename T>
 T SystemFunction::approximateIntegralToScalar(
     const SystemExpression& lowerBound,
     const SystemExpression& upperBound) const {
@@ -1253,6 +1263,9 @@ template float SystemFunction::approximateToScalarWithValue<float>(float,
                                                                    int) const;
 template double SystemFunction::approximateToScalarWithValue<double>(double,
                                                                      int) const;
+
+template float SystemExpression::approximateToScalarJunior<float>() const;
+template double SystemExpression::approximateToScalarJunior<double>() const;
 
 template float SystemFunction::approximateIntegralToScalar<float>(
     const SystemExpression& upperBound,

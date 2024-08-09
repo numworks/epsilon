@@ -8,11 +8,6 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-ApproximationContext ApproximationContextFromReductionContext(
-    const ReductionContext& reductionContext) {
-  return ApproximationContext(reductionContext);
-}
-
 EMSCRIPTEN_BINDINGS(computation_context) {
   enum_<Preferences::ComplexFormat>("ComplexFormat")
       .value("Real", Preferences::ComplexFormat::Real)
@@ -55,12 +50,6 @@ EMSCRIPTEN_BINDINGS(computation_context) {
       .constructor<Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
                    Preferences::UnitFormat, ReductionTarget,
                    SymbolicComputation, UnitConversion>();
-  class_<ApproximationContext, base<ComputationContext>>(
-      "PCR_ApproximationContext")
-      .constructor<Context*, Preferences::ComplexFormat,
-                   Preferences::AngleUnit>()
-      .class_function("FromReductionContext",
-                      &ApproximationContextFromReductionContext);
 }
 
 }  // namespace Poincare::JSBridge

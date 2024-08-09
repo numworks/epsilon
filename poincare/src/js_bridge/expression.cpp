@@ -159,11 +159,19 @@ TypedSystemExpression typedGetReducedDerivative(
 }
 
 TypedSystemExpression typedApproximateToTree(
-    const TypedSystemExpression& expression,
-    const ApproximationContext& approximationContext) {
+    const TypedSystemExpression& expression) {
+  EmptyContext context;
+  // Expression is already projected
+  ApproximationContext approximationContext(
+      &context, Preferences::ComplexFormat::Cartesian,
+      Preferences::AngleUnit::Radian);
   JuniorExpression result =
       expression.approximateToTree<double>(approximationContext);
   return *reinterpret_cast<TypedSystemExpression*>(&result);
+}
+
+double typedApproximateToScalar(const TypedSystemExpression& expr) {
+  return expr.approximateToScalarJunior<double>();
 }
 
 double typedApproximateToScalarWithValue(const TypedSystemFunction& expr,
@@ -210,6 +218,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .constructor<>()
       .class_function("BuildFromTree", &BuildSystemFunctionFromJsTree)
       .function("getTree", &SystemFunctionToJsTree)
+      .function("approximateToScalar", &typedApproximateToScalar)
       .function("approximateToScalarWithValue",
                 &typedApproximateToScalarWithValue)
       .function("approximateIntegralToScalar",

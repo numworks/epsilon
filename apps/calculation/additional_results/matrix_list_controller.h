@@ -16,10 +16,9 @@ class MatrixListController : public ExpressionsListController {
       const Poincare::UserExpression approximateOutput) override;
 
  private:
-  I18n::Message messageAtIndex(int index) override;
-  // Map from cell index to message index
+  I18n::Message messageAtIndex(int index) override { return m_message[index]; }
   constexpr static int k_maxNumberOfOutputRows = 5;
-  int m_indexMessageMap[k_maxNumberOfOutputRows];
+  I18n::Message m_message[k_maxNumberOfOutputRows];
 };
 
 }  // namespace Calculation

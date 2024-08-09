@@ -51,7 +51,6 @@ void MatrixListController::computeAdditionalResults(
   bool mIsSquared = Internal::Matrix::NumberOfRows(matrix) ==
                     Internal::Matrix::NumberOfColumns(matrix);
   size_t index = 0;
-  size_t messageIndex = 0;
 
   // 1. Matrix determinant if square matrix
   if (mIsSquared) {
@@ -65,7 +64,7 @@ void MatrixListController::computeAdditionalResults(
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
 
-    m_indexMessageMap[index] = messageIndex++;
+    m_message[index] = I18n::Message::AdditionalDeterminant;
     m_layouts[index++] = CreateBeautifiedLayout(determinant, &ctx);
     matrixClone->removeTree();
 
@@ -74,43 +73,31 @@ void MatrixListController::computeAdditionalResults(
     if (!determinantIsUndefinedOrNull) {
       // TODO: Handle a determinant that can be null.
       Tree* inverse = Internal::Matrix::Inverse(matrix, false);
-      m_indexMessageMap[index] = messageIndex++;
+      m_message[index] = I18n::Message::AdditionalInverse;
       m_layouts[index++] = CreateBeautifiedLayout(inverse, &ctx);
     }
   }
 
   // 3. Matrix row echelon form
-  messageIndex = 2;
   Tree* reducedRowEchelonForm = matrix->cloneTree();
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
   // preserve reducedRowEchelonForm for next step.
   Tree* rowEchelonForm = reducedRowEchelonForm->cloneTree();
-  m_indexMessageMap[index] = messageIndex++;
+  m_message[index] = I18n::Message::AdditionalRowEchelonForm;
   m_layouts[index++] = CreateBeautifiedLayout(rowEchelonForm, &ctx);
 
   /* 4. Matrix reduced row echelon form
    *    it can be computed from row echelon form to save computation time.*/
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
-  m_indexMessageMap[index] = messageIndex++;
+  m_message[index] = I18n::Message::AdditionalReducedRowEchelonForm;
   m_layouts[index++] = CreateBeautifiedLayout(reducedRowEchelonForm, &ctx);
   // 5. Matrix trace if square matrix
   if (mIsSquared) {
-    m_indexMessageMap[index] = messageIndex++;
+    m_message[index] = I18n::Message::AdditionalTrace;
     m_layouts[index++] =
         CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
   }
   matrix->removeTree();
-}
-
-I18n::Message MatrixListController::messageAtIndex(int index) {
-  // Message index is mapped in setExpression because it depends on the Matrix.
-  assert(index < k_maxNumberOfOutputRows && index >= 0);
-  I18n::Message messages[k_maxNumberOfOutputRows] = {
-      I18n::Message::AdditionalDeterminant, I18n::Message::AdditionalInverse,
-      I18n::Message::AdditionalRowEchelonForm,
-      I18n::Message::AdditionalReducedRowEchelonForm,
-      I18n::Message::AdditionalTrace};
-  return messages[m_indexMessageMap[index]];
 }
 
 }  // namespace Calculation

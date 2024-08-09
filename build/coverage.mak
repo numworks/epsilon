@@ -32,7 +32,8 @@ _coverage_excludes := \
   '**/ion/src/simulator/external/**' \
   '*/output/**' \
   '**/python/src/**' \
-  '/Library/**'
+	$(patsubst %,'%/**',$(wildcard /Applications)) \
+	$(patsubst %,'%/**',$(wildcard /Library))
 
 #TODO: no need to filter once unit tests are all fixed
 _coverage_unit_test_filter := -f poincare
@@ -44,7 +45,7 @@ $(OUTPUT_DIRECTORY)/$1coverage/coverage.info: $(OUTPUT_DIRECTORY)/$1coverage/cov
 	./$$< --headless --limit-stack-usage $(_coverage_unit_test_filter)
 	for state_file in tests/screenshots_dataset/*/*.nws; do ./$$(word 2,$$^) --headless --limit-stack-usage --load-state-file $$$$state_file; done
 	lcov --capture --directory $$(@D) --output-file $$@ --ignore-errors inconsistent --filter range || (rm -f $@; false)
-	lcov --remove $$@ $(_coverage_excludes) -o $$@ --ignore-errors inconsistent --filter range || (rm -f $@; false)
+	lcov --remove $$@ $(_coverage_excludes) -o $$@ --ignore-errors unused --ignore-errors inconsistent --filter range || (rm -f $@; false)
 )
 endef
 
@@ -57,7 +58,7 @@ endif
 # Checks whether ARCHS is composed of several words. The coverage target is invalid if there are more than one architecture.
 ifneq ($(findstring $( ),$(ARCHS)),)
 coverage:
-	$(error Several archs exist for platform, select one by overriding the ARCHS variable.)
+	$(error Several archs exist for platform, select one by overriding the ARCHS variable)
 else
 coverage: $(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage/coverage.info
 	genhtml $< -s --legend --output-directory $(<D)/diagnosis --ignore-errors inconsistent --filter range

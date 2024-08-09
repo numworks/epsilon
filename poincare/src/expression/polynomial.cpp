@@ -402,7 +402,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
 }
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
-  assert(!AdvancedReduction::DeepExpand(e));
+  assert(!AdvancedReduction::DeepExpand(e) && !e->isDep());
   TreeRef polynomial(Polynomial::PushEmpty(variable));
   Type type = e->type();
   if (type == Type::Add) {
@@ -463,24 +463,47 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
   return std::make_pair(e, static_cast<uint8_t>(0));
 }
 
+void addChildToNAryWithDependencies(Tree* nary, const Tree* child,
+                                    const Tree* depList) {
+  assert(!child->isDep());  // Otherwise we would need to bubble-up dependencies
+  if (depList) {
+    assert(depList->isDepList());
+    Tree* newChild =
+        PatternMatching::Create(KDep(KA, KB), {.KA = child, .KB = depList});
+    NAry::AddChild(nary, newChild);
+  } else {
+    NAry::AddChild(nary, child->cloneTree());
+  }
+}
+
 Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Tree* poly = e->cloneTree();
-  // TODO: add dependency on each coef?
-  Dependency::RemoveDependencies(poly);
   AdvancedReduction::DeepExpand(poly);
-  Dependency::RemoveDependencies(poly);
+  TreeRef depList;
+  if (poly->isDep()) {
+    poly->removeNode();
+    depList = poly->nextTree();
+    assert(depList->isDepList());
+  }
   poly = Parse(poly, symbol);
   if (!poly->isPolynomial()) {
     TreeRef result = SharedTreeStack->pushList(0);
-    NAry::AddChild(result, poly);
+    addChildToNAryWithDependencies(result, poly, depList);
+    poly->removeTree();
     symbol->removeTree();
+    if (depList) {
+      depList->removeTree();
+    }
     return result;
   }
   int degree = Polynomial::Degree(poly);
   if (degree < 0 || degree > Polynomial::k_maxPolynomialDegree) {
     poly->removeTree();
     symbol->removeTree();
+    if (depList) {
+      depList->removeTree();
+    }
     return nullptr;
   }
   TreeRef result = SharedTreeStack->pushList(0);
@@ -489,14 +512,18 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   for (int i = 0; i <= degree; i++) {
     if (0 <= indexExponent &&
         i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
-      NAry::AddChild(result, poly->child(indexExponent + 1)->cloneTree());
+      addChildToNAryWithDependencies(result, poly->child(indexExponent + 1),
+                                     depList);
       indexExponent--;
     } else {
-      NAry::AddChild(result, SharedTreeStack->pushZero());
+      addChildToNAryWithDependencies(result, 0_e, depList);
     }
   }
   poly->removeTree();
   symbol->removeTree();
+  if (depList) {
+    depList->removeTree();
+  }
   return result;
 }
 

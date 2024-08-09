@@ -218,7 +218,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
-      PatternMatching::MatchReplace(e, KLogarithm(KA, e_e), KLn(KA)) ||
+      PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLn(KA)) ||
       // Cot(A) -> cos(A)/sin(A)
       PatternMatching::MatchReplace(e, KCot(KA),
                                     KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
@@ -257,7 +257,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KLog(KA),
                                     KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
-      PatternMatching::MatchReplace(e, KLogarithm(KA, KB),
+      PatternMatching::MatchReplace(e, KLogBase(KA, KB),
                                     KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
       // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchReplace(e, KConj(KA),

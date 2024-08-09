@@ -408,8 +408,8 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   if (identifierLength == *length) {
     return false;
   }
-  if (Builtin::ReservedFunctionName(KLogarithm)
-          .contains(LayoutSpan(start, identifierLength))) {
+  if (Builtin::ReservedFunctionName(KLogBase).contains(
+          LayoutSpan(start, identifierLength))) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;

@@ -63,7 +63,7 @@ QUIZ_CASE(pcj_approximation) {
   approximates_to(KAdd(KMult(2_e, 4_e), KPow(1.5_fe, 3.0_fe)), 11.375f);
   approximates_to(KDiv(KSub(2_e, 4_e), 10.0_fe), -0.2f);
   approximates_to(KTrig(KDiv(π_e, 2_e), 1_e), 1.f);
-  approximates_to(KLogarithm(KMult(13_e, 13_e), 13_e), 2.f);
+  approximates_to(KLogBase(KMult(13_e, 13_e), 13_e), 2.f);
   approximates_to(KExp(2_e), M_E * M_E);
   approximates_to(KLog(100_e), 2.f);
   approximates_to(KLn(e_e), 1.f);

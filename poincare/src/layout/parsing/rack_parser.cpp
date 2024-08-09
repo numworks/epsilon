@@ -794,7 +794,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       MoveTreeOverTree(parameter, parameter->child(0));
       base->swapWithTree(parameter);
       leftHandSide = parameter;
-      CloneNodeAtNode(leftHandSide, KLogarithm);
+      CloneNodeAtNode(leftHandSide, KLogBase);
     }
     return;
   }
@@ -873,7 +873,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   if (numberOfParameters == 1 && builtin->type() == Type::LogBase) {
     builtin = Builtin::GetReservedFunction(KLog);
   } else if (numberOfParameters == 2 && builtin->type() == Type::Log) {
-    builtin = Builtin::GetReservedFunction(KLogarithm);
+    builtin = Builtin::GetReservedFunction(KLogBase);
   } else if (numberOfParameters == 1 && builtin->type() == Type::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
   }
@@ -1281,8 +1281,8 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   if (log.isUninitialized() || !log->isLog()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  // Turn log into logarithm
-  leftHandSide = PatternMatching::Create(KLogarithm(KA, KB),
+  // Turn log into logBase
+  leftHandSide = PatternMatching::Create(KLogBase(KA, KB),
                                          {.KA = log->child(0), .KB = base});
   base->removeTree();
   log->removeTree();

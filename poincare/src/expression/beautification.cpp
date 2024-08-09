@@ -210,10 +210,10 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   // ln(A)^(-1) * ln(B)      -> log(B, A)
   changed = PatternMatching::MatchReplace(
                 ref, KMult(KA_s, KLn(KB), KPow(KLn(KC), -1_e), KD_s),
-                KMult(KA_s, KLogarithm(KB, KC), KD_s)) ||
+                KMult(KA_s, KLogBase(KB, KC), KD_s)) ||
             PatternMatching::MatchReplace(
                 ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
-                KMult(KA_s, KLogarithm(KC, KB), KD_s));
+                KMult(KA_s, KLogBase(KC, KB), KD_s));
 #endif
 
   int n = e->numberOfChildren();

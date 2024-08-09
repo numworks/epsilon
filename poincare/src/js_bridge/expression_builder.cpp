@@ -114,12 +114,12 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(Cos),
     BUILDER(Tan),
     BUILDER(Sin),
-    BUILDER(Trig),
+    /* BUILDER(Trig) -> System node, not allowed in UserExpressions ⛔️ */
     BUILDER(ACos),
     BUILDER(ATan),
     BUILDER(ASin),
-    BUILDER(ATrig),
-    BUILDER(ATanRad),
+    /* BUILDER(ATrig) -> System node, not allowed in UserExpressions ⛔️ */
+    /* BUILDER(ATanRad) -> System node, not allowed in UserExpressions ⛔️ */
     BUILDER(Sec),
     BUILDER(Csc),
     BUILDER(Cot),
@@ -133,7 +133,7 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(ArSinH),
     BUILDER(ArTanH),
     BUILDER(Ln),
-    BUILDER(LnReal),
+    /* BUILDER(LnReal) -> System node, not allowed in UserExpressions ⛔️ */
     BUILDER(Log),
     BUILDER(LogBase),
 
@@ -161,8 +161,8 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(PercentSimple),
     BUILDER(PercentAddition),
     BUILDER(Permute),
-    BUILDER(Polynomial),
-    BUILDER(PowReal),
+    /* BUILDER(Polynomial) -> ? */
+    /* BUILDER(PowReal) -> System node, not allowed in UserExpressions ⛔️ */
     BUILDER(Quo),
     BUILDER(Re),
     BUILDER(Rem),
@@ -171,7 +171,7 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(Sqrt),
     BUILDER(Root),
     BUILDER(Sub),
-    BUILDER(TrigDiff),
+    /* BUILDER(TrigDiff) -> System node, not allowed in UserExpressions ⛔️ */
     /* Var -> Partially implemented, see at end of the list ✅ */
 
     // 4 - Parametric types
@@ -179,39 +179,40 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(Product),
     BUILDER(Diff),
     BUILDER(Integral),
-    BUILDER(IntegralWithAlternatives),
+    /* BUILDER(IntegralWithAlternatives) -> System node, not allow in
+       UserExpressions ⛔️ */
     BUILDER(ListSequence),
 
     // 5 - Matrix and vector builtins
-    BUILDER(Dot),
-    BUILDER(Norm),
-    BUILDER(Trace),
-    BUILDER(Cross),
-    BUILDER(Det),
-    BUILDER(Dim),
-    BUILDER(Identity),
-    BUILDER(Inverse),
-    BUILDER(Ref),
-    BUILDER(Rref),
-    BUILDER(Transpose),
-    BUILDER(PowMatrix),
+    /* BUILDER(Dot) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Norm) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Trace) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Cross) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Det) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Dim) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Identity) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Inverse) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Ref) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Rref) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Transpose) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(PowMatrix) -> System node, not allowed in UserExpressions ⛔️ */
     /* Matrix -> Not implemented ❌ */
 
     // 6 - Lists
-    BUILDER(List),
-    BUILDER(ListSort),
-    BUILDER(ListElement),
-    BUILDER(ListSlice),
-    BUILDER(Mean),
-    BUILDER(StdDev),
-    BUILDER(Median),
-    BUILDER(Variance),
-    BUILDER(SampleStdDev),
-    BUILDER(Min),
-    BUILDER(Max),
-    BUILDER(ListSum),
-    BUILDER(ListProduct),
-    BUILDER(Point),
+    /* BUILDER(List) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(ListSort) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(ListElement) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(ListSlice) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Mean) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(StdDev) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Median) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Variance) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(SampleStdDev) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Min) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Max) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(ListSum) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(ListProduct) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(Point) -> Not usable in PoincareJS for now 🏗️ */
 
     // 7 - Booleans
     BUILDER(False),
@@ -235,30 +236,30 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
 
     // 9 - Order dependant expressions
     BUILDER(Piecewise),
-    BUILDER(Dependency),
-    BUILDER(Dependencies),
+    /* BUILDER(Dependency) -> System node ⛔️ */
+    /* BUILDER(Dependencies) -> System node ⛔️ */
     BUILDER(Set),
     BUILDER(Parentheses),
     /* Empty -> Not implemented ❌ */
 
     // 10 - Undefined expressions
     BUILDER(NonReal),
-    BUILDER(UndefZeroPowerZero),
-    BUILDER(UndefZeroDivision),
-    BUILDER(UndefUnhandled),
-    BUILDER(UndefUnhandledDimension),
-    BUILDER(UndefBadType),
-    BUILDER(UndefOutOfDefinition),
-    BUILDER(UndefNotDefined),
-    BUILDER(UndefForbidden),
+    /* BUILDER(UndefZeroPowerZero) -> System node ⛔️ */
+    /* BUILDER(UndefZeroDivision) -> System node ⛔️ */
+    /* BUILDER(UndefUnhandled) -> System node ⛔️ */
+    /* BUILDER(UndefUnhandledDimension) -> System node ⛔️ */
+    /* BUILDER(UndefBadType) -> System node ⛔️ */
+    /* BUILDER(UndefOutOfDefinition) -> System node ⛔️ */
+    /* BUILDER(UndefNotDefined) -> System node ⛔️ */
+    /* BUILDER(UndefForbidden) -> System node ⛔️ */
     BUILDER(Undef),
 
     // 11 - Operations on expressions
-    BUILDER(Store),
-    BUILDER(UnitConversion),
-    BUILDER(SequenceExplicit),
-    BUILDER(SequenceSingleRecurrence),
-    BUILDER(SequenceDoubleRecurrence),
+    /* BUILDER(Store) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(UnitConversion) -> Not usable in PoincareJS for now 🏗️ */
+    /* BUILDER(SequenceExplicit) -> ? */
+    /* BUILDER(SequenceSingleRecurrence) -> ? */
+    /* BUILDER(SequenceDoubleRecurrence) -> ? */
     /* PointOfInterest -> Not implemented ❌ */
 
     // 13 - Custom builders

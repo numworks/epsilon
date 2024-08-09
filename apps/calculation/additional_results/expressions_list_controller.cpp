@@ -1,5 +1,8 @@
 #include "expressions_list_controller.h"
 
+#include <poincare/helpers/expression_equal_sign.h>
+#include <poincare/src/expression/projection.h>
+
 #include "../app.h"
 #include "../edit_expression_controller.h"
 
@@ -140,6 +143,45 @@ Poincare::Layout ExpressionsListController::layoutAtIndex(HighlightCell* cell,
   }
   assert(!layout.isUninitialized());
   return layout;
+}
+
+Layout ExpressionsListController::GetExactLayoutFromExpression(
+    const UserExpression e, const Internal::ProjectionContext* ctx,
+    Layout* approximate, bool* isStrictlyEqual) {
+  assert(!e.isUninitialized());
+  UserExpression approximateExpression, exactExpression;
+  Internal::ProjectionContext tempCtx = *ctx;
+  tempCtx.m_symbolic =
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+  e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
+                                   &tempCtx);
+  assert(!approximateExpression.isUninitialized());
+  Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
+      approximateExpression, ctx->m_context);
+  Layout exactLayout = exactExpression.isUninitialized()
+                           ? approximateLayout
+                           : Shared::PoincareHelpers::CreateLayout(
+                                 exactExpression, ctx->m_context);
+  if (approximate) {
+    // TODO_PCJ: Factorize with ExpressionDisplayPermissions
+    if (approximateExpression.isUndefined()) {
+      // Hide exact layout if approximation is undef (e.g tan(1.5707963267949))
+      exactLayout = Layout();
+      *approximate = approximateLayout;
+    }
+    /* Make it editable to compare equivalent layouts. */
+    else if (exactLayout.isIdenticalTo(approximateLayout, true)) {
+      *approximate = Layout();
+    } else {
+      *approximate = approximateLayout;
+      if (isStrictlyEqual) {
+        *isStrictlyEqual =
+            Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
+                exactExpression, approximateExpression, ctx);
+      }
+    }
+  }
+  return exactLayout;
 }
 
 }  // namespace Calculation

@@ -47,11 +47,6 @@ class IllustratedExpressionsListController
   void setLineAtIndex(int index, const Poincare::UserExpression formula,
                       const Poincare::UserExpression expression,
                       const Poincare::Internal::ProjectionContext* ctx);
-  static Poincare::Layout GetExactLayoutFromExpression(
-      const Poincare::UserExpression e,
-      const Poincare::Internal::ProjectionContext* ctx,
-      Poincare::Layout* approximatedLayout = nullptr,
-      bool* exactAndApproximateExpressionsAreStrictlyEqual = nullptr);
 
  private:
   Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,

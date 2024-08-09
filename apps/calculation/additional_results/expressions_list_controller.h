@@ -66,6 +66,11 @@ class ExpressionsListController
   uint8_t numberOfSignificantDigits() const {
     return m_calculationPreferences.numberOfSignificantDigits;
   }
+  static Poincare::Layout GetExactLayoutFromExpression(
+      const Poincare::UserExpression e,
+      const Poincare::Internal::ProjectionContext* ctx,
+      Poincare::Layout* approximatedLayout = nullptr,
+      bool* exactAndApproximateExpressionsAreStrictlyEqual = nullptr);
 
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];

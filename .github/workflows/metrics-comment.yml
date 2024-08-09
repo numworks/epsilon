@@ -31,7 +31,7 @@ jobs:
             var fs = require('fs');
             fs.writeFileSync('${{github.workspace}}/metrics-output.zip', Buffer.from(download.data));
       - name: Unzip file
-        run: sudo apt-get install unzip && unzip metrics-output.zip
+        run: sudo apt-get install unzip && unzip -o metrics-output.zip
       - name: Add comment
         uses: actions/github-script@v6
         with:

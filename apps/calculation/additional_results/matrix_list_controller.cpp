@@ -2,30 +2,17 @@
 
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/src/expression/matrix.h>
-#include <poincare/src/expression/simplification.h>
-#include <poincare/src/layout/layouter.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/additional_results_helper.h>
+#include <poincare/src/expression/projection.h>
 #include <string.h>
 
 #include "../app.h"
 
 using namespace Poincare;
-// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
-using namespace Poincare::Internal;
 using namespace Shared;
 
 namespace Calculation {
 
-JuniorLayout CreateBeautifiedLayout(Tree* expression, ProjectionContext* ctx) {
-  Simplification::BeautifyReduced(expression, ctx);
-  return JuniorLayout::Builder(Layouter::LayoutExpression(
-      expression, false,
-      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
-      Poincare::Preferences::SharedPreferences()->displayMode()));
-}
-
-// TODO_PCJ: Move part of this in Poincare
 void MatrixListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
@@ -34,70 +21,44 @@ void MatrixListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  ProjectionContext ctx = {
+  Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       .m_context = App::app()->localContext()};
 
-  // The expression must be reduced to call methods such as determinant or trace
-  assert(approximateOutput.tree()->isMatrix());
-  Tree* matrix =
-      (exactOutput.tree()->isMatrix() ? exactOutput : approximateOutput)
-          .tree()
-          ->cloneTree();
-  Simplification::ProjectAndReduce(matrix, &ctx, false);
-  bool mIsSquared = Internal::Matrix::NumberOfRows(matrix) ==
-                    Internal::Matrix::NumberOfColumns(matrix);
+  // Compute all layouts at once to reuse intermediate results
+  Layout determinant, inverse, rowEchelonForm, reducedRowEchelonForm, trace;
+  AdditionalResultsHelper::ComputeMatrixProperties(
+      exactOutput, approximateOutput, ctx, determinant, inverse, rowEchelonForm,
+      reducedRowEchelonForm, trace);
+
   size_t index = 0;
-
-  // 1. Matrix determinant if square matrix
-  if (mIsSquared) {
-    /* Determinant is reduced so that a null determinant can be detected.
-     * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
-     * not be reduced to a rational, but will be null in theory. */
-    Tree* determinant;
-    Tree* matrixClone = matrix->cloneTree();
-    Internal::Matrix::RowCanonize(matrixClone, true, &determinant, false);
-    // determinant has
-    bool determinantIsUndefinedOrNull =
-        determinant->isUndefined() || determinant->isZero();
-
+  // Determinant is only computed on squared matrices
+  bool isSquared = !determinant.isUninitialized();
+  if (isSquared) {
     m_message[index] = I18n::Message::AdditionalDeterminant;
-    m_layouts[index++] = CreateBeautifiedLayout(determinant, &ctx);
-    matrixClone->removeTree();
-
-    /* 2. Matrix inverse if invertible matrix
-     * A squared matrix is invertible if and only if determinant is non null */
-    if (!determinantIsUndefinedOrNull) {
-      // TODO: Handle a determinant that can be null.
-      Tree* inverse = Internal::Matrix::Inverse(matrix, false);
+    m_layouts[index++] = determinant;
+    if (!inverse.isUninitialized()) {
       m_message[index] = I18n::Message::AdditionalInverse;
-      m_layouts[index++] = CreateBeautifiedLayout(inverse, &ctx);
+      m_layouts[index++] = inverse;
     }
+  } else {
+    assert(inverse.isUninitialized());
   }
-
-  // 3. Matrix row echelon form
-  Tree* reducedRowEchelonForm = matrix->cloneTree();
-  Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
-  // preserve reducedRowEchelonForm for next step.
-  Tree* rowEchelonForm = reducedRowEchelonForm->cloneTree();
+  assert(!rowEchelonForm.isUninitialized() &&
+         !reducedRowEchelonForm.isUninitialized());
   m_message[index] = I18n::Message::AdditionalRowEchelonForm;
-  m_layouts[index++] = CreateBeautifiedLayout(rowEchelonForm, &ctx);
-
-  /* 4. Matrix reduced row echelon form
-   *    it can be computed from row echelon form to save computation time.*/
-  Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
+  m_layouts[index++] = rowEchelonForm;
   m_message[index] = I18n::Message::AdditionalReducedRowEchelonForm;
-  m_layouts[index++] = CreateBeautifiedLayout(reducedRowEchelonForm, &ctx);
-  // 5. Matrix trace if square matrix
-  if (mIsSquared) {
+  m_layouts[index++] = reducedRowEchelonForm;
+
+  if (isSquared) {
+    assert(!trace.isUninitialized());
     m_message[index] = I18n::Message::AdditionalTrace;
-    m_layouts[index++] =
-        CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
+    m_layouts[index++] = trace;
   }
-  matrix->removeTree();
 }
 
 }  // namespace Calculation

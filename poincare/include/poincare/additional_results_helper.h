@@ -2,6 +2,8 @@
 #define POINCARE_ADDITIONAL_RESULTS_HELPER_H
 
 #include <poincare/expression.h>
+#include <poincare/layout.h>
+#include <poincare/src/expression/projection.h>
 
 namespace Poincare {
 
@@ -36,6 +38,15 @@ class AdditionalResultsHelper final {
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);
+
+  /* Matrix additional results */
+  static void ComputeMatrixProperties(const UserExpression& exactOutput,
+                                      const UserExpression& approximateOutput,
+                                      Internal::ProjectionContext ctx,
+                                      Layout& determinant, Layout& inverse,
+                                      Layout& rowEchelonForm,
+                                      Layout& reducedRowEchelonForm,
+                                      Layout& trace);
 };
 
 }  // namespace Poincare

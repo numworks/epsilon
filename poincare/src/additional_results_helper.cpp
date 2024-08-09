@@ -4,12 +4,15 @@
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/unit.h>
 #include <poincare/src/expression/unit_representatives.h>
+#include <poincare/src/layout/layouter.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree.h>
 
 namespace Poincare {
 
@@ -292,6 +295,68 @@ bool AdditionalResultsHelper::HasRational(
           Internal::PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)),
                                            &ctx)) &&
          ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
+}
+
+// Eat reduced expression's tree and return a beautified layout
+Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
+                                        ProjectionContext* ctx) {
+  Simplification::BeautifyReduced(reducedExpression, ctx);
+  return Poincare::Layout::Builder(Layouter::LayoutExpression(
+      reducedExpression, false,
+      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
+      Poincare::Preferences::SharedPreferences()->displayMode()));
+}
+
+void AdditionalResultsHelper::ComputeMatrixProperties(
+    const UserExpression& exactOutput, const UserExpression& approximateOutput,
+    Internal::ProjectionContext ctx, Poincare::Layout& determinantL,
+    Poincare::Layout& inverseL, Poincare::Layout& rowEchelonFormL,
+    Poincare::Layout& reducedRowEchelonFormL, Poincare::Layout& traceL) {
+  assert(approximateOutput.tree()->isMatrix());
+  Tree* matrix =
+      (exactOutput.tree()->isMatrix() ? exactOutput : approximateOutput)
+          .tree()
+          ->cloneTree();
+  // The expression must be reduced to call matrix methods.
+  Simplification::ProjectAndReduce(matrix, &ctx, false);
+  bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
+                   Internal::Matrix::NumberOfColumns(matrix);
+
+  // 1. Matrix determinant if square matrix
+  if (isSquared) {
+    Tree* determinant;
+    Tree* matrixClone = matrix->cloneTree();
+    Internal::Matrix::RowCanonize(matrixClone, true, &determinant, false);
+    // TODO: Use ComplexSign or approximation to handle more complex cases
+    bool determinantIsUndefinedOrNull =
+        determinant->isUndefined() || determinant->isZero();
+    determinantL = CreateBeautifiedLayout(determinant, &ctx);
+    matrixClone->removeTree();
+
+    /* 2. Matrix inverse if invertible matrix
+     * A squared matrix is invertible if and only if determinant is non null */
+    if (!determinantIsUndefinedOrNull) {
+      Tree* inverse = Internal::Matrix::Inverse(matrix, false);
+      inverseL = CreateBeautifiedLayout(inverse, &ctx);
+    }
+  }
+
+  // 3. Matrix row echelon form
+  Tree* reducedRowEchelonForm = matrix->cloneTree();
+  Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
+  // Clone layouted tree to preserve reducedRowEchelonForm for next step.
+  rowEchelonFormL =
+      CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx);
+
+  /* 4. Matrix reduced row echelon form
+   *    Computed from row echelon form to save computation time. */
+  Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
+  reducedRowEchelonFormL = CreateBeautifiedLayout(reducedRowEchelonForm, &ctx);
+
+  // 5. Matrix trace if square matrix
+  if (isSquared) {
+    traceL = CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
+  }
 }
 
 }  // namespace Poincare

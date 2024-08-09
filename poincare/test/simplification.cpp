@@ -941,10 +941,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "1/√(2)");
   // TODO: dependencies could be optimized
-  simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "dep(cos(y),{cos(3×y)})");
-  simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "dep(sin(y),{sin(3×y)})");
-  simplifies_to("2×cos(2y)×sin(y)+sin(y)", "dep(sin(3×y),{sin(y)})");
-  simplifies_to("2×cos(2y)×cos(y)-cos(y)", "dep(cos(3×y),{cos(y)})");
+  simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
+  simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
+  simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
+  simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
   simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");

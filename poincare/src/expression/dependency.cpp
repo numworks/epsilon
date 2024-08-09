@@ -140,12 +140,10 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   }
   if (((searched->isLn() && container->isLnReal()) ||
        (searched->isPow() && container->isPowReal() &&
-        searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
-       (searched->isTrig() && container->isTrig())) &&
+        searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     /* lnReal(x) contains ln(x)
-     * powReal(x,y) contains pow(x,y)
-     * sin(x) contains cos(x) and inversely */
+     * powReal(x,y) contains pow(x,y) */
     return true;
   }
   // TODO_PCJ if power and same type of power return true
@@ -185,6 +183,12 @@ bool RemoveUselessDependencies(Tree* dep) {
         continue;
       }
 #endif
+    } else if (depI->isTrig()) {
+      // dep(..,{trig(x,..)}) = dep(..,{x})
+      depI->moveTreeOverTree(depI->child(0));
+      i--;
+      changed = true;
+      continue;
     }
     depI = depI->nextTree();
   }

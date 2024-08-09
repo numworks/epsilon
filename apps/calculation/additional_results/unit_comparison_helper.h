@@ -5,6 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/src/expression/dimension_vector.h>
 #include <poincare/src/expression/unit.h>
+// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
 
 namespace Calculation {
 

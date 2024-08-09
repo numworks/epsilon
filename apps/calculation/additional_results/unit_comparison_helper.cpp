@@ -13,6 +13,7 @@
 #include "../app.h"
 
 using namespace Poincare;
+// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
 using namespace Poincare::Internal::Units;
 using namespace Shared;
 

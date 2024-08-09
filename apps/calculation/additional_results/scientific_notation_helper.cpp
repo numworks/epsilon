@@ -7,6 +7,7 @@
 #include <poincare/src/memory/tree.h>
 
 using namespace Poincare;
+// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
 using namespace Poincare::Internal;
 
 namespace Calculation {

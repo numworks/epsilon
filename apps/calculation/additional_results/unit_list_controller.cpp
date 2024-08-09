@@ -172,7 +172,8 @@ void UnitListController::computeAdditionalResults(
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue,
-      Internal::Dimension::Get(approximatedSIExpression.tree()).unit.vector,
+      Internal::Dimension::Get(approximatedSIExpression.tree(), context)
+          .unit.vector,
       m_referenceValues, &m_tableIndexForComparison);
 
   assert(m_numberOfExpressionCells + m_numberOfBufferCells > 0);

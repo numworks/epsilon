@@ -134,12 +134,13 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const Preferences::CalculationPreferences calculationPreferences) {
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
-  Internal::Dimension dimension = Internal::Dimension::Get(inputTree);
+  Internal::Dimension dimension = Internal::Dimension::Get(inputTree, context);
 
-  assert(dimension == Internal::Dimension::Get(exactTree));
+  assert(dimension == Internal::Dimension::Get(exactTree, context));
   assert(!dimension.isUnit() || dimension.isSimpleAngleUnit());
 
-  if (!dimension.isScalarOrUnit() || Internal::Dimension::IsList(exactTree)) {
+  if (!dimension.isScalarOrUnit() ||
+      Internal::Dimension::IsList(exactTree, context)) {
     return UserExpression();
   }
   /* Trigonometry additional results are displayed if either input or output is
@@ -171,7 +172,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   Tree* exactAngle = directTrigoFunction->child(0)->cloneTree();
   assert(exactAngle && !exactAngle->isUndefined());
   Internal::Dimension exactAngleDimension =
-      Internal::Dimension::Get(exactAngle);
+      Internal::Dimension::Get(exactAngle, context);
   assert(exactAngleDimension.isScalar() ||
          exactAngleDimension.isSimpleAngleUnit());
   Preferences::ComplexFormat complexFormat =

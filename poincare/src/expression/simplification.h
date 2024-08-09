@@ -31,7 +31,8 @@ class Simplification {
 
  private:
   static void ApplySimplify(const Tree* dataTree,
-                            ProjectionContext* projectionContext);
+                            ProjectionContext* projectionContext,
+                            bool advanced);
   static void ApplyProjectAndReduce(const Tree* dataTree,
                                     ProjectionContext* projectionContext,
                                     bool advanced);

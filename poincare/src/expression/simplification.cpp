@@ -52,7 +52,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
     Tree* e, ProjectionContext* projectionContext) {
   // Clone the tree, and use an adaptive strategy to handle pool overflow.
   SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                         RelaxProjectionContext);
+                                         RelaxProjectionContext, true);
   /* TODO: Due to projection/beautification cycles and multiple intermediary
    * steps, keeping track of a changed status is unreliable. We could compare
    * CRC instead. */
@@ -67,7 +67,8 @@ void Simplification::ProjectAndReduceWithAdaptiveStrategy(
 }
 
 void Simplification::ApplySimplify(const Tree* dataTree,
-                                   ProjectionContext* projectionContext) {
+                                   ProjectionContext* projectionContext,
+                                   bool advanced) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -90,7 +91,7 @@ void Simplification::ApplySimplify(const Tree* dataTree,
     e = dataTree->cloneTree();
   }
 
-  ProjectAndReduce(e, projectionContext, true);
+  ProjectAndReduce(e, projectionContext, advanced);
   BeautifyReduced(e, projectionContext);
 
   if (isStore) {

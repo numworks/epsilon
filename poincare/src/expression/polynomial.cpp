@@ -487,37 +487,27 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
     assert(depList->isDepList());
   }
   poly = Parse(poly, symbol);
-  if (!poly->isPolynomial()) {
-    TreeRef result = SharedTreeStack->pushList(0);
+  TreeRef result;
+  if (poly->isPolynomial()) {
+    int degree = Polynomial::Degree(poly);
+    if (0 <= degree && degree <= Polynomial::k_maxPolynomialDegree) {
+      result = SharedTreeStack->pushList(0);
+      int numberOfTerms = Polynomial::NumberOfTerms(poly);
+      int indexExponent = numberOfTerms - 1;
+      for (int i = 0; i <= degree; i++) {
+        if (0 <= indexExponent &&
+            i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
+          addChildToNAryWithDependencies(result, poly->child(indexExponent + 1),
+                                         depList);
+          indexExponent--;
+        } else {
+          addChildToNAryWithDependencies(result, 0_e, depList);
+        }
+      }
+    }
+  } else {
+    result = SharedTreeStack->pushList(0);
     addChildToNAryWithDependencies(result, poly, depList);
-    poly->removeTree();
-    symbol->removeTree();
-    if (depList) {
-      depList->removeTree();
-    }
-    return result;
-  }
-  int degree = Polynomial::Degree(poly);
-  if (degree < 0 || degree > Polynomial::k_maxPolynomialDegree) {
-    poly->removeTree();
-    symbol->removeTree();
-    if (depList) {
-      depList->removeTree();
-    }
-    return nullptr;
-  }
-  TreeRef result = SharedTreeStack->pushList(0);
-  int numberOfTerms = Polynomial::NumberOfTerms(poly);
-  int indexExponent = numberOfTerms - 1;
-  for (int i = 0; i <= degree; i++) {
-    if (0 <= indexExponent &&
-        i == Polynomial::ExponentAtIndex(poly, indexExponent)) {
-      addChildToNAryWithDependencies(result, poly->child(indexExponent + 1),
-                                     depList);
-      indexExponent--;
-    } else {
-      addChildToNAryWithDependencies(result, 0_e, depList);
-    }
   }
   poly->removeTree();
   symbol->removeTree();

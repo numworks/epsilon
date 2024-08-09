@@ -86,12 +86,16 @@ class Sign {
   }
 
   bool operator==(const Sign&) const = default;
+  /* OR operator on each of sign's properties:
+   * PositiveInteger() || NegativeInteger() = Integer() */
   Sign operator||(const Sign& other) const {
     return Sign(m_canBeNull || other.canBeNull(),
                 m_canBeStrictlyPositive || other.canBeStrictlyPositive(),
                 m_canBeStrictlyNegative || other.canBeStrictlyNegative(),
                 m_canBeNonInteger || other.canBeNonInteger());
   }
+  /* AND operator on each of sign's properties:
+   * PositiveInteger() && NegativeInteger() = Zero() */
   Sign operator&&(const Sign& other) const {
     return Sign(m_canBeNull && other.canBeNull(),
                 m_canBeStrictlyPositive && other.canBeStrictlyPositive(),
@@ -182,6 +186,14 @@ class ComplexSign {
   constexpr bool isInteger() const { return !canBeNonInteger(); }
 
   bool operator==(const ComplexSign&) const = default;
+  /* OR operator on both real and imaginary signs. See Sign operators.
+   * RealUnknown() || Zero() = RealUnknown() */
+  ComplexSign operator||(const ComplexSign& other) const {
+    return ComplexSign(realSign() || other.realSign(),
+                       imagSign() || other.imagSign());
+  }
+  /* AND operator on both real and imaginary signs. See Sign operators.
+   * RealUnknown() && Zero() = Zero() */
   ComplexSign operator&&(const ComplexSign& other) const {
     return ComplexSign(realSign() && other.realSign(),
                        imagSign() && other.imagSign());

@@ -2,11 +2,8 @@
 
 #include <apps/apps_container_helper.h>
 #include <poincare/additional_results_helper.h>
-#include <poincare/k_tree.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/preferences.h>
-#include <poincare/src/expression/integer.h>
-#include <poincare/src/memory/pattern_matching.h>
 
 #include <cmath>
 
@@ -18,7 +15,7 @@
 using namespace Poincare;
 using namespace Shared;
 
-namespace Poincare::Internal {
+namespace Calculation {
 
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const UserExpression input, const UserExpression exactOutput,
@@ -189,7 +186,7 @@ bool AdditionalResultsType::HasUnit(
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,
            GlobalPreferences::SharedGlobalPreferences()->unitFormat()) ||
-       Calculation::UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
+       UnitComparison::ShouldDisplayUnitComparison(value, unit))) {
     /* Sometimes with angle units, the reduction with UnitConversion::None
      * will be defined but not the reduction with UnitConversion::Default,
      * which will make the unit list controller crash.  */
@@ -209,7 +206,7 @@ bool AdditionalResultsType::HasVector(
     const Preferences::CalculationPreferences calculationPreferences) {
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm = Calculation::VectorHelper::BuildVectorNorm(
+  Expression norm = VectorHelper::BuildVectorNorm(
       exactOutput.clone(), globalContext, calculationPreferences);
   if (norm.isUninitialized()) {
     return false;
@@ -279,28 +276,21 @@ bool AdditionalResultsType::HasScientificNotation(
       calculationPreferences.displayMode,
       calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(
-      Calculation::ScientificNotationHelper::ScientificLayout(
+      ScientificNotationHelper::ScientificLayout(
           approximateOutput, globalContext, calculationPreferences),
       true);
 }
 
-bool AdditionalResultsType::HasInteger(const Tree* exactOutput) {
-  assert(exactOutput);
-  // assert(!exactOutput.hasUnit());
-  return exactOutput->isPositiveInteger() &&
-         IntegerHandler::Compare(Integer::Handler(exactOutput),
-                                 Integer::Handler(10000000000000000_e)) < 0;
+bool AdditionalResultsType::HasInteger(
+    const Poincare::UserExpression exactOutput) {
+  assert(!exactOutput.hasUnit());
+  return Poincare::AdditionalResultsHelper::HasInteger(exactOutput);
 }
 
-bool AdditionalResultsType::HasRational(const Tree* exactOutput) {
-  // Find forms like [12]/[23] or -[12]/[23]
-  assert(exactOutput);
-  // assert(!exactOutput.hasUnit());
-  PatternMatching::Context ctx;
-  // TODO: this should be isRational before the beautification
-  return (PatternMatching::Match(exactOutput, KDiv(KA, KB), &ctx) ||
-          PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)), &ctx)) &&
-         ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
+bool AdditionalResultsType::HasRational(
+    const Poincare::UserExpression exactOutput) {
+  assert(!exactOutput.hasUnit());
+  return Poincare::AdditionalResultsHelper::HasRational(exactOutput);
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Calculation

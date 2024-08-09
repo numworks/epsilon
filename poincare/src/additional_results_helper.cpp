@@ -2,6 +2,7 @@
 #include <poincare/new_trigonometry.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
@@ -272,6 +273,25 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   *value = Approximation::To<float>(numericalValue);
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
   return UserExpression::Builder(clone);
+}
+
+bool AdditionalResultsHelper::HasInteger(
+    const Poincare::UserExpression exactOutput) {
+  return exactOutput.tree()->isPositiveInteger() &&
+         Internal::IntegerHandler::Compare(
+             Internal::Integer::Handler(exactOutput),
+             Internal::Integer::Handler(10000000000000000_e)) < 0;
+}
+
+bool AdditionalResultsHelper::HasRational(
+    const Poincare::UserExpression exactOutput) {
+  // Find forms like [12]/[23] or -[12]/[23]
+  Internal::PatternMatching::Context ctx;
+  // TODO: this should be isRational before the beautification
+  return (Internal::PatternMatching::Match(exactOutput, KDiv(KA, KB), &ctx) ||
+          Internal::PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)),
+                                           &ctx)) &&
+         ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
 }
 
 }  // namespace Poincare

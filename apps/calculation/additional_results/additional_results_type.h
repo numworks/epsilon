@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 
-namespace Poincare::Internal {
+namespace Calculation {
 
 struct AdditionalResultsType {
   bool integer : 1;
@@ -69,14 +69,10 @@ struct AdditionalResultsType {
       const Poincare::UserExpression approximateOutput,
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences);
-  static bool HasInteger(const Tree* exactOutput);
-  static bool HasRational(const Tree* exactOutput);
+  static bool HasInteger(const Poincare::UserExpression);
+  static bool HasRational(const Poincare::UserExpression);
 };
 
-}  // namespace Poincare::Internal
-
-namespace Calculation {
-using AdditionalResultsType = Poincare::Internal::AdditionalResultsType;
-}
+}  // namespace Calculation
 
 #endif

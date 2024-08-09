@@ -16,7 +16,7 @@ class AdditionalResultsHelper final {
   static void TrigonometryAngleHelper(
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
-      Poincare::Preferences::CalculationPreferences calculationPreferences,
+      Preferences::CalculationPreferences calculationPreferences,
       const Internal::ProjectionContext* ctx,
       ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation,
       UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact);
@@ -30,6 +30,12 @@ class AdditionalResultsHelper final {
   static bool HasSingleNumericalValue(const UserExpression input);
   static UserExpression CloneReplacingNumericalValuesWithSymbol(
       const UserExpression input, const char* symbol, float* value);
+
+  /* Integer additional results */
+  static bool HasInteger(const UserExpression exactOutput);
+
+  /* Rational additional results */
+  static bool HasRational(const UserExpression exactOutput);
 };
 
 }  // namespace Poincare

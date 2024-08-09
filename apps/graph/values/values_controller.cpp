@@ -365,7 +365,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context* context = App::app()->localContext();
-  UserExpression result;
+  SystemExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
@@ -383,6 +383,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Symbol::Builder(Shared::Function::k_unknownName,
                         strlen(Shared::Function::k_unknownName)));
     bool simplificationFailure = false;
+    // TODO_PCJ: result is a SystemExpression, we don't want to project again
     PoincareHelpers::CloneAndSimplify(
         &result, &abscissaContext,
         {.symbolicComputation =

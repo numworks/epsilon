@@ -1147,7 +1147,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
   ExecutionContext executionContext{this, action, cursorRackOffset(), context};
   assert(SharedTreeStack->numberOfTrees() == 0);
 
-  ExceptionTry {
+  {
     LayoutBufferCursor* bufferCursor = executionContext.m_cursor;
     // Clone layoutBuffer into the TreeStack
     SharedTreeStack->clone(executionContext.m_cursor->rootRack());
@@ -1162,21 +1162,11 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
     bufferCursor->setCursorRack(static_cast<Rack*>(Tree::FromBlocks(
         bufferCursor->rootRack()->block() + editionCursor.cursorRackOffset())));
     bufferCursor->applyTreeStackCursor(editionCursor);
-  }
-  ExceptionCatch(type) {
-    assert(SharedTreeStack->numberOfTrees() == 0);
-    switch (type) {
-      case ExceptionType::TreeStackOverflow:
-      case ExceptionType::IntegerOverflow:
-        return;
-      default:
-        TreeStackCheckpoint::Raise(type);
-    }
-  }
 
-  assert(Tree::FromBlocks(SharedTreeStack->firstBlock())->isRackLayout());
-  m_rootLayout = Poincare::JuniorLayout::Builder(
-      Tree::FromBlocks(SharedTreeStack->firstBlock()));
+    assert(Tree::FromBlocks(SharedTreeStack->firstBlock())->isRackLayout());
+    m_rootLayout = Poincare::JuniorLayout::Builder(
+        Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
   SharedTreeStack->flush();
 }
 

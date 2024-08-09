@@ -13,14 +13,33 @@
 
 namespace Poincare::Internal {
 
+bool Dependency::DeepBubbleUpDependencies(Tree* e) {
+  bool modified = false;
+  for (Tree* child : e->children()) {
+    modified |= DeepBubbleUpDependencies(child);
+  }
+  return ShallowBubbleUpDependencies(e) || modified;
+}
+
 bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   if (e->isDep()) {
-    if (!Main(e)->isDep()) {
-      return false;
+    bool changed = false;
+    Tree* main = Main(e);
+    // We cannot call Dependencies(e) here it might not be a DepList
+    Tree* dependencies = e->child(k_dependenciesIndex);
+    if (dependencies->isDep()) {
+      assert(Main(dependencies)->isDepList());
+      Set::Union(Main(dependencies), Dependencies(dependencies));
+      dependencies->removeNode();
+      changed = true;
     }
-    Set::Union(Dependencies(Main(e)), Dependencies(e));
-    e->removeNode();
-    return true;
+    dependencies = Dependencies(e);
+    if (main->isDep()) {
+      Set::Union(Dependencies(main), dependencies);
+      e->removeNode();
+      changed = true;
+    }
+    return changed;
   }
   TreeRef finalSet = KDepList()->cloneTree();
   int i = 0;

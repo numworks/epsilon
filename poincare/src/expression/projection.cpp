@@ -5,6 +5,7 @@
 
 #include "angle.h"
 #include "decimal.h"
+#include "dependency.h"
 #include "physical_constant.h"
 #include "symbol.h"
 #include "unit.h"
@@ -91,6 +92,10 @@ bool Projection::DeepSystemProject(Tree* e,
   bool changed =
       Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext);
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
+  if (changed) {
+    Dependency::DeepBubbleUpDependencies(e);
+    Dependency::DeepRemoveUselessDependencies(e);
+  }
   return changed;
 }
 

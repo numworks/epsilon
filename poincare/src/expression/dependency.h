@@ -24,6 +24,7 @@ struct Dependency {
     assert(e->child(k_dependenciesIndex)->isDepList());
     return e->child(k_dependenciesIndex);
   }
+  static bool DeepBubbleUpDependencies(Tree* e);
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);
   static bool RemoveDependencies(Tree* e);

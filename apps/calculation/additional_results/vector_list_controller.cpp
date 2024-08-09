@@ -52,8 +52,8 @@ void VectorListController::computeAdditionalResults(
   SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  ComplexSign sign = approximatedNorm.complexSign();
-  assert(sign.isReal() && !sign.realSign().canBeStrictlyNegative());
+  Sign sign = approximatedNorm.sign();
+  assert(!sign.canBeStrictlyNegative());
   if (sign.canBeNull() ||
       SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
     return;
@@ -88,11 +88,9 @@ void VectorListController::computeAdditionalResults(
   SystemExpression yApprox = PoincareHelpers::Approximate<double>(
       normalized.cloneChildAtIndex(1), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  sign = yApprox.complexSign();
+  sign = yApprox.sign();
   // HasVector should be false if any vector's child is complex.
-  assert(sign.isReal());
-  if (sign.realSign().canBeStrictlyNegative() &&
-      !sign.realSign().canBeStrictlyPositive()) {
+  if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {
     angle = UserExpression::Create(
         KSub(KA, KB),
         {.KA = NewTrigonometry::Period(ctx.m_angleUnit), .KB = angle});

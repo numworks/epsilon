@@ -347,8 +347,8 @@ class JuniorExpression : public OExpression {
                     Context* context = nullptr) const;
   Dimension dimension(Context* context = nullptr) const;
 
-  // ComplexSign of a SystematicExpression
-  ComplexSign complexSign() const;
+  // Sign of a SystemExpression
+  Sign sign() const;
 
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsUninitialized(const NewExpression e) {

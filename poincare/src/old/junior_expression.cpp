@@ -986,9 +986,7 @@ Poincare::Dimension NewExpression::dimension(Context* context) const {
   return Poincare::Dimension(*this, context);
 }
 
-ComplexSign SystemExpression::complexSign() const {
-  return GetComplexSign(tree());
-}
+Sign SystemExpression::sign() const { return GetSign(tree()); }
 
 bool NewExpression::hasComplexI(Context* context,
                                 SymbolicComputation replaceSymbols) const {

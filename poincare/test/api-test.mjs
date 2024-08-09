@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { CompilePoincareModuleFromFile, UsePoincare } from './poincare.mjs'
+import { CompilePoincareModuleFromFile, UsePoincare, UserExpressionTree } from './poincare.mjs'
 
 console.log('\n> Initializing Poincare');
 
@@ -130,8 +130,8 @@ Promise.all([
     assert.ok(!secondDerivative.isUninitialized());
     assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x^{2}\\right)\\right)');
 
-    const lowerBound = poincare.BuildExpression.Int(0);
-    const upperBound = poincare.BuildExpression.Int(1);
+    const lowerBound = poincare.BuildExpression.SystemInt(0);
+    const upperBound = poincare.BuildExpression.SystemInt(1);
     const integral = systemFunction.approximateIntegralToScalar(lowerBound, upperBound);
     assert.equal(integral, 0.3333333333333333);
   }),
@@ -139,15 +139,13 @@ Promise.all([
   testCase('Expression - Retrieve tree from CPP heap', async (poincare) => {
     const expression = poincare.BuildExpression.FromLatex('1+2');
     assert.ok(!expression.isUninitialized());
-    const storedTree = expression.tree().toUint8Array();
-    const expectedTree = new Uint8Array([19, 2, 6, 7]);
+    const storedTree = expression.getTree();
+    const expectedTree = new UserExpressionTree([19, 2, 6, 7]);
     assert.deepEqual(storedTree, expectedTree);
 
     // Reinstantiate in a new Poincare instance
     UsePoincare((newPoincare) => {
-      const newExpression = newPoincare.BuildExpression.FromTree(
-        newPoincare.PCR_Tree.FromUint8Array(storedTree),
-      );
+      const newExpression = newPoincare.PCR_UserExpression.BuildFromTree(storedTree);
       assert.ok(!newExpression.isUninitialized());
       assert.equal(expression.toLatex(), '1+2');
     });
@@ -156,8 +154,8 @@ Promise.all([
   testCase('Expression builder', async (poincare) => {
     const expression = poincare.BuildExpression.FromPattern(
       'Pow(Add(Mult(MinusOne,K0),K1),Pi)',
-      poincare.BuildExpression.Int(2),
-      poincare.BuildExpression.Float(1e-3),
+      poincare.BuildExpression.UserInt(2),
+      poincare.BuildExpression.UserFloat(1e-3),
     );
     assert.ok(!expression.isUninitialized());
     assert.equal(expression.toLatex(), '\\left(-1\\times 2+0.001\\right)^{π}');
@@ -175,10 +173,9 @@ Promise.all([
       poincare.UnitConversion.Default,
     );
 
-    const systemFunctionTree = poincare.BuildExpression.FromLatex('(x-4)(x+2)')
+    const systemFunction = poincare.BuildExpression.FromLatex('(x-4)(x+2)')
       .cloneAndReduce(reductionContext)
-      .getSystemFunction('x')
-      .tree();
+      .getSystemFunction('x');
 
     let solver;
     function resetSolver() {
@@ -187,29 +184,29 @@ Promise.all([
     }
 
     resetSolver();
-    const firstRoot = solver.nextRoot(systemFunctionTree);
+    const firstRoot = solver.nextRoot(systemFunction);
     assert.equal(firstRoot.x(), -2);
     assert.equal(firstRoot.y(), 0);
 
-    const secondRoot = solver.nextRoot(systemFunctionTree);
+    const secondRoot = solver.nextRoot(systemFunction);
     assert.equal(secondRoot.x(), 4);
     assert.equal(secondRoot.y(), 0);
 
-    const thirdRoot = solver.nextRoot(systemFunctionTree);
+    const thirdRoot = solver.nextRoot(systemFunction);
     assert.ok(Number.isNaN(thirdRoot.x()));
     assert.ok(Number.isNaN(thirdRoot.y()));
 
     resetSolver();
-    const firstMin = solver.nextMinimum(systemFunctionTree);
+    const firstMin = solver.nextMinimum(systemFunction);
     assert.equal(firstMin.x(), 1);
     assert.equal(firstMin.y(), -9);
 
-    const secondMin = solver.nextMinimum(systemFunctionTree);
+    const secondMin = solver.nextMinimum(systemFunction);
     assert.ok(Number.isNaN(secondMin.x()));
     assert.ok(Number.isNaN(secondMin.y()));
 
     resetSolver();
-    const firstMax = solver.nextMaximum(systemFunctionTree);
+    const firstMax = solver.nextMaximum(systemFunction);
     assert.ok(Number.isNaN(firstMax.x()));
     assert.ok(Number.isNaN(firstMax.y()));
   }),

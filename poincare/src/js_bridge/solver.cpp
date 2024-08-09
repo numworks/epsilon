@@ -2,15 +2,31 @@
 #include <poincare/numeric/solver.h>
 #include <poincare/old/context.h>
 
+#include "expression_types.h"
+
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-// For default parameter
-Coordinate2D<double> nextIntersection(Solver<double>* solver,
-                                      const Internal::Tree* e1,
-                                      const Internal::Tree* e2) {
-  return solver->nextIntersection(e1, e2);
+Coordinate2D<double> nextRoot(Solver<double>& solver,
+                              const TypedSystemFunction& e) {
+  return solver.nextRoot(e.tree());
+}
+
+Coordinate2D<double> nextMinimum(Solver<double>& solver,
+                                 const TypedSystemFunction& e) {
+  return solver.nextMinimum(e.tree());
+}
+
+Coordinate2D<double> nextMaximum(Solver<double>& solver,
+                                 const TypedSystemFunction& e) {
+  return solver.nextMaximum(e.tree());
+}
+
+Coordinate2D<double> nextIntersection(Solver<double>& solver,
+                                      const TypedSystemFunction& e1,
+                                      const TypedSystemFunction& e2) {
+  return solver.nextIntersection(e1.tree(), e2.tree());
 }
 
 EMSCRIPTEN_BINDINGS(solver) {
@@ -21,19 +37,10 @@ EMSCRIPTEN_BINDINGS(solver) {
       .constructor<double, double, Context*>()
       .function("stretch", &Solver<double>::stretch)
       .function("setSearchStep", &Solver<double>::setSearchStep)
-      .function("nextRoot",
-                select_overload<Coordinate2D<double>(const Internal::Tree*)>(
-                    &Solver<double>::nextRoot),
-                allow_raw_pointers())
-      .function("nextMinimum",
-                select_overload<Coordinate2D<double>(const Internal::Tree*)>(
-                    &Solver<double>::nextMinimum),
-                allow_raw_pointers())
-      .function("nextMaximum",
-                select_overload<Coordinate2D<double>(const Internal::Tree*)>(
-                    &Solver<double>::nextMaximum),
-                allow_raw_pointers())
-      .function("nextIntersection", &nextIntersection, allow_raw_pointers());
+      .function("nextRoot", &nextRoot)
+      .function("nextMinimum", &nextMinimum)
+      .function("nextMaximum", &nextMaximum)
+      .function("nextIntersection", &nextIntersection);
 }
 
 }  // namespace Poincare::JSBridge

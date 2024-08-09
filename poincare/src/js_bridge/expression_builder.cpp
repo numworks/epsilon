@@ -10,6 +10,9 @@
 #include <poincare/src/memory/type_block.h>
 
 #include <string>
+
+#include "expression_types.h"
+
 using namespace emscripten;
 using namespace Poincare::Internal;
 
@@ -17,22 +20,44 @@ namespace Poincare::JSBridge {
 
 // --- Simple builders (Int, Float, Rational, Latex) ---
 
-JuniorExpression BuildInt(int32_t value) {
-  return JuniorExpression::Builder(value);
+TypedSystemExpression BuildSystemInt(int32_t value) {
+  JuniorExpression result = JuniorExpression::Builder(value);
+  return *reinterpret_cast<TypedSystemExpression*>(&result);
 }
 
-JuniorExpression BuildFloat(double value) {
-  return JuniorExpression::Builder<double>(value);
+TypedUserExpression BuildUserInt(int32_t value) {
+  JuniorExpression result = JuniorExpression::Builder(value);
+  return *reinterpret_cast<TypedUserExpression*>(&result);
 }
 
-JuniorExpression BuildRational(int32_t numerator, int32_t denominator) {
-  return JuniorExpression::Builder(
+TypedSystemExpression BuildSystemFloat(double value) {
+  JuniorExpression result = JuniorExpression::Builder<double>(value);
+  return *reinterpret_cast<TypedSystemExpression*>(&result);
+}
+
+TypedUserExpression BuildUserFloat(double value) {
+  JuniorExpression result = JuniorExpression::Builder<double>(value);
+  return *reinterpret_cast<TypedUserExpression*>(&result);
+}
+
+TypedSystemExpression BuildSystemRational(int32_t numerator,
+                                          int32_t denominator) {
+  JuniorExpression result = JuniorExpression::Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
+  return *reinterpret_cast<TypedSystemExpression*>(&result);
 }
 
-UserExpression BuildFromLatexString(std::string latex) {
+TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
+  JuniorExpression result = JuniorExpression::Builder(
+      Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
+  return *reinterpret_cast<TypedUserExpression*>(&result);
+}
+
+TypedUserExpression BuildFromLatexString(std::string latex) {
   EmptyContext context;
-  return JuniorExpression::ParseLatex(latex.c_str(), &context);
+  JuniorExpression result =
+      JuniorExpression::ParseLatex(latex.c_str(), &context);
+  return *reinterpret_cast<TypedUserExpression*>(&result);
 }
 
 // --- Build from pattern ---
@@ -274,7 +299,7 @@ TreePatternBuilder findTreePatternBuilder(const char* identifier,
 }
 
 Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
-                           const JuniorExpression* contextExprs,
+                           const TypedUserExpression* contextExprs,
                            size_t nContextExprs) {
   // Skip whitespaces
   while (*buffer == ' ' && buffer < bufferEnd) {
@@ -403,40 +428,41 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
   return result;
 }
 
-JuniorExpression BuildFromPatternImpl(std::string pattern,
-                                      const JuniorExpression* contextExprs,
-                                      size_t nContextExprs) {
+TypedUserExpression BuildFromPatternImpl(
+    std::string pattern, const TypedUserExpression* contextExprs,
+    size_t nContextExprs) {
   const char* buffer = pattern.c_str();
   const char* bufferEnd = buffer + pattern.size();
-  Tree* result =
+  Tree* resultTree =
       buildTreeFromPattern(buffer, bufferEnd, contextExprs, nContextExprs);
-  return JuniorExpression::Builder(result);
+  JuniorExpression resultExpr = JuniorExpression::Builder(resultTree);
+  return *reinterpret_cast<TypedUserExpression*>(&resultExpr);
 }
 
 template <typename... Expressions>
-JuniorExpression BuildFromPattern(std::string buffer,
-                                  Expressions... expressions) {
-  const JuniorExpression contextExprs[] = {expressions...};
+TypedUserExpression BuildFromPattern(std::string buffer,
+                                     Expressions... expressions) {
+  const TypedUserExpression contextExprs[] = {expressions...};
   return BuildFromPatternImpl(buffer, contextExprs, sizeof...(expressions));
 }
 
 // --- Bindings ---
 
-// Macro to create binding functions for different numbers of JuniorExpression
-// arguments
+/* Macro to create binding functions for different numbers of
+ * TypedUserExpression arguments */
 #define BIND_BUILD_FROM_PATTERN(N) \
   class_function("FromPattern", &BuildFromPattern<REPEAT_ARGS(N)>)
 
-#define REPEAT_ARGS_1 const JuniorExpression
-#define REPEAT_ARGS_2 REPEAT_ARGS_1, const JuniorExpression
-#define REPEAT_ARGS_3 REPEAT_ARGS_2, const JuniorExpression
-#define REPEAT_ARGS_4 REPEAT_ARGS_3, const JuniorExpression
-#define REPEAT_ARGS_5 REPEAT_ARGS_4, const JuniorExpression
-#define REPEAT_ARGS_6 REPEAT_ARGS_5, const JuniorExpression
-#define REPEAT_ARGS_7 REPEAT_ARGS_6, const JuniorExpression
-#define REPEAT_ARGS_8 REPEAT_ARGS_7, const JuniorExpression
-#define REPEAT_ARGS_9 REPEAT_ARGS_8, const JuniorExpression
-#define REPEAT_ARGS_10 REPEAT_ARGS_9, const JuniorExpression
+#define REPEAT_ARGS_1 const TypedUserExpression
+#define REPEAT_ARGS_2 REPEAT_ARGS_1, const TypedUserExpression
+#define REPEAT_ARGS_3 REPEAT_ARGS_2, const TypedUserExpression
+#define REPEAT_ARGS_4 REPEAT_ARGS_3, const TypedUserExpression
+#define REPEAT_ARGS_5 REPEAT_ARGS_4, const TypedUserExpression
+#define REPEAT_ARGS_6 REPEAT_ARGS_5, const TypedUserExpression
+#define REPEAT_ARGS_7 REPEAT_ARGS_6, const TypedUserExpression
+#define REPEAT_ARGS_8 REPEAT_ARGS_7, const TypedUserExpression
+#define REPEAT_ARGS_9 REPEAT_ARGS_8, const TypedUserExpression
+#define REPEAT_ARGS_10 REPEAT_ARGS_9, const TypedUserExpression
 
 #define REPEAT_ARGS(N) REPEAT_ARGS_##N
 
@@ -444,14 +470,13 @@ class DummyClass {};  // Dummy class to bind static functions
 
 EMSCRIPTEN_BINDINGS(expression_builder) {
   class_<DummyClass>("BuildExpression")
-      .class_function("Int", &BuildInt)
-      .class_function("Float", &BuildFloat)
-      .class_function("Rational", &BuildRational)
+      .class_function("SystemInt", &BuildSystemInt)
+      .class_function("UserInt", &BuildUserInt)
+      .class_function("SystemFloat", &BuildSystemFloat)
+      .class_function("UserFloat", &BuildUserFloat)
+      .class_function("SystemRational", &BuildSystemRational)
+      .class_function("UserRational", &BuildUserRational)
       .class_function("FromLatex", &BuildFromLatexString)
-      .class_function("FromTree",
-                      select_overload<NewExpression(const Tree*)>(
-                          &JuniorExpression::Builder),
-                      allow_raw_pointers())
       .class_function("FromPattern", &BuildFromPattern<>)
       .BIND_BUILD_FROM_PATTERN(1)
       .BIND_BUILD_FROM_PATTERN(2)

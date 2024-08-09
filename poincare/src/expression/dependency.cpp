@@ -174,7 +174,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   return false;
 }
 
-bool RemoveUselessDependencies(Tree* dep) {
+bool ShallowRemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
   // TODO: This function uses Set as an Nary which is an implementation detail
@@ -261,7 +261,7 @@ bool Dependency::DeepRemoveUselessDependencies(Tree* e) {
     changed |= DeepRemoveUselessDependencies(child);
   }
   if (e->isDep()) {
-    changed |= RemoveUselessDependencies(e);
+    changed |= ShallowRemoveUselessDependencies(e);
   }
   return changed;
 }

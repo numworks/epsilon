@@ -217,7 +217,7 @@ $(addprefix expression/, \
   random.cpp \
   rational.cpp \
   sequence.cpp \
-  sequence_cache.cpp \
+  sequence_cache.cpp:-nosequencecache \
   set.cpp \
   simplification.cpp \
   symbol.cpp \

@@ -24,6 +24,8 @@ class Arithmetic {
   static bool ReduceRound(Tree* e);
   static bool ReduceFactor(Tree* e);
 
+  static bool BeautifyFactor(Tree* e);
+
   // Turn binomial and permute into factorials
   static bool ReducePermute(Tree* e);
   static bool ExpandPermute(Tree* e);
@@ -32,8 +34,6 @@ class Arithmetic {
 
   static bool ReduceGCD(Tree* e) { return ReduceGCDOrLCM(e, true); }
   static bool ReduceLCM(Tree* e) { return ReduceGCDOrLCM(e, false); }
-
-  static bool BeautifyFactor(Tree* e);
 
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
 

@@ -120,6 +120,37 @@ bool Arithmetic::ReduceFactor(Tree* e) {
   return false;
 }
 
+bool Arithmetic::BeautifyFactor(Tree* e) {
+  if (!e->isFactor()) {
+    return false;
+  }
+  if (
+      // factor(a / b) -> factor(a) / factor(b)
+      PatternMatching::MatchReplace(e, KFactor(KDiv(KA, KB)),
+                                    KDiv(KFactor(KA), KFactor(KB))) ||
+      // factor(- a) -> - factor(a)
+      PatternMatching::MatchReplace(e, KFactor(KOpposite(KA)),
+                                    KOpposite(KFactor(KA)))) {
+    return true;
+  }
+  Tree* child = e->child(0);
+  assert(child->isInteger());
+  if (child->isZero() || child->isOne()) {
+    // Factor is an extended prime factorization
+    e->moveTreeOverTree(child);
+    return true;
+  }
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  IntegerHandler handler = Integer::Handler(child);
+  if (handler.sign() == NonStrictSign::Negative) {
+    SharedTreeStack->pushOpposite();
+    handler.setSign(NonStrictSign::Positive);
+  }
+  PushPrimeFactorization(handler);
+  e->moveTreeOverTree(result);
+  return true;
+}
+
 bool Arithmetic::ReduceGCDOrLCM(Tree* e, bool isGCD) {
   bool changed = NAry::Flatten(e) + NAry::Sort(e);
   Tree* first = e->child(0);
@@ -452,37 +483,6 @@ Tree* Arithmetic::PushPrimeFactorization(IntegerHandler m) {
   NAry::SetNumberOfChildren(mult, result.numberOfFactors);
   NAry::SquashIfPossible(mult);
   return mult;
-}
-
-bool Arithmetic::BeautifyFactor(Tree* e) {
-  if (!e->isFactor()) {
-    return false;
-  }
-  if (
-      // factor(a / b) -> factor(a) / factor(b)
-      PatternMatching::MatchReplace(e, KFactor(KDiv(KA, KB)),
-                                    KDiv(KFactor(KA), KFactor(KB))) ||
-      // factor(- a) -> - factor(a)
-      PatternMatching::MatchReplace(e, KFactor(KOpposite(KA)),
-                                    KOpposite(KFactor(KA)))) {
-    return true;
-  }
-  Tree* child = e->child(0);
-  assert(child->isInteger());
-  if (child->isZero() || child->isOne()) {
-    // Factor is an extended prime factorization
-    e->moveTreeOverTree(child);
-    return true;
-  }
-  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  IntegerHandler handler = Integer::Handler(child);
-  if (handler.sign() == NonStrictSign::Negative) {
-    SharedTreeStack->pushOpposite();
-    handler.setSign(NonStrictSign::Positive);
-  }
-  PushPrimeFactorization(handler);
-  e->moveTreeOverTree(result);
-  return true;
 }
 
 uint32_t Arithmetic::GCD(uint32_t a, uint32_t b) {

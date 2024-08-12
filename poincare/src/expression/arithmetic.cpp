@@ -458,6 +458,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     return result;
   }
   assert(m.is<uint16_t>());
+  // using to<int> instead of to<uint16_t> to save a template specialization
   result.factors[t] = m.to<int>();
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;

@@ -799,33 +799,29 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     return;
   }
 
-// Parse cos^n(x)
-#if 0
+  // Parse cos^n(x)
   bool powerFunction = false;
   int powerValue;
   TreeRef power = parseIntegerCaretForFunction(false, &powerValue);
-  if (!power.isUninitialized()) {
-    assert(power.isInteger());
+  if (power) {
     if (powerValue == -1) {
       // Detect cos^-1(x) --> arccos(x)
-      const char *mainAlias = aliasesList.mainAlias();
-      functionHelper =
-          ParsingHelper::GetInverseFunction(mainAlias, strlen(mainAlias));
-      if (!functionHelper) {
+      builtin = ParsingHelper::GetInverseFunction(builtin);
+      if (!builtin) {
         // This function has no inverse
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      aliasesList = (**functionHelper).aliasesList();
+      aliasesList = builtin->aliases();
+      power->removeTree();
     } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
-      if (!ParsingHelper::IsPowerableFunction(*functionHelper)) {
+      if (!ParsingHelper::IsPowerableFunction(builtin)) {
         // This function can't be powered
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
       powerFunction = true;
     }
   }
-#endif
 
   if (m_parsingContext.context() && builtin->type().isParametric()) {
     //  We must make sure that the parameter is parsed as a single variable.
@@ -889,11 +885,11 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     // Incorrect parameter type or too few args
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-#if 0
+
   if (powerFunction) {
-    leftHandSide = Power::Builder(leftHandSide, power);
+    CloneNodeAtNode(leftHandSide, KPow);
+    power->detachTree();
   }
-#endif
 }
 
 void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,

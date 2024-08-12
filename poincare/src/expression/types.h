@@ -154,6 +154,7 @@ NODE(ArTanH, 1)
 
 RANGE(IndirectHyperbolicTrigonometryFunction, ArCosH, ArTanH)
 RANGE(HyperbolicTrigonometryFunction, CosH, ArTanH)
+RANGE(AnyTrigonometryFunction, Cos, ArTanH)
 
 // Ln(value)
 NODE(Ln, 1)

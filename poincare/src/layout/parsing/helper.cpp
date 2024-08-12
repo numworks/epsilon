@@ -3,9 +3,11 @@
 #include <omg/unicode_helper.h>
 #include <omg/utf8_helper.h>
 #include <poincare/src/expression/binary.h>
+#include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/integer.h>
 
 namespace Poincare::Internal {
+
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
                                       Token::Type* returnType) {
   if (CompareLayoutSpanWithNullTerminatedString(
@@ -53,6 +55,24 @@ bool ParsingHelper::ExtractInteger(const Tree* e, int* value) {
     }
   }
   return false;
+}
+
+const Builtin* ParsingHelper::GetInverseFunction(const Builtin* builtin) {
+  switch (builtin->type()) {
+    case Type::Cos:
+      return Builtin::GetReservedFunction(Type::ACos);
+    case Type::Sin:
+      return Builtin::GetReservedFunction(Type::ASin);
+    case Type::Tan:
+      return Builtin::GetReservedFunction(Type::ATan);
+    default:
+      return nullptr;
+  }
+}
+
+bool ParsingHelper::IsPowerableFunction(const Builtin* builtin) {
+  // return TypeBlock::IsAnyTrigonometryFunction(builtin->type());
+  return builtin->type().isAnyTrigonometryFunction();
 }
 
 }  // namespace Poincare::Internal

@@ -802,8 +802,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   // Parse cos^n(x)
   bool powerFunction = false;
   int powerValue;
-  TreeRef power = parseIntegerCaretForFunction(false, &powerValue);
-  if (power) {
+  if (parseIntegerCaretForFunction(false, &powerValue)) {
     if (powerValue == -1) {
       // Detect cos^-1(x) --> arccos(x)
       builtin = ParsingHelper::GetInverseFunction(builtin);
@@ -812,7 +811,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
       aliasesList = builtin->aliases();
-      power->removeTree();
     } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(builtin)) {
@@ -888,7 +886,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
 
   if (powerFunction) {
     CloneNodeAtNode(leftHandSide, KPow);
-    power->detachTree();
+    Integer::Push(powerValue);
   }
 }
 
@@ -1292,8 +1290,8 @@ bool IsIntegerBaseTenOrEmptyExpression(const Tree* e) {
   return e->isInteger();
 }
 
-Tree* RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
-                                               int* caretIntegerValue) {
+bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
+                                              int* caretIntegerValue) {
   // Parse f^n(x)
   Tree* result = nullptr;
   if (popTokenIfType(Token::Type::Caret)) {
@@ -1314,7 +1312,7 @@ Tree* RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
   } else {
-    return nullptr;
+    return false;
   }
   assert(result);
   assert(caretIntegerValue);
@@ -1322,7 +1320,8 @@ Tree* RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     result->moveTreeOverTree(result->child(0));
   }
   if (ParsingHelper::ExtractInteger(result, caretIntegerValue)) {
-    return result;
+    result->removeTree();
+    return true;
   }
   TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
 }

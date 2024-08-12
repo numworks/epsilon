@@ -168,8 +168,8 @@ class RackParser {
       Token::Type stoppingType, bool parseApostropheAsDerivative);
   void parseSequence(TreeRef& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
-  Tree* parseIntegerCaretForFunction(bool allowParenthesis,
-                                     int* caretIntegerValue);
+  bool parseIntegerCaretForFunction(bool allowParenthesis,
+                                    int* caretIntegerValue);
   bool generateMixedFractionIfNeeded(TreeRef& leftHandSide);
 
   // Save and restore parser state

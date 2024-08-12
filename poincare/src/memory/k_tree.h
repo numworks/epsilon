@@ -210,6 +210,22 @@ struct String {
   }
 };
 
+// KTree for Arbitrary
+
+template <typename T, T data,
+          typename IS = decltype(std::make_index_sequence<sizeof(T)>())>
+struct _KArbitraryHelper;
+
+template <typename T, T data, std::size_t... I>
+struct _KArbitraryHelper<T, data, std::index_sequence<I...>>
+    : KNAry<Type::Arbitrary, sizeof(T) & 0xFF, (sizeof(T) >> 8),
+            std::bit_cast<std::array<uint8_t, sizeof(T)>>(data)[I]...> {};
+
+template <typename T, T data>
+constexpr auto KArbitrary = _KArbitraryHelper<T, data>();
+
+// KTree for Placeholder
+
 template <Placeholder::Tag T, Placeholder::Filter F>
 struct KPlaceholderFilter
     : public KTree<Type::Placeholder, Placeholder::ParamsToValue(T, F)> {

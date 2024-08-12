@@ -33,34 +33,33 @@ async function testCase(featureName, testFunction) {
 Promise.all([
   // Wait for all tests to complete before logging end message
   testCase('Regression - Linear', async (poincare) => {
-    class ArraySeries extends poincare.PCR_Series.extend('PCR_Series', {}) {
-      constructor(x, y) {
-        super();
-        assert.equal(x.length, y.length);
-        this.x = x;
-        this.y = y;
-      }
-      getX(i) {
-        return this.x[i];
-      }
-      getY(i) {
-        return this.y[i];
-      }
-      numberOfPairs() {
-        return this.x.length;
-      }
-    }
+    var series = new poincare.PCR_RegressionSeries([1.0, 8.0, 14.0, 79.0], [-3.581, 20.296, 40.676, 261.623]);
 
-    var series = new ArraySeries([1.0, 8.0, 14.0, 79.0], [-3.581, 20.296, 40.676, 261.623]);
+    assert.equal(series.numberOfPairs(), 4);
+    assert.equal(series.slope(), 3.3995413996411177);
+
     var regression = new poincare.PCR_Regression(poincare.RegressionType.LinearAxpb);
     var coefficients = regression.fit(series);
-
     assert.deepEqual(coefficients, [3.3995413996411177, -6.934805690848492, NaN, NaN, NaN]);
-
     var prediction = regression.evaluate(coefficients, 10);
 
     assert.equal(prediction, 27.06060830556268);
   }),
+
+  testCase('Statistics - Array', async (poincare) => {
+    var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0]);
+
+    assert.equal(dataset.mean(), 0.5);
+  }),
+
+
+  testCase('Statistics - Series', async (poincare) => {
+    var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0], [2.0, 4.0, 1.0, 3.0]);
+
+    assert.equal(dataset.mean(), 3.8);
+    assert.equal(dataset.variance(), 45.36);
+  }),
+
 
   testCase('Expression - Parse, Reduce, Approximate', async (poincare) => {
     const userExpression = poincare.PCR_UserExpression.BuildFromLatex('\\frac{6}{9}');

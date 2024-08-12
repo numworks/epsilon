@@ -135,7 +135,7 @@ struct KFixedArity : public KTree<Tag, ExtraValues...> {
   }
 };
 
-template <Block Tag>
+template <Block Tag, Block... ExtraValues>
 struct KNAry {
   template <KTreeConcept... CTS>
   consteval auto operator()(CTS...) const {
@@ -143,7 +143,7 @@ struct KNAry {
   }
 
   template <size_t Nb>
-  static constexpr KTree<Tag, Nb> node{};
+  static constexpr KTree<Tag, Nb, ExtraValues...> node{};
 
   template <class... Args>
     requires HasATreeConcept<Args...>

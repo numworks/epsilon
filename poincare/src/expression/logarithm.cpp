@@ -211,6 +211,9 @@ bool Logarithm::ContractLn(Tree* e) {
       ctx.getTree(KA)->isInteger()) {
     const Tree* a = ctx.getTree(KB);
     const Tree* b = ctx.getTree(KA);
+    if (a->isZero()) {
+      return false;
+    }
     TreeRef c = PushProductCorrection(a, b);
     ctx.setNode(KC, c, 1, false);
     e->moveTreeOverTree(

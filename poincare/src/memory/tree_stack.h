@@ -162,6 +162,13 @@ class TreeStack : public BlockStack {
                             uint8_t interest, bool inverted,
                             uint8_t subCurveIndex);
 
+  Tree* pushArbitrary(uint16_t size, const uint8_t* data);
+
+  template <typename T>
+  Tree* pushArbitrary(const T& value) {
+    return pushArbitrary(sizeof(T), reinterpret_cast<const uint8_t*>(&value));
+  }
+
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {

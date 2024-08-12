@@ -49,6 +49,11 @@
 #ifndef ONLY_LAYOUTS
 #define SCOPED_NODE(F) F
 
+NODE(Arbitrary, NARY, {
+  uint16_t size;
+  uint8_t data[];
+})
+
 NODE(Placeholder, 0, { uint8_t id; })
 #if ASSERTIONS
 NODE(TreeBorder)

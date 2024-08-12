@@ -202,6 +202,11 @@ class TypeBlock : public Block {
         uint8_t numberOfChars = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfChars;
       }
+      case Type::Arbitrary: {
+        uint16_t size = static_cast<uint8_t>(*nextNth(3)) << 8 |
+                        static_cast<uint8_t>(*nextNth(2));
+        return numberOfMetaBlocks + size;
+      }
       default:
         return numberOfMetaBlocks;
     }

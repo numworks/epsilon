@@ -170,6 +170,17 @@ Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
   return result;
 }
 
+Tree* TreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
+  Tree* result = pushBlock(Type::Arbitrary);
+  pushBlock(0);  // nary
+  pushBlock(size & 0xFF);
+  pushBlock(size >> 8);
+  for (size_t i = 0; i < size; i++) {
+    pushBlock(data[i]);
+  }
+  return result;
+}
+
 #if POINCARE_TREE_LOG
 
 void TreeStack::logNode(std::ostream& stream, const Tree* node, bool recursive,

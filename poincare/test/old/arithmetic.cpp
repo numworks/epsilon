@@ -11,14 +11,13 @@ using namespace Poincare::Internal;
 void fill_buffer_with(char* buffer, size_t bufferSize, const char* functionName,
                       IntegerHandler* a, int numberOfIntegers) {
   size_t numberOfChar = strlcpy(buffer, functionName, bufferSize);
-  WorkingBuffer workingBuffer;
   for (int i = 0; i < numberOfIntegers; i++) {
     if (i > 0) {
       numberOfChar +=
           strlcpy(buffer + numberOfChar, ", ", bufferSize - numberOfChar);
     }
-    numberOfChar += a[i].serialize(buffer + numberOfChar,
-                                   bufferSize - numberOfChar, &workingBuffer);
+    numberOfChar +=
+        a[i].serialize(buffer + numberOfChar, bufferSize - numberOfChar);
   }
   strlcpy(buffer + numberOfChar, ")", bufferSize - numberOfChar);
 }

@@ -204,14 +204,11 @@ class IntegerHandler final {
   }
 #endif
 
-  int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer) const;
   size_t serialize(char* buffer, size_t bufferSize,
-                   WorkingBuffer* workingBuffer,
-                   OMG::Base base = OMG::Base::Decimal) const;
-  size_t serializeInDecimal(char* buffer, size_t bufferSize,
-                            WorkingBuffer* workingBuffer) const;
-  void removeZeroAtTheEnd(int minimalNumbersOfDigits,
-                          WorkingBuffer* workingBuffer);
+                   OMG::Base base = OMG::Base::Decimal) const {
+    WorkingBuffer workingBuffer;
+    return serialize(buffer, bufferSize, &workingBuffer, base);
+  }
 
  private:
   static constexpr float k_digitBase =
@@ -249,6 +246,15 @@ class IntegerHandler final {
   // sanitize removes the leading zero and recompute the number of digits if
   // necessary
   void sanitize();
+
+  int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer) const;
+  size_t serialize(char* buffer, size_t bufferSize,
+                   WorkingBuffer* workingBuffer,
+                   OMG::Base base = OMG::Base::Decimal) const;
+  size_t serializeInDecimal(char* buffer, size_t bufferSize,
+                            WorkingBuffer* workingBuffer) const;
+  void removeZeroAtTheEnd(int minimalNumbersOfDigits,
+                          WorkingBuffer* workingBuffer);
 
   // Get HalfNativeDigits, NativeDigits, DoubleNativeDigits
   template <typename T>

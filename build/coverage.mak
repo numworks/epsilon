@@ -31,59 +31,75 @@ $(call all_targets_named,coverage/%.bin): SFLAGS += --coverage
 
 _coverage_excludes := \
   '**/eadk/**' \
-  '**/ion/src/simulator/external/**' \
+  '**/external/**' \
   '*/output/**' \
-  '**/python/src/**' \
-  $(patsubst %,'%/**',$(wildcard /Applications)) \
-  $(patsubst %,'%/**',$(wildcard /Library))
+	'**/test/**' \
+	'**/python/src/**' \
+	'**/quiz/src/**' \
+  '/Applications/**' \
+  '/Library/**' \
+	'/usr/**' \
 
-# initialize_diagnosis, <test_category>, <coverage_dir>
+# initialize_diagnosis, <file_name>, <coverage_dir>
 define initialize_diagnosis
-	rm -f $2/coverage_$1.info
+	@echo Cleaning coverage data in $2 and removing $2/$1.info
+	rm -f $2/$1.info
 	lcov --zerocounters --directory $2
 endef
 
-# TODO: No need to filter unit tests once they are all fixed.
 # run_unit_tests, <test_bin>
 define run_unit_tests
-	./$1 --headless --limit-stack-usage -f poincare
+	@echo Running unit tests with executable $1
+	./$1 --headless --limit-stack-usage -f distributions
+	./$1 --headless --limit-stack-usage -f finance
+	./$1 --headless --limit-stack-usage -f graph
+	./$1 --headless --limit-stack-usage -f ion
+	./$1 --headless --limit-stack-usage -f kandinsky
+	./$1 --headless --limit-stack-usage -f liba
+	./$1 --headless --limit-stack-usage -f omg
 	./$1 --headless --limit-stack-usage -f pcj
+	./$1 --headless --limit-stack-usage -f poincare
+	./$1 --headless --limit-stack-usage -f probability
+	./$1 --headless --limit-stack-usage -f regression
+	./$1 --headless --limit-stack-usage -f sequence
+	./$1 --headless --limit-stack-usage -f shared
+	./$1 --headless --limit-stack-usage -f statistics
 endef
+# FIXME: all python tests crash when building with gcc
+# ./$1 --headless --limit-stack-usage -f python
+# TODO: Put back unit tests that are currently broken for all toolchains
+# ./$1 --headless --limit-stack-usage -f code
+# ./$1 --headless --limit-stack-usage -f escher
+# ./$1 --headless --limit-stack-usage -f solver
 
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests
-	for state_file in tests/screenshots_dataset/*/*.nws; do ./$1 --headless --limit-stack-usage --load-state-file $$$$state_file; done
+	@echo Running screenshot tests with executable $1
+	python3 build/screenshots/compare_crc.py -n $1
 endef
 
-# generate_coverage_info, <test_category>, <coverage_dir>
+# generate_coverage_info, <file_name>, <coverage_dir>
 define generate_coverage_info
-	lcov --capture --directory $2 --output-file $2/$1.info --ignore-errors inconsistent --filter range || (rm -f $2/$1.info; false)
-	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info --ignore-errors unused --ignore-errors inconsistent --filter range || (rm -f $2/$1.info; false)
+	@echo Generating coverage info for files in $2. Result will be stored in $2/$1.info.
+	lcov --capture --directory $2 --output-file $2/$1.info
+	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info
 endef
 
 # rule_for_coverage_info,<coverage_dir>
 define rule_for_coverage_info
 $(eval \
 coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
-	$(call initialize_diagnosis,all_tests,$1)
+	$(call initialize_diagnosis,code_coverage,$1)
 	$(call run_screenshot_tests,$$(word 2,$$^))
 	$(call run_unit_tests,$$<)
-	$(call generate_coverage_info,all_tests,$1)
-
-	$(call initialize_diagnosis,screenshot_tests,$1)
-	$(call run_screenshot_tests,$$(word 2,$$^))
-	$(call generate_coverage_info,screenshot_tests,$1)
-
-	$(call initialize_diagnosis,unit_tests,$1)
-	$(call run_unit_tests,$$<)
-	$(call generate_coverage_info,unit_tests,$1)
+	$(call generate_coverage_info,code_coverage,$1)
 )
 endef
 
-# generate_diagnosis, <test_category>, <coverage_dir>
+# generate_diagnosis, <folder_name>, <coverage_dir>
 define generate_diagnosis
-	genhtml $2/$1.info -s --legend --output-directory $2/diagnosis_$1 --ignore-errors inconsistent --filter range
-	open $2/diagnosis_$1/index.html
+	@echo Generating coverage diagnosis in $2/$1 from $2/$1.info
+	genhtml $2/$1.info -s --legend --output-directory $2/$1
 endef
 
 .PHONY: coverage
@@ -96,9 +112,7 @@ else
 $(call rule_for_coverage_info,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage) \
 $(call rule_for_diagnosis,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
 coverage: coverage_info
-	$(call generate_diagnosis,unit_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
-	$(call generate_diagnosis,screenshot_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
-	$(call generate_diagnosis,all_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
+	$(call generate_diagnosis,code_coverage,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
 endif
 
 $(call document_other_target,coverage,Generate a coverage diagnosis by running unit and screenshot tests)

@@ -47,7 +47,7 @@ RANGE(Pair, AbsLayout, CurlyBracesLayout)
 // CondensedSum(sumSymbol, start, end)
 NODE(CondensedSum, 3)
 
-// Diff(Symbol, SymbolValue, Derivand, Order)
+// Diff(Symbol, SymbolValue, Order, Derivand)
 /* FIXME isNthDerivative wastes an extra metablock so it can be initialized by
  * the ktree */
 NODE(Diff, 4, {

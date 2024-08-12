@@ -85,7 +85,7 @@ void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
   }
 }
 
-#if 0
+#if 0  // TODO_PCJ
 template <int N>
 void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
   Arithmetic arithmetic;
@@ -192,7 +192,7 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
 }
 
 QUIZ_CASE(poincare_arithmetic_divisors) {
-#if 0
+#if 0  // TODO_PCJ
   quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(0)) ==
                                    Arithmetic::k_errorTooManyFactors,
                                "divisors(0)");

@@ -32,13 +32,12 @@ void assert_gcd_equals_to(IntegerHandler a, IntegerHandler b,
   quiz_assert_print_if_failure(IntegerHandler::Compare(gcd, c) == 0,
                                failInformationBuffer);
   if (a.is<int>() && b.is<int>()) {
-    // Test Arithmetic::GCD(int, int) if possible
+    // Test Arithmetic::GCD(int, int)
     a.setSign(NonStrictSign::Positive);
     b.setSign(NonStrictSign::Positive);
     int extractedGcd = Arithmetic::GCD(a.to<int>(), b.to<int>());
-    quiz_assert_print_if_failure(
-        c.is<int>() ? extractedGcd == c.to<int>() : true,
-        failInformationBuffer);
+    quiz_assert_print_if_failure(c.is<int>() && extractedGcd == c.to<int>(),
+                                 failInformationBuffer);
   }
 }
 
@@ -57,10 +56,9 @@ void assert_lcm_equals_to(IntegerHandler a, IntegerHandler b,
     a.setSign(NonStrictSign::Positive);
     b.setSign(NonStrictSign::Positive);
     int extractedLcm = Arithmetic::LCM(a.to<int>(), b.to<int>(), &isUndefined);
-    if (c.is<int>()) {
-      quiz_assert_print_if_failure(extractedLcm == c.to<int>(),
-                                   failInformationBuffer);
-    }
+    quiz_assert_print_if_failure(
+        c.is<int>() ? extractedLcm == c.to<int>() : isUndefined,
+        failInformationBuffer);
   }
 }
 

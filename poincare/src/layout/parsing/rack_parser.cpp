@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <utility>
 
-// #include "helper.h"
+#include "helper.h"
 
 namespace Poincare::Internal {
 
@@ -1296,42 +1296,40 @@ bool IsIntegerBaseTenOrEmptyExpression(const Tree* e) {
   return e->isInteger();
 }
 
-#if 0
-TreeRef Parser::parseIntegerCaretForFunction(bool allowParenthesis,
-                                                int *caretIntegerValue) {
+Tree* RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
+                                               int* caretIntegerValue) {
   // Parse f^n(x)
-  Token::Type endDelimiterOfPower;
-  if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
-    endDelimiterOfPower = Token::Type::RightSystemParenthesis;
-  } else if (popTokenIfType(Token::Type::Caret)) {
-    endDelimiterOfPower = Token::Type::RightParenthesis;
+  Tree* result = nullptr;
+  if (popTokenIfType(Token::Type::Caret)) {
     if (!popTokenIfType(Token::Type::LeftParenthesis)) {
       // Exponent should be parenthesed
       // TODO: allow without parenthesis?
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
+    result = parseUntil(Token::Type::RightParenthesis);
+    if (!popTokenIfType(Token::Type::RightParenthesis)) {
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
+  } else if (popTokenIfType(Token::Type::Superscript)) {
+    const Tree* layout = m_currentToken.firstLayout();
+    result = Parser::Parse(layout->child(0), m_parsingContext.context(),
+                           m_parsingContext.parsingMethod());
+    if (!result) {
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
   } else {
-    return Expression();
+    return nullptr;
   }
-  Expression base = parseUntil(endDelimiterOfPower);
-  if (!popTokenIfType(endDelimiterOfPower)) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-  bool isSymbol;
+  assert(result);
   assert(caretIntegerValue);
-  Expression result =
-      allowParenthesis && base.type() == ExpressionNode::Type::Parenthesis
-          ? base.child(0)
-          : base;
-  if (SimplificationHelper::extractInteger(result, caretIntegerValue,
-                                           &isSymbol) &&
-      !isSymbol) {
+  if (allowParenthesis && result->isParentheses()) {
+    result->moveTreeOverTree(result->child(0));
+  }
+  if (ParsingHelper::ExtractInteger(result, caretIntegerValue)) {
     return result;
   }
   TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  return Expression();
 }
-#endif
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
   if (false /*m_parsingContext.context() &&

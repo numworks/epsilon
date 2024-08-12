@@ -3,6 +3,7 @@
 #include <omg/unicode_helper.h>
 #include <omg/utf8_helper.h>
 #include <poincare/src/expression/binary.h>
+#include <poincare/src/expression/integer.h>
 
 namespace Poincare::Internal {
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
@@ -34,6 +35,22 @@ bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
         assert(false);
     }
     return true;
+  }
+  return false;
+}
+
+bool ParsingHelper::ExtractInteger(const Tree* e, int* value) {
+  bool isOpposite = false;
+  if (e->isOpposite()) {
+    e = e->child(0);
+    isOpposite = true;
+  }
+  if (e->isRational()) {
+    IntegerHandler intHandler = Integer::Handler(e);
+    if (intHandler.is<int>()) {
+      *value = intHandler.to<int>() * (isOpposite ? -1 : 1);
+      return true;
+    }
   }
   return false;
 }

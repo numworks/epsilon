@@ -16,6 +16,7 @@ namespace Poincare::Internal {
 // TODO: tests
 
 IntegerHandler Rational::Numerator(const Tree* e) {
+  assert(e->isRational());
   Type type = e->type();
   switch (type) {
     case Type::Zero:
@@ -66,6 +67,7 @@ IntegerHandler Rational::Numerator(const Tree* e) {
 }
 
 IntegerHandler Rational::Denominator(const Tree* e) {
+  assert(e->isRational());
   switch (e->type()) {
     case Type::Zero:
     case Type::One:

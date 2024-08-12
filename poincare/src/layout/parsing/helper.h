@@ -9,6 +9,7 @@ namespace Poincare::Internal {
 class ParsingHelper {
  public:
   static bool IsLogicalOperator(LayoutSpan name, Token::Type* returnType);
+  static bool ExtractInteger(const Tree* e, int* value);
 };
 }  // namespace Poincare::Internal
 #endif

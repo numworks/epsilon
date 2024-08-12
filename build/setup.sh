@@ -64,8 +64,9 @@ install_macos_binary_deps() {
     imagemagick \
     libpng \
     libusb \
+    lcov \
     pkg-config \
-    python3
+    python3 \
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     brew install numworks/tap/arm-none-eabi-gcc
@@ -83,6 +84,7 @@ install_linux_binary_deps() {
     libpng-dev \
     libx11-dev \
     libxext-dev \
+    lcov \
     pkg-config \
     python3 \
     python3-pip \

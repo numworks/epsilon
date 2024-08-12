@@ -221,6 +221,9 @@ struct _KArbitraryHelper<T, data, std::index_sequence<I...>>
     : KNAry<Type::Arbitrary, sizeof(T) & 0xFF, (sizeof(T) >> 8),
             std::bit_cast<std::array<uint8_t, sizeof(T)>>(data)[I]...> {};
 
+/* WARNING: T may not have implicit padding, as it leads to uninitialized bytes,
+ * which are not permitted in bit_cast. You must declare padding explicitly:
+ * e.g. struct { int a; bool b; bool padding[3] = {0, 0, 0}; }*/
 template <typename T, T data>
 constexpr auto KArbitrary = _KArbitraryHelper<T, data>();
 

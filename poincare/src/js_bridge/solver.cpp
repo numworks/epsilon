@@ -31,6 +31,8 @@ Coordinate2D<double> nextIntersection(Solver<double>& solver,
 
 EMSCRIPTEN_BINDINGS(solver) {
   class_<Coordinate2D<double>>("PCR_Coordinate2D")
+      .constructor<double, double>()
+      .constructor<>()
       .function("x", &Coordinate2D<double>::x)
       .function("y", &Coordinate2D<double>::y);
   class_<Solver<double>>("PCR_Solver")

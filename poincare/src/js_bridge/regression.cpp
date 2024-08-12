@@ -1,14 +1,13 @@
 #include <emscripten/bind.h>
-#include <emscripten/val.h>
 #include <poincare/src/regression/linear_regression.h>
 #include <poincare/src/regression/regression.h>
 #include <poincare/src/regression/series.h>
 
+#include "utils.h"
+
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
-
-EMSCRIPTEN_DECLARE_VAL_TYPE(FloatArray);
 
 class SeriesFromJsArray : public Regression::Series {
  public:
@@ -16,7 +15,7 @@ class SeriesFromJsArray : public Regression::Series {
       : m_xArray(xArray), m_yArray(yArray) {}
 
   int numberOfPairs() const override {
-    return ArraysHaveSameLength(m_xArray, m_yArray)
+    return Utils::ArraysHaveSameLength(m_xArray, m_yArray)
                ? m_xArray["length"].as<int>()
                : 0;
   }
@@ -38,11 +37,6 @@ class SeriesFromJsArray : public Regression::Series {
   }
 
  private:
-  static bool ArraysHaveSameLength(const FloatArray& array,
-                                   const FloatArray& otherArray) {
-    return array["length"].as<int>() == otherArray["length"].as<int>();
-  }
-
   const FloatArray m_xArray;
   const FloatArray m_yArray;
 };
@@ -68,8 +62,6 @@ double evaluate(const Regression::Regression* reg,
 }
 
 EMSCRIPTEN_BINDINGS(regression) {
-  register_type<FloatArray>("number[]");
-
   class_<SeriesFromJsArray>("PCR_RegressionSeries")
       .constructor<const FloatArray&, const FloatArray&>()
       .function("numberOfPairs", &SeriesFromJsArray::numberOfPairs)

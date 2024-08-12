@@ -397,6 +397,7 @@ _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
   utils.cpp \
   regression.cpp \
   solver.cpp \
+  statistics.cpp \
 )
 
 $(call create_module,poincare,1, \

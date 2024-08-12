@@ -212,20 +212,20 @@ struct String {
 
 // KTree for Arbitrary
 
-template <typename T, T data,
-          typename IS = decltype(std::make_index_sequence<sizeof(T)>())>
+template <auto data,
+          typename IS = decltype(std::make_index_sequence<sizeof(data)>())>
 struct _KArbitraryHelper;
 
-template <typename T, T data, std::size_t... I>
-struct _KArbitraryHelper<T, data, std::index_sequence<I...>>
-    : KNAry<Type::Arbitrary, sizeof(T) & 0xFF, (sizeof(T) >> 8),
-            std::bit_cast<std::array<uint8_t, sizeof(T)>>(data)[I]...> {};
+template <auto data, std::size_t... I>
+struct _KArbitraryHelper<data, std::index_sequence<I...>>
+    : KNAry<Type::Arbitrary, sizeof(data) & 0xFF, (sizeof(data) >> 8),
+            std::bit_cast<std::array<uint8_t, sizeof(data)>>(data)[I]...> {};
 
 /* WARNING: T may not have implicit padding, as it leads to uninitialized bytes,
  * which are not permitted in bit_cast. You must declare padding explicitly:
  * e.g. struct { int a; bool b; bool padding[3] = {0, 0, 0}; }*/
-template <typename T, T data>
-constexpr auto KArbitrary = _KArbitraryHelper<T, data>();
+template <auto data>
+constexpr auto KArbitrary = _KArbitraryHelper<data>();
 
 // KTree for Placeholder
 

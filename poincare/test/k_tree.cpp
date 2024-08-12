@@ -158,9 +158,10 @@ QUIZ_CASE(pcj_k_tree_arbitrary_data) {
     }
   };
 
-  assert_arbitrary_is(KArbitrary<bool, true>(), true, 0);
-  assert_arbitrary_is(KArbitrary<int, -1>(), -1, 0);
-  assert_arbitrary_is(KArbitrary<char, 'a'>(KArbitrary<char, 'b'>()), 'a', 1);
-  assert_arbitrary_is(KArbitrary<Misc, Misc{1, 2.f, true}>(0_e, 1_e, 2_e),
+  assert_arbitrary_is(KArbitrary<true>(), true, 0);
+  assert_arbitrary_is(KArbitrary<-1>(), -1, 0);
+  assert_arbitrary_is(KArbitrary<123ULL>(), 123ULL, 0);
+  assert_arbitrary_is(KArbitrary<'a'>(KArbitrary<'b'>()), 'a', 1);
+  assert_arbitrary_is(KArbitrary<Misc{1, 2.f, true}>(0_e, 1_e, 2_e),
                       Misc{1, 2.f, true}, 3);
 }

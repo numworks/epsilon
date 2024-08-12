@@ -2,6 +2,7 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/memory/arbitrary_data.h>
 
 #include "helper.h"
 
@@ -132,4 +133,34 @@ QUIZ_CASE(pcj_k_rack) {
 QUIZ_CASE(pcj_k_tree_to_tree_pointer) {
   constexpr const Tree* a = KAdd(2_e, 3_e);
   quiz_assert(a->treeSize() == 5);
+}
+
+template <typename T>
+void assert_arbitrary_is(const Tree* tree, const T& value,
+                         int numberOfChildren) {
+  quiz_assert(tree->type() == Type::Arbitrary);
+  quiz_assert(tree->nodeSize() ==
+              TypeBlock::NumberOfMetaBlocks(Type::Arbitrary) + sizeof(T));
+  quiz_assert(tree->numberOfChildren() == numberOfChildren);
+  quiz_assert(ArbitraryData::Size(tree) == sizeof(T));
+  quiz_assert(ArbitraryData::Unpack<T>(tree) == value);
+}
+
+QUIZ_CASE(pcj_k_tree_arbitrary_data) {
+  struct Misc {
+    int a;
+    float b;
+    bool c;
+    bool padding[3] = {false, false, false};
+
+    bool operator==(const Misc& other) const {
+      return a == other.a && b == other.b && c == other.c;
+    }
+  };
+
+  assert_arbitrary_is(KArbitrary<bool, true>(), true, 0);
+  assert_arbitrary_is(KArbitrary<int, -1>(), -1, 0);
+  assert_arbitrary_is(KArbitrary<char, 'a'>(KArbitrary<char, 'b'>()), 'a', 1);
+  assert_arbitrary_is(KArbitrary<Misc, Misc{1, 2.f, true}>(0_e, 1_e, 2_e),
+                      Misc{1, 2.f, true}, 3);
 }

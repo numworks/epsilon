@@ -77,8 +77,8 @@ double LogisticRegression::partialDerivate(const double* modelCoefficients,
 void LogisticRegression::specializedInitCoefficientsForFit(
     double* modelCoefficients, double defaultValue,
     const Series* series) const {
-  OneColumn xColumn(series, 0);
-  OneColumn yColumn(series, 1);
+  StatisticsDatasetFromSeriesColumn xColumn(series, 0);
+  StatisticsDatasetFromSeriesColumn yColumn(series, 1);
   /* We optimize fit for data that actually follow a logistic function curve :
    * f(x)=c/(1+a*e^(-bx))
    * We use these properties :
@@ -110,7 +110,6 @@ void LogisticRegression::specializedInitCoefficientsForFit(
    * are distributed around the interesting part. We can therefore estimate b
    * from X's range of values (dependent on outliers): Xmax - Xmin = 10/b */
   double b = 10.0 / (xColumn.max() - xColumn.min());
-  double slope = DatasetSeriesAdapter(series).slope();
   if (!std::isfinite(b)) {
     b = defaultValue;
   }
@@ -118,7 +117,7 @@ void LogisticRegression::specializedInitCoefficientsForFit(
    * Sign of b if :                  c positive         c negative
    * - Positive slope (__/‾‾) :      b positive         b negative
    * - Negative slope (‾‾\__) :      b negative         b positive */
-  if ((slope < 0.0) != (c < 0.0)) {
+  if ((series->slope() < 0.0) != (c < 0.0)) {
     b = -b;
   }
 

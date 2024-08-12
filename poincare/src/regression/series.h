@@ -2,8 +2,11 @@
 #define POINCARE_REGRESSION_SERIES_H
 
 #include <assert.h>
+#include <poincare/numeric/statistics.h>
 
 namespace Poincare::Regression {
+
+class StatisticsDatasetFromSeriesColumn;
 
 // Apps will provide series to the regression algorithm with Series
 class Series {
@@ -21,6 +24,18 @@ class Series {
   }
   virtual int numberOfPairs() const = 0;
   bool numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const;
+
+  // Statistics
+  StatisticsDatasetFromSeriesColumn createDatasetFromColumn(
+      int i, StatisticsCalculationOptions options = {}) const;
+  double columnProductSum(StatisticsCalculationOptions options = {}) const;
+  double covariance(StatisticsCalculationOptions options = {}) const;
+  double slope(StatisticsCalculationOptions options = {}) const;
+  double yIntercept(StatisticsCalculationOptions options = {}) const;
+
+ private:
+  double meanOfColumn(int i, StatisticsCalculationOptions options) const;
+  double varianceOfColumn(int i, StatisticsCalculationOptions options) const;
 };
 
 }  // namespace Poincare::Regression

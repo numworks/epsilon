@@ -62,9 +62,8 @@ void TransformedRegression::privateFit(const Series* series,
                                        Poincare::Context* context) const {
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   StatisticsCalculationOptions options(applyLnOnX(), applyLnOnY(), opposeY);
-  DatasetSeriesAdapter dataset(series);
-  modelCoefficients[0] = dataset.yIntercept(options);
-  modelCoefficients[1] = dataset.slope(options);
+  modelCoefficients[0] = series->yIntercept(options);
+  modelCoefficients[1] = series->slope(options);
   if (applyLnOnA()) {
     modelCoefficients[0] =
         (opposeY ? -1.0 : 1.0) * std::exp(modelCoefficients[0]);

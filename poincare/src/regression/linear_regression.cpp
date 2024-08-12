@@ -22,9 +22,8 @@ UserExpression LinearRegression::privateExpression(
 void LinearRegression::privateFit(const Series* series,
                                   double* modelCoefficients,
                                   Context* context) const {
-  DatasetSeriesAdapter dataset(series);
-  modelCoefficients[slopeCoefficientIndex()] = dataset.slope();
-  modelCoefficients[yInterceptCoefficientIndex()] = dataset.yIntercept();
+  modelCoefficients[slopeCoefficientIndex()] = series->slope();
+  modelCoefficients[yInterceptCoefficientIndex()] = series->yIntercept();
 }
 
 }  // namespace Poincare::Regression

@@ -2,6 +2,7 @@
 
 #include <ion.h>
 #include <ion/display.h>
+#include <ion/keyboard/layout_events.h>
 #include <kandinsky/font.h>
 #include <omg/print.h>
 #include <omg/utf8_decoder.h>

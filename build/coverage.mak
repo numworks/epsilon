@@ -1,5 +1,6 @@
 $(call create_goal,coverage_epsilon, \
   apps \
+  eadk \
   escher \
   ion \
   kandinsky \
@@ -13,6 +14,7 @@ $(call create_goal,coverage_epsilon, \
 
 $(call create_goal,coverage_test, \
   apps.test \
+  eadk \
   escher.test \
   ion.test \
   kandinsky.test \
@@ -50,7 +52,7 @@ endef
 
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests
-	for state_file in tests/screenshots_dataset/*/*.nws; do ./output/debug/macos/arm64/coverage/coverage_epsilon.bin --headless --limit-stack-usage --load-state-file $$state_file; done
+	for state_file in tests/screenshots_dataset/*/*.nws; do ./$1 --headless --limit-stack-usage --load-state-file $$$$state_file; done
 endef
 
 # generate_coverage_info, <test_category>, <coverage_dir>
@@ -65,7 +67,7 @@ $(eval \
 coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
 	$(call initialize_diagnosis,all_tests,$1)
 	$(call run_screenshot_tests,$$(word 2,$$^))
-	$(call run_unit_tests,$$(word 2,$$^))
+	$(call run_unit_tests,$$<)
 	$(call generate_coverage_info,all_tests,$1)
 
 	$(call initialize_diagnosis,screenshot_tests,$1)
@@ -73,7 +75,7 @@ coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
 	$(call generate_coverage_info,screenshot_tests,$1)
 
 	$(call initialize_diagnosis,unit_tests,$1)
-	$(call run_unit_tests,$$(word 2,$$^))
+	$(call run_unit_tests,$$<)
 	$(call generate_coverage_info,unit_tests,$1)
 )
 endef

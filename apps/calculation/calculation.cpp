@@ -164,15 +164,13 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (exactOutputTree()->isUndefined() ||
              approximatedOutputTree()->isNonReal() ||
+             approximatedOutputTree()->isUndefined() ||
              // Other conditions are factorized in CAS
              CAS::ShouldOnlyDisplayApproximation(
                  inputExp, outputExp,
                  approximateOutput(NumberOfSignificantDigits::UserDefined),
                  context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (approximatedOutputTree()->isUndefined()) {
-    assert(!approximatedOutputTree()->isNonReal());
-    m_displayOutput = DisplayOutput::ExactOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
              inputExp.recursivelyMatches(NewExpression::IsApproximate,
                                          context) ||

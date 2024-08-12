@@ -391,7 +391,10 @@ $(addprefix helpers/, \
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
   computation_context.cpp \
   expression.cpp \
-  expression_builder.cpp \
+  system_expression.cpp \
+  system_function.cpp \
+  user_expression.cpp \
+  utils.cpp \
   regression.cpp \
   solver.cpp \
 )

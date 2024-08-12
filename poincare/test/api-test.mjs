@@ -63,7 +63,7 @@ Promise.all([
   }),
 
   testCase('Expression - Parse, Reduce, Approximate', async (poincare) => {
-    const userExpression = poincare.BuildExpression.FromLatex('\\frac{6}{9}');
+    const userExpression = poincare.PCR_UserExpression.BuildFromLatex('\\frac{6}{9}');
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -86,7 +86,7 @@ Promise.all([
   }),
 
   testCase('Expression - System Function, Derivative', async (poincare) => {
-    const userExpression = poincare.BuildExpression.FromLatex('x^{2}-2x+1');
+    const userExpression = poincare.PCR_UserExpression.BuildFromLatex('x^{2}-2x+1');
 
     assert.ok(!userExpression.isUninitialized());
 
@@ -112,14 +112,14 @@ Promise.all([
     assert.ok(!secondDerivative.isUninitialized());
     assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x^{2}\\right)\\right)');
 
-    const lowerBound = poincare.BuildExpression.SystemInt(0);
-    const upperBound = poincare.BuildExpression.SystemInt(1);
+    const lowerBound = poincare.PCR_SystemExpression.BuildInt(0);
+    const upperBound = poincare.PCR_SystemExpression.BuildInt(1);
     const integral = systemFunction.approximateIntegralToScalar(lowerBound, upperBound);
     assert.equal(integral, 0.3333333333333333);
   }),
 
   testCase('Expression - Retrieve tree from CPP heap', async (poincare) => {
-    const expression = poincare.BuildExpression.FromLatex('1+2');
+    const expression = poincare.PCR_UserExpression.BuildFromLatex('1+2');
     assert.ok(!expression.isUninitialized());
     const storedTree = expression.getTree();
     const expectedTree = new UserExpressionTree([19, 2, 6, 7]);
@@ -134,10 +134,10 @@ Promise.all([
   }),
 
   testCase('Expression builder', async (poincare) => {
-    const expression = poincare.BuildExpression.FromPattern(
+    const expression = poincare.PCR_UserExpression.BuildFromPattern(
       'Pow(Add(Mult(MinusOne,K0),K1),Pi)',
-      poincare.BuildExpression.UserInt(2),
-      poincare.BuildExpression.UserFloat(1e-3),
+      poincare.PCR_UserExpression.BuildInt(2),
+      poincare.PCR_UserExpression.BuildFloat(1e-3),
     );
     assert.ok(!expression.isUninitialized());
     assert.equal(expression.toLatex(), '\\left(-1\\times 2+0.001\\right)^{π}');
@@ -147,7 +147,7 @@ Promise.all([
     const emptyContext = new poincare.PCR_EmptyContext();
     const reductionContext = poincare.PCR_ReductionContext.Default(emptyContext, true);
 
-    const systemFunction = poincare.BuildExpression.FromLatex('(x-4)(x+2)')
+    const systemFunction = poincare.PCR_UserExpression.BuildFromLatex('(x-4)(x+2)')
       .cloneAndReduce(reductionContext)
       .getSystemFunction('x');
 

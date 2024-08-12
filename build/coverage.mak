@@ -32,37 +32,71 @@ _coverage_excludes := \
   '**/ion/src/simulator/external/**' \
   '*/output/**' \
   '**/python/src/**' \
-	$(patsubst %,'%/**',$(wildcard /Applications)) \
-	$(patsubst %,'%/**',$(wildcard /Library))
+  $(patsubst %,'%/**',$(wildcard /Applications)) \
+  $(patsubst %,'%/**',$(wildcard /Library))
 
-#TODO: no need to filter once unit tests are all fixed
-_coverage_unit_test_filter := -f poincare
+# initialize_diagnosis, <test_category>, <coverage_dir>
+define initialize_diagnosis
+	rm -f $2/coverage_$1.info
+	lcov --zerocounters --directory $2
+endef
 
-# rule_for_coverage, <arch_dir>
-define rule_for_coverage
+# TODO: No need to filter unit tests once they are all fixed.
+# run_unit_tests, <test_bin>
+define run_unit_tests
+	./$1 --headless --limit-stack-usage -f poincare
+	./$1 --headless --limit-stack-usage -f pcj
+endef
+
+# run_screenshot_tests, <epsilon_bin>
+define run_screenshot_tests
+	for state_file in tests/screenshots_dataset/*/*.nws; do ./output/debug/macos/arm64/coverage/coverage_epsilon.bin --headless --limit-stack-usage --load-state-file $$state_file; done
+endef
+
+# generate_coverage_info, <test_category>, <coverage_dir>
+define generate_coverage_info
+	lcov --capture --directory $2 --output-file $2/$1.info --ignore-errors inconsistent --filter range || (rm -f $2/$1.info; false)
+	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info --ignore-errors unused --ignore-errors inconsistent --filter range || (rm -f $2/$1.info; false)
+endef
+
+# rule_for_coverage_info,<coverage_dir>
+define rule_for_coverage_info
 $(eval \
-$(OUTPUT_DIRECTORY)/$1coverage/coverage.info: $(OUTPUT_DIRECTORY)/$1coverage/coverage_test.bin $(OUTPUT_DIRECTORY)/$1coverage/coverage_epsilon.bin
-	./$$< --headless --limit-stack-usage $(_coverage_unit_test_filter)
-	for state_file in tests/screenshots_dataset/*/*.nws; do ./$$(word 2,$$^) --headless --limit-stack-usage --load-state-file $$$$state_file; done
-	lcov --capture --directory $$(@D) --output-file $$@ --ignore-errors inconsistent --filter range || (rm -f $@; false)
-	lcov --remove $$@ $(_coverage_excludes) -o $$@ --ignore-errors unused --ignore-errors inconsistent --filter range || (rm -f $@; false)
+coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
+	$(call initialize_diagnosis,all_tests,$1)
+	$(call run_screenshot_tests,$$(word 2,$$^))
+	$(call run_unit_tests,$$(word 2,$$^))
+	$(call generate_coverage_info,all_tests,$1)
+
+	$(call initialize_diagnosis,screenshot_tests,$1)
+	$(call run_screenshot_tests,$$(word 2,$$^))
+	$(call generate_coverage_info,screenshot_tests,$1)
+
+	$(call initialize_diagnosis,unit_tests,$1)
+	$(call run_unit_tests,$$(word 2,$$^))
+	$(call generate_coverage_info,unit_tests,$1)
 )
 endef
 
-ifneq ($(ARCHS),)
-$(foreach a,$(ARCHS),$(call rule_for_coverage,$a/))
-else
-$(call rule_for_coverage,)
-endif
+# generate_diagnosis, <test_category>, <coverage_dir>
+define generate_diagnosis
+	genhtml $2/$1.info -s --legend --output-directory $2/diagnosis_$1 --ignore-errors inconsistent --filter range
+	open $2/diagnosis_$1/index.html
+endef
+
+.PHONY: coverage
 
 # Checks whether ARCHS is composed of several words. The coverage target is invalid if there are more than one architecture.
 ifneq ($(findstring $( ),$(ARCHS)),)
 coverage:
 	$(error Several archs exist for platform, select one by overriding the ARCHS variable)
 else
-coverage: $(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage/coverage.info
-	genhtml $< -s --legend --output-directory $(<D)/diagnosis --ignore-errors inconsistent --filter range
-	open  $(<D)/diagnosis/index.html
+$(call rule_for_coverage_info,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage) \
+$(call rule_for_diagnosis,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
+coverage: coverage_info
+	$(call generate_diagnosis,unit_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
+	$(call generate_diagnosis,screenshot_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
+	$(call generate_diagnosis,all_tests,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
 endif
 
 $(call document_other_target,coverage,Generate a coverage diagnosis by running unit and screenshot tests)

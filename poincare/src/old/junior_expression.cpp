@@ -516,8 +516,12 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   Tree* e = tree()->cloneTree();
   Simplification::SimplifyWithAdaptiveStrategy(e, context);
   if (approximatedExpression) {
-    *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
-        e, context->m_angleUnit, context->m_complexFormat));
+    Tree* a = e->cloneTree();
+    /* We are using ApproximateAndReplaceEveryScalar to approximate expressions
+     * with symbols such as π*x → 3.14*x.  We could use
+     * Approximation::RootTreeToTree if CAS is not enabled. */
+    Approximation::ApproximateAndReplaceEveryScalar(a, context);
+    *approximatedExpression = Builder(a);
   }
   *simplifiedExpression = Builder(e);
   return;

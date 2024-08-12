@@ -1,17 +1,50 @@
 #include <emscripten/bind.h>
+#include <emscripten/val.h>
 #include <poincare/src/regression/linear_regression.h>
 #include <poincare/src/regression/regression.h>
+#include <poincare/src/regression/series.h>
 
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-/* Wrapper to allow Series to be subclassed by JS */
-struct SeriesWrapper : public wrapper<Regression::Series> {
-  EMSCRIPTEN_WRAPPER(SeriesWrapper);
-  double getX(int i) const { return call<double>("getX", i); }
-  double getY(int i) const { return call<double>("getY", i); }
-  int numberOfPairs() const { return call<int>("numberOfPairs"); }
+EMSCRIPTEN_DECLARE_VAL_TYPE(FloatArray);
+
+class SeriesFromJsArray : public Regression::Series {
+ public:
+  SeriesFromJsArray(const FloatArray& xArray, const FloatArray& yArray)
+      : m_xArray(xArray), m_yArray(yArray) {}
+
+  int numberOfPairs() const override {
+    return ArraysHaveSameLength(m_xArray, m_yArray)
+               ? m_xArray["length"].as<int>()
+               : 0;
+  }
+  double getX(int i) const override { return m_xArray[i].as<double>(); }
+  double getY(int i) const override { return m_yArray[i].as<double>(); }
+
+  const FloatArray& getXArray() const { return m_xArray; }
+  const FloatArray& getYArray() const { return m_yArray; }
+
+  double columProductSumWrapper() const {
+    return columnProductSum(StatisticsCalculationOptions());
+  }
+  double covarianceWrapper() const {
+    return covariance(StatisticsCalculationOptions());
+  }
+  double slopeWrapper() const { return slope(StatisticsCalculationOptions()); }
+  double yInterceptWrapper() const {
+    return yIntercept(StatisticsCalculationOptions());
+  }
+
+ private:
+  static bool ArraysHaveSameLength(const FloatArray& array,
+                                   const FloatArray& otherArray) {
+    return array["length"].as<int>() == otherArray["length"].as<int>();
+  }
+
+  const FloatArray m_xArray;
+  const FloatArray m_yArray;
 };
 
 /* Methods of Regression using double* modelCoefficients are wrapped with a
@@ -22,7 +55,7 @@ using ModelCoefficients =
     std::array<double, Regression::Regression::k_maxNumberOfCoefficients>;
 
 ModelCoefficients fit(const Regression::Regression* reg,
-                      const Regression::Series* series) {
+                      const SeriesFromJsArray* series) {
   ModelCoefficients result;
   result.fill(NAN);
   reg->fit(series, result.data(), nullptr);
@@ -30,13 +63,22 @@ ModelCoefficients fit(const Regression::Regression* reg,
 }
 
 double evaluate(const Regression::Regression* reg,
-                const ModelCoefficients ModelCoefficients, double x) {
-  return reg->evaluate(ModelCoefficients.data(), x);
+                const ModelCoefficients modelCoefficients, double x) {
+  return reg->evaluate(modelCoefficients.data(), x);
 }
 
 EMSCRIPTEN_BINDINGS(regression) {
-  class_<Regression::Series>("PCR_Series")
-      .allow_subclass<SeriesWrapper>("PCR_SeriesWrapper");
+  register_type<FloatArray>("number[]");
+
+  class_<SeriesFromJsArray>("PCR_RegressionSeries")
+      .constructor<const FloatArray&, const FloatArray&>()
+      .function("numberOfPairs", &SeriesFromJsArray::numberOfPairs)
+      .function("getXArray", &SeriesFromJsArray::getXArray)
+      .function("getYArray", &SeriesFromJsArray::getYArray)
+      .function("columnProductSum", &SeriesFromJsArray::columProductSumWrapper)
+      .function("covariance", &SeriesFromJsArray::covarianceWrapper)
+      .function("slope", &SeriesFromJsArray::slopeWrapper)
+      .function("yIntercept", &SeriesFromJsArray::yInterceptWrapper);
 
   enum_<Regression::Regression::Type>("RegressionType")
       .value("None", Regression::Regression::Type::None)

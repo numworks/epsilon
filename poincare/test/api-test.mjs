@@ -33,18 +33,27 @@ async function testCase(featureName, testFunction) {
 Promise.all([
   // Wait for all tests to complete before logging end message
   testCase('Regression - Linear', async (poincare) => {
-    var series = new poincare.PCR_RegressionSeries([1.0, 8.0, 14.0, 79.0], [-3.581, 20.296, 40.676, 261.623]);
+    var series = new poincare.PCR_RegressionSeries([1.0, 8.0, 14.0, 79.0], [-3.581, 22.2, 40.676, 261.623]);
 
     assert.equal(series.getXArray()[0], 1.0);
 
     assert.equal(series.numberOfPairs(), 4);
-    assert.equal(series.slope(), 3.3995413996411177);
+    assert.equal(series.slope(), 3.3910000000000005);
 
     var regression = new poincare.PCR_Regression(poincare.RegressionType.LinearAxpb);
     var coefficients = regression.fit(series);
-    assert.deepEqual(coefficients, [3.3995413996411177, -6.934805690848492, NaN, NaN, NaN]);
+    assert.deepEqual(coefficients, [3.3910000000000005, -6.241000000000014, NaN, NaN, NaN]);
     var prediction = regression.evaluate(coefficients, 10);
-    assert.equal(prediction, 27.06060830556268);
+    assert.equal(prediction, 27.66899999999999);
+
+    var r = regression.correlationCoefficient(series);
+    assert.equal(r, 0.9999713636007523);
+    var r2 = regression.determinationCoefficient(series, coefficients);
+    assert.equal(r2, 0.999942728021548);
+    var residual = regression.residualAtIndex(series, coefficients, 0);
+    assert.equal(residual, -0.7309999999999865);
+    var residualStdev = regression.residualStandardDeviation(series, coefficients);
+    assert.equal(residualStdev, 1.1334028410057904);
   }),
 
   testCase('Statistics - Array', async (poincare) => {

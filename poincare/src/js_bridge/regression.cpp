@@ -61,6 +61,29 @@ double evaluate(const Regression::Regression* reg,
   return reg->evaluate(modelCoefficients.data(), x);
 }
 
+double correlationCoefficient(const Regression::Regression* reg,
+                              const SeriesFromJsArray* series) {
+  return reg->correlationCoefficient(series);
+}
+
+double determinationCoefficient(const Regression::Regression* reg,
+                                const SeriesFromJsArray* series,
+                                const ModelCoefficients modelCoefficients) {
+  return reg->determinationCoefficient(series, modelCoefficients.data());
+}
+
+double residualAtIndex(const Regression::Regression* reg,
+                       const SeriesFromJsArray* series,
+                       const ModelCoefficients modelCoefficients, int index) {
+  return reg->residualAtIndex(series, modelCoefficients.data(), index);
+}
+
+double residualStandardDeviation(const Regression::Regression* reg,
+                                 const SeriesFromJsArray* series,
+                                 const ModelCoefficients modelCoefficients) {
+  return reg->residualStandardDeviation(series, modelCoefficients.data());
+}
+
 EMSCRIPTEN_BINDINGS(regression) {
   class_<SeriesFromJsArray>("PCR_RegressionSeries")
       .constructor<const FloatArray&, const FloatArray&>()
@@ -96,7 +119,14 @@ EMSCRIPTEN_BINDINGS(regression) {
       .function("numberOfCoefficients",
                 &Regression::Regression::numberOfCoefficients)
       .function("fit", &fit, allow_raw_pointers())
-      .function("evaluate", &evaluate, allow_raw_pointers());
+      .function("evaluate", &evaluate, allow_raw_pointers())
+      .function("correlationCoefficient", &correlationCoefficient,
+                allow_raw_pointers())
+      .function("determinationCoefficient", &determinationCoefficient,
+                allow_raw_pointers())
+      .function("residualAtIndex", &residualAtIndex, allow_raw_pointers())
+      .function("residualStandardDeviation", &residualStandardDeviation,
+                allow_raw_pointers());
 
   static_assert(std::size(ModelCoefficients()) == 5);
   value_array<ModelCoefficients>("ModelCoefficients")

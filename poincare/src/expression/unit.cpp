@@ -915,7 +915,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   }
   if (!dimension.isUnit()) {
     // There may remain units that cancel themselves, remove them.
-    return Tree::ApplyShallowToDown(e, ShallowRemoveUnit);
+    return Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   }
   TreeRef extractedUnits = e->cloneTree();
   if (e->isUnitConversion()) {
@@ -928,7 +928,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     // Temperature units must be removed from root expression
     RemoveTemperatureUnit(e);
   }
-  Tree::ApplyShallowToDown(e, ShallowRemoveUnit);
+  Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   if (unitDisplay == UnitDisplay::AutomaticMetric ||
       unitDisplay == UnitDisplay::AutomaticImperial) {
     extractedUnits->removeTree();

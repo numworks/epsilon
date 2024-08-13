@@ -167,8 +167,8 @@ class Tree : public TypeBlock {
 
   typedef bool (*Operation)(Tree* node);
   typedef bool (*ShallowOperation)(Tree* node, void* context);
-  static bool ApplyShallowToDown(Tree* node, ShallowOperation shallowOperation,
-                                 void* context = nullptr, bool check = true);
+  static bool ApplyShallowTopDown(Tree* node, ShallowOperation shallowOperation,
+                                  void* context = nullptr, bool check = true);
   static bool ApplyShallowBottomUp(Tree* node,
                                    ShallowOperation shallowOperation,
                                    void* context = nullptr, bool check = true);

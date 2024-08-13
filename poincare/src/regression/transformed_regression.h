@@ -19,10 +19,10 @@ class TransformedRegression : public Regression {
                   Poincare::Context* context) const override;
   bool dataSuitableForFit(const Series* series) const override;
 
-  virtual bool applyLnOnX() const = 0;
-  virtual bool applyLnOnY() const = 0;
+  bool applyLnOnX() const { return FitsLnX(type()); };
+  bool applyLnOnY() const { return FitsLnY(type()); }
   bool applyLnOnA() const { return applyLnOnY(); }
-  virtual bool applyLnOnB() const { return false; }
+  bool applyLnOnB() const { return FitsLnB(type()); }
 };
 
 }  // namespace Poincare::Regression

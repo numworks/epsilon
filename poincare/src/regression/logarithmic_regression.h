@@ -12,8 +12,6 @@ class LogarithmicRegression : public TransformedRegression {
  private:
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
-  bool applyLnOnX() const override { return true; }
-  bool applyLnOnY() const override { return false; }
 };
 
 }  // namespace Poincare::Regression

@@ -41,10 +41,59 @@ class Regression {
 
   constexpr static char k_xSymbol = 'x';
 
-  // Properties
+  // --- Static properties ---
+
+  // - Coefficients
   static int NumberOfCoefficients(Type type);
+  constexpr static bool HasCoefficients(Type type) {
+    return type != Type::None;
+  }
+
+  // - Category
+  constexpr static bool IsLinear(Type type) {
+    return type == Type::LinearApbx || type == Type::LinearAxpb;
+  }
+  constexpr static bool IsAffine(Type type) {
+    return type == Type::Median || IsLinear(type);
+  }
+  constexpr static bool IsTransformed(Type type) {
+    return type == Type::ExponentialAbx || type == Type::ExponentialAebx ||
+           type == Type::Power || type == Type::Logarithmic;
+  }
+
+  // - Correlation and determination coefficients
+  constexpr static bool HasR(Type type) {
+    return type == Type::None || IsLinear(type) || FitsLnY(type) ||
+           FitsLnX(type);
+  }
+  constexpr static bool HasRSquared(Type type) {
+    return HasCoefficients(type) && HasR(type);
+  }
+  constexpr static bool HasR2(Type type) {
+    return type == Type::Proportional || type == Type::Quadratic ||
+           type == Type::Cubic || type == Type::Quartic;
+  }
+
+  // - Transformation
+  constexpr static bool FitsLnY(Type type) {
+    // These models are fitted with a ln(+-Y) change of variable.
+    return type == Type::Power || type == Type::ExponentialAbx ||
+           type == Type::ExponentialAebx;
+  }
+  constexpr static bool FitsLnX(Type type) {
+    // These models are fitted with a ln(X) change of variable.
+    return type == Type::Power || type == Type::Logarithmic;
+  }
+  constexpr static bool FitsLnB(Type type) {
+    // These models are fitted with a ln(B) change of variable.
+    return type == Type::ExponentialAbx;
+  }
+
+  // - Formula
   static const char* Formula(Type type);
   static const Poincare::Layout TemplateLayout(Type type);
+
+  // --- Methods ---
 
   virtual Type type() const = 0;
 

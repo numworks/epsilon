@@ -76,19 +76,16 @@ class Store : public Shared::LinearRegressionStore {
   // Type-specific properties
   typedef bool (*TypeProperty)(Model::Type type);
   static bool HasCoefficients(Model::Type type) {
-    return type != Model::Type::None;
+    return Poincare::Regression::Regression::HasCoefficients(type);
   }
   static bool DisplayR(Model::Type type) {
-    return type == Model::Type::None || type == Model::Type::LinearApbx ||
-           type == Model::Type::LinearAxpb || FitsLnY(type) || FitsLnX(type);
+    return Poincare::Regression::Regression::HasR(type);
   }
   static bool DisplayRSquared(Model::Type type) {
-    return HasCoefficients(type) && DisplayR(type);
+    return Poincare::Regression::Regression::HasRSquared(type);
   }
   static bool DisplayR2(Model::Type type) {
-    return type == Model::Type::Proportional ||
-           type == Model::Type::Quadratic || type == Model::Type::Cubic ||
-           type == Model::Type::Quartic;
+    return Poincare::Regression::Regression::HasR2(type);
   }
   static bool DisplayResidualStandardDeviation(Model::Type type) {
     return HasCoefficients(type) &&
@@ -107,13 +104,10 @@ class Store : public Shared::LinearRegressionStore {
     return HasCoefficients(type) && !HasCoefficientM(type);
   }
   static bool FitsLnY(Model::Type type) {
-    // These models are fitted with a ln(+-Y) change of variable.
-    return type == Model::Type::Power || type == Model::Type::ExponentialAbx ||
-           type == Model::Type::ExponentialAebx;
+    return Poincare::Regression::Regression::FitsLnY(type);
   }
   static bool FitsLnX(Model::Type type) {
-    // These models are fitted with a ln(X) change of variable.
-    return type == Model::Type::Power || type == Model::Type::Logarithmic;
+    return Poincare::Regression::Regression::FitsLnX(type);
   }
   bool AnyActiveSeriesSatisfies(TypeProperty property) const;
   bool seriesSatisfies(int series, TypeProperty property) const {

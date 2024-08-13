@@ -17,9 +17,6 @@ class ExponentialRegression : public TransformedRegression {
  private:
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
-  bool applyLnOnX() const override { return false; }
-  bool applyLnOnY() const override { return true; }
-  bool applyLnOnB() const override { return m_isAbxForm; }
 
   /* In a*b^x form, modelCoefficients[1] contains the b, and is transformed via
    * log to the b' of the normal a*exp(b'*x) form */

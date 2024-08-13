@@ -235,35 +235,7 @@ bool Store::coefficientsAreDefined(int series, Context* globalContext,
 }
 
 double Store::correlationCoefficient(int series) const {
-  /* Returns the correlation coefficient (R) between the series X and Y
-   * (transformed if series is a TransformedModel). In non-linear and
-   * non-transformed regressions, its square is different from the
-   * determinationCoefficient R2. it is then hidden to avoid confusion */
-  if (!seriesSatisfies(series, DisplayR)) {
-    return NAN;
-  }
-  bool applyLn = seriesSatisfies(series, FitsLnY);
-  bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
-  Shared::DoublePairStore::CalculationOptions options(
-      seriesSatisfies(series, FitsLnX), applyLn, applyOpposite);
-  double v0 = varianceOfColumn(series, 0, options);
-  double v1 = varianceOfColumn(series, 1, options);
-  if (std::isnan(v0) || std::isnan(v1)) {
-    // Can happen if applyLn on negative/null values
-    return NAN;
-  }
-  /* Compare v0 and v1 to EpsilonLax to check if they are equal to zero (since
-   * approximation errors could give them > 0 while they are not.)*/
-  double result = (std::abs(v0) < OMG::Float::EpsilonLax<double>() ||
-                   std::abs(v1) < OMG::Float::EpsilonLax<double>())
-                      ? 1.0
-                      : covariance(series, options) / std::sqrt(v0 * v1);
-  /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
-   * fixed here to prevent r^2 from being bigger than 1. */
-  if (std::abs(result) <= 1.0 + OMG::Float::SqrtEpsilonLax<double>()) {
-    return std::clamp(result, -1.0, 1.0);
-  }
-  return NAN;
+  return modelForSeries(series)->correlationCoefficient(this, series);
 }
 
 double Store::determinationCoefficientForSeries(int series,
@@ -317,8 +289,10 @@ double Store::xValueForYValue(int series, double y, Context* globalContext) {
 
 double Store::residualAtIndexForSeries(int series, int index,
                                        Context* globalContext) {
-  double x = get(series, 0, index);
-  return get(series, 1, index) - yValueForXValue(series, x, globalContext);
+  const double* modelCoefficients =
+      coefficientsForSeries(series, globalContext);
+  return modelForSeries(series)->residualAtIndex(this, series,
+                                                 modelCoefficients, index);
 }
 
 bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
@@ -333,77 +307,21 @@ bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
 
 double Store::computeDeterminationCoefficient(int series,
                                               Context* globalContext) {
-  // Computes and returns the determination coefficient of the regression.
-  if (seriesSatisfies(series, DisplayRSquared)) {
-    /* With linear regressions and transformed models (Exponential, Logarithm
-     * and Power), we use r^2, the square of the correlation coefficient between
-     * the series Y (transformed) and the evaluated values.*/
-    double r = correlationCoefficient(series);
-    return r * r;
-  }
-  if (!seriesSatisfies(series, DisplayR2)) {
-    /* R2 does not need to be computed if model is median-median, so we avoid
-     * computation. If needed, it could be computed though. */
-    return NAN;
-  }
-  assert(!seriesSatisfies(series, FitsLnY) &&
-         !seriesSatisfies(series, FitsLnX));
-  /* With proportional regression or badly fitted models, R2 can technically be
-   * negative. R2<0 means that the regression is less effective than a
-   * constant set to the series average. It should not happen with regression
-   * models that can fit a constant observation. */
-  // Residual sum of squares
-  double ssr = 0;
-  // Total sum of squares
-  double sst = 0;
-  const int numberOfPairs = numberOfPairsOfSeries(series);
-  assert(numberOfPairs > 0);
-  double mean = meanOfColumn(series, 1);
-  for (int k = 0; k < numberOfPairs; k++) {
-    // Difference between the observation and the estimated value of the model
-    double estimation =
-        yValueForXValue(series, get(series, 0, k), globalContext);
-    double observation = get(series, 1, k);
-    if (std::isnan(estimation) || std::isinf(estimation)) {
-      // Data Not Suitable for estimation
-      return NAN;
-    }
-    double residual = observation - estimation;
-    ssr += residual * residual;
-    // Difference between the observation and the overall observations mean
-    double difference = observation - mean;
-    sst += difference * difference;
-  }
-  if (sst == 0.0) {
-    /* Observation was constant, r2 is undefined. Return 1 if estimations
-     * exactly matched observations. 0 is usually returned otherwise. */
-    return (ssr <= DBL_EPSILON) ? 1.0 : 0.0;
-  }
-  double r2 = 1.0 - ssr / sst;
-  /* Check if regression fit was optimal.
-   * TODO: Optimize regression fitting so that r2 cannot be negative.
-   * assert(r2 >= 0 || seriesRegressionType(series) ==
-   * Model::Type::Proportional); */
-  return r2;
+  const double* modelCoefficients =
+      coefficientsForSeries(series, globalContext);
+  return modelForSeries(series)->determinationCoefficient(this, series,
+                                                          modelCoefficients);
 }
 
 double Store::computeResidualStandardDeviation(int series,
                                                Context* globalContext) {
-  int nCoeff =
-      regressionModel(m_regressionTypes[series])->numberOfCoefficients();
-  int n = numberOfPairsOfSeries(series);
-  if (n <= nCoeff) {
-    return NAN;
-  }
-  double sum = 0.;
-  for (int i = 0; i < n; i++) {
-    double res = residualAtIndexForSeries(series, i, globalContext);
-    sum += res * res;
-  }
-  return std::sqrt(sum / (n - nCoeff));
+  const double* modelCoefficients =
+      coefficientsForSeries(series, globalContext);
+  return modelForSeries(series)->residualStandardDeviation(this, series,
+                                                           modelCoefficients);
 }
 
-Model* Store::regressionModel(Model::Type type) {
+Model* Store::regressionModel(Model::Type type) const {
   /* Most of regression app still expects a Model * with ->name and (Store, int)
    * API. We therefore cannot use directly a const Regression * pointer and need
    * the Model object to live somewhere. This static instance is the only Model

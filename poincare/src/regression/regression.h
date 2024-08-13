@@ -117,6 +117,15 @@ class Regression {
   void fit(const Series* series, double* modelCoefficients,
            Poincare::Context* context) const;
 
+  double correlationCoefficient(const Series* series) const;
+  double determinationCoefficient(const Series* series,
+                                  const double* modelCoefficients) const;
+
+  double residualAtIndex(const Series* series, const double* modelCoefficients,
+                         int index) const;
+  double residualStandardDeviation(const Series* series,
+                                   const double* modelCoefficients) const;
+
  protected:
   virtual Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const = 0;

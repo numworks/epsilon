@@ -9,6 +9,8 @@
 
 #include <cmath>
 
+#include "dataset_adapter.h"
+
 using namespace Poincare::Internal;
 namespace Poincare::Regression {
 using namespace API;
@@ -270,6 +272,118 @@ void Regression::specializedInitCoefficientsForFit(double* modelCoefficients,
   for (int i = 0; i < nbCoef; i++) {
     modelCoefficients[i] = defaultValue;
   }
+}
+
+double Regression::correlationCoefficient(const Series* series) const {
+  /* Returns the correlation coefficient (R) between the series X and Y
+   * (transformed if series is a TransformedModel). In non-linear and
+   * non-transformed regressions, its square is different from the
+   * determinationCoefficient R2. it is then hidden to avoid confusion */
+  const Type thisType = type();
+  if (!HasR(thisType)) {
+    return NAN;
+  }
+  bool applyLn = FitsLnY(thisType);
+  bool applyOpposite = applyLn && series->getY(0) < 0.0;
+  StatisticsCalculationOptions options(FitsLnX(thisType), applyLn,
+                                       applyOpposite);
+
+  double v0 = series->createDatasetFromColumn(0, options).variance();
+  double v1 = series->createDatasetFromColumn(1, options).variance();
+  if (std::isnan(v0) || std::isnan(v1)) {
+    // Can happen if applyLn on negative/null values
+    return NAN;
+  }
+  /* Compare v0 and v1 to EpsilonLax to check if they are equal to zero (since
+   * approximation errors could give them > 0 while they are not.)*/
+  double result = (std::abs(v0) < OMG::Float::EpsilonLax<double>() ||
+                   std::abs(v1) < OMG::Float::EpsilonLax<double>())
+                      ? 1.0
+                      : series->covariance(options) / std::sqrt(v0 * v1);
+  /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
+   * fixed here to prevent r^2 from being bigger than 1. */
+  if (std::abs(result) <= 1.0 + OMG::Float::SqrtEpsilonLax<double>()) {
+    return std::clamp(result, -1.0, 1.0);
+  }
+  return NAN;
+}
+
+double Regression::determinationCoefficient(
+    const Series* series, const double* modelCoefficients) const {
+  // Computes and returns the determination coefficient of the regression.
+  const Type thisType = type();
+  if (HasRSquared(thisType)) {
+    /* With linear regressions and transformed models (Exponential, Logarithm
+     * and Power), we use r^2, the square of the correlation coefficient between
+     * the series Y (transformed) and the evaluated values.*/
+    double r = correlationCoefficient(series);
+    return r * r;
+  }
+
+  if (!HasR2(thisType)) {
+    /* R2 does not need to be computed if model is median-median, so we avoid
+     * computation. If needed, it could be computed though. */
+    return NAN;
+  }
+
+  assert(!FitsLnY(thisType) && !FitsLnX(thisType));
+  /* With proportional regression or badly fitted models, R2 can technically be
+   * negative. R2<0 means that the regression is less effective than a
+   * constant set to the series average. It should not happen with regression
+   * models that can fit a constant observation. */
+  // Residual sum of squares
+  double ssr = 0;
+  // Total sum of squares
+  double sst = 0;
+  const int numberOfPairs = series->numberOfPairs();
+  assert(numberOfPairs > 0);
+  double mean = series->createDatasetFromColumn(1).mean();
+  for (int k = 0; k < numberOfPairs; k++) {
+    // Difference between the observation and the estimated value of the model
+    double estimation = evaluate(modelCoefficients, series->getX(k));
+    double observation = series->getY(k);
+    if (std::isnan(estimation) || std::isinf(estimation)) {
+      // Data Not Suitable for estimation
+      return NAN;
+    }
+    double residual = observation - estimation;
+    ssr += residual * residual;
+    // Difference between the observation and the overall observations mean
+    double difference = observation - mean;
+    sst += difference * difference;
+  }
+  if (sst == 0.0) {
+    /* Observation was constant, r2 is undefined. Return 1 if estimations
+     * exactly matched observations. 0 is usually returned otherwise. */
+    return (ssr <= DBL_EPSILON) ? 1.0 : 0.0;
+  }
+  double r2 = 1.0 - ssr / sst;
+  /* Check if regression fit was optimal.
+   * TODO: Optimize regression fitting so that r2 cannot be negative.
+   * assert(r2 >= 0 || seriesRegressionType(series) ==
+   * Model::Type::Proportional); */
+  return r2;
+}
+
+double Regression::residualAtIndex(const Series* series,
+                                   const double* modelCoefficients,
+                                   int index) const {
+  return series->getY(index) - evaluate(modelCoefficients, series->getX(index));
+}
+
+double Regression::residualStandardDeviation(
+    const Series* series, const double* modelCoefficients) const {
+  int nCoeff = numberOfCoefficients();
+  int n = series->numberOfPairs();
+  if (n <= nCoeff) {
+    return NAN;
+  }
+  double sum = 0.;
+  for (int i = 0; i < n; i++) {
+    double res = residualAtIndex(series, modelCoefficients, i);
+    sum += res * res;
+  }
+  return std::sqrt(sum / (n - nCoeff));
 }
 
 }  // namespace Poincare::Regression

@@ -30,7 +30,7 @@ class Store : public Shared::LinearRegressionStore {
   Model::Type seriesRegressionType(int series) const {
     return m_regressionTypes[series];
   }
-  Model* modelForSeries(int series) {
+  Model* modelForSeries(int series) const {
     assert(series >= 0 && series < k_numberOfSeries);
     assert((int)m_regressionTypes[series] >= 0 &&
            (int)m_regressionTypes[series] < Model::k_numberOfModels);
@@ -43,7 +43,7 @@ class Store : public Shared::LinearRegressionStore {
                          Poincare::Context* globalContext);
   int nextDot(int series, OMG::HorizontalDirection direction, int dot,
               bool displayMean);
-  Model* regressionModel(Model::Type type);
+  Model* regressionModel(Model::Type type) const;
 
   // Series
   void updateSeriesValidity(int series) override;
@@ -102,12 +102,6 @@ class Store : public Shared::LinearRegressionStore {
   static bool HasCoefficientA(Model::Type type) {
     // Any regression type not having M coefficient have A coefficient
     return HasCoefficients(type) && !HasCoefficientM(type);
-  }
-  static bool FitsLnY(Model::Type type) {
-    return Poincare::Regression::Regression::FitsLnY(type);
-  }
-  static bool FitsLnX(Model::Type type) {
-    return Poincare::Regression::Regression::FitsLnX(type);
   }
   bool AnyActiveSeriesSatisfies(TypeProperty property) const;
   bool seriesSatisfies(int series, TypeProperty property) const {

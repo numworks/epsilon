@@ -385,7 +385,7 @@ bool AdvancedReduction::DeepContract(Tree* e) {
 }
 
 bool AdvancedReduction::DeepExpand(Tree* e) {
-  // Tree::ApplyShallowInDepth could be used but we need to skip sets
+  // Tree::ApplyShallowToDown could be used but we need to skip sets
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
    * We push a temporary tree to preserve TreeRef.

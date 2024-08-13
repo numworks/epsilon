@@ -153,13 +153,13 @@ bool Beautification::DeepBeautify(Tree* e,
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
     AdvancedReduction::Reduce(e);
   }
-  changed = Tree::ApplyShallowInDepth(e, ShallowBeautify) || changed;
+  changed = Tree::ApplyShallowToDown(e, ShallowBeautify) || changed;
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
   changed =
-      Tree::ApplyShallowInDepth(e, ShallowBeautifyDivisionsAndRoots) || changed;
+      Tree::ApplyShallowToDown(e, ShallowBeautifyDivisionsAndRoots) || changed;
   changed =
-      Tree::ApplyShallowInDepth(e, ShallowBeautifySpecialDisplays) || changed;
+      Tree::ApplyShallowToDown(e, ShallowBeautifySpecialDisplays) || changed;
   changed = Variables::BeautifyToName(e) || changed;
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;

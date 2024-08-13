@@ -166,10 +166,9 @@ class Tree : public TypeBlock {
   }
 
   typedef bool (*Operation)(Tree* node);
-  // Apply Shallow operation in a Top Down manner.
   typedef bool (*ShallowOperation)(Tree* node, void* context);
-  static bool ApplyShallowInDepth(Tree* node, ShallowOperation shallowOperation,
-                                  void* context = nullptr, bool check = true);
+  static bool ApplyShallowToDown(Tree* node, ShallowOperation shallowOperation,
+                                 void* context = nullptr, bool check = true);
 
   bool deepReplaceWith(const Tree* target, const Tree* replacement);
   bool deepReplaceWith(const Tree* target, TreeRef& replacement);

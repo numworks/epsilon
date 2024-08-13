@@ -341,8 +341,8 @@ bool Tree::hasAncestor(const Tree* node, bool includeSelf) const {
   return block() < node->block() + node->treeSize();
 }
 
-bool Tree::ApplyShallowInDepth(Tree* t, ShallowOperation shallowOperation,
-                               void* context, bool check) {
+bool Tree::ApplyShallowToDown(Tree* t, ShallowOperation shallowOperation,
+                              void* context, bool check) {
   bool changed = false;
   for (Tree* node : t->selfAndDescendants()) {
     changed = shallowOperation(node, context) || changed;

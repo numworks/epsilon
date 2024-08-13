@@ -90,7 +90,7 @@ ProjectionContext Projection::ContextFromSettings() {
 bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
   bool changed =
-      Tree::ApplyShallowInDepth(e, ShallowSystemProject, &projectionContext);
+      Tree::ApplyShallowToDown(e, ShallowSystemProject, &projectionContext);
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (changed) {
     Dependency::DeepBubbleUpDependencies(e);
@@ -159,7 +159,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Dimension childDim = Dimension::Get(child);
     if (childDim.isSimpleAngleUnit()) {
       // Remove all units to fall back to radian
-      changed = Tree::ApplyShallowInDepth(e, Units::Unit::ShallowRemoveUnit);
+      changed = Tree::ApplyShallowToDown(e, Units::Unit::ShallowRemoveUnit);
     } else if (angleUnit != Internal::AngleUnit::Radian) {
       child->moveTreeOverTree(PatternMatching::Create(
           KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));

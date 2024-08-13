@@ -197,7 +197,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
      * manually add the conversion ratio back to preserve the input angleUnit.
      */
     // exactAngle * angleUnitRatio / RadianUnitRatio
-    Tree::ApplyShallowInDepth(exactAngle, Units::Unit::ShallowRemoveUnit);
+    Tree::ApplyShallowToDown(exactAngle, Units::Unit::ShallowRemoveUnit);
     exactAngle->cloneNodeAtNode(KMult.node<2>);
     PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
     // Simplify again

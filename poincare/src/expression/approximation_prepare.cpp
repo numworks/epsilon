@@ -68,9 +68,9 @@ bool Approximation::PrepareFunctionForApproximation(
 
 bool Approximation::PrepareExpressionForApproximation(
     Tree* e, ComplexFormat complexFormat) {
-  bool changed = Tree::ApplyShallowInDepth(e, &ShallowExpandIntegrals);
+  bool changed = Tree::ApplyShallowToDown(e, &ShallowExpandIntegrals);
   changed =
-      Tree::ApplyShallowInDepth(e, &ShallowPrepareForApproximation) || changed;
+      Tree::ApplyShallowToDown(e, &ShallowPrepareForApproximation) || changed;
   return changed;
 }
 

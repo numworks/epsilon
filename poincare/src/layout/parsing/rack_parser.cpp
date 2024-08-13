@@ -994,7 +994,6 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     parseSequence(leftHandSide, name, Token::Type::RightParenthesis);
     return;
   }
-#if 0
   State previousState = currentState();
   // Try to parse aspostrophe as derivative
   if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
@@ -1003,9 +1002,24 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   }
   // Parse aspostrophe as unit (default parsing)
   setState(previousState);
-#endif
   privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                              stoppingType, false);
+}
+
+bool RackParser::parseApostropheDerivationOrder(int* derivationOrder) {
+  // Parse derivation order of f'"'(x)
+  assert(derivationOrder && *derivationOrder == 0);
+  LayoutSpanDecoder decoder(m_nextToken.toSpan());
+  CodePoint cp = decoder.nextCodePoint();
+  while (cp == '\'' || cp == '\"') {
+    *derivationOrder += cp == '\'' ? 1 : 2;
+    if (decoder.isEmpty()) {
+      popToken();
+      decoder = LayoutSpanDecoder(m_nextToken.toSpan());
+    }
+    cp = decoder.nextCodePoint();
+  }
+  return *derivationOrder > 0;
 }
 
 bool RackParser::privateParseCustomIdentifierWithParameters(
@@ -1013,24 +1027,15 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     Token::Type stoppingType, bool parseApostropheAsDerivative) {
   int derivationOrder = 0;
   if (parseApostropheAsDerivative) {
-#if 0
     // Case 1: parse f'''(x)
-    while (m_nextToken.length() == 1 &&
-           (m_nextToken.text()[0] == '\'' || m_nextToken.text()[0] == '\"')) {
-      popToken();
-      derivationOrder += m_currentToken.text()[0] == '\'' ? 1 : 2;
-    }
-    // Case 2: parse f^(3)(x)
-    if (derivationOrder == 0) {
-      TreeRef base =
-          parseIntegerCaretForFunction(true, &derivationOrder);
-      if (base.isUninitialized() || derivationOrder < 0) {
+    if (!parseApostropheDerivationOrder(&derivationOrder)) {
+      // Case 2: parse f^(3)(x)
+      if (!parseIntegerCaretForFunction(true, &derivationOrder) ||
+          derivationOrder < 0) {
         return false;
       }
     }
-#else
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
+    assert(derivationOrder > 0);
   }
 
   // If the identifier is not followed by parentheses, it is a symbol
@@ -1055,13 +1060,16 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   } else {
     if (derivationOrder > 0) {
-#if 0
-        TreeRef derivand =
-            Function::Builder(name, length, Symbol::SystemSymbol());
-        result =
-            Derivative::Builder(derivand, Symbol::SystemSymbol(), parameter,
-                                BasedInteger::Builder(derivationOrder));
-#endif
+      result = SharedTreeStack->pushDiff();
+      // Symbol
+      Symbol::k_systemSymbol->cloneTree();
+      // SymbolValue
+      parameter->detachTree();
+      // Order
+      Integer::Push(derivationOrder);
+      // Derivand
+      SharedTreeStack->pushUserFunction(name);
+      Symbol::k_systemSymbol->cloneTree();
     } else {
       result = SharedTreeStack->pushUserFunction(name);
       parameter->moveNodeBeforeNode(result);

@@ -26,6 +26,15 @@ endif
 
 # Modules
 
+# FIXME: We shouldn't need Kandinsky font
+KANDINSKY_font_variant := epsilon
+
+# FIXME: Flags to build ion files
+SFLAGS += \
+  -Iion/include/ion/keyboard/epsilon \
+  -DION_DISPLAY_WIDTH=1000 \
+  -DION_DISPLAY_HEIGHT=1000
+
 $(call import_module,omg,omg)
 $(call import_module,kandinsky,kandinsky)
 $(call import_module,poincare,poincare)
@@ -48,7 +57,7 @@ $(addprefix ion/src/shared/, \
   exam_mode.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
-  layout_events.cpp \
+  layout_events/epsilon/layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \

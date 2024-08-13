@@ -437,13 +437,16 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     }
     case Type::Diff:
-      // TODO_PCJ createValidExpandedForm
-      if (expression->lastChild()->isUserFunction() &&
-          expression->lastChild()->child(0)->isUserSymbol() &&
-          expression->lastChild()->child(0)->treeIsIdenticalTo(
-              Symbol::k_systemSymbol)) {
+      // TODO_PCJ: isValidCondensedForm and createValidExpandedForm
+      // Case 1: f'(a)
+      if (expression->child(0)->treeIsIdenticalTo(Symbol::k_systemSymbol)) {
+        assert(expression->lastChild()->isUserFunction() &&
+               expression->lastChild()->child(0)->isUserSymbol() &&
+               expression->lastChild()->child(0)->treeIsIdenticalTo(
+                   Symbol::k_systemSymbol));
         layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
         int order = Integer::Handler(expression->child(2)).to<int>();
+        assert(order > 0);
         if (order <= 2) {
           PushCodePoint(layoutParent, order == 1 ? '\'' : '"');
           expression->child(2)->removeTree();
@@ -465,6 +468,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                          k_forceParenthesis);
         break;
       }
+      // Case 2: diff(f(x),x,a,n)
       if (m_linearMode) {
         layoutBuiltin(layoutParent, expression);
       } else {

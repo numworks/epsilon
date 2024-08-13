@@ -143,7 +143,9 @@ $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js poincare/poincarejs/post_process_poincarejs.sh poincare/poincarejs/poincare-partial.d.ts
 
 # Version file
+.PHONY: $(OUTPUT_DIRECTORY)/.version.json
 $(OUTPUT_DIRECTORY)/.version.json:
+	@mkdir -p $(OUTPUT_DIRECTORY)
 	@echo '{' > $@
 	@echo '  "version": "$(APP_VERSION)",' >> $@
 	@echo '  "commit": "$(PATCH_LEVEL)",' >> $@

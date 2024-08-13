@@ -94,7 +94,7 @@ class StatisticsDataset {
   T squaredSum() const { return offsettedSquaredSum(0.0); }
   // sum(value(i) - (a + b * dataset.value(i))
   T squaredSumOffsettedByLinearTransformationOfDataset(
-      StatisticsDataset<T> dataset, double a, double b) const;
+      const StatisticsDataset<T>* dataset, double a, double b) const;
 
   T mean() const { return weightedSum() / totalWeight(); }
   T variance() const;

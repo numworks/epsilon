@@ -97,17 +97,18 @@ T StatisticsDataset<T>::weightedSum() const {
 template <typename T>
 T StatisticsDataset<T>::offsettedSquaredSum(T offset) const {
   ConstantDatasetColumn<T> offsetColumn(offset, datasetLength());
-  return squaredSumOffsettedByLinearTransformationOfDataset(
-      StatisticsDataset(&offsetColumn), 0.0, 1.0);
+  StatisticsDataset<T> offsetDataset(&offsetColumn);
+  return squaredSumOffsettedByLinearTransformationOfDataset(&offsetDataset, 0.0,
+                                                            1.0);
 }
 
 template <typename T>
 T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(
-    StatisticsDataset<T> dataset, double a, double b) const {
-  assert(dataset.datasetLength() == datasetLength());
+    const StatisticsDataset<T>* dataset, double a, double b) const {
+  assert(dataset->datasetLength() == datasetLength());
   T total = 0.0;
-  for (int i = 0; i < datasetLength(); i++) {
-    T offsettedValue = valueAtIndex(i) - (a + b * dataset.valueAtIndex(i));
+  for (Idx i = 0; i < datasetLength(); i++) {
+    T offsettedValue = valueAtIndex(i) - (a + b * dataset->valueAtIndex(i));
     total += offsettedValue * offsettedValue * weightAtIndex(i);
   }
   return total;

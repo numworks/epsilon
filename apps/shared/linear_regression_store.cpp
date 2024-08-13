@@ -52,7 +52,7 @@ double LinearRegressionStore::leastSquaredSum(int series) const {
   // Find the linear regression
   double a = yIntercept(series);
   double b = slope(series);
-  return yDataset.squaredSumOffsettedByLinearTransformationOfDataset(xDataset,
+  return yDataset.squaredSumOffsettedByLinearTransformationOfDataset(&xDataset,
                                                                      a, b);
 }
 

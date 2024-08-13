@@ -95,7 +95,8 @@ EMSCRIPTEN_BINDINGS(statistics) {
       .function("squaredSum", &StatisticsDataset<double>::squaredSum)
       .function("squaredSumOffsettedByLinearTransformationOfDataset",
                 &StatisticsDataset<
-                    double>::squaredSumOffsettedByLinearTransformationOfDataset)
+                    double>::squaredSumOffsettedByLinearTransformationOfDataset,
+                allow_raw_pointers())
       .function("mean", &StatisticsDataset<double>::mean)
       .function("variance", &StatisticsDataset<double>::variance)
       .function("standardDeviation",

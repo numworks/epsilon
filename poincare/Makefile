@@ -130,6 +130,19 @@ $(call create_goal,poincare, \
   poincarejs \
 )
 
+# Post process poincare.js and poincare.d.ts
+define LD_WRAPPER_poincare
+	$1
+	./poincare/poincarejs/post_process_poincarejs.sh $(OUTPUT_DIRECTORY)
+endef
+
+$(OUTPUT_DIRECTORY)/poincare.js: poincare/poincarejs/post_process_poincarejs.sh poincare/poincarejs/poincare-partial.js
+
+# Byproducts of building poincare.js
+$(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
+$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js poincare/poincarejs/post_process_poincarejs.sh poincare/poincarejs/poincare-partial.d.ts
+
+# Version file
 $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '{' > $@
 	@echo '  "version": "$(APP_VERSION)",' >> $@
@@ -137,19 +150,11 @@ $(OUTPUT_DIRECTORY)/.version.json:
 	@echo '  "debug": "$(DEBUG)"' >> $@
 	@echo '}' >> $@
 
-$(OUTPUT_DIRECTORY)/README.md:
+# Documentation
+$(OUTPUT_DIRECTORY)/README.md: poincare/poincarejs/docs.md
 	cp poincare/poincarejs/docs.md $@
 
-# Post process poincare.js and poincare.d.ts
-define LD_WRAPPER_poincare
-	$1
-	./poincare/poincarejs/post_process_poincarejs.sh $(OUTPUT_DIRECTORY)
-endef
-
-# Byproducts of building poincare.js
-$(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
-$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
-
+# Zip poincare.js and related files
 ZIPPED_FILES := poincare.js poincare.wasm .version.json README.md
 # Add .d.ts file if EMIT_TSD is set to 1
 ifeq ($(EMIT_TSD),1)
@@ -159,6 +164,8 @@ endif
 $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,$(ZIPPED_FILES)))
 
 $(call document_other_target,poincarejs.zip,Pack poincare.js and related files inside a zip ready to be copied in foxglove)
+
+# --- poincare.js.run (tests) ---
 
 # Node expects modules to end with .mjs
 $(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js

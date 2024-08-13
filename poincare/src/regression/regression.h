@@ -41,13 +41,17 @@ class Regression {
 
   constexpr static char k_xSymbol = 'x';
 
-  virtual int numberOfCoefficients() const = 0;
+  // Properties
+  static int NumberOfCoefficients(Type type);
+  static const char* Formula(Type type);
+  static const Poincare::Layout TemplateLayout(Type type);
 
-  virtual const char* formula() const {
-    assert(false);
-    return "";
-  }
-  virtual Poincare::Layout templateLayout() const;
+  virtual Type type() const = 0;
+
+  int numberOfCoefficients() const { return NumberOfCoefficients(type()); }
+  const char* formula() const { return Formula(type()); }
+  Poincare::Layout templateLayout() const { return TemplateLayout(type()); }
+
   Poincare::Layout equationLayout(
       const double* modelCoefficients, const char* ySymbol,
       int significantDigits,

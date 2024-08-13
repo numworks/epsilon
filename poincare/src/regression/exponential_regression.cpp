@@ -7,11 +7,6 @@
 namespace Poincare::Regression {
 using namespace API;
 
-Layout ExponentialRegression::templateLayout() const {
-  return m_isAbxForm ? "a·b"_l ^ KSuperscriptL("x"_l)
-                     : "a·e"_l ^ KSuperscriptL("b·x"_l);
-}
-
 UserExpression ExponentialRegression::privateExpression(
     const double* modelCoefficients) const {
   // if m_isAbxForm -> a*b^x, else a*e^bx

@@ -7,10 +7,6 @@
 namespace Poincare::Regression {
 using namespace API;
 
-Poincare::Layout PowerRegression::templateLayout() const {
-  return "a·x"_l ^ KSuperscriptL("b"_l);
-}
-
 UserExpression PowerRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^b

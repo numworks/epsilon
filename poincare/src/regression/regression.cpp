@@ -1,7 +1,6 @@
 #include "regression.h"
 
 #include <omg/float.h>
-#include <poincare/layout.h>
 #include <poincare/numeric/solver.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
@@ -13,11 +12,6 @@
 using namespace Poincare::Internal;
 namespace Poincare::Regression {
 using namespace API;
-
-Layout Regression::templateLayout() const {
-  const char* layoutString = formula() + sizeof("y=") - 1;
-  return Layout::String(layoutString);
-}
 
 Layout Regression::equationLayout(
     const double* modelCoefficients, const char* ySymbol, int significantDigits,

@@ -1,4 +1,6 @@
 #include <omg/unreachable.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
 
 #include "cubic_regression.h"
 #include "exponential_regression.h"
@@ -15,6 +17,7 @@
 #include "trigonometric_regression.h"
 
 namespace Poincare::Regression {
+
 const Regression* Regression::Get(Type type) {
   switch (type) {
     case Type::None:
@@ -59,6 +62,93 @@ const Regression* Regression::Get(Type type) {
     case Type::Median:
       constexpr static MedianRegression median;
       return &median;
+  }
+  OMG::unreachable();
+}
+
+int Regression::NumberOfCoefficients(Type type) {
+  switch (type) {
+    case Type::None:
+      return 0;
+    case Type::Proportional:
+      return 1;
+    case Type::LinearAxpb:
+    case Type::LinearApbx:
+    case Type::Logarithmic:
+    case Type::ExponentialAebx:
+    case Type::ExponentialAbx:
+    case Type::Power:
+    case Type::Median:
+      return 2;
+    case Type::Quadratic:
+    case Type::Logistic:
+      return 3;
+    case Type::Cubic:
+    case Type::Trigonometric:
+      return 4;
+    case Type::Quartic:
+      return 5;
+  }
+  OMG::unreachable();
+}
+
+const char* Regression::Formula(Type type) {
+  switch (type) {
+    case Type::None:
+      assert(false);
+      return "";
+    case Type::LinearAxpb:
+    case Type::Median:
+      return "y=a·x+b";
+    case Type::LinearApbx:
+      return "y=a+b·x";
+    case Type::Proportional:
+      return "y=a·x";
+    case Type::Quadratic:
+      return "y=a·x^2+b·x+c";
+    case Type::Cubic:
+      return "y=a·x^3+b·x^2+c·x+d";
+    case Type::Quartic:
+      return "y=a·x^4+b·x^3+c·x^2+d·x+e";
+    case Type::Logarithmic:
+      return "y=a+b·ln(x)";
+    case Type::ExponentialAebx:
+      return "y=a·exp(b·x)";
+    case Type::ExponentialAbx:
+      return "y=a·b^x";
+    case Type::Power:
+      return "y=a·x^b";
+    case Type::Trigonometric:
+      return "y=a·sin(b·x+c)+d";
+    case Type::Logistic:
+      return "y=c/(1+a·exp(-b·x))";
+  }
+  OMG::unreachable();
+}
+
+const Poincare::Layout Regression::TemplateLayout(Type type) {
+  switch (type) {
+    case Type::None:
+      assert(false);
+      return Poincare::Layout();
+    case Type::Quadratic:
+      return "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
+    case Type::Cubic:
+      return "a·x"_l ^ KSuperscriptL("3"_l) ^ "+b·x"_l ^ KSuperscriptL("2"_l) ^
+             "+c·x+d"_l;
+    case Type::Quartic:
+      return "a·x"_l ^ KSuperscriptL("4"_l) ^ "+b·x"_l ^ KSuperscriptL("3"_l) ^
+             "+c·x"_l ^ KSuperscriptL("2"_l) ^ "+d·x+e"_l;
+    case Type::ExponentialAebx:
+      return "a·e"_l ^ KSuperscriptL("b·x"_l);
+    case Type::ExponentialAbx:
+      return "a·b"_l ^ KSuperscriptL("x"_l);
+    case Type::Power:
+      return "a·x"_l ^ KSuperscriptL("b"_l);
+    case Type::Logistic:
+      return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
+    default:
+      return Layout::String(Formula(type) + sizeof("y=") - 1);
   }
   OMG::unreachable();
 }

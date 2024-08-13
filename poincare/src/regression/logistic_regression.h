@@ -9,10 +9,7 @@ class LogisticRegression : public Regression {
  public:
   using Regression::Regression;
 
-  int numberOfCoefficients() const override { return 3; }
-  const char* formula() const override { return "y=c/(1+a·exp(-b·x))"; }
-
-  Poincare::Layout templateLayout() const override;
+  Type type() const override { return Type::Logistic; }
 
   double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,

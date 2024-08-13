@@ -10,10 +10,7 @@ class NoneRegression : public Regression {
  public:
   using Regression::Regression;
 
-  Poincare::Layout templateLayout() const override {
-    assert(false);
-    return Poincare::Layout();
-  }
+  Type type() const override { return Type::None; }
 
   double evaluate(const double* modelCoefficients, double x) const override {
     return NAN;
@@ -24,7 +21,6 @@ class NoneRegression : public Regression {
     assert(false);
     return NAN;
   }
-  int numberOfCoefficients() const override { return 0; }
 
  private:
   Poincare::API::UserExpression privateExpression(

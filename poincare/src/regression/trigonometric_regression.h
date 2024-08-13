@@ -8,9 +8,8 @@ namespace Poincare::Regression {
 class TrigonometricRegression : public Regression {
  public:
   using Regression::Regression;
-  int numberOfCoefficients() const override { return k_numberOfCoefficients; }
 
-  const char* formula() const override { return "y=a·sin(b·x+c)+d"; }
+  Type type() const override { return Type::Trigonometric; }
   double evaluate(const double* modelCoefficients, double x) const override;
 
  private:

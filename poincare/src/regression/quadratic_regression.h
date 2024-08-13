@@ -8,11 +8,8 @@ namespace Poincare::Regression {
 class QuadraticRegression : public Regression {
  public:
   using Regression::Regression;
-  int numberOfCoefficients() const override { return 3; }
 
-  const char* formula() const override { return "y=a·x^2+b·x+c"; }
-  Poincare::Layout templateLayout() const override;
-
+  Type type() const override { return Type::Quadratic; }
   double evaluate(const double* modelCoefficients, double x) const override;
 
  private:

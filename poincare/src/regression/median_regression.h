@@ -6,6 +6,9 @@
 namespace Poincare::Regression {
 
 class MedianRegression : public AffineRegression {
+ public:
+  Type type() const override { return Type::Median; }
+
  private:
   double getMedianValue(const Series* series, uint8_t* sortedIndex, int column,
                         int startIndex, int endIndex) const;

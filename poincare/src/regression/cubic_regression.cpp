@@ -7,11 +7,6 @@
 namespace Poincare::Regression {
 using namespace API;
 
-Poincare::Layout CubicRegression::templateLayout() const {
-  return "a·x"_l ^ KSuperscriptL("3"_l) ^ "+b·x"_l ^ KSuperscriptL("2"_l) ^
-         "+c·x+d"_l;
-}
-
 UserExpression CubicRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^3+b*x^2+c*x+d

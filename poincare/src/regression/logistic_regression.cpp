@@ -11,10 +11,6 @@
 namespace Poincare::Regression {
 using namespace API;
 
-Poincare::Layout LogisticRegression::templateLayout() const {
-  return KRackL(KFracL("c"_l, "1+a·e"_l ^ KSuperscriptL("-b·x"_l)));
-}
-
 UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))

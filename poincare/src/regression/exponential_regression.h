@@ -9,10 +9,10 @@ class ExponentialRegression : public TransformedRegression {
  public:
   constexpr ExponentialRegression(bool isAbxForm = false)
       : m_isAbxForm(isAbxForm) {}
-  const char* formula() const override {
-    return m_isAbxForm ? "y=a·b^x" : "y=a·exp(b·x)";
+
+  Type type() const override {
+    return m_isAbxForm ? Type::ExponentialAbx : Type::ExponentialAebx;
   }
-  Poincare::Layout templateLayout() const override;
 
  private:
   Poincare::API::UserExpression privateExpression(

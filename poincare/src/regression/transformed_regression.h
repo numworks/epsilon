@@ -10,7 +10,6 @@ namespace Poincare::Regression {
  * (Logarithm), Y (Exponential) or both (Power). */
 class TransformedRegression : public Regression {
  public:
-  int numberOfCoefficients() const override { return 2; }
   double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;

@@ -51,5 +51,9 @@ QUIZ_CASE(pcj_projection) {
   Simplification::ToSystem(ref, &ctx);
   assert_trees_are_equal(ref, KPowReal(π_e, 1_e / 2_e));
 
+  CloneTreeOverTree(ref, KACos(KASin(1_e / 2_e)));
+  Simplification::ToSystem(ref, &ctx);
+  assert_trees_are_equal(ref, KATrig(KATrig(1_e / 2_e, 1_e), 0_e));
+
   ref->removeTree();
 }

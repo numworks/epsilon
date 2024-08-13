@@ -1300,13 +1300,15 @@ bool IsIntegerBaseTenOrEmptyExpression(const Tree* e) {
 
 bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
                                               int* caretIntegerValue) {
+  State previousState = currentState();
   // Parse f^n(x)
   Tree* result = nullptr;
   if (popTokenIfType(Token::Type::Caret)) {
     if (!popTokenIfType(Token::Type::LeftParenthesis)) {
       // Exponent should be parenthesed
       // TODO: allow without parenthesis?
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      setState(previousState);
+      return false;
     }
     result = parseUntil(Token::Type::RightParenthesis);
     if (!popTokenIfType(Token::Type::RightParenthesis)) {
@@ -1331,7 +1333,9 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     result->removeTree();
     return true;
   }
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  setState(previousState);
+  result->removeTree();
+  return false;
 }
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {

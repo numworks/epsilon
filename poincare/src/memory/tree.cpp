@@ -351,6 +351,17 @@ bool Tree::ApplyShallowToDown(Tree* t, ShallowOperation shallowOperation,
   return changed;
 }
 
+bool Tree::ApplyShallowBottomUp(Tree* t, ShallowOperation shallowOperation,
+                                void* context, bool check) {
+  bool changed = false;
+  for (Tree* child : t->children()) {
+    changed |= ApplyShallowBottomUp(child, shallowOperation, context, check);
+  }
+  changed = shallowOperation(t, context) || changed;
+  assert(!(changed && check && shallowOperation(t, context)));
+  return changed;
+}
+
 bool Tree::deepReplaceWith(const Tree* target, const Tree* replacement) {
   assert(SharedTreeStack->isAfter(replacement, this) &&
          SharedTreeStack->isAfter(target, this));

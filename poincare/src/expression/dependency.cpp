@@ -14,11 +14,8 @@
 namespace Poincare::Internal {
 
 bool Dependency::DeepBubbleUpDependencies(Tree* e) {
-  bool modified = false;
-  for (Tree* child : e->children()) {
-    modified |= DeepBubbleUpDependencies(child);
-  }
-  return ShallowBubbleUpDependencies(e) || modified;
+  return Tree::ApplyShallowBottomUp(
+      e, [](Tree* e, void* context) { return ShallowBubbleUpDependencies(e); });
 }
 
 bool Dependency::ShallowBubbleUpDependencies(Tree* e) {

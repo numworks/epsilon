@@ -21,7 +21,7 @@ class DatasetColumnFromJsArray : public DatasetColumn<double> {
   };
   int length() const override { return m_array["length"].as<int>(); }
 
-  const FloatArray getArray() const { return m_array; }
+  const FloatArray& getArray() const { return m_array; }
 
  private:
   const FloatArray m_array;

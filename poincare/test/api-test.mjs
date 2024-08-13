@@ -35,6 +35,8 @@ Promise.all([
   testCase('Regression - Linear', async (poincare) => {
     var series = new poincare.PCR_RegressionSeries([1.0, 8.0, 14.0, 79.0], [-3.581, 20.296, 40.676, 261.623]);
 
+    assert.equal(series.getXArray()[0], 1.0);
+
     assert.equal(series.numberOfPairs(), 4);
     assert.equal(series.slope(), 3.3995413996411177);
 
@@ -42,20 +44,18 @@ Promise.all([
     var coefficients = regression.fit(series);
     assert.deepEqual(coefficients, [3.3995413996411177, -6.934805690848492, NaN, NaN, NaN]);
     var prediction = regression.evaluate(coefficients, 10);
-
     assert.equal(prediction, 27.06060830556268);
   }),
 
   testCase('Statistics - Array', async (poincare) => {
     var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0]);
-
     assert.equal(dataset.mean(), 0.5);
   }),
 
 
   testCase('Statistics - Series', async (poincare) => {
     var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0], [2.0, 4.0, 1.0, 3.0]);
-
+    assert.equal(dataset.getValuesArray().length, 4);
     assert.equal(dataset.mean(), 3.8);
     assert.equal(dataset.variance(), 45.36);
   }),

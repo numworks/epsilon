@@ -5,8 +5,8 @@
 
 namespace Poincare::Internal {
 // Exact and approximated must be system expressions
-bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
-                                                   const Tree* approximate);
+bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
+                                                    const Tree* approximate);
 
 }  // namespace Poincare::Internal
 

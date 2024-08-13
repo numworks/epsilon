@@ -4,6 +4,7 @@
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/decimal.h>
+#include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/matrix.h>
@@ -448,7 +449,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         int order = Integer::Handler(expression->child(2)).to<int>();
         assert(order > 0);
         if (order <= 2) {
-          PushCodePoint(layoutParent, order == 1 ? '\'' : '"');
+          PushCodePoint(layoutParent, order == 1
+                                          ? Derivation::k_firstOrderSymbol
+                                          : Derivation::k_secondOrderSymbol);
           expression->child(2)->removeTree();
         } else {
           TreeRef rack;

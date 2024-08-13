@@ -8,7 +8,6 @@
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/cosine.h>
-#include <poincare/old/derivative.h>
 #include <poincare/old/division.h>
 #include <poincare/old/function.h>
 #include <poincare/old/helpers.h>
@@ -23,6 +22,7 @@
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/undefined.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/derivation.h>
 
 #include <algorithm>
 
@@ -100,9 +100,10 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
                                              : k_ordinateSymbol));
   }
   if (derivationOrder > 0) {
-    const CodePoint derivative = derivationOrder == 1
-                                     ? DerivativeNode::k_firstDerivativeSymbol
-                                     : DerivativeNode::k_secondDerivativeSymbol;
+    const CodePoint derivative =
+        derivationOrder == 1
+            ? Poincare::Internal::Derivation::k_firstOrderSymbol
+            : Poincare::Internal::Derivation::k_secondOrderSymbol;
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, derivative);
   }

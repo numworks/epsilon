@@ -23,9 +23,6 @@ class DerivativeNode final : public ParameteredExpressionNode {
   // Properties
   Type otype() const override { return Type::Derivative; }
 
-  constexpr static CodePoint k_firstDerivativeSymbol = '\'';
-  constexpr static CodePoint k_secondDerivativeSymbol = '\"';
-
  private:
   bool isFirstOrder() const {
     return OExpression(childAtIndex(numberOfChildren() - 1)).isOne();

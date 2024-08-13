@@ -36,8 +36,7 @@ size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
     assert(order > 0);
     if (order <= 2) {
       length += SerializationHelper::CodePoint(
-          buffer + length, bufferSize - length,
-          order == 1 ? k_firstDerivativeSymbol : k_secondDerivativeSymbol);
+          buffer + length, bufferSize - length, order == 1 ? '\'' : '"');
     } else {
       length += SerializationHelper::CodePoint(buffer + length,
                                                bufferSize - length, '^');

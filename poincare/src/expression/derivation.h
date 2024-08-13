@@ -11,6 +11,9 @@ class Derivation {
   static bool Reduce(Tree* e);
   TREE_REF_WRAP(Reduce)
 
+  constexpr static CodePoint k_firstOrderSymbol = '\'';
+  constexpr static CodePoint k_secondOrderSymbol = '"';
+
  private:
   /* Push derivand derivation on the pool. If force is true, push a diff tree
    * anyway when we can't derivate. */

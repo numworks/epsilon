@@ -105,7 +105,7 @@ double typedApproximateToScalar(const TypedSystemExpression& expr) {
   return expr.approximateToScalarJunior<double>();
 }
 
-EMSCRIPTEN_BINDINGS(user_expression) {
+EMSCRIPTEN_BINDINGS(system_expression) {
   register_type<SystemExpressionTree>("SystemExpressionTree");
   class_<TypedSystemExpression, base<JuniorExpression>>("PCR_SystemExpression")
       .constructor<>()

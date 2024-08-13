@@ -86,11 +86,7 @@ class Approximation final {
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
   template <typename T>
-  static T To(const Tree* e, T x) {
-    assert(s_context);
-    s_context->setLocalValue(x);
-    return To<T>(e);
-  }
+  static T To(const Tree* e, T x);
 
   // tree must be of boolean dimension.
   template <typename T>

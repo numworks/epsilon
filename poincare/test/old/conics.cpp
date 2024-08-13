@@ -12,8 +12,8 @@ using CoordinateType = Conic::CoordinateType;
 
 CartesianConic buildCartesianConic(const char* expression) {
   Shared::GlobalContext globalContext;
-  ProjectionContext projContext = {.m_context = &globalContext,
-                                   .m_complexFormat = ComplexFormat::Cartesian};
+  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
+                                   .m_context = &globalContext};
   Tree* e = parse_expression(expression, &globalContext);
   Simplification::ProjectAndReduce(e, &projContext, false);
   return CartesianConic(Expression::Builder(e));
@@ -21,8 +21,8 @@ CartesianConic buildCartesianConic(const char* expression) {
 
 PolarConic buildPolarConic(const char* expression) {
   Shared::GlobalContext globalContext;
-  ProjectionContext projContext = {.m_context = &globalContext,
-                                   .m_complexFormat = ComplexFormat::Cartesian};
+  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
+                                   .m_context = &globalContext};
   Tree* e = parse_expression(expression, &globalContext);
   Simplification::ProjectAndReduce(e, &projContext, false);
   return PolarConic(Expression::Builder(e));
@@ -30,8 +30,8 @@ PolarConic buildPolarConic(const char* expression) {
 
 ParametricConic buildParametricConic(const char* expression) {
   Shared::GlobalContext globalContext;
-  ProjectionContext projContext = {.m_context = &globalContext,
-                                   .m_complexFormat = ComplexFormat::Cartesian};
+  ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
+                                   .m_context = &globalContext};
   // Prevent t from being interpreted as ton
   Poincare::VariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);

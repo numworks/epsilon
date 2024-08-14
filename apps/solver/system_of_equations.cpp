@@ -127,8 +127,8 @@ void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_approximateSolvingRange.isValid());
   double rangeMin = m_approximateSolvingRange.min();
   double rangeMax = m_approximateSolvingRange.max();
-  Poincare::Solver<double> solver =
-      PoincareHelpers::Solver(rangeMin, rangeMax, m_variables[0], context);
+  Poincare::OSolver<double> solver =
+      PoincareHelpers::OSolver(rangeMin, rangeMax, m_variables[0], context);
   solver.stretch();
 
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {

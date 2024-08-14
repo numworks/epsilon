@@ -180,13 +180,14 @@ inline void CloneAndReduceAndRemoveUnit(
 // ===== Misc =====
 
 template <typename T>
-inline Poincare::Solver<T> Solver(T xMin, T xMax, const char* unknown = nullptr,
-                                  Poincare::Context* context = nullptr) {
+inline Poincare::OSolver<T> OSolver(T xMin, T xMax,
+                                    const char* unknown = nullptr,
+                                    Poincare::Context* context = nullptr) {
   Poincare::Preferences* preferences =
       Poincare::Preferences::SharedPreferences();
-  return Poincare::Solver<T>(xMin, xMax, unknown, context,
-                             preferences->complexFormat(),
-                             preferences->angleUnit());
+  return Poincare::OSolver<T>(xMin, xMax, unknown, context,
+                              preferences->complexFormat(),
+                              preferences->angleUnit());
 }
 
 // Return the nearest number from t's representation with given precision.

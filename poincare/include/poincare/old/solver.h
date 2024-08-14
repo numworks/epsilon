@@ -10,7 +10,7 @@
 namespace Poincare {
 
 template <typename T>
-class Solver {
+class OSolver {
  public:
   enum class Interest : uint8_t {
     None,
@@ -75,13 +75,13 @@ class Solver {
                           Interest::Discontinuity);
   }
 
-  /* Arguments beyond xEnd are only required if the Solver manipulates
+  /* Arguments beyond xEnd are only required if the OSolver manipulates
    * OExpression. */
-  Solver(T xStart, T xEnd, const char *unknown = nullptr,
-         Context *context = nullptr,
-         Preferences::ComplexFormat complexFormat =
-             Preferences::ComplexFormat::Cartesian,
-         Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+  OSolver(T xStart, T xEnd, const char *unknown = nullptr,
+          Context *context = nullptr,
+          Preferences::ComplexFormat complexFormat =
+              Preferences::ComplexFormat::Cartesian,
+          Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 
   T start() const { return m_xStart; }
   T end() const { return m_xEnd; }
@@ -153,7 +153,7 @@ class Solver {
                                           FunctionEvaluation f, const void *aux,
                                           T minimalSizeOfInterval);
   static bool FunctionSeemsConstantOnTheInterval(
-      Solver<T>::FunctionEvaluation f, const void *aux, T xMin, T xMax);
+      OSolver<T>::FunctionEvaluation f, const void *aux, T xMin, T xMax);
 
   T maximalStep() const { return m_maximalXStep; }
   static T MinimalStep(T x, T slope = static_cast<T>(1.));

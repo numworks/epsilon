@@ -16,32 +16,30 @@ class OSolverAlgorithms {
   /* Bibliography: R. P. Brent, Algorithms for finding zeros and extrema of
    * functions without calculating derivatives
    *
-   * These two functions must be of the Solver<double>::HoneResult type.
+   * These two functions must be of the OSolver<double>::HoneResult type.
    * Users who want to find roots and extrema with good precision should
-   * use the Solver<double> API. */
-  static Coordinate2D<double> BrentRoot(Solver<double>::FunctionEvaluation f,
+   * use the OSolver<double> API. */
+  static Coordinate2D<double> BrentRoot(OSolver<double>::FunctionEvaluation f,
                                         const void* aux, double xMin,
                                         double xMax,
-                                        Solver<double>::Interest interest,
+                                        OSolver<double>::Interest interest,
                                         double precision);
-  static Coordinate2D<double> BrentMinimum(Solver<double>::FunctionEvaluation f,
-                                           const void* aux, double xMin,
-                                           double xMax,
-                                           Solver<double>::Interest interest,
-                                           double precision);
+  static Coordinate2D<double> BrentMinimum(
+      OSolver<double>::FunctionEvaluation f, const void* aux, double xMin,
+      double xMax, OSolver<double>::Interest interest, double precision);
 
   /* Numeric functions for statistics and probability. */
   static Coordinate2D<double> IncreasingFunctionRoot(
       double ax, double bx, double resultPrecision,
-      Solver<double>::FunctionEvaluation f, const void* aux,
+      OSolver<double>::FunctionEvaluation f, const void* aux,
       double* resultEvaluation = nullptr);
   template <typename T>
   static T CumulativeDistributiveInverseForNDefinedFunction(
-      T* probability, typename Solver<T>::FunctionEvaluation f,
+      T* probability, typename OSolver<T>::FunctionEvaluation f,
       const void* aux);
   template <typename T>
   static T CumulativeDistributiveFunctionForNDefinedFunction(
-      T x, typename Solver<T>::FunctionEvaluation f, const void* aux);
+      T x, typename OSolver<T>::FunctionEvaluation f, const void* aux);
 
  private:
   constexpr static int k_numberOfIterationsBrent = 100;

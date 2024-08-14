@@ -20,7 +20,7 @@ PreimageGraphController::PreimageGraphController(
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, Context* context) {
-  Solver<double> solver = PoincareHelpers::Solver(
+  OSolver<double> solver = PoincareHelpers::OSolver(
       start, max, ContinuousFunction::k_unknownName, context);
   SystemFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(

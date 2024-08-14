@@ -97,6 +97,10 @@ class Regression {
 
   virtual Type type() const = 0;
 
+  bool hasR() const { return HasR(type()); }
+  bool hasRSquared() const { return HasRSquared(type()); }
+  bool hasR2() const { return HasR2(type()); }
+
   int numberOfCoefficients() const { return NumberOfCoefficients(type()); }
   const char* formula() const { return Formula(type()); }
   Poincare::Layout templateLayout() const { return TemplateLayout(type()); }

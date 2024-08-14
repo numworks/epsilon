@@ -116,6 +116,10 @@ EMSCRIPTEN_BINDINGS(regression) {
        * policy::reference tells JS it does not have the ownership on it. */
       .constructor(&Regression::Regression::Get,
                    return_value_policy::reference())
+      .function("type", &Regression::Regression::type)
+      .function("hasR", &Regression::Regression::hasR)
+      .function("hasRSquared", &Regression::Regression::hasRSquared)
+      .function("hasR2", &Regression::Regression::hasR2)
       .function("numberOfCoefficients",
                 &Regression::Regression::numberOfCoefficients)
       .function("fit", &fit, allow_raw_pointers())

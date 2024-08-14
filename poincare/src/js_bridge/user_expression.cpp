@@ -430,6 +430,7 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
       Tree* childTree = buildTreeFromPattern(childStart, tempBuffer,
                                              contextExprs, nContextExprs);
       if (!childTree) {
+        stack->flushFromBlock(result);
         return nullptr;
       }
       childStart = tempBuffer + 1;

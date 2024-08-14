@@ -1211,7 +1211,7 @@ template <typename T>
 T Approximation::To(const Tree* e, T x) {
   Context* previousContext = s_context;
   if (!s_context) {
-    Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
+    Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
     s_context = &context;
   }
   s_context->setLocalValue(x);

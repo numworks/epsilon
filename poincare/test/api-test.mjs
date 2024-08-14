@@ -141,6 +141,13 @@ Promise.all([
     );
     assert.ok(!expression.isUninitialized());
     assert.equal(expression.toLatex(), '\\left(-1\\times 2+0.001\\right)^{π}');
+
+    // Test spaces after commas
+    const expression2 = poincare.PCR_UserExpression.BuildFromPattern(
+      'Add(Mult(MinusOne, One), Pi)'
+    );
+    assert.ok(!expression2.isUninitialized());
+    assert.equal(expression2.toLatex(), '-1\\times 1+π');
   }),
 
   testCase('Solver - Min, Max, Root', async (poincare) => {

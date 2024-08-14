@@ -394,7 +394,7 @@ bool AdvancedReduction::DeepExpand(Tree* e) {
   TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
   Tree* target = e;
   while (target->block() < nextTree->block()) {
-    if (target->isDepList()) {
+    while (target->isDepList()) {
       // Never expand anything in dependency's dependencies set.
       target = target->nextTree();
     }

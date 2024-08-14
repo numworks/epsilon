@@ -202,33 +202,45 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
 
 template <typename T>
 int StatisticsDataset<T>::indexAtSortedIndex(int i) const {
-  if (datasetLength() < k_maxLengthForSortedIndex) {
-    buildMemoizedSortedIndex();
-    return static_cast<int>(m_sortedIndex[i]);
-  }
-  return nonMemoizedIndexAtSortedIndex(i);
+  buildMemoizedSortedIndex();
+  return static_cast<int>(m_sortedIndex[i]);
 }
+
+#ifndef TARGET_POINCARE_JS
+using MemoizedIndexType = uint8_t;
+#else
+using MemoizedIndexType = int;
+#endif
 
 template <typename T>
 void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
-  assert(datasetLength() < k_maxLengthForSortedIndex);
   if (!m_recomputeSortedIndex) {
     return;
   }
+
   int length = datasetLength();
+#ifndef TARGET_POINCARE_JS
+  assert(length < k_maxLengthForSortedIndex);
+#else
+  assert(m_sortedIndex == nullptr);
+  m_sortedIndex = new int[length];
+#endif
+
   for (int i = 0; i < length; i++) {
     m_sortedIndex[i] = i;
   }
-  void* pack[] = {&m_sortedIndex, const_cast<DatasetColumn<T>*>(m_values)};
+  void* pack[] = {&(m_sortedIndex[0]), const_cast<DatasetColumn<T>*>(m_values)};
   Helpers::Sort(
       [](int i, int j, void* ctx, int n) {  // swap
         void** pack = reinterpret_cast<void**>(ctx);
-        uint8_t* sortedIndex = reinterpret_cast<uint8_t*>(pack[0]);
+        MemoizedIndexType* sortedIndex =
+            reinterpret_cast<MemoizedIndexType*>(pack[0]);
         std::swap(sortedIndex[i], sortedIndex[j]);
       },
       [](int i, int j, void* ctx, int n) {  // compare
         void** pack = reinterpret_cast<void**>(ctx);
-        uint8_t* sortedIndex = reinterpret_cast<uint8_t*>(pack[0]);
+        MemoizedIndexType* sortedIndex =
+            reinterpret_cast<MemoizedIndexType*>(pack[0]);
         DatasetColumn<T>* values = reinterpret_cast<DatasetColumn<T>*>(pack[1]);
         return std::isnan(values->valueAtIndex(sortedIndex[i])) ||
                values->valueAtIndex(sortedIndex[i]) >=
@@ -236,69 +248,6 @@ void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
       },
       pack, datasetLength());
   m_recomputeSortedIndex = false;
-}
-
-template <typename T>
-int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndex(int index) const {
-  int length = datasetLength();
-  assert(index < length && index >= 0);
-
-  if (length == 1) {
-    return 0;
-  }
-
-  // Optimize the min case
-  if (index == 0) {
-    T currentMin = valueAtIndex(0);
-    int currentMinIndex = 0;
-    for (int i = 0; i < length; i++) {
-      T val = valueAtIndex(i);
-      if (!std::isnan(val) && (std::isnan(currentMin) || val < currentMin)) {
-        currentMin = val;
-        currentMinIndex = i;
-      }
-    }
-    return currentMinIndex;
-  }
-
-  // Optimize the max case
-  if (index == length - 1) {
-    T currentMax = valueAtIndex(0);
-    int currentMaxIndex = 0;
-    for (int i = 0; i < length; i++) {
-      T val = valueAtIndex(i);
-      if (std::isnan(val) || (!std::isnan(currentMax) && val >= currentMax)) {
-        currentMax = val;
-        currentMaxIndex = i;
-      }
-    }
-    return currentMaxIndex;
-  }
-
-  for (int i = 0; i < length; i++) {
-    T candidate = valueAtIndex(i);
-    bool candidateIsNaN = std::isnan(candidate);
-    int numberOfSmallerValues = 0;
-    for (int j = 0; j < length; j++) {
-      if (j == i) {
-        continue;
-      }
-      T valJ = valueAtIndex(j);
-      bool valJIsNaN = std::isnan(valJ);
-      if ((!valJIsNaN && (candidateIsNaN || valJ < candidate)) ||
-          (j < i && ((valJIsNaN && candidateIsNaN) || valJ == candidate))) {
-        numberOfSmallerValues++;
-      }
-      if (numberOfSmallerValues > index) {
-        break;
-      }
-    }
-    if (numberOfSmallerValues == index) {
-      return i;
-    }
-  }
-  assert(false);
-  return -1;
 }
 
 template class StatisticsDataset<float>;

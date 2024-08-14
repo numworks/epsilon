@@ -78,6 +78,8 @@ Promise.all([
     assert.equal(dataset.getValuesArray().length, 4);
     assert.equal(dataset.mean(), 3.8);
     assert.equal(dataset.variance(), 45.36);
+    assert.equal(dataset.median(), 5.0);
+    assert.equal(dataset.max(), 10.0);
   }),
 
 

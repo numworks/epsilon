@@ -70,8 +70,6 @@ class StatisticsDataset {
       const ExpressionNode* e, const ApproximationContext& approximationContext,
       ListComplex<T> evaluationArray[]);
 #endif
-  // TODO: Template on the length for sortedIndex ?
-  constexpr static int k_maxLengthForSortedIndex = 256;
 
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
@@ -89,10 +87,25 @@ class StatisticsDataset {
 
   bool isUndefined() { return m_values == nullptr; }
 
+#ifdef TARGET_POINCARE_JS
+  void deleteSortedIndex() {
+    if (m_sortedIndex != nullptr) {
+      delete[] m_sortedIndex;
+      m_sortedIndex = nullptr;
+    }
+  }
+
+  ~StatisticsDataset() { deleteSortedIndex(); }
+#endif
+
   void setHasBeenModified() {
     m_recomputeSortedIndex = true;
     m_memoizedTotalWeight = NAN;
+#ifdef TARGET_POINCARE_JS
+    deleteSortedIndex();
+#endif
   }
+
   int indexAtSortedIndex(int i) const;
 
   T totalWeight() const;
@@ -139,11 +152,16 @@ class StatisticsDataset {
   T privateTotalWeight() const;
 
   void buildMemoizedSortedIndex() const;
-  int nonMemoizedIndexAtSortedIndex(int i) const;
 
   const DatasetColumn<T>* m_values;
   const DatasetColumn<T>* m_weights;
+#ifndef TARGET_POINCARE_JS
+  constexpr static int k_maxLengthForSortedIndex = 256;
   mutable uint8_t m_sortedIndex[k_maxLengthForSortedIndex];
+#else
+  // Use a malloced array to avoid the 256 elements limit
+  mutable int* m_sortedIndex = nullptr;
+#endif
   mutable bool m_recomputeSortedIndex;
   mutable double m_memoizedTotalWeight;
   bool m_lnOfValues;

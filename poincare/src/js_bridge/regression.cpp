@@ -1,8 +1,12 @@
 #include <emscripten/bind.h>
+#include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/regression/linear_regression.h>
 #include <poincare/src/regression/regression.h>
 #include <poincare/src/regression/series.h>
 
+#include <string>
+
+#include "expression_types.h"
 #include "utils.h"
 
 using namespace emscripten;
@@ -54,6 +58,21 @@ ModelCoefficients fit(const Regression::Regression* reg,
   result.fill(NAN);
   reg->fit(series, result.data(), nullptr);
   return result;
+}
+
+std::string latexTemplateFormula(const Regression::Regression* reg) {
+  constexpr int k_bufferSize = 1024;
+  char buffer[k_bufferSize];
+  Layout layout = reg->templateLayout();
+  Internal::LatexParser::LayoutToLatex(Internal::Rack::From(layout.tree()),
+                                       buffer, buffer + k_bufferSize - 1);
+  return std::string(buffer, strlen(buffer));
+}
+
+TypedUserExpression expression(const Regression::Regression* reg,
+                               const ModelCoefficients modelCoefficients) {
+  JuniorExpression expression = reg->expression(modelCoefficients.data());
+  return *reinterpret_cast<TypedUserExpression*>(&expression);
 }
 
 double evaluate(const Regression::Regression* reg,
@@ -122,6 +141,9 @@ EMSCRIPTEN_BINDINGS(regression) {
       .function("hasR2", &Regression::Regression::hasR2)
       .function("numberOfCoefficients",
                 &Regression::Regression::numberOfCoefficients)
+      .function("latexTemplateFormula", &latexTemplateFormula,
+                allow_raw_pointers())
+      .function("expression", &expression, allow_raw_pointers())
       .function("fit", &fit, allow_raw_pointers())
       .function("evaluate", &evaluate, allow_raw_pointers())
       .function("correlationCoefficient", &correlationCoefficient,

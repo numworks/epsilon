@@ -44,7 +44,7 @@ $(addprefix device/userland/drivers/, \
 ) \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
-  post_and_hardware_tests.cpp \
+  post_and_hardware_tests.cpp:-nopost \
 ) \
 $(addprefix device/shared/drivers/, \
   assert.cpp \

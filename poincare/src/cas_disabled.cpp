@@ -108,7 +108,7 @@ bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
                Type::Diff,
                Type::Distribution,
            }) ||
-           t->isSequence();
+           t->isUserSequence();
   });
 }
 

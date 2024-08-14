@@ -139,10 +139,7 @@ class StatisticsDataset {
   T privateTotalWeight() const;
 
   void buildMemoizedSortedIndex() const;
-
   int nonMemoizedIndexAtSortedIndex(int i) const;
-  int nonMemoizedIndexAtSortedIndexFromBottom(int i) const;
-  int nonMemoizedIndexAtSortedIndexFromTop(int i) const;
 
   const DatasetColumn<T>* m_values;
   const DatasetColumn<T>* m_weights;

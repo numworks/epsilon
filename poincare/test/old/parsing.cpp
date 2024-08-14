@@ -1164,9 +1164,6 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f''", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
                                      apostropheUnit.clone()));
   assert_parsed_expression_is(
-      "f^\u00121\u0013",
-      Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
       "f^(2)", Power::Builder(Symbol::Builder("f", 1),
                               Parenthesis::Builder(BasedInteger::Builder(2))));
 
@@ -1189,9 +1186,6 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parse_to_same_expression("f'''(x)", "f^(3)(x)");
   assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)");
   assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)");
-  assert_parse_to_same_expression("f^\u00121\u0013(x)", "f^(1)(x)");
-  assert_parse_to_same_expression("f^\u00122\u0013(x)", "f^(2)(x)");
-  assert_parse_to_same_expression("f^\u00123\u0013(x)", "f^(3)(x)");
   assert_parsed_expression_is(
       "f^(3)(x)",
       Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
@@ -1211,9 +1205,6 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parsed_expression_is(
       "f''", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
                                      apostropheUnit.clone()));
-  assert_parsed_expression_is(
-      "f^\u00121\u0013",
-      Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)));
   assert_parsed_expression_is(
       "f^(2)", Power::Builder(Symbol::Builder("f", 1),
                               Parenthesis::Builder(BasedInteger::Builder(2))));

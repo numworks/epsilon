@@ -328,7 +328,7 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
   }
 
   TreeStack* stack = TreeStack::SharedTreeStack;
-  Tree* result = reinterpret_cast<Tree*>(stack->lastBlock());
+  Tree* result = Tree::FromBlocks(stack->lastBlock());
 
   // Detect the presence of children in parenthesis
   const char* childrenBuffer = buffer + 1;

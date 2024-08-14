@@ -34,11 +34,6 @@
  * ask it to.
  * (for example, that's what we do in Apps::Statistics::Store)
  *
- * WARNING: The main drawback of the memoization is that it's limited to 256
- * elements. If you need to compute a median on a dataset with more than 256
- * elements, you can still use a StatisticsDataset, but it will be way slower,
- * as the sorted index won't be memoized.
- *
  * === ENHANCEMENTS ===
  * More statistics method could be implemented here if factorization is needed.
  * */

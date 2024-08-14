@@ -5,6 +5,7 @@
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/integer.h>
+#include <poincare/src/expression/trigonometry.h>
 
 namespace Poincare::Internal {
 
@@ -58,16 +59,11 @@ bool ParsingHelper::ExtractInteger(const Tree* e, int* value) {
 }
 
 const Builtin* ParsingHelper::GetInverseFunction(const Builtin* builtin) {
-  switch (builtin->type()) {
-    case Type::Cos:
-      return Builtin::GetReservedFunction(Type::ACos);
-    case Type::Sin:
-      return Builtin::GetReservedFunction(Type::ASin);
-    case Type::Tan:
-      return Builtin::GetReservedFunction(Type::ATan);
-    default:
-      return nullptr;
+  if (builtin->type().isDirectTrigonometryFunction()) {
+    return Builtin::GetReservedFunction(
+        Trigonometry::GetInverseType(builtin->type()));
   }
+  return nullptr;
 }
 
 bool ParsingHelper::IsPowerableFunction(const Builtin* builtin) {

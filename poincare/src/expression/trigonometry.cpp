@@ -1,5 +1,6 @@
 #include "trigonometry.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -434,6 +435,19 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
                 KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),
                      KTrig(KAdd(KB, KE), KAdd(KF, KC))),
                 KG_s));
+}
+
+Type Trigonometry::GetInverseType(Type type) {
+  switch (type) {
+    case Type::Cos:
+      return Type::ACos;
+    case Type::Sin:
+      return Type::ASin;
+    case Type::Tan:
+      return Type::ATan;
+    default:
+      OMG::unreachable();
+  }
 }
 
 /* TODO: Maybe expand arccos(x) = π/2 - arcsin(x).

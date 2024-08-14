@@ -27,6 +27,12 @@ $(call create_goal,test, \
   sdl \
 )
 
+ifeq ($(HOST),macos)
+ifeq ($(CXX),g++)
+$(error Epsilon cannot be built with the gcc compiler on macOS)
+endif
+endif
+
 include build/coverage.mak
 
 ifeq ($(PLATFORM),web)

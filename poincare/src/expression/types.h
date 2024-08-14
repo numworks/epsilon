@@ -126,7 +126,7 @@ NODE(ATan, 1)
 NODE(ATrig, 2)
 NODE(ATanRad, 1)
 
-RANGE(IndirectTrigonometryFunction, ACos, ATanRad)
+RANGE(InverseTrigonometryFunction, ACos, ATanRad)
 RANGE(TrigonometryFunction, Cos, ATanRad)
 
 NODE(Csc, 1)
@@ -139,7 +139,7 @@ NODE(ACsc, 1)
 NODE(ASec, 1)
 NODE(ACot, 1)
 
-RANGE(IndirectAdvancedTrigonometryFunction, ASec, ACot)
+RANGE(InverseAdvancedTrigonometryFunction, ASec, ACot)
 RANGE(AdvancedTrigonometryFunction, Sec, ACot)
 
 NODE(CosH, 1)
@@ -152,7 +152,7 @@ NODE(ArCosH, 1)
 NODE(ArSinH, 1)
 NODE(ArTanH, 1)
 
-RANGE(IndirectHyperbolicTrigonometryFunction, ArCosH, ArTanH)
+RANGE(InverseHyperbolicTrigonometryFunction, ArCosH, ArTanH)
 RANGE(HyperbolicTrigonometryFunction, CosH, ArTanH)
 RANGE(AnyTrigonometryFunction, Cos, ArTanH)
 

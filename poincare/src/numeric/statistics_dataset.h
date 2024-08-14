@@ -20,7 +20,7 @@
  * === COMPLEXITY ===
  * There are two categories of methods:
  * - The ones which will always take the same time (like mean).
- * - The ones which memoize sorted indexes (like median).
+ * - The ones which need sorted indexes (like median).
  *
  * If you need to compute a mean, variance, standardDeviation, or any other
  * method that does not need sortedIndex, you can recreate a StatisticsDataset
@@ -33,6 +33,11 @@
  * Indeed, the object memoizes m_sortedIndex and recomputes it only if you
  * ask it to.
  * (for example, that's what we do in Apps::Statistics::Store)
+ *
+ * WARNING: The main drawback of the memoization is that it's limited to 256
+ * elements. If you need to compute a median on a dataset with more than 256
+ * elements, you can still use a StatisticsDataset, but it will be way slower,
+ * as the sorted index won't be memoized.
  *
  * === ENHANCEMENTS ===
  * More statistics method could be implemented here if factorization is needed.
@@ -65,6 +70,8 @@ class StatisticsDataset {
       const ExpressionNode* e, const ApproximationContext& approximationContext,
       ListComplex<T> evaluationArray[]);
 #endif
+  // TODO: Template on the length for sortedIndex ?
+  constexpr static int k_maxLengthForSortedIndex = 256;
 
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
@@ -101,7 +108,8 @@ class StatisticsDataset {
   T standardDeviation() const { return std::sqrt(variance()); }
   T sampleStandardDeviation() const;
 
-  // Need sortedIndex
+  /* All the following methods need sortedIndex and are way faster with a
+   * length < 256. */
   T sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const;
   T sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const;
   T median() const {
@@ -127,11 +135,13 @@ class StatisticsDataset {
   T valueAtIndex(int index) const;
   T weightAtIndex(int index) const;
   T privateTotalWeight() const;
-  void buildSortedIndex() const;
+
+  void buildMemoizedSortedIndex() const;
+  int nonMemoizedIndexAtSortedIndex(int i) const;
 
   const DatasetColumn<T>* m_values;
   const DatasetColumn<T>* m_weights;
-  mutable uint8_t m_sortedIndex[256];
+  mutable uint8_t m_sortedIndex[k_maxLengthForSortedIndex];
   mutable bool m_recomputeSortedIndex;
   mutable double m_memoizedTotalWeight;
   bool m_lnOfValues;

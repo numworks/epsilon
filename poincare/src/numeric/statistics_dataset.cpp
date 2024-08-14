@@ -107,7 +107,7 @@ T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(
     const StatisticsDataset<T>* dataset, double a, double b) const {
   assert(dataset->datasetLength() == datasetLength());
   T total = 0.0;
-  for (Idx i = 0; i < datasetLength(); i++) {
+  for (int i = 0; i < datasetLength(); i++) {
     T offsettedValue = valueAtIndex(i) - (a + b * dataset->valueAtIndex(i));
     total += offsettedValue * offsettedValue * weightAtIndex(i);
   }
@@ -162,10 +162,13 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
   }
   T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
   int elementSortedIndex = -1;
+  int elementIndex = -1;
+  T elementWeight = 0.0;
   T cumulatedWeight = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     elementSortedIndex = i;
-    T elementWeight = weightAtIndex(indexAtSortedIndex(i));
+    elementIndex = indexAtSortedIndex(i);
+    elementWeight = weightAtIndex(elementIndex);
     if (elementWeight == static_cast<T>(0.0)) {
       continue;
     }
@@ -174,35 +177,38 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
       break;
     }
   }
-  if (std::fabs(cumulatedWeight - weight) < epsilon) {
-    /* There is an element of cumulated weight, so the result is
-     * the mean between this element and the next element (in terms of cumulated
-     * weight) that has a non-null weight. */
-    for (int i = elementSortedIndex + 1; i < datasetLength(); i++) {
-      int nextElementIndex = indexAtSortedIndex(i);
-      T nextWeight = weightAtIndex(nextElementIndex);
-      if (!std::isnan(nextWeight) && nextWeight > 0.0) {
-        if (upperIndex) {
+  if (upperIndex) {
+    if (std::fabs(cumulatedWeight - weight) < epsilon) {
+      /* There is an element of cumulated weight, so the result is
+       * the mean between this element and the next element (in terms of
+       * cumulated weight) that has a non-null weight. */
+      for (int i = elementSortedIndex + 1; i < datasetLength(); i++) {
+        int nextElementIndex = indexAtSortedIndex(i);
+        T nextWeight = weightAtIndex(nextElementIndex);
+        if (!std::isnan(nextWeight) && nextWeight > 0.0) {
           *upperIndex = nextElementIndex;
+          break;
         }
-        return indexAtSortedIndex(elementSortedIndex);
       }
+    } else {
+      *upperIndex = elementIndex;
     }
   }
-  if (upperIndex) {
-    *upperIndex = indexAtSortedIndex(elementSortedIndex);
-  }
-  return indexAtSortedIndex(elementSortedIndex);
+  return elementIndex;
 }
 
 template <typename T>
 int StatisticsDataset<T>::indexAtSortedIndex(int i) const {
-  buildSortedIndex();
-  return static_cast<int>(m_sortedIndex[i]);
+  if (datasetLength() < k_maxLengthForSortedIndex) {
+    buildMemoizedSortedIndex();
+    return static_cast<int>(m_sortedIndex[i]);
+  }
+  return nonMemoizedIndexAtSortedIndex(i);
 }
 
 template <typename T>
-void StatisticsDataset<T>::buildSortedIndex() const {
+void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
+  assert(datasetLength() < k_maxLengthForSortedIndex);
   if (!m_recomputeSortedIndex) {
     return;
   }
@@ -226,6 +232,38 @@ void StatisticsDataset<T>::buildSortedIndex() const {
       },
       pack, datasetLength());
   m_recomputeSortedIndex = false;
+}
+
+template <typename T>
+int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndex(int index) const {
+  int length = datasetLength();
+  assert(index < length && index >= 0);
+
+  if (length == 1) {
+    return 0;
+  }
+
+  for (int i = 0; i < length; i++) {
+    T candidate = valueAtIndex(i);
+    bool candidateIsNaN = std::isnan(candidate);
+    int numberOfSmallerValues = 0;
+    for (int j = 0; j < length; j++) {
+      if (j == i) {
+        continue;
+      }
+      T valJ = valueAtIndex(j);
+      bool valJIsNaN = std::isnan(valJ);
+      if ((!valJIsNaN && (candidateIsNaN || valJ < candidate)) ||
+          (j < i && ((valJIsNaN && candidateIsNaN) || valJ == candidate))) {
+        numberOfSmallerValues++;
+      }
+    }
+    if (numberOfSmallerValues == index) {
+      return i;
+    }
+  }
+  assert(false);
+  return -1;
 }
 
 template class StatisticsDataset<float>;

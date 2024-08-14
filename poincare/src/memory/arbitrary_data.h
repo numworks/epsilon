@@ -15,7 +15,9 @@ class ArbitraryData {
 
   template <typename T>
   constexpr static T Unpack(const Tree* tree, size_t offset = 0) {
+#ifndef PLATFORM_DEVICE
     static_assert(std::is_trivially_copyable<T>::value);
+#endif
     assert(tree->isArbitrary());
     assert(Size(tree) >= sizeof(T) + offset);
     constexpr size_t header = TypeBlock::NumberOfMetaBlocks(Type::Arbitrary);
@@ -34,7 +36,9 @@ class ArbitraryData {
 
   template <typename T>
   static void Write(Tree* tree, const T& data, size_t offset = 0) {
+#ifndef PLATFORM_DEVICE
     static_assert(std::is_trivially_copyable<T>::value);
+#endif
     Write(tree, &data, sizeof(T), offset);
   }
 };

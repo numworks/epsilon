@@ -182,6 +182,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
     }
   }
   if (upperIndex) {
+    *upperIndex = elementIndex;
     if (std::fabs(cumulatedWeight - weight) < epsilon) {
       /* There is an element of cumulated weight, so the result is
        * the mean between this element and the next element (in terms of
@@ -194,8 +195,6 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
           break;
         }
       }
-    } else {
-      *upperIndex = elementIndex;
     }
   }
   return elementIndex;

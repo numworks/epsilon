@@ -1,3 +1,9 @@
+ifeq ($(HOST),macos)
+ifeq ($(CXX),g++)
+$(error Epsilon cannot be built with the gcc compiler on macOS)
+endif
+endif
+
 $(call import_module,sdl,ion/src/simulator/external)
 
 $(call create_goal,epsilon, \
@@ -27,11 +33,9 @@ $(call create_goal,test, \
   sdl \
 )
 
-ifeq ($(HOST),macos)
-ifeq ($(CXX),g++)
-$(error Epsilon cannot be built with the gcc compiler on macOS)
-endif
-endif
+#TODO: maybe integrate this check to the goal rule in haussmann?
+epsilon.bin: check_compiler_version
+test.bin: check_compiler_version
 
 include build/coverage.mak
 

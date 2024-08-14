@@ -104,10 +104,13 @@ endef
 
 .PHONY: coverage
 
-# Checks whether ARCHS is composed of several words. The coverage target is invalid if there are more than one architecture.
 ifneq ($(findstring $( ),$(ARCHS)),)
+# Checks whether ARCHS is composed of several words. The coverage target is invalid if there are more than one architecture.
 coverage:
 	$(error Several archs exist for platform, select one by overriding the ARCHS variable)
+else ifneq ($(TOOLCHAIN),host-gcc)
+coverage:
+	$(error The coverage target needs a gcc compiler)
 else
 $(call rule_for_coverage_info,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage) \
 $(call rule_for_diagnosis,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)

@@ -253,7 +253,7 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(Piecewise),
     /* BUILDER(Dependency) -> System node ⛔️ */
     /* BUILDER(Dependencies) -> System node ⛔️ */
-    BUILDER(Set),
+    /* BUILDER(Set) -> System node ⛔️ */
     BUILDER(Parentheses),
     /* Empty -> Not implemented ❌ */
 

@@ -52,9 +52,9 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
 }
 
 int PointsOfInterestCache::numberOfPoints(
-    Internal::Solver<double>::Interest interest) const {
+    Solver<double>::Interest interest) const {
   int n = numberOfPoints();
-  if (interest == Poincare::Internal::Solver<double>::Interest::None) {
+  if (interest == Poincare::Solver<double>::Interest::None) {
     return n;
   }
   int result = 0;
@@ -67,7 +67,7 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double start, double end, Internal::Solver<double>::Interest interest,
+    double start, double end, Solver<double>::Interest interest,
     int subCurveIndex) {
   if (start == end) {
     return PointOfInterest();
@@ -89,7 +89,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     if (direction * p.abscissa >= direction * end) {
       break;
     }
-    if ((interest == Internal::Solver<double>::Interest::None ||
+    if ((interest == Solver<double>::Interest::None ||
          interest == p.interest) &&
         p.subCurveIndex == subCurveIndex) {
       return p;
@@ -99,12 +99,12 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
 }
 
 bool PointsOfInterestCache::hasInterestAtCoordinates(
-    double x, double y, Internal::Solver<double>::Interest interest) const {
+    double x, double y, Solver<double>::Interest interest) const {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
     if (p.x() == x && p.y() == y &&
-        (interest == Internal::Solver<double>::Interest::None ||
+        (interest == Solver<double>::Interest::None ||
          p.interest == interest)) {
       return true;
     }
@@ -113,10 +113,10 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(
 }
 
 bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
-    double x, double y, Poincare::Internal::Solver<double>::Interest interest,
+    double x, double y, Poincare::Solver<double>::Interest interest,
     bool allInterestsAreDisplayed) const {
   if (!canDisplayPoints(allInterestsAreDisplayed
-                            ? Poincare::Internal::Solver<double>::Interest::None
+                            ? Poincare::Solver<double>::Interest::None
                             : interest)) {
     // Ignore interest point if it is not displayed.
     return false;
@@ -170,7 +170,7 @@ struct PointSearchContext {
   Context* const context;
   ContinuousFunctionStore* const store;
   const float searchStep;
-  Internal::Solver<double> solver;
+  Solver<double> solver;
   Ion::Storage::Record record;
 
   size_t currentProvider = 0;
@@ -204,7 +204,7 @@ PointOfInterest findYIntercept(void* searchContext) {
         return {xy.x(),
                 xy.y(),
                 0,
-                Internal::Solver<double>::Interest::YIntercept,
+                Solver<double>::Interest::YIntercept,
                 f->isAlongY(),
                 static_cast<uint8_t>(subCurve)};
       }
@@ -218,20 +218,19 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
 
   ExpiringPointer<ContinuousFunction> f = ctx->model();
   using NextSolution =
-      Coordinate2D<double> (Internal::Solver<double>::*)(const Internal::Tree*);
-  NextSolution methodsNext[] = {&Internal::Solver<double>::nextRoot,
-                                &Internal::Solver<double>::nextMinimum,
-                                &Internal::Solver<double>::nextMaximum};
+      Coordinate2D<double> (Solver<double>::*)(const Internal::Tree*);
+  NextSolution methodsNext[] = {&Solver<double>::nextRoot,
+                                &Solver<double>::nextMinimum,
+                                &Solver<double>::nextMaximum};
   while (ctx->counter < std::size(methodsNext)) {
     NextSolution next = methodsNext[ctx->counter];
-    if (next !=
-            static_cast<NextSolution>(&Internal::Solver<double>::nextRoot) &&
+    if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) &&
         f->isAlongY()) {
       // Do not compute min and max since they would appear left/rightmost
       ++ctx->counter;
       continue;
     }
-    ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Fast);
+    ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
     Coordinate2D<double> solution;
     while (
         std::isfinite((solution = (ctx->solver.*next)(f->expressionApproximated(
@@ -285,7 +284,7 @@ PointOfInterest findIntersections(void* searchContext) {
       }
       ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
     }
-    ctx->solver.setGrowthSpeed(Internal::Solver<double>::GrowthSpeed::Precise);
+    ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     Coordinate2D<double> solution;
     while (std::isfinite(
         (solution = ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction))
@@ -353,8 +352,8 @@ API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
       .end = end,
       .context = context,
       .store = store,
-      .searchStep = static_cast<float>(
-          Internal::Solver<double>::MaximalStep(m_start - m_end)),
+      .searchStep =
+          static_cast<float>(Solver<double>::MaximalStep(m_start - m_end)),
       .solver = {start, end, context},
       .record = m_record,
   };

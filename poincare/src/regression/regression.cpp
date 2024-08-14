@@ -53,9 +53,8 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   }
   Tree* yTree = Internal::SharedTreeStack->pushFloat(y);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  double result = Poincare::Internal::Solver(xMin, xMax, context)
-                      .nextIntersection(yTree, e)
-                      .x();
+  double result =
+      Poincare::Solver(xMin, xMax, context).nextIntersection(yTree, e).x();
   yTree->removeTree();
   return result;
 }

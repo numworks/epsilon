@@ -17,7 +17,7 @@ GraphView::GraphView(InteractiveCurveViewRange* graphRange,
       m_interestView(this),
       m_areaIndex(0),
       m_nextPointOfInterestIndex(0),
-      m_interest(Internal::Solver<double>::Interest::None),
+      m_interest(Solver<double>::Interest::None),
       m_computePointsOfInterest(false),
       m_tangentDisplay(false) {}
 
@@ -589,7 +589,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       m_nextPointOfInterestIndex = i;
     }
 
-    if (m_interest != Poincare::Internal::Solver<double>::Interest::None &&
+    if (m_interest != Poincare::Solver<double>::Interest::None &&
         m_interest != p.interest) {
       continue;
     }

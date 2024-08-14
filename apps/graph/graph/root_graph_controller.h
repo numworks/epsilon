@@ -15,9 +15,8 @@ class RootGraphController : public CalculationGraphController {
   TELEMETRY_ID("Root");
 
  private:
-  Poincare::Internal::Solver<double>::Interest specialInterest()
-      const override {
-    return Poincare::Internal::Solver<double>::Interest::Root;
+  Poincare::Solver<double>::Interest specialInterest() const override {
+    return Poincare::Solver<double>::Interest::Root;
   }
 };
 

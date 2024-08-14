@@ -17,8 +17,6 @@ namespace Poincare {
 
 class Zoom {
   friend class ::ZoomTest;
-  template <typename T>
-  using Solver = Internal::Solver<T>;
 
  public:
   template <typename T>

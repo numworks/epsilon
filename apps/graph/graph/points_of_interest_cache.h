@@ -27,8 +27,7 @@ class PointsOfInterestCache {
   }
 
   int numberOfPoints() const { return m_list.numberOfPoints(); }
-  int numberOfPoints(
-      Poincare::Internal::Solver<double>::Interest interest) const;
+  int numberOfPoints(Poincare::Solver<double>::Interest interest) const;
   Poincare::PointOfInterest pointAtIndex(int i) const {
     return m_list.pointAtIndex(i);
   }
@@ -39,22 +38,21 @@ class PointsOfInterestCache {
 
   Poincare::PointOfInterest firstPointInDirection(
       double start, double end,
-      Poincare::Internal::Solver<double>::Interest interest =
-          Poincare::Internal::Solver<double>::Interest::None,
+      Poincare::Solver<double>::Interest interest =
+          Poincare::Solver<double>::Interest::None,
       int subCurveIndex = 0);
   bool hasInterestAtCoordinates(
       double x, double y,
-      Poincare::Internal::Solver<double>::Interest interest =
-          Poincare::Internal::Solver<double>::Interest::None) const;
+      Poincare::Solver<double>::Interest interest =
+          Poincare::Solver<double>::Interest::None) const;
   bool hasDisplayableInterestAtCoordinates(
       double x, double y,
-      Poincare::Internal::Solver<double>::Interest interest =
-          Poincare::Internal::Solver<double>::Interest::None,
+      Poincare::Solver<double>::Interest interest =
+          Poincare::Solver<double>::Interest::None,
       bool allInterestsAreDisplayed = true) const;
 
-  bool canDisplayPoints(
-      Poincare::Internal::Solver<double>::Interest interest =
-          Poincare::Internal::Solver<double>::Interest::None) const {
+  bool canDisplayPoints(Poincare::Solver<double>::Interest interest =
+                            Poincare::Solver<double>::Interest::None) const {
     return !m_interestingPointsOverflowPool &&
            (numberOfPoints(interest) <= k_maxNumberOfDisplayablePoints);
   }

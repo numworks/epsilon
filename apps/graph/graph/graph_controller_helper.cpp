@@ -221,10 +221,10 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       if (std::isfinite(derivative.toScalar()) &&
           (pointsOfInterest->hasInterestAtCoordinates(
                cursor->x(), cursor->y(),
-               Internal::Solver<double>::Interest::LocalMaximum) ||
+               Solver<double>::Interest::LocalMaximum) ||
            pointsOfInterest->hasInterestAtCoordinates(
                cursor->x(), cursor->y(),
-               Internal::Solver<double>::Interest::LocalMinimum))) {
+               Solver<double>::Interest::LocalMinimum))) {
         derivative = PointOrScalar<double>(0.);
       }
     }
@@ -266,8 +266,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
       App::app()
           ->graphController()
           ->pointsOfInterestForSelectedRecord()
-          ->firstPointInDirection(start, end,
-                                  Internal::Solver<double>::Interest::None,
+          ->firstPointInDirection(start, end, Solver<double>::Interest::None,
                                   subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x())) {

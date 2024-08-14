@@ -7,9 +7,6 @@
 
 namespace Poincare {
 
-template <typename T>
-using Solver = Internal::Solver<T>;
-
 // HorizontalAsymptoteHelper
 
 void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p,

@@ -162,7 +162,7 @@ Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
   Tree* result = pushBlock(Type::PointOfInterest);
   PointOfInterest p = {
       abscissa, ordinate,
-      data,     static_cast<Internal::Solver<double>::Interest>(interest),
+      data,     static_cast<Solver<double>::Interest>(interest),
       inverted, subCurveIndex};
   // Copy content of data as if it was blocks
   insertBlocks(lastBlock(), reinterpret_cast<Block*>(&p),

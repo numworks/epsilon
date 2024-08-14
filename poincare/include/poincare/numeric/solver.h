@@ -10,13 +10,10 @@
 #include <algorithm>
 #include <cmath>
 
+/* TODO_PCJ: Change signatures to systemFunctions instead of Trees. */
 namespace Poincare {
-class Context;
-}
 
-/* TODO_PCJ: Expose Solver in Poincare Namespace when the old Solver is removed
- * and change signatures to systemFunctions instead of Trees. */
-namespace Poincare::Internal {
+class Context;
 
 template <typename T>
 class Solver {
@@ -101,23 +98,25 @@ class Solver {
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist.
    * TODO_PCJ: The unknown variable must have been projected to id 0. */
-  Coordinate2D<T> next(const Tree* e, BracketTest test, HoneResult hone);
+  Coordinate2D<T> next(const Internal::Tree* e, BracketTest test,
+                       HoneResult hone);
   Coordinate2D<T> next(FunctionEvaluation f, const void* aux, BracketTest test,
                        HoneResult hone,
                        DiscontinuityEvaluation discontinuityTest = nullptr);
-  Coordinate2D<T> nextRoot(const Tree* e);
+  Coordinate2D<T> nextRoot(const Internal::Tree* e);
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void* aux) {
     return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot);
   }
-  Coordinate2D<T> nextMinimum(const Tree* e);
-  Coordinate2D<T> nextMaximum(const Tree* e) {
+  Coordinate2D<T> nextMinimum(const Internal::Tree* e);
+  Coordinate2D<T> nextMaximum(const Internal::Tree* e) {
     return next(e, MaximumInBracket, SafeBrentMaximum);
   }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
    * times in a row. */
-  Coordinate2D<T> nextIntersection(const Tree* e1, const Tree* e2,
-                                   const Tree** memoizedDifference = nullptr);
+  Coordinate2D<T> nextIntersection(
+      const Internal::Tree* e1, const Internal::Tree* e2,
+      const Internal::Tree** memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */
@@ -130,7 +129,7 @@ class Solver {
  private:
   struct FunctionEvaluationParameters {
     // const ApproximationContext &approximationContext;
-    const Tree* expression;
+    const Internal::Tree* expression;
   };
 
   constexpr static T k_NAN = static_cast<T>(NAN);
@@ -167,14 +166,15 @@ class Solver {
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
-  Coordinate2D<T> nextPossibleRootInChild(const Tree* e, int childIndex) const;
-  typedef bool (*ExpressionTestAuxiliary)(const Tree* e, Context* context,
-                                          void* auxiliary);
-  Coordinate2D<T> nextRootInChildren(const Tree* e,
+  Coordinate2D<T> nextPossibleRootInChild(const Internal::Tree* e,
+                                          int childIndex) const;
+  typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
+                                          Context* context, void* auxiliary);
+  Coordinate2D<T> nextRootInChildren(const Internal::Tree* e,
                                      ExpressionTestAuxiliary test,
                                      void* aux) const;
-  Coordinate2D<T> nextRootInMultiplication(const Tree* m) const;
-  Coordinate2D<T> nextRootInAddition(const Tree* m) const;
+  Coordinate2D<T> nextRootInMultiplication(const Internal::Tree* m) const;
+  Coordinate2D<T> nextRootInAddition(const Internal::Tree* m) const;
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);
@@ -189,6 +189,6 @@ class Solver {
   GrowthSpeed m_growthSpeed;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare
 
 #endif

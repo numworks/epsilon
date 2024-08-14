@@ -193,8 +193,8 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equationsSet,
   // int numberOfSolutions = 0;
 
   assert(range.isValid());
-  Solver<double> solver = Poincare::Internal::Solver<double>(
-      range.min(), range.max(), nullptr /*context*/);
+  Solver<double> solver =
+      Poincare::Solver<double>(range.min(), range.max(), nullptr /*context*/);
   solver.stretch();
 
   TreeRef resultList = List::PushEmpty();

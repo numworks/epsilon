@@ -10,7 +10,7 @@ struct PointOfInterest {
   double abscissa = NAN;
   double ordinate;
   uint32_t data;
-  Internal::Solver<double>::Interest interest;
+  Solver<double>::Interest interest;
   bool inverted;
   uint8_t subCurveIndex;
 

@@ -15,10 +15,10 @@ using Poincare::Context;
 using Poincare::Preferences;
 using namespace Poincare::Internal;
 
-typedef Solver<double>::Interest Interest;
+typedef Poincare::Solver<double>::Interest Interest;
 
 void assert_next_solution_is(const char* expression, Context* context,
-                             Solver<double>* solver,
+                             Poincare::Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
                              Interest interest, const char* otherExpression,
                              AngleUnit angleUnit) {
@@ -69,7 +69,7 @@ void assert_solutions_are(
     Interest interest, Preferences::AngleUnit angleUnit,
     const char* otherExpression) {
   Shared::GlobalContext context;
-  Solver<double> solver(start, end, &context);
+  Poincare::Solver<double> solver(start, end, &context);
   for (Poincare::Coordinate2D<double> c : expected) {
     assert_next_solution_is(expression, &context, &solver, c, interest,
                             otherExpression, angleUnit);

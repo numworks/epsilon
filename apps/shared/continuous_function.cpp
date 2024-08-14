@@ -753,7 +753,11 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
         derivationOrder == 0
             ? expressionReduced(record, context)
             : expressionDerivateReduced(record, context, derivationOrder);
-    *approximated = e.getSystemFunction(k_unknownName);
+    // TODO: factorise the next line with other methods?
+    *approximated =
+        e.getSystemFunction(properties(record).isAlongY()
+                                ? ContinuousFunctionProperties::k_ordinateName
+                                : k_unknownName);
   }
   return *approximated;
 }

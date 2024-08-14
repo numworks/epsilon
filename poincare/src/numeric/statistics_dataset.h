@@ -52,8 +52,8 @@ class StatisticsCalculationOptions {
       : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
   StatisticsCalculationOptions(bool lnOfX, bool lnOfY, bool oppositeOfY)
       : m_lnOfX(lnOfX), m_lnOfY(lnOfY), m_oppositeOfY(oppositeOfY) {}
-  bool lnOfValue(int column) const { return column == 0 ? m_lnOfX : m_lnOfY; }
-  bool oppositeOfValue(int column) const {
+  bool lnOfValues(int column) const { return column == 0 ? m_lnOfX : m_lnOfY; }
+  bool oppositeOfValues(int column) const {
     return column == 1 && m_oppositeOfY;
   }
   double transformValue(double value, int column) const;
@@ -75,16 +75,16 @@ class StatisticsDataset {
 
   StatisticsDataset(const DatasetColumn<T>* values,
                     const DatasetColumn<T>* weights, bool lnOfValues = false,
-                    bool oppositeOfValue = false)
+                    bool oppositeOfValues = false)
       : m_values(values),
         m_weights(weights),
         m_recomputeSortedIndex(true),
         m_memoizedTotalWeight(NAN),
         m_lnOfValues(lnOfValues),
-        m_oppositeOfValues(oppositeOfValue) {}
+        m_oppositeOfValues(oppositeOfValues) {}
   StatisticsDataset(const DatasetColumn<T>* values, bool lnOfValues = false,
-                    bool oppositeOfValue = false)
-      : StatisticsDataset(values, nullptr, lnOfValues, oppositeOfValue) {}
+                    bool oppositeOfValues = false)
+      : StatisticsDataset(values, nullptr, lnOfValues, oppositeOfValues) {}
   StatisticsDataset() : StatisticsDataset(nullptr, nullptr, false, false) {}
 
   bool isUndefined() { return m_values == nullptr; }

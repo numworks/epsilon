@@ -119,8 +119,8 @@ Poincare::StatisticsDataset<double>
 LinearRegressionStore::createDatasetFromColumn(
     int series, int i, CalculationOptions options) const {
   return Poincare::StatisticsDataset<double>(&m_dataLists[series][i],
-                                             options.lnOfValue(i),
-                                             options.oppositeOfValue(i));
+                                             options.lnOfValues(i),
+                                             options.oppositeOfValues(i));
 }
 
 }  // namespace Shared

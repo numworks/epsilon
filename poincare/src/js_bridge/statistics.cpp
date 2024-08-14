@@ -31,20 +31,20 @@ class StatisticsDatasetFromJsArrays : public StatisticsDataset<double> {
  public:
   StatisticsDatasetFromJsArrays(const FloatArray& values,
                                 const FloatArray& weights, bool lnOfValues,
-                                bool oppositeOfValue)
+                                bool oppositeOfValues)
       : StatisticsDataset<double>(
             Utils::ArraysHaveSameLength(values, weights) ? &m_valuesArray
                                                          : nullptr,
             Utils::ArraysHaveSameLength(values, weights) ? &m_weightsArray
                                                          : nullptr,
-            lnOfValues, oppositeOfValue),
+            lnOfValues, oppositeOfValues),
         m_valuesArray(values),
         m_weightsArray(weights) {}
 
   StatisticsDatasetFromJsArrays(const FloatArray& values, bool lnOfValues,
-                                bool oppositeOfValue)
+                                bool oppositeOfValues)
       : StatisticsDataset<double>(&m_valuesArray, nullptr, lnOfValues,
-                                  oppositeOfValue),
+                                  oppositeOfValues),
         m_valuesArray(values) {}
 
   StatisticsDatasetFromJsArrays(const FloatArray& values)

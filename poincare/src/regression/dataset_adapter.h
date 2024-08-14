@@ -27,9 +27,9 @@ class DatasetColumnSeriesAdapter : public Internal::DatasetColumn<double> {
 class StatisticsDatasetFromSeriesColumn : public StatisticsDataset<double> {
  public:
   StatisticsDatasetFromSeriesColumn(const Series* series, int column,
-                                    bool lnOfValue = false,
-                                    bool oppositeOfValue = false)
-      : StatisticsDataset(&m_columnAdapter, lnOfValue, oppositeOfValue),
+                                    bool lnOfValues = false,
+                                    bool oppositeOfValues = false)
+      : StatisticsDataset(&m_columnAdapter, lnOfValues, oppositeOfValues),
         m_columnAdapter(series, column) {}
 
  private:

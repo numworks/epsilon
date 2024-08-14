@@ -27,8 +27,8 @@ bool Series::numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const {
 
 StatisticsDatasetFromSeriesColumn Series::createDatasetFromColumn(
     int i, StatisticsCalculationOptions options) const {
-  return StatisticsDatasetFromSeriesColumn(this, i, options.lnOfValue(i),
-                                           options.oppositeOfValue(i));
+  return StatisticsDatasetFromSeriesColumn(this, i, options.lnOfValues(i),
+                                           options.oppositeOfValues(i));
 }
 
 double Series::columnProductSum(StatisticsCalculationOptions options) const {

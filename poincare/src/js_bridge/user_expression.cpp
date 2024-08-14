@@ -342,7 +342,7 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
   int numberOfChildren = hasChildren && (*(childrenBuffer + 1) != ')');
   if (hasChildren) {
     if (*(bufferEnd - 1) != ')') {
-      // Shoud end with ')'
+      // Should end with ')'
       return nullptr;
     }
 
@@ -362,7 +362,7 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
     }
 
     if (innerParenthesis != 0) {
-      // Parenthesis are not balanced
+      // Parentheses are not balanced
       return nullptr;
     }
   }

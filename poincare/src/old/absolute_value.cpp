@@ -37,7 +37,7 @@ OExpression AbsoluteValueNode::shallowReduce(
 
 bool AbsoluteValueNode::derivate(const ReductionContext& reductionContext,
                                  Symbol symbol, OExpression symbolValue) {
-  return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
+  return false;
 }
 
 OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
@@ -154,30 +154,6 @@ OExpression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   // abs(-x) = abs(x)
   c.makePositiveAnyNegativeNumeralFactor(reductionContext);
   return *this;
-}
-
-// Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
-bool AbsoluteValue::derivate(const ReductionContext& reductionContext,
-                             Symbol symbol, OExpression symbolValue) {
-  {
-    OExpression e =
-        Derivative::DefaultDerivate(*this, reductionContext, symbol);
-    if (!e.isUninitialized()) {
-      return true;
-    }
-  }
-
-  OExpression f = childAtIndex(0);
-  Multiplication result = Multiplication::Builder();
-  result.addChildAtIndexInPlace(
-      Derivative::Builder(f.clone(), symbol.clone().convert<Symbol>(),
-                          symbolValue.clone()),
-      0, 0);
-  result.addChildAtIndexInPlace(f.clone(), 1, 1);
-  replaceWithInPlace(result);
-  result.addChildAtIndexInPlace(Power::Builder(*this, Rational::Builder(-1)), 2,
-                                2);
-  return true;
 }
 
 }  // namespace Poincare

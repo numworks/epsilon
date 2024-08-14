@@ -52,8 +52,6 @@ class AbsoluteValue final
  public:
   using ExpressionBuilder::ExpressionBuilder;
   OExpression shallowReduce(ReductionContext reductionContext);
-  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue);
 };
 
 }  // namespace Poincare

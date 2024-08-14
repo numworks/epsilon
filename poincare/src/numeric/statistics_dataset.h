@@ -124,8 +124,10 @@ class StatisticsDataset {
     return indexAtCumulatedFrequency(1.0 / 2.0, upperIndex);
   }
 
-  T min() const { return sortedElementAtCumulatedFrequency(0, false); }
-  T max() const { return sortedElementAtCumulatedFrequency(1, false); }
+  T min() const { return valueAtIndex(indexAtSortedIndex(0)); }
+  T max() const {
+    return valueAtIndex(indexAtSortedIndex(datasetLength() - 1));
+  }
 
  private:
   int datasetLength() const {
@@ -137,7 +139,10 @@ class StatisticsDataset {
   T privateTotalWeight() const;
 
   void buildMemoizedSortedIndex() const;
+
   int nonMemoizedIndexAtSortedIndex(int i) const;
+  int nonMemoizedIndexAtSortedIndexFromBottom(int i) const;
+  int nonMemoizedIndexAtSortedIndexFromTop(int i) const;
 
   const DatasetColumn<T>* m_values;
   const DatasetColumn<T>* m_weights;

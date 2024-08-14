@@ -247,6 +247,47 @@ int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndex(int index) const {
     return 0;
   }
 
+  // Optimize the min case
+  if (index == 0) {
+    T currentMin = valueAtIndex(0);
+    int currentMinIndex = 0;
+    for (int i = 0; i < length; i++) {
+      T val = valueAtIndex(i);
+      if (!std::isnan(val) && (std::isnan(currentMin) || val < currentMin)) {
+        currentMin = val;
+        currentMinIndex = i;
+      }
+    }
+    return currentMinIndex;
+  }
+
+  // Optimize the max case
+  if (index == length - 1) {
+    T currentMax = valueAtIndex(0);
+    int currentMaxIndex = 0;
+    for (int i = 0; i < length; i++) {
+      T val = valueAtIndex(i);
+      if (std::isnan(val) || (!std::isnan(currentMax) && val >= currentMax)) {
+        currentMax = val;
+        currentMaxIndex = i;
+      }
+    }
+    return currentMaxIndex;
+  }
+
+  /* These two methods are equivalent, but the first one is faster for the
+   * lower half of the dataset and the second one is faster for the upper half.
+   */
+  if (index <= length / 2) {
+    return nonMemoizedIndexAtSortedIndexFromBottom(index);
+  }
+  return nonMemoizedIndexAtSortedIndexFromTop(index);
+}
+
+template <typename T>
+int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndexFromBottom(
+    int index) const {
+  int length = datasetLength();
   for (int i = 0; i < length; i++) {
     T candidate = valueAtIndex(i);
     bool candidateIsNaN = std::isnan(candidate);
@@ -261,6 +302,9 @@ int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndex(int index) const {
           (j < i && ((valJIsNaN && candidateIsNaN) || valJ == candidate))) {
         numberOfSmallerValues++;
       }
+      if (numberOfSmallerValues > index) {
+        break;
+      }
     }
     if (numberOfSmallerValues == index) {
       return i;
@@ -270,6 +314,36 @@ int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndex(int index) const {
   return -1;
 }
 
+template <typename T>
+int StatisticsDataset<T>::nonMemoizedIndexAtSortedIndexFromTop(
+    int index) const {
+  int length = datasetLength();
+  int objectiveOfHigherValues = length - index - 1;
+  for (int i = 0; i < length; i++) {
+    T candidate = valueAtIndex(i);
+    bool candidateIsNaN = std::isnan(candidate);
+    int numberOfHigherValues = 0;
+    for (int j = 0; j < length; j++) {
+      if (j == i) {
+        continue;
+      }
+      T valJ = valueAtIndex(j);
+      bool valJIsNaN = std::isnan(valJ);
+      if ((!candidateIsNaN && (valJIsNaN || valJ > candidate)) ||
+          (j > i && ((valJIsNaN && candidateIsNaN) || valJ == candidate))) {
+        numberOfHigherValues++;
+      }
+      if (numberOfHigherValues > objectiveOfHigherValues) {
+        break;
+      }
+    }
+    if (numberOfHigherValues == objectiveOfHigherValues) {
+      return i;
+    }
+  }
+  assert(false);
+  return -1;
+}
 template class StatisticsDataset<float>;
 template class StatisticsDataset<double>;
 

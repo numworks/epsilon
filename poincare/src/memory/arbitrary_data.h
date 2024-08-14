@@ -22,7 +22,7 @@ class ArbitraryData {
     assert(Size(tree) >= sizeof(T) + offset);
     constexpr size_t header = TypeBlock::NumberOfMetaBlocks(Type::Arbitrary);
     T result;
-    std::memcpy(&result, tree->nextNth(header + offset), sizeof(T));
+    memcpy(&result, tree->nextNth(header + offset), sizeof(T));
     return result;
   }
 
@@ -31,7 +31,7 @@ class ArbitraryData {
     assert(tree->isArbitrary());
     assert(Size(tree) >= size + offset);
     constexpr size_t header = TypeBlock::NumberOfMetaBlocks(Type::Arbitrary);
-    std::memcpy(tree->nextNth(header + offset), data, size);
+    memcpy(tree->nextNth(header + offset), data, size);
   }
 
   template <typename T>

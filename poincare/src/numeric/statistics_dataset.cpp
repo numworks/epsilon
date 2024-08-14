@@ -79,7 +79,8 @@ T StatisticsDataset<T>::privateTotalWeight() const {
     return NAN;
   }
   T total = 0.0;
-  for (int i = 0; i < datasetLength(); i++) {
+  int length = datasetLength();
+  for (int i = 0; i < length; i++) {
     total += weightAtIndex(i);
   }
   return total;
@@ -88,7 +89,8 @@ T StatisticsDataset<T>::privateTotalWeight() const {
 template <typename T>
 T StatisticsDataset<T>::weightedSum() const {
   T total = 0.0;
-  for (int i = 0; i < datasetLength(); i++) {
+  int length = datasetLength();
+  for (int i = 0; i < length; i++) {
     total += valueAtIndex(i) * weightAtIndex(i);
   }
   return total;
@@ -107,7 +109,8 @@ T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(
     const StatisticsDataset<T>* dataset, double a, double b) const {
   assert(dataset->datasetLength() == datasetLength());
   T total = 0.0;
-  for (int i = 0; i < datasetLength(); i++) {
+  int length = datasetLength();
+  for (int i = 0; i < length; i++) {
     T offsettedValue = valueAtIndex(i) - (a + b * dataset->valueAtIndex(i));
     total += offsettedValue * offsettedValue * weightAtIndex(i);
   }
@@ -161,11 +164,12 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
     return -1;
   }
   T epsilon = sizeof(T) == sizeof(double) ? DBL_EPSILON : FLT_EPSILON;
+  int length = datasetLength();
   int elementSortedIndex = -1;
   int elementIndex = -1;
   T elementWeight = 0.0;
   T cumulatedWeight = 0.0;
-  for (int i = 0; i < datasetLength(); i++) {
+  for (int i = 0; i < length; i++) {
     elementSortedIndex = i;
     elementIndex = indexAtSortedIndex(i);
     elementWeight = weightAtIndex(elementIndex);
@@ -182,7 +186,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
       /* There is an element of cumulated weight, so the result is
        * the mean between this element and the next element (in terms of
        * cumulated weight) that has a non-null weight. */
-      for (int i = elementSortedIndex + 1; i < datasetLength(); i++) {
+      for (int i = elementSortedIndex + 1; i < length; i++) {
         int nextElementIndex = indexAtSortedIndex(i);
         T nextWeight = weightAtIndex(nextElementIndex);
         if (!std::isnan(nextWeight) && nextWeight > 0.0) {
@@ -212,7 +216,8 @@ void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
   if (!m_recomputeSortedIndex) {
     return;
   }
-  for (int i = 0; i < datasetLength(); i++) {
+  int length = datasetLength();
+  for (int i = 0; i < length; i++) {
     m_sortedIndex[i] = i;
   }
   void* pack[] = {&m_sortedIndex, const_cast<DatasetColumn<T>*>(m_values)};

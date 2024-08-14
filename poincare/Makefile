@@ -8,7 +8,7 @@ endif
 
 PATH_haussmann := haussmann
 APP_NAME := Poincare
-APP_VERSION := 0.0.0
+APP_VERSION := 0.1.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= foxglove

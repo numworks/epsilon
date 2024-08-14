@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
+Coordinate2D<double> OSolverAlgorithms::IncreasingFunctionRoot(
     double ax, double bx, double resultPrecision,
     Solver<double>::FunctionEvaluation f, const void* aux,
     double* resultEvaluation) {
@@ -55,7 +55,7 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
 }
 
 template <typename T>
-T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+T OSolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
     T* probability, typename Solver<T>::FunctionEvaluation f, const void* aux) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   assert(*probability <= (static_cast<T>(1.f) - precision) &&
@@ -92,7 +92,7 @@ T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
 }
 
 template <typename T>
-T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+T OSolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
     T x, typename Solver<T>::FunctionEvaluation f, const void* aux) {
   int end = std::floor(x);
   T result = 0.0;
@@ -110,7 +110,7 @@ T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
   return result;
 }
 
-Coordinate2D<double> SolverAlgorithms::BrentRoot(
+Coordinate2D<double> OSolverAlgorithms::BrentRoot(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
     double xMax, Solver<double>::Interest interest, double precision) {
   if (xMax < xMin) {
@@ -195,7 +195,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
   return Coordinate2D<double>(NAN, NAN);
 }
 
-Coordinate2D<double> SolverAlgorithms::BrentMinimum(
+Coordinate2D<double> OSolverAlgorithms::BrentMinimum(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
     double xMax, Solver<double>::Interest interest, double precision) {
   assert(xMin < xMax);
@@ -303,15 +303,15 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(
 // Explicit template instantiations
 
 template float
-SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+OSolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
     float* probability, Solver<float>::FunctionEvaluation f, const void* aux);
 template double
-SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+OSolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
     double* probability, Solver<double>::FunctionEvaluation f, const void* aux);
 template float
-SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+OSolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
     float x, Solver<float>::FunctionEvaluation f, const void* aux);
 template double
-SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+OSolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
     double x, Solver<double>::FunctionEvaluation f, const void* aux);
 }  // namespace Poincare

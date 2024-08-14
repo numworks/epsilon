@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class SolverAlgorithms {
+class OSolverAlgorithms {
  public:
   constexpr static double k_goldenRatio =
       0.381966011250105151795413165634361882279690820194237137864;  // (3-sqrt(5))/2

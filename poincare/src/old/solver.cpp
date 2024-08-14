@@ -240,8 +240,8 @@ Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
     return Coordinate2D<T>(NAN, NAN);
   }
 
-  return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,
-                                        precision);
+  return OSolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,
+                                         precision);
 }
 
 template <typename T>
@@ -269,7 +269,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  OMG::Troolean discontinuous) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
-        SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+        OSolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
     /* If the function is discontinuous and the discontinuity is on both sides
      * of the abscissa axis, a fake root could have been found. Filter it out
      * using null tolerance. This can happens for example with the functions:
@@ -429,7 +429,7 @@ T Solver<T>::MinimalStep(T x, T slope) {
   if (preventTooSmallStep) {
     /* We make the minimal step dependent on the slope because if a function is
      * too flat, taking a step too small could lead to not detecting minimums
-     * and maximums. Indeed, the function SolverAlgorithms::DetectApproxima-
+     * and maximums. Indeed, the function OSolverAlgorithms::DetectApproxima-
      * -tionErrorsForMinimum filters out mins and maxs when the function
      * seems constant on the interval.
      * We use e^7 because e^7 ~ 1000, so that if slope = 0,

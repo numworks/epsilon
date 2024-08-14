@@ -1,6 +1,5 @@
 #include "preimage_graph_controller.h"
 
-#include <apps/shared/poincare_helpers.h>
 #include <poincare/expression.h>
 #include <poincare/old/serialization_helper.h>
 
@@ -20,12 +19,12 @@ PreimageGraphController::PreimageGraphController(
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, Context* context) {
-  OSolver<double> solver = PoincareHelpers::OSolver(
-      start, max, ContinuousFunction::k_unknownName, context);
+  Solver<double> solver = Poincare::Solver(start, max, context);
   SystemFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
-  return solver.nextIntersection(NewExpression::Builder<double>(m_image), f);
+  return solver.nextIntersection(NewExpression::Builder<double>(m_image).tree(),
+                                 f.tree());
 }
 
 }  // namespace Graph

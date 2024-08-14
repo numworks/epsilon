@@ -113,30 +113,30 @@ NODE(RandIntNoRep, 3, { uint8_t seed; })
 RANGE(Randomized, Random, RandIntNoRep)
 
 NODE(Cos, 1)
-NODE(Tan, 1)
 NODE(Sin, 1)
+NODE(Tan, 1)
 // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
 NODE(Trig, 2)
 
 RANGE(DirectTrigonometryFunction, Cos, Trig)
 
 NODE(ACos, 1)
-NODE(ATan, 1)
 NODE(ASin, 1)
+NODE(ATan, 1)
 NODE(ATrig, 2)
 NODE(ATanRad, 1)
 
 RANGE(IndirectTrigonometryFunction, ACos, ATanRad)
 RANGE(TrigonometryFunction, Cos, ATanRad)
 
-NODE(Sec, 1)
 NODE(Csc, 1)
+NODE(Sec, 1)
 NODE(Cot, 1)
 
 RANGE(DirectAdvancedTrigonometryFunction, Sec, Cot)
 
-NODE(ASec, 1)
 NODE(ACsc, 1)
+NODE(ASec, 1)
 NODE(ACot, 1)
 
 RANGE(IndirectAdvancedTrigonometryFunction, ASec, ACot)

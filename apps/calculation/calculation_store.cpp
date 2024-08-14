@@ -151,20 +151,21 @@ ExpiringPointer<Calculation> CalculationStore::push(
       complexFormat =
           Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
               complexFormat, inputExpression, context);
-      PoincareHelpers::CloneAndSimplifyAndApproximate(
-          inputExpression, &exactOutputExpression, &approximateOutputExpression,
-          context,
-          {
-              .complexFormat = complexFormat,
-              // Complex format has already been updated
-              .updateComplexFormatWithExpression = false,
-              .symbolicComputation =
-                  CAS::Enabled()
-                      ? SymbolicComputation::
-                            ReplaceAllDefinedSymbolsWithDefinition
-                      : SymbolicComputation::
-                            ReplaceAllSymbolsWithDefinitionsOrUndefined,
-          });
+      inputExpression.cloneAndSimplifyAndApproximate(
+          &exactOutputExpression, &approximateOutputExpression,
+          PoincareHelpers::ReductionContextForParameters(
+              inputExpression, context,
+              {
+                  .complexFormat = complexFormat,
+                  // Complex format has already been updated
+                  .updateComplexFormatWithExpression = false,
+                  .symbolicComputation =
+                      CAS::Enabled()
+                          ? SymbolicComputation::
+                                ReplaceAllDefinedSymbolsWithDefinition
+                          : SymbolicComputation::
+                                ReplaceAllSymbolsWithDefinitionsOrUndefined,
+              }));
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 

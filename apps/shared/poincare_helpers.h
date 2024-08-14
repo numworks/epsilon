@@ -152,16 +152,6 @@ inline void CloneAndSimplify(
       reductionFailure);
 }
 
-inline void CloneAndSimplifyAndApproximate(
-    Poincare::UserExpression e, Poincare::UserExpression* simplifiedExpression,
-    Poincare::UserExpression* approximatedExpression,
-    Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
-  e.cloneAndSimplifyAndApproximate(
-      simplifiedExpression, approximatedExpression,
-      ReductionContextForParameters(e, context, reductionParameters));
-}
-
 inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {}) {

@@ -17,7 +17,7 @@ jobs:
       - name: Download emscripten
         uses: numworks/setup-emscripten@latest
         with:
-          sdk: 3.1.60
+          sdk: 3.1.61
       - name: Checkout
         uses: actions/checkout@v3
         with:

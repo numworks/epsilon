@@ -41,6 +41,17 @@ Promise.all([
     assert.equal(series.slope(), 3.3910000000000005);
 
     var regression = new poincare.PCR_Regression(poincare.RegressionType.LinearAxpb);
+
+    var hasR = regression.hasR();
+    assert.ok(hasR);
+    var hasRSquared = regression.hasRSquared();
+    assert.ok(hasRSquared);
+    var hasR2 = regression.hasR2();
+    assert.ok(!hasR2);
+
+    var formula = regression.latexTemplateFormula();
+    assert.equal(formula, 'a\\cdot x+b');
+
     var coefficients = regression.fit(series);
     assert.deepEqual(coefficients, [3.3910000000000005, -6.241000000000014, NaN, NaN, NaN]);
     var prediction = regression.evaluate(coefficients, 10);

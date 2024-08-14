@@ -78,8 +78,8 @@ LDFLAGS_ion += \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_ldflags_ion_$c))) \
   -L$(PATH_ion)/src/device/epsilon-core/device/shared-core/flash \
   -L$(PATH_ion)/src/device/shared/flash \
-  -L$(OUTPUT_DIRECTORY)/ion/src/device/epsilon-core/device/shared-core/flash \
-  -L$(OUTPUT_DIRECTORY)/ion/src/device/shared/flash
+  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/epsilon-core/device/shared-core/flash \
+  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash
 
 # Prevent building kernel or userland without a slot.
 LDFLAGS_ion += \

@@ -3,9 +3,14 @@
 
 #include <stdint.h>
 
+struct KDColorStruct {
+  uint16_t value;
+};
+
 class KDColor {
  public:
   constexpr KDColor() : m_value(0) {}
+  constexpr KDColor(KDColorStruct color) : m_value(color.value) {}
   // FIXME: This should not be needed, and is probably wasting CPU cycles
   constexpr static KDColor RGB16(uint16_t rgb) { return KDColor(rgb); }
   constexpr static KDColor RGB24(uint32_t rgb) {
@@ -31,7 +36,8 @@ class KDColor {
   }
 
   static KDColor Blend(KDColor first, KDColor second, uint8_t alpha);
-  operator uint16_t() const { return m_value; }
+  constexpr operator uint16_t() const { return m_value; }
+  constexpr operator KDColorStruct() const { return {m_value}; }
 
   struct HSVColor {
     double H;  // Between 0.0 and 360.0 (360.0 excluded)

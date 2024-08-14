@@ -4,11 +4,22 @@
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
 
+struct KD1DMarginsStruct {
+  KDCoordinate firstMargin;
+  KDCoordinate secondMargin;
+};
+
 class KD1DMargins {
  public:
   constexpr KD1DMargins(KDCoordinate firstMargin, KDCoordinate secondMargin)
       : m_firstMargin(firstMargin), m_secondMargin(secondMargin) {}
+  constexpr KD1DMargins(KD1DMarginsStruct margins)
+      : KD1DMargins(margins.firstMargin, margins.secondMargin) {}
   constexpr KD1DMargins() : m_firstMargin(0), m_secondMargin(0) {}
+
+  constexpr operator KD1DMarginsStruct() const {
+    return {m_firstMargin, m_secondMargin};
+  }
 
  protected:
   constexpr KDCoordinate firstMargin() const { return m_firstMargin; }
@@ -64,6 +75,11 @@ class KDVerticalMargins : public KD1DMargins {
   constexpr KDCoordinate height() const { return total(); }
 };
 
+struct KDMarginsStruct {
+  KD1DMarginsStruct horizontal;
+  KD1DMarginsStruct vertical;
+};
+
 // KDMargins(left, right, top, bottom)
 // KDMargins(horizontal, vertical)
 // KDMargins(margin) -> all margins are equal
@@ -80,6 +96,8 @@ class KDMargins : public KDHorizontalMargins, public KDVerticalMargins {
       : KDHorizontalMargins(margin, margin),
         KDVerticalMargins(margin, margin) {}
   constexpr KDMargins() : KDHorizontalMargins(), KDVerticalMargins() {}
+  constexpr KDMargins(KDMarginsStruct margins)
+      : KDMargins(margins.horizontal, margins.vertical) {}
 
   constexpr bool operator==(const KDMargins& other) const {
     return other.horizontal() == horizontal() && other.vertical() == vertical();
@@ -87,6 +105,9 @@ class KDMargins : public KDHorizontalMargins, public KDVerticalMargins {
   // Unary minus
   constexpr KDMargins operator-() const {
     return KDMargins(-left(), -right(), -top(), -bottom());
+  }
+  constexpr operator KDMarginsStruct() const {
+    return {horizontal(), vertical()};
   }
 
   constexpr KDHorizontalMargins horizontal() const { return *this; }

@@ -3,9 +3,15 @@
 
 #include <kandinsky/coordinate.h>
 
+struct KDPointStruct {
+  KDCoordinate x;
+  KDCoordinate y;
+};
+
 class KDPoint {
  public:
   constexpr KDPoint(KDCoordinate x, KDCoordinate y) : m_x(x), m_y(y) {}
+  constexpr KDPoint(KDPointStruct p) : KDPoint(p.x, p.y) {}
   KDCoordinate x() const { return m_x; }
   KDCoordinate y() const { return m_y; }
   KDPoint translatedBy(KDPoint other) const;
@@ -15,6 +21,7 @@ class KDPoint {
     return (m_x == other.m_x && m_y == other.m_y);
   }
   bool operator!=(const KDPoint& other) const { return !(operator==(other)); }
+  constexpr operator KDPointStruct() const { return {m_x, m_y}; }
   uint16_t squareDistanceTo(KDPoint other) const;
 
  private:

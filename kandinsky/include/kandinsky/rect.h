@@ -23,15 +23,21 @@
  *
  * */
 
+struct KDRectStruct {
+  KDPointStruct origin;
+  KDSizeStruct size;
+};
+
 class KDRect {
  public:
   constexpr KDRect(KDCoordinate x, KDCoordinate y, KDCoordinate width,
                    KDCoordinate height)
       : m_origin(x, y), m_size(width, height) {}
-  KDRect(KDPoint p, KDSize s) : m_origin(p), m_size(s) {}
-  KDRect(KDCoordinate x, KDCoordinate y, KDSize s)
+  constexpr KDRect(KDRectStruct r) : KDRect(r.origin, r.size) {}
+  constexpr KDRect(KDPoint p, KDSize s) : m_origin(p), m_size(s) {}
+  constexpr KDRect(KDCoordinate x, KDCoordinate y, KDSize s)
       : m_origin(x, y), m_size(s) {}
-  KDRect(KDPoint p, KDCoordinate width, KDCoordinate height)
+  constexpr KDRect(KDPoint p, KDCoordinate width, KDCoordinate height)
       : m_origin(p), m_size(width, height) {}
 
   KDCoordinate x() const { return m_origin.x(); }
@@ -54,6 +60,7 @@ class KDRect {
     return (m_origin == other.origin() && m_size == other.size());
   }
   bool operator!=(const KDRect& other) const { return !(other == *this); }
+  constexpr operator KDRectStruct() const { return {m_origin, m_size}; }
 
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setSize(KDSize size) { m_size = size; }

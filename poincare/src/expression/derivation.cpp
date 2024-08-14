@@ -196,6 +196,18 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       }
       return derivand->isPow() ? multiplication : newNode;
     }
+    case Type::Abs: {
+      /* Di(|x|) = sign(x) if x != 0 and undef if x = 0
+       *         = x / |x| */
+      Tree* multiplication = SharedTreeStack->pushMult(2);
+      derivand->child(0)->cloneTree();
+      Tree* power = SharedTreeStack->pushPow();
+      derivand->cloneTree();
+      SharedTreeStack->pushMinusOne();
+      SystematicReduction::ShallowReduce(power);
+      SystematicReduction::ShallowReduce(multiplication);
+      return multiplication;
+    }
     default:
       return nullptr;
   }

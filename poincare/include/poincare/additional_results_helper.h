@@ -43,6 +43,11 @@ class AdditionalResultsHelper final {
   static SystemExpression GetMixedFraction(SystemExpression rational,
                                            bool mixedFractionsEnabled);
 
+  /* Scientific notation additional results */
+  static Layout ScientificLayout(
+      const UserExpression approximateOutput, Context* context,
+      const Preferences::CalculationPreferences calculationPreferences);
+
   /* Matrix additional results */
   static void ComputeMatrixProperties(const UserExpression& exactOutput,
                                       const UserExpression& approximateOutput,

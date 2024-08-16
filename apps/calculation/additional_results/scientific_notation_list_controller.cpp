@@ -1,7 +1,8 @@
 #include "scientific_notation_list_controller.h"
 
+#include <poincare/additional_results_helper.h>
+
 #include "../app.h"
-#include "scientific_notation_helper.h"
 
 using namespace Poincare;
 
@@ -13,7 +14,7 @@ void ScientificNotationListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasScientificNotation(
       approximateOutput, m_calculationPreferences));
   Context* context = App::app()->localContext();
-  m_layouts[0] = ScientificNotationHelper::ScientificLayout(
+  m_layouts[0] = AdditionalResultsHelper::ScientificLayout(
       approximateOutput, context, m_calculationPreferences);
 }
 

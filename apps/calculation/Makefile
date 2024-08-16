@@ -1,7 +1,6 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/calculation/, \
   additional_results/additional_results_type.cpp \
   additional_results/unit_comparison_helper.cpp \
-  additional_results/scientific_notation_helper.cpp \
   additional_results/vector_helper.cpp \
   calculation.cpp \
   calculation_store.cpp \

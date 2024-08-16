@@ -348,13 +348,33 @@ SystemExpression AdditionalResultsHelper::GetMixedFraction(
 }
 
 // Eat reduced expression's tree and return a beautified layout
-Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
-                                        ProjectionContext* ctx) {
+Poincare::Layout CreateBeautifiedLayout(
+    Tree* reducedExpression, ProjectionContext* ctx,
+    uint8_t numberOfSignificantDigits =
+        Preferences::SharedPreferences()->numberOfSignificantDigits(),
+    Preferences::PrintFloatMode displayMode =
+        Preferences::SharedPreferences()->displayMode()) {
   Simplification::BeautifyReduced(reducedExpression, ctx);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      reducedExpression, false,
-      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
-      Poincare::Preferences::SharedPreferences()->displayMode()));
+      reducedExpression, false, numberOfSignificantDigits, displayMode));
+}
+
+Poincare::Layout AdditionalResultsHelper::ScientificLayout(
+    const UserExpression approximateOutput, Context* context,
+    const Preferences::CalculationPreferences calculationPreferences) {
+  assert(calculationPreferences.displayMode !=
+         Preferences::PrintFloatMode::Scientific);
+  ProjectionContext ctx = {
+      .m_strategy = Strategy::ApproximateToFloat,
+      .m_symbolic =
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_context = context};
+  Tree* e = approximateOutput.tree()->cloneTree();
+  Simplification::ProjectAndReduce(e, &ctx, false);
+  assert(!ctx.m_dimension.isUnit());
+  return CreateBeautifiedLayout(
+      e, &ctx, calculationPreferences.numberOfSignificantDigits,
+      Preferences::PrintFloatMode::Scientific);
 }
 
 void AdditionalResultsHelper::ComputeMatrixProperties(

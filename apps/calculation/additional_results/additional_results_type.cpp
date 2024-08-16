@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include "../calculation.h"
-#include "scientific_notation_helper.h"
 #include "vector_helper.h"
 
 using namespace Poincare;
@@ -275,7 +274,7 @@ bool AdditionalResultsType::HasScientificNotation(
       calculationPreferences.displayMode,
       calculationPreferences.numberOfSignificantDigits, globalContext);
   return !historyResult.isIdenticalTo(
-      ScientificNotationHelper::ScientificLayout(
+      AdditionalResultsHelper::ScientificLayout(
           approximateOutput, globalContext, calculationPreferences),
       true);
 }

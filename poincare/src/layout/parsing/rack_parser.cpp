@@ -540,6 +540,12 @@ void RackParser::privateParseTimes(TreeRef& leftHandSide,
   } else {
     CloneNodeAtNode(leftHandSide, KMult.node<2>);
   }
+  if (rightHandSide->isMult()) {
+    NAry::SetNumberOfChildren(leftHandSide,
+                              leftHandSide->numberOfChildren() +
+                                  rightHandSide->numberOfChildren() - 1);
+    rightHandSide->removeNode();
+  }
 }
 
 void RackParser::parseCaret(TreeRef& leftHandSide, Token::Type stoppingType) {

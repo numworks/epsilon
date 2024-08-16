@@ -283,6 +283,7 @@ class JuniorExpression : public OExpression {
       T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
   bool isScalarComplex(
       Preferences::CalculationPreferences calculationPreferences) const;
+  bool isDiscontinuousBetweenFloatValues(float x1, float x2) const;
 
   OExpression shallowReduce(ReductionContext reductionContext) {
     // TODO_PCJ

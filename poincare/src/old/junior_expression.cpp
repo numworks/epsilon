@@ -688,6 +688,11 @@ bool UserExpression::isScalarComplex(
   return false;
 }
 
+bool SystemFunction::isDiscontinuousBetweenFloatValues(float x1,
+                                                       float x2) const {
+  return Continuity::IsDiscontinuousBetweenFloatValues(tree(), x1, x2);
+}
+
 template <typename T>
 PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {

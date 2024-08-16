@@ -22,7 +22,6 @@
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/old/undefined.h>
 #include <poincare/print.h>
-#include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/derivation.h>
 
 #include <algorithm>
@@ -188,8 +187,7 @@ bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context* context) const {
   SystemFunction equation =
       expressionReduced(context).getSystemFunction(k_unknownName);
-  return Internal::Continuity::IsDiscontinuousBetweenFloatValues(
-      equation.tree(), x1, x2);
+  return equation.isDiscontinuousBetweenFloatValues(x1, x2);
 }
 
 void ContinuousFunction::getLineParameters(double* slope, double* intercept,

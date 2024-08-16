@@ -16,8 +16,9 @@ class Order {
     /* TODO: AdditionBeautification mimics the order obtained by
      * Addition::shallowBeautify. Providing a custom order in Beautification
      * would be cleaner. */
-    AdditionBeautification
-    // TODO: add real comparison order (numerical)
+    AdditionBeautification,
+    // Order of the extended real line, complexes/undef will raise SortFail
+    RealLine
   };
   /* Compare returns:
    *  1 if e1 > e2
@@ -41,6 +42,7 @@ class Order {
   static int CompareChildren(const Tree* e1, const Tree* e2, OrderType order,
                              bool backward = false);
   static int CompareLastChild(const Tree* e1, const Tree* e2, OrderType order);
+  static int RealLineCompare(const Tree* e1, const Tree* e2);
 };
 
 }  // namespace Poincare::Internal

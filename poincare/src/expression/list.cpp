@@ -85,10 +85,10 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     } else {
       assert(type.isMin() || type.isMax());
       // Bubble up undefined children.
-      // TODO_PCJ: we need a natural order not a comparison
       if (!result->isUndefined() &&
-          (element->isUndefined() || Order::CompareSystem(element, result) ==
-                                         ((type.isMax()) ? 1 : -1))) {
+          (element->isUndefined() ||
+           Order::Compare(element, result, Order::OrderType::RealLine) ==
+               ((type.isMax()) ? 1 : -1))) {
         result->removeTree();
       } else {
         element->removeTree();
@@ -160,9 +160,17 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::ListSum:
     case Type::ListProduct:
     case Type::Min:
-    case Type::Max:
-      e->moveTreeOverTree(Fold(e->child(0), e->type()));
+    case Type::Max: {
+      ExceptionTry { e->moveTreeOverTree(Fold(e->child(0), e->type())); }
+      ExceptionCatch(exc) {
+        if (exc == ExceptionType::SortFail) {
+          e->cloneTreeOverTree(KUndef);
+          return true;
+        }
+        TreeStackCheckpoint::Raise(exc);
+      }
       return true;
+    }
     case Type::Mean:
       e->moveTreeOverTree(Mean(e->child(0), e->child(1)));
       return true;
@@ -223,7 +231,13 @@ bool List::ShallowApplyListOperators(Tree* e) {
       if (!list->isList()) {
         return changed;
       }
-      NAry::Sort(list);
+      ExceptionTry { NAry::Sort(list, Order::OrderType::RealLine); }
+      ExceptionCatch(exc) {
+        if (exc == ExceptionType::SortFail) {
+          return changed;
+        }
+        TreeStackCheckpoint::Raise(exc);
+      }
       e->removeNode();
       return true;
     }

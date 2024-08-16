@@ -775,7 +775,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
       Tree* list = ToList<T>(e->child(0));
-      OutOfContext(NAry::Sort(list));
+      OutOfContext(NAry::Sort(list, Order::OrderType::RealLine));
       std::complex<T> result = ToComplex<T>(list);
       list->removeTree();
       return result;

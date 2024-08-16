@@ -52,6 +52,7 @@ enum class ExceptionType : int {
   RelaxContext,
   // Misc
   ParseFail,  // Used by parser, TODO: Use more distinct errors.
+  SortFail,   // NAry::Sort encountered unsortable types with respect to Order
   Other,      // Used internally for Unit tests.
 };
 

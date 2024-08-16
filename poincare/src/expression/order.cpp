@@ -1,6 +1,7 @@
 #include "order.h"
 
 #include <poincare/src/memory/multiple_nodes_iterator.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/memory/type_block.h>
 
 #include "approximation.h"
@@ -15,6 +16,9 @@
 namespace Poincare::Internal {
 
 int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
+  if (order == OrderType::RealLine) {
+    return Order::RealLineCompare(e1, e2);
+  }
   int cmp = memcmp(e1, e2, e1->treeSize());
   if (cmp == 0) {
     return 0;
@@ -248,6 +252,19 @@ int Order::CompareChildren(const Tree* e1, const Tree* e2, OrderType order,
 
 int Order::CompareLastChild(const Tree* e1, const Tree* e2, OrderType order) {
   return Compare(e1->lastChild(), e2, order) == -1 ? -1 : 1;
+}
+
+int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
+  /* TODO: the approximations could be precomputed and called only once */
+  std::complex<double> v1 = Approximation::ToComplex<double>(e1);
+  if (v1.imag() || std::isnan(v1.real())) {
+    TreeStackCheckpoint::Raise(ExceptionType::SortFail);
+  }
+  std::complex<double> v2 = Approximation::ToComplex<double>(e2);
+  if (v2.imag() || std::isnan(v2.real())) {
+    TreeStackCheckpoint::Raise(ExceptionType::SortFail);
+  }
+  return v1.real() < v2.real() ? -1 : v1.real() == v2.real() ? 0 : 1;
 }
 
 }  // namespace Poincare::Internal

@@ -22,9 +22,8 @@ class Continuity {
   }
 
   // e must be a system function
-  static bool IsDiscontinuousBetweenValuesForSymbol(
-      const Tree* e, const char* symbol, float x1, float x2
-      /*const ApproximationContext &approximationContext*/);
+  static bool IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
+                                                float x2);
 
  private:
   static bool ShallowIsDiscontinuous(const Tree* e);

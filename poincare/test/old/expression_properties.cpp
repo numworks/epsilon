@@ -1101,8 +1101,8 @@ void assert_is_continuous_between_values(const char* expression, float x1,
   SystemExpression e2 = e1.cloneAndReduce(reductionContext);
   SystemFunction e3 = e2.getSystemFunction("x", true);
   quiz_assert_print_if_failure(
-      !isContinuous == Continuity::IsDiscontinuousBetweenValuesForSymbol(
-                           e3.tree(), nullptr, x1, x2),
+      !isContinuous ==
+          Continuity::IsDiscontinuousBetweenFloatValues(e3.tree(), x1, x2),
       expression);
 }
 

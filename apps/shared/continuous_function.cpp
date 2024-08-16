@@ -188,8 +188,8 @@ bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context* context) const {
   SystemFunction equation =
       expressionReduced(context).getSystemFunction(k_unknownName);
-  return Internal::Continuity::IsDiscontinuousBetweenValuesForSymbol(
-      equation.tree(), nullptr, x1, x2);
+  return Internal::Continuity::IsDiscontinuousBetweenFloatValues(
+      equation.tree(), x1, x2);
 }
 
 void ContinuousFunction::getLineParameters(double* slope, double* intercept,

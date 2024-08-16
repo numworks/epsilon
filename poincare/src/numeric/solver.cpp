@@ -315,8 +315,7 @@ template <typename T>
 bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
   const Solver<T>::FunctionEvaluationParameters* p =
       reinterpret_cast<const Solver<T>::FunctionEvaluationParameters*>(aux);
-  return Continuity::IsDiscontinuousBetweenValuesForSymbol(p->expression,
-                                                           nullptr, x1, x2);
+  return Continuity::IsDiscontinuousBetweenFloatValues(p->expression, x1, x2);
 };
 
 template <typename T>

@@ -11,9 +11,8 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
           Variables::HasVariables(e));
 };
 
-bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
-                                                       const char* symbol,
-                                                       float x1, float x2) {
+bool Continuity::IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
+                                                   float x2) {
   // TODO_PCJ: symbol is ignored for now
   if (e->isRandomized()) {
     return true;
@@ -39,7 +38,7 @@ bool Continuity::IsDiscontinuousBetweenValuesForSymbol(const Tree* e,
     return true;
   }
   for (const Tree* child : e->children()) {
-    if (IsDiscontinuousBetweenValuesForSymbol(child, symbol, x1, x2)) {
+    if (IsDiscontinuousBetweenFloatValues(child, x1, x2)) {
       return true;
     }
   }

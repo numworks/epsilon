@@ -201,9 +201,6 @@ class OExpression : public PoolHandle {
   bool isSystemSymbol() const { return node()->isSystemSymbol(); }
 
   bool involvesDiscontinuousFunction(Context* context) const;
-  bool isDiscontinuousBetweenValuesForSymbol(
-      const char* symbol, float x1, float x2,
-      const ApproximationContext& approximationContext) const;
   bool hasBooleanValue() const;
   bool hasMatrixOrListChild(Context* context, bool isReduced = true) const {
     return node()->hasMatrixOrListChild(context, isReduced);

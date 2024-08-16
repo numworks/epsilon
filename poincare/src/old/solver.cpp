@@ -301,10 +301,7 @@ Coordinate2D<T> OSolver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 
 template <typename T>
 bool OSolver<T>::DiscontinuityTestForExpression(T x1, T x2, const void *aux) {
-  const OSolver<T>::FunctionEvaluationParameters *p =
-      reinterpret_cast<const OSolver<T>::FunctionEvaluationParameters *>(aux);
-  return p->expression.isDiscontinuousBetweenValuesForSymbol(
-      p->unknown, x1, x2, p->approximationContext);
+  return false;
 };
 
 template <typename T>

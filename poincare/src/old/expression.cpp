@@ -482,56 +482,6 @@ bool OExpression::involvesDiscontinuousFunction(Context *context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
-bool OExpression::isDiscontinuousBetweenValuesForSymbol(
-    const char *symbol, float x1, float x2,
-    const ApproximationContext &approximationContext) const {
-  if (isRandom()) {
-    return true;
-  }
-  bool isDiscontinuous = false;
-  if (isOfType({ExpressionNode::Type::Ceiling, ExpressionNode::Type::Floor,
-                ExpressionNode::Type::Round})) {
-    // is discontinuous if it changes value
-    isDiscontinuous = approximateToScalarWithValueForSymbol<float>(
-                          symbol, x1, approximationContext) !=
-                      approximateToScalarWithValueForSymbol<float>(
-                          symbol, x2, approximationContext);
-  } else if (otype() == ExpressionNode::Type::FracPart) {
-    // is discontinuous if the child changes int value
-    isDiscontinuous =
-        std::floor(childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
-            symbol, x1, approximationContext)) !=
-        std::floor(childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
-            symbol, x2, approximationContext));
-  } else if (isOfType({ExpressionNode::Type::AbsoluteValue,
-                       ExpressionNode::Type::SignFunction})) {
-    // is discontinuous if the child changes sign
-    isDiscontinuous =
-        (childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
-             symbol, x1, approximationContext) > 0.0) !=
-        (childAtIndex(0).approximateToScalarWithValueForSymbol<float>(
-             symbol, x2, approximationContext) > 0.0);
-  } else if (otype() == ExpressionNode::Type::PiecewiseOperator) {
-    PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
-    isDiscontinuous =
-        pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x1, approximationContext) !=
-        pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(
-            symbol, x2, approximationContext);
-  }
-  if (isDiscontinuous) {
-    return true;
-  }
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndex(i).isDiscontinuousBetweenValuesForSymbol(
-            symbol, x1, x2, approximationContext)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool OExpression::hasBooleanValue() const {
   return isOfType({ExpressionNode::Type::OBoolean,
                    ExpressionNode::Type::Comparison,

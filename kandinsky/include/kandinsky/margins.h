@@ -12,29 +12,25 @@ struct KD1DMarginsStruct {
 class KD1DMargins {
  public:
   constexpr KD1DMargins(KDCoordinate firstMargin, KDCoordinate secondMargin)
-      : m_firstMargin(firstMargin), m_secondMargin(secondMargin) {}
-  constexpr KD1DMargins(KD1DMarginsStruct margins)
-      : KD1DMargins(margins.firstMargin, margins.secondMargin) {}
-  constexpr KD1DMargins() : m_firstMargin(0), m_secondMargin(0) {}
+      : m_struct{firstMargin, secondMargin} {}
+  constexpr KD1DMargins(KD1DMarginsStruct margins) : m_struct{margins} {}
+  constexpr KD1DMargins() : m_struct{0, 0} {}
 
-  constexpr operator KD1DMarginsStruct() const {
-    return {m_firstMargin, m_secondMargin};
-  }
+  constexpr operator KD1DMarginsStruct() const { return m_struct; }
 
  protected:
-  constexpr KDCoordinate firstMargin() const { return m_firstMargin; }
-  constexpr KDCoordinate secondMargin() const { return m_secondMargin; }
+  constexpr KDCoordinate firstMargin() const { return m_struct.firstMargin; }
+  constexpr KDCoordinate secondMargin() const { return m_struct.secondMargin; }
 
-  void setFirstMargin(KDCoordinate m) { m_firstMargin = m; }
-  void setSecondMargin(KDCoordinate m) { m_secondMargin = m; }
+  void setFirstMargin(KDCoordinate m) { m_struct.firstMargin = m; }
+  void setSecondMargin(KDCoordinate m) { m_struct.secondMargin = m; }
 
   constexpr KDCoordinate total() const {
-    return m_firstMargin + m_secondMargin;
+    return firstMargin() + secondMargin();
   }
 
  private:
-  KDCoordinate m_firstMargin;
-  KDCoordinate m_secondMargin;
+  KD1DMarginsStruct m_struct;
 };
 
 // KDHorizontalMargins(left, right)

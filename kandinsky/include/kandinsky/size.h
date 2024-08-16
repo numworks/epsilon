@@ -12,30 +12,30 @@ struct KDSizeStruct {
 class KDSize {
  public:
   constexpr KDSize(KDCoordinate width, KDCoordinate height)
-      : m_width(width), m_height(height) {}
-  constexpr KDSize(KDSizeStruct s) : KDSize(s.width, s.height) {}
-  constexpr KDCoordinate width() const { return m_width; }
-  constexpr KDCoordinate height() const { return m_height; }
+      : m_struct{width, height} {}
+  constexpr KDSize(KDSizeStruct s) : m_struct{s} {}
+  constexpr KDCoordinate width() const { return m_struct.width; }
+  constexpr KDCoordinate height() const { return m_struct.height; }
   bool operator==(const KDSize& other) const {
-    return m_width == other.width() && m_height == other.height();
+    return m_struct.width == other.m_struct.width &&
+           m_struct.height == other.m_struct.height;
   }
   KDSize operator+(const KDSize& other) const {
-    return KDSize(m_width + other.width(), m_height + other.height());
+    return KDSize(width() + other.width(), height() + other.height());
   }
   KDSize operator-(const KDSize& other) const {
-    return KDSize(m_width - other.width(), m_height - other.height());
+    return KDSize(width() - other.width(), height() - other.height());
   }
   KDSize operator+(const KDMargins& margins) const {
-    return KDSize(m_width + margins.width(), m_height + margins.height());
+    return KDSize(width() + margins.width(), height() + margins.height());
   }
   KDSize operator-(const KDMargins& margins) const {
-    return KDSize(m_width - margins.width(), m_height - margins.height());
+    return KDSize(width() - margins.width(), height() - margins.height());
   }
-  constexpr operator KDSizeStruct() const { return {m_width, m_height}; }
+  constexpr operator KDSizeStruct() const { return m_struct; }
 
  private:
-  KDCoordinate m_width;
-  KDCoordinate m_height;
+  KDSizeStruct m_struct;
 };
 
 constexpr KDSize KDSizeZero = KDSize(0, 0);

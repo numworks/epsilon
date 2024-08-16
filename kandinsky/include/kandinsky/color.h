@@ -9,8 +9,8 @@ struct KDColorStruct {
 
 class KDColor {
  public:
-  constexpr KDColor() : m_value(0) {}
-  constexpr KDColor(KDColorStruct color) : m_value(color.value) {}
+  constexpr KDColor() : m_struct{0} {}
+  constexpr KDColor(KDColorStruct color) : m_struct{color} {}
   // FIXME: This should not be needed, and is probably wasting CPU cycles
   constexpr static KDColor RGB16(uint16_t rgb) { return KDColor(rgb); }
   constexpr static KDColor RGB24(uint32_t rgb) {
@@ -21,23 +21,23 @@ class KDColor {
     return KDColor((r >> 3) << 11 | (g >> 2) << 5 | (b >> 3));
   }
   uint8_t red() const {
-    uint8_t r5 = (m_value >> 11) & 0x1F;
+    uint8_t r5 = (m_struct.value >> 11) & 0x1F;
     return Expand(r5, 5);
   }
 
   uint8_t green() const {
-    uint8_t g6 = (m_value >> 5) & 0x3F;
+    uint8_t g6 = (m_struct.value >> 5) & 0x3F;
     return Expand(g6, 6);
   }
 
   uint8_t blue() const {
-    uint8_t b5 = m_value & 0x1F;
+    uint8_t b5 = m_struct.value & 0x1F;
     return Expand(b5, 5);
   }
 
   static KDColor Blend(KDColor first, KDColor second, uint8_t alpha);
-  constexpr operator uint16_t() const { return m_value; }
-  constexpr operator KDColorStruct() const { return {m_value}; }
+  constexpr operator uint16_t() const { return m_struct.value; }
+  constexpr operator KDColorStruct() const { return {m_struct.value}; }
 
   struct HSVColor {
     double H;  // Between 0.0 and 360.0 (360.0 excluded)
@@ -69,9 +69,9 @@ class KDColor {
            | (s >>
               (nBits - (8 - nBits)));  // Trick: let's try and fill the padding
   }
-  constexpr KDColor(uint16_t value) : m_value(value) {}
+  constexpr KDColor(uint16_t value) : m_struct{value} {}
 
-  uint16_t m_value;
+  KDColorStruct m_struct;
 };
 
 constexpr KDColor KDColorBlack = KDColor::RGB24(0x000000);

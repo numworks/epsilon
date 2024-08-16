@@ -32,20 +32,20 @@ class KDRect {
  public:
   constexpr KDRect(KDCoordinate x, KDCoordinate y, KDCoordinate width,
                    KDCoordinate height)
-      : m_origin(x, y), m_size(width, height) {}
-  constexpr KDRect(KDRectStruct r) : KDRect(r.origin, r.size) {}
-  constexpr KDRect(KDPoint p, KDSize s) : m_origin(p), m_size(s) {}
+      : m_struct{{x, y}, {width, height}} {}
+  constexpr KDRect(KDRectStruct r) : m_struct{r} {}
+  constexpr KDRect(KDPoint p, KDSize s) : m_struct{p, s} {}
   constexpr KDRect(KDCoordinate x, KDCoordinate y, KDSize s)
-      : m_origin(x, y), m_size(s) {}
+      : m_struct{{x, y}, s} {}
   constexpr KDRect(KDPoint p, KDCoordinate width, KDCoordinate height)
-      : m_origin(p), m_size(width, height) {}
+      : m_struct{p, {width, height}} {}
 
-  KDCoordinate x() const { return m_origin.x(); }
-  KDCoordinate y() const { return m_origin.y(); }
-  KDPoint origin() const { return m_origin; }
-  KDCoordinate width() const { return m_size.width(); }
-  KDCoordinate height() const { return m_size.height(); }
-  KDSize size() const { return m_size; }
+  KDCoordinate x() const { return origin().x(); }
+  KDCoordinate y() const { return origin().y(); }
+  KDPoint origin() const { return m_struct.origin; }
+  KDCoordinate width() const { return size().width(); }
+  KDCoordinate height() const { return size().height(); }
+  KDSize size() const { return m_struct.size; }
   KDCoordinate top() const { return y(); }
   KDCoordinate right() const { return x() + width() - 1; }
   KDCoordinate bottom() const { return y() + height() - 1; }
@@ -57,13 +57,13 @@ class KDRect {
   KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
 
   bool operator==(const KDRect& other) const {
-    return (m_origin == other.origin() && m_size == other.size());
+    return (origin() == other.origin() && size() == other.size());
   }
   bool operator!=(const KDRect& other) const { return !(other == *this); }
-  constexpr operator KDRectStruct() const { return {m_origin, m_size}; }
+  constexpr operator KDRectStruct() const { return m_struct; }
 
-  void setOrigin(KDPoint origin) { m_origin = origin; }
-  void setSize(KDSize size) { m_size = size; }
+  void setOrigin(KDPoint origin) { m_struct.origin = origin; }
+  void setSize(KDSize size) { m_struct.size = size; }
 
   KDRect transposed() const;
   KDRect translatedBy(KDPoint p) const;
@@ -84,8 +84,7 @@ class KDRect {
   bool isEmpty() const;
 
  private:
-  KDPoint m_origin;
-  KDSize m_size;
+  KDRectStruct m_struct;
 };
 
 constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);

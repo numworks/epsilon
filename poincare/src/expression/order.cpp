@@ -255,6 +255,19 @@ int Order::CompareLastChild(const Tree* e1, const Tree* e2, OrderType order) {
 }
 
 int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
+  Dimension dim = Dimension::Get(e1);
+  if (dim.isPoint()) {
+    /* TODO: make less calls to Dimension::Get */
+    Tree* p1 = Approximation::RootTreeToTree<double>(e1);
+    Tree* p2 = Approximation::RootTreeToTree<double>(e2);
+    int result = RealLineCompare(p1->child(0), p2->child(0));
+    if (result == 0) {
+      result = RealLineCompare(p1->child(1), p2->child(1));
+    }
+    p2->removeTree();
+    p1->removeTree();
+    return result;
+  }
   /* TODO: the approximations could be precomputed and called only once */
   std::complex<double> v1 = Approximation::ToComplex<double>(e1);
   if (v1.imag() || std::isnan(v1.real())) {

@@ -38,6 +38,10 @@ class AdditionalResultsHelper final {
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);
+  static SystemExpression CreateEuclideanDivision(SystemExpression e);
+  static SystemExpression GetRational(const UserExpression e, bool negative);
+  static SystemExpression GetMixedFraction(SystemExpression rational,
+                                           bool mixedFractionsEnabled);
 
   /* Matrix additional results */
   static void ComputeMatrixProperties(const UserExpression& exactOutput,

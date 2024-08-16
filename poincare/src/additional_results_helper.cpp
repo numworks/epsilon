@@ -6,6 +6,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/unit.h>
@@ -295,6 +296,55 @@ bool AdditionalResultsHelper::HasRational(
           Internal::PatternMatching::Match(exactOutput, KOpposite(KDiv(KA, KB)),
                                            &ctx)) &&
          ctx.getTree(KA)->isInteger() && ctx.getTree(KB)->isInteger();
+}
+
+IntegerHandler extractInteger(const Tree* e) {
+  /* TODO_PCJ: is this usage of IntegerHandler correct ?
+   * A quick experiment showed incorrect digits with large numbers ! */
+  if (e->isOpposite()) {
+    IntegerHandler i = extractInteger(e->child(0));
+    i.setSign(InvertSign(i.sign()));
+    return i;
+  }
+  assert(e->isInteger());
+  return Integer::Handler(e);
+}
+
+SystemExpression AdditionalResultsHelper::GetRational(const UserExpression e,
+                                                      bool negative) {
+  const Tree* eTree = e.tree();
+  IntegerHandler numerator = extractInteger(eTree->child(0));
+  if (negative) {
+    numerator.setSign(InvertSign(numerator.sign()));
+  }
+  IntegerHandler denominator = extractInteger(eTree->child(1));
+  return SystemExpression::Builder(Rational::Push(numerator, denominator));
+}
+
+// Take a rational a/b and create the euclidian division a=b*q+r
+SystemExpression AdditionalResultsHelper::CreateEuclideanDivision(
+    SystemExpression e) {
+  IntegerHandler num = Rational::Numerator(e);
+  IntegerHandler den = Rational::Denominator(e);
+  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
+  Tree* numTree = num.pushOnTreeStack();
+  Tree* denTree = den.pushOnTreeStack();
+  SystemExpression result = SystemExpression::Builder(PatternMatching::Create(
+      KEqual(KA, KAdd(KMult(KB, KC), KD)), {.KA = numTree,
+                                            .KB = denTree,
+                                            .KC = division.quotient,
+                                            .KD = division.remainder}));
+  denTree->removeTree();
+  numTree->removeTree();
+  division.remainder->removeTree();
+  division.quotient->removeTree();
+  return result;
+}
+
+SystemExpression AdditionalResultsHelper::GetMixedFraction(
+    SystemExpression rational, bool mixedFractionsEnabled) {
+  return SystemExpression::Builder(
+      Rational::CreateMixedFraction(rational, mixedFractionsEnabled));
 }
 
 // Eat reduced expression's tree and return a beautified layout

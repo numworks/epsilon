@@ -1,32 +1,16 @@
 #include "rational_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/src/expression/integer.h>
-#include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/rational.h>
-#include <poincare/src/memory/pattern_matching.h>
+#include <poincare/additional_results_helper.h>
+#include <poincare/k_tree.h>
 #include <string.h>
 
 #include "../app.h"
 
 using namespace Poincare;
-// TODO_PCJ: Isolate from Internal::Poincare
-using namespace Poincare::Internal;
 using namespace Shared;
 
 namespace Calculation {
-
-IntegerHandler extractInteger(const Tree* e) {
-  /* TODO_PCJ: is this usage of IntegerHandler correct ?
-   * A quick experiment showed incorrect digits with large numbers ! */
-  if (e->isOpposite()) {
-    IntegerHandler i = extractInteger(e->child(0));
-    i.setSign(InvertSign(i.sign()));
-    return i;
-  }
-  assert(e->isInteger());
-  return Integer::Handler(e);
-}
 
 static bool isIntegerInput(const Expression e) {
   return (e.type() == ExpressionNode::Type::BasedInteger ||
@@ -46,51 +30,27 @@ static bool isFractionInput(const Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
-// Take a rational a/b and create the euclidian division a=b*q+r
-static Tree* CreateEuclideanDivision(const Tree* e) {
-  IntegerHandler num = Rational::Numerator(e);
-  IntegerHandler den = Rational::Denominator(e);
-  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
-  TreeRef numTree = num.pushOnTreeStack();
-  TreeRef denTree = den.pushOnTreeStack();
-  TreeRef result = PatternMatching::Create(KEqual(KA, KAdd(KMult(KB, KC), KD)),
-                                           {.KA = numTree,
-                                            .KB = denTree,
-                                            .KC = division.quotient,
-                                            .KD = division.remainder});
-  denTree->removeTree();
-  numTree->removeTree();
-  division.remainder->removeTree();
-  division.quotient->removeTree();
-  return result;
-}
-
 void RationalListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
   assert(AdditionalResultsType::HasRational(exactOutput));
-  Expression e = isFractionInput(input) ? input : exactOutput;
+  UserExpression e = isFractionInput(input) ? input : exactOutput;
   assert(!e.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
   bool negative = e.type() == ExpressionNode::Type::Opposite;
-  const Expression div = negative ? e.cloneChildAtIndex(0) : e;
+  const UserExpression div = negative ? e.cloneChildAtIndex(0) : e;
   assert(div.type() == ExpressionNode::Type::Division);
-  IntegerHandler numerator = extractInteger(div.cloneChildAtIndex(0));
-  if (negative) {
-    numerator.setSign(InvertSign(numerator.sign()));
-  }
-  IntegerHandler denominator = extractInteger(div.cloneChildAtIndex(1));
-  Expression rational =
-      Expression::Builder(Rational::Push(numerator, denominator));
-  SystemExpression mixedFraction =
-      SystemExpression::Builder(Rational::CreateMixedFraction(
-          rational,
-          GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
-              Preferences::MixedFractions::Enabled));
+
+  SystemExpression rational =
+      AdditionalResultsHelper::GetRational(div, negative);
+  SystemExpression mixedFraction = AdditionalResultsHelper::GetMixedFraction(
+      rational,
+      GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
+          Preferences::MixedFractions::Enabled);
   SystemExpression euclideanDiv =
-      SystemExpression::Builder(CreateEuclideanDivision(rational));
+      AdditionalResultsHelper::CreateEuclideanDivision(rational);
 
   int index = 0;
   m_layouts[index++] = PoincareHelpers::CreateLayout(
@@ -108,8 +68,8 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-Poincare::Layout RationalListController::layoutAtIndex(
-    Escher::HighlightCell* cell, int index) {
+Layout RationalListController::layoutAtIndex(Escher::HighlightCell* cell,
+                                             int index) {
   return ExpressionsListController::layoutAtIndex(cell, index);
 #if 0  // TODO_PCJ
   if (index == 1) {

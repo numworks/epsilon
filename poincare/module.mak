@@ -198,7 +198,6 @@ $(addprefix expression/, \
   dependency.cpp \
   derivation.cpp \
   dimension.cpp \
-  dimension_vector.cpp \
   division.cpp \
   equation_solver.cpp \
   float_helper.cpp \

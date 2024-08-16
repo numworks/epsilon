@@ -4,6 +4,7 @@
 #include <omg/round.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include "approximation.h"
 #include "integer.h"
@@ -147,7 +148,7 @@ Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
    * - Repeat those steps until no more simplification is possible.
    */
   Tree* unitsAccu = KMult()->cloneTree();
-  /* If exponents are not integers, FromBaseUnits will return a null
+  /* If exponents are not integers, GetSIVector will return a null
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
   size_t unitsSupportSize = unitsExponents->supportSize();
@@ -550,7 +551,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
   if (unit.isUninitialized() || !std::isfinite(value)) {
     return false;
   }
-  SIVector vector = SIVector::FromBaseUnits(unit);
+  SIVector vector = GetSIVector(unit);
   const Representative* representative =
       Representative::RepresentativeForDimension(vector);
 
@@ -906,6 +907,83 @@ double Unit::GetValue(const Tree* unit) {
          std::pow(10., GetPrefix(unit)->exponent());
 }
 
+SIVector Unit::GetSIVector(const Tree* baseUnits) {
+  SIVector vector = SIVector::Empty();
+  int numberOfFactors;
+  int factorIndex = 0;
+  const Tree* factor;
+  if (baseUnits->isMult()) {
+    numberOfFactors = baseUnits->numberOfChildren();
+    factor = baseUnits->child(0);
+  } else {
+    numberOfFactors = 1;
+    factor = baseUnits;
+  }
+  do {
+    // Get the unit's exponent
+    int8_t exponent = 1;
+    if (factor->isPow()) {
+      const Tree* exp = factor->child(1);
+      assert(exp->isRational());
+      // Using the closest integer to the exponent.
+      float exponentFloat = Approximation::To<float>(exp);
+      if (exponentFloat != std::round(exponentFloat)) {
+        /* If non-integer exponents are found, we round a null vector so that
+         * Multiplication::shallowBeautify will not attempt to find derived
+         * units. */
+        return SIVector::Empty();
+      }
+      /* We limit to INT_MAX / 3 because an exponent might get bigger with
+       * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
+       * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */
+      if (std::fabs(exponentFloat) < INT8_MAX / 3) {
+        // Exponent can be safely casted as int
+        exponent = static_cast<int8_t>(std::round(exponentFloat));
+        assert(std::fabs(exponentFloat - static_cast<float>(exponent)) <= 0.5f);
+      } else {
+        /* Base units vector will ignore this coefficient, to avoid exponent
+         * overflow. In any way, shallowBeautify will conserve homogeneity. */
+        exponent = 0;
+      }
+      factor = factor->child(0);
+    }
+    // Fill the vector with the unit's exponent
+    assert(factor->isUnit());
+    vector.addAllCoefficients(GetRepresentative(factor)->siVector(), exponent);
+    if (++factorIndex >= numberOfFactors) {
+      break;
+    }
+    factor = baseUnits->child(factorIndex);
+  } while (true);
+  return vector;
+}
+
+Tree* Unit::Push(SIVector vector) {
+  Tree* result = SharedTreeStack->pushMult(0);
+  int numberOfChildren = 0;
+  for (int i = 0; i < k_numberOfBaseUnits; i++) {
+    // We require the base units to be the first seven in DefaultRepresentatives
+    const Representative* representative =
+        Representative::DefaultRepresentatives()[i];
+    assert(representative);
+    int8_t exponent = vector.coefficientAtIndex(i);
+    if (exponent == 0) {
+      continue;
+    }
+    if (exponent != 1) {
+      SharedTreeStack->pushPow();
+    }
+    Push(representative);
+    if (exponent != 1) {
+      Integer::Push(exponent);
+    }
+    NAry::SetNumberOfChildren(result, ++numberOfChildren);
+  }
+  // assert(numberOfChildren > 0);
+  NAry::SquashIfUnary(result) || NAry::SquashIfEmpty(result);
+  return result;
+}
+
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
                               UnitDisplay unitDisplay, AngleUnit angleUnit) {
@@ -958,7 +1036,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::Equivalent:
       // TODO
     case UnitDisplay::BasicSI:
-      MoveTreeOverTree(extractedUnits, dimension.unit.vector.toBaseUnits());
+      MoveTreeOverTree(extractedUnits, Push(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       return true;
@@ -1162,12 +1240,12 @@ bool Unit::BuildAutomaticOutput(Tree* e, Dimension dimension,
   assert(!vector.isEmpty());
   TreeRef units;
   if (dimension.isAngleUnit()) {
-    units = vector.toBaseUnits();
+    units = Push(vector);
   } else {
     double value = Approximation::RootTreeToReal<double>(e);
     units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
-    vector.toBaseUnits();
+    Push(vector);
     NAry::Flatten(units);
     NAry::SquashIfPossible(units);
     ChooseBestRepresentativeAndPrefixForValue(

@@ -291,6 +291,12 @@ class Unit {
 
   static double GetValue(const Tree* unit);
 
+  /* SI Vector of base units (Mult, Unit or Pow) with integer exponents. If
+   * rational exponents, the closest integer will be used. */
+  static SIVector GetSIVector(const Tree* baseUnits);
+  // Push base SI units matching the vector
+  static Tree* Push(SIVector vector);
+
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
                                  UnitDisplay unitDisplay, AngleUnit angleUnit);

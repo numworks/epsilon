@@ -601,7 +601,7 @@ UserExpression BuildComparisonExpression(double value,
   UserExpression unit = UserExpression::Builder(
       referenceUnit.outputRepresentative
           ? Internal::Units::Unit::Push(referenceUnit.outputRepresentative)
-          : referenceUnit.siVector.toBaseUnits());
+          : Internal::Units::Unit::Push(referenceUnit.siVector));
   // outputRepresentative are expected to be equivalent to SI units.
   assert(
       !referenceUnit.outputRepresentative ||

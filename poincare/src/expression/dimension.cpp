@@ -20,7 +20,7 @@ namespace Poincare::Internal {
 // TODO_PCJ: Use context with userNamed trees
 
 Dimension Dimension::Unit(const Tree* unit) {
-  return Unit(Units::SIVector::FromBaseUnits(unit),
+  return Unit(Units::Unit::GetSIVector(unit),
               Units::Unit::GetRepresentative(unit));
 }
 

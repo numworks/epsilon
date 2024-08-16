@@ -9,8 +9,6 @@
 
 namespace Poincare::Internal {
 
-class Tree;
-
 namespace Units {
 
 struct SIVector {
@@ -42,10 +40,6 @@ struct SIVector {
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
-
-  static SIVector FromBaseUnits(const Tree* baseUnits);
-  // Push SI units matching the vector
-  Tree* toBaseUnits() const;
 
   constexpr void addAllCoefficients(const SIVector other, int8_t factor) {
     for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {

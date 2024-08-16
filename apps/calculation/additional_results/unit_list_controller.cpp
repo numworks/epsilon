@@ -91,7 +91,7 @@ void UnitListController::computeAdditionalResults(
     expressions[i] = Expression();
   }
 
-  // TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
+  // TODO_PCJ: Isolate from Internal::Poincare
 
   // Build an expression for each relevant unit display mode
   int numberOfExpressions = 0;

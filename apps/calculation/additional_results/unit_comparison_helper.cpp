@@ -16,7 +16,7 @@
 #include "../app.h"
 
 using namespace Poincare;
-// TODO_PCJ: Move logic in Poincare::AdditionalResultsHelper
+// TODO_PCJ: Isolate from Internal::Poincare
 using namespace Poincare::Internal::Units;
 using namespace Shared;
 

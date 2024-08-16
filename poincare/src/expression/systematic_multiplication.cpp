@@ -172,7 +172,8 @@ static bool SimplifySortedMultiplication(Tree* multiplication) {
             PatternMatching::Create(KMult(0_e, KA), {.KA = multiplication}));
       } else {
         // Since all units are equivalent, use base SI.
-        multiplication->moveTreeOverTree(Units::Unit::Push(dim.unit.vector));
+        multiplication->moveTreeOverTree(
+            Units::Unit::GetBaseUnits(dim.unit.vector));
         if (multiplication->isMult()) {
           NAry::Sort(multiplication, Order::OrderType::PreserveMatrices);
         } else {

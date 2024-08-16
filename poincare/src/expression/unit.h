@@ -295,7 +295,7 @@ class Unit {
    * rational exponents, the closest integer will be used. */
   static SIVector GetSIVector(const Tree* baseUnits);
   // Push base SI units matching the vector
-  static Tree* Push(SIVector vector);
+  static Tree* GetBaseUnits(SIVector vector);
 
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,

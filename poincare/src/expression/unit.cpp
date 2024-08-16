@@ -958,7 +958,7 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
   return vector;
 }
 
-Tree* Unit::Push(SIVector vector) {
+Tree* Unit::GetBaseUnits(SIVector vector) {
   Tree* result = SharedTreeStack->pushMult(0);
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
@@ -1036,7 +1036,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::Equivalent:
       // TODO
     case UnitDisplay::BasicSI:
-      MoveTreeOverTree(extractedUnits, Push(dimension.unit.vector));
+      MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
       return true;
@@ -1240,12 +1240,12 @@ bool Unit::BuildAutomaticOutput(Tree* e, Dimension dimension,
   assert(!vector.isEmpty());
   TreeRef units;
   if (dimension.isAngleUnit()) {
-    units = Push(vector);
+    units = GetBaseUnits(vector);
   } else {
     double value = Approximation::RootTreeToReal<double>(e);
     units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
-    Push(vector);
+    GetBaseUnits(vector);
     NAry::Flatten(units);
     NAry::SquashIfPossible(units);
     ChooseBestRepresentativeAndPrefixForValue(

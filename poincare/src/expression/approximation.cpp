@@ -160,7 +160,7 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim) {
     Tree* result = ToBeautifiedComplex<T>(e);
     if (dim.isUnit()) {
       result->cloneNodeAtNode(KMult.node<2>);
-      Units::Unit::Push(dim.unit.vector);
+      Units::Unit::GetBaseUnits(dim.unit.vector);
       NAry::Flatten(result);
     }
     return result;

@@ -1048,6 +1048,7 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/src/expression/continuity.h>
 
 #include "../helper.h"
 
@@ -1092,20 +1093,20 @@ QUIZ_CASE(poincare_expression_list_of_points) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
-#if 0
-
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
-  ApproximationContext approximationContext(&context, Cartesian, Degree);
+  UserExpression e1 = UserExpression::Builder(TextToTree(expression, &context));
+  ReductionContext reductionContext(&context);
+  SystemExpression e2 = e1.cloneAndReduce(reductionContext);
+  SystemFunction e3 = e2.getSystemFunction("x", true);
   quiz_assert_print_if_failure(
-      !isContinuous == e.isDiscontinuousBetweenValuesForSymbol(
-                           "x", x1, x2, approximationContext),
+      !isContinuous == Continuity::IsDiscontinuousBetweenValuesForSymbol(
+                           e3.tree(), nullptr, x1, x2),
       expression);
 }
 
-QUIZ_DISABLED_CASE(poincare_expression_continuous) {
+QUIZ_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+x^2", 2.43f, 2.45f, true);
   assert_is_continuous_between_values("x+x^2", 2.45f, 2.47f, true);
   assert_is_continuous_between_values("x+floor(x^2)", 2.43f, 2.45f, false);
@@ -1119,6 +1120,8 @@ QUIZ_DISABLED_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+random()", 2.43f, 2.45f, false);
   assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
 }
+
+#if 0
 
 void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   Shared::GlobalContext context;

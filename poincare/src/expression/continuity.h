@@ -21,6 +21,7 @@ class Continuity {
     return e->hasDescendantSatisfying(ShallowIsDiscontinuous);
   }
 
+  // e must be a system function
   static bool IsDiscontinuousBetweenValuesForSymbol(
       const Tree* e, const char* symbol, float x1, float x2
       /*const ApproximationContext &approximationContext*/);

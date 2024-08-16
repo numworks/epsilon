@@ -78,9 +78,12 @@ class ReductionContext : public ComputationContext {
   }
 
   ReductionContext(
-      Context* context, Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-      ReductionTarget target,
+      Context* context = nullptr,
+      Preferences::ComplexFormat complexFormat =
+          Preferences::ComplexFormat::Cartesian,
+      Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
+      Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
+      ReductionTarget target = ReductionTarget::User,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       UnitConversion unitConversion = UnitConversion::Default,
@@ -94,11 +97,6 @@ class ReductionContext : public ComputationContext {
         m_shouldExpandMultiplication(shouldExpandMultiplication),
         m_shouldCheckMatrices(shouldCheckMatrices),
         m_shouldExpandLogarithm(shouldExpandLogarithm) {}
-  ReductionContext()
-      : ReductionContext(nullptr, Preferences::ComplexFormat::Cartesian,
-                         Preferences::AngleUnit::Radian,
-                         Preferences::UnitFormat::Metric,
-                         ReductionTarget::User) {}
 
   Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
   ReductionTarget target() const { return m_target; }

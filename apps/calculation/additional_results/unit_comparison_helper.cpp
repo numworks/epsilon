@@ -25,9 +25,8 @@ namespace Calculation {
 namespace UnitComparison {
 
 struct ReferenceUnit {
-  Poincare::Internal::Units::SIVector siVector;
-  const Poincare::Internal::Units::Representative* outputRepresentative =
-      nullptr;
+  SIVector siVector;
+  const Representative* outputRepresentative = nullptr;
 };
 
 /* If you add new reference values, they always need to be
@@ -493,7 +492,7 @@ int FindUpperAndLowerReferenceValues(
     double inputValue, UserExpression approximatedSIExpression,
     Context* context, const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
-  Poincare::Internal::Units::SIVector siVector =
+  SIVector siVector =
       Internal::Dimension::Get(approximatedSIExpression.tree(), context)
           .unit.vector;
   /* 1. Find table of corresponding unit.
@@ -599,11 +598,10 @@ UserExpression BuildComparisonExpression(double value,
   assert(tableIndex < k_numberOfReferenceTables);
   double ratio = value / static_cast<double>(referenceValue->value);
   ReferenceUnit referenceUnit = k_referenceTables[tableIndex].reference;
-  UserExpression unit =
-      UserExpression::Builder(referenceUnit.outputRepresentative
-                                  ? Poincare::Internal::Units::Unit::Push(
-                                        referenceUnit.outputRepresentative)
-                                  : referenceUnit.siVector.toBaseUnits());
+  UserExpression unit = UserExpression::Builder(
+      referenceUnit.outputRepresentative
+          ? Internal::Units::Unit::Push(referenceUnit.outputRepresentative)
+          : referenceUnit.siVector.toBaseUnits());
   // outputRepresentative are expected to be equivalent to SI units.
   assert(
       !referenceUnit.outputRepresentative ||

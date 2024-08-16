@@ -146,9 +146,13 @@ bool SystematicOperation::ReducePower(Tree* e) {
     SystematicReduction::ShallowReduce(e);
     return true;
   }
-  // exp(a)^b -> exp(a*b)
-  return PatternMatching::MatchReplaceSimplify(e, KPow(KExp(KA), KB),
-                                               KExp(KMult(KA, KB)));
+  return
+      // exp(a)^b -> exp(a*b)
+      PatternMatching::MatchReplaceSimplify(e, KPow(KExp(KA), KB),
+                                            KExp(KMult(KA, KB))) ||
+      // sign(x)^-1 -> dep(sign(x), {x^-1})
+      PatternMatching::MatchReplaceSimplify(
+          e, KPow(KSign(KA), -1_e), KDep(KSign(KA), KDepList(KPow(KA, -1_e))));
 }
 
 void SystematicOperation::ConvertPowerRealToPower(Tree* e) {

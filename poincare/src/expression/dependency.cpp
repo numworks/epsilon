@@ -160,9 +160,16 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     /* lnReal(x) contains ln(x)
      * powReal(x,y) contains pow(x,y) */
+    // TODO: we shouldn't have powReal at this step
     return true;
   }
-  // TODO_PCJ if power and same type of power return true
+  if (searched->isPow() && container->isPow() &&
+      searched->child(0)->treeIsIdenticalTo(container->child(0)) &&
+      searched->child(1)->isMinusOne() && container->child(1)->isZero()) {
+    /* x^0 contains x^-1 */
+    // TODO_PCJ add other possibilities (like x^2 contains x^4...)
+    return true;
+  }
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {
       return true;

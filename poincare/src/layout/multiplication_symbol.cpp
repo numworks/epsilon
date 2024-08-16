@@ -131,10 +131,8 @@ LayoutShape LeftLayoutShape(const Tree* e) {
     case Type::ListSlice:
       return BoundaryPunctuation;
 
-#if O  // TODO_PCJ
     case Type::MixedFraction:
       return Integer;
-#endif
 
     case Type::Mult:  // from NAry
       // should be assert(false) ?
@@ -195,10 +193,8 @@ LayoutShape RightLayoutShape(const Tree* e) {
     case Type::Integral:
       return MoreLetters;
 
-#if O  // TODO_PCJ
     case Type::MixedFraction:
       return Fraction;
-#endif
 
     case Type::Mult:  // from NAry
       // should be assert(false) ?

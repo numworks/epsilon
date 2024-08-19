@@ -582,56 +582,6 @@ Expression Trigonometry::ShallowReduceAdvancedFunction(
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::ShallowReduceInverseAdvancedFunction(
-    Expression& e, ReductionContext reductionContext) {
-  assert(IsInverseAdvancedTrigonometryFunction(e));
-  {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
-        e, &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits);
-    if (!eReduced.isUninitialized()) {
-      return eReduced;
-    }
-  }
-  Expression result;
-  // Step 1. Manage specific cases for Arcotangent
-  if (e.type() == ExpressionNode::Type::ArcCotangent) {
-    OMG::Troolean isNull = e.childAtIndex(0).isNull(reductionContext.context());
-    // Step 1.1. Reduce ArcCotangent(0) to π/2
-    if (isNull == OMG::Troolean::True) {
-      result = Multiplication::Builder(
-          PiExpressionInAngleUnit(reductionContext.angleUnit()),
-          Rational::Builder(1, 2));
-      e.replaceWithInPlace(result);
-      return result.shallowReduce(reductionContext);
-    }
-    /* Step 1.2. Do not reduce ArcCotangent when we do not know if child is null
-     * and target is not User. */
-    if (isNull == OMG::Troolean::Unknown &&
-        reductionContext.target() != ReductionTarget::User) {
-      return e;
-    }
-  }
-  // Step 2. Replace with equivalent inverse function on inverse (^-1) argument
-  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
-  switch (e.type()) {
-    case ExpressionNode::Type::ArcSecant:
-      result = ArcCosine::Builder(p);
-      break;
-    case ExpressionNode::Type::ArcCosecant:
-      result = ArcSine::Builder(p);
-      break;
-    default:
-      assert(e.type() == ExpressionNode::Type::ArcCotangent);
-      result = ArcTangent::Builder(p);
-      break;
-  }
-  e.replaceWithInPlace(result);
-  p.shallowReduce(reductionContext);
-  return result.shallowReduce(reductionContext);
-}
-
 Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
                                                      Expression& denominator) {
   /* Replace direct trigonometric function with their advanced counterpart.

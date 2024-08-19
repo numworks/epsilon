@@ -22,14 +22,4 @@ size_t ArcSecantNode::serialize(char* buffer, size_t bufferSize,
       ArcSecant::s_functionHelper.aliasesList().mainAlias());
 }
 
-// TODO_PCJ: Delete this method
-OExpression ArcSecantNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  assert(false);
-  return this;
-  // ArcSecant e = ArcSecant(this);
-  // return Trigonometry::ShallowReduceInverseAdvancedFunction(e,
-  //                                                           reductionContext);
-}
-
 }  // namespace Poincare

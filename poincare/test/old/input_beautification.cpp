@@ -118,56 +118,52 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
       "sum(3,", KRackL(KSumL("k"_l, KRackL(), KRackL(), "3"_l)));
 }
 
-#if 0
-typedef void (LayoutCursor::*AddLayoutPointer)(Context* context);
-typedef void (*CursorAddLayout)(LayoutCursor* cursor, Context* context,
+typedef void (Poincare::Internal::LayoutBufferCursor::*AddLayoutPointer)(
+    Context* context);
+typedef void (*CursorAddLayout)(Poincare::Internal::LayoutBufferCursor* cursor,
+                                Context* context,
                                 AddLayoutPointer optionalAddLayoutFunction);
 
 void assert_apply_beautification_after_layout_insertion(
     CursorAddLayout layoutInsertionFunction,
     AddLayoutPointer optionalAddLayoutFunction = nullptr) {
-  HorizontalLayout horizontalLayout = HorizontalLayout::Builder();
-  LayoutCursor cursor(horizontalLayout);
+  Layout r = KRackL();
+  Poincare::Internal::LayoutBufferCursor c(r, r.tree());
   Shared::GlobalContext context;
-  cursor.insertText("pi", &context);
-  (*layoutInsertionFunction)(&cursor, &context, optionalAddLayoutFunction);
-  Layout piCodePoint = CodePointLayout::Builder(UCodePointGreekSmallLetterPi);
-  if (optionalAddLayoutFunction ==
-      &LayoutCursor::addFractionLayoutAndCollapseSiblings) {
+  c.insertText("pi", &context);
+  (*layoutInsertionFunction)(&c, &context, optionalAddLayoutFunction);
+  if (optionalAddLayoutFunction == &Poincare::Internal::LayoutBufferCursor::
+                                       addFractionLayoutAndCollapseSiblings) {
     // Check numerator of created fraction
-    quiz_assert(horizontalLayout.childAtIndex(0)
-                    .childAtIndex(0)
-                    .childAtIndex(0)
-                    .isIdenticalTo(piCodePoint));
+    quiz_assert(
+        c.rootRack()->child(0)->child(0)->child(0)->treeIsIdenticalTo("π"_cl));
   } else {
-    quiz_assert(horizontalLayout.childAtIndex(0).isIdenticalTo(piCodePoint));
+    quiz_assert(c.rootRack()->child(0)->treeIsIdenticalTo("π"_cl));
   }
 }
-#endif
 
 QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
-#if 0
   AddLayoutPointer layoutInsertionFunction[] = {
-      &LayoutCursor::addFractionLayoutAndCollapseSiblings,
+      &Poincare::Internal::LayoutBufferCursor::
+          addFractionLayoutAndCollapseSiblings,
       /* addEmptyExponentialLayout inserts 2 layouts so it's not beautified.
        * Not a problem until it is reported by users as being a problem .. */
-      // &LayoutCursor::addEmptyExponentialLayout,
-      &LayoutCursor::addEmptyPowerLayout,
-      &LayoutCursor::addEmptySquareRootLayout,
-      &LayoutCursor::addEmptySquarePowerLayout,
-      &LayoutCursor::addEmptyTenPowerLayout,
-      &LayoutCursor::addEmptyMatrixLayout};
+      // &Poincare::Internal::LayoutBufferCursor::addEmptyExponentialLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyPowerLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptySquareRootLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptySquarePowerLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyTenPowerLayout,
+      &Poincare::Internal::LayoutBufferCursor::addEmptyMatrixLayout};
   int numberOfFunctions = std::size(layoutInsertionFunction);
 
   for (int i = 0; i < numberOfFunctions; i++) {
     assert_apply_beautification_after_layout_insertion(
-        [](LayoutCursor* cursor, Context* context,
+        [](Poincare::Internal::LayoutBufferCursor* cursor, Context* context,
            AddLayoutPointer optionalAddLayoutFunction) {
           (cursor->*optionalAddLayoutFunction)(context);
         },
         layoutInsertionFunction[i]);
   }
-#endif
 }
 
 QUIZ_CASE(poincare_input_beautification_derivative) {

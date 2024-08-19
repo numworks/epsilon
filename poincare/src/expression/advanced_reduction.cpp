@@ -30,7 +30,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
    * expression could yield different results if limits have been reached. */
 
   Tree* editedExpression = e->cloneTree();
-  Context ctx(editedExpression, e, Metric::GetMetric(e));
+  Context ctx(editedExpression, e, Metric::GetMetric(e), e->hash());
   // Add initial root
   ctx.m_crcCollection.add(e->hash(), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
@@ -347,9 +347,12 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   std::cout << "\n";
 #endif
 #endif
-  if (metric < ctx->m_bestMetric) {
+  // If metric is the same, compare hash to ensure a deterministic result.
+  if (metric < ctx->m_bestMetric ||
+      (metric == ctx->m_bestMetric && ctx->m_root->hash() > ctx->m_bestHash)) {
     ctx->m_bestMetric = metric;
     ctx->m_bestPath = ctx->m_path;
+    ctx->m_bestHash = ctx->m_root->hash();
   }
   return fullExploration;
 }

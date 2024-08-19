@@ -224,8 +224,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)",
-                "dep(0,{abs(a),abs(b),abs(c)})");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{abs(a×b),abs(c)})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
 }
 
@@ -1155,8 +1154,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("1+ln(x)+ln(y)", "dep(1+ln(x)+ln(y),{ln(x),ln(y)})");
   // TODO: Metric: 2×ln(π)
   simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
-  simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
-                "dep(1-ln(x),{ln(x),arg(1/x),arg(x)})");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1-ln(x),{ln(x)})");
   simplifies_to("1-ln(x)", "1-ln(x)", cartesianCtx);
   // TODO: Should simplify to undef
   simplifies_to("ln(0)", "ln(0)");

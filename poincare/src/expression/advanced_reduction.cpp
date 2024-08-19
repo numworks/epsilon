@@ -30,9 +30,10 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
    * expression could yield different results if limits have been reached. */
 
   Tree* editedExpression = e->cloneTree();
-  Context ctx(editedExpression, e, Metric::GetMetric(e), e->hash());
+  Context ctx(editedExpression, e, Metric::GetMetric(e),
+              CrcCollection::AdvancedHash(e));
   // Add initial root
-  ctx.m_crcCollection.add(e->hash(), 0);
+  ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
   e->logSerialize();
@@ -266,7 +267,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
       uint32_t hash;
       if (rootChanged) {
         // No need to recompute hash if root did not change.
-        hash = ctx->m_root->hash();
+        hash = CrcCollection::AdvancedHash(ctx->m_root);
       }
       /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
        * not go further. */
@@ -349,10 +350,11 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
 #endif
   // If metric is the same, compare hash to ensure a deterministic result.
   if (metric < ctx->m_bestMetric ||
-      (metric == ctx->m_bestMetric && ctx->m_root->hash() > ctx->m_bestHash)) {
+      (metric == ctx->m_bestMetric &&
+       CrcCollection::AdvancedHash(ctx->m_root) > ctx->m_bestHash)) {
     ctx->m_bestMetric = metric;
     ctx->m_bestPath = ctx->m_path;
-    ctx->m_bestHash = ctx->m_root->hash();
+    ctx->m_bestHash = CrcCollection::AdvancedHash(ctx->m_root);
   }
   return fullExploration;
 }

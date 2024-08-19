@@ -38,6 +38,10 @@ class AdvancedReduction {
     // Return false if hash was already explored
     bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
+    // Ignore dependencies in hash
+    static uint32_t AdvancedHash(const Tree* e) {
+      return (e->isDep() ? e->child(0) : e)->hash();
+    }
 
    private:
     // Max Expand/Contract combination possibilities

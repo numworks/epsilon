@@ -130,6 +130,9 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " rightIsTemporary="
            << AutocompletedPair::IsTemporary(this, Side::Right);
   }
+  if (isDiffLayout()) {
+    stream << " isNthDerivative=" << toDiffLayoutNode()->isNthDerivative;
+  }
 }
 
 void Tree::logSerialize(std::ostream& stream) const {

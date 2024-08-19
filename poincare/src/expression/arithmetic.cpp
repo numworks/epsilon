@@ -71,7 +71,8 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return true;
   }
 
-  if (!Dimension::Get(child).isScalar() || Dimension::IsList(child)) {
+  assert(Dimension::Get(child).isScalar());
+  if (Dimension::IsList(child)) {
     return false;
   }
   /* TODO: Escape to undef if child is complex, instead of relying on final

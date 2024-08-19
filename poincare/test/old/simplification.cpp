@@ -835,17 +835,17 @@ QUIZ_CASE(poincare_simplification_units) {
                                        Radian, Imperial);
   assert_parsed_expression_simplify_to("abs(_s)", "1×_s");
   assert_parsed_expression_simplify_to("abs(3_m)", "3×_m");
-  assert_parsed_expression_simplify_to("ceil(3.3_m)", "4×_m");
-  assert_parsed_expression_simplify_to("floor(_s)", "1×_s");
-  assert_parsed_expression_simplify_to("floor(3.3_m)", "3×_m");
-  assert_parsed_expression_simplify_to("round(3.3_m, 0)", "3×_m");
-  assert_parsed_expression_simplify_to("round(_s,1)", "1×_s");
-  assert_parsed_expression_simplify_to("sign(-2_m)", "-1");
-  assert_parsed_expression_simplify_to("sign(4_m)", "1");
-  assert_parsed_expression_simplify_to("sign(_s)", "1");
+  assert_parsed_expression_simplify_to("ceil(3.3_m)", Undefined::Name());
+  assert_parsed_expression_simplify_to("floor(_s)", Undefined::Name());
+  assert_parsed_expression_simplify_to("floor(3.3_m)", Undefined::Name());
+  assert_parsed_expression_simplify_to("round(3.3_m, 0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("round(_s,1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sign(-2_m)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sign(4_m)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sign(_s)", Undefined::Name());
   assert_parsed_expression_simplify_to(
-      "abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "14×_m");
-  assert_parsed_expression_simplify_to("sign(3_m) + 2", "3");
+      "abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sign(3_m) + 2", Undefined::Name());
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("10000_kg", "10×_t");
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");

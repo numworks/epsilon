@@ -1072,6 +1072,12 @@ bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
+bool NewExpression::isNumber() const {
+  return !isUninitialized() &&
+         (tree()->isRationalOrFloat() || tree()->isInf() ||
+          tree()->isUndefined() || tree()->isDecimal());
+};
+
 bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
 }

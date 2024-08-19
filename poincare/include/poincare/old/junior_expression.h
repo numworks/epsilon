@@ -397,6 +397,7 @@ class JuniorExpression : public OExpression {
   bool isPureAngleUnit() const;
   bool isInRadians(Context* context) const;
   bool involvesDiscontinuousFunction(Context* context) const;
+  bool isNumber() const;
 #endif
 #if 1
   /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression

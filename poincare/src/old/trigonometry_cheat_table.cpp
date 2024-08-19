@@ -22,6 +22,7 @@ OExpression TrigonometryCheatTable::Row::Pair::reducedExpression(
 OExpression TrigonometryCheatTable::simplify(
     const OExpression e, ExpressionNode::Type type,
     const ReductionContext& reductionContext) const {
+  // TODO_PCJ: check it is implemented in PCJ
   assert(type == ExpressionNode::Type::Sine ||
          type == ExpressionNode::Type::Cosine ||
          type == ExpressionNode::Type::Tangent ||

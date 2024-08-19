@@ -403,6 +403,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
     return true;
   }
+  // TODO_PCJ: Reduce atan(1/x) in dep(sign(x)*π/2-atan(x),{1/x})
   return false;
 }
 

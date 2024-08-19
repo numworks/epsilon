@@ -26,16 +26,6 @@ size_t ArcCosineNode::serialize(char* buffer, size_t bufferSize,
       this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
       ArcCosine::s_functionHelper.aliasesList().mainAlias());
 }
-
-// TODO_PCJ: Delete this method
-OExpression ArcCosineNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  assert(false);
-  return this;
-  // ArcCosine e = ArcCosine(this);
-  // return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
-}
-
 bool ArcCosineNode::derivate(const ReductionContext& reductionContext,
                              Symbol symbol, OExpression symbolValue) {
   return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);

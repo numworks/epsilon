@@ -26,15 +26,6 @@ size_t ArcSineNode::serialize(char* buffer, size_t bufferSize,
       ArcSine::s_functionHelper.aliasesList().mainAlias());
 }
 
-// TODO_PCJ: Delete this method
-OExpression ArcSineNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  assert(false);
-  return this;
-  // ArcSine e = ArcSine(this);
-  // return Trigonometry::ShallowReduceInverseFunction(e, reductionContext);
-}
-
 bool ArcSineNode::derivate(const ReductionContext& reductionContext,
                            Symbol symbol, OExpression symbolValue) {
   return ArcSine(this).derivate(reductionContext, symbol, symbolValue);

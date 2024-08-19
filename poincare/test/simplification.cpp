@@ -321,8 +321,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("conj(conj(f(x)))", "dep(f(x),{im(f(x))})", ctx);
   simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
   simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{im(f(y)),re(f(y))})", ctx);
-  // TODO_PCJ: should reduce to re(f(y))
-  simplifies_to("im(i×f(y))", "im(f(y)×i)", ctx);
+  simplifies_to("im(i×f(y))", "dep(re(f(y)),{im(f(y))})", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
   simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",
@@ -494,10 +493,10 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
                 "(1+e^(2×x))^2)×(-1+e^(4×x)))/(2×(1+e^(4×x)))");
-  simplifies_to("arcosh(5)", "ln(5+2×√(6))", cartesianCtx);
+  simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
-  simplifies_to("arsinh(sinh(x))", "ln((e^x-e^(-x))/2+√((e^x-e^(-x))^2/4+1))",
-                cartesianCtx);
+  simplifies_to("arsinh(sinh(x))",
+                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
   // TODO: Should simplify to x and overflow the pool
   // simplifies_to(
   //     "artanh(tanh(x))",
@@ -1156,7 +1155,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("1+ln(x)+ln(y)", "dep(1+ln(x)+ln(y),{ln(x),ln(y)})");
   // TODO: Metric: 2×ln(π)
   simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
-  simplifies_to("cos(x)^2+sin(x)^2-ln(x)", "dep(1-ln(x),{ln(x)})");
+  simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
+                "dep(1-ln(x),{ln(x),arg(1/x),arg(x)})");
   simplifies_to("1-ln(x)", "1-ln(x)", cartesianCtx);
   // TODO: Should simplify to undef
   simplifies_to("ln(0)", "ln(0)");

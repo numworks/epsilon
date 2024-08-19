@@ -22,13 +22,4 @@ size_t CosecantNode::serialize(char* buffer, size_t bufferSize,
       Cosecant::s_functionHelper.aliasesList().mainAlias());
 }
 
-// TODO_PCJ: Delete this method
-OExpression CosecantNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  assert(false);
-  return this;
-  // Cosecant e = Cosecant(this);
-  // return Trigonometry::ShallowReduceAdvancedFunction(e, reductionContext);
-}
-
 }  // namespace Poincare

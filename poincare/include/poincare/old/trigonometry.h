@@ -33,8 +33,6 @@ class Trigonometry final {
 #if 0
   static Expression ShallowReduceDirectFunction(
       Expression& e, ReductionContext reductionContext);
-  static Expression ShallowReduceAdvancedFunction(
-      Expression& e, ReductionContext reductionContext);
   static Expression ReplaceWithAdvancedFunction(Expression& e,
                                                 Expression& denominator);
 #endif

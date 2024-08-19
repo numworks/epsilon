@@ -393,47 +393,6 @@ Expression Trigonometry::ShallowReduceDirectFunction(
   return e;
 }
 
-Expression Trigonometry::ShallowReduceAdvancedFunction(
-    Expression& e, ReductionContext reductionContext) {
-  /* Since the child always ends in a direct function, angle units are left
-   * untouched here */
-  assert(IsAdvancedTrigonometryFunction(e));
-  {
-    Expression eReduced = SimplificationHelper::defaultShallowReduce(
-        e, &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::KeepUnits);
-    if (!eReduced.isUninitialized()) {
-      return eReduced;
-    }
-  }
-  // Step 0. Replace with inverse (^-1) of equivalent direct function.
-  Expression result;
-  switch (e.type()) {
-    case ExpressionNode::Type::Secant:
-      result = Cosine::Builder(e.childAtIndex(0));
-      break;
-    case ExpressionNode::Type::Cosecant:
-      result = Sine::Builder(e.childAtIndex(0));
-      break;
-    default:
-      assert(e.type() == ExpressionNode::Type::Cotangent);
-      // Use cot(x)=cos(x)/sin(x) definition to handle cot(pi/2)=0
-      Cosine c = Cosine::Builder(e.childAtIndex(0).clone());
-      Sine s = Sine::Builder(e.childAtIndex(0));
-      Division d = Division::Builder(c, s);
-      e.replaceWithInPlace(d);
-      c.shallowReduce(reductionContext);
-      s.shallowReduce(reductionContext);
-      return d.shallowReduce(reductionContext);
-      break;
-  }
-  Power p = Power::Builder(result, Rational::Builder(-1));
-  e.replaceWithInPlace(p);
-  result.shallowReduce(reductionContext);
-  return p.shallowReduce(reductionContext);
-}
-
 Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
                                                      Expression& denominator) {
   /* Replace direct trigonometric function with their advanced counterpart.

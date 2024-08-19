@@ -171,45 +171,26 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
 }
 
 QUIZ_CASE(poincare_input_beautification_derivative) {
-#if 0
   Shared::GlobalContext context;
 
-  const HorizontalLayout firstOrderDerivative =
-      HorizontalLayout::Builder(FirstOrderDerivativeLayout::Builder(
-          HorizontalLayout::Builder(),
-          HorizontalLayout::Builder(CodePointLayout::Builder('x')),
-          HorizontalLayout::Builder()));
-  const HorizontalLayout nthOrderDerivative =
-      HorizontalLayout::Builder(HigherOrderDerivativeLayout::Builder(
-          HorizontalLayout::Builder(),
-          HorizontalLayout::Builder(CodePointLayout::Builder('x')),
-          HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+  const Layout firstOrderDerivative =
+      KRackL(KDiffL("x"_l, KRackL(), "1"_l, KRackL()));
+  const Layout nthOrderDerivative =
+      KRackL(KNthDiffL("x"_l, KRackL(), KRackL(), KRackL()));
 
   // Test d/dx()->diff()
   {
-    HorizontalLayout h = HorizontalLayout::Builder(FractionLayout::Builder(
-        HorizontalLayout::Builder(CodePointLayout::Builder('d')),
-        HorizontalLayout::Builder(CodePointLayout::Builder('d'),
-                                  CodePointLayout::Builder('x'))));
-    LayoutCursor cursor(h);
-    cursor.insertText("(", &context);
-    quiz_assert(h.isIdenticalTo(firstOrderDerivative));
+    Layout l = KRackL(KFracL("d"_l, "dx"_l));
+    Poincare::Internal::LayoutBufferCursor c(l, l.tree());
+    c.insertText("(", &context);
+    quiz_assert(c.rootRack()->treeIsIdenticalTo(firstOrderDerivative.tree()));
   }
 
   // Test d/dx^▯->d^▯/dx^▯
   {
-    Layout h = firstOrderDerivative.clone();
-    LayoutCursor cursor(h.childAtIndex(0).childAtIndex(1));
-    cursor.addEmptyPowerLayout(&context);
-    quiz_assert(h.isIdenticalTo(nthOrderDerivative));
+    Layout l = firstOrderDerivative;
+    Poincare::Internal::LayoutBufferCursor c(l, l.tree()->child(0)->child(0));
+    c.addEmptyPowerLayout(&context);
+    quiz_assert(c.rootRack()->treeIsIdenticalTo(nthOrderDerivative.tree()));
   }
-
-  // d/d|x -> "Power" -> d^▯/dx^▯
-  {
-    Layout h = firstOrderDerivative.clone();
-    LayoutCursor cursor(h.childAtIndex(0).childAtIndex(1));
-    cursor.addEmptyPowerLayout(&context);
-    quiz_assert(h.isIdenticalTo(nthOrderDerivative));
-  }
-#endif
 }

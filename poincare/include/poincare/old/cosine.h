@@ -27,7 +27,6 @@ class CosineNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplication
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

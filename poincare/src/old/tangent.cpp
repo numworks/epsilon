@@ -26,11 +26,6 @@ size_t TangentNode::serialize(char* buffer, size_t bufferSize,
       Tangent::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression TangentNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Tangent(this).shallowReduce(reductionContext);
-}
-
 bool TangentNode::derivate(const ReductionContext& reductionContext,
                            Symbol symbol, OExpression symbolValue) {
   return Tangent(this).derivate(reductionContext, symbol, symbolValue);
@@ -39,24 +34,6 @@ bool TangentNode::derivate(const ReductionContext& reductionContext,
 OExpression TangentNode::unaryFunctionDifferential(
     const ReductionContext& reductionContext) {
   return Tangent(this).unaryFunctionDifferential(reductionContext);
-}
-
-// TODO_PCJ: Delete this method
-OExpression Tangent::shallowReduce(ReductionContext reductionContext) {
-  assert(false);
-  return OExpression();
-  // OExpression newExpression =
-  //     Trigonometry::ShallowReduceDirectFunction(*this, reductionContext);
-  // if (newExpression.otype() == ExpressionNode::Type::Tangent) {
-  //   Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
-  //   Cosine c = Cosine::Builder(newExpression.childAtIndex(0));
-  //   Division d = Division::Builder(s, c);
-  //   s.shallowReduce(reductionContext);
-  //   c.shallowReduce(reductionContext);
-  //   newExpression.replaceWithInPlace(d);
-  //   return d.shallowReduce(reductionContext);
-  // }
-  // return newExpression;
 }
 
 bool Tangent::derivate(const ReductionContext& reductionContext, Symbol symbol,

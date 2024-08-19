@@ -192,6 +192,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
     e->moveNodeAtNode(SharedTreeStack->pushMult(2));
     SystematicReduction::ShallowReduce(e);
   }
+  // TODO_PCJ: cos(atan(x)) -> 1/sqrt(1+x^2) and sin(atan(x))-> x/sqrt(1+x^2)
   return changed;
 }
 

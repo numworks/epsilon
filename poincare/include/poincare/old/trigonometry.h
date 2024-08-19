@@ -31,8 +31,6 @@ class Trigonometry final {
   static bool ExpressionIsEquivalentToInverseOfTangent(const UserExpression& e);
   // TODO_PCJ: Delete these method
 #if 0
-  static Expression ShallowReduceDirectFunction(
-      Expression& e, ReductionContext reductionContext);
   static Expression ReplaceWithAdvancedFunction(Expression& e,
                                                 Expression& denominator);
 #endif

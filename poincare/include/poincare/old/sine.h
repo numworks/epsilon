@@ -28,7 +28,6 @@ class SineNode final : public ExpressionNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplication
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

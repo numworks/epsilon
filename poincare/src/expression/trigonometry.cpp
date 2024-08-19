@@ -17,28 +17,6 @@
 
 namespace Poincare::Internal {
 
-bool Trigonometry::IsDirect(const Tree* e) {
-  switch (e->type()) {
-    case Type::Cos:
-    case Type::Sin:
-    case Type::Tan:
-      return true;
-    default:
-      return false;
-  }
-}
-
-bool Trigonometry::IsInverse(const Tree* e) {
-  switch (e->type()) {
-    case Type::ACos:
-    case Type::ASin:
-    case Type::ATan:
-      return true;
-    default:
-      return false;
-  }
-}
-
 const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   // Sin and cos are 2pi periodic. With sin(n*π/120), n goes from 0 to 239.
   n = n % 240;

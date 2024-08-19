@@ -9,8 +9,6 @@ namespace Poincare::Internal {
 
 class Trigonometry final {
  public:
-  static bool IsDirect(const Tree* e);
-  static bool IsInverse(const Tree* e);
   static bool ReduceTrig(Tree* e);
   TREE_REF_WRAP(ReduceTrig);
   static bool ReduceTrigDiff(Tree* e);

@@ -344,6 +344,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/expression_properties.cpp \
   old/expression_to_layout.cpp \
   old/helper.cpp \
+  old/input_beautification.cpp \
   old/layout.cpp \
   old/layout_cursor.cpp \
   old/layout_serialization.cpp \

@@ -1374,11 +1374,10 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is(
       "-1x", Opposite::Builder(Multiplication::Builder(
                  BasedInteger::Builder(1), Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "2×1x", Multiplication::Builder(
-                  BasedInteger::Builder(2),
-                  Multiplication::Builder(BasedInteger::Builder(1),
-                                          Symbol::Builder("x", 1))));
+  assert_parsed_expression_is("2×1x",
+                              Multiplication::Builder(BasedInteger::Builder(2),
+                                                      BasedInteger::Builder(1),
+                                                      Symbol::Builder("x", 1)));
   assert_parsed_expression_is(
       "2^1x", Multiplication::Builder(Power::Builder(BasedInteger::Builder(2),
                                                      BasedInteger::Builder(1)),

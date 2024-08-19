@@ -232,17 +232,8 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
 
   // Piecewise
   using namespace Poincare::Internal;
-  // TODO: this is tedious and fragile
-  Tree* p = SharedTreeStack->pushRackLayout(1);
-  SharedTreeStack->pushPiecewiseLayout(4, 2);
-  "3"_l->cloneTree();
-  "2>3"_l->cloneTree();
-  "2"_l->cloneTree();
-  "2<3"_l->cloneTree();
-  "1"_l->cloneTree();
-  ""_l->cloneTree();
-  ""_l->cloneTree();
-  ""_l->cloneTree();
+  Tree* p = KRackL(KPiecewise3L("3"_l, "2>3"_l, "2"_l, "2<3"_l, "1"_l, ""_l))
+                ->cloneTree();
   l = Layout::Builder(p);
 
   OList args = OList::Builder();

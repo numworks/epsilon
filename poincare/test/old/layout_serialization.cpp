@@ -101,14 +101,7 @@ QUIZ_CASE(poincare_layout_serialization) {
                               "2^\x12x+5\x13");
 
   // Piecewise
-  Tree *p = SharedTreeStack->pushPiecewiseLayout(4, 2);
-  "3"_l->cloneTree();
-  "2>3"_l->cloneTree();
-  "2"_l->cloneTree();
-  "2<3"_l->cloneTree();
-  "1"_l->cloneTree();
-  KRackL()->cloneTree();
-  KRackL()->cloneTree();  // last empty row for input
-  KRackL()->cloneTree();  // last empty row for input
-  assert_layout_serializes_to(p, "piecewise(3,2>3,2,2<3,1)");
+  assert_layout_serializes_to(
+      KRackL(KPiecewise3L("3"_l, "2>3"_l, "2"_l, "2<3"_l, "1"_l, ""_l)),
+      "piecewise(3,2>3,2,2<3,1)");
 }

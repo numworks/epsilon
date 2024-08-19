@@ -68,6 +68,25 @@ constexpr auto KMatrix2x2L(A, B, C, D) {
             0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
 }
 
+template <KTreeConcept A, KTreeConcept B>
+constexpr auto KPiecewise1L(A, B) {
+  return Concat<KTree<Type::PiecewiseLayout, 2, 2>, A, B,
+                KTree<Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
+}
+
+template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D>
+constexpr auto KPiecewise2L(A, B, C, D) {
+  return Concat<KTree<Type::PiecewiseLayout, 3, 2>, A, B, C, D,
+                KTree<Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
+}
+
+template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D,
+          KTreeConcept E, KTreeConcept F>
+constexpr auto KPiecewise3L(A, B, C, D, E, F) {
+  return Concat<KTree<Type::PiecewiseLayout, 4, 2>, A, B, C, D, E, F,
+                KTree<Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
+}
+
 constexpr auto KConjL = KUnary<Type::ConjLayout>();
 constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
 constexpr auto KRootL = KBinary<Type::RootLayout>();

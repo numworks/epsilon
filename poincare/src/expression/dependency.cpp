@@ -167,7 +167,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
       searched->child(1)->isMinusOne() && container->child(1)->isZero()) {
     /* x^0 contains x^-1 */
     /* TODO_PCJ
-     * - add other possibilities (like x^1/4 contains x^1/2, x^-n contains x^n)
+     * - add other possibilities (like x^1/4 contains x^1/2, x^-n contains x^n
+     *   with n positive integer)
      * - with PowReal */
     return true;
   }
@@ -214,7 +215,7 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       changed = true;
       continue;
     }
-    // TODO: pow(x,n) -> x?
+    // TODO: pow(x,n) -> x with n positive integer?
     depI = depI->nextTree();
   }
   if (changed) {

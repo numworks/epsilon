@@ -356,8 +356,6 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
 }
 
 bool SystematicOperation::ReduceSign(Tree* e) {
-  /* TODO: if Mult, remove elements for which sign can be computed (either with
-   * GetComplexSign or because it can be approximated) */
   assert(e->isSign());
   const Tree* child = e->child(0);
   ComplexSign sign = GetComplexSign(child);

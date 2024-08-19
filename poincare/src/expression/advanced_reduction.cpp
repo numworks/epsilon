@@ -448,4 +448,7 @@ bool AdvancedReduction::TryOneOperation(Tree* e,
   return false;
 }
 
+/* TODO: sign(A*B) <-> sign(A) * sign(B)
+ * It may not work at all with complexes. */
+
 }  // namespace Poincare::Internal

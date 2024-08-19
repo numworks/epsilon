@@ -34,7 +34,7 @@ class AdvancedReduction {
   // Ordered list of hashes encountered during advanced reduction.
   class CrcCollection {
    public:
-    CrcCollection() : m_length(0) {}
+    CrcCollection() : m_length(0), m_maxDepth(ADVANCED_MAX_DEPTH) {}
     // Return false if hash was already explored
     bool add(uint32_t crc, uint8_t depth);
     bool isFull() const { return m_length >= k_size; }
@@ -42,14 +42,23 @@ class AdvancedReduction {
     static uint32_t AdvancedHash(const Tree* e) {
       return (e->isDep() ? e->child(0) : e)->hash();
     }
+    uint8_t maxDepth() const { return m_maxDepth; }
 
    private:
+    /* Discard the hashes encountered with the lowest depth, to continue advance
+     * reduction at lower max depth. BestPath won't be discarded, but remaining
+     * branches will be explored at lower depths. */
+    void decreaseMaxDepth();
     // Max Expand/Contract combination possibilities
     constexpr static size_t k_size = ADVANCED_MAX_BREADTH;
     uint32_t m_collection[k_size];
-    // Depth at which each crc has been explored
+    // Depth and Available depth at which each possibilities have been explored
+    // TODO: Since ADVANCED_MAX_DEPTH is small, we could use a bitfield here.
     uint8_t m_depth[k_size];
+    uint8_t m_availableDepth[k_size];
     size_t m_length;
+    // Max depths at which a hash will be handled.
+    uint8_t m_maxDepth;
   };
 
   // Store a direction. NextNode can be applied multiple times.

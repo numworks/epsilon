@@ -75,10 +75,15 @@ bool AdvancedReduction::Reduce(Tree* e) {
 }
 
 bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
-  if (isFull()) {
-    // Behave as if all trees had already been tested.
+  if (depth > m_maxDepth) {
+    // Escape if depth is too high, behave as if tree had already been tested.
     return false;
   }
+  if (isFull()) {
+    decreaseMaxDepth();
+    return !isFull() && add(crc, depth);
+  }
+  int8_t availableDepth = m_maxDepth - depth;
   // TODO: Maybe use a dichotomic search.
   for (size_t i = 0; i < m_length; i++) {
     uint32_t crc_i = m_collection[i];
@@ -86,25 +91,74 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
       continue;
     }
     if (crc_i == crc) {
-      if (m_depth[i] <= depth) {
+      if (m_depth[i] > depth) {
+        // Keep smallest depth
+        m_depth[i] = depth;
+      }
+      if (m_availableDepth[i] >= availableDepth) {
+        // Already explored with a bigger available depth.
         return false;
       }
-      // There might be new nodes to explore if more resources are available.
-      m_depth[i] = depth;
+      // There are new nodes to explore with more resources
+      m_availableDepth[i] = availableDepth;
       return true;
     }
-    // Insert CRC32 and depth
+    // Insert CRC32, availableDepth and depth
     memmove(m_collection + i + 1, m_collection + i,
             sizeof(*m_collection) * (m_length - i));
+    memmove(m_availableDepth + i + 1, m_availableDepth + i,
+            sizeof(*m_availableDepth) * (m_length - i));
     memmove(m_depth + i + 1, m_depth + i, sizeof(*m_depth) * (m_length - i));
     m_length++;
     m_collection[i] = crc;
+    m_availableDepth[i] = availableDepth;
     m_depth[i] = depth;
     return true;
   }
+  m_availableDepth[m_length] = availableDepth;
   m_depth[m_length] = depth;
   m_collection[m_length++] = crc;
   return true;
+}
+
+void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
+  LogIndent();
+  assert(isFull());
+  std::cout << "CrcCollection had a " << (int)m_maxDepth
+            << " max depth and is full. ";
+#endif
+  // Find the smallest available depth in CRC collection
+  m_maxDepth = 0;
+  size_t firstMaxDepthIndex = 0;
+  for (size_t i = 0; i < m_length; i++) {
+    uint8_t depth = m_depth[i];
+    if (m_maxDepth < depth) {
+      m_maxDepth = depth;
+      firstMaxDepthIndex = i;
+    }
+  }
+  // Decrement maxDepth
+  m_maxDepth--;
+  // Remove all CRC explored at maxDepth
+  size_t i = firstMaxDepthIndex;
+  while (i < m_length) {
+    if (m_depth[i] > m_maxDepth) {
+      memmove(m_depth + i, m_depth + i + 1,
+              (m_length - i - 1) * sizeof(*m_depth));
+      memmove(m_availableDepth + i, m_availableDepth + i + 1,
+              (m_length - i - 1) * sizeof(*m_availableDepth));
+      memmove(m_collection + i, m_collection + i + 1,
+              (m_length - i - 1) * sizeof(*m_collection));
+      m_length--;
+    } else {
+      i++;
+    }
+  }
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
+  std::cout << "Remove " << (int)(k_size - m_length)
+            << " elements at maxDepth.\n";
+#endif
 }
 
 bool SkipTree(const Tree* e) {
@@ -237,6 +291,14 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   } else {
     bool isLeaf = true;
     for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
+      if (ctx->m_crcCollection.maxDepth() < ctx->m_path.length()) {
+        fullExploration = false;
+        break;
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+        LogIndent();
+        std::cout << "CRC maxDepth has been reduced.\n";
+#endif
+      }
       Direction dir = Direction::SingleDirectionForIndex(i);
       if (ctx->m_mustResetRoot) {
         // Reset root to current path
@@ -293,6 +355,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         }
 #endif
         isLeaf = false;
+        assert(ctx->m_crcCollection.maxDepth() >= ctx->m_path.length());
         bool canAddDir = ctx->m_path.append(dir);
         assert(canAddDir);
         (void)canAddDir;

@@ -95,8 +95,8 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
     }
     // Insert CRC32 and depth
     memmove(m_collection + i + 1, m_collection + i,
-            sizeof(uint32_t) * (m_length - i));
-    memmove(m_depth + i + 1, m_depth + i, sizeof(uint8_t) * (m_length - i));
+            sizeof(*m_collection) * (m_length - i));
+    memmove(m_depth + i + 1, m_depth + i, sizeof(*m_depth) * (m_length - i));
     m_length++;
     m_collection[i] = crc;
     m_depth[i] = depth;

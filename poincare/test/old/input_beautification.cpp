@@ -171,8 +171,6 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
 }
 
 QUIZ_CASE(poincare_input_beautification_derivative) {
-  Shared::GlobalContext context;
-
   const Layout firstOrderDerivative =
       KRackL(KDiffL("x"_l, KRackL(), "1"_l, KRackL()));
   const Layout nthOrderDerivative =
@@ -182,7 +180,7 @@ QUIZ_CASE(poincare_input_beautification_derivative) {
   {
     Layout l = KRackL(KFracL("d"_l, "dx"_l));
     Poincare::Internal::LayoutBufferCursor c(l, l.tree());
-    c.insertText("(", &context);
+    c.insertText("(");
     quiz_assert(c.rootRack()->treeIsIdenticalTo(firstOrderDerivative.tree()));
   }
 
@@ -190,7 +188,7 @@ QUIZ_CASE(poincare_input_beautification_derivative) {
   {
     Layout l = firstOrderDerivative;
     Poincare::Internal::LayoutBufferCursor c(l, l.tree()->child(0)->child(0));
-    c.addEmptyPowerLayout(&context);
+    c.addEmptyPowerLayout(nullptr);
     quiz_assert(c.rootRack()->treeIsIdenticalTo(nthOrderDerivative.tree()));
   }
 }

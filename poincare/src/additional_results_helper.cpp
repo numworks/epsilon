@@ -310,8 +310,8 @@ IntegerHandler extractInteger(const Tree* e) {
   return Integer::Handler(e);
 }
 
-SystemExpression AdditionalResultsHelper::GetRational(const UserExpression e,
-                                                      bool negative) {
+SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
+                                                         bool negative) {
   const Tree* eTree = e.tree();
   IntegerHandler numerator = extractInteger(eTree->child(0));
   if (negative) {
@@ -341,7 +341,7 @@ SystemExpression AdditionalResultsHelper::CreateEuclideanDivision(
   return result;
 }
 
-SystemExpression AdditionalResultsHelper::GetMixedFraction(
+SystemExpression AdditionalResultsHelper::CreateMixedFraction(
     SystemExpression rational, bool mixedFractionsEnabled) {
   return SystemExpression::Builder(
       Rational::CreateMixedFraction(rational, mixedFractionsEnabled));

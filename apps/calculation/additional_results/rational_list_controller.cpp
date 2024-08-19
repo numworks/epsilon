@@ -44,8 +44,8 @@ void RationalListController::computeAdditionalResults(
   assert(div.type() == ExpressionNode::Type::Division);
 
   SystemExpression rational =
-      AdditionalResultsHelper::GetRational(div, negative);
-  SystemExpression mixedFraction = AdditionalResultsHelper::GetMixedFraction(
+      AdditionalResultsHelper::CreateRational(div, negative);
+  SystemExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
       rational,
       GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
           Preferences::MixedFractions::Enabled);

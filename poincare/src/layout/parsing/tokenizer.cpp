@@ -185,6 +185,8 @@ Token Tokenizer::popToken() {
         type = Token::Type::PrefixSuperscript;
       }
     }
+    // Layout separators should have been stripped.
+    assert(!layout->isSeparatorLayout());
     return Token(type, layout);
   }
 

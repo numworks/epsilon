@@ -24,6 +24,7 @@ bool ExactAndApproximateExpressionsAreStriclyEqual(const Tree* exact,
      * 0.63 with 2 digits. But until now the app will call this with the
      * truncated float. */
     Tree* layout = Layouter::LayoutExpression(approximate->cloneTree());
+    Layouter::StripSeparators(layout);
     Tree* parsed = Parser::Parse(layout, nullptr);
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
            (parsed->isOpposite() && parsed->child(0)->isRationalOrFloat() ||

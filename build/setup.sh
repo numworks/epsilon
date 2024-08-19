@@ -74,6 +74,11 @@ install_macos_binary_deps() {
 }
 
 install_linux_binary_deps() {
+  # add the "debian testing" sources
+  if ! [ -f "/etc/apt/sources.list.d/debian-testing.list" ]; then
+    sudo bash -c "echo deb http://deb.debian.org/debian testing main >> /etc/apt/sources.list.d/debian-testing.list"
+  fi
+  sudo apt update && sudo apt upgrade
   sudo apt-get install \
     build-essential \
     clang-format \

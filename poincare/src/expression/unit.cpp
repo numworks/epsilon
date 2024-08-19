@@ -1200,9 +1200,7 @@ bool Unit::KeepUnitsOnly(Tree* e) {
       e->moveTreeOverTree(e->child(Parametric::FunctionIndex(e->type())));
       didRemovedTree = KeepUnitsOnly(e);
       break;
-    case Type::Round:
-    case Type::Floor:
-    case Type::Ceil:
+    case Type::Abs:
       e->moveTreeOverTree(e->child(0));
       didRemovedTree = KeepUnitsOnly(e);
       break;

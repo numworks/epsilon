@@ -351,10 +351,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::Cross:
       return childDim[0].isVector() && (childDim[0] == childDim[1]) &&
              (childDim[0].matrix.rows == 3 || childDim[0].matrix.cols == 3);
-
-    case Type::Round:
-      return (childDim[0].isScalar() || childDim[0].isUnit()) &&
-             childDim[1].isScalar();
     case Type::Piecewise: {
       /* A piecewise can contain any type provided it is the same everywhere
        * Conditions are stored on odd indices and should be booleans */
@@ -409,10 +405,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       [[fallthrough]];
     }
     case Type::Abs:
-    case Type::Floor:
-    case Type::Ceil:
-    case Type::Sign:
-      // case Type::Sqrt: TODO: Handle _m^(1/2)
+      // case Type::Sqrt:  TODO: Handle _m^(1/2)
       unitsAllowed = true;
       break;
     case Type::Matrix:
@@ -518,9 +511,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Abs:
     case Type::Opposite:
     case Type::Sqrt:
-    case Type::Floor:
-    case Type::Ceil:
-    case Type::Round:
     case Type::Add:
     case Type::Sub:
     case Type::Cross:

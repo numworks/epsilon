@@ -559,7 +559,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("floor(8/3)", "2");
   simplifies_to("round(1/3,2)", "33/100");
-  simplifies_to("round(3.3_m)", "3×_m");
+  simplifies_to("round(3.3_m)", "undef");
   // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
@@ -753,6 +753,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^-1");
+  simplifies_to("abs(-3.3_m)", "3.3×_m");
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");

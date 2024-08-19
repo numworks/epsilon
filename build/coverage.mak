@@ -58,7 +58,7 @@ endef
 define generate_coverage_info
 	@echo Generating coverage info for files in $2. Result will be stored in $2/$1.info.
 	lcov --capture --directory $2 --output-file $2/$1.info
-	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info
+	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info --ignore-errors unused
 endef
 
 # rule_for_coverage_info,<coverage_dir>

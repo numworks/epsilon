@@ -93,10 +93,9 @@ QUIZ_CASE(pcj_simplification_contraction) {
                     KAbs(KMult("e"_e, "f"_e))),
 
               KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
-  // TODO: Raise an assertion in addition simplification
-  // contract_to(
-  //     KAdd("e"_e, "f"_e, KLn("a"_e), KLn("b"_e), KLn(KMult("c"_e, "d"_e))),
-  //     KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
+  contract_to(
+      KAdd("e"_e, "f"_e, KLn(π_e), KLn(KMult(2_e, e_e))),
+      KDep(KAdd("e"_e, "f"_e, KLn(KMult(2_e, π_e, e_e))), KDepList(i_e)));
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));
@@ -499,11 +498,11 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
                 "ln(e^x/2-e^(-x)/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
-  // TODO: Should simplify to x and overflow the pool
-  // simplifies_to(
-  //     "artanh(tanh(x))",
-  //     "ln((1+(-1+e^(2×x))/(1+e^(2×x)))/(1-(-1+e^(2×x))/(1+e^(2×x))))/2",
-  //     cartesianCtx);
+  // TODO: Should simplify to x
+  simplifies_to(
+      "artanh(tanh(x))",
+      "(-ln(1-(-1+e^(2×x))/(1+e^(2×x)))+ln(1+(-1+e^(2×x))/(1+e^(2×x))))/2",
+      cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cosh(arcosh(x))",
                 "(x+e^((ln(x-1)+ln(x+1))/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
@@ -1000,11 +999,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
 #endif
   simplifies_to("atan(-1/√(3))", "-π/6");
   simplifies_to("atan(1/√(3))", "π/6");
-#if 0  // TODO_PCJ
-  simplifies_to(
-      "atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
-      "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
-#endif
+  simplifies_to("atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
+                "{-π/2,-π/3,-π/4,-π/6,0,π/4,π/6,π/3,π/2}");
 
   // Trig diff
   simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
@@ -1133,14 +1129,11 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("(a+b)^2", "(a+b)^2");
   simplifies_to("2*a+b*(a+c)-b*c", "dep(a×(b+2),{c})");
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^2+e^((a+b)×c)");
-#if 0
-  /* TODO: This can Expand/contract infinitely and overflow the pool on any
-   * strategy */
+  // TODO: Should be 0
   simplifies_to(
       "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
-      "0");
-#endif
+      "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

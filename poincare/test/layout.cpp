@@ -47,6 +47,8 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_expression_layouts_as(54321_e, "0xD431"_l, false, -1,
                                Preferences::PrintFloatMode::Decimal,
                                OMG::Base::Hexadecimal);
+  assert_expression_layouts_as(KAdd("x"_e, KOpposite(KAdd("y"_e, "z"_e))),
+                               "x-"_l ^ KParenthesesL("y+z"_l));
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

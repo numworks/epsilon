@@ -247,6 +247,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
 void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
                                    CodePoint op, bool multiplication) {
   Type type = expression->type();
+  int operatorPriority = OperatorPriority(type);
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
   for (int childIndex = 0; childIndex < childNumber; childIndex++) {
@@ -262,7 +263,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
         } else {
           PushCodePoint(layoutParent, UCodePointMiddleDot);
         }
-        layoutExpression(layoutParent, child, OperatorPriority(type));
+        layoutExpression(layoutParent, child, operatorPriority);
         previousWasUnit = isUnit;
         continue;
       }
@@ -272,13 +273,18 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
           // Consume opposite block now and insert - instead of +
           PushCodePoint(layoutParent, '-');
           child->removeNode();
+          if (OperatorPriority(Type::Opposite) <
+              OperatorPriority(child->type())) {
+            // Add(A, Oppose(Add(A, B))) -> A - ( B + C )
+            operatorPriority = k_forceParenthesis;
+          }
         } else {
           PushCodePoint(layoutParent, op);
         }
         addOperatorSeparator(layoutParent);
       }
     }
-    layoutExpression(layoutParent, child, OperatorPriority(type));
+    layoutExpression(layoutParent, child, operatorPriority);
     previousWasUnit = isUnit;
   }
 }

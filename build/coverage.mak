@@ -69,6 +69,7 @@ endef
 # ./$1 --headless --limit-stack-usage -f python
 # TODO: Put back unit tests that are currently broken for all toolchains
 # ./$1 --headless --limit-stack-usage -f code
+# ./$1 --headless --limit-stack-usage -f calculation
 # ./$1 --headless --limit-stack-usage -f escher
 # ./$1 --headless --limit-stack-usage -f solver
 

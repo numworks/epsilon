@@ -33,7 +33,6 @@ $(call create_goal,test, \
   sdl \
 )
 
-#TODO: maybe integrate this check to the goal rule in haussmann?
 epsilon.bin: check_compiler_version
 test.bin: check_compiler_version
 

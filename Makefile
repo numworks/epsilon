@@ -17,7 +17,7 @@ CLANG_MINIMUM_VERSION:=14
 
 # TODO: move this function to haussmann?
 # Only the major version is checked, the second parameter is expected to be an integer
-# check_minimum_version, <command>, <minimum_required_version_id>
+# check_minimum_version, <compiler>, <minimum_required_version_id>
 define check_minimum_version
 	@echo Using $1 $(shell $1 -dumpversion)
 	$1 --version

@@ -940,27 +940,33 @@ QUIZ_CASE(pcj_simplification_infinity) {
 
 QUIZ_CASE(pcj_simplification_trigonometry) {
   // Direct trigonometry exact formulas
-  simplifies_to("cos(0)", "1");
-  simplifies_to("sin(π)", "0");
-  simplifies_to("cos(π)", "-1");
-  simplifies_to("cos(7×π/12)", "-(√(2)×(-1+√(3)))/4");
-  simplifies_to("cos(13×π/12)", "-(√(2)×(1+√(3)))/4");
-  simplifies_to("sin(π/3)", "√(3)/2");
-  simplifies_to("cos(π×2/3)", "-1/2");
-  simplifies_to("cos(π×15/4)", "1/√(2)");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  simplifies_to("cos(π×7/10)", "-√((5-√(5))/8)");
-  simplifies_to("cos(π×7/5)", "-(-1+√(5))/4");
-  simplifies_to("cos(π×-7/8)", "-√(2+√(2))/2");
-  simplifies_to("cos(π×11/12)", "-(2^(-1/2)×(1+√(3)))/2");
-  simplifies_to("cos(π×13/6)", "√(3)/2");
-  simplifies_to("sin(π×7/10)", "(1+√(5))/4");
-  simplifies_to("sin(π×7/5)", "-√((5+√(5))/8)");
-  simplifies_to("sin(π×-7/8)", "-√(2-√(2))/2");
-  simplifies_to("sin(π×11/12)", "(2^(-1/2)×(-1+√(3)))/2");
-  simplifies_to("sin(π×13/6)", "1/2");
-#endif
-  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
+  simplifies_to("cos({0,π/2,π,3π/2,-4π})", "{1,0,-1,0,1}");
+  simplifies_to("sin({0,π/2,π,3π/2,-4π})", "{0,1,0,-1,0}");
+  // test π/12 in top-right quadrant
+  simplifies_to("cos({π/12,-19π/12})",
+                "{(1+√(3))/(2×√(2)),(-1+√(3))/(2×√(2))}");
+  simplifies_to("sin({π/12,-19π/12})",
+                "{(-1+√(3))/(2×√(2)),(1+√(3))/(2×√(2))}");
+  // test π/10 in top-left quadrant
+  simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
+  simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
+  // test π/8 in bottom-left quadrant
+  simplifies_to("cos({9π/8,59π/8})", "{-√(2+√(2))/2,-√(2-√(2))/2}");
+  simplifies_to("sin({9π/8,59π/8})", "{-√(2-√(2))/2,-√(2+√(2))/2}");
+  // test π/6 in bottom-right quadrant
+  simplifies_to("cos({22π/6,11π/6})", "{1/2,√(3)/2}");
+  simplifies_to("sin({22π/6,11π/6})", "{-√(3)/2,-1/2}");
+  // test π/5 in all quadrants
+  simplifies_to("cos({6π/5,-33π/5,18π/5,-π/5})",
+                "{-(1+√(5))/4,-(-1+√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
+  simplifies_to("sin({π/5,2π/5,3π/5,-6π/5})",
+                "{√(5/8-√(5)/8),√((5+√(5))/8),√((5+√(5))/8),√(5/8-√(5)/8)}");
+  // test π/4 in all quadrants
+  simplifies_to("cos({π/4,3π/4,-11π/4,7π/4})",
+                "{1/√(2),-1/√(2),-1/√(2),1/√(2)}");
+  simplifies_to("sin({π/4,3π/4,-11π/4,7π/4})",
+                "{1/√(2),1/√(2),-1/√(2),-1/√(2)}");
+  // add? simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
 

@@ -18,6 +18,7 @@
 namespace Poincare::Internal {
 
 const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
+  // TODO_PCJ: add exact formula for inverse functions too
   // Sin and cos are 2pi periodic. With sin(n*π/120), n goes from 0 to 239.
   n = n % 240;
   // Formula is opposed depending on the quadrant

@@ -31,7 +31,6 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/tangent.h>
 #include <poincare/old/trigonometry.h>
-#include <poincare/old/trigonometry_cheat_table.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/preferences.h>

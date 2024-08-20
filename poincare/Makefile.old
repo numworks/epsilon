@@ -152,7 +152,6 @@ poincare_src += $(addprefix poincare/src/old/,\
   pool_object.cpp \
   pool.cpp \
   trigonometry.cpp \
-  trigonometry_cheat_table.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \

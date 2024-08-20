@@ -145,7 +145,6 @@ class OExpression : public PoolHandle {
   friend class SymbolAbstractNode;
   friend class Tangent;
   friend class Trigonometry;
-  friend class TrigonometryCheatTable;
   friend class OUnit;
   friend class UnitConvert;
   friend class UnitNode;

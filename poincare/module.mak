@@ -164,7 +164,6 @@ $(addprefix old/, \
   symbol_abstract.cpp \
   tangent.cpp \
   trigonometry.cpp \
-  trigonometry_cheat_table.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \

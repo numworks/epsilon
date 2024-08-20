@@ -939,7 +939,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
 }
 
 QUIZ_CASE(pcj_simplification_trigonometry) {
-  // Trigonometry identities
+  // Direct trigonometry exact formulas
   simplifies_to("cos(0)", "1");
   simplifies_to("sin(π)", "0");
   simplifies_to("cos(π)", "-1");
@@ -948,76 +948,114 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(π/3)", "√(3)/2");
   simplifies_to("cos(π×2/3)", "-1/2");
   simplifies_to("cos(π×15/4)", "1/√(2)");
+#if ACTIVATE_IF_INCREASED_PATH_SIZE
+  simplifies_to("cos(π×7/10)", "-√((5-√(5))/8)");
+  simplifies_to("cos(π×7/5)", "-(-1+√(5))/4");
+  simplifies_to("cos(π×-7/8)", "-√(2+√(2))/2");
+  simplifies_to("cos(π×11/12)", "-(2^(-1/2)×(1+√(3)))/2");
+  simplifies_to("cos(π×13/6)", "√(3)/2");
+  simplifies_to("sin(π×7/10)", "(1+√(5))/4");
+  simplifies_to("sin(π×7/5)", "-√((5+√(5))/8)");
+  simplifies_to("sin(π×-7/8)", "-√(2-√(2))/2");
+  simplifies_to("sin(π×11/12)", "(2^(-1/2)×(-1+√(3)))/2");
+  simplifies_to("sin(π×13/6)", "1/2");
+#endif
+  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
+  simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
+
+  // Inverse trigonometry exact formulas
+  simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+                "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
+  simplifies_to("acos(-1/√(2))", "3π/4");
+  simplifies_to("acos(1/√(2))", "π/4");
+#if 0  // TODO_PCJ
+  simplifies_to("acos(-(√(6)+√(2))/4)", "11π/12");
+  simplifies_to("acos(-(√(6)-√(2))/4)", "7π/12");
+  simplifies_to("acos((√(6)-√(2))/4)", "5π/12");
+  simplifies_to("acos((√(6)+√(2))/4)", "π/12");
+#endif
+  simplifies_to("asin(-1/√(2))", "-π/4");
+  simplifies_to("asin(1/√(2))", "π/4");
+  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+                "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
+  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
+                "{-90,-60,-45,-30,0,30,45,60,90}",
+                {.m_angleUnit = AngleUnit::Degree});
+#if 0  // TODO_PCJ
+  simplifies_to("asin(-(√(6)+√(2))/4)", "-5π/12");
+  simplifies_to("asin(-(√(6)-√(2))/4)", "-π/12");
+  simplifies_to("asin((√(6)-√(2))/4)", "π/12");
+  simplifies_to("asin((√(6)+√(2))/4)", "5π/12");
+#endif
+  simplifies_to("atan(-1/√(3))", "-π/6");
+  simplifies_to("atan(1/√(3))", "π/6");
+#if 0  // TODO_PCJ
+  simplifies_to(
+      "atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
+      "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
+#endif
+
+  // Trig diff
   simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
-  simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
-  // TODO: Undetected magic value.
-  simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  simplifies_to(
-      "{cos(π×7/10),cos(π×7/5),cos(π×-7/8),cos(π×11/12),cos(π×13/6),sin(π×7/"
-      "10),sin(π×7/5),sin(π×-7/8),sin(π×11/12),sin(π×13/6)}",
-      "{-√((5-√(5))/8),-(-1+√(5))/4,-√(2+√(2))/2,-(2^(-1/2)×(1+√(3)))/2,√(3)/"
-      "2,(1+√(5))/4,-√((5+√(5))/8),-√(2-√(2))/2,(2^(-1/2)×(-1+√(3)))/2,1/2}");
-#endif
-  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
-  simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
-  // Other angle units :
-  simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
 
+  // Direct trigonometry
+  simplifies_to("cos(-x)", "cos(x)");
+  simplifies_to("-sin(-x)", "sin(x)");
+  simplifies_to("tan(-x)", "-tan(x)");
+  simplifies_to("cos({-inf,inf})", "{undef, undef}");
+  simplifies_to("sin({-inf,inf})", "{undef, undef}");
+
+  // Direct advanced trigonometry
   simplifies_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
   simplifies_to("1/tan(3)", "cot(3)");
-  simplifies_to("tan(-x)", "-tan(x)");
-}
 
-QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
-  // acos and asin are nonreal out of [-1,1] in real mode
-  simplifies_to("cos(acos(3/7))", "3/7");
-  simplifies_to("cos(acos(9/7))", "undef");  // TODO: nonreal ?
-  simplifies_to("sin(asin(3/7))", "3/7");
-  simplifies_to("sin(asin(9/7))", "undef");  // TODO: nonreal ?
+  // Inverse trigonometry
+  simplifies_to("acos(-x)", "arccos(-x)", cartesianCtx);
+  simplifies_to("asin(-x)", "arcsin(-x)", cartesianCtx);
+  simplifies_to("atan(-x)", "-arctan(x)", cartesianCtx);
 
-  // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
-                "dep(0,{√(-x^2/(x^2+1)+1)})", cartesianCtx);
+  // trig(atrig)
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
+  simplifies_to("cos({acos(-x), asin(-x), atan(-x)})",
+                "{-x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
-  // TODO_PCJ: tan(atan) and atan(tan)
+  simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
+                "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1)/x,x/√(-x^2+1),tan(arctan(x))}", cartesianCtx);
-  simplifies_to("acos(cos(x))", "acos(cos(x))", cartesianCtx);
-  simplifies_to("acos({cos(-23*π/7), sin(-23*π/7)})/π", "{5/7,3/14}");
-  simplifies_to("acos({cos(π*23/7), sin(π*23/7)})/π", "{5/7,11/14}");
-  simplifies_to("asin({cos(-23*π/7), sin(-23*π/7)})/π", "{-3/14,2/7}");
-  simplifies_to("asin({cos(π*23/7), sin(π*23/7)})/π", "{-3/14,-2/7}");
-  simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
-                "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
-  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
-                "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}");
-  /* TODO_PCJ once inf is implemented: simplifies_to(
-      "atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
-      "{-π/2,-π/3,-π/4,-π/6,0,π/6,π/4,π/3,π/2}"); */
-  simplifies_to("acos({-1/√(2), 1/√(2)})", "{3π/4,π/4}");
-  simplifies_to("asin({-1/√(2), 1/√(2)})", "{-π/4,π/4}");
-  simplifies_to("atan({-1/√(3), 1/√(3)})", "{-π/6,π/6}");
-  // Other angle units :
-  simplifies_to("cos({acos(x), asin(x), atan(x)})",
-                "{x,√(-x^2+1),cos(arctan(x))}",
-                {.m_complexFormat = ComplexFormat::Cartesian,
-                 .m_angleUnit = AngleUnit::Degree});
-  simplifies_to("acos(cos(x))", "acos(cos(x))",
-                {.m_complexFormat = ComplexFormat::Cartesian,
-                 .m_angleUnit = AngleUnit::Degree});
-  simplifies_to("acos({cos(683), sin(683)})/200", "{117/200,183/200}",
+  simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
+                "{-√(-x^2+1)/x,-x/√(-x^2+1),-tan(arctan(x))}", cartesianCtx);
+  simplifies_to("cos(acos(3/7))", "3/7");
+  simplifies_to("cos(acos(9/7))", "undef");  // TODO: nonreal ?
+  simplifies_to("cos(acos(9/7))", "9/7", cartesianCtx);
+  simplifies_to("sin(asin(3/7))", "3/7");
+  simplifies_to("sin(asin(9/7))", "undef");  // TODO: nonreal ?
+  simplifies_to("sin(asin(9/7))", "9/7", cartesianCtx);
+
+  // atrig(trig)
+  simplifies_to("acos({cos(x), sin(x), tan(x)})",
+                "{arccos(cos(x)),arccos(sin(x)),arccos(tan(x))}", cartesianCtx);
+  simplifies_to("asin({cos(x), sin(x), tan(x)})",
+                "{arcsin(cos(x)),arcsin(sin(x)),arcsin(tan(x))}", cartesianCtx);
+  simplifies_to("atan({cos(x), sin(x), tan(x)})",
+                "{arctan(cos(x)),arctan(sin(x)),arctan(tan(x))}", cartesianCtx);
+  simplifies_to("acos(cos({3π/7, -11π/15,34π/15, 40π/13}))",
+                "{(3×π)/7,(11×π)/15,(4×π)/15,(12×π)/13}");
+  simplifies_to("asin(sin({3π/7, -11π/15,34π/15, 40π/13}))",
+                "{(3×π)/7,-(4×π)/15,(4×π)/15,-π/13}");
+  simplifies_to("atan(tan({3π/7, -11π/15,34π/15, 40π/13}))",
+                "{(3×π)/7,(4×π)/15,(4×π)/15,π/13}");
+  simplifies_to("acos({cos(683), sin(683)})", "{117,183}",
                 {.m_angleUnit = AngleUnit::Gradian});
-  simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
-                "{-90,-60,-45,-30,0,30,45,60,90}",
-                {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("acos(sin({π*23/7, -23*π/7}))/π", "{11/14,3/14}");
+  simplifies_to("asin(cos({π*23/7, -23*π/7}))/π", "{-3/14,-3/14}");
+
 #if 0
   // TODO: asin(x) = π/2 - acos(x) advanced reduction safe from infinite loops.
   simplifies_to("asin(x)-π/2", "-arccos(x)");
@@ -1027,15 +1065,13 @@ QUIZ_CASE(pcj_simplification_inverse_trigonometry) {
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
-#if 0
-  // TODO: Add more exact values.
-  simplifies_to(
-      "acos({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
-      "{11π/12,7π/12,5π/12,π/12}");
-  simplifies_to(
-      "asin({-(√(6)+√(2))/4, -(√(6)-√(2))/4, (√(6)-√(2))/4, (√(6)+√(2))/4})",
-      "{-5π/12,-π/12,π/12,5π/12}");
-#endif
+  // TODO: Undetected magic value.
+  simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
+  simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
+  simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
+  // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
+                "dep(0,{√(-x^2/(x^2+1)+1)})", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {

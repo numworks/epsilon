@@ -174,6 +174,7 @@ bool Simplification::IsSystem(const Tree* e) {
 
 bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
+  assert(!SystematicReduction::DeepReduce(e));
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;

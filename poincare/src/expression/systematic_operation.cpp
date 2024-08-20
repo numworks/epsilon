@@ -332,24 +332,34 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
       elem = elem->nextTree();
     }
   }
-  NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
-  NAry::SetNumberOfChildren(a, nbChildrenOut);
   if (nbChildrenOut == 0) {
     a->removeTree();
-    return nbChildrenRemoved > 0;
+    if (nbChildrenRemoved == 0) {
+      // Nothing has been extracted:  re(A+B) = re(A+B)
+      return false;
+    }
   }
-  bool includeOriginalTree = true;
-  if (child->numberOfChildren() == 0) {
-    // Remove re/im(add) e
-    e->removeTree();
-    includeOriginalTree = false;
-  } else if (child->numberOfChildren() == 1) {
-    // Shallow reduce to remove the Add node
-    SystematicReduction::ShallowReduce(child);
+  if (nbChildrenRemoved > 0) {
+    NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
+    if (NAry::SquashIfEmpty(child)) {
+      assert(nbChildrenOut > 0);
+      // re(+) = re(0) = 0
+      e->removeNode();
+    } else {
+      // re(+A) = re(A)
+      NAry::SquashIfUnary(child);
+    }
+    if (nbChildrenOut == 0) {
+      // re(A + B) = re(A)
+      return true;
+    }
   }
+  assert(nbChildrenOut > 0);
+  NAry::SetNumberOfChildren(a, nbChildrenOut);
+  // re(A+B+C) = A + re(C)
   e->moveTreeBeforeNode(a);
   // Increase the number of children of a to include the original re/im
-  NAry::SetNumberOfChildren(e, nbChildrenOut + includeOriginalTree);
+  NAry::SetNumberOfChildren(e, nbChildrenOut + 1);
   // Shallow reduce new tree
   SystematicReduction::ShallowReduce(e);
   return true;

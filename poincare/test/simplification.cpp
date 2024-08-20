@@ -314,6 +314,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("im(2+i×π)", "π", ctx);
   simplifies_to("conj(2+i×π)", "2-π×i", ctx);
   simplifies_to("i×im(x)+re(x)", "x");
+  simplifies_to("re(ln((-2+i)×(-1+i))+2×π×i)", "re(ln(1-3×i))", ctx);
 
   store("x→f(x)", &globalContext);
   simplifies_to("i×im(f(x))+re(f(x))", "dep(f(x),{im(f(x))})", ctx);

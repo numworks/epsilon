@@ -541,6 +541,7 @@ void RackParser::privateParseTimes(TreeRef& leftHandSide,
     CloneNodeAtNode(leftHandSide, KMult.node<2>);
   }
   if (rightHandSide->isMult()) {
+    // mult<2>(A, mult<2>(B, C)) -> mult<3>(A, B, C)
     NAry::SetNumberOfChildren(leftHandSide,
                               leftHandSide->numberOfChildren() +
                                   rightHandSide->numberOfChildren() - 1);

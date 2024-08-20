@@ -12,10 +12,6 @@
 
 using namespace Poincare::Internal;
 
-/* TODO_PCJ: Reactivate these tests once we can increase ADVANCED_MAX_DEPTH to
- * 12 and ADVANCED_MAX_BREADTH to 128 */
-#define ACTIVATE_IF_INCREASED_PATH_SIZE 0
-
 constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
                                                 ComplexFormat::Cartesian};
 constexpr ProjectionContext polarCtx = {.m_complexFormat =
@@ -177,9 +173,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("2a+3b+4a", "6×a+3×b");
   simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "(7×a-9)×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
-#endif
+  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "dep(b×(d+f)×g,{a})");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{ln(x)})");
@@ -224,8 +218,10 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,c})");
+  // TODO: Remove ln(c^2) dependency
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,ln(c^2)})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
+  simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "dep(3,{x})");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -234,8 +230,9 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
   simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{ln(y)})");
-  simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)})");
+  simplifies_to(
+      "diff(((x^4)×ln(x)×e^(3x)), x, y)",
+      "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y),arg(y),arg(y^4)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
@@ -329,19 +326,14 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
   simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{f(y)})", ctx);
   simplifies_to("im(i×f(y))", "re(f(y))", ctx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
-  simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",
-                "re(f(y))+(-f(x)+re(f(x)))×i", ctx);
-#endif
+  simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))", "im(f(x))+re(f(y))",
+                ctx);
   simplifies_to("im(re(f(x))+i×im(f(x)))", "im(f(x))", ctx);
   simplifies_to("re(re(f(x))+i×im(f(x)))", "re(f(x))", ctx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO: Overflows CRC32 collection, should be 0
+  // TODO: Should simplify to 0
   simplifies_to(
       "abs(f(x)+i×f(y))^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2",
-      "abs(f(x)+f(y)×i)^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2", ctx);
-#endif
+      "abs(f(x)+f(y)×i)^2-((-im(f(y))+re(f(x)))^2+(im(f(x))+re(f(y)))^2)", ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
   simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", ctx);
@@ -496,9 +488,9 @@ QUIZ_CASE(pcj_simplification_factorial) {
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(-x)+sinh(x)", "e^x");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
-#endif
+  // TODO : Should simplify to 1
+  simplifies_to("cosh(x)^2-sinh(-x)^2",
+                "(e^x+e^(-x))^2/4+1/2-(e^(-2×x)+e^(2×x))/4");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
@@ -506,26 +498,22 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
-                "ln((e^x-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
+                "ln(e^x/2-e^(-x)/2+√(1/2+(e^(-2×x)+e^(2×x))/4))", cartesianCtx);
   // TODO: Should simplify to x and overflow the pool
   // simplifies_to(
   //     "artanh(tanh(x))",
   //     "ln((1+(-1+e^(2×x))/(1+e^(2×x)))/(1-(-1+e^(2×x))/(1+e^(2×x))))/2",
   //     cartesianCtx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should simplify to x
   simplifies_to("cosh(arcosh(x))",
                 "(x+e^((ln(x-1)+ln(x+1))/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
                 cartesianCtx);
-#endif
   // TODO: Should simplify to x
   simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
                 cartesianCtx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should simplify to x
-  simplifies_to("tanh(artanh(x))", "(-1+e^(ln(x+1)-ln(-x+1)))/(1+(x+1)/(-x+1))",
+  simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
                 cartesianCtx);
-#endif
 }
 
 QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
@@ -716,11 +704,9 @@ QUIZ_CASE(pcj_simplification_power) {
 
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO: 0 (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1)
+  // TODO: (exp(i*(arg(A) + arg(B) - arg(A*B))) should be simplified to 1
   simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
-                "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
-#endif
+                "√(-2)+e^(ln(-1-i)/2+ln(1-i)/2)", cartesianCtx);
 
   // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
@@ -1146,9 +1132,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("1-cos(x)^2-sin(x)^2", "dep(0,{x})");
   simplifies_to("(a+b)^2", "(a+b)^2");
   simplifies_to("2*a+b*(a+c)-b*c", "dep(a×(b+2),{c})");
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^(2)+e^((a+b)×c)");
-#endif
+  simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^2+e^((a+b)×c)");
 #if 0
   /* TODO: This can Expand/contract infinitely and overflow the pool on any
    * strategy */
@@ -1174,14 +1158,11 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "dep(0,{x})");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
-#if ACTIVATE_IF_INCREASED_PATH_SIZE
-  // TODO: Should be ln(2), but overflows the pool
-  // simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
+  simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
-#endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
   simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-                "dep(0,{ln(abs(x)×√(y^2))})", cartesianCtx);
+                "dep(0,{ln(abs(x)×abs(y))})", cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

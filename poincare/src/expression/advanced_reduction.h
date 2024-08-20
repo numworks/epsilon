@@ -12,9 +12,9 @@
 #include "trigonometry.h"
 
 // Max number of trees advanced reduction can handle
-#define ADVANCED_MAX_BREADTH 64
+#define ADVANCED_MAX_BREADTH 32
 // Max depth of path advanced reduction can handle
-#define ADVANCED_MAX_DEPTH 6
+#define ADVANCED_MAX_DEPTH 10
 
 namespace Poincare::Internal {
 

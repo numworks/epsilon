@@ -1072,10 +1072,9 @@ bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
-bool NewExpression::isNumber() const {
-  return !isUninitialized() &&
-         (tree()->isRationalOrFloat() || tree()->isInf() ||
-          tree()->isUndefined() || tree()->isDecimal());
+bool NewExpression::isConstantNumber() const {
+  return !isUninitialized() && (tree()->isNumber() || tree()->isInf() ||
+                                tree()->isUndefined() || tree()->isDecimal());
 };
 
 bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {

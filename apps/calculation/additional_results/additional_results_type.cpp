@@ -233,9 +233,8 @@ static bool expressionIsInterestingFunction(const Expression e) {
                   ExpressionNode::Type::Parenthesis})) {
     return expressionIsInterestingFunction(e.cloneChildAtIndex(0));
   }
-  return !e.isNumber() &&
-         !e.isOfType({ExpressionNode::Type::ConstantMaths,
-                      ExpressionNode::Type::UnitConvert}) &&
+  return !e.isConstantNumber() &&
+         e.type() != ExpressionNode::Type::UnitConvert &&
          !e.deepIsOfType({ExpressionNode::Type::Sequence,
                           ExpressionNode::Type::Factor,
                           ExpressionNode::Type::RealPart,

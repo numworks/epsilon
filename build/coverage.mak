@@ -61,21 +61,15 @@ define generate_coverage_info
 	lcov --remove $2/$1.info $(_coverage_excludes) -o $2/$1.info --ignore-errors unused
 endef
 
-# rule_for_coverage_info,<coverage_dir>
-define rule_for_coverage_info
+# rule_for_coverage,<coverage_dir>
+define rule_for_coverage
 $(eval \
-coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
+coverage: $1/coverage_test.bin $1/coverage_epsilon.bin
 	$(call initialize_diagnosis,code_coverage,$1)
 	$(call run_screenshot_tests,$$(word 2,$$^))
 	$(call run_unit_tests,$$<)
 	$(call generate_coverage_info,code_coverage,$1)
 )
-endef
-
-# generate_diagnosis, <folder_name>, <coverage_dir>
-define generate_diagnosis
-	@echo Generating coverage diagnosis in $2/$1 from $2/$1.info
-	genhtml $2/$1.info -s --legend --output-directory $2/$1
 endef
 
 .PHONY: coverage
@@ -88,10 +82,7 @@ else ifneq ($(TOOLCHAIN),host-gcc)
 coverage:
 	$(error The coverage target needs a gcc compiler)
 else
-$(call rule_for_coverage_info,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage) \
-$(call rule_for_diagnosis,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
-coverage: coverage_info
-	$(call generate_diagnosis,code_coverage,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
+$(call rule_for_coverage,$(OUTPUT_DIRECTORY)/$(if $(ARCHS),$(ARCHS)/,)coverage)
 endif
 
 $(call document_other_target,coverage,Generate a coverage diagnosis by running unit and screenshot tests)

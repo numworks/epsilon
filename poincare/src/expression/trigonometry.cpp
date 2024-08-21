@@ -176,6 +176,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
                  e, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
     // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=√(1-x^2)
+    // TODO_PCJ: detect tan(atan(x)) (but tan is split up in sin/cos)
     /* TODO: what about asin(sin(acos(x)))? Maybe the simplification
      * asin(sin(...)) is more interesting than the simplification of
      * sin(acos(x)).

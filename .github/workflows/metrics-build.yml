@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'poincare/doc/**'
+      - 'tests/**'
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
 

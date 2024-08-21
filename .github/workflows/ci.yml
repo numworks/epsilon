@@ -6,6 +6,7 @@ on:
   pull_request:
     paths-ignore:
       - 'poincare/doc/**'
+      - 'tests/**'
     # TODO_PCJ: Remove this condition and uncomment push to reactivate CI
     branches:
       - workflow-disabled

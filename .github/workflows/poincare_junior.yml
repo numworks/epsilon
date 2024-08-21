@@ -4,6 +4,7 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'poincare/doc/**'
+      - 'tests/**'
 
 env:
   MAKEFLAGS: ${{ endswith(github.repository, '/epsilon-internal') && '-j32' || '-j2' }}

@@ -125,13 +125,13 @@ Promise.all([
       .getReducedDerivative('x', 1)
       .cloneAndBeautify(reductionContext);
     assert.ok(!firstDerivative.isUninitialized());
-    assert.equal(firstDerivative.toLatex(), 'dep\\left(2x-2,\\left(x^{2}\\right)\\right)');
+    assert.equal(firstDerivative.toLatex(), '2x-2');
 
     const secondDerivative = reducedExpression
       .getReducedDerivative('x', 2)
       .cloneAndBeautify(reductionContext);
     assert.ok(!secondDerivative.isUninitialized());
-    assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x^{2}\\right)\\right)');
+    assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x\\right)\\right)');
 
     const lowerBound = poincare.PCR_SystemExpression.BuildInt(0);
     const upperBound = poincare.PCR_SystemExpression.BuildInt(1);

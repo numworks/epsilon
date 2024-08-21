@@ -343,10 +343,10 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
     NAry::SetNumberOfChildren(child, nbChildren - nbChildrenRemoved);
     if (NAry::SquashIfEmpty(child)) {
       assert(nbChildrenOut > 0);
-      // re(+) = re(0) = 0
+      // re(add()) = re(0) = 0
       e->removeNode();
     } else {
-      // re(+A) = re(A)
+      // re(add(A)) = re(A)
       NAry::SquashIfUnary(child);
     }
     if (nbChildrenOut == 0) {

@@ -442,11 +442,6 @@ void assert_expression_parses_and_serializes_to_itself(const char *expression) {
   return assert_expression_parses_and_serializes_to(expression, expression);
 }
 
-void assert_expression_layouts_as(Tree *expression, Tree *layout) {
-  Tree *l = Internal::Layouter::LayoutExpression(expression);
-  quiz_assert(l->treeIsIdenticalTo(layout));
-}
-
 template void assert_expression_approximates_to<float>(
     char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
     Preferences::ComplexFormat, int);

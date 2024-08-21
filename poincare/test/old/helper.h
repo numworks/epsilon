@@ -167,9 +167,4 @@ void assert_expression_parses_and_serializes_to(const char* expression,
                                                 const char* result);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
-// OExpression layouting
-
-void assert_expression_layouts_as(Poincare::Internal::Tree* expression,
-                                  Poincare::Internal::Tree* layout);
-
 #endif

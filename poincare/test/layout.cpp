@@ -11,27 +11,33 @@
 
 using namespace Poincare::Internal;
 
+void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
+                                  bool linearMode = false,
+                                  int numberOfSignificantDigits = -1,
+                                  Preferences::PrintFloatMode floatMode =
+                                      Preferences::PrintFloatMode::Decimal) {
+  Tree* l = Layouter::LayoutExpression(expression->cloneTree(), linearMode,
+                                       numberOfSignificantDigits, floatMode);
+  assert_trees_are_equal(l, layout);
+  l->removeTree();
+}
+
 QUIZ_CASE(pcj_expression_to_layout) {
-  assert_trees_are_equal(
-      Layouter::LayoutExpression(KPow(KAdd("x"_e, "y"_e), 2_e)->cloneTree()),
+  assert_expression_layouts_as(
+      KPow(KAdd("x"_e, "y"_e), 2_e),
       KRackL(KParenthesesL("x+y"_l), KSuperscriptL("2"_l)));
-  assert_trees_are_equal(
-      Layouter::LayoutExpression(KPow(KMult("x"_e, "y"_e), 2_e)->cloneTree()),
+  assert_expression_layouts_as(
+      KPow(KMult("x"_e, "y"_e), 2_e),
       KRackL(KParenthesesL("x·y"_l), KSuperscriptL("2"_l)));
-  assert_trees_are_equal(
-      Layouter::LayoutExpression(
-          KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e)->cloneTree(), true),
-      "2 1/3+4"_l);
-  assert_trees_are_equal(
-      Layouter::LayoutExpression(KAdd(12345_e, KOpposite(54321_e))->cloneTree(),
-                                 false),
-      // 12 345 - 54 321
-      "12"_l ^ KThousandSeparatorL ^ "345"_l ^ KOperatorSeparatorL ^ "-"_l ^
-          KOperatorSeparatorL ^ "54"_l ^ KThousandSeparatorL ^ "321"_l);
-  assert_trees_are_equal(
-      Layouter::LayoutExpression(KAdd(12345_de, -54321_de)->cloneTree(), false),
-      "12"_l ^ KThousandSeparatorL ^ "345"_l ^ KOperatorSeparatorL ^ "-"_l ^
-          KOperatorSeparatorL ^ "54"_l ^ KThousandSeparatorL ^ "321"_l);
+  assert_expression_layouts_as(KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e),
+                               "2 1/3+4"_l, true);
+  // 12 345 - 54 321
+  const Tree* expected = "12"_l ^ KThousandSeparatorL ^ "345"_l ^
+                         KOperatorSeparatorL ^ "-"_l ^ KOperatorSeparatorL ^
+                         "54"_l ^ KThousandSeparatorL ^ "321"_l;
+  assert_expression_layouts_as(KAdd(12345_e, KOpposite(54321_e)), expected,
+                               false);
+  assert_expression_layouts_as(KAdd(12345_de, -54321_de), expected, false);
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

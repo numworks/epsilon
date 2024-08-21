@@ -92,13 +92,15 @@ static constexpr int k_commaPriority = OperatorPriority(Type::Set);
 
 Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  int numberOfSignificantDigits,
-                                 Preferences::PrintFloatMode floatMode) {
+                                 Preferences::PrintFloatMode floatMode,
+                                 OMG::Base base) {
   assert(expression->isExpression());
   /* expression lives before layoutParent in the TreeStack and will be
    * destroyed in the process. An TreeRef is necessary to keep track of
    * layoutParent's root. */
   TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
-  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode);
+  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
+                    base);
   layouter.m_addSeparators =
       !linearMode && layouter.requireSeparators(expression);
   layouter.layoutExpression(layoutParent, expression, k_maxPriority);
@@ -206,19 +208,25 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     PushCodePoint(layoutParent, '-');
   }
   handler.setSign(NonStrictSign::Positive);
+  if (m_base != OMG::Base::Decimal) {
+    assert(decimalOffset == 0);
+    PushCodePoint(layoutParent, '0');
+    PushCodePoint(layoutParent, m_base == OMG::Base::Binary ? 'b' : 'x');
+  }
   Tree* rack = KRackL()->cloneTree();
   /* We can't manipulate an IntegerHandler in a workingBuffer since we're
    * pushing layouts on the TreeStack at each steps. Value is therefore
    * temporarily stored and updated on the TreeStack. */
   TreeRef value = handler.pushOnTreeStack();
   do {
-    DivisionResult result =
-        IntegerHandler::Division(Integer::Handler(value), IntegerHandler(10));
+    DivisionResult result = IntegerHandler::Division(
+        Integer::Handler(value), IntegerHandler(static_cast<uint8_t>(m_base)));
     uint8_t digit = Integer::Handler(result.remainder);
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
     MoveTreeOverTree(value, result.quotient);
-    InsertCodePointAt(rack, '0' + digit, 0);
+    char codePoint = (digit < 10 ? '0' : 'A' - 10) + digit;
+    InsertCodePointAt(rack, codePoint, 0);
     if (--decimalOffset == 0) {
       InsertCodePointAt(rack, '.', 0);
       if (value->isZero()) {
@@ -228,7 +236,9 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
-  AddThousandSeparators(rack);
+  if (m_base == OMG::Base::Decimal) {
+    AddThousandSeparators(rack);
+  }
   NAry::AddOrMergeChild(layoutParent, rack);
 }
 

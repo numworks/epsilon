@@ -15,9 +15,11 @@ void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
                                   bool linearMode = false,
                                   int numberOfSignificantDigits = -1,
                                   Preferences::PrintFloatMode floatMode =
-                                      Preferences::PrintFloatMode::Decimal) {
-  Tree* l = Layouter::LayoutExpression(expression->cloneTree(), linearMode,
-                                       numberOfSignificantDigits, floatMode);
+                                      Preferences::PrintFloatMode::Decimal,
+                                  OMG::Base base = OMG::Base::Decimal) {
+  Tree* l =
+      Layouter::LayoutExpression(expression->cloneTree(), linearMode,
+                                 numberOfSignificantDigits, floatMode, base);
   assert_trees_are_equal(l, layout);
   l->removeTree();
 }
@@ -38,6 +40,13 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_expression_layouts_as(KAdd(12345_e, KOpposite(54321_e)), expected,
                                false);
   assert_expression_layouts_as(KAdd(12345_de, -54321_de), expected, false);
+
+  assert_expression_layouts_as(54321_e, "0b1101010000110001"_l, false, -1,
+                               Preferences::PrintFloatMode::Decimal,
+                               OMG::Base::Binary);
+  assert_expression_layouts_as(54321_e, "0xD431"_l, false, -1,
+                               Preferences::PrintFloatMode::Decimal,
+                               OMG::Base::Hexadecimal);
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

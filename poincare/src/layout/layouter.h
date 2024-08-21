@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUTER_H
 #define POINCARE_LAYOUTER_H
 
+#include <omg/enums.h>
 #include <poincare/src/expression/decimal.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -15,7 +16,8 @@ class Layouter {
   static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
                                 int numberOfSignificantDigits = -1,
                                 Preferences::PrintFloatMode floatMode =
-                                    Preferences::PrintFloatMode::Decimal);
+                                    Preferences::PrintFloatMode::Decimal,
+                                OMG::Base base = OMG::Base::Decimal);
 
   static bool AddThousandSeparators(Tree* rack);
 
@@ -27,11 +29,12 @@ class Layouter {
 
  private:
   Layouter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
-           Preferences::PrintFloatMode floatMode)
+           Preferences::PrintFloatMode floatMode, OMG::Base base)
       : m_linearMode(linearMode),
         m_addSeparators(addSeparators),
         m_numberOfSignificantDigits(numberOfSignificantDigits),
-        m_floatMode(floatMode) {}
+        m_floatMode(floatMode),
+        m_base(base) {}
   void addOperatorSeparator(Tree* layoutParent);
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);
@@ -55,6 +58,7 @@ class Layouter {
   bool m_addSeparators;
   int m_numberOfSignificantDigits;
   Preferences::PrintFloatMode m_floatMode;
+  OMG::Base m_base;
 };
 }  // namespace Poincare::Internal
 

@@ -273,4 +273,13 @@ void Grid::addEmptyColumn() {
   }
 }
 
+void Grid::empty() {
+  if (isPiecewiseLayout()) {
+    moveTreeOverTree(KEmptyPiecewiseL->cloneTree());
+  } else {
+    assert(isMatrixLayout());
+    moveTreeOverTree(KEmptyMatrixL->cloneTree());
+  }
+}
+
 }  // namespace Poincare::Internal

@@ -792,9 +792,8 @@ constexpr ToolboxMessage listsChildren[] = {
     ToolboxMessageNode(I18n::Message::Operations, listsOperationsChildren)};
 
 constexpr ToolboxMessage logicChildren[] = {
-    ToolboxMessageLeaf(I18n::Message::PiecewiseCommandWithArgs,
-                       I18n::Message::PieceWise, false,
-                       I18n::Message::PiecewiseCommand),
+    ToolboxMessageMath(KRackL(KPiecewise2L("-x"_l, "x<0"_l, "x"_l, "x≥0"_l)),
+                       I18n::Message::PieceWise),
     ToolboxMessageLeaf(I18n::Message::LessOrEqual,
                        I18n::Message::LessOrEqualText),
     ToolboxMessageLeaf(I18n::Message::GreaterOrEqual,

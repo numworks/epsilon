@@ -2,6 +2,7 @@
 #include <poincare/old/junior_layout.h>
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/render_metrics.h>
 #include <poincare/src/memory/n_ary.h>
@@ -24,6 +25,10 @@ void DeleteChildrenRacks(Tree* rack) {
   for (Tree* layout : rack->children()) {
     if (layout->isParenthesesLayout()) {
       AutocompletedPair::SetTemporary(layout, Side::Right, true);
+    }
+    if (layout->isGridLayout()) {
+      Grid* grid = Grid::From(layout);
+      grid->empty();
     }
     for (Tree* subRack : layout->children()) {
       if (layout->isParametricLayout() && subRack == layout->child(0)) {

@@ -89,6 +89,8 @@ class Grid : public Layout {
   bool childIsInLastNonGrayColumn(int index) const;
   bool childIsInLastNonGrayRow(int index) const;
 
+  void empty();
+
  private:
   bool isColumnOrRowEmpty(bool column, int index) const;
   void addEmptyRowOrColumn(bool column);

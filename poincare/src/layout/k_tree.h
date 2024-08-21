@@ -68,6 +68,10 @@ constexpr auto KMatrix2x2L(A, B, C, D) {
             0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>>();
 }
 
+constexpr auto KEmptyPiecewiseL =
+    KTree<Type::PiecewiseLayout, 2, 2, Type::RackLayout, 0, 0, Type::RackLayout,
+          0, 0, Type::RackLayout, 0, 0, Type::RackLayout, 0, 0>();
+
 template <KTreeConcept A, KTreeConcept B>
 constexpr auto KPiecewise1L(A, B) {
   return Concat<KTree<Type::PiecewiseLayout, 2, 2>, A, B,

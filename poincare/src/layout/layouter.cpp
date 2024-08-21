@@ -225,6 +225,8 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     assert(result.remainder > result.quotient);
     result.remainder->removeTree();
     MoveTreeOverTree(value, result.quotient);
+    // Map 0 1 2 ... 9 10 11 ... 15 to char '0' '1' '2' ... '9' 'A' 'B' ... 'F'
+    assert(digit < 16);
     char codePoint = (digit < 10 ? '0' : 'A' - 10) + digit;
     InsertCodePointAt(rack, codePoint, 0);
     if (--decimalOffset == 0) {

@@ -1,9 +1,11 @@
 name: Lint Code Base
 on:
   pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - 'poincare/doc/**'
+    paths:
+      - '**.cpp'
+      - '**.c'
+      - '**.h'
+      - '**.py'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

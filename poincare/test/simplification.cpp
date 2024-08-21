@@ -1101,8 +1101,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "dep(0,{1/(x^2+1)})",
-                cartesianCtx);
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
+                "dep(0,{ln(-x^2/(x^2+1)+1)})", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {
@@ -1170,8 +1170,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
 #endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "dep(0,{x,y})",
-                cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+                "dep(0,{ln(abs(x)×√(y^2))})", cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

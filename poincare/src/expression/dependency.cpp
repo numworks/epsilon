@@ -154,11 +154,15 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
-  if (((searched->isLn() && container->isLnReal()) ||
+  if (((searched->isLn() && container->isPow() &&
+        container->child(0)->treeIsIdenticalTo(container->child(0)) &&
+        container->child(1)->isStrictlyNegativeInteger()) ||
+       (searched->isLn() && container->isLnReal()) ||
        (searched->isPow() && container->isPowReal() &&
         searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
-    /* lnReal(x) contains ln(x)
+    /* 1/(-n) contains ln(x)
+     * lnReal(x) contains ln(x)
      * powReal(x,y) contains pow(x,y) */
     return true;
   }
@@ -182,10 +186,10 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 
 // These expression are only undef if their child is undef.
 bool IsDefinedIfChildIsDefined(const Tree* e) {
-  return e->isOfType({Type::Trig, Type::Ln, Type::Abs, Type::Exp, Type::Re,
-                      Type::Im}) ||
-         /* TODO_PCJ: Use the old Power::typeOfDependency logic for better
-          * sensitivity (ex: return true on |x|+1)^(-1)) */
+  /* TODO_PCJ: For better sensitivity (simplify more dependencies):
+   *           - Use the old Power::typeOfDependency logic
+   *           - Handle logarithm of non null children */
+  return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveInteger());
 }
 

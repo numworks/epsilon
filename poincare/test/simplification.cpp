@@ -224,8 +224,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)",
-                "dep(0,{abs(a),abs(b),abs(c)})");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,c})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
 }
 
@@ -237,17 +236,17 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{ln(y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
                 "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)})");
-  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "dep(8×y,{y^2})");
+  simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
    * approximates to undef and not nonreal. */
   simplifies_to("diff(ln(x), x, -1)", "undef");
-  simplifies_to("diff(x^3,x,x,2)", "dep(6×x,{x^3})");  // should be 6*x
-  simplifies_to("diff(x*y*y*y*z,y,x,2)", "dep(6×z×x^2,{x^3})");
+  simplifies_to("diff(x^3,x,x,2)", "6×x");
+  simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×z×x^2");
 
   simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×x^2×k×y");
-  simplifies_to("diff(3×x^2×k×y,x,k,2)", "dep(6×k×y,{k^2})");
-  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "dep(6×k×y,{k^2})");
+  simplifies_to("diff(3×x^2×k×y,x,k,2)", "6×k×y");
+  simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "6×k×y");
   simplifies_to("diff((x^2, floor(x)),x,k)", "(2×k,diff(floor(x),x,k))");
   simplifies_to("diff(floor(x), x, y, 1)", "diff(floor(x),x,y)");
   // There should be no dependencies, see Dependency::ContainsSameDependency
@@ -317,12 +316,12 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(ln((-2+i)×(-1+i))+2×π×i)", "re(ln(1-3×i))", ctx);
 
   store("x→f(x)", &globalContext);
-  simplifies_to("i×im(f(x))+re(f(x))", "dep(f(x),{im(f(x))})", ctx);
-  simplifies_to("re(conj(f(x)))-re(f(x))", "dep(0,{re(f(x))})", ctx);
-  simplifies_to("conj(conj(f(x)))", "dep(f(x),{im(f(x))})", ctx);
+  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
+  simplifies_to("re(conj(f(x)))-re(f(x))", "dep(0,{f(x)})", ctx);
+  simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
   simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
-  simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{im(f(y)),re(f(y))})", ctx);
-  simplifies_to("im(i×f(y))", "dep(re(f(y)),{im(f(y))})", ctx);
+  simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{f(y)})", ctx);
+  simplifies_to("im(i×f(y))", "re(f(y))", ctx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   // TODO: Should be im(f(x))+re(f(y)), fail because of Full CRC collection
   simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))",
@@ -486,7 +485,7 @@ QUIZ_CASE(pcj_simplification_factorial) {
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
-  simplifies_to("cosh(-x)+sinh(x)", "dep(e^x,{e^(-x)})");
+  simplifies_to("cosh(-x)+sinh(x)", "e^x");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
 #endif
@@ -853,9 +852,9 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   assert_trees_are_equal(e3, r3);
 
-  Tree* e4 = KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDepList(KAbs("x"_e), "z"_e)))
+  Tree* e4 = KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDepList("x"_e, "z"_e)))
                  ->cloneTree();
-  const Tree* r4 = KDep(1_e, KDepList(KAbs("y"_e), "z"_e));
+  const Tree* r4 = KDep(1_e, KDepList("y"_e, "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   assert_trees_are_equal(e4, r4);
 }
@@ -954,9 +953,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({0,π/2,π,3π/2,-4π})", "{0,1,0,-1,0}");
   // test π/12 in top-right quadrant
   simplifies_to("cos({π/12,-19π/12})",
-                "{(1+√(3))/(2×√(2)),(-1+√(3))/(2×√(2))}");
+                "{(√(2)×(1+√(3)))/4,(-1+√(3))/(2×√(2))}");
   simplifies_to("sin({π/12,-19π/12})",
-                "{(-1+√(3))/(2×√(2)),(1+√(3))/(2×√(2))}");
+                "{(√(2)×(-1+√(3)))/4,(√(2)×(1+√(3)))/4}");
   // test π/10 in top-left quadrant
   simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
   simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
@@ -1102,8 +1101,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
-  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
-                "dep(0,{√(-x^2/(x^2+1)+1)})", cartesianCtx);
+  simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)", "dep(0,{1/(x^2+1)})",
+                cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {
@@ -1171,8 +1170,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
 #endif
   simplifies_to("ln(x)+ln(y)-ln(x×y)", "ln(x)+ln(y)-ln(x×y)", cartesianCtx);
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-                "dep(0,{ln(abs(x)×√(y^2))})", cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))", "dep(0,{x,y})",
+                cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

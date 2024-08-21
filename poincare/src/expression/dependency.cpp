@@ -180,6 +180,15 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   return false;
 }
 
+// These expression are only undef if their child is undef.
+bool IsDefinedIfChildIsDefined(const Tree* e) {
+  return e->isOfType({Type::Trig, Type::Ln, Type::Abs, Type::Exp, Type::Re,
+                      Type::Im}) ||
+         /* TODO_PCJ: Use the old Power::typeOfDependency logic for better
+          * sensitivity (ex: return true on |x|+1)^(-1)) */
+         (e->isPow() && e->child(1)->isStrictlyPositiveInteger());
+}
+
 bool ShallowRemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
@@ -198,18 +207,8 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       changed = true;
       continue;
     }
-    // dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
-    if (depI->isPow()) {
-#if TODO_PCJ
-      Power p = static_cast<Power&>(depI);
-      if (p.typeOfDependency(reductionContext) == Power::DependencyType::None) {
-        depI->moveTreeOverTree(depI->child(0));
-        i--;
-        continue;
-      }
-#endif
-    } else if (depI->isTrig()) {
-      // dep(..,{trig(x,..)}) = dep(..,{x})
+    if (IsDefinedIfChildIsDefined(depI)) {
+      // dep(..,{trig(x,..)}) = dep(..,{x}), same with similar expressions
       depI->moveTreeOverTree(depI->child(0));
       i--;
       changed = true;

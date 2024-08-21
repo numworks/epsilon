@@ -46,7 +46,8 @@ install_python_deps() {
     pyelftools \
     pypng \
     stringcase \
-    black
+    black \
+    parse
 }
 
 install_macos_binary_deps() {

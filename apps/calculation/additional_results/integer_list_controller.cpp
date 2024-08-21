@@ -30,18 +30,10 @@ void IntegerListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
   assert(AdditionalResultsType::HasInteger(exactOutput));
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
-    if (baseAtIndex(index) == OMG::Base::Decimal) {
-      m_layouts[index] = exactOutput.createLayout(
-          Preferences::PrintFloatMode::Decimal,
-          Preferences::LargeNumberOfSignificantDigits, nullptr);
-    } else {
-#if 0
-      // TODO_PCJ: serialize integer in binary and hexadecimal
-      m_layouts[index] = integer.createLayout(baseAtIndex(index));
-#else
-      m_layouts[index] = Layout::String("TODO");
-#endif
-    }
+    m_layouts[index] =
+        exactOutput.createLayout(Preferences::PrintFloatMode::Decimal,
+                                 Preferences::LargeNumberOfSignificantDigits,
+                                 nullptr, false, false, baseAtIndex(index));
   }
   // Computing factorExpression
   Expression factor = UserExpression::Create(KFactor(KA), {.KA = exactOutput});

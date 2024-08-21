@@ -873,7 +873,7 @@ bool OExpression::containsSameDependency(
 Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits,
                                  Context *context, bool forceStripMargin,
-                                 bool nested) const {
+                                 bool nested, OMG::Base base) const {
   if (isUninitialized()) {
     return Layout();
   }
@@ -881,7 +881,7 @@ Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   Internal::Tree *exp =
       static_cast<const JuniorExpression &>(*this).tree()->cloneTree();
   Internal::Tree *lay = Internal::Layouter::LayoutExpression(
-      exp, false, numberOfSignificantDigits, floatDisplayMode);
+      exp, false, numberOfSignificantDigits, floatDisplayMode, base);
   return JuniorLayout::Builder(lay);
 }
 

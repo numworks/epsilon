@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_API_H
 #define POINCARE_EXPRESSION_API_H
 
+#include <omg/enums.h>
 #include <poincare/layout.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
@@ -82,6 +83,7 @@ struct LayoutFormat {
   bool linearMode = false;
   int8_t numberOfSignificantDigits = -1;
   Preferences::PrintFloatMode floatMode = Preferences::PrintFloatMode::Decimal;
+  OMG::Base base = OMG::Base::Decimal;
 };
 
 #if 0

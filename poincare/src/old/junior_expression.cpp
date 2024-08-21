@@ -205,7 +205,7 @@ SystemExpression JuniorExpressionNode::approximateToTree(
 
 Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
+    Context* context, OMG::Base base) const {
   return JuniorLayout::Builder(Layouter::LayoutExpression(
       tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode));
 }

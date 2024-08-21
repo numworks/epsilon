@@ -112,7 +112,8 @@ class JuniorExpressionNode final : public ExpressionNode {
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits, Context* context) const;
+                      int numberOfSignificantDigits, Context* context,
+                      OMG::Base base = OMG::Base::Decimal) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;

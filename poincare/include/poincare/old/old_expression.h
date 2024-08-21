@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_REFERENCE_H
 
 #include <ion/storage/file_system.h>
+#include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
@@ -366,7 +367,8 @@ class OExpression : public PoolHandle {
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,
-                      bool forceStripMargin = false, bool nested = false) const;
+                      bool forceStripMargin = false, bool nested = false,
+                      OMG::Base base = OMG::Base::Decimal) const;
   ExpressionNode::LayoutShape leftLayoutShape() const {
     return node()->leftLayoutShape();
   }

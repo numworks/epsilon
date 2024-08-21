@@ -91,7 +91,7 @@ UserExpression UserExpression::FromSymbol(const char* name) {
 Layout UserExpression::createLayout(LayoutFormat format) const {
   return Layout::Builder(Internal::Layouter::LayoutExpression(
       tree()->cloneTree(), format.linearMode, format.numberOfSignificantDigits,
-      format.floatMode));
+      format.floatMode, format.base));
 }
 
 SystemExpression UserExpression::projected() const {

@@ -282,13 +282,17 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
 }
 
 bool SystematicOperation::ReduceComplexPart(Tree* e) {
+  /* Note : We could rely on advanced reduction step re(A+B) <-> re(A) + re(B)
+   * instead of handling addition here, but this makes some obvious
+   * simplifications too hard to reach consistently. */
   /* With A not pure, B real and C imaginary pure :
    * re(A+B+C) = dep(re(A) + B, {C}) and im(A+B+C) = dep(im(A) - i*C, {B}) */
   assert(e->isRe() || e->isIm());
   bool isRe = e->isRe();
   Tree* child = e->child(0);
-  // Handle both re(A) and re(A+B+C)
+  // Handle both re(A) and re(A+B+C).
   bool childIsAdd = child->isAdd();
+  // Note : childIsAdd could be set to false if addition's complex sign is pure.
   int nbChildren = 1;
   if (childIsAdd) {
     nbChildren = child->numberOfChildren();

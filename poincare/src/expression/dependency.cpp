@@ -161,7 +161,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
        (searched->isPow() && container->isPowReal() &&
         searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
-    /* 1/(-n) contains ln(x)
+    /* 1^-n contains ln(x)
      * lnReal(x) contains ln(x)
      * powReal(x,y) contains pow(x,y) */
     return true;
@@ -187,7 +187,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 // These expression are only undef if their child is undef.
 bool IsDefinedIfChildIsDefined(const Tree* e) {
   /* TODO_PCJ: For better sensitivity (simplify more dependencies):
-   *           - Use the old Power::typeOfDependency logic
+   *           - Use the old Power::typeOfDependency logic :
+   *                dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
    *           - Handle logarithm of non null children */
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveInteger());
@@ -212,7 +213,7 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     }
     if (IsDefinedIfChildIsDefined(depI)) {
-      // dep(..,{trig(x,..)}) = dep(..,{x}), same with similar expressions
+      // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
       depI->moveTreeOverTree(depI->child(0));
       i--;
       changed = true;

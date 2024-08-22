@@ -65,12 +65,6 @@ bool Trigonometry::IsDirectTrigonometryFunction(const UserExpression& e) {
                      ExpressionNode::Type::Tangent});
 }
 
-bool Trigonometry::IsInverseTrigonometryFunction(const UserExpression& e) {
-  return e.isOfType({ExpressionNode::Type::ArcCosine,
-                     ExpressionNode::Type::ArcSine,
-                     ExpressionNode::Type::ArcTangent});
-}
-
 UserExpression Trigonometry::UnitConversionFactor(
     Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
   if (fromUnit == toUnit) {

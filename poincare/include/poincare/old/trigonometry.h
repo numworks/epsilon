@@ -16,7 +16,6 @@ class Trigonometry final {
   static UserExpression PiExpressionInAngleUnit(
       Preferences::AngleUnit angleUnit);
   static bool IsDirectTrigonometryFunction(const UserExpression& e);
-  static bool IsInverseTrigonometryFunction(const UserExpression& e);
   /* Returns a (unreduced) division between pi in each unit, or 1 if the units
    * are the same. */
   static UserExpression UnitConversionFactor(Preferences::AngleUnit fromUnit,

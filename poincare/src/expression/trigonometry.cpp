@@ -153,7 +153,9 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   /* TODO: Maybe the exact trigonometric values should be replaced in advanced
    *        reduction. */
   if (piFactor) {
-    // Find n to match Trig((n/120)*π, ...) with exact value.
+    /* We have exact values for 1/d with d ∈ {1,2,3,4,5,6,8,10,12}
+     * We thus rule out piFactor that are not of of the form n/d, n∈ℕ
+     * Which means piFactor*120 must be int (120 = lcm(1,2,3,4,5,6,8,10,12)) */
     Tree* multipleTree = Rational::Multiplication(120_e, piFactor);
     if (multipleTree->isInteger()) {
       // Trig is 2pi periodic, n can be retrieved as a uint8_t.

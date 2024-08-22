@@ -1369,6 +1369,9 @@ template std::complex<float> Approximation::RootPreparedToComplex<float>(
 template std::complex<double> Approximation::RootPreparedToComplex<double>(
     const Tree*, double);
 
+template float Approximation::FloatBinomial<float>(float, float);
+template double Approximation::FloatBinomial<double>(double, double);
+
 template std::complex<float> Approximation::ToComplex<float>(const Tree*);
 template std::complex<double> Approximation::ToComplex<double>(const Tree*);
 

@@ -1,31 +1,6 @@
-$(call create_goal,coverage_epsilon, \
-  apps \
-  eadk \
-  escher \
-  ion \
-  kandinsky \
-  liba_bridge \
-  omg \
-  poincare \
-  python \
-  sdl \
-  ,coverage, \
-)
+$(call create_goal,coverage_epsilon,$(MODULES_epsilon),coverage)
 
-$(call create_goal,coverage_test, \
-  apps.test \
-  eadk \
-  escher.test \
-  ion.test \
-  kandinsky.test \
-  liba_bridge \
-  omg.test \
-  poincare.test \
-  python.test \
-  quiz \
-  sdl \
-  ,coverage, \
-)
+$(call create_goal,coverage_test,$(MODULES_test),coverage)
 
 $(call all_targets_named,coverage/%.bin): SFLAGS += --coverage
 

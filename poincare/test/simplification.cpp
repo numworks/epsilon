@@ -966,7 +966,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{1/√(2),-1/√(2),-1/√(2),1/√(2)}");
   simplifies_to("sin({π/4,3π/4,-11π/4,7π/4})",
                 "{1/√(2),1/√(2),-1/√(2),-1/√(2)}");
-  // add? simplifies_to("cos(π×7/10)+√(5/8-√(5)/8)", "0", cartesianCtx);
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
 

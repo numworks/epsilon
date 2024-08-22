@@ -1036,6 +1036,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{√(-x^2+1)/x,x/√(-x^2+1),tan(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
                 "{-√(-x^2+1)/x,-x/√(-x^2+1),-tan(arctan(x))}", cartesianCtx);
+  simplifies_to("cos({acos(x), asin(x), atan(x)})",
+                "{x,√(-x^2+1),cos(arctan(x))}",
+                {.m_complexFormat = ComplexFormat::Cartesian,
+                 .m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(acos(3/7))", "3/7");
   simplifies_to("cos(acos(9/7))", "undef");  // TODO: nonreal ?
   simplifies_to("cos(acos(9/7))", "9/7", cartesianCtx);
@@ -1050,6 +1054,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{arcsin(cos(x)),arcsin(sin(x)),arcsin(tan(x))}", cartesianCtx);
   simplifies_to("atan({cos(x), sin(x), tan(x)})",
                 "{arctan(cos(x)),arctan(sin(x)),arctan(tan(x))}", cartesianCtx);
+  simplifies_to("acos({cos(x), sin(x), tan(x)})",
+                "{arccos(cos(x)),arccos(sin(x)),arccos(tan(x))}",
+                {.m_complexFormat = ComplexFormat::Cartesian,
+                 .m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos({3π/7, -11π/15,34π/15, 40π/13}))",
                 "{(3×π)/7,(11×π)/15,(4×π)/15,(12×π)/13}");
   simplifies_to("asin(sin({3π/7, -11π/15,34π/15, 40π/13}))",

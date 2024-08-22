@@ -356,6 +356,9 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("-2×_m", "-2×_m", polarCtx);
   simplifies_to("(-2,i)", "(-2,i)", polarCtx);
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^((-π/2)×i)}", polarCtx);
+  // TODO : Better simplify abs and arg
+  simplifies_to("(y/y+3)×e^(i×(x-x+2))",
+                "dep(abs(4×e^(2×i))×e^(arg(4×e^(2×i))×i),{x,y^0})", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {

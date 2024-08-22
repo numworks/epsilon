@@ -9,6 +9,7 @@
 #include "approximation.h"
 #include "arithmetic.h"
 #include "context.h"
+#include "dependency.h"
 #include "division.h"
 #include "float.h"
 #include "number.h"
@@ -286,25 +287,43 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
   bool absReduced = SystematicReduction::ShallowReduce(abs);
-  SharedTreeStack->pushExp();
-  SharedTreeStack->pushMult(2);
+  Tree* exp = SharedTreeStack->pushExp();
+  Tree* mult = SharedTreeStack->pushMult(2);
   SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
   bool argReduced = SystematicReduction::ShallowReduce(arg);
+  // Bubble up dependencies that appeared during reduction.
+  bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&
+                               Dependency::ShallowBubbleUpDependencies(exp);
+  bubbledUpDependencies =
+      Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
+  if (bubbledUpDependencies) {
+    Dependency::DeepRemoveUselessDependencies(result);
+  }
   /* the multiplication that may be created by arg is not flattened on purpose
    * to keep (π/2)*i as such and not as π*i/2 */
   if (!absReduced || !argReduced) {
     SharedTreeStack->dropBlocksFrom(result);
     return false;
   }
+  Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
+  if (bubbledUpDependencies) {
+    // abs and arg may have been invalidated, find them again.
+    PatternMatching::Context ctx;
+    bool find = PatternMatching::Match(polarForm,
+                                       KMult(KA, KExp(KMult(i_e, KB))), &ctx);
+    assert(find);
+    abs = const_cast<Tree*>(ctx.getTree(KA));
+    arg = const_cast<Tree*>(ctx.getTree(KB));
+  }
   if (abs->isZero() || arg->isZero()) {
-    NAry::RemoveChildAtIndex(result, 1);
+    NAry::RemoveChildAtIndex(polarForm, 1);
   }
   if (abs->isOne()) {
-    NAry::RemoveChildAtIndex(result, 0);
+    NAry::RemoveChildAtIndex(polarForm, 0);
   }
-  NAry::SquashIfPossible(result);
+  NAry::SquashIfPossible(polarForm);
   e->moveTreeOverTree(result);
   return true;
 }

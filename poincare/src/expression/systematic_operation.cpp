@@ -246,6 +246,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
   const Tree* child = e->child(0);
   ComplexSign childSign = GetComplexSign(child);
+  // TODO : arg(e^(iA)) = A when A real, arg(A*B) = arg(B) when A real positive
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
   if (!realSign.isKnown()) {
@@ -480,6 +481,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
     assert(!ReduceAbs(e));
     return true;
   }
+  // TODO : |e^(i*x)| = 1 when x is real
   ComplexSign complexSign = GetComplexSign(child);
   if (!complexSign.isPure()) {
     return false;

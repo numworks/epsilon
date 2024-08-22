@@ -60,12 +60,6 @@ UserExpression Trigonometry::PiExpressionInAngleUnit(
   }
 }
 
-UserExpression Trigonometry::AnglePeriodInAngleUnit(
-    Preferences::AngleUnit angleUnit) {
-  return Multiplication::Builder(
-      Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
-}
-
 bool Trigonometry::IsDirectTrigonometryFunction(const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
                      ExpressionNode::Type::Tangent});
@@ -75,40 +69,6 @@ bool Trigonometry::IsInverseTrigonometryFunction(const UserExpression& e) {
   return e.isOfType({ExpressionNode::Type::ArcCosine,
                      ExpressionNode::Type::ArcSine,
                      ExpressionNode::Type::ArcTangent});
-}
-
-bool Trigonometry::IsAdvancedTrigonometryFunction(const UserExpression& e) {
-  return e.isOfType({ExpressionNode::Type::Secant,
-                     ExpressionNode::Type::Cosecant,
-                     ExpressionNode::Type::Cotangent});
-}
-
-bool Trigonometry::IsInverseAdvancedTrigonometryFunction(
-    const UserExpression& e) {
-  return e.isOfType({ExpressionNode::Type::ArcSecant,
-                     ExpressionNode::Type::ArcCosecant,
-                     ExpressionNode::Type::ArcCotangent});
-}
-
-bool Trigonometry::AreInverseFunctions(const UserExpression& directFunction,
-                                       const UserExpression& inverseFunction) {
-  if (!IsDirectTrigonometryFunction(directFunction)) {
-    return false;
-  }
-  ExpressionNode::Type correspondingType;
-  switch (directFunction.type()) {
-    case ExpressionNode::Type::Cosine:
-      correspondingType = ExpressionNode::Type::ArcCosine;
-      break;
-    case ExpressionNode::Type::Sine:
-      correspondingType = ExpressionNode::Type::ArcSine;
-      break;
-    default:
-      assert(directFunction.type() == ExpressionNode::Type::Tangent);
-      correspondingType = ExpressionNode::Type::ArcTangent;
-      break;
-  }
-  return inverseFunction.type() == correspondingType;
 }
 
 UserExpression Trigonometry::UnitConversionFactor(
@@ -121,55 +81,8 @@ UserExpression Trigonometry::UnitConversionFactor(
                            PiExpressionInAngleUnit(fromUnit));
 }
 
-bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(
-    const UserExpression& e, bool inverse) {
-  // We look for (sin(x) * cos(x)^-1) or (sin(x)^-1 * cos(x))
-  assert(ExpressionNode::Type::Sine < ExpressionNode::Type::Cosine);
-  ExpressionNode::Type numeratorType =
-      inverse ? ExpressionNode::Type::Cosine : ExpressionNode::Type::Sine;
-  ExpressionNode::Type denominatorType =
-      inverse ? ExpressionNode::Type::Sine : ExpressionNode::Type::Cosine;
-  int numeratorIndex = inverse ? 1 : 0;  // Cos is always after sin;
-  int denominatorIndex = inverse ? 0 : 1;
-  if (e.type() == ExpressionNode::Type::Multiplication &&
-      e.childAtIndex(numeratorIndex).type() == numeratorType &&
-      e.childAtIndex(denominatorIndex).type() == ExpressionNode::Type::Power &&
-      e.childAtIndex(denominatorIndex).childAtIndex(0).type() ==
-          denominatorType &&
-      e.childAtIndex(denominatorIndex).childAtIndex(1).isMinusOne() &&
-      e.childAtIndex(numeratorIndex)
-          .childAtIndex(0)
-          .isIdenticalTo(e.childAtIndex(denominatorIndex)
-                             .childAtIndex(0)
-                             .childAtIndex(0))) {
-    return true;
-  }
-  return false;
-}
-
-bool Trigonometry::ExpressionIsEquivalentToTangent(const UserExpression& e) {
-  return ExpressionIsTangentOrInverseOfTangent(e, false);
-}
-
-bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(
-    const UserExpression& e) {
-  return ExpressionIsTangentOrInverseOfTangent(e, true);
-}
-
 // TODO_PCJ: Delete these method
 #if 0
-static int PiDivisor(Preferences::AngleUnit angleUnit) {
-  switch (angleUnit) {
-    case Preferences::AngleUnit::Radian:
-      return 1;
-    case Preferences::AngleUnit::Degree:
-      return 180;
-    default:
-      assert(angleUnit == Preferences::AngleUnit::Gradian);
-      return 200;
-  }
-}
-
 Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
                                                      Expression& denominator) {
   /* Replace direct trigonometric function with their advanced counterpart.

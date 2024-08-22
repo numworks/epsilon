@@ -13,22 +13,14 @@ class Trigonometry final {
     Cosine = 0,
     Sine = 1,
   };
-  static UserExpression AnglePeriodInAngleUnit(
-      Preferences::AngleUnit angleUnit);
   static UserExpression PiExpressionInAngleUnit(
       Preferences::AngleUnit angleUnit);
   static bool IsDirectTrigonometryFunction(const UserExpression& e);
   static bool IsInverseTrigonometryFunction(const UserExpression& e);
-  static bool IsAdvancedTrigonometryFunction(const UserExpression& e);
-  static bool IsInverseAdvancedTrigonometryFunction(const UserExpression& e);
-  static bool AreInverseFunctions(const UserExpression& directFunction,
-                                  const UserExpression& inverseFunction);
   /* Returns a (unreduced) division between pi in each unit, or 1 if the units
    * are the same. */
   static UserExpression UnitConversionFactor(Preferences::AngleUnit fromUnit,
                                              Preferences::AngleUnit toUnit);
-  static bool ExpressionIsEquivalentToTangent(const UserExpression& e);
-  static bool ExpressionIsEquivalentToInverseOfTangent(const UserExpression& e);
   // TODO_PCJ: Delete these method
 #if 0
   static Expression ReplaceWithAdvancedFunction(Expression& e,
@@ -40,10 +32,6 @@ class Trigonometry final {
    * angle unit she is using if she's forgetting to switch the angle unit */
   static void DeepAddAngleUnitToAmbiguousDirectFunctions(
       UserExpression& e, Preferences::AngleUnit angleUnit);
-
- private:
-  static bool ExpressionIsTangentOrInverseOfTangent(const UserExpression& e,
-                                                    bool inverse);
 };
 
 }  // namespace Poincare

@@ -46,6 +46,6 @@ LDFLAGS_sdl += \
 
 # Search this specific directory for SDL_config.h before $(PATH_sdl)
 # FIXME Move this file to a SDL directory?
-SFLAGS_sdl := -Iion/src/simulator/linux/include $(SFLAGS_sdl)
+SFLAGS_sdl := -I$(PATH_ion)/src/simulator/linux/include $(SFLAGS_sdl)
 # Make sure an error is raised if we ever use the standard SDL_config.h
 PRIVATE_SFLAGS_sdl += -DUSING_GENERATED_CONFIG_H

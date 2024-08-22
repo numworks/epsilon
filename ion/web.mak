@@ -30,7 +30,7 @@ _ion_web_exported_runtime_methods := $(subst $( ),$(,) ,$(strip $(patsubst %,"%"
 )))
 
 LDFLAGS_ion += \
-  --pre-js ion/src/simulator/web/preamble_env.js \
+  --pre-js $(PATH_ion)/src/simulator/web/preamble_env.js \
   -s EXPORTED_FUNCTIONS='[$(_ion_web_exported_functions)]' \
   -s EXPORTED_RUNTIME_METHODS='[$(_ion_web_exported_runtime_methods)]'
 

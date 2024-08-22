@@ -190,7 +190,8 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
    *           - Use the old Power::typeOfDependency logic :
    *                dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
    *           - Handle logarithm of non null children */
-  return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im}) ||
+  return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
+                      Type::ATrig, Type::ATanRad}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveInteger());
 }
 

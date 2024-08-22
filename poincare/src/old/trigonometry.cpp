@@ -60,11 +60,6 @@ UserExpression Trigonometry::PiExpressionInAngleUnit(
   }
 }
 
-bool Trigonometry::IsDirectTrigonometryFunction(const UserExpression& e) {
-  return e.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine,
-                     ExpressionNode::Type::Tangent});
-}
-
 UserExpression Trigonometry::UnitConversionFactor(
     Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit) {
   if (fromUnit == toUnit) {
@@ -83,7 +78,7 @@ Expression Trigonometry::ReplaceWithAdvancedFunction(Expression& e,
    * This function must be called within a denominator. */
   assert(e.type() == ExpressionNode::Type::Power &&
          !denominator.isUninitialized());
-  assert(IsDirectTrigonometryFunction(denominator));
+  assert(denominator.tree()->isDirectTrigonometryFunction());
   Expression result;
   switch (denominator.type()) {
     case ExpressionNode::Type::Cosine:

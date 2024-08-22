@@ -1045,7 +1045,7 @@ OExpression Power::shallowBeautify(const ReductionContext &reductionContext) {
   OExpression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
   if (!p.isUninitialized()) {
-    if (Trigonometry::IsDirectTrigonometryFunction(p) &&
+    if (p.tree()->isDirectTrigonometryFunction() &&
         (p.otype() != ExpressionNode::Type::Tangent ||
          !p.approximate<float>(ApproximationContext(reductionContext, true))
               .isUndefined())) {

@@ -131,6 +131,43 @@ const Tree* getPiFactor(const Tree* e) {
   return nullptr;
 }
 
+static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
+  assert(TypeBlock::IsDirectTrigonometryFunction(type));
+  assert(piFactor && piFactor->isRational());
+  /* x = piFactor * π
+   *
+   * For cos: look for equivalent angle in [0,π] (since acos ∈ [0,π])
+   * Compute k = ⌊piFactor⌋
+   * if k is even, acos(cos(x)) = π*(piFactor-k)
+   * if k is odd, acos(cos(x)) = acos(cos(-x)) = π*(k-piFactor+1)
+
+   * For sin: look for equivalent angle in [-π/2,π/2] (since asin ∈ [-π/2,π/2])
+   * Compute k = ⌊piFactor + 1/2⌋
+   * if k is even, asin(sin(x)) = π*(piFactor-k)
+   * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-piFactor)
+
+   * For tan: look for equivalent angle in [-π/2,π/2] (since atan ∈ [-π/2,π/2])
+   * Compute k = ⌊piFactor + 1/2⌋
+   * if k is even, atan(tan(x)) = π*(piFactor-k)
+   * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(piFactor-k) */
+  Tree* res = PatternMatching::CreateSimplify(
+      type == Type::Cos ? KFloor(KA) : KFloor(KAdd(KA, 1_e / 2_e)),
+      {.KA = piFactor});
+  assert(res->isInteger());
+  bool kIsEven = Integer::Handler(res).isEven();
+  res->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
+  if (!kIsEven && type != Type::Tan) {
+    res->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
+    if (type != Type::Sin) {
+      res->moveTreeOverTree(
+          PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
+    }
+  }
+  return res;
+}
+
 bool Trigonometry::ReduceTrig(Tree* e) {
   assert(e->isTrig());
   // Trig(x,y) = {Cos(x) if y=0, Sin(x) if y=1, -Cos(x) if y=2, -Sin(x) if y=3}
@@ -246,34 +283,7 @@ static bool simplifyATrigOfTrig(Tree* e) {
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
   bool swapATrig = type != Type::Tan &&
                    (!ctx.getTree(KB)->treeIsIdenticalTo(ctx.getTree(KC)));
-  /* For acos ∈ [0,π]:
-   * Compute k = ⌊y⌋
-   * if k is even, acos(cos(x)) = π*(y-k)
-   * if k is odd, acos(cos(x)) = acos(cos(-x)) = π*(k-y+1)
-
-   * For asin ∈ [-π/2,π/2]:
-   * Compute k = ⌊y + 1/2⌋
-   * if k is even, asin(sin(x)) = π*(y-k)
-   * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-y)
-
-   * For atan ∈ [-π/2,π/2]:
-   * Compute k = ⌊y + 1/2⌋
-   * if k is even, atan(tan(x)) = π*(y-k)
-   * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(y-k) */
-  Tree* res = PatternMatching::CreateSimplify(
-      type == Type::Cos ? KFloor(KA) : KFloor(KAdd(KA, 1_e / 2_e)), {.KA = y});
-  assert(res->isInteger());
-  bool kIsEven = Integer::Handler(res).isEven();
-  res->moveTreeOverTree(PatternMatching::CreateSimplify(
-      KAdd(KA, KMult(-1_e, KB)), {.KA = y, .KB = res}));
-  if (!kIsEven && type != Type::Tan) {
-    res->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
-    if (type != Type::Sin) {
-      res->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
-    }
-  }
+  Tree* res = computeSimplifiedPiFactorForType(y, type);
   if (swapATrig) {
     res->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(1_e / 2_e, KMult(-1_e, KA)), {.KA = res}));

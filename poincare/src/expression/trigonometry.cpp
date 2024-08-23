@@ -288,9 +288,74 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   return changed;
 }
 
+// Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x)) if possible
+static void preprocessAtanOfTan(Tree* e) {
+  PatternMatching::Context ctx;
+  // Match atan(sin(a)/cos(b))
+  if (!PatternMatching::Match(
+          e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
+          &ctx)) {
+    return;
+  }
+  const Tree* aFactor = getPiFactor(ctx.getTree(KA));
+  const Tree* bFactor = getPiFactor(ctx.getTree(KB));
+  if (!aFactor || !bFactor) {
+    return;
+  }
+  assert(aFactor->isRational() && bFactor->isRational());
+  // We need the pointers to KA and KB in our tree
+  Tree* a = e->child(0)->child(1)->child(0);
+  assert(a->treeIsIdenticalTo(ctx.getTree(KA)));
+  Tree* b = e->child(0)->child(0)->child(0)->child(0);
+  assert(b->treeIsIdenticalTo(ctx.getTree(KB)));
+
+  /* Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x))
+   * a = b      ==>  sin(a)/cos(b) = sin(a)/cos(a) = sin(b)/cos(b)
+   * a = -b     ==>  sin(a)/cos(b) = sin(a)/cos(a)
+   * a = π - b  ==>  sin(a)/cos(b) = sin(b)/cos(b)
+   * a = π + b  ==>  sin(a)/cos(b) = sin(-a)/cos(-a) = sin(-b)/cos(-b) */
+
+  Tree* sub = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
+                                              {.KA = aFactor, .KB = bFactor});
+  sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
+  assert(sub->isRational());
+  if (sub->treeIsIdenticalTo(0_e)) {
+    // a = b ==> sin(a)/cos(a)
+    sub->removeTree();
+    b->moveTreeOverTree(a->cloneTree());
+    return;
+  } else if (sub->treeIsIdenticalTo(1_e)) {
+    // a = π + b ==> sin(-a)/cos(-a)
+    sub->removeTree();
+    a->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a}));
+    b->moveTreeOverTree(a->cloneTree());
+    return;
+  }
+  sub->removeTree();
+
+  Tree* add = PatternMatching::CreateSimplify(KAdd(KA, KB),
+                                              {.KA = aFactor, .KB = bFactor});
+  add->moveTreeOverTree(computeSimplifiedPiFactor(add));
+  assert(add->isRational());
+  if (add->treeIsIdenticalTo(0_e)) {
+    // a = -b ==> sin(a)/cos(a)
+    add->removeTree();
+    b->moveTreeOverTree(a->cloneTree());
+    return;
+  } else if (add->treeIsIdenticalTo(1_e)) {
+    // a = π - b ==> sin(b)/cos(b)
+    add->removeTree();
+    a->moveTreeOverTree(b->cloneTree());
+    return;
+  }
+  add->removeTree();
+}
+
 static bool simplifyATrigOfTrig(Tree* e) {
   TypeBlock type = Type::Undef;
   PatternMatching::Context ctx;
+  preprocessAtanOfTan(e);
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;

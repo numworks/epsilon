@@ -1076,7 +1076,7 @@ QUIZ_CASE(poincare_simplification_logarithm) {
   assert_parsed_expression_simplify_to("log(1002101470343)",
                                        "log(1002101470343)");
   assert_parsed_expression_simplify_to("log(64,2)", "6");
-  assert_parsed_expression_simplify_to("log(2,64)", "log(2,64)");
+  assert_parsed_expression_simplify_to("log(2,64)", "1/6");
   assert_parsed_expression_simplify_to("log(1476225,5)", "10×log(3,5)+2");
 
   assert_parsed_expression_simplify_to("log(100)", "2");
@@ -2215,7 +2215,7 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)",
                                        SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
-  assert_parsed_expression_simplify_to("√(i×(i+2))", "√(2×i-1)",
+  assert_parsed_expression_simplify_to("√(i×(i+2))", "√(-1+2×i)",
                                        SystemForApproximation);
 
   // Always reduce sign for ReductionTarget = User
@@ -2539,7 +2539,7 @@ QUIZ_CASE(poincare_probability) {
 QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
   // Try with ReductionTarget = User --> fails --> retry with ReductionTarget =
   // SystemForApproximation
-  assert_parsed_expression_simplify_to("(π+i)^√(i×(i+2))", "(π+i)^√(2×i-1)");
+  assert_parsed_expression_simplify_to("(π+i)^√(i×(i+2))", "(π+i)^√(-1+2×i)");
   // Multiplication overflows --> don't reduce
   assert_parsed_expression_simplify_to(
       "20^23×20^23×20^23×20^23×20^23×20^23×25^23×20^23×20^23×20^23×20^23×20^"

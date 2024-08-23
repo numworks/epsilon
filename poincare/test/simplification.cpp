@@ -1070,6 +1070,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("acos(sin({π*23/7, -23*π/7}))/π", "{11/14,3/14}");
   simplifies_to("asin(cos({π*23/7, -23*π/7}))/π", "{-3/14,-3/14}");
+  simplifies_to("atan({tan(-3π/13), -sin(3π/13)/cos(3π/13)})",
+                "{-3π/13,-3π/13}");
 
 #if 0
   // TODO: asin(x) = π/2 - acos(x) advanced reduction safe from infinite loops.

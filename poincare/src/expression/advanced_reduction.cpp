@@ -294,11 +294,11 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
     for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
       if (ctx->m_crcCollection.maxDepth() < ctx->m_path.length()) {
         fullExploration = false;
-        break;
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
         LogIndent();
         std::cout << "CRC maxDepth has been reduced.\n";
 #endif
+        break;
       }
       Direction dir = Direction::SingleDirectionForIndex(i);
       if (ctx->m_mustResetRoot) {

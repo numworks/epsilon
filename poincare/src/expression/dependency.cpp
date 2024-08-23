@@ -155,10 +155,10 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
     return true;
   }
   if (((container->isLn() && searched->isPow() &&
-        searched->child(0)->treeIsIdenticalTo(searched->child(0)) &&
+        searched->child(0)->treeIsIdenticalTo(container->child(0)) &&
         searched->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isPow() &&
-        container->child(0)->treeIsIdenticalTo(container->child(0)) &&
+        container->child(0)->treeIsIdenticalTo(searched->child(0)) &&
         container->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isLnReal()) ||
        (searched->isPow() && container->isPowReal() &&

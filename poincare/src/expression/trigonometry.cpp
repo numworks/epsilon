@@ -131,6 +131,25 @@ const Tree* getPiFactor(const Tree* e) {
   return nullptr;
 }
 
+static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
+  assert(piFactor && piFactor->isRational());
+  /* x = piFactor * π
+   * Look for equivalent angle in [0,2π]
+   * Compute k = ⌊piFactor⌋
+   * if k is even, x = π*(piFactor-k)
+   * if k is odd, x = π*(piFactor-k+1) */
+  Tree* res = PatternMatching::CreateSimplify(KFloor(KA), {.KA = piFactor});
+  assert(res->isInteger());
+  bool kIsEven = Integer::Handler(res).isEven();
+  res->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
+  if (!kIsEven) {
+    res->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
+  }
+  return res;
+}
+
 static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
   assert(TypeBlock::IsDirectTrigonometryFunction(type));
   assert(piFactor && piFactor->isRational());
@@ -209,6 +228,14 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       }
     } else {
       multipleTree->removeTree();
+      // Translate angle in [0,2π]
+      TreeRef simplifiedPiFactor = computeSimplifiedPiFactor(piFactor);
+      if (!simplifiedPiFactor->treeIsIdenticalTo(piFactor)) {
+        firstArgument->moveTreeOverTree(PatternMatching::CreateSimplify(
+            KMult(π_e, KA), {.KA = simplifiedPiFactor}));
+        changed = true;
+      }
+      simplifiedPiFactor->removeTree();
     }
   } else if (PatternMatching::MatchReplace(e, KTrig(KATrig(KA, KB), KB), KA) ||
              PatternMatching::MatchReplaceSimplify(

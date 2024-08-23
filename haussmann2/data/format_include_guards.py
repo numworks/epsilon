@@ -1,8 +1,9 @@
 def format_include_guard(header_file, should_correct_error):
-    """Check that include guards are correctly formatted. The correct format is RELATIVE_PATH_TO_FILE_H_"""
+    """Check that include guards are correctly formatted. The correct format for the file relative/path/to_file.h is RELATIVE__PATH__TO_FILE_H"""
     from pathlib import Path
     header_path = Path(header_file)
-    guard_macro = ''.join([c if c.isalnum() else '_' for c in header_path.as_posix().upper()])
+    # Use __ for / instead of _, otherwise dir/file.h and dir_file.h would have the same guard.
+    guard_macro = ''.join([c if c.isalnum() else '__' if c == '/' else '_' for c in header_path.as_posix().upper()])
     with open(header_path, 'r') as file:
         lines = file.readlines()
         if len(lines) < 3:

@@ -275,10 +275,10 @@ void Grid::addEmptyColumn() {
 
 void Grid::empty() {
   if (isPiecewiseLayout()) {
-    moveTreeOverTree(KEmptyPiecewiseL->cloneTree());
+    cloneTreeOverTree(KEmptyPiecewiseL);
   } else {
     assert(isMatrixLayout());
-    moveTreeOverTree(KEmptyMatrixL->cloneTree());
+    cloneTreeOverTree(KEmptyMatrixL);
   }
 }
 

@@ -25,8 +25,7 @@ void DeleteChildrenRacks(Tree* rack) {
   for (Tree* layout : rack->children()) {
     if (layout->isParenthesesLayout()) {
       AutocompletedPair::SetTemporary(layout, Side::Right, true);
-    }
-    if (layout->isGridLayout()) {
+    } else if (layout->isGridLayout()) {
       Grid* grid = Grid::From(layout);
       grid->empty();
     }

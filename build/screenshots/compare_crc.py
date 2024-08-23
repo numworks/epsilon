@@ -48,6 +48,11 @@ parser.add_argument(
     type=existing_directory,
     help="Dataset to test",
 )
+parser.add_argument(
+    "--ignore-failure",
+    action="store_true",
+    help="Do not exit with an error status even if some scenarios failed.",
+)
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
@@ -199,7 +204,8 @@ def main():
     if fails == 0:
         shutil.rmtree(output_folder)
 
-    sys.exit(fails)
+    if not args.ignore_failure:
+        sys.exit(fails)
 
 
 if __name__ == "__main__":

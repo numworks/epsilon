@@ -10,32 +10,10 @@ ASSERTIONS ?= $(DEBUG)
 
 ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 
-include $(PATH_haussmann)/Makefile
-
 GCC_MINIMUM_VERSION:=11
 CLANG_MINIMUM_VERSION:=14
 
-# TODO: move this function to haussmann?
-# Only the major version is checked, the second parameter is expected to be an integer
-# check_minimum_version, <compiler>, <minimum_required_version_id>
-define check_minimum_version
-	@echo Using $1 $(shell $1 -dumpversion)
-	$1 --version
-	if [ $(word 1,$(subst ., ,$(shell $1 -dumpversion))) -lt $2 ]; then \
-	  echo "Failed requirement, $1 should have a version >= $2"; \
-    exit 1; \
-	fi
-endef
-
-.PHONY: check_compiler_version
-ifeq ($(lastword $(subst /, ,$(CC))),gcc)
-check_compiler_version:
-	$(call check_minimum_version,gcc,$(GCC_MINIMUM_VERSION))
-endif
-ifeq ($(lastword $(subst /, ,$(CC))),clang)
-check_compiler_version:
-	$(call check_minimum_version,clang,$(CLANG_MINIMUM_VERSION))
-endif
+include $(PATH_haussmann)/Makefile
 
 # Further configuration
 

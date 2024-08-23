@@ -33,9 +33,6 @@ $(call create_goal,test, \
   sdl \
 )
 
-epsilon.bin: check_compiler_version
-test.bin: check_compiler_version
-
 include build/coverage.mak
 
 ifeq ($(PLATFORM),web)

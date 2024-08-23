@@ -64,8 +64,6 @@ endef
 # rule_for_coverage_info,<coverage_dir>
 define rule_for_coverage_info
 $(eval \
-$1/coverage_epsilon.bin: check_compiler_version
-$1/coverage_test.bin: check_compiler_version
 coverage_info: $1/coverage_test.bin $1/coverage_epsilon.bin
 	$(call initialize_diagnosis,code_coverage,$1)
 	$(call run_screenshot_tests,$$(word 2,$$^))

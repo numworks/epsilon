@@ -8,12 +8,12 @@ _coverage_excludes := \
   '**/eadk/**' \
   '**/external/**' \
   '*/output/**' \
-	'**/test/**' \
-	'**/python/src/**' \
-	'**/quiz/src/**' \
+  '**/test/**' \
+  '**/python/src/**' \
+  '**/quiz/src/**' \
   '/Applications/**' \
   '/Library/**' \
-	'/usr/**' \
+  '/usr/**' \
 
 # initialize_diagnosis, <file_name>, <coverage_dir>
 define initialize_diagnosis

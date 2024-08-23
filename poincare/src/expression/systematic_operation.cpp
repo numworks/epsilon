@@ -314,6 +314,8 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
           (isRe != childSign.isReal()) ? deletedChildren : extractedChildren,
           detachedChild);
       detachedChildrenCount++;
+    } else {
+      child = child->nextTree();
     }
   }
   if (detachedChildrenCount == 0) {

@@ -76,7 +76,8 @@ bool AdvancedReduction::Reduce(Tree* e) {
 
 bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
   if (depth > m_maxDepth) {
-    // Escape if depth is too high, behave as if tree had already been tested.
+    /* Escape if depth is too high, behave as if tree had already been tested
+     * (by returning false) to prevent going further. */
     return false;
   }
   if (isFull()) {

@@ -52,12 +52,12 @@ class AdvancedReduction {
     // Max Expand/Contract combination possibilities
     constexpr static size_t k_size = ADVANCED_MAX_BREADTH;
     uint32_t m_collection[k_size];
-    // Depth and Available depth at which each possibilities have been explored
+    // Depth and Available depth at which each possibility has been explored
     // TODO: Since ADVANCED_MAX_DEPTH is small, we could use a bitfield here.
     uint8_t m_depth[k_size];
     uint8_t m_availableDepth[k_size];
     size_t m_length;
-    // Max depths at which a hash will be handled.
+    // Maximal depth at which a hash will be handled.
     uint8_t m_maxDepth;
   };
 

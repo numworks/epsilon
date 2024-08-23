@@ -18,7 +18,7 @@ def format_include_guard(header_file, should_correct_error):
                 lines[1] = f'#define {guard_macro}\n'
             else:
                 return False
-        if lines[-1].startswith('#endif') and lines[-1].strip() != f'#endif // {guard_macro}':
+        if lines[-1].startswith('#endif') and lines[-1].strip() != f'#endif  // {guard_macro}':
             if should_correct_error:
                 lines[-1] = f'#endif // {guard_macro}\n'
             else:

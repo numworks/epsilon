@@ -164,7 +164,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
        (searched->isPow() && container->isPowReal() &&
         searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
-    /* 1^-n contains ln(x) and inversely
+    /* x^-n contains ln(x) and inversely
      * lnReal(x) contains ln(x)
      * powReal(x,y) contains pow(x,y) */
     return true;

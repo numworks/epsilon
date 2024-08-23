@@ -83,14 +83,16 @@ QUIZ_CASE(pcj_simplification_contraction) {
               KExp(KAdd("x"_e, "y"_e, "z"_e)));
   contract_to(
       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
-      KMult(1_e / 2_e, KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
-                            KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e))));
-  contract_to(KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e), KExp("y"_e),
-                    KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
-              KMult(1_e / 2_e,
-                    KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
-                         KTrig(KAdd("x"_e, KMult(-1_e, "y"_e)), 1_e)),
-                    KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e))));
+      KMult(1_e / 2_e,
+            KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                 KMult(-1_e, KTrig(KAdd(KMult(-1_e, "x"_e), "y"_e), 1_e)))));
+  contract_to(
+      KMult(KAbs("x"_e), KAbs("y"_e), KExp("x"_e), KExp("y"_e),
+            KTrig("x"_e, 1_e), KTrig("y"_e, 0_e)),
+      KMult(1_e / 2_e,
+            KAdd(KTrig(KAdd("x"_e, "y"_e), 1_e),
+                 KMult(-1_e, KTrig(KAdd(KMult(-1_e, "x"_e), "y"_e), 1_e))),
+            KAbs(KMult("x"_e, "y"_e)), KExp(KAdd("x"_e, "y"_e))));
   contract_to(KMult(KAbs("a"_e), KAbs(KMult("b"_e, "c"_e)), KAbs("d"_e),
                     KAbs(KMult("e"_e, "f"_e))),
 

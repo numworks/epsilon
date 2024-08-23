@@ -405,7 +405,8 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
   /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be changing
    * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
    * both way would lead to infinite possible contractions. */
-  return  // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
+  return
+      // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D // TODO_PCJ: add dep in B
       PatternMatching::MatchReplaceSimplify(
           e,
           KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KB, 1_e), 2_e),
@@ -413,6 +414,7 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
           KAdd(1_e, KA_s, KC_s, KD_s)) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
+      // TODO: isn't that an expand operation?
       PatternMatching::MatchReplaceSimplify(
           e, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
           KMult(1_e / 2_e, KA_s, KD_s,

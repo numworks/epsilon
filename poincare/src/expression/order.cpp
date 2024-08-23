@@ -109,8 +109,11 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
   if (type1 == Type::Var) {
     return Variables::Id(e1) - Variables::Id(e2);
   }
-  // f(0, 1, 4) < f(0, 2, 3) and (2 + 3) < (1 + 4)
-  return CompareChildren(e1, e2, type1 == Type::Add || type1 == Type::Mult);
+  /* f(0, 1, 4) < f(0, 2, 3)
+   * (2 + 3) < (1 + 4)
+   * trig(5, 0) < trig(4, 1)   (same order as Type::Cos and Type::Sin) */
+  return CompareChildren(
+      e1, e2, type1 == Type::Add || type1 == Type::Mult || type1 == Type::Trig);
 }
 
 bool Order::ContainsSubtree(const Tree* tree, const Tree* subtree) {

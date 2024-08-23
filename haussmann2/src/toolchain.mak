@@ -50,3 +50,25 @@ CC := ccache $(CC)
 CXX := ccache $(CXX)
 AR := ccache $(AR)
 endif
+
+
+# Only the major version is checked, the parameter is expected to be an integer
+# check_compiler_version,<minimum_required_version>
+define check_compiler_version
+$(if $(shell if [ $(word 1,$(subst ., ,$(shell $(CC) -dumpversion))) -lt $1 ]; then \
+	           echo error; \
+	           fi),\
+	$(error "Failed requirement, $(CC) must have a version >= $1 but has version $(shell $(CC) -dumpversion)"),)
+endef
+
+ifeq ($(lastword $(subst /, ,$(CC))),gcc)
+ifneq ($(GCC_MINIMUM_VERSION),)
+$(call check_compiler_version,$(GCC_MINIMUM_VERSION))
+endif
+endif
+
+ifeq ($(lastword $(subst /, ,$(CC))),clang)
+ifneq ($(CLANG_MINIMUM_VERSION),)
+$(call check_compiler_version,$(CLANG_MINIMUM_VERSION))
+endif
+endif

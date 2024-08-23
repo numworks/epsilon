@@ -298,58 +298,61 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
     nbChildren = child->numberOfChildren();
     child = child->child(0);
   }
-  // Children to extract out of ComplexPart
-  TreeRef extracted = SharedTreeStack->pushAdd(0);
-  // Children to remove from ComplexPart
-  TreeRef deleted = SharedTreeStack->pushAdd(0);
 
-  int detachedChildren = 0;
+  TreeRef extractedChildren = SharedTreeStack->pushAdd(0);
+  TreeRef deletedChildren = SharedTreeStack->pushAdd(0);
+
+  int detachedChildrenCount = 0;
   for (int i = 0; i < nbChildren; i++) {
     ComplexSign childSign = GetComplexSign(child);
     if (childSign.isPure()) {
       // re(A) = A or 0, im(A) = 0 or -i*A
-      // Detach child before casting TreeRef deleted/extracted into Tree *
+      /* Detach child before casting TreeRef deletedChildren or
+       * extractedChildren into Tree *. */
       Tree* detachedChild = child->detachTree();
-      NAry::AddChild((isRe != childSign.isReal()) ? deleted : extracted,
-                     detachedChild);
-      detachedChildren++;
+      NAry::AddChild(
+          (isRe != childSign.isReal()) ? deletedChildren : extractedChildren,
+          detachedChild);
+      detachedChildrenCount++;
     }
   }
-  if (detachedChildren == 0) {
+  if (detachedChildrenCount == 0) {
     // Nothing changed.
-    deleted->removeTree();
-    extracted->removeTree();
+    deletedChildren->removeTree();
+    extractedChildren->removeTree();
     return false;
   }
   if (childIsAdd) {
-    if (detachedChildren == nbChildren) {
+    if (detachedChildrenCount == nbChildren) {
       // Remove emptied out Addition node
       e->child(0)->removeNode();
     } else {
       // Update number of children
-      NAry::SetNumberOfChildren(e->child(0), nbChildren - detachedChildren);
+      NAry::SetNumberOfChildren(e->child(0),
+                                nbChildren - detachedChildrenCount);
       NAry::SquashIfUnary(e->child(0));
     }
   }
-  if (detachedChildren == nbChildren) {
+  if (detachedChildrenCount == nbChildren) {
     // ComplexPart has been pilfered of its child, it's now 0.
     e->cloneTreeOverNode(0_e);
   }
   /* Optimize a SystematicReduction::ShallowReduce call, as only squash could be
    * needed here (children are already ordered and shouldn't reduce further) */
-  NAry::SquashIfPossible(extracted);
-  NAry::SquashIfPossible(deleted);
+  NAry::SquashIfPossible(extractedChildren);
+  NAry::SquashIfPossible(deletedChildren);
 
   if (!isRe) {
     // Add -i factor to children extracted from imaginary part
-    PatternMatching::MatchReplaceSimplify(extracted, KA, KMult(-1_e, i_e, KA));
+    PatternMatching::MatchReplaceSimplify(extractedChildren, KA,
+                                          KMult(-1_e, i_e, KA));
   }
-  // Combine remaining children with extracted ones
+  // Combine remaining children with detached ones
   e->moveTreeOverTree(PatternMatching::CreateSimplify(
       KDep(KAdd(KA, KB), KDepList(KC)),
-      {.KA = e, .KB = extracted, .KC = deleted}));
-  deleted->removeTree();
-  extracted->removeTree();
+      {.KA = e, .KB = extractedChildren, .KC = deletedChildren}));
+  deletedChildren->removeTree();
+  extractedChildren->removeTree();
   return true;
 }
 

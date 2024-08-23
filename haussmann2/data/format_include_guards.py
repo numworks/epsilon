@@ -7,17 +7,17 @@ def format_include_guard(header_file, should_correct_error):
         lines = file.readlines()
         if len(lines) < 3:
             return False
-        if not lines[0].strip() == f'#ifndef {guard_macro}':
+        if lines[0].startswith('#ifndef') and lines[0].strip() != f'#ifndef {guard_macro}':
             if should_correct_error:
                 lines[0] = f'#ifndef {guard_macro}\n'
             else:
                 return False
-        if not lines[1].strip() == f'#define {guard_macro}':
+        if lines[1].startswith('#define') and lines[1].strip() != f'#define {guard_macro}':
             if should_correct_error:
                 lines[1] = f'#define {guard_macro}\n'
             else:
                 return False
-        if not lines[-1].strip() == f'#endif // {guard_macro}':
+        if lines[-1].startswith('#endif') and lines[-1].strip() != f'#endif // {guard_macro}':
             if should_correct_error:
                 lines[-1] = f'#endif // {guard_macro}\n'
             else:

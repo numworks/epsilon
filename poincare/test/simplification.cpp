@@ -591,7 +591,7 @@ QUIZ_CASE(pcj_simplification_percent) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
-  simplifies_to("-2-30%", "(-2)×(1+(-30)/100)");
+  simplifies_to("-2-30%", "(-2)×(1-30/100)");
   simplifies_to("x-30%", "x×(1-30/100)",
                 {.m_strategy = Strategy::ApproximateToFloat});
 }

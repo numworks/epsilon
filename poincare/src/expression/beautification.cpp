@@ -136,8 +136,14 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
   if (!PatternMatching::Match(e, KPercentAddition(KA, KB), &ctx)) {
     return false;
   }
-  // A + B% -> A * (1 + B / 100)
-  return PatternMatching::MatchReplace(e, KPercentAddition(KA, KB),
+  /* ShallowBeautifyPercent comes after Rational(-20) -> Opposite(Rational(20)),
+   * we need to revert it partially. */
+  // A - B% -> A * (1 - B / 100)
+  return PatternMatching::MatchReplace(e, KPercentAddition(KA, KOpposite(KB)),
+                                       KMult(KA, KSub(1_e, KDiv(KB, 100_e))))
+         // A + B% -> A * (1 + B / 100)
+         ||
+         PatternMatching::MatchReplace(e, KPercentAddition(KA, KB),
                                        KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
 }
 

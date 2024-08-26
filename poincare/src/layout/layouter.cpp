@@ -452,11 +452,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Diff:
       // TODO_PCJ: isValidCondensedForm and createValidExpandedForm
       // Case 1: f'(a)
-      if (expression->child(0)->treeIsIdenticalTo(Symbol::k_systemSymbol)) {
+      if (expression->child(0)->treeIsIdenticalTo(KUnknownSymbol)) {
         assert(expression->lastChild()->isUserFunction() &&
                expression->lastChild()->child(0)->isUserSymbol() &&
                expression->lastChild()->child(0)->treeIsIdenticalTo(
-                   Symbol::k_systemSymbol));
+                   KUnknownSymbol));
         layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
         int order = Integer::Handler(expression->child(2)).to<int>();
         assert(order > 0);

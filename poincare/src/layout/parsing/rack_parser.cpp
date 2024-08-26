@@ -1078,14 +1078,14 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       result = SharedTreeStack->pushDiff();
       // Symbol
-      Symbol::k_systemSymbol->cloneTree();
+      KUnknownSymbol->cloneTree();
       // SymbolValue
       parameter->detachTree();
       // Order
       Integer::Push(derivationOrder);
       // Derivand
       SharedTreeStack->pushUserFunction(name);
-      Symbol::k_systemSymbol->cloneTree();
+      KUnknownSymbol->cloneTree();
     } else {
       result = SharedTreeStack->pushUserFunction(name);
       parameter->moveNodeBeforeNode(result);

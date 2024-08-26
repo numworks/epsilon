@@ -27,8 +27,6 @@ class Symbol final {
   constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_sequenceSymbol = 'n';
 
-  constexpr static KTree k_systemSymbol = "\x01"_e;
-
   static uint8_t Length(const Tree* e) {
     assert(e->isUserNamed());
     return e->nodeValue(0) - 1;

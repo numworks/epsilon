@@ -164,6 +164,11 @@ bool List::ShallowApplyListOperators(Tree* e) {
       ExceptionTry { e->moveTreeOverTree(Fold(e->child(0), e->type())); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
+          if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+            // leave max({x,0}) unchanged
+            // TODO: we could return undef with max({x,i})
+            return false;
+          }
           e->cloneTreeOverTree(KUndef);
           return true;
         }

@@ -103,7 +103,7 @@ QUIZ_CASE(pcj_simplification_contraction) {
   //     KAdd("e"_e, "f"_e, KLn(KMult("a"_e, "b"_e, "c"_e, "d"_e))));
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
-              KAdd(1_e, "b"_e, "c"_e, "d"_e));
+              KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {
@@ -678,7 +678,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("0^(1+x^2)", "0");
   simplifies_to("sqrt(9)", "3");
   simplifies_to("root(-8,3)", "-2");
-  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
+  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "dep(0,{x})", cartesianCtx);
 
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");
@@ -1123,7 +1123,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^4");
   simplifies_to("1-cos(x)^2", "sin(x)^2");
 #endif
-  simplifies_to("1-cos(x)^2-sin(x)^2", "0");
+  simplifies_to("1-cos(x)^2-sin(x)^2", "dep(0,{x})");
   simplifies_to("(a+b)^2", "(a+b)^2");
   simplifies_to("2*a+b*(a+c)-b*c", "dep(a×(b+2),{c})");
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
@@ -1150,7 +1150,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   // TODO: Should simplify to undef
   simplifies_to("ln(0)", "ln(0)");
   simplifies_to("ln(0)", "ln(0)", cartesianCtx);
-  simplifies_to("ln(cos(x)^2+sin(x)^2)", "0");
+  simplifies_to("ln(cos(x)^2+sin(x)^2)", "dep(0,{x})");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
 #if ACTIVATE_IF_INCREASED_PATH_SIZE
@@ -1166,7 +1166,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);
   simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
   simplifies_to("√(0)", "0", cartesianCtx);
-  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
+  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "dep(0,{x})", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_boolean) {

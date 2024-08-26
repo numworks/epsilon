@@ -298,17 +298,14 @@ static void preprocessAtanOfTan(Tree* e) {
           &ctx)) {
     return;
   }
-  const Tree* aFactor = getPiFactor(ctx.getTree(KA));
-  const Tree* bFactor = getPiFactor(ctx.getTree(KB));
+  Tree* a = const_cast<Tree*>(ctx.getTree(KA));
+  Tree* b = const_cast<Tree*>(ctx.getTree(KB));
+  const Tree* aFactor = getPiFactor(a);
+  const Tree* bFactor = getPiFactor(b);
   if (!aFactor || !bFactor) {
     return;
   }
   assert(aFactor->isRational() && bFactor->isRational());
-  // We need the pointers to KA and KB in our tree
-  Tree* a = e->child(0)->child(1)->child(0);
-  assert(a->treeIsIdenticalTo(ctx.getTree(KA)));
-  Tree* b = e->child(0)->child(0)->child(0)->child(0);
-  assert(b->treeIsIdenticalTo(ctx.getTree(KB)));
 
   /* Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x))
    * a = b      ==>  sin(a)/cos(b) = sin(a)/cos(a) = sin(b)/cos(b)

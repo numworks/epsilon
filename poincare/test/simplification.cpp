@@ -591,7 +591,7 @@ QUIZ_CASE(pcj_simplification_percent) {
   // % are left unreduced on purpose to show their exact formula
   simplifies_to("-25%", "-25/100");
   simplifies_to("2↗30%", "2×(1+30/100)");
-  simplifies_to("-2-30%", "-2×(1-30/100)");
+  simplifies_to("-2-30%", "(-2)×(1+(-30)/100)");
   simplifies_to("x-30%", "x×(1-30/100)",
                 {.m_strategy = Strategy::ApproximateToFloat});
 }
@@ -757,7 +757,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1234_g", "1.234×_kg");
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
-  simplifies_to("_s^-1", "1×_s^-1");
+  simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("abs(-3.3_m)", "3.3×_m");
 
   // Temperature
@@ -768,7 +768,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("8_°C/2", "4×_°C");
   simplifies_to("2_K+2_K", "4×_K");
   simplifies_to("2_K×2_K", "4×_K^2");
-  simplifies_to("1/_K", "1×_K^-1");
+  simplifies_to("1/_K", "1×_K^(-1)");
   simplifies_to("(2_K)^2", "4×_K^2");
 
   // Undefined

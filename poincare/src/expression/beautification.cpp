@@ -167,8 +167,9 @@ bool Beautification::DeepBeautify(Tree* e,
 }
 
 bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
-  // Turn multiplications with negative powers into divisions
-  if (e->isMult() || e->isPow() || Number::IsStrictRational(e)) {
+  /* Turn multiplications with negative powers into divisions and negative
+   * rationals into opposites */
+  if (e->isMult() || e->isPow() || e->isRational()) {
     if (Division::BeautifyIntoDivision(e)) {
       return true;
     }

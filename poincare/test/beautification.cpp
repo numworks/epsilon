@@ -37,6 +37,10 @@ QUIZ_CASE(pcj_beautification) {
   TreeRef ref6((-3_e / 2_e)->cloneTree());
   Beautification::DeepBeautify(ref6);
   assert_trees_are_equal(ref6, KOpposite(KDiv(3_e, 2_e)));
+
+  TreeRef ref7((-3_e)->cloneTree());
+  Beautification::DeepBeautify(ref7);
+  assert_trees_are_equal(ref7, KOpposite(3_e));
 }
 
 void beautifies_to(const char* input, const char* output) {

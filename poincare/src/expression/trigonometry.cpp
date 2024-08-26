@@ -151,7 +151,8 @@ static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
 }
 
 static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
-  assert(TypeBlock::IsDirectTrigonometryFunction(type));
+  assert(TypeBlock::IsDirectTrigonometryFunction(type) &&
+         !TypeBlock::IsTrig(type));
   assert(piFactor && piFactor->isRational());
   /* x = piFactor * π
    *
@@ -322,14 +323,14 @@ static void preprocessAtanOfTan(Tree* e) {
   if (sub->treeIsIdenticalTo(0_e)) {
     // a = b ==> sin(a)/cos(a)
     sub->removeTree();
-    b->moveTreeOverTree(a->cloneTree());
+    b->cloneTreeOverTree(a);
     return;
   } else if (sub->treeIsIdenticalTo(1_e)) {
     // a = π + b ==> sin(-a)/cos(-a)
     sub->removeTree();
     a->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a}));
-    b->moveTreeOverTree(a->cloneTree());
+    b->cloneTreeOverTree(a);
     return;
   }
   sub->removeTree();
@@ -341,12 +342,12 @@ static void preprocessAtanOfTan(Tree* e) {
   if (add->treeIsIdenticalTo(0_e)) {
     // a = -b ==> sin(a)/cos(a)
     add->removeTree();
-    b->moveTreeOverTree(a->cloneTree());
+    b->cloneTreeOverTree(a);
     return;
   } else if (add->treeIsIdenticalTo(1_e)) {
     // a = π - b ==> sin(b)/cos(b)
     add->removeTree();
-    a->moveTreeOverTree(b->cloneTree());
+    a->cloneTreeOverTree(b);
     return;
   }
   add->removeTree();

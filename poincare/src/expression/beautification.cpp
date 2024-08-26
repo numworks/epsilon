@@ -158,7 +158,8 @@ bool Beautification::DeepBeautify(Tree* e,
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
   changed =
-      Tree::ApplyShallowTopDown(e, ShallowBeautifyDivisionsAndRoots) || changed;
+      Tree::ApplyShallowTopDown(e, ShallowBeautifyOppositesDivisionsAndRoots) ||
+      changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
   changed = Variables::BeautifyToName(e) || changed;
@@ -166,7 +167,8 @@ bool Beautification::DeepBeautify(Tree* e,
   return changed;
 }
 
-bool Beautification::ShallowBeautifyDivisionsAndRoots(Tree* e, void* context) {
+bool Beautification::ShallowBeautifyOppositesDivisionsAndRoots(Tree* e,
+                                                               void* context) {
   /* Turn multiplications with negative powers into divisions and negative
    * rationals into opposites */
   if (e->isMult() || e->isPow() || e->isRational()) {

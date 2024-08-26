@@ -161,7 +161,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
     case Type::ListProduct:
     case Type::Min:
     case Type::Max: {
-      ExceptionTry { e->moveTreeOverTree(Fold(e->child(0), e->type())); }
+      Tree* result;
+      ExceptionTry { result = Fold(e->child(0), e->type()); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
           if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
@@ -174,6 +175,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
         }
         TreeStackCheckpoint::Raise(exc);
       }
+      e->moveTreeOverTree(result);
       return true;
     }
     case Type::Mean:

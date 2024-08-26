@@ -257,9 +257,11 @@ int Order::CompareLastChild(const Tree* e1, const Tree* e2, OrderType order) {
 int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   Dimension dim = Dimension::Get(e1);
   if (dim.isPoint()) {
+    assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
     Tree* p1 = Approximation::RootTreeToTree<double>(e1);
     Tree* p2 = Approximation::RootTreeToTree<double>(e2);
+    assert(p1->isPoint() && p2->isPoint());
     int result = RealLineCompare(p1->child(0), p2->child(0));
     if (result == 0) {
       result = RealLineCompare(p1->child(1), p2->child(1));
@@ -270,11 +272,11 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   }
   /* TODO: the approximations could be precomputed and called only once */
   std::complex<double> v1 = Approximation::ToComplex<double>(e1);
-  if (v1.imag() || std::isnan(v1.real())) {
+  if (v1.imag() != 0.0 || std::isnan(v1.real())) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
   std::complex<double> v2 = Approximation::ToComplex<double>(e2);
-  if (v2.imag() || std::isnan(v2.real())) {
+  if (v2.imag() != 0.0 || std::isnan(v2.real())) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
   return v1.real() < v2.real() ? -1 : v1.real() == v2.real() ? 0 : 1;

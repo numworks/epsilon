@@ -113,6 +113,9 @@ QUIZ_CASE(pcj_simplification_variables) {
       KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
   assert_trees_are_equal(Variables::GetUserSymbols(e),
                          KSet("m"_e, "y"_e, "z"_e));
+  const Tree* s = KSum("k"_e, 1_e, 2_e, KAdd(KVarK, π_e));
+  quiz_assert(!Variables::HasVariables(s));
+  quiz_assert(Variables::HasVariables(s->lastChild()));
 }
 
 QUIZ_CASE(pcj_replace_symbol_with_tree) {

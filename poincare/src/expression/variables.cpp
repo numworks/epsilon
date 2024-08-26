@@ -230,10 +230,23 @@ bool Variables::BeautifyToName(Tree* e, uint8_t depth) {
   return changed;
 }
 
+static bool HasVariablesOutOfScope(const Tree* e, int scope) {
+  if (e->isVar()) {
+    return Variables::Id(e) >= scope;
+  }
+  bool isParametric = e->isParametric();
+  for (IndexedChild<const Tree*> child : e->indexedChildren()) {
+    int childScope =
+        scope + (isParametric && Parametric::IsFunctionIndex(child.index, e));
+    if (HasVariablesOutOfScope(child, childScope)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Variables::HasVariables(const Tree* e) {
-  // TODO: we probably want to ignore bound variables
-  // return HasVariable(e, 0) ?
-  return e->hasDescendantSatisfying([](const Tree* e) { return e->isVar(); });
+  return HasVariablesOutOfScope(e, 0);
 }
 
 bool Variables::HasVariable(const Tree* e, const Tree* variable) {

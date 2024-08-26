@@ -123,6 +123,7 @@ RANGE(DirectTrigonometryFunction, Cos, Trig)
 NODE(ACos, 1)
 NODE(ASin, 1)
 NODE(ATan, 1)
+// ATrig(x,y) = {ACos(x) if y=0, ASin(x) if y=1}
 NODE(ATrig, 2)
 NODE(ATanRad, 1)
 

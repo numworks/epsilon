@@ -6,6 +6,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "approximation.h"
+#include "float_helper.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
@@ -210,7 +211,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
       float pivot = std::abs(Approximation::ToComplex<float>(pivotChild));
       // Handle very low pivots
-      if (pivot == 0.0f && !pivotChild->isZero()) {
+      if (pivot == 0.0f &&
+          !(pivotChild->isZero() ||
+            (pivotChild->isFloat() && FloatHelper::FloatTo(pivotChild) == 0))) {
         pivot = FLT_MIN;
       }
 

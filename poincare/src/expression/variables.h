@@ -29,6 +29,8 @@ class Variables {
   };
   // Push a Set with the free user symbols of the expression
   static Tree* GetUserSymbols(const Tree* e);
+  static bool HasUserSymbols(const Tree* e);
+
   static bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
   static bool BeautifyToName(Tree* e, uint8_t depth = 0);
   static uint8_t Id(const Tree* variable);

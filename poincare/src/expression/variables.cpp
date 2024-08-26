@@ -71,6 +71,11 @@ void Variables::GetUserSymbols(const Tree* e, Tree* set) {
   }
 }
 
+bool Variables::HasUserSymbols(const Tree* e) {
+  return e->hasDescendantSatisfying(
+      [](const Tree* e) { return e->isUserSymbol(); });
+}
+
 bool Variables::Replace(Tree* e, const Tree* variable, const Tree* value,
                         bool simplify) {
   assert(variable->isVar());

@@ -24,6 +24,33 @@ Dimension Dimension::Unit(const Tree* unit) {
               Units::Unit::GetRepresentative(unit));
 }
 
+bool IsIntegerExpression(const Tree* e) {
+  /* TODO: when the dimension depends on an arbitrary expression (for instance
+   * identity(e)) we need a nested Simplify to properly compute the value of the
+   * inner expression before continuing.
+   * This will have consequences on the API because we need to pass the
+   * projection context and to alter the tree to avoid recomputing this
+   * sub-expression too often. */
+  if (e->isInteger()) {
+    return true;
+  }
+  switch (e->type()) {
+    case Type::Parentheses:
+    case Type::Opposite:
+    case Type::Mult:
+    case Type::Add: {
+      for (const Tree* child : e->children()) {
+        if (!IsIntegerExpression(child)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
 bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   using Type = Internal::Type;
   // TODO complexity should be linear
@@ -315,11 +342,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         // Powers of non-Kelvin temperature unit are forbidden
         return false;
       }
-      const Tree* index = e->child(1);
-      return index->isInteger() ||
-             (index->isOpposite() && index->child(0)->isInteger()) ||
-             (index->isMult() && index->numberOfChildren() == 2 &&
-              index->child(0)->isMinusOne() && index->child(1)->isInteger());
+      return IsIntegerExpression(e->child(1));
     }
     case Type::Sum:
     case Type::Product:
@@ -343,7 +366,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       return childDim[0].isSquareMatrix();
     case Type::Identity:
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && e->child(0)->isInteger();
+      return childDim[0].isScalar() && IsIntegerExpression(e->child(0));
     case Type::Norm:
       return childDim[0].isVector();
     case Type::Dot:

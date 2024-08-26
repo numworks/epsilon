@@ -630,8 +630,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
       if (m_expression.dimension().isListOfPoints()) {
-        m_expression = m_expression.approximateListAndSort<double>()
-                           .removeUndefListElements();
+        m_expression = m_expression.removeUndefListElements()
+                           .approximateListAndSort<double>();
       } else {
         assert(m_expression.dimension().isPoint());
         m_expression = PoincareHelpers::Approximate<double>(

@@ -25,8 +25,6 @@ class Trigonometry final {
   static Type GetInverseType(Type type);
 
  private:
-  // Given n, return the exact expression of sin(n*π/120).
-  static const Tree* ExactFormula(uint8_t n, bool isSin, bool* isOpposed);
   static bool ReduceTrigSecondElement(Tree* e, bool* isOpposed);
   TREE_REF_WRAP_1(ReduceTrigSecondElement, bool*);
 };

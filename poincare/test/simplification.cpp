@@ -1015,6 +1015,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("tan(-x)", "-tan(x)");
   simplifies_to("cos({-inf,inf})", "{undef, undef}");
   simplifies_to("sin({-inf,inf})", "{undef, undef}");
+  simplifies_to("sin((241/120)π)", "sin(π/120)");
 
   // Direct advanced trigonometry
   simplifies_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");

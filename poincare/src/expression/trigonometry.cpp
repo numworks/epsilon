@@ -17,7 +17,8 @@
 
 namespace Poincare::Internal {
 
-const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
+// Given n, return the exact expression of sin(n*π/120).
+const Tree* exactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   // TODO_PCJ: add exact formula for inverse functions too
   // Sin and cos are 2pi periodic. With sin(n*π/120), n goes from 0 to 239.
   n = n % 240;
@@ -87,6 +88,24 @@ const Tree* Trigonometry::ExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
     default:
       return nullptr;
   }
+}
+
+const Tree* exactFormula(const Tree* piFactor, bool isSin, bool* isOpposed) {
+  /* We have exact values for 1/d with d ∈ {1,2,3,4,5,6,8,10,12}
+   * We thus rule out piFactor that are not of of the form n/d, n∈ℕ
+   * Which means piFactor*120 must be int (120 = lcm(1,2,3,4,5,6,8,10,12)) */
+  Tree* multipleTree = Rational::Multiplication(120_e, piFactor);
+  if (multipleTree->isInteger()) {
+    // Trig is 2pi periodic, n can be retrieved as a uint8_t.
+    multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
+        Integer::Handler(multipleTree), IntegerHandler(240)));
+    assert(Integer::Is<uint8_t>(multipleTree));
+    uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
+    multipleTree->removeTree();
+    return exactFormula(n, isSin, isOpposed);
+  }
+  multipleTree->removeTree();
+  return nullptr;
 }
 
 bool Trigonometry::ReduceTrigDiff(Tree* e) {
@@ -210,26 +229,16 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   /* TODO: Maybe the exact trigonometric values should be replaced in advanced
    *        reduction. */
   if (piFactor) {
-    /* We have exact values for 1/d with d ∈ {1,2,3,4,5,6,8,10,12}
-     * We thus rule out piFactor that are not of of the form n/d, n∈ℕ
-     * Which means piFactor*120 must be int (120 = lcm(1,2,3,4,5,6,8,10,12)) */
-    Tree* multipleTree = Rational::Multiplication(120_e, piFactor);
-    if (multipleTree->isInteger()) {
-      // Trig is 2pi periodic, n can be retrieved as a uint8_t.
-      multipleTree->moveTreeOverTree(IntegerHandler::Remainder(
-          Integer::Handler(multipleTree), IntegerHandler(240)));
-      assert(Integer::Is<uint8_t>(multipleTree));
-      uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
-      multipleTree->removeTree();
-      const Tree* exactFormula = ExactFormula(n, isSin, &isOpposed);
-      if (exactFormula) {
-        e->cloneTreeOverTree(exactFormula);
-        SystematicReduction::DeepReduce(e);
-        changed = true;
-      }
+    bool tempIsOpposed = isOpposed;
+    const Tree* exact = exactFormula(piFactor, isSin, &tempIsOpposed);
+    if (exact) {
+      e->cloneTreeOverTree(exact);
+      SystematicReduction::DeepReduce(e);
+      isOpposed = tempIsOpposed;
+      changed = true;
     } else {
-      multipleTree->removeTree();
       // Translate angle in [0,2π]
+      // TODO: absorb isOpposed
       TreeRef simplifiedPiFactor = computeSimplifiedPiFactor(piFactor);
       if (!simplifiedPiFactor->treeIsIdenticalTo(piFactor)) {
         firstArgument->moveTreeOverTree(PatternMatching::CreateSimplify(

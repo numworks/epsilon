@@ -115,9 +115,11 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
         base = lastBase;
       } else {
         // Find base forward
-        int j = i;
-        const Layout* candidateBase = Layout::From(child->nextTree());
+        int j = i + 1;
+        const Layout* candidateBase =
+            static_cast<const Layout*>(child->nextTree());
         while (j < numberOfChildren) {
+          assert(candidateBase->isLayout());
           if (!candidateBase->isVerticalOffsetLayout()) {
             base = candidateBase;
             break;
@@ -127,7 +129,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
             base = nullptr;
             break;
           }
-          candidateBase = Layout::From(candidateBase->nextTree());
+          candidateBase = static_cast<const Layout*>(child->nextTree());
           j++;
         }
       }
@@ -145,8 +147,9 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
       } else {
         baseHeight = Render::Height(base);
         baseBaseline = Render::Baseline(base);
-        base = Layout::From(base->nextTree());
+        base = static_cast<const Layout*>(base->nextTree());
         while (base < child) {
+          assert(base->isLayout());
           KDCoordinate oldBaseHeight = baseHeight;
           KDCoordinate oldBaseBaseline = baseBaseline;
           KDSize baseSize = Render::Size(base);
@@ -157,7 +160,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
           UpdateChildWithBase(VerticalOffset::IsSuperscript(base),
                               oldBaseHeight, oldBaseBaseline, &baseBaseline,
                               &baseHeight);
-          base = Layout::From(base->nextTree());
+          base = static_cast<const Layout*>(base->nextTree());
         }
       }
       UpdateChildWithBase(VerticalOffset::IsSuperscript(child), baseHeight,

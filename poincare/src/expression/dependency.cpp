@@ -219,7 +219,13 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       changed = true;
       continue;
     }
-    if (IsDefinedIfChildIsDefined(depI)) {
+
+    if (depI->isPow() && depI->child(1)->isStrictlyNegativeInteger() &&
+        !depI->child(1)->isMinusOne()) {
+      // x^-n dependency is equivalent to x^-1
+      depI->child(1)->cloneNodeOverNode(-1_e);
+      changed = true;
+    } else if (IsDefinedIfChildIsDefined(depI)) {
       // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
       depI->moveTreeOverTree(depI->child(0));
       i--;

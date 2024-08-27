@@ -683,7 +683,7 @@ QUIZ_CASE(pcj_simplification_random) {
 QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
   simplifies_to("1/(1/a)", "dep(a,{1/a})");
-  simplifies_to("1/(a^-3)", "dep(a^3,{1/a^3})");
+  simplifies_to("1/(a^-3)", "dep(a^3,{1/a})");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
   simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");

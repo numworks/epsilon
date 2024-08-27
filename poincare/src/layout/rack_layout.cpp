@@ -136,11 +136,16 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
       KDCoordinate baseHeight, baseBaseline;
       if (!base) {
         // Add an empty base
-        if (ShouldDrawEmptyBaseAt(node, i)) {
+        if (ShouldDrawEmptyBaseAt(node, i + VerticalOffset::IsPrefix(child))) {
+          KDCoordinate baseX =
+              x +
+              (VerticalOffset::IsPrefix(child) ? childWidth : KDCoordinate(0));
           callback(nullptr, EmptyRectangle::Size(Render::s_font),
                    EmptyRectangle::Baseline(Render::s_font),
-                   {x, EmptyRectangle::Baseline(Render::s_font)}, context);
-          x += EmptyRectangle::Size(Render::s_font).width();
+                   {baseX, EmptyRectangle::Baseline(Render::s_font)}, context);
+          if (VerticalOffset::IsSuffix(child)) {
+            x += EmptyRectangle::Size(Render::s_font).width();
+          }
         }
         baseHeight = EmptyRectangle::Size(Render::s_font).height();
         baseBaseline = EmptyRectangle::Baseline(Render::s_font);

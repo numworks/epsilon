@@ -2221,7 +2221,8 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   // Always reduce sign for ReductionTarget = User
   assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))",
                                        SystemForApproximation);
-  assert_parsed_expression_simplify_to("sign(abs(x))", "1", User);
+  assert_parsed_expression_simplify_to("sign(abs(x))", "\u0014dep(1,{x})",
+                                       User);
 
   // Reduction of abs(x) depends on the target and the complex format
   assert_parsed_expression_simplify_to("x/abs(x)", "\u0014dep(1/sign(x),{1/x})",

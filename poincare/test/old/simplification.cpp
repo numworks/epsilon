@@ -986,7 +986,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("(i×floor(-abs(x)))^(2/3)",
                                        "(i×floor(-abs(x)))^(2/3)");
   // Denesting of square roots
-  assert_parsed_expression_simplify_to("√(2+√(3))", "(√(6)+√(2))/2");
+  assert_parsed_expression_simplify_to("√(2+√(3))", "(√(2)+√(6))/2");
   assert_parsed_expression_simplify_to("√(3-√(7))", "√(3-√(7))");
   assert_parsed_expression_simplify_to("√(-2+√(3))", "(√(6)-√(2))/2×i", User,
                                        Radian, MetricUnitFormat, Cartesian);
@@ -1265,8 +1265,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("cos(-π×340001)", "-1");
   assert_parsed_expression_simplify_to("cos(-π×√(2))", "cos(√(2)×π)");
   assert_parsed_expression_simplify_to("cos(1311π/6)", "0");
-  assert_parsed_expression_simplify_to("cos(π/12)", "(√(6)+√(2))/4");
-  assert_parsed_expression_simplify_to("cos(-π/12)", "(√(6)+√(2))/4");
+  assert_parsed_expression_simplify_to("cos(π/12)", "(√(2)+√(6))/4");
+  assert_parsed_expression_simplify_to("cos(-π/12)", "(√(2)+√(6))/4");
   assert_parsed_expression_simplify_to("cos(-π17/8)", "√(2+√(2))/2");
   assert_parsed_expression_simplify_to("cos(41π/6)", "-√(3)/2");
   assert_parsed_expression_simplify_to("cos(π/4+1000π)", "√(2)/2");
@@ -1286,9 +1286,9 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("cos(-180×√(2))", "cos(180×√(2))", User,
                                        Degree);
   assert_parsed_expression_simplify_to("cos(39330)", "0", User, Degree);
-  assert_parsed_expression_simplify_to("cos(15)", "(√(6)+√(2))/4", User,
+  assert_parsed_expression_simplify_to("cos(15)", "(√(2)+√(6))/4", User,
                                        Degree);
-  assert_parsed_expression_simplify_to("cos(-15)", "(√(6)+√(2))/4", User,
+  assert_parsed_expression_simplify_to("cos(-15)", "(√(2)+√(6))/4", User,
                                        Degree);
   assert_parsed_expression_simplify_to("cos(-765/2)", "√(2+√(2))/2", User,
                                        Degree);

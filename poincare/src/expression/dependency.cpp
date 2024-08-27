@@ -153,12 +153,15 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   // Un-projected trees are not expected here.
   assert(!searched->isOfType({Type::Log, Type::LogBase}) &&
          !container->isOfType({Type::Log, Type::LogBase}));
-  // TODO handle scopes, x will not be seen in sum(k+x,k,1,n)
+  // TODO: handle scopes, x will not be seen in sum(k+x,k,1,n)
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
+  // From x^n with n integer, only x^-1, x^0, or nothing should remain here.
+  assert(!(searched->isPow() && searched->child(1)->isInteger() &&
+           !searched->child(1)->isOfType({Type::Zero, Type::MinusOne})));
   if (((container->isLn() && searched->isPow() &&
-        searched->child(1)->isStrictlyNegativeInteger()) ||
+        searched->child(1)->isMinusOne()) ||
        (searched->isLn() && container->isPow() &&
         container->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isLnReal()) ||
@@ -172,11 +175,11 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   }
   if (searched->isPow() && container->isPow() &&
       searched->child(0)->treeIsIdenticalTo(container->child(0)) &&
-      searched->child(1)->isMinusOne() && container->child(1)->isZero()) {
-    /* x^0 contains x^-1 */
-    /* TODO_PCJ
-     * - add other possibilities (like x^1/4 contains x^1/2, x^-n contains x^n
-     *   with n positive integer)
+      searched->child(1)->isMinusOne() &&
+      container->child(1)->isNegativeInteger()) {
+    /* x^0 and x^-n contains x^-1 */
+    /* TODO_PCJ:
+     * - add other possibilities like x^1/4 contains x^1/2
      * - with PowReal */
     return true;
   }
@@ -222,7 +225,7 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
 
     if (depI->isPow() && depI->child(1)->isStrictlyNegativeInteger() &&
         !depI->child(1)->isMinusOne()) {
-      // x^-n dependency is equivalent to x^-1
+      // dep(..., {x^-n}) = dep(..., {x^-1}) with n an integer
       depI->child(1)->cloneNodeOverNode(-1_e);
       changed = true;
     } else if (IsDefinedIfChildIsDefined(depI)) {

@@ -158,7 +158,7 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
   }
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   std::cout << "Remove " << (int)(k_size - m_length)
-            << " elements at maxDepth.\n";
+            << " elements of depth bigger than " << (int)m_maxDepth << ".\n";
 #endif
 }
 

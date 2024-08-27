@@ -128,6 +128,8 @@ bool StoreMenuController::parseAndStore(const char* text) {
   }
   UserExpression value = input.cloneChildAtIndex(0);
   UserExpression symbol = input.cloneChildAtIndex(1);
+  assert(symbol.isOfType(
+      {ExpressionNode::Type::Symbol, ExpressionNode::Type::Function}));
   PoincareHelpers::CloneAndSimplify(&value, context);
 #if 0  // TODO_PCJ
   UserExpression valueApprox =

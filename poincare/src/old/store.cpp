@@ -15,25 +15,14 @@
 
 namespace Poincare {
 
-bool Store::storeValueForSymbol(Context* context) const {
-  assert(!value().isUninitialized());
-  // TODO_PCJ handle unit store
-  if (Internal::Dimension::Get(tree()->child(0), context).isUnit()) {
-    return false;
-  }
-  return context->setExpressionForSymbolAbstract(value(), symbol());
-}
-
-#define Store OStore
-
 OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Store(this).shallowReduce(reductionContext);
+  return OStore(this).shallowReduce(reductionContext);
 }
 
 OExpression StoreNode::deepReplaceReplaceableSymbols(
     Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
-  return Store(this).deepReplaceReplaceableSymbols(
+  return OStore(this).deepReplaceReplaceableSymbols(
       context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
@@ -45,26 +34,21 @@ Evaluation<T> StoreNode::templatedApproximate(
   return Complex<T>::Undefined();
 }
 
-void Store::deepReduceChildren(const ReductionContext& reductionContext) {
+void OStore::deepReduceChildren(const ReductionContext& reductionContext) {
   // Only the value of a symbol should have no free variables
   if (symbol().otype() == ExpressionNode::Type::Symbol) {
     childAtIndex(0).deepReduce(reductionContext);
   }
 }
 
-OExpression Store::shallowReduce(ReductionContext reductionContext) {
+OExpression OStore::shallowReduce(ReductionContext reductionContext) {
   /* Stores are kept by the reduction and the app will do the effective store if
    * deemed necessary. Side-effects of the storage modification will therefore
    * happen outside of the checkpoint. */
   return *this;
 }
 
-bool Store::storeValueForSymbol(Context* context) const {
-  assert(!value().isUninitialized());
-  return context->setExpressionForSymbolAbstract(value(), symbol());
-}
-
-OExpression Store::deepReplaceReplaceableSymbols(
+OExpression OStore::deepReplaceReplaceableSymbols(
     Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
   // Only the value of a symbol should have no free variables

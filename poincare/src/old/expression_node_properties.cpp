@@ -90,7 +90,7 @@ OExpression ExpressionNode::deepBeautify(
 void ExpressionNode::deepReduceChildren(
     const ReductionContext& reductionContext) {
   if (otype() == Type::Store) {
-    OExpression(this).convert<Store>().deepReduceChildren(reductionContext);
+    OExpression(this).convert<OStore>().deepReduceChildren(reductionContext);
     return;
   }
   if (otype() == Type::Logarithm && numberOfChildren() == 2) {

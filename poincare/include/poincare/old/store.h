@@ -60,7 +60,6 @@ class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
   // OExpression
   void deepReduceChildren(const ReductionContext& reductionContext);
   OExpression shallowReduce(ReductionContext reductionContext);
-  bool storeValueForSymbol(Context* context) const;
   OExpression deepReplaceReplaceableSymbols(
       Context* context, OMG::Troolean* isCircular,
       int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
@@ -77,16 +76,6 @@ class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
   StoreNode* node() const {
     return static_cast<StoreNode*>(OExpression::node());
   }
-};
-
-class Store final : public JuniorExpression {
- public:
-  const JuniorExpression value() const { return cloneChildAtIndex(0); }
-  const SymbolAbstract symbol() const {
-    const JuniorExpression e = cloneChildAtIndex(1);
-    return static_cast<const SymbolAbstract&>(e);
-  }
-  bool storeValueForSymbol(Context* context) const;
 };
 
 }  // namespace Poincare

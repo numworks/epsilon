@@ -111,8 +111,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
   m_inUsePreferences = *Preferences::SharedPreferences();
   char* cursor = endOfCalculations();
   Calculation* current;
-  UserExpression exactOutputExpression, approximateOutputExpression,
-      storeExpression;
+  UserExpression inputExpression, exactOutputExpression,
+      approximateOutputExpression;
 
   {
     CircuitBreakerCheckpoint checkpoint(
@@ -133,8 +133,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       assert(cursor != k_pushError);
 
       /* Push the input */
-      UserExpression inputExpression =
-          UserExpression::Parse(inputLayout, &ansContext);
+      inputExpression = UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
       char* nextCursor = pushExpressionTree(
@@ -171,28 +170,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       /* Post-processing of store expression */
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
-      if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
-        storeExpression = exactOutputExpression;
-        UserExpression exactStoredExpression =
-            StoreHelper::Value(storeExpression);
-        approximateOutputExpression =
-            PoincareHelpers::ApproximateKeepingUnits<double>(
-                exactStoredExpression, context);
-        if (StoreHelper::Symbol(storeExpression).type() ==
-                ExpressionNode::Type::Symbol &&
-            CAS::ShouldOnlyDisplayApproximation(
-                inputExpression, exactStoredExpression,
-                approximateOutputExpression, context)) {
-          storeExpression = NewExpression::Create(
-              KStore(KA, KB), {.KA = approximateOutputExpression,
-                               .KB = storeExpression.cloneChildAtIndex(1)});
-        }
-        assert(StoreHelper::Symbol(storeExpression).type() !=
-                   ExpressionNode::Type::Symbol ||
-               !StoreHelper::Value(storeExpression)
-                    .deepIsSymbolic(
-                        nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
-      }
     } else {
       context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
       return nullptr;
@@ -209,16 +186,27 @@ ExpiringPointer<Calculation> CalculationStore::push(
    *
    * Once this is done, replace the output with the stored expression. To do
    * so, retrieve the expression of the symbol after it is stored because it can
-   * be different from the value in the storeExpression.
+   * be different from the value in the store expression.
    * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
    * "cos(x^2)".
    * */
-  if (!storeExpression.isUninitialized()) {
-    assert(storeExpression.type() == ExpressionNode::Type::Store);
-    if (StoreHelper::Store(context, storeExpression)) {
-      exactOutputExpression = context->expressionForSymbolAbstract(
-          StoreHelper::Symbol(storeExpression), false);
-      assert(!exactOutputExpression.isUninitialized());
+  if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
+    UserExpression value = StoreHelper::Value(exactOutputExpression);
+    SymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
+    UserExpression valueApprox =
+        PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
+    if (symbol.type() == ExpressionNode::Type::Symbol &&
+        CAS::ShouldOnlyDisplayApproximation(inputExpression, value, valueApprox,
+                                            context)) {
+      value = valueApprox;
+    }
+    assert(!value.deepIsSymbolic(nullptr,
+                                 SymbolicComputation::DoNotReplaceAnySymbol));
+    if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
+      exactOutputExpression = value;
+      approximateOutputExpression = valueApprox;
+      assert(!exactOutputExpression.isUninitialized() &&
+             !approximateOutputExpression.isUninitialized());
     } else {
       exactOutputExpression = Undefined::Builder();
       approximateOutputExpression = Undefined::Builder();

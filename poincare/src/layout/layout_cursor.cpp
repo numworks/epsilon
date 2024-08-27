@@ -128,9 +128,8 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   }
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
-    bool isEmpty = isOnEmptySquare();
     *shouldRedrawLayout =
-        selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
+        selecting || wasEmpty || *shouldRedrawLayout || isOnEmptySquare() ||
         // Redraw to show/hide the empty gray squares of the parent grid
         mostNestedGridParent(cursorRack(), rootRack()) != oldGridParent;
     if (cursorRack() != oldRack) {

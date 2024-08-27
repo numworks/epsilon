@@ -78,6 +78,28 @@ void FindBaseForward(const Layout* child, int maxDepth,
 }
 #endif
 
+const Layout* FindPrefixBase(const Rack* rack, const Layout* verticalOffset,
+                             int verticalOffsetIndex) {
+  assert(VerticalOffset::IsPrefix(verticalOffset));
+  int numberOfChildren = rack->numberOfChildren();
+  int candidateIndex = verticalOffsetIndex + 1;
+  const Layout* candidateBase =
+      static_cast<const Layout*>(verticalOffset->nextTree());
+  while (candidateIndex < numberOfChildren) {
+    assert(candidateBase->isLayout());
+    if (!candidateBase->isVerticalOffsetLayout()) {
+      return candidateBase;
+    }
+    if (VerticalOffset::IsSuffix(candidateBase)) {
+      // Add an empty base
+      return nullptr;
+    }
+    candidateBase = static_cast<const Layout*>(candidateBase->nextTree());
+    candidateIndex++;
+  }
+  return nullptr;
+}
+
 void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
                                     int rightIndex, Callback callback,
                                     void* context, bool showEmpty) {
@@ -115,23 +137,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
         base = lastBase;
       } else {
         // Find base forward
-        int j = i + 1;
-        const Layout* candidateBase =
-            static_cast<const Layout*>(child->nextTree());
-        while (j < numberOfChildren) {
-          assert(candidateBase->isLayout());
-          if (!candidateBase->isVerticalOffsetLayout()) {
-            base = candidateBase;
-            break;
-          }
-          if (VerticalOffset::IsSuffix(candidateBase)) {
-            // Add an empty base
-            base = nullptr;
-            break;
-          }
-          candidateBase = static_cast<const Layout*>(child->nextTree());
-          j++;
-        }
+        base = FindPrefixBase(node, Layout::From(child), i);
       }
       KDCoordinate baseHeight, baseBaseline;
       if (!base) {

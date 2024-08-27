@@ -99,6 +99,8 @@ class LayoutCursor {
     return cursorRack()->block() - rootRack()->block();
   }
 
+  bool isOnEmptySquare() const;
+
   Layout* leftLayout() const;
   Layout* rightLayout() const;
   Tree* parentLayout(int* index) const;

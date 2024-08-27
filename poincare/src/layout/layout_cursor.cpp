@@ -92,6 +92,18 @@ static const Tree* mostNestedGridParent(const Tree* l, const Tree* root) {
   return ancestorGrid;
 }
 
+bool LayoutCursor::isOnEmptySquare() const {
+  return RackLayout::IsEmpty(cursorRack()) ||
+         (leftLayout() && leftLayout()->isVerticalOffsetLayout() &&
+          VerticalOffset::IsPrefix(leftLayout()) &&
+          RackLayout::FindBase(cursorRack(), leftLayout(), position() - 1) ==
+              nullptr) ||
+         (rightLayout() && rightLayout()->isVerticalOffsetLayout() &&
+          VerticalOffset::IsSuffix(rightLayout()) &&
+          RackLayout::FindBase(cursorRack(), rightLayout(), position()) ==
+              nullptr);
+}
+
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
                         bool* shouldRedrawLayout, Poincare::Context* context) {
@@ -106,7 +118,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   }
   Rack* oldRack = cursorRack();
   bool moved = false;
-  bool wasEmpty = RackLayout::IsEmpty(cursorRack());
+  bool wasEmpty = isOnEmptySquare();
   const Tree* oldGridParent = mostNestedGridParent(cursorRack(), rootRack());
   // Perform the actual move
   if (direction.isVertical()) {
@@ -116,7 +128,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   }
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
-    bool isEmpty = RackLayout::IsEmpty(cursorRack());
+    bool isEmpty = isOnEmptySquare();
     *shouldRedrawLayout =
         selecting || wasEmpty || isEmpty || *shouldRedrawLayout ||
         // Redraw to show/hide the empty gray squares of the parent grid

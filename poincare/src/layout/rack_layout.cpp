@@ -78,6 +78,24 @@ void FindBaseForward(const Layout* child, int maxDepth,
 }
 #endif
 
+const Layout* FindSuffixBase(const Rack* rack, const Layout* verticalOffset,
+                             int verticalOffsetIndex) {
+  assert(VerticalOffset::IsSuffix(verticalOffset));
+  int i = 0;
+  const Layout* candidateBase = nullptr;
+  const Tree* child = rack->child(0);
+  while (i < verticalOffsetIndex) {
+    if (!child->isVerticalOffsetLayout()) {
+      candidateBase = Layout::From(child);
+    } else if (VerticalOffset::IsPrefix(child)) {
+      candidateBase = nullptr;
+    }
+    child = child->nextTree();
+    i++;
+  }
+  return candidateBase;
+}
+
 const Layout* FindPrefixBase(const Rack* rack, const Layout* verticalOffset,
                              int verticalOffsetIndex) {
   assert(VerticalOffset::IsPrefix(verticalOffset));
@@ -98,6 +116,14 @@ const Layout* FindPrefixBase(const Rack* rack, const Layout* verticalOffset,
     candidateIndex++;
   }
   return nullptr;
+}
+
+const Layout* RackLayout::FindBase(const Rack* rack,
+                                   const Layout* verticalOffset,
+                                   int verticalOffsetIndex) {
+  return VerticalOffset::IsPrefix(verticalOffset)
+             ? FindPrefixBase(rack, verticalOffset, verticalOffsetIndex)
+             : FindSuffixBase(rack, verticalOffset, verticalOffsetIndex);
 }
 
 void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
@@ -134,6 +160,7 @@ void RackLayout::IterBetweenIndexes(const Rack* node, int leftIndex,
       const Layout* base = nullptr;
       if (VerticalOffset::IsSuffix(child)) {
         // Use base
+        assert(lastBase == FindSuffixBase(node, Layout::From(child), i));
         base = lastBase;
       } else {
         // Find base forward

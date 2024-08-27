@@ -37,6 +37,9 @@ class RackLayout {
   static bool ShouldDrawEmptyBaseAt(const Rack* l, int childIndex);
   static void RenderNode(const Rack* l, KDContext* ctx, KDPoint p,
                          bool showEmpty, bool isGridPlaceholder = false);
+  // Find the base of a vertical offset or nullptr if an empty square is needed
+  static const Layout* FindBase(const Rack* rack, const Layout* verticalOffset,
+                                int verticalOffsetIndex);
 
   static const LayoutCursor* s_layoutCursor;
 };

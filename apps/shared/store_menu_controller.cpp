@@ -126,12 +126,9 @@ bool StoreMenuController::parseAndStore(const char* text) {
     openAbortWarning();
     return false;
   }
-  UserExpression reducedValue = input.cloneChildAtIndex(0);
-  PoincareHelpers::CloneAndSimplify(&reducedValue, context);
-  UserExpression reducedExp = UserExpression::Create(
-      KStore(KA, KB), {.KA = reducedValue, .KB = input.cloneChildAtIndex(1)});
-  UserExpression symbol = reducedExp.cloneChildAtIndex(1);
-  UserExpression value = reducedExp.cloneChildAtIndex(0);
+  UserExpression value = input.cloneChildAtIndex(0);
+  UserExpression symbol = input.cloneChildAtIndex(1);
+  PoincareHelpers::CloneAndSimplify(&value, context);
 #if 0  // TODO_PCJ
   UserExpression valueApprox =
       PoincareHelpers::ApproximateKeepingUnits<double>(value, context);

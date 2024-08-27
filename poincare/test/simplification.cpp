@@ -1008,6 +1008,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("2×sin(2y)×cos(y)-sin(3×y)", "sin(y)");
   simplifies_to("2×cos(2y)×sin(y)+sin(y)", "sin(3×y)");
   simplifies_to("2×cos(2y)×cos(y)-cos(y)", "cos(3×y)");
+  simplifies_to("sin(4π/21)sin(π/7)", "(-1/2+cos((41×π)/21))/2");
+  simplifies_to("cos(13π/42)sin(π/7)", "(-1/2+sin((19×π)/42))/2");
 
   // Direct trigonometry
   simplifies_to("cos(-x)", "cos(x)");

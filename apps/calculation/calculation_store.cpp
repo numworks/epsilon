@@ -191,6 +191,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * "cos(x^2)".
    * */
   if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
+    // TODO: factorize with StoreMenuController::parseAndStore
     UserExpression value = StoreHelper::Value(exactOutputExpression);
     SymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
     UserExpression valueApprox =

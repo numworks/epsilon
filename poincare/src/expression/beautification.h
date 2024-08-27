@@ -29,7 +29,7 @@ class Beautification {
                                          bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit);
   static bool ShallowBeautifyPercent(Tree* e);
-  static bool ShallowBeautifyOppositesDivisionsAndRoots(Tree* e, void* context);
+  static bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
   static bool ShallowBeautify(Tree* e, void* context);
   static bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 };

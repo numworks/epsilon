@@ -141,12 +141,12 @@ bool StoreMenuController::parseAndStore(const char* text) {
 #endif
   if (symbol.type() == ExpressionNode::Type::Symbol &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
-    reducedExp.replaceChildAtIndexInPlace(0, valueApprox);
+    value = valueApprox;
   }
-  Store store = static_cast<Store&>(reducedExp);
   close();
   app->prepareForIntrusiveStorageChange();
-  bool stored = store.storeValueForSymbol(context);
+  bool stored = context->setExpressionForSymbolAbstract(
+      value, static_cast<const SymbolAbstract&>(symbol));
   app->concludeIntrusiveStorageChange();
   if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the

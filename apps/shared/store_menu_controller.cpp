@@ -130,28 +130,25 @@ bool StoreMenuController::parseAndStore(const char* text) {
   PoincareHelpers::CloneAndSimplify(&reducedValue, context);
   UserExpression reducedExp = UserExpression::Create(
       KStore(KA, KB), {.KA = reducedValue, .KB = input.cloneChildAtIndex(1)});
-  bool isVariable =
-      reducedExp.cloneChildAtIndex(1).type() == ExpressionNode::Type::Symbol;
+  UserExpression symbol = reducedExp.cloneChildAtIndex(1);
+  UserExpression value = reducedExp.cloneChildAtIndex(0);
 #if 0  // TODO_PCJ
-  UserExpression leftHandSideApproximation =
-      PoincareHelpers::ApproximateKeepingUnits<double>(
-          reducedExp.cloneChildAtIndex(0), context);
+  UserExpression valueApprox =
+      PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
 #else
-  UserExpression leftHandSideApproximation =
-      PoincareHelpers::Approximate<double>(reducedExp.cloneChildAtIndex(0),
-                                           context);
+  UserExpression valueApprox =
+      PoincareHelpers::Approximate<double>(value, context);
 #endif
-  if (isVariable && CAS::ShouldOnlyDisplayApproximation(
-                        input, reducedExp.cloneChildAtIndex(0),
-                        leftHandSideApproximation, context)) {
-    reducedExp.replaceChildAtIndexInPlace(0, leftHandSideApproximation);
+  if (symbol.type() == ExpressionNode::Type::Symbol &&
+      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
+    reducedExp.replaceChildAtIndexInPlace(0, valueApprox);
   }
   Store store = static_cast<Store&>(reducedExp);
   close();
   app->prepareForIntrusiveStorageChange();
-  bool storeImpossible = !store.storeValueForSymbol(context);
+  bool stored = store.storeValueForSymbol(context);
   app->concludeIntrusiveStorageChange();
-  if (storeImpossible) {
+  if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the
      * store menu */
     app->displayWarning(I18n::Message::VariableCantBeEdited);

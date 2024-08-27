@@ -131,13 +131,8 @@ bool StoreMenuController::parseAndStore(const char* text) {
   assert(symbol.isOfType(
       {ExpressionNode::Type::Symbol, ExpressionNode::Type::Function}));
   PoincareHelpers::CloneAndSimplify(&value, context);
-#if 0  // TODO_PCJ
   UserExpression valueApprox =
       PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
-#else
-  UserExpression valueApprox =
-      PoincareHelpers::Approximate<double>(value, context);
-#endif
   if (symbol.type() == ExpressionNode::Type::Symbol &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
     value = valueApprox;

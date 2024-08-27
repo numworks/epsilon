@@ -139,8 +139,13 @@ template <class T>
 inline Poincare::Expression ApproximateKeepingUnits(
     const Poincare::Expression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {}) {
+#if 0  // TODO_PCJ
   return e.approximateKeepingUnits<T>(
       ReductionContextForParameters(e, context, reductionParameters));
+#else
+  return Approximate<T>(e, context);
+
+#endif
 }
 
 inline void CloneAndSimplify(

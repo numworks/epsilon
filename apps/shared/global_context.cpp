@@ -237,14 +237,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
   PoincareHelpers::CloneAndSimplify(&expression, this, params);
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and just calling "approximate" would return undef */
-
-#if 0  // TODO_PCJ
-  UserExpression approximation = PoincareHelpers::ApproximateKeepingUnits<double>(
-      expression, this, params);
-#else
   UserExpression approximation =
-      PoincareHelpers::Approximate<double>(expression, this);
-#endif
+      PoincareHelpers::ApproximateKeepingUnits<double>(expression, this,
+                                                       params);
   // Do not store exact derivative, etc.
   if (storeApproximation ||
       CAS::ShouldOnlyDisplayApproximation(UserExpression(), expression,

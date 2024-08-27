@@ -4,7 +4,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <limits.h>
-#include <poincare/old/store.h>
+#include <poincare/helpers/store.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -214,7 +214,7 @@ void set(const char* variable, const char* value) {
   SolverContext solverContext(&globalContext);
   Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
 #if 0  // TODO_PCJ
-  static_cast<Store &>(e).storeValueForSymbol(&globalContext);
+  StoreHelper::Store(&globalContext,e);
 #else
   assert(false);
 #endif

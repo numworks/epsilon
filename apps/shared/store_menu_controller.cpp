@@ -3,8 +3,8 @@
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include <poincare/cas.h>
+#include <poincare/helpers/store.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/store.h>
 
 #include "app_with_store_menu.h"
 #include "poincare_helpers.h"
@@ -126,10 +126,8 @@ bool StoreMenuController::parseAndStore(const char* text) {
     openAbortWarning();
     return false;
   }
-  UserExpression value = input.cloneChildAtIndex(0);
-  UserExpression symbol = input.cloneChildAtIndex(1);
-  assert(symbol.isOfType(
-      {ExpressionNode::Type::Symbol, ExpressionNode::Type::Function}));
+  UserExpression value = StoreHelper::Value(input);
+  SymbolAbstract symbol = StoreHelper::Symbol(input);
   PoincareHelpers::CloneAndSimplify(&value, context);
   UserExpression valueApprox =
       PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
@@ -139,8 +137,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
   }
   close();
   app->prepareForIntrusiveStorageChange();
-  bool stored = context->setExpressionForSymbolAbstract(
-      value, static_cast<const SymbolAbstract&>(symbol));
+  bool stored = StoreHelper::StoreValueForSymbol(context, value, symbol);
   app->concludeIntrusiveStorageChange();
   if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the

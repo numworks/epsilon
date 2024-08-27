@@ -1,10 +1,10 @@
 #include "calculation_store.h"
 
 #include <poincare/cas.h>
+#include <poincare/helpers/store.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/rational.h>
-#include <poincare/old/store.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/trigonometry.h>
 #include <poincare/old/undefined.h>
@@ -174,11 +174,11 @@ ExpiringPointer<Calculation> CalculationStore::push(
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
         UserExpression exactStoredExpression =
-            static_cast<Store&>(storeExpression).value();
+            StoreHelper::Value(storeExpression);
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
                 exactStoredExpression, context);
-        if (static_cast<Store&>(storeExpression).symbol().type() ==
+        if (StoreHelper::Symbol(storeExpression).type() ==
                 ExpressionNode::Type::Symbol &&
             CAS::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,
@@ -187,10 +187,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
               KStore(KA, KB), {.KA = approximateOutputExpression,
                                .KB = storeExpression.cloneChildAtIndex(1)});
         }
-        assert(static_cast<Store&>(storeExpression).symbol().type() !=
+        assert(StoreHelper::Symbol(storeExpression).type() !=
                    ExpressionNode::Type::Symbol ||
-               !static_cast<Store&>(storeExpression)
-                    .value()
+               !StoreHelper::Value(storeExpression)
                     .deepIsSymbolic(
                         nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
       }
@@ -216,9 +215,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (!storeExpression.isUninitialized()) {
     assert(storeExpression.type() == ExpressionNode::Type::Store);
-    if (static_cast<Store&>(storeExpression).storeValueForSymbol(context)) {
+    if (StoreHelper::Store(context, storeExpression)) {
       exactOutputExpression = context->expressionForSymbolAbstract(
-          static_cast<Store&>(storeExpression).symbol(), false);
+          StoreHelper::Symbol(storeExpression), false);
       assert(!exactOutputExpression.isUninitialized());
     } else {
       exactOutputExpression = Undefined::Builder();

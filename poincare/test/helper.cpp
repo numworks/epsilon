@@ -2,7 +2,7 @@
 
 #include <apps/shared/global_context.h>
 #include <poincare/expression.h>
-#include <poincare/old/store.h>
+#include <poincare/helpers/store.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
@@ -132,5 +132,5 @@ void process_tree_and_compare(const char* input, const char* output,
 
 void store(const char* storeExpression, Poincare::Context* ctx) {
   Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
-  static_cast<const Poincare::Store&>(s).storeValueForSymbol(ctx);
+  Poincare::StoreHelper::Store(ctx, s);
 }

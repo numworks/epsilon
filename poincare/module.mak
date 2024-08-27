@@ -239,6 +239,7 @@ $(addprefix function_properties/, \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
   layout.cpp \
+  store.cpp \
 ) \
 $(addprefix layout/, \
   autocompleted_pair.cpp \

@@ -89,7 +89,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(sin(x)^2,x,x)", "sin(2×x)");
 
   assert_reduces_to_formal_expression("diff(diff(x^3,x,x),x,x)", "6×x");
-  assert_reduces_to_formal_expression("diff(sinh(sin(y)),x,x)", "sinh(sin(y))");
+  assert_reduces_to_formal_expression("diff(sinh(sin(y)),x,x)", "dep(0,{y})");
 
 #if TODO_PCJ
   assert_reduces_to_formal_expression(

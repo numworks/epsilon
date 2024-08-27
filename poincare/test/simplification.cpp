@@ -104,6 +104,14 @@ QUIZ_CASE(pcj_simplification_contraction) {
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));
+  contract_to(KMult(2_e, KTrig(KMult(1_e / 9_e, π_e), 1_e),
+                    KTrig(KMult(1_e / 7_e, π_e), 1_e)),
+              KAdd(KTrig(KMult(79_e / 63_e, π_e), 0_e),
+                   KTrig(KMult(124_e / 63_e, π_e), 0_e)));
+  contract_to(KMult(2_e, KTrig(KMult(1_e / 9_e, π_e), 0_e),
+                    KTrig(KMult(1_e / 7_e, π_e), 1_e)),
+              KAdd(KTrig(KMult(16_e / 63_e, π_e), 1_e),
+                   KTrig(KMult(61_e / 63_e, π_e), 1_e)));
 }
 
 QUIZ_CASE(pcj_simplification_variables) {

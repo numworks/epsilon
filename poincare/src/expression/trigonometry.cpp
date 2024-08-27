@@ -238,14 +238,23 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       changed = true;
     } else {
       // Translate angle in [0,2π]
-      // TODO: absorb isOpposed
-      TreeRef simplifiedPiFactor = computeSimplifiedPiFactor(piFactor);
+      TreeRef simplifiedPiFactor = piFactor->cloneTree();
+      if (isOpposed) {
+        // -cos(x) = cos(x+π) and -sin(x) = sin(x+π)
+        MoveTreeOverTree(simplifiedPiFactor,
+                         PatternMatching::CreateSimplify(
+                             KAdd(KA, 1_e), {.KA = simplifiedPiFactor}));
+        isOpposed = false;
+      }
+      MoveTreeOverTree(simplifiedPiFactor,
+                       computeSimplifiedPiFactor(simplifiedPiFactor));
       if (!simplifiedPiFactor->treeIsIdenticalTo(piFactor)) {
         firstArgument->moveTreeOverTree(PatternMatching::CreateSimplify(
             KMult(π_e, KA), {.KA = simplifiedPiFactor}));
         changed = true;
       }
       simplifiedPiFactor->removeTree();
+      return changed;
     }
   } else if (PatternMatching::MatchReplace(e, KTrig(KATrig(KA, KB), KB), KA) ||
              PatternMatching::MatchReplaceSimplify(

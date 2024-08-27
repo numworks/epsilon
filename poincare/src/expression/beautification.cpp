@@ -309,7 +309,7 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
   if (bubbledUpDependencies) {
-    // abs and arg may have been invalidated, find them again.
+    // abs and arg pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;
     bool find = PatternMatching::Match(polarForm,
                                        KMult(KA, KExp(KMult(i_e, KB))), &ctx);

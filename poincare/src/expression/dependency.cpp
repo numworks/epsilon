@@ -150,6 +150,9 @@ bool RemoveDefinedDependencies(Tree* dep) {
 }
 
 bool ContainsSameDependency(const Tree* searched, const Tree* container) {
+  // Un-projected trees are not expected here.
+  assert(!searched->isOfType({Type::Log, Type::LogBase}) &&
+         !container->isOfType({Type::Log, Type::LogBase}));
   // TODO handle scopes, x will not be seen in sum(k+x,k,1,n)
   if (searched->treeIsIdenticalTo(container)) {
     return true;
@@ -189,6 +192,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 
 // These expression are only undef if their child is undef.
 bool IsDefinedIfChildIsDefined(const Tree* e) {
+  // Un-projected trees are not expected here.
+  assert(!e->isOfType({Type::Conj, Type::Decimal, Type::Cos, Type::Sin}));
   /* TODO_PCJ: For better sensitivity (simplify more dependencies):
    *           - Use the old Power::typeOfDependency logic :
    *                dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q

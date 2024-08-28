@@ -334,9 +334,13 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   TreeRef createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
+    // force parentheses when serializing e^(x)
+    int secondChildPriority = type == Type::Pow && expression->isEulerE()
+                                  ? k_forceParenthesis
+                                  : OperatorPriority(type);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     PushCodePoint(layoutParent, type == Type::Div ? '/' : '^');
-    layoutExpression(layoutParent, expression, OperatorPriority(type));
+    layoutExpression(layoutParent, expression, secondChildPriority);
     return;
   }
   if (type == Type::Div) {

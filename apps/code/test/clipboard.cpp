@@ -23,8 +23,7 @@ void assert_clipboard_enters_and_exits_python(const char* string,
 QUIZ_CASE(code_clipboard_enters_and_exits_python) {
   TestExecutionEnvironment env = init_environment();
   assert_clipboard_enters_and_exits_python("4×4", "4*4");
-  assert_clipboard_enters_and_exits_python("e^\u00121+2\u0013",
-                                           "exp\u00121+2\u0013");
+  assert_clipboard_enters_and_exits_python("e^(1+2)", "exp(1+2)");
   assert_clipboard_enters_and_exits_python("e^(ln(4))", "exp(log(4))");
   assert_clipboard_enters_and_exits_python("√(1ᴇ10)", "sqrt(1e10)");
   assert_clipboard_enters_and_exits_python("12^(1/4)×(π/6)×(12×π)^(1/4)",
@@ -36,7 +35,7 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
   Expression e = Expression::Parse("1+e^x", nullptr);
   char buffer[32];
   e.serialize(buffer, sizeof(buffer));
-  assert_clipboard_enters_and_exits_python(buffer, "1+exp\u0012x\u0013");
+  assert_clipboard_enters_and_exits_python(buffer, "1+exp(x)");
 
   /* The character 'e' should only be changed to 'ᴇ' if it is part of a
    * floating-point number. */

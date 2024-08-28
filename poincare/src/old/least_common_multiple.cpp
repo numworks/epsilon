@@ -27,13 +27,6 @@ OExpression LeastCommonMultipleNode::shallowBeautify(
   return LeastCommonMultiple(this).shallowBeautify(reductionContext.context());
 }
 
-template <typename T>
-Evaluation<T> LeastCommonMultipleNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  /* TODO: distribute approx over list with Map */
-  return Arithmetic::LCM<T>(*this, approximationContext);
-}
-
 OExpression LeastCommonMultiple::shallowBeautify(Context* context) {
   /* Sort children in decreasing order:
    * lcm(1,x,x^2) --> lcm(x^2,x,1)
@@ -83,10 +76,5 @@ OExpression LeastCommonMultiple::shallowReduce(
   return *this;
 #endif
 }
-
-template Evaluation<float> LeastCommonMultipleNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> LeastCommonMultipleNode::templatedApproximate<
-    double>(const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

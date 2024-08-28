@@ -53,38 +53,6 @@ Integer Arithmetic::LCM(const Integer& a, const Integer& b) {
   return Integer::Multiplication(i, Integer::Division(j, GCD(i, j)).quotient);
 }
 
-uint32_t Arithmetic::GCD(uint32_t a, uint32_t b, bool*) {
-  assert(a >= 0 && b >= 0);
-  if (b > a) {
-    uint32_t temp = b;
-    b = a;
-    a = temp;
-  }
-  uint32_t r = 0;
-  while (b != 0) {
-    r = a - (a / b) * b;
-    a = b;
-    b = r;
-  }
-  return a;
-}
-
-uint32_t Arithmetic::LCM(uint32_t a, uint32_t b, bool* hasOverflown) {
-  assert(a >= 0 && b >= 0);
-  assert(hasOverflown && !*hasOverflown);
-  if (a == 0 || b == 0) {
-    return 0;
-  }
-  uint32_t gcd = GCD(a, b);
-  if (b / gcd >= UINT32_MAX / a) {
-    // LCM will overflow uint32_t
-    *hasOverflown = true;
-    return INT_MAX;
-  }
-  // Using LCM(a,b) = a * b / GCD(a,b)
-  return a * (b / gcd);
-}
-
 Integer getIntegerFromRationalExpression(OExpression expression) {
   // OExpression must be a Rational with 1 as denominator.
   assert(expression.otype() == ExpressionNode::Type::Rational);
@@ -122,53 +90,6 @@ OExpression Arithmetic::LCM(const OExpression& expression) {
   /* Compute LCM of expression's children. the expression must have at least 1
    * child, and all its children must be integer Rationals. */
   return applyAssociativeFunctionOnChildren(expression, Arithmetic::LCM);
-}
-
-template <typename T>
-Evaluation<T> applyAssociativeFunctionOnChildren(
-    const ExpressionNode& expressionNode,
-    uint32_t (*f)(uint32_t, uint32_t, bool*),
-    const ApproximationContext& approximationContext) {
-  /* Use function associativity to compute a function of expression's children.
-   * The function can be GCD or LCM. */
-  bool isUndefined = false;
-  // We define f(a) = f(a,a) = a
-  uint32_t a = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(
-      expressionNode.childAtIndex(0), &isUndefined, approximationContext);
-  // f is associative, f(a,b,c,d) = f(f(f(a,b),c),d)
-  int childrenNumber = expressionNode.numberOfChildren();
-  for (int i = 1; i < childrenNumber; ++i) {
-    uint32_t b = ApproximationHelper::PositiveIntegerApproximationIfPossible<T>(
-        expressionNode.childAtIndex(i), &isUndefined, approximationContext);
-    if (isUndefined) {
-      return Complex<T>::RealUndefined();
-    }
-    a = f(a, b, &isUndefined);
-    if (isUndefined || !ApproximationHelper::IsIntegerRepresentationAccurate(
-                           static_cast<T>(a))) {
-      // GCD or LCM result has overflown or can't be accurately casted as <T>
-      return Complex<T>::RealUndefined();
-    }
-  }
-  return Complex<T>::Builder(static_cast<T>(a));
-}
-
-template <typename T>
-Evaluation<T> Arithmetic::GCD(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext) {
-  // Evaluate GCD of expression's children
-  return applyAssociativeFunctionOnChildren<T>(expressionNode, Arithmetic::GCD,
-                                               approximationContext);
-}
-
-template <typename T>
-Evaluation<T> Arithmetic::LCM(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext) {
-  // Evaluate LCM of expression's children
-  return applyAssociativeFunctionOnChildren<T>(expressionNode, Arithmetic::LCM,
-                                               approximationContext);
 }
 
 const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {
@@ -376,16 +297,4 @@ void Arithmetic::resetLock() {
   s_lock = nullptr;
 }
 
-template Evaluation<double> Arithmetic::GCD<double>(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext);
-template Evaluation<float> Arithmetic::GCD<float>(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext);
-template Evaluation<double> Arithmetic::LCM<double>(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext);
-template Evaluation<float> Arithmetic::LCM<float>(
-    const ExpressionNode& expressionNode,
-    const ApproximationContext& approximationContext);
 }  // namespace Poincare

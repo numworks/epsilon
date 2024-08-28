@@ -14,12 +14,6 @@ namespace Poincare {
 namespace ApproximationHelper {
 template <typename T>
 T Epsilon();
-template <typename T>
-bool IsIntegerRepresentationAccurate(T x);
-template <typename T>
-uint32_t PositiveIntegerApproximationIfPossible(
-    const ExpressionNode* expression, bool* isUndefined,
-    const ApproximationContext& approximationContext);
 
 // Map on mutliple children
 template <typename T>

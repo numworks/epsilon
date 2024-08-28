@@ -15,38 +15,6 @@ extern "C" {
 
 namespace Poincare {
 
-template <typename T>
-bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
-  /* Float and double's precision to represent integers is limited by the size
-   * of their mantissa. If an integer requires more digits than there is in the
-   * mantissa, there will be a loss on precision that can be fatal on operations
-   * such as GCD and LCM. */
-  int digits = 0;
-  // Compute number of digits (base 2) required to represent x
-  std::frexp(x, &digits);
-  // Compare it to the maximal number of digits that can be represented with <T>
-  return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
-}
-
-template <typename T>
-uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(
-    const ExpressionNode *expression, bool *isUndefined,
-    const ApproximationContext &approximationContext) {
-  Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
-  T scalar = std::abs(evaluation.toScalar());
-  /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
-   * 4294967296. */
-  if (std::isnan(scalar) || scalar != std::round(scalar) ||
-      scalar >= static_cast<T>(UINT32_MAX) ||
-      !IsIntegerRepresentationAccurate(scalar)) {
-    /* PositiveIntegerApproximationIfPossible returns undefined result if scalar
-     * cannot be accurately represented as an unsigned integer. */
-    *isUndefined = true;
-    return 0;
-  }
-  return static_cast<uint32_t>(scalar);
-}
-
 /* Must be the maximum the number of parameters of functions that can distribute
  * over lists, currently hgeomcdfrange(m,q,N,K,n) */
 constexpr static int k_maxNumberOfParametersForMap = 5;
@@ -162,18 +130,6 @@ Evaluation<T> ApproximationHelper::Map(
   }
   return std::move(resultList);
 }
-
-template bool
-Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);
-template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<
-    double>(double x);
-
-template uint32_t
-Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(
-    Poincare::ExpressionNode const *, bool *, const ApproximationContext &);
-template uint32_t
-Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(
-    Poincare::ExpressionNode const *, bool *, const ApproximationContext &);
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(
     const Poincare::ExpressionNode *expression, const ApproximationContext &,

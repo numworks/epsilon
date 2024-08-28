@@ -27,13 +27,6 @@ OExpression GreatCommonDivisorNode::shallowBeautify(
   return GreatCommonDivisor(this).shallowBeautify(reductionContext.context());
 }
 
-template <typename T>
-Evaluation<T> GreatCommonDivisorNode::templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  /* TODO: distribute approx over list with Map */
-  return Arithmetic::GCD<T>(*this, approximationContext);
-}
-
 OExpression GreatCommonDivisor::shallowBeautify(Context* context) {
   /* Sort children in decreasing order:
    * gcd(1,x,x^2) --> gcd(x^2,x,1)
@@ -83,10 +76,5 @@ OExpression GreatCommonDivisor::shallowReduce(
   return *this;
 #endif
 }
-
-template Evaluation<float> GreatCommonDivisorNode::templatedApproximate<float>(
-    const ApproximationContext& approximationContext) const;
-template Evaluation<double> GreatCommonDivisorNode::templatedApproximate<
-    double>(const ApproximationContext& approximationContext) const;
 
 }  // namespace Poincare

@@ -157,11 +157,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
-  // From x^n with n integer, only x^-1, x^0, or nothing should remain here.
-  assert(!(searched->isPow() && searched->child(1)->isInteger() &&
-           !searched->child(1)->isOfType({Type::Zero, Type::MinusOne})));
   if (((container->isLn() && searched->isPow() &&
-        searched->child(1)->isMinusOne()) ||
+        searched->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isPow() &&
         container->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isLnReal()) ||

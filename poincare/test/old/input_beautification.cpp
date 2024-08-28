@@ -55,7 +55,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   // Beautify logN()
   assert_inserted_text_turns_into(
-      "log52(6", "log"_l ^ KSubscriptL("52"_l) ^ KParenthesesL("6"_l));
+      "log52(6", "log"_l ^ KSubscriptL("52"_l) ^ KParenthesesRightTempL("6"_l));
 
   // Absorb arguments
   assert_inserted_text_turns_into("floor(", KRackL(KFloorL("4+6"_l)), "4+6");

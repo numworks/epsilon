@@ -238,8 +238,7 @@ class InputBeautification {
             nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
         parameters[1]->detachTree();
         NAry::AddChildAtIndex(log, base, nlLog ? 0 : 3);
-        // TODO would be nicer with a temporary parenthesis ?
-        TreeRef abscissa = KParenthesesL->cloneNode();
+        TreeRef abscissa = KParenthesesRightTempL->cloneNode();
         parameters[0]->detachTree();
         NAry::AddChild(log, abscissa);
         return log;

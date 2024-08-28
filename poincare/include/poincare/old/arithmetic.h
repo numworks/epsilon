@@ -10,8 +10,6 @@ class Arithmetic final {
  public:
   static Integer GCD(const Integer& i, const Integer& j);
   static Integer LCM(const Integer& i, const Integer& j);
-  static OExpression GCD(const OExpression& expression);
-  static OExpression LCM(const OExpression& expression);
 
   constexpr static int k_numberOfPrimeFactors = 1000;
   constexpr static int k_maxNumberOfFactors = 32;

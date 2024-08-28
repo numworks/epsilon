@@ -17,11 +17,6 @@ size_t GreatCommonDivisorNode::serialize(
       GreatCommonDivisor::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression GreatCommonDivisorNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return GreatCommonDivisor(this).shallowReduce(reductionContext);
-}
-
 OExpression GreatCommonDivisorNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return GreatCommonDivisor(this).shallowBeautify(reductionContext.context());
@@ -37,44 +32,6 @@ OExpression GreatCommonDivisor::shallowBeautify(Context* context) {
       },
       context, true, false);
   return *this;
-}
-
-OExpression GreatCommonDivisor::shallowReduce(
-    ReductionContext reductionContext) {
-#if 0  // TODO_PCJ: Delete this method
-  {
-    OExpression e = SimplificationHelper::defaultShallowReduce(
-        *this, &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits,
-        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  assert(numberOfChildren() > 0);
-
-  // Step 0: Merge children which are GCD
-  mergeSameTypeChildrenInPlace();
-
-  // Step 1: check that all children are compatible
-  {
-    OExpression checkChildren =
-        checkChildrenAreRationalIntegersAndUpdate(reductionContext);
-    if (!checkChildren.isUninitialized()) {
-      return checkChildren;
-    }
-  }
-
-  // Step 2: Compute GCD
-  OExpression result = Arithmetic::GCD(*this);
-
-  replaceWithInPlace(result);
-  return result;
-#else
-  return *this;
-#endif
 }
 
 }  // namespace Poincare

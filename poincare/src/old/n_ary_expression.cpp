@@ -64,48 +64,6 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
-#if 0  // TODO_PCJ: Delete this method
-OExpression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
-    const ReductionContext& reductionContext) {
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber; ++i) {
-    OExpression c = childAtIndex(i);
-    if (c.deepIsMatrix(reductionContext.context(),
-                       reductionContext.shouldCheckMatrices())) {
-      return replaceWithUndefinedInPlace();
-    }
-    if (c.otype() != ExpressionNode::Type::Rational) {
-      /* Replace expression with undefined if child can be approximated to a
-       * complex or finite non-integer number. Otherwise, rely on template
-       * approximations. hasDefinedComplexApproximation is given Cartesian
-       * complex format to force imaginary part approximation. */
-      ApproximationContext approximationContext(reductionContext, true);
-      Preferences::ComplexFormat complexFormat =
-          approximationContext.complexFormat();
-      approximationContext.setComplextFormat(
-          Preferences::ComplexFormat::Cartesian);
-      if (!c.isReal(reductionContext.context(),
-                    reductionContext.shouldCheckMatrices()) &&
-          c.hasDefinedComplexApproximation<float>(approximationContext)) {
-        return replaceWithUndefinedInPlace();
-      }
-      // If c was complex but with a null imaginary part, real part is checked.
-      approximationContext.setComplextFormat(complexFormat);
-      double app = c.approximateToScalar<double>(approximationContext);
-      if (std::isfinite(app) && app != std::round(app)) {
-        return replaceWithUndefinedInPlace();
-      }
-      // Note : Child could be replaced with the approximation (if finite) here.
-      return *this;
-    }
-    if (!static_cast<Rational&>(c).isInteger()) {
-      return replaceWithUndefinedInPlace();
-    }
-  }
-  return OExpression();
-}
-#endif
-
 OExpression NAryExpression::combineComplexCartesians(
     ComplexOperator complexOperator, ReductionContext reductionContext) {
   /* Let's bubble up the complex cartesian if possible.

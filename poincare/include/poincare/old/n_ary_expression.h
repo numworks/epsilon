@@ -62,10 +62,6 @@ class NAryExpression : public OExpression {
   NAryExpressionNode* node() const {
     return static_cast<NAryExpressionNode*>(OExpression::node());
   }
-#if 0  // TODO_PCJ: Delete this method
-  OExpression checkChildrenAreRationalIntegersAndUpdate(
-      const ReductionContext& reductionContext);
-#endif
   using ComplexOperator = ComplexCartesian (ComplexCartesian::*)(
       ComplexCartesian& other, const ReductionContext& reductionContext);
   // /!\ Only call this during reduction.

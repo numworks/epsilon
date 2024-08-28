@@ -17,11 +17,6 @@ size_t LeastCommonMultipleNode::serialize(
       LeastCommonMultiple::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression LeastCommonMultipleNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return LeastCommonMultiple(this).shallowReduce(reductionContext);
-}
-
 OExpression LeastCommonMultipleNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return LeastCommonMultiple(this).shallowBeautify(reductionContext.context());
@@ -41,40 +36,7 @@ OExpression LeastCommonMultiple::shallowBeautify(Context* context) {
 
 OExpression LeastCommonMultiple::shallowReduce(
     ReductionContext reductionContext) {
-#if 0  // TODO_PCJ: Delete this method
-  {
-    OExpression e = SimplificationHelper::defaultShallowReduce(
-        *this, &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits,
-        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists);
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  assert(numberOfChildren() > 0);
-
-  // Step 0: Merge children which are LCM
-  mergeSameTypeChildrenInPlace();
-
-  // Step 1: check that all children are compatible
-  {
-    OExpression checkChildren =
-        checkChildrenAreRationalIntegersAndUpdate(reductionContext);
-    if (!checkChildren.isUninitialized()) {
-      return checkChildren;
-    }
-  }
-
-  // Step 2: Compute LCM
-  OExpression result = Arithmetic::LCM(*this);
-
-  replaceWithInPlace(result);
-  return result;
-#else
-  return *this;
-#endif
+  return OExpression();
 }
 
 }  // namespace Poincare

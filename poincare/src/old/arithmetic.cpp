@@ -53,45 +53,6 @@ Integer Arithmetic::LCM(const Integer& a, const Integer& b) {
   return Integer::Multiplication(i, Integer::Division(j, GCD(i, j)).quotient);
 }
 
-Integer getIntegerFromRationalExpression(OExpression expression) {
-  // OExpression must be a Rational with 1 as denominator.
-  assert(expression.otype() == ExpressionNode::Type::Rational);
-  Rational r = static_cast<Rational&>(expression);
-  assert(r.isInteger());
-  Integer i = r.signedIntegerNumerator();
-  assert(!i.isOverflow());
-  return i;
-}
-
-OExpression applyAssociativeFunctionOnChildren(const OExpression& expression,
-                                               Integer (*f)(const Integer&,
-                                                            const Integer&)) {
-  /* Use function associativity to compute a function of expression's children.
-   * The function can be GCD or LCM. The expression must have at least 1
-   * child, and all its children must be integer Rationals. */
-  // We define f(a) = f(a,a) = a
-  Integer result = getIntegerFromRationalExpression(expression.childAtIndex(0));
-  // f is associative, f(a,b,c,d) = f(f(f(a,b),c),d)
-  int childrenNumber = expression.numberOfChildren();
-  for (int i = 1; i < childrenNumber; ++i) {
-    result =
-        f(result, getIntegerFromRationalExpression(expression.childAtIndex(i)));
-  }
-  return Rational::Builder(result);
-}
-
-OExpression Arithmetic::GCD(const OExpression& expression) {
-  /* Compute GCD of expression's children. the expression must have at least 1
-   * child, and all its children must be integer Rationals. */
-  return applyAssociativeFunctionOnChildren(expression, Arithmetic::GCD);
-}
-
-OExpression Arithmetic::LCM(const OExpression& expression) {
-  /* Compute LCM of expression's children. the expression must have at least 1
-   * child, and all its children must be integer Rationals. */
-  return applyAssociativeFunctionOnChildren(expression, Arithmetic::LCM);
-}
-
 const short primeFactors[Arithmetic::k_numberOfPrimeFactors] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,
     41,   43,   47,   53,   59,   61,   67,   71,   73,   79,   83,   89,

@@ -416,8 +416,8 @@ void LayoutBufferCursor::addEmptyLogarithmWithBase10Layout(
   const Tree* l =
       Preferences::SharedPreferences()->logarithmBasePosition() ==
               Preferences::LogarithmBasePosition::TopLeft
-          ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^ KParenthesesL(""_l)
-          : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesL(""_l);
+          ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^ KParenthesesRightTempL(""_l)
+          : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesRightTempL(""_l);
   insertLayout(l, context, false, false);
 }
 

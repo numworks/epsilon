@@ -29,9 +29,14 @@ void DeleteChildrenRacks(Tree* rack) {
       Grid* grid = Grid::From(layout);
       grid->empty();
     }
+    bool isParametric = layout->isParametricLayout();
+    bool isFirstOrderDiff =
+        layout->isDiffLayout() && !layout->toDiffLayoutNode()->isNthDerivative;
     for (Tree* subRack : layout->children()) {
-      if (layout->isParametricLayout() && subRack == layout->child(0)) {
+      if ((isParametric && subRack == layout->child(0)) ||
+          (isFirstOrderDiff && subRack == layout->child(2))) {
         // Keep the parametric variable
+        // Keep order in first order diff
         continue;
       }
       if (subRack->numberOfChildren() > 0) {

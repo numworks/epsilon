@@ -28,6 +28,9 @@ class AdditionalResultsHelper final {
       Context* context,
       const Preferences::CalculationPreferences calculationPreferences);
 
+  static bool HasInverseTrigo(const UserExpression input,
+                              const UserExpression exactOutput);
+
   /* Function additional results */
   static bool HasSingleNumericalValue(const UserExpression input);
   static UserExpression CloneReplacingNumericalValuesWithSymbol(

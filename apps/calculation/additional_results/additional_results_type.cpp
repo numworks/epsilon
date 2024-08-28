@@ -143,8 +143,7 @@ bool AdditionalResultsType::HasInverseTrigo(
   // If the result is complex, it is treated as a complex result instead.
   assert(!exactOutput.isScalarComplex(calculationPreferences));
   assert(!exactOutput.hasUnit(true));
-  return input.tree()->isInverseTrigonometryFunction() ||
-         exactOutput.tree()->isInverseTrigonometryFunction();
+  return AdditionalResultsHelper::HasInverseTrigo(input, exactOutput);
 }
 
 bool AdditionalResultsType::HasUnit(

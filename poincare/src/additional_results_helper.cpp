@@ -218,6 +218,12 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   return UserExpression::Builder(exactAngle);
 }
 
+bool AdditionalResultsHelper::HasInverseTrigo(
+    const UserExpression input, const UserExpression exactOutput) {
+  return input.tree()->isInverseTrigonometryFunction() ||
+         exactOutput.tree()->isInverseTrigonometryFunction();
+}
+
 // Return the only numerical value found in e, nullptr if there are none or more
 const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   assert(!*error);

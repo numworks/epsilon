@@ -2754,7 +2754,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("frac({0.3,180})", "{3/10,0}");
   assert_parsed_expression_simplify_to("gcd({25,60},15)", "{5,15}");
   assert_parsed_expression_simplify_to("arcosh({0,π})",
-                                       "{arcosh(0),arcosh(π)}");
+                                       "{π/2×i,ln(π+√(π^2-1))}");
   assert_parsed_expression_simplify_to("arsinh({0,π})", "{0,arsinh(π)}");
   assert_parsed_expression_simplify_to("artanh({0,π})", "{0,artanh(π)}");
   assert_parsed_expression_simplify_to("cosh({0,π})", "{1,cosh(π)}");

@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
@@ -7,6 +8,11 @@
 #include <quiz.h>
 
 #include "helper.h"
+#include "omg/code_point.h"
+#include "poincare/old/symbol.h"
+#include "poincare/old/variable_context.h"
+#include "poincare/src/expression/symbol.h"
+#include "poincare/src/layout/parsing/parsing_context.h"
 
 using namespace Poincare::Internal;
 
@@ -86,4 +92,41 @@ QUIZ_CASE(pcj_parse_unit) {
     LayoutSpanDecoder decoder(Rack::From(t));
     quiz_assert(Units::Unit::CanParse(&decoder, nullptr, nullptr));
   }
+}
+
+QUIZ_CASE(pcj_assignment_parse) {
+  Shared::GlobalContext context;
+
+  std::cout << "y=zz, classic" << std::endl;
+  assert_trees_are_equal(
+      RackParser("y=zz"_l, &context, -1, ParsingContext::ParsingMethod::Classic)
+          .parse(),
+      KEqual("y"_e, KMult("z"_e, "z"_e)));  // OK
+
+  std::cout << "y=xxln(x), classic" << std::endl;
+  assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context, -1,
+                                    ParsingContext::ParsingMethod::Classic)
+                             .parse(),
+                         KEqual("y"_e, KMult("x"_e, "x"_e, KLn("x"_e))));  // OK
+
+  std::cout << "y=xxln(x), assignment" << std::endl;
+  assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context, -1,
+                                    ParsingContext::ParsingMethod::Assignment)
+                             .parse(),
+                         KEqual("y"_e, KFun<"xxln">("x"_e)));  // Expected
+
+  std::cout << "f(x)=xxln(x), classic" << std::endl;
+  assert_trees_are_equal(RackParser("f(x)=xxln(x)"_l, &context, -1,
+                                    ParsingContext::ParsingMethod::Classic)
+                             .parse(),
+                         KEqual(KMult("f"_e, KParentheses("x"_e)),
+                                KMult("x"_e, "x"_e, KLn("x"_e))));
+  // Expected when parsing "f(x)" with the "classic" method
+
+  std::cout << "f(x)=xxln(x), assignment" << std::endl;
+  assert_trees_are_equal(
+      RackParser("f(x)=xxln(x)"_l, &context, -1,
+                 ParsingContext::ParsingMethod::Assignment)
+          .parse(),
+      KEqual(KFun<"f">("x"_e), KFun<"xxln">("x"_e)));  // FIXME
 }

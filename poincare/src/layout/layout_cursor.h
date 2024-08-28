@@ -161,6 +161,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   void addEmptySquareRootLayout(Poincare::Context* context);
   void addEmptySquarePowerLayout(Poincare::Context* context);
   void addEmptyExponentialLayout(Poincare::Context* context);
+  void addEmptyLogarithmWithBase10Layout(Poincare::Context* context);
   void addEmptyTenPowerLayout(Poincare::Context* context);
   void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
   void insertText(const char* text, Poincare::Context* context = nullptr,

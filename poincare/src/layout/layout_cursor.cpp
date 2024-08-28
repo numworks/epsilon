@@ -411,6 +411,16 @@ void LayoutBufferCursor::addEmptyExponentialLayout(Poincare::Context* context) {
   insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
 }
 
+void LayoutBufferCursor::addEmptyLogarithmWithBase10Layout(
+    Poincare::Context* context) {
+  const Tree* l =
+      Preferences::SharedPreferences()->logarithmBasePosition() ==
+              Preferences::LogarithmBasePosition::TopLeft
+          ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^ KParenthesesL(""_l)
+          : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesL(""_l);
+  insertLayout(l, context, false, false);
+}
+
 void LayoutBufferCursor::addEmptyTenPowerLayout(Poincare::Context* context) {
   insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
 }

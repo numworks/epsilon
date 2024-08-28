@@ -281,6 +281,9 @@ bool LayoutField::insertText(const char* text, bool indentation,
     if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
       cursor->addEmptyMatrixLayout(context());
       return true;
+    } else if (strcmp(text, k_logWithBase10) == 0) {
+      cursor->addEmptyLogarithmWithBase10Layout(context());
+      return true;
     }
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g

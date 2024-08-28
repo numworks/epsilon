@@ -29,6 +29,8 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
   bool handleXNT(int currentIndex, CodePoint startingXNT);
 
  protected:
+  static constexpr const char* k_logWithBase10 = "log(\x11,10)";
+
   bool privateHandleBoxEvent(Ion::Events::Event event);
   virtual bool prepareToEdit() {
     assert(false);

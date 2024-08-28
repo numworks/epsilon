@@ -230,14 +230,18 @@ class InputBeautification {
 
   constexpr static BeautificationRule k_logarithmRule = {
       "log", 2, [](TreeRef* parameters) -> Tree* {
-        // TODO handle NL-log cf LayoutHelper::Logarithm
+        bool nlLog =
+            Preferences::SharedPreferences()->logarithmBasePosition() ==
+            Preferences::LogarithmBasePosition::TopLeft;
         TreeRef log = "log"_l->cloneTree();
-        NAry::SetNumberOfChildren(log, 5);
-        SharedTreeStack->pushVerticalOffsetLayout(true, false);
+        TreeRef base =
+            nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();
         parameters[1]->detachTree();
+        NAry::AddChildAtIndex(log, base, nlLog ? 0 : 3);
         // TODO would be nicer with a temporary parenthesis ?
-        SharedTreeStack->pushParenthesisLayout(false, false);
+        TreeRef abscissa = KParenthesesL->cloneNode();
         parameters[0]->detachTree();
+        NAry::AddChild(log, abscissa);
         return log;
       }};
   constexpr static int k_indexOfBaseOfLog = 1;

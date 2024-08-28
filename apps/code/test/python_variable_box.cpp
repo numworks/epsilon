@@ -58,7 +58,7 @@ void assert_variables_are(const char* script,
   quiz_assert(index == 0);
 }
 
-QUIZ_CASE(python_variable_box) {
+QUIZ_CASE(code_variable_box) {
   init_environment();
 
   const char* expectedVariables[] = {"froo", "from", "frozenset()"};

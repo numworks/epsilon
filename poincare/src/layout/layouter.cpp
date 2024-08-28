@@ -26,7 +26,7 @@ using Poincare::Preferences;
 
 namespace Poincare::Internal {
 
-static constexpr int k_forceParenthesis = -2;
+static constexpr int k_forceParentheses = -2;
 
 // A single token will never need parentheses
 static constexpr int k_tokenPriority = -1;
@@ -276,7 +276,7 @@ void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
           if (OperatorPriority(Type::Opposite) <
               OperatorPriority(child->type())) {
             // Add(A, Oppose(Add(A, B))) -> A - ( B + C )
-            operatorPriority = k_forceParenthesis;
+            operatorPriority = k_forceParentheses;
           }
         } else {
           PushCodePoint(layoutParent, op);
@@ -336,7 +336,7 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   if (m_linearMode) {
     // force parentheses when serializing e^(x)
     int secondChildPriority = type == Type::Pow && expression->isEulerE()
-                                  ? k_forceParenthesis
+                                  ? k_forceParentheses
                                   : OperatorPriority(type);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     PushCodePoint(layoutParent, type == Type::Div ? '/' : '^');
@@ -410,7 +410,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           !expression->child(0)->child(0)->isUserSymbol();
       layoutExpression(
           layoutParent, expression->nextNode(),
-          addExtraParenthesis ? k_forceParenthesis : OperatorPriority(type));
+          addExtraParenthesis ? k_forceParentheses : OperatorPriority(type));
       break;
     }
     case Type::Fact:
@@ -485,12 +485,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
             rack = SharedTreeStack->pushRackLayout(0);
             NAry::AddChild(layoutParent, createdLayout);
           }
-          layoutExpression(rack, expression->child(2), k_forceParenthesis);
+          layoutExpression(rack, expression->child(2), k_forceParentheses);
         }
         expression->child(2)->removeTree();
         expression->child(0)->removeTree();
         layoutExpression(layoutParent, expression->nextNode(),
-                         k_forceParenthesis);
+                         k_forceParentheses);
         break;
       }
       // Case 2: diff(f(x),x,a,n)
@@ -539,7 +539,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       // Value
       layoutExpression(layoutParent, expression->nextNode(),
-                       k_forceParenthesis);
+                       k_forceParentheses);
       break;
     }
     case Type::MixedFraction:
@@ -563,12 +563,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       if (type.isUserFunction()) {
         // minimum priority to force parentheses
         layoutExpression(layoutParent, expression->nextNode(),
-                         k_forceParenthesis);
+                         k_forceParentheses);
       }
       if (type.isUserSequence()) {
         if (m_linearMode) {
           layoutExpression(layoutParent, expression->nextNode(),
-                           k_forceParenthesis);
+                           k_forceParentheses);
         } else {
           TreeRef layout = KSubscriptL->cloneNode();
           layoutChildrenAsRacks(expression);
@@ -673,7 +673,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
     case Type::Parentheses:
       layoutExpression(layoutParent, expression->nextNode(),
-                       k_forceParenthesis);
+                       k_forceParentheses);
       break;
     case Type::Store:
     case Type::UnitConversion:

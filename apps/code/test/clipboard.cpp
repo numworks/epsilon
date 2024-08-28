@@ -1,6 +1,7 @@
 #include "../clipboard.h"
 
 #include <poincare/expression.h>
+#include <python/test/execution_environment.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -20,6 +21,7 @@ void assert_clipboard_enters_and_exits_python(const char* string,
 }
 
 QUIZ_CASE(code_clipboard_enters_and_exits_python) {
+  TestExecutionEnvironment env = init_environment();
   assert_clipboard_enters_and_exits_python("4×4", "4*4");
   assert_clipboard_enters_and_exits_python("e^\u00121+2\u0013",
                                            "exp\u00121+2\u0013");
@@ -58,6 +60,7 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
       "e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+"
       "1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+e+1e2+\ne+1e2+e+1e2+e+1e2+e+1e2+e+1e2+"
       "exec()");
+  deinit_environment();
 }
 
 }  // namespace Code

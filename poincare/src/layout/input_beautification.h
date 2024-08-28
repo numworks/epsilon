@@ -230,6 +230,7 @@ class InputBeautification {
 
   constexpr static BeautificationRule k_logarithmRule = {
       "log", 2, [](TreeRef* parameters) -> Tree* {
+        // TODO: factorize with Layouter and LayoutCursor
         bool nlLog =
             Preferences::SharedPreferences()->logarithmBasePosition() ==
             Preferences::LogarithmBasePosition::TopLeft;

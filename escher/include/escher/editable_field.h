@@ -34,6 +34,8 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
     assert(false);
     return false;
   }
+  virtual size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
+                                  size_t bufferSize);
 
  private:
   virtual bool findXNT(char* buffer, size_t bufferSize, int xntIndex,

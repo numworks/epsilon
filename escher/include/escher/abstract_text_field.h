@@ -157,7 +157,7 @@ class AbstractTextField : public TextInput {
   bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
   size_t getTextFromEvent(Ion::Events::Event event, char* buffer,
-                          size_t bufferSize);
+                          size_t bufferSize) override;
 
   TextFieldDelegate* m_delegate;
 };

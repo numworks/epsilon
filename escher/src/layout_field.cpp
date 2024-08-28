@@ -552,12 +552,6 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
 
 size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char* buffer,
                                      size_t bufferSize) {
-  if (event == Ion::Events::Log &&
-      Poincare::Preferences::SharedPreferences()->logarithmKeyEvent() ==
-          Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
-    constexpr const char* k_logWithBase10 = "log(\x11,10)";
-    return strlcpy(buffer, k_logWithBase10, bufferSize);
-  }
   if (event == Ion::Events::Sto && m_delegate &&
       m_delegate->shouldInsertTextForStoEvent(this)) {
     return strlcpy(buffer, "→", bufferSize);
@@ -569,7 +563,7 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char* buffer,
   if (event == Ion::Events::DoubleQuotes) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
-  return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+  return EditableField::getTextFromEvent(event, buffer, bufferSize);
 }
 
 bool LayoutField::handleStoreEvent() {

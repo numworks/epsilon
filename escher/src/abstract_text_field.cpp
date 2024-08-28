@@ -506,7 +506,7 @@ size_t AbstractTextField::getTextFromEvent(Ion::Events::Event event,
       m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes(this)) {
     return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
   }
-  return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);
+  return EditableField::getTextFromEvent(event, buffer, bufferSize);
 }
 
 void AbstractTextField::scrollToCursor() {

@@ -192,6 +192,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
     // TODO: factorize with StoreMenuController::parseAndStore
+    // TODO: add circuit breaker?
     UserExpression value = StoreHelper::Value(exactOutputExpression);
     SymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
     UserExpression valueApprox =

@@ -258,8 +258,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
   }
 
   return
-      // lnReal(x) -> ln(x)
-      PatternMatching::MatchReplace(e, KLnReal(KA), KLn(KA)) ||
+      // ln(x) -> lnUser(x)
+      PatternMatching::MatchReplace(e, KLn(KA), KLnUser(KA)) ||
       // exp(1) -> e
       PatternMatching::MatchReplace(e, KExp(1_e), e_e) ||
       // exp(A) -> e^A

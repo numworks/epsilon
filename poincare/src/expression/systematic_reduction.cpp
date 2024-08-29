@@ -127,8 +127,6 @@ bool SystematicReduction::Switch(Tree* e) {
       return List::ShallowApplyListOperators(e);
     case Type::Ln:
       return Logarithm::ReduceLn(e);
-    case Type::LnReal:
-      return SystematicOperation::ReduceLnReal(e);
     case Type::Mult:
       return SystematicOperation::ReduceMultiplication(e);
     case Type::Permute:

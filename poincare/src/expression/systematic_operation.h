@@ -23,7 +23,6 @@ class SystematicOperation {
    * TODO: ensure it cannot. */
   static bool ReduceAbs(Tree* e);
   static bool ReducePowerReal(Tree* e);
-  static bool ReduceLnReal(Tree* e);
   static bool ReduceExp(Tree* e);
   static bool ReduceComplexArgument(Tree* e);
   static bool ReduceComplexPart(Tree* e);

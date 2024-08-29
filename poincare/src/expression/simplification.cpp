@@ -164,7 +164,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 #if ASSERTIONS
 bool Simplification::IsSystem(const Tree* e) {
   Tree* c = e->cloneTree();
-  // Use ComplexFormat::Cartesian to avoid having PowReal and LnReal interfering
+  // Use ComplexFormat::Cartesian to avoid having PowReal interfering
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};
   bool changed = ToSystem(c, &ctx);
   c->removeTree();

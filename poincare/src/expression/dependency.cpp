@@ -161,12 +161,12 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
         searched->child(1)->isStrictlyNegativeInteger()) ||
        (searched->isLn() && container->isPow() &&
         container->child(1)->isStrictlyNegativeInteger()) ||
-       (searched->isLn() && container->isLnReal()) ||
+       (searched->isLn() && container->isLnUser()) ||
        (searched->isPow() && container->isPowReal() &&
         searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     /* x^-n contains ln(x) and inversely
-     * lnReal(x) contains ln(x)
+     * lnUser(x) contains ln(x)
      * powReal(x,y) contains pow(x,y) */
     return true;
   }

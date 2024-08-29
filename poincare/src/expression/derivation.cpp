@@ -161,7 +161,6 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
     case Type::Exp:
       // Di(exp(x)) = exp(x)
       return derivand->cloneTree();
-    case Type::LnReal:
     case Type::Ln: {
       // Di(ln(x)) = 1/x
       Tree* power = SharedTreeStack->pushPow();

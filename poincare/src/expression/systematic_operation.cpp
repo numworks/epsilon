@@ -219,29 +219,6 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   return true;
 }
 
-bool SystematicOperation::ReduceLnReal(Tree* e) {
-  assert(e->isLnReal());
-  // Under real mode, input ln(x) must return nonreal if x < 0
-  ComplexSign childSign = GetComplexSign(e->child(0));
-  if (childSign.realSign().isStrictlyNegative() || childSign.isNonReal()) {
-    // Child can't be real, positive or null
-    e->cloneTreeOverTree(KNonReal);
-    return true;
-  }
-  if (childSign.realSign().canBeStrictlyNegative() ||
-      childSign.canBeNonReal()) {
-    // Child can be nonreal or negative, add a dependency in case.
-    e->moveTreeOverTree(PatternMatching::Create(
-        KDep(KLn(KA), KDepList(KLnReal(KA))), {.KA = e->child(0)}));
-    e = e->child(0);
-  } else {
-    // Safely fallback to complex logarithm.
-    e->cloneNodeOverNode(KLn);
-  }
-  SystematicReduction::ShallowReduce(e);
-  return true;
-}
-
 bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
   const Tree* child = e->child(0);

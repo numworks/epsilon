@@ -211,8 +211,17 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     return true;
   }
 
-  if (realMode && e->isLn()) {
-    e->cloneNodeOverNode(KLnReal);
+  if (e->isLnUser()) {
+    if (realMode) {
+      // lnUser(A) -> dep(ln(A), {nonNull(x), powReal(x,1/2)})
+      PatternMatching::MatchReplace(
+          e, KLnUser(KA),
+          KDep(KLn(KA), KDepList(KNonNull(KA), KPowReal(KA, 1_e / 2_e))));
+    } else {
+      // lnUser(A) -> dep(ln(A), {nonNull(x)})
+      PatternMatching::MatchReplace(e, KLnUser(KA),
+                                    KDep(KLn(KA), KDepList(KNonNull(KA))));
+    }
     return true;
   }
 
@@ -223,7 +232,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(e)
-      PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLn(KA)) ||
+      PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLnUser(KA)) ||
       // Cot(A) -> cos(A)/sin(A)
       PatternMatching::MatchReplace(e, KCot(KA),
                                     KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
@@ -259,11 +268,11 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // e -> exp(1)
       PatternMatching::MatchReplace(e, e_e, KExp(1_e)) ||
       // log(A) -> ln(A) * ln(10)^(-1)
-      PatternMatching::MatchReplace(e, KLog(KA),
-                                    KMult(KLn(KA), KPow(KLn(10_e), -1_e))) ||
+      PatternMatching::MatchReplace(
+          e, KLog(KA), KMult(KLnUser(KA), KPow(KLn(10_e), -1_e))) ||
       // log(A, B) -> ln(A) * ln(B)^(-1)
-      PatternMatching::MatchReplace(e, KLogBase(KA, KB),
-                                    KMult(KLn(KA), KPow(KLn(KB), -1_e))) ||
+      PatternMatching::MatchReplace(
+          e, KLogBase(KA, KB), KMult(KLnUser(KA), KPow(KLnUser(KB), -1_e))) ||
       // conj(A) -> re(A)-i*re(A)
       PatternMatching::MatchReplace(e, KConj(KA),
                                     KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||

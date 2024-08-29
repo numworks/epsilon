@@ -845,6 +845,16 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return Units::Unit::GetValue(e);
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(e).m_value;
+    case Type::LnUser: {
+      bool real =
+          s_context && s_context->m_complexFormat == ComplexFormat::Real;
+      std::complex<T> child = ToComplex<T>(e->child(0));
+      std::complex<T>(0);
+      return child == std::complex<T>(0) ||
+                     (real && (child.real() < 0 || child.imag() != 0))
+                 ? NAN
+                 : std::log(child);
+    }
     default:;
   }
   // The remaining operators are defined only on reals
@@ -873,9 +883,6 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       // TODO why no epsilon in Poincare ?
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }
-    case Type::LnReal:
-      // TODO unreal
-      return child[0] <= 0 ? NAN : std::log(child[0]);
     case Type::Floor:
     case Type::Ceil: {
       /* Assume low deviation from natural numbers are errors */

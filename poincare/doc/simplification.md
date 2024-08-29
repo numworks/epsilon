@@ -192,7 +192,8 @@ $$
 | log(A, e) | ln(e) |
 | log(A) | ln(A)×ln(10)^(-1) |
 | log(A, B) | ln(A)×ln(B)^(-1) |
-| ln(A) (with real complex format) | lnReal(A) |
+| lnUser(A) (with real complex format) | dep(ln(A), {NoNull(A), powReal(A,1/2))}) |
+| lnUser(A) (otherwise) | dep(ln(A), {NoNull(A)}) |
 | sec(A) | 1/cos(A) |
 | csc(A) | 1/sin(A) |
 | cot(A) | cos(A)/sin(A) |
@@ -299,9 +300,6 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | partialDiff(Trig(x, n), 1) | 0 |
 | partialDiff(x^n, 0) | n×x^(n - 1) |
 | partialDiff(x^n, 1) | 0 |
-| lnReal(x) (with x > 0) | ln(x) |
-| lnReal(x) (with x <= 0 or complex) | nonreal |
-| lnReal(x) | Dep(ln(x), lnReal(x)) |
 | ln(exp(x)) | x |
 | ln(-1) | iπ |
 | ln(1) | 0 |

@@ -147,8 +147,8 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(ArCosH),
     BUILDER(ArSinH),
     BUILDER(ArTanH),
-    BUILDER(Ln),
-    /* BUILDER(LnReal) -> System node, not allowed in UserExpressions ⛔️ */
+    BUILDER(LnUser),
+    /* BUILDER(Ln) -> System node, not allowed in UserExpressions ⛔️ */
     BUILDER(Log),
     BUILDER(LogBase),
 

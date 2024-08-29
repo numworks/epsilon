@@ -117,7 +117,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::Exp, "exp"},
     {Type::LogBase, "log"},
     {Type::Log, "log"},
-    {Type::Ln, "ln"},
+    {Type::LnUser, "ln"},
     {Type::Cross, "cross"},
     {Type::Det, "det"},
     {Type::Dim, "dim"},

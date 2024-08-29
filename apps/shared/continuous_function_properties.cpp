@@ -72,6 +72,19 @@ CodePoint ContinuousFunctionProperties::symbol() const {
   }
 }
 
+ContinuousFunctionProperties::SymbolType
+ContinuousFunctionProperties::SymbolTypeForCodePoint(CodePoint symbol) {
+  switch (symbol) {
+    case k_parametricSymbol:
+      return SymbolType::T;
+    case k_polarSymbol:
+      return SymbolType::Theta;
+    default:
+      assert(symbol == k_cartesianSymbol);
+      return SymbolType::X;
+  }
+}
+
 I18n::Message ContinuousFunctionProperties::MessageForSymbolType(
     SymbolType symbolType) {
   switch (symbolType) {

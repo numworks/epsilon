@@ -220,6 +220,7 @@ class ContinuousFunctionProperties {
   };
 
   AreaType areaType() const;
+  static SymbolType SymbolTypeForCodePoint(CodePoint symbol);
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
   I18n::Message symbolMessage() const {
     return MessageForSymbolType(symbolType());

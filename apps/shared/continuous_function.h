@@ -448,6 +448,8 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record, Poincare::Context* context) const;
 
    private:
+    static CodePoint CodePointForSymbol(const Poincare::UserExpression& symbol);
+
     // Return address of the record's expression
     void* expressionAddress(const Ion::Storage::Record* record) const override;
     // Return size of the record's expression

@@ -882,19 +882,13 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     const char* functionName =
         static_cast<Poincare::Function&>(leftExpression).name();
     const size_t functionNameLength = strlen(functionName);
+    const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
+    CodePoint codePointSymbol = CodePointForSymbol(functionSymbol);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
-      const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
       // Set the model's plot type.
-      if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
-        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::T;
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
-        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Theta;
-      } else {
-        assert(
-            functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)));
-        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::X;
-      }
+      tempFunctionSymbol =
+          ContinuousFunctionProperties::SymbolTypeForCodePoint(codePointSymbol);
       result = result.cloneChildAtIndex(1);
       isUnnamedFunction = false;
     } else {
@@ -1041,6 +1035,20 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
   return error;
 }
 
+CodePoint ContinuousFunction::Model::CodePointForSymbol(
+    const UserExpression& symbol) {
+  // Extract the CodePoint function's symbol. We know it is either x, t or θ
+  assert(symbol.type() == ExpressionNode::Type::Symbol);
+  if (symbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
+    return k_cartesianSymbol;
+  }
+  if (symbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+    return k_polarSymbol;
+  }
+  assert(symbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
+  return k_parametricSymbol;
+}
+
 Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     Poincare::Layout l, CodePoint symbol, Poincare::Context* context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
@@ -1062,16 +1070,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     const UserExpression functionSymbol =
         expressionToStore.cloneChildAtIndex(0).cloneChildAtIndex(0);
     // Extract the CodePoint function's symbol. We know it is either x, t or θ
-    assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
     // Override the symbol so that it can be replaced in the right expression
-    if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
-      symbol = k_cartesianSymbol;
-    } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
-      symbol = k_polarSymbol;
-    } else {
-      assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
-      symbol = k_parametricSymbol;
-    }
+    symbol = CodePointForSymbol(functionSymbol);
     // Do not replace symbol in f(x)=
     expressionToStore = ExpressionModel::ReplaceSymbolWithUnknown(
         expressionToStore, symbol, true);

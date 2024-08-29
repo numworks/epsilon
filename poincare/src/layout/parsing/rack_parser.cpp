@@ -148,7 +148,7 @@ Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
 // Private
 
 Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
-  typedef void (RackParser::*TokenParser)(TreeRef & leftHandSide,
+  typedef void (RackParser::*TokenParser)(TreeRef& leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,          // Token::Type::EndOfStream
@@ -260,6 +260,16 @@ void RackParser::popToken() {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     } else {
       m_nextToken = m_tokenizer.popToken();
+      if (m_nextToken.type() == Token::Type::AssignmentEqual) {
+        assert(m_parsingContext.parsingMethod() ==
+               ParsingContext::ParsingMethod::Assignment);
+        /* Stop parsing for assignment to ensure that, frow now on xy is
+         * understood as x*y. For example, "func(x) = xy" -> left of the =, we
+         * parse for assignment so "func" is NOT understood as "f*u*n*c", but
+         * after the equal we want "xy" to be understood as "x*y" */
+        m_parsingContext.setParsingMethod(
+            ParsingContext::ParsingMethod::Classic);
+      }
     }
   }
 }

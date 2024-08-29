@@ -97,36 +97,21 @@ QUIZ_CASE(pcj_parse_unit) {
 QUIZ_CASE(pcj_assignment_parse) {
   Shared::GlobalContext context;
 
-  std::cout << "y=zz, classic" << std::endl;
-  assert_trees_are_equal(
-      RackParser("y=zz"_l, &context, -1, ParsingContext::ParsingMethod::Classic)
-          .parse(),
-      KEqual("y"_e, KMult("z"_e, "z"_e)));  // OK
+  assert_trees_are_equal(RackParser("y=zz"_l, &context).parse(),
+                         KEqual("y"_e, KMult("z"_e, "z"_e)));
 
-  std::cout << "y=xxln(x), classic" << std::endl;
-  assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context, -1,
-                                    ParsingContext::ParsingMethod::Classic)
-                             .parse(),
-                         KEqual("y"_e, KMult("x"_e, "x"_e, KLn("x"_e))));  // OK
+  assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context).parse(),
+                         KEqual("y"_e, KMult("x"_e, "x"_e, KLn("x"_e))));
 
-  std::cout << "y=xxln(x), assignment" << std::endl;
-  assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context, -1,
-                                    ParsingContext::ParsingMethod::Assignment)
-                             .parse(),
-                         KEqual("y"_e, KFun<"xxln">("x"_e)));  // Expected
-
-  std::cout << "f(x)=xxln(x), classic" << std::endl;
-  assert_trees_are_equal(RackParser("f(x)=xxln(x)"_l, &context, -1,
-                                    ParsingContext::ParsingMethod::Classic)
-                             .parse(),
+  assert_trees_are_equal(RackParser("f(x)=xxln(x)"_l, &context).parse(),
                          KEqual(KMult("f"_e, KParentheses("x"_e)),
                                 KMult("x"_e, "x"_e, KLn("x"_e))));
-  // Expected when parsing "f(x)" with the "classic" method
+  // Expected if the "Classic" (default) parsing method is selected on an
+  // assignment expression: the left-hand side is parsed as "f*(x)"
 
-  std::cout << "f(x)=xxln(x), assignment" << std::endl;
   assert_trees_are_equal(
       RackParser("f(x)=xxln(x)"_l, &context, -1,
                  ParsingContext::ParsingMethod::Assignment)
           .parse(),
-      KEqual(KFun<"f">("x"_e), KFun<"xxln">("x"_e)));  // FIXME
+      KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLn("x"_e))));
 }

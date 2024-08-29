@@ -148,21 +148,14 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim) {
   if (dim.isBoolean()) {
     return (ToBoolean<T>(e) ? KTrue : KFalse)->cloneTree();
   }
-  if (dim.isUnit() || dim.isScalar()) {
-    // By default, approximation returns basic SI Units.
-    if (dim.isUnit() && dim.hasNonKelvinTemperatureUnit()) {
-      Tree* result = e->cloneTree();
-      Units::Unit::RemoveTemperatureUnit(result);
-      dim.unit.representative = &Units::Temperature::representatives.kelvin;
-      result->moveTreeOverTree(ToTree<T>(result, dim));
-      return result;
-    }
+  if (dim.isUnit()) {
+    // Preserve units and only replace scalar values.
+    Tree* result = e->cloneTree();
+    PrivateApproximateAndReplaceEveryScalar(result);
+    return result;
+  }
+  if (dim.isScalar()) {
     Tree* result = ToBeautifiedComplex<T>(e);
-    if (dim.isUnit()) {
-      result->cloneNodeAtNode(KMult.node<2>);
-      Units::Unit::GetBaseUnits(dim.unit.vector);
-      NAry::Flatten(result);
-    }
     return result;
   }
   assert(dim.isPoint() || dim.isMatrix());

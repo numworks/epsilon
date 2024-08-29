@@ -16,7 +16,7 @@ const SymbolAbstract StoreHelper::Symbol(const UserExpression& e) {
   return static_cast<const SymbolAbstract&>(symbol);
 }
 
-bool StoreHelper::Store(Context* context, const UserExpression& e) {
+bool StoreHelper::PerformStore(Context* context, const UserExpression& e) {
   return StoreValueForSymbol(context, Value(e), Symbol(e));
 }
 

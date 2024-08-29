@@ -214,7 +214,7 @@ void set(const char* variable, const char* value) {
   SolverContext solverContext(&globalContext);
   Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
 #if 0  // TODO_PCJ
-  StoreHelper::Store(&globalContext,e);
+  StoreHelper::PerformStore(&globalContext,e);
 #else
   assert(false);
 #endif

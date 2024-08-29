@@ -132,5 +132,5 @@ void process_tree_and_compare(const char* input, const char* output,
 
 void store(const char* storeExpression, Poincare::Context* ctx) {
   Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
-  Poincare::StoreHelper::Store(ctx, s);
+  Poincare::StoreHelper::PerformStore(ctx, s);
 }

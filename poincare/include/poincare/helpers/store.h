@@ -10,7 +10,7 @@ namespace StoreHelper {
 
 const JuniorExpression Value(const UserExpression& e);
 const SymbolAbstract Symbol(const UserExpression& e);
-bool Store(Context* context, const UserExpression& e);
+bool PerformStore(Context* context, const UserExpression& e);
 bool StoreValueForSymbol(Context* context, const UserExpression& value,
                          const SymbolAbstract& symbol);
 

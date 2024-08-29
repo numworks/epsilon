@@ -1332,13 +1332,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
   }
   s_context = &context;
   uint32_t hash = e->hash();
-  bool result = false;
-  if (CanApproximate(e) && Dimension::IsNonListScalar(e)) {
-    e->moveTreeOverTree(ToTree<double>(e, Dimension()));
-    result = true;
-  } else {
-    result = PrivateApproximateAndReplaceEveryScalar(e);
-  }
+  bool result = PrivateApproximateAndReplaceEveryScalar(e);
   s_context = nullptr;
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
    * returning true at every call. We should detect and skip them in
@@ -1347,17 +1341,13 @@ bool Approximation::ApproximateAndReplaceEveryScalar(
 }
 
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* e) {
-  assert(!CanApproximate(e) || !Dimension::IsNonListScalar(e));
+  if (CanApproximate(e) && Dimension::IsNonListScalar(e)) {
+    e->moveTreeOverTree(ToTree<double>(e, Dimension()));
+    return true;
+  }
   bool changed = false;
-  int childIndex = 0;
-  for (Tree* child : e->children()) {
-    if (SkipApproximation(child->type(), e->type(), childIndex++)) {
-      continue;
-    }
-    if (CanApproximate(child) && Dimension::IsNonListScalar(child)) {
-      child->moveTreeOverTree(ToTree<double>(child, Dimension()));
-      changed = true;
-    } else {
+  for (IndexedChild<Tree*> child : e->indexedChildren()) {
+    if (!SkipApproximation(child->type(), e->type(), child.index)) {
       changed = PrivateApproximateAndReplaceEveryScalar(child) || changed;
     }
   }

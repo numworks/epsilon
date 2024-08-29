@@ -7,7 +7,8 @@ on:
       - 'tests/**'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,14 +20,13 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
-      - run: echo "CCACHE_DIR=/home/usain/_work/ccache" >> $GITHUB_ENV
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       # TODO_PCJ: Add ASAN=1 and TIDY=1
-      - run: make TOOLCHAIN=host-clang CCACHE=1 PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
+      - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
       # TODO_PCJ: Uncomment all filters, delete this workflow and re-activate ci.yml once they all run.
       # - run: output/release/linux/test.bin --headless --limit-stack-usage -f calculation
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f code
@@ -59,4 +59,4 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
-      - run: make -j8 -f poincare/Makefile PLATFORM=foxglove CCACHE=1 EMIT_TSD=0 poincare.js.run
+      - run: make -j8 -f poincare/Makefile PLATFORM=foxglove EMIT_TSD=0 poincare.js.run

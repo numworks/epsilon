@@ -7,7 +7,8 @@ on:
       - 'poincare/doc/**'
       - 'tests/**'
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,7 +27,6 @@ jobs:
       - name: Find most recent ancestor of PR and target branch
         id: common_ancestor
         run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
-      - run: echo "CCACHE_DIR=/home/usain/_work/ccache" >> $GITHUB_ENV
       - name: Checkout to most recent ancestor
         uses: actions/checkout@v3
         with:
@@ -42,9 +42,9 @@ jobs:
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0110
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: cd base && make CCACHE=1 bootloader.elf && make CCACHE=1 kernel.onboarding.beta.allow3rdparty.A.elf
+        run: cd base && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
       - name: Build common ancestor userland for N0110
-        run: cd base && make CCACHE=1 userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd base && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Find head of PR
         uses: actions/checkout@v3
         with:
@@ -56,9 +56,9 @@ jobs:
         run: cd head && build/setup.sh
       - name: Build head bootloader and kernel for N0110
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: cd head && make CCACHE=1 bootloader.elf && make CCACHE=1 kernel.onboarding.beta.allow3rdparty.A.elf
+        run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
       - name: Build head userland for N0110
-        run: cd head && make CCACHE=1 userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd head && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Initialize metrics output
         run: |
           mkdir -p ./metrics-output

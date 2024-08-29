@@ -7,7 +7,8 @@ on:
       - 'tests/**'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,7 +20,6 @@ jobs:
     steps:
       - uses: numworks/setup-llvm@latest
       - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
-      - run: echo "CCACHE_DIR=/home/usain/_work/ccache" >> $GITHUB_ENV
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:
@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: build/setup.sh --only-simulator
       - name: Make head
-        run: make TOOLCHAIN=host-clang CCACHE=1 PLATFORM=simulator ASSERTIONS=1 test.bin
+        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Verify that a single make is sufficient
         run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 output/release/linux/test.bin --question
       - name: Run head
@@ -50,7 +50,7 @@ jobs:
       - name: Checkout to most recent ancestor
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
       - name: Make ancestor
-        run: make TOOLCHAIN=host-clang CCACHE=1 PLATFORM=simulator ASSERTIONS=1 test.bin
+        run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 test.bin
       - name: Run ancestor
         shell: bash
         run: output/release/linux/test.bin --headless --limit-stack-usage -f poincare | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv

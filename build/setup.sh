@@ -75,7 +75,7 @@ install_macos_binary_deps() {
 }
 
 install_linux_binary_deps() {
-  sudo apt update && sudo apt upgrade
+  sudo apt-get update && sudo apt-get upgrade
   sudo apt-get install \
     build-essential \
     ccache \

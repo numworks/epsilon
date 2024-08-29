@@ -984,20 +984,13 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric},
       &store, &context);
-  constexpr static FunctionProperties k_unhandledParametric =
-      FunctionProperties{
-          .m_status = ContinuousFunctionProperties::Status::Unhandled,
-          .m_caption = I18n::Message::UnhandledType,
-          .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
-          .m_curveParameterType =
-              ContinuousFunctionProperties::CurveParameterType::Parametric};
-#if 0  // TODO_PCJ
-  assert_check_function_properties("h(t)=g'(t)", k_unhandledParametric, &store,
+  constexpr static FunctionProperties k_undefined = FunctionProperties{
+      .m_status = ContinuousFunctionProperties::Status::Undefined,
+      .m_caption = I18n::Message::UndefinedType};
+  assert_check_function_properties("h(t)=g'(t)", k_undefined, &store, &context);
+  assert_check_function_properties("h(t)=2g(t)", k_undefined, &store, &context);
+  assert_check_function_properties("h(t)=2g'(t)", k_undefined, &store,
                                    &context);
-  assert_check_function_properties("h(t)=2g(t)", k_unhandledParametric, &store,
-                                   &context);
-  assert_check_function_properties("h(t)=2g'(t)", k_unhandledParametric, &store, &context);
-#endif
 
   store.removeAll();
 }

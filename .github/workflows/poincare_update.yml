@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
       - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV

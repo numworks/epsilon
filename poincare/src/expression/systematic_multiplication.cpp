@@ -32,6 +32,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
           next->removeTree();
         } else {
           // 0 * x -> dep(0,{x})
+          // TODO_PCJ: x could be inf
           next->detachTree();
           (*numberOfDependencies)++;
         }

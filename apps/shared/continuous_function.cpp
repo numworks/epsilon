@@ -871,8 +871,6 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     *computedEquationType = equationType;
   }
   bool isUnnamedFunction = true;
-  /* TODO_PCJ: leftExpression is later changed and should not be a clone of
-   * result's child. */
   UserExpression leftExpression = result.cloneChildAtIndex(0);
 
   if (IsFunctionAssignment(result)) {
@@ -893,14 +891,9 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       isUnnamedFunction = false;
     } else {
       /* Function in left part of the equation refer to an already defined one.
-       * Replace the symbol in the entire expression (the symbol in the right
-       * part has already been replaced in buildExpressionFromLayout). */
-      assert(leftExpression.cloneChildAtIndex(0).isIdenticalTo(
-          Symbol::Builder(k_cartesianSymbol)));
-      result =
-          ExpressionModel::ReplaceSymbolWithUnknown(result, k_cartesianSymbol);
-      // TODO_PCJ: See comment at leftExpression's initialization.
-      leftExpression = result.cloneChildAtIndex(0);
+       * Replace the symbol. */
+      leftExpression = ExpressionModel::ReplaceSymbolWithUnknown(
+          leftExpression, codePointSymbol);
     }
   } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
              leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {

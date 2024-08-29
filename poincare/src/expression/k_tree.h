@@ -84,6 +84,7 @@ constexpr auto KPow = KBinary<Type::Pow>();
 constexpr auto KPowReal = KBinary<Type::PowReal>();
 constexpr auto KPowMatrix = KBinary<Type::PowMatrix>();
 constexpr auto KDep = KBinary<Type::Dep>();
+constexpr auto KNonNull = KUnary<Type::NonNull>();
 constexpr auto KRound = KBinary<Type::Round>();
 constexpr auto KListElement = KBinary<Type::ListElement>();
 constexpr auto KMean = KBinary<Type::Mean>();

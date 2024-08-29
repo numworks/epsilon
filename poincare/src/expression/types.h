@@ -337,6 +337,8 @@ NODE(Piecewise, NARY)
 // Dep(expression, DepList(dep1, …, depN))
 NODE(Dep, 2)
 NODE(DepList, NARY)
+// NonNull(x) = {0 if x!=0, undef} (only used in DepList)
+NODE(NonNull, 1)
 
 NODE(Set, NARY)
 NODE(Parentheses, 1)

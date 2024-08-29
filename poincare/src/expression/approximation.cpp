@@ -832,6 +832,12 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Dep: {
       return UndefDependencies(e) ? NAN : ToComplex<T>(Dependency::Main(e));
     }
+    case Type::NonNull: {
+      // NonNull(0) = NonNull(undef) = undef, else NonNull(x) = 0
+      return ToComplex<T>(e->child(0)) != std::complex<T>(0)
+                 ? std::complex<T>(0)
+                 : NAN;
+    }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be
      * handled at this point. */

@@ -25,12 +25,11 @@ Dimension Dimension::Unit(const Tree* unit) {
 }
 
 bool IsIntegerExpression(const Tree* e) {
-  /* TODO: when the dimension depends on an arbitrary expression (for instance
-   * identity(e)) we need a nested Simplify to properly compute the value of the
-   * inner expression before continuing.
-   * This will have consequences on the API because we need to pass the
-   * projection context and to alter the tree to avoid recomputing this
-   * sub-expression too often. */
+  /* TODO: when the dimension depends on an integer expression (that is not an
+   * integer node) we need a nested Simplify to properly compute the value of
+   * the inner expression before continuing. This will have consequences on the
+   * API because we need to pass the projection context and to alter the tree to
+   * avoid recomputing this sub-expression too often. */
   if (e->isInteger()) {
     return true;
   }

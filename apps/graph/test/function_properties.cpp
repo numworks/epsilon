@@ -945,7 +945,6 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
   store.removeAll();
 
-#if 0  // TODO_PCJ
   // For derivatives
   addFunction("f(x)=3x", &store, &context);
   assert_same_function_properties("f1(x)=f'(x)", "f2(x)=diff(f(x),x,x)",
@@ -960,10 +959,12 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   addFunction("r1(θ)=cos(θ)", &store, &context);
   assert_same_function_properties("r2(θ)=r1'(θ)", "r3(θ)=diff(r1(θ),θ,θ)",
                                   &context);
+#if 0  // TODO_PCJ
   assert_same_function_properties("r2(θ)=r1\"(θ)", "r3(θ)=diff(r1(θ),θ,θ,2)",
                                   &context);
   assert_same_function_properties("r2(θ)=r1^(3)(θ)", "r3(θ)=diff(r1(θ),θ,θ,3)",
                                   &context);
+#endif
   assert_same_function_properties("r=r1'(θ)", "r=diff(r1(θ),θ,θ)", &context);
   assert_same_function_properties("r=r1\"(θ)", "r=diff(r1(θ),θ,θ,2)", &context);
   assert_same_function_properties("r=r1^(3)(θ)", "r=diff(r1(θ),θ,θ,3)",
@@ -971,10 +972,12 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   addFunction("g(t)=(-t,t)", &store, &context);
   assert_same_function_properties("g1(t)=g'(t)", "g2(t)=diff(g(t),t,t)",
                                   &context);
+#if 0  // TODO_PCJ
   assert_same_function_properties("g1(t)=g\"(t)", "g2(t)=diff(g(t),t,t,2)",
                                   &context);
   assert_same_function_properties("g1(t)=g^(3)(t)", "g2(t)=diff(g(t),t,t,3)",
                                   &context);
+#endif
 
   // We do not distibute operations on points
   assert_check_function_properties(
@@ -992,14 +995,15 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric};
+#if 0  // TODO_PCJ
   assert_check_function_properties("h(t)=g'(t)", k_unhandledParametric, &store,
                                    &context);
   assert_check_function_properties("h(t)=2g(t)", k_unhandledParametric, &store,
                                    &context);
   assert_check_function_properties("h(t)=2g'(t)", k_unhandledParametric, &store, &context);
+#endif
 
   store.removeAll();
-#endif
 }
 
 }  // namespace Graph

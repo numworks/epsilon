@@ -1,3 +1,4 @@
+#include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
@@ -520,12 +521,16 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   Tree* e = tree()->cloneTree();
   Simplification::SimplifyWithAdaptiveStrategy(e, context);
   if (approximatedExpression) {
-    Tree* a = e->cloneTree();
-    /* We are using ApproximateAndReplaceEveryScalar to approximate expressions
-     * with symbols such as π*x → 3.14*x.  We could use
-     * Approximation::RootTreeToTree when CAS is not enabled. */
-    Approximation::ApproximateAndReplaceEveryScalar(a, context);
-    *approximatedExpression = Builder(a);
+    if (CAS::Enabled()) {
+      Tree* a = e->cloneTree();
+      /* We are using ApproximateAndReplaceEveryScalar to approximate
+       * expressions with symbols such as π*x → 3.14*x. */
+      Approximation::ApproximateAndReplaceEveryScalar(a, context);
+      *approximatedExpression = Builder(a);
+    } else {
+      *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
+          e, context->m_angleUnit, context->m_complexFormat));
+    }
   }
   *simplifiedExpression = Builder(e);
   return;

@@ -18,7 +18,7 @@ QUIZ_CASE(pcj_beautification) {
   Beautification::DeepBeautify(ref1);
   assert_trees_are_equal(ref1, KAdd(KCos(3_e), KSin("x"_e),
                                     KOpposite(KMult(2_e, KPow(5_e, "y"_e))),
-                                    KDiv(KLn(2_e), KLn(4_e))));
+                                    KDiv(KLnUser(2_e), KLnUser(4_e))));
 
   TreeRef ref3(KExp(KMult(1_e / 2_e, KLn("y"_e))));
   Beautification::DeepBeautify(ref3);

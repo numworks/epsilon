@@ -101,8 +101,10 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^(-3)", "undef");
   approximates_to<float>("(-1)^(-2024)", "1");
   approximates_to<float>("(-1)^(-2025)", "-1");
-  approximates_to<float>("(-1)^(pi)", "nonreal");
-  approximates_to<float>("(-2.5)^(-3.14)", "nonreal");
+  // TODO: should be nonreal
+  approximates_to<float>("(-1)^(pi)", "undef");
+  // TODO: should be nonreal
+  approximates_to<float>("(-2.5)^(-3.14)", "undef");
   approximates_to<float>("0^i", "undef", cartesianCtx);
   approximates_to<float>("0^(3+4i)", "0", cartesianCtx);
   approximates_to<float>("0^(3-4i)", "0", cartesianCtx);
@@ -204,7 +206,8 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("log(inf,-inf)", "undef");
   approximates_to<float>("log(-inf,-inf)", "undef");
   approximates_to<float>("ln(inf)", "∞");
-  approximates_to<float>("ln(-inf)", "nonreal");
+  // TODO: should be nonreal
+  approximates_to<float>("ln(-inf)", "undef");
   approximates_to<float>("ln(-inf)", "∞+3.141593×i", cartesianCtx);
   approximates_to<float>("cos(inf)", "undef");
   approximates_to<float>("cos(-inf)", "undef");

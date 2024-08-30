@@ -871,6 +871,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     *computedEquationType = equationType;
   }
   bool isUnnamedFunction = true;
+  /* TODO_PCJ: leftExpression is later changed and should not be a clone of
+   * result's child. */
   UserExpression leftExpression = result.cloneChildAtIndex(0);
 
   if (IsFunctionAssignment(result)) {

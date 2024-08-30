@@ -157,29 +157,28 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   if (searched->treeIsIdenticalTo(container)) {
     return true;
   }
-  if (((container->isLn() && searched->isPow() &&
-        searched->child(1)->isStrictlyNegativeInteger()) ||
-       (searched->isLn() && container->isPow() &&
-        container->child(1)->isStrictlyNegativeInteger()) ||
-       (searched->isLn() && container->isLnUser()) ||
-       (searched->isPow() && container->isPowReal() &&
-        searched->child(1)->treeIsIdenticalTo(container->child(1)))) &&
+  if ((
+          // powReal(x,y) contains pow(x,y)
+          (searched->isPow() && container->isPowReal() &&
+           searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
+          // lnUser(x) contains ln(x)
+          (searched->isLn() && container->isLnUser()) ||
+          // ln(x) contains x^-n
+          (container->isLn() && searched->isPow() &&
+           searched->child(1)->isStrictlyNegativeInteger()) ||
+          // x^-n contains ln(x)
+          (searched->isLn() && container->isPow() &&
+           container->child(1)->isStrictlyNegativeInteger()) ||
+          // x^0 and x^-n contains x^-1
+          (searched->isPow() && container->isPow() &&
+           searched->child(1)->isMinusOne() &&
+           container->child(1)->isNegativeInteger())) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
-    /* x^-n contains ln(x) and inversely
-     * lnUser(x) contains ln(x)
-     * powReal(x,y) contains pow(x,y) */
     return true;
   }
-  if (searched->isPow() && container->isPow() &&
-      searched->child(0)->treeIsIdenticalTo(container->child(0)) &&
-      searched->child(1)->isMinusOne() &&
-      container->child(1)->isNegativeInteger()) {
-    /* x^0 and x^-n contains x^-1 */
-    /* TODO_PCJ:
-     * - add other possibilities like x^1/4 contains x^1/2
-     * - with PowReal */
-    return true;
-  }
+  /* TODO_PCJ:
+   * - add other possibilities like x^1/4 contains x^1/2
+   * - with PowReal */
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {
       return true;

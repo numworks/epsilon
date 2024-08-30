@@ -108,6 +108,7 @@ void assert_check_function_properties(const char* expression,
                 expectedProperties.m_equationType);
     quiz_assert(fProperties.areaType() == expectedProperties.m_areaType);
   }
+  store->removeModel(*function);
 }
 
 void assert_check_function_properties(const char* expression,
@@ -140,6 +141,7 @@ void assert_same_function_properties(const char* expression1,
           .m_areaType = properties1.areaType(),
       },
       &store, context);
+  store.removeModel(*function1);
 }
 
 void assert_same_function_properties(const char* expression1,
@@ -984,12 +986,25 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric},
       &store, &context);
-  constexpr static FunctionProperties k_undefined = FunctionProperties{
-      .m_status = ContinuousFunctionProperties::Status::Undefined,
-      .m_caption = I18n::Message::UndefinedType};
-  assert_check_function_properties("h(t)=g'(t)", k_undefined, &store, &context);
-  assert_check_function_properties("h(t)=2g(t)", k_undefined, &store, &context);
-  assert_check_function_properties("h(t)=2g'(t)", k_undefined, &store,
+  assert_check_function_properties(
+      "h(t)=g'(t)",
+      FunctionProperties{
+          .m_caption = I18n::Message::ParametricEquationType,
+          .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+          .m_curveParameterType =
+              ContinuousFunctionProperties::CurveParameterType::Parametric,
+          .m_conicShape = Poincare::Conic::Shape::Parabola},
+      &store, &context);
+  constexpr static FunctionProperties k_undefinedParametric =
+      FunctionProperties{
+          .m_status = ContinuousFunctionProperties::Status::Undefined,
+          .m_caption = I18n::Message::UndefinedType,
+          .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+          .m_curveParameterType =
+              ContinuousFunctionProperties::CurveParameterType::Parametric};
+  assert_check_function_properties("h(t)=2g(t)", k_undefinedParametric, &store,
+                                   &context);
+  assert_check_function_properties("h(t)=2g'(t)", k_undefinedParametric, &store,
                                    &context);
 
   store.removeAll();

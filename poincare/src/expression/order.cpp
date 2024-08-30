@@ -259,16 +259,13 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   if (dim.isPoint()) {
     assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
-    Tree* p1 = Approximation::RootTreeToTree<double>(e1);
-    Tree* p2 = Approximation::RootTreeToTree<double>(e2);
-    assert(p1->isPoint() && p2->isPoint());
-    int result = RealLineCompare(p1->child(0), p2->child(0));
-    if (result == 0) {
-      result = RealLineCompare(p1->child(1), p2->child(1));
-    }
-    p2->removeTree();
-    p1->removeTree();
-    return result;
+    Coordinate2D<double> p1 = Approximation::RootTreeToPoint<double>(e1);
+    Coordinate2D<double> p2 = Approximation::RootTreeToPoint<double>(e2);
+    return p1.x() < p2.x()   ? -1
+           : p1.x() > p2.x() ? 1
+           : p1.y() < p2.y() ? -1
+           : p1.y() > p2.y() ? 1
+                             : 0;
   }
   /* TODO: the approximations could be precomputed and called only once */
   std::complex<double> v1 = Approximation::ToComplex<double>(e1);

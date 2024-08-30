@@ -66,7 +66,7 @@ class Approximation final {
   static Coordinate2D<T> RootTreeToPoint(
       const Tree* pointTree, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate<T>(pointTree, false, false, NAN, -1,
+    return RootToPointOrScalarPrivate<T>(pointTree, true, false, NAN, -1,
                                          angleUnit, complexFormat)
         .toPoint();
   }

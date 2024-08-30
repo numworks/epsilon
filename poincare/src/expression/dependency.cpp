@@ -151,8 +151,8 @@ bool RemoveDefinedDependencies(Tree* dep) {
 
 bool ContainsSameDependency(const Tree* searched, const Tree* container) {
   // Un-projected trees are not expected here.
-  assert(!searched->isOfType({Type::Log, Type::LogBase}) &&
-         !container->isOfType({Type::Log, Type::LogBase}));
+  assert(!searched->isOfType({Type::Log, Type::LogBase, Type::LnUser}) &&
+         !container->isOfType({Type::Log, Type::LogBase, Type::LnUser}));
   // TODO: handle scopes, x will not be seen in sum(k+x,k,1,n)
   if (searched->treeIsIdenticalTo(container)) {
     return true;
@@ -161,8 +161,6 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
           // powReal(x,y) contains pow(x,y)
           (searched->isPow() && container->isPowReal() &&
            searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
-          // lnUser(x) contains ln(x)
-          (searched->isLn() && container->isLnUser()) ||
           // NonNull(x) contains x^-n
           (container->isNonNull() && searched->isPow() &&
            searched->child(1)->isStrictlyNegativeInteger()) ||

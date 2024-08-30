@@ -235,7 +235,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       if (hasNonKelvinChild) {
         return false;
       }
-      if (childDim[child.index].hasNonKelvinTemperatureUnit()) {
+      if (childDim[child.index].hasNonKelvinTemperatureUnit() &&
+          !e->isUnitConversion()) {
         if (hasUnitChild) {
           return false;
         }
@@ -391,7 +392,9 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UnitConversion:
       assert(childDim[1].isUnit());
-      return childDim[0] == childDim[1] ||
+      /* Not using Dimension operator == because different representatives are
+       * allowed. */
+      return childDim[0].unit.vector == childDim[1].unit.vector ||
              (childDim[1].isSimpleAngleUnit() && childDim[0].isScalar());
     case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})

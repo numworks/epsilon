@@ -9,6 +9,7 @@
 #include "physical_constant.h"
 #include "symbol.h"
 #include "unit.h"
+#include "unit_representatives.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -144,7 +145,8 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
   if (e->isUnit() &&
       projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
-      !Units::Unit::IsNonKelvinTemperature(Units::Unit::GetRepresentative(e))) {
+      Units::Unit::GetRepresentative(e)->siVector() !=
+          Units::Temperature::Dimension) {
     /* To prevent unnecessary mix of units
      * (12_km / 6_mm)×_°C -> (12 000 / 0.006)×_°C */
     Units::Unit::RemoveUnit(e);

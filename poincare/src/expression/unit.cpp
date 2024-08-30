@@ -1297,6 +1297,15 @@ bool Unit::BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits) {
            With _mm*_Hz+(_m+_km)*_s^-1 : _mm*_Hz, _m_s^-1 or _km_s^-1 ?
   */
   ExtractUnits(extractedUnits, true);
+  if (extractedUnits->isUnit() &&
+      IsNonKelvinTemperature(GetRepresentative(extractedUnits))) {
+    // Handle non kelvin temperature conversion separately.
+    e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(
+        KelvinValueToRepresentative(Approximation::RootTreeToReal<double>(e),
+                                    GetRepresentative(extractedUnits))));
+    e->cloneNodeAtNode(KMult.node<2>);
+    return true;
+  }
   // Multiply e, extractedUnits and inverse of extractedUnits's SI value.
   e->cloneNodeAtNode(KMult.node<3>);
   KPow->cloneNode();

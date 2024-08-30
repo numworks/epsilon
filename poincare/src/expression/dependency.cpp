@@ -163,11 +163,11 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
            searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
           // lnUser(x) contains ln(x)
           (searched->isLn() && container->isLnUser()) ||
-          // ln(x) contains x^-n
-          (container->isLn() && searched->isPow() &&
+          // NonNull(x) contains x^-n
+          (container->isNonNull() && searched->isPow() &&
            searched->child(1)->isStrictlyNegativeInteger()) ||
-          // x^-n contains ln(x)
-          (searched->isLn() && container->isPow() &&
+          // x^-n contains NonNull(x)
+          (searched->isNonNull() && container->isPow() &&
            container->child(1)->isStrictlyNegativeInteger()) ||
           // x^0 and x^-n contains x^-1
           (searched->isPow() && container->isPow() &&
@@ -222,8 +222,9 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
     if (depI->isPow()) {
       Tree* exponent = depI->child(1);
       if (exponent->isStrictlyNegativeInteger() && !exponent->isMinusOne()) {
-        // dep(..., {x^-n}) = dep(..., {x^-1}) with n an integer > 0
-        exponent->cloneNodeOverNode(-1_e);
+        // dep(..., {x^-n}) = dep(..., {NonNull(x)}) with n an integer > 0
+        exponent->removeTree();
+        depI->cloneNodeOverNode(KNonNull);
         changed = true;
         continue;
       } else if (exponent->isStrictlyPositiveInteger()) {

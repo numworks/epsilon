@@ -287,15 +287,4 @@ OExpression Rational::shallowBeautify() {
   return *this;
 }
 
-OExpression Rational::denominator() const {
-  Integer d = integerDenominator();
-  if (d.isOne()) {
-    return OExpression();
-  }
-  if (d.isOverflow()) {
-    return Infinity::Builder(false);
-  }
-  return Rational::Builder(d);
-}
-
 }  // namespace Poincare

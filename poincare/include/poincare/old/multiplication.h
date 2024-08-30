@@ -92,7 +92,6 @@ class Multiplication : public NAryExpression {
   // Simplification
   OExpression shallowBeautify(const ReductionContext& reductionContext);
   OExpression shallowReduce(ReductionContext reductionContext);
-  OExpression denominator(const ReductionContext& reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order,
                            Context* context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, false,

@@ -88,6 +88,7 @@ IntegerHandler Rational::Denominator(const Tree* e) {
     case Type::RationalNegBig: {
       const Block* block = e->block();
       uint8_t numeratorNumberOfDigits = e->nodeValue(0);
+      assert(numeratorNumberOfDigits <= IntegerHandler::k_maxNumberOfDigits);
       uint8_t denominatorNumberOfDigits = e->nodeValue(1);
       const uint8_t* digits = reinterpret_cast<const uint8_t*>(
           block->nextNth(3 + numeratorNumberOfDigits));

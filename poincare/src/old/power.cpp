@@ -1213,27 +1213,6 @@ OExpression Power::ChainedPowerBuilder(OExpression leftSide,
 // Private
 
 // Simplification
-OExpression Power::denominator(const ReductionContext &reductionContext) const {
-  if (childAtIndex(0).otype() == ExpressionNode::Type::OUnit ||
-      childAtIndex(1).otype() == ExpressionNode::Type::Infinity) {
-    // x^-inf can be different from 1/x^inf
-    return OExpression();
-  }
-  OExpression pow = clone();
-  // If the power is of form x^(-y), denominator should be x^y
-  OExpression positiveIndex =
-      pow.childAtIndex(1).makePositiveAnyNegativeNumeralFactor(
-          reductionContext);
-  if (positiveIndex.isUninitialized()) {
-    return OExpression();
-  }
-  /* We cannot shallowReduce pow as it is not attached to its parent yet.
-   * If y was -1, pow is now x^1, denominator is then only x. */
-  if (positiveIndex.isRationalOne()) {
-    return pow.childAtIndex(0);
-  }
-  return pow;
-}
 
 OExpression Power::SafePowerRationalRational(
     const Rational base, const Rational index,

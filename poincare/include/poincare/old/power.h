@@ -133,8 +133,6 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
 
   // OUnit
   OExpression removeUnit(OExpression* unit);
-
-  OExpression denominator(const ReductionContext& reductionContext) const;
 };
 
 }  // namespace Poincare

@@ -84,6 +84,7 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
         }
         IntegerHandler rDen = Rational::Denominator(factor);
         if (!rDen.isOne()) {
+          // TODO_PCJ: if rDen is overflow, return -inf
           factorsDenominator = rDen.pushOnTreeStack();
         }
       }

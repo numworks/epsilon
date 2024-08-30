@@ -59,16 +59,7 @@ bool ExpressionNode::isSystemSymbol() const {
 
 OExpression ExpressionNode::denominator(
     const ReductionContext& reductionContext) const {
-  if (otype() == Type::Multiplication) {
-    return OExpression(this).convert<Multiplication>().denominator(
-        reductionContext);
-  }
-  if (otype() == Type::Power) {
-    return OExpression(this).convert<Power>().denominator(reductionContext);
-  }
-  if (otype() == Type::Rational) {
-    return OExpression(this).convert<Rational>().denominator();
-  }
+  // Coded in pcj in GetNumeratorAndDenominator
   return OExpression();
 }
 

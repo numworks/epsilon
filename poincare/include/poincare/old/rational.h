@@ -144,7 +144,6 @@ class Rational final : public Number {
 
   /* Simplification */
   OExpression shallowBeautify();
-  OExpression denominator() const;
 };
 
 }  // namespace Poincare

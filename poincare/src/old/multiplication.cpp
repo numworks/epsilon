@@ -687,18 +687,6 @@ replace_by_result:
   return result;
 }
 
-OExpression Multiplication::denominator(
-    const ReductionContext &reductionContext) const {
-  /* TODO ?
-   * Turn the denominator const method into an extractDenominator method
-   * (non const) in the same same way as extractUnits.
-   * Then remove splitIntoNormalForm.
-   */
-  OExpression numer, denom;
-  splitIntoNormalForm(numer, denom, reductionContext);
-  return denom;
-}
-
 bool Multiplication::derivate(const ReductionContext &reductionContext,
                               Symbol symbol, OExpression symbolValue) {
   {

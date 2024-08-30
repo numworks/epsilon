@@ -1033,10 +1033,15 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::AutomaticInput:
       // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
       return BuildAutomaticInputOutput(e, extractedUnits);
+    case UnitDisplay::Equivalent:
+      if (BuildEquivalentOutput(e, extractedUnits, dimension)) {
+        return true;
+      }
+      // Fallthrough to properly dispose of extractedUnits.
+      [[fallthrough]];
     case UnitDisplay::Decomposition:
       // TODO
-    case UnitDisplay::Equivalent:
-      // TODO
+      [[fallthrough]];
     case UnitDisplay::BasicSI:
       MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
@@ -1298,6 +1303,57 @@ bool Unit::BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits) {
   Tree* unitClone = extractedUnits->cloneTree();
   Tree::ApplyShallowTopDown(unitClone, ShallowRemoveUnit);
   (-1_e)->cloneTree();
+  return true;
+}
+
+// Use an equivalent representative for surface and volumes
+bool Unit::BuildEquivalentOutput(Tree* e, TreeRef& extractedUnits,
+                                 Dimension dimension) {
+  SIVector vector = dimension.unit.vector;
+  // Only Surfaces and Volumes are concerned
+  if (vector.supportSize() != 1 || vector.distance < 2 || vector.distance > 3) {
+    return false;
+  }
+  bool isVolume = (vector.distance == 3);
+  bool hasDistanceUnit =
+      extractedUnits->hasDescendantSatisfying([](const Tree* e) {
+        return e->isUnit() &&
+               GetRepresentative(e)->siVector() == Distance::Dimension;
+      });
+  bool isImperial = DisplayImperialUnits(extractedUnits);
+
+  extractedUnits->removeTree();
+  const Representative* targetRepresentative;
+  Tree* units;
+  // TODO: Maybe handle intermediary cases where multiple units are involved.
+  // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
+  if (hasDistanceUnit) {
+    if (isVolume) {
+      targetRepresentative = isImperial ? &Volume::representatives.gallon
+                                        : &Volume::representatives.liter;
+    } else {
+      targetRepresentative = isImperial ? &Surface::representatives.acre
+                                        : &Surface::representatives.hectare;
+    }
+    units = Push(targetRepresentative, Prefix::EmptyPrefix());
+  } else {
+    targetRepresentative = isImperial ? &Distance::representatives.foot
+                                      : &Distance::representatives.meter;
+    units = KPow->cloneNode();
+    Push(targetRepresentative, Prefix::EmptyPrefix());
+    Integer::Push(isVolume ? 3 : 2);
+  }
+  assert(e->nextTree() == units);
+  // Select best prefix
+  double value = Approximation::RootTreeToReal<double>(e) /
+                 Approximation::RootTreeToReal<double>(units);
+  // TODO: Allow representative switch between in, ft, yd and mi
+  // UnitFormat doesn't matter with optimizeRepresentative false.
+  ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+      units, &value, UnitFormat::Metric, true, false);
+  e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
+  // Multiply e with units
+  e->cloneNodeAtNode(KMult.node<2>);
   return true;
 }
 

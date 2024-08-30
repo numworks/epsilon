@@ -60,6 +60,17 @@ class Approximation final {
         .toScalar();
   }
 
+  /* pointTree must have a point dimension. angleUnit and complexFormat can be
+   * left to default on projected trees. */
+  template <typename T>
+  static Coordinate2D<T> RootTreeToPoint(
+      const Tree* pointTree, AngleUnit angleUnit = AngleUnit::Radian,
+      ComplexFormat complexFormat = ComplexFormat::Real) {
+    return RootToPointOrScalarPrivate<T>(pointTree, false, false, NAN, -1,
+                                         angleUnit, complexFormat)
+        .toPoint();
+  }
+
   // angleUnit and complexFormat can be left to default on projected trees.
   template <typename T>
   static Tree* RootTreeToTree(

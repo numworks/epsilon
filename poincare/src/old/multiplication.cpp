@@ -1475,60 +1475,9 @@ bool Multiplication::TermIsPowerOfRationals(const OExpression &e) {
 void Multiplication::splitIntoNormalForm(
     OExpression &numerator, OExpression &denominator,
     const ReductionContext &reductionContext) const {
+  // Coded in pcj in GetNumeratorAndDenominator
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
-  int numberOfFactorsInNumerator = 0;
-  int numberOfFactorsInDenominator = 0;
-  const int numberOfFactors = numberOfChildren();
-  for (int i = 0; i < numberOfFactors; i++) {
-    OExpression factor = childAtIndex(i).clone();
-    ExpressionNode::Type factorType = factor.otype();
-    OExpression factorsNumerator;
-    OExpression factorsDenominator;
-    if (factorType == ExpressionNode::Type::Rational) {
-      Rational r = static_cast<Rational &>(factor);
-      if (r.isRationalOne()) {
-        // Special case: add a unary numeral factor if r = 1
-        factorsNumerator = r;
-      } else {
-        Integer rNum = r.signedIntegerNumerator();
-        if (!rNum.isOne()) {
-          factorsNumerator = Rational::Builder(rNum);
-        }
-        Integer rDen = r.integerDenominator();
-        if (!rDen.isOne()) {
-          factorsDenominator = Rational::Builder(rDen);
-        }
-      }
-    } else if (factorType == ExpressionNode::Type::Power) {
-      OExpression fd = factor.denominator(reductionContext);
-      if (fd.isUninitialized()) {
-        factorsNumerator = factor;
-      } else {
-        factorsDenominator = fd;
-      }
-    } else {
-      factorsNumerator = factor;
-    }
-    if (!factorsNumerator.isUninitialized()) {
-      mNumerator.addChildAtIndexInPlace(factorsNumerator,
-                                        numberOfFactorsInNumerator,
-                                        numberOfFactorsInNumerator);
-      numberOfFactorsInNumerator++;
-    }
-    if (!factorsDenominator.isUninitialized()) {
-      mDenominator.addChildAtIndexInPlace(factorsDenominator,
-                                          numberOfFactorsInDenominator,
-                                          numberOfFactorsInDenominator);
-      numberOfFactorsInDenominator++;
-    }
-  }
-  if (numberOfFactorsInNumerator) {
-    numerator = mNumerator.squashUnaryHierarchyInPlace();
-  }
-  if (numberOfFactorsInDenominator) {
-    denominator = mDenominator.squashUnaryHierarchyInPlace();
-  }
 }
 
 const OExpression Multiplication::Base(const OExpression e) {

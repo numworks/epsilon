@@ -44,6 +44,14 @@ namespace Poincare::Internal {
     return r;                     \
   }()
 
+#define OutOfContextBlock(F)      \
+  {                               \
+    Context* context = s_context; \
+    s_context = nullptr;          \
+    F;                            \
+    s_context = context;          \
+  }
+
 /* Static members */
 
 Approximation::Context* Approximation::s_context = nullptr;
@@ -775,20 +783,17 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       /* TODO we are computing all elements and sorting the list for all
        * elements, this is awful */
       Tree* list = ToList<T>(e->child(0));
-      {
-        Context* context = s_context;
-        s_context = nullptr;
-        ExceptionTry { NAry::Sort(list, Order::OrderType::RealLine); }
-        ExceptionCatch(exc) {
-          if (exc == ExceptionType::SortFail) {
-            /* Unfortunately, there is no way to signal that a list is
-             * unsortable, leave it unsorted */
-          } else {
-            TreeStackCheckpoint::Raise(exc);
-          }
-        }
-        s_context = context;
-      }
+      OutOfContextBlock(
+          ExceptionTry {
+            NAry::Sort(list, Order::OrderType::RealLine);
+          } ExceptionCatch(exc) {
+            if (exc == ExceptionType::SortFail) {
+              /* Unfortunately, there is no way to signal that a list is
+               * unsortable, leave it unsorted */
+            } else {
+              TreeStackCheckpoint::Raise(exc);
+            }
+          });
       std::complex<T> result = ToComplex<T>(list);
       list->removeTree();
       return result;

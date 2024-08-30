@@ -220,11 +220,20 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     }
 
-    if (depI->isPow() && depI->child(1)->isStrictlyNegativeInteger() &&
-        !depI->child(1)->isMinusOne()) {
-      // dep(..., {x^-n}) = dep(..., {x^-1}) with n an integer
-      depI->child(1)->cloneNodeOverNode(-1_e);
-      changed = true;
+    if (depI->isPow()) {
+      Tree* exponent = depI->child(1);
+      if (exponent->isStrictlyNegativeInteger() && !exponent->isMinusOne()) {
+        // dep(..., {x^-n}) = dep(..., {x^-1}) with n an integer > 0
+        exponent->cloneNodeOverNode(-1_e);
+        changed = true;
+        continue;
+      } else if (exponent->isStrictlyPositiveInteger()) {
+        // dep(..., {x^n}) = dep(..., {x}) with n an integer > 0
+        depI->moveTreeOverTree(depI->child(0));
+        i--;
+        changed = true;
+        continue;
+      }
     } else if (IsDefinedIfChildIsDefined(depI)) {
       // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
       depI->moveTreeOverTree(depI->child(0));
@@ -232,7 +241,6 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       changed = true;
       continue;
     }
-    // TODO: pow(x,n) -> x with n positive integer?
     depI = depI->nextTree();
   }
   if (changed) {

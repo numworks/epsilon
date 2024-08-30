@@ -763,6 +763,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("abs(-3.3_m)", "3.3×_m");
+  simplifies_to("10^(-6)_m^3", "1×_cm^3");
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");

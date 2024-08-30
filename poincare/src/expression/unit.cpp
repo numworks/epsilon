@@ -1117,8 +1117,11 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
       } else {
         // Correct the value since e is in basic SI
         value /= Approximation::RootTreeToReal<double>(extractedUnits);
+        /* With speed, find best prefix for distance. Otherwise, target
+         * extractedUnits (that could be a Power). */
         ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-            unit1, &value, UnitFormat::Metric, true, false);
+            (unit2 ? unit1 : (Tree*)extractedUnits), &value, UnitFormat::Metric,
+            true, false);
       }
       e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
       // Multiply value and extractedUnits.

@@ -1006,6 +1006,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     // Temperature units must be removed from root expression
     RemoveTemperatureUnit(e);
   }
+  // Turn e into its SI value. 2_m + _yd -> 3.8288
   Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   if (unitDisplay == UnitDisplay::AutomaticMetric ||
       unitDisplay == UnitDisplay::AutomaticImperial) {
@@ -1014,7 +1015,8 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     return true;
   }
   assert(extractedUnits && e->nextTree() == extractedUnits);
-  bool treeRemoved = KeepUnitsOnly(extractedUnits);
+  bool treeRemoved = ExtractUnits(extractedUnits, false);
+  // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd
   assert(!treeRemoved);
   (void)treeRemoved;
   // Take advantage of e being last tree.
@@ -1029,8 +1031,8 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       BuildMainOutput(e, extractedUnits, dimension, angleUnit);
       return true;
     case UnitDisplay::AutomaticInput:
-      // extractedUnits might be of the form _mm*_Hz+(_m+_km)*_s^-1.
-      // TODO: Implement the extraction of one of the terms to use it.
+      // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
+      return BuildAutomaticInputOutput(e, extractedUnits);
     case UnitDisplay::Decomposition:
       // TODO
     case UnitDisplay::Equivalent:
@@ -1089,16 +1091,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
     Integer::Push(dimension.unit.vector.angle);
     assert(Dimension::Get(newExtractedUnits) == Dimension::Get(extractedUnits));
     MoveTreeOverTree(extractedUnits, newExtractedUnits);
-    // e is basic SI and needs to be converted back to target unit.
-    TreeRef ratio = Units::Angle::DefaultRepresentativeForAngleUnit(angleUnit)
-                        ->pushReducedRatioExpression();
-    e->moveTreeOverTree(PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
-                                                {.KA = e, .KB = ratio}));
-    ratio->removeTree();
-    Simplification::ReduceSystem(e, false);
-    // Multiply value and extractedUnits.
-    assert(e->nextTree() == extractedUnits);
-    e->cloneNodeAtNode(KMult.node<2>);
+    BuildAutomaticInputOutput(e, extractedUnits);
     return;
   }
 
@@ -1158,7 +1151,7 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
   }
 }
 
-bool Unit::KeepUnitsOnly(Tree* e) {
+bool Unit::ExtractUnits(Tree* e, bool ignoreAdd) {
 #if ASSERTIONS
   bool wasUnit = Dimension::Get(e).isUnit();
 #endif
@@ -1173,9 +1166,15 @@ bool Unit::KeepUnitsOnly(Tree* e) {
       int n = e->numberOfChildren();
       int remainingChildren = n;
       Tree* child = e->child(0);
+      // If ignoreAdd, replace _m + _km + _yd with _m.
+      bool removeRemainingChildren = false;
       for (int i = 0; i < n; i++) {
-        if (!KeepUnitsOnly(child)) {
+        if (removeRemainingChildren) {
+          child->removeTree();
+          remainingChildren--;
+        } else if (!ExtractUnits(child, ignoreAdd)) {
           child = child->nextTree();
+          removeRemainingChildren = ignoreAdd && e->isAdd();
         } else {
           remainingChildren--;
         }
@@ -1198,18 +1197,18 @@ bool Unit::KeepUnitsOnly(Tree* e) {
     case Type::Sum:
     case Type::Product:
       e->moveTreeOverTree(e->child(Parametric::FunctionIndex(e->type())));
-      didRemovedTree = KeepUnitsOnly(e);
+      didRemovedTree = ExtractUnits(e, ignoreAdd);
       break;
     case Type::Abs:
-      e->moveTreeOverTree(e->child(0));
-      didRemovedTree = KeepUnitsOnly(e);
+      e->removeNode();
+      didRemovedTree = ExtractUnits(e, ignoreAdd);
       break;
     case Type::PowReal:
       // Ignore PowReal nodes
       e->cloneNodeOverNode(KPow);
     case Type::Pow:
       // If there are units in base, keep the tree.
-      if (!KeepUnitsOnly(e->child(0))) {
+      if (!ExtractUnits(e->child(0), ignoreAdd)) {
         didRemovedTree = false;
         break;
       }
@@ -1282,6 +1281,21 @@ bool HasUnit(const Tree* e) {
 bool IsPureAngleUnit(const Tree* e) {
   return e->isUnit() &&
          Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
+}
+
+// Use only one of the extracted unit and converts e to it.
+bool Unit::BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits) {
+  /* TODO: Select the best possible choice if there are multiple units
+           With _mm*_Hz+(_m+_km)*_s^-1 : _mm*_Hz, _m_s^-1 or _km_s^-1 ?
+  */
+  ExtractUnits(extractedUnits, true);
+  // Multiply e, extractedUnits and inverse of extractedUnits's SI value.
+  e->cloneNodeAtNode(KMult.node<3>);
+  KPow->cloneNode();
+  Tree* unitClone = extractedUnits->cloneTree();
+  Tree::ApplyShallowTopDown(unitClone, ShallowRemoveUnit);
+  (-1_e)->cloneTree();
+  return true;
 }
 
 }  // namespace Units

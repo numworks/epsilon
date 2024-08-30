@@ -306,9 +306,10 @@ class Unit {
   static double KelvinValueToRepresentative(
       double value, const Representative* representative);
   /* Remove subtrees that don't contain units. Return true if the entire tree
-   * has been removed. */
-  static bool KeepUnitsOnly(Tree* e);
-  TREE_REF_WRAP(KeepUnitsOnly);
+   * has been removed. Only Mult, Pow, and Add (if not ignoreAdd) are preserved.
+   */
+  static bool ExtractUnits(Tree* e, bool ignoreAdd);
+  TREE_REF_WRAP_1(ExtractUnits, bool);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnits(const Tree* extractedUnits);
   static void BuildMainOutput(Tree* e, TreeRef& extractedUnits,
@@ -316,6 +317,7 @@ class Unit {
   // Without taking input units into account, select best unit for tree
   static bool BuildAutomaticOutput(Tree* e, Dimension dimension,
                                    UnitDisplay unitDisplay);
+  static bool BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);

@@ -7,6 +7,7 @@
 #include "approximation.h"
 #include "k_tree.h"
 #include "parametric.h"
+#include "rational.h"
 #include "set.h"
 #include "undefined.h"
 #include "variables.h"
@@ -161,17 +162,19 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
           // powReal(x,y) contains pow(x,y)
           (searched->isPow() && container->isPowReal() &&
            searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
-          // pow(x,0) and pow(x,-r) contains nonNull(x)
-          (searched->isNonNull() && container->isPow() &&
+          // pow(x,0) and pow(x,-r) (idem powReal) contains nonNull(x)
+          (searched->isNonNull() &&
+           (container->isPow() || container->isPowReal()) &&
            (container->child(1)->isStrictlyNegativeRational() ||
-            container->child(1)->isZero()))) &&
+            container->child(1)->isZero())) ||
+          // powReal(x,p/q) contains realPositive(x) with p,q integers, q even
+          (searched->isRealPositive() && container->isPowReal() &&
+           container->child(1)->isRational() &&
+           !container->child(1)->isZero() &&
+           Rational::Denominator(container->child(1)).isEven())) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     return true;
   }
-  /* TODO_PCJ: powReal(x,r) with r rational
-   * r = p/q with q>0 and p!=0
-   * - contains realPositive(x) if q even
-   * - contains nonNull(x)      if p<0 */
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {
       return true;
@@ -212,12 +215,6 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     }
 
-    /* TODO_PCJ: powReal(x,r) with r rational
-     * r = p/q with q>0 and p!=0
-     * - {powReal(x,r)} -> {x}                           if p>0, q odd
-     * - {powReal(x,r)} -> {realPositive(x)}             if p>0, q even
-     * - {powReal(x,r)} -> {nonNull(x)}                  if p<0, q odd
-     * - {powReal(x,r)} -> {nonNull(x), realPositive(x)} if p<0, q even */
     if (depI->isPow()) {
       Tree* exponent = depI->child(1);
       if (exponent->isStrictlyNegativeRational()) {
@@ -233,6 +230,38 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
         changed = true;
         continue;
       }
+    } else if (depI->isPowReal()) {
+      Tree* exponent = depI->child(1);
+      if (!exponent->isRational() || exponent->isZero()) {
+        continue;
+      }
+      IntegerHandler p = Rational::Numerator(exponent);
+      IntegerHandler q = Rational::Denominator(exponent);
+      assert(!p.isZero() && q.strictSign() == StrictSign::Positive);
+      exponent->removeTree();
+      if (p.strictSign() == StrictSign::Positive) {
+        if (q.isEven()) {
+          // {powReal(x,p/q)} -> {realPositive(x)}
+          depI->cloneNodeOverNode(KRealPositive);
+        } else {
+          // {powReal(x,p/q)} -> {x}
+          depI->removeNode();
+          i--;
+        }
+      } else {
+        if (q.isEven()) {
+          // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
+          depI->cloneNodeOverNode(KNonNull);
+          Tree* secondDep = KRealPositive->cloneNode();
+          depI->child(0)->cloneTree();
+          NAry::AddChild(set, secondDep);
+        } else {
+          // {powReal(x,p/q)} -> {nonNull(x)}
+          depI->cloneNodeOverNode(KNonNull);
+        }
+      }
+      changed = true;
+      continue;
     } else if (IsDefinedIfChildIsDefined(depI)) {
       // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
       depI->moveTreeOverTree(depI->child(0));

@@ -138,6 +138,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
       return result();
 
+    case Type::Dep:
     case Type::Abs:
     case Type::SinH:
     case Type::Opposite:

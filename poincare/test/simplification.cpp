@@ -381,31 +381,32 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum((2k)^2,k,2,5)", "216");
   simplifies_to("sum((2k)^2,k,0,n)", "(2×n×(n+1)×(2×n+1))/3");
   simplifies_to("sum((2k)^4,k,0,n)", "16×sum(k^4,k,0,n)");
-  simplifies_to("sum(k*cos(k),k,1,n)", "sum(k×cos(k),k,1,n)");
+  simplifies_to("sum(k*cos(k),k,1,n)", "sum(cos(k)×k,k,1,n)");
   simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "n×(n+1)×x");
   simplifies_to("sum(sum(a*k,a,0,j),k,1,n)", "(j×(j+1)×n×(n+1))/4");
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "0");
   simplifies_to("sum(sin(k),k,a,a-10)", "0");
-  simplifies_to("sum(random()*k,k,0,n)", "sum(k×random(),k,0,n)");
+  simplifies_to("sum(random()*k,k,0,n)", "sum(random()×k,k,0,n)");
   simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
 
   // product
   simplifies_to("product(p,k,j,n)", "p^(-j+n+1)");
   simplifies_to("product(p^3,k,j,n)", "p^3^(-j+n+1)");
   simplifies_to("product(k^3,k,j,n)", "product(k,k,j,n)^3");
-  simplifies_to("product(k^x,k,j,n)", "product(exp(x×ln(k)),k,j,n)");
-  simplifies_to("product(x^k,k,j,n)", "product(exp(k×ln(x)),k,j,n)");
+  simplifies_to("product(k^x,k,j,n)", "product(k^x,k,j,n)");
+  simplifies_to("product(x^k,k,j,n)", "product(x^k,k,j,n)");
   simplifies_to("product(π^k,k,2,1)", "1");
   simplifies_to("product(sin(k),k,a+10,a)", "1");
   simplifies_to("product(sin(k),k,a,a-10)", "1");
-  simplifies_to("product(random()*k,k,0,n)", "product(k×random(),k,0,n)");
+  simplifies_to("product(random()*k,k,0,n)", "product(random()×k,k,0,n)");
   simplifies_to("product(random(),k,0,10)", "product(random(),k,0,10)");
 
   // product(exp) <-> exp(sum)
   // TODO_PCJ: we should have b×product(k,k,a,b)^2 not product(k,k,a,b)^2×b
   simplifies_to("exp(2*sum(ln(k),k,a,b) + ln(b))",
-                "dep(product(k,k,a,b)^2×b,{ln(b),sum(ln(k),k,a,b)})");
+                "dep(product(k,k,a,b)^2×b,{sum(NonNull(k),k,a,b),sum(√(k),k,a,"
+                "b),NonNull(b),√(b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
   // expand sum

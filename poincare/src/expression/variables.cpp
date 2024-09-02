@@ -218,8 +218,9 @@ bool Variables::BeautifyToName(Tree* e, uint8_t depth) {
     if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       // beautify variable introduced by this scope
       // TODO: check that name is available here or make new name
-      changed =
-          Replace(child, 0, e->child(Parametric::k_variableIndex)) || changed;
+      changed = Replace(child, 0, e->child(Parametric::k_variableIndex), false,
+                        false) ||
+                changed;
       // beautify outer variables
       changed = BeautifyToName(child, depth + 1) || changed;
       continue;

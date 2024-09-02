@@ -1,6 +1,7 @@
 #include <poincare/function_properties/conic.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/trigonometry.h>
@@ -48,8 +49,9 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
 
-  const Tree* e = analyzedExpression.tree();
-  assert(!e->isDep());
+  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+                      ? Dependency::Main(analyzedExpression.tree())
+                      : analyzedExpression.tree();
 
   int dy = Degree::Get(e, y);
   if (dy < 1 || dy > 2) {
@@ -427,8 +429,9 @@ double CartesianConic::getRadius() const {
 
 PolarConic::PolarConic(const SystemExpression& analyzedExpression,
                        const char* symbol) {
-  const Tree* e = analyzedExpression.tree();
-  assert(!e->isDep());
+  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+                      ? Dependency::Main(analyzedExpression.tree())
+                      : analyzedExpression.tree();
 
   // Detect the pattern r = a
   int deg = Degree::Get(e, symbol);

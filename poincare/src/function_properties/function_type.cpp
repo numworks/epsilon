@@ -1,5 +1,6 @@
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/degree.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/division.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/simplification.h>
@@ -15,7 +16,6 @@ using namespace Internal;
 
 FunctionType::LineType FunctionType::PolarLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(analyzedExpression.dimension().isScalar());
 
   /* Detect polar lines
@@ -23,7 +23,9 @@ FunctionType::LineType FunctionType::PolarLineType(
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line */
 
-  const Tree* e = analyzedExpression.tree();
+  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+                      ? Dependency::Main(analyzedExpression.tree())
+                      : analyzedExpression.tree();
   if (!e->isMult() && !e->isPow()) {
     return LineType::None;
   }
@@ -150,10 +152,11 @@ bool isLinearCombinationOfFunction(const Tree* e, const char* symbol,
 
 FunctionType::CartesianType FunctionType::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(analyzedExpression.dimension().isScalar());
 
-  const Tree* e = analyzedExpression.tree();
+  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+                      ? Dependency::Main(analyzedExpression.tree())
+                      : analyzedExpression.tree();
 
   // f(x) = piecewise(...)
   if (e->hasDescendantSatisfying(

@@ -537,8 +537,8 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
 
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
-  simplifies_to("sec(arcsec(x))", "dep(x,{1/x})", cartesianCtx);
-  simplifies_to("csc(arccsc(x))", "dep(x,{1/x})", cartesianCtx);
+  simplifies_to("sec(arcsec(x))", "dep(x,{NonNull(x)})", cartesianCtx);
+  simplifies_to("csc(arccsc(x))", "dep(x,{NonNull(x)})", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
@@ -672,7 +672,7 @@ QUIZ_CASE(pcj_simplification_random) {
 
 QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
-  simplifies_to("1/(1/a)", "dep(a,{1/a})");
+  simplifies_to("1/(1/a)", "dep(a,{NonNull(a)})");
   simplifies_to("1/(a^-3)", "dep(a^3,{NonNull(a)})");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
@@ -1028,7 +1028,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin((241/120)π)", "sin(π/120)");
 
   // Direct advanced trigonometry
-  simplifies_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
+  simplifies_to("1/tan(x)", "dep(cot(x),{NonNull(cos(x))})");
   simplifies_to("1/tan(3)", "cot(3)");
 
   // Inverse trigonometry

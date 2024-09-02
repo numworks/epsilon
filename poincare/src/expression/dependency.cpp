@@ -161,22 +161,17 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
           // powReal(x,y) contains pow(x,y)
           (searched->isPow() && container->isPowReal() &&
            searched->child(1)->treeIsIdenticalTo(container->child(1))) ||
-          // NonNull(x) contains x^-n
-          (container->isNonNull() && searched->isPow() &&
-           searched->child(1)->isStrictlyNegativeInteger()) ||
-          // x^-n contains NonNull(x)
+          // pow(x,0) and pow(x,-r) contains nonNull(x)
           (searched->isNonNull() && container->isPow() &&
-           container->child(1)->isStrictlyNegativeInteger()) ||
-          // x^0 and x^-n contains x^-1
-          (searched->isPow() && container->isPow() &&
-           searched->child(1)->isMinusOne() &&
-           container->child(1)->isNegativeInteger())) &&
+           (container->child(1)->isStrictlyNegativeRational() ||
+            container->child(1)->isZero()))) &&
       searched->child(0)->treeIsIdenticalTo(container->child(0))) {
     return true;
   }
-  /* TODO_PCJ:
-   * - add other possibilities like x^1/4 contains x^1/2
-   * - with PowReal */
+  /* TODO_PCJ: powReal(x,r) with r rational
+   * r = p/q with q>0 and p!=0
+   * - contains realPositive(x) if q even
+   * - contains nonNull(x)      if p<0 */
   for (const Tree* child : container->children()) {
     if (ContainsSameDependency(searched, child)) {
       return true;
@@ -217,16 +212,22 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     }
 
+    /* TODO_PCJ: powReal(x,r) with r rational
+     * r = p/q with q>0 and p!=0
+     * - {powReal(x,r)} -> {x}                           if p>0, q odd
+     * - {powReal(x,r)} -> {realPositive(x)}             if p>0, q even
+     * - {powReal(x,r)} -> {nonNull(x)}                  if p<0, q odd
+     * - {powReal(x,r)} -> {nonNull(x), realPositive(x)} if p<0, q even */
     if (depI->isPow()) {
       Tree* exponent = depI->child(1);
-      if (exponent->isStrictlyNegativeInteger() && !exponent->isMinusOne()) {
-        // dep(..., {x^-n}) = dep(..., {NonNull(x)}) with n an integer > 0
+      if (exponent->isStrictlyNegativeRational()) {
+        // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
         exponent->removeTree();
         depI->cloneNodeOverNode(KNonNull);
         changed = true;
         continue;
-      } else if (exponent->isStrictlyPositiveInteger()) {
-        // dep(..., {x^n}) = dep(..., {x}) with n an integer > 0
+      } else if (exponent->isStrictlyPositiveRational()) {
+        // dep(..., {x^r}) = dep(..., {x}) with r rational > 0
         depI->moveTreeOverTree(depI->child(0));
         i--;
         changed = true;

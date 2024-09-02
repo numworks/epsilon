@@ -28,6 +28,7 @@ uint8_t Parametric::FunctionIndex(TypeBlock type) {
     case Type::DiffLayout:
     case Type::Integral:
     case Type::IntegralLayout:
+    case Type::IntegralWithAlternatives:
     case Type::Sum:
     case Type::SumLayout:
     case Type::Product:

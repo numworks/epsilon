@@ -3,6 +3,7 @@
 #include "advanced_reduction.h"
 #include "approximation.h"
 #include "beautification.h"
+#include "dependency.h"
 #include "k_tree.h"
 #include "systematic_reduction.h"
 #include "variables.h"
@@ -13,10 +14,11 @@ bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
   bool changed = PatternMatching::MatchReplace(
       e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
-  // TODO: we should have powReal(x,1/2) -> sqrtReal(x)
-  //                   or powReal(x,1/2) -> dep(sqrt(x), nonNegative(x))
   return PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
+         PatternMatching::MatchReplace(
+             e, KPowReal(KA, 1_e / 2_e),
+             KDep(KSqrt(KA), KDepList(KRealPositive(KA)))) ||
          PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
          /* TODO: e^ is better than exp because we have code to handle special
           * cases in pow, exp is probably more precise on normal values */
@@ -72,6 +74,10 @@ bool Approximation::PrepareExpressionForApproximation(
   bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
   changed =
       Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
+  if (changed) {
+    // ShallowPrepareForApproximation can introduce dependencies
+    Dependency::DeepBubbleUpDependencies(e);
+  }
   return changed;
 }
 

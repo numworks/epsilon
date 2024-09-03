@@ -276,7 +276,7 @@ QUIZ_CASE(pcj_sign_methods) {
 
 void assert_sign(const char* input, ComplexSign expectedSign,
                  ComplexFormat complexFormat = ComplexFormat::Cartesian) {
-  Tree* expression = TextToTree(input);
+  Tree* expression = parse(input);
   ProjectionContext ctx = {.m_complexFormat = complexFormat};
   Simplification::ProjectAndReduce(expression, &ctx, false);
   bool result = GetComplexSign(expression) == expectedSign;

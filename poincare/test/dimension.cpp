@@ -11,7 +11,7 @@ bool dim(const Tree* e, Dimension d, Poincare::Context* ctx = nullptr) {
 }
 
 bool dim(const char* input, Dimension d, Poincare::Context* ctx = nullptr) {
-  Tree* e = TextToTree(input);
+  Tree* e = parse(input, ctx);
   bool result = dim(e, d, ctx);
   e->removeTree();
   return result;
@@ -23,7 +23,7 @@ bool len(const Tree* e, int n, Poincare::Context* ctx = nullptr) {
 }
 
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
-  Tree* e = TextToTree(input);
+  Tree* e = parse(input, ctx);
   bool result = len(e, n, ctx);
   e->removeTree();
   return result;
@@ -34,7 +34,7 @@ bool hasInvalidDimOrLen(const Tree* e, Poincare::Context* ctx = nullptr) {
 }
 
 bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
-  Tree* e = TextToTree(input);
+  Tree* e = parse(input, ctx);
   bool result = hasInvalidDimOrLen(e, ctx);
   e->removeTree();
   return result;

@@ -144,7 +144,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
 void assert_polynomial_degree_is(ProjectionContext projectionContext,
                                  const char* input, int expectedDegree,
                                  const char* symbolName = "x") {
-  Tree* expression = TextToTree(input, projectionContext.m_context);
+  Tree* expression = parse(input, projectionContext.m_context);
   Simplification::ProjectAndReduce(expression, &projectionContext, false);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);

@@ -8,7 +8,7 @@ using namespace Poincare;
 
 static inline void assert_single_numerical_values(const char* expression,
                                                   bool result) {
-  UserExpression input = UserExpression::Builder(TextToTree(expression));
+  UserExpression input = UserExpression::Builder(parse(expression));
   quiz_assert(AdditionalResultsHelper::HasSingleNumericalValue(input) ==
               result);
 }
@@ -27,8 +27,8 @@ QUIZ_CASE(poincare_additional_results_numerical_values) {
 static inline void assert_generalizes_to_and_extract(const char* expression,
                                                      const char* generalized,
                                                      float value) {
-  UserExpression e = UserExpression::Builder(TextToTree(expression));
-  UserExpression g = UserExpression::Builder(TextToTree(generalized));
+  UserExpression e = UserExpression::Builder(parse(expression));
+  UserExpression g = UserExpression::Builder(parse(generalized));
   float v;
   UserExpression f =
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(e, "x",

@@ -114,9 +114,6 @@ inline void assertionsWarn() {
 #endif
 #endif
 
-Tree* parse(const char* input, Poincare::Context* context = nullptr,
-            bool parseForAssignment = false);
-
 // Integer
 
 const char* MaxIntegerString();            // (2^8)^k_maxNumberOfDigits-1
@@ -129,7 +126,8 @@ const char* ApproximatedParsedIntegerString();
 
 // Parsing
 
-Tree* TextToTree(const char* input, Poincare::Context* context = nullptr);
+Tree* parse(const char* input, Poincare::Context* context = nullptr,
+            bool parseForAssignment = false);
 
 void store(const char* storeExpression, Poincare::Context* ctx);
 

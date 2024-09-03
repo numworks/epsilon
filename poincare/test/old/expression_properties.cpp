@@ -1056,7 +1056,7 @@ using namespace Poincare;
 
 void assert_is_list_of_points(const char* definition, Context* context,
                               bool truth = true) {
-  UserExpression e = UserExpression::Builder(TextToTree(definition, context));
+  UserExpression e = UserExpression::Builder(parse(definition, context));
   bool isListOfPoints = e.dimension(context).isListOfPoints();
   quiz_assert_print_if_failure(isListOfPoints == truth, definition);
 }
@@ -1096,7 +1096,7 @@ QUIZ_CASE(poincare_expression_list_of_points) {
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(TextToTree(expression, &context));
+  UserExpression e1 = UserExpression::Builder(parse(expression, &context));
   ReductionContext reductionContext(&context);
   SystemExpression e2 = e1.cloneAndReduce(reductionContext);
   SystemFunction e3 = e2.getSystemFunction("x", true);

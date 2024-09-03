@@ -15,7 +15,7 @@ bool check_solutions(
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationSet = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationSet, TextToTree(equation));
+    NAry::AddChild(equationSet, parse(equation));
   }
   EquationSolver::Context context = EquationSolver::Context();
   EquationSolver::Error error = EquationSolver::Error::NoError;
@@ -31,7 +31,7 @@ bool check_solutions(
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
-      Tree* expectedSolution = TextToTree(output);
+      Tree* expectedSolution = parse(output);
       Simplification::SimplifyWithAdaptiveStrategy(expectedSolution,
                                                    &projectionContext);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
@@ -91,7 +91,7 @@ void check_range(std::initializer_list<const char*> inputs, double min,
                  double max) {
   Tree* equationSet = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationSet, TextToTree(equation));
+    NAry::AddChild(equationSet, parse(equation));
   }
   EquationSolver::Context context = EquationSolver::Context();
   Poincare::Range1D<double> range =

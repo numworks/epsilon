@@ -10,19 +10,6 @@
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
-Tree* parse(const char* input, Poincare::Context* context,
-            bool parseForAssignment) {
-  Tree* inputLayout = RackFromText(input);
-  RackParser parser(inputLayout, context, -1,
-                    parseForAssignment
-                        ? ParsingContext::ParsingMethod::Assignment
-                        : ParsingContext::ParsingMethod::Classic);
-  bool success = parser.parse() != nullptr;
-  // quiz_assert(expression);
-  inputLayout->removeTree();
-  return success ? inputLayout : nullptr;
-}
-
 const char* AlmostMaxIntegerString() {
   static const char* s =
       "179769313486231590772930519078902473361797697894230657273430081157732675"
@@ -60,16 +47,6 @@ const char * ApproximatedParsedIntegerString() {
 }
 #endif
 
-Tree* TextToTree(const char* input, Poincare::Context* context) {
-  Tree* expression = RackFromText(input);
-  Tree* parsed = RackParser(expression, context).parse();
-  if (!parsed) {
-    parsed = KUndef->cloneTree();
-  }
-  expression->moveTreeOverTree(parsed);
-  return expression;
-}
-
 void quiz_assert_print_if_failure(bool test, const char* information) {
   if (!test) {
 #if 0  // TODO_PCJ
@@ -99,8 +76,8 @@ void remove_system_codepoints(char* buffer) {
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext) {
-  Tree* expected = TextToTree(output, projectionContext.m_context);
-  Tree* expression = TextToTree(input, projectionContext.m_context);
+  Tree* expected = parse(output, projectionContext.m_context);
+  Tree* expression = parse(input, projectionContext.m_context);
   process(expression, projectionContext);
   quiz_assert(expression);
   quiz_assert(expected);
@@ -128,6 +105,19 @@ void process_tree_and_compare(const char* input, const char* output,
   expression->removeTree();
   expected->removeTree();
   assert(SharedTreeStack->numberOfTrees() == 0);
+}
+
+Tree* parse(const char* input, Poincare::Context* context,
+            bool parseForAssignment) {
+  Tree* layout = RackFromText(input);
+  RackParser parser(layout, context, -1,
+                    parseForAssignment
+                        ? ParsingContext::ParsingMethod::Assignment
+                        : ParsingContext::ParsingMethod::Classic);
+  Tree* expression = parser.parse();
+  quiz_assert(expression);
+  layout->moveTreeOverTree(expression);
+  return layout;
 }
 
 void store(const char* storeExpression, Poincare::Context* ctx) {

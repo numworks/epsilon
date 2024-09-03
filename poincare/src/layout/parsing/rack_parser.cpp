@@ -789,6 +789,9 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
   MoveNodeOverNode(parameterList,
                    builtin->pushNode(parameterList->numberOfChildren()));
   if (TypeBlock(type).isParametric()) {
+    if (!parameterList->child(1)->isUserSymbol()) {
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
     // Move sub-expression at the end
     parameterList->nextTree()->moveTreeBeforeNode(parameterList->child(0));
   }

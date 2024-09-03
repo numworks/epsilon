@@ -32,10 +32,6 @@ std::complex<T> Approximation::ComputeComplexPower(
        )) {
     return NAN;
   }
-  if (complexFormat == ComplexFormat::Real && c.real() < zero &&
-      std::round(d.real()) != d.real()) {
-    return NAN;
-  }
 
   std::complex<T> result;
   if (c.imag() == zero && d.imag() == zero && c.real() != zero &&
@@ -73,6 +69,10 @@ std::complex<T> Approximation::ComputeComplexPower(
      * cartesian complex format. The issue is still visible when x is so small
      * that result is 0, which is plotted even though it is "complex". */
     return result;
+  }
+  if (complexFormat == ComplexFormat::Real &&
+      result.imag() != static_cast<T>(0.0)) {
+    return NAN;
   }
   std::complex<T> precision =
       d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;

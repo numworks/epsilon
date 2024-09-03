@@ -205,34 +205,6 @@ void assert_parsed_expression_is(const char *expression,
   quiz_print(information);
 }
 
-void assert_text_not_parsable(const char *text, Context *context) {
-  k_total++;
-  bool bad = false;
-  bool crash = false;
-  ExceptionTry {
-    assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *parsed = parse(text, context);
-    bad = parsed;
-    if (parsed) {
-      parsed->removeTree();
-    }
-  }
-  ExceptionCatch(type) {
-    SharedTreeStack->flush();
-    crash = true;
-  }
-  assert(SharedTreeStack->numberOfTrees() == 0);
-  k_bad += bad;
-  k_crash += crash;
-
-  constexpr int bufferSize = 2048;
-  char information[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
-                                      text);
-  quiz_print(information);
-}
-
 void assert_parse_to_same_expression(const char *expression1,
                                      const char *expression2) {
   k_total++;

@@ -7,6 +7,7 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
+#include "../helper.h"
 #include "helper.h"
 #include "tree/helpers.h"
 
@@ -925,7 +926,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is(
       "quo(1,2)", DivisionQuotient::Builder(BasedInteger::Builder(1),
                                             BasedInteger::Builder(2)));
-  assert_parsed_expression_is("random()", Random::Builder());
+  assert_parsed_expression_is("random()", Poincare::Random::Builder());
   assert_parsed_expression_is(
       "randint(1,2)",
       Randint::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));

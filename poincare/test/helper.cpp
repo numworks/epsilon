@@ -107,17 +107,32 @@ void process_tree_and_compare(const char* input, const char* output,
   assert(SharedTreeStack->numberOfTrees() == 0);
 }
 
-Tree* parse(const char* input, Poincare::Context* context,
-            bool parseForAssignment) {
+Tree* private_parse(const char* input, Poincare::Context* context,
+                    bool parseForAssignment, bool assertNotParsable) {
   Tree* layout = RackFromText(input);
   RackParser parser(layout, context, -1,
                     parseForAssignment
                         ? ParsingContext::ParsingMethod::Assignment
                         : ParsingContext::ParsingMethod::Classic);
   Tree* expression = parser.parse();
+  if (assertNotParsable) {
+    quiz_assert(!expression);
+    layout->removeTree();
+    return nullptr;
+  }
   quiz_assert(expression);
   layout->moveTreeOverTree(expression);
   return layout;
+}
+
+Tree* parse(const char* input, Poincare::Context* context,
+            bool parseForAssignment) {
+  return private_parse(input, context, parseForAssignment, false);
+}
+
+void assert_text_not_parsable(const char* input, Poincare::Context* context) {
+  bool parsed = private_parse(input, context, false, true);
+  assert(!parsed);
 }
 
 void store(const char* storeExpression, Poincare::Context* ctx) {

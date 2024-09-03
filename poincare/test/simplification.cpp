@@ -691,7 +691,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("41^(1/3)", "root(41,3)");
   // - PowerReal(x,y) y is not a rational
   simplifies_to("x^(e^3)", "x^e^3");
-  simplifies_to("(x^e)^3)", "(x^e)^3)");
+  simplifies_to("(x^e)^3", "x^e^3");
   // - Looking at y's reduced rational form p/q :
   //   * PowerReal(x,y) if x is of unknown sign and p odd
   simplifies_to("x^(1/3)", "root(x,3)");

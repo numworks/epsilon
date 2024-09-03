@@ -32,6 +32,10 @@ std::complex<T> Approximation::ComputeComplexPower(
        )) {
     return NAN;
   }
+  if (complexFormat == ComplexFormat::Real && c.real() < zero &&
+      std::round(d.real()) != d.real()) {
+    return NAN;
+  }
 
   std::complex<T> result;
   if (c.imag() == zero && d.imag() == zero && c.real() != zero &&

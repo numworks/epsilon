@@ -268,7 +268,21 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       i--;
       changed = true;
       continue;
+    } else if (depI->isNonNull() && depI->child(0)->isMult()) {
+      // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
+      Tree* mult = depI->child(0);
+      int n = mult->numberOfChildren();
+      Tree* child = mult->child(1);
+      for (int i = 1; i < n; i++) {
+        child->cloneNodeAtNode(KNonNull);
+        child = child->nextTree();
+      }
+      mult->removeNode();
+      NAry::SetNumberOfChildren(set, set->numberOfChildren() + n - 1);
+      changed = true;
+      continue;
     }
+
     depI = depI->nextTree();
   }
   if (changed) {

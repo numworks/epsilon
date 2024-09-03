@@ -1172,12 +1172,12 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
-                "dep(ln(x)+ln(y)-ln(x×y),{NonNull(x),NonNull(y),NonNull(x×y)})",
+                "dep(ln(x)+ln(y)-ln(x×y),{NonNull(x),NonNull(y)})",
                 cartesianCtx);
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-                "dep(0,{ln(abs(x)),ln(abs(y)),NonNull(abs(x)),NonNull(abs(y)),"
-                "NonNull(abs(x)×abs(y))})",
-                cartesianCtx);
+  simplifies_to(
+      "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+      "dep(0,{ln(abs(x)),ln(abs(y)),NonNull(abs(x)),NonNull(abs(y))})",
+      cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

@@ -178,6 +178,9 @@ bool List::ShallowApplyListOperators(Tree* e) {
       bool hasWeightList = Dimension::IsList(e->child(1));
       Tree* valuesList = e->child(0);
       BubbleUp(valuesList, SystematicReduction::ShallowReduce);
+      if (!valuesList->isList()) {
+        return false;
+      }
       Tree* weigthsList = e->child(1);
       if (hasWeightList) {
         // weigths are approximated in place

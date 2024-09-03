@@ -509,9 +509,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Get(e->child(Parametric::FunctionIndex(e)), ctx);
     case Type::Dep:
       return Get(Dependency::Main(e), ctx);
-    case Type::NonNull:
-    case Type::RealPositive:
-      return Scalar();
     case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {

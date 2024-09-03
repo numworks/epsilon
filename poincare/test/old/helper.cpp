@@ -8,6 +8,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
+#include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/old/parsing/parser.h>
@@ -165,7 +166,14 @@ void assert_parsed_expression_process_to(
 
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool parseForAssignment) {
-  Tree *result = parse(expression, context, parseForAssignment);
+  Tree *inputLayout = RackFromText(expression);
+  RackParser parser(inputLayout, context, -1,
+                    parseForAssignment
+                        ? Internal::ParsingContext::ParsingMethod::Assignment
+                        : Internal::ParsingContext::ParsingMethod::Classic);
+  bool success = parser.parse() != nullptr;
+  inputLayout->removeTree();
+  Tree *result = success ? inputLayout : nullptr;
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }

@@ -71,13 +71,12 @@ bool Approximation::PrepareFunctionForApproximation(
 
 bool Approximation::PrepareExpressionForApproximation(
     Tree* e, ComplexFormat complexFormat) {
-  bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
-  changed =
-      Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
+  bool changed = Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation);
   if (changed) {
     // ShallowPrepareForApproximation can introduce dependencies
     Dependency::DeepBubbleUpDependencies(e);
   }
+  changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals) || changed;
   return changed;
 }
 

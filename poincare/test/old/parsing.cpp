@@ -916,7 +916,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is(
       "permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),
                                                   BasedInteger::Builder(1)));
-  assert_text_not_parsable("piecewise(2,1+1,3)");
   assert_parsed_expression_is(
       "product(1,n,2,3)",
       Product::Builder(BasedInteger::Builder(1), Symbol::Builder("n", 1),

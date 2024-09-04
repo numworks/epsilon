@@ -18,7 +18,7 @@ bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
          PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(
              e, KPowReal(KA, 1_e / 2_e),
-             KDep(KSqrt(KA), KDepList(KRealPositive(KA)))) ||
+             KDep(KSqrt(KA), KDepList(KRealPos(KA)))) ||
          PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
          /* TODO: e^ is better than exp because we have code to handle special
           * cases in pow, exp is probably more precise on normal values */

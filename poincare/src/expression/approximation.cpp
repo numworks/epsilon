@@ -833,10 +833,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       return UndefDependencies(e) ? NAN : ToComplex<T>(Dependency::Main(e));
     }
     case Type::NonNull:
-    case Type::RealPositive: {
+    case Type::RealPos: {
       std::complex<T> x = ToComplex<T>(e->child(0));
       return ((e->isNonNull() && x != std::complex<T>(0)) ||
-              (e->isRealPositive() && x.imag() == 0 && x.real() >= 0))
+              (e->isRealPos() && x.imag() == 0 && x.real() >= 0))
                  ? std::complex<T>(0)
                  : NAN;
     }

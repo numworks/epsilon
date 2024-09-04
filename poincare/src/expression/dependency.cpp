@@ -168,7 +168,7 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
            (container->child(1)->isStrictlyNegativeRational() ||
             container->child(1)->isZero())) ||
           // powReal(x,p/q) contains realPositive(x) with p,q integers, q even
-          (searched->isRealPositive() && container->isPowReal() &&
+          (searched->isRealPos() && container->isPowReal() &&
            container->child(1)->isRational() &&
            !container->child(1)->isZero() &&
            Rational::Denominator(container->child(1)).isEven())) &&
@@ -234,7 +234,7 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       if (p.strictSign() == StrictSign::Positive) {
         if (q.isEven()) {
           // {powReal(x,p/q)} -> {realPositive(x)}
-          depI->cloneNodeOverNode(KRealPositive);
+          depI->cloneNodeOverNode(KRealPos);
         } else {
           // {powReal(x,p/q)} -> {x}
           depI->removeNode();
@@ -244,7 +244,7 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
         if (q.isEven()) {
           // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
           depI->cloneNodeOverNode(KNonNull);
-          Tree* secondDep = KRealPositive->cloneNode();
+          Tree* secondDep = KRealPos->cloneNode();
           depI->child(0)->cloneTree();
           NAry::AddChild(set, secondDep);
         } else {

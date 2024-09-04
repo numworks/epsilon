@@ -215,8 +215,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     if (realMode) {
       // lnUser(A) -> dep(ln(A), {nonNull(x), realPositive(x)})
       PatternMatching::MatchReplace(
-          e, KLnUser(KA),
-          KDep(KLn(KA), KDepList(KNonNull(KA), KRealPositive(KA))));
+          e, KLnUser(KA), KDep(KLn(KA), KDepList(KNonNull(KA), KRealPos(KA))));
     } else {
       // lnUser(A) -> dep(ln(A), {nonNull(x)})
       PatternMatching::MatchReplace(e, KLnUser(KA),

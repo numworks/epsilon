@@ -168,4 +168,6 @@ bool SystematicReduction::Switch(Tree* e) {
   }
 }
 
+// TODO: NonNull(x) should be reduced using ComplexSign::canBeNull()
+
 }  // namespace Poincare::Internal

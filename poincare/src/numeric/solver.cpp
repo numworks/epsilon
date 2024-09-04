@@ -1,6 +1,7 @@
 #include <poincare/numeric/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/continuity.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -138,13 +139,17 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
       return result();
 
-    case Type::Dep:
     case Type::Abs:
+    case Type::ATan:
     case Type::SinH:
     case Type::Opposite:
     case Type::Sqrt:
       /* f(x) = 0 <=> x = 0 */
       return nextRoot(e->child(0));
+
+    case Type::Dep:
+      registerSolution(nextRootInDependency(e), Interest::Root);
+      return result();
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
@@ -638,6 +643,22 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
     xRoot = xChildrenRoot;
   }
   return Coordinate2D<T>(xRoot, k_zero);
+}
+
+template <typename T>
+Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
+  assert(e->isDep());
+  Solver<T> solver = *this;
+  const Tree* main = Dependency::Main(e);
+  // Find root in main
+  Coordinate2D<T> root = solver.nextRoot(main);
+  // Check that the dependencies of the solution are not undefined
+  while (solver.lastInterest() == Interest::Root &&
+         std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
+    // verifier que xstart a bien avancé à root.x()
+    root = solver.nextRoot(main);
+  }
+  return root;
 }
 
 template <typename T>

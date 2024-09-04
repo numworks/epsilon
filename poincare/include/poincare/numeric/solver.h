@@ -175,6 +175,7 @@ class Solver {
                                      void* aux) const;
   Coordinate2D<T> nextRootInMultiplication(const Internal::Tree* m) const;
   Coordinate2D<T> nextRootInAddition(const Internal::Tree* m) const;
+  Coordinate2D<T> nextRootInDependency(const Internal::Tree* m) const;
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);

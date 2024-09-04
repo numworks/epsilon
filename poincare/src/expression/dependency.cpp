@@ -193,7 +193,7 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
    *           - Handle logarithm of non null children */
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
                       Type::ATrig, Type::ATanRad}) ||
-         (e->isPow() && e->child(1)->isStrictlyPositiveInteger());
+         (e->isPow() && e->child(1)->isStrictlyPositiveRational());
 }
 
 bool ShallowRemoveUselessDependencies(Tree* dep) {
@@ -215,21 +215,13 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     }
 
-    if (depI->isPow()) {
-      Tree* exponent = depI->child(1);
-      if (exponent->isStrictlyNegativeRational()) {
-        // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
-        exponent->removeTree();
-        depI->cloneNodeOverNode(KNonNull);
-        changed = true;
-        continue;
-      } else if (exponent->isStrictlyPositiveRational()) {
-        // dep(..., {x^r}) = dep(..., {x}) with r rational > 0
-        depI->moveTreeOverTree(depI->child(0));
-        i--;
-        changed = true;
-        continue;
-      }
+    if (depI->isPow() && depI->child(1)->isStrictlyNegativeRational()) {
+      // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
+      depI->child(1)->removeTree();
+      depI->cloneNodeOverNode(KNonNull);
+      changed = true;
+      continue;
+
     } else if (depI->isPowReal()) {
       Tree* exponent = depI->child(1);
       if (!exponent->isRational() || exponent->isZero()) {

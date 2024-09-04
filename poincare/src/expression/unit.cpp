@@ -1037,10 +1037,11 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       if (BuildEquivalentOutput(e, extractedUnits, dimension)) {
         return true;
       }
-      // Fallthrough to properly dispose of extractedUnits.
       [[fallthrough]];
     case UnitDisplay::Decomposition:
-      // TODO
+      if (BuildDecompositionOutput(e, extractedUnits, dimension)) {
+        return true;
+      }
       [[fallthrough]];
     case UnitDisplay::BasicSI:
       MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
@@ -1363,6 +1364,99 @@ bool Unit::BuildEquivalentOutput(Tree* e, TreeRef& extractedUnits,
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
   // Multiply e with units
   e->cloneNodeAtNode(KMult.node<2>);
+  return true;
+}
+
+// Given a SI value, build decomposition along multiple representatives
+Tree* BuildDecomposition(double value, const Representative** list,
+                         int length) {
+  assert(length > 0);
+  Tree* result = SharedTreeStack->pushAdd(0);
+  for (int i = 0; i < length; i++) {
+    bool lastUnit = i == length - 1;
+    const Representative* representative = list[i];
+    double ratio = representative->ratio();
+    // Representatives must be ordered and have the same dimension.
+    assert(i == 0 || (ratio < list[i - 1]->ratio()) &&
+                         list[i]->siVector() == list[i - 1]->siVector());
+    double representativeValue = value / ratio;
+    if (!lastUnit) {
+      // 1.6 -> 1 and -1.6 -> -1
+      representativeValue = (representativeValue > 0.0)
+                                ? std::floor(representativeValue)
+                                : std::ceil(representativeValue);
+    }
+    if (representativeValue != 0.0 ||
+        (lastUnit && result->numberOfChildren() == 0)) {
+      // Add decomposed unit
+      SharedTreeStack->pushMult(2);
+      SharedTreeStack->pushFloat(representativeValue);
+      Unit::Push(list[i]);
+      NAry::SetNumberOfChildren(result, result->numberOfChildren() + 1);
+    }
+    value -= ratio * representativeValue;
+  }
+  assert(value == 0.0 && result->numberOfChildren() > 0);
+  NAry::SquashIfUnary(result);
+  return result;
+}
+
+// Decomposition representatives list, ordered from biggest to smallest ratio.
+const Representative* TimeRepresentativeList[] = {
+    &Time::representatives.year,   &Time::representatives.month,
+    &Time::representatives.day,    &Time::representatives.hour,
+    &Time::representatives.minute, &Time::representatives.second};
+
+const Representative* AngleRepresentativeList[] = {
+    &Angle::representatives.degree, &Angle::representatives.arcMinute,
+    &Angle::representatives.arcSecond};
+
+const Representative* MassRepresentativeList[] = {
+    &Mass::representatives.shortTon, &Mass::representatives.pound,
+    &Mass::representatives.ounce};
+
+const Representative* DistanceRepresentativeList[] = {
+    &Distance::representatives.mile, &Distance::representatives.yard,
+    &Distance::representatives.foot, &Distance::representatives.inch};
+
+const Representative* VolumeRepresentativeList[] = {
+    &Volume::representatives.gallon, &Volume::representatives.quart,
+    &Volume::representatives.pint, &Volume::representatives.cup};
+
+bool Unit::BuildDecompositionOutput(Tree* e, TreeRef& extractedUnits,
+                                    Dimension dimension) {
+  // Decompose time, angle, and imperial volume, mass and length
+  SIVector vector = dimension.unit.vector;
+  const Representative** list = nullptr;
+  int length;
+  if (vector == Time::Dimension) {
+    list = TimeRepresentativeList;
+    length = std::size(TimeRepresentativeList);
+  } else if (vector == Angle::Dimension) {
+    list = AngleRepresentativeList;
+    length = std::size(AngleRepresentativeList);
+  } else if (DisplayImperialUnits(extractedUnits)) {
+    if (vector == Mass::Dimension) {
+      list = MassRepresentativeList;
+      length = std::size(MassRepresentativeList);
+    } else if (vector == Distance::Dimension) {
+      list = DistanceRepresentativeList;
+      length = std::size(DistanceRepresentativeList);
+    } else if (vector == Volume::Dimension) {
+      list = VolumeRepresentativeList;
+      length = std::size(VolumeRepresentativeList);
+    }
+  }
+  if (!list) {
+    return false;
+  }
+  double value = Approximation::RootTreeToReal<double>(e);
+  if (std::isnan(value) || std::isinf(value)) {
+    return false;
+  }
+  // extractedUnits are no longer necessary
+  extractedUnits->removeTree();
+  e->moveTreeOverTree(BuildDecomposition(value, list, length));
   return true;
 }
 

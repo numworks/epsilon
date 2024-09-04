@@ -320,6 +320,8 @@ class Unit {
   static bool BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits);
   static bool BuildEquivalentOutput(Tree* e, TreeRef& extractedUnits,
                                     Dimension dimension);
+  static bool BuildDecompositionOutput(Tree* e, TreeRef& extractedUnits,
+                                       Dimension dimension);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);

@@ -39,9 +39,6 @@ class Prefix {
 
   const char* symbol() const { return m_symbol; }
   int8_t exponent() const { return m_exponent; }
-#if 0
-  size_ serialize(char* buffer, size_t bufferSize,) const;
-#endif
 
  private:
   constexpr Prefix(const char* symbol, int8_t exponent)
@@ -98,20 +95,6 @@ class Representative {
     }
     return standardRepresentative(value, exponent, unitFormat, prefix);
   }
-#if 0
-    /* hasSpecialAdditionalExpressions return true if the unit has special
-     * forms suchas as splits (for time and imperial units) or common
-     * conversions (such as speed and energy). */
-    virtual bool hasSpecialAdditionalExpressions(double value,
-                                                 UnitFormat unitFormat) const {
-      return false;
-    }
-    virtual int setAdditionalExpressions(
-        double value, Expression* dest, int availableLength,
-        const ReductionContext& reductionContext) const {
-      return 0;
-    }
-#endif
 
   Aliases rootSymbols() const { return m_rootSymbols; }
   double ratio() const { return Approximation::To<double>(ratioExpression()); }
@@ -122,9 +105,6 @@ class Representative {
     return m_outputPrefixable != Prefixable::None;
   }
   bool isImperial() const { return m_isImperial; }
-#if 0
-  size_ serialize(char* buffer, size_t bufferSize,, const Prefix* prefix) const;
-#endif
   bool canParseWithEquivalents(const char* symbol, size_t length,
                                const Representative** representative,
                                const Prefix** prefix) const;
@@ -164,45 +144,6 @@ class Representative {
   const bool m_isImperial;
 };
 
-#if 0
-class UnitNode final : public ExpressionNode {
- public:
-  constexpr static int k_numberOfBaseUnits = 8;
-
-  // Expression Properties
-  Expression removeUnit(Expression* unit) override;
-
-  /* Layout */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits,
-                      Context* context) const override;
-  size_ serialize(char* buffer, size_t bufferSize,,
-                Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits) const override;
-
-  /* Approximation */
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templatedApproximate<double>(approximationContext);
-  }
-
-  // Comparison
-  int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
-                                  bool ignoreParentheses) const override;
-
-  // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
-  Expression shallowReduce(const ReductionContext& reductionContext) override;
-
-};
-#endif
-
 class Unit {
  public:
   constexpr static int k_numberOfBaseUnits = 8;
@@ -240,14 +181,6 @@ class Unit {
   static void ChooseBestRepresentativeAndPrefixForValue(Tree* units,
                                                         double* value,
                                                         UnitFormat unitFormat);
-#if 0
-  static bool ShouldDisplayAdditionalOutputs(double value, const Tree* unit,
-                                             UnitFormat unitFormat);
-  static Tree* BuildSplit(double value, const Unit* units, int length,
-                          const ReductionContext& reductionContext);
-  static Tree* ConvertTemperatureUnits(
-      Tree* e, Unit unit, const ReductionContext& reductionContext);
-#endif
 
   static bool AllowImplicitAddition(
       const Representative* smallestRepresentative,
@@ -256,16 +189,6 @@ class Unit {
   static bool IsUnitOrPowerOfUnit(const Tree* e);
   static bool ForceMarginLeftOfUnit(const Tree* e);
 
-#if 0
-  // Simplification
-  Expression shallowReduce(ReductionContext reductionContext);
-  Expression shallowBeautify();
-
-  static bool IsBaseUnit(const Tree* unit) {
-    return GetRepresentative(unit)->isBaseUnit() &&
-           GetPrefix(unit) == Prefix::EmptyPrefix();
-  }
-#endif
   static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                                 double exponent,
                                                 UnitFormat unitFormat,

@@ -34,13 +34,6 @@ const Prefix* Prefix::FromId(uint8_t id) {
   return Prefixes() + id;
 }
 
-#if 0
-int Prefix::serialize(char* buffer, int bufferSize) const {
-  assert(bufferSize >= 0);
-  return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
-}
-#endif
-
 // Representative
 const Representative* const* Representative::DefaultRepresentatives() {
   static const Representative* defaultRepresentatives[k_numberOfDimensions] = {
@@ -261,23 +254,6 @@ const Representative* Representative::defaultFindBestRepresentative(
   return result;
 }
 
-#if 0
-int Representative::serialize(char* buffer, int bufferSize,
-                              const Prefix* prefix) const {
-  int length = 0;
-  length += prefix->serialize(buffer, bufferSize);
-  assert(length == 0 || isInputPrefixable());
-  assert(length < bufferSize);
-  buffer += length;
-  bufferSize -= length;
-  assert(bufferSize >= 0);
-  length += std::min<int>(
-      strlcpy(buffer, m_rootSymbols.mainAlias(), bufferSize), bufferSize - 1);
-  return length;
-}
-
-#endif
-
 bool Representative::canParseWithEquivalents(
     const char* symbol, size_t length, const Representative** representative,
     const Prefix** prefix) const {
@@ -392,82 +368,6 @@ Tree* Representative::pushReducedRatioExpression() const {
   return result;
 }
 
-#if 0
-// UnitNode
-Expression removeUnit(Expression* unit) { return Unit(this).removeUnit(unit); }
-
-Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                    int numberOfSignificantDigits, Context* context) const {
-  /* TODO: compute the bufferSize more precisely... So far the longest unit is
-   * "month" of size 6 but later, we might add unicode to represent ohm or µ
-   * which would change the required size?*/
-  constexpr static size_t bufferSize = 10;
-  char buffer[bufferSize];
-  char* string = buffer;
-  int stringLen = serialize(buffer, bufferSize, floatDisplayMode,
-                            numberOfSignificantDigits);
-  if (!context ||
-      (context->canRemoveUnderscoreToUnits() &&
-       context->expressionTypeForIdentifier(buffer + 1, strlen(buffer) - 1) ==
-           Context::SymbolAbstractType::None)) {
-    // If the unit is not a defined variable, do not display the '_'
-    assert(string[0] == '_');
-    string++;
-    stringLen--;
-  }
-  return LayoutHelper::StringToStringLayout(string, stringLen);
-}
-
-int serialize(char* buffer, int bufferSize,
-              Preferences::PrintFloatMode floatDisplayMode,
-              int numberOfSignificantDigits) const {
-  assert(bufferSize >= 0);
-  int underscoreLength =
-      std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
-  buffer += underscoreLength;
-  bufferSize -= underscoreLength;
-  return underscoreLength +
-         m_representative->serialize(buffer, bufferSize, m_prefix);
-}
-
-int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
-                                bool ignoreParentheses) const {
-  if (!ascending) {
-    return e->simplificationOrderSameType(this, true, ignoreParentheses);
-  }
-  assert(type() == e->type());
-  const UnitNode* eNode = static_cast<const UnitNode*>(e);
-  SIVector v = representative()->siVector();
-  SIVector w = eNode->representative()->siVector();
-  for (int i = 0; i < k_numberOfBaseUnits; i++) {
-    if (v.coefficientAtIndex(i) != w.coefficientAtIndex(i)) {
-      return v.coefficientAtIndex(i) - w.coefficientAtIndex(i);
-    }
-  }
-  const ptrdiff_t representativeDiff =
-      m_representative - eNode->representative();
-  if (representativeDiff != 0) {
-    return representativeDiff;
-  }
-  const ptrdiff_t prediff = eNode->prefix()->exponent() - m_prefix->exponent();
-  return prediff;
-}
-
-Expression shallowReduce(const ReductionContext& reductionContext) {
-  return Unit(this).shallowReduce(reductionContext);
-}
-
-Expression shallowBeautify(const ReductionContext& reductionContext) {
-  return Unit(this).shallowBeautify();
-}
-
-template <typename T>
-Evaluation<T> templatedApproximate(
-    const ApproximationContext& approximationContext) const {
-  return Complex<T>::Undefined();
-}
-#endif
-
 // Unit
 bool Unit::CanParse(ForwardUnicodeDecoder* name,
                     const Representative** representative,
@@ -545,111 +445,6 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
   }
 }
 
-#if 0
-bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
-                                          Preferences::UnitFormat unitFormat) {
-  if (unit.isUninitialized() || !std::isfinite(value)) {
-    return false;
-  }
-  SIVector vector = GetSIVector(unit);
-  const Representative* representative =
-      Representative::RepresentativeForDimension(vector);
-
-  ExpressionTest isNonBase = [](const Expression e, Context* context) {
-    return !e.isUninitialized() && e.type() == ExpressionNode::Type::Unit &&
-           !e.convert<Unit>().isBaseUnit();
-  };
-
-  return (representative != nullptr &&
-          representative->hasSpecialAdditionalExpressions(value, unitFormat)) ||
-         unit.recursivelyMatches(isNonBase);
-}
-
-Expression Unit::BuildSplit(double value, const Unit* units, int length,
-                            const ReductionContext& reductionContext) {
-  assert(!std::isnan(value));
-  assert(units);
-  assert(length > 0);
-
-  double baseRatio = units->node()->representative()->ratio();
-  double basedValue = value / baseRatio;
-  // WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ? (see
-  // below)
-  if (std::isinf(basedValue) ||
-      std::fabs(basedValue) < OMG::Float::EpsilonLax<double>()) {
-    return Multiplication::Builder(Number::FloatNumber(basedValue), units[0]);
-  }
-  double err =
-      std::pow(10.0, Poincare::PrintFloat::k_numberOfStoredSignificantDigits -
-                         1 - std::ceil(log10(std::fabs(basedValue))));
-  double remain = std::round(basedValue * err) / err;
-
-  Addition res = Addition::Builder();
-  for (int i = length - 1; i >= 0; i--) {
-    assert(units[i].node()->prefix() == Prefix::EmptyPrefix());
-    double factor =
-        std::round(units[i].node()->representative()->ratio() / baseRatio);
-    double share = remain / factor;
-    if (i > 0) {
-      share = (share > 0.0) ? std::floor(share) : std::ceil(share);
-    }
-    remain -= share * factor;
-    /* WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ?
-     *  What happens if basedValue >= EpsilonLax but share < EpsilonLax for
-     *  each unit of the split ?
-     *  Right now it's not a problem because there is no unit with a ratio
-     *  inferior to EpsilonLax but it might be if femto prefix is implemented.
-     *  (EpsilonLax = 10^-15 = femto)*/
-    if (std::abs(share) >= OMG::Float::EpsilonLax<double>()) {
-      res.addChildAtIndexInPlace(
-          Multiplication::Builder(Float<double>::Builder(share), units[i]),
-          res.numberOfChildren(), res.numberOfChildren());
-    }
-  }
-  assert(res.numberOfChildren() > 0);
-  ReductionContext keepUnitsContext(
-      reductionContext.context(), reductionContext.complexFormat(),
-      reductionContext.angleUnit(), reductionContext.unitFormat(),
-      ReductionTarget::User,
-      SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      UnitConversion::None);
-  return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
-}
-
-Expression Unit::ConvertTemperatureUnits(
-    Expression e, Unit unit, const ReductionContext& reductionContext) {
-  const Representative* targetRepr = unit.representative();
-  const Prefix* targetPrefix = unit.node()->prefix();
-  assert(unit.representative()->siVector() ==
-         TemperatureRepresentative::Dimension);
-
-  Expression startUnit;
-  e = e.removeUnit(&startUnit);
-  if (startUnit.isUninitialized() ||
-      startUnit.type() != ExpressionNode::Type::Unit) {
-    return Undefined::Builder();
-  }
-  const Representative* startRepr =
-      static_cast<Unit&>(startUnit).representative();
-  if (startRepr->siVector() !=
-      TemperatureRepresentative::Dimension) {
-    return Undefined::Builder();
-  }
-
-  const Prefix* startPrefix = static_cast<Unit&>(startUnit).node()->prefix();
-  double value = e.approximateToScalar<double>(reductionContext.context(),
-                                               reductionContext.complexFormat(),
-                                               reductionContext.angleUnit());
-  return Multiplication::Builder(
-      Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(
-                                 value * std::pow(10., startPrefix->exponent()),
-                                 startRepr, targetRepr) *
-                             std::pow(10., -targetPrefix->exponent())),
-      unit.cloneTree());
-}
-
-#endif
-
 bool Unit::AllowImplicitAddition(const Representative* smallestRepresentative,
                                  const Representative* biggestRepresentative) {
   if (smallestRepresentative == biggestRepresentative) {
@@ -696,81 +491,6 @@ bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
   }
   return true;
 }
-
-#if 0
-Expression Unit::shallowReduce(ReductionContext reductionContext) {
-  if (reductionContext.unitConversion() == UnitConversion::None ||
-      isBaseUnit()) {
-    /* We escape early if we are one of the seven base units.
-     * Nb : For masses, k is considered the base prefix, so kg will be escaped
-     * here but not g */
-    return *this;
-  }
-
-  /* Handle temperatures : Celsius and Fahrenheit should not be used in
-   * calculations, only in conversions and results.
-   * These are the seven legal forms for writing non-kelvin temperatures :
-   * (1)  _°C
-   * (2)  _°C->_?
-   * (3)  123_°C
-   * (4)  -123_°C
-   * (5)  123_°C->_K
-   * (6)  -123_°C->_K
-   * (7)  Right member of a unit convert - this is handled above, as
-   *      UnitConversion is set to None in this case. */
-  if (node()->representative()->siVector() ==
-          TemperatureRepresentative::Default().siVector() &&
-      node()->representative() != &Representatives::Temperature::kelvin) {
-    Expression p = parent();
-    if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert ||
-        p.type() == ExpressionNode::Type::Store ||
-        (p.type() == ExpressionNode::Type::Mult &&
-         p.numberOfChildren() == 2) ||
-        p.type() == ExpressionNode::Type::Opposite) {
-      /* If the parent is a UnitConvert, the temperature is always legal.
-       * Otherwise, we need to wait until the reduction of the multiplication
-       * to fully detect forbidden forms. */
-      return *this;
-    }
-    return replaceWithUndefinedInPlace();
-  }
-
-  UnitNode* unitNode = node();
-  const Representative* representative = unitNode->representative();
-  const Prefix* prefix = unitNode->prefix();
-
-  Expression result = representative->toBaseUnits(reductionContext)
-                          .deepReduce(reductionContext);
-  if (prefix != Prefix::EmptyPrefix()) {
-    Expression prefixFactor = Power::Builder(
-        Rational::Builder(10), Rational::Builder(prefix->exponent()));
-    prefixFactor = prefixFactor.shallowReduce(reductionContext);
-    result = Multiplication::Builder(prefixFactor, result)
-                 .shallowReduce(reductionContext);
-  }
-  replaceWithInPlace(result);
-  return result;
-}
-
-Expression Unit::shallowBeautify() {
-  // Force Float(1) in front of an orphan Unit
-  if (parent().isUninitialized() ||
-      parent().type() == ExpressionNode::Type::Opposite) {
-    Multiplication m = Multiplication::Builder(Float<double>::Builder(1.));
-    replaceWithInPlace(m);
-    m.addChildAtIndexInPlace(*this, 1, 1);
-    return std::move(m);
-  }
-  return *this;
-}
-
-Expression Unit::removeUnit(Expression* unit) {
-  *unit = *this;
-  Expression one = Rational::Builder(1);
-  replaceWithInPlace(one);
-  return one;
-}
-#endif
 
 void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                              double exponent,

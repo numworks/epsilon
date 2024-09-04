@@ -155,7 +155,9 @@ constexpr static Builtin s_builtins[] = {
     {Type::RandIntNoRep, "randintnorep"},
     {Type::Diff, "diff"},            // 2D layout is special
     {Type::Piecewise, "piecewise"},  // 2D layout is a grid
-    {Type::Dep, "dep"},              // TODO dummy
+    {Type::Dep, "dep"},              // TODO shouldn't be user parsable
+    {Type::NonNull, "nonNull"},      // TODO shouldn't be user parsable
+    {Type::RealPos, "realPos"},      // TODO shouldn't be user parsable
 };
 
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {

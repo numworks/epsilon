@@ -175,10 +175,10 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "dep(b×(d+f)×g,{a})");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
-  simplifies_to("e^(ln(x))", "dep(x,{NonNull(x),RealPos(x)})");
-  simplifies_to("e^(ln(1+x^2))", "dep(x^2+1,{NonNull(1+x^2),RealPos(1+x^2)})");
-  simplifies_to("e^(ln(x))", "dep(x,{NonNull(x)})", cartesianCtx);
-  simplifies_to("e^(ln(x+x))", "dep(2×x,{NonNull(x+x)})", cartesianCtx);
+  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
+  simplifies_to("e^(ln(1+x^2))", "dep(x^2+1,{nonNull(1+x^2),realPos(1+x^2)})");
+  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
+  simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", cartesianCtx);
   simplifies_to("x+1+(-1)(x+1)", "dep(0,{x})");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
@@ -228,11 +228,11 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
-  simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{RealPos(y)})");
+  simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{realPos(y)})");
   simplifies_to(
       "diff(((x^4)×ln(x)×e^(3x)), x, y)",
-      "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{arg(y),arg(y^4),NonNull("
-      "y),RealPos(y)})");
+      "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{arg(y),arg(y^4),nonNull("
+      "y),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
@@ -407,8 +407,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // TODO_PCJ: we should have b×product(k,k,a,b)^2 not product(k,k,a,b)^2×b
   simplifies_to(
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
-      "dep(product(k,k,a,b)^2×b,{sum(NonNull(k),k,a,b),sum(RealPos(k),k,a,"
-      "b),NonNull(b),RealPos(b)})");
+      "dep(product(k,k,a,b)^2×b,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
+      "b),nonNull(b),realPos(b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
   // expand sum
@@ -539,15 +539,15 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
 
   // TODO_PCJ: This return undef because one of the piecewise branch is undef
   // simplifies_to("arccot(0)", "π/2");
-  simplifies_to("sec(arcsec(x))", "dep(x,{NonNull(x)})", cartesianCtx);
-  simplifies_to("csc(arccsc(x))", "dep(x,{NonNull(x)})", cartesianCtx);
+  simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
+  simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("cot(arccot(1+abs(x)))", "cot(arctan(1/(1+abs(x))))",
                 cartesianCtx);
 
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",
-                "dep(tan(x)×ln(x),{NonNull(x),RealPos(x)})");
-  simplifies_to("ln(x)*tan(x)", "dep(tan(x)×ln(x),{NonNull(x),RealPos(x)})");
+                "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
+  simplifies_to("ln(x)*tan(x)", "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("sin(x)*(cos(y)^-1)*(cos(x)^-1)*sin(y)", "tan(x)×tan(y)");
 }
 
@@ -674,8 +674,8 @@ QUIZ_CASE(pcj_simplification_random) {
 
 QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/a", "1/a");
-  simplifies_to("1/(1/a)", "dep(a,{NonNull(a)})");
-  simplifies_to("1/(a^-3)", "dep(a^3,{NonNull(a)})");
+  simplifies_to("1/(1/a)", "dep(a,{nonNull(a)})");
+  simplifies_to("1/(a^-3)", "dep(a^3,{nonNull(a)})");
   simplifies_to("a×a^(-1)", "dep(1,{a^0})");
   simplifies_to("a×a^(1+1)", "a^3");
   simplifies_to("2×a^1×(2a)^(-1)", "dep(1,{a^0})");
@@ -924,10 +924,10 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ simplifies_to("log(-inf,0)", "undef");
   simplifies_to("log(inf,1)", "undef");
   simplifies_to("log(-inf,1)", "undef");
-  simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{NonNull(x),RealPos(x)})");
+  simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
   // TODO: should be nonreal
   simplifies_to("log(-inf,x)", "undef");
-  simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{NonNull(x)})", cartesianCtx);
+  simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
   // TODO: should be nonreal
   simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
@@ -935,7 +935,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ simplifies_to("log(0,-inf)", "undef");
   simplifies_to("log(1,inf)", "0");
   // TODO_PCJ simplifies_to("log(1,-inf)", "0");
-  simplifies_to("log(x,inf)", "dep(0,{ln(x),NonNull(x),RealPos(x)})");
+  simplifies_to("log(x,inf)", "dep(0,{ln(x),nonNull(x),realPos(x)})");
   // TODO_PCJ simplifies_to("log(x,-inf)", "dep(∞×sign(1/ln(x)),{ln(x)})");
   simplifies_to("log(inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(-inf,inf)", "undef");
@@ -1030,7 +1030,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin((241/120)π)", "sin(π/120)");
 
   // Direct advanced trigonometry
-  simplifies_to("1/tan(x)", "dep(cot(x),{NonNull(cos(x))})");
+  simplifies_to("1/tan(x)", "dep(cot(x),{nonNull(cos(x))})");
   simplifies_to("1/tan(3)", "cot(3)");
 
   // Inverse trigonometry
@@ -1151,28 +1151,28 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)",
-                "dep(1+ln(x)+ln(y),{NonNull(x),NonNull(y),RealPos(x),"
-                "RealPos(y)})");
+                "dep(1+ln(x)+ln(y),{nonNull(x),nonNull(y),realPos(x),"
+                "realPos(y)})");
   // TODO: Metric: 2×ln(π)
   simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
-                "dep(1-ln(x),{arg(1/x),arg(x),RealPos(x)})");
-  simplifies_to("1-ln(x)", "dep(1-ln(x),{NonNull(x)})", cartesianCtx);
+                "dep(1-ln(x),{arg(1/x),arg(x),realPos(x)})");
+  simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", cartesianCtx);
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(0)", "undef", cartesianCtx);
   simplifies_to(
       "ln(cos(x)^2+sin(x)^2)",
-      "dep(0,{NonNull(cos(x)^2+sin(x)^2),RealPos(cos(x)^2+sin(x)^2)})");
+      "dep(0,{nonNull(cos(x)^2+sin(x)^2),realPos(cos(x)^2+sin(x)^2)})");
   simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
-                "dep(ln(x)+ln(y)-ln(x×y),{NonNull(x),NonNull(y)})",
+                "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
                 cartesianCtx);
   simplifies_to(
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-      "dep(0,{ln(abs(x)),ln(abs(y)),NonNull(abs(x)),NonNull(abs(y))})",
+      "dep(0,{ln(abs(x)),ln(abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
       cartesianCtx);
 
   // Use complex logarithm internally

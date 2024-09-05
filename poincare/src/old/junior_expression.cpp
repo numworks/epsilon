@@ -474,6 +474,10 @@ ExpressionNode::Type NewExpression::type() const {
     case Type::InferiorEqual:
       // TODO_PCJ
       return ExpressionNode::Type::Comparison;
+    case Type::PercentSimple:
+      return ExpressionNode::Type::PercentSimple;
+    case Type::PercentAddition:
+      return ExpressionNode::Type::PercentAddition;
     default:
       return ExpressionNode::Type::JuniorExpression;
   }

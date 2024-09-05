@@ -204,7 +204,6 @@ poincare_src += $(addprefix poincare/src/,\
   expression/beautification.cpp \
   expression/binary.cpp \
   expression/builtin.cpp \
-  expression/comparison.cpp \
   expression/continuity.cpp \
   expression/conversion.cpp \
   expression/decimal.cpp \
@@ -221,6 +220,7 @@ poincare_src += $(addprefix poincare/src/,\
   expression/matrix.cpp \
   expression/metric.cpp \
   expression/number.cpp \
+  expression/order.cpp \
   expression/parametric.cpp \
   expression/physical_constant.cpp \
   expression/polynomial.cpp \
@@ -319,11 +319,9 @@ tests_src += $(addprefix poincare/src/,\
 tests_src += $(addprefix poincare/test/,\
   approximation.cpp \
   beautification.cpp \
-  comparison.cpp \
   dimension.cpp \
   distribution.cpp \
   erf_inv.cpp \
-  expression_comparison.cpp \
   expression_to_layout.cpp \
   float_helper.cpp \
   layout.cpp \
@@ -338,6 +336,7 @@ tests_src += $(addprefix poincare/test/,\
   memory_edition.cpp \
   n_ary.cpp \
   numeric_solver.cpp \
+  order.cpp \
   parse.cpp \
   polynomial.cpp \
   projection.cpp \

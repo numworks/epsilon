@@ -361,20 +361,19 @@ _sources_poincare_test := $(addprefix test/, \
   api.cpp \
   approximation.cpp \
   beautification.cpp \
-  comparison.cpp \
   dimension.cpp \
   equation_solver.cpp \
-  expression_comparison.cpp \
   float_helper.cpp \
-  layout.cpp \
   helper.cpp \
   integer.cpp \
   k_tree.cpp \
   latex_parser.cpp \
+  layout.cpp \
   match.cpp \
   matrix.cpp \
   memory_elements.cpp \
   n_ary.cpp \
+  order.cpp \
   parse.cpp \
   polynomial.cpp \
   projection.cpp \

@@ -90,7 +90,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
      * and Power) / Multiplication (numbers) will not benefit from this
      * exception. */
     if (type1 == Type::Add || type1 == Type::Mult) {
-      // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
+      // x < (1 + y) < z and y < (x * z)
       return CompareLastChild(e1, e2, order);
     }
     return -1;

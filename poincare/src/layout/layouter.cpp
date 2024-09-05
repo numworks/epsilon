@@ -60,6 +60,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case Type::InferiorEqual:
     case Type::Inferior:
     case Type::SuperiorEqual:
+    case Type::Superior:
       return 11;
 
     case Type::LogicalNot:

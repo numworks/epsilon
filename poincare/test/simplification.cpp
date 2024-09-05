@@ -831,7 +831,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
       "{(x, 2), (x/x, 2), (3, undef), (1 , piecewise(x/x + (a + b)^2 - 2*a*b, "
       "x + y/y>2, undef))}",
       "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(a^2+b^2+1,{x^0}),"
-      "(x+1)>2,undef),{y^0}))}");
+      "x+1>2,undef),{y^0}))}");
 
   simplifies_to("{1,undef}", "{1,undef}");
   simplifies_to("[[1,undef]]", "[[1,undef]]");

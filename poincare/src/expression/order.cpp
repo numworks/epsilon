@@ -110,8 +110,8 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
   if (type1 == Type::Var) {
     return Variables::Id(e1) - Variables::Id(e2);
   }
-  if (type1 == Type::Unit) {
-    // TODO: Only with Beautification OrderType or maybe AdditionBeautification.
+  if (type1 == Type::Unit && order == OrderType::Beautification) {
+    // TODO: Maybe limit to AdditionBeautification or when ancestor is Add.
     // Sort units from biggest to smallest ratio for implicit additions.
     const Units::Representative* repr1 = Units::Unit::GetRepresentative(e1);
     const Units::Representative* repr2 = Units::Unit::GetRepresentative(e2);

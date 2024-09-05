@@ -9,6 +9,7 @@
 #include "k_tree.h"
 #include "polynomial.h"
 #include "symbol.h"
+#include "unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -108,6 +109,19 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
   }
   if (type1 == Type::Var) {
     return Variables::Id(e1) - Variables::Id(e2);
+  }
+  if (type1 == Type::Unit) {
+    // TODO: Only with Beautification OrderType or maybe AdditionBeautification.
+    // Sort units from biggest to smallest ratio for implicit additions.
+    const Units::Representative* repr1 = Units::Unit::GetRepresentative(e1);
+    const Units::Representative* repr2 = Units::Unit::GetRepresentative(e2);
+    if (repr1 == repr2) {
+      // Prefix could be used, but there is no needs for a specific order.
+      return 0;
+    }
+    // Sort units from biggest to smallest ratio.
+    float ratioDiff = repr2->ratio() - repr1->ratio();
+    return ratioDiff < 0.f ? -1 : ratioDiff == 0.f ? 0 : 1;
   }
   /* f(0, 1, 4) < f(0, 2, 3)
    * (2 + 3) < (1 + 4)

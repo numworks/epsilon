@@ -33,6 +33,10 @@ namespace Poincare::Internal {
 Tree* RackParser::parse() {
   ExceptionTry {
     for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
+      if (child.index < m_tokenizer.currentPosition() ||
+          child.index >= m_tokenizer.endPosition()) {
+        continue;
+      }
       if (child->treeIsIdenticalTo("→"_cl)) {
         return parseExpressionWithRightwardsArrow(child.index);
       }

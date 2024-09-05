@@ -67,7 +67,6 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 12;
     case Type::LogicalAnd:
       return 13;
-    // TODO_PCJ force parentheses on equality
     case Type::LogicalOr:
     case Type::LogicalXor:
       return 14;
@@ -365,7 +364,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   TypeBlock type = expression->type();
 
   // Add Parentheses if necessary
-  if (parentPriority < OperatorPriority(type) &&
+  if (parentPriority <= OperatorPriority(type) &&
       !(type.isPoint() || type.isList())) {
     TreeRef parenthesis = KParenthesesL(KRackL())->cloneTree();
     NAry::AddChild(layoutParent, parenthesis);

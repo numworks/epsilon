@@ -54,7 +54,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
                     ParsingContext::ParsingMethod method) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
-    return RackParser(l, context, -1, method).parse();
+    return RackParser(l, context, method).parse();
   }
   switch (l->layoutType()) {
     case LayoutType::VerticalOffset:
@@ -64,7 +64,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       assert(false);
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
-      Tree* list = RackParser(l->child(0), context, -1, method, true).parse();
+      Tree* list = RackParser(l->child(0), context, method, true).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }

@@ -33,12 +33,13 @@ class RackParser {
    * but the parser will set parseForAssignment = false when it encounters a
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
-  RackParser(const Tree* rack, Poincare::Context* context, int textEnd = -1,
+  RackParser(const Tree* rack, Poincare::Context* context,
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic,
-             bool commaSeparatedList = false)
+             bool commaSeparatedList = false, int textStart = 0,
+             int textEnd = -1)
       : m_parsingContext(context, parsingMethod),
-        m_tokenizer(Rack::From(rack), &m_parsingContext, 0, textEnd),
+        m_tokenizer(Rack::From(rack), &m_parsingContext, textStart, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),

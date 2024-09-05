@@ -110,7 +110,7 @@ void process_tree_and_compare(const char* input, const char* output,
 Tree* private_parse(const char* input, Poincare::Context* context,
                     bool parseForAssignment, bool assertNotParsable) {
   Tree* layout = RackFromText(input);
-  RackParser parser(layout, context, -1,
+  RackParser parser(layout, context,
                     parseForAssignment
                         ? ParsingContext::ParsingMethod::Assignment
                         : ParsingContext::ParsingMethod::Classic);

@@ -648,7 +648,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("sort(randintnorep(1,4,4))", "sort(randintnorep(1,4,4))");
   simplifies_to("med(sequence(random(),k,10))", "med(sequence(random(),k,10))");
   simplifies_to("sort({π,3,e})", "{e,3,π}");
-  simplifies_to("sort({i,2})", "sort({i,2})");  // should be undef ?
+  simplifies_to("sort({i,2})", "undef");
   simplifies_to("max({π,e})", "π");
   simplifies_to("max({π,i})", "undef");
   simplifies_to("min({π,e})", "e");

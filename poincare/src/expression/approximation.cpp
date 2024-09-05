@@ -791,9 +791,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
             NAry::Sort(sortedList, Order::OrderType::RealLine);
           } ExceptionCatch(exc) {
             if (exc == ExceptionType::SortFail) {
-              sortedList = list;
-              /* Unfortunately, there is no way to signal that a list is
-               * unsortable, leave it unsorted */
+              list->removeTree();
+              /* The approximation returns {undef,…,undef} instead of undef but
+               * the list should have been sorted during the reduction in most
+               * cases. */
+              return NAN;
             } else {
               TreeStackCheckpoint::Raise(exc);
             }

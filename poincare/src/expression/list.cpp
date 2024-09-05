@@ -241,7 +241,15 @@ bool List::ShallowApplyListOperators(Tree* e) {
       ExceptionTry { NAry::Sort(list, Order::OrderType::RealLine); }
       ExceptionCatch(exc) {
         if (exc == ExceptionType::SortFail) {
-          return changed;
+          if (Variables::HasVariables(e) || Variables::HasUserSymbols(e)) {
+            return changed;
+          }
+          /* Returning undef instead of the list changes the list length of the
+           * expression. It might work when used with other lists because a
+           * scalar can be interpret as a constant list in most contexts but
+           * expect issues. */
+          e->cloneTreeOverTree(KUndef);
+          return true;
         }
         TreeStackCheckpoint::Raise(exc);
       }

@@ -31,15 +31,14 @@ class Order {
 
  private:
   // Compare two different trees. May return any int.
-  static int CompareDifferent(const Tree* e1, const Tree* e2,
-                              OrderType order = OrderType::System);
+  static int CompareDifferent(const Tree* e1, const Tree* e2, OrderType order);
   static int CompareNumbers(const Tree* e1, const Tree* e2);
   static int CompareNames(const Tree* e1, const Tree* e2);
   static int CompareConstants(const Tree* e1, const Tree* e2);
-  static int ComparePolynomial(const Tree* e1, const Tree* e2);
-  static int CompareChildren(const Tree* e1, const Tree* e2,
+  static int ComparePolynomial(const Tree* e1, const Tree* e2, OrderType order);
+  static int CompareChildren(const Tree* e1, const Tree* e2, OrderType order,
                              bool backward = false);
-  static int CompareLastChild(const Tree* e1, const Tree* e2);
+  static int CompareLastChild(const Tree* e1, const Tree* e2, OrderType order);
 };
 
 }  // namespace Poincare::Internal

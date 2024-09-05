@@ -91,7 +91,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
      * exception. */
     if (type1 == Type::Add || type1 == Type::Mult) {
       // sin(x) < (1 + cos(x)) < tan(x) and cos(x) < (sin(x) * tan(x))
-      return CompareLastChild(e1, e2);
+      return CompareLastChild(e1, e2, order);
     }
     return -1;
   }
@@ -105,7 +105,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     // a(1) < a(2), Scan children
   }
   if (type1 == Type::Polynomial) {
-    return ComparePolynomial(e1, e2);
+    return ComparePolynomial(e1, e2, order);
   }
   if (type1 == Type::Var) {
     return Variables::Id(e1) - Variables::Id(e2);
@@ -127,7 +127,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
    * (2 + 3) < (1 + 4)
    * trig(5, 0) < trig(4, 1)   (same order as Type::Cos and Type::Sin)
    * same with atrig */
-  return CompareChildren(e1, e2,
+  return CompareChildren(e1, e2, order,
                          type1 == Type::Add || type1 == Type::Mult ||
                              type1 == Type::Trig || type1 == Type::ATrig);
 }
@@ -176,8 +176,8 @@ int Order::CompareConstants(const Tree* e1, const Tree* e2) {
   return static_cast<uint8_t>(e2->type()) - static_cast<uint8_t>(e1->type());
 }
 
-int Order::ComparePolynomial(const Tree* e1, const Tree* e2) {
-  int childrenComparison = CompareChildren(e1, e2);
+int Order::ComparePolynomial(const Tree* e1, const Tree* e2, OrderType order) {
+  int childrenComparison = CompareChildren(e1, e2, order);
   if (childrenComparison != 0) {
     return childrenComparison;
   }
@@ -193,14 +193,15 @@ int Order::ComparePolynomial(const Tree* e1, const Tree* e2) {
   return 0;
 }
 
-int PrivateCompareChildren(const Tree* e1, const Tree* e2) {
+int PrivateCompareChildren(const Tree* e1, const Tree* e2,
+                           Order::OrderType order) {
   for (std::pair<std::array<const Tree*, 2>, int> indexedNodes :
        MultipleNodesIterator::Children<NoEditable, 2>({e1, e2})) {
     const Tree* child1 = std::get<std::array<const Tree*, 2>>(indexedNodes)[0];
     const Tree* child2 = std::get<std::array<const Tree*, 2>>(indexedNodes)[1];
-    int order = Order::Compare(child1, child2);
-    if (order != 0) {
-      return order;
+    int result = Order::Compare(child1, child2, order);
+    if (result != 0) {
+      return result;
     }
   }
   return 0;
@@ -209,16 +210,19 @@ int PrivateCompareChildren(const Tree* e1, const Tree* e2) {
 // Use a recursive method to compare the trees backward. Both number of
 // nextTree() and comparison is optimal.
 int CompareNextTreePairOrItself(const Tree* e1, const Tree* e2,
+                                Order::OrderType order,
                                 int numberOfComparisons) {
   int nextTreeComparison =
       numberOfComparisons > 1
-          ? CompareNextTreePairOrItself(e1->nextTree(), e2->nextTree(),
+          ? CompareNextTreePairOrItself(e1->nextTree(), e2->nextTree(), order,
                                         numberOfComparisons - 1)
           : 0;
-  return nextTreeComparison != 0 ? nextTreeComparison : Order::Compare(e1, e2);
+  return nextTreeComparison != 0 ? nextTreeComparison
+                                 : Order::Compare(e1, e2, order);
 }
 
-int PrivateCompareChildrenBackwards(const Tree* e1, const Tree* e2) {
+int PrivateCompareChildrenBackwards(const Tree* e1, const Tree* e2,
+                                    Order::OrderType order) {
   int numberOfChildren1 = e1->numberOfChildren();
   int numberOfChildren2 = e2->numberOfChildren();
   int numberOfComparisons = std::min(numberOfChildren1, numberOfChildren2);
@@ -227,12 +231,14 @@ int PrivateCompareChildrenBackwards(const Tree* e1, const Tree* e2) {
   }
   return CompareNextTreePairOrItself(
       e1->child(numberOfChildren1 - numberOfComparisons),
-      e2->child(numberOfChildren2 - numberOfComparisons), numberOfComparisons);
+      e2->child(numberOfChildren2 - numberOfComparisons), order,
+      numberOfComparisons);
 }
 
-int Order::CompareChildren(const Tree* e1, const Tree* e2, bool backward) {
+int Order::CompareChildren(const Tree* e1, const Tree* e2, OrderType order,
+                           bool backward) {
   int comparison = (backward ? PrivateCompareChildrenBackwards
-                             : PrivateCompareChildren)(e1, e2);
+                             : PrivateCompareChildren)(e1, e2, order);
   if (comparison != 0) {
     return comparison;
   }
@@ -240,8 +246,8 @@ int Order::CompareChildren(const Tree* e1, const Tree* e2, bool backward) {
   return e2->numberOfChildren() - e1->numberOfChildren();
 }
 
-int Order::CompareLastChild(const Tree* e1, const Tree* e2) {
-  return Compare(e1->lastChild(), e2) == -1 ? -1 : 1;
+int Order::CompareLastChild(const Tree* e1, const Tree* e2, OrderType order) {
+  return Compare(e1->lastChild(), e2, order) == -1 ? -1 : 1;
 }
 
 }  // namespace Poincare::Internal

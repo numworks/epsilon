@@ -495,8 +495,8 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
                 "(e^(x)+e^(-x))^2/4+1/2-(e^(-2×x)+e^(2×x))/4");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-(-1+e^(2×x))/(1+e^(2×x))+((1+(-1+e^(2×x))^2/"
-                "(1+e^(2×x))^2)×(-1+e^(4×x)))/(2×(1+e^(4×x)))");
+                "-(-1+e^(2×x))/(1+e^(2×x))+((-1+e^(4×x))×(1+(-1+e^(2×x))^2/"
+                "(1+e^(2×x))^2))/(2×(1+e^(4×x)))");
   simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",

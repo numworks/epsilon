@@ -139,7 +139,7 @@ Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
                      operationMonomialAndReduce);
   }
   const Tree* x = Variable(polA);
-  if (polB->isPolynomial() && Order::Compare(x, Variable(polB)) > 0) {
+  if (polB->isPolynomial() && Order::CompareSystem(x, Variable(polB)) > 0) {
     return Operation(polB, polA, type, operationMonomial,
                      operationMonomialAndReduce);
   }
@@ -231,7 +231,7 @@ DivisionResult<Tree*> Polynomial::PseudoDivision(Tree* polA, Tree* polB) {
     return {.quotient = (0_e)->cloneTree(), .remainder = a};
   }
   const Tree* var = Variable(a);
-  if (polB->isPolynomial() && Order::Compare(var, Variable(polB)) >= 0) {
+  if (polB->isPolynomial() && Order::CompareSystem(var, Variable(polB)) >= 0) {
     var = Variable(polB);
   }
   TreeRef b(polB);

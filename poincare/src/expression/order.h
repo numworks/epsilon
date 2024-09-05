@@ -27,6 +27,9 @@ class Order {
    */
   static int Compare(const Tree* e1, const Tree* e2,
                      OrderType order = OrderType::System);
+  static int CompareSystem(const Tree* e1, const Tree* e2) {
+    return Compare(e1, e2, OrderType::System);
+  }
   static bool ContainsSubtree(const Tree* tree, const Tree* subtree);
 
  private:

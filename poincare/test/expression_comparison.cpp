@@ -6,7 +6,7 @@
 using namespace Poincare::Internal;
 
 void assert_comparison_equals(const Tree* e1, const Tree* e2, int result) {
-  int comparison = Order::Compare(e1, e2);
+  int comparison = Order::CompareSystem(e1, e2);
   quiz_assert(comparison == result);
 }
 

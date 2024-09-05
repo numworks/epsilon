@@ -289,7 +289,7 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   bool changed = false;
   IntegerHandler i = Integer::Handler(e);
   Tree* remainder = IntegerHandler::Remainder(i, IntegerHandler(4));
-  if (Order::Compare(remainder, 2_e) >= 0) {
+  if (Order::CompareSystem(remainder, 2_e) >= 0) {
     changed = true;
     *isOpposed = !*isOpposed;
     remainder->moveTreeOverTree(

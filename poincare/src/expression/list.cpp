@@ -87,8 +87,8 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
       // Bubble up undefined children.
       // TODO_PCJ: we need a natural order not a comparison
       if (!result->isUndefined() &&
-          (element->isUndefined() ||
-           Order::Compare(element, result) == ((type.isMax()) ? 1 : -1))) {
+          (element->isUndefined() || Order::CompareSystem(element, result) ==
+                                         ((type.isMax()) ? 1 : -1))) {
         result->removeTree();
       } else {
         element->removeTree();

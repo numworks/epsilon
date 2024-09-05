@@ -137,8 +137,8 @@ int JuniorExpressionNode::simplificationOrderSameType(
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
   assert(otype() == e->otype());
-  return Order::Compare(tree(),
-                        static_cast<const JuniorExpressionNode*>(e)->tree());
+  return Order::CompareSystem(
+      tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
 // Only handle approximated Boolean, Point and Complex trees.

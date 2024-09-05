@@ -17,7 +17,8 @@ class Order {
      * Addition::shallowBeautify. Providing a custom order in Beautification
      * would be cleaner. */
     AdditionBeautification,
-    // Order of the extended real line, complexes/undef will raise SortFail
+    /* Order of the extended real line, complexes/undef will raise SortFail
+     * Some Trees will compare equal */
     RealLine
   };
   /* Compare returns:

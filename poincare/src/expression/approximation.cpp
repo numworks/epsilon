@@ -791,11 +791,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
             NAry::Sort(sortedList, Order::OrderType::RealLine);
           } ExceptionCatch(exc) {
             if (exc == ExceptionType::SortFail) {
-              list->removeTree();
               /* The approximation returns {undef,…,undef} instead of undef but
                * the list should have been sorted during the reduction in most
                * cases. */
-              return NAN;
+              sortedList = KUndef->cloneTree();
             } else {
               TreeStackCheckpoint::Raise(exc);
             }

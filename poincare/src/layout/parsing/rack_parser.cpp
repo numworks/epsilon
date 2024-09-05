@@ -509,19 +509,16 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
          ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
   /* We parse the string again, but this time with
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
-#if 0
-  // TODO_PCJ we need to be able to set the initial parsing position for this
-  Parser p(m_currentToken.text(), m_parsingContext.context(),
-           m_currentToken.text() + m_currentToken.length(),
-           ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
-  leftHandSide = p.parse();
+  int start = m_root->indexOfChild(m_currentToken.firstLayout());
+  RackParser subParser(
+      m_root, m_parsingContext.context(),
+      ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false, start,
+      start + m_currentToken.length());
+  leftHandSide = subParser.parse();
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   isThereImplicitOperator();
-#else
-  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-#endif
 }
 
 void RackParser::parseSlash(TreeRef& leftHandSide, Token::Type stoppingType) {

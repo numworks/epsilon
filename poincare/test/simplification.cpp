@@ -800,6 +800,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");
   simplifies_to("_mn + _G", "undef");
 
+  // Implicit additions
+  simplifies_to("3h300min", "8×_h");
+
   // 0
   simplifies_to("0×0×2×(_rad + _°)×_°", "0×_rad^2");
   simplifies_to("0×0×2×(_km + _m)×_km×_s", "0×_m^2×_s");

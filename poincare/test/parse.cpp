@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/unit.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
@@ -78,4 +79,11 @@ QUIZ_CASE(pcj_layout_parse) {
   quiz_assert(is_parsable("True xor not False"_l));
   quiz_assert(is_parsable("f(x)"_l));
   quiz_assert(!is_parsable("f(f)"_l));
+}
+
+QUIZ_CASE(pcj_parse_unit) {
+  for (const Tree* t : (const Tree*[]){"m"_l, "min"_l, "°"_l, "'"_l, "\""_l}) {
+    LayoutSpanDecoder decoder(Rack::From(t));
+    quiz_assert(Units::Unit::CanParse(&decoder, nullptr, nullptr));
+  }
 }

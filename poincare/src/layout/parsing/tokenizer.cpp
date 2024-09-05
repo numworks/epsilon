@@ -226,8 +226,7 @@ Token Tokenizer::popToken() {
        * any identifier is a unit. */
       Token result(Token::Type::Unit);
       result.setRange(start.layout(),
-                      UTF8Decoder::CharSizeOfCodePoint(c) +
-                          popWhile(IsNonDigitalIdentifierMaterial));
+                      1 + popWhile(IsNonDigitalIdentifierMaterial));
 #if ASSERTIONS
       LayoutSpanDecoder decoder(result.toSpan());
       assert(Units::Unit::CanParse(&decoder, nullptr, nullptr));

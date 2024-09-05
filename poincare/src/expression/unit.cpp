@@ -731,11 +731,11 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   if (unitDisplay == UnitDisplay::AutomaticMetric ||
       unitDisplay == UnitDisplay::AutomaticImperial) {
     extractedUnits->removeTree();
-    BuildAutomaticOutput(e, dimension, unitDisplay);
+    ApplyAutomaticDisplay(e, dimension, unitDisplay);
     return true;
   }
   assert(extractedUnits && e->nextTree() == extractedUnits);
-  bool treeRemoved = ExtractUnits(extractedUnits, false);
+  bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd
   assert(!treeRemoved);
   (void)treeRemoved;
@@ -748,18 +748,18 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       e->cloneTreeOverTree(KUndef);
       return true;
     case UnitDisplay::MainOutput:
-      BuildMainOutput(e, extractedUnits, dimension, angleUnit);
+      ApplyMainOutputDisplay(e, extractedUnits, dimension, angleUnit);
       return true;
     case UnitDisplay::AutomaticInput:
       // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
-      return BuildAutomaticInputOutput(e, extractedUnits);
+      return ApplyAutomaticInputDisplay(e, extractedUnits);
     case UnitDisplay::Equivalent:
-      if (BuildEquivalentOutput(e, extractedUnits, dimension)) {
+      if (ApplyEquivalentDisplay(e, extractedUnits, dimension)) {
         return true;
       }
       [[fallthrough]];
     case UnitDisplay::Decomposition:
-      if (BuildDecompositionOutput(e, extractedUnits, dimension)) {
+      if (ApplyDecompositionDisplay(e, extractedUnits, dimension)) {
         return true;
       }
       [[fallthrough]];
@@ -808,8 +808,8 @@ bool Unit::DisplayImperialUnits(const Tree* extractedUnits) {
   return hasImperialUnits;
 }
 
-void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
-                           Dimension dimension, AngleUnit angleUnit) {
+void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
+                                  Dimension dimension, AngleUnit angleUnit) {
   if (dimension.isAngleUnit()) {
     // Replace extractedUnits to target angle unit.
     Tree* newExtractedUnits = KPow->cloneNode();
@@ -817,7 +817,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
     Integer::Push(dimension.unit.vector.angle);
     assert(Dimension::Get(newExtractedUnits) == Dimension::Get(extractedUnits));
     MoveTreeOverTree(extractedUnits, newExtractedUnits);
-    BuildAutomaticInputOutput(e, extractedUnits);
+    ApplyAutomaticInputDisplay(e, extractedUnits);
     return;
   }
 
@@ -861,7 +861,7 @@ void Unit::BuildMainOutput(Tree* e, TreeRef& extractedUnits,
                             ? UnitDisplay::AutomaticImperial
                             : UnitDisplay::AutomaticMetric;
   extractedUnits->removeTree();
-  BuildAutomaticOutput(e, dimension, display);
+  ApplyAutomaticDisplay(e, dimension, display);
 }
 
 bool Unit::ShallowRemoveUnit(Tree* e, void*) {
@@ -880,7 +880,7 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
   }
 }
 
-bool Unit::ExtractUnits(Tree* e, bool ignoreAdd) {
+bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
 #if ASSERTIONS
   bool wasUnit = Dimension::Get(e).isUnit();
 #endif
@@ -895,15 +895,15 @@ bool Unit::ExtractUnits(Tree* e, bool ignoreAdd) {
       int n = e->numberOfChildren();
       int remainingChildren = n;
       Tree* child = e->child(0);
-      // If ignoreAdd, replace _m + _km + _yd with _m.
+      // If !preserveAdd, replace _m + _km + _yd with _m.
       bool removeRemainingChildren = false;
       for (int i = 0; i < n; i++) {
         if (removeRemainingChildren) {
           child->removeTree();
           remainingChildren--;
-        } else if (!ExtractUnits(child, ignoreAdd)) {
+        } else if (!RemoveNonUnits(child, preserveAdd)) {
           child = child->nextTree();
-          removeRemainingChildren = ignoreAdd && e->isAdd();
+          removeRemainingChildren = !preserveAdd && e->isAdd();
         } else {
           remainingChildren--;
         }
@@ -926,18 +926,18 @@ bool Unit::ExtractUnits(Tree* e, bool ignoreAdd) {
     case Type::Sum:
     case Type::Product:
       e->moveTreeOverTree(e->child(Parametric::FunctionIndex(e->type())));
-      didRemovedTree = ExtractUnits(e, ignoreAdd);
+      didRemovedTree = RemoveNonUnits(e, preserveAdd);
       break;
     case Type::Abs:
       e->removeNode();
-      didRemovedTree = ExtractUnits(e, ignoreAdd);
+      didRemovedTree = RemoveNonUnits(e, preserveAdd);
       break;
     case Type::PowReal:
       // Ignore PowReal nodes
       e->cloneNodeOverNode(KPow);
     case Type::Pow:
       // If there are units in base, keep the tree.
-      if (!ExtractUnits(e->child(0), ignoreAdd)) {
+      if (!RemoveNonUnits(e->child(0), preserveAdd)) {
         didRemovedTree = false;
         break;
       }
@@ -959,8 +959,8 @@ bool Unit::ExtractUnits(Tree* e, bool ignoreAdd) {
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
  *           output 5°C, 41°F should output 41°F). */
-bool Unit::BuildAutomaticOutput(Tree* e, Dimension dimension,
-                                UnitDisplay unitDisplay) {
+bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
+                                 UnitDisplay unitDisplay) {
   assert(dimension.isUnit() && !e->isUndefined());
   Units::SIVector vector = dimension.unit.vector;
   assert(!vector.isEmpty());
@@ -1013,11 +1013,11 @@ bool IsPureAngleUnit(const Tree* e) {
 }
 
 // Use only one of the extracted unit and converts e to it.
-bool Unit::BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits) {
+bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& extractedUnits) {
   /* TODO: Select the best possible choice if there are multiple units
            With _mm*_Hz+(_m+_km)*_s^-1 : _mm*_Hz, _m_s^-1 or _km_s^-1 ?
   */
-  ExtractUnits(extractedUnits, true);
+  RemoveNonUnits(extractedUnits, false);
   if (extractedUnits->isUnit() &&
       IsNonKelvinTemperature(GetRepresentative(extractedUnits))) {
     // Handle non kelvin temperature conversion separately.
@@ -1037,8 +1037,8 @@ bool Unit::BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits) {
 }
 
 // Use an equivalent representative for surface and volumes
-bool Unit::BuildEquivalentOutput(Tree* e, TreeRef& extractedUnits,
-                                 Dimension dimension) {
+bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
+                                  Dimension dimension) {
   SIVector vector = dimension.unit.vector;
   // Only Surfaces and Volumes are concerned
   if (vector.supportSize() != 1 || vector.distance < 2 || vector.distance > 3) {
@@ -1143,8 +1143,8 @@ const Representative* VolumeRepresentativeList[] = {
     &Volume::representatives.gallon, &Volume::representatives.quart,
     &Volume::representatives.pint, &Volume::representatives.cup};
 
-bool Unit::BuildDecompositionOutput(Tree* e, TreeRef& extractedUnits,
-                                    Dimension dimension) {
+bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
+                                     Dimension dimension) {
   // Decompose time, angle, and imperial volume, mass and length
   SIVector vector = dimension.unit.vector;
   const Representative** list = nullptr;

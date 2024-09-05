@@ -229,22 +229,22 @@ class Unit {
   static double KelvinValueToRepresentative(
       double value, const Representative* representative);
   /* Remove subtrees that don't contain units. Return true if the entire tree
-   * has been removed. Only Mult, Pow, and Add (if not ignoreAdd) are preserved.
+   * has been removed. Only Mult, Pow, and Add (if preserveAdd) are preserved.
    */
-  static bool ExtractUnits(Tree* e, bool ignoreAdd);
-  TREE_REF_WRAP_1(ExtractUnits, bool);
+  static bool RemoveNonUnits(Tree* e, bool preserveAdd);
+  TREE_REF_WRAP_1(RemoveNonUnits, bool);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnits(const Tree* extractedUnits);
-  static void BuildMainOutput(Tree* e, TreeRef& extractedUnits,
-                              Dimension dimension, AngleUnit angleUnit);
+  static void ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
+                                     Dimension dimension, AngleUnit angleUnit);
   // Without taking input units into account, select best unit for tree
-  static bool BuildAutomaticOutput(Tree* e, Dimension dimension,
-                                   UnitDisplay unitDisplay);
-  static bool BuildAutomaticInputOutput(Tree* e, TreeRef& extractedUnits);
-  static bool BuildEquivalentOutput(Tree* e, TreeRef& extractedUnits,
-                                    Dimension dimension);
-  static bool BuildDecompositionOutput(Tree* e, TreeRef& extractedUnits,
-                                       Dimension dimension);
+  static bool ApplyAutomaticDisplay(Tree* e, Dimension dimension,
+                                    UnitDisplay unitDisplay);
+  static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& extractedUnits);
+  static bool ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
+                                     Dimension dimension);
+  static bool ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
+                                        Dimension dimension);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);

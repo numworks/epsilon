@@ -394,6 +394,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       assert(childDim[1].isUnit());
       /* Not using Dimension operator == because different representatives are
        * allowed. */
+      assert(childDim[0].isUnit());
       return childDim[0].unit.vector == childDim[1].unit.vector ||
              (childDim[1].isSimpleAngleUnit() && childDim[0].isScalar());
     case Type::Dep:

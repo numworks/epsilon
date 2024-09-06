@@ -47,7 +47,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
       /* TODO_PCJ: bubble up across list operators in the same fashion as on
        * parametrics
        * */
-      if (e->isParametric() && Parametric::FunctionIndex(e) == i) {
+      if (e->isParametric() && Parametric::IsFunctionIndex(i, e)) {
         if (e->isDiff()) {
           // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
           const Tree* symbolValue = e->child(1);

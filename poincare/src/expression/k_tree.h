@@ -73,6 +73,14 @@ constexpr auto KParentheses = KUnary<Type::Parentheses>();
 constexpr auto KSign = KUnary<Type::Sign>();
 constexpr auto KFactor = KUnary<Type::Factor>();
 constexpr auto KNorm = KUnary<Type::Norm>();
+constexpr auto KTrace = KUnary<Type::Trace>();
+constexpr auto KDet = KUnary<Type::Det>();
+constexpr auto KDim = KUnary<Type::Dim>();
+constexpr auto KIdentity = KUnary<Type::Identity>();
+constexpr auto KInverse = KUnary<Type::Inverse>();
+constexpr auto KRef = KUnary<Type::Ref>();
+constexpr auto KRref = KUnary<Type::Rref>();
+constexpr auto KTranspose = KUnary<Type::Transpose>();
 
 constexpr auto KATrig = KBinary<Type::ATrig>();
 constexpr auto KLogBase = KBinary<Type::LogBase>();
@@ -104,6 +112,8 @@ constexpr auto KInferior = KBinary<Type::Inferior>();
 constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
 constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
 constexpr auto KDecimal = KBinary<Type::Decimal>();
+constexpr auto KDot = KBinary<Type::Dot>();
+constexpr auto KCross = KBinary<Type::Cross>();
 
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
 constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();

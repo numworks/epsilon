@@ -1171,7 +1171,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
   {
     LayoutBufferCursor* bufferCursor = executionContext.m_cursor;
     // Clone layoutBuffer into the TreeStack
-    SharedTreeStack->clone(executionContext.m_cursor->rootRack());
+    executionContext.m_cursor->rootRack()->cloneTree();
     // Create a temporary cursor
     TreeStackCursor editionCursor = bufferCursor->createTreeStackCursor();
     // Perform the action

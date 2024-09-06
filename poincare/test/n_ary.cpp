@@ -72,10 +72,11 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   assert_trees_are_equal(addition1, addition2);
 
   // Sort
-  Tree* addition3 = SharedTreeStack->clone(
+  Tree* addition3 =
       KAdd(KLn(5_e), KLn(1_e), KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
            KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, KLn(2_e)), 1_e,
-           KPow(KTrig(3_e, 0_e), -1_e)));
+           KPow(KTrig(3_e, 0_e), -1_e))
+          ->cloneTree();
   NAry::Sort(addition3);
   assert_trees_are_equal(
       addition3,
@@ -83,7 +84,7 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
            KTrig(3_e, 0_e), KTrig(2_e, 1_e), KLn(1_e),
            KMult(1_e, 0_e, KLn(2_e)), KLn(5_e)));
 
-  Tree* sorted = SharedTreeStack->clone(KAdd(1_e, 2_e, 3_e));
+  Tree* sorted = KAdd(1_e, 2_e, 3_e)->cloneTree();
   NAry::SortedInsertChild(sorted, TreeRef(0_e));
   NAry::SortedInsertChild(sorted, TreeRef(2_e));
   NAry::SortedInsertChild(sorted, TreeRef(5_e));

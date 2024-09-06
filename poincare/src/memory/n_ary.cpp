@@ -158,7 +158,7 @@ bool NAry::Sort(Tree* nary, Order::OrderType order) {
   return false;
 push:
   // push children in their destination order
-  Tree* newNAry = SharedTreeStack->clone(nary, false);
+  Tree* newNAry = nary->cloneNode();
   for (int i = 0; i < numberOfChildren; i++) {
     children[indexes[i]]->cloneTree();
   }

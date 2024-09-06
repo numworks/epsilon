@@ -45,7 +45,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef e) {
   // Step 1: We want to compute the common denominator, b*d
   for (Tree* child : e->children()) {
     child = Rationalize(child);
-    TreeRef denominator = Denominator(SharedTreeStack->clone(child));
+    TreeRef denominator = Denominator(child->cloneTree());
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
@@ -59,8 +59,7 @@ TreeRef Algebraic::RationalizeAddition(TreeRef e) {
     // Create Mult(child, commonDenominator) = a*b * b*d
     TreeRef multiplication(SharedTreeStack->pushMult(1));
     child->moveNodeBeforeNode(multiplication);
-    child->nextTree()->moveTreeBeforeNode(
-        SharedTreeStack->clone(commonDenominator));
+    child->nextTree()->cloneTreeBeforeNode(commonDenominator);
     // TODO basicReduction of child
   }
   // Create Mult(e, Pow)

@@ -364,7 +364,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       if (node->isSimpleNAry()) {
         /* Insert the entire tree recursively so that its number of children can
          * be updated. */
-        Tree* insertedNode = SharedTreeStack->clone(node, false);
+        Tree* insertedNode = node->cloneNode();
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify);
@@ -379,7 +379,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         CreateTree(node, context, nullptr, simplify);
         node = node->nextTree();
       } else {
-        Tree* result = SharedTreeStack->clone(node, false);
+        Tree* result = node->cloneNode();
         node = node->nextNode();
         if (simplify) {
           for (int i = 0; i < numberOfChildren; i++) {
@@ -416,13 +416,13 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
-        Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
+        Tree* inserted = nodeToInsert->cloneTree();
         assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
         (void)(inserted);
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
-    Tree* inserted = SharedTreeStack->clone(nodeToInsert, true);
+    Tree* inserted = nodeToInsert->cloneTree();
     assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
     (void)(inserted);
     node = node->nextNode();

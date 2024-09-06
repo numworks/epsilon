@@ -26,7 +26,7 @@ void assert_match_and_create(const Tree* source, const Tree* pattern,
   assert_trees_are_equal(createdRef, output);
   createdRef->removeTree();
   // Also test with matchAndReplace
-  TreeRef replacedSourceClone = TreeRef(SharedTreeStack->clone(source));
+  TreeRef replacedSourceClone = TreeRef(source->cloneTree());
   PatternMatching::MatchReplace(replacedSourceClone, pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone->removeTree();

@@ -1119,7 +1119,6 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
-  // TODO: Undetected magic value.
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
   simplifies_to("sin(17×π/12)^2+cos(5×π/12)^2", "1", cartesianCtx);
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);

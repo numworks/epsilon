@@ -5,8 +5,8 @@
 
 namespace Poincare::Internal {
 
-/* TODO_PCJ: Metric should never return a same score for two different
- * expressions. */
+/* TODO: Metric should never return a same score for two different
+ * expressions. AdvanceReduction already handles that. */
 class Metric {
  public:
   // Metric of given tree. The smaller is the better.

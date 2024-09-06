@@ -111,6 +111,7 @@ static bool ReduceMultiplicationChildRec(Tree* child, int index,
 }
 
 static bool ReduceMultiplicationWithInf(Tree* e) {
+  // TODO_PCJ: what about x complex? sign is not defined on complexes
   // x*inf -> sign(x)*inf
   // Except when x = -1,0,1 or sign (to avoid infinite loop)
   PatternMatching::Context ctx;

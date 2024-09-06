@@ -888,7 +888,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
                                                   BasedInteger::Builder(3)}));
   assert_text_not_parsable("lcm(1)");
   assert_text_not_parsable("lcm()");
-  assert_parsed_expression_is(
+  assert_parsed_expression_is(  // TODO: is LnUser now
       "ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1)",
                               Logarithm::Builder(BasedInteger::Builder(1)));

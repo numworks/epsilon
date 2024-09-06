@@ -1111,13 +1111,14 @@ Tree* BuildDecomposition(double value, const Representative** list,
     assert(i == 0 || (list[i]->ratio() < list[i - 1]->ratio()) &&
                          list[i]->siVector() == list[i - 1]->siVector());
     double representativeValue = value / ratio;
+    double lax = OMG::Float::EpsilonLax<double>() / ratio;
     if (!lastUnit) {
       // 1.6 -> 1 and -1.6 -> -1
       representativeValue = (representativeValue > 0.0)
-                                ? std::floor(representativeValue)
-                                : std::ceil(representativeValue);
+                                ? std::floor(representativeValue + lax)
+                                : std::ceil(representativeValue - lax);
     }
-    if (representativeValue != 0.0 ||
+    if (std::abs(representativeValue) > lax ||
         (lastUnit && result->numberOfChildren() == 0)) {
       // Add decomposed unit
       SharedTreeStack->pushMult(2);
@@ -1127,7 +1128,8 @@ Tree* BuildDecomposition(double value, const Representative** list,
     }
     value -= ratio * representativeValue;
   }
-  assert(value == 0.0 && result->numberOfChildren() > 0);
+  assert(std::abs(value) <= OMG::Float::EpsilonLax<double>() &&
+         result->numberOfChildren() > 0);
   NAry::SquashIfUnary(result);
   return result;
 }
@@ -1182,7 +1184,8 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
     return false;
   }
   double value = Approximation::RootTreeToReal<double>(e);
-  if (std::isnan(value) || std::isinf(value)) {
+  if (std::isnan(value) || std::isinf(value) ||
+      std::abs(value) <= OMG::Float::EpsilonLax<double>()) {
     return false;
   }
   // extractedUnits are no longer necessary

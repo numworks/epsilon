@@ -797,7 +797,7 @@ bool Layouter::requireSeparators(const Tree* expression) {
     Tree* clone = expression->cloneTree();
     TreeRef rack = KRackL()->cloneTree();
     layoutExpression(rack, clone, k_tokenPriority);
-    for (const Tree* child : rack->children()) {
+    for (const Tree* child : rack->descendants()) {
       if (child->isSeparatorLayout()) {
         rack->removeTree();
         return true;

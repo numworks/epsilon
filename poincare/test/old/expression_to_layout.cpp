@@ -19,8 +19,8 @@ QUIZ_CASE(poincare_expression_to_layout) {
   assert_parsed_expression_layouts_to("abs(1)", KRackL(KAbsL("1"_l)));
   assert_parsed_expression_layouts_to("binomial(1,2)",
                                       KRackL(KBinomialL("1"_l, "2"_l)));
-  // assert_parsed_expression_layouts_to(
-  // "[[1,2][3,4]]", MatrixLayout::Builder("1"_l, "2"_l, "3"_l, "4"_l));
+  assert_parsed_expression_layouts_to(
+      "[[1,2][3,4]]", KRackL(KMatrix2x2L("1"_l, "2"_l, "3"_l, "4"_l)));
   assert_parsed_expression_layouts_to("1+2", "1+2"_l);
   assert_parsed_expression_layouts_to("ceil(1)", KRackL(KCeilL("1"_l)));
   assert_parsed_expression_layouts_to("conj(1)", KRackL(KConjL("1"_l)));

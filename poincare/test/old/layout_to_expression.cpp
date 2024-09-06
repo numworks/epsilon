@@ -170,16 +170,13 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
   l = KRackL(
       KDiffL("Var"_l, "cos(2)"_l, "1"_l, KRackL(KFracL("1"_l, "Var"_l))));
   e = KDiff("Var"_e, KCos(2_e), 1_e, KDiv(1_e, "Var"_e));
-
-  // TODO_PCJ: disabled because Var is a multi-letter variable
-  // assert_parsed_layout_is(l, e);
+  assert_parsed_layout_is(l, e);
 
   // diff(1/Var, Var, cos(2), 2)
   l = KRackL(
       KNthDiffL("Var"_l, "cos(2)"_l, "2"_l, KRackL(KFracL("1"_l, "Var"_l))));
   e = KDiff("Var"_e, KCos(2_e), 2_e, KDiv(1_e, "Var"_e));
-
-  // assert_parsed_layout_is(l, e);
+  assert_parsed_layout_is(l, e);
 
   // Piecewise
   l = KRackL(KPiecewise3L("3"_l, "2>3"_l, "2"_l, "2<3"_l, "1"_l, ""_l));

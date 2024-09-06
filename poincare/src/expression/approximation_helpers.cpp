@@ -34,8 +34,8 @@ T Approximation::PositiveIntegerApproximation(T c) {
 template <typename T>
 bool isNegligible(T x, T precision, T norm1, T norm2) {
   T absX = std::fabs(x);
-  return absX <= 10.0 * precision && absX / norm1 <= precision &&
-         absX / norm2 <= precision;
+  T epsilon = 10.0 * precision;
+  return absX <= epsilon && absX / norm1 <= epsilon && absX / norm2 <= epsilon;
 }
 
 template <typename T>

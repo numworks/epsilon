@@ -393,7 +393,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
 
   // product
   simplifies_to("product(p,k,j,n)", "p^(-j+n+1)");
-  simplifies_to("product(p^3,k,j,n)", "p^3^(-j+n+1)");
+  simplifies_to("product(p^3,k,j,n)", "(p^3)^(-j+n+1)");
   simplifies_to("product(k^3,k,j,n)", "product(k,k,j,n)^3");
   simplifies_to("product(k^x,k,j,n)", "product(k^x,k,j,n)");
   simplifies_to("product(x^k,k,j,n)", "product(x^k,k,j,n)");
@@ -695,7 +695,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("41^(1/3)", "root(41,3)");
   // - PowerReal(x,y) y is not a rational
   simplifies_to("x^(e^3)", "x^e^3");
-  simplifies_to("(x^e)^3", "x^e^3");
+  simplifies_to("(x^e)^3", "(x^e)^3");
   // - Looking at y's reduced rational form p/q :
   //   * PowerReal(x,y) if x is of unknown sign and p odd
   simplifies_to("x^(1/3)", "root(x,3)");

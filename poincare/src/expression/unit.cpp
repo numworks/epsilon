@@ -63,6 +63,7 @@ const Representative* const* Representative::DefaultRepresentatives() {
       Surface::representatives,
       Volume::representatives,
       Speed::representatives,
+      // Update AllRepresentatives in unit_k_units.h if you change this
   };
   return defaultRepresentatives;
 }

@@ -655,7 +655,6 @@ Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
   // Check that the dependencies of the solution are not undefined
   while (solver.lastInterest() == Interest::Root &&
          std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
-    // verifier que xstart a bien avancé à root.x()
     root = solver.nextRoot(main);
   }
   return root;

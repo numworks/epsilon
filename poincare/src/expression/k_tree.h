@@ -102,6 +102,8 @@ constexpr auto KPermute = KBinary<Type::Permute>();
 constexpr auto KRoot = KBinary<Type::Root>();
 constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
 constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
+constexpr auto KQuo = KBinary<Type::Quo>();
+constexpr auto KRem = KBinary<Type::Rem>();
 constexpr auto KPoint = KBinary<Type::Point>();
 constexpr auto KStore = KBinary<Type::Store>();
 constexpr auto KUnitConversion = KBinary<Type::UnitConversion>();
@@ -127,6 +129,8 @@ constexpr auto KDiff = KFixedArity<4, Type::Diff>();
 
 constexpr auto KAdd = KNAry<Type::Add>();
 constexpr auto KMult = KNAry<Type::Mult>();
+constexpr auto KGCD = KNAry<Type::GCD>();
+constexpr auto KLCM = KNAry<Type::LCM>();
 constexpr auto KList = KNAry<Type::List>();
 constexpr auto KSet = KNAry<Type::Set>();
 constexpr auto KDepList = KNAry<Type::DepList>();

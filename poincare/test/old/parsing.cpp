@@ -3,6 +3,7 @@
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -71,6 +72,13 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* r,
+                                 bool parseForAssignment = false) {
+  assert_parsed_expression_is(expression, Expression::Builder(r),
+                              parseForAssignment);
+}
+
 QUIZ_CASE(poincare_parsing_tokenize_numbers) {
   assert_tokenizes_as_number("1");
   assert_tokenizes_as_number("12");
@@ -107,9 +115,7 @@ QUIZ_CASE(poincare_parsing_tokenize_numbers) {
 
 QUIZ_CASE(poincare_parsing_memory_exhaustion) {
   // int initialPoolSize = pool_size();
-  assert_parsed_expression_is(
-      "2+3",
-      Addition::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3)));
+  assert_parsed_expression_is("2+3", KAdd(2_e, 3_e));
   // assert_pool_size(initialPoolSize);
 
   int memoryFailureHasBeenHandled = false;
@@ -135,18 +141,18 @@ QUIZ_CASE(poincare_parsing_memory_exhaustion) {
 
 QUIZ_CASE(poincare_parsing_parse_numbers) {
   // Parse decimal
-  assert_parsed_expression_is("0", BasedInteger::Builder(0));
-  assert_parsed_expression_is("0.1", Decimal::Builder(0.1));
-  assert_parsed_expression_is("1.", BasedInteger::Builder(1));
-  assert_parsed_expression_is(".1", Decimal::Builder(0.1));
-  assert_parsed_expression_is("0ᴇ2", Decimal::Builder(0.0));
+  assert_parsed_expression_is("0", 0_e);
+  assert_parsed_expression_is("0.1", 0.1_e);
+  assert_parsed_expression_is("1.", 1_e);
+  assert_parsed_expression_is(".1", 0.1_e);
+  assert_parsed_expression_is("0ᴇ2", 0.0_e);
   assert_parsed_expression_is("0.1ᴇ2", Decimal::Builder(10.0));
   assert_parsed_expression_is("1.ᴇ2", Decimal::Builder(100.0));
   assert_parsed_expression_is(".1ᴇ2", Decimal::Builder(10.0));
-  assert_parsed_expression_is("0ᴇ-2", Decimal::Builder(0.0));
-  assert_parsed_expression_is("0.1ᴇ-2", Decimal::Builder(0.001));
-  assert_parsed_expression_is("1.ᴇ-2", Decimal::Builder(0.01));
-  assert_parsed_expression_is(".1ᴇ-2", Decimal::Builder(0.001));
+  assert_parsed_expression_is("0ᴇ-2", 0.0_e);
+  assert_parsed_expression_is("0.1ᴇ-2", 0.001_e);
+  assert_parsed_expression_is("1.ᴇ-2", 0.01_e);
+  assert_parsed_expression_is(".1ᴇ-2", 0.001_e);
   // Decimal with rounding when digits are above 14
   assert_parsed_expression_is("0.0000012345678901234",
                               Decimal::Builder(Integer("12345678901234"), -6));
@@ -203,225 +209,79 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
 }
 
 QUIZ_CASE(poincare_parsing_parse) {
-  assert_parsed_expression_is("1", BasedInteger::Builder(1));
-  assert_parsed_expression_is("(1)",
-                              Parenthesis::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "((1))", Parenthesis::Builder((OExpression)Parenthesis::Builder(
-                   BasedInteger::Builder(1))));
-  assert_parsed_expression_is(
-      "1+2",
-      Addition::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "(1)+2", Addition::Builder(Parenthesis::Builder(BasedInteger::Builder(1)),
-                                 BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "(1+2)", Parenthesis::Builder(Addition::Builder(
-                   BasedInteger::Builder(1), BasedInteger::Builder(2))));
-  OExpression::Tuple one_two_three = {BasedInteger::Builder(1),
-                                      BasedInteger::Builder(2),
-                                      BasedInteger::Builder(3)};
-  assert_parsed_expression_is("1+2+3", Addition::Builder(one_two_three));
-  assert_parsed_expression_is(
-      "1+2+(3+4)",
-      Addition::Builder(
-          {BasedInteger::Builder(1), BasedInteger::Builder(2),
-           Parenthesis::Builder(Addition::Builder(BasedInteger::Builder(3),
-                                                  BasedInteger::Builder(4)))}));
-  assert_parsed_expression_is("+2", BasedInteger::Builder(2));
-  assert_parsed_expression_is(
-      "1×2", Multiplication::Builder(BasedInteger::Builder(1),
-                                     BasedInteger::Builder(2)));
-  assert_parsed_expression_is("1×2×3", Multiplication::Builder(one_two_three));
-  assert_parsed_expression_is(
-      "1+2×3",
-      Addition::Builder(BasedInteger::Builder(1),
-                        Multiplication::Builder(BasedInteger::Builder(2),
-                                                BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1/2",
-      Division::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "(1/2)", Parenthesis::Builder(Division::Builder(
-                   BasedInteger::Builder(1), BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1/2/3", Division::Builder(Division::Builder(BasedInteger::Builder(1),
-                                                   BasedInteger::Builder(2)),
-                                 BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "1/2×3",
-      Multiplication::Builder(
-          Division::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)),
-          BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "(1/2×3)",
-      Parenthesis::Builder(Multiplication::Builder(
-          Division::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)),
-          BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1×2/3",
-      Multiplication::Builder(BasedInteger::Builder(1),
-                              Division::Builder(BasedInteger::Builder(2),
-                                                BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "(1×2/3)", Parenthesis::Builder(Multiplication::Builder(
-                     BasedInteger::Builder(1),
-                     Division::Builder(BasedInteger::Builder(2),
-                                       BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "(1/2/3)",
-      Parenthesis::Builder(Division::Builder(
-          Division::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)),
-          BasedInteger::Builder(3))));
-  assert_parsed_expression_is("1^2", Power::Builder(BasedInteger::Builder(1),
-                                                    BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1^2^3", Power::Builder(BasedInteger::Builder(1),
-                              Power::Builder(BasedInteger::Builder(2),
-                                             BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1=2", Comparison::Builder(BasedInteger::Builder(1),
-                                 ComparisonNode::OperatorType::Equal,
-                                 BasedInteger::Builder(2)));
+  assert_parsed_expression_is("1", 1_e);
+  assert_parsed_expression_is("(1)", KParentheses(1_e));
+  assert_parsed_expression_is("((1))", KParentheses(KParentheses(1_e)));
+  assert_parsed_expression_is("1+2", KAdd(1_e, 2_e));
+  assert_parsed_expression_is("(1)+2", KAdd(KParentheses(1_e), 2_e));
+  assert_parsed_expression_is("(1+2)", KParentheses(KAdd(1_e, 2_e)));
+  assert_parsed_expression_is("1+2+3", KAdd(1_e, 2_e, 3_e));
+  assert_parsed_expression_is("1+2+(3+4)",
+                              KAdd(1_e, 2_e, KParentheses(KAdd(3_e, 4_e))));
+  assert_parsed_expression_is("+2", 2_e);
+  assert_parsed_expression_is("1×2", KMult(1_e, 2_e));
+  assert_parsed_expression_is("1×2×3", KMult(1_e, 2_e, 3_e));
+  assert_parsed_expression_is("1+2×3", KAdd(1_e, KMult(2_e, 3_e)));
+  assert_parsed_expression_is("1/2", KDiv(1_e, 2_e));
+  assert_parsed_expression_is("(1/2)", KParentheses(KDiv(1_e, 2_e)));
+  assert_parsed_expression_is("1/2/3", KDiv(KDiv(1_e, 2_e), 3_e));
+  assert_parsed_expression_is("1/2×3", KMult(KDiv(1_e, 2_e), 3_e));
+  assert_parsed_expression_is("(1/2×3)",
+                              KParentheses(KMult(KDiv(1_e, 2_e), 3_e)));
+  assert_parsed_expression_is("1×2/3", KMult(1_e, KDiv(2_e, 3_e)));
+  assert_parsed_expression_is("(1×2/3)",
+                              KParentheses(KMult(1_e, KDiv(2_e, 3_e))));
+  assert_parsed_expression_is("(1/2/3)",
+                              KParentheses(KDiv(KDiv(1_e, 2_e), 3_e)));
+  assert_parsed_expression_is("1^2", KPow(1_e, 2_e));
+  assert_parsed_expression_is("1^2^3", KPow(1_e, KPow(2_e, 3_e)));
+  assert_parsed_expression_is("1=2", KEqual(1_e, 2_e));
   assert_text_not_parsable("=5");
-  assert_parsed_expression_is("-1",
-                              Opposite::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "(-1)",
-      Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(1))));
-  assert_parsed_expression_is(
-      "1-2",
-      Subtraction::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "-1-2", Subtraction::Builder(Opposite::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1-2-3",
-      Subtraction::Builder(Subtraction::Builder(BasedInteger::Builder(1),
-                                                BasedInteger::Builder(2)),
-                           BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "(1-2)", Parenthesis::Builder(Subtraction::Builder(
-                   BasedInteger::Builder(1), BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1+-2", Addition::Builder(BasedInteger::Builder(1),
-                                Opposite::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "--1", Opposite::Builder(
-                 (OExpression)Opposite::Builder(BasedInteger::Builder(1))));
-  assert_parsed_expression_is(
-      "(1+2)-3", Subtraction::Builder(
-                     Parenthesis::Builder(Addition::Builder(
-                         BasedInteger::Builder(1), BasedInteger::Builder(2))),
-                     BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "(2×-3)", Parenthesis::Builder(Multiplication::Builder(
-                    BasedInteger::Builder(2),
-                    Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "1^(2)-3",
-      Subtraction::Builder(
-          Power::Builder(BasedInteger::Builder(1),
-                         Parenthesis::Builder(BasedInteger::Builder(2))),
-          BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "1^2-3", Subtraction::Builder(Power::Builder(BasedInteger::Builder(1),
-                                                   BasedInteger::Builder(2)),
-                                    BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "2^-3", Power::Builder(BasedInteger::Builder(2),
-                             Opposite::Builder(BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "2--2+-1",
-      Addition::Builder(
-          Subtraction::Builder(BasedInteger::Builder(2),
-                               Opposite::Builder(BasedInteger::Builder(2))),
-          Opposite::Builder(BasedInteger::Builder(1))));
-  assert_parsed_expression_is(
-      "2--2×-1",
-      Subtraction::Builder(BasedInteger::Builder(2),
-                           Opposite::Builder(Multiplication::Builder(
-                               BasedInteger::Builder(2),
-                               Opposite::Builder(BasedInteger::Builder(1))))));
-  assert_parsed_expression_is(
-      "-1^2", Opposite::Builder(Power::Builder(BasedInteger::Builder(1),
-                                               BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "2e^(3)",
-      Multiplication::Builder(
-          BasedInteger::Builder(2),
-          Power::Builder(Constant::ExponentialEBuilder(),
-                         Parenthesis::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "2/-3/-4",
-      Division::Builder(
-          Division::Builder(BasedInteger::Builder(2),
-                            Opposite::Builder(BasedInteger::Builder(3))),
-          Opposite::Builder(BasedInteger::Builder(4))));
-  assert_parsed_expression_is(
-      "1×2-3×4",
-      Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),
-                                                   BasedInteger::Builder(2)),
-                           Multiplication::Builder(BasedInteger::Builder(3),
-                                                   BasedInteger::Builder(4))));
-  assert_parsed_expression_is(
-      "-1×2", Opposite::Builder(Multiplication::Builder(
-                  BasedInteger::Builder(1), BasedInteger::Builder(2))));
-  assert_parsed_expression_is("1!",
-                              Factorial::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "1+2!", Addition::Builder(BasedInteger::Builder(1),
-                                Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!+2", Addition::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                                BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1!+2!", Addition::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                                 Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1×2!",
-      Multiplication::Builder(BasedInteger::Builder(1),
-                              Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!×2",
-      Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                              BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1!×2!",
-      Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                              Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1-2!",
-      Subtraction::Builder(BasedInteger::Builder(1),
-                           Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!-2", Subtraction::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1!-2!",
-      Subtraction::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                           Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1/2!", Division::Builder(BasedInteger::Builder(1),
-                                Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!/2", Division::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                                BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1!/2!", Division::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                                 Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1^2!", Power::Builder(BasedInteger::Builder(1),
-                             Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!^2", Power::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                             BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1!^2!", Power::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                              Factorial::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "(1)!",
-      Factorial::Builder(Parenthesis::Builder(BasedInteger::Builder(1))));
+  assert_parsed_expression_is("-1", KOpposite(1_e));
+  assert_parsed_expression_is("(-1)", KParentheses(KOpposite(1_e)));
+  assert_parsed_expression_is("1-2", KSub(1_e, 2_e));
+  assert_parsed_expression_is("-1-2", KSub(KOpposite(1_e), 2_e));
+  assert_parsed_expression_is("1-2-3", KSub(KSub(1_e, 2_e), 3_e));
+  assert_parsed_expression_is("(1-2)", KParentheses(KSub(1_e, 2_e)));
+  assert_parsed_expression_is("1+-2", KAdd(1_e, KOpposite(2_e)));
+  assert_parsed_expression_is("--1", KOpposite(KOpposite(1_e)));
+  assert_parsed_expression_is("(1+2)-3",
+                              KSub(KParentheses(KAdd(1_e, 2_e)), 3_e));
+  assert_parsed_expression_is("(2×-3)",
+                              KParentheses(KMult(2_e, KOpposite(3_e))));
+  assert_parsed_expression_is("1^(2)-3",
+                              KSub(KPow(1_e, KParentheses(2_e)), 3_e));
+  assert_parsed_expression_is("1^2-3", KSub(KPow(1_e, 2_e), 3_e));
+  assert_parsed_expression_is("2^-3", KPow(2_e, KOpposite(3_e)));
+  assert_parsed_expression_is("2--2+-1",
+                              KAdd(KSub(2_e, KOpposite(2_e)), KOpposite(1_e)));
+  assert_parsed_expression_is("2--2×-1",
+                              KSub(2_e, KOpposite(KMult(2_e, KOpposite(1_e)))));
+  assert_parsed_expression_is("-1^2", KOpposite(KPow(1_e, 2_e)));
+  assert_parsed_expression_is("2e^(3)",
+                              KMult(2_e, KPow(e_e, KParentheses(3_e))));
+  assert_parsed_expression_is("2/-3/-4",
+                              KDiv(KDiv(2_e, KOpposite(3_e)), KOpposite(4_e)));
+  assert_parsed_expression_is("1×2-3×4",
+                              KSub(KMult(1_e, 2_e), KMult(3_e, 4_e)));
+  assert_parsed_expression_is("-1×2", KOpposite(KMult(1_e, 2_e)));
+  assert_parsed_expression_is("1!", KFact(1_e));
+  assert_parsed_expression_is("1+2!", KAdd(1_e, KFact(2_e)));
+  assert_parsed_expression_is("1!+2", KAdd(KFact(1_e), 2_e));
+  assert_parsed_expression_is("1!+2!", KAdd(KFact(1_e), KFact(2_e)));
+  assert_parsed_expression_is("1×2!", KMult(1_e, KFact(2_e)));
+  assert_parsed_expression_is("1!×2", KMult(KFact(1_e), 2_e));
+  assert_parsed_expression_is("1!×2!", KMult(KFact(1_e), KFact(2_e)));
+  assert_parsed_expression_is("1-2!", KSub(1_e, KFact(2_e)));
+  assert_parsed_expression_is("1!-2", KSub(KFact(1_e), 2_e));
+  assert_parsed_expression_is("1!-2!", KSub(KFact(1_e), KFact(2_e)));
+  assert_parsed_expression_is("1/2!", KDiv(1_e, KFact(2_e)));
+  assert_parsed_expression_is("1!/2", KDiv(KFact(1_e), 2_e));
+  assert_parsed_expression_is("1!/2!", KDiv(KFact(1_e), KFact(2_e)));
+  assert_parsed_expression_is("1^2!", KPow(1_e, KFact(2_e)));
+  assert_parsed_expression_is("1!^2", KPow(KFact(1_e), 2_e));
+  assert_parsed_expression_is("1!^2!", KPow(KFact(1_e), KFact(2_e)));
+  assert_parsed_expression_is("(1)!", KFact(KParentheses(1_e)));
   assert_text_not_parsable("1+");
   assert_text_not_parsable(")");
   assert_text_not_parsable(")(");
@@ -442,31 +302,13 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("re^\u0012im(,0)\u0013");
 }
 
-OMatrix BuildMatrix(int rows, int columns, OExpression entries[]) {
-  OMatrix m = OMatrix::Builder();
-  int position = 0;
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < columns; j++) {
-      m.addChildAtIndexInPlace(entries[position], position, position);
-      position++;
-    }
-  }
-  m.setDimensions(rows, columns);
-  return m;
-}
-
 QUIZ_CASE(poincare_parsing_matrices) {
-  OExpression m1[] = {BasedInteger::Builder(1)};
-  assert_parsed_expression_is("[[1]]", BuildMatrix(1, 1, m1));
-  OExpression m2[] = {BasedInteger::Builder(1), BasedInteger::Builder(2),
-                      BasedInteger::Builder(3)};
-  assert_parsed_expression_is("[[1,2,3]]", BuildMatrix(1, 3, m2));
-  OExpression m3[] = {BasedInteger::Builder(1), BasedInteger::Builder(2),
-                      BasedInteger::Builder(3), BasedInteger::Builder(4),
-                      BasedInteger::Builder(5), BasedInteger::Builder(6)};
-  assert_parsed_expression_is("[[1,2,3][4,5,6]]", BuildMatrix(2, 3, m3));
-  OExpression m4[] = {BasedInteger::Builder(1), BuildMatrix(1, 1, m1)};
-  assert_parsed_expression_is("[[1,[[1]]]]", BuildMatrix(1, 2, m4));
+  KTree m1 = KMatrix<1, 1>(1_e);
+  assert_parsed_expression_is("[[1]]", m1);
+  assert_parsed_expression_is("[[1,2,3]]", KMatrix<1, 3>(1_e, 2_e, 3_e));
+  assert_parsed_expression_is("[[1,2,3][4,5,6]]",
+                              KMatrix<2, 3>(1_e, 2_e, 3_e, 4_e, 5_e, 6_e));
+  assert_parsed_expression_is("[[1,[[1]]]]", KMatrix<1, 2>(1_e, m1));
   assert_text_not_parsable("[");
   assert_text_not_parsable("]");
   assert_text_not_parsable("[[");
@@ -483,33 +325,11 @@ QUIZ_CASE(poincare_parsing_matrices) {
   assert_text_not_parsable("[,]");
 }
 
-template <size_t N>
-OList BuildList(OExpression (&elements)[N]) {
-  OList l = OList::Builder();
-  for (size_t i = 0; i < N; i++) {
-    l.addChildAtIndexInPlace(elements[i], i, i);
-  }
-  return l;
-}
-
 QUIZ_CASE(poincare_parsing_lists) {
-  assert_parsed_expression_is("{}", OList::Builder());
-  {
-    OExpression elements[] = {BasedInteger::Builder(1)};
-    assert_parsed_expression_is("{1}", BuildList(elements));
-  }
-  {
-    OExpression elements[] = {BasedInteger::Builder(1),
-                              BasedInteger::Builder(2),
-                              BasedInteger::Builder(3)};
-    assert_parsed_expression_is("{1,2,3}", BuildList(elements));
-  }
-  {
-    OExpression inner[] = {BasedInteger::Builder(2), BasedInteger::Builder(3)};
-    OExpression outer[] = {BasedInteger::Builder(1), BuildList(inner),
-                           BasedInteger::Builder(4)};
-    assert_parsed_expression_is("{1,{2,3},4}", BuildList(outer));
-  }
+  assert_parsed_expression_is("{}", KList());
+  assert_parsed_expression_is("{1}", KList(1_e));
+  assert_parsed_expression_is("{1,2,3}", KList(1_e, 2_e, 3_e));
+  assert_parsed_expression_is("{1,{2,3},4}", KList(1_e, KList(2_e, 3_e), 4_e));
   assert_text_not_parsable("{");
   assert_text_not_parsable("{{");
   assert_text_not_parsable("}");
@@ -522,21 +342,9 @@ QUIZ_CASE(poincare_parsing_lists) {
 }
 
 QUIZ_CASE(poincare_parsing_lists_access) {
-  {
-    OExpression elements[] = {BasedInteger::Builder(2)};
-    assert_parsed_expression_is(
-        "{2}(1)",
-        ListElement::Builder(BasedInteger::Builder(1), BuildList(elements)));
-  }
-  {
-    OExpression elements[] = {BasedInteger::Builder(3),
-                              BasedInteger::Builder(4),
-                              BasedInteger::Builder(5)};
-    assert_parsed_expression_is(
-        "{3,4,5}(1,2)",
-        ListSlice::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2),
-                           BuildList(elements)));
-  }
+  assert_parsed_expression_is("{2}(1)", KListElement(KList(2_e), 1_e));
+  assert_parsed_expression_is("{3,4,5}(1,2)",
+                              KListSlice(KList(3_e, 4_e, 5_e), 1_e, 2_e));
 }
 
 QUIZ_CASE(poincare_parsing_constants) {
@@ -732,188 +540,105 @@ QUIZ_CASE(poincare_parsing_units) {
 
 QUIZ_CASE(poincare_parsing_identifiers) {
   // Custom variables without storage
-  assert_parsed_expression_is("a", Symbol::Builder("a", 1));
-  assert_parsed_expression_is("x", Symbol::Builder("x", 1));
-  assert_parsed_expression_is("\"toot\"", Symbol::Builder("\"toot\"", 6));
-  assert_parsed_expression_is("\"tot12\"", Symbol::Builder("\"tot12\"", 7));
-  assert_parsed_expression_is(
-      "f(f)",
-      Multiplication::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(Symbol::Builder("f", 1))));
-  assert_parsed_expression_is(
-      "f((1))",
-      Multiplication::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(Parenthesis::Builder(
-                                  BasedInteger::Builder(1)))));
+  assert_parsed_expression_is("a", "a"_e);
+  assert_parsed_expression_is("x", "x"_e);
+  assert_parsed_expression_is("\"toot\"", "\"toot\""_e);
+  assert_parsed_expression_is("\"tot12\"", "\"tot12\""_e);
+  assert_parsed_expression_is("f(f)", KMult("f"_e, KParentheses("f"_e)));
+  assert_parsed_expression_is("f((1))",
+                              KMult("f"_e, KParentheses(KParentheses(1_e))));
   assert_text_not_parsable("_a");
   assert_text_not_parsable("abcdefgh");
   assert_text_not_parsable("f(1,2,3)");
 
   // User-defined functions
-  assert_parsed_expression_is(
-      "1→f(x)",
-      OStore::Builder(BasedInteger::Builder(1),
-                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "1→ab12AB_(x)",
-      OStore::Builder(
-          BasedInteger::Builder(1),
-          Function::Builder("ab12AB_", 7, Symbol::Builder("x", 1))));
+  assert_parsed_expression_is("1→f(x)", KStore(1_e, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("1→ab12AB_(x)",
+                              KStore(1_e, KFun<"ab12AB_">("x"_e)));
 
   // Reserved symbols
-  assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
-  assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
-  assert_parsed_expression_is("i", Constant::ComplexIBuilder());
-  assert_parsed_expression_is("π", Constant::PiBuilder());
-  assert_parsed_expression_is("pi", Constant::PiBuilder());
-  assert_parsed_expression_is("e", Constant::ExponentialEBuilder());
-  assert_parsed_expression_is("∞", Infinity::Builder(false));
-  assert_parsed_expression_is("+∞", Infinity::Builder(false));
-  assert_parsed_expression_is("inf", Infinity::Builder(false));
-  assert_parsed_expression_is("+inf", Infinity::Builder(false));
-  assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
+  assert_parsed_expression_is("Ans", "Ans"_e);
+  assert_parsed_expression_is("ans", "Ans"_e);
+  assert_parsed_expression_is("i", i_e);
+  assert_parsed_expression_is("π", π_e);
+  assert_parsed_expression_is("pi", π_e);
+  assert_parsed_expression_is("e", e_e);
+  assert_parsed_expression_is("∞", KInf);
+  assert_parsed_expression_is("+∞", KInf);
+  assert_parsed_expression_is("inf", KInf);
+  assert_parsed_expression_is("+inf", KInf);
+  assert_parsed_expression_is("undef", KUndef);
 
   // Reserved functions
-  assert_parsed_expression_is("arccos(1)",
-                              ArcCosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("acos(1)",
-                              ArcCosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("cos^(-1)(1)",
-                              ArcCosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "arcosh(1)", HyperbolicArcCosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("arccot(1)",
-                              ArcCotangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("arccsc(1)",
-                              ArcCosecant::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("abs(1)",
-                              AbsoluteValue::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "arg(1)", ComplexArgument::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("arcsec(1)",
-                              ArcSecant::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("asin(1)",
-                              ArcSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("arcsin(1)",
-                              ArcSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("sin^(-1)(1)",
-                              ArcSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "arsinh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("arctan(1)",
-                              ArcTangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("atan(1)",
-                              ArcTangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("tan^(-1)(1)",
-                              ArcTangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "artanh(1)", HyperbolicArcTangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "binomial(2,1)", BinomialCoefficient::Builder(BasedInteger::Builder(2),
-                                                    BasedInteger::Builder(1)));
-  assert_parsed_expression_is("ceil(1)",
-                              Ceiling::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "cross(1,1)",
-      VectorCross::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arccos(1)", KACos(1_e));
+  assert_parsed_expression_is("acos(1)", KACos(1_e));
+  assert_parsed_expression_is("cos^(-1)(1)", KACos(1_e));
+  assert_parsed_expression_is("arcosh(1)", KArCosH(1_e));
+  assert_parsed_expression_is("arccot(1)", KACot(1_e));
+  assert_parsed_expression_is("arccsc(1)", KACsc(1_e));
+  assert_parsed_expression_is("abs(1)", KAbs(1_e));
+  assert_parsed_expression_is("arg(1)", KArg(1_e));
+  assert_parsed_expression_is("arcsec(1)", KASec(1_e));
+  assert_parsed_expression_is("asin(1)", KASin(1_e));
+  assert_parsed_expression_is("arcsin(1)", KASin(1_e));
+  assert_parsed_expression_is("sin^(-1)(1)", KASin(1_e));
+  assert_parsed_expression_is("arsinh(1)", KArSinH(1_e));
+  assert_parsed_expression_is("arctan(1)", KATan(1_e));
+  assert_parsed_expression_is("atan(1)", KATan(1_e));
+  assert_parsed_expression_is("tan^(-1)(1)", KATan(1_e));
+  assert_parsed_expression_is("artanh(1)", KArTanH(1_e));
+  assert_parsed_expression_is("binomial(2,1)", KBinomial(2_e, 1_e));
+  assert_parsed_expression_is("ceil(1)", KCeil(1_e));
+  assert_parsed_expression_is("cross(1,1)", KCross(1_e, 1_e));
   assert_text_not_parsable("diff(1,2,3)");
   assert_text_not_parsable("diff(0,_s,0)");
-  assert_parsed_expression_is(
-      "diff(1,x,3)",
-      Derivative::Builder(BasedInteger::Builder(1), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "diff(xa,xa,3)",
-      Derivative::Builder(Symbol::Builder("xa", 2), Symbol::Builder("xa", 2),
-                          BasedInteger::Builder(3)));
+  assert_parsed_expression_is("diff(1,x,3)", KDiff("x"_e, 3_e, 1_e, 1_e));
+  assert_parsed_expression_is("diff(xa,xa,3)", KDiff("xa"_e, 3_e, 1_e, "xa"_e));
   assert_parsed_expression_is(
       "diff(xaxaxa,xaxax,1)",
-      Derivative::Builder(Multiplication::Builder(Symbol::Builder("xaxax", 5),
-                                                  Symbol::Builder("a", 1)),
-                          Symbol::Builder("xaxax", 5),
-                          BasedInteger::Builder(1)));
+      KDiff("xaxax"_e, 1_e, 1_e, KMult("xaxax"_e, "a"_e)));
   assert_parsed_expression_is(
       "diff(diff(yb,yb,xa),xa,3)",
-      Derivative::Builder(Derivative::Builder(Symbol::Builder("yb", 2),
-                                              Symbol::Builder("yb", 2),
-                                              Symbol::Builder("xa", 2)),
-                          Symbol::Builder("xa", 2), BasedInteger::Builder(3)));
-  OExpression m0[] = {BasedInteger::Builder(2), Symbol::Builder("t", 1)};
+      KDiff("xa"_e, 3_e, 1_e, KDiff("yb"_e, "xa"_e, 1_e, "yb"_e)));
   assert_parsed_expression_is(
-      "diff([[2,t]],t,4)",
-      Derivative::Builder(BuildMatrix(1, 2, m0), Symbol::Builder("t", 1),
-                          BasedInteger::Builder(4)));
-  assert_parsed_expression_is("dim(1)",
-                              ODimension::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("conj(1)",
-                              Conjugate::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("cot(1)",
-                              Cotangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("det(1)",
-                              Determinant::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "dot(1,1)",
-      VectorDot::Builder(BasedInteger::Builder(1), BasedInteger::Builder(1)));
-  assert_parsed_expression_is("cos(1)",
-                              Cosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "cosh(1)", HyperbolicCosine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("csc(1)",
-                              Cosecant::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("factor(1)",
-                              Factor::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("floor(1)",
-                              Floor::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("frac(1)",
-                              FracPart::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "gcd(1,2,3)", GreatCommonDivisor::Builder({BasedInteger::Builder(1),
-                                                 BasedInteger::Builder(2),
-                                                 BasedInteger::Builder(3)}));
+      "diff([[2,t]],t,4)", KDiff("t"_e, 4_e, 1_e, KMatrix<1, 2>(2_e, "t"_e)));
+  assert_parsed_expression_is("dim(1)", KDim(1_e));
+  assert_parsed_expression_is("conj(1)", KConj(1_e));
+  assert_parsed_expression_is("cot(1)", KCot(1_e));
+  assert_parsed_expression_is("det(1)", KDet(1_e));
+  assert_parsed_expression_is("dot(1,1)", KDot(1_e, 1_e));
+  assert_parsed_expression_is("cos(1)", KCos(1_e));
+  assert_parsed_expression_is("cosh(1)", KCosH(1_e));
+  assert_parsed_expression_is("csc(1)", KCsc(1_e));
+  assert_parsed_expression_is("factor(1)", KFactor(1_e));
+  assert_parsed_expression_is("floor(1)", KFloor(1_e));
+  assert_parsed_expression_is("frac(1)", KFrac(1_e));
+  assert_parsed_expression_is("gcd(1,2,3)", KGCD(1_e, 2_e, 3_e));
   assert_text_not_parsable("gcd(1)");
   assert_text_not_parsable("gcd()");
-  assert_parsed_expression_is("im(1)",
-                              ImaginaryPart::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "int(1,x,2,3)",
-      Integral::Builder(BasedInteger::Builder(1), Symbol::Builder("x", 1),
-                        BasedInteger::Builder(2), BasedInteger::Builder(3)));
+  assert_parsed_expression_is("im(1)", KIm(1_e));
+  assert_parsed_expression_is("int(1,x,2,3)", KIntegral("x"_e, 2_e, 3_e, 1_e));
   assert_text_not_parsable("int(1,2,3,4)");
   assert_text_not_parsable("int(1,_s,3,4)");
-  assert_parsed_expression_is("inverse(1)",
-                              MatrixInverse::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "lcm(1,2,3)", LeastCommonMultiple::Builder({BasedInteger::Builder(1),
-                                                  BasedInteger::Builder(2),
-                                                  BasedInteger::Builder(3)}));
+  assert_parsed_expression_is("inverse(1)", KInverse(1_e));
+  assert_parsed_expression_is("lcm(1,2,3)", KLCM(1_e, 2_e, 3_e));
   assert_text_not_parsable("lcm(1)");
   assert_text_not_parsable("lcm()");
-  assert_parsed_expression_is(  // TODO: is LnUser now
-      "ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("log(1)",
-                              Logarithm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "log(1,2)",
-      Logarithm::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
+  assert_parsed_expression_is("ln(1)", KLnUser(1_e));
+  assert_parsed_expression_is("log(1)", KLog(1_e));
+  assert_parsed_expression_is("log(1,2)", KLogBase(1_e, 2_e));
   {
     Shared::GlobalContext context;
     // A context is passed so that the expression is not parsed as a sequence
     assert_text_not_parsable("og\u0014{2\u0014}(1)", &context);
   }
-  assert_parsed_expression_is("norm(1)",
-                              VectorNorm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),
-                                                  BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "product(1,n,2,3)",
-      Product::Builder(BasedInteger::Builder(1), Symbol::Builder("n", 1),
-                       BasedInteger::Builder(2), BasedInteger::Builder(3)));
+  assert_parsed_expression_is("norm(1)", KNorm(1_e));
+  assert_parsed_expression_is("permute(2,1)", KPermute(2_e, 1_e));
+  assert_parsed_expression_is("product(1,n,2,3)",
+                              KProduct("n"_e, 2_e, 3_e, 1_e));
   assert_text_not_parsable("product(1,2,3,4)");
   assert_text_not_parsable("product(1,_s,3,4)");
-  assert_parsed_expression_is(
-      "quo(1,2)", DivisionQuotient::Builder(BasedInteger::Builder(1),
-                                            BasedInteger::Builder(2)));
+  assert_parsed_expression_is("quo(1,2)", KQuo(1_e, 2_e));
   assert_parsed_expression_is("random()", Poincare::Random::Builder());
   assert_parsed_expression_is(
       "randint(1,2)",
@@ -927,122 +652,54 @@ QUIZ_CASE(poincare_parsing_identifiers) {
       RandintNoRepeat::Builder(BasedInteger::Builder(1),
                                BasedInteger::Builder(10),
                                BasedInteger::Builder(3)));
-  assert_parsed_expression_is("re(1)",
-                              RealPart::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "ref(1)", MatrixRowEchelonForm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "rem(1,2)", DivisionRemainder::Builder(BasedInteger::Builder(1),
-                                             BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "root(1,2)",
-      NthRoot::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "round(1,2)",
-      Round::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is("rref(1)", MatrixReducedRowEchelonForm::Builder(
-                                             BasedInteger::Builder(1)));
-  assert_parsed_expression_is("sec(1)",
-                              Secant::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("sin(1)",
-                              Sine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("sign(1)",
-                              SignFunction::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "sinh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "sum(1,n,2,3)",
-      Sum::Builder(BasedInteger::Builder(1), Symbol::Builder("n", 1),
-                   BasedInteger::Builder(2), BasedInteger::Builder(3)));
+  assert_parsed_expression_is("re(1)", KRe(1_e));
+  assert_parsed_expression_is("ref(1)", KRef(1_e));
+  assert_parsed_expression_is("rem(1,2)", KRem(1_e, 2_e));
+  assert_parsed_expression_is("root(1,2)", KRoot(1_e, 2_e));
+  assert_parsed_expression_is("round(1,2)", KRound(1_e, 2_e));
+  assert_parsed_expression_is("rref(1)", KRref(1_e));
+  assert_parsed_expression_is("sec(1)", KSec(1_e));
+  assert_parsed_expression_is("sin(1)", KSin(1_e));
+  assert_parsed_expression_is("sign(1)", KSign(1_e));
+  assert_parsed_expression_is("sinh(1)", KSinH(1_e));
+  assert_parsed_expression_is("sum(1,n,2,3)", KSum("n"_e, 2_e, 3_e, 1_e));
   assert_text_not_parsable("sum(1,2,3,4)");
   assert_text_not_parsable("sum(1,_s,3,4)");
-  assert_parsed_expression_is("tan(1)",
-                              Tangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "tanh(1)", HyperbolicTangent::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("trace(1)",
-                              MatrixTrace::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "transpose(1)", MatrixTranspose::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("√(1)",
-                              SquareRoot::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("tan(1)", KTan(1_e));
+  assert_parsed_expression_is("tanh(1)", KTanH(1_e));
+  assert_parsed_expression_is("trace(1)", KTrace(1_e));
+  assert_parsed_expression_is("transpose(1)", KTranspose(1_e));
+  assert_parsed_expression_is("√(1)", KSqrt(1_e));
   assert_text_not_parsable("cos(1,2)");
   assert_text_not_parsable("quo()");
   assert_text_not_parsable("log(1,2,3)");
   assert_text_not_parsable("sinh^(-1)(2)");
-  assert_parsed_expression_is(
-      "\u0014dep(x,{})",
-      Dependency::Builder(Symbol::Builder("x", 1), OList::Builder()));
+  assert_parsed_expression_is("\u0014dep(x,{})", KDep("x"_e, KDepList()));
   assert_text_not_parsable("\u0014cos(x)");
   assert_text_not_parsable("\u0014cod(x)");
 
   // Powered reserved functions (integer powers other than -1)
-  assert_parsed_expression_is(
-      "cos^(0)(1)", Power::Builder(Cosine::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(0)));
-  assert_parsed_expression_is(
-      "sin^(1)(1)", Power::Builder(Sine::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "tan^(2)(1)", Power::Builder(Tangent::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "arccos^(3)(1)",
-      Power::Builder(ArcCosine::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "arcsin^(4)(1)",
-      Power::Builder(ArcSine::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(4)));
-  assert_parsed_expression_is(
-      "arctan^(5)(1)",
-      Power::Builder(ArcTangent::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(5)));
-  assert_parsed_expression_is(
-      "cot^(6)(1)", Power::Builder(Cotangent::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(6)));
-  assert_parsed_expression_is(
-      "sec^(7)(1)", Power::Builder(Secant::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(7)));
-  assert_parsed_expression_is(
-      "csc^(8)(1)", Power::Builder(Cosecant::Builder(BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(8)));
-  assert_parsed_expression_is(
-      "arccot^(9)(1)",
-      Power::Builder(ArcCotangent::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(9)));
-  assert_parsed_expression_is(
-      "arcsec^(10)(1)",
-      Power::Builder(ArcSecant::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(10)));
-  assert_parsed_expression_is(
-      "arccsc^(11)(1)",
-      Power::Builder(ArcCosecant::Builder(BasedInteger::Builder(1)),
-                     BasedInteger::Builder(11)));
-  assert_parsed_expression_is(
-      "cosh^(-2)(1)",
-      Power::Builder(HyperbolicCosine::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "sinh^(-3)(1)",
-      Power::Builder(HyperbolicSine::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "tanh^(-4)(1)",
-      Power::Builder(HyperbolicTangent::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(4))));
-  assert_parsed_expression_is(
-      "arsinh^(-5)(1)",
-      Power::Builder(HyperbolicArcSine::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(5))));
-  assert_parsed_expression_is(
-      "arcosh^(-6)(1)",
-      Power::Builder(HyperbolicArcCosine::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(6))));
-  assert_parsed_expression_is(
-      "artanh^(-7)(1)",
-      Power::Builder(HyperbolicArcTangent::Builder(BasedInteger::Builder(1)),
-                     Opposite::Builder(BasedInteger::Builder(7))));
+  assert_parsed_expression_is("cos^(0)(1)", KPow(KCos(1_e), 0_e));
+  assert_parsed_expression_is("sin^(1)(1)", KPow(KSin(1_e), 1_e));
+  assert_parsed_expression_is("tan^(2)(1)", KPow(KTan(1_e), 2_e));
+  assert_parsed_expression_is("arccos^(3)(1)", KPow(KACos(1_e), 3_e));
+  assert_parsed_expression_is("arcsin^(4)(1)", KPow(KASin(1_e), 4_e));
+  assert_parsed_expression_is("arctan^(5)(1)", KPow(KATan(1_e), 5_e));
+  assert_parsed_expression_is("cot^(6)(1)", KPow(KCot(1_e), 6_e));
+  assert_parsed_expression_is("sec^(7)(1)", KPow(KSec(1_e), 7_e));
+  assert_parsed_expression_is("csc^(8)(1)", KPow(KCsc(1_e), 8_e));
+  assert_parsed_expression_is("arccot^(9)(1)", KPow(KACot(1_e), 9_e));
+  assert_parsed_expression_is("arcsec^(10)(1)", KPow(KASec(1_e), 10_e));
+  assert_parsed_expression_is("arccsc^(11)(1)", KPow(KACsc(1_e), 11_e));
+  assert_parsed_expression_is("cosh^(-2)(1)", KPow(KCosH(1_e), KOpposite(2_e)));
+  assert_parsed_expression_is("sinh^(-3)(1)", KPow(KSinH(1_e), KOpposite(3_e)));
+  assert_parsed_expression_is("tanh^(-4)(1)", KPow(KTanH(1_e), KOpposite(4_e)));
+  assert_parsed_expression_is("arsinh^(-5)(1)",
+                              KPow(KArSinH(1_e), KOpposite(5_e)));
+  assert_parsed_expression_is("arcosh^(-6)(1)",
+                              KPow(KArCosH(1_e), KOpposite(6_e)));
+  assert_parsed_expression_is("artanh^(-7)(1)",
+                              KPow(KArTanH(1_e), KOpposite(7_e)));
   assert_text_not_parsable("ln^(2)(2)");
 
   // Custom identifiers with storage
@@ -1056,36 +713,19 @@ QUIZ_CASE(poincare_parsing_identifiers) {
       "foobar", "func", "", 0);
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "a3b", "exp", "", 0);
-  assert_parsed_expression_is(
-      "xyz",
-      Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1),
-                              Symbol::Builder("z", 1)));
-  assert_parsed_expression_is(
-      "xy123z", Multiplication::Builder(Symbol::Builder("x", 1),
-                                        Symbol::Builder("y123", 4),
-                                        Symbol::Builder("z", 1)));
-  assert_parsed_expression_is(
-      "3→xyz",
-      OStore::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
-  assert_parsed_expression_is("ab", Symbol::Builder("ab", 2));
-  assert_parsed_expression_is(
-      "ab3", Multiplication::Builder(Symbol::Builder("a", 1),
-                                     Symbol::Builder("b3", 2)));
-  assert_parsed_expression_is("a3b", Symbol::Builder("a3b", 3));
-  assert_parsed_expression_is(
-      "aacos(x)",
-      Multiplication::Builder(Symbol::Builder("a", 1),
-                              ArcCosine::Builder(Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "bacos(x)", Function::Builder("bacos", 5, Symbol::Builder("x", 1)));
-  assert_parsed_expression_is(
-      "azfoobar(x)",
-      Multiplication::Builder(
-          Symbol::Builder("a", 1), Symbol::Builder("z", 1),
-          Function::Builder("foobar", 6, Symbol::Builder("x", 1))));
+  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e));
+  assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e));
+  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e));
+  assert_parsed_expression_is("ab", "ab"_e);
+  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e));
+  assert_parsed_expression_is("a3b", "a3b"_e);
+  assert_parsed_expression_is("aacos(x)", KMult("a"_e, KACos("x"_e)));
+  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e));
+  assert_parsed_expression_is("azfoobar(x)",
+                              KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
-
+#if 0
 QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   OUnit apostropheUnit = OUnit::Builder(
       OUnit::k_angleRepresentatives + OUnit::k_arcMinuteRepresentativeIndex,
@@ -1100,75 +740,39 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
 
   // No symbols defined
   assert_parsed_expression_is(
-      "f'(x)",
-      Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
-                              Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f'(x)", KMult("f"_e, apostropheUnit, KParentheses("x"_e)));
+  assert_parsed_expression_is("f\"(x)",
+                              KMult("f"_e, quoteUnit, KParentheses("x"_e)));
   assert_parsed_expression_is(
-      "f\"(x)",
-      Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit,
-                              Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f''(x)", KMult("f"_e, apostropheUnit, apostropheUnit.clone(),
+                      KParentheses("x"_e)));
   assert_parsed_expression_is(
-      "f''(x)",
-      Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
-                              apostropheUnit.clone(),
-                              Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f^(1)(x)", KMult(KPow("f"_e, KParentheses(1_e)), KParentheses("x"_e)));
   assert_parsed_expression_is(
-      "f^(1)(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1),
-                         Parenthesis::Builder(BasedInteger::Builder(1))),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f^(2)(x)", KMult(KPow("f"_e, KParentheses(2_e)), KParentheses("x"_e)));
   assert_parsed_expression_is(
-      "f^(2)(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1),
-                         Parenthesis::Builder(BasedInteger::Builder(2))),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f^(3)(x)", KMult(KPow("f"_e, KParentheses(3_e)), KParentheses("x"_e)));
+  assert_parsed_expression_is("f^1(x)",
+                              KMult(KPow("f"_e, 1_e), KParentheses("x"_e)));
+  assert_parsed_expression_is("f^2(x)",
+                              KMult(KPow("f"_e, 2_e), KParentheses("x"_e)));
+  assert_parsed_expression_is("f^3(x)",
+                              KMult(KPow("f"_e, 3_e), KParentheses("x"_e)));
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
   assert_parsed_expression_is(
-      "f^(3)(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1),
-                         Parenthesis::Builder(BasedInteger::Builder(3))),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "f^1(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(1)),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "f^2(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(2)),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "f^3(x)",
-      Multiplication::Builder(
-          Power::Builder(Symbol::Builder("f", 1), BasedInteger::Builder(3)),
-          Parenthesis::Builder(Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
-  assert_parsed_expression_is(
-      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
-  assert_parsed_expression_is(
-      "f''", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
-                                     apostropheUnit.clone()));
-  assert_parsed_expression_is(
-      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(BasedInteger::Builder(2))));
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
 
   // Function defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_parsed_expression_is(
-      "f'(x)",
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(1)));
+      "f'(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
+                                   Symbol::SystemSymbol(), "x"_e, 1_e));
   assert_parsed_expression_is(
-      "f\"(x)",
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(2)));
+      "f\"(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
+                                    Symbol::SystemSymbol(), "x"_e, 2_e));
   assert_parse_to_same_expression("f'(x)", "f^(1)(x)");
   assert_parse_to_same_expression("f\"(x)", "f^(2)(x)");
   assert_parse_to_same_expression("f''(x)", "f^(2)(x)");
@@ -1176,48 +780,28 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)");
   assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)");
   assert_parsed_expression_is(
-      "f^(3)(x)",
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(3)));
+      "f^(3)(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
+                                      Symbol::SystemSymbol(), "x"_e, 3_e));
   assert_parsed_expression_is(
-      "f^(3/2)(x)", Multiplication::Builder(
-                        Power::Builder(Symbol::Builder("f", 1),
-                                       Parenthesis::Builder(Division::Builder(
-                                           BasedInteger::Builder(3),
-                                           BasedInteger::Builder(2)))),
-                        Parenthesis::Builder(Symbol::Builder("x", 1))));
+      "f^(3/2)(x)",
+      KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)));
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
   assert_parsed_expression_is(
-      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
-  assert_parsed_expression_is(
-      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
-  assert_parsed_expression_is(
-      "f''", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
-                                     apostropheUnit.clone()));
-  assert_parsed_expression_is(
-      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(BasedInteger::Builder(2))));
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // OExpression defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "exp", "", 0);
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
   assert_parsed_expression_is(
-      "f'", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit));
-  assert_parsed_expression_is(
-      "f\"", Multiplication::Builder(Symbol::Builder("f", 1), quoteUnit));
-  assert_parsed_expression_is(
-      "f''", Multiplication::Builder(Symbol::Builder("f", 1), apostropheUnit,
-                                     apostropheUnit.clone()));
-  assert_parsed_expression_is(
-      "f^(1)", Power::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(BasedInteger::Builder(1))));
-  assert_parsed_expression_is(
-      "f^(2)", Power::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "f^(3)", Power::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(BasedInteger::Builder(3))));
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)));
+  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
+  assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   assert_text_not_parsable(
@@ -1226,45 +810,19 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
 
 QUIZ_CASE(poincare_parsing_parse_store) {
   Expression ton = Expression::Parse("_t", nullptr);
-  assert_parsed_expression_is("1→a", OStore::Builder(BasedInteger::Builder(1),
-                                                     Symbol::Builder("a", 1)));
-  assert_parsed_expression_is("t→a",
-                              OStore::Builder(ton, Symbol::Builder("a", 1)));
-  assert_parsed_expression_is("1→g", OStore::Builder(BasedInteger::Builder(1),
-                                                     Symbol::Builder("g", 1)));
-  assert_parsed_expression_is(
-      "1→f(x)",
-      OStore::Builder(BasedInteger::Builder(1),
-                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "x→f(x)",
-      OStore::Builder(Symbol::Builder("x", 1),
-                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "n→f(x)",
-      OStore::Builder(Symbol::Builder("n", 1),
-                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "ab→f(ab)",
-      OStore::Builder(Symbol::Builder("ab", 2),
-                      Function::Builder("f", 1, Symbol::Builder("ab", 2))));
-  assert_parsed_expression_is(
-      "ab→f(x)",
-      OStore::Builder(Multiplication::Builder(Symbol::Builder("a", 1),
-                                              Symbol::Builder("b", 1)),
-                      Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "t→f(t)",
-      OStore::Builder(Symbol::Builder("t", 1),
-                      Function::Builder("f", 1, Symbol::Builder("t", 1))));
-  assert_parsed_expression_is(
-      "t→f(x)",
-      OStore::Builder(ton, Function::Builder("f", 1, Symbol::Builder("x", 1))));
-  OExpression m0[] = {Symbol::Builder('x')};
-  assert_parsed_expression_is(
-      "[[x]]→f(x)",
-      OStore::Builder(BuildMatrix(1, 1, m0),
-                      Function::Builder("f", 1, Symbol::Builder('x'))));
+  assert_parsed_expression_is("1→a", KStore(1_e, "a"_e));
+  assert_parsed_expression_is("t→a", KStore(ton, "a"_e));
+  assert_parsed_expression_is("1→g", KStore(1_e, "g"_e));
+  assert_parsed_expression_is("1→f(x)", KStore(1_e, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("x→f(x)", KStore("x"_e, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("n→f(x)", KStore("n"_e, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("ab→f(ab)", KStore("ab"_e, KFun<"f">("ab"_e)));
+  assert_parsed_expression_is("ab→f(x)",
+                              KStore(KMult("a"_e, "b"_e), KFun<"f">("x"_e)));
+  assert_parsed_expression_is("t→f(t)", KStore("t"_e, KFun<"f">("t"_e)));
+  assert_parsed_expression_is("t→f(x)", KStore(ton, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("[[x]]→f(x)",
+                              KStore(KMatrix<1, 1>("x"_e), KFun<"f">("x"_e)));
   assert_text_not_parsable("a→b→c");
   assert_text_not_parsable("0→0→c");
   assert_text_not_parsable("1→");
@@ -1284,21 +842,13 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Expression degree = Expression::Parse("_°", nullptr);
   Expression minute = Expression::Parse("_'", nullptr);
   Expression radian = Expression::Parse("_rad", nullptr);
+  assert_parsed_expression_is("3t→kg",
+                              UnitConvert::Builder(KMult(3_e, ton), kilogram));
   assert_parsed_expression_is(
-      "3t→kg",
-      UnitConvert::Builder(
-          Multiplication::Builder(BasedInteger::Builder(3), ton), kilogram));
+      "3t→kg^2", UnitConvert::Builder(KMult(3_e, ton), KPow(kilogram, 2_e)));
   assert_parsed_expression_is(
-      "3t→kg^2", UnitConvert::Builder(
-                     Multiplication::Builder(BasedInteger::Builder(3), ton),
-                     Power::Builder(kilogram, BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "3°4'→rad",
-      UnitConvert::Builder(
-          Addition::Builder(
-              Multiplication::Builder(BasedInteger::Builder(3), degree),
-              Multiplication::Builder(BasedInteger::Builder(4), minute)),
-          radian));
+      "3°4'→rad", UnitConvert::Builder(
+                      KAdd(KMult(3_e, degree), KMult(4_e, minute)), radian));
   assert_text_not_parsable("1→_m");
   assert_text_not_parsable("2t→3kg");
   assert_text_not_parsable("1→2");
@@ -1325,262 +875,91 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
+#endif
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable(".1.2");
   assert_text_not_parsable("1 2");
-  assert_parsed_expression_is("1x",
-                              Multiplication::Builder(BasedInteger::Builder(1),
-                                                      Symbol::Builder("x", 1)));
-  assert_parsed_expression_is(
-      "1Ans", Multiplication::Builder(BasedInteger::Builder(1),
-                                      Symbol::Builder("Ans", 3)));
+  assert_parsed_expression_is("1x", KMult(1_e, "x"_e));
+  assert_parsed_expression_is("1Ans", KMult(1_e, "Ans"_e));
   // Special identifiers can be implicitly multiplied from the left
-  assert_parsed_expression_is(
-      "Ans5", Multiplication::Builder(Symbol::Builder("Ans", 3),
-                                      BasedInteger::Builder(5)));
+  assert_parsed_expression_is("Ans5", KMult("Ans"_e, 5_e));
   // Fallback from binary number
-  assert_parsed_expression_is(
-      "0b2", Multiplication::Builder(BasedInteger::Builder(0),
-                                     Symbol::Builder("b2", 2)));
-  assert_parsed_expression_is(
-      "0xG",
-      Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("x", 1),
-                              Symbol::Builder("G", 1)));
-  assert_parsed_expression_is(
-      "1x+2",
-      Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),
-                                                Symbol::Builder("x", 1)),
-                        BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1π",
-      Multiplication::Builder(BasedInteger::Builder(1), Constant::PiBuilder()));
-  assert_parsed_expression_is(
-      "1x-2",
-      Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),
-                                                   Symbol::Builder("x", 1)),
-                           BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "-1x", Opposite::Builder(Multiplication::Builder(
-                 BasedInteger::Builder(1), Symbol::Builder("x", 1))));
-  assert_parsed_expression_is("2×1x",
-                              Multiplication::Builder(BasedInteger::Builder(2),
-                                                      BasedInteger::Builder(1),
-                                                      Symbol::Builder("x", 1)));
-  assert_parsed_expression_is(
-      "2^1x", Multiplication::Builder(Power::Builder(BasedInteger::Builder(2),
-                                                     BasedInteger::Builder(1)),
-                                      Symbol::Builder("x", 1)));
-  assert_parsed_expression_is(
-      "1x^2",
-      Multiplication::Builder(
-          BasedInteger::Builder(1),
-          Power::Builder(Symbol::Builder("x", 1), BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "2/1x",
-      Division::Builder(BasedInteger::Builder(2),
-                        Multiplication::Builder(BasedInteger::Builder(1),
-                                                Symbol::Builder("x", 1))));
-  assert_parsed_expression_is(
-      "1x/2",
-      Division::Builder(Multiplication::Builder(BasedInteger::Builder(1),
-                                                Symbol::Builder("x", 1)),
-                        BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "(1)2",
-      Multiplication::Builder(Parenthesis::Builder(BasedInteger::Builder(1)),
-                              BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1(2)",
-      Multiplication::Builder(BasedInteger::Builder(1),
-                              Parenthesis::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "sin(1)2",
-      Multiplication::Builder(Sine::Builder(BasedInteger::Builder(1)),
-                              BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "1cos(2)",
-      Multiplication::Builder(BasedInteger::Builder(1),
-                              Cosine::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1!2",
-      Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),
-                              BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "2e^(3)",
-      Multiplication::Builder(
-          BasedInteger::Builder(2),
-          Power::Builder(Constant::ExponentialEBuilder(),
-                         Parenthesis::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "\u00122^3\u00133",
-      Multiplication::Builder(
-          Power::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3)),
-          BasedInteger::Builder(3)));
-  OExpression m1[] = {BasedInteger::Builder(1)};
-  OMatrix M1 = BuildMatrix(1, 1, m1);
-  OExpression m2[] = {BasedInteger::Builder(2)};
-  OMatrix M2 = BuildMatrix(1, 1, m2);
-  assert_parsed_expression_is("[[1]][[2]]", Multiplication::Builder(M1, M2));
-  OExpression l1[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
-  assert_parsed_expression_is(
-      "2{1,2}",
-      Multiplication::Builder(BasedInteger::Builder(2), BuildList(l1)));
-  OExpression l2[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
-  assert_parsed_expression_is(
-      "{1,2}2",
-      Multiplication::Builder(BuildList(l2), BasedInteger::Builder(2)));
+  assert_parsed_expression_is("0b2", KMult(0_e, "b2"_e));
+  assert_parsed_expression_is("0xG", KMult(0_e, "x"_e, "G"_e));
+  assert_parsed_expression_is("1x+2", KAdd(KMult(1_e, "x"_e), 2_e));
+  assert_parsed_expression_is("1π", KMult(1_e, π_e));
+  assert_parsed_expression_is("1x-2", KSub(KMult(1_e, "x"_e), 2_e));
+  assert_parsed_expression_is("-1x", KOpposite(KMult(1_e, "x"_e)));
+  assert_parsed_expression_is("2×1x", KMult(2_e, 1_e, "x"_e));
+  assert_parsed_expression_is("2^1x", KMult(KPow(2_e, 1_e), "x"_e));
+  assert_parsed_expression_is("1x^2", KMult(1_e, KPow("x"_e, 2_e)));
+  assert_parsed_expression_is("2/1x", KDiv(2_e, KMult(1_e, "x"_e)));
+  assert_parsed_expression_is("1x/2", KDiv(KMult(1_e, "x"_e), 2_e));
+  assert_parsed_expression_is("(1)2", KMult(KParentheses(1_e), 2_e));
+  assert_parsed_expression_is("1(2)", KMult(1_e, KParentheses(2_e)));
+  assert_parsed_expression_is("sin(1)2", KMult(KSin(1_e), 2_e));
+  assert_parsed_expression_is("1cos(2)", KMult(1_e, KCos(2_e)));
+  assert_parsed_expression_is("1!2", KMult(KFact(1_e), 2_e));
+  assert_parsed_expression_is("2e^(3)",
+                              KMult(2_e, KPow(e_e, KParentheses(3_e))));
+  assert_parsed_expression_is("\u00122^3\u00133", KMult(KPow(2_e, 3_e), 3_e));
+  KTree M1 = KMatrix<1, 1>(1_e);
+  KTree M2 = KMatrix<1, 1>(2_e);
+  assert_parsed_expression_is("[[1]][[2]]", KMult(M1, M2));
+  assert_parsed_expression_is("2{1,2}", KMult(2_e, KList(1_e, 2_e)));
+  assert_parsed_expression_is("{1,2}2", KMult(KList(1_e, 2_e), 2_e));
 }
 
 QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
-  assert_parsed_expression_is(
-      "1+-2", Addition::Builder(BasedInteger::Builder(1),
-                                Opposite::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1--2",
-      Subtraction::Builder(BasedInteger::Builder(1),
-                           Opposite::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "1+conj(-2)",
-      Addition::Builder(
-          BasedInteger::Builder(1),
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
-  assert_parsed_expression_is(
-      "1-conj(-2)",
-      Subtraction::Builder(
-          BasedInteger::Builder(1),
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
-  assert_parsed_expression_is(
-      "3conj(1+i)",
-      Multiplication::Builder(
-          BasedInteger::Builder(3),
-          Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1),
-                                               Constant::ComplexIBuilder()))));
-  assert_parsed_expression_is(
-      "2×-3",
-      Multiplication::Builder(BasedInteger::Builder(2),
-                              Opposite::Builder(BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "--2", Opposite::Builder(Opposite::Builder(BasedInteger::Builder(2))));
-  assert_parsed_expression_is(
-      "\u00122/3\u0013^2",
-      Power::Builder(Parenthesis::Builder(Division::Builder(
-                         BasedInteger::Builder(2), BasedInteger::Builder(3))),
-                     BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "log(1+-2)", Logarithm::Builder(Addition::Builder(
-                       BasedInteger::Builder(1),
-                       Opposite::Builder(BasedInteger::Builder(2)))));
+  assert_parsed_expression_is("1+-2", KAdd(1_e, KOpposite(2_e)));
+  assert_parsed_expression_is("1--2", KSub(1_e, KOpposite(2_e)));
+  assert_parsed_expression_is("1+conj(-2)", KAdd(1_e, KConj(KOpposite(2_e))));
+  assert_parsed_expression_is("1-conj(-2)", KSub(1_e, KConj(KOpposite(2_e))));
+  assert_parsed_expression_is("3conj(1+i)", KMult(3_e, KConj(KAdd(1_e, i_e))));
+  assert_parsed_expression_is("2×-3", KMult(2_e, KOpposite(3_e)));
+  assert_parsed_expression_is("--2", KOpposite(KOpposite(2_e)));
+  assert_parsed_expression_is("\u00122/3\u0013^2",
+                              KPow(KParentheses(KDiv(2_e, 3_e)), 2_e));
+  assert_parsed_expression_is("log(1+-2)", KLog(KAdd(1_e, KOpposite(2_e))));
 
   // Conjugate expressions
-  assert_parsed_expression_is(
-      "conj(-3)+2",
-      Addition::Builder(
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
-          BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "2+conj(-3)",
-      Addition::Builder(
-          BasedInteger::Builder(2),
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "conj(-3)×2",
-      Multiplication::Builder(
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
-          BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "2×conj(-3)",
-      Multiplication::Builder(
-          BasedInteger::Builder(2),
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "conj(-3)-2",
-      Subtraction::Builder(
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))),
-          BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "2-conj(-3)",
-      Subtraction::Builder(
-          BasedInteger::Builder(2),
-          Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "conj(2+3)^2",
-      Power::Builder(Conjugate::Builder(Addition::Builder(
-                         BasedInteger::Builder(2), BasedInteger::Builder(3))),
-                     BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "-conj(2+3)", Opposite::Builder(Conjugate::Builder(Addition::Builder(
-                        BasedInteger::Builder(2), BasedInteger::Builder(3)))));
-  assert_parsed_expression_is(
-      "conj(2+3)!", Factorial::Builder(Conjugate::Builder(Addition::Builder(
-                        BasedInteger::Builder(2), BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("conj(-3)+2", KAdd(KConj(KOpposite(3_e)), 2_e));
+  assert_parsed_expression_is("2+conj(-3)", KAdd(2_e, KConj(KOpposite(3_e))));
+  assert_parsed_expression_is("conj(-3)×2", KMult(KConj(KOpposite(3_e)), 2_e));
+  assert_parsed_expression_is("2×conj(-3)", KMult(2_e, KConj(KOpposite(3_e))));
+  assert_parsed_expression_is("conj(-3)-2", KSub(KConj(KOpposite(3_e)), 2_e));
+  assert_parsed_expression_is("2-conj(-3)", KSub(2_e, KConj(KOpposite(3_e))));
+  assert_parsed_expression_is("conj(2+3)^2", KPow(KConj(KAdd(2_e, 3_e)), 2_e));
+  assert_parsed_expression_is("-conj(2+3)", KOpposite(KConj(KAdd(2_e, 3_e))));
+  assert_parsed_expression_is("conj(2+3)!", KFact(KConj(KAdd(2_e, 3_e))));
 }
 
 QUIZ_CASE(poincare_parsing_mixed_fraction) {
-  assert_parsed_expression_is(
-      "1 2/3",
-      MixedFraction::Builder(BasedInteger::Builder(1),
-                             Division::Builder(BasedInteger::Builder(2),
-                                               BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1\u0012\u00122\u0013/\u00123\u0013\u0013",
-      MixedFraction::Builder(BasedInteger::Builder(1),
-                             Division::Builder(BasedInteger::Builder(2),
-                                               BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1\u00122/3\u00132",
-      Multiplication::Builder(
-          MixedFraction::Builder(BasedInteger::Builder(1),
-                                 Division::Builder(BasedInteger::Builder(2),
-                                                   BasedInteger::Builder(3))),
-          BasedInteger::Builder(2)));
+  assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
+  assert_parsed_expression_is("1\u0012\u00122\u0013/\u00123\u0013\u0013",
+                              KMixedFraction(1_e, KDiv(2_e, 3_e)));
+  assert_parsed_expression_is("1\u00122/3\u00132",
+                              KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), 2_e));
   assert_parsed_expression_is(
       "1\u00122/3\u0013\u00122/3\u0013",
-      Multiplication::Builder(
-          MixedFraction::Builder(BasedInteger::Builder(1),
-                                 Division::Builder(BasedInteger::Builder(2),
-                                                   BasedInteger::Builder(3))),
-          Division::Builder(BasedInteger::Builder(2),
-                            BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1\u0012e/3\u0013",
-      Multiplication::Builder(BasedInteger::Builder(1),
-                              Division::Builder(Constant::ExponentialEBuilder(),
-                                                BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "1\u00122.5/3\u0013",
-      Multiplication::Builder(
-          BasedInteger::Builder(1),
-          Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
+      KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), KDiv(2_e, 3_e)));
+  assert_parsed_expression_is("1\u0012e/3\u0013", KMult(1_e, KDiv(e_e, 3_e)));
+  assert_parsed_expression_is("1\u00122.5/3\u0013",
+                              KMult(1_e, KDiv(2.5_e, 3_e)));
 }
 
 QUIZ_CASE(poincare_parsing_function_assignment) {
   assert_parsed_expression_is(
       "f(x)=xy",
-      Comparison::Builder(Multiplication::Builder(
-                              Symbol::Builder("f", 1),
-                              Parenthesis::Builder(Symbol::Builder("x", 1))),
-                          ComparisonNode::OperatorType::Equal,
-                          Multiplication::Builder(Symbol::Builder("x", 1),
-                                                  Symbol::Builder("y", 1))));
+      KEqual(KMult("f"_e, KParentheses("x"_e)), KMult("x"_e, "y"_e)));
   assert_parsed_expression_is(
-      "f(x)=xy",
-      Comparison::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
-                          ComparisonNode::OperatorType::Equal,
-                          Multiplication::Builder(Symbol::Builder("x", 1),
-                                                  Symbol::Builder("y", 1))),
-      true);
+      "f(x)=xy", KEqual(KFun<"f">("x"_e), KMult("x"_e, "y"_e)), true);
 
   /* Ensure y=ax is not understood as "y"="ax" but "y"="a"*"x" when parsing for
    * assignment. (The "parsing for assignment" should apply only to left
    * handside of the comparison). */
-  assert_parsed_expression_is(
-      "y=ax",
-      Comparison::Builder(Symbol::Builder("y", 1),
-                          ComparisonNode::OperatorType::Equal,
-                          Multiplication::Builder(Symbol::Builder("a", 1),
-                                                  Symbol::Builder("x", 1))),
-      true);
+  assert_parsed_expression_is("y=ax", KEqual("y"_e, KMult("a"_e, "x"_e)), true);
 
   // Without assignment "f(x)=4=3" is "Comparison(f*(x), equal, 4, equal, 3)"
   Comparison comparison = Comparison::Builder(
@@ -1611,27 +990,12 @@ QUIZ_CASE(poincare_parsing_east_arrows) {
   assert_text_not_parsable("1↘2%*10");
   assert_text_not_parsable("1↗10*2%");
   assert_text_not_parsable("1↘10*2%");
+  assert_parsed_expression_is("1↗5%", KPercentAddition(1_e, 5_e));
+  assert_parsed_expression_is("1↘5%", KPercentAddition(1_e, KOpposite(5_e)));
+  assert_parsed_expression_is("2+1↗5%+4",
+                              KAdd(KPercentAddition(KAdd(2_e, 1_e), 5_e), 4_e));
   assert_parsed_expression_is(
-      "1↗5%", PercentAddition::Builder(BasedInteger::Builder(1),
-                                       BasedInteger::Builder(5)));
-  assert_parsed_expression_is(
-      "1↘5%",
-      PercentAddition::Builder(BasedInteger::Builder(1),
-                               Opposite::Builder(BasedInteger::Builder(5))));
-  assert_parsed_expression_is(
-      "2+1↗5%+4",
-      Addition::Builder(
-          PercentAddition::Builder(Addition::Builder(BasedInteger::Builder(2),
-                                                     BasedInteger::Builder(1)),
-                                   BasedInteger::Builder(5)),
-          BasedInteger::Builder(4)));
-  assert_parsed_expression_is(
-      "2+1↘5%+4",
-      Addition::Builder(
-          PercentAddition::Builder(Addition::Builder(BasedInteger::Builder(2),
-                                                     BasedInteger::Builder(1)),
-                                   Opposite::Builder(BasedInteger::Builder(5))),
-          BasedInteger::Builder(4)));
+      "2+1↘5%+4", KAdd(KPercentAddition(KAdd(2_e, 1_e), KOpposite(5_e)), 4_e));
 }
 
 QUIZ_CASE(poincare_parsing_logic) {
@@ -1715,15 +1079,8 @@ QUIZ_CASE(poincare_parsing_logic) {
 }
 
 QUIZ_CASE(poincare_parsing_points) {
-  assert_parsed_expression_is(
-      "(0,1)",
-      OPoint::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)));
-  assert_parsed_expression_is(
-      "(5,sin(3))", OPoint::Builder(BasedInteger::Builder(5),
-                                    Sine::Builder(BasedInteger::Builder(3))));
-  assert_parsed_expression_is(
-      "(0,1)cos(3)",
-      Multiplication::Builder(
-          OPoint::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)),
-          Cosine::Builder(BasedInteger::Builder(3))));
+  assert_parsed_expression_is("(0,1)", KPoint(0_e, 1_e));
+  assert_parsed_expression_is("(5,sin(3))", KPoint(5_e, KSin(3_e)));
+  assert_parsed_expression_is("(0,1)cos(3)",
+                              KMult(KPoint(0_e, 1_e), KCos(3_e)));
 }

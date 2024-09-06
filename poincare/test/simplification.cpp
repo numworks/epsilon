@@ -822,6 +822,26 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
+
+  // Decomposition
+  simplifies_to("123_m", "123×_m",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("1241_yd", "1241×_yd",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("1241_in", "34×_yd+1×_ft+5×_in",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  // TODO: Should be only 2_in (same issue with 102026_in input).
+  simplifies_to("102038_in-1_ft", "1×_mi+1074×_yd+2.0000000000073×_in",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("π_year",
+                "3×_year+1×_month+21×_day+6×_h+42×_min+4.3249250054359×_s",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("100.125_gon", "90×_°+6×_'+45×_\"",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("105454.5_oz", "3×_shtn+590×_lb+14.5×_oz",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("232.8_qt", "58×_gal+1×_pt+1.2×_cup",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

@@ -33,15 +33,13 @@ void assert_layout_is_not_parsed(Layout l) {
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 
-// TODO_PCJ this parses correctly in pcj and should not
 QUIZ_CASE(poincare_layout_to_expression_unparsable) {
-#if 0
   {
     /*   d     |
      * -----(x)|
      * d 1+x   |1+x=3
      */
-    Layout l = KRackL(KDiffL("1+x"_l, "3"_l, "x"_l));
+    Layout l = KRackL(KDiffL("1+x"_l, "3"_l, "1"_l, "x"_l));
     assert_layout_is_not_parsed(l);
   }
   {
@@ -52,7 +50,6 @@ QUIZ_CASE(poincare_layout_to_expression_unparsable) {
     Layout l = KRackL(KNthDiffL("1+x"_l, "3"_l, "2"_l, "x"_l));
     assert_layout_is_not_parsed(l);
   }
-#endif
 }
 
 void assert_parsed_layout_is(Layout l, Poincare::OExpression r) {

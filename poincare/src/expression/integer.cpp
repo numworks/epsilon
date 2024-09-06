@@ -613,11 +613,6 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
 IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
                                    const IntegerHandler& b,
                                    WorkingBuffer* workingBuffer) {
-#if 0
-  if (a.isOverflow() || b.isOverflow()) {
-    return Integer::Overflow(false);
-  }
-#endif
   // TODO Knuth modified like in upy to avoid divisions
   IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);

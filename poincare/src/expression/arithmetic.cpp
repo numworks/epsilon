@@ -23,7 +23,7 @@ OMG::Troolean IsInteger(const Tree* e) {
     return OMG::Troolean::False;
   }
   if (!e->isRational()) {
-    // TODO_PCJ: in old poincare we approximated and checked it was real and int
+    // TODO: in old poincare we approximated and checked it was real and int
     return OMG::Troolean::Unknown;
   }
   return OMG::BoolToTroolean(e->isInteger());

@@ -365,7 +365,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
 
   // Add Parentheses if necessary
   if (parentPriority <= OperatorPriority(type) &&
-      !(type.isPoint() || type.isList())) {
+      !(type.isPoint() || type.isList() || type.isDepList())) {
     TreeRef parenthesis = KParenthesesL(KRackL())->cloneTree();
     NAry::AddChild(layoutParent, parenthesis);
     TreeRef rack = parenthesis->child(0);

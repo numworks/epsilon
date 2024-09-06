@@ -46,13 +46,13 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case Type::Mult:
       return 3;
     case Type::PercentAddition:
+    case Type::MixedFraction:
       return 4;
     case Type::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case Type::Sub:
       return 5;
     case Type::Add:
-    case Type::MixedFraction:
       return 6;
 
     case Type::Equal:

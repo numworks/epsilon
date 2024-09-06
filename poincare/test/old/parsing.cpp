@@ -4,6 +4,7 @@
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/unit_k_units.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -411,131 +412,68 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_tokenizes_as_unit("_A");
 
   // Can parse implicit multiplication with units
-  Expression kilometer = Expression::Parse("_km", nullptr);
-  Expression second = Expression::Parse("_s", nullptr);
-  assert_parsed_expression_is(
-      "_kmπ", Multiplication::Builder(kilometer, Constant::PiBuilder()));
-  assert_parsed_expression_is(
-      "π_km", Multiplication::Builder(Constant::PiBuilder(), kilometer));
+  assert_parsed_expression_is("_kmπ", KMult(KUnits::kilometer, π_e));
+  assert_parsed_expression_is("π_km", KMult(π_e, KUnits::kilometer));
   assert_parsed_expression_is("_s_km",
-                              Multiplication::Builder(second, kilometer));
-  assert_parsed_expression_is(
-      "3_s", Multiplication::Builder(BasedInteger::Builder(3), second));
+                              KMult(KUnits::second, KUnits::kilometer));
+  assert_parsed_expression_is("3_s", KMult(3_e, KUnits::second));
 
   // "l" is alias for "L"
-  Expression liter = Expression::Parse("_L", nullptr);
-  assert_parsed_expression_is("l", liter);
-  assert_parsed_expression_is("_l", liter);
+  assert_parsed_expression_is("l", KUnits::liter);
+  assert_parsed_expression_is("_l", KUnits::liter);
 
-  assert_parsed_expression_is(
-      "kmπ", Multiplication::Builder(kilometer, Constant::PiBuilder()));
-  assert_parsed_expression_is(
-      "πkm", Multiplication::Builder(Constant::PiBuilder(), kilometer));
-  assert_parsed_expression_is("skm",
-                              Multiplication::Builder(second, kilometer));
-  assert_parsed_expression_is(
-      "3s", Multiplication::Builder(BasedInteger::Builder(3), second));
+  assert_parsed_expression_is("kmπ", KMult(KUnits::kilometer, π_e));
+  assert_parsed_expression_is("πkm", KMult(π_e, KUnits::kilometer));
+  assert_parsed_expression_is("skm", KMult(KUnits::second, KUnits::kilometer));
+  assert_parsed_expression_is("3s", KMult(3_e, KUnits::second));
 
   // Angle units
-  Expression degree = Expression::Parse("_°", nullptr);
-  Expression arcsecond = Expression::Parse("_\"", nullptr);
-  assert_parsed_expression_is(
-      "3°", Multiplication::Builder(BasedInteger::Builder(3), degree));
-  assert_parsed_expression_is(
-      "3\"", Multiplication::Builder(BasedInteger::Builder(3), arcsecond));
-  assert_parsed_expression_is(
-      "3\"+a\"",
-      Addition::Builder(
-          Multiplication::Builder(BasedInteger::Builder(3), arcsecond),
-          Multiplication::Builder(Symbol::Builder("a", 1), arcsecond.clone())));
-  assert_parsed_expression_is(
-      "3\"abc\"", Multiplication::Builder(BasedInteger::Builder(3),
-                                          Symbol::Builder("\"abc\"", 5)));
-  assert_parsed_expression_is(
-      "x\"abc\"", Multiplication::Builder(Symbol::Builder("x", 1),
-                                          Symbol::Builder("\"abc\"", 5)));
+  assert_parsed_expression_is("3°", KMult(3_e, KUnits::degree));
+  assert_parsed_expression_is("3\"", KMult(3_e, KUnits::arcSecond));
+  assert_parsed_expression_is("3\"+a\"", KAdd(KMult(3_e, KUnits::arcSecond),
+                                              KMult("a"_e, KUnits::arcSecond)));
+  assert_parsed_expression_is("3\"abc\"", KMult(3_e, "\"abc\""_e));
+  assert_parsed_expression_is("x\"abc\"", KMult("x"_e, "\"abc\""_e));
   assert_text_not_parsable("\"0");
 
   // Implicit addition
-  Expression minute = Expression::Parse("_min", nullptr);
-  Expression hour = Expression::Parse("_h", nullptr);
   assert_parsed_expression_is(
-      "3h40min5s",
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(3), hour),
-           Multiplication::Builder(BasedInteger::Builder(40), minute),
-           Multiplication::Builder(BasedInteger::Builder(5), second)}));
+      "3h40min5s", KAdd(KMult(3_e, KUnits::hour), KMult(40_e, KUnits::minute),
+                        KMult(5_e, KUnits::second)));
   assert_parsed_expression_is(
-      "5mi4yd2ft3in",
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(5),
-                                   Expression::Parse("_mi", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(4),
-                                   Expression::Parse("_yd", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(2),
-                                   Expression::Parse("_ft", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_in", nullptr))}));
+      "5mi4yd2ft3in", KAdd(KMult(5_e, KUnits::mile), KMult(4_e, KUnits::yard),
+                           KMult(2_e, KUnits::foot), KMult(3_e, KUnits::inch)));
   assert_parsed_expression_is(
-      "5lb4oz",
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(5),
-                                   Expression::Parse("_lb", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(4),
-                                   Expression::Parse("_oz", nullptr))}));
+      "5lb4oz", KAdd(KMult(5_e, KUnits::pound), KMult(4_e, KUnits::ounce)));
   assert_parsed_expression_is(
-      "5°4'3\"",
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(5),
-                                   Expression::Parse("_°", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(4),
-                                   Expression::Parse("_'", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_\"", nullptr))}));
+      "5°4'3\"", KAdd(KMult(5_e, KUnits::degree), KMult(4_e, KUnits::arcMinute),
+                      KMult(3_e, KUnits::arcSecond)));
   // Works with decimal numbers
   assert_parsed_expression_is(
       "3.5h40.3min5.1s",
-      Addition::Builder(
-          {Multiplication::Builder(Decimal::Builder(3.5), hour),
-           Multiplication::Builder(Decimal::Builder(40.3), minute),
-           Multiplication::Builder(Decimal::Builder(5.1), second)}));
+      KAdd(KMult(3.5_e, KUnits::hour), KMult(40.3_e, KUnits::minute),
+           KMult(5.1_e, KUnits::second)));
   // Has priority over other operation
   assert_parsed_expression_is(
       "2×3h5s",
-      Multiplication::Builder(
-          BasedInteger::Builder(2),
-          Addition::Builder(
-              {Multiplication::Builder(BasedInteger::Builder(3), hour),
-               Multiplication::Builder(BasedInteger::Builder(5), second)})));
+      KMult(2_e, KAdd(KMult(3_e, KUnits::hour), KMult(5_e, KUnits::second))));
   assert_parsed_expression_is(
       "4h-3h5s",
-      Subtraction::Builder(
-          Multiplication::Builder(BasedInteger::Builder(4), hour.clone()),
-          Addition::Builder(
-              {Multiplication::Builder(BasedInteger::Builder(3), hour),
-               Multiplication::Builder(BasedInteger::Builder(5), second)})));
+      KSub(KMult(4_e, KUnits::hour),
+           KAdd(KMult(3_e, KUnits::hour), KMult(5_e, KUnits::second))));
   // Does not work with fractions or other numbers
   assert_parsed_expression_is(
-      "(3/5)hπs", Multiplication::Builder(
-                      {Parenthesis::Builder(Division::Builder(
-                           BasedInteger::Builder(3), BasedInteger::Builder(5))),
-                       hour, Constant::PiBuilder(), second}));
+      "(3/5)hπs",
+      KMult(KParentheses(KDiv(3_e, 5_e)), KUnits::hour, π_e, KUnits::second));
   // Does not work with any unit
-  assert_parsed_expression_is(
-      "3km4m", Multiplication::Builder(
-                   {BasedInteger::Builder(3), Symbol::Builder("k", 1),
-                    Symbol::Builder("m4", 2),
-                    Expression::Parse("_m", nullptr)}));  // 3*k*m4*m
+  assert_parsed_expression_is("3km4m", KMult(3_e, "k"_e, "m4"_e,
+                                             KUnits::meter));  // 3*k*m4*m
   // Does not work in any order
-  assert_parsed_expression_is(
-      "3s5h",
-      Multiplication::Builder({BasedInteger::Builder(3),
-                               Symbol::Builder("s5", 2), hour}));  // 3*s5*h
+  assert_parsed_expression_is("3s5h",
+                              KMult(3_e, "s5"_e, KUnits::hour));  // 3*s5*h
   // Does not allow repetition
-  assert_parsed_expression_is(
-      "3s5s",
-      Multiplication::Builder({BasedInteger::Builder(3),
-                               Symbol::Builder("s5", 2), second}));  // 3*s5*s
+  assert_parsed_expression_is("3s5s",
+                              KMult(3_e, "s5"_e, KUnits::second));  // 3*s5*s
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {
@@ -725,14 +663,10 @@ QUIZ_CASE(poincare_parsing_identifiers) {
                               KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
-#if 0
+
 QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
-  OUnit apostropheUnit = OUnit::Builder(
-      OUnit::k_angleRepresentatives + OUnit::k_arcMinuteRepresentativeIndex,
-      OUnit::Prefix::EmptyPrefix());
-  OUnit quoteUnit = OUnit::Builder(
-      OUnit::k_angleRepresentatives + OUnit::k_arcSecondRepresentativeIndex,
-      OUnit::Prefix::EmptyPrefix());
+  constexpr KTree apostropheUnit = KUnits::arcMinute;
+  constexpr KTree quoteUnit = KUnits::arcSecond;
 
   // Reserved function
   assert_text_not_parsable("cos'(x)");
@@ -744,8 +678,8 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parsed_expression_is("f\"(x)",
                               KMult("f"_e, quoteUnit, KParentheses("x"_e)));
   assert_parsed_expression_is(
-      "f''(x)", KMult("f"_e, apostropheUnit, apostropheUnit.clone(),
-                      KParentheses("x"_e)));
+      "f''(x)",
+      KMult("f"_e, apostropheUnit, apostropheUnit, KParentheses("x"_e)));
   assert_parsed_expression_is(
       "f^(1)(x)", KMult(KPow("f"_e, KParentheses(1_e)), KParentheses("x"_e)));
   assert_parsed_expression_is(
@@ -760,19 +694,17 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
                               KMult(KPow("f"_e, 3_e), KParentheses("x"_e)));
   assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
   assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
-  assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f''",
+                              KMult("f"_e, apostropheUnit, apostropheUnit));
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
 
   // Function defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_parsed_expression_is(
-      "f'(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
-                                   Symbol::SystemSymbol(), "x"_e, 1_e));
+      "f'(x)", KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)));
   assert_parsed_expression_is(
-      "f\"(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
-                                    Symbol::SystemSymbol(), "x"_e, 2_e));
+      "f\"(x)", KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)));
   assert_parse_to_same_expression("f'(x)", "f^(1)(x)");
   assert_parse_to_same_expression("f\"(x)", "f^(2)(x)");
   assert_parse_to_same_expression("f''(x)", "f^(2)(x)");
@@ -780,15 +712,14 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)");
   assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)");
   assert_parsed_expression_is(
-      "f^(3)(x)", Derivative::Builder(KFun<"f">(Symbol::SystemSymbol()),
-                                      Symbol::SystemSymbol(), "x"_e, 3_e));
+      "f^(3)(x)", KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)));
   assert_parsed_expression_is(
       "f^(3/2)(x)",
       KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)));
   assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
   assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
-  assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f''",
+                              KMult("f"_e, apostropheUnit, apostropheUnit));
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
@@ -797,8 +728,8 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
       "f", "exp", "", 0);
   assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
   assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
-  assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit.clone()));
+  assert_parsed_expression_is("f''",
+                              KMult("f"_e, apostropheUnit, apostropheUnit));
   assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)));
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
   assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)));
@@ -809,9 +740,8 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {
-  Expression ton = Expression::Parse("_t", nullptr);
   assert_parsed_expression_is("1→a", KStore(1_e, "a"_e));
-  assert_parsed_expression_is("t→a", KStore(ton, "a"_e));
+  assert_parsed_expression_is("t→a", KStore(KUnits::ton, "a"_e));
   assert_parsed_expression_is("1→g", KStore(1_e, "g"_e));
   assert_parsed_expression_is("1→f(x)", KStore(1_e, KFun<"f">("x"_e)));
   assert_parsed_expression_is("x→f(x)", KStore("x"_e, KFun<"f">("x"_e)));
@@ -820,7 +750,7 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   assert_parsed_expression_is("ab→f(x)",
                               KStore(KMult("a"_e, "b"_e), KFun<"f">("x"_e)));
   assert_parsed_expression_is("t→f(t)", KStore("t"_e, KFun<"f">("t"_e)));
-  assert_parsed_expression_is("t→f(x)", KStore(ton, KFun<"f">("x"_e)));
+  assert_parsed_expression_is("t→f(x)", KStore(KUnits::ton, KFun<"f">("x"_e)));
   assert_parsed_expression_is("[[x]]→f(x)",
                               KStore(KMatrix<1, 1>("x"_e), KFun<"f">("x"_e)));
   assert_text_not_parsable("a→b→c");
@@ -837,18 +767,15 @@ QUIZ_CASE(poincare_parsing_parse_store) {
 }
 
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
-  Expression ton = Expression::Parse("_t", nullptr);
-  Expression kilogram = Expression::Parse("_kg", nullptr);
-  Expression degree = Expression::Parse("_°", nullptr);
-  Expression minute = Expression::Parse("_'", nullptr);
-  Expression radian = Expression::Parse("_rad", nullptr);
-  assert_parsed_expression_is("3t→kg",
-                              UnitConvert::Builder(KMult(3_e, ton), kilogram));
   assert_parsed_expression_is(
-      "3t→kg^2", UnitConvert::Builder(KMult(3_e, ton), KPow(kilogram, 2_e)));
+      "3t→kg", KUnitConversion(KMult(3_e, KUnits::ton), KUnits::kilogram));
   assert_parsed_expression_is(
-      "3°4'→rad", UnitConvert::Builder(
-                      KAdd(KMult(3_e, degree), KMult(4_e, minute)), radian));
+      "3t→kg^2",
+      KUnitConversion(KMult(3_e, KUnits::ton), KPow(KUnits::kilogram, 2_e)));
+  assert_parsed_expression_is(
+      "3°4'→rad", KUnitConversion(KAdd(KMult(3_e, KUnits::degree),
+                                       KMult(4_e, KUnits::arcMinute)),
+                                  KUnits::radian));
   assert_text_not_parsable("1→_m");
   assert_text_not_parsable("2t→3kg");
   assert_text_not_parsable("1→2");
@@ -875,7 +802,6 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
-#endif
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable(".1.2");

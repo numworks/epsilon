@@ -830,11 +830,10 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("1241_in", "34×_yd+1×_ft+5×_in",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
-  // TODO: Should be only 2_in (same issue with 102026_in input).
-  simplifies_to("102038_in-1_ft", "1×_mi+1074×_yd+2.0000000000073×_in",
+  simplifies_to("102038_in-1_ft", "1×_mi+1074×_yd+2×_in",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("π_year",
-                "3×_year+1×_month+21×_day+6×_h+42×_min+4.3249250054359×_s",
+                "3×_year+1×_month+21×_day+6×_h+42×_min+4.3249249999999×_s",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("100.125_gon", "90×_°+6×_'+45×_\"",
                 {.m_unitDisplay = UnitDisplay::Decomposition});

@@ -27,6 +27,7 @@ namespace Poincare::Internal {
 
 class TreeStack : public BlockStack {
   friend class TreeRef;
+  friend class Tree;
 
  public:
   using BlockStack::BlockStack;
@@ -47,9 +48,6 @@ class TreeStack : public BlockStack {
   // Initialize trees
   Tree* initFromAddress(const void* address, bool isTree = true) {
     return Tree::FromBlocks(BlockStack::initFromAddress(address, isTree));
-  }
-  Tree* clone(const Tree* node, bool isTree = true) {
-    return initFromAddress(static_cast<const void*>(node->block()), isTree);
   }
 
   Tree* pushBlock(Block block) {
@@ -195,6 +193,10 @@ class TreeStack : public BlockStack {
   }
 #endif
  private:
+  Tree* clone(const Tree* node, bool isTree = true) {
+    return initFromAddress(static_cast<const void*>(node->block()), isTree);
+  }
+
   Tree::ConstNodes allNodes() {
     return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }

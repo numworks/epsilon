@@ -11,7 +11,7 @@ QUIZ_CASE(pcj_tree_stack) {
 
   constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Tree* handingNode = k_expression;
-  Tree* editedNode = stack->clone(handingNode);
+  Tree* editedNode = handingNode->cloneTree();
   quiz_assert(stack->size() == handingNode->treeSize());
   quiz_assert(stack->numberOfTrees() == 1);
   quiz_assert(stack->isRootBlock(editedNode->block()));
@@ -21,7 +21,7 @@ QUIZ_CASE(pcj_tree_stack) {
   quiz_assert(stack->nodeForIdentifier(stack->referenceNode(editedNode)) ==
               editedNode);
 
-  editedNode = stack->clone(handingNode);
+  editedNode = handingNode->cloneTree();
   quiz_assert(stack->isRootBlock(editedNode->block()));
   stack->flush();
   quiz_assert(stack->size() == 0);

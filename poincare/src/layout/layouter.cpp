@@ -226,7 +226,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     if (--decimalOffset == 0) {
       InsertCodePointAt(rack, '.', 0);
       if (value->isZero()) {
-        // TODO insert 0 before . if nothing else is to come
+        // TODO_PCJ: insert 0 before . if nothing else is to come
         InsertCodePointAt(rack, '0', 0);
       }
     }
@@ -311,7 +311,7 @@ void Layouter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
-  // TODO_PCJ ask the context whether to add an underscore
+  // TODO_PCJ: ask the context whether to add an underscore
   if (m_linearMode) {
     PushCodePoint(layoutParent, '_');
   }
@@ -376,7 +376,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     }
     case Type::Mult:
-      /* TODO_PCJ: Add small margins when units are present */
       layoutInfixOperator(
           layoutParent, expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
@@ -435,7 +434,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::IntegerNegShort:
     case Type::IntegerPosBig:
     case Type::IntegerNegBig:
-      // TODO_PCJ we need a way to layout an integer in base something
       layoutIntegerHandler(layoutParent, Integer::Handler(expression));
       break;
     case Type::Half:
@@ -718,7 +716,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else
-        // TODO: Handle missing Types
         assert(false);
         PushCodePoint(layoutParent, '?');
 #endif
@@ -773,7 +770,6 @@ bool Layouter::AddThousandSeparators(Tree* rack) {
 
 bool Layouter::requireSeparators(const Tree* expression) {
   if (expression->isRational()) {
-    // TODO_PCJ same for decimals and floats
     IntegerHandler num = Rational::Numerator(expression);
     num.setSign(NonStrictSign::Positive);
     if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {

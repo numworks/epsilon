@@ -57,7 +57,9 @@ class Builtin {
 class BuiltinWithLayout : public Builtin {
  public:
   constexpr BuiltinWithLayout(Type type, Aliases aliases, LayoutType layoutType)
-      : Builtin(type, aliases), m_layoutType(layoutType) {}
+      : Builtin(type, aliases), m_layoutType(layoutType) {
+    assert(TypeBlock::NumberOfMetaBlocks(static_cast<Type>(layoutType)) == 1);
+  }
   LayoutType layoutType() const { return m_layoutType; }
   bool has2DLayout() const override { return true; }
 

@@ -159,12 +159,6 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
         static_cast<const BuiltinWithLayout*>(builtin);
     TreeRef layout = SharedTreeStack->pushBlock(
         static_cast<Type>(builtinWithLayout->layoutType()));
-    /* Some builtins have a bigger nodeSize. Additional parameters are not
-     * handled here. TODO_PCJ: Remove this one these Layouts are moved out of
-     * builtins. */
-    for (size_t i = 1; i < layout->nodeSize(); i++) {
-      SharedTreeStack->pushZero();
-    }
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
   }

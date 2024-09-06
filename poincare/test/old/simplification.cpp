@@ -222,7 +222,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   // cos^2+sin^2
   assert_parsed_expression_simplify_to("cos(x)^2+sin(x)^2", "\u0014dep(1,{x})");
   assert_parsed_expression_simplify_to("2xln(x)cos(x)^2+2xln(x)sin(x)^2",
-                                       "2×x×ln(x)");
+                                       "dep(2×x×ln(x),{nonNull(x)})");
   assert_parsed_expression_simplify_to("5cos(3x+2)^2+5sin(3x+2)^2+3",
                                        "\u0014dep(8,{x})");
   assert_parsed_expression_simplify_to("4cos(x)^2+3sin(x)^2",
@@ -1001,7 +1001,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(1/(ln(2)^2-2πln(2)+π^2))",
                                        "1/(-ln(2)+π)");
   assert_parsed_expression_simplify_to("(-2)^(n-1)", "-(-2)^n/2");
-  assert_parsed_expression_simplify_to("e^(ln(x))", "\u0014dep(x,{ln(x)})");
+  assert_parsed_expression_simplify_to("e^(ln(x))", "dep(x,{nonNull(x)})");
   // Special cases with (a*b)^x = |a|^x*(sign(a)*b)
   assert_parsed_expression_simplify_to("√(-arcsin(-e-1))", "√(-arcsin(-e-1))");
   assert_parsed_expression_simplify_to("((-e^3)×cos(2))^(1/3)",
@@ -1236,7 +1236,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "cot(x)");
   // 1/tan = cot if tan(x) != undef
-  assert_parsed_expression_simplify_to("1/tan(x)", "dep(cot(x),{1/cos(x)})");
+  assert_parsed_expression_simplify_to("1/tan(x)",
+                                       "dep(cot(x),{nonNull(cos(x))})");
   assert_parsed_expression_simplify_to("sin(x)×π/cos(x)", "π×tan(x)");
   assert_parsed_expression_simplify_to("sin(x)/(π×cos(x))", "tan(x)/π");
   assert_parsed_expression_simplify_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
@@ -2406,12 +2407,12 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
   assert_parsed_expression_simplify_to("tanh(artanh(3))", "3");
   assert_parsed_expression_simplify_to("tanh(artanh(0.5))", "1/2");
   assert_parsed_expression_simplify_to("tanh(artanh(-3))", "-3");
-  assert_parsed_expression_simplify_to("tanh(artanh(3))", "tanh(artanh(3))",
-                                       User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("tanh(artanh(3))", "3", User, Radian,
+                                       MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("tanh(artanh(0.5))", "1/2", User, Radian,
                                        MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("tanh(artanh(-3))", "-tanh(artanh(3))",
-                                       User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("tanh(artanh(-3))", "-3", User, Radian,
+                                       MetricUnitFormat, Real);
 
   // artanh(tanh)
   assert_parsed_expression_simplify_to("artanh(tanh(3))", "3");

@@ -38,9 +38,9 @@ QUIZ_CASE(poincare_derivative_formal) {
 
   assert_reduces_to_formal_expression("diff(e^x,x,x)", "e^\u0012x\u0013");
   assert_reduces_to_formal_expression("diff(2^x,x,x)", "ln(2)×2^x");
-  assert_reduces_to_formal_expression("diff(ln(x),x,x)", "1/x");
+  assert_reduces_to_formal_expression("diff(ln(x),x,x)", "dep(1/x,{ln(x)})");
   assert_reduces_to_formal_expression("diff(log(x),x,x)",
-                                      "1/\u0012x×ln(10)\u0013");
+                                      "dep(1/(x×ln(10)),{ln(x)})");
 
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "cos(x)");
   assert_reduces_to_formal_expression("diff(sin(x),x,x)",

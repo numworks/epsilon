@@ -2,6 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/round.h>
+#include <poincare/print_float.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -1092,12 +1093,22 @@ Tree* BuildDecomposition(double value, const Representative** list,
                          int length) {
   assert(length > 0);
   Tree* result = SharedTreeStack->pushAdd(0);
+  double smallestRatio = list[length - 1]->ratio();
+  // Instead of SI, use value at smallest representative
+  value /= smallestRatio;
+  /* Round value to max displayed precision :
+   * With a value of 10.0000000000001, err is 10^12 and value is rounded to 10*/
+  double err = std::pow(10.0, PrintFloat::k_maxNumberOfSignificantDigits -
+                                  (std::floor(log10(std::fabs(value))) + 1));
+  value = std::round(value * err) / err;
+
   for (int i = 0; i < length; i++) {
     bool lastUnit = i == length - 1;
     const Representative* representative = list[i];
-    double ratio = representative->ratio();
+    // Compute ratio from smallest representative to this one
+    double ratio = representative->ratio() / smallestRatio;
     // Representatives must be ordered and have the same dimension.
-    assert(i == 0 || (ratio < list[i - 1]->ratio()) &&
+    assert(i == 0 || (list[i]->ratio() < list[i - 1]->ratio()) &&
                          list[i]->siVector() == list[i - 1]->siVector());
     double representativeValue = value / ratio;
     if (!lastUnit) {

@@ -2,7 +2,6 @@ SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/old/,\
   junior_layout.cpp \
-  layout.cpp \
   layout_node.cpp \
 )
 

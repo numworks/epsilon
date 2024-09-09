@@ -94,7 +94,6 @@ $(addprefix old/, \
   integral.cpp \
   junior_expression.cpp \
   junior_layout.cpp \
-  layout.cpp \
   layout_node.cpp \
   least_common_multiple.cpp \
   list.cpp \

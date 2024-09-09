@@ -110,7 +110,7 @@ QUIZ_CASE(pcj_assignment_parse) {
   // assignment expression: the left-hand side is parsed as "f*(x)"
 
   assert_trees_are_equal(
-      RackParser("f(x)=xxln(x)"_l, &context, -1,
+      RackParser("f(x)=xxln(x)"_l, &context,
                  ParsingContext::ParsingMethod::Assignment)
           .parse(),
       KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLn("x"_e))));

@@ -37,8 +37,6 @@ class OLayout : public PoolHandle {
   size_t serializeForParsing(char *buffer, size_t bufferSize) const {
     return (*this)->serialize(buffer, bufferSize);
   }
-  size_t serializeParsedExpression(char *buffer, size_t bufferSize,
-                                   Context *context) const;
 };
 
 }  // namespace Poincare

@@ -17,25 +17,4 @@ Layout Layout::clone() const {
   return cast;
 }
 
-size_t Layout::serializeParsedExpression(char *buffer, size_t bufferSize,
-                                         Context *context) const {
-  /* This method fixes the following problem:
-   * Some layouts have a special serialization so they can be parsed afterwards,
-   * such has logBase3(2) that serializes as log_{3}(2). When handling the
-   * layout text, we want to use log(2,3) because we might paste the text in a
-   * LinearEdition textfield, so what we really want is the parsed expression's
-   * serialization. */
-  if (bufferSize <= 0) {
-    return 0;
-  }
-  serializeForParsing(buffer, bufferSize);
-  Poincare::Expression e = Poincare::Expression::Parse(buffer, context);
-  if (e.isUninitialized()) {
-    buffer[0] = 0;
-    return 0;
-  }
-  return e.serialize(buffer, bufferSize,
-                     Poincare::Preferences::SharedPreferences()->displayMode());
-}
-
 }  // namespace Poincare

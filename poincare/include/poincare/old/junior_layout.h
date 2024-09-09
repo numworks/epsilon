@@ -92,6 +92,11 @@ class JuniorLayout final : public OLayout {
     return JuniorLayout();
   }
 
+  // Serialization
+  size_t serializeForParsing(char* buffer, size_t bufferSize) const {
+    return (*this)->serialize(buffer, bufferSize);
+  }
+
   JuniorLayout cloneWithoutMargins();
 
   // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))

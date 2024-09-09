@@ -32,11 +32,6 @@ class OLayout : public PoolHandle {
     return isUninitialized() ? l.isUninitialized()
                              : (*this)->isIdenticalTo(l, makeEditable);
   }
-
-  // Serialization
-  size_t serializeForParsing(char *buffer, size_t bufferSize) const {
-    return (*this)->serialize(buffer, bufferSize);
-  }
 };
 
 }  // namespace Poincare

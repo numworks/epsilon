@@ -80,7 +80,8 @@ Poincare::Layout Clipboard::storedLayout() {
   const char* systemText = Ion::Clipboard::read();
   if (systemText) {
     return Poincare::Expression::Parse(systemText, nullptr)
-        .createLayout(Poincare::Preferences::PrintFloatMode::Decimal, 14,
+        .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
+                      Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                       nullptr);
   }
   return Poincare::Layout::Builder(

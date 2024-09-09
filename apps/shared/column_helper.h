@@ -61,7 +61,7 @@ class StoreColumnHelper {
   /* Fill with formula */
   void displayFormulaInput();
   void fillFormulaInputWithTemplate(const Poincare::Layout& templateLayout);
-  void sendFormulaToView(const Poincare::Layout& formulaLayout);
+  void fillFormulaInputWithFormula(const Poincare::Layout& formulaLayout);
   bool fillColumnWithFormula(const Poincare::Layout& formulaLayout);
 
   /* Clear series */

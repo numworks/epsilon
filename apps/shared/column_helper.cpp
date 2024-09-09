@@ -76,7 +76,7 @@ void StoreColumnHelper::displayFormulaInput() {
       formulaMemoizationIndex(store()->seriesAtColumn(referencedColumn()),
                               store()->relativeColumn(referencedColumn()));
   if (!memoizedFormula(index).isUninitialized()) {
-    fillFormulaInputWithTemplate(memoizedFormula(index));
+    sendFormulaToView(memoizedFormula(index));
     return;
   }
   App::app()->displayModalViewController(&m_templateStackController, 0.f, 0.f,
@@ -96,6 +96,10 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(
   if (!templateLayout.isUninitialized()) {
     formulaLayout = Layout::Concatenate(formulaLayout, templateLayout);
   }
+  sendFormulaToView(formulaLayout);
+}
+
+void StoreColumnHelper::sendFormulaToView(const Layout& formulaLayout) {
   inputViewController()->setLayout(formulaLayout);
   inputViewController()->edit(
       Ion::Events::OK, this,

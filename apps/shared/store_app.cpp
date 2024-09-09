@@ -16,27 +16,20 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
     m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
-  size_t formulaLength = formula.serializeParsedExpression(
-      m_memoizedFormulasBuffer[index], k_bufferSize,
-      StoreApp::storeApp()->localContext());
-  if (formulaLength == k_bufferSize - 1) {
+  size_t size = formula.tree()->treeSize();
+  if (size == k_bufferSize - 1) {
     // Formula is too long
     m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
+  memcpy(m_memoizedFormulasBuffer, formula.tree(), size);
   return true;
 }
 
 Layout StoreApp::Snapshot::memoizedFormula(int index) const {
-  if (m_memoizedFormulasBuffer[index][0] == 0) {
-    return Layout();
-  }
-  UserExpression e = UserExpression::Parse(
-      m_memoizedFormulasBuffer[index], StoreApp::storeApp()->localContext());
-  return e.createLayout(
-      Preferences::SharedPreferences()->displayMode(),
-      Preferences::SharedPreferences()->numberOfSignificantDigits(),
-      StoreApp::storeApp()->localContext());
+  return Expression::Parse(m_memoizedFormulasBuffer[index], nullptr)
+      .createLayout(Preferences::PrintFloatMode::Decimal,
+                    PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
 }
 
 }  // namespace Shared

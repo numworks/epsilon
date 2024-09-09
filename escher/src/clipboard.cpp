@@ -40,7 +40,7 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
   if (size < k_bufferSize) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
-  // Serialize in case we need it in python or outside epsilon
+  // Serialize in case we need it in a text field/area or outside epsilon
   layout.serialize(m_textBuffer, k_bufferSize);
   // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);

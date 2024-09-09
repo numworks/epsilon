@@ -1,9 +1,11 @@
 #include "serialize.h"
 
 #include <poincare/src/expression/builtin.h>
+#include <poincare/src/memory/pattern_matching.h>
 
 #include <algorithm>
 
+#include "autocompleted_pair.h"
 #include "code_point_layout.h"
 #include "grid.h"
 #include "indices.h"
@@ -21,6 +23,32 @@ char* append(const char* text, char* buffer, char* end) {
   return buffer + len;
 }
 
+Rack* rackForSerialization(const Rack* rack) {
+  // Transform log^a(b) and a^log(b) in log(b,a)
+  Tree* newRack = rack->cloneTree();
+  /* Replace temporary parenthesis into non temporary parenthesis to avoid
+   * duplicating pattern matching (temporary parentheses are serialized the
+   * same as non temporary parentheses). */
+  for (Tree* child : newRack->children()) {
+    if (child->isParenthesesLayout() &&
+        (AutocompletedPair::IsTemporary(child, Side::Left) ||
+         AutocompletedPair::IsTemporary(child, Side::Right))) {
+      child->cloneNodeOverNode(KParenthesesL);
+    }
+  }
+  // log^a(b) -> log(b,a)
+  PatternMatching::MatchReplace(
+      newRack, KA_s ^ "log"_l ^ KSubscriptL(KB) ^ KParenthesesL(KC) ^ KD_s,
+      KA_s ^ "log"_l ^ KParenthesesL(KC ^ ","_cl ^ KB) ^ KD_s);
+  // a^log(b) -> log(b,a)
+  PatternMatching::MatchReplace(
+      newRack,
+      KA_s ^ KPrefixSuperscriptL(KB) ^ "log"_l ^ KParenthesesL(KC) ^ KD_s,
+      KA_s ^ "log"_l ^ KParenthesesL(KC ^ ","_cl ^ KB) ^ KD_s);
+  assert(newRack->isRackLayout());
+  return static_cast<Rack*>(newRack);
+}
+
 char* SerializeRack(const Rack* rack, char* buffer, char* end) {
   if (rack->numberOfChildren() == 0) {
     /* Text fields serializes layouts to insert them and we need an empty
@@ -28,12 +56,15 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
      * TODO: should this behavior be behind a flag ? */
     buffer = append("\x11", buffer, end);
   }
-  for (const Tree* child : rack->children()) {
+  Tree* newRack = rackForSerialization(rack);
+  for (const Tree* child : newRack->children()) {
     buffer = SerializeLayout(Layout::From(child), buffer, end);
     if (buffer == end) {
+      newRack->removeTree();
       return end;
     }
   }
+  newRack->removeTree();
   return buffer;
 }
 

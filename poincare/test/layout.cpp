@@ -6,6 +6,7 @@
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/multiplication_symbol.h>
 #include <poincare/src/layout/render.h>
+#include <poincare/src/layout/serialize.h>
 
 #include "helper.h"
 
@@ -95,4 +96,22 @@ QUIZ_CASE(pcj_k_matrix_l) {
   quiz_assert(mat->numberOfColumns() == 3);
   quiz_assert(mat->numberOfRows() == 3);
   quiz_assert(mat->childAt(1, 1)->treeIsIdenticalTo("d"_l));
+}
+
+void assert_layout_serializes_as(const Tree* layout,
+                                 const char* serialization) {
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  remove_system_codepoints(buffer);
+  quiz_assert(strcmp(buffer, serialization) == 0);
+}
+
+QUIZ_CASE(pcj_layout_serialization) {
+  assert_layout_serializes_as(KRackL(KAbsL("42log"_l ^ KSubscriptL("123"_l) ^
+                                           KParenthesesLeftTempL("x"_l))),
+                              "abs(42log(x,123))");
+  assert_layout_serializes_as("1+"_l ^ KPrefixSuperscriptL("abc"_l) ^ "log"_l ^
+                                  KParenthesesLeftTempL("x"_l),
+                              "1+log(x,abc)");
 }

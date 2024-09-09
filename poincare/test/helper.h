@@ -24,6 +24,8 @@ void process_tree_and_compare(const char* input, const char* output,
 
 void quiz_assert_print_if_failure(bool test, const char* information);
 
+void remove_system_codepoints(char* buffer);
+
 inline void assert_tree_equals_blocks(const Tree* tree,
                                       std::initializer_list<Block> blocks) {
   const Block* block = tree->block();

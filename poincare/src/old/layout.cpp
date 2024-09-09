@@ -7,14 +7,4 @@ namespace Poincare {
 
 #define Layout OLayout
 
-Layout Layout::clone() const {
-  if (isUninitialized()) {
-    return Layout();
-  }
-  PoolHandle c = PoolHandle::clone();
-  Layout cast = Layout(static_cast<LayoutNode *>(c.object()));
-  cast->invalidAllSizesPositionsAndBaselines();
-  return cast;
-}
-
 }  // namespace Poincare

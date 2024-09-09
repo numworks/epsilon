@@ -151,6 +151,16 @@ void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                          style.backgroundColor, cursor);
 }
 
+JuniorLayout JuniorLayout::clone() const {
+  if (isUninitialized()) {
+    return JuniorLayout();
+  }
+  PoolHandle c = PoolHandle::clone();
+  OLayout cast = OLayout(static_cast<LayoutNode*>(c.object()));
+  cast->invalidAllSizesPositionsAndBaselines();
+  return static_cast<JuniorLayout&>(cast);
+}
+
 JuniorLayout JuniorLayout::cloneWithoutMargins() {
   Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());

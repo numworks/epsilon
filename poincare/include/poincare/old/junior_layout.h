@@ -64,11 +64,6 @@ class JuniorLayout final : public OLayout {
     static_assert(t.type().isRackLayout());
   }
 
-  JuniorLayout clone() const {
-    OLayout clone = OLayout::clone();
-    return static_cast<JuniorLayout&>(clone);
-  }
-
   static JuniorLayout Create(const Internal::Tree* structure,
                              Internal::ContextTrees ctx);
   operator const Internal::Tree*() { return tree(); }
@@ -97,8 +92,9 @@ class JuniorLayout final : public OLayout {
     return (*this)->serialize(buffer, bufferSize);
   }
 
+  // Clone
+  JuniorLayout clone() const;
   JuniorLayout cloneWithoutMargins();
-
   // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
   JuniorLayout cloneWithoutChildrenRacks();
 

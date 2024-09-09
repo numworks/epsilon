@@ -14,7 +14,6 @@ class OLayout : public PoolHandle {
  public:
   OLayout() : PoolHandle() {}
   OLayout(const LayoutNode *node) : PoolHandle(node) {}
-  OLayout clone() const;
 
   const LayoutNode *operator->() const {
     assert(isUninitialized() ||

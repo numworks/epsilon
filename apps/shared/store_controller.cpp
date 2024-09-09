@@ -263,7 +263,8 @@ void StoreController::loadMemoizedFormulasFromSnapshot() {
   }
 }
 
-void StoreController::memoizeFormula(Poincare::Layout formula, int index) {
+void StoreController::memoizeFormula(const Poincare::Layout& formula,
+                                     int index) {
   m_memoizedFormulas[index] = formula;
   StoreApp::storeApp()->storeAppSnapshot()->memoizeFormula(formula, index);
 }

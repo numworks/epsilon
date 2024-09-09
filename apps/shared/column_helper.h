@@ -60,7 +60,7 @@ class StoreColumnHelper {
 
   /* Fill with formula */
   void displayFormulaInput();
-  void fillFormulaInputWithTemplate(Poincare::Layout layout);
+  void fillFormulaInputWithTemplate(const Poincare::Layout& templateLayout);
   bool fillColumnWithFormula(const char* text);
 
   /* Clear series */
@@ -83,7 +83,7 @@ class StoreColumnHelper {
   virtual Poincare::Layout memoizedFormula(int index) {
     return Poincare::Layout();
   }
-  virtual void memoizeFormula(Poincare::Layout formula, int index) {}
+  virtual void memoizeFormula(const Poincare::Layout& formula, int index) {}
   int formulaMemoizationIndex(int series, int relativeColumn);
   enum class FillColumnStatus : uint8_t {
     Success,

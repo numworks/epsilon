@@ -83,7 +83,8 @@ void StoreColumnHelper::displayFormulaInput() {
                                          Metric::PopUpMarginsNoBottom);
 }
 
-void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
+void StoreColumnHelper::fillFormulaInputWithTemplate(
+    const Layout& templateLayout) {
   constexpr size_t k_sizeOfBuffer = Constant::MaxSerializedExpressionSize;
   char templateString[k_sizeOfBuffer];
   size_t filledLength =

@@ -78,7 +78,7 @@ class StoreController : public EditableCellTableViewController,
   }
   void resetMemoizedFormulaOfColumn(int series, int column);
   void resetMemoizedFormulasOfEmptyColumns(int series);
-  void memoizeFormula(Poincare::Layout formula, int index) override;
+  void memoizeFormula(const Poincare::Layout& formula, int index) override;
 
   Escher::PrefacedTableView m_prefacedTableView;
   DoublePairStore* m_store;

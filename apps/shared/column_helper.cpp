@@ -85,19 +85,18 @@ void StoreColumnHelper::displayFormulaInput() {
 
 void StoreColumnHelper::fillFormulaInputWithTemplate(
     const Layout& templateLayout) {
-  constexpr size_t k_sizeOfBuffer = Constant::MaxSerializedExpressionSize;
-  char templateString[k_sizeOfBuffer];
-  size_t filledLength =
-      fillColumnNameFromStore(referencedColumn(), templateString);
-  if (filledLength < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
-    filledLength += SerializationHelper::CodePoint(
-        templateString + filledLength, k_sizeOfBuffer - filledLength, '=');
+  constexpr size_t k_bufferSize = ClearColumnHelper::k_maxSizeOfColumnName;
+  char formulaText[k_bufferSize];
+  size_t length = fillColumnNameFromStore(referencedColumn(), formulaText);
+  if (length < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
+    length += SerializationHelper::CodePoint(formulaText + length,
+                                             k_bufferSize - length, '=');
   }
+  Layout formulaLayout = Layout::Parse(formulaText);
   if (!templateLayout.isUninitialized()) {
-    templateLayout.serializeParsedExpression(
-        templateString + filledLength, k_sizeOfBuffer - filledLength, nullptr);
+    formulaLayout = Layout::Concatenate(formulaLayout, templateLayout);
   }
-  inputViewController()->setTextBody(templateString);
+  inputViewController()->setLayout(formulaLayout);
   inputViewController()->edit(
       Ion::Events::OK, this,
       [](void* context, void* sender) {
@@ -106,17 +105,17 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(
         InputViewController* thisInputViewController =
             static_cast<InputViewController*>(sender);
         return storeColumnHelper->fillColumnWithFormula(
-            thisInputViewController->textBody());
+            thisInputViewController->layout());
       },
       [](void* context, void* sender) { return true; });
 }
 
-bool StoreColumnHelper::fillColumnWithFormula(const char* text) {
+bool StoreColumnHelper::fillColumnWithFormula(
+    const Poincare::Layout& formulaLayout) {
   int column = store()->relativeColumn(referencedColumn());
   int series = store()->seriesAtColumn(referencedColumn());
-  Layout formulaLayout;
   FillColumnStatus status =
-      privateFillColumnWithFormula(text, &series, &column, &formulaLayout);
+      privateFillColumnWithFormula(formulaLayout, &series, &column);
   if (status == FillColumnStatus::Success ||
       status == FillColumnStatus::NoDataToStore) {
     if (status == FillColumnStatus::Success) {
@@ -149,11 +148,11 @@ int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
 }
 
 StoreColumnHelper::FillColumnStatus
-StoreColumnHelper::privateFillColumnWithFormula(const char* text, int* series,
-                                                int* column,
-                                                Layout* formulaLayout) {
+StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
+                                                int* series, int* column) {
   StoreContext storeContext(store(), m_parentContext);
-  UserExpression formula = UserExpression::Parse(text, &storeContext);
+  UserExpression formula =
+      UserExpression::Parse(formulaLayout.tree(), &storeContext);
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }
@@ -173,12 +172,6 @@ StoreColumnHelper::privateFillColumnWithFormula(const char* text, int* series,
       return FillColumnStatus::DataNotSuitable;
     }
   }
-
-  // Create the layout before simplifying
-  *formulaLayout = formula.createLayout(
-      Preferences::SharedPreferences()->displayMode(),
-      Preferences::SharedPreferences()->numberOfSignificantDigits(),
-      &storeContext);
 
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext,

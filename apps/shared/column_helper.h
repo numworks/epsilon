@@ -61,7 +61,7 @@ class StoreColumnHelper {
   /* Fill with formula */
   void displayFormulaInput();
   void fillFormulaInputWithTemplate(const Poincare::Layout& templateLayout);
-  bool fillColumnWithFormula(const char* text);
+  bool fillColumnWithFormula(const Poincare::Layout& formulaLayout);
 
   /* Clear series */
   size_t fillColumnNameFromStore(int column, char* buffer) {
@@ -92,8 +92,7 @@ class StoreColumnHelper {
     DataNotSuitable,
   };
   FillColumnStatus privateFillColumnWithFormula(
-      const char* text, int* series, int* column,
-      Poincare::Layout* formulaLayout);
+      const Poincare::Layout& formulaLayout, int* series, int* column);
 
   ClearColumnHelper* m_clearColumnHelper;
   /* Fill with formula */

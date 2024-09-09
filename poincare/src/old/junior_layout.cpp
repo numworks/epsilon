@@ -123,6 +123,15 @@ JuniorLayout JuniorLayout::Parse(const char* string) {
   return JuniorLayout::Builder(Internal::RackFromText(string));
 }
 
+JuniorLayout JuniorLayout::Concatenate(JuniorLayout layout1,
+                                       JuniorLayout layout2) {
+  assert(!layout1.isUninitialized() && !layout2.isUninitialized());
+  assert(layout1.tree()->isRackLayout() && layout2.tree()->isRackLayout());
+  Internal::Tree* result = layout1.tree()->cloneTree();
+  Internal::NAry::AddOrMergeChild(result, layout2.tree()->cloneTree());
+  return Builder(result);
+}
+
 void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
                         Internal::LayoutCursor* cursor,
                         KDColor selectionColor) {

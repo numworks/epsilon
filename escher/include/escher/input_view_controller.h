@@ -15,11 +15,11 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
  public:
   InputViewController(Responder* parentResponder, ViewController* child,
                       LayoutFieldDelegate* layoutFieldDelegate);
-  const char* textBody() {
-    return m_expressionInputBarController.layoutField()->text();
+  const Poincare::Layout layout() {
+    return m_expressionInputBarController.layoutField()->layout();
   }
-  void setTextBody(const char* text) {
-    m_expressionInputBarController.layoutField()->setText(text);
+  void setLayout(const Poincare::Layout& layout) {
+    m_expressionInputBarController.layoutField()->setLayout(layout);
   }
   void edit(Ion::Events::Event event, void* context,
             Invocation::Action successAction, Invocation::Action failureAction);

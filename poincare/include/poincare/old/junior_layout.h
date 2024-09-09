@@ -80,6 +80,8 @@ class JuniorLayout final : public OLayout {
   static JuniorLayout Builder(const Internal::Tree* tree);
   // Eat the tree
   static JuniorLayout Builder(Internal::Tree* tree);
+  static JuniorLayout Concatenate(JuniorLayout layout1, JuniorLayout layout2);
+
   Internal::Tree* tree() const {
     return const_cast<JuniorLayout*>(this)->node()->tree();
   }

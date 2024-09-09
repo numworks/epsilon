@@ -11,7 +11,7 @@ using namespace Poincare;
 void assert_stored_text_is_parseable(Layout layout) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  layout.serializeForParsing(buffer, bufferSize);
+  layout.serialize(buffer, bufferSize);
   Clipboard* clipboard = Clipboard::SharedClipboard();
   clipboard->storeText(buffer);
   Expression e = Expression::Parse(clipboard->storedText(), nullptr, false);

@@ -41,7 +41,7 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
   // Serialize in case we need it in python or outside epsilon
-  layout.serializeForParsing(m_textBuffer, k_bufferSize);
+  layout.serialize(m_textBuffer, k_bufferSize);
   // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);
 }

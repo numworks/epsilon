@@ -341,7 +341,7 @@ void assert_parsed_expression_layout_serialize_to_self(
       DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  el.serializeForParsing(buffer, bufferSize);
+  el.serialize(buffer, bufferSize);
   quiz_assert_print_if_failure(strcmp(expressionLayout, buffer) == 0,
                                expressionLayout);
 #endif

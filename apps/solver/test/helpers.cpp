@@ -140,7 +140,7 @@ static void compareSolutions(SystemOfEquations* system,
     }
     constexpr int bufferSize = 200;
     char obtainedLayoutBuffer[bufferSize];
-    obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
+    obtainedLayout.serialize(obtainedLayoutBuffer, bufferSize);
     Expression obtainedExpression =
         Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
     quiz_assert(

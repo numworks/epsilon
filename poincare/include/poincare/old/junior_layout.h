@@ -93,7 +93,7 @@ class JuniorLayout final : public OLayout {
   }
 
   // Serialization
-  size_t serializeForParsing(char* buffer, size_t bufferSize) const {
+  size_t serialize(char* buffer, size_t bufferSize) const {
     return (*this)->serialize(buffer, bufferSize);
   }
 

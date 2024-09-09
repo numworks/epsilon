@@ -361,7 +361,7 @@ KDSize LayoutField::minimalSizeForOptimalDisplay() const {
 }
 
 const char* LayoutField::text() {
-  layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
+  layout().serialize(m_draftBuffer, m_draftBufferSize);
   return m_draftBuffer;
 }
 

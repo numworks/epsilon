@@ -15,6 +15,10 @@ LDFLAGS += \
   -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) \
   -s PRECISE_F32=1
 
+ifeq ($(_emscripten_single_file),1)
+LDFLAGS += -s SINGLE_FILE
+endif
+
 ifneq ($(DEBUG),0)
 LDFLAGS += \
   --profiling-funcs \

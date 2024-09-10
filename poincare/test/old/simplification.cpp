@@ -1029,7 +1029,7 @@ QUIZ_CASE(poincare_simplification_percent) {
   assert_parsed_expression_simplify_to("80+20%", "80×(1+20/100)");
   assert_parsed_expression_simplify_to("20%+80+20%", "(20/100+80)×(1+20/100)");
   assert_parsed_expression_simplify_to("80+20%+20%",
-                                       "80×(1+20/100)×(1+20/100)");
+                                       "(80×(1+20/100))×(1+20/100)");
   assert_parsed_expression_simplify_to("80-20%", "80×(1-20/100)");
   assert_parsed_expression_simplify_to("80+20-20%", "100×(1-20/100)");
   assert_parsed_expression_simplify_to("80+10*20%", "10×20/100+80");

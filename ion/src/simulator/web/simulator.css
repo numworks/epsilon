@@ -52,10 +52,18 @@ body.fullscreen .col-calculator {
    * were calculated on background.jpg.
    * TODO: This could be replaced with 0;0;100%;100%; if all dimensions in
    * layout.json were recomputed for the usual .webp background.*/
+#ifdef LAYOUT_epsilon
   top: 0.6%;
   left: 7.9%;
   width: 84.1%;
   height: 89.1%;
+#endif
+#ifdef LAYOUT_scandium
+  top: 14.6%;
+  left: 20.1%;
+  width: 59.8%;
+  height: 74.1%;
+#endif
 }
 
 .actions {

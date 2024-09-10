@@ -38,7 +38,10 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(0_e);
     return true;
   }
-  // TODO_PCJ: Raise Unhandled if child is zero and ln is user-input.
+  if (child->isZero()) {
+    e->cloneTreeOverTree(KMult(-1_e, KInf));
+    return true;
+  }
   return false;
 }
 

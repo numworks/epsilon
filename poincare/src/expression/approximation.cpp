@@ -438,7 +438,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
        * 0-0i]). We manually handle the case where the argument is null, as the
        * lib c++ gives log(0) = -inf, which is only a generous shorthand for the
        * limit. */
-      return c == std::complex<T>(0) ? NAN
+      return c == std::complex<T>(0) ? -INFINITY
              : e->isLog()            ? std::log10(c)
                                      : std::log(c);
     }

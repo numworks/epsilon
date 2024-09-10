@@ -218,7 +218,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
   // TODO: Remove ln(c^2) dependency
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,ln(c^2)})");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,c})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "dep(3,{x})");
 }
@@ -940,8 +940,8 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // functions
   simplifies_to("exp(inf)", "∞");
   simplifies_to("exp(-inf)", "0");
-  // TODO_PCJ simplifies_to("log(inf,0)", "undef");
-  // TODO_PCJ simplifies_to("log(-inf,0)", "undef");
+  simplifies_to("log(inf,0)", "undef");
+  simplifies_to("log(-inf,0)", "undef");
   simplifies_to("log(inf,1)", "undef");
   simplifies_to("log(-inf,1)", "undef");
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
@@ -951,12 +951,12 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO: should be nonreal
   simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
-  // TODO_PCJ simplifies_to("log(0,inf)", "undef");
-  // TODO_PCJ simplifies_to("log(0,-inf)", "undef");
+  simplifies_to("log(0,inf)", "undef");
+  simplifies_to("log(0,-inf)", "undef");
   simplifies_to("log(1,inf)", "0");
-  // TODO_PCJ simplifies_to("log(1,-inf)", "0");
-  simplifies_to("log(x,inf)", "dep(0,{ln(x),nonNull(x),realPos(x)})");
-  // TODO_PCJ simplifies_to("log(x,-inf)", "dep(∞×sign(1/ln(x)),{ln(x)})");
+  simplifies_to("log(1,-inf)", "0", cartesianCtx);
+  simplifies_to("log(x,inf)", "dep(0,{nonNull(x),realPos(x)})");
+  simplifies_to("log(x,-inf)", "dep(ln(x)/ln(-∞),{nonNull(x)})", cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(-inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(inf,-inf)", "undef");
@@ -1124,7 +1124,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(17)^2+cos(6)^2", "cos(6)^2+sin(17)^2", cartesianCtx);
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
-                "dep(0,{ln(-x^2/(x^2+1)+1)})", cartesianCtx);
+                "dep(0,{nonNull(x^2+1)})", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {
@@ -1189,10 +1189,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
                 "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
                 cartesianCtx);
-  simplifies_to(
-      "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-      "dep(0,{ln(abs(x)),ln(abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
-      cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+                "dep(0,{nonNull(abs(x)),nonNull(abs(y))})", cartesianCtx);
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

@@ -309,12 +309,11 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^0", "\u0014dep(1,{1/x})",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "\u0014dep(x,{x^(-π+1)})",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
   assert_parsed_expression_simplify_to("2^x×2^(-x)", "\u0014dep(1,{x})",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("y^x×y^(-x)", "\u0014dep(1,{x,ln(y)})",
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "\u0014dep(1,{x,y})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x/√(x)", "\u0014dep(√(x),{1/√(x)})",
                                        SystemForAnalysis);

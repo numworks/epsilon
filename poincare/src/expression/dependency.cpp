@@ -187,12 +187,8 @@ bool ContainsSameDependency(const Tree* searched, const Tree* container) {
 bool IsDefinedIfChildIsDefined(const Tree* e) {
   // Un-projected trees are not expected here.
   assert(!e->isOfType({Type::Conj, Type::Decimal, Type::Cos, Type::Sin}));
-  /* TODO_PCJ: For better sensitivity (simplify more dependencies):
-   *           - Use the old Power::typeOfDependency logic :
-   *                dep(..,{x^y}) = dep(..,{x}) if y > 0 and y != p/2*q
-   *           - Handle logarithm of non null children */
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
-                      Type::ATrig, Type::ATanRad}) ||
+                      Type::ATrig, Type::ATanRad, Type::Ln}) ||
          (e->isPow() && e->child(1)->isStrictlyPositiveRational());
 }
 

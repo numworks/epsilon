@@ -25,8 +25,7 @@ class Order {
    *  0 if e1 == e2 (trees are identical)
    *  Order depends on OrderType and may not match order of approximation.
    */
-  static int Compare(const Tree* e1, const Tree* e2,
-                     OrderType order = OrderType::System);
+  static int Compare(const Tree* e1, const Tree* e2, OrderType order);
   static int CompareSystem(const Tree* e1, const Tree* e2) {
     return Compare(e1, e2, OrderType::System);
   }

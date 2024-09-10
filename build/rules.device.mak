@@ -22,6 +22,12 @@ HELP_GOAL_bootloader := In debug mode the bootloader is built with -Os to fit in
 endif
 endif
 
+$(OUTPUT_DIRECTORY)/bootloader/%.program: $(OUTPUT_DIRECTORY)/bootloader/%.elf
+	$(call rule_label,PROGRAM)
+	openocd -f build/device/openocd.$(PLATFORM).cfg -c "unlock; program $<; reset; shutdown"
+
+$(call document_other_target,bootloader.program,Unlock device and flash bootloader with openocd)
+
 # Firmware component - kernel
 
 ifeq ($(ASSERTIONS),0)

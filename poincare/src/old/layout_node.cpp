@@ -22,8 +22,8 @@ bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
   return protectedIsIdenticalTo(l);
 }
 
-KDSize LayoutNode::layoutSize(KDFont::Size font,
-                              Internal::LayoutCursor *cursor) const {
+KDSize LayoutMemoization::layoutSize(KDFont::Size font,
+                                     Internal::LayoutCursor *cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     Internal::RackLayout::s_layoutCursor = cursor;
     KDSize size = computeSize(font);
@@ -66,8 +66,8 @@ KDSize LayoutNode::layoutSize(KDFont::Size font,
   return m_size;
 }
 
-KDCoordinate LayoutNode::baseline(KDFont::Size font,
-                                  Internal::LayoutCursor *cursor) const {
+KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
+                                         Internal::LayoutCursor *cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
     Internal::RackLayout::s_layoutCursor = cursor;
     m_baseline = computeBaseline(font);
@@ -77,7 +77,7 @@ KDCoordinate LayoutNode::baseline(KDFont::Size font,
   return m_baseline;
 }
 
-void LayoutNode::invalidAllSizesPositionsAndBaselines() {
+void LayoutMemoization::invalidAllSizesPositionsAndBaselines() {
   m_flags.m_sized = false;
   m_flags.m_baselined = false;
 }

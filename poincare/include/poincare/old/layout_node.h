@@ -18,14 +18,11 @@ namespace Poincare {
 
 class OLayout;
 
-class LayoutNode : public PoolObject {
-  friend class OLayout;
-
+// Helper class to cache the size and the baseline of a Layout.
+class LayoutMemoization {
  public:
-  // Constructor
-  LayoutNode()
-      : PoolObject(),
-        m_size(KDSizeZero),
+  LayoutMemoization()
+      : m_size(KDSizeZero),
         m_baseline(0),
         m_flags({
             .m_baselined = false,
@@ -34,34 +31,18 @@ class LayoutNode : public PoolObject {
             .m_sizeFontSize = KDFont::Size::Small,
         }) {}
 
-  // Comparison
-  bool isIdenticalTo(const OLayout l, bool makeEditable = false) const;
-
-  // Rendering
-  constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
+  // TODO: invalid cache when tempering with hierarchy
+  // TODO remember if cursor was in layout and hide this method
+  virtual void invalidAllSizesPositionsAndBaselines();
   KDSize layoutSize(KDFont::Size font,
                     Internal::LayoutCursor *cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,
                         Internal::LayoutCursor *cursor = nullptr) const;
 
-  // TODO: invalid cache when tempering with hierarchy
-  // TODO remember if cursor was in layout and hide this method
-  virtual void invalidAllSizesPositionsAndBaselines();
-  size_t serialize(char *buffer, size_t bufferSize,
-                   Preferences::PrintFloatMode floatDisplayMode =
-                       Preferences::PrintFloatMode::Decimal,
-                   int numberOfSignificantDigits = 0) const override {
-    assert(false);
-    return 0;
-  }
-
  private:
+  constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
   virtual KDSize computeSize(KDFont::Size font) const = 0;
   virtual KDCoordinate computeBaseline(KDFont::Size font) const = 0;
-  virtual void render(KDContext *ctx, KDPoint p,
-                      KDGlyph::Style style) const = 0;
-  virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
-
   mutable KDSize m_size;
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of
@@ -77,6 +58,30 @@ class LayoutNode : public PoolObject {
     KDFont::Size m_sizeFontSize : 1;
   };
   mutable Flags m_flags;
+};
+
+class LayoutNode : public PoolObject, public LayoutMemoization {
+  friend class OLayout;
+
+ public:
+  // Constructor
+  LayoutNode() : PoolObject(), LayoutMemoization() {}
+
+  // Comparison
+  bool isIdenticalTo(const OLayout l, bool makeEditable = false) const;
+
+  size_t serialize(char *buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode =
+                       Preferences::PrintFloatMode::Decimal,
+                   int numberOfSignificantDigits = 0) const override {
+    assert(false);
+    return 0;
+  }
+
+ private:
+  virtual void render(KDContext *ctx, KDPoint p,
+                      KDGlyph::Style style) const = 0;
+  virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
 };
 
 }  // namespace Poincare

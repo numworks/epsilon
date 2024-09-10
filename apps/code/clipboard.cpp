@@ -70,6 +70,7 @@ const UTF8Helper::TextPair* Clipboard::PythonTextPairs() {
           UTF8Helper::TextPair("arccos(\x11)", "acos(\x11)", true),
           UTF8Helper::TextPair("arcsin(\x11)", "asin(\x11)", true),
           UTF8Helper::TextPair("arctan(\x11)", "atan(\x11)", true),
+          // TODO: only when log has 1 argument
           UTF8Helper::TextPair("log(\x11)", "log10(\x11)", true),
           UTF8Helper::TextPair("ln(\x11)", "log(\x11)", true),
           UTF8Helper::TextPair("ᴇ", "e", false, ShouldReplaceLetterE),

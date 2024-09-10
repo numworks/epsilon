@@ -27,7 +27,7 @@
         <canvas class="calculator-mirror" width="320" height="240"></canvas>
       </div>
     </div>
-    <script src="epsilon.js"></script>
+    <script src=EM_MODULE_JS></script>
     <script>
 #include "calculator.js"
 var Module = {};

@@ -10,6 +10,10 @@ else
 EPSILON_GETOPT := 1
 endif
 
+ifeq ($(PLATFORM),web)
+ION_em_module_js := epsilon.js
+endif
+
 ifneq ($(filter android ios,$(PLATFORM)),)
 EPSILON_TELEMETRY := 1
 else

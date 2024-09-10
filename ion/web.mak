@@ -48,4 +48,4 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.css: $(OUTPUT_DIRECTORY)/$(_ion_
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.html.inc $(addprefix $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.,html css)
 	$(call rule_label,HOSTCPP)
-	$(HOSTCPP) -I$(dir $@) -P $(filter %.inc,$^) $@
+	$(HOSTCPP) -I$(dir $@) -DEM_MODULE_NAME=$(APP_NAME) -DEM_MODULE_JS='"$(ION_em_module_js)"' -P $(filter %.inc,$^) $@

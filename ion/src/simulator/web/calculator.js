@@ -69,7 +69,7 @@ function Calculator(emModule) {
   }
 
   // Load and run Epsilon
-  Epsilon(emModule).then(resultModule => {
+  EM_MODULE_NAME(emModule).then(resultModule => {
     /* As per emscripten 3.1.58 "the argument passed into the module constructor is
      * no longer mutated in place. The expectation is that the module instance will
      * be available via the constructor return value."

@@ -116,7 +116,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     const Units::Representative* repr1 = Units::Unit::GetRepresentative(e1);
     const Units::Representative* repr2 = Units::Unit::GetRepresentative(e2);
     if (repr1 == repr2) {
-      // Prefix could be used, but there is no needs for a specific order.
+      // Prefix could be used, but there is no need for a specific order.
       return 0;
     }
     // Sort units from biggest to smallest ratio.

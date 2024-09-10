@@ -705,6 +705,16 @@ Tree* Unit::GetBaseUnits(SIVector vector) {
   return result;
 }
 
+/* TODO_PCJ: Confirm this logic that as not been re-implemented in additional
+ * results is no longer expected. Implement it otherwise.
+ * - Angle unit displayed as degree and radians
+ * - Temperature units displayed as Kelvin, Celsius and Fahrenheit
+ * - Energy units displayed as J, Wh and eV
+ * - Surface units displayed as ha (and acres if imperial)
+ * - Volume units displayed as L
+ * - Speed units displayed as km/h (and mph if imperial)
+ */
+
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
                               UnitDisplay unitDisplay, AngleUnit angleUnit) {

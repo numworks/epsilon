@@ -790,7 +790,7 @@ UserExpression UserExpression::cloneAndSimplify(
     return e;
   }
 #else
-  assert(!reduceFailure && (type() != ExpressionNode::Type::Store));
+  assert(!reduceFailure && (!tree()->isStore()));
 #endif
   /* TODO_PCJ: e takes space in the pool only to be deleted right after
    * beautification. This could be optimized. */
@@ -898,7 +898,7 @@ bool UserExpression::replaceSymbols(Poincare::Context* context,
 
 static bool IsIgnoredSymbol(const NewExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
-  if (e->type() != ExpressionNode::Type::Symbol) {
+  if (e->tree()->isUserSymbol()) {
     return false;
   }
   while (ignoredSymbols) {
@@ -932,14 +932,11 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
   assert(testResult == OMG::Troolean::Unknown && !isUninitialized());
 
   // Handle dependencies, store, symbols and functions
-  ExpressionNode::Type t = type();
-  if (t == ExpressionNode::Type::Dependency ||
-      t == ExpressionNode::Type::Store) {
+  if (tree()->isDep() || tree()->isStore()) {
     return cloneChildAtIndex(0).recursivelyMatches(
         test, context, replaceSymbols, auxiliary, ignoredSymbols);
   }
-  if (t == ExpressionNode::Type::Symbol ||
-      t == ExpressionNode::Type::Function) {
+  if (tree()->isUserSymbol() || tree()->isUserFunction()) {
     assert(replaceSymbols ==
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
            replaceSymbols ==
@@ -949,12 +946,12 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
     if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
         (replaceSymbols ==
              SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&
-         t == ExpressionNode::Type::Symbol)) {
+         tree()->isUserSymbol())) {
       return false;
     }
     assert(replaceSymbols ==
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-           t == ExpressionNode::Type::Function);
+           tree()->isUserFunction());
     return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
                                    context, auxiliary, ignoredSymbols);
   }
@@ -963,6 +960,7 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
    * the pool to be recursivelyMatched. We do so so that ExpressionTrinaryTest
    * can use Expression API. */
   const int childrenCount = tree()->numberOfChildren();
+
   bool isParametered = tree()->isParametric();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
   for (int i = childrenCount - 1; i >= 0; i--) {
@@ -1079,9 +1077,9 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
         if (isAngleUnit && hasAngleUnits) {
           *hasAngleUnits = true;
         }
-        return (e.type() == ExpressionNode::Type::Unit &&
+        return (e.tree()->isUnit() &&
                 (!pack->ignoreAngleUnits || !isAngleUnit)) ||
-               e.type() == ExpressionNode::Type::ConstantPhysics;
+               e.tree()->isPhysicalConstant();
       },
       ctx,
       replaceSymbols
@@ -1090,8 +1088,29 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
       &pack);
 }
 
+bool NewExpression::IsUndefined(const NewExpression e) {
+  return e.tree()->isUndefined();
+}
+
+bool NewExpression::isUndefined() const { return tree()->isUndefined(); }
+
+bool NewExpression::IsNAry(const NewExpression e) { return e.tree()->isNAry(); }
+
+bool NewExpression::IsApproximate(const NewExpression e) {
+  return e.tree()->isDecimal() || e.tree()->isFloat() ||
+         e.tree()->isDoubleFloat();
+}
+
+bool NewExpression::IsPercent(const NewExpression e) {
+  return e.tree()->isPercentSimple() || e.tree()->isPercentAddition();
+}
+
+bool NewExpression::IsSequence(const NewExpression e) {
+  return e.tree()->isSequence();
+}
+
 bool NewExpression::isPureAngleUnit() const {
-  return !isUninitialized() && type() == ExpressionNode::Type::Unit &&
+  return !isUninitialized() && tree()->isUnit() &&
          Internal::Dimension::Get(tree()).isSimpleAngleUnit();
 }
 

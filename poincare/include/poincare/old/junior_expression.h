@@ -367,32 +367,23 @@ class JuniorExpression : public OExpression {
   static bool IsUninitialized(const NewExpression e) {
     return e.isUninitialized();
   }
-  static bool IsUndefined(const NewExpression e) { return e.isUndefined(); }
-  static bool IsNAry(const NewExpression e) {
-    return e.isOfType(
-        {ExpressionNode::Type::Addition, ExpressionNode::Type::Multiplication});
-  }
-  static bool IsApproximate(const NewExpression e) {
-    return e.isOfType({ExpressionNode::Type::Decimal,
-                       ExpressionNode::Type::Float,
-                       ExpressionNode::Type::Double});
-  }
+
+  static bool IsUndefined(const NewExpression e);
+  static bool IsNAry(const NewExpression e);
+  static bool IsApproximate(const NewExpression e);
+
   static bool IsMatrix(const NewExpression e, Context* context) {
     assert(false);
     return false;
   }
   static bool IsPlusOrMinusInfinity(const SystemExpression e);
-  static bool IsPercent(const NewExpression e) {
-    return e.isOfType({ExpressionNode::Type::PercentSimple,
-                       ExpressionNode::Type::PercentAddition});
-  }
+
+  static bool IsPercent(const NewExpression e);
   static bool IsDiscontinuous(const NewExpression e, Context* context);
-  static bool IsSequence(const NewExpression e) {
-    return e.type() == ExpressionNode::Type::Sequence;
-  }
+  static bool IsSequence(const NewExpression e);
 
   bool allChildrenAreUndefined() const;
-  bool isUndefined() const { return type() == ExpressionNode::Type::Undefined; }
+  bool isUndefined() const;
   bool hasComplexI(
       Context* context,
       SymbolicComputation replaceSymbols =

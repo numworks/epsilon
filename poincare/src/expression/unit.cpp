@@ -1134,8 +1134,8 @@ Tree* BuildDecomposition(double value, const Representative** list,
                                 ? std::floor(representativeValue + lax)
                                 : std::ceil(representativeValue - lax);
     }
-    if (std::abs(representativeValue) > lax ||
-        (lastUnit && result->numberOfChildren() == 0)) {
+    assert(!lastUnit || result->numberOfChildren() > 0);
+    if (std::abs(representativeValue) > lax) {
       // Add decomposed unit
       SharedTreeStack->pushMult(2);
       SharedTreeStack->pushFloat(representativeValue);
@@ -1201,8 +1201,10 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
     return false;
   }
   double value = Approximation::RootTreeToReal<double>(e);
+  // Skip decomposition if value is smaller than second smallest representative.
+  assert(length > 1);
   if (std::isnan(value) || std::isinf(value) ||
-      std::abs(value) <= OMG::Float::EpsilonLax<double>()) {
+      std::abs(value) <= list[length - 2]->ratio()) {
     return false;
   }
   // extractedUnits are no longer necessary

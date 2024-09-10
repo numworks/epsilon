@@ -1142,24 +1142,24 @@ Tree* BuildDecomposition(double value, const Representative** list,
 }
 
 // Decomposition representatives list, ordered from biggest to smallest ratio.
-const Representative* TimeRepresentativeList[] = {
+const Representative* timeRepresentativesList[] = {
     &Time::representatives.year,   &Time::representatives.month,
     &Time::representatives.day,    &Time::representatives.hour,
     &Time::representatives.minute, &Time::representatives.second};
 
-const Representative* AngleRepresentativeList[] = {
+const Representative* angleRepresentativesList[] = {
     &Angle::representatives.degree, &Angle::representatives.arcMinute,
     &Angle::representatives.arcSecond};
 
-const Representative* MassRepresentativeList[] = {
+const Representative* massRepresentativesList[] = {
     &Mass::representatives.shortTon, &Mass::representatives.pound,
     &Mass::representatives.ounce};
 
-const Representative* DistanceRepresentativeList[] = {
+const Representative* distanceRepresentativesList[] = {
     &Distance::representatives.mile, &Distance::representatives.yard,
     &Distance::representatives.foot, &Distance::representatives.inch};
 
-const Representative* VolumeRepresentativeList[] = {
+const Representative* volumeRepresentativesList[] = {
     &Volume::representatives.gallon, &Volume::representatives.quart,
     &Volume::representatives.pint, &Volume::representatives.cup};
 
@@ -1170,21 +1170,21 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
   const Representative** list = nullptr;
   int length;
   if (vector == Time::Dimension) {
-    list = TimeRepresentativeList;
-    length = std::size(TimeRepresentativeList);
+    list = timeRepresentativesList;
+    length = std::size(timeRepresentativesList);
   } else if (vector == Angle::Dimension) {
-    list = AngleRepresentativeList;
-    length = std::size(AngleRepresentativeList);
+    list = angleRepresentativesList;
+    length = std::size(angleRepresentativesList);
   } else if (DisplayImperialUnits(extractedUnits)) {
     if (vector == Mass::Dimension) {
-      list = MassRepresentativeList;
-      length = std::size(MassRepresentativeList);
+      list = massRepresentativesList;
+      length = std::size(massRepresentativesList);
     } else if (vector == Distance::Dimension) {
-      list = DistanceRepresentativeList;
-      length = std::size(DistanceRepresentativeList);
+      list = distanceRepresentativesList;
+      length = std::size(distanceRepresentativesList);
     } else if (vector == Volume::Dimension) {
-      list = VolumeRepresentativeList;
-      length = std::size(VolumeRepresentativeList);
+      list = volumeRepresentativesList;
+      length = std::size(volumeRepresentativesList);
     }
   }
   if (!list) {

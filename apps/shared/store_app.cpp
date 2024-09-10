@@ -17,7 +17,7 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
     return false;
   }
   size_t size = formula.tree()->treeSize();
-  if (size >= k_bufferSize - 1) {
+  if (size > k_bufferSize - 1) {
     // Formula is too long
     m_memoizedFormulasBuffer[index][0] = 0;
     return false;

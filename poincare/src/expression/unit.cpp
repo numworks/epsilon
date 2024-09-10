@@ -1110,7 +1110,7 @@ double roundToMaxPrecision(double value) {
 }
 
 // Given a SI value, build decomposition along multiple representatives
-Tree* BuildDecomposition(double value, const Representative** list,
+Tree* BuildDecomposition(double value, const Representative* const* list,
                          int length) {
   assert(length > 0);
   Tree* result = SharedTreeStack->pushAdd(0);
@@ -1152,24 +1152,24 @@ Tree* BuildDecomposition(double value, const Representative** list,
 }
 
 // Decomposition representatives list, ordered from biggest to smallest ratio.
-const Representative* timeRepresentativesList[] = {
+constexpr const Representative* const timeRepresentativesList[] = {
     &Time::representatives.year,   &Time::representatives.month,
     &Time::representatives.day,    &Time::representatives.hour,
     &Time::representatives.minute, &Time::representatives.second};
 
-const Representative* angleRepresentativesList[] = {
+constexpr const Representative* const angleRepresentativesList[] = {
     &Angle::representatives.degree, &Angle::representatives.arcMinute,
     &Angle::representatives.arcSecond};
 
-const Representative* massRepresentativesList[] = {
+constexpr const Representative* const massRepresentativesList[] = {
     &Mass::representatives.shortTon, &Mass::representatives.pound,
     &Mass::representatives.ounce};
 
-const Representative* distanceRepresentativesList[] = {
+constexpr const Representative* const distanceRepresentativesList[] = {
     &Distance::representatives.mile, &Distance::representatives.yard,
     &Distance::representatives.foot, &Distance::representatives.inch};
 
-const Representative* volumeRepresentativesList[] = {
+constexpr const Representative* const volumeRepresentativesList[] = {
     &Volume::representatives.gallon, &Volume::representatives.quart,
     &Volume::representatives.pint, &Volume::representatives.cup};
 
@@ -1177,7 +1177,7 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
                                      Dimension dimension) {
   // Decompose time, angle, and imperial volume, mass and length
   SIVector vector = dimension.unit.vector;
-  const Representative** list = nullptr;
+  const Representative* const* list = nullptr;
   int length;
   if (vector == Time::Dimension) {
     list = timeRepresentativesList;

@@ -952,15 +952,15 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
-  simplifies_to("log(0,-inf)", "undef");
+  simplifies_to("log(0,-inf)", "undef", cartesianCtx);
   simplifies_to("log(1,inf)", "0");
   simplifies_to("log(1,-inf)", "0", cartesianCtx);
   simplifies_to("log(x,inf)", "dep(0,{nonNull(x),realPos(x)})");
   simplifies_to("log(x,-inf)", "dep(ln(x)/ln(-∞),{nonNull(x)})", cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
-  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef");
-  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef");
-  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef");
+  // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", cartesianCtx);
+  // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);
+  // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", cartesianCtx);
   simplifies_to("ln(inf)", "∞");
   // TODO: should be nonreal
   simplifies_to("ln(-inf)", "undef");

@@ -181,10 +181,10 @@ QUIZ_CASE(pcj_approximation_infinity) {
   // functions
   approximates_to<float>("exp(inf)", "∞");
   approximates_to<float>("exp(-inf)", "0");
-  approximates_to<float>("log(inf,0)", "undef");
-  approximates_to<float>("log(-inf,0)", "undef");
-  approximates_to<float>("log(inf,1)", "undef");
-  approximates_to<float>("log(-inf,1)", "undef");
+  approximates_to<float>("log(inf,0)", "undef", cartesianCtx);
+  approximates_to<float>("log(-inf,0)", "undef", cartesianCtx);
+  approximates_to<float>("log(inf,1)", "undef", cartesianCtx);
+  approximates_to<float>("log(-inf,1)", "undef", cartesianCtx);
   approximates_to<float>("log(inf,0.3)", "-∞");
   approximates_to<float>("log(-inf,0.3)", "nonreal");
   approximates_to<float>("log(-inf,0.3)", "-∞-2.609355×i", cartesianCtx);
@@ -193,26 +193,26 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("log(-inf,3)", "∞+2.859601×i", cartesianCtx);
   approximates_to<float>("log(inf,-3)", "nonreal");
   approximates_to<float>("log(inf,-3)", "∞-∞×i", cartesianCtx);
-  approximates_to<float>("log(0,inf)", "undef");
-  approximates_to<float>("log(0,-inf)", "undef");
+  approximates_to<float>("log(0,inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(0,-inf)", "undef", cartesianCtx);
   approximates_to<float>("log(1,inf)", "0");
   approximates_to<float>("log(1,-inf)", "0");
   approximates_to<float>("log(0.3,inf)", "0");
   approximates_to<float>("log(0.3,-inf)", "0");
   approximates_to<float>("log(3,inf)", "0");
   approximates_to<float>("log(3,-inf)", "0");
-  approximates_to<float>("log(inf,inf)", "undef");
-  approximates_to<float>("log(-inf,inf)", "undef");
-  approximates_to<float>("log(inf,-inf)", "undef");
-  approximates_to<float>("log(-inf,-inf)", "undef");
+  approximates_to<float>("log(inf,inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(-inf,inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(inf,-inf)", "undef", cartesianCtx);
+  approximates_to<float>("log(-inf,-inf)", "undef", cartesianCtx);
   approximates_to<float>("ln(inf)", "∞");
   // TODO: should be nonreal
   approximates_to<float>("ln(-inf)", "undef");
   approximates_to<float>("ln(-inf)", "∞+3.141593×i", cartesianCtx);
   approximates_to<float>("cos(inf)", "undef");
-  approximates_to<float>("cos(-inf)", "undef");
-  approximates_to<float>("sin(inf)", "undef");
-  approximates_to<float>("sin(-inf)", "undef");
+  approximates_to<float>("cos(-inf)", "undef", cartesianCtx);
+  approximates_to<float>("sin(inf)", "undef", cartesianCtx);
+  approximates_to<float>("sin(-inf)", "undef", cartesianCtx);
   approximates_to<float>("atan(inf)", "1.570796");
   approximates_to<float>("atan(-inf)", "-1.570796");
 

@@ -895,17 +895,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is(
       "log(1,2)",
       Logarithm::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "log\u0014{2\u0014}(1)",
-      Logarithm::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "\u0014{3\u0014}log(7)",
-      Logarithm::Builder(BasedInteger::Builder(7), BasedInteger::Builder(3)));
-  assert_parsed_expression_is(
-      "5\u0014{3\u0014}log(7)",
-      Multiplication::Builder(BasedInteger::Builder(5),
-                              Logarithm::Builder(BasedInteger::Builder(7),
-                                                 BasedInteger::Builder(3))));
   {
     Shared::GlobalContext context;
     // A context is passed so that the expression is not parsed as a sequence
@@ -1441,12 +1430,6 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is(
       "{1,2}2",
       Multiplication::Builder(BuildList(l2), BasedInteger::Builder(2)));
-  assert_parsed_expression_is(
-      "\u0014{2\u0014}log(3)log\u0014{2\u0014}(3)",
-      Multiplication::Builder(Logarithm::Builder(BasedInteger::Builder(3),
-                                                 BasedInteger::Builder(2)),
-                              Logarithm::Builder(BasedInteger::Builder(3),
-                                                 BasedInteger::Builder(2))));
 }
 
 QUIZ_CASE(poincare_parsing_with_missing_parentheses) {

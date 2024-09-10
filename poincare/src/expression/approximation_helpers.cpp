@@ -34,8 +34,8 @@ T Approximation::PositiveIntegerApproximation(T c) {
 template <typename T>
 bool isNegligible(T x, T precision, T norm1, T norm2) {
   T absX = std::fabs(x);
-  T epsilon = 10.0 * precision;
-  return absX <= epsilon && absX / norm1 <= epsilon && absX / norm2 <= epsilon;
+  return absX <= precision && absX / norm1 <= precision &&
+         absX / norm2 <= precision;
 }
 
 template <typename T>
@@ -68,7 +68,7 @@ std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNegligible(
   }
   T magnitude1 = minimalNonNullMagnitudeOfParts(input1);
   T magnitude2 = minimalNonNullMagnitudeOfParts(input2);
-  T precision = OMG::Float::EpsilonLax<T>();
+  T precision = 10.0 * OMG::Float::EpsilonLax<T>();
   if (isNegligible(result.imag(), precision, magnitude1, magnitude2)) {
     result.imag(0);
   }

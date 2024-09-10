@@ -28,6 +28,8 @@ $(addprefix device/epsilon-core/device/shared-core/drivers/, \
   flash_authorizations.cpp \
   flash_write_with_interruptions.cpp \
   internal_flash.cpp \
+  internal_flash_stm32f.cpp:-n0120 \
+  internal_flash_stm32h.cpp:+n0120 \
   internal_flash_otp.cpp \
   reset.cpp \
   swd.cpp \

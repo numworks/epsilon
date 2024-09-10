@@ -905,12 +905,12 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("0/inf", "0");
 
   // x^inf
-  // simplifies_to("(-2)^inf", "undef");  // complex inf
-  // simplifies_to("(-2)^(-inf)", "0");
+  // TODO simplifies_to("(-2)^inf", "undef");  // complex inf
+  // TODO simplifies_to("(-2)^(-inf)", "0");
   simplifies_to("(-1)^inf", "undef");
   simplifies_to("(-1)^(-inf)", "undef");
-  // simplifies_to("(-0.3)^inf", "0");
-  // simplifies_to("(-0.3)^(-inf)", "undef");  // complex inf
+  // TODO simplifies_to("(-0.3)^inf", "0");
+  // TODO simplifies_to("(-0.3)^(-inf)", "undef");  // complex inf
   simplifies_to("0^inf", "0");
   simplifies_to("0^(-inf)", "undef");  // complex inf
   simplifies_to("0.3^inf", "0");

@@ -1,18 +1,15 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/empty_context.h>
+#include <omg/code_point.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/parsing/parsing_context.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <quiz.h>
 
 #include "helper.h"
-#include "omg/code_point.h"
-#include "poincare/old/symbol.h"
-#include "poincare/old/variable_context.h"
-#include "poincare/src/expression/symbol.h"
-#include "poincare/src/layout/parsing/parsing_context.h"
 
 using namespace Poincare::Internal;
 

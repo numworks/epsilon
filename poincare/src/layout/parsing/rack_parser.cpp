@@ -263,7 +263,7 @@ void RackParser::popToken() {
       if (m_nextToken.type() == Token::Type::AssignmentEqual) {
         assert(m_parsingContext.parsingMethod() ==
                ParsingContext::ParsingMethod::Assignment);
-        /* Stop parsing for assignment to ensure that, frow now on xy is
+        /* Stop parsing for assignment to ensure that, from now on xy is
          * understood as x*y. For example, "func(x) = xy" -> left of the =, we
          * parse for assignment so "func" is NOT understood as "f*u*n*c", but
          * after the equal we want "xy" to be understood as "x*y" */

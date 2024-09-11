@@ -48,13 +48,16 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
        * parametrics
        * */
       if (e->isParametric() && Parametric::IsFunctionIndex(i, e)) {
+        if (e->isIntegral() || e->isIntegralWithAlternatives()) {
+          continue;
+        }
         if (e->isDiff()) {
-          // diff(dep({ln(x), z}, x), x, y) -> dep({ln(y), z}, diff(x, x, y))
+          // diff(dep(x, {ln(x), z}), x, y) -> dep(diff(x, x, y), {ln(y), z})
           const Tree* symbolValue = e->child(1);
           Variables::LeaveScopeWithReplacement(childSet, symbolValue, false);
         } else {
-          /* sum(dep({    f(k),           z},     k), k, 1, n) ->
-           *     dep({sum(f(k), k, 1, n), z}, sum(k,  k, 1, n))
+          /* sum(dep(k, {f(k), z}), k, 1, n) ->
+           * dep(sum(k, k, 1, n), {sum(f(k), k, 1, n), z})
            * TODO:
            * - Keeping the dependency in the parametric would be more optimal,
            *   but we would have to handle them along the simplification process

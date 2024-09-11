@@ -1,6 +1,8 @@
 #ifndef POINCARE_LAYOUT_H
 #define POINCARE_LAYOUT_H
 
+#include <kandinsky/context.h>
+#include <poincare/src/layout/layout_memoization.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 
@@ -17,7 +19,8 @@ namespace Poincare {
 
 class JuniorLayout;
 
-class JuniorLayoutNode final : public PoolObject, public LayoutMemoization {
+class JuniorLayoutNode final : public PoolObject,
+                               public Internal::LayoutMemoization {
   friend class JuniorLayout;
 
  private:

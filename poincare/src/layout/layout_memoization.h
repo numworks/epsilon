@@ -1,25 +1,15 @@
-#ifndef POINCARE_LAYOUT_NODE_H
-#define POINCARE_LAYOUT_NODE_H
+#ifndef POINCARE_LAYOUT_MEMOIZATION_H
+#define POINCARE_LAYOUT_MEMOIZATION_H
 
-#include <escher/metric.h>
-#include <kandinsky/color.h>
-#include <kandinsky/context.h>
-#include <kandinsky/point.h>
-#include <kandinsky/size.h>
-#include <omg/directions.h>
-
-#include "pool_object.h"
+#include <kandinsky/font.h>
 
 namespace Poincare::Internal {
+
 class LayoutCursor;
-}
 
-namespace Poincare {
-
-class OLayout;
-
-// Helper class to cache the size and the baseline of a Layout.
+// Helper class to cache the size and the baseline of a Pool Layout.
 class LayoutMemoization {
+  // TODO: replace virtuality with a template because it has a single override
  public:
   LayoutMemoization()
       : m_size(KDSizeZero),
@@ -34,10 +24,9 @@ class LayoutMemoization {
   // TODO: invalid cache when tempering with hierarchy
   // TODO remember if cursor was in layout and hide this method
   virtual void invalidAllSizesPositionsAndBaselines();
-  KDSize layoutSize(KDFont::Size font,
-                    Internal::LayoutCursor *cursor = nullptr) const;
+  KDSize layoutSize(KDFont::Size font, LayoutCursor* cursor = nullptr) const;
   KDCoordinate baseline(KDFont::Size font,
-                        Internal::LayoutCursor *cursor = nullptr) const;
+                        LayoutCursor* cursor = nullptr) const;
 
  private:
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
@@ -60,6 +49,6 @@ class LayoutMemoization {
   mutable Flags m_flags;
 };
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal
 
 #endif

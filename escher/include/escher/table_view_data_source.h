@@ -2,6 +2,7 @@
 #define ESCHER_TABLE_VIEW_DATA_SOURCE_H
 
 #include <escher/highlight_cell.h>
+#include <escher/metric.h>
 #include <escher/table_size_1D_manager.h>
 #include <escher/view.h>
 

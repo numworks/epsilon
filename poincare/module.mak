@@ -94,7 +94,6 @@ $(addprefix old/, \
   integral.cpp \
   junior_expression.cpp \
   junior_layout.cpp \
-  layout_node.cpp \
   least_common_multiple.cpp \
   list.cpp \
   list_access.cpp \
@@ -251,6 +250,7 @@ $(addprefix layout/, \
   layout_selection.cpp \
   layout_span.cpp \
   layout_span_decoder.cpp \
+  layout_memoization.cpp \
   layouter.cpp \
   multiplication_symbol.cpp \
   parser.cpp \

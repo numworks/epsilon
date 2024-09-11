@@ -5,7 +5,6 @@
 #include <omg/directions.h>
 
 #include "context.h"
-#include "layout_node.h"
 #include "pool_handle.h"
 
 namespace Poincare {}  // namespace Poincare

@@ -1,14 +1,13 @@
-#include <escher/metric.h>
-#include <ion/display.h>
-#include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/layout_node.h>
-#include <poincare/old/old_expression.h>
-#include <poincare/src/layout/rack_layout.h>
+#include "layout_memoization.h"
 
-namespace Poincare {
+#include <poincare/old/exception_checkpoint.h>
+
+#include "rack_layout.h"
+
+namespace Poincare::Internal {
 
 KDSize LayoutMemoization::layoutSize(KDFont::Size font,
-                                     Internal::LayoutCursor *cursor) const {
+                                     Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     Internal::RackLayout::s_layoutCursor = cursor;
     KDSize size = computeSize(font);
@@ -52,9 +51,9 @@ KDSize LayoutMemoization::layoutSize(KDFont::Size font,
 }
 
 KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
-                                         Internal::LayoutCursor *cursor) const {
+                                         Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
-    Internal::RackLayout::s_layoutCursor = cursor;
+    RackLayout::s_layoutCursor = cursor;
     m_baseline = computeBaseline(font);
     m_flags.m_baselined = true;
     m_flags.m_baselineFontSize = font;
@@ -67,4 +66,4 @@ void LayoutMemoization::invalidAllSizesPositionsAndBaselines() {
   m_flags.m_baselined = false;
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

@@ -10,6 +10,7 @@ struct LayoutStyle : KDGlyph::Style {
   KDColor selectionColor;
   KDColor emptySquareColor;
   KDColor placeholderColor;
+  KDColor piecewiseCommaColor;
 };
 
 }  // namespace Poincare

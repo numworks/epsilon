@@ -1375,7 +1375,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           if (!grid->isEditing()) {
             continue;
           }
-          commaStyle.glyphColor = style.placeholderColor;
+          commaStyle.glyphColor = style.piecewiseCommaColor;
         }
         ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
       }

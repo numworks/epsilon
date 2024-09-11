@@ -37,7 +37,7 @@ class LayoutView : public GlyphsView {
   static Poincare::LayoutStyle DefaultLayoutStyle(
       const KDGlyph::Style& glyphStyle) {
     return {glyphStyle, Escher::Palette::Select, Escher::Palette::YellowDark,
-            Escher::Palette::GrayDark};
+            Escher::Palette::GrayBright, Escher::Palette::GrayDark};
   }
 
  protected:

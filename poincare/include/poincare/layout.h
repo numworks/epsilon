@@ -1,7 +1,6 @@
 #ifndef POINCARE_LAYOUT_H
 #define POINCARE_LAYOUT_H
 
-#include <escher/palette.h>
 #include <kandinsky/context.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
@@ -21,7 +20,7 @@ namespace Poincare {
 class Layout;
 
 class LayoutObject final : public PoolObject,
-                               public Internal::LayoutMemoization {
+                           public Internal::LayoutMemoization {
   friend class Layout;
 
  private:
@@ -31,9 +30,7 @@ class LayoutObject final : public PoolObject,
   size_t size() const override;
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override {
-    stream << "Layout";
-  }
+  void logNodeName(std::ostream& stream) const override { stream << "Layout"; }
   void logAttributes(std::ostream& stream) const override;
 #endif
 
@@ -89,7 +86,7 @@ class Layout final : public PoolHandle {
   }
 
   static Layout Create(const Internal::Tree* structure,
-                             Internal::ContextTrees ctx);
+                       Internal::ContextTrees ctx);
   operator const Internal::Tree*() { return tree(); }
 
   static Layout CodePoint(CodePoint cp);
@@ -128,8 +125,7 @@ class Layout final : public PoolHandle {
 
   // Render
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            Internal::LayoutCursor* cursor,
-            KDColor selectionColor = Escher::Palette::Select);
+            Internal::LayoutCursor* cursor, KDColor selectionColor);
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 
   LayoutObject* node() {

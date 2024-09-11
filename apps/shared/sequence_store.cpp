@@ -1,6 +1,7 @@
 #include "sequence_store.h"
 
 #include <apps/global_preferences.h>
+#include <escher/palette.h>
 #include <ion/storage/file_system.h>
 
 #include <algorithm>

@@ -142,7 +142,7 @@ void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 }
 
 void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, nullptr);
+  draw(ctx, p, style, nullptr, KDColorBlack);
 }
 
 // Rendering

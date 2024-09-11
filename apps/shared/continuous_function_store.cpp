@@ -1,5 +1,6 @@
 #include "continuous_function_store.h"
 
+#include <escher/palette.h>
 #include <ion.h>
 #include <poincare/old/serialization_helper.h>
 

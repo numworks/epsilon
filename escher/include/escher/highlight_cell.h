@@ -1,6 +1,7 @@
 #ifndef ESCHER_HIGHLIGHT_CELL_H
 #define ESCHER_HIGHLIGHT_CELL_H
 
+#include <escher/palette.h>
 #include <escher/responder.h>
 #include <escher/view.h>
 #include <poincare/layout.h>

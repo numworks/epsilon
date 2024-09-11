@@ -503,7 +503,7 @@ class Unit final {
   static bool IsPureAngleUnit(NewExpression expression, bool radianOnly);
   static bool HasAngleDimension(NewExpression expression);
   static bool ShouldDisplayAdditionalOutputs(
-      double value, OExpression unit, Preferences::UnitFormat unitFormat) {
+      double value, UserExpression unit, Preferences::UnitFormat unitFormat) {
     assert(false);
     return false;
   }

@@ -73,11 +73,11 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
-void assert_parsed_expression_is(const char* expression,
-                                 const Poincare::Internal::Tree* r,
-                                 bool parseForAssignment = false) {
-  assert_parsed_expression_is(expression, Expression::Builder(r),
-                              parseForAssignment);
+void assert_parsed_expression_is(
+    const char* expression, const Poincare::Internal::Tree* expectedExpression,
+    bool parseForAssignment = false) {
+  assert_parsed_expression_is(
+      expression, Expression::Builder(expectedExpression), parseForAssignment);
 }
 
 QUIZ_CASE(poincare_parsing_tokenize_numbers) {
@@ -830,9 +830,8 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("2e^(3)",
                               KMult(2_e, KPow(e_e, KParentheses(3_e))));
   assert_parsed_expression_is("\u00122^3\u00133", KMult(KPow(2_e, 3_e), 3_e));
-  KTree M1 = KMatrix<1, 1>(1_e);
-  KTree M2 = KMatrix<1, 1>(2_e);
-  assert_parsed_expression_is("[[1]][[2]]", KMult(M1, M2));
+  assert_parsed_expression_is("[[1]][[2]]",
+                              KMult(KMatrix<1, 1>(1_e), KMatrix<1, 1>(2_e)));
   assert_parsed_expression_is("2{1,2}", KMult(2_e, KList(1_e, 2_e)));
   assert_parsed_expression_is("{1,2}2", KMult(KList(1_e, 2_e), 2_e));
 }

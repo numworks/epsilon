@@ -245,7 +245,6 @@ $(addprefix layout/, \
   empty_rectangle.cpp \
   grid.cpp \
   input_beautification.cpp \
-  layout.cpp \
   layout_cursor.cpp \
   layout_selection.cpp \
   layout_span.cpp \
@@ -288,6 +287,9 @@ $(addprefix numeric/, \
   statistics_dataset.cpp \
   statistics_dataset_column.cpp \
   zoom.cpp \
+) \
+$(addprefix pool/, \
+  layout.cpp \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \

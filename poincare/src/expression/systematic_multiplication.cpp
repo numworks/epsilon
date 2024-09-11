@@ -27,12 +27,13 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     } else {
       if (Dimension::IsNonListScalar(next)) {
         if (Approximation::CanApproximate(next) &&
-            !std::isnan(Approximation::To<float>(next))) {
+            std::isfinite(Approximation::To<float>(next))) {
           // 0 * x -> 0
           next->removeTree();
         } else {
-          // 0 * x -> dep(0,{x})
-          // TODO_PCJ: x could be inf
+          // 0 * x -> dep(0, {0 * x})
+          SharedTreeStack->pushMult(2);
+          child->cloneTree();
           next->detachTree();
           (*numberOfDependencies)++;
         }

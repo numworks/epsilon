@@ -46,11 +46,11 @@ QUIZ_CASE(pcj_simplification_expansion) {
   expand_to(KTrig(KAdd(π_e, "x"_e, "y"_e), 0_e),
             KDep(KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
                       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))),
-                 KDepList(KTrig(KAdd("x"_e, "y"_e), 1_e))));
+                 KDepList(KMult(0_e, KTrig(KAdd("x"_e, "y"_e), 1_e)))));
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
             KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
   expand_to(KLn(KMult(2_e, π_e)),
-            KDep(KAdd(KLn(2_e), KLn(π_e)), KDepList(i_e)));
+            KDep(KAdd(KLn(2_e), KLn(π_e)), KDepList(KMult(0_e, i_e))));
   // Algebraic expand
   // A?*(B+C)*D? = A*D*B + A*D*C
   expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
@@ -93,9 +93,9 @@ QUIZ_CASE(pcj_simplification_contraction) {
                     KAbs(KMult("e"_e, "f"_e))),
 
               KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
-  contract_to(
-      KAdd("e"_e, "f"_e, KLn(π_e), KLn(KMult(2_e, e_e))),
-      KDep(KAdd("e"_e, "f"_e, KLn(KMult(2_e, π_e, e_e))), KDepList(i_e)));
+  contract_to(KAdd("e"_e, "f"_e, KLn(π_e), KLn(KMult(2_e, e_e))),
+              KDep(KAdd("e"_e, "f"_e, KLn(KMult(2_e, π_e, e_e))),
+                   KDepList(KMult(0_e, i_e))));
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));
@@ -850,9 +850,8 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to(
       "{(x, 2), (x/x, 2), (3, undef), (1 , piecewise(x/x + (a + b)^2 - 2*a*b, "
       "x + y/y>2, undef))}",
-      "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(a^2+b^2+1,{x^0}),"
-      "x+1>2,undef),{y^0}))}");
-
+      "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(-2×a×b+(a+b)^2+1,"
+      "{x^0}),x+1>2,undef),{y^0}))}");
   simplifies_to("{1,undef}", "{1,undef}");
   simplifies_to("[[1,undef]]", "[[1,undef]]");
   simplifies_to("(1,undef)", "(1,undef)");

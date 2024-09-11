@@ -200,7 +200,11 @@ bool ShallowRemoveUselessDependencies(Tree* dep) {
   bool changed = false;
   Tree* depI = set->child(0);
   for (int i = 0; i < set->numberOfChildren(); i++) {
-    // TODO is it true with infinite ? for instance -inf+inf is undef
+    /* TODO_PCJ:
+     * - if 1 child can be inf and another child can be -inf, then we cannot
+     *   split add
+     * - if 1 child can be zero and another child can be inf, then we cannot
+     *   split mult */
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if (depI->isAdd() || depI->isMult()) {
       NAry::SetNumberOfChildren(

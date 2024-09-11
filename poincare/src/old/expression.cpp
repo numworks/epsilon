@@ -882,7 +882,7 @@ Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       static_cast<const JuniorExpression &>(*this).tree()->cloneTree();
   Internal::Tree *lay = Internal::Layouter::LayoutExpression(
       exp, false, numberOfSignificantDigits, floatDisplayMode, base);
-  return JuniorLayout::Builder(lay);
+  return Layout::Builder(lay);
 }
 
 size_t OExpression::serialize(char *buffer, size_t bufferSize,

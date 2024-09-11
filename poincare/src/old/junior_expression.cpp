@@ -1,9 +1,9 @@
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
+#include <poincare/layout.h>
 #include <poincare/old/boolean.h>
 #include <poincare/old/complex.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/junior_layout.h>
 #include <poincare/old/list_complex.h>
 #include <poincare/old/matrix.h>
 #include <poincare/old/matrix_complex.h>
@@ -207,7 +207,7 @@ SystemExpression JuniorExpressionNode::approximateToTree(
 Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context, OMG::Base base) const {
-  return JuniorLayout::Builder(Layouter::LayoutExpression(
+  return Poincare::Layout::Builder(Layouter::LayoutExpression(
       tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode));
 }
 
@@ -1191,7 +1191,8 @@ Poincare::Layout Point::create2DLayout(
       floatDisplayMode, significantDigits, context);
   Poincare::Layout child1 = cloneChildAtIndex(1).createLayout(
       floatDisplayMode, significantDigits, context);
-  return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
+  return Poincare::Layout::Create(KPoint2DL(KA, KB),
+                                  {.KA = child0, .KB = child1});
 }
 
 template Coordinate2D<float> Point::approximate2D<float>(

@@ -17,7 +17,7 @@
 #include <poincare/sign.h>
 
 namespace Poincare {
-class JuniorLayout;
+class Layout;
 }
 
 namespace Poincare::Internal {

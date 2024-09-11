@@ -2,8 +2,8 @@
 #define POINCARE_LAYOUT_CURSOR_H
 
 #include <omg/directions.h>
+#include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/junior_layout.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
@@ -136,7 +136,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the cursorNode. */
   LayoutBufferCursor(
-      Poincare::JuniorLayout rootLayout = Poincare::JuniorLayout(),
+      Poincare::Layout rootLayout = Poincare::Layout(),
       Tree* cursorNode = nullptr,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
       : LayoutCursor(0, -1), m_rootLayout(rootLayout) {
@@ -149,7 +149,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
   }
 
-  Poincare::JuniorLayout rootLayout() { return m_rootLayout; }
+  Poincare::Layout rootLayout() { return m_rootLayout; }
   Rack* rootRack() const override {
     return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
   }
@@ -258,7 +258,7 @@ class LayoutBufferCursor final : public LayoutCursor {
   }
   bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
 
-  Poincare::JuniorLayout m_rootLayout;
+  Poincare::Layout m_rootLayout;
   int m_cursorRack;
 };
 

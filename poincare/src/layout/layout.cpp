@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/junior_layout.h>
+#include <poincare/layout.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/layouter.h>
@@ -13,43 +13,42 @@
 
 namespace Poincare {
 
-JuniorLayoutNode::JuniorLayoutNode(const Internal::Tree* tree,
-                                   size_t treeSize) {
+LayoutObject::LayoutObject(const Internal::Tree* tree, size_t treeSize) {
   memcpy(m_blocks, tree->block(), treeSize);
 }
 
-size_t JuniorLayoutNode::size() const {
-  return sizeof(JuniorLayoutNode) + tree()->treeSize();
+size_t LayoutObject::size() const {
+  return sizeof(LayoutObject) + tree()->treeSize();
 }
 
 #if POINCARE_TREE_LOG
-void JuniorLayoutNode::logAttributes(std::ostream& stream) const {
+void LayoutObject::logAttributes(std::ostream& stream) const {
   stream << '\n';
   tree()->log(stream);
 }
 #endif
 
-KDSize JuniorLayoutNode::computeSize(KDFont::Size font) const {
+KDSize LayoutObject::computeSize(KDFont::Size font) const {
   return Internal::Render::Size(tree(), font);
 }
 
-KDCoordinate JuniorLayoutNode::computeBaseline(KDFont::Size font) const {
+KDCoordinate LayoutObject::computeBaseline(KDFont::Size font) const {
   return Internal::Render::Baseline(tree(), font);
 }
 
-void JuniorLayoutNode::render(KDContext* ctx, KDPoint p,
-                              KDGlyph::Style style) const {
+void LayoutObject::render(KDContext* ctx, KDPoint p,
+                          KDGlyph::Style style) const {
   Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
                          style.backgroundColor);
 }
 
-size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
+size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfSignificantDigits) const {
   return Internal::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
 }
 
-bool JuniorLayoutNode::isIdenticalTo(JuniorLayout l, bool makeEditable) const {
+bool LayoutObject::isIdenticalTo(Layout l, bool makeEditable) const {
   if (l.isUninitialized()) {
     return false;
   }
@@ -58,50 +57,50 @@ bool JuniorLayoutNode::isIdenticalTo(JuniorLayout l, bool makeEditable) const {
   }
   /* TODO_PCJ have a comparison with a flag to ignore separators similar to what
    * isIdenticalTo(makeEditable=true)) was doing. */
-  return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
+  return tree()->treeIsIdenticalTo(static_cast<const Layout&>(l).tree());
 }
 
-const Internal::Tree* JuniorLayoutNode::tree() const {
+const Internal::Tree* LayoutObject::tree() const {
   return Internal::Tree::FromBlocks(m_blocks);
 }
-Internal::Tree* JuniorLayoutNode::tree() {
+Internal::Tree* LayoutObject::tree() {
   return Internal::Tree::FromBlocks(m_blocks);
 }
 
-JuniorLayout JuniorLayout::Builder(const Internal::Tree* tree) {
+Layout Layout::Builder(const Internal::Tree* tree) {
   if (!tree) {
-    return JuniorLayout();
+    return Layout();
   }
   assert(LayoutHelpers::IsSanitizedRack(tree));
   size_t size = tree->treeSize();
-  void* bufferNode = Pool::sharedPool->alloc(sizeof(JuniorLayoutNode) + size);
-  JuniorLayoutNode* node = new (bufferNode) JuniorLayoutNode(tree, size);
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(LayoutObject) + size);
+  LayoutObject* node = new (bufferNode) LayoutObject(tree, size);
   PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
-  return static_cast<JuniorLayout&>(h);
+  return static_cast<Layout&>(h);
 }
 
-JuniorLayout JuniorLayout::Builder(Internal::Tree* tree) {
-  JuniorLayout result = Builder(const_cast<const Internal::Tree*>(tree));
+Layout Layout::Builder(Internal::Tree* tree) {
+  Layout result = Builder(const_cast<const Internal::Tree*>(tree));
   if (tree) {
     tree->removeTree();
   }
   return result;
 }
 
-JuniorLayout JuniorLayout::Create(const Internal::Tree* structure,
-                                  Internal::ContextTrees ctx) {
+Layout Layout::Create(const Internal::Tree* structure,
+                      Internal::ContextTrees ctx) {
   Internal::Tree* tree = Internal::PatternMatching::Create(structure, ctx);
   LayoutHelpers::SanitizeRack(tree);
   return Builder(tree);
 }
 
-JuniorLayout JuniorLayout::CodePoint(::CodePoint cp) {
+Layout Layout::CodePoint(::CodePoint cp) {
   Internal::Tree* tree = KRackL.node<1>->cloneNode();
   Internal::CodePointLayout::Push(cp);
   return Builder(tree);
 }
 
-JuniorLayout JuniorLayout::String(const char* str, int length) {
+Layout Layout::String(const char* str, int length) {
   Internal::Tree* tree = KRackL()->cloneTree();
   UTF8Decoder decoder(str);
   int n = 0;
@@ -122,15 +121,14 @@ JuniorLayout JuniorLayout::String(const char* str, int length) {
   return Builder(tree);
 }
 
-JuniorLayout JuniorLayout::Parse(const char* string) {
+Layout Layout::Parse(const char* string) {
   if (!string || string[0] == 0) {
-    return JuniorLayout();
+    return Layout();
   }
-  return JuniorLayout::Builder(Internal::RackFromText(string));
+  return Layout::Builder(Internal::RackFromText(string));
 }
 
-JuniorLayout JuniorLayout::Concatenate(JuniorLayout layout1,
-                                       JuniorLayout layout2) {
+Layout Layout::Concatenate(Layout layout1, Layout layout2) {
   assert(!layout1.isUninitialized() && !layout2.isUninitialized());
   assert(layout1.tree()->isRackLayout() && layout2.tree()->isRackLayout());
   Internal::Tree* result = layout1.tree()->cloneTree();
@@ -138,52 +136,51 @@ JuniorLayout JuniorLayout::Concatenate(JuniorLayout layout1,
   return Builder(result);
 }
 
-void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                        Internal::LayoutCursor* cursor,
-                        KDColor selectionColor) {
+void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
+                  Internal::LayoutCursor* cursor, KDColor selectionColor) {
   node()->draw(ctx, p, style, cursor, selectionColor);
 }
 
-void JuniorLayout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
+void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
   draw(ctx, p, style, nullptr);
 }
 
 // Rendering
 
-void JuniorLayoutNode::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                            Internal::LayoutCursor* cursor,
-                            KDColor selectionColor) const {
+void LayoutObject::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
+                        Internal::LayoutCursor* cursor,
+                        KDColor selectionColor) const {
   Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
                          style.backgroundColor, cursor);
 }
 
-JuniorLayout JuniorLayout::clone() const {
+Layout Layout::clone() const {
   if (isUninitialized()) {
-    return JuniorLayout();
+    return Layout();
   }
   PoolHandle c = PoolHandle::clone();
-  JuniorLayout cast = static_cast<JuniorLayout&>(c);
+  Layout cast = static_cast<Layout&>(c);
   cast->invalidAllSizesPositionsAndBaselines();
   return cast;
 }
 
-JuniorLayout JuniorLayout::cloneWithoutMargins() {
+Layout Layout::cloneWithoutMargins() {
   Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
   Internal::Layouter::StripSeparators(clone);
-  return JuniorLayout::Builder(clone);
+  return Layout::Builder(clone);
 }
 
-JuniorLayout JuniorLayout::cloneWithoutChildrenRacks() {
+Layout Layout::cloneWithoutChildrenRacks() {
   Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
   LayoutHelpers::DeleteChildrenRacks(clone);
-  return JuniorLayout::Builder(clone);
+  return Layout::Builder(clone);
 }
 
-bool JuniorLayout::isEmpty() const { return tree()->numberOfChildren() == 0; }
+bool Layout::isEmpty() const { return tree()->numberOfChildren() == 0; }
 
-bool JuniorLayout::isCodePointsString() const {
+bool Layout::isCodePointsString() const {
   for (const Internal::Tree* child : tree()->children()) {
     if (!(child->isCodePointLayout() || child->isCombinedCodePointsLayout())) {
       return false;

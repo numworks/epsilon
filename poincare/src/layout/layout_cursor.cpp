@@ -1185,7 +1185,7 @@ void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
     bufferCursor->applyTreeStackCursor(editionCursor);
 
     assert(Tree::FromBlocks(SharedTreeStack->firstBlock())->isRackLayout());
-    m_rootLayout = Poincare::JuniorLayout::Builder(
+    m_rootLayout = Poincare::Layout::Builder(
         Tree::FromBlocks(SharedTreeStack->firstBlock()));
   }
   SharedTreeStack->flush();

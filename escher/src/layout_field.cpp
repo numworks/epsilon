@@ -64,7 +64,7 @@ void LayoutField::ContentView::copySelection(Poincare::Context* context,
     return;
   }
   Poincare::Internal::Tree* t = selection.cloneSelection();
-  Layout layoutToParse = JuniorLayout::Builder(t);
+  Layout layoutToParse = Layout::Builder(t);
   if (layoutToParse.isUninitialized()) {
     return;
   }
@@ -340,7 +340,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
    * */
   if (!forceCursorRightOfText) {
     Poincare::LayoutHelpers::MakeRightMostParenthesisTemporary(
-        static_cast<JuniorLayout&>(resultLayout).tree());
+        static_cast<Layout&>(resultLayout).tree());
   }
 
   insertLayoutAtCursor(resultLayout, forceCursorRightOfText,
@@ -389,7 +389,7 @@ void LayoutField::restoreContent(const char* buffer, size_t size,
   if (size == 0) {
     return;
   }
-  JuniorLayout l = JuniorLayout::Builder(
+  Layout l = Layout::Builder(
       reinterpret_cast<const Poincare::Internal::Tree*>(buffer));
   setLayout(l);
   if (*cursorOffset != -1) {

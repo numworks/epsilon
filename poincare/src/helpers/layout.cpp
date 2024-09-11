@@ -1,5 +1,4 @@
 #include <poincare/helpers/layout.h>
-#include <poincare/old/junior_layout.h>
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/grid.h>

@@ -40,7 +40,7 @@ Layout OPoint::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
                                                significantDigits, context);
   Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
                                                significantDigits, context);
-  return JuniorLayout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
+  return Layout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
 }
 
 }  // namespace Poincare

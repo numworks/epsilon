@@ -93,7 +93,6 @@ $(addprefix old/, \
   infinity.cpp \
   integral.cpp \
   junior_expression.cpp \
-  junior_layout.cpp \
   least_common_multiple.cpp \
   list.cpp \
   list_access.cpp \
@@ -246,6 +245,7 @@ $(addprefix layout/, \
   empty_rectangle.cpp \
   grid.cpp \
   input_beautification.cpp \
+  layout.cpp \
   layout_cursor.cpp \
   layout_selection.cpp \
   layout_span.cpp \

@@ -6,7 +6,8 @@
 namespace Poincare::Internal {
 
 /* TODO: Metric should never return a same score for two different
- * expressions. AdvanceReduction already handles that. */
+ * expressions. AdvanceReduction uses this flawed metric but handles identical
+ * metrics on different expressions by looking at their CRC. */
 class Metric {
  public:
   // Metric of given tree. The smaller is the better.

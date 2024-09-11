@@ -1,7 +1,6 @@
 #ifndef POINCARE_LAYOUT_RENDER_METRICS_H
 #define POINCARE_LAYOUT_RENDER_METRICS_H
 
-#include <escher/metric.h>
 #include <kandinsky/coordinate.h>
 #include <omg/unreachable.h>
 
@@ -18,17 +17,35 @@ inline KDSize Size(const Rack* r) { return Render::Size(r); }
 inline KDCoordinate Width(const Rack* r) { return Size(r).width(); }
 inline KDCoordinate Height(const Rack* r) { return Size(r).height(); }
 
+namespace FractionAndConjugate {
+constexpr KDCoordinate k_horizontalOverflow = 2;
+constexpr KDCoordinate k_horizontalMargin = 2;
+}  // namespace FractionAndConjugate
+
 namespace Fraction {
+using FractionAndConjugate::k_horizontalMargin;
+using FractionAndConjugate::k_horizontalOverflow;
 constexpr KDCoordinate k_lineMargin = 2;
 constexpr KDCoordinate k_lineHeight = 1;
-constexpr KDCoordinate k_horizontalOverflow =
-    Escher::Metric::FractionAndConjugateHorizontalOverflow;
-constexpr KDCoordinate k_horizontalMargin =
-    Escher::Metric::FractionAndConjugateHorizontalMargin;
 }  // namespace Fraction
+
+namespace Conjugate {
+using FractionAndConjugate::k_horizontalMargin;
+using FractionAndConjugate::k_horizontalOverflow;
+constexpr KDCoordinate k_overlineWidth = 1;
+constexpr KDCoordinate k_overlineVerticalMargin = 1;
+}  // namespace Conjugate
 
 namespace CodePoint {
 constexpr KDCoordinate k_middleDotWidth = 5;
+}
+
+namespace OperatorSeparator {
+constexpr static KDCoordinate k_width = 4;
+}
+
+namespace ThousandsSeparator {
+constexpr static KDCoordinate k_width = 3;
 }
 
 namespace VerticalOffset {
@@ -38,8 +55,7 @@ constexpr KDCoordinate k_indiceHeight = 10;
 namespace Pair {
 constexpr KDCoordinate k_lineThickness = 1;
 
-constexpr KDCoordinate k_minimalChildHeight =
-    Escher::Metric::MinimalBracketAndParenthesisChildHeight;
+constexpr KDCoordinate k_minimalChildHeight = 16;
 
 constexpr uint8_t k_temporaryBlendAlpha = 0x60;
 
@@ -185,11 +201,6 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
 }
 }  // namespace Pair
 
-namespace Conjugate {
-constexpr KDCoordinate k_overlineWidth = 1;
-constexpr KDCoordinate k_overlineVerticalMargin = 1;
-}  // namespace Conjugate
-
 namespace NthRoot {
 constexpr KDCoordinate k_heightMargin = 2;
 constexpr KDCoordinate k_widthMargin = 2;
@@ -321,8 +332,7 @@ inline KDPoint PositionOfDInNumerator(const Layout* node, KDCoordinate baseline,
                                       KDFont::Size font) {
   return KDPoint(
       (Width(node->child(k_variableIndex)) + k_dxHorizontalMargin) / 2 +
-          Escher::Metric::FractionAndConjugateHorizontalMargin +
-          Escher::Metric::FractionAndConjugateHorizontalOverflow,
+          Fraction::k_horizontalMargin + Fraction::k_horizontalOverflow,
       baseline - KDFont::Font(font)->stringSize(k_dString).height() -
           Fraction::k_lineMargin - Fraction::k_lineHeight);
 }
@@ -330,8 +340,7 @@ inline KDPoint PositionOfDInNumerator(const Layout* node, KDCoordinate baseline,
 inline KDPoint PositionOfDInDenominator(const Layout* node,
                                         KDCoordinate baseline,
                                         KDFont::Size font) {
-  return KDPoint(Escher::Metric::FractionAndConjugateHorizontalMargin +
-                     Escher::Metric::FractionAndConjugateHorizontalOverflow,
+  return KDPoint(Fraction::k_horizontalMargin + Fraction::k_horizontalOverflow,
                  baseline + Fraction::k_lineMargin +
                      OrderHeightOffset(node, font) +
                      Height(node->child(k_variableIndex)) -
@@ -350,7 +359,7 @@ inline KDPoint PositionOfVariableInFractionSlot(const Layout* node,
 }
 
 inline KDCoordinate FractionBarWidth(const Layout* node, KDFont::Size font) {
-  return 2 * Escher::Metric::FractionAndConjugateHorizontalOverflow +
+  return 2 * Fraction::k_horizontalOverflow +
          KDFont::Font(font)->stringSize(k_dString).width() +
          k_dxHorizontalMargin + Width(node->child(k_variableIndex)) +
          OrderWidth(node, font);
@@ -375,8 +384,7 @@ inline KDCoordinate AbscissaBaseline(const Layout* node, KDCoordinate baseline,
 inline KDPoint PositionOfVariableInAssignmentSlot(const Layout* node,
                                                   KDCoordinate baseline,
                                                   KDFont::Size font) {
-  return KDPoint(2 * (Escher::Metric::FractionAndConjugateHorizontalMargin +
-                      k_barHorizontalMargin) +
+  return KDPoint(2 * (Fraction::k_horizontalMargin + k_barHorizontalMargin) +
                      FractionBarWidth(node, font) +
                      ParenthesesWidth(node, font) + k_barWidth,
                  AbscissaBaseline(node, baseline, font) -
@@ -393,9 +401,8 @@ inline KDPoint PositionOfLeftParenthesis(const Layout* node,
                                          KDFont::Size font) {
   return KDPoint(PositionOfVariableInFractionSlot(node, baseline, font).x() +
                      Width(node->child(k_variableIndex)) +
-                     OrderWidth(node, font) +
-                     Escher::Metric::FractionAndConjugateHorizontalMargin +
-                     Escher::Metric::FractionAndConjugateHorizontalOverflow,
+                     OrderWidth(node, font) + Fraction::k_horizontalMargin +
+                     Fraction::k_horizontalOverflow,
                  Baseline(node) - ParenthesisBaseline(node, font));
 }
 

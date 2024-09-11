@@ -1,6 +1,5 @@
 #include "render.h"
 
-#include <escher/metric.h>
 #include <escher/palette.h>
 #include <kandinsky/dot.h>
 #include <omg/unreachable.h>
@@ -32,14 +31,11 @@ KDSize Render::Size(const Layout* l) {
       break;
     }
     case LayoutType::Conj: {
+      using namespace Conjugate;
       KDSize childSize = Size(l->child(0));
-      width = Escher::Metric::FractionAndConjugateHorizontalMargin +
-              Escher::Metric::FractionAndConjugateHorizontalOverflow +
-              childSize.width() +
-              Escher::Metric::FractionAndConjugateHorizontalOverflow +
-              Escher::Metric::FractionAndConjugateHorizontalMargin;
-      height = childSize.height() + Conjugate::k_overlineWidth +
-               Conjugate::k_overlineVerticalMargin;
+      width = k_horizontalMargin + k_horizontalOverflow + childSize.width() +
+              k_horizontalOverflow + k_horizontalMargin;
+      height = childSize.height() + k_overlineWidth + k_overlineVerticalMargin;
       break;
     }
     case LayoutType::Sqrt:
@@ -177,12 +173,12 @@ KDSize Render::Size(const Layout* l) {
       break;
     }
     case LayoutType::ThousandSeparator:
-      width = Escher::Metric::ThousandsSeparatorWidth;
+      width = ThousandsSeparator::k_width;
       height = 0;
       break;
     case LayoutType::OperatorSeparator:
     case LayoutType::UnitSeparator:
-      width = Escher::Metric::OperatorHorizontalMargin;
+      width = OperatorSeparator::k_width;
       height = 0;
       break;
     case LayoutType::AsciiCodePoint:
@@ -296,8 +292,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     }
     case LayoutType::Conj: {
       return KDPoint(
-          Escher::Metric::FractionAndConjugateHorizontalMargin +
-              Escher::Metric::FractionAndConjugateHorizontalOverflow,
+          Conjugate::k_horizontalMargin + Conjugate::k_horizontalOverflow,
           Conjugate::k_overlineWidth + Conjugate::k_overlineVerticalMargin);
     }
     case LayoutType::Sqrt:
@@ -947,10 +942,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
     }
     case LayoutType::Conj: {
       ctx->fillRect(
-          KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
-                 p.y(),
-                 Width(l->child(0)) +
-                     2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
+          KDRect(p.x() + Conjugate::k_horizontalMargin, p.y(),
+                 Width(l->child(0)) + 2 * Conjugate::k_horizontalOverflow,
                  Conjugate::k_overlineWidth),
           style.glyphColor);
       return;
@@ -1016,10 +1009,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           PositionOfDInDenominator(l, baseline, style.font).translatedBy(p),
           style);
 
-      KDRect horizontalBar =
-          KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
-                 baseline - Fraction::k_lineHeight,
-                 FractionBarWidth(l, style.font), Fraction::k_lineHeight);
+      KDRect horizontalBar = KDRect(
+          Fraction::k_horizontalMargin, baseline - Fraction::k_lineHeight,
+          FractionBarWidth(l, style.font), Fraction::k_lineHeight);
       ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
 
       // ...(f)...

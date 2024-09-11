@@ -36,13 +36,8 @@ class Metric {
   constexpr static KDCoordinate ExpressionInputBarMinimalHeight = 37;
   constexpr static KDCoordinate EditableExpressionAdditionalMargin =
       CellMargins.left() - LayoutViewMargin;
-  constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
-  constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
-  constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;
-  constexpr static KDCoordinate OperatorHorizontalMargin = 4;
   constexpr static KDCoordinate SmallCellMargin = 2;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
-  constexpr static KDCoordinate ThousandsSeparatorWidth = 3;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
 
   // ButtonRow

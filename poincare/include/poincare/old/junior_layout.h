@@ -1,12 +1,13 @@
 #ifndef POINCARE_LAYOUT_H
 #define POINCARE_LAYOUT_H
 
+#include <escher/palette.h>
 #include <kandinsky/context.h>
+#include <poincare/old/pool_handle.h>
+#include <poincare/old/pool_object.h>
 #include <poincare/src/layout/layout_memoization.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
-
-#include "old_layout.h"
 
 namespace Poincare::Internal {
 class Block;

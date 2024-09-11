@@ -2,7 +2,6 @@
 #define POINCARE_LAYOUT_ALIAS_H
 
 // clang-format off
-#include <poincare/old/old_layout.h>
 #include <poincare/old/junior_layout.h>
 
 namespace Poincare {

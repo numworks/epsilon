@@ -55,8 +55,8 @@ bool LayoutObject::isIdenticalTo(Layout l, bool makeEditable) const {
   if (identifier() == l.identifier()) {
     return true;
   }
-  /* TODO_PCJ have a comparison with a flag to ignore separators similar to what
-   * isIdenticalTo(makeEditable=true)) was doing. */
+  /* TODO_PCJ we should either ignore separators when makeEditable is true or
+   * remove the flag completely. */
   return tree()->treeIsIdenticalTo(static_cast<const Layout&>(l).tree());
 }
 
@@ -142,7 +142,8 @@ void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
 }
 
 void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, nullptr, KDColorBlack);
+  draw(ctx, p, style, nullptr,
+       KDColorBlack /* placeholder that will not be used */);
 }
 
 // Rendering

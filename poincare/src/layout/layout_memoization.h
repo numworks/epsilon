@@ -29,7 +29,6 @@ class LayoutMemoization {
                         LayoutCursor* cursor = nullptr) const;
 
  private:
-  constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
   virtual KDSize computeSize(KDFont::Size font) const = 0;
   virtual KDCoordinate computeBaseline(KDFont::Size font) const = 0;
   mutable KDSize m_size;

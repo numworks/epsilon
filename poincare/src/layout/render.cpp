@@ -18,8 +18,6 @@ namespace Poincare::Internal {
 
 KDFont::Size Render::s_font = KDFont::Size::Large;
 
-constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
-
 KDSize Render::Size(const Layout* l) {
   KDCoordinate width = 0;
   KDCoordinate height = 0;

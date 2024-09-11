@@ -38,6 +38,8 @@ class Render {
                    KDColor backgroundColor = KDColorWhite,
                    const LayoutCursor* cursor = nullptr);
 
+  constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
+
  private:
   static KDSize Size(const Rack* l, bool showEmpty = true);
   static KDSize Size(const Layout* l);

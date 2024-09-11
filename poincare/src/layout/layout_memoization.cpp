@@ -3,6 +3,7 @@
 #include <poincare/old/exception_checkpoint.h>
 
 #include "rack_layout.h"
+#include "render.h"
 
 namespace Poincare::Internal {
 
@@ -39,7 +40,8 @@ KDSize LayoutMemoization::layoutSize(KDFont::Size font,
      *  - Forbid insertion of a large layout as the child of another layout.
      *  - Check for an overflow before each translation of p in the render
      * methods*/
-    if (size.height() >= k_maxLayoutSize || size.width() >= k_maxLayoutSize) {
+    if (size.height() >= Render::k_maxLayoutSize ||
+        size.width() >= Render::k_maxLayoutSize) {
       ExceptionCheckpoint::Raise();
     }
 

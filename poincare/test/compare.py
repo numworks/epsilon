@@ -103,7 +103,7 @@ def main():
         print(
             "%%{init: { 'themeVariables': { 'pie1': '#50C102', 'pie2': '#FFB734', 'pie3': '#FF000c'}}}%%"
         )
-        print(f"pie showdata")
+        print(f"pie showData")
         for total, name in (totalOK, "OK"), (totalBAD, "BAD"), (totalCRASH, "CRASH"):
             print('"', name, '" : ', total)
         print(f"```")

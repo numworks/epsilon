@@ -40,7 +40,7 @@ struct ConstexprTree : public Tree {
 };
 
 /* The KTree template class is the compile time representation of a constexpr
- * tree. It's complete block representation is specified as template parameters
+ * tree. Its complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
  * a Tree*. It also eliminated identical trees since their are all using the
  * same specialized function. */

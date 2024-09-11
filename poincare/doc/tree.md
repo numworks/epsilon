@@ -85,7 +85,7 @@ above this parent and walk downward from there (this is what
 `parentOfDescendant` does).
 
 Most of the time, algorithms are built such that their behavior doesn't change
-depending of where your tree is or what are its siblings.
+depending on where your tree is or what its siblings are.
 
 
 ## How to know what Type a Tree has ?
@@ -443,7 +443,7 @@ reason, `TreeRefs` are intended to be temporary and used sparingly where
 performance matters. You will often see function passing `TreeRefs &` to
 avoid `TreeRef` object copy that would uselessly multiply the number of references pointing to a same `Tree`.
 
-All the methods on available on `Tree` are accessible on `TreeRef` as
+All the methods available on `Tree` are accessible on `TreeRef` as
 well. It should be easy to upgrade a `Tree *` into a `TreeRef` at any
 point when you want to track your `Tree` safely.
 
@@ -497,13 +497,13 @@ Similarly, the identifier can be the special value
 `TreeStack::ReferenceTable::NoNodeIdentifier` to indicates that the `TreeRef` doesn't
 point to any tree.
 
-To retrieve the node pointed by an `TreeRef`, we just return the node in
+To retrieve the node pointed by a `TreeRef`, we just return the node in
 the `TreeStack` at the corresponding offset.
 
 Each time something is moved or changed in the `TreeStack`, all node offsets are
 updated (`TreeStack::ReferenceTable::updateNodes`).
 
-Once an `TreeRef` is destroyed, the corresponding node offset is set back
+Once a `TreeRef` is destroyed, the corresponding node offset is set back
 to `TreeStack::ReferenceTable::DeletedOffset`.
 
 </details>

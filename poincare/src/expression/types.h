@@ -2,8 +2,8 @@
 
 // 1.1 - Rationals
 
-/* Defined in neg rationals, neg integers, pos integers, pos rationals order to
- * allow for nested range definitions. */
+/* Defined in neg rationals, neg integers, pos integers, pos rationals in order
+ * to allow for nested range definitions. */
 
 // 1.1.a - Negative rationals
 

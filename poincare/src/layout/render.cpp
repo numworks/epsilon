@@ -1,6 +1,5 @@
 #include "render.h"
 
-#include <escher/palette.h>
 #include <kandinsky/dot.h>
 #include <omg/unreachable.h>
 
@@ -582,11 +581,9 @@ KDCoordinate Render::Baseline(const Layout* l) {
   };
 }
 
-void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor,
-                  const LayoutCursor* cursor) {
-  KDGlyph::Style style{expressionColor, backgroundColor, font};
-  Render::s_font = font;
+void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
+                  const LayoutStyle& style, const LayoutCursor* cursor) {
+  Render::s_font = style.font;
   RackLayout::s_layoutCursor = cursor;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
@@ -597,7 +594,7 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p, KDFont::Size font,
 }
 
 void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
-                      const KDGlyph::Style& style, LayoutSelection selection,
+                      const LayoutStyle& style, LayoutSelection selection,
                       bool showEmpty) {
   if (RackLayout::IsTrivial(l) && selection.layout() != l) {
     // Early escape racks with only one child
@@ -605,7 +602,6 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     return;
   }
   KDCoordinate baseline = RackLayout::Baseline(l);
-  static constexpr KDColor selectionColor = Escher::Palette::Select;
   if (selection.layout() == l) {
     // Draw the selected area gray background
     KDSize selectedSize = RackLayout::SizeBetweenIndexes(
@@ -615,7 +611,8 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     KDPoint start(
         RackLayout::SizeBetweenIndexes(l, 0, selection.leftPosition()).width(),
         baseline - selectedBaseline);
-    ctx->fillRect(KDRect(p.translatedBy(start), selectedSize), selectionColor);
+    ctx->fillRect(KDRect(p.translatedBy(start), selectedSize),
+                  style.selectionColor);
   }
 #if 0
   /* TODO_PCJ: enabling this size call deteriorates the complexity, should size
@@ -631,7 +628,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
   struct Context {
     KDContext* ctx;
     KDPoint rackPosition;
-    const KDGlyph::Style& style;
+    const LayoutStyle& style;
     LayoutSelection selection;
     KDCoordinate rackBaseline;
     int index;
@@ -659,16 +656,17 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       context->index++;
       return;
     }
-    KDGlyph::Style childStyle = context->style;
+    LayoutStyle childStyle = context->style;
     if (context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
-      childStyle.backgroundColor = selectionColor;
+      childStyle.backgroundColor = context->style.selectionColor;
     }
     if (child) {
       DrawSimpleLayout(child, context->ctx, p, childStyle, context->selection);
     } else if (childSize.width() > 0) {
       EmptyRectangle::DrawEmptyRectangle(context->ctx, p, s_font,
-                                         EmptyRectangle::Color::Yellow);
+                                         EmptyRectangle::Color::Yellow,
+                                         context->style);
     }
     context->index++;
   };
@@ -677,7 +675,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
 }
 
 void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
-                              const KDGlyph::Style& style,
+                              const LayoutStyle& style,
                               LayoutSelection selection) {
   if (l->isGridLayout()) {
     return DrawGridLayout(l, ctx, p, style, selection);
@@ -696,7 +694,7 @@ void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
 }
 
 void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
-                            const KDGlyph::Style& style,
+                            const LayoutStyle& style,
                             LayoutSelection selection) {
   /* For efficiency, we first compute the positions of the rows and columns and
    * then render each child at the right place.  This function also handles the
@@ -756,7 +754,7 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
          grid->verticalGridEntryMargin(s_font);
     KDPoint pc = KDPoint(x, y).translatedBy(offset);
     if (grid->childIsPlaceholder(child.index)) {
-      RackLayout::RenderNode(childRack, ctx, pc, true, true);
+      RackLayout::RenderNode(childRack, ctx, pc, true, true, style);
     } else {
       DrawRack(childRack, ctx, pc, style, selection, true);
     }
@@ -765,7 +763,7 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
 
 void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
                                       KDContext* ctx, KDPoint p,
-                                      const KDGlyph::Style& style) {
+                                      const LayoutStyle& style) {
   using namespace Parenthesis;
   KDColor parenthesisWorkingBuffer[k_curveHeight * k_curveWidth];
   KDCoordinate parenthesisHeight =
@@ -795,7 +793,7 @@ void RenderParenthesisWithChildHeight(bool left, KDCoordinate childHeight,
 
 void RenderSquareBrackets(
     bool left, KDCoordinate childHeight, KDContext* ctx, KDPoint p,
-    const KDGlyph::Style& style,
+    const LayoutStyle& style,
     KDCoordinate minVerticalMargin = SquareBrackets::k_minVerticalMargin,
     KDCoordinate bracketWidth = SquareBrackets::k_bracketWidth,
     bool renderTopBar = true, bool renderBottomBar = true,
@@ -837,7 +835,7 @@ void RenderSquareBrackets(
 
 void RenderCurlyBracesWithChildHeight(bool left, KDCoordinate childHeight,
                                       KDContext* ctx, KDPoint p,
-                                      const KDGlyph::Style& style) {
+                                      const LayoutStyle& style) {
   using namespace CurlyBraces;
   // Compute margins and dimensions for each part
   KDColor workingBuffer[k_curveHeight * k_curveWidth];
@@ -902,7 +900,7 @@ void RenderCurlyBracesWithChildHeight(bool left, KDCoordinate childHeight,
 }
 
 void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
-                        const KDGlyph::Style& style) {
+                        const LayoutStyle& style) {
   switch (l->layoutType()) {
     case LayoutType::Binomial: {
       using namespace TwoRows;
@@ -1137,7 +1135,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
         KDPoint point =
             left ? p : p.translatedBy(KDPoint(rightBracketOffset, 0));
         if (l->isAutocompletedPair()) {
-          KDGlyph::Style braceStyle = style;
+          LayoutStyle braceStyle = style;
           if (AutocompletedPair::IsTemporary(l,
                                              left ? Side::Left : Side::Right)) {
             braceStyle.glyphColor =
@@ -1377,7 +1375,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           if (!grid->isEditing()) {
             continue;
           }
-          commaStyle.glyphColor = Escher::Palette::GrayDark;
+          commaStyle.glyphColor = style.placeholderColor;
         }
         ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
       }

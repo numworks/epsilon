@@ -1,5 +1,6 @@
 #include "plot_view.h"
 
+#include <escher/layout_view.h>
 #include <float.h>
 
 #include <algorithm>
@@ -193,9 +194,8 @@ void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect, Layout layout,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     layout.draw(ctx, layoutOrigin,
-                {.glyphColor = color,
-                 .backgroundColor = backgroundColor(),
-                 .font = k_font});
+                Escher::LayoutView::DefaultLayoutStyle(
+                    {color, backgroundColor(), k_font}));
   }
 }
 

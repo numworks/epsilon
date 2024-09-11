@@ -37,9 +37,8 @@ KDCoordinate LayoutObject::computeBaseline(KDFont::Size font) const {
 }
 
 void LayoutObject::render(KDContext* ctx, KDPoint p,
-                          KDGlyph::Style style) const {
-  Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                         style.backgroundColor);
+                          const LayoutStyle& style) const {
+  Internal::Render::Draw(tree(), ctx, p, style);
 }
 
 size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
@@ -136,23 +135,16 @@ Layout Layout::Concatenate(Layout layout1, Layout layout2) {
   return Builder(result);
 }
 
-void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                  Internal::LayoutCursor* cursor, KDColor selectionColor) {
-  node()->draw(ctx, p, style, cursor, selectionColor);
-}
-
-void Layout::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style) {
-  draw(ctx, p, style, nullptr,
-       KDColorBlack /* placeholder that will not be used */);
+void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
+                  Internal::LayoutCursor* cursor) {
+  node()->draw(ctx, p, style, cursor);
 }
 
 // Rendering
 
-void LayoutObject::draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-                        Internal::LayoutCursor* cursor,
-                        KDColor selectionColor) const {
-  Internal::Render::Draw(tree(), ctx, p, style.font, style.glyphColor,
-                         style.backgroundColor, cursor);
+void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
+                        Internal::LayoutCursor* cursor) const {
+  Internal::Render::Draw(tree(), ctx, p, style, cursor);
 }
 
 Layout Layout::clone() const {

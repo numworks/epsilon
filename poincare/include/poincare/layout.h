@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_H
 
 #include <kandinsky/context.h>
+#include <poincare/layout_style.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
 #include <poincare/src/layout/layout_memoization.h>
@@ -45,9 +46,9 @@ class LayoutObject final : public PoolObject,
 
   bool isIdenticalTo(Layout l, bool makeEditable) const;
 
-  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            Internal::LayoutCursor* cursor, KDColor selectionColor) const;
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const;
+  void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
+            Internal::LayoutCursor* cursor) const;
+  void render(KDContext* ctx, KDPoint p, const LayoutStyle& style) const;
 
   const Internal::Tree* tree() const;
   Internal::Tree* tree();
@@ -124,9 +125,8 @@ class Layout final : public PoolHandle {
   bool isEmpty() const;
 
   // Render
-  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
-            Internal::LayoutCursor* cursor, KDColor selectionColor);
-  void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
+  void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
+            Internal::LayoutCursor* cursor = nullptr);
 
   LayoutObject* node() {
     return static_cast<LayoutObject*>(PoolHandle::object());

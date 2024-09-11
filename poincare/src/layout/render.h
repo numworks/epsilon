@@ -5,6 +5,7 @@
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
 #include <kandinsky/point.h>
+#include <poincare/layout_style.h>
 #include <poincare/src/memory/tree.h>
 
 #include "layout_selection.h"
@@ -33,9 +34,8 @@ class Render {
   }
 
   static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root);
-  static void Draw(const Tree* l, KDContext* ctx, KDPoint p, KDFont::Size font,
-                   KDColor expressionColor = KDColorBlack,
-                   KDColor backgroundColor = KDColorWhite,
+  static void Draw(const Tree* l, KDContext* ctx, KDPoint p,
+                   const LayoutStyle& style,
                    const LayoutCursor* cursor = nullptr);
 
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
@@ -59,16 +59,16 @@ class Render {
   static KDPoint PositionOfChild(const Layout* l, int childIndex);
 
   static void DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
-                               const KDGlyph::Style& style,
+                               const LayoutStyle& style,
                                LayoutSelection selection);
   static void DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
-                             const KDGlyph::Style& style,
+                             const LayoutStyle& style,
                              LayoutSelection selection);
   static void DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
-                       const KDGlyph::Style& style, LayoutSelection selection,
+                       const LayoutStyle& style, LayoutSelection selection,
                        bool showEmpty = true);
   static void RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
-                         const KDGlyph::Style& style);
+                         const LayoutStyle& style);
 
   static KDFont::Size s_font;
 };

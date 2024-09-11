@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_RACK_LAYOUT_H
 
 #include <kandinsky/context.h>
+#include <poincare/layout_style.h>
 
 #include "../memory/tree_ref.h"
 #include "rack.h"
@@ -36,7 +37,8 @@ class RackLayout {
   static bool ShouldDrawEmptyRectangle(const Rack* l);
   static bool ShouldDrawEmptyBaseAt(const Rack* l, int childIndex);
   static void RenderNode(const Rack* l, KDContext* ctx, KDPoint p,
-                         bool showEmpty, bool isGridPlaceholder = false);
+                         bool showEmpty, bool isGridPlaceholder,
+                         const LayoutStyle& style);
   // Find the base of a vertical offset or nullptr if an empty square is needed
   static const Layout* FindBase(const Rack* rack, const Layout* verticalOffset,
                                 int verticalOffsetIndex);

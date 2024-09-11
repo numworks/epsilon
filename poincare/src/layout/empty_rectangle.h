@@ -5,6 +5,7 @@
 #include <kandinsky/context.h>
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
+#include <poincare/layout_style.h>
 
 namespace Poincare::Internal {
 
@@ -13,14 +14,15 @@ namespace Poincare::Internal {
 class EmptyRectangle {
  public:
   enum class Color : bool { Yellow, Gray };
-  enum class State : bool { Hidden, Visible };
+
   static KDSize Size(KDFont::Size font, bool withMargins = true);
   static KDCoordinate Baseline(KDFont::Size font) {
     return Size(font).height() / 2;
   }
 
   static void DrawEmptyRectangle(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                 Color rectangleColor);
+                                 Color rectangleColor,
+                                 const LayoutStyle& style);
 
  private:
   constexpr static KDCoordinate k_marginWidth = 1;

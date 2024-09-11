@@ -34,6 +34,12 @@ class LayoutView : public GlyphsView {
            !m_layout.wasErasedByException();
   }
 
+  static Poincare::LayoutStyle DefaultLayoutStyle(
+      const KDGlyph::Style& glyphStyle) {
+    return {glyphStyle, Escher::Palette::Select, Escher::Palette::YellowDark,
+            Escher::Palette::GrayDark};
+  }
+
  protected:
   /* Warning: we do not need to delete the previous layout when deleting object
    * or setting a new layout. Indeed, the layout is always possessed by a

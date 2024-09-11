@@ -16,6 +16,14 @@ const Tree* Base(const Tree* e) { return e->isPow() ? e->child(0) : e; }
 
 const Tree* Exponent(const Tree* e) { return e->isPow() ? e->child(1) : 1_e; }
 
+static bool approximationIsFinite(const Tree* e) {
+  if (!Approximation::CanApproximate(e)) {
+    return false;
+  }
+  std::complex<double> approx = Approximation::ToComplex<double>(e);
+  return std::isfinite(approx.real()) && std::isfinite(approx.imag());
+}
+
 static bool MergeMultiplicationChildWithNext(Tree* child,
                                              int* numberOfDependencies) {
   Tree* next = child->nextTree();
@@ -26,8 +34,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
       merge = KUndef->cloneTree();
     } else {
       if (Dimension::IsNonListScalar(next)) {
-        if (Approximation::CanApproximate(next) &&
-            std::isfinite(Approximation::To<float>(next))) {
+        if (approximationIsFinite(next)) {
           // 0 * x -> 0
           next->removeTree();
         } else {

@@ -49,8 +49,7 @@ QUIZ_CASE(pcj_simplification_expansion) {
                  KDepList(KMult(0_e, KTrig(KAdd("x"_e, "y"_e), 1_e)))));
   expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
             KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
-  expand_to(KLn(KMult(2_e, π_e)),
-            KDep(KAdd(KLn(2_e), KLn(π_e)), KDepList(KMult(0_e, i_e))));
+  expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
   // Algebraic expand
   // A?*(B+C)*D? = A*D*B + A*D*C
   expand_to(KMult("a"_e, KAdd("b"_e, "c"_e, "d"_e), "e"_e),
@@ -94,8 +93,7 @@ QUIZ_CASE(pcj_simplification_contraction) {
 
               KAbs(KMult("a"_e, "b"_e, "c"_e, "d"_e, "e"_e, "f"_e)));
   contract_to(KAdd("e"_e, "f"_e, KLn(π_e), KLn(KMult(2_e, e_e))),
-              KDep(KAdd("e"_e, "f"_e, KLn(KMult(2_e, π_e, e_e))),
-                   KDepList(KMult(0_e, i_e))));
+              KAdd("e"_e, "f"_e, KLn(KMult(2_e, π_e, e_e))));
   contract_to(KAdd("b"_e, "c"_e, "d"_e, KPow(KTrig("x"_e, 0_e), 2_e),
                    KPow(KTrig("x"_e, 1_e), 2_e)),
               KDep(KAdd(1_e, "b"_e, "c"_e, "d"_e), KDepList("x"_e)));

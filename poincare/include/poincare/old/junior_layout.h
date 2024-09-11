@@ -15,7 +15,9 @@ struct ContextTrees;
 
 namespace Poincare {
 
-class JuniorLayoutNode final : public LayoutNode {
+class JuniorLayout;
+
+class JuniorLayoutNode final : public PoolObject, public LayoutMemoization {
   friend class JuniorLayout;
 
  private:
@@ -32,25 +34,26 @@ class JuniorLayoutNode final : public LayoutNode {
 #endif
 
   size_t serialize(char* buffer, size_t bufferSize,
-                   Preferences::PrintFloatMode floatDisplayMode,
-                   int numberOfSignificantDigits) const override;
+                   Preferences::PrintFloatMode floatDisplayMode =
+                       Preferences::PrintFloatMode::Decimal,
+                   int numberOfSignificantDigits = 0) const override;
 
   // LayoutNode
   KDSize computeSize(KDFont::Size font) const override;
   KDCoordinate computeBaseline(KDFont::Size font) const override;
 
-  bool protectedIsIdenticalTo(OLayout l) const override;
+  bool isIdenticalTo(JuniorLayout l, bool makeEditable) const;
 
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style,
             Internal::LayoutCursor* cursor, KDColor selectionColor) const;
-  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) const;
 
   const Internal::Tree* tree() const;
   Internal::Tree* tree();
   Internal::Block m_blocks[0];
 };
 
-class JuniorLayout final : public OLayout {
+class JuniorLayout final : public PoolHandle {
  public:
   JuniorLayout() {}
 
@@ -62,6 +65,23 @@ class JuniorLayout final : public OLayout {
   template <Internal::KTrees::KTreeConcept T>
   JuniorLayout(T t) : JuniorLayout(static_cast<const Internal::Tree*>(t)) {
     static_assert(t.type().isRackLayout());
+  }
+
+  const JuniorLayoutNode* operator->() const {
+    assert(isUninitialized() ||
+           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    return static_cast<const JuniorLayoutNode*>(PoolHandle::object());
+  }
+
+  JuniorLayoutNode* operator->() {
+    assert(isUninitialized() ||
+           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    return static_cast<JuniorLayoutNode*>(PoolHandle::object());
+  }
+
+  bool isIdenticalTo(JuniorLayout l, bool makeEditable = false) const {
+    return isUninitialized() ? l.isUninitialized()
+                             : (*this)->isIdenticalTo(l, makeEditable);
   }
 
   static JuniorLayout Create(const Internal::Tree* structure,
@@ -109,7 +129,11 @@ class JuniorLayout final : public OLayout {
   void draw(KDContext* ctx, KDPoint p, KDGlyph::Style style);
 
   JuniorLayoutNode* node() {
-    return static_cast<JuniorLayoutNode*>(OLayout::object());
+    return static_cast<JuniorLayoutNode*>(PoolHandle::object());
+  }
+
+  const JuniorLayoutNode* node() const {
+    return static_cast<JuniorLayoutNode*>(PoolHandle::object());
   }
 
   // True if rack with only code points in it

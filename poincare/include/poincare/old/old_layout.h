@@ -8,31 +8,6 @@
 #include "layout_node.h"
 #include "pool_handle.h"
 
-namespace Poincare {
-
-class OLayout : public PoolHandle {
- public:
-  OLayout() : PoolHandle() {}
-  OLayout(const LayoutNode *node) : PoolHandle(node) {}
-
-  const LayoutNode *operator->() const {
-    assert(isUninitialized() ||
-           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
-    return static_cast<const LayoutNode *>(PoolHandle::object());
-  }
-
-  LayoutNode *operator->() {
-    assert(isUninitialized() ||
-           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
-    return static_cast<LayoutNode *>(PoolHandle::object());
-  }
-
-  bool isIdenticalTo(OLayout l, bool makeEditable = false) const {
-    return isUninitialized() ? l.isUninitialized()
-                             : (*this)->isIdenticalTo(l, makeEditable);
-  }
-};
-
-}  // namespace Poincare
+namespace Poincare {}  // namespace Poincare
 
 #endif

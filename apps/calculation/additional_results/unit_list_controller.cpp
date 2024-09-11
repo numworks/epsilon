@@ -126,7 +126,7 @@ void UnitListController::computeAdditionalResults(
       Layout layout =
           Shared::PoincareHelpers::CreateLayout(expressions[i], context);
       // Skip layouts identical to exactOutput
-      if (exactOutputLayout->isIdenticalTo(layout, true)) {
+      if (exactOutputLayout.isIdenticalTo(layout, true)) {
         continue;
       }
       // Skip duplicate layouts
@@ -134,7 +134,7 @@ void UnitListController::computeAdditionalResults(
       for (size_t j = 0; j < m_numberOfExpressionCells; j++) {
         Layout previousLayout =
             m_layouts[j].isUninitialized() ? m_exactLayouts[j] : m_layouts[j];
-        if (previousLayout->isIdenticalTo(layout, true)) {
+        if (previousLayout.isIdenticalTo(layout, true)) {
           skipLayout = true;
           break;
         }

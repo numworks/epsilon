@@ -7,21 +7,6 @@
 
 namespace Poincare {
 
-#define Layout OLayout
-
-bool LayoutNode::isIdenticalTo(const Layout l, bool makeEditable) const {
-  if (makeEditable) {
-    // TODO_PCJ
-  }
-  if (l.isUninitialized()) {
-    return false;
-  }
-  if (identifier() == l.identifier()) {
-    return true;
-  }
-  return protectedIsIdenticalTo(l);
-}
-
 KDSize LayoutMemoization::layoutSize(KDFont::Size font,
                                      Internal::LayoutCursor *cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {

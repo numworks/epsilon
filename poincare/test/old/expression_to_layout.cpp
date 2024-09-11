@@ -45,7 +45,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
 
 void assert_expression_layouts_and_serializes_to(OExpression expression,
                                                  const char* serialization) {
-  OLayout layout =
+  Layout layout =
       UserExpression(expression)
           .createLayout(DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits,
                         nullptr);

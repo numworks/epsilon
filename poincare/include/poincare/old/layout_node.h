@@ -60,30 +60,6 @@ class LayoutMemoization {
   mutable Flags m_flags;
 };
 
-class LayoutNode : public PoolObject, public LayoutMemoization {
-  friend class OLayout;
-
- public:
-  // Constructor
-  LayoutNode() : PoolObject(), LayoutMemoization() {}
-
-  // Comparison
-  bool isIdenticalTo(const OLayout l, bool makeEditable = false) const;
-
-  size_t serialize(char *buffer, size_t bufferSize,
-                   Preferences::PrintFloatMode floatDisplayMode =
-                       Preferences::PrintFloatMode::Decimal,
-                   int numberOfSignificantDigits = 0) const override {
-    assert(false);
-    return 0;
-  }
-
- private:
-  virtual void render(KDContext *ctx, KDPoint p,
-                      KDGlyph::Style style) const = 0;
-  virtual bool protectedIsIdenticalTo(OLayout l) const = 0;
-};
-
 }  // namespace Poincare
 
 #endif

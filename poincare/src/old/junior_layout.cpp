@@ -49,7 +49,13 @@ size_t JuniorLayoutNode::serialize(char* buffer, size_t bufferSize,
   return Internal::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
 }
 
-bool JuniorLayoutNode::protectedIsIdenticalTo(OLayout l) const {
+bool JuniorLayoutNode::isIdenticalTo(JuniorLayout l, bool makeEditable) const {
+  if (l.isUninitialized()) {
+    return false;
+  }
+  if (identifier() == l.identifier()) {
+    return true;
+  }
   /* TODO_PCJ have a comparison with a flag to ignore separators similar to what
    * isIdenticalTo(makeEditable=true)) was doing. */
   return tree()->treeIsIdenticalTo(static_cast<const JuniorLayout&>(l).tree());
@@ -156,9 +162,9 @@ JuniorLayout JuniorLayout::clone() const {
     return JuniorLayout();
   }
   PoolHandle c = PoolHandle::clone();
-  OLayout cast = OLayout(static_cast<LayoutNode*>(c.object()));
+  JuniorLayout cast = static_cast<JuniorLayout&>(c);
   cast->invalidAllSizesPositionsAndBaselines();
-  return static_cast<JuniorLayout&>(cast);
+  return cast;
 }
 
 JuniorLayout JuniorLayout::cloneWithoutMargins() {

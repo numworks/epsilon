@@ -38,7 +38,6 @@ SFLAGS += \
 $(call import_module,omg,omg)
 $(call import_module,kandinsky,kandinsky)
 $(call import_module,poincare,poincare)
-$(call import_module,escher,escher)
 $(call import_module,python,python)
 
 # FIXME Fake a module with enough glue to build. Eventually, we should be able
@@ -132,7 +131,6 @@ $(call all_objects_for,$(SOURCES_poincarejs)): $(KANDINSKY_fonts_dependencies)
 # Rules
 
 $(call create_goal,poincare, \
-  escher \
   kandinsky \
   omg \
   poincare.js_bridge \

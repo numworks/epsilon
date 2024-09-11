@@ -83,7 +83,7 @@ def main():
     computed_crc32_list = []
 
     try:
-        with ThreadPoolExecutor(max_workers=8) as pool:
+        with ThreadPoolExecutor(max_workers=os.cpu_count()) as pool:
             for scenario_name in sorted(os.listdir(dataset)):
                 if not re.match(args.filter, scenario_name):
                     continue

@@ -199,7 +199,9 @@ class JuniorExpression : public OExpression {
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
   ExpressionNode::Type type() const;
-  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const;
+  bool isOfType(std::initializer_list<Internal::Type> types) const;
+  bool deepIsOfType(std::initializer_list<Internal::Type> types,
+                    Context* context = nullptr) const;
 
   NewExpression operator=(OExpression&& other) {
     *this = Juniorize(other);
@@ -356,8 +358,6 @@ class JuniorExpression : public OExpression {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr) const;
 
-  bool deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
-                    Context* context = nullptr) const;
   Dimension dimension(Context* context = nullptr) const;
 
   // Sign of a SystemExpression
@@ -381,6 +381,12 @@ class JuniorExpression : public OExpression {
   static bool IsPercent(const NewExpression e);
   static bool IsDiscontinuous(const NewExpression e, Context* context);
   static bool IsSequence(const NewExpression e);
+  static bool IsIntegral(const NewExpression e);
+  static bool IsDiff(const NewExpression e);
+  static bool IsBoolean(const NewExpression e);
+  static bool IsList(const NewExpression e);
+  static bool IsUserSymbol(const NewExpression e);
+  static bool IsUserFunction(const NewExpression e);
 
   bool allChildrenAreUndefined() const;
   bool isUndefined() const;

@@ -226,23 +226,6 @@ bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
          !approximateOutput.recursivelyMatches(NewExpression::IsUndefined);
 }
 
-static bool expressionIsInterestingFunction(const Expression e) {
-  assert(!e.isUninitialized());
-  if (e.isOfType({ExpressionNode::Type::Opposite,
-                  ExpressionNode::Type::Parenthesis})) {
-    return expressionIsInterestingFunction(e.cloneChildAtIndex(0));
-  }
-  return !e.isConstantNumber() &&
-         e.type() != ExpressionNode::Type::UnitConvert &&
-         !e.deepIsOfType({ExpressionNode::Type::Sequence,
-                          ExpressionNode::Type::Factor,
-                          ExpressionNode::Type::RealPart,
-                          ExpressionNode::Type::ImaginaryPart,
-                          ExpressionNode::Type::ComplexArgument,
-                          ExpressionNode::Type::Conjugate}) &&
-         AdditionalResultsHelper::HasSingleNumericalValue(e);
-}
-
 bool AdditionalResultsType::HasFunction(
     const UserExpression input, const UserExpression approximateOutput) {
   // We want a single numerical value and to avoid showing the identity function
@@ -253,7 +236,7 @@ bool AdditionalResultsType::HasFunction(
   assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
   return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
          approximateOutput.type() != ExpressionNode::Type::Point &&
-         expressionIsInterestingFunction(input);
+         AdditionalResultsHelper::expressionIsInterestingFunction(input);
 }
 
 bool AdditionalResultsType::HasScientificNotation(

@@ -28,6 +28,8 @@ class AdditionalResultsHelper final {
       Context* context,
       const Preferences::CalculationPreferences calculationPreferences);
 
+  static bool expressionIsInterestingFunction(const UserExpression e);
+
   static bool HasInverseTrigo(const UserExpression input,
                               const UserExpression exactOutput);
 

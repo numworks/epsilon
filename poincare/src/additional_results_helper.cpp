@@ -218,6 +218,21 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   return UserExpression::Builder(exactAngle);
 }
 
+bool AdditionalResultsHelper::expressionIsInterestingFunction(
+    const UserExpression e) {
+  assert(!e.isUninitialized());
+
+  if (e.isOfType({Type::Opposite, Type::Parentheses})) {
+    return AdditionalResultsHelper::expressionIsInterestingFunction(
+        e.cloneChildAtIndex(0));
+  }
+  return !e.isConstantNumber() &&
+         e.type() != ExpressionNode::Type::UnitConvert &&
+         !e.deepIsOfType({Type::UserSequence, Type::Factor, Type::Re, Type::Im,
+                          Type::Arg, Type::Conj}) &&
+         AdditionalResultsHelper::HasSingleNumericalValue(e);
+}
+
 bool AdditionalResultsHelper::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput) {
   return input.tree()->isInverseTrigonometryFunction() ||

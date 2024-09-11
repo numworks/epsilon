@@ -497,13 +497,21 @@ ExpressionNode::Type NewExpression::type() const {
 }
 
 bool NewExpression::isOfType(
-    std::initializer_list<ExpressionNode::Type> types) const {
-  for (ExpressionNode::Type t : types) {
-    if (type() == t) {
-      return true;
-    }
-  }
-  return false;
+    std::initializer_list<Internal::Type> types) const {
+  return tree()->isOfType(types);
+}
+
+bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
+                                 Context* context) const {
+  return recursivelyMatches(
+      [](const Expression e, Context* context, void* auxiliary) {
+        return e.isOfType(*static_cast<std::initializer_list<Internal::Type>*>(
+                   auxiliary))
+                   ? OMG::Troolean::True
+                   : OMG::Troolean::Unknown;
+      },
+      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      &types);
 }
 
 void UserExpression::cloneAndSimplifyAndApproximate(
@@ -1030,20 +1038,6 @@ bool NewExpression::recursivelyMatches(ExpressionTestAuxiliary test,
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 
-bool NewExpression::deepIsOfType(
-    std::initializer_list<ExpressionNode::Type> types, Context* context) const {
-  return recursivelyMatches(
-      [](const Expression e, Context* context, void* auxiliary) {
-        return e.isOfType(
-                   *static_cast<std::initializer_list<ExpressionNode::Type>*>(
-                       auxiliary))
-                   ? OMG::Troolean::True
-                   : OMG::Troolean::Unknown;
-      },
-      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &types);
-}
-
 Poincare::Dimension NewExpression::dimension(Context* context) const {
   return Poincare::Dimension(*this, context);
 }
@@ -1107,6 +1101,26 @@ bool NewExpression::IsPercent(const NewExpression e) {
 
 bool NewExpression::IsSequence(const NewExpression e) {
   return e.tree()->isSequence();
+}
+
+bool NewExpression::IsIntegral(const NewExpression e) {
+  return e.tree()->isIntegral();
+}
+
+bool NewExpression::IsDiff(const NewExpression e) { return e.tree()->isDiff(); }
+
+bool NewExpression::IsBoolean(const NewExpression e) {
+  return e.tree()->isBoolean();
+}
+
+bool NewExpression::IsList(const NewExpression e) { return e.tree()->isList(); }
+
+bool NewExpression::IsUserSymbol(const NewExpression e) {
+  return e.tree()->isUserSymbol();
+}
+
+bool NewExpression::IsUserFunction(const NewExpression e) {
+  return e.tree()->isUserFunction();
 }
 
 bool NewExpression::isPureAngleUnit() const {

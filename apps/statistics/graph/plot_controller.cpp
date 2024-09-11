@@ -65,7 +65,7 @@ bool PlotController::reloadBannerView() {
   Poincare::Preferences::PrintFloatMode displayMode =
       Poincare::Preferences::SharedPreferences()->displayMode();
   constexpr static int k_bufferSize =
-      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth + 1;
+      Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
   char buffer[k_bufferSize] = "";
 
   // Display series name

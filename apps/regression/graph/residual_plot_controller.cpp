@@ -35,7 +35,7 @@ void ResidualPlotController::updateCursor() {
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
   constexpr static int k_maxNumberOfGlyphs =
-      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
+      Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
   char buffer[bufferSize];
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "x=%*.*ed", x, displayMode,

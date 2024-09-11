@@ -95,7 +95,7 @@ bool HistogramController::reloadBannerView() {
   constexpr static int k_bufferSize =
       sizeof("Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[");  // longest case
   constexpr static int k_maxNumberOfGlyphs =
-      Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
+      Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
   char buffer[k_bufferSize] = "";
 
   // Display series name

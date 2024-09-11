@@ -55,7 +55,7 @@ void InputController::InputTitle(Escher::ViewController* vc,
     StackViewController* stackViewControllerResponder =
         static_cast<StackViewController*>(vc->parentResponder());
     constexpr int k_maxNumberOfGlyphs =
-        Poincare::Print::k_maxNumberOfSmallGlyphsInScreenWidth;
+        Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
     if (stackViewControllerResponder->topViewController() != vc) {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,

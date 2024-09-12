@@ -197,7 +197,7 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
                               Float<double>::Builder(1.0e30));
 
   // Infinity
-  assert_parsed_expression_is("23ᴇ1000", Infinity::Builder(false));
+  assert_parsed_expression_is("23ᴇ1000", KMult(-1_e, KInf));
   assert_parsed_expression_is("2.3ᴇ1000", Decimal::Builder(Integer(23), 1000));
 
   // Zero
@@ -875,24 +875,11 @@ QUIZ_CASE(poincare_parsing_function_assignment) {
    * handside of the comparison). */
   assert_parsed_expression_is("y=ax", KEqual("y"_e, KMult("a"_e, "x"_e)), true);
 
-  // Without assignment "f(x)=4=3" is "Comparison(f*(x), equal, 4, equal, 3)"
-  Comparison comparison = Comparison::Builder(
-      Multiplication::Builder(Symbol::Builder("f", 1),
-                              Parenthesis::Builder(Symbol::Builder("x", 1))),
-      ComparisonNode::OperatorType::Equal, BasedInteger::Builder(4));
-  comparison = comparison.addComparison(ComparisonNode::OperatorType::Equal,
-                                        BasedInteger::Builder(3));
-  assert_parsed_expression_is("f(x)=4=3", comparison);
-  // When assigning, "f(x)=4=3" is "Assignment(f(x), Comparison(4, equal, 3))"
   assert_parsed_expression_is(
-      "f(x)=4=3",
-      Comparison::Builder(
-          Function::Builder("f", 1, Symbol::Builder("x", 1)),
-          ComparisonNode::OperatorType::Equal,
-          Comparison::Builder(BasedInteger::Builder(4),
-                              ComparisonNode::OperatorType::Equal,
-                              BasedInteger::Builder(3))),
-      true);
+      "f(x)=4=3", KLogicalAnd(KEqual(KMult("f"_e, KParentheses("x"_e)), 4_e),
+                              KEqual(4_e, 3_e)));
+  assert_parsed_expression_is("f(x)=4=3",
+                              KEqual(KFun<"f">("x"_e), KEqual(4_e, 3_e)), true);
 }
 
 QUIZ_CASE(poincare_parsing_east_arrows) {

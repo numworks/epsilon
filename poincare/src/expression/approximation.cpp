@@ -67,7 +67,7 @@ Approximation::Context::Context(AngleUnit angleUnit,
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
       m_variablesOffset(k_maxNumberOfVariables),
-      m_encounteredComplex(false),
+      m_isNonReal(false),
       m_listElement(listElement),
       m_pointElement(-1) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
@@ -137,12 +137,11 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* e) {
    * used with OutOfContext matrix operations, we should impose a context
    * instead. */
   // Return nonreal if not undef and a complex was encountered in real mode
-  if (s_context && s_context->m_encounteredComplex) {
-    if (s_context->m_complexFormat == ComplexFormat::Real &&
-        !std::isnan(value.real()) && !std::isnan(value.imag())) {
+  if (s_context && s_context->m_isNonReal) {
+    if (!std::isnan(value.real()) && !std::isnan(value.imag())) {
       return KNonReal->cloneTree();
     }
-    s_context->m_encounteredComplex = false;
+    s_context->m_isNonReal = false;
   }
   return Beautification::PushBeautifiedComplex(
       value, s_context ? s_context->m_complexFormat : ComplexFormat::Cartesian);
@@ -326,8 +325,9 @@ template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
 
-  if (s_context && value.imag() != 0) {
-    s_context->m_encounteredComplex = true;
+  if (s_context && value.imag() != 0 &&
+      s_context->m_complexFormat == ComplexFormat::Real) {
+    s_context->m_isNonReal = true;
   }
   // We used to flush negative zeros here but it was not worth
   return value;

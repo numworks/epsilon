@@ -246,7 +246,7 @@ class Approximation final {
     static constexpr int k_maxNumberOfVariables = 16;
     VariableType m_variables[k_maxNumberOfVariables];
     uint8_t m_variablesOffset;
-    bool m_encounteredComplex;
+    bool m_isNonReal;
 
     // Tells if we are approximating to get the nth-element of a list
     int m_listElement;

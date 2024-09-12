@@ -122,7 +122,10 @@ QUIZ_CASE(poincare_parsing_memory_exhaustion) {
         NAry::AddChild(add, child);
       }
     }
-    ExceptionCatch(type) { memoryFailureHasBeenHandled = true; }
+    ExceptionCatch(type) {
+      quiz_assert(type == ExceptionType::TreeStackOverflow);
+      memoryFailureHasBeenHandled = true;
+    }
   }
 
   quiz_assert(memoryFailureHasBeenHandled);

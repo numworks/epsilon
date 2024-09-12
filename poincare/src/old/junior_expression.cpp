@@ -1081,8 +1081,12 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
           : SymbolicComputation::DoNotReplaceAnySymbol,
       &pack);
 }
-
-bool NewExpression::isUndefined() const { return tree()->isUndefined(); }
+bool NewExpression::isUndefined() const {
+  // TODO_PCJ: this is terribly confusing. We should either:
+  // - rename NewExpression::isUndefined() into something more specific
+  // - create a Tree range for non-nonreal undefined
+  return tree()->isUndefined() && !tree()->isNonReal();
+}
 
 bool NewExpression::isMatrix(Context* context) const {
   if (context) {

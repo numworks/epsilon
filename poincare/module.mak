@@ -188,7 +188,7 @@ $(addprefix expression/, \
   binary.cpp \
   builtin.cpp \
   continuity.cpp \
-  conversion.cpp \
+  conversion.cpp:-no_conversion \
   decimal.cpp \
   degree.cpp \
   dependency.cpp \
@@ -204,6 +204,7 @@ $(addprefix expression/, \
   logarithm.cpp \
   matrix.cpp \
   metric.cpp \
+  no_conversion.cpp:+no_conversion \
   number.cpp \
   order.cpp \
   parametric.cpp \

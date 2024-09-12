@@ -102,7 +102,7 @@ Poincare::Internal::Tree* parse_expression(const char* expression,
                                            bool parseForAssignment = false);
 
 void assert_parsed_expression_is(const char* expression,
-                                 Poincare::OExpression r,
+                                 const Poincare::Internal::Tree* expected,
                                  bool parseForAssignment = false);
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2);

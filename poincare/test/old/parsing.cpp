@@ -75,13 +75,6 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
-void assert_parsed_expression_is(
-    const char* expression, const Poincare::Internal::Tree* expectedExpression,
-    bool parseForAssignment = false) {
-  assert_parsed_expression_is(
-      expression, Expression::Builder(expectedExpression), parseForAssignment);
-}
-
 QUIZ_CASE(poincare_parsing_tokenize_numbers) {
   assert_tokenizes_as_number("1");
   assert_tokenizes_as_number("12");

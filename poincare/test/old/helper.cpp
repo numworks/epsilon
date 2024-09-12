@@ -179,7 +179,7 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
 }
 
 void assert_parsed_expression_is(const char *expression,
-                                 Poincare::OExpression r,
+                                 const Poincare::Internal::Tree *expected,
                                  bool parseForAssignment) {
   k_total++;
   Shared::GlobalContext context;
@@ -188,11 +188,7 @@ void assert_parsed_expression_is(const char *expression,
   ExceptionTry {
     // assert(SharedTreeStack->numberOfTrees() == 0);
     Tree *parsed = parse_expression(expression, &context, parseForAssignment);
-    Tree *expected = Internal::FromPoincareExpression(r);
-    bad = !parsed || !expected || !parsed->treeIsIdenticalTo(expected);
-    if (expected) {
-      expected->removeTree();
-    }
+    bad = !parsed || !parsed->treeIsIdenticalTo(expected);
     if (parsed) {
       parsed->removeTree();
     }
@@ -400,7 +396,7 @@ void assert_expression_serializes_and_parses_to_itself(
   Tree *layout = Internal::Layouter::LayoutExpression(expression->cloneTree());
   *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
   layout->removeTree();
-  assert_parsed_expression_is(buffer, Expression::Builder(expression));
+  assert_parsed_expression_is(buffer, expression);
 }
 
 void assert_expression_parses_and_serializes_to(const char *expression,

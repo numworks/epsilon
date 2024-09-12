@@ -143,12 +143,12 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   Internal::Dimension dimension = Internal::Dimension::Get(inputTree, context);
 
   assert(dimension == Internal::Dimension::Get(exactTree, context));
-  assert(!dimension.isUnit() || dimension.isSimpleAngleUnit());
-
   if (!dimension.isScalarOrUnit() ||
-      Internal::Dimension::IsList(exactTree, context)) {
+      Internal::Dimension::IsList(exactTree, context) ||
+      (dimension.isUnit() && !dimension.isSimpleAngleUnit())) {
     return UserExpression();
   }
+  assert(!dimension.isUnit() || dimension.isSimpleAngleUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct function. Indeed, we want to capture both cases:
    * - > input: cos(60)

@@ -48,7 +48,7 @@ SystemExpression Equation::Model::standardForm(
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
                                     {.target = reductionTarget});
 
-  if (simplifiedInput.type() == ExpressionNode::Type::Nonreal) {
+  if (IsNonReal(simplifiedInput)) {
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
                  [](const NewExpression e, Context* context) {

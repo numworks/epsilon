@@ -25,7 +25,7 @@ const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone,
     ContextWithParent* lastDescendantContext) {
-  if (symbol.type() == ExpressionNode::Type::Symbol &&
+  if (IsUserSymbol(symbol) &&
       static_cast<const Symbol&>(symbol).name()[0] == 't') {
     return UserExpression();
   }
@@ -232,7 +232,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
             : equation->standardForm(context, false,
                                      ReductionTarget::SystemForAnalysis);
     if (simplifiedEquations[i].isUninitialized() ||
-        simplifiedEquations[i].type() == ExpressionNode::Type::Undefined ||
+        simplifiedEquations[i].isUndefined() ||
         simplifiedEquations[i].recursivelyMatches(
             IsMatrix, context,
             m_overrideUserVariables
@@ -240,7 +240,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
                 : SymbolicComputation::
                       ReplaceAllDefinedSymbolsWithDefinition)) {
       return Error::EquationUndefined;
-    } else if (simplifiedEquations[i].type() == ExpressionNode::Type::Nonreal) {
+    } else if (simplifiedEquations[i].isNonReal()) {
       return Error::EquationNonreal;
     }
 
@@ -445,7 +445,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       ReductionTarget::SystemForAnalysis);
   for (int i = 0; i < numberOfOriginalEquations; i++) {
-    if (simplifiedEquations[i].type() != ExpressionNode::Type::Dependency) {
+    if (simplifiedEquations[i].isDep()) {
       continue;
     }
     if (simplifiedEquations[i]
@@ -510,7 +510,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   for (size_t i = 0; i < numberOfSolutions; i++) {
     /* Since getPolynomialReducedCoefficients passes right through dependencies,
      * we need to handle them now. */
-    if (simplifiedEquations[0].type() == ExpressionNode::Type::Dependency) {
+    if (simplifiedEquations[0].isDep()) {
       VariableContext contextWithSolution(variable(0), context);
       contextWithSolution.setExpressionForSymbolAbstract(
           x[i], Symbol::Builder(variable(0), strlen(variable(0))));
@@ -544,7 +544,7 @@ static void simplifyAndApproximateSolution(
       symbolicComputation, UnitConversion::Default);
   e.cloneAndSimplifyAndApproximate(exact, approximate, reductionContext,
                                    approximateDuringReduction);
-  if (exact->type() == ExpressionNode::Type::Dependency) {
+  if (IsDep(*exact)) {
     /* e has been reduced under ReductionTarget::SystemForAnalysis in
      * Equation::Model::standardForm and has gone through Matrix::rank,
      * which discarded dependencies. Reducing here under
@@ -613,11 +613,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       displayExactSolution = true;
     }
   }
-  if (approximate.type() == ExpressionNode::Type::Nonreal) {
+  if (IsNonReal(approximate)) {
     return Error::EquationNonreal;
   }
-  if (type != SolutionType::Formal &&
-      approximate.type() == ExpressionNode::Type::Undefined) {
+  if (type != SolutionType::Formal && IsUndefined(approximate)) {
     return Error::EquationUndefined;
   }
 

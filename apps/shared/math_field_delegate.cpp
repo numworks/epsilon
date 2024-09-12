@@ -37,7 +37,7 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,
                                                        Context* context) {
-  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store;
+  return !exp.isUninitialized() && !IsStore(exp);
 }
 
 bool AbstractMathFieldDelegate::isAcceptableText(const char* text,

@@ -159,18 +159,16 @@ void ContinuousFunctionProperties::update(
   setHideDetails(genericCaptionOnly);
 
   assert(!reducedEquation.isUninitialized());
-  if (reducedEquation.type() == ExpressionNode::Type::Undefined) {
+  if (reducedEquation.isUndefined()) {
     setErrorStatusAndUpdateCaption(Status::Undefined);
     return;
   }
 
   // Do not handle dependencies for now.
   const SystemExpression analyzedExpression =
-      (reducedEquation.type() == ExpressionNode::Type::Dependency)
-          ? reducedEquation.cloneChildAtIndex(0)
-          : reducedEquation;
-  if (reducedEquation.type() == ExpressionNode::Type::Dependency &&
-      analyzedExpression.type() == ExpressionNode::Type::Dependency) {
+      (IsDep(reducedEquation)) ? reducedEquation.cloneChildAtIndex(0)
+                               : reducedEquation;
+  if (IsDep(reducedEquation) && IsDep(analyzedExpression)) {
     // If there is still a dependency, it means that the reduction failed.
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
@@ -304,7 +302,7 @@ void ContinuousFunctionProperties::update(
 
 I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
     const SystemExpression& analyzedExpression) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(!IsDep(analyzedExpression));
   assert(isEnabled() && isCartesian());
   FunctionType::CartesianType type = FunctionType::CartesianFunctionType(
       analyzedExpression, Function::k_unknownName);
@@ -337,7 +335,7 @@ I18n::Message ContinuousFunctionProperties::captionForCartesianFunction(
 void ContinuousFunctionProperties::setCartesianEquationProperties(
     const Poincare::SystemExpression& analyzedExpression, int xDeg, int yDeg,
     OMG::Troolean highestCoefficientIsPositive) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(!IsDep(analyzedExpression));
   assert(isEnabled() && isCartesian());
 
   /* We can rely on x and y degree to identify plot type :
@@ -421,7 +419,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 
 I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
     const SystemExpression& analyzedExpression) {
-  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
+  assert(!IsDep(analyzedExpression));
   assert(isEnabled() && isPolar());
 
   // Detect polar lines
@@ -459,7 +457,7 @@ I18n::Message ContinuousFunctionProperties::captionForPolarFunction(
 
 I18n::Message ContinuousFunctionProperties::captionForParametricFunction(
     const Poincare::SystemExpression& analyzedExpression) {
-  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
+  assert(IsPoint(analyzedExpression));
   assert(isEnabled() && isParametric());
 
   // Detect parametric lines
@@ -505,7 +503,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
-  return equation.type() == ExpressionNode::Type::Comparison &&
+  return IsComparison(equation) &&
          equation.cloneChildAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
              [](const NewExpression e, Context* context, void* auxiliary) {

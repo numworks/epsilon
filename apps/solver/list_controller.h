@@ -68,7 +68,7 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::StackViewController* stackController() const;
   bool shouldCompleteEquation(Poincare::UserExpression expression,
                               CodePoint symbol) override {
-    return expression.type() != Poincare::ExpressionNode::Type::Comparison;
+    return IsComparison(expression);
   }
   bool completeEquation(Escher::LayoutField* equationField,
                         CodePoint symbol) override;

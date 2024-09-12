@@ -122,7 +122,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
   UserExpression input = UserExpression::Parse(text, context);
-  if (input.isUninitialized() || input.type() != ExpressionNode::Type::Store) {
+  if (input.isUninitialized() || !IsStore(input)) {
     openAbortWarning();
     return false;
   }
@@ -131,7 +131,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
   PoincareHelpers::CloneAndSimplify(&value, context);
   UserExpression valueApprox =
       PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
-  if (symbol.type() == ExpressionNode::Type::Symbol &&
+  if (IsUserSymbol(symbol) &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
     value = valueApprox;
   }

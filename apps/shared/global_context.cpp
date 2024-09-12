@@ -125,13 +125,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
       expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
-  if (symbol.type() == ExpressionNode::Type::Symbol) {
+  if (IsUserSymbol(symbol)) {
     return setExpressionForUserNamed(finalExpression, symbol, record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
-  assert(symbol.type() == ExpressionNode::Type::Function &&
-         symbol.cloneChildAtIndex(0).type() == ExpressionNode::Type::Symbol);
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
+  assert(IsUserFunction(symbol) && IsUserSymbol(childSymbol));
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -153,12 +152,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
-  if (symbol.type() == ExpressionNode::Type::Symbol) {
+  if (IsUserSymbol(symbol)) {
     return ExpressionForUserNamed(r);
-  } else if (symbol.type() == ExpressionNode::Type::Function) {
+  } else if (IsUserFunction(symbol)) {
     return ExpressionForFunction(symbol.cloneChildAtIndex(0), r);
   }
-  assert(symbol.type() == ExpressionNode::Type::Sequence);
+  assert(IsSequence(symbol));
   return expressionForSequence(symbol, r, ctx);
 }
 
@@ -206,7 +205,7 @@ const UserExpression GlobalContext::expressionForSequence(
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
-  if (rank.type() == ExpressionNode::Type::Rational) {
+  if (IsRational(rank)) {
 #if 0  // TODO_PCJ
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
@@ -246,11 +245,10 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
                                           approximation, this)) {
     expression = approximation;
   }
-  ExpressionNode::Type type = expression.type();
   const char* extension;
-  if (type == ExpressionNode::Type::List) {
+  if (IsList(expression)) {
     extension = Ion::Storage::listExtension;
-  } else if (type == ExpressionNode::Type::Matrix) {
+  } else if (IsMatrix(expression)) {
     extension = Ion::Storage::matrixExtension;
   } else {
     extension = Ion::Storage::expressionExtension;
@@ -348,7 +346,7 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
 static void storeParametricComponent(char* baseName, size_t baseNameLength,
                                      size_t bufferSize, const UserExpression& e,
                                      bool first) {
-  assert(!e.isUninitialized() && e.type() == ExpressionNode::Type::Point);
+  assert(!e.isUninitialized() && IsPoint(e));
   UserExpression child = e.cloneChildAtIndex(first ? 0 : 1);
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
@@ -364,7 +362,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
     return;
   }
   UserExpression e = f->expressionClone();
-  if (e.type() != ExpressionNode::Type::Point) {
+  if (IsPoint(e)) {
     // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
     return;
   }

@@ -106,13 +106,13 @@ bool ParametricComponentsNameError(UserExpression expression,
   const UserExpression point = expression.cloneChildAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-      point.type() != ExpressionNode::Type::Point) {
+      IsPoint(point)) {
     // The user is not defining a parametric function
     return false;
   }
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char functionName[bufferSize];
-  assert(function.type() == ExpressionNode::Type::Function);
+  assert(IsUserFunction(function));
   strlcpy(functionName, static_cast<const Poincare::Function&>(function).name(),
           bufferSize);
   size_t functionNameLength = strlen(functionName);

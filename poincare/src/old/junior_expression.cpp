@@ -1137,6 +1137,12 @@ bool NewExpression::isBasedInteger() const {
   return tree()->isRational() && tree()->isInteger();
 }
 
+bool NewExpression::isDep() const { return tree()->isDep(); }
+
+bool NewExpression::isComparison() const { return tree()->isComparison(); }
+
+bool NewExpression::isRational() const { return tree()->isRational(); }
+
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && tree()->isUnit() &&
          Internal::Dimension::Get(tree()).isSimpleAngleUnit();

@@ -386,6 +386,9 @@ class JuniorExpression : public OExpression {
   bool isOpposite() const;
   bool isDiv() const;
   bool isBasedInteger() const;
+  bool isDep() const;
+  bool isComparison() const;
+  bool isRational() const;
 
   bool allChildrenAreUndefined() const;
   bool hasComplexI(
@@ -553,6 +556,11 @@ static inline bool IsDiv(const NewExpression e) { return e.isDiv(); }
 static inline bool IsBasedInteger(const NewExpression e) {
   return e.isBasedInteger();
 }
+static inline bool IsDep(const NewExpression e) { return e.isDep(); }
+static inline bool IsComparison(const NewExpression e) {
+  return e.isComparison();
+}
+static inline bool IsRational(const NewExpression e) { return e.isRational(); }
 
 }  // namespace Poincare
 

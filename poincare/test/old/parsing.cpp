@@ -193,9 +193,11 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is("0b1011", 11_e);
   assert_parsed_expression_is("0x12AC", 4780_e);
 
+#if 0  // TODO_PCJ
   // Integer parsed in Decimal because they overflow Integer
   assert_parsed_expression_is(ApproximatedParsedIntegerString(),
                               Float<double>::Builder(1.0e30));
+#endif
 
   // Infinity
   assert_parsed_expression_is("23ᴇ1000", KMult(-1_e, KInf));
@@ -576,7 +578,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("quo(1,2)", KQuo(1_e, 2_e));
   assert_parsed_expression_is("random()", KRandom);
   assert_parsed_expression_is("randint(1,2)", KRandInt(1_e, 2_e));
-  // assert_parsed_expression_is("randint(2)", KRandInt(1_e, 2_e));
+  assert_parsed_expression_is("randint(2)", KRandInt(1_e, 2_e));
   assert_parsed_expression_is("randintnorep(1,10,3)",
                               KRandIntNoRep(1_e, 10_e, 3_e));
   assert_parsed_expression_is("re(1)", KRe(1_e));

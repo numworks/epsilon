@@ -577,19 +577,11 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("product(1,2,3,4)");
   assert_text_not_parsable("product(1,_s,3,4)");
   assert_parsed_expression_is("quo(1,2)", KQuo(1_e, 2_e));
-  assert_parsed_expression_is("random()", Poincare::Random::Builder());
-  assert_parsed_expression_is(
-      "randint(1,2)",
-      Randint::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2)));
-  /* TODO PCJ
-  assert_parsed_expression_is("randint(2)",
-                              Randint::Builder(BasedInteger::Builder(2)));
-                              */
-  assert_parsed_expression_is(
-      "randintnorep(1,10,3)",
-      RandintNoRepeat::Builder(BasedInteger::Builder(1),
-                               BasedInteger::Builder(10),
-                               BasedInteger::Builder(3)));
+  assert_parsed_expression_is("random()", KRandom);
+  assert_parsed_expression_is("randint(1,2)", KRandInt(1_e, 2_e));
+  assert_parsed_expression_is("randint(2)", KRandInt(1_e, 2_e));
+  assert_parsed_expression_is("randintnorep(1,10,3)",
+                              KRandIntNoRep(1_e, 10_e, 3_e));
   assert_parsed_expression_is("re(1)", KRe(1_e));
   assert_parsed_expression_is("ref(1)", KRef(1_e));
   assert_parsed_expression_is("rem(1,2)", KRem(1_e, 2_e));

@@ -136,6 +136,11 @@ constexpr auto KSet = KNAry<Type::Set>();
 constexpr auto KDepList = KNAry<Type::DepList>();
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 
+// with seed 0
+constexpr auto KRandom = KTree<Type::Random, 0>();
+constexpr auto KRandInt = KBinary<Type::RandInt, 0>();
+constexpr auto KRandIntNoRep = KFixedArity<3, Type::RandIntNoRep, 0>();
+
 template <uint8_t Id, uint8_t sign>
 constexpr auto KVar = KTree<Type::Var, Id, sign>();
 

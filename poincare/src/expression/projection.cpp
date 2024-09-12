@@ -295,11 +295,10 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      /* acot(A) -> { π/2 if A is 0, atan(1/A) otherwise } using acos(0)
-       * instead of π/2 to handle angle unit */
-      PatternMatching::MatchReplace(
-          e, KACot(KA),
-          KPiecewise(KACos(0_e), KEqual(KA, 0_e), KATan(KPow(KA, -1_e)))) ||
+      /* acot(A) -> π/2 - atan(A)
+      using acos(0) instead of π/2 to handle angle */
+      PatternMatching::MatchReplace(e, KACot(KA),
+                                    KAdd(KACos(0_e), KMult(-1_e, KATan(KA)))) ||
       // cosh(A) -> (exp(A)+exp(-A))*1/2
       PatternMatching::MatchReplace(
           e, KCosH(KA),

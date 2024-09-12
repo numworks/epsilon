@@ -8,8 +8,8 @@ namespace Poincare {
 
 struct LayoutStyle : KDGlyph::Style {
   KDColor selectionColor;
-  KDColor emptySquareColor;
-  KDColor placeholderColor;
+  KDColor requiredPlaceholderColor;
+  KDColor optionalPlaceholderColor;
   KDColor piecewiseCommaColor;
 };
 

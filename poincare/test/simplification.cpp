@@ -215,7 +215,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  // TODO: Remove ln(c^2) dependency
   simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,c})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "dep(3,{x})");

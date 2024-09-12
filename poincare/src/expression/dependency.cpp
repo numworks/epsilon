@@ -49,6 +49,9 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
        * */
       if (e->isParametric() && Parametric::IsFunctionIndex(i, e)) {
         if (e->isIntegral() || e->isIntegralWithAlternatives()) {
+          /* We need to keep dependencies in the integrand because special
+           * computations are done when integrand is undef at one of the bounds.
+           */
           continue;
         }
         if (e->isDiff()) {

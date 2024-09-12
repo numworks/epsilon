@@ -792,7 +792,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("tan(2_m)", "undef");
   simplifies_to("tan(2_rad^2)", "undef");
   // TODO_PCJ : Wasn't exact before
-  simplifies_to("π×_rad×_°", "(π^2×_rad^2)/180");
+  simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km");
@@ -823,11 +823,15 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_kg×_K×_s^2");
 
   // Angles
+  simplifies_to("_rad", "_rad");
   simplifies_to("360×_°", "2×π×_rad");
   simplifies_to("π×π×_rad", "_rad×π^2");
   simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");
+  simplifies_to("0.2_rad", "1/5×_rad");
+  simplifies_to("-0.2_rad", "-1/5×_rad");
+  simplifies_to("0.2_rad^2", "1/5×_rad^2");
 
   // Decomposition
   simplifies_to("123_m", "123×_m",

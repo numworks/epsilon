@@ -45,19 +45,24 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-// Get numerator, denominator, opposite (if needed), complex I (if needed)
+// Get numerator, denominator, out, opposite (if needed), complex I (if needed)
 void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
-                                     TreeRef& denominator, bool* needOpposite,
-                                     bool* needI) {
+                                     TreeRef& denominator, TreeRef& out,
+                                     bool* needOpposite, bool* needI) {
+  /* TODO: instead of needI, add i in out. Handle this in
+   * GetNumeratorAndDenominator too, by passing num in both num and out maybe ?
+   */
   assert(needOpposite && needI);
   assert(!numerator.isUninitialized() && numerator->isMult());
   assert(!denominator.isUninitialized() && denominator->isMult());
+  assert(!out.isUninitialized() && out->isMult());
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(e);
   for (int i = 0; i < numberOfFactors; i++) {
     const Tree* factor = Factor(e, i);
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
+    TreeRef factorsOut;
     if (factor->isComplexI() && i == numberOfFactors - 1 &&
         denominator->numberOfChildren() > 0) {
       /* Move the final i out of the multiplication e.g. 2^(-1)×i → (1/2)×i. If
@@ -96,8 +101,10 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
        * Indeed x^(-inf) can be different from 1/x^inf
        * for example (-2)^inf is undef but (-2)^-inf is 0 (and not undef) */
       assert(!Infinity::IsPlusOrMinusInfinity(exponent));
-      if (!base->isUnit() && !base->isEulerE() &&
-          MakePositiveAnyNegativeNumeralFactor(exponent)) {
+      if (base->isUnit()) {
+        factorsOut = pow;
+      } else if (!base->isEulerE() &&
+                 MakePositiveAnyNegativeNumeralFactor(exponent)) {
         if (exponent->isOne()) {
           pow->moveTreeOverTree(base);
         }
@@ -105,6 +112,8 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
       } else {
         factorsNumerator = pow;
       }
+    } else if (factor->isUnit()) {
+      factorsOut = factor->cloneTree();
     } else {
       factorsNumerator = factor->cloneTree();
     }
@@ -114,18 +123,24 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
     if (factorsNumerator) {
       NAry::AddChild(numerator, factorsNumerator);
     }
+    if (factorsOut) {
+      NAry::AddChild(out, factorsOut);
+    }
   }
   NAry::SquashIfPossible(numerator);
   NAry::SquashIfPossible(denominator);
+  NAry::SquashIfPossible(out);
 }
 
 void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
                                           TreeRef& denominator) {
   bool needOpposite = false;
   bool needI = false;
+  // Anything expected in out is put back in numerator.
   numerator = SharedTreeStack->pushMult(0);
   denominator = SharedTreeStack->pushMult(0);
-  GetDivisionComponents(e, numerator, denominator, &needOpposite, &needI);
+  GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite,
+                        &needI);
   if (!needOpposite && !needI) {
     return;
   }
@@ -148,13 +163,15 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
 bool Division::BeautifyIntoDivision(Tree* e) {
   TreeRef num = SharedTreeStack->pushMult(0);
   TreeRef den = SharedTreeStack->pushMult(0);
+  TreeRef out = SharedTreeStack->pushMult(0);
   bool needOpposite = false;
   bool needI = false;
-  GetDivisionComponents(e, num, den, &needOpposite, &needI);
+  GetDivisionComponents(e, num, den, out, &needOpposite, &needI);
   if (den->isOne() && !needOpposite) {
     // no need to apply needI if den->isOne
     num->removeTree();
     den->removeTree();
+    out->removeTree();
     return false;
   }
   if (needOpposite) {
@@ -171,6 +188,14 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     num->cloneNodeAtNode(KDiv);
   } else {
     den->removeTree();
+  }
+  if (!out->isOne()) {
+    e->cloneNodeBeforeNode(KMult.node<2>);
+    e = e->child(0);
+    // TODO: create method cloneTreeAfterTree
+    e->nextTree()->moveTreeBeforeNode(out);
+  } else {
+    out->removeTree();
   }
   e->moveTreeOverTree(num);
   return true;

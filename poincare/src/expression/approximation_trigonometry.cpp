@@ -138,12 +138,12 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       }
       return TrigonometricToComplex(type.isASec() ? Type::ACos : Type::ASin,
                                     static_cast<T>(1) / value, angleUnit);
-    case Type::ACot:
-      if (value == static_cast<T>(0)) {
-        return ConvertFromRadian(M_PI_2, angleUnit);
-      }
-      return TrigonometricToComplex(Type::ATan, static_cast<T>(1) / value,
-                                    angleUnit);
+    case Type::ACot: {
+      std::complex<T> piOverTwo = ConvertFromRadian(M_PI_2, angleUnit);
+      std::complex<T> arctanValue =
+          TrigonometricToComplex(Type::ATan, value, angleUnit);
+      return piOverTwo - arctanValue;
+    }
     default:
       OMG::unreachable();
   }

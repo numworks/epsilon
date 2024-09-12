@@ -48,11 +48,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
 // Get numerator, denominator, out, opposite (if needed), complex I (if needed)
 void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                      TreeRef& denominator, TreeRef& out,
-                                     bool* needOpposite, bool* needI) {
-  /* TODO: instead of needI, add i in out. Handle this in
-   * GetNumeratorAndDenominator too, by passing num in both num and out maybe ?
-   */
-  assert(needOpposite && needI);
+                                     bool* needOpposite) {
+  assert(needOpposite);
   assert(!numerator.isUninitialized() && numerator->isMult());
   assert(!denominator.isUninitialized() && denominator->isMult());
   assert(!out.isUninitialized() && out->isMult());
@@ -63,16 +60,12 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
     TreeRef factorsOut;
-    if (factor->isComplexI() && i == numberOfFactors - 1 &&
-        denominator->numberOfChildren() > 0) {
+    if (factor->isComplexI() && i == numberOfFactors - 1) {
       /* Move the final i out of the multiplication e.g. 2^(-1)×i → (1/2)×i. If
        * i is not in the last position, it is either intentional or a bug in the
        * order, so leave it where it is. */
-      assert(*needI == false);
-      *needI = true;
-      continue;
-    }
-    if (factor->isRational()) {
+      factorsOut = factor->cloneTree();
+    } else if (factor->isRational()) {
       if (factor->isOne()) {
         // Special case: add a unary numeral factor if r = 1
         factorsNumerator = factor->cloneTree();
@@ -135,13 +128,11 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
 void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
                                           TreeRef& denominator) {
   bool needOpposite = false;
-  bool needI = false;
   // Anything expected in out is put back in numerator.
   numerator = SharedTreeStack->pushMult(0);
   denominator = SharedTreeStack->pushMult(0);
-  GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite,
-                        &needI);
-  if (!needOpposite && !needI) {
+  GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite);
+  if (needOpposite) {
     return;
   }
   if (!numerator->isMult()) {
@@ -151,12 +142,7 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
       CloneNodeAtNode(numerator, KMult.node<1>);
     }
   }
-  if (needOpposite) {
-    NAry::AddChild(numerator, (-1_e)->cloneTree());
-  }
-  if (needI) {
-    NAry::AddChild(numerator, (i_e)->cloneTree());
-  }
+  NAry::AddChild(numerator, (-1_e)->cloneTree());
   NAry::SquashIfPossible(numerator);
 }
 
@@ -165,10 +151,9 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   TreeRef den = SharedTreeStack->pushMult(0);
   TreeRef out = SharedTreeStack->pushMult(0);
   bool needOpposite = false;
-  bool needI = false;
-  GetDivisionComponents(e, num, den, out, &needOpposite, &needI);
+  GetDivisionComponents(e, num, den, out, &needOpposite);
   if (den->isOne() && !needOpposite) {
-    // no need to apply needI if den->isOne
+    // e is already num*out
     num->removeTree();
     den->removeTree();
     out->removeTree();
@@ -178,26 +163,33 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     e->cloneNodeBeforeNode(KOpposite);
     e = e->child(0);
   }
-  if (needI) {
-    e->cloneNodeBeforeNode(KMult.node<2>);
-    e = e->child(0);
-    // TODO: create method cloneTreeAfterTree
-    e->nextTree()->cloneTreeBeforeNode(i_e);
-  }
   if (!den->isOne()) {
     num->cloneNodeAtNode(KDiv);
+    if (out->isOne()) {
+      // return num/den
+      out->removeTree();
+    } else {
+      // return num/den * out
+      num->cloneNodeAtNode(KMult.node<2>);
+    }
+    e->moveTreeOverTree(num);
   } else {
     den->removeTree();
+    assert(needOpposite);
+    if (num->isOne()) {
+      // return out
+      num->removeTree();
+      e->moveTreeOverTree(out);
+    } else if (out->isOne()) {
+      // return num
+      out->removeTree();
+      e->moveTreeOverTree(num);
+    } else {
+      // return num*out
+      num->cloneNodeAtNode(KMult.node<2>);
+      e->moveTreeOverTree(num);
+    }
   }
-  if (!out->isOne()) {
-    e->cloneNodeBeforeNode(KMult.node<2>);
-    e = e->child(0);
-    // TODO: create method cloneTreeAfterTree
-    e->nextTree()->moveTreeBeforeNode(out);
-  } else {
-    out->removeTree();
-  }
-  e->moveTreeOverTree(num);
   return true;
 }
 

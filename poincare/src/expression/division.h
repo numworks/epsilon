@@ -16,7 +16,7 @@ class Division {
  private:
   static void GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                     TreeRef& denominator, TreeRef& out,
-                                    bool* needOpposite, bool* needI);
+                                    bool* needOpposite);
 };
 
 }  // namespace Poincare::Internal

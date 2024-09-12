@@ -67,7 +67,7 @@ class Metric {
   }
 
   constexpr static int MaxNumberOfSmallGlyphsInDisplayWidth =
-      (Ion::Display::Width - 2 * Escher::Metric::CommonLargeMargin) /
+      (Ion::Display::Width - 2 * CommonLargeMargin) /
       KDFont::GlyphWidth(KDFont::Size::Small);
 
   constexpr static int MinimalNumberOfScrollableRowsToFillDisplayHeight(

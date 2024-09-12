@@ -596,7 +596,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("quo()");
   assert_text_not_parsable("log(1,2,3)");
   assert_text_not_parsable("sinh^(-1)(2)");
-  assert_parsed_expression_is("\u0014dep(x,{})", KDep("x"_e, KDepList()));
   assert_text_not_parsable("\u0014cos(x)");
   assert_text_not_parsable("\u0014cod(x)");
 

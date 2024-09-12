@@ -857,17 +857,22 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     size_t parameterLength;
     int start = m_root->indexOfChild(m_currentToken.firstLayout()) +
                 m_currentToken.length() + 1;
-    LayoutSpanDecoder decoder(Layout::From(m_root->child(start)),
-                              m_root->numberOfChildren() - start);
-    if (ParameterText(&decoder, &parameterText, &parameterLength)) {
-      Poincare::Context* oldContext = m_parsingContext.context();
-      char name[Symbol::k_maxNameLength];
-      LayoutSpanDecoder nameDecoder(LayoutSpan(parameterText, parameterLength));
-      nameDecoder.printInBuffer(name, std::size(name));
-      Poincare::VariableContext parameterContext(name, oldContext);
-      m_parsingContext.setContext(&parameterContext);
-      leftHandSide = parseFunctionParameters();
-      m_parsingContext.setContext(oldContext);
+    if (start < m_root->numberOfChildren()) {
+      LayoutSpanDecoder decoder(Layout::From(m_root->child(start)),
+                                m_root->numberOfChildren() - start);
+      if (ParameterText(&decoder, &parameterText, &parameterLength)) {
+        Poincare::Context* oldContext = m_parsingContext.context();
+        char name[Symbol::k_maxNameLength];
+        LayoutSpanDecoder nameDecoder(
+            LayoutSpan(parameterText, parameterLength));
+        nameDecoder.printInBuffer(name, std::size(name));
+        Poincare::VariableContext parameterContext(name, oldContext);
+        m_parsingContext.setContext(&parameterContext);
+        leftHandSide = parseFunctionParameters();
+        m_parsingContext.setContext(oldContext);
+      } else {
+        leftHandSide = parseFunctionParameters();
+      }
     } else {
       leftHandSide = parseFunctionParameters();
     }
@@ -876,24 +881,9 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 
   /* The following lines are there because some functions have the same name
-   * but not same number of parameters.
-   * This is currently only useful for "sum" which can be sum({1,2,3}) or
-   * sum(1/k, k, 1, n) */
+   * but not same number of parameters. */
   assert(!leftHandSide.isUninitialized());
   int numberOfParameters = leftHandSide->numberOfChildren();
-#if 0
-  if ((**functionHelper).minNumberOfChildren() >= 0) {
-    while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
-      functionHelper++;
-      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
-          !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
-        // Too many parameters provided.
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-    }
-  }
-#endif
-
   if (numberOfParameters == 1 && builtin->type() == Type::LogBase) {
     builtin = Builtin::GetReservedFunction(KLog);
   } else if (numberOfParameters == 2 && builtin->type() == Type::Log) {

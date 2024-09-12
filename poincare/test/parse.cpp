@@ -82,6 +82,10 @@ QUIZ_CASE(pcj_layout_parse) {
   quiz_assert(is_parsable("True xor not False"_l));
   quiz_assert(is_parsable("f(x)"_l));
   quiz_assert(!is_parsable("f(f)"_l));
+  assert_trees_are_equal(
+      RackParser("sum"_l ^ KParenthesesL(KRackL(KCurlyBracesL("2"_l))), nullptr)
+          .parse(),
+      KListSum(KList(2_e)));
 }
 
 QUIZ_CASE(pcj_parse_unit) {

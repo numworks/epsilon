@@ -7,7 +7,7 @@
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/symbol.h>
-#include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/vertical_offset.h>
 
 #include "helper.h"

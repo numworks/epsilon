@@ -25,8 +25,8 @@
 #include "rational.h"
 #include "symbol.h"
 #include "undefined.h"
-#include "unit.h"
-#include "unit_representatives.h"
+#include "units/representatives.h"
+#include "units/unit.h"
 #include "variables.h"
 #include "vector.h"
 

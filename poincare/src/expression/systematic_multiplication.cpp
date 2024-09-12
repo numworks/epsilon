@@ -8,7 +8,7 @@
 #include "rational.h"
 #include "systematic_operation.h"
 #include "systematic_reduction.h"
-#include "unit.h"
+#include "units/unit.h"
 
 namespace Poincare::Internal {
 

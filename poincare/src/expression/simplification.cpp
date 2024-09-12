@@ -11,7 +11,7 @@
 #include "random.h"
 #include "sign.h"
 #include "systematic_reduction.h"
-#include "unit.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

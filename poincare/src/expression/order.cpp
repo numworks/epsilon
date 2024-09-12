@@ -9,7 +9,7 @@
 #include "k_tree.h"
 #include "polynomial.h"
 #include "symbol.h"
-#include "unit.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

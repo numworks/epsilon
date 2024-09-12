@@ -4,7 +4,7 @@
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/unit_k_units.h>
+#include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>

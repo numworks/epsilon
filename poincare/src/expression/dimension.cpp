@@ -12,7 +12,7 @@
 #include "parametric.h"
 #include "physical_constant.h"
 #include "symbol.h"
-#include "unit_representatives.h"
+#include "units/representatives.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

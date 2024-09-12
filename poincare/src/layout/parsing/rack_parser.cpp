@@ -13,7 +13,7 @@
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/symbol.h>
-#include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_layout_decoder.h>

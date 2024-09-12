@@ -8,8 +8,8 @@
 #include "dependency.h"
 #include "physical_constant.h"
 #include "symbol.h"
-#include "unit.h"
-#include "unit_representatives.h"
+#include "units/representatives.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {

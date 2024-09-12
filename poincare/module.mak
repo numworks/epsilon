@@ -225,8 +225,8 @@ $(addprefix expression/, \
   systematic_reduction.cpp \
   trigonometry.cpp \
   undefined.cpp \
-  unit.cpp \
-  unit_representatives.cpp \
+  units/unit.cpp \
+  units/representatives.cpp \
   variables.cpp \
   vector.cpp \
 ) \

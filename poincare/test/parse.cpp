@@ -1,6 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/parsing/tokenizer.h>

@@ -1,7 +1,7 @@
-#ifndef POINCARE_EXPRESSION_UNIT_K_UNITS_H
-#define POINCARE_EXPRESSION_UNIT_K_UNITS_H
+#ifndef POINCARE_EXPRESSION_UNITS_K_UNITS_H
+#define POINCARE_EXPRESSION_UNITS_K_UNITS_H
 
-#include "unit_representatives.h"
+#include "representatives.h"
 
 namespace Poincare::Internal::Units {
 

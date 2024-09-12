@@ -3,7 +3,7 @@
 #include <omg/unreachable.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/dependency.h>
-#include <poincare/src/expression/unit.h>
+#include <poincare/src/expression/units/unit.h>
 
 #include <algorithm>
 

@@ -7,8 +7,8 @@
 #include <poincare/print_float.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/dimension_vector.h>
-#include <poincare/src/expression/unit.h>
-#include <poincare/src/expression/unit_representatives.h>
+#include <poincare/src/expression/units/representatives.h>
+#include <poincare/src/expression/units/unit.h>
 
 #include <array>
 #include <cmath>

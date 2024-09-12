@@ -7,12 +7,12 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 
-#include "approximation.h"
-#include "integer.h"
-#include "parametric.h"
-#include "physical_constant.h"
-#include "simplification.h"
-#include "unit_representatives.h"
+#include "../approximation.h"
+#include "../integer.h"
+#include "../parametric.h"
+#include "../physical_constant.h"
+#include "../simplification.h"
+#include "representatives.h"
 
 namespace Poincare::Internal {
 namespace Units {
@@ -63,7 +63,7 @@ const Representative* const* Representative::DefaultRepresentatives() {
       Surface::representatives,
       Volume::representatives,
       Speed::representatives,
-      // Update AllRepresentatives in unit_k_units.h if you change this
+      // Update AllRepresentatives in units/k_units.h if you change this
   };
   return defaultRepresentatives;
 }

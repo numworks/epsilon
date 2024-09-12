@@ -9,8 +9,8 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/expression/unit.h>
-#include <poincare/src/expression/unit_representatives.h>
+#include <poincare/src/expression/units/representatives.h>
+#include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>

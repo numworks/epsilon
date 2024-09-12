@@ -365,11 +365,8 @@ class JuniorExpression : public OExpression {
   Sign sign() const;
 
   static bool IsDiscontinuous(const NewExpression e, Context* context);
+  bool isMatrix(Context* context = nullptr) const;
 
-  bool isMatrix(Context* context) const {
-    assert(false);
-    return false;
-  }
   bool isUndefined() const;
   bool isNAry() const;
   bool isApproximate() const;
@@ -384,6 +381,11 @@ class JuniorExpression : public OExpression {
   bool isUserFunction() const;
   bool isStore() const;
   bool isFactor() const;
+  bool isPoint() const;
+  bool isNonReal() const;
+  bool isOpposite() const;
+  bool isDiv() const;
+  bool isBasedInteger() const;
 
   bool allChildrenAreUndefined() const;
   bool hasComplexI(
@@ -516,7 +518,7 @@ static inline bool IsUninitialized(const NewExpression e) {
   return e.isUninitialized();
 }
 
-static inline bool IsMatrix(const NewExpression e, Context* context) {
+static inline bool IsMatrix(const NewExpression e, Context* context = nullptr) {
   return e.isMatrix(context);
 }
 
@@ -544,6 +546,13 @@ static inline bool IsUserFunction(const NewExpression e) {
 }
 static inline bool IsStore(const NewExpression e) { return e.isStore(); }
 static inline bool IsFactor(const NewExpression e) { return e.isFactor(); }
+static inline bool IsPoint(const NewExpression e) { return e.isPoint(); }
+static inline bool IsNonReal(const NewExpression e) { return e.isNonReal(); }
+static inline bool IsOpposite(const NewExpression e) { return e.isOpposite(); }
+static inline bool IsDiv(const NewExpression e) { return e.isDiv(); }
+static inline bool IsBasedInteger(const NewExpression e) {
+  return e.isBasedInteger();
+}
 
 }  // namespace Poincare
 

@@ -221,7 +221,7 @@ bool AdditionalResultsType::HasVector(
 bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
-  return approximateOutput.type() == ExpressionNode::Type::Matrix &&
+  return IsMatrix(approximateOutput) &&
          !approximateOutput.recursivelyMatches(IsUndefined);
 }
 
@@ -232,9 +232,8 @@ bool AdditionalResultsType::HasFunction(
   assert(!input.hasUnit());
   assert(!approximateOutput.isUndefined());
   assert(!approximateOutput.hasUnit());
-  assert(approximateOutput.type() != ExpressionNode::Type::Matrix);
-  return approximateOutput.type() != ExpressionNode::Type::Nonreal &&
-         approximateOutput.type() != ExpressionNode::Type::Point &&
+  assert(!IsMatrix(approximateOutput));
+  return !IsNonReal(approximateOutput) && !IsPoint(approximateOutput) &&
          AdditionalResultsHelper::expressionIsInterestingFunction(input);
 }
 
@@ -245,7 +244,7 @@ bool AdditionalResultsType::HasScientificNotation(
   assert(!approximateOutput.hasUnit());
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  if (approximateOutput.type() == ExpressionNode::Type::Nonreal ||
+  if (IsNonReal(approximateOutput) ||
       calculationPreferences.displayMode ==
           Preferences::PrintFloatMode::Scientific) {
     return false;

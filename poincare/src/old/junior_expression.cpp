@@ -1084,6 +1084,15 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
 
 bool NewExpression::isUndefined() const { return tree()->isUndefined(); }
 
+bool NewExpression::isMatrix(Context* context) const {
+  if (context) {
+    // TODO_PCJ: implement isMatrix check with a context
+    assert(false);
+    return false;
+  }
+  return tree()->isMatrix();
+}
+
 bool NewExpression::isNAry() const { return tree()->isNAry(); }
 
 bool NewExpression::isApproximate() const {
@@ -1115,6 +1124,18 @@ bool NewExpression::isUserFunction() const { return tree()->isUserFunction(); }
 bool NewExpression::isStore() const { return tree()->isStore(); }
 
 bool NewExpression::isFactor() const { return tree()->isFactor(); }
+
+bool NewExpression::isPoint() const { return tree()->isPoint(); }
+
+bool NewExpression::isNonReal() const { return tree()->isNonReal(); }
+
+bool NewExpression::isOpposite() const { return tree()->isOpposite(); }
+
+bool NewExpression::isDiv() const { return tree()->isDiv(); }
+
+bool NewExpression::isBasedInteger() const {
+  return tree()->isRational() && tree()->isInteger();
+}
 
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && tree()->isUnit() &&

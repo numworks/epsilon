@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "../app.h"
+#include "poincare/old/junior_expression.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -13,16 +14,15 @@ using namespace Shared;
 namespace Calculation {
 
 static bool isIntegerInput(const Expression e) {
-  return (e.type() == ExpressionNode::Type::BasedInteger ||
-          (e.type() == ExpressionNode::Type::Opposite &&
-           isIntegerInput(e.cloneChildAtIndex(0))));
+  return (IsBasedInteger(e) ||
+          (IsOpposite(e) && isIntegerInput(e.cloneChildAtIndex(0))));
 }
 
 static bool isFractionInput(const Expression e) {
-  if (e.type() == ExpressionNode::Type::Opposite) {
+  if (IsOpposite(e)) {
     return isFractionInput(e.cloneChildAtIndex(0));
   }
-  if (e.type() != ExpressionNode::Type::Division) {
+  if (IsDiv(e)) {
     return false;
   }
   Expression num = e.cloneChildAtIndex(0);
@@ -39,9 +39,9 @@ void RationalListController::computeAdditionalResults(
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
-  bool negative = e.type() == ExpressionNode::Type::Opposite;
+  bool negative = IsOpposite(e);
   const UserExpression div = negative ? e.cloneChildAtIndex(0) : e;
-  assert(div.type() == ExpressionNode::Type::Division);
+  assert(IsDiv(div));
 
   SystemExpression rational =
       AdditionalResultsHelper::CreateRational(div, negative);

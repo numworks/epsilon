@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include "../app.h"
+#include "poincare/old/junior_expression.h"
 #include "vector_helper.h"
 
 using namespace Poincare;
@@ -65,14 +66,14 @@ void VectorListController::computeAdditionalResults(
        .angleUnit = angleUnit(),
        .target = k_target,
        .symbolicComputation = k_symbolicComputation});
-  if (normalized.type() != ExpressionNode::Type::Matrix) {
+  if (IsMatrix(normalized)) {
     // The reduction might have failed
     return;
   }
   setLineAtIndex(index++, UserExpression(), normalized, &ctx);
 
   // 3. Angle with x-axis
-  assert(approximateOutput.type() == ExpressionNode::Type::Matrix);
+  assert(IsMatrix(approximateOutput));
   Matrix vector = static_cast<const Matrix&>(approximateOutput);
   assert(vector.isVector());
   if (vector.tree()->numberOfChildren() != 2) {

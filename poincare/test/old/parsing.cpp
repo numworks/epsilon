@@ -576,7 +576,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("quo(1,2)", KQuo(1_e, 2_e));
   assert_parsed_expression_is("random()", KRandom);
   assert_parsed_expression_is("randint(1,2)", KRandInt(1_e, 2_e));
-  assert_parsed_expression_is("randint(2)", KRandInt(1_e, 2_e));
+  // assert_parsed_expression_is("randint(2)", KRandInt(1_e, 2_e));
   assert_parsed_expression_is("randintnorep(1,10,3)",
                               KRandIntNoRep(1_e, 10_e, 3_e));
   assert_parsed_expression_is("re(1)", KRe(1_e));

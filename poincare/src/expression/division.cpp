@@ -50,8 +50,8 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                      TreeRef& denominator, bool* needOpposite,
                                      bool* needI) {
   assert(needOpposite && needI);
-  numerator = SharedTreeStack->pushMult(0);
-  denominator = SharedTreeStack->pushMult(0);
+  assert(!numerator.isUninitialized() && numerator->isMult());
+  assert(!denominator.isUninitialized() && denominator->isMult());
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(e);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -123,6 +123,8 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
                                           TreeRef& denominator) {
   bool needOpposite = false;
   bool needI = false;
+  numerator = SharedTreeStack->pushMult(0);
+  denominator = SharedTreeStack->pushMult(0);
   GetDivisionComponents(e, numerator, denominator, &needOpposite, &needI);
   if (!needOpposite && !needI) {
     return;
@@ -144,8 +146,8 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
 }
 
 bool Division::BeautifyIntoDivision(Tree* e) {
-  TreeRef num;
-  TreeRef den;
+  TreeRef num = SharedTreeStack->pushMult(0);
+  TreeRef den = SharedTreeStack->pushMult(0);
   bool needOpposite = false;
   bool needI = false;
   GetDivisionComponents(e, num, den, &needOpposite, &needI);

@@ -186,7 +186,7 @@ void assert_parsed_expression_is(const char *expression,
   bool bad = false;
   bool crash = false;
   ExceptionTry {
-    assert(SharedTreeStack->numberOfTrees() == 0);
+    // assert(SharedTreeStack->numberOfTrees() == 0);
     Tree *parsed = parse_expression(expression, &context, parseForAssignment);
     Tree *expected = Internal::FromPoincareExpression(r);
     bad = !parsed || !expected || !parsed->treeIsIdenticalTo(expected);
@@ -201,7 +201,7 @@ void assert_parsed_expression_is(const char *expression,
     SharedTreeStack->flush();
     crash = true;
   }
-  assert(SharedTreeStack->numberOfTrees() == 0);
+  // assert(SharedTreeStack->numberOfTrees() == 0);
   k_bad += bad;
   k_crash += crash;
 

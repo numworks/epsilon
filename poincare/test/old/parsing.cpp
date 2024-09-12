@@ -3,6 +3,7 @@
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
@@ -143,54 +144,54 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is("0.1", 0.1_e);
   assert_parsed_expression_is("1.", 1_e);
   assert_parsed_expression_is(".1", 0.1_e);
-  assert_parsed_expression_is("0ᴇ2", 0.0_e);
-  assert_parsed_expression_is("0.1ᴇ2", Decimal::Builder(10.0));
-  assert_parsed_expression_is("1.ᴇ2", Decimal::Builder(100.0));
-  assert_parsed_expression_is(".1ᴇ2", Decimal::Builder(10.0));
-  assert_parsed_expression_is("0ᴇ-2", 0.0_e);
+  assert_parsed_expression_is("0ᴇ2", KDecimal(0_e, -2_e));
+  assert_parsed_expression_is("0.1ᴇ2", KDecimal(1_e, -1_e));
+  assert_parsed_expression_is("1.ᴇ2", KDecimal(1_e, -2_e));
+  assert_parsed_expression_is(".1ᴇ2", KDecimal(1_e, -1_e));
+  assert_parsed_expression_is("0ᴇ-2", 0.00_e);
   assert_parsed_expression_is("0.1ᴇ-2", 0.001_e);
   assert_parsed_expression_is("1.ᴇ-2", 0.01_e);
   assert_parsed_expression_is(".1ᴇ-2", 0.001_e);
   // Decimal with rounding when digits are above 14
   assert_parsed_expression_is("0.0000012345678901234",
-                              Decimal::Builder(Integer("12345678901234"), -6));
+                              KDecimal(12345678901234_e, 19_e));
   assert_parsed_expression_is("0.00000123456789012345",
-                              Decimal::Builder(Integer("12345678901235"), -6));
+                              KDecimal(12345678901235_e, 19_e));
   assert_parsed_expression_is("0.00000123456789012341",
-                              Decimal::Builder(Integer("12345678901234"), -6));
+                              KDecimal(12345678901234_e, 19_e));
   assert_parsed_expression_is("1234567890123.4",
-                              Decimal::Builder(Integer("12345678901234"), 12));
+                              KDecimal(12345678901234_e, 1_e));
   assert_parsed_expression_is("123456789012345.2",
-                              Decimal::Builder(Integer("12345678901235"), 14));
+                              KDecimal(12345678901235_e, 1_e));
   assert_parsed_expression_is("123456789012341.2",
-                              Decimal::Builder(Integer("12345678901234"), 14));
-  assert_parsed_expression_is("12.34567",
-                              Decimal::Builder(Integer("1234567"), 1));
+                              KDecimal(12345678901234_e, -1_e));
+  assert_parsed_expression_is("12.34567", KDecimal(1234567_e, 5_e));
   assert_parsed_expression_is(".999999999999990",
-                              Decimal::Builder(Integer("99999999999999"), -1));
+                              KDecimal(99999999999999_e, 14_e));
   assert_parsed_expression_is("9.99999999999994",
-                              Decimal::Builder(Integer("99999999999999"), 0));
+                              KDecimal(99999999999999_e, 13_e));
   assert_parsed_expression_is("99.9999999999995",
-                              Decimal::Builder(Integer("100000000000000"), 2));
+                              KDecimal(100000000000000_e, 12_e));
   assert_parsed_expression_is("999.999999999999",
-                              Decimal::Builder(Integer("100000000000000"), 3));
+                              KDecimal(100000000000000_e, 11_e));
   assert_parsed_expression_is("9999.99199999999",
-                              Decimal::Builder(Integer("99999920000000"), 3));
+                              KDecimal(99999920000000_e, 10_e));
   assert_parsed_expression_is("99299.9999999999",
-                              Decimal::Builder(Integer("99300000000000"), 4));
+                              KDecimal(99300000000000_e, 9_e));
 
   // Parse integer
-  assert_parsed_expression_is(
-      "123456789012345678765434567",
-      BasedInteger::Builder("123456789012345678765434567"));
-  assert_parsed_expression_is(MaxParsedIntegerString(),
-                              BasedInteger::Builder(MaxParsedIntegerString()));
+  const char* input = "123456789012345678765434567";
+  Tree* a = Internal::Integer::Push(input, strlen(input));
+  assert_parsed_expression_is(input, a);
+  const char* input2 = MaxParsedIntegerString();
+  a->removeTree();
+  Tree* b = Internal::Integer::Push(input2, strlen(input2));
+  assert_parsed_expression_is(input2, b);
+  b->removeTree();
 
   // Parsed Based integer
-  assert_parsed_expression_is(
-      "0b1011", BasedInteger::Builder("1011", 4, OMG::Base::Binary));
-  assert_parsed_expression_is(
-      "0x12AC", BasedInteger::Builder("12AC", 4, OMG::Base::Hexadecimal));
+  assert_parsed_expression_is("0b1011", 11_e);
+  assert_parsed_expression_is("0x12AC", 4780_e);
 
   // Integer parsed in Decimal because they overflow Integer
   assert_parsed_expression_is(ApproximatedParsedIntegerString(),
@@ -198,12 +199,11 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
 
   // Infinity
   assert_parsed_expression_is("23ᴇ1000", KMult(-1_e, KInf));
-  assert_parsed_expression_is("2.3ᴇ1000", Decimal::Builder(Integer(23), 1000));
+  assert_parsed_expression_is("2.3ᴇ1000", KDecimal(23_e, -999_e));
 
   // Zero
-  assert_parsed_expression_is("0.23ᴇ-1000", Decimal::Builder(Integer(0), 0));
-  assert_parsed_expression_is("0.23ᴇ-999",
-                              Decimal::Builder(Integer(23), -1000));
+  assert_parsed_expression_is("0.23ᴇ-1000", KDecimal(0_e, 0_e));
+  assert_parsed_expression_is("0.23ᴇ-999", KDecimal(23_e, 1001_e));
 }
 
 QUIZ_CASE(poincare_parsing_parse) {

@@ -394,11 +394,13 @@ void assert_expression_serializes_to(const Tree *expression,
 }
 
 void assert_expression_serializes_and_parses_to_itself(
-    Poincare::OExpression expression) {
+    const Poincare::Internal::Tree *expression) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  expression.serialize(buffer, bufferSize);
-  assert_parsed_expression_is(buffer, expression);
+  Tree *layout = Internal::Layouter::LayoutExpression(expression->cloneTree());
+  *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
+  layout->removeTree();
+  assert_parsed_expression_is(buffer, Expression::Builder(expression));
 }
 
 void assert_expression_parses_and_serializes_to(const char *expression,

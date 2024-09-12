@@ -301,32 +301,15 @@ QUIZ_CASE(poincare_serialization_percent) {
 }
 
 QUIZ_CASE(poincare_serialization_power) {
-  assert_expression_serializes_and_parses_to_itself(Power::Builder(
-      BasedInteger::Builder(2),
-      Comparison::Builder(BasedInteger::Builder(3),
-                          ComparisonNode::OperatorType::Equal,
-                          Subtraction::Builder(BasedInteger::Builder(4),
-                                               BasedInteger::Builder(5)))));
   assert_expression_serializes_and_parses_to_itself(
-      Power::Builder(BasedInteger::Builder(2),
-                     PercentSimple::Builder(Power::Builder(
-                         BasedInteger::Builder(3), BasedInteger::Builder(4)))));
-  assert_expression_serializes_and_parses_to_itself(PercentSimple::Builder(
-      Power::Builder(BasedInteger::Builder(2),
-                     BinaryLogicalOperator::Builder(
-                         BasedInteger::Builder(3), BasedInteger::Builder(4),
-                         BinaryLogicalOperatorNode::OperatorType::Or))));
+      KPow(2_e, KEqual(3_e, KSub(4_e, 5_e))));
   assert_expression_serializes_and_parses_to_itself(
-      AbsoluteValue::Builder(PercentAddition::Builder(
-          BasedInteger::Builder(0),
-          Division::Builder(
-              BasedInteger::Builder(0),
-              BinaryLogicalOperator::Builder(
-                  Symbol::Builder("r", 1),
-                  Multiplication::Builder(
-                      Symbol::Builder("o", 1), Symbol::Builder("m0", 2),
-                      Parenthesis::Builder(BasedInteger::Builder(0))),
-                  BinaryLogicalOperatorNode::OperatorType::And)))));
+      KPow(2_e, KPercentSimple(KPow(3_e, 4_e))));
+  assert_expression_serializes_and_parses_to_itself(
+      KPercentSimple(KPow(2_e, KLogicalOr(3_e, 4_e))));
+  assert_expression_serializes_and_parses_to_itself(KAbs(KPercentAddition(
+      0_e,
+      KDiv(0_e, KLogicalAnd("r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))));
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {

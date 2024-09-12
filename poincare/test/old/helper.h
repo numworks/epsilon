@@ -160,7 +160,7 @@ void assert_expression_serializes_to(
     int numberOfSignificantDigits = 7);
 
 void assert_expression_serializes_and_parses_to_itself(
-    Poincare::OExpression expression);
+    const Poincare::Internal::Tree* expression);
 void assert_expression_parses_and_serializes_to(const char* expression,
                                                 const char* result);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);

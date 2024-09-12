@@ -25,10 +25,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-I18n::Message Sequence::parameterMessageName() const {
-  return I18n::Message::N;
-}
-
 size_t Sequence::nameWithArgumentAndType(char* buffer, size_t bufferSize) {
   size_t result = nameWithArgument(buffer, bufferSize);
   assert(result >= 1);

@@ -1,7 +1,6 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
-#include <escher/i18n.h>
 #include <poincare/old/function.h>
 #include <poincare/old/symbol.h>
 
@@ -64,7 +63,6 @@ class Function : public ExpressionModelHandle {
                                     double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
                                     Poincare::Context* context);
-  virtual I18n::Message parameterMessageName() const = 0;
 
   // Evaluation
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(

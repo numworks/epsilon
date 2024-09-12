@@ -49,10 +49,7 @@ class ContinuousFunction : public Function {
   /* Function */
 
   CodePoint symbol() const override { return properties().symbol(); }
-  // Return Message corresponding to ContinuousFunction's SymbolType
-  I18n::Message parameterMessageName() const override {
-    return properties().symbolMessage();
-  }
+
   size_t nameWithoutArgument(char* buffer, size_t bufferSize,
                              int derivationOrder = 0);
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")

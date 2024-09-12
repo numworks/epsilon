@@ -28,7 +28,7 @@ class Sequence : public Function {
       Poincare::Symbol::k_sequenceSymbol;
   using Type = Poincare::Internal::Sequence::Type;
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
-  I18n::Message parameterMessageName() const override;
+
   CodePoint symbol() const override { return k_sequenceSymbol; }
   size_t nameWithArgumentAndType(char* buffer, size_t bufferSize);
 

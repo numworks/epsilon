@@ -6,6 +6,11 @@
 
 namespace Sequence {
 
+void GoToParameterController::setRecord(Ion::Storage::Record record) {
+  m_record = record;
+  setParameterName(I18n::Message::N);
+}
+
 bool GoToParameterController::setParameterAtIndex(int parameterIndex,
                                                   double f) {
   assert(parameterIndex == 0);

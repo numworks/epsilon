@@ -34,11 +34,4 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(
   return true;
 }
 
-void FunctionGoToParameterController::setRecord(Ion::Storage::Record record) {
-  m_record = record;
-  ExpiringPointer<Function> function =
-      FunctionApp::app()->functionStore()->modelForRecord(m_record);
-  setParameterName(function->parameterMessageName());
-}
-
 }  // namespace Shared

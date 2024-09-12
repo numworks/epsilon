@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "../app.h"
-#include "poincare/old/junior_expression.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -22,7 +21,7 @@ static bool isFractionInput(const Expression e) {
   if (IsOpposite(e)) {
     return isFractionInput(e.cloneChildAtIndex(0));
   }
-  if (IsDiv(e)) {
+  if (!IsDiv(e)) {
     return false;
   }
   Expression num = e.cloneChildAtIndex(0);

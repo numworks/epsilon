@@ -9,7 +9,6 @@
 #include <poincare/src/memory/k_tree_concept.h>
 
 #include "old_expression.h"
-#include "poincare/old/context.h"
 
 namespace Poincare::Internal {
 class Tree;

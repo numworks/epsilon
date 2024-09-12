@@ -362,7 +362,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
     return;
   }
   UserExpression e = f->expressionClone();
-  if (IsPoint(e)) {
+  if (!IsPoint(e)) {
     // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
     return;
   }

@@ -10,8 +10,6 @@
 #include <poincare/old/undefined.h>
 #include <poincare/src/memory/tree.h>
 
-#include "poincare/old/junior_expression.h"
-
 using namespace Poincare;
 using namespace Shared;
 

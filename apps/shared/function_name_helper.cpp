@@ -106,7 +106,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   const UserExpression point = expression.cloneChildAtIndex(1);
   if (!functionSymbol.isIdenticalTo(
           Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
-      IsPoint(point)) {
+      !IsPoint(point)) {
     // The user is not defining a parametric function
     return false;
   }

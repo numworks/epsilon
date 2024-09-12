@@ -8,7 +8,6 @@
 #include <cmath>
 
 #include "../calculation.h"
-#include "poincare/old/junior_expression.h"
 #include "vector_helper.h"
 
 using namespace Poincare;

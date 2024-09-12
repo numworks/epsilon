@@ -11,7 +11,6 @@
 #include <string.h>
 
 #include "../app.h"
-#include "poincare/old/junior_expression.h"
 #include "vector_helper.h"
 
 using namespace Poincare;
@@ -66,7 +65,7 @@ void VectorListController::computeAdditionalResults(
        .angleUnit = angleUnit(),
        .target = k_target,
        .symbolicComputation = k_symbolicComputation});
-  if (IsMatrix(normalized)) {
+  if (!IsMatrix(normalized)) {
     // The reduction might have failed
     return;
   }

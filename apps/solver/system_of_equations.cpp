@@ -445,7 +445,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       ReductionTarget::SystemForAnalysis);
   for (int i = 0; i < numberOfOriginalEquations; i++) {
-    if (simplifiedEquations[i].isDep()) {
+    if (!simplifiedEquations[i].isDep()) {
       continue;
     }
     if (simplifiedEquations[i]

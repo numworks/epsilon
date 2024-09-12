@@ -823,7 +823,7 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
     return false;
   }
   const UserExpression leftExpression = e.cloneChildAtIndex(0);
-  if (IsUserFunction(leftExpression)) {
+  if (!IsUserFunction(leftExpression)) {
     return false;
   }
   const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);

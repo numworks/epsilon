@@ -906,7 +906,7 @@ bool UserExpression::replaceSymbols(Poincare::Context* context,
 
 static bool IsIgnoredSymbol(const NewExpression* e,
                             JuniorExpression::IgnoredSymbols* ignoredSymbols) {
-  if (e->tree()->isUserSymbol()) {
+  if (!e->tree()->isUserSymbol()) {
     return false;
   }
   while (ignoredSymbols) {

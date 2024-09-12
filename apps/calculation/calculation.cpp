@@ -149,7 +149,8 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
-  return IsStore(input) && IsUserFunction(input.cloneChildAtIndex(1));
+  return NewExpression::IsStore(input) &&
+         NewExpression::IsUserFunction(input.cloneChildAtIndex(1));
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
@@ -171,9 +172,11 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
                  context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
-             inputExp.recursivelyMatches(IsApproximate, context) ||
-             outputExp.recursivelyMatches(IsApproximate, context) ||
-             inputExp.recursivelyMatches(IsPercent, context)) {
+             inputExp.recursivelyMatches(NewExpression::IsApproximate,
+                                         context) ||
+             outputExp.recursivelyMatches(NewExpression::IsApproximate,
+                                          context) ||
+             inputExp.recursivelyMatches(NewExpression::IsPercent, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;
@@ -267,7 +270,9 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
   if (ExceptionRun(ecp)) {
     UserExpression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
-            [](const NewExpression e) { return IsPercent(e) || IsFactor(e); },
+            [](const NewExpression e) {
+              return NewExpression::IsPercent(e) || NewExpression::IsFactor(e);
+            },
             context)) {
       /* When the input contains percent or factor, the exact expression is not
        * fully reduced so we need to reduce it again prior to computing equal

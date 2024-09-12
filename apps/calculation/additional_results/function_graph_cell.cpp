@@ -68,7 +68,7 @@ bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect) const {
   SystemFunction function = m_model->function();
-  assert(!function.recursivelyMatches(IsSequence));
+  assert(!function.recursivelyMatches(NewExpression::IsSequence));
 
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
     SystemFunction* e = (Expression*)model;

@@ -13,6 +13,7 @@
 #include "continuous_function.h"
 #include "continuous_function_store.h"
 #include "function_name_helper.h"
+#include "poincare/old/junior_expression.h"
 #include "poincare_helpers.h"
 #include "sequence.h"
 #include "sequence_context.h"
@@ -125,12 +126,13 @@ bool GlobalContext::setExpressionForSymbolAbstract(
       expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
-  if (IsUserSymbol(symbol)) {
+  if (NewExpression::IsUserSymbol(symbol)) {
     return setExpressionForUserNamed(finalExpression, symbol, record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
-  assert(IsUserFunction(symbol) && IsUserSymbol(childSymbol));
+  assert(NewExpression::IsUserFunction(symbol) &&
+         NewExpression::IsUserSymbol(childSymbol));
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
@@ -152,12 +154,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
     const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
-  if (IsUserSymbol(symbol)) {
+  if (NewExpression::IsUserSymbol(symbol)) {
     return ExpressionForUserNamed(r);
-  } else if (IsUserFunction(symbol)) {
+  } else if (NewExpression::IsUserFunction(symbol)) {
     return ExpressionForFunction(symbol.cloneChildAtIndex(0), r);
   }
-  assert(IsSequence(symbol));
+  assert(NewExpression::IsSequence(symbol));
   return expressionForSequence(symbol, r, ctx);
 }
 
@@ -205,7 +207,7 @@ const UserExpression GlobalContext::expressionForSequence(
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
-  if (IsRational(rank)) {
+  if (NewExpression::IsRational(rank)) {
 #if 0  // TODO_PCJ
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();
@@ -246,9 +248,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
     expression = approximation;
   }
   const char* extension;
-  if (IsList(expression)) {
+  if (NewExpression::IsList(expression)) {
     extension = Ion::Storage::listExtension;
-  } else if (IsMatrix(expression)) {
+  } else if (NewExpression::IsMatrix(expression)) {
     extension = Ion::Storage::matrixExtension;
   } else {
     extension = Ion::Storage::expressionExtension;
@@ -346,7 +348,7 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
 static void storeParametricComponent(char* baseName, size_t baseNameLength,
                                      size_t bufferSize, const UserExpression& e,
                                      bool first) {
-  assert(!e.isUninitialized() && IsPoint(e));
+  assert(!e.isUninitialized() && NewExpression::IsPoint(e));
   UserExpression child = e.cloneChildAtIndex(first ? 0 : 1);
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
@@ -362,7 +364,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
     return;
   }
   UserExpression e = f->expressionClone();
-  if (!IsPoint(e)) {
+  if (!NewExpression::IsPoint(e)) {
     // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
     return;
   }

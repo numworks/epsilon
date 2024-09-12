@@ -389,6 +389,44 @@ class JuniorExpression : public OExpression {
   bool isComparison() const;
   bool isRational() const;
 
+  // Set of ExpressionTest that can be used with recursivelyMatches
+  static bool IsUninitialized(const NewExpression e) {
+    return e.isUninitialized();
+  }
+
+  static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
+    return e.isMatrix(context);
+  }
+
+  static bool IsUndefined(const NewExpression e) { return e.isUndefined(); }
+  static bool IsNAry(const NewExpression e) { return e.isNAry(); }
+  static bool IsApproximate(const NewExpression e) { return e.isApproximate(); }
+  static bool IsPlusOrMinusInfinity(const NewExpression e) {
+    return e.isPlusOrMinusInfinity();
+  }
+  static bool IsPercent(const NewExpression e) { return e.isPercent(); }
+  static bool IsSequence(const NewExpression e) { return e.isSequence(); }
+  static bool IsIntegral(const NewExpression e) { return e.isIntegral(); }
+  static bool IsDiff(const NewExpression e) { return e.isDiff(); }
+  static bool IsBoolean(const NewExpression e) { return e.isBoolean(); }
+  static bool IsList(const NewExpression e) { return e.isList(); }
+  static bool IsUserSymbol(const NewExpression e) { return e.isUserSymbol(); }
+  static bool IsUserFunction(const NewExpression e) {
+    return e.isUserFunction();
+  }
+  static bool IsStore(const NewExpression e) { return e.isStore(); }
+  static bool IsFactor(const NewExpression e) { return e.isFactor(); }
+  static bool IsPoint(const NewExpression e) { return e.isPoint(); }
+  static bool IsNonReal(const NewExpression e) { return e.isNonReal(); }
+  static bool IsOpposite(const NewExpression e) { return e.isOpposite(); }
+  static bool IsDiv(const NewExpression e) { return e.isDiv(); }
+  static bool IsBasedInteger(const NewExpression e) {
+    return e.isBasedInteger();
+  }
+  static bool IsDep(const NewExpression e) { return e.isDep(); }
+  static bool IsComparison(const NewExpression e) { return e.isComparison(); }
+  static bool IsRational(const NewExpression e) { return e.isRational(); }
+
   bool allChildrenAreUndefined() const;
   bool hasComplexI(
       Context* context,
@@ -514,52 +552,6 @@ class Unit final {
     return false;
   }
 };
-
-// Set of ExpressionTest that can be used with recursivelyMatches
-static inline bool IsUninitialized(const NewExpression e) {
-  return e.isUninitialized();
-}
-
-static inline bool IsMatrix(const NewExpression e, Context* context = nullptr) {
-  return e.isMatrix(context);
-}
-
-static inline bool IsUndefined(const NewExpression e) {
-  return e.isUndefined();
-}
-static inline bool IsNAry(const NewExpression e) { return e.isNAry(); }
-static inline bool IsApproximate(const NewExpression e) {
-  return e.isApproximate();
-}
-static inline bool IsPlusOrMinusInfinity(const NewExpression e) {
-  return e.isPlusOrMinusInfinity();
-}
-static inline bool IsPercent(const NewExpression e) { return e.isPercent(); }
-static inline bool IsSequence(const NewExpression e) { return e.isSequence(); }
-static inline bool IsIntegral(const NewExpression e) { return e.isIntegral(); }
-static inline bool IsDiff(const NewExpression e) { return e.isDiff(); }
-static inline bool IsBoolean(const NewExpression e) { return e.isBoolean(); }
-static inline bool IsList(const NewExpression e) { return e.isList(); }
-static inline bool IsUserSymbol(const NewExpression e) {
-  return e.isUserSymbol();
-}
-static inline bool IsUserFunction(const NewExpression e) {
-  return e.isUserFunction();
-}
-static inline bool IsStore(const NewExpression e) { return e.isStore(); }
-static inline bool IsFactor(const NewExpression e) { return e.isFactor(); }
-static inline bool IsPoint(const NewExpression e) { return e.isPoint(); }
-static inline bool IsNonReal(const NewExpression e) { return e.isNonReal(); }
-static inline bool IsOpposite(const NewExpression e) { return e.isOpposite(); }
-static inline bool IsDiv(const NewExpression e) { return e.isDiv(); }
-static inline bool IsBasedInteger(const NewExpression e) {
-  return e.isBasedInteger();
-}
-static inline bool IsDep(const NewExpression e) { return e.isDep(); }
-static inline bool IsComparison(const NewExpression e) {
-  return e.isComparison();
-}
-static inline bool IsRational(const NewExpression e) { return e.isRational(); }
 
 }  // namespace Poincare
 

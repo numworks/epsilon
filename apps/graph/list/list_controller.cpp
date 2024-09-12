@@ -85,7 +85,7 @@ bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
   Dimension dimension = expression.dimension();
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list of points. */
-  return !IsComparison(expression) &&
+  return !NewExpression::IsComparison(expression) &&
          (!dimension.isPoint() || symbol == Symbol::k_parametricSymbol) &&
          !dimension.isListOfPoints();
 }

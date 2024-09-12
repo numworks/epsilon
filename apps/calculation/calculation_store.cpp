@@ -67,13 +67,13 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
      * since it's exactly the approx (this happens mainly with units).
      * */
     ansExpr = input;
-    if (IsStore(ansExpr)) {
+    if (NewExpression::IsStore(ansExpr)) {
       /* Case 1.1 If the input is a store expression, keep only the first child
        * of the input in Ans because the whole store can't be used in a
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(IsApproximate, context) &&
+  } else if (input.recursivelyMatches(NewExpression::IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -86,7 +86,8 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
      * Default to the exact output.*/
     ansExpr = exactOutput;
   }
-  assert(IsUninitialized(ansExpr) || !IsStore(ansExpr));
+  assert(NewExpression::IsUninitialized(ansExpr) ||
+         !NewExpression::IsStore(ansExpr));
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
@@ -189,14 +190,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
    * "cos(x^2)".
    * */
-  if (IsStore(exactOutputExpression)) {
+  if (NewExpression::IsStore(exactOutputExpression)) {
     // TODO: factorize with StoreMenuController::parseAndStore
     // TODO: add circuit breaker?
     UserExpression value = StoreHelper::Value(exactOutputExpression);
     SymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
     UserExpression valueApprox =
         PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
-    if (IsUserSymbol(symbol) &&
+    if (NewExpression::IsUserSymbol(symbol) &&
         CAS::ShouldOnlyDisplayApproximation(inputExpression, value, valueApprox,
                                             context)) {
       value = valueApprox;

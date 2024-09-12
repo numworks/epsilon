@@ -77,7 +77,7 @@ template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model,
                                                      Context* context) {
   const SystemFunctionPoint* e = static_cast<const SystemFunctionPoint*>(model);
-  assert(IsPoint(*e));
+  assert(NewExpression::IsPoint(*e));
   assert(coordinate == 0 || coordinate == 1);
   // TODO: Approximating the other coordinate could be skipped for performances.
   Coordinate2D<T> value =

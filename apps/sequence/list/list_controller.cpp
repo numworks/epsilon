@@ -130,7 +130,7 @@ bool ListController::isAcceptableExpression(const UserExpression expression,
                                             Context* context) {
   // Do not accept any OperatorType.
   return MathLayoutFieldDelegate::isAcceptableExpression(expression, context) &&
-         !IsComparison(expression);
+         !NewExpression::IsComparison(expression);
 }
 
 void ListController::computeTitlesColumnWidth(bool forceMax) {

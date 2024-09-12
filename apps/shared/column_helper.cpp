@@ -164,7 +164,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
     const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
-    if (IsUserSymbol(leftOfEqual)) {
+    if (NewExpression::IsUserSymbol(leftOfEqual)) {
       const Symbol symbolLeftOfEqual = static_cast<const Symbol&>(leftOfEqual);
       if (store()->isColumnName(symbolLeftOfEqual.name(),
                                 strlen(symbolLeftOfEqual.name()), series,
@@ -190,12 +190,12 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
 
   if (formula.recursivelyMatches(
           [](const NewExpression e) { return e.isRandomList(); }) ||
-      !IsList(formula)) {
+      !NewExpression::IsList(formula)) {
     // Sometimes the formula is a list but the reduction failed.
     formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
   }
 
-  if (IsList(formula)) {
+  if (NewExpression::IsList(formula)) {
     bool allChildrenAreUndefined = true;
     int formulaNumberOfChildren =
         static_cast<List&>(formula).numberOfChildren();

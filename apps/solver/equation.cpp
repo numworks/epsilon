@@ -48,11 +48,12 @@ SystemExpression Equation::Model::standardForm(
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
                                     {.target = reductionTarget});
 
-  if (IsNonReal(simplifiedInput)) {
+  if (NewExpression::IsNonReal(simplifiedInput)) {
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
                  [](const NewExpression e, Context* context) {
-                   return (IsUndefined(e) || IsPlusOrMinusInfinity(e));
+                   return (NewExpression::IsUndefined(e) ||
+                           NewExpression::IsPlusOrMinusInfinity(e));
                  },
                  contextToUse) ||
              simplifiedInput.dimension().isMatrix()) {
@@ -67,14 +68,15 @@ SystemExpression Equation::Model::standardForm(
             {.target = reductionTarget});
     returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
   } else {
-    assert(IsBoolean(simplifiedInput) || IsList(simplifiedInput));
+    assert(NewExpression::IsBoolean(simplifiedInput) ||
+           NewExpression::IsList(simplifiedInput));
     /* The equality has disappeared after reduction. This may be because:
      * - the comparison was always true or false (e.g. 1 = 0) and has been
      *   reduced to a boolean.
      * - the equal sign has been distributed inside a list
      * Return 1 if the equation has no solution (since it is equivalent to
      * 1 = 0) or 0 if it has infinite solutions. */
-    returnedExpression = IsBoolean(simplifiedInput) &&
+    returnedExpression = NewExpression::IsBoolean(simplifiedInput) &&
                                  static_cast<Boolean&>(simplifiedInput).value()
                              ? Rational::Builder(0)
                              : Rational::Builder(1);

@@ -25,7 +25,7 @@ const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone,
     ContextWithParent* lastDescendantContext) {
-  if (IsUserSymbol(symbol) &&
+  if (NewExpression::IsUserSymbol(symbol) &&
       static_cast<const Symbol&>(symbol).name()[0] == 't') {
     return UserExpression();
   }
@@ -234,7 +234,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     if (simplifiedEquations[i].isUninitialized() ||
         simplifiedEquations[i].isUndefined() ||
         simplifiedEquations[i].recursivelyMatches(
-            IsMatrix, context,
+            NewExpression::IsMatrix, context,
             m_overrideUserVariables
                 ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
                 : SymbolicComputation::
@@ -310,7 +310,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ab.setDimensions(m, n + 1);
 
-  assert(!ab.recursivelyMatches(IsUninitialized, context));
+  assert(!ab.recursivelyMatches(NewExpression::IsUninitialized, context));
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context);
@@ -544,7 +544,7 @@ static void simplifyAndApproximateSolution(
       symbolicComputation, UnitConversion::Default);
   e.cloneAndSimplifyAndApproximate(exact, approximate, reductionContext,
                                    approximateDuringReduction);
-  if (IsDep(*exact)) {
+  if (NewExpression::IsDep(*exact)) {
     /* e has been reduced under ReductionTarget::SystemForAnalysis in
      * Equation::Model::standardForm and has gone through Matrix::rank,
      * which discarded dependencies. Reducing here under
@@ -613,10 +613,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       displayExactSolution = true;
     }
   }
-  if (IsNonReal(approximate)) {
+  if (NewExpression::IsNonReal(approximate)) {
     return Error::EquationNonreal;
   }
-  if (type != SolutionType::Formal && IsUndefined(approximate)) {
+  if (type != SolutionType::Formal && NewExpression::IsUndefined(approximate)) {
     return Error::EquationUndefined;
   }
 

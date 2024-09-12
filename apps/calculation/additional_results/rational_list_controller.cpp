@@ -13,15 +13,16 @@ using namespace Shared;
 namespace Calculation {
 
 static bool isIntegerInput(const Expression e) {
-  return (IsBasedInteger(e) ||
-          (IsOpposite(e) && isIntegerInput(e.cloneChildAtIndex(0))));
+  return (
+      NewExpression::IsBasedInteger(e) ||
+      (NewExpression::IsOpposite(e) && isIntegerInput(e.cloneChildAtIndex(0))));
 }
 
 static bool isFractionInput(const Expression e) {
-  if (IsOpposite(e)) {
+  if (NewExpression::IsOpposite(e)) {
     return isFractionInput(e.cloneChildAtIndex(0));
   }
-  if (!IsDiv(e)) {
+  if (!NewExpression::IsDiv(e)) {
     return false;
   }
   Expression num = e.cloneChildAtIndex(0);
@@ -38,9 +39,9 @@ void RationalListController::computeAdditionalResults(
   static_assert(k_maxNumberOfRows >= 2,
                 "k_maxNumberOfRows must be greater than 2");
 
-  bool negative = IsOpposite(e);
+  bool negative = NewExpression::IsOpposite(e);
   const UserExpression div = negative ? e.cloneChildAtIndex(0) : e;
-  assert(IsDiv(div));
+  assert(NewExpression::IsDiv(div));
 
   SystemExpression rational =
       AdditionalResultsHelper::CreateRational(div, negative);

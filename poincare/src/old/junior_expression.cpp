@@ -310,6 +310,17 @@ SystemExpression SystemExpression::Builder(PointOrScalar<T> pointOrScalar) {
   return Builder<T>(pointOrScalar.toPoint());
 }
 
+SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
+  // TODO: this is a workaround until we port old Decimal::Builder(double)
+  char buffer[PrintFloat::k_maxFloatCharSize];
+  PrintFloat::PrintFloat::ConvertFloatToText(
+      value, buffer, PrintFloat::k_maxFloatCharSize,
+      PrintFloat::k_maxFloatGlyphLength,
+      PrintFloat::k_maxNumberOfSignificantDigits,
+      Preferences::PrintFloatMode::Decimal);
+  return UserExpression::Parse(buffer, nullptr);
+}
+
 NewExpression NewExpression::Builder(const Tree* tree) {
   if (!tree) {
     return NewExpression();

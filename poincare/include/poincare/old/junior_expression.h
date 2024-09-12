@@ -178,6 +178,8 @@ class JuniorExpression : public OExpression {
   template <typename T>
   static SystemExpression Builder(PointOrScalar<T> pointOrScalar);
 
+  static SystemExpression DecimalBuilderFromDouble(double v);
+
   template <Internal::KTrees::KTreeConcept T>
   static NewExpression Builder(T x) {
     return Builder(static_cast<const Internal::Tree*>(x));

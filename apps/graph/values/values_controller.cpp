@@ -377,7 +377,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     result = function->expressionReduced(context);
     VariableContext abscissaContext =
         VariableContext(Shared::Function::k_unknownName, context);
-    UserExpression abscissaExpression = Decimal::Builder<double>(abscissa);
+    UserExpression abscissaExpression =
+        UserExpression::DecimalBuilderFromDouble(abscissa);
     abscissaContext.setExpressionForSymbolAbstract(
         abscissaExpression,
         Symbol::Builder(Shared::Function::k_unknownName,

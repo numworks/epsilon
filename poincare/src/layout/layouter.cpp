@@ -23,8 +23,6 @@
 #include "k_tree.h"
 #include "multiplication_symbol.h"
 
-using Poincare::Preferences;
-
 namespace Poincare::Internal {
 
 static constexpr int k_forceParentheses = -2;
@@ -34,6 +32,10 @@ static constexpr int k_tokenPriority = -1;
 
 // MaxPriority is to be used when there is no parent that could cause confusion
 static constexpr int k_maxPriority = 20;
+
+/* Priority just after Add for left child of a subtraction that may be an
+ * unparenthesed addition */
+static constexpr int k_subLeftChildPriority = 7;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
@@ -55,6 +57,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 5;
     case Type::Add:
       return 6;
+      static_assert(k_subLeftChildPriority == 7);
 
     case Type::Equal:
     case Type::NotEqual:
@@ -409,7 +412,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     case Type::Sub:
       layoutExpression(layoutParent, expression->nextNode(),
-                       OperatorPriority(Type::Add));
+                       k_subLeftChildPriority);
       addOperatorSeparator(layoutParent);
       PushCodePoint(layoutParent, '-');
       addOperatorSeparator(layoutParent);

@@ -26,6 +26,10 @@ void assert_expression_layouts_as(const Tree* expression, const Tree* layout,
 }
 
 QUIZ_CASE(pcj_expression_to_layout) {
+  assert_expression_layouts_as(KAdd(1_e, 2_e, 3_e), "1+2+3"_l);
+  assert_expression_layouts_as(KSub(KAdd(1_e, 2_e), 3_e), "1+2-3"_l);
+  assert_expression_layouts_as(KSub(1_e, KAdd(2_e, 3_e)),
+                               "1-"_l ^ KParenthesesL("2+3"_l));
   assert_expression_layouts_as(
       KPow(KAdd("x"_e, "y"_e), 2_e),
       KRackL(KParenthesesL("x+y"_l), KSuperscriptL("2"_l)));

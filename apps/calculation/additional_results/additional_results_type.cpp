@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "../calculation.h"
+#include "poincare/old/junior_expression.h"
 #include "vector_helper.h"
 
 using namespace Poincare;
@@ -89,17 +90,15 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * return any additional outputs for them to avoid bothering with special
    * cases. */
   if (Preferences::SharedPreferences()->examMode().forbidAdditionalResults() ||
-      input.isUninitialized() || exactOutput.isUninitialized() ||
-      approximateOutput.isUninitialized() ||
-      input.type() == ExpressionNode::Type::Store ||
-      exactOutput.type() == ExpressionNode::Type::List ||
-      approximateOutput.type() == ExpressionNode::Type::List ||
+      IsUninitialized(input) || IsUninitialized(exactOutput) ||
+      IsUninitialized(approximateOutput) || IsStore(input) ||
+      IsList(exactOutput) || IsList(approximateOutput) ||
       approximateOutput.recursivelyMatches([](const NewExpression e) {
-        return e.isUndefined() || e.type() == ExpressionNode::Type::Infinity;
+        return IsUndefined(e) || IsPlusOrMinusInfinity(e);
       })) {
     return true;
   }
-  assert(!input.isUndefined() && !exactOutput.isUndefined());
+  assert(!IsUndefined(input) && !IsUndefined(exactOutput));
   return false;
 }
 

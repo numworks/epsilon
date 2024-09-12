@@ -1112,6 +1112,10 @@ bool NewExpression::isUserSymbol() const { return tree()->isUserSymbol(); }
 
 bool NewExpression::isUserFunction() const { return tree()->isUserFunction(); }
 
+bool NewExpression::isStore() const { return tree()->isStore(); }
+
+bool NewExpression::isFactor() const { return tree()->isFactor(); }
+
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && tree()->isUnit() &&
          Internal::Dimension::Get(tree()).isSimpleAngleUnit();
@@ -1125,14 +1129,14 @@ bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
+bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
+  return Continuity::InvolvesDiscontinuousFunction(e.tree());
+}
+
 bool NewExpression::isConstantNumber() const {
   return !isUninitialized() && (tree()->isNumber() || tree()->isInf() ||
                                 tree()->isUndefined() || tree()->isDecimal());
 };
-
-bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
-  return Continuity::InvolvesDiscontinuousFunction(e.tree());
-}
 
 bool NewExpression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(

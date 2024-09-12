@@ -382,6 +382,8 @@ class JuniorExpression : public OExpression {
   bool isList() const;
   bool isUserSymbol() const;
   bool isUserFunction() const;
+  bool isStore() const;
+  bool isFactor() const;
 
   bool allChildrenAreUndefined() const;
   bool hasComplexI(
@@ -540,6 +542,8 @@ static inline bool IsUserSymbol(const NewExpression e) {
 static inline bool IsUserFunction(const NewExpression e) {
   return e.isUserFunction();
 }
+static inline bool IsStore(const NewExpression e) { return e.isStore(); }
+static inline bool IsFactor(const NewExpression e) { return e.isFactor(); }
 
 }  // namespace Poincare
 

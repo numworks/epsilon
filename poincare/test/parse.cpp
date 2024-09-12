@@ -98,11 +98,11 @@ QUIZ_CASE(pcj_assignment_parse) {
                          KEqual("y"_e, KMult("z"_e, "z"_e)));
 
   assert_trees_are_equal(RackParser("y=xxln(x)"_l, &context).parse(),
-                         KEqual("y"_e, KMult("x"_e, "x"_e, KLn("x"_e))));
+                         KEqual("y"_e, KMult("x"_e, "x"_e, KLnUser("x"_e))));
 
   assert_trees_are_equal(RackParser("f(x)=xxln(x)"_l, &context).parse(),
                          KEqual(KMult("f"_e, KParentheses("x"_e)),
-                                KMult("x"_e, "x"_e, KLn("x"_e))));
+                                KMult("x"_e, "x"_e, KLnUser("x"_e))));
   // Expected if the "Classic" (default) parsing method is selected on an
   // assignment expression: the left-hand side is parsed as "f*(x)"
 
@@ -110,5 +110,5 @@ QUIZ_CASE(pcj_assignment_parse) {
       RackParser("f(x)=xxln(x)"_l, &context,
                  ParsingContext::ParsingMethod::Assignment)
           .parse(),
-      KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLn("x"_e))));
+      KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))));
 }

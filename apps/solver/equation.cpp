@@ -52,8 +52,7 @@ SystemExpression Equation::Model::standardForm(
     returnedExpression = Nonreal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
                  [](const NewExpression e, Context* context) {
-                   return (Expression::IsUndefined(e) ||
-                           Expression::IsPlusOrMinusInfinity(e));
+                   return (IsUndefined(e) || IsPlusOrMinusInfinity(e));
                  },
                  contextToUse) ||
              simplifiedInput.dimension().isMatrix()) {
@@ -68,15 +67,14 @@ SystemExpression Equation::Model::standardForm(
             {.target = reductionTarget});
     returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
   } else {
-    assert(UserExpression::IsBoolean(simplifiedInput) ||
-           UserExpression::IsList(simplifiedInput));
+    assert(IsBoolean(simplifiedInput) || IsList(simplifiedInput));
     /* The equality has disappeared after reduction. This may be because:
      * - the comparison was always true or false (e.g. 1 = 0) and has been
      *   reduced to a boolean.
      * - the equal sign has been distributed inside a list
      * Return 1 if the equation has no solution (since it is equivalent to
      * 1 = 0) or 0 if it has infinite solutions. */
-    returnedExpression = UserExpression::IsBoolean(simplifiedInput) &&
+    returnedExpression = IsBoolean(simplifiedInput) &&
                                  static_cast<Boolean&>(simplifiedInput).value()
                              ? Rational::Builder(0)
                              : Rational::Builder(1);

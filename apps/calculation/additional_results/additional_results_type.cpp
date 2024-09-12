@@ -223,7 +223,7 @@ bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
   return approximateOutput.type() == ExpressionNode::Type::Matrix &&
-         !approximateOutput.recursivelyMatches(NewExpression::IsUndefined);
+         !approximateOutput.recursivelyMatches(IsUndefined);
 }
 
 bool AdditionalResultsType::HasFunction(

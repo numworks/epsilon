@@ -461,8 +461,7 @@ bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
   return expressionApproximated(context).recursivelyMatches(
       [](const NewExpression e) {
         return !e.isUninitialized() &&
-               (NewExpression::IsSequence(e) || NewExpression::IsIntegral(e) ||
-                NewExpression::IsDiff(e));
+               (IsSequence(e) || IsIntegral(e) || IsDiff(e));
       });
 }
 

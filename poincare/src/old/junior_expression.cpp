@@ -1082,46 +1082,35 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
       &pack);
 }
 
-bool NewExpression::IsUndefined(const NewExpression e) {
-  return e.tree()->isUndefined();
-}
-
 bool NewExpression::isUndefined() const { return tree()->isUndefined(); }
 
-bool NewExpression::IsNAry(const NewExpression e) { return e.tree()->isNAry(); }
+bool NewExpression::isNAry() const { return tree()->isNAry(); }
 
-bool NewExpression::IsApproximate(const NewExpression e) {
-  return e.tree()->isDecimal() || e.tree()->isFloat() ||
-         e.tree()->isDoubleFloat();
+bool NewExpression::isApproximate() const {
+  return tree()->isDecimal() || tree()->isFloat() || tree()->isDoubleFloat();
 }
 
-bool NewExpression::IsPercent(const NewExpression e) {
-  return e.tree()->isPercentSimple() || e.tree()->isPercentAddition();
+bool SystemExpression::isPlusOrMinusInfinity() const {
+  return Infinity::IsPlusOrMinusInfinity(tree());
 }
 
-bool NewExpression::IsSequence(const NewExpression e) {
-  return e.tree()->isSequence();
+bool NewExpression::isPercent() const {
+  return tree()->isPercentSimple() || tree()->isPercentAddition();
 }
 
-bool NewExpression::IsIntegral(const NewExpression e) {
-  return e.tree()->isIntegral();
-}
+bool NewExpression::isSequence() const { return tree()->isSequence(); }
 
-bool NewExpression::IsDiff(const NewExpression e) { return e.tree()->isDiff(); }
+bool NewExpression::isIntegral() const { return tree()->isIntegral(); }
 
-bool NewExpression::IsBoolean(const NewExpression e) {
-  return e.tree()->isBoolean();
-}
+bool NewExpression::isDiff() const { return tree()->isDiff(); }
 
-bool NewExpression::IsList(const NewExpression e) { return e.tree()->isList(); }
+bool NewExpression::isBoolean() const { return tree()->isBoolean(); }
 
-bool NewExpression::IsUserSymbol(const NewExpression e) {
-  return e.tree()->isUserSymbol();
-}
+bool NewExpression::isList() const { return tree()->isList(); }
 
-bool NewExpression::IsUserFunction(const NewExpression e) {
-  return e.tree()->isUserFunction();
-}
+bool NewExpression::isUserSymbol() const { return tree()->isUserSymbol(); }
+
+bool NewExpression::isUserFunction() const { return tree()->isUserFunction(); }
 
 bool NewExpression::isPureAngleUnit() const {
   return !isUninitialized() && tree()->isUnit() &&
@@ -1143,10 +1132,6 @@ bool NewExpression::isConstantNumber() const {
 
 bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
   return Continuity::InvolvesDiscontinuousFunction(e.tree());
-}
-
-bool SystemExpression::IsPlusOrMinusInfinity(const SystemExpression e) {
-  return Infinity::IsPlusOrMinusInfinity(e.tree());
 }
 
 bool NewExpression::allChildrenAreUndefined() const {

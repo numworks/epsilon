@@ -73,7 +73,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(NewExpression::IsApproximate, context) &&
+  } else if (input.recursivelyMatches(IsApproximate, context) &&
              mostRecentCalculation->equalSign(context) ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.

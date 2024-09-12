@@ -54,8 +54,7 @@ void VectorListController::computeAdditionalResults(
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   Sign sign = approximatedNorm.sign();
   assert(!sign.canBeStrictlyNegative());
-  if (sign.canBeNull() ||
-      SystemExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
+  if (sign.canBeNull() || IsPlusOrMinusInfinity(approximatedNorm)) {
     return;
   }
   UserExpression normalized =

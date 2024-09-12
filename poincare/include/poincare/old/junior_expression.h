@@ -9,6 +9,7 @@
 #include <poincare/src/memory/k_tree_concept.h>
 
 #include "old_expression.h"
+#include "poincare/old/context.h"
 
 namespace Poincare::Internal {
 class Tree;
@@ -363,33 +364,26 @@ class JuniorExpression : public OExpression {
   // Sign of a SystemExpression
   Sign sign() const;
 
-  // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsUninitialized(const NewExpression e) {
-    return e.isUninitialized();
-  }
+  static bool IsDiscontinuous(const NewExpression e, Context* context);
 
-  static bool IsUndefined(const NewExpression e);
-  static bool IsNAry(const NewExpression e);
-  static bool IsApproximate(const NewExpression e);
-
-  static bool IsMatrix(const NewExpression e, Context* context) {
+  bool isMatrix(Context* context) const {
     assert(false);
     return false;
   }
-  static bool IsPlusOrMinusInfinity(const SystemExpression e);
-
-  static bool IsPercent(const NewExpression e);
-  static bool IsDiscontinuous(const NewExpression e, Context* context);
-  static bool IsSequence(const NewExpression e);
-  static bool IsIntegral(const NewExpression e);
-  static bool IsDiff(const NewExpression e);
-  static bool IsBoolean(const NewExpression e);
-  static bool IsList(const NewExpression e);
-  static bool IsUserSymbol(const NewExpression e);
-  static bool IsUserFunction(const NewExpression e);
+  bool isUndefined() const;
+  bool isNAry() const;
+  bool isApproximate() const;
+  bool isPlusOrMinusInfinity() const;
+  bool isPercent() const;
+  bool isSequence() const;
+  bool isIntegral() const;
+  bool isDiff() const;
+  bool isBoolean() const;
+  bool isList() const;
+  bool isUserSymbol() const;
+  bool isUserFunction() const;
 
   bool allChildrenAreUndefined() const;
-  bool isUndefined() const;
   bool hasComplexI(
       Context* context,
       SymbolicComputation replaceSymbols =
@@ -514,6 +508,38 @@ class Unit final {
     return false;
   }
 };
+
+// Set of ExpressionTest that can be used with recursivelyMatches
+static inline bool IsUninitialized(const NewExpression e) {
+  return e.isUninitialized();
+}
+
+static inline bool IsMatrix(const NewExpression e, Context* context) {
+  return e.isMatrix(context);
+}
+
+static inline bool IsUndefined(const NewExpression e) {
+  return e.isUndefined();
+}
+static inline bool IsNAry(const NewExpression e) { return e.isNAry(); }
+static inline bool IsApproximate(const NewExpression e) {
+  return e.isApproximate();
+}
+static inline bool IsPlusOrMinusInfinity(const NewExpression e) {
+  return e.isPlusOrMinusInfinity();
+}
+static inline bool IsPercent(const NewExpression e) { return e.isPercent(); }
+static inline bool IsSequence(const NewExpression e) { return e.isSequence(); }
+static inline bool IsIntegral(const NewExpression e) { return e.isIntegral(); }
+static inline bool IsDiff(const NewExpression e) { return e.isDiff(); }
+static inline bool IsBoolean(const NewExpression e) { return e.isBoolean(); }
+static inline bool IsList(const NewExpression e) { return e.isList(); }
+static inline bool IsUserSymbol(const NewExpression e) {
+  return e.isUserSymbol();
+}
+static inline bool IsUserFunction(const NewExpression e) {
+  return e.isUserFunction();
+}
 
 }  // namespace Poincare
 

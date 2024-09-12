@@ -172,11 +172,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
                  context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
-             inputExp.recursivelyMatches(NewExpression::IsApproximate,
-                                         context) ||
-             outputExp.recursivelyMatches(NewExpression::IsApproximate,
-                                          context) ||
-             inputExp.recursivelyMatches(NewExpression::IsPercent, context)) {
+             inputExp.recursivelyMatches(IsApproximate, context) ||
+             outputExp.recursivelyMatches(IsApproximate, context) ||
+             inputExp.recursivelyMatches(IsPercent, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;
@@ -271,8 +269,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
     UserExpression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
             [](const NewExpression e) {
-              return NewExpression::IsPercent(e) ||
-                     e.type() == ExpressionNode::Type::Factor;
+              return IsPercent(e) || e.type() == ExpressionNode::Type::Factor;
             },
             context)) {
       /* When the input contains percent or factor, the exact expression is not

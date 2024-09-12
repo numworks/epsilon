@@ -234,7 +234,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     if (simplifiedEquations[i].isUninitialized() ||
         simplifiedEquations[i].type() == ExpressionNode::Type::Undefined ||
         simplifiedEquations[i].recursivelyMatches(
-            NewExpression::IsMatrix, context,
+            IsMatrix, context,
             m_overrideUserVariables
                 ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
                 : SymbolicComputation::
@@ -310,7 +310,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ab.setDimensions(m, n + 1);
 
-  assert(!ab.recursivelyMatches(NewExpression::IsUninitialized, context));
+  assert(!ab.recursivelyMatches(IsUninitialized, context));
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context);

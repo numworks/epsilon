@@ -206,7 +206,7 @@ JuniorExpression SymbolAbstract::Expand(
    * will be preserved as long as the function is defined within this symbol. */
   e = JuniorExpression::ExpressionWithoutSymbols(e, context,
                                                  symbolicComputation);
-  if (!e.isUninitialized() && symbol.type() == ExpressionNode::Type::Function) {
+  if (!e.isUninitialized() && symbol.isUserFunction()) {
     e = JuniorExpression::Create(KDep(KA, KDepList(KB)),
                                  {.KA = e, .KB = symbol.tree()->child(0)});
   }

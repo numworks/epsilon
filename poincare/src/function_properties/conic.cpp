@@ -12,6 +12,7 @@
 #include <algorithm>
 
 #include "helper.h"
+#include "poincare/old/junior_expression.h"
 
 /* Double comparison is extensively used in Conics's methods for performances.
  * To limit the approximation errors that may rise from these comparisons, we
@@ -49,7 +50,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
 
-  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+  const Tree* e = analyzedExpression.isDep()
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
 
@@ -429,7 +430,7 @@ double CartesianConic::getRadius() const {
 
 PolarConic::PolarConic(const SystemExpression& analyzedExpression,
                        const char* symbol) {
-  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+  const Tree* e = NewExpression::IsDep(analyzedExpression)
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
 
@@ -499,7 +500,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
 
 ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
                                  const char* symbol) {
-  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
+  assert(analyzedExpression.isPoint());
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();

@@ -198,7 +198,7 @@ class JuniorExpression : public OExpression {
   }
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
-  ExpressionNode::Type type() const;
+
   bool isOfType(std::initializer_list<Internal::Type> types) const;
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;

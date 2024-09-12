@@ -79,7 +79,7 @@ ComparisonNode::OperatorType ComparisonNode::SwitchInferiorSuperior(
 bool ComparisonNode::IsBinaryComparison(JuniorExpression e,
                                         OperatorType* operatorType) {
   assert(!e.isUninitialized());
-  if (e.type() != Type::Comparison) {
+  if (!e.isComparison()) {
     return false;
   }
   if (operatorType) {

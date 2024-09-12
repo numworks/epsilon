@@ -9,6 +9,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "helper.h"
+#include "poincare/old/junior_expression.h"
 
 namespace Poincare {
 
@@ -23,7 +24,7 @@ FunctionType::LineType FunctionType::PolarLineType(
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line */
 
-  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+  const Tree* e = NewExpression::IsDep(analyzedExpression)
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
   if (!e->isMult() && !e->isPow()) {
@@ -57,7 +58,7 @@ FunctionType::LineType FunctionType::PolarLineType(
 
 FunctionType::LineType FunctionType::ParametricLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
-  assert(analyzedExpression.type() == ExpressionNode::Type::Point);
+  assert(NewExpression::IsPoint(analyzedExpression));
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
@@ -154,7 +155,7 @@ FunctionType::CartesianType FunctionType::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.dimension().isScalar());
 
-  const Tree* e = analyzedExpression.type() == ExpressionNode::Type::Dependency
+  const Tree* e = NewExpression::IsDep(analyzedExpression)
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
 

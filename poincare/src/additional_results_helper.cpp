@@ -226,8 +226,7 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
     return AdditionalResultsHelper::expressionIsInterestingFunction(
         e.cloneChildAtIndex(0));
   }
-  return !e.isConstantNumber() &&
-         e.type() != ExpressionNode::Type::UnitConvert &&
+  return !e.isConstantNumber() && !e.tree()->isUnitConversion() &&
          !e.deepIsOfType({Type::UserSequence, Type::Factor, Type::Re, Type::Im,
                           Type::Arg, Type::Conj}) &&
          AdditionalResultsHelper::HasSingleNumericalValue(e);

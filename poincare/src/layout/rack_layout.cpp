@@ -299,11 +299,9 @@ void RackLayout::RenderNode(const Rack* node, KDContext* ctx, KDPoint pos,
                             bool showEmpty, bool isGridPlaceholder,
                             const LayoutStyle& style) {
   if (showEmpty && ShouldDrawEmptyRectangle(node)) {
-    EmptyRectangle::DrawEmptyRectangle(ctx, pos, Render::s_font,
-                                       isGridPlaceholder
-                                           ? EmptyRectangle::Color::Gray
-                                           : EmptyRectangle::Color::Yellow,
-                                       style);
+    EmptyRectangle::DrawEmptyRectangle(
+        ctx, pos, Render::s_font,
+        isGridPlaceholder ? style.placeholderColor : style.emptySquareColor);
   }
 }
 

@@ -13,16 +13,13 @@ namespace Poincare::Internal {
 
 class EmptyRectangle {
  public:
-  enum class Color : bool { Yellow, Gray };
-
   static KDSize Size(KDFont::Size font, bool withMargins = true);
   static KDCoordinate Baseline(KDFont::Size font) {
     return Size(font).height() / 2;
   }
 
   static void DrawEmptyRectangle(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                 Color rectangleColor,
-                                 const LayoutStyle& style);
+                                 KDColor fillColor);
 
  private:
   constexpr static KDCoordinate k_marginWidth = 1;

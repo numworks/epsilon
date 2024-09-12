@@ -665,8 +665,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       DrawSimpleLayout(child, context->ctx, p, childStyle, context->selection);
     } else if (childSize.width() > 0) {
       EmptyRectangle::DrawEmptyRectangle(context->ctx, p, s_font,
-                                         EmptyRectangle::Color::Yellow,
-                                         context->style);
+                                         context->style.emptySquareColor);
     }
     context->index++;
   };

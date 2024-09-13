@@ -538,8 +538,7 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("sec(arcsec(9/7))", "9/7");
   simplifies_to("sec(arcsec(3/7))", "undef");
 
-  // TODO_PCJ: This return undef because one of the piecewise branch is undef
-  // simplifies_to("arccot(0)", "π/2");
+  simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   // TODO: Should simplify to x

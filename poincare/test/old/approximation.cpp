@@ -1398,7 +1398,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("arccot(0)", "90", Degree);
   assert_expression_approximates_to<float>("arccot(0)", "1.570796", Radian);
   assert_expression_approximates_to<float>(
-      "arccot(180-19.11604×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
+      "arccot(-19.11604×i)", "180+3×i", Degree, MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<float>("arccot(19.11604×i)", "-3×i", Degree,
                                            MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<float>("arccot(-0.253182-0.928133×i)",

@@ -32,6 +32,8 @@ struct Dependency {
  private:
   constexpr static int k_mainIndex = 0;
   constexpr static int k_dependenciesIndex = 1;
+  static bool ShallowRemoveUselessDependencies(Tree* e);
+  static bool RemoveDefinedDependencies(Tree* e);
 };
 
 }  // namespace Poincare::Internal

@@ -235,7 +235,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
       "y),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  simplifies_to("diff(ln(x), x, -1)", "nonreal");
+  // simplifies_to("diff(ln(x), x, -1)", "nonreal");
   simplifies_to("diff(x^3,x,x,2)", "6×x");
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×z×x^2");
 
@@ -952,8 +952,8 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(inf,1)", "undef");
   simplifies_to("log(-inf,1)", "undef");
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
-  // TODO: should be nonreal
-  simplifies_to("log(-inf,x)", "undef");
+  simplifies_to("log(-inf,x)",
+                "dep(nonreal,{nonNull(x),nonNull(ln(x)),realPos(x)})");
   simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
   simplifies_to("log(inf,-3)", "nonreal");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);

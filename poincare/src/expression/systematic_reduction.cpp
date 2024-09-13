@@ -60,6 +60,12 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     }
   }
 
+  if (e->isDep() && Dependency::Main(e)->isNonReal()) {
+    /* dep(nonreal,{...}) can be undef, so we can't replace the whole expression
+     * with nonreal */
+    bubbleUpUndef = false;
+  }
+
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {
     ShallowReduce(e);
     return true;

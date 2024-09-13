@@ -2,6 +2,7 @@
 
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "approximation.h"
@@ -106,7 +107,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   return false;
 };
 
-bool RemoveDefinedDependencies(Tree* dep) {
+bool Dependency::RemoveDefinedDependencies(Tree* dep) {
   /* TODO: We call this function to eliminate some dependencies after we
    * modified the list and it processes all the dependencies. We should rather
    * add an AddDependency method that makes sure the dependency is interesting
@@ -114,6 +115,7 @@ bool RemoveDefinedDependencies(Tree* dep) {
   Tree* set = Dependency::Dependencies(dep);
 
   bool changed = false;
+  bool isNonReal = false;
   int totalNumberOfDependencies = set->numberOfChildren();
   int i = 0;
   const Tree* depI = set->nextNode();
@@ -128,8 +130,17 @@ bool RemoveDefinedDependencies(Tree* dep) {
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
     Approximation::ApproximateAndReplaceEveryScalar(approximation);
     if (approximation->isUndefined()) {
-      dep->moveTreeOverTree(approximation);
-      return true;
+      if (approximation->isNonReal()) {
+        isNonReal = true;
+        changed = true;
+        approximation->removeTree();
+        NAry::RemoveChildAtIndex(set, i);
+        totalNumberOfDependencies--;
+        continue;
+      } else {
+        dep->moveTreeOverTree(approximation);
+        return true;
+      }
     }
 
     bool canBeApproximated = Approximation::CanApproximate(approximation);
@@ -143,6 +154,18 @@ bool RemoveDefinedDependencies(Tree* dep) {
     } else {
       i++;
       depI = depI->nextTree();
+    }
+  }
+
+  if (isNonReal) {
+    // dep(main,{deps}) -> dep(nonreal,{deps,main})
+    Tree* main = Dependency::Main(dep);
+    // To avoid infinite loops
+    if (!main->isNonReal()) {
+      NAry::AddChild(set, main);
+      main->cloneNodeAtNode(KNonReal);
+      ShallowRemoveUselessDependencies(dep);
+      return true;
     }
   }
 
@@ -198,7 +221,7 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
          (e->isPow() && e->child(1)->isStrictlyPositiveRational());
 }
 
-bool ShallowRemoveUselessDependencies(Tree* dep) {
+bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
   // TODO: This function uses Set as an Nary which is an implementation detail

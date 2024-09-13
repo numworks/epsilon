@@ -271,6 +271,8 @@ QUIZ_CASE(pcj_approximation_units) {
 QUIZ_CASE(pcj_approximation_trigonometry) {
   approximates_to<float>("arccot(0)", "1.570796");
   approximates_to<float>("arccot(0)", "90", {.m_angleUnit = AngleUnit::Degree});
+  approximates_to<float>("arccot(0.5)", "1.107149");
+  approximates_to<float>("arccot(-0.5)", "2.034444");
   approximates_to<float>("arcsec(0)", "undef");
   approximates_to<float>("arccsc(0)", "undef");
 }

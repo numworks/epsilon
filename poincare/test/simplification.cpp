@@ -531,6 +531,7 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccsc(csc(π/6))", "π/6");
   simplifies_to("arccot(cot(π/6))", "π/6");
   simplifies_to("arccot(-1)", "3π/4");
+  simplifies_to("arccot(-1)", "135", {.m_angleUnit = AngleUnit::Degree});
 
   simplifies_to("csc(arccsc(9/7))", "9/7");
   simplifies_to("csc(arccsc(3/7))", "undef");
@@ -541,7 +542,7 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
-  // TODO: Should simplify to x
+  // TODO: Should simplify to 1+abs(x)
   simplifies_to("cot(arccot(1+abs(x)))", "tan(arctan(1+abs(x)))", cartesianCtx);
 
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",

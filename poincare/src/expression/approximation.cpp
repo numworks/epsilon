@@ -1,7 +1,6 @@
 #include "approximation.h"
 
 #include <omg/float.h>
-#include <omg/signaling_nan.h>
 #include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/numeric/statistics_dataset.h>
@@ -67,7 +66,6 @@ Approximation::Context::Context(AngleUnit angleUnit,
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
       m_variablesOffset(k_maxNumberOfVariables),
-      m_isNonReal(false),
       m_listElement(listElement),
       m_pointElement(-1) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
@@ -136,12 +134,8 @@ Tree* Approximation::ToBeautifiedComplex(const Tree* e) {
   /* TODO: no s_context => complexFormat = cartesian for now, and it is only
    * used with OutOfContext matrix operations, we should impose a context
    * instead. */
-  // Return nonreal if not undef and a complex was encountered in real mode
-  if (s_context && s_context->m_isNonReal) {
-    if (!std::isnan(value.real()) && !std::isnan(value.imag())) {
-      return KNonReal->cloneTree();
-    }
-    s_context->m_isNonReal = false;
+  if (IsNonReal<T>(value)) {
+    return KNonReal->cloneTree();
   }
   return Beautification::PushBeautifiedComplex(
       value, s_context ? s_context->m_complexFormat : ComplexFormat::Cartesian);
@@ -327,7 +321,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e) {
 
   if (s_context && value.imag() != 0 &&
       s_context->m_complexFormat == ComplexFormat::Real) {
-    s_context->m_isNonReal = true;
+    return NonReal<T>();
   }
   // We used to flush negative zeros here but it was not worth
   return value;
@@ -855,14 +849,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     }
     case Type::RealPos: {
       std::complex<T> x = ToComplex<T>(e->child(0));
-      if (x.real() < 0 || x.imag() != 0) {
-        if (!s_context) {
-          return NAN;
-        }
-        // Return nonreal instead of undef when possible
-        s_context->m_isNonReal = true;
-      }
-      return std::complex<T>(0);
+      return x.real() >= 0 && x.imag() == 0 ? std::complex<T>(0) : NonReal<T>();
     }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be
@@ -875,7 +862,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
       std::complex<T> x = ToComplex<T>(e->child(0));
       if (s_context && s_context->m_complexFormat == ComplexFormat::Real &&
           (x.real() < 0 || x.imag() != 0)) {
-        s_context->m_isNonReal = true;
+        return NonReal<T>();
       }
       return x == std::complex<T>(0) ? NAN : std::log(x);
     }

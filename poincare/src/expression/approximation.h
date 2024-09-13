@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
+#include <omg/signaling_nan.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -153,6 +154,19 @@ class Approximation final {
 
  private:
   template <typename T>
+  static std::complex<T> NonReal() {
+    return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
+  }
+  template <typename T>
+  static bool IsNonReal(std::complex<T> x) {
+    if (OMG::IsSignalingNan(x.real())) {
+      assert(x.imag() == static_cast<T>(0));
+      return true;
+    }
+    return false;
+  }
+
+  template <typename T>
   static PointOrScalar<T> RootToPointOrScalarPrivate(
       const Tree* e, bool isPoint, bool isPrepared = true, T abscissa = NAN,
       int listElement = -1, AngleUnit angleUnit = AngleUnit::Radian,
@@ -246,7 +260,6 @@ class Approximation final {
     static constexpr int k_maxNumberOfVariables = 16;
     VariableType m_variables[k_maxNumberOfVariables];
     uint8_t m_variablesOffset;
-    bool m_isNonReal;
 
     // Tells if we are approximating to get the nth-element of a list
     int m_listElement;

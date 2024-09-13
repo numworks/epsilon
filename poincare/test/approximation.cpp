@@ -206,8 +206,7 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("log(inf,-inf)", "undef", cartesianCtx);
   approximates_to<float>("log(-inf,-inf)", "undef", cartesianCtx);
   approximates_to<float>("ln(inf)", "∞");
-  // TODO: should be nonreal
-  approximates_to<float>("ln(-inf)", "undef");
+  approximates_to<float>("ln(-inf)", "nonreal");
   approximates_to<float>("ln(-inf)", "∞+3.141593×i", cartesianCtx);
   approximates_to<float>("cos(inf)", "undef");
   approximates_to<float>("cos(-inf)", "undef", cartesianCtx);

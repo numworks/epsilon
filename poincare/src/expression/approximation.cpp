@@ -849,13 +849,20 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Dep: {
       return UndefDependencies(e) ? NAN : ToComplex<T>(Dependency::Main(e));
     }
-    case Type::NonNull:
+    case Type::NonNull: {
+      std::complex<T> x = ToComplex<T>(e->child(0));
+      return x != std::complex<T>(0) ? std::complex<T>(0) : NAN;
+    }
     case Type::RealPos: {
       std::complex<T> x = ToComplex<T>(e->child(0));
-      return ((e->isNonNull() && x != std::complex<T>(0)) ||
-              (e->isRealPos() && x.imag() == 0 && x.real() >= 0))
-                 ? std::complex<T>(0)
-                 : NAN;
+      if (x.real() < 0 || x.imag() != 0) {
+        if (!s_context) {
+          return NAN;
+        }
+        // Return nonreal instead of undef when possible
+        s_context->m_isNonReal = true;
+      }
+      return std::complex<T>(0);
     }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be
@@ -865,14 +872,12 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(e).m_value;
     case Type::LnUser: {
-      bool real =
-          s_context && s_context->m_complexFormat == ComplexFormat::Real;
-      std::complex<T> child = ToComplex<T>(e->child(0));
-      std::complex<T>(0);
-      return child == std::complex<T>(0) ||
-                     (real && (child.real() < 0 || child.imag() != 0))
-                 ? NAN
-                 : std::log(child);
+      std::complex<T> x = ToComplex<T>(e->child(0));
+      if (s_context && s_context->m_complexFormat == ComplexFormat::Real &&
+          (x.real() < 0 || x.imag() != 0)) {
+        s_context->m_isNonReal = true;
+      }
+      return x == std::complex<T>(0) ? NAN : std::log(x);
     }
     default:;
   }

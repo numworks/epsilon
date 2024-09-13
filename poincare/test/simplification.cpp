@@ -235,9 +235,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
       "y),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  /* TODO: Should be unreal but returns undef because dependency lnReal(-1)
-   * approximates to undef and not nonreal. */
-  simplifies_to("diff(ln(x), x, -1)", "undef");
+  simplifies_to("diff(ln(x), x, -1)", "nonreal");
   simplifies_to("diff(x^3,x,x,2)", "6×x");
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×z×x^2");
 
@@ -957,8 +955,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO: should be nonreal
   simplifies_to("log(-inf,x)", "undef");
   simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
-  // TODO: should be nonreal
-  simplifies_to("log(inf,-3)", "undef");
+  simplifies_to("log(inf,-3)", "nonreal");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
   simplifies_to("log(0,-inf)", "undef", cartesianCtx);
@@ -971,8 +968,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);
   // TODO_PCJ simplifies_to("log(-inf,-inf)", "undef", cartesianCtx);
   simplifies_to("ln(inf)", "∞");
-  // TODO: should be nonreal
-  simplifies_to("ln(-inf)", "undef");
+  simplifies_to("ln(-inf)", "nonreal");
   simplifies_to("cos(inf)", "undef");
   simplifies_to("cos(-inf)", "undef");
   simplifies_to("sin(inf)", "undef");

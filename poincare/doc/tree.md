@@ -163,7 +163,7 @@ The structure of a `Tree` can be inspected in DEBUG with several log functions, 
 
 - `tree->logDiffWith(otherTree)` can compare trees with a diff-like output on top of the log output
 
-- `tree->logSerialized()` is more concise and used to focus on the mathematical logic rather than the structure
+- `tree->logSerialize()` is more concise and used to focus on the mathematical logic rather than the structure
   ```
   2+3
   ```

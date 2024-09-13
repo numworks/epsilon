@@ -83,7 +83,7 @@ bool Simplify(Tree* t) {
 
 ## Use OMG::unreachable() to mark unreachable paths
 
-It similar to `assert(false)` but will not need dummy returns to avoid warnings.
+It is similar to `assert(false)` but will not need dummy returns to avoid warnings.
 
 If the case list is exhaustive, put it after the switch:
 ```cpp

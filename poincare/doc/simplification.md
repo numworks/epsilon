@@ -18,8 +18,8 @@ Steps:
 - Projection removes complexMode, angleUnit, ...
 - SystematicReduction applies obvious reductions
 - AdvancedReduction finds the best reduced representation
-- Beautification undoes Projection and apply readability improvements
-- In practice, Beautification also prepare for Layouter
+- Beautification undoes Projection and applies readability improvements
+- In practice, Beautification also prepares for Layouter
 
 Expression properties:
 - Projected Expressions are made of specific Nodes
@@ -100,7 +100,7 @@ However, user symbols are considered real, $re(x)$ simplifies to $x$ under any C
 <details>
 <summary>Why are user symbols are considered real ?</summary>
 
-We considered two alternatives that weren't satisfying enough as for now. In the future, we should come back on this to allow more versatile usages.
+We considered two alternatives that weren't satisfying enough as of now. In the future, we should come back on this to allow more versatile usages.
 
 #### 1 - Unknown complex sign for user symbols as well
 
@@ -116,7 +116,7 @@ Just like variables, we could store the UserSymbol's sign in its node.
 
 We can no longer create UserSymbol Trees without needing a special context.
 
-For example, when computing an expressions's polynomial degree depending on "x", its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
+For example, when computing an expression's polynomial degree depending on "x", its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
 
 However, we try not to rely on any context when manipulating projected expressions.
 
@@ -124,7 +124,7 @@ However, we try not to rely on any context when manipulating projected expressio
 
 ## Dimension check
 
-Dimension covers scalars, points, booleans, units, matrix size, and list size (handled in a different functions in a similar way).
+Dimension covers scalars, points, booleans, units, matrix size, and list size (handled in different functions in a similar way).
 
 This is done as early as possible so that all following steps can assume the dimension is correct, removing the need for many checks.
 
@@ -151,21 +151,16 @@ Most of the time, we use the `Default` strategy and let the simplification handl
 ## Projection
 
 It is expected to:
-- Approximated everything that can be if strategy is `ApproximateToFloat`.
+- Approximate everything that can be if strategy is `ApproximateToFloat`.
 - Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1))). It replace nodes not handled by reduction with other nodes handled by reduction.
-- Un-contextualize the expression (complex format and angle units considerations from reduction algorithm)
+- Un-contextualize the expression (remove complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time
 
 ### Effects
 
 For example, in degrees, $cos(x)-y+frac(z)+arccot(x)$ would be projected to
 
-$$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+
-\begin{dcases}
-        π/2 & x=0 \\
-        atan(1/x) \\
-\end{dcases}
-$$
+$$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 
 <details>
 <summary>List of projections</summary>
@@ -199,7 +194,7 @@ $$
 | cot(A) | cos(A)/sin(A) |
 | arcsec(A) | acos(1/A) |
 | arccsc(A) | asin(1/A) |
-| arccot(A) | {acos(0) if A=0, atan(1/A)} |
+| arccot(A) | π/2-atan(A) |
 | cosh(A) | (exp(A)+exp(-A))×1/2 |
 | sinh(A) | (exp(A)-exp(-A))×1/2 |
 | tanh(A) | (exp(2A)-1)/(exp(2A)+1) |
@@ -219,7 +214,7 @@ Advanced reduction can undo it if it doesn't improve the overall expression, and
 
 Since this step is applied long after projection step, the new tree must already be in its projected form.
 
-In practice, we replace `atan(x)` (projected tree for tan) into `atrig(x*(1+x^2)^(-1/2),1)`.
+In practice, we replace `atan(x)` (projected tree for atan) by `atrig(x*(1+x^2)^(-1/2),1)`.
 
 This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
@@ -274,11 +269,11 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | t^m×t^n | t^(m+n) |
 | powerReal(A, B) (with A complex or positive, or B integer) | A^B |
 | powerReal(A, B) (with A negative, B negative rational p/q, q even) | unreal |
-| powerReal(A, B) (with A negative, B rational p/q, q odd) | ±|A|^B |
+| powerReal(A, B) (with A negative, B rational p/q, q odd) | ±abs(A)^B |
 | abs(abs(x)) | abs(x) |
 | abs(x) (when x is a number) | ±x |
 | trigDiff({1,1,0,0}, {1,0,1,0}) | {0, 1, 3, 0} |
-| trig(-x,y) | ±trig(-x,y) |
+| trig(-x,y) | ±trig(x,y) |
 | trig(πn/120, B) (with some values of n) | exact value |
 | trig(atrig(A,B), B) | A |
 | trig(atrig(A,B), C) | sqrt(1-A^2) |
@@ -422,7 +417,7 @@ It is expected to:
 
 ### Effects
 
-Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and call systematic reduction at every steps.
+Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and calls systematic reduction at each step.
 
 <details>
 <summary>List of advanded reductions</summary>
@@ -493,11 +488,11 @@ With an approximation strategy, we approximate again here in case previous steps
 
 ## Beautification
 
-This step basically undo earlier steps in the following order:
+This step basically undoes earlier steps in the following order:
 
 ### Restore complex format
 
-Unimplemented yet.
+Not implemented yet.
 
 ### Restore angle unit
 
@@ -509,7 +504,7 @@ An advanced reduction may be called again after that because the created angle f
 
 ### Beautify
 
-This step undo the projection by re-introducing nodes unhandled by reduction (For example, `Division`, `Log`, `Power` with non-integer indexes...).
+This step undoes the projection by re-introducing nodes not handled by reduction (For example, `Division`, `Log`, `Power` with non-integer indexes...).
 
 `Addition`, `Multiplication`, `GCD` and `LCM` are also sorted differently.
 
@@ -526,7 +521,7 @@ User variables, as well as nested local variables are restored to their original
 
 #### Advanced Reduction Examples
 
-`_` represent the node that is being examined.
+`_` represents the node that is being examined.
 
 - Unsuccessful advanced reduction on simple tree $a+b$.
 

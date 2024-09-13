@@ -157,7 +157,7 @@ const Tree * quadraticLayout = "a·x"_l ^ KSuperscriptL("2"_l) ^ "+b·x+c"_l;
 
 There is no memoization of layout properties (size, baseline, absolute position) inside poincare-junior.
 
-Racks and matrices computes their children properties instead of each children computing them. It avoids computing several times the same properties.
+Racks and matrices compute their children properties instead of each children computing them. It avoids computing the same properties several times.
 
 
 ### Separators
@@ -200,7 +200,7 @@ Separators are ignored by the char* serialization and by the parser.
 An empty rack displays itself as a yellow square, unless the cursor is pointing to it.
 
 Grids (matrices and piecewise layouts) always possess an additional row and column filled with empty racks called placeholders.
-They are displayed as gray squares, if the cursor is in the grid or one of its descendants.
+They are displayed as gray squares if the cursor is in the grid or in one of its descendants.
 
 #### Example
 ```
@@ -219,9 +219,9 @@ FractionLayout
 
 A `VerticalOffset` is related to a layout positionned before or after him in the same rack. Let's call this layout the anchor of the `VerticalOffset`.
 
-When a rack encounters a `VerticalOffset` while iterating over their children, it places it relatively to its anchor height. `VerticalOffset` does nothing by itself.
+When a rack encounters a `VerticalOffset` while iterating over its children, it places the `VerticalOffset` relatively to its anchor. `VerticalOffset` does nothing by itself.
 
-The vertical offset has two properties (`isSubScript` and `isPrefix`) that respectively determine how to place it (up or down) and what is its anchor (previous or next layout).
+The vertical offset has two properties (`isSubScript` and `isPrefix`) that respectively determine how to place it (up or down) and what is its anchor (next or previous layout).
 
 If there is no anchor, an empty yellow square is displayed instead.
 

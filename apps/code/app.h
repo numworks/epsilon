@@ -72,8 +72,8 @@ class App : public Shared::SharedApp {
   /* Python delegate:
    * MicroPython requires a heap. To avoid dynamic allocation, we keep a working
    * buffer here and we give to controllers that load Python environment. We
-   * also memoize the last Python user to avoid re-initiating MicroPython when
-   * unneeded. */
+   * also memoize the last Python user to avoid re-initializing MicroPython when
+   * not needed. */
   const void* m_pythonUser;
   ConsoleController m_consoleController;
   Escher::ButtonRowController m_listFooter;

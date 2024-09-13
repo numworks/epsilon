@@ -282,6 +282,11 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
   approximates_to<float>("floor(1+i)", "undef");
 }
 
+QUIZ_CASE(pcj_approximation_derivatives) {
+  // TODO: should be nonreal
+  approximates_to<float>("diff(ln(x), x, -1)", "undef");
+}
+
 QUIZ_CASE(pcj_approximation_decimal) {
   approximates_to(283495231345_e, 283495231345.f);
   approximates_to(283495231345._e, 283495231345.f);

@@ -54,8 +54,7 @@ void VectorListController::computeAdditionalResults(
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   Sign sign = approximatedNorm.sign();
   assert(!sign.canBeStrictlyNegative());
-  if (sign.canBeNull() ||
-      NewExpression::IsPlusOrMinusInfinity(approximatedNorm)) {
+  if (sign.canBeNull() || approximatedNorm.isPlusOrMinusInfinity()) {
     return;
   }
   UserExpression normalized =
@@ -66,14 +65,14 @@ void VectorListController::computeAdditionalResults(
        .angleUnit = angleUnit(),
        .target = k_target,
        .symbolicComputation = k_symbolicComputation});
-  if (!NewExpression::IsMatrix(normalized)) {
+  if (!normalized.isMatrix()) {
     // The reduction might have failed
     return;
   }
   setLineAtIndex(index++, UserExpression(), normalized, &ctx);
 
   // 3. Angle with x-axis
-  assert(NewExpression::IsMatrix(approximateOutput));
+  assert(approximateOutput.isMatrix());
   Matrix vector = static_cast<const Matrix&>(approximateOutput);
   assert(vector.isVector());
   if (vector.tree()->numberOfChildren() != 2) {

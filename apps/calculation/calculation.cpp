@@ -149,8 +149,7 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
-  return NewExpression::IsStore(input) &&
-         NewExpression::IsUserFunction(input.cloneChildAtIndex(1));
+  return input.isStore() && input.cloneChildAtIndex(1).isUserFunction();
 }
 
 Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
@@ -270,9 +269,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
   if (ExceptionRun(ecp)) {
     UserExpression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(
-            [](const NewExpression e) {
-              return NewExpression::IsPercent(e) || NewExpression::IsFactor(e);
-            },
+            [](const NewExpression e) { return e.isPercent() || e.isFactor(); },
             context)) {
       /* When the input contains percent or factor, the exact expression is not
        * fully reduced so we need to reduce it again prior to computing equal

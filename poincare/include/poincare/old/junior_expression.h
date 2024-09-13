@@ -199,6 +199,8 @@ class JuniorExpression : public OExpression {
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
 
+  // The following two methods should be moved out of JuniorExpression's public
+  // API.
   bool isOfType(std::initializer_list<Internal::Type> types) const;
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;
@@ -393,39 +395,14 @@ class JuniorExpression : public OExpression {
   static bool IsUninitialized(const NewExpression e) {
     return e.isUninitialized();
   }
-
   static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
     return e.isMatrix(context);
   }
-
   static bool IsUndefined(const NewExpression e) { return e.isUndefined(); }
-  static bool IsNAry(const NewExpression e) { return e.isNAry(); }
   static bool IsApproximate(const NewExpression e) { return e.isApproximate(); }
-  static bool IsPlusOrMinusInfinity(const NewExpression e) {
-    return e.isPlusOrMinusInfinity();
-  }
   static bool IsPercent(const NewExpression e) { return e.isPercent(); }
   static bool IsSequence(const NewExpression e) { return e.isSequence(); }
-  static bool IsIntegral(const NewExpression e) { return e.isIntegral(); }
-  static bool IsDiff(const NewExpression e) { return e.isDiff(); }
-  static bool IsBoolean(const NewExpression e) { return e.isBoolean(); }
-  static bool IsList(const NewExpression e) { return e.isList(); }
-  static bool IsUserSymbol(const NewExpression e) { return e.isUserSymbol(); }
-  static bool IsUserFunction(const NewExpression e) {
-    return e.isUserFunction();
-  }
   static bool IsStore(const NewExpression e) { return e.isStore(); }
-  static bool IsFactor(const NewExpression e) { return e.isFactor(); }
-  static bool IsPoint(const NewExpression e) { return e.isPoint(); }
-  static bool IsNonReal(const NewExpression e) { return e.isNonReal(); }
-  static bool IsOpposite(const NewExpression e) { return e.isOpposite(); }
-  static bool IsDiv(const NewExpression e) { return e.isDiv(); }
-  static bool IsBasedInteger(const NewExpression e) {
-    return e.isBasedInteger();
-  }
-  static bool IsDep(const NewExpression e) { return e.isDep(); }
-  static bool IsComparison(const NewExpression e) { return e.isComparison(); }
-  static bool IsRational(const NewExpression e) { return e.isRational(); }
 
   bool allChildrenAreUndefined() const;
   bool hasComplexI(

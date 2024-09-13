@@ -66,17 +66,17 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {
-    if (NewExpression::IsDep(e)) {
+    if (e.isDep()) {
       e = e.cloneChildAtIndex(0);
     }
     bool isUndefined = e.isUndefined();
-    if (!isUndefined && NewExpression::IsPoint(e)) {
+    if (!isUndefined && e.isPoint()) {
       assert(f->properties().isParametric() || f->properties().isScatterPlot());
       isUndefined = e.cloneChildAtIndex(0).isUndefined() ||
                     e.cloneChildAtIndex(1).isUndefined();
     }
     if (!isUndefined && f->numberOfSubCurves() == 2) {
-      assert(NewExpression::IsList(e));
+      assert(e.isList());
       assert(static_cast<List&>(e).numberOfChildren() == 2);
       isUndefined = e.cloneChildAtIndex(0).isUndefined() &&
                     e.cloneChildAtIndex(1).isUndefined();

@@ -24,7 +24,7 @@ FunctionType::LineType FunctionType::PolarLineType(
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line */
 
-  const Tree* e = NewExpression::IsDep(analyzedExpression)
+  const Tree* e = analyzedExpression.isDep()
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
   if (!e->isMult() && !e->isPow()) {
@@ -58,7 +58,7 @@ FunctionType::LineType FunctionType::PolarLineType(
 
 FunctionType::LineType FunctionType::ParametricLineType(
     const SystemExpression& analyzedExpression, const char* symbol) {
-  assert(NewExpression::IsPoint(analyzedExpression));
+  assert(analyzedExpression.isPoint());
 
   const Tree* xOfT = analyzedExpression.tree()->child(0);
   const Tree* yOfT = xOfT->nextTree();
@@ -155,7 +155,7 @@ FunctionType::CartesianType FunctionType::CartesianFunctionType(
     const SystemExpression& analyzedExpression, const char* symbol) {
   assert(analyzedExpression.dimension().isScalar());
 
-  const Tree* e = NewExpression::IsDep(analyzedExpression)
+  const Tree* e = analyzedExpression.isDep()
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
 

@@ -461,8 +461,7 @@ bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
   return expressionApproximated(context).recursivelyMatches(
       [](const NewExpression e) {
         return !e.isUninitialized() &&
-               (NewExpression::IsSequence(e) || NewExpression::IsIntegral(e) ||
-                NewExpression::IsDiff(e));
+               (e.isSequence() || e.isIntegral() || e.isDiff());
       });
 }
 
@@ -552,7 +551,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (numberOfSubCurves() >= 2) {
       assert(subCurveIndex >= 0);
       assert(derivationOrder == 0);
-      assert(NewExpression::IsList(e));
+      assert(e.isList());
       assert(static_cast<List&>(e).numberOfChildren() > subCurveIndex);
     }
     T value = e.approximateToScalarWithValue<T>(t, subCurveIndex);
@@ -565,7 +564,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (e.isUndefined()) {
     return Coordinate2D<T>(NAN, NAN);
   }
-  assert(NewExpression::IsPoint(e));
+  assert(e.isPoint());
   return e.approximateToPointOrScalarWithValue<T>(t).toPoint();
 }
 
@@ -824,7 +823,7 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
     return false;
   }
   const UserExpression leftExpression = e.cloneChildAtIndex(0);
-  if (!NewExpression::IsUserFunction(leftExpression)) {
+  if (!leftExpression.isUserFunction()) {
     return false;
   }
   const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
@@ -877,7 +876,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   if (IsFunctionAssignment(result)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
-    assert(NewExpression::IsUserFunction(leftExpression));
+    assert(leftExpression.isUserFunction());
     const char* functionName =
         static_cast<Poincare::Function&>(leftExpression).name();
     const size_t functionNameLength = strlen(functionName);
@@ -971,7 +970,7 @@ SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
     } else {
       assert(prop.isParametric() || prop.isPolar());
       SystemExpression expression = parametricForm(record, context);
-      assert(NewExpression::IsPoint(expression));
+      assert(expression.isPoint());
       m_expressionSlope =
           SystemExpression::CreateReduce(
               KMult(KA, KPow(KB, -1_e)),
@@ -1032,7 +1031,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
 CodePoint ContinuousFunction::Model::CodePointForSymbol(
     const UserExpression& symbol) {
   // Extract the CodePoint function's symbol. We know it is either x, t or θ
-  assert(NewExpression::IsUserSymbol(symbol));
+  assert(symbol.isUserSymbol());
   if (symbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
     return k_cartesianSymbol;
   }
@@ -1071,9 +1070,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
         expressionToStore, symbol, true);
   } else {
     if (expressionToStore.recursivelyMatches([](const NewExpression e) {
-          return NewExpression::IsUserSymbol(e) &&
-                 AliasesLists::k_thetaAliases.contains(
-                     static_cast<const Symbol&>(e).name());
+          return e.isUserSymbol() && AliasesLists::k_thetaAliases.contains(
+                                         static_cast<const Symbol&>(e).name());
         })) {
       symbol = expressionToStore.cloneChildAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))
@@ -1133,7 +1131,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
   if (prop.isCartesian()) {
     SystemExpression e =
         expressionReduced(record, Poincare::Context::GlobalContext);
-    if (NewExpression::IsList(e)) {
+    if (e.isList()) {
       assert(prop.isOfDegreeTwo());
       return static_cast<List&>(e).numberOfChildren();
     }
@@ -1161,7 +1159,7 @@ SystemExpression ContinuousFunction::Model::parametricForm(
     assert(prop.isParametric());
     e = e.clone();
   }
-  assert(NewExpression::IsPoint(e));
+  assert(e.isPoint());
   return e;
 }
 

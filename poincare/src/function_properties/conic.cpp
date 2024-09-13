@@ -430,7 +430,7 @@ double CartesianConic::getRadius() const {
 
 PolarConic::PolarConic(const SystemExpression& analyzedExpression,
                        const char* symbol) {
-  const Tree* e = NewExpression::IsDep(analyzedExpression)
+  const Tree* e = analyzedExpression.isDep()
                       ? Dependency::Main(analyzedExpression.tree())
                       : analyzedExpression.tree();
 

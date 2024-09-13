@@ -21,7 +21,7 @@ SequenceContext::SequenceContext(Context* parentContext,
 const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone,
     ContextWithParent* lastDescendantContext) {
-  if (!NewExpression::IsSequence(symbol)) {
+  if (!symbol.isSequence()) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
   }

@@ -89,19 +89,15 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * return any additional outputs for them to avoid bothering with special
    * cases. */
   if (Preferences::SharedPreferences()->examMode().forbidAdditionalResults() ||
-      NewExpression::IsUninitialized(input) ||
-      NewExpression::IsUninitialized(exactOutput) ||
-      NewExpression::IsUninitialized(approximateOutput) ||
-      NewExpression::IsStore(input) || NewExpression::IsList(exactOutput) ||
-      NewExpression::IsList(approximateOutput) ||
+      input.isUninitialized() || exactOutput.isUninitialized() ||
+      approximateOutput.isUninitialized() || input.isStore() ||
+      exactOutput.isList() || approximateOutput.isList() ||
       approximateOutput.recursivelyMatches([](const NewExpression e) {
-        return NewExpression::IsUndefined(e) ||
-               NewExpression::IsPlusOrMinusInfinity(e);
+        return e.isUndefined() || e.isPlusOrMinusInfinity();
       })) {
     return true;
   }
-  assert(!NewExpression::IsUndefined(input) &&
-         !NewExpression::IsUndefined(exactOutput));
+  assert(!input.isUndefined() && !exactOutput.isUndefined());
   return false;
 }
 
@@ -224,7 +220,7 @@ bool AdditionalResultsType::HasVector(
 bool AdditionalResultsType::HasMatrix(const UserExpression approximateOutput) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit(true));
-  return NewExpression::IsMatrix(approximateOutput) &&
+  return approximateOutput.isMatrix() &&
          !approximateOutput.recursivelyMatches(NewExpression::IsUndefined);
 }
 
@@ -235,9 +231,8 @@ bool AdditionalResultsType::HasFunction(
   assert(!input.hasUnit());
   assert(!approximateOutput.isUndefined());
   assert(!approximateOutput.hasUnit());
-  assert(!NewExpression::IsMatrix(approximateOutput));
-  return !NewExpression::IsNonReal(approximateOutput) &&
-         !NewExpression::IsPoint(approximateOutput) &&
+  assert(!approximateOutput.isMatrix());
+  return !approximateOutput.isNonReal() && !approximateOutput.isPoint() &&
          AdditionalResultsHelper::expressionIsInterestingFunction(input);
 }
 
@@ -248,7 +243,7 @@ bool AdditionalResultsType::HasScientificNotation(
   assert(!approximateOutput.hasUnit());
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  if (NewExpression::IsNonReal(approximateOutput) ||
+  if (approximateOutput.isNonReal() ||
       calculationPreferences.displayMode ==
           Preferences::PrintFloatMode::Scientific) {
     return false;

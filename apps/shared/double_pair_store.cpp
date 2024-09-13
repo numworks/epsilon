@@ -47,7 +47,7 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       }
       UserExpression e =
           NewExpression::ExpressionFromAddress(listData.buffer, listData.size);
-      if (!NewExpression::IsList(e)) {
+      if (!e.isList()) {
         continue;
       }
       setList(static_cast<List&>(e), s, i, true);

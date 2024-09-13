@@ -25,7 +25,7 @@ const UserExpression
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const SymbolAbstract& symbol, bool clone,
     ContextWithParent* lastDescendantContext) {
-  if (NewExpression::IsUserSymbol(symbol) &&
+  if (symbol.isUserSymbol() &&
       static_cast<const Symbol&>(symbol).name()[0] == 't') {
     return UserExpression();
   }
@@ -544,7 +544,7 @@ static void simplifyAndApproximateSolution(
       symbolicComputation, UnitConversion::Default);
   e.cloneAndSimplifyAndApproximate(exact, approximate, reductionContext,
                                    approximateDuringReduction);
-  if (NewExpression::IsDep(*exact)) {
+  if (exact->isDep()) {
     /* e has been reduced under ReductionTarget::SystemForAnalysis in
      * Equation::Model::standardForm and has gone through Matrix::rank,
      * which discarded dependencies. Reducing here under
@@ -613,10 +613,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       displayExactSolution = true;
     }
   }
-  if (NewExpression::IsNonReal(approximate)) {
+  if (approximate.isNonReal()) {
     return Error::EquationNonreal;
   }
-  if (type != SolutionType::Formal && NewExpression::IsUndefined(approximate)) {
+  if (type != SolutionType::Formal && approximate.isUndefined()) {
     return Error::EquationUndefined;
   }
 

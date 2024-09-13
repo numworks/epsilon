@@ -2470,8 +2470,7 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)",
                                        SystemForApproximation);
-  assert_parsed_expression_simplify_to(
-      "arccot(x)", "\u0014dep((π×sign(x)-2×arctan(x))/2,{1/x})", User);
+  assert_parsed_expression_simplify_to("arccot(x)", "π/2-arctan(x)", User);
   assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)",

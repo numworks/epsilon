@@ -295,7 +295,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("1ᴇ2ᴇ3");
   assert_text_not_parsable("0b001112");
   assert_text_not_parsable("0x123G");
-  assert_text_not_parsable("re^\u0012im(,0)\u0013");
+  assert_text_not_parsable("re^(im(,0))");
 }
 
 QUIZ_CASE(poincare_parsing_matrices) {
@@ -815,7 +815,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1!2", KMult(KFact(1_e), 2_e));
   assert_parsed_expression_is("2e^(3)",
                               KMult(2_e, KPow(e_e, KParentheses(3_e))));
-  assert_parsed_expression_is("\u00122^3\u00133", KMult(KPow(2_e, 3_e), 3_e));
+  assert_parsed_expression_is("(2^3)3", KMult(KPow(2_e, 3_e), 3_e));
   assert_parsed_expression_is("[[1]][[2]]",
                               KMult(KMatrix<1, 1>(1_e), KMatrix<1, 1>(2_e)));
   assert_parsed_expression_is("2{1,2}", KMult(2_e, KList(1_e, 2_e)));
@@ -830,7 +830,7 @@ QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
   assert_parsed_expression_is("3conj(1+i)", KMult(3_e, KConj(KAdd(1_e, i_e))));
   assert_parsed_expression_is("2×-3", KMult(2_e, KOpposite(3_e)));
   assert_parsed_expression_is("--2", KOpposite(KOpposite(2_e)));
-  assert_parsed_expression_is("\u00122/3\u0013^2",
+  assert_parsed_expression_is("(2/3)^2",
                               KPow(KParentheses(KDiv(2_e, 3_e)), 2_e));
   assert_parsed_expression_is("log(1+-2)", KLog(KAdd(1_e, KOpposite(2_e))));
 
@@ -848,16 +848,15 @@ QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
 
 QUIZ_CASE(poincare_parsing_mixed_fraction) {
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
-  assert_parsed_expression_is("1\u0012\u00122\u0013/\u00123\u0013\u0013",
+  assert_parsed_expression_is("1((2)/(3))",
                               KMixedFraction(1_e, KDiv(2_e, 3_e)));
-  assert_parsed_expression_is("1\u00122/3\u00132",
+  assert_parsed_expression_is("1(2/3)2",
                               KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), 2_e));
   assert_parsed_expression_is(
-      "1\u00122/3\u0013\u00122/3\u0013",
+      "1(2/3)(2/3)",
       KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), KDiv(2_e, 3_e)));
-  assert_parsed_expression_is("1\u0012e/3\u0013", KMult(1_e, KDiv(e_e, 3_e)));
-  assert_parsed_expression_is("1\u00122.5/3\u0013",
-                              KMult(1_e, KDiv(2.5_e, 3_e)));
+  assert_parsed_expression_is("1(e/3)", KMult(1_e, KDiv(e_e, 3_e)));
+  assert_parsed_expression_is("1(2.5/3)", KMult(1_e, KDiv(2.5_e, 3_e)));
 }
 
 QUIZ_CASE(poincare_parsing_function_assignment) {

@@ -76,8 +76,6 @@ class ConstantNode final : public ExpressionNode {
       ConstantInfo{"_R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"},
       ConstantInfo{"_ε0", 3, 8.8541878128e-12, "_F/_m"},
       ConstantInfo{"_μ0", 3, 1.25663706212e-6, "_N*_A^-2"},
-      /* "_hplanck" has the longest name. Modify the constexpr in
-       * ConstantNode::createLayout if that's not the case anymore. */
       ConstantInfo{"_hplanck", 3, 6.62607015e-34, "_J*_s"}};
   constexpr static int k_numberOfConstants = std::size(k_constants);
 

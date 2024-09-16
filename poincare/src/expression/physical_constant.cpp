@@ -24,8 +24,6 @@ const PhysicalConstant::Properties PhysicalConstant::k_constants[] = {
     Properties{"_R", 8.31446261815324, (J * (mol ^ -1) * (K ^ -1))},
     Properties{"_ε0", 8.8541878128e-12, F / m},
     Properties{"_μ0", 1.25663706212e-6, (N * (A ^ -2))},
-    /* "_hplanck" has the longest name. Modify the constexpr in
-     * PhysicalConstantNode::createLayout if that's not the case anymore. */
     Properties{"_hplanck", 6.62607015e-34, (J * s)},
 };
 

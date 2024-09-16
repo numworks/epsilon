@@ -138,24 +138,6 @@ class AbstractBlockStack {
   size_t m_size = 0;
 };
 
-template <size_t MaxNumberOfBlocks>
-class TemplatedBlockStack : public AbstractBlockStack {
- public:
-  constexpr static size_t k_maxNumberOfBlocks = MaxNumberOfBlocks;
-  constexpr static size_t k_maxNumberOfTreeRefs = MaxNumberOfBlocks / 8;
-
-  TemplatedBlockStack()
-      : AbstractBlockStack{m_concreteReferenceTable, m_blockBuffer,
-                           MaxNumberOfBlocks} {}
-
- protected:
-  ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};
-  Block m_blockBuffer[k_maxNumberOfBlocks];
-  uint16_t m_nodeOffsetBuffer[k_maxNumberOfTreeRefs];
-};
-
-using BlockStack = TemplatedBlockStack<1024 * 16>;
-
 }  // namespace Poincare::Internal
 
 #endif

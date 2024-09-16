@@ -16,7 +16,7 @@ namespace Poincare::Internal {
 
 OMG::GlobalBox<TreeStack> TreeStack::SharedTreeStack;
 
-size_t TreeStack::numberOfTrees() const {
+size_t AbstractTreeStack::numberOfTrees() const {
   const Block* currentBlock = firstBlock();
   size_t result = 0;
   while (currentBlock < lastBlock()) {
@@ -27,7 +27,7 @@ size_t TreeStack::numberOfTrees() const {
   return result;
 }
 
-Tree* TreeStack::pushSingleFloat(float value) {
+Tree* AbstractTreeStack::pushSingleFloat(float value) {
   Tree* result = pushBlock(Type::SingleFloat);
   pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
   pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
@@ -36,7 +36,7 @@ Tree* TreeStack::pushSingleFloat(float value) {
   return result;
 }
 
-Tree* TreeStack::pushDoubleFloat(double value) {
+Tree* AbstractTreeStack::pushDoubleFloat(double value) {
   Tree* result = pushBlock(Type::DoubleFloat);
   pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
   pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
@@ -49,7 +49,8 @@ Tree* TreeStack::pushDoubleFloat(double value) {
   return result;
 }
 
-Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
+Tree* AbstractTreeStack::pushUserNamed(TypeBlock type, const char* name,
+                                       size_t size) {
   assert(type.isUserNamed());
   Tree* result = pushBlock(type);
   pushBlock(size);
@@ -60,52 +61,52 @@ Tree* TreeStack::pushUserNamed(TypeBlock type, const char* name, size_t size) {
   return result;
 }
 
-Tree* TreeStack::pushVar(uint8_t id, ComplexSign sign) {
+Tree* AbstractTreeStack::pushVar(uint8_t id, ComplexSign sign) {
   Tree* result = pushBlock(Type::Var);
   pushBlock(id);
   pushBlock(sign.getValue());
   return result;
 }
 
-Tree* TreeStack::pushRandom(uint8_t seed) {
+Tree* AbstractTreeStack::pushRandom(uint8_t seed) {
   Tree* result = pushBlock(Type::Random);
   pushBlock(seed);
   return result;
 }
 
-Tree* TreeStack::pushRandInt(uint8_t seed) {
+Tree* AbstractTreeStack::pushRandInt(uint8_t seed) {
   Tree* result = pushBlock(Type::RandInt);
   pushBlock(seed);
   return result;
 }
-Tree* TreeStack::pushRandIntNoRep(uint8_t seed) {
+Tree* AbstractTreeStack::pushRandIntNoRep(uint8_t seed) {
   Tree* result = pushBlock(Type::RandIntNoRep);
   pushBlock(seed);
   return result;
 }
 
-Tree* TreeStack::pushPhysicalConstant(uint8_t constantId) {
+Tree* AbstractTreeStack::pushPhysicalConstant(uint8_t constantId) {
   assert(constantId < PhysicalConstant::k_numberOfConstants);
   Tree* result = pushBlock(Type::PhysicalConstant);
   pushBlock(constantId);
   return result;
 }
 
-Tree* TreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
+Tree* AbstractTreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
   Tree* result = pushBlock(Type::Unit);
   pushBlock(representativeId);
   pushBlock(prefixId);
   return result;
 }
 
-Tree* TreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
+Tree* AbstractTreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
   Tree* result = pushBlock(Type::AsciiCodePointLayout);
   assert(codePoint < 128);
   pushBlock(int(codePoint));
   return result;
 }
 
-Tree* TreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
+Tree* AbstractTreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   Tree* result = pushBlock(Type::UnicodeCodePointLayout);
   int first = codePoint;
@@ -116,8 +117,8 @@ Tree* TreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
   return result;
 }
 
-Tree* TreeStack::pushCombinedCodePointsLayout(CodePoint codePoint,
-                                              CodePoint combinedCodePoint) {
+Tree* AbstractTreeStack::pushCombinedCodePointsLayout(
+    CodePoint codePoint, CodePoint combinedCodePoint) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   Tree* result = pushBlock(Type::CombinedCodePointsLayout);
   int first = codePoint;
@@ -133,22 +134,23 @@ Tree* TreeStack::pushCombinedCodePointsLayout(CodePoint codePoint,
   return result;
 }
 
-Tree* TreeStack::pushParenthesisLayout(bool leftIsTemporary,
-                                       bool rightIsTemporary) {
+Tree* AbstractTreeStack::pushParenthesisLayout(bool leftIsTemporary,
+                                               bool rightIsTemporary) {
   Tree* result = pushBlock(Type::ParenthesesLayout);
   // TODO: factor with autocompleted_pair.h
   pushBlock(leftIsTemporary | (0b10 && rightIsTemporary));
   return result;
 }
 
-Tree* TreeStack::pushVerticalOffsetLayout(bool isSubscript, bool isPrefix) {
+Tree* AbstractTreeStack::pushVerticalOffsetLayout(bool isSubscript,
+                                                  bool isPrefix) {
   Tree* result = pushBlock(Type::VerticalOffsetLayout);
   // TODO: factor with vertical_offset.h
   pushBlock(isSubscript | (0b10 && isPrefix));
   return result;
 }
 
-Tree* TreeStack::pushRackLayout(int nbChildren) {
+Tree* AbstractTreeStack::pushRackLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
   Tree* result = pushBlock(Type::RackLayout);
   pushBlock(nbChildren % 256);
@@ -156,9 +158,10 @@ Tree* TreeStack::pushRackLayout(int nbChildren) {
   return result;
 }
 
-Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
-                                     uint32_t data, uint8_t interest,
-                                     bool inverted, uint8_t subCurveIndex) {
+Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
+                                             uint32_t data, uint8_t interest,
+                                             bool inverted,
+                                             uint8_t subCurveIndex) {
   Tree* result = pushBlock(Type::PointOfInterest);
   PointOfInterest p = {
       abscissa, ordinate,
@@ -170,7 +173,7 @@ Tree* TreeStack::pushPointOfInterest(double abscissa, double ordinate,
   return result;
 }
 
-Tree* TreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
+Tree* AbstractTreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
   Tree* result = pushBlock(Type::Arbitrary);
   pushBlock(0);  // nary
   pushBlock(size & 0xFF);
@@ -183,8 +186,8 @@ Tree* TreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
 
 #if POINCARE_TREE_LOG
 
-void TreeStack::logNode(std::ostream& stream, const Tree* node, bool recursive,
-                        bool verbose, int indentation) {
+void AbstractTreeStack::logNode(std::ostream& stream, const Tree* node,
+                                bool recursive, bool verbose, int indentation) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
   m_referenceTable.logIdsForNode(stream, node);
@@ -194,12 +197,12 @@ void TreeStack::logNode(std::ostream& stream, const Tree* node, bool recursive,
   stream << "</Reference>" << std::endl;
 }
 
-void TreeStack::log(std::ostream& stream, LogFormat format, bool verbose,
-                    int indentation) {
+void AbstractTreeStack::log(std::ostream& stream, LogFormat format,
+                            bool verbose, int indentation) {
   const char* formatName = format == LogFormat::Tree ? "tree" : "flat";
   Indent(stream, indentation);
-  stream << "<TreeStack format=\"" << formatName << "\" size=\"" << size()
-         << "\">\n";
+  stream << "<AbstractTreeStack format=\"" << formatName << "\" size=\""
+         << size() << "\">\n";
   if (format == LogFormat::Tree) {
     for (const Tree* tree : trees()) {
       logNode(stream, tree, true, verbose, indentation + 1);
@@ -210,7 +213,7 @@ void TreeStack::log(std::ostream& stream, LogFormat format, bool verbose,
     }
   }
   Indent(stream, indentation);
-  stream << "</TreeStack>" << std::endl;
+  stream << "</AbstractTreeStack>" << std::endl;
 }
 
 #endif

@@ -25,18 +25,17 @@ namespace Poincare::Internal {
 /* TreeStack is built on top of BlockStack to interpret contiguous chunk of
  * blocks as Trees and provide creation, iteration and logging methods. */
 
-class TreeStack : public BlockStack {
+class AbstractTreeStack : public AbstractBlockStack {
   friend class TreeRef;
   friend class Tree;
 
  public:
-  using BlockStack::BlockStack;
+  using AbstractBlockStack::AbstractBlockStack;
 
-  static OMG::GlobalBox<TreeStack> SharedTreeStack
 #if PLATFORM_DEVICE
-      __attribute__((section(".bss.$tree_stack")))
+  __attribute__((section(".bss.$tree_stack")))
 #endif
-      ;
+  ;
 
   size_t numberOfTrees() const;
 
@@ -47,7 +46,8 @@ class TreeStack : public BlockStack {
 
   // Initialize trees
   Tree* initFromAddress(const void* address, bool isTree = true) {
-    return Tree::FromBlocks(BlockStack::initFromAddress(address, isTree));
+    return Tree::FromBlocks(
+        AbstractBlockStack::initFromAddress(address, isTree));
   }
 
   Tree* pushBlock(Block block) {
@@ -170,7 +170,7 @@ class TreeStack : public BlockStack {
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {
-    return BlockStack::referenceBlock(node->block());
+    return AbstractBlockStack::referenceBlock(node->block());
   }
 
   Tree* nodeForIdentifier(uint16_t id) {
@@ -179,8 +179,8 @@ class TreeStack : public BlockStack {
 
   /* We delete the assignment operator because copying without care the
    * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
-  TreeStack& operator=(TreeStack&&) = delete;
-  TreeStack& operator=(const TreeStack&) = delete;
+  AbstractTreeStack& operator=(AbstractTreeStack&&) = delete;
+  AbstractTreeStack& operator=(const AbstractTreeStack&) = delete;
 
 #if POINCARE_TREE_LOG
   enum class LogFormat { Flat, Tree };
@@ -213,39 +213,7 @@ class TreeStack : public BlockStack {
             typename... ParametersTs>
   void execute(ActionT action, Tree* tree, ContextT* context,
                std::size_t maxSize, RelaxT relax,
-               ParametersTs... extraParameters) {
-#if ASSERTIONS
-    size_t treesNumber = numberOfTrees();
-#endif
-    size_t previousSize = size();
-    while (true) {
-      ExceptionTry {
-        assert(numberOfTrees() == treesNumber);
-        action(tree, context, extraParameters...);
-        // Prevent edition action from leaking: an action create at most one
-        // tree.
-        assert(numberOfTrees() <= treesNumber + 1);
-        // Ensure the result tree doesn't exceeds the expected size.
-        if (size() - previousSize > maxSize) {
-          TreeStackCheckpoint::Raise(ExceptionType::RelaxContext);
-        }
-        return;
-      }
-      ExceptionCatch(type) {
-        assert(numberOfTrees() == treesNumber);
-        switch (type) {
-          case ExceptionType::TreeStackOverflow:
-          case ExceptionType::IntegerOverflow:
-          case ExceptionType::RelaxContext:
-            if (relax(context)) {
-              continue;
-            }
-          default:
-            TreeStackCheckpoint::Raise(type);
-        }
-      }
-    }
-  }
+               ParametersTs... extraParameters);
 
  public:
   template <typename ActionT, typename ContextT, typename RelaxT,
@@ -257,14 +225,72 @@ class TreeStack : public BlockStack {
     // Copy context to avoid altering the original
     ContextT contextCopy = *context;
     Block* previousLastBlock = lastBlock();
-    execute(action, tree, &contextCopy, k_maxNumberOfBlocks, relax,
-            extraParameters...);
+    execute(action, tree, &contextCopy, m_maxSize, relax, extraParameters...);
     assert(previousLastBlock != lastBlock());
     tree->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
   }
 };
 
+template <size_t MaxNumberOfBlocks>
+class TemplatedTreeStack : public AbstractTreeStack {
+ public:
+  constexpr static size_t k_maxNumberOfBlocks = MaxNumberOfBlocks;
+  constexpr static size_t k_maxNumberOfTreeRefs = MaxNumberOfBlocks / 8;
+
+  TemplatedTreeStack()
+      : AbstractTreeStack{m_concreteReferenceTable, m_blockBuffer,
+                          MaxNumberOfBlocks} {}
+
+ private:
+  ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};
+  Block m_blockBuffer[k_maxNumberOfBlocks];
+  uint16_t m_nodeOffsetBuffer[k_maxNumberOfTreeRefs];
+};
+
+class TreeStack : public TemplatedTreeStack<1024 * 16> {
+ public:
+  static OMG::GlobalBox<TreeStack> SharedTreeStack;
+};
+
 #define SharedTreeStack TreeStack::SharedTreeStack
+
+template <typename ActionT, typename RelaxT, typename ContextT,
+          typename... ParametersTs>
+void AbstractTreeStack::execute(ActionT action, Tree* tree, ContextT* context,
+                                std::size_t maxSize, RelaxT relax,
+                                ParametersTs... extraParameters) {
+#if ASSERTIONS
+  size_t treesNumber = numberOfTrees();
+#endif
+  size_t previousSize = size();
+  while (true) {
+    ExceptionTry {
+      assert(numberOfTrees() == treesNumber);
+      action(tree, context, extraParameters...);
+      /* Prevent edition action from leaking: an action create at most one
+       * tree. */
+      assert(numberOfTrees() <= treesNumber + 1);
+      // Ensure the result tree doesn't exceeds the expected size.
+      if (size() - previousSize > maxSize) {
+        TreeStackCheckpoint::Raise(ExceptionType::RelaxContext);
+      }
+      return;
+    }
+    ExceptionCatch(type) {
+      assert(numberOfTrees() == treesNumber);
+      switch (type) {
+        case ExceptionType::TreeStackOverflow:
+        case ExceptionType::IntegerOverflow:
+        case ExceptionType::RelaxContext:
+          if (relax(context)) {
+            continue;
+          }
+        default:
+          TreeStackCheckpoint::Raise(type);
+      }
+    }
+  }
+}
 
 }  // namespace Poincare::Internal
 

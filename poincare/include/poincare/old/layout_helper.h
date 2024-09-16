@@ -22,17 +22,6 @@ OLayout DefaultCreateOperatorLayoutForInfix(const char* operatorName,
                                             OExpression left, OExpression right,
                                             OLayout rightLayout);
 
-OLayout Infix(const OExpression& expression,
-              Preferences::PrintFloatMode floatDisplayMode,
-              int numberOfSignificantDigits, const char* operatorName,
-              Context* context,
-              OperatorLayoutForInfix operatorLayoutBuilder =
-                  DefaultCreateOperatorLayoutForInfix);
-OLayout Prefix(const OExpression& expression,
-               Preferences::PrintFloatMode floatDisplayMode,
-               int numberOfSignificantDigits, const char* operatorName,
-               Context* context, bool addParenthesese = true);
-
 /* Create special layouts */
 OLayout Parentheses(OLayout layout, bool cloneLayout);
 /* Create StringLayout from buffer (or CodePointLayout if bufferLen = 1) */

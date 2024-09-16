@@ -80,7 +80,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case Type::UnitConversion:
       // 2,3→x is read as (2,3)→x not 2,(3→x) (even if invalid)
       return 19;
-    case Type::RackLayout:
+    case Type::RackBasicLayout:
       return 20;
     default:
       return k_tokenPriority;

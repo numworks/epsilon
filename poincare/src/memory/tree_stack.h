@@ -154,6 +154,7 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushVerticalOffsetLayout(bool isSubscript, bool isPrefix);
 
   Tree* pushRackLayout(int nbChildren);
+  Tree* pushRackMemoLayout(int nbChildren);
 
   Tree* pushPointOfInterest(double abscissa, double ordinate, uint32_t data,
                             uint8_t interest, bool inverted,

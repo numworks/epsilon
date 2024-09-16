@@ -184,28 +184,17 @@ void assert_parsed_expression_is(const char *expression,
   k_total++;
   Shared::GlobalContext context;
   bool bad = false;
-  bool crash = false;
-  ExceptionTry {
-    // assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *parsed = parse_expression(expression, &context, parseForAssignment);
-    bad = !parsed || !parsed->treeIsIdenticalTo(expected);
-    if (parsed) {
-      parsed->removeTree();
-    }
+  Tree *parsed = parse_expression(expression, &context, parseForAssignment);
+  bad = !parsed || !parsed->treeIsIdenticalTo(expected);
+  if (parsed) {
+    parsed->removeTree();
   }
-  ExceptionCatch(type) {
-    SharedTreeStack->flush();
-    crash = true;
-  }
-  // assert(SharedTreeStack->numberOfTrees() == 0);
   k_bad += bad;
-  k_crash += crash;
 
   constexpr int bufferSize = 2048;
   char information[bufferSize] = "";
   Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      crash ? "CRASH" : (bad ? "BAD" : "OK"),
-                                      expression);
+                                      bad ? "BAD" : "OK", expression);
   quiz_print(information);
 }
 

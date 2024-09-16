@@ -13,7 +13,7 @@
 #define NODE1(F) NODE_USE(F, 0, 0)
 #define NODE2(F, N) NODE_USE(F, N, 0)
 #define NODE3(F, N, S) \
-  NODE_DECL(F, S) NODE_USE(F, N, sizeof(CustomTypeStructs::NODE_NAME(F)))
+  NODE_DECL(F, N, S) NODE_USE(F, N, sizeof(CustomTypeStructs::NODE_NAME(F)))
 #define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
 
 // Macros that may be customized before including this file :
@@ -27,7 +27,7 @@
 #endif
 
 #ifndef NODE_DECL
-#define NODE_DECL(NAME, NODE_STRUCT)
+#define NODE_DECL(NAME, NB_CHILDREN, NODE_STRUCT)
 #endif
 
 // 1 - Expressions

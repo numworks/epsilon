@@ -38,7 +38,7 @@ namespace CustomTypeStructs {
  * };
  */
 
-#define NODE_DECL(F, S) struct NODE_NAME(F) S;
+#define NODE_DECL(F, N, S) struct NODE_NAME(F) S;
 #include "types.h"
 }  // namespace CustomTypeStructs
 
@@ -98,18 +98,24 @@ class TypeBlock : public Block {
 #include "types.h"
 #undef RANGE1
 
-  // Add casts to custom node structs
-#define CAST_(F, T)                                               \
-  CustomTypeStructs::F* to##F() {                                 \
-    assert(type() == Type::T);                                    \
-    return reinterpret_cast<CustomTypeStructs::F*>(next());       \
-  }                                                               \
-  const CustomTypeStructs::F* to##F() const {                     \
-    assert(type() == Type::T);                                    \
-    return reinterpret_cast<const CustomTypeStructs::F*>(next()); \
+  consteval static size_t DefaultNumberOfMetaBlocks(int N) {
+    return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
   }
-#define CAST(F, T) CAST_(F, T)
-#define NODE_DECL(F, S) CAST(NODE_NAME(F), SCOPED_NODE(F))
+
+  // Add casts to custom node structs
+#define CAST_(F, N, T)                                    \
+  CustomTypeStructs::F* to##F() {                         \
+    assert(type() == Type::T);                            \
+    return reinterpret_cast<CustomTypeStructs::F*>(       \
+        nextNth(DefaultNumberOfMetaBlocks(N)));           \
+  }                                                       \
+  const CustomTypeStructs::F* to##F() const {             \
+    assert(type() == Type::T);                            \
+    return reinterpret_cast<const CustomTypeStructs::F*>( \
+        nextNth(DefaultNumberOfMetaBlocks(N)));           \
+  }
+#define CAST(F, N, T) CAST_(F, N, T)
+#define NODE_DECL(F, N, S) CAST(NODE_NAME(F), N, SCOPED_NODE(F))
 #include "types.h"
 #undef CAST_
 #undef CAST
@@ -149,10 +155,6 @@ class TypeBlock : public Block {
   constexpr static int NARY = -1;
   constexpr static int NARY2D = -2;
   constexpr static int NARY16 = -3;
-
-  consteval static size_t DefaultNumberOfMetaBlocks(int N) {
-    return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
-  }
 
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {

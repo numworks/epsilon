@@ -101,33 +101,6 @@ bool MatrixLayoutNode::isEditing() const {
              EmptyRectangle::Color::Gray;
 }
 
-KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
-  assert(false);
-  return 0;
-}
-
-KDPoint MatrixLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
-  assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l, font).translatedBy(
-      SquareBracketPairLayoutNode::ChildOffset(gridHeight(font)));
-}
-
-KDCoordinate MatrixLayoutNode::computeBaseline(KDFont::Size font) {
-  return GridLayoutNode::computeBaseline(font) +
-         BracketPairLayoutNode::k_lineThickness;
-}
-
-void MatrixLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
-  KDSize s = gridSize(style.font);
-  SquareBracketPairLayoutNode::RenderWithChildSize(
-      true, s.height(), ctx, p, style.glyphColor, style.backgroundColor);
-  KDCoordinate rightOffset =
-      SquareBracketPairLayoutNode::ChildOffset(s.height()).x() + s.width();
-  SquareBracketPairLayoutNode::RenderWithChildSize(
-      false, s.height(), ctx, p.translatedBy(KDPoint(rightOffset, 0)),
-      style.glyphColor, style.backgroundColor);
-}
-
 MatrixLayout MatrixLayout::Builder(OLayout l1) {
   MatrixLayout m =
       PoolHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1});

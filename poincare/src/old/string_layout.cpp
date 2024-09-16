@@ -32,47 +32,6 @@ bool StringLayoutNode::protectedIsIdenticalTo(OLayout l) {
                  std::max(stringLength() + 1, sl.stringLength() + 1)) == 0;
 }
 
-// Sizing and positioning
-KDSize StringLayoutNode::computeSize(KDFont::Size font) {
-  KDSize glyph = KDFont::GlyphSize(font);
-  return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width() +
-                    numberOfThousandsSeparators() *
-                        Escher::Metric::ThousandsSeparatorWidth,
-                glyph.height());
-}
-
-KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
-  return KDFont::GlyphHeight(font) / 2;
-}
-
-void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
-  int nThousandsSeparators = numberOfThousandsSeparators();
-  if (nThousandsSeparators == 0) {
-    ctx->drawString(m_string, p, style);
-    return;
-  }
-  // Draw the thousand separators
-  size_t firstSeparatorIndex = firstNonDigitIndex() - 3 * nThousandsSeparators;
-  // Use this buffer to draw group of 3 digits (+ the "-" if needed).
-  constexpr size_t k_bufferSize = 5;
-  char groupedNumbersBuffer[k_bufferSize];
-  assert(firstSeparatorIndex < k_bufferSize);
-  // Draw the first separator first
-  strlcpy(groupedNumbersBuffer, m_string, firstSeparatorIndex + 1);
-  p = ctx->drawString(groupedNumbersBuffer, p, style);
-  p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
-  // Draw the other separators.
-  for (int i = 0; i < nThousandsSeparators - 1; i++) {
-    strlcpy(groupedNumbersBuffer, m_string + firstSeparatorIndex + i * 3, 4);
-    p = ctx->drawString(groupedNumbersBuffer, p, style);
-    p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
-  }
-  // Draw the end of the string.
-  ctx->drawString(
-      m_string + firstSeparatorIndex + 3 * (nThousandsSeparators - 1), p,
-      style);
-}
-
 int StringLayoutNode::numberOfThousandsSeparators() {
   int nonDigitIndex = firstNonDigitIndex();
   bool isNegative = m_string[0] == '-';

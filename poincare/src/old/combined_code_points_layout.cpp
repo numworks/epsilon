@@ -17,15 +17,6 @@ size_t CombinedCodePointsLayoutNode::serialize(
   return numberOfChar;
 }
 
-void CombinedCodePointsLayoutNode::render(KDContext *ctx, KDPoint p,
-                                          KDGlyph::Style style) {
-  // Null-terminating char
-  constexpr int bufferSize = 2 * sizeof(CodePoint) / sizeof(char) + 1;
-  char buffer[bufferSize];
-  serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, 0);
-  ctx->drawString(buffer, p, style);
-}
-
 bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(OLayout l) {
   assert(l.otype() == Type::CombinedCodePointsLayout);
   CombinedCodePointsLayout &cpl = static_cast<CombinedCodePointsLayout &>(l);

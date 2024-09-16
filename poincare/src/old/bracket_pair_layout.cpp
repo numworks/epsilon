@@ -10,36 +10,6 @@ BracketPairLayoutNode::deletionMethodForCursorLeftOfChild(
   return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
 }
 
-KDSize BracketPairLayoutNode::computeSize(KDFont::Size font) {
-  KDSize childSize = childLayout()->layoutSize(font);
-  KDCoordinate width = 2 * bracketWidth() + childSize.width();
-  KDCoordinate height = Height(childSize.height(), minVerticalMargin());
-  return KDSize(width, height);
-}
-
-KDCoordinate BracketPairLayoutNode::computeBaseline(KDFont::Size font) {
-  KDCoordinate childHeight = childLayout()->layoutSize(font).height();
-  KDCoordinate childBaseLine = childLayout()->baseline(font);
-  return Baseline(childHeight, childBaseLine, minVerticalMargin());
-}
-
-KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode* child,
-                                               KDFont::Size font) {
-  assert(childLayout() == child);
-  KDCoordinate childHeight = childLayout()->layoutSize(font).height();
-
-  return ChildOffset(minVerticalMargin(), bracketWidth(), childHeight);
-}
-
-void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p,
-                                   KDGlyph::Style style) {
-  renderOneBracket(true, ctx, p, style);
-  KDCoordinate rightBracketOffset =
-      bracketWidth() + childLayout()->layoutSize(style.font).width();
-  renderOneBracket(false, ctx, p.translatedBy(KDPoint(rightBracketOffset, 0)),
-                   style);
-}
-
 size_t BracketPairLayoutNode::serializeWithSymbol(
     char symbolOpen, char symbolClose, char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

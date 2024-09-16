@@ -389,14 +389,4 @@ LayoutNode *AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
   return child;
 }
 
-LayoutNode::DeletionMethod
-AutocompletedBracketPairLayoutNode::deletionMethodForCursorLeftOfChild(
-    int childIndex) const {
-  if ((childIndex == k_outsideIndex && isTemporary(Side::Right)) ||
-      (childIndex == 0 && isTemporary(Side::Left))) {
-    return DeletionMethod::MoveLeft;
-  }
-  return DeletionMethod::AutocompletedBracketPairMakeTemporary;
-}
-
 }  // namespace Poincare

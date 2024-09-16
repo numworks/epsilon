@@ -90,6 +90,7 @@ KDSize Render::Size(const Layout* l) {
       break;
     }
     case LayoutType::Integral: {
+      // TODO_PCJ: handle nested integrals, cf old code
       using namespace Integral;
       KDSize dSize = KDFont::Font(s_font)->stringSize("d");
       KDSize integrandSize = Size(l->child(3));

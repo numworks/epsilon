@@ -9,38 +9,6 @@ namespace Poincare {
 
 #define Layout OLayout
 
-int FractionLayoutNode::indexAfterHorizontalCursorMove(
-    OMG::HorizontalDirection direction, int currentIndex,
-    bool* shouldRedrawLayout) {
-  if (currentIndex == k_outsideIndex) {
-    /* When coming from the left, go to the numerator.
-     * When coming from the right, go to the denominator. */
-    return direction.isRight() ? k_numeratorIndex : k_denominatorIndex;
-  }
-  return k_outsideIndex;
-}
-
-int FractionLayoutNode::indexAfterVerticalCursorMove(
-    OMG::VerticalDirection direction, int currentIndex,
-    PositionInLayout positionAtCurrentIndex, bool* shouldRedrawLayout) {
-  switch (currentIndex) {
-    case k_outsideIndex:
-      return direction.isUp() ? k_numeratorIndex : k_denominatorIndex;
-    case k_numeratorIndex:
-      return direction.isUp() ? k_cantMoveIndex : k_denominatorIndex;
-    default:
-      assert(currentIndex == k_denominatorIndex);
-      return direction.isUp() ? k_numeratorIndex : k_cantMoveIndex;
-  }
-}
-
-LayoutNode::DeletionMethod
-FractionLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  return childIndex == k_denominatorIndex
-             ? DeletionMethod::FractionDenominatorDeletion
-             : DeletionMethod::MoveLeft;
-}
-
 size_t FractionLayoutNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,
@@ -81,10 +49,6 @@ size_t FractionLayoutNode::serialize(
   return numberOfChar;
 }
 
-int FractionLayoutNode::indexOfChildToPointToWhenInserting() {
-  return numeratorLayout()->isEmpty() ? k_numeratorIndex : k_denominatorIndex;
-}
-
 bool FractionLayoutNode::isCollapsable(
     int* numberOfOpenParenthesis, OMG::HorizontalDirection direction) const {
   if (*numberOfOpenParenthesis > 0) {
@@ -108,58 +72,6 @@ bool FractionLayoutNode::isCollapsable(
             : absorbingSibling.rightCollapsingAbsorbingChildIndex());
   }
   return absorbingSibling.isHorizontal() && absorbingSibling.isEmpty();
-}
-
-KDSize FractionLayoutNode::computeSize(KDFont::Size font) {
-  KDCoordinate width =
-      std::max(numeratorLayout()->layoutSize(font).width(),
-               denominatorLayout()->layoutSize(font).width()) +
-      2 * Escher::Metric::FractionAndConjugateHorizontalOverflow +
-      2 * Escher::Metric::FractionAndConjugateHorizontalMargin;
-  KDCoordinate height = numeratorLayout()->layoutSize(font).height() +
-                        k_fractionLineMargin + k_fractionLineHeight +
-                        k_fractionLineMargin +
-                        denominatorLayout()->layoutSize(font).height();
-  return KDSize(width, height);
-}
-
-KDCoordinate FractionLayoutNode::computeBaseline(KDFont::Size font) {
-  return numeratorLayout()->layoutSize(font).height() + k_fractionLineMargin +
-         k_fractionLineHeight;
-}
-
-KDPoint FractionLayoutNode::positionOfChild(LayoutNode* child,
-                                            KDFont::Size font) {
-  KDCoordinate x = 0;
-  KDCoordinate y = 0;
-  if (child == numeratorLayout()) {
-    x = (KDCoordinate)((layoutSize(font).width() -
-                        numeratorLayout()->layoutSize(font).width()) /
-                       2);
-  } else if (child == denominatorLayout()) {
-    x = (KDCoordinate)((layoutSize(font).width() -
-                        denominatorLayout()->layoutSize(font).width()) /
-                       2);
-    y = (KDCoordinate)(numeratorLayout()->layoutSize(font).height() +
-                       2 * k_fractionLineMargin + k_fractionLineHeight);
-  } else {
-    assert(false);
-  }
-  return KDPoint(x, y);
-}
-
-void FractionLayoutNode::render(KDContext* ctx, KDPoint p,
-                                KDGlyph::Style style) {
-  KDCoordinate fractionLineY =
-      p.y() + numeratorLayout()->layoutSize(style.font).height() +
-      k_fractionLineMargin;
-  ctx->fillRect(
-      KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
-             fractionLineY,
-             layoutSize(style.font).width() -
-                 2 * Escher::Metric::FractionAndConjugateHorizontalMargin,
-             k_fractionLineHeight),
-      style.glyphColor);
 }
 
 }  // namespace Poincare

@@ -92,7 +92,8 @@ class Approximation final {
   template <typename T>
   static T To(const Tree* e) {
     std::complex<T> value = ToComplex<T>(e);
-    return value.imag() == 0 ? value.real() : NAN;
+    // Remove signaling nan
+    return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
   }
 
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and

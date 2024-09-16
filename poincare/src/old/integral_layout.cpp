@@ -8,16 +8,6 @@
 
 namespace Poincare {
 
-size_t IntegralLayoutNode::serialize(
-    char *buffer, size_t bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(
-      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
-      Integral::s_functionHelper.aliasesList().mainAlias(),
-      SerializationHelper::ParenthesisType::System);
-}
-
 /* Return pointer to the first or the last integral from left to right
  * (considering multiple integrals in a row). */
 IntegralLayoutNode *IntegralLayoutNode::mostNestedIntegral(

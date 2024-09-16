@@ -8,13 +8,6 @@ bool CodePointLayoutNode::IsCodePoint(OLayout l, CodePoint c) {
          static_cast<CodePointLayout &>(l).codePoint() == c;
 }
 
-size_t CodePointLayoutNode::serialize(
-    char *buffer, size_t bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfSignificantDigits) const {
-  return SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
-}
-
 bool CodePointLayoutNode::isCollapsable(
     int *numberOfOpenParenthesis, OMG::HorizontalDirection direction) const {
   if (*numberOfOpenParenthesis <= 0) {
@@ -67,20 +60,6 @@ bool CodePointLayoutNode::isCollapsable(
 bool CodePointLayoutNode::isMultiplicationCodePoint() const {
   return m_codePoint == '*' || m_codePoint == UCodePointMultiplicationSign ||
          m_codePoint == UCodePointMiddleDot;
-}
-
-bool CodePointLayoutNode::protectedIsIdenticalTo(OLayout l) {
-  assert(l.otype() == Type::CodePointLayout ||
-         l.otype() == Type::CombinedCodePointsLayout);
-  CodePointLayout &cpl = static_cast<CodePointLayout &>(l);
-  return codePoint() == cpl.codePoint();
-}
-
-CodePointLayout CodePointLayout::Builder(CodePoint c) {
-  void *bufferNode = Pool::sharedPool->alloc(sizeof(CodePointLayoutNode));
-  CodePointLayoutNode *node = new (bufferNode) CodePointLayoutNode(c);
-  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
-  return static_cast<CodePointLayout &>(h);
 }
 
 }  // namespace Poincare

@@ -147,6 +147,7 @@ Integer::Integer(const char *digits, size_t length, bool negative, OMG::Base b)
 
 size_t Integer::serialize(char *buffer, size_t bufferSize,
                           OMG::Base base) const {
+  // TODO_PCJ: check that it is implemented in layoutIntegerHandler
   if (bufferSize == 0) {
     return bufferSize - 1;
   }
@@ -256,16 +257,6 @@ size_t Integer::serializeInBinaryBase(char *buffer, size_t bufferSize,
     assert(currentChar < requiredBufferSize);
   }
   return requiredBufferSize - 1;
-}
-
-// Layout
-
-Layout Integer::createLayout(OMG::Base base) const {
-  constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 1;
-  char buffer[bufferSize];
-  int numberOfChars = serialize(buffer, bufferSize, base);
-  assert(numberOfChars >= 1);
-  return Layout::String(buffer, numberOfChars);
 }
 
 // Approximation

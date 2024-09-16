@@ -111,9 +111,6 @@ class Integer final : public PoolHandle {
   size_t serialize(char *buffer, size_t bufferSize,
                    OMG::Base base = OMG::Base::Decimal) const;
 
-  // Layout
-  Layout createLayout(OMG::Base base = OMG::Base::Decimal) const;
-
   // Approximation
   template <typename T>
   T approximate() const;

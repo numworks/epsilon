@@ -185,30 +185,6 @@ void ComparisonNode::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-#if 0
-OLayout ComparisonNode::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context) const {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  for (int i = 0; i < m_numberOfOperands - 1; i++) {
-    result.addOrMergeChildAtIndex(
-        childAtIndex(i)->createLayout(floatDisplayMode,
-                                      numberOfSignificantDigits, context),
-        result.numberOfChildren());
-    OLayout operatorLayout = ComparisonOperatorLayout(m_operatorsList[i]);
-    operatorLayout.setMargin(true);
-    result.addChildAtIndexInPlace(operatorLayout, result.numberOfChildren(),
-                                  result.numberOfChildren());
-  }
-  OLayout lastChildLayout =
-      childAtIndex(m_numberOfOperands - 1)
-          ->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
-  lastChildLayout.setMargin(true);
-  result.addOrMergeChildAtIndex(lastChildLayout, result.numberOfChildren());
-  return std::move(result);
-}
-#endif
-
 size_t ComparisonNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

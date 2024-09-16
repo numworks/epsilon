@@ -75,45 +75,4 @@ size_t MatrixLayoutNode::serialize(char *buffer, size_t bufferSize,
   return std::min(numberOfChar, bufferSize - 1);
 }
 
-void MatrixLayoutNode::startEditing() {
-  if (!isEditing()) {
-    addEmptyRow(EmptyRectangle::Color::Gray);
-    addEmptyColumn(EmptyRectangle::Color::Gray);
-  }
-}
-
-void MatrixLayoutNode::stopEditing() {
-  if (isEditing()) {
-    deleteRowAtIndex(m_numberOfRows - 1);
-    deleteColumnAtIndex(m_numberOfColumns - 1);
-  }
-}
-
-// Private
-
-bool MatrixLayoutNode::isEditing() const {
-  if (numberOfChildren() == 0) {
-    return false;
-  }
-  LayoutNode *lastChild = childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
-  return lastChild->isEmpty() &&
-         static_cast<HorizontalLayoutNode *>(lastChild)->emptyColor() ==
-             EmptyRectangle::Color::Gray;
-}
-
-MatrixLayout MatrixLayout::Builder(OLayout l1) {
-  MatrixLayout m =
-      PoolHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1});
-  m.setDimensions(1, 1);
-  return m;
-}
-
-MatrixLayout MatrixLayout::Builder(OLayout l1, OLayout l2, OLayout l3,
-                                   OLayout l4) {
-  MatrixLayout m =
-      PoolHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1, l2, l3, l4});
-  m.setDimensions(2, 2);
-  return m;
-}
-
 }  // namespace Poincare

@@ -12,18 +12,15 @@ namespace Poincare::Internal {
 
 /* A stack of Blocks (= bytes) with motion tracking references. */
 
-class BlockStack {
+class AbstractBlockStack {
   friend class TreeStackCheckpoint;
 
  public:
-  constexpr static int k_maxNumberOfBlocks = 1024 * 16;
-  constexpr static int k_maxNumberOfReferences = k_maxNumberOfBlocks / 8;
-
-  BlockStack() : m_referenceTable(this), m_size(0) {}
-
+  int maxNumberOfBlocks() const { return m_maxSize; }
+  int maxNumberOfReferences() const { return maxNumberOfBlocks() / 8; }
   const Block* firstBlock() const { return m_blocks; }
   Block* firstBlock() { return m_blocks; }
-  // If BlockStack is empty, first and last blocks are the same one
+  // If AbstractBlockStack is empty, first and last blocks are the same one
   const Block* lastBlock() const { return m_blocks + m_size; }
   Block* lastBlock() { return m_blocks + m_size; }
   size_t size() const { return m_size; }
@@ -68,9 +65,10 @@ class BlockStack {
   }
 
   /* We delete the assignment operator because copying without care the
-   * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
-  BlockStack& operator=(BlockStack&&) = delete;
-  BlockStack& operator=(const BlockStack&) = delete;
+   * ReferenceTable would corrupt the m_referenceTable.m_pool pointer.
+   */
+  AbstractBlockStack& operator=(AbstractBlockStack&&) = delete;
+  AbstractBlockStack& operator=(const AbstractBlockStack&) = delete;
 
  protected:
   /* The reference table stores the offset of the tree in the edition pool.
@@ -88,7 +86,8 @@ class BlockStack {
      * removed or replaced. */
     constexpr static uint16_t InvalidatedOffset = 0xFFFF;
 
-    ReferenceTable(BlockStack* pool) : m_length(0), m_pool(pool) {}
+    ReferenceTable(AbstractBlockStack* pool, uint16_t* nodeOffsetArray)
+        : m_pool(pool), m_nodeOffsetForIdentifier(nodeOffsetArray) {}
     Block* nodeForIdentifier(uint16_t id) const;
     uint16_t storeNode(Block* node);
     void updateIdentifier(uint16_t id, Block* newNode);
@@ -99,7 +98,7 @@ class BlockStack {
                      const Block* contextSelection1,
                      const Block* contextSelection2, int contextAlteration);
     void invalidateIdentifiersAfterBlock(const Block* block);
-    bool isFull() { return m_length == BlockStack::k_maxNumberOfReferences; }
+    bool isFull() { return m_length == m_pool->maxNumberOfReferences(); }
     void reset() { setLength(0); }
     /* Restoring length to a previous value has the same effect as deleting all
      * the references that where introduced in between. */
@@ -118,19 +117,44 @@ class BlockStack {
 
     uint16_t storeNodeAtIndex(Block* node, size_t index);
 
-    uint16_t m_length;
-    BlockStack* m_pool;
-    uint16_t m_nodeOffsetForIdentifier[BlockStack::k_maxNumberOfReferences];
+    AbstractBlockStack* m_pool;
+    uint16_t* m_nodeOffsetForIdentifier;
+    uint16_t m_length = 0;
   };
+
+  AbstractBlockStack(ReferenceTable& referenceTable, Block* blocks,
+                     size_t maxNumberOfBlocks)
+      : m_referenceTable(referenceTable),
+        m_blocks(blocks),
+        m_maxSize(maxNumberOfBlocks) {}
 
   ReferenceTable* referenceTable() { return &m_referenceTable; }
 
   /* If we end up needing too many TreeRef, we could ref-count  them in
    * m_referenceTable and implement a destructor on TreeRef. */
-  ReferenceTable m_referenceTable;
-  Block m_blocks[k_maxNumberOfBlocks];
-  size_t m_size;
+  ReferenceTable& m_referenceTable;
+  Block* m_blocks;
+  size_t m_maxSize;
+  size_t m_size = 0;
 };
+
+template <size_t MaxNumberOfBlocks>
+class TemplatedBlockStack : public AbstractBlockStack {
+ public:
+  constexpr static size_t k_maxNumberOfBlocks = MaxNumberOfBlocks;
+  constexpr static size_t k_maxNumberOfTreeRefs = MaxNumberOfBlocks / 8;
+
+  TemplatedBlockStack()
+      : AbstractBlockStack{m_concreteReferenceTable, m_blockBuffer,
+                           MaxNumberOfBlocks} {}
+
+ protected:
+  ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};
+  Block m_blockBuffer[k_maxNumberOfBlocks];
+  uint16_t m_nodeOffsetBuffer[k_maxNumberOfTreeRefs];
+};
+
+using BlockStack = TemplatedBlockStack<1024 * 16>;
 
 }  // namespace Poincare::Internal
 

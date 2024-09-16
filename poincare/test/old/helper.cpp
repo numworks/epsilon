@@ -83,12 +83,10 @@ void build_failure_infos(char *returnedInformationsBuffer, size_t bufferSize,
                             expression, result, expectedResult);
 }
 
-static int k_crash;
 static int k_bad;
 static int k_total;
 
 void quiz_reset_failure_ratio() {
-  k_crash = 0;
   k_bad = 0;
   k_total = 0;
 }
@@ -99,10 +97,9 @@ void quiz_print_failure_ratio() {
   }
   constexpr int bufferSize = 100;
   char buffer[bufferSize];
-  int success = k_total - k_bad - k_crash;
+  int success = k_total - k_bad;
   Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "  %i ok   %i bad   %i crash  / %i", success, k_bad,
-      k_crash, k_total,
+      buffer, bufferSize, "  %i ok   %i bad  / %i", success, k_bad, k_total,
       // 100. * static_cast<float>(success) / static_cast<float>(k_total),
       Preferences::PrintFloatMode::Decimal, 5);
   quiz_print(buffer);
@@ -131,32 +128,24 @@ void assert_parsed_expression_process_to(
   char result[bufferSize];
   copy_without_system_chars(result, oldResult);
   bool bad = false;
-  bool crash = false;
-  ExceptionTry {
-    assert(SharedTreeStack->numberOfTrees() == 0);
-    Tree *e = parse_expression(expression, &globalContext);
-    Tree *m = process(e, ReductionContext(&globalContext, complexFormat,
-                                          angleUnit, unitFormat, target,
-                                          symbolicComputation, unitConversion));
-    Tree *l = Internal::Layouter::LayoutExpression(m, true,
-                                                   numberOfSignificantDigits);
-    *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
-    copy_without_system_chars(buffer, buffer);
-    l->removeTree();
-    bad = strcmp(buffer, result) != 0;
-  }
-  ExceptionCatch(type) {
-    SharedTreeStack->flush();
-    crash = true;
-  }
+  assert(SharedTreeStack->numberOfTrees() == 0);
+  Tree *e = parse_expression(expression, &globalContext);
+  Tree *m = process(
+      e, ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
+                          target, symbolicComputation, unitConversion));
+  Tree *l =
+      Internal::Layouter::LayoutExpression(m, true, numberOfSignificantDigits);
+  *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
+  copy_without_system_chars(buffer, buffer);
+  l->removeTree();
+  bad = strcmp(buffer, result) != 0;
   assert(SharedTreeStack->numberOfTrees() == 0);
   k_bad += bad;
-  k_crash += crash;
 
   char information[bufferSize] = "";
-  int i = Poincare::Print::UnsafeCustomPrintf(
-      information, bufferSize, "%s\t%s\t%s",
-      crash ? "CRASH" : (bad ? "BAD" : "OK"), expression, result);
+  int i = Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
+                                              "%s\t%s\t%s", bad ? "BAD" : "OK",
+                                              expression, result);
   if (bad) {
     Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
                                         buffer);

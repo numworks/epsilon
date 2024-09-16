@@ -582,6 +582,23 @@ KDCoordinate Render::Baseline(const Layout* l) {
   };
 }
 
+Tree* cloneWithRackMemo(const Tree* l) {
+  const Rack* prev = RackLayout::s_cursorRack;
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  for (const Tree* n : l->selfAndDescendants()) {
+    if (prev == n) {
+      RackLayout::s_cursorRack =
+          static_cast<const Rack*>(SharedTreeStack->lastBlock());
+    }
+    if (n->isRackLayout() && n->numberOfChildren() > 1) {
+      SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
+    } else {
+      n->cloneNode();
+    }
+  }
+  return result;
+}
+
 void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
                   const LayoutStyle& style, const LayoutCursor* cursor) {
   Render::s_font = style.font;
@@ -591,8 +608,10 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(l), false)),
                 style.backgroundColor);
-  DrawRack(Rack::From(l), ctx, p, style,
+  Tree* withMemo = cloneWithRackMemo(l);
+  DrawRack(Rack::From(withMemo), ctx, p, style,
            cursor ? cursor->selection() : LayoutSelection(), false);
+  withMemo->removeTree();
 }
 
 void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
@@ -1386,10 +1405,30 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 }
 
 KDSize Render::Size(const Rack* l, bool showEmpty) {
-  return RackLayout::Size(l, showEmpty);
+  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->width != 0) {
+    return KDSize(l->toRackMemoLayoutNode()->width,
+                  l->toRackMemoLayoutNode()->height);
+  }
+  KDSize size = RackLayout::Size(l, showEmpty);
+  if (l->isRackMemoLayout()) {
+    assert(size.width() != 0);
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->width = size.width();
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->height = size.height();
+  }
+  return size;
 }
 
-KDCoordinate Render::Baseline(const Rack* l) { return RackLayout::Baseline(l); }
+KDCoordinate Render::Baseline(const Rack* l) {
+  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->baseline != 0) {
+    return l->toRackMemoLayoutNode()->baseline;
+  }
+  KDCoordinate baseline = RackLayout::Baseline(l);
+  if (l->isRackMemoLayout()) {
+    assert(baseline != 0);
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->baseline = baseline;
+  }
+  return baseline;
+}
 
 KDPoint Render::PositionOfChild(const Rack* l, int childIndex) {
   return RackLayout::ChildPosition(l, childIndex);

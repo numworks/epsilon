@@ -8,9 +8,6 @@
 namespace Poincare::Internal {
 
 bool Grid::isEditing() const {
-  if (SharedTreeStack->contains(this)) {
-    return true;
-  }
   if (!RackLayout::s_cursorRack) {
     return false;
   }
@@ -31,7 +28,6 @@ bool Grid::childIsPlaceholder(int index) const {
 }
 
 Rack* Grid::willFillEmptyChildAtIndex(int childIndex) {
-  assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
   bool isRightOfGrid = childIsRightOfGrid(childIndex);
   int column = columnAtChildIndex(childIndex);
@@ -46,7 +42,6 @@ Rack* Grid::willFillEmptyChildAtIndex(int childIndex) {
 }
 
 int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
-  assert(isEditing());
   int row = rowAtChildIndex(childIndex);
   int column = columnAtChildIndex(childIndex);
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);

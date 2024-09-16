@@ -11,11 +11,11 @@ bool Grid::isEditing() const {
   if (SharedTreeStack->contains(this)) {
     return true;
   }
-  if (!RackLayout::s_layoutCursor) {
+  if (!RackLayout::s_cursorRack) {
     return false;
   }
   // TODO isEditing is called a lot, is nextTree too expensive ?
-  Tree* cursorRack = RackLayout::s_layoutCursor->cursorRack();
+  const Tree* cursorRack = RackLayout::s_cursorRack;
   return this <= cursorRack && cursorRack < nextTree();
 }
 

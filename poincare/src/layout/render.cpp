@@ -585,7 +585,8 @@ KDCoordinate Render::Baseline(const Layout* l) {
 void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
                   const LayoutStyle& style, const LayoutCursor* cursor) {
   Render::s_font = style.font;
-  RackLayout::s_layoutCursor = cursor;
+  RackLayout::s_cursorRack = cursor ? cursor->cursorRack() : nullptr;
+  RackLayout::s_cursorPosition = cursor ? cursor->position() : 0;
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(l), false)),

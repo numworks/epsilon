@@ -43,7 +43,8 @@ class RackLayout {
   static const Layout* FindBase(const Rack* rack, const Layout* verticalOffset,
                                 int verticalOffsetIndex);
 
-  static const LayoutCursor* s_layoutCursor;
+  static const Rack* s_cursorRack;
+  static int s_cursorPosition;
 };
 
 }  // namespace Poincare::Internal

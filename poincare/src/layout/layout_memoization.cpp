@@ -1,6 +1,7 @@
 #include "layout_memoization.h"
 
 #include <poincare/old/exception_checkpoint.h>
+#include <poincare/src/layout/layout_cursor.h>
 
 #include "rack_layout.h"
 #include "render.h"
@@ -10,7 +11,10 @@ namespace Poincare::Internal {
 KDSize LayoutMemoization::layoutSize(KDFont::Size font,
                                      Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
-    Internal::RackLayout::s_layoutCursor = cursor;
+    Poincare::Internal::RackLayout::s_cursorRack =
+        cursor ? cursor->cursorRack() : nullptr;
+    Poincare::Internal::RackLayout::s_cursorPosition =
+        cursor ? cursor->position() : 0;
     KDSize size = computeSize(font);
 
     /* This method will raise an exception if the size of the layout that is
@@ -55,7 +59,10 @@ KDSize LayoutMemoization::layoutSize(KDFont::Size font,
 KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
                                          Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
-    RackLayout::s_layoutCursor = cursor;
+    Poincare::Internal::RackLayout::s_cursorRack =
+        cursor ? cursor->cursorRack() : nullptr;
+    Poincare::Internal::RackLayout::s_cursorPosition =
+        cursor ? cursor->position() : 0;
     m_baseline = computeBaseline(font);
     m_flags.m_baselined = true;
     m_flags.m_baselineFontSize = font;

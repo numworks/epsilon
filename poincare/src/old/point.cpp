@@ -34,13 +34,4 @@ OExpression OPoint::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Layout OPoint::create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
-                              int significantDigits, Context* context) const {
-  Layout child0 = childAtIndex(0).createLayout(floatDisplayMode,
-                                               significantDigits, context);
-  Layout child1 = childAtIndex(1).createLayout(floatDisplayMode,
-                                               significantDigits, context);
-  return Layout::Create(KPoint2DL(KA, KB), {.KA = child0, .KB = child1});
-}
-
 }  // namespace Poincare

@@ -10,6 +10,7 @@
 #include <poincare/old/unit.h>
 #include <poincare/old/unit_convert.h>
 
+#include "../helper.h"
 #include "helper.h"
 
 using namespace Poincare;
@@ -47,15 +48,13 @@ QUIZ_CASE(poincare_simplification_rational) {
   size_t bufferLengthOfInf = strlen(bufferInf);
   strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
           k_bufferSizeOfInf - bufferLengthOfInf);
-  assert_parsed_expression_simplify_to(bufferInf, "0");
+  assert_parse_to_integer_overflow(bufferInf);
   // MaxParsedIntegerString()
   assert_parsed_expression_simplify_to(MaxParsedIntegerString(),
                                        MaxParsedIntegerString());
   // OverflowedIntegerString()
-  assert_parsed_expression_simplify_to(OverflowedIntegerString(),
-                                       Infinity::Name());
-  assert_parsed_expression_simplify_to(BigOverflowedIntegerString(),
-                                       Infinity::Name());
+  assert_parse_to_integer_overflow(OverflowedIntegerString());
+  assert_parse_to_integer_overflow(BigOverflowedIntegerString());
   // ApproximatedParsedIntegerString()
   assert_parsed_expression_simplify_to(ApproximatedParsedIntegerString(),
                                        "1ᴇ30");
@@ -64,7 +63,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   bufferLengthOfInf = 1;
   strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(),
           k_bufferSizeOfInf - bufferLengthOfInf);
-  assert_parsed_expression_simplify_to(bufferInf, Infinity::Name(true));
+  assert_parse_to_integer_overflow(bufferInf);
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("22355/45325", "4471/9065");

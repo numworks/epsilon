@@ -108,7 +108,8 @@ void process_tree_and_compare(const char* input, const char* output,
 }
 
 Tree* private_parse(const char* input, Poincare::Context* context,
-                    bool parseForAssignment, bool assertNotParsable) {
+                    bool parseForAssignment = false,
+                    bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
   RackParser parser(layout, context,
                     parseForAssignment
@@ -127,12 +128,22 @@ Tree* private_parse(const char* input, Poincare::Context* context,
 
 Tree* parse(const char* input, Poincare::Context* context,
             bool parseForAssignment) {
-  return private_parse(input, context, parseForAssignment, false);
+  return private_parse(input, context, parseForAssignment);
 }
 
 void assert_text_not_parsable(const char* input, Poincare::Context* context) {
   bool parsed = private_parse(input, context, false, true);
-  assert(!parsed);
+  quiz_assert(!parsed);
+}
+
+void assert_parse_to_integer_overflow(const char* input,
+                                      Poincare::Context* context) {
+  ExceptionTry {
+    private_parse(input, context);
+    quiz_assert(false);
+  }
+  ExceptionCatch(type) { quiz_assert(type == ExceptionType::IntegerOverflow); }
+  SharedTreeStack->flush();
 }
 
 void store(const char* storeExpression, Poincare::Context* ctx) {

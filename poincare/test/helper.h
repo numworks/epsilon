@@ -132,6 +132,8 @@ Tree* parse(const char* input, Poincare::Context* context = nullptr,
             bool parseForAssignment = false);
 void assert_text_not_parsable(const char* input,
                               Poincare::Context* context = nullptr);
+void assert_parse_to_integer_overflow(const char* input,
+                                      Poincare::Context* context = nullptr);
 
 void store(const char* storeExpression, Poincare::Context* ctx);
 

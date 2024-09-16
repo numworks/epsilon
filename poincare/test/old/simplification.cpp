@@ -182,18 +182,17 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("-2+6", "4");
   assert_parsed_expression_simplify_to("-2-6", "-8");
   assert_parsed_expression_simplify_to("-M", "-M");
-  assert_parsed_expression_simplify_to("M-M", "\u0014dep(0,{M})");
+  assert_parsed_expression_simplify_to("M-M", "dep(0,{M})");
   assert_parsed_expression_simplify_to("-5π+3π", "-2×π");
   assert_parsed_expression_simplify_to("1-3+M-5+2M-4M", "-M-7");
-  assert_parsed_expression_simplify_to("M+P-M-P", "\u0014dep(0,{M,P})");
-  assert_parsed_expression_simplify_to("M+P+(-1)×M+(-1)×P",
-                                       "\u0014dep(0,{M,P})");
+  assert_parsed_expression_simplify_to("M+P-M-P", "dep(0,{M,P})");
+  assert_parsed_expression_simplify_to("M+P+(-1)×M+(-1)×P", "dep(0,{M,P})");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "-10×cos(2)+2");
   assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3×2)/9-4/7+1/98",
                                        "(882×ln(2)+2347)/882");
   assert_parsed_expression_simplify_to("1+2+0+cos(2)", "cos(2)+3");
   assert_parsed_expression_simplify_to("M-M+2cos(2)+P-P-cos(2)",
-                                       "\u0014dep(cos(2),{M,P})");
+                                       "dep(cos(2),{M,P})");
   assert_parsed_expression_simplify_to("x+3+π+2×x", "3×x+π+3");
   assert_parsed_expression_simplify_to("1/(x+1)+1/(π+2)",
                                        "(x+π+3)/(π×x+2×x+π+2)");
@@ -220,19 +219,19 @@ QUIZ_CASE(poincare_simplification_addition) {
       "x^3+y^3+3×x×y^2+3×x^2×y+3×√(2)×x^2+3×x^2+3×√(2)×y^2+3×y^2+6×√(2)×x×y+"
       "6×x×y+6×√(2)×x+9×x+6×√(2)×y+9×y+7+5×√(2)");
   // cos^2+sin^2
-  assert_parsed_expression_simplify_to("cos(x)^2+sin(x)^2", "\u0014dep(1,{x})");
+  assert_parsed_expression_simplify_to("cos(x)^2+sin(x)^2", "dep(1,{x})");
   assert_parsed_expression_simplify_to("2xln(x)cos(x)^2+2xln(x)sin(x)^2",
                                        "dep(2×x×ln(x),{nonNull(x)})");
   assert_parsed_expression_simplify_to("5cos(3x+2)^2+5sin(3x+2)^2+3",
-                                       "\u0014dep(8,{x})");
+                                       "dep(8,{x})");
   assert_parsed_expression_simplify_to("4cos(x)^2+3sin(x)^2",
                                        "4×cos(x)^2+3×sin(x)^2");
 }
 
 QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("undef×x", Undefined::Name());
-  assert_parsed_expression_simplify_to("0×x+P", "\u0014dep(P,{x})");
-  assert_parsed_expression_simplify_to("0×x×0×32×cos(3)", "\u0014dep(0,{x})");
+  assert_parsed_expression_simplify_to("0×x+P", "dep(P,{x})");
+  assert_parsed_expression_simplify_to("0×x×0×32×cos(3)", "dep(0,{x})");
   assert_parsed_expression_simplify_to("3×M^4×P^x×P^2×(M^2+2)×2×1.2",
                                        "(36×M^6×P^(x+2)+72×M^4×P^(x+2))/5");
   assert_parsed_expression_simplify_to("M×(P+Q)×(X+3)",
@@ -262,8 +261,8 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("(1/2)^-1", "2");
   assert_parsed_expression_simplify_to("√(2)×√(3)", "√(6)");
   assert_parsed_expression_simplify_to("2×2^π", "2×2^π");
-  assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "\u0014dep(P,{1/M})");
-  assert_parsed_expression_simplify_to("M^3×M^(-3)", "\u0014dep(1,{1/M})");
+  assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "dep(P,{M^0})");
+  assert_parsed_expression_simplify_to("M^3×M^(-3)", "dep(1,{M^0})");
   assert_parsed_expression_simplify_to("2^π×(1/2)^π", "1");
   assert_parsed_expression_simplify_to("-iπ^3×(-iπ^3)×(-iπ^3)", "π^9×i");
   assert_parsed_expression_simplify_to("(x+1)×(x+2)", "x^2+3×x+2");
@@ -271,8 +270,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("11π/(22π+11π)", "1/3");
   assert_parsed_expression_simplify_to("11/(22π+11π)", "1/(3×π)");
   assert_parsed_expression_simplify_to("-11/(22π+11π)", "-1/(3×π)");
-  assert_parsed_expression_simplify_to("M^2×P×M^(-2)×P^(-2)",
-                                       "\u0014dep(1/P,{1/M})");
+  assert_parsed_expression_simplify_to("M^2×P×M^(-2)×P^(-2)", "dep(1/P,{M^0})");
   assert_parsed_expression_simplify_to("M^(-1)×P^(-1)", "1/(M×P)");
   assert_parsed_expression_simplify_to("x+x", "2×x");
   assert_parsed_expression_simplify_to("2×x+x", "3×x");
@@ -280,9 +278,9 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2×x+2×x", "4×x");
   assert_parsed_expression_simplify_to("x×2+2×n", "2×n+2×x");
   assert_parsed_expression_simplify_to("x+x+n+n", "2×n+2×x");
-  assert_parsed_expression_simplify_to("x-x-n+n", "\u0014dep(0,{n,x})");
-  assert_parsed_expression_simplify_to("x+n-x-n", "\u0014dep(0,{n,x})");
-  assert_parsed_expression_simplify_to("x-x", "\u0014dep(0,{x})");
+  assert_parsed_expression_simplify_to("x-x-n+n", "dep(0,{n,x})");
+  assert_parsed_expression_simplify_to("x+n-x-n", "dep(0,{n,x})");
+  assert_parsed_expression_simplify_to("x-x", "dep(0,{x})");
   assert_parsed_expression_simplify_to("π×3^(1/2)×(5π)^(1/2)×(4/5)^(1/2)",
                                        "2×√(3)×π^(3/2)");
   assert_parsed_expression_simplify_to("12^(1/4)×(π/6)×(12×π)^(1/4)",
@@ -294,34 +292,34 @@ QUIZ_CASE(poincare_simplification_multiplication) {
                                        "[[82,123][178,267]]");
   assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500",
                                        "0×[[1,0][0,1]]^500");
-  assert_parsed_expression_simplify_to("x^5/x^3", "\u0014dep(x^2,{1/x^3})");
+  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{1/x^3})");
   assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
-  assert_parsed_expression_simplify_to("x^0", "\u0014dep(1,{1/x})");
+  assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})");
   assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^5/x^3", "\u0014dep(x^2,{1/x^3})",
+  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{1/x^3})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^0", "\u0014dep(1,{1/x})",
+  assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("2^x×2^(-x)", "\u0014dep(1,{x})",
+  assert_parsed_expression_simplify_to("2^x×2^(-x)", "dep(1,{x})",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("y^x×y^(-x)", "\u0014dep(1,{x,y})",
+  assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep(1,{x,y})",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x/√(x)", "\u0014dep(√(x),{1/√(x)})",
+  assert_parsed_expression_simplify_to("x/√(x)", "dep(√(x),{1/√(x)})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",
                                        SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "\u0014dep(x,{√(x)})",
-                                       User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "\u0014dep(2,{x})");
+  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "dep(x,{√(x)})", User,
+                                       Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "dep(2,{x})");
   assert_parsed_expression_simplify_to("10-1/(3^x)", "(10×3^x-1)/3^x");
   assert_parsed_expression_simplify_to("2×cos(π/12)×e^(5πi/12)",
                                        "1/2+\U000000122+√(3)\U00000013/2×i");
@@ -949,14 +947,13 @@ QUIZ_CASE(poincare_simplification_power) {
                                        MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(x^(2/3))^3", "x^2", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("(x^(3/4))^4",
-                                       "\u0014dep(x^3,{x^(3/4)})", User, Radian,
-                                       MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("(x^(3/4))^4", "dep(x^3,{x^(3/4)})",
+                                       User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("(x^(3/4))^4", "x^3", User, Radian,
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-x)", "√(-x)");
-  assert_parsed_expression_simplify_to("√(x)^2", "\u0014dep(x,{√(x)})", User,
-                                       Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("√(x)^2", "dep(x,{√(x)})", User, Radian,
+                                       MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("√(x)^2", "x", User, Radian,
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(-3)^2", "nonreal", User, Radian,
@@ -1002,7 +999,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("(-2)^(n-1)", "-(-2)^n/2");
   assert_parsed_expression_simplify_to("e^(ln(x))", "dep(x,{nonNull(x)})");
   // Special cases with (a*b)^x = |a|^x*(sign(a)*b)
-  assert_parsed_expression_simplify_to("√(-arcsin(-e-1))", "√(-arcsin(-e-1))");
+  assert_parsed_expression_simplify_to("√(-arcsin(-e-1))", "√(arcsin(1+e))");
   assert_parsed_expression_simplify_to("((-e^3)×cos(2))^(1/3)",
                                        "e×root(-cos(2),3)");
   // assert this does not crash
@@ -1026,16 +1023,16 @@ QUIZ_CASE(poincare_simplification_percent) {
   assert_parsed_expression_simplify_to("80*20%", "80×20/100");
   assert_parsed_expression_simplify_to("80/(20%)", "80/(20/100)");
   assert_parsed_expression_simplify_to("80+20%", "80×(1+20/100)");
-  assert_parsed_expression_simplify_to("20%+80+20%", "(20/100+80)×(1+20/100)");
+  assert_parsed_expression_simplify_to("20%+80+20%", "(80+20/100)×(1+20/100)");
   assert_parsed_expression_simplify_to("80+20%+20%",
                                        "(80×(1+20/100))×(1+20/100)");
   assert_parsed_expression_simplify_to("80-20%", "80×(1-20/100)");
   assert_parsed_expression_simplify_to("80+20-20%", "100×(1-20/100)");
-  assert_parsed_expression_simplify_to("80+10*20%", "10×20/100+80");
-  assert_parsed_expression_simplify_to("80-10*20%", "-10×20/100+80");
-  assert_parsed_expression_simplify_to("80+20%*10", "10×20/100+80");
-  assert_parsed_expression_simplify_to("80-20%*10", "-10×20/100+80");
-  assert_parsed_expression_simplify_to("80+20%π", "20/100×π+80");
+  assert_parsed_expression_simplify_to("80+10*20%", "80+10×20/100");
+  assert_parsed_expression_simplify_to("80-10*20%", "80-10×20/100");
+  assert_parsed_expression_simplify_to("80+20%*10", "80+10×20/100");
+  assert_parsed_expression_simplify_to("80-20%*10", "80-10×20/100");
+  assert_parsed_expression_simplify_to("80+20%π", "80+π×20/100");
 }
 
 QUIZ_CASE(poincare_simplification_logarithm) {
@@ -1103,7 +1100,7 @@ QUIZ_CASE(poincare_simplification_random) {
   assert_parsed_expression_simplify_to("3^random()×3^random()",
                                        "3^(random()+random())");
   assert_parsed_expression_simplify_to("random()×ln(2)×3+random()×ln(2)×5",
-                                       "3×ln(2)×random()+5×ln(2)×random()");
+                                       "(3×random()+5×random())×ln(2)");
 }
 
 QUIZ_CASE(poincare_simplification_randint) {
@@ -1495,12 +1492,12 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(-∞)", "-π/2", User, Radian);
   assert_parsed_expression_simplify_to("tan(atan(∞))", Undefined::Name(), User,
                                        Radian);
+  assert_parsed_expression_simplify_to("atan(1/x)",
+                                       "dep((π×sign(x)-2×arctan(x))/2,{1/x})");
   assert_parsed_expression_simplify_to(
-      "atan(1/x)", "\u0014dep((π×sign(x)-2×arctan(x))/2,{1/x})");
+      "atan(1/x)", "dep(90×sign(x)-arctan(x),{1/x})", User, Degree);
   assert_parsed_expression_simplify_to(
-      "atan(1/x)", "\u0014dep(90×sign(x)-arctan(x),{1/x})", User, Degree);
-  assert_parsed_expression_simplify_to(
-      "atan(1/x)", "\u0014dep(100×sign(x)-arctan(x),{1/x})", User, Gradian);
+      "atan(1/x)", "dep(100×sign(x)-arctan(x),{1/x})", User, Gradian);
   assert_parsed_expression_simplify_to("atan(cos(x)/sin(x))", "arctan(cot(x))");
   assert_parsed_expression_simplify_to("atan(cos(π/7)/sin(π/7))",
                                        "\U000000125×π\U00000013/14");
@@ -1555,7 +1552,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1,(-1)^(1/2)][3,4]]",
                                        "[[1,nonreal][3,4]]", User, Radian,
                                        MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("[[1,3_kg][3,4]]", "[[1,3×_kg][3,4]]",
+  assert_parsed_expression_simplify_to("[[1,3_kg][3,4]]", Undefined::Name(),
                                        User, Radian, MetricUnitFormat, Real);
 
   // Addition OMatrix
@@ -2221,11 +2218,10 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   // Always reduce sign for ReductionTarget = User
   assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))",
                                        SystemForApproximation);
-  assert_parsed_expression_simplify_to("sign(abs(x))", "\u0014dep(1,{x})",
-                                       User);
+  assert_parsed_expression_simplify_to("sign(abs(x))", "dep(1,{x})", User);
 
   // Reduction of abs(x) depends on the target and the complex format
-  assert_parsed_expression_simplify_to("x/abs(x)", "\u0014dep(1/sign(x),{1/x})",
+  assert_parsed_expression_simplify_to("x/abs(x)", "dep(1/sign(x),{1/x})",
                                        SystemForAnalysis, Radian,
                                        MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)", User, Radian,
@@ -2308,7 +2304,7 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("P^2^2×P+4×P^3", "P^5+4×P^3");
   assert_parsed_expression_simplify_to(
       "0.5+4×P×Q-2.3+2×P×Q-2×Q×P^R-cos(4)+2×P^R×Q+P×Q×R×X",
-      "\u0014dep((5×P×Q×R×X+30×P×Q-5×cos(4)-9)/5,{P^R})");
+      "dep((5×P×Q×R×X+30×P×Q-5×cos(4)-9)/5,{P^R})");
   assert_parsed_expression_simplify_to("(1+√(2))/5", "(1+√(2))/5");
   assert_parsed_expression_simplify_to("(2+√(6))^2", "10+4×√(6)");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+π", "tan(3)×ln(2)+π");
@@ -2749,7 +2745,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
                                        "{0,0,1,-2}");
   assert_parsed_expression_simplify_to("floor({0.3,180})", "{0,180}");
   assert_parsed_expression_simplify_to("frac({1/√(2),1/2,1,-1.3})",
-                                       "{frac(√(2)/2),1/2,0,7/10}");
+                                       "{1/√(2),1/2,0,7/10}");
   assert_parsed_expression_simplify_to("frac({0.3,180})", "{3/10,0}");
   assert_parsed_expression_simplify_to("gcd({25,60},15)", "{5,15}");
   assert_parsed_expression_simplify_to("arcosh({0,π})",
@@ -2952,9 +2948,8 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)",
                                        Undefined::Name());
   assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
-  assert_parsed_expression_simplify_to(
-      "piecewise(-x/x,x>0,0)",
-      "\u0014dep(piecewise(-1,x>0,0),{piecewise(1/x,x>0,0)})");
+  assert_parsed_expression_simplify_to("piecewise(-x/x,x>0,0)",
+                                       "piecewise(dep(-1,{x^0}),x>0,0)");
 
   assert_parsed_expression_simplify_to(
       "piecewise(3,4>0,2,2<a)", "undef", User, Radian, MetricUnitFormat,
@@ -2963,7 +2958,7 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
 
 QUIZ_CASE(poincare_simplification_integral) {
   assert_parsed_expression_simplify_to("int(tan(x),x,0,x)",
-                                       "int(sin(x)/cos(x),x,0,x)");
+                                       "int(tan(x),x,0,x)");
   assert_parsed_expression_simplify_to("int(arccot(x),x,0,x)",
                                        "int(arccot(x),x,0,x)");
 }

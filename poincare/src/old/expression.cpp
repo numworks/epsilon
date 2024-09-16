@@ -870,21 +870,6 @@ bool OExpression::containsSameDependency(
 
 /* Layout Helper */
 
-Layout OExpression::createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                                 int numberOfSignificantDigits,
-                                 Context *context, bool forceStripMargin,
-                                 bool nested, OMG::Base base) const {
-  if (isUninitialized()) {
-    return Layout();
-  }
-  assert(otype() == ExpressionNode::Type::JuniorExpression);
-  Internal::Tree *exp =
-      static_cast<const JuniorExpression &>(*this).tree()->cloneTree();
-  Internal::Tree *lay = Internal::Layouter::LayoutExpression(
-      exp, false, numberOfSignificantDigits, floatDisplayMode, base);
-  return Layout::Builder(lay);
-}
-
 size_t OExpression::serialize(char *buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

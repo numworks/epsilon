@@ -208,7 +208,8 @@ Poincare::Layout JuniorExpressionNode::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context, OMG::Base base) const {
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode));
+      tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode,
+      base));
 }
 
 size_t JuniorExpressionNode::serialize(
@@ -840,14 +841,24 @@ int SystemExpression::getPolynomialReducedCoefficients(
   return degree;
 }
 
+Poincare::Layout UserExpression::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context, OMG::Base base) const {
+  if (isUninitialized()) {
+    return Poincare::Layout();
+  }
+  return node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                              context, base);
+}
+
 char* UserExpression::toLatex(char* buffer, int bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits, Context* context,
-                              bool forceStripMargin, bool nested) const {
+                              int numberOfSignificantDigits,
+                              Context* context) const {
   return LatexParser::LayoutToLatex(
-      Rack::From(createLayout(floatDisplayMode, numberOfSignificantDigits,
-                              context, forceStripMargin, nested)
-                     .tree()),
+      Rack::From(
+          createLayout(floatDisplayMode, numberOfSignificantDigits, context)
+              .tree()),
       buffer, buffer + bufferSize - 1);
 }
 

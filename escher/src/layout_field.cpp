@@ -305,7 +305,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
   Layout resultLayout = resultExpression.createLayout(
       Poincare::Preferences::SharedPreferences()->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-      App::app() ? App::app()->localContext() : nullptr, true);
+      App::app() ? App::app()->localContext() : nullptr);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;

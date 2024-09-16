@@ -33,7 +33,7 @@ void IntegerListController::computeAdditionalResults(
     m_layouts[index] =
         exactOutput.createLayout(Preferences::PrintFloatMode::Decimal,
                                  Preferences::LargeNumberOfSignificantDigits,
-                                 nullptr, false, false, baseAtIndex(index));
+                                 nullptr, baseAtIndex(index));
   }
   // Computing factorExpression
   Expression factor = UserExpression::Create(KFactor(KA), {.KA = exactOutput});

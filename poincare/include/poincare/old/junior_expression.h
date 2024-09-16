@@ -309,10 +309,12 @@ class JuniorExpression : public OExpression {
                                        SymbolicComputation symbolicComputation,
                                        bool keepDependencies = false) const;
 
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfSignificantDigits, Context* context,
+                      OMG::Base base = OMG::Base::Decimal) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits, Context* context,
-                bool forceStripMargin = false, bool nested = false) const;
+                int numberOfSignificantDigits, Context* context) const;
 
 #if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,

@@ -364,10 +364,6 @@ class OExpression : public PoolHandle {
                               const ReductionContext& reductionContext) const;
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits, Context* context,
-                      bool forceStripMargin = false, bool nested = false,
-                      OMG::Base base = OMG::Base::Decimal) const;
   ExpressionNode::LayoutShape leftLayoutShape() const {
     return node()->leftLayoutShape();
   }

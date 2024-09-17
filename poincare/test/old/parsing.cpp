@@ -848,15 +848,18 @@ QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
 
 QUIZ_CASE(poincare_parsing_mixed_fraction) {
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
-  assert_parsed_expression_is("1((2)/(3))",
-                              KMixedFraction(1_e, KDiv(2_e, 3_e)));
+  assert_parsed_expression_is(
+      "1((2)/(3))",
+      KMult(1_e, KParentheses(KDiv(KParentheses(2_e), KParentheses(3_e)))));
   assert_parsed_expression_is("1(2/3)2",
-                              KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), 2_e));
+                              KMult(1_e, KParentheses(KDiv(2_e, 3_e)), 2_e));
   assert_parsed_expression_is(
       "1(2/3)(2/3)",
-      KMult(KMixedFraction(1_e, KDiv(2_e, 3_e)), KDiv(2_e, 3_e)));
-  assert_parsed_expression_is("1(e/3)", KMult(1_e, KDiv(e_e, 3_e)));
-  assert_parsed_expression_is("1(2.5/3)", KMult(1_e, KDiv(2.5_e, 3_e)));
+      KMult(1_e, KParentheses(KDiv(2_e, 3_e)), KParentheses(KDiv(2_e, 3_e))));
+  assert_parsed_expression_is("1(e/3)",
+                              KMult(1_e, KParentheses(KDiv(e_e, 3_e))));
+  assert_parsed_expression_is("1(2.5/3)",
+                              KMult(1_e, KParentheses(KDiv(2.5_e, 3_e))));
 }
 
 QUIZ_CASE(poincare_parsing_function_assignment) {

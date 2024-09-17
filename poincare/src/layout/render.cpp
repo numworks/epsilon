@@ -628,7 +628,7 @@ Tree* cloneWithRackMemo(const Tree* l) {
       RackLayout::s_cursorRack =
           static_cast<const Rack*>(SharedTreeStack->lastBlock());
     }
-    if (n->isRackLayout() && n->numberOfChildren() > 1) {
+    if (n->isRackLayout() && n->numberOfChildren() > 0) {
       SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
     } else {
       n->cloneNode();

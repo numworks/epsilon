@@ -23,9 +23,11 @@ class Render {
   friend KDSize Size(const Rack* rack);
 
  public:
-  static KDSize Size(const Tree* l, KDFont::Size fontSize);
+  static KDSize Size(const Tree* l, KDFont::Size fontSize, int leftPosition = 0,
+                     int rightPosition = -1);
 
-  static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize);
+  static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize,
+                               int leftPosition = 0, int rightPosition = -1);
 
   static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root);
   static void Draw(const Tree* l, KDContext* ctx, KDPoint p,

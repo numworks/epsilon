@@ -262,18 +262,29 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
   return result;
 }
 
-KDSize Render::Size(const Tree* l, KDFont::Size fontSize) {
+KDSize Render::Size(const Tree* l, KDFont::Size fontSize, int leftPosition,
+                    int rightPosition) {
+  if (rightPosition == -1) {
+    rightPosition = l->numberOfChildren();
+  }
   s_font = fontSize;
   Tree* withMemoRoot = cloneWithRackMemo(l);
-  KDSize result = Size(static_cast<const Rack*>(withMemoRoot), false);
+  KDSize result =
+      RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
+                                     leftPosition, rightPosition, false);
   withMemoRoot->removeTree();
   return result;
 }
 
-KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize) {
+KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
+                              int leftPosition, int rightPosition) {
+  if (rightPosition == -1) {
+    rightPosition = l->numberOfChildren();
+  }
   s_font = fontSize;
   Tree* withMemoRoot = cloneWithRackMemo(l);
-  KDCoordinate result = Baseline(static_cast<const Rack*>(withMemoRoot));
+  KDCoordinate result = RackLayout::BaselineBetweenIndexes(
+      static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
   withMemoRoot->removeTree();
   return result;
 }

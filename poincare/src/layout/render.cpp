@@ -647,8 +647,12 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(withMemo), false)),
                 style.backgroundColor);
-  DrawRack(Rack::From(withMemo), ctx, p, style,
-           cursor ? cursor->selection() : LayoutSelection(), false);
+  LayoutSelection selection =
+      cursor ? LayoutSelection(RackLayout::s_cursorRack,
+                               cursor->selection().startPosition(),
+                               cursor->selection().endPosition())
+             : LayoutSelection();
+  DrawRack(Rack::From(withMemo), ctx, p, style, selection, false);
   withMemo->removeTree();
 }
 

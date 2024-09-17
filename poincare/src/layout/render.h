@@ -23,10 +23,7 @@ class Render {
   friend KDSize Size(const Rack* rack);
 
  public:
-  static KDSize Size(const Tree* l, KDFont::Size fontSize) {
-    s_font = fontSize;
-    return Size(static_cast<const Rack*>(l), false);
-  }
+  static KDSize Size(const Tree* l, KDFont::Size fontSize);
 
   static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize) {
     s_font = fontSize;

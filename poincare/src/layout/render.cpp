@@ -262,6 +262,14 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
   return result;
 }
 
+KDSize Render::Size(const Tree* l, KDFont::Size fontSize) {
+  s_font = fontSize;
+  Tree* withMemoRoot = cloneWithRackMemo(l);
+  KDSize result = Size(static_cast<const Rack*>(withMemoRoot), false);
+  withMemoRoot->removeTree();
+  return result;
+}
+
 KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
   KDCoordinate x = 0;
   for (int j = 0; j < column; j++) {
@@ -1422,7 +1430,7 @@ KDSize Render::Size(const Rack* l, bool showEmpty) {
   }
   KDSize size = RackLayout::Size(l, showEmpty);
   if (l->isRackMemoLayout()) {
-    assert(size.width() != 0);
+    assert(size.width() != INT16_MAX);
     const_cast<Rack*>(l)->toRackMemoLayoutNode()->width = size.width();
     const_cast<Rack*>(l)->toRackMemoLayoutNode()->height = size.height();
   }

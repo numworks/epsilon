@@ -132,6 +132,7 @@ void Division::GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
   numerator = SharedTreeStack->pushMult(0);
   denominator = SharedTreeStack->pushMult(0);
   GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite);
+  assert(numerator->nextTree() == denominator);
   if (needOpposite) {
     return;
   }
@@ -152,6 +153,7 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   TreeRef outNum = SharedTreeStack->pushMult(0);
   bool needOpposite = false;
   GetDivisionComponents(e, num, den, outNum, &needOpposite);
+  assert(num->nextTree() == den && den->nextTree() == outNum);
   if (den->isOne() && !needOpposite) {
     // e is already num*outNum
     num->removeTree();

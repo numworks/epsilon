@@ -143,7 +143,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
          * inside of it. */
         if (readClone->isAutocompletedPair()) {
           PrivateBalanceBrackets(type, readClone->child(0), cursorRack,
-                                 cursorPosition, readClone);
+                                 cursorPosition, readClone->child(0));
         }
 
         continue;

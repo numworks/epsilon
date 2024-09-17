@@ -26,7 +26,7 @@ That library is in charge of doing all the drawing. It performs functions such a
 
 ### Escher — GUI toolkit
 
-Escher is our GUI toolkit. It provides functionalities such as "draw a button" or "place three tabs named Foo, Bar and Baz". It asks Ion for events and uses Kandinsky to do draw the actual user interface.
+Escher is our GUI toolkit. It provides functionalities such as "draw a button" or "place three tabs named Foo, Bar and Baz". It asks Ion for events and uses Kandinsky to draw the actual user interface.
 
 ### Poincare — Mathematics engine
 
@@ -65,7 +65,7 @@ The stack memory is possibly the most used area of memory. It contains all local
 
 #### Heap memory
 
-Unfortunately, local variables can't answer all use cases, and sometimes one need to allocate memory that lives longer than a function call. This is traditionally done by using a pair of `malloc` / `free` functions.
+Unfortunately, local variables can't answer all use cases, and sometimes one needs to allocate memory that lives longer than a function call. This is traditionally done by using a pair of `malloc` / `free` functions.
 
 This raises a lot of potential problems that can trigger unpredictable dynamic behaviors:
 

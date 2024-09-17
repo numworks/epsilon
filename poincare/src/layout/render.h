@@ -25,10 +25,7 @@ class Render {
  public:
   static KDSize Size(const Tree* l, KDFont::Size fontSize);
 
-  static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize) {
-    s_font = fontSize;
-    return Baseline(static_cast<const Rack*>(l));
-  }
+  static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize);
 
   static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root);
   static void Draw(const Tree* l, KDContext* ctx, KDPoint p,

@@ -270,6 +270,14 @@ KDSize Render::Size(const Tree* l, KDFont::Size fontSize) {
   return result;
 }
 
+KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize) {
+  s_font = fontSize;
+  Tree* withMemoRoot = cloneWithRackMemo(l);
+  KDCoordinate result = Baseline(static_cast<const Rack*>(withMemoRoot));
+  withMemoRoot->removeTree();
+  return result;
+}
+
 KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
   KDCoordinate x = 0;
   for (int j = 0; j < column; j++) {

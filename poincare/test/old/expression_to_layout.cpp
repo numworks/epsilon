@@ -1,18 +1,20 @@
-#include <poincare/old/poincare_expressions.h>
+#include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/layouter.h>
+#include <poincare/src/layout/serialize.h>
 
-#include "helper.h"
+#include "../helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 using namespace Poincare::Internal::KTrees;
 
 void assert_parsed_expression_layouts_to(const char* expression,
-                                         Layout expectedLayout) {
-  Internal::Tree* e = parse_expression(expression, nullptr);
-  Internal::Tree* l = Internal::Layouter::LayoutExpression(e);
-  Layout el = Layout::Builder(l);
-  quiz_assert_print_if_failure(el.isIdenticalTo(expectedLayout), expression);
+                                         const Tree* expectedLayout) {
+  Tree* e = parse(expression, nullptr);
+  Tree* l = Layouter::LayoutExpression(e);
+  quiz_assert_print_if_failure(l->treeIsIdenticalTo(expectedLayout),
+                               expression);
 }
 
 QUIZ_CASE(poincare_expression_to_layout) {
@@ -43,294 +45,178 @@ QUIZ_CASE(poincare_expression_to_layout) {
   assert_parsed_expression_layouts_to("-x^2", "-x"_l ^ KSuperscriptL("2"_l));
 }
 
-void assert_expression_layouts_and_serializes_to(OExpression expression,
-                                                 const char* serialization) {
-  Layout layout =
-      UserExpression(expression)
-          .createLayout(DecimalMode, PrintFloat::k_maxNumberOfSignificantDigits,
-                        nullptr);
-#if 0
-  // TODO_PCJ ? should be adapted since system parentheses are gone
-  assert_layout_serializes_to(layout, serialization);
-#endif
+void assert_expression_layouts_and_serializes_to(const Tree* expression,
+                                                 const char* serialization,
+                                                 bool linearMode) {
+  Tree* layout =
+      Layouter::LayoutExpression(expression->cloneTree(), linearMode);
+  quiz_assert(layout);
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  quiz_assert(strcmp(serialization, buffer) == 0);
+  layout->removeTree();
+}
+
+void assert_expression_layouts_and_serializes_to(const Tree* expression,
+                                                 const char* serialization1D,
+                                                 const char* serialization2D) {
+  assert_expression_layouts_and_serializes_to(expression, serialization1D,
+                                              true);
+  assert_expression_layouts_and_serializes_to(expression, serialization2D,
+                                              false);
 }
 
 QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // Decimal x OneLetter
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Decimal::Builder("2", -4), Symbol::Builder('a')),
-      "2ᴇ-4a");
+  assert_expression_layouts_and_serializes_to(KMult(KDecimal(2_e, 4_e), "a"_e),
+                                              "2ᴇ-4×a", "2ᴇ-4a");
   // Decimal x Decimal
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Decimal::Builder("2", -4),
-                              Decimal::Builder("2", -4)),
-      "2ᴇ-4×2ᴇ-4");
+      KMult(KDecimal(2_e, 4_e), KDecimal(2_e, 4_e)), "2ᴇ-4×2ᴇ-4", "2ᴇ-4×2ᴇ-4");
   // Integer x Integer
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2), Rational::Builder(1)),
-      "2×1");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, 1_e), "2×1", "2×1");
   // Integer x MoreLetters
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2), Symbol::Builder("abc", 3)),
-      "2·abc");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, "abc"_e), "2×abc",
+                                              "2·abc");
   // Integer x fraction
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2), Rational::Builder(2, 3)),
-      "2×\u0012\u00122\u0013/\u00123\u0013\u0013");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, KDiv(2_e, 3_e)),
+                                              "2×2/3", "2×((2)/(3))");
   // BoundaryPunctuation x Integer
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(AbsoluteValue::Builder(Rational::Builder(2)),
-                              Rational::Builder(1)),
-      "abs\u00122\u0013×1");
+  assert_expression_layouts_and_serializes_to(KMult(KAbs(2_e), 1_e), "abs(2)×1",
+                                              "abs(2)×1");
   // BoundaryPunctuation x OneLetter
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(BinomialCoefficient::Builder(
-                                  Rational::Builder(2), Rational::Builder(3)),
-                              Symbol::Builder('a')),
-      "binomial\u0012\u00122\u0013,\u00123\u0013\u0013a");
+      KMult(KBinomial(2_e, 3_e), "a"_e), "binomial(2,3)×a", "binomial(2,3)a");
   // BoundaryPunctuation x Root
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Cosine::Builder(Rational::Builder(2)),
-                              SquareRoot::Builder(Rational::Builder(2))),
-      "cos(2)√\u00122\u0013");
+  assert_expression_layouts_and_serializes_to(KMult(KCos(2_e), KSqrt(2_e)),
+                                              "cos(2)×√(2)", "cos(2)√(2)");
 
+#if O  // Can never happen --> delete those tests?
   // BasedInteger x ?
   // 0b101·0.23
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(BasedInteger::Builder("5", OMG::Base::Binary),
-                              Decimal::Builder("23", -1)),
-      "0b101·0.23");
+  assert_expression_layouts_and_serializes_to(KMult(5_e, 0.23_e), "0b101·0.23",
+                                              OMG::Base::Binary);
   // 0x2A3·23242
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          BasedInteger::Builder("675", OMG::Base::Hexadecimal),
-          Rational::Builder(23242)),
-      "0x2A3·23242");
+      KMult(675_e, 23242_e), "0x2A3·23242", OMG::Base::Hexadecimal);
   // 0b101·π
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(BasedInteger::Builder("5", OMG::Base::Binary),
-                              Symbol::Builder(UCodePointGreekSmallLetterPi)),
-      "0b101·π");
+  assert_expression_layouts_and_serializes_to(KMult(5_e, "π"_e), "0b101·π",
+                                              OMG::Base::Binary);
   // 0x2A3·abc
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          BasedInteger::Builder("675", OMG::Base::Hexadecimal),
-          Symbol::Builder("abc", 3)),
-      "0x2A3·abc");
+      KMult(675_e, "abc"_e), "0x2A3·abc", OMG::Base::Hexadecimal);
   // 0b101·(1+2)
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(BasedInteger::Builder("5", OMG::Base::Binary),
-                              Parenthesis::Builder(Addition::Builder(
-                                  Rational::Builder(1), Rational::Builder(2)))),
-      "0b101·(1+2)");
+      KMult(5_e, KParentheses(KAdd(1_e, 2_e))), "0b101·(1+2)",
+      OMG::Base::Binary);
   // 0x2A3·√(2)
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          BasedInteger::Builder("675", OMG::Base::Hexadecimal),
-          SquareRoot::Builder(Rational::Builder(2))),
-      "0x2A3·√\u00122\u0013");
+      KMult(675_e, KSqrt(2_e)), "0x2A3·√(2)", OMG::Base::Hexadecimal);
   // 0b101·root(2,3)
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          BasedInteger::Builder("5", OMG::Base::Binary),
-          NthRoot::Builder(Rational::Builder(2), Rational::Builder(3))),
-      "0b101·root\u0012\u00122\u0013,\u00123\u0013\u0013");
+      KMult(5_e, KRoot(2_e, 3_e)), "0b101·root((2),(3))", OMG::Base::Binary);
   // 0x2A3·2/3
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          BasedInteger::Builder("675", OMG::Base::Hexadecimal),
-          Rational::Builder(2, 3)),
-      "0x2A3·\u0012\u00122\u0013/\u00123\u0013\u0013");
+      KMult(675_e, KDiv(2_e, 3_e)), "0x2A3·((2)/(3))", OMG::Base::Hexadecimal);
 
   // ? x BasedInteger
   // 0.23·0x2A3
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Decimal::Builder("23", -1),
-          BasedInteger::Builder("675", OMG::Base::Hexadecimal)),
-      "0.23·0x2A3");
+      KMult(0.23_e, 675_e), "0.23·0x2A3", OMG::Base::Hexadecimal);
   // 23242·0b101
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(23242),
-                              BasedInteger::Builder("5", OMG::Base::Binary)),
-      "23242·0b101");
+  assert_expression_layouts_and_serializes_to(KMult(23242_e, 5_e),
+                                              "23242·0b101", OMG::Base::Binary);
   // π·0x2A3
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Symbol::Builder(UCodePointGreekSmallLetterPi),
-          BasedInteger::Builder(675, OMG::Base::Hexadecimal)),
-      "π·0x2A3");
+  assert_expression_layouts_and_serializes_to(KMult("π"_e, 675_e), "π·0x2A3",
+                                              OMG::Base::Hexadecimal);
   // abc·0b101
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Symbol::Builder("abc", 3),
-                              BasedInteger::Builder(5, OMG::Base::Binary)),
-      "abc·0b101");
+  assert_expression_layouts_and_serializes_to(KMult("abc"_e, 5_e), "abc·0b101",
+                                              OMG::Base::Binary);
   // (1+2)·0x2A3
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Parenthesis::Builder(
-              Addition::Builder(Rational::Builder(1), Rational::Builder(2))),
-          BasedInteger::Builder(675, OMG::Base::Hexadecimal)),
-      "(1+2)·0x2A3");
+      KMult(KParentheses(KAdd(1_e, 2_e)), 675_e), "(1+2)·0x2A3",
+      OMG::Base::Hexadecimal);
   // √(2)·0b101
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)),
-                              BasedInteger::Builder(5, OMG::Base::Binary)),
-      "√\u00122\u0013·0b101");
+  assert_expression_layouts_and_serializes_to(KMult(KSqrt(2_e), 5_e),
+                                              "√(2)·0b101", OMG::Base::Binary);
   // root(2,3)·0x2A3
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          NthRoot::Builder(Rational::Builder(2), Rational::Builder(3)),
-          BasedInteger::Builder(675, OMG::Base::Hexadecimal)),
-      "root\u0012\u00122\u0013,\u00123\u0013\u0013·0x2A3");
+  assert_expression_layouts_and_serializes_to(KMult(KRoot(2_e, 3_e), 675_e),
+                                              "root((2),(3))·0x2A3",
+                                              OMG::Base::Hexadecimal);
   // 2/3·0b101
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2, 3),
-                              BasedInteger::Builder(5, OMG::Base::Binary)),
-      "\u0012\u00122\u0013/\u00123\u0013\u0013·0b101");
+      KMult(KDiv(2_e, 3_e), 5_e), "((2)/(3))·0b101", OMG::Base::Binary);
+#endif
 
   // 2√(2)
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2),
-                              SquareRoot::Builder(Rational::Builder(2))),
-      "2√\u00122\u0013");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, KSqrt(2_e)), "2×√(2)",
+                                              "2√(2)");
   // √(2)x2
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)),
-                              Rational::Builder(2)),
-      "√\u00122\u0013×2");
+  assert_expression_layouts_and_serializes_to(KMult(KSqrt(2_e), 2_e), "√(2)×2",
+                                              "√(2)×2");
   // 2π
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2), Constant::PiBuilder()),
-      "2π");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, π_e), "2×π", "2π");
   // π·i
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Constant::PiBuilder(),
-                              Constant::ComplexIBuilder()),
-      "π·i");
+  assert_expression_layouts_and_serializes_to(KMult(π_e, i_e), "π×i", "π·i");
   // conj(2)√(2)
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Conjugate::Builder(Rational::Builder(2)),
-                              SquareRoot::Builder(Rational::Builder(2))),
-      "conj\u00122\u0013√\u00122\u0013");
+  assert_expression_layouts_and_serializes_to(KMult(KConj(2_e), KSqrt(2_e)),
+                                              "conj(2)×√(2)", "conj(2)√(2)");
   // √(2)a!
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(SquareRoot::Builder(Rational::Builder(2)),
-                              Factorial::Builder(Symbol::Builder('a'))),
-      "√\u00122\u0013a!");
+  assert_expression_layouts_and_serializes_to(KMult(KSqrt(2_e), KFact("a"_e)),
+                                              "√(2)×a!", "√(2)a!");
   // a 2/3
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Symbol::Builder('a'),
-          Division::Builder(Rational::Builder(2), Rational::Builder(3))),
-      "a\u0012\u00122\u0013/\u00123\u0013\u0013");
+  assert_expression_layouts_and_serializes_to(KMult("a"_e, KDiv(2_e, 3_e)),
+                                              "a×2/3", "a((2)/(3))");
   // (1+π)a
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Parenthesis::Builder(Addition::Builder(
-                                  Rational::Builder(1), Constant::PiBuilder())),
-                              Symbol::Builder('a')),
-      "(1+π)a");
+      KMult(KParentheses(KAdd(1_e, π_e)), "a"_e), "(1+π)×a", "(1+π)a");
   // 2·root(2,a)
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2),
-          NthRoot::Builder(Rational::Builder(2), Symbol::Builder('a'))),
-      "2·root\u0012\u00122\u0013,\u0012a\u0013\u0013");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, KRoot(2_e, "a"_e)),
+                                              "2×root(2,a)", "2·root(2,a)");
 
   // Operator contamination (if two operands needs x, all operands are separated
   // by a x) 1x2xa
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(1), Rational::Builder(2),
-                              Symbol::Builder('a')),
-      "1×2×a");
+  assert_expression_layouts_and_serializes_to(KMult(1_e, 2_e, "a"_e), "1×2×a",
+                                              "1×2×a");
   // 2·π·a
-  assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(Rational::Builder(2), Constant::PiBuilder(),
-                              Symbol::Builder('a')),
-      "2·π·a");
+  assert_expression_layouts_and_serializes_to(KMult(2_e, π_e, "a"_e), "2×π×a",
+                                              "2·π·a");
   // 2(1+a)(1+π)
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2),
-          Parenthesis::Builder(
-              Addition::Builder(Rational::Builder(1), Symbol::Builder('a'))),
-          Parenthesis::Builder(
-              Addition::Builder(Rational::Builder(1), Constant::PiBuilder()))),
-      "2(1+a)(1+π)");
+      KMult(2_e, KParentheses(KAdd(1_e, "a"_e)), KParentheses(KAdd(1_e, π_e))),
+      "2×(1+a)×(1+π)", "2(1+a)(1+π)");
 
   /* Special case for units
    * When possible, do not display an operator between a value and its unit,
    * even if there is another operator defined for this multiplication. */
   // 2_m·3_m
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix()),
-          Rational::Builder(3),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix())),
-      "2m·3m");
+      KMult(2_e, KUnits::meter, 3_e, KUnits::meter), "2×_m×3×_m", "2·m·3·m");
   // 2_m×3.5_m
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix()),
-          Float<double>::Builder(3.5),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix())),
-      "2m×3.5m");
+      KMult(2_e, KUnits::meter, 3.5_fe, KUnits::meter), "2×_m×3.5×_m",
+      "2·m×3.5·m");
   // Always put a dot between units
   // 2_s^-1·_m
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2),
-          Power::Builder(OUnit::Builder(OUnit::k_timeRepresentatives +
-                                            OUnit::k_secondRepresentativeIndex,
-                                        UnitNode::Prefix::EmptyPrefix()),
-                         Rational::Builder(-1)),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix())),
-      "2s^\u0012-1\u0013·m");
+      KMult(2_e, KPow(KUnits::second, -1_e), KUnits::meter), "2×_s^-1×_m",
+      "2·s^(-1)·m");
   // 2×3_m·_s^-1
   assert_expression_layouts_and_serializes_to(
-      Multiplication::Builder(
-          Rational::Builder(2), Rational::Builder(3),
-          OUnit::Builder(OUnit::k_distanceRepresentatives +
-                             OUnit::k_meterRepresentativeIndex,
-                         UnitNode::Prefix::EmptyPrefix()),
-          Power::Builder(OUnit::Builder(OUnit::k_timeRepresentatives +
-                                            OUnit::k_secondRepresentativeIndex,
-                                        UnitNode::Prefix::EmptyPrefix()),
-                         Rational::Builder(-1))),
-      "2×3m·s^\u0012-1\u0013");
+      KMult(2_e, 3_e, KUnits::meter, KPow(KUnits::second, -1_e)),
+      "2×3×_m×_s^-1", "2×3·m·s^(-1)");
 }
 
 QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {
   assert_expression_layouts_and_serializes_to(
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(2),
-                                   Expression::Parse("_h", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_min", nullptr)),
-           Multiplication::Builder(Decimal::Builder(4.5),
-                                   Expression::Parse("_s", nullptr))}),
-      "2h3min4.5s");
+      KAdd(KMult(2_e, KUnits::hour), KMult(3_e, KUnits::minute),
+           KMult(4.5_e, KUnits::second)),
+      "2×_h+3×_min+4.5×_s", "2·h3·min4.5·s");
   assert_expression_layouts_and_serializes_to(
-      Addition::Builder(
-          {Multiplication::Builder(BasedInteger::Builder(2),
-                                   Expression::Parse("_h", nullptr)),
-           Multiplication::Builder(BasedInteger::Builder(3),
-                                   Expression::Parse("_min", nullptr)),
-           Multiplication::Builder(Decimal::Builder(4, 30),
-                                   Expression::Parse("_s", nullptr))}),
-      "2h+3min+4ᴇ30s");
+      KAdd(KMult(2_e, KUnits::hour), KMult(3_e, KUnits::minute),
+           KMult(KDecimal(4_e, -30_e), KUnits::second)),
+      "2×_h+3×_min+4ᴇ30×_s", "2·h+3·min+4ᴇ30·s");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(
@@ -348,24 +234,14 @@ void assert_parsed_expression_layout_serialize_to_self(
 }
 
 QUIZ_CASE(poincare_expression_to_layout_serializes_to_self) {
-  assert_parsed_expression_layout_serialize_to_self(
-      "binomial\u0012\u00127\u0013,\u00126\u0013\u0013");
-  assert_parsed_expression_layout_serialize_to_self(
-      "root\u0012\u00127\u0013,\u00123\u0013\u0013");
+  assert_parsed_expression_layout_serialize_to_self("binomial((7),(6))");
+  assert_parsed_expression_layout_serialize_to_self("root((7),(3))");
 }
 
 QUIZ_CASE(poincare_expression_to_layout_mixed_fraction) {
   assert_expression_layouts_and_serializes_to(
-      MixedFraction::Builder(
-          Rational::Builder(1),
-          Division::Builder(Rational::Builder(2), Rational::Builder(3))),
-      "1\u0012\u00122\u0013/\u00123\u0013\u0013");
+      KMixedFraction(1_e, KDiv(2_e, 3_e)), "1 2/3", "1((2)/(3))");
   assert_expression_layouts_and_serializes_to(
-      Division::Builder(
-          MixedFraction::Builder(
-              Rational::Builder(1),
-              Division::Builder(Rational::Builder(2), Rational::Builder(3))),
-          Rational::Builder(4)),
-      "\u0012\u00121\u0012\u00122\u0013/\u00123\u0013\u0013\u0013/"
-      "\u00124\u0013\u0013");
+      KDiv(KMixedFraction(1_e, KDiv(2_e, 3_e)), 4_e), "(1 2/3)/4",
+      "((1((2)/(3)))/(4))");
 }

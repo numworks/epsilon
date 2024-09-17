@@ -135,9 +135,6 @@ int Grid::indexAtRowColumn(int row, int column) const {
 }
 
 int Grid::closestNonGrayIndex(int index) const {
-  if (!isEditing()) {
-    return index;
-  }
   int row = rowAtChildIndex(index);
   int column = columnAtChildIndex(index);
   if (!numberOfColumnsIsFixed() && childIsRightOfGrid(index)) {

@@ -460,7 +460,6 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
         return DeletionMethod::MoveLeft;
       }
 
-      assert(grid->isEditing());
       int row = grid->rowAtChildIndex(childIndex);
       int column = grid->columnAtChildIndex(childIndex);
       if (row == 0 && column == 0 &&

@@ -633,7 +633,7 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     DrawSimpleLayout(l->child(0), ctx, p, style, selection);
     return;
   }
-  KDCoordinate baseline = RackLayout::Baseline(l);
+  KDCoordinate baseline = Baseline(l);
   if (selection.layout() == l) {
     // Draw the selected area gray background
     KDSize selectedSize = RackLayout::SizeBetweenIndexes(

@@ -523,11 +523,6 @@ class Unit final {
   static NewExpression Builder(Preferences::AngleUnit angleUnit);
   static bool IsPureAngleUnit(NewExpression expression, bool radianOnly);
   static bool HasAngleDimension(NewExpression expression);
-  static bool ShouldDisplayAdditionalOutputs(
-      double value, UserExpression unit, Preferences::UnitFormat unitFormat) {
-    assert(false);
-    return false;
-  }
 };
 
 }  // namespace Poincare

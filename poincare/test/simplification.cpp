@@ -235,7 +235,6 @@ QUIZ_CASE(pcj_simplification_derivative) {
       "y),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
-  // TODO: should be nonreal
   simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "6×x");
   simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×z×x^2");

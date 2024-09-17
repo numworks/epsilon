@@ -282,7 +282,6 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
 }
 
 QUIZ_CASE(pcj_approximation_derivatives) {
-  // TODO: should be nonreal
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
 }
 

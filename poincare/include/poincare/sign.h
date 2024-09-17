@@ -191,6 +191,9 @@ class ComplexSign {
     return realSign().canBeNonInteger() || imagSign().canBeNonInteger();
   }
   constexpr bool isInteger() const { return !canBeNonInteger(); }
+  constexpr bool canBeInfinite() const {
+    return realSign().canBeInfinite() || imagSign().canBeInfinite();
+  }
 
   bool operator==(const ComplexSign&) const = default;
   /* OR operator on both real and imaginary signs. See Sign operators.

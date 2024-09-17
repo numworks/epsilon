@@ -17,7 +17,7 @@ namespace Poincare {
 
 Sign RelaxIntegerProperty(Sign s) {
   return Sign(s.canBeNull(), s.canBeStrictlyPositive(),
-              s.canBeStrictlyNegative());
+              s.canBeStrictlyNegative(), true, s.canBeInfinite());
 }
 
 Sign DecimalFunction(Sign s, Internal::Type type) {
@@ -25,6 +25,7 @@ Sign DecimalFunction(Sign s, Internal::Type type) {
   bool canBeStrictlyPositive = s.canBeStrictlyPositive();
   bool canBeStrictlyNegative = s.canBeStrictlyNegative();
   bool canBeNonInteger = s.canBeNonInteger();
+  bool canBeInfinite = s.canBeInfinite();
   switch (type) {
     case Internal::Type::Ceil:
       canBeNull |= canBeStrictlyNegative && canBeNonInteger;
@@ -46,12 +47,13 @@ Sign DecimalFunction(Sign s, Internal::Type type) {
       assert(false);
   }
   return Sign(canBeNull, canBeStrictlyPositive, canBeStrictlyNegative,
-              canBeNonInteger);
+              canBeNonInteger, canBeInfinite);
 }
 
 Sign Opposite(Sign s) {
   return Sign(s.canBeNull(), s.canBeStrictlyNegative(),
-              s.canBeStrictlyPositive(), s.canBeNonInteger());
+              s.canBeStrictlyPositive(), s.canBeNonInteger(),
+              s.canBeInfinite());
 }
 
 Sign Mult(Sign s1, Sign s2) {
@@ -60,7 +62,8 @@ Sign Mult(Sign s1, Sign s2) {
                   (s1.canBeStrictlyNegative() && s2.canBeStrictlyNegative()),
               (s1.canBeStrictlyPositive() && s2.canBeStrictlyNegative()) ||
                   (s1.canBeStrictlyNegative() && s2.canBeStrictlyPositive()),
-              s1.canBeNonInteger() || s2.canBeNonInteger());
+              s1.canBeNonInteger() || s2.canBeNonInteger(),
+              s1.canBeInfinite() || s2.canBeInfinite());
 }
 
 Sign Add(Sign s1, Sign s2) {
@@ -69,7 +72,8 @@ Sign Add(Sign s1, Sign s2) {
                   (s1.canBeStrictlyNegative() && s2.canBeStrictlyPositive()),
               s1.canBeStrictlyPositive() || s2.canBeStrictlyPositive(),
               s1.canBeStrictlyNegative() || s2.canBeStrictlyNegative(),
-              s1.canBeNonInteger() || s2.canBeNonInteger());
+              s1.canBeNonInteger() || s2.canBeNonInteger(),
+              s1.canBeInfinite() || s2.canBeInfinite());
 }
 
 #if POINCARE_TREE_LOG
@@ -108,9 +112,10 @@ ComplexSign RelaxIntegerProperty(ComplexSign s) {
 }
 
 ComplexSign Abs(ComplexSign s) {
-  return ComplexSign(Sign(s.canBeNull(), !s.isNull(), false,
-                          s.canBeNonInteger() || !s.isPure()),
-                     Sign::Zero());
+  return ComplexSign(
+      Sign(s.canBeNull(), !s.isNull(), false,
+           s.canBeNonInteger() || !s.isPure(), s.canBeInfinite()),
+      Sign::Zero());
 }
 
 ComplexSign ArcCosine(ComplexSign s) {
@@ -125,8 +130,8 @@ ComplexSign ArcCosine(ComplexSign s) {
 }
 
 ComplexSign ArcSine(ComplexSign s) {
-  /* - the sign of re(actan(z)) is always the same as re(z)
-   * - the sign of im(actan(z)) is always the same as im(z) except when re(z)!=0
+  /* - the sign of re(asin(z)) is always the same as re(z)
+   * - the sign of im(asin(z)) is always the same as im(z) except when re(z)!=0
    *   and im(z)=0: im(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1} */
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
@@ -138,8 +143,8 @@ ComplexSign ArcSine(ComplexSign s) {
 }
 
 ComplexSign ArcTangent(ComplexSign s) {
-  /* - the sign of im(actan(z)) is always the same as im(z)
-   * - the sign of re(actan(z)) is always the same as re(z) except when im(z)!=0
+  /* - the sign of im(atan(z)) is always the same as im(z)
+   * - the sign of re(atan(z)) is always the same as re(z) except when im(z)!=0
        z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1} */
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());

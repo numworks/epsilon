@@ -1463,7 +1463,7 @@ bool Multiplication::TermIsPowerOfRationals(const OExpression &e) {
 void Multiplication::splitIntoNormalForm(
     OExpression &numerator, OExpression &denominator,
     const ReductionContext &reductionContext) const {
-  // Coded in pcj in GetNumeratorAndDenominator
+  // Coded in pcj in GetDivisionComponents
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
 }

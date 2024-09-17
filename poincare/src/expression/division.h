@@ -10,8 +10,9 @@ namespace Poincare::Internal {
 class Division {
  public:
   static bool BeautifyIntoDivision(Tree* e);
-  static void GetNumeratorAndDenominator(const Tree* e, TreeRef& numerator,
-                                         TreeRef& denominator);
+  // Also compute numerator's degree for given symbol
+  static Tree* PushDenominator(const Tree* e, const char* symbol,
+                               int* numeratorDegree);
 
  private:
   // Get numerator, denominator, outerNumerator, and opposite (if needed)

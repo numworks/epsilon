@@ -31,15 +31,14 @@ FunctionType::LineType FunctionType::PolarLineType(
     return LineType::None;
   }
 
-  TreeRef numerator, denominator;
-  Division::GetNumeratorAndDenominator(e, numerator, denominator);
-  assert(numerator && denominator);
+  int numeratorDegree;
+  Tree* denominator = Division::PushDenominator(e, symbol, &numeratorDegree);
+  assert(denominator);
   double a, b, c;
   bool polarLine =
-      Degree::Get(numerator, symbol) == 0 &&
+      numeratorDegree == 0 &&
       DetectLinearPatternOfTrig(denominator, symbol, &a, &b, &c, false) &&
       std::abs(b) == 1.0;
-  numerator->removeTree();
   denominator->removeTree();
 
   if (polarLine) {
@@ -106,12 +105,10 @@ bool isFractionOfPolynomials(const Tree* e, const char* symbol) {
   if (!e->isMult() && !e->isPow()) {
     return false;
   }
-  TreeRef numerator, denominator;
-  Division::GetNumeratorAndDenominator(e, numerator, denominator);
-  assert(numerator && denominator);
-  int numeratorDegree = Degree::Get(numerator, symbol);
+  int numeratorDegree;
+  Tree* denominator = Division::PushDenominator(e, symbol, &numeratorDegree);
+  assert(denominator);
   int denominatorDegree = Degree::Get(denominator, symbol);
-  numerator->removeTree();
   denominator->removeTree();
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }

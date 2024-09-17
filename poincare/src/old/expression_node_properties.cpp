@@ -59,7 +59,7 @@ bool ExpressionNode::isSystemSymbol() const {
 
 OExpression ExpressionNode::denominator(
     const ReductionContext& reductionContext) const {
-  // Coded in pcj in GetNumeratorAndDenominator
+  // Coded in pcj in GetDivisionComponents
   return OExpression();
 }
 

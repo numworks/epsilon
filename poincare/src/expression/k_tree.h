@@ -141,16 +141,19 @@ constexpr auto KRandom = KTree<Type::Random, 0>();
 constexpr auto KRandInt = KBinary<Type::RandInt, 0>();
 constexpr auto KRandIntNoRep = KFixedArity<3, Type::RandIntNoRep, 0>();
 
-template <uint8_t Id, uint8_t sign>
-constexpr auto KVar = KTree<Type::Var, Id, sign>();
+template <uint8_t Id, uint8_t realSign, uint8_t imagSign>
+constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();
 
 // Discrete local variable
 constexpr auto KVarK = KVar<Parametric::k_localVariableId,
-                            Parametric::k_discreteVariableSign.getValue()>;
+                            Parametric::k_discreteVariableSign.getRealValue(),
+                            Parametric::k_discreteVariableSign.getImagValue()>;
 
 // Continuous local variable
-constexpr auto KVarX = KVar<Parametric::k_localVariableId,
-                            Parametric::k_continuousVariableSign.getValue()>;
+constexpr auto KVarX =
+    KVar<Parametric::k_localVariableId,
+         Parametric::k_continuousVariableSign.getRealValue(),
+         Parametric::k_continuousVariableSign.getImagValue()>;
 
 // Default UserSymbol in functions
 // TODO: Try to limit the usage of UCodePointUnknown

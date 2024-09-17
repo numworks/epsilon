@@ -221,7 +221,8 @@ NODE(Sub, 2)
 NODE(TrigDiff, 2)
 NODE(Var, 0, {
   uint8_t id;
-  uint8_t sign;
+  uint8_t realSign;
+  uint8_t imagSign;
 })
 
 // 4 - Parametric types

@@ -27,7 +27,7 @@ uint8_t Variables::Id(const Tree* variable) {
 
 ComplexSign Variables::GetComplexSign(const Tree* variable) {
   assert(variable->isVar());
-  return ComplexSign::FromValue(variable->nodeValue(1));
+  return ComplexSign::FromValue(variable->nodeValue(1), variable->nodeValue(2));
 }
 
 uint8_t Variables::ToId(const Tree* variables, const char* name,

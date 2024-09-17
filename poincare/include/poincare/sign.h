@@ -24,12 +24,14 @@ namespace Poincare {
 class Sign {
  public:
   constexpr Sign(bool canBeNull, bool canBeStrictlyPositive,
-                 bool canBeStrictlyNegative, bool canBeNonInteger = true)
+                 bool canBeStrictlyNegative, bool canBeNonInteger = true,
+                 bool canBeInfinite = true)
       : m_canBeNull(canBeNull),
         m_canBeStrictlyPositive(canBeStrictlyPositive),
         m_canBeStrictlyNegative(canBeStrictlyNegative),
         m_canBeNonInteger(canBeNonInteger &&
-                          (canBeStrictlyPositive || canBeStrictlyNegative)) {
+                          (canBeStrictlyPositive || canBeStrictlyNegative)),
+        m_canBeInfinite(canBeInfinite) {
     // By ensuring its members can't be modified, a Sign is always valid.
     assert(isValid());
   }
@@ -37,7 +39,8 @@ class Sign {
     return Sign(OMG::BitHelper::getBitRange(value, 0, 0),
                 OMG::BitHelper::getBitRange(value, 1, 1),
                 OMG::BitHelper::getBitRange(value, 2, 2),
-                OMG::BitHelper::getBitRange(value, 3, 3));
+                OMG::BitHelper::getBitRange(value, 3, 3),
+                OMG::BitHelper::getBitRange(value, 4, 4));
   }
 
   constexpr bool canBeNull() const { return m_canBeNull; }
@@ -48,6 +51,7 @@ class Sign {
     return m_canBeStrictlyNegative;
   }
   constexpr bool canBeNonInteger() const { return m_canBeNonInteger; }
+  constexpr bool canBeInfinite() const { return m_canBeInfinite; }
   constexpr bool canBeNonNull() const {
     return m_canBeStrictlyPositive || m_canBeStrictlyNegative;
   }
@@ -92,7 +96,8 @@ class Sign {
     return Sign(m_canBeNull || other.canBeNull(),
                 m_canBeStrictlyPositive || other.canBeStrictlyPositive(),
                 m_canBeStrictlyNegative || other.canBeStrictlyNegative(),
-                m_canBeNonInteger || other.canBeNonInteger());
+                m_canBeNonInteger || other.canBeNonInteger(),
+                m_canBeInfinite || other.canBeInfinite());
   }
   /* AND operator on each of sign's properties:
    * PositiveInteger() && NegativeInteger() = Zero() */
@@ -100,16 +105,18 @@ class Sign {
     return Sign(m_canBeNull && other.canBeNull(),
                 m_canBeStrictlyPositive && other.canBeStrictlyPositive(),
                 m_canBeStrictlyNegative && other.canBeStrictlyNegative(),
-                m_canBeNonInteger && other.canBeNonInteger());
+                m_canBeNonInteger && other.canBeNonInteger(),
+                m_canBeInfinite && other.canBeInfinite());
   }
 
   constexpr uint8_t getValue() {
     // Cannot use bit_cast because it doesn't handle bitfields.
     return m_canBeNull << 0 | m_canBeStrictlyPositive << 1 |
-           m_canBeStrictlyNegative << 2 | m_canBeNonInteger << 3;
+           m_canBeStrictlyNegative << 2 | m_canBeNonInteger << 3 |
+           m_canBeInfinite << 4;
   }
 
-  constexpr static Sign Zero() { return Sign(true, false, false); }
+  constexpr static Sign Zero() { return Sign(true, false, false, true, false); }
   constexpr static Sign NonNull() { return Sign(false, true, true); }
   constexpr static Sign StrictlyPositive() { return Sign(false, true, false); }
   constexpr static Sign Positive() { return Sign(true, true, false); }
@@ -150,19 +157,19 @@ class Sign {
   bool m_canBeStrictlyPositive : 1;
   bool m_canBeStrictlyNegative : 1;
   bool m_canBeNonInteger : 1;
+  bool m_canBeInfinite : 1;
 };
 
 class ComplexSign {
  public:
   constexpr ComplexSign(Sign realSign, Sign imagSign)
       : m_realValue(realSign.getValue()), m_imagValue(imagSign.getValue()) {}
-  constexpr static ComplexSign FromValue(uint8_t value) {
-    return ComplexSign(
-        Sign::FromValue(OMG::BitHelper::getBitRange(value, 3, 0)),
-        Sign::FromValue(OMG::BitHelper::getBitRange(value, 7, 4)));
+  constexpr static ComplexSign FromValue(uint8_t realValue, uint8_t imagValue) {
+    return ComplexSign(Sign::FromValue(realValue), Sign::FromValue(imagValue));
   }
 
-  constexpr uint8_t getValue() const { return m_realValue | m_imagValue << 4; }
+  constexpr uint8_t getRealValue() const { return m_realValue; }
+  constexpr uint8_t getImagValue() const { return m_imagValue; }
 
   constexpr Sign realSign() const { return Sign::FromValue(m_realValue); }
   constexpr Sign imagSign() const { return Sign::FromValue(m_imagValue); }
@@ -226,12 +233,12 @@ class ComplexSign {
 #endif
 
  private:
-  uint8_t m_realValue : 4;
-  uint8_t m_imagValue : 4;
+  uint8_t m_realValue;
+  uint8_t m_imagValue;
 };
 
 static_assert(sizeof(Sign) == sizeof(uint8_t));
-static_assert(sizeof(ComplexSign) == sizeof(uint8_t));
+static_assert(sizeof(ComplexSign) == 2 * sizeof(uint8_t));
 
 }  // namespace Poincare
 

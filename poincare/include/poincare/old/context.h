@@ -51,7 +51,7 @@ class Context {
 
  protected:
   /* This is used by the ContextWithParent to pass itself to its parent.
-   * When getting the expression for a sequences in GlobalContext, you need
+   * When getting the expression for a sequence in GlobalContext, you need
    * information on the variable that is stored in the ContextWithParent that
    * called you. */
   virtual const JuniorExpression protectedExpressionForSymbolAbstract(

@@ -64,7 +64,8 @@ Tree* AbstractTreeStack::pushUserNamed(TypeBlock type, const char* name,
 Tree* AbstractTreeStack::pushVar(uint8_t id, ComplexSign sign) {
   Tree* result = pushBlock(Type::Var);
   pushBlock(id);
-  pushBlock(sign.getValue());
+  pushBlock(sign.getRealValue());
+  pushBlock(sign.getImagValue());
   return result;
 }
 

@@ -360,8 +360,8 @@ QUIZ_CASE(pcj_simplification_polar) {
 
 QUIZ_CASE(pcj_simplification_parametric) {
   // Leave and enter with a nested parametric
-  const Tree* a = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<2, 0>));
-  const Tree* b = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<1, 0>));
+  const Tree* a = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<2, 0, 0>));
+  const Tree* b = KSum("k"_e, 0_e, 2_e, KMult(KVarK, KVar<1, 0, 0>));
   Tree* e = a->cloneTree();
   Variables::LeaveScope(e);
   assert_trees_are_equal(e, b);

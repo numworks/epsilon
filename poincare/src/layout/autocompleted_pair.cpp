@@ -32,14 +32,23 @@ Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
  * of another type or the top layout. */
 static int bracketNestingLevel(Tree* rack, TypeBlock type, Tree* root) {
   assert(type.isAutocompletedPair());
-  Tree* parent = rack->parent(root);
   int result = 0;
-  while (parent && parent->type() == type) {
-    // If both sides are temp, the bracket will be removed so it is ignored
-    result += !AutocompletedPair::IsTemporary(parent, Side::Left) ||
-              !AutocompletedPair::IsTemporary(parent, Side::Right);
-    parent = parent->parent(root);
-    parent = parent->parent(root);
+  bool isRack = true;
+  for (const Tree* ancestor : rack->ancestors(root)) {
+    if (!isRack) {
+      isRack = true;
+    } else {
+      // Skip racks
+      isRack = false;
+      continue;
+    }
+    if (ancestor->type() != type) {
+      result = 0;
+    } else {
+      // If both sides are temp, the bracket will be removed so it is ignored
+      result += !AutocompletedPair::IsTemporary(ancestor, Side::Left) ||
+                !AutocompletedPair::IsTemporary(ancestor, Side::Right);
+    }
   }
   return result;
 }

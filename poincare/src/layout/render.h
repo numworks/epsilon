@@ -41,6 +41,7 @@ class Render {
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 
  private:
+  static KDPoint AbsoluteOriginRec(const Tree* l, const Tree* root);
   static KDSize Size(const Rack* l, bool showEmpty = true);
   static KDSize Size(const Layout* l);
 

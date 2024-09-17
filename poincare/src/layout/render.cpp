@@ -228,7 +228,9 @@ KDSize Render::Size(const Layout* l) {
   return KDSize(width, height);
 }
 
-KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
+Tree* cloneWithRackMemo(const Tree* l);
+
+KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
   assert(root <= l && root->nextTree() > l);
   assert(l->isRackOrLayout());
   if (l == root) {
@@ -244,11 +246,20 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
           root->isRackLayout()
               ? PositionOfChild(static_cast<const Rack*>(root), childIndex)
               : PositionOfChild(static_cast<const Layout*>(root), childIndex);
-      return AbsoluteOrigin(l, child).translatedBy(positionOfChild);
+      return AbsoluteOriginRec(l, child).translatedBy(positionOfChild);
     }
     child = nextChild;
     childIndex++;
   }
+}
+
+KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
+  RackLayout::s_cursorRack = Rack::From(l);
+  // assert(l == RackLayout::s_cursorRack);
+  Tree* withMemoRoot = cloneWithRackMemo(root);
+  KDPoint result = AbsoluteOriginRec(RackLayout::s_cursorRack, withMemoRoot);
+  withMemoRoot->removeTree();
+  return result;
 }
 
 KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {

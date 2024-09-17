@@ -65,7 +65,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   cursorBaseline =
       RackLayout::BaselineBetweenIndexes(cursorRack(), left, right);
   KDCoordinate cursorYOriginInLayout =
-      Render::Baseline(cursorRack()) - cursorBaseline;
+      Render::Baseline(cursorRack(), font) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
   cursorXOffset =
       RackLayout::SizeBetweenIndexes(cursorRack(), 0, m_position).width();
@@ -79,7 +79,7 @@ KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) const {
 }
 
 KDCoordinate LayoutCursor::cursorBaseline(KDFont::Size font) const {
-  return Render::Baseline(cursorRack());
+  return Render::Baseline(cursorRack(), font);
 }
 
 static const Tree* mostNestedGridParent(const Tree* l, const Tree* root) {

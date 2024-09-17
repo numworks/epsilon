@@ -14,8 +14,10 @@ class Division {
                                          TreeRef& denominator);
 
  private:
+  // Get numerator, denominator, outerNumerator, and opposite (if needed)
   static void GetDivisionComponents(const Tree* e, TreeRef& numerator,
-                                    TreeRef& denominator, TreeRef& out,
+                                    TreeRef& denominator,
+                                    TreeRef& outerNumerator,
                                     bool* needOpposite);
 };
 

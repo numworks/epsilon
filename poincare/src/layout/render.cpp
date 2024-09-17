@@ -677,17 +677,14 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     ctx->fillRect(KDRect(p.translatedBy(start), selectedSize),
                   style.selectionColor);
   }
-#if 0
-  /* TODO_PCJ: enabling this size call deteriorates the complexity, should size
-   * raise in case of overflow instead ? */
-  KDSize size = Size(l, childSizes);
+  KDSize size = Size(l, showEmpty);
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - p.y() ||
       size.width() > KDCOORDINATE_MAX - p.x()) {
     // Layout size overflows KDCoordinate
     return;
   }
-#endif
+
   struct Context {
     KDContext* ctx;
     KDPoint rackPosition;

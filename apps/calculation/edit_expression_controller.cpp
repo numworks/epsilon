@@ -130,10 +130,13 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
 #endif
   Context* context = this->context();
   VariableContext ansContext = m_calculationStore->createAnsContext(context);
-  if (layoutField->isEmpty()) {
+  if (!layoutField->isEmpty()) {
+    m_lastInput = layoutField->layout().clone();
+  }
+  Layout layout = layoutField->isEmpty() ? m_lastInput : layoutField->layout();
+  if (layout.isUninitialized()) {
     return false;
   }
-  Layout layout = layoutField->layout();
   if (!isAcceptableLayout(layout, &ansContext)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;

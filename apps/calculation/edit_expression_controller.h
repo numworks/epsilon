@@ -78,6 +78,7 @@ class EditExpressionController : public Escher::ViewController,
   HistoryController* m_historyController;
   CalculationStore* m_calculationStore;
   ContentView m_contentView;
+  Poincare::Layout m_lastInput;
 };
 
 }  // namespace Calculation

@@ -185,12 +185,13 @@ class AbstractTreeStack : public BlockStack {
 #if POINCARE_TREE_LOG
   enum class LogFormat { Flat, Tree };
   void logNode(std::ostream& stream, const Tree* node, bool recursive,
-               bool verbose, int indentation);
+               bool verbose, int indentation, bool serialize = false);
   void log(std::ostream& stream, LogFormat format, bool verbose,
            int indentation = 0);
   __attribute__((__used__)) void log() {
     log(std::cout, LogFormat::Tree, false);
   }
+  __attribute__((__used__)) void logSerialize();
 #endif
 
  protected:

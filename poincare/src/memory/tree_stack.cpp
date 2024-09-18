@@ -199,12 +199,18 @@ Tree* AbstractTreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
 #if POINCARE_TREE_LOG
 
 void AbstractTreeStack::logNode(std::ostream& stream, const Tree* node,
-                                bool recursive, bool verbose, int indentation) {
+                                bool recursive, bool verbose, int indentation,
+                                bool serialize) {
   Indent(stream, indentation);
   stream << "<Reference id=\"";
   m_referenceTable.logIdsForNode(stream, node);
   stream << "\">\n";
-  node->log(stream, recursive, verbose, indentation + 1);
+  if (serialize) {
+    Indent(stream, indentation + 1);
+    node->logSerialize(stream);
+  } else {
+    node->log(stream, recursive, verbose, indentation + 1);
+  }
   Indent(stream, indentation);
   stream << "</Reference>" << std::endl;
 }
@@ -226,6 +232,17 @@ void AbstractTreeStack::log(std::ostream& stream, LogFormat format,
   }
   Indent(stream, indentation);
   stream << "</AbstractTreeStack>" << std::endl;
+}
+
+void AbstractTreeStack::logSerialize() {
+  std::ostream& stream = std::cout;
+  Indent(stream, 0);
+  stream << "<TreeStack size=\"" << size() << "\">\n";
+  for (const Tree* tree : trees()) {
+    logNode(stream, tree, true, false, 1, true);
+  }
+  Indent(stream, 0);
+  stream << "</TreeStack>" << std::endl;
 }
 
 #endif

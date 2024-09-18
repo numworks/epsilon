@@ -77,6 +77,9 @@ void Sign::log(std::ostream& stream, bool endOfLine) const {
   if (isNull()) {
     stream << "Zero";
   } else {
+    if (!m_canBeInfinite) {
+      stream << "Finite ";
+    }
     if (!m_canBeNonInteger) {
       stream << "Integer and ";
     }

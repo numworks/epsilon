@@ -40,6 +40,12 @@ Tree -> Rack
      -> Layout -> Grid
 ```
 
+### RackMemo
+
+`Rack` has two subtypes :
+- `RackBasic` used nearly everywhere and a synonym of `Rack` in the rest doc
+- `RackMemo` which is a `RackBasic` with 6 additional bytes to be able to store its computed baseline and size. `RackMemo` is used only temporarily inside `Render` methods.
+
 ## Layout cursor
 
 ### Simple cursor

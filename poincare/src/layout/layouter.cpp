@@ -883,14 +883,14 @@ bool Layouter::ImplicitAddition(const Tree* addition) {
     if (!sign.isReal() || !sign.realSign().isPositive()) {
       return false;
     }
-    const Units::Representative* childReprensentative =
+    const Units::Representative* childRepresentative =
         Units::Unit::GetRepresentative(child->child(1));
     if (storedUnitRepresentative &&
-        !Units::Unit::AllowImplicitAddition(childReprensentative,
+        !Units::Unit::AllowImplicitAddition(childRepresentative,
                                             storedUnitRepresentative)) {
       return false;
     }
-    storedUnitRepresentative = childReprensentative;
+    storedUnitRepresentative = childRepresentative;
   }
   return true;
 }

@@ -597,20 +597,21 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::SingleFloat:
     case Type::DoubleFloat: {
       char buffer[100];
+      int numberOfSignificantDigits =
+          m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
+          : type == Type::SingleFloat
+              ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
+              : Poincare::PrintFloat::SignificantDecimalDigits<double>();
       if (type.isDecimal()) {
         Decimal::Serialize(expression, buffer, std::size(buffer), m_floatMode,
-                           m_numberOfSignificantDigits);
+                           numberOfSignificantDigits);
         expression->child(1)->removeTree();
         expression->child(0)->removeTree();
       } else {
         Poincare::PrintFloat::ConvertFloatToText(
             FloatHelper::To(expression), buffer, std::size(buffer),
             Poincare::PrintFloat::k_maxFloatGlyphLength,
-            m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
-            : type == Type::SingleFloat
-                ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
-                : Poincare::PrintFloat::SignificantDecimalDigits<double>(),
-            m_floatMode);
+            numberOfSignificantDigits, m_floatMode);
       }
       TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);

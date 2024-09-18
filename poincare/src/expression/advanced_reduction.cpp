@@ -190,7 +190,12 @@ bool AdvancedReduction::Direction::canApply(const Tree* e,
   assert(!isNextNode() ||
          (NextNode(e)->block() < SharedTreeStack->lastBlock()) ==
              NextNode(e)->hasAncestor(root, false));
-  return !isNextNode() || NextNode(e)->block() < SharedTreeStack->lastBlock();
+  if (!isNextNode()) {
+    // Early exit a contract / expand direction is e is a number or a user
+    // symbol.
+    return !e->isNumber() && !e->isUserSymbol();
+  }
+  return NextNode(e)->block() < SharedTreeStack->lastBlock();
 }
 
 bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,

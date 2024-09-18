@@ -1329,6 +1329,6 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   // √a/√b <=> √(a/b)
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g
-  simplifies_to("(2/3)^(5/7)", "(2/3)^(5/7)");    // "root(288,7)/3"
-  simplifies_to("(4/11)^(8/9)", "(4/11)^(8/9)");  // "2×root(1408,9)/11"
+  simplifies_to("(2/3)^(5/7)", "root(288,7)/3");
+  simplifies_to("(4/11)^(8/9)", "root(720896,9)/11");  // "2×root(1408,9)/11"
 }

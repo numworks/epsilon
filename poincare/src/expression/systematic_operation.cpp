@@ -81,8 +81,45 @@ bool SystematicOperation::ReducePower(Tree* e) {
     // Use a dependency as a fallback.
     return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
   }
-  // After systematic reduction, a power can only have integer index.
   if (!n->isInteger()) {
+    if (n->isRational() && base->isRational() && !base->isInteger()) {
+      /* (a/b)^(c/d) -> (1/b)^g × exp((1/d)×ln(a^c × b^f)) with f the smallest
+       * positive integer such that (c+f)/d=g is an integer. */
+      TreeRef a = Rational::Numerator(base).pushOnTreeStack();
+      TreeRef b = Rational::Denominator(base).pushOnTreeStack();
+      TreeRef c = Rational::Numerator(n).pushOnTreeStack();
+      TreeRef d = Rational::Denominator(n).pushOnTreeStack();
+      // b can't be one to prevent unnecessary transformation and infinite loop
+      assert(!b->isOne());
+      // Compute f and g such that (c+f)/d is an integer g and 0 <= f < d
+      DivisionResult<Tree*> divCD =
+          IntegerHandler::Division(Integer::Handler(c), Integer::Handler(d));
+      TreeRef f, g;
+      if (divCD.remainder->isZero()) {
+        f = (0_e)->cloneTree();
+        g = divCD.quotient->cloneTree();
+      } else {
+        f = IntegerHandler::Subtraction(Integer::Handler(d),
+                                        Integer::Handler(divCD.remainder));
+        g = IntegerHandler::Addition(IntegerHandler(1),
+                                     Integer::Handler(divCD.quotient));
+      }
+      divCD.remainder->removeTree();
+      divCD.quotient->removeTree();
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KMult(KPow(KB, KMult(-1_e, KG)),
+                KExp(KMult(KPow(KD, -1_e),
+                           KLn(KMult(KPow(KA, KC), KPow(KB, KF)))))),
+          {.KA = a, .KB = b, .KC = c, .KD = d, .KF = f, .KG = g}));
+      g->removeTree();
+      f->removeTree();
+      d->removeTree();
+      c->removeTree();
+      b->removeTree();
+      a->removeTree();
+      return true;
+    }
+    // After systematic reduction, a power can only have integer index.
     // base^n -> exp(n*ln(base))
     return PatternMatching::MatchReplaceSimplify(e, KPow(KA, KB),
                                                  KExp(KMult(KLn(KA), KB)));
@@ -431,10 +468,13 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero())) {
-    /* To ensure there is only one way of representing x^n. Also handle 0^y with
-     * Power logic. */
-    // exp(n*ln(x)) -> x^n with n an integer or x null.
+      (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero() ||
+       (ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational() &&
+        !ctx.getTree(KB)->isInteger()))) {
+    /* To ensure there is only one way of representing x^n.
+     *  Fallback to Power logic for 0^y and rational power of strict rationals.
+     */
+    // exp(a*ln(b)) -> a^b
     e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
     assert(!e->isExp());
     return true;

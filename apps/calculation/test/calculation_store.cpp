@@ -775,7 +775,7 @@ QUIZ_CASE(calculation_complex_format) {
 QUIZ_CASE(calculation_involving_sequence) {
   Shared::GlobalContext globalContext;
 
-  Shared::SequenceStore* seqStore = globalContext.sequenceStore;
+  Shared::SequenceStore* seqStore = globalContext.s_sequenceStore;
   Ion::Storage::Record::ErrorStatus err = seqStore->addEmptyModel();
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   Ion::Storage::Record record =

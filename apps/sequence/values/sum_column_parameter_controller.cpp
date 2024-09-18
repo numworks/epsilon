@@ -18,7 +18,7 @@ bool SumColumnParameterController::handleEvent(Ion::Events::Event event) {
     m_valuesController->selectCellAtLocation(
         m_valuesController->selectedColumn() - 1,
         m_valuesController->selectedRow());
-    GlobalContext::sequenceStore->modelForRecord(m_record)->setDisplaySum(
+    GlobalContext::s_sequenceStore->modelForRecord(m_record)->setDisplaySum(
         false);
     StackViewController* stack = (StackViewController*)(parentResponder());
     stack->pop();

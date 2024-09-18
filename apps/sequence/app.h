@@ -34,7 +34,7 @@ class App : public Shared::FunctionApp {
     Shared::SequenceStore* functionStore() override {
       return static_cast<Shared::GlobalContext*>(
                  AppsContainerHelper::sharedAppsContainerGlobalContext())
-          ->sequenceStore;
+          ->s_sequenceStore;
     }
     CurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* interval() { return &m_interval; }
@@ -64,7 +64,7 @@ class App : public Shared::FunctionApp {
   Shared::SequenceStore* functionStore() const override {
     return static_cast<Shared::GlobalContext*>(
                AppsContainerHelper::sharedAppsContainerGlobalContext())
-        ->sequenceStore;
+        ->s_sequenceStore;
   }
   Shared::Interval* interval() { return snapshot()->interval(); }
   ValuesController* valuesController() override {

@@ -164,7 +164,7 @@ void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
   } else if (m_currentPage == Page::Function) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Storage::functionExtension)) {
-      symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
+      symbol = GlobalContext::s_continuousFunctionStore->modelForRecord(record)
                    ->symbol();
     } else if (record.hasExtension(Storage::parametricComponentExtension)) {
       symbol = ContinuousFunctionProperties::k_parametricSymbol;
@@ -452,7 +452,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     size_t length = 0;
     if (record.hasExtension(Storage::functionExtension)) {
       ExpiringPointer<ContinuousFunction> f =
-          GlobalContext::continuousFunctionStore->modelForRecord(record);
+          GlobalContext::s_continuousFunctionStore->modelForRecord(record);
       if (f->properties().isEnabledParametric()) {
         isParametricFunction = true;
         length = f->name(buffer, bufferSize);

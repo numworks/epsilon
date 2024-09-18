@@ -33,7 +33,7 @@ class App : public Shared::FunctionApp {
     Shared::ContinuousFunctionStore* functionStore() override {
       return static_cast<Shared::GlobalContext*>(
                  AppsContainerHelper::sharedAppsContainerGlobalContext())
-          ->continuousFunctionStore;
+          ->s_continuousFunctionStore;
     }
     Shared::InteractiveCurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* intervalForSymbolType(

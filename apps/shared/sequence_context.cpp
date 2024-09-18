@@ -88,7 +88,7 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
 }
 
 Poincare::Internal::SequenceCache* SequenceContext::cache() {
-  return GlobalContext::sequenceCache;
+  return GlobalContext::s_sequenceCache;
 }
 
 }  // namespace Shared

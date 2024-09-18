@@ -270,7 +270,7 @@ void ContinuousFunction::updateDerivativeColorAfterChangingPlotDisplay(
   /* - if we are displaying the plot: use a new color
    * - if we are hidding the plot: use the color of the main function */
   KDColor newColor =
-      newDisplay ? GlobalContext::continuousFunctionStore->colorForNewModel()
+      newDisplay ? GlobalContext::s_continuousFunctionStore->colorForNewModel()
                  : color();
   recordData()->setColor(newColor, derivationOrder);
 }
@@ -1174,7 +1174,7 @@ size_t ContinuousFunction::Model::expressionSize(
 }
 
 void ContinuousFunction::Model::setStorageChangeFlag() const {
-  GlobalContext::continuousFunctionStore->setStorageChangeFlag(true);
+  GlobalContext::s_continuousFunctionStore->setStorageChangeFlag(true);
 }
 
 template Coordinate2D<float>

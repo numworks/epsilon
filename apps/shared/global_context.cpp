@@ -24,14 +24,15 @@ namespace Shared {
 
 constexpr const char* GlobalContext::k_extensions[];
 
-OMG::GlobalBox<SequenceStore> GlobalContext::sequenceStore;
-OMG::GlobalBox<Internal::SequenceCache> GlobalContext::sequenceCache;
-OMG::GlobalBox<ContinuousFunctionStore> GlobalContext::continuousFunctionStore;
+OMG::GlobalBox<SequenceStore> GlobalContext::s_sequenceStore;
+OMG::GlobalBox<Internal::SequenceCache> GlobalContext::s_sequenceCache;
+OMG::GlobalBox<ContinuousFunctionStore>
+    GlobalContext::s_continuousFunctionStore;
 
 void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   m_sequenceContext.resetCache();
-  GlobalContext::sequenceStore->storageDidChangeForRecord(record);
-  GlobalContext::continuousFunctionStore->storageDidChangeForRecord(record);
+  GlobalContext::s_sequenceStore->storageDidChangeForRecord(record);
+  GlobalContext::s_continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char* baseName) {
@@ -51,7 +52,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
              record.hasExtension(Ion::Storage::regressionExtension)) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Ion::Storage::functionExtension)) {
-      symbol = GlobalContext::continuousFunctionStore->modelForRecord(record)
+      symbol = GlobalContext::s_continuousFunctionStore->modelForRecord(record)
                    ->symbol();
     } else if (record.hasExtension(
                    Ion::Storage::parametricComponentExtension)) {
@@ -272,7 +273,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   } else {
     // The previous record was not a function. Create a new model.
     ContinuousFunction newModel =
-        continuousFunctionStore->newModel(symbol.name(), &error);
+        s_continuousFunctionStore->newModel(symbol.name(), &error);
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
@@ -281,7 +282,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   Poincare::UserExpression equation = Poincare::UserExpression::Create(
       KEqual(KA, KB), {.KA = symbol, .KB = expressionToStore});
   ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::continuousFunctionStore->modelForRecord(recordToSet);
+      GlobalContext::s_continuousFunctionStore->modelForRecord(recordToSet);
   // TODO: factorize with ContinuousFunction::setContent
   bool wasCartesian = f->properties().isCartesian();
   error = f->setExpressionContent(equation);
@@ -299,18 +300,18 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
 }
 
 void GlobalContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
-  sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
-  continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
+  s_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
+  s_continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 void GlobalContext::prepareForNewApp() {
-  sequenceStore->setStorageChangeFlag(false);
-  continuousFunctionStore->setStorageChangeFlag(false);
+  s_sequenceStore->setStorageChangeFlag(false);
+  s_continuousFunctionStore->setStorageChangeFlag(false);
 }
 
 void GlobalContext::reset() {
-  sequenceStore->reset();
-  continuousFunctionStore->reset();
+  s_sequenceStore->reset();
+  s_continuousFunctionStore->reset();
 }
 
 // Parametric components
@@ -334,7 +335,7 @@ void GlobalContext::DeleteParametricComponentsWithBaseName(
 void GlobalContext::DeleteParametricComponentsOfRecord(
     Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::continuousFunctionStore->modelForRecord(record);
+      GlobalContext::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;
   }
@@ -358,7 +359,7 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
 void GlobalContext::StoreParametricComponentsOfRecord(
     Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> f =
-      GlobalContext::continuousFunctionStore->modelForRecord(record);
+      GlobalContext::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;
   }
@@ -378,12 +379,12 @@ void GlobalContext::StoreParametricComponentsOfRecord(
 
 double GlobalContext::approximateSequenceAtRank(const char* identifier,
                                                 int rank) const {
-  int index = sequenceStore->SequenceIndexForName(identifier[0]);
+  int index = s_sequenceStore->SequenceIndexForName(identifier[0]);
   Sequence* sequence = m_sequenceContext.sequenceAtNameIndex(index);
-  double result = sequenceCache->storedValueOfSequenceAtRank(index, rank);
+  double result = s_sequenceCache->storedValueOfSequenceAtRank(index, rank);
   if (OMG::IsSignalingNan(result)) {
     // compute value if not in cache
-    result = sequence->approximateAtRank(rank, sequenceCache);
+    result = sequence->approximateAtRank(rank, s_sequenceCache);
   }
   return result;
 }

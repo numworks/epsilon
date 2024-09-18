@@ -44,7 +44,7 @@ class GlobalContext final : public Poincare::Context {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  GlobalContext() : m_sequenceContext(this, sequenceStore) {
+  GlobalContext() : m_sequenceContext(this, s_sequenceStore) {
     // GlobalContext expects to have a single instance at a time
     assert(Poincare::Context::GlobalContext == nullptr);
     Poincare::Context::GlobalContext = this;
@@ -60,9 +60,9 @@ class GlobalContext final : public Poincare::Context {
   bool setExpressionForSymbolAbstract(
       const Poincare::UserExpression& expression,
       const Poincare::SymbolAbstract& symbol) override;
-  static OMG::GlobalBox<SequenceStore> sequenceStore;
-  static OMG::GlobalBox<Poincare::Internal::SequenceCache> sequenceCache;
-  static OMG::GlobalBox<ContinuousFunctionStore> continuousFunctionStore;
+  static OMG::GlobalBox<SequenceStore> s_sequenceStore;
+  static OMG::GlobalBox<Poincare::Internal::SequenceCache> s_sequenceCache;
+  static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext* sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(

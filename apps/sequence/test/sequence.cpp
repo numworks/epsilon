@@ -46,7 +46,7 @@ void check_sequences_defined_by(
     const char* conditions1[SequenceStore::k_maxNumberOfSequences],
     const char* conditions2[SequenceStore::k_maxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.sequenceStore;
+  SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
   Sequence* seqs[SequenceStore::k_maxNumberOfSequences];
@@ -70,7 +70,7 @@ void check_sequences_defined_by(
    * GlobalContext::sequenceStore singleton. It won't be destructed. However,
    * we need to make sure that the pool is empty between quiz_cases. */
   store->tidyDownstreamPoolFrom();
-  GlobalContext::sequenceCache->resetCache();
+  GlobalContext::s_sequenceCache->resetCache();
 }
 
 void check_sum_of_sequence_between_bounds(double result, double start,
@@ -79,7 +79,7 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                                           const char* condition1,
                                           const char* condition2) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.sequenceStore;
+  SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
@@ -93,7 +93,7 @@ void check_sum_of_sequence_between_bounds(double result, double start,
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();  // Cf comment above
-  GlobalContext::sequenceCache->resetCache();
+  GlobalContext::s_sequenceCache->resetCache();
 }
 
 QUIZ_CASE(sequence_evaluation) {
@@ -699,7 +699,7 @@ QUIZ_CASE(sequence_evaluation) {
 
 QUIZ_CASE(sequence_context) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.sequenceStore;
+  SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
   assert_reduce_and_store("3→f(x)");
@@ -731,7 +731,7 @@ QUIZ_CASE(sequence_context) {
 
 QUIZ_CASE(sequence_order) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.sequenceStore;
+  SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
   Sequence* u = addSequence(store, Sequence::Type::Explicit, "", nullptr,
@@ -780,7 +780,7 @@ QUIZ_CASE(sequence_sum_evaluation) {
 
 QUIZ_CASE(sequence_suitable_for_cobweb) {
   Shared::GlobalContext globalContext;
-  SequenceStore* store = globalContext.sequenceStore;
+  SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
                           "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)

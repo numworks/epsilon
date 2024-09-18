@@ -35,8 +35,8 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                        int numberOfSignificantDigits) {
   assert(decimal->isDecimal() ||
          (decimal->isOpposite() && decimal->child(0)->isDecimal()));
-  bool m_negative = decimal->isOpposite();
-  if (m_negative) {
+  bool negative = decimal->isOpposite();
+  if (negative) {
     decimal = decimal->child(0);
   }
   const Tree* unsignedMantissa = decimal->child(0);
@@ -114,7 +114,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
 
   // Print the sign
   int currentChar = 0;
-  if (m_negative) {
+  if (negative) {
     currentChar += CodePoint(buffer, bufferSize, '-');
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
@@ -244,7 +244,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     if (currentChar + 1 >= bufferSize - 1) {
       return bufferSize - 1;
     }
-    int decimalMarkerPosition = m_negative ? exponent + 1 : exponent;
+    int decimalMarkerPosition = negative ? exponent + 1 : exponent;
     for (int i = currentChar - 1; i > decimalMarkerPosition; i--) {
       buffer[i + 1] = buffer[i];
     }
@@ -259,7 +259,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     return bufferSize - 1;
   }
   if (exponent >= 0 && exponent > mantissaLength - 1) {
-    int endMarkerPosition = m_negative ? exponent + 1 : exponent;
+    int endMarkerPosition = negative ? exponent + 1 : exponent;
     for (int i = currentChar - 1; i < endMarkerPosition; i++) {
       currentChar +=
           CodePoint(buffer + currentChar, bufferSize - currentChar, '0');

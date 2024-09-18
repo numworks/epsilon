@@ -125,15 +125,17 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   NAry::SquashIfPossible(outerNumerator);
 }
 
-Tree* Division::PushDenominator(const Tree* e, const char* symbol,
-                                int* numeratorDegree) {
+Tree* Division::PushDenominatorAndComputeDegreeOfNumerator(
+    const Tree* e, const char* symbol, int* numeratorDegree) {
   bool needOpposite = false;
   // Anything expected in outerNumerator is put back in numerator.
   TreeRef denominator = SharedTreeStack->pushMult(0);
   TreeRef numerator = SharedTreeStack->pushMult(0);
   GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite);
   assert(denominator->nextTree() == numerator);
-  // needOpposite won't alter degree
+  /* needOpposite won't alter degree, so it is ignored.
+   * Otherwise, numerator should be multiplied by -1 and flattened, or replaced
+   * with -1 if it was 1. */
   *numeratorDegree = Degree::Get(numerator, symbol);
   numerator->removeTree();
   return denominator;

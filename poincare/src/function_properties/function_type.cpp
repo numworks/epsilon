@@ -32,7 +32,8 @@ FunctionType::LineType FunctionType::PolarLineType(
   }
 
   int numeratorDegree;
-  Tree* denominator = Division::PushDenominator(e, symbol, &numeratorDegree);
+  Tree* denominator = Division::PushDenominatorAndComputeDegreeOfNumerator(
+      e, symbol, &numeratorDegree);
   assert(denominator);
   double a, b, c;
   bool polarLine =
@@ -106,7 +107,8 @@ bool isFractionOfPolynomials(const Tree* e, const char* symbol) {
     return false;
   }
   int numeratorDegree;
-  Tree* denominator = Division::PushDenominator(e, symbol, &numeratorDegree);
+  Tree* denominator = Division::PushDenominatorAndComputeDegreeOfNumerator(
+      e, symbol, &numeratorDegree);
   assert(denominator);
   int denominatorDegree = Degree::Get(denominator, symbol);
   denominator->removeTree();

@@ -455,7 +455,8 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
 
   // Detect the pattern (d·e)/(1±e·cos(θ+c)) where e is the eccentricity
   int numeratorDegree;
-  Tree* denominator = Division::PushDenominator(e, symbol, &numeratorDegree);
+  Tree* denominator = Division::PushDenominatorAndComputeDegreeOfNumerator(
+      e, symbol, &numeratorDegree);
   assert(denominator);
   bool ok = numeratorDegree == 0 && denominator->isAdd() &&
             DetectLinearPatternOfTrig(denominator, symbol, &a, &b, &c, true) &&

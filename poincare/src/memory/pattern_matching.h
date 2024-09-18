@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_PATTERN_MATCHING_H
 
 #include <omg/always_false.h>
+#include <omg/unreachable.h>
 
 #include <array>
 
@@ -98,6 +99,7 @@ class PatternMatching {
     static_assert(OMG::always_false<KT>,
                   "Match should not be called with a KTree as first argument, "
                   "source and pattern have probably been mixed up");
+    OMG::unreachable();
   }
 #endif
 

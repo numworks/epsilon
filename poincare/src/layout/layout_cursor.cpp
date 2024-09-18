@@ -35,6 +35,10 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
+  /* TODO: perf: this method and the related ones cursorHeight, cursorBaseline,
+   * middleLeftPoint call Render methods with the same arguments several
+   * times. We should add a CursorRect on render or expose the
+   * clonedWithRackMemo tree to build it only once. */
   int left, right;
   if (currentSelection.isEmpty()) {
     left = std::max(leftmostPosition(), m_position - 1);

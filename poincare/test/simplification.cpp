@@ -1315,3 +1315,20 @@ QUIZ_CASE(pcj_simplification_decimal) {
   Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
   assert_trees_are_equal(tree, KDiv(31_e, 25_e));
 }
+
+QUIZ_CASE(pcj_simplification_rational_power) {
+  // TODO: Fix or improve these cases
+  // a^b/2 / a^c/2 => a^(b-c)/2
+  simplifies_to("3^(3/2)/(3^(7/2))", "1/9");
+  simplifies_to("3^(π/2)/(3^(e/2))", "3^(π/2-e/2)");  // "3^((π-e)/2)"
+  // 1/(√a+√b) => (√a-√b)/(a-b)
+  simplifies_to("1/(√(3)+√(5))", "1/(√(3)+√(5))");  // "(√(3)-√(5))/2"
+  simplifies_to("1/(√(3)-√(5))", "1/(√(3)-√(5))");  // "-(√(3)+√(5))/2"
+  // 1/√a => √a/a
+  simplifies_to("1/√(3)", "1/√(3)");  // "√(3)/3"
+  // √a/√b <=> √(a/b)
+  simplifies_to("√(3)/√(5)-√(3/5)", "0");
+  // (c/d)^(a/b) => root(c^a*d^f,b)/d^g
+  simplifies_to("(2/3)^(5/7)", "(2/3)^(5/7)");    // "root(288,7)/3"
+  simplifies_to("(4/11)^(8/9)", "(4/11)^(8/9)");  // "2×root(1408,9)/11"
+}

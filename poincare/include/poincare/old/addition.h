@@ -56,9 +56,6 @@ class AdditionNode final : public NAryInfixExpressionNode {
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue) override;
-
-  // Properties
-  bool displayImplicitAdditionBetweenUnits(Layout l) const;
 };
 
 class Addition final : public NAryExpression {

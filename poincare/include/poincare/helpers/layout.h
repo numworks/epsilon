@@ -14,8 +14,6 @@ void MakeRightMostParenthesisTemporary(Internal::Tree* l);
 // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
 void DeleteChildrenRacks(Internal::Tree* rack);
 
-bool ContainsSmallCapitalE(const Internal::Tree* rack);
-
 // Enforce a correct rack/layout structure by merging or inserting racks
 void SanitizeRack(Internal::Tree* rack);
 

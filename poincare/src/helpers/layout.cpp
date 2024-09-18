@@ -45,12 +45,6 @@ void DeleteChildrenRacks(Tree* rack) {
   }
 }
 
-bool ContainsSmallCapitalE(const Tree* rack) {
-  return rack->hasChildSatisfying([](const Tree* e) {
-    return CodePointLayout::IsCodePoint(e, UCodePointLatinLetterSmallCapitalE);
-  });
-}
-
 void SanitizeRack(Internal::Tree* rack) {
   if (!rack->isRackLayout()) {
     rack->cloneNodeAtNode(KRackL.node<1>);

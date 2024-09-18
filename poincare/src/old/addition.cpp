@@ -69,42 +69,6 @@ bool AdditionNode::derivate(const ReductionContext& reductionContext,
   return Addition(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-// Properties
-bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
-  int nChildrenExpression = numberOfChildren();
-  if (nChildrenExpression < 2) {
-    return false;
-  }
-  /* Step 1: Check if the layout of the addtion contains an 'ᴇ'.
-   * If it's the case, return false, since implicit
-   * addition should not contain any 'ᴇ'.
-   * */
-  if (LayoutHelpers::ContainsSmallCapitalE(l.tree())) {
-    return false;
-  }
-  // Step 2: Check if units can be implicitly added
-  const OUnit::Representative* storedUnitRepresentative = nullptr;
-  for (int i = 0; i < nChildrenExpression; i++) {
-    OExpression child = childAtIndex(i);
-    if (child.otype() != Type::Multiplication ||
-        child.numberOfChildren() != 2 ||
-        !child.childAtIndex(0).isOfType(
-            {Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) ||
-        child.childAtIndex(1).otype() != Type::OUnit ||
-        child.childAtIndex(0).isPositive(nullptr) == OMG::Troolean::False) {
-      return false;
-    }
-    OUnit unitOfChild = child.childAtIndex(1).convert<OUnit>();
-    if (storedUnitRepresentative &&
-        !OUnit::AllowImplicitAddition(unitOfChild.representative(),
-                                      storedUnitRepresentative)) {
-      return false;
-    }
-    storedUnitRepresentative = unitOfChild.representative();
-  }
-  return true;
-}
-
 // Addition
 
 const Number Addition::NumeralFactor(const OExpression& e) {

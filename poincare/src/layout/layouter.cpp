@@ -1,5 +1,6 @@
 #include "layouter.h"
 
+#include <omg/utf8_helper.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
@@ -351,6 +352,26 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   NAry::AddChild(layoutParent, createdLayout);
 }
 
+void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
+                                       size_t bufferSize) {
+  assert(expression->isOfType(
+      {Type::Decimal, Type::DoubleFloat, Type::SingleFloat}));
+  int numberOfSignificantDigits =
+      m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
+      : expression->isSingleFloat()
+          ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
+          : Poincare::PrintFloat::SignificantDecimalDigits<double>();
+  if (expression->isDecimal()) {
+    Decimal::Serialize(expression, buffer, bufferSize, m_floatMode,
+                       numberOfSignificantDigits);
+  } else {
+    Poincare::PrintFloat::ConvertFloatToText(
+        FloatHelper::To(expression), buffer, bufferSize,
+        Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
+        m_floatMode);
+  }
+}
+
 // Remove expression while converting it to a layout in layoutParent
 void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                                 int parentPriority) {
@@ -369,7 +390,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
   switch (type) {
     // TODO_PCJ: Restore Addition and Multiplication symbol in linear mode
     case Type::Add: {
-      CodePoint op = ImplicitAddition(expression) && !m_linearMode
+      CodePoint op = implicitAddition(expression) && !m_linearMode
                          ? UCodePointNull
                          : CodePoint('+');
       layoutInfixOperator(layoutParent, expression, op);
@@ -596,22 +617,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::Decimal:
     case Type::SingleFloat:
     case Type::DoubleFloat: {
-      char buffer[100];
-      int numberOfSignificantDigits =
-          m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
-          : type == Type::SingleFloat
-              ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
-              : Poincare::PrintFloat::SignificantDecimalDigits<double>();
+      constexpr size_t bufferSize = 100;
+      char buffer[bufferSize];
+      serializeDecimalOrFloat(expression, buffer, bufferSize);
       if (type.isDecimal()) {
-        Decimal::Serialize(expression, buffer, std::size(buffer), m_floatMode,
-                           numberOfSignificantDigits);
         expression->child(1)->removeTree();
         expression->child(0)->removeTree();
-      } else {
-        Poincare::PrintFloat::ConvertFloatToText(
-            FloatHelper::To(expression), buffer, std::size(buffer),
-            Poincare::PrintFloat::k_maxFloatGlyphLength,
-            numberOfSignificantDigits, m_floatMode);
       }
       TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
@@ -864,12 +875,10 @@ void Layouter::StripUselessPlus(Tree* rack) {
   NAry::SetNumberOfChildren(rack, n);
 }
 
-bool Layouter::ImplicitAddition(const Tree* addition) {
+bool Layouter::implicitAddition(const Tree* addition) {
   if (addition->numberOfChildren() < 2) {
     return false;
   }
-  // Step 1: TODO_PCJ check that no ᴇ will be needed
-  // Step 2: Check if units can be implicitly added
   const Units::Representative* storedUnitRepresentative = nullptr;
   for (const Tree* child : addition->children()) {
     if (!(child->isMult() && child->numberOfChildren() == 2 &&
@@ -883,8 +892,21 @@ bool Layouter::ImplicitAddition(const Tree* addition) {
     if (!sign.isReal() || !sign.realSign().isPositive()) {
       return false;
     }
+    /*  Check if the layout of the addition contains an 'ᴇ'.
+     * If it's the case, return false, since implicit
+     * addition should not contain any 'ᴇ'.*/
+    if (!child->child(0)->isInteger()) {
+      constexpr size_t bufferSize = 100;
+      char buffer[bufferSize];
+      serializeDecimalOrFloat(child->child(0), buffer, bufferSize);
+      if (UTF8Helper::HasCodePoint(buffer,
+                                   UCodePointLatinLetterSmallCapitalE)) {
+        return false;
+      }
+    }
     const Units::Representative* childRepresentative =
         Units::Unit::GetRepresentative(child->child(1));
+    // Check if units can be implicitly added
     if (storedUnitRepresentative &&
         !Units::Unit::AllowImplicitAddition(childRepresentative,
                                             storedUnitRepresentative)) {

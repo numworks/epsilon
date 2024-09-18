@@ -25,8 +25,6 @@ class Layouter {
    * and replace UnitSeparators with a middle dot. */
   static void StripSeparators(Tree* rack);
 
-  static bool ImplicitAddition(const Tree* addition);
-
  private:
   Layouter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
            Preferences::PrintFloatMode floatMode, OMG::Base base)
@@ -52,6 +50,9 @@ class Layouter {
   void layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression);
   void layoutExpression(TreeRef& layoutParent, Tree* expression,
                         int parentPriority);
+  bool implicitAddition(const Tree* addition);
+  void serializeDecimalOrFloat(const Tree* expression, char* buffer,
+                               size_t bufferSize);
   // Recursively replace "+-" into "-" in rack
   static void StripUselessPlus(Tree* rack);
   bool m_linearMode;

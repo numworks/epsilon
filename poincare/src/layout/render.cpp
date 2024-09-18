@@ -16,6 +16,202 @@ namespace Poincare::Internal {
 
 KDFont::Size Render::s_font = KDFont::Size::Large;
 
+/* Helpers */
+
+/* Clone rack replacing basic racks with memo racks and update the cursor to
+ * make it point in the new tree. */
+static Tree* CloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor) {
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  for (const Tree* n : l->selfAndDescendants()) {
+    if (cursor->rack == n) {
+      cursor->rack = static_cast<const Rack*>(SharedTreeStack->lastBlock());
+    }
+    if (n->isRackLayout() && n->numberOfChildren() > 0) {
+      SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
+    } else {
+      n->cloneNode();
+    }
+  }
+  return result;
+}
+
+/* External API */
+
+KDSize Render::Size(const Tree* l, KDFont::Size fontSize,
+                    const SimpleLayoutCursor& cursor, int leftPosition,
+                    int rightPosition) {
+  if (rightPosition == -1) {
+    rightPosition = l->numberOfChildren();
+  }
+  s_font = fontSize;
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = CloneWithRackMemo(l, &localCursor);
+  KDSize result =
+      RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
+                                     leftPosition, rightPosition, false);
+  withMemoRoot->removeTree();
+  return result;
+}
+
+KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
+                              const SimpleLayoutCursor& cursor,
+                              int leftPosition, int rightPosition) {
+  if (rightPosition == -1) {
+    rightPosition = l->numberOfChildren();
+  }
+  s_font = fontSize;
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = CloneWithRackMemo(l, &localCursor);
+  KDCoordinate result = RackLayout::BaselineBetweenIndexes(
+      static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
+  withMemoRoot->removeTree();
+  return result;
+}
+
+KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
+                               KDFont::Size fontSize,
+                               const SimpleLayoutCursor& cursor) {
+  s_font = fontSize;
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = CloneWithRackMemo(root, &localCursor);
+  KDPoint result = AbsoluteOriginRec(localCursor.rack, withMemoRoot);
+  withMemoRoot->removeTree();
+  return result;
+}
+
+void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
+                  const LayoutStyle& style, const SimpleLayoutCursor& cursor,
+                  const LayoutSelection& selection) {
+  Render::s_font = style.font;
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemo = CloneWithRackMemo(l, &localCursor);
+  /* TODO all screenshots work fine without the fillRect except labels on graphs
+   * when they overlap. We could add a flag to draw it only when necessary. */
+  ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(withMemo), false)),
+                style.backgroundColor);
+  LayoutSelection localSelection =
+      cursor.rack ? LayoutSelection(localCursor.rack, selection.startPosition(),
+                                    selection.endPosition())
+                  : LayoutSelection();
+  DrawRack(Rack::From(withMemo), ctx, p, style, localSelection, false);
+  withMemo->removeTree();
+}
+
+/* Implementations on Rack */
+
+KDSize Render::Size(const Rack* l, bool showEmpty) {
+  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->width != 0) {
+    return KDSize(l->toRackMemoLayoutNode()->width,
+                  l->toRackMemoLayoutNode()->height);
+  }
+  KDSize size = RackLayout::Size(l, showEmpty);
+  if (l->isRackMemoLayout()) {
+    assert(size.width() != INT16_MAX);
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->width = size.width();
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->height = size.height();
+  }
+  return size;
+}
+
+KDCoordinate Render::Baseline(const Rack* l) {
+  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->baseline != 0) {
+    return l->toRackMemoLayoutNode()->baseline;
+  }
+  KDCoordinate baseline = RackLayout::Baseline(l);
+  if (l->isRackMemoLayout()) {
+    assert(baseline != 0);
+    const_cast<Rack*>(l)->toRackMemoLayoutNode()->baseline = baseline;
+  }
+  return baseline;
+}
+
+KDPoint Render::PositionOfChild(const Rack* l, int childIndex) {
+  return RackLayout::ChildPosition(l, childIndex);
+}
+
+void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
+                      const LayoutStyle& style, LayoutSelection selection,
+                      bool showEmpty) {
+  if (RackLayout::IsTrivial(l) && selection.layout() != l) {
+    // Early escape racks with only one child
+    DrawSimpleLayout(l->child(0), ctx, p, style, selection);
+    return;
+  }
+  KDCoordinate baseline = Baseline(l);
+  if (selection.layout() == l) {
+    // Draw the selected area gray background
+    KDSize selectedSize = RackLayout::SizeBetweenIndexes(
+        l, selection.leftPosition(), selection.rightPosition());
+    KDCoordinate selectedBaseline = RackLayout::BaselineBetweenIndexes(
+        l, selection.leftPosition(), selection.rightPosition());
+    KDPoint start(
+        RackLayout::SizeBetweenIndexes(l, 0, selection.leftPosition()).width(),
+        baseline - selectedBaseline);
+    ctx->fillRect(KDRect(p.translatedBy(start), selectedSize),
+                  style.selectionColor);
+  }
+  KDSize size = Size(l, showEmpty);
+  if (size.height() <= 0 || size.width() <= 0 ||
+      size.height() > KDCOORDINATE_MAX - p.y() ||
+      size.width() > KDCOORDINATE_MAX - p.x()) {
+    // Layout size overflows KDCoordinate
+    return;
+  }
+
+  struct Context {
+    KDContext* ctx;
+    KDPoint rackPosition;
+    const LayoutStyle& style;
+    LayoutSelection selection;
+    KDCoordinate rackBaseline;
+    int index;
+  };
+  Context context{
+      ctx,      p,
+      style,    selection.layout() == l ? selection : LayoutSelection(),
+      baseline, 0};
+  RackLayout::Callback* iter = [](const Layout* child, KDSize childSize,
+                                  KDCoordinate childBaseline, KDPoint position,
+                                  void* ctx) {
+    Context* context = static_cast<Context*>(ctx);
+    KDPoint p(position.x(), context->rackBaseline - position.y());
+    p = p.translatedBy(context->rackPosition);
+    if (p.x() > context->ctx->clippingRect()
+                    .relativeTo(context->ctx->origin())
+                    .right()) {
+      return;
+    }
+    if ((!child || child->isCodePointLayout()) &&
+        p.x() + KDFont::GlyphWidth(context->style.font) <
+            context->ctx->clippingRect()
+                .relativeTo(context->ctx->origin())
+                .left()) {
+      context->index++;
+      return;
+    }
+    LayoutStyle childStyle = context->style;
+    if (context->index >= context->selection.leftPosition() &&
+        context->index < context->selection.rightPosition()) {
+      childStyle.backgroundColor = context->style.selectionColor;
+    }
+    if (child) {
+      DrawSimpleLayout(child, context->ctx, p, childStyle, context->selection);
+    } else if (childSize.width() > 0) {
+      EmptyRectangle::DrawEmptyRectangle(
+          context->ctx, p, s_font, context->style.requiredPlaceholderColor);
+    }
+    context->index++;
+  };
+  RackLayout::IterBetweenIndexes(l, 0, l->numberOfChildren(), iter, &context,
+                                 showEmpty);
+}
+
+/* Implementations on Layout */
+
 KDSize Render::Size(const Layout* l) {
   KDCoordinate width = 0;
   KDCoordinate height = 0;
@@ -228,8 +424,6 @@ KDSize Render::Size(const Layout* l) {
   return KDSize(width, height);
 }
 
-Tree* cloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor);
-
 KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
   assert(root <= l && root->nextTree() > l);
   assert(l->isRackOrLayout());
@@ -251,51 +445,6 @@ KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
     child = nextChild;
     childIndex++;
   }
-}
-
-KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
-                               KDFont::Size fontSize,
-                               const SimpleLayoutCursor& cursor) {
-  s_font = fontSize;
-  SimpleLayoutCursor localCursor = cursor;
-  RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = cloneWithRackMemo(root, &localCursor);
-  KDPoint result = AbsoluteOriginRec(localCursor.rack, withMemoRoot);
-  withMemoRoot->removeTree();
-  return result;
-}
-
-KDSize Render::Size(const Tree* l, KDFont::Size fontSize,
-                    const SimpleLayoutCursor& cursor, int leftPosition,
-                    int rightPosition) {
-  if (rightPosition == -1) {
-    rightPosition = l->numberOfChildren();
-  }
-  s_font = fontSize;
-  SimpleLayoutCursor localCursor = cursor;
-  RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = cloneWithRackMemo(l, &localCursor);
-  KDSize result =
-      RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
-                                     leftPosition, rightPosition, false);
-  withMemoRoot->removeTree();
-  return result;
-}
-
-KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
-                              const SimpleLayoutCursor& cursor,
-                              int leftPosition, int rightPosition) {
-  if (rightPosition == -1) {
-    rightPosition = l->numberOfChildren();
-  }
-  s_font = fontSize;
-  SimpleLayoutCursor localCursor = cursor;
-  RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = cloneWithRackMemo(l, &localCursor);
-  KDCoordinate result = RackLayout::BaselineBetweenIndexes(
-      static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
-  withMemoRoot->removeTree();
-  return result;
 }
 
 KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
@@ -627,119 +776,6 @@ KDCoordinate Render::Baseline(const Layout* l) {
       assert(false);
       return 0;
   };
-}
-
-/* Clone rack replacing basic racks with memo racks and update the cursor to
- * make it point in the new tree. */
-Tree* cloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor) {
-  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  for (const Tree* n : l->selfAndDescendants()) {
-    if (cursor->rack == n) {
-      cursor->rack = static_cast<const Rack*>(SharedTreeStack->lastBlock());
-    }
-    if (n->isRackLayout() && n->numberOfChildren() > 0) {
-      SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
-    } else {
-      n->cloneNode();
-    }
-  }
-  return result;
-}
-
-void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
-                  const LayoutStyle& style, const SimpleLayoutCursor& cursor,
-                  const LayoutSelection& selection) {
-  Render::s_font = style.font;
-  SimpleLayoutCursor localCursor = cursor;
-  RackLayout::s_cursor = &localCursor;
-  Tree* withMemo = cloneWithRackMemo(l, &localCursor);
-  /* TODO all screenshots work fine without the fillRect except labels on graphs
-   * when they overlap. We could add a flag to draw it only when necessary. */
-  ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(withMemo), false)),
-                style.backgroundColor);
-  LayoutSelection localSelection =
-      cursor.rack ? LayoutSelection(localCursor.rack, selection.startPosition(),
-                                    selection.endPosition())
-                  : LayoutSelection();
-  DrawRack(Rack::From(withMemo), ctx, p, style, localSelection, false);
-  withMemo->removeTree();
-}
-
-void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
-                      const LayoutStyle& style, LayoutSelection selection,
-                      bool showEmpty) {
-  if (RackLayout::IsTrivial(l) && selection.layout() != l) {
-    // Early escape racks with only one child
-    DrawSimpleLayout(l->child(0), ctx, p, style, selection);
-    return;
-  }
-  KDCoordinate baseline = Baseline(l);
-  if (selection.layout() == l) {
-    // Draw the selected area gray background
-    KDSize selectedSize = RackLayout::SizeBetweenIndexes(
-        l, selection.leftPosition(), selection.rightPosition());
-    KDCoordinate selectedBaseline = RackLayout::BaselineBetweenIndexes(
-        l, selection.leftPosition(), selection.rightPosition());
-    KDPoint start(
-        RackLayout::SizeBetweenIndexes(l, 0, selection.leftPosition()).width(),
-        baseline - selectedBaseline);
-    ctx->fillRect(KDRect(p.translatedBy(start), selectedSize),
-                  style.selectionColor);
-  }
-  KDSize size = Size(l, showEmpty);
-  if (size.height() <= 0 || size.width() <= 0 ||
-      size.height() > KDCOORDINATE_MAX - p.y() ||
-      size.width() > KDCOORDINATE_MAX - p.x()) {
-    // Layout size overflows KDCoordinate
-    return;
-  }
-
-  struct Context {
-    KDContext* ctx;
-    KDPoint rackPosition;
-    const LayoutStyle& style;
-    LayoutSelection selection;
-    KDCoordinate rackBaseline;
-    int index;
-  };
-  Context context{
-      ctx,      p,
-      style,    selection.layout() == l ? selection : LayoutSelection(),
-      baseline, 0};
-  RackLayout::Callback* iter = [](const Layout* child, KDSize childSize,
-                                  KDCoordinate childBaseline, KDPoint position,
-                                  void* ctx) {
-    Context* context = static_cast<Context*>(ctx);
-    KDPoint p(position.x(), context->rackBaseline - position.y());
-    p = p.translatedBy(context->rackPosition);
-    if (p.x() > context->ctx->clippingRect()
-                    .relativeTo(context->ctx->origin())
-                    .right()) {
-      return;
-    }
-    if ((!child || child->isCodePointLayout()) &&
-        p.x() + KDFont::GlyphWidth(context->style.font) <
-            context->ctx->clippingRect()
-                .relativeTo(context->ctx->origin())
-                .left()) {
-      context->index++;
-      return;
-    }
-    LayoutStyle childStyle = context->style;
-    if (context->index >= context->selection.leftPosition() &&
-        context->index < context->selection.rightPosition()) {
-      childStyle.backgroundColor = context->style.selectionColor;
-    }
-    if (child) {
-      DrawSimpleLayout(child, context->ctx, p, childStyle, context->selection);
-    } else if (childSize.width() > 0) {
-      EmptyRectangle::DrawEmptyRectangle(
-          context->ctx, p, s_font, context->style.requiredPlaceholderColor);
-    }
-    context->index++;
-  };
-  RackLayout::IterBetweenIndexes(l, 0, l->numberOfChildren(), iter, &context,
-                                 showEmpty);
 }
 
 void Render::DrawSimpleLayout(const Layout* l, KDContext* ctx, KDPoint p,
@@ -1450,36 +1486,6 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       return;
     }
   };
-}
-
-KDSize Render::Size(const Rack* l, bool showEmpty) {
-  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->width != 0) {
-    return KDSize(l->toRackMemoLayoutNode()->width,
-                  l->toRackMemoLayoutNode()->height);
-  }
-  KDSize size = RackLayout::Size(l, showEmpty);
-  if (l->isRackMemoLayout()) {
-    assert(size.width() != INT16_MAX);
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->width = size.width();
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->height = size.height();
-  }
-  return size;
-}
-
-KDCoordinate Render::Baseline(const Rack* l) {
-  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->baseline != 0) {
-    return l->toRackMemoLayoutNode()->baseline;
-  }
-  KDCoordinate baseline = RackLayout::Baseline(l);
-  if (l->isRackMemoLayout()) {
-    assert(baseline != 0);
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->baseline = baseline;
-  }
-  return baseline;
-}
-
-KDPoint Render::PositionOfChild(const Rack* l, int childIndex) {
-  return RackLayout::ChildPosition(l, childIndex);
 }
 
 }  // namespace Poincare::Internal

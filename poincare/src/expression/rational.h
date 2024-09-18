@@ -23,7 +23,8 @@ class Rational final {
   static IntegerHandler Denominator(const Tree* e);
   static Poincare::Sign Sign(const Tree* e) {
     return Poincare::Sign(e->isZero(), e->isStrictlyPositiveRational(),
-                          e->isStrictlyNegativeRational(), !e->isInteger());
+                          e->isStrictlyNegativeRational(), !e->isInteger(),
+                          false);
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 

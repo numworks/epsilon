@@ -42,7 +42,7 @@ Sign Number::Sign(const Tree* e) {
   switch (e->type()) {
     case Type::Pi:
     case Type::EulerE:
-      return Sign::StrictlyPositive();
+      return Sign::FiniteStrictlyPositive();
     case Type::DoubleFloat:
     case Type::SingleFloat: {
       double value = FloatHelper::To(e);

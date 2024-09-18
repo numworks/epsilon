@@ -142,6 +142,9 @@ class Sign {
   constexpr static Sign FinitePositive() {
     return Sign(true, true, false, true, false);
   }
+  constexpr static Sign FiniteStrictlyPositive() {
+    return Sign(false, true, false, true, false);
+  }
   constexpr static Sign FiniteStrictlyPositiveInteger() {
     return Sign(false, true, false, false, false);
   }

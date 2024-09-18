@@ -119,25 +119,33 @@ ComplexSign Abs(ComplexSign s) {
 }
 
 ComplexSign ArcCosine(ComplexSign s) {
+  // re(acos(z)) cannot be infinite, im(acos(z)) is finite if abs(z) is finite
   Sign re = s.realSign();
   Sign im = s.imagSign();
-  return ComplexSign(Sign(re.canBeStrictlyPositive(), true, false),
+  return ComplexSign(Sign(re.canBeStrictlyPositive(), true, false, true, false),
                      Sign(im.canBeNull(),
                           im.canBeStrictlyNegative() ||
                               (im.canBeNull() && re.canBeStrictlyPositive()),
                           im.canBeStrictlyPositive() ||
-                              (im.canBeNull() && re.canBeStrictlyNegative())));
+                              (im.canBeNull() && re.canBeStrictlyNegative()),
+                          true, s.canBeInfinite()));
 }
 
 ComplexSign ArcSine(ComplexSign s) {
   /* - the sign of re(asin(z)) is always the same as re(z)
    * - the sign of im(asin(z)) is always the same as im(z) except when re(z)!=0
-   *   and im(z)=0: im(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1} */
+   *   and im(z)=0: im(asin(x)) = {>0 if x<-1, =0 if -1<=x<=1, and <0 if x>1}
+   * - re(asin(z)) cannot be infinite, im(asin(z)) is finite if abs(z) is finite
+   */
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (imagSign.canBeNull() && realSign.canBeNonNull()) {
     imagSign = imagSign || Sign(true, realSign.canBeStrictlyNegative(),
                                 realSign.canBeStrictlyPositive());
+  }
+  realSign = realSign && Sign(true, true, true, true, false);
+  if (s.canBeInfinite()) {
+    imagSign = imagSign || Sign(false, false, false, false, true);
   }
   return ComplexSign(realSign, imagSign);
 }
@@ -145,12 +153,22 @@ ComplexSign ArcSine(ComplexSign s) {
 ComplexSign ArcTangent(ComplexSign s) {
   /* - the sign of im(atan(z)) is always the same as im(z)
    * - the sign of re(atan(z)) is always the same as re(z) except when im(z)!=0
-       z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1} */
+   *   z=i*y: re(atan(i*y)) = {-π/2 if y<-1, 0 if -1<y<1, and π/2 if y>1}
+   * - re(atan(z)) cannot be infinite, im(atan(z)) is finite if im(z) == 0 or
+   *   re(z) != 0 (accounts for the fact that im(atan(z)) is infinite for z=i or
+   * -i)
+   */
   Sign realSign = RelaxIntegerProperty(s.realSign());
   Sign imagSign = RelaxIntegerProperty(s.imagSign());
   if (realSign.canBeNull() && imagSign.canBeNonNull()) {
     realSign = realSign || Sign(true, imagSign.canBeStrictlyPositive(),
                                 imagSign.canBeStrictlyNegative());
+  }
+  realSign = realSign && Sign(true, true, true, true, false);
+  if (imagSign.isNull() || !realSign.canBeNull()) {
+    imagSign = imagSign && Sign(true, true, true, true, false);
+  } else {
+    imagSign = imagSign || Sign(false, false, false, false, true);
   }
   return ComplexSign(realSign, imagSign);
 }

@@ -22,6 +22,12 @@ class Render {
   friend KDSize Size(const Rack* rack);
 
  public:
+  /* The externally visible functions use the font and cursor passed in argument
+   * to set static variables referred to by the private functions.  They are
+   * also responsible of creating and deleting a temporary copy of the layout,
+   * with Racks replaced by RackMemo.
+   */
+
   static KDSize Size(const Tree* l, KDFont::Size fontSize,
                      const SimpleLayoutCursor& cursor, int leftPosition = 0,
                      int rightPosition = -1);
@@ -41,6 +47,10 @@ class Render {
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 
  private:
+  /* Since the Tree is bipartite Rack > Layouts > Racks > Layouts …, the private
+   * functions rely on this and call the Layout or the Rack overloads
+   * alternatively. */
+
   static KDPoint AbsoluteOriginRec(const Tree* l, const Tree* root);
   static KDSize Size(const Rack* l, bool showEmpty = true);
   static KDSize Size(const Layout* l);

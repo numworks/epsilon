@@ -121,7 +121,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   if (!result.isUninitialized()) {
     int i = 0;
     for (const Tree* symbol : userSymbols->children()) {
-      assert(i < 6);
+      assert(i < k_maxNumberOfExactSolutions);
       Symbol::CopyName(symbol, context->variables[i++],
                        Symbol::k_maxNameLength);
       Variables::LeaveScopeWithReplacement(result, symbol, false);
@@ -488,6 +488,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   const Tree* coefficients[k_maxNumberOfPolynomialCoefficients] = {};
   int degree = Polynomial::Degree(polynomial);
   if (degree > k_maxPolynomialDegree) {
+    *error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
   }

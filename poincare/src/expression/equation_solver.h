@@ -14,6 +14,9 @@ namespace Poincare::Internal {
 
 class EquationSolver {
  public:
+  constexpr static int k_maxNumberOfExactSolutions = 6;
+  constexpr static int k_maxNumberOfApproximateSolutions = 10;
+
   enum class Type : uint8_t {
     LinearSystem,
     PolynomialMonovariable,
@@ -38,13 +41,11 @@ class EquationSolver {
     bool exactResults = true;
     bool hasMoreSolutions = false;
     int numberOfVariables = 0;
-    char variables[6][Symbol::k_maxNameSize];
+    char variables[k_maxNumberOfExactSolutions][Symbol::k_maxNameSize];
     // Context used for apps/solver compatibility
     int numberOfUserVariables = 0;
-    char userVariables[6][Symbol::k_maxNameSize];
+    char userVariables[k_maxNumberOfExactSolutions][Symbol::k_maxNameSize];
   };
-
-  constexpr static int k_maxNumberOfApproximateSolutions = 10;
 
   // Return list of exact solutions.
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,

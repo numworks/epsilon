@@ -15,7 +15,6 @@ namespace Poincare::Internal {
 
 class Render {
   friend class RackLayout;
-  friend class LayoutCursor;
   friend class Grid;
   // Used by render_metrics
   friend KDCoordinate Baseline(const Rack* rack);
@@ -29,7 +28,8 @@ class Render {
   static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize,
                                int leftPosition = 0, int rightPosition = -1);
 
-  static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root);
+  static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root,
+                                KDFont::Size fontSize);
   static void Draw(const Tree* l, KDContext* ctx, KDPoint p,
                    const LayoutStyle& style,
                    const LayoutCursor* cursor = nullptr);

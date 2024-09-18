@@ -253,7 +253,9 @@ KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
   }
 }
 
-KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root) {
+KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
+                               KDFont::Size fontSize) {
+  Render::s_font = fontSize;
   RackLayout::s_cursorRack = Rack::From(l);
   // assert(l == RackLayout::s_cursorRack);
   Tree* withMemoRoot = cloneWithRackMemo(root);

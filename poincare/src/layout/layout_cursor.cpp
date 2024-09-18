@@ -51,7 +51,6 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
-  Render::s_font = font;  // TODO_PCJ clean this code
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
   int left, right;
@@ -67,7 +66,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
       Render::Baseline(cursorRack(), font) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
   cursorXOffset = Render::Size(cursorRack(), font, 0, m_position).width();
-  return Render::AbsoluteOrigin(cursorRack(), rootRack())
+  return Render::AbsoluteOrigin(cursorRack(), rootRack(), font)
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 

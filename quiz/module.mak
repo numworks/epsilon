@@ -18,7 +18,7 @@ _test_sources := $(shell find apps escher ion kandinsky liba libaxx omg poincare
 $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.
 	$(call rule_label,AWK)
 	awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
-		$(foreach m,$(filter-out quiz quiz.%,$(MODULES_$(GOAL))), \
+		$(foreach m,$(filter %.test,$(MODULES_$(GOAL))), \
 			$(call tasteless_filter,$(filter %:+test,$(SOURCES_$(firstword $(subst ., ,$m)))))) \
 		> $@
 

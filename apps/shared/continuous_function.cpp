@@ -682,8 +682,18 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         assert(m_properties.isOfDegreeTwo());
-        m_expression = SystemExpression::Builder(Poincare::Roots::Quadratic(
-            coefficients[2], coefficients[1], coefficients[0]));
+        Internal::Tree* list = Poincare::Roots::Quadratic(
+            coefficients[2], coefficients[1], coefficients[0]);
+        if (list->numberOfChildren() == 1) {
+          // Flat conic
+          list->removeNode();
+        } else if (list->numberOfChildren() == 2) {
+          /* Swap the equations since conics inequalities use assume their
+           * equations are in a certain order to make the distinction between
+           * inside and outside. */
+          list->child(0)->swapWithTree(list->child(1));
+        }
+        m_expression = SystemExpression::Builder(list);
       } else {
         /* TODO: We could handle simple equations of any degree by solving the
          * equation within the graph view bounds, to plot as many vertical or

@@ -139,6 +139,12 @@ class Sign {
     return Sign(false, true, true, false);
   }
   constexpr static Sign Integer() { return Sign(true, true, true, false); }
+  constexpr static Sign FinitePositive() {
+    return Sign(true, true, false, true, false);
+  }
+  constexpr static Sign FiniteStrictlyPositiveInteger() {
+    return Sign(false, true, false, false, false);
+  }
 
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log(bool endOfLine = true) const {
@@ -229,6 +235,9 @@ class ComplexSign {
   }
   static constexpr ComplexSign RealStrictlyPositiveInteger() {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
+  }
+  static constexpr ComplexSign RealFiniteStrictlyPositiveInteger() {
+    return ComplexSign(Sign::FiniteStrictlyPositiveInteger(), Sign::Zero());
   }
 
 #if POINCARE_TREE_LOG

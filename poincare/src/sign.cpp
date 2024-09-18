@@ -173,6 +173,7 @@ ComplexSign ArcTangent(ComplexSign s) {
   return ComplexSign(realSign, imagSign);
 }
 
+// Note: we could get more info on canBeInfinite
 ComplexSign Exponential(ComplexSign s) {
   if (!s.isReal()) {
     return ComplexSign::Unknown();
@@ -200,6 +201,7 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
+// Note: we could get more info on canBeInfinite
 ComplexSign Ln(ComplexSign s) {
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
@@ -234,6 +236,7 @@ ComplexSign Add(ComplexSign s1, ComplexSign s2) {
                      Add(s1.imagSign(), s2.imagSign()));
 }
 
+// Note: we could get more info on canBeInfinite
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
     return ComplexSign::Unknown();
@@ -244,7 +247,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   }
   if (exp.isNull()) {
     // base^0 = 1
-    return ComplexSign::RealStrictlyPositiveInteger();
+    return ComplexSign::RealFiniteStrictlyPositiveInteger();
   }
   bool canBeNull = base.realSign().canBeNull();
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
@@ -274,7 +277,7 @@ ComplexSign GetComplexSign(const Tree* e) {
   }
   switch (e->type()) {
     case Type::Mult: {
-      ComplexSign s = ComplexSign::RealStrictlyPositiveInteger();  // 1
+      ComplexSign s = ComplexSign::RealFiniteStrictlyPositiveInteger();  // 1
       for (const Tree* c : e->children()) {
         s = Mult(s, GetComplexSign(c));
         if (s.isUnknown() || s.isNull()) {
@@ -313,7 +316,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Var:
       return Variables::GetComplexSign(e);
     case Type::ComplexI:
-      return ComplexSign(Sign::Zero(), Sign::StrictlyPositiveInteger());
+      return ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositiveInteger());
     case Type::Trig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
       return Trig(GetComplexSign(e->child(0)), e->child(1)->isOne());
@@ -326,6 +329,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
     case Type::PhysicalConstant:
+      ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::Unit:
       // Units are considered equivalent to their SI ratio
       return ComplexSign(Sign::Positive(), Sign::Zero());

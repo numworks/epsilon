@@ -19,24 +19,6 @@
 
 namespace Poincare::Internal {
 
-#if 0
-void LayoutCursor::safeSetCursorNode(Layout cursorNode,
-                                 OMG::HorizontalDirection sideOfLayout) {
-  LayoutCursor previousCursor = *this;
-  moveCursorToLayout(cursorNode, sideOfLayout);
-  // Invalidate memoized info ?
-}
-
-void LayoutCursor::safeSetPosition(int position) {
-  assert(position >= 0);
-  assert(position <= RightmostPossibleCursorPosition(m_rootLayout));
-  assert(!isSelecting());
-  LayoutCursor previousCursor = *this;
-  m_position = position;
-  // Invalidate memoized info ?
-}
-#endif
-
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
   LayoutSelection currentSelection = selection();
   int left, right;
@@ -399,11 +381,6 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
   if (beautificationMethod.beautifyAfterInserting) {
     InputBeautification::BeautifyLeftOfCursorAfterInsertion(this, context);
   }
-
-#if 0
-  // - Step 12 - Invalidate layout sizes and positions
-  invalidateSizesAndPositions();
-#endif
 }
 
 void LayoutBufferCursor::addEmptyExponentialLayout(Poincare::Context* context) {
@@ -607,12 +584,6 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   return parent && parent->isFractionLayout() && indexInParent == 0 &&
          parent->child(1)->numberOfChildren() == 0;
 }
-
-#if 0
-int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
-  return l.isHorizontal() ? l.numberOfChildren() : 1;
-}
-#endif
 
 /* Private */
 
@@ -901,48 +872,6 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   }
   return false;
 }
-
-#if 0
-bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
-    EmptyRectangle::State state) {
-  bool result = false;
-  if (m_rootLayout.isHorizontal()) {
-    result =
-        static_cast<HorizontalLayout &>(m_rootLayout).setEmptyVisibility(state);
-  }
-  Layout leftL = leftLayout();
-  if (!leftL.isUninitialized() &&
-      leftL.type() == LayoutNode::Type::VerticalOffsetLayout &&
-      static_cast<VerticalOffsetLayout &>(leftL).horizontalPosition() ==
-          VerticalOffsetLayoutNode::HorizontalPosition::Prefix) {
-    result =
-        static_cast<VerticalOffsetLayout &>(leftL).setEmptyVisibility(state) ||
-        result;
-  }
-  Layout rightL = rightLayout();
-  if (!rightL.isUninitialized() &&
-      rightL.type() == LayoutNode::Type::VerticalOffsetLayout &&
-      static_cast<VerticalOffsetLayout &>(rightL).horizontalPosition() ==
-          VerticalOffsetLayoutNode::HorizontalPosition::Suffix) {
-    result =
-        static_cast<VerticalOffsetLayout &>(rightL).setEmptyVisibility(state) ||
-        result;
-  }
-  return result;
-}
-#endif
-
-#if 0
-void LayoutCursor::invalidateSizesAndPositions() {
-  Layout layoutToInvalidate = m_rootLayout;
-  while (!layoutToInvalidate.parent().isUninitialized()) {
-    layoutToInvalidate = layoutToInvalidate.parent();
-  }
-  layoutToInvalidate.invalidAllSizesPositionsAndBaselines();
-}
-#else
-// TODO: Nothing is memoized for now, maybe implement something ?
-#endif
 
 void LayoutBufferCursor::TreeStackCursor::privateDelete(
     DeletionMethod deletionMethod, bool deletionAppliedToParent) {

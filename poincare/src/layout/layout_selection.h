@@ -35,12 +35,6 @@ class LayoutSelection {
 
   LayoutSelection() : LayoutSelection(nullptr, 0, 0) {}
 
-#if 0
-  LayoutSelection cloneTree() {
-    return LayoutSelection(m_rackLayout->cloneTree(), m_startPosition, m_endPosition);
-  }
-#endif
-
   bool isEmpty() const {
     return !m_rackLayout || m_startPosition == m_endPosition;
   }
@@ -52,14 +46,6 @@ class LayoutSelection {
   int endPosition() const { return m_endPosition; }
   int leftPosition() const { return std::min(m_startPosition, m_endPosition); }
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
-
-#if 0
-  bool containsNode(const Tree* n) const {
-    const Block* b = n->block();
-    return !isEmpty() && b >= m_rackLayout->child(leftPosition())->block() &&
-           b <= m_rackLayout->child(rightPosition() - 1)->block();
-  }
-#endif
 
   Tree* cloneSelection() const;
 

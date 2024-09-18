@@ -78,9 +78,23 @@ void process_tree_and_compare(const char* input, const char* output,
                               ProjectionContext projectionContext) {
   Tree* expected = parse(output, projectionContext.m_context);
   Tree* expression = parse(input, projectionContext.m_context);
+  if (!expression || !expected) {
+    // Parsing failed
+    quiz_assert(false);
+    if (expression) {
+      expression->removeTree();
+    } else if (expected) {
+      expected->removeTree();
+    }
+    return;
+  }
   process(expression, projectionContext);
-  quiz_assert(expression);
-  quiz_assert(expected);
+  if (!expression) {
+    // process failed
+    quiz_assert(false);
+    expected->removeTree();
+    return;
+  }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
     Tree* outputLayout =
@@ -116,12 +130,11 @@ Tree* private_parse(const char* input, Poincare::Context* context,
                         ? ParsingContext::ParsingMethod::Assignment
                         : ParsingContext::ParsingMethod::Classic);
   Tree* expression = parser.parse();
-  if (assertNotParsable) {
-    quiz_assert(!expression);
+  if (assertNotParsable || !expression) {
+    quiz_assert(assertNotParsable == !expression);
     layout->removeTree();
     return nullptr;
   }
-  quiz_assert(expression);
   layout->moveTreeOverTree(expression);
   return layout;
 }

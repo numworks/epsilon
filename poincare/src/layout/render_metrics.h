@@ -108,9 +108,9 @@ constexpr KDPoint ChildOffset(KDCoordinate childHeight) {
 }  // namespace SquareBrackets
 
 namespace AbsoluteValue {
-constexpr KDCoordinate k_k_innerWidthMargin = 2;
+constexpr KDCoordinate k_innerWidthMargin = 2;
 constexpr KDCoordinate k_bracketWidth = Pair::k_lineThickness +
-                                        k_k_innerWidthMargin +
+                                        k_innerWidthMargin +
                                         SquareBrackets::k_externalWidthMargin;
 constexpr KDCoordinate k_minVerticalMargin = 0;
 }  // namespace AbsoluteValue

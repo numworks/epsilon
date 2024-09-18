@@ -1239,7 +1239,7 @@ QUIZ_CASE(pcj_simplification_piecewise) {
   simplifies_to("piecewise(4^2,undef,6,4>2)", "undef");
 }
 
-QUIZ_CASE(pcj_distributions) {
+QUIZ_CASE(pcj_simplification_distributions) {
   simplifies_to("binomcdf(3,5,0.4)", "binomcdf(3,5,2/5)");
   simplifies_to("binompdf(3.5,5,0.4)", "binompdf(3,5,2/5)");
   simplifies_to("normcdf(inf,5,0.4)", "1");
@@ -1301,7 +1301,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
-QUIZ_CASE(pcj_decimal) {
+QUIZ_CASE(pcj_simplification_decimal) {
   Tree* tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (-2_e)->cloneTree();

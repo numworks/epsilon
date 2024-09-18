@@ -174,8 +174,14 @@ ComplexSign ArcTangent(ComplexSign s) {
 }
 
 ComplexSign Exponential(ComplexSign s) {
-  return s.isReal() ? ComplexSign::RealStrictlyPositive()
-                    : ComplexSign::Unknown();
+  if (!s.isReal()) {
+    return ComplexSign::Unknown();
+  }
+  if (s.realSign().canBeInfinite() && s.realSign().canBeStrictlyNegative()) {
+    // exp(-inf) = 0 , necessary so that x^y = exp(y*ln(x)) can be null.
+    return ComplexSign::RealPositive();
+  }
+  return ComplexSign::RealStrictlyPositive();
 }
 
 ComplexSign ComplexArgument(ComplexSign s) {
@@ -190,7 +196,7 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign(im.canBeNull() && (re.canBeNull() || re.canBeStrictlyPositive()),
            (im.canBeNull() && re.canBeStrictlyNegative()) ||
                im.canBeStrictlyPositive(),
-           im.canBeStrictlyNegative()),
+           im.canBeStrictlyNegative(), true, false),
       Sign::Zero());
 }
 
@@ -242,12 +248,15 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   }
   bool canBeNull = base.realSign().canBeNull();
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
+  bool canBeInfinite = (base.canBeInfinite() || exp.canBeInfinite()) &&
+                       exp.realSign().canBeStrictlyPositive();
   if (base.isReal()) {
     bool isPositive = expIsTwo || base.realSign().isPositive();
-    return ComplexSign(Sign(canBeNull, true, !isPositive, canBeNonInteger),
-                       Sign::Zero());
+    return ComplexSign(
+        Sign(canBeNull, true, !isPositive, canBeNonInteger, canBeInfinite),
+        Sign::Zero());
   }
-  Sign sign = Sign(true, true, true, canBeNonInteger);
+  Sign sign = Sign(true, true, true, canBeNonInteger, true);
   return ComplexSign(sign, sign);
 }
 

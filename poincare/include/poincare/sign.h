@@ -221,6 +221,9 @@ class ComplexSign {
   static constexpr ComplexSign Zero() {
     return ComplexSign(Sign::Zero(), Sign::Zero());
   }
+  static constexpr ComplexSign RealPositive() {
+    return ComplexSign(Sign::Positive(), Sign::Zero());
+  }
   static constexpr ComplexSign RealStrictlyPositive() {
     return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
   }

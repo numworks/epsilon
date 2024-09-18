@@ -1,8 +1,10 @@
 #include "multiplication_symbol.h"
 
 #include <omg/unreachable.h>
+#include <omg/utf8_helper.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 
 #include <algorithm>
@@ -161,7 +163,9 @@ LayoutShape LeftLayoutShape(const Tree* e) {
     case Type::UserSymbol:
     case Type::UserFunction:
     case Type::UserSequence:
-      return OneLetter;  // TODO_PCJ: or MoreLetters
+      return UTF8Helper::StringGlyphLength(Symbol::GetName(e)) <= 1
+                 ? OneLetter
+                 : MoreLetters;
 
     case Type::Unit:
       return OneLetter;  // had "TODO" in poincare
@@ -225,16 +229,16 @@ LayoutShape RightLayoutShape(const Tree* e) {
   }
 }
 
-enum class Symbol : uint8_t {
+enum class OperatorSymbol : uint8_t {
   // The order matters !
   Empty = 0,
   MiddleDot = 1,
   MultiplicationSign = 2,
 };
 
-using enum Symbol;
+using enum OperatorSymbol;
 
-CodePoint CodePointForOperatorSymbol(Symbol symbol) {
+CodePoint CodePointForOperatorSymbol(OperatorSymbol symbol) {
   switch (symbol) {
     case Empty:
       return UCodePointNull;
@@ -274,7 +278,7 @@ CodePoint CodePointForOperatorSymbol(Symbol symbol) {
  * */
 // clang-format on
 
-Symbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
+OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
   if (left == Default || right == Default || right == Brace) {
     return MiddleDot;
   }
@@ -344,7 +348,7 @@ CodePoint MultiplicationSymbol(const Tree* mult) {
      * for '·'. */
     const Tree* left = mult->child(i);
     const Tree* right = mult->child(i + 1);
-    Symbol symbol;
+    OperatorSymbol symbol;
     if (Units::Unit::IsUnitOrPowerOfUnit(right)) {
       symbol = Units::Unit::IsUnitOrPowerOfUnit(left) ? MiddleDot : Empty;
     } else {
@@ -354,7 +358,7 @@ CodePoint MultiplicationSymbol(const Tree* mult) {
     sign = std::max(sign, static_cast<int>(symbol));
   }
   assert(sign >= 0);
-  return CodePointForOperatorSymbol(static_cast<Symbol>(sign));
+  return CodePointForOperatorSymbol(static_cast<OperatorSymbol>(sign));
 }
 
 }  // namespace Poincare::Internal

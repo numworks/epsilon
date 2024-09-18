@@ -193,6 +193,8 @@ void AbstractPlotView::drawLayout(KDContext* ctx, KDRect rect, Layout layout,
   KDPoint layoutOrigin = computeOrigin(floatToPixel2D(xy), layoutSize,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
+    ctx->fillRect(KDRect(layoutOrigin, layoutSize).intersectedWith(rect),
+                  backgroundColor());
     layout.draw(ctx, layoutOrigin,
                 Escher::LayoutView::DefaultLayoutStyle(
                     {color, backgroundColor(), k_font}));

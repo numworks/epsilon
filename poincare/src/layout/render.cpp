@@ -89,10 +89,6 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
   Tree* withMemo = CloneWithRackMemo(l, &localCursor);
-  /* TODO all screenshots work fine without the fillRect except labels on graphs
-   * when they overlap. We could add a flag to draw it only when necessary. */
-  ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(withMemo), false)),
-                style.backgroundColor);
   LayoutSelection localSelection =
       cursor.rack ? LayoutSelection(localCursor.rack, selection.startPosition(),
                                     selection.endPosition())

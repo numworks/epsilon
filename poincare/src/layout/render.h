@@ -22,17 +22,21 @@ class Render {
   friend KDSize Size(const Rack* rack);
 
  public:
-  static KDSize Size(const Tree* l, KDFont::Size fontSize, int leftPosition = 0,
+  static KDSize Size(const Tree* l, KDFont::Size fontSize,
+                     const SimpleLayoutCursor& cursor, int leftPosition = 0,
                      int rightPosition = -1);
 
   static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize,
+                               const SimpleLayoutCursor& cursor,
                                int leftPosition = 0, int rightPosition = -1);
 
   static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root,
-                                KDFont::Size fontSize);
+                                KDFont::Size fontSize,
+                                const SimpleLayoutCursor& cursor);
+
   static void Draw(const Tree* l, KDContext* ctx, KDPoint p,
-                   const LayoutStyle& style,
-                   const LayoutCursor* cursor = nullptr);
+                   const LayoutStyle& style, const SimpleLayoutCursor& cursor,
+                   const LayoutSelection& selection);
 
   constexpr static KDCoordinate k_maxLayoutSize = 3 * KDCOORDINATE_MAX / 4;
 

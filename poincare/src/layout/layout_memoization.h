@@ -6,6 +6,7 @@
 namespace Poincare::Internal {
 
 class LayoutCursor;
+struct SimpleLayoutCursor;
 
 // Helper class to cache the size and the baseline of a Pool Layout.
 class LayoutMemoization {
@@ -29,8 +30,10 @@ class LayoutMemoization {
                         LayoutCursor* cursor = nullptr) const;
 
  private:
-  virtual KDSize computeSize(KDFont::Size font) const = 0;
-  virtual KDCoordinate computeBaseline(KDFont::Size font) const = 0;
+  virtual KDSize computeSize(KDFont::Size font,
+                             const LayoutCursor* cursor) const = 0;
+  virtual KDCoordinate computeBaseline(KDFont::Size font,
+                                       const LayoutCursor* cursor) const = 0;
   mutable KDSize m_size;
   /* m_baseline is the signed vertical distance from the top of the layout to
    * the fraction bar of an hypothetical fraction sibling layout. If the top of

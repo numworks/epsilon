@@ -5,6 +5,7 @@
 #include <poincare/layout_style.h>
 
 #include "../memory/tree_ref.h"
+#include "layout_selection.h"
 #include "rack.h"
 
 namespace Poincare::Internal {
@@ -43,8 +44,7 @@ class RackLayout {
   static const Layout* FindBase(const Rack* rack, const Layout* verticalOffset,
                                 int verticalOffsetIndex);
 
-  static const Rack* s_cursorRack;
-  static int s_cursorPosition;
+  static const SimpleLayoutCursor* s_cursor;
 };
 
 }  // namespace Poincare::Internal

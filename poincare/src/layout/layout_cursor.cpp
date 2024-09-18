@@ -47,7 +47,7 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
     left = currentSelection.leftPosition();
     right = currentSelection.rightPosition();
   }
-  return Render::Size(cursorRack(), font, left, right).height();
+  return Render::Size(cursorRack(), font, simpleCursor(), left, right).height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
@@ -61,12 +61,14 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
     left = currentSelection.leftPosition();
     right = currentSelection.rightPosition();
   }
-  cursorBaseline = Render::Baseline(cursorRack(), font, left, right);
+  cursorBaseline =
+      Render::Baseline(cursorRack(), font, simpleCursor(), left, right);
   KDCoordinate cursorYOriginInLayout =
-      Render::Baseline(cursorRack(), font) - cursorBaseline;
+      Render::Baseline(cursorRack(), font, simpleCursor()) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
-  cursorXOffset = Render::Size(cursorRack(), font, 0, m_position).width();
-  return Render::AbsoluteOrigin(cursorRack(), rootRack(), font)
+  cursorXOffset =
+      Render::Size(cursorRack(), font, simpleCursor(), 0, m_position).width();
+  return Render::AbsoluteOrigin(cursorRack(), rootRack(), font, simpleCursor())
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
@@ -76,7 +78,7 @@ KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) const {
 }
 
 KDCoordinate LayoutCursor::cursorBaseline(KDFont::Size font) const {
-  return Render::Baseline(cursorRack(), font);
+  return Render::Baseline(cursorRack(), font, simpleCursor());
 }
 
 static const Tree* mostNestedGridParent(const Tree* l, const Tree* root) {

@@ -228,7 +228,7 @@ KDSize Render::Size(const Layout* l) {
   return KDSize(width, height);
 }
 
-Tree* cloneWithRackMemo(const Tree* l);
+Tree* cloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor);
 
 KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
   assert(root <= l && root->nextTree() > l);
@@ -254,23 +254,27 @@ KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
 }
 
 KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
-                               KDFont::Size fontSize) {
-  Render::s_font = fontSize;
-  RackLayout::s_cursorRack = Rack::From(l);
-  // assert(l == RackLayout::s_cursorRack);
-  Tree* withMemoRoot = cloneWithRackMemo(root);
-  KDPoint result = AbsoluteOriginRec(RackLayout::s_cursorRack, withMemoRoot);
+                               KDFont::Size fontSize,
+                               const SimpleLayoutCursor& cursor) {
+  s_font = fontSize;
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = cloneWithRackMemo(root, &localCursor);
+  KDPoint result = AbsoluteOriginRec(localCursor.rack, withMemoRoot);
   withMemoRoot->removeTree();
   return result;
 }
 
-KDSize Render::Size(const Tree* l, KDFont::Size fontSize, int leftPosition,
+KDSize Render::Size(const Tree* l, KDFont::Size fontSize,
+                    const SimpleLayoutCursor& cursor, int leftPosition,
                     int rightPosition) {
   if (rightPosition == -1) {
     rightPosition = l->numberOfChildren();
   }
   s_font = fontSize;
-  Tree* withMemoRoot = cloneWithRackMemo(l);
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = cloneWithRackMemo(l, &localCursor);
   KDSize result =
       RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
                                      leftPosition, rightPosition, false);
@@ -279,12 +283,15 @@ KDSize Render::Size(const Tree* l, KDFont::Size fontSize, int leftPosition,
 }
 
 KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
+                              const SimpleLayoutCursor& cursor,
                               int leftPosition, int rightPosition) {
   if (rightPosition == -1) {
     rightPosition = l->numberOfChildren();
   }
   s_font = fontSize;
-  Tree* withMemoRoot = cloneWithRackMemo(l);
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemoRoot = cloneWithRackMemo(l, &localCursor);
   KDCoordinate result = RackLayout::BaselineBetweenIndexes(
       static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
   withMemoRoot->removeTree();
@@ -622,13 +629,13 @@ KDCoordinate Render::Baseline(const Layout* l) {
   };
 }
 
-Tree* cloneWithRackMemo(const Tree* l) {
-  const Rack* prev = RackLayout::s_cursorRack;
+/* Clone rack replacing basic racks with memo racks and update the cursor to
+ * make it point in the new tree. */
+Tree* cloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor) {
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   for (const Tree* n : l->selfAndDescendants()) {
-    if (prev == n) {
-      RackLayout::s_cursorRack =
-          static_cast<const Rack*>(SharedTreeStack->lastBlock());
+    if (cursor->rack == n) {
+      cursor->rack = static_cast<const Rack*>(SharedTreeStack->lastBlock());
     }
     if (n->isRackLayout() && n->numberOfChildren() > 0) {
       SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
@@ -640,21 +647,21 @@ Tree* cloneWithRackMemo(const Tree* l) {
 }
 
 void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
-                  const LayoutStyle& style, const LayoutCursor* cursor) {
+                  const LayoutStyle& style, const SimpleLayoutCursor& cursor,
+                  const LayoutSelection& selection) {
   Render::s_font = style.font;
-  RackLayout::s_cursorRack = cursor ? cursor->cursorRack() : nullptr;
-  RackLayout::s_cursorPosition = cursor ? cursor->position() : 0;
-  Tree* withMemo = cloneWithRackMemo(l);
+  SimpleLayoutCursor localCursor = cursor;
+  RackLayout::s_cursor = &localCursor;
+  Tree* withMemo = cloneWithRackMemo(l, &localCursor);
   /* TODO all screenshots work fine without the fillRect except labels on graphs
    * when they overlap. We could add a flag to draw it only when necessary. */
   ctx->fillRect(KDRect(p, Size(static_cast<const Rack*>(withMemo), false)),
                 style.backgroundColor);
-  LayoutSelection selection =
-      cursor ? LayoutSelection(RackLayout::s_cursorRack,
-                               cursor->selection().startPosition(),
-                               cursor->selection().endPosition())
-             : LayoutSelection();
-  DrawRack(Rack::From(withMemo), ctx, p, style, selection, false);
+  LayoutSelection localSelection =
+      cursor.rack ? LayoutSelection(localCursor.rack, selection.startPosition(),
+                                    selection.endPosition())
+                  : LayoutSelection();
+  DrawRack(Rack::From(withMemo), ctx, p, style, localSelection, false);
   withMemo->removeTree();
 }
 

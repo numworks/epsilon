@@ -8,11 +8,11 @@
 namespace Poincare::Internal {
 
 bool Grid::isEditing() const {
-  if (!RackLayout::s_cursorRack) {
+  if (!RackLayout::s_cursor) {
     return false;
   }
   // TODO isEditing is called a lot, is nextTree too expensive ?
-  const Tree* cursorRack = RackLayout::s_cursorRack;
+  const Tree* cursorRack = RackLayout::s_cursor->rack;
   return this <= cursorRack && cursorRack < nextTree();
 }
 

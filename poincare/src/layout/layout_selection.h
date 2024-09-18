@@ -5,7 +5,14 @@
 
 #include <algorithm>
 
+#include "rack.h"
+
 namespace Poincare::Internal {
+
+struct SimpleLayoutCursor {
+  const Rack* rack = nullptr;
+  int position;
+};
 
 class LayoutSelection {
  public:

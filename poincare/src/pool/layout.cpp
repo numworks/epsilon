@@ -28,17 +28,18 @@ void LayoutObject::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-KDSize LayoutObject::computeSize(KDFont::Size font) const {
-  return Internal::Render::Size(tree(), font);
+KDSize LayoutObject::computeSize(KDFont::Size font,
+                                 const Internal::LayoutCursor* cursor) const {
+  return Internal::Render::Size(
+      tree(), font,
+      cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor());
 }
 
-KDCoordinate LayoutObject::computeBaseline(KDFont::Size font) const {
-  return Internal::Render::Baseline(tree(), font);
-}
-
-void LayoutObject::render(KDContext* ctx, KDPoint p,
-                          const LayoutStyle& style) const {
-  Internal::Render::Draw(tree(), ctx, p, style);
+KDCoordinate LayoutObject::computeBaseline(
+    KDFont::Size font, const Internal::LayoutCursor* cursor) const {
+  return Internal::Render::Baseline(
+      tree(), font,
+      cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor());
 }
 
 size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
@@ -144,7 +145,10 @@ void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
 
 void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
                         Internal::LayoutCursor* cursor) const {
-  Internal::Render::Draw(tree(), ctx, p, style, cursor);
+  Internal::Render::Draw(
+      tree(), ctx, p, style,
+      cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor(),
+      cursor ? cursor->selection() : Internal::LayoutSelection());
 }
 
 Layout Layout::clone() const {

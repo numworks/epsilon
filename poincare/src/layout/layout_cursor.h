@@ -92,6 +92,10 @@ class LayoutCursor {
   static int RightmostPossibleCursorPosition(Layout l);
 #endif
 
+  SimpleLayoutCursor simpleCursor() const {
+    return {.rack = cursorRack(), .position = position()};
+  }
+
  protected:
   virtual void setCursorRack(Rack* rack) = 0;
   void setCursorRack(Rack* rack, int childIndex, OMG::HorizontalDirection side);

@@ -13,8 +13,7 @@ namespace VerticalOffset {
 constexpr static KDCoordinate IndiceHeight = 10;
 }  // namespace VerticalOffset
 
-const Rack* RackLayout::s_cursorRack = nullptr;
-int RackLayout::s_cursorPosition;
+const SimpleLayoutCursor* RackLayout::s_cursor = nullptr;
 
 KDSize RackLayout::Size(const Rack* node, bool showEmpty) {
   return SizeBetweenIndexes(node, 0, node->numberOfChildren(), showEmpty);
@@ -25,7 +24,7 @@ KDCoordinate RackLayout::Baseline(const Rack* node) {
 }
 
 bool RackLayout::ShouldDrawEmptyBaseAt(const Rack* node, int p) {
-  return !(s_cursorRack && s_cursorRack == node && s_cursorPosition == p);
+  return !(s_cursor && s_cursor->rack == node && s_cursor->position == p);
 }
 
 void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
@@ -286,10 +285,10 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Rack* node) {
   if (node->numberOfChildren() != 0) {
     return false;
   }
-  if (!RackLayout::s_cursorRack) {
+  if (!RackLayout::s_cursor) {
     return true;
   }
-  if (node == s_cursorRack) {
+  if (node == s_cursor->rack) {
     return false;
   }
   return true;

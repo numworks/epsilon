@@ -11,11 +11,7 @@ namespace Poincare::Internal {
 KDSize LayoutMemoization::layoutSize(KDFont::Size font,
                                      Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
-    Poincare::Internal::RackLayout::s_cursorRack =
-        cursor ? cursor->cursorRack() : nullptr;
-    Poincare::Internal::RackLayout::s_cursorPosition =
-        cursor ? cursor->position() : 0;
-    KDSize size = computeSize(font);
+    KDSize size = computeSize(font, cursor);
 
     /* This method will raise an exception if the size of the layout that is
      * passed is beyond k_maxLayoutSize.
@@ -59,11 +55,7 @@ KDSize LayoutMemoization::layoutSize(KDFont::Size font,
 KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
                                          Internal::LayoutCursor* cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
-    Poincare::Internal::RackLayout::s_cursorRack =
-        cursor ? cursor->cursorRack() : nullptr;
-    Poincare::Internal::RackLayout::s_cursorPosition =
-        cursor ? cursor->position() : 0;
-    m_baseline = computeBaseline(font);
+    m_baseline = computeBaseline(font, cursor);
     m_flags.m_baselined = true;
     m_flags.m_baselineFontSize = font;
   }

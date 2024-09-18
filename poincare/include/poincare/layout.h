@@ -13,6 +13,7 @@ namespace Poincare::Internal {
 class Block;
 class Tree;
 class LayoutCursor;
+struct SimpleLayoutCursor;
 struct ContextTrees;
 }  // namespace Poincare::Internal
 
@@ -41,14 +42,15 @@ class LayoutObject final : public PoolObject,
                    int numberOfSignificantDigits = 0) const override;
 
   // LayoutNode
-  KDSize computeSize(KDFont::Size font) const override;
-  KDCoordinate computeBaseline(KDFont::Size font) const override;
+  KDSize computeSize(KDFont::Size font,
+                     const Internal::LayoutCursor* cursor) const override;
+  KDCoordinate computeBaseline(
+      KDFont::Size font, const Internal::LayoutCursor* cursor) const override;
 
   bool isIdenticalTo(Layout l, bool makeEditable) const;
 
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
             Internal::LayoutCursor* cursor) const;
-  void render(KDContext* ctx, KDPoint p, const LayoutStyle& style) const;
 
   const Internal::Tree* tree() const;
   Internal::Tree* tree();

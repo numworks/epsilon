@@ -119,10 +119,9 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    int i = 0;
-    for (const Tree* symbol : userSymbols->children()) {
-      assert(i < k_maxNumberOfExactSolutions);
-      Symbol::CopyName(symbol, context->variables[i++],
+    for (IndexedChild<const Tree*> symbol : userSymbols->indexedChildren()) {
+      assert(symbol.index < k_maxNumberOfExactSolutions);
+      Symbol::CopyName(symbol, context->variables[symbol.index],
                        Symbol::k_maxNameLength);
       Variables::LeaveScopeWithReplacement(result, symbol, false);
     }

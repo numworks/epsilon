@@ -235,7 +235,7 @@ template <size_t MaxNumberOfBlocks>
 class TemplatedTreeStack : public AbstractTreeStack {
  public:
   constexpr static size_t k_maxNumberOfBlocks = MaxNumberOfBlocks;
-  constexpr static size_t k_maxNumberOfTreeRefs = MaxNumberOfBlocks / 8;
+  constexpr static size_t k_maxNumberOfReferences = MaxNumberOfBlocks / 8;
 
   TemplatedTreeStack()
       : AbstractTreeStack{m_concreteReferenceTable, m_blockBuffer,
@@ -244,7 +244,7 @@ class TemplatedTreeStack : public AbstractTreeStack {
  private:
   ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};
   Block m_blockBuffer[k_maxNumberOfBlocks];
-  uint16_t m_nodeOffsetBuffer[k_maxNumberOfTreeRefs];
+  uint16_t m_nodeOffsetBuffer[k_maxNumberOfReferences];
 };
 
 class TreeStack : public TemplatedTreeStack<1024 * 16> {

@@ -192,11 +192,13 @@ class AbstractTreeStack : public AbstractBlockStack {
     log(std::cout, LogFormat::Tree, false);
   }
 #endif
- private:
+
+ protected:
   Tree* clone(const Tree* node, bool isTree = true) {
     return initFromAddress(static_cast<const void*>(node->block()), isTree);
   }
 
+ private:
   Tree::ConstNodes allNodes() {
     return Tree::ConstNodes(Tree::FromBlocks(firstBlock()), numberOfTrees());
   }

@@ -117,16 +117,18 @@ QUIZ_CASE(pcj_sign_methods) {
 
   // Frac
   quiz_assert(DecimalFunction(Sign::Zero(), Type::Frac) == Sign::Zero());
-  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Frac) == Sign::Positive());
+  quiz_assert(DecimalFunction(Sign::NonNull(), Type::Frac) ==
+              Sign::FinitePositive());
   quiz_assert(DecimalFunction(Sign::StrictlyPositive(), Type::Frac) ==
-              Sign::Positive());
+              Sign::FinitePositive());
   quiz_assert(DecimalFunction(Sign::Positive(), Type::Frac) ==
-              Sign::Positive());
+              Sign::FinitePositive());
   quiz_assert(DecimalFunction(Sign::StrictlyNegative(), Type::Frac) ==
-              Sign::Positive());
+              Sign::FinitePositive());
   quiz_assert(DecimalFunction(Sign::Negative(), Type::Frac) ==
-              Sign::Positive());
-  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Frac) == Sign::Positive());
+              Sign::FinitePositive());
+  quiz_assert(DecimalFunction(Sign::Unknown(), Type::Frac) ==
+              Sign::FinitePositive());
   quiz_assert(DecimalFunction(Sign::StrictlyPositiveInteger(), Type::Frac) ==
               Sign::Zero());
   quiz_assert(DecimalFunction(Sign::PositiveInteger(), Type::Frac) ==

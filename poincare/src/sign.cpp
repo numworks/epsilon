@@ -39,6 +39,7 @@ Sign DecimalFunction(Sign s, Internal::Type type) {
       canBeNull = true;
       canBeStrictlyPositive = canBeNonInteger;
       canBeStrictlyNegative = false;
+      canBeInfinite = false;
       break;
     case Internal::Type::Round:
       canBeNull = true;

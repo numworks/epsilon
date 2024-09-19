@@ -29,22 +29,24 @@ static void assert_properties(const Tree* numerator, const Tree* denominator,
 }
 
 QUIZ_CASE(pcj_rational_properties) {
-  assert_properties(3_e, 8_e, Type::RationalPosShort, Sign::StrictlyPositive());
+  assert_properties(3_e, 8_e, Type::RationalPosShort,
+                    Sign::FiniteStrictlyPositive());
   assert_properties(-1_e, 255_e, Type::RationalNegShort,
-                    Sign::StrictlyNegative());
-  assert_properties(1_e, -1_e, Type::MinusOne, Sign::StrictlyNegativeInteger());
-  assert_properties(-1_e, -2_e, Type::Half, Sign::StrictlyPositive());
+                    Sign::FiniteStrictlyNegative());
+  assert_properties(1_e, -1_e, Type::MinusOne,
+                    Sign::FiniteStrictlyNegativeInteger());
+  assert_properties(-1_e, -2_e, Type::Half, Sign::FiniteStrictlyPositive());
   assert_properties(127_e, -255_e, Type::RationalNegShort,
-                    Sign::StrictlyNegative());
+                    Sign::FiniteStrictlyNegative());
   assert_properties(0_e, 5_e, Type::Zero, Sign::Zero());
   assert_properties(32134123_e, 812312312_e, Type::RationalPosBig,
-                    Sign::StrictlyPositive());
+                    Sign::FiniteStrictlyPositive());
   assert_properties(32134123_e, -812312312_e, Type::RationalNegBig,
-                    Sign::StrictlyNegative());
+                    Sign::FiniteStrictlyNegative());
   assert_properties(-32134123_e, 812312312_e, Type::RationalNegBig,
-                    Sign::StrictlyNegative());
+                    Sign::FiniteStrictlyNegative());
   assert_properties(-32134123_e, -812312312_e, Type::RationalPosBig,
-                    Sign::StrictlyPositive());
+                    Sign::FiniteStrictlyPositive());
   assert_properties(0_e, 812312312_e, Type::Zero, Sign::Zero());
   assert_properties(0_e, -812312312_e, Type::Zero, Sign::Zero());
 }

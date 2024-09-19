@@ -145,8 +145,14 @@ class Sign {
   constexpr static Sign FiniteStrictlyPositive() {
     return Sign(false, true, false, true, false);
   }
+  constexpr static Sign FiniteStrictlyNegative() {
+    return Sign(false, false, true, true, false);
+  }
   constexpr static Sign FiniteStrictlyPositiveInteger() {
     return Sign(false, true, false, false, false);
+  }
+  constexpr static Sign FiniteStrictlyNegativeInteger() {
+    return Sign(false, false, true, false, false);
   }
 
 #if POINCARE_TREE_LOG

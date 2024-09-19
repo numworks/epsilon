@@ -23,6 +23,7 @@ KDFont::Size Render::s_font = KDFont::Size::Large;
 static Tree* CloneWithRackMemoized(const Tree* l, SimpleLayoutCursor* cursor) {
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   for (const Tree* n : l->selfAndDescendants()) {
+    assert(!n->isRackMemoizedLayout());
     if (cursor->rack == n) {
       cursor->rack = static_cast<const Rack*>(SharedTreeStack->lastBlock());
     }

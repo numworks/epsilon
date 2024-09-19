@@ -522,7 +522,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
     for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
       Tree* solution = solutionList->child(i);
       ComplexSign sign = GetComplexSign(solution);
-      // TODO: approximate if unknown
+      // TODO_PCJ: approximate if unknown
       if (!sign.isReal()) {
         NAry::RemoveChildAtIndex(solutionList, i);
       }

@@ -30,7 +30,7 @@ class EquationSolver {
     TooManyVariables = 3,
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,
-    DisabledInExamMode,  // TODO rebased from poincare
+    DisabledInExamMode,  // TODO_PCJ
   };
 
   struct Context {

@@ -44,7 +44,7 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
-    // Variable is now displayed in the equation solution
+    // Variable is displayed in the equation solution
     assert(index < m_numberOfSolvingVariables &&
            m_solverContext.variables[index][0] != '\0');
     return m_solverContext.variables[index];

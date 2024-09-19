@@ -688,9 +688,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
           // Flat conic
           list->removeNode();
         } else if (list->numberOfChildren() == 2) {
-          /* Swap the equations since conics inequalities use assume their
-           * equations are in a certain order to make the distinction between
-           * inside and outside. */
+          /* Swap the equations since conics inequalities assume their equations
+           * are in a certain order to make the distinction between inside and
+           * outside. */
           list->child(0)->swapWithTree(list->child(1));
         }
         m_expression = SystemExpression::Builder(list);

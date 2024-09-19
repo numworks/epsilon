@@ -104,6 +104,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
   }
 #endif
+  assert(!result);
   set->removeTree();
   return error;
 }
@@ -248,7 +249,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* result = Poincare::Internal::EquationSolver::ApproximateSolve(
       equation, m_approximateSolvingRange, &m_solverContext);
 
-  assert(result);
+  assert(result && result->isList());
   // Update member variables for LinearSystem
   m_type = m_solverContext.type;
   m_degree = m_solverContext.degree;

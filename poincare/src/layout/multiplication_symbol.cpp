@@ -254,7 +254,7 @@ CodePoint CodePointForOperatorSymbol(OperatorSymbol symbol) {
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Unit |   Default
+ * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BoundaryPunct | Root | NthRoot | Fraction | Unit |   Default
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
@@ -264,7 +264,7 @@ CodePoint CodePointForOperatorSymbol(OperatorSymbol symbol) {
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * MoreLetters   |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * BundaryPunct. |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
+ * BoundaryPunct |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
  * Brace         |    •    |    •    |     •     |      •      |       ×       |  •   |    •    |    •     |  ø   |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------

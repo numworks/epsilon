@@ -321,7 +321,7 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("(abs(x)+i)*abs(abs(x)-i)",
               ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
-              ComplexSign(Sign::StrictlyPositive(), Sign::Unknown()));
+              ComplexSign(Sign::StrictlyPositive(), Sign::Finite()));
   assert_sign("re(abs(x)-i)+i*arg(2+i)",
               ComplexSign(Sign::Positive(), Sign::FiniteStrictlyPositive()));
 
@@ -341,15 +341,15 @@ QUIZ_CASE(pcj_sign) {
 
   // ln
   assert_sign("ln(0)", ComplexSign::Unknown());
-  assert_sign("ln(3)", Sign::Unknown());
+  assert_sign("ln(3)", Sign::Finite());
   assert_sign("ln(-3)",
-              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyPositive()));
+              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
   assert_sign("ln(ln(3))",
               ComplexSign(Sign::Unknown(), Sign::FinitePositive()));
   assert_sign("ln(4+i)",
-              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyPositive()));
+              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
   assert_sign("ln(4-i)",
-              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyNegative()));
+              ComplexSign(Sign::Finite(), Sign::FiniteStrictlyNegative()));
   assert_sign("ln(ln(x+i*y)i)", ComplexSign(Sign::Unknown(), Sign::Finite()));
 
   // power

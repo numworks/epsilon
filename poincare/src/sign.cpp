@@ -203,12 +203,13 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
-// Note: we could get more info on canBeInfinite
 ComplexSign Ln(ComplexSign s) {
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
    * im(ln(z)) = arg(z) */
-  return ComplexSign(Sign::Unknown(), ComplexArgument(s).realSign());
+  Sign realSign =
+      (s.isFinite() && !s.canBeNull()) ? Sign::Finite() : Sign::Unknown();
+  return ComplexSign(realSign, ComplexArgument(s).realSign());
 }
 
 ComplexSign DecimalFunction(ComplexSign s, Internal::Type type) {

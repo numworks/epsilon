@@ -65,6 +65,7 @@ class Sign {
   }
   constexpr bool isNegative() const { return !m_canBeStrictlyPositive; }
   constexpr bool isPositive() const { return !m_canBeStrictlyNegative; }
+  constexpr bool isFinite() const { return !m_canBeInfinite; }
   // It can be positive, negative and null
   constexpr bool isUnknown() const {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative;
@@ -207,6 +208,9 @@ class ComplexSign {
     return realSign().canBeNonInteger() || imagSign().canBeNonInteger();
   }
   constexpr bool isInteger() const { return !canBeNonInteger(); }
+  constexpr bool isFinite() const {
+    return realSign().isFinite() && imagSign().isFinite();
+  }
   constexpr bool canBeInfinite() const {
     return realSign().canBeInfinite() || imagSign().canBeInfinite();
   }

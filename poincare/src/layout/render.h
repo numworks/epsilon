@@ -25,7 +25,7 @@ class Render {
   /* The externally visible functions use the font and cursor passed in argument
    * to set static variables referred to by the private functions.  They are
    * also responsible of creating and deleting a temporary copy of the layout,
-   * with Racks replaced by RackMemo.
+   * with Racks replaced by RackMemoized.
    */
 
   static KDSize Size(const Tree* l, KDFont::Size fontSize,

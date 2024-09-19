@@ -20,14 +20,14 @@ KDFont::Size Render::s_font = KDFont::Size::Large;
 
 /* Clone rack replacing basic racks with memo racks and update the cursor to
  * make it point in the new tree. */
-static Tree* CloneWithRackMemo(const Tree* l, SimpleLayoutCursor* cursor) {
+static Tree* CloneWithRackMemoized(const Tree* l, SimpleLayoutCursor* cursor) {
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   for (const Tree* n : l->selfAndDescendants()) {
     if (cursor->rack == n) {
       cursor->rack = static_cast<const Rack*>(SharedTreeStack->lastBlock());
     }
     if (n->isRackLayout() && n->numberOfChildren() > 0) {
-      SharedTreeStack->pushRackMemoLayout(n->numberOfChildren());
+      SharedTreeStack->pushRackMemoizedLayout(n->numberOfChildren());
     } else {
       n->cloneNode();
     }
@@ -46,7 +46,7 @@ KDSize Render::Size(const Tree* l, KDFont::Size fontSize,
   s_font = fontSize;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = CloneWithRackMemo(l, &localCursor);
+  Tree* withMemoRoot = CloneWithRackMemoized(l, &localCursor);
   KDSize result =
       RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
                                      leftPosition, rightPosition, false);
@@ -63,7 +63,7 @@ KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
   s_font = fontSize;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = CloneWithRackMemo(l, &localCursor);
+  Tree* withMemoRoot = CloneWithRackMemoized(l, &localCursor);
   KDCoordinate result = RackLayout::BaselineBetweenIndexes(
       static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
   withMemoRoot->removeTree();
@@ -76,7 +76,7 @@ KDPoint Render::AbsoluteOrigin(const Tree* l, const Tree* root,
   s_font = fontSize;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
-  Tree* withMemoRoot = CloneWithRackMemo(root, &localCursor);
+  Tree* withMemoRoot = CloneWithRackMemoized(root, &localCursor);
   KDPoint result = AbsoluteOriginRec(localCursor.rack, withMemoRoot);
   withMemoRoot->removeTree();
   return result;
@@ -88,7 +88,7 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
   Render::s_font = style.font;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
-  Tree* withMemo = CloneWithRackMemo(l, &localCursor);
+  Tree* withMemo = CloneWithRackMemoized(l, &localCursor);
   LayoutSelection localSelection =
       cursor.rack ? LayoutSelection(localCursor.rack, selection.startPosition(),
                                     selection.endPosition())
@@ -100,27 +100,28 @@ void Render::Draw(const Tree* l, KDContext* ctx, KDPoint p,
 /* Implementations on Rack */
 
 KDSize Render::Size(const Rack* l, bool showEmpty) {
-  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->width != 0) {
-    return KDSize(l->toRackMemoLayoutNode()->width,
-                  l->toRackMemoLayoutNode()->height);
+  if (l->isRackMemoizedLayout() && l->toRackMemoizedLayoutNode()->width != 0) {
+    return KDSize(l->toRackMemoizedLayoutNode()->width,
+                  l->toRackMemoizedLayoutNode()->height);
   }
   KDSize size = RackLayout::Size(l, showEmpty);
-  if (l->isRackMemoLayout()) {
+  if (l->isRackMemoizedLayout()) {
     assert(size.width() != INT16_MAX);
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->width = size.width();
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->height = size.height();
+    const_cast<Rack*>(l)->toRackMemoizedLayoutNode()->width = size.width();
+    const_cast<Rack*>(l)->toRackMemoizedLayoutNode()->height = size.height();
   }
   return size;
 }
 
 KDCoordinate Render::Baseline(const Rack* l) {
-  if (l->isRackMemoLayout() && l->toRackMemoLayoutNode()->baseline != 0) {
-    return l->toRackMemoLayoutNode()->baseline;
+  if (l->isRackMemoizedLayout() &&
+      l->toRackMemoizedLayoutNode()->baseline != 0) {
+    return l->toRackMemoizedLayoutNode()->baseline;
   }
   KDCoordinate baseline = RackLayout::Baseline(l);
-  if (l->isRackMemoLayout()) {
+  if (l->isRackMemoizedLayout()) {
     assert(baseline != 0);
-    const_cast<Rack*>(l)->toRackMemoLayoutNode()->baseline = baseline;
+    const_cast<Rack*>(l)->toRackMemoizedLayoutNode()->baseline = baseline;
   }
   return baseline;
 }

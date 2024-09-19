@@ -38,7 +38,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   /* TODO: perf: this method and the related ones cursorHeight, cursorBaseline,
    * middleLeftPoint call Render methods with the same arguments several
    * times. We should add a CursorRect on render or expose the
-   * clonedWithRackMemo tree to build it only once. */
+   * clonedWithRackMemoized tree to build it only once. */
   int left, right;
   if (currentSelection.isEmpty()) {
     left = std::max(leftmostPosition(), m_position - 1);

@@ -152,18 +152,18 @@ Tree* AbstractTreeStack::pushVerticalOffsetLayout(bool isSubscript,
 
 Tree* AbstractTreeStack::pushRackLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
-  Tree* result = pushBlock(Type::RackBasicLayout);
+  Tree* result = pushBlock(Type::RackSimpleLayout);
   pushBlock(nbChildren % 256);
   pushBlock(nbChildren / 256);
   return result;
 }
 
-Tree* AbstractTreeStack::pushRackMemoLayout(int nbChildren) {
+Tree* AbstractTreeStack::pushRackMemoizedLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
-  Tree* result = pushBlock(Type::RackMemoLayout);
+  Tree* result = pushBlock(Type::RackMemoizedLayout);
   pushBlock(nbChildren % 256);
   pushBlock(nbChildren / 256);
-  for (int i = 0; i < sizeof(CustomTypeStructs::RackMemoLayoutNode); i++) {
+  for (int i = 0; i < sizeof(CustomTypeStructs::RackMemoizedLayoutNode); i++) {
     pushBlock(0);
   }
   return result;

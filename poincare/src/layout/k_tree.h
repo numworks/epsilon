@@ -9,7 +9,7 @@ namespace Poincare::Internal {
 namespace KTrees {
 
 // TODO: A RackLayout shouldn't have RackLayout children.
-constexpr auto KRackL = KNAry16<Type::RackBasicLayout>();
+constexpr auto KRackL = KNAry16<Type::RackSimpleLayout>();
 
 constexpr auto KSuperscriptL = KUnary<Type::VerticalOffsetLayout, 0>();
 constexpr auto KSubscriptL = KUnary<Type::VerticalOffsetLayout, 1>();
@@ -49,44 +49,44 @@ constexpr auto KPtBinomialL = KBinary<Type::PtBinomialLayout>();
 constexpr auto KPtPermuteL = KBinary<Type::PtPermuteLayout>();
 
 constexpr auto KEmptyMatrixL =
-    KTree<Type::MatrixLayout, 2, 2, Type::RackBasicLayout, 0, 0,
-          Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0,
-          Type::RackBasicLayout, 0, 0>();
+    KTree<Type::MatrixLayout, 2, 2, Type::RackSimpleLayout, 0, 0,
+          Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0,
+          Type::RackSimpleLayout, 0, 0>();
 
 template <KTreeConcept A>
 constexpr auto KMatrix1x1L(A) {
   return Concat<
       KTree<Type::MatrixLayout, 2, 2>, A,
-      KTree<Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0,
-            Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0>>();
+      KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0,
+            Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
 template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D>
 constexpr auto KMatrix2x2L(A, B, C, D) {
   return Concat<KTree<Type::MatrixLayout, 3, 3>, A, B,
-                KTree<Type::RackBasicLayout, 0, 0>, C, D,
-                KTree<Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0,
-                      Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0,
-                      Type::RackBasicLayout, 0, 0>>();
+                KTree<Type::RackSimpleLayout, 0, 0>, C, D,
+                KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0,
+                      0, Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout,
+                      0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
 constexpr auto KEmptyPiecewiseL =
-    KTree<Type::PiecewiseLayout, 2, 2, Type::RackBasicLayout, 0, 0,
-          Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0,
-          Type::RackBasicLayout, 0, 0>();
+    KTree<Type::PiecewiseLayout, 2, 2, Type::RackSimpleLayout, 0, 0,
+          Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0,
+          Type::RackSimpleLayout, 0, 0>();
 
 template <KTreeConcept A, KTreeConcept B>
 constexpr auto KPiecewise1L(A, B) {
   return Concat<
       KTree<Type::PiecewiseLayout, 2, 2>, A, B,
-      KTree<Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0>>();
+      KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
 template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D>
 constexpr auto KPiecewise2L(A, B, C, D) {
   return Concat<
       KTree<Type::PiecewiseLayout, 3, 2>, A, B, C, D,
-      KTree<Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0>>();
+      KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
 template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D,
@@ -94,7 +94,7 @@ template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D,
 constexpr auto KPiecewise3L(A, B, C, D, E, F) {
   return Concat<
       KTree<Type::PiecewiseLayout, 4, 2>, A, B, C, D, E, F,
-      KTree<Type::RackBasicLayout, 0, 0, Type::RackBasicLayout, 0, 0>>();
+      KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
 constexpr auto KConjL = KUnary<Type::ConjLayout>();
@@ -133,17 +133,17 @@ using KCombinedCodePointL =
 template <String S,
           typename IS =
               decltype(std::make_index_sequence<S.codePointSize() - 1>())>
-struct _RackBasicLayoutHelper;
+struct _RackSimpleLayoutHelper;
 
 template <String S, std::size_t... I>
-struct _RackBasicLayoutHelper<S, std::index_sequence<I...>>
+struct _RackSimpleLayoutHelper<S, std::index_sequence<I...>>
     : Concat<
-          KTree<Type::RackBasicLayout, sizeof...(I) % 256, sizeof...(I) / 256>,
+          KTree<Type::RackSimpleLayout, sizeof...(I) % 256, sizeof...(I) / 256>,
           KCodePointL<S.codePointAt(I)>...> {};
 
 template <String S>
 consteval auto operator"" _l() {
-  return _RackBasicLayoutHelper<S>();
+  return _RackSimpleLayoutHelper<S>();
 }
 
 // Unfortunately template operator'' does not exist, we must use strings instead
@@ -157,40 +157,40 @@ consteval auto operator"" _cl() {
 
 // rack ^ rack
 template <Block N1, Block... B1, Block N2, Block... B2>
-consteval auto operator^(KTree<Type::RackBasicLayout, N1, 0, B1...>,
-                         KTree<Type::RackBasicLayout, N2, 0, B2...>) {
+consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
+                         KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2) < 256);
-  return KTree<Type::RackBasicLayout,
+  return KTree<Type::RackSimpleLayout,
                Block(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2)), 0,
                B1..., B2...>();
 }
 
 // rack ^ layout
 template <Block N1, Block... B1, Block T2, Block... B2>
-  requires(Type(uint8_t(T2)) != Type::RackBasicLayout)
-consteval auto operator^(KTree<Type::RackBasicLayout, N1, 0, B1...>,
+  requires(Type(uint8_t(T2)) != Type::RackSimpleLayout)
+consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
                          KTree<T2, B2...>) {
   static_assert(static_cast<uint8_t>(N1) < 255);
-  return KTree<Type::RackBasicLayout, Block(static_cast<uint8_t>(N1) + 1), 0,
+  return KTree<Type::RackSimpleLayout, Block(static_cast<uint8_t>(N1) + 1), 0,
                B1..., T2, B2...>();
 }
 
 // layout ^ rack
 template <Block T1, Block... B1, Block N2, Block... B2>
-  requires(Type(uint8_t(T1)) != Type::RackBasicLayout)
+  requires(Type(uint8_t(T1)) != Type::RackSimpleLayout)
 consteval auto operator^(KTree<T1, B1...>,
-                         KTree<Type::RackBasicLayout, N2, 0, B2...>) {
+                         KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N2) < 255);
-  return KTree<Type::RackBasicLayout, Block(static_cast<uint8_t>(N2) + 1), 0,
+  return KTree<Type::RackSimpleLayout, Block(static_cast<uint8_t>(N2) + 1), 0,
                T1, B1..., B2...>();
 }
 
 // layout ^ layout
 template <Block T1, Block... B1, Block T2, Block... B2>
-  requires(Type(uint8_t(T1)) != Type::RackBasicLayout &&
-           Type(uint8_t(T2)) != Type::RackBasicLayout)
+  requires(Type(uint8_t(T1)) != Type::RackSimpleLayout &&
+           Type(uint8_t(T2)) != Type::RackSimpleLayout)
 consteval auto operator^(KTree<T1, B1...>, KTree<T2, B2...>) {
-  return KTree<Type::RackBasicLayout, 2, 0, T1, B1..., T2, B2...>();
+  return KTree<Type::RackSimpleLayout, 2, 0, T1, B1..., T2, B2...>();
 }
 
 }  // namespace KTrees

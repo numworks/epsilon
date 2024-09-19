@@ -1,11 +1,11 @@
 #ifndef ONLY_LAYOUTS
-NODE(RackBasic, NARY16)
-NODE(RackMemo, NARY16, {
+NODE(RackSimple, NARY16)
+NODE(RackMemoized, NARY16, {
   uint16_t width;
   uint16_t height;
   uint16_t baseline;
 })
-RANGE(RackLayout, RackBasicLayout, RackMemoLayout)
+RANGE(RackLayout, RackSimpleLayout, RackMemoizedLayout)
 #endif
 
 NODE(VerticalOffset, 1, {
@@ -92,4 +92,4 @@ NODE(Root, 2)
 NODE(Sqrt, 1)
 
 RANGE(Layout, VerticalOffsetLayout, SqrtLayout)
-RANGE(RackOrLayout, RackBasicLayout, SqrtLayout)
+RANGE(RackOrLayout, RackSimpleLayout, SqrtLayout)

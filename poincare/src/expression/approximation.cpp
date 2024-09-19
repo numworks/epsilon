@@ -1234,12 +1234,15 @@ Tree* Approximation::ToMatrix(const Tree* e) {
 template <typename T>
 T Approximation::To(const Tree* e, T x) {
   Context* previousContext = s_context;
+  T result;
   if (!s_context) {
-    Context context(AngleUnit::Radian, ComplexFormat::Cartesian);
+    Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
     s_context = &context;
+    result = To<T>(e);
+  } else {
+    s_context->setLocalValue(x);
+    result = To<T>(e);
   }
-  s_context->setLocalValue(x);
-  T result = To<T>(e);
   s_context = previousContext;
   return result;
 }

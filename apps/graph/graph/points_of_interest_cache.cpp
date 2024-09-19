@@ -217,6 +217,11 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
   ExpiringPointer<ContinuousFunction> f = ctx->model();
+  if (f->numberOfSubCurves() != 1) {
+    // Only y-intercept
+    return PointOfInterest{};
+  }
+
   using NextSolution =
       Coordinate2D<double> (Solver<double>::*)(const Internal::Tree*);
   NextSolution methodsNext[] = {&Solver<double>::nextRoot,

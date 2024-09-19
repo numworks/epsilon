@@ -176,6 +176,12 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
+  // After List::BubbleUp, there should be no more "hidden" lists in the tree,
+  // except when the tree has randomized descendants (for which the list bubble
+  // up fails)
+  assert(e->isList() || !Dimension::IsList(e) ||
+         e->hasDescendantSatisfying(
+             [](const Tree* e) { return e->isRandomized(); }));
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
   }

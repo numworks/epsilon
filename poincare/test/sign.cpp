@@ -302,9 +302,9 @@ void assert_sign(const char* input, Sign expectedSign) {
 }
 
 QUIZ_CASE(pcj_sign) {
-  assert_sign("2", Sign::StrictlyPositiveInteger());
-  assert_sign("2+π", Sign::StrictlyPositive());
-  assert_sign("2-π", Sign::Unknown());
+  assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
+  assert_sign("2+π", Sign::FiniteStrictlyPositive());
+  assert_sign("2-π", Sign::Finite());
   assert_sign("3 * abs(cos(x)) * -2", Sign::Negative());
 
   assert_sign("x", ComplexSign::RealUnknown());
@@ -315,13 +315,13 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("x^2", Sign::Positive());
   assert_sign("x^2+y^2", Sign::Positive());
   assert_sign("0.5*ln(x^2+y^2)", Sign::Unknown());
-  assert_sign("e^(0.5*ln(x^2+y^2))", Sign::StrictlyPositive());
+  assert_sign("e^(0.5*ln(x^2+y^2))", Sign::Positive());
   assert_sign("(abs(x)+i)*abs(abs(x)-i)",
               ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
               ComplexSign(Sign::StrictlyPositive(), Sign::Unknown()));
   assert_sign("re(abs(x)-i)+i*arg(2+i)",
-              ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
+              ComplexSign(Sign::Positive(), Sign::FiniteStrictlyPositive()));
 
   // cos
   assert_sign("cos(3)", Sign::Unknown());
@@ -331,20 +331,24 @@ QUIZ_CASE(pcj_sign) {
 
   // sin
   assert_sign("sin(3)", Sign::Unknown());
-  assert_sign("sin(2i)", ComplexSign(Sign::Zero(), Sign::StrictlyPositive()));
-  assert_sign("sin(-2i)", ComplexSign(Sign::Zero(), Sign::StrictlyNegative()));
+  assert_sign("sin(2i)",
+              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive()));
+  assert_sign("sin(-2i)",
+              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyNegative()));
   assert_sign("sin(3+2i)", ComplexSign::Unknown());
 
   // ln
   assert_sign("ln(0)", ComplexSign::Unknown());
   assert_sign("ln(3)", Sign::Unknown());
-  assert_sign("ln(-3)", ComplexSign(Sign::Unknown(), Sign::StrictlyPositive()));
-  assert_sign("ln(ln(3))", ComplexSign(Sign::Unknown(), Sign::Positive()));
+  assert_sign("ln(-3)",
+              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyPositive()));
+  assert_sign("ln(ln(3))",
+              ComplexSign(Sign::Unknown(), Sign::FinitePositive()));
   assert_sign("ln(4+i)",
-              ComplexSign(Sign::Unknown(), Sign::StrictlyPositive()));
+              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyPositive()));
   assert_sign("ln(4-i)",
-              ComplexSign(Sign::Unknown(), Sign::StrictlyNegative()));
-  assert_sign("ln(ln(x+i*y)i)", ComplexSign::Unknown());
+              ComplexSign(Sign::Unknown(), Sign::FiniteStrictlyNegative()));
+  assert_sign("ln(ln(x+i*y)i)", ComplexSign(Sign::Unknown(), Sign::Finite()));
 
   // power
   assert_sign("(1+i)^4", ComplexSign(Sign::Integer(), Sign::Integer()));

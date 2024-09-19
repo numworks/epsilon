@@ -107,7 +107,7 @@ KDSize Render::Size(const Rack* l, bool showEmpty) {
   }
   KDSize size = RackLayout::Size(l, showEmpty);
   if (l->isRackMemoizedLayout()) {
-    assert(size.width() != INT16_MAX);
+    assert(size.width() != 0);
     const_cast<Rack*>(l)->toRackMemoizedLayoutNode()->width = size.width();
     const_cast<Rack*>(l)->toRackMemoizedLayoutNode()->height = size.height();
   }

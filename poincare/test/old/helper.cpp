@@ -83,28 +83,6 @@ void build_failure_infos(char *returnedInformationsBuffer, size_t bufferSize,
                             expression, result, expectedResult);
 }
 
-static int k_bad;
-static int k_total;
-
-void quiz_reset_failure_ratio() {
-  k_bad = 0;
-  k_total = 0;
-}
-
-void quiz_print_failure_ratio() {
-  if (!k_total) {
-    return;
-  }
-  constexpr int bufferSize = 100;
-  char buffer[bufferSize];
-  int success = k_total - k_bad;
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "  %i ok   %i bad  / %i", success, k_bad, k_total,
-      // 100. * static_cast<float>(success) / static_cast<float>(k_total),
-      Preferences::PrintFloatMode::Decimal, 5);
-  quiz_print(buffer);
-}
-
 void copy_without_system_chars(char *buffer, const char *input) {
   while (char c = *input++) {
     if (c == 0x11) continue;
@@ -121,7 +99,6 @@ void assert_parsed_expression_process_to(
     Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
     UnitConversion unitConversion, ProcessExpression process,
     int numberOfSignificantDigits) {
-  k_total++;
   Shared::GlobalContext globalContext;
   constexpr int bufferSize = 2048;
   char buffer[bufferSize];
@@ -140,7 +117,6 @@ void assert_parsed_expression_process_to(
   l->removeTree();
   bad = strcmp(buffer, result) != 0;
   assert(SharedTreeStack->numberOfTrees() == 0);
-  k_bad += bad;
 
   char information[bufferSize] = "";
   int i = Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
@@ -170,7 +146,6 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
 void assert_parsed_expression_is(const char *expression,
                                  const Poincare::Internal::Tree *expected,
                                  bool parseForAssignment) {
-  k_total++;
   Shared::GlobalContext context;
   bool bad = false;
   Tree *parsed = parse_expression(expression, &context, parseForAssignment);
@@ -178,7 +153,6 @@ void assert_parsed_expression_is(const char *expression,
   if (parsed) {
     parsed->removeTree();
   }
-  k_bad += bad;
 
   constexpr int bufferSize = 2048;
   char information[bufferSize] = "";

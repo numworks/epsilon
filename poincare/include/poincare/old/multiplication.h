@@ -30,19 +30,6 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
   double degreeForSortingAddition(bool symbolsOnly) const override;
 
  private:
-  enum class MultiplicationSymbol : uint8_t {
-    // The order matters !
-    Empty = 0,
-    MiddleDot = 1,
-    MultiplicationSign = 2,
-  };
-
-  static MultiplicationSymbol OperatorSymbolBetween(
-      ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right);
-  static CodePoint CodePointForOperatorSymbol(MultiplicationSymbol symbol);
-  // Layout
-  CodePoint operatorSymbol() const;
-
   // Serialize
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

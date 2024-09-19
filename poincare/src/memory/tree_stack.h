@@ -25,12 +25,12 @@ namespace Poincare::Internal {
 /* TreeStack is built on top of BlockStack to interpret contiguous chunk of
  * blocks as Trees and provide creation, iteration and logging methods. */
 
-class AbstractTreeStack : public AbstractBlockStack {
+class AbstractTreeStack : public BlockStack {
   friend class TreeRef;
   friend class Tree;
 
  public:
-  using AbstractBlockStack::AbstractBlockStack;
+  using BlockStack::BlockStack;
 
 #if PLATFORM_DEVICE
   __attribute__((section(".bss.$tree_stack")))
@@ -46,8 +46,7 @@ class AbstractTreeStack : public AbstractBlockStack {
 
   // Initialize trees
   Tree* initFromAddress(const void* address, bool isTree = true) {
-    return Tree::FromBlocks(
-        AbstractBlockStack::initFromAddress(address, isTree));
+    return Tree::FromBlocks(BlockStack::initFromAddress(address, isTree));
   }
 
   Tree* pushBlock(Block block) {
@@ -170,7 +169,7 @@ class AbstractTreeStack : public AbstractBlockStack {
   // Reset TreeStack end to tree, ignoring what comes after
   void dropBlocksFrom(const Tree* tree) { flushFromBlock(tree->block()); }
   uint16_t referenceNode(Tree* node) {
-    return AbstractBlockStack::referenceBlock(node->block());
+    return BlockStack::referenceBlock(node->block());
   }
 
   Tree* nodeForIdentifier(uint16_t id) {

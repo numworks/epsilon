@@ -12,7 +12,7 @@ namespace Poincare::Internal {
 
 /* A stack of Blocks (= bytes) with motion tracking references. */
 
-class AbstractBlockStack {
+class BlockStack {
   friend class TreeStackCheckpoint;
 
  public:
@@ -20,7 +20,7 @@ class AbstractBlockStack {
   int maxNumberOfReferences() const { return maxNumberOfBlocks() / 8; }
   const Block* firstBlock() const { return m_blocks; }
   Block* firstBlock() { return m_blocks; }
-  // If AbstractBlockStack is empty, first and last blocks are the same one
+  // If BlockStack is empty, first and last blocks are the same one
   const Block* lastBlock() const { return m_blocks + m_size; }
   Block* lastBlock() { return m_blocks + m_size; }
   size_t size() const { return m_size; }
@@ -67,8 +67,8 @@ class AbstractBlockStack {
   /* We delete the assignment operator because copying without care the
    * ReferenceTable would corrupt the m_referenceTable.m_pool pointer.
    */
-  AbstractBlockStack& operator=(AbstractBlockStack&&) = delete;
-  AbstractBlockStack& operator=(const AbstractBlockStack&) = delete;
+  BlockStack& operator=(BlockStack&&) = delete;
+  BlockStack& operator=(const BlockStack&) = delete;
 
  protected:
   /* The reference table stores the offset of the tree in the edition pool.
@@ -86,7 +86,7 @@ class AbstractBlockStack {
      * removed or replaced. */
     constexpr static uint16_t InvalidatedOffset = 0xFFFF;
 
-    ReferenceTable(AbstractBlockStack* pool, uint16_t* nodeOffsetArray)
+    ReferenceTable(BlockStack* pool, uint16_t* nodeOffsetArray)
         : m_pool(pool), m_nodeOffsetForIdentifier(nodeOffsetArray) {}
     Block* nodeForIdentifier(uint16_t id) const;
     uint16_t storeNode(Block* node);
@@ -117,13 +117,13 @@ class AbstractBlockStack {
 
     uint16_t storeNodeAtIndex(Block* node, size_t index);
 
-    AbstractBlockStack* m_pool;
+    BlockStack* m_pool;
     uint16_t* m_nodeOffsetForIdentifier;
     uint16_t m_length = 0;
   };
 
-  AbstractBlockStack(ReferenceTable& referenceTable, Block* blocks,
-                     size_t maxNumberOfBlocks)
+  BlockStack(ReferenceTable& referenceTable, Block* blocks,
+             size_t maxNumberOfBlocks)
       : m_referenceTable(referenceTable),
         m_blocks(blocks),
         m_maxSize(maxNumberOfBlocks) {}

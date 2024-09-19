@@ -14,7 +14,7 @@
 
 namespace Poincare::Internal {
 
-bool AbstractBlockStack::isRootBlock(const Block* block, bool allowLast) const {
+bool BlockStack::isRootBlock(const Block* block, bool allowLast) const {
   const Block* currentBlock = firstBlock();
   if (block >= lastBlock()) {
     return allowLast && block == lastBlock();
@@ -25,7 +25,7 @@ bool AbstractBlockStack::isRootBlock(const Block* block, bool allowLast) const {
   return currentBlock == block;
 }
 
-Block* AbstractBlockStack::initFromAddress(const void* address, bool isTree) {
+Block* BlockStack::initFromAddress(const void* address, bool isTree) {
   const Tree* node = Tree::FromBlocks(reinterpret_cast<const Block*>(address));
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   Block* copiedTree = lastBlock();
@@ -41,12 +41,12 @@ Block* AbstractBlockStack::initFromAddress(const void* address, bool isTree) {
   return copiedTree;
 }
 
-void AbstractBlockStack::replaceBlock(Block* previousBlock, Block newBlock) {
+void BlockStack::replaceBlock(Block* previousBlock, Block newBlock) {
   replaceBlocks(previousBlock, &newBlock, 1);
 }
 
-void AbstractBlockStack::replaceBlocks(Block* destination, const Block* source,
-                                       size_t numberOfBlocks) {
+void BlockStack::replaceBlocks(Block* destination, const Block* source,
+                               size_t numberOfBlocks) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
       [](uint16_t* offset, Block* block, const Block* destination,
@@ -58,8 +58,8 @@ void AbstractBlockStack::replaceBlocks(Block* destination, const Block* source,
       destination, nullptr, numberOfBlocks);
 }
 
-bool AbstractBlockStack::insertBlocks(Block* destination, const Block* source,
-                                      size_t numberOfBlocks, bool at) {
+bool BlockStack::insertBlocks(Block* destination, const Block* source,
+                              size_t numberOfBlocks, bool at) {
   if (numberOfBlocks == 0) {
     return true;
   }
@@ -92,7 +92,7 @@ bool AbstractBlockStack::insertBlocks(Block* destination, const Block* source,
   return true;
 }
 
-void AbstractBlockStack::removeBlocks(Block* address, size_t numberOfBlocks) {
+void BlockStack::removeBlocks(Block* address, size_t numberOfBlocks) {
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
@@ -113,8 +113,8 @@ void AbstractBlockStack::removeBlocks(Block* address, size_t numberOfBlocks) {
       address, nullptr, numberOfBlocks);
 }
 
-void AbstractBlockStack::moveBlocks(Block* destination, Block* source,
-                                    size_t numberOfBlocks, bool at) {
+void BlockStack::moveBlocks(Block* destination, Block* source,
+                            size_t numberOfBlocks, bool at) {
   if (destination == source || numberOfBlocks == 0) {
     return;
   }
@@ -151,7 +151,7 @@ void AbstractBlockStack::moveBlocks(Block* destination, Block* source,
   }
 }
 
-void AbstractBlockStack::flush() {
+void BlockStack::flush() {
   m_size = 0;
   m_referenceTable.reset();
 #if POINCARE_POOL_VISUALIZATION
@@ -159,7 +159,7 @@ void AbstractBlockStack::flush() {
 #endif
 }
 
-void AbstractBlockStack::flushFromBlock(const Block* block) {
+void BlockStack::flushFromBlock(const Block* block) {
   /* This function is used to flush the right side of the pool when we revert to
    * a checkpoint. We initially expected the block to revert to to be a root
    * block, in order to have only well-formed trees on the stack during the
@@ -173,14 +173,13 @@ void AbstractBlockStack::flushFromBlock(const Block* block) {
 #endif
 }
 
-uint16_t AbstractBlockStack::referenceBlock(Block* node) {
+uint16_t BlockStack::referenceBlock(Block* node) {
   return m_referenceTable.storeNode(node);
 }
 
 // ReferenceTable
 
-Block* AbstractBlockStack::ReferenceTable::nodeForIdentifier(
-    uint16_t id) const {
+Block* BlockStack::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   if (id == NoNodeIdentifier) {
     return nullptr;
   }
@@ -198,7 +197,7 @@ Block* AbstractBlockStack::ReferenceTable::nodeForIdentifier(
   return n;
 }
 
-uint16_t AbstractBlockStack::ReferenceTable::storeNode(Block* node) {
+uint16_t BlockStack::ReferenceTable::storeNode(Block* node) {
   if (isFull()) {
     Block* n;
     size_t index = 0;
@@ -213,14 +212,13 @@ uint16_t AbstractBlockStack::ReferenceTable::storeNode(Block* node) {
   }
 }
 
-void AbstractBlockStack::ReferenceTable::updateIdentifier(uint16_t id,
-                                                          Block* newNode) {
+void BlockStack::ReferenceTable::updateIdentifier(uint16_t id, Block* newNode) {
   assert(id < m_length);
   storeNodeAtIndex(newNode, id);
 }
 
-void AbstractBlockStack::ReferenceTable::deleteIdentifier(uint16_t id) {
-  if (id == AbstractBlockStack::ReferenceTable::NoNodeIdentifier) {
+void BlockStack::ReferenceTable::deleteIdentifier(uint16_t id) {
+  if (id == BlockStack::ReferenceTable::NoNodeIdentifier) {
     return;
   }
   assert(id < m_length);
@@ -235,9 +233,10 @@ void AbstractBlockStack::ReferenceTable::deleteIdentifier(uint16_t id) {
   }
 }
 
-void AbstractBlockStack::ReferenceTable::updateNodes(
-    AlterSelectedBlock function, const Block* contextSelection1,
-    const Block* contextSelection2, int contextAlteration) {
+void BlockStack::ReferenceTable::updateNodes(AlterSelectedBlock function,
+                                             const Block* contextSelection1,
+                                             const Block* contextSelection2,
+                                             int contextAlteration) {
   Block* first = static_cast<Block*>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
     if (m_nodeOffsetForIdentifier[i] == InvalidatedOffset ||
@@ -250,7 +249,7 @@ void AbstractBlockStack::ReferenceTable::updateNodes(
   }
 }
 
-void AbstractBlockStack::ReferenceTable::invalidateIdentifiersAfterBlock(
+void BlockStack::ReferenceTable::invalidateIdentifiersAfterBlock(
     const Block* block) {
   Block* first = static_cast<Block*>(m_pool->firstBlock());
   assert(block >= first && block <= first + UINT16_MAX);
@@ -265,11 +264,11 @@ void AbstractBlockStack::ReferenceTable::invalidateIdentifiersAfterBlock(
 
 #if POINCARE_TREE_LOG
 
-void AbstractBlockStack::ReferenceTable::logIdsForNode(
-    std::ostream& stream, const Block* node) const {
+void BlockStack::ReferenceTable::logIdsForNode(std::ostream& stream,
+                                               const Block* node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    Block* n = AbstractBlockStack::ReferenceTable::nodeForIdentifier(i);
+    Block* n = BlockStack::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << static_cast<int>(i) << ", ";
       found = true;
@@ -282,8 +281,8 @@ void AbstractBlockStack::ReferenceTable::logIdsForNode(
 
 #endif
 
-uint16_t AbstractBlockStack::ReferenceTable::storeNodeAtIndex(Block* node,
-                                                              size_t index) {
+uint16_t BlockStack::ReferenceTable::storeNodeAtIndex(Block* node,
+                                                      size_t index) {
   if (index >= m_length) {
     assert(index == m_length);
     assert(!isFull());

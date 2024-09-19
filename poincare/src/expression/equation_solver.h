@@ -84,6 +84,8 @@ class EquationSolver {
 
   constexpr static char k_parameterPrefix = 't';
   static uint32_t TagParametersUsedAsVariables(const Context* context);
+
+  // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
   static void TagVariableIfParameter(const char* name, uint32_t* tags,
                                      const Context* context);
 };

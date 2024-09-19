@@ -570,12 +570,7 @@ void EquationSolver::TagVariableIfParameter(const char* variable,
   size_t maxIndex = OMG::BitHelper::numberOfBitsIn(*tags);
   size_t maxNumberOfDigits =
       OMG::Print::LengthOfUInt32(OMG::Base::Decimal, maxIndex);
-  size_t index = 0;
-  for (size_t digit = 1; digit < 1 + maxNumberOfDigits &&
-                         '0' <= variable[digit] && variable[digit] <= '9';
-       digit++) {
-    index = 10 * index + (variable[digit] - '0');
-  }
+  size_t index = OMG::Print::ParseDecimalInt(&variable[1], maxNumberOfDigits);
   if (index > 0 && index < maxIndex) {
     OMG::BitHelper::setBitAtIndex(*tags, index, true);
   }

@@ -39,6 +39,8 @@ inline constexpr uint8_t DigitForCharacter(char c) {
   return c - 'a' + 10;
 }
 
+uint32_t ParseDecimalInt(const char* text, int maxNumberOfDigits);
+
 constexpr size_t MaxLengthOfUInt32(Base base) {
   return OMG::BitHelper::numberOfBitsIn<uint32_t>() /
          OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base));

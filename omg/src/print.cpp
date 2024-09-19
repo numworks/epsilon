@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <omg/ieee754.h>
 #include <omg/print.h>
 
@@ -48,6 +49,18 @@ int IntLeft(uint32_t integer, char* buffer, int bufferLength) {
 int IntRight(uint32_t integer, char* buffer, int bufferLength) {
   PrintIntInBuffer(integer, buffer, bufferLength, false);
   return bufferLength;
+}
+
+uint32_t ParseDecimalInt(const char* text, int maxNumberOfDigits) {
+  uint32_t result = 0;
+  assert(*text);
+  while (maxNumberOfDigits && '0' <= *text && *text <= '9') {
+    assert(result < UINT32_MAX / 10 - 1);
+    result = 10 * result + (*text - '0');
+    text++;
+    maxNumberOfDigits--;
+  }
+  return result;
 }
 
 }  // namespace OMG::Print

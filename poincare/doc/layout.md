@@ -43,7 +43,7 @@ Tree -> Rack
 ### RackMemoized
 
 `Rack` has two subtypes :
-- `RackSimple` used nearly everywhere and a synonym of `Rack` in the rest doc
+- `RackSimple` used nearly everywhere and is a synonym of `Rack` in the rest of the documentation
 - `RackMemoized` which is a `RackSimple` with 6 additional bytes to be able to store its computed baseline and size. `RackMemoized` is used only temporarily inside `Render` methods.
 
 ## Layout cursor

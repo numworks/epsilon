@@ -82,38 +82,19 @@ bool SystematicOperation::ReducePower(Tree* e) {
     return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
   }
   if (!n->isInteger()) {
-    if (n->isRational() && base->isRational() && !base->isInteger()) {
-      /* (a/b)^(c/d) -> (1/b)^g × exp((1/d)×ln(a^c × b^f)) with f the smallest
-       * positive integer such that (c+f)/d=g is an integer. */
-      TreeRef a = Rational::Numerator(base).pushOnTreeStack();
-      TreeRef b = Rational::Denominator(base).pushOnTreeStack();
-      TreeRef c = Rational::Numerator(n).pushOnTreeStack();
-      TreeRef d = Rational::Denominator(n).pushOnTreeStack();
-      // b can't be one to prevent unnecessary transformation and infinite loop
+    if (n->isRational() && !Rational::IsStrictlyPositiveUnderOne(n)) {
+      // x^(a/b) -> x^((a-c)/b) * exp(ln(x)*c/b) with c remainder of a/b
+      TreeRef a = Rational::Numerator(n).pushOnTreeStack();
+      TreeRef b = Rational::Denominator(n).pushOnTreeStack();
       assert(!b->isOne());
-      // Compute f and g such that (c+f)/d is an integer g and 0 <= f < d
-      DivisionResult<Tree*> divCD =
-          IntegerHandler::Division(Integer::Handler(c), Integer::Handler(d));
-      TreeRef f, g;
-      if (divCD.remainder->isZero()) {
-        f = (0_e)->cloneTree();
-        g = divCD.quotient->cloneTree();
-      } else {
-        f = IntegerHandler::Subtraction(Integer::Handler(d),
-                                        Integer::Handler(divCD.remainder));
-        g = IntegerHandler::Addition(IntegerHandler(1),
-                                     Integer::Handler(divCD.quotient));
-      }
-      divCD.remainder->removeTree();
-      divCD.quotient->removeTree();
+      DivisionResult<Tree*> divAB =
+          IntegerHandler::Division(Integer::Handler(a), Integer::Handler(b));
+      TreeRef c = divAB.remainder;
+      divAB.quotient->removeTree();
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KPow(KB, KMult(-1_e, KG)),
-                KExp(KMult(KPow(KD, -1_e),
-                           KLn(KMult(KPow(KA, KC), KPow(KB, KF)))))),
-          {.KA = a, .KB = b, .KC = c, .KD = d, .KF = f, .KG = g}));
-      g->removeTree();
-      f->removeTree();
-      d->removeTree();
+          KMult(KPow(KD, KMult(KAdd(KA, KMult(-1_e, KC)), KPow(KB, -1_e))),
+                KExp(KMult(KC, KPow(KB, -1_e), KLn(KD)))),
+          {.KA = a, .KB = b, .KC = c, .KD = base}));
       c->removeTree();
       b->removeTree();
       a->removeTree();
@@ -468,13 +449,14 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      (ctx.getTree(KA)->isInteger() || ctx.getTree(KB)->isZero() ||
-       (ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational() &&
-        !ctx.getTree(KB)->isInteger()))) {
-    /* To ensure there is only one way of representing x^n.
-     *  Fallback to Power logic for 0^y and rational power of strict rationals.
-     */
-    // exp(a*ln(b)) -> a^b
+      (ctx.getTree(KB)->isZero() ||
+       (ctx.getTree(KA)->isRational() &&
+        !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA))))) {
+    /* 0^y and x^(a/b) are expected to have a unique representation :
+     * - 0^y is either 0 or undef
+     * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive
+     *   integers and c < b.
+     * Fallback on Power implementation for that : exp(a*ln(b)) -> b^a */
     e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
     assert(!e->isExp());
     return true;

@@ -235,6 +235,12 @@ bool Rational::IsGreaterThanOne(const Tree* e) {
   return IntegerHandler::Compare(Numerator(e), Denominator(e)) > 0;
 }
 
+bool Rational::IsStrictlyPositiveUnderOne(const Tree* e) {
+  IntegerHandler num = Numerator(e);
+  return IntegerHandler::Compare(num, IntegerHandler(0)) > 0 &&
+         IntegerHandler::Compare(num, Denominator(e)) < 0;
+}
+
 Tree* Rational::CreateMixedFraction(const Tree* e,
                                     bool mixedFractionsAreEnabled) {
   IntegerHandler num = Numerator(e);

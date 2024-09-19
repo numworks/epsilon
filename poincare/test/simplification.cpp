@@ -199,7 +199,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "x/(√(x^2+1)×√(-x^2/(x^2+1)+1))");
+                "(x×√(x^2+1))/((x^2+1)×√(-x^2/(x^2+1)+1))");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   // Sort order
@@ -729,9 +729,7 @@ QUIZ_CASE(pcj_simplification_power) {
 
   simplifies_to("2/√(2)", "√(2)");
   simplifies_to("4/√(2)", "2*√(2)");
-  simplifies_to("1/√(2) - √(2)/2", "0");
-  // TODO: metric issue, one form should be preferred
-  simplifies_to("1/√(2)", "1/√(2)");
+  simplifies_to("1/√(2)", "√(2)/2");
   simplifies_to("√(2)/2", "√(2)/2");
 }
 
@@ -987,8 +985,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({0,π/2,π,3π/2,-4π})", "{1,0,-1,0,1}");
   simplifies_to("sin({0,π/2,π,3π/2,-4π})", "{0,1,0,-1,0}");
   // test π/12 in top-right quadrant
-  simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(-1+√(3))/(2×√(2))}");
-  simplifies_to("sin({π/12,-19π/12})", "{(-1+√(3))/(2×√(2)),(√(2)+√(6))/4}");
+  simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(√(2)×(-1+√(3)))/4}");
+  simplifies_to("sin({π/12,-19π/12})", "{(√(2)×(-1+√(3)))/4,(√(2)+√(6))/4}");
   // test π/10 in top-left quadrant
   simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
   simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
@@ -1005,11 +1003,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{√(5/8-√(5)/8),√((5+√(5))/8),√((5+√(5))/8),√(5/8-√(5)/8)}");
   // test π/4 in all quadrants
   simplifies_to("cos({π/4,3π/4,-11π/4,7π/4})",
-                "{1/√(2),-1/√(2),-1/√(2),1/√(2)}");
+                "{√(2)/2,-√(2)/2,-√(2)/2,√(2)/2}");
   simplifies_to("sin({π/4,3π/4,-11π/4,7π/4})",
-                "{1/√(2),1/√(2),-1/√(2),-1/√(2)}");
+                "{√(2)/2,√(2)/2,-√(2)/2,-√(2)/2}");
   simplifies_to("cos(π)", "cos(π)", {.m_angleUnit = AngleUnit::Degree});
-  simplifies_to("cos(45)", "1/√(2)", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("cos(45)", "√(2)/2", {.m_angleUnit = AngleUnit::Degree});
 
   // Inverse trigonometry exact formulas
   simplifies_to("acos({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
@@ -1075,9 +1073,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
                 "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,x/√(-x^2+1),tan(arctan(x))}", cartesianCtx);
+                "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),tan(arctan(x))}",
+                cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
-                "{-√(-x^2+1)/x,-x/√(-x^2+1),-tan(arctan(x))}", cartesianCtx);
+                "{-√(-x^2+1)/x,-(x×√(-x^2+1))/(-x^2+1),-tan(arctan(x))}",
+                cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
                 {.m_complexFormat = ComplexFormat::Cartesian,
@@ -1325,10 +1325,13 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("1/(√(3)+√(5))", "1/(√(3)+√(5))");  // "(√(3)-√(5))/2"
   simplifies_to("1/(√(3)-√(5))", "1/(√(3)-√(5))");  // "-(√(3)+√(5))/2"
   // 1/√a => √a/a
-  simplifies_to("1/√(3)", "1/√(3)");  // "√(3)/3"
+  simplifies_to("1/√(3)", "√(3)/3");
   // √a/√b <=> √(a/b)
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g
-  simplifies_to("(2/3)^(5/7)", "root(288,7)/3");
-  simplifies_to("(4/11)^(8/9)", "root(720896,9)/11");  // "2×root(1408,9)/11"
+  simplifies_to("(2/3)^(5/7)", "(2/3)^(5/7)");  // "root(288,7)/3"
+  simplifies_to("(4/11)^(8/9)",
+                "(4/11)^(8/9)");  // "2×root(1408,9)/11"
+  simplifies_to("(5/2)^(-4/3)",
+                "(4×(5/2)^(2/3))/25");  // "2×root(50,3)/25"
 }

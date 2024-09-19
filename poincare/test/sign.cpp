@@ -376,6 +376,13 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
   assert_sign("(5-i)^(-1)", ComplexSign(Sign::Finite(), Sign::Finite()));
 
+  // arg
+  assert_sign("arg(5)", Sign::Zero());
+  assert_sign("arg(-5)", Sign::FiniteStrictlyPositive());
+  assert_sign("arg(ln(3+i*inf))", Sign::Finite());
+  assert_sign("arg(3+i)", Sign::FiniteStrictlyPositive());
+  assert_sign("arg(3 - i)", Sign::FiniteStrictlyNegative());
+
   // inf
   assert_sign("inf", Sign::StrictlyPositive());
   assert_sign("-inf", Sign::StrictlyNegative());

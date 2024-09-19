@@ -38,35 +38,35 @@ static Tree* CloneWithRackMemoized(const Tree* l, SimpleLayoutCursor* cursor) {
 
 /* External API */
 
-KDSize Render::Size(const Tree* l, KDFont::Size fontSize,
-                    const SimpleLayoutCursor& cursor, int leftPosition,
-                    int rightPosition) {
-  if (rightPosition == -1) {
-    rightPosition = l->numberOfChildren();
+KDSize Render::SizeBetweenIndexes(const Tree* l, KDFont::Size fontSize,
+                                  const SimpleLayoutCursor& cursor,
+                                  int leftIndex, int rightIndex) {
+  if (rightIndex == -1) {
+    rightIndex = l->numberOfChildren();
   }
   s_font = fontSize;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
   Tree* withMemoRoot = CloneWithRackMemoized(l, &localCursor);
-  KDSize result =
-      RackLayout::SizeBetweenIndexes(static_cast<const Rack*>(withMemoRoot),
-                                     leftPosition, rightPosition, false);
+  KDSize result = RackLayout::SizeBetweenIndexes(
+      static_cast<const Rack*>(withMemoRoot), leftIndex, rightIndex, false);
   withMemoRoot->removeTree();
   return result;
 }
 
-KDCoordinate Render::Baseline(const Tree* l, KDFont::Size fontSize,
-                              const SimpleLayoutCursor& cursor,
-                              int leftPosition, int rightPosition) {
-  if (rightPosition == -1) {
-    rightPosition = l->numberOfChildren();
+KDCoordinate Render::BaselineBetweenIndexes(const Tree* l,
+                                            KDFont::Size fontSize,
+                                            const SimpleLayoutCursor& cursor,
+                                            int leftIndex, int rightIndex) {
+  if (rightIndex == -1) {
+    rightIndex = l->numberOfChildren();
   }
   s_font = fontSize;
   SimpleLayoutCursor localCursor = cursor;
   RackLayout::s_cursor = &localCursor;
   Tree* withMemoRoot = CloneWithRackMemoized(l, &localCursor);
   KDCoordinate result = RackLayout::BaselineBetweenIndexes(
-      static_cast<const Rack*>(withMemoRoot), leftPosition, rightPosition);
+      static_cast<const Rack*>(withMemoRoot), leftIndex, rightIndex);
   withMemoRoot->removeTree();
   return result;
 }

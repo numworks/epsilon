@@ -28,13 +28,22 @@ class Render {
    * with Racks replaced by RackMemoized.
    */
 
+  static KDSize SizeBetweenIndexes(const Tree* l, KDFont::Size fontSize,
+                                   const SimpleLayoutCursor& cursor,
+                                   int leftIndex, int rightIndex);
   static KDSize Size(const Tree* l, KDFont::Size fontSize,
-                     const SimpleLayoutCursor& cursor, int leftPosition = 0,
-                     int rightPosition = -1);
+                     const SimpleLayoutCursor& cursor) {
+    return SizeBetweenIndexes(l, fontSize, cursor, 0, -1);
+  }
 
+  static KDCoordinate BaselineBetweenIndexes(const Tree* l,
+                                             KDFont::Size fontSize,
+                                             const SimpleLayoutCursor& cursor,
+                                             int leftIndex, int rightIndex);
   static KDCoordinate Baseline(const Tree* l, KDFont::Size fontSize,
-                               const SimpleLayoutCursor& cursor,
-                               int leftPosition = 0, int rightPosition = -1);
+                               const SimpleLayoutCursor& cursor) {
+    return BaselineBetweenIndexes(l, fontSize, cursor, 0, -1);
+  }
 
   static KDPoint AbsoluteOrigin(const Tree* l, const Tree* root,
                                 KDFont::Size fontSize,

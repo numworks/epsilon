@@ -29,7 +29,9 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
     left = currentSelection.leftPosition();
     right = currentSelection.rightPosition();
   }
-  return Render::Size(cursorRack(), font, simpleCursor(), left, right).height();
+  return Render::SizeBetweenIndexes(cursorRack(), font, simpleCursor(), left,
+                                    right)
+      .height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
@@ -47,13 +49,14 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
     left = currentSelection.leftPosition();
     right = currentSelection.rightPosition();
   }
-  cursorBaseline =
-      Render::Baseline(cursorRack(), font, simpleCursor(), left, right);
+  cursorBaseline = Render::BaselineBetweenIndexes(cursorRack(), font,
+                                                  simpleCursor(), left, right);
   KDCoordinate cursorYOriginInLayout =
       Render::Baseline(cursorRack(), font, simpleCursor()) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
-  cursorXOffset =
-      Render::Size(cursorRack(), font, simpleCursor(), 0, m_position).width();
+  cursorXOffset = Render::SizeBetweenIndexes(cursorRack(), font, simpleCursor(),
+                                             0, m_position)
+                      .width();
   return Render::AbsoluteOrigin(cursorRack(), rootRack(), font, simpleCursor())
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }

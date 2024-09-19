@@ -45,6 +45,7 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert((Sign::StrictlyPositive() || Sign::Negative()) ==
               Sign::Unknown());
   quiz_assert((Sign::Positive() || Sign::Negative()) == Sign::Unknown());
+  quiz_assert((Sign::Finite() || Sign::Unknown()) == Sign::Unknown());
 
   // RelaxIntegerProperty
   quiz_assert(RelaxIntegerProperty(Sign::Zero()) == Sign::Zero());
@@ -66,6 +67,9 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::Negative());
   quiz_assert(RelaxIntegerProperty(Sign::NonNullInteger()) == Sign::NonNull());
   quiz_assert(RelaxIntegerProperty(Sign::Integer()) == Sign::Unknown());
+  quiz_assert(RelaxIntegerProperty(Sign::FiniteInteger()) == Sign::Finite());
+  quiz_assert(RelaxIntegerProperty(Sign::FiniteStrictlyPositiveInteger()) ==
+              Sign::FiniteStrictlyPositive());
 
   // Ceil
   quiz_assert(DecimalFunction(Sign::Zero(), Type::Ceil) == Sign::Zero());
@@ -181,6 +185,9 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Opposite(Sign::NegativeInteger()) == Sign::PositiveInteger());
   quiz_assert(Opposite(Sign::NonNullInteger()) == Sign::NonNullInteger());
   quiz_assert(Opposite(Sign::Integer()) == Sign::Integer());
+  quiz_assert(Opposite(Sign::FiniteInteger()) == Sign::FiniteInteger());
+  quiz_assert(Opposite(Sign::FiniteStrictlyPositive()) ==
+              Sign::FiniteStrictlyNegative());
 
   // Mult(..., Zero)
   quiz_assert(Mult(Sign::Zero(), Sign::Zero()) == Sign::Zero());
@@ -199,7 +206,8 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::NonNull());
   quiz_assert(Mult(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
   quiz_assert(Mult(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
-  // Mult(..., Positive)
+  quiz_assert(Mult(Sign::Finite(), Sign::NonNull()) == Sign::Unknown());
+  //  Mult(..., StrictlyPositive)
   quiz_assert(Mult(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
               Sign::StrictlyPositive());
   quiz_assert(Mult(Sign::Positive(), Sign::StrictlyPositive()) ==
@@ -210,24 +218,25 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::Negative());
   quiz_assert(Mult(Sign::Unknown(), Sign::StrictlyPositive()) ==
               Sign::Unknown());
-  // Mult(..., PositiveOrNull)
+  // Mult(..., Positive)
   quiz_assert(Mult(Sign::Positive(), Sign::Positive()) == Sign::Positive());
   quiz_assert(Mult(Sign::StrictlyNegative(), Sign::Positive()) ==
               Sign::Negative());
   quiz_assert(Mult(Sign::Negative(), Sign::Positive()) == Sign::Negative());
   quiz_assert(Mult(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
-  // Mult(..., Negative)
+  // Mult(..., StrictlyNegative)
   quiz_assert(Mult(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
               Sign::StrictlyPositive());
   quiz_assert(Mult(Sign::Negative(), Sign::StrictlyNegative()) ==
               Sign::Positive());
   quiz_assert(Mult(Sign::Unknown(), Sign::StrictlyNegative()) ==
               Sign::Unknown());
-  // Mult(..., NegativeOrNull)
+  // Mult(..., Negative)
   quiz_assert(Mult(Sign::Negative(), Sign::Negative()) == Sign::Positive());
   quiz_assert(Mult(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
   // Mult(..., Unknown)
   quiz_assert(Mult(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Mult(Sign::Finite(), Sign::Unknown()) == Sign::Unknown());
 
   // Add(..., Zero)
   quiz_assert(Add(Sign::Zero(), Sign::Zero()) == Sign::Zero());
@@ -238,7 +247,8 @@ QUIZ_CASE(pcj_sign_methods) {
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::Zero()) ==
               Sign::StrictlyNegative());
   quiz_assert(Add(Sign::Negative(), Sign::Zero()) == Sign::Negative());
-  quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
+  quiz_assert(Add(Sign::Finite(), Sign::Zero()) == Sign::Finite());
+  quiz_assert(Add(Sign::Unknown(), Sign::Zero()) == Sign::Unknown());
   // Add(..., NonNull)
   quiz_assert(Add(Sign::NonNull(), Sign::NonNull()) == Sign::Unknown());
   quiz_assert(Add(Sign::StrictlyPositive(), Sign::NonNull()) ==
@@ -248,7 +258,7 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::Unknown());
   quiz_assert(Add(Sign::Negative(), Sign::NonNull()) == Sign::Unknown());
   quiz_assert(Add(Sign::Unknown(), Sign::NonNull()) == Sign::Unknown());
-  // Add(..., Positive)
+  // Add(..., StrictlyPositive)
   quiz_assert(Add(Sign::StrictlyPositive(), Sign::StrictlyPositive()) ==
               Sign::StrictlyPositive());
   quiz_assert(Add(Sign::Positive(), Sign::StrictlyPositive()) ==
@@ -259,22 +269,29 @@ QUIZ_CASE(pcj_sign_methods) {
               Sign::Unknown());
   quiz_assert(Add(Sign::Unknown(), Sign::StrictlyPositive()) ==
               Sign::Unknown());
-  // Add(..., PositiveOrNull)
+  // Add(..., Positive)
   quiz_assert(Add(Sign::Positive(), Sign::Positive()) == Sign::Positive());
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::Positive()) ==
               Sign::Unknown());
   quiz_assert(Add(Sign::Negative(), Sign::Positive()) == Sign::Unknown());
+  quiz_assert(Add(Sign::FinitePositive(), Sign::Positive()) ==
+              Sign::Positive());
   quiz_assert(Add(Sign::Unknown(), Sign::Positive()) == Sign::Unknown());
-  // Add(..., Negative)
+  // Add(..., StrictlyNegative)
   quiz_assert(Add(Sign::StrictlyNegative(), Sign::StrictlyNegative()) ==
               Sign::StrictlyNegative());
   quiz_assert(Add(Sign::Negative(), Sign::StrictlyNegative()) ==
               Sign::StrictlyNegative());
   quiz_assert(Add(Sign::Unknown(), Sign::StrictlyNegative()) ==
               Sign::Unknown());
-  // Add(..., NegativeOrNull)
+  // Add(..., Negative)
   quiz_assert(Add(Sign::Negative(), Sign::Negative()) == Sign::Negative());
+  quiz_assert(Add(Sign::FiniteNegative(), Sign::Negative()) ==
+              Sign::Negative());
   quiz_assert(Add(Sign::Unknown(), Sign::Negative()) == Sign::Unknown());
+  // Add(.., Finite)
+  quiz_assert(Add(Sign::Finite(), Sign::Finite()) == Sign::Finite());
+  quiz_assert(Add(Sign::Unknown(), Sign::Finite()) == Sign::Unknown());
   // Add(..., Unknown)
   quiz_assert(Add(Sign::Unknown(), Sign::Unknown()) == Sign::Unknown());
 }

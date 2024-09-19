@@ -164,14 +164,12 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     KDContext* ctx;
     KDPoint rackPosition;
     const LayoutStyle& style;
+    const Rack* rack;
     LayoutSelection selection;
     KDCoordinate rackBaseline;
     int index;
   };
-  Context context{
-      ctx,      p,
-      style,    selection.layout() == l ? selection : LayoutSelection(),
-      baseline, 0};
+  Context context{ctx, p, style, l, selection, baseline, 0};
   RackLayout::Callback* iter = [](const Layout* child, KDSize childSize,
                                   KDCoordinate childBaseline, KDPoint position,
                                   void* ctx) {
@@ -192,7 +190,8 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       return;
     }
     LayoutStyle childStyle = context->style;
-    if (context->index >= context->selection.leftPosition() &&
+    if (context->rack == context->selection.layout() &&
+        context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
       childStyle.backgroundColor = context->style.selectionColor;
     }

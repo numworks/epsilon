@@ -232,15 +232,16 @@ class AbstractTreeStack : public BlockStack {
   }
 };
 
-template <size_t MaxNumberOfBlocks>
+template <size_t MaxNumberOfBlocks,
+          size_t MaxNumberOfReferences = MaxNumberOfBlocks / 8>
 class TemplatedTreeStack : public AbstractTreeStack {
  public:
   constexpr static size_t k_maxNumberOfBlocks = MaxNumberOfBlocks;
-  constexpr static size_t k_maxNumberOfReferences = MaxNumberOfBlocks / 8;
+  constexpr static size_t k_maxNumberOfReferences = MaxNumberOfReferences;
 
   TemplatedTreeStack()
       : AbstractTreeStack{m_concreteReferenceTable, m_blockBuffer,
-                          MaxNumberOfBlocks} {}
+                          k_maxNumberOfBlocks} {}
 
  private:
   ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};

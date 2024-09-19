@@ -311,8 +311,8 @@ QUIZ_CASE(pcj_sign) {
 
   assert_sign("x", ComplexSign::RealUnknown());
   assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
-  assert_sign("5+i*y",
-              ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Unknown()));
+  assert_sign("5+i*y", ComplexSign(Sign::FiniteStrictlyPositiveInteger(),
+                                   Sign::Unknown()));
   assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
   assert_sign("x^2", Sign::Positive());
   assert_sign("x^2+y^2", Sign::Positive());

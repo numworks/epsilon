@@ -64,7 +64,8 @@ Sign Mult(Sign s1, Sign s2) {
               (s1.canBeStrictlyPositive() && s2.canBeStrictlyNegative()) ||
                   (s1.canBeStrictlyNegative() && s2.canBeStrictlyPositive()),
               s1.canBeNonInteger() || s2.canBeNonInteger(),
-              s1.canBeInfinite() || s2.canBeInfinite());
+              (s1.canBeNonNull() && s2.canBeNonNull() &&
+               (s1.canBeInfinite() || s2.canBeInfinite())));
 }
 
 Sign Add(Sign s1, Sign s2) {

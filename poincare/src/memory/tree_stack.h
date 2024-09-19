@@ -245,8 +245,8 @@ class TemplatedTreeStack : public AbstractTreeStack {
 
  private:
   ReferenceTable m_concreteReferenceTable{this, m_nodeOffsetBuffer};
-  Block m_blockBuffer[k_maxNumberOfBlocks];
   uint16_t m_nodeOffsetBuffer[k_maxNumberOfReferences];
+  Block m_blockBuffer[k_maxNumberOfBlocks];
 };
 
 class TreeStack : public TemplatedTreeStack<1024 * 16> {

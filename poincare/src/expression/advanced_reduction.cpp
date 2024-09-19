@@ -44,7 +44,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   s_indent = 0;
-  std::cout << "Best path metric is: " << ctx.m_bestMetric;
+  std::cout << "Best path metric is: " << ctx.m_bestMetric << "\n";
 #endif
 
   return std::move(ctx.m_bestPath);
@@ -220,11 +220,11 @@ bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
 }
 
 #if POINCARE_TREE_LOG
-void AdvancedReduction::Direction::log() {
+void AdvancedReduction::Direction::log() const {
   if (isNextNode()) {
     std::cout << "NextNode";
     if (m_type > 1) {
-      std::cout << " * " << m_type;
+      std::cout << " * " << std::to_string(m_type);
     }
   } else if (isContract()) {
     std::cout << "Contract";
@@ -280,6 +280,16 @@ bool AdvancedReduction::Path::append(Direction direction) {
   }
   return true;
 }
+
+#if POINCARE_TREE_LOG
+void AdvancedReduction::Path::log() const {
+  std::cout << " | ";
+  for (uint8_t i = 0; i < m_length; i++) {
+    m_stack[i].log();
+    std::cout << " | ";
+  }
+}
+#endif
 
 bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   bool fullExploration = true;
@@ -363,6 +373,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         isLeaf = false;
         assert(ctx->m_crcCollection.maxDepth() >= ctx->m_path.length());
         bool canAddDir = ctx->m_path.append(dir);
+
         assert(canAddDir);
         (void)canAddDir;
         if (!ReduceRec(target, ctx)) {
@@ -407,13 +418,16 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   assert(!ctx->m_mustResetRoot);
   // All directions are impossible, we are at a leaf. Compare metrics.
   int metric = Metric::GetMetric(ctx->m_root);
+
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
-  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE <= 1
-  std::cout << ": ";
+  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric
+            << "): ";
   ctx->m_root->logSerialize();
-#else
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+  LogIndent();
+  std::cout << "Path:";
+  ctx->m_path.log();
   std::cout << "\n";
 #endif
 #endif

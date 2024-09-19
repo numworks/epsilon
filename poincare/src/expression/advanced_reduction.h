@@ -73,7 +73,7 @@ class AdvancedReduction {
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
 #if POINCARE_TREE_LOG
-    void log();
+    void log() const;
 #endif
     // Returns one of the three base direction (NextNode, Contract and Expand).
     static Direction SingleDirectionForIndex(int index) {
@@ -115,6 +115,9 @@ class AdvancedReduction {
     // Return true if direction was appended
     bool append(Direction direction);
     uint8_t length() const { return m_length; }
+#if POINCARE_TREE_LOG
+    void log() const;
+#endif
 
    private:
     // Path max length (~= 2 * max number of allowed Expand/Contract)

@@ -183,8 +183,12 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
                                      bool selecting, bool* shouldRedrawLayout,
                                      Poincare::Context* context) {
   assert(step > 0);
+  *shouldRedrawLayout = false;
   for (int i = 0; i < step; i++) {
-    if (!move(direction, selecting, shouldRedrawLayout, context)) {
+    bool shouldRedrawLayoutStep;
+    bool canMove = move(direction, selecting, &shouldRedrawLayoutStep, context);
+    *shouldRedrawLayout |= shouldRedrawLayoutStep;
+    if (!canMove) {
       return i > 0;
     }
   }

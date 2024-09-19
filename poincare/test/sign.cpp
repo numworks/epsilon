@@ -353,9 +353,11 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("ln(ln(x+i*y)i)", ComplexSign(Sign::Unknown(), Sign::Finite()));
 
   // power
-  assert_sign("(1+i)^4", ComplexSign(Sign::Integer(), Sign::Integer()));
-  assert_sign("(5+i)^3", ComplexSign(Sign::Integer(), Sign::Integer()));
-  assert_sign("(5-i)^(-1)", ComplexSign(Sign::Unknown(), Sign::Unknown()));
+  assert_sign("(1+i)^4",
+              ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
+  assert_sign("(5+i)^3",
+              ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
+  assert_sign("(5-i)^(-1)", ComplexSign(Sign::Finite(), Sign::Finite()));
 
   // inf
   assert_sign("inf", Sign::StrictlyPositive());

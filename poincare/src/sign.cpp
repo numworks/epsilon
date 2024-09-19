@@ -254,15 +254,14 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   }
   bool canBeNull = base.realSign().canBeNull();
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
-  bool canBeInfinite = (base.canBeInfinite() || exp.canBeInfinite()) &&
-                       exp.realSign().canBeStrictlyPositive();
+  bool canBeInfinite = base.canBeInfinite() || exp.canBeInfinite();
   if (base.isReal()) {
     bool isPositive = expIsTwo || base.realSign().isPositive();
     return ComplexSign(
         Sign(canBeNull, true, !isPositive, canBeNonInteger, canBeInfinite),
         Sign::Zero());
   }
-  Sign sign = Sign(true, true, true, canBeNonInteger, true);
+  Sign sign = Sign(true, true, true, canBeNonInteger, canBeInfinite);
   return ComplexSign(sign, sign);
 }
 

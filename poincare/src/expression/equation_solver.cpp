@@ -30,6 +30,15 @@ void VariableArray<N>::append(const char* variable) {
   m_numberOfVariables++;
 }
 
+template <int N>
+void VariableArray<N>::fillWithList(const Tree* list) {
+  assert((list->isList() || list->isSet()) && list->numberOfChildren() <= N);
+  clear();
+  for (const Tree* variable : list->children()) {
+    append(Symbol::GetName(variable));
+  }
+}
+
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {
@@ -89,10 +98,9 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
   Tree* replacedSymbols = Set::Difference(
       Variables::GetUserSymbols(equationsSet), userSymbols->cloneTree());
+
   if (replacedSymbols->numberOfChildren() > 0) {
-    for (const Tree* variable : replacedSymbols->children()) {
-      context->userVariables.append(Symbol::GetName(variable));
-    }
+    context->userVariables.fillWithList(replacedSymbols);
   }
   replacedSymbols->removeTree();
 
@@ -124,8 +132,8 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    for (const Tree* symbol : userSymbols->indexedChildren()) {
-      context->variables.append(Symbol::GetName(symbol));
+    context->variables.fillWithList(userSymbols);
+    for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false);
     }
   }

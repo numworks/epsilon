@@ -165,8 +165,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
-  m_solverContext.variables.append(
-      Internal::Symbol::GetName(variables->child(0)));
+  m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   Internal::ProjectionContext ctx;
   Internal::Simplification::ToSystem(equation, &ctx);
@@ -230,9 +229,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
-  m_solverContext.variables.clear();
-  m_solverContext.variables.append(
-      Internal::Symbol::GetName(variables->child(0)));
+  m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   Internal::ProjectionContext ctx;
   Internal::Simplification::ToSystem(equation, &ctx);

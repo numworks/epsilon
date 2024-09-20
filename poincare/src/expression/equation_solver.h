@@ -16,6 +16,7 @@ template <int N>
 class VariableArray {
  public:
   VariableArray() : m_numberOfVariables(0) {}
+  void fillWithList(const Tree* list);
   void clear() { m_numberOfVariables = 0; }
   void append(const char* variable);
   int numberOfVariables() const { return m_numberOfVariables; }

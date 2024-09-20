@@ -117,7 +117,9 @@ class Sign {
            m_canBeInfinite << 4;
   }
 
-  constexpr static Sign Zero() { return Sign(true, false, false, true, false); }
+  constexpr static Sign Zero() {
+    return Sign(true, false, false, false, false);
+  }
   constexpr static Sign NonNull() { return Sign(false, true, true); }
   constexpr static Sign StrictlyPositive() { return Sign(false, true, false); }
   constexpr static Sign Positive() { return Sign(true, true, false); }

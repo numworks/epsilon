@@ -132,19 +132,16 @@ $(call create_tool,inliner, \
 $(_escher_inliner): TOOLS_CFLAGS += -std=c11 $(shell pkg-config libpng --cflags)
 $(_escher_inliner): TOOLS_LDFLAGS += $(shell pkg-config libpng --libs)
 
-$(OUTPUT_DIRECTORY)/%.h: %.png $(_escher_inliner) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/%.cpp: %.png $(_escher_inliner) | $$(@D)/.
 	$(call rule_label,INLINE)
-	$(_escher_inliner) $< $@ $(basename $@).cpp $(INLINER_ARGS)
-
-$(OUTPUT_DIRECTORY)/%.cpp: $(OUTPUT_DIRECTORY)/%.h
-	@ :
+	$(_escher_inliner) $< $(basename $@).h $(basename $@).cpp $(INLINER_ARGS)
 
 # Helpers for sources using images
 
 # depends_on_image, <list of cpp>, <list of png>
 define depends_on_image
 $(eval \
-$(call all_objects_for,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2))
+$(call all_objects_for,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2))
 $(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
 )
 endef
@@ -152,7 +149,7 @@ endef
 # depends_on_transparent_image, <list of cpp>, <list of png>
 define depends_on_transparent_image
 $(eval \
-$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2)): INLINER_ARGS += --transparent
+$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): INLINER_ARGS += --transparent
 $(call depends_on_image,$1,$2)
 )
 endef

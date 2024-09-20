@@ -51,6 +51,17 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
+  if (!(Dimension::ListLength(e) > 0)) {
+    return ReduceIndependantElement(e);
+  }
+  bool changed = false;
+  for (std::size_t i = 0; i < e->numberOfChildren(); i++) {
+    changed = ReduceIndependantElement(e->child(i)) || changed;
+  }
+  return changed;
+}
+
+bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
   Path best_path{};
   ExceptionTry { best_path = FindBestReduction(e); }
   ExceptionCatch(type) {
@@ -347,8 +358,8 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         // No need to recompute hash if root did not change.
         hash = CrcCollection::AdvancedHash(ctx->m_root);
       }
-      /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
-       * not go further. */
+      /* If unchanged or unexplored, recursively advanced reduce. Otherwise,
+       * do not go further. */
       if (!rootChanged ||
           ctx->m_crcCollection.add(hash, ctx->m_path.length())) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
@@ -477,8 +488,8 @@ bool AdvancedReduction::DeepExpand(Tree* e) {
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
    * We push a temporary tree to preserve TreeRef.
-   * TODO: Maybe find a solution for this unintuitive workaround, the same hack
-   * is used in Projection::DeepReplaceUserNamed. */
+   * TODO: Maybe find a solution for this unintuitive workaround, the same
+   * hack is used in Projection::DeepReplaceUserNamed. */
   TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
   Tree* target = e;
   while (target->block() < nextTree->block()) {

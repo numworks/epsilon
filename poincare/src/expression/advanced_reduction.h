@@ -146,6 +146,8 @@ class AdvancedReduction {
 
   [[nodiscard]] static Path FindBestReduction(const Tree* e);
 
+  static bool ReduceIndependantElement(Tree* e);
+
   /* Recursive advanced reduction. Return true if advanced reduction
    * possibilities have all been explored. */
   static bool ReduceRec(Tree* e, Context* ctx);

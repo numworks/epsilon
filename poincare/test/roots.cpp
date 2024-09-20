@@ -41,6 +41,5 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1, -1, -6}", "{3,-2}");
   assert_roots_are("{1,-x-1,x}",
                    "{(x+1+√(x^2-2×x+1))/2,-(-x-1+√(x^2-2×x+1))/2}");
-  // TODO: Should simplify to {-1×i,i}
-  assert_roots_are("{1, 0, 1}", "{i,-√(-4)/2}");
+  assert_roots_are("{1, 0, 1}", "{i,-i}");
 }

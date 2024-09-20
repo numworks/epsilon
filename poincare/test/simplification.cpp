@@ -1326,6 +1326,8 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("1/(√(3)-√(5))", "1/(√(3)-√(5))");  // "-(√(3)+√(5))/2"
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
+  // TODO: Maybe we want to limit rational power simplification to ration bases.
+  simplifies_to("π^(-3/4)", "root(π, 4)/π");  // π^(-3/4) ?
   // √a/√b <=> √(a/b)
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g

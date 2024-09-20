@@ -44,18 +44,17 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(size_t index) const {
-    // Variable is displayed in the equation solution
-    assert(index < m_numberOfSolvingVariables &&
-           m_solverContext.variables[index][0] != '\0');
-    return m_solverContext.variables[index];
+    return m_solverContext.variables.variable(index);
   }
-  size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
+  size_t numberOfUserVariables() const {
+    return m_solverContext.userVariables.numberOfVariables();
+  }
   const char* userVariable(size_t index) const {
-    assert(index < m_numberOfUserVariables &&
-           m_userVariables[index][0] != '\0');
-    return m_userVariables[index];
+    return m_solverContext.userVariables.variable(index);
   }
-  bool overrideUserVariables() const { return m_overrideUserVariables; }
+  bool overrideUserVariables() const {
+    return m_solverContext.overrideUserVariables;
+  }
 
   // Approximate range
   Poincare::Range1D<double> approximateSolvingRange() const {
@@ -118,19 +117,12 @@ class SystemOfEquations {
   void registerSolution(double f);
 
   Solution m_solutions[k_maxNumberOfSolutions];
-  size_t m_numberOfSolvingVariables;
-  size_t m_numberOfUserVariables;
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   int m_degree;
   Poincare::Range1D<double> m_approximateSolvingRange;
-  char m_variables[Poincare::Expression::k_maxNumberOfVariables]
-                  [Poincare::SymbolAbstractNode::k_maxNameSize];
-  char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]
-                      [Poincare::SymbolAbstractNode::k_maxNameSize];
   Type m_type;
   Poincare::Preferences::ComplexFormat m_complexFormat;
-  bool m_overrideUserVariables;
   bool m_hasMoreSolutions;
   bool m_autoApproximateSolvingRange;
   Poincare::Internal::EquationSolver::Context m_solverContext;

@@ -49,6 +49,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
   Error error = Error::NoError;
 
+  m_solverContext.variables.clear();
+  m_solverContext.userVariables.clear();
+
   Internal::Tree* set = equationSet(m_store);
   Internal::Tree* result = EquationSolver::ExactSolve(
       set, &m_solverContext, {.m_context = context}, &error);
@@ -60,11 +63,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_degree = m_solverContext.degree;
     m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
     m_numberOfSolutions = result->numberOfChildren();
-    m_numberOfSolvingVariables = m_numberOfSolutions;
-    m_overrideUserVariables = m_solverContext.overrideUserVariables;
-    m_numberOfUserVariables = m_solverContext.numberOfUserVariables;
-    // Copy user variables
-    memcpy(m_userVariables, m_solverContext.userVariables, sizeof(char[6][10]));
     // Copy solutions
     for (int i = 0; const Internal::Tree* solution : result->children()) {
       Poincare::Expression exact = Poincare::UserExpression::Builder(solution);
@@ -104,7 +102,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
   }
 #endif
-  assert(!result);
   set->removeTree();
   return error;
 }
@@ -170,16 +167,16 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   Internal::Tree* set = equationSet(m_store);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
-  m_solverContext.numberOfVariables = 1;
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
-  Internal::Symbol::CopyName(variables->child(0), m_solverContext.variables[0],
-                             10);
+  m_solverContext.variables.append(
+      Internal::Symbol::GetName(variables->child(0)));
   variables->removeTree();
   Internal::ProjectionContext ctx;
   Internal::Simplification::ToSystem(equation, &ctx);
   Internal::Approximation::PrepareFunctionForApproximation(
-      equation, m_solverContext.variables[0], Preferences::ComplexFormat::Real);
+      equation, m_solverContext.variables.variable(0),
+      Preferences::ComplexFormat::Real);
 
   m_approximateSolvingRange =
       Poincare::Internal::EquationSolver::AutomaticInterval(equation,
@@ -236,16 +233,17 @@ void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* set = equationSet(m_store);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
-  m_solverContext.numberOfVariables = 1;
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
-  Internal::Symbol::CopyName(variables->child(0), m_solverContext.variables[0],
-                             10);
+  m_solverContext.variables.clear();
+  m_solverContext.variables.append(
+      Internal::Symbol::GetName(variables->child(0)));
   variables->removeTree();
   Internal::ProjectionContext ctx;
   Internal::Simplification::ToSystem(equation, &ctx);
   Internal::Approximation::PrepareFunctionForApproximation(
-      equation, m_solverContext.variables[0], Preferences::ComplexFormat::Real);
+      equation, m_solverContext.variables.variable(0),
+      Preferences::ComplexFormat::Real);
   Internal::Tree* result = Poincare::Internal::EquationSolver::ApproximateSolve(
       equation, m_approximateSolvingRange, &m_solverContext);
 
@@ -255,12 +253,6 @@ void SystemOfEquations::approximateSolve(Context* context) {
   m_degree = m_solverContext.degree;
   m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
   m_numberOfSolutions = result->numberOfChildren();
-  m_numberOfSolvingVariables = 1;
-  m_overrideUserVariables = m_solverContext.overrideUserVariables;
-  m_numberOfUserVariables = m_solverContext.numberOfUserVariables;
-  // Copy user variables
-  memcpy(m_userVariables, m_solverContext.userVariables, sizeof(char[6][10]));
-  memcpy(m_variables[0], "x", strlen("x"));
   // Copy solutions
   for (int i = 0; const Internal::Tree* solution : result->children()) {
     m_solutions[i++] =
@@ -321,10 +313,11 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
 SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
     Context* context) {
   return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
-      ->standardForm(context, m_overrideUserVariables,
+      ->standardForm(context, overrideUserVariables(),
                      ReductionTarget::SystemForApproximation);
 }
 
+#if 0
 SystemOfEquations::Error SystemOfEquations::privateExactSolve(
     Context* context) {
   m_numberOfSolutions = 0;
@@ -748,7 +741,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     Preferences::UnitFormat unitFormat =
         GlobalPreferences::SharedGlobalPreferences()->unitFormat();
     SymbolicComputation symbolicComputation =
-        m_overrideUserVariables
+        m_solverContext.overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
     simplifyAndApproximateSolution(
@@ -851,5 +844,6 @@ void SystemOfEquations::tagVariableIfParameter(const char* variable,
     OMG::BitHelper::setBitAtIndex(*tags, index, true);
   }
 }
+#endif
 
 }  // namespace Solver

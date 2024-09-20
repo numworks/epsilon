@@ -181,7 +181,7 @@ ComplexSign Exponential(ComplexSign s) {
     return ComplexSign::Unknown();
   }
   if (s.realSign().canBeInfinite() && s.realSign().canBeStrictlyNegative()) {
-    // exp(-inf) = 0 , necessary so that x^y = exp(y*ln(x)) can be null.
+    // exp(-inf) = 0, necessary so that x^y = exp(y*ln(x)) can be null.
     return ComplexSign::RealPositive();
   }
   return ComplexSign::RealStrictlyPositive();
@@ -331,10 +331,9 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
     case Type::PhysicalConstant:
-      ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::Unit:
       // Units are considered equivalent to their SI ratio
-      return ComplexSign(Sign::Positive(), Sign::Zero());
+      return ComplexSign(Sign::FinitePositive(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ACos:

@@ -411,7 +411,7 @@ For instance: `GetElement({2, 3, 4}, 1) -> 3` and `GetElement(ListSequence(2*k, 
 
 It is expected to:
 - Reduce any reducible expression if given enough resources
-- Do its best with reduced resources
+- Do its best with limited resources
 - Be deterministic
 - Ignore dependencies
 

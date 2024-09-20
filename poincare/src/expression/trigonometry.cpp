@@ -420,6 +420,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   }
   bool argIsOpposed = argSign.realSign().isNegative();
   bool changed = argIsOpposed;
+  assert(!arg->treeIsIdenticalTo(KExp(KMult(-1_e / 2_e, KLn(2_e)))));
   if (argIsOpposed) {
     e->child(0)->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = arg}));
@@ -433,11 +434,9 @@ bool Trigonometry::ReduceATrig(Tree* e) {
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
     changed = true;
-  } else if (arg->treeIsIdenticalTo(KExp(KMult(-1_e / 2_e, KLn(2_e)))) ||
-             arg->treeIsIdenticalTo(
+  } else if (arg->treeIsIdenticalTo(
                  KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))) {
-    // TODO_PCJ: we shouldn't have to test both x=1/√2 and x=√2/2
-    // acos(1/√2) = asin(1/√2) = π/4
+    // acos(√2/2) = asin(√2/2) = π/4
     e->moveTreeOverTree(PatternMatching::CreateSimplify(KMult(1_e / 4_e, π_e)));
     changed = true;
   } else if (arg->isMult()) {
@@ -496,10 +495,9 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     e->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
     return true;
   }
-  if (PatternMatching::Match(arg, KExp(KMult(-1_e / 2_e, KLn(3_e))), &ctx) ||
-      PatternMatching::Match(
+  assert(!PatternMatching::Match(arg, KExp(KMult(-1_e / 2_e, KLn(3_e))), &ctx));
+  if (PatternMatching::Match(
           arg, KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), &ctx)) {
-    // TODO_PCJ: we shouldn't have to test both x=1/√3 and x=√3/3
     // atan(1/√3) = π/6
     e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
     return true;

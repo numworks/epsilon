@@ -3,15 +3,22 @@
 #include <ion/clipboard.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/expression.h>
+#include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 
 namespace Escher {
 
-static Clipboard s_clipboard;
+Clipboard::Clipboard() {
+  const Poincare::Internal::Tree* emptyRack = Poincare::Internal::KRackL();
+  memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
+}
 
-Clipboard* Clipboard::SharedClipboard() { return &s_clipboard; }
+Clipboard* Clipboard::SharedClipboard() {
+  static Clipboard s_clipboard;
+  return &s_clipboard;
+}
 
 void Clipboard::storeText(const char* text, int length) {
   int maxSize = TextField::MaxBufferSize();

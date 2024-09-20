@@ -17,6 +17,7 @@ class Clipboard {
   constexpr static int k_bufferSize = TextField::MaxBufferSize();
 
  protected:
+  Clipboard();
   /* TODO store either text or layout in an union and convert as needed ? */
   char m_textBuffer[k_bufferSize];
   char m_treeBuffer[k_bufferSize];

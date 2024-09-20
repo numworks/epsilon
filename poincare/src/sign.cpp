@@ -233,7 +233,7 @@ ComplexSign GetComplexSign(const Tree* e) {
   if (e->isNumber()) {
     return ComplexSign(Number::Sign(e), Sign::Zero());
   } else if (e->isDecimal()) {
-    return ComplexSign(Sign::Positive(), Sign::Zero());
+    return ComplexSign(Number::Sign(e->child(0)), Sign::Zero());
   } else if (e->isUserNamed()) {
     return Symbol::GetComplexSign(e);
   }

@@ -2774,7 +2774,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("root({2,3},5)",
                                        "{root(2,5),root(3,5)}");
   assert_parsed_expression_simplify_to("-{1/√(2),1/2,3,2,1,-3}",
-                                       "{-√(2)/2,-1/2,-3,-2,-1,3}");
+                                       "{-1/√(2),-1/2,-3,-2,-1,3}");
   assert_parsed_expression_simplify_to("re({1,i})", "{1,0}");
   assert_parsed_expression_simplify_to("round({2.12,3.42}, 1)", "{21/10,17/5}");
   assert_parsed_expression_simplify_to("round(1.23456, {2,3})",

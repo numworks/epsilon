@@ -209,19 +209,21 @@ Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
 
 bool Logarithm::ContractLn(Tree* e) {
   PatternMatching::Context ctx;
-  // A*ln(B) = ln(B^A) + i*(A*arg(B) - arg(B^A)) if A is an integer.
+  // (A/D)*ln(B) = (ln(B^A) + i*(A*arg(B) - arg(B^A)))/D with A, D integers.
   if (PatternMatching::Match(e, KMult(KA, KLn(KB)), &ctx) &&
-      ctx.getTree(KA)->isInteger()) {
-    const Tree* a = ctx.getTree(KB);
-    const Tree* b = ctx.getTree(KA);
-    if (a->isZero()) {
-      return false;
-    }
-    TreeRef c = PushProductCorrection(a, b);
-    ctx.setNode(KC, c, 1, false);
-    e->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KAdd(KLn(KPow(KB, KA)), KC), ctx));
+      ctx.getTree(KA)->isRational() &&
+      !Rational::Numerator(ctx.getTree(KA)).isOne()) {
+    TreeRef a = Rational::Numerator(ctx.getTree(KA)).pushOnTreeStack();
+    const Tree* b = ctx.getTree(KB);
+    assert(!b->isZero());
+    TreeRef c = PushProductCorrection(b, a);
+    TreeRef d = Rational::Denominator(ctx.getTree(KA)).pushOnTreeStack();
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KMult(KPow(KD, -1_e), KAdd(KLn(KPow(KB, KA)), KC)),
+        {.KA = a, .KB = b, .KC = c, .KD = d}));
+    d->removeTree();
     c->removeTree();
+    a->removeTree();
     return true;
   }
   // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))

@@ -82,6 +82,20 @@ bool SystematicOperation::ReducePower(Tree* e) {
     return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
   }
   if (!n->isInteger()) {
+    if (n->isRational() && base->isRational() && !base->isInteger()) {
+      /* Split the rational to remove roots from denominator. After
+       * simplification, we expect
+       * (p/q)^(a/b) -> (p/q)^n * p^(c/b) * q^(d/b) / q with integers c and d
+       * positive integers such that c+d = b */
+      TreeRef p = Rational::Numerator(base).pushOnTreeStack();
+      TreeRef q = Rational::Denominator(base).pushOnTreeStack();
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KMult(KPow(KA, KB), KPow(KC, KMult(-1_e, KB))),
+          {.KA = p, .KB = n, .KC = q}));
+      q->removeTree();
+      p->removeTree();
+      return true;
+    }
     if (n->isRational() && !Rational::IsStrictlyPositiveUnderOne(n)) {
       // x^(a/b) -> x^((a-c)/b) * exp(ln(x)*c/b) with c remainder of a/b
       TreeRef a = Rational::Numerator(n).pushOnTreeStack();
@@ -451,9 +465,11 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       (ctx.getTree(KB)->isZero() ||
        (ctx.getTree(KA)->isRational() &&
-        !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA))))) {
+        ((ctx.getTree(KB)->isRational() && !ctx.getTree(KB)->isInteger()) ||
+         !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA)))))) {
     /* 0^y and x^(a/b) are expected to have a unique representation :
      * - 0^y is either 0 or undef
+     * - (p/q)^(a/b) is p^(a/b)*q^(-a/b) (and then fallback on next step)
      * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive
      *   integers and c < b.
      * Fallback on Power implementation for that : exp(a*ln(b)) -> b^a */

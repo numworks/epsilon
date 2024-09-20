@@ -6,7 +6,9 @@ $(call create_module,quiz,1,$(addprefix src/, \
   test_symbols.c \
 ))
 
+ifeq ($(TOOLCHAIN),emscripten)
 LDFLAGS_quiz := -s MODULARIZE=0
+endif
 
 # List of the files that may contain a QUIZ_CASE and should cause test_symbols.c
 # to be rebuilt. It is coarser than using goals but it is hard to have

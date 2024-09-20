@@ -59,9 +59,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   if (error == Error::NoError) {
     assert(result);
     // Update member variables for LinearSystem
-    m_type = m_solverContext.type;
-    m_degree = m_solverContext.degree;
-    m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
     m_numberOfSolutions = result->numberOfChildren();
     // Copy solutions
     for (int i = 0; const Internal::Tree* solution : result->children()) {
@@ -71,7 +68,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           PoincareHelpers::CreateLayout(exact, context);
       Poincare::Layout approximatedLayout;
       bool areStriclyEqual = false;
-      if (!m_hasMoreSolutions) {
+      if (!hasMoreSolutions()) {
         /* TODO: even if some variables depend on t, others may be worth to
          * approximate, alternatively approx everything with ReplaceScalars */
         ApproximationContext ctx(context);
@@ -157,7 +154,6 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_autoApproximateSolvingRange = false;
-  m_hasMoreSolutions = false;
   m_solverContext.hasMoreSolutions = false;
   m_approximateSolvingRange = approximateSolvingRange;
 }
@@ -182,7 +178,6 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
       Poincare::Internal::EquationSolver::AutomaticInterval(equation,
                                                             &m_solverContext);
   m_autoApproximateSolvingRange = true;
-  m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
 }
 
 #if 0
@@ -249,9 +244,6 @@ void SystemOfEquations::approximateSolve(Context* context) {
 
   assert(result && result->isList());
   // Update member variables for LinearSystem
-  m_type = m_solverContext.type;
-  m_degree = m_solverContext.degree;
-  m_hasMoreSolutions = m_solverContext.hasMoreSolutions;
   m_numberOfSolutions = result->numberOfChildren();
   // Copy solutions
   for (int i = 0; const Internal::Tree* solution : result->children()) {

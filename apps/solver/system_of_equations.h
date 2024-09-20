@@ -41,8 +41,8 @@ class SystemOfEquations {
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
   // System analysis
-  Type type() const { return m_type; }
-  int degree() const { return m_degree; }
+  Type type() const { return m_solverContext.type; }
+  int degree() const { return m_solverContext.degree; }
   const char* variable(size_t index) const {
     return m_solverContext.variables.variable(index);
   }
@@ -77,7 +77,7 @@ class SystemOfEquations {
     assert(index < m_numberOfSolutions);
     return m_solutions + index;
   }
-  bool hasMoreSolutions() const { return m_hasMoreSolutions; }
+  bool hasMoreSolutions() const { return m_solverContext.hasMoreSolutions; }
 
   void tidy(Poincare::PoolObject* treePoolCursor = nullptr);
 
@@ -119,11 +119,8 @@ class SystemOfEquations {
   Solution m_solutions[k_maxNumberOfSolutions];
   size_t m_numberOfSolutions;
   EquationStore* m_store;
-  int m_degree;
   Poincare::Range1D<double> m_approximateSolvingRange;
-  Type m_type;
   Poincare::Preferences::ComplexFormat m_complexFormat;
-  bool m_hasMoreSolutions;
   bool m_autoApproximateSolvingRange;
   Poincare::Internal::EquationSolver::Context m_solverContext;
 };

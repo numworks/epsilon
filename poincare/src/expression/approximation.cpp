@@ -412,9 +412,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Root: {
       std::complex<T> base = ToComplex<T>(e->child(0));
       std::complex<T> exp = ToComplex<T>(e->child(1));
-      /* If the complexFormat is Real, we look for nthroot of form root(x,q)
+      /* If the complexFormat is Real, we look for nth root of form root(x,q)
        * with x real and q integer because they might have a real form which
-       * does not correspond to the principale angle. */
+       * does not correspond to the principal angle. */
       if (s_context &&
           s_context->m_complexFormat == Preferences::ComplexFormat::Real &&
           exp.imag() == 0.0 && std::round(exp.real()) == exp.real()) {
@@ -434,7 +434,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e) {
     case Type::Log:
     case Type::Ln: {
       std::complex<T> c = ToComplex<T>(e->child(0));
-      /* log has a branch cut on ]-inf, 0]: it is then multivalued on this cut.
+      /* log has a branch cut on ]-inf, 0]: it is then multi-valued on this cut.
        * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
        * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
        * 0-0i]). We manually handle the case where the argument is null, as the
@@ -1369,7 +1369,7 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(Tree* e) {
 
 /* TODO: not all this functions are worth templating on float and
  * double. ToComplex needs it but ToMatrix could take a bool and call the
- * correct ToComplex<T> as needed since the code is mostly independant of the
+ * correct ToComplex<T> as needed since the code is mostly independent of the
  * float type used in the tree. */
 
 template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(

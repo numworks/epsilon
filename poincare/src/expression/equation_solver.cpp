@@ -22,6 +22,14 @@
 
 namespace Poincare::Internal {
 
+template <int N>
+void VariableArray<N>::append(const char* variable) {
+  assert(m_numberOfVariables < N);
+  assert(strlen(variable) < Symbol::k_maxNameLength);
+  strcpy(m_variables[m_numberOfVariables], variable);
+  m_numberOfVariables++;
+}
+
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {
@@ -82,12 +90,9 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   Tree* replacedSymbols = Set::Difference(
       Variables::GetUserSymbols(equationsSet), userSymbols->cloneTree());
   if (replacedSymbols->numberOfChildren() > 0) {
-    int i = 0;
     for (const Tree* variable : replacedSymbols->children()) {
-      Symbol::CopyName(variable, context->userVariables[i++],
-                       Symbol::k_maxNameSize);
+      context->userVariables.append(Symbol::GetName(variable));
     }
-    context->numberOfUserVariables = replacedSymbols->numberOfChildren();
   }
   replacedSymbols->removeTree();
 
@@ -119,10 +124,8 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    for (IndexedChild<const Tree*> symbol : userSymbols->indexedChildren()) {
-      assert(symbol.index < k_maxNumberOfExactSolutions);
-      Symbol::CopyName(symbol, context->variables[symbol.index],
-                       Symbol::k_maxNameLength);
+    for (const Tree* symbol : userSymbols->indexedChildren()) {
+      context->variables.append(Symbol::GetName(symbol));
       Variables::LeaveScopeWithReplacement(result, symbol, false);
     }
   }
@@ -184,7 +187,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
                                        Range1D<double> range,
                                        Context* context) {
   assert(context->type == Type::GeneralMonovariable);
-  assert(context->numberOfVariables == 1);
+  assert(context->variables.numberOfVariables() == 1);
 
   assert(range.isValid());
   Solver<double> solver =
@@ -548,11 +551,11 @@ EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
 
 uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
   uint32_t tags = 0;
-  for (size_t i = 0; i < context->numberOfVariables; i++) {
-    TagVariableIfParameter(context->variables[i], &tags, context);
+  for (size_t i = 0; i < context->variables.numberOfVariables(); i++) {
+    TagVariableIfParameter(context->variables.variable(i), &tags, context);
   }
-  for (size_t i = 0; i < context->numberOfUserVariables; i++) {
-    TagVariableIfParameter(context->userVariables[i], &tags, context);
+  for (size_t i = 0; i < context->userVariables.numberOfVariables(); i++) {
+    TagVariableIfParameter(context->userVariables.variable(i), &tags, context);
   }
   return tags;
 }

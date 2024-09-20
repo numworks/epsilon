@@ -12,6 +12,24 @@ namespace Poincare::Internal {
 /* Solver methods are a direct (and incomplete for now) adaptation of methods in
  * apps/solver/system_of_equations.cpp. */
 
+template <int N>
+class VariableArray {
+ public:
+  VariableArray() : m_numberOfVariables(0) {}
+  void clear() { m_numberOfVariables = 0; }
+  void append(const char* variable);
+  int numberOfVariables() const { return m_numberOfVariables; }
+  const char* variable(int index) const {
+    assert(0 <= index && index < m_numberOfVariables);
+    assert(m_variables[index][0] != '\0');
+    return m_variables[index];
+  }
+
+ private:
+  int m_numberOfVariables;
+  char m_variables[N][Symbol::k_maxNameSize];
+};
+
 class EquationSolver {
  public:
   constexpr static int k_maxNumberOfExactSolutions = 6;
@@ -40,11 +58,8 @@ class EquationSolver {
     bool overrideUserVariables = false;
     bool exactResults = true;
     bool hasMoreSolutions = false;
-    int numberOfVariables = 0;
-    char variables[k_maxNumberOfExactSolutions][Symbol::k_maxNameSize];
-    // Context used for apps/solver compatibility
-    int numberOfUserVariables = 0;
-    char userVariables[k_maxNumberOfExactSolutions][Symbol::k_maxNameSize];
+    VariableArray<k_maxNumberOfExactSolutions> variables;
+    VariableArray<k_maxNumberOfExactSolutions> userVariables;
   };
 
   // Return list of exact solutions.

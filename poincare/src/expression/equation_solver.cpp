@@ -236,9 +236,16 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
     *error = Error::EquationUndefined;
     return;
   }
-  if (equationsSet->isUndefined()) {
-    *error = equationsSet->isNonReal() ? Error::EquationNonReal
-                                       : Error::EquationUndefined;
+  if (!equationsSet->isList()) {
+    *error = Error::EquationUndefined;
+    return;
+  }
+  for (const Tree* equation : equationsSet->children()) {
+    if (equation->isUndefined()) {
+      *error = equation->isNonReal() && *error == Error::NoError
+                   ? Error::EquationNonReal
+                   : Error::EquationUndefined;
+    }
   }
 }
 

@@ -524,20 +524,18 @@ bool CursorMotion::IsCollapsable(const Layout* l, const Rack* root,
        * absorbed. This way, the user can write a product of fractions without
        * typing the × sign. */
       int indexOfThis;
-      const Tree* parent = root->parentOfDescendant(l, &indexOfThis);
+      const Rack* parent =
+          Rack::From(root->parentOfDescendant(l, &indexOfThis));
       assert(parent && parent->numberOfChildren() > 1);
       int indexInParent = parent->indexOfChild(l);
       int indexOfAbsorbingSibling =
           indexInParent + (direction.isLeft() ? 1 : -1);
       assert(indexOfAbsorbingSibling >= 0 &&
              indexOfAbsorbingSibling < parent->numberOfChildren());
-      const Tree* absorbingSibling = parent->child(indexOfAbsorbingSibling);
-      if (absorbingSibling->numberOfChildren() > 0) {
-        absorbingSibling = absorbingSibling->child(
-            CollapsingAbsorbingChildIndex(l, direction));
-      }
-      return absorbingSibling->isRackLayout() &&
-             Rack::IsEmpty(absorbingSibling);
+      const Layout* absorbingSibling = parent->child(indexOfAbsorbingSibling);
+      const Rack* absorbingRack = absorbingSibling->child(
+          CollapsingAbsorbingChildIndex(absorbingSibling, direction));
+      return Rack::IsEmpty(absorbingRack);
     }
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {

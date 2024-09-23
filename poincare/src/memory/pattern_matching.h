@@ -139,7 +139,7 @@ class PatternMatching {
   static bool PrivateMatchReplace(Tree* source, const Tree* pattern,
                                   const Tree* structure, bool simplify);
 
-  /* During Match, MatchContext allow keeping track of matched Nary sizes.
+  /* During Match, MatchContext allows keeping track of matched Nary sizes.
    * It keeps track of both source and pattern.
    * For example, we want to prevent source Add(Mult(1,2),3) from matching with
    * pattern Add(Mult(1), 2, 3). At some point, local source will be Mult(1,2)

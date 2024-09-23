@@ -226,7 +226,6 @@ It is expected to:
 - Be efficient and simple
 - Apply obvious and definitive changes
 - Do nothing if applied a second time
-- Ignore dependencies
 
 ### Effects
 
@@ -385,7 +384,7 @@ Indeed, we don't preserve $ln(0.333)$ and systematically reduce it with $-1.099$
 
 #### Dependencies
 
-Dependencies are always bubble-up to the top.
+Dependencies are always bubbled-up to the top.
 
 Most of the time, we just merge and move the dependencies up:
 

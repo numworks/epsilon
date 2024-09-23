@@ -82,7 +82,6 @@ install_linux_binary_deps() {
     clang-format \
     git \
     imagemagick \
-    lcov \
     libfreetype6-dev \
     libjpeg-dev \
     libpng-dev \
@@ -96,6 +95,8 @@ install_linux_binary_deps() {
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
   fi
+
+  install_latest_lcov
 }
 
 install_windows_binary_deps() {
@@ -118,6 +119,28 @@ install_windows_binary_deps() {
     pacman -S --noconfirm \
       mingw-w64-x86_64-python-pyusb
       mingw-w64-x86_64-arm-none-eabi-gcc
+  fi
+}
+
+install_latest_lcov(){
+  sudo apt update
+  # Remove any existing lcov installed with apt
+  sudo apt remove lcov -y
+  # Some lcov dependencies need to be manually installed
+  sudo apt install libdatetime-perl libcapture-tiny-perl -y
+  # Download the lcov github release with wget
+  sudo apt install wget
+  sudo wget https://github.com/linux-test-project/lcov/releases/download/v2.1/lcov-2.1.tar.gz && tar -xf lcov-2.1.tar.gz
+  # Compile lcov
+  cd lcov-2.1 && sudo make install && cd ..
+  # Clean folder
+  rm -r lcov-*
+  # Test that version 2.1 is installed
+  if ! lcov --version | grep -q '2.1'
+  then
+    echo "lcov version is incorrect, got "
+    lcov --version
+    exit 1
   fi
 }
 

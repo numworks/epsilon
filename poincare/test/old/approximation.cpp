@@ -5,6 +5,7 @@
 #include <poincare/old/undefined.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/k_tree.h>
 
 #include "helper.h"
 
@@ -866,21 +867,28 @@ QUIZ_CASE(poincare_approximation_function) {
 
 template <typename T>
 void assert_no_duplicates_in_list(const char *expression) {
-#if 0
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext, true);
-  e = ListSort::Builder(e);
-  OExpression result =
-      e.approximate<T>(ApproximationContext(&globalContext, Cartesian, Radian));
-  assert(result.otype() == ExpressionNode::Type::OList);
-  OList list = static_cast<OList &>(result);
-  int n = list.numberOfChildren();
+  Internal::Tree *e = parse_expression(expression, &globalContext);
+  e->cloneNodeAtNode(Poincare::Internal::KListSort);
+  e->moveTreeOverTree(
+      Internal::Approximation::RootTreeToTree<T>(e, Radian, Cartesian));
+  assert(e->isList());
+  int n = e->numberOfChildren();
+  bool bad = false;
   for (int i = 1; i < n; i++) {
-    quiz_assert_print_if_failure(
-        !list.childAtIndex(i).isIdenticalTo(list.childAtIndex(i - 1)),
-        expression);
+    if (e->child(i)->treeIsIdenticalTo(e->child(i - 1))) {
+      bad = true;
+      break;
+    }
+    /* quiz_assert_print_if_failure(!e->child(i)->treeIsIdenticalTo(e->child(i -
+     * 1)), expression); */
   }
-#endif
+  constexpr int bufferSize = 500;
+  char information[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
+                                      bad ? "BAD" : "OK", expression);
+  quiz_print(information);
+  e->removeTree();
 }
 
 QUIZ_CASE(poincare_approximation_unique_random) {

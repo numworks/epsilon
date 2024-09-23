@@ -119,6 +119,7 @@ constexpr auto KCross = KBinary<Type::Cross>();
 
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
 constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
+constexpr auto KListSort = KUnary<Type::ListSort>();
 
 constexpr auto KSum = KFixedArity<4, Type::Sum>();
 constexpr auto KProduct = KFixedArity<4, Type::Product>();

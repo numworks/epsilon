@@ -63,8 +63,9 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Addition(child, next);
-  } else if (Infinity::IsPlusOrMinusInfinity(next) && child->isNumber()) {
-    // number ± inf -> ± inf
+  } else if (Infinity::IsPlusOrMinusInfinity(next) &&
+             GetComplexSign(child).isFinite()) {
+    // finite expression ± inf -> ± inf
     child->removeTree();
     return true;
   } else if (TermsAreEqual(child, next)) {

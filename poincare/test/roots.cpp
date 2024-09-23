@@ -21,6 +21,11 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             tree->moveTreeOverTree(Roots::Quadratic(
                 tree->child(0), tree->child(1), tree->child(2)));
             break;
+          case 4:
+            tree->moveTreeOverTree(Roots::Cubic(tree->child(0), tree->child(1),
+                                                tree->child(2),
+                                                tree->child(3)));
+            break;
           default:
             // Not handled
             quiz_assert(false);
@@ -42,4 +47,18 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1,-x-1,x}",
                    "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2}");
   assert_roots_are("{1, 0, 1}", "{-i,i}");
+
+  assert_roots_are("{1, undef, 0, 0}", "{}");
+  assert_roots_are("{1, 0, 0, -8}", "{2,-1+√(3)×i,-1-√(3)×i}");
+  // assert_roots_are("{1, 0, -3, -2}", "{-1,2}");
+
+  // assert_solves_to("x^3+x+1=0", {"x=-0.6823278038",
+  // "x=0.3411639019-1.1615414×i",
+  //                                "x=0.3411639019+1.1615414×i", "delta=-31"});
+  // assert_solves_to("x^3+x^2+1=0",
+  //                  {"x=-1.465571232", "x=0.2327856159-0.7925519925×i",
+  //                   "x=0.2327856159+0.7925519925×i", "delta=-31"});
+  // assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});
+  // assert_solves_to("x^3-4x^2+6x-24=0",
+  //                  {"x=4", "x=-√(6)×i", "x=√(6)×i", "delta=-11616"});
 }

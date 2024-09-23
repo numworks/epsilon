@@ -54,7 +54,13 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   Internal::Tree* set = equationSet(m_store);
   Internal::Tree* result = EquationSolver::ExactSolve(
-      set, &m_solverContext, {.m_context = context}, &error);
+      set, &m_solverContext,
+      {
+          .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
+          .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
+          .m_context = context,
+      },
+      &error);
 
   if (error == Error::NoError) {
     assert(result);

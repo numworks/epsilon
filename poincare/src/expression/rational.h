@@ -28,6 +28,7 @@ class Rational final {
   }
   static bool SetSign(Tree* e, NonStrictSign sign);
 
+  static int Compare(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Multiplication(const Tree* e1, const Tree* e2);
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)

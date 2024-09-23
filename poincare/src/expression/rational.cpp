@@ -267,4 +267,18 @@ Tree* Rational::CreateMixedFraction(const Tree* e,
   return integerPart;
 }
 
+int Rational::Compare(const Tree* e1, const Tree* e2) {
+  assert(e1->isRational() && e2->isRational());
+  if (e1->isStrictlyNegativeRational() != e2->isStrictlyNegativeRational()) {
+    return e1->isStrictlyNegativeRational() ? -1 : 1;
+  }
+  Tree* m1 = IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
+  Tree* m2 = IntegerHandler::Multiplication(Denominator(e1), Numerator(e2));
+  int result =
+      IntegerHandler::Compare(Integer::Handler(m1), Integer::Handler(m2));
+  m2->removeTree();
+  m1->removeTree();
+  return result;
+}
+
 }  // namespace Poincare::Internal

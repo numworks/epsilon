@@ -9,6 +9,7 @@
 #include "dimension.h"
 #include "k_tree.h"
 #include "polynomial.h"
+#include "rational.h"
 #include "symbol.h"
 #include "units/unit.h"
 #include "variables.h"
@@ -155,7 +156,7 @@ int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
   }
   assert(!e1->isMathematicalConstant());
   if (e1->isRational() && e2->isRational()) {
-    // TODO_PCJ: return Rational::NaturalOrder(e1, e2);
+    return Rational::Compare(e1, e2);
   }
   float approximation =
       Approximation::To<float>(e1) - Approximation::To<float>(e2);

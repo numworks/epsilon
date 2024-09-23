@@ -1,83 +1,99 @@
-#include <poincare/old/rational.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
+#include <quiz.h>
 
-#include "helper.h"
+#include "../helper.h"
 
-using namespace Poincare;
+using namespace Poincare::Internal;
 
-static inline void assert_equal(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) == 0);
-}
-static inline void assert_not_equal(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) != 0);
-}
-
-static inline void assert_lower(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) < 0);
+static inline void assert_equal(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) == 0);
 }
 
-static inline void assert_greater(const Rational i, const Rational j) {
-  quiz_assert(Rational::NaturalOrder(i, j) > 0);
+static inline void assert_not_equal(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) != 0);
+}
+
+static inline void assert_lower(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) < 0);
+}
+
+static inline void assert_greater(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) > 0);
 }
 
 QUIZ_CASE(poincare_rational_order) {
-  assert_equal(Rational::Builder(123, 324), Rational::Builder(41, 108));
-  assert_not_equal(Rational::Builder(123, 234), Rational::Builder(42, 108));
-  assert_lower(Rational::Builder(123, 234), Rational::Builder(456, 567));
-  assert_lower(Rational::Builder(-123, 234), Rational::Builder(456, 567));
-  assert_greater(Rational::Builder(123, 234), Rational::Builder(-456, 567));
-  assert_greater(
-      Rational::Builder(123, 234),
-      Rational::Builder("123456789123456789", "12345678912345678910"));
+  Tree* e1 = Rational::Push(123_e, 324_e);
+  Tree* e2 = Rational::Push(41_e, 108_e);
+  assert_equal(e1, e2);
+  Tree* e3 = Rational::Push(123_e, 234_e);
+  Tree* e4 = Rational::Push(42_e, 108_e);
+  assert_not_equal(e3, e4);
+  Tree* e5 = Rational::Push(456_e, 567_e);
+  assert_lower(e3, e5);
+  Tree* e6 = Rational::Push(-123_e, 234_e);
+  assert_lower(e6, e5);
+  Tree* e7 = Rational::Push(-456_e, 567_e);
+  assert_greater(e3, e7);
+  Tree* i = parse("12345678912345678910");
+  Tree* e8 = Rational::Push(123456789123456789_e, i);
+  assert_greater(e3, e8);
+  e8->removeTree();
+  i->removeTree();
+  e7->removeTree();
+  e6->removeTree();
+  e5->removeTree();
+  e4->removeTree();
+  e3->removeTree();
+  e2->removeTree();
+  e1->removeTree();
 }
 
-QUIZ_CASE(poincare_rational_specific_properties) {
-  quiz_assert(Rational::Builder(0).isZero());
-  quiz_assert(!Rational::Builder(231).isZero());
-  quiz_assert(Rational::Builder(1).isOne());
-  quiz_assert(!Rational::Builder(-1).isOne());
-  quiz_assert(!Rational::Builder(1).isMinusOne());
-  quiz_assert(Rational::Builder(-1).isMinusOne());
-  quiz_assert(Rational::Builder(1, 2).isHalf());
-  quiz_assert(!Rational::Builder(-1).isHalf());
-  quiz_assert(Rational::Builder(-1, 2).isMinusHalf());
-  quiz_assert(!Rational::Builder(3, 2).isMinusHalf());
-  quiz_assert(Rational::Builder(10).isTen());
-  quiz_assert(!Rational::Builder(-1).isTen());
-  quiz_assert(Rational::Builder(-1).isInteger());
-  quiz_assert(Rational::Builder(9).isInteger());
-  quiz_assert(Rational::Builder(9, 3).isInteger());
-  quiz_assert(Rational::Builder(-9, 3).isInteger());
-  quiz_assert(!Rational::Builder(9, 10).isInteger());
-  Rational m1 = Rational::IntegerPower(Rational::Builder(2), Integer(1024));
-  quiz_assert(m1.numeratorOrDenominatorIsInfinity());
-  quiz_assert(!m1.integerDenominator().isZero());
-}
-
-static inline void assert_add_to(const Rational i, const Rational j,
-                                 const Rational k) {
-  quiz_assert(Rational::NaturalOrder(Rational::Addition(i, j), k) == 0);
+static inline void assert_add_to(const Tree* e1, const Tree* e2,
+                                 const Tree* e3) {
+  quiz_assert(Rational::Compare(Rational::Addition(e1, e2), e3) == 0);
 }
 
 QUIZ_CASE(poincare_rational_addition) {
-  assert_add_to(Rational::Builder(1, 2), Rational::Builder(1),
-                Rational::Builder(3, 2));
-  assert_add_to(Rational::Builder("18446744073709551616", "4294967296"),
-                Rational::Builder(8, 9), Rational::Builder("38654705672", "9"));
-  assert_add_to(Rational::Builder("18446744073709551616", "4294967296"),
-                Rational::Builder(-8, 9),
-                Rational::Builder("38654705656", "9"));
+  Tree* e1 = Rational::Push(1_e, 2_e);
+  Tree* e2 = Rational::Push(1_e, 1_e);
+  Tree* e3 = Rational::Push(3_e, 2_e);
+  assert_add_to(e1, e2, e3);
+  Tree* i = parse("18446744073709551616");
+  Tree* e4 = Rational::Push(i, 4294967296_e);
+  Tree* e5 = Rational::Push(8_e, 9_e);
+  Tree* e6 = Rational::Push(38654705672_e, 9_e);
+  assert_add_to(e4, e5, e6);
+  Tree* e7 = Rational::Push(-8_e, 9_e);
+  Tree* e8 = Rational::Push(38654705656_e, 9_e);
+  assert_add_to(e4, e7, e8);
+  e8->removeTree();
+  e7->removeTree();
+  e6->removeTree();
+  e5->removeTree();
+  i->removeTree();
+  e4->removeTree();
+  e3->removeTree();
+  e2->removeTree();
+  e1->removeTree();
 }
 
-static inline void assert_pow_to(const Rational i, const Integer j,
-                                 const Rational k) {
-  quiz_assert(Rational::NaturalOrder(Rational::IntegerPower(i, j), k) == 0);
+static inline void assert_pow_to(const Tree* e1, const Tree* e2,
+                                 const Tree* e3) {
+  quiz_assert(Rational::Compare(Rational::IntegerPower(e1, e2), e3) == 0);
 }
 
 QUIZ_CASE(poincare_rational_power) {
-  assert_pow_to(Rational::Builder(4, 5),
-                Rational::Builder(3).signedIntegerNumerator(),
-                Rational::Builder(64, 125));
-  assert_pow_to(Rational::Builder(4, 5),
-                Rational::Builder(-3).signedIntegerNumerator(),
-                Rational::Builder(125, 64));
+  Tree* e1 = Rational::Push(4_e, 5_e);
+  Tree* e2 = Rational::Push(3_e, 1_e);
+  Tree* e3 = Rational::Push(64_e, 125_e);
+  assert_pow_to(e1, e2, e3);
+  Tree* e4 = Rational::Push(-3_e, 1_e);
+  Tree* e5 = Rational::Push(125_e, 64_e);
+  assert_pow_to(e1, e4, e5);
+  e5->removeTree();
+  e4->removeTree();
+  e3->removeTree();
+  e2->removeTree();
+  e1->removeTree();
 }

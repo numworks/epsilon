@@ -1,6 +1,9 @@
 #ifndef POINCARE_NUMERIC_ROOTS_H
 #define POINCARE_NUMERIC_ROOTS_H
 
+#include <poincare/old/computation_context.h>
+#include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare {
@@ -22,6 +25,29 @@ class Roots {
                      const Tree* discriminant = nullptr);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
+
+ private:
+  constexpr static int k_maxNumberOfNodesBeforeApproximatingDelta = 16;
+  static Tree* ReducePolynomial(const Tree* coefficients, int degree,
+                                const Tree* parameter,
+                                const ReductionContext& reductionContext);
+  static Rational ReduceRationalPolynomial(const Rational* coefficients,
+                                           int degree, Rational parameter);
+  static bool IsRoot(const Tree* coefficients, int degree, const Tree* root,
+                     const ReductionContext& reductionContext) {
+    return GetSign(
+               ReducePolynomial(coefficients, degree, root, reductionContext))
+        .isNull();
+  }
+
+  static Tree* RationalRootSearch(const Tree* coefficients, int degree,
+                                  const ReductionContext& reductionContext);
+  static Tree* SumRootSearch(const Tree* coefficients, int degree,
+                             int relevantCoefficient,
+                             const ReductionContext& reductionContext);
+  static Tree* CardanoNumber(const Tree* delta0, const Tree* delta1,
+                             bool* approximate,
+                             const ReductionContext& reductionContext);
 
 #if 0
   static int LinearPolynomialRoots(OExpression a, OExpression b,

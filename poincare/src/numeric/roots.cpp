@@ -93,102 +93,36 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   return KList(1_e, 2_e, 3_e)->cloneTree();
 }
 
+Tree* Roots::ReducePolynomial(const Tree* coefficients, int degree,
+                              const Tree* parameter,
+                              const ReductionContext& reductionContext) {
+  return nullptr;
+}
+
+Rational Roots::ReduceRationalPolynomial(const Rational* coefficients,
+                                         int degree, Rational parameter) {
+  return Rational{};
+}
+
+Tree* Roots::RationalRootSearch(const Tree* coefficients, int degree,
+                                const ReductionContext& reductionContext) {
+  return nullptr;
+}
+
+Tree* Roots::SumRootSearch(const Tree* coefficients, int degree,
+                           int relevantCoefficient,
+                           const ReductionContext& reductionContext) {
+  return nullptr;
+}
+Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1,
+                           bool* approximate,
+                           const ReductionContext& reductionContext) {
+  return nullptr;
+}
+
 #if 0
 
-int Polynomial::LinearPolynomialRoots(OExpression a, OExpression b,
-                                      OExpression *root,
-                                      ReductionContext reductionContext,
-                                      bool beautifyRoots) {
-  assert(root);
-  assert(!(a.isUninitialized() || b.isUninitialized()));
-  *root = Division::Builder(Opposite::Builder(b), a)
-              .cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
-  return !root->isUndefined();
-}
 
-int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
-                                         OExpression c, OExpression* root1,
-                                         OExpression* root2, OExpression* delta,
-                                         ReductionContext reductionContext,
-                                         bool* approximateSolutions,
-                                         bool beautifyRoots) {
-  assert(root1 && root2 && delta);
-  assert(!(a.isUninitialized() || b.isUninitialized() || c.isUninitialized()));
-
-  bool approximate = approximateSolutions ? *approximateSolutions : false;
-
-  Context* context = reductionContext.context();
-  ApproximationContext approximationContext(reductionContext);
-
-  *delta = Subtraction::Builder(
-      Power::Builder(b.clone(), Rational::Builder(2)),
-      Multiplication::Builder(Rational::Builder(4), a.clone(), c.clone()));
-  *delta = delta->cloneAndSimplify(reductionContext);
-  if (delta->isUndefined()) {
-    *root1 = Undefined::Builder();
-    *root2 = Undefined::Builder();
-    return 0;
-  }
-
-  bool multipleRoot = false;
-  OMG::Troolean deltaNull = delta->isNull(context);
-  if (deltaNull == OMG::Troolean::True ||
-      (deltaNull == OMG::Troolean::Unknown &&
-       delta->approximateToScalar<double>(approximationContext) == 0.)) {
-    *root1 = Division::Builder(
-        Opposite::Builder(b.clone()),
-        Multiplication::Builder(Rational::Builder(2), a.clone()));
-    *root2 = Undefined::Builder();
-    multipleRoot = true;
-  } else {
-    // Grapher relies on the order here to properly navigate implicit curves.
-    int offset = 0;
-    OMG::Troolean aPositive = a.isPositive(context);
-    if (aPositive != OMG::Troolean::True &&
-        (aPositive == OMG::Troolean::False ||
-         a.approximateToScalar<double>(approximationContext) < 0.)) {
-      // Coefficient a is negative, swap root1 and root 2 to preseverve order.
-      offset = 1;
-    }
-    OExpression* roots[2] = {root1, root2};
-    *roots[offset % 2] = Division::Builder(
-        Subtraction::Builder(Opposite::Builder(b.clone()),
-                             SquareRoot::Builder(delta->clone())),
-        Multiplication::Builder(Rational::Builder(2), a.clone()));
-    *roots[(1 + offset) % 2] = Division::Builder(
-        Addition::Builder(Opposite::Builder(b.clone()),
-                          SquareRoot::Builder(delta->clone())),
-        Multiplication::Builder(Rational::Builder(2), a.clone()));
-  }
-
-  if (!approximate) {
-    *root1 = root1->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
-    *root2 = root2->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
-    if (root1->otype() == ExpressionNode::Type::Undefined ||
-        (!multipleRoot && root2->otype() == ExpressionNode::Type::Undefined)) {
-      // Simplification has been interrupted, recompute approximated roots.
-      approximate = true;
-      if (approximateSolutions) {
-        *approximateSolutions = true;
-      }
-      return QuadraticPolynomialRoots(a, b, c, root1, root2, delta,
-                                      reductionContext, &approximate,
-                                      beautifyRoots);
-    }
-  } else {
-    *delta = delta->approximate<double>(approximationContext);
-    *root1 = root1->approximate<double>(approximationContext);
-    *root2 = root2->approximate<double>(approximationContext);
-  }
-  assert(!(root1->isUninitialized() || root2->isUninitialized()));
-
-  if (root1->isUndefined()) {
-    *root1 = *root2;
-    *root2 = Undefined::Builder();
-  }
-
-  return !root1->isUndefined() + !root2->isUndefined();
-}
 
 static bool rootSmallerThan(const OExpression* root1, const OExpression* root2,
                             const ApproximationContext* approximationContext) {

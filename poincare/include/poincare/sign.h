@@ -31,7 +31,8 @@ class Sign {
         m_canBeStrictlyNegative(canBeStrictlyNegative),
         m_canBeNonInteger(canBeNonInteger &&
                           (canBeStrictlyPositive || canBeStrictlyNegative)),
-        m_canBeInfinite(canBeInfinite) {
+        m_canBeInfinite(canBeInfinite &&
+                        (canBeStrictlyPositive || canBeStrictlyNegative)) {
     // By ensuring its members can't be modified, a Sign is always valid.
     assert(isValid());
   }

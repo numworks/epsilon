@@ -58,37 +58,11 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   if (error == Error::NoError) {
     assert(result);
-    // Update member variables for LinearSystem
-    m_numberOfSolutions = result->numberOfChildren();
-    // Copy solutions
-    for (int i = 0; const Internal::Tree* solution : result->children()) {
-      Poincare::Expression exact = Poincare::UserExpression::Builder(solution);
-      Poincare::Expression reduced = exact.cloneAndReduce({});
-      Poincare::Layout exactLayout =
-          PoincareHelpers::CreateLayout(exact, context);
-      Poincare::Layout approximatedLayout;
-      bool areStriclyEqual = false;
-      if (!hasMoreSolutions()) {
-        /* TODO: even if some variables depend on t, others may be worth to
-         * approximate, alternatively approx everything with ReplaceScalars */
-        ApproximationContext ctx(context);
-        Poincare::Expression approximated =
-            reduced.approximateToTree<double>(ctx);
-        if (approximated.tree()->isNonReal()) {
-          return Error::EquationNonReal;
-        }
-        Internal::ProjectionContext projCtx;  // TODO: pass arguments
-        areStriclyEqual =
-            Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                reduced, approximated, &projCtx);
-        approximatedLayout =
-            PoincareHelpers::CreateLayout(approximated, context);
-        if (exactLayout.isIdenticalTo(approximatedLayout)) {
-          approximatedLayout = Poincare::Layout();
-        }
-      }
-      m_solutions[i++] =
-          Solution(exactLayout, approximatedLayout, NAN, areStriclyEqual);
+    m_numberOfSolutions = 0;
+    for (const Internal::Tree* solution : result->children()) {
+      registerSolution(
+          UserExpression::Builder(solution), context,
+          hasMoreSolutions() ? SolutionType::Formal : SolutionType::Exact);
     }
     result->removeTree();
   }
@@ -665,6 +639,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   // Account for delta
   return registerSolution(delta, context, type);
 }
+#endif
 
 static void simplifyAndApproximateSolution(
     UserExpression e, UserExpression* exact, UserExpression* approximate,
@@ -788,6 +763,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   return Error::NoError;
 }
 
+#if 0
 void SystemOfEquations::registerSolution(double f) {
   if (std::isfinite(f)) {
     m_solutions[m_numberOfSolutions++] = Solution(Layout(), Layout(), f, false);

@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <ion/display.h>
+#include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 
@@ -176,20 +177,22 @@ bool EditExpressionController::isAcceptableExpression(
   if (expression.isUninitialized()) {
     return false;
   }
-  // Replace ans with its value and check serialization
-  UserExpression exp = expression.clone();
-  exp = m_calculationStore->replaceAnsInExpression(exp, context);
-  constexpr int maxSerializationSize = Constant::MaxSerializedExpressionSize;
-  char buffer[maxSerializationSize];
-  int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
-  /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
-   * escaped before printing utterly the expression. */
-  if (length >= maxSerializationSize - 1) {
-    return false;
+  ExceptionCheckpoint ecp;
+  if (ExceptionRun(ecp)) {
+    // Replace ans with its value and check serialization
+    UserExpression exp = expression.clone();
+    exp = m_calculationStore->replaceAnsInExpression(exp, context);
+    assert(!exp.isUninitialized());
+    Layout layout =
+        exp.createLayout(Preferences::PrintFloatMode::Decimal,
+                         PrintFloat::k_maxNumberOfSignificantDigits, context);
+    assert(!layout.isUninitialized());
+    return true;
+    exp = UserExpression::Parse(layout, context);
+    // Replacing Ans made the expression un-parsable.
+    return !exp.isUninitialized();
   }
-  exp = UserExpression::Parse(buffer, context);
-  // The ans replacement made the expression unparsable
-  return !exp.isUninitialized();
+  return false;
 }
 
 void EditExpressionController::reloadView() {

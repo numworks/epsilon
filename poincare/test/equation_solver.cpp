@@ -56,6 +56,7 @@ QUIZ_CASE(pcj_equation_solver) {
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);
+  check_solutions({"x-π"}, {"π"}, projCtx);
   check_solutions({"x+x+1"}, {"-1/2"}, projCtx);
   check_solutions({"x+y", "y+x", "y-x+2"}, {"1", "-1"}, projCtx);
 

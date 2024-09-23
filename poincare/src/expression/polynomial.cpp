@@ -325,8 +325,10 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
 bool PolynomialParser::ContainsVariable(const Tree* e) {
   int numberOfChildren = e->numberOfChildren();
   if (numberOfChildren == 0) {
-    return e->isOfType({Type::UserFunction, Type::UserSequence,
-                        Type::UserSymbol, Type::Pi, Type::EulerE, Type::Var});
+    /* TODO: we used to consider π and e as variables, restore them if
+     * polynomial interpretation is to be implemented */
+    return e->isOfType(
+        {Type::UserFunction, Type::UserSequence, Type::UserSymbol, Type::Var});
   }
   const Tree* child = e->child(0);
   for (int i = 0; i < numberOfChildren; i++) {

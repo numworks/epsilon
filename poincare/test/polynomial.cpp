@@ -29,13 +29,14 @@ QUIZ_CASE(pcj_polynomial_parsing) {
       /* variables = {} */ KSet(),
       /* polynomial */ 42_e);
   assert_polynomial_is_parsed(
-      /* π^3 + 3*π^2*e + 3*π*e^2 + e^3 */ KAdd(
-          KPow(π_e, 3_e), KMult(3_e, KPow(π_e, 2_e), "e"_e),
-          KMult(3_e, KPow("e"_e, 2_e), π_e), KPow("e"_e, 3_e)),
-      /* variables = {π, e} */ KSet(π_e, "e"_e),
+      /* x^3 + 3*x^2*y + 3*x*y^2 + y^3 */ KAdd(
+          KPow("x"_e, 3_e), KMult(3_e, KPow("x"_e, 2_e), "y"_e),
+          KMult(3_e, KPow("y"_e, 2_e), "x"_e), KPow("y"_e, 3_e)),
+      /* variables = {x, y} */ KSet("x"_e, "y"_e),
       /* polynomial */
-      KPol(Exponents<3, 2, 1, 0>(), π_e, 1_e, KPol(Exponents<1>(), "e"_e, 3_e),
-           KPol(Exponents<2>(), "e"_e, 3_e), KPol(Exponents<3>(), "e"_e, 1_e)));
+      KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e,
+           KPol(Exponents<1>(), "y"_e, 3_e), KPol(Exponents<2>(), "y"_e, 3_e),
+           KPol(Exponents<3>(), "y"_e, 1_e)));
   // TODO: parse polynomial with float coefficients?
 }
 
@@ -56,7 +57,7 @@ QUIZ_CASE(pcj_polynomial_variables) {
   assert_trees_are_equal(
       PolynomialParser::GetVariables(KAdd(
           KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), "x"_e), KMult(i_e, π_e))),
-      KSet(π_e, "x"_e));
+      KSet("x"_e));
 }
 
 QUIZ_CASE(pcj_polynomial_operations) {

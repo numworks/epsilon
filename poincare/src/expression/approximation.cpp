@@ -318,9 +318,9 @@ bool UndefDependencies(const Tree* dep) {
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
-
-  if (s_context && value.imag() != 0 &&
-      s_context->m_complexFormat == ComplexFormat::Real) {
+  if (s_context && s_context->m_complexFormat == ComplexFormat::Real &&
+      value.imag() != 0 && !e->isComplexI()) {
+    // Do not return NonReal for i
     return NonReal<T>();
   }
   // We used to flush negative zeros here but it was not worth

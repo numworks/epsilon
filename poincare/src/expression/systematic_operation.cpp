@@ -358,7 +358,8 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   } else {
     return false;
   }
-  e->cloneTreeOverTree(result);
+  e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
+                                              {.KA = result, .KB = child}));
   return true;
 }
 

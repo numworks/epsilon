@@ -564,6 +564,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("lcm(14,6)", "42");
   simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
   simplifies_to("sign(-2)", "-1");
+  simplifies_to("sign(abs(x)+1)", "dep(1,{x})");
   simplifies_to("ceil(8/3)", "3");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("floor(8/3)", "2");
@@ -907,7 +908,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("-3×inf", "-∞");
   simplifies_to("inf×(-inf)", "-∞");
   simplifies_to("x×(-inf)", "∞×sign(-x)");
-  simplifies_to("(abs(x)+1)*inf", "∞");
+  simplifies_to("(abs(x)+1)*inf", "dep(∞,{x})");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
 

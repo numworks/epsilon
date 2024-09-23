@@ -92,13 +92,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     }
     result->removeTree();
   }
-#if 0
-  else if (error == Error::RequireApproximateSolution) {
-    m_type = Type::GeneralMonovariable;
-    m_approximateResolutionMinimum = -k_defaultApproximateSearchRange;
-    m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
-  }
-#endif
   set->removeTree();
   return error;
 }

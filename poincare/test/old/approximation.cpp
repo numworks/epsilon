@@ -462,7 +462,7 @@ QUIZ_CASE(poincare_approximation_logarithm) {
   assert_expression_approximates_to<double>("log(0)", Undefined::Name());
   assert_expression_approximates_to<double>("log(2,0)", Undefined::Name());
 
-  // WARNING: evaluate on branch cut can be multivalued
+  // WARNING: evaluate on branch cut can be multi-valued
   assert_expression_approximates_to<double>(
       "ln(-4)", "1.3862943611199+3.1415926535898×i");
 }
@@ -1652,7 +1652,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                             "13+5ᴇ-290×i", Radian,
                                             MetricUnitFormat, Cartesian, 3);
 
-  // WARNING: evaluate on branch cut can be multivalued
+  // WARNING: evaluate on branch cut can be multi-valued
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×i",
                                             Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×i",

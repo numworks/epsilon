@@ -175,8 +175,8 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
     if (((j == 1 && expression->isListStatWithCoefficients()) ||
          (j == 3 && expression->isDiff())) &&
         expression->nextNode()->isOne()) {
-      // TODO: factorise with PromoteBuiltin?
-      // TODO: factorise with 2D layouting?
+      // TODO: factorize with PromoteBuiltin?
+      // TODO: factorize with 2D layouting?
       /* Remove default parameters:
        * - mean(L, 1) -> mean(L)
        * - diff(f, x, y, 1) -> diff(f, x, y) */
@@ -467,7 +467,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       PushCodePoint(layoutParent, '/');
       layoutIntegerHandler(layoutParent, Rational::Denominator(expression));
 #else
-      // Expression should have been beautified before layoutting
+      // Expression should have been beautified before layouting
       assert(false);
 #endif
       break;
@@ -848,7 +848,7 @@ void Layouter::StripUselessPlus(Tree* rack) {
    * respectively.
    * TODO: we should rather rework LayoutExpression(negative double) to make it
    * work like rationals with first the beautification into opposite block and
-   * then the insertion of - instead of + when layoutting the addition. */
+   * then the insertion of - instead of + when layouting the addition. */
   assert(rack->isRackLayout());
   Tree* child = rack->nextNode();
   int n = rack->numberOfChildren();

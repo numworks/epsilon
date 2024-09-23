@@ -1,4 +1,5 @@
 #include <poincare/numeric/roots.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/n_ary.h>
@@ -32,8 +33,12 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
   if (discriminant->isUndefined()) {
     return discriminant->cloneTree();
   }
-  // TODO: Approximate if unsure
   ComplexSign deltaSign = GetComplexSign(discriminant);
+  if (deltaSign.realSign().isUnknown()) {
+    Tree* approxDelta = Approximation::RootTreeToTree<double>(discriminant);
+    deltaSign = GetComplexSign(approxDelta);
+    approxDelta->removeTree();
+  }
   if (deltaSign.isNull()) {
     // -B/2A
     return PatternMatching::CreateSimplify(

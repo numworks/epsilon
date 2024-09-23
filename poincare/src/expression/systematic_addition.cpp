@@ -65,7 +65,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
     merge = Number::Addition(child, next);
   } else if (Infinity::IsPlusOrMinusInfinity(next) &&
              GetComplexSign(child).isFinite()) {
-    // finite expression ± inf -> ± inf
+    // x ± inf -> ± inf if x is finite
     child->removeTree();
     return true;
   } else if (TermsAreEqual(child, next)) {

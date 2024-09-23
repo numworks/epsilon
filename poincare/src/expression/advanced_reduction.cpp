@@ -51,7 +51,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
-  if (!(Dimension::ListLength(e) > 0)) {
+  if (!(e->isList())) {
     return ReduceIndependantElement(e);
   }
   bool changed = false;
@@ -201,12 +201,7 @@ bool AdvancedReduction::Direction::canApply(const Tree* e,
   assert(!isNextNode() ||
          (NextNode(e)->block() < SharedTreeStack->lastBlock()) ==
              NextNode(e)->hasAncestor(root, false));
-  if (!isNextNode()) {
-    // Early exit a contract / expand direction is e is a number or a user
-    // symbol.
-    return !e->isNumber() && !e->isUserSymbol();
-  }
-  return NextNode(e)->block() < SharedTreeStack->lastBlock();
+  return !isNextNode() || NextNode(e)->block() < SharedTreeStack->lastBlock();
 }
 
 bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
@@ -219,6 +214,10 @@ bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
     return true;
   }
   assert(isContract() || isExpand());
+  if ((*u)->numberOfChildren() == 0) {
+    // Trees without children cannot be contracted or expanded.
+    return false;
+  }
   if (!(isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
   }
@@ -432,9 +431,11 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
 
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
-  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric
-            << "): ";
+  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE <= 1
+  std::cout << ": ";
   ctx->m_root->logSerialize();
+#endif
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
   LogIndent();
   std::cout << "Path:";

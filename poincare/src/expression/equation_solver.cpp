@@ -76,11 +76,7 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
   return result;
 }
 
-/* TODO:
- * - Implement a number of variable limit (Error::TooManyVariables).
- * - Catch Undefined and Nonreal simplified equations (Error::EquationNonreal
- *   and Error::EquationUndefined).
- * - Project equality into subtraction.  */
+/* TODO_PCJ: Implement a number of variable limit (Error::TooManyVariables). */
 Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         Context* context,
                                         ProjectionContext projectionContext,
@@ -553,11 +549,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
 
 EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
                                                       Context* context) {
-  /* TODO:
-   * - Handle exact results being forbidden.
-   * - Pass more context.
-   * - Handle Nonreal and Undefined solutions.
-   * - Handle approximate display.
+  /* TODO_PCJ:
+   * - Remove this function
+   * - Pass more context
    */
   // TODO: Use user settings for a RealUnkown sign ?
   Simplification::ReduceSystem(solution, true);

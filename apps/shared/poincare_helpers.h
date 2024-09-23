@@ -49,15 +49,6 @@ inline int ConvertFloatToTextWithDisplayMode(
       .CharLength;
 }
 
-inline size_t Serialize(
-    const Poincare::Expression e, char* buffer, size_t bufferSize,
-    int numberOfSignificantDigits =
-        Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
-  return e.serialize(buffer, bufferSize,
-                     Poincare::Preferences::SharedPreferences()->displayMode(),
-                     numberOfSignificantDigits);
-}
-
 // ===== Approximation =====
 
 struct ApproximationParameters {

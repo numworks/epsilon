@@ -177,6 +177,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
       Poincare::Internal::EquationSolver::AutomaticInterval(equation,
                                                             &m_solverContext);
   m_autoApproximateSolvingRange = true;
+  set->removeTree();
 }
 
 #if 0

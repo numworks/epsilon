@@ -101,10 +101,8 @@ bool SystematicOperation::ReducePower(Tree* e) {
       TreeRef a = Rational::Numerator(n).pushOnTreeStack();
       TreeRef b = Rational::Denominator(n).pushOnTreeStack();
       assert(!b->isOne());
-      DivisionResult<Tree*> divAB =
-          IntegerHandler::Division(Integer::Handler(a), Integer::Handler(b));
-      TreeRef c = divAB.remainder;
-      divAB.quotient->removeTree();
+      TreeRef c =
+          IntegerHandler::Remainder(Integer::Handler(a), Integer::Handler(b));
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KPow(KD, KMult(KAdd(KA, KMult(-1_e, KC)), KPow(KB, -1_e))),
                 KExp(KMult(KC, KPow(KB, -1_e), KLn(KD)))),

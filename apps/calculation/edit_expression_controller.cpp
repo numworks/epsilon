@@ -177,7 +177,7 @@ bool EditExpressionController::isAcceptableExpression(
   if (expression.isUninitialized()) {
     return false;
   }
-  // Replace ans with its value and check serialization
+  // Replace ans with its value and check layout
   UserExpression exp = expression.clone();
   exp = m_calculationStore->replaceAnsInExpression(exp, context);
   assert(!exp.isUninitialized());
@@ -185,6 +185,7 @@ bool EditExpressionController::isAcceptableExpression(
       exp.createLayout(Preferences::PrintFloatMode::Decimal,
                        PrintFloat::k_maxNumberOfSignificantDigits, context);
   assert(!layout.isUninitialized());
+  layout = layout.cloneWithoutMargins();
   exp = UserExpression::Parse(layout, context);
   // Replacing Ans made the expression un-parsable.
   return !exp.isUninitialized();

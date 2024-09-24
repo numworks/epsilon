@@ -21,7 +21,7 @@ void assertLayoutParsesTo(const Tree* layout, const Tree* expected,
   assert_trees_are_equal(expression, expected);
 }
 
-QUIZ_CASE(pcj_layout_tokenize) {
+QUIZ_CASE(pcj_parse_layout_tokenize) {
   Shared::GlobalContext ctx;
   ParsingContext context(&ctx, ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer(Rack::From("ab*123.45"_l), &context);
@@ -65,7 +65,7 @@ bool is_parsable(const Tree* layout) {
 
 // TODO import all the parsing tests from poincare
 
-QUIZ_CASE(pcj_layout_parse) {
+QUIZ_CASE(pcj_parse_layout) {
   assertLayoutParsesTo("2^(3+1)^4"_l,
                        KPow(2_e, KPow(KParentheses(KAdd(3_e, 1_e)), 4_e)));
   quiz_assert(is_parsable("12(123 +  0x2a+2*0b0101)"_l));
@@ -100,7 +100,7 @@ QUIZ_CASE(pcj_parse_unit) {
   }
 }
 
-QUIZ_CASE(pcj_assignment_parse) {
+QUIZ_CASE(pcj_parse_assignment) {
   Shared::GlobalContext context;
 
   assertLayoutParsesTo("y=zz"_l, KEqual("y"_e, KMult("z"_e, "z"_e)), &context);

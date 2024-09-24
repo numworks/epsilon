@@ -50,9 +50,8 @@ class GlobalContext final : public Poincare::Context {
     Poincare::Context::GlobalContext = this;
   };
 
-#if ASSERTIONS
   ~GlobalContext() { Poincare::Context::GlobalContext = nullptr; }
-#endif
+
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */

@@ -38,15 +38,6 @@ QUIZ_CASE(poincare_rational_order) {
   Tree* i = parse("12345678912345678910");
   Tree* e8 = Rational::Push(123456789123456789_e, i);
   assert_greater(e3, e8);
-  e8->removeTree();
-  i->removeTree();
-  e7->removeTree();
-  e6->removeTree();
-  e5->removeTree();
-  e4->removeTree();
-  e3->removeTree();
-  e2->removeTree();
-  e1->removeTree();
 }
 
 static inline void assert_add_to(const Tree* e1, const Tree* e2,
@@ -67,15 +58,6 @@ QUIZ_CASE(poincare_rational_addition) {
   Tree* e7 = Rational::Push(-8_e, 9_e);
   Tree* e8 = Rational::Push(38654705656_e, 9_e);
   assert_add_to(e4, e7, e8);
-  e8->removeTree();
-  e7->removeTree();
-  e6->removeTree();
-  e5->removeTree();
-  i->removeTree();
-  e4->removeTree();
-  e3->removeTree();
-  e2->removeTree();
-  e1->removeTree();
 }
 
 static inline void assert_pow_to(const Tree* e1, const Tree* e2,
@@ -91,9 +73,4 @@ QUIZ_CASE(poincare_rational_power) {
   Tree* e4 = Rational::Push(-3_e, 1_e);
   Tree* e5 = Rational::Push(125_e, 64_e);
   assert_pow_to(e1, e4, e5);
-  e5->removeTree();
-  e4->removeTree();
-  e3->removeTree();
-  e2->removeTree();
-  e1->removeTree();
 }

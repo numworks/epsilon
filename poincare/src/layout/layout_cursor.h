@@ -171,9 +171,10 @@ class LayoutBufferCursor final : public LayoutCursor {
     execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
   void insertLayout(const Tree* l, Poincare::Context* context = nullptr,
-                    bool forceRight = false, bool forceLeft = false) {
-    TreeStackCursor::InsertLayoutContext insertLayoutContext{l, forceRight,
-                                                             forceLeft};
+                    bool forceRight = false, bool forceLeft = false,
+                    bool collapseSiblings = true) {
+    TreeStackCursor::InsertLayoutContext insertLayoutContext{
+        l, forceRight, forceLeft, collapseSiblings};
     execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
   }
   void deleteAndResetSelection() {
@@ -212,6 +213,7 @@ class LayoutBufferCursor final : public LayoutCursor {
     struct InsertLayoutContext {
       const Tree* m_tree;
       bool m_forceRight, m_forceLeft;
+      bool m_collapseSiblings;
     };
     void insertLayout(Poincare::Context* context,
                       const void* insertLayoutContext);

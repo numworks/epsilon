@@ -370,7 +370,9 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
    * not merged */
   if (numberOfInsertedChildren == 1 && !autocompletedPairInserted) {
     // ref is undef
-    collapseSiblingsOfLayout(Layout::From(toCollapse));
+    if (insertLayoutContext->m_collapseSiblings) {
+      collapseSiblingsOfLayout(Layout::From(toCollapse));
+    }
     int indexOfChildToPointTo =
         (forceRight || forceLeft)
             ? k_outsideIndex

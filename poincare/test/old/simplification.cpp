@@ -2743,7 +2743,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
                                        "{0,0,1,-2}");
   assert_parsed_expression_simplify_to("floor({0.3,180})", "{0,180}");
   assert_parsed_expression_simplify_to("frac({1/√(2),1/2,1,-1.3})",
-                                       "{1/√(2),1/2,0,7/10}");
+                                       "{√(2)/2,1/2,0,7/10}");
   assert_parsed_expression_simplify_to("frac({0.3,180})", "{3/10,0}");
   assert_parsed_expression_simplify_to("gcd({25,60},15)", "{5,15}");
   assert_parsed_expression_simplify_to("arcosh({0,π})",

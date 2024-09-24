@@ -910,6 +910,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("inf×(-inf)", "-∞");
   simplifies_to("x×(-inf)", "∞×sign(-x)");
   simplifies_to("(abs(x)+1)*inf", "dep(∞,{x})");
+  simplifies_to("cos(x)+inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
 

@@ -222,7 +222,7 @@ ComplexSign Trig(ComplexSign s, bool isSin) {
     return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
                  : ComplexSign::RealStrictlyPositive();
   }
-  return ComplexSign(Sign::Unknown(),
+  return ComplexSign(s.isReal() ? Sign::Finite() : Sign::Unknown(),
                      s.isReal() ? Sign::Zero() : Sign::Unknown());
 }
 

@@ -324,7 +324,7 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
   assert_sign("2-π", Sign::Finite());
-  assert_sign("3 * abs(cos(x)) * -2", Sign::Negative());
+  assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());
 
   assert_sign("x", ComplexSign::RealUnknown());
   assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
@@ -343,13 +343,13 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::Positive(), Sign::FiniteStrictlyPositive()));
 
   // cos
-  assert_sign("cos(3)", Sign::Unknown());
+  assert_sign("cos(3)", Sign::Finite());
   assert_sign("cos(2i)", Sign::StrictlyPositive());
   assert_sign("cos(-2i)", Sign::StrictlyPositive());
   assert_sign("cos(3+2i)", ComplexSign::Unknown());
 
   // sin
-  assert_sign("sin(3)", Sign::Unknown());
+  assert_sign("sin(3)", Sign::Finite());
   assert_sign("sin(2i)",
               ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive()));
   assert_sign("sin(-2i)",

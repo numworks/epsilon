@@ -92,63 +92,6 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(KMult(KCos(2_e), KSqrt(2_e)),
                                               "cos(2)×√(2)", "cos(2)√(2)");
 
-#if O  // Can never happen --> delete those tests?
-  // BasedInteger x ?
-  // 0b101·0.23
-  assert_expression_layouts_and_serializes_to(KMult(5_e, 0.23_e), "0b101·0.23",
-                                              OMG::Base::Binary);
-  // 0x2A3·23242
-  assert_expression_layouts_and_serializes_to(
-      KMult(675_e, 23242_e), "0x2A3·23242", OMG::Base::Hexadecimal);
-  // 0b101·π
-  assert_expression_layouts_and_serializes_to(KMult(5_e, "π"_e), "0b101·π",
-                                              OMG::Base::Binary);
-  // 0x2A3·abc
-  assert_expression_layouts_and_serializes_to(
-      KMult(675_e, "abc"_e), "0x2A3·abc", OMG::Base::Hexadecimal);
-  // 0b101·(1+2)
-  assert_expression_layouts_and_serializes_to(
-      KMult(5_e, KParentheses(KAdd(1_e, 2_e))), "0b101·(1+2)",
-      OMG::Base::Binary);
-  // 0x2A3·√(2)
-  assert_expression_layouts_and_serializes_to(
-      KMult(675_e, KSqrt(2_e)), "0x2A3·√(2)", OMG::Base::Hexadecimal);
-  // 0b101·root(2,3)
-  assert_expression_layouts_and_serializes_to(
-      KMult(5_e, KRoot(2_e, 3_e)), "0b101·root((2),(3))", OMG::Base::Binary);
-  // 0x2A3·2/3
-  assert_expression_layouts_and_serializes_to(
-      KMult(675_e, KDiv(2_e, 3_e)), "0x2A3·((2)/(3))", OMG::Base::Hexadecimal);
-
-  // ? x BasedInteger
-  // 0.23·0x2A3
-  assert_expression_layouts_and_serializes_to(
-      KMult(0.23_e, 675_e), "0.23·0x2A3", OMG::Base::Hexadecimal);
-  // 23242·0b101
-  assert_expression_layouts_and_serializes_to(KMult(23242_e, 5_e),
-                                              "23242·0b101", OMG::Base::Binary);
-  // π·0x2A3
-  assert_expression_layouts_and_serializes_to(KMult("π"_e, 675_e), "π·0x2A3",
-                                              OMG::Base::Hexadecimal);
-  // abc·0b101
-  assert_expression_layouts_and_serializes_to(KMult("abc"_e, 5_e), "abc·0b101",
-                                              OMG::Base::Binary);
-  // (1+2)·0x2A3
-  assert_expression_layouts_and_serializes_to(
-      KMult(KParentheses(KAdd(1_e, 2_e)), 675_e), "(1+2)·0x2A3",
-      OMG::Base::Hexadecimal);
-  // √(2)·0b101
-  assert_expression_layouts_and_serializes_to(KMult(KSqrt(2_e), 5_e),
-                                              "√(2)·0b101", OMG::Base::Binary);
-  // root(2,3)·0x2A3
-  assert_expression_layouts_and_serializes_to(KMult(KRoot(2_e, 3_e), 675_e),
-                                              "root((2),(3))·0x2A3",
-                                              OMG::Base::Hexadecimal);
-  // 2/3·0b101
-  assert_expression_layouts_and_serializes_to(
-      KMult(KDiv(2_e, 3_e), 5_e), "((2)/(3))·0b101", OMG::Base::Binary);
-#endif
-
   // 2√(2)
   assert_expression_layouts_and_serializes_to(KMult(2_e, KSqrt(2_e)), "2×√(2)",
                                               "2√(2)");

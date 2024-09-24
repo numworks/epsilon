@@ -213,8 +213,9 @@ class LayoutBufferCursor final : public LayoutCursor {
                                  const void* nullptrData);
     struct InsertLayoutContext {
       const Tree* m_tree;
-      bool m_forceRight, m_forceLeft;
-      bool m_collapseSiblings;
+      bool m_forceRight = false;
+      bool m_forceLeft = false;
+      bool m_collapseSiblings = true;
     };
     void insertLayout(Poincare::Context* context,
                       const void* insertLayoutContext);

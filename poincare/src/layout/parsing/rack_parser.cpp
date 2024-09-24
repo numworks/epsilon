@@ -1380,15 +1380,16 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
           (m_nextToken.is(Token::Type::Layout) &&
            m_nextToken.firstLayout()->isFractionLayout()))) {
     m_waitingSlashForMixedFraction = true;
-    TreeRef rightHandSide = parseUntil(Token::Type::LeftBrace);
+    Tree* rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
-    if (!rightHandSide.isUninitialized() && rightHandSide->isDiv() &&
+    if (rightHandSide && rightHandSide->isDiv() &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
         IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction
       CloneNodeAtNode(leftHandSide, KMixedFraction);
       return true;
     }
+    rightHandSide->removeTree();
   }
 
   setState(previousState);

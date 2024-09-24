@@ -221,6 +221,59 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
          (e->isPow() && e->child(1)->isStrictlyPositiveRational());
 }
 
+// Check presence of undefined patterns e.g. inf-inf or inf*0
+bool CanBeUndefWithInfinity(const Tree* e) {
+  assert(e->isOfType({Type::Add, Type::Mult}));
+  if (e->isAdd()) {
+    bool canContainRealPlusInfinity = false;
+    bool canContainRealMinusInfinity = false;
+    bool canContainImagPlusInfinity = false;
+    bool canContainImagMinusInfinity = false;
+    for (const Tree* child : e->children()) {
+      ComplexSign s = GetComplexSign(child);
+      Sign realSign = s.realSign();
+      Sign imagSign = s.imagSign();
+      bool canBeRealPlusInfinity =
+          realSign.canBeInfinite() && realSign.canBeStrictlyPositive();
+      bool canBeRealMinusInfinity =
+          realSign.canBeInfinite() && realSign.canBeStrictlyNegative();
+      bool canBeImagPlusInfinity =
+          imagSign.canBeInfinite() && imagSign.canBeStrictlyPositive();
+      bool canBeImagMinusInfinity =
+          imagSign.canBeInfinite() && imagSign.canBeStrictlyNegative();
+
+      if ((canBeRealPlusInfinity && canContainRealMinusInfinity) ||
+          (canBeRealMinusInfinity && canContainRealPlusInfinity) ||
+          (canBeImagPlusInfinity && canContainImagMinusInfinity) ||
+          (canBeImagMinusInfinity && canContainImagPlusInfinity)) {
+        return true;
+      }
+      canContainRealPlusInfinity |= canBeRealPlusInfinity;
+      canContainRealMinusInfinity |= canBeRealMinusInfinity;
+      canContainImagPlusInfinity |= canBeImagPlusInfinity;
+      canContainImagMinusInfinity |= canBeImagMinusInfinity;
+    }
+  } else if (e->isMult()) {
+    bool canContainInfinity = false;
+    bool canContainNull = false;
+    for (const Tree* child : e->children()) {
+      ComplexSign s = GetComplexSign(child);
+      Sign realSign = s.realSign();
+      Sign imagSign = s.imagSign();
+      bool canBeRealOrImagNull = realSign.canBeNull() || imagSign.canBeNull();
+      bool canBeRealOrImagInfinity = s.canBeInfinite();
+
+      if ((canBeRealOrImagNull && canContainInfinity) ||
+          (canBeRealOrImagInfinity && canContainNull)) {
+        return true;
+      }
+      canContainInfinity |= canBeRealOrImagInfinity;
+      canContainNull |= canBeRealOrImagNull;
+    }
+  }
+  return false;
+}
+
 bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
@@ -236,6 +289,9 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
      *   split mult */
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if (depI->isAdd() || depI->isMult()) {
+      if (CanBeUndefWithInfinity(depI)) {
+        continue;
+      }
       NAry::SetNumberOfChildren(
           set, set->numberOfChildren() + depI->numberOfChildren() - 1);
       depI->removeNode();

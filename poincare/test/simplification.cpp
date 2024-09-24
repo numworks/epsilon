@@ -899,6 +899,12 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   const Tree* r4 = KDep(1_e, KDepList(KFun<"f">("y"_e), KFun<"f">("z"_e)));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   assert_trees_are_equal(e4, r4);
+
+  Tree* e5 =
+      KDep(1_e, KDepList(KAdd(KInf, "x"_e, KMult(-1_e, KInf))))->cloneTree();
+  const Tree* r5 = KDep(1_e, KDepList(KAdd("x"_e, KInf, KOpposite(KInf))));
+  Simplification::SimplifyWithAdaptiveStrategy(e5, &context);
+  assert_trees_are_equal(e5, r5);
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {

@@ -436,6 +436,10 @@ void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(
   insertLayout(KFracL(""_l, ""_l), context, false, false);
 }
 
+void LayoutBufferCursor::addMixedFractionLayout(Poincare::Context* context) {
+  insertLayout(KFracL(""_l, ""_l), context, false, true, false);
+}
+
 void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
                                                      const void* data) {
   const InsertTextContext* insertTextContext =

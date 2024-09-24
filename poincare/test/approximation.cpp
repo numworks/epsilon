@@ -110,6 +110,7 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("0^(3-4i)", "0", cartesianCtx);
   approximates_to<float>("0^(-3+4i)", "undef", cartesianCtx);
   approximates_to<float>("0^(-3-4i)", "undef", cartesianCtx);
+  approximates_to<float>("1-e^(-90000000/563)", "1");
 }
 
 QUIZ_CASE(pcj_approximation_list) {

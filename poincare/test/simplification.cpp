@@ -694,6 +694,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("sqrt(9)", "3");
   simplifies_to("root(-8,3)", "-2");
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "dep(0,{x})", cartesianCtx);
+  simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
 
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");

@@ -647,7 +647,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e));
   assert_parsed_expression_is("azfoobar(x)",
                               KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)));
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(poincare_parsing_derivative_apostrophe) {

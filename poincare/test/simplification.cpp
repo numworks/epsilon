@@ -489,7 +489,6 @@ QUIZ_CASE(pcj_simplification_parametric) {
                 "product(f(k),k,a,a+9)", ctx);
   simplifies_to("product(f(k),k,5,b) / product(f(u),u,100,b)",
                 "product(f(k),k,5,99)", ctx);
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {
@@ -1311,7 +1310,6 @@ QUIZ_CASE(pcj_simplification_function) {
   simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
   simplifies_to("f(y)+f(x)-f(x)", "dep(f(y),{0×f(x)})");
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_simplification_variable_replace) {
@@ -1350,8 +1348,6 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 
   // Local variables may be unit names
   simplifies_to("sum(t,t,1,3)", "6");
-
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(pcj_simplification_decimal) {

@@ -373,5 +373,4 @@ QUIZ_CASE(poincare_serialization_derivative) {
   assert_expression_parses_and_serializes_to("f^\u00121\u0013(x)", "f'(x)");
   assert_expression_parses_and_serializes_to("f^\u00122\u0013(x)", "f\"(x)");
   assert_expression_parses_and_serializes_to("f^\u00123\u0013(x)", "f^(3)(x)");
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

@@ -1089,8 +1089,6 @@ QUIZ_CASE(poincare_expression_list_of_points) {
   assert_is_list_of_points("{x}", &globalContext, false);
   assert_is_list_of_points("{a,undef,(3,4)}", &globalContext, false);
   assert_is_list_of_points("{a,x,(3,4)}", &globalContext, false);
-
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 void assert_is_continuous_between_values(const char* expression, float x1,

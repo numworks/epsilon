@@ -50,14 +50,6 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   // Make sure fBoth has changed
   assert_parsed_expression_simplify_to("fBoth(4)", "9");
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "7");
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("Adadas.exp")
-      .destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f1.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f2.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fBoth.func")
-      .destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
@@ -65,10 +57,6 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
   assert_reduce_and_store("b→a");
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
@@ -78,20 +66,12 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
   assert_expression_approximates_to<double>("c", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
   // h: x → h(x)
   assert_reduce_and_store("h(x)→h(x)");
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
@@ -100,10 +80,6 @@ QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
   assert_reduce_and_store("g(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
@@ -114,11 +90,6 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("h.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
@@ -128,11 +99,6 @@ QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("a", Undefined::Name());
   assert_expression_approximates_to<double>("b", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_composed_functions) {
@@ -155,10 +121,6 @@ QUIZ_CASE(poincare_context_user_variable_composed_functions) {
   assert_expression_approximates_to<double>("f(g(4))", "25");
   // Add a sum to bypass simplification
   assert_expression_approximates_to<double>("f(g(4))+sum(1, n, 2, 4)", "28");
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(
@@ -200,9 +162,6 @@ QUIZ_CASE(
   assert_parsed_expression_approximates_with_value_for_symbol(
       Function::Builder("f", 1, Symbol::SystemSymbol()), x, 1.0, (double)NAN,
       Real);
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_properties) {
@@ -223,12 +182,6 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   assert_reduce_and_store("0.2*x→g(x)");
   quiz_assert(Function::Builder("g", 1, Rational::Builder(2))
                   .recursivelyMatches(OExpression::IsApproximate, &context));
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.mat").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
@@ -239,11 +192,6 @@ QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
   assert_parsed_expression_simplify_to("g(1)", Undefined::Name());
   assert_reduce_and_store("f(undef)→b");
   assert_parsed_expression_simplify_to("b", Undefined::Name());
-
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
 template void assert_parsed_expression_approximates_with_value_for_symbol(

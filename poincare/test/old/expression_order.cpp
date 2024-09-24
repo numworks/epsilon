@@ -1,252 +1,181 @@
-#include <apps/shared/global_context.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/arc_cosine.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/infinity.h>
-#include <poincare/old/power.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/square_root.h>
-#include <poincare/old/sum.h>
+#include <poincare/print.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/order.h>
+#include <poincare/src/memory/n_ary.h>
 
-#include "helper.h"
+#include "../helper.h"
 
-using namespace Poincare;
+using namespace Poincare::Internal;
 
-void assert_greater(OExpression e1, OExpression e2) {
-  /* ExpressionNode::SimplificationOrder can be used directly (because node
-   * getter is private) so we build an addition whose we sort children and we
-   * check that the children order is the expected one. */
-  Shared::GlobalContext globalContext;
-  Addition a = Addition::Builder(e1, e2);
-  a.sortChildrenInPlace(
-      [](const ExpressionNode *e1, const ExpressionNode *e2) {
-        return ExpressionNode::SimplificationOrder(e1, e2, false);
-      },
-      &globalContext, true);
-  quiz_assert(a.childAtIndex(0) == e1);
-  quiz_assert(a.childAtIndex(1) == e2);
+void assert_greater(const Tree* e1, const Tree* e2) {
+  // quiz_assert(Order::CompareSystem(e1, e2) == 1);
+  bool test = Order::CompareSystem(e1, e2) == 1;
+
+  constexpr int bufferSize = 256;
+  char information[bufferSize] = "";
+  char buffer1[bufferSize];
+  char buffer2[bufferSize];
+  serialize_expression(e1, buffer1, bufferSize);
+  serialize_expression(e2, buffer2, bufferSize);
+  Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
+                                      "%s\t%s greater than %s",
+                                      !test ? "BAD" : "OK", buffer1, buffer2);
+  quiz_print(information);
 }
 
 QUIZ_CASE(poincare_expression_order_constant) {
-  assert_greater(Constant::Builder("_c"), Constant::ExponentialEBuilder());
-  assert_greater(Constant::Builder("_G"), Constant::PiBuilder());
-  assert_greater(Constant::PiBuilder(), Constant::ComplexIBuilder());
-  assert_greater(Constant::ExponentialEBuilder(), Constant::PiBuilder());
-  assert_greater(Constant::ExponentialEBuilder(), Constant::ComplexIBuilder());
+  Tree* c = parse("_c");
+  assert_greater(c, e_e);
+  c->removeTree();
+  Tree* G = parse("_G");
+  assert_greater(G, π_e);
+  G->removeTree();
+  assert_greater(π_e, i_e);
+  assert_greater(e_e, π_e);
+  assert_greater(e_e, i_e);
 }
 
 QUIZ_CASE(poincare_expression_order_decimal) {
-  assert_greater(Decimal::Builder("1", -3), Decimal::Builder("-1", -3));
-  assert_greater(Decimal::Builder("-1", -3), Decimal::Builder("-1", -2));
-  assert_greater(Decimal::Builder("1", -3), Decimal::Builder("1", -4));
-  assert_greater(Decimal::Builder("123", -3), Decimal::Builder("12", -3));
+  assert_greater(KDecimal(1_e, 3_e), KOpposite(KDecimal(1_e, 3_e)));
+  assert_greater(KOpposite(KDecimal(1_e, 3_e)), KOpposite(KDecimal(1_e, 2_e)));
+  assert_greater(KDecimal(1_e, 3_e), KDecimal(1_e, 4_e));
+  assert_greater(KDecimal(123_e, 3_e), KDecimal(12_e, 3_e));
 }
 
 QUIZ_CASE(poincare_expression_order_rational) {
-  assert_greater(Rational::Builder(9, 10), Rational::Builder(-9, 10));
-  assert_greater(Rational::Builder(3, 4), Rational::Builder(2, 3));
+  assert_greater(9_e / 10_e, -9_e / 10_e);
+  assert_greater(3_e / 4_e, 2_e / 3_e);
 }
 
 QUIZ_CASE(poincare_expression_order_float) {
-  assert_greater(Float<double>::Builder(0.234),
-                 Float<double>::Builder(-0.2392));
-  assert_greater(Float<float>::Builder(0.234), Float<float>::Builder(0.123));
-  assert_greater(Float<double>::Builder(234), Float<double>::Builder(123));
+  assert_greater(0.234_de, -0.2392_de);
+  assert_greater(0.234_fe, 0.123_fe);
+  assert_greater(234_de, 123_de);
 }
 
 QUIZ_CASE(poincare_expression_order_power) {
   // 2^3 > (1/2)^5
-  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)),
-                 Power::Builder(Rational::Builder(1, 2), Rational::Builder(5)));
+  assert_greater(KPow(2_e, 3_e), KPow(1_e / 2_e, 5_e));
   // 2^3 > 2^2
-  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)),
-                 Power::Builder(Rational::Builder(2), Rational::Builder(2)));
+  assert_greater(KPow(2_e, 3_e), KPow(2_e, 2_e));
   // Order with expression other than power
   // 2^3 > 1
-  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)),
-                 Rational::Builder(1));
+  assert_greater(KPow(2_e, 3_e), 1_e);
   // 2^3 > 2
-  assert_greater(Power::Builder(Rational::Builder(2), Rational::Builder(3)),
-                 Rational::Builder(2));
+  assert_greater(KPow(2_e, 3_e), 2_e);
 }
 
-QUIZ_CASE(poincare_expression_order_symbol) {
-  assert_greater(Symbol::Builder('a'), Symbol::Builder('b'));
-}
+QUIZ_CASE(poincare_expression_order_symbol) { assert_greater("a"_e, "b"_e); }
 
 QUIZ_CASE(poincare_expression_order_function) {
-  assert_greater(Function::Builder("f", 1, Rational::Builder(1)),
-                 Function::Builder("g", 1, Rational::Builder(9)));
+  assert_greater(KFun<"f">(1_e), KFun<"g">(9_e));
 }
 
 QUIZ_CASE(poincare_expression_order_mix) {
-  assert_greater(Symbol::Builder('x'), Rational::Builder(2));
-  assert_greater(Symbol::Builder('x'), Infinity::Builder(true));
-  assert_greater(ArcCosine::Builder(Rational::Builder(2)),
-                 Decimal::Builder("3", -2));
+  assert_greater("x"_e, 2_e);
+  assert_greater("x"_e, KInf);
+  assert_greater(KACos(2_e), KDecimal(3_e, 2_e));
 }
 
-void assert_multiplication_or_addition_is_ordered_as(OExpression e1,
-                                                     OExpression e2) {
-  Shared::GlobalContext globalContext;
-  if (e1.otype() == ExpressionNode::Type::Multiplication) {
-    static_cast<Multiplication &>(e1).sortChildrenInPlace(
-        [](const ExpressionNode *e1, const ExpressionNode *e2) {
-          return ExpressionNode::SimplificationOrder(e1, e2, true);
-        },
-        &globalContext);
-  } else {
-    quiz_assert(e1.otype() == ExpressionNode::Type::Addition);
-    static_cast<Addition &>(e1).sortChildrenInPlace(
-        [](const ExpressionNode *e1, const ExpressionNode *e2) {
-          return ExpressionNode::SimplificationOrder(e1, e2, false);
-        },
-        &globalContext);
+void assert_multiplication_or_addition_is_ordered_as(const Tree* e1,
+                                                     const Tree* e2) {
+  Tree* clone = e1->cloneTree();
+  NAry::Sort(clone, e1->isAdd() ? Order::OrderType::AdditionBeautification
+                                : Order::OrderType::Beautification);
+  bool test = e1->treeIsIdenticalTo(e2);
+  // quiz_assert(e1->treeIsIdenticalTo(e2));
+
+  constexpr int bufferSize = 256;
+  char information[bufferSize] = "";
+  char buffer1[bufferSize];
+  char buffer2[bufferSize];
+  serialize_expression(e1, buffer1, bufferSize);
+  serialize_expression(e2, buffer2, bufferSize);
+  int i = Poincare::Print::UnsafeCustomPrintf(
+      information, bufferSize, "%s\t%s\t%s", !test ? "BAD" : "OK", buffer1,
+      buffer2);
+  if (!test) {
+    serialize_expression(clone, buffer2, bufferSize);
+    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
+                                        buffer2);
   }
-  quiz_assert(e1.isIdenticalTo(e2));
+  quiz_print(information);
+
+  clone->removeTree();
 }
 
 QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   {
     // 2 * 5 -> 2 * 5
-    OExpression e1 =
-        Multiplication::Builder(Rational::Builder(2), Rational::Builder(5));
-    assert_multiplication_or_addition_is_ordered_as(e1, e1);
+    assert_multiplication_or_addition_is_ordered_as(KMult(2_e, 5_e),
+                                                    KMult(2_e, 5_e));
   }
   {
     // 5 * 2 -> 2 * 5
-    OExpression e1 =
-        Multiplication::Builder(Rational::Builder(5), Rational::Builder(2));
-    OExpression e2 =
-        Multiplication::Builder(Rational::Builder(2), Rational::Builder(5));
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(KMult(5_e, 2_e),
+                                                    KMult(2_e, 5_e));
   }
   {
     // 1 + 2 + 0 -> 2 + 1 + 0
-    OExpression e1 = Addition::Builder(
-        {Rational::Builder(1), Rational::Builder(2), Rational::Builder(0)});
-    OExpression e2 = Addition::Builder(
-        {Rational::Builder(2), Rational::Builder(1), Rational::Builder(0)});
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(KAdd(1_e, 2_e, 0_e),
+                                                    KAdd(2_e, 1_e, 0_e));
   }
   {
     // pi + i + e -> e + pi + i
-    OExpression pi = Constant::PiBuilder();
-    OExpression i = Constant::ComplexIBuilder();
-    OExpression e = Constant::ExponentialEBuilder();
-    OExpression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
-    OExpression e2 = Addition::Builder({e, pi, i});
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(KAdd(π_e, i_e, e_e),
+                                                    KAdd(e_e, π_e, i_e));
   }
   {
     // root(3) * 2 -> 2 * root(3)
-    OExpression e1 = Multiplication::Builder(
-        SquareRoot::Builder(Rational::Builder(3)), Rational::Builder(2));
-    OExpression e2 = Multiplication::Builder(
-        Rational::Builder(2), SquareRoot::Builder(Rational::Builder(3)));
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(KMult(KSqrt(3_e), 2_e),
+                                                    KMult(2_e, KSqrt(3_e)));
   }
   {
     // c + b^2 + a^2 + a -> a^2 + a + b^2 + c
-    OExpression e1 = Addition::Builder(
-        {Symbol::Builder('c'),
-         Power::Builder(Symbol::Builder('b'), Rational::Builder(2)),
-         Power::Builder(Symbol::Builder('a'), Rational::Builder(2)),
-         Symbol::Builder('a')});
-    OExpression e2 = Addition::Builder(
-        {Power::Builder(Symbol::Builder('a'), Rational::Builder(2)),
-         Symbol::Builder('a'),
-         Power::Builder(Symbol::Builder('b'), Rational::Builder(2)),
-         Symbol::Builder('c')});
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KAdd("c"_e, KPow("b"_e, 2_e), KPow("a"_e, 2_e), "a"_e),
+        KAdd(KPow("a"_e, 2_e), "a"_e, KPow("b"_e, 2_e), "c"_e));
   }
   {
     // 3*x^2 + 2*x^3 -> 2*x^3 + 3*x^2
-    OExpression child1 = Multiplication::Builder(
-        Rational::Builder(2),
-        Power::Builder(Symbol::Builder('x'), Rational::Builder(3)));
-    OExpression child2 = Multiplication::Builder(
-        Rational::Builder(3),
-        Power::Builder(Symbol::Builder('x'), Rational::Builder(2)));
-    OExpression e1 = Addition::Builder(child2.clone(), child1.clone());
-    OExpression e2 = Addition::Builder(child1, child2);
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KAdd(KMult(3_e, KPow("x"_e, 2_e)), KMult(2_e, KPow("x"_e, 3_e))),
+        KAdd(KMult(2_e, KPow("x"_e, 3_e)), KMult(3_e, KPow("x"_e, 2_e))));
   }
   {
     // 2*x + 3*x -> 3*x + 2*x
-    OExpression child1 =
-        Multiplication::Builder(Rational::Builder(3), Symbol::Builder('x'));
-    OExpression child2 =
-        Multiplication::Builder(Rational::Builder(2), Symbol::Builder('x'));
-    OExpression e1 = Addition::Builder(child2.clone(), child1.clone());
-    OExpression e2 = Addition::Builder(child1, child2);
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KAdd(KMult(2_e, "x"_e), KMult(3_e, "x"_e)),
+        KAdd(KMult(3_e, "x"_e), KMult(2_e, "x"_e)));
   }
   {
     // pi^b * pi^a -> pi^a * pi^b
-    OExpression child1 =
-        Power::Builder(Constant::PiBuilder(), Symbol::Builder('a'));
-    OExpression child2 =
-        Power::Builder(Constant::PiBuilder(), Symbol::Builder('b'));
-    OExpression e1 = Multiplication::Builder(child2.clone(), child1.clone());
-    OExpression e2 = Multiplication::Builder(child1, child2);
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KMult(KPow(π_e, "b"_e), KPow(π_e, "a"_e)),
+        KMult(KPow(π_e, "a"_e), KPow(π_e, "b"_e)));
   }
   {
     // pi^3 * pi^2 -> pi^2 * pi^3
-    OExpression child1 =
-        Power::Builder(Constant::PiBuilder(), Rational::Builder(2));
-    OExpression child2 =
-        Power::Builder(Constant::PiBuilder(), Rational::Builder(3));
-    OExpression e1 = Multiplication::Builder(child2.clone(), child1.clone());
-    OExpression e2 = Multiplication::Builder(child1, child2);
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KMult(KPow(π_e, 3_e), KPow(π_e, 2_e)),
+        KMult(KPow(π_e, 2_e), KPow(π_e, 3_e)));
   }
   {
     // 1 + Matrix1 + 2 -> 1 + 2 + Matrix1
-    OExpression child1 = Rational::Builder(1);
-    OExpression child2 = Rational::Builder(2);
-    OExpression childMatrix = OMatrix::Builder();
-    static_cast<OMatrix &>(childMatrix)
-        .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
-    OExpression e1 = Multiplication::Builder(
-        child2.clone(), childMatrix.clone(), child1.clone());
-    OExpression e2 = Multiplication::Builder(child1.clone(), child2.clone(),
-                                             childMatrix.clone());
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KMult(2_e, KMatrix<1, 1>(3_e), 1_e),
+        KMult(1_e, 2_e, KMatrix<1, 1>(3_e)));
   }
-
   {
     // 1 + Matrix1 + Matrix2 + 2 -> 1 + 2 + Matrix1 + Matrix2
-    OExpression child1 = Rational::Builder(1);
-    OExpression child2 = Rational::Builder(2);
-    OExpression childMatrix1 = OMatrix::Builder();
-    static_cast<OMatrix &>(childMatrix1)
-        .addChildAtIndexInPlace(Rational::Builder(3), 0, 0);
-    OExpression childMatrix2 = OMatrix::Builder();
-    static_cast<OMatrix &>(childMatrix2)
-        .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
-
-    OExpression e1 =
-        Multiplication::Builder({child2.clone(), childMatrix1.clone(),
-                                 childMatrix2.clone(), child1.clone()});
-    OExpression e2 =
-        Multiplication::Builder({child1.clone(), child2.clone(),
-                                 childMatrix1.clone(), childMatrix2.clone()});
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    assert_multiplication_or_addition_is_ordered_as(
+        KMult(2_e, KMatrix<1, 1>(3_e), KMatrix<1, 1>(0_e), 1_e),
+        KMult(1_e, 2_e, KMatrix<1, 1>(3_e), KMatrix<1, 1>(0_e)));
   }
-
   {
-    // ∑OMatrix + i  -> i + ∑OMatrix
-    OExpression childMatrix = OMatrix::Builder();
-    static_cast<OMatrix &>(childMatrix)
-        .addChildAtIndexInPlace(Rational::Builder(0), 0, 0);
-    OExpression child1 =
-        Sum::Builder(childMatrix, Symbol::Builder('n'), Rational::Builder(0),
-                     Rational::Builder(0));
-    OExpression child2 = Symbol::Builder('i');
-    OExpression e1 = Addition::Builder(child1.clone(), child2.clone());
-    OExpression e2 = Addition::Builder(child2, child1);
-    assert_multiplication_or_addition_is_ordered_as(e1, e2);
+    // ∑Matrix + i  -> i + ∑Matrix
+    assert_multiplication_or_addition_is_ordered_as(
+        KAdd(KSum(KMatrix<1, 1>(0_e), "n"_e, 0_e, 0_e), "i"_e),
+        KAdd("i"_e, KSum(KMatrix<1, 1>(0_e), "n"_e, 0_e, 0_e)));
   }
 }

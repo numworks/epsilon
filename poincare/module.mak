@@ -344,6 +344,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/derivative.cpp \
   old/distribution.cpp \
   old/erf_inv.cpp \
+  old/expression_order.cpp \
   old/expression_properties.cpp \
   old/expression_to_layout.cpp \
   old/helper.cpp \

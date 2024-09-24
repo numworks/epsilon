@@ -187,7 +187,6 @@ bool EditExpressionController::isAcceptableExpression(
         exp.createLayout(Preferences::PrintFloatMode::Decimal,
                          PrintFloat::k_maxNumberOfSignificantDigits, context);
     assert(!layout.isUninitialized());
-    return true;
     exp = UserExpression::Parse(layout, context);
     // Replacing Ans made the expression un-parsable.
     return !exp.isUninitialized();

@@ -1359,8 +1359,8 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
 }
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
-  if (false /*m_parsingContext.context() &&
-             !Preferences::SharedPreferences()->mixedFractionsAreEnabled()*/) {
+  if (m_parsingContext.context() &&
+      !Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
      * parsed the first time.

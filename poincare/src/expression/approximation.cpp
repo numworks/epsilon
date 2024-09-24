@@ -320,7 +320,11 @@ std::complex<T> Approximation::ToComplex(const Tree* e) {
   std::complex<T> value = ToComplexSwitch<T>(e);
   if (s_context && s_context->m_complexFormat == ComplexFormat::Real &&
       value.imag() != 0 && !e->isComplexI()) {
-    // Do not return NonReal for i
+    /* Some operations in reduction can introduce i, but when complex format is
+     * real and the factor or i approximates to 0, we don't want to return
+     * nonreal. We thus decided not to return nonreal when we approximate i.
+     * TODO: tolerate any complex encountered in approximation intermediary
+     * steps? */
     return NonReal<T>();
   }
   // We used to flush negative zeros here but it was not worth

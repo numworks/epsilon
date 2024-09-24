@@ -322,6 +322,7 @@ void assert_sign(const char* input, Sign expectedSign) {
 
 QUIZ_CASE(pcj_sign) {
   assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
+  assert_sign("-2.5", Sign::FiniteStrictlyNegative());
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
   assert_sign("2-π", Sign::Finite());
   assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());

@@ -50,7 +50,8 @@ Sign Number::Sign(const Tree* e) {
         return Sign::Unknown();
       }
       // Floats are not considered integer since they may have been rounded
-      return Poincare::Sign(value == 0, value > 0, value < 0, true);
+      return Poincare::Sign(value == 0, value > 0, value < 0, true,
+                            std::isinf(value));
     }
     default:
       assert(e->isRational());

@@ -121,3 +121,9 @@ QUIZ_CASE(pcj_parse_assignment) {
       KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))), &context,
       ParsingContext::ParsingMethod::Assignment);
 }
+
+QUIZ_CASE(pcj_parse_mixed_fraction) {
+  assertLayoutParsesTo("1 2/3"_l, KMixedFraction(1_e, KDiv(2_e, 3_e)));
+  assertLayoutParsesTo("1"_l ^ KFracL("2"_l, "3"_l),
+                       KMixedFraction(1_e, KDiv(2_e, 3_e)));
+}

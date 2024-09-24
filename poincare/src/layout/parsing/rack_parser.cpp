@@ -1372,11 +1372,13 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
     return false;
   }
   State previousState = currentState();
+
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number or empty
-      && m_nextToken.is(Token::Type::Number)) {
-    // TODO_PCJ: or popToken is a FractionLayout
+      && (m_nextToken.is(Token::Type::Number) ||
+          (m_nextToken.is(Token::Type::Layout) &&
+           m_nextToken.firstLayout()->isFractionLayout()))) {
     m_waitingSlashForMixedFraction = true;
     TreeRef rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
@@ -1388,6 +1390,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
       return true;
     }
   }
+
   setState(previousState);
   return false;
 }

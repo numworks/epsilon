@@ -51,12 +51,21 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
+  // In the case of a list, advanced reduction works more efficiently when
+  // called independently on the list elements. Thus we ensure that there are no
+  // "hidden" lists. The List::BubbleUp function fails when the tree has
+  // randomized descendants, so this case is excluded. This exception is not
+  // critical for the advanced reduction performance.
+  assert(e->isList() || !Dimension::IsList(e) ||
+         e->hasDescendantSatisfying(
+             [](const Tree* e) { return e->isRandomized(); }));
+
   if (!(e->isList())) {
     return ReduceIndependantElement(e);
   }
   bool changed = false;
-  for (std::size_t i = 0; i < e->numberOfChildren(); i++) {
-    changed = ReduceIndependantElement(e->child(i)) || changed;
+  for (Tree* child : e->children()) {
+    changed = ReduceIndependantElement(child) || changed;
   }
   return changed;
 }

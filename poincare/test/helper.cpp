@@ -97,13 +97,9 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    Tree* outputLayout =
-        Layouter::LayoutExpression(expression->cloneTree(), true);
-    quiz_assert(outputLayout);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
-    *Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
-    remove_system_codepoints(buffer);
+    serialize_expression(expression, buffer, bufferSize);
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;
@@ -114,7 +110,6 @@ void process_tree_and_compare(const char* input, const char* output,
 #endif
     }
     quiz_assert(ok);
-    outputLayout->removeTree();
   }
   expression->removeTree();
   expected->removeTree();
@@ -162,4 +157,13 @@ void assert_parse_to_integer_overflow(const char* input,
 void store(const char* storeExpression, Poincare::Context* ctx) {
   Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
   Poincare::StoreHelper::PerformStore(ctx, s);
+}
+
+void serialize_expression(const Tree* expression, char* buffer,
+                          size_t bufferSize) {
+  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
+  quiz_assert(layout);
+  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  remove_system_codepoints(buffer);
+  layout->removeTree();
 }

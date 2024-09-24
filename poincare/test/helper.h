@@ -147,4 +147,9 @@ inline Tree* parseAndPrepareForApproximation(const char* function,
   return e;
 }
 
+// Serialization
+
+void serialize_expression(const Tree* expression, char* buffer,
+                          size_t bufferSize);
+
 #endif

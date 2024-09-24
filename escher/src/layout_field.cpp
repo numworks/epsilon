@@ -281,6 +281,9 @@ bool LayoutField::insertText(const char* text, bool indentation,
     } else if (strcmp(text, k_logWithBase10) == 0) {
       cursor->addEmptyLogarithmWithBase10Layout(context());
       return true;
+    } else if (strcmp(text, k_emptyMixedFraction) == 0) {
+      cursor->addMixedFractionLayout(context());
+      return true;
     }
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g

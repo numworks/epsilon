@@ -30,6 +30,8 @@ class EditableField : public TextCursorView::WithBlinkingCursor<
 
  protected:
   static constexpr const char* k_logWithBase10 = "log(\x11,10)";
+  // FIXME Factorized with I18n::Message::MixedFractionCommand
+  static constexpr const char* k_emptyMixedFraction = "\x11 \x11/\x11";
 
   bool privateHandleBoxEvent(Ion::Events::Event event);
   virtual bool prepareToEdit() {

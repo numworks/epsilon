@@ -167,9 +167,7 @@ class Sign {
   }
 
 #if POINCARE_TREE_LOG
-  __attribute__((__used__)) void log(bool endOfLine = true) const {
-    log(std::cout, endOfLine);
-  }
+  __attribute__((__used__)) void log() const { log(std::cout, true); }
   void log(std::ostream& stream, bool endOfLine = true) const;
 #endif
 
@@ -273,9 +271,7 @@ class ComplexSign {
   }
 
 #if POINCARE_TREE_LOG
-  __attribute__((__used__)) void log(bool endOfLine = true) const {
-    log(std::cout, endOfLine);
-  }
+  __attribute__((__used__)) void log() const { return log(std::cout, true); }
   void log(std::ostream& stream, bool endOfLine = true) const;
 #endif
 

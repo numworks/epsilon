@@ -262,6 +262,9 @@ class ComplexSign {
   static constexpr ComplexSign RealStrictlyPositive() {
     return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
   }
+  static constexpr ComplexSign RealFiniteStrictlyPositive() {
+    return ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero());
+  }
   static constexpr ComplexSign RealStrictlyPositiveInteger() {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }

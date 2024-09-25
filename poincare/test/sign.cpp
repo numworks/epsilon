@@ -347,7 +347,7 @@ QUIZ_CASE(pcj_sign) {
       "(abs(x)+i)*abs(abs(x)-i)",
       ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
-              ComplexSign(Sign::StrictlyPositive(), Sign::Finite()));
+              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Finite()));
   assert_sign(
       "re(abs(x)-i)+i*arg(2+i)",
       ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));

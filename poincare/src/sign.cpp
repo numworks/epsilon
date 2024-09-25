@@ -180,7 +180,6 @@ ComplexSign ArcTangent(ComplexSign s) {
   return ComplexSign(realSign, imagSign);
 }
 
-// Note: we could get more info on canBeInfinite
 ComplexSign Exponential(ComplexSign s) {
   if (!s.isReal()) {
     return ComplexSign::Unknown();
@@ -189,7 +188,9 @@ ComplexSign Exponential(ComplexSign s) {
     // exp(-inf) = 0, necessary so that x^y = exp(y*ln(x)) can be null.
     return ComplexSign::RealPositive();
   }
-  return ComplexSign::RealStrictlyPositive();
+  return s.realSign().canBeInfinite()
+             ? ComplexSign::RealStrictlyPositive()
+             : ComplexSign::RealFiniteStrictlyPositive();
 }
 
 ComplexSign ComplexArgument(ComplexSign s) {
@@ -343,6 +344,11 @@ ComplexSign GetComplexSign(const Tree* e) {
       assert(e->child(1)->isOne() || e->child(1)->isZero());
       return e->child(1)->isOne() ? ArcSine(GetComplexSign(e->child(0)))
                                   : ArcCosine(GetComplexSign(e->child(0)));
+    case Type::Ceil:
+    case Type::Floor:
+    case Type::Frac:
+    case Type::Round:
+      return DecimalFunction(GetComplexSign(e->child(0)), e->type());
 #if 0
     // Activate these cases if necessary
     case Type::ATan:
@@ -351,11 +357,6 @@ ComplexSign GetComplexSign(const Tree* e) {
       assert(GetComplexSign(e->child(0)) ==
              ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
       return ComplexSign::RealStrictlyPositiveInteger();
-    case Type::Ceil:
-    case Type::Floor:
-    case Type::Frac:
-    case Type::Round:
-      return DecimalFunction(GetComplexSign(e->child(0)), e->type());
     case Type::PercentSimple:
       return RelaxIntegerProperty(GetComplexSign(e->child(0)));
     case Type::MixedFraction:

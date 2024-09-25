@@ -3,8 +3,59 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "k_tree.h"
+#include "sign.h"
 
 namespace Poincare::Internal {
+
+bool AdvancedOperation::ContractImRe(Tree* e) {
+  // re(A)+im(A)*i = A
+  return PatternMatching::MatchReplaceSimplify(
+      e, KAdd(KRe(KA), KMult(KIm(KA), i_e)), KA);
+}
+
+bool ExpandImReIfNotInfinite(Tree* e) {
+  // Replace im and re in additions only to prevent infinitely expanding
+  PatternMatching::Context ctx;
+  // These patterns are true only if re(C) is finite
+  // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
+  // A? + B?*im(C)*D? = A - i*B*C*D + i*B*re(C)*D
+  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
+                             &ctx) ||
+      PatternMatching::Match(e, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)), &ctx)) {
+    const Tree* c = ctx.getTree(KC);
+    const Sign realSign = GetComplexSign(c).realSign();
+    if (realSign.isFinite()) {
+      return PatternMatching::MatchReplaceSimplify(
+                 e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
+                 KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
+                      KMult(i_e, KB_s, KRe(KC), KD_s), KE_p)) ||
+             PatternMatching::MatchReplaceSimplify(
+                 e, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)),
+                 KAdd(KA_p, KMult(-1_e, i_e, KB_s, KC, KD_s),
+                      KMult(i_e, KB_s, KRe(KC), KD_s)));
+    }
+  }
+  // These patterns are true only if im(C) is finite
+  // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
+  // A? + B?*re(C)*D? = A + B*C*D - i*B*im(C)*D
+  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
+                             &ctx) ||
+      PatternMatching::Match(e, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)), &ctx)) {
+    const Tree* c = ctx.getTree(KC);
+    const Sign imagSign = GetComplexSign(c).imagSign();
+    if (imagSign.isFinite()) {
+      return PatternMatching::MatchReplaceSimplify(
+                 e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
+                 KAdd(KA_s, KMult(KB_s, KC, KD_s),
+                      KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_p)) ||
+             PatternMatching::MatchReplaceSimplify(
+                 e, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)),
+                 KAdd(KA_p, KMult(KB_s, KC, KD_s),
+                      KMult(-1_e, i_e, KB_s, KIm(KC), KD_s)));
+    }
+  }
+  return false;
+}
 
 bool AdvancedOperation::ExpandImRe(Tree* e) {
   return
@@ -24,27 +75,7 @@ bool AdvancedOperation::ExpandImRe(Tree* e) {
           e, KRe(KMult(KA, KB_p)),
           KAdd(KMult(KRe(KA), KRe(KMult(KB_p))),
                KMult(-1_e, KIm(KA), KIm(KMult(KB_p))))) ||
-      // Replace im and re in additions only to prevent infinitely expanding
-      // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
-      PatternMatching::MatchReplaceSimplify(
-          e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
-          KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
-               KMult(i_e, KB_s, KRe(KC), KD_s), KE_p)) ||
-      // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
-      PatternMatching::MatchReplaceSimplify(
-          e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
-          KAdd(KA_s, KMult(KB_s, KC, KD_s),
-               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_p)) ||
-      // A? + B?*im(C)*D? = A - i*B*C*D + i*B*re(C)*D
-      PatternMatching::MatchReplaceSimplify(
-          e, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)),
-          KAdd(KA_p, KMult(-1_e, i_e, KB_s, KC, KD_s),
-               KMult(i_e, KB_s, KRe(KC), KD_s))) ||
-      // A? + B?*re(C)*D? = A + B*C*D - i*B*im(C)*D
-      PatternMatching::MatchReplaceSimplify(
-          e, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)),
-          KAdd(KA_p, KMult(KB_s, KC, KD_s),
-               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s)));
+      ExpandImReIfNotInfinite(e);
 }
 
 bool AdvancedOperation::ContractAbs(Tree* e) {

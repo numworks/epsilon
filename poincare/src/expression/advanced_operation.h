@@ -7,6 +7,7 @@ namespace Poincare::Internal {
 
 class AdvancedOperation {
  public:
+  static bool ContractImRe(Tree* e);
   static bool ExpandImRe(Tree* e);
   static bool ContractAbs(Tree* e);
   static bool ExpandAbs(Tree* e);

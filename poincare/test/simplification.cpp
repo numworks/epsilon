@@ -331,7 +331,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   // TODO: Should simplify to 0
   simplifies_to(
       "abs(f(x)+i×f(y))^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2",
-      "abs(f(x)+f(y)×i)^2-((-im(f(y))+re(f(x)))^2+(im(f(x))+re(f(y)))^2)", ctx);
+      "im(f(x)+f(y)×i)^2-(im(f(x))+re(f(y)))^2", ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
   simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", ctx);

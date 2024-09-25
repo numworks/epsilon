@@ -297,9 +297,11 @@ QUIZ_CASE(pcj_sign_methods) {
 }
 
 void assert_sign(const char* input, ComplexSign expectedSign,
-                 ComplexFormat complexFormat = ComplexFormat::Cartesian) {
+                 ComplexFormat complexFormat = ComplexFormat::Cartesian,
+                 Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
-  ProjectionContext ctx = {.m_complexFormat = complexFormat};
+  ProjectionContext ctx = {.m_complexFormat = complexFormat,
+                           .m_strategy = strategy};
   Simplification::ProjectAndReduce(expression, &ctx, false);
   bool result = GetComplexSign(expression) == expectedSign;
 #if POINCARE_TREE_LOG
@@ -323,6 +325,9 @@ void assert_sign(const char* input, Sign expectedSign) {
 QUIZ_CASE(pcj_sign) {
   assert_sign("2", Sign::FiniteStrictlyPositiveInteger());
   assert_sign("-2.5", Sign::FiniteStrictlyNegative());
+  assert_sign("π", ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()),
+              ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
   assert_sign("2-π", Sign::Finite());
   assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());

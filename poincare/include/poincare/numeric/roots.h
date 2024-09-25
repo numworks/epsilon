@@ -2,6 +2,7 @@
 #define POINCARE_NUMERIC_ROOTS_H
 
 #include <poincare/old/computation_context.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree.h>
@@ -28,6 +29,14 @@ class Roots {
 
  private:
   constexpr static int k_maxNumberOfNodesBeforeApproximatingDelta = 16;
+
+  static constexpr KTree k_cubeRootOfUnity1 = KMult(
+      KPow(2_e, -1_e), KAdd(-1_e, KMult(KPow(3_e, KPow(2_e, -1_e)), i_e)));
+
+  static constexpr KTree k_cubeRootOfUnity2 =
+      KMult(KPow(2_e, -1_e),
+            KAdd(-1_e, KMult(-1_e, KPow(3_e, KPow(2_e, -1_e)), i_e)));
+
   static Tree* ReducePolynomial(const Tree* coefficients, int degree,
                                 const Tree* parameter,
                                 const ReductionContext& reductionContext);
@@ -39,6 +48,12 @@ class Roots {
                ReducePolynomial(coefficients, degree, root, reductionContext))
         .isNull();
   }
+
+  static Tree* CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
+                                             const Tree* c);
+
+  static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
+                                                        const Tree* d);
 
   static Tree* RationalRootSearch(const Tree* coefficients, int degree,
                                   const ReductionContext& reductionContext);

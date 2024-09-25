@@ -89,8 +89,44 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   if (discriminant->isUndefined()) {
     return KList()->cloneTree();
   }
-  // TODO_PCJ
+
+  /* To avoid applying Cardano's formula right away, we use techniques to find a
+   * simple solution, based on some particularly common forms of cubic equations
+   * in school problems. */
+  if (GetComplexSign(d).isNull()) {
+    return CubicRootsNullLastCoefficient(a, b, c);
+  }
+  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
+    return CubicRootsNullSecondAndThirdCoefficients(a, d);
+  }
+
   return KList(1_e, 2_e, 3_e)->cloneTree();
+}
+
+Tree* Roots::CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
+                                           const Tree* c) {
+  /* If d is null, the polynom can easily be factorized by X. */
+  TreeRef allRoots = KList(0_e)->cloneTree();
+  TreeRef quadraticRoots = Roots::Quadratic(a, b, c);
+  for (const Tree* root : quadraticRoots->children()) {
+    NAry::AddChild(allRoots, root->cloneTree());
+  }
+  quadraticRoots->removeTree();
+  return allRoots;
+}
+
+Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
+                                                      const Tree* d) {
+  /* Polynoms of the form "ax^3+d=0" have a simple solution : x1 = sqrt(-d/a,3)
+   * x2 = rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
+  Tree* baseRoot = PatternMatching::CreateSimplify(
+      KPow(KMult(-1_e, KPow(KA, -1_e), KD), KPow(3_e, -1_e)),
+      {.KA = a, .KD = d});
+  TreeRef result = PatternMatching::CreateSimplify(
+      KList(KA, KMult(KA, k_cubeRootOfUnity1), KMult(KA, k_cubeRootOfUnity2)),
+      {.KA = baseRoot});
+  baseRoot->removeTree();
+  return result;
 }
 
 Tree* Roots::ReducePolynomial(const Tree* coefficients, int degree,

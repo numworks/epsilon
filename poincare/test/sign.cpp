@@ -334,21 +334,23 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("2-π", Sign::Finite());
   assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());
 
-  assert_sign("x", ComplexSign::RealUnknown());
-  assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
+  assert_sign("x", ComplexSign::RealFinite());
+  assert_sign("5+i*(x+i*y)", ComplexSign::Finite());
   assert_sign("5+i*y", ComplexSign(Sign::FiniteStrictlyPositiveInteger(),
-                                   Sign::Unknown()));
-  assert_sign("5+i*(x+i*y)", ComplexSign::Unknown());
-  assert_sign("x^2", Sign::Positive());
-  assert_sign("x^2+y^2", Sign::Positive());
+                                   Sign::Finite()));
+  assert_sign("5+i*(x+i*y)", ComplexSign::Finite());
+  assert_sign("x^2", Sign::FinitePositive());
+  assert_sign("x^2+y^2", Sign::FinitePositive());
   assert_sign("0.5*ln(x^2+y^2)", Sign::Unknown());
   assert_sign("e^(0.5*ln(x^2+y^2))", Sign::Positive());
-  assert_sign("(abs(x)+i)*abs(abs(x)-i)",
-              ComplexSign(Sign::Positive(), Sign::StrictlyPositive()));
+  assert_sign(
+      "(abs(x)+i)*abs(abs(x)-i)",
+      ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));
   assert_sign("e^(0.5*ln(12))+i*re(ln(2+i))",
               ComplexSign(Sign::StrictlyPositive(), Sign::Finite()));
-  assert_sign("re(abs(x)-i)+i*arg(2+i)",
-              ComplexSign(Sign::Positive(), Sign::FiniteStrictlyPositive()));
+  assert_sign(
+      "re(abs(x)-i)+i*arg(2+i)",
+      ComplexSign(Sign::FinitePositive(), Sign::FiniteStrictlyPositive()));
 
   // cos
   assert_sign("cos(3)", Sign::Finite());

@@ -21,10 +21,10 @@ const char* Symbol::GetName(const Tree* e) {
 }
 
 ComplexSign Symbol::GetComplexSign(const Tree* e) {
-  // Undefined global variables are considered scalar (and real for UserSymbols)
+  /* Undefined global variables are considered scalar (and real finite for
+   * UserSymbols) */
   assert(e->isUserNamed());
-  return e->isUserSymbol() ? ComplexSign::RealUnknown()
-                           : ComplexSign::Unknown();
+  return e->isUserSymbol() ? ComplexSign::RealFinite() : ComplexSign::Unknown();
 }
 
 }  // namespace Poincare::Internal

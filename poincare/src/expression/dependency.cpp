@@ -391,11 +391,13 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
 
   /* Step 3: Remove dependencies already contained in main expression.
    * dep(x^2+1,{x}) -> x^2+1 */
-  depI = set->child(0);
-  for (int i = 0; i < set->numberOfChildren(); i++) {
+  depI = set->nextNode();
+  int nbChildren = set->numberOfChildren();
+  for (int i = 0; i < nbChildren; i++) {
     if (ContainsSameDependency(depI, expression)) {
       NAry::RemoveChildAtIndex(set, i);
       i--;
+      nbChildren--;
       changed = true;
       continue;
     }

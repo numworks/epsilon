@@ -389,6 +389,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(sin(k),k,a,a-10)", "0");
   simplifies_to("sum(random()*k,k,0,n)", "sum(random()×k,k,0,n)");
   simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
+  simplifies_to("sum(k/k,k,1,n)", "dep(n,{sum(k^0,k,1,n)})");
+  simplifies_to("sum(k/k,k,0,n)", "dep(n+1,{sum(k^0,k,0,n)})");
+  simplifies_to("sum(k/k,k,-1,n)", "dep(n+2,{sum(k^0,k,-1,n)})");
 
   // product
   simplifies_to("product(p,k,j,n)", "p^(-j+n+1)");

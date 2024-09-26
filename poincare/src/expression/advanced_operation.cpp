@@ -7,6 +7,9 @@
 
 namespace Poincare::Internal {
 
+/* This is redundant with im and re expansion but necessary to contract possibly
+infinite expressions which cannot be expanded
+*/
 bool AdvancedOperation::ContractImRe(Tree* e) {
   // re(A)+im(A)*i = A
   return PatternMatching::MatchReplaceSimplify(
@@ -14,44 +17,40 @@ bool AdvancedOperation::ContractImRe(Tree* e) {
 }
 
 bool ExpandImReIfNotInfinite(Tree* e) {
-  // Replace im and re in additions only to prevent infinitely expanding
   PatternMatching::Context ctx;
-  // These patterns are true only if re(C) is finite
   // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
-  // A? + B?*im(C)*D? = A - i*B*C*D + i*B*re(C)*D
-  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
-                             &ctx) ||
-      PatternMatching::Match(e, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)), &ctx)) {
-    const Tree* c = ctx.getTree(KC);
-    const Sign realSign = GetComplexSign(c).realSign();
-    if (realSign.isFinite()) {
-      return PatternMatching::MatchReplaceSimplify(
-                 e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_p),
-                 KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
-                      KMult(i_e, KB_s, KRe(KC), KD_s), KE_p)) ||
-             PatternMatching::MatchReplaceSimplify(
-                 e, KAdd(KA_p, KMult(KB_s, KIm(KC), KD_s)),
-                 KAdd(KA_p, KMult(-1_e, i_e, KB_s, KC, KD_s),
-                      KMult(i_e, KB_s, KRe(KC), KD_s)));
+  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_s),
+                             &ctx)) {
+    const Tree* kc = ctx.getTree(KC);
+    const Sign realSign = GetComplexSign(kc).realSign();
+
+    /* - Pattern is only true if re(C) is finite
+     * - At least one member of the addition must be non-empty to prevent
+     * infinitely expanding */
+    if (realSign.isFinite() && (ctx.getNumberOfTrees(Placeholder::A) != 0 ||
+                                ctx.getNumberOfTrees(Placeholder::E) != 0)) {
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
+               KMult(i_e, KB_s, KRe(KC), KD_s), KE_s),
+          ctx));
+      return true;
     }
   }
-  // These patterns are true only if im(C) is finite
   // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
-  // A? + B?*re(C)*D? = A + B*C*D - i*B*im(C)*D
-  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
-                             &ctx) ||
-      PatternMatching::Match(e, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)), &ctx)) {
-    const Tree* c = ctx.getTree(KC);
-    const Sign imagSign = GetComplexSign(c).imagSign();
-    if (imagSign.isFinite()) {
-      return PatternMatching::MatchReplaceSimplify(
-                 e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_p),
-                 KAdd(KA_s, KMult(KB_s, KC, KD_s),
-                      KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_p)) ||
-             PatternMatching::MatchReplaceSimplify(
-                 e, KAdd(KA_p, KMult(KB_s, KRe(KC), KD_s)),
-                 KAdd(KA_p, KMult(KB_s, KC, KD_s),
-                      KMult(-1_e, i_e, KB_s, KIm(KC), KD_s)));
+  if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_s),
+                             &ctx)) {
+    const Tree* kc = ctx.getTree(KC);
+    const Sign imagSign = GetComplexSign(kc).imagSign();
+    /* - Pattern is only true if im(C) is finite
+     * - At least one member of the addition must be non-empty to prevent
+     * infinitely expanding */
+    if (imagSign.isFinite() && (ctx.getNumberOfTrees(Placeholder::A) != 0 ||
+                                ctx.getNumberOfTrees(Placeholder::E) != 0)) {
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KAdd(KA_s, KMult(KB_s, KC, KD_s),
+               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_s),
+          ctx));
+      return true;
     }
   }
   return false;

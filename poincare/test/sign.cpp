@@ -327,6 +327,8 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("-2.5", Sign::FiniteStrictlyNegative());
   assert_sign("π", ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()),
               ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
+  assert_sign("inf", ComplexSign(Sign::StrictlyPositive(), Sign::Zero()),
+              ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
 
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
   assert_sign("2-π", Sign::Finite());

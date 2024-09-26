@@ -37,17 +37,22 @@ class Roots {
       KMult(KPow(2_e, -1_e),
             KAdd(-1_e, KMult(-1_e, KPow(3_e, KPow(2_e, -1_e)), i_e)));
 
+  static Tree* CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
+                                            const Tree* c, const Tree* d,
+                                            const Tree* r);
+
+  static Tree* EvaluatePolynomialAtValue(const Tree* value, const Tree* a,
+                                         const Tree* b, const Tree* c,
+                                         const Tree* d);
+
+  static bool IsRoot(const Tree* root, const Tree* a, const Tree* b,
+                     const Tree* c, const Tree* d);
+
   static Tree* ReducePolynomial(const Tree* coefficients, int degree,
                                 const Tree* parameter,
                                 const ReductionContext& reductionContext);
   static Rational ReduceRationalPolynomial(const Rational* coefficients,
                                            int degree, Rational parameter);
-  static bool IsRoot(const Tree* coefficients, int degree, const Tree* root,
-                     const ReductionContext& reductionContext) {
-    return GetSign(
-               ReducePolynomial(coefficients, degree, root, reductionContext))
-        .isNull();
-  }
 
   static Tree* CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
                                              const Tree* c);

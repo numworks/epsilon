@@ -49,7 +49,15 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1, 0, 1}", "{-i,i}");
 
   assert_roots_are("{1, undef, 0, 0}", "{}");
+  assert_roots_are("{1, -2, 1, 0}", "{1,0}");
+  assert_roots_are("{1,-x-1,x,0}",
+                   "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2,0}");
   assert_roots_are("{1, 0, 0, -8}", "{2,-1+√(3)×i,-1-√(3)×i}");
+  assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
+
+  // assert_roots_are(
+  //     "{1, -4, 6, -24}",
+  //     "{-√(-24)/2,√(-24)/2,4}");  // TODO: this should be simplified
   // assert_roots_are("{1, 0, -3, -2}", "{-1,2}");
 
   // assert_solves_to("x^3+x+1=0", {"x=-0.6823278038",

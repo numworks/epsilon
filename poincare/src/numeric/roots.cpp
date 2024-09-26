@@ -3,8 +3,12 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+
+#include "poincare/sign.h"
+#include "poincare/src/memory/tree_ref.h"
 
 namespace Poincare::Internal {
 
@@ -91,27 +95,51 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   }
 
   /* To avoid applying Cardano's formula right away, we use techniques to find a
-   * simple solution, based on some particularly common forms of cubic equations
+   * simple root, based on some particularly common forms of cubic equations
    * in school problems. */
+
   if (GetComplexSign(d).isNull()) {
     return CubicRootsNullLastCoefficient(a, b, c);
   }
   if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
     return CubicRootsNullSecondAndThirdCoefficients(a, d);
   }
+  /* Polynomials which can be written as "kx^2(cx+d)+cx+d" or
+   * "kx(bx^2+d)+bx^2+d" (??) have a simple root: x1 = -d/c. */
+  TreeRef simpleRoot = PatternMatching::CreateSimplify(
+      KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
+
+  if (IsRoot(simpleRoot, a, b, c, d)) {
+    TreeRef solutions = CubicRootsKnowingNonZeroRoot(a, b, c, d, simpleRoot);
+    simpleRoot->removeTree();
+    return solutions;
+  }
 
   return KList(1_e, 2_e, 3_e)->cloneTree();
+}
+
+Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
+                                          const Tree* c, const Tree* d,
+                                          const Tree* r) {
+  assert(!GetSign(r).isNull());
+  /* If r is a non zero root of "ax^3+bx^2+cx+d", we can factorize the
+   * polynomial as "(x-r)*(ax^2+β*x+γ)", with "β =b+a*r" and γ=-d/r */
+  TreeRef beta = PatternMatching::CreateSimplify(KAdd(KB, KMult(KA, KH)),
+                                                 {.KA = a, .KB = b, .KH = r});
+  TreeRef gamma = PatternMatching::CreateSimplify(KMult(KD, KPow(KH, -1_e)),
+                                                  {.KD = d, .KH = r});
+  TreeRef allRoots = Roots::Quadratic(a, beta, gamma);
+  NAry::AddChild(allRoots, r->cloneTree());
+  beta->removeTree();
+  gamma->removeTree();
+  return allRoots;
 }
 
 Tree* Roots::CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
                                            const Tree* c) {
   /* If d is null, the polynom can easily be factorized by X. */
-  TreeRef allRoots = KList(0_e)->cloneTree();
-  TreeRef quadraticRoots = Roots::Quadratic(a, b, c);
-  for (const Tree* root : quadraticRoots->children()) {
-    NAry::AddChild(allRoots, root->cloneTree());
-  }
-  quadraticRoots->removeTree();
+  TreeRef allRoots = Roots::Quadratic(a, b, c);
+  NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
   return allRoots;
 }
 
@@ -129,10 +157,22 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
   return result;
 }
 
-Tree* Roots::ReducePolynomial(const Tree* coefficients, int degree,
-                              const Tree* parameter,
-                              const ReductionContext& reductionContext) {
-  return nullptr;
+Tree* Roots::EvaluatePolynomialAtValue(const Tree* value, const Tree* a,
+                                       const Tree* b, const Tree* c,
+                                       const Tree* d) {
+  return PatternMatching::CreateSimplify(
+      KAdd(KMult(KA, KPow(KH, 3_e)), KMult(KB, KPow(KH, 2_e)), KMult(KC, KH),
+           KD),
+      {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
+}
+
+bool Roots::IsRoot(const Tree* root, const Tree* a, const Tree* b,
+                   const Tree* c, const Tree* d) {
+  Tree* evaluatedValue = EvaluatePolynomialAtValue(root, a, b, c, d);
+  SystematicReduction::DeepReduce(evaluatedValue);
+  bool isNull = GetComplexSign(evaluatedValue).isNull();
+  evaluatedValue->removeTree();
+  return isNull;
 }
 
 Rational Roots::ReduceRationalPolynomial(const Rational* coefficients,

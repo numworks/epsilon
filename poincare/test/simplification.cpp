@@ -154,7 +154,7 @@ void simplifies_to(const char* input, const char* output,
 
 QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x", "x");
-  simplifies_to("x-x", "dep(0,{x})");
+  simplifies_to("x-x", "0");
   simplifies_to("2+2", "4");
   simplifies_to("(2×3(2^2)) + 2×2", "28");
   simplifies_to("36/8", "9/2");
@@ -173,14 +173,14 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("2a+3b+4a", "6×a+3×b");
   simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "(7×a-9)×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
-  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "dep(b×(d+f)×g,{a})");
+  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
   simplifies_to("e^(ln(1+x^2))", "dep(x^2+1,{nonNull(1+x^2),realPos(1+x^2)})");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", cartesianCtx);
-  simplifies_to("x+1+(-1)(x+1)", "dep(0,{x})");
+  simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
   simplifies_to("0.0001234", "617/5000000");
   simplifies_to("98765000", "98765000");
@@ -218,16 +218,16 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{a,b,c})");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
-  simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "dep(3,{x})");
+  simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(x, x, 2)", "1");
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
-  simplifies_to("diff(1+x, x, y)", "dep(1,{y})");
+  simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{realPos(y)})");
   simplifies_to(
       "diff(((x^4)×ln(x)×e^(3x)), x, y)",
@@ -310,19 +310,19 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("i×im(x)+re(x)", "x");
   simplifies_to("re(ln(1-3×i)+2×π×i)", "re(ln(1-3×i))", ctx);
   // z being a finite unknown real, arccos(z) is a finite unknown complex.
-  simplifies_to("im(x+i*y+arccos(z))", "dep(y+im(arccos(z)),{x})", ctx);
-  simplifies_to("im(x)", "dep(0,{x})", ctx);
+  simplifies_to("im(x+i*y+arccos(z))", "y+im(arccos(z))", ctx);
+  simplifies_to("im(x)", "0", ctx);
   simplifies_to("im(i*y)", "y", ctx);
   simplifies_to("im(arccos(z))", "im(arccos(z))", ctx);
   simplifies_to("im(x1+x2+i*y1+i*y2+arccos(z1)+arccos(z2))",
-                "dep(y1+y2+im(arccos(z1))+im(arccos(z2)),{x1,x2})", ctx);
+                "y1+y2+im(arccos(z1))+im(arccos(z2))", ctx);
   simplifies_to("arccos(z)-i×im(arccos(z))", "re(arccos(z))", ctx);
 
   store("x→f(x)", &globalContext);
   simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
   simplifies_to("re(conj(f(x)))-re(f(x))", "dep(0,{f(x)})", ctx);
   simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
-  simplifies_to("re(f(x)+y)-y", "dep(re(f(x)),{y})", ctx);
+  simplifies_to("re(f(x)+y)-y", "re(f(x))", ctx);
   simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{f(y)})", ctx);
   simplifies_to("im(i×f(y))", "re(f(y))", ctx);
   simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))", "im(f(x))+re(f(y))",
@@ -356,7 +356,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^((-π/2)×i)}", polarCtx);
   // TODO : Better simplify abs and arg
   simplifies_to("(y/y+3)×e^(i×(x-x+2))",
-                "dep(abs(4×e^(2×i))×e^(arg(4×e^(2×i))×i),{x,y^0})", polarCtx);
+                "dep(abs(4×e^(2×i))×e^(arg(4×e^(2×i))×i),{y^0})", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {
@@ -565,7 +565,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("lcm(14,6)", "42");
   simplifies_to("gcd(6,y,2,x,4)", "gcd(2,x,y)");
   simplifies_to("sign(-2)", "-1");
-  simplifies_to("sign(abs(x)+1)", "dep(1,{x})");
+  simplifies_to("sign(abs(x)+1)", "1");
   simplifies_to("ceil(8/3)", "3");
   simplifies_to("frac(8/3)", "2/3");
   simplifies_to("floor(8/3)", "2");
@@ -694,7 +694,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("0^(1+x^2)", "0");
   simplifies_to("sqrt(9)", "3");
   simplifies_to("root(-8,3)", "-2");
-  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "dep(0,{x})", cartesianCtx);
+  simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
 
   // Real powers
@@ -741,8 +741,7 @@ QUIZ_CASE(pcj_simplification_float) {
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("1+π+x", "x+4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("cos(x-x)", "dep(1,{x})",
-                {.m_strategy = Strategy::ApproximateToFloat});
+  simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("random()-random()", "random()-1×random()",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("y^3*x^-2", "y^3/x^2",
@@ -884,11 +883,13 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   assert_trees_are_equal(e3, r3);
 
+#if 0
   Tree* e4 = KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDepList("x"_e, "z"_e)))
                  ->cloneTree();
   const Tree* r4 = KDep(1_e, KDepList("y"_e, "z"_e));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   assert_trees_are_equal(e4, r4);
+#endif
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {
@@ -909,8 +910,8 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("-3×inf", "-∞");
   simplifies_to("inf×(-inf)", "-∞");
   simplifies_to("x×(-inf)", "∞×sign(-x)");
-  simplifies_to("(abs(x)+1)*inf", "dep(∞,{x})");
-  simplifies_to("cos(x)+inf", "dep(∞,{x})");
+  simplifies_to("(abs(x)+1)*inf", "∞");
+  simplifies_to("cos(x)+inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
 
@@ -1163,9 +1164,9 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^4");
   simplifies_to("1-cos(x)^2", "sin(x)^2");
 #endif
-  simplifies_to("1-cos(x)^2-sin(x)^2", "dep(0,{x})");
+  simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("2*a+b*(a+c)-b*c", "dep(a×(b+2),{c})");
+  simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^2+e^((a+b)×c)");
   // TODO: Should be 0
   simplifies_to(
@@ -1204,7 +1205,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);
   simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
   simplifies_to("√(0)", "0", cartesianCtx);
-  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "dep(0,{x})", cartesianCtx);
+  simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_boolean) {

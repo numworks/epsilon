@@ -66,13 +66,7 @@ QUIZ_CASE(pcj_equation_solver) {
   // TODO_PCJ: should be t1 since t is already used
   check_solutions({"t+u"}, {"-t", "t"}, projCtx);
 
-  /* TODO_PCJ: this is the current solution (but can be asserted because dep
-   * cannot be parsed). We need to ignore dependencies in t variables since they
-   * are defined everywhere. */
-  // check_solutions(
-  // {"a+b", "c+d"},
-  // {"dep(-t1,{t2})", "dep(t1,{t2})", "dep(-t2,{t1})", "dep(t2,{t1})"},
-  // projCtx);
+  check_solutions({"a+b", "c+d"}, {"-t2", "t2", "-t1", "t1"}, projCtx);
 
   check_solutions({"1"}, {}, projCtx);
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},

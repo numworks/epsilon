@@ -71,6 +71,8 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           hasMoreSolutions() ? SolutionType::Formal : SolutionType::Exact);
     }
     result->removeTree();
+  } else {
+    assert(!result);
   }
   set->removeTree();
   return error;

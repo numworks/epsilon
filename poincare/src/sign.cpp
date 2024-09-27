@@ -175,7 +175,7 @@ ComplexSign ArcTangent(ComplexSign s) {
   if (imagSign.isNull() || !realSign.canBeNull()) {
     imagSign = imagSign && Sign(true, true, true, true, false);
   } else {
-    imagSign = imagSign || Sign(false, false, false, false, true);
+    imagSign = RelaxFiniteProperty(imagSign);
   }
   return ComplexSign(realSign, imagSign);
 }

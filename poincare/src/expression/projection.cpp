@@ -241,7 +241,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // NthRoot(A, B) -> A^(1/B)
       PatternMatching::MatchReplace(e, KRoot(KA, KB),
                                     KPow(KA, KPow(KB, -1_e))) ||
-      // log(A, e) -> ln(e)
+      // log(A, e) -> ln(A)
       PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLnUser(KA)) ||
       // Cot(A) -> cos(A)/sin(A)
       PatternMatching::MatchReplace(e, KCot(KA),

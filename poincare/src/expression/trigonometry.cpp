@@ -18,7 +18,7 @@
 namespace Poincare::Internal {
 
 // Given n, return the exact expression of sin(n*π/120).
-const Tree* exactFormula(uint8_t n, bool isSin, bool* isOpposed) {
+const Tree* getExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   // TODO_PCJ: add exact formula for inverse functions too
   // Sin and cos are 2pi periodic. With sin(n*π/120), n goes from 0 to 239.
   n = n % 240;
@@ -90,7 +90,7 @@ const Tree* exactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   }
 }
 
-const Tree* exactFormula(const Tree* piFactor, bool isSin, bool* isOpposed) {
+const Tree* getExactFormula(const Tree* piFactor, bool isSin, bool* isOpposed) {
   /* We have exact values for 1/d with d ∈ {1,2,3,4,5,6,8,10,12}
    * We thus rule out piFactor that are not of of the form n/d, n∈ℕ
    * Which means piFactor*120 must be int (120 = lcm(1,2,3,4,5,6,8,10,12)) */
@@ -102,7 +102,7 @@ const Tree* exactFormula(const Tree* piFactor, bool isSin, bool* isOpposed) {
     assert(Integer::Is<uint8_t>(multipleTree));
     uint8_t n = Integer::Handler(multipleTree).to<uint8_t>();
     multipleTree->removeTree();
-    return exactFormula(n, isSin, isOpposed);
+    return getExactFormula(n, isSin, isOpposed);
   }
   multipleTree->removeTree();
   return nullptr;
@@ -230,7 +230,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
    *        reduction. */
   if (piFactor) {
     bool tempIsOpposed = isOpposed;
-    const Tree* exact = exactFormula(piFactor, isSin, &tempIsOpposed);
+    const Tree* exact = getExactFormula(piFactor, isSin, &tempIsOpposed);
     if (exact) {
       e->cloneTreeOverTree(exact);
       SystematicReduction::DeepReduce(e);

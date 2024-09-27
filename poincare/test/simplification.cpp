@@ -856,6 +856,13 @@ QUIZ_CASE(pcj_simplification_unit) {
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {
+  /* Since a user symbol alone "x" is considered always defined, use "f(x)" to
+   * see the dependencies. */
+  simplifies_to("f(x)-f(x)", "dep(0,{f(x)})");
+  simplifies_to("cos(re(f(x)))+inf", "dep(∞,{f(x)})");
+  simplifies_to("diff(1+x, x, f(y))", "dep(1,{f(y)})");
+  simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", cartesianCtx);
+  simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
   simplifies_to("0^(5+ln(5))", "0");
   simplifies_to("[[x/x]]", "[[dep(1,{x^0})]]");
   simplifies_to("lcm(undef, 2+x/x)", "undef");
@@ -886,13 +893,12 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
   assert_trees_are_equal(e3, r3);
 
-#if 0
-  Tree* e4 = KDiff("x"_e, "y"_e, 1_e, KDep("x"_e, KDepList("x"_e, "z"_e)))
+  Tree* e4 = KDiff("x"_e, "y"_e, 1_e,
+                   KDep("x"_e, KDepList(KFun<"f">("x"_e), KFun<"f">("z"_e))))
                  ->cloneTree();
-  const Tree* r4 = KDep(1_e, KDepList("y"_e, "z"_e));
+  const Tree* r4 = KDep(1_e, KDepList(KFun<"f">("y"_e), KFun<"f">("z"_e)));
   Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
   assert_trees_are_equal(e4, r4);
-#endif
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {

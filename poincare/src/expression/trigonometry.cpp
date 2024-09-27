@@ -196,8 +196,6 @@ bool Trigonometry::ReduceTrig(Tree* e) {
     const Tree* exact = getExactFormula(piFactor, isSin, &tempIsOpposed);
     if (exact) {
       e->cloneTreeOverTree(exact);
-      // exact should already be in reduced form.
-      assert(!SystematicReduction::DeepReduce(e));
       isOpposed = tempIsOpposed;
       changed = true;
     } else {
@@ -387,7 +385,6 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   const Tree* angle = ExactFormula::GetAngleOf(arg, isAsin);
   if (angle) {
     e->cloneTreeOverTree(angle);
-    assert(!SystematicReduction::DeepReduce(e));
     changed = true;
   }
   if (argIsOpposed) {

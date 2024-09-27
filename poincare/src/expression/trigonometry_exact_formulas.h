@@ -6,7 +6,12 @@
 
 namespace Poincare::Internal {
 
+// Used to test exact formulas
+class ExactFormulaTest;
+
 class ExactFormula {
+  friend class ExactFormulaTest;
+
  public:
   template <KTreeConcept T1, KTreeConcept T2, KTreeConcept T3>
   constexpr ExactFormula(T1 angle, T2 cos, T3 sin)
@@ -22,8 +27,8 @@ class ExactFormula {
   constexpr static int k_totalNumberOfFormula = 17;
   // Only formulas for angles in [0, π/4] are used when simplifying Trig
   constexpr static int k_numberOfFormulaForTrig = 7;
-  // There are additional formulas at negative angles
-  constexpr static int k_numberOfPositiveAngleFormulas = 13;
+  // There are additional formulas to handle unknown signs
+  constexpr static int k_indexOfFirstUnknownSignFormula = 13;
 
   const Tree* m_angle;
   const Tree* m_cos;

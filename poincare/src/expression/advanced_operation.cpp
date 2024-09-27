@@ -23,12 +23,11 @@ bool ExpandImReIfNotInfinite(Tree* e) {
                              &ctx)) {
     const Tree* kc = ctx.getTree(KC);
     const Sign realSign = GetComplexSign(kc).realSign();
-
     /* - Pattern is only true if re(C) is finite
      * - At least one member of the addition must be non-empty to prevent
      * infinitely expanding */
-    if (realSign.isFinite() && (ctx.getNumberOfTrees(Placeholder::A) != 0 ||
-                                ctx.getNumberOfTrees(Placeholder::E) != 0)) {
+    if (realSign.isFinite() &&
+        (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
                KMult(i_e, KB_s, KRe(KC), KD_s), KE_s),
@@ -44,8 +43,8 @@ bool ExpandImReIfNotInfinite(Tree* e) {
     /* - Pattern is only true if im(C) is finite
      * - At least one member of the addition must be non-empty to prevent
      * infinitely expanding */
-    if (imagSign.isFinite() && (ctx.getNumberOfTrees(Placeholder::A) != 0 ||
-                                ctx.getNumberOfTrees(Placeholder::E) != 0)) {
+    if (imagSign.isFinite() &&
+        (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KAdd(KA_s, KMult(KB_s, KC, KD_s),
                KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_s),

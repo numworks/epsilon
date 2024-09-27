@@ -43,6 +43,10 @@ class PatternMatching {
     const Tree* getTree(KPlaceholder<T>) const {
       return getTree(T);
     }
+    template <Placeholder::Tag T>
+    const uint8_t getNumberOfTrees(KPlaceholder<T>) const {
+      return getNumberOfTrees(T);
+    }
     const Tree* getTree(uint8_t tag) const { return m_array[tag]; }
     uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
     bool isAnyTree(uint8_t tag) const {

@@ -131,7 +131,7 @@ Promise.all([
       .getReducedDerivative('x', 2)
       .cloneAndBeautify(reductionContext);
     assert.ok(!secondDerivative.isUninitialized());
-    assert.equal(secondDerivative.toLatex(), 'dep\\left(2,\\left(x\\right)\\right)');
+    assert.equal(secondDerivative.toLatex(), '2');
 
     const lowerBound = poincare.PCR_SystemExpression.BuildInt(0);
     const upperBound = poincare.PCR_SystemExpression.BuildInt(1);

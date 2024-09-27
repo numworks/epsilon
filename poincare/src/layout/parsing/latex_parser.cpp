@@ -232,7 +232,8 @@ Tree* LatexToLayout(const char* latexString) {
 /* Node with custom handling:
  *   OperatorSeparator -> suppressed in Latex
  *   UnitSeparator -> suppressed in Latex
- *   ThousandsSeparator -> replaced with ' '
+ *   ThousandsSeparator -> replaced with ' ' or suppressed depending on the
+ * `withThousandsSeparator` parameter
  *
  * Node unimplemented (that are serialized instead):
  *   Ceil
@@ -252,9 +253,13 @@ Tree* LatexToLayout(const char* latexString) {
  *   PtPermute (not handled by serialization ?)
  * */
 
-char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
+char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
+                                                char* end,
+                                                bool withThousandsSeparators,
+                                                RackSerializer serializer) {
   for (const Tree* child : rack->children()) {
-    if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout()) {
+    if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout() ||
+        (!withThousandsSeparators && child->isThousandsSeparatorLayout())) {
       // Invisible in latex
       continue;
     }
@@ -263,6 +268,8 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
       break;
     }
 
+    /* If withThousandsSeparators is false, we already handled the case where
+     * child->isThousandsSeparatorLayout() is true. */
     if (child->isThousandsSeparatorLayout()) {
       // Replace with '\ '
       if (buffer + 1 >= end) {
@@ -310,8 +317,8 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
         }
         assert(strlen(token.description[i + 1]) <= 1);
         int indexOfChildInLayout = token.description[i + 1][0];
-        buffer = LayoutToLatexWithExceptions(
-            Rack::From(child->child(indexOfChildInLayout)), buffer, end);
+        buffer = serializer(Rack::From(child->child(indexOfChildInLayout)),
+                            buffer, end);
         i += 2;
       }
     }
@@ -326,8 +333,7 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
     }
 
     // Use common serialization
-    buffer = SerializeLayout(Layout::From(child), buffer, end,
-                             LayoutToLatexWithExceptions);
+    buffer = SerializeLayout(Layout::From(child), buffer, end, serializer);
     *buffer = 0;
   }
 
@@ -339,9 +345,29 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
   return buffer;
 }
 
-char* LayoutToLatex(const Rack* rack, char* buffer, char* end) {
+char* LayoutToLatexWithThousandsSeparatorsWithExceptions(const Rack* rack,
+                                                         char* buffer,
+                                                         char* end) {
+  return LayoutToLatexWithExceptionsRefactorHelper(
+      rack, buffer, end, true,
+      LayoutToLatexWithThousandsSeparatorsWithExceptions);
+}
+char* LayoutToLatexWithoutThousandsSeparatorsWithExceptions(const Rack* rack,
+                                                            char* buffer,
+                                                            char* end) {
+  return LayoutToLatexWithExceptionsRefactorHelper(
+      rack, buffer, end, false,
+      LayoutToLatexWithoutThousandsSeparatorsWithExceptions);
+}
+
+char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
+                    bool withThousandsSeparators) {
   ExceptionTry {
-    char* result = LayoutToLatexWithExceptions(rack, buffer, end);
+    char* result = withThousandsSeparators
+                       ? LayoutToLatexWithThousandsSeparatorsWithExceptions(
+                             rack, buffer, end)
+                       : LayoutToLatexWithoutThousandsSeparatorsWithExceptions(
+                             rack, buffer, end);
     return result;
   }
   ExceptionCatch(type) {

@@ -318,10 +318,10 @@ QUIZ_CASE(pcj_simplification_complex) {
                 "y1+y2+im(arccos(z1))+im(arccos(z2))", ctx);
   simplifies_to("arccos(z)-i×im(arccos(z))", "re(arccos(z))", ctx);
   simplifies_to("i×im(arccos(z))+re(arccos(z))", "arccos(z)", ctx);
-  simplifies_to("re(conj(arccos(z)))-re(arccos(z))", "dep(0,{arccos(z)})", ctx);
+  simplifies_to("re(conj(arccos(z)))-re(arccos(z))", "0", ctx);
   simplifies_to("conj(conj(arccos(z)))", "arccos(z)", ctx);
   simplifies_to("re(arccos(z)+y)-y", "re(arccos(z))", ctx);
-  simplifies_to("re(i×arccos(w))+im(arccos(w))", "dep(0,{arccos(w)})", ctx);
+  simplifies_to("re(i×arccos(w))+im(arccos(w))", "0", ctx);
   simplifies_to("im(i×arccos(w))", "re(arccos(w))", ctx);
   simplifies_to("i×(conj(arccos(z)+i×arccos(w))+im(arccos(w))-re(arccos(z)))",
                 "im(arccos(z))+re(arccos(w))", ctx);
@@ -331,8 +331,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to(
       "abs(arccos(z)+i×arccos(w))^2-(-im(arccos(w))+re(arccos(z)))^2-(im("
       "arccos(z))+re(arccos(w)))^2",
-      "abs(arccos(z)+arccos(w)×i)^2-((-im(arccos(w))+re(arccos(z)))^2+(im("
-      "arccos(z))+re(arccos(w)))^2)",
+      "abs(arccos(z)+arccos(w)×i)^2-((im(arccos(z))+re(arccos(w)))^2+(-im("
+      "arccos(w))+re(arccos(z)))^2)",
       ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
@@ -918,7 +918,6 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("inf-inf", "undef");
   simplifies_to("-inf+inf", "undef");
   simplifies_to("inf-inf+3*inf", "undef");
-  simplifies_to("x-inf", "x-∞");
   simplifies_to("inf*(-π)", "-∞");
   simplifies_to("inf*2*inf", "∞");
   simplifies_to("0×inf", "undef");
@@ -930,6 +929,14 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("cos(x)+inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
+
+  Shared::GlobalContext globalContext;
+  store("x→f(x)", &globalContext);
+  ProjectionContext ctx = {
+      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_context = &globalContext,
+  };
+  simplifies_to("f(x)-inf", "f(x)-∞", ctx);
 
   // x^inf
   // TODO simplifies_to("(-2)^inf", "undef");  // complex inf
@@ -1278,7 +1285,7 @@ QUIZ_CASE(pcj_simplification_function) {
   };
   simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
-  simplifies_to("f(y)+f(x)-f(x)", "dep(f(y),{f(x)})");
+  simplifies_to("f(y)+f(x)-f(x)", "dep(f(y),{0×f(x)})");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

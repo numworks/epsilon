@@ -17,6 +17,143 @@
 
 namespace Poincare::Internal {
 
+class ExactFormula {
+ public:
+  template <KTreeConcept T1, KTreeConcept T2, KTreeConcept T3>
+  constexpr ExactFormula(T1 angle, T2 cos, T3 sin)
+      : m_angle(angle), m_cos(cos), m_sin(sin) {}
+
+  const Tree* m_angle;
+  const Tree* m_cos;
+  const Tree* m_sin;
+};
+
+ExactFormula ExactFormulas[] = {
+    /* Angles in [0, π/4] */
+    // θ, cos(θ), sin(θ)
+    {0_e, 1_e, 0_e},
+    // π/4, √2/2, √2/2
+    {KMult(1_e / 4_e, π_e), KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))),
+     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e))))},
+    // π/5, (1+√5)/4, √((5-√5)/8)
+    {KMult(1_e / 5_e, π_e),
+     KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
+     KExp(KMult(1_e / 2_e,
+                KLn(KMult(1_e / 8_e,
+                          KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e,
+                                                           KLn(5_e)))))))))},
+    // π/6, √3/2, 1/2
+    {KMult(1_e / 6_e, π_e), KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
+     1_e / 2_e},
+    // π/8, √(2+√2)/2, √(2-√2)/2
+    {KMult(1_e / 8_e, π_e),
+     KMult(1_e / 2_e,
+           KExp(KMult(1_e / 2_e,
+                      KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))))),
+     KMult(
+         1_e / 2_e,
+         KExp(KMult(
+             1_e / 2_e,
+             KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))))))},
+    // π/10, √((5+√5)/8), (√5-1)/4
+    {KMult(1_e / 10_e, π_e),
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KMult(1_e / 8_e, KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))))),
+     KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
+    // π/12, 1/4×√2×(1+√3), 1/4×√2×(-1+√3)
+    {KMult(1_e / 12_e, π_e),
+     KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+    /* Angles in ]π/4, π/2]
+     * TODO : Remove them with asin(x) = π/2 - acos(x) advanced reduction. */
+    // π/2, 0, 1
+    {KMult(1_e / 2_e, π_e), 0_e, 1_e},
+    // π/3, 1/2, √3/2
+    {KMult(1_e / 3_e, π_e), 1_e / 2_e,
+     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e))))},
+    // 3π/10, √((5-√5)/8), (1+√5)/4
+    {KMult(3_e / 10_e, π_e),
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KMult(1_e / 8_e,
+                   KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))),
+     KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
+    // 3π/8, √(2-√2)/2, √(2+√2)/2
+    {KMult(3_e / 8_e, π_e),
+     KMult(1_e / 2_e,
+           KExp(KMult(
+               1_e / 2_e,
+               KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))))),
+     KMult(1_e / 2_e,
+           KExp(KMult(1_e / 2_e,
+                      KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))))},
+    // 2π/5, (√5-1)/4, √((5+√5)/8)
+    {KMult(2_e / 5_e, π_e),
+     KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KMult(1_e / 8_e, KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
+    // 5π/12, 1/4×√2×(-1+√3), 1/4×√2×(1+√3)
+    {KMult(5_e / 12_e, π_e),
+     KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+    /* Additional negative angles :
+     * TODO : - Remove them with better sign detection in simplifyATrigOfTrig
+     *        - Only one of the two formulas can be matched in each cases */
+    // -π/10, -√((5+√5)/8), -(√5-1)/4
+    {KMult(-1_e / 10_e, π_e),
+     KMult(-1_e, KExp(KMult(
+                     1_e / 2_e,
+                     KLn(KMult(1_e / 8_e,
+                               KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))),
+     KMult(-1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
+    // -π/12, -1/4×√2×(1+√3), -1/4×√2×(-1+√3)
+    {KMult(-1_e / 12_e, π_e),
+     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+    // 3π/5, -(√5-1)/4, -√((5+√5)/8)
+    {KMult(3_e / 5_e, π_e),
+     KMult(-1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
+     KMult(
+         -1_e,
+         KExp(KMult(1_e / 2_e,
+                    KLn(KMult(1_e / 8_e,
+                              KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))))))},
+    // 7π/12, -1/4×√2×(-1+√3), -1/4×√2×(1+√3)
+    {KMult(7_e / 12_e, π_e),
+     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
+           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+};
+
+const Tree* getTrig(const Tree* child, const bool sin) {
+  PatternMatching::Context ctx;
+  for (const ExactFormula& ef : ExactFormulas) {
+    if (PatternMatching::Match(child, ef.m_angle, &ctx)) {
+      return sin ? ef.m_sin : ef.m_cos;
+    }
+  }
+  return nullptr;
+}
+
+const Tree* getAngle(const Tree* child, const bool asin) {
+  PatternMatching::Context ctx;
+  for (const ExactFormula& ef : ExactFormulas) {
+    if (PatternMatching::Match(child, asin ? ef.m_sin : ef.m_cos, &ctx)) {
+      return ef.m_angle;
+    }
+  }
+  return nullptr;
+}
+
 // Given n, return the exact expression of sin(n*π/120).
 const Tree* getExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   // TODO_PCJ: add exact formula for inverse functions too
@@ -41,53 +178,15 @@ const Tree* getExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   }
   /* Only 7 exact formulas are left to handle. */
   assert(n >= 0 && n <= 30);
-  switch (n) {
-    case 0:  // 0
-      return isSin ? 0_e : 1_e;
-    case 10:  // π/12
-      return isSin ? KMult(KAdd(KExp(KMult(1_e / 2_e, KLn(3_e))), -1_e),
-                           KPow(KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), 2_e),
-                                -1_e))
-                   : KMult(KAdd(KExp(KMult(1_e / 2_e, KLn(3_e))), 1_e),
-                           KPow(KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), 2_e),
-                                -1_e));
-    case 12:  // π/10
-      return isSin ? KMult(1_e / 4_e,
-                           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))
-                   : KExp(KMult(1_e / 2_e,
-                                KLn(KMult(1_e / 8_e,
-                                          KAdd(5_e, KExp(KMult(1_e / 2_e,
-                                                               KLn(5_e))))))));
-    case 15:  // π/8
-      return isSin
-                 ? KMult(
-                       1_e / 2_e,
-                       KExp(KMult(
-                           1_e / 2_e,
-                           KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e,
-                                                                KLn(2_e)))))))))
-                 : KMult(
-                       1_e / 2_e,
-                       KExp(KMult(
-                           1_e / 2_e,
-                           KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))));
-    case 20:  // π/6
-      return isSin ? 1_e / 2_e
-                   : KMult(KExp(KMult(1_e / 2_e, KLn(3_e))), 1_e / 2_e);
-    case 24:  // π/5
-      return isSin ? KExp(KMult(
-                         1_e / 2_e,
-                         KLn(KMult(
-                             1_e / 8_e,
-                             KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e,
-                                                              KLn(5_e)))))))))
-                   : KMult(1_e / 4_e,
-                           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))));
-    case 30:  // π/4
-      return KExp(KMult(-1_e, 1_e / 2_e, KLn(2_e)));
-    default:
-      return nullptr;
+  Tree* reducedAngle = SharedTreeStack->pushMult(2);
+  Rational::Push(n, 120);
+  SharedTreeStack->pushPi();
+  if (n == 0) {
+    reducedAngle->cloneTreeOverTree(0_e);
   }
+  const Tree* result = getTrig(reducedAngle, isSin);
+  reducedAngle->removeTree();
+  return result;
 }
 
 const Tree* getExactFormula(const Tree* piFactor, bool isSin, bool* isOpposed) {
@@ -233,7 +332,8 @@ bool Trigonometry::ReduceTrig(Tree* e) {
     const Tree* exact = getExactFormula(piFactor, isSin, &tempIsOpposed);
     if (exact) {
       e->cloneTreeOverTree(exact);
-      SystematicReduction::DeepReduce(e);
+      // exact should already be in reduced form.
+      assert(!SystematicReduction::DeepReduce(e));
       isOpposed = tempIsOpposed;
       changed = true;
     } else {
@@ -408,50 +508,23 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   if (simplifyATrigOfTrig(e)) {
     return true;
   }
-  const Tree* arg = e->child(0);
+  Tree* arg = e->child(0);
   bool isAsin = arg->nextTree()->isOne();
   ComplexSign argSign = GetComplexSign(arg);
-  if (argSign.isNull()) {
-    e->cloneTreeOverTree(isAsin ? 0_e : KMult(1_e / 2_e, π_e));
-    return true;
-  }
   if (!argSign.isReal()) {
     return false;
   }
-  bool argIsOpposed = argSign.realSign().isNegative();
+  bool argIsOpposed =
+      !argSign.realSign().isNull() && argSign.realSign().isNegative();
   bool changed = argIsOpposed;
-  assert(!arg->treeIsIdenticalTo(KExp(KMult(-1_e / 2_e, KLn(2_e)))));
   if (argIsOpposed) {
-    e->child(0)->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = arg}));
+    PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
   }
-  if (arg->isOne()) {
-    // asin(1) = π/2 and acos(1) = 0
-    e->cloneTreeOverTree(isAsin ? KMult(1_e / 2_e, π_e) : 0_e);
+  const Tree* angle = getAngle(arg, isAsin);
+  if (angle) {
+    e->cloneTreeOverTree(angle);
+    assert(!SystematicReduction::DeepReduce(e));
     changed = true;
-  } else if (arg->isHalf()) {
-    // asin(1/2) = π/6 and acos(1/2) = π/3
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KMult(π_e, KPow(KA, -1_e)), {.KA = isAsin ? 6_e : 3_e}));
-    changed = true;
-  } else if (arg->treeIsIdenticalTo(
-                 KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))) {
-    // acos(√2/2) = asin(√2/2) = π/4
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(KMult(1_e / 4_e, π_e)));
-    changed = true;
-  } else if (arg->isMult()) {
-    /* TODO: Handle the same angles as ExactFormula (π/12, π/10, π/8 and π/5 are
-     * missing) and find a better implementation for these special cases. */
-    changed =
-        // acos(√3/2) = π/6
-        PatternMatching::MatchReplaceSimplify(
-            e, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 0_e),
-            KMult(1_e / 6_e, π_e)) ||
-        // asin(√3/2) = π/3
-        PatternMatching::MatchReplaceSimplify(
-            e, KATrig(KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), 1_e),
-            KMult(1_e / 3_e, π_e)) ||
-        changed;
   }
   if (argIsOpposed) {
     assert(changed);

@@ -1025,12 +1025,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{π,5π/6,3π/4,2π/3,π/2,π/3,π/4,π/6,0}");
   simplifies_to("acos(-1/√(2))", "3π/4");
   simplifies_to("acos(1/√(2))", "π/4");
-#if 0  // TODO_PCJ
   simplifies_to("acos(-(√(6)+√(2))/4)", "11π/12");
   simplifies_to("acos(-(√(6)-√(2))/4)", "7π/12");
   simplifies_to("acos((√(6)-√(2))/4)", "5π/12");
   simplifies_to("acos((√(6)+√(2))/4)", "π/12");
-#endif
   simplifies_to("asin(-1/√(2))", "-π/4");
   simplifies_to("asin(1/√(2))", "π/4");
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
@@ -1038,12 +1036,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",
                 {.m_angleUnit = AngleUnit::Degree});
-#if 0  // TODO_PCJ
   simplifies_to("asin(-(√(6)+√(2))/4)", "-5π/12");
   simplifies_to("asin(-(√(6)-√(2))/4)", "-π/12");
   simplifies_to("asin((√(6)-√(2))/4)", "π/12");
   simplifies_to("asin((√(6)+√(2))/4)", "5π/12");
-#endif
   simplifies_to("atan(-1/√(3))", "-π/6");
   simplifies_to("atan(1/√(3))", "π/6");
   simplifies_to("atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",

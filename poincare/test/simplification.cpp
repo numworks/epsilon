@@ -317,22 +317,23 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("im(x1+x2+i*y1+i*y2+arccos(z1)+arccos(z2))",
                 "y1+y2+im(arccos(z1))+im(arccos(z2))", ctx);
   simplifies_to("arccos(z)-i×im(arccos(z))", "re(arccos(z))", ctx);
-
-  store("x→f(x)", &globalContext);
-  simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);
-  simplifies_to("re(conj(f(x)))-re(f(x))", "dep(0,{f(x)})", ctx);
-  simplifies_to("conj(conj(f(x)))", "f(x)", ctx);
-  simplifies_to("re(f(x)+y)-y", "re(f(x))", ctx);
-  simplifies_to("re(i×f(y))+im(f(y))", "dep(0,{f(y)})", ctx);
-  simplifies_to("im(i×f(y))", "re(f(y))", ctx);
-  simplifies_to("i×(conj(f(x)+i×f(y))+im(f(y))-re(f(x)))", "im(f(x))+re(f(y))",
-                ctx);
-  simplifies_to("im(re(f(x))+i×im(f(x)))", "im(f(x))", ctx);
-  simplifies_to("re(re(f(x))+i×im(f(x)))", "re(f(x))", ctx);
+  simplifies_to("i×im(arccos(z))+re(arccos(z))", "arccos(z)", ctx);
+  simplifies_to("re(conj(arccos(z)))-re(arccos(z))", "dep(0,{arccos(z)})", ctx);
+  simplifies_to("conj(conj(arccos(z)))", "arccos(z)", ctx);
+  simplifies_to("re(arccos(z)+y)-y", "re(arccos(z))", ctx);
+  simplifies_to("re(i×arccos(w))+im(arccos(w))", "dep(0,{arccos(w)})", ctx);
+  simplifies_to("im(i×arccos(w))", "re(arccos(w))", ctx);
+  simplifies_to("i×(conj(arccos(z)+i×arccos(w))+im(arccos(w))-re(arccos(z)))",
+                "im(arccos(z))+re(arccos(w))", ctx);
+  simplifies_to("im(re(arccos(z))+i×im(arccos(z)))", "im(arccos(z))", ctx);
+  simplifies_to("re(re(arccos(z))+i×im(arccos(z)))", "re(arccos(z))", ctx);
   // TODO: Should simplify to 0
   simplifies_to(
-      "abs(f(x)+i×f(y))^2-(-im(f(y))+re(f(x)))^2-(im(f(x))+re(f(y)))^2",
-      "im(f(x)+f(y)×i)^2-(im(f(x))+re(f(y)))^2", ctx);
+      "abs(arccos(z)+i×arccos(w))^2-(-im(arccos(w))+re(arccos(z)))^2-(im("
+      "arccos(z))+re(arccos(w)))^2",
+      "abs(arccos(z)+arccos(w)×i)^2-((-im(arccos(w))+re(arccos(z)))^2+(im("
+      "arccos(z))+re(arccos(w)))^2)",
+      ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
   simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", ctx);
@@ -340,7 +341,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(-i×2)", "-π/2", ctx);
   simplifies_to("arg(0)", "undef", ctx);
   simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
-  simplifies_to("abs(f(x)^2)", "abs(f(x)^2)", ctx);
+  simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

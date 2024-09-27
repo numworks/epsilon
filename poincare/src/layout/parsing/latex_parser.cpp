@@ -232,7 +232,7 @@ Tree* LatexToLayout(const char* latexString) {
 /* Node with custom handling:
  *   OperatorSeparator -> suppressed in Latex
  *   UnitSeparator -> suppressed in Latex
- *   ThousandSeparator -> replaced with ' '
+ *   ThousandsSeparator -> replaced with ' '
  *
  * Node unimplemented (that are serialized instead):
  *   Ceil
@@ -263,7 +263,7 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end) {
       break;
     }
 
-    if (child->isThousandSeparatorLayout()) {
+    if (child->isThousandsSeparatorLayout()) {
       // Replace with '\ '
       if (buffer + 1 >= end) {
         // Buffer is too short

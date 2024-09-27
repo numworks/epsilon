@@ -143,7 +143,7 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       buffer = append("·", buffer, end);
       break;
     case LayoutType::OperatorSeparator:
-    case LayoutType::ThousandSeparator:
+    case LayoutType::ThousandsSeparator:
       break;
     case LayoutType::Matrix: {
       const Grid* grid = Grid::From(layout);

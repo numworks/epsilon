@@ -20,9 +20,9 @@ NODE(OperatorSeparator)
 // Small space between a value and its unit
 NODE(UnitSeparator)
 // Small space between groups of three digits
-NODE(ThousandSeparator)
+NODE(ThousandsSeparator)
 
-RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandSeparatorLayout)
+RANGE(SeparatorLayout, OperatorSeparatorLayout, ThousandsSeparatorLayout)
 
 NODE(AsciiCodePoint, 0, { char codePoint; })
 NODE(UnicodeCodePoint, 0, { CodePoint codePoint; })

@@ -131,7 +131,7 @@ class UserExpression : public JuniorPoolHandle {
    *   - Adding parentheses if needed `Mult(Add(…,…),…)` → `(…+…)*…`
    *   - Chose the suitable multiplication symbol and apply it everywhere
    *   - Insert separators everywhere if they are needed somewhere
-   *     For instance thousand separators if a integer has >= 5 digits
+   *     For instance thousands separators if a integer has >= 5 digits
    */
   Layout createLayout(LayoutFormat format = {}) const;
 

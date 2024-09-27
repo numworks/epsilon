@@ -39,9 +39,9 @@ QUIZ_CASE(pcj_expression_to_layout) {
   assert_expression_layouts_as(KAdd(KMixedFraction(2_e, KDiv(1_e, 3_e)), 4_e),
                                "2 1/3+4"_l, true);
   // 12 345 - 54 321
-  const Tree* expected = "12"_l ^ KThousandSeparatorL ^ "345"_l ^
+  const Tree* expected = "12"_l ^ KThousandsSeparatorL ^ "345"_l ^
                          KOperatorSeparatorL ^ "-"_l ^ KOperatorSeparatorL ^
-                         "54"_l ^ KThousandSeparatorL ^ "321"_l;
+                         "54"_l ^ KThousandsSeparatorL ^ "321"_l;
   assert_expression_layouts_as(KAdd(12345_e, KOpposite(54321_e)), expected,
                                false);
   assert_expression_layouts_as(KAdd(12345_de, -54321_de), expected, false);

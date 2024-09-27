@@ -19,9 +19,9 @@ class Layouter {
                                     Preferences::PrintFloatMode::Decimal,
                                 OMG::Base base = OMG::Base::Decimal);
 
-  static bool AddThousandSeparators(Tree* rack);
+  static bool AddThousandsSeparators(Tree* rack);
 
-  /* Recursively remove OperatorSeparators and ThousandSeparators in rack
+  /* Recursively remove OperatorSeparators and ThousandsSeparators in rack
    * and replace UnitSeparators with a middle dot. */
   static void StripSeparators(Tree* rack);
 

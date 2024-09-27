@@ -237,7 +237,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
   if (m_base == OMG::Base::Decimal) {
-    AddThousandSeparators(rack);
+    AddThousandsSeparators(rack);
   }
   NAry::AddOrMergeChild(layoutParent, rack);
 }
@@ -630,7 +630,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
-      AddThousandSeparators(rack);
+      AddThousandsSeparators(rack);
       NAry::AddOrMergeChild(layoutParent, rack);
       break;
     }
@@ -759,21 +759,21 @@ int FirstNonDigitIndex(Tree* rack) {
 
 /* We only display thousands separator if there is more than 4 digits (12 345
  * but 1234) */
-constexpr int k_minDigitsForThousandSeparator = 5;
-constexpr int k_minValueForThousandSeparator = 10000;
+constexpr int k_minDigitsForThousandsSeparator = 5;
+constexpr int k_minValueForThousandsSeparator = 10000;
 
-bool Layouter::AddThousandSeparators(Tree* rack) {
+bool Layouter::AddThousandsSeparators(Tree* rack) {
   int nonDigitIndex = FirstNonDigitIndex(rack);
   bool isNegative = rack->child(0)->isCodePointLayout() &&
                     CodePointLayout::GetCodePoint(rack->child(0)) == '-';
-  if (nonDigitIndex - isNegative < k_minDigitsForThousandSeparator) {
+  if (nonDigitIndex - isNegative < k_minDigitsForThousandsSeparator) {
     return false;
   }
   int index = isNegative + 1;  // skip "-" and first digit
   Tree* digit = rack->child(index);
   while (index < nonDigitIndex) {
     if ((nonDigitIndex - index) % 3 == 0) {
-      digit->cloneTreeAtNode(KThousandSeparatorL);
+      digit->cloneTreeAtNode(KThousandsSeparatorL);
       digit = digit->nextTree();
     }
     digit = digit->nextTree();
@@ -788,11 +788,11 @@ bool Layouter::requireSeparators(const Tree* expression) {
   if (expression->isRational()) {
     IntegerHandler num = Rational::Numerator(expression);
     num.setSign(NonStrictSign::Positive);
-    if (IntegerHandler::Compare(num, k_minValueForThousandSeparator) >= 0) {
+    if (IntegerHandler::Compare(num, k_minValueForThousandsSeparator) >= 0) {
       return true;
     }
     IntegerHandler den = Rational::Denominator(expression);
-    if (IntegerHandler::Compare(den, k_minValueForThousandSeparator) >= 0) {
+    if (IntegerHandler::Compare(den, k_minValueForThousandsSeparator) >= 0) {
       return true;
     }
     return false;

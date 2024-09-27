@@ -168,7 +168,7 @@ Racks and matrices compute their children properties instead of each children co
 
 ### Separators
 
-`ThousandSeparator` and `OperatorSeparator` layouts are inserted in `Racks` by the layouter.
+`ThousandsSeparator` and `OperatorSeparator` layouts are inserted in `Racks` by the layouter.
 
 #### Example
 The expression
@@ -185,7 +185,7 @@ is turned into this layout by the layoutter:
 Rack
 ├─ '1'
 ├─ '2'
-├─ ThousandSeparator
+├─ ThousandsSeparator
 ├─ '3'
 ├─ '4'
 ├─ '5'
@@ -193,7 +193,7 @@ Rack
 ├─ '+'
 ├─ OperatorSeparator
 ├─ '6'
-├─ ThousandSeparator
+├─ ThousandsSeparator
 ├─ '7'
 ├─ '8'
 └─ '9'

@@ -1248,6 +1248,13 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("√(abs(x)^2)", "abs(x)", cartesianCtx);
   simplifies_to("√(0)", "0", cartesianCtx);
   simplifies_to("√(cos(x)^2+sin(x)^2-1)", "0", cartesianCtx);
+
+  // Simplification with exponential
+  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
+  simplifies_to("ln(e^x)", "dep(x,{nonNull(e^(x))})", cartesianCtx);
+  simplifies_to("ln(e^(i×π))", "π×i", cartesianCtx);
+  simplifies_to("ln(e^(-i×π))", "π×i", cartesianCtx);
+  simplifies_to("ln(e^(i×2×π))", "0", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_boolean) {

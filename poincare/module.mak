@@ -223,6 +223,7 @@ $(addprefix expression/, \
   systematic_multiplication.cpp \
   systematic_reduction.cpp \
   trigonometry.cpp \
+  trigonometry_exact_formulas.cpp \
   undefined.cpp \
   units/unit.cpp \
   units/representatives.cpp \

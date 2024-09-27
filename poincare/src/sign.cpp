@@ -334,12 +334,12 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Unit:
       // Units are considered equivalent to their SI ratio
       return ComplexSign(Sign::FinitePositive(), Sign::Zero());
-#if 0
-    // Activate these cases if necessary
     case Type::ATrig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
       return e->child(1)->isOne() ? ArcSine(GetComplexSign(e->child(0)))
                                   : ArcCosine(GetComplexSign(e->child(0)));
+#if 0
+    // Activate these cases if necessary
     case Type::ATan:
       return ArcTangent(GetComplexSign(e->child(0)));
     case Type::Fact:

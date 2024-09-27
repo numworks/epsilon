@@ -309,13 +309,14 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("conj(2+i×π)", "2-π×i", ctx);
   simplifies_to("i×im(x)+re(x)", "x");
   simplifies_to("re(ln(1-3×i)+2×π×i)", "re(ln(1-3×i))", ctx);
-  // z being an unknown real, arccos(z) is an unknown complex.
+  // z being a finite unknown real, arccos(z) is a finite unknown complex.
   simplifies_to("im(x+i*y+arccos(z))", "dep(y+im(arccos(z)),{x})", ctx);
   simplifies_to("im(x)", "dep(0,{x})", ctx);
   simplifies_to("im(i*y)", "y", ctx);
   simplifies_to("im(arccos(z))", "im(arccos(z))", ctx);
   simplifies_to("im(x1+x2+i*y1+i*y2+arccos(z1)+arccos(z2))",
                 "dep(y1+y2+im(arccos(z1))+im(arccos(z2)),{x1,x2})", ctx);
+  simplifies_to("arccos(z)-i×im(arccos(z))", "re(arccos(z))", ctx);
 
   store("x→f(x)", &globalContext);
   simplifies_to("i×im(f(x))+re(f(x))", "f(x)", ctx);

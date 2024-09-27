@@ -7,9 +7,7 @@
 
 namespace Poincare::Internal {
 
-/* This is redundant with im and re expansion but necessary to contract possibly
-infinite expressions which cannot be expanded
-*/
+// This is redundant with im and re expansion for finite expressions
 bool AdvancedOperation::ContractImRe(Tree* e) {
   // re(A)+im(A)*i = A
   return PatternMatching::MatchReplaceSimplify(

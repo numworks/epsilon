@@ -16,9 +16,11 @@ namespace Poincare::Internal {
 bool Logarithm::ReduceLn(Tree* e) {
   Tree* child = e->child(0);
   if (child->isExp()) {
-    // ln(exp(x)) -> x
-    e->removeNode();
-    e->removeNode();
+    // ln(exp(x)) -> re(x) + i*arg(exp(i*im(x)))
+    const Tree* childOfExp = child->child(0);
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))),
+        {.KA = childOfExp}));
     return true;
   }
   if (child->isInf()) {

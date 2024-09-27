@@ -11,7 +11,6 @@ namespace Internal {
 bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
                                                     const Tree* approximate) {
   assert(exact && approximate);
-  assert(!approximate->isUndefined());
   assert(Simplification::IsSystem(exact) &&
          Simplification::IsSystem(approximate));
 
@@ -38,7 +37,9 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
   }
 
   if (exact->type() != approximate->type()) {
-    return false;
+    // Ignore different types of undefined, except for NonReal
+    return (approximate->isUndefined() && exact->isUndefined()) &&
+           (approximate->isNonReal() == exact->isNonReal());
   }
 
   /* Check deeply for equality, because the expression can be a list, a matrix

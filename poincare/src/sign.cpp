@@ -20,6 +20,11 @@ Sign RelaxIntegerProperty(Sign s) {
               s.canBeStrictlyNegative(), true, s.canBeInfinite());
 }
 
+Sign RelaxFiniteProperty(Sign s) {
+  return Sign(s.canBeNull(), s.canBeStrictlyPositive(),
+              s.canBeStrictlyNegative(), s.canBeNonInteger(), true);
+}
+
 Sign DecimalFunction(Sign s, Internal::Type type) {
   bool canBeNull = s.canBeNull();
   bool canBeStrictlyPositive = s.canBeStrictlyPositive();
@@ -145,10 +150,10 @@ ComplexSign ArcSine(ComplexSign s) {
     imagSign = imagSign || Sign(true, realSign.canBeStrictlyNegative(),
                                 realSign.canBeStrictlyPositive());
   }
-  realSign = realSign && Sign(true, true, true, true, false);
   if (s.canBeInfinite()) {
-    imagSign = imagSign || Sign(false, false, false, false, true);
+    imagSign = RelaxFiniteProperty(imagSign);
   }
+  realSign = realSign && Sign(true, true, true, true, false);
   return ComplexSign(realSign, imagSign);
 }
 

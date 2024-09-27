@@ -91,54 +91,38 @@ QUIZ_CASE(pcj_rational_irreducible_form) {
 typedef Tree* (*Operation)(const Tree* i, const Tree* j);
 
 static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
-                             const Tree* j, Operation operation,
-                             const Tree* resNumerator,
+                             const Tree* jNumerator, const Tree* jDenominator,
+                             Operation operation, const Tree* resNumerator,
                              const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
+  Tree* j = Rational::Push(jNumerator, jDenominator);
   Tree* expected = Rational::Push(resNumerator, resDenominator);
   Tree* result = operation(i, j);
   SystematicReduction::ShallowReduce(result);
   quiz_assert(result->treeIsIdenticalTo(expected));
   result->removeTree();
   expected->removeTree();
+  j->removeTree();
   i->removeTree();
 }
 
-static void assert_add_or_mult(const Tree* iNumerator, const Tree* iDenominator,
-                               const Tree* jNumerator, const Tree* jDenominator,
-                               Operation operation, const Tree* resNumerator,
-                               const Tree* resDenominator) {
-  assert(operation == Rational::Addition ||
-         operation == Rational::Multiplication);
-  Tree* j = Rational::Push(jNumerator, jDenominator);
-  assert_operation(iNumerator, iDenominator, j, operation, resNumerator,
-                   resDenominator);
-  j->removeTree();
-}
-
 QUIZ_CASE(pcj_rational_addition) {
-  assert_add_or_mult(1_e, 2_e, 1_e, 2_e, Rational::Addition, 1_e, 1_e);
-  assert_add_or_mult(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
-                     21028_e);
+  assert_operation(1_e, 2_e, 1_e, 2_e, Rational::Addition, 1_e, 1_e);
+  assert_operation(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
+                   21028_e);
 }
 
 QUIZ_CASE(pcj_rational_multiplication) {
-  assert_add_or_mult(1_e, 2_e, 1_e, 2_e, Rational::Multiplication, 1_e, 4_e);
-  assert_add_or_mult(23515_e, 7_e, 2_e, 23515_e, Rational::Multiplication, 2_e,
-                     7_e);
-}
-
-static void assert_power(const Tree* iNumerator, const Tree* iDenominator,
-                         const Tree* j, const Tree* resNumerator,
-                         const Tree* resDenominator) {
-  assert_operation(iNumerator, iDenominator, j, Rational::IntegerPower,
-                   resNumerator, resDenominator);
+  assert_operation(1_e, 2_e, 1_e, 2_e, Rational::Multiplication, 1_e, 4_e);
+  assert_operation(23515_e, 7_e, 2_e, 23515_e, Rational::Multiplication, 2_e,
+                   7_e);
 }
 
 QUIZ_CASE(pcj_rational_integer_power) {
-  assert_power(3_e, 2_e, 3_e, 27_e, 8_e);
-  assert_power(1_e, 2_e, 10_e, 1_e, 1024_e);
-  assert_power(7123_e, 3_e, 2_e, 50737129_e, 9_e);
+  assert_operation(3_e, 2_e, 3_e, 1_e, Rational::IntegerPower, 27_e, 8_e);
+  assert_operation(1_e, 2_e, 10_e, 1_e, Rational::IntegerPower, 1_e, 1024_e);
+  assert_operation(7123_e, 3_e, 2_e, 1_e, Rational::IntegerPower, 50737129_e,
+                   9_e);
 }
 
 QUIZ_CASE(pcj_rational_create_mixed_fraction) {

@@ -30,11 +30,29 @@ class Rational final {
 
   static int Compare(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2);
+  static Tree* Addition(const Tree* e1, const Tree* e2, const Tree* e3,
+                        auto... others) {
+    TreeRef e1e2Addition = Addition(e1, e2);
+    TreeRef fullAddition = Addition(e1e2Addition, e3, others...);
+    e1e2Addition->removeTree();
+    return fullAddition;
+  }
   static Tree* Multiplication(const Tree* e1, const Tree* e2);
+  static Tree* Multiplication(const Tree* e1, const Tree* e2, const Tree* e3,
+                              auto... others) {
+    return Multiplication(Multiplication(e1, e2), e3, others...);
+
+    TreeRef e1e2Multiplication = Multiplication(e1, e2);
+    TreeRef fullMultiplication =
+        Multiplication(e1e2Multiplication, e3, others...);
+    e1e2Multiplication->removeTree();
+    return fullMultiplication;
+  }
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Tree* IntegerPower(const Tree* e1, const Tree* e2);
 
   static bool IsGreaterThanOne(const Tree* e);
+  static bool IsZero(const Tree* e);
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
   static Tree* CreateMixedFraction(const Tree* e,
                                    bool mixedFractionsAreEnabled);

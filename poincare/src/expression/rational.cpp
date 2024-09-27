@@ -231,6 +231,10 @@ bool Rational::IsIrreducible(const Tree* e) {
   return result;
 }
 
+bool Rational::IsZero(const Tree* e) {
+  return Numerator(e).isZero() && !Denominator(e).isZero();
+}
+
 bool Rational::IsGreaterThanOne(const Tree* e) {
   return IntegerHandler::Compare(Numerator(e), Denominator(e)) > 0;
 }

@@ -1,7 +1,6 @@
 /output/
 /build/artifacts/
 ion/src/simulator/android/.gradle/
-ion/src/simulator/ios/GoogleAnalyticsServices/
 .gradle/
 .venv/
 __pycache__

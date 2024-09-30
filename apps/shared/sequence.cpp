@@ -120,7 +120,7 @@ bool Sequence::isSuitableForCobweb(Context* context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(),
-             reinterpret_cast<SequenceContext*>(context)->cache())) &&
+             reinterpret_cast<SequenceContext*>(context)->cache(), context)) &&
          !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
@@ -148,18 +148,18 @@ T Sequence::privateEvaluateYAtX(T x, Context* context) const {
   assert(!std::isnan(x));
   int n = std::round(x);
   return static_cast<T>(approximateAtRank(
-      n, reinterpret_cast<SequenceContext*>(context)->cache()));
+      n, reinterpret_cast<SequenceContext*>(context)->cache(), context));
 }
 
-double Sequence::approximateAtRank(int rank,
-                                   Internal::SequenceCache* sqctx) const {
+double Sequence::approximateAtRank(int rank, Internal::SequenceCache* sqctx,
+                                   Context* ctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
        sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return NAN;
   }
-  sqctx->stepUntilRank(sequenceIndex, rank);
+  sqctx->stepUntilRank(sequenceIndex, rank, ctx);
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 

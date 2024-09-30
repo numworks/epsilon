@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_SEQUENCE_CACHE_H
 
 #include <omg/troolean.h>
+#include <poincare/old/context.h>
 
 namespace Shared {
 class SequenceStore;
@@ -17,7 +18,7 @@ class SequenceCache {
   void resetCache();
   bool sequenceIsNotComputable(int sequenceIndex);
 
-  void stepUntilRank(int sequenceIndex, int rank);
+  void stepUntilRank(int sequenceIndex, int rank, Context* ctx);
   int rank(int sequenceIndex, bool intermediateComputation) {
     return *(rankPointer(sequenceIndex, intermediateComputation));
   }
@@ -33,7 +34,8 @@ class SequenceCache {
   double* valuesPointer(int sequenceIndex, bool intermediateComputation);
   void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
                         int delta);
-  void stepRanks(int sequenceIndex, bool intermediateComputation, int step);
+  void stepRanks(int sequenceIndex, bool intermediateComputation, int step,
+                 Context* ctx);
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);

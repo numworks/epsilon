@@ -94,7 +94,7 @@ void SequenceCache::shiftValuesRight(int sequenceIndex,
   }
 }
 
-void SequenceCache::stepUntilRank(int sequenceIndex, int rank) {
+void SequenceCache::stepUntilRank(int sequenceIndex, int rank, Context* ctx) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
@@ -115,12 +115,12 @@ void SequenceCache::stepUntilRank(int sequenceIndex, int rank) {
   }
   while (*currentRank < rank) {
     int step = jumpToRank ? rank - *currentRank : 1;
-    stepRanks(sequenceIndex, intermediateComputation, step);
+    stepRanks(sequenceIndex, intermediateComputation, step, ctx);
   }
 }
 
 void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
-                              int step) {
+                              int step, Context* ctx) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
@@ -153,7 +153,7 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
     *values = s->approximateAtContextRank(
-        nullptr, rank(sequenceIndex, intermediateComputation),
+        ctx, rank(sequenceIndex, intermediateComputation),
         intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range

@@ -132,8 +132,8 @@ class Sequence : public Function {
   }
   double approximateAtContextRank(Poincare::Context* ctx, int rank,
                                   bool intermediateComputation) const;
-  double approximateAtRank(int rank,
-                           Poincare::Internal::SequenceCache* sqctx) const;
+  double approximateAtRank(int rank, Poincare::Internal::SequenceCache* sqctx,
+                           Poincare::Context* ctx) const;
 
   Poincare::UserExpression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const override;

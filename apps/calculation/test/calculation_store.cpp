@@ -13,8 +13,6 @@
 typedef ::Calculation::AdditionalResultsType AdditionalResultsType;
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign;
-typedef ::Calculation::Calculation::NumberOfSignificantDigits
-    NumberOfSignificantDigits;
 
 using namespace Poincare;
 using namespace Calculation;
@@ -172,9 +170,8 @@ QUIZ_CASE(calculation_ans) {
   lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximateToggle);
-  assert_expression_serializes_to(
-      lastCalculation->approximateOutput(NumberOfSignificantDigits::Maximal),
-      "2.6366666666667");
+  assert_expression_serializes_to(lastCalculation->approximateOutput(),
+                                  "2.6366666666667");
 
   assertAnsIs("1+1→a", "2", &globalContext, &store);
   assertAnsIs("0^0→a", "0^0", &globalContext, &store);
@@ -234,14 +231,12 @@ void assertCalculationIs(const char* input, DisplayOutput display,
                                     exactOutput);
   }
   if (displayedApproximateOutput) {
-    assert_expression_serializes_to(lastCalculation->approximateOutput(
-                                        NumberOfSignificantDigits::UserDefined),
+    assert_expression_serializes_to(lastCalculation->approximateOutput(),
                                     displayedApproximateOutput);
   }
   if (storedApproximateOutput) {
-    assert_expression_serializes_to(
-        lastCalculation->approximateOutput(NumberOfSignificantDigits::Maximal),
-        storedApproximateOutput);
+    assert_expression_serializes_to(lastCalculation->approximateOutput(),
+                                    storedApproximateOutput);
   }
   store->deleteAll();
 }
@@ -433,10 +428,8 @@ void assertMainCalculationOutputIs(const char* input, const char* output,
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput(context)) {
     case DisplayOutput::ApproximateOnly:
-      assert_expression_serializes_to(
-          lastCalculation->approximateOutput(
-              NumberOfSignificantDigits::UserDefined),
-          output);
+      assert_expression_serializes_to(lastCalculation->approximateOutput(),
+                                      output);
       break;
     default:
       assert_expression_serializes_to(lastCalculation->exactOutput(), output);

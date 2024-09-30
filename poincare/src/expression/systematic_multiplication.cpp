@@ -64,9 +64,9 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     assert(!merge->isMult());
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
-    merge =
-        (child->isMatrix() ? Matrix::Multiplication
-                           : Matrix::ScalarMultiplication)(child, next, false);
+    merge = (child->isMatrix()
+                 ? Matrix::Multiplication
+                 : Matrix::ScalarMultiplication)(child, next, false, nullptr);
   }
   if (!merge) {
     return false;

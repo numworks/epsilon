@@ -3,6 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
+#include "approximation.h"
 #include "dimension.h"
 
 namespace Poincare::Internal {
@@ -36,21 +37,26 @@ struct Matrix {
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* matrix1, const Tree* matrix2,
-                        bool approximate = false);
-  static Tree* ScalarMultiplication(const Tree* scalar, const Tree* matrix,
-                                    bool approximate = false);
+                        bool approximate = false,
+                        const Approximation::Context* ctx = nullptr);
+  static Tree* ScalarMultiplication(
+      const Tree* scalar, const Tree* matrix, bool approximate = false,
+      const Approximation::Context* ctx = nullptr);
   static Tree* Multiplication(const Tree* matrix1, const Tree* matrix2,
-                              bool approximate = false);
+                              bool approximate = false,
+                              const Approximation::Context* ctx = nullptr);
   static Tree* Transpose(const Tree* matrix);
   static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
-                          bool approximate = false);
+                          bool approximate = false,
+                          const Approximation::Context* ctx = nullptr);
   static int Rank(const Tree* matrix);
   static int CanonizeAndRank(Tree* matrix);
   static int RankOfCanonized(const Tree* matrix);
-  static Tree* Inverse(const Tree* matrix, bool approximate = false);
-  static Tree* Power(const Tree* matrix, int exponent,
-                     bool approximate = false);
+  static Tree* Inverse(const Tree* matrix, bool approximate = false,
+                       const Approximation::Context* ctx = nullptr);
+  static Tree* Power(const Tree* matrix, int exponent, bool approximate = false,
+                     const Approximation::Context* ctx = nullptr);
   static bool SystematicReduceMatrixOperation(Tree* e);
 };
 

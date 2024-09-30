@@ -589,7 +589,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       Tree* m = ToMatrix<T>(e->child(0), ctx);
       Tree* value;
       if (e->isDet()) {
-        Matrix::RowCanonize(m, true, &value, true);
+        Matrix::RowCanonize(m, true, &value, true, ctx);
       } else {
         assert(e->isNorm());
         value = Vector::Norm(m);
@@ -1087,7 +1087,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       while (n--) {
         child = child->nextTree();
         Tree* approximatedChild = ToMatrix<T>(child, ctx);
-        Matrix::Addition(result, approximatedChild, true);
+        Matrix::Addition(result, approximatedChild, true, ctx);
         approximatedChild->removeTree();
         result->removeTree();
       }
@@ -1096,8 +1096,8 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::Sub: {
       Tree* a = ToMatrix<T>(e->child(0), ctx);
       Tree* b = ToMatrix<T>(e->child(1), ctx);
-      b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true));
-      Matrix::Addition(a, b);
+      b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true, ctx));
+      Matrix::Addition(a, b, true, ctx);
       a->removeTree();
       a->removeTree();
       return a;
@@ -1115,11 +1115,11 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
           continue;
         }
         if (resultIsMatrix && childIsMatrix) {
-          Matrix::Multiplication(result, approx, true);
+          Matrix::Multiplication(result, approx, true, ctx);
         } else if (resultIsMatrix) {
-          Matrix::ScalarMultiplication(approx, result, true);
+          Matrix::ScalarMultiplication(approx, result, true, ctx);
         } else {
-          Matrix::ScalarMultiplication(result, approx, true);
+          Matrix::ScalarMultiplication(result, approx, true, ctx);
         }
         resultIsMatrix |= childIsMatrix;
         approx->removeTree();
@@ -1134,7 +1134,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       e->child(1)->cloneTree();
       ToBeautifiedComplex<T>(s, ctx);
       s->removeTree();
-      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true));
+      s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true, ctx));
       a->removeTree();
       return a;
     }
@@ -1146,14 +1146,15 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
         return KUndef->cloneTree();
       }
       Tree* result = ToMatrix<T>(base, ctx);
-      result->moveTreeOverTree(Matrix::Power(result, value, true));
+      result->moveTreeOverTree(Matrix::Power(result, value, true, ctx));
       return result;
     }
     case Type::Inverse:
     case Type::Transpose: {
       Tree* result = ToMatrix<T>(e->child(0), ctx);
-      result->moveTreeOverTree(e->isInverse() ? Matrix::Inverse(result, true)
-                                              : Matrix::Transpose(result));
+      result->moveTreeOverTree(e->isInverse()
+                                   ? Matrix::Inverse(result, true, ctx)
+                                   : Matrix::Transpose(result));
       return result;
     }
     case Type::Identity:
@@ -1161,7 +1162,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::Ref:
     case Type::Rref: {
       Tree* result = ToMatrix<T>(e->child(0), ctx);
-      Matrix::RowCanonize(result, e->isRref(), nullptr, true);
+      Matrix::RowCanonize(result, e->isRref(), nullptr, true, ctx);
       return result;
     }
     case Type::Dim: {

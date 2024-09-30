@@ -650,25 +650,17 @@ SystemExpression SystemExpression::removeUndefListElements() const {
 
 UserExpression UserExpression::cloneAndSimplify(
     ReductionContext reductionContext, bool* reductionFailure) const {
-  bool reduceFailure = false;
-  UserExpression e =
-      cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
-  if (reductionFailure) {
-    *reductionFailure = reduceFailure;
-  }
-#if 0  // TODO_PCJ
-  if (reduceFailure ||
-      (otype() == ExpressionNode::Type::Store &&
-       !static_cast<const Store*>(this)->isTrulyReducedInShallowReduce())) {
-    // We can't beautify unreduced expression
-    return e;
-  }
-#else
-  assert(!reduceFailure && (!tree()->isStore()));
-#endif
-  /* TODO_PCJ: e takes space in the pool only to be deleted right after
-   * beautification. This could be optimized. */
-  return e.cloneAndBeautify(reductionContext);
+  UserExpression e;
+  cloneAndSimplifyAndApproximate(&e, nullptr, reductionContext);
+  return e;
+
+  /* TODO_PCJ Ensure reduction failure is properly handled. Have
+   * cloneAndSimplifyAndApproximate make use of the return value from
+   * SimplifyWithAdaptiveStrategy. */
+
+  /* TODO_PCJ It would probably make more sense to have
+   * cloneAndSimplifyAndApproximate rely on cloneAndSimplify, not the other way.
+   */
 }
 
 UserExpression ProjectedExpression::cloneAndBeautify(

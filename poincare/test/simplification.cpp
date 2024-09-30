@@ -1341,4 +1341,6 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("(2/3)^(5/7)", "root(288,7)/3");
   simplifies_to("(4/11)^(8/9)", "(2×root(1408,9))/11");
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
+  // (1+i)/(1-i) => i
+  simplifies_to("(1+i)/(1-i)", "i");
 }

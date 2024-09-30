@@ -147,6 +147,20 @@ bool AdvancedOperation::ContractMult(Tree* e) {
 
 bool AdvancedOperation::ExpandPower(Tree* e) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
+  PatternMatching::Context ctx;
+  // 1/(A+iB) -> (A-iB) / (A^2+B^2)
+  if (PatternMatching::Match(e, KPow(KA, -1_e), &ctx)) {
+    ComplexSign s = GetComplexSign(ctx.getTree(KA));
+    // Filter out infinite and pure expressions for useful and accurate results
+    if (!s.isPure() && !s.canBeInfinite()) {
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KMult(KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA))),
+                KPow(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)), -1_e)),
+          ctx));
+      return true;
+    }
+  }
+
   // (A + B?)^2 = (A^2 + 2*A*B + B^2)
   // TODO: Implement a more general (A + B)^C expand.
   return PatternMatching::MatchReplaceSimplify(

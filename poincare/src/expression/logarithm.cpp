@@ -15,12 +15,10 @@ namespace Poincare::Internal {
 
 bool Logarithm::ReduceLn(Tree* e) {
   Tree* child = e->child(0);
-  if (child->isExp()) {
-    // ln(exp(x)) -> re(x) + i*arg(exp(i*im(x)))
-    const Tree* childOfExp = child->child(0);
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))),
-        {.KA = childOfExp}));
+  if (child->isExp() && GetComplexSign(child->child(0)).isReal()) {
+    // ln(exp(x)) -> x if x is real
+    e->removeNode();
+    e->removeNode();
     return true;
   }
   if (child->isInf()) {
@@ -277,7 +275,10 @@ bool Logarithm::ExpandLn(Tree* e) {
     c->removeTree();
     return true;
   }
-  return false;
+  // ln(exp(A)) -> re(A) + i*arg(exp(i*im(A)))
+  return PatternMatching::MatchReplaceSimplify(
+      e, KLn(KExp(KA)),
+      KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))));
 }
 
 bool Logarithm::ExpandLnOnRational(Tree* e) {

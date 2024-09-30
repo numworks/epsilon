@@ -46,12 +46,12 @@ class Random {
   }
   template <typename T>
   static T Approximate(const Tree* randomTree, Context* context,
-                       int listElement);
+                       int listElement, const void* approxCtx);
 
  private:
   template <typename T>
   static T PrivateApproximate(const Tree* randomTree, Context* context,
-                              int listElement);
+                              int listElement, const void* approxCtx);
   static void SetSeed(Tree* randomTree, uint8_t seed) {
     assert(randomTree->isRandomized() && GetSeed(randomTree) == 0);
     randomTree->setNodeValue(0, seed);

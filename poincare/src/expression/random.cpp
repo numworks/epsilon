@@ -51,8 +51,8 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
 }
 
 template <typename T>
-T Random::Approximate(const Tree* randomTree, Context* context,
-                      int listElement) {
+T Random::Approximate(const Tree* randomTree, Context* context, int listElement,
+                      const void* approxCtx) {
   uint8_t seed = Random::GetSeed(randomTree);
   if (randomTree->isRandIntNoRep()) {
     assert(listElement >= 0);
@@ -71,7 +71,7 @@ T Random::Approximate(const Tree* randomTree, Context* context,
     }
   }
   // Context is needed with RandIntNoRep
-  T result = PrivateApproximate<T>(randomTree, context, listElement);
+  T result = PrivateApproximate<T>(randomTree, context, listElement, approxCtx);
   if (seed > 0) {
     context->m_list[seed - 1] = result;
   }
@@ -80,13 +80,14 @@ T Random::Approximate(const Tree* randomTree, Context* context,
 
 template <typename T>
 T Random::PrivateApproximate(const Tree* randomTree, Context* context,
-                             int listElement/* TODO ,
-                                               const Approximation::Context* ctx*/) {
+                             int listElement, const void* approxCtx) {
+  const Approximation::Context* ctx =
+      static_cast<const Approximation::Context*>(approxCtx);
   if (randomTree->isRandom()) {
     return Poincare::Random::random<T>();
   } else if (randomTree->isRandInt()) {
-    return RandomInt<T>(Approximation::To<T>(randomTree->child(0), nullptr),
-                        Approximation::To<T>(randomTree->child(1), nullptr));
+    return RandomInt<T>(Approximation::To<T>(randomTree->child(0), ctx),
+                        Approximation::To<T>(randomTree->child(1), ctx));
   }
   assert(randomTree->isRandIntNoRep());
   uint8_t seed = Random::GetSeed(randomTree);
@@ -94,8 +95,8 @@ T Random::PrivateApproximate(const Tree* randomTree, Context* context,
     // Cannot access a single element for unseeded RandIntNoRep.
     return NAN;
   }
-  T a = Approximation::To<T>(randomTree->child(0), nullptr);
-  T b = Approximation::To<T>(randomTree->child(1), nullptr);
+  T a = Approximation::To<T>(randomTree->child(0), ctx);
+  T b = Approximation::To<T>(randomTree->child(1), ctx);
   // Shorten the RandInt window since numbers have already been generated.
   T result = RandomInt<T>(a, b - listElement);
   // Check all previously generated numbers, ordered by increasing value.
@@ -104,7 +105,7 @@ T Random::PrivateApproximate(const Tree* randomTree, Context* context,
   for (int j = 0; j < listElement; j++) {
     // Find the next check : smallest value bigger than previousCheck
     for (int k = 0; k < listElement; k++) {
-      T value = Approximate<T>(randomTree, context, k);
+      T value = Approximate<T>(randomTree, context, k, approxCtx);
       if (value > previousCheck && value < check) {
         check = value;
       }
@@ -147,10 +148,14 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
-template float Random::Approximate<float>(const Tree*, Context*, int);
-template double Random::Approximate<double>(const Tree*, Context*, int);
-template float Random::PrivateApproximate<float>(const Tree*, Context*, int);
-template double Random::PrivateApproximate<double>(const Tree*, Context*, int);
+template float Random::Approximate<float>(const Tree*, Context*, int,
+                                          const void*);
+template double Random::Approximate<double>(const Tree*, Context*, int,
+                                            const void*);
+template float Random::PrivateApproximate<float>(const Tree*, Context*, int,
+                                                 const void*);
+template double Random::PrivateApproximate<double>(const Tree*, Context*, int,
+                                                   const void*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 

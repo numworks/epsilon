@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/units/representatives.h>
 
 #include "helper.h"
 
@@ -168,7 +169,10 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("c", Point, &globalContext));
   QUIZ_ASSERT(len("h(b)", 2, &globalContext));
   QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, &globalContext));
-  QUIZ_ASSERT(hasInvalidDimOrLen("j(d)", &globalContext));
+  QUIZ_ASSERT(dim(
+      "j(d)",
+      Dimension::Unit({.distance = 1}, &Units::Distance::representatives.meter),
+      &globalContext));
   QUIZ_ASSERT(hasInvalidDimOrLen("j(c)", &globalContext));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);

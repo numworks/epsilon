@@ -55,8 +55,9 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
   UserExpression exactOutput = mostRecentCalculation->exactOutput();
   UserExpression approxOutput = mostRecentCalculation->approximateOutput();
   UserExpression ansExpr;
-  if (mostRecentCalculation->displayOutput(context) ==
-          Calculation::DisplayOutput::ApproximateOnly ||
+  if ((mostRecentCalculation->displayOutput(context) ==
+           Calculation::DisplayOutput::ApproximateOnly &&
+       !exactOutput.isIdenticalTo(approxOutput)) ||
       exactOutput.isUndefined()) {
     /* Case 1.
      * If exact output was hidden, it should not be accessible using Ans.

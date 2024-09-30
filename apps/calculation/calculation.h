@@ -63,8 +63,6 @@ class Calculation {
     return d != DisplayOutput::ExactOnly;
   }
 
-  enum class NumberOfSignificantDigits { Maximal, UserDefined };
-
   Calculation(
       Poincare::Preferences::CalculationPreferences calculationPreferences)
       : m_displayOutput(DisplayOutput::Unknown),
@@ -101,8 +99,7 @@ class Calculation {
   // Expressions
   Poincare::UserExpression input();
   Poincare::UserExpression exactOutput();
-  Poincare::UserExpression approximateOutput(
-      NumberOfSignificantDigits numberOfSignificantDigits);
+  Poincare::UserExpression approximateOutput();
 
   // Layouts
   Poincare::Layout createInputLayout();

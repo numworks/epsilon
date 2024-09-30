@@ -53,8 +53,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
   ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
   UserExpression input = mostRecentCalculation->input();
   UserExpression exactOutput = mostRecentCalculation->exactOutput();
-  UserExpression approxOutput = mostRecentCalculation->approximateOutput(
-      Calculation::NumberOfSignificantDigits::Maximal);
+  UserExpression approxOutput = mostRecentCalculation->approximateOutput();
   UserExpression ansExpr;
   if (mostRecentCalculation->displayOutput(context) ==
           Calculation::DisplayOutput::ApproximateOnly ||

@@ -53,8 +53,7 @@ UserExpression Calculation::exactOutput() {
   return e;
 }
 
-UserExpression Calculation::approximateOutput(
-    NumberOfSignificantDigits numberOfSignificantDigits) {
+UserExpression Calculation::approximateOutput() {
   // clang-format off
   /* Warning:
    * Since quite old versions of Epsilon, the Expression 'exp' was used to be
@@ -87,7 +86,6 @@ UserExpression Calculation::approximateOutput(
    */
   // clang-format on
   UserExpression e = UserExpression::Builder(approximatedOutputTree());
-  // TODO_PCJ numberOfSignificantDigits is ignored, I think we can get rid of it
   assert(!e.isUninitialized());
   return e;
 }
@@ -123,8 +121,7 @@ Layout Calculation::createApproximateOutputLayout(
     bool* couldNotCreateApproximateLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    UserExpression e =
-        approximateOutput(NumberOfSignificantDigits::UserDefined);
+    UserExpression e = approximateOutput();
     if (!e.isUninitialized()) {
       return e.createLayout(displayMode(), numberOfSignificantDigits(),
                             App::app()->localContext());
@@ -166,9 +163,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
              approximatedOutputTree()->isUndefined() ||
              // Other conditions are factorized in CAS
              CAS::ShouldOnlyDisplayApproximation(
-                 inputExp, outputExp,
-                 approximateOutput(NumberOfSignificantDigits::UserDefined),
-                 context)) {
+                 inputExp, outputExp, approximateOutput(), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
              inputExp.recursivelyMatches(NewExpression::IsApproximate,
@@ -285,12 +280,10 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
     // TODO: need to pass projection context
     Internal::ProjectionContext ctx{.m_complexFormat = complexFormat(),
                                     .m_angleUnit = angleUnit()};
-    m_equalSign =
-        Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-            exactOutputExpression,
-            approximateOutput(NumberOfSignificantDigits::UserDefined), &ctx)
-            ? EqualSign::Equal
-            : EqualSign::Approximation;
+    m_equalSign = Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
+                      exactOutputExpression, approximateOutput(), &ctx)
+                      ? EqualSign::Equal
+                      : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool
@@ -305,8 +298,7 @@ void Calculation::fillExpressionsForAdditionalResults(
   Context* globalContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   *input = this->input();
-  *approximateOutput =
-      this->approximateOutput(NumberOfSignificantDigits::Maximal);
+  *approximateOutput = this->approximateOutput();
   *exactOutput = displayOutput(globalContext) == DisplayOutput::ApproximateOnly
                      ? *approximateOutput
                      : this->exactOutput();

@@ -564,14 +564,15 @@ bool PolynomialParser::HasNonNullCoefficients(
     ComplexSign sign = GetComplexSign(child);
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
-    assert(Dimension::Get(child).isScalar() &&
-           (Approximation::ToComplex<double>(child).imag() == 0 ||
-            std::isnan(Approximation::ToComplex<double>(child).imag())));
+    assert(
+        Dimension::Get(child).isScalar() &&
+        (Approximation::ToComplex<double>(child, nullptr).imag() == 0 ||
+         std::isnan(Approximation::ToComplex<double>(child, nullptr).imag())));
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = Approximation::To<double>(child);
+      double approximation = Approximation::To<double>(child, nullptr);
       if (!std::isnan(approximation)) {
         isPositive = OMG::BoolToTroolean(approximation > 0.0);
       }
@@ -583,13 +584,14 @@ bool PolynomialParser::HasNonNullCoefficients(
     ComplexSign sign = GetComplexSign(child);
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
-    assert(Dimension::Get(child).isScalar() &&
-           (Approximation::ToComplex<double>(child).imag() == 0 ||
-            std::isnan(Approximation::ToComplex<double>(child).imag())));
+    assert(
+        Dimension::Get(child).isScalar() &&
+        (Approximation::ToComplex<double>(child, nullptr).imag() == 0 ||
+         std::isnan(Approximation::ToComplex<double>(child, nullptr).imag())));
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above
-      double approximation = Approximation::To<double>(child);
+      double approximation = Approximation::To<double>(child, nullptr);
       if (!std::isnan(approximation)) {
         isNull = OMG::BoolToTroolean(approximation != 0.0);
       }

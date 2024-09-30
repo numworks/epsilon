@@ -12,12 +12,14 @@ namespace Poincare::Internal {
 
 Tree* Number::Addition(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
-    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(e1) +
-                                            Approximation::To<double>(e2));
+    return SharedTreeStack->pushDoubleFloat(
+        Approximation::To<double>(e1, nullptr) +
+        Approximation::To<double>(e2, nullptr));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(e1) +
-                                            Approximation::To<float>(e2));
+    return SharedTreeStack->pushSingleFloat(
+        Approximation::To<float>(e1, nullptr) +
+        Approximation::To<float>(e2, nullptr));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Addition(e1, e2);
@@ -25,12 +27,15 @@ Tree* Number::Addition(const Tree* e1, const Tree* e2) {
 }
 Tree* Number::Multiplication(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
-    return SharedTreeStack->pushDoubleFloat(Approximation::To<double>(e1) *
-                                            Approximation::To<double>(e2));
+    // TODO: approximate the Tree to be consistent with enhanced float *
+    return SharedTreeStack->pushDoubleFloat(
+        Approximation::To<double>(e1, nullptr) *
+        Approximation::To<double>(e2, nullptr));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
-    return SharedTreeStack->pushSingleFloat(Approximation::To<float>(e1) *
-                                            Approximation::To<float>(e2));
+    return SharedTreeStack->pushSingleFloat(
+        Approximation::To<float>(e1, nullptr) *
+        Approximation::To<float>(e2, nullptr));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Multiplication(e1, e2);

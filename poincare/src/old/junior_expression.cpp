@@ -145,14 +145,15 @@ int JuniorExpressionNode::simplificationOrderSameType(
 template <typename T>
 Evaluation<T> EvaluationFromSimpleTree(const Tree* tree) {
   if (tree->isBoolean()) {
-    return BooleanEvaluation<T>::Builder(Approximation::ToBoolean<T>(tree));
+    return BooleanEvaluation<T>::Builder(
+        Approximation::ToBoolean<T>(tree, nullptr));
   }
   if (tree->isPoint()) {
     assert(false);
     // TODO_PCJ: To implement.
     // return PointEvaluation<T>::Builder()
   }
-  return Complex<T>::Builder(Approximation::ToComplex<T>(tree));
+  return Complex<T>::Builder(Approximation::ToComplex<T>(tree, nullptr));
 }
 
 // Return the Evaluation for any tree.

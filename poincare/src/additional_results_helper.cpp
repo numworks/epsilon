@@ -249,7 +249,7 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   }
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
-    if (!std::isfinite(Approximation::To<float>(e))) {
+    if (!std::isfinite(Approximation::To<float>(e, nullptr))) {
       *error = true;
       return nullptr;
     }
@@ -294,7 +294,7 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   Tree* numericalValue =
       const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
-  *value = Approximation::To<float>(numericalValue);
+  *value = Approximation::To<float>(numericalValue, nullptr);
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
   return UserExpression::Builder(clone);
 }

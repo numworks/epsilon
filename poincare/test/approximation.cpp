@@ -282,6 +282,12 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
   approximates_to<float>("floor(1+i)", "undef");
 }
 
+QUIZ_CASE(pcj_approximation_parametrics) {
+  approximates_to<float>("int(x, x, 1, 2)", "1.5");
+  approximates_to<float>("diff(2×x, x, 2)", "2");
+  approximates_to<float>("sum(k/2, k, 1, 12)", "39");
+}
+
 QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
 }

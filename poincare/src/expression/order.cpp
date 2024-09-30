@@ -158,12 +158,12 @@ int Order::CompareNumbers(const Tree* e1, const Tree* e2) {
   if (e1->isRational() && e2->isRational()) {
     return Rational::Compare(e1, e2);
   }
-  float approximation =
-      Approximation::To<float>(e1) - Approximation::To<float>(e2);
+  float approximation = Approximation::To<float>(e1, nullptr) -
+                        Approximation::To<float>(e2, nullptr);
   if (approximation == 0.0f || std::isnan(approximation)) {
     // Trees are different but float approximation is not precise enough.
-    double doubleApprox =
-        Approximation::To<double>(e1) - Approximation::To<double>(e2);
+    double doubleApprox = Approximation::To<double>(e1, nullptr) -
+                          Approximation::To<double>(e2, nullptr);
     return doubleApprox < 0.0 ? -1 : (doubleApprox > 0.0 ? 1 : 0);
   }
   return approximation < 0.0 ? -1 : (approximation > 0.0 ? 1 : 0);
@@ -269,11 +269,11 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
                              : 0;
   }
   /* TODO: the approximations could be precomputed and called only once */
-  std::complex<double> v1 = Approximation::ToComplex<double>(e1);
+  std::complex<double> v1 = Approximation::ToComplex<double>(e1, nullptr);
   if (v1.imag() != 0.0 || std::isnan(v1.real())) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
-  std::complex<double> v2 = Approximation::ToComplex<double>(e2);
+  std::complex<double> v2 = Approximation::ToComplex<double>(e2, nullptr);
   if (v2.imag() != 0.0 || std::isnan(v2.real())) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }

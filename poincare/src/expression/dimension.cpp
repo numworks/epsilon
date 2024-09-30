@@ -170,7 +170,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return e->numberOfChildren();
     case Type::ListSequence:
       // TODO: Handle undef Approximation.
-      return Approximation::To<float>(e->child(1));
+      return Approximation::To<float>(e->child(1), nullptr);
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));
@@ -517,7 +517,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Pow: {
       Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(e->child(1));
+        float index = Approximation::To<float>(e->child(1), nullptr);
         if (index < INT8_MAX && index > INT8_MIN &&
             std::round(index) == index) {
           // TODO: Handle/forbid index > int8_t
@@ -559,7 +559,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
-      int n = Approximation::To<float>(e->child(0));
+      int n = Approximation::To<float>(e->child(0), nullptr);
       return Matrix(n, n);
     }
     case Type::UnitConversion:

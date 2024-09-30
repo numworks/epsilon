@@ -98,7 +98,7 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
     childM1->cloneTree();
     childM2->cloneTree();
     if (approximate) {
-      Approximation::ApproximateToComplexTree(child);
+      Approximation::ApproximateToComplexTree(child, nullptr);
     } else {
       SystematicReduction::ShallowReduce(child);
     }
@@ -116,7 +116,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
     scalar->cloneTree();
     child->cloneTree();
     if (approximate) {
-      Approximation::ApproximateToComplexTree(mult);
+      Approximation::ApproximateToComplexTree(mult, nullptr);
     } else {
       SystematicReduction::ShallowReduce(mult);
     }
@@ -160,13 +160,13 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
         rowsM2[k]->cloneTree();
         rowsM2[k] = rowsM2[k]->nextTree();
         if (approximate) {
-          Approximation::ApproximateToComplexTree(mult);
+          Approximation::ApproximateToComplexTree(mult, nullptr);
         } else {
           SystematicReduction::ShallowReduce(mult);
         }
       }
       if (approximate) {
-        Approximation::ApproximateToComplexTree(add);
+        Approximation::ApproximateToComplexTree(add, nullptr);
       } else {
         SystematicReduction::ShallowReduce(add);
       }
@@ -209,7 +209,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
-      float pivot = std::abs(Approximation::ToComplex<float>(pivotChild));
+      float pivot =
+          std::abs(Approximation::ToComplex<float>(pivotChild, nullptr));
       // Handle very low pivots
       if (pivot == 0.0f &&
           !(pivotChild->isZero() ||
@@ -236,7 +237,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     Tree* candidate = Child(matrix, iPivot, k);
     if (candidate->isZero() ||
         (approximate &&
-         std::abs(Approximation::ToComplex<float>(candidate)) == 0)) {
+         std::abs(Approximation::ToComplex<float>(candidate, nullptr)) == 0)) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {
@@ -266,7 +267,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
         if (approximate) {
           Tree* newOpHJ = PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
                                                   {.KA = opHJ, .KB = divisor});
-          Approximation::ApproximateToComplexTree(newOpHJ);
+          Approximation::ApproximateToComplexTree(newOpHJ, nullptr);
           opHJ->moveTreeOverTree(newOpHJ);
         } else {
           opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -294,7 +295,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
             Tree* newOpIJ =
                 PatternMatching::Create(KAdd(KA, KMult(-1_e, KB, KC)),
                                         {.KA = opIJ, .KB = opHJ, .KC = factor});
-            Approximation::ApproximateToComplexTree(newOpIJ);
+            Approximation::ApproximateToComplexTree(newOpIJ, nullptr);
             opIJ->moveTreeOverTree(newOpIJ);
           } else {
             opIJ->moveTreeOverTree(PatternMatching::CreateSimplify(

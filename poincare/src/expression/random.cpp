@@ -80,12 +80,13 @@ T Random::Approximate(const Tree* randomTree, Context* context,
 
 template <typename T>
 T Random::PrivateApproximate(const Tree* randomTree, Context* context,
-                             int listElement) {
+                             int listElement/* TODO ,
+                                               const Approximation::Context* ctx*/) {
   if (randomTree->isRandom()) {
     return Poincare::Random::random<T>();
   } else if (randomTree->isRandInt()) {
-    return RandomInt<T>(Approximation::To<T>(randomTree->child(0)),
-                        Approximation::To<T>(randomTree->child(1)));
+    return RandomInt<T>(Approximation::To<T>(randomTree->child(0), nullptr),
+                        Approximation::To<T>(randomTree->child(1), nullptr));
   }
   assert(randomTree->isRandIntNoRep());
   uint8_t seed = Random::GetSeed(randomTree);
@@ -93,8 +94,8 @@ T Random::PrivateApproximate(const Tree* randomTree, Context* context,
     // Cannot access a single element for unseeded RandIntNoRep.
     return NAN;
   }
-  T a = Approximation::To<T>(randomTree->child(0));
-  T b = Approximation::To<T>(randomTree->child(1));
+  T a = Approximation::To<T>(randomTree->child(0), nullptr);
+  T b = Approximation::To<T>(randomTree->child(1), nullptr);
   // Shorten the RandInt window since numbers have already been generated.
   T result = RandomInt<T>(a, b - listElement);
   // Check all previously generated numbers, ordered by increasing value.

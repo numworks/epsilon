@@ -71,7 +71,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       coefListY->removeTree();
       return;
     }
-    m_c = Approximation::To<double>(c);
+    m_c = Approximation::To<double>(c, nullptr);
   }
 
   // Extract b and e
@@ -85,9 +85,9 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   Tree* coefListX = PolynomialParser::GetReducedCoefficients(be, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
-    m_b = Approximation::To<double>(coefListX->child(1));
+    m_b = Approximation::To<double>(coefListX->child(1), nullptr);
   }
-  m_e = Approximation::To<double>(coefListX->child(0));
+  m_e = Approximation::To<double>(coefListX->child(0), nullptr);
   coefListX->removeTree();
 
   // Extract a, d and f
@@ -103,12 +103,12 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   coefListX = PolynomialParser::GetReducedCoefficients(adf, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
-    m_a = Approximation::To<double>(coefListX->child(2));
+    m_a = Approximation::To<double>(coefListX->child(2), nullptr);
   }
   if (dx >= 1) {
-    m_d = Approximation::To<double>(coefListX->child(1));
+    m_d = Approximation::To<double>(coefListX->child(1), nullptr);
   }
-  m_f = Approximation::To<double>(coefListX->child(0));
+  m_f = Approximation::To<double>(coefListX->child(0), nullptr);
   coefListX->removeTree();
   coefListY->removeTree();
 
@@ -481,7 +481,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
   assert(0 < nRemoved && nRemoved < nChildren);
   NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
-  double k = Approximation::To<double>(denominator);
+  double k = Approximation::To<double>(denominator, nullptr);
   denominator->removeTree();
 
   // Turn a·cos(θ+c)+k into (a/k)·cos(θ+c)+1

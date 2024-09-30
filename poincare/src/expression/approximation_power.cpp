@@ -113,14 +113,14 @@ std::complex<T> Approximation::ComputeNotPrincipalRealRootOfRationalPow(
 
 template <typename T>
 std::complex<T> Approximation::ApproximatePower(const Tree* power,
-                                                ComplexFormat complexFormat) {
+                                                const Context* ctx) {
   const Tree* base = power->child(0);
   const Tree* exponent = power->child(1);
-  std::complex<T> c = ToComplex<T>(base);
+  std::complex<T> c = ToComplex<T>(base, ctx);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
-  if (complexFormat == ComplexFormat::Real) {
+  if (ctx->m_complexFormat == ComplexFormat::Real) {
     T p = NAN;
     T q = NAN;
     // If the power has been reduced, we look for a rational index
@@ -132,8 +132,8 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
      * index of the for Division(Rational,Rational). */
     if (exponent->isDiv() && exponent->child(0)->isInteger() &&
         exponent->child(1)->isInteger()) {
-      p = To<T>(exponent->child(0));
-      q = To<T>(exponent->child(1));
+      p = To<T>(exponent->child(0), ctx);
+      q = To<T>(exponent->child(1), ctx);
     }
     /* We don't handle power that haven't been reduced or simplified as the
      * index can take to many forms and still be equivalent to p/q,
@@ -147,13 +147,14 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
     }
   }
 defaultApproximation:
-  return ComputeComplexPower<T>(c, ToComplex<T>(exponent), complexFormat);
+  return ComputeComplexPower<T>(c, ToComplex<T>(exponent, ctx),
+                                ctx->m_complexFormat);
 }
 
 template std::complex<float> Approximation::ApproximatePower(
-    const Tree* child, ComplexFormat complexFormat);
+    const Tree* child, const Context* ctx);
 template std::complex<double> Approximation::ApproximatePower(
-    const Tree* child, ComplexFormat complexFormat);
+    const Tree* child, const Context* ctx);
 
 template std::complex<float>
 Approximation::ComputeNotPrincipalRealRootOfRationalPow(

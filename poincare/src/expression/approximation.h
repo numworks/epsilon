@@ -26,6 +26,39 @@ struct Dimension;
 
 class Approximation final {
  public:
+  struct Context {
+    using VariableType = double;
+    Context(AngleUnit angleUnit = AngleUnit::Radian,
+            ComplexFormat complexFormat = ComplexFormat::Cartesian,
+            VariableType abscissa = NAN, int listElement = -1);
+
+    VariableType variable(uint8_t index) const {
+      return m_variables[indexForVariable(index)];
+    }
+    void shiftVariables() { m_variablesOffset--; }
+    void unshiftVariables() { m_variablesOffset++; }
+
+    void setLocalValue(VariableType value) {
+      m_variables[indexForVariable(0)] = value;
+    }
+    // with sum(sum(l,l,1,k),k,1,n) m_variables stores [n, NaN, …, NaN, l, k]
+    uint8_t indexForVariable(uint8_t index) const {
+      assert(index < m_variablesOffset);
+      return (index + m_variablesOffset) % k_maxNumberOfVariables;
+    }
+    AngleUnit m_angleUnit;
+    ComplexFormat m_complexFormat;
+
+    static constexpr int k_maxNumberOfVariables = 16;
+    VariableType m_variables[k_maxNumberOfVariables];
+    uint8_t m_variablesOffset;
+
+    // Tells if we are approximating to get the nth-element of a list
+    int m_listElement;
+    // Tells if we are approximating to get the nth-element of a point
+    int m_pointElement;
+  };
+
   /* Approximations on root tree, independent from current s_context. */
 
   /* preparedFunction is scalar and must have been prepared with
@@ -82,16 +115,16 @@ class Approximation final {
 
   // Approximate a tree with any dimension
   template <typename T>
-  static Tree* ToTree(const Tree* e, Dimension dim);
+  static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
 
   // tree must be of scalar dimension
   template <typename T>
-  static std::complex<T> ToComplex(const Tree* e);
+  static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
 
   // tree must be of scalar dimension and real.
   template <typename T>
-  static T To(const Tree* e) {
-    std::complex<T> value = ToComplex<T>(e);
+  static T To(const Tree* e, const Context* ctx) {
+    std::complex<T> value = ToComplex<T>(e, ctx);
     // Remove signaling nan
     return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
   }
@@ -99,27 +132,27 @@ class Approximation final {
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
   template <typename T>
-  static T To(const Tree* e, T x);
+  static T To(const Tree* e, T x, const Context* ctx);
 
   // tree must be of boolean dimension.
   template <typename T>
-  static bool ToBoolean(const Tree* e);
+  static bool ToBoolean(const Tree* e, const Context* ctx);
 
   // Input tree e must have a positive ListLength
   template <typename T>
-  static Tree* ToList(const Tree* e);
+  static Tree* ToList(const Tree* e, const Context* ctx);
 
   // tree must be of point dimension.
   template <typename T>
-  static Tree* ToPoint(const Tree* e);
+  static Tree* ToPoint(const Tree* e, const Context* ctx);
 
   // tree must be of matrix dimension.
   template <typename T>
-  static Tree* ToMatrix(const Tree* e);
+  static Tree* ToMatrix(const Tree* e, const Context* ctx);
 
   // Replace a Tree with the Tree of its complex approximation
-  static bool ApproximateToComplexTree(Tree* e);
-  TREE_REF_WRAP(ApproximateToComplexTree);
+  static bool ApproximateToComplexTree(Tree* e, const Context* ctx);
+  TREE_REF_WRAP_1D(ApproximateToComplexTree, const Context*, nullptr);
 
   /* Helpers */
 
@@ -144,7 +177,8 @@ class Approximation final {
   /* Returns -1 if every condition is false, it assumes there is no other free
    * variable than VarX */
   template <typename T>
-  static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
+  static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
+                                            const Context* ctx);
 
   template <typename T>
   static T FloatBinomial(T n, T k);
@@ -181,17 +215,18 @@ class Approximation final {
 
   static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
-  static bool PrivateApproximateAndReplaceEveryScalar(Tree* e);
+  static bool PrivateApproximateAndReplaceEveryScalar(Tree* e,
+                                                      const Context* ctx);
 
   /* Variables with id >= firstNonApproximableVarId are considered not
    * approximable. */
   static bool CanApproximate(const Tree* e, int firstNonApproximableVarId);
 
   template <typename T>
-  static std::complex<T> ToComplexSwitch(const Tree* e);
+  static std::complex<T> ToComplexSwitch(const Tree* e, const Context* ctx);
 
   template <typename T>
-  static Tree* ToBeautifiedComplex(const Tree* e);
+  static Tree* ToBeautifiedComplex(const Tree* e, const Context* ctx);
 
   template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
@@ -201,12 +236,13 @@ class Approximation final {
   static std::complex<T> HyperbolicToComplex(TypeBlock type,
                                              std::complex<T> value);
   template <typename T>
-  static T ApproximateIntegral(const Tree* integral);
+  static T ApproximateIntegral(const Tree* integral, const Context* ctx);
   template <typename T>
-  static T ApproximateDerivative(const Tree* function, T at, int order);
+  static T ApproximateDerivative(const Tree* function, T at, int order,
+                                 const Context* ctx);
   template <typename T>
   static std::complex<T> ApproximatePower(const Tree* power,
-                                          ComplexFormat complexFormat);
+                                          const Context* ctx);
   template <typename T>
   static std::complex<T> ComputeComplexPower(const std::complex<T> c,
                                              const std::complex<T> d,
@@ -218,10 +254,12 @@ class Approximation final {
   /* Approximate the conditions of a piecewise and return the tree corresponding
    * to the matching branch */
   template <typename T>
-  static const Tree* SelectPiecewiseBranch(const Tree* piecewise);
+  static const Tree* SelectPiecewiseBranch(const Tree* piecewise,
+                                           const Context* ctx);
 
   template <typename T>
-  static std::complex<T> ApproximateTrace(const Tree* matrix);
+  static std::complex<T> ApproximateTrace(const Tree* matrix,
+                                          const Context* ctx);
 
   template <typename T>
   static bool IsIntegerRepresentationAccurate(T x);
@@ -235,43 +273,6 @@ class Approximation final {
   static std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
                                                      std::complex<T> input);
 
-  struct Context {
-    using VariableType = double;
-    Context(AngleUnit angleUnit = AngleUnit::Radian,
-            ComplexFormat complexFormat = ComplexFormat::Cartesian,
-            VariableType abscissa = NAN, int listElement = -1);
-
-    VariableType variable(uint8_t index) const {
-      return m_variables[indexForVariable(index)];
-    }
-    void shiftVariables() { m_variablesOffset--; }
-    void unshiftVariables() { m_variablesOffset++; }
-
-    void setLocalValue(VariableType value) {
-      m_variables[indexForVariable(0)] = value;
-    }
-    // with sum(sum(l,l,1,k),k,1,n) m_variables stores [n, NaN, …, NaN, l, k]
-    uint8_t indexForVariable(uint8_t index) const {
-      assert(index < m_variablesOffset);
-      return (index + m_variablesOffset) % k_maxNumberOfVariables;
-    }
-    AngleUnit m_angleUnit;
-    ComplexFormat m_complexFormat;
-
-    static constexpr int k_maxNumberOfVariables = 16;
-    VariableType m_variables[k_maxNumberOfVariables];
-    uint8_t m_variablesOffset;
-
-    // Tells if we are approximating to get the nth-element of a list
-    int m_listElement;
-    // Tells if we are approximating to get the nth-element of a point
-    int m_pointElement;
-  };
-
-  /* Approximation context is created by entry points RootTreeTo* and passed
-   * down to the function hierarchy using a static pointer to avoid carrying an
-   * extra argument everywhere. */
-  static Context* s_context;
   static Random::Context* s_randomContext;
 };
 

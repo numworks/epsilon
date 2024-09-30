@@ -272,7 +272,7 @@ void Zoom::fitConditions(SystemFunction piecewise,
         static_cast<const ConditionsParameters*>(aux);
     return static_cast<float>(
         Internal::Approximation::IndexOfActivePiecewiseBranchAt(
-            params->piecewise, t));
+            params->piecewise, t, nullptr));
   };
   Solver<float>::BracketTest test = [](Coordinate2D<float> a,
                                        Coordinate2D<float>,

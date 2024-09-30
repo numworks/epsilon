@@ -193,7 +193,7 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced) {
      * also providing a safe approximation context. */
     Tree* approximatedTree = Approximation::RootTreeToTree<double>(e);
     std::complex<double> value =
-        Approximation::ToComplex<double>(approximatedTree);
+        Approximation::ToComplex<double>(approximatedTree, nullptr);
     assert(AreConsistent(GetComplexSign(e), value));
     approximatedTree->removeTree();
   }

@@ -57,7 +57,7 @@ float Beautification::DegreeForSortingAddition(const Tree* e,
       }
       const Tree* index = e->child(1);
       if (index->isNumber()) {
-        return Approximation::To<float>(index) * baseDegree;
+        return Approximation::To<float>(index, nullptr) * baseDegree;
       }
       return NAN;
     }

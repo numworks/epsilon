@@ -180,7 +180,7 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 | ceil(A) | -floor(-A) |
 | frac(A) | A - floor(A) |
 | e | exp(1) |
-| conj(A) | re(A)-i×re(A) |
+| conj(A) | re(A)-i×im(A) |
 | - A | (-1)×A |
 | A - B | A + (-1)×B |
 | A / B | A×B^-1 |

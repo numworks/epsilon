@@ -274,7 +274,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // log(A, B) -> ln(A) * ln(B)^(-1)
       PatternMatching::MatchReplace(
           e, KLogBase(KA, KB), KMult(KLnUser(KA), KPow(KLnUser(KB), -1_e))) ||
-      // conj(A) -> re(A)-i*re(A)
+      // conj(A) -> re(A)-i*im(A)
       PatternMatching::MatchReplace(e, KConj(KA),
                                     KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA)))) ||
       // - A  -> (-1)*A

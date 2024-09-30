@@ -118,12 +118,15 @@ Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
 }
 
 Layout Calculation::createApproximateOutputLayout(
-    bool* couldNotCreateApproximateLayout) {
+    bool* couldNotCreateApproximateLayout, bool forEditing) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(displayMode(), numberOfSignificantDigits(),
+      return e.createLayout(displayMode(),
+                            forEditing
+                                ? PrintFloat::k_maxNumberOfSignificantDigits
+                                : numberOfSignificantDigits(),
                             App::app()->localContext());
     }
   }

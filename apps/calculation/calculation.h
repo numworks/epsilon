@@ -105,7 +105,7 @@ class Calculation {
   Poincare::Layout createInputLayout();
   Poincare::Layout createExactOutputLayout(bool* couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(
-      bool* couldNotCreateApproximateLayout);
+      bool* couldNotCreateApproximateLayout, bool forEditing = false);
 
   // Heights
   KDCoordinate height(bool expanded);

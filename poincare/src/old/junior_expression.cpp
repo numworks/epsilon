@@ -385,7 +385,6 @@ void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* approximatedExpression,
     const ReductionContext& reductionContext,
     bool approximateKeepingSymbols) const {
-  assert(reductionContext.target() == ReductionTarget::User);
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),

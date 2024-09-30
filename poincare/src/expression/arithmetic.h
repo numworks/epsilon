@@ -17,6 +17,14 @@ class Arithmetic {
     int8_t numberOfFactors = 0;
   };
 
+  struct Divisors {
+    constexpr static int8_t k_maxNumberOfDivisors = 64;
+    uint32_t list[k_maxNumberOfDivisors];
+    // TODO: error handling with a TreeStackException
+    constexpr static int8_t k_divisorListFailed = -1;
+    int8_t numberOfDivisors = 0;
+  };
+
   static bool ReduceFactorial(Tree* e);
   static bool ExpandFactorial(Tree* e);
   static bool ReduceQuotientOrRemainder(Tree* e);
@@ -36,6 +44,8 @@ class Arithmetic {
   static bool ReduceLCM(Tree* e) { return ReduceGCDOrLCM(e, false); }
 
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
+
+  static Divisors ListPositiveDivisors(IntegerHandler m);
 
   static uint32_t GCD(uint32_t a, uint32_t b);
   static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);

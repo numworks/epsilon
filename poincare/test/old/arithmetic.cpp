@@ -1,5 +1,6 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/expression/arithmetic.h>
+#include <poincare/src/expression/integer.h>
 
 #include <utility>
 
@@ -83,33 +84,21 @@ void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
   }
 }
 
-#if 0  // TODO_PCJ
-template <int N>
-void assert_divisors_equal_to(Integer a, int const (&divisors)[N]) {
-  Arithmetic arithmetic;
-  int tempAValue = a.isExtractable() ? a.extractedInt() : INT_MAX;
-  int numberOfDivisors = arithmetic.PositiveDivisors(a);
-  if (numberOfDivisors == Arithmetic::k_errorTooManyFactors) {
-    numberOfDivisors = Arithmetic::k_maxNumberOfDivisors;
-  } else {
-    assert(numberOfDivisors >= 0);
-  }
-  constexpr size_t bufferSize = 100;
-  char failInformationBuffer[bufferSize];
-  fill_buffer_with(failInformationBuffer, bufferSize, "divisors(", &a, 1);
-  // a should remain unchanged
+template <unsigned long N>
+void assert_divisors_equal_to(const IntegerHandler& a,
+                              const std::array<int, N>& expectedList) {
+  static_assert(N <= Arithmetic::Divisors::k_maxNumberOfDivisors);
+  Arithmetic::Divisors result = Arithmetic::ListPositiveDivisors(a);
   quiz_assert_print_if_failure(
-      tempAValue == (a.isExtractable() ? a.extractedInt() : INT_MAX),
-      failInformationBuffer);
-  quiz_assert_print_if_failure(numberOfDivisors == N, failInformationBuffer);
+      result.numberOfDivisors != Arithmetic::Divisors::k_divisorListFailed,
+      "divisor list computation failed");
+  quiz_assert_print_if_failure(result.numberOfDivisors == N,
+                               "incorrect number of divisors");
   for (int i = 0; i < N; i++) {
-    quiz_assert_print_if_failure(
-        arithmetic.divisorAtIndex(i)->approximate<float>() ==
-            Integer(divisors[i]).approximate<float>(),
-        failInformationBuffer);
+    quiz_assert_print_if_failure(result.list[i] == expectedList[i],
+                                 "incorrect divisor value");
   }
 }
-#endif
 
 IntegerHandler ParseHandler(const char* str) {
   UTF8Decoder decoder(str);
@@ -190,40 +179,40 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
 }
 
 QUIZ_CASE(poincare_arithmetic_divisors) {
-#if 0  // TODO_PCJ
-  quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(0)) ==
-                                   Arithmetic::k_errorTooManyFactors,
-                               "divisors(0)");
-  assert_divisors_equal_to(Integer(1), {1});
-  assert_divisors_equal_to(Integer(2), {1, 2});
-  assert_divisors_equal_to(Integer(-12), {1, 2, 3, 4, 6, 12});
-  assert_divisors_equal_to(Integer(-100), {1, 2, 4, 5, 10, 20, 25, 50, 100});
-  assert_divisors_equal_to(Integer(225), {1, 3, 5, 9, 15, 25, 45, 75, 225});
-  assert_divisors_equal_to(
-      Integer(1680),
+  quiz_assert_print_if_failure(
+      Arithmetic::ListPositiveDivisors(IntegerHandler(0)).numberOfDivisors ==
+          Arithmetic::Divisors::k_divisorListFailed,
+      "divisors(0)");
+
+  assert_divisors_equal_to<1>(IntegerHandler(1), {1});
+  assert_divisors_equal_to<2>(IntegerHandler(2), {1, 2});
+  assert_divisors_equal_to<6>(IntegerHandler(-12), {1, 2, 3, 4, 6, 12});
+  assert_divisors_equal_to<9>(IntegerHandler(-100),
+                              {1, 2, 4, 5, 10, 20, 25, 50, 100});
+  assert_divisors_equal_to<9>(IntegerHandler(225),
+                              {1, 3, 5, 9, 15, 25, 45, 75, 225});
+  assert_divisors_equal_to<40>(
+      IntegerHandler(1680),
       {1,   2,   3,   4,   5,   6,   7,   8,   10,  12,  14,  15,  16, 20,
        21,  24,  28,  30,  35,  40,  42,  48,  56,  60,  70,  80,  84, 105,
        112, 120, 140, 168, 210, 240, 280, 336, 420, 560, 840, 1680});
-  assert_divisors_equal_to(Integer(INT_MAX), {1, INT_MAX});
+  assert_divisors_equal_to<2>(IntegerHandler(INT_MAX), {1, INT_MAX});
+
   /* Too many divisors */
-  assert_divisors_equal_to(
-      Integer(10080),
-      {1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  12,   14,  15,
-       16,  18,  20,  21,  24,  28,  30,  32,  35,  36,  40,   42,  45,
-       48,  56,  60,  63,  70,  72,  80,  84,  90,  96,  105,  112, 120,
-       126, 140, 144, 160, 168, 180, 210, 224, 240, 252, 280,  288, 315,
-       336, 360, 420, 480, 504, 560, 630, 672, 720, 840, 1008, 1120});
-  quiz_assert_print_if_failure(Arithmetic().PositiveDivisors(Integer(10080)) ==
-                                   Arithmetic::k_errorTooManyFactors,
-                               "divisors(10080)");
-  /* Factor too large */
   quiz_assert_print_if_failure(
-      Arithmetic().PositiveDivisors(Integer(static_cast<int>(INT_MIN))) ==
-          Arithmetic::k_errorFactorTooLarge,
-      "divisors(INT_MIN)");
+      Arithmetic::ListPositiveDivisors(IntegerHandler(10080))
+              .numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed,
+      "divisors(10080)");
+
+#if 0
+  /* TODO: IntegerHandler overflowing the 'int' range: what to do in those cases? */
+  assert_divisors_equal_to<2>(IntegerHandler(INT_MIN), {1, INT_MIN});
+
+  IntegerHandler handler = Integer::Handler(
+      IntegerHandler::Addition(IntegerHandler(INT_MAX), IntegerHandler(1)));
   quiz_assert_print_if_failure(
-      Arithmetic().PositiveDivisors(Integer::Addition(
-          Integer(INT_MAX), Integer(1))) == Arithmetic::k_errorFactorTooLarge,
+      Arithmetic::ListPositiveDivisors(handler).numberOfDivisors ==
+          Arithmetic::Divisors::k_divisorListFailed,
       "divisors(INT_MAX+1)");
 #endif
 }

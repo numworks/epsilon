@@ -4,6 +4,7 @@
 #include <omg/ieee754.h>
 #include <omg/troolean.h>
 #include <poincare/old/approximation_helper.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -464,6 +465,36 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   result.factors[t] = m.to<int>();
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;
+  return result;
+}
+
+Arithmetic::Divisors Arithmetic::ListPositiveDivisors(IntegerHandler handler) {
+  Divisors result{};
+  int n = handler.to<int>();
+  if (n == 0) {
+    // TODO: use a TreeStackException
+    result.numberOfDivisors = Divisors::k_divisorListFailed;
+    return result;
+  }
+  if (n < 0) {
+    n = -n;
+  }
+  // Except n itself, all divisors are under n/2
+  int kEnd = n / 2;
+  // No need to look for even divisors if n is odd
+  int kStep = 1 + (n % 2);
+  // Look for positive divisors of n
+  for (int k = 1; k <= kEnd; k += kStep) {
+    if (n % k == 0) {
+      result.list[result.numberOfDivisors++] = k;
+      if (result.numberOfDivisors >= Divisors::k_maxNumberOfDivisors) {
+        // TODO: use a TreeStackException
+        result.numberOfDivisors = Divisors::k_divisorListFailed;
+        return result;
+      }
+    }
+  }
+  result.list[result.numberOfDivisors++] = n;
   return result;
 }
 

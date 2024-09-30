@@ -388,7 +388,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       return nullptr;
     }
   }
-  assert(rank == n && n > 0);
+  assert(rank == n);
 
   // TODO: Make sure the solution satisfies dependencies in equations
 

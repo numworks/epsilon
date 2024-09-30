@@ -387,6 +387,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       matrix->removeTree();
       return nullptr;
     }
+  } else {
+    context->hasMoreSolutions = false;
   }
   assert(rank == n);
 

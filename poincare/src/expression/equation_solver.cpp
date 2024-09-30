@@ -81,6 +81,14 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         Context* context,
                                         ProjectionContext projectionContext,
                                         Error* error) {
+  // Retrieve user symbols before simplification and variable replacement
+  Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
+  for (const Tree* userSymbol : userSymbols->children()) {
+    if (projectionContext.m_context->treeForSymbolIdentifier(userSymbol)) {
+      context->userVariables.append(Symbol::GetName(userSymbol));
+    }
+  }
+  userSymbols->removeTree();
   /* Clone and simplify the equations */
   Tree* reducedEquationSet = equationsSet->cloneTree();
   ProjectAndReduce(reducedEquationSet, projectionContext, error);
@@ -89,16 +97,9 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     return nullptr;
   }
 
-  /* Count and collect used and replaced UserSymbols */
-  Tree* userSymbols = Variables::GetUserSymbols(reducedEquationSet);
+  /* Count and collect remaining UserSymbols */
+  userSymbols = Variables::GetUserSymbols(reducedEquationSet);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
-  Tree* replacedSymbols = Set::Difference(
-      Variables::GetUserSymbols(equationsSet), userSymbols->cloneTree());
-
-  if (replacedSymbols->numberOfChildren() > 0) {
-    context->userVariables.fillWithList(replacedSymbols);
-  }
-  replacedSymbols->removeTree();
 
   /* Replace UserSymbols with variables for easier solution handling */
   SwapTreesPointers(&reducedEquationSet, &userSymbols);

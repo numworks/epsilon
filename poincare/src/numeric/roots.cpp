@@ -7,7 +7,6 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
-#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -135,10 +134,6 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   }
 
   if (!foundRoot) {
-    /* b is the opposite of the sum of all roots counted with their
-     * multiplicity. As additions containing roots or powers are in general not
-     * reducible, if there exists an irrational root, it might still be
-     * explicit in the expression for b. */
     foundRoot = SumRootSearch(a, b, c, d);
   }
 
@@ -187,7 +182,7 @@ Tree* DefaultEvaluation::polynomial(const Tree* value, const Tree* a,
       KAdd(KMult(KA, KPow(KH, 3_e)), KMult(KB, KPow(KH, 2_e)), KMult(KC, KH),
            KD),
       {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
-  SystematicReduction::DeepReduce(e);
+  AdvancedReduction::Reduce(e);
   return e;
 }
 
@@ -291,6 +286,31 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
                            const Tree* d) {
+  /* b is the opposite of the sum of all roots counted with their
+   * multiplicity, multiplied by a. As additions containing roots or powers are
+   * in general not reducible, if there exists an irrational root, it might
+   * still be explicit in the expression for b. */
+
+  if (b->isMult() || b->isAdd()) {
+    /* If b is a product, it might contain a triple root. If b is an addition,
+     * the different terms might be roots. */
+    for (const Tree* productOrSumTerm : b->children()) {
+      Tree* r = PatternMatching::CreateSimplify(
+          KMult(-1_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = productOrSumTerm});
+      if (IsRoot(r, a, b, c, d)) {
+        return r;
+      }
+      r->removeTree();
+      /* Test the opposite sign. The minus sign could be in any of the different
+       * factors of a product. */
+      r = PatternMatching::CreateSimplify(KMult(1_e, KB, KPow(KA, -1_e)),
+                                          {.KA = a, .KB = productOrSumTerm});
+      if (IsRoot(r, a, b, c, d)) {
+        return r;
+      }
+      r->removeTree();
+    }
+  }
   return nullptr;
 }
 

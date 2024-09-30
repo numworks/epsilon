@@ -196,6 +196,11 @@ bool IntegerHandler::is<uint16_t>() const {
 }
 
 template <>
+bool IntegerHandler::is<uint32_t>() const {
+  return isUnsignedType<uint32_t>();
+}
+
+template <>
 bool IntegerHandler::is<int>() const {
   return isSignedType<int>();
 }
@@ -794,6 +799,7 @@ void Integer::SetSign(Tree* e, NonStrictSign sign) {
 
 template float Poincare::Internal::IntegerHandler::to<float>() const;
 template double Poincare::Internal::IntegerHandler::to<double>() const;
+template uint32_t Poincare::Internal::IntegerHandler::to<uint32_t>() const;
 template uint8_t Poincare::Internal::IntegerHandler::to<uint8_t>() const;
 template int8_t Poincare::Internal::IntegerHandler::to<int8_t>() const;
 template int Poincare::Internal::IntegerHandler::to<int>() const;

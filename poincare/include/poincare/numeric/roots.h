@@ -11,6 +11,20 @@ namespace Poincare {
 
 namespace Internal {
 
+struct DefaultEvaluation {
+  Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
+                   const Tree* c, const Tree* d);
+
+  bool isZero(const Tree* e) { return GetComplexSign(e).isNull(); }
+};
+
+struct RationalEvaluation {
+  Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
+                   const Tree* c, const Tree* d);
+
+  bool isZero(const Tree* e) { return Rational::IsZero(e); }
+};
+
 class Roots {
  public:
   // Return the only root.
@@ -39,32 +53,24 @@ class Roots {
 
   static Tree* CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                             const Tree* c, const Tree* d,
-                                            const Tree* r);
-
-  static Tree* EvaluatePolynomialAtValue(const Tree* value, const Tree* a,
-                                         const Tree* b, const Tree* c,
-                                         const Tree* d);
-
-  static bool IsRoot(const Tree* root, const Tree* a, const Tree* b,
-                     const Tree* c, const Tree* d);
-
-  static Tree* ReducePolynomial(const Tree* coefficients, int degree,
-                                const Tree* parameter,
-                                const ReductionContext& reductionContext);
-  static Rational ReduceRationalPolynomial(const Rational* coefficients,
-                                           int degree, Rational parameter);
-
-  static Tree* CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
-                                             const Tree* c);
-
+                                            Tree* r);
   static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                         const Tree* d);
 
-  static Tree* RationalRootSearch(const Tree* coefficients, int degree,
-                                  const ReductionContext& reductionContext);
-  static Tree* SumRootSearch(const Tree* coefficients, int degree,
-                             int relevantCoefficient,
-                             const ReductionContext& reductionContext);
+  template <typename EvaluationMethod = DefaultEvaluation>
+  static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,
+                     const Tree* c, const Tree* d) {
+    TreeRef e = EvaluationMethod{}.polynomial(value, a, b, c, d);
+    bool isZero = EvaluationMethod{}.isZero(e);
+    e->removeTree();
+    return isZero;
+  }
+
+  static Tree* RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
+                                  const Tree* d);
+  static Tree* SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
+                             const Tree* d);
+
   static Tree* CardanoNumber(const Tree* delta0, const Tree* delta1,
                              bool* approximate,
                              const ReductionContext& reductionContext);

@@ -55,10 +55,13 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1, 0, 0, -8}", "{2,-1+√(3)×i,-1-√(3)×i}");
   assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
 
-  // assert_roots_are(
-  //     "{1, -4, 6, -24}",
-  //     "{-√(-24)/2,√(-24)/2,4}");  // TODO: this should be simplified
-  // assert_roots_are("{1, 0, -3, -2}", "{-1,2}");
+  assert_roots_are(
+      "{1, -4, 6, -24}",
+      "{-√(-24)/2,√(-24)/2,4}");  // TODO: this should be simplified
+  assert_roots_are("{1, 0, -3, -2}",
+                   "{-1,2,-1}");  // TODO: multiple roots and ordering
+  assert_roots_are("{4, 0, -12, -8}",
+                   "{-1,2,-1}");  // TODO: multiple roots and ordering
 
   // assert_solves_to("x^3+x+1=0", {"x=-0.6823278038",
   // "x=0.3411639019-1.1615414×i",

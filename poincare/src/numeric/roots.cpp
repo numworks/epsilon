@@ -1,14 +1,16 @@
 #include <poincare/numeric/roots.h>
+#include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/arithmetic.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
-
-#include "poincare/sign.h"
-#include "poincare/src/memory/tree_ref.h"
+#include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
 
@@ -94,25 +96,54 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
     return KList()->cloneTree();
   }
 
+  /* Cases in which some coefficients are zero. */
+  if (GetComplexSign(a).isNull()) {
+    return Roots::Quadratic(b, c, d);
+  }
+  if (GetComplexSign(d).isNull()) {
+    /* When d is null the obvious root is zero. To avoid complexifying the
+     * remaining quadratic polynomial expression with further calculations, we
+     * directly call the quadratic solver for a, b, and c. */
+    TreeRef allRoots = Roots::Quadratic(a, b, c);
+    NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
+    return allRoots;
+  }
+  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
+    /* We compute the three solutions here because they are quite simple, and
+     * to avoid generating very complex coefficients when creating the remaining
+     * quadratic equation. */
+    return CubicRootsNullSecondAndThirdCoefficients(a, d);
+  }
+
   /* To avoid applying Cardano's formula right away, we use techniques to find a
    * simple root, based on some particularly common forms of cubic equations
    * in school problems. */
+  TreeRef foundRoot{};
 
-  if (GetComplexSign(d).isNull()) {
-    return CubicRootsNullLastCoefficient(a, b, c);
-  }
-  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
-    return CubicRootsNullSecondAndThirdCoefficients(a, d);
-  }
-  /* Polynomials which can be written as "kx^2(cx+d)+cx+d" or
-   * "kx(bx^2+d)+bx^2+d" (??) have a simple root: x1 = -d/c. */
+  /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple root:
+   * "-d/c". */
   TreeRef simpleRoot = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
-
   if (IsRoot(simpleRoot, a, b, c, d)) {
-    TreeRef solutions = CubicRootsKnowingNonZeroRoot(a, b, c, d, simpleRoot);
-    simpleRoot->removeTree();
-    return solutions;
+    foundRoot = simpleRoot->cloneTree();
+  }
+  simpleRoot->removeTree();
+
+  if (!foundRoot && (a->isRational() && b->isRational() && c->isRational() &&
+                     d->isRational())) {
+    foundRoot = RationalRootSearch(a, b, c, d);
+  }
+
+  if (!foundRoot) {
+    /* b is the opposite of the sum of all roots counted with their
+     * multiplicity. As additions containing roots or powers are in general not
+     * reducible, if there exists an irrational root, it might still be
+     * explicit in the expression for b. */
+    foundRoot = SumRootSearch(a, b, c, d);
+  }
+
+  if (foundRoot) {
+    return CubicRootsKnowingNonZeroRoot(a, b, c, d, foundRoot);
   }
 
   return KList(1_e, 2_e, 3_e)->cloneTree();
@@ -120,26 +151,18 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
 Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                           const Tree* c, const Tree* d,
-                                          const Tree* r) {
+                                          Tree* r) {
   assert(!GetSign(r).isNull());
   /* If r is a non zero root of "ax^3+bx^2+cx+d", we can factorize the
    * polynomial as "(x-r)*(ax^2+β*x+γ)", with "β =b+a*r" and γ=-d/r */
   TreeRef beta = PatternMatching::CreateSimplify(KAdd(KB, KMult(KA, KH)),
                                                  {.KA = a, .KB = b, .KH = r});
-  TreeRef gamma = PatternMatching::CreateSimplify(KMult(KD, KPow(KH, -1_e)),
-                                                  {.KD = d, .KH = r});
+  TreeRef gamma = PatternMatching::CreateSimplify(
+      KMult(-1_e, KD, KPow(KH, -1_e)), {.KD = d, .KH = r});
   TreeRef allRoots = Roots::Quadratic(a, beta, gamma);
-  NAry::AddChild(allRoots, r->cloneTree());
+  NAry::AddChild(allRoots, r);
   beta->removeTree();
   gamma->removeTree();
-  return allRoots;
-}
-
-Tree* Roots::CubicRootsNullLastCoefficient(const Tree* a, const Tree* b,
-                                           const Tree* c) {
-  /* If d is null, the polynom can easily be factorized by X. */
-  TreeRef allRoots = Roots::Quadratic(a, b, c);
-  NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
   return allRoots;
 }
 
@@ -157,39 +180,120 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
   return result;
 }
 
-Tree* Roots::EvaluatePolynomialAtValue(const Tree* value, const Tree* a,
-                                       const Tree* b, const Tree* c,
-                                       const Tree* d) {
-  return PatternMatching::CreateSimplify(
+Tree* DefaultEvaluation::polynomial(const Tree* value, const Tree* a,
+                                    const Tree* b, const Tree* c,
+                                    const Tree* d) {
+  Tree* e = PatternMatching::CreateSimplify(
       KAdd(KMult(KA, KPow(KH, 3_e)), KMult(KB, KPow(KH, 2_e)), KMult(KC, KH),
            KD),
       {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
+  SystematicReduction::DeepReduce(e);
+  return e;
 }
 
-bool Roots::IsRoot(const Tree* root, const Tree* a, const Tree* b,
-                   const Tree* c, const Tree* d) {
-  Tree* evaluatedValue = EvaluatePolynomialAtValue(root, a, b, c, d);
-  SystematicReduction::DeepReduce(evaluatedValue);
-  bool isNull = GetComplexSign(evaluatedValue).isNull();
-  evaluatedValue->removeTree();
-  return isNull;
+Tree* RationalEvaluation::polynomial(const Tree* value, const Tree* a,
+                                     const Tree* b, const Tree* c,
+                                     const Tree* d) {
+  /* Many temporary Tree pointers are created here. Having a "smart pointer" to
+   * a Tree, responsible for managing the ressource and calling removeTree()
+   * when destroyed, would make the following code become a one liner. */
+  Tree* x3 = Rational::IntegerPower(value, 3_e);
+  Tree* aTerm = Rational::Multiplication(a, x3);
+  Tree* x2 = Rational::IntegerPower(value, 2_e);
+  Tree* bTerm = Rational::Multiplication(b, x2);
+  Tree* cTerm = Rational::Multiplication(c, value);
+  TreeRef result = Rational::Addition(aTerm, bTerm, cTerm, d);
+  cTerm->removeTree();
+  bTerm->removeTree();
+  x2->removeTree();
+  aTerm->removeTree();
+  x3->removeTree();
+  return result;
 }
 
-Rational Roots::ReduceRationalPolynomial(const Rational* coefficients,
-                                         int degree, Rational parameter) {
-  return Rational{};
-}
+Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
+                                const Tree* d) {
+  assert(a->isRational() && b->isRational() && c->isRational() &&
+         d->isRational());
 
-Tree* Roots::RationalRootSearch(const Tree* coefficients, int degree,
-                                const ReductionContext& reductionContext) {
+  /* The equation can be written with integer coefficients. Under that form,
+   * since d/a = -x1*x2*x3, a rational root p/q must be so that p divides d
+   * and q divides a. */
+
+  TreeRef denominatorA = Rational::Denominator(a).pushOnTreeStack();
+  TreeRef denominatorB = Rational::Denominator(b).pushOnTreeStack();
+  TreeRef denominatorC = Rational::Denominator(c).pushOnTreeStack();
+  TreeRef denominatorD = Rational::Denominator(d).pushOnTreeStack();
+  /* It is needed to keep a TreeRef to this 4 trees in order to delete them
+   * after CreateSimplify. A lighter API would be to have CreateSimplify accept
+   * rvalue TreeRefs (and the trees pointed to would be removed inside
+   * CreateSimplify). This would make the code much shorter and more readable
+   * (here there are as many as 8 extra lines in addition to calling
+   * CreateSimplify) */
+  TreeRef lcm = PatternMatching::CreateSimplify(KLCM(KA, KB, KC, KD),
+                                                {.KA = denominatorA,
+                                                 .KB = denominatorB,
+                                                 .KC = denominatorC,
+                                                 .KD = denominatorD});
+  denominatorA->removeTree();
+  denominatorB->removeTree();
+  denominatorC->removeTree();
+  denominatorD->removeTree();
+  assert(lcm->isRational());
+  TreeRef A = Rational::Multiplication(a, lcm);
+  TreeRef D = Rational::Multiplication(d, lcm);
+  lcm->removeTree();
+
+  IntegerHandler AHandler = Integer::Handler(A);
+  IntegerHandler DHandler = Integer::Handler(D);
+  A->removeTree();
+  D->removeTree();
+  AHandler.setSign(NonStrictSign::Positive);
+  DHandler.setSign(NonStrictSign::Positive);
+
+  /* The absolute value of A or D might be above the uint32_t maximum
+   * representable value. As the ListPositiveDivisors function only accepts
+   * uint32_t input, we must prevent potential overflows. */
+  if (IntegerHandler::Compare(AHandler, IntegerHandler(UINT32_MAX)) == 1) {
+    return nullptr;
+  }
+  Arithmetic::Divisors divisorsA =
+      Arithmetic::ListPositiveDivisors(AHandler.to<uint32_t>());
+  Arithmetic::Divisors divisorsD =
+      Arithmetic::ListPositiveDivisors(DHandler.to<uint32_t>());
+
+  if (divisorsA.numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed ||
+      divisorsD.numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed) {
+    return nullptr;
+  }
+
+  for (int8_t i = 0; i < divisorsA.numberOfDivisors; i++) {
+    for (int8_t j = 0; j < divisorsD.numberOfDivisors; j++) {
+      /* If i and j are not coprime, i/j has already been tested. */
+      uint32_t p = divisorsA.list[i];
+      uint32_t q = divisorsD.list[j];
+      if (Arithmetic::GCD(p, q) == 1) {
+        Tree* r = Rational::Push(IntegerHandler(p), IntegerHandler(q));
+        if (IsRoot<RationalEvaluation>(r, a, b, c, d)) {
+          return r;
+        }
+
+        Rational::SetSign(r, NonStrictSign::Negative);
+        if (IsRoot<RationalEvaluation>(r, a, b, c, d)) {
+          return r;
+        }
+        r->removeTree();
+      }
+    }
+  }
   return nullptr;
 }
 
-Tree* Roots::SumRootSearch(const Tree* coefficients, int degree,
-                           int relevantCoefficient,
-                           const ReductionContext& reductionContext) {
+Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
+                           const Tree* d) {
   return nullptr;
 }
+
 Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1,
                            bool* approximate,
                            const ReductionContext& reductionContext) {

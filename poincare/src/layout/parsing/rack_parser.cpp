@@ -631,11 +631,18 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
+  bool leftIsSymbolWithUnits = false;
+  if (leftHandSide->isUserSymbol() && m_parsingContext.context()) {
+    const Tree* value =
+        m_parsingContext.context()->treeForSymbolIdentifier(leftHandSide);
+    leftIsSymbolWithUnits = value && Units::HasUnit(value);
+  }
+
   TreeRef rightHandSide = parseUntil(stoppingType);
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
       rightHandSide.isUninitialized() ||
       !Units::IsCombinationOfUnits(rightHandSide) ||
-      (!Units::HasUnit(leftHandSide) &&
+      (!Units::HasUnit(leftHandSide) && !leftIsSymbolWithUnits &&
        !Units::IsPureAngleUnit(rightHandSide))) {
     // UnitConvert expect a unit on the right and an expression with units on
     // the left

@@ -27,8 +27,13 @@ class AdvancedReduction {
   static bool DeepContract(Tree* e);
   TREE_REF_WRAP(DeepContract);
   // Top-Bottom deep expand
-  static bool DeepExpand(Tree* e);
+  static bool DeepExpand(Tree* e) { return PrivateDeepExpand(e); };
   TREE_REF_WRAP(DeepExpand);
+  // Top-Bottom deep expand using only algebraic operations
+  static bool DeepExpandAlgebraic(Tree* e) {
+    return PrivateDeepExpand(e, true);
+  };
+  TREE_REF_WRAP(DeepExpandAlgebraic);
 
  private:
   // Ordered list of hashes encountered during advanced reduction.
@@ -155,6 +160,7 @@ class AdvancedReduction {
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 
   /* Expand/Contract operations */
+  static bool PrivateDeepExpand(Tree* e, bool onlyAlgebraicOperations = false);
   static bool ShallowContract(Tree* e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_contractOperations, std::size(k_contractOperations));
@@ -162,6 +168,10 @@ class AdvancedReduction {
   static bool ShallowExpand(Tree* e, bool tryAll) {
     return (tryAll ? TryAllOperations : TryOneOperation)(
         e, k_expandOperations, std::size(k_expandOperations));
+  }
+  static bool ShallowExpandAlgebraic(Tree* e, bool tryAll) {
+    return (tryAll ? TryAllOperations : TryOneOperation)(
+        e, k_expandAlgebraicOperations, std::size(k_expandAlgebraicOperations));
   }
 
   // Try all Operations until they all fail consecutively.
@@ -186,6 +196,12 @@ class AdvancedReduction {
       Arithmetic::ExpandPermute,      Projection::Expand,
       AdvancedOperation::ExpandPower, AdvancedOperation::ExpandMult,
       AdvancedOperation::ExpandImRe,
+  };
+  constexpr static Tree::Operation k_expandAlgebraicOperations[] = {
+      AdvancedOperation::ExpandPower,
+      AdvancedOperation::ExpandMult,
+      Parametric::ExpandSum,
+      Parametric::ExpandProduct,
   };
 };
 

@@ -31,19 +31,18 @@
 
 namespace Poincare::Internal {
 
-// With a nullptr context, seeded random will be undef.
-Random::Context* Approximation::s_randomContext = nullptr;
-
 /* Approximation::Context */
 
-Approximation::Context::Context(AngleUnit angleUnit,
+Approximation::Context::Context(Random::Context* randomContext,
+                                AngleUnit angleUnit,
                                 ComplexFormat complexFormat,
                                 VariableType abscissa, int listElement)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
       m_variablesOffset(k_maxNumberOfVariables),
       m_listElement(listElement),
-      m_pointElement(-1) {
+      m_pointElement(-1),
+      m_randomContext(randomContext) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_variables[i] = NAN;
   }
@@ -78,8 +77,7 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
   assert(dim == Dimension::Get(e));
 
   Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat);
+  Context context(&randomContext, angleUnit, complexFormat);
   Tree* clone = e->cloneTree();
   // TODO we should rather assume variable projection has already been done
   Variables::ProjectLocalVariablesToId(clone);
@@ -96,7 +94,6 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
   }
 
   clone->removeTree();
-  s_randomContext = nullptr;
   return clone;
 }
 
@@ -155,8 +152,8 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
     const Tree* e, bool isPoint, bool isPrepared, T abscissa, int listElement,
     AngleUnit angleUnit, ComplexFormat complexFormat) {
   Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(angleUnit, complexFormat, abscissa, listElement);
+  Context context(&randomContext, angleUnit, complexFormat, abscissa,
+                  listElement);
   Tree* clone;
   if (!isPrepared) {
     clone = e->cloneTree();
@@ -174,7 +171,6 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
   if (!isPrepared) {
     clone->removeTree();
   }
-  s_randomContext = nullptr;
   return isPoint ? PointOrScalar<T>(xScalar, yScalar)
                  : PointOrScalar<T>(yScalar);
 }
@@ -183,10 +179,9 @@ template <typename T>
 std::complex<T> Approximation::RootPreparedToComplex(
     const Tree* preparedFunction, T abscissa) {
   Random::Context randomContext;
-  s_randomContext = &randomContext;
-  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, abscissa);
+  Context context(&randomContext, AngleUnit::Radian, ComplexFormat::Cartesian,
+                  abscissa);
   std::complex<T> result = ToComplex<T>(preparedFunction, &context);
-  s_randomContext = nullptr;
   return result;
 }
 
@@ -318,7 +313,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
 
   if (e->isRandomized()) {
-    return Random::Approximate<T>(e, s_randomContext,
+    return Random::Approximate<T>(e, ctx->m_randomContext,
                                   ctx ? ctx->m_listElement : -1);
   }
   switch (e->type()) {
@@ -1200,7 +1195,7 @@ template <typename T>
 T Approximation::To(const Tree* e, T x, const Context* ctx) {
   T result;
   if (!ctx) {
-    Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
+    Context context(nullptr, AngleUnit::Radian, ComplexFormat::Cartesian, x);
     ctx = &context;
     result = To<T>(e, &context);
   } else {
@@ -1238,7 +1233,8 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
                                                   const Context* ctx) {
   assert(!ctx);
   assert(piecewise->isPiecewise());
-  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, x);
+  // TODO piecewises depending on a random will not work
+  Context context(nullptr, AngleUnit::Radian, ComplexFormat::Cartesian, x);
   ctx = &context;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise, ctx);
   ctx = nullptr;
@@ -1303,7 +1299,7 @@ bool SkipApproximation(TypeBlock type, TypeBlock parentType,
 
 bool Approximation::ApproximateAndReplaceEveryScalar(
     Tree* e, const ProjectionContext* ctx) {
-  Context context(ctx ? ctx->m_angleUnit : AngleUnit::Radian,
+  Context context(nullptr, ctx ? ctx->m_angleUnit : AngleUnit::Radian,
                   ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
   if (SkipApproximation(e->type())) {
     return false;

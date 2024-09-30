@@ -28,7 +28,8 @@ class Approximation final {
  public:
   struct Context {
     using VariableType = double;
-    Context(AngleUnit angleUnit = AngleUnit::Radian,
+    Context(Random::Context* randomContext = nullptr,
+            AngleUnit angleUnit = AngleUnit::Radian,
             ComplexFormat complexFormat = ComplexFormat::Cartesian,
             VariableType abscissa = NAN, int listElement = -1);
 
@@ -57,6 +58,8 @@ class Approximation final {
     int m_listElement;
     // Tells if we are approximating to get the nth-element of a point
     int m_pointElement;
+
+    Random::Context* m_randomContext;
   };
 
   /* Approximations on root tree, independent from current s_context. */
@@ -272,8 +275,6 @@ class Approximation final {
   template <typename T>
   static std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
                                                      std::complex<T> input);
-
-  static Random::Context* s_randomContext;
 };
 
 }  // namespace Poincare::Internal

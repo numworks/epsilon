@@ -163,7 +163,7 @@ double Sequence::approximateAtRank(int rank,
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(SequenceContext* sqctx, int rank,
+double Sequence::approximateAtContextRank(Context* ctx, int rank,
                                           bool intermediateComputation) const {
   if (rank < initialRank()) {
     return NAN;
@@ -172,15 +172,15 @@ double Sequence::approximateAtContextRank(SequenceContext* sqctx, int rank,
   SystemExpression e;
   if (rank >= firstNonInitialRank()) {
     x = static_cast<double>(rank - order());
-    e = expressionReduced(sqctx);
+    e = expressionReduced(ctx);
   } else {
     assert(type() != Type::Explicit);
     x = static_cast<double>(NAN);
     if (rank == initialRank()) {
-      e = firstInitialConditionExpressionReduced(sqctx);
+      e = firstInitialConditionExpressionReduced(ctx);
     } else {
       assert(type() == Type::DoubleRecurrence);
-      e = secondInitialConditionExpressionReduced(sqctx);
+      e = secondInitialConditionExpressionReduced(ctx);
     }
   }
   return e.approximateToScalarWithValue(x);

@@ -33,7 +33,6 @@ class CalculationParameterController
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void fillAreaCell();
-  TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override { return k_numberOfRows; }
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTwoTitles;

@@ -2,7 +2,6 @@
 #define ESCHER_VIEW_CONTROLLER_H
 
 #include <escher/i18n.h>
-#include <escher/telemetry.h>
 #include <ion/events.h>
 extern "C" {
 #include <stdint.h>
@@ -60,7 +59,7 @@ class ViewController : public Responder {
   virtual const char* title() { return nullptr; }
   virtual View* view() = 0;
   virtual void initView() {}
-  virtual void viewWillAppear();
+  virtual void viewWillAppear() {}
   virtual void viewDidDisappear() {}
   virtual TitlesDisplay titlesDisplay() {
     return TitlesDisplay::DisplayAllTitles;
@@ -70,14 +69,6 @@ class ViewController : public Responder {
   virtual void stackOpenPage(ViewController* nextPage);
   // Pop the parent StackViewController responder on a Left event
   bool popFromStackViewControllerOnLeftEvent(Ion::Events::Event event);
-
- protected:
-#if EPSILON_TELEMETRY
-  virtual const char* telemetryId() const { return nullptr; }
-  void telemetryReportEvent(const char* action, const char* label) const;
-#else
-  void telemetryReportEvent(const char* action, const char* label) const {}
-#endif
 };
 
 }  // namespace Escher

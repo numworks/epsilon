@@ -37,7 +37,6 @@ class App : public Shared::SharedApp {
   static App* app() { return static_cast<App*>(Escher::App::app()); }
   bool quitInputRunLoop();
   ~App();
-  TELEMETRY_ID("Code");
   Escher::StackViewController* stackViewController() {
     return &m_codeStackViewController;
   }

@@ -25,7 +25,6 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
                    Shared::CursorView* cursorView,
                    Shared::SequenceStore* sequenceStore);
   const char* title() override;
-  TELEMETRY_ID("Cobweb");
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
   bool isRecordSuitable() const;

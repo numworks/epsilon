@@ -53,8 +53,6 @@ class App : public Shared::MathApp {
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
 
-  TELEMETRY_ID("Calculation");
-
   Snapshot* snapshot() const {
     return static_cast<Snapshot*>(Shared::SharedApp::snapshot());
   }

@@ -33,7 +33,6 @@ class HistogramController : public MultipleDataViewController {
 
   // ViewController
   MultipleDataView* multipleDataView() override { return &m_view; }
-  TELEMETRY_ID("Histogram");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

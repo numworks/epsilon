@@ -46,8 +46,6 @@ class ResidualPlotController : public Escher::ViewController {
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
-  TELEMETRY_ID("ResidualPlotGraph");
-
  private:
   // Move cursor to selected and updates the banner
   void updateCursor();

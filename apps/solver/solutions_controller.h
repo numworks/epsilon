@@ -38,8 +38,6 @@ class SolutionsController : public Escher::ViewController,
       Escher::Responder* previousFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  TELEMETRY_ID("Solutions");
-
   // ButtonRowDelegate
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override {

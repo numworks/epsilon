@@ -19,9 +19,6 @@ class CalculationController : public Shared::DoublePairTableController {
   CalculationController(Escher::Responder* parentResponder,
                         Escher::ButtonRowController* header, Store* store);
 
-  // View Controller
-  TELEMETRY_ID("Calculation");
-
   // TableViewDataSource
   int numberOfRows() const override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,

@@ -50,8 +50,6 @@ class App : public Shared::MathApp {
   void storageDidChangeForRecord(Ion::Storage::Record record) override;
   void prepareForIntrusiveStorageChange() override;
 
-  TELEMETRY_ID("Solver");
-
  private:
   App(Snapshot* snapshot);
 

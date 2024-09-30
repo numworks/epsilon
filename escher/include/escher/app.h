@@ -6,7 +6,6 @@
 #include <escher/image.h>
 #include <escher/modal_view_controller.h>
 #include <escher/responder.h>
-#include <escher/telemetry.h>
 #include <escher/timer.h>
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
@@ -102,10 +101,6 @@ class App : public Responder {
     return true;
   }
   virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
-
-#if EPSILON_TELEMETRY
-  virtual const char* telemetryId() const { return nullptr; }
-#endif
 
   static App* app();
 

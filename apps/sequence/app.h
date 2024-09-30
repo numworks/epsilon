@@ -52,7 +52,6 @@ class App : public Shared::FunctionApp {
   Snapshot* snapshot() const {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  TELEMETRY_ID("Sequence");
   /* TODO: override variableBox to lock sequence in the variable box once they
    * appear there NestedMenuController * variableBox(EditableField *
    * textInput) override; */

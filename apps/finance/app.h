@@ -45,7 +45,6 @@ class App : public Shared::MathApp {
     OMG::RingBuffer<Escher::ViewController*, k_maxDepth> m_pageQueue;
     Data m_data;
   };
-  TELEMETRY_ID("Finance");
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
   static InterestData* GetInterestData() {

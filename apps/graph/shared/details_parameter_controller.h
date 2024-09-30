@@ -33,7 +33,6 @@ class DetailsParameterController
     return TitlesDisplay::DisplayLastThreeTitles;
   }
   void viewWillAppear() override;
-  TELEMETRY_ID("TypeParameter");
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return 1 + detailsNumberOfSections(); }

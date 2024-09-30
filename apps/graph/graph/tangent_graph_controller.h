@@ -22,7 +22,6 @@ class TangentGraphController
   const char* title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  TELEMETRY_ID("Tangent");
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);

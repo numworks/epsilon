@@ -21,7 +21,6 @@ class StoreController : public EditableCellTableViewController,
   StoreController(Escher::Responder* parentResponder, DoublePairStore* store,
                   Escher::ButtonRowController* header,
                   Poincare::Context* parentContext);
-  TELEMETRY_ID("Store");
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

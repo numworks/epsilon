@@ -22,7 +22,6 @@ class ListParameterController
       Escher::SelectableListViewDelegate* listDelegate = nullptr);
 
   bool handleEvent(Ion::Events::Event event) override;
-  TELEMETRY_ID("ListParameter");
   virtual void setRecord(Ion::Storage::Record record);
   void viewWillAppear() override;
 

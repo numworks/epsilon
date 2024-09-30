@@ -92,8 +92,6 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
                 sizeof(InferenceEvenOddEditableCell) *
                     k_doubleColumnTableNumberOfReusableCells});
 
-  TELEMETRY_ID("Inference");
-
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;
   int selectedSubApp() const override {

@@ -40,7 +40,6 @@ class CalculationController : public Escher::ViewController,
   }
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  TELEMETRY_ID("Calculation");
 
   /* TableViewDataSource */
   int numberOfRows() const override { return 1; }

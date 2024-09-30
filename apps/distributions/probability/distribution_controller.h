@@ -22,8 +22,6 @@ class DistributionController : public Escher::SelectableListViewController<
                          Distribution* distribution,
                          ParametersController* parametersController);
 
-  TELEMETRY_ID("Distribution");
-
   Escher::View* view() override { return &m_contentView; }
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;

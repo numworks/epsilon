@@ -19,11 +19,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
 
 ion_src += ion/src/shared/collect_registers.cpp
 
-ifeq ($(EPSILON_TELEMETRY),1)
-ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
-ion_src += ion/src/shared/telemetry_console.cpp
-endif
-
 # RC file dependencies
 $(call object_for,ion/src/simulator/windows/resources.rc): WRFLAGS += -I $(BUILD_DIR)
 $(call object_for,ion/src/simulator/windows/resources.rc): $(addprefix $(BUILD_DIR)/,logo.ico)

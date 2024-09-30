@@ -47,7 +47,6 @@ class ConsoleController : public Escher::ViewController,
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
-  TELEMETRY_ID("Console");
 
   // ListViewDataSource
   int numberOfRows() const override;

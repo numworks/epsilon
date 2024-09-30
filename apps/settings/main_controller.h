@@ -46,7 +46,6 @@ class MainController : public Escher::SelectableListViewController<
   KDCoordinate separatorBeforeRow(int row) override;
   void viewWillAppear() override;
   bool hasTestModeCell() const;
-  TELEMETRY_ID("");
 
  private:
   I18n::Message messageAtModelIndex(int i) const;

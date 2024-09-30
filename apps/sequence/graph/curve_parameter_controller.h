@@ -20,7 +20,6 @@ class CurveParameterController
                            Shared::InteractiveCurveViewRange* graphRange,
                            Shared::CurveViewCursor* cursor);
   const char* title() override;
-  TELEMETRY_ID("CurveParameter");
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);

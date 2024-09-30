@@ -13,7 +13,6 @@ class IntervalController : public Shared::SingleRangeController<double> {
  public:
   IntervalController(Escher::Responder* parentResponder);
   const char* title() override;
-  TELEMETRY_ID("Interval");
   bool handleEvent(Ion::Events::Event event) override;
 
  private:

@@ -22,7 +22,6 @@ class HistoryController : public Escher::ViewController,
   Escher::View* view() override { return &m_selectableListView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  TELEMETRY_ID("");
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder* nextFirstResponder) override;
   void reload();

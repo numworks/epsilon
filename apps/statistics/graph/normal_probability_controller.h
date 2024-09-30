@@ -44,8 +44,6 @@ class NormalProbabilityController : public PlotController,
   bool drawSeriesZScoreLine(int series, float* x, float* y, float* u,
                             float* v) const override;
 
-  TELEMETRY_ID("NormalProbability");
-
  private:
   // PlotController
   void reloadValueInBanner(Poincare::Preferences::PrintFloatMode displayMode,

@@ -14,7 +14,6 @@
 #include "platform.h"
 #include "random.h"
 #include "state_file.h"
-#include "telemetry.h"
 #include "window.h"
 #ifndef __WIN32__
 #include <signal.h>
@@ -235,9 +234,6 @@ int main(int argc, char* argv[]) {
       // Set log journal starting language
       Journal::logJournal()->setStartingLanguage(args.get(k_languageFlag));
     }
-#if EPSILON_TELEMETRY
-    Telemetry::init();
-#endif
     Window::init();
     Haptics::init();
   }
@@ -271,9 +267,6 @@ int main(int argc, char* argv[]) {
   if (!headless) {
     Haptics::shutdown();
     Window::shutdown();
-#if EPSILON_TELEMETRY
-    Telemetry::shutdown();
-#endif
   }
 
   return 0;

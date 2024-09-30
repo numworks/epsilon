@@ -31,7 +31,6 @@ class ValuesController : public EditableCellTableViewController,
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  TELEMETRY_ID("Values");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

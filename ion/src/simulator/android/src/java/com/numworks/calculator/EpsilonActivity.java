@@ -44,25 +44,6 @@ public class EpsilonActivity extends SDLActivity {
     return getResources().getConfiguration().locale.getLanguage();
   }
 
-  public void telemetryInit() {
-    sAnalytics = GoogleAnalytics.getInstance(this);
-    sTracker = sAnalytics.newTracker("UA-93775823-3");
-  }
-
-  public void telemetryScreen(String screenName) {
-    sTracker.setScreenName(screenName);
-    sTracker.send(new HitBuilders.ScreenViewBuilder().build());
-  }
-
-  public void telemetryEvent(String category, String action, String label) {
-    sTracker.send(new HitBuilders.EventBuilder()
-      .setCategory(category)
-      .setAction(action)
-      .setLabel(label)
-      .build()
-    );
-  }
-
   public boolean hapticFeedbackIsEnabled() {
     ContentResolver contentResolver = SDL.getContext().getContentResolver();
     int val = Settings.System.getInt(contentResolver, Settings.System.HAPTIC_FEEDBACK_ENABLED, 0);

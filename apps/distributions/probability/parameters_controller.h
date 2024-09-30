@@ -23,7 +23,6 @@ class ParametersController : public Shared::FloatParameterController<double> {
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void viewWillAppear() override;
-  TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;

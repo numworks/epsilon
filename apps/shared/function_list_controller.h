@@ -19,8 +19,6 @@ class FunctionListController : public ExpressionModelListController,
                          Escher::ButtonRowController* footer,
                          I18n::Message text);
 
-  TELEMETRY_ID("List");
-
   /* ButtonRowDelegate */
   int numberOfButtons(
       Escher::ButtonRowController::Position position) const override;

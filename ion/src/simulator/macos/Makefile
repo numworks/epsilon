@@ -25,11 +25,6 @@ else
 ion_src += ion/src/shared/collect_registers.cpp
 endif
 
-ifeq ($(EPSILON_TELEMETRY),1)
-ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
-ion_src += ion/src/shared/telemetry_console.cpp
-endif
-
 ifndef ARCH
 
 # App resources

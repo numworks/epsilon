@@ -22,7 +22,6 @@ class RegressionController : public Escher::SelectableListViewController<
   // ViewController
   const char* title() override;
   ViewController::TitlesDisplay titlesDisplay() override;
-  TELEMETRY_ID("Regression");
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

@@ -44,7 +44,6 @@ class InteractiveCurveViewController
     return ViewController::TitlesDisplay::NeverDisplayOwnTitle;
   }
   void viewWillAppear() override;
-  TELEMETRY_ID("Graph");
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,

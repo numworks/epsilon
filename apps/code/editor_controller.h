@@ -27,7 +27,6 @@ class EditorController : public Escher::ViewController {
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
-  TELEMETRY_ID("Editor");
 
  private:
   void cleanStorageEmptySpace();

@@ -22,7 +22,6 @@ class DomainParameterController
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
-  TELEMETRY_ID("DomainParameter");
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,

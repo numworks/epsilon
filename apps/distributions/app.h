@@ -54,8 +54,6 @@ class App : public Shared::MathApp {
   void willOpenPage(Escher::ViewController* controller) override;
   void didExitPage(Escher::ViewController* controller) override;
 
-  TELEMETRY_ID("Distributions");
-
  private:
   App(Snapshot* snapshot, Poincare::Context* parentContext);
   Snapshot* snapshot() const {

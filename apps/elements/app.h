@@ -45,7 +45,6 @@ class App : public Shared::AppWithStoreMenu {
     AtomicNumber m_selectedElement;
     AtomicNumber m_previousElement;
   };
-  TELEMETRY_ID("ElementsTable");
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
 

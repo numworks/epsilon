@@ -27,7 +27,6 @@ class FunctionZoomAndPanCurveViewController
   }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  TELEMETRY_ID("Zoom");
 
  private:
   constexpr static KDCoordinate k_standardViewHeight = 174;

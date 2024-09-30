@@ -45,8 +45,6 @@ class FrequencyController : public PlotController,
     return axis == Shared::AbstractPlotView::Axis::Vertical ? 0.5f : 1.0f;
   }
 
-  TELEMETRY_ID("Frequency");
-
  private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 

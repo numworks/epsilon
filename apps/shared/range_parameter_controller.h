@@ -44,7 +44,6 @@ class RangeParameterController
   Escher::StackViewController* stackController() {
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
-  TELEMETRY_ID("Range");
 
  private:
   void buttonAction();

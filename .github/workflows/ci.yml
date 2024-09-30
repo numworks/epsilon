@@ -168,9 +168,9 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 epsilon.ipa
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 ASSERTIONS=1 test.ipa
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
+      - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
+      - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
+      - run: make PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon-ios.ipa

@@ -35,11 +35,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   journal.cpp \
 )
 
-ifeq ($(EPSILON_TELEMETRY),1)
-ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
-ion_src += ion/src/shared/telemetry_console.cpp
-endif
-
 $(eval $(call rule_for, \
   INCBIN, \
   ion/src/simulator/linux/assets.s ion/src/simulator/linux/platform_images.h, \

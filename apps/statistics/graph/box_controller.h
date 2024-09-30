@@ -40,8 +40,6 @@ class BoxController : public MultipleDataViewController {
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
 
-  TELEMETRY_ID("Box");
-
  private:
   bool reloadBannerView() override;
 

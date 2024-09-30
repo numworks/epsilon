@@ -331,7 +331,6 @@ bool ConsoleController::textFieldDidFinishEditing(AbstractTextField* textField,
     return false;
   }
   char* text = textField->draftText();
-  telemetryReportEvent("Console", text);
   runAndPrintForCommand(text);
   if (!isDisplayingViewController()) {
     reloadData();

@@ -26,7 +26,6 @@ class App : public Escher::App {
   Snapshot* snapshot() const {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  TELEMETRY_ID("Home");
 
  private:
   App(Snapshot* snapshot);

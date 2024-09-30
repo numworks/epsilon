@@ -23,7 +23,6 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
 
-  TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
 
  protected:

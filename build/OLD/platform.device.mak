@@ -2,7 +2,6 @@ MODEL ?= n0110
 USE_LIBA = 1
 EXE = elf
 
-EPSILON_TELEMETRY ?= 0
 TERMS_OF_USE ?= 0
 
 # We want to do the following transformations:

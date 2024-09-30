@@ -30,11 +30,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
 ion_src += ion/src/shared/dummy/circuit_breaker.cpp
 ion_src += ion/src/shared/collect_registers.cpp
 
-ifeq ($(EPSILON_TELEMETRY),1)
-ion_src += ion/src/simulator/shared/dummy/telemetry_init.cpp
-ion_src += ion/src/shared/telemetry_console.cpp
-endif
-
 DEFAULT = epsilon.html
 
 $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css): ion/src/simulator/shared/layout.json ion/src/simulator/web/css_html_layout.py | $$(@D)/.

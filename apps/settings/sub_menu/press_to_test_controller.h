@@ -18,7 +18,6 @@ class PressToTestController : public Escher::ListWithTopAndBottomController {
     return I18n::translate(I18n::Message::PressToTest);
   }
   bool handleEvent(Ion::Events::Event event) override;
-  TELEMETRY_ID("PressToTest");
   void viewWillAppear() override;
   int numberOfRows() const override;
   int typeAtRow(int row) const override;

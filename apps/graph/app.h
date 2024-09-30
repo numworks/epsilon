@@ -51,7 +51,6 @@ class App : public Shared::FunctionApp {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
 
-  TELEMETRY_ID("Graph");
   Shared::ContinuousFunctionStore* functionStore() const override {
     return snapshot()->functionStore();
   }

@@ -29,7 +29,6 @@ class ScriptParameterController
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  TELEMETRY_ID("ScriptParameter");
 
   /* MemoizedListViewDataSource */
   Escher::AbstractMenuCell* cell(int row) override;

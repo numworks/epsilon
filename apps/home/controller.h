@@ -22,7 +22,6 @@ class Controller : public Escher::ViewController,
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  TELEMETRY_ID("");
 
   int numberOfRows() const override {
     return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;

@@ -26,10 +26,6 @@ bool StoreHelper::StoreValueForSymbol(Context* context,
                                       const SymbolAbstract& symbol) {
   assert(!value.isUninitialized());
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
-  // TODO_PCJ handle unit store (remove the if once done)
-  if (Internal::Dimension::Get(value.tree(), context).isUnit()) {
-    return false;
-  }
   return context->setExpressionForSymbolAbstract(value, symbol);
 }
 

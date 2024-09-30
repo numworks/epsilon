@@ -33,33 +33,32 @@ class Approximation final {
             ComplexFormat complexFormat = ComplexFormat::Cartesian,
             VariableType abscissa = NAN, int listElement = -1);
 
-    VariableType variable(uint8_t index) const {
-      return m_variables[indexForVariable(index)];
-    }
-    void shiftVariables() { m_variablesOffset--; }
-    void unshiftVariables() { m_variablesOffset++; }
+    Context(const Context* parentContext, VariableType abscissa);
 
-    void setLocalValue(VariableType value) {
-      m_variables[indexForVariable(0)] = value;
+    VariableType variable(uint8_t index) const {
+      if (index == 0) {
+        return m_localVariable;
+      }
+      if (m_parentContext) {
+        return m_parentContext->variable(index - 1);
+      }
+      return NAN;
     }
-    // with sum(sum(l,l,1,k),k,1,n) m_variables stores [n, NaN, …, NaN, l, k]
-    uint8_t indexForVariable(uint8_t index) const {
-      assert(index < m_variablesOffset);
-      return (index + m_variablesOffset) % k_maxNumberOfVariables;
-    }
+
+    void setLocalValue(VariableType value) { m_localVariable = value; }
+
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
 
-    static constexpr int k_maxNumberOfVariables = 16;
-    VariableType m_variables[k_maxNumberOfVariables];
-    uint8_t m_variablesOffset;
+    VariableType m_localVariable;
 
     // Tells if we are approximating to get the nth-element of a list
-    int m_listElement;
+    int16_t m_listElement;
     // Tells if we are approximating to get the nth-element of a point
-    int m_pointElement;
+    int16_t m_pointElement;
 
     Random::Context* m_randomContext;
+    const Context* m_parentContext;
   };
 
   /* Approximations on root tree, independent from current s_context. */

@@ -39,14 +39,17 @@ Approximation::Context::Context(Random::Context* randomContext,
                                 VariableType abscissa, int listElement)
     : m_angleUnit(angleUnit),
       m_complexFormat(complexFormat),
-      m_variablesOffset(k_maxNumberOfVariables),
+      m_localVariable(abscissa),
       m_listElement(listElement),
       m_pointElement(-1),
-      m_randomContext(randomContext) {
-  for (int i = 0; i < k_maxNumberOfVariables; i++) {
-    m_variables[i] = NAN;
-  }
-  setLocalValue(abscissa);
+      m_randomContext(randomContext),
+      m_parentContext(nullptr) {}
+
+Approximation::Context::Context(const Context* parentContext,
+                                VariableType abscissa)
+    : Context(*parentContext) {
+  m_parentContext = parentContext;
+  m_localVariable = abscissa;
 }
 
 template <typename T>
@@ -523,8 +526,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
       assert(ctx);
-      Context childCtx(*ctx);
-      childCtx.shiftVariables();
+      Context childCtx(ctx, NAN);
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
         childCtx.setLocalValue(k);
@@ -572,8 +574,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         return NAN;
       }
       assert(ctx);
-      Context childCtx(*ctx);
-      childCtx.shiftVariables();
+      Context childCtx(ctx, NAN);
       T result = ApproximateDerivative(derivand, at.real(), order, &childCtx);
       return result;
     }
@@ -620,10 +621,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return ToComplex<T>(e->child(ctx->m_listElement), ctx);
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
-      Context childCtx(*ctx);
-      childCtx.shiftVariables();
       // epsilon sequences starts at one
-      childCtx.setLocalValue(ctx->m_listElement + 1);
+      Context childCtx(ctx, ctx->m_listElement + 1);
       std::complex<T> result = ToComplex<T>(e->child(2), &childCtx);
       return result;
     }

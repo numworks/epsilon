@@ -42,13 +42,15 @@ void VariableArray<N>::fillWithList(const Tree* list) {
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {
-  context->overrideUserVariables = false;
+  Context firstContext = *context;
+  firstContext.overrideUserVariables = false;
   projectionContext.m_symbolic =
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
   Tree* result =
-      PrivateExactSolve(equationsSet, context, projectionContext, error);
+      PrivateExactSolve(equationsSet, &firstContext, projectionContext, error);
   if (*error == Error::RequireApproximateSolution ||
       (*error == Error::NoError && result->numberOfChildren() > 0)) {
+    *context = firstContext;
     return result;
   }
   assert((result == nullptr) || (result->numberOfChildren() == 0));
@@ -66,7 +68,7 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
     *error = secondError;
   } else {
     assert(!result);
-    context->overrideUserVariables = false;
+    *context = firstContext;
     if (*error == Error::NoError) {
       /* The system becomes invalid when overriding the user variables: the
        * first solution was better. Restore inital empty set */

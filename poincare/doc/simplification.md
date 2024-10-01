@@ -433,6 +433,7 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
 | (A? + B)^2 | (A^2 + 2×A×B + B^2) |
+| (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
 | 1/A with A not pure and never infinite | conj(A)/(A*conj(A)) |
 | A×ln(B) (with A integer) | ln(B^A) + i×(A×arg(B) - arg(B^A)) |
 | A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E + i×(arg(B) + arg(D) - arg(BD)) |

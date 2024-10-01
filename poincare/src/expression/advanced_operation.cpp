@@ -170,6 +170,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   }
 
   // Binomial theorem
+  // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
   if (PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
       ctx.getTree(KC)->isInteger() && !ctx.getTree(KC)->isMinusOne()) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0

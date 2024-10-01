@@ -182,7 +182,7 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
 
 /* Reduce to principal argument in ]-π,π] if the argument is of the form
  * r*π with r rational */
-bool ReduceArgumentToPrincipal(Tree* e) {
+bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   assert(GetComplexSign(e).isReal());
   const Tree* piFactor = getPiFactor(e);
   if (piFactor) {

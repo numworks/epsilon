@@ -11,6 +11,7 @@
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
+#include "trigonometry.h"
 
 namespace Poincare::Internal {
 
@@ -253,7 +254,19 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
   const Tree* child = e->child(0);
   ComplexSign childSign = GetComplexSign(child);
-  // TODO : arg(e^(iA)) = A when A real, arg(A*B) = arg(B) when A real positive
+  // TODO : arg(A*B) = arg(B) when A real positive
+  // arg(e^(iA)) = A reduced to ]-π,π] when A real
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(child, KExp(KMult(KA_p, i_e)), &ctx)) {
+    Tree* arg = PatternMatching::CreateSimplify(KMult(KA_p), ctx);
+    if (GetComplexSign(arg).isReal() &&
+        Trigonometry::ReduceArgumentToPrincipal(arg)) {
+      e->moveTreeOverTree(arg);
+      return true;
+    } else {
+      arg->removeTree();
+    }
+  }
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
   if (!realSign.isKnown()) {

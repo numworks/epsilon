@@ -175,14 +175,7 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
   if (!layout.isUninitialized()) {
     layout = layout.cloneWithoutChildrenRacks();
     App::app()->modalViewController()->dismissModal();
-    if (Poincare::Preferences::SharedPreferences()->editionMode() ==
-        Poincare::Preferences::EditionMode::Edition1D) {
-      char buffer[AbstractTextField::MaxBufferSize()];
-      layout.serialize(buffer, sizeof(buffer));
-      sender()->handleEventWithText(buffer);
-    } else {
-      sender()->handleEventWithLayout(layout);
-    }
+    sender()->handleEventWithLayout(layout);
     return true;
   }
 

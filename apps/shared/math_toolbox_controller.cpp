@@ -136,6 +136,11 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
         // If 2D parsing failed or edition is in 1D, try a simpler layout
         resultLayout = Layout::String(text, strlen(text));
       }
+    } else if (Poincare::Preferences::SharedPreferences()->editionMode() ==
+               Poincare::Preferences::EditionMode::Edition1D) {
+      char buffer[128];  // TODO
+      size_t len = resultLayout.serialize(buffer, sizeof(buffer));
+      resultLayout = Layout::String(buffer, len);
     }
 
     myCell->label()->setLayout(resultLayout);

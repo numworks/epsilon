@@ -17,9 +17,9 @@ class ExactFormula {
   constexpr ExactFormula(T1 angle, T2 cos, T3 sin)
       : m_angle(angle), m_cos(cos), m_sin(sin) {}
   // Find exact formula corresponding to angle, nullptr otherwise
-  static const Tree* GetTrigOf(const Tree* angle, const bool isSin);
+  static const Tree* GetTrigOf(const Tree* angle, bool isSin);
   // Find exact formula corresponding to trig, nullptr otherwise
-  static const Tree* GetAngleOf(const Tree* trig, const bool isAsin);
+  static const Tree* GetAngleOf(const Tree* trig, bool isAsin);
 
  private:
   static ExactFormula GetExactFormulaAtIndex(int n);

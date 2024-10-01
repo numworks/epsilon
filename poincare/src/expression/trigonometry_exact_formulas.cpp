@@ -105,7 +105,7 @@ ExactFormula ExactFormula::GetExactFormulaAtIndex(int n) {
   return ExactFormulas[n];
 }
 
-const Tree* ExactFormula::GetTrigOf(const Tree* angle, const bool isSin) {
+const Tree* ExactFormula::GetTrigOf(const Tree* angle, bool isSin) {
   PatternMatching::Context ctx;
   for (int i = 0; i < k_numberOfFormulaForTrig; i++) {
     ExactFormula ef = GetExactFormulaAtIndex(i);
@@ -117,7 +117,7 @@ const Tree* ExactFormula::GetTrigOf(const Tree* angle, const bool isSin) {
   return nullptr;
 }
 
-const Tree* ExactFormula::GetAngleOf(const Tree* trig, const bool isAsin) {
+const Tree* ExactFormula::GetAngleOf(const Tree* trig, bool isAsin) {
   PatternMatching::Context ctx;
   for (int i = 0; i < k_totalNumberOfFormula; i++) {
     ExactFormula ef = GetExactFormulaAtIndex(i);

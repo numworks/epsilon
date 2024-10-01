@@ -6,7 +6,7 @@
 
 namespace Poincare::Internal {
 
-ExactFormula ExactFormulas[] = {
+constexpr ExactFormula ExactFormulas[] = {
     /* Angles in [0, π/4] */
     // θ, cos(θ), sin(θ)
     {0_e, 1_e, 0_e},

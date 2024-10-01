@@ -74,6 +74,7 @@ class EditExpressionController : public Escher::ViewController,
 
   void reloadView();
   void memoizeInput();
+  void clearLastInput() { m_lastInput = Poincare::Layout(); }
 
   HistoryController* m_historyController;
   CalculationStore* m_calculationStore;

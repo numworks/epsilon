@@ -100,12 +100,14 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
   assert(m_contentView.layoutField() == layoutField);
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
+      clearLastInput();
       layoutField->setEditing(false);
       App::app()->setFirstResponder(m_historyController);
     }
     return true;
   }
   if (event == Ion::Events::Clear && layoutField->isEmpty()) {
+    clearLastInput();
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;

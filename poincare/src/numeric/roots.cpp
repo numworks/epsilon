@@ -128,11 +128,13 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   }
   simpleRoot->removeTree();
 
+  /* Search based on arithmetic properties (only if all coefficients are
+   * rational) */
   if (!foundRoot && (a->isRational() && b->isRational() && c->isRational() &&
                      d->isRational())) {
     foundRoot = RationalRootSearch(a, b, c, d);
   }
-
+  /* Search for an irreducible root if the b coefficient is a sum. */
   if (!foundRoot) {
     foundRoot = SumRootSearch(a, b, c, d);
   }
@@ -141,6 +143,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
     return CubicRootsKnowingNonZeroRoot(a, b, c, d, foundRoot);
   }
 
+  // TODO: return something meaningful when solver failed
   return KList(1_e, 2_e, 3_e)->cloneTree();
 }
 

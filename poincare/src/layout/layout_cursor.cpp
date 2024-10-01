@@ -487,7 +487,7 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
         forceCursorLeftOfText = true;
         setCursorToFirstEmptyCodePoint = false;
       }
-      if (nextCodePoint == ')') {
+      if (!linearMode && nextCodePoint == ')') {
         // Skip ) to turn cos(\x11) into cos(] with ] temporary
         codePoint = decoder.nextCodePoint();
         /* TODO: previously cos(\x11) was parsable into a cos with an empty

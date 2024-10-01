@@ -162,10 +162,25 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   }
 
   // (A + B?)^2 = (A^2 + 2*A*B + B^2)
-  // TODO: Implement a more general (A + B)^C expand.
-  return PatternMatching::MatchReplaceSimplify(
-      e, KPow(KAdd(KA, KB_p), 2_e),
-      KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)), KPow(KAdd(KB_p), 2_e)));
+  if (PatternMatching::MatchReplaceSimplify(
+          e, KPow(KAdd(KA, KB_p), 2_e),
+          KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)),
+               KPow(KAdd(KB_p), 2_e)))) {
+    return true;
+  }
+
+  // Binomial theorem
+  if (PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
+      ctx.getTree(KC)->isPositiveInteger()) {
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KSum("k"_e, 0_e, KC,
+             KMult(KBinomial(KC, KVarK), KPow(KA, KVarK),
+                   KPow(KAdd(KB_p), KAdd(KC, KMult(-1_e, KVarK))))),
+        ctx));
+    Parametric::Explicit(e);
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Poincare::Internal

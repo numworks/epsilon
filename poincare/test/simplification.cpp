@@ -71,6 +71,9 @@ QUIZ_CASE(pcj_simplification_expansion) {
             KList(KDep(KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e)),
                        KDepList(KMult("a"_e, KAdd("b"_e, "c"_e)))),
                   KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e))));
+  expand_to(
+      KPow(KAdd(2_e, π_e), 3_e),
+      KAdd(8_e, KMult(12_e, π_e), KMult(6_e, KPow(π_e, 2_e)), KPow(π_e, 3_e)));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {

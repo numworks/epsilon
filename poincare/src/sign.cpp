@@ -1,5 +1,6 @@
 #include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/number.h>
@@ -389,6 +390,17 @@ ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
   }
   difference->removeTree();
   return result;
+}
+
+ComplexSign SignOfTreeOrApproximation(const Tree* e) {
+  ComplexSign sign = GetComplexSign(e);
+  if (sign.realSign().isUnknown()) {
+    Tree* approximation = Approximation::RootTreeToTree<double>(e);
+    sign = GetComplexSign(approximation);
+    approximation->removeTree();
+    // TODO: what if the sign is still unknown after approximating?
+  }
+  return sign;
 }
 
 }  // namespace Internal

@@ -44,6 +44,9 @@ class Approximation final {
 
     void setLocalValue(VariableType value) { m_localVariable = value; }
 
+    /* TODO: most members of the context will not change and are needlessly
+     * copied when building parent context chains. We should have an independant
+     * variable chain instead. */
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
 

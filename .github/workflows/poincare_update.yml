@@ -75,12 +75,3 @@ jobs:
             }
       - name: Check for failures
         run: "! grep --silent broken comment.md"
-      - name: Upload logs
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test_results.zip
-          path: |
-            ancestor.csv
-            head.csv
-          retention-days: 7

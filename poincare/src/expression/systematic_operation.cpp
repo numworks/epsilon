@@ -459,21 +459,31 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     e->cloneTreeOverTree(1_e);
     return true;
   }
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      (ctx.getTree(KB)->isZero() ||
-       (ctx.getTree(KA)->isRational() &&
-        ((ctx.getTree(KB)->isRational() && !ctx.getTree(KB)->isInteger()) ||
-         !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA)))))) {
-    /* 0^y and x^(a/b) are expected to have a unique representation :
-     * - 0^y is either 0 or undef
-     * - (p/q)^(a/b) is p^(a/b)*q^(-a/b) (and then fallback on next step)
-     * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive
-     *   integers and c < b.
-     * Fallback on Power implementation for that : exp(a*ln(b)) -> b^a */
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
-    assert(!e->isExp());
-    return true;
+  if (child->isMult()) {
+    PatternMatching::Context ctx;
+    if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
+        (ctx.getTree(KB)->isZero() ||
+         (ctx.getTree(KA)->isRational() &&
+          ((ctx.getTree(KB)->isRational() && !ctx.getTree(KB)->isInteger()) ||
+           !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA)))))) {
+      /* 0^y and x^(a/b) are expected to have a unique representation :
+       * - 0^y is either 0 or undef
+       * - (p/q)^(a/b) is p^(a/b)*q^(-a/b) (and then fallback on next step)
+       * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive
+       *   integers and c < b.
+       * Fallback on Power implementation for that : exp(a*ln(b)) -> b^a */
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
+      assert(!e->isExp());
+      return true;
+    }
+    /* This last step shortcuts at least three advanced reduction steps and is
+     * quite common when manipulating roots of negatives.
+     * TODO: Deactivate it if advanced reduction is strong enough. */
+    if (PatternMatching::MatchReplaceSimplify(
+            e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KMult(π_e, i_e), KB_s))),
+            KMult(i_e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s)))))) {
+      return true;
+    }
   }
   return false;
 }

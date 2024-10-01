@@ -743,6 +743,9 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("4/√(2)", "2*√(2)");
   simplifies_to("1/√(2)", "√(2)/2");
   simplifies_to("√(2)/2", "√(2)/2");
+  simplifies_to("√(-12)/2", "√(3)×i", cartesianCtx);
+  // TODO: Should simplify to -2+√(3)×i (same metric)
+  simplifies_to("-2+√(-12)/2", "-2+√(-12)/2", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_float) {

@@ -22,6 +22,7 @@ class Trigonometry final {
   static bool ExpandTrigonometric(Tree* e);
   TREE_REF_WRAP(ExpandTrigonometric);
 
+  static bool ReduceArgumentToPrincipal(Tree* e);
   static Type GetInverseType(Type type);
 
  private:

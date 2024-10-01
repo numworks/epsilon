@@ -131,7 +131,8 @@ static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
 }
 
 static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
-  assert(TypeBlock::IsDirectTrigonometryFunction(type) &&
+  assert((TypeBlock::IsDirectTrigonometryFunction(type) ||
+          TypeBlock::IsArg(type)) &&
          !TypeBlock::IsTrig(type));
   assert(piFactor && piFactor->isRational());
   /* x = piFactor * π
@@ -150,23 +151,48 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
    * (since atan ∈ ]-π/2,π/2[ and we ignore undefined values for x=n*π/2)
    * Compute k = ⌊piFactor + 1/2⌋
    * if k is even, atan(tan(x)) = π*(piFactor-k)
-   * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(piFactor-k) */
+   * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(piFactor-k)
+   *
+   * For arg: look for equivalent angle in ]-π,π]
+   * (since principal argument ∈ ]-π,π])
+   * Compute k = ⌈piFactor⌉
+   * if k is even, Arg(exp(i*x)) = π*(piFactor-k)
+   * if k is odd, Arg(exp(i*x)) = π*(piFactor-k+1) */
   Tree* res = PatternMatching::CreateSimplify(
-      type == Type::Cos ? KFloor(KA) : KFloor(KAdd(KA, 1_e / 2_e)),
+      type == Type::Cos   ? KFloor(KA)
+      : type == Type::Arg ? KMult(-1_e, KFloor(KMult(-1_e, KA)))
+                          : KFloor(KAdd(KA, 1_e / 2_e)),
       {.KA = piFactor});
   assert(res->isInteger());
   bool kIsEven = Integer::Handler(res).isEven();
   res->moveTreeOverTree(PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
   if (!kIsEven && type != Type::Tan) {
-    res->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
+    if (type != Type::Arg) {
+      res->moveTreeOverTree(
+          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
+    }
     if (type != Type::Sin) {
       res->moveTreeOverTree(
           PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
     }
   }
   return res;
+}
+
+/* Reduce to principal argument in ]-π,π] if the argument is of the form
+ * r*π with r rational */
+bool ReduceArgumentToPrincipal(Tree* e) {
+  assert(GetComplexSign(e).isReal());
+  const Tree* piFactor = getPiFactor(e);
+  if (piFactor) {
+    Tree* simplifiedPiFactor = computeSimplifiedPiFactor(piFactor);
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KMult(KA, π_e), {.KA = simplifiedPiFactor}));
+    e->nextTree()->removeTree();
+    return true;
+  }
+  return false;
 }
 
 bool Trigonometry::ReduceTrig(Tree* e) {

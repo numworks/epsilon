@@ -45,9 +45,7 @@ const Tree* getExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   Tree* reducedAngle = SharedTreeStack->pushMult(2);
   Rational::Push(n, 120);
   SharedTreeStack->pushPi();
-  if (n == 0) {
-    reducedAngle->cloneTreeOverTree(0_e);
-  }
+  SystematicReduction::DeepReduce(reducedAngle);
   const Tree* result = ExactFormula::GetTrigOf(reducedAngle, isSin);
   reducedAngle->removeTree();
   return result;

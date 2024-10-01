@@ -723,6 +723,8 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     displayApproximateSolution = true;
   } else {
     assert(type == SolutionType::Formal || type == SolutionType::Exact);
+    UserExpression* approximatePointer =
+        type == SolutionType::Formal ? nullptr : &approximate;
     Preferences::UnitFormat unitFormat =
         GlobalPreferences::SharedGlobalPreferences()->unitFormat();
     SymbolicComputation symbolicComputation =
@@ -730,7 +732,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
     simplifyAndApproximateSolution(
-        e, &exact, &approximate, approximateDuringReduction, context,
+        e, &exact, approximatePointer, approximateDuringReduction, context,
         m_complexFormat, angleUnit, unitFormat, symbolicComputation);
     displayExactSolution =
         approximateDuringReduction ||
@@ -742,13 +744,13 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
        * Re-reduce but force approximating during redution. */
       exact = UserExpression();
       approximate = UserExpression();
-      simplifyAndApproximateSolution(e, &exact, &approximate, true, context,
-                                     m_complexFormat, angleUnit, unitFormat,
-                                     symbolicComputation);
+      simplifyAndApproximateSolution(e, &exact, approximatePointer, true,
+                                     context, m_complexFormat, angleUnit,
+                                     unitFormat, symbolicComputation);
       displayExactSolution = true;
     }
   }
-  if (approximate.isNonReal()) {
+  if (!approximate.isUninitialized() && approximate.isNonReal()) {
     return Error::EquationNonReal;
   }
   if (type != SolutionType::Formal && approximate.isUndefined()) {

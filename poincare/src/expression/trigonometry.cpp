@@ -114,7 +114,7 @@ const Tree* getPiFactor(const Tree* e) {
 static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
   assert(piFactor && piFactor->isRational());
   /* x = piFactor * π
-   * Look for equivalent angle in [0,2π]
+   * Look for equivalent angle in [0,2π[
    * Compute k = ⌊piFactor⌋
    * if k is even, x = π*(piFactor-k)
    * if k is odd, x = π*(piFactor-k+1) */
@@ -146,7 +146,8 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
    * if k is even, asin(sin(x)) = π*(piFactor-k)
    * if k is odd, asin(sin(x)) = asin(sin(π-x)) = π*(k-piFactor)
 
-   * For tan: look for equivalent angle in [-π/2,π/2] (since atan ∈ [-π/2,π/2])
+   * For tan: look for equivalent angle in [-π/2,π/2]
+   * (since atan ∈ ]-π/2,π/2[ and we ignore undefined values for x=n*π/2)
    * Compute k = ⌊piFactor + 1/2⌋
    * if k is even, atan(tan(x)) = π*(piFactor-k)
    * if k is odd, atan(tan(x)) = atan(tan(x+π)) = π*(piFactor-k) */
@@ -226,8 +227,8 @@ bool Trigonometry::ReduceTrig(Tree* e) {
      * asin(sin(...)) is more interesting than the simplification of
      * sin(acos(x)).
      * Same with atan(tan(asin)), atan(tan(acos)), acos(cos(asin)).
-     * Maybe we should move this transformation (sin(asin(x)) and cos(acos(x)))
-     * to advanced reduction.*/
+     * Maybe we should move this transformation (sin(asin(x)) and
+     * cos(acos(x))) to advanced reduction.*/
     changed = true;
   } else if (Infinity::IsPlusOrMinusInfinity(firstArgument)) {
     // sin(±inf) = cos(±inf) = undef
@@ -451,8 +452,8 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 
 bool Trigonometry::ContractTrigonometric(Tree* e) {
   /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be changing
-   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
-   * both way would lead to infinite possible contractions. */
+   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and
+   * having both way would lead to infinite possible contractions. */
   return
       // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
       PatternMatching::MatchReplaceSimplify(

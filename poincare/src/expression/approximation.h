@@ -36,13 +36,10 @@ class Approximation final {
     Context(const Context* parentContext, VariableType abscissa);
 
     VariableType variable(uint8_t index) const {
-      if (index == 0) {
-        return m_localVariable;
-      }
-      if (m_parentContext) {
-        return m_parentContext->variable(index - 1);
-      }
-      return NAN;
+      return index == 0
+                 ? m_localVariable
+                 : (m_parentContext ? m_parentContext->variable(index - 1)
+                                    : NAN);
     }
 
     void setLocalValue(VariableType value) { m_localVariable = value; }

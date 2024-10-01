@@ -426,10 +426,10 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | A?×\|B\|×\|C\|×D? | A×\|BC\|×D |
 | \|A×B?\| | \|A\|×\|B\| |
 | \|A\| | exp(ln(re(A)^2+im(A)^2)/2) |
-| exp(A?×i×B?) | cos(A×B) + sin(A×B)×i |
+| exp(A?×i) | cos(A) + sin(A)×i |
 | exp(A + B?) | exp(A)×exp(B) |
 | A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
-| A? + cos(B) + C? + i×sin(B) + D? | A + C + D + exp(B×i) |
+| A? + cos(B) + C? + sin(B)×i + D? | A + C + D + exp(B×i) |
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
 | (A? + B)^2 | (A^2 + 2×A×B + B^2) |
@@ -440,8 +440,8 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | ln(12/7) | 2×ln(2) + ln(3) - ln(7) |
 | ln(A×B?) | ln(A) + ln(B) - (arg(A) + arg(B) - arg(AB))×i |
 | ln(A^B) | B×ln(A) - (B×arg(A) - arg(A^B))×i |
-| i×(B×arg(A) - arg(A^B)) | k×2π×i (when k can be found) |
-| i×(arg(A) + arg(B) - arg(A×B)) | k×2π×i (when k can be found) |
+| (B×arg(A) - arg(A^B))×i | k×2π×i (when k can be found) |
+| (arg(A) + arg(B) - arg(A×B))×i | k×2π×i (when k can be found) |
 | A? + cos(B)^2 + C? + sin(D)^2 + E? | 1 + A + C + E |
 | A?×Trig(B, C)×D?×Trig(E, F)×G? | 0.5×A×D×(Trig(B - E, TrigDiff(C, F)) + Trig(B + E, C + F))×G |
 | Trig(A? + B, C) | Trig(A, 0)×Trig(B, C) + Trig(A, 1)×Trig(B, C-1) |

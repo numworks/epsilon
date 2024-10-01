@@ -307,10 +307,10 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   bool absReduced = SystematicReduction::ShallowReduce(abs);
   Tree* exp = SharedTreeStack->pushExp();
   Tree* mult = SharedTreeStack->pushMult(2);
-  SharedTreeStack->pushComplexI();
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
   bool argReduced = SystematicReduction::ShallowReduce(arg);
+  SharedTreeStack->pushComplexI();
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&
                                Dependency::ShallowBubbleUpDependencies(exp);
@@ -330,7 +330,7 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
     // abs and arg pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;
     bool find = PatternMatching::Match(polarForm,
-                                       KMult(KA, KExp(KMult(i_e, KB))), &ctx);
+                                       KMult(KA, KExp(KMult(KB, i_e))), &ctx);
     assert(find);
     abs = const_cast<Tree*>(ctx.getTree(KA));
     arg = const_cast<Tree*>(ctx.getTree(KB));

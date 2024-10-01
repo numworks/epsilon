@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <escher/abstract_text_field.h>
 #include <poincare/layout.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <string.h>
@@ -138,7 +139,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
       }
     } else if (Poincare::Preferences::SharedPreferences()->editionMode() ==
                Poincare::Preferences::EditionMode::Edition1D) {
-      char buffer[128];  // TODO
+      char buffer[AbstractTextField::MaxBufferSize()];
       size_t len = resultLayout.serialize(buffer, sizeof(buffer));
       resultLayout = Layout::String(buffer, len);
     }
@@ -176,8 +177,8 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
     App::app()->modalViewController()->dismissModal();
     if (Poincare::Preferences::SharedPreferences()->editionMode() ==
         Poincare::Preferences::EditionMode::Edition1D) {
-      char buffer[128];  // TODO
-      size_t len = layout.serialize(buffer, sizeof(buffer));
+      char buffer[AbstractTextField::MaxBufferSize()];
+      layout.serialize(buffer, sizeof(buffer));
       sender()->handleEventWithText(buffer);
     } else {
       sender()->handleEventWithLayout(layout);

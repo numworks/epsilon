@@ -171,18 +171,21 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
 
   // Binomial theorem
   if (PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
-      ctx.getTree(KC)->isPositiveInteger()) {
+      ctx.getTree(KC)->isInteger() && !ctx.getTree(KC)->isMinusOne()) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KAdd(KPow(KA, KC),
-             KSum("k"_e, 1_e, KAdd(KC, -1_e),
-                  KMult(KBinomial(KC, KVarK), KPow(KA, KVarK),
-                        KPow(KAdd(KB_p), KAdd(KC, KMult(-1_e, KVarK))))),
-             KPow(KAdd(KB_p), KC)),
+        KPow(KAdd(KPow(KA, KAbs(KC)),
+                  KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
+                       KMult(KBinomial(KAbs(KC), KVarK), KPow(KA, KVarK),
+                             KPow(KAdd(KB_p),
+                                  KAdd(KAbs(KC), KMult(-1_e, KVarK))))),
+                  KPow(KAdd(KB_p), KAbs(KC))),
+             KSign(KC)),
         ctx));
     Parametric::Explicit(e);
     return true;
   }
+
   return false;
 }
 

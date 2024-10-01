@@ -71,9 +71,6 @@ QUIZ_CASE(pcj_simplification_expansion) {
             KList(KDep(KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e)),
                        KDepList(KMult("a"_e, KAdd("b"_e, "c"_e)))),
                   KAdd(KMult("a"_e, "b"_e), KMult("a"_e, "c"_e))));
-  expand_to(
-      KPow(KAdd(2_e, π_e), 3_e),
-      KAdd(8_e, KMult(12_e, π_e), KMult(6_e, KPow(π_e, 2_e)), KPow(π_e, 3_e)));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
@@ -1181,6 +1178,8 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
       "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
+  simplifies_to("1/(i-1)^2", "1/2×i");
+  simplifies_to("(x+y)^3-x^3-y^3", "3*y^2*x+3*y*x^2");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

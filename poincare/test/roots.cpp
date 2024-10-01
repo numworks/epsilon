@@ -49,7 +49,7 @@ QUIZ_CASE(pcj_roots) {
                    "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2}");
   assert_roots_are("{1, 0, 1}", "{-i,i}");
 
-  assert_roots_are("{1, undef, 0, 0}", "{}");
+  assert_roots_are("{1, undef, 0, 0}", "undef");
   assert_roots_are("{0, 1, 0, 1}", "{-i,i}");
   assert_roots_are("{1, -2, 1, 0}", "{1,0}");
   assert_roots_are("{1,-x-1,x,0}",

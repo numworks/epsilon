@@ -2,6 +2,7 @@
 #define POINCARE_NUMERIC_ROOTS_H
 
 #include <poincare/old/computation_context.h>
+#include <poincare/sign.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
@@ -29,33 +30,30 @@ class Roots {
  public:
   // Return the only root.
   static Tree* Linear(const Tree* a, const Tree* b);
-  /* Return a list of one or two roots, in decreasing order
-   *   delta can be provided or will be computed */
+
+  /* Return a list of one or two roots, in decreasing order.
+   * Delta can be provided or will be computed. */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
                          const Tree* discriminant = nullptr);
   static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
                                      const Tree* c);
 
+  /* Return a list of at most three roots, in decreasing order.
+   * Delta can be provided or will be computed. */
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                     const Tree* discriminant = nullptr);
+                     const Tree* preComputedDiscriminant = nullptr);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
 
  private:
-  constexpr static int k_maxNumberOfNodesBeforeApproximatingDelta = 16;
-
+  // (-1 + i√(3)) / 2
   static constexpr KTree k_cubeRootOfUnity1 = KMult(
       KPow(2_e, -1_e), KAdd(-1_e, KMult(KPow(3_e, KPow(2_e, -1_e)), i_e)));
 
+  // (-1 - i√(3)) / 2
   static constexpr KTree k_cubeRootOfUnity2 =
       KMult(KPow(2_e, -1_e),
             KAdd(-1_e, KMult(-1_e, KPow(3_e, KPow(2_e, -1_e)), i_e)));
-
-  static Tree* CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
-                                            const Tree* c, const Tree* d,
-                                            Tree* r);
-  static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
-                                                        const Tree* d);
 
   template <typename EvaluationMethod = DefaultEvaluation>
   static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,
@@ -66,14 +64,30 @@ class Roots {
     return isZero;
   }
 
+  static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
+                                                        const Tree* d);
+
+  static Tree* SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
+                                const Tree* d);
   static Tree* RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
                                   const Tree* d);
   static Tree* SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
                              const Tree* d);
 
-  static Tree* CardanoNumber(const Tree* delta0, const Tree* delta1,
-                             bool* approximate,
-                             const ReductionContext& reductionContext);
+  static Tree* CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
+                                            const Tree* c, const Tree* d,
+                                            Tree* r);
+
+  static Tree* CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
+                             const Tree* d, const Tree* delta);
+  static Tree* CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
+                                          const Tree* c, const Tree* d);
+  static Tree* Delta0(const Tree* a, const Tree* b, const Tree* c);
+  static Tree* Delta1(const Tree* a, const Tree* b, const Tree* c,
+                      const Tree* d);
+  static Tree* CardanoNumber(const Tree* delta0, const Tree* delta1);
+  static Tree* CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
+                           const Tree* delta0, uint8_t k);
 
 #if 0
   static int LinearPolynomialRoots(OExpression a, OExpression b,

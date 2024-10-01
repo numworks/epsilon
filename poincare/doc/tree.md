@@ -180,7 +180,7 @@ KTrees are a collective name for a collection of constexpr constructors defined 
 They have the name of the node prefixed by K and can be nested to create the tree you would expect:
 
 ```cpp
-constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, i_e, π_e)); // exp(2*i*π)
+constexpr const Tree * k_immutableExpression = KExp(KMult(2_e, π_e, i_e)); // exp(2*π*i)
 ```
 
 ### Literals

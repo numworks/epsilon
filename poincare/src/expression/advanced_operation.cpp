@@ -16,7 +16,7 @@ bool AdvancedOperation::ContractImRe(Tree* e) {
 
 bool ExpandImReIfNotInfinite(Tree* e) {
   PatternMatching::Context ctx;
-  // A? + B?*im(C)*D? + E? = A - i*B*C*D + i*B*re(C)*D + E
+  // A? + B?*im(C)*D? + E? = A - B*C*D*i + B*re(C)*D*i + E
   if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_s),
                              &ctx)) {
     const Tree* kc = ctx.getTree(KC);
@@ -27,13 +27,13 @@ bool ExpandImReIfNotInfinite(Tree* e) {
     if (realSign.isFinite() &&
         (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KAdd(KA_s, KMult(-1_e, i_e, KB_s, KC, KD_s),
-               KMult(i_e, KB_s, KRe(KC), KD_s), KE_s),
+          KAdd(KA_s, KMult(-1_e, KB_s, KC, KD_s, i_e),
+               KMult(KB_s, KRe(KC), KD_s, i_e), KE_s),
           ctx));
       return true;
     }
   }
-  // A? + B?*re(C)*D? + E? = A + B*C*D - i*B*im(C)*D + E
+  // A? + B?*re(C)*D? + E? = A + B*C*D - B*im(C)*D*i + E
   if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KRe(KC), KD_s), KE_s),
                              &ctx)) {
     const Tree* kc = ctx.getTree(KC);
@@ -45,7 +45,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
         (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KAdd(KA_s, KMult(KB_s, KC, KD_s),
-               KMult(-1_e, i_e, KB_s, KIm(KC), KD_s), KE_s),
+               KMult(-1_e, KB_s, KIm(KC), KD_s, i_e), KE_s),
           ctx));
       return true;
     }
@@ -95,11 +95,11 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
 
 bool AdvancedOperation::ExpandExp(Tree* e) {
   return
-      // exp(A?*i*B?) = cos(A*B) + i*sin(A*B)
+      // exp(A?*i*B?) = cos(A*B) + sin(A*B)*i
       PatternMatching::MatchReplaceSimplify(
           e, KExp(KMult(KA_s, i_e, KB_s)),
           KAdd(KTrig(KMult(KA_s, KB_s), 0_e),
-               KMult(i_e, KTrig(KMult(KA_s, KB_s), 1_e)))) ||
+               KMult(KTrig(KMult(KA_s, KB_s), 1_e), i_e))) ||
       // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceSimplify(
           e, KExp(KAdd(KA, KB_p)), KMult(KExp(KA), KExp(KAdd(KB_p)))) ||
@@ -116,10 +116,10 @@ bool AdvancedOperation::ContractExp(Tree* e) {
       PatternMatching::MatchReplaceSimplify(
           e, KMult(KA_s, KExp(KB), KExp(KC), KD_s),
           KMult(KA_s, KExp(KAdd(KB, KC)), KD_s)) ||
-      // A? + cos(B) + C? + i*sin(B) + D? = A + C + D + exp(i*B)
+      // A? + cos(B) + C? + i*sin(B) + D? = A + C + D + exp(B*i)
       PatternMatching::MatchReplaceSimplify(
           e, KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(i_e, KTrig(KB, 1_e)), KD_s),
-          KAdd(KA_s, KC_s, KD_s, KExp(KMult(i_e, KB))));
+          KAdd(KA_s, KC_s, KD_s, KExp(KMult(KB, i_e))));
 }
 
 bool AdvancedOperation::ExpandMult(Tree* e) {
@@ -148,13 +148,13 @@ bool AdvancedOperation::ContractMult(Tree* e) {
 bool AdvancedOperation::ExpandPower(Tree* e) {
   // (A?*B)^C = A^C * B^C is currently in SystematicSimplification
   PatternMatching::Context ctx;
-  // 1/(A+iB) -> (A-iB) / (A^2+B^2)
+  // 1/(A+iB) -> (A-B*i) / (A^2+B^2)
   if (PatternMatching::Match(e, KPow(KA, -1_e), &ctx)) {
     ComplexSign s = GetComplexSign(ctx.getTree(KA));
     // Filter out infinite and pure expressions for useful and accurate results
     if (!s.isPure() && !s.canBeInfinite()) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KAdd(KRe(KA), KMult(-1_e, i_e, KIm(KA))),
+          KMult(KAdd(KRe(KA), KMult(-1_e, KIm(KA), i_e)),
                 KPow(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)), -1_e)),
           ctx));
       return true;

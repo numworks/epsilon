@@ -180,7 +180,7 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 | ceil(A) | -floor(-A) |
 | frac(A) | A - floor(A) |
 | e | exp(1) |
-| conj(A) | re(A)-i×im(A) |
+| conj(A) | re(A)-im(A)×i |
 | - A | (-1)×A |
 | A - B | A + (-1)×B |
 | A / B | A×B^-1 |
@@ -426,22 +426,22 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | A?×\|B\|×\|C\|×D? | A×\|BC\|×D |
 | \|A×B?\| | \|A\|×\|B\| |
 | \|A\| | exp(ln(re(A)^2+im(A)^2)/2) |
-| exp(A?×i×B?) | cos(A×B) + i×sin(A×B) |
+| exp(A?×i×B?) | cos(A×B) + sin(A×B)×i |
 | exp(A + B?) | exp(A)×exp(B) |
 | A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
-| A? + cos(B) + C? + i×sin(B) + D? | A + C + D + exp(i×B) |
+| A? + cos(B) + C? + i×sin(B) + D? | A + C + D + exp(B×i) |
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
 | (A? + B)^2 | (A^2 + 2×A×B + B^2) |
 | (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
 | 1/A with A not pure and never infinite | conj(A)/(A*conj(A)) |
-| A×ln(B) (with A integer) | ln(B^A) + i×(A×arg(B) - arg(B^A)) |
-| A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E + i×(arg(B) + arg(D) - arg(BD)) |
+| A×ln(B) (with A integer) | ln(B^A) + (A×arg(B) - arg(B^A))×i |
+| A? + ln(B) + C? + ln(D) + E? | A + C + ln(BD) + E + (arg(B) + arg(D) - arg(BD))×i |
 | ln(12/7) | 2×ln(2) + ln(3) - ln(7) |
-| ln(A×B?) | ln(A) + ln(B) - i×(arg(A) + arg(B) - arg(AB)) |
-| ln(A^B) | B×ln(A) - i×( B×arg(A) - arg(A^B)) |
-| i×(B×arg(A) - arg(A^B)) | i×k×2π (when k can be found) |
-| i×(arg(A) + arg(B) - arg(A×B)) | i×k×2π (when k can be found) |
+| ln(A×B?) | ln(A) + ln(B) - (arg(A) + arg(B) - arg(AB))×i |
+| ln(A^B) | B×ln(A) - (B×arg(A) - arg(A^B))×i |
+| i×(B×arg(A) - arg(A^B)) | k×2π×i (when k can be found) |
+| i×(arg(A) + arg(B) - arg(A×B)) | k×2π×i (when k can be found) |
 | A? + cos(B)^2 + C? + sin(D)^2 + E? | 1 + A + C + E |
 | A?×Trig(B, C)×D?×Trig(E, F)×G? | 0.5×A×D×(Trig(B - E, TrigDiff(C, F)) + Trig(B + E, C + F))×G |
 | Trig(A? + B, C) | Trig(A, 0)×Trig(B, C) + Trig(A, 1)×Trig(B, C-1) |
@@ -458,8 +458,8 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | re(x + y) | re(x) + re(z) |
 | im(x×y) | im(x)re(y) + re(x)im(y) |
 | re(x×y) | re(x)re(y) - im(x)im(y) |
-| A? + B?×im(C)×D? + E? | A - i×BCD + i×B×re(C)×D + E |
-| A? + B?×re(C)×D? + E? | A + BCD - i×B×im(C)×D + E |
+| A? + B?×im(C)×D? + E? | A - BCD×i + B×re(C)×D×i + E |
+| A? + B?×re(C)×D? + E? | A + BCD - B×im(C)×D×i + E |
 
 </details>
 

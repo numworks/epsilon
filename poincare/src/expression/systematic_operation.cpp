@@ -354,7 +354,7 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   if (!isRe) {
     // Add -i factor to children extracted from imaginary part
     PatternMatching::MatchReplaceSimplify(extractedChildren, KA,
-                                          KMult(-1_e, i_e, KA));
+                                          KMult(-1_e, KA, i_e));
   }
   // Combine remaining children with detached ones
   e->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -481,7 +481,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
      * TODO: Deactivate it if advanced reduction is strong enough. */
     if (PatternMatching::MatchReplaceSimplify(
             e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KMult(π_e, i_e), KB_s))),
-            KMult(i_e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s)))))) {
+            KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;
     }
   }

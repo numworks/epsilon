@@ -56,7 +56,7 @@ QUIZ_CASE(pcj_polynomial_variables) {
       KSet("x"_e, KPow("y"_e, -1_e)));
   assert_trees_are_equal(
       PolynomialParser::GetVariables(KAdd(
-          KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), "x"_e), KMult(i_e, π_e))),
+          KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), "x"_e), KMult(π_e, i_e))),
       KSet("x"_e));
 }
 

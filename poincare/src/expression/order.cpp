@@ -89,6 +89,7 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
       return comparePowerChild;
     }
     if (type1 == Type::ComplexI) {
+      // i is always last.
       return 1;
     }
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication

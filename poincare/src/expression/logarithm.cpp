@@ -184,26 +184,26 @@ Tree* PushIK2Pi(int k) {
 }
 
 Tree* PushProductCorrection(const Tree* a, const Tree* b) {
-  // B*ln(A) - ln(A^B) = i*k*2π = i*(B*arg(A) - arg(A^B))
+  // B*ln(A) - ln(A^B) = k*2π*i = (B*arg(A) - arg(A^B))*i
   int k;
   if (CanGetArgProdModulo(a, b, &k)) {
     return PushIK2Pi(k);
   }
   // Push B*arg(A) - arg(A^B)
   return PatternMatching::CreateSimplify(
-      KMult(i_e, KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB))))),
+      KMult(KAdd(KMult(KB, KArg(KA)), KMult(-1_e, KArg(KPow(KA, KB)))), i_e),
       {.KA = a, .KB = b});
 }
 
 Tree* PushAdditionCorrection(const Tree* a, const Tree* b) {
-  // ln(A) + ln(B) - ln(A*B) = i*k*2π = i*(arg(A) + arg(B) - arg(A*B))
+  // ln(A) + ln(B) - ln(A*B) = k*2π*i = (arg(A) + arg(B) - arg(A*B))*i
   int k;
   if (CanGetArgSumModulo(a, b, &k)) {
     return PushIK2Pi(k);
   }
   // Push arg(A) + arg(B) - arg(AB)
   return PatternMatching::CreateSimplify(
-      KMult(i_e, KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB))))),
+      KMult(KAdd(KArg(KA), KArg(KB), KMult(-1_e, KArg(KMult(KA, KB)))), i_e),
       {.KA = a, .KB = b});
 }
 

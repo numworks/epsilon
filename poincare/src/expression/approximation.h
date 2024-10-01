@@ -242,6 +242,12 @@ class Approximation final {
   template <typename T>
   static T ApproximateDerivative(const Tree* function, T at, int order,
                                  const Context* ctx);
+
+  template <typename T>
+  static T ApproximateRandom(const Tree* random, const Context* ctx);
+  template <typename T>
+  static T ApproximateRandomHelper(const Tree* randomTree, const Context* ctx);
+
   template <typename T>
   static std::complex<T> ApproximatePower(const Tree* power,
                                           const Context* ctx);

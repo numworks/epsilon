@@ -316,8 +316,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
 
   if (e->isRandomized()) {
-    return Random::Approximate<T>(e, ctx->m_randomContext,
-                                  ctx ? ctx->m_listElement : -1, ctx);
+    return ApproximateRandom<T>(e, ctx);
   }
   switch (e->type()) {
     case Type::Parentheses:

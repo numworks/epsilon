@@ -44,20 +44,15 @@ class Random {
     assert(randomTree->isRandomized());
     return randomTree->nodeValue(0);
   }
+
   template <typename T>
-  static T Approximate(const Tree* randomTree, Context* context,
-                       int listElement, const void* approxCtx);
+  static T RandomInt(T a, T b);
 
  private:
-  template <typename T>
-  static T PrivateApproximate(const Tree* randomTree, Context* context,
-                              int listElement, const void* approxCtx);
   static void SetSeed(Tree* randomTree, uint8_t seed) {
     assert(randomTree->isRandomized() && GetSeed(randomTree) == 0);
     randomTree->setNodeValue(0, seed);
   }
-  template <typename T>
-  static T RandomInt(T a, T b);
 };
 
 }  // namespace Poincare::Internal

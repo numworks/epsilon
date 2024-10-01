@@ -388,7 +388,7 @@ _sources_poincare_test := $(addprefix test/, \
   sign.cpp \
   simplification.cpp \
   tree_stack.cpp \
-	trigonometry_exact_formulas.cpp \
+  trigonometry_exact_formulas.cpp \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
 ) \

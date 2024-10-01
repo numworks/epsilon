@@ -374,8 +374,8 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   if (!argSign.isReal()) {
     return false;
   }
-  bool argIsOpposed =
-      !argSign.realSign().isNull() && argSign.realSign().isNegative();
+  bool argIsOpposed = argSign.realSign().canBeStrictlyNegative() &&
+                      !argSign.realSign().canBeStrictlyPositive();
   bool changed = argIsOpposed;
   if (argIsOpposed) {
     PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));

@@ -42,6 +42,7 @@ void VariableArray<N>::fillWithList(const Tree* list) {
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {
+  // TODO: Context is quite large and this copy could be optimized.
   Context firstContext = *context;
   firstContext.overrideUserVariables = false;
   projectionContext.m_symbolic =

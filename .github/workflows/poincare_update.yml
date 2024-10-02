@@ -65,13 +65,36 @@ jobs:
           script: |
             var fs = require('fs');
             var comment = fs.readFileSync('./comment.md').toString().trim();
-            if (comment) {
+
+            const body = "### Poincare tests\n\n" + comment
+            const pr_number = context.issue.number
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const oldComments = await github.paginate(
+              github.rest.issues.listComments,
+              {
+                owner, repo,
+                issue_number: pr_number,
+              }
+            );
+
+            const commentToUpdate = oldComments.findLast(comment =>
+              comment.user.login === 'github-actions[bot]' && comment.body.startsWith(body.slice(0,10))
+            )
+
+            if (commentToUpdate) {
+              await github.rest.issues.updateComment({
+                owner, repo, body,
+                comment_id: commentToUpdate.id,
+              });
+            } else {
               await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: "### Poincare tests\n\n" + comment
+                owner, repo, body,
+                issue_number: pr_number,
               });
             }
+
       - name: Check for failures
         run: "! grep --silent broken comment.md"

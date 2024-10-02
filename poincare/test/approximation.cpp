@@ -279,9 +279,14 @@ QUIZ_CASE(pcj_approximation_trigonometry) {
 
 QUIZ_CASE(pcj_approximation_arithmetic) {
   approximates_to<float>("floor(π)", "3");
+  approximates_to<float>("floor(-π)", "-4");
   approximates_to<float>("log(floor(2^64),2)", "64");
   // TODO_PCJ: this test returns nonreal with emscripten
   // approximates_to<float>("floor(1+i)", "undef");
+  approximates_to<float>("ceil(3)", "3");
+  approximates_to<float>("ceil(π)", "4");
+  approximates_to<float>("ceil(-π)", "-3");
+  approximates_to<float>("ceil(1+i)", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_parametrics) {

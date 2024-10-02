@@ -1,0 +1,67 @@
+name: Clean-up artifacts
+
+on:
+  pull_request:
+   types:
+     - closed
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Clean-up artifacts'
+        id: cleanup-artifacts
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+            const branch = context.payload.pull_request.head.ref;
+
+            // Get workflow runs associated with this PR's branch
+            const workflowRuns = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              {
+                owner,
+                repo,
+                branch,
+                event: 'pull_request',
+              });
+
+            // Filter workflow runs triggered by the specific PR
+            const prWorkflowRuns = workflowRuns.filter(
+              run => run.pull_requests.some(pr => pr.number === pull_number)
+            );
+
+            if (prWorkflowRuns.length === 0) {
+              console.log(`No workflow runs found for PR #${pull_number}`);
+              return;
+            }
+
+            async function deleteArtifactById(artifactId) {
+              try {
+                await github.rest.actions.deleteArtifact({
+                  owner,
+                  repo,
+                  artifact_id: artifactId
+                });
+                console.log(`Deleted artifact with ID: ${artifactId}`);
+              } catch (error) {
+                console.log(`Failed to delete artifact with ID: ${artifactId}, Error: ${error.message}`);
+              }
+            }
+
+            for (const run of prWorkflowRuns) {
+              const artifacts = await github.paginate(
+                github.rest.actions.listWorkflowRunArtifacts,
+                {
+                  owner,
+                  repo,
+                  run_id: run.id,
+                });
+              for (const artifact of artifacts) {
+                await deleteArtifactById(artifact.id);
+              }
+            }

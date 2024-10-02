@@ -1181,6 +1181,8 @@ QUIZ_CASE(pcj_simplification_advanced) {
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {
+  simplifies_to("log(3,27)", "1/3");
+  simplifies_to("log(27,3)", "3");
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)",

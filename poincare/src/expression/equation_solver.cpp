@@ -437,7 +437,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */
   SystematicReduction::DeepReduce(eq);
-  AdvancedReduction::DeepExpand(eq);
+  AdvancedReduction::DeepExpandAlgebraic(eq);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?

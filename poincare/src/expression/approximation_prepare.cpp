@@ -36,7 +36,7 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Variables::Replace(tree, 0, value, false, true);
   /* We need to remove the constant part by expanding polynomials introduced by
    * the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
-  AdvancedReduction::DeepExpand(tree);
+  AdvancedReduction::DeepExpandAlgebraic(tree);
   value->removeTree();
   return value;
 }

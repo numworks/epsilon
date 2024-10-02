@@ -406,7 +406,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
 }
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
-  assert(!AdvancedReduction::DeepExpand(e) && !e->isDep());
+  assert(!AdvancedReduction::DeepExpandAlgebraic(e) && !e->isDep());
   Type type = e->type();
   ExceptionTry {
     TreeRef polynomial;
@@ -495,7 +495,7 @@ void addChildToNAryWithDependencies(Tree* nary, const Tree* child,
 Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
   Tree* poly = e->cloneTree();
-  AdvancedReduction::DeepExpand(poly);
+  AdvancedReduction::DeepExpandAlgebraic(poly);
   TreeRef depList;
   if (poly->isDep()) {
     poly->removeNode();

@@ -85,7 +85,7 @@ int Degree::Get(const Tree* e, const Tree* symbol) {
   // Expand the expression for a more accurate degree.
   Tree* clone = e->cloneTree();
   SystematicReduction::DeepReduce(clone);
-  AdvancedReduction::DeepExpand(clone);
+  AdvancedReduction::DeepExpandAlgebraic(clone);
   int degree = PrivateGet(clone, symbol);
   clone->removeTree();
   return degree;

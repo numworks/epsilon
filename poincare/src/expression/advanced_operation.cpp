@@ -174,16 +174,18 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   if (PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
       ctx.getTree(KC)->isInteger() && !ctx.getTree(KC)->isMinusOne()) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
+    bool inverse = ctx.getTree(KC)->isNegativeInteger();
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KPow(KAdd(KPow(KA, KAbs(KC)),
-                  KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
-                       KMult(KBinomial(KAbs(KC), KVarK), KPow(KA, KVarK),
-                             KPow(KAdd(KB_p),
-                                  KAdd(KAbs(KC), KMult(-1_e, KVarK))))),
-                  KPow(KAdd(KB_p), KAbs(KC))),
-             KSign(KC)),
+        KAdd(KPow(KA, KAbs(KC)),
+             KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
+                  KMult(KBinomial(KAbs(KC), KVarK), KPow(KA, KVarK),
+                        KPow(KAdd(KB_p), KAdd(KAbs(KC), KMult(-1_e, KVarK))))),
+             KPow(KAdd(KB_p), KAbs(KC))),
         ctx));
     Parametric::Explicit(e);
+    if (inverse) {
+      PatternMatching::MatchReplaceSimplify(e, KA, KPow(KA, -1_e));
+    }
     return true;
   }
 

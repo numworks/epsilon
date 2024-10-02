@@ -37,14 +37,25 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
             var fs = require('fs');
             var pr_number = Number(fs.readFileSync('./PR_number'));
             var binary_size_summary = fs.readFileSync('./binary_size_summary');
             var app_sizes = fs.readFileSync('./app_sizes');
             var binary_size_n0110 = fs.readFileSync('./binary_size_n0110');
+
+            const body = (
+              "### Binary size analysis\n\n"
+              + binary_size_summary + "\n"
+              + "<details>\n<summary>Full details</summary>\n\n"
+              + "### Apps\n\n"
+              + app_sizes + "\n\n"
+              + "### N0110\n\n"
+              + binary_size_n0110 + "\n"
+              + "</details>"
+            );
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
 
             const oldComments = await github.paginate(
               github.rest.issues.listComments,
@@ -55,10 +66,8 @@ jobs:
             );
 
             const commentToUpdate = oldComments.findLast(comment =>
-              comment.user.login === 'github-actions[bot]' && comment.body.startsWith("### Binary size analysis")
+              comment.user.login === 'github-actions[bot]' && comment.body.startsWith(body.slice(0,10))
             )
-
-            var body = "### Binary size analysis\n\n" + binary_size_summary + "\n<details>\n<summary>Full details</summary>\n\n### Apps\n\n" + app_sizes + "\n\n### N0110\n\n" + binary_size_n0110 + "</details>";
 
             if (commentToUpdate) {
               await github.rest.issues.updateComment({

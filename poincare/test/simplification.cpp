@@ -1224,6 +1224,9 @@ QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("2<1", "False");
   simplifies_to("1<2<=2", "True");
   simplifies_to("x≥2", "x>=2");
+  simplifies_to("x>y>z", "x>y and y>z");
+  simplifies_to("a>b≥c=d≤e<f", "a>b and b>=c and c=d and d<=e and e<f");
+  simplifies_to("60>5≥1+3=4≤2+2<50", "True");
 }
 
 QUIZ_CASE(pcj_simplification_point) {

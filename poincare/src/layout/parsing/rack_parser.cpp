@@ -584,11 +584,17 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
   (void)check;
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::ComparisonOperator);
-  if (leftHandSide->isComparison()) {
-    /* TODO a < b = c was parsed in Comparison[<,=](a,b,c)
-     * It is now parsed as (a < b and b = c) to simplify code. */
-    /* TODO_PCJ: fix code with a < b < c < d */
-    CloneTreeAtNode(rightHandSide, leftHandSide->child(1));
+  if (leftHandSide->isComparison() || leftHandSide->isLogicalAnd()) {
+    /* TODO: a < b = c usd to be parsed to Comparison[<,=](a,b,c).
+     * It is now parsed as (a < b and b = c) to simplify code.
+     * Bigger structures like a < b = c > d, end up here with (a < b and b = c)
+     * on the left and d on the right, it is parsed to
+     * ((a < b and b = c) and (c > d)), which can work recursively. */
+    const Tree* lastComparison = leftHandSide->isLogicalAnd()
+                                     ? leftHandSide->child(1)
+                                     : static_cast<Tree*>(leftHandSide);
+    assert(lastComparison->isComparison());
+    CloneTreeAtNode(rightHandSide, lastComparison->child(1));
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
     MoveNodeAtNode(rightHandSide, comparison);
     CloneNodeAtNode(leftHandSide, KLogicalAnd);

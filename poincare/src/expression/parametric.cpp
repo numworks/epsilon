@@ -340,7 +340,7 @@ bool Parametric::Explicit(Tree* e) {
   Tree* boundsDifference = PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
   Dependency::RemoveDependencies(boundsDifference);
-  AdvancedReduction::DeepExpand(boundsDifference);
+  AdvancedReduction::DeepExpandAlgebraic(boundsDifference);
   Dependency::RemoveDependencies(boundsDifference);
   // TODO: larger type than uint8
   if (!Integer::Is<uint8_t>(boundsDifference)) {

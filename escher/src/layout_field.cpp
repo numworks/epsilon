@@ -433,13 +433,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 
 bool LayoutField::handleEventWithLayout(Layout layout,
                                         bool forceCursorRightOfText) {
-  if (Poincare::Preferences::SharedPreferences()->editionMode() ==
-      Poincare::Preferences::EditionMode::Edition1D) {
-    constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
-    char buffer[bufferSize];
-    layout.serialize(buffer, bufferSize);
-    return handleEventWithText(buffer, false, forceCursorRightOfText);
-  }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   insertLayoutAtCursor(layout, forceCursorRightOfText);
   // TODO: insertLayoutAtCursor should return a bool, insertion could fail
@@ -627,11 +620,18 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   if (layout.isUninitialized()) {
     return;
   }
-  layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
-                         forceCursorLeftOfLayout);
-
+  if (Poincare::Preferences::SharedPreferences()->editionMode() ==
+      Poincare::Preferences::EditionMode::Edition1D) {
+    constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
+    char buffer[bufferSize];
+    layout.serialize(buffer, bufferSize);
+    insertText(buffer, false, forceCursorRightOfLayout);
+  } else {
+    layout = layout.makeEditable();
+    cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
+                           forceCursorLeftOfLayout);
+  }
   // Reload
   reload(previousSize);
   scrollToCursor();

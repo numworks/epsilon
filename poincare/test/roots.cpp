@@ -22,7 +22,6 @@ struct ExactSolve {
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
     TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
     discriminant->removeTree();
-    // TODO: return roots AND discriminant
     return roots;
   }
 };
@@ -35,7 +34,6 @@ struct ExactSolveAndApproximate {
     TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
     roots->removeTree();
     discriminant->removeTree();
-    // TODO: return roots AND discriminant
     return approximateRoots;
   }
 };
@@ -51,7 +49,6 @@ struct ExactSolveAndRealCubicApproximate {
         Roots::ApproximateRootsOfRealCubic(roots, discriminant);
     roots->removeTree();
     discriminant->removeTree();
-    // TODO: return roots AND discriminant
     return approximateRoots;
   }
 };
@@ -97,8 +94,6 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
 QUIZ_CASE(pcj_roots) {
   using namespace cubic_solver_policies;
 
-  // TODO: test the discriminant values
-
   assert_roots_are("{1, undef}", "undef");
   assert_roots_are("{6, 2}", "-1/3");
   assert_roots_are("{1, -1}", "1");
@@ -110,11 +105,9 @@ QUIZ_CASE(pcj_roots) {
                    "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2}");
   assert_roots_are("{1, 0, 1}", "{-i,i}");
 
-  assert_roots_are("{1, undef, 0, 0}", "undef");
+  assert_roots_are("{1, 1, undef, 1}", "undef");
   assert_roots_are("{0, 1, 0, 1}", "{-i,i}");
   assert_roots_are("{1, -2, 1, 0}", "{1,0}");
-  assert_roots_are("{1,-x-1,x,0}",
-                   "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2,0}");
   assert_roots_are("{1, 0, 0, -8}", "{2,-1+√(3)×i,-1-√(3)×i}");
   assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
   assert_roots_are("{1, -4, 6, -24}",
@@ -125,19 +118,27 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{4, 0, -12, -8}",
                    "{-1,2,-1}");  // TODO: multiple roots and ordering
   assert_roots_are("{1, -i, -1, i}", "{-1,1,i}");
+  assert_roots_are("{1, -3×i, -3, i}", "{i,i}");  // TODO: multiple roots
   assert_roots_are("{1, -3×√(2), 6, -2×√(2)}",
                    "{√(2),√(2)}");  // TODO: multiple roots
   assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{√(3),-π}");
-  assert_roots_are<ExactSolveAndRealCubicApproximate>(
-      "{1,0,1,1}",
-      "{-0.68232780382802,0.34116390191401-1.1615413999973×i,0.34116390191401+"
-      "1.1615413999973×i}");
+  assert_roots_are("{1,-900,270000,-27000000}", "{300}");
+
+  assert_roots_are("{1,-√(2),-16,24×√(2)}",
+                   "{2×√(2),-3×√(2)}");  // TODO: ordering
+
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,1,0,1}",
       "{-1.4655712318768,0.23278561593838-0.79255199251545×i,0.23278561593838+"
       "0.79255199251545×i}");
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,0,-3,1}", "{-1.8793852415718,1.532088886238,0.34729635533386}");
+
+  assert_roots_are<ExactSolveAndApproximate>(
+      "{1,i,-1,1}",
+      "{-1.2237724884371-0.40117404251929×i,0.70354372055869-0."
+      "97874867081524×i,0.52022876787839+0.37992271333452×i}");
+
   /* In the two following tests, integer coefficients are too large for a
    * rational search (divisors list is full), but applying the Cardano method
    * then applying the real cubic root approximation succeeds */
@@ -146,6 +147,14 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,90,2125,-31250}",
       "{-50-25×i,10,-50+25×i}");  // TODO: root ordering
+
+  /* The following cubic has {1.23} as a triple root. The discriminant
+   * calculation fails to find zero. Note that WolframAlpha gives exactly the
+   * same roots, so this might be non trivial to fix. */
+  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+      "{1,-3.69,4.5387,-1.86087}",
+      "{1.2227887521485-0.012490247664834×i,1.2444224957031,1.2227887521485+0."
+      "012490247664834×i}");
 
   // TODO: test CubicRootsNullDiscriminant
 

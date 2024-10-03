@@ -398,7 +398,6 @@ ComplexSign SignOfTreeOrApproximation(const Tree* e) {
     Tree* approximation = Approximation::RootTreeToTree<double>(e);
     sign = GetComplexSign(approximation);
     approximation->removeTree();
-    // TODO: what if the sign is still unknown after approximating?
   }
   return sign;
 }

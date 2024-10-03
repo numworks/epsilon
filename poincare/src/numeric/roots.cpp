@@ -129,6 +129,11 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
                    const Tree* preComputedDiscriminant) {
   assert(a && b && c && d);
 
+  if (a->isUndefined() || b->isUndefined() || c->isUndefined() ||
+      d->isUndefined()) {
+    return KUndef->cloneTree();
+  }
+
   /* Cases in which some coefficients are zero. */
   if (GetComplexSign(a).isNull()) {
     return Roots::Quadratic(b, c, d);
@@ -151,10 +156,10 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
     return CubicRootsNullSecondAndThirdCoefficients(a, d);
   }
 
-  /* To avoid applying Cardano's formula right away, we use techniques to find a
-   * simple root, based on some particularly common forms of cubic equations
-   * in school problems. */
-  TreeRef foundRoot{};
+  /* To avoid applying Cardano's formula right away (because it takes a lot of
+   * computation time), we use techniques to find a simple root, based on some
+   * particularly common forms of cubic equations in school problems. */
+  TreeRef foundRoot = TreeRef();
   foundRoot = SimpleRootSearch(a, b, c, d);
   if (!foundRoot && (a->isRational() && b->isRational() && c->isRational() &&
                      d->isRational())) {
@@ -428,9 +433,6 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
   cardanoRoot1->removeTree();
   cardanoRoot0->removeTree();
 
-  /* TODO: If delta > 0 (and coefficients are real), assert that the three
-   * solutions are real. */
-
   return rootList;
 }
 
@@ -438,10 +440,10 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
                                         const Tree* c, const Tree* d) {
   /* If the discriminant is zero, the cubic has a multiple root.
    * Furthermore, if Δ_0 = b^2 - 3ac is zero, the cubic has a triple root. */
-  Tree* delta0 = Delta0(a, b, c);
+  TreeRef delta0 = Delta0(a, b, c);
 
   // clang-format off
-  Tree* rootList = SignOfTreeOrApproximation(delta0).isNull()
+  TreeRef rootList = SignOfTreeOrApproximation(delta0).isNull()
   ?
   // -b / 3a is a triple root
   PatternMatching::CreateSimplify(
@@ -539,8 +541,6 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
 Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
                          const Tree* delta0, uint8_t k) {
   assert(k == 0 || k == 1 || k == 2);
-
-  // TODO: if cardano may be null (i.e. sign.canBeNull())
   assert(!SignOfTreeOrApproximation(cardano).isNull());
 
   /* -(b + C + delta0/(C)/(3a) is a root of the cubic, where C is the Cardano

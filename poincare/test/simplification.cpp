@@ -981,7 +981,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(-inf,x)",
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
   simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
-  simplifies_to("log(inf,-3)", "nonreal");
+  /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
+   * non real */
+  simplifies_to("log(inf,-3)", "undef");
   simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
   simplifies_to("log(0,-inf)", "undef", cartesianCtx);

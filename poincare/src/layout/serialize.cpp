@@ -9,6 +9,7 @@
 #include "code_point_layout.h"
 #include "grid.h"
 #include "indices.h"
+#include "parsing/tokenizer.h"
 #include "vertical_offset.h"
 
 namespace Poincare::Internal {
@@ -68,6 +69,31 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
   return buffer;
 }
 
+bool mayNeedParentheses(const Rack* rack) {
+  ParsingContext parsingContext(nullptr,
+                                ParsingContext::ParsingMethod::Classic);
+  Tokenizer tokenizer(rack, &parsingContext);
+  Token t = tokenizer.popToken();
+  // Racks containing a single token should not need parentheses
+  if (t.is(Token::Type::EndOfStream) || t.is(Token::Type::Layout)) {
+    return true;
+  }
+  return !tokenizer.popToken().isEndOfStream();
+}
+
+char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
+                               RackSerializer serializer) {
+  bool addParentheses = mayNeedParentheses(rack);
+  if (addParentheses) {
+    buffer = append("(", buffer, end);
+  }
+  buffer = serializer(rack, buffer, end);
+  if (addParentheses) {
+    buffer = append(")", buffer, end);
+  }
+  return buffer;
+}
+
 char* SerializeLayout(const Layout* layout, char* buffer, char* end,
                       RackSerializer serializer) {
   switch (layout->layoutType()) {
@@ -92,22 +118,24 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       break;
     }
     case LayoutType::Fraction: {
-      buffer = append("((", buffer, end);
-      buffer = serializer(layout->child(0), buffer, end);
-      buffer = append(")/(", buffer, end);
-      buffer = serializer(layout->child(1), buffer, end);
-      buffer = append("))", buffer, end);
+      buffer = append("(", buffer, end);
+      buffer =
+          serializeWithParentheses(layout->child(0), buffer, end, serializer);
+      buffer = append("/", buffer, end);
+      buffer =
+          serializeWithParentheses(layout->child(1), buffer, end, serializer);
+      buffer = append(")", buffer, end);
       break;
     }
     case LayoutType::VerticalOffset: {
       if (VerticalOffset::IsSuffixSuperscript(layout)) {
-        buffer = append("^(", buffer, end);
-        buffer = serializer(layout->child(0), buffer, end);
-        buffer = append(")", buffer, end);
+        buffer = append("^", buffer, end);
+        buffer =
+            serializeWithParentheses(layout->child(0), buffer, end, serializer);
       } else {
-        buffer = append("(", buffer, end);
-        buffer = serializer(layout->child(0), buffer, end);
-        buffer = append(")", buffer, end);
+        // TODO_PCJ: something else is needed here
+        buffer =
+            serializeWithParentheses(layout->child(0), buffer, end, serializer);
       }
       break;
     }

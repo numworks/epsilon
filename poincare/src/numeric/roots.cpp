@@ -178,10 +178,53 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   return cardanoRoots;
 }
 
+Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
+                                         const Tree* discriminant) {
+  ComplexSign discriminantSign = SignOfTreeOrApproximation(discriminant);
+  assert(discriminantSign.isReal());
+  TreeRef approximatedRoots = Approximation::RootTreeToTree<double>(roots);
+  assert(approximatedRoots->isList());
+  if (discriminantSign.realSign().isPositive()) {
+    // If the discriminant is positive or zero, all roots are real.
+    for (Tree* root : approximatedRoots->children()) {
+      Tree* realPart =
+          Approximation::extractRealPartIfImaginaryPartNegligible(root);
+      assert(realPart != nullptr && realPart->isNumber());
+      root->moveTreeOverTree(realPart);
+    }
+  } else {
+    // If the discriminant is strictly negative, there are three distinct roots.
+    // One root is real and the two others are complex conjugates.
+    assert(approximatedRoots->numberOfChildren() == 3);
+    Tree* r1 = approximatedRoots->child(0);
+    Tree* r2 = approximatedRoots->child(1);
+    Tree* r3 = approximatedRoots->child(2);
+    Tree* maybeRealR1 =
+        Approximation::extractRealPartIfImaginaryPartNegligible(r1);
+    Tree* maybeRealR2 =
+        Approximation::extractRealPartIfImaginaryPartNegligible(r2);
+    Tree* maybeRealR3 =
+        Approximation::extractRealPartIfImaginaryPartNegligible(r3);
+    // Only one of the root is real
+    assert(((maybeRealR1 != nullptr) + (maybeRealR2 != nullptr) +
+            (maybeRealR3 != nullptr)) == 1);
+    if (maybeRealR1) {
+      r1->moveTreeOverTree(maybeRealR1);
+    }
+    if (maybeRealR2) {
+      r2->moveTreeOverTree(maybeRealR2);
+    }
+    if (maybeRealR3) {
+      r3->moveTreeOverTree(maybeRealR3);
+    }
+  }
+  return approximatedRoots;
+}
+
 Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                           const Tree* c, const Tree* d,
                                           Tree* r) {
-  assert(!GetSign(r).isNull());
+  assert(!GetComplexSign(r).isNull());
   /* If r is a non zero root of "ax^3+bx^2+cx+d", we can factorize the
    * polynomial as "(x-r)*(ax^2+β*x+γ)", with "β =b+a*r" and γ=-d/r */
   TreeRef beta = PatternMatching::CreateSimplify(KAdd(KB, KMult(KA, KH)),

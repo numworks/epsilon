@@ -2,7 +2,10 @@
 
 #include <omg/float.h>
 #include <omg/unreachable.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/n_ary.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
 
@@ -1323,6 +1326,37 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
   }
   // TODO: Merge additions and multiplication's children if possible.
   return changed;
+}
+
+Tree* Approximation::extractRealPartIfImaginaryPartNegligible(const Tree* e) {
+  if (e->isNumber()) {
+    // e is already a "pure" real number
+    return e->cloneTree();
+  }
+  // Project to remove Opposite trees
+  Tree* projectedExpression = e->cloneTree();
+  Projection::DeepSystemProject(projectedExpression);
+  /* The root must now be either of form "a+b*i", or of form "a+b*(-1)*i",
+   * otherwise approximation or projection has failed earlier. */
+  TreeRef reAndAbsIm = PatternMatching::MatchCreate(
+      projectedExpression, KAdd(KA, KMult(KB, i_e)), KPoint(KA, KB));
+  if (!reAndAbsIm) {
+    reAndAbsIm = PatternMatching::MatchCreate(
+        projectedExpression, KAdd(KA, KMult(-1_e, KB, i_e)), KPoint(KA, KB));
+  }
+  assert(reAndAbsIm);
+  projectedExpression->removeTree();
+  Tree* realPart = reAndAbsIm->child(0);
+  Tree* imaginaryPart = reAndAbsIm->child(1);
+  assert(realPart->isNumber() && imaginaryPart->isNumber());
+  if (std::abs(Approximation::To<double>(imaginaryPart, nullptr)) <
+      100 * OMG::Float::EpsilonLax<double>()) {
+    TreeRef result = realPart->cloneTree();
+    reAndAbsIm->removeTree();
+    return result;
+  }
+  reAndAbsIm->removeTree();
+  return nullptr;
 }
 
 /* TODO: not all this functions are worth templating on float and

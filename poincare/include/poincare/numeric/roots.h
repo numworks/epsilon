@@ -44,6 +44,15 @@ class Roots {
                      const Tree* preComputedDiscriminant = nullptr);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
+  /* The approximation of cubic roots requires special attention. We have
+   * information on the number of real roots, looking at the discriminant
+   * sign. Approximation errors adding a very small imaginary part can be
+   * removed using this information. */
+  /* WARNING: this function assumes that all the cubic coefficients are real.
+   * Otherwise, we do not have any information on the "realness" of roots, and
+   * we can simply call the usual approximation function. */
+  static Tree* ApproximateRootsOfRealCubic(const Tree* roots,
+                                           const Tree* discriminant);
 
  private:
   // (-1 + i√(3)) / 2

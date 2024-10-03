@@ -1,10 +1,64 @@
 #include <poincare/numeric/roots.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
+namespace cubic_solver_policies {
+/* The Solver App may have different policies:
+ * - display the exact result or approximate it
+ * - approximate the result knowing or not that the input coefficients are all
+ * real numbers.
+ * The following structs simulate those different policies. They allow to test
+ * the resulting roots either against some expected exact roots, or against some
+ * expected approximate roots.
+ */
+
+struct ExactSolve {
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
+                       const Tree* d) {
+    TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+    discriminant->removeTree();
+    // TODO: return roots AND discriminant
+    return roots;
+  }
+};
+
+struct ExactSolveAndApproximate {
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
+                       const Tree* d) {
+    TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
+    roots->removeTree();
+    discriminant->removeTree();
+    // TODO: return roots AND discriminant
+    return approximateRoots;
+  }
+};
+
+struct ExactSolveAndRealCubicApproximate {
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
+                       const Tree* d) {
+    assert(GetComplexSign(a).isReal() && GetComplexSign(b).isReal() &&
+           GetComplexSign(c).isReal() && GetComplexSign(d).isReal());
+    TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+    TreeRef approximateRoots =
+        Roots::ApproximateRootsOfRealCubic(roots, discriminant);
+    roots->removeTree();
+    discriminant->removeTree();
+    // TODO: return roots AND discriminant
+    return approximateRoots;
+  }
+};
+
+}  // namespace cubic_solver_policies
+
+template <typename CubicSolverPolicy = cubic_solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   ProjectionContext projCtx = {.m_complexFormat = ComplexFormat::Cartesian};
   process_tree_and_compare(
@@ -21,11 +75,14 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             tree->moveTreeOverTree(Roots::Quadratic(
                 tree->child(0), tree->child(1), tree->child(2)));
             break;
-          case 4:
-            tree->moveTreeOverTree(Roots::Cubic(tree->child(0), tree->child(1),
-                                                tree->child(2),
-                                                tree->child(3)));
+          case 4: {
+            Tree* a = tree->child(0);
+            Tree* b = tree->child(1);
+            Tree* c = tree->child(2);
+            Tree* d = tree->child(3);
+            tree->moveTreeOverTree(CubicSolverPolicy::process(a, b, c, d));
             break;
+          }
           default:
             // Not handled
             quiz_assert(false);
@@ -38,6 +95,10 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
 }
 
 QUIZ_CASE(pcj_roots) {
+  using namespace cubic_solver_policies;
+
+  // TODO: test the discriminant values
+
   assert_roots_are("{1, undef}", "undef");
   assert_roots_are("{6, 2}", "-1/3");
   assert_roots_are("{1, -1}", "1");
@@ -63,22 +124,30 @@ QUIZ_CASE(pcj_roots) {
                    "{-1,2,-1}");  // TODO: multiple roots and ordering
   assert_roots_are("{4, 0, -12, -8}",
                    "{-1,2,-1}");  // TODO: multiple roots and ordering
-  assert_roots_are("{1, -69, 1478, -10080}",
-                   "{1,2,3}");  // Integer coefficients are too large for
-                                // rational search (divisors list is full)
+  assert_roots_are("{1, -i, -1, i}", "{-1,1,i}");
   assert_roots_are("{1, -3×√(2), 6, -2×√(2)}",
                    "{√(2),√(2)}");  // TODO: multiple roots
   assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{√(3),-π}");
+  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+      "{1,0,1,1}",
+      "{-0.68232780382802,0.34116390191401-1.1615413999973×i,0.34116390191401+"
+      "1.1615413999973×i}");
+  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+      "{1,1,0,1}",
+      "{-1.4655712318768,0.23278561593838-0.79255199251545×i,0.23278561593838+"
+      "0.79255199251545×i}");
+  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+      "{1,0,-3,1}", "{-1.8793852415718,1.532088886238,0.34729635533386}");
+  /* In the two following tests, integer coefficients are too large for a
+   * rational search (divisors list is full), but applying the Cardano method
+   * then applying the real cubic root approximation succeeds */
+  assert_roots_are<ExactSolveAndRealCubicApproximate>("{1, -69, 1478, -10080}",
+                                                      "{16,18,35}");
+  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+      "{1,90,2125,-31250}",
+      "{-50-25×i,10,-50+25×i}");  // TODO: root ordering
 
-  // TODO: Exact forms are too complicated, approximation is needed:
-  assert_roots_are("{1,0,1,1}", "{1,2,3}");
-  assert_roots_are("{1,1,0,1}", "{1,2,3}");
-  // assert_solves_to("x^3+x+1=0", {"x=-0.6823278038",
-  // "x=0.3411639019-1.1615414×i",
-  //                                "x=0.3411639019+1.1615414×i", "delta=-31"});
-  // assert_solves_to("x^3+x^2+1=0",
-  //                  {"x=-1.465571232", "x=0.2327856159-0.7925519925×i",
-  //                   "x=0.2327856159+0.7925519925×i", "delta=-31"});
+  // TODO: test CubicRootsNullDiscriminant
 
   // TODO: when there are very large numbers among coefficients
   // assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});

@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_TYPE_BLOCK_H
 
 #include <omg/code_point.h>
+#include <omg/unaligned.h>
 
 #include "block.h"
 #if __EMSCRIPTEN__
@@ -221,8 +222,7 @@ class TypeBlock : public Block {
     } else if (n == NARY) {
       return static_cast<uint8_t>(*next());
     } else if (n == NARY16) {
-      return static_cast<uint8_t>(*next()) +
-             256 * static_cast<uint8_t>(*nextNth(2));
+      return OMG::unalignedShort(next());
     } else {
       assert(n == NARY2D);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));

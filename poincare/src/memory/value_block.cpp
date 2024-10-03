@@ -1,5 +1,6 @@
 #include "value_block.h"
 
+#include <omg/unaligned.h>
 #include <string.h>
 
 #include <bit>
@@ -9,35 +10,15 @@
 #endif
 
 namespace Poincare::Internal {
-
-#if __EMSCRIPTEN__
 template <>
 uint16_t ValueBlock::get<uint16_t>() const {
-  return *reinterpret_cast<const emscripten_align1_short*>(this);
+  return OMG::unalignedShort(this);
 }
 
 template <>
 uint32_t ValueBlock::get<uint32_t>() const {
-  return *reinterpret_cast<const emscripten_align1_int*>(this);
+  return OMG::unalignedLong(this);
 }
-#else
-template <>
-uint16_t ValueBlock::get<uint16_t>() const {
-  return *reinterpret_cast<const uint16_t*>(this);
-}
-
-template <>
-uint32_t ValueBlock::get<uint32_t>() const {
-  /* Unaligned 32-bits accesses are ok on the f7 but not on the h7.
-   * The portable way to do unaligned accesses is to use memcpy and hope for the
-   * compiler to optimize it away when possible. However it is not optimized
-   * here therefore we build it manually. */
-  uint32_t value = static_cast<const ValueBlock*>(nextNth(2))->get<uint16_t>();
-  value <<= 16;
-  value |= get<uint16_t>();
-  return value;
-}
-#endif
 
 template <>
 uint64_t ValueBlock::get<uint64_t>() const {

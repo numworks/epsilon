@@ -8,7 +8,6 @@
 #include "record.h"
 #include "record_name_verifier.h"
 #include "storage_delegate.h"
-#include "storage_helper.h"
 
 namespace Ion {
 

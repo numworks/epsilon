@@ -3,14 +3,11 @@
 
 #include <omg/arithmetic.h>
 #include <omg/bit_helper.h>
+#include <omg/unaligned.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <stdlib.h>
-
-#if __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
 
 namespace Poincare::Internal {
 
@@ -29,25 +26,15 @@ typedef uint64_t double_native_uint_t;
 template <typename T>
 struct Unaligned;
 
-#if __EMSCRIPTEN__
 template <>
 struct Unaligned<half_native_uint_t> {
-  using type = emscripten_align1_short;
+  // Warning: the using = syntax does not preseve the attribute, dont use it
+  typedef OMG::unaligned_uint16_t type;
 };
 template <>
 struct Unaligned<native_uint_t> {
-  using type = emscripten_align1_int;
+  typedef OMG::unaligned_uint32_t type;
 };
-#else
-template <>
-struct Unaligned<half_native_uint_t> {
-  using type = uint16_t;
-};
-template <>
-struct Unaligned<native_uint_t> {
-  using type = uint32_t;
-};
-#endif
 
 static_assert(sizeof(native_uint_t) == 2 * sizeof(half_native_uint_t),
               "native_int_t should be twice the size of half_native_uint_t");

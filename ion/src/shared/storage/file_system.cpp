@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <ion.h>
 #include <omg/print.h>
+#include <omg/unaligned.h>
 #include <string.h>
 
 #include <new>
@@ -487,7 +488,7 @@ char* FileSystem::pointerOfRecord(const Record record) const {
 }
 
 FileSystem::record_size_t FileSystem::sizeOfRecordStarting(char* start) const {
-  return start ? StorageHelper::unalignedShort(start) : 0;
+  return start ? OMG::unalignedShort(start) : 0;
 }
 
 const void* FileSystem::valueOfRecordStarting(char* start) const {
@@ -506,7 +507,7 @@ Record::Name FileSystem::nameOfRecordStarting(char* start) const {
 }
 
 size_t FileSystem::overrideSizeAtPosition(char* position, record_size_t size) {
-  StorageHelper::writeUnalignedShort(size, position);
+  OMG::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 
@@ -616,9 +617,9 @@ bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(
 
 FileSystem::RecordIterator& FileSystem::RecordIterator::operator++() {
   assert(m_recordStart);
-  record_size_t size = StorageHelper::unalignedShort(m_recordStart);
+  record_size_t size = OMG::unalignedShort(m_recordStart);
   char* nextRecord = m_recordStart + size;
-  record_size_t newRecordSize = StorageHelper::unalignedShort(nextRecord);
+  record_size_t newRecordSize = OMG::unalignedShort(nextRecord);
   m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
   return *this;
 }

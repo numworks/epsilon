@@ -1213,6 +1213,8 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
   simplifies_to("1/(i-1)^2", "1/2×i");
   simplifies_to("(x+y)^3-x^3-y^3", "3*y^2*x+3*y*x^2");
+  // TODO_PCJ: we used to reduce to (π+1)/(π+2)
+  simplifies_to("1/(1+1/(1+π))", "1/(1+1/(1+π))");
 }
 
 QUIZ_CASE(pcj_simplification_logarithm) {

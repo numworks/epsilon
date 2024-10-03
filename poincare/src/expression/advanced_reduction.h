@@ -14,7 +14,7 @@
 // Max number of trees advanced reduction can handle
 #define ADVANCED_MAX_BREADTH 32
 // Max depth of path advanced reduction can handle
-#define ADVANCED_MAX_DEPTH 10
+#define ADVANCED_MAX_DEPTH 8
 
 namespace Poincare::Internal {
 

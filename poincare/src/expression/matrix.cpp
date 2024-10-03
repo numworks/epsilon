@@ -279,9 +279,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
       divisor->cloneTreeOverTree(1_e);
 
       int l = reducedForm ? 0 : h + 1;
-      /* Set to 0 all M[i][j] i != h, j > k by linear combination. If a
+      /* Set to 0 all M[i][j] i != h by linear combination. If a
        * non-reduced form is computed (ref), only rows below the pivot are
-       * reduced, i > h as well */
+       * reduced (i > h) */
       for (int i = l; i < m; i++) {
         if (i == h) {
           continue;

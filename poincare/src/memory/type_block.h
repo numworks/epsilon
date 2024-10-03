@@ -221,12 +221,8 @@ class TypeBlock : public Block {
     } else if (n == NARY) {
       return static_cast<uint8_t>(*next());
     } else if (n == NARY16) {
-#if __EMSCRIPTEN__
-      // Ideally we would factorize this with ValueBlock::get<uint16_t>
-      return *reinterpret_cast<const emscripten_align1_short*>(next());
-#else
-      return *reinterpret_cast<const uint16_t*>(next());
-#endif
+      return static_cast<uint8_t>(*next()) +
+             256 * static_cast<uint8_t>(*nextNth(2));
     } else {
       assert(n == NARY2D);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));

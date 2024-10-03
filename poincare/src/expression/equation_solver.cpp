@@ -104,6 +104,16 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   userSymbols = Variables::GetUserSymbols(reducedEquationSet);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
 
+  if ((equationsSet->numberOfChildren() > 1 || numberOfVariables > 1) &&
+      Preferences::SharedPreferences()
+          ->examMode()
+          .forbidSimultaneousEquationSolver()) {
+    userSymbols->removeTree();
+    reducedEquationSet->removeTree();
+    *error = Error::DisabledInExamMode;
+    return nullptr;
+  }
+
   /* Replace UserSymbols with variables for easier solution handling */
   SwapTreesPointers(&reducedEquationSet, &userSymbols);
   int i = 0;

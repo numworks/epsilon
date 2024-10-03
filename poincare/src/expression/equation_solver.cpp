@@ -505,7 +505,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   Tree* equation = simplifiedEquationSet->child(0)->cloneTree();
   // TODO: expansion should be done only once
   SystematicReduction::DeepReduce(equation);
-  AdvancedReduction::DeepExpand(equation);
+  AdvancedReduction::DeepExpandAlgebraic(equation);
   Tree* polynomial = PolynomialParser::Parse(
       equation, Variables::Variable(0, ComplexSign::Unknown()));
   if (!polynomial) {

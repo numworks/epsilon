@@ -23,7 +23,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
   /* ShallowReplaceUserNamed may push and remove trees at the end of TreeStack.
    * We push a temporary tree to preserve TreeRef.
    * TODO: Maybe find a solution for this unintuitive workaround, the same hack
-   * is used in Projection::DeepExpand. */
+   * is used in Projection::PrivateDeepExpand. */
   TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
   while (e->block() < nextTree->block()) {
     if (e->isParametric()) {

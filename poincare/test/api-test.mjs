@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict'
 import fs from 'fs'
 
-import { CompilePoincare, UsePoincare, UserExpressionTree } from './poincare.mjs'
+import { CompilePoincareAsync, UsePoincare, UserExpressionTree } from './poincare.mjs'
 
 console.log('\n> Initializing Poincare');
 
 const wasmBuffer = fs.readFileSync('./poincare.wasm');
-await CompilePoincare(wasmBuffer);
+await CompilePoincareAsync(wasmBuffer);
 
 console.log('> Starting tests\n');
 

@@ -85,7 +85,7 @@ void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
 }
 
 template <unsigned long N>
-void assert_divisors_equal_to(const IntegerHandler& a,
+void assert_divisors_equal_to(uint32_t a,
                               const std::array<int, N>& expectedList) {
   static_assert(N <= Arithmetic::Divisors::k_maxNumberOfDivisors);
   Arithmetic::Divisors result = Arithmetic::ListPositiveDivisors(a);
@@ -180,39 +180,25 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
 
 QUIZ_CASE(poincare_arithmetic_divisors) {
   quiz_assert_print_if_failure(
-      Arithmetic::ListPositiveDivisors(IntegerHandler(0)).numberOfDivisors ==
+      Arithmetic::ListPositiveDivisors(0).numberOfDivisors ==
           Arithmetic::Divisors::k_divisorListFailed,
       "divisors(0)");
 
-  assert_divisors_equal_to<1>(IntegerHandler(1), {1});
-  assert_divisors_equal_to<2>(IntegerHandler(2), {1, 2});
-  assert_divisors_equal_to<6>(IntegerHandler(-12), {1, 2, 3, 4, 6, 12});
-  assert_divisors_equal_to<9>(IntegerHandler(-100),
-                              {1, 2, 4, 5, 10, 20, 25, 50, 100});
-  assert_divisors_equal_to<9>(IntegerHandler(225),
-                              {1, 3, 5, 9, 15, 25, 45, 75, 225});
+  assert_divisors_equal_to<1>(1, {1});
+  assert_divisors_equal_to<2>(2, {1, 2});
+  assert_divisors_equal_to<6>(12, {1, 2, 3, 4, 6, 12});
+  assert_divisors_equal_to<9>(100, {1, 2, 4, 5, 10, 20, 25, 50, 100});
+  assert_divisors_equal_to<9>(225, {1, 3, 5, 9, 15, 25, 45, 75, 225});
   assert_divisors_equal_to<40>(
-      IntegerHandler(1680),
+      1680,
       {1,   2,   3,   4,   5,   6,   7,   8,   10,  12,  14,  15,  16, 20,
        21,  24,  28,  30,  35,  40,  42,  48,  56,  60,  70,  80,  84, 105,
        112, 120, 140, 168, 210, 240, 280, 336, 420, 560, 840, 1680});
-  assert_divisors_equal_to<2>(IntegerHandler(INT_MAX), {1, INT_MAX});
+  assert_divisors_equal_to<2>(INT_MAX, {1, INT_MAX});
 
   /* Too many divisors */
   quiz_assert_print_if_failure(
-      Arithmetic::ListPositiveDivisors(IntegerHandler(10080))
-              .numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed,
-      "divisors(10080)");
-
-#if 0
-  /* TODO: IntegerHandler overflowing the 'int' range: what to do in those cases? */
-  assert_divisors_equal_to<2>(IntegerHandler(INT_MIN), {1, INT_MIN});
-
-  IntegerHandler handler = Integer::Handler(
-      IntegerHandler::Addition(IntegerHandler(INT_MAX), IntegerHandler(1)));
-  quiz_assert_print_if_failure(
-      Arithmetic::ListPositiveDivisors(handler).numberOfDivisors ==
+      Arithmetic::ListPositiveDivisors(10080).numberOfDivisors ==
           Arithmetic::Divisors::k_divisorListFailed,
-      "divisors(INT_MAX+1)");
-#endif
+      "divisors(10080)");
 }

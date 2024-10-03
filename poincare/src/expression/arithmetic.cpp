@@ -468,23 +468,20 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
   return result;
 }
 
-Arithmetic::Divisors Arithmetic::ListPositiveDivisors(IntegerHandler handler) {
+Arithmetic::Divisors Arithmetic::ListPositiveDivisors(uint32_t n) {
   Divisors result{};
-  int n = handler.to<int>();
   if (n == 0) {
     // TODO: use a TreeStackException
     result.numberOfDivisors = Divisors::k_divisorListFailed;
     return result;
   }
-  if (n < 0) {
-    n = -n;
-  }
+
   // Except n itself, all divisors are under n/2
-  int kEnd = n / 2;
+  uint32_t kEnd = n / 2;
   // No need to look for even divisors if n is odd
-  int kStep = 1 + (n % 2);
+  uint32_t kStep = 1 + (n % 2);
   // Look for positive divisors of n
-  for (int k = 1; k <= kEnd; k += kStep) {
+  for (uint32_t k = 1; k <= kEnd; k += kStep) {
     if (n % k == 0) {
       result.list[result.numberOfDivisors++] = k;
       if (result.numberOfDivisors >= Divisors::k_maxNumberOfDivisors) {

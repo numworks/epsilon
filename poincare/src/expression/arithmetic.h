@@ -45,7 +45,10 @@ class Arithmetic {
 
   static FactorizedInteger PrimeFactorization(IntegerHandler m);
 
-  static Divisors ListPositiveDivisors(IntegerHandler m);
+  /* TODO: implement ListPositiveDivisors for IntegerHandler inputs, to handle
+   * arbitrary sized integers */
+  /* WARNING: This function only accepts inputs which are POSITIVE integers. */
+  static Divisors ListPositiveDivisors(uint32_t n);
 
   static uint32_t GCD(uint32_t a, uint32_t b);
   static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);

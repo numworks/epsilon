@@ -113,7 +113,9 @@ class App : public Shared::SharedApp {
 
     /* Ensure the Pool and the TreeStack are contiguous in memory (with a
       small margin of 8 bytes due to memory alignment) */
+#if ASSERTIONS
     constexpr size_t alignment_margin = 8;
+#endif
     assert(static_cast<char*>(static_cast<void*>(Poincare::Pool::sharedPool)) +
                sizeof(Poincare::Pool) <
            static_cast<char*>(

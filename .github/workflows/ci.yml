@@ -121,7 +121,8 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
-      - run: timeout 5m node output/release/web/test.js --headless --limit-stack-usage
+      - run: node output/release/web/test.js --headless --limit-stack-usage
+        timeout-minutes: 5
       - uses: actions/upload-artifact@v3
         with:
           name: epsilon.html

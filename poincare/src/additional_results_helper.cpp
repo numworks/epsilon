@@ -416,7 +416,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* determinant;
     Tree* matrixClone = matrix->cloneTree();
-    Internal::Matrix::RowCanonize(matrixClone, true, &determinant, false);
+    if (!Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
+                                       false)) {
+      determinant->cloneTreeOverTree(KUndef);
+    }
     // TODO: Use ComplexSign or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();

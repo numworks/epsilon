@@ -81,7 +81,7 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
                                               "2·abc");
   // Integer x fraction
   assert_expression_layouts_and_serializes_to(KMult(2_e, KDiv(2_e, 3_e)),
-                                              "2×2/3", "2×((2)/(3))");
+                                              "2×2/3", "2×(2/3)");
   // BoundaryPunctuation x Integer
   assert_expression_layouts_and_serializes_to(KMult(KAbs(2_e), 1_e), "abs(2)×1",
                                               "abs(2)×1");
@@ -110,7 +110,7 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
                                               "√(2)×a!", "√(2)a!");
   // a 2/3
   assert_expression_layouts_and_serializes_to(KMult("a"_e, KDiv(2_e, 3_e)),
-                                              "a×2/3", "a((2)/(3))");
+                                              "a×2/3", "a(2/3)");
   // (1+π)a
   assert_expression_layouts_and_serializes_to(
       KMult(KParentheses(KAdd(1_e, π_e)), "a"_e), "(1+π)×a", "(1+π)a");
@@ -183,8 +183,8 @@ QUIZ_CASE(poincare_expression_to_layout_serializes_to_self) {
 
 QUIZ_CASE(poincare_expression_to_layout_mixed_fraction) {
   assert_expression_layouts_and_serializes_to(
-      KMixedFraction(1_e, KDiv(2_e, 3_e)), "1 2/3", "1((2)/(3))");
+      KMixedFraction(1_e, KDiv(2_e, 3_e)), "1 2/3", "1(2/3)");
   assert_expression_layouts_and_serializes_to(
       KDiv(KMixedFraction(1_e, KDiv(2_e, 3_e)), 4_e), "(1 2/3)/4",
-      "((1((2)/(3)))/(4))");
+      "((1(2/3))/4)");
 }

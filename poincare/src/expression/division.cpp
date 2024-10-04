@@ -167,6 +167,7 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     } else {
       // return num/den * outNum
       num->cloneNodeAtNode(KMult.node<2>);
+      NAry::Flatten(num);
     }
     e->moveTreeOverTree(num);
   } else {
@@ -183,6 +184,7 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     } else {
       // return num*outNum
       num->cloneNodeAtNode(KMult.node<2>);
+      NAry::Flatten(num);
       e->moveTreeOverTree(num);
     }
   }

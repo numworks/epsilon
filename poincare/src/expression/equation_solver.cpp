@@ -289,8 +289,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     Matrix::SetNumberOfRows(matrix, Matrix::NumberOfRows(matrix) + 1);
   }
   assert(Matrix::NumberOfRows(matrix) == rows);
-  // Compute the rank of (A|b)
-  int rank = Matrix::CanonizeAndRank(matrix);
+  // Compute the rank of (A|b), force to account for user defined variables
+  int rank = Matrix::CanonizeAndRank(matrix, true);
   if (rank == -1) {
     *error = Error::EquationUndefined;
     matrix->removeTree();
@@ -395,7 +395,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
      * t.approximate() is NAN. If other children of ab have an undef
      * approximation, the previous rank computation would already have returned
      * -1. */
-    rank = Matrix::CanonizeAndRank(matrix);  // TODO_PCJ force cano flag ?
+    rank = Matrix::CanonizeAndRank(matrix, true);
     if (rank == -1) {
       *error = Error::EquationUndefined;
       matrix->removeTree();

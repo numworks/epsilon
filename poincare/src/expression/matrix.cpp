@@ -184,7 +184,8 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 }
 
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
-                         bool approximate, const Approximation::Context* ctx) {
+                         bool approximate, const Approximation::Context* ctx,
+                         bool forceCanonization) {
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
@@ -333,8 +334,8 @@ int Matrix::Rank(const Tree* matrix) {
   return rank;
 }
 
-int Matrix::CanonizeAndRank(Tree* matrix) {
-  RowCanonize(matrix);
+int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
+  RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization);
   return RankOfCanonized(matrix);
 }
 

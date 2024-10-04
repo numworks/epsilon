@@ -49,9 +49,10 @@ struct Matrix {
   static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
                           bool approximate = false,
-                          const Approximation::Context* ctx = nullptr);
+                          const Approximation::Context* ctx = nullptr,
+                          bool forceCanonization = false);
   static int Rank(const Tree* matrix);
-  static int CanonizeAndRank(Tree* matrix);
+  static int CanonizeAndRank(Tree* matrix, bool forceCanonization = false);
   static int RankOfCanonized(const Tree* matrix);
   static Tree* Inverse(const Tree* matrix, bool approximate = false,
                        const Approximation::Context* ctx = nullptr);

@@ -186,6 +186,15 @@ void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
   AddChildAtIndex(nary, child, a);
 }
 
+bool NAry::ContainsSame(const Tree* nary, const Tree* value) {
+  for (const Tree* element : nary->children()) {
+    if (value->treeIsIdenticalTo(element)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
   Tree* result = nary->cloneNode();
   int nb = endIndex - startIndex;

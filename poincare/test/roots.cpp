@@ -1,12 +1,11 @@
 #include <poincare/numeric/roots.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
-namespace cubic_solver_policies {
+namespace solver_policies {
 /* The Solver App may have different policies:
  * - display the exact result or approximate it
  * - approximate the result knowing or not that the input coefficients are all
@@ -17,6 +16,14 @@ namespace cubic_solver_policies {
  */
 
 struct ExactSolve {
+  static Tree* process(const Tree* a, const Tree* b) {
+    return Roots::Linear(a, b);
+  }
+
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c) {
+    return Roots::Quadratic(a, b, c);
+  }
+
   static Tree* process(const Tree* a, const Tree* b, const Tree* c,
                        const Tree* d) {
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
@@ -27,18 +34,38 @@ struct ExactSolve {
 };
 
 struct ExactSolveAndApproximate {
-  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
-                       const Tree* d) {
-    TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
-    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+  static Tree* process(const Tree* a, const Tree* b) {
+    TreeRef roots = ExactSolve::process(a, b);
     TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
     roots->removeTree();
-    discriminant->removeTree();
+    return approximateRoots;
+  }
+
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c) {
+    TreeRef roots = ExactSolve::process(a, b, c);
+    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
+    roots->removeTree();
+    return approximateRoots;
+  }
+
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
+                       const Tree* d) {
+    TreeRef roots = ExactSolve::process(a, b, c, d);
+    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
+    roots->removeTree();
     return approximateRoots;
   }
 };
 
 struct ExactSolveAndRealCubicApproximate {
+  static Tree* process(const Tree* a, const Tree* b) {
+    return ExactSolveAndApproximate::process(a, b);
+  }
+
+  static Tree* process(const Tree* a, const Tree* b, const Tree* c) {
+    return ExactSolveAndApproximate::process(a, b, c);
+  }
+
   static Tree* process(const Tree* a, const Tree* b, const Tree* c,
                        const Tree* d) {
     assert(GetComplexSign(a).isReal() && GetComplexSign(b).isReal() &&
@@ -53,23 +80,22 @@ struct ExactSolveAndRealCubicApproximate {
   }
 };
 
-}  // namespace cubic_solver_policies
+}  // namespace solver_policies
 
-template <typename CubicSolverPolicy = cubic_solver_policies::ExactSolve>
+template <typename SolverPolicy = solver_policies::ExactSolve>
 void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   ProjectionContext projCtx = {.m_complexFormat = ComplexFormat::Cartesian};
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree, ProjectionContext projCtx) {
         Simplification::ProjectAndReduce(tree, &projCtx, true);
-        int numberOfCoefficients = tree->numberOfChildren();
-        switch (numberOfCoefficients) {
+        switch (tree->numberOfChildren()) {
           case 2:
             tree->moveTreeOverTree(
-                Roots::Linear(tree->child(0), tree->child(1)));
+                SolverPolicy::process(tree->child(0), tree->child(1)));
             break;
           case 3:
-            tree->moveTreeOverTree(Roots::Quadratic(
+            tree->moveTreeOverTree(SolverPolicy::process(
                 tree->child(0), tree->child(1), tree->child(2)));
             break;
           case 4: {
@@ -77,22 +103,20 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             Tree* b = tree->child(1);
             Tree* c = tree->child(2);
             Tree* d = tree->child(3);
-            tree->moveTreeOverTree(CubicSolverPolicy::process(a, b, c, d));
+            tree->moveTreeOverTree(SolverPolicy::process(a, b, c, d));
             break;
           }
           default:
             // Not handled
             quiz_assert(false);
         }
-        // TODO: Advanced reduction is needed to simplify roots of rationals
-        Simplification::ReduceSystem(tree, true);
         Simplification::BeautifyReduced(tree, &projCtx);
       },
       projCtx);
 }
 
 QUIZ_CASE(pcj_roots) {
-  using namespace cubic_solver_policies;
+  using namespace solver_policies;
 
   assert_roots_are("{1, undef}", "undef");
   assert_roots_are("{6, 2}", "-1/3");
@@ -108,19 +132,17 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1, 1, undef, 1}", "undef");
   assert_roots_are("{0, 1, 0, 1}", "{-i,i}");
   assert_roots_are("{1, -2, 1, 0}", "{0,1}");
+  assert_roots_are("{1, 1, 0, 0}", "{-1,0}");
   assert_roots_are("{1, 0, 0, -8}", "{2,-1-√(3)×i,-1+√(3)×i}");
   assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
   assert_roots_are("{1, -4, 6, -24}",
                    "{4,-√(-24)/2,√(-24)/2}");  // TODO: this should simplify to
                                                // "{4,-√(6)×i,√(6)×i}"
-  assert_roots_are("{1, 0, -3, -2}",
-                   "{-1,-1,2}");  // TODO: duplicate roots
-  assert_roots_are("{4, 0, -12, -8}",
-                   "{-1,-1,2}");  // TODO: duplicate roots
+  assert_roots_are("{-1, 0, 3, 2}", "{-1,2}");
+  assert_roots_are("{4, 0, -12, -8}", "{-1,2}");
   assert_roots_are("{1, -i, -1, i}", "{-1,1,i}");
-  assert_roots_are("{1, -3×i, -3, i}", "{i,i}");  // TODO: duplicate roots
-  assert_roots_are("{1, -3×√(2), 6, -2×√(2)}",
-                   "{√(2),√(2)}");  // TODO: duplicate roots
+  assert_roots_are("{1, -3×i, -3, i}", "{i}");
+  assert_roots_are("{1, -3×√(2), 6, -2×√(2)}", "{√(2)}");
   assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{-π,√(3)}");
   assert_roots_are("{1,-900,270000,-27000000}", "{300}");
   assert_roots_are("{1,-√(2),-16,24×√(2)}", "{-3×√(2),2×√(2)}");

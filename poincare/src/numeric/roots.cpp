@@ -53,8 +53,10 @@ Tree* RationalEvaluation::polynomial(const Tree* value, const Tree* a,
 
 Tree* Roots::Linear(const Tree* a, const Tree* b) {
   assert(a && b);
-  return PatternMatching::CreateSimplify(KMult(-1_e, KB, KPow(KA, -1_e)),
-                                         {.KA = a, .KB = b});
+  TreeRef root = PatternMatching::CreateSimplify(
+      KMult(-1_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+  AdvancedReduction::Reduce(root);
+  return root;
 }
 
 Tree* Roots::QuadraticDiscriminant(const Tree* a, const Tree* b,
@@ -102,6 +104,8 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
     // Switch roots for a consistent order
     root1->detachTree();
   }
+
+  AdvancedReduction::Reduce(solutions);
   return solutions;
 }
 
@@ -145,14 +149,16 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
      * directly call the quadratic solver for a, b, and c. */
     TreeRef allRoots = Roots::Quadratic(a, b, c);
     assert(allRoots->isList());
-    NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
-    NAry::Sort(allRoots, Order::OrderType::ComplexLine);
+    if (!NAry::ContainsSame(allRoots, KTree(0_e))) {
+      NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
+      NAry::Sort(allRoots, Order::OrderType::ComplexLine);
+    }
     return allRoots;
   }
   if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
     /* We compute the three solutions here because they are quite simple, and
-     * to avoid generating very complex coefficients when creating the remaining
-     * quadratic equation. */
+     * to avoid generating very complex coefficients when creating the
+     * remaining quadratic equation. */
     return CubicRootsNullSecondAndThirdCoefficients(a, d);
   }
 
@@ -197,8 +203,8 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       root->moveTreeOverTree(realPart);
     }
   } else {
-    // If the discriminant is strictly negative, there are three distinct roots.
-    // One root is real and the two others are complex conjugates.
+    // If the discriminant is strictly negative, there are three distinct
+    // roots. One root is real and the two others are complex conjugates.
     assert(approximatedRoots->numberOfChildren() == 3);
     Tree* r1 = approximatedRoots->child(0);
     Tree* r2 = approximatedRoots->child(1);
@@ -237,18 +243,22 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
   TreeRef gamma = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KH, -1_e)), {.KD = d, .KH = r});
   TreeRef allRoots = Roots::Quadratic(a, beta, gamma);
-  NAry::AddChild(allRoots, r);
-  NAry::Sort(allRoots, Order::OrderType::ComplexLine);
   beta->removeTree();
   gamma->removeTree();
+  if (!NAry::ContainsSame(allRoots, r)) {
+    NAry::AddChild(allRoots, r);
+    NAry::Sort(allRoots, Order::OrderType::ComplexLine);
+  } else {
+    r->removeTree();
+  }
   return allRoots;
 }
 
 Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                       const Tree* d) {
   /* Polynoms of the form "ax^3+d=0" have a simple real solution : x1 =
-   * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2 =
-   * rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
+   * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2
+   * = rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
   Tree* baseRoot = PatternMatching::CreateSimplify(
       KPow(KMult(-1_e, KPow(KA, -1_e), KD), KPow(3_e, -1_e)),
       {.KA = a, .KD = d});
@@ -257,6 +267,7 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
       {.KA = baseRoot});
   baseRoot->removeTree();
   NAry::Sort(rootList, Order::OrderType::ComplexLine);
+  AdvancedReduction::Reduce(rootList);
   return rootList;
 }
 
@@ -435,6 +446,8 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
   cardanoRoot2->removeTree();
   cardanoRoot1->removeTree();
   cardanoRoot0->removeTree();
+
+  AdvancedReduction::Reduce(rootList);
 
   /* We do not sort the roots obtained with Cardano here, because their
   exact form is complicated to read and does not allow one to see directly if

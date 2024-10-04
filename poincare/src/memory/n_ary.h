@@ -31,7 +31,9 @@ class NAry {
   static void SortedInsertChild(
       Tree* nary, Tree* child,
       Order::OrderType order = Order::OrderType::System);
+  static bool ContainsSame(const Tree* nary, const Tree* value);
   static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
+
   TREE_REF_WRAP(Flatten);
   TREE_REF_WRAP(SquashIfPossible);
   TREE_REF_WRAP(SquashIfEmpty);

@@ -52,6 +52,8 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.
 		-I$(dir $@) \
 		-DEM_MODULE_NAME=$(APP_NAME) \
 		-DEM_MODULE_JS='"$(ION_em_module_js)"' \
+		-DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
+		-DEPSILON_VERSION=\"$(APP_VERSION)\" \
 		-DLAYOUT_$(ION_layout_variant) \
 		-P $(filter %.inc,$^) \
 		$@

@@ -30,8 +30,14 @@
     <script src=EM_MODULE_JS></script>
     <script>
 #include "calculator.js"
-var Module = {};
-Calculator(Module);
+      var ModuleAsync = {};
+      var Module = {
+          UTF8ToString: (x => x),
+          _IonSoftwareVersion: (() => EPSILON_VERSION),
+          _IonPatchLevel: (() => PATCH_LEVEL)
+          }
+      };
+Calculator(ModuleAsync);
     </script>
     <script>
 document.getElementById("action-fullscreen").addEventListener("click", function(e){
@@ -43,7 +49,7 @@ document.getElementById("action-fullscreen").addEventListener("click", function(
 });
 
 document.getElementById("action-screenshot").addEventListener("click", function(e) {
-  Module.takeScreenshot(e);
+  ModuleAsync.takeScreenshot(e);
 });
     </script>
     <script async src="https://www.numworks.com/simulator/update.js"></script>

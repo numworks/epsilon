@@ -51,10 +51,8 @@ bool IsIntegerExpression(const Tree* e) {
 bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   using Type = Internal::Type;
   // TODO complexity should be linear
-  if (e->numberOfChildren() == 0) {
-    return true;
-  }
-  int childLength[e->numberOfChildren()];
+  // TODO: remove the VLA as it is non-standard
+  int childLength[e->numberOfChildren() == 0 ? 1 : e->numberOfChildren()];
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (!DeepCheckListLength(child, ctx)) {
       return false;
@@ -222,10 +220,8 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
-  if (e->numberOfChildren() == 0) {
-    return true;
-  }
-  Dimension childDim[e->numberOfChildren()];
+  // TODO: remove the VLA as it is non-standard
+  Dimension childDim[e->numberOfChildren() == 0 ? 1 : e->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {

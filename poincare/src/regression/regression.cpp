@@ -2,6 +2,7 @@
 
 #include <omg/float.h>
 #include <poincare/numeric/solver.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -47,11 +48,14 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   if (e.isUninitialized()) {
     return NAN;
   }
-  Tree* yTree = Internal::SharedTreeStack->pushFloat(y);
+  Tree* diff = SharedTreeStack->pushAdd(2);
+  static_cast<const Tree*>(e)->cloneTree();
+  SharedTreeStack->pushFloat(-y);
+  Approximation::PrepareFunctionForApproximation(diff, "x",
+                                                 ComplexFormat::Real);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  double result =
-      Poincare::Solver(xMin, xMax, context).nextIntersection(yTree, e).x();
-  yTree->removeTree();
+  double result = Poincare::Solver(xMin, xMax, context).nextRoot(diff).x();
+  diff->removeTree();
   return result;
 }
 

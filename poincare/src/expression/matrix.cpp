@@ -197,13 +197,31 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
+  int m = NumberOfRows(matrix);
+  int n = NumberOfColumns(matrix);
+
+  // Check that all values are valid
+  if (!forceCanonization) {
+    for (const Tree* child : matrix->children()) {
+      // TODO: check if undefined after approximation
+      if (child->isUndefined() || !Approximation::CanApproximate(child)) {
+        if (approximate) {
+          matrix->moveTreeOverTree(Matrix::Undef(
+              {static_cast<uint8_t>(m), static_cast<uint8_t>(n)}));
+          if (determinant) {
+            Tree* det = KUndefUnhandled->cloneTree();
+            *determinant = det;
+          }
+        }
+        return false;
+      }
+    }
+  }
+
   TreeRef det;
   if (determinant) {
     det = SharedTreeStack->pushMult(0);
   }
-
-  int m = NumberOfRows(matrix);
-  int n = NumberOfColumns(matrix);
 
   int h = 0;  // row pivot
   int k = 0;  // column pivot
@@ -336,15 +354,21 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
 
 int Matrix::Rank(const Tree* matrix) {
   Tree* copy = matrix->cloneTree();
-  RowCanonize(copy);
-  int rank = RankOfCanonized(copy);
-  copy->removeTree();
-  return rank;
+  if (RowCanonize(copy)) {
+    int rank = RankOfCanonized(copy);
+    copy->removeTree();
+    return rank;
+  } else {
+    copy->removeTree();
+    return NAN;
+  }
 }
 
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
-  RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization);
-  return RankOfCanonized(matrix);
+  if (RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization)) {
+    return RankOfCanonized(matrix);
+  }
+  return NAN;
 }
 
 int Matrix::RankOfCanonized(const Tree* matrix) {
@@ -384,14 +408,22 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
     }
   }
   // Compute the inverse
-  RowCanonize(matrixAI, true, nullptr, approximate, ctx);
+  bool canonized = RowCanonize(matrixAI, true, nullptr, approximate, ctx);
+  if (!canonized && !approximate) {
+    matrixAI->cloneTreeOverTree(KUndefUnhandled);
+    return matrixAI;
+  }
+
   // Check inversibility
-  for (int i = 0; i < dim; i++) {
-    if (!Child(matrixAI, i, i)->isOne()) {
-      matrixAI->cloneTreeOverTree(KUndefUnhandled);
-      return matrixAI;
+  if (canonized) {
+    for (int i = 0; i < dim; i++) {
+      if (!Child(matrixAI, i, i)->isOne()) {
+        matrixAI->cloneTreeOverTree(KOutOfDefinition);
+        return matrixAI;
+      }
     }
   }
+
   // Remove A from (A|I)
   Tree* child = matrixAI->child(0);
   for (int i = 0; i < dim; i++) {
@@ -446,9 +478,11 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     return false;
   }
   if (e->isRef() || e->isRref()) {
-    RowCanonize(child, e->isRref());
-    e->removeNode();
-    return true;
+    if (RowCanonize(child, e->isRref())) {
+      e->removeNode();
+      return true;
+    }
+    return false;
   }
   Tree* result;
   switch (e->type()) {
@@ -462,13 +496,19 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
-      RowCanonize(child, true, &result);
-      break;
+      if (RowCanonize(child, true, &result)) {
+        break;
+      }
+      return false;
     case Type::Identity:
       result = Identity(child);
       break;
     case Type::Inverse:
       result = Inverse(child);
+      if (result->isUndefined()) {
+        result->removeTree();
+        return false;
+      }
       break;
     case Type::Norm:
       result = Vector::Norm(child);

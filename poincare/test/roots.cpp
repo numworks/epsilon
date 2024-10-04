@@ -122,6 +122,8 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{6, 2}", "-1/3");
   assert_roots_are("{1, -1}", "1");
   assert_roots_are("{2x+z, 4y-1}", "(-4×y+1)/(2×x+z)");
+
+  assert_roots_are("{undef, -2, 1}", "undef");
   assert_roots_are("{1, -2, 1}", "{1}");
   assert_roots_are("{π, -2π, π}", "{1}");
   assert_roots_are("{1, -1, -6}", "{-2,3}");
@@ -146,6 +148,10 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{-π,√(3)}");
   assert_roots_are("{1,-900,270000,-27000000}", "{300}");
   assert_roots_are("{1,-√(2),-16,24×√(2)}", "{-3×√(2),2×√(2)}");
+  assert_roots_are(
+      "{1371700960631000000000000000000000000000,-2222177778000000000000000000,"
+      "1199988000000000,-216}",
+      "{3/5555500000000}");
 
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,1,0,1}",

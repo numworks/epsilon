@@ -404,39 +404,12 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
   TreeRef delta1 = Delta1(a, b, c, d);
   TreeRef cardano = CardanoNumber(delta0, delta1);
   delta1->removeTree();
-  // TODO: if cardano contains undef or infinite nodes?
-
-  if (SignOfTreeOrApproximation(cardano).isNull()) {
-    // TODO: check the below example. If it is fixed, we should instead assert
-    // that cardano is not null.
-    /* cardano is only null when there is a triple root. This should have been
-     * already handled when computing delta, since delta should be equal to 0
-     * in this case. This means there were approximation errors during
-     * the computation of delta. Restore correct delta value here.
-     *
-     * Example:
-     * For the family of equations (111 111 000 000 000 x - K)^3 = 0,
-     * delta should be equal to zero, but it's not due to approximations
-     * errors. For K = 6, we find cardano == 0, so the error is caught here.
-     * But for K = 2 or K = 9, we still find delta != 0 and cardano != 0, so
-     * the error is not fixed.
-     *
-     * TODO: Enhance delta computation and/or add a formal solve of equations
-     * of type (AX+B)^3=0. */
-
-    // {-b / 3a}
-    Tree* rootList = rootList = PatternMatching::CreateSimplify(
-        KList(KMult(-1_e, KB, KPow(KMult(3_e, KA), -1_e))), {.KA = a, .KB = b});
-    cardano->removeTree();
-    delta0->removeTree();
-    AdvancedReduction::Reduce(rootList);
-    return rootList;
-  }
+  /* If the discriminant is not zero, then the Cardano number cannot be zero. */
+  assert(!SignOfTreeOrApproximation(cardano).isNull());
 
   TreeRef cardanoRoot0 = CardanoRoot(a, b, cardano, delta0, 0);
   TreeRef cardanoRoot1 = CardanoRoot(a, b, cardano, delta0, 1);
   TreeRef cardanoRoot2 = CardanoRoot(a, b, cardano, delta0, 2);
-
   cardano->removeTree();
   delta0->removeTree();
 

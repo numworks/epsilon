@@ -23,6 +23,14 @@ Tree* Matrix::Zero(MatrixDimension d) {
   return result;
 }
 
+Tree* Matrix::Undef(MatrixDimension d) {
+  Tree* result = SharedTreeStack->pushMatrix(d.rows, d.cols);
+  for (int i = 0; i < d.rows * d.cols; i++) {
+    (KUndef)->cloneTree();
+  }
+  return result;
+}
+
 Tree* Matrix::Identity(const Tree* n) {
   assert(n->isNumber());
   if (Integer::Handler(n).numberOfDigits() > 1) {

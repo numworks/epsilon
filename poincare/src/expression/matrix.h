@@ -34,6 +34,7 @@ struct Matrix {
     return matrix->child(row * NumberOfColumns(matrix) + col);
   }
   static Tree* Zero(MatrixDimension d);
+  static Tree* Undef(MatrixDimension d);
   static Tree* Identity(const Tree* n);
   static Tree* Trace(const Tree* matrix);
   static Tree* Addition(const Tree* matrix1, const Tree* matrix2,

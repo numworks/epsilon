@@ -19,8 +19,19 @@ class Order {
     AdditionBeautification,
     /* Order of the extended real line, complexes/undef will raise SortFail
      * Some Trees will compare equal */
-    RealLine
+    RealLine,
+    /* Order for complex numbers. Real numbers go first, then complex numbers
+     * are ordered by ascending real part. */
+    ComplexLine
   };
+  /* TODO: More C++ idiomatic coding style: use one type for each OrderType
+   * instead of an enum. Each order would be represented by a struct, and each
+   * struct would implement a "static int compare(const Tree*, const Tree*)"
+   * method (replacing RealLineCompare, ComplexLineCompare...). The Compare
+   * method would take an "OrderType" template parameter instead of the
+   * "OrderType order" classical parameter. Then inside Compare, it would be
+   * possible to directly call OrderType::Compare instead of relying on "if
+   * (order==...)" clauses. */
   /* Compare returns:
    *  1 if e1 > e2
    * -1 if e1 < e2
@@ -44,6 +55,7 @@ class Order {
                              bool backward = false);
   static int CompareLastChild(const Tree* e1, const Tree* e2, OrderType order);
   static int RealLineCompare(const Tree* e1, const Tree* e2);
+  static int ComplexLineCompare(const Tree* e1, const Tree* e2);
 };
 
 }  // namespace Poincare::Internal

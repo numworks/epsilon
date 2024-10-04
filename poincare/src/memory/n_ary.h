@@ -37,6 +37,7 @@ class NAry {
   TREE_REF_WRAP(SquashIfEmpty);
   TREE_REF_WRAP(SquashIfUnary);
   TREE_REF_WRAP(Sanitize);
+  TREE_REF_WRAP_1D(Sort, Order::OrderType, Order::OrderType::System);
 
  private:
   static constexpr size_t k_maxNumberOfChildren = 255;

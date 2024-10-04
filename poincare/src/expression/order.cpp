@@ -20,6 +20,9 @@ int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
   if (order == OrderType::RealLine) {
     return Order::RealLineCompare(e1, e2);
   }
+  if (order == OrderType::ComplexLine) {
+    return Order::ComplexLineCompare(e1, e2);
+  }
   int cmp = memcmp(e1, e2, e1->treeSize());
   if (cmp == 0) {
     return 0;
@@ -279,6 +282,37 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
   return v1.real() < v2.real() ? -1 : v1.real() == v2.real() ? 0 : 1;
+}
+
+int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
+  assert(Dimension::Get(e1).isScalar() && Dimension::Get(e2).isScalar());
+  /* TODO: the approximations could be precomputed and called only once */
+  std::complex<double> v1 = Approximation::ToComplex<double>(e1, nullptr);
+  std::complex<double> v2 = Approximation::ToComplex<double>(e2, nullptr);
+  /*  Two real numbers are ordered following the natural real line order. */
+  if ((v1.imag() == 0) && (v2.imag() == 0)) {
+    return v1.real() < v2.real() ? -1 : v1.real() > v2.real() ? 1 : 0;
+  }
+  /* Real numbers are ordered before complex numbers */
+  if ((v1.imag() == 0) && (v2.imag() != 0)) {
+    return -1;
+  }
+  if ((v2.imag() == 0) && (v1.imag() != 0)) {
+    return 1;
+  }
+  /* Two complex numbers are ordered by their real part, then by their imaginary
+   * part. */
+  // clang-format off
+  return v1.real() < v2.real()
+           ? -1
+           : v1.real() > v2.real()
+               ? 1
+               : v1.imag() < v2.imag()
+                   ? -1
+                   : v1.imag() > v2.imag()
+                       ? 1
+                       : 0;
+  // clang-format on
 }
 
 }  // namespace Poincare::Internal

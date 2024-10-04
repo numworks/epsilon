@@ -5,6 +5,7 @@
 #include <poincare/src/expression/arithmetic.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/order.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/memory/n_ary.h>
@@ -143,10 +144,9 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
     TreeRef allRoots = Roots::Quadratic(a, b, c);
-    if (allRoots->isUndefined()) {
-      return allRoots;
-    }
+    assert(allRoots->isList());
     NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
+    NAry::Sort(allRoots, Order::OrderType::ComplexLine);
     return allRoots;
   }
   if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
@@ -179,7 +179,6 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
                       : Roots::CubicDiscriminant(a, b, c, d);
   TreeRef cardanoRoots = CardanoMethod(a, b, c, d, delta);
   delta->removeTree();
-
   return cardanoRoots;
 }
 
@@ -223,6 +222,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
       r3->moveTreeOverTree(maybeRealR3);
     }
   }
+  NAry::Sort(approximatedRoots, Order::OrderType::ComplexLine);
   return approximatedRoots;
 }
 
@@ -238,6 +238,7 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
       KMult(-1_e, KD, KPow(KH, -1_e)), {.KD = d, .KH = r});
   TreeRef allRoots = Roots::Quadratic(a, beta, gamma);
   NAry::AddChild(allRoots, r);
+  NAry::Sort(allRoots, Order::OrderType::ComplexLine);
   beta->removeTree();
   gamma->removeTree();
   return allRoots;
@@ -245,16 +246,18 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
 
 Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                       const Tree* d) {
-  /* Polynoms of the form "ax^3+d=0" have a simple solution : x1 =
-   * sqrt(-d/a,3) x2 = rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
+  /* Polynoms of the form "ax^3+d=0" have a simple real solution : x1 =
+   * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2 =
+   * rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
   Tree* baseRoot = PatternMatching::CreateSimplify(
       KPow(KMult(-1_e, KPow(KA, -1_e), KD), KPow(3_e, -1_e)),
       {.KA = a, .KD = d});
-  TreeRef result = PatternMatching::CreateSimplify(
+  TreeRef rootList = PatternMatching::CreateSimplify(
       KList(KA, KMult(KA, k_cubeRootOfUnity1), KMult(KA, k_cubeRootOfUnity2)),
       {.KA = baseRoot});
   baseRoot->removeTree();
-  return result;
+  NAry::Sort(rootList, Order::OrderType::ComplexLine);
+  return rootList;
 }
 
 Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
@@ -433,6 +436,10 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
   cardanoRoot1->removeTree();
   cardanoRoot0->removeTree();
 
+  /* We do not sort the roots obtained with Cardano here, because their
+  exact form is complicated to read and does not allow one to see directly if
+  the value is real or complex. Sorting the roots will be handled by
+  approximation later on. */
   return rootList;
 }
 
@@ -468,6 +475,8 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
   // clang-format on
 
   delta0->removeTree();
+
+  NAry::Sort(rootList);
   return rootList;
 }
 

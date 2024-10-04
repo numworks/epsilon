@@ -107,32 +107,30 @@ QUIZ_CASE(pcj_roots) {
 
   assert_roots_are("{1, 1, undef, 1}", "undef");
   assert_roots_are("{0, 1, 0, 1}", "{-i,i}");
-  assert_roots_are("{1, -2, 1, 0}", "{1,0}");
-  assert_roots_are("{1, 0, 0, -8}", "{2,-1+√(3)×i,-1-√(3)×i}");
+  assert_roots_are("{1, -2, 1, 0}", "{0,1}");
+  assert_roots_are("{1, 0, 0, -8}", "{2,-1-√(3)×i,-1+√(3)×i}");
   assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
   assert_roots_are("{1, -4, 6, -24}",
-                   "{-√(-24)/2,√(-24)/2,4}");  // TODO: this should simplify to
+                   "{4,-√(-24)/2,√(-24)/2}");  // TODO: this should simplify to
                                                // "{4,-√(6)×i,√(6)×i}"
   assert_roots_are("{1, 0, -3, -2}",
-                   "{-1,2,-1}");  // TODO: multiple roots and ordering
+                   "{-1,-1,2}");  // TODO: duplicate roots
   assert_roots_are("{4, 0, -12, -8}",
-                   "{-1,2,-1}");  // TODO: multiple roots and ordering
+                   "{-1,-1,2}");  // TODO: duplicate roots
   assert_roots_are("{1, -i, -1, i}", "{-1,1,i}");
-  assert_roots_are("{1, -3×i, -3, i}", "{i,i}");  // TODO: multiple roots
+  assert_roots_are("{1, -3×i, -3, i}", "{i,i}");  // TODO: duplicate roots
   assert_roots_are("{1, -3×√(2), 6, -2×√(2)}",
-                   "{√(2),√(2)}");  // TODO: multiple roots
-  assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{√(3),-π}");
+                   "{√(2),√(2)}");  // TODO: duplicate roots
+  assert_roots_are("{1,π-2×√(3),3-2×√(3)×π,3×π}", "{-π,√(3)}");
   assert_roots_are("{1,-900,270000,-27000000}", "{300}");
-
-  assert_roots_are("{1,-√(2),-16,24×√(2)}",
-                   "{2×√(2),-3×√(2)}");  // TODO: ordering
+  assert_roots_are("{1,-√(2),-16,24×√(2)}", "{-3×√(2),2×√(2)}");
 
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,1,0,1}",
       "{-1.4655712318768,0.23278561593838-0.79255199251545×i,0.23278561593838+"
       "0.79255199251545×i}");
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
-      "{1,0,-3,1}", "{-1.8793852415718,1.532088886238,0.34729635533386}");
+      "{1,0,-3,1}", "{-1.8793852415718,0.34729635533386,1.532088886238}");
 
   assert_roots_are<ExactSolveAndApproximate>(
       "{1,i,-1,1}",
@@ -144,19 +142,16 @@ QUIZ_CASE(pcj_roots) {
    * then applying the real cubic root approximation succeeds */
   assert_roots_are<ExactSolveAndRealCubicApproximate>("{1, -69, 1478, -10080}",
                                                       "{16,18,35}");
-  assert_roots_are<ExactSolveAndRealCubicApproximate>(
-      "{1,90,2125,-31250}",
-      "{-50-25×i,10,-50+25×i}");  // TODO: root ordering
+  assert_roots_are<ExactSolveAndRealCubicApproximate>("{1,90,2125,-31250}",
+                                                      "{10,-50-25×i,-50+25×i}");
 
   /* The following cubic has {1.23} as a triple root. The discriminant
    * calculation fails to find zero. Note that WolframAlpha gives exactly the
    * same roots, so this might be non trivial to fix. */
   assert_roots_are<ExactSolveAndRealCubicApproximate>(
       "{1,-3.69,4.5387,-1.86087}",
-      "{1.2227887521485-0.012490247664834×i,1.2444224957031,1.2227887521485+0."
+      "{1.2444224957031,1.2227887521485-0.012490247664834×i,1.2227887521485+0."
       "012490247664834×i}");
-
-  // TODO: test CubicRootsNullDiscriminant
 
   // TODO: when there are very large numbers among coefficients
   // assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});

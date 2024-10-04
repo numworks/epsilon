@@ -1,5 +1,8 @@
-#if 0
 #include "metric.h"
+
+#if USE_TREE_SIZE_METRIC
+
+#else
 
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -68,4 +71,5 @@ int Metric::GetMetric(Type type) {
 }
 
 }  // namespace Poincare::Internal
+
 #endif

@@ -3,6 +3,8 @@
 
 #include <poincare/src/memory/tree.h>
 
+#define USE_TREE_SIZE_METRIC 1
+
 namespace Poincare::Internal {
 
 /* TODO: Metric should never return a same score for two different
@@ -11,11 +13,12 @@ namespace Poincare::Internal {
 class Metric {
  public:
   // Metric of given tree. The smaller is the better.
+#if USE_TREE_SIZE_METRIC
   static int GetMetric(const Tree* e) {
     return (e->isDep() ? e->child(0) : e)->treeSize();
   }
 
-#if 0
+#else
   static int GetMetric(const Tree* e);
 
  private:

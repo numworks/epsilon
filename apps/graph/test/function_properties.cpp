@@ -499,7 +499,7 @@ QUIZ_CASE(graph_function_properties) {
                   .m_caption = I18n::Message::InequalityType,
                   .m_equationType = ComparisonNode::OperatorType::SuperiorEqual,
                   .m_isOfDegreeTwo = true,
-                  .m_numberOfSubCurves = 2,
+                  .m_numberOfSubCurves = 1,
                   .m_areaType =
                       ContinuousFunctionProperties::AreaType::Outside});
 

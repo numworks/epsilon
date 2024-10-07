@@ -450,8 +450,6 @@ bool SystematicOperation::ReduceDim(Tree* e) {
 bool SystematicOperation::ReduceExp(Tree* e) {
   Tree* child = e->child(0);
   if (child->isLn()) {
-    /* TODO_PCJ: Add a ln(x) dependency on user-input ln only when x can be
-     * null. */
     // exp(ln(x)) -> x
     e->removeNode();
     e->removeNode();

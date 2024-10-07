@@ -1,4 +1,7 @@
 #include <editline/readline.h>
+#include <ion/src/shared/init.h>
+#include <ion/src/simulator/shared/random.h>
+#include <poincare/init.h>
 #include <pwd.h>
 #include <unistd.h>
 
@@ -77,12 +80,12 @@ std::string getHomeDirectory() {
 }
 
 void initializeHistory() {
-  std::string historyFile = getHomeDirectory() + "/.your_cli_history";
+  std::string historyFile = getHomeDirectory() + "/.poincare_history";
   read_history(historyFile.c_str());
 }
 
 void saveHistory() {
-  std::string historyFile = getHomeDirectory() + "/.your_cli_history";
+  std::string historyFile = getHomeDirectory() + "/.poincare_history";
   write_history(historyFile.c_str());
 }
 
@@ -92,7 +95,11 @@ int main() {
 
   initializeHistory();
 
-  std::string prompt = "poincare-cli> ";
+  Ion::Simulator::Random::init();
+  Ion::Init();
+  Poincare::Init();
+
+  std::string prompt = "> ";
 
   while (true) {
     char* input = readline(prompt.c_str());

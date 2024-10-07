@@ -34,6 +34,7 @@ POINCARE_variant = epsilon
 
 # FIXME: Flags to build ion files
 SFLAGS += \
+  -Iion/include \
   -Iion/include/ion/keyboard/epsilon \
   -DION_DISPLAY_WIDTH=1000 \
   -DION_DISPLAY_HEIGHT=1000 \
@@ -59,6 +60,7 @@ $(call create_module,poincare_cli,1, \
     ) \
     $(addprefix shared/dummy/, \
       authentication.cpp \
+      circuit_breaker.cpp \
       exam_bytes.cpp \
       external_apps.cpp \
       init.cpp \
@@ -77,7 +79,6 @@ $(call assert_defined,KANDINSKY_fonts_dependencies)
 $(call all_objects_for,$(SOURCES_poincare_cli)): $(KANDINSKY_fonts_dependencies)
 
 PRIVATE_SFLAGS_poincare_cli += \
-  -Iion/include \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
@@ -88,5 +89,6 @@ LDFLAGS_poincare_cli += -ledit
 $(call create_goal,poincare_cli, \
   kandinsky \
   omg \
+  poincare.nostorage \
   poincare_cli \
 )

@@ -1,24 +1,30 @@
 #include "commands.h"
 
+#include <poincare/expression.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/memory/tree.h>
+
 #include <iostream>
 
 // Command implementations
 void simplifyCommand(const std::vector<std::string>& args) {
-  // Your simplify logic here
-  std::cout << "Simplify command executed with args:";
-  for (const auto& arg : args) std::cout << " " << arg;
-  std::cout << std::endl;
+  bool reductionFailure = false;
+  Poincare::Internal::ProjectionContext ctx;
+  Poincare::Expression e = Poincare::Expression::Parse(args[0].c_str(), nullptr)
+                               .cloneAndSimplify(&ctx, &reductionFailure);
+  char buffer[1024];
+  e.serialize(buffer, std::size(buffer));
+  std::cout << buffer << std::endl;
 }
 
 void logCommand(const std::vector<std::string>& args) {
-  // Your log logic here
-  std::cout << "Log command executed with args:";
-  for (const auto& arg : args) std::cout << " " << arg;
-  std::cout << std::endl;
+  Poincare::Expression e =
+      Poincare::Expression::Parse(args[0].c_str(), nullptr);
+  e.tree()->log();
 }
 
 // Command map
 std::map<std::string, void (*)(const std::vector<std::string>&)> commands = {
-    {"simplify", simplifyCommand}, {"log", logCommand},
-    // Add more commands here
+    {"simplify", simplifyCommand},
+    {"log", logCommand},
 };

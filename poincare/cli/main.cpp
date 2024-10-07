@@ -90,10 +90,14 @@ void saveHistory() {
 }
 
 int main() {
-  initializeCommands();
-  setupCompletion();
+  bool isInteractive = isatty(STDIN_FILENO);
 
-  initializeHistory();
+  initializeCommands();
+
+  if (isInteractive) {
+    setupCompletion();
+    initializeHistory();
+  }
 
   Ion::Simulator::Random::init();
   Ion::Init();
@@ -104,7 +108,9 @@ int main() {
   while (true) {
     char* input = readline(prompt.c_str());
     if (input == nullptr) {  // EOF (e.g., Ctrl+D)
-      std::cout << "\nExiting." << std::endl;
+      if (isInteractive) {
+        std::cout << "\nExiting." << std::endl;
+      }
       break;
     }
 
@@ -131,13 +137,18 @@ int main() {
 
     // Match command with possible abbreviation
     std::string cmdName = matchCommand(tokens[0]);
-    if (cmdName.empty()) continue;
+    if (cmdName.empty()) {
+      std::cerr << "unknown command " << tokens[0] << '\n';
+      continue;
+    }
 
     std::vector<std::string> args(tokens.begin() + 1, tokens.end());
     commands[cmdName](args);
   }
 
-  saveHistory();
+  if (isInteractive) {
+    saveHistory();
+  }
 
   return 0;
 }

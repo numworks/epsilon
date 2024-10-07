@@ -91,7 +91,7 @@ class EquationSolver {
                                uint8_t numberOfVariables, Context* context,
                                Error* error);
 
-  static constexpr int k_maxNumberOfDescendantsBeforeApproximating = 16;
+  static constexpr int k_maxNumberOfDescendantsBeforeApproximating = 32;
   static bool ShouldApproximatePolynomialRoots(const Tree* roots);
 
   // Return list of linear coefficients for each variables and final constant.

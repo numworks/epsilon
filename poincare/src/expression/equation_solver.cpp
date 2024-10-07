@@ -136,6 +136,19 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       context->type = Type::GeneralMonovariable;
       // TODO: Handle GeneralMonovariable solving.
       assert(result.isUninitialized());
+      reducedEquationSet->removeTree();
+      userSymbols->removeTree();
+      return result;
+    }
+    /* Remove non real solutions of a polynomial if the equation was projected
+     * with a "Real" Complex format */
+    assert(result->isList());
+    if (projectionContext.m_complexFormat == ComplexFormat::Real) {
+      for (int i = result->numberOfChildren() - 1; i >= 0; i--) {
+        if (!SignOfTreeOrApproximation(result->child(i)).isReal()) {
+          NAry::RemoveChildAtIndex(result, i);
+        }
+      }
     }
   }
   reducedEquationSet->removeTree();
@@ -570,21 +583,6 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   for (Tree* solution : solutionList->children()) {
     // TODO_PCJ: restore dependencies handling here
     EnhanceSolution(solution, context);
-  }
-  if (Preferences::SharedPreferences()->complexFormat() ==
-      ComplexFormat::Real) {
-    for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
-      Tree* solution = solutionList->child(i);
-      ComplexSign sign = GetComplexSign(solution);
-      if (sign.imagSign().isUnknown()) {
-        Tree* approxDelta = Approximation::RootTreeToTree<double>(solution);
-        sign = GetComplexSign(approxDelta);
-        approxDelta->removeTree();
-      }
-      if (!sign.isReal()) {
-        NAry::RemoveChildAtIndex(solutionList, i);
-      }
-    }
   }
   NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;

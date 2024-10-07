@@ -538,10 +538,34 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
       coef = 0_e;
     }
   }
-  TreeRef discriminant = Roots::QuadraticDiscriminant(
-      coefficients[2], coefficients[1], coefficients[0]);
-  TreeRef solutionList = Roots::Quadratic(coefficients[2], coefficients[1],
-                                          coefficients[0], discriminant);
+
+  assert(degree == 2 || degree == 3);
+  TreeRef discriminant =
+      (degree == 2)
+          ? Roots::QuadraticDiscriminant(coefficients[2], coefficients[1],
+                                         coefficients[0])
+          : Roots::CubicDiscriminant(coefficients[3], coefficients[2],
+                                     coefficients[1], coefficients[0]);
+  // Exact solutions are computed here
+  TreeRef solutionList =
+      (degree == 2)
+          ? Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0],
+                             discriminant)
+          : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
+                         coefficients[0], discriminant);
+
+  if (ShouldApproximatePolynomialRoots(solutionList)) {
+    TreeRef approximatedRoots =
+        ((degree == 3) && helpers::AllOf(coefficients, numberOfTerms,
+                                         [](const Tree* e) {
+                                           return GetComplexSign(e).isReal();
+                                         }))
+            ? Roots::ApproximateRootsOfRealCubic(solutionList, discriminant)
+            : Approximation::RootTreeToTree<double>(solutionList);
+    solutionList->removeTree();
+    solutionList = approximatedRoots;
+  }
+
   polynomial->removeTree();
   for (Tree* solution : solutionList->children()) {
     // TODO_PCJ: restore dependencies handling here

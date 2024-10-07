@@ -91,6 +91,11 @@ class EquationSolver {
                                uint8_t numberOfVariables, Context* context,
                                Error* error);
 
+  static bool ShouldApproximatePolynomialRoots(const Tree* roots) {
+    // TODO
+    return true;
+  }
+
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
                                      uint8_t numberOfVariables,
@@ -105,6 +110,21 @@ class EquationSolver {
   static void TagVariableIfParameter(const char* name, uint32_t* tags,
                                      const Context* context);
 };
+
+namespace helpers {
+
+template <typename P>
+static inline bool AllOf(const Tree** trees, int numberOfElements,
+                         P predicate) {
+  for (int i = 0; i < numberOfElements; i++) {
+    if (!predicate(trees[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+}  // namespace helpers
 
 }  // namespace Poincare::Internal
 

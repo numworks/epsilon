@@ -1,30 +1,67 @@
 #include "commands.h"
 
 #include <poincare/expression.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/memory/tree.h>
 
 #include <iostream>
 
-// Command implementations
-void simplifyCommand(const std::vector<std::string>& args) {
-  bool reductionFailure = false;
-  Poincare::Internal::ProjectionContext ctx;
-  Poincare::Expression e = Poincare::Expression::Parse(args[0].c_str(), nullptr)
-                               .cloneAndSimplify(&ctx, &reductionFailure);
-  char buffer[1024];
-  e.serialize(buffer, std::size(buffer));
+using namespace Poincare;
+
+UserExpression getExpression(const std::vector<std::string>& args) {
+  if (args.size() != 1) {
+    std::cerr << "this function expects an expression tree";
+    return {};
+  }
+  UserExpression e = Expression::Parse(args[0].c_str(), nullptr);
+  return e;
+}
+
+void printExpression(const UserExpression& expr) {
+  char buffer[65536];
+  expr.serialize(buffer, std::size(buffer));
   std::cout << buffer << std::endl;
 }
 
+// Command implementations
+void expandCommand(const std::vector<std::string>& args) {
+  UserExpression s = getExpression(args);
+  Internal::ProjectionContext ctx;
+  Internal::Tree* p = s.tree()->cloneTree();
+  Internal::Simplification::ToSystem(p, &ctx);
+  Internal::SystematicReduction::DeepReduce(p);
+  Internal::AdvancedReduction::DeepExpand(p);
+  Expression r = Expression::Builder(p);
+  printExpression(r);
+}
+
+void approximateCommand(const std::vector<std::string>& args) {
+  UserExpression e = getExpression(args);
+  ApproximationContext ctx(nullptr, Preferences::ComplexFormat::Real,
+                           Preferences::AngleUnit::Radian);
+  printExpression(e.approximateToTree<double>(ctx));
+}
+
+void simplifyCommand(const std::vector<std::string>& args) {
+  bool reductionFailure = false;
+  Internal::ProjectionContext ctx;
+  UserExpression e =
+      getExpression(args).cloneAndSimplify(&ctx, &reductionFailure);
+  printExpression(e);
+}
+
 void logCommand(const std::vector<std::string>& args) {
-  Poincare::Expression e =
-      Poincare::Expression::Parse(args[0].c_str(), nullptr);
+  UserExpression e = getExpression(args);
   e.tree()->log();
 }
 
 // Command map
 std::map<std::string, void (*)(const std::vector<std::string>&)> commands = {
+    {"approximate", approximateCommand},
+    {"expand", expandCommand},
     {"simplify", simplifyCommand},
     {"log", logCommand},
 };

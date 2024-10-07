@@ -292,7 +292,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   /* Compute the rank of (A|b), forceCanonize to ignore UserSequences
    * which are not explicit yet */
   int rank = Matrix::CanonizeAndRank(matrix, true);
-  if (rank == -1) {
+  if (rank == Matrix::k_failedToCanonizeRank) {
     *error = Error::EquationUndefined;
     matrix->removeTree();
     return nullptr;
@@ -393,11 +393,11 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
 
     /* forceCanonization = true so that canonization still happens even if
-     * t.approximate() is NAN. If other children of ab have an undef
-     * approximation, the previous rank computation would already have returned
-     * -1. */
+     * t.approximate() is NAN. If other children of ab had an undef
+     * approximation, the resolution would already have failed at
+     * reduction of the equation set. */
     rank = Matrix::CanonizeAndRank(matrix, true);
-    if (rank == -1) {
+    if (rank == Matrix::k_failedToCanonizeRank) {
       *error = Error::EquationUndefined;
       matrix->removeTree();
       return nullptr;

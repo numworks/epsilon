@@ -591,6 +591,13 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   return solutionList;
 }
 
+bool EquationSolver::ShouldApproximatePolynomialRoots(const Tree* roots) {
+  return helpers::AnyOf(roots, [](const Tree* root) {
+    return root->numberOfDescendants(true) >
+           k_maxNumberOfDescendantsBeforeApproximating;
+  });
+}
+
 EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
                                                       Context* context) {
   /* TODO_PCJ:

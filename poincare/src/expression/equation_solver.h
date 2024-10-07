@@ -91,10 +91,8 @@ class EquationSolver {
                                uint8_t numberOfVariables, Context* context,
                                Error* error);
 
-  static bool ShouldApproximatePolynomialRoots(const Tree* roots) {
-    // TODO
-    return true;
-  }
+  static constexpr int k_maxNumberOfDescendantsBeforeApproximating = 16;
+  static bool ShouldApproximatePolynomialRoots(const Tree* roots);
 
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
@@ -122,6 +120,17 @@ static inline bool AllOf(const Tree** trees, int numberOfElements,
     }
   }
   return true;
+}
+
+template <typename P>
+static inline bool AnyOf(const Tree* listTree, P predicate) {
+  assert(listTree->isList());
+  for (const Tree* element : listTree->children()) {
+    if (predicate(element)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 }  // namespace helpers

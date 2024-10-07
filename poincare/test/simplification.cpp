@@ -181,8 +181,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("2a+3b+4a", "6×a+3×b");
   simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "(7×a-9)×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
-  // TODO: Should be "b×(d+f)×g" (ADVANCED_MAX_DEPTH is too small)
-  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d×g+f×g)");
+  simplifies_to("(a+b)×(d+f)×g-a×d×g-a×f×g", "b×(d+f)×g");
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
@@ -229,8 +228,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(x^2)", "x^2");
   simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{0×√(c^2)})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
-  // TODO: Should be "3" (ADVANCED_MAX_DEPTH is too small)
-  simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "-2×x-1+2×(x+2)");
+  simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -506,8 +504,7 @@ QUIZ_CASE(pcj_simplification_factorial) {
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
   // TODO : Should simplify to 1
-  simplifies_to("cosh(x)^2-sinh(-x)^2",
-                "(e^(x)+e^(-x))^2/4+1/2-(e^(-2×x)+e^(2×x))/4");
+  simplifies_to("cosh(x)^2-sinh(-x)^2", "e^(x)×e^(-x)");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-(-1+e^(2×x))/(1+e^(2×x))+((-1+e^(4×x))×(1+(-1+e^(2×x))^2/"
@@ -515,7 +512,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
-                "ln(e^(x)/2-e^(-x)/2+√(1/2+(e^(-2×x)+e^(2×x))/4))",
+                "ln((e^(x)-e^(-x))/2+√(1/2+(e^(-2×x)+e^(2×x))/4))",
                 cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to(
@@ -734,8 +731,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(x)^2", "x", cartesianCtx);
   /* TODO: Should be 0, (exp(i*(arg(A) + arg(B) - arg(A*B))) should be
    * simplified to 1 */
-  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-2)+√(-1-i)×√(1-i)",
-                cartesianCtx);
+  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
+                "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
 
   // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");

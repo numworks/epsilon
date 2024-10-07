@@ -4,6 +4,7 @@
 
 #include "k_tree.h"
 #include "sign.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -121,17 +122,29 @@ bool AdvancedOperation::ContractExp(Tree* e) {
           KAdd(KA_s, KC_s, KD_s, KExp(KMult(KB, i_e))));
 }
 
+// A*(B+C+..)*(D+E+...) = A*B*D + A*B*E+...+A*C*D+...
 bool AdvancedOperation::ExpandMult(Tree* e) {
-  // We need at least one factor before or after addition.
-  return
-      // A?*(B+C?)*D? = A*B*D + A*C*D
-      PatternMatching::MatchReplaceSimplify(
-          e, KMult(KA_p, KAdd(KB, KC_p), KD_s),
-          KAdd(KMult(KA_p, KB, KD_s), KMult(KA_p, KAdd(KC_p), KD_s))) ||
-      // (A+B?)*C? = A*C + B*C
-      PatternMatching::MatchReplaceSimplify(
-          e, KMult(KAdd(KA, KB_p), KC_p),
-          KAdd(KMult(KA, KC_p), KMult(KAdd(KB_p), KC_p)));
+  /* As opposed to most advanced operation steps, we expand mult in depth
+   * because too many advanced reduction steps were needed to simplify
+   * multiplications of additions. We therefore rely on ContractMult for atomic
+   * contractions that improve the metric. */
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KMult(KA_s, KAdd(KB, KC_p), KD_s), &ctx) &&
+      (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KD) != 0)) {
+    int numberOfTerms = 1 + ctx.getNumberOfTrees(KC);
+    Tree* result = SharedTreeStack->pushAdd(numberOfTerms);
+    const Tree* term = ctx.getTree(KB);
+    for (int i = 0; i < numberOfTerms; i++) {
+      ctx.setNode(KB, term, 1, false);
+      // TODO: Maybe limit the number of recursive calls.
+      ExpandMult(PatternMatching::CreateSimplify(KMult(KA_s, KB, KD_s), ctx));
+      term = term->nextTree();
+    }
+    e->moveTreeOverTree(result);
+    SystematicReduction::ShallowReduce(e);
+    return true;
+  }
+  return false;
 }
 
 bool AdvancedOperation::ContractMult(Tree* e) {

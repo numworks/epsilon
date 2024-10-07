@@ -226,6 +226,8 @@ bool Logarithm::ContractLn(Tree* e) {
     a->removeTree();
     return true;
   }
+  /* Note: We could avoid PushAdditionCorrection if inside an exponential.
+   * Adding this special case doesn't seem worth it. */
   // A?+ ln(B) +C?+ ln(D) +E? = A+C+ ln(BD) +E+ i*(arg(B) + arg(D) - arg(BD))
   if (PatternMatching::Match(e, KAdd(KA_s, KLn(KB), KC_s, KLn(KD), KE_s),
                              &ctx)) {
@@ -242,6 +244,9 @@ bool Logarithm::ContractLn(Tree* e) {
 }
 
 bool Logarithm::ExpandLn(Tree* e) {
+  if (!e->isLn()) {
+    return false;
+  }
   // ln(12/7) = 2*ln(2) + ln(3) - ln(7)
   if (ExpandLnOnRational(e)) {
     return true;

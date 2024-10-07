@@ -42,6 +42,7 @@ SFLAGS += \
   -DION_KEYBOARD_COLUMNS=6 \
   -DION_KEYBOARD_ROWS=9
 
+$(call import_module,liba,liba)
 $(call import_module,omg,omg)
 $(call import_module,kandinsky,kandinsky)
 $(call import_module,poincare,poincare)
@@ -88,6 +89,7 @@ LDFLAGS_poincare_cli += -ledit
 
 $(call create_goal,poincare_cli, \
   kandinsky \
+  liba_bridge \
   omg \
   poincare.nostorage \
   poincare_cli \

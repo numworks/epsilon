@@ -101,13 +101,8 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
           e, KExp(KMult(KA_s, i_e)),
           KAdd(KTrig(KMult(KA_s), 0_e), KMult(KTrig(KMult(KA_s), 1_e), i_e))) ||
       // exp(A+B?) = exp(A) * exp(B)
-      PatternMatching::MatchReplaceSimplify(
-          e, KExp(KAdd(KA, KB_p)), KMult(KExp(KA), KExp(KAdd(KB_p)))) ||
-      // exp(-(1/2)*A) = exp(1/2*A) * exp(-A)
-      /* Used in 1/√(x) -> √(x)/x, a more general solution may be needed. */
-      PatternMatching::MatchReplaceSimplify(
-          e, KExp(KMult(-1_e / 2_e, KA_p)),
-          KMult(KExp(KMult(1_e / 2_e, KA_p)), KExp(KMult(-1_e, KA_p))));
+      PatternMatching::MatchReplaceSimplify(e, KExp(KAdd(KA, KB_p)),
+                                            KMult(KExp(KA), KExp(KAdd(KB_p))));
 }
 
 bool AdvancedOperation::ContractExp(Tree* e) {

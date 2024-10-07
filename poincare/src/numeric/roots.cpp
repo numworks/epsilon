@@ -1,4 +1,5 @@
 #include <poincare/numeric/roots.h>
+#include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/sign.h>
@@ -16,8 +17,11 @@ Tree* Roots::Linear(const Tree* a, const Tree* b) {
 Tree* Roots::QuadraticDiscriminant(const Tree* a, const Tree* b,
                                    const Tree* c) {
   // Δ=B^2-4AC
-  return PatternMatching::CreateSimplify(
+  Tree* result = PatternMatching::CreateSimplify(
       KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
+  // Use advanced reduction because systematic reduction doesn't expand powers.
+  AdvancedReduction::Reduce(result);
+  return result;
 }
 
 Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,

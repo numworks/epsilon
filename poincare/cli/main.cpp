@@ -9,15 +9,7 @@
 #include <string>
 #include <vector>
 
-// Command function declarations
-void simplifyCommand(const std::vector<std::string>& args);
-void logCommand(const std::vector<std::string>& args);
-
-// Command map
-std::map<std::string, void (*)(const std::vector<std::string>&)> commands = {
-    {"simplify", simplifyCommand}, {"log", logCommand},
-    // Add more commands here
-};
+#include "commands.h"
 
 std::vector<std::string> commandNames;
 
@@ -92,19 +84,6 @@ void initializeHistory() {
 void saveHistory() {
   std::string historyFile = getHomeDirectory() + "/.your_cli_history";
   write_history(historyFile.c_str());
-}
-
-// Command implementations
-void simplifyCommand(const std::vector<std::string>& args) {
-  std::cout << "Simplify command executed with args:";
-  for (const auto& arg : args) std::cout << " " << arg;
-  std::cout << std::endl;
-}
-
-void logCommand(const std::vector<std::string>& args) {
-  std::cout << "Log command executed with args:";
-  for (const auto& arg : args) std::cout << " " << arg;
-  std::cout << std::endl;
 }
 
 int main() {

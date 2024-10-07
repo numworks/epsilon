@@ -49,6 +49,7 @@ $(call import_module,poincare,poincare)
 $(call import_module,poincare_cli,.)
 $(call create_module,poincare_cli,1, \
   $(addprefix poincare/cli/, \
+    commands.cpp \
     main.cpp \
     timing.cpp \
   ) \

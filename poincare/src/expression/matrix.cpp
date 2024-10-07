@@ -209,8 +209,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
           matrix->moveTreeOverTree(Matrix::Undef(
               {static_cast<uint8_t>(m), static_cast<uint8_t>(n)}));
           if (determinant) {
-            Tree* det = KUndefUnhandled->cloneTree();
-            *determinant = det;
+            *determinant = KUndefUnhandled->cloneTree();
           }
         }
         return false;
@@ -360,7 +359,7 @@ int Matrix::Rank(const Tree* matrix) {
     return rank;
   } else {
     copy->removeTree();
-    return NAN;
+    return k_failedToCanonizeRank;
   }
 }
 
@@ -368,7 +367,7 @@ int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
   if (RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization)) {
     return RankOfCanonized(matrix);
   }
-  return NAN;
+  return k_failedToCanonizeRank;
 }
 
 int Matrix::RankOfCanonized(const Tree* matrix) {

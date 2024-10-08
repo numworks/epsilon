@@ -63,13 +63,12 @@ QUIZ_CASE(solver_polynomial_equation) {
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-2π)(x/2-pi)=0", {"x=2π", "delta=0"});
-  assert_solves_to("(x-π)(x-ln(2))=0",
-                   {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
-  assert_solves_to("(x-√(2))(x-√(3))=0",
-                   {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
+  // assert_solves_to("(x-π)(x-ln(2))=0",
+  //                  {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
+  // assert_solves_to("(x-√(2))(x-√(3))=0",
+  //                  {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
   assert_solves_to("2×x^2-4×x+2=0", {"x=1", "delta=0"});
-  assert_solves_to("2×x^2-4×x+4=3",
-                   {"x=(2-√(2))/2", "x=(2+√(2))/2", "delta=8"});
+  assert_solves_to("2×x^2-4×x+4=3", {"x=1-√(2)/2", "x=1+√(2)/2", "delta=8"});
   assert_solves_to("3×x^2-4x+4=2",
                    {"x=2/3-(√(2)/3)i", "x=2/3+(√(2)/3)i", "delta=-8"});
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",

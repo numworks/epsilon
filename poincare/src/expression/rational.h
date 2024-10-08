@@ -32,7 +32,7 @@ class Rational final {
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2, const Tree* e3,
                         auto... others) {
-    TreeRef e1e2Addition = Addition(e1, e2);
+    Tree* e1e2Addition = Addition(e1, e2);
     TreeRef fullAddition = Addition(e1e2Addition, e3, others...);
     e1e2Addition->removeTree();
     return fullAddition;
@@ -42,7 +42,7 @@ class Rational final {
                               auto... others) {
     return Multiplication(Multiplication(e1, e2), e3, others...);
 
-    TreeRef e1e2Multiplication = Multiplication(e1, e2);
+    Tree* e1e2Multiplication = Multiplication(e1, e2);
     TreeRef fullMultiplication =
         Multiplication(e1e2Multiplication, e3, others...);
     e1e2Multiplication->removeTree();

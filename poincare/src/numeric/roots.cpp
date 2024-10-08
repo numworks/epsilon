@@ -33,10 +33,6 @@ Tree* DefaultEvaluation::polynomial(const Tree* value, const Tree* a,
 Tree* RationalEvaluation::polynomial(const Tree* value, const Tree* a,
                                      const Tree* b, const Tree* c,
                                      const Tree* d) {
-  /* Many temporary Tree pointers are created here. Having a "smart pointer"
-   * to a Tree, responsible for managing the ressource and calling
-   * removeTree() when destroyed, would make the following code become a one
-   * liner. */
   Tree* x3 = Rational::IntegerPower(value, 3_e);
   Tree* aTerm = Rational::Multiplication(a, x3);
   Tree* x2 = Rational::IntegerPower(value, 2_e);
@@ -292,25 +288,19 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
    * since d/a = -x1*x2*x3, a rational root p/q must be so that p divides d
    * and q divides a. */
 
-  TreeRef denominatorA = Rational::Denominator(a).pushOnTreeStack();
-  TreeRef denominatorB = Rational::Denominator(b).pushOnTreeStack();
-  TreeRef denominatorC = Rational::Denominator(c).pushOnTreeStack();
-  TreeRef denominatorD = Rational::Denominator(d).pushOnTreeStack();
-  /* It is needed to keep a TreeRef to this 4 trees in order to delete them
-   * after CreateSimplify. A lighter API would be to have CreateSimplify
-   * accept rvalue TreeRefs (and the trees pointed to would be removed inside
-   * CreateSimplify). This would make the code much shorter and more readable
-   * (here there are as many as 8 extra lines in addition to calling
-   * CreateSimplify) */
+  Tree* denominatorA = Rational::Denominator(a).pushOnTreeStack();
+  Tree* denominatorB = Rational::Denominator(b).pushOnTreeStack();
+  Tree* denominatorC = Rational::Denominator(c).pushOnTreeStack();
+  Tree* denominatorD = Rational::Denominator(d).pushOnTreeStack();
   TreeRef lcm = PatternMatching::CreateSimplify(KLCM(KA, KB, KC, KD),
                                                 {.KA = denominatorA,
                                                  .KB = denominatorB,
                                                  .KC = denominatorC,
                                                  .KD = denominatorD});
-  denominatorA->removeTree();
-  denominatorB->removeTree();
-  denominatorC->removeTree();
   denominatorD->removeTree();
+  denominatorC->removeTree();
+  denominatorB->removeTree();
+  denominatorA->removeTree();
   assert(lcm->isRational());
   TreeRef A = Rational::Multiplication(a, lcm);
   TreeRef D = Rational::Multiplication(d, lcm);

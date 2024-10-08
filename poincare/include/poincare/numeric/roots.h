@@ -15,15 +15,11 @@ namespace Internal {
 struct DefaultEvaluation {
   Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
                    const Tree* c, const Tree* d);
-
-  bool isZero(const Tree* e) { return GetComplexSign(e).isNull(); }
 };
 
 struct RationalEvaluation {
   Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
                    const Tree* c, const Tree* d);
-
-  bool isZero(const Tree* e) { return Rational::IsZero(e); }
 };
 
 class Roots {
@@ -56,6 +52,7 @@ class Roots {
 
  private:
   // (-1 + i√(3)) / 2
+  // TODO: change all KPow(KPow) to Kexp(KLn)
   static constexpr KTree k_cubeRootOfUnity1 = KMult(
       KPow(2_e, -1_e), KAdd(-1_e, KMult(KPow(3_e, KPow(2_e, -1_e)), i_e)));
 
@@ -67,8 +64,8 @@ class Roots {
   template <typename EvaluationMethod = DefaultEvaluation>
   static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,
                      const Tree* c, const Tree* d) {
-    TreeRef e = EvaluationMethod{}.polynomial(value, a, b, c, d);
-    bool isZero = EvaluationMethod{}.isZero(e);
+    Tree* e = EvaluationMethod{}.polynomial(value, a, b, c, d);
+    bool isZero = e->isZero();
     e->removeTree();
     return isZero;
   }

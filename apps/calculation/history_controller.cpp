@@ -290,10 +290,11 @@ void HistoryController::handleOK() {
     if (outputSubviewPosition ==
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
         displayOutput != Calculation::DisplayOutput::ExactOnly) {
+      assert(Calculation::CanDisplayApproximate(displayOutput));
       editController->insertLayout(
           calculation->createApproximateOutputLayout(&dummy, true));
     } else {
-      assert(Calculation::CanDisplayApproximate(displayOutput));
+      assert(Calculation::CanDisplayExact(displayOutput));
       editController->insertLayout(
           calculation->createExactOutputLayout(&dummy));
     }

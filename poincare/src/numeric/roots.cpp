@@ -135,10 +135,10 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   }
 
   /* Cases in which some coefficients are zero. */
-  if (GetComplexSign(a).isNull()) {
+  if (a->isZero()) {
     return Roots::Quadratic(b, c, d);
   }
-  if (GetComplexSign(d).isNull()) {
+  if (d->isZero()) {
     /* When d is null the obvious root is zero. To avoid complexifying the
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
@@ -150,7 +150,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
     }
     return allRoots;
   }
-  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
+  if (b->isZero() && c->isZero()) {
     /* We compute the three solutions here because they are quite simple, and
      * to avoid generating very complex coefficients when creating the
      * remaining quadratic equation. */

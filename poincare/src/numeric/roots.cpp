@@ -308,8 +308,7 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
   IntegerHandler AHandler = Integer::Handler(A);
   IntegerHandler DHandler = Integer::Handler(D);
-  A->removeTree();
-  D->removeTree();
+
   AHandler.setSign(NonStrictSign::Positive);
   DHandler.setSign(NonStrictSign::Positive);
 
@@ -317,12 +316,17 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
    * representable value. As the ListPositiveDivisors function only accepts
    * uint32_t input, we must prevent potential overflows. */
   if (IntegerHandler::Compare(AHandler, IntegerHandler(UINT32_MAX)) == 1) {
+    A->removeTree();
+    D->removeTree();
     return nullptr;
   }
   Arithmetic::Divisors divisorsA =
       Arithmetic::ListPositiveDivisors(AHandler.to<uint32_t>());
   Arithmetic::Divisors divisorsD =
       Arithmetic::ListPositiveDivisors(DHandler.to<uint32_t>());
+
+  A->removeTree();
+  D->removeTree();
 
   if (divisorsA.numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed ||
       divisorsD.numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed) {

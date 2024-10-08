@@ -367,11 +367,10 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
       if (IsRoot(r, a, b, c, d)) {
         return r;
       }
-      r->removeTree();
       /* Test the opposite sign. The minus sign could be in any of the
        * different factors of a product. */
-      r = PatternMatching::CreateSimplify(KMult(1_e, KB, KPow(KA, -1_e)),
-                                          {.KA = a, .KB = productOrSumTerm});
+      r->moveTreeOverTree(
+          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = r}));
       if (IsRoot(r, a, b, c, d)) {
         return r;
       }

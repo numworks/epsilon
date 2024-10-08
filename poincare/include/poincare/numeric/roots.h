@@ -51,15 +51,16 @@ class Roots {
                                            const Tree* discriminant);
 
  private:
+  static constexpr KTree k_squareRootOfThree =
+      KExp(KMult(KPow(2_e, -1_e), KLn(3_e)));
+
   // (-1 + i√(3)) / 2
-  // TODO: change all KPow(KPow) to Kexp(KLn)
-  static constexpr KTree k_cubeRootOfUnity1 = KMult(
-      KPow(2_e, -1_e), KAdd(-1_e, KMult(KPow(3_e, KPow(2_e, -1_e)), i_e)));
+  static constexpr KTree k_cubeRootOfUnity1 =
+      KMult(KPow(2_e, -1_e), KAdd(-1_e, KMult(k_squareRootOfThree, i_e)));
 
   // (-1 - i√(3)) / 2
   static constexpr KTree k_cubeRootOfUnity2 =
-      KMult(KPow(2_e, -1_e),
-            KAdd(-1_e, KMult(-1_e, KPow(3_e, KPow(2_e, -1_e)), i_e)));
+      KMult(KPow(2_e, -1_e), KAdd(-1_e, KMult(-1_e, k_squareRootOfThree, i_e)));
 
   template <typename EvaluationMethod = DefaultEvaluation>
   static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,

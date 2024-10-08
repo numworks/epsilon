@@ -9,11 +9,19 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   shared/unix/platform_files.cpp \
   shared/circuit_breaker.cpp \
   shared/clipboard_helper_sdl.cpp \
-  shared/collect_registers_x86_64.s \
-  shared/collect_registers.cpp \
   shared/haptics.cpp \
   shared/journal.cpp \
 )
+
+# We could define ARCHS for linux as well instead
+ifeq ($(shell uname -m),x86_64)
+SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
+  shared/collect_registers_x86_64.s \
+  shared/collect_registers.cpp \
+)
+else
+SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
+endif
 
 # Make sure the call to shell is not in a recursive variable.
 _ion_libjpeg_cflags := $(shell pkg-config libpng libjpeg --cflags)

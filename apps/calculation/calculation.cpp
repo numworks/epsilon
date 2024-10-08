@@ -159,10 +159,10 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
   UserExpression inputExp = input();
   UserExpression outputExp = exactOutput();
   if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
-      ShouldOnlyDisplayExactOutput(inputExp)) {
+      ShouldOnlyDisplayExactOutput(inputExp) ||
+      exactOutputTree()->isUndefined()) {
     m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (exactOutputTree()->isUndefined() ||
-             approximatedOutputTree()->isNonReal() ||
+  } else if (approximatedOutputTree()->isNonReal() ||
              approximatedOutputTree()->isUndefined() ||
              // Other conditions are factorized in CAS
              CAS::ShouldOnlyDisplayApproximation(

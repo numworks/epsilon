@@ -393,6 +393,7 @@ ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
 }
 
 ComplexSign SignOfTreeOrApproximation(const Tree* e) {
+  assert(Dimension::IsNonListScalar(e));
   ComplexSign sign = GetComplexSign(e);
   if (sign.realSign().isUnknown()) {
     Tree* approximation = Approximation::RootTreeToTree<double>(e);

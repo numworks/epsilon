@@ -6,6 +6,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+CI=0
+if [[ "${1-}" == "--ci" ]]; then
+  CI=1
+  shift
+fi
+
 INSTALL_ARM_GCC=1
 if [[ "${1-}" == "--only-simulator" ]]; then
   INSTALL_ARM_GCC=0
@@ -97,7 +103,9 @@ install_linux_binary_deps() {
     sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
   fi
 
-  install_latest_lcov
+  if [[ $CI == "1" ]]; then
+    install_latest_lcov
+  fi
 }
 
 install_windows_binary_deps() {
@@ -170,4 +178,7 @@ setup_nws_diff_converter() {
 
 install_binary_deps
 install_python_deps
-init_git_pre_push_hook
+
+if [[ $CI == "0" ]]; then
+  init_git_pre_push_hook
+fi

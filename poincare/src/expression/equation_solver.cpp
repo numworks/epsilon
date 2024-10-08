@@ -289,9 +289,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     Matrix::SetNumberOfRows(matrix, Matrix::NumberOfRows(matrix) + 1);
   }
   assert(Matrix::NumberOfRows(matrix) == rows);
-  /* Compute the rank of (A|b), forceCanonize to ignore UserSequences
-   * which are not explicit yet */
-  int rank = Matrix::CanonizeAndRank(matrix, true);
+  // Compute the rank of (A|b)
+  int rank = Matrix::CanonizeAndRank(matrix);
   if (rank == Matrix::k_failedToCanonizeRank) {
     *error = Error::EquationUndefined;
     matrix->removeTree();

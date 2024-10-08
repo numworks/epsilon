@@ -1245,7 +1245,7 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
 
 bool Approximation::CanApproximate(const Tree* e,
                                    int firstNonApproximableVarId) {
-  if (e->isRandomized() || e->isUserNamed() ||
+  if (e->isRandomized() || e->isUserSymbol() || e->isUserFunction() ||
       (e->isVar() && Variables::Id(e) >= firstNonApproximableVarId) ||
       e->isDepList()) {
     return false;

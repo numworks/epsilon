@@ -20,9 +20,7 @@ using namespace Poincare;
 
 template <typename T>
 void solve_and_process_error(std::initializer_list<const char*> equations,
-                             T&& lambda) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+                             SolverContext* solverContext, T&& lambda) {
   EquationStore equationStore;
   SystemOfEquations system(&equationStore);
   for (const char* equation : equations) {
@@ -33,34 +31,37 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
         equationStore.recordAtIndex(equationStore.numberOfModels() - 1);
     Shared::ExpiringPointer<Equation> model =
         equationStore.modelForRecord(record);
-    err = model->setContent(Layout::Parse(equation), &solverContext);
+    err = model->setContent(Layout::Parse(equation), solverContext);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }
   equationStore.tidyDownstreamPoolFrom();
   system.tidy();
-  SystemOfEquations::Error err = system.exactSolve(&solverContext);
+  SystemOfEquations::Error err = system.exactSolve(solverContext);
   lambda(&system, err);
   equationStore.removeAll();
 }
 
 template <typename T>
-void solve_and(std::initializer_list<const char*> equations, T&& lambda) {
-  solve_and_process_error(equations, [lambda](SystemOfEquations* system,
-                                              SystemOfEquations::Error error) {
-    quiz_assert(error == NoError);
-    lambda(system);
-  });
+void solve_and(std::initializer_list<const char*> equations,
+               SolverContext* solverContext, T&& lambda) {
+  solve_and_process_error(
+      equations, solverContext,
+      [lambda](SystemOfEquations* system, SystemOfEquations::Error error) {
+        quiz_assert(error == NoError);
+        lambda(system);
+      });
 }
 
 void assert_solves_with_range_to(const char* equation, double min, double max,
                                  std::initializer_list<double> solutions,
                                  const char* variable = nullptr) {
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
   solve_and_process_error(
-      {equation}, [min, max, solutions, variable](SystemOfEquations* system,
-                                                  SystemOfEquations::Error e) {
-        Shared::GlobalContext globalContext;
-        SolverContext solverContext(&globalContext);
+      {equation}, &solverContext,
+      [min, max, solutions, variable, &solverContext](
+          SystemOfEquations* system, SystemOfEquations::Error e) {
         quiz_assert(e == RequireApproximateSolution);
         assert(std::isnan(min) == std::isnan(max));
         if (std::isnan(min)) {
@@ -85,17 +86,18 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
 
 void assert_solves_to_error(std::initializer_list<const char*> equations,
                             SystemOfEquations::Error error) {
-  solve_and_process_error(equations, [error](SystemOfEquations* system,
-                                             SystemOfEquations::Error e) {
-    quiz_assert(e == error);
-  });
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
+  solve_and_process_error(
+      equations, &solverContext,
+      [error](SystemOfEquations* system, SystemOfEquations::Error e) {
+        quiz_assert(e == error);
+      });
 }
 
 static void compareSolutions(SystemOfEquations* system,
-                             std::initializer_list<const char*> solutions) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
-
+                             std::initializer_list<const char*> solutions,
+                             SolverContext* solverContext) {
   size_t i = 0;
   for (const char* solution : solutions) {
     // Solutions are specified under the form "foo=bar"
@@ -131,7 +133,7 @@ static void compareSolutions(SystemOfEquations* system,
      * creating an expression from a layout. */
 
     Expression expectedExpression =
-        Expression::Parse(expectedValue, &solverContext, false);
+        Expression::Parse(expectedValue, solverContext, false);
     quiz_assert(!expectedExpression.isUninitialized());
 
     Layout obtainedLayout = system->solution(i)->exactLayout();
@@ -142,7 +144,7 @@ static void compareSolutions(SystemOfEquations* system,
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer, bufferSize);
     Expression obtainedExpression =
-        Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
+        Expression::Parse(obtainedLayoutBuffer, solverContext, false);
     quiz_assert(
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 
@@ -154,18 +156,25 @@ static void compareSolutions(SystemOfEquations* system,
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> equations,
     std::initializer_list<const char*> solutions) {
-  solve_and(equations, [solutions](SystemOfEquations* system) {
-    quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
-                system->hasMoreSolutions());
-    compareSolutions(system, solutions);
-  });
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
+  solve_and(
+      equations, &solverContext,
+      [solutions, &solverContext](SystemOfEquations* system) {
+        quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
+                    system->hasMoreSolutions());
+        compareSolutions(system, solutions, &solverContext);
+      });
 }
 
 void assert_solves_to(std::initializer_list<const char*> equations,
                       std::initializer_list<const char*> solutions) {
-  solve_and(equations, [solutions](SystemOfEquations* system) {
-    compareSolutions(system, solutions);
-  });
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
+  solve_and(equations, &solverContext,
+            [solutions, &solverContext](SystemOfEquations* system) {
+              compareSolutions(system, solutions, &solverContext);
+            });
 }
 
 void assert_solves_numerically_to(const char* equation, double min, double max,
@@ -182,15 +191,17 @@ void assert_solves_with_auto_solving_range(
 
 void assert_auto_solving_range_is(const char* equation, double min,
                                   double max) {
-  solve_and_process_error({equation}, [min, max](SystemOfEquations* system,
-                                                 SystemOfEquations::Error e) {
-    Shared::GlobalContext globalContext;
-    SolverContext solverContext(&globalContext);
-    quiz_assert(e == RequireApproximateSolution);
-    system->autoComputeApproximateSolvingRange(&solverContext);
-    Range1D<double> solvingRange = system->approximateSolvingRange();
-    quiz_assert(solvingRange.min() == min && solvingRange.max() == max);
-  });
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
+  solve_and_process_error(
+      {equation}, &solverContext,
+      [min, max, &solverContext](SystemOfEquations* system,
+                                 SystemOfEquations::Error e) {
+        quiz_assert(e == RequireApproximateSolution);
+        system->autoComputeApproximateSolvingRange(&solverContext);
+        Range1D<double> solvingRange = system->approximateSolvingRange();
+        quiz_assert(solvingRange.min() == min && solvingRange.max() == max);
+      });
 }
 
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,

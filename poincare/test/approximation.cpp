@@ -217,15 +217,15 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("atan(-inf)", "-1.570796");
 
   // nonreal vs undef
-  approximates_to<float>("nonreal", "undef");  // TODO: nonreal
+  approximates_to<float>("nonreal", "nonreal");
   approximates_to<float>("√(-1)", "nonreal");
   approximates_to<float>("√(-1)+1/0", "undef");
   // TODO_PCJ: this test returns 0 with emscripten
   // approximates_to<float>("1/(√(-1)^2+1)", "nonreal");
   approximates_to<float>("{√(-1),1/0}", "{nonreal,undef}");
-  approximates_to<float>("(√(-1),2)", "(undef,2)");  // TODO: (nonreal,2)
+  approximates_to<float>("(√(-1),2)", "(nonreal,2)");
   approximates_to<float>("(1/0,2)", "(undef,2)");
-  approximates_to<float>("[[√(-1),2]]", "[[undef,2]]");  // TODO: [[nonreal,2]]
+  approximates_to<float>("[[√(-1),2]]", "[[nonreal,2]]");
 }
 
 QUIZ_CASE(pcj_approximation_units) {

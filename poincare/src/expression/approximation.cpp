@@ -306,10 +306,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
    * cases where we know for sure there are no complexes. */
   assert(e->isExpression());
   if (e->isUndefined()) {
-    /* TODO: Find a way to pass exact type up to PushBeautifiedComplex, at least
-     * to have something similar to similar to old SetEncounteredComplex method
-     * and distinguish undef from nonreal. */
-    return NAN;
+    // TODO: Find a way to pass exact undef type up to PushBeautifiedComplex.
+    return e->isNonReal() ? NonReal<T>() : NAN;
   }
   if (e->isRational()) {
     return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();

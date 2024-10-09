@@ -262,6 +262,8 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "a,x,3),diff(floor(a),a,x,6)})");
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
                 "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
+  simplifies_to("diff(randint(0,5), x, 2)", "undef");
+  simplifies_to("diff(x*random(), x, 2)", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

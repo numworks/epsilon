@@ -103,7 +103,8 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
             {Type::ComplexI, Type::Conj, Type::Im, Type::Re, Type::Arg})) {
       return true;
     }
-    if (descendant->isUserNamed()) {
+    // Skip UserSequences.
+    if (descendant->isUserFunction() || descendant->isUserSymbol()) {
       /* We could factorize with DeepReplaceUserNamed but this avoid having to
        * clone the tree. */
       switch (projectionContext.m_symbolic) {

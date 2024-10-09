@@ -60,7 +60,8 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
   }
 
   Error secondError = Error::NoError;
-  projectionContext.m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
+  projectionContext.m_symbolic =
+      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
   result =
       PrivateExactSolve(equationsSet, context, projectionContext, &secondError);
   if (*error != Error::NoError || secondError == Error::NoError ||
@@ -85,11 +86,12 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         Error* error) {
   // Update context from projectionContext
   assert(projectionContext.m_symbolic ==
-             SymbolicComputation::DoNotReplaceAnySymbol ||
+             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions ||
          projectionContext.m_symbolic ==
              SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  context->overrideUserVariables = (projectionContext.m_symbolic ==
-                                    SymbolicComputation::DoNotReplaceAnySymbol);
+  context->overrideUserVariables =
+      (projectionContext.m_symbolic ==
+       SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   Projection::UpdateComplexFormatWithExpressionInput(equationsSet,
                                                      &projectionContext);
   context->complexFormat = projectionContext.m_complexFormat;

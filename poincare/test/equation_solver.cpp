@@ -100,6 +100,10 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
                   projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  store("x+1→f(x)", &globalContext);
+  check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 void check_range(const char* input, double min, double max) {

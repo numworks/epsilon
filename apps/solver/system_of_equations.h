@@ -120,7 +120,6 @@ class SystemOfEquations {
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   Poincare::Range1D<double> m_approximateSolvingRange;
-  Poincare::Preferences::ComplexFormat m_complexFormat;
   bool m_autoApproximateSolvingRange;
   Poincare::Internal::EquationSolver::Context m_solverContext;
 };

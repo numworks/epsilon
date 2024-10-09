@@ -53,6 +53,7 @@ class EquationSolver {
   };
 
   struct Context {
+    ComplexFormat complexFormat;
     Type type;
     int8_t degree;
     // If true, defined userVariables are ignored.

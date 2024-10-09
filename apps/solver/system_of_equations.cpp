@@ -54,14 +54,15 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   Internal::Tree* set = equationSet(m_store);
   // TODO: Optimize this call and generally improve how complexFormat is handled
-  m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      Preferences::SharedPreferences()->complexFormat(),
-      JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-      context);
+  m_solverContext.complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::SharedPreferences()->complexFormat(),
+          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
+          context);
   Internal::Tree* result = EquationSolver::ExactSolve(
       set, &m_solverContext,
       {
-          .m_complexFormat = m_complexFormat,
+          .m_complexFormat = m_solverContext.complexFormat,
           .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
           .m_context = context,
       },
@@ -141,10 +142,11 @@ void SystemOfEquations::setApproximateSolvingRange(
 void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   // TODO: factor with approximateSolve to avoid preparing the equation twice
   Internal::Tree* set = equationSet(m_store);
-  m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      Preferences::SharedPreferences()->complexFormat(),
-      JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-      context);
+  m_solverContext.complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::SharedPreferences()->complexFormat(),
+          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
+          context);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
@@ -152,7 +154,7 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   Internal::ProjectionContext ctx{
-      .m_complexFormat = m_complexFormat,
+      .m_complexFormat = m_solverContext.complexFormat,
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
       .m_context = context};
   Internal::Simplification::ToSystem(equation, &ctx);
@@ -213,10 +215,11 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
 
 void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* set = equationSet(m_store);
-  m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      Preferences::SharedPreferences()->complexFormat(),
-      JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-      context);
+  m_solverContext.complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::SharedPreferences()->complexFormat(),
+          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
+          context);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
@@ -224,7 +227,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   Internal::ProjectionContext ctx{
-      .m_complexFormat = m_complexFormat,
+      .m_complexFormat = m_solverContext.complexFormat,
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
       .m_context = context};
   Internal::Simplification::ToSystem(equation, &ctx);
@@ -731,9 +734,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         m_solverContext.overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-    simplifyAndApproximateSolution(
-        e, &exact, approximatePointer, approximateDuringReduction, context,
-        m_complexFormat, angleUnit, unitFormat, symbolicComputation);
+    simplifyAndApproximateSolution(e, &exact, approximatePointer,
+                                   approximateDuringReduction, context,
+                                   m_solverContext.complexFormat, angleUnit,
+                                   unitFormat, symbolicComputation);
     displayExactSolution =
         approximateDuringReduction ||
         (!forbidExactSolution &&
@@ -745,8 +749,9 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       exact = UserExpression();
       approximate = UserExpression();
       simplifyAndApproximateSolution(e, &exact, approximatePointer, true,
-                                     context, m_complexFormat, angleUnit,
-                                     unitFormat, symbolicComputation);
+                                     context, m_solverContext.complexFormat,
+                                     angleUnit, unitFormat,
+                                     symbolicComputation);
       displayExactSolution = true;
     }
   }

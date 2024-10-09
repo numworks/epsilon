@@ -11,6 +11,7 @@ PoolCheckpoint* PoolCheckpoint::s_topmost = nullptr;
 PoolCheckpoint::PoolCheckpoint()
     : m_parent(s_topmost), m_endOfPool(Pool::sharedPool->last()) {
   assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);
+  assert(Internal::TreeStack::SharedTreeStack->size() == 0);
 }
 
 void PoolCheckpoint::protectedDiscard() const {

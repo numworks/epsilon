@@ -60,10 +60,14 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
 Preferences::ComplexFormat ExpressionModel::complexFormat(
     const Storage::Record* record, Context* context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
-    UserExpression e = ExpressionModel::expressionClone(record);
-    m_expressionComplexFormat = e.hasComplexNodes(context)
-                                    ? MemoizedComplexFormat::Complex
-                                    : MemoizedComplexFormat::Any;
+    if (Preferences::ComplexFormat::Real !=
+        Preferences::UpdatedComplexFormatWithExpressionInput(
+            Preferences::ComplexFormat::Real,
+            ExpressionModel::expressionClone(record), context)) {
+      m_expressionComplexFormat = MemoizedComplexFormat::Complex;
+    } else {
+      m_expressionComplexFormat = MemoizedComplexFormat::Any;
+    }
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
   Preferences::ComplexFormat userComplexFormat =

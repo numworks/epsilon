@@ -17,7 +17,7 @@ jobs:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}

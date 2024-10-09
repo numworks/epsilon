@@ -525,6 +525,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
         childCtx.setLocalValue(k);
+        Random::Context cleanContext;
+        childCtx.m_randomContext = &cleanContext;
         std::complex<T> value = ToComplex<T>(child, &childCtx);
         if (e->isSum()) {
           result += value;

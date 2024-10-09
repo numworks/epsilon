@@ -628,6 +628,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     layout.serialize(buffer, bufferSize);
     insertText(buffer, false, forceCursorRightOfLayout);
   } else {
+    /* makeEditable is in the else because it only strips separators
+     * and they are also stripped when serializing to a buffer */
     layout = layout.makeEditable();
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                            forceCursorLeftOfLayout);

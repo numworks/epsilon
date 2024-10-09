@@ -5,6 +5,7 @@
 
 #include "dependency.h"
 #include "k_tree.h"
+#include "random.h"
 #include "rational.h"
 #include "set.h"
 #include "systematic_reduction.h"
@@ -98,7 +99,7 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     SystematicReduction::ShallowReduce(result);
     return result;
   }
-  if (derivand->isRandomized()) {
+  if (Random::HasRandom(derivand)) {
     // Do not handle random nodes in derivation
     return KUndefUnhandled->cloneTree();
   }

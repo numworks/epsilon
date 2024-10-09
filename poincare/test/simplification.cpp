@@ -604,6 +604,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("frac(2^24+π)-π", "16777216-floor(16777216+π)");
   simplifies_to("log(floor(2^54+π)-3, 2)",
                 "ln(-3+floor(18014398509481984+π))/ln(2)");
+  simplifies_to("floor(random())", "floor(random())");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

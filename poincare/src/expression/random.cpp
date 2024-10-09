@@ -62,7 +62,7 @@ T Approximation::ApproximateRandom(const Tree* randomTree,
   }
   assert(seed <= Random::Context::k_maxNumberOfVariables);
   if (seed > 0) {
-    if (!approxCtx->m_randomContext) {
+    if (!approxCtx || !approxCtx->m_randomContext) {
       return NAN;
     }
     T result = approxCtx->m_randomContext->m_list[seed - 1];

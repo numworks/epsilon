@@ -2,6 +2,7 @@
 #include <ion/storage/file_system.h>
 #include <poincare/old/junior_expression.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/projection.h>
 
 namespace Poincare {
 
@@ -26,11 +27,14 @@ Preferences::Preferences()
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const JuniorExpression& exp, Context* context,
     SymbolicComputation replaceSymbols) {
-  if (complexFormat == ComplexFormat::Real &&
-      exp.hasComplexNodes(context, replaceSymbols)) {
-    return k_defautComplexFormatIfNotReal;
-  }
-  return complexFormat;
+  Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = complexFormat,
+      .m_symbolic = replaceSymbols,
+      .m_context = context,
+  };
+  Internal::Projection::UpdateComplexFormatWithExpressionInput(
+      exp.tree(), &projectionContext);
+  return projectionContext.m_complexFormat;
 }
 
 ExamMode Preferences::examMode() const {

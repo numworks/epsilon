@@ -28,15 +28,14 @@ void VectorListController::computeAdditionalResults(
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context* context = App::app()->localContext();
-  assert(complexFormat() ==
-         Preferences::UpdatedComplexFormatWithExpressionInput(
-             complexFormat(), exactOutput, context));
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       .m_context = context};
+  assert(!Internal::Projection::UpdateComplexFormatWithExpressionInput(
+      exactOutput, &ctx));
 
   setShowIllustration(false);
   size_t index = 0;

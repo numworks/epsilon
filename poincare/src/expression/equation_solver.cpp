@@ -45,14 +45,8 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  Error* error) {
   // TODO: Context is quite large and this copy could be optimized.
   Context firstContext = *context;
-  firstContext.overrideUserVariables = false;
   projectionContext.m_symbolic =
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-  firstContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          firstContext.complexFormat, JuniorExpression::Builder(equationsSet),
-          projectionContext.m_context, projectionContext.m_symbolic);
-  projectionContext.m_complexFormat = firstContext.complexFormat;
   Tree* result =
       PrivateExactSolve(equationsSet, &firstContext, projectionContext, error);
   if (*error == Error::RequireApproximateSolution ||
@@ -66,12 +60,7 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
   }
 
   Error secondError = Error::NoError;
-  context->overrideUserVariables = true;
   projectionContext.m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
-  context->complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-      context->complexFormat, JuniorExpression::Builder(equationsSet),
-      projectionContext.m_context, projectionContext.m_symbolic);
-  projectionContext.m_complexFormat = context->complexFormat;
   result =
       PrivateExactSolve(equationsSet, context, projectionContext, &secondError);
   if (*error != Error::NoError || secondError == Error::NoError ||
@@ -94,6 +83,16 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         Context* context,
                                         ProjectionContext projectionContext,
                                         Error* error) {
+  // Update context from projectionContext
+  assert(projectionContext.m_symbolic ==
+             SymbolicComputation::DoNotReplaceAnySymbol ||
+         projectionContext.m_symbolic ==
+             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  context->overrideUserVariables = (projectionContext.m_symbolic ==
+                                    SymbolicComputation::DoNotReplaceAnySymbol);
+  Projection::UpdateComplexFormatWithExpressionInput(equationsSet,
+                                                     &projectionContext);
+  context->complexFormat = projectionContext.m_complexFormat;
   // Retrieve user symbols before simplification and variable replacement
   Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
   for (const Tree* userSymbol : userSymbols->children()) {

@@ -905,17 +905,6 @@ Poincare::Dimension NewExpression::dimension(Context* context) const {
 
 Sign SystemExpression::sign() const { return GetSign(tree()); }
 
-bool NewExpression::hasComplexNodes(Context* context,
-                                    SymbolicComputation replaceSymbols) const {
-  return !isUninitialized() &&
-         recursivelyMatches(
-             [](const NewExpression e, Context* context) {
-               return e.tree()->isOfType(
-                   {Type::ComplexI, Type::Conj, Type::Im, Type::Re, Type::Arg});
-             },
-             context, replaceSymbols);
-}
-
 bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
                             bool replaceSymbols, Context* ctx) const {
   if (hasAngleUnits) {

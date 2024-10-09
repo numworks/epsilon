@@ -51,14 +51,12 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   m_solverContext.variables.clear();
   m_solverContext.userVariables.clear();
-  m_solverContext.complexFormat =
-      Preferences::SharedPreferences()->complexFormat();
 
   Internal::Tree* set = equationSet(m_store);
   Internal::Tree* result = EquationSolver::ExactSolve(
       set, &m_solverContext,
       {
-          .m_complexFormat = m_solverContext.complexFormat,
+          .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
           .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
           .m_context = context,
       },
@@ -145,15 +143,12 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   m_solverContext.overrideUserVariables = false;
-  m_solverContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::SharedPreferences()->complexFormat(),
-          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-          context);
   Internal::ProjectionContext ctx{
-      .m_complexFormat = m_solverContext.complexFormat,
+      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
       .m_context = context};
+  Internal::Projection::UpdateComplexFormatWithExpressionInput(set, &ctx);
+  m_solverContext.complexFormat = ctx.m_complexFormat;
   Internal::Simplification::ToSystem(equation, &ctx);
   Internal::Approximation::PrepareFunctionForApproximation(
       equation, m_solverContext.variables.variable(0),
@@ -219,15 +214,12 @@ void SystemOfEquations::approximateSolve(Context* context) {
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
   m_solverContext.overrideUserVariables = false;
-  m_solverContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::SharedPreferences()->complexFormat(),
-          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-          context);
   Internal::ProjectionContext ctx{
-      .m_complexFormat = m_solverContext.complexFormat,
+      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
       .m_context = context};
+  Internal::Projection::UpdateComplexFormatWithExpressionInput(set, &ctx);
+  m_solverContext.complexFormat = ctx.m_complexFormat;
   Internal::Simplification::ToSystem(equation, &ctx);
   Internal::Approximation::PrepareFunctionForApproximation(
       equation, m_solverContext.variables.variable(0),

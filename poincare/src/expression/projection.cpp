@@ -97,6 +97,48 @@ ProjectionContext Projection::ContextFromSettings() {
   };
 }
 
+bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
+  for (const Tree* descendant : e->selfAndDescendants()) {
+    if (descendant->isOfType(
+            {Type::ComplexI, Type::Conj, Type::Im, Type::Re, Type::Arg})) {
+      return true;
+    }
+    if (descendant->isUserNamed()) {
+      /* We could factorize with DeepReplaceUserNamed but this avoid having to
+       * clone the tree. */
+      switch (projectionContext.m_symbolic) {
+        case SymbolicComputation::DoNotReplaceAnySymbol:
+        case SymbolicComputation::ReplaceAllSymbolsWithUndefined:
+          break;
+        case SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions:
+          if (!e->isUserFunction()) {
+            break;
+          }
+          [[fallthrough]];
+        default: {
+          const Tree* definition =
+              projectionContext.m_context->treeForSymbolIdentifier(descendant);
+          if (definition && hasComplexNodes(definition, projectionContext)) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+bool Projection::UpdateComplexFormatWithExpressionInput(
+    const Tree* e, ProjectionContext* projectionContext) {
+  if (e && projectionContext->m_complexFormat == ComplexFormat::Real &&
+      hasComplexNodes(e, *projectionContext)) {
+    projectionContext->m_complexFormat =
+        Preferences::k_defautComplexFormatIfNotReal;
+    return true;
+  }
+  return false;
+}
+
 bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
   bool changed =
@@ -129,12 +171,12 @@ bool Projection::IsForbidden(const Tree* e) {
   }
 }
 
-/* The order of nodes in NAry is not a concern here. They will be sorted before
- * SystemReduction. */
+/* The order of nodes in NAry is not a concern here. They will be sorted
+ * before SystemReduction. */
 bool Projection::ShallowSystemProject(Tree* e, void* context) {
-  /* TODO: Most of the projections could be optimized by simply replacing and
-   * inserting nodes. This optimization could be applied in matchAndReplace. See
-   * comment in matchAndReplace. */
+  /* TODO: Most of the projections could be optimized by simply replacing
+   * and inserting nodes. This optimization could be applied in
+   * matchAndReplace. See comment in matchAndReplace. */
   ProjectionContext* projectionContext =
       static_cast<ProjectionContext*>(context);
 

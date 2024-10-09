@@ -23,6 +23,10 @@ struct ProjectionContext {
 class Projection {
  public:
   static ProjectionContext ContextFromSettings();
+  /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true
+   * if updated. */
+  static bool UpdateComplexFormatWithExpressionInput(
+      const Tree* e, ProjectionContext* projectionContext);
   static bool DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
                                    SymbolicComputation symbolic);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});

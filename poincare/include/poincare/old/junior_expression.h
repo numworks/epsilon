@@ -406,11 +406,6 @@ class JuniorExpression : public OExpression {
   static bool IsStore(const NewExpression e) { return e.isStore(); }
 
   bool allChildrenAreUndefined() const;
-  // Return true if expression contains i, Re, Im, Arg or Conj
-  bool hasComplexNodes(
-      Context* context,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false, Context* ctx = nullptr) const;
   bool isPureAngleUnit() const;

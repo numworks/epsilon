@@ -133,7 +133,8 @@ static void compareSolutions(SystemOfEquations* system,
      * creating an expression from a layout. */
 
     Expression expectedExpression =
-        Expression::Parse(expectedValue, solverContext, false);
+        Expression::Parse(expectedValue, solverContext, false)
+            .cloneAndReduce(ReductionContext{});
     quiz_assert(!expectedExpression.isUninitialized());
 
     Layout obtainedLayout = system->solution(i)->exactLayout();
@@ -144,7 +145,9 @@ static void compareSolutions(SystemOfEquations* system,
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer, bufferSize);
     Expression obtainedExpression =
-        Expression::Parse(obtainedLayoutBuffer, solverContext, false);
+        Expression::Parse(obtainedLayoutBuffer, solverContext, false)
+            .cloneAndReduce(ReductionContext{});
+
     quiz_assert(
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 

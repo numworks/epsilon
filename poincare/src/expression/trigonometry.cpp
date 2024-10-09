@@ -186,11 +186,11 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   assert(GetComplexSign(e).isReal());
   const Tree* piFactor = getPiFactor(e);
   if (piFactor) {
-    Tree* simplifiedPiFactor =
+    TreeRef simplifiedPiFactor =
         computeSimplifiedPiFactorForType(piFactor, Type::Arg);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(KA, π_e), {.KA = simplifiedPiFactor}));
-    e->nextTree()->removeTree();
+    simplifiedPiFactor->removeTree();
     return true;
   }
   return false;

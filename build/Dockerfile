@@ -14,3 +14,5 @@ COPY build/setup.sh build/setup.sh
 RUN build/setup.sh --ci
 
 ENV PYTHON=/runner/.venv/bin/python
+
+WORKDIR /epsilon

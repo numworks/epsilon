@@ -2,6 +2,7 @@
 #include <poincare/old/pool.h>
 #include <poincare/old/pool_checkpoint.h>
 #include <poincare/old/pool_object.h>
+#include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {
 
@@ -19,6 +20,7 @@ void PoolCheckpoint::protectedDiscard() const {
 }
 
 void PoolCheckpoint::rollback() const {
+  Internal::TreeStack::SharedTreeStack->flush();
   Pool::sharedPool->freePoolFromNode(m_endOfPool);
 }
 

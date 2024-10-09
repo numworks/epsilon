@@ -4,22 +4,24 @@
 /* Usage:
  *
  * CAUTION : A scope MUST be created directly around the PoolCheckpoint, to
-ensure
- * to forget the PoolCheckpoint once the interruptable code is executed. Indeed,
- * the scope calls the checkpoint destructor, which invalidate the current
- * checkpoint.
- * Also, any node stored under TopmostEndOfPool should not be altered.
-
-void interruptableCode() {
-  Poincare::PoolCheckpoint cp;
-  if (CheckpointRun(cp)) {
-    CodeInvolvingLongComputationsOrLargeMemoryNeed();
-  } else {
-    ErrorHandler();
-  }
-}
-
-*/
+ * ensure to forget the PoolCheckpoint once the interruptable code is executed.
+ * Indeed, the scope calls the checkpoint destructor, which invalidate the
+ * current checkpoint. Also, any node stored under TopmostEndOfPool should not
+ * be altered.
+ *
+ *
+ * void interruptableCode() {
+ *   Poincare::PoolCheckpoint cp;
+ *   if (CheckpointRun(cp)) {
+ *     CodeInvolvingLongComputationsOrLargeMemoryNeed();
+ *   } else {
+ *     ErrorHandler();
+ *   }
+ * }
+ *
+ * PoolCheckpoint rollback will also flush the TreeStack so using a Tree* or a
+ * TreeRef in a scope above a PoolCheckpoint is completely forbidden.
+ */
 
 #define CheckpointRun(checkpoint, activation) (checkpoint.setActive(activation))
 

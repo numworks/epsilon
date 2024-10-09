@@ -35,9 +35,8 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
 
-      # TODO Only install clang-format and black
       - name: Setup
-        run: build/setup.sh --only-simulator
+        run: sudo apt-get install black
 
       - name: Get a recent clang-format version
         uses: numworks/setup-llvm@latest

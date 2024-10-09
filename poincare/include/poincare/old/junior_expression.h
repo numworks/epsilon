@@ -406,7 +406,8 @@ class JuniorExpression : public OExpression {
   static bool IsStore(const NewExpression e) { return e.isStore(); }
 
   bool allChildrenAreUndefined() const;
-  bool hasComplexI(
+  // Return true if expression contains i, Re, Im, Arg or Conj
+  bool hasComplexNodes(
       Context* context,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;

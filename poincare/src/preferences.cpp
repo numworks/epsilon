@@ -26,7 +26,7 @@ Preferences::Preferences()
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const JuniorExpression& exp,
     Context* context) {
-  if (complexFormat == ComplexFormat::Real && exp.hasComplexI(context)) {
+  if (complexFormat == ComplexFormat::Real && exp.hasComplexNodes(context)) {
     return k_defautComplexFormatIfNotReal;
   }
   return complexFormat;

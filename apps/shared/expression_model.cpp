@@ -61,9 +61,10 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
     const Storage::Record* record, Context* context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression e = ExpressionModel::expressionClone(record);
-    m_expressionComplexFormat = !e.isUninitialized() && e.hasComplexI(context)
-                                    ? MemoizedComplexFormat::Complex
-                                    : MemoizedComplexFormat::Any;
+    m_expressionComplexFormat =
+        !e.isUninitialized() && e.hasComplexNodes(context)
+            ? MemoizedComplexFormat::Complex
+            : MemoizedComplexFormat::Any;
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
   Preferences::ComplexFormat userComplexFormat =

@@ -26,6 +26,11 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->removeNode();
     return true;
   }
+  if (child->isComplexI()) {
+    // ln(i) -> i*π/2
+    e->cloneTreeOverTree(KMult(1_e / 2_e, π_e, i_e));
+    return true;
+  }
   if (!child->isInteger()) {
     return false;
   }

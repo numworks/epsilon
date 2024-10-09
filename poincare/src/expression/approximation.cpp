@@ -618,6 +618,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
       Context childCtx(ctx, ctx->m_listElement + 1);
+      Random::Context cleanContext;
+      childCtx.m_randomContext = &cleanContext;
       std::complex<T> result = ToComplex<T>(e->child(2), &childCtx);
       return result;
     }

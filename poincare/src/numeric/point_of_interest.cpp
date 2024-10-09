@@ -85,32 +85,32 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
 
 API::JuniorPoolHandle PointsOfInterestList::BuildStash(Provider provider,
                                                        void* providerContext) {
-  Internal::Tree* stash;
-  {
-    using namespace Internal;
-    ExceptionTry {
-      stash = List::PushEmpty();
-      PointOfInterest point;
-      while (!(point = provider(providerContext)).isUninitialized()) {
-        Tree* pointTree =
-            Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
-                point.abscissa, point.ordinate, point.data,
-                static_cast<uint8_t>(point.interest), point.inverted,
-                point.subCurveIndex);
-        NAry::AddChild(stash, pointTree);
-      }
-    }
-    ExceptionCatch(type) {
-      if (type != ExceptionType::TreeStackOverflow) {
-        TreeStackCheckpoint::Raise(type);
-      }
-      return {};
-    }
-  }
-
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
+      Internal::Tree* stash;
+      {
+        using namespace Internal;
+        ExceptionTry {
+          stash = List::PushEmpty();
+          PointOfInterest point;
+          while (!(point = provider(providerContext)).isUninitialized()) {
+            Tree* pointTree =
+                Internal::TreeStack::SharedTreeStack->pushPointOfInterest(
+                    point.abscissa, point.ordinate, point.data,
+                    static_cast<uint8_t>(point.interest), point.inverted,
+                    point.subCurveIndex);
+            NAry::AddChild(stash, pointTree);
+          }
+        }
+        ExceptionCatch(type) {
+          if (type != ExceptionType::TreeStackOverflow) {
+            TreeStackCheckpoint::Raise(type);
+          }
+          return {};
+        }
+      }
+
       return API::JuniorPoolHandle::Builder(stash);
     } else {
       return {};

@@ -47,6 +47,9 @@ jobs:
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
 
+      - name: Cleanup output folder
+        run: rm -r output
+
       - name: Checkout to most recent ancestor
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 

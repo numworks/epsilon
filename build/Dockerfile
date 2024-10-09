@@ -13,6 +13,8 @@ COPY build/setup.sh build/setup.sh
 
 RUN build/setup.sh --ci
 
+RUN apt-get install clang libc++-dev libc++abi-dev
+
 ENV PYTHON=/runner/.venv/bin/python
 
 WORKDIR /epsilon

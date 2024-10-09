@@ -14,39 +14,6 @@
 
 namespace Poincare::Internal {
 
-Tree* DefaultEvaluation::polynomial(const Tree* value, const Tree* a,
-                                    const Tree* b, const Tree* c,
-                                    const Tree* d) {
-  // clang-format off
-  Tree* e = PatternMatching::CreateSimplify(
-    KAdd(
-      KMult(KA, KPow(KH, 3_e)),
-      KMult(KB, KPow(KH, 2_e)),
-      KMult(KC, KH),
-      KD),
-    {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
-  // clang-format on
-  AdvancedReduction::Reduce(e);
-  return e;
-}
-
-Tree* RationalEvaluation::polynomial(const Tree* value, const Tree* a,
-                                     const Tree* b, const Tree* c,
-                                     const Tree* d) {
-  Tree* x3 = Rational::IntegerPower(value, 3_e);
-  Tree* aTerm = Rational::Multiplication(a, x3);
-  Tree* x2 = Rational::IntegerPower(value, 2_e);
-  Tree* bTerm = Rational::Multiplication(b, x2);
-  Tree* cTerm = Rational::Multiplication(c, value);
-  TreeRef result = Rational::Addition(aTerm, bTerm, cTerm, d);
-  cTerm->removeTree();
-  bTerm->removeTree();
-  x2->removeTree();
-  aTerm->removeTree();
-  x3->removeTree();
-  return result;
-}
-
 Tree* Roots::Linear(const Tree* a, const Tree* b) {
   assert(a && b);
   TreeRef root = PatternMatching::CreateSimplify(
@@ -227,6 +194,29 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
   return approximatedRoots;
 }
 
+Tree* Roots::PolynomialEvaluation(const Tree* value, const Tree* a,
+                                  const Tree* b, const Tree* c, const Tree* d) {
+  // clang-format off
+  Tree* e = PatternMatching::CreateSimplify(
+    KAdd(
+      KMult(KA, KPow(KH, 3_e)),
+      KMult(KB, KPow(KH, 2_e)),
+      KMult(KC, KH),
+      KD),
+    {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
+  // clang-format on
+  AdvancedReduction::Reduce(e);
+  return e;
+}
+
+bool Roots::IsRoot(const Tree* value, const Tree* a, const Tree* b,
+                   const Tree* c, const Tree* d) {
+  Tree* e = PolynomialEvaluation(value, a, b, c, d);
+  bool isZero = e->isZero();
+  e->removeTree();
+  return isZero;
+}
+
 Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                           const Tree* c, const Tree* d,
                                           Tree* r) {
@@ -340,12 +330,12 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
       uint32_t q = divisorsD.list[j];
       if (Arithmetic::GCD(p, q) == 1) {
         Tree* r = Rational::Push(IntegerHandler(p), IntegerHandler(q));
-        if (IsRoot<RationalEvaluation>(r, a, b, c, d)) {
+        if (IsRoot(r, a, b, c, d)) {
           return r;
         }
 
         Rational::SetSign(r, NonStrictSign::Negative);
-        if (IsRoot<RationalEvaluation>(r, a, b, c, d)) {
+        if (IsRoot(r, a, b, c, d)) {
           return r;
         }
         r->removeTree();

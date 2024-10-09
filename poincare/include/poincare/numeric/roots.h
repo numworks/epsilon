@@ -12,16 +12,6 @@ namespace Poincare {
 
 namespace Internal {
 
-struct DefaultEvaluation {
-  Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
-                   const Tree* c, const Tree* d);
-};
-
-struct RationalEvaluation {
-  Tree* polynomial(const Tree* value, const Tree* a, const Tree* b,
-                   const Tree* c, const Tree* d);
-};
-
 class Roots {
  public:
   // Return the only root.
@@ -62,14 +52,12 @@ class Roots {
   static constexpr KTree k_cubeRootOfUnity2 =
       KMult(KPow(2_e, -1_e), KAdd(-1_e, KMult(-1_e, k_squareRootOfThree, i_e)));
 
-  template <typename EvaluationMethod = DefaultEvaluation>
+  static Tree* PolynomialEvaluation(const Tree* value, const Tree* a,
+                                    const Tree* b, const Tree* c,
+                                    const Tree* d);
+
   static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,
-                     const Tree* c, const Tree* d) {
-    Tree* e = EvaluationMethod{}.polynomial(value, a, b, c, d);
-    bool isZero = e->isZero();
-    e->removeTree();
-    return isZero;
-  }
+                     const Tree* c, const Tree* d);
 
   static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                         const Tree* d);

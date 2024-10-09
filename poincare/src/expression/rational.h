@@ -52,7 +52,6 @@ class Rational final {
   static Tree* IntegerPower(const Tree* e1, const Tree* e2);
 
   static bool IsGreaterThanOne(const Tree* e);
-  static bool IsZero(const Tree* e);
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
   static Tree* CreateMixedFraction(const Tree* e,
                                    bool mixedFractionsAreEnabled);

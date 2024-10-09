@@ -1,10 +1,7 @@
-name: 'Docker Build and Run Setup'
-description: 'Build Docker container and define DOCKER_RUN variable'
-
-inputs:
-  cache_dir:
-    description: 'Path to the ccache directory'
-    required: true
+name: Build Docker container and define variable DOCKER_RUN to run it
+description: |
+  Build Docker container and define DOCKER_RUN variable.
+  It binds CCACHE_DIR and pass MAKEFLAGS to the container.
 
 runs:
   using: "composite"
@@ -16,4 +13,4 @@ runs:
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=${{ inputs.cache_dir }},target=/cache --mount type=bind,source=.,target=/epsilon epsilon-builder:latest sh -c" >> $GITHUB_ENV
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=$CCACHE_DIR,target=/cache --mount type=bind,source=.,target=/epsilon epsilon-builder:latest sh -c" >> $GITHUB_ENV

@@ -49,7 +49,7 @@ class __attribute__((packed)) Preferences final {
     Edition1D,
   };
   using ComplexFormat = Internal::ComplexFormat;
-  constexpr static ComplexFormat k_defautComplexFormatIfNotReal =
+  constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(

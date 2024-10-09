@@ -74,7 +74,7 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
       Preferences::SharedPreferences()->complexFormat();
   if (m_expressionComplexFormat == MemoizedComplexFormat::Complex &&
       userComplexFormat == Preferences::ComplexFormat::Real) {
-    return Preferences::k_defautComplexFormatIfNotReal;
+    return Preferences::k_defaultComplexFormatIfNotReal;
   }
   return userComplexFormat;
 }

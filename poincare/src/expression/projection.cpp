@@ -133,7 +133,7 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
   if (e && projectionContext->m_complexFormat == ComplexFormat::Real &&
       hasComplexNodes(e, *projectionContext)) {
     projectionContext->m_complexFormat =
-        Preferences::k_defautComplexFormatIfNotReal;
+        Preferences::k_defaultComplexFormatIfNotReal;
     return true;
   }
   return false;

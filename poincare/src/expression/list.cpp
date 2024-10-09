@@ -22,7 +22,7 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
       assert(k < e->numberOfChildren());
       return e->child(k)->cloneTree();
     case Type::ListSequence: {
-      if (Parametric::HasLocalRandom(e)) {
+      if (Random::HasRandom(e)) {
         return nullptr;
       }
       Tree* result = e->child(2)->cloneTree();

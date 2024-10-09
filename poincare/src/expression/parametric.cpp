@@ -99,7 +99,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     return true;
   }
 
-  if (HasLocalRandom(e)) {
+  if (Random::HasRandom(e)) {
     return false;
   }
 
@@ -320,17 +320,11 @@ bool Parametric::ContractProduct(Tree* e) {
   return false;
 }
 
-bool Parametric::HasLocalRandom(const Tree* e) {
-  // TODO: could be factorized with HasVariable
-  return e->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isRandomized(); });
-}
-
 bool Parametric::Explicit(Tree* e) {
   if (!(e->isSum() || e->isProduct())) {
     return false;
   }
-  if (HasLocalRandom(e)) {
+  if (Random::HasRandom(e)) {
     return false;
   }
   bool isSum = e->isSum();

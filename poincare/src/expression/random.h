@@ -48,6 +48,11 @@ class Random {
   template <typename T>
   static T RandomInt(T a, T b);
 
+  static bool HasRandom(const Tree* e) {
+    return e->hasDescendantSatisfying(
+        [](const Tree* e) { return e->isRandomized(); });
+  }
+
  private:
   static void SetSeed(Tree* randomTree, uint8_t seed) {
     assert(randomTree->isRandomized() && GetSeed(randomTree) == 0);

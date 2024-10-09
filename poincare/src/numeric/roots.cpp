@@ -111,6 +111,13 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
      * directly call the quadratic solver for a, b, and c. */
     TreeRef allRoots = Roots::Quadratic(a, b, c);
     assert(allRoots->isList());
+    /* TODO:
+     * We could refactor this by either:
+     * - creating an NAry::RemoveDuplicates function, that would be called right
+     * after NAry::Sort. We could even make a shortcut that calls both steps:
+     * NAry::SortAndRemoveDuplicates.
+     * - designing and using a Set structure instead of a List.
+     */
     if (!NAry::ContainsSame(allRoots, KTree(0_e))) {
       NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
       NAry::Sort(allRoots, Order::OrderType::ComplexLine);
@@ -142,12 +149,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
   /* We did not manage to find any simple root: we resort to using Cardano's
    * formula. */
-  TreeRef delta = preComputedDiscriminant
-                      ? preComputedDiscriminant->cloneTree()
-                      : Roots::CubicDiscriminant(a, b, c, d);
-  TreeRef cardanoRoots = CardanoMethod(a, b, c, d, delta);
-  delta->removeTree();
-  return cardanoRoots;
+  return CardanoMethod(a, b, c, d, preComputedDiscriminant);
 }
 
 Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
@@ -260,6 +262,7 @@ Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
                               const Tree* d) {
   /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple root:
    * "-d/c". */
+  /* TODO: check the "kx(bx^2+d)+bx^2+d" pattern, with root √(-d/b) */
   TreeRef simpleRoot = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
   if (IsRoot(simpleRoot, a, b, c, d)) {
@@ -376,6 +379,13 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
                            const Tree* d, const Tree* delta) {
+  if (!delta) {
+    Tree* discriminant = Roots::CubicDiscriminant(a, b, c, d);
+    TreeRef roots = Roots::CardanoMethod(a, b, c, d, discriminant);
+    discriminant->removeTree();
+    return roots;
+  }
+
   if (SignOfTreeOrApproximation(delta).isNull()) {
     Tree* rootList = CubicRootsNullDiscriminant(a, b, c, d);
     AdvancedReduction::Reduce(rootList);

@@ -9,7 +9,7 @@ on:
       - 'ion/src/simulator/**'
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1 PLATFORM=n0120' || '-j2 PLATFORM=n0120' }}
-  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache_docker' || '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,8 +19,6 @@ jobs:
   binary-size:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
-      - name: Install ARM toolchain
-        uses: numworks/setup-arm-toolchain@latest
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v3
         with:
@@ -35,17 +33,19 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
-      - name: Install dependencies
-        run: cd base && build/setup.sh
+
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+
       - name: Check for epsilon-core
         id: epsilon-core
         run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: cd base && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
+        run: cd base && $DOCKER_RUN "make PYTHON=\$PYTHON bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build common ancestor userland for N0120
-        run: cd base && make userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd base && $DOCKER_RUN "make PYTHON=\$PYTHON userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Find head of PR
         uses: actions/checkout@v3
         with:
@@ -53,13 +53,12 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
-      - name: Install dependencies
-        run: cd head && build/setup.sh
+
       - name: Build head bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
+        run: cd head && $DOCKER_RUN "make PYTHON=\$PYTHON bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build head userland for N0120
-        run: cd head && make userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd head && $DOCKER_RUN "make PYTHON=\$PYTHON userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Initialize metrics output
         run: |
           mkdir -p ./metrics-output

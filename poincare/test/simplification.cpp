@@ -351,6 +351,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(0)", "undef", ctx);
   simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
   simplifies_to("arg(exp(i*π/7))", "π/7", ctx);
+  simplifies_to("arg(exp(-i*π/7))", "-π/7", ctx);
   simplifies_to("arg(exp(i*π*10))", "0", ctx);
   simplifies_to("arg(exp(-i*π))", "π", ctx);
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);

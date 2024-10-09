@@ -186,7 +186,8 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   assert(GetComplexSign(e).isReal());
   const Tree* piFactor = getPiFactor(e);
   if (piFactor) {
-    Tree* simplifiedPiFactor = computeSimplifiedPiFactor(piFactor);
+    Tree* simplifiedPiFactor =
+        computeSimplifiedPiFactorForType(piFactor, Type::Arg);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(KA, π_e), {.KA = simplifiedPiFactor}));
     e->nextTree()->removeTree();
@@ -253,8 +254,8 @@ bool Trigonometry::ReduceTrig(Tree* e) {
      * asin(sin(...)) is more interesting than the simplification of
      * sin(acos(x)).
      * Same with atan(tan(asin)), atan(tan(acos)), acos(cos(asin)).
-     * Maybe we should move this transformation (sin(asin(x)) and
-     * cos(acos(x))) to advanced reduction.*/
+     * Maybe we should move this transformation (sin(asin(x)) and cos(acos(x)))
+     * to advanced reduction.*/
     changed = true;
   } else if (Infinity::IsPlusOrMinusInfinity(firstArgument)) {
     // sin(±inf) = cos(±inf) = undef
@@ -478,8 +479,8 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 
 bool Trigonometry::ContractTrigonometric(Tree* e) {
   /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be changing
-   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and
-   * having both way would lead to infinite possible contractions. */
+   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
+   * both way would lead to infinite possible contractions. */
   return
       // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
       PatternMatching::MatchReplaceSimplify(

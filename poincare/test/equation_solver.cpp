@@ -92,6 +92,14 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"sin(x)"}, {}, projCtx,
                   EquationSolver::Error::RequireApproximateSolution);
 #endif
+
+  // Complex format detection
+  projCtx.m_complexFormat = ComplexFormat::Real;
+  store("i→a", &globalContext);
+  check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "e^(π/3×i)"}, projCtx);
+  check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
+                  projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 void check_range(const char* input, double min, double max) {

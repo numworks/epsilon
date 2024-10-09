@@ -51,14 +51,10 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
   m_solverContext.variables.clear();
   m_solverContext.userVariables.clear();
+  m_solverContext.complexFormat =
+      Preferences::SharedPreferences()->complexFormat();
 
   Internal::Tree* set = equationSet(m_store);
-  // TODO: Optimize this call and generally improve how complexFormat is handled
-  m_solverContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::SharedPreferences()->complexFormat(),
-          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-          context);
   Internal::Tree* result = EquationSolver::ExactSolve(
       set, &m_solverContext,
       {
@@ -142,17 +138,18 @@ void SystemOfEquations::setApproximateSolvingRange(
 void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   // TODO: factor with approximateSolve to avoid preparing the equation twice
   Internal::Tree* set = equationSet(m_store);
-  m_solverContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::SharedPreferences()->complexFormat(),
-          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-          context);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
+  m_solverContext.overrideUserVariables = false;
+  m_solverContext.complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::SharedPreferences()->complexFormat(),
+          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
+          context);
   Internal::ProjectionContext ctx{
       .m_complexFormat = m_solverContext.complexFormat,
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
@@ -215,17 +212,18 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
 
 void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* set = equationSet(m_store);
-  m_solverContext.complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::SharedPreferences()->complexFormat(),
-          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
-          context);
   assert(set->numberOfChildren() == 1);
   Internal::Tree* equation = set->child(0);
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
   m_solverContext.variables.fillWithList(variables);
   variables->removeTree();
+  m_solverContext.overrideUserVariables = false;
+  m_solverContext.complexFormat =
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::SharedPreferences()->complexFormat(),
+          JuniorExpression::Builder(const_cast<const Internal::Tree*>(set)),
+          context);
   Internal::ProjectionContext ctx{
       .m_complexFormat = m_solverContext.complexFormat,
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),

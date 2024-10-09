@@ -24,9 +24,10 @@ Preferences::Preferences()
       m_forceExamModeReload(false) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const JuniorExpression& exp,
-    Context* context) {
-  if (complexFormat == ComplexFormat::Real && exp.hasComplexNodes(context)) {
+    ComplexFormat complexFormat, const JuniorExpression& exp, Context* context,
+    SymbolicComputation replaceSymbols) {
+  if (complexFormat == ComplexFormat::Real &&
+      exp.hasComplexNodes(context, replaceSymbols)) {
     return k_defautComplexFormatIfNotReal;
   }
   return complexFormat;

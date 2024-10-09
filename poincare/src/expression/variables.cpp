@@ -276,6 +276,7 @@ bool Variables::HasVariable(const Tree* e, int id) {
 }
 
 void Variables::EnterOrLeaveScope(Tree* e, bool enter, int var) {
+  assert(!e->isRandomized());
   if (e->isVar()) {
     uint8_t id = Id(e);
     if (id > var) {

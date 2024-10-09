@@ -99,10 +99,10 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
                 tree->child(0), tree->child(1), tree->child(2)));
             break;
           case 4: {
-            Tree* a = tree->child(0);
-            Tree* b = tree->child(1);
-            Tree* c = tree->child(2);
-            Tree* d = tree->child(3);
+            const Tree* a = tree->child(0);
+            const Tree* b = tree->child(1);
+            const Tree* c = tree->child(2);
+            const Tree* d = tree->child(3);
             tree->moveTreeOverTree(SolverPolicy::process(a, b, c, d));
             break;
           }

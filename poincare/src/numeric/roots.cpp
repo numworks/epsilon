@@ -16,8 +16,8 @@ namespace Poincare::Internal {
 
 Tree* Roots::Linear(const Tree* a, const Tree* b) {
   assert(a && b);
-  TreeRef root = PatternMatching::CreateSimplify(
-      KMult(-1_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+  Tree* root = PatternMatching::CreateSimplify(KMult(-1_e, KB, KPow(KA, -1_e)),
+                                               {.KA = a, .KB = b});
   AdvancedReduction::Reduce(root);
   return root;
 }
@@ -109,7 +109,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
     /* When d is null the obvious root is zero. To avoid complexifying the
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
-    TreeRef allRoots = Roots::Quadratic(a, b, c);
+    Tree* allRoots = Roots::Quadratic(a, b, c);
     assert(allRoots->isList());
     /* TODO:
      * We could refactor this by either:
@@ -263,7 +263,7 @@ Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
   /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple root:
    * "-d/c". */
   /* TODO: check the "kx(bx^2+d)+bx^2+d" pattern, with root √(-d/b) */
-  TreeRef simpleRoot = PatternMatching::CreateSimplify(
+  Tree* simpleRoot = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
   if (IsRoot(simpleRoot, a, b, c, d)) {
     return simpleRoot;
@@ -285,19 +285,21 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
   Tree* denominatorB = Rational::Denominator(b).pushOnTreeStack();
   Tree* denominatorC = Rational::Denominator(c).pushOnTreeStack();
   Tree* denominatorD = Rational::Denominator(d).pushOnTreeStack();
-  TreeRef lcm = PatternMatching::CreateSimplify(KLCM(KA, KB, KC, KD),
-                                                {.KA = denominatorA,
-                                                 .KB = denominatorB,
-                                                 .KC = denominatorC,
-                                                 .KD = denominatorD});
+  Tree* lcm = PatternMatching::CreateSimplify(KLCM(KA, KB, KC, KD),
+                                              {.KA = denominatorA,
+                                               .KB = denominatorB,
+                                               .KC = denominatorC,
+                                               .KD = denominatorD});
+
+  assert(lcm->isRational());
+  TreeRef A = Rational::Multiplication(a, lcm);
+  TreeRef D = Rational::Multiplication(d, lcm);
+
+  lcm->removeTree();
   denominatorD->removeTree();
   denominatorC->removeTree();
   denominatorB->removeTree();
   denominatorA->removeTree();
-  assert(lcm->isRational());
-  TreeRef A = Rational::Multiplication(a, lcm);
-  TreeRef D = Rational::Multiplication(d, lcm);
-  lcm->removeTree();
 
   IntegerHandler AHandler = Integer::Handler(A);
   IntegerHandler DHandler = Integer::Handler(D);
@@ -392,25 +394,26 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
     return rootList;
   }
 
-  TreeRef delta0 = Delta0(a, b, c);
-  TreeRef delta1 = Delta1(a, b, c, d);
-  TreeRef cardano = CardanoNumber(delta0, delta1);
-  delta1->removeTree();
+  Tree* delta0 = Delta0(a, b, c);
+  Tree* delta1 = Delta1(a, b, c, d);
+  Tree* cardano = CardanoNumber(delta0, delta1);
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
   assert(!SignOfTreeOrApproximation(cardano).isNull());
 
-  TreeRef cardanoRoot0 = CardanoRoot(a, b, cardano, delta0, 0);
-  TreeRef cardanoRoot1 = CardanoRoot(a, b, cardano, delta0, 1);
-  TreeRef cardanoRoot2 = CardanoRoot(a, b, cardano, delta0, 2);
-  cardano->removeTree();
-  delta0->removeTree();
+  Tree* cardanoRoot0 = CardanoRoot(a, b, cardano, delta0, 0);
+  Tree* cardanoRoot1 = CardanoRoot(a, b, cardano, delta0, 1);
+  Tree* cardanoRoot2 = CardanoRoot(a, b, cardano, delta0, 2);
 
   TreeRef rootList = PatternMatching::CreateSimplify(
       KList(KA, KB, KC),
       {.KA = cardanoRoot0, .KB = cardanoRoot1, .KC = cardanoRoot2});
+
   cardanoRoot2->removeTree();
   cardanoRoot1->removeTree();
   cardanoRoot0->removeTree();
+  cardano->removeTree();
+  delta1->removeTree();
+  delta0->removeTree();
 
   AdvancedReduction::Reduce(rootList);
 
@@ -425,7 +428,7 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
                                         const Tree* c, const Tree* d) {
   /* If the discriminant is zero, the cubic has a multiple root.
    * Furthermore, if Δ_0 = b^2 - 3ac is zero, the cubic has a triple root. */
-  TreeRef delta0 = Delta0(a, b, c);
+  Tree* delta0 = Delta0(a, b, c);
 
   // clang-format off
   TreeRef rootList = SignOfTreeOrApproximation(delta0).isNull()
@@ -487,9 +490,9 @@ Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
 }
 
 Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
-  /* C = root((delta1 ± sqrt(delta1^2 - 4*delta0^3)) / 2, 3)
+  /* C = ∛((delta1 ± √(delta1^2 - 4*delta0^3)) / 2)
    * The sign of ± must be chosen so that C is not null:
-   *   - if delta0 is null, we enforce C = root(delta1, 3).
+   *   - if delta0 is null, we enforce C = ∛(delta1).
    *   - otherwise, ± takes the sign of delta1. This way, we do not run the
    *     risk of subtracting two very close numbers when delta0 << delta1. */
 
@@ -498,11 +501,10 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
                                            {.KA = delta1});
   }
 
-  Tree* signDelta1 = SignOfTreeOrApproximation(delta1).realSign().isPositive()
-                         ? (1_e)->cloneTree()
-                         : (-1_e)->cloneTree();
+  const Tree* signDelta1 =
+      SignOfTreeOrApproximation(delta1).realSign().isPositive() ? 1_e : -1_e;
   // clang-format off
-  TreeRef cardano = PatternMatching::CreateSimplify(
+  Tree* cardano = PatternMatching::CreateSimplify(
     KPow(
       KMult(
         KAdd(
@@ -519,8 +521,6 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
     {.KA = delta0, .KB = delta1, .KC = signDelta1});
   // clang-format on
 
-  signDelta1->removeTree();
-
   AdvancedReduction::Reduce(cardano);
   return cardano;
 }
@@ -535,22 +535,22 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
    * computing the three possibilities for C, i.e. with the three cubic roots
    * of unity. */
 
-  Tree* C = (k == 0)   ? cardano->cloneTree()
-            : (k == 1) ? PatternMatching::CreateSimplify(
-                             KMult(KA, k_cubeRootOfUnity1), {.KA = cardano})
-                       : PatternMatching::CreateSimplify(
-                             KMult(KA, k_cubeRootOfUnity2), {.KA = cardano});
+  const Tree* cubicRoot = (k == 0)   ? 1_e
+                          : (k == 1) ? k_cubeRootOfUnity1
+                                     : k_cubeRootOfUnity2;
 
   // clang-format off
-  TreeRef root = PatternMatching::CreateSimplify(
+  Tree* root = PatternMatching::CreateSimplify(
       KMult(
         KPow(KMult(-3_e, KA), -1_e),
-        KAdd(KB, KC, KMult(KD, KPow(KC, -1_e)))
+        KAdd(
+          KB,
+          KMult(KE, KC),
+          KMult(KD, KPow(KMult(KE, KC), -1_e))
+        )
       ),
-      {.KA = a, .KB = b, .KC = C, .KD = delta0});
+      {.KA = a, .KB = b, .KC = cardano, .KD = delta0, .KE = cubicRoot});
   // clang-format on
-
-  C->removeTree();
 
   AdvancedReduction::Reduce(root);
   return root;

@@ -51,8 +51,8 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
                                           Poincare::Context* context) const {
   if (m_circular == -1) {
     UserExpression e = expressionClone(record);
-    m_circular =
-        NewExpression::ExpressionWithoutSymbols(e, context).isUninitialized();
+    e.replaceSymbols(context);
+    m_circular = e.isUninitialized();
   }
   return m_circular;
 }
@@ -87,7 +87,7 @@ SystemExpression ExpressionModel::expressionReduced(
    * expression: for example,
    *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
    *    expression,
-   *  - so do Expression::ExpressionWithoutSymbols and SymbolAbstract::Expand,
+   *  - so do Expression::replaceSymbols and SymbolAbstract::Expand,
    *  - Symbol::shallowReduce and Function::shallowReduce and
    *    Expression::deepReplaceReplaceableSymbols return Undefined or
    *    the expression unaltered according to symbolic-computation setting,

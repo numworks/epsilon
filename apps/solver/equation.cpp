@@ -27,9 +27,8 @@ SystemExpression Equation::Model::standardForm(
       replaceFunctionsButNotSymbols
           ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
           : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-  UserExpression expressionInputWithoutFunctions =
-      NewExpression::ExpressionWithoutSymbols(expressionClone(record), context,
-                                              symbolicComputation);
+  UserExpression expressionInputWithoutFunctions = expressionClone(record);
+  expressionInputWithoutFunctions.replaceSymbols(context, symbolicComputation);
   if (expressionInputWithoutFunctions.isUninitialized()) {
     // The expression is circularly-defined
     expressionInputWithoutFunctions = Undefined::Builder();

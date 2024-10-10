@@ -28,8 +28,8 @@ inline NonStrictSign InvertSign(NonStrictSign sign) {
   return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
 }
 
-// Return the Tree sign if it is known, otherwise return the sign of the
-// approximated value
+/* Return the Tree sign if it is known, otherwise return the sign of the
+ * approximated value */
 ComplexSign SignOfTreeOrApproximation(const Tree* e);
 
 }  // namespace Poincare::Internal

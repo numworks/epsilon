@@ -195,7 +195,7 @@ class Approximation final {
    * instead.
    * This function assumes that Approximation has already been applied
    * to e. */
-  static Tree* extractRealPartIfImaginaryPartNegligible(const Tree* e);
+  static Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e);
 
  private:
   template <typename T>

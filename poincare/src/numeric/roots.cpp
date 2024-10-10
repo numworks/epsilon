@@ -162,7 +162,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
     // If the discriminant is positive or zero, all roots are real.
     for (Tree* root : approximatedRoots->children()) {
       Tree* realPart =
-          Approximation::extractRealPartIfImaginaryPartNegligible(root);
+          Approximation::ExtractRealPartIfImaginaryPartNegligible(root);
       assert(realPart != nullptr && realPart->isNumber());
       root->moveTreeOverTree(realPart);
     }
@@ -174,11 +174,11 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
     Tree* r2 = approximatedRoots->child(1);
     Tree* r3 = approximatedRoots->child(2);
     Tree* maybeRealR1 =
-        Approximation::extractRealPartIfImaginaryPartNegligible(r1);
+        Approximation::ExtractRealPartIfImaginaryPartNegligible(r1);
     Tree* maybeRealR2 =
-        Approximation::extractRealPartIfImaginaryPartNegligible(r2);
+        Approximation::ExtractRealPartIfImaginaryPartNegligible(r2);
     Tree* maybeRealR3 =
-        Approximation::extractRealPartIfImaginaryPartNegligible(r3);
+        Approximation::ExtractRealPartIfImaginaryPartNegligible(r3);
     // Only one of the root is real
     assert(((maybeRealR1 != nullptr) + (maybeRealR2 != nullptr) +
             (maybeRealR3 != nullptr)) == 1);

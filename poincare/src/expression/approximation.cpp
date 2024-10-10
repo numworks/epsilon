@@ -2,10 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/unreachable.h>
-#include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/n_ary.h>
-#include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
 
@@ -23,8 +20,6 @@
 #include "list.h"
 #include "matrix.h"
 #include "physical_constant.h"
-#include "poincare/src/expression/sign.h"
-#include "poincare/src/memory/tree_stack.h"
 #include "random.h"
 #include "rational.h"
 #include "symbol.h"
@@ -1330,11 +1325,11 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
   return changed;
 }
 
-Tree* Approximation::extractRealPartIfImaginaryPartNegligible(const Tree* e) {
+Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
   if (GetComplexSign(e).isReal()) {
     return e->cloneTree();
   }
-  std::complex<double> value = Approximation::ToComplex<double>(e, nullptr);
+  std::complex<double> value = ToComplex<double>(e, nullptr);
   constexpr float precision = 100 * OMG::Float::EpsilonLax<double>();
   if (std::abs(value.imag()) < precision) {
     return SharedTreeStack->pushDoubleFloat(value.real());

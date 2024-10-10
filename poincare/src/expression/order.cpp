@@ -302,17 +302,11 @@ int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
   }
   /* Two complex numbers are ordered by their real part, then by their imaginary
    * part. */
-  // clang-format off
-  return v1.real() < v2.real()
-           ? -1
-           : v1.real() > v2.real()
-               ? 1
-               : v1.imag() < v2.imag()
-                   ? -1
-                   : v1.imag() > v2.imag()
-                       ? 1
-                       : 0;
-  // clang-format on
+  return v1.real() < v2.real()   ? -1
+         : v1.real() > v2.real() ? 1
+         : v1.imag() < v2.imag() ? -1
+         : v1.imag() > v2.imag() ? 1
+                                 : 0;
 }
 
 }  // namespace Poincare::Internal

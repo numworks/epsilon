@@ -815,8 +815,14 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
     assert(replaceSymbols ==
                SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
            tree()->isUserFunction());
-    return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
-                                   context, auxiliary, ignoredSymbols);
+    JuniorExpression e = clone();
+    // Undefined symbols must be preserved.
+    e.replaceSymbols(
+        context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    return !e.isUninitialized() &&
+           e.recursivelyMatches(test, context,
+                                SymbolicComputation::DoNotReplaceAnySymbol,
+                                auxiliary, ignoredSymbols);
   }
 
   /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on

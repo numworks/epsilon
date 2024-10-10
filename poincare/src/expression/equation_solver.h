@@ -125,12 +125,7 @@ static inline bool AllOf(const Tree** trees, int numberOfElements,
 template <typename P>
 static inline bool AnyOf(const Tree* listTree, P predicate) {
   assert(listTree->isList());
-  for (const Tree* element : listTree->children()) {
-    if (predicate(element)) {
-      return true;
-    }
-  }
-  return false;
+  return listTree->hasChildSatisfying(predicate);
 }
 
 }  // namespace helpers

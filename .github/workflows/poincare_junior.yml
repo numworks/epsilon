@@ -45,7 +45,7 @@ jobs:
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f regression
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f sequence
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f shared
-      # - run: output/release/linux/test.bin --headless --limit-stack-usage -f solver
+      - run: output/release/linux/test.bin --headless --limit-stack-usage -f solver
       - run: output/release/linux/test.bin --headless --limit-stack-usage -f statistics
   poincarejs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}

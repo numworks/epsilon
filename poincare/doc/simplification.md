@@ -184,7 +184,7 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 | - A | (-1)×A |
 | A - B | A + (-1)×B |
 | A / B | A×B^-1 |
-| log(A, e) | ln(e) |
+| log(A, e) | ln(A) |
 | log(A) | ln(A)×ln(10)^(-1) |
 | log(A, B) | ln(A)×ln(B)^(-1) |
 | lnUser(A) (with real complex format) | dep(ln(A), {NoNull(A), powReal(A,1/2))}) |

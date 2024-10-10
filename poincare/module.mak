@@ -333,6 +333,7 @@ _sources_poincare_test := $(addprefix test/, \
   parse.cpp \
   polynomial.cpp \
   projection.cpp \
+  random.cpp \
   rational.cpp \
   roots.cpp \
   set.cpp \

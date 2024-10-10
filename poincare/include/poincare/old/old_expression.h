@@ -425,15 +425,6 @@ class OExpression : public PoolHandle {
       const ReductionContext& reductionContext);
   OExpression deepReplaceSymbols(const ReductionContext& reductionContext);
 
-  /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
-   * uninitialized expression if it is circularly defined.
-   * SymbolicComputation defines how to handle functions
-   * and undefined symbols. */
-  static OExpression ExpressionWithoutSymbols(
-      OExpression expressionWithSymbols, Context* context,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-
   OExpression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   OExpression angleUnitToRadian(Preferences::AngleUnit angleUnit);
 
@@ -628,25 +619,6 @@ class OExpression : public PoolHandle {
   }
   OExpression deepReplaceSymbolWithExpression(const SymbolAbstract& symbol,
                                               const OExpression expression);
-  /* 'deepReplaceReplaceableSymbols' replaces symbols in place. isCircular
-   * indicates if it is circularly defined and has been interrupted.
-   * SymbolicComputation defines how to handle functions and undefined symbols.
-   */
-  bool involvesCircularity(Context* context, int maxDepth,
-                           const char** visitedSymbols,
-                           int numberOfVisitedSymbols) {
-    return node()->involvesCircularity(context, maxDepth, visitedSymbols,
-                                       numberOfVisitedSymbols);
-  }
-  OExpression deepReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-    return node()->deepReplaceReplaceableSymbols(
-        context, isCircular, parameteredAncestorsCount, symbolicComputation);
-  }
-  OExpression defaultReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
   /* Simplification */
   static void SimplifyAndApproximateChildren(

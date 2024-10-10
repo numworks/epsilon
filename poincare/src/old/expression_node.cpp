@@ -35,26 +35,6 @@ int ExpressionNode::getPolynomialCoefficients(
       polynomialDegree(context, symbolName), context, symbolName, coefficients);
 }
 
-bool ExpressionNode::involvesCircularity(Context* context, int maxDepth,
-                                         const char** visitedSymbols,
-                                         int numberOfVisitedSymbols) {
-  int nChildren = numberOfChildren();
-  for (int i = 0; i < nChildren; i++) {
-    if (childAtIndex(i)->involvesCircularity(context, maxDepth, visitedSymbols,
-                                             numberOfVisitedSymbols)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-OExpression ExpressionNode::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  return OExpression(this).defaultReplaceReplaceableSymbols(
-      context, isCircular, parameteredAncestorsCount, symbolicComputation);
-}
-
 int ExpressionNode::getVariables(Context* context, isVariableTest isVariable,
                                  char* variables, int maxSizeVariable,
                                  int nextVariableIndex) const {

@@ -192,12 +192,6 @@ class ExpressionNode : public PoolObject {
   /*!*/ virtual int getPolynomialCoefficients(Context* context,
                                               const char* symbolName,
                                               OExpression coefficients[]) const;
-  virtual bool involvesCircularity(Context* context, int maxDepth,
-                                   const char** visitedSymbols,
-                                   int numberOfVisitedSymbols);
-  /*!*/ virtual OExpression deepReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   typedef bool (*isVariableTest)(const char* c, Poincare::Context* context);
   virtual int getVariables(Context* context, isVariableTest isVariable,
                            char* variables, int maxSizeVariable,

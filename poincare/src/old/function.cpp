@@ -57,13 +57,6 @@ OExpression FunctionNode::shallowReduce(
   return Function(this).shallowReduce(reductionContext);
 }
 
-OExpression FunctionNode::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  return Function(this).deepReplaceReplaceableSymbols(
-      context, isCircular, parameteredAncestorsCount, symbolicComputation);
-}
-
 Evaluation<float> FunctionNode::approximate(
     SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);
@@ -154,70 +147,6 @@ OExpression Function::shallowReduce(ReductionContext reductionContext) {
   /* The stored expression is as entered by the user, so we need to call reduce
    * Remaining Nested symbols will be properly expanded as they are reduced. */
   return result.deepReduce(reductionContext);
-}
-
-OExpression Function::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  /* This symbolic computation parameters make no sense in this method.
-   * It is therefore not handled. */
-  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
-
-  if (symbolicComputation ==
-      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    return replaceWithUndefinedInPlace();
-  }
-
-  assert(symbolicComputation ==
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
-         symbolicComputation ==
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-         symbolicComputation ==
-             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
-
-  /* Check for circularity only when a symbol/function is encountered so that
-   * it is not uselessly checked each time deepReplaceReplaceableSymbols is
-   * called.
-   * isCircularFromHere is used so that isCircular is not altered if this is
-   * not circular but a sibling of this is circular and was not checked yet. */
-  OMG::Troolean isCircularFromHere = *isCircular;
-  checkForCircularityIfNeeded(context, &isCircularFromHere);
-  if (isCircularFromHere == OMG::Troolean::True) {
-    *isCircular = isCircularFromHere;
-    return *this;
-  }
-  assert(isCircularFromHere == OMG::Troolean::False);
-
-  // Replace replaceable symbols in child
-  defaultReplaceReplaceableSymbols(context, &isCircularFromHere,
-                                   parameteredAncestorsCount,
-                                   symbolicComputation);
-  assert(isCircularFromHere == OMG::Troolean::False);
-
-  OExpression e = context->expressionForSymbolAbstract(*this, true);
-  /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
-   * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
-  if (e.isUninitialized()) {
-    if (symbolicComputation ==
-            SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-        symbolicComputation ==
-            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
-      return *this;
-    }
-    assert(symbolicComputation ==
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-    return replaceWithUndefinedInPlace();
-  }
-
-  // Build dependency to keep track of function's parameter
-  Dependency d = Dependency::Builder(e);
-  d.addDependency(childAtIndex(0));
-  replaceWithInPlace(d);
-
-  e = e.deepReplaceReplaceableSymbols(context, &isCircularFromHere,
-                                      parameteredAncestorsCount,
-                                      symbolicComputation);
-  return std::move(d);
 }
 
 }  // namespace Poincare

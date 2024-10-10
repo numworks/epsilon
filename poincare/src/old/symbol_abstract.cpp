@@ -84,54 +84,6 @@ size_t SymbolAbstractNode::serialize(
   return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
-bool SymbolAbstractNode::involvesCircularity(Context *context, int maxDepth,
-                                             const char **visitedSymbols,
-                                             int numberOfVisitedSymbols) {
-  if (otype() == ExpressionNode::Type::Sequence) {
-    return ExpressionNode::involvesCircularity(
-        context, maxDepth, visitedSymbols, numberOfVisitedSymbols);
-  }
-  // Check if this symbol has already been visited.
-  for (int i = 0; i < numberOfVisitedSymbols; i++) {
-    if (strcmp(name(), visitedSymbols[i]) == 0) {
-      return true;
-    }
-  }
-
-  // Check children of this (useful for function parameters)
-  if (ExpressionNode::involvesCircularity(context, maxDepth, visitedSymbols,
-                                          numberOfVisitedSymbols)) {
-    return true;
-  }
-
-  // Check for circularity in the expression of the symbol and decrease depth
-  maxDepth--;
-  if (maxDepth < 0) {
-    /* We went too deep into the check and consider the expression to be
-     * circular. */
-    return true;
-  }
-  visitedSymbols[numberOfVisitedSymbols] = m_name;
-  numberOfVisitedSymbols++;
-
-  OExpression symbolAbstract;
-  if (otype() == ExpressionNode::Type::Function) {
-    // This is like cloning, but without the symbol.
-    symbolAbstract = Function::Builder(name(), strlen(name()),
-                                       Symbol::Builder(UCodePointUnknown));
-  } else {
-    assert(otype() == ExpressionNode::Type::Symbol);
-    symbolAbstract = SymbolAbstract(this);
-  }
-
-  OExpression e = context->expressionForSymbolAbstract(
-      static_cast<SymbolAbstract &>(symbolAbstract), false);
-
-  return !e.isUninitialized() &&
-         e.involvesCircularity(context, maxDepth, visitedSymbols,
-                               numberOfVisitedSymbols);
-}
-
 const char *SymbolAbstract::name() const {
   return Internal::Symbol::GetName(tree());
 }
@@ -185,16 +137,6 @@ JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
   return *this;
 }
 #endif
-
-void SymbolAbstract::checkForCircularityIfNeeded(Context *context,
-                                                 OMG::Troolean *isCircular) {
-  assert(*isCircular != OMG::Troolean::True);
-  if (*isCircular == OMG::Troolean::Unknown) {
-    const char *visitedSymbols[OExpression::k_maxSymbolReplacementsCount];
-    *isCircular = OMG::BoolToTroolean(involvesCircularity(
-        context, OExpression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
-  }
-}
 
 JuniorExpression SymbolAbstract::Expand(
     const SymbolAbstract &symbol, Context *context, bool clone,

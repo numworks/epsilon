@@ -73,9 +73,6 @@ class SymbolAbstractNode : public ExpressionNode {
   size_t serialize(char *buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  bool involvesCircularity(Context *context, int maxDepth,
-                           const char **visitedSymbols,
-                           int numberOfVisitedSymbols) override;
 
   char m_name[0];  // MUST be the last member variable
 
@@ -118,7 +115,6 @@ class SymbolAbstract : public JuniorExpression {
     return nullptr;
     // return static_cast<SymbolAbstractNode *>(JuniorExpression::node());
   }
-  void checkForCircularityIfNeeded(Context *context, OMG::Troolean *isCircular);
 
  private:
   static JuniorExpression Expand(const SymbolAbstract &symbol, Context *context,

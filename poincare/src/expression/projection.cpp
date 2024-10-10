@@ -16,6 +16,9 @@ namespace Poincare::Internal {
 
 bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
                                       SymbolicComputation symbolic) {
+  /* TODO_PCJ: in old poincare, we did not do anything for sequence trees (not
+   * only nodes), and for store trees we only replaced in the first child and if
+   * the second child was a user symbol. */
   if (symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
     return false;
   }
@@ -51,6 +54,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
       (!e->isUserSymbol() ||
        symbolic ==
            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
+    // TODO: skip also system symbol?
     return false;
   }
   if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {

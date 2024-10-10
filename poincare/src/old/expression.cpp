@@ -568,21 +568,6 @@ void OExpression::defaultSetChildrenInPlace(OExpression other) {
   }
 }
 
-OExpression OExpression::defaultReplaceReplaceableSymbols(
-    Context *context, OMG::Troolean *isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  int nbChildren = numberOfChildren();
-  for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).deepReplaceReplaceableSymbols(
-        context, isCircular, parameteredAncestorsCount, symbolicComputation);
-    if (*isCircular == OMG::Troolean::True) {
-      // the expression is circularly defined, escape
-      return *this;
-    }
-  }
-  return *this;
-}
-
 OExpression OExpression::makePositiveAnyNegativeNumeralFactor(
     const ReductionContext &reductionContext) {
   // The expression is a negative number
@@ -1079,25 +1064,6 @@ void OExpression::cloneAndSimplifyAndApproximate(
   }
 }
 
-OExpression OExpression::ExpressionWithoutSymbols(
-    OExpression e, Context *context, SymbolicComputation symbolicComputation) {
-  if (e.isUninitialized() ||
-      symbolicComputation == SymbolicComputation::DoNotReplaceAnySymbol) {
-    return e;
-  }
-
-  // Replace all the symbols in depth.
-  OMG::Troolean isCircular = OMG::Troolean::Unknown;
-  e = e.deepReplaceReplaceableSymbols(context, &isCircular, 0,
-                                      symbolicComputation);
-  if (isCircular != OMG::Troolean::True) {
-    return e;
-  }
-  /* Symbols are defined circularly (or likely to be if we made too many
-   * replacements), in which case we return an uninitialized expression. */
-  return OExpression();
-}
-
 OExpression OExpression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     // e*180/Pi
@@ -1244,10 +1210,7 @@ OExpression OExpression::deepRemoveUselessDependencies(
 
 OExpression OExpression::deepReplaceSymbols(
     const ReductionContext &reductionContext) {
-  OExpression result = OExpression::ExpressionWithoutSymbols(
-      *this, reductionContext.context(),
-      reductionContext.symbolicComputation());
-  return result.isUninitialized() ? Undefined::Builder() : result;
+  return Undefined::Builder();
 }
 
 OExpression OExpression::setSign(bool positive,

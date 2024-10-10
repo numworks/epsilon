@@ -35,10 +35,6 @@ class SymbolNode final : public SymbolAbstractNode {
 
   /* Simplification */
   OExpression shallowReduce(const ReductionContext& reductionContext) override;
-  OExpression deepReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount,
-      SymbolicComputation symbolicComputation) override;
 
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
@@ -96,9 +92,6 @@ class Symbol final : public SymbolAbstract {
                 OExpression symbolValue);
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 OExpression coefficients[]) const;
-  OExpression deepReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
  private:
   SymbolNode* node() const {

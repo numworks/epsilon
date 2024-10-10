@@ -15,13 +15,6 @@ OExpression ParameteredExpressionNode::replaceSymbolWithExpression(
                                                                  expression);
 }
 
-OExpression ParameteredExpressionNode::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  return ParameteredExpression(this).deepReplaceReplaceableSymbols(
-      context, isCircular, parameteredAncestorsCount, symbolicComputation);
-}
-
 int ParameteredExpressionNode::getVariables(Context* context,
                                             isVariableTest isVariable,
                                             char* variables,
@@ -193,34 +186,6 @@ OExpression ParameteredExpression::replaceSymbolWithExpression(
       "ParameteredExpression::replaceSymbolWithExpression might not be valid");
   for (int i = 2; i < childrenCount; i++) {
     childAtIndex(i).replaceSymbolWithExpression(symbol, expression);
-  }
-  return *this;
-}
-
-OExpression ParameteredExpression::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  /* All children replaceable symbols should be replaced apart from symbols that
-   * are parameters in parametered expressions.*/
-  int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    if (i == ParameterChildIndex()) {
-      // Do not replace symbols in the parameter child
-      continue;
-    }
-    /* In the parametered child, increase the parametered ancestors count so
-     * that when replacing symbols, the expressions check that the symbols are
-     * not the parametered symbols. */
-    bool shouldIncreaseParameteredAncestorsCount = i == ParameteredChildIndex();
-    childAtIndex(i).deepReplaceReplaceableSymbols(
-        context, isCircular,
-        parameteredAncestorsCount +
-            (shouldIncreaseParameteredAncestorsCount ? 1 : 0),
-        symbolicComputation);
-    if (*isCircular == OMG::Troolean::True) {
-      // the expression is circularly defined, escape
-      return *this;
-    }
   }
   return *this;
 }

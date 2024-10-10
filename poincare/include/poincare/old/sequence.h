@@ -55,11 +55,6 @@ class Sequence final : public SymbolAbstract {
 
   // Simplification
   OExpression shallowReduce(ReductionContext reductionContext);
-  OExpression deepReplaceReplaceableSymbols(
-      Context* context, OMG::Troolean* isCircular,
-      int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-    return *this;
-  }
 };
 
 }  // namespace Poincare

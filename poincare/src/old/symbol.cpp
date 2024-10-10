@@ -62,13 +62,6 @@ OExpression SymbolNode::shallowReduce(
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-OExpression SymbolNode::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  return Symbol(this).deepReplaceReplaceableSymbols(
-      context, isCircular, parameteredAncestorsCount, symbolicComputation);
-}
-
 bool SymbolNode::derivate(const ReductionContext& reductionContext,
                           Symbol symbol, OExpression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);
@@ -202,74 +195,6 @@ int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
     coefficients[0] = clone();
   }
   return deg;
-}
-
-OExpression Symbol::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  /* This symbolic computation parameters make no sense in this method.
-   * It is therefore not handled. */
-  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
-  if (symbolicComputation ==
-      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    return replaceWithUndefinedInPlace();
-  }
-  if (symbolicComputation ==
-          SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions ||
-      isSystemSymbol()) {
-    return *this;
-  }
-
-  assert(symbolicComputation ==
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
-         symbolicComputation ==
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-
-  // Check that this is not a parameter in a parametered expression
-  OExpression ancestor = *this;
-  while (parameteredAncestorsCount > 0) {
-    ancestor = ancestor.parent();
-    assert(!ancestor.isUninitialized());
-    if (ancestor.isParameteredExpression()) {
-      parameteredAncestorsCount--;
-      Symbol ancestorParameter =
-          static_cast<ParameteredExpression&>(ancestor).parameter();
-      if (hasSameNameAs(ancestorParameter)) {
-        return *this;
-      }
-    }
-  }
-
-  /* Check for circularity only when a symbol/function is encountered so that
-   * it is not uselessly checked each time deepReplaceReplaceableSymbols is
-   * called.
-   * isCircularFromHere is used so that isCircular is not altered if this is
-   * not circular but a sibling of this is circular and was not checked yet. */
-  OMG::Troolean isCircularFromHere = *isCircular;
-  checkForCircularityIfNeeded(context, &isCircularFromHere);
-  if (isCircularFromHere == OMG::Troolean::True) {
-    *isCircular = isCircularFromHere;
-    return *this;
-  }
-  assert(isCircularFromHere == OMG::Troolean::False);
-
-  Expression e = context->expressionForSymbolAbstract(*this, true);
-  if (e.isUninitialized()) {
-    if (symbolicComputation ==
-        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
-      return *this;
-    }
-    assert(symbolicComputation ==
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-    return replaceWithUndefinedInPlace();
-  }
-
-  replaceWithInPlace(e);
-  /* Reset parameteredAncestorsCount, because outer local context is ignored
-   * within symbol's expression. */
-  e = e.deepReplaceReplaceableSymbols(context, &isCircularFromHere, 0,
-                                      symbolicComputation);
-  return e;
 }
 
 }  // namespace Poincare

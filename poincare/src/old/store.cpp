@@ -19,13 +19,6 @@ OExpression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
   return OStore(this).shallowReduce(reductionContext);
 }
 
-OExpression StoreNode::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  return OStore(this).deepReplaceReplaceableSymbols(
-      context, isCircular, parameteredAncestorsCount, symbolicComputation);
-}
-
 template <typename T>
 Evaluation<T> StoreNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
@@ -45,18 +38,6 @@ OExpression OStore::shallowReduce(ReductionContext reductionContext) {
   /* Stores are kept by the reduction and the app will do the effective store if
    * deemed necessary. Side-effects of the storage modification will therefore
    * happen outside of the checkpoint. */
-  return *this;
-}
-
-OExpression OStore::deepReplaceReplaceableSymbols(
-    Context* context, OMG::Troolean* isCircular, int parameteredAncestorsCount,
-    SymbolicComputation symbolicComputation) {
-  // Only the value of a symbol should have no free variables
-  if (symbol().otype() == ExpressionNode::Type::Symbol) {
-    OExpression value = childAtIndex(0).deepReplaceReplaceableSymbols(
-        context, isCircular, parameteredAncestorsCount, symbolicComputation);
-    replaceChildAtIndexInPlace(0, value);
-  }
   return *this;
 }
 

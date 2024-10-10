@@ -80,20 +80,20 @@ QUIZ_CASE(poincare_expression_order_mix) {
   assert_greater(KACos(2_e), KDecimal(3_e, 2_e));
 }
 
-void assert_multiplication_or_addition_is_ordered_as(const Tree* e1,
-                                                     const Tree* e2) {
-  Tree* clone = e1->cloneTree();
-  NAry::Sort(clone, e1->isAdd() ? Order::OrderType::AdditionBeautification
-                                : Order::OrderType::Beautification);
-  bool test = e1->treeIsIdenticalTo(e2);
+void assert_multiplication_or_addition_is_ordered_as(const Tree* input,
+                                                     const Tree* expected) {
+  Tree* clone = input->cloneTree();
+  NAry::Sort(clone, input->isAdd() ? Order::OrderType::AdditionBeautification
+                                   : Order::OrderType::Beautification);
+  bool test = input->treeIsIdenticalTo(expected);
   // quiz_assert(e1->treeIsIdenticalTo(e2));
 
   constexpr int bufferSize = 256;
   char information[bufferSize] = "";
   char buffer1[bufferSize];
   char buffer2[bufferSize];
-  serialize_expression(e1, buffer1, bufferSize);
-  serialize_expression(e2, buffer2, bufferSize);
+  serialize_expression(input, buffer1, bufferSize);
+  serialize_expression(expected, buffer2, bufferSize);
   int i = Poincare::Print::UnsafeCustomPrintf(
       information, bufferSize, "%s\t%s\t%s", !test ? "BAD" : "OK", buffer1,
       buffer2);

@@ -10,6 +10,7 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
+#include "poincare/old/context.h"
 #include "systematic_reduction.h"
 #include "vector.h"
 
@@ -364,7 +365,9 @@ int Matrix::Rank(const Tree* matrix) {
 }
 
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
-  if (RowCanonize(matrix, true, nullptr, false, nullptr, forceCanonization)) {
+  Approximation::Context approximationContext{};
+  if (RowCanonize(matrix, true, nullptr, false, &approximationContext,
+                  forceCanonization)) {
     return RankOfCanonized(matrix);
   }
   return k_failedToCanonizeRank;

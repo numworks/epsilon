@@ -1,6 +1,7 @@
 #include <poincare/additional_results_helper.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/src/expression/angle.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -342,22 +343,31 @@ SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
 }
 
 // Take a rational a/b and create the euclidian division a=b*q+r
-SystemExpression AdditionalResultsHelper::CreateEuclideanDivision(
+UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
     SystemExpression e) {
   IntegerHandler num = Rational::Numerator(e);
   IntegerHandler den = Rational::Denominator(e);
   DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
   Tree* numTree = num.pushOnTreeStack();
   Tree* denTree = den.pushOnTreeStack();
-  SystemExpression result = SystemExpression::Builder(PatternMatching::Create(
+  Tree* quotient = division.quotient->cloneTree();
+  /* We beautify the quotient that may be negative and leave the rest unchanged
+   * because we want to control the beautification order manually. */
+  Beautification::DeepBeautify(quotient);
+  assert(denTree->isPositiveInteger() &&
+         division.remainder->isPositiveInteger());
+  UserExpression result = UserExpression::Builder(PatternMatching::Create(
       KEqual(KA, KAdd(KMult(KB, KC), KD)), {.KA = numTree,
                                             .KB = denTree,
-                                            .KC = division.quotient,
+                                            .KC = quotient,
                                             .KD = division.remainder}));
+
+  quotient->removeTree();
   denTree->removeTree();
   numTree->removeTree();
   division.remainder->removeTree();
   division.quotient->removeTree();
+
   return result;
 }
 

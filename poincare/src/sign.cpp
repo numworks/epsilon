@@ -349,6 +349,9 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Frac:
     case Type::Round:
       return DecimalFunction(GetComplexSign(e->child(0)), e->type());
+    case Type::Random:
+    case Type::RandInt:
+      return ComplexSign(Sign::Finite(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

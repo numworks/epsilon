@@ -93,150 +93,30 @@ bool OExpression::isInteger() const {
           childAtIndex(0).isInteger());
 }
 
-#if 0
-static bool IsIgnoredSymbol(const OExpression *e,
-                            OExpression::IgnoredSymbols *ignoredSymbols) {
-  if (e->otype() != ExpressionNode::Type::Symbol) {
-    return false;
-  }
-  while (ignoredSymbols) {
-    assert(ignoredSymbols->head);
-    if (ignoredSymbols->head->isIdenticalTo(*e)) {
-      return true;
-    }
-    ignoredSymbols =
-        reinterpret_cast<OExpression::IgnoredSymbols *>(ignoredSymbols->tail);
-  }
-  return false;
-}
-#endif
-
 bool OExpression::recursivelyMatches(ExpressionTrinaryTest test,
                                      Context *context,
                                      SymbolicComputation replaceSymbols,
                                      void *auxiliary,
                                      IgnoredSymbols *ignoredSymbols) const {
-#if 0  // TODO_PCJ
-  if (!context) {
-    replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
-  }
-  if (IsIgnoredSymbol(this, ignoredSymbols)) {
-    return false;
-  }
-  OMG::Troolean testResult = test(*this, context, auxiliary);
-  if (testResult == OMG::Troolean::True) {
-    return true;
-  } else if (testResult == OMG::Troolean::False) {
-    return false;
-  }
-  assert(testResult == OMG::Troolean::Unknown && !isUninitialized());
-
-  // Handle dependencies, store, symbols and functions
-  ExpressionNode::Type t = otype();
-  if (t == ExpressionNode::Type::Dependency) {
-    OExpression e = *this;
-    return static_cast<Dependency &>(e).dependencyRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary, ignoredSymbols);
-  }
-  if (t == ExpressionNode::Type::Store) {
-    OExpression e = *this;
-    return static_cast<Store &>(e).storeRecursivelyMatches(
-        test, context, replaceSymbols, auxiliary, ignoredSymbols);
-  }
-  if (t == ExpressionNode::Type::Symbol ||
-      t == ExpressionNode::Type::Function) {
-    assert(replaceSymbols ==
-               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-           replaceSymbols ==
-               SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-           // We need only those cases for now
-           || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
-    if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
-        (replaceSymbols ==
-             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&
-         t == ExpressionNode::Type::Symbol)) {
-      return false;
-    }
-    assert(replaceSymbols ==
-               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-           t == ExpressionNode::Type::Function);
-    return SymbolAbstract::matches(convert<const SymbolAbstract>(), test,
-                                   context, auxiliary, ignoredSymbols);
-  }
-
-  const int childrenCount = this->numberOfChildren();
-  bool isParametered = isParameteredExpression();
-  // Run loop backwards to find lists and matrices quicker in NAry expressions
-  for (int i = childrenCount - 1; i >= 0; i--) {
-    if (isParametered && i == ParameteredExpression::ParameterChildIndex()) {
-      continue;
-    }
-    OExpression childToAnalyze = childAtIndex(i);
-    bool matches;
-    if (isParametered && i == ParameteredExpression::ParameteredChildIndex()) {
-      OExpression symbolExpr =
-          childAtIndex(ParameteredExpression::ParameterChildIndex());
-      Symbol symbol = static_cast<Symbol &>(symbolExpr);
-      IgnoredSymbols updatedIgnoredSymbols = {.head = &symbol,
-                                              .tail = ignoredSymbols};
-      matches = childToAnalyze.recursivelyMatches(
-          test, context, replaceSymbols, auxiliary, &updatedIgnoredSymbols);
-    } else {
-      matches = childToAnalyze.recursivelyMatches(test, context, replaceSymbols,
-                                                  auxiliary, ignoredSymbols);
-    }
-    if (matches) {
-      return true;
-    }
-  }
   return false;
-#else
-  // TODO_PCJ
-  return false;
-#endif
 }
 
 bool OExpression::recursivelyMatches(ExpressionTest test, Context *context,
                                      SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const OExpression e, Context *context,
-                                     void *auxiliary) {
-    ExpressionTest *trueTest = static_cast<ExpressionTest *>(auxiliary);
-    return (*trueTest)(e, context) ? OMG::Troolean::True
-                                   : OMG::Troolean::Unknown;
-  };
-  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+  return false;
 }
 
 bool OExpression::recursivelyMatches(SimpleExpressionTest test,
                                      Context *context,
                                      SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const OExpression e, Context *context,
-                                     void *auxiliary) {
-    SimpleExpressionTest *trueTest =
-        static_cast<SimpleExpressionTest *>(auxiliary);
-    return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
-  };
-  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+  return false;
 }
 
 bool OExpression::recursivelyMatches(ExpressionTestAuxiliary test,
                                      Context *context,
                                      SymbolicComputation replaceSymbols,
                                      void *auxiliary) const {
-  struct Pack {
-    ExpressionTestAuxiliary *test;
-    void *auxiliary;
-  };
-  ExpressionTrinaryTest ternary = [](const OExpression e, Context *context,
-                                     void *pack) {
-    ExpressionTestAuxiliary *trueTest =
-        static_cast<ExpressionTestAuxiliary *>(static_cast<Pack *>(pack)->test);
-    return (*trueTest)(e, context, static_cast<Pack *>(pack)->auxiliary)
-               ? OMG::Troolean::True
-               : OMG::Troolean::Unknown;
-  };
-  Pack pack{&test, auxiliary};
-  return recursivelyMatches(ternary, context, replaceSymbols, &pack);
+  return false;
 }
 
 bool OExpression::deepIsOfType(

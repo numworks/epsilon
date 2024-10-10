@@ -57,14 +57,6 @@ class OStore final : public ExpressionTwoChildren<OStore, StoreNode> {
   void deepReduceChildren(const ReductionContext& reductionContext);
   OExpression shallowReduce(ReductionContext reductionContext);
 
-  bool storeRecursivelyMatches(
-      ExpressionTrinaryTest test, Context* context,
-      SymbolicComputation replaceSymbols, void* auxiliary,
-      OExpression::IgnoredSymbols* ignoredSymbols) const {
-    return value().recursivelyMatches(test, context, replaceSymbols, auxiliary,
-                                      ignoredSymbols);
-  }
-
  private:
   StoreNode* node() const {
     return static_cast<StoreNode*>(OExpression::node());

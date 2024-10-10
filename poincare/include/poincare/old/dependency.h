@@ -63,13 +63,6 @@ class Dependency : public OExpression {
   /* Store the dependecies in l and replace the dependency node with the true
    * expression. */
   OExpression extractDependencies(OList l);
-  bool dependencyRecursivelyMatches(
-      ExpressionTrinaryTest test, Context* context,
-      SymbolicComputation replaceSymbols, void* auxiliary,
-      OExpression::IgnoredSymbols* ignoredSymbols) const {
-    return mainExpression().recursivelyMatches(test, context, replaceSymbols,
-                                               auxiliary, ignoredSymbols);
-  }
 
   OExpression removeUselessDependencies(
       const ReductionContext& reductionContext);

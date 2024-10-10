@@ -92,20 +92,6 @@ bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
   return strcmp(other.name(), name()) == 0;
 }
 
-bool SymbolAbstract::matches(const SymbolAbstract &symbol,
-                             JuniorExpression::ExpressionTrinaryTest test,
-                             Context *context, void *auxiliary,
-                             JuniorExpression::IgnoredSymbols *ignoredSymbols) {
-  // Undefined symbols must be preserved.
-  JuniorExpression e = SymbolAbstract::Expand(
-      symbol, context, true,
-      SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  return !e.isUninitialized() &&
-         e.recursivelyMatches(test, context,
-                              SymbolicComputation::DoNotReplaceAnySymbol,
-                              auxiliary, ignoredSymbols);
-}
-
 // Implemented in JuniorExpression::replaceSymbolWithExpression
 #if 0
 JuniorExpression SymbolAbstract::replaceSymbolWithExpression(

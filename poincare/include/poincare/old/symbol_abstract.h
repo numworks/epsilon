@@ -98,9 +98,6 @@ class SymbolAbstract : public JuniorExpression {
  public:
   const char *name() const;
   bool hasSameNameAs(const SymbolAbstract &other) const;
-  static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
-                      Context *context, void *auxiliary,
-                      JuniorExpression::IgnoredSymbols *ignoredSymbols);
   // Implemented in JuniorExpression::replaceSymbolWithExpression
 #if 0
   JuniorExpression replaceSymbolWithExpression(

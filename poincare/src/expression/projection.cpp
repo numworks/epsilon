@@ -14,73 +14,13 @@
 
 namespace Poincare::Internal {
 
-bool involvesCircularity(const Tree* e, Context* context, int maxDepth,
-                         const char** visitedSymbols,
-                         int numberOfVisitedSymbols) {
-  // Check for circularity only when a symbol/function is encountered
-  if (!e->isUserFunction() && !e->isUserSymbol()) {
-    for (const Tree* child : e->children()) {
-      if (involvesCircularity(child, context, maxDepth, visitedSymbols,
-                              numberOfVisitedSymbols)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  const char* name = Symbol::GetName(e);
-
-  // Check if this symbol has already been visited.
-  for (int i = 0; i < numberOfVisitedSymbols; i++) {
-    if (strcmp(name, visitedSymbols[i]) == 0) {
-      return true;
-    }
-  }
-
-  // Check children of this (useful for function parameters)
-  for (const Tree* child : e->children()) {
-    if (involvesCircularity(child, context, maxDepth, visitedSymbols,
-                            numberOfVisitedSymbols)) {
-      return true;
-    }
-  }
-
-  // Check for circularity in the expression of the symbol and decrease depth
-  maxDepth--;
-  if (maxDepth < 0) {
-    /* We went too deep into the check and consider the expression to be
-     * circular. */
-    return true;
-  }
-  visitedSymbols[numberOfVisitedSymbols] = name;
-  numberOfVisitedSymbols++;
-
-  Tree* symbol = Tree::FromBlocks(SharedTreeStack->lastBlock());
-  if (e->isUserFunction()) {
-    // This is like cloning, but without the symbol.
-    e->cloneNode();
-    KUnknownSymbol->cloneTree();
-  } else {
-    e->cloneTree();
-  }
-
-  const Tree* definition =
-      context ? context->treeForSymbolIdentifier(symbol) : nullptr;
-  bool isCircular =
-      definition && involvesCircularity(definition, context, maxDepth,
-                                        visitedSymbols, numberOfVisitedSymbols);
-  symbol->removeTree();
-  return isCircular;
-}
-
 bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
                                       SymbolicComputation symbolic) {
   if (symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
     return false;
   }
   // Check for circularity
-  const char* visitedSymbols[Symbol::k_maxSymbolReplacementsCount];
-  if (involvesCircularity(e, context, Symbol::k_maxSymbolReplacementsCount,
-                          visitedSymbols, 0)) {
+  if (Symbol::InvolvesCircularity(e, context)) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }

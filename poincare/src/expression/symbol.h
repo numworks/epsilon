@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SYMBOL_H
 #define POINCARE_EXPRESSION_SYMBOL_H
 
+#include <poincare/old/context.h>
 #include <poincare/sign.h>
 
 #include "context.h"
@@ -37,6 +38,8 @@ class Symbol final {
   static const char* GetName(const Tree* e);
 
   static ComplexSign GetComplexSign(const Tree* e);
+
+  static bool InvolvesCircularity(const Tree* e, Poincare::Context* context);
 };
 
 }  // namespace Poincare::Internal

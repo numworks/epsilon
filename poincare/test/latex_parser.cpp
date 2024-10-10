@@ -37,30 +37,38 @@ QUIZ_CASE(pcj_latex_to_layout) {
                               KCodePointL<UCodePointInfinity>());
 }
 
-void assert_layout_convert_to_latex(const Tree* l, const char* latex) {
+void assert_layout_convert_to_latex(const Tree* l, const char* latex,
+                                    bool withThousandsSeparator) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
-  LatexParser::LayoutToLatex(Rack::From(l), buffer, buffer + bufferSize - 1);
+  LatexParser::LayoutToLatex(Rack::From(l), buffer, buffer + bufferSize - 1,
+                             withThousandsSeparator);
   quiz_assert_print_if_failure(strncmp(buffer, latex, strlen(latex)) == 0,
                                latex);
 }
 
 QUIZ_CASE(pcj_layout_to_latex) {
+  // Use the withThousandsSeparator variable when its value doesn't matter.
+  bool withThousandsSeparator = true;
   assert_layout_convert_to_latex(
       "1+"_l ^ KAbsL("3+"_l ^ KParenthesesL("a-b"_l) ^ "+2"_l) ^ "+4"_l,
-      "1+\\left|3+\\left(a-b\\right)+2\\right|+4");
+      "1+\\left|3+\\left(a-b\\right)+2\\right|+4", withThousandsSeparator);
   assert_layout_convert_to_latex(
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))),
-      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}");
+      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}", withThousandsSeparator);
   assert_layout_convert_to_latex(
       KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))),
-      "\\int_{1}^{2}t^{3}\\ dt");
-  assert_layout_convert_to_latex("12"_l ^ KThousandsSeparatorL ^ "345"_l,
-                                 "12\\ 345");
+      "\\int_{1}^{2}t^{3}\\ dt", withThousandsSeparator);
+
+  // Test the thousand separators
+  const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;
+  assert_layout_convert_to_latex(layoutWithThousands, "12\\ 345", true);
+  assert_layout_convert_to_latex(layoutWithThousands, "12345", false);
+
   assert_layout_convert_to_latex(
       KRackL(KDiffL("t"_l, "2"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))),
-      "diff(t^{3},t,2)");
+      "diff(t^{3},t,2)", withThousandsSeparator);
   assert_layout_convert_to_latex(
       KCodePointL<UCodePointInferiorEqual>() ^
           KCodePointL<UCodePointSuperiorEqual>() ^
@@ -68,5 +76,5 @@ QUIZ_CASE(pcj_layout_to_latex) {
           KCodePointL<UCodePointMultiplicationSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
           KCodePointL<UCodePointInfinity>(),
-      "\\le \\ge \\cdot \\times \\to \\infty ");
+      "\\le \\ge \\cdot \\times \\to \\infty ", withThousandsSeparator);
 }

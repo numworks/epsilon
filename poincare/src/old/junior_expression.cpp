@@ -716,13 +716,13 @@ Poincare::Layout UserExpression::createLayout(
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits,
-                              Context* context) const {
+                              int numberOfSignificantDigits, Context* context,
+                              bool withThousandsSeparator) const {
   return LatexParser::LayoutToLatex(
       Rack::From(
           createLayout(floatDisplayMode, numberOfSignificantDigits, context)
               .tree()),
-      buffer, buffer + bufferSize - 1);
+      buffer, buffer + bufferSize - 1, withThousandsSeparator);
 }
 
 NewExpression NewExpression::replaceSymbolWithExpression(

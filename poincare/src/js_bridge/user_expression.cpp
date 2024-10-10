@@ -471,12 +471,14 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
 }
 
 std::string typedToLatex(const TypedUserExpression& expression,
-                         int numberOfSignificantDigits) {
+                         int numberOfSignificantDigits,
+                         bool withThousandsSeparators) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
   expression.toLatex(buffer, k_bufferSize, Preferences::PrintFloatMode::Decimal,
-                     numberOfSignificantDigits, &context);
+                     numberOfSignificantDigits, &context,
+                     withThousandsSeparators);
   return std::string(buffer, strlen(buffer));
 }
 

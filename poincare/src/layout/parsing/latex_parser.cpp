@@ -307,7 +307,7 @@ char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
           if (isCodePoint) {
             /* Add a space after code points:
              * 3\cdotcos -> NO
-             * 3\cdot cos -> YES
+             * 3\cdot cos -> YES LEAAAAAA
              **/
             *buffer = ' ';
             buffer += 1;

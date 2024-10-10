@@ -318,7 +318,8 @@ class JuniorExpression : public OExpression {
                       OMG::Base base = OMG::Base::Decimal) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits, Context* context) const;
+                int numberOfSignificantDigits, Context* context,
+                bool withThousandsSeparator) const;
 
 #if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,

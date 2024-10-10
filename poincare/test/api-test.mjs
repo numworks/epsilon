@@ -99,14 +99,17 @@ Promise.all([
 
     const userReducedExpression = reducedExpression.cloneAndBeautify(reductionContext);
     assert.ok(!userReducedExpression.isUninitialized());
-    assert.equal(userReducedExpression.toLatex(), '\\frac{2}{3}');
+    const numberOfSignificantDigits = 7;
+    // We don't care about the withThousandsSeparators value, they won't be added either way.
+    const withThousandsSeparators = true;
+    assert.equal(userReducedExpression.toLatex(numberOfSignificantDigits, withThousandsSeparators), '\\frac{2}{3}');
 
     const userApproximateExpression = reducedExpression
       .approximateToTree()
       .cloneAndBeautify(reductionContext);
 
     assert.ok(!userApproximateExpression.isUninitialized());
-    assert.equal(userApproximateExpression.toLatex(), '0.6666667');
+    assert.equal(userApproximateExpression.toLatex(numberOfSignificantDigits, withThousandsSeparators), '0.6666667');
   }),
 
   testCase('Expression - System Function, Derivative', async (poincare) => {
@@ -128,13 +131,17 @@ Promise.all([
       .getReducedDerivative('x', 1)
       .cloneAndBeautify(reductionContext);
     assert.ok(!firstDerivative.isUninitialized());
-    assert.equal(firstDerivative.toLatex(), '2x-2');
+
+    const numberOfSignificantDigits = 7;
+    // We don't care about the withThousandsSeparators value, they won't be added either way.
+    const withThousandsSeparators = true;
+    assert.equal(firstDerivative.toLatex(numberOfSignificantDigits, withThousandsSeparators), '2x-2');
 
     const secondDerivative = reducedExpression
       .getReducedDerivative('x', 2)
       .cloneAndBeautify(reductionContext);
     assert.ok(!secondDerivative.isUninitialized());
-    assert.equal(secondDerivative.toLatex(), '2');
+    assert.equal(secondDerivative.toLatex(numberOfSignificantDigits, withThousandsSeparators), '2');
 
     const lowerBound = poincare.PCR_SystemExpression.BuildInt(0);
     const upperBound = poincare.PCR_SystemExpression.BuildInt(1);
@@ -153,7 +160,7 @@ Promise.all([
     UsePoincare((newPoincare) => {
       const newExpression = newPoincare.PCR_UserExpression.BuildFromTree(storedTree);
       assert.ok(!newExpression.isUninitialized());
-      assert.equal(expression.toLatex(), '1+2');
+      assert.equal(expression.toLatex(7, true), '1+2');
     });
   }),
 
@@ -164,14 +171,17 @@ Promise.all([
       poincare.PCR_UserExpression.BuildFloat(1e-3),
     );
     assert.ok(!expression.isUninitialized());
-    assert.equal(expression.toLatex(), '\\left(-1\\times 2+0.001\\right)^{π}');
+    const numberOfSignificantDigits = 7;
+    // We don't care about the withThousandsSeparators value, they won't be added either way.
+    const withThousandsSeparators = true;
+    assert.equal(expression.toLatex(numberOfSignificantDigits, withThousandsSeparators), '\\left(-1\\times 2+0.001\\right)^{π}');
 
     // Test spaces after commas
     const expression2 = poincare.PCR_UserExpression.BuildFromPattern(
       'Add(Mult(MinusOne, One), Pi)'
     );
     assert.ok(!expression2.isUninitialized());
-    assert.equal(expression2.toLatex(), '-1\\times 1+π');
+    assert.equal(expression2.toLatex(numberOfSignificantDigits, withThousandsSeparators), '-1\\times 1+π');
   }),
 
   testCase('Solver - Min, Max, Root', async (poincare) => {

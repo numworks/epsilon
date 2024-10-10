@@ -7,11 +7,11 @@
 
 using namespace Poincare::Internal;
 
-void assert_is_greater(const Tree* e1, const Tree* e2) {
+void assert_greater(const Tree* e1, const Tree* e2) {
   quiz_assert(Order::CompareSystem(e1, e2) == 1);
 }
 
-void assert_greater(const Tree* e1, const Tree* e2) {
+void old_assert_greater(const Tree* e1, const Tree* e2) {
   bool test = Order::CompareSystem(e1, e2) == 1;
 
   constexpr int bufferSize = 256;
@@ -28,56 +28,59 @@ void assert_greater(const Tree* e1, const Tree* e2) {
 
 QUIZ_CASE(poincare_expression_order_constant) {
   Tree* c = parse("_c");
-  assert_greater(c, e_e);
+  old_assert_greater(c, e_e);
   c->removeTree();
   Tree* G = parse("_G");
-  assert_greater(G, π_e);
+  old_assert_greater(G, π_e);
   G->removeTree();
-  assert_greater(π_e, i_e);
-  assert_greater(e_e, π_e);
-  assert_greater(e_e, i_e);
+  old_assert_greater(π_e, i_e);
+  old_assert_greater(e_e, π_e);
+  old_assert_greater(e_e, i_e);
 }
 
 QUIZ_CASE(poincare_expression_order_decimal) {
-  assert_greater(KDecimal(1_e, 3_e), KOpposite(KDecimal(1_e, 3_e)));
-  assert_greater(KOpposite(KDecimal(1_e, 3_e)), KOpposite(KDecimal(1_e, 2_e)));
-  assert_greater(KDecimal(1_e, 3_e), KDecimal(1_e, 4_e));
-  assert_greater(KDecimal(123_e, 3_e), KDecimal(12_e, 3_e));
+  old_assert_greater(KDecimal(1_e, 3_e), KOpposite(KDecimal(1_e, 3_e)));
+  old_assert_greater(KOpposite(KDecimal(1_e, 3_e)),
+                     KOpposite(KDecimal(1_e, 2_e)));
+  old_assert_greater(KDecimal(1_e, 3_e), KDecimal(1_e, 4_e));
+  old_assert_greater(KDecimal(123_e, 3_e), KDecimal(12_e, 3_e));
 }
 
 QUIZ_CASE(poincare_expression_order_rational) {
-  assert_is_greater(9_e / 10_e, -9_e / 10_e);
-  assert_is_greater(3_e / 4_e, 2_e / 3_e);
+  assert_greater(9_e / 10_e, -9_e / 10_e);
+  assert_greater(3_e / 4_e, 2_e / 3_e);
 }
 
 QUIZ_CASE(poincare_expression_order_float) {
-  assert_is_greater(0.234_de, -0.2392_de);
-  assert_is_greater(0.234_fe, 0.123_fe);
-  assert_is_greater(234_de, 123_de);
+  assert_greater(0.234_de, -0.2392_de);
+  assert_greater(0.234_fe, 0.123_fe);
+  assert_greater(234_de, 123_de);
 }
 
 QUIZ_CASE(poincare_expression_order_power) {
   // 2^3 > (1/2)^5
-  assert_is_greater(KPow(2_e, 3_e), KPow(1_e / 2_e, 5_e));
+  assert_greater(KPow(2_e, 3_e), KPow(1_e / 2_e, 5_e));
   // 2^3 > 2^2
-  assert_is_greater(KPow(2_e, 3_e), KPow(2_e, 2_e));
+  assert_greater(KPow(2_e, 3_e), KPow(2_e, 2_e));
   // Order with expression other than power
   // 2^3 > 1
-  assert_is_greater(KPow(2_e, 3_e), 1_e);
+  assert_greater(KPow(2_e, 3_e), 1_e);
   // 2^3 > 2
-  assert_is_greater(KPow(2_e, 3_e), 2_e);
+  assert_greater(KPow(2_e, 3_e), 2_e);
 }
 
-QUIZ_CASE(poincare_expression_order_symbol) { assert_greater("a"_e, "b"_e); }
+QUIZ_CASE(poincare_expression_order_symbol) {
+  old_assert_greater("a"_e, "b"_e);
+}
 
 QUIZ_CASE(poincare_expression_order_function) {
-  assert_greater(KFun<"f">(1_e), KFun<"g">(9_e));
+  old_assert_greater(KFun<"f">(1_e), KFun<"g">(9_e));
 }
 
 QUIZ_CASE(poincare_expression_order_mix) {
-  assert_greater("x"_e, 2_e);
-  assert_greater("x"_e, KInf);
-  assert_greater(KACos(2_e), KDecimal(3_e, 2_e));
+  old_assert_greater("x"_e, 2_e);
+  old_assert_greater("x"_e, KInf);
+  old_assert_greater(KACos(2_e), KDecimal(3_e, 2_e));
 }
 
 void assert_multiplication_or_addition_is_ordered_as(const Tree* input,

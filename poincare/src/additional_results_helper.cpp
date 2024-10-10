@@ -450,6 +450,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     traceL = CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
   }
+
+  matrix->removeTree();
 }
 
 }  // namespace Poincare

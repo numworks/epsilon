@@ -88,7 +88,7 @@ void assert_multiplication_or_addition_is_ordered_as(const Tree* input,
   Tree* clone = input->cloneTree();
   NAry::Sort(clone, input->isAdd() ? Order::OrderType::AdditionBeautification
                                    : Order::OrderType::Beautification);
-  bool test = input->treeIsIdenticalTo(expected);
+  bool test = clone->treeIsIdenticalTo(expected);
   // quiz_assert(e1->treeIsIdenticalTo(e2));
 
   constexpr int bufferSize = 256;

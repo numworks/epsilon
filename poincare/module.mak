@@ -341,7 +341,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/approximation.cpp \
   old/arithmetic.cpp \
   old/conics.cpp \
-  old/dependency.cpp \
   old/derivative.cpp \
   old/distribution.cpp \
   old/erf_inv.cpp \

@@ -400,17 +400,10 @@ Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
   assert(!SignOfTreeOrApproximation(cardano).isNull());
 
-  Tree* cardanoRoot0 = CardanoRoot(a, b, cardano, delta0, 0);
-  Tree* cardanoRoot1 = CardanoRoot(a, b, cardano, delta0, 1);
-  Tree* cardanoRoot2 = CardanoRoot(a, b, cardano, delta0, 2);
-
-  TreeRef rootList = PatternMatching::CreateSimplify(
-      KList(KA, KB, KC),
-      {.KA = cardanoRoot0, .KB = cardanoRoot1, .KC = cardanoRoot2});
-
-  cardanoRoot2->removeTree();
-  cardanoRoot1->removeTree();
-  cardanoRoot0->removeTree();
+  TreeRef rootList = SharedTreeStack->pushList(3);
+  CardanoRoot(a, b, cardano, delta0, 0);
+  CardanoRoot(a, b, cardano, delta0, 1);
+  CardanoRoot(a, b, cardano, delta0, 2);
   cardano->removeTree();
   delta1->removeTree();
   delta0->removeTree();
@@ -463,11 +456,8 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
 
 Tree* Roots::Delta0(const Tree* a, const Tree* b, const Tree* c) {
   // Δ_0 = b^2 - 3ac
-  Tree* delta0 = PatternMatching::CreateSimplify(
+  return PatternMatching::CreateSimplify(
       KAdd(KPow(KB, 2_e), KMult(-3_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
-
-  AdvancedReduction::Reduce(delta0);
-  return delta0;
 }
 
 Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
@@ -475,7 +465,7 @@ Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
   {
     //  Δ_1 = 2b^3 - 9abc + 27da^2
     // clang-format off
-    Tree* delta1 = PatternMatching::CreateSimplify(
+    return PatternMatching::CreateSimplify(
         KAdd(
           KMult(2_e, KPow(KB, 3_e)),
           KMult(-9_e, KA, KB, KC),
@@ -483,9 +473,6 @@ Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
         ),
         {.KA = a, .KB = b, .KC = c, .KD = d});
     // clang-format on
-
-    AdvancedReduction::Reduce(delta1);
-    return delta1;
   }
 }
 
@@ -520,8 +507,6 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
       KPow(3_e, -1_e)),
     {.KA = delta0, .KB = delta1, .KC = signDelta1});
   // clang-format on
-
-  AdvancedReduction::Reduce(cardano);
   return cardano;
 }
 
@@ -540,7 +525,7 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
                                      : k_cubeRootOfUnity2;
 
   // clang-format off
-  Tree* root = PatternMatching::CreateSimplify(
+  return  PatternMatching::CreateSimplify(
       KMult(
         KPow(KMult(-3_e, KA), -1_e),
         KAdd(
@@ -551,9 +536,6 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
       ),
       {.KA = a, .KB = b, .KC = cardano, .KD = delta0, .KE = cubicRoot});
   // clang-format on
-
-  AdvancedReduction::Reduce(root);
-  return root;
 }
 
 }  // namespace Poincare::Internal

@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_DEPENDENCY_H
 
 #include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
 
@@ -27,6 +28,8 @@ struct Dependency {
   static bool DeepBubbleUpDependencies(Tree* e);
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);
+  TREE_REF_WRAP(DeepRemoveUselessDependencies);
+
   static bool RemoveDependencies(Tree* e);
 
  private:

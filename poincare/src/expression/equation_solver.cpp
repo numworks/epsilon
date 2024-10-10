@@ -2,6 +2,7 @@
 
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/solver.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -119,7 +120,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   int i = 0;
   for (const Tree* variable : userSymbols->children()) {
     Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
-                             ComplexSign::Unknown());
+                             ComplexSign::Finite());
   }
 
   /* Find equation's results */
@@ -451,11 +452,12 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
    * temporary workaround. */
   SystematicReduction::DeepReduce(eq);
   AdvancedReduction::DeepExpandAlgebraic(eq);
+  Dependency::DeepRemoveUselessDependencies(eq);
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
     Tree* polynomial = PolynomialParser::Parse(
-        eq, Variables::Variable(i, ComplexSign::Unknown()));
+        eq, Variables::Variable(i, ComplexSign::Finite()));
     if (!polynomial) {
       // equation is not polynomial
       SharedTreeStack->dropBlocksFrom(result);
@@ -519,8 +521,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   // TODO: expansion should be done only once
   SystematicReduction::DeepReduce(equation);
   AdvancedReduction::DeepExpandAlgebraic(equation);
+  Dependency::DeepRemoveUselessDependencies(equation);
   Tree* polynomial = PolynomialParser::Parse(
-      equation, Variables::Variable(0, ComplexSign::Unknown()));
+      equation, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {
     *error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);

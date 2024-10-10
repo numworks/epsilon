@@ -15,6 +15,7 @@ PoolCheckpoint::PoolCheckpoint()
 }
 
 void PoolCheckpoint::protectedDiscard() const {
+  assert(Internal::TreeStack::SharedTreeStack->size() == 0);
   if (s_topmost == this) {
     s_topmost = m_parent;
   }

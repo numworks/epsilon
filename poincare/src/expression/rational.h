@@ -32,21 +32,18 @@ class Rational final {
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2, const Tree* e3,
                         auto... others) {
-    Tree* e1e2Addition = Addition(e1, e2);
-    TreeRef fullAddition = Addition(e1e2Addition, e3, others...);
-    e1e2Addition->removeTree();
-    return fullAddition;
+    Tree* result = Addition(e1, e2);
+    result->moveTreeOverTree(Addition(result, e3, others...));
+    return result;
   }
   static Tree* Multiplication(const Tree* e1, const Tree* e2);
   static Tree* Multiplication(const Tree* e1, const Tree* e2, const Tree* e3,
                               auto... others) {
     return Multiplication(Multiplication(e1, e2), e3, others...);
 
-    Tree* e1e2Multiplication = Multiplication(e1, e2);
-    TreeRef fullMultiplication =
-        Multiplication(e1e2Multiplication, e3, others...);
-    e1e2Multiplication->removeTree();
-    return fullMultiplication;
+    Tree* result = Multiplication(e1, e2);
+    result->moveTreeOverTree(Multiplication(result, e3, others...));
+    return result;
   }
   // IntegerPower of (p1/q1)^(p2) --> (p1^p2)/(q1^p2)
   static Tree* IntegerPower(const Tree* e1, const Tree* e2);

@@ -88,11 +88,12 @@ QUIZ_CASE(pcj_rational_irreducible_form) {
   assert_irreducible_form(123169_e, 123191_e, 123169_e, 123191_e);
 }
 
-typedef Tree* (*Operation)(const Tree* i, const Tree* j);
+typedef Tree* (*BinaryOperation)(const Tree* i, const Tree* j);
 
 static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
                              const Tree* jNumerator, const Tree* jDenominator,
-                             Operation operation, const Tree* resNumerator,
+                             BinaryOperation operation,
+                             const Tree* resNumerator,
                              const Tree* resDenominator) {
   Tree* i = Rational::Push(iNumerator, iDenominator);
   Tree* j = Rational::Push(jNumerator, jDenominator);
@@ -106,16 +107,41 @@ static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
   i->removeTree();
 }
 
+typedef Tree* (*TernaryOperation)(const Tree* i, const Tree* j, const Tree* k);
+
+static void assert_operation(const Tree* iNumerator, const Tree* iDenominator,
+                             const Tree* jNumerator, const Tree* jDenominator,
+                             const Tree* kNumerator, const Tree* kDenominator,
+                             TernaryOperation operation,
+                             const Tree* resNumerator,
+                             const Tree* resDenominator) {
+  Tree* i = Rational::Push(iNumerator, iDenominator);
+  Tree* j = Rational::Push(jNumerator, jDenominator);
+  Tree* k = Rational::Push(kNumerator, kDenominator);
+  Tree* expected = Rational::Push(resNumerator, resDenominator);
+  Tree* result = operation(i, j, k);
+  SystematicReduction::ShallowReduce(result);
+  quiz_assert(result->treeIsIdenticalTo(expected));
+  result->removeTree();
+  expected->removeTree();
+  k->removeTree();
+  j->removeTree();
+  i->removeTree();
+}
+
 QUIZ_CASE(pcj_rational_addition) {
   assert_operation(1_e, 2_e, 1_e, 2_e, Rational::Addition, 1_e, 1_e);
   assert_operation(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
                    21028_e);
+  assert_operation(1_e, 2_e, 1_e, 4_e, 2_e, 8_e, Rational::Addition, 1_e, 1_e);
 }
 
 QUIZ_CASE(pcj_rational_multiplication) {
   assert_operation(1_e, 2_e, 1_e, 2_e, Rational::Multiplication, 1_e, 4_e);
   assert_operation(23515_e, 7_e, 2_e, 23515_e, Rational::Multiplication, 2_e,
                    7_e);
+  assert_operation(1_e, 2_e, 1_e, 2_e, 1_e, -2_e, Rational::Multiplication,
+                   -1_e, 8_e);
 }
 
 QUIZ_CASE(pcj_rational_integer_power) {

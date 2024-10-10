@@ -83,23 +83,19 @@ QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
   assert_reduce_and_store("1→f(x)");
   assert_reduce_and_store("f(x)→g(x)");
-#if 0  // TODO_PCJ
   assert_reduce_and_store("g(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
-#endif
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
   assert_reduce_and_store("1→f(x)");
   assert_reduce_and_store("f(x)→g(x)");
   assert_reduce_and_store("g(x)→h(x)");
-#if 0  // TODO_PCJ
   assert_reduce_and_store("h(x)→f(x)");
   assert_expression_approximates_to<double>("f(1)", Undefined::Name());
   assert_expression_approximates_to<double>("g(1)", Undefined::Name());
   assert_expression_approximates_to<double>("h(1)", Undefined::Name());
-#endif
 }
 
 QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {

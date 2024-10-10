@@ -27,6 +27,8 @@ class Symbol final {
   constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_sequenceSymbol = 'n';
 
+  constexpr static int k_maxSymbolReplacementsCount = 10;
+
   static uint8_t Length(const Tree* e) {
     assert(e->isUserNamed());
     return e->nodeValue(0) - 1;

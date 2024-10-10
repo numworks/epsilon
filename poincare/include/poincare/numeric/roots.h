@@ -1,12 +1,7 @@
 #ifndef POINCARE_NUMERIC_ROOTS_H
 #define POINCARE_NUMERIC_ROOTS_H
 
-#include <poincare/old/computation_context.h>
-#include <poincare/sign.h>
-#include <poincare/src/expression/k_tree.h>
-#include <poincare/src/expression/rational.h>
-#include <poincare/src/expression/sign.h>
-#include <poincare/src/memory/tree.h>
+#include <poincare/k_tree.h>
 
 namespace Poincare {
 
@@ -14,17 +9,17 @@ namespace Internal {
 
 class Roots {
  public:
-  // Return the only root.
+  // Returns the only root.
   static Tree* Linear(const Tree* a, const Tree* b);
 
-  /* Return a list of one or two roots, in decreasing order.
+  /* Returns a list of one or two roots, in decreasing order.
    * Delta can be provided or will be computed. */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
                          const Tree* discriminant = nullptr);
   static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
                                      const Tree* c);
 
-  /* Return a list of at most three roots, in decreasing order.
+  /* Returns a list of at most three roots, in decreasing order.
    * Delta can be provided or will be computed. */
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
                      const Tree* preComputedDiscriminant = nullptr);
@@ -58,9 +53,15 @@ class Roots {
   static bool IsRoot(const Tree* value, const Tree* a, const Tree* b,
                      const Tree* c, const Tree* d);
 
+  /* Cubic solver helpers */
+
+  /* Returns a list of three cubic roots in the special case where the "b" and
+   * "c" cubic coefficients are null. */
   static Tree* CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                         const Tree* d);
 
+  /* Search methods return a root of the cubic polynomial or a nullptr if
+   * no root was found with the method. */
   static Tree* SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
                                 const Tree* d);
   static Tree* RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
@@ -68,14 +69,23 @@ class Roots {
   static Tree* SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
                              const Tree* d);
 
+  /* Returns a list of all cubic roots, knowing one root "r". */
   static Tree* CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                             const Tree* c, const Tree* d,
                                             Tree* r);
 
-  static Tree* CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
-                             const Tree* d, const Tree* delta);
+  /* Returns a list of all cubic roots using Cardano's method. Delta can be
+   * provided or will be computed */
+  static Tree* CubicRootsCardanoMethod(const Tree* a, const Tree* b,
+                                       const Tree* c, const Tree* d,
+                                       const Tree* delta);
+
+  /* Returns a list of all cubic roots in the special case of Cardano's method,
+   * when the discriminant is null. */
   static Tree* CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
                                           const Tree* c, const Tree* d);
+
+  /* Intermediate steps of Cardano's method.  */
   static Tree* Delta0(const Tree* a, const Tree* b, const Tree* c);
   static Tree* Delta1(const Tree* a, const Tree* b, const Tree* c,
                       const Tree* d);

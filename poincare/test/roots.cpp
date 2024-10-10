@@ -1,5 +1,6 @@
 #include <poincare/numeric/roots.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/sign.h>
 
 #include "helper.h"
 

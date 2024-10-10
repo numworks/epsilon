@@ -149,7 +149,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
   /* We did not manage to find any simple root: we resort to using Cardano's
    * formula. */
-  return CardanoMethod(a, b, c, d, preComputedDiscriminant);
+  return CubicRootsCardanoMethod(a, b, c, d, preComputedDiscriminant);
 }
 
 Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
@@ -379,11 +379,12 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
   return nullptr;
 }
 
-Tree* Roots::CardanoMethod(const Tree* a, const Tree* b, const Tree* c,
-                           const Tree* d, const Tree* delta) {
+Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
+                                     const Tree* c, const Tree* d,
+                                     const Tree* delta) {
   if (!delta) {
     Tree* discriminant = Roots::CubicDiscriminant(a, b, c, d);
-    TreeRef roots = Roots::CardanoMethod(a, b, c, d, discriminant);
+    TreeRef roots = Roots::CubicRootsCardanoMethod(a, b, c, d, discriminant);
     discriminant->removeTree();
     return roots;
   }

@@ -482,6 +482,16 @@ std::string typedToLatex(const TypedUserExpression& expression,
   return std::string(buffer, strlen(buffer));
 }
 
+std::string typedToLatexWithThousandsSeparators(
+    const TypedUserExpression& expression, int numberOfSignificantDigits) {
+  return typedToLatex(expression, numberOfSignificantDigits, true);
+}
+
+std::string typedToLatexWith7DigitsAndThousandsSeparators(
+    const TypedUserExpression& expression) {
+  return typedToLatexWithThousandsSeparators(expression, 7);
+}
+
 TypedSystemExpression typedCloneAndReduce(
     const TypedUserExpression& expr, const ReductionContext& reductionContext) {
   JuniorExpression result = expr.cloneAndReduce(reductionContext);
@@ -532,6 +542,8 @@ EMSCRIPTEN_BINDINGS(user_expression) {
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("getTree", &ExpressionToJsTree)
       .function("toLatex", &typedToLatex)
+      .function("toLatex", &typedToLatexWithThousandsSeparators)
+      .function("toLatex", &typedToLatexWith7DigitsAndThousandsSeparators)
       .function("cloneAndReduce", &typedCloneAndReduce);
 }
 }  // namespace Poincare::JSBridge

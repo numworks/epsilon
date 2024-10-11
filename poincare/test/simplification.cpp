@@ -517,9 +517,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
                 "(x+e^((ln(x-1)+ln(x+1))/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
                 cartesianCtx);
   simplifies_to("sinh(arsinh(x))", "x", cartesianCtx);
-  // TODO: Should simplify to x
-  simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
-                cartesianCtx);
+  simplifies_to("tanh(artanh(x))", "x", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
@@ -1103,11 +1101,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
                 "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),tan(arctan(x))}",
-                cartesianCtx);
+                "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),x}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
-                "{-√(-x^2+1)/x,-(x×√(-x^2+1))/(-x^2+1),-tan(arctan(x))}",
-                cartesianCtx);
+                "{-√(-x^2+1)/x,-(x×√(-x^2+1))/(-x^2+1),-x}", cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
                 {.m_complexFormat = ComplexFormat::Cartesian,

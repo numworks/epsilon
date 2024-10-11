@@ -498,6 +498,12 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
    * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
    * both way would lead to infinite possible contractions. */
   return
+      // A?*tan(atan(B))*C? = A*B*C
+      PatternMatching::MatchReplaceSimplify(
+          e,
+          KMult(KA_s, KPow(KTrig(KATanRad(KB), 0_e), -1_e),
+                KTrig(KATanRad(KB), 1_e), KC_s),
+          KMult(KA_s, KB, KC_s)) ||
       // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
       PatternMatching::MatchReplaceSimplify(
           e,

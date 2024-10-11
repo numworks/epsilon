@@ -103,8 +103,10 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
 void ListParameterController::updateFirstRankCell() {
   char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
-  OMG::Print::IntLeft(sequence()->initialRank(), buffer,
-                      Shared::Sequence::k_initialRankNumberOfDigits + 1);
+  int size =
+      OMG::Print::IntLeft(sequence()->initialRank(), buffer,
+                          Shared::Sequence::k_initialRankNumberOfDigits + 1);
+  buffer[size] = 0;
   m_firstRankCell.textField()->setText(buffer);
 }
 

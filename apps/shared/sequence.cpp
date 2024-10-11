@@ -322,8 +322,9 @@ void Sequence::InitialConditionModel::buildName(Sequence* sequence) {
       (conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) ||
       sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits + 1];
-  OMG::Print::IntLeft(sequence->initialRank() + conditionIndex(), buffer,
-                      k_initialRankNumberOfDigits + 1);
+  int size = OMG::Print::IntLeft(sequence->initialRank() + conditionIndex(),
+                                 buffer, k_initialRankNumberOfDigits + 1);
+  buffer[size] = 0;
   m_name = Layout::Create(KA ^ KSubscriptL(KB),
                           {.KA = Layout::CodePoint(sequence->fullName()[0]),
                            .KB = Layout::String(buffer)});

@@ -523,6 +523,19 @@ class Unit final {
   static bool HasAngleDimension(NewExpression expression);
 };
 
+class Undefined final : public JuniorExpression {
+ public:
+  static Undefined Builder();
+  constexpr static const char* Name() { return "undef"; }
+  constexpr static int NameSize() { return 6; }
+};
+
+class JInfinity {
+ public:
+  constexpr static const char* k_infinityName = "∞";
+  constexpr static const char* k_minusInfinityName = "-∞";
+};
+
 }  // namespace Poincare
 
 #endif

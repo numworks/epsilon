@@ -4,10 +4,8 @@
 #include <poincare/helpers/store.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/rational.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/trigonometry.h>
-#include <poincare/old/undefined.h>
 #include <poincare/src/memory/tree.h>
 
 using namespace Poincare;

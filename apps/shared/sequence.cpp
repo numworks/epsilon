@@ -3,15 +3,12 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <float.h>
+#include <omg/print.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/based_integer.h>
-#include <poincare/old/rational.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/sum.h>
 #include <poincare/src/expression/sequence.h>
 #include <string.h>
 
@@ -325,8 +322,8 @@ void Sequence::InitialConditionModel::buildName(Sequence* sequence) {
       (conditionIndex() == 0 && sequence->type() == Type::SingleRecurrence) ||
       sequence->type() == Type::DoubleRecurrence);
   char buffer[k_initialRankNumberOfDigits + 1];
-  Integer(sequence->initialRank() + conditionIndex())
-      .serialize(buffer, k_initialRankNumberOfDigits + 1);
+  OMG::Print::IntLeft(sequence->initialRank() + conditionIndex(), buffer,
+                      k_initialRankNumberOfDigits + 1);
   m_name = Layout::Create(KA ^ KSubscriptL(KB),
                           {.KA = Layout::CodePoint(sequence->fullName()[0]),
                            .KB = Layout::String(buffer)});

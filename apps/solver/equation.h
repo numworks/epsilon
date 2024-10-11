@@ -9,12 +9,14 @@ class Equation : public Shared::ExpressionModelHandle {
  public:
   Equation(Ion::Storage::Record record = Record())
       : ExpressionModelHandle(record) {}
+#if 0
   Poincare::SystemExpression standardForm(
       Poincare::Context* context, bool replaceFunctionsButNotSymbols,
       Poincare::ReductionTarget reductionTarget) const {
     return m_model.standardForm(this, context, replaceFunctionsButNotSymbols,
                                 reductionTarget);
   }
+#endif
   CodePoint symbol() const override { return 0; }
 
  private:

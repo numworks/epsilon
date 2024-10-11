@@ -3,7 +3,6 @@
 #include <apps/i18n.h>
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
-#include <poincare/old/point_evaluation.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/print.h>
 

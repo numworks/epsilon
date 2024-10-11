@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/infinity.h>
 
 #include "../app.h"
 
@@ -43,10 +42,10 @@ bool DomainParameterController::textFieldDidFinishEditing(
       textField->draftText()[0] == '\0') {
     textField->setEditing(true);  // To edit draft text buffer in setText
     if (textField == m_boundsCells[0].textField()) {
-      textField->setText(Poincare::Infinity::Name(true));
+      textField->setText(Poincare::JInfinity::k_minusInfinityName);
     } else {
       assert(textField == m_boundsCells[1].textField());
-      textField->setText(Poincare::Infinity::Name(false));
+      textField->setText(Poincare::JInfinity::k_infinityName);
     }
     textField->setEditing(false);  // set editing back to previous value
   }

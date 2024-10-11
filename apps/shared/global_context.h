@@ -5,8 +5,6 @@
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
 #include <poincare/old/context.h>
-#include <poincare/old/decimal.h>
-#include <poincare/old/matrix.h>
 #include <poincare/old/symbol.h>
 #include <poincare/src/expression/sequence_cache.h>
 

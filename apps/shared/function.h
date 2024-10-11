@@ -1,7 +1,6 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
-#include <poincare/old/function.h>
 #include <poincare/old/symbol.h>
 
 #include "expression_model_handle.h"

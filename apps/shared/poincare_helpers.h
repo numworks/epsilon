@@ -3,7 +3,6 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/expression.h>
-#include <poincare/old/solver.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
@@ -164,17 +163,6 @@ inline void CloneAndReduceAndRemoveUnit(
 }
 
 // ===== Misc =====
-
-template <typename T>
-inline Poincare::OSolver<T> OSolver(T xMin, T xMax,
-                                    const char* unknown = nullptr,
-                                    Poincare::Context* context = nullptr) {
-  Poincare::Preferences* preferences =
-      Poincare::Preferences::SharedPreferences();
-  return Poincare::OSolver<T>(xMin, xMax, unknown, context,
-                              preferences->complexFormat(),
-                              preferences->angleUnit());
-}
 
 // Return the nearest number from t's representation with given precision.
 template <class T>

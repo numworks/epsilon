@@ -4,9 +4,6 @@
 #include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/expression_node.h>
-#include <poincare/old/nonreal.h>
-#include <poincare/old/undefined.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
 

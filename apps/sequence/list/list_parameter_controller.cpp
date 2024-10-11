@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
+#include <omg/print.h>
 
 #include "../app.h"
 #include "list_controller.h"
@@ -102,8 +103,8 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
 void ListParameterController::updateFirstRankCell() {
   char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
-  Poincare::Integer(sequence()->initialRank())
-      .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
+  OMG::Print::IntLeft(sequence()->initialRank(), buffer,
+                      Shared::Sequence::k_initialRankNumberOfDigits + 1);
   m_firstRankCell.textField()->setText(buffer);
 }
 

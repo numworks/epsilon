@@ -5,15 +5,13 @@
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/function.h>
-#include <poincare/old/rational.h>
+#include <poincare/old/junior_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/undefined.h>
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"
 #include "function_name_helper.h"
-#include "poincare/old/junior_expression.h"
 #include "poincare_helpers.h"
 #include "sequence.h"
 #include "sequence_context.h"

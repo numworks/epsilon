@@ -2,7 +2,6 @@
 
 #include <ion/storage/record.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/addition.h>
 #include <poincare/old/symbol.h>
 #include <poincare/print.h>
 

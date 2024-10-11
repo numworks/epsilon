@@ -3,14 +3,6 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/boolean.h>
-#include <poincare/old/comparison.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/empty_context.h>
-#include <poincare/old/nonreal.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/subtraction.h>
-#include <poincare/old/undefined.h>
 
 using namespace Ion;
 using namespace Poincare;
@@ -18,6 +10,7 @@ using namespace Shared;
 
 namespace Solver {
 
+#if 0
 SystemExpression Equation::Model::standardForm(
     const Storage::Record* record, Context* context,
     bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {
@@ -37,7 +30,7 @@ SystemExpression Equation::Model::standardForm(
   Context* contextToUse =
       replaceFunctionsButNotSymbols ? &emptyContext : context;
 
-  // Reduce the expression
+  // Reduce the expr ession
   UserExpression simplifiedInput = expressionInputWithoutFunctions;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
                                     {.target = reductionTarget});
@@ -75,6 +68,7 @@ SystemExpression Equation::Model::standardForm(
   }
   return returnedExpression;
 }
+#endif
 
 void* Equation::Model::expressionAddress(
     const Ion::Storage::Record* record) const {

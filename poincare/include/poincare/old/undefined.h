@@ -59,13 +59,6 @@ class OUndefined final : public Number {
   }
 };
 
-class Undefined final : public JuniorExpression {
- public:
-  static Undefined Builder();
-  constexpr static const char* Name() { return "undef"; }
-  constexpr static int NameSize() { return 6; }
-};
-
 }  // namespace Poincare
 
 #endif

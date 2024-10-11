@@ -8,8 +8,6 @@
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/polynomial.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/src/expression/approximation.h>
@@ -289,9 +287,12 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
 
 SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
     Context* context) {
-  return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
+  assert(false);
+#if 0
+ return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
       ->standardForm(context, overrideUserVariables(),
                      ReductionTarget::SystemForApproximation);
+#endif
 }
 
 #if 0

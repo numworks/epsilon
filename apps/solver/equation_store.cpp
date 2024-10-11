@@ -3,8 +3,6 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/polynomial.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
 

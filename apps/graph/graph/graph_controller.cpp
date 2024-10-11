@@ -2,7 +2,6 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
-#include <poincare/old/matrix.h>
 #include <poincare/old/symbol.h>
 
 #include <algorithm>

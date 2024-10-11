@@ -5,7 +5,6 @@
 #include <ion/storage/file_system.h>
 #include <omg/list.h>
 #include <omg/memory.h>
-#include <poincare/old/list.h>
 #include <poincare/old/serialization_helper.h>
 #include <stddef.h>
 

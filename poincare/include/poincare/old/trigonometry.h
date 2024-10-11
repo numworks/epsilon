@@ -19,8 +19,8 @@ class Trigonometry final {
    * are the same. */
   static UserExpression UnitConversionFactor(Preferences::AngleUnit fromUnit,
                                              Preferences::AngleUnit toUnit);
-  // TODO_PCJ: Delete these method
 #if 0
+  // TODO_PCJ: Delete these method
   static Expression ReplaceWithAdvancedFunction(Expression& e,
                                                 Expression& denominator);
 #endif

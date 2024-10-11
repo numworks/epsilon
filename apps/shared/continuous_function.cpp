@@ -7,19 +7,9 @@
 #include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/cosine.h>
-#include <poincare/old/division.h>
 #include <poincare/old/function.h>
-#include <poincare/old/integral.h>
-#include <poincare/old/list_sort.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/multiplication.h>
-#include <poincare/old/point_evaluation.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/sine.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/symbol_abstract.h>
-#include <poincare/old/undefined.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
 

@@ -8,8 +8,8 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/decimal.h>
 #include <poincare/old/serialization_helper.h>
+#include <poincare/old/variable_context.h>
 
 #include "../app.h"
 

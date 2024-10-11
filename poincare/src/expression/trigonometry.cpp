@@ -379,6 +379,11 @@ static bool simplifyATrigOfTrig(Tree* e) {
                  &ctx)) {
     // atan(sin/cos)
     type = Type::Tan;
+    // atan(tan(i*x)) = i*x for x real
+    if (GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+      e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
+      return true;
+    }
   } else {
     return false;
   }

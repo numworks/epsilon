@@ -1,7 +1,7 @@
 #include "statistics_dataset.h"
 
 #include <omg/float.h>
-#include <poincare/old/helpers.h>
+#include <omg/list.h>
 
 #include <algorithm>
 #include <cmath>
@@ -230,7 +230,7 @@ void StatisticsDataset<T>::buildMemoizedSortedIndex() const {
     m_sortedIndex[i] = i;
   }
   void* pack[] = {&(m_sortedIndex[0]), const_cast<DatasetColumn<T>*>(m_values)};
-  Helpers::Sort(
+  OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {  // swap
         void** pack = reinterpret_cast<void**>(ctx);
         MemoizedIndexType* sortedIndex =

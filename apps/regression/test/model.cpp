@@ -3,8 +3,8 @@
 #include <apps/shared/global_context.h>
 #include <apps/shared/store_context.h>
 #include <assert.h>
+#include <omg/list.h>
 #include <poincare/new_trigonometry.h>
-#include <poincare/old/helpers.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -483,7 +483,7 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
   /* Sort from lower to hight y. This is to check if the coefficients
    * initialization does not rely on the order of the values */
   double* context[2] = {x, y};
-  Poincare::Helpers::Sort(
+  OMG::List::Sort(
       [](int i, int j, void* context, int numberOfElements) {
         double** ctx = reinterpret_cast<double**>(context);
         double* x = ctx[0];

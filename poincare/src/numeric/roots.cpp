@@ -1,3 +1,4 @@
+#include <omg/list.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>

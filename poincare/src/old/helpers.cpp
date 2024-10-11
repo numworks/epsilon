@@ -95,19 +95,4 @@ bool Helpers::Rotate(uint32_t *dst, uint32_t *src, size_t len) {
   return true;
 }
 
-void Helpers::Sort(Swap swap, Compare compare, void *context,
-                   int numberOfElements) {
-  /* Using an insertion-sort algorithm, which has the advantage of being
-   * in-place and efficient when already sorted. It is optimal if Compare is
-   * more lenient with equalities ( >= instead of > ) */
-  for (int i = 1; i < numberOfElements; i++) {
-    for (int j = i - 1; j >= 0; j--) {
-      if (compare(j + 1, j, context, numberOfElements)) {
-        break;
-      }
-      swap(j, j + 1, context, numberOfElements);
-    }
-  }
-}
-
 }  // namespace Poincare

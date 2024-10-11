@@ -1,4 +1,5 @@
 #include <omg/float.h>
+#include <omg/list.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arithmetic.h>
 #include <poincare/old/complex_argument.h>
@@ -519,7 +520,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
   /* Sort the roots. The real roots go first, in ascending order, then the
    * complex roots in order of ascending imaginary part. */
   void *pack[] = {root1, root2, root3, &approximationContext};
-  Helpers::Sort(
+  OMG::List::Sort(
       [](int i, int j, void *ctx, int n) {  // Swap method
         assert(i < n && j < n);
         OExpression **tab =

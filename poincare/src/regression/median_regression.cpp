@@ -1,6 +1,7 @@
 #include "median_regression.h"
 
 #include <assert.h>
+#include <omg/list.h>
 
 namespace Poincare::Regression {
 
@@ -23,7 +24,7 @@ static void sortIndexByColumn(uint8_t* sortedIndex, const Series* series,
   assert(startIndex < endIndex);
   void* pack[] = {const_cast<Series*>(series), sortedIndex + startIndex,
                   &column};
-  Poincare::Helpers::Sort(
+  OMG::List::Sort(
       [](int i, int j, void* ctx, int n) {  // Swap method
         void** pack = reinterpret_cast<void**>(ctx);
         uint8_t* sortedIndex = reinterpret_cast<uint8_t*>(pack[1]);

@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <ion.h>
 #include <ion/storage/file_system.h>
+#include <omg/list.h>
 #include <omg/memory.h>
-#include <poincare/old/helpers.h>
 #include <poincare/old/list.h>
 #include <poincare/old/serialization_helper.h>
 #include <stddef.h>
@@ -317,8 +317,7 @@ void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
 
   void* context[] = {const_cast<DoublePairStore*>(this), &series, &column};
-  Poincare::Helpers::Sort(swapRows, compare, context,
-                          numberOfPairsOfSeries(series));
+  OMG::List::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
   updateSeries(series, delayUpdate);
 }
 

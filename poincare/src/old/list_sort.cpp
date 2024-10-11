@@ -70,7 +70,7 @@ OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
   Helpers::ListSortPack<float> pack{
       &list, static_cast<ListComplex<float>*>(&approximatedList),
       listOfDefinedScalars};
-  Helpers::Sort(Helpers::SwapInList<float>, Helpers::CompareInList<float>,
+  OMG::List::Sort(Helpers::SwapInList<float>, Helpers::CompareInList<float>,
                 &pack, child.numberOfChildren());
 #endif
 

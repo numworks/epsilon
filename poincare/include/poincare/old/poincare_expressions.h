@@ -30,13 +30,11 @@
 #include <poincare/old/floor.h>
 #include <poincare/old/frac_part.h>
 #include <poincare/old/function.h>
-#include <poincare/old/great_common_divisor.h>
 #include <poincare/old/imaginary_part.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/integer.h>
 #include <poincare/old/integral.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/least_common_multiple.h>
 #include <poincare/old/list.h>
 #include <poincare/old/list_access.h>
 #include <poincare/old/list_complex.h>
@@ -75,7 +73,6 @@
 #include <poincare/old/piecewise_operator.h>
 #include <poincare/old/point.h>
 #include <poincare/old/power.h>
-#include <poincare/old/product.h>
 #include <poincare/old/randint.h>
 #include <poincare/old/randint_no_repeat.h>
 #include <poincare/old/random.h>
@@ -88,7 +85,6 @@
 #include <poincare/old/square_root.h>
 #include <poincare/old/store.h>
 #include <poincare/old/subtraction.h>
-#include <poincare/old/sum.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/tangent.h>
 #include <poincare/old/undefined.h>

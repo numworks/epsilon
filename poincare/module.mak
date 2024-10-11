@@ -66,19 +66,15 @@ $(addprefix old/, \
   expression.cpp \
   expression_node.cpp \
   expression_node_properties.cpp \
-  factor.cpp \
-  factorial.cpp \
   float.cpp \
   float_list.cpp \
   floor.cpp \
   frac_part.cpp \
   function.cpp \
-  great_common_divisor.cpp \
   imaginary_part.cpp \
   infinity.cpp \
   integral.cpp \
   junior_expression.cpp \
-  least_common_multiple.cpp \
   list.cpp \
   list_complex.cpp \
   logarithm.cpp \
@@ -86,7 +82,6 @@ $(addprefix old/, \
   matrix.cpp \
   matrix_complex.cpp \
   matrix_inverse.cpp \
-  mixed_fraction.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
   n_ary_infix_expression.cpp \
@@ -98,13 +93,10 @@ $(addprefix old/, \
   parametered_expression.cpp \
   parenthesis.cpp \
   percent.cpp \
-  permute_coefficient.cpp \
   piecewise_operator.cpp \
   point.cpp \
   point_evaluation.cpp \
-  polynomial.cpp \
   power.cpp \
-  product.cpp \
   randint.cpp \
   randint_no_repeat.cpp \
   random.cpp \
@@ -121,8 +113,6 @@ $(addprefix old/, \
   square_root.cpp \
   store.cpp \
   subtraction.cpp \
-  sum.cpp \
-  sum_and_product.cpp \
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \

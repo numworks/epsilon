@@ -340,12 +340,8 @@ template FloatList<double> PoolHandle::NAryBuilder<FloatList<double>, ListNode>(
 template FloatList<float> PoolHandle::NAryBuilder<FloatList<float>, ListNode>(
     const Tuple &);
 template Ghost PoolHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
-template GreatCommonDivisor PoolHandle::NAryBuilder<
-    GreatCommonDivisor, GreatCommonDivisorNode>(const Tuple &);
 template Integral PoolHandle::FixedArityBuilder<Integral, IntegralNode>(
     const Tuple &);
-template LeastCommonMultiple PoolHandle::NAryBuilder<
-    LeastCommonMultiple, LeastCommonMultipleNode>(const Tuple &);
 template OList PoolHandle::NAryBuilder<OList, ListNode>(const Tuple &);
 template ListComplex<double> PoolHandle::NAryBuilder<
     ListComplex<double>, ListComplexNode<double>>(const Tuple &);
@@ -356,8 +352,6 @@ template MatrixComplex<double> PoolHandle::NAryBuilder<
     MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);
 template MatrixComplex<float> PoolHandle::NAryBuilder<
     MatrixComplex<float>, MatrixComplexNode<float>>(const Tuple &);
-template MixedFraction
-PoolHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
 template Multiplication
 PoolHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template Opposite PoolHandle::FixedArityBuilder<Opposite, OppositeNode>(
@@ -366,11 +360,8 @@ template Parenthesis
 PoolHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PiecewiseOperator PoolHandle::NAryBuilder<
     PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
-template Product PoolHandle::FixedArityBuilder<Product, ProductNode>(
-    const Tuple &);
 template Subtraction
 PoolHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
-template Sum PoolHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
 template OUndefined PoolHandle::FixedArityBuilder<OUndefined, UndefinedNode>(
     const Tuple &);
 template Nonreal PoolHandle::FixedArityBuilder<Nonreal, NonrealNode>(

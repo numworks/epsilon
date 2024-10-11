@@ -4,10 +4,7 @@
 #include <poincare/old/addition.h>
 #include <poincare/old/comparison.h>
 #include <poincare/old/division.h>
-#include <poincare/old/division_quotient.h>
-#include <poincare/old/division_remainder.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/mixed_fraction.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/opposite.h>
 #include <poincare/old/serialization_helper.h>
@@ -733,35 +730,6 @@ IntegerDivision Integer::udiv(const Integer &numerator,
     div.remainder = div.remainder.divideByPowerOf2(pow);
   }
   return div;
-}
-
-OExpression Integer::CreateMixedFraction(const Integer &num,
-                                         const Integer &denom) {
-  Integer numPositive(num), denomPositive(denom);
-  numPositive.setNegative(false);
-  denomPositive.setNegative(false);
-  IntegerDivision division = Division(numPositive, denomPositive);
-  OExpression integerPart = Rational::Builder(division.quotient);
-  Rational fractionPart = Rational::Builder(division.remainder, denomPositive);
-  // If mixed fractions are enabled
-  if (Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
-    OExpression mixedFraction = MixedFraction::Builder(
-        integerPart, Rational::Builder(fractionPart.unsignedIntegerNumerator()),
-        Rational::Builder(fractionPart.integerDenominator()));
-    if (num.isNegative() != denom.isNegative()) {
-      mixedFraction = Opposite::Builder(mixedFraction);
-    }
-    return mixedFraction;
-  }
-  // If mixed fractions don't exist in this country
-  if (num.isNegative() == denom.isNegative()) {
-    return Addition::Builder(integerPart, fractionPart);
-  }
-  /* Do not add a minus sign before a zero. */
-  return Subtraction::Builder(NaturalOrder(numPositive, denomPositive) < 0
-                                  ? integerPart
-                                  : Opposite::Builder(integerPart),
-                              fractionPart);
 }
 
 template float Integer::approximate<float>() const;

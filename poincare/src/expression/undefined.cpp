@@ -12,7 +12,8 @@ namespace Poincare::Internal {
 bool Undefined::CanBeUndefined(const Tree* e) {
   // Their elements can be undefined and it is never bubbled up.
   return !(e->isPoint() || e->isList() || e->isMatrix() ||
-           e->isUnitConversion() || e->isUserSymbol());
+           e->isUnitConversion() || e->isUserSymbol() ||
+           e->numberOfChildren() == 0);
 }
 
 bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {

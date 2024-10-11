@@ -1,6 +1,7 @@
 #ifndef APPS_SHARED_SEQUENCE_STORE_H
 #define APPS_SHARED_SEQUENCE_STORE_H
 
+#include <omg/print.h>
 #include <stdint.h>
 
 #include "function_store.h"
@@ -34,7 +35,7 @@ class SequenceStore : public FunctionStore {
   constexpr static size_t k_maxSequenceNameLength = []() {
     size_t m = 0;
     for (const char* s : k_sequenceNames) {
-      m = std::max<size_t>(m, Poincare::Helpers::StringLength(s));
+      m = std::max<size_t>(m, OMG::Print::StringLength(s));
     }
     return m;
   }();

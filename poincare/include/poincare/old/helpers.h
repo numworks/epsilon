@@ -47,14 +47,6 @@ class Helpers {
            ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
   }
 
-  constexpr static int StringLength(const char* string) {
-    int result = 0;
-    while (string[result] != 0) {
-      result++;
-    }
-    return result;
-  }
-
   constexpr static inline bool EqualOrBothNan(double a, double b) {
     return a == b || (std::isnan(a) && std::isnan(b));
   }

@@ -54,6 +54,15 @@ constexpr size_t LengthOfUInt32(Base base, uint32_t integer) {
                             1;
 }
 
+// constexpr version of strlen
+constexpr static int StringLength(const char* string) {
+  int result = 0;
+  while (string[result] != 0) {
+    result++;
+  }
+  return result;
+}
+
 int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
            char* buffer, int bufferSize);
 int IntLeft(uint32_t integer, char* buffer, int bufferLength);

@@ -77,7 +77,7 @@ class Infinity final : public Number {
     return negative ? k_minusInfinityMainName : k_infinityAliases.mainAlias();
   }
   constexpr static int NameSize(bool negative = false) {
-    return Helpers::StringLength(Name(negative)) + 1;
+    return OMG::Print::StringLength(Name(negative)) + 1;
   }
   static Infinity Builder(bool negative);
 

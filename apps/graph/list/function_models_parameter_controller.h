@@ -96,8 +96,7 @@ class FunctionModelsParameterController
   constexpr static const char* k_inequationModelWhenForbidden = "y≤x";
   // Piecewise is the longest named model
   constexpr static size_t k_maxSizeOfNamedModel =
-      Poincare::Helpers::StringLength(
-          k_models[static_cast<int>(Model::Piecewise)]) -
+      OMG::Print::StringLength(k_models[static_cast<int>(Model::Piecewise)]) -
       1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
   // Expression cells
   constexpr static I18n::Message

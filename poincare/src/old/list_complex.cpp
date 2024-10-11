@@ -69,9 +69,11 @@ bool ListComplex<T>::sort() {
   if (!listOfDefinedScalars && !listOfDefinedPoints) {
     return false;
   }
+#if 0
   Helpers::ListSortPack<T> pack{nullptr, this, listOfDefinedScalars};
   Helpers::Sort(Helpers::SwapInList<T>, Helpers::CompareInList<T>, &pack,
                 numberOfChildren());
+#endif
   return true;
 }
 

@@ -66,11 +66,13 @@ OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
+#if 0
   Helpers::ListSortPack<float> pack{
       &list, static_cast<ListComplex<float>*>(&approximatedList),
       listOfDefinedScalars};
   Helpers::Sort(Helpers::SwapInList<float>, Helpers::CompareInList<float>,
                 &pack, child.numberOfChildren());
+#endif
 
   replaceWithInPlace(child);
   return child;

@@ -110,44 +110,4 @@ void Helpers::Sort(Swap swap, Compare compare, void *context,
   }
 }
 
-template <typename T>
-void Helpers::SwapInList(int i, int j, void *context, int numberOfElements) {
-  ListSortPack<float> *pack = static_cast<ListSortPack<float> *>(context);
-  OList *list = reinterpret_cast<OList *>(pack->list);
-  ListComplex<float> *listComplex =
-      reinterpret_cast<ListComplex<float> *>(pack->listComplex);
-  assert(listComplex->numberOfChildren() == numberOfElements);
-  assert(0 <= i && i < numberOfElements && 0 <= j && j < numberOfElements);
-  listComplex->swapChildrenInPlace(i, j);
-  if (list) {
-    assert(list->numberOfChildren() == listComplex->numberOfChildren());
-    list->swapChildrenInPlace(i, j);
-  }
-}
-
-template <typename T>
-bool Helpers::CompareInList(int i, int j, void *context, int numberOfElements) {
-  ListSortPack<T> *pack = static_cast<ListSortPack<T> *>(context);
-  ListComplex<T> *listComplex =
-      reinterpret_cast<ListComplex<T> *>(pack->listComplex);
-  Evaluation<T> eI = listComplex->childAtIndex(i);
-  Evaluation<T> eJ = listComplex->childAtIndex(j);
-  if (pack->scalars) {
-    assert(eI.isDefinedScalar() && eJ.isDefinedScalar());
-    float xI = eI.toScalar();
-    float xJ = eJ.toScalar();
-    assert(!std::isnan(xI) && !std::isnan(xJ));
-    return xI > xJ;
-  }
-  assert(eI.isDefinedPoint() && eJ.isDefinedPoint());
-  Coordinate2D<float> cI = static_cast<PointEvaluation<T> &>(eI).xy();
-  Coordinate2D<float> cJ = static_cast<PointEvaluation<T> &>(eJ).xy();
-  return cI.isGreaterThan(cJ);
-}
-
-template void Helpers::SwapInList<float>(int, int, void *, int);
-template void Helpers::SwapInList<double>(int, int, void *, int);
-template bool Helpers::CompareInList<float>(int, int, void *, int);
-template bool Helpers::CompareInList<double>(int, int, void *, int);
-
 }  // namespace Poincare

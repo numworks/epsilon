@@ -253,10 +253,8 @@ Tree* LatexToLayout(const char* latexString) {
  *   PtPermute (not handled by serialization ?)
  * */
 
-char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
-                                                char* end,
-                                                bool withThousandsSeparators,
-                                                RackSerializer serializer) {
+char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
+                                  bool withThousandsSeparators) {
   for (const Tree* child : rack->children()) {
     if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout() ||
         (!withThousandsSeparators && child->isThousandsSeparatorLayout())) {
@@ -267,6 +265,16 @@ char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
     if (buffer >= end) {
       break;
     }
+
+    /* We don't want to capture withThousandsSeparators in the lambda
+     * (generates more code), so we put the parameter manually. */
+    RackSerializer serializer = withThousandsSeparators
+      ? [](const Rack* rack, char* buffer, char* end) {
+          return LayoutToLatexWithExceptions(rack, buffer, end, true);
+        }
+      : [](const Rack* rack, char* buffer, char* end) {
+          return LayoutToLatexWithExceptions(rack, buffer, end, false);
+        };
 
     /* If withThousandsSeparators is false, we already handled the case where
      * child->isThousandsSeparatorLayout() is true. */
@@ -346,29 +354,11 @@ char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
   return buffer;
 }
 
-char* LayoutToLatexWithThousandsSeparatorsWithExceptions(const Rack* rack,
-                                                         char* buffer,
-                                                         char* end) {
-  return LayoutToLatexWithExceptionsRefactorHelper(
-      rack, buffer, end, true,
-      LayoutToLatexWithThousandsSeparatorsWithExceptions);
-}
-char* LayoutToLatexWithoutThousandsSeparatorsWithExceptions(const Rack* rack,
-                                                            char* buffer,
-                                                            char* end) {
-  return LayoutToLatexWithExceptionsRefactorHelper(
-      rack, buffer, end, false,
-      LayoutToLatexWithoutThousandsSeparatorsWithExceptions);
-}
-
 char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
                     bool withThousandsSeparators) {
   ExceptionTry {
-    char* result = withThousandsSeparators
-                       ? LayoutToLatexWithThousandsSeparatorsWithExceptions(
-                             rack, buffer, end)
-                       : LayoutToLatexWithoutThousandsSeparatorsWithExceptions(
-                             rack, buffer, end);
+    char* result =
+        LayoutToLatexWithExceptions(rack, buffer, end, withThousandsSeparators);
     return result;
   }
   ExceptionCatch(type) {

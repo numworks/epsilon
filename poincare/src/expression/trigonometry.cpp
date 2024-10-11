@@ -363,6 +363,17 @@ static bool simplifyATrigOfTrig(Tree* e) {
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
+    // asin(sin(i*x)) = i*x and acos(cos(i*x)) = i*abs(i*x) for x real
+    TypeBlock typeChild = ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos;
+    if (GetComplexSign(ctx.getTree(KA)).isPureIm() && (type == typeChild)) {
+      if (type == Type::Sin) {
+        e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
+      } else {
+        e->moveTreeOverTree(
+            PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), ctx));
+      }
+      return true;
+    }
   } else if (PatternMatching::Match(
                  e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
                  &ctx)) {

@@ -35,7 +35,7 @@ def format_include_guard(header_file, should_correct_error):
             and lines[-1].strip() != f"#endif  // {guard_macro}"
         ):
             if should_correct_error:
-                lines[-1] = f"#endif // {guard_macro}\n"
+                lines[-1] = f"#endif  // {guard_macro}\n"
             else:
                 return False
     if should_correct_error:

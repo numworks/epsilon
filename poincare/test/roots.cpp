@@ -1,21 +1,12 @@
 #include <poincare/numeric/roots.h>
-#include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/sign.h>
 
 #include "helper.h"
 
 using namespace Poincare::Internal;
 
 namespace solver_policies {
-/* The Solver App may have different policies:
- * - display the exact result or approximate it
- * - approximate the result knowing or not that the input coefficients are all
- * real numbers.
- * The following structs simulate those different policies. They allow to test
- * the resulting roots either against some expected exact roots, or against some
- * expected approximate roots.
- */
 
+// Always return the exact solutions
 struct ExactSolve {
   static Tree* process(const Tree* a, const Tree* b) {
     return Roots::Linear(a, b);
@@ -28,56 +19,29 @@ struct ExactSolve {
   static Tree* process(const Tree* a, const Tree* b, const Tree* c,
                        const Tree* d) {
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
-    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant, true);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant, false);
     discriminant->removeTree();
     return roots;
   }
 };
 
-struct ExactSolveAndApproximate {
+// Return the exact solutions, except for some of the cubic polynomials that
+// require Cardano's method, in which case approximate solutions are returned.
+struct FastSolve {
   static Tree* process(const Tree* a, const Tree* b) {
-    TreeRef roots = ExactSolve::process(a, b);
-    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
-    roots->removeTree();
-    return approximateRoots;
+    return ExactSolve::process(a, b);
   }
 
   static Tree* process(const Tree* a, const Tree* b, const Tree* c) {
-    TreeRef roots = ExactSolve::process(a, b, c);
-    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
-    roots->removeTree();
-    return approximateRoots;
+    return ExactSolve::process(a, b, c);
   }
 
   static Tree* process(const Tree* a, const Tree* b, const Tree* c,
                        const Tree* d) {
-    TreeRef roots = ExactSolve::process(a, b, c, d);
-    TreeRef approximateRoots = Approximation::RootTreeToTree<double>(roots);
-    roots->removeTree();
-    return approximateRoots;
-  }
-};
-
-struct ExactSolveAndRealCubicApproximate {
-  static Tree* process(const Tree* a, const Tree* b) {
-    return ExactSolveAndApproximate::process(a, b);
-  }
-
-  static Tree* process(const Tree* a, const Tree* b, const Tree* c) {
-    return ExactSolveAndApproximate::process(a, b, c);
-  }
-
-  static Tree* process(const Tree* a, const Tree* b, const Tree* c,
-                       const Tree* d) {
-    assert(GetComplexSign(a).isReal() && GetComplexSign(b).isReal() &&
-           GetComplexSign(c).isReal() && GetComplexSign(d).isReal());
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
     TreeRef roots = Roots::Cubic(a, b, c, d, discriminant, true);
-    TreeRef approximateRoots =
-        Roots::ApproximateRootsOfRealCubic(roots, discriminant);
-    roots->removeTree();
     discriminant->removeTree();
-    return approximateRoots;
+    return roots;
   }
 };
 
@@ -154,30 +118,28 @@ QUIZ_CASE(pcj_roots) {
       "1199988000000000,-216}",
       "{3/5555500000000}");
 
-  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+  assert_roots_are<FastSolve>(
       "{1,1,0,1}",
       "{-1.4655712318768,0.23278561593838-0.79255199251545×i,0.23278561593838+"
       "0.79255199251545×i}");
-  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+  assert_roots_are<FastSolve>(
       "{1,0,-3,1}", "{-1.8793852415718,0.34729635533386,1.532088886238}");
 
-  assert_roots_are<ExactSolveAndApproximate>(
+  assert_roots_are<FastSolve>(
       "{1,i,-1,1}",
-      "{-1.2237724884371-0.40117404251929×i,0.70354372055869-0."
-      "97874867081524×i,0.52022876787839+0.37992271333452×i}");
+      "{-1.2237724884371-0.40117404251929×i,0.52022876787839+0."
+      "37992271333452×i,0.70354372055869-0.97874867081524×i}");
 
   /* In the two following tests, integer coefficients are too large for a
-   * rational search (divisors list is full), but applying the Cardano method
-   * then applying the real cubic root approximation succeeds */
-  assert_roots_are<ExactSolveAndRealCubicApproximate>("{1, -69, 1478, -10080}",
-                                                      "{16,18,35}");
-  assert_roots_are<ExactSolveAndRealCubicApproximate>("{1,90,2125,-31250}",
-                                                      "{10,-50-25×i,-50+25×i}");
+   * rational search (divisors list is full), but applying Cardano's method
+   * succeeds */
+  assert_roots_are<FastSolve>("{1, -69, 1478, -10080}", "{16,18,35}");
+  assert_roots_are<FastSolve>("{1,90,2125,-31250}", "{10,-50-25×i,-50+25×i}");
 
   /* The following cubic has {1.23} as a triple root. The discriminant
    * calculation fails to find zero. Note that WolframAlpha gives exactly the
    * same roots, so this might be non trivial to fix. */
-  assert_roots_are<ExactSolveAndRealCubicApproximate>(
+  assert_roots_are<FastSolve>(
       "{1,-3.69,4.5387,-1.86087}",
       "{1.2444224957031,1.2227887521485-0.012490247664834×i,1.2227887521485+0."
       "012490247664834×i}");

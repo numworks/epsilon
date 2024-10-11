@@ -8,6 +8,7 @@
 #include <escher/scrollable_layout_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include <omg/string.h>
 
 #include <array>
 
@@ -96,8 +97,8 @@ class FunctionModelsParameterController
   constexpr static const char* k_inequationModelWhenForbidden = "y≤x";
   // Piecewise is the longest named model
   constexpr static size_t k_maxSizeOfNamedModel =
-      OMG::Print::StringLength(k_models[static_cast<int>(Model::Piecewise)]) -
-      1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
+      OMG::StringLength(k_models[static_cast<int>(Model::Piecewise)]) - 1 +
+      Shared::ContinuousFunction::k_maxDefaultNameSize;
   // Expression cells
   constexpr static I18n::Message
       k_modelDescriptions[k_numberOfExpressionModels] = {

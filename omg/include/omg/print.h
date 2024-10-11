@@ -54,15 +54,6 @@ constexpr size_t LengthOfUInt32(Base base, uint32_t integer) {
                             1;
 }
 
-// constexpr version of strlen
-constexpr static int StringLength(const char* string) {
-  int result = 0;
-  while (string[result] != 0) {
-    result++;
-  }
-  return result;
-}
-
 int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
            char* buffer, int bufferSize);
 int IntLeft(uint32_t integer, char* buffer, int bufferLength);
@@ -71,12 +62,6 @@ int IntRight(uint32_t integer, char* buffer, int bufferLength);
 inline constexpr bool IsLowercaseLetter(char c) { return 'a' <= c && c <= 'z'; }
 
 inline constexpr bool IsDigit(char c) { return '0' <= c && c <= '9'; }
-
-/* FIXME : This can be replaced by std::string_view when moving to C++17 */
-constexpr static bool StringsAreEqual(const char* s1, const char* s2) {
-  return *s1 == *s2 &&
-         ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
-}
 
 }  // namespace Print
 

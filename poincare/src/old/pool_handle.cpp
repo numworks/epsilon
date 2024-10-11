@@ -351,14 +351,6 @@ template ListComplex<double> PoolHandle::NAryBuilder<
     ListComplex<double>, ListComplexNode<double>>(const Tuple &);
 template ListComplex<float> PoolHandle::NAryBuilder<
     ListComplex<float>, ListComplexNode<float>>(const Tuple &);
-template ListElement
-PoolHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>(const Tuple &);
-template ListSlice PoolHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>(
-    const Tuple &);
-template ListSequence
-PoolHandle::FixedArityBuilder<ListSequence, ListSequenceNode>(const Tuple &);
-template ListSort PoolHandle::FixedArityBuilder<ListSort, ListSortNode>(
-    const Tuple &);
 template OMatrix PoolHandle::NAryBuilder<OMatrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> PoolHandle::NAryBuilder<
     MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);

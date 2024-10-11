@@ -82,30 +82,12 @@ $(addprefix old/, \
   junior_expression.cpp \
   least_common_multiple.cpp \
   list.cpp \
-  list_access.cpp \
   list_complex.cpp \
-  list_maximum.cpp \
-  list_mean.cpp \
-  list_median.cpp \
-  list_minimum.cpp \
-  list_product.cpp \
-  list_sample_standard_deviation.cpp \
-  list_sequence.cpp \
-  list_sort.cpp \
-  list_standard_deviation.cpp \
-  list_sum.cpp \
-  list_variance.cpp \
   logarithm.cpp \
   logical_operator.cpp \
   matrix.cpp \
   matrix_complex.cpp \
-  matrix_echelon_form.cpp \
-  matrix_identity.cpp \
   matrix_inverse.cpp \
-  matrix_reduced_row_echelon_form.cpp \
-  matrix_row_echelon_form.cpp \
-  matrix_trace.cpp \
-  matrix_transpose.cpp \
   mixed_fraction.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
@@ -151,9 +133,6 @@ $(addprefix old/, \
   unit.cpp \
   unit_convert.cpp \
   variable_context.cpp \
-  vector_cross.cpp \
-  vector_dot.cpp \
-  vector_norm.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \

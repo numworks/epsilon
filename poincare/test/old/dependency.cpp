@@ -1,9 +1,6 @@
-#include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/old/undefined.h>
-#include <poincare/src/expression/simplification.h>
 
-#include "../helper.h"
 #include "helper.h"
 
 using namespace Poincare;

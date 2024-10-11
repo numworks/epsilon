@@ -4,7 +4,6 @@
 #include <kandinsky/font.h>
 
 #include "layout_cursor.h"
-#include "layout_helper.h"
 #include "old_layout.h"
 
 namespace Poincare {

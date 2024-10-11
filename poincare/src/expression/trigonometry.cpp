@@ -245,10 +245,13 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       return changed;
     }
   } else if (PatternMatching::MatchReplace(e, KTrig(KATrig(KA, KB), KB), KA) ||
+             PatternMatching::MatchReplace(
+                 e, KTrig(KMult(KArCosH(KA), i_e), 0_e), KA) ||
              PatternMatching::MatchReplaceSimplify(
                  e, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
-    // sin(asin(x))=cos(acos(x))=x, sin(acos(x))=cos(asin(x))=√(1-x^2)
+    /* sin(asin(x))=cos(acos(x))=cos(arcosh(x)*i)=x,
+     * sin(acos(x))=cos(asin(x))=√(1-x^2) */
     // TODO_PCJ: detect tan(atan(x)) (but tan is split up in sin/cos)
     /* TODO: what about asin(sin(acos(x)))? Maybe the simplification
      * asin(sin(...)) is more interesting than the simplification of

@@ -295,11 +295,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
           e, KArSinH(KA), KMult(-1_e, i_e, KATrig(KMult(KA, i_e), 1_e))) ||
       // ArTanh(A) -> i*atan(-i*A)
       PatternMatching::MatchReplace(e, KArTanH(KA),
-                                    KMult(i_e, KATan(KMult(-1_e, i_e, KA)))) ||
-      // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
-      PatternMatching::MatchReplace(
-          e, KArCosH(KA),
-          KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e))))))) {
+                                    KMult(i_e, KATan(KMult(-1_e, i_e, KA))))) {
     // Hyperbolic trigonometry results should stay in radian unit
     projectionContext->m_angleUnit = AngleUnit::Radian;
     // e may need to be projected again.
@@ -389,7 +385,11 @@ bool Projection::Expand(Tree* e) {
           e, KATanRad(KA),
           KATrig(
               KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
-              1_e));
+              1_e)) ||
+      // ArCosh(A) -> ln(A+sqrt(A^2-1))
+      PatternMatching::MatchReplaceSimplify(
+          e, KArCosH(KA),
+          KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e))));
 }
 
 }  // namespace Poincare::Internal

@@ -509,13 +509,10 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "tan(2×x×i)×i×(sin(x×i)^2/(2×cos(x×i)^2)-1/2)+tan(x×i)×i");
-  simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
+  simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
   simplifies_to("arsinh(sinh(x))", "x", cartesianCtx);
   simplifies_to("artanh(tanh(x))", "x", cartesianCtx);
-  // TODO: Should simplify to x
-  simplifies_to("cosh(arcosh(x))",
-                "(x+e^((ln(x-1)+ln(x+1))/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
-                cartesianCtx);
+  simplifies_to("cosh(arcosh(x))", "x", cartesianCtx);
   simplifies_to("sinh(arsinh(x))", "x", cartesianCtx);
   simplifies_to("tanh(artanh(x))", "x", cartesianCtx);
 }

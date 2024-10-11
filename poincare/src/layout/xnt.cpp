@@ -35,6 +35,10 @@ constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
 
 static int indexOfCodePointInCycle(CodePoint codePoint,
                                    const CodePoint* cycle) {
+  if (codePoint == Symbol::k_radiusSymbol) {
+    // r is not in the cycle, use θ instead
+    codePoint = Symbol::k_polarSymbol;
+  }
   for (size_t i = 0; i < k_maxCycleSize - 1; i++) {
     if (cycle[i] == codePoint) {
       return i;

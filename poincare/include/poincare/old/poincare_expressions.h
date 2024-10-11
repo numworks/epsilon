@@ -3,11 +3,6 @@
 
 #include <poincare/old/absolute_value.h>
 #include <poincare/old/addition.h>
-#include <poincare/old/arc_cosecant.h>
-#include <poincare/old/arc_cosine.h>
-#include <poincare/old/arc_cotangent.h>
-#include <poincare/old/arc_secant.h>
-#include <poincare/old/arc_sine.h>
 #include <poincare/old/arc_tangent.h>
 #include <poincare/old/based_integer.h>
 #include <poincare/old/binomial_coefficient.h>
@@ -18,7 +13,6 @@
 #include <poincare/old/conjugate.h>
 #include <poincare/old/constant.h>
 #include <poincare/old/context.h>
-#include <poincare/old/cosecant.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/cotangent.h>
 #include <poincare/old/decimal.h>
@@ -39,12 +33,6 @@
 #include <poincare/old/frac_part.h>
 #include <poincare/old/function.h>
 #include <poincare/old/great_common_divisor.h>
-#include <poincare/old/hyperbolic_arc_cosine.h>
-#include <poincare/old/hyperbolic_arc_sine.h>
-#include <poincare/old/hyperbolic_arc_tangent.h>
-#include <poincare/old/hyperbolic_cosine.h>
-#include <poincare/old/hyperbolic_sine.h>
-#include <poincare/old/hyperbolic_tangent.h>
 #include <poincare/old/imaginary_part.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/integer.h>
@@ -96,7 +84,6 @@
 #include <poincare/old/rational.h>
 #include <poincare/old/real_part.h>
 #include <poincare/old/round.h>
-#include <poincare/old/secant.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/sign_function.h>
 #include <poincare/old/sine.h>

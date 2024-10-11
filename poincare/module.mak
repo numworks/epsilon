@@ -36,11 +36,6 @@ $(addprefix old/, \
   addition.cpp \
   aliases_list.cpp \
   approximation_helper.cpp \
-  arc_cosecant.cpp \
-  arc_cosine.cpp \
-  arc_cotangent.cpp \
-  arc_secant.cpp \
-  arc_sine.cpp \
   arc_tangent.cpp \
   arithmetic.cpp \
   array.cpp \
@@ -56,7 +51,6 @@ $(addprefix old/, \
   conjugate.cpp \
   constant.cpp \
   context.cpp \
-  cosecant.cpp \
   cosine.cpp \
   cotangent.cpp \
   decimal.cpp \
@@ -82,13 +76,6 @@ $(addprefix old/, \
   frac_part.cpp \
   function.cpp \
   great_common_divisor.cpp \
-  hyperbolic_arc_cosine.cpp \
-  hyperbolic_arc_sine.cpp \
-  hyperbolic_arc_tangent.cpp \
-  hyperbolic_cosine.cpp \
-  hyperbolic_sine.cpp \
-  hyperbolic_tangent.cpp \
-  hyperbolic_trigonometric_function.cpp \
   imaginary_part.cpp \
   infinity.cpp \
   integral.cpp \
@@ -145,7 +132,6 @@ $(addprefix old/, \
   real_part.cpp \
   rightwards_arrow_expression.cpp \
   round.cpp \
-  secant.cpp \
   sequence.cpp \
   sign_function.cpp \
   simplification_helper.cpp \

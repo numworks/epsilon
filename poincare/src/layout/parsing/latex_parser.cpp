@@ -305,9 +305,10 @@ char* LayoutToLatexWithExceptionsRefactorHelper(const Rack* rack, char* buffer,
         buffer += delimiterLength;
         if (i == token.descriptionLength - 1) {
           if (isCodePoint) {
-            /* Add a space after code points:
+            /* Add a space after latex codepoints, otherwise the string might
+             * not be valid in latex.
              * 3\cdotcos -> NO
-             * 3\cdot cos -> YES LEAAAAAA
+             * 3\cdot cos -> YES
              **/
             *buffer = ' ';
             buffer += 1;

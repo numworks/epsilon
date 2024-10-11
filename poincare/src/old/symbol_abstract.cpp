@@ -5,7 +5,6 @@
 #include <poincare/old/constant.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/function.h>
-#include <poincare/old/helpers.h>
 #include <poincare/old/parenthesis.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/sequence.h>

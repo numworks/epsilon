@@ -7,7 +7,6 @@
 #include <poincare/expression.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/old/comparison.h>
-#include <poincare/old/helpers.h>
 #include <poincare/old/symbol.h>
 
 /* ContinuousFunctionProperties is an object containing:

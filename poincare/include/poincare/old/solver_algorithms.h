@@ -3,7 +3,6 @@
 
 #include <omg/float.h>
 
-#include "helpers.h"
 #include "solver.h"
 
 namespace Poincare {

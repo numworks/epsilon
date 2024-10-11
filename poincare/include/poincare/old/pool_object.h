@@ -12,7 +12,6 @@
 #include <omg/memory.h>
 #include <poincare/preferences.h>
 
-#include "helpers.h"
 #include "pool_checkpoint.h"
 
 /* What's in a PoolObject, really?

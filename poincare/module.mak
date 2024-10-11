@@ -7,7 +7,6 @@ _sources_poincare_minimal := $(addprefix src/, \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  old/helpers.cpp \
   old/integer.cpp \
   old/serialization_helper.cpp \
   old/pool_handle.cpp \

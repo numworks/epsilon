@@ -10,7 +10,6 @@
 #include <poincare/old/cosine.h>
 #include <poincare/old/division.h>
 #include <poincare/old/function.h>
-#include <poincare/old/helpers.h>
 #include <poincare/old/integral.h>
 #include <poincare/old/list_sort.h>
 #include <poincare/old/matrix.h>

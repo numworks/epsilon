@@ -33,6 +33,8 @@ class Roots {
   /* WARNING: this function assumes that all the cubic coefficients are real.
    * Otherwise, we do not have any information on the "realness" of roots, and
    * we can simply call the usual approximation function. */
+  /* TODO: this function could be generalized to quadratic polynomials (or even
+   * other polynomial degrees) */
   static Tree* ApproximateRootsOfRealCubic(const Tree* roots,
                                            const Tree* discriminant);
 

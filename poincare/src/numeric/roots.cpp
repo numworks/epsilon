@@ -358,25 +358,30 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
    * reducible, if there exists an irrational root, it might still be explicit
    * in the expression for b. */
 
-  if (b->isMult() || b->isAdd()) {
-    /* If b is a product, it might contain a triple root. If b is an addition,
-     * the different terms might be roots. */
-    for (const Tree* productOrSumTerm : b->children()) {
-      Tree* r = PatternMatching::CreateSimplify(
-          KMult(-1_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = productOrSumTerm});
-      if (IsRoot(r, a, b, c, d)) {
-        return r;
-      }
-      /* Test the opposite sign. The minus sign could be in any of the different
-       * factors of a product. */
-      r->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = r}));
+  if (b->isAdd()) {
+    /* If b is an addition, then its expression might be "b = (-r1*a) + (-r2*a)
+     * + (-r3*a)", when roots are irreducible. We can test for each term of the
+     * addition whether  "-1 * addTerm / a" is a root. */
+    for (const Tree* sumTerm : b->children()) {
+      Tree* r = PatternMatching::CreateSimplify(KMult(-1_e, KH, KPow(KA, -1_e)),
+                                                {.KA = a, .KH = sumTerm});
       if (IsRoot(r, a, b, c, d)) {
         return r;
       }
       r->removeTree();
     }
   }
+  if (b->isMult()) {
+    /* If b is a product, then its expression might be "b = -a*3*r, with r being
+     * a triple root. */
+    Tree* r = PatternMatching::CreateSimplify(
+        KMult(-1_e / 3_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+    if (IsRoot(r, a, b, c, d)) {
+      return r;
+    }
+    r->removeTree();
+  }
+
   return nullptr;
 }
 

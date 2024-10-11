@@ -10,7 +10,7 @@
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
-#include <poincare/src/layout/xnt.h>
+#include <poincare/xnt.h>
 
 #include <algorithm>
 
@@ -339,8 +339,8 @@ bool AbstractTextField::prepareToEdit() {
 bool AbstractTextField::findXNT(char* buffer, size_t bufferSize, int xntIndex,
                                 size_t* cycleSize) {
   UTF8Decoder decoder(text(), cursorLocation());
-  return Poincare::Internal::FindXNTSymbol1D(decoder, buffer, bufferSize,
-                                             xntIndex, cycleSize);
+  return Poincare::XNT::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
+                                        cycleSize);
 }
 
 void AbstractTextField::removePreviousXNT() {

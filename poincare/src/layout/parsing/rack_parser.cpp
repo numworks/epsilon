@@ -17,7 +17,6 @@
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
-#include <poincare/src/layout/xnt.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -873,7 +872,8 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     if (start < m_root->numberOfChildren()) {
       LayoutSpanDecoder decoder(Layout::From(m_root->child(start)),
                                 m_root->numberOfChildren() - start);
-      if (ParameterText(&decoder, &parameterText, &parameterLength)) {
+      if (ParsingHelper::ParameterText(&decoder, &parameterText,
+                                       &parameterLength)) {
         Poincare::Context* oldContext = m_parsingContext.context();
         char name[Symbol::k_maxNameLength];
         LayoutSpanDecoder nameDecoder(

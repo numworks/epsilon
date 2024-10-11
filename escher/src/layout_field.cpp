@@ -15,7 +15,7 @@
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
-#include <poincare/src/layout/xnt.h>
+#include <poincare/xnt.h>
 #include <string.h>
 
 #include <algorithm>
@@ -197,12 +197,12 @@ bool LayoutField::findXNT(char* buffer, size_t bufferSize, int xntIndex,
   if (linearMode()) {
     Poincare::Internal::RackLayoutDecoder decoder(cursor()->cursorRack(),
                                                   cursor()->position());
-    return Poincare::Internal::FindXNTSymbol1D(decoder, buffer, bufferSize,
-                                               xntIndex, cycleSize);
+    return Poincare::XNT::FindXNTSymbol1D(decoder, buffer, bufferSize, xntIndex,
+                                          cycleSize);
   }
-  return Poincare::Internal::FindXNTSymbol2D(cursor()->cursorRack(),
-                                             cursor()->rootRack(), buffer,
-                                             bufferSize, xntIndex, cycleSize);
+  return Poincare::XNT::FindXNTSymbol2D(cursor()->cursorRack(),
+                                        cursor()->rootRack(), buffer,
+                                        bufferSize, xntIndex, cycleSize);
 }
 
 void LayoutField::removePreviousXNT() {

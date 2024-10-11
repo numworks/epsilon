@@ -7,6 +7,8 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/trigonometry.h>
 
+#include "tokenizer.h"
+
 namespace Poincare::Internal {
 
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
@@ -69,6 +71,127 @@ const Builtin* ParsingHelper::GetInverseFunction(const Builtin* builtin) {
 bool ParsingHelper::IsPowerableFunction(const Builtin* builtin) {
   // return TypeBlock::IsAnyTrigonometryFunction(builtin->type());
   return builtin->type().isAnyTrigonometryFunction();
+}
+
+// TODO: replace with the other variant
+bool ParsingHelper::ParameterText(UnicodeDecoder& varDecoder,
+                                  size_t* parameterStart,
+                                  size_t* parameterLength) {
+  static_assert(k_indexOfParameter1D == 1,
+                "ParameteredExpression::ParameterText is outdated");
+  /* Find the beginning of the parameter. Count parentheses to handle the
+   * presence of functions with several parameters in the parametered
+   * expression. */
+  CodePoint c = UCodePointUnknown;
+  bool variableFound = false;
+  int cursorLevel = 0;
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder.nextCodePoint();
+    switch (c) {
+      case '(':
+      case '{':
+      case '[':
+        cursorLevel++;
+        break;
+      case ')':
+      case '}':
+      case ']':
+        cursorLevel--;
+        break;
+      case ',':
+        // The parameter is the second argument of parametered expressions
+        variableFound = cursorLevel == 0;
+        break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return false;
+  }
+
+  size_t startOfVariable = varDecoder.position();
+  c = varDecoder.nextCodePoint();
+  CodePoint previousC = UCodePointUnknown;
+  while (c != UCodePointNull && c != ',' && c != ')') {
+    previousC = c;
+    c = varDecoder.nextCodePoint();
+  }
+  size_t endOfVariable = varDecoder.position();
+  varDecoder.unsafeSetPosition(startOfVariable);
+  do {
+    // Skip whitespaces
+    c = varDecoder.nextCodePoint();
+  } while (c == ' ');
+  varDecoder.previousCodePoint();
+  startOfVariable = varDecoder.position();
+  size_t lengthOfVariable = endOfVariable - startOfVariable - 1;
+
+  if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+    return false;
+  }
+  varDecoder.unsafeSetPosition(startOfVariable);
+  *parameterLength = lengthOfVariable;
+  *parameterStart = startOfVariable;
+  return true;
+}
+
+bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
+                                  const Layout** parameterStart,
+                                  size_t* parameterLength) {
+  static_assert(k_indexOfParameter1D == 1,
+                "ParameteredExpression::ParameterText is outdated");
+  /* Find the beginning of the parameter. Count parentheses to handle the
+   * presence of functions with several parameters in the parametered
+   * expression. */
+  CodePoint c = UCodePointUnknown;
+  bool variableFound = false;
+  int cursorLevel = 0;
+  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
+    c = varDecoder->nextCodePoint();
+    switch (c) {
+      case '(':
+      case '{':
+      case '[':
+        cursorLevel++;
+        break;
+      case ')':
+      case '}':
+      case ']':
+        cursorLevel--;
+        break;
+      case ',':
+        // The parameter is the second argument of parametered expressions
+        variableFound = cursorLevel == 0;
+        break;
+    }
+  }
+  if (!variableFound || c == UCodePointNull) {
+    return false;
+  }
+
+  LayoutSpanDecoder startOfVariable = *varDecoder;
+  c = varDecoder->nextCodePoint();
+  CodePoint previousC = UCodePointUnknown;
+  while (c != UCodePointNull && c != ',' && c != ')') {
+    previousC = c;
+    c = varDecoder->nextCodePoint();
+  }
+  const Tree* endOfVariable = varDecoder->layout();
+  *varDecoder = startOfVariable;
+  // Skip whitespaces
+  while (varDecoder->codePoint() == ' ') {
+    c = varDecoder->nextCodePoint();
+  }
+  startOfVariable = *varDecoder;
+  size_t lengthOfVariable =
+      NumberOfNextTreeTo(startOfVariable.layout(), endOfVariable) - 1;
+
+  // if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+  // return false;
+  // }
+  *varDecoder = startOfVariable;
+  *parameterLength = lengthOfVariable;
+  *parameterStart = startOfVariable.layout();
+  return true;
 }
 
 }  // namespace Poincare::Internal

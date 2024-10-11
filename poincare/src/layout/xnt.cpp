@@ -1,16 +1,18 @@
-#include "xnt.h"
-
 #include <omg/utf8_helper.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/xnt.h>
 
 #include "k_tree.h"
+#include "parsing/helper.h"
 #include "parsing/tokenizer.h"
 #include "rack_layout_decoder.h"
 #include "serialize.h"
 
-namespace Poincare::Internal {
+using namespace Poincare::Internal;
+
+namespace Poincare::XNT {
 
 // Cycles
 constexpr int k_maxCycleSize = 5;
@@ -89,137 +91,6 @@ constexpr struct {
 };
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
 
-constexpr int k_indexOfMainExpression1D = 0;
-constexpr int k_indexOfParameter1D = 1;
-
-// TODO: replace with the other variant
-bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
-                   size_t* parameterLength) {
-  static_assert(k_indexOfParameter1D == 1,
-                "ParameteredExpression::ParameterText is outdated");
-  /* Find the beginning of the parameter. Count parentheses to handle the
-   * presence of functions with several parameters in the parametered
-   * expression. */
-  CodePoint c = UCodePointUnknown;
-  bool variableFound = false;
-  int cursorLevel = 0;
-  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
-    c = varDecoder.nextCodePoint();
-    switch (c) {
-      case '(':
-      case '{':
-      case '[':
-        cursorLevel++;
-        break;
-      case ')':
-      case '}':
-      case ']':
-        cursorLevel--;
-        break;
-      case ',':
-        // The parameter is the second argument of parametered expressions
-        variableFound = cursorLevel == 0;
-        break;
-    }
-  }
-  if (!variableFound || c == UCodePointNull) {
-    return false;
-  }
-
-  size_t startOfVariable = varDecoder.position();
-  c = varDecoder.nextCodePoint();
-  CodePoint previousC = UCodePointUnknown;
-  while (c != UCodePointNull && c != ',' && c != ')') {
-    previousC = c;
-    c = varDecoder.nextCodePoint();
-  }
-  size_t endOfVariable = varDecoder.position();
-  varDecoder.unsafeSetPosition(startOfVariable);
-  do {
-    // Skip whitespaces
-    c = varDecoder.nextCodePoint();
-  } while (c == ' ');
-  varDecoder.previousCodePoint();
-  startOfVariable = varDecoder.position();
-  size_t lengthOfVariable = endOfVariable - startOfVariable - 1;
-
-  if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
-    return false;
-  }
-  varDecoder.unsafeSetPosition(startOfVariable);
-  *parameterLength = lengthOfVariable;
-  *parameterStart = startOfVariable;
-  return true;
-}
-
-bool ParameterText(LayoutSpanDecoder* varDecoder, const Layout** parameterStart,
-                   size_t* parameterLength) {
-  static_assert(k_indexOfParameter1D == 1,
-                "ParameteredExpression::ParameterText is outdated");
-  /* Find the beginning of the parameter. Count parentheses to handle the
-   * presence of functions with several parameters in the parametered
-   * expression. */
-  CodePoint c = UCodePointUnknown;
-  bool variableFound = false;
-  int cursorLevel = 0;
-  while (c != UCodePointNull && cursorLevel >= 0 && !variableFound) {
-    c = varDecoder->nextCodePoint();
-    switch (c) {
-      case '(':
-      case '{':
-      case '[':
-        cursorLevel++;
-        break;
-      case ')':
-      case '}':
-      case ']':
-        cursorLevel--;
-        break;
-      case ',':
-        // The parameter is the second argument of parametered expressions
-        variableFound = cursorLevel == 0;
-        break;
-    }
-  }
-  if (!variableFound || c == UCodePointNull) {
-    return false;
-  }
-
-  LayoutSpanDecoder startOfVariable = *varDecoder;
-  c = varDecoder->nextCodePoint();
-  CodePoint previousC = UCodePointUnknown;
-  while (c != UCodePointNull && c != ',' && c != ')') {
-    previousC = c;
-    c = varDecoder->nextCodePoint();
-  }
-  const Tree* endOfVariable = varDecoder->layout();
-  *varDecoder = startOfVariable;
-  // Skip whitespaces
-  while (varDecoder->codePoint() == ' ') {
-    c = varDecoder->nextCodePoint();
-  }
-  startOfVariable = *varDecoder;
-  size_t lengthOfVariable =
-      NumberOfNextTreeTo(startOfVariable.layout(), endOfVariable) - 1;
-
-  // if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
-  // return false;
-  // }
-  *varDecoder = startOfVariable;
-  *parameterLength = lengthOfVariable;
-  *parameterStart = startOfVariable.layout();
-  return true;
-}
-
-bool ParameterText(const char* text, const char** parameterText,
-                   size_t* parameterLength) {
-  UTF8Decoder decoder(text);
-  size_t parameterStart = *parameterText - text;
-  bool result = ParameterText(decoder, &parameterStart, parameterLength);
-  *parameterText = parameterStart + text;
-  return result;
-}
-
 static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   while (CodePoint c = pattern.nextCodePoint()) {
     if (string.nextCodePoint() != c) {
@@ -289,7 +160,7 @@ static bool findParameteredFunction1D(UnicodeDecoder& decoder,
       case ',':
         if (functionLevel == 0) {
           numberOfCommas++;
-          if (numberOfCommas > k_indexOfParameter1D) {
+          if (numberOfCommas > ParsingHelper::k_indexOfParameter1D) {
             /* We are only interested in the 2 first children.
              * Look for one in level. */
             functionLevel++;
@@ -325,15 +196,17 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
   *cycleSize = 0;
   if (findParameteredFunction1D(decoder, &functionIndex, &childIndex)) {
     assert(0 <= functionIndex && functionIndex < k_numberOfFunctions);
-    assert(0 <= childIndex && childIndex <= k_indexOfParameter1D);
+    assert(0 <= childIndex &&
+           childIndex <= ParsingHelper::k_indexOfParameter1D);
     CodePoint xnt = CodePointAtIndexInCycle(
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
     size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     buffer[size] = 0;
-    if (childIndex == k_indexOfMainExpression1D) {
+    if (childIndex == ParsingHelper::k_indexOfMainExpression1D) {
       size_t parameterStart;
       size_t parameterLength;
-      if (ParameterText(decoder, &parameterStart, &parameterLength)) {
+      if (ParsingHelper::ParameterText(decoder, &parameterStart,
+                                       &parameterLength)) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);
         *cycleSize = 1;
@@ -415,4 +288,4 @@ bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
   return false;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::XNT

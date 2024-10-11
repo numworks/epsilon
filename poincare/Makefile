@@ -138,11 +138,15 @@ define LD_WRAPPER_poincare
 endef
 endif
 
-$(OUTPUT_DIRECTORY)/poincare.js: poincare/poincarejs/pre-js.js poincare/poincarejs/extern-pre-js.js poincare/poincarejs/post_process_ts.sh poincare/poincarejs/poincare-partial.d.ts
+$(OUTPUT_DIRECTORY)/poincare.js: poincare/poincarejs/pre-js.js poincare/poincarejs/extern-pre-js.js poincare/poincarejs/post_process_ts.sh
 
 # Byproducts of building poincare.js
 $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
 $(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
+
+# Global types
+$(OUTPUT_DIRECTORY)/global.d.ts: poincare/poincarejs/global.d.ts
+	cp poincare/poincarejs/global.d.ts $@
 
 # Version file
 .PHONY: $(OUTPUT_DIRECTORY)/.version.json
@@ -162,7 +166,7 @@ $(OUTPUT_DIRECTORY)/README.md: poincare/poincarejs/docs.md
 ZIPPED_FILES := poincare.js poincare.wasm .version.json README.md
 # Add .d.ts file if EMIT_TSD is set to 1
 ifeq ($(EMIT_TSD),1)
-    ZIPPED_FILES := $(ZIPPED_FILES) poincare.d.ts
+    ZIPPED_FILES := $(ZIPPED_FILES) poincare.d.ts global.d.ts
 endif
 
 $(call create_zip,poincarejs.zip,$(addprefix $(OUTPUT_DIRECTORY)/,$(ZIPPED_FILES)))

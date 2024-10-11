@@ -168,7 +168,6 @@ $(addprefix old/, \
   vector_cross.cpp \
   vector_dot.cpp \
   vector_norm.cpp \
-  xnt_helpers.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \
@@ -350,9 +349,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/expression_properties.cpp \
   old/expression_to_layout.cpp \
   old/helper.cpp \
-  old/input_beautification.cpp \
   old/layout.cpp \
-  old/layout_cursor.cpp \
   old/layout_serialization.cpp \
   old/layout_to_expression.cpp \
   old/matrix.cpp \

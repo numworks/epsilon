@@ -5,13 +5,13 @@
 #include <ion/display.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/numeric/zoom.h>
+#include <poincare/old/serialization_helper.h>
 #include <string.h>
 
 #include <algorithm>
 #include <cmath>
 
 #include "interactive_curve_view_range.h"
-#include "poincare/src/old/parsing/parser.h"
 #include "poincare_helpers.h"
 
 using namespace Poincare;

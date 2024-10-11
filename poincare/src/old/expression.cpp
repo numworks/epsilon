@@ -39,8 +39,6 @@
 #include <cmath>
 #include <utility>
 
-#include "parsing/parser.h"
-
 namespace Poincare {
 
 static bool s_approximationEncounteredComplex = false;

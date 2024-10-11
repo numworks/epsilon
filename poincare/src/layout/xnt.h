@@ -8,6 +8,8 @@
 
 namespace Poincare::Internal {
 
+// TODO: move in helpers
+
 bool ParameterText(LayoutSpanDecoder* varDecoder, const Layout** parameterStart,
                    size_t* parameterLength);
 
@@ -16,6 +18,9 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
 
 bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
                      size_t bufferSize, int xntIndex, size_t* cycleSize);
+
+CodePoint CodePointAtIndexInDefaultCycle(int index, CodePoint startingCodePoint,
+                                         size_t* cycleSize);
 
 }  // namespace Poincare::Internal
 

@@ -11,7 +11,6 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
-#include <poincare/src/old/parsing/parser.h>
 #include <poincare/test/helper.h>
 
 using namespace Poincare;

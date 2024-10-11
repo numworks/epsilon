@@ -4,7 +4,7 @@
 #include <escher/toolbox.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/xnt_helpers.h>
+#include <poincare/src/layout/xnt.h>
 
 using namespace Poincare;
 
@@ -36,7 +36,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   // Find special XNT
   if (!findXNT(buffer, bufferSize, currentIndex, &cycleSize)) {
     // Use default XNT cycle
-    CodePoint xnt = XNTHelpers::CodePointAtIndexInDefaultCycle(
+    CodePoint xnt = Poincare::Internal::CodePointAtIndexInDefaultCycle(
         currentIndex, startingXNT, &cycleSize);
     SerializationHelper::CodePoint(buffer, bufferSize, xnt);
   }

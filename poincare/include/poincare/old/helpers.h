@@ -36,10 +36,6 @@ class Helpers {
   static void SwapInList(int i, int j, void* context, int numberOfElements);
   template <typename T>
   static bool CompareInList(int i, int j, void* context, int numberOfElements);
-
-  // Return true if observed and expected are approximately equal
-  template <typename T>
-  static bool RelativelyEqual(T observed, T expected, T relativeThreshold);
 };
 
 }  // namespace Poincare

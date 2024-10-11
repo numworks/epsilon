@@ -152,17 +152,6 @@ bool Helpers::CompareInList(int i, int j, void *context, int numberOfElements) {
   return cI.isGreaterThan(cJ);
 }
 
-template <typename T>
-bool Helpers::RelativelyEqual(T observed, T expected, T relativeThreshold) {
-  assert(std::isfinite(observed) && std::isfinite(expected));
-  if (expected == 0.0) {
-    return observed == 0.0;
-  }
-  return std::fabs((observed - expected) / expected) <= relativeThreshold;
-}
-
-template bool Helpers::RelativelyEqual<float>(float, float, float);
-template bool Helpers::RelativelyEqual<double>(double, double, double);
 template void Helpers::SwapInList<float>(int, int, void *, int);
 template void Helpers::SwapInList<double>(int, int, void *, int);
 template bool Helpers::CompareInList<float>(int, int, void *, int);

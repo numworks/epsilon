@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <float.h>
 #include <limits.h>
-#include <poincare/old/helpers.h>
 #include <poincare/probability/normal_distribution.h>
 #include <string.h>
 
@@ -100,7 +99,7 @@ int Store::numberOfBars(int series) const {
   double maxVal = maxValue(series);
   int nBars = static_cast<int>(
       std::floor((maxVal - firstBarAbscissa) / barWidth()) + 1);
-  if (Poincare::Helpers::RelativelyEqual<double>(
+  if (OMG::Float::RelativelyEqual<double>(
           maxVal, firstBarAbscissa + nBars * barWidth(), k_precision)) {
     /* If the maxValue is on the upper bound of the last bar, we need to add
      * one bar to be consistent with sumOfValuesBetween. */
@@ -497,13 +496,12 @@ double Store::sumOfValuesBetween(int series, double x1, double x2,
   for (int k = 0; k < numberOfPairs; k++) {
     int sortedIndex = valueIndexAtSortedIndex(series, k);
     double value = get(series, 0, sortedIndex);
-    if (value > x2 ||
-        (stopIfEqual &&
-         Poincare::Helpers::RelativelyEqual<double>(value, x2, k_precision))) {
+    if (value > x2 || (stopIfEqual && OMG::Float::RelativelyEqual<double>(
+                                          value, x2, k_precision))) {
       break;
     }
     if (value >= x1 ||
-        Poincare::Helpers::RelativelyEqual<double>(value, x1, k_precision)) {
+        OMG::Float::RelativelyEqual<double>(value, x1, k_precision)) {
       result += get(series, 1, sortedIndex);
     }
   }

@@ -11,7 +11,7 @@ namespace OMG::Float {
 
 bool IsGreater(float xI, float xJ, bool nanIsGreatest);
 
-// TODO: This is a copy of Poincare::Helpers::RelativelyEqual
+// Return true if observed and expected are approximately equal
 template <typename T>
 bool RelativelyEqual(T observed, T expected, T relativeThreshold) {
   assert(std::isfinite(observed) && std::isfinite(expected));

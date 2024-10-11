@@ -350,6 +350,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Round:
       return DecimalFunction(GetComplexSign(e->child(0)), e->type());
     case Type::Random:
+      return ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::RandInt:
       return ComplexSign(Sign::Finite(), Sign::Zero());
 #if 0

@@ -282,6 +282,32 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   if (
+      // cosh(A) -> cos(i*A)
+      PatternMatching::MatchReplace(e, KCosH(KA), KTrig(KMult(KA, i_e), 0_e)) ||
+      // sinh(A) -> -i*sin(i*A)
+      PatternMatching::MatchReplace(
+          e, KSinH(KA), KMult(-1_e, i_e, KTrig(KMult(KA, i_e), 1_e))) ||
+      // tanh(A) -> -i*tan(i*A)
+      PatternMatching::MatchReplace(e, KTanH(KA),
+                                    KMult(-1_e, i_e, KTan(KMult(i_e, KA)))) ||
+      // ArSinh(A) -> -i*asin(i*A)
+      PatternMatching::MatchReplace(
+          e, KArSinH(KA), KMult(-1_e, i_e, KATrig(KMult(KA, i_e), 1_e))) ||
+      // ArTanh(A) -> i*atan(-i*A)
+      PatternMatching::MatchReplace(e, KArTanH(KA),
+                                    KMult(i_e, KATan(KMult(-1_e, i_e, KA)))) ||
+      // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
+      PatternMatching::MatchReplace(
+          e, KArCosH(KA),
+          KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e))))))) {
+    // Hyperbolic trigonometry results should stay in radian unit
+    projectionContext->m_angleUnit = AngleUnit::Radian;
+    // e may need to be projected again.
+    ShallowSystemProject(e, projectionContext);
+    return true;
+  }
+
+  if (
       // Sqrt(A) -> A^0.5
       PatternMatching::MatchReplace(e, KSqrt(KA), KPow(KA, 1_e / 2_e)) ||
       // NthRoot(A, B) -> A^(1/B)
@@ -299,20 +325,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArcSec(A) -> acos(1/A)
       PatternMatching::MatchReplace(e, KASec(KA), KACos(KPow(KA, -1_e))) ||
       // ArcCsc(A) -> asin(1/A)
-      PatternMatching::MatchReplace(e, KACsc(KA), KASin(KPow(KA, -1_e))) ||
-      // tanh(A) -> -i*tan(i*A)
-      PatternMatching::MatchReplace(e, KTanH(KA),
-                                    KMult(-1_e, i_e, KTan(KMult(i_e, KA)))) ||
-      // ArSinh(A) -> -i*asin(i*A)
-      PatternMatching::MatchReplace(e, KArSinH(KA),
-                                    KMult(-1_e, i_e, KASin(KMult(KA, i_e)))) ||
-      // ArTanh(A) -> i*atan(-i*A)
-      PatternMatching::MatchReplace(e, KArTanH(KA),
-                                    KMult(i_e, KATan(KMult(-1_e, i_e, KA)))) ||
-      // ArCosh(A) -> ln(A+sqrt(A-1)*sqrt(A+1))
-      PatternMatching::MatchReplace(
-          e, KArCosH(KA),
-          KLn(KAdd(KA, KMult(KSqrt(KAdd(KA, -1_e)), KSqrt(KAdd(KA, 1_e))))))) {
+      PatternMatching::MatchReplace(e, KACsc(KA), KASin(KPow(KA, -1_e)))) {
     // e may need to be projected again.
     ShallowSystemProject(e, context);
     return true;
@@ -356,11 +369,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
-      // cosh(A) -> cos(i*A)
-      PatternMatching::MatchReplace(e, KCosH(KA), KTrig(KMult(KA, i_e), 0_e)) ||
-      // sinh(A) -> -i*sin(i*A)
-      PatternMatching::MatchReplace(
-          e, KSinH(KA), KMult(-1_e, i_e, KTrig(KMult(KA, i_e), 1_e))) ||
       /* acot(A) -> π/2 - atan(A)
       using acos(0) instead of π/2 to handle angle */
       PatternMatching::MatchReplace(e, KACot(KA),

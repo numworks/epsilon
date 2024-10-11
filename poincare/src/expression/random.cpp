@@ -1,6 +1,6 @@
 #include "random.h"
 
-#include <poincare/old/random.h>
+#include <poincare/numeric/random.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 
@@ -82,7 +82,7 @@ template <typename T>
 T Approximation::ApproximateRandomHelper(const Tree* randomTree,
                                          const Context* ctx) {
   if (randomTree->isRandom()) {
-    return Poincare::Random::random<T>();
+    return Poincare::random<T>();
   } else if (randomTree->isRandInt()) {
     return Random::RandomInt<T>(
         Approximation::To<T>(randomTree->child(0), ctx),
@@ -144,7 +144,7 @@ T Random::RandomInt(T a, T b) {
   T range = 1 + b - a;
   // Ugly way to avoid the rare case where rand is exactly 1.
   T rand;
-  while ((rand = Poincare::Random::random<T>()) == static_cast<T>(1.0)) {
+  while ((rand = Poincare::random<T>()) == static_cast<T>(1.0)) {
   }
   return std::floor(rand * range + a);
 }

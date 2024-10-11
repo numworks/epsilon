@@ -230,6 +230,7 @@ $(addprefix numeric/, \
   erf_inv.cpp \
   helpers.cpp \
   point_of_interest.cpp \
+  random.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   roots.cpp \

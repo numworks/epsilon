@@ -1,5 +1,5 @@
 #include <apps/apps_container_helper.h>
-#include <poincare/old/random.h>
+#include <poincare/numeric/random.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 
@@ -649,7 +649,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
       .m_confidenceLevel = 0.95,
   };
   for (int i = 0; i < rawDataCase.m_numberOfInputs / 2; i++) {
-    rawDataCase.m_inputs[2 * i] = Poincare::Random::random<double>();
+    rawDataCase.m_inputs[2 * i] = Poincare::random<double>();
     rawDataCase.m_inputs[2 * i + 1] = 1;
   }
 

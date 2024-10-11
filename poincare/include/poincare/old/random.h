@@ -35,20 +35,6 @@ class RandomNode final : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  // Evaluation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<float>(approximationContext);
-  }
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override {
-    return templateApproximate<double>(approximationContext);
-  }
-  template <typename T>
-  Evaluation<T> templateApproximate(
-      const ApproximationContext& approximationContext) const;
 };
 
 class Random final : public ExpressionNoChildren<Random, RandomNode> {
@@ -62,9 +48,6 @@ class Random final : public ExpressionNoChildren<Random, RandomNode> {
   }
   constexpr static OExpression::FunctionHelper s_functionHelper =
       OExpression::FunctionHelper("random", 0, &UntypedBuilder);
-
-  template <typename T>
-  static T random();
 };
 
 }  // namespace Poincare

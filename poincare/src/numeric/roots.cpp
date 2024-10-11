@@ -371,17 +371,14 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
       r->removeTree();
     }
   }
-  if (b->isMult()) {
-    /* If b is a product, then its expression might be "b = -a*3*r, with r being
-     * a triple root. */
-    Tree* r = PatternMatching::CreateSimplify(
-        KMult(-1_e / 3_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
-    if (IsRoot(r, a, b, c, d)) {
-      return r;
-    }
-    r->removeTree();
+  /* If the polynomial has a triple root, then the expression of b might be "b
+   * = -a*3*r, with r being a triple root. */
+  Tree* r = PatternMatching::CreateSimplify(
+      KMult(-1_e / 3_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+  if (IsRoot(r, a, b, c, d)) {
+    return r;
   }
-
+  r->removeTree();
   return nullptr;
 }
 

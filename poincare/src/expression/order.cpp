@@ -289,10 +289,6 @@ int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
   /* TODO: the approximations could be precomputed and called only once */
   std::complex<double> v1 = Approximation::ToComplex<double>(e1, nullptr);
   std::complex<double> v2 = Approximation::ToComplex<double>(e2, nullptr);
-  /*  Two real numbers are ordered following the natural real line order. */
-  if ((v1.imag() == 0) && (v2.imag() == 0)) {
-    return v1.real() < v2.real() ? -1 : v1.real() > v2.real() ? 1 : 0;
-  }
   /* Real numbers are ordered before complex numbers */
   if ((v1.imag() == 0) && (v2.imag() != 0)) {
     return -1;

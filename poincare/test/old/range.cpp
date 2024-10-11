@@ -1,4 +1,4 @@
-#include <poincare/old/helpers.h>
+#include <omg/comparison.h>
 #include <poincare/range.h>
 
 #include "../helper.h"
@@ -19,8 +19,8 @@ void assert_length_and_center_are(Range1D<float> r, float expextedLength,
                                   float expextedCenter) {
   float l = r.length();
   float c = r.center();
-  quiz_assert(Helpers::EqualOrBothNan(l, expextedLength));
-  quiz_assert(Helpers::EqualOrBothNan(c, expextedCenter));
+  quiz_assert(OMG::EqualOrBothNan(l, expextedLength));
+  quiz_assert(OMG::EqualOrBothNan(c, expextedCenter));
 }
 
 QUIZ_CASE(poincare_range_1d_geometry) {
@@ -82,8 +82,8 @@ QUIZ_CASE(poincare_range_1d_set_bound) {
 
 void assert_range_extends_to(Range1D<float> r1, float p, Range1D<float> r2) {
   r1.extend(p, Range1D<float>::k_maxFloat);
-  quiz_assert(Helpers::EqualOrBothNan(r1.min(), r2.min()));
-  quiz_assert(Helpers::EqualOrBothNan(r1.max(), r2.max()));
+  quiz_assert(OMG::EqualOrBothNan(r1.min(), r2.min()));
+  quiz_assert(OMG::EqualOrBothNan(r1.max(), r2.max()));
 }
 
 QUIZ_CASE(poincare_range_1d_extend) {
@@ -107,8 +107,8 @@ QUIZ_CASE(poincare_range_1d_extend) {
 void assert_range_zooms_to(Range1D<float> r1, float r, float c,
                            Range1D<float> r2) {
   r1.zoom(r, c);
-  quiz_assert(Helpers::EqualOrBothNan(r1.min(), r2.min()));
-  quiz_assert(Helpers::EqualOrBothNan(r1.max(), r2.max()));
+  quiz_assert(OMG::EqualOrBothNan(r1.min(), r2.min()));
+  quiz_assert(OMG::EqualOrBothNan(r1.max(), r2.max()));
 }
 
 QUIZ_CASE(poincare_range_1d_zoom) {

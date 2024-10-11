@@ -46,10 +46,6 @@ class Helpers {
     return *s1 == *s2 &&
            ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
   }
-
-  constexpr static inline bool EqualOrBothNan(double a, double b) {
-    return a == b || (std::isnan(a) && std::isnan(b));
-  }
 };
 
 }  // namespace Poincare

@@ -4,8 +4,8 @@
 #include <apps/shared/editable_cell_table_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <omg/comparison.h>
 #include <poincare/layout.h>
-#include <poincare/old/helpers.h>
 
 #include <algorithm>
 
@@ -196,12 +196,12 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       *calculation2 = (m_store->*calculationMethods[calculationIndex])(
           series, 1, Store::CalculationOptions());
     }
-    assert(Helpers::EqualOrBothNan(
-               *calculation1, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 0, Store::CalculationOptions())) &&
-           Helpers::EqualOrBothNan(
-               *calculation2, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 1, Store::CalculationOptions())));
+    assert(OMG::EqualOrBothNan(*calculation1,
+                               (m_store->*calculationMethods[calculationIndex])(
+                                   series, 0, Store::CalculationOptions())) &&
+           OMG::EqualOrBothNan(*calculation2,
+                               (m_store->*calculationMethods[calculationIndex])(
+                                   series, 1, Store::CalculationOptions())));
     EvenOddDoubleBufferTextCell* myCell =
         static_cast<EvenOddDoubleBufferTextCell*>(cell);
     PoincareHelpers::ConvertFloatToText<double>(
@@ -238,14 +238,13 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     }
     assert(
         (c == Calculation::NumberOfDots &&
-         Helpers::EqualOrBothNan(
+         OMG::EqualOrBothNan(
              *calculation,
              m_store->doubleCastedNumberOfPairsOfSeries(series))) ||
         (c == Calculation::Covariance &&
-         Helpers::EqualOrBothNan(*calculation, m_store->covariance(series))) ||
+         OMG::EqualOrBothNan(*calculation, m_store->covariance(series))) ||
         (c == Calculation::SumOfProducts &&
-         Helpers::EqualOrBothNan(*calculation,
-                                 m_store->columnProductSum(series))));
+         OMG::EqualOrBothNan(*calculation, m_store->columnProductSum(series))));
     result = *calculation;
   } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
     if (!m_store->coefficientsAreDefined(series, globContext)) {

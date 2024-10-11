@@ -107,28 +107,20 @@ class EquationSolver {
   // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
   static void TagVariableIfParameter(const char* name, uint32_t* tags,
                                      const Context* context);
-};
 
-namespace helpers {
-
-template <typename P>
-static inline bool AllOf(const Tree** trees, int numberOfElements,
-                         P predicate) {
-  for (int i = 0; i < numberOfElements; i++) {
-    if (!predicate(trees[i])) {
-      return false;
+  // TODO: the following function could be generalized for NArys (with a "const
+  // Tree* naryTree" parameter instead of "const Tree** trees")
+  template <typename P>
+  static inline bool AllOf(const Tree** trees, int numberOfElements,
+                           P predicate) {
+    for (int i = 0; i < numberOfElements; i++) {
+      if (!predicate(trees[i])) {
+        return false;
+      }
     }
+    return true;
   }
-  return true;
-}
-
-template <typename P>
-static inline bool AnyOf(const Tree* listTree, P predicate) {
-  assert(listTree->isList());
-  return listTree->hasChildSatisfying(predicate);
-}
-
-}  // namespace helpers
+};
 
 }  // namespace Poincare::Internal
 

@@ -569,10 +569,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
 
   if (ShouldApproximatePolynomialRoots(solutionList)) {
     TreeRef approximatedRoots =
-        ((degree == 3) && helpers::AllOf(coefficients, numberOfTerms,
-                                         [](const Tree* e) {
-                                           return GetComplexSign(e).isReal();
-                                         }))
+        ((degree == 3) &&
+         AllOf(coefficients, numberOfTerms,
+               [](const Tree* e) { return GetComplexSign(e).isReal(); }))
             ? Roots::ApproximateRootsOfRealCubic(solutionList, discriminant)
             : Approximation::RootTreeToTree<double>(solutionList);
     solutionList->removeTree();
@@ -590,7 +589,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
 }
 
 bool EquationSolver::ShouldApproximatePolynomialRoots(const Tree* roots) {
-  return helpers::AnyOf(roots, [](const Tree* root) {
+  return roots->hasChildSatisfying([](const Tree* root) {
     return root->numberOfDescendants(true) >
            k_maxNumberOfDescendantsBeforeApproximating;
   });

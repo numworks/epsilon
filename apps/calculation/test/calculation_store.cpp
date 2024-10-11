@@ -4,7 +4,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/cas.h>
-#include <poincare/old/poincare_expressions.h>
+#include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
@@ -191,8 +191,8 @@ QUIZ_CASE(calculation_ans) {
   Preferences::SharedPreferences()->setExamMode(
       ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
-      SquareRoot::Builder(Rational::Builder(2)),
-      SquareRoot::Builder(Rational::Builder(2)), Expression(), nullptr));
+      UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
+      Expression(), nullptr));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 

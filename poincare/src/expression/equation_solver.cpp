@@ -568,7 +568,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
           ? Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0],
                              discriminant)
           : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
-                         coefficients[0], discriminant);
+                         coefficients[0], discriminant, true);
 
   if (ShouldApproximatePolynomialRoots(solutionList)) {
     TreeRef approximatedRoots =

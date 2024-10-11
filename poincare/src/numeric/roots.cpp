@@ -96,7 +96,7 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
 }
 
 Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                   const Tree* discriminant) {
+                   const Tree* discriminant, bool fastCardanoMethod) {
   assert(a && b && c && d);
 
   if (a->isUndefined() || b->isUndefined() || c->isUndefined() ||
@@ -148,7 +148,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
   /* We did not manage to find any simple root: we resort to using Cardano's
    * formula. */
-  return CubicRootsCardanoMethod(a, b, c, d, discriminant);
+  return CubicRootsCardanoMethod(a, b, c, d, discriminant, fastCardanoMethod);
 }
 
 Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
@@ -384,7 +384,8 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
                                      const Tree* c, const Tree* d,
-                                     const Tree* delta) {
+                                     const Tree* delta,
+                                     bool approximateCardanoNumber) {
   if (!delta) {
     Tree* discriminant = Roots::CubicDiscriminant(a, b, c, d);
     TreeRef roots = Roots::CubicRootsCardanoMethod(a, b, c, d, discriminant);
@@ -401,6 +402,10 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   Tree* delta0 = Delta0(a, b, c);
   Tree* delta1 = Delta1(a, b, c, d);
   Tree* cardano = CardanoNumber(delta0, delta1);
+  if (approximateCardanoNumber) {
+    cardano->moveTreeOverTree(Approximation::RootTreeToTree<double>(cardano));
+  }
+
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
   assert(!SignOfTreeOrApproximation(cardano).isNull());
 
@@ -412,13 +417,19 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   delta1->removeTree();
   delta0->removeTree();
 
-  AdvancedReduction::Reduce(rootList);
-
-  /* We do not sort the roots obtained with Cardano here, because their exact
-   * form is complicated to read and does not allow one to see directly if the
-   * value is real or complex. Sorting the roots will be handled by
-   * approximation later on. */
-  return rootList;
+  if (!approximateCardanoNumber) {
+    AdvancedReduction::Reduce(rootList);
+    /* We do not sort the exact roots obtained with Cardano here, because their
+     * expression is complicated to read and does not allow one to see directly
+     * if the value is real or complex. In that case, sorting the roots will be
+     * handled by approximation later on. */
+    return rootList;
+  } else {
+    TreeRef approximatedRoots = Approximation::RootTreeToTree<double>(rootList);
+    rootList->removeTree();
+    NAry::Sort(approximatedRoots, Order::OrderType::ComplexLine);
+    return approximatedRoots;
+  }
 }
 
 Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
@@ -453,7 +464,7 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
 
   delta0->removeTree();
 
-  NAry::Sort(rootList);
+  NAry::Sort(rootList, Order::OrderType::ComplexLine);
   return rootList;
 }
 
@@ -494,7 +505,7 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
   const Tree* signDelta1 =
       SignOfTreeOrApproximation(delta1).realSign().isPositive() ? 1_e : -1_e;
   // clang-format off
-  Tree* cardano = PatternMatching::CreateSimplify(
+  return PatternMatching::CreateSimplify(
     KPow(
       KMult(
         KAdd(
@@ -510,7 +521,6 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
       KPow(3_e, -1_e)),
     {.KA = delta0, .KB = delta1, .KC = signDelta1});
   // clang-format on
-  return cardano;
 }
 
 Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
@@ -518,7 +528,7 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
   assert(k == 0 || k == 1 || k == 2);
   assert(!SignOfTreeOrApproximation(cardano).isNull());
 
-  /* -(b + C + delta0/(C)/(3a) is a root of the cubic, where C is the Cardano
+  /* -(b + C + delta0/(C))/(3a) is a root of the cubic, where C is the Cardano
    * number multiplied by any cubic root of unity. All roots are listed by
    * computing the three possibilities for C, i.e. with the three cubic roots of
    * unity. */

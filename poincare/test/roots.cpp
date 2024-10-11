@@ -28,7 +28,7 @@ struct ExactSolve {
   static Tree* process(const Tree* a, const Tree* b, const Tree* c,
                        const Tree* d) {
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
-    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant, true);
     discriminant->removeTree();
     return roots;
   }
@@ -72,7 +72,7 @@ struct ExactSolveAndRealCubicApproximate {
     assert(GetComplexSign(a).isReal() && GetComplexSign(b).isReal() &&
            GetComplexSign(c).isReal() && GetComplexSign(d).isReal());
     TreeRef discriminant = Roots::CubicDiscriminant(a, b, c, d);
-    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant);
+    TreeRef roots = Roots::Cubic(a, b, c, d, discriminant, true);
     TreeRef approximateRoots =
         Roots::ApproximateRootsOfRealCubic(roots, discriminant);
     roots->removeTree();

@@ -21,9 +21,13 @@ class Roots {
                                      const Tree* c);
 
   /* Return a list of at most three roots, in decreasing order.
-   * Delta can be provided or will be computed. */
+   * Delta can be provided or will be computed.
+   * If applying Cardano's method is needed, it can be made faster (as it costs
+   * a great amount of computation time). However in that case, the solutions
+   * obtained by Cardano's method will be approximated.  */
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                     const Tree* discriminant = nullptr);
+                     const Tree* discriminant = nullptr,
+                     bool fastCardanoMethod = false);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
   /* The approximation of cubic roots requires special attention. We have
@@ -78,10 +82,15 @@ class Roots {
                                             Tree* r);
 
   /* Return a list of all cubic roots using Cardano's method. Delta can be
-   * provided or will be computed */
+   * provided or will be computed. Cardano's number has a complicated expression
+   * and can be approximated. If Cardano's number is approximated, all roots
+   * will be approximated. The computation time  of the approximate solutions is
+   * reduced by a great factor compared to the exact solutions, which require
+   * AdvancedReduction on complicated expressions. */
   static Tree* CubicRootsCardanoMethod(const Tree* a, const Tree* b,
                                        const Tree* c, const Tree* d,
-                                       const Tree* delta);
+                                       const Tree* delta,
+                                       bool approximateCardanoNumber = false);
 
   /* Return a list of all cubic roots in the special case of Cardano's method,
    * when the discriminant is null. */

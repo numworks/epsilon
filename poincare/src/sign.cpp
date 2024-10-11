@@ -395,7 +395,7 @@ ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
 ComplexSign SignOfTreeOrApproximation(const Tree* e) {
   assert(Dimension::IsNonListScalar(e));
   ComplexSign sign = GetComplexSign(e);
-  if (!sign.realSign().isKnown()) {
+  if (!sign.realSign().isKnown() || !sign.imagSign().isKnown()) {
     Tree* approximation = Approximation::RootTreeToTree<double>(e);
     sign = GetComplexSign(approximation);
     approximation->removeTree();

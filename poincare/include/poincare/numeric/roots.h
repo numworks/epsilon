@@ -22,7 +22,7 @@ class Roots {
   /* Returns a list of at most three roots, in decreasing order.
    * Delta can be provided or will be computed. */
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                     const Tree* preComputedDiscriminant = nullptr);
+                     const Tree* discriminant = nullptr);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
   /* The approximation of cubic roots requires special attention. We have

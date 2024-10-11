@@ -63,7 +63,10 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
       {.KA = a, .KB = b, .KC = discriminant});
   ComplexSign aSign = SignOfTreeOrApproximation(a);
   if (aSign.isReal() && aSign.realSign().isNegative()) {
-    // Switch roots for a consistent order
+    /* Switch roots for a consistent order.
+     * Quadratic may be called from grapher with coefficients b an c that cannot
+     * be approximated (because they depend on variables. We therefore use a's
+     * sign instead of ComplexLine order like cubic solver. */
     root1->detachTree();
   }
 
@@ -75,8 +78,8 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                const Tree* d) {
   /* Δ = b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
    * If Δ > 0, the cubic has three distinct real roots. If Δ < 0, the cubic has
-   * one real root and two non-real complex conjugate roots.
-   * If Δ = 0, the cubic has a multiple root. */
+   * one real root and two non-real complex conjugate roots. If Δ = 0, the cubic
+   * has a multiple root. */
 
   // clang-format off
   Tree* delta = PatternMatching::CreateSimplify(
@@ -93,7 +96,7 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
 }
 
 Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                   const Tree* preComputedDiscriminant) {
+                   const Tree* discriminant) {
   assert(a && b && c && d);
 
   if (a->isUndefined() || b->isUndefined() || c->isUndefined() ||
@@ -102,42 +105,38 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
   }
 
   /* Cases in which some coefficients are zero. */
-  if (a->isZero()) {
+  if (GetComplexSign(a).isNull()) {
     return Roots::Quadratic(b, c, d);
   }
-  if (d->isZero()) {
+  if (GetComplexSign(d).isNull()) {
     /* When d is null the obvious root is zero. To avoid complexifying the
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
     Tree* allRoots = Roots::Quadratic(a, b, c);
     assert(allRoots->isList());
-    /* TODO:
-     * We could refactor this by either:
+    /* TODO: We could refactor this by either:
      * - creating an NAry::RemoveDuplicates function, that would be called right
      * after NAry::Sort. We could even make a shortcut that calls both steps:
      * NAry::SortAndRemoveDuplicates.
-     * - designing and using a Set structure instead of a List.
-     */
+     * - designing and using a Set structure instead of a List. */
     if (!NAry::ContainsSame(allRoots, KTree(0_e))) {
       NAry::AddChild(allRoots, KTree(0_e)->cloneTree());
       NAry::Sort(allRoots, Order::OrderType::ComplexLine);
     }
     return allRoots;
   }
-  if (b->isZero() && c->isZero()) {
+  if (GetComplexSign(b).isNull() && GetComplexSign(c).isNull()) {
     /* We compute the three solutions here because they are quite simple, and
-     * to avoid generating very complex coefficients when creating the
-     * remaining quadratic equation. */
+     * to avoid generating very complex coefficients when creating the remaining
+     * quadratic equation. */
     return CubicRootsNullSecondAndThirdCoefficients(a, d);
   }
 
   /* To avoid applying Cardano's formula right away (because it takes a lot of
    * computation time), we use techniques to find a simple root, based on some
    * particularly common forms of cubic equations in school problems. */
-  TreeRef foundRoot = TreeRef();
-  foundRoot = SimpleRootSearch(a, b, c, d);
-  if (!foundRoot && (a->isRational() && b->isRational() && c->isRational() &&
-                     d->isRational())) {
+  TreeRef foundRoot = SimpleRootSearch(a, b, c, d);
+  if (!foundRoot) {
     foundRoot = RationalRootSearch(a, b, c, d);
   }
   if (!foundRoot) {
@@ -149,7 +148,7 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
   /* We did not manage to find any simple root: we resort to using Cardano's
    * formula. */
-  return CubicRootsCardanoMethod(a, b, c, d, preComputedDiscriminant);
+  return CubicRootsCardanoMethod(a, b, c, d, discriminant);
 }
 
 Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
@@ -244,8 +243,8 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
 Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
                                                       const Tree* d) {
   /* Polynoms of the form "ax^3+d=0" have a simple real solution : x1 =
-   * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2
-   * = rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
+   * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2 =
+   * rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
   Tree* baseRoot = PatternMatching::CreateSimplify(
       KPow(KMult(-1_e, KPow(KA, -1_e), KD), KPow(3_e, -1_e)),
       {.KA = a, .KD = d});
@@ -260,8 +259,8 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
 
 Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
                               const Tree* d) {
-  /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple root:
-   * "-d/c". */
+  /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple
+   * root: "-d/c". */
   /* TODO: check the "kx(bx^2+d)+bx^2+d" pattern, with root √(-d/b) */
   Tree* simpleRoot = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
@@ -274,8 +273,10 @@ Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
                                 const Tree* d) {
-  assert(a->isRational() && b->isRational() && c->isRational() &&
-         d->isRational());
+  if (!(a->isRational() && b->isRational() && c->isRational() &&
+        d->isRational())) {
+    return nullptr;
+  }
 
   /* The equation can be written with integer coefficients. Under that form,
    * since d/a = -x1*x2*x3, a rational root p/q must be so that p divides d
@@ -352,10 +353,10 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
 
 Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
                            const Tree* d) {
-  /* b is the opposite of the sum of all roots counted with their
-   * multiplicity, multiplied by a. As additions containing roots or powers
-   * are in general not reducible, if there exists an irrational root, it
-   * might still be explicit in the expression for b. */
+  /* b is the opposite of the sum of all roots counted with their multiplicity,
+   * multiplied by a. As additions containing roots or powers are in general not
+   * reducible, if there exists an irrational root, it might still be explicit
+   * in the expression for b. */
 
   if (b->isMult() || b->isAdd()) {
     /* If b is a product, it might contain a triple root. If b is an addition,
@@ -366,8 +367,8 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
       if (IsRoot(r, a, b, c, d)) {
         return r;
       }
-      /* Test the opposite sign. The minus sign could be in any of the
-       * different factors of a product. */
+      /* Test the opposite sign. The minus sign could be in any of the different
+       * factors of a product. */
       r->moveTreeOverTree(
           PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = r}));
       if (IsRoot(r, a, b, c, d)) {
@@ -420,8 +421,8 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
 
 Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
                                         const Tree* c, const Tree* d) {
-  /* If the discriminant is zero, the cubic has a multiple root.
-   * Furthermore, if Δ_0 = b^2 - 3ac is zero, the cubic has a triple root. */
+  /* If the discriminant is zero, the cubic has a multiple root. Furthermore, if
+   * Δ_0 = b^2 - 3ac is zero, the cubic has a triple root. */
   Tree* delta0 = Delta0(a, b, c);
 
   // clang-format off
@@ -433,8 +434,7 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
               KMult(-1_e, KB, KPow(KMult(3_e, KA), -1_e))),
           {.KA = a, .KB = b})
     :
-      /* "(9ad - bc)/(2*delta0)" is a double root and
-      * (4abc - 9da^2 - b^3)/(a*delta0)" is a simple root */
+      /* "(9ad - bc)/(2*delta0)" is a double root and (4abc - 9da^2 - b^3)/(a*delta0)" is a simple root */
       PatternMatching::CreateSimplify(
           KList(
               KMult(
@@ -480,9 +480,9 @@ Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
 Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
   /* C = ∛((delta1 ± √(delta1^2 - 4*delta0^3)) / 2)
    * The sign of ± must be chosen so that C is not null:
-   *   - if delta0 is null, we enforce C = ∛(delta1).
-   *   - otherwise, ± takes the sign of delta1. This way, we do not run the
-   *     risk of subtracting two very close numbers when delta0 << delta1. */
+   * - if delta0 is null, we enforce C = ∛(delta1).
+   * - otherwise, ± takes the sign of delta1. This way, we do not run the risk
+   * of subtracting two very close numbers when delta0 << delta1. */
 
   if (SignOfTreeOrApproximation(delta0).isNull()) {
     return PatternMatching::CreateSimplify(KPow(KA, KPow(3_e, -1_e)),
@@ -518,8 +518,8 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
 
   /* -(b + C + delta0/(C)/(3a) is a root of the cubic, where C is the Cardano
    * number multiplied by any cubic root of unity. All roots are listed by
-   * computing the three possibilities for C, i.e. with the three cubic roots
-   * of unity. */
+   * computing the three possibilities for C, i.e. with the three cubic roots of
+   * unity. */
 
   const Tree* cubicRoot = (k == 0)   ? 1_e
                           : (k == 1) ? k_cubeRootOfUnity1

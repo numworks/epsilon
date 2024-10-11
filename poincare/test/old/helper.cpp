@@ -3,7 +3,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/beautification.h>
-#include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>

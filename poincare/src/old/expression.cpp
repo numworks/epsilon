@@ -33,7 +33,6 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/old/variable_context.h>
-#include <poincare/src/expression/conversion.h>
 #include <poincare/src/layout/layouter.h>
 
 #include <cmath>

@@ -13,7 +13,6 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/continuity.h>
-#include <poincare/src/expression/conversion.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/float_helper.h>
@@ -345,12 +344,10 @@ NewExpression NewExpression::Builder(Tree* tree) {
 }
 
 NewExpression NewExpression::Juniorize(OExpression e) {
-  if (e.isUninitialized() ||
-      e.otype() == ExpressionNode::Type::JuniorExpression) {
-    // e is already a junior expression
-    return static_cast<NewExpression&>(e);
-  }
-  return Builder(FromPoincareExpression(e));
+  assert(e.isUninitialized() ||
+         e.otype() == ExpressionNode::Type::JuniorExpression);
+  // e is already a junior expression
+  return static_cast<NewExpression&>(e);
 }
 
 NewExpression NewExpression::cloneChildAtIndex(int i) const {

@@ -114,7 +114,13 @@ bool AdvancedOperation::ContractExp(Tree* e) {
       // A? + cos(B) + C? + sin(B)*i + D? = A + C + D + exp(B*i)
       PatternMatching::MatchReplaceSimplify(
           e, KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(KTrig(KB, 1_e), i_e), KD_s),
-          KAdd(KA_s, KC_s, KD_s, KExp(KMult(KB, i_e))));
+          KAdd(KA_s, KC_s, KD_s, KExp(KMult(KB, i_e)))) ||
+      // A? + cos(B) + C? - sin(B)*i + D? = A + C + D + exp(-B*i)
+      PatternMatching::MatchReplaceSimplify(
+          e,
+          KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(-1_e, KTrig(KB, 1_e), i_e),
+               KD_s),
+          KAdd(KA_s, KC_s, KD_s, KExp(KMult(-1_e, KB, i_e))));
 }
 
 // A*(B+C+..)*(D+E+...) = A*B*D + A*B*E+...+A*C*D+...

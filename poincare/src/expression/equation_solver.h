@@ -91,9 +91,6 @@ class EquationSolver {
                                uint8_t numberOfVariables, Context* context,
                                Error* error);
 
-  static constexpr int k_maxNumberOfDescendantsBeforeApproximating = 32;
-  static bool ShouldApproximatePolynomialRoots(const Tree* roots);
-
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
                                      uint8_t numberOfVariables,
@@ -107,19 +104,6 @@ class EquationSolver {
   // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
   static void TagVariableIfParameter(const char* name, uint32_t* tags,
                                      const Context* context);
-
-  // TODO: the following function could be generalized for NArys (with a "const
-  // Tree* naryTree" parameter instead of "const Tree** trees")
-  template <typename P>
-  static inline bool AllOf(const Tree** trees, int numberOfElements,
-                           P predicate) {
-    for (int i = 0; i < numberOfElements; i++) {
-      if (!predicate(trees[i])) {
-        return false;
-      }
-    }
-    return true;
-  }
 };
 
 }  // namespace Poincare::Internal

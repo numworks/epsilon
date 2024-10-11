@@ -25,8 +25,9 @@ struct ExactSolve {
   }
 };
 
-// Return the exact solutions, except for some of the cubic polynomials that
-// require Cardano's method, in which case approximate solutions are returned.
+/* Return the exact solutions, except for some of the cubic polynomials that
+ * require Cardano's method, in which case approximate solutions are returned.
+ */
 struct FastSolve {
   static Tree* process(const Tree* a, const Tree* b) {
     return ExactSolve::process(a, b);

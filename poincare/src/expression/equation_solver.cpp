@@ -562,7 +562,10 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
                                          coefficients[0])
           : Roots::CubicDiscriminant(coefficients[3], coefficients[2],
                                      coefficients[1], coefficients[0]);
-  // Exact solutions are computed here
+  /* Exact solutions are computed, except for some of the cubic polynomials that
+   * require Cardano's method, in which case approximate solutions are computed.
+   * TODO: the "fastCardanoMethod" parameter needs to be exposed at upper
+   * levels. */
   TreeRef solutionList =
       (degree == 2)
           ? Roots::Quadratic(coefficients[2], coefficients[1], coefficients[0],
@@ -570,16 +573,10 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
           : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
                          coefficients[0], discriminant, true);
 
-  if (ShouldApproximatePolynomialRoots(solutionList)) {
-    TreeRef approximatedRoots =
-        ((degree == 3) &&
-         AllOf(coefficients, numberOfTerms,
-               [](const Tree* e) { return GetComplexSign(e).isReal(); }))
-            ? Roots::ApproximateRootsOfRealCubic(solutionList, discriminant)
-            : Approximation::RootTreeToTree<double>(solutionList);
-    solutionList->removeTree();
-    solutionList = approximatedRoots;
-  }
+  /* TODO: When all coefficients are real, the number of real solutions needs to
+   * be checked in an assert (looking at the discrimant sign). The verification
+   * function would be similar to Roots::ApproximateRootsOfRealCubic, but
+   * without approximation. */
 
   polynomial->removeTree();
   for (Tree* solution : solutionList->children()) {
@@ -589,13 +586,6 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;
   return solutionList;
-}
-
-bool EquationSolver::ShouldApproximatePolynomialRoots(const Tree* roots) {
-  return roots->hasChildSatisfying([](const Tree* root) {
-    return root->numberOfDescendants(true) >
-           k_maxNumberOfDescendantsBeforeApproximating;
-  });
 }
 
 EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,

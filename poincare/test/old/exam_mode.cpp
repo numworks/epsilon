@@ -1,4 +1,4 @@
-#include <poincare/old/exam_mode.h>
+#include <poincare/exam_mode.h>
 #include <quiz.h>
 
 using namespace Poincare;

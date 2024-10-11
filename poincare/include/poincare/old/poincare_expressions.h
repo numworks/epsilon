@@ -22,8 +22,6 @@
 #include <poincare/old/dimension.h>
 #include <poincare/old/distribution_dispatcher.h>
 #include <poincare/old/division.h>
-#include <poincare/old/division_quotient.h>
-#include <poincare/old/division_remainder.h>
 #include <poincare/old/empty_expression.h>
 #include <poincare/old/factor.h>
 #include <poincare/old/factorial.h>

@@ -60,8 +60,6 @@ $(addprefix old/, \
   dimension.cpp \
   distribution_dispatcher.cpp \
   division.cpp \
-  division_quotient.cpp \
-  division_remainder.cpp \
   empty_context.cpp \
   empty_expression.cpp \
   evaluation.cpp \

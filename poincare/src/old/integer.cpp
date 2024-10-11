@@ -735,22 +735,6 @@ IntegerDivision Integer::udiv(const Integer &numerator,
   return div;
 }
 
-OExpression Integer::CreateEuclideanDivision(const Integer &num,
-                                             const Integer &denom) {
-  OExpression quo = DivisionQuotient::Reduce(num, denom);
-  OExpression rem = DivisionRemainder::Reduce(num, denom);
-  OExpression e = Comparison::Builder(
-      Rational::Builder(num), ComparisonNode::OperatorType::Equal,
-      Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo),
-                        rem));
-  ReductionContext defaultReductionContext = ReductionContext(
-      nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
-      Preferences::UnitFormat::Metric, ReductionTarget::User,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  e = e.deepBeautify(defaultReductionContext);
-  return e;
-}
-
 OExpression Integer::CreateMixedFraction(const Integer &num,
                                          const Integer &denom) {
   Integer numPositive(num), denomPositive(denom);

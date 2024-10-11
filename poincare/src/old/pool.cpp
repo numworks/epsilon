@@ -1,5 +1,5 @@
+#include <omg/memory.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/helpers.h>
 #include <poincare/old/pool.h>
 #include <poincare/old/pool_checkpoint.h>
 #include <poincare/old/pool_handle.h>
@@ -89,7 +89,7 @@ void Pool::moveNodes(PoolObject *destination, PoolObject *source,
   uint32_t *dst = reinterpret_cast<uint32_t *>(destination);
   size_t len = moveSize / 4;
 
-  if (Helpers::Rotate(dst, src, len)) {
+  if (OMG::Memory::Rotate(dst, src, len)) {
     updateNodeForIdentifierFromNode(dst < src ? destination : source);
   }
 }

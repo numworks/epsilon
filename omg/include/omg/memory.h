@@ -8,7 +8,8 @@
 namespace OMG::Memory {
 
 size_t AlignedSize(size_t realSize, size_t alignment);
-bool Rotate(uint8_t* dst, uint8_t* src, size_t len);
+template <typename T>
+bool Rotate(T* dst, T* src, size_t len);
 void Decompress(const uint8_t* src, uint8_t* dst, int srcSize, int dstSize);
 
 constexpr uint32_t k_crcPolynomial = 0x04C11DB7;

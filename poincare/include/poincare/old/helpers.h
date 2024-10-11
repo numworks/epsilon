@@ -16,8 +16,6 @@ class ListComplex;
 class Helpers {
  public:
   static size_t Gcd(size_t a, size_t b);
-
-  static bool Rotate(uint32_t* dst, uint32_t* src, size_t len);
 };
 
 }  // namespace Poincare

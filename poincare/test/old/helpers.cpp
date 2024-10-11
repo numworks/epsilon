@@ -1,3 +1,4 @@
+#include <omg/memory.h>
 #include <poincare/old/helpers.h>
 
 #include "helper.h"
@@ -20,12 +21,12 @@ QUIZ_CASE(poincare_helpers_insert_simple_swap) {
     buf[i] = (uint32_t)i;
   }
 
-  Poincare::Helpers::Rotate(&buf[0], &buf[1], 1);
+  OMG::Memory::Rotate(&buf[0], &buf[1], 1);
   quiz_assert(buf[0] == 1);
   quiz_assert(buf[1] == 0);
   quiz_assert(buf[2] == 2);
 
-  Poincare::Helpers::Rotate(&buf[2], &buf[0], 1);
+  OMG::Memory::Rotate(&buf[2], &buf[0], 1);
   quiz_assert(buf[0] == 0);
   quiz_assert(buf[1] == 1);
   quiz_assert(buf[2] == 2);
@@ -35,7 +36,7 @@ static inline void test_rotate(uint32_t buf[], size_t bufSize, size_t dstIndex,
                                size_t srcIndex, size_t len) {
   quiz_assert(len == 0 || (srcIndex + len - 1 < bufSize));
 
-  Poincare::Helpers::Rotate(&buf[dstIndex], &buf[srcIndex], len);
+  OMG::Memory::Rotate(&buf[dstIndex], &buf[srcIndex], len);
 
   if (len == 0 || srcIndex == dstIndex ||
       (dstIndex > srcIndex && dstIndex < srcIndex + len)) {

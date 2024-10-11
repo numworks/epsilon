@@ -11,7 +11,8 @@ size_t AlignedSize(size_t realSize, size_t alignment) {
   return result;
 }
 
-bool Rotate(uint8_t* dst, uint8_t* src, size_t len) {
+template <typename T>
+bool Rotate(T* dst, T* src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *
@@ -44,14 +45,14 @@ bool Rotate(uint8_t* dst, uint8_t* src, size_t len) {
   size_t dstAddressOffset = dst < src ? len : dst - len - src;
 
   // We need the limit addresses of the data that will change
-  uint8_t* insertionZoneStart = dst < src ? dst : src;
-  uint8_t* insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
+  T* insertionZoneStart = dst < src ? dst : src;
+  T* insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
 
-  uint8_t* cycleStartAddress;
-  uint8_t* moveSrcAddress;
-  uint8_t* moveDstAddress;
-  uint8_t tmpData;
-  uint8_t nextTmpData;
+  T* cycleStartAddress;
+  T* moveSrcAddress;
+  T* moveDstAddress;
+  T tmpData;
+  T nextTmpData;
 
   for (size_t i = 0; i < numberOfCycles; i++) {
     // Set the cycle starting source
@@ -79,5 +80,8 @@ bool Rotate(uint8_t* dst, uint8_t* src, size_t len) {
   }
   return true;
 }
+
+template bool Rotate(uint8_t* dst, uint8_t* src, size_t len);
+template bool Rotate(uint32_t* dst, uint32_t* src, size_t len);
 
 }  // namespace OMG::Memory

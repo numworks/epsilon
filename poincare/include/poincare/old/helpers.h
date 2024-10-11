@@ -15,7 +15,6 @@ class ListComplex;
 
 class Helpers {
  public:
-  static size_t Gcd(size_t a, size_t b);
 };
 
 }  // namespace Poincare

@@ -1,10 +1,10 @@
+#include <omg/arithmetic.h>
 #include <omg/memory.h>
-#include <poincare/old/helpers.h>
 
 #include "helper.h"
 
 static inline void assert_gcd_is(size_t a, size_t b, size_t g) {
-  quiz_assert(Poincare::Helpers::Gcd(a, b) == g);
+  quiz_assert(OMG::Arithmetic::Gcd(a, b) == g);
 }
 
 QUIZ_CASE(poincare_helpers_gcd) {

@@ -485,6 +485,17 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   return false;
 }
 
+bool Trigonometry::ReduceArCosH(Tree* e) {
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KArCosH(KTrig(KMult(KA, i_e), 0_e)), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // acosh(cos(i*x)) = abs(x) for x real
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(KAbs(KA), ctx));
+    return true;
+  }
+  return false;
+}
+
 /* TODO: Find an easier solution for nested expand/contract smart shallow
  * simplification. */
 

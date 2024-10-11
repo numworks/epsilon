@@ -17,6 +17,8 @@ class Trigonometry final {
   TREE_REF_WRAP(ReduceATrig);
   static bool ReduceArcTangentRad(Tree* e);
   TREE_REF_WRAP(ReduceArcTangentRad);
+  static bool ReduceArCosH(Tree* e);
+  TREE_REF_WRAP(ReduceArCosH);
   static bool ContractTrigonometric(Tree* e);
   TREE_REF_WRAP(ContractTrigonometric);
   static bool ExpandTrigonometric(Tree* e);

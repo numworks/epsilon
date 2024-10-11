@@ -505,12 +505,10 @@ QUIZ_CASE(pcj_simplification_factorial) {
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
-  // TODO : Should simplify to 1
-  simplifies_to("cosh(x)^2-sinh(-x)^2", "e^(x)×e^(-x)");
+  simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-(-1+e^(2×x))/(1+e^(2×x))+((-1+e^(4×x))×(1+(-1+e^(2×x))^2/"
-                "(1+e^(2×x))^2))/(2×(1+e^(4×x)))");
+                "tan(2×x×i)×i×(sin(x×i)^2/(2×cos(x×i)^2)-1/2)+tan(x×i)×i");
   simplifies_to("arcosh(5)", "ln(5+√(24))", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("arsinh(sinh(x))",
@@ -525,9 +523,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(arcosh(x))",
                 "(x+e^((ln(x-1)+ln(x+1))/2)+1/(x+e^((ln(x-1)+ln(x+1))/2)))/2",
                 cartesianCtx);
-  // TODO: Should simplify to x
-  simplifies_to("sinh(arsinh(x))", "(x+√(x^2+1)-1/(x+√(x^2+1)))/2",
-                cartesianCtx);
+  simplifies_to("sinh(arsinh(x))", "x", cartesianCtx);
   // TODO: Should simplify to x
   simplifies_to("tanh(artanh(x))", "(-1+(x+1)/(-x+1))/(1+(x+1)/(-x+1))",
                 cartesianCtx);

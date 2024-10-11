@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict'
 import fs from 'fs'
 
-import { CompilePoincareAsync, UsePoincare, UserExpressionTree } from './poincare.mjs'
-
-console.log('\n> Initializing Poincare');
-
-const wasmBuffer = fs.readFileSync('./poincare.wasm');
-await CompilePoincareAsync(wasmBuffer);
+import PoincareInstanceFactory from './poincare.mjs'
 
 console.log('> Starting tests\n');
 
@@ -14,28 +9,35 @@ let nTests = 0;
 let nSuccess = 0;
 
 async function testCase(featureName, testFunction) {
-  // Create a new Poincare instance
-  UsePoincare(async (poincare) => {
-    nTests += 1;
-    let success = true;
-    let error = null;
-    try {
-      await testFunction(poincare);
-      nSuccess += 1;
-    } catch (e) {
-      error = e;
-      success = false;
-    }
-    console.log((success ? '✅ ' : '❌ ') + 'Test: ' + featureName);
-    if (!success) {
-      console.log(error);
-    }
-  });
+  // Create a new Poincare instance for each test
+  const poincare = await PoincareInstanceFactory();
+  nTests += 1;
+  let success = true;
+  let error = null;
+  try {
+    await testFunction(poincare);
+    nSuccess += 1;
+  } catch (e) {
+    error = e;
+    success = false;
+  }
+  console.log((success ? '✅ ' : '❌ ') + 'Test: ' + featureName);
+  if (!success) {
+    console.log(error);
+  }
 }
 
 Promise.all([
   // Wait for all tests to complete before logging end message
-  testCase('Regression - Linear', async (poincare) => {
+  testCase('Module - cleanUpAfterRun', (poincare) => {
+    var expression;
+    poincare.cleanUpAfterRun(() => {
+      expression = poincare.PCR_UserExpression.BuildFromLatex('1/2');
+    });
+    // The expression should be deleted after the callback
+    assert.ok(expression.isDeleted());
+  }),
+  testCase('Regression - Linear', (poincare) => {
     var series = new poincare.PCR_RegressionSeries([1.0, 8.0, 14.0, 79.0], [-3.581, 22.2, 40.676, 261.623]);
 
     assert.equal(series.getXArray()[0], 1.0);
@@ -70,13 +72,13 @@ Promise.all([
     assert.equal(residualStdev, 1.1334028410057904);
   }),
 
-  testCase('Statistics - Array', async (poincare) => {
+  testCase('Statistics - Array', (poincare) => {
     var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0]);
     assert.equal(dataset.mean(), 0.5);
   }),
 
 
-  testCase('Statistics - Series', async (poincare) => {
+  testCase('Statistics - Series', (poincare) => {
     var dataset = new poincare.PCR_StatisticsDataset([1.0, 5.0, -14.0, 10.0], [2.0, 4.0, 1.0, 3.0]);
     assert.equal(dataset.getValuesArray().length, 4);
     assert.equal(dataset.mean(), 3.8);
@@ -86,7 +88,7 @@ Promise.all([
   }),
 
 
-  testCase('Expression - Parse, Reduce, Approximate', async (poincare) => {
+  testCase('Expression - Parse, Reduce, Approximate', (poincare) => {
     const userExpression = poincare.PCR_UserExpression.BuildFromLatex('\\frac{6}{9}');
 
     assert.ok(!userExpression.isUninitialized());
@@ -112,7 +114,7 @@ Promise.all([
     assert.equal(userApproximateExpression.toLatex(numberOfSignificantDigits, withThousandsSeparators), '0.6666667');
   }),
 
-  testCase('Expression - System Function, Derivative', async (poincare) => {
+  testCase('Expression - System Function, Derivative', (poincare) => {
     const userExpression = poincare.PCR_UserExpression.BuildFromLatex('x^{2}-2x+1');
 
     assert.ok(!userExpression.isUninitialized());
@@ -157,14 +159,13 @@ Promise.all([
     assert.deepEqual(storedTree, expectedTree);
 
     // Reinstantiate in a new Poincare instance
-    UsePoincare((newPoincare) => {
-      const newExpression = newPoincare.PCR_UserExpression.BuildFromTree(storedTree);
-      assert.ok(!newExpression.isUninitialized());
-      assert.equal(expression.toLatex(7, true), '1+2');
-    });
+    const newPoincare = await PoincareInstanceFactory();
+    const newExpression = newPoincare.PCR_UserExpression.BuildFromTree(storedTree);
+    assert.ok(!newExpression.isUninitialized());
+    assert.equal(newExpression.toLatex(7, true), '1+2');
   }),
 
-  testCase('Expression builder', async (poincare) => {
+  testCase('Expression builder', (poincare) => {
     const expression = poincare.PCR_UserExpression.BuildFromPattern(
       'Pow(Add(Mult(MinusOne,K0),K1),Pi)',
       poincare.PCR_UserExpression.BuildInt(2),
@@ -184,7 +185,7 @@ Promise.all([
     assert.equal(expression2.toLatex(numberOfSignificantDigits, withThousandsSeparators), '-1\\times 1+π');
   }),
 
-  testCase('Solver - Min, Max, Root', async (poincare) => {
+  testCase('Solver - Min, Max, Root', (poincare) => {
     const emptyContext = new poincare.PCR_EmptyContext();
     const reductionContext = poincare.PCR_ReductionContext.Default(emptyContext, true);
 

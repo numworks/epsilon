@@ -103,16 +103,6 @@ PRIVATE_SFLAGS_poincarejs += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
 
-# Make the module initialization synchronous
-LDFLAGS_poincarejs += -s WASM_ASYNC_COMPILATION=0 \
-
-# We remove 'node' from the environment because it is not working
-# with the combination of WASM_ASYNC_COMPILATION=0 and EXPORT_ES6=1
-# poincare.js can still be used with node though, probably because
-# there is no behaviour like fetching data that require to differentiate
-# the environments.
-LDFLAGS_poincarejs += -s ENVIRONMENT='web,webview,worker' \
-
 # Generate ts types file
 # For this to work, go to emsdk/upstream/emscripten and run:
 # > npm install typescript
@@ -120,6 +110,9 @@ LDFLAGS_poincarejs += -s ENVIRONMENT='web,webview,worker' \
 ifeq ($(EMIT_TSD),1)
 LDFLAGS_poincarejs += --emit-tsd poincare.d.ts
 endif
+
+LDFLAGS_poincarejs += --pre-js poincare/poincarejs/pre-js.js
+LDFLAGS_poincarejs += --extern-pre-js poincare/poincarejs/extern-pre-js.js
 
 LDFLAGS_poincarejs += \
   -lembind \
@@ -137,17 +130,19 @@ $(call create_goal,poincare, \
   poincarejs \
 )
 
-# Post process poincare.js and poincare.d.ts
+# Post process poincare.d.ts
+ifeq ($(EMIT_TSD),1)
 define LD_WRAPPER_poincare
 	$1
-	./poincare/poincarejs/post_process_poincarejs.sh $(OUTPUT_DIRECTORY)
+	./poincare/poincarejs/post_process_ts.sh $(OUTPUT_DIRECTORY)
 endef
+endif
 
-$(OUTPUT_DIRECTORY)/poincare.js: poincare/poincarejs/post_process_poincarejs.sh poincare/poincarejs/poincare-partial.js
+$(OUTPUT_DIRECTORY)/poincare.js: poincare/poincarejs/pre-js.js poincare/poincarejs/extern-pre-js.js poincare/poincarejs/post_process_ts.sh poincare/poincarejs/poincare-partial.d.ts
 
 # Byproducts of building poincare.js
 $(OUTPUT_DIRECTORY)/poincare.wasm: $(OUTPUT_DIRECTORY)/poincare.js
-$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js poincare/poincarejs/post_process_poincarejs.sh poincare/poincarejs/poincare-partial.d.ts
+$(OUTPUT_DIRECTORY)/poincare.d.ts: $(OUTPUT_DIRECTORY)/poincare.js
 
 # Version file
 .PHONY: $(OUTPUT_DIRECTORY)/.version.json

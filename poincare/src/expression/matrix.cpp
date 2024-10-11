@@ -10,7 +10,6 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "number.h"
-#include "poincare/old/context.h"
 #include "systematic_reduction.h"
 #include "vector.h"
 

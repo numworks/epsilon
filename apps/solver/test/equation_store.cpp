@@ -18,10 +18,8 @@ QUIZ_CASE(solver_error) {
 
   assert_solves_to_error("x-[[2,3]]=0", EquationUndefined);
   assert_solves_to_error("x[[2,3]]=0", EquationUndefined);
-
-  /* TODO_PCJ: currently solves to EquationUndefined */
-  // assert_solves_to_no_solution("x-{2,3}=0");
-  // assert_solves_to_no_solution("x{2,3}=0");
+  assert_solves_to_error("x-{2,3}=0", EquationUndefined);
+  assert_solves_to_error("x{2,3}=0", EquationUndefined);
 }
 
 QUIZ_CASE(solver_linear_system) {
@@ -210,19 +208,19 @@ QUIZ_CASE(solver_complex_real) {
   // assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
 
 #if 0  // TODO_PCJ
-  // // With a predefined variable that should be ignored
-  // set("h", "3");
-  // assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});
-  // set("h", "1");
-  // assert_solves_to("h^2=-1", {"delta=-4"});  // No real solutions
-  // set("h", "i+1");
-  // assert_solves_to("h^2=-1", {"delta=-4"});  // No real solutions
-  // //  - We still want complex solutions if the input has some complex value
-  // set("h", "1");
-  // assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
-  // set("h", "i+1");
-  // assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
-  // unset("h");
+  // With a predefined variable that should be ignored
+  set("h", "3");
+  assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});
+  set("h", "1");
+  assert_solves_to("h^2=-1", {"delta=-4"});  // No real solutions
+  set("h", "i+1");
+  assert_solves_to("h^2=-1", {"delta=-4"});  // No real solutions
+  //  - We still want complex solutions if the input has some complex value
+  set("h", "1");
+  assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
+  set("h", "i+1");
+  assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
+  unset("h");
 #endif
 }
 

@@ -40,12 +40,6 @@ class Helpers {
   // Return true if observed and expected are approximately equal
   template <typename T>
   static bool RelativelyEqual(T observed, T expected, T relativeThreshold);
-
-  /* FIXME : This can be replaced by std::string_view when moving to C++17 */
-  constexpr static bool StringsAreEqual(const char* s1, const char* s2) {
-    return *s1 == *s2 &&
-           ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
-  }
 };
 
 }  // namespace Poincare

@@ -1,7 +1,8 @@
 #ifndef POINCARE_INFINITY_H
 #define POINCARE_INFINITY_H
 
-#include "helpers.h"
+#include <omg/print.h>
+
 #include "number.h"
 
 namespace Poincare {
@@ -69,8 +70,8 @@ class Infinity final : public Number {
    * const char * when negative = true */
   constexpr static const char* k_minusInfinityMainName = "-∞";
   // ∞ is 3 chars long.
-  static_assert(Helpers::StringsAreEqual(k_minusInfinityMainName + 1,
-                                         k_infinityAliases.mainAlias()),
+  static_assert(OMG::Print::StringsAreEqual(k_minusInfinityMainName + 1,
+                                            k_infinityAliases.mainAlias()),
                 "minus infinity does not have same name as infinity.");
 
   constexpr static const char* Name(bool negative = false) {

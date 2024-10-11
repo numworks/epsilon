@@ -25,7 +25,6 @@ class Helpers {
     bool scalars;
   };
 
-  static size_t AlignedSize(size_t realSize, size_t alignment);
   static size_t Gcd(size_t a, size_t b);
 
   static bool Rotate(uint32_t* dst, uint32_t* src, size_t len);

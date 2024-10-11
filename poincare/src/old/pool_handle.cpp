@@ -1,3 +1,4 @@
+#include <omg/memory.h>
 #include <poincare/old/ghost.h>
 #include <poincare/old/poincare_expressions.h>
 #include <poincare/old/pool_handle.h>
@@ -286,7 +287,7 @@ PoolHandle PoolHandle::BuildWithGhostChildren(PoolObject *node) {
     ghost->retain();
     assert((char *)ghost ==
            (char *)node->next() +
-               i * Helpers::AlignedSize(sizeof(GhostNode), ByteAlignment));
+               i * OMG::Memory::AlignedSize(sizeof(GhostNode), ByteAlignment));
   }
   return PoolHandle(node);
 }

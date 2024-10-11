@@ -29,8 +29,9 @@ void Pool::move(PoolObject *destination, PoolObject *source,
 }
 
 void Pool::moveChildren(PoolObject *destination, PoolObject *sourceParent) {
-  size_t moveSize = sourceParent->deepSize(-1) -
-                    Helpers::AlignedSize(sourceParent->size(), ByteAlignment);
+  size_t moveSize =
+      sourceParent->deepSize(-1) -
+      OMG::Memory::AlignedSize(sourceParent->size(), ByteAlignment);
   moveNodes(destination, sourceParent->next(), moveSize);
 }
 
@@ -134,7 +135,7 @@ void *Pool::alloc(size_t size) {
   assert(!s_treePoolLocked);
 #endif
 
-  size = Helpers::AlignedSize(size, ByteAlignment);
+  size = OMG::Memory::AlignedSize(size, ByteAlignment);
   if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
@@ -149,7 +150,7 @@ void Pool::dealloc(PoolObject *node, size_t size) {
   assert(!s_treePoolLocked);
 #endif
 
-  size = Helpers::AlignedSize(size, ByteAlignment);
+  size = OMG::Memory::AlignedSize(size, ByteAlignment);
   char *ptr = reinterpret_cast<char *>(node);
   assert(ptr >= buffer() && ptr < m_cursor);
 

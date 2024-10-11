@@ -9,6 +9,7 @@
 #include <iostream>
 #include <ostream>
 #endif
+#include <omg/memory.h>
 #include <poincare/preferences.h>
 
 #include "helpers.h"
@@ -228,7 +229,7 @@ class PoolObject {
      * a VARIABLE size */
     return reinterpret_cast<PoolObject *>(
         reinterpret_cast<char *>(const_cast<PoolObject *>(this)) +
-        Helpers::AlignedSize(size(), ByteAlignment));
+        OMG::Memory::AlignedSize(size(), ByteAlignment));
   }
 #if PCJ_DELETE
   PoolObject *nextSibling() const;

@@ -139,6 +139,14 @@ Tree* parse(const char* input, Poincare::Context* context,
   return private_parse(input, context, parseForAssignment);
 }
 
+Tree* parse_and_simplify(const char* input) {
+  Tree* e = parse(input);
+  assert(e);
+  ProjectionContext ctx = {};
+  Simplification::SimplifyWithAdaptiveStrategy(e, &ctx);
+  return e;
+}
+
 void assert_text_not_parsable(const char* input, Poincare::Context* context) {
   bool parsed = private_parse(input, context, false, true);
   quiz_assert(!parsed);

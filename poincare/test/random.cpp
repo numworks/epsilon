@@ -6,14 +6,6 @@
 
 using namespace Poincare::Internal;
 
-Tree* parse_and_simplify(const char* input) {
-  Tree* e = parse(input);
-  assert(e);
-  ProjectionContext ctx = {};
-  Simplification::SimplifyWithAdaptiveStrategy(e, &ctx);
-  return e;
-}
-
 template <typename T>
 void simplify_and_compare_approximates(const char* input1, const char* input2,
                                        bool equal) {

@@ -118,7 +118,10 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
           [[fallthrough]];
         default: {
           const Tree* definition =
-              projectionContext.m_context->treeForSymbolIdentifier(descendant);
+              projectionContext.m_context
+                  ? projectionContext.m_context->treeForSymbolIdentifier(
+                        descendant)
+                  : nullptr;
           if (definition && hasComplexNodes(definition, projectionContext)) {
             return true;
           }

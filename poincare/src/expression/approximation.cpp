@@ -349,10 +349,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Sub:
       return ToComplex<T>(e->child(0), ctx) - ToComplex<T>(e->child(1), ctx);
     case Type::Pow: {
-      // how is this called without a context ?
-      Context c;
-      c.m_complexFormat = ComplexFormat::Real;
-      return ApproximatePower<T>(e, ctx ? ctx : &c);
+      return ApproximatePower<T>(
+          e, ctx, ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
     }
     case Type::GCD:
     case Type::LCM: {
@@ -848,9 +846,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Decimal:
       return child[0] * std::pow(static_cast<T>(10.0), -child[1]);
     case Type::PowReal: {
-      Context childCtx(*ctx);
-      childCtx.m_complexFormat = ComplexFormat::Real;
-      return ApproximatePower<T>(e, &childCtx);
+      return ApproximatePower<T>(e, ctx, ComplexFormat::Real);
     }
     case Type::Sign: {
       // TODO why no epsilon in Poincare ?

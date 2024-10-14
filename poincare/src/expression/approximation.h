@@ -257,8 +257,8 @@ class Approximation final {
   static T ApproximateRandomHelper(const Tree* randomTree, const Context* ctx);
 
   template <typename T>
-  static std::complex<T> ApproximatePower(const Tree* power,
-                                          const Context* ctx);
+  static std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
+                                          ComplexFormat complexFormat);
   template <typename T>
   static std::complex<T> ComputeComplexPower(const std::complex<T> c,
                                              const std::complex<T> d,

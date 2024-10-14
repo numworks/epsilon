@@ -132,11 +132,11 @@ QUIZ_CASE(poincare_context_user_variable_composed_functions) {
 QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value) {
   // f : x→ x^2
   assert_reduce_and_store("x^2→f(x)");
-  // Approximate f(?-2) with ? = 5
+  // Approximate f(x-2) with x = 5
 
   assert_parsed_expression_approximates_with_value_for_symbol(
       KFun<"f">(KSub("x"_e, 2_e)), "x", 5.0, 9.0);
-  // Approximate f(?-1)+f(?+1) with ? = 3
+  // Approximate f(x-1)+f(x+1) with x = 3
   assert_parsed_expression_approximates_with_value_for_symbol(
       KAdd(KFun<"f">(KSub("x"_e, 1_e)), KFun<"f">(KAdd("x"_e, 1_e))), "x", 3.0,
       20.0);
@@ -146,7 +146,7 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value) {
 
   // f : x → √(-1)
   assert_reduce_and_store("√(-1)×√(-1)→f(x)");
-  // Approximate f(?) with ? = 5
+  // Approximate f(x) with x = 5
   // Cartesian
   assert_parsed_expression_approximates_with_value_for_symbol(KFun<"f">("x"_e),
                                                               "x", 1.0, -1.0);

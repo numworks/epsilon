@@ -286,16 +286,16 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KCosH(KA), KTrig(KMult(KA, i_e), 0_e)) ||
       // sinh(A) -> -i*sin(i*A)
       PatternMatching::MatchReplace(
-          e, KSinH(KA), KMult(-1_e, i_e, KTrig(KMult(KA, i_e), 1_e))) ||
+          e, KSinH(KA), KMult(-1_e, KTrig(KMult(KA, i_e), 1_e), i_e)) ||
       // tanh(A) -> -i*tan(i*A)
       PatternMatching::MatchReplace(e, KTanH(KA),
-                                    KMult(-1_e, i_e, KTan(KMult(i_e, KA)))) ||
+                                    KMult(-1_e, KTan(KMult(KA, i_e)), i_e)) ||
       // ArSinh(A) -> -i*asin(i*A)
       PatternMatching::MatchReplace(
-          e, KArSinH(KA), KMult(-1_e, i_e, KATrig(KMult(KA, i_e), 1_e))) ||
-      // ArTanh(A) -> i*atan(-i*A)
+          e, KArSinH(KA), KMult(-1_e, KATrig(KMult(KA, i_e), 1_e), i_e)) ||
+      // ArTanh(A) -> -i*atan(i*A)
       PatternMatching::MatchReplace(e, KArTanH(KA),
-                                    KMult(i_e, KATan(KMult(-1_e, i_e, KA))))) {
+                                    KMult(-1_e, KATan(KMult(KA, i_e)), i_e))) {
     // Hyperbolic trigonometry results should stay in radian unit
     projectionContext->m_angleUnit = AngleUnit::Radian;
     // e may need to be projected again.

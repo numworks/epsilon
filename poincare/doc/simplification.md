@@ -53,7 +53,61 @@ For example, with this projection, both random should always approximate to the 
 sinh(random())=\frac{e^{random()}-e^{-random()}}{2}
 ```
 
-Therefore, we seed each random in this step with an id. On approximation, random nodes with a same id will be approximated to the same value.
+
+<details>
+<summary>Exception with some parametrics</summary>
+
+For parametrics (in particular Sum, Product and ListSequence, others just do not handle random) containing a randomized expression, we want to approximate each instance of the expression to a different random, for instance:
+
+$sum(random(),k,0,1) = random()+random() ≠ 2*random()$
+
+We handle this problematic with the following steps:
+
+- the expression is seeded as usual
+
+$sum(random_1(),k,0,1)$
+
+- we prevent any randomized node from entering or leaving the scope of the parametric
+
+$sum(random_1(),k,0,1)$ cannot reduce to $2*random_1()$
+
+and
+
+$random_1()+sequence(random_2(),k,2)$ cannot reduce to $sequence(random_1()+random_2(),k,2)$
+
+- when we approximate a parametric, we approximate each instance of the expression with new values for each seed (by giving a clean randomContext each time)
+
+$$sum(tan(random_1()),k,0,1)$$
+
+approximates via
+
+$$\frac{sin(random_1())}{cos(random_1())} + \frac{sin(random_1^{new}())}{cos(random_1^{new}())}$$
+
+<details>
+<summary>Reasons for handling parametrics this way</summary>
+
+We want to respect the following properties:
+
+- $random()$ cannot be approximated during simplification
+- $random()-random()$ should not be reduced to 0
+- $tan(random())$ should be well distributed
+- $sequence(random(),k,10)$ should not be reduced to $random()*sequence(1,k,10)$
+
+A possible solution would be to seed random nodes via a child containing an expression evaluating to an integer, so that we could seed nodes inside parametrics with a formula dependant on k. This would mean forbidding randomized nodes in integrals and diff, and having a solution for a too high number of seeds (for instance always returning a different result). 
+
+This solution was deemed too heavy for now, which is why parametrics are only handled at approximation. 
+
+<details>
+<summary>Other solutions we thought of</summary>
+
+- *not seeding nodes in parametrics*, which would force us to prevent any form of simplification on an expression containing a randomized parametric (and thus check at each entry point of the simplification whether we have a randomized parametric in the expression)
+
+
+</details>
+
+</details>
+
+</details>
 
 ## Local symbols
 

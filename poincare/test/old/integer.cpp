@@ -382,14 +382,14 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(OverflowedInteger(), "∞");
 }
 
-// Euclidian Division
+// Euclidean Division
 
 void assert_division_computes_to(int n, int m, const char* div) {
   assert_expression_serializes_to(
       Integer::CreateEuclideanDivision(Integer(n), Integer(m)), div);
 }
 
-QUIZ_CASE(poincare_integer_euclidian_division) {
+QUIZ_CASE(poincare_integer_euclidean_division) {
   assert_division_computes_to(47, 8, "47=8×5+7");
   assert_division_computes_to(1, 5, "1=5×0+1");
   assert_division_computes_to(12, 4, "12=4×3+0");

@@ -1,0 +1,11 @@
+{
+  "name": "epsilon-internal",
+  "version": "1.0.0",
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,mjs,cjs,ts}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs,cjs,ts}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}

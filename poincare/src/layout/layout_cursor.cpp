@@ -606,6 +606,7 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 
 void LayoutCursor::moveCursorToLayout(Tree* cursorNode,
                                       OMG::HorizontalDirection sideOfLayout) {
+  stopSelecting();
   if (!cursorNode->isRackLayout()) {
     int indexInParent;
     Rack* parent =

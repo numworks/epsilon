@@ -487,9 +487,9 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
 
 bool Trigonometry::ReduceArCosH(Tree* e) {
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KArCosH(KTrig(KMult(KA, i_e), 0_e)), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
-    // acosh(cos(i*x)) = abs(x) for x real
+  if (PatternMatching::Match(e, KArCosH(KTrig(KA, 0_e)), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+    // acosh(cos(x)) = abs(x) for x pure imaginary
     e->moveTreeOverTree(PatternMatching::CreateSimplify(KAbs(KA), ctx));
     return true;
   }

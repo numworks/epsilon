@@ -326,15 +326,21 @@ void assert_expression_serializes_to(const Tree *expression,
 #endif
 }
 
-void assert_expression_serializes_and_parses_to_itself(
-    const Poincare::Internal::Tree *expression) {
+void assert_expression_serializes_and_parses_to(
+    const Poincare::Internal::Tree *expression,
+    const Poincare::Internal::Tree *result) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree *layout =
       Internal::Layouter::LayoutExpression(expression->cloneTree(), true);
   *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
   layout->removeTree();
-  assert_parsed_expression_is(buffer, expression);
+  assert_parsed_expression_is(buffer, result);
+}
+
+void assert_expression_serializes_and_parses_to_itself(
+    const Poincare::Internal::Tree *expression) {
+  return assert_expression_serializes_and_parses_to(expression, expression);
 }
 
 void assert_expression_parses_and_serializes_to(

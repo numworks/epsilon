@@ -205,13 +205,17 @@ QUIZ_CASE(poincare_serialization_float) {
 }
 
 QUIZ_CASE(poincare_serialization_division) {
-  assert_expression_serializes_to(KDiv(-2_e, π_e), "(-2)/π");
-  assert_expression_serializes_to(KDiv(π_e, -2_e), "π/(-2)");
+  assert_expression_serializes_to(KDiv(-2_e, π_e), "-2/π");
+  assert_expression_serializes_to(KDiv(π_e, -2_e), "π/-2");
+  assert_expression_serializes_and_parses_to_itself(KDiv(2_e, 3_e));
   assert_expression_serializes_to(KDiv(2_e / 3_e, π_e), "(2/3)/π");
   assert_expression_serializes_to(KDiv(KAdd(2_e, 1_e), π_e), "(2+1)/π");
   assert_expression_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");
   assert_expression_serializes_to(KDiv(KMult(2_e, 1_e), π_e), "(2×1)/π");
   assert_expression_serializes_to(KDiv(KDiv(2_e, 1_e), π_e), "(2/1)/π");
+  assert_expression_serializes_to(KDiv(2_e, KDiv(1_e, π_e)), "2/(1/π)");
+  assert_expression_serializes_to(KDiv(KDiv(2_e, 3_e), KDiv(1_e, π_e)),
+                                  "(2/3)/(1/π)");
   assert_expression_serializes_to(KDiv(KOpposite(2_e), π_e), "(-2)/π");
 }
 
@@ -227,21 +231,31 @@ QUIZ_CASE(poincare_serialization_percent) {
   assert_expression_serializes_to(KPercentSimple(KPow(π_e, 3_e)), "(π^3)%");
   assert_expression_serializes_to(
       KPercentAddition(KPercentAddition(100_e, 20_e), KOpposite(30_e)),
-      "100↗20%↘30%");
+      "(100↗20%)↘30%");
   assert_expression_serializes_to(KPow(π_e, KPercentAddition(100_e, 20_e)),
                                   "π^(100↗20%)");
 }
 
 QUIZ_CASE(poincare_serialization_power) {
-  assert_expression_serializes_and_parses_to_itself(
-      KPow(2_e, KEqual(3_e, KSub(4_e, 5_e))));
-  assert_expression_serializes_and_parses_to_itself(
-      KPow(2_e, KPercentSimple(KPow(3_e, 4_e))));
-  assert_expression_serializes_and_parses_to_itself(
-      KPercentSimple(KPow(2_e, KLogicalOr(3_e, 4_e))));
-  assert_expression_serializes_and_parses_to_itself(KAbs(KPercentAddition(
-      0_e,
-      KDiv(0_e, KLogicalAnd("r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))));
+  assert_expression_serializes_and_parses_to(
+      KPow(2_e, KEqual(3_e, KSub(4_e, 5_e))),
+      KPow(2_e, KParentheses(KEqual(3_e, KSub(4_e, 5_e)))));
+  assert_expression_serializes_and_parses_to(
+      KPow(2_e, KPercentSimple(KPow(3_e, 4_e))),
+      KPow(2_e, KPercentSimple(KParentheses(KPow(3_e, 4_e)))));
+  assert_expression_serializes_and_parses_to(
+      KPercentSimple(KPow(2_e, KLogicalOr(3_e, 4_e))),
+      KPercentSimple(
+          KParentheses(KPow(2_e, KParentheses(KLogicalOr(3_e, 4_e))))));
+  assert_expression_serializes_and_parses_to(
+      KAbs(KPercentAddition(
+          0_e, KDiv(0_e, KLogicalAnd(
+                             "r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))),
+      KAbs(KPercentAddition(
+          0_e,
+          KParentheses(KDiv(
+              0_e, KParentheses(KLogicalAnd(
+                       "r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))))));
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {

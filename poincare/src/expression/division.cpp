@@ -60,6 +60,9 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
     TreeRef factorsNumerator;
     TreeRef factorsDenominator;
     TreeRef factorsOuterNumerator;
+    if (factor->treeIsIdenticalTo(-1_fe) || factor->treeIsIdenticalTo(-1_de)) {
+      factor = -1_e;
+    }
     if (factor->isComplexI() && i == numberOfFactors - 1) {
       /* Move the final i out of the multiplication e.g. 2^(-1)×i → (1/2)×i. If
        * i is not in the last position, it is either intentional or a bug in the

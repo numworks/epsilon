@@ -58,8 +58,7 @@ QUIZ_CASE(poincare_serialization_rational) {
   Integer one(1);
   Integer overflow = Integer::Overflow(false);
   assert_expression_serializes_to(Rational::Builder(one, overflow), "1/∞");
-  assert_expression_serializes_to(Rational::Builder(overflow),
-                                  Infinity::Name());
+  assert_expression_serializes_to(Rational::Builder(overflow), "∞");
 }
 
 QUIZ_CASE(poincare_serialization_decimal) {
@@ -220,8 +219,8 @@ QUIZ_CASE(poincare_serialization_float) {
   assert_expression_serializes_to(Float<float>::Builder(-1.2345E-1), "-0.12345",
                                   DecimalMode);
 
-  assert_expression_serializes_to(Float<double>::Builder(INFINITY),
-                                  Infinity::Name(), DecimalMode);
+  assert_expression_serializes_to(Float<double>::Builder(INFINITY), "∞",
+                                  DecimalMode);
   assert_expression_serializes_to(Float<float>::Builder(0.0f), "0",
                                   DecimalMode);
   assert_expression_serializes_to(Float<float>::Builder(NAN), Undefined::Name(),

@@ -132,20 +132,19 @@ QUIZ_CASE(poincare_approximation_float) {
                                       "-0.12345");
 
   assert_float_approximates_to<double>(Expression::Builder<double>(INFINITY),
-                                       Infinity::Name());
+                                       "∞");
   assert_float_approximates_to<float>(Expression::Builder<float>(0.0f), "0");
   assert_float_approximates_to<float>(Expression::Builder<float>(NAN),
                                       Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_infinity) {
-  assert_expression_approximates_to<double>("10^1000", Infinity::Name());
-  assert_expression_approximates_to<double>("2*10^1000", Infinity::Name());
-  assert_expression_approximates_to<double>("(10^1000)/2", Infinity::Name());
+  assert_expression_approximates_to<double>("10^1000", "∞");
+  assert_expression_approximates_to<double>("2*10^1000", "∞");
+  assert_expression_approximates_to<double>("(10^1000)/2", "∞");
   assert_expression_approximates_to_scalar<double>("10^1000", INFINITY);
   assert_expression_approximates_to<double>("(∞)×(i)", "∞×i");
-  assert_expression_approximates_to<double>("(inf×i)×(i)",
-                                            Infinity::Name(true));
+  assert_expression_approximates_to<double>("(inf×i)×(i)", "-∞");
   assert_expression_approximates_to<double>("(inf×i)×(2)", "∞×i");
   // (inf+i)×(2) = inf * 2 - 1 * 0 + i * (inf * 0 + 1 * 2), inf * 0 return NAN
   assert_expression_approximates_to<double>("(inf+i)×(2)", Undefined::Name());

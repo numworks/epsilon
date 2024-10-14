@@ -79,7 +79,9 @@ Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   Ion::Storage::Record record =
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
-  assert(!record.isNull());
+  if (record.isNull()) {
+    return nullptr;
+  }
   Sequence* s = m_sequenceStore->modelForRecord(record);
   return s;
 }

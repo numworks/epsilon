@@ -636,9 +636,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         return NAN;
       }
       assert(ctx);
-      Context childCtx(*ctx);
-      childCtx.m_listElement = i;
-      std::complex<T> result = ToComplex<T>(values, &childCtx);
+      Context tempCtx(*ctx);
+      tempCtx.m_listElement = i;
+      std::complex<T> result = ToComplex<T>(values, &tempCtx);
       return result;
     }
     case Type::ListSlice: {
@@ -649,9 +649,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(Integer::Is<uint8_t>(e->child(2)));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
       assert(start >= 0);
-      Context childCtx(*ctx);
-      childCtx.m_listElement += start;
-      std::complex<T> result = ToComplex<T>(values, &childCtx);
+      Context tempCtx(*ctx);
+      tempCtx.m_listElement += start;
+      std::complex<T> result = ToComplex<T>(values, &tempCtx);
       return result;
     }
     case Type::ListSum:
@@ -659,11 +659,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values);
-      Context childCtx(*ctx);
+      Context tempCtx(*ctx);
       std::complex<T> result = e->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
-        childCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &childCtx);
+        tempCtx.m_listElement = i;
+        std::complex<T> v = ToComplex<T>(values, &tempCtx);
         result = e->isListSum() ? result + v : result * v;
       }
       return result;
@@ -673,11 +673,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values);
-      Context childCtx(*ctx);
+      Context tempCtx(*ctx);
       T result;
       for (int i = 0; i < length; i++) {
-        childCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &childCtx);
+        tempCtx.m_listElement = i;
+        std::complex<T> v = ToComplex<T>(values, &tempCtx);
         if (v.imag() != 0 || std::isnan(v.real())) {
           return NAN;
         }
@@ -696,14 +696,14 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
       int length = Dimension::ListLength(values);
-      Context childCtx(*ctx);
+      Context tempCtx(*ctx);
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;
       for (int i = 0; i < length; i++) {
-        childCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &childCtx);
-        std::complex<T> c = ToComplex<T>(coefficients, &childCtx);
+        tempCtx.m_listElement = i;
+        std::complex<T> v = ToComplex<T>(values, &tempCtx);
+        std::complex<T> c = ToComplex<T>(coefficients, &tempCtx);
         if (c.imag() != 0 || c.real() < 0) {
           return NAN;
         }
@@ -1038,11 +1038,11 @@ Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
   Dimension dimension = Dimension::Get(e);
   int length = Dimension::ListLength(e);
   assert(length != Dimension::k_nonListListLength);
-  Context childCtx(*ctx);
+  Context tempCtx(*ctx);
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
-    childCtx.m_listElement = i;
-    ToTree<T>(e, dimension, &childCtx);
+    tempCtx.m_listElement = i;
+    ToTree<T>(e, dimension, &tempCtx);
   }
   return list;
 }
@@ -1050,12 +1050,12 @@ Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
 template <typename T>
 Tree* Approximation::ToPoint(const Tree* e, const Context* ctx) {
   assert(ctx);
-  Context childCtx(*ctx);
+  Context tempCtx(*ctx);
   Tree* point = SharedTreeStack->pushPoint();
-  childCtx.m_pointElement = 0;
-  ToBeautifiedComplex<T>(e, &childCtx);
-  childCtx.m_pointElement = 1;
-  ToBeautifiedComplex<T>(e, &childCtx);
+  tempCtx.m_pointElement = 0;
+  ToBeautifiedComplex<T>(e, &tempCtx);
+  tempCtx.m_pointElement = 1;
+  ToBeautifiedComplex<T>(e, &tempCtx);
   return point;
 }
 
@@ -1196,9 +1196,9 @@ T Approximation::To(const Tree* e, T x, const Context* ctx) {
     ctx = &context;
     result = To<T>(e, &context);
   } else {
-    Context childCtx(*ctx);
-    childCtx.setLocalValue(x);
-    result = To<T>(e, &childCtx);
+    Context tempCtx(*ctx);
+    tempCtx.setLocalValue(x);
+    result = To<T>(e, &tempCtx);
   }
   return result;
 }

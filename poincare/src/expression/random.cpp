@@ -103,10 +103,10 @@ T Approximation::ApproximateRandomHelper(const Tree* randomTree,
   T previousCheck = a - 1.0;
   for (int j = 0; j < ctx->m_listElement; j++) {
     // Find the next check : smallest value bigger than previousCheck
-    Context childCtx(*ctx);
+    Context tempCtx(*ctx);
     for (int k = 0; k < ctx->m_listElement; k++) {
-      childCtx.m_listElement = k;
-      T value = ApproximateRandom<T>(randomTree, &childCtx);
+      tempCtx.m_listElement = k;
+      T value = ApproximateRandom<T>(randomTree, &tempCtx);
       if (value > previousCheck && value < check) {
         check = value;
       }

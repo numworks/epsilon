@@ -4,3 +4,4 @@ ion/src/simulator/android/.gradle/
 .gradle/
 .venv/
 __pycache__
+node_modules/

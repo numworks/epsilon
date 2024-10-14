@@ -761,7 +761,7 @@ QUIZ_CASE(pcj_simplification_float) {
   simplifies_to("1+π+x", "x+4.1415926535898",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("cos(x-x)", "1", {.m_strategy = Strategy::ApproximateToFloat});
-  simplifies_to("random()-random()", "random()-1×random()",
+  simplifies_to("random()-random()", "random()-random()",
                 {.m_strategy = Strategy::ApproximateToFloat});
   simplifies_to("y^3*x^-2", "y^3/x^2",
                 {.m_strategy = Strategy::ApproximateToFloat});

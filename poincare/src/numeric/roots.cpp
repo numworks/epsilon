@@ -419,10 +419,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
 
   if (!approximateCardanoNumber) {
     AdvancedReduction::Reduce(rootList);
-    /* We do not sort the exact roots obtained with Cardano here, because their
-     * expression is complicated to read and does not allow one to see directly
-     * if the value is real or complex. In that case, sorting the roots will be
-     * handled by approximation later on. */
+    NAry::Sort(rootList, Order::OrderType::ComplexLine);
     return rootList;
   } else {
     // Some rounding errors in Cardano's method calculations may lead to small

@@ -73,7 +73,6 @@ bool ParsingHelper::IsPowerableFunction(const Builtin* builtin) {
   return builtin->type().isAnyTrigonometryFunction();
 }
 
-// TODO: replace with the other variant
 bool ParsingHelper::ParameterText(UnicodeDecoder& varDecoder,
                                   size_t* parameterStart,
                                   size_t* parameterLength) {
@@ -134,6 +133,7 @@ bool ParsingHelper::ParameterText(UnicodeDecoder& varDecoder,
   return true;
 }
 
+// TODO: merge with ParameterText(UnicodeDecoder&) defined above
 bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
                                   const Layout** parameterStart,
                                   size_t* parameterLength) {

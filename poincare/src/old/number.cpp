@@ -57,7 +57,7 @@ Number Number::ParseNumber(const char *integralPart, size_t integralLength,
     if (exp < 0) {
       return Decimal::Builder(0.0);
     } else {
-      return Infinity::Builder(false);
+      return OInfinity::Builder(false);
     }
   }
   return Decimal::Builder(integralPart, integralLength, decimalPart,
@@ -70,7 +70,7 @@ Number Number::DecimalNumber(T f) {
     return OUndefined::Builder();
   }
   if (std::isinf(f)) {
-    return Infinity::Builder(f < static_cast<T>(0.0));
+    return OInfinity::Builder(f < static_cast<T>(0.0));
   }
   return Decimal::Builder(f);
 }
@@ -80,7 +80,7 @@ Number Number::FloatNumber(T f) {
   if (std::isnan(f)) {
     return OUndefined::Builder();
   } else if (std::isinf(f)) {
-    return Infinity::Builder(f < static_cast<T>(0.0));
+    return OInfinity::Builder(f < static_cast<T>(0.0));
   } else {
     return Float<T>::Builder(f);
   }

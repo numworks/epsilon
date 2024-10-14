@@ -233,8 +233,8 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
       m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1);
 
   // Assert that m is not +/-inf
-  assert(strcmp(tempBuffer, Infinity::Name(false)) != 0);
-  assert(strcmp(tempBuffer, Infinity::Name(true)) != 0);
+  assert(strcmp(tempBuffer, OInfinity::Name(false)) != 0);
+  assert(strcmp(tempBuffer, OInfinity::Name(true)) != 0);
 
   // Stop here if m is undef
   if (strcmp(tempBuffer, Undefined::Name()) == 0) {

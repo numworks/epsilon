@@ -26,18 +26,18 @@ size_t InfinityNode::serialize(char* buffer, size_t bufferSize,
 
 bool InfinityNode::derivate(const ReductionContext& reductionContext,
                             Symbol symbol, OExpression symbolValue) {
-  return Infinity(this).derivate(reductionContext, symbol, symbolValue);
+  return OInfinity(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Infinity Infinity::Builder(bool negative) {
+OInfinity OInfinity::Builder(bool negative) {
   void* bufferNode = Pool::sharedPool->alloc(sizeof(InfinityNode));
   InfinityNode* node = new (bufferNode) InfinityNode(negative);
   PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
-  return static_cast<Infinity&>(h);
+  return static_cast<OInfinity&>(h);
 }
 
-bool Infinity::derivate(const ReductionContext& reductionContext, Symbol symbol,
-                        OExpression symbolValue) {
+bool OInfinity::derivate(const ReductionContext& reductionContext,
+                         Symbol symbol, OExpression symbolValue) {
   replaceWithUndefinedInPlace();
   return true;
 }

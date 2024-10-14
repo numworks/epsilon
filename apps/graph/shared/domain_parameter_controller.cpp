@@ -42,10 +42,10 @@ bool DomainParameterController::textFieldDidFinishEditing(
       textField->draftText()[0] == '\0') {
     textField->setEditing(true);  // To edit draft text buffer in setText
     if (textField == m_boundsCells[0].textField()) {
-      textField->setText(Poincare::JInfinity::k_minusInfinityName);
+      textField->setText(Poincare::Infinity::k_minusInfinityName);
     } else {
       assert(textField == m_boundsCells[1].textField());
-      textField->setText(Poincare::JInfinity::k_infinityName);
+      textField->setText(Poincare::Infinity::k_infinityName);
     }
     textField->setEditing(false);  // set editing back to previous value
   }

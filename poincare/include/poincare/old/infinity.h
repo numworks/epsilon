@@ -62,7 +62,7 @@ class InfinityNode final : public NumberNode {
   bool m_negative;
 };
 
-class Infinity final : public Number {
+class OInfinity final : public Number {
  public:
   constexpr static AliasesList k_infinityAliases =
       AliasesLists::k_infinityAliases;
@@ -80,9 +80,9 @@ class Infinity final : public Number {
   constexpr static int NameSize(bool negative = false) {
     return OMG::StringLength(Name(negative)) + 1;
   }
-  static Infinity Builder(bool negative);
+  static OInfinity Builder(bool negative);
 
-  Infinity(InfinityNode* n) : Number(n) {}
+  OInfinity(InfinityNode* n) : Number(n) {}
   OExpression setSign(bool positive);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue);

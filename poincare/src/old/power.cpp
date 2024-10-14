@@ -405,7 +405,7 @@ OExpression Power::shallowReduce(ReductionContext reductionContext) {
       case OMG::Troolean::True:
         /* +inf^+x -> +inf
          * -inf^+x -> +inf * (-1)^+x */
-        trivialResult = Infinity::Builder(false);
+        trivialResult = OInfinity::Builder(false);
         if (baseIsPositive == OMG::Troolean::False) {
           Power p = Power::Builder(Rational::Builder(-1), index);
           trivialResult = Multiplication::Builder(p, trivialResult);

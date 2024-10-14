@@ -2,11 +2,11 @@
 #include <omg/print.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/infinity.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/infinity.h>
 extern "C" {
 #include <assert.h>
 #include <float.h>
@@ -196,7 +196,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   // TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
     // Infinity
-    int requiredCharLength = Infinity::NameSize(f < 0) - 1;
+    int requiredCharLength = strlen(Internal::Infinity::Name(f < 0));
     TextLengths requiredTextLengths = {.CharLength = requiredCharLength,
                                        .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
@@ -204,7 +204,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
       return requiredTextLengths;
     }
     // Write inf or -inf
-    strlcpy(buffer, Infinity::Name(f < 0), bufferSize);
+    strlcpy(buffer, Internal::Infinity::Name(f < 0), bufferSize);
     return requiredTextLengths;
   }
 

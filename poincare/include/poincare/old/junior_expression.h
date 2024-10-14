@@ -530,10 +530,10 @@ class Undefined final : public JuniorExpression {
   constexpr static int NameSize() { return 6; }
 };
 
-class JInfinity {
+class Infinity {
  public:
-  constexpr static const char* k_infinityName = "∞";
-  constexpr static const char* k_minusInfinityName = "-∞";
+  static const char* k_infinityName;
+  static const char* k_minusInfinityName;
 };
 
 }  // namespace Poincare

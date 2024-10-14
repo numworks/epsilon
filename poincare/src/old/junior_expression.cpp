@@ -950,7 +950,7 @@ bool NewExpression::isApproximate() const {
 }
 
 bool SystemExpression::isPlusOrMinusInfinity() const {
-  return Infinity::IsPlusOrMinusInfinity(tree());
+  return Internal::Infinity::IsPlusOrMinusInfinity(tree());
 }
 
 bool NewExpression::isPercent() const {
@@ -1170,6 +1170,13 @@ bool Unit::HasAngleDimension(NewExpression expression) {
   assert(Internal::Dimension::DeepCheck(expression.tree()));
   return Internal::Dimension::Get(expression.tree()).isSimpleAngleUnit();
 }
+
+/* Infinity */
+
+const char* Poincare::Infinity::k_infinityName =
+    Internal::Infinity::k_infinityName;
+const char* Poincare::Infinity::k_minusInfinityName =
+    Internal::Infinity::k_minusInfinityName;
 
 template SystemExpression JuniorExpressionNode::approximateToTree<float>(
     const ApproximationContext&) const;

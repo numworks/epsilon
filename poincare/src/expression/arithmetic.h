@@ -11,7 +11,7 @@ class Arithmetic {
  public:
   struct FactorizedInteger {
     constexpr static int k_maxNumberOfFactors = 32;
-    uint16_t factors[k_maxNumberOfFactors];
+    uint32_t factors[k_maxNumberOfFactors];
     uint8_t coefficients[k_maxNumberOfFactors];
     constexpr static int k_factorizationFailed = -1;
     int8_t numberOfFactors = 0;

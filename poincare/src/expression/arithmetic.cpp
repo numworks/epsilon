@@ -315,6 +315,9 @@ bool Arithmetic::ExpandBinomial(Tree* e) {
 }
 
 static constexpr uint16_t k_biggestPrimeFactor = 10000;
+static_assert(k_biggestPrimeFactor * k_biggestPrimeFactor < UINT32_MAX,
+              "factors are stored as uint32_t");
+
 static constexpr size_t k_numberOfPrimeFactors = 1000;
 static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,
@@ -460,9 +463,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
     return result;
   }
-  assert(m.is<uint16_t>());
-  // using to<int> instead of to<uint16_t> to save a template specialization
-  result.factors[t] = m.to<int>();
+  result.factors[t] = m.to<uint32_t>();
   result.coefficients[t]++;
   result.numberOfFactors = t + 1;
   return result;

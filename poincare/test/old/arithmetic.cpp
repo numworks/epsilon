@@ -176,6 +176,11 @@ QUIZ_CASE(poincare_arithmetic_factorization) {
   int coefficients7[0] = {};
   assert_prime_factorization_equals_to(IntegerHandler(1), factors7,
                                        coefficients7, 0);
+
+  int factors8[1] = {101119};
+  int coefficients8[1] = {1};
+  assert_prime_factorization_equals_to(IntegerHandler(101119), factors8,
+                                       coefficients8, 1);
 }
 
 QUIZ_CASE(poincare_arithmetic_divisors) {

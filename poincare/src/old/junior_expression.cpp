@@ -343,13 +343,6 @@ NewExpression NewExpression::Builder(Tree* tree) {
   return result;
 }
 
-NewExpression NewExpression::Juniorize(OExpression e) {
-  assert(e.isUninitialized() ||
-         e.otype() == ExpressionNode::Type::JuniorExpression);
-  // e is already a junior expression
-  return static_cast<NewExpression&>(e);
-}
-
 NewExpression NewExpression::cloneChildAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));

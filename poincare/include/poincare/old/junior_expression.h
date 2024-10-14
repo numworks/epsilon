@@ -187,7 +187,7 @@ class JuniorExpression : public OExpression {
   static NewExpression Builder(const Internal::Tree* tree);
   // Eat the tree
   static NewExpression Builder(Internal::Tree* tree);
-  static NewExpression Juniorize(OExpression e);
+
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
@@ -206,12 +206,12 @@ class JuniorExpression : public OExpression {
                     Context* context = nullptr) const;
 
   NewExpression operator=(OExpression&& other) {
-    *this = Juniorize(other);
+    *this = static_cast<NewExpression&>(other);
     return *this;
   }
 
   NewExpression operator=(const OExpression& other) {
-    *this = Juniorize(other);
+    *this = static_cast<const NewExpression&>(other);
     return *this;
   }
 

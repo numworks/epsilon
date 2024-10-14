@@ -79,8 +79,9 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("sin(asin(x))=2", {"x=2"});
 }
 
-QUIZ_CASE(solver_polynomial_equation) {
+QUIZ_CASE(solver_quadratic) {
   setComplexFormatAndAngleUnit(Cartesian, Radian);
+
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-2π)(x/2-pi)=0", {"x=2π", "delta=0"});
 
@@ -89,6 +90,10 @@ QUIZ_CASE(solver_polynomial_equation) {
   //                  {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
   // assert_solves_to("(x-√(2))(x-√(3))=0",
   //                  {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
+
+  assert_solves_to("x^2+1=0", {"x=-i", "x=i", "delta=-4"});
+  assert_solves_to("i/5×(x-3)^2=0", {"x=3", "delta=0"});
+  assert_solves_to("2i×(x-3i)^2=0", {"x=3×i", "delta=0"});
 
   assert_solves_to("2×x^2-4×x+2=0", {"x=1", "delta=0"});
   assert_solves_to("2×x^2-4×x+4=3", {"x=1-√(2)/2", "x=1+√(2)/2", "delta=8"});
@@ -99,6 +104,11 @@ QUIZ_CASE(solver_polynomial_equation) {
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
                    {"x=-(-1+π+√(π^2+9-2π+8×√(5)))/4",
                     "x=(-π+1+√(π^2-2π+9+8√(5)))/4", "delta=π^2-2π+9+8√(5)"});
+}
+
+QUIZ_CASE(solver_cubic) {
+  setComplexFormatAndAngleUnit(Cartesian, Radian);
+
   assert_solves_to("x^3+x+1=0",
                    {"x=-0.6823278038", "x=0.3411639019-1.1615414×i",
                     "x=0.3411639019+1.1615414×i", "delta=-31"});
@@ -115,12 +125,98 @@ QUIZ_CASE(solver_polynomial_equation) {
                     "x=-(√(-24))/(2)",  // TODO_PCJ: simplify
                     "x=√(-24)/(2)", "delta=-11616"});
 
-  // TODO_PCJ: dependency management (dep(a^2,{a^0}))
-  // assert_solves_to("x^2+x/x-1=0", {"delta=0"});
+  assert_solves_to("4×x^3+3×x+i=0", {"x=-i/2", "x=i", "delta=0"});
+  assert_solves_to("x^3-8=0",
+                   {"x=2", "x=-1-√(3)×i", "x=-1+√(3)×i", "delta=-1728"});
 
-  /* TODO_PCJ: The next equation finds x=0 as a solution (and not x=1), which is
-   * mathematically incorrect. */
-  // assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"});
+  assert_solves_to(
+      "x^3-8i=0",
+      {"x=root(i,3)(-1+√(3)i)",  // TODO_PCJ: simplify to "x=-√(3)+i"
+       "x=-root(i,3)(1+√(3)i)",  // TODO_PCJ: simplify to "x=-2×i"
+       "x=2×root(i,3)",          // TODO_PCJ: simplify to "x=√(3)+i"
+       "delta=1728"});
+
+  /* NOTE: we used to only display the approximate form for the below case, this
+   * can be discussed. */
+  assert_solves_to("x^3-13-i=0", {"x=(root(13+i,3)(-1+√(3)i))/2",
+                                  "x=(root(13+i,3)(-1-√(3)i))/2",
+                                  "x=root(13+i,3)", "delta=-4536-702i"});
+
+  assert_solves_to("x^3-(2+i)×x^2-2×i×x-2+4×i=0",
+                   {
+                       "x=-1-i", "x=1+i", "x=2+i",
+                       "delta=312+384i-4(-2+4i)(-2-i)^3-36·i·(-2-i)·(-2+4i)"
+                       // TODO_PCJ : advanced reduction fails to simplify delta
+                   });
+  assert_solves_to("x^3+3×x^2+3×x+0.7=0",
+                   {"x=-0.3305670499", "x=-1.334716475-0.5797459409i",
+                    "x=-1.334716475+0.5797459409i", "delta=-2.43"});
+
+  assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
+                   {
+                       "x=-2+1×i", "x=-1+2×i", "x=1-3×i",
+                       "delta=-4(6+7i)^3-27(15+5i)^2+4(6+7i)^2+1500+4700i"
+                       // TODO_PCJ: simplify to -1288 -666×i"
+                   });
+  assert_solves_to(
+      "x^3+x^2+x-39999999",
+      {
+          "x=341.6612041", "x=-171.3306021-296.1770828×i",
+          "x=-171.3306021+296.1770828×i",
+          "delta=-43199998400000016"  // should we display -4.32ᴇ16 here?
+      });
+  assert_solves_to(
+      "x^3+x^2+x+1-80*π*200000",
+      {
+          "x=368.7200924", "x=-184.8600462-319.610685×i",
+          "x=-184.8600462+319.610685×i",
+          "delta=-6912000000000000π^2-16+640000000π"  // or approximate value?
+      });
+
+  // TODO_PCJ: delta fails to simplify
+  // assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
+  //                  {"x=√(3)/2",
+  //                   "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
+  //                   "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"});
+}
+
+QUIZ_CASE(solver_quadratic_real) {
+  setComplexFormatAndAngleUnit(Real, Radian);
+
+  assert_solves_to("x^2-3×x+2=0", {"x=1", "x=2", "delta=1"});
+  assert_solves_to("3×x^2=0", {"x=0", "delta=0"});
+  assert_solves_to("1/3×x^2+2/3×x-5=0", {"x=-5", "x=3", "delta=64/9"});
+  assert_solves_to("(x-2/3)(x+0.2)=0", {"x=-1/5", "x=2/3", "delta=169/225"});
+  assert_solves_to("x^2+1", {"delta=-4"});
+  assert_solves_to("x^3+3×x^2+3×x+0.7=0", {"x=-0.3305670499", "delta=-2.43"});
+
+  // TODO_PCJ: fails to simplify
+  // assert_solves_to("√(2)(x-√(3))(x-√(5))=0", {"x=√(3)",
+  // "x=√(5)","delta=16-4×√(15)"});
+  // assert_solves_to("(x-7/3)(x-π)(x-log(3))=0",
+  //                  {"x=log(3)", "x=7/3", "x=π", "delta=1.598007ᴇ1"});
+
+  /* TODO_PCJ: the following expression raises
+   * "assert(!layout->isSeparatorLayout())" on a "ThousandSeparator" layout in
+   * Tokenizer::popToken(). A possible element of explanation is that a quotient
+   * of two IntegerPosBig is created at some point */
+  // assert_solves_to("(x-4.231)^3=0", {"x=4231/1000", "delta=0"});
+}
+
+QUIZ_CASE(solver_cubic_real) {
+  setComplexFormatAndAngleUnit(Real, Radian);
+
+  assert_solves_to("x^3-3×x^2+3×x-1=0", {"x=1", "delta=0"});
+  assert_solves_to("x^3+x^2-15/4×x-9/2=0", {"x=-3/2", "x=2", "delta=0"});
+
+  // TODO_PCJ: fails to simplify
+  // assert_solves_to("1/9×(x+√(2))^3=0", {"x=-√(2)", "delta=0"});
+
+  assert_solves_to("(x-1)(x-2)(x-3)=0", {"x=1", "x=2", "x=3", "delta=4"});
+
+  // TODO_PCJ: delta fails to simplify
+  // assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
+  //                  {"x=√(3)/2", "delta=(-465+180×√(3))/16"});
 }
 
 QUIZ_CASE(solver_approximate) {
@@ -238,6 +334,13 @@ QUIZ_CASE(solver_complex_cartesian) {
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1");
   assert_solves_to("root(-8,3)*x+3=0",
                    "x=3×e^(2×π×i/3)/2");  //  TODO_PCJ: force cartesian format
+
+  // TODO_PCJ: dependency management (dep(a^2,{a^0}))
+  // assert_solves_to("x^2+x/x-1=0", {"delta=0"});
+
+  /* TODO_PCJ: The next equation finds x=0 as a solution (and not x=1), which is
+   * mathematically incorrect. */
+  // assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"});
 }
 
 QUIZ_CASE(solver_complex_polar) {
@@ -254,6 +357,18 @@ QUIZ_CASE(solver_complex_polar) {
   //                  {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
 
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)i)");
+
+  /* TODO_PCJ: when the equation has form "ax^3 + d = 0", display approximate
+   * values instead of exact values if the expressions are too complicated */
+  assert_solves_to("2x^3-e^(2iπ/7)=0",
+                   {"x=((e^(-((ln(2))/3)+((2π)/21)i)(-1+√(3)i))/2)",
+                    "x=((e^(-((ln(2))/3)+((2π)/21)i)(-1-√(3)i))/2)",
+                    "x=e^(-(ln(2)/3)+((2π)/21)i)", "delta=-108e^(((4π)/7)i)"});
+  assert_solves_to(
+      "x^3-e^(2iπ/7)-1=0",
+      {"x=((root(1+e^(((2π)/7)i),3)(-1+√(3)i))/2)",
+       "x=((root(1+e^(((2π)/7)i),3)(-1-√(3)i))/2)", "x=root(1+e^(((2π)/7)i),3)",
+       "delta=-27(1+e^(((2π)/7)i))^2"});
 }
 
 QUIZ_CASE(solver_symbolic_computation) {

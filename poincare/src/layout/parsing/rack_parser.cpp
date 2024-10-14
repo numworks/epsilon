@@ -1017,8 +1017,11 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
-      Parser::Parse(m_currentToken.firstLayout()->child(0),
-                    m_parsingContext.context());
+      Tree* index = Parser::Parse(m_currentToken.firstLayout()->child(0),
+                                  m_parsingContext.context());
+      if (!index) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
       return;
     }
     if (m_nextToken.type() != Token::Type::LeftParenthesis) {

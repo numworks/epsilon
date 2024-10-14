@@ -567,11 +567,12 @@ bool UserExpression::hasDefinedComplexApproximation(
 }
 
 bool UserExpression::isScalarComplex(
-    Preferences::CalculationPreferences calculationPreferences) const {
+    Preferences::CalculationPreferences calculationPreferences,
+    Context* context) const {
   Preferences::ComplexFormat complexFormat =
       calculationPreferences.complexFormat;
   Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  ApproximationContext approximationContext(nullptr, complexFormat, angleUnit);
+  ApproximationContext approximationContext(context, complexFormat, angleUnit);
   approximationContext.updateComplexFormat(*this);
   if (hasDefinedComplexApproximation<double>(approximationContext)) {
     assert(!hasUnit());

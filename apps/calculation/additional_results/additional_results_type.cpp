@@ -25,7 +25,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasComplex(approximateOutput, calculationPreferences)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (exactOutput.isScalarComplex(calculationPreferences)) {
+  if (HasComplex(exactOutput, calculationPreferences)) {
     // Cf comment in HasComplex
     return AdditionalResultsType{.empty = true};
   }
@@ -120,7 +120,9 @@ bool AdditionalResultsType::HasComplex(
    *    complex, while the exact output is.
    * We chosed to handle the 2nd case and not to display any additional results
    * in the 1st case. */
-  return approximateOutput.isScalarComplex(calculationPreferences);
+  return approximateOutput.isScalarComplex(
+      calculationPreferences,
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
@@ -139,7 +141,7 @@ bool AdditionalResultsType::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!exactOutput.isScalarComplex(calculationPreferences));
+  assert(!HasComplex(exactOutput, calculationPreferences));
   assert(!exactOutput.hasUnit(true));
   return AdditionalResultsHelper::HasInverseTrigo(input, exactOutput);
 }
@@ -209,8 +211,7 @@ bool AdditionalResultsType::HasVector(
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.tree()->numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (approximateOutput.cloneChildAtIndex(i).isScalarComplex(
-            calculationPreferences)) {
+    if (HasComplex(approximateOutput, calculationPreferences)) {
       return false;
     }
   }

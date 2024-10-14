@@ -289,7 +289,8 @@ class JuniorExpression : public OExpression {
       const ApproximationContext& approximationContext,
       T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
   bool isScalarComplex(
-      Preferences::CalculationPreferences calculationPreferences) const;
+      Preferences::CalculationPreferences calculationPreferences,
+      Context* context) const;
   bool isDiscontinuousBetweenFloatValues(float x1, float x2) const;
 
   OExpression shallowReduce(ReductionContext reductionContext) {

@@ -364,6 +364,9 @@ int Matrix::Rank(const Tree* matrix) {
 }
 
 int Matrix::CanonizeAndRank(Tree* matrix, bool forceCanonization) {
+  /* TODO: At the moment, we need to create an approximation context to be
+   * passed to RowCanonize. Approximation should be reworked so that creating
+   * such a context is not needed.  */
   Approximation::Context approximationContext{};
   if (RowCanonize(matrix, true, nullptr, false, &approximationContext,
                   forceCanonization)) {

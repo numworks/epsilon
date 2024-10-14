@@ -98,6 +98,10 @@ void assert_solves_to_error(std::initializer_list<const char*> equations,
 static void compareSolutions(SystemOfEquations* system,
                              std::initializer_list<const char*> solutions,
                              SolverContext* solverContext) {
+  /* TODO: this function needs to be reworked so that we can compare Expressions
+   * directly, instead of parsing const char * objects and Layouts and comparing
+   * afterwards. */
+
   size_t i = 0;
   for (const char* solution : solutions) {
     // Solutions are specified under the form "foo=bar"

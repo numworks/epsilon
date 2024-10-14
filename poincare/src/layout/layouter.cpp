@@ -445,7 +445,10 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       } else {
         PushCodePoint(layoutParent, UCodePointNorthEastArrow);
       }
-      // continue
+      // Use very low priority because parentheses are needed in most cases
+      layoutExpression(layoutParent, expression->nextNode(), 0);
+      PushCodePoint(layoutParent, '%');
+      break;
     case Type::PercentSimple:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

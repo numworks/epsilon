@@ -239,11 +239,9 @@ QUIZ_CASE(poincare_serialization_power) {
       KPow(2_e, KPercentSimple(KPow(3_e, 4_e))));
   assert_expression_serializes_and_parses_to_itself(
       KPercentSimple(KPow(2_e, KLogicalOr(3_e, 4_e))));
-#if 0  // TODO_PCJ
   assert_expression_serializes_and_parses_to_itself(KAbs(KPercentAddition(
       0_e,
       KDiv(0_e, KLogicalAnd("r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))));
-#endif
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {

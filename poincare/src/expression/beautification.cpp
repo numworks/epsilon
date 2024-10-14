@@ -201,7 +201,9 @@ bool Beautification::ShallowBeautifyOppositesDivisionsRoots(Tree* e,
   /* Turn multiplications with negative powers into divisions and negative
    * rationals into opposites */
   if (e->isMult() || e->isPow() || e->isRational()) {
-    if (Division::BeautifyIntoDivision(e)) {
+    bool isUnitResult = e->isMult() && e->numberOfChildren() >= 2 &&
+                        e->child(0)->isNumber() && e->child(1)->isUnit();
+    if (!isUnitResult && Division::BeautifyIntoDivision(e)) {
       return true;
     }
   }

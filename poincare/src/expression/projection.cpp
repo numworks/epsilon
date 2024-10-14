@@ -172,8 +172,8 @@ bool Projection::IsForbidden(const Tree* e) {
   }
 }
 
-/* The order of nodes in NAry is not a concern here. They will be sorted
- * before SystemReduction. */
+/* The order of nodes in NAry is not a concern here. They will be sorted before
+ * SystemReduction. */
 bool Projection::ShallowSystemProject(Tree* e, void* context) {
   /* TODO: Most of the projections could be optimized by simply replacing
    * and inserting nodes. This optimization could be applied in

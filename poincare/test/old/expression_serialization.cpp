@@ -1,4 +1,5 @@
 #include <ion/storage/file_system.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 
@@ -19,12 +20,22 @@ QUIZ_CASE(poincare_serialization_based_integer) {
       OMG::Base::Hexadecimal);
 }
 
+void assert_rational_serializes_to(const Tree* rational,
+                                   const char* serialization) {
+  assert(rational->isRational());
+  Tree* clone = rational->cloneTree();
+  /* Rationals disappear at beautification, so their serialization hasn't been
+   * implemented */
+  Beautification::DeepBeautify(clone);
+  return assert_expression_serializes_to(clone, serialization);
+}
+
 QUIZ_CASE(poincare_serialization_rational) {
-  assert_expression_serializes_to(2_e / 3_e, "2/3");
+  assert_rational_serializes_to(2_e / 3_e, "2/3");
 
   Tree* e1 = parse("123456789101112131");
   Tree* e2 = Rational::Push(12345678910111213_e, e1);
-  assert_expression_serializes_to(e2, "12345678910111213/123456789101112131");
+  assert_rational_serializes_to(e2, "12345678910111213/123456789101112131");
 
   const char* buffer =
       "123456789112345678921234567893123456789412345678951234567896123456789612"
@@ -33,15 +44,15 @@ QUIZ_CASE(poincare_serialization_rational) {
       "789";
   Tree* e3 = parse(buffer);
   Tree* e4 = Rational::Push(e3, 1_e);
-  assert_expression_serializes_to(e4, buffer);
+  assert_rational_serializes_to(e4, buffer);
 
-  assert_expression_serializes_to(-2_e / 3_e, "-2/3");
-  assert_expression_serializes_to(2345678909876_e, "2345678909876");
+  assert_rational_serializes_to(-2_e / 3_e, "-2/3");
+  assert_rational_serializes_to(2345678909876_e, "2345678909876");
   Tree* e5 = Rational::Push(-2345678909876_e, 5_e);
-  assert_expression_serializes_to(e5, "-2345678909876/5");
+  assert_rational_serializes_to(e5, "-2345678909876/5");
 
   Tree* e6 = parse(MaxIntegerString());
-  assert_expression_serializes_to(e6, MaxIntegerString());
+  assert_rational_serializes_to(e6, MaxIntegerString());
 
   flush_stack();  // TODO: should be done after each quiz_case
 }

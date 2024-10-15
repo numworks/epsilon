@@ -342,13 +342,16 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | trig(±inf, A) | undef |
 | atrig(-x,1) | - atrig(x,1) |
 | atrig(-x,0) | π/2 - atrig(x,0) |
-| atrig(trig(π×y, i), j) | π/2 - atrig(trig(π×y, i), i) |
+| atrig(trig(π×y, i), j) (with y real for all following) | π/2 - atrig(trig(π×y, i), i) |
 | atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ even) | π×(y - ⌊y + π/2⌋) |
 | atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ odd) | π×(⌊y + π/2⌋ - y) |
 | atrig(trig(π×y, 1), 1) (with ⌊y⌋ even) | π×(y - ⌊y⌋) |
 | atrig(trig(π×y, 1), 1) (with ⌊y⌋ odd) | π×(y - ⌊y⌋ + 1) |
 | atrig(A,B) (with A one of the exact values) | exact value |
-| atan(tan(A)) | A reduced to ]-π/2, π/2[ |
+| atrig(trig(i×x, 0), 0) (with x real) | abs(i×x) |
+| atrig(trig(i×x, 1), 1) (with x real) | i×x |
+| atan(tan(i×x)) (with x real) | i×x |
+| atan(tan(x)) (with x real) | x reduced to ]-π/2, π/2[ |
 | arcsin(-x) | -arcsin(x) |
 | arccos(-x) | π - arccos(x) |
 | atan({-1, 0, 1}) | {-π/4, 0, π/4} |

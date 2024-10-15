@@ -249,12 +249,11 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 | arcsec(A) | acos(1/A) |
 | arccsc(A) | asin(1/A) |
 | arccot(A) | π/2-atan(A) |
-| cosh(A) | (exp(A)+exp(-A))×1/2 |
-| sinh(A) | (exp(A)-exp(-A))×1/2 |
-| tanh(A) | (exp(2A)-1)/(exp(2A)+1) |
-| arcosh(A) | ln(A + sqrt(A - 1)×sqrt(A + 1)) |
-| arsinh(A) | ln(A + sqrt(A^2 + 1)) |
-| artanh(A) | (ln(1+A)-ln(1-A))×1/2 |
+| cosh(A) | cos(i×A) |
+| sinh(A) | -i×sin(i×A) |
+| tanh(A) | -i×tan(i×A) |
+| arsinh(A) | -i×asin(i×A) |
+| artanh(A) | -i×atan(i×A) |
 
 </details>
 
@@ -273,6 +272,16 @@ In practice, we replace `atan(x)` (projected tree for atan) by `atrig(x*(1+x^2)^
 This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
 For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
+
+<details>
+<summary>List of projections in advanced reduction</summary>
+
+| Match | Replace |
+|---|---|
+| atan(A) | asin(A / sqrt(A^2 + 1)) |
+| arcosh(A) | ln(A + sqrt(A^2 - 1)) |
+
+</details>
 
 ## Systematic reduction
 

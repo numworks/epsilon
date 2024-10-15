@@ -136,7 +136,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       char* nextCursor = pushExpressionTree(
           cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
       if (nextCursor == k_pushError) {
-        return errorPushUndefined();
+        // leave the calculation undefined
+        return current;
       }
       current->m_inputTreeSize = nextCursor - cursor;
       cursor = nextCursor;
@@ -228,10 +229,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
     char* nextCursor = pushExpressionTree(cursor, e, digits);
     if (nextCursor == k_pushError) {
-      nextCursor = pushUndefined(cursor);
-      if (nextCursor == k_pushError) {
-        return errorPushUndefined();
-      }
+      // not enough space, leave undef
+      continue;
     }
     assert(i == 0 || i == 1);
     (i == 0 ? current->m_exactOutputTreeSize
@@ -317,25 +316,9 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
   return deletedSize;
 }
 
-ExpiringPointer<Calculation> CalculationStore::errorPushUndefined() {
-  assert(numberOfCalculations() == 0);
-  char* cursor = pushUndefined(m_buffer);
-  assert(m_buffer < cursor &&
-         cursor <= m_buffer + m_bufferSize - sizeof(Calculation*));
-  *(pointerArray() - 1) = cursor;
-  Calculation* calculation = reinterpret_cast<Calculation*>(m_buffer);
-  m_numberOfCalculations = 1;
-  return ExpiringPointer(calculation);
-}
-
 /* TODO:
  * We should replace pushEmptyCalculation and pushExpressionTree with a
  * single pushCalculation that would safely set the trees and their sizes.
- *
- * We could also change Calculation such that treeSize = 0 represents an
- * undefined tree. With this, trees will stay to their default undefined value
- * if there is not enough space and we can get rid of errorPushUndefined and
- * several if k_pushError.
  */
 
 char* CalculationStore::pushEmptyCalculation(
@@ -366,11 +349,6 @@ char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
     location -= deleteOldestCalculation(location);
   }
   assert(false);
-}
-
-char* CalculationStore::pushUndefined(char* location) {
-  return pushExpressionTree(location, Undefined::Builder(),
-                            m_inUsePreferences.numberOfSignificantDigits());
 }
 
 }  // namespace Calculation

@@ -91,7 +91,6 @@ class CalculationStore {
     return privateDeleteCalculationAtIndex(numberOfCalculations() - 1,
                                            endOfTemporaryData);
   }
-  Shared::ExpiringPointer<Calculation> errorPushUndefined();
 
   /* Push helper methods return a pointer to the end of the pushed content, or
    * k_pushError if the content was not pushed. */
@@ -100,7 +99,6 @@ class CalculationStore {
       Poincare::Preferences::CalculationPreferences calculationPreferences);
   char* pushExpressionTree(char* location, Poincare::UserExpression e,
                            int numberOfSignificantDigits);
-  char* pushUndefined(char* location);
 
   char* const m_buffer;
   const size_t m_bufferSize;

@@ -112,9 +112,10 @@ static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
 
   for (size_t i = 0; i < SIVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
-    simplifiedExponents.setCoefficientAtIndex(
+    bool success = simplifiedExponents.setCoefficientAtIndex(
         i, unitsExponents->coefficientAtIndex(i) -
                entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
+    assert(success);
   }
   size_t simplifiedSupportSize = simplifiedExponents.supportSize();
   /* Note: A metric is considered simpler if the support size (number of
@@ -673,7 +674,9 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
     }
     // Fill the vector with the unit's exponent
     assert(factor->isUnit());
-    vector.addAllCoefficients(GetRepresentative(factor)->siVector(), exponent);
+    bool success = vector.addAllCoefficients(
+        GetRepresentative(factor)->siVector(), exponent);
+    assert(success);
     if (++factorIndex >= numberOfFactors) {
       break;
     }

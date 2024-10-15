@@ -318,8 +318,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
             assert(next.hasNonKelvinTemperatureUnit());
             return false;
           }
-          unitVector.addAllCoefficients(next.unit.vector,
-                                        secondDivisionChild ? -1 : 1);
+          if (!unitVector.addAllCoefficients(next.unit.vector,
+                                             secondDivisionChild ? -1 : 1)) {
+            return false;
+          }
         }
       }
       // Forbid units * matrices
@@ -342,7 +344,21 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         // Powers of non-Kelvin temperature unit are forbidden
         return false;
       }
-      return IsIntegerExpression(e->child(1));
+      /* Forbid units of non-integer power or of too big of a power.
+       * TODO_PCJ:  Handle the unit as a scalar if the index is not an integer
+       */
+      if (!IsIntegerExpression(e->child(1))) {
+        return false;
+      }
+      float index = Approximation::To<float>(e->child(1), nullptr);
+      assert(!std::isnan(index) && std::round(index) == index);
+      if (index > static_cast<float>(INT8_MAX) ||
+          (index < static_cast<float>(INT8_MIN))) {
+        return false;
+      }
+      Units::SIVector unitVector = Units::SIVector::Empty();
+      return unitVector.addAllCoefficients(childDim[0].unit.vector,
+                                           static_cast<int8_t>(index));
     }
     case Type::Sum:
     case Type::Product:
@@ -495,8 +511,9 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
           }
           cols = dim.matrix.cols;
         } else if (dim.isUnit()) {
-          unitVector.addAllCoefficients(dim.unit.vector,
-                                        secondDivisionChild ? -1 : 1);
+          bool success = unitVector.addAllCoefficients(
+              dim.unit.vector, secondDivisionChild ? -1 : 1);
+          assert(success);
           representative = dim.unit.representative;
         }
         secondDivisionChild = (e->isDiv());
@@ -520,21 +537,15 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
         float index = Approximation::To<float>(e->child(1), nullptr);
-        if (index < INT8_MAX && index > INT8_MIN &&
-            std::round(index) == index) {
-          // TODO: Handle/forbid index > int8_t
-          assert(!std::isnan(index) &&
-                 std::fabs(index) < static_cast<float>(INT8_MAX));
-          Units::SIVector unitVector = Units::SIVector::Empty();
-          unitVector.addAllCoefficients(dim.unit.vector,
-                                        static_cast<int8_t>(index));
-
-          dim = unitVector.isEmpty()
-                    ? Scalar()
-                    : Unit(unitVector, dim.unit.representative);
-        }
-        // Handle the unit as a scalar if the index is not an integer
-        // TODO_PCJ: Either forbid or ensure this is handled correctly
+        assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
+               index >= static_cast<float>(INT8_MIN) &&
+               std::round(index) == index);
+        Units::SIVector unitVector = Units::SIVector::Empty();
+        bool success = unitVector.addAllCoefficients(
+            dim.unit.vector, static_cast<int8_t>(index));
+        assert(success);
+        dim = unitVector.isEmpty() ? Scalar()
+                                   : Unit(unitVector, dim.unit.representative);
       }
       return dim;
     }

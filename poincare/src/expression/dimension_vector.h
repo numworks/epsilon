@@ -41,14 +41,25 @@ struct SIVector {
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
 
-  constexpr void addAllCoefficients(const SIVector other, int8_t factor) {
+  // Return false if operation overflowed.
+  [[nodiscard]] constexpr bool addAllCoefficients(const SIVector other,
+                                                  int8_t factor) {
     for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
-      setCoefficientAtIndex(
-          i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
+      if (!setCoefficientAtIndex(i, coefficientAtIndex(i) +
+                                        other.coefficientAtIndex(i) * factor)) {
+        return false;
+      }
+      assert(static_cast<int>(coefficientAtIndex(i)) +
+                 static_cast<int>(other.coefficientAtIndex(i)) *
+                     static_cast<int>(factor) ==
+             (coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor));
     }
+    return true;
   }
 
-  constexpr void setCoefficientAtIndex(uint8_t i, int8_t coefficient) {
+  // Return false if operation overflowed.
+  [[nodiscard]] constexpr bool setCoefficientAtIndex(uint8_t i,
+                                                     int8_t coefficient) {
     assert(i < k_numberOfBaseUnits);
     int8_t* coefficientsAddresses[] = {&time,
                                        &distance,
@@ -60,11 +71,14 @@ struct SIVector {
                                        &luminousIntensity};
     static_assert(std::size(coefficientsAddresses) == k_numberOfBaseUnits);
     *(coefficientsAddresses[i]) = coefficient;
+    return true;
   }
 
-  constexpr void setCoefficientAtIndex(uint8_t i, int coefficient) {
-    assert(coefficient <= INT8_MAX && coefficient >= INT8_MIN);
-    setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
+  // Return false if operation overflowed.
+  [[nodiscard]] constexpr bool setCoefficientAtIndex(uint8_t i,
+                                                     int coefficient) {
+    return coefficient <= INT8_MAX && coefficient >= INT8_MIN &&
+           setCoefficientAtIndex(i, static_cast<int8_t>(coefficient));
   }
 
   constexpr int8_t coefficientAtIndex(uint8_t i) const {

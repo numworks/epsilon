@@ -219,7 +219,7 @@ QUIZ_CASE(poincare_serialization_division) {
   assert_expression_serializes_to(KDiv(-2_e, π_e), "-2/π");
   assert_expression_serializes_to(KDiv(π_e, -2_e), "π/-2");
   assert_expression_serializes_and_parses_to_itself(KDiv(2_e, 3_e));
-  assert_expression_serializes_to(KDiv(2_e / 3_e, π_e), "(2/3)/π");
+  assert_expression_serializes_to(KDiv(KDiv(2_e, 3_e), π_e), "(2/3)/π");
   assert_expression_serializes_to(KDiv(KAdd(2_e, 1_e), π_e), "(2+1)/π");
   assert_expression_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");
   assert_expression_serializes_to(KDiv(KMult(2_e, 1_e), π_e), "(2×1)/π");
@@ -231,13 +231,13 @@ QUIZ_CASE(poincare_serialization_division) {
 }
 
 QUIZ_CASE(poincare_serialization_factorial) {
-  assert_expression_serializes_to(KFact(2_e / 3_e), "(2/3)!");
+  assert_expression_serializes_to(KFact(KDiv(2_e, 3_e)), "(2/3)!");
   assert_expression_serializes_to(KFact(KDiv(π_e, 3_e)), "(π/3)!");
   assert_expression_serializes_to(KFact(KPow(π_e, 3_e)), "(π^3)!");
 }
 
 QUIZ_CASE(poincare_serialization_percent) {
-  assert_expression_serializes_to(KPercentSimple(2_e / 3_e), "(2/3)%");
+  assert_expression_serializes_to(KPercentSimple(KDiv(2_e, 3_e)), "(2/3)%");
   assert_expression_serializes_to(KPercentSimple(KDiv(π_e, 3_e)), "(π/3)%");
   assert_expression_serializes_to(KPercentSimple(KPow(π_e, 3_e)), "(π^3)%");
   assert_expression_serializes_to(

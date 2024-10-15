@@ -4,6 +4,7 @@
 #include <omg/unreachable.h>
 #include <string.h>
 
+#include "dimension.h"
 #include "integer.h"
 #include "k_tree.h"
 #include "symbol.h"
@@ -32,6 +33,9 @@ int Sequence::InitialRank(const Tree* sequence) {
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const char* name, Type type, int initialRank, bool recursion,
     bool systemSymbol, bool otherSequences) {
+  if (!Dimension::IsNonListScalar(e)) {
+    return true;
+  }
   const Tree* skipUntil = e;
   for (const Tree* d : e->selfAndDescendants()) {
     if (d < skipUntil) {

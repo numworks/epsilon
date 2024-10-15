@@ -27,7 +27,8 @@ class Beautification {
   static bool TurnIntoPolarForm(Tree* e, Dimension dim);
   static bool DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                          bool* simplifyParent);
-  static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit);
+  static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
+                                            bool* simplifyParent);
   static bool ShallowBeautifyPercent(Tree* e);
   static bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
   static bool ShallowBeautify(Tree* e, void* context);

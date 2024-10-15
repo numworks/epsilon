@@ -83,10 +83,7 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
         DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystematicReduce);
     mustSystematicReduce |= tempMustSystematicReduce;
   }
-  // A parent simplification is required after inverse trigonometry beautify
-  *simplifyParent =
-      (angleUnit != AngleUnit::Radian && (e->isATrig() || e->isATanRad()));
-  if (ShallowBeautifyAngleFunctions(e, angleUnit)) {
+  if (ShallowBeautifyAngleFunctions(e, angleUnit, simplifyParent)) {
     return true;
   } else if (mustSystematicReduce) {
     assert(modified);
@@ -96,10 +93,18 @@ bool Beautification::DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
 }
 
 // At this stage of the simplification, advanced reductions are expected.
-bool Beautification::ShallowBeautifyAngleFunctions(Tree* e,
-                                                   AngleUnit angleUnit) {
+bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
+                                                   bool* simplifyParent) {
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
+    // Hyperbolic functions
+    if (PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 0_e),
+                                              KCosH(KMult(KA_s))) ||
+        PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 1_e),
+                                              KMult(KSinH(KMult(KA_s)), i_e))) {
+      *simplifyParent = true;
+      return true;
+    };
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = e->child(0);
       child->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -114,12 +119,22 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e,
     return true;
   }
   if (e->isATrig() || e->isATanRad()) {
+    // Inverse hyperbolic functions
+    if (PatternMatching::MatchReplaceSimplify(
+            e, KATrig(KMult(KA_s, i_e), 1_e),
+            KMult(KArSinH(KMult(KA_s)), i_e)) ||
+        PatternMatching::MatchReplaceSimplify(
+            e, KATanRad(KMult(KA_s, i_e)), KMult(KArTanH(KMult(KA_s)), i_e))) {
+      *simplifyParent = true;
+      return true;
+    }
     PatternMatching::MatchReplace(e, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchReplace(e, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
     if (angleUnit != AngleUnit::Radian) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)}));
+      *simplifyParent = true;
     }
     return true;
   }
@@ -244,7 +259,11 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       // cos(A)/sin(A) -> cot(A)
       PatternMatching::MatchReplace(
           e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
-          KMult(KA_s, KC_s, KCot(KB), KD_s))) {
+          KMult(KA_s, KC_s, KCot(KB), KD_s)) ||
+      // sinh(A)/cosh(A) -> tanh(A)
+      PatternMatching::MatchReplace(
+          e, KMult(KA_s, KPow(KCosH(KB), -1_e), KC_s, KSinH(KB), KD_s),
+          KMult(KA_s, KC_s, KTanH(KB), KD_s))) {
     assert(n > e->numberOfChildren());
     (void)n;
     n = e->numberOfChildren();

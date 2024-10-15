@@ -4,6 +4,7 @@
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/expression.h>
+#include <poincare/k_tree.h>
 #include <poincare/old/context.h>
 
 #if __EMSCRIPTEN__
@@ -70,7 +71,10 @@ class Calculation {
         m_calculationPreferences(calculationPreferences),
         m_additionalResultsType(),
         m_height(-1),
-        m_expandedHeight(-1) {
+        m_expandedHeight(-1),
+        m_inputTreeSize(0),
+        m_exactOutputTreeSize(0),
+        m_approximatedOutputTreeSize(0) {
     static_assert(sizeof(m_trees) == 0);
   }
   bool operator==(const Calculation& c);
@@ -130,15 +134,19 @@ class Calculation {
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   const Poincare::Internal::Tree* inputTree() const {
-    return reinterpret_cast<const Poincare::Internal::Tree*>(m_trees);
+    return m_inputTreeSize == 0 ? KUndef
+                                : Poincare::Internal::Tree::FromBlocks(m_trees);
   }
   const Poincare::Internal::Tree* exactOutputTree() const {
-    return reinterpret_cast<const Poincare::Internal::Tree*>(m_trees +
-                                                             m_inputTreeSize);
+    return m_exactOutputTreeSize == 0 ? KUndef
+                                      : Poincare::Internal::Tree::FromBlocks(
+                                            m_trees + m_inputTreeSize);
   }
   const Poincare::Internal::Tree* approximatedOutputTree() const {
-    return reinterpret_cast<const Poincare::Internal::Tree*>(
-        m_trees + m_inputTreeSize + m_exactOutputTreeSize);
+    return m_approximatedOutputTreeSize == 0
+               ? KUndef
+               : Poincare::Internal::Tree::FromBlocks(
+                     m_trees + m_inputTreeSize + m_exactOutputTreeSize);
   }
   bool exactAndApproximatedAreEqual() const {
     return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&
@@ -179,7 +187,7 @@ class Calculation {
   uint16_t m_exactOutputTreeSize;
   uint16_t m_approximatedOutputTreeSize;  // used only by ==
 #endif
-  char m_trees[0];  // MUST be the last member variable
+  Poincare::Internal::Block m_trees[0];  // MUST be the last member variable
 };
 
 }  // namespace Calculation

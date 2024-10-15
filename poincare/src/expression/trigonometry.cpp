@@ -361,44 +361,48 @@ static void preprocessAtanOfTan(Tree* e) {
 
 static bool simplifyATrigOfTrig(Tree* e) {
   TypeBlock type = Type::Undef;
+  bool swapATrig = false;
   PatternMatching::Context ctx;
   preprocessAtanOfTan(e);
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
-    // asin(sin(i*x)) = i*x and acos(cos(i*x)) = i*abs(i*x) for x real
-    TypeBlock typeChild = ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos;
-    if (GetComplexSign(ctx.getTree(KA)).isPureIm() && (type == typeChild)) {
-      if (type == Type::Sin) {
-        e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
-      } else {
-        e->moveTreeOverTree(
-            PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), ctx));
-      }
-      return true;
-    }
+    swapATrig = (type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos));
   } else if (PatternMatching::Match(
                  e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
                  &ctx)) {
     // atan(sin/cos)
     type = Type::Tan;
-    // atan(tan(i*x)) = i*x for x real
-    if (GetComplexSign(ctx.getTree(KA)).isPureIm()) {
-      e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
-      return true;
-    }
   } else {
     return false;
   }
+
+  /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
+   * for x real */
+  if (GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+    if (type == Type::Sin || type == Type::Tan) {
+      e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
+    } else {
+      assert(type == Type::Cos);
+      e->moveTreeOverTree(
+          PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), ctx));
+    }
+    // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
+    if (swapATrig) {
+      e->moveNodeOverTree(
+          PatternMatching::CreateSimplify(PatternMatching::CreateSimplify(
+              KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), {.KA = e})));
+    }
+    return true;
+  }
+
   // x = π*y
   const Tree* y = getPiFactor(ctx.getTree(KA));
   if (!y) {
     return false;
   }
-  // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
-  bool swapATrig = type != Type::Tan &&
-                   (!ctx.getTree(KB)->treeIsIdenticalTo(ctx.getTree(KC)));
   Tree* res = computeSimplifiedPiFactorForType(y, type);
+  // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
   if (swapATrig) {
     res->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(1_e / 2_e, KMult(-1_e, KA)), {.KA = res}));
@@ -508,9 +512,10 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 }
 
 bool Trigonometry::ContractTrigonometric(Tree* e) {
-  /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be changing
-   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
-   * both way would lead to infinite possible contractions. */
+  /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be
+   * changing cos(B)^2 to 1-sin(B)^2, but we would also need it the other
+   * way, and having both way would lead to infinite possible contractions.
+   */
   return
       // A?*tan(atan(B))*C? = A*B*C
       PatternMatching::MatchReplaceSimplify(

@@ -419,25 +419,21 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
 
   if (!approximateCardanoNumber) {
     AdvancedReduction::Reduce(rootList);
-    NAry::Sort(rootList, Order::OrderType::ComplexLine);
-    return rootList;
   } else {
     // Some rounding errors in Cardano's method calculations may lead to small
     // imaginary parts. If we know that some roots are pure real numbers because
     // the polynomial coefficients are all real, remove these small imaginary
     // parts.
-
-    TreeRef approximatedRoots =
-        (SignOfTreeOrApproximation(a).isReal() &&
-         SignOfTreeOrApproximation(b).isReal() &&
-         SignOfTreeOrApproximation(c).isReal() &&
-         SignOfTreeOrApproximation(d).isReal())
-            ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-            : Approximation::RootTreeToTree<double>(rootList);
-    rootList->removeTree();
-    NAry::Sort(approximatedRoots, Order::OrderType::ComplexLine);
-    return approximatedRoots;
+    MoveTreeOverTree(rootList,
+                     (SignOfTreeOrApproximation(a).isReal() &&
+                      SignOfTreeOrApproximation(b).isReal() &&
+                      SignOfTreeOrApproximation(c).isReal() &&
+                      SignOfTreeOrApproximation(d).isReal())
+                         ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
+                         : Approximation::RootTreeToTree<double>(rootList));
   }
+  NAry::Sort(rootList, Order::OrderType::ComplexLine);
+  return rootList;
 }
 
 Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,

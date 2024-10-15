@@ -387,29 +387,22 @@ static bool simplifyATrigOfTrig(Tree* e) {
       e->moveTreeOverTree(
           PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), ctx));
     }
-    // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
-    if (swapATrig) {
-      e->moveNodeOverTree(
-          PatternMatching::CreateSimplify(PatternMatching::CreateSimplify(
-              KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)), {.KA = e})));
+  } else {
+    // x = π*y
+    const Tree* y = getPiFactor(ctx.getTree(KA));
+    if (y) {
+      e->moveTreeOverTree(computeSimplifiedPiFactorForType(y, type));
+      PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
+    } else {
+      return false;
     }
-    return true;
   }
 
-  // x = π*y
-  const Tree* y = getPiFactor(ctx.getTree(KA));
-  if (!y) {
-    return false;
-  }
-  Tree* res = computeSimplifiedPiFactorForType(y, type);
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
   if (swapATrig) {
-    res->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KAdd(1_e / 2_e, KMult(-1_e, KA)), {.KA = res}));
+    PatternMatching::MatchReplaceSimplify(
+        e, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
   }
-  res->moveTreeOverTree(
-      PatternMatching::CreateSimplify(KMult(π_e, KA), {.KA = res}));
-  e->moveTreeOverTree(res);
   return true;
 }
 

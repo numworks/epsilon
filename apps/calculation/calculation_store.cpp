@@ -126,7 +126,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
       current = reinterpret_cast<Calculation*>(cursor);
       cursor = pushEmptyCalculation(
           cursor,
-          Poincare::Preferences::SharedPreferences()->calculationPreferences());
+          Poincare::Preferences::SharedPreferences()->calculationPreferences(),
+          &current);
+
       assert(cursor != k_pushError);
 
       /* Push the input */
@@ -134,7 +136,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
       char* nextCursor = pushExpressionTree(
-          cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits);
+          cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits,
+          &current);
       if (nextCursor == k_pushError) {
         // leave the calculation undefined
         return current;
@@ -227,7 +230,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         i == 0 ? exactOutputExpression : approximateOutputExpression;
     int digits = PrintFloat::k_maxNumberOfSignificantDigits;
 
-    char* nextCursor = pushExpressionTree(cursor, e, digits);
+    char* nextCursor = pushExpressionTree(cursor, e, digits, &current);
     if (nextCursor == k_pushError) {
       // not enough space, leave undef
       continue;
@@ -323,19 +326,24 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
 
 char* CalculationStore::pushEmptyCalculation(
     char* location,
-    Poincare::Preferences::CalculationPreferences calculationPreferences) {
+    Poincare::Preferences::CalculationPreferences calculationPreferences,
+    Calculation** current) {
   while (spaceForNewCalculations(location) < k_calculationMinimalSize) {
     if (numberOfCalculations() == 0) {
       return k_pushError;
     }
-    location -= deleteOldestCalculation(location);
+    int deleted = deleteOldestCalculation(location);
+    location -= deleted;
+    *current = reinterpret_cast<Calculation*>(
+        reinterpret_cast<char*>(*current) - deleted);
   }
   new (location) Calculation(calculationPreferences);
   return location + sizeof(Calculation);
 }
 
 char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
-                                           int numberOfSignificantDigits) {
+                                           int numberOfSignificantDigits,
+                                           Calculation** current) {
   while (true) {
     size_t availableSize = spaceForNewCalculations(location);
     size_t length = e.tree()->treeSize();
@@ -346,9 +354,11 @@ char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
     if (numberOfCalculations() == 0) {
       return k_pushError;
     }
-    location -= deleteOldestCalculation(location);
+    int deleted = deleteOldestCalculation(location);
+    location -= deleted;
+    *current = reinterpret_cast<Calculation*>(
+        reinterpret_cast<char*>(*current) - deleted);
   }
-  assert(false);
 }
 
 }  // namespace Calculation

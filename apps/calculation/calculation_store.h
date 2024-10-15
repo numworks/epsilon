@@ -93,12 +93,15 @@ class CalculationStore {
   }
 
   /* Push helper methods return a pointer to the end of the pushed content, or
-   * k_pushError if the content was not pushed. */
+   * k_pushError if the content was not pushed. They also take the current
+   * calculation to update it if some older calculations are cleared. */
   char* pushEmptyCalculation(
       char* location,
-      Poincare::Preferences::CalculationPreferences calculationPreferences);
+      Poincare::Preferences::CalculationPreferences calculationPreferences,
+      Calculation** current);
   char* pushExpressionTree(char* location, Poincare::UserExpression e,
-                           int numberOfSignificantDigits);
+                           int numberOfSignificantDigits,
+                           Calculation** current);
 
   char* const m_buffer;
   const size_t m_bufferSize;

@@ -381,7 +381,7 @@ static bool simplifyATrigOfTrig(Tree* e) {
    * for x real */
   if (GetComplexSign(ctx.getTree(KA)).isPureIm()) {
     if (type == Type::Sin || type == Type::Tan) {
-      e->moveTreeOverTree(ctx.getTree(KA)->cloneTree());
+      e->cloneTreeOverTree(ctx.getTree(KA));
     } else {
       assert(type == Type::Cos);
       e->moveTreeOverTree(

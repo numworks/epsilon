@@ -512,10 +512,9 @@ bool Trigonometry::ExpandTrigonometric(Tree* e) {
 }
 
 bool Trigonometry::ContractTrigonometric(Tree* e) {
-  /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be
-   * changing cos(B)^2 to 1-sin(B)^2, but we would also need it the other
-   * way, and having both way would lead to infinite possible contractions.
-   */
+  /* TODO: Does not catch cos(B)^2+2*sin(B)^2, one solution could be changing
+   * cos(B)^2 to 1-sin(B)^2, but we would also need it the other way, and having
+   * both way would lead to infinite possible contractions. */
   return
       // A?*tan(atan(B))*C? = A*B*C
       PatternMatching::MatchReplaceSimplify(

@@ -339,15 +339,22 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | trig(πn/120, B) (with some values of n) | exact value |
 | trig(atrig(A,B), B) | A |
 | trig(atrig(A,B), C) | sqrt(1-A^2) |
+| trig(±inf, A) | undef |
+| atrig(-x,1) | - atrig(x,1) |
+| atrig(-x,0) | π/2 - atrig(x,0) |
 | atrig(trig(π×y, i), j) | π/2 - atrig(trig(π×y, i), i) |
 | atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ even) | π×(y - ⌊y + π/2⌋) |
 | atrig(trig(π×y, 0), 0) (with ⌊y + π/2⌋ odd) | π×(⌊y + π/2⌋ - y) |
 | atrig(trig(π×y, 1), 1) (with ⌊y⌋ even) | π×(y - ⌊y⌋) |
 | atrig(trig(π×y, 1), 1) (with ⌊y⌋ odd) | π×(y - ⌊y⌋ + 1) |
 | atrig(A,B) (with A one of the exact values) | exact value |
+| atan(tan(A)) | A reduced to ]-π/2, π/2[ |
 | arcsin(-x) | -arcsin(x) |
 | arccos(-x) | π - arccos(x) |
 | atan({-1, 0, 1}) | {-π/4, 0, π/4} |
+| atan(-x) | -atan(x) |
+| acosh(cos(x)) (with x pure imaginary) | abs(x) |
+| cos(arcosh(x)×i) | x |
 | diff(A) (with all n children of A having a known partial derivative) | diff(child(A, 0))×partialDiff(A, 0) + ... + diff(child(A, n))×partialDiff(A, n) |
 | partialDiff(A×B×C×D, 2) | A×B×D |
 | partialDiff(A + B + C + D, 2) | 1 |
@@ -357,17 +364,23 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | partialDiff(Trig(x, n), 1) | 0 |
 | partialDiff(x^n, 0) | n×x^(n - 1) |
 | partialDiff(x^n, 1) | 0 |
-| ln(exp(x)) | x |
+| ln(exp(x)) (with x real) | x |
 | ln(-1) | iπ |
+| ln(i) | π/2×i |
 | ln(1) | 0 |
+| ln(inf) | inf |
+| ln(0) | -inf |
 | exp(ln(x)) | x |
 | exp(0) | 1 |
+| exp(inf) | inf |
+| exp(-inf) | 0 |
 | exp(B×ln(A)) (with B an integer) | A^B |
 | arg(0) | undef |
 | arg(x) (with re(x) = 0)| π/2 if im(x) > 0, -π/2 if im(x) < 0 |
 | arg(x) (with re(x) > 0) | arctan(im(x)/re(x)) |
 | arg(x) (with re(x) < 0 and im(x) >= 0) | arctan(im(x)/re(x)) + π |
 | arg(x) (with re(x) < 0 and im(x) < 0) | arctan(im(x)/re(x)) - π |
+| arg(e^(iA)) (with A real) | A reduced to ]-π,π] |
 | im(x) (with re(x) = 0) | -ix |
 | im(x) (with im(x) = 0) | 0 |
 | re(x) (with re(x) = 0) | 0 |
@@ -481,6 +494,8 @@ It is expected to:
 
 Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and calls systematic reduction at each step.
 
+Some expansion operations are used specifically to expand algebraic operations (+, ×, ^) and are thus grouped to be called on their own when necessary (for instance, to expand a polynomial function before computing its coefficients).
+
 <details>
 <summary>List of advanded reductions</summary>
 
@@ -492,7 +507,7 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | exp(A?×i) | cos(A) + sin(A)×i |
 | exp(A + B?) | exp(A)×exp(B) |
 | A?×exp(B)×exp(C)×D? | A×exp(B + C)×D |
-| A? + cos(B) + C? + sin(B)×i + D? | A + C + D + exp(B×i) |
+| A? + cos(B) + C? ± sin(B)×i + D? | A + C + D + exp(±B×i) |
 | A?×(B + C?)×D? | A×B×D + A×C×D |
 | A? + B?×C×D? + E? + F?×C×G? + H? | A + C×(B×D + F×G) + E + H |
 | (A? + B)^2 | (A^2 + 2×A×B + B^2) |
@@ -503,6 +518,7 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | ln(12/7) | 2×ln(2) + ln(3) - ln(7) |
 | ln(A×B?) | ln(A) + ln(B) - (arg(A) + arg(B) - arg(AB))×i |
 | ln(A^B) | B×ln(A) - (B×arg(A) - arg(A^B))×i |
+| ln(exp(A)) | re(A) + i×arg(exp(i×im(A))) |
 | (B×arg(A) - arg(A^B))×i | k×2π×i (when k can be found) |
 | (arg(A) + arg(B) - arg(A×B))×i | k×2π×i (when k can be found) |
 | A? + cos(B)^2 + C? + sin(D)^2 + E? | 1 + A + C + E |
@@ -517,6 +533,8 @@ Using Expand and Contract formulas, Advanced reduction tries to transform the ex
 | permute(n, k) | n! / (n - k)! |
 | tan(A) | sin(A) / cos(A) |
 | atan(A) | asin(A / Sqrt(1 + A^2)) |
+| tan(atan(A)) | A |
+| arcosh(A) | ln(A + sqrt(A^2 - 1)) |
 | im(x + y) | im(x) + im(z) |
 | re(x + y) | re(x) + re(z) |
 | im(x×y) | im(x)re(y) + re(x)im(y) |

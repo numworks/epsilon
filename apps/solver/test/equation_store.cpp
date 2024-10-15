@@ -131,9 +131,9 @@ QUIZ_CASE(solver_cubic) {
 
   assert_solves_to(
       "x^3-8i=0",
-      {"x=root(i,3)(-1+√(3)i)",  // TODO_PCJ: simplify to "x=-√(3)+i"
-       "x=-root(i,3)(1+√(3)i)",  // TODO_PCJ: simplify to "x=-2×i"
-       "x=2×root(i,3)",          // TODO_PCJ: simplify to "x=√(3)+i"
+      {"x=root(i,3)(-1+√(3)i)",     // TODO_PCJ: simplify to "x=-√(3)+i"
+       "x=root(8i,3)(-1-√(3)i)/2",  // TODO_PCJ: simplify to "x=-2×i"
+       "x=2×root(i,3)",             // TODO_PCJ: simplify to "x=√(3)+i"
        "delta=1728"});
 
   /* NOTE: we used to only display the approximate form for the below case, this
@@ -155,7 +155,7 @@ QUIZ_CASE(solver_cubic) {
   assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
                    {
                        "x=-2+1×i", "x=-1+2×i", "x=1-3×i",
-                       "delta=-4(6+7i)^3-27(15+5i)^2+4(6+7i)^2+1500+4700i"
+                       "delta=-4(6+7i)^3+4(6+7i)^2-3900+650i"
                        // TODO_PCJ: simplify to -1288 -666×i"
                    });
   assert_solves_to(

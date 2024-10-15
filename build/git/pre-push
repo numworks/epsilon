@@ -17,10 +17,10 @@
 #     `git init`
 #
 
-protected='master'
+protected='(master|version-[1-9][0-9])'
 
 if read local_ref local_sha remote_ref remote_sha; then
-    if [[ "$remote_ref" == *"$protected"* ]]; then
+    if [[ "$remote_ref" =~ $protected ]]; then
         echo -en "\033[1;101mWARNING: You're about to push on $protected. Do you REALLY want to do this ? [y|N] \033[0m"
         read -n 1 -r < /dev/tty
         echo

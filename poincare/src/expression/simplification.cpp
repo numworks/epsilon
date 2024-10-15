@@ -209,6 +209,10 @@ bool Simplification::HandleUnits(Tree* e,
       Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
                                       projectionContext->m_unitDisplay,
                                       projectionContext->m_angleUnit)) {
+    // Re-apply strategy to make sure introduced integers are floats.
+    if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
+      ApplyStrategy(e, projectionContext->m_strategy, true);
+    }
     ReduceSystem(e, false);
     changed = true;
   }

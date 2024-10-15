@@ -385,6 +385,10 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
   constexpr static size_t bufferSize = 10;
   char symbol[bufferSize];
   size_t length = name->printInBuffer(symbol, bufferSize);
+  if (length == 0) {
+    // the name was too long for the buffer, it cannot be a unit
+    return false;
+  }
   assert(length < bufferSize);
   size_t offset = (symbol[0] == '_') ? 1 : 0;
   assert(length > offset && symbol[offset] != '_');

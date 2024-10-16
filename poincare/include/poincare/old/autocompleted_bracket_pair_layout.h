@@ -9,26 +9,10 @@ namespace Poincare {
 
 class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
  public:
-  enum class Side : uint8_t {
-    Left = 0,
-    Right = 1,
-  };
-  static Side OtherSide(Side side) {
-    return side == Side::Left ? Side::Right : Side::Left;
-  }
-
   static bool IsAutoCompletedBracketPairType(Type type) {
     return type == LayoutNode::Type::ParenthesesLayout ||
            type == LayoutNode::Type::CurlyBracesLayout;
   }
-  static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, Type* type,
-                                                  Side* side);
-  static OLayout BuildFromBracketType(Type type);
-
-  // Deep balance the autocompleted brackets in hLayout
-  static void BalanceBrackets(HorizontalLayout hLayout,
-                              HorizontalLayout* cursorLayout,
-                              int* cursorPosition);
 
   AutocompletedBracketPairLayoutNode()
       : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
@@ -42,18 +26,7 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
   DeletionMethod deletionMethodForCursorLeftOfChild(
       int childIndex) const override;
 
-  bool isTemporary(Side side) const {
-    return side == Side::Left ? m_leftIsTemporary : m_rightIsTemporary;
-  }
-  void setTemporary(Side side, bool temporary);
-  void makeChildrenPermanent(Side side, bool includeThis);
-
  protected:
-  KDColor bracketColor(Side side, KDColor fg, KDColor bg) const {
-    return isTemporary(side) ? KDColor::Blend(fg, bg, k_temporaryBlendAlpha)
-                             : fg;
-  }
-
 #if POINCARE_TREE_LOG
   void logAttributes(std::ostream& stream) const override {
     stream << " left=\"" << (m_leftIsTemporary ? "temporary" : "permanent")
@@ -65,11 +38,6 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
 
  private:
   constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
-  static void PrivateBalanceBrackets(Type type, HorizontalLayout hLayout,
-                                     HorizontalLayout* cursorLayout,
-                                     int* cursorPosition);
-
-  LayoutNode* childOnSide(Side side) const;
 
   bool m_leftIsTemporary : 1;
   bool m_rightIsTemporary : 1;

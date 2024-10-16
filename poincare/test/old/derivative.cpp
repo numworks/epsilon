@@ -79,10 +79,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression(
       "diff(arccot(x),x,x)", "\u0014dep(-1/\u0012x^2+1\u0013,{arccot(x)})");
 
-  assert_reduces_to_formal_expression("diff(sinh(x),x,x)",
-                                      "\u0014dep(cosh(x),{sinh(x)})");
-  assert_reduces_to_formal_expression("diff(cosh(x),x,x)",
-                                      "\u0014dep(sinh(x),{cosh(x)})");
+  assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "cosh(x)");
+  assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "sinh(x)");
   assert_reduces_to_formal_expression("diff(tanh(x),x,x)",
                                       "\u0014dep(1/cosh(x)^2,{tanh(x)})");
   assert_reduces_to_formal_expression("diff(sin(x)^2,x,x)", "sin(2×x)");

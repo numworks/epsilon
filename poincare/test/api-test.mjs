@@ -28,9 +28,9 @@ async function testCase(featureName, testFunction) {
 
 Promise.all([
   // Wait for all tests to complete before logging end message
-  testCase('Module - cleanUpAfterRun', (poincare) => {
+  testCase('Module - runAndCleanup', (poincare) => {
     var expression;
-    poincare.cleanUpAfterRun(() => {
+    poincare.runAndCleanup(() => {
       expression = poincare.PCR_UserExpression.BuildFromLatex('1/2');
     });
     // The expression should be deleted after the callback

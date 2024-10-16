@@ -98,10 +98,14 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
     // Hyperbolic functions
-    if (PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 0_e),
+    if (
+        // cos(A?*i) -> cosh(A)
+        PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 0_e),
                                               KCosH(KMult(KA_s))) ||
+        // sin(A?*i) -> sinh(A)*i
         PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 1_e),
                                               KMult(KSinH(KMult(KA_s)), i_e))) {
+      // Necessary to simplify i introduced here
       *simplifyParent = true;
       return true;
     };
@@ -120,11 +124,15 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
   }
   if (e->isATrig() || e->isATanRad()) {
     // Inverse hyperbolic functions
-    if (PatternMatching::MatchReplaceSimplify(
+    if (
+        // asin(A?*i) -> asinh(A)*i
+        PatternMatching::MatchReplaceSimplify(
             e, KATrig(KMult(KA_s, i_e), 1_e),
             KMult(KArSinH(KMult(KA_s)), i_e)) ||
+        // atan(A?*i) -> atanh(A)*i
         PatternMatching::MatchReplaceSimplify(
             e, KATanRad(KMult(KA_s, i_e)), KMult(KArTanH(KMult(KA_s)), i_e))) {
+      // Necessary to simplify i introduced here
       *simplifyParent = true;
       return true;
     }

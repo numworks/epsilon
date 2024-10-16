@@ -8,6 +8,18 @@
 
 using namespace Poincare;
 
+void assert_beautifies_serializes_to(
+    const Tree* rational, const char* serialization,
+    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
+    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal) {
+  Tree* clone = rational->cloneTree();
+  // Serialization is supposed to be performed on beautified expressions
+  Beautification::DeepBeautify(clone);
+  assert_expression_serializes_to(clone, serialization, mode,
+                                  numberOfSignificantDigits, base);
+  clone->removeTree();
+}
+
 QUIZ_CASE(poincare_serialization_based_integer) {
   assert_expression_serializes_to(
       23_e, "23", Poincare::Preferences::PrintFloatMode::Scientific, 7,
@@ -20,22 +32,12 @@ QUIZ_CASE(poincare_serialization_based_integer) {
       OMG::Base::Hexadecimal);
 }
 
-void assert_rational_serializes_to(const Tree* rational,
-                                   const char* serialization) {
-  assert(rational->isRational());
-  Tree* clone = rational->cloneTree();
-  /* Rationals disappear at beautification, so their serialization hasn't been
-   * implemented */
-  Beautification::DeepBeautify(clone);
-  return assert_expression_serializes_to(clone, serialization);
-}
-
 QUIZ_CASE(poincare_serialization_rational) {
-  assert_rational_serializes_to(2_e / 3_e, "2/3");
+  assert_beautifies_serializes_to(2_e / 3_e, "2/3");
 
   Tree* e1 = parse("123456789101112131");
   Tree* e2 = Rational::Push(12345678910111213_e, e1);
-  assert_rational_serializes_to(e2, "12345678910111213/123456789101112131");
+  assert_beautifies_serializes_to(e2, "12345678910111213/123456789101112131");
 
   const char* buffer =
       "123456789112345678921234567893123456789412345678951234567896123456789612"
@@ -44,15 +46,15 @@ QUIZ_CASE(poincare_serialization_rational) {
       "789";
   Tree* e3 = parse(buffer);
   Tree* e4 = Rational::Push(e3, 1_e);
-  assert_rational_serializes_to(e4, buffer);
+  assert_beautifies_serializes_to(e4, buffer);
 
-  assert_rational_serializes_to(-2_e / 3_e, "-2/3");
-  assert_rational_serializes_to(2345678909876_e, "2345678909876");
+  assert_beautifies_serializes_to(-2_e / 3_e, "-2/3");
+  assert_beautifies_serializes_to(2345678909876_e, "2345678909876");
   Tree* e5 = Rational::Push(-2345678909876_e, 5_e);
-  assert_rational_serializes_to(e5, "-2345678909876/5");
+  assert_beautifies_serializes_to(e5, "-2345678909876/5");
 
   Tree* e6 = parse(MaxIntegerString());
-  assert_rational_serializes_to(e6, MaxIntegerString());
+  assert_beautifies_serializes_to(e6, MaxIntegerString());
 
   flush_stack();  // TODO: should be done after each quiz_case
 }
@@ -216,18 +218,18 @@ QUIZ_CASE(poincare_serialization_float) {
 }
 
 QUIZ_CASE(poincare_serialization_division) {
-  assert_expression_serializes_to(KDiv(-2_e, π_e), "-2/π");
-  assert_expression_serializes_to(KDiv(π_e, -2_e), "π/-2");
+  assert_beautifies_serializes_to(KDiv(-2_e, π_e), "(-2)/π");
+  assert_beautifies_serializes_to(KDiv(π_e, -2_e), "π/(-2)");
   assert_expression_serializes_and_parses_to_itself(KDiv(2_e, 3_e));
-  assert_expression_serializes_to(KDiv(KDiv(2_e, 3_e), π_e), "(2/3)/π");
-  assert_expression_serializes_to(KDiv(KAdd(2_e, 1_e), π_e), "(2+1)/π");
-  assert_expression_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");
-  assert_expression_serializes_to(KDiv(KMult(2_e, 1_e), π_e), "(2×1)/π");
-  assert_expression_serializes_to(KDiv(KDiv(2_e, 1_e), π_e), "(2/1)/π");
-  assert_expression_serializes_to(KDiv(2_e, KDiv(1_e, π_e)), "2/(1/π)");
-  assert_expression_serializes_to(KDiv(KDiv(2_e, 3_e), KDiv(1_e, π_e)),
+  assert_beautifies_serializes_to(KDiv(KDiv(2_e, 3_e), π_e), "(2/3)/π");
+  assert_beautifies_serializes_to(KDiv(KAdd(1_e, 2_e), π_e), "(1+2)/π");
+  assert_beautifies_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");
+  assert_beautifies_serializes_to(KDiv(KMult(1_e, 2_e), π_e), "(1×2)/π");
+  assert_beautifies_serializes_to(KDiv(KDiv(2_e, 1_e), π_e), "(2/1)/π");
+  assert_beautifies_serializes_to(KDiv(2_e, KDiv(1_e, π_e)), "2/(1/π)");
+  assert_beautifies_serializes_to(KDiv(KDiv(2_e, 3_e), KDiv(1_e, π_e)),
                                   "(2/3)/(1/π)");
-  assert_expression_serializes_to(KDiv(KOpposite(2_e), π_e), "(-2)/π");
+  assert_beautifies_serializes_to(KDiv(KOpposite(2_e), π_e), "(-2)/π");
 }
 
 QUIZ_CASE(poincare_serialization_factorial) {

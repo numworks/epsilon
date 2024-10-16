@@ -1128,7 +1128,7 @@ Tree* BuildDecomposition(double value, const Representative* const* list,
     bool lastUnit = i == length - 1;
     const Representative* representative = list[i];
     // Compute ratio from smallest representative to this one
-    double ratio = representative->ratio() / smallestRatio;
+    double ratio = std::round(representative->ratio() / smallestRatio);
     // Representatives must be ordered and have the same dimension.
     assert(i == 0 || (list[i]->ratio() < list[i - 1]->ratio()) &&
                          list[i]->siVector() == list[i - 1]->siVector());

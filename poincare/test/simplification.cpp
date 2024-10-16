@@ -870,6 +870,8 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("232.8_qt", "58×_gal+1×_pt+1.2×_cup",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("35_gon", "31×_°+30×_'",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

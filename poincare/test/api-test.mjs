@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
-import fs from 'fs'
 
-import PoincareInstanceFactory from './poincare.mjs'
+import InstantiatePoincare from './poincare.mjs'
 
 console.log('> Starting tests\n');
 
@@ -10,7 +9,7 @@ let nSuccess = 0;
 
 async function testCase(featureName, testFunction) {
   // Create a new Poincare instance for each test
-  const poincare = await PoincareInstanceFactory();
+  const poincare = await InstantiatePoincare();
   nTests += 1;
   let success = true;
   let error = null;
@@ -158,8 +157,8 @@ Promise.all([
     const expectedTree = new UserExpressionTree([19, 2, 6, 7]);
     assert.deepEqual(storedTree, expectedTree);
 
-    // Reinstantiate in a new Poincare instance
-    const newPoincare = await PoincareInstanceFactory();
+    // Reinstantiate in a new Poincare
+    const newPoincare = await InstantiatePoincare();
     const newExpression = newPoincare.PCR_UserExpression.BuildFromTree(storedTree);
     assert.ok(!newExpression.isUninitialized());
     assert.equal(newExpression.toLatex(7, true), '1+2');

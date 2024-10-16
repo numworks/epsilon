@@ -342,7 +342,7 @@ SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
   return SystemExpression::Builder(Rational::Push(numerator, denominator));
 }
 
-// Take a rational a/b and create the euclidian division a=b*q+r
+// Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
     SystemExpression e) {
   IntegerHandler num = Rational::Numerator(e);

@@ -208,7 +208,7 @@ class IntegerHandler final {
    * The buffer holding one of the IntegerHandler a or b can be used as the
    * workingBuffer because we read a and b digits before filling the working
    * buffer. */
-  static IntegerHandler Parse(UnicodeDecoder& decoder, OMG::Base base,
+  static IntegerHandler Parse(ForwardUnicodeDecoder& decoder, OMG::Base base,
                               WorkingBuffer* workingBuffer);
   static IntegerHandler Usum(const IntegerHandler& a, const IntegerHandler& b,
                              bool subtract, WorkingBuffer* workingBuffer,
@@ -280,7 +280,7 @@ class Integer {
     return IntegerHandler::Parse(decoder, base, &workingBuffer)
         .pushOnTreeStack();
   }
-  static Tree* Push(UnicodeDecoder& decoder,
+  static Tree* Push(ForwardUnicodeDecoder& decoder,
                     OMG::Base base = OMG::Base::Decimal) {
     WorkingBuffer workingBuffer;
     return IntegerHandler::Parse(decoder, base, &workingBuffer)

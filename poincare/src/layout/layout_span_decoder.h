@@ -23,7 +23,12 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
                     size_t lastPosition = k_noSize)
       : LayoutSpanDecoder(initialPosition == 0
                               ? static_cast<const Layout*>(rack->nextNode())
-                              : rack->child(initialPosition),
+                          /* initialPosition is allowed to be lastPosition for
+                           * convenience, in that case m_layout is nullptr and
+                           * should not be dereferenced */
+                          : initialPosition < rack->numberOfChildren()
+                              ? rack->child(initialPosition)
+                              : nullptr,
                           (lastPosition == k_noSize ? rack->numberOfChildren()
                                                     : lastPosition) -
                               initialPosition) {}

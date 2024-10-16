@@ -348,8 +348,8 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
   /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
            m_root and parentOfDescendant() call wouldn't be needed. */
   int start = 0;
-  const Tree* rack =
-      m_root->parentOfDescendant(m_currentToken.firstLayout(), &start);
+  const Rack* rack = Rack::From(
+      m_root->parentOfDescendant(m_currentToken.firstLayout(), &start));
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
   if (m_currentToken.type() == Token::Type::HexadecimalNumber ||
@@ -358,24 +358,25 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     base = m_currentToken.type() == Token::Type::HexadecimalNumber
                ? OMG::Base::Hexadecimal
                : OMG::Base::Binary;
-    RackLayoutDecoder decoder(rack, start, end);
+    LayoutSpanDecoder decoder(rack, start, end);
     leftHandSide = Integer::Push(decoder, base);
   } else {
     // the tokenizer have already ensured the float is syntactically correct
-    RackLayoutDecoder decoder(rack, start, end);
-    size_t decimalPoint = OMG::CodePointSearch(&decoder, '.');
+    LayoutSpanDecoder decoder(rack, start, end);
+    LayoutSpanDecoder save = decoder;
+    size_t decimalPoint = start + OMG::CodePointSearch(&decoder, '.');
     if (decimalPoint == end) {
       /* continue with the same decoder since E should be after the decimal
        * point, except when there is no point */
-      decoder.setPosition(start);
+      decoder = save;
     }
-    size_t smallE =
-        OMG::CodePointSearch(&decoder, UCodePointLatinLetterSmallCapitalE);
+    size_t smallE = start + OMG::CodePointSearch(
+                                &decoder, UCodePointLatinLetterSmallCapitalE);
 
-    RackLayoutDecoder integerDigits(rack, start,
+    LayoutSpanDecoder integerDigits(rack, start,
                                     std::min(smallE, decimalPoint));
-    RackLayoutDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
-    RackLayoutDecoder exponentDigits(rack, smallE + 1, end);
+    LayoutSpanDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
+    LayoutSpanDecoder exponentDigits(rack, smallE + 1, end);
 
     if (decimalPoint == end || smallE == decimalPoint + 1) {
       // Decimal integer

@@ -68,13 +68,13 @@ void WorkingBuffer::garbageCollect(
 
 /* IntegerHandler */
 
-IntegerHandler IntegerHandler::Parse(UnicodeDecoder& decoder, OMG::Base base,
+IntegerHandler IntegerHandler::Parse(ForwardUnicodeDecoder& decoder,
+                                     OMG::Base base,
                                      WorkingBuffer* workingBuffer) {
   NonStrictSign sign = NonStrictSign::Positive;
-  if (decoder.nextCodePoint() == '-') {
+  if (decoder.codePoint() == '-') {
     sign = NonStrictSign::Negative;
-  } else {
-    decoder.previousCodePoint();
+    decoder.nextCodePoint();
   }
   IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));

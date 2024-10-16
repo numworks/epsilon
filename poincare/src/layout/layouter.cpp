@@ -29,6 +29,8 @@ static constexpr int k_forceParentheses = -2;
 
 // A single token will never need parentheses
 static constexpr int k_tokenPriority = -1;
+// Will always need parentheses except for a single token
+static constexpr int k_minPriority = 0;
 
 // MaxPriority is to be used when there is no parent that could cause confusion
 static constexpr int k_maxPriority = 20;
@@ -446,7 +448,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         PushCodePoint(layoutParent, UCodePointNorthEastArrow);
       }
       // Use very low priority because parentheses are needed in most cases
-      layoutExpression(layoutParent, expression->nextNode(), 0);
+      layoutExpression(layoutParent, expression->nextNode(), k_minPriority);
       PushCodePoint(layoutParent, '%');
       break;
     case Type::PercentSimple:

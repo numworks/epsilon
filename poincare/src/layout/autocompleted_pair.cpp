@@ -66,8 +66,9 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
                                                TreeRef& cursorRack,
                                                int* cursorPosition) {
   assert(type.isAutocompletedPair());
+  assert(rootRack && cursorRack && cursorPosition);
+  assert(rootRack->isRackLayout() && cursorRack->isRackLayout());
 
-  assert(type == Type::ParenthesesLayout || type == Type::CurlyBracesLayout);
   bool hasDescendantToBalance = false;
   for (const Tree* d : rootRack->descendants()) {
     if (d->type() == type) {
@@ -101,11 +102,10 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
   TreeRef resultRack = KRackL()->cloneTree();
   Tree* writtenRack = resultRack;
 
-  assert((cursorRack == nullptr) == (cursorPosition == nullptr));
   /* This is used to retrieve a proper cursor position after balancing. (see
    * comment after the while loop) */
   int cursorNestingLevel = -1;
-  if (cursorRack && *cursorPosition == 0) {
+  if (*cursorPosition == 0) {
     cursorNestingLevel = bracketNestingLevel(type, rootRack, cursorRack);
   }
 
@@ -114,7 +114,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
      * Since everything is cloned into the result, the cursor position will be
      * lost, so when the corresponding layout is being read, set the cursor
      * position in the written layout. */
-    if (cursorRack && readRack == cursorRack && readIndex == *cursorPosition) {
+    if (readRack == cursorRack && readIndex == *cursorPosition) {
       cursorRack = writtenRack;
       *cursorPosition = writtenRack->numberOfChildren();
     }
@@ -131,8 +131,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
 
         /* If cursor is inside the added cloned layout, set its layout inside
          * the clone by keeping the same address offset as in the original. */
-        if (cursorRack && cursorRack >= readChild &&
-            cursorRack < readChild->nextTree()) {
+        if (cursorRack >= readChild && cursorRack < readChild->nextTree()) {
           int cursorOffset = cursorRack - readChild;
           Tree* l = readClone + cursorOffset;
           assert(l->isRackLayout());
@@ -314,7 +313,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
   while (rootRack->numberOfChildren() > 0) {
     NAry::RemoveChildAtIndex(rootRack, 0);
   }
-  if (cursorRack && cursorRack == resultRack) {
+  if (cursorRack == resultRack) {
     cursorRack = rootRack;
   }
   NAry::AddOrMergeChildAtIndex(rootRack, resultRack, 0);

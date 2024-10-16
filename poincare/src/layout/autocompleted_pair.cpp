@@ -121,7 +121,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
 
     if (readIndex < readRack->numberOfChildren()) {
       /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
-       * juste add it to the written layout and continue reading. */
+       * just add it to the written layout and continue reading. */
       Tree* readChild = readRack->child(readIndex);
       if (readChild->type() != type) {
         assert(!readChild->isRackLayout());
@@ -130,7 +130,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
         readIndex++;
 
         /* If cursor is inside the added cloned layout, set its layout inside
-         * the clone by keeping the same adress offset as in the original. */
+         * the clone by keeping the same address offset as in the original. */
         if (cursorRack && cursorRack >= readChild &&
             cursorRack < readChild->nextTree()) {
           int cursorOffset = cursorRack - readChild;
@@ -177,7 +177,8 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
        *    Ex: hLayout = "A+(B+C]"
        *      if the current reading is at '|' : "A+|(B+C]"
        *      so the current result is         : "A+|"
-       *      The encountered bracket is PERMA so the writing adds a bracket.
+       *      The encountered bracket is PERMANENT so the writing adds a
+       *      bracket.
        *      the current reading becomes      : "A+(|B+C]"
        *      and the current result is        : "A+(|]"
        * */
@@ -229,23 +230,23 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
      *      and the current result is still  : "(A+B|]"
      *
      *  - If the right side is PERMANENT, either:
-     *    - The writting is in a bracket of the same type: close the bracket
-     *      and continue writting outside of it.
+     *    - The writing is in a bracket of the same type: close the bracket
+     *      and continue writing outside of it.
      *      Ex: hLayout = "(A+B)+C"
      *        if the current reading is at '|' : "(A+B|)+C"
      *        so the current result is         : "(A+B|]"
-     *        The encountered bracket is PERMA so the writing closes the
+     *        The encountered bracket is PERMANENT so the writing closes the
      *        bracket.
      *        the current reading becomes      : "(A+B)|+C"
      *        and the current result is        : "(A+B)|"
-     *    - The writting is NOT in a bracket of the same type: a new bracket
+     *    - The writing is NOT in a bracket of the same type: a new bracket
      *      that is TEMP on the left and absorbs everything on its left should
      *      be inserted.
      *      Ex: hLayout = "A+[B)+C"
      *        if the current reading is at '|' : "A+[B|)+C"
      *        so the current result is         : "A+B|"
-     *        The encountered bracket is PERMA but there is no bracket to
-     *        close so the writting creates a bracket and absorbs everything.
+     *        The encountered bracket is PERMANENT but there is no bracket to
+     *        close so the writing creates a bracket and absorbs everything.
      *        the current reading becomes      : "A+[B)|+C"
      *        and the current result is        : "[A+B)|"
      * */

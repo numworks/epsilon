@@ -67,7 +67,7 @@ int PointsOfInterestCache::numberOfPoints(
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(
-    double start, double end, Solver<double>::Interest interest,
+    double start, double end, bool stretch, Solver<double>::Interest interest,
     int subCurveIndex) {
   if (start == end) {
     return PointOfInterest();
@@ -83,10 +83,12 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
   for (int i = firstIndex; direction * i <= direction * lastIndex;
        i += direction) {
     PointOfInterest p = pointAtIndex(i);
-    if (direction * p.abscissa <= direction * start) {
+    if (direction * p.abscissa < direction * start ||
+        (!stretch && p.abscissa == start)) {
       continue;
     }
-    if (direction * p.abscissa >= direction * end) {
+    if (direction * p.abscissa > direction * end ||
+        (!stretch && p.abscissa == end)) {
       break;
     }
     if ((interest == Solver<double>::Interest::None ||

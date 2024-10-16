@@ -18,8 +18,11 @@ PreimageGraphController::PreimageGraphController(
       m_image(NAN) {}
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
-    double start, double max, Context* context) {
+    double start, double max, Context* context, bool stretch) {
   Solver<double> solver = Poincare::Solver(start, max, context);
+  if (stretch) {
+    solver.stretch();
+  }
   SystemFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);

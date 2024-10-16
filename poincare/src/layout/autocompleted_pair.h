@@ -39,9 +39,8 @@ class AutocompletedPair {
   static Tree* ChildOnSide(Tree* l, Side side);
 
  private:
-  static void PrivateBalanceBrackets(TypeBlock type, Tree* rack,
-                                     TreeRef& cursorRack, int* cursorPosition,
-                                     Tree* rootRack);
+  static void PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
+                                     TreeRef& cursorRack, int* cursorPosition);
 };  // namespace AutocompletedPair
 
 }  // namespace Poincare::Internal

@@ -57,20 +57,19 @@ static int bracketNestingLevel(TypeBlock type, const Tree* rootRack,
 void AutocompletedPair::BalanceBrackets(Tree* rootRack, TreeRef& cursorRack,
                                         int* cursorPosition) {
   PrivateBalanceBrackets(Type::ParenthesesLayout, rootRack, cursorRack,
-                         cursorPosition, rootRack);
+                         cursorPosition);
   PrivateBalanceBrackets(Type::CurlyBracesLayout, rootRack, cursorRack,
-                         cursorPosition, rootRack);
+                         cursorPosition);
 }
 
-void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
+void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
                                                TreeRef& cursorRack,
-                                               int* cursorPosition,
-                                               Tree* rootRack) {
+                                               int* cursorPosition) {
   assert(type.isAutocompletedPair());
 
   assert(type == Type::ParenthesesLayout || type == Type::CurlyBracesLayout);
   bool hasDescendantToBalance = false;
-  for (const Tree* d : rack->descendants()) {
+  for (const Tree* d : rootRack->descendants()) {
     if (d->type() == type) {
       hasDescendantToBalance = true;
       break;
@@ -97,7 +96,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
    *  - Each time any other layout is encountered, just copy it.
    *
    * */
-  Tree* readRack = rack;
+  Tree* readRack = rootRack;
   int readIndex = 0;
   TreeRef resultRack = KRackL()->cloneTree();
   Tree* writtenRack = resultRack;
@@ -144,7 +143,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
          * inside of it. */
         if (readClone->isAutocompletedPair()) {
           PrivateBalanceBrackets(type, readClone->child(0), cursorRack,
-                                 cursorPosition, readClone->child(0));
+                                 cursorPosition);
         }
 
         continue;
@@ -197,7 +196,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
 
     /* -- Step 3 -- The reading arrived at the end of the original hLayout:
      * The balancing is complete. */
-    if (readRack == rack) {
+    if (readRack == rootRack) {
       break;
     }
 
@@ -312,13 +311,13 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
   /* Now that the result is ready to replace hLayout, replaceWithInPlace
    * cannot be used since hLayout might not have a parent.
    * So hLayout is first emptied and then merged with result.  */
-  while (rack->numberOfChildren() > 0) {
-    NAry::RemoveChildAtIndex(rack, 0);
+  while (rootRack->numberOfChildren() > 0) {
+    NAry::RemoveChildAtIndex(rootRack, 0);
   }
   if (cursorRack && cursorRack == resultRack) {
-    cursorRack = rack;
+    cursorRack = rootRack;
   }
-  NAry::AddOrMergeChildAtIndex(rack, resultRack, 0);
+  NAry::AddOrMergeChildAtIndex(rootRack, resultRack, 0);
 }
 
 void AutocompletedPair::MakeChildrenPermanent(Tree* l, Side side,

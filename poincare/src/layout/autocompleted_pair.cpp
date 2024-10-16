@@ -30,11 +30,12 @@ Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
 
 /* This function counts the number of parent brackets until it reaches a bracket
  * of another type or the top layout. */
-static int bracketNestingLevel(Tree* rack, TypeBlock type, Tree* root) {
+static int bracketNestingLevel(TypeBlock type, Tree* rootRack,
+                               Tree* cursorRack) {
   assert(type.isAutocompletedPair());
   int result = 0;
   bool isRack = true;
-  for (const Tree* ancestor : rack->ancestors(root)) {
+  for (const Tree* ancestor : cursorRack->ancestors(rootRack)) {
     if (!isRack) {
       isRack = true;
     } else {
@@ -53,12 +54,12 @@ static int bracketNestingLevel(Tree* rack, TypeBlock type, Tree* root) {
   return result;
 }
 
-void AutocompletedPair::BalanceBrackets(Tree* rack, TreeRef& cursorLayout,
+void AutocompletedPair::BalanceBrackets(Tree* rootRack, TreeRef& cursorRack,
                                         int* cursorPosition) {
-  PrivateBalanceBrackets(Type::ParenthesesLayout, rack, cursorLayout,
-                         cursorPosition, rack);
-  PrivateBalanceBrackets(Type::CurlyBracesLayout, rack, cursorLayout,
-                         cursorPosition, rack);
+  PrivateBalanceBrackets(Type::ParenthesesLayout, rootRack, cursorRack,
+                         cursorPosition, rootRack);
+  PrivateBalanceBrackets(Type::CurlyBracesLayout, rootRack, cursorRack,
+                         cursorPosition, rootRack);
 }
 
 void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
@@ -106,7 +107,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
    * comment after the while loop) */
   int cursorNestingLevel = -1;
   if (cursorRack && *cursorPosition == 0) {
-    cursorNestingLevel = bracketNestingLevel(cursorRack, type, rootRack);
+    cursorNestingLevel = bracketNestingLevel(type, rootRack, cursorRack);
   }
 
   while (true) {
@@ -297,7 +298,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rack,
    * all these cases. */
   if (cursorNestingLevel >= 0 && *cursorPosition == 0) {
     int newCursorNestingLevel =
-        bracketNestingLevel(cursorRack, type, resultRack);
+        bracketNestingLevel(type, resultRack, cursorRack);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
       Tree* p = cursorRack->parent(resultRack);
       assert(p && p->type() == type);

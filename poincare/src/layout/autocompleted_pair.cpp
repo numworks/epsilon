@@ -79,12 +79,12 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     return;
   }
 
-  /* Read hLayout from left to right, and create a copy of it with balanced
+  /* Read rootRack from left to right, and create a copy of it with balanced
    * brackets.
    *
    * Example: ("(" is permanent, "[" is temporary)
-   *  hLayout = "(A]+((B)+[C))" should be balanced into
-   *   result = "(A+((B)+C))"
+   *  rootRack = "(A]+((B)+[C))" should be balanced into
+   *    result = "(A+((B)+C))"
    *
    * To do so:
    *  - Each time a permanent opening bracket is encountered, a bracket is
@@ -164,7 +164,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
        *
        *  - If the left side is TEMPORARY, do not add a bracket in the written
        *    layout.
-       *    Ex: hLayout = "A+[B+C)"
+       *    Ex: rootRack = "A+[B+C)"
        *      if the current reading is at '|' : "A+|[B+C)"
        *      so the current result is         : "A+|"
        *      The encountered bracket is TEMP so the writing does not add a
@@ -174,7 +174,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
        *
        *  - If the left side is PERMANENT, add a bracket in the written layout
        *    and makes it temporary on the right for now.
-       *    Ex: hLayout = "A+(B+C]"
+       *    Ex: rootRack = "A+(B+C]"
        *      if the current reading is at '|' : "A+|(B+C]"
        *      so the current result is         : "A+|"
        *      The encountered bracket is PERMANENT so the writing adds a
@@ -194,15 +194,15 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     // The index is at the end of the current readLayout
     assert(readIndex == readRack->numberOfChildren());
 
-    /* -- Step 3 -- The reading arrived at the end of the original hLayout:
+    /* -- Step 3 -- The reading arrived at the end of the original rootRack:
      * The balancing is complete. */
     if (readRack == rootRack) {
       break;
     }
 
-    /* -- Step 4 -- The reading arrived at the end of an horizontal layout.
+    /* -- Step 4 -- The reading arrived at the end of rack.
      *
-     * The case of the horizontal layout being the top layout (hLayout) has
+     * The case of the rack being the top layout (rootRack) has
      * already been escaped, so here, readLayout is always the child of a
      * bracket.
      * */
@@ -221,7 +221,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
      *
      *  - If the right side is TEMPORARY, do not close a bracket in the
      *    written layout.
-     *    Ex: hLayout = "(A+B]+C"
+     *    Ex: rootRack = "(A+B]+C"
      *      if the current reading is at '|' : "(A+B|]+C"
      *      so the current result is         : "(A+B|]"
      *      The encountered bracket is TEMP so the writing does not close the
@@ -232,7 +232,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
      *  - If the right side is PERMANENT, either:
      *    - The writing is in a bracket of the same type: close the bracket
      *      and continue writing outside of it.
-     *      Ex: hLayout = "(A+B)+C"
+     *      Ex: rootRack = "(A+B)+C"
      *        if the current reading is at '|' : "(A+B|)+C"
      *        so the current result is         : "(A+B|]"
      *        The encountered bracket is PERMANENT so the writing closes the
@@ -242,7 +242,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
      *    - The writing is NOT in a bracket of the same type: a new bracket
      *      that is TEMP on the left and absorbs everything on its left should
      *      be inserted.
-     *      Ex: hLayout = "A+[B)+C"
+     *      Ex: rootRack = "A+[B)+C"
      *        if the current reading is at '|' : "A+[B|)+C"
      *        so the current result is         : "A+B|"
      *        The encountered bracket is PERMANENT but there is no bracket to
@@ -281,7 +281,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
   }
 
   /* This is a fix for the following problem:
-   * If the hLayout is "12[34)", it should be balanced into "[1234)".
+   * If the rootRack is "12[34)", it should be balanced into "[1234)".
    * The problem occurs if the cursor is before the 1: "|12[34)"
    * It's unclear if the result should be "[|1234)" or "|[1234)"
    * This ensures that the result will be the second one: "|[1234)"
@@ -308,9 +308,9 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     }
   }
 
-  /* Now that the result is ready to replace hLayout, replaceWithInPlace
-   * cannot be used since hLayout might not have a parent.
-   * So hLayout is first emptied and then merged with result.  */
+  /* Now that the result is ready to replace rootRack, replaceWithInPlace
+   * cannot be used since rootRack might not have a parent.
+   * So rootRack is first emptied and then merged with result.  */
   while (rootRack->numberOfChildren() > 0) {
     NAry::RemoveChildAtIndex(rootRack, 0);
   }

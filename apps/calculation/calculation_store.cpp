@@ -324,11 +324,9 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
  * single pushCalculation that would safely set the trees and their sizes.
  */
 
-char* CalculationStore::pushEmptyCalculation(
-    char* location,
-    Poincare::Preferences::CalculationPreferences calculationPreferences,
-    Calculation** current) {
-  while (spaceForNewCalculations(location) < k_calculationMinimalSize) {
+char* CalculationStore::getEmptySpace(char* location, size_t neededSize,
+                                      Calculation** current) {
+  while (spaceForNewCalculations(location) < neededSize) {
     if (numberOfCalculations() == 0) {
       return k_pushError;
     }
@@ -336,6 +334,17 @@ char* CalculationStore::pushEmptyCalculation(
     location -= deleted;
     *current = reinterpret_cast<Calculation*>(
         reinterpret_cast<char*>(*current) - deleted);
+  }
+  return location;
+}
+
+char* CalculationStore::pushEmptyCalculation(
+    char* location,
+    Poincare::Preferences::CalculationPreferences calculationPreferences,
+    Calculation** current) {
+  location = getEmptySpace(location, k_calculationMinimalSize, current);
+  if (location == k_pushError) {
+    return k_pushError;
   }
   new (location) Calculation(calculationPreferences);
   return location + sizeof(Calculation);
@@ -344,21 +353,13 @@ char* CalculationStore::pushEmptyCalculation(
 char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
                                            int numberOfSignificantDigits,
                                            Calculation** current) {
-  while (true) {
-    size_t availableSize = spaceForNewCalculations(location);
-    size_t length = e.tree()->treeSize();
-    if (length < availableSize) {
-      memcpy(location, e.tree(), length);
-      return location + length;
-    }
-    if (numberOfCalculations() == 0) {
-      return k_pushError;
-    }
-    int deleted = deleteOldestCalculation(location);
-    location -= deleted;
-    *current = reinterpret_cast<Calculation*>(
-        reinterpret_cast<char*>(*current) - deleted);
+  size_t length = e.tree()->treeSize();
+  location = getEmptySpace(location, length, current);
+  if (location == k_pushError) {
+    return k_pushError;
   }
+  memcpy(location, e.tree(), length);
+  return location + length;
 }
 
 }  // namespace Calculation

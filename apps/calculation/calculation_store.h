@@ -95,6 +95,7 @@ class CalculationStore {
   /* Push helper methods return a pointer to the end of the pushed content, or
    * k_pushError if the content was not pushed. They also take the current
    * calculation to update it if some older calculations are cleared. */
+  char* getEmptySpace(char* location, size_t neededSize, Calculation** current);
   char* pushEmptyCalculation(
       char* location,
       Poincare::Preferences::CalculationPreferences calculationPreferences,

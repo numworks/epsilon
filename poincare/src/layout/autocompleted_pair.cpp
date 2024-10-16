@@ -30,8 +30,8 @@ Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
 
 /* This function counts the number of parent brackets until it reaches a bracket
  * of another type or the top layout. */
-static int bracketNestingLevel(TypeBlock type, Tree* rootRack,
-                               Tree* cursorRack) {
+static int bracketNestingLevel(TypeBlock type, const Tree* rootRack,
+                               const Tree* cursorRack) {
   assert(type.isAutocompletedPair());
   int result = 0;
   bool isRack = true;

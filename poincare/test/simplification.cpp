@@ -362,7 +362,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("1", "1", polarCtx);
   simplifies_to("-1", "e^(π×i)", polarCtx);
   simplifies_to("2i", "2×e^(π/2×i)", polarCtx);
-  simplifies_to("cos(i)", "cos(i)", polarCtx);
+  simplifies_to("cos(i)", "cosh(1)", polarCtx);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
                 "[[42,(2×e^(π×i))/3][1+i,π×e^((-π/2)×i)]]", polarCtx);
   simplifies_to("-2×_m", "-2×_m", polarCtx);
@@ -504,11 +504,24 @@ QUIZ_CASE(pcj_simplification_factorial) {
 }
 
 QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
+  simplifies_to("cosh(-x)", "cosh(x)");
+  simplifies_to("sinh(-x)", "-sinh(x)");
+  simplifies_to("tanh(-x)", "-tanh(x)");
+  simplifies_to("arcosh(-x)", "arcosh(-x)");
+  // TODO: Should simplify to -arsinh(x)
+  simplifies_to("arsinh(-x)", "arsinh(-x)");
+  simplifies_to("artanh(-x)", "-artanh(x)");
+  simplifies_to("cosh(i)", "cos(1)");
+  simplifies_to("sinh(i)", "sin(1)×i");
+  simplifies_to("tanh(i)", "tan(1)×i");
+  simplifies_to("arcosh(i)", "arcosh(i)");
+  simplifies_to("arsinh(i)", "π/2×i");
+  simplifies_to("artanh(i)", "π/4×i");
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "tan(2×x×i)×i×(sin(x×i)^2/(2×cos(x×i)^2)-1/2)+tan(x×i)×i");
+                "-tanh(x)-tanh(2×x)×(-sinh(x)^2/(2×cosh(x)^2)-1/2)");
   simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
   simplifies_to("arcosh(5)-ln(5+sqrt(24))", "0", cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", cartesianCtx);

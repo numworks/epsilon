@@ -111,6 +111,17 @@ ifeq ($(EMIT_TSD),1)
 LDFLAGS_poincarejs += --emit-tsd poincare.d.ts
 endif
 
+# When the final poincare.js, the pre/post-js files are concatenated to it:
+#
+# <extern-pre-js>
+# var Poincare = (() => {
+#   return async function () {
+#     <pre-js>
+#     // Main poincare.js code
+#     <post-js>
+#   }
+#})();
+# <extern-post-js>
 LDFLAGS_poincarejs += --pre-js poincare/poincarejs/pre-js.js
 LDFLAGS_poincarejs += --extern-pre-js poincare/poincarejs/extern-pre-js.js
 

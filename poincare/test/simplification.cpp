@@ -1155,6 +1155,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(sin({3,10,3,16,3,23}π/13)/cos({36,55,42,55,75,55}π/13))",
                 "{-3π/13,3π/13,-3π/13,-3π/13,3π/13,-3π/13}");
 
+  // Angle format with hyperbolic trigonometry
+  simplifies_to("cos(2)+cosh(2)+cos(2)", "2×cos(2)+cosh(2)",
+                {.m_angleUnit = AngleUnit::Degree});
+
 #if 0
   // TODO: asin(x) = π/2 - acos(x) advanced reduction safe from infinite loops.
   simplifies_to("asin(x)-π/2", "-arccos(x)");

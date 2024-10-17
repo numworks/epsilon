@@ -51,12 +51,13 @@ template <typename T>
 DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
                                          const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations,
+DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
                                      Substitution<T> substitution,
                                      const Approximation::Context* ctx);
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
-                                            T eps, int numberOfIterations,
+                                            T absoluteErrorThreshold,
+                                            int numberOfIterations,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx);
 
@@ -146,11 +147,9 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
       end = b;
     }
   }
-  /* The tolerance sqrt(eps) estimated by the method is an upper bound and the
-   * real is error is typically eps */
-  constexpr T precision = OMG::Float::SqrtEpsilonLax<T>();
+
   DetailedResult<T> detailedResult = adaptiveQuadrature<T>(
-      start, end, precision, k_maxNumberOfIterations, substitution, ctx);
+      start, end, k_maxNumberOfIterations, substitution, ctx);
   return DetailedResultIsValid(detailedResult) ? scale * detailedResult.integral
                                                : NAN;
 }
@@ -293,7 +292,6 @@ DetailedResult<T> tanhSinhQuadrature(int level,
 template <typename T>
 DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
                                          const Approximation::Context* ctx) {
-  constexpr T epsilon = OMG::Float::Epsilon<T>();
   constexpr T max = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
   /* We here use Kronrod-Legendre quadrature with n = 21
    * The abscissa and weights are taken from QUADPACK library. */
@@ -380,8 +378,9 @@ DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
                    ? kronrodIntegralDifference * errorCoefficient
                    : kronrodIntegralDifference;
   }
-  if (absKronrodIntegral > max / (static_cast<T>(50.0) * epsilon)) {
-    T minError = epsilon * 50 * absKronrodIntegral;
+  if (absKronrodIntegral >
+      max / (static_cast<T>(50.0) * OMG::Float::Epsilon<T>())) {
+    T minError = OMG::Float::Epsilon<T>() * 50 * absKronrodIntegral;
     absError = absError > minError ? absError : minError;
   }
   DetailedResult<T> result;
@@ -391,20 +390,24 @@ DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
 }
 
 template <typename T>
-DetailedResult<T> adaptiveQuadrature(T a, T b, T eps, int numberOfIterations,
+DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
                                      Substitution<T> substitution,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, ctx);
-  return iterateAdaptiveQuadrature(quadKG, a, b, eps, numberOfIterations,
-                                   substitution, ctx);
+
+  constexpr T absoluteErrorThreshold = 1e-3 * OMG::Float::SqrtEpsilonLax<T>();
+  return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
+                                   numberOfIterations, substitution, ctx);
 }
 
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
-                                            T eps, int numberOfIterations,
+                                            T absoluteErrorThreshold,
+                                            int numberOfIterations,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx) {
-  if (quadKG.absoluteError <= eps || numberOfIterations == 1) {
+  if (quadKG.absoluteError <= absoluteErrorThreshold ||
+      numberOfIterations == 1) {
     return quadKG;
   }
 
@@ -420,9 +423,9 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
     DetailedResult<T>* current = currentIsLeft ? &left : &right;
     T lowerBound = currentIsLeft ? a : m;
     T upperBound = currentIsLeft ? m : b;
-    *current =
-        iterateAdaptiveQuadrature(*current, lowerBound, upperBound, eps / 2,
-                                  numberOfIterations - 1, substitution, ctx);
+    *current = iterateAdaptiveQuadrature(
+        *current, lowerBound, upperBound, absoluteErrorThreshold / 2,
+        numberOfIterations - 1, substitution, ctx);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};
     }

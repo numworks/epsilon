@@ -192,7 +192,7 @@ $(OUTPUT_DIRECTORY)/poincare.mjs: $(OUTPUT_DIRECTORY)/poincare.js
 	cp $(OUTPUT_DIRECTORY)/poincare.js $(OUTPUT_DIRECTORY)/poincare.mjs
 
 poincare.js.run: $(OUTPUT_DIRECTORY)/poincare.mjs
-	cp poincare/test/api-test.mjs $(OUTPUT_DIRECTORY)
-	cd $(OUTPUT_DIRECTORY)/ && node api-test.mjs
+	cp poincare/test/poincarejs-test.mjs $(OUTPUT_DIRECTORY)
+	cd $(OUTPUT_DIRECTORY)/ && node poincarejs-test.mjs
 
 $(call document_other_target,poincare.js.run,Test poincare.js using node)

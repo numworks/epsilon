@@ -80,7 +80,8 @@ bool DerivativeNode::isValidCondensedForm() const {
 }
 
 Expression DerivativeNode::createValidExpandedForm() const {
-  return Derivative(this).createValidExpandedForm();
+  assert(false);
+  return {};
 }
 
 int DerivativeNode::extractIntegerOrder() const {

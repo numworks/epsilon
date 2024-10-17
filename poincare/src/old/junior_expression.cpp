@@ -237,6 +237,16 @@ const Tree* JuniorExpressionNode::tree() const {
 
 /* JuniorExpression */
 
+NewExpression NewExpression::ExpressionFromAddress(const void* address,
+                                                   size_t size) {
+  if (address == nullptr || size == 0) {
+    return NewExpression();
+  }
+  // Build the OExpression in the Tree Pool
+  return NewExpression(static_cast<JuniorExpressionNode*>(
+      Pool::sharedPool->copyTreeFromAddress(address, size)));
+}
+
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
                                      bool addMissingParenthesis,
                                      bool parseForAssignment) {
@@ -514,7 +524,14 @@ template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToScalar(
     const char* text, Context* context,
     SymbolicComputation symbolicComputation) {
-  UserExpression exp = ParseAndSimplify(text, context, symbolicComputation);
+  UserExpression exp = Parse(text, context, false);
+  if (exp.isUninitialized()) {
+    return NAN;
+  }
+  ReductionContext ctx =
+      ReductionContext::DefaultReductionContextForAnalysis(context);
+  ctx.setSymbolicComputation(symbolicComputation);
+  exp = exp.cloneAndSimplify(ctx);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<T>(context);
 }

@@ -216,34 +216,3 @@ void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
   Preferences::SharedPreferences()->setComplexFormat(complexFormat);
   Preferences::SharedPreferences()->setAngleUnit(angleUnit);
 }
-
-void set(const char* variable, const char* value) {
-  const char* assign = "→";
-
-  char buffer[32];
-  assert(strlen(value) + strlen(assign) + strlen(variable) < sizeof(buffer));
-
-  buffer[0] = 0;
-  strlcat(buffer, value, sizeof(buffer));
-  strlcat(buffer, assign, sizeof(buffer));
-  strlcat(buffer, variable, sizeof(buffer));
-
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
-  Expression e = Expression::ParseAndSimplify(buffer, &solverContext);
-#if 0  // TODO_PCJ
-  StoreHelper::PerformStore(&globalContext,e);
-#else
-  assert(false);
-#endif
-}
-
-void unset(const char* variable) {
-  // The variable is either an expression or a function
-  Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtension(variable, "exp")
-      .destroy();
-  Ion::Storage::FileSystem::sharedFileSystem
-      ->recordBaseNamedWithExtension(variable, "func")
-      .destroy();
-}

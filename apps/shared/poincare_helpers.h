@@ -154,14 +154,6 @@ inline Poincare::SystemExpression CloneAndReduce(
       ReductionContextForParameters(e, context, reductionParameters));
 }
 
-inline void CloneAndReduceAndRemoveUnit(
-    Poincare::Expression* e, Poincare::Expression* unit,
-    Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
-  *e = e->cloneAndReduceAndRemoveUnit(
-      ReductionContextForParameters(*e, context, reductionParameters), unit);
-}
-
 // ===== Misc =====
 
 // Return the nearest number from t's representation with given precision.

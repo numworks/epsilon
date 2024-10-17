@@ -68,7 +68,4 @@ void setComplexFormatAndAngleUnit(
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::Preferences::AngleUnit angleUnit);
 
-void set(const char* variable, const char* value);
-void unset(const char* variable);
-
 #endif

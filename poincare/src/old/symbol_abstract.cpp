@@ -41,7 +41,7 @@ size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
 
 OExpression SymbolAbstractNode::replaceSymbolWithExpression(
     const SymbolAbstract &symbol, const OExpression &expression) {
-  return SymbolAbstract(this).replaceSymbolWithExpression(symbol, expression);
+  assert(false);
 }
 
 ExpressionNode::LayoutShape SymbolAbstractNode::leftLayoutShape() const {

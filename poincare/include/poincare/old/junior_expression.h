@@ -143,16 +143,20 @@ class JuniorExpression : public OExpression {
   friend class JuniorExpressionNode;
 
  public:
+  using OExpression::OExpression;
+
   JuniorExpression() {}
-  JuniorExpression(const OExpression& other) { *this = other; }
 
   JuniorExpression(const API::UserExpression& ue) {
     *this = Builder(ue.tree());
   }
 
   NewExpression clone() const {
-    return static_cast<NewExpression>(OExpression::clone());
+    OExpression clone = OExpression::clone();
+    return static_cast<NewExpression&>(clone);
   }
+
+  static NewExpression ExpressionFromAddress(const void* address, size_t size);
 
   static UserExpression Parse(const Internal::Tree* layout, Context* context,
                               bool addMissingParenthesis = true,
@@ -204,16 +208,6 @@ class JuniorExpression : public OExpression {
   bool isOfType(std::initializer_list<Internal::Type> types) const;
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;
-
-  NewExpression operator=(OExpression&& other) {
-    *this = static_cast<NewExpression&>(other);
-    return *this;
-  }
-
-  NewExpression operator=(const OExpression& other) {
-    *this = static_cast<const NewExpression&>(other);
-    return *this;
-  }
 
   JuniorExpressionNode* node() const {
     return static_cast<JuniorExpressionNode*>(OExpression::node());

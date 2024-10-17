@@ -35,13 +35,12 @@ define run_unit_tests
 	./$1 --headless --limit-stack-usage -f pcj
 	./$1 --headless --limit-stack-usage -f poincare
 	./$1 --headless --limit-stack-usage -f probability
+	./$1 --headless --limit-stack-usage -f python
 	./$1 --headless --limit-stack-usage -f regression
 	./$1 --headless --limit-stack-usage -f sequence
 	./$1 --headless --limit-stack-usage -f shared
 	./$1 --headless --limit-stack-usage -f statistics
 endef
-# FIXME: all python tests crash when building with gcc
-# ./$1 --headless --limit-stack-usage -f python
 # TODO: Put back unit tests that are currently broken for all toolchains
 # ./$1 --headless --limit-stack-usage -f code
 # ./$1 --headless --limit-stack-usage -f calculation

@@ -197,11 +197,6 @@ class Approximation final {
    * to e. */
   static Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e);
 
- private:
-  template <typename T>
-  static std::complex<T> NonReal() {
-    return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
-  }
   template <typename T>
   static bool IsNonReal(std::complex<T> x) {
     if (OMG::IsSignalingNan(x.real())) {
@@ -209,6 +204,12 @@ class Approximation final {
       return true;
     }
     return false;
+  }
+
+ private:
+  template <typename T>
+  static std::complex<T> NonReal() {
+    return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
   }
 
   template <typename T>

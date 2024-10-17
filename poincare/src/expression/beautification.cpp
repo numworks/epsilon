@@ -377,6 +377,9 @@ template <typename T>
 Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
                                             ComplexFormat complexFormat) {
   // TODO: factorize with the code above somehow ?
+  if (Approximation::IsNonReal(value)) {
+    return KNonReal->cloneTree();
+  }
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
     return KUndef->cloneTree();

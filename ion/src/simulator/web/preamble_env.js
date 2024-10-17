@@ -11,11 +11,10 @@
  * Cf https://github.com/emscripten-core/emscripten/issues/9827
  * */
 
-Module["preRun"] = function () {
+Module['preRun'] = function () {
   if (Module['env'] && typeof Module['env'] === 'object') {
     for (var key in Module['env']) {
-      if (Module['env'].hasOwnProperty(key))
-        ENV[key] = Module['env'][key];
+      if (Module['env'].hasOwnProperty(key)) ENV[key] = Module['env'][key];
     }
   }
   /* When figuring up in which DOM element to draw, SDL2/emscripten looks for
@@ -26,5 +25,5 @@ Module["preRun"] = function () {
    * DOM node lookups made by Emscripten! Using this feature, we can instruct
    * emscripten to use a custom element when looking for "#canvas".
    * See https://github.com/emscripten-core/emscripten/pull/10659 */
-  specialHTMLTargets["#canvas"] = Module.canvas;
-}
+  specialHTMLTargets['#canvas'] = Module.canvas;
+};

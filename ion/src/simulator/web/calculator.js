@@ -8,9 +8,9 @@ function Calculator(emModule) {
    */
 
   // Configure emModule
-  var emModule = (typeof emModule === 'undefined') ? {} : emModule;
+  var emModule = typeof emModule === 'undefined' ? {} : emModule;
   var calculatorElement = emModule.element || document.querySelector('.calculator');
-  var mainCanvas = calculatorElement.querySelector("canvas");
+  var mainCanvas = calculatorElement.querySelector('canvas');
   if (typeof emModule.mirrorCanvas === 'undefined') {
     /* If emModule.mirrorCanvas is defined as null, don't do anything */
     emModule.mirrorCanvas = document.querySelector('canvas.calculator-mirror');
@@ -20,26 +20,26 @@ function Calculator(emModule) {
     canvas: mainCanvas,
     arguments: [
       '--language',
-      document.documentElement.lang || window.navigator.language.split('-')[0]
+      document.documentElement.lang || window.navigator.language.split('-')[0],
     ],
-    onEpsilonIdle: function() {
+    onEpsilonIdle: function () {
       calculatorElement.classList.remove('loading');
     },
-    takeScreenshot: function(e) {
+    takeScreenshot: function (e) {
       if (e.altKey) {
         this.copyScreenshot();
       } else {
         this.downloadScreenshot();
       }
     },
-    copyScreenshot: function() {
-      this.screenshot(function(blob){
-        let data = [new ClipboardItem({[blob.type]: blob})];
+    copyScreenshot: function () {
+      this.screenshot(function (blob) {
+        let data = [new ClipboardItem({ [blob.type]: blob })];
         navigator.clipboard.write(data);
       });
     },
-    downloadScreenshot: function() {
-      this.screenshot(function(blob){
+    downloadScreenshot: function () {
+      this.screenshot(function (blob) {
         var url = URL.createObjectURL(blob);
         console.log(blob, url);
         var link = document.createElement('a');
@@ -49,18 +49,18 @@ function Calculator(emModule) {
         URL.revokeObjectURL(url);
       });
     },
-    screenshot: function(callback) {
-      if (typeof(this._IonDisplayForceRefresh) === "function") {
+    screenshot: function (callback) {
+      if (typeof this._IonDisplayForceRefresh === 'function') {
         // Some versions of Epsilon (before 20.1.1) need this call
         this._IonDisplayForceRefresh();
       }
       return mainCanvas.toBlob(callback);
-    }
+    },
   };
   if (mirrorCanvasContext) {
-    defaultModule.onDisplayRefresh = function() {
+    defaultModule.onDisplayRefresh = function () {
       mirrorCanvasContext.drawImage(mainCanvas, 0, 0);
-    }
+    };
   }
   for (var attrname in defaultModule) {
     if (!emModule.hasOwnProperty(attrname)) {
@@ -69,7 +69,7 @@ function Calculator(emModule) {
   }
 
   // Load and run Epsilon
-  EM_MODULE_NAME(emModule).then(resultModule => {
+  EM_MODULE_NAME(emModule).then((resultModule) => {
     /* As per emscripten 3.1.58 "the argument passed into the module constructor is
      * no longer mutated in place. The expectation is that the module instance will
      * be available via the constructor return value."
@@ -81,20 +81,20 @@ function Calculator(emModule) {
      * This needs to be done after loading Epsilon, otherwise the _IonSimulator*
      * functions haven't been defined just yet. */
     function eventHandler(keyHandler) {
-      return function(ev) {
+      return function (ev) {
         var key = this.getAttribute('data-key');
         keyHandler(key);
         /* Always prevent default action of event.
-        * This will prevent the browser from delaying that event. Indeed the
-        * browser would otherwise try to see if that event could have any other
-        * meaning (e.g. a click) and might delay it as a result.*/
+         * This will prevent the browser from delaying that event. Indeed the
+         * browser would otherwise try to see if that event could have any other
+         * meaning (e.g. a click) and might delay it as a result.*/
         ev.preventDefault();
       };
     }
     var downHandler = eventHandler(emModule._IonSimulatorKeyboardKeyDown);
     var upHandler = eventHandler(emModule._IonSimulatorKeyboardKeyUp);
 
-    calculatorElement.querySelectorAll('span').forEach(function(span){
+    calculatorElement.querySelectorAll('span').forEach(function (span) {
       /* We use pointer events to handle both touch and mouse events */
       span.addEventListener('pointerdown', downHandler);
       span.addEventListener('pointerup', upHandler);
@@ -102,23 +102,23 @@ function Calculator(emModule) {
   });
 
   function resizeImgForJpg(img) {
-    if (img.currentSrc.endsWith(".jpg") || img.currentSrc.startsWith("data:image/jpg")) {
-      calculatorElement.style.top = "0";
-      calculatorElement.style.left = "0";
-      calculatorElement.style.width = "100%";
-      calculatorElement.style.height = "100%";
+    if (img.currentSrc.endsWith('.jpg') || img.currentSrc.startsWith('data:image/jpg')) {
+      calculatorElement.style.top = '0';
+      calculatorElement.style.left = '0';
+      calculatorElement.style.width = '100%';
+      calculatorElement.style.height = '100%';
     }
   }
 
-  var calculatorImg = document.querySelector("picture > img");
+  var calculatorImg = document.querySelector('picture > img');
   // On Chrome, the img may take time to load the currentSrc, so we need to add
   // a callback.
   if (calculatorImg.complete) {
     resizeImgForJpg(calculatorImg);
   } else {
-    calculatorImg.onload = function() {
+    calculatorImg.onload = function () {
       resizeImgForJpg(calculatorImg);
-    }
+    };
   }
 }
 

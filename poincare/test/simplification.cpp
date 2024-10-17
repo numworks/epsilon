@@ -547,10 +547,10 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(-1)", "135", {.m_angleUnit = AngleUnit::Degree});
 
   simplifies_to("csc(arccsc(9/7))", "9/7");
-  simplifies_to("csc(arccsc(3/7))", "undef");
+  simplifies_to("csc(arccsc(3/7))", "nonreal");
   simplifies_to("csc(arccsc(3/7))", "3/7", cartesianCtx);
   simplifies_to("sec(arcsec(9/7))", "9/7");
-  simplifies_to("sec(arcsec(3/7))", "undef");
+  simplifies_to("sec(arcsec(3/7))", "nonreal");
 
   simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
@@ -1121,10 +1121,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("cos(acos(3/7))", "3/7");
-  simplifies_to("cos(acos(9/7))", "undef");  // TODO: nonreal ?
+  simplifies_to("cos(acos(9/7))", "nonreal");
   simplifies_to("cos(acos(9/7))", "9/7", cartesianCtx);
   simplifies_to("sin(asin(3/7))", "3/7");
-  simplifies_to("sin(asin(9/7))", "undef");  // TODO: nonreal ?
+  simplifies_to("sin(asin(9/7))", "nonreal");
   simplifies_to("sin(asin(9/7))", "9/7", cartesianCtx);
 
   // atrig(trig)

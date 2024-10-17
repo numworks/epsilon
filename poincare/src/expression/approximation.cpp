@@ -256,29 +256,36 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   return c / d;
 }
 
-// Return true if one of the dependencies is undefined
-bool UndefDependencies(const Tree* dep, const Approximation::Context* ctx) {
+/* Return highest order of undefined dependencies if there is at least one, zero
+ * otherwise */
+template <typename T>
+std::complex<T> UndefDependencies(const Tree* dep,
+                                  const Approximation::Context* ctx) {
   // Dependency children may have different dimensions.
+  std::complex<T> undefValue = std::complex<T>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
     Dimension dim = Dimension::Get(child);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<float> c = Approximation::ToComplex<float>(child, ctx);
-      if (std::isnan(c.real())) {
-        return true;
+      std::complex<T> c = Approximation::ToComplex<T>(child, ctx);
+      if (Approximation::IsNonReal(c) && undefValue == std::complex<T>(0)) {
+        // Only update to nonreal if there is no undef to respect priority
+        undefValue = c;
+      } else if (std::isnan(c.real())) {
+        undefValue = NAN;
+      } else {
+        assert(!std::isnan(c.imag()));
       }
-      assert(!std::isnan(c.imag()));
     } else {
-      Tree* a = Approximation::ToTree<float>(child, Dimension::Get(child), ctx);
+      Tree* a = Approximation::ToTree<T>(child, Dimension::Get(child), ctx);
       if (a->isUndefined()) {
         a->removeTree();
-        return true;
+        undefValue = NAN;
       }
       a->removeTree();
     }
   }
-  // None of the dependencies are NAN.
-  return false;
+  return undefValue;
 }
 
 template <typename T>
@@ -802,8 +809,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
           abscissa, Distribution::Get(distribution), parameters);
     }
     case Type::Dep: {
-      return UndefDependencies(e, ctx) ? NAN
-                                       : ToComplex<T>(Dependency::Main(e), ctx);
+      std::complex<T> undef = UndefDependencies<T>(e, ctx);
+      return (undef == std::complex<T>(0))
+                 ? ToComplex<T>(Dependency::Main(e), ctx)
+                 : undef;
     }
     case Type::NonNull: {
       std::complex<T> x = ToComplex<T>(e->child(0), ctx);
@@ -1013,7 +1022,7 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
   }
   if (e->isDep()) {
     // TODO: Undefined boolean return false for now.
-    return !UndefDependencies(e, ctx) && a;
+    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0));
   }
   bool b = ToBoolean<T>(e->child(1), ctx);
   switch (e->type()) {
@@ -1180,9 +1189,13 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     }
     case Type::Piecewise:
       return ToMatrix<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
-    case Type::Dep:
-      return UndefDependencies(e, ctx) ? KUndef->cloneTree()
-                                       : ToMatrix<T>(Dependency::Main(e), ctx);
+    case Type::Dep: {
+      std::complex<T> undef = UndefDependencies<T>(e, ctx);
+      return (undef == std::complex<T>(0))
+                 ? ToMatrix<T>(Dependency::Main(e), ctx)
+                 : (IsNonReal(undef) ? KNonReal->cloneTree()
+                                     : KUndef->cloneTree());
+    }
     default:;
   }
   return KUndef->cloneTree();

@@ -295,6 +295,15 @@ QUIZ_CASE(pcj_approximation_parametrics) {
   approximates_to<float>("sum(k/2, k, 1, 12)", "39");
 }
 
+QUIZ_CASE(pcj_approximation_integrals) {
+  approximates_to<double>("int(710×x×e^(-710×x), x, 0, 10)",
+                          "0.0014084507042254");
+  approximates_to<double>("710*int(x×e^(-710×x), x, 0, 10)",
+                          "0.0014084507042254");
+  approximates_to<float>("int(710×x×e^(-710×x), x, 0, 10)", "0.001408451");
+  approximates_to<float>("710*int(x×e^(-710×x), x, 0, 10)", "0.001408451");
+}
+
 QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
 }

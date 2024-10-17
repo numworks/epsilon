@@ -395,7 +395,7 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, ctx);
 
-  constexpr T absoluteErrorThreshold = 1e-3 * OMG::Float::SqrtEpsilonLax<T>();
+  constexpr T absoluteErrorThreshold = 1e-11;
   return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
                                    numberOfIterations, substitution, ctx);
 }

@@ -35,8 +35,7 @@
           UTF8ToString: (x => x),
           _IonSoftwareVersion: (() => EPSILON_VERSION),
           _IonPatchLevel: (() => PATCH_LEVEL)
-          }
-      };
+          };
 Calculator(ModuleAsync);
     </script>
     <script>

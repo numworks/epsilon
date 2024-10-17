@@ -51,7 +51,7 @@ $(call create_zip,htmlpack%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
   app/assets/background.jpg \
   app/assets/background-no-shadow.webp \
 ) \
-  ion/src/simulator/assets/background-with-shadow.webp \
+  ion/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp \
 )
 
 $(call document_other_target,htmlpack.<flavors>.zip)

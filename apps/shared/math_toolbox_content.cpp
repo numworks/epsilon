@@ -741,7 +741,7 @@ constexpr ToolboxMessage listMean = ToolboxMessageLeaf(
     I18n::Message::ListMeanCommandWithArg, I18n::Message::Mean);
 constexpr ToolboxMessage listStandardDeviation =
     ToolboxMessageLeaf(I18n::Message::ListStandardDevCommandWithArg,
-                       I18n::Message::StandardDeviation);
+                       I18n::Message::StandardDeviationFullName);
 constexpr ToolboxMessage listMedian = ToolboxMessageLeaf(
     I18n::Message::ListMedianCommandWithArg, I18n::Message::Median);
 constexpr ToolboxMessage listVariance = ToolboxMessageLeaf(

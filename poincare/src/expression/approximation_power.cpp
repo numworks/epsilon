@@ -1,6 +1,7 @@
 #include "approximation.h"
 #include "context.h"
 #include "rational.h"
+#include "undefined.h"
 
 namespace Poincare::Internal {
 
@@ -51,6 +52,11 @@ std::complex<T> Approximation::ComputeComplexPower(
   } else {
     result = std::pow(c, d);
   }
+
+  if (Undefined::IsUndefined(result)) {
+    return result;
+  }
+
   /* Openbsd trigonometric functions are numerical implementation and thus are
    * approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to
@@ -72,7 +78,7 @@ std::complex<T> Approximation::ComputeComplexPower(
   }
   if (complexFormat == ComplexFormat::Real &&
       result.imag() != static_cast<T>(0.0)) {
-    return NAN;
+    return NonReal<T>();
   }
   std::complex<T> precision =
       d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;

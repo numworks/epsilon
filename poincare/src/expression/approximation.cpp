@@ -268,8 +268,8 @@ std::complex<T> UndefDependencies(const Tree* dep,
     if (dim.isScalar()) {
       // Optimize most cases
       std::complex<T> c = Approximation::ToComplex<T>(child, ctx);
+      // Only update to nonreal if there is no undef to respect priority
       if (Approximation::IsNonReal(c) && undefValue == std::complex<T>(0)) {
-        // Only update to nonreal if there is no undef to respect priority
         undefValue = c;
       } else if (std::isnan(c.real())) {
         undefValue = NAN;
@@ -292,7 +292,7 @@ template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplexSwitch<T>(e, ctx);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
-      !e->isComplexI()) {
+      !(Undefined::IsUndefined(value)) && !e->isComplexI()) {
     /* Some operations in reduction can introduce i, but when complex format is
      * real and the factor or i approximates to 0, we don't want to return
      * nonreal. We thus decided not to return nonreal when we approximate i.
@@ -396,7 +396,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         // root(x, q) with q integer and x real
         std::complex<T> result =
             ComputeNotPrincipalRealRootOfRationalPow<T>(base, 1, exp.real());
-        if (!std::isnan(result.real()) && !std::isnan(result.imag())) {
+        if (!Undefined::IsUndefined(result)) {
           return result;
         }
       }
@@ -517,13 +517,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       if (low.imag() != 0 || (int)low.real() != low.real()) {
         return NAN;
       }
-      assert(!std::isnan(low.real()) && !std::isnan(low.imag()));
+      assert(!Undefined::IsUndefined(low));
       const Tree* upperBoundChild = lowerBoundChild->nextTree();
       std::complex<T> up = ToComplex<T>(upperBoundChild, ctx);
       if (up.imag() != 0 || (int)up.real() != up.real()) {
         return NAN;
       }
-      assert(!std::isnan(up.real()) && !std::isnan(up.imag()));
+      assert(!Undefined::IsUndefined(up));
       int lowerBound = low.real();
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
@@ -540,7 +540,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         } else {
           result *= value;
         }
-        if (std::isnan(result.real()) || std::isnan(result.imag())) {
+        if (Undefined::IsUndefined(result)) {
           break;
         }
       }
@@ -847,12 +847,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   T child[2];
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
     std::complex<T> app = ToComplex<T>(childNode, ctx);
-    if (app.imag() != 0) {
+    if (app.imag() != 0 || std::isnan(app.real())) {
       return NAN;
     }
-    if (std::isnan(app.real())) {
-      return NAN;
-    }
+    assert(!std::isnan(app.imag()));
     child[childNode.index] = app.real();
   }
   switch (e->type()) {

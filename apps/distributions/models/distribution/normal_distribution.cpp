@@ -45,7 +45,8 @@ ParameterRepresentation NormalDistribution::paramRepresentationAtIndex(
     case ParamsOrder::Sigma: {
       Poincare::Layout s =
           Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::Sigma));
-      return ParameterRepresentation{s, I18n::Message::StandardDeviation};
+      return ParameterRepresentation{
+          s, I18n::Message::StandardDeviationDefinition};
     }
     default:
       assert(false);

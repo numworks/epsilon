@@ -534,16 +534,14 @@ inline const Layout* MostNestedIntegral(const Layout* node,
   return node;
 }
 
-inline KDCoordinate BoundMaxHeight(const Layout* node, BoundPosition position,
-                                   KDFont::Size font) {
+inline KDCoordinate BoundMaxHeight(const Layout* node, BoundPosition position) {
   // TODO
   return Height(node->child(position == BoundPosition::LowerBound
                                 ? k_lowerBoundIndex
                                 : k_upperBoundIndex));
 }
 
-inline KDCoordinate CentralArgumentHeight(const Layout* node,
-                                          KDFont::Size font) {
+inline KDCoordinate CentralArgumentHeight(const Layout* node) {
   /* When integrals are in a row, the last one is the tallest. We take its
    * central argument height to define the one of the others integrals */
   const Layout* last = MostNestedIntegral(node, NestedPosition::Next);
@@ -557,7 +555,7 @@ inline KDCoordinate CentralArgumentHeight(const Layout* node,
            std::max(integrandHeight - integrandBaseline,
                     differentialHeight - differentialBaseline);
   } else {
-    return CentralArgumentHeight(last, font);
+    return CentralArgumentHeight(last);
   }
 }
 }  // namespace Integral

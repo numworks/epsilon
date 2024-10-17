@@ -298,11 +298,10 @@ KDSize Render::Size(const Layout* l) {
       const Layout* last = MostNestedIntegral(l, NestedPosition::Next);
       height = (l == last)
                    ? k_boundVerticalMargin +
-                         BoundMaxHeight(l, BoundPosition::UpperBound, s_font) +
+                         BoundMaxHeight(l, BoundPosition::UpperBound) +
+                         k_integrandVerticalMargin + CentralArgumentHeight(l) +
                          k_integrandVerticalMargin +
-                         CentralArgumentHeight(l, s_font) +
-                         k_integrandVerticalMargin +
-                         BoundMaxHeight(l, BoundPosition::LowerBound, s_font) +
+                         BoundMaxHeight(l, BoundPosition::LowerBound) +
                          k_boundVerticalMargin
                    : Height(last);
       break;
@@ -558,11 +557,11 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       if (childIndex == k_lowerBoundIndex) {
         x = boundOffset;
         y = Height(l) - k_boundVerticalMargin -
-            BoundMaxHeight(l, BoundPosition::LowerBound, s_font);
+            BoundMaxHeight(l, BoundPosition::LowerBound);
       } else if (childIndex == k_upperBoundIndex) {
         x = boundOffset;
         y = k_boundVerticalMargin +
-            BoundMaxHeight(l, BoundPosition::UpperBound, s_font) -
+            BoundMaxHeight(l, BoundPosition::UpperBound) -
             upperBoundSize.height();
       } else if (childIndex == k_integrandIndex) {
         x = boundOffset +
@@ -714,7 +713,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
       const Layout* last = MostNestedIntegral(l, NestedPosition::Next);
       if (l == last) {
         return k_boundVerticalMargin +
-               BoundMaxHeight(l, BoundPosition::UpperBound, s_font) +
+               BoundMaxHeight(l, BoundPosition::UpperBound) +
                k_integrandVerticalMargin +
                std::max(Baseline(l->child(3)), Baseline(l->child(0)));
       } else {
@@ -1171,15 +1170,14 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       using namespace Integral;
       const Rack* integrand = l->child(k_integrandIndex);
       KDSize integrandSize = Size(integrand);
-      KDCoordinate centralArgHeight = CentralArgumentHeight(l, s_font);
+      KDCoordinate centralArgHeight = CentralArgumentHeight(l);
       KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
 
       // Render the integral symbol
       KDCoordinate offsetX = p.x() + k_symbolWidth;
-      KDCoordinate offsetY =
-          p.y() + k_boundVerticalMargin +
-          BoundMaxHeight(l, BoundPosition::UpperBound, s_font) +
-          k_integrandVerticalMargin - k_symbolHeight;
+      KDCoordinate offsetY = p.y() + k_boundVerticalMargin +
+                             BoundMaxHeight(l, BoundPosition::UpperBound) +
+                             k_integrandVerticalMargin - k_symbolHeight;
 
       // Upper part
       KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);

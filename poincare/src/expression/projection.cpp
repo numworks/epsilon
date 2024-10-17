@@ -122,6 +122,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
                   ? projectionContext.m_context->treeForSymbolIdentifier(
                         descendant)
                   : nullptr;
+          assert(definition != e);  // circular definition
           if (definition && hasComplexNodes(definition, projectionContext)) {
             return true;
           }

@@ -6,6 +6,10 @@ on:
       - '**.c'
       - '**.h'
       - '**.py'
+      - '**.js'
+      - '**.cjs'
+      - '**.mjs'
+      - '**.ts'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

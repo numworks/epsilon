@@ -215,7 +215,8 @@ T Approximation::FloatBinomial(T n, T k) {
 }
 
 template <typename T>
-std::complex<T> FloatMultiplication(std::complex<T> c, std::complex<T> d) {
+static std::complex<T> FloatMultiplication(std::complex<T> c,
+                                           std::complex<T> d) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
   if (std::isinf(std::abs(c)) || std::isinf(std::abs(d))) {
     constexpr T zero = static_cast<T>(0.0);
@@ -238,7 +239,7 @@ std::complex<T> FloatMultiplication(std::complex<T> c, std::complex<T> d) {
 }
 
 template <typename T>
-std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
+static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
   if (d.real() == 0 && d.imag() == 0) {
     return NAN;
   }
@@ -259,8 +260,8 @@ std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 /* Return highest order of undefined dependencies if there is at least one, zero
  * otherwise */
 template <typename T>
-std::complex<T> UndefDependencies(const Tree* dep,
-                                  const Approximation::Context* ctx) {
+static std::complex<T> UndefDependencies(const Tree* dep,
+                                         const Approximation::Context* ctx) {
   // Dependency children may have different dimensions.
   std::complex<T> undefValue = std::complex<T>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
@@ -1280,12 +1281,12 @@ bool Approximation::CanApproximate(const Tree* e,
   return true;
 }
 
-bool SkipApproximation(TypeBlock type) {
+static bool SkipApproximation(TypeBlock type) {
   return type.isFloat() || type.isComplexI();
 }
 
-bool SkipApproximation(TypeBlock type, TypeBlock parentType,
-                       int indexInParent) {
+static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
+                              int indexInParent) {
   if (SkipApproximation(type)) {
     return true;
   }

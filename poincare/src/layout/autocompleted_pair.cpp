@@ -149,14 +149,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         continue;
       }
 
-      // -- Step 2 -- The reading arrived left of a bracket:
-      Tree* bracketNode = readChild;
-
-      /* - Step 2.1 - Read
-       * The reading enters the brackets and continues inside it.
-       */
-      readRack = readChild->child(0);
-      readIndex = 0;
+      // -- Step 2 -- The reading arrived left of a bracket
 
       /* - Step 2.2 - Write
        * To know if a bracket should be added to the written layout, the
@@ -182,12 +175,18 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
        *      the current reading becomes      : "A+(|B+C]"
        *      and the current result is        : "A+(|]"
        * */
-      if (!IsTemporary(bracketNode, Side::Left)) {
+      if (!IsTemporary(readChild, Side::Left)) {
         TreeRef newBracket = BuildFromBracketType(type);
         SetTemporary(newBracket, Side::Right, true);
         NAry::AddChild(writtenRack, newBracket);
         writtenRack = newBracket->child(0);
       }
+
+      /* - Step 2.2 - Read
+       * The reading enters the brackets and continues inside it.
+       */
+      readRack = readChild->child(0);
+      readIndex = 0;
       continue;
     }
 

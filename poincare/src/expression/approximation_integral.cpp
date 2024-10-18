@@ -406,7 +406,7 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
   constexpr T approximationErrorThreshold = 1e-11;
 
   return iterateAdaptiveQuadrature(quadKG, a, b, approximationErrorThreshold,
-                                   numberOfIterations, substitution, ctx);
+                                   numberOfIterations - 1, substitution, ctx);
 }
 
 template <typename T>
@@ -426,8 +426,13 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
    * criterion must be kept in all cases, because on integrals that have an
    * almost null value, the error and the integral value have a similar order of
    * magnitude. */
+  /* TODO: we could add a minimum number of steps to force the integration
+   * interval to be split into several intervals. This would prevent some wrong
+   * early exits that can occur if the error is below the threshold, but because
+   * both Kronrod and Gauss quadratures have too few interpolation points
+   * compared to the interval length. */
   if (quadKG.absoluteError <= approximationErrorThreshold ||
-      numberOfIterations <= 1) {
+      numberOfIterations <= 0) {
     return quadKG;
   }
 

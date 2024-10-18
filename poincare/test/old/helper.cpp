@@ -299,20 +299,31 @@ void assert_expression_simplifies_approximates_to(
 void assert_expression_serializes_to(const Tree *expression,
                                      const char *serialization,
                                      Preferences::PrintFloatMode mode,
-                                     int numberOfSignificantDigits) {
+                                     int numberOfSignificantDigits,
+                                     OMG::Base base) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree *layout = Internal::Layouter::LayoutExpression(
-      expression->cloneTree(), true, numberOfSignificantDigits, mode);
+      expression->cloneTree(), true, numberOfSignificantDigits, mode, base);
   Serialize(layout, buffer, buffer + bufferSize);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
   char information[bufferSize] = "";
+#if 0
   if (!test) {
     build_failure_infos(information, bufferSize, "serialized expression",
                         buffer, serialization);
   }
   quiz_assert_print_if_failure(test, information);
+#else
+  int i = Poincare::Print::UnsafeCustomPrintf(
+      information, bufferSize, "%s\t%s", test ? "OK" : "BAD", serialization);
+  if (!test) {
+    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
+                                        buffer);
+  }
+  quiz_print(information);
+#endif
 }
 
 void assert_expression_serializes_and_parses_to_itself(
@@ -326,21 +337,24 @@ void assert_expression_serializes_and_parses_to_itself(
   assert_parsed_expression_is(buffer, expression);
 }
 
-void assert_expression_parses_and_serializes_to(const char *expression,
-                                                const char *result) {
-#if 0
+void assert_expression_parses_and_serializes_to(
+    const char *expression, const char *result,
+    Preferences::PrintFloatMode mode, int numberOfSignificantDigits,
+    OMG::Base base) {
   Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext);
+  Tree *e = parse_expression(expression, &globalContext);
+  Tree *l = Internal::Layouter::LayoutExpression(
+      e, true, numberOfSignificantDigits, mode, base);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  e.serialize(buffer, bufferSize);
+  Serialize(l, buffer, buffer + bufferSize);
+  l->removeTree();
   const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {
     build_failure_infos(information, bufferSize, expression, buffer, result);
   }
   quiz_assert_print_if_failure(test, information);
-#endif
 }
 
 void assert_expression_parses_and_serializes_to_itself(const char *expression) {

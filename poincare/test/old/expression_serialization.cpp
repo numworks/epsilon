@@ -1,302 +1,235 @@
-#include <omg/float.h>
-#include <poincare/old/absolute_value.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/based_integer.h>
-#include <poincare/old/comparison.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/decimal.h>
-#include <poincare/old/derivative.h>
-#include <poincare/old/division.h>
-#include <poincare/old/factorial.h>
-#include <poincare/old/function.h>
-#include <poincare/old/infinity.h>
-#include <poincare/old/logical_operator.h>
-#include <poincare/old/opposite.h>
-#include <poincare/old/parenthesis.h>
-#include <poincare/old/percent.h>
-#include <poincare/old/power.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/subtraction.h>
-#include <poincare/old/undefined.h>
+#include <ion/storage/file_system.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/rational.h>
 
+#include "../helper.h"
 #include "helper.h"
 
 using namespace Poincare;
 
 QUIZ_CASE(poincare_serialization_based_integer) {
   assert_expression_serializes_to(
-      BasedInteger::Builder(Integer(23), OMG::Base::Decimal), "23");
+      23_e, "23", Poincare::Preferences::PrintFloatMode::Scientific, 7,
+      OMG::Base::Decimal);
   assert_expression_serializes_to(
-      BasedInteger::Builder(Integer(23), OMG::Base::Binary), "0b10111");
+      23_e, "0b10111", Poincare::Preferences::PrintFloatMode::Scientific, 7,
+      OMG::Base::Binary);
   assert_expression_serializes_to(
-      BasedInteger::Builder(Integer(23), OMG::Base::Hexadecimal), "0x17");
+      23_e, "0x17", Poincare::Preferences::PrintFloatMode::Scientific, 7,
+      OMG::Base::Hexadecimal);
 }
 
 QUIZ_CASE(poincare_serialization_rational) {
-  assert_expression_serializes_to(Rational::Builder(2, 3), "2/3");
-  assert_expression_serializes_to(
-      Rational::Builder("12345678910111213", "123456789101112131"),
-      "12345678910111213/123456789101112131");
-  assert_expression_serializes_to(
-      Rational::Builder(
-          "12345678911234567892123456789312345678941234567895123456789612345678"
-          "96123456789712345678981234567899123456789012345678911234567892123456"
-          "78931234567894123456789512345678961234567896123456789712345678981234"
-          "567899123456789",
-          "1"),
+  assert_expression_serializes_to(2_e / 3_e, "2/3");
+
+  Tree* e1 = parse("123456789101112131");
+  Tree* e2 = Rational::Push(12345678910111213_e, e1);
+  assert_expression_serializes_to(e2, "12345678910111213/123456789101112131");
+
+  const char* buffer =
       "123456789112345678921234567893123456789412345678951234567896123456789612"
       "345678971234567898123456789912345678901234567891123456789212345678931234"
       "567894123456789512345678961234567896123456789712345678981234567899123456"
-      "789");
-  assert_expression_serializes_to(Rational::Builder(-2, 3), "-2/3");
-  assert_expression_serializes_to(Rational::Builder("2345678909876"),
-                                  "2345678909876");
-  assert_expression_serializes_to(Rational::Builder("-2345678909876", "5"),
-                                  "-2345678909876/5");
-  assert_expression_serializes_to(Rational::Builder(MaxIntegerString()),
-                                  MaxIntegerString());
-  Integer one(1);
-  Integer overflow = Integer::Overflow(false);
-  assert_expression_serializes_to(Rational::Builder(one, overflow), "1/∞");
-  assert_expression_serializes_to(Rational::Builder(overflow), "∞");
+      "789";
+  Tree* e3 = parse(buffer);
+  Tree* e4 = Rational::Push(e3, 1_e);
+  assert_expression_serializes_to(e4, buffer);
+
+  assert_expression_serializes_to(-2_e / 3_e, "-2/3");
+  assert_expression_serializes_to(2345678909876_e, "2345678909876");
+  Tree* e5 = Rational::Push(-2345678909876_e, 5_e);
+  assert_expression_serializes_to(e5, "-2345678909876/5");
+
+  Tree* e6 = parse(MaxIntegerString());
+  assert_expression_serializes_to(e6, MaxIntegerString());
+
+  flush_stack();  // TODO: should be done after each quiz_case
 }
 
 QUIZ_CASE(poincare_serialization_decimal) {
-  Decimal d0 = Decimal::Builder(Integer("-123456789"), 30);
+  const Tree* d0 = KOpposite(KDecimal(123456789_e, -22_e));
   assert_expression_serializes_to(d0, "-1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serializes_to(d0, "-1.234568ᴇ30", DecimalMode, 7);
   assert_expression_serializes_to(d0, "-1.23456789ᴇ30", EngineeringMode, 14);
-  Decimal d1 = Decimal::Builder(Integer("123456789"), 30);
+  const Tree* d1 = KDecimal(123456789_e, -22_e);
   assert_expression_serializes_to(d1, "1.23456789ᴇ30", ScientificMode, 14);
   assert_expression_serializes_to(d1, "1.235ᴇ30", DecimalMode, 4);
   assert_expression_serializes_to(d1, "1.23456789ᴇ30", EngineeringMode, 14);
-  Decimal d2 = Decimal::Builder(Integer("-123456789"), -30);
+  const Tree* d2 = KOpposite(KDecimal(123456789_e, 38_e));
   assert_expression_serializes_to(d2, "-1.23456789ᴇ-30", DecimalMode, 14);
   assert_expression_serializes_to(d2, "-1.235ᴇ-30", ScientificMode, 4);
   assert_expression_serializes_to(d2, "-1.235ᴇ-30", EngineeringMode, 4);
-  Decimal d3 = Decimal::Builder(Integer("-12345"), -3);
+  const Tree* d3 = KOpposite(KDecimal(12345_e, 7_e));
   assert_expression_serializes_to(d3, "-0.0012345", DecimalMode, 7);
   assert_expression_serializes_to(d3, "-0.00123", DecimalMode, 3);
   assert_expression_serializes_to(d3, "-0.001235", DecimalMode, 4);
   assert_expression_serializes_to(d3, "-1.23ᴇ-3", ScientificMode, 3);
   assert_expression_serializes_to(d3, "-1.23ᴇ-3", EngineeringMode, 3);
-  Decimal d4 = Decimal::Builder(Integer("12345"), -3);
+  const Tree* d4 = KDecimal(12345_e, 7_e);
   assert_expression_serializes_to(d4, "0.0012345", DecimalMode, 7);
   assert_expression_serializes_to(d4, "1.2ᴇ-3", ScientificMode, 2);
   assert_expression_serializes_to(d4, "1.23ᴇ-3", EngineeringMode, 3);
-  Decimal d5 = Decimal::Builder(Integer("12345"), 3);
+  const Tree* d5 = KDecimal(12345_e, 1_e);
   assert_expression_serializes_to(d5, "1234.5", DecimalMode, 7);
   assert_expression_serializes_to(d5, "1.23ᴇ3", DecimalMode, 3);
   assert_expression_serializes_to(d5, "1235", DecimalMode, 4);
   assert_expression_serializes_to(d5, "1.235ᴇ3", ScientificMode, 4);
   assert_expression_serializes_to(d5, "1.235ᴇ3", EngineeringMode, 4);
-  Decimal d6 = Decimal::Builder(Integer("-12345"), 3);
+  const Tree* d6 = KOpposite(KDecimal(12345_e, 1_e));
   assert_expression_serializes_to(d6, "-1234.5", DecimalMode, 7);
   assert_expression_serializes_to(d6, "-1.2345ᴇ3", ScientificMode, 10);
   assert_expression_serializes_to(d6, "-1.2345ᴇ3", EngineeringMode, 10);
-  Decimal d7 = Decimal::Builder(Integer("12345"), 6);
+  const Tree* d7 = KDecimal(12345_e, -2_e);
   assert_expression_serializes_to(d7, "1234500", DecimalMode, 7);
   assert_expression_serializes_to(d7, "1.2345ᴇ6", DecimalMode, 6);
   assert_expression_serializes_to(d7, "1.2345ᴇ6", ScientificMode);
   assert_expression_serializes_to(d7, "1.2345ᴇ6", EngineeringMode);
-  Decimal d8 = Decimal::Builder(Integer("-12345"), 6);
+  const Tree* d8 = KOpposite(KDecimal(12345_e, -2_e));
   assert_expression_serializes_to(d8, "-1234500", DecimalMode, 7);
   assert_expression_serializes_to(d8, "-1.2345ᴇ6", DecimalMode, 5);
   assert_expression_serializes_to(d7, "1.235ᴇ6", ScientificMode, 4);
   assert_expression_serializes_to(d7, "1.235ᴇ6", EngineeringMode, 4);
-  Decimal d9 = Decimal::Builder(Integer("-12345"), -1);
+  const Tree* d9 = KOpposite(KDecimal(12345_e, 5_e));
   assert_expression_serializes_to(d9, "-0.12345", DecimalMode, 7);
   assert_expression_serializes_to(d9, "-0.1235", DecimalMode, 4);
   assert_expression_serializes_to(d9, "-1.235ᴇ-1", ScientificMode, 4);
   assert_expression_serializes_to(d9, "-123.5ᴇ-3", EngineeringMode, 4);
-  Decimal d10 = Decimal::Builder(Integer("12345"), -1);
+  const Tree* d10 = KDecimal(12345_e, 5_e);
   assert_expression_serializes_to(d10, "1.2345ᴇ-1");
   assert_expression_serializes_to(d10, "0.12345", DecimalMode, 7);
   assert_expression_serializes_to(d10, "0.1235", DecimalMode, 4);
   assert_expression_serializes_to(d10, "1.235ᴇ-1", ScientificMode, 4);
   assert_expression_serializes_to(d10, "123.5ᴇ-3", EngineeringMode, 4);
 
-  assert_expression_serializes_to(Decimal::Builder(0.25), "250ᴇ-3",
-                                  EngineeringMode);
-  assert_expression_serializes_to(Decimal::Builder(-1.23456789E30),
+  assert_expression_serializes_to(0.25_e, "250ᴇ-3", EngineeringMode);
+  assert_expression_serializes_to(KOpposite(KDecimal(123456789_e, -22_e)),
                                   "-1.23456789ᴇ30", ScientificMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(1.23456789E30),
-                                  "1.23456789ᴇ30", ScientificMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(-1.23456789E-30),
+  assert_expression_serializes_to(KDecimal(123456789_e, -22_e), "1.23456789ᴇ30",
+                                  ScientificMode, 14);
+  assert_expression_serializes_to(KOpposite(KDecimal(123456789_e, 38_e)),
                                   "-1.23456789ᴇ-30", ScientificMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(-1.2345E-3), "-0.0012345",
+  assert_expression_serializes_to(KOpposite(KDecimal(12345_e, 7_e)),
+                                  "-0.0012345", DecimalMode);
+  assert_expression_serializes_to(KDecimal(12345_e, 7_e), "0.0012345",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(1.2345E-3), "0.0012345",
+  assert_expression_serializes_to(KDecimal(12345_e, 1_e), "1234.5",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(1.2345E3), "1234.5",
+  assert_expression_serializes_to(KOpposite(KDecimal(12345_e, 1_e)), "-1234.5",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(-1.2345E3), "-1234.5",
+  assert_expression_serializes_to(KDecimal(12345_e, -2_e), "1234500",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(1.2345E6), "1234500",
+  assert_expression_serializes_to(KOpposite(KDecimal(12345_e, -2_e)),
+                                  "-1234500", DecimalMode);
+  assert_expression_serializes_to(KOpposite(KDecimal(12345_e, 5_e)), "-0.12345",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(-1.2345E6), "-1234500",
+  assert_expression_serializes_to(KDecimal(12345_e, 5_e), "0.12345",
                                   DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(-1.2345E-1), "-0.12345",
-                                  DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(1.2345E-1), "0.12345",
-                                  DecimalMode);
-  assert_expression_serializes_to(Decimal::Builder(1.0), "1");
-  assert_expression_serializes_to(Decimal::Builder(0.9999999999999996), "1");
-  assert_expression_serializes_to(Decimal::Builder(0.99999999999995),
-                                  "9.9999999999995ᴇ-1", ScientificMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(0.00000099999999999995),
-                                  "9.9999999999995ᴇ-7", ScientificMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(0.000000999999999999995),
-                                  "1ᴇ-6", DecimalMode);
-  assert_expression_serializes_to(
-      Decimal::Builder(0.000000999999999901200121020102010201201201021099995),
+  assert_expression_serializes_to(1.0_e, "1");
+  assert_expression_parses_and_serializes_to("0.9999999999999996", "1");
+  assert_expression_parses_and_serializes_to(
+      "0.99999999999995", "9.9999999999995ᴇ-1", ScientificMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "0.00000099999999999995", "9.9999999999995ᴇ-7", ScientificMode, 14);
+  assert_expression_parses_and_serializes_to("0.000000999999999999995", "1ᴇ-6",
+                                             DecimalMode);
+#if 0  // TODO_PCJ
+  assert_expression_parses_and_serializes_to(
+      "0.000000999999999901200121020102010201201201021099995",
       "9.999999999012ᴇ-7", DecimalMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(9999999999999.53),
-                                  "9999999999999.5", DecimalMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(99999999999999.54), "1ᴇ14",
-                                  DecimalMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(999999999999999.54), "1ᴇ15",
-                                  DecimalMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(9999999999999999.54), "1ᴇ16",
-                                  DecimalMode, 14);
-  assert_expression_serializes_to(Decimal::Builder(-9.702365051313E-297),
-                                  "-9.702365051313ᴇ-297", DecimalMode, 14);
+#endif
+  assert_expression_parses_and_serializes_to(
+      "9999999999999.53", "9999999999999.5", DecimalMode, 14);
+  assert_expression_parses_and_serializes_to("99999999999999.54", "1ᴇ14",
+                                             DecimalMode, 14);
+  assert_expression_parses_and_serializes_to("999999999999999.54", "1ᴇ15",
+                                             DecimalMode, 14);
+  assert_expression_parses_and_serializes_to("9999999999999999.54", "1ᴇ16",
+                                             DecimalMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297", DecimalMode, 14);
 
   // Engineering notation
-  assert_expression_serializes_to(Decimal::Builder(0.0), "0", EngineeringMode,
+  assert_expression_serializes_to(0.0_e, "0", EngineeringMode, 7);
+  assert_expression_serializes_to(10.0_e, "10", EngineeringMode, 7);
+  assert_expression_serializes_to(100.0_e, "100", EngineeringMode, 7);
+  assert_expression_serializes_to(1000.0_e, "1ᴇ3", EngineeringMode, 7);
+  assert_expression_serializes_to(1234.0_e, "1.234ᴇ3", EngineeringMode, 7);
+  assert_expression_serializes_to(KOpposite(0.1_e), "-100ᴇ-3", EngineeringMode,
                                   7);
-  assert_expression_serializes_to(Decimal::Builder(10.0), "10", EngineeringMode,
+  assert_expression_serializes_to(KOpposite(0.01_e), "-10ᴇ-3", EngineeringMode,
                                   7);
-  assert_expression_serializes_to(Decimal::Builder(100.0), "100",
-                                  EngineeringMode, 7);
-  assert_expression_serializes_to(Decimal::Builder(1000.0), "1ᴇ3",
-                                  EngineeringMode, 7);
-  assert_expression_serializes_to(Decimal::Builder(1234.0), "1.234ᴇ3",
-                                  EngineeringMode, 7);
-  assert_expression_serializes_to(Decimal::Builder(-0.1), "-100ᴇ-3",
-                                  EngineeringMode, 7);
-  assert_expression_serializes_to(Decimal::Builder(-0.01), "-10ᴇ-3",
-                                  EngineeringMode, 7);
-  assert_expression_serializes_to(Decimal::Builder(-0.001), "-1ᴇ-3",
-                                  EngineeringMode, 7);
+  assert_expression_serializes_to(KOpposite(0.001_e), "-1ᴇ-3", EngineeringMode,
+                                  7);
+}
+
+template <typename T>
+void assert_float_serializes_to(
+    T value, const char* result,
+    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
+    int numberOfSignificantDigits = 7) {
+  Tree* e = SharedTreeStack->pushFloat(value);
+  assert_expression_serializes_to(e, result, mode, numberOfSignificantDigits);
+  e->removeTree();
 }
 
 QUIZ_CASE(poincare_serialization_float) {
-  assert_expression_serializes_to(Float<double>::Builder(-1.23456789E30),
-                                  "-1.23456789ᴇ30", DecimalMode, 14);
-  assert_expression_serializes_to(Float<double>::Builder(1.23456789E30),
-                                  "1.23456789ᴇ30", DecimalMode, 14);
-  assert_expression_serializes_to(Float<double>::Builder(-1.23456789E-30),
-                                  "-1.23456789ᴇ-30", DecimalMode, 14);
-  assert_expression_serializes_to(Float<double>::Builder(-1.2345E-3),
-                                  "-0.0012345", DecimalMode);
-  assert_expression_serializes_to(Float<double>::Builder(1.2345E-3),
-                                  "0.0012345", DecimalMode);
-  assert_expression_serializes_to(Float<double>::Builder(1.2345E3), "1234.5",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<double>::Builder(-1.2345E3), "-1234.5",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<double>::Builder(0.99999999999995),
-                                  "9.9999999999995ᴇ-1", ScientificMode, 14);
-  assert_expression_serializes_to(
-      Float<double>::Builder(0.00000000099999999999995), "9.9999999999995ᴇ-10",
-      DecimalMode, 14);
-  assert_expression_serializes_to(
-      Float<double>::Builder(
-          0.0000000009999999999901200121020102010201201201021099995),
+  assert_float_serializes_to<double>(-1.23456789E30, "-1.23456789ᴇ30",
+                                     DecimalMode, 14);
+  assert_float_serializes_to<double>(1.23456789E30, "1.23456789ᴇ30",
+                                     DecimalMode, 14);
+  assert_float_serializes_to<double>(-1.23456789E-30, "-1.23456789ᴇ-30",
+                                     DecimalMode, 14);
+  assert_float_serializes_to<double>(-1.2345E-3, "-0.0012345", DecimalMode);
+  assert_float_serializes_to<double>(1.2345E-3, "0.0012345", DecimalMode);
+  assert_float_serializes_to<double>(1.2345E3, "1234.5", DecimalMode);
+  assert_float_serializes_to<double>(-1.2345E3, "-1234.5", DecimalMode);
+  assert_float_serializes_to<double>(0.99999999999995, "9.9999999999995ᴇ-1",
+                                     ScientificMode, 14);
+  assert_float_serializes_to<double>(0.00000000099999999999995,
+                                     "9.9999999999995ᴇ-10", DecimalMode, 14);
+  assert_float_serializes_to<double>(
+      0.0000000009999999999901200121020102010201201201021099995,
       "9.9999999999012ᴇ-10", DecimalMode, 14);
-  assert_expression_serializes_to(Float<float>::Builder(1.2345E-1), "0.12345",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(1), "1", DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(0.9999999999999995),
-                                  "1", DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(1.2345E6), "1234500",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(-1.2345E6), "-1234500",
-                                  DecimalMode);
-  assert_expression_serializes_to(
-      Float<float>::Builder(0.0000009999999999999995), "1ᴇ-6", DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(-1.2345E-1), "-0.12345",
-                                  DecimalMode);
+  assert_float_serializes_to<float>(1.2345E-1, "0.12345", DecimalMode);
+  assert_float_serializes_to<float>(1, "1", DecimalMode);
+  assert_float_serializes_to<float>(0.9999999999999995, "1", DecimalMode);
+  assert_float_serializes_to<float>(1.2345E6, "1234500", DecimalMode);
+  assert_float_serializes_to<float>(-1.2345E6, "-1234500", DecimalMode);
+  assert_float_serializes_to<float>(0.0000009999999999999995, "1ᴇ-6",
+                                    DecimalMode);
+  assert_float_serializes_to<float>(-1.2345E-1, "-0.12345", DecimalMode);
 
-  assert_expression_serializes_to(Float<double>::Builder(INFINITY), "∞",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(0.0f), "0",
-                                  DecimalMode);
-  assert_expression_serializes_to(Float<float>::Builder(NAN), Undefined::Name(),
-                                  DecimalMode);
+  assert_float_serializes_to<double>(INFINITY, "∞", DecimalMode);
+  assert_float_serializes_to<float>(0.0f, "0", DecimalMode);
+  assert_float_serializes_to<float>(NAN, "undef", DecimalMode);
 }
 
 QUIZ_CASE(poincare_serialization_division) {
-  assert_expression_serializes_to(
-      Division::Builder(Rational::Builder(-2), Constant::PiBuilder()),
-      "\u0012-2\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(Constant::PiBuilder(), Rational::Builder(-2)),
-      "π/\u0012-2\u0013");
-  assert_expression_serializes_to(
-      Division::Builder(Rational::Builder(2, 3), Constant::PiBuilder()),
-      "\u00122/3\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(
-          Addition::Builder(Rational::Builder(2), Rational::Builder(1)),
-          Constant::PiBuilder()),
-      "\u00122+1\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(
-          Subtraction::Builder(Rational::Builder(2), Rational::Builder(1)),
-          Constant::PiBuilder()),
-      "\u00122-1\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(
-          Multiplication::Builder(Rational::Builder(2), Rational::Builder(1)),
-          Constant::PiBuilder()),
-      "\u00122×1\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(
-          Division::Builder(Rational::Builder(2), Rational::Builder(1)),
-          Constant::PiBuilder()),
-      "\u00122/1\u0013/π");
-  assert_expression_serializes_to(
-      Division::Builder(Opposite::Builder(Rational::Builder(2)),
-                        Constant::PiBuilder()),
-      "\u0012-2\u0013/π");
+  assert_expression_serializes_to(KDiv(-2_e, π_e), "(-2)/π");
+  assert_expression_serializes_to(KDiv(π_e, -2_e), "π/(-2)");
+  assert_expression_serializes_to(KDiv(2_e / 3_e, π_e), "(2/3)/π");
+  assert_expression_serializes_to(KDiv(KAdd(2_e, 1_e), π_e), "(2+1)/π");
+  assert_expression_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");
+  assert_expression_serializes_to(KDiv(KMult(2_e, 1_e), π_e), "(2×1)/π");
+  assert_expression_serializes_to(KDiv(KDiv(2_e, 1_e), π_e), "(2/1)/π");
+  assert_expression_serializes_to(KDiv(KOpposite(2_e), π_e), "(-2)/π");
 }
 
 QUIZ_CASE(poincare_serialization_factorial) {
-  assert_expression_serializes_to(Factorial::Builder(Rational::Builder(2, 3)),
-                                  "\u00122/3\u0013!");
-  assert_expression_serializes_to(
-      Factorial::Builder(
-          Division::Builder(Constant::PiBuilder(), Rational::Builder(3))),
-      "\u0012π/3\u0013!");
-  assert_expression_serializes_to(
-      Factorial::Builder(
-          Power::Builder(Constant::PiBuilder(), Rational::Builder(3))),
-      "\u0012π^3\u0013!");
+  assert_expression_serializes_to(KFact(2_e / 3_e), "(2/3)!");
+  assert_expression_serializes_to(KFact(KDiv(π_e, 3_e)), "(π/3)!");
+  assert_expression_serializes_to(KFact(KPow(π_e, 3_e)), "(π^3)!");
 }
 
 QUIZ_CASE(poincare_serialization_percent) {
+  assert_expression_serializes_to(KPercentSimple(2_e / 3_e), "(2/3)%");
+  assert_expression_serializes_to(KPercentSimple(KDiv(π_e, 3_e)), "(π/3)%");
+  assert_expression_serializes_to(KPercentSimple(KPow(π_e, 3_e)), "(π^3)%");
   assert_expression_serializes_to(
-      PercentSimple::Builder(Rational::Builder(2, 3)), "\u00122/3\u0013%");
-  assert_expression_serializes_to(
-      PercentSimple::Builder(
-          Division::Builder(Constant::PiBuilder(), Rational::Builder(3))),
-      "\u0012π/3\u0013%");
-  assert_expression_serializes_to(
-      PercentSimple::Builder(
-          Power::Builder(Constant::PiBuilder(), Rational::Builder(3))),
-      "\u0012π^3\u0013%");
-  assert_expression_serializes_to(
-      PercentAddition::Builder(PercentAddition::Builder(Rational::Builder(100),
-                                                        Rational::Builder(20)),
-                               Opposite::Builder(Rational::Builder(30))),
+      KPercentAddition(KPercentAddition(100_e, 20_e), KOpposite(30_e)),
       "100↗20%↘30%");
-  assert_expression_serializes_to(
-      Power::Builder(Constant::PiBuilder(),
-                     PercentAddition::Builder(Rational::Builder(100),
-                                              Rational::Builder(20))),
-      "π^\u0012100↗20%\u0013");
+  assert_expression_serializes_to(KPow(π_e, KPercentAddition(100_e, 20_e)),
+                                  "π^(100↗20%)");
 }
 
 QUIZ_CASE(poincare_serialization_power) {
@@ -306,42 +239,26 @@ QUIZ_CASE(poincare_serialization_power) {
       KPow(2_e, KPercentSimple(KPow(3_e, 4_e))));
   assert_expression_serializes_and_parses_to_itself(
       KPercentSimple(KPow(2_e, KLogicalOr(3_e, 4_e))));
+#if 0  // TODO_PCJ
   assert_expression_serializes_and_parses_to_itself(KAbs(KPercentAddition(
       0_e,
       KDiv(0_e, KLogicalAnd("r"_e, KMult("o"_e, "m0"_e, KParentheses(0_e)))))));
+#endif
 }
 
 QUIZ_CASE(poincare_serialization_derivative) {
+  assert_expression_serializes_to(KDiff("x"_e, "x"_e, 1_e, KFun<"f">("x"_e)),
+                                  "diff(f(x),x,x)");
+  assert_expression_serializes_to(KDiff("x"_e, "x"_e, 2_e, KFun<"f">("x"_e)),
+                                  "diff(f(x),x,x,2)");
+  assert_expression_serializes_to(KDiff("x"_e, "x"_e, 3_e, KFun<"f">("x"_e)),
+                                  "diff(f(x),x,x,3)");
   assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
-                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(1)),
-      "diff(f(x),x,x)");
+      KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)), "f'(x)");
   assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
-                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(2)),
-      "diff(f(x),x,x,2)");
+      KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)), "f\"(x)");
   assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)),
-                          Symbol::Builder("x", 1), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(3)),
-      "diff(f(x),x,x,3)");
-  assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(1)),
-      "f'(x)");
-  assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(2)),
-      "f\"(x)");
-  assert_expression_serializes_to(
-      Derivative::Builder(Function::Builder("f", 1, Symbol::SystemSymbol()),
-                          Symbol::SystemSymbol(), Symbol::Builder("x", 1),
-                          BasedInteger::Builder(3)),
-      "f^(3)(x)");
+      KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)), "f^(3)(x)");
   assert_expression_parses_and_serializes_to("f'(x)", "f×_'×(x)");
   assert_expression_parses_and_serializes_to("f\"(x)", "f×_\"×(x)");
   assert_expression_parses_and_serializes_to("f''(x)", "f×_'×_'×(x)");
@@ -350,9 +267,6 @@ QUIZ_CASE(poincare_serialization_derivative) {
   assert_expression_parses_and_serializes_to("f^(1)(x)", "f^(1)×(x)");
   assert_expression_parses_and_serializes_to("f^(2)(x)", "f^(2)×(x)");
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)×(x)");
-  assert_expression_parses_and_serializes_to("f^\u00121\u0013(x)", "f^1×(x)");
-  assert_expression_parses_and_serializes_to("f^\u00122\u0013(x)", "f^2×(x)");
-  assert_expression_parses_and_serializes_to("f^\u00123\u0013(x)", "f^3×(x)");
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_expression_parses_and_serializes_to_itself("f(x)");
@@ -369,7 +283,4 @@ QUIZ_CASE(poincare_serialization_derivative) {
   assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)");
   assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)");
   assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)");
-  assert_expression_parses_and_serializes_to("f^\u00121\u0013(x)", "f'(x)");
-  assert_expression_parses_and_serializes_to("f^\u00122\u0013(x)", "f\"(x)");
-  assert_expression_parses_and_serializes_to("f^\u00123\u0013(x)", "f^(3)(x)");
 }

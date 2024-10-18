@@ -1,6 +1,7 @@
 #ifndef POINCARE_TEST_HELPER_H
 #define POINCARE_TEST_HELPER_H
 
+#include <omg/enums.h>
 #include <omg/float.h>
 #include <poincare/old/expression_node.h>
 #include <poincare/print_float.h>
@@ -154,12 +155,14 @@ void assert_expression_simplifies_approximates_to(
 void assert_expression_serializes_to(
     const Poincare::Internal::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
-    int numberOfSignificantDigits = 7);
+    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 
 void assert_expression_serializes_and_parses_to_itself(
     const Poincare::Internal::Tree* expression);
-void assert_expression_parses_and_serializes_to(const char* expression,
-                                                const char* result);
+void assert_expression_parses_and_serializes_to(
+    const char* expression, const char* result,
+    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
+    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 void assert_expression_parses_and_serializes_to_itself(const char* expression);
 
 #endif

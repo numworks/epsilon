@@ -176,7 +176,7 @@ NODE(Binomial, 2)
 NODE(Ceil, 1)
 NODE(ComplexI)
 NODE(Conj, 1)
-// Decimal(Value, -Exponent)
+// Decimal(Value, -Exponent) with Value a positive int and Exponent an int
 NODE(Decimal, 2)
 NODE(Distribution, NARY, {
   uint8_t distributionId;

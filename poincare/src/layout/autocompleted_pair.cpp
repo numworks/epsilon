@@ -97,9 +97,11 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
    *  - Each time any other layout is encountered, just copy it.
    *
    * */
+  // Rack being read in rootRack
   Tree* readRack = rootRack;
   int readIndex = 0;
   TreeRef resultRack = KRackL()->cloneTree();
+  // Rack being written in resultRack
   Tree* writtenRack = resultRack;
 
   /* This is used to retrieve a proper cursor position after balancing. (see
@@ -132,6 +134,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         /* If cursor is inside the added cloned layout, set its layout inside
          * the clone by keeping the same address offset as in the original. */
         if (cursorRack >= readChild && cursorRack < readChild->nextTree()) {
+          assert(readClone->isAutocompletedPair());
           int cursorOffset = cursorRack - readChild;
           Tree* l = readClone + cursorOffset;
           assert(l->isRackLayout());

@@ -447,6 +447,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       // continue
     case Type::PercentSimple:
+      /* Use OperatorPriority(Type::PercentSimple) instead of
+       * OperatorPriority(type) because PercentAddition's second
+       * child has the same priority as a PercentSimple. */
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(Type::PercentSimple));
       PushCodePoint(layoutParent, '%');

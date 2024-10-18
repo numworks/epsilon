@@ -134,16 +134,14 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         /* If cursor is inside the added cloned layout, set its layout inside
          * the clone by keeping the same address offset as in the original. */
         if (cursorRack >= readChild && cursorRack < readChild->nextTree()) {
-          assert(readClone->isAutocompletedPair());
           int cursorOffset = cursorRack - readChild;
           Tree* l = readClone + cursorOffset;
           assert(l->isRackLayout());
           cursorRack = l;
-        }
 
-        /* If the inserted child is a bracket pair of another type, balance
-         * inside of it. */
-        if (readClone->isAutocompletedPair()) {
+          /* If the inserted child is a bracket pair of another type, balance
+           * inside of it. */
+          assert(readClone->isAutocompletedPair());
           PrivateBalanceBrackets(type, readClone->child(0), cursorRack,
                                  cursorPosition);
         }

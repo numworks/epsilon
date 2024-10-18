@@ -11,7 +11,6 @@ format: PYFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFA
 format:
 # Use xargs to elegantly handle the case CXXFILES=""
 	echo "=== Formatting .cpp and .h files ==="
-	$(PYTHON) $(PATH_haussmann)/data/format_include_guards.py $(filter --dry-run,$(CXXFORMATARGS)) $(filter %.h,$(CXXFILES))
 	echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
 	echo "=== Formatting .py files ==="
 	echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)

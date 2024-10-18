@@ -1,3 +1,7 @@
+# This file is deprecated and has been replaced by the use of "#pragma once".
+# Keep it in case we need to reformat the include guards in the future, for
+# instace if we want to support an exotic compiler.
+
 def format_include_guard(header_file, should_correct_error):
     """Check that include guards are correctly formatted. The correct format for the file relative/path/to_file.h is RELATIVE__PATH__TO_FILE_H"""
     from pathlib import Path

@@ -18,6 +18,7 @@ struct DetailedResult {
 template <typename T>
 static bool DetailedResultIsValid(DetailedResult<T> result);
 
+// Maximum number of interval splits for the iterative quadrature
 constexpr static int k_maxNumberOfIterations = 20;
 
 template <typename T>
@@ -395,19 +396,38 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, ctx);
 
-  constexpr T absoluteErrorThreshold = 1e-11;
-  return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
+  /* Threshold to consider that the quadrature approximation have converged. As
+   * a general rule, this threshold should be rather low. This is because the
+   * iterative algorithm first consider the whole integration interval. There is
+   * a risk that the first quadratures miss some parts of the integral that are
+   * "invisible" when the interpolation points are far from each other. We must
+   * avoid those cases, in which the algorithm early exits with an incorrect
+   * approximation of the integral value. */
+  constexpr T approximationErrorThreshold = 1e-11;
+
+  return iterateAdaptiveQuadrature(quadKG, a, b, approximationErrorThreshold,
                                    numberOfIterations, substitution, ctx);
 }
 
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
-                                            T absoluteErrorThreshold,
+                                            T approximationErrorThreshold,
                                             int numberOfIterations,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx) {
-  if (quadKG.absoluteError <= absoluteErrorThreshold ||
-      numberOfIterations == 1) {
+  /* The Kronrod-Gauss method returns an error value together with the integral
+   * approximation. Because it is impossible to know the exact value of the
+   * integral, this error is computed by the difference between the integral
+   * approximations obtained by two different methods, namely Kronrod and Gauss
+   * quadratures. */
+  /* TODO: to increase performance and avoid doing too many iterative calls, we
+   * could add another exit criterion based on the relative difference between
+   * quadKG.absoluteError and quadKG.integralError. Note that the absolute error
+   * criterion must be kept in all cases, because on integrals that have an
+   * almost null value, the error and the integral value have a similar order of
+   * magnitude. */
+  if (quadKG.absoluteError <= approximationErrorThreshold ||
+      numberOfIterations <= 1) {
     return quadKG;
   }
 
@@ -423,8 +443,14 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
     DetailedResult<T>* current = currentIsLeft ? &left : &right;
     T lowerBound = currentIsLeft ? a : m;
     T upperBound = currentIsLeft ? m : b;
+
+    /* The iterateAdaptiveQuadrature function is called recursively on the
+     * half-interval with the biggest error. The number of remaining iterations
+     * decreases with each recursive call. Because the error returned by the
+     * kronrodGaussQuadrature method is proportional to the interval length, the
+     * error threshold is divided by two. */
     *current = iterateAdaptiveQuadrature(
-        *current, lowerBound, upperBound, absoluteErrorThreshold / 2,
+        *current, lowerBound, upperBound, approximationErrorThreshold / 2,
         numberOfIterations - 1, substitution, ctx);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};

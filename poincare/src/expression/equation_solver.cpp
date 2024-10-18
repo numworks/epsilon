@@ -132,6 +132,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
                              ComplexSign::Finite());
   }
+  context->numberOfVariables = userSymbols->numberOfChildren();
 
   /* Find equation's results */
   TreeRef result;
@@ -169,6 +170,39 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     context->variables.fillWithList(userSymbols);
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false);
+    }
+    context->numberOfVariables -= userSymbols->numberOfChildren();
+    if (context->numberOfVariables > 0) {
+      /* Equation had more solution and introduced new unknowns variables, name
+       * them 't' + 2 digits + '\0' */
+      constexpr size_t parameterNameSize = 1 + 2 + 1;
+      char parameterName[parameterNameSize] = {k_parameterPrefix};
+      // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
+      size_t parameterIndex = (context->numberOfVariables > 1) ? 1 : 0;
+      uint32_t usedParameterIndices = TagParametersUsedAsVariables(context);
+
+      for (int j = 0; j < context->numberOfVariables; j++) {
+        // Generate a unique identifier t? that does not collide with variables.
+        while (
+            OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
+          parameterIndex++;
+          assert(parameterIndex <
+                 OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
+        }
+        size_t parameterNameLength =
+            parameterIndex == 0
+                ? 1
+                : 1 + OMG::Print::IntLeft(parameterIndex, parameterName + 1,
+                                          parameterNameSize - 2);
+        parameterIndex++;
+        assert(parameterNameLength >= 1 &&
+               parameterNameLength < parameterNameSize);
+        parameterName[parameterNameLength] = 0;
+        TreeRef symbol = SharedTreeStack->pushUserSymbol(
+            parameterName, parameterNameLength + 1);
+        Variables::LeaveScopeWithReplacement(result, symbol, false);
+        symbol->removeTree();
+      }
     }
   }
   userSymbols->removeTree();
@@ -339,26 +373,10 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     coefficient = coefficient->nextTree();
   }
 
-  /* Use a context without t to avoid replacing the t? parameters with a value
-   * if the user stored something in them but they are not used by the
-   * system.
-   * It is declared here as it needs to be accessible when registering the
-   * solutions at the end. */
-  // ContextWithoutT noTContext(context);
-
   if (rank != n || n <= 0) {
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
     context->hasMoreSolutions = true;
-
-    // context = &noTContext;
-
-    // 't' + 2 digits + '\0'
-    constexpr size_t parameterNameSize = 1 + 2 + 1;
-    char parameterName[parameterNameSize] = {k_parameterPrefix};
-    size_t parameterIndex = n - rank == 1 ? 0 : 1;
-    uint32_t usedParameterIndices = TagParametersUsedAsVariables(context);
-
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
@@ -393,23 +411,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       for (int i = 0; i < n; i++) {
         (i == variable ? 1_e : 0_e)->cloneTree();
       }
-
-      // Generate a unique identifier t? that does not collide with variables.
-      while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
-        parameterIndex++;
-        assert(parameterIndex <
-               OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
-      }
-      size_t parameterNameLength =
-          parameterIndex == 0
-              ? 1
-              : 1 + OMG::Print::IntLeft(parameterIndex, parameterName + 1,
-                                        parameterNameSize - 2);
-      parameterIndex++;
-      assert(parameterNameLength >= 1 &&
-             parameterNameLength < parameterNameSize);
-      parameterName[parameterNameLength] = 0;
-      SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+      // Push a finite variable starting from ??
+      SharedTreeStack->pushVar(context->numberOfVariables++,
+                               ComplexSign::Finite());
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
       variable--;

@@ -56,6 +56,7 @@ class EquationSolver {
     ComplexFormat complexFormat;
     Type type;
     int8_t degree;
+    int8_t numberOfVariables;
     // If true, defined userVariables are ignored.
     bool overrideUserVariables = false;
     bool exactResults = true;

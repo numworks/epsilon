@@ -200,7 +200,8 @@ bool Beautification::ShallowBeautifyOppositesDivisionsRoots(Tree* e,
                                                             void* context) {
   // (-A)*U -> -A*U, with U a unit
   if (e->isMult() && e->numberOfChildren() >= 2 &&
-      e->child(0)->isStrictlyNegativeRational() && e->child(1)->isUnit()) {
+      e->child(0)->isStrictlyNegativeRational() &&
+      Dimension::Get(e->child(1)).isUnit()) {
     Rational::SetSign(e->child(0), NonStrictSign::Positive);
     e->cloneNodeAtNode(KOpposite);
     return true;
@@ -210,7 +211,8 @@ bool Beautification::ShallowBeautifyOppositesDivisionsRoots(Tree* e,
    * rationals into opposites */
   if (e->isMult() || e->isPow() || e->isRational()) {
     bool isUnitResult = e->isMult() && e->numberOfChildren() >= 2 &&
-                        e->child(0)->isNumber() && e->child(1)->isUnit();
+                        e->child(0)->isNumber() &&
+                        Dimension::Get(e->child(1)).isUnit();
     if (!isUnitResult && Division::BeautifyIntoDivision(e)) {
       return true;
     }

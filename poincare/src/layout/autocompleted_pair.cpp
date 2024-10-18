@@ -185,7 +185,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
       if (!IsTemporary(bracketNode, Side::Left)) {
         TreeRef newBracket = BuildFromBracketType(type);
         SetTemporary(newBracket, Side::Right, true);
-        NAry::AddOrMergeChild(writtenRack, newBracket);
+        NAry::AddChild(writtenRack, newBracket);
         writtenRack = newBracket->child(0);
       }
       continue;

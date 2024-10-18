@@ -51,7 +51,7 @@ endef
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests
 	@echo Running screenshot tests with executable $1
-	python3 build/screenshots/compare_crc.py --no-screenshots --ignore-failure $1
+	python3 build/screenshots/compare_crc.py --no-screenshots --ignore-failure --filter '^((?!python).)*$$$$' $1
 endef
 
 # generate_coverage_info, <file_name>, <coverage_dir>

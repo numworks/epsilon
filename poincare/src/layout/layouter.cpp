@@ -445,7 +445,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       } else {
         PushCodePoint(layoutParent, UCodePointNorthEastArrow);
       }
-      // continue
+      [[fallthrough]];
     case Type::PercentSimple:
       /* Use OperatorPriority(Type::PercentSimple) instead of
        * OperatorPriority(type) because PercentAddition's second

@@ -6,6 +6,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "approximation.h"
+#include "dependency.h"
 #include "float_helper.h"
 #include "integer.h"
 #include "k_tree.h"
@@ -299,6 +300,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
         } else {
           opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
               KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
+          Dependency::DeepRemoveUselessDependencies(opHJ);
         }
         // TODO_PCJ: Dependency
       }
@@ -328,6 +330,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
             opIJ->moveTreeOverTree(PatternMatching::CreateSimplify(
                 KAdd(KA, KMult(-1_e, KB, KC)),
                 {.KA = opIJ, .KB = opHJ, .KC = factor}));
+            Dependency::DeepRemoveUselessDependencies(opIJ);
           }
           // TODO_PCJ: Dependency
         }

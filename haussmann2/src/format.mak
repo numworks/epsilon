@@ -3,8 +3,8 @@ CXXFORMATARGS ?= -i --Werror --verbose
 GITDIFFARGS := --name-only --diff-filter=d
 PYFORMAT := ./.venv/bin/black
 PYFORMATARGS ?=
-PRETTIER := npx prettier
-PRETTIERARGS ?= --write
+JSFORMAT := npx prettier
+JSFORMATARGS ?= --write
 
 .PHONY: format
 format: BASE ?= HEAD
@@ -18,7 +18,7 @@ format:
 	echo "=== Formatting .py files ==="
 	echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
 	echo "=== Formatting .js files ==="
-	echo $(JSFILES) | xargs -r $(PRETTIER) $(PRETTIERARGS)
+	echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS)
 
 .PHONY: reformat
 reformat:

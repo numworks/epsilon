@@ -39,13 +39,14 @@ define run_unit_tests
 	./$1 --headless --limit-stack-usage -f regression
 	./$1 --headless --limit-stack-usage -f sequence
 	./$1 --headless --limit-stack-usage -f shared
+	./$1 --headless --limit-stack-usage -f solver
 	./$1 --headless --limit-stack-usage -f statistics
 endef
-# TODO: Put back unit tests that are currently broken for all toolchains
+# FIXME: tests involving micropython can make the coverage target crash
 # ./$1 --headless --limit-stack-usage -f code
+# TODO: Put back unit tests that are currently broken
 # ./$1 --headless --limit-stack-usage -f calculation
 # ./$1 --headless --limit-stack-usage -f escher
-# ./$1 --headless --limit-stack-usage -f solver
 
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests

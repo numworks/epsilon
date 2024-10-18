@@ -4,6 +4,8 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+#include "settings/sub_menu/screen_timeout_controller.h"
+
 using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
@@ -23,6 +25,12 @@ constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {
 constexpr MessageTree s_modelComplexFormatChildren[3] = {
     MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Algebraic),
     MessageTree(I18n::Message::Exponential)};
+constexpr MessageTree
+    s_modelScreenTimeoutChildren[ScreenTimeoutController::k_totalNumberOfCell] =
+        {MessageTree(I18n::Message::ThirtySeconds),
+         MessageTree(I18n::Message::OneMinute),
+         MessageTree(I18n::Message::TwoMinutes),
+         MessageTree(I18n::Message::FiveMinutes)};
 constexpr MessageTree s_modelFontChildren[2] = {
     MessageTree(I18n::Message::LargeFont),
     MessageTree(I18n::Message::SmallFont)};
@@ -52,6 +60,7 @@ MainController::MainController(Responder* parentResponder)
                     ButtonCell::Style::EmbossedLight),
       m_preferencesController(this),
       m_displayModeController(this),
+      m_screenTimeoutController(this),
       m_localizationController(this, LocalizationController::Mode::Language),
       m_examModeController(this),
       m_pressToTestController(this),
@@ -289,6 +298,8 @@ ViewController* MainController::subControllerForCell(
       return &m_preferencesController;
     case I18n::Message::DisplayMode:
       return &m_displayModeController;
+    case I18n::Message::ScreenTimeout:
+      return &m_screenTimeoutController;
     case I18n::Message::Language:
     case I18n::Message::Country:
       return &m_localizationController;

@@ -17,6 +17,7 @@
 #include "sub_menu/localization_controller.h"
 #include "sub_menu/preferences_controller.h"
 #include "sub_menu/press_to_test_controller.h"
+#include "sub_menu/screen_timeout_controller.h"
 #include "sub_menu/test_mode_controller.h"
 
 namespace Settings {
@@ -25,6 +26,8 @@ extern const MessageTree s_modelAngleChildren[3];
 extern const MessageTree s_modelEditionModeChildren[2];
 extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
+extern const MessageTree
+    s_modelScreenTimeoutChildren[ScreenTimeoutController::k_totalNumberOfCell];
 extern const MessageTree s_modelFontChildren[2];
 extern const MessageTree s_modelTestModeMenu[2];
 extern const MessageTree
@@ -62,7 +65,7 @@ class MainController : public Escher::SelectableListViewController<
   constexpr static int k_popUpCellType = 2;
   constexpr static int k_resetCellType = 3;
   // Model index
-  constexpr static int k_indexOfExamModeCell = 8;
+  constexpr static int k_indexOfExamModeCell = 9;
   // Max number of visible cells
   constexpr static int k_numberOfSimpleChevronCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
@@ -82,6 +85,7 @@ class MainController : public Escher::SelectableListViewController<
   Escher::ButtonCell m_resetButton;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
+  ScreenTimeoutController m_screenTimeoutController;
   LocalizationController m_localizationController;
   ExamModeController m_examModeController;
   PressToTestController m_pressToTestController;

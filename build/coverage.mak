@@ -25,6 +25,7 @@ endef
 # run_unit_tests, <test_bin>
 define run_unit_tests
 	@echo Running unit tests with executable $1
+	./$1 --headless --limit-stack-usage -f code
 	./$1 --headless --limit-stack-usage -f distributions
 	./$1 --headless --limit-stack-usage -f finance
 	./$1 --headless --limit-stack-usage -f graph
@@ -42,8 +43,6 @@ define run_unit_tests
 	./$1 --headless --limit-stack-usage -f solver
 	./$1 --headless --limit-stack-usage -f statistics
 endef
-# FIXME: tests involving micropython can make the coverage target crash
-# ./$1 --headless --limit-stack-usage -f code
 # TODO: Put back unit tests that are currently broken
 # ./$1 --headless --limit-stack-usage -f calculation
 # ./$1 --headless --limit-stack-usage -f escher
@@ -51,7 +50,7 @@ endef
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests
 	@echo Running screenshot tests with executable $1
-	python3 build/screenshots/compare_crc.py --no-screenshots --ignore-failure --filter '^((?!python).)*$$$$' $1
+	python3 build/screenshots/compare_crc.py --no-screenshots --ignore-failure $1
 endef
 
 # generate_coverage_info, <file_name>, <coverage_dir>

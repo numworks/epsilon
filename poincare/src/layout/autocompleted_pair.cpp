@@ -91,7 +91,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
   // Rack being read in rootRack
   Tree* readRack = rootRack;
   int readIndex = 0;
-  TreeRef resultRack = KRackL()->cloneTree();
+  Tree* resultRack = KRackL()->cloneTree();
   // Rack being written in resultRack
   Tree* writtenRack = resultRack;
 
@@ -258,18 +258,10 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
 
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
-    TreeRef newWrittenRack = KRackL.node<1>->cloneNode();
-    TreeRef newBracket =
+    Tree* newBracket =
         SharedTreeStack->pushAutocompletedPairLayout(type, true, false);
-    KRackL()->cloneTree();
-    if (writtenRack == resultRack) {
-      resultRack = newWrittenRack;
-    } else {
-      assert(false);
-      writtenRack->moveTreeOverTree(newWrittenRack);
-    }
-    newBracket->child(0)->moveTreeOverTree(writtenRack);
-    writtenRack = newWrittenRack;
+    writtenRack->moveNodeBeforeNode(newBracket);
+    writtenRack->cloneNodeBeforeNode(KRackL.node<1>);
   }
 
   /* This is a fix for the following problem:

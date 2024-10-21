@@ -22,22 +22,61 @@ class ScreenTimeoutController : public GenericSubController {
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void viewWillAppear() override;
 
-  constexpr static int k_totalNumberOfCell = 4;
+  int currentSelectedRow() const;
 
-  // TODO: remove, preference mockup
-  int currentPreference() const { return m_preferenceIndex; }
+  constexpr static uint8_t k_totalNumberOfCell = 4;
 
  protected:
   int initialSelectedRow() const override;
 
  private:
-  void setPreference(int valueIndex);
+  void setPreference(int rowIndex);
 
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_cells[k_totalNumberOfCell];
 
-  // TODO: remove, preference mockup
-  int m_preferenceIndex;
+  enum DimmingTimeLabel : uint8_t {
+    ThirtySeconds,
+    OneMinute,
+    TwoMinutes,
+    FiveMinutes,
+    NElements
+  };
+  static_assert(DimmingTimeLabel::NElements == k_totalNumberOfCell,
+                "mismatch between number of labels and number of cells");
+
+  // TODO: move to .cpp
+  static DimmingTimeLabel toRowLabel(int time) {
+    switch (time) {
+      case 30000:
+        return ThirtySeconds;
+      case 60000:
+        return OneMinute;
+      case 120000:
+        return TwoMinutes;
+      case 300000:
+        return FiveMinutes;
+      default:
+        // error case
+        return NElements;
+    }
+  }
+
+  static int toDimmingTime(DimmingTimeLabel label) {
+    switch (label) {
+      case ThirtySeconds:
+        return 30000;
+      case OneMinute:
+        return 60000;
+      case TwoMinutes:
+        return 120000;
+      case FiveMinutes:
+        return 300000;
+      case NElements:
+        // error case
+        return -1;
+    }
+  }
 };
 
 }  // namespace Settings

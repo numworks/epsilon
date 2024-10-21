@@ -1,5 +1,7 @@
 #include "screen_timeout_controller.h"
 
+#include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 
 namespace Settings {
@@ -8,7 +10,7 @@ bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     setPreference(selectedRow());
     // TODO: if necessary
-    // AppsContainer::sharedAppsContainer()->refreshPreferences();
+    AppsContainer::sharedAppsContainer()->refreshPreferences();
     Escher::StackViewController* stack = stackController();
     stack->pop();
     return true;
@@ -16,15 +18,19 @@ bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
-int ScreenTimeoutController::initialSelectedRow() const {
-  // TODO: replace with real preference getter
-  return m_preferenceIndex;
+int ScreenTimeoutController::currentSelectedRow() const {
+  return toRowLabel(
+      GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
 }
 
-void ScreenTimeoutController::setPreference(int valueIndex) {
-  assert(valueIndex >= 0 && valueIndex < k_totalNumberOfCell);
-  // TODO: replace with real preference setter
-  m_preferenceIndex = valueIndex;
+int ScreenTimeoutController::initialSelectedRow() const {
+  return currentSelectedRow();
+}
+
+void ScreenTimeoutController::setPreference(int rowIndex) {
+  assert(rowIndex >= 0 && rowIndex < DimmingTimeLabel::NElements);
+  GlobalPreferences::SharedGlobalPreferences()->setDimmingTime(
+      toDimmingTime(static_cast<DimmingTimeLabel>(rowIndex)));
 }
 
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,

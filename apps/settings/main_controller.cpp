@@ -195,6 +195,11 @@ int MainController::typeAtRow(int row) const {
 }
 
 void MainController::fillCellForRow(HighlightCell* cell, int row) {
+  /* TODO: each child controller (m_preferencesController,
+   * m_displayModeController...) should be responsible for getting the current
+   * value from GlobalPreferences or SharedPreferences. This would make the code
+   * more modular and thus clearer. */
+
   GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
   Preferences* preferences = Preferences::SharedPreferences();
@@ -221,6 +226,9 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
     return;
   }
   assert(type == k_defaultCellType);
+
+  /* TODO: the two following "if" blocks could be factorized into the switch /
+   * case that appears right after. */
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
     int languageIndex = (int)(globalPreferences->language());
@@ -250,8 +258,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::ScreenTimeout:
-      // TODO: replace with global preference getter
-      childIndex = m_screenTimeoutController.currentPreference();
+      childIndex = m_screenTimeoutController.currentSelectedRow();
       break;
     case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==

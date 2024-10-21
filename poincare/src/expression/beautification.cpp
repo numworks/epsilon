@@ -198,22 +198,18 @@ bool Beautification::DeepBeautify(Tree* e,
 
 bool Beautification::ShallowBeautifyOppositesDivisionsRoots(Tree* e,
                                                             void* context) {
-  // (-A)*U -> -A*U, with U a unit
   if (e->isMult() && e->numberOfChildren() >= 2 &&
-      e->child(0)->isStrictlyNegativeRational() &&
       Dimension::Get(e->child(1)).isUnit()) {
-    Rational::SetSign(e->child(0), NonStrictSign::Positive);
-    e->cloneNodeAtNode(KOpposite);
-    return true;
-  }
-
-  /* Turn multiplications with negative powers into divisions and negative
-   * rationals into opposites */
-  if (e->isMult() || e->isPow() || e->isRational()) {
-    bool isUnitResult = e->isMult() && e->numberOfChildren() >= 2 &&
-                        e->child(0)->isNumber() &&
-                        Dimension::Get(e->child(1)).isUnit();
-    if (!isUnitResult && Division::BeautifyIntoDivision(e)) {
+    // (-A)*U -> -A*U, with U a unit
+    if (e->child(0)->isStrictlyNegativeRational()) {
+      Rational::SetSign(e->child(0), NonStrictSign::Positive);
+      e->cloneNodeAtNode(KOpposite);
+      return true;
+    }
+  } else if (e->isMult() || e->isPow() || e->isRational()) {
+    /* Turn multiplications with negative powers into divisions and negative
+     * rationals into opposites */
+    if (Division::BeautifyIntoDivision(e)) {
       return true;
     }
   }

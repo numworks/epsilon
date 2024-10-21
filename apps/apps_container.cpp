@@ -30,7 +30,8 @@ AppsContainer::AppsContainer()
       m_dfuBetweenEvents(false),
       m_examPopUpController(),
       m_promptController(k_promptMessages, k_promptColors,
-                         k_promptNumberOfMessages)
+                         k_promptNumberOfMessages),
+      m_backlightDimmingTimer(30000)  // TODO: read from GlobalPreferences
 #if EPSILON_GETOPT
       ,
       m_initialAppSnapshot(nullptr)

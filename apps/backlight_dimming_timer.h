@@ -5,11 +5,10 @@
 
 class BacklightDimmingTimer : public Escher::Timer {
  public:
-  BacklightDimmingTimer();
+  BacklightDimmingTimer(int dimmingTime);
 
  private:
-  constexpr static int k_idleBeforeDimmingDuration =
-      30 * 1000;  // In miliseconds
+  int m_dimmingTime;  // In miliseconds
   constexpr static int k_dimBacklightBrightness = 0;
   bool fire() override;
 };

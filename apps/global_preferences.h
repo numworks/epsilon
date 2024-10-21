@@ -102,8 +102,13 @@ class __attribute__((packed)) GlobalPreferences {
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
 
+  int dimmingTime() const { return m_dimmingTime; }
+  void setDimmingTime(int dimmingTime) { m_dimmingTime = dimmingTime; }
+
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
+
+  constexpr static uint32_t k_defaultDimmingTime = 30000;
 
  private:
   constexpr static uint8_t k_version = 0;
@@ -112,7 +117,11 @@ class __attribute__((packed)) GlobalPreferences {
       : m_version(k_version),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_showPopUp(true),
-        m_font(KDFont::Size::Large) {
+        m_font(KDFont::Size::Large),
+        m_dimmingTime(k_defaultDimmingTime)
+  /* TODO: default value should be stored somewhere for both global preferences
+     and dimming timer initial value */
+  {
     setLanguage(I18n::Language::EN);
     setCountry(I18n::Country::WW, false);
   }
@@ -147,10 +156,13 @@ class __attribute__((packed)) GlobalPreferences {
              bool m_showPopUp;                //
              KDFont::Size m_font;)
 #endif
+
+  // TODO: move inside CODE_GUARD?
+  uint32_t m_dimmingTime;
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == 9,
+static_assert(sizeof(GlobalPreferences) == 13,
               "Class GlobalPreferences changed size");
 #endif
 

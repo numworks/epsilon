@@ -31,7 +31,7 @@ AppsContainer::AppsContainer()
       m_examPopUpController(),
       m_promptController(k_promptMessages, k_promptColors,
                          k_promptNumberOfMessages),
-      m_backlightDimmingTimer(30000)  // TODO: read from GlobalPreferences
+      m_backlightDimmingTimer(GlobalPreferences::k_defaultDimmingTime)
 #if EPSILON_GETOPT
       ,
       m_initialAppSnapshot(nullptr)
@@ -351,7 +351,11 @@ bool AppsContainer::updateBatteryState() {
   return batteryLevelUpdated || pluggedStateUpdated || chargingStateUpdated;
 }
 
-void AppsContainer::refreshPreferences() { m_window.refreshPreferences(); }
+void AppsContainer::refreshPreferences() {
+  m_backlightDimmingTimer.setNewTimeout(
+      GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
+  m_window.refreshPreferences();
+}
 
 void AppsContainer::reloadTitleBarView() { m_window.reloadTitleBarView(); }
 

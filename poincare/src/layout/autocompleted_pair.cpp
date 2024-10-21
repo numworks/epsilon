@@ -72,6 +72,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
    * the fraction won't impact the ones inside the fraction.
    */
   Tree* currentLayout = cursorRack;
+  // TODO: refactor to avoid calling parent
   Tree* currentParent = currentLayout->parent(rootRack);
   while (currentParent &&
          (currentParent->isRackLayout() || currentParent->type() == type)) {
@@ -151,7 +152,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
 
       // -- Step 2 -- The reading arrived left of a bracket
 
-      /* - Step 2.2 - Write
+      /* - Step 2.1 - Write
        * To know if a bracket should be added to the written layout, the
        * temporary status of the LEFT side of the bracket is checked.
        *
@@ -183,7 +184,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         writtenRack = newBracket->child(0);
       }
 
-      /* - Step 2.2 - Read
+      /* - Step 2.1 - Read
        * The reading enters the brackets and continues inside it.
        */
       readRack = readChild->child(0);
@@ -206,12 +207,14 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
      * already been escaped, so here, readLayout is always the child of a
      * bracket.
      * */
+    // TODO: refactor to avoid calling parent
     Tree* readBracket = readRack->parent(rootRack);
     assert(readBracket->type() == type);
 
     /* - Step 4.1. - Read
      * The reading goes out of the bracket and continues in its parent.
      * */
+    // TODO: refactor to avoid calling parent
     readRack = readBracket->parent(rootRack);
     readIndex = readRack->indexOfChild(readBracket) + 1;
 
@@ -254,6 +257,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
       continue;
     }
 
+    // TODO: refactor to avoid calling parent
     Tree* writtenBracket = writtenRack->parent(resultRack);
     if (writtenBracket) {
       /* The current written layout is in a bracket of the same type:
@@ -261,15 +265,16 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
       assert(writtenBracket->type() == type);
       assert(IsTemporary(writtenBracket, Side::Right));
       SetTemporary(writtenBracket, Side::Right, false);
+      // TODO: refactor to avoid calling parent
       writtenRack = writtenBracket->parent(resultRack);
       continue;
     }
 
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
-    Tree* newBracket =
+    Tree* newBracketNode =
         SharedTreeStack->pushAutocompletedPairLayout(type, true, false);
-    writtenRack->moveNodeBeforeNode(newBracket);
+    writtenRack->moveNodeBeforeNode(newBracketNode);
     writtenRack->cloneNodeBeforeNode(KRackL.node<1>);
   }
 
@@ -292,8 +297,10 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     int newCursorNestingLevel =
         bracketNestingLevel(type, resultRack, cursorRack);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
+      // TODO: refactor to avoid calling parent
       Tree* p = cursorRack->parent(resultRack);
       assert(p && p->type() == type);
+      // TODO: refactor to avoid calling parent
       Tree* r = p->parent(resultRack);
       *cursorPosition = r->indexOfChild(p);
       cursorRack = r;

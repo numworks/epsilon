@@ -508,8 +508,8 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
                            codePoint, &bracketType, &bracketSide)) {
       // Brackets will be balanced later in insertLayout
       bool left = bracketSide == Side::Left;
-      newChild = SharedTreeStack->pushAutocompletedPairLayout(
-          bracketType, left ? false : true, left ? true : false);
+      newChild = SharedTreeStack->pushAutocompletedPairLayout(bracketType,
+                                                              !left, left);
       KRackL()->cloneTree();
     } else if (nextCodePoint.isCombining()) {
       newChild = SharedTreeStack->pushCombinedCodePointsLayout(codePoint,

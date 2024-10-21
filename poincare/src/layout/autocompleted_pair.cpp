@@ -300,16 +300,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     }
   }
 
-  /* Now that the result is ready to replace rootRack, replaceWithInPlace
-   * cannot be used since rootRack might not have a parent.
-   * So rootRack is first emptied and then merged with result.  */
-  while (rootRack->numberOfChildren() > 0) {
-    NAry::RemoveChildAtIndex(rootRack, 0);
-  }
-  if (cursorRack == resultRack) {
-    cursorRack = rootRack;
-  }
-  NAry::AddOrMergeChildAtIndex(rootRack, resultRack, 0);
+  rootRack->moveTreeOverTree(resultRack);
 }
 
 void AutocompletedPair::MakeChildrenPermanent(Tree* l, Side side,

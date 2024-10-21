@@ -15,6 +15,13 @@ void quiz_print(const char* message) { Ion::Console::writeLine(message); }
 
 bool quiz_print_clear() { return Ion::Console::clear(); }
 
+void flushGlobalData() {
+  // TODO: Only Pool is expected to never leak. Uniformize expectations.
+  quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+  flush_stack();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}
+
 static inline void ion_main_inner(const char* testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
@@ -55,16 +62,12 @@ static inline void ion_main_inner(const char* testFilter) {
       quiz_print(buffer);
     }
     quiz_print(quiz_case_names[i]);
-    // TODO: clean when removing Pool
-    int initialPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
-    quiz_assert(initialPoolSize == 0);
-    flush_stack();
-    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+    flushGlobalData();
     c();
-    int currentPoolSize = Poincare::Pool::sharedPool->numberOfNodes();
-    quiz_assert(initialPoolSize == currentPoolSize);
     i++;
   }
+  flushGlobalData();
+
   quiz_print_clear();
 
   // Display test results

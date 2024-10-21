@@ -453,17 +453,16 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     }
     return TokenizerFailure("Only constants and units can be prefixed with _");
   }
-#if 0
-  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
-          string, *length,
-          ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
-    /* Special case for "min". min() = minimum(), min = minute.
-     * We handle this now so that min is never understood as a CustomIdentifier
-     * (3->min is not allowed, just like 3->cos) */
-    return *(string + *length) == '(' ? Token::Type::ReservedFunction
-                                      : Token::Type::Unit;
+  if (CompareLayoutSpanWithNullTerminatedString(
+          span,
+          Builtin::GetReservedFunction(Type::Min)->aliases()->mainAlias()) ==
+      0) {
+    bool followedByParenthesis =
+        m_decoder.layout()->isParenthesesLayout() ||
+        CodePointLayout::IsCodePoint(m_decoder.layout(), '(');
+    return followedByParenthesis ? Token::Type::ReservedFunction
+                                 : Token::Type::Unit;
   }
-#endif
   if (Builtin::HasReservedFunction(span)) {
     return Token::Type::ReservedFunction;
   }

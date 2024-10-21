@@ -259,18 +259,17 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 
 /* Return highest order of undefined dependencies if there is at least one, zero
  * otherwise */
-template <typename T>
-static std::complex<T> UndefDependencies(const Tree* dep,
-                                         const Approximation::Context* ctx) {
+static std::complex<float> HelperUndefDependencies(
+    const Tree* dep, const Approximation::Context* ctx) {
   // Dependency children may have different dimensions.
-  std::complex<T> undefValue = std::complex<T>(0);
+  std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
     Dimension dim = Dimension::Get(child);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<T> c = Approximation::ToComplex<T>(child, ctx);
+      std::complex<float> c = Approximation::ToComplex<float>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
-      if (Approximation::IsNonReal(c) && undefValue == std::complex<T>(0)) {
+      if (Approximation::IsNonReal(c) && undefValue == std::complex<float>(0)) {
         undefValue = c;
       } else if (std::isnan(c.real())) {
         undefValue = NAN;
@@ -278,7 +277,7 @@ static std::complex<T> UndefDependencies(const Tree* dep,
         assert(!std::isnan(c.imag()));
       }
     } else {
-      Tree* a = Approximation::ToTree<T>(child, Dimension::Get(child), ctx);
+      Tree* a = Approximation::ToTree<float>(child, Dimension::Get(child), ctx);
       if (a->isUndefined()) {
         a->removeTree();
         undefValue = NAN;
@@ -287,6 +286,13 @@ static std::complex<T> UndefDependencies(const Tree* dep,
     }
   }
   return undefValue;
+}
+
+template <typename T>
+std::complex<T> Approximation::UndefDependencies(const Tree* dep,
+                                                 const Context* ctx) {
+  std::complex<float> res = HelperUndefDependencies(dep, ctx);
+  return IsNonReal(res) ? NonReal<T>() : std::complex<T>(res);
 }
 
 template <typename T>

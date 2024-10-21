@@ -213,6 +213,9 @@ class Approximation final {
   }
 
   template <typename T>
+  static std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
+
+  template <typename T>
   static PointOrScalar<T> RootToPointOrScalarPrivate(
       const Tree* e, bool isPoint, bool isPrepared = true, T abscissa = NAN,
       int listElement = -1, AngleUnit angleUnit = AngleUnit::Radian,

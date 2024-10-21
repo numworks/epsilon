@@ -19,15 +19,6 @@ bool AutocompletedPair::IsAutoCompletedBracketPairCodePoint(CodePoint c,
   return true;
 }
 
-Tree* AutocompletedPair::BuildFromBracketType(TypeBlock type) {
-  assert(type.isAutocompletedPair());
-  Tree* result = SharedTreeStack->pushBlock(type);
-  // TODO proper node constructor
-  SharedTreeStack->pushBlock(0);
-  KRackL()->cloneTree();
-  return result;
-}
-
 /* This function counts the number of parent brackets until it reaches a bracket
  * of another type or the top layout. */
 static int bracketNestingLevel(TypeBlock type, const Tree* rootRack,
@@ -176,8 +167,9 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
        *      and the current result is        : "A+(|]"
        * */
       if (!IsTemporary(readChild, Side::Left)) {
-        TreeRef newBracket = BuildFromBracketType(type);
-        SetTemporary(newBracket, Side::Right, true);
+        TreeRef newBracket =
+            SharedTreeStack->pushAutocompletedPairLayout(type, false, true);
+        KRackL()->cloneTree();
         NAry::AddChild(writtenRack, newBracket);
         writtenRack = newBracket->child(0);
       }
@@ -267,8 +259,9 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
     TreeRef newWrittenRack = KRackL.node<1>->cloneNode();
-    TreeRef newBracket = BuildFromBracketType(type);
-    SetTemporary(newBracket, Side::Left, true);
+    TreeRef newBracket =
+        SharedTreeStack->pushAutocompletedPairLayout(type, true, false);
+    KRackL()->cloneTree();
     if (writtenRack == resultRack) {
       resultRack = newWrittenRack;
     } else {

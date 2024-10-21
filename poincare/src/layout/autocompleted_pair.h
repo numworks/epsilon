@@ -11,10 +11,6 @@ enum class Side : uint8_t {
   Right = 1,
 };
 
-inline Side OtherSide(Side side) {
-  return side == Side::Left ? Side::Right : Side::Left;
-}
-
 class AutocompletedPair {
  public:
   static bool IsTemporary(const Tree* l, Side side) {
@@ -29,7 +25,6 @@ class AutocompletedPair {
 
   static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, TypeBlock* type,
                                                   Side* side);
-  static Tree* BuildFromBracketType(TypeBlock type);
 
   // Deep balance the autocompleted brackets in rack
   static void BalanceBrackets(Tree* rootRack, TreeRef& cursorRack,

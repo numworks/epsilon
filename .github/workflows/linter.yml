@@ -38,5 +38,13 @@ jobs:
       - name: Get a recent clang-format version
         uses: numworks/setup-llvm@latest
 
+      # These are for prettier
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Node.js dependencies
+        run: npm install
+
       - name: Lint files changed by PR
-        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror" PYFORMATARGS="--check"
+        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror" PYFORMATARGS="--check" JSFORMATARGS="--check"

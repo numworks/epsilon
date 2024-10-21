@@ -1,4 +1,7 @@
+#include <apps/shared/global_context.h>
+#include <poincare/test/helper.h>
 #include <quiz.h>
+#include <string.h>
 
 #include "helpers.h"
 
@@ -273,6 +276,21 @@ QUIZ_CASE(solver_approximate) {
    */
 }
 
+void set(const char* variable, const char* expression) {
+  /* TODO : Replace all these "set("h", "3")" with store("h→3", &globalCtxt).
+   * globalCtxt has to be passed to all the assert_solves_(...) functions. */
+  Shared::GlobalContext globalContext;
+  char buffer[50];
+  int expressionLen = strlen(expression);
+  strlcpy(buffer, expression, expressionLen + 1);
+  const char* storeSymbol = "→";
+  int storeSymbolLen = strlen(storeSymbol);
+  strlcpy(buffer + expressionLen, storeSymbol, storeSymbolLen + 1);
+  strlcpy(buffer + expressionLen + storeSymbolLen, variable,
+          strlen(variable) + 1);
+  store(buffer, &globalContext);
+}
+
 QUIZ_CASE(solver_complex_real) {
   setComplexFormatAndAngleUnit(Real, Radian);
   // We still want complex solutions if the input has some complex value
@@ -298,7 +316,6 @@ QUIZ_CASE(solver_complex_real) {
   // assert_solves_to_error("x√(cot(4π/5))=0", EquationUndefined);
   // assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
 
-#if 0  // TODO_PCJ
   // With a predefined variable that should be ignored
   set("h", "3");
   assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"});
@@ -311,8 +328,7 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
   set("h", "i+1");
   assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"});  // Complex solutions
-  unset("h");
-#endif
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(solver_complex_cartesian) {
@@ -367,16 +383,15 @@ QUIZ_CASE(solver_complex_polar) {
 }
 
 QUIZ_CASE(solver_symbolic_computation) {
-#if 0  // TODO_PCJ
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   /* This test case needs the user defined variable. Indeed, in the equation
    * store, m_variables is just before m_userVariables, so bad fetching in
    * m_variables might fetch into m_userVariables and create problems. */
   set("x", "0");
   assert_solves_to_infinite_solutions(
-      {"b=0", "D=0", "c=0", "x+y+z+t=0"},
-      {"b=0", "D=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"});
-  unset("x");
+      {"D=0", "b=0", "c=0", "x+y+z+t=0"},
+      {"D=0", "b=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"});
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Long variable names
   assert_solves_to("2\"abcde\"+3=4", "\"abcde\"=1/2");
@@ -387,13 +402,13 @@ QUIZ_CASE(solver_symbolic_computation) {
    * With the user defined variable, it has no solutions. */
   set("g", "0");
   assert_solves_to_no_solution({"a=a+1", "a+b+c+d+f+g+h=0"});
-  unset("g");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   set("a", "x");
   // a is undef
   assert_solves_to("a=0", {"a=0"});
 
-  unset("a");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   assert_solves_to_infinite_solutions({"x+a=0"}, {"a=-t", "x=t"});
 
@@ -433,56 +448,51 @@ QUIZ_CASE(solver_symbolic_computation) {
    * replaced with its context value, and the equation becomes a + a + 2 = 0.
    * The solution is therefore a = -1. */
 
+#if 0
   set("d", "5");
   set("c", "d");
   set("h(x)", "c+d+3");
   assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"},
                                       {"c=-3", "d=0", "x=t"});
   // c and d context values should not be used
+#endif
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});
 
   set("j", "8_g");
   assert_solves_to("j+1=0", {"j=-1"});
 
-  unset("a");
-  unset("b");
-  unset("c");
-  unset("d");
-  unset("j");
-  unset("f");
-  unset("g");
-  unset("h");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   set("a", "0");
   assert_solves_to("a=0", "a=0");
-  unset("a");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   set("b", "0");
   assert_solves_to_no_solution({"b*b=1", "a=b"});
   // If predefined variable had been ignored, there would have been this error
   // assert_solves_to_error({"b*b=1","a=b"}, NonLinearSystem);
-  unset("b");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   set("x", "-1");
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   set("x", "1");
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
-  unset("x");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
+#if 0
   set("t", "1");
   set("a", "2");
   assert_solves_to_infinite_solutions({"ax=y"}, {"x=t/2", "y=t"});
-  unset("a");
-  unset("t");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+#endif
 
   set("a", "0");
   assert_solves_to_error("cos(πx)+cos(a)=0", RequireApproximateSolution);
   // Value of a was not ignored, which would have resulted in a NonLinearSystem
-  unset("a");
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   set("c", "arcsin(10)cb=0");
   assert_solves_to_error("arcsin(10)cb=0", NonLinearSystem);
-  unset("c");
-#endif
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

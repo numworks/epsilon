@@ -6,9 +6,7 @@ QUIZ_CASE(solver_error) {
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
 
-  /* TODO_PCJ: VariableArray<>::fillWithList is called with too many user
-   * variables and hits an assert */
-  // assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables);
+  assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables);
 
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
 

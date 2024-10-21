@@ -79,7 +79,6 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
   return result;
 }
 
-/* TODO_PCJ: Implement a number of variable limit (Error::TooManyVariables). */
 Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                         Context* context,
                                         ProjectionContext projectionContext,
@@ -119,9 +118,13 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       Preferences::SharedPreferences()
           ->examMode()
           .forbidSimultaneousEquationSolver()) {
+    *error = Error::DisabledInExamMode;
+  } else if (numberOfVariables > k_maxNumberOfExactSolutions) {
+    *error = Error::TooManyVariables;
+  }
+  if (*error != Error::NoError) {
     userSymbols->removeTree();
     reducedEquationSet->removeTree();
-    *error = Error::DisabledInExamMode;
     return nullptr;
   }
 

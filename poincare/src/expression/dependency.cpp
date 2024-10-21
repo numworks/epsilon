@@ -371,6 +371,9 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   if (!dep->isDep()) {
     return true;
   }
+  /* Set pointer might have been invalidated by RemoveDefinedDependencies. We
+   * choose to recompute the pointer instead of having a TreeRef. */
+  set = Dependency::Dependencies(dep);
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
    * {sqrt(x), sqrt(x), 1/sqrt(x)} -> {1/sqrt(x)} */

@@ -20,6 +20,7 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/serialize.h>
+#include <poincare/src/layout/vertical_offset.h>
 
 #include "placeholder.h"
 #endif
@@ -132,6 +133,10 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
   if (isDiffLayout()) {
     stream << " isNthDerivative=" << toDiffLayoutNode()->isNthDerivative;
+  }
+  if (isVerticalOffsetLayout()) {
+    stream << " isSubscript=" << VerticalOffset::IsSubscript(this);
+    stream << " isPrefix=" << VerticalOffset::IsPrefix(this);
   }
 }
 

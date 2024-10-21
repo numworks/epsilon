@@ -445,9 +445,8 @@ T Solver<T>::MinimalStep(T x, T slope) {
   if (preventTooSmallStep) {
     /* We make the minimal step dependent on the slope because if a function is
      * too flat, taking a step too small could lead to not detecting minimums
-     * and maximums. Indeed, the function SolverAlgorithms::DetectApproxima-
-     * -tionErrorsForMinimum filters out mins and maxs when the function
-     * seems constant on the interval.
+     * and maximums. Indeed, the function FunctionSeemsConstantOnTheInterval
+     * would filter out mins and maxs.
      * We use e^7 because e^7 ~ 1000, so that if slope = 0,
      * minStep = 10e-6 * 10e3 = 0.001.
      * This is not applied to floats since the minStep is already big enough.

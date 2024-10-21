@@ -7,6 +7,7 @@ namespace Settings {
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     setPreference(selectedRow());
+    // TODO: if necessary
     // AppsContainer::sharedAppsContainer()->refreshPreferences();
     Escher::StackViewController* stack = stackController();
     stack->pop();
@@ -16,12 +17,14 @@ bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
 }
 
 int ScreenTimeoutController::initialSelectedRow() const {
-  // return (int)preferences->screenTimeoutSetting();
-  return 0;
+  // TODO: replace with real preference getter
+  return m_preferenceIndex;
 }
 
 void ScreenTimeoutController::setPreference(int valueIndex) {
-  // TODO
+  assert(valueIndex >= 0 && valueIndex < k_totalNumberOfCell);
+  // TODO: replace with real preference setter
+  m_preferenceIndex = valueIndex;
 }
 
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,

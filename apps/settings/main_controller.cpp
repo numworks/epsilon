@@ -250,7 +250,9 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::ScreenTimeout:
-      childIndex = 0;
+      // TODO: replace with global preference getter
+      childIndex = m_screenTimeoutController.currentPreference();
+      break;
     case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==
                            KDFont::Size::Large

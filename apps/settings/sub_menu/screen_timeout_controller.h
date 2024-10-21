@@ -24,6 +24,9 @@ class ScreenTimeoutController : public GenericSubController {
 
   constexpr static int k_totalNumberOfCell = 4;
 
+  // TODO: remove, preference mockup
+  int currentPreference() const { return m_preferenceIndex; }
+
  protected:
   int initialSelectedRow() const override;
 
@@ -32,6 +35,9 @@ class ScreenTimeoutController : public GenericSubController {
 
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_cells[k_totalNumberOfCell];
+
+  // TODO: remove, preference mockup
+  int m_preferenceIndex;
 };
 
 }  // namespace Settings

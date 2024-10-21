@@ -243,10 +243,10 @@ typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void* aux, T xMin, T xMax,
-                                            Interest interest, T precision,
+                                            Interest interest, T xPrecision,
                                             OMG::Troolean discontinuous) {
   if (xMax < xMin) {
-    return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision,
+    return SafeBrentMinimum(f, aux, xMax, xMin, interest, xPrecision,
                             discontinuous);
   }
   assert(xMin < xMax);
@@ -258,13 +258,13 @@ Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
   }
 
   return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,
-                                        precision);
+                                        xPrecision);
 }
 
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
                                             const void* aux, T xMin, T xMax,
-                                            Interest interest, T precision,
+                                            Interest interest, T xPrecision,
                                             OMG::Troolean discontinuous) {
   const void* pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void* aux) {
@@ -274,7 +274,7 @@ Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
     return -(*f)(x, param[1]);
   };
   Coordinate2D<T> res = SafeBrentMinimum(minusF, pack, xMin, xMax, interest,
-                                         precision, discontinuous);
+                                         xPrecision, discontinuous);
   return Coordinate2D<T>(res.x(), -res.y());
 }
 
@@ -282,11 +282,11 @@ template <typename T>
 Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  const void* aux, T xMin,
                                                  T xMax, Interest interest,
-                                                 T precision,
+                                                 T xPrecision,
                                                  OMG::Troolean discontinuous) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
-        SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+        SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
     /* If the function is discontinuous and the discontinuity is on both sides
      * of the abscissa axis, a fake root could have been found. Filter it out
      * using null tolerance. This can happens for example with the functions:
@@ -301,11 +301,11 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
-    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, precision,
+    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, xPrecision,
                            discontinuous);
   } else {
     assert(interest == Interest::LocalMaximum);
-    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision,
+    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, xPrecision,
                            discontinuous);
   }
   return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
@@ -673,11 +673,11 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
    */
   constexpr T precisionForDiscontinuousFunctions =
       k_relativePrecision * k_minimalAbsoluteStep;
-  T precision = discontinuous == OMG::Troolean::True
+  T xPrecision = discontinuous == OMG::Troolean::True
                     ? precisionForDiscontinuousFunctions
                     : NullTolerance(start);
   Coordinate2D<T> solution =
-      hone(f, aux, start, end, interest, precision, discontinuous);
+      hone(f, aux, start, end, interest, xPrecision, discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
     return solution;
   }

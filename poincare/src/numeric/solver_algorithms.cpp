@@ -5,7 +5,7 @@
 namespace Poincare::Internal {
 
 Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
-    double ax, double bx, double resultPrecision,
+    double ax, double bx, double xPrecision,
     Solver<double>::FunctionEvaluation f, const void* aux,
     double* resultEvaluation) {
   assert(ax < bx);
@@ -20,7 +20,7 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
     // The minimal value is already bigger than 0, return min.
     return Coordinate2D<double>(currentAbscissa, eval);
   }
-  while (max - min > resultPrecision) {
+  while (max - min > xPrecision) {
     currentAbscissa = (min + max) / 2.0;
     /* If the mean between min and max is the same double (in IEEE754
      * representation) as one of the bounds - min or max, we look for another
@@ -114,9 +114,9 @@ T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
 
 Coordinate2D<double> SolverAlgorithms::BrentRoot(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Solver<double>::Interest interest, double precision) {
+    double xMax, Solver<double>::Interest interest, double xPrecision) {
   if (xMax < xMin) {
-    return BrentRoot(f, aux, xMax, xMin, interest, precision);
+    return BrentRoot(f, aux, xMax, xMin, interest, xPrecision);
   }
   assert(interest == Solver<double>::Interest::Root);
   assert(xMin < xMax);
@@ -150,7 +150,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
       fc = fa;
     }
 
-    double tol1 = 2. * DBL_EPSILON * std::fabs(b) + 0.5 * precision;
+    double tol1 = 2. * DBL_EPSILON * std::fabs(b) + 0.5 * xPrecision;
     double xm = 0.5 * (c - b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
       double fbcMiddle = f(0.5 * (b + c), aux);
@@ -199,7 +199,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
 
 Coordinate2D<double> SolverAlgorithms::BrentMinimum(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
-    double xMax, Solver<double>::Interest interest, double precision) {
+    double xMax, Solver<double>::Interest interest, double xPrecision) {
   assert(xMin < xMax);
   double a = xMin;
   double b = xMax;
@@ -216,7 +216,7 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(
 
   for (int i = 0; i < k_numberOfIterationsBrent; i++) {
     double m = 0.5 * (a + b);
-    double tol1 = k_sqrtEps * std::fabs(x) + precision;
+    double tol1 = k_sqrtEps * std::fabs(x) + xPrecision;
     double tol2 = 2. * tol1;
 
     if (std::fabs(x - m) <= tol2 - 0.5 * (b - a)) {

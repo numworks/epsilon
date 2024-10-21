@@ -22,16 +22,16 @@ class SolverAlgorithms {
                                         const void* aux, double xMin,
                                         double xMax,
                                         Solver<double>::Interest interest,
-                                        double precision);
+                                        double xPrecision);
   static Coordinate2D<double> BrentMinimum(Solver<double>::FunctionEvaluation f,
                                            const void* aux, double xMin,
                                            double xMax,
                                            Solver<double>::Interest interest,
-                                           double precision);
+                                           double xPrecision);
 
   /* Numeric functions for statistics and probability. */
   static Coordinate2D<double> IncreasingFunctionRoot(
-      double ax, double bx, double resultPrecision,
+      double ax, double bx, double xPrecision,
       Solver<double>::FunctionEvaluation f, const void* aux,
       double* resultEvaluation = nullptr);
   template <typename T>

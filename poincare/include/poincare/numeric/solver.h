@@ -142,15 +142,15 @@ class Solver {
 
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision,
+                                          T xPrecision,
                                           OMG::Troolean discontinuous);
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision,
+                                          T xPrecision,
                                           OMG::Troolean discontinuous);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f,
                                                const void* aux, T xMin, T xMax,
-                                               Interest interest, T precision,
+                                               Interest interest, T xPrecision,
                                                OMG::Troolean discontinuous);
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);

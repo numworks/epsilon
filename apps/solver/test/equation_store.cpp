@@ -41,26 +41,23 @@ QUIZ_CASE(solver_linear_system) {
   //                                     {"x=√(5)t+t", "y=t"});
   // assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
 
-  // assert_solves_to_infinite_solutions({"x+y+z=0"},
-  //                                     {"x=-t1-t2", "y=t2", "z=t1"});
-  // assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
-  //                                     {"x=t", "y=-2t", "z=t"});
+  assert_solves_to_infinite_solutions({"x+y+z=0"},
+                                      {"x=-t1-t2", "y=t2", "z=t1"});
+  assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
+                                      {"x=t", "y=-2t", "z=t"});
 
-  // TODO_PCJ: rank calculation fails (4 instead of 3)
-  // assert_solves_to_infinite_solutions({"x+y+z=2", "2x+y-z=3", "3x+2y=5"},
-  //                                     {"x=2t+1", "y=-3t+1", "z=t"});
+  assert_solves_to_infinite_solutions({"x+y+z=2", "2x+y-z=3", "3x+2y=5"},
+                                      {"x=2t+1", "y=-3t+1", "z=t"});
 
   assert_solves_to_infinite_solutions({"a=b", "c=d"},
                                       {"a=t2", "b=t2", "c=t1", "d=t1"});
   assert_solves_to_infinite_solutions({"a-b+c=0", "c-d=0"},
                                       {"a=-t1+t2", "b=t2", "c=t1", "d=t1"});
 
-  /* TODO_PCJ: t_n are not properly managed. The following equations resolve to
-   * expressions such as "t=t", "t1=t1+t2" etc. */
-  // assert_solves_to_infinite_solutions({"x=t"}, {"t=t1", "x=t1"});
-  // assert_solves_to_infinite_solutions(
-  //     {"t1=t2+t3", "t5=t1-t6"},
-  //     {"t1=t4+t7", "t2=t4+t7-t8", "t3=t8", "t5=t7", "t6=t4"});
+  assert_solves_to_infinite_solutions({"x=t"}, {"t=t1", "x=t1"});
+  assert_solves_to_infinite_solutions(
+      {"t1=t2+t3", "t5=t1-t6"},
+      {"t1=t4+t7", "t2=t4+t7-t8", "t3=t8", "t5=t7", "t6=t4"});
 
   assert_solves_to_infinite_solutions(
       {"a+2b+c+3d=0", "c-d=2"}, {"a=-4t1-2t2-2", "b=t2", "c=t1+2", "d=t1"});

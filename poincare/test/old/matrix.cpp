@@ -10,6 +10,7 @@ static inline void assert_has_rank(const char *exp, int rank) {
   Internal::Tree *e = parse_expression(exp, &context);
   quiz_assert(e->isMatrix());
   quiz_assert(rank == Internal::Matrix::Rank(e));
+  e->removeTree();
 }
 
 QUIZ_CASE(poincare_matrix_rank) {
@@ -19,6 +20,7 @@ QUIZ_CASE(poincare_matrix_rank) {
   assert_has_rank("[[1,-1,0][0,1,2][0,1,2][0,1,2][0,1,2][0,1,2]]", 2);
   assert_has_rank("[[1,0,0,0,0,0][-1,1,1,1,1,1][0,2,2,2,2,2]]", 2);
   assert_has_rank("[[1,2,3][1,3,x][1,4,6]]", -1);
+  assert_has_rank("[[1,1,0][0,0,0][0,1,x]]", -1);
 }
 
 QUIZ_CASE(poincare_matrix_undef) {

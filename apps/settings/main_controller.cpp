@@ -4,8 +4,6 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
-#include "settings/sub_menu/screen_timeout_controller.h"
-
 using namespace Poincare;
 using namespace Shared;
 using namespace Escher;

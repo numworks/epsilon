@@ -8,7 +8,6 @@ class BacklightDimmingTimer : public Escher::Timer {
   BacklightDimmingTimer(int dimmingTime);
 
  private:
-  int m_dimmingTime;  // In miliseconds
   constexpr static int k_dimBacklightBrightness = 0;
   bool fire() override;
 };

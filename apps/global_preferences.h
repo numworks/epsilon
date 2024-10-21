@@ -118,10 +118,7 @@ class __attribute__((packed)) GlobalPreferences {
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_showPopUp(true),
         m_font(KDFont::Size::Large),
-        m_dimmingTime(k_defaultDimmingTime)
-  /* TODO: default value should be stored somewhere for both global preferences
-     and dimming timer initial value */
-  {
+        m_dimmingTime(k_defaultDimmingTime) {
     setLanguage(I18n::Language::EN);
     setCountry(I18n::Country::WW, false);
   }

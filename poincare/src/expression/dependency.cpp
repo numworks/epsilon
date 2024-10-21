@@ -163,6 +163,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     // To avoid infinite loops
     if (!main->isNonReal()) {
       NAry::AddChild(set, main);
+      // TODO: use replaceTreeWithDimensionedType(main, Type::NonReal)?
       main->cloneNodeAtNode(KNonReal);
       ShallowRemoveUselessDependencies(dep);
       return true;

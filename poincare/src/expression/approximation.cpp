@@ -823,7 +823,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     }
     case Type::NonNull: {
       std::complex<T> x = ToComplex<T>(e->child(0), ctx);
-      return x != std::complex<T>(0) ? std::complex<T>(0) : NAN;
+      return !std::isnan(x.real()) && x != std::complex<T>(0)
+                 ? std::complex<T>(0)
+                 : NAN;
     }
     case Type::RealPos: {
       std::complex<T> x = ToComplex<T>(e->child(0), ctx);

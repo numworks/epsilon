@@ -283,27 +283,22 @@ KDSize Render::Size(const Layout* l) {
       break;
     }
     case LayoutType::Integral: {
-      // TODO_PCJ: handle nested integrals, cf old code
       using namespace Integral;
       KDSize dSize = KDFont::Font(s_font)->stringSize("d");
-      KDSize integrandSize = Size(l->child(3));
-      KDSize differentialSize = Size(l->child(0));
-      KDSize lowerBoundSize = Size(l->child(1));
-      KDSize upperBoundSize = Size(l->child(2));
+      KDSize integrandSize = Size(l->child(k_integrandIndex));
+      KDSize differentialSize = Size(l->child(k_differentialIndex));
+      KDSize lowerBoundSize = Size(l->child(k_lowerBoundIndex));
+      KDSize upperBoundSize = Size(l->child(k_upperBoundIndex));
       width = k_symbolWidth + k_lineThickness + k_boundHorizontalMargin +
               std::max(lowerBoundSize.width(), upperBoundSize.width()) +
               k_integrandHorizontalMargin + integrandSize.width() +
               k_differentialHorizontalMargin + dSize.width() +
               k_differentialHorizontalMargin + differentialSize.width();
-      const Layout* last = MostNestedIntegral(l, NestedPosition::Next);
-      height = (l == last)
-                   ? k_boundVerticalMargin +
-                         BoundMaxHeight(l, BoundPosition::UpperBound) +
-                         k_integrandVerticalMargin + CentralArgumentHeight(l) +
-                         k_integrandVerticalMargin +
-                         BoundMaxHeight(l, BoundPosition::LowerBound) +
-                         k_boundVerticalMargin
-                   : Height(last);
+      height =
+          k_boundVerticalMargin + BoundMaxHeight(l, BoundPosition::UpperBound) +
+          k_integrandVerticalMargin + CentralArgumentHeight(l) +
+          k_integrandVerticalMargin +
+          BoundMaxHeight(l, BoundPosition::LowerBound) + k_boundVerticalMargin;
       break;
     }
     case LayoutType::Product:
@@ -710,17 +705,18 @@ KDCoordinate Render::Baseline(const Layout* l) {
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      const Layout* last = MostNestedIntegral(l, NestedPosition::Next);
-      if (l == last) {
+      const Rack* integrand = l->child(k_integrandIndex);
+      if (Integral::IsRackWithOnlyIntegral(integrand)) {
+        /* When integrals are directly nested, the baseline of the
+         * parent integral is the same as its child's.
+         */
+        return Baseline(integrand);
+      } else {
         return k_boundVerticalMargin +
                BoundMaxHeight(l, BoundPosition::UpperBound) +
                k_integrandVerticalMargin +
-               std::max(Baseline(l->child(3)), Baseline(l->child(0)));
-      } else {
-        /* If integrals are in a row, they must have the same baseline. Since
-         * the last integral has the lowest, we take this one for all the others
-         */
-        return Baseline(last);
+               std::max(Baseline(integrand),
+                        Baseline(l->child(k_differentialIndex)));
       }
     }
     case LayoutType::Product:

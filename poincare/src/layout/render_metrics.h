@@ -526,26 +526,33 @@ constexpr KDCoordinate k_lineThickness = 1;
 enum class BoundPosition : uint8_t { UpperBound, LowerBound };
 enum class NestedPosition : uint8_t { Previous, Next };
 
-/* Return pointer to the first or the last integral from left to right
- * (considering multiple integrals in a row). */
-inline const Layout* MostNestedIntegral(const Layout* node,
-                                        NestedPosition position) {
-  // TODO
-  return node;
+inline bool IsRackWithOnlyIntegral(const Rack* rack) {
+  return rack->numberOfChildren() == 1 && rack->child(0)->isIntegralLayout();
 }
 
 inline KDCoordinate BoundMaxHeight(const Layout* node, BoundPosition position) {
-  // TODO
-  return Height(node->child(position == BoundPosition::LowerBound
-                                ? k_lowerBoundIndex
-                                : k_upperBoundIndex));
+  /* When integrals are directly nested, we compute the maximum bound
+   * height of the parent integral and all of the nested children integrals.
+   */
+  const Rack* integrand = node->child(k_integrandIndex);
+  const KDCoordinate boundHeight = Height(
+      node->child(position == BoundPosition::LowerBound ? k_lowerBoundIndex
+                                                        : k_upperBoundIndex));
+  if (IsRackWithOnlyIntegral(integrand)) {
+    return std::max(boundHeight, BoundMaxHeight(integrand->child(0), position));
+  } else {
+    return boundHeight;
+  }
 }
 
 inline KDCoordinate CentralArgumentHeight(const Layout* node) {
-  /* When integrals are in a row, the last one is the tallest. We take its
-   * central argument height to define the one of the others integrals */
-  const Layout* last = MostNestedIntegral(node, NestedPosition::Next);
-  if (node == last) {
+  /* When integrals are directly nested, the central argument height of the
+   * parent integral is the same as its child's.
+   */
+  const Rack* integrand = node->child(k_integrandIndex);
+  if (IsRackWithOnlyIntegral(integrand)) {
+    return CentralArgumentHeight(integrand->child(0));
+  } else {
     KDCoordinate integrandHeight = Height(node->child(k_integrandIndex));
     KDCoordinate integrandBaseline = Baseline(node->child(k_integrandIndex));
     KDCoordinate differentialHeight = Height(node->child(k_differentialIndex));
@@ -554,8 +561,6 @@ inline KDCoordinate CentralArgumentHeight(const Layout* node) {
     return std::max(integrandBaseline, differentialBaseline) +
            std::max(integrandHeight - integrandBaseline,
                     differentialHeight - differentialBaseline);
-  } else {
-    return CentralArgumentHeight(last);
   }
 }
 }  // namespace Integral

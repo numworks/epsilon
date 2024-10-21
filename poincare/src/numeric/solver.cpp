@@ -308,9 +308,6 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
     res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision,
                            discontinuous);
   }
-  if (std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())) {
-    return res;
-  }
   return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
              ? res
              : Coordinate2D<T>();

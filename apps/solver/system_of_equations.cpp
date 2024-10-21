@@ -721,10 +721,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         type == SolutionType::Formal ? nullptr : &approximate;
     Preferences::UnitFormat unitFormat =
         GlobalPreferences::SharedGlobalPreferences()->unitFormat();
+    // Any remaining symbol at this point should be an unknown parameter.
     SymbolicComputation symbolicComputation =
-        m_solverContext.overrideUserVariables
-            ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-            : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+        SymbolicComputation::DoNotReplaceAnySymbol;
+    assert(type == SolutionType::Formal || !e.clone().replaceSymbols(context));
     simplifyAndApproximateSolution(e, &exact, approximatePointer,
                                    approximateDuringReduction, context,
                                    m_solverContext.complexFormat, angleUnit,
@@ -736,7 +736,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     displayApproximateSolution = type != SolutionType::Formal;
     if (!displayApproximateSolution && !displayExactSolution) {
       /* Happens if the formal solution has no permission to be displayed.
-       * Re-reduce but force approximating during redution. */
+       * Re-reduce but force approximating during reduction. */
       exact = UserExpression();
       approximate = UserExpression();
       simplifyAndApproximateSolution(e, &exact, approximatePointer, true,

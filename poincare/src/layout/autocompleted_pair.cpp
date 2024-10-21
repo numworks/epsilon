@@ -60,6 +60,27 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
   assert(rootRack && cursorRack && cursorPosition);
   assert(rootRack->isRackLayout() && cursorRack->isRackLayout());
 
+  /* Find the top rack for balancing brackets.
+   *
+   * This might go again through already balanced brackets but it's safer in
+   * order to ensure that all brackets are always balanced after an insertion or
+   * a deletion.
+   *
+   * Stop if the parent of the currentLayout is not a rack neither a bracket.
+   * Ex: When balancing the brackets inside the numerator of a fraction, it's
+   * useless to take the parent rack of the fraction, since brackets outside of
+   * the fraction won't impact the ones inside the fraction.
+   */
+  Tree* currentLayout = cursorRack;
+  Tree* currentParent = currentLayout->parent(rootRack);
+  while (currentParent &&
+         (currentParent->isRackLayout() || currentParent->type() == type)) {
+    currentLayout = currentParent;
+    currentParent = currentLayout->parent(rootRack);
+  }
+  assert(currentLayout->isRackLayout());
+  rootRack = currentLayout;
+
   bool hasDescendantToBalance = false;
   for (const Tree* d : rootRack->descendants()) {
     if (d->type() == type) {
@@ -122,21 +143,9 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         NAry::AddOrMergeChild(writtenRack, readClone);
         readIndex++;
 
-        /* If cursor is inside the added cloned layout, set its layout inside
-         * the clone by keeping the same address offset as in the original. */
-        if (cursorRack >= readChild && cursorRack < readChild->nextTree()) {
-          int cursorOffset = cursorRack - readChild;
-          Tree* l = readClone + cursorOffset;
-          assert(l->isRackLayout());
-          cursorRack = l;
-
-          /* If the inserted child is a bracket pair of another type, balance
-           * inside of it. */
-          assert(readClone->isAutocompletedPair());
-          PrivateBalanceBrackets(type, readClone->child(0), cursorRack,
-                                 cursorPosition);
-        }
-
+        // The cursor shouldn't be inside the added cloned layout.
+        assert(
+            !(cursorRack >= readChild && cursorRack < readChild->nextTree()));
         continue;
       }
 

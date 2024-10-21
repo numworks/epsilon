@@ -1075,30 +1075,8 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
 
 void LayoutBufferCursor::TreeStackCursor::
     balanceAutocompletedBracketsAndKeepAValidCursor() {
-  /* Find the top horizontal layout for balancing brackets.
-   *
-   * This might go again through already balanced brackets but it's safer in
-   * order to ensure that all brackets are always balanced after an insertion or
-   * a deletion.
-   *
-   * Stop if the parent of the currentLayout is not horizontal neither
-   * a bracket.
-   * Ex: When balancing the brackets inside the numerator of a fraction, it's
-   * useless to take the parent horizontal layout of the fraction, since
-   * brackets outside of the fraction won't impact the ones inside the
-   * fraction.
-   */
-  Tree* currentLayout = cursorRack();
-  Tree* currentParent = currentLayout->parent(rootRack());
-  while (currentParent && (currentParent->isRackLayout() ||
-                           currentParent->isAutocompletedPair())) {
-    currentLayout = currentParent;
-    currentParent = currentLayout->parent(rootRack());
-  }
-  // If the top bracket does not have an horizontal parent, create one
-  assert(currentLayout->isRackLayout());
   TreeRef ref = cursorRack();
-  AutocompletedPair::BalanceBrackets(currentLayout, ref, &m_position);
+  AutocompletedPair::BalanceBrackets(rootRack(), ref, &m_position);
   m_cursorRackRef = static_cast<Tree*>(ref);
 }
 

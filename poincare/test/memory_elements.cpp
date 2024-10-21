@@ -726,3 +726,27 @@ QUIZ_CASE(pcj_constructor) {
           ValueBlock('2'),
       });
 }
+
+QUIZ_CASE(pcj_pushers) {
+  // Vertical offset layout
+  Tree* e1 = SharedTreeStack->pushVerticalOffsetLayout(false, false);
+  quiz_assert(e1->nodeIsIdenticalTo(KSuperscriptL));
+  Tree* e2 = SharedTreeStack->pushVerticalOffsetLayout(false, true);
+  quiz_assert(e2->nodeIsIdenticalTo(KPrefixSuperscriptL));
+  Tree* e3 = SharedTreeStack->pushVerticalOffsetLayout(true, false);
+  quiz_assert(e3->nodeIsIdenticalTo(KSubscriptL));
+  Tree* e4 = SharedTreeStack->pushVerticalOffsetLayout(true, true);
+  quiz_assert(e4->nodeIsIdenticalTo(KPrefixSubscriptL));
+
+  // ParenthesisLayout layout
+  Tree* e5 = SharedTreeStack->pushParenthesisLayout(false, false);
+  quiz_assert(e5->nodeIsIdenticalTo(KParenthesesL));
+  Tree* e6 = SharedTreeStack->pushParenthesisLayout(false, true);
+  quiz_assert(e6->nodeIsIdenticalTo(KParenthesesRightTempL));
+  Tree* e7 = SharedTreeStack->pushParenthesisLayout(true, false);
+  quiz_assert(e7->nodeIsIdenticalTo(KParenthesesLeftTempL));
+  Tree* e8 = SharedTreeStack->pushParenthesisLayout(true, true);
+  quiz_assert(e8->nodeIsIdenticalTo(KParenthesesTempL));
+
+  SharedTreeStack->flush();  // TODO: should be done at the end of every test
+}

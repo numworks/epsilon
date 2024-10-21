@@ -139,15 +139,14 @@ Tree* AbstractTreeStack::pushAutocompletedPairLayout(TypeBlock type,
                                                      bool leftIsTemporary,
                                                      bool rightIsTemporary) {
   Tree* result = pushBlock(type);
-  pushBlock(leftIsTemporary | (0b10 && rightIsTemporary));
+  pushBlock(leftIsTemporary | (rightIsTemporary << 1));
   return result;
 }
 
 Tree* AbstractTreeStack::pushVerticalOffsetLayout(bool isSubscript,
                                                   bool isPrefix) {
   Tree* result = pushBlock(Type::VerticalOffsetLayout);
-  // TODO: factor with vertical_offset.h
-  pushBlock(isSubscript | (0b10 && isPrefix));
+  pushBlock(isSubscript | (isPrefix << 1));
   return result;
 }
 

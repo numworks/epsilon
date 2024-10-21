@@ -249,6 +249,8 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
     case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();
       break;
+    case I18n::Message::ScreenTimeout:
+      childIndex = 0;
     case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==
                            KDFont::Size::Large

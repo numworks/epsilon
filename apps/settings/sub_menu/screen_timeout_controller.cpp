@@ -11,6 +11,11 @@ bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
+int ScreenTimeoutController::initialSelectedRow() const {
+  // return (int)preferences->screenTimeoutSetting();
+  return 0;
+}
+
 HighlightCell* ScreenTimeoutController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);

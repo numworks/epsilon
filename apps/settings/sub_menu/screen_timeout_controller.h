@@ -24,13 +24,9 @@ class ScreenTimeoutController : public GenericSubController {
   constexpr static int k_totalNumberOfCell = 4;
 
  protected:
-  int initialSelectedRow() const override {
-    return 0;
-    // return valueIndex(m_messageTreeModel->label());
-  }
+  int initialSelectedRow() const override;
 
  private:
-  // int valueIndex(I18n::Message message) const;
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_cells[k_totalNumberOfCell];
 };

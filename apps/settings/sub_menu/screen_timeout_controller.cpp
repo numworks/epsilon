@@ -2,12 +2,16 @@
 
 #include <apps/i18n.h>
 
-using namespace Shared;
-using namespace Escher;
-
 namespace Settings {
 
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    setPreference(selectedRow());
+    // AppsContainer::sharedAppsContainer()->refreshPreferences();
+    Escher::StackViewController* stack = stackController();
+    stack->pop();
+    return true;
+  }
   return GenericSubController::handleEvent(event);
 }
 
@@ -16,23 +20,28 @@ int ScreenTimeoutController::initialSelectedRow() const {
   return 0;
 }
 
-HighlightCell* ScreenTimeoutController::reusableCell(int index, int type) {
+void ScreenTimeoutController::setPreference(int valueIndex) {
+  // TODO
+}
+
+Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,
+                                                             int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_cells[index];
 }
 
 int ScreenTimeoutController::reusableCellCount(int type) const {
-  return k_totalNumberOfCell;
+  return GenericSubController::reusableCellCount(type);
 }
 
-void ScreenTimeoutController::fillCellForRow(HighlightCell* cell, int row) {
+void ScreenTimeoutController::fillCellForRow(Escher::HighlightCell* cell,
+                                             int row) {
   GenericSubController::fillCellForRow(cell, row);
 }
 
 KDCoordinate ScreenTimeoutController::nonMemoizedRowHeight(int row) {
-  MenuCell<MessageTextView, LayoutView> tempCell;
-  return protectedNonMemoizedRowHeight(&tempCell, row);
+  return GenericSubController::nonMemoizedRowHeight(row);
 }
 
 void ScreenTimeoutController::viewWillAppear() {

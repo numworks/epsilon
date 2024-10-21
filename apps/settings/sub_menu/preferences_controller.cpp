@@ -102,6 +102,11 @@ KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
                                                         int valueIndex) {
+  /* TODO: Implement a derived class for each preference (angle units, display
+   * mode, complex format...). Each derived class would be responsible for
+   * implementing a setter. This would make the code more modular and avoid such
+   * hard-to-read if/else blocks. */
+
   Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
@@ -127,6 +132,11 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
 
 int PreferencesController::valueIndexForPreference(
     I18n::Message message) const {
+  /* TODO: Implement a derived class for each preference (angle units, display
+   * mode, complex format...). Each derived class would be responsible for
+   * implementing a getter. This would make the code more modular and avoid such
+   * hard-to-read if/else blocks. */
+
   Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();

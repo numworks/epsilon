@@ -25,7 +25,7 @@ Solver<T>::Solver(T xStart, T xEnd, Context* context)
       m_lastInterest(Interest::None),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {
-  setSearchStep(MaximalStep(xEnd - xStart));
+  setSearchStep(DefaultSearchStepForAmplitude(xEnd - xStart));
 }
 
 template <typename T>
@@ -222,10 +222,9 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
 
 template <typename T>
 void Solver<T>::stretch() {
-  T step = maximalStep();
   T stepSign = m_xStart < m_xEnd ? static_cast<T>(1.) : static_cast<T>(-1.);
-  m_xStart -= step * stepSign;
-  m_xEnd += step * stepSign;
+  m_xStart -= m_searchStep * stepSign;
+  m_xEnd += m_searchStep * stepSign;
 }
 
 template <typename T>
@@ -433,7 +432,8 @@ bool Solver<T>::FunctionSeemsConstantOnTheInterval(
 }
 
 template <typename T>
-T Solver<T>::MaximalStep(T intervalAmplitude) {
+T Solver<T>::DefaultSearchStepForAmplitude(T intervalAmplitude) {
+  // NOTE: Is 100 too low ?
   constexpr T minimalNumberOfSteps = static_cast<T>(100.);
   return std::fabs(intervalAmplitude) / minimalNumberOfSteps;
 }
@@ -500,7 +500,7 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
   constexpr T lowerTypicalMagnitude = static_cast<T>(-1.);
   constexpr T upperTypicalMagnitude = static_cast<T>(3.);
 
-  T maxStep = maximalStep();
+  T maxStep = m_searchStep;
   T minStep = MinimalStep(x, slope);
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
@@ -750,7 +750,7 @@ template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void*, double, double, Interest, double,
     OMG::Troolean);
-template double Solver<double>::MaximalStep(double);
+template double Solver<double>::DefaultSearchStepForAmplitude(double);
 template void Solver<double>::ExcludeUndefinedFromBracket(
     Coordinate2D<double>* p1, Coordinate2D<double>* p2,
     Coordinate2D<double>* p3, FunctionEvaluation f, const void* aux,
@@ -765,6 +765,6 @@ template Solver<float>::Solver(float, float, Context*);
 template Coordinate2D<float> Solver<float>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
-template float Solver<float>::MaximalStep(float);
+template float Solver<float>::DefaultSearchStepForAmplitude(float);
 
 }  // namespace Poincare

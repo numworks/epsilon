@@ -50,7 +50,7 @@ class Solver {
         k_relativePrecision,
         OMG::Float::SquareRoot<T>(k_relativePrecision) * std::fabs(x));
   }
-  static T MaximalStep(T intervalAmplitude);
+  static T DefaultSearchStepForAmplitude(T intervalAmplitude);
 
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t,
@@ -122,7 +122,7 @@ class Solver {
    * interval. */
   void stretch();
   void setSearchStep(T step) {
-    m_maximalXStep = std::max(step, k_minimalPracticalStep);
+    m_searchStep = std::max(step, k_minimalPracticalStep);
   }
   void setGrowthSpeed(GrowthSpeed speed) { m_growthSpeed = speed; }
 
@@ -162,7 +162,6 @@ class Solver {
   static bool FunctionSeemsConstantOnTheInterval(
       Solver<T>::FunctionEvaluation f, const void* aux, T xMin, T xMax);
 
-  T maximalStep() const { return m_maximalXStep; }
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
@@ -183,7 +182,7 @@ class Solver {
 
   T m_xStart;
   T m_xEnd;
-  T m_maximalXStep;
+  T m_searchStep;
   T m_yResult;
   Context* m_context;
   Interest m_lastInterest;

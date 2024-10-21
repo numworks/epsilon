@@ -358,7 +358,7 @@ API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
       .context = context,
       .store = store,
       .searchStep =
-          static_cast<float>(Solver<double>::MaximalStep(m_start - m_end)),
+          static_cast<float>(Solver<double>::DefaultSearchStepForAmplitude(m_start - m_end)),
       .solver = {start, end, context},
       .record = m_record,
   };

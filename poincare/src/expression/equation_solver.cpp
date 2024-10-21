@@ -174,35 +174,17 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false);
     }
+    // Replace additional unknown parameter variables (t1, t2, ...)
     context->numberOfVariables -= userSymbols->numberOfChildren();
     if (context->numberOfVariables > 0) {
-      /* Equation had more solution and introduced new unknowns variables, name
-       * them 't' + 2 digits + '\0' */
-      constexpr size_t parameterNameSize = 1 + 2 + 1;
-      char parameterName[parameterNameSize] = {k_parameterPrefix};
       // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
       size_t parameterIndex = (context->numberOfVariables > 1) ? 1 : 0;
       uint32_t usedParameterIndices = TagParametersUsedAsVariables(context);
 
       for (int j = 0; j < context->numberOfVariables; j++) {
         // Generate a unique identifier t? that does not collide with variables.
-        while (
-            OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
-          parameterIndex++;
-          assert(parameterIndex <
-                 OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
-        }
-        size_t parameterNameLength =
-            parameterIndex == 0
-                ? 1
-                : 1 + OMG::Print::IntLeft(parameterIndex, parameterName + 1,
-                                          parameterNameSize - 2);
-        parameterIndex++;
-        assert(parameterNameLength >= 1 &&
-               parameterNameLength < parameterNameSize);
-        parameterName[parameterNameLength] = 0;
-        TreeRef symbol = SharedTreeStack->pushUserSymbol(
-            parameterName, parameterNameLength + 1);
+        TreeRef symbol = getNextParameterSymbol(
+            &parameterIndex, usedParameterIndices, projectionContext.m_context);
         Variables::LeaveScopeWithReplacement(result, symbol, false);
         symbol->removeTree();
       }
@@ -618,32 +600,63 @@ EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
 
 uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
   uint32_t tags = 0;
+  constexpr size_t k_maxIndex = OMG::BitHelper::numberOfBitsIn(tags);
+  constexpr size_t k_maxNumberOfDigits =
+      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
+  /* Only check local variables that may not have a global definition. The
+   * others  will be checked for later. */
   for (size_t i = 0; i < context->variables.numberOfVariables(); i++) {
-    TagVariableIfParameter(context->variables.variable(i), &tags, context);
-  }
-  for (size_t i = 0; i < context->userVariables.numberOfVariables(); i++) {
-    TagVariableIfParameter(context->userVariables.variable(i), &tags, context);
+    // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
+    const char* variable = context->variables.variable(i);
+    if (variable[0] != k_parameterPrefix) {
+      continue;
+    }
+    if (variable[1] == '\0') {
+      OMG::BitHelper::setBitAtIndex(tags, 0, true);
+      continue;
+    }
+    size_t index =
+        OMG::Print::ParseDecimalInt(&variable[1], k_maxNumberOfDigits);
+    if (index > 0 && index < k_maxIndex) {
+      OMG::BitHelper::setBitAtIndex(tags, index, true);
+    }
   }
   return tags;
 }
 
-void EquationSolver::TagVariableIfParameter(const char* variable,
-                                            uint32_t* tags,
-                                            const Context* context) {
-  if (variable[0] != k_parameterPrefix) {
-    return;
+Tree* EquationSolver::getNextParameterSymbol(size_t* parameterIndex,
+                                             uint32_t usedParameterIndices,
+                                             Poincare::Context* context) {
+  /* Equation had more solution and introduced new unknowns variables, name
+   * them 't' + 2 digits + '\0' */
+  constexpr size_t k_parameterNameSize = 1 + 2 + 1;
+  constexpr size_t k_maxIndex =
+      OMG::BitHelper::numberOfBitsIn(usedParameterIndices);
+  char parameterName[k_parameterNameSize] = {k_parameterPrefix};
+  while (*parameterIndex < k_maxIndex) {
+    // Skip already used parameter indices in local variables
+    while (OMG::BitHelper::bitAtIndex(usedParameterIndices, *parameterIndex)) {
+      (*parameterIndex)++;
+      assert(*parameterIndex < k_maxIndex);
+    }
+    size_t parameterNameLength =
+        *parameterIndex == 0
+            ? 1
+            : 1 + OMG::Print::IntLeft(*parameterIndex, parameterName + 1,
+                                      k_parameterNameSize - 2);
+    (*parameterIndex)++;
+    assert(parameterNameLength >= 1 &&
+           parameterNameLength < k_parameterNameSize);
+    parameterName[parameterNameLength] = 0;
+    Tree* symbol =
+        SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
+    if (!context->treeForSymbolIdentifier(symbol)) {
+      return symbol;
+    }
+    // Skip already used parameter indices in global variables
+    symbol->removeTree();
   }
-  if (variable[1] == '\0') {
-    OMG::BitHelper::setBitAtIndex(*tags, 0, true);
-    return;
-  }
-  size_t maxIndex = OMG::BitHelper::numberOfBitsIn(*tags);
-  size_t maxNumberOfDigits =
-      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, maxIndex);
-  size_t index = OMG::Print::ParseDecimalInt(&variable[1], maxNumberOfDigits);
-  if (index > 0 && index < maxIndex) {
-    OMG::BitHelper::setBitAtIndex(*tags, index, true);
-  }
+  OMG::unreachable();
 }
 
 }  // namespace Poincare::Internal

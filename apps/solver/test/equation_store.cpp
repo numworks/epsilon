@@ -480,12 +480,10 @@ QUIZ_CASE(solver_symbolic_computation) {
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-#if 0
   set("t", "1");
   set("a", "2");
-  assert_solves_to_infinite_solutions({"ax=y"}, {"x=t/2", "y=t"});
+  assert_solves_to_infinite_solutions({"ax=y"}, {"x=t1/2", "y=t1"});
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-#endif
 
   set("a", "0");
   assert_solves_to_error("cos(πx)+cos(a)=0", RequireApproximateSolution);

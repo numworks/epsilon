@@ -135,10 +135,10 @@ Tree* AbstractTreeStack::pushCombinedCodePointsLayout(
   return result;
 }
 
-Tree* AbstractTreeStack::pushParenthesisLayout(bool leftIsTemporary,
-                                               bool rightIsTemporary) {
-  Tree* result = pushBlock(Type::ParenthesesLayout);
-  // TODO: factor with autocompleted_pair.h
+Tree* AbstractTreeStack::pushAutocompletedPairLayout(TypeBlock type,
+                                                     bool leftIsTemporary,
+                                                     bool rightIsTemporary) {
+  Tree* result = pushBlock(type);
   pushBlock(leftIsTemporary | (0b10 && rightIsTemporary));
   return result;
 }

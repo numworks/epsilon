@@ -150,7 +150,12 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushCombinedCodePointsLayout(CodePoint codePoint,
                                      CodePoint combinedCodePoint);
 
-  Tree* pushParenthesisLayout(bool leftIsTemporary, bool rightIsTemporary);
+  Tree* pushAutocompletedPairLayout(TypeBlock type, bool leftIsTemporary,
+                                    bool rightIsTemporary);
+  Tree* pushParenthesisLayout(bool leftIsTemporary, bool rightIsTemporary) {
+    return pushAutocompletedPairLayout(Type::ParenthesesLayout, leftIsTemporary,
+                                       rightIsTemporary);
+  }
   Tree* pushVerticalOffsetLayout(bool isSubscript, bool isPrefix);
 
   Tree* pushRackLayout(int nbChildren);

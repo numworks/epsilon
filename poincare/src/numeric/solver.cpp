@@ -674,8 +674,8 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   constexpr T precisionForDiscontinuousFunctions =
       k_relativePrecision * k_minimalAbsoluteStep;
   T xPrecision = discontinuous == OMG::Troolean::True
-                    ? precisionForDiscontinuousFunctions
-                    : NullTolerance(start);
+                     ? precisionForDiscontinuousFunctions
+                     : NullTolerance(start);
   Coordinate2D<T> solution =
       hone(f, aux, start, end, interest, xPrecision, discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {

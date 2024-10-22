@@ -23,9 +23,6 @@ static bool IsErrorNegligible(DetailedResult<T> result,
 template <typename T>
 static bool DetailedResultIsValid(DetailedResult<T> result);
 
-// Maximum number of interval splits for the iterative quadrature
-constexpr static int k_maxNumberOfIterations = 20;
-
 template <typename T>
 struct Substitution {
   enum class Type { None, LeftOpen, RightOpen, RealLine };
@@ -57,16 +54,13 @@ template <typename T>
 DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
                                          const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
-                                     Substitution<T> substitution,
+DetailedResult<T> adaptiveQuadrature(T a, T b, Substitution<T> substitution,
                                      const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
-                                            T absoluteErrorThreshold,
-                                            T relativeErrorThreshold,
-                                            int numberOfIterations,
-                                            Substitution<T> substitution,
-                                            const Approximation::Context* ctx);
+DetailedResult<T> iterateAdaptiveQuadrature(
+    DetailedResult<T> quadKG, T a, T b, T absoluteErrorThreshold,
+    T relativeErrorThreshold, Substitution<T> substitution,
+    const Approximation::Context* ctx, int iterationDepth, int* iterationCount);
 
 const Tree* integrandExpression;
 
@@ -155,8 +149,8 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
     }
   }
 
-  DetailedResult<T> detailedResult = adaptiveQuadrature<T>(
-      start, end, k_maxNumberOfIterations, substitution, ctx);
+  DetailedResult<T> detailedResult =
+      adaptiveQuadrature<T>(start, end, substitution, ctx);
   return DetailedResultIsValid(detailedResult) ? scale * detailedResult.integral
                                                : NAN;
 }
@@ -408,8 +402,7 @@ DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
 }
 
 template <typename T>
-DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
-                                     Substitution<T> substitution,
+DetailedResult<T> adaptiveQuadrature(T a, T b, Substitution<T> substitution,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, ctx);
 
@@ -424,18 +417,27 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
   constexpr T absoluteErrorThreshold = 1e-12;
   constexpr T relativeErrorThreshold = OMG::Float::SqrtEpsilon<T>();
 
+  int numberOfCalls = 1;
   return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
-                                   relativeErrorThreshold,
-                                   numberOfIterations - 1, substitution, ctx);
+                                   relativeErrorThreshold, substitution, ctx, 1,
+                                   &numberOfCalls);
 }
 
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
                                             T absoluteErrorThreshold,
                                             T relativeErrorThreshold,
-                                            int numberOfIterations,
                                             Substitution<T> substitution,
-                                            const Approximation::Context* ctx) {
+                                            const Approximation::Context* ctx,
+                                            int iterationDepth,
+                                            int* iterationCount) {
+  // Maximum number of interval splits for the iterative quadrature
+  constexpr static int k_maxIterationDepth = 20;
+  /* Maximum number of calls to iterateAdaptiveQuadrature, to avoid going very
+   * deep everywhere on the interval, which would mean 2^20 calls.
+   * Example: int(sin(10^7*x), 0, 1) */
+  constexpr static int k_maxIterationCount = 5000;
+
   /* The Kronrod-Gauss method returns an error value together with the integral
    * approximation. Because it is impossible to know the exact value of the
    * integral, this error is computed by the difference between the integral
@@ -448,13 +450,15 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
    * compared to the interval length. */
   if (IsErrorNegligible(quadKG, absoluteErrorThreshold,
                         relativeErrorThreshold) ||
-      numberOfIterations <= 0) {
+      iterationDepth > k_maxIterationDepth ||
+      *iterationCount > k_maxIterationCount) {
     return quadKG;
   }
 
   T m = (a + b) / 2;
   DetailedResult<T> left = kronrodGaussQuadrature(a, m, substitution, ctx);
   DetailedResult<T> right = kronrodGaussQuadrature(m, b, substitution, ctx);
+  *iterationCount += 1;
 
   /* Start by the side with the biggest error to reach maximumError faster if
    * it can be reached. */
@@ -472,7 +476,8 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
      * initial error thresholds are divided by two. */
     *current = iterateAdaptiveQuadrature(
         *current, lowerBound, upperBound, absoluteErrorThreshold / 2,
-        relativeErrorThreshold / 2, numberOfIterations - 1, substitution, ctx);
+        relativeErrorThreshold / 2, substitution, ctx, iterationDepth + 1,
+        iterationCount);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};
     }

@@ -1008,6 +1008,10 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(x*sin(1/x)*√(abs(1-x)),x,0,3)",
                                             "1.9819412", Radian,
                                             MetricUnitFormat, Cartesian, 8);
+
+  // Ensure this escapes earlier (or it would take up too much time)
+  assert_expression_approximates_to<float>("int(sin((10^7)*x),x,0,1)",
+                                           Undefined::Name());
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {

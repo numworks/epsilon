@@ -6,6 +6,7 @@
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/trigonometry.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 
 using namespace Poincare;
@@ -151,21 +152,22 @@ ExpiringPointer<Calculation> CalculationStore::push(
       complexFormat =
           Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
               complexFormat, inputExpression, context);
+
+      Internal::ProjectionContext projContext = {
+          .m_complexFormat = complexFormat,
+          .m_angleUnit =
+              Poincare::Preferences::SharedPreferences()->angleUnit(),
+          .m_unitFormat =
+              GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+          .m_symbolic =
+              CAS::Enabled()
+                  ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+                  : SymbolicComputation::
+                        ReplaceAllSymbolsWithDefinitionsOrUndefined,
+          .m_context = context};
+
       inputExpression.cloneAndSimplifyAndApproximate(
-          &exactOutputExpression, &approximateOutputExpression,
-          PoincareHelpers::ReductionContextForParameters(
-              inputExpression, context,
-              {
-                  .complexFormat = complexFormat,
-                  // Complex format has already been updated
-                  .updateComplexFormatWithExpression = false,
-                  .symbolicComputation =
-                      CAS::Enabled()
-                          ? SymbolicComputation::
-                                ReplaceAllDefinedSymbolsWithDefinition
-                          : SymbolicComputation::
-                                ReplaceAllSymbolsWithDefinitionsOrUndefined,
-              }));
+          &exactOutputExpression, &approximateOutputExpression, &projContext);
       assert(!exactOutputExpression.isUninitialized() &&
              !approximateOutputExpression.isUninitialized());
 

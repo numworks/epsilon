@@ -384,20 +384,6 @@ bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
 void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    const ReductionContext& reductionContext) const {
-  ProjectionContext context = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
-  return cloneAndSimplifyAndApproximate(simplifiedExpression,
-                                        approximatedExpression, &context);
-}
-
-void UserExpression::cloneAndSimplifyAndApproximate(
-    UserExpression* simplifiedExpression,
-    UserExpression* approximatedExpression,
     Internal::ProjectionContext* context) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
@@ -655,8 +641,14 @@ SystemExpression SystemExpression::removeUndefListElements() const {
 
 UserExpression UserExpression::cloneAndSimplify(
     ReductionContext reductionContext, bool* reductionFailure) const {
+  ProjectionContext projContext = {
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
+      .m_unitFormat = reductionContext.unitFormat(),
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
   UserExpression e;
-  cloneAndSimplifyAndApproximate(&e, nullptr, reductionContext);
+  cloneAndSimplifyAndApproximate(&e, nullptr, &projContext);
   return e;
 
   /* TODO_PCJ Ensure reduction failure is properly handled. Have

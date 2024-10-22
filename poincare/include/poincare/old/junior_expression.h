@@ -216,10 +216,6 @@ class JuniorExpression : public OExpression {
   void cloneAndSimplifyAndApproximate(
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
-      const ReductionContext& reductionContext) const;
-  void cloneAndSimplifyAndApproximate(
-      UserExpression* simplifiedExpression,
-      UserExpression* approximatedExpression,
       Internal::ProjectionContext* context) const;
   SystemExpression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure,

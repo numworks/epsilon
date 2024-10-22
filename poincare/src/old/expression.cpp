@@ -743,22 +743,6 @@ size_t OExpression::serialize(char *buffer, size_t bufferSize,
 
 /* Simplification */
 
-OExpression OExpression::ParseAndSimplify(
-    const char *text, Context *context, SymbolicComputation symbolicComputation,
-    UnitConversion unitConversion, bool *reductionFailure) {
-  JuniorExpression exp = JuniorExpression::Parse(text, context, false);
-  if (exp.isUninitialized()) {
-    return Undefined::Builder();
-  }
-  ReductionContext ctx =
-      ReductionContext::DefaultReductionContextForAnalysis(context);
-  ctx.setSymbolicComputation(symbolicComputation);
-  ctx.setUnitConversion(unitConversion);
-  exp = exp.cloneAndSimplify(ctx);
-  assert(!exp.isUninitialized());
-  return exp;
-}
-
 OExpression OExpression::cloneAndSimplify(ReductionContext reductionContext,
                                           bool *reductionFailure) const {
   bool reduceFailure = false;
@@ -1168,18 +1152,6 @@ U OExpression::approximateToScalar(
 }
 
 template <typename U>
-U OExpression::ParseAndSimplifyAndApproximateToScalar(
-    const char *text, Context *context,
-    SymbolicComputation symbolicComputation) {
-  OExpression exp = ParseAndSimplify(text, context, symbolicComputation);
-  assert(!exp.isUninitialized());
-  // TODO: Shared shouldn't be called in Poincare !
-  assert(false);
-  // return Shared::PoincareHelpers::ApproximateToScalar<U>(exp, context);
-  return NAN;
-}
-
-template <typename U>
 Evaluation<U> OExpression::approximateWithValueForSymbol(
     const char *symbol, U x,
     const ApproximationContext &approximationContext) const {
@@ -1451,13 +1423,6 @@ template float OExpression::approximateToScalar(
     const ApproximationContext &approximationContext) const;
 template double OExpression::approximateToScalar(
     const ApproximationContext &approximationContext) const;
-
-template float OExpression::ParseAndSimplifyAndApproximateToScalar<float>(
-    const char *text, Context *context,
-    SymbolicComputation symbolicComputation);
-template double OExpression::ParseAndSimplifyAndApproximateToScalar<double>(
-    const char *text, Context *context,
-    SymbolicComputation symbolicComputation);
 
 template Evaluation<float> OExpression::approximateToEvaluation(
     const ApproximationContext &approximationContext) const;

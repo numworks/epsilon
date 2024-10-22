@@ -391,12 +391,6 @@ class OExpression : public PoolHandle {
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static OExpression ParseAndSimplify(
-      const char* text, Context* context,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      UnitConversion unitConversion = UnitConversion::Default,
-      bool* reductionFailure = nullptr);
   OExpression cloneAndSimplify(ReductionContext reductionContext,
                                bool* reductionFailure = nullptr) const;
   void cloneAndSimplifyAndApproximate(
@@ -442,11 +436,6 @@ class OExpression : public PoolHandle {
   /* Approximation Helper
    * These methods reset the sApproximationEncounteredComplex flag. They should
    * not be use to implement node approximation */
-  template <typename U>
-  static U ParseAndSimplifyAndApproximateToScalar(
-      const char* text, Context* context,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   template <typename U>
   OExpression approximate(
       const ApproximationContext& approximationContext) const;

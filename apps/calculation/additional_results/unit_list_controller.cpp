@@ -96,22 +96,17 @@ void UnitListController::computeAdditionalResults(
   ctx.m_unitDisplay = (unitFormat == Preferences::UnitFormat::Metric)
                           ? Internal::UnitDisplay::AutomaticMetric
                           : Internal::UnitDisplay::AutomaticImperial;
-  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                       nullptr, &ctx);
+  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
-  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                       nullptr, &ctx);
+  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   ctx.m_unitDisplay = Internal::UnitDisplay::Decomposition;
-  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                       nullptr, &ctx);
+  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
-  input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                       nullptr, &ctx);
+  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
 
   if (unitFormat != Preferences::UnitFormat::Metric) {
     ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticMetric;
-    input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
-                                         nullptr, &ctx);
+    expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   }
   ctx.m_unitDisplay = Internal::UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;

@@ -73,6 +73,7 @@ class ScreenTimeoutController : public GenericSubController {
       case FiveMinutes:
         return 300000;
       case NElements:
+      default:
         // error case
         return -1;
     }

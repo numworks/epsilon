@@ -58,6 +58,7 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
                                             T absoluteErrorThreshold,
+                                            T relativeErrorThreshold,
                                             int numberOfIterations,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx);
@@ -400,22 +401,26 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, int numberOfIterations,
                                      const Approximation::Context* ctx) {
   DetailedResult<T> quadKG = kronrodGaussQuadrature(a, b, substitution, ctx);
 
-  /* Threshold to consider that the quadrature approximation have converged. As
-   * a general rule, this threshold should be rather low. This is because the
-   * iterative algorithm first consider the whole integration interval. There is
-   * a risk that the first quadratures miss some parts of the integral that are
-   * "invisible" when the interpolation points are far from each other. We must
-   * avoid those cases, in which the algorithm early exits with an incorrect
-   * approximation of the integral value. */
-  constexpr T approximationErrorThreshold = 1e-11;
+  /* Absolute and relative thresholds to consider that the quadrature
+   * approximation have converged. This thresholds should be low enough to
+   * ensure the integral is computed accurately.
+   * The iterative algorithm first considers the whole integration interval.
+   * There is a risk that the first quadratures miss some parts of the integral
+   * that are "invisible" when the interpolation points are far from each other.
+   * We must avoid those cases, in which the algorithm early exits with an
+   * incorrect approximation of the integral value. */
+  constexpr T absoluteErrorThreshold = 1e-12;
+  constexpr T relativeErrorThreshold = OMG::Float::SqrtEpsilon<T>();
 
-  return iterateAdaptiveQuadrature(quadKG, a, b, approximationErrorThreshold,
+  return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
+                                   relativeErrorThreshold,
                                    numberOfIterations - 1, substitution, ctx);
 }
 
 template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
-                                            T approximationErrorThreshold,
+                                            T absoluteErrorThreshold,
+                                            T relativeErrorThreshold,
                                             int numberOfIterations,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx) {
@@ -424,18 +429,14 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
    * integral, this error is computed by the difference between the integral
    * approximations obtained by two different methods, namely Kronrod and Gauss
    * quadratures. */
-  /* TODO: to increase performance and avoid doing too many iterative calls, we
-   * could add another exit criterion based on the relative difference between
-   * quadKG.absoluteError and quadKG.integralError. Note that the absolute error
-   * criterion must be kept in all cases, because on integrals that have an
-   * almost null value, the error and the integral value have a similar order of
-   * magnitude. */
   /* TODO: we could add a minimum number of steps to force the integration
    * interval to be split into several intervals. This would prevent some wrong
    * early exits that can occur if the error is below the threshold, but because
    * both Kronrod and Gauss quadratures have too few interpolation points
    * compared to the interval length. */
-  if (quadKG.absoluteError <= approximationErrorThreshold ||
+  if (quadKG.absoluteError <= absoluteErrorThreshold ||
+      quadKG.absoluteError <
+          relativeErrorThreshold * std::fabs(quadKG.integral) ||
       numberOfIterations <= 0) {
     return quadKG;
   }
@@ -457,10 +458,10 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
      * half-interval with the biggest error. The number of remaining iterations
      * decreases with each recursive call. Because the error returned by the
      * kronrodGaussQuadrature method is proportional to the interval length, the
-     * error threshold is divided by two. */
+     * initial error thresholds are divided by two. */
     *current = iterateAdaptiveQuadrature(
-        *current, lowerBound, upperBound, approximationErrorThreshold / 2,
-        numberOfIterations - 1, substitution, ctx);
+        *current, lowerBound, upperBound, absoluteErrorThreshold / 2,
+        relativeErrorThreshold / 2, numberOfIterations - 1, substitution, ctx);
     if (!DetailedResultIsValid(*current)) {
       return {NAN, NAN};
     }

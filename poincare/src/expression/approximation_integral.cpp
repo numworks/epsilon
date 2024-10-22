@@ -157,9 +157,13 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
 
 template <typename T>
 bool DetailedResultIsValid(DetailedResult<T> result) {
-  constexpr T maximumErrorForDisplay = 0.1;
+  constexpr T absoluteErrorThreshold = 0.1;
+  constexpr T relativeErrorThreshold = 1e-4;
+
   return !std::isnan(result.integral) &&
-         result.absoluteError < maximumErrorForDisplay;
+         (result.absoluteError < absoluteErrorThreshold ||
+          std::abs(result.absoluteError / result.integral) <
+              relativeErrorThreshold);
 }
 
 template <typename T>

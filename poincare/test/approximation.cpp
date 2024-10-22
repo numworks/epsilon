@@ -296,6 +296,9 @@ QUIZ_CASE(pcj_approximation_parametrics) {
 }
 
 QUIZ_CASE(pcj_approximation_integrals) {
+  approximates_to<double>("int(e^x, x, 0, 200)", "7.2259737681257ᴇ86");
+  approximates_to<double>("int(e^(x^3), x, 0, 4)", "1.312888495564ᴇ26");
+
   approximates_to<double>("int(710×x×e^(-710×x), x, 0, 10)",
                           "0.0014084507042254");
   approximates_to<double>("710*int(x×e^(-710×x), x, 0, 10)",

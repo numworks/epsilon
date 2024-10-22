@@ -485,7 +485,14 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
    * - even when |t| is large, dt never skips an order of magnitude
    *   i.e. 0.1 < |(t+dt)/t| < 10
    * - there is a minimal value for dt, to allow crossing zero.
-   * - always sample a minimal number of points in the whole interval. */
+   * - always sample a minimal number of points in the whole interval.
+   *
+   * NOTE: The growth speed as function of the magnitude of x has
+   * an inflexion point at:
+   * (2/(3 * growthSpeedAcceleration)) ^ (1/3) + upperTypicalMagnitude
+   * This is currently equal to 7.05, which matches the max magnitude
+   * of x (10^8)
+   * */
   T baseGrowthSpeed = m_growthSpeed == GrowthSpeed::Precise
                           ? static_cast<T>(1.01)
                           : static_cast<T>(1.05);

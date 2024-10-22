@@ -69,4 +69,8 @@ QUIZ_CASE(python_numpy) {
                                     "array([5.0, 10.0])\n");
   assert_command_execution_succeeds(env, "5*np.array([1, 2])",
                                     "array([5.0, 10.0])\n");
+  assert_command_execution_succeeds(env, "np.array([1, 2])**2",
+                                    "array([1.0, 4.0])\n");
+  assert_command_execution_succeeds(env, "2**np.array([1, 2])",
+                                    "array([2.0, 4.0])\n");
 }

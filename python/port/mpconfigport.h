@@ -128,6 +128,9 @@
 // Allow for numpy array operations from both sides (5 * np.array([1,2,3]))
 #define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
 
+// Allow even more operations on numpy arrays from both sides
+#define MICROPY_PY_ALL_SPECIAL_METHODS (1)
+
 #define MICROPY_VM_HOOK_LOOP micropython_port_vm_hook_loop();
 
 typedef intptr_t mp_int_t;    // must be pointer size

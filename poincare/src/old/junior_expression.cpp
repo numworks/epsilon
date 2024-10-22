@@ -511,10 +511,11 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
   if (exp.isUninitialized()) {
     return NAN;
   }
-  ReductionContext ctx =
-      ReductionContext::DefaultReductionContextForAnalysis(context);
-  ctx.setSymbolicComputation(symbolicComputation);
-  exp = exp.cloneAndSimplify(ctx);
+  ProjectionContext ctx = {
+      .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+      .m_symbolic = symbolicComputation,
+      .m_context = context};
+  exp = exp.cloneAndSimplify(&ctx);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<T>(context);
 }
@@ -640,15 +641,9 @@ SystemExpression SystemExpression::removeUndefListElements() const {
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    ReductionContext reductionContext, bool* reductionFailure) const {
-  ProjectionContext projContext = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
+    Internal::ProjectionContext* context, bool* reductionFailure) const {
   UserExpression e;
-  cloneAndSimplifyAndApproximate(&e, nullptr, &projContext);
+  cloneAndSimplifyAndApproximate(&e, nullptr, context);
   return e;
 
   /* TODO_PCJ Ensure reduction failure is properly handled. Have

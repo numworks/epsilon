@@ -5,6 +5,7 @@
 #include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/projection.h>
 
 namespace Shared {
 
@@ -125,6 +126,20 @@ inline Poincare::ReductionContext ReductionContextForParameters(
   return reductionContext;
 }
 
+inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
+    const Poincare::Expression e, Poincare::Context* context,
+    const ReductionParameters& reductionParameters) {
+  Poincare::ReductionContext reductionContext =
+      ReductionContextForParameters(e, context, reductionParameters);
+  Poincare::Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
+      .m_unitFormat = reductionContext.unitFormat(),
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
+  return projectionContext;
+}
+
 template <class T>
 inline Poincare::Expression ApproximateKeepingUnits(
     const Poincare::Expression e, Poincare::Context* context,
@@ -142,9 +157,9 @@ inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
-  *e = e->cloneAndSimplify(
-      ReductionContextForParameters(*e, context, reductionParameters),
-      reductionFailure);
+  Poincare::Internal::ProjectionContext ctx =
+      ProjectionContextForParameters(*e, context, reductionParameters);
+  *e = e->cloneAndSimplify(&ctx, reductionFailure);
 }
 
 inline Poincare::SystemExpression CloneAndReduce(

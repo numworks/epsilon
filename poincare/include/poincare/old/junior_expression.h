@@ -221,7 +221,7 @@ class JuniorExpression : public OExpression {
       ReductionContext* reductionContext, bool* reduceFailure,
       bool approximateDuringReduction = false) const;
 
-  UserExpression cloneAndSimplify(ReductionContext reductionContext,
+  UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
                                   bool* reductionFailure = nullptr) const;
   SystemExpression cloneAndReduce(ReductionContext reductionContext) const;
 

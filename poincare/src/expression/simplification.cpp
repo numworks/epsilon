@@ -63,6 +63,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
 
 void Simplification::ProjectAndReduceWithAdaptiveStrategy(
     Tree* e, ProjectionContext* projectionContext, bool advanced) {
+  // TODO_PCJ: Add ExceptionTry just like in SimplifyWithAdaptiveStrategy?
   SharedTreeStack->executeAndReplaceTree(ApplyProjectAndReduce, e,
                                          projectionContext,
                                          RelaxProjectionContext, advanced);

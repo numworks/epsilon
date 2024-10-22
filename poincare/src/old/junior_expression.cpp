@@ -405,21 +405,17 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   return;
 }
 
-SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
-    ReductionContext* reductionContext, bool* reduceFailure,
-    bool approximateDuringReduction) const {
+SystemExpression UserExpression::cloneAndReduce(
+    ReductionContext reductionContext) const {
   ProjectionContext context = {
-      .m_complexFormat = reductionContext->complexFormat(),
-      .m_angleUnit = reductionContext->angleUnit(),
-      .m_strategy = approximateDuringReduction ? Strategy::ApproximateToFloat
-                                               : Strategy::Default,
-      .m_unitFormat = reductionContext->unitFormat(),
-      .m_symbolic = reductionContext->symbolicComputation(),
-      .m_context = reductionContext->context()};
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
+      .m_unitFormat = reductionContext.unitFormat(),
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::ProjectAndReduceWithAdaptiveStrategy(e, &context, true);
-  *reduceFailure = false;
   SystemExpression simplifiedExpression = Builder(e);
 #if 0
   if (approximateDuringReduction) {
@@ -439,25 +435,17 @@ SystemExpression UserExpression::cloneAndDeepReduceWithSystemCheckpoint(
      * "2*x^float(2.)" because float(2.) != rational(2.).
      * This does not happen if e is reduced beforehand. */
     simplifiedExpression =
-        simplifiedExpression.deepApproximateKeepingSymbols(*reductionContext);
+        simplifiedExpression.deepApproximateKeepingSymbols(reductionContext);
   }
-  if (!*reduceFailure) {
+  if (!reduceFailure) {
     /* TODO_PCJ: Ensure Dependency::deepRemoveUselessDependencies(...) logic has
      * been properly brought in Simplification. */
     simplifiedExpression =
-        simplifiedExpression.deepRemoveUselessDependencies(*reductionContext);
+        simplifiedExpression.deepRemoveUselessDependencies(reductionContext);
   }
 #endif
   assert(!simplifiedExpression.isUninitialized());
   return simplifiedExpression;
-}
-
-SystemExpression UserExpression::cloneAndReduce(
-    ReductionContext reductionContext) const {
-  // TODO: Ensure all cloneAndReduce usages handle reduction failure.
-  bool reduceFailure;
-  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
-                                                &reduceFailure);
 }
 
 SystemExpression SystemExpression::getReducedDerivative(

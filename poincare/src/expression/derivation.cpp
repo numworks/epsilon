@@ -4,6 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "dependency.h"
+#include "dimension.h"
 #include "k_tree.h"
 #include "random.h"
 #include "rational.h"
@@ -19,12 +20,38 @@ bool Derivation::Reduce(Tree* e) {
   const Tree* symbol = e->child(0);
   const Tree* symbolValue = symbol->nextTree();
   const Tree* order = symbolValue->nextTree();
+  const Tree* constDerivand = order->nextTree();
+
+  // Distribute derivation on points.
+  if (constDerivand->isPoint()) {
+    /* Points could be handled in Derive in the general case with
+     * Diff(Point(KA,KB)) = (1, 0) * Diff(KA) + (0, 1) * Diff(KB)
+     * but sums and product of points are not handled. We escape the case with
+     * diff((f(y), g(y)), y, x) -> (diff(f(y), y, x), diff(g(y), y, x)) */
+    Tree* pointDiff = SharedTreeStack->pushPoint();
+    PatternMatching::Create(KDiff(KA, KB, KC, KD),
+                            {.KA = symbol,
+                             .KB = symbolValue,
+                             .KC = order,
+                             .KD = constDerivand->child(0)});
+    PatternMatching::Create(KDiff(KA, KB, KC, KD),
+                            {.KA = symbol,
+                             .KB = symbolValue,
+                             .KC = order,
+                             .KD = constDerivand->child(1)});
+    Derivation::Reduce(pointDiff->child(0));
+    Derivation::Reduce(pointDiff->child(1));
+    SystematicReduction::ShallowReduce(pointDiff);
+    e->moveTreeOverTree(pointDiff);
+    return true;
+  }
+
   if (!Integer::Is<uint8_t>(order)) {
     e->cloneTreeOverTree(KUndefUnhandled);
     return true;
   }
   int derivationOrder = Integer::Handler(order).to<uint8_t>();
-  const Tree* constDerivand = order->nextTree();
+
   // Derive the derivand successively, preserving local variable scope.
   Tree* derivative = constDerivand->cloneTree();
   int currentDerivationOrder = 0;
@@ -71,6 +98,7 @@ bool Derivation::Reduce(Tree* e) {
 
 // Derive derivand preserving scope (V0^2 -> 2*V0).
 Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
+  assert(Dimension::Get(derivand).isScalar());
   if (derivand->treeIsIdenticalTo(KVarX)) {
     // V0 -> 1
     return (1_e)->cloneTree();
@@ -82,21 +110,6 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     Tree* result =
         PatternMatching::Create(KDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
     SystematicReduction::ShallowReduce(result->child(2));
-    return result;
-  }
-  if (derivand->isPoint()) {
-    /* Points could be handled in General case with
-     * Diff(Point(KA,KB)) = (1, 0) * Diff(KA) + (0, 1) * Diff(KB)
-     * but sums and product of points are not handled. We escape the case with
-     * (f(V0), g(V0)) -> (diff(f(V0), symbol, V0), diff(g(V0), symbol, V0)) */
-    Tree* result = SharedTreeStack->pushPoint();
-    // Force derivation to always distribute derivation on points.
-    Tree* tempDerivative = Derive(derivand->child(0), symbol, true);
-    assert(tempDerivative);
-    tempDerivative = Derive(derivand->child(1), symbol, true);
-    assert(tempDerivative);
-    (void)tempDerivative;
-    SystematicReduction::ShallowReduce(result);
     return result;
   }
   if (Random::HasRandom(derivand)) {

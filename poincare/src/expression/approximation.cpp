@@ -57,6 +57,10 @@ PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
     const Tree* preparedFunction, T abscissa) {
   Dimension dimension = Dimension::Get(preparedFunction);
   assert(dimension.isScalar() || dimension.isPoint());
+  if (std::isnan(abscissa)) {
+    return dimension.isScalar() ? PointOrScalar<T>(NAN)
+                                : PointOrScalar<T>(NAN, NAN);
+  }
   return RootToPointOrScalarPrivate<T>(preparedFunction, dimension.isPoint(),
                                        true, abscissa);
 }

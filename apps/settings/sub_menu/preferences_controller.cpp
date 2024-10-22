@@ -70,7 +70,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::Real:
       return "x"_l;
     case I18n::Message::Algebraic:
-      return "a+ib"_l;
+      return "a+bi"_l;
     case I18n::Message::Exponential:
       return "re"_l ^ KSuperscriptL("iθ"_l);
 

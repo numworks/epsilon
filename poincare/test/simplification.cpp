@@ -880,6 +880,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("f(x)-f(x)", "dep(0,{0×f(x)})");
   simplifies_to("cos(re(f(x)))+inf", "dep(∞,{f(x)})");
   simplifies_to("diff(1+x, x, f(y))", "dep(1,{f(y)})");
+  simplifies_to("diff(1, x, f(y))", "dep(0,{f(y)})");
   simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", cartesianCtx);
   simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
   simplifies_to("0^(5+ln(5))", "0");

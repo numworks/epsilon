@@ -65,12 +65,9 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_fails(env, "np.arange(0,3,0)");
   assert_command_execution_fails(env, "np.concatenate((0,0))");
   // Numpy reverse methods
-  assert_command_execution_succeeds(env, "np.array([1, 2])*5",
-                                    "array([5.0, 10.0])\n");
-  assert_command_execution_succeeds(env, "5*np.array([1, 2])",
-                                    "array([5.0, 10.0])\n");
-  assert_command_execution_succeeds(env, "np.array([1, 2])**2",
-                                    "array([1.0, 4.0])\n");
-  assert_command_execution_succeeds(env, "2**np.array([1, 2])",
-                                    "array([2.0, 4.0])\n");
+  assert_command_execution_succeeds(env, "c = np.array([1, 2])");
+  assert_command_execution_succeeds(env, "c*5", "array([5.0, 10.0])\n");
+  assert_command_execution_succeeds(env, "5*c", "array([5.0, 10.0])\n");
+  assert_command_execution_succeeds(env, "c**2", "array([1.0, 4.0])\n");
+  assert_command_execution_succeeds(env, "2**c", "array([2.0, 4.0])\n");
 }

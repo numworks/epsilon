@@ -629,7 +629,7 @@ SystemExpression SystemExpression::removeUndefListElements() const {
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    Internal::ProjectionContext* context, bool* reductionFailure) const {
+    Internal::ProjectionContext* context) const {
   UserExpression e;
   cloneAndSimplifyAndApproximate(&e, nullptr, context);
   return e;

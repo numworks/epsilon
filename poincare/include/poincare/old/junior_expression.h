@@ -218,8 +218,7 @@ class JuniorExpression : public OExpression {
       UserExpression* approximatedExpression,
       Internal::ProjectionContext* context) const;
 
-  UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
-                                  bool* reductionFailure = nullptr) const;
+  UserExpression cloneAndSimplify(Internal::ProjectionContext* context) const;
   SystemExpression cloneAndReduce(ReductionContext reductionContext) const;
 
   UserExpression cloneAndBeautify(

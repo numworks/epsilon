@@ -383,14 +383,13 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         abscissaExpression,
         Symbol::Builder(Shared::Function::k_unknownName,
                         strlen(Shared::Function::k_unknownName)));
-    bool simplificationFailure = false;
+    bool simplificationFailure = false;  // TODO_PCJ
     // TODO_PCJ: result is a SystemExpression, we don't want to project again
     PoincareHelpers::CloneAndSimplify(
         &result, &abscissaContext,
         {.symbolicComputation =
              SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-         .unitConversion = UnitConversion::Default},
-        &simplificationFailure);
+         .unitConversion = UnitConversion::Default});
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     UserExpression approximation =

@@ -155,11 +155,10 @@ inline Poincare::Expression ApproximateKeepingUnits(
 
 inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {},
-    bool* reductionFailure = nullptr) {
+    const ReductionParameters& reductionParameters = {}) {
   Poincare::Internal::ProjectionContext ctx =
       ProjectionContextForParameters(*e, context, reductionParameters);
-  *e = e->cloneAndSimplify(&ctx, reductionFailure);
+  *e = e->cloneAndSimplify(&ctx);
 }
 
 inline Poincare::SystemExpression CloneAndReduce(

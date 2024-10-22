@@ -125,6 +125,9 @@
 // (This scheme won't work if we want to mix Thumb and normal ARM code.)
 #define MICROPY_MAKE_POINTER_CALLABLE(p) (p)
 
+// Allow for numpy array operations from both sides (5 * np.array([1,2,3]))
+#define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
+
 #define MICROPY_VM_HOOK_LOOP micropython_port_vm_hook_loop();
 
 typedef intptr_t mp_int_t;    // must be pointer size

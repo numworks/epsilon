@@ -159,6 +159,7 @@ inline void CloneAndSimplify(
   Poincare::Internal::ProjectionContext ctx =
       ProjectionContextForParameters(*e, context, reductionParameters);
   *e = e->cloneAndSimplify(&ctx);
+  assert(!e->isUninitialized());
 }
 
 inline Poincare::SystemExpression CloneAndReduce(

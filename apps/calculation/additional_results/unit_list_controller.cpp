@@ -97,21 +97,27 @@ void UnitListController::computeAdditionalResults(
                           ? Internal::UnitDisplay::AutomaticMetric
                           : Internal::UnitDisplay::AutomaticImperial;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::Decomposition;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   if (unitFormat != Preferences::UnitFormat::Metric) {
     ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticMetric;
     expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+    assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
   ctx.m_unitDisplay = Internal::UnitDisplay::BasicSI;
   UserExpression approximatedSIExpression;
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression, &ctx);
+  assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   // Memoize distinct layouts
   Layout exactOutputLayout =

@@ -290,6 +290,7 @@ void assert_expression_simplifies_approximates_to(
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
         e = e.cloneAndSimplify(reductionContext);
+       quiz_assert(!e.isUninitialized());
         return e.approximate<T>(ApproximationContext(reductionContext));
       },
       numberOfSignificantDigits);

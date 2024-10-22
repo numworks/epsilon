@@ -391,7 +391,9 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
   if (approximatedExpression) {
-    const Tree* e = simplifiedExpression->tree();
+    const Tree* e = simplifiedExpression->isUninitialized()
+                        ? tree()
+                        : simplifiedExpression->tree();
     if (CAS::Enabled()) {
       Tree* a = e->cloneTree();
       /* We are using ApproximateAndReplaceEveryScalar to approximate
@@ -409,12 +411,11 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context) const {
   Tree* e = tree()->cloneTree();
-  Simplification::SimplifyWithAdaptiveStrategy(e, context);
-  return Builder(e);
-
-  /* TODO_PCJ Ensure reduction failure is properly handled. Have
-   * cloneAndSimplifyAndApproximate make use of the return value from
-   * SimplifyWithAdaptiveStrategy. */
+  if (Simplification::SimplifyWithAdaptiveStrategy(e, context)) {
+    return Builder(e);
+  }
+  e->removeTree();
+  return UserExpression();
 }
 
 SystemExpression UserExpression::cloneAndReduce(

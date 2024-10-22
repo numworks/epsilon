@@ -155,7 +155,8 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
                                    &tempCtx);
-  assert(!approximateExpression.isUninitialized());
+  assert(!exactExpression.isUninitialized() &&
+         !approximateExpression.isUninitialized());
   Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
       approximateExpression, ctx->m_context);
   Layout exactLayout = exactExpression.isUninitialized()

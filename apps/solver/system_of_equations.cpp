@@ -668,6 +668,7 @@ static void simplifyAndApproximateSolution(
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
+  assert(exact);
   Internal::ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
@@ -678,6 +679,8 @@ static void simplifyAndApproximateSolution(
       .m_symbolic = symbolicComputation,
       .m_context = context};
   e.cloneAndSimplifyAndApproximate(exact, approximate, &projCtx);
+  assert(!exact->isUninitialized() &&
+         (!approximate || !approximate->isUninitialized()));
   if (exact->isDep()) {
     /* Reduction may have created a dependency.
      * We remove that dependency in order to create layouts. */

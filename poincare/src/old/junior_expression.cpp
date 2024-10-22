@@ -405,6 +405,21 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   return;
 }
 
+UserExpression UserExpression::cloneAndSimplify(
+    Internal::ProjectionContext* context) const {
+  UserExpression e;
+  cloneAndSimplifyAndApproximate(&e, nullptr, context);
+  return e;
+
+  /* TODO_PCJ Ensure reduction failure is properly handled. Have
+   * cloneAndSimplifyAndApproximate make use of the return value from
+   * SimplifyWithAdaptiveStrategy. */
+
+  /* TODO_PCJ It would probably make more sense to have
+   * cloneAndSimplifyAndApproximate rely on cloneAndSimplify, not the other way.
+   */
+}
+
 SystemExpression UserExpression::cloneAndReduce(
     ReductionContext reductionContext) const {
   ProjectionContext context = {
@@ -446,6 +461,19 @@ SystemExpression UserExpression::cloneAndReduce(
 #endif
   assert(!simplifiedExpression.isUninitialized());
   return simplifiedExpression;
+}
+
+UserExpression ProjectedExpression::cloneAndBeautify(
+    const ReductionContext& reductionContext) const {
+  ProjectionContext context = {
+      .m_complexFormat = reductionContext.complexFormat(),
+      .m_angleUnit = reductionContext.angleUnit(),
+      .m_unitFormat = reductionContext.unitFormat(),
+      .m_symbolic = reductionContext.symbolicComputation(),
+      .m_context = reductionContext.context()};
+  Tree* e = tree()->cloneTree();
+  Simplification::BeautifyReduced(e, &context);
+  return Builder(e);
 }
 
 SystemExpression SystemExpression::getReducedDerivative(
@@ -626,34 +654,6 @@ SystemExpression SystemExpression::removeUndefListElements() const {
     }
   }
   return SystemExpression::Builder(clone);
-}
-
-UserExpression UserExpression::cloneAndSimplify(
-    Internal::ProjectionContext* context) const {
-  UserExpression e;
-  cloneAndSimplifyAndApproximate(&e, nullptr, context);
-  return e;
-
-  /* TODO_PCJ Ensure reduction failure is properly handled. Have
-   * cloneAndSimplifyAndApproximate make use of the return value from
-   * SimplifyWithAdaptiveStrategy. */
-
-  /* TODO_PCJ It would probably make more sense to have
-   * cloneAndSimplifyAndApproximate rely on cloneAndSimplify, not the other way.
-   */
-}
-
-UserExpression ProjectedExpression::cloneAndBeautify(
-    const ReductionContext& reductionContext) const {
-  ProjectionContext context = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
-  Tree* e = tree()->cloneTree();
-  Simplification::BeautifyReduced(e, &context);
-  return Builder(e);
 }
 
 bool NewExpression::derivate(const ReductionContext& reductionContext,

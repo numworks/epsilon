@@ -668,19 +668,18 @@ static void simplifyAndApproximateSolution(
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
-  ReductionContext reductionContext = ReductionContext(
-      context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
-      symbolicComputation, UnitConversion::Default);
-  e.cloneAndSimplifyAndApproximate(exact, approximate, reductionContext,
-                                   approximateDuringReduction);
+  Internal::ProjectionContext projCtx = {
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = angleUnit,
+      .m_strategy = approximateDuringReduction
+                        ? Internal::Strategy::ApproximateToFloat
+                        : Internal::Strategy::Default,
+      .m_unitFormat = unitFormat,
+      .m_symbolic = symbolicComputation,
+      .m_context = context};
+  e.cloneAndSimplifyAndApproximate(exact, approximate, &projCtx);
   if (exact->isDep()) {
-    /* e has been reduced under ReductionTarget::SystemForAnalysis in
-     * Equation::Model::standardForm and has gone through Matrix::rank,
-     * which discarded dependencies. Reducing here under
-     * ReductionTarget::User may have created new dependencies. For example,
-     * "i" had been preserved up to now and has been reduced to a
-     * ComplexCartesian here, which may have triggered further reduction and
-     * the creation of a dependency.
+    /* Reduction may have created a dependency.
      * We remove that dependency in order to create layouts. */
     *exact = exact->cloneChildAtIndex(0);
   }

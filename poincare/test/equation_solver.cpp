@@ -32,8 +32,7 @@ bool check_solutions(
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = parse(output);
-      Simplification::SimplifyWithAdaptiveStrategy(expectedSolution,
-                                                   &projectionContext);
+      simplify_with_adaptive_strategy(expectedSolution, &projectionContext);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
       solution = solution->nextTree();
       expectedSolution->removeTree();

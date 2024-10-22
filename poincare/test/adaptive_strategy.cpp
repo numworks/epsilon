@@ -20,7 +20,7 @@ void simplify(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::SimplifyWithAdaptiveStrategy(tree, &projectionContext);
+        simplify_with_adaptive_strategy(tree, &projectionContext);
       },
       projectionContext);
 }

@@ -155,7 +155,7 @@ void simplifies_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::SimplifyWithAdaptiveStrategy(tree, &projectionContext);
+        simplify_with_adaptive_strategy(tree, &projectionContext);
       },
       projectionContext);
 }
@@ -908,20 +908,20 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   ProjectionContext context;
   Tree* e3 = KAdd(2_e, KPow("a"_e, 0_e))->cloneTree();
   const Tree* r3 = KDep(3_e, KDepList(KPow("a"_e, 0_e)));
-  Simplification::SimplifyWithAdaptiveStrategy(e3, &context);
+  simplify_with_adaptive_strategy(e3, &context);
   assert_trees_are_equal(e3, r3);
 
   Tree* e4 = KDiff("x"_e, "y"_e, 1_e,
                    KDep("x"_e, KDepList(KFun<"f">("x"_e), KFun<"f">("z"_e))))
                  ->cloneTree();
   const Tree* r4 = KDep(1_e, KDepList(KFun<"f">("y"_e), KFun<"f">("z"_e)));
-  Simplification::SimplifyWithAdaptiveStrategy(e4, &context);
+  simplify_with_adaptive_strategy(e4, &context);
   assert_trees_are_equal(e4, r4);
 
   Tree* e5 =
       KDep(1_e, KDepList(KAdd(KInf, "x"_e, KMult(-1_e, KInf))))->cloneTree();
   const Tree* r5 = KDep(1_e, KDepList(KAdd("x"_e, KInf, KOpposite(KInf))));
-  Simplification::SimplifyWithAdaptiveStrategy(e5, &context);
+  simplify_with_adaptive_strategy(e5, &context);
   assert_trees_are_equal(e5, r5);
 }
 
@@ -1366,13 +1366,13 @@ QUIZ_CASE(pcj_simplification_decimal) {
   (124_e)->cloneTree();
   (-2_e)->cloneTree();
   ProjectionContext ctx = realCtx;
-  Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
+  simplify_with_adaptive_strategy(tree, &ctx);
   assert_trees_are_equal(tree, 12400_e);
   tree->removeTree();
   tree = SharedTreeStack->pushDecimal();
   (124_e)->cloneTree();
   (2_e)->cloneTree();
-  Simplification::SimplifyWithAdaptiveStrategy(tree, &ctx);
+  simplify_with_adaptive_strategy(tree, &ctx);
   assert_trees_are_equal(tree, KDiv(31_e, 25_e));
 }
 

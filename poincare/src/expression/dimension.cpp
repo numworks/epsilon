@@ -416,8 +416,15 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
       return true;
-    case Type::Set:
     case Type::DepList:
+      // DepLists can only contain scalars
+      for (int i = 0; i < e->numberOfChildren(); i++) {
+        if (!childDim[i].isScalar()) {
+          return false;
+        }
+      }
+      return true;
+    case Type::Set:
     case Type::List:
       /* Lists can contain scalars, points or booleans but they must all be of
        * the same type. */

@@ -385,11 +385,13 @@ void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
     Internal::ProjectionContext* context) const {
+  // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
+  *simplifiedExpression = cloneAndSimplify(context);
+  // Step 2: approximate
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
-  Tree* e = tree()->cloneTree();
-  Simplification::SimplifyWithAdaptiveStrategy(e, context);
   if (approximatedExpression) {
+    const Tree* e = simplifiedExpression->tree();
     if (CAS::Enabled()) {
       Tree* a = e->cloneTree();
       /* We are using ApproximateAndReplaceEveryScalar to approximate
@@ -401,23 +403,18 @@ void UserExpression::cloneAndSimplifyAndApproximate(
           e, context->m_angleUnit, context->m_complexFormat));
     }
   }
-  *simplifiedExpression = Builder(e);
   return;
 }
 
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context) const {
-  UserExpression e;
-  cloneAndSimplifyAndApproximate(&e, nullptr, context);
-  return e;
+  Tree* e = tree()->cloneTree();
+  Simplification::SimplifyWithAdaptiveStrategy(e, context);
+  return Builder(e);
 
   /* TODO_PCJ Ensure reduction failure is properly handled. Have
    * cloneAndSimplifyAndApproximate make use of the return value from
    * SimplifyWithAdaptiveStrategy. */
-
-  /* TODO_PCJ It would probably make more sense to have
-   * cloneAndSimplifyAndApproximate rely on cloneAndSimplify, not the other way.
-   */
 }
 
 SystemExpression UserExpression::cloneAndReduce(

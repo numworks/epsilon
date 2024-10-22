@@ -173,6 +173,8 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     context->variables.fillWithList(userSymbols);
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false);
+      // LeaveScopeWithReplacement can return dependencies
+      Dependency::DeepRemoveUselessDependencies(result);
     }
     // Replace additional unknown parameter variables (t1, t2, ...)
     context->numberOfVariables -= userSymbols->numberOfChildren();

@@ -88,6 +88,17 @@ bool Variables::Replace(Tree* e, int id, const Tree* value, bool leave,
    * after e. Cloning is overkill but easy. */
   TreeRef valueRef = value->cloneTree();
   bool result = Replace(e, id, valueRef, leave, simplify);
+  /* Add a dependency in the value if it is leaving the scope of the expression
+   * but it does not appear in the expression.
+   */
+  if (leave && !result) {
+    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
+                                                {.KA = e, .KB = valueRef}));
+    if (simplify) {
+      SystematicReduction::ShallowReduce(e);
+    }
+    result = true;
+  }
   valueRef->removeTree();
   return result;
 }

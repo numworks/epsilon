@@ -90,6 +90,8 @@ bool Derivation::Reduce(Tree* e) {
     Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
                                          symbolValue, false);
     derivative->cloneNodeAtNode(KDep);
+    SystematicReduction::ShallowReduce(derivative->child(1));
+    SystematicReduction::ShallowReduce(derivative);
   }
 
   e->moveTreeOverTree(derivative);

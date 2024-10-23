@@ -125,7 +125,8 @@
 // (This scheme won't work if we want to mix Thumb and normal ARM code.)
 #define MICROPY_MAKE_POINTER_CALLABLE(p) (p)
 
-// Allow for numpy array operations from both sides (5 * np.array([1,2,3]))
+/* Allow for numpy array operations from both sides (scalar * array and
+ * array * scalar) */
 #define MICROPY_PY_REVERSE_SPECIAL_METHODS (1)
 
 // Allow even more operations on numpy arrays from both sides

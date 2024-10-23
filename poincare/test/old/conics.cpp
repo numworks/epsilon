@@ -14,30 +14,33 @@ using CoordinateType = Conic::CoordinateType;
 CartesianConic buildCartesianConic(const char* expression) {
   Shared::GlobalContext globalContext;
   ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_context = &globalContext};
+                                   .m_context = &globalContext,
+                                   .m_advanceReduce = false};
   Tree* e = parse_expression(expression, &globalContext);
-  Simplification::ProjectAndReduce(e, &projContext, false);
+  Simplification::ProjectAndReduce(e, &projContext);
   return CartesianConic(Expression::Builder(e));
 }
 
 PolarConic buildPolarConic(const char* expression) {
   Shared::GlobalContext globalContext;
   ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_context = &globalContext};
+                                   .m_context = &globalContext,
+                                   .m_advanceReduce = false};
   Tree* e = parse_expression(expression, &globalContext);
-  Simplification::ProjectAndReduce(e, &projContext, false);
+  Simplification::ProjectAndReduce(e, &projContext);
   return PolarConic(Expression::Builder(e));
 }
 
 ParametricConic buildParametricConic(const char* expression) {
   Shared::GlobalContext globalContext;
   ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_context = &globalContext};
+                                   .m_context = &globalContext,
+                                   .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
   Poincare::VariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);
   Tree* e = parse_expression(expression, &tContext);
-  Simplification::ProjectAndReduce(e, &projContext, false);
+  Simplification::ProjectAndReduce(e, &projContext);
   return ParametricConic(Expression::Builder(e));
 }
 

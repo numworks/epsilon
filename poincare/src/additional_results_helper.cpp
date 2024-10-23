@@ -398,9 +398,10 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
       .m_strategy = Strategy::ApproximateToFloat,
       .m_symbolic =
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      .m_context = context};
+      .m_context = context,
+      .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
-  Simplification::ProjectAndReduce(e, &ctx, false);
+  Simplification::ProjectAndReduce(e, &ctx);
   assert(!ctx.m_dimension.isUnit());
   return CreateBeautifiedLayout(
       e, &ctx, calculationPreferences.numberOfSignificantDigits,
@@ -418,7 +419,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
           .tree()
           ->cloneTree();
   // The expression must be reduced to call matrix methods.
-  Simplification::ProjectAndReduce(matrix, &ctx, false);
+  Simplification::ProjectAndReduce(matrix, &ctx);
   bool isSquared = Internal::Matrix::NumberOfRows(matrix) ==
                    Internal::Matrix::NumberOfColumns(matrix);
 

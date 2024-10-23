@@ -410,7 +410,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context, bool* reductionFailure) const {
-  return cloneAndReduceAndBeautify(context, true, true, reductionFailure);
+  return cloneAndReduceAndBeautify(context, true, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
@@ -421,16 +421,16 @@ SystemExpression UserExpression::cloneAndReduce(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  return cloneAndReduceAndBeautify(&context, true, false, reductionFailure);
+  return cloneAndReduceAndBeautify(&context, false, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduceAndBeautify(
-    Internal::ProjectionContext* context, bool advanced, bool beautify,
+    Internal::ProjectionContext* context, bool beautify,
     bool* reductionFailure) const {
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  bool reductionSuccess = Simplification::SimplifyWithAdaptiveStrategy(
-      e, context, advanced, beautify);
+  bool reductionSuccess =
+      Simplification::SimplifyWithAdaptiveStrategy(e, context, beautify);
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }

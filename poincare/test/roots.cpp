@@ -54,7 +54,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
   process_tree_and_compare(
       coefficients, expectedRoots,
       [](Tree* tree, ProjectionContext projCtx) {
-        Simplification::ProjectAndReduce(tree, &projCtx, true);
+        Simplification::ProjectAndReduce(tree, &projCtx);
         switch (tree->numberOfChildren()) {
           case 2:
             tree->moveTreeOverTree(

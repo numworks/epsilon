@@ -75,8 +75,7 @@ void remove_system_codepoints(char* buffer) {
 
 void simplify_with_adaptive_strategy(Tree* e, ProjectionContext* ctx,
                                      bool beautify) {
-  bool success =
-      Simplification::SimplifyWithAdaptiveStrategy(e, ctx, true, beautify);
+  bool success = Simplification::SimplifyWithAdaptiveStrategy(e, ctx, beautify);
   quiz_assert(success);
 }
 

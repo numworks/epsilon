@@ -301,8 +301,9 @@ void assert_sign(const char* input, ComplexSign expectedSign,
                  Strategy strategy = Strategy::Default) {
   Tree* expression = parse(input);
   ProjectionContext ctx = {.m_complexFormat = complexFormat,
-                           .m_strategy = strategy};
-  Simplification::ProjectAndReduce(expression, &ctx, false);
+                           .m_strategy = strategy,
+                           .m_advanceReduce = false};
+  Simplification::ProjectAndReduce(expression, &ctx);
   bool result = GetComplexSign(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {

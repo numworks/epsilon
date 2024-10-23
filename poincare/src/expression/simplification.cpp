@@ -50,14 +50,12 @@ bool RelaxProjectionContext(void* context) {
 }
 
 bool Simplification::SimplifyWithAdaptiveStrategy(
-    Tree* e, ProjectionContext* projectionContext, bool advanced,
-    bool beautify) {
+    Tree* e, ProjectionContext* projectionContext, bool beautify) {
   assert(projectionContext);
   ExceptionTry {
     // Clone the tree, and use an adaptive strategy to handle pool overflow.
     SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                           RelaxProjectionContext, advanced,
-                                           beautify);
+                                           RelaxProjectionContext, beautify);
   }
   ExceptionCatch(type) {
     switch (type) {
@@ -73,7 +71,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
 
 void Simplification::ApplySimplify(const Tree* dataTree,
                                    ProjectionContext* projectionContext,
-                                   bool advanced, bool beautify) {
+                                   bool beautify) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -98,7 +96,7 @@ void Simplification::ApplySimplify(const Tree* dataTree,
     e = dataTree->cloneTree();
   }
 
-  ProjectAndReduce(e, projectionContext, advanced);
+  ProjectAndReduce(e, projectionContext);
   if (beautify) {
     BeautifyReduced(e, projectionContext);
   }
@@ -111,11 +109,10 @@ void Simplification::ApplySimplify(const Tree* dataTree,
 }
 
 void Simplification::ProjectAndReduce(Tree* e,
-                                      ProjectionContext* projectionContext,
-                                      bool advanced) {
+                                      ProjectionContext* projectionContext) {
   assert(!e->isStore());
   ToSystem(e, projectionContext);
-  ReduceSystem(e, advanced);
+  ReduceSystem(e, projectionContext->m_advanceReduce);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyStrategy(e, projectionContext->m_strategy, true);
 }

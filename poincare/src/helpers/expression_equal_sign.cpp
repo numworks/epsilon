@@ -28,8 +28,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
            (parsed->isOpposite() && parsed->child(0)->isRationalOrFloat() ||
             parsed->child(0)->isDecimal()));
-    ProjectionContext ctx{};
-    Simplification::ProjectAndReduce(parsed, &ctx, false);
+    ProjectionContext ctx{.m_advanceReduce = false};
+    Simplification::ProjectAndReduce(parsed, &ctx);
     bool result = exact->treeIsIdenticalTo(parsed);
     parsed->removeTree();
     layout->removeTree();
@@ -68,10 +68,11 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
     const UserExpression exact, const UserExpression approximate,
     const Internal::ProjectionContext* ctx) {
   Internal::ProjectionContext ctxCopy = *ctx;
+  ctxCopy.m_advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
-  Internal::Simplification::SimplifyWithAdaptiveStrategy(
-      exactProjected, &ctxCopy, false, false);
+  Internal::Simplification::SimplifyWithAdaptiveStrategy(exactProjected,
+                                                         &ctxCopy, false);
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
   Internal::Simplification::ToSystem(approximateProjected, &ctxCopy);

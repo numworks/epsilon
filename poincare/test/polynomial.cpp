@@ -146,7 +146,7 @@ void assert_polynomial_degree_is(ProjectionContext projectionContext,
                                  const char* input, int expectedDegree,
                                  const char* symbolName = "x") {
   Tree* expression = parse(input, projectionContext.m_context);
-  Simplification::ProjectAndReduce(expression, &projectionContext, false);
+  Simplification::ProjectAndReduce(expression, &projectionContext);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);
   expression->removeTree();
@@ -162,7 +162,8 @@ QUIZ_CASE(pcj_polynomial_degree) {
   ProjectionContext projCtx = {
       .m_complexFormat = ComplexFormat::Cartesian,
       .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      .m_context = &globalContext};
+      .m_context = &globalContext,
+      .m_advanceReduce = false};
 
   assert_polynomial_degree_is(projCtx, "x+1", 1);
   assert_polynomial_degree_is(projCtx, "cos(2)+1", 0);

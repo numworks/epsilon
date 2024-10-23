@@ -11,12 +11,10 @@ class Simplification {
  public:
   static bool SimplifyWithAdaptiveStrategy(Tree* e,
                                            ProjectionContext* projectionContext,
-                                           bool advanced = true,
                                            bool beautify = true);
 
   // Simplification steps
-  static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext,
-                               bool advanced);
+  static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext);
   static bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext);
   TREE_REF_WRAP_1(BeautifyReduced, ProjectionContext*);
   static bool PrepareForProjection(Tree* e,
@@ -30,7 +28,7 @@ class Simplification {
 
  private:
   static void ApplySimplify(const Tree* dataTree,
-                            ProjectionContext* projectionContext, bool advanced,
+                            ProjectionContext* projectionContext,
                             bool beautify);
 
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);

@@ -96,10 +96,10 @@ Layout UserExpression::createLayout(LayoutFormat format) const {
 
 SystemExpression UserExpression::projected() const {
   // TODO: Pass context.
-  Internal::ProjectionContext context;
+  Internal::ProjectionContext context{.m_advanceReduce = false};
   // TODO: Handle Store and UnitConversion like in Simplification::Simplify.
   Internal::Tree* e = tree()->cloneTree();
-  Internal::Simplification::ProjectAndReduce(e, &context, false);
+  Internal::Simplification::ProjectAndReduce(e, &context);
   return SystemExpression::Builder(e, context.m_dimension.unit.vector);
 }
 

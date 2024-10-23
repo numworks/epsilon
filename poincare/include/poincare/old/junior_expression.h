@@ -461,7 +461,7 @@ class JuniorExpression : public OExpression {
 
  private:
   SystemExpression cloneAndReduceAndBeautify(
-      Internal::ProjectionContext* context, bool advanced, bool beautify,
+      Internal::ProjectionContext* context, bool beautify,
       bool* reductionFailure = nullptr) const;
 };
 

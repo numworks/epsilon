@@ -366,8 +366,8 @@ Tree* Representative::pushReducedRatioExpression() const {
   Tree* result = ratioExpression()->cloneTree();
   /* Representatives's ratio expressions are quite simple and not dependant on
    * any context. */
-  ProjectionContext ctx;
-  Simplification::ProjectAndReduce(result, &ctx, false);
+  ProjectionContext ctx{.m_advanceReduce = false};
+  Simplification::ProjectAndReduce(result, &ctx);
   return result;
 }
 

@@ -11,9 +11,6 @@ EMSCRIPTEN_DECLARE_VAL_TYPE(FloatArray);
 
 namespace Utils {
 
-Internal::Tree* JsArrayToTree(const emscripten::val& jsTree);
-emscripten::val TreeToJsArray(const Internal::Tree* tree);
-
 bool ArraysHaveSameLength(const FloatArray& array1, const FloatArray& array2);
 
 }  // namespace Utils

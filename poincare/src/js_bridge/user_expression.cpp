@@ -2,7 +2,6 @@
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/old/junior_expression.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -13,7 +12,6 @@
 #include <string>
 
 #include "expression_types.h"
-#include "utils.h"
 
 using namespace emscripten;
 using namespace Poincare::Internal;
@@ -22,33 +20,7 @@ namespace Poincare::JSBridge {
 
 // === 1. Builders ===
 
-// === 1.1. Build from Javascript array ===
-
-/* Bind JavaScript type
- * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
- * This type is defined in poincare-partial.js
- * */
-EMSCRIPTEN_DECLARE_VAL_TYPE(UserExpressionTree);
-
-TypedUserExpression BuildFromJsTree(const UserExpressionTree& jsTree) {
-  Tree* tree = Utils::JsArrayToTree(jsTree);
-  JuniorExpression result = JuniorExpression::Builder(tree);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
-}
-
-/* The following function is used to build Uint8Array from a UserExpression.
- * It relies on the fact that UserExpressionTree is globally defined in
- * poincare-partial.js */
-
-UserExpressionTree ExpressionToJsTree(const TypedUserExpression& expression) {
-  /* Equivalent to the js code "new UserExpressionTree(typedArray)"
-   * This array will be instantiated on javascript heap, allowing it to be
-   * properly handled by the js garbage collector */
-  return UserExpressionTree(val::global("UserExpressionTree")
-                                .new_(Utils::TreeToJsArray(expression.tree())));
-}
-
-// === 1.2. Build from numbers ===
+// === 1.1. Build from numbers ===
 
 TypedUserExpression BuildUserInt(int32_t value) {
   JuniorExpression result = JuniorExpression::Builder(value);
@@ -66,7 +38,7 @@ TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
   return *reinterpret_cast<TypedUserExpression*>(&result);
 }
 
-// === 1.3. Build from Latex string ===
+// === 1.2. Build from Latex string ===
 
 TypedUserExpression BuildFromLatex(std::string latex) {
   EmptyContext context;
@@ -75,7 +47,7 @@ TypedUserExpression BuildFromLatex(std::string latex) {
   return *reinterpret_cast<TypedUserExpression*>(&result);
 }
 
-// === 1.4. Build from pattern ===
+// === 1.3. Build from pattern ===
 
 using CustomBuilder = bool (*)(const char* children, size_t childrenLength);
 
@@ -499,17 +471,6 @@ TypedSystemExpression typedCloneAndReduce(
   return *reinterpret_cast<TypedSystemExpression*>(&result);
 }
 
-TypedUserExpression typedClone(const TypedUserExpression& expr) {
-  JuniorExpression result = expr.clone();
-  return *reinterpret_cast<TypedUserExpression*>(&result);
-}
-
-TypedUserExpression typedCloneChildAtIndex(const TypedUserExpression& expr,
-                                           int i) {
-  JuniorExpression result = expr.cloneChildAtIndex(i);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
-}
-
 // === 3. Bindings ===
 
 /* Macro to create binding functions for different numbers of
@@ -531,10 +492,14 @@ TypedUserExpression typedCloneChildAtIndex(const TypedUserExpression& expr,
 #define REPEAT_ARGS(N) REPEAT_ARGS_##N
 
 EMSCRIPTEN_BINDINGS(user_expression) {
-  register_type<UserExpressionTree>("UserExpressionTree");
+  register_type<TypedUserExpression::JsTree>("UserExpressionTree");
   class_<TypedUserExpression, base<JuniorExpression>>("PCR_UserExpression")
       .constructor<>()
-      .class_function("BuildFromTree", &BuildFromJsTree)
+      .class_function("BuildFromTree", &TypedUserExpression::BuildFromJsTree)
+      .function("getTree", &TypedUserExpression::getJsTree)
+      .function("clone", &TypedUserExpression::typedClone)
+      .function("cloneChildAtIndex",
+                &TypedUserExpression::typedCloneChildAtIndex)
       .class_function("BuildInt", &BuildUserInt)
       .class_function("BuildFloat", &BuildUserFloat)
       .class_function("BuildRational", &BuildUserRational)
@@ -552,9 +517,6 @@ EMSCRIPTEN_BINDINGS(user_expression) {
       .BIND_BUILD_FROM_PATTERN(10)
       .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
-      .function("getTree", &ExpressionToJsTree)
-      .function("clone", &typedClone)
-      .function("cloneChildAtIndex", &typedCloneChildAtIndex)
       .function("toLatex", &typedToLatex)
       .function("toLatex", &typedToLatexWithThousandsSeparators)
       .function("toLatex", &typedToLatexWith7DigitsAndThousandsSeparators)

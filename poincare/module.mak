@@ -350,6 +350,7 @@ $(addprefix helpers/, \
 
 _sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
   computation_context.cpp \
+  expression_types.cpp \
   expression.cpp \
   system_expression.cpp \
   system_function.cpp \

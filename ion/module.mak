@@ -11,8 +11,8 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
 
 _ion_display_width_epsilon = 320
 _ion_display_height_epsilon = 240
-_ion_display_width_scandium = 203
-_ion_display_height_scandium = 81
+_ion_display_width_scandium = 200
+_ion_display_height_scandium = 87
 
 SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \

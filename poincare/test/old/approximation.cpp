@@ -1009,7 +1009,8 @@ QUIZ_CASE(poincare_approximation_integral) {
                                             "1.9819412", Radian,
                                             MetricUnitFormat, Cartesian, 8);
 
-  // Ensure this escapes earlier (or it would take up too much time)
+  /* The integral approximation escapes before finding a result, because it
+   * would take too much time. */
   assert_expression_approximates_to<float>("int(sin((10^7)*x),x,0,1)",
                                            Undefined::Name());
 }

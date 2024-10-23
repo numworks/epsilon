@@ -17,19 +17,19 @@ namespace Poincare::JSBridge {
 
 TypedSystemExpression BuildSystemInt(int32_t value) {
   JuniorExpression result = JuniorExpression::Builder(value);
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 TypedSystemExpression BuildSystemFloat(double value) {
   JuniorExpression result = JuniorExpression::Builder<double>(value);
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 TypedSystemExpression BuildSystemRational(int32_t numerator,
                                           int32_t denominator) {
   JuniorExpression result = JuniorExpression::Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 // === 2. Methods ===
@@ -38,14 +38,14 @@ TypedUserExpression typedCloneAndBeautify(
     const TypedSystemExpression& expr,
     const ReductionContext& reductionContext) {
   JuniorExpression result = expr.cloneAndBeautify(reductionContext);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
+  return TypedUserExpression::Cast(result);
 }
 
 TypedSystemFunction typedGetSystemFunction(
     const TypedSystemExpression& expression, std::string symbolName) {
   JuniorExpression result =
       expression.getSystemFunction(symbolName.c_str(), true);
-  return *reinterpret_cast<TypedSystemFunction*>(&result);
+  return TypedSystemFunction::Cast(result);
 }
 
 TypedSystemExpression typedGetReducedDerivative(
@@ -53,7 +53,7 @@ TypedSystemExpression typedGetReducedDerivative(
     int derivationOrder) {
   JuniorExpression result =
       expression.getReducedDerivative(symbolName.c_str(), derivationOrder);
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 TypedSystemExpression typedApproximateToTree(
@@ -65,7 +65,7 @@ TypedSystemExpression typedApproximateToTree(
       Preferences::AngleUnit::Radian);
   JuniorExpression result =
       expression.approximateToTree<double>(approximationContext);
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 double typedApproximateToScalar(const TypedSystemExpression& expr) {

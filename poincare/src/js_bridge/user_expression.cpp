@@ -24,27 +24,27 @@ namespace Poincare::JSBridge {
 
 TypedUserExpression BuildUserInt(int32_t value) {
   JuniorExpression result = JuniorExpression::Builder(value);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
+  return TypedUserExpression::Cast(result);
 }
 
 TypedUserExpression BuildUserFloat(double value) {
   JuniorExpression result = JuniorExpression::Builder<double>(value);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
+  return TypedUserExpression::Cast(result);
 }
 
 TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
   JuniorExpression result = JuniorExpression::Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
-  return *reinterpret_cast<TypedUserExpression*>(&result);
+  return TypedUserExpression::Cast(result);
 }
 
 // === 1.2. Build from Latex string ===
 
 TypedUserExpression BuildFromLatex(std::string latex) {
   EmptyContext context;
-  JuniorExpression result =
-      JuniorExpression::ParseLatex(latex.c_str(), &context);
-  return *reinterpret_cast<TypedUserExpression*>(&result);
+
+  return TypedUserExpression::Cast(
+      JuniorExpression::ParseLatex(latex.c_str(), &context));
 }
 
 // === 1.3. Build from pattern ===
@@ -426,8 +426,7 @@ TypedUserExpression BuildFromPattern(std::string pattern,
   const TypedUserExpression contextExprs[] = {expressions...};
   Tree* resultTree = buildTreeFromPattern(buffer, bufferEnd, contextExprs,
                                           sizeof...(expressions));
-  JuniorExpression resultExpr = JuniorExpression::Builder(resultTree);
-  return *reinterpret_cast<TypedUserExpression*>(&resultExpr);
+  return TypedUserExpression::Cast(JuniorExpression::Builder(resultTree));
 }
 
 // === 2. Methods ===
@@ -467,8 +466,7 @@ std::string typedToLatexWith7DigitsAndThousandsSeparators(
 TypedSystemExpression typedCloneAndReduce(
     const TypedUserExpression& expr, const ReductionContext& reductionContext) {
   JuniorExpression result = expr.cloneAndReduce(reductionContext);
-  assert(!result.isUninitialized());
-  return *reinterpret_cast<TypedSystemExpression*>(&result);
+  return TypedSystemExpression::Cast(result);
 }
 
 // === 3. Bindings ===

@@ -45,7 +45,7 @@ TypedExpression<T> TypedExpression<T>::BuildFromJsTree(
     const TypedExpression<T>::JsTree& jsTree) {
   Tree* tree = JsArrayToTree(jsTree);
   JuniorExpression result = JuniorExpression::Builder(tree);
-  return *reinterpret_cast<TypedExpression<T>*>(&result);
+  return TypedExpression<T>::Cast(result);
 }
 
 // Tree types defined in poincare-partial.js
@@ -73,14 +73,12 @@ TypedExpression<T>::JsTree TypedExpression<T>::getJsTree() const {
 
 template <ExpressionType T>
 TypedExpression<T> TypedExpression<T>::typedClone() const {
-  JuniorExpression result = this->clone();
-  return TypedExpression<T>(result);
+  return TypedExpression<T>::Cast(this->clone());
 }
 
 template <ExpressionType T>
 TypedExpression<T> TypedExpression<T>::typedCloneChildAtIndex(int i) const {
-  JuniorExpression result = this->cloneChildAtIndex(i);
-  return *reinterpret_cast<TypedExpression<T>*>(&result);
+  return TypedExpression<T>::Cast(this->cloneChildAtIndex(i));
 }
 
 template class TypedExpression<ExpressionType::UserExpression>;

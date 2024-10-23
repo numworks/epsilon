@@ -71,8 +71,7 @@ std::string latexTemplateFormula(const Regression::Regression* reg) {
 
 TypedUserExpression expression(const Regression::Regression* reg,
                                const ModelCoefficients modelCoefficients) {
-  JuniorExpression expression = reg->expression(modelCoefficients.data());
-  return *reinterpret_cast<TypedUserExpression*>(&expression);
+  return TypedUserExpression::Cast(reg->expression(modelCoefficients.data()));
 }
 
 double evaluate(const Regression::Regression* reg,

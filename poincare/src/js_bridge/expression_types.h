@@ -23,6 +23,13 @@ class TypedExpression : public JuniorExpression {
 
   TypedExpression() : JuniorExpression() {}
 
+  static inline TypedExpression Cast(JuniorExpression expr) {
+    /* WARNING: This is safe as long as TypedExpression doesn't have more
+     * attributes than JuniorExpression. */
+    static_assert(sizeof(TypedExpression) == sizeof(JuniorExpression));
+    return *reinterpret_cast<TypedExpression*>(&expr);
+  }
+
   // Build a JuniorExpression from a JS Uint8Array
   static TypedExpression BuildFromJsTree(const JsTree& jsTree);
   // Build a JS Uint8Array from a JuniorExpression.

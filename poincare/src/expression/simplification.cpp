@@ -62,6 +62,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   ExceptionCatch(type) {
     switch (type) {
       case ExceptionType::TreeStackOverflow:
+      case ExceptionType::IntegerOverflow:
         return false;
       default:
         TreeStackCheckpoint::Raise(type);

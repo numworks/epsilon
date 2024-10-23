@@ -19,7 +19,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
   if (exact->isRational() && approximate->isFloat()) {
     /* Using parsing is the safest way to create a Decimal that will be the same
      * as what the user will read. */
-    /* TODO: We need to be careful to the number of significants digits 1/16 ~=
+    /* TODO: We need to be careful to the number of significant digits 1/16 ~=
      * 0.63 with 2 digits. But until now the app will call this with the
      * truncated float. */
     Tree* layout = Layouter::LayoutExpression(approximate->cloneTree());
@@ -68,7 +68,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
     const UserExpression exact, const UserExpression approximate,
     const Internal::ProjectionContext* ctx) {
   Internal::ProjectionContext ctxCopy = *ctx;
-  // Exact is projected and reduced to turn divs into rationals
+  // Exact is projected and reduced to turn divisions into rationals
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
   Internal::Simplification::ToSystem(exactProjected, &ctxCopy);
   Internal::Simplification::ReduceSystem(exactProjected, false);

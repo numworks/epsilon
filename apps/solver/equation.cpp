@@ -53,6 +53,7 @@ SystemExpression Equation::Model::standardForm(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
     returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
+  assert(!returnedExpression.isUninitialized());
   } else {
     assert(simplifiedInput.isBoolean() || simplifiedInput.isList());
     /* The equality has disappeared after reduction. This may be because:

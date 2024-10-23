@@ -451,6 +451,10 @@ class JuniorExpression : public OExpression {
   // Swap
   void swapChildrenInPlace(int i, int j) { assert(false); }
 #endif
+
+ private:
+  SystemExpression cloneAndReduceAndBeautify(
+      Internal::ProjectionContext* context, bool advanced, bool beautify) const;
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is Matrix

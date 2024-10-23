@@ -717,6 +717,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
                  .target = ReductionTarget::SystemForApproximation,
                  .symbolicComputation =
                      SymbolicComputation::DoNotReplaceAnySymbol});
+        assert(!resultForApproximation.isUninitialized());
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;
@@ -780,6 +781,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
          .target = ReductionTarget::SystemForAnalysis,
          // Symbols have already been replaced.
          .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
+    assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Create(KUndef, {});
   }

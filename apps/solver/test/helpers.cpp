@@ -153,6 +153,7 @@ static void compareSolutions(SystemOfEquations* system,
             .cloneAndReduce(ReductionContext{});
 
     quiz_assert(
+        !expectedExpression.isUninitialized() &&
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 
     i++;

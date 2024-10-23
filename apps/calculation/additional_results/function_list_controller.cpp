@@ -38,6 +38,7 @@ void FunctionListController::computeAdditionalResults(
            .angleUnit = angleUnit(),
            .target = ReductionTarget::SystemForApproximation})
           .getSystemFunction(k_symbolName, true);
+  assert(!simplifiedExpression.isUninitialized());
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

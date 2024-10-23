@@ -410,12 +410,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context) const {
-  Tree* e = tree()->cloneTree();
-  if (Simplification::SimplifyWithAdaptiveStrategy(e, context)) {
-    return Builder(e);
-  }
-  e->removeTree();
-  return UserExpression();
+  return cloneAndReduceAndBeautify(context, true, true);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
@@ -426,12 +421,19 @@ SystemExpression UserExpression::cloneAndReduce(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
+  return cloneAndReduceAndBeautify(&context, true, false);
+}
+
+SystemExpression UserExpression::cloneAndReduceAndBeautify(
+    Internal::ProjectionContext* context, bool advanced, bool beautify) const {
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  Simplification::SimplifyWithAdaptiveStrategy(e, &context, true, false);
-  SystemExpression simplifiedExpression = Builder(e);
-  assert(!simplifiedExpression.isUninitialized());
-  return simplifiedExpression;
+  if (Simplification::SimplifyWithAdaptiveStrategy(e, context, advanced,
+                                                   beautify)) {
+    return Builder(e);
+  }
+  e->removeTree();
+  return UserExpression();
 }
 
 UserExpression ProjectedExpression::cloneAndBeautify(

@@ -495,6 +495,7 @@ std::string typedToLatexWith7DigitsAndThousandsSeparators(
 TypedSystemExpression typedCloneAndReduce(
     const TypedUserExpression& expr, const ReductionContext& reductionContext) {
   JuniorExpression result = expr.cloneAndReduce(reductionContext);
+  assert(!result.isUninitialized());
   return *reinterpret_cast<TypedSystemExpression*>(&result);
 }
 

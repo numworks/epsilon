@@ -79,6 +79,8 @@ void Simplification::ApplySimplify(const Tree* dataTree,
   bool isStore = dataTree->isStore();
   Tree* e;
   if (isStore) {
+    // Store might not be properly handled in reduced expressions.
+    assert(beautify);
     const Tree* firstChild = dataTree->child(0);
     if (firstChild->nextTree()->isUserFunction()) {
       if (CAS::Enabled()) {

@@ -11,8 +11,8 @@ namespace Internal {
 bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
                                                     const Tree* approximate) {
   assert(exact && approximate);
-  assert(Simplification::IsSystem(exact) &&
-         Simplification::IsSystem(approximate));
+  // If projection failed, exact can be not system
+  assert(Simplification::IsSystem(approximate));
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */
@@ -70,8 +70,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
   Internal::ProjectionContext ctxCopy = *ctx;
   // Exact is projected and reduced to turn divisions into rationals
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
-  Internal::Simplification::ToSystem(exactProjected, &ctxCopy);
-  Internal::Simplification::ReduceSystem(exactProjected, false);
+  Internal::Simplification::SimplifyWithAdaptiveStrategy(
+      exactProjected, &ctxCopy, false, false);
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
   Internal::Simplification::ToSystem(approximateProjected, &ctxCopy);

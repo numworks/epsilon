@@ -16,6 +16,11 @@ struct DetailedResult {
 };
 
 template <typename T>
+static bool IsErrorNegligible(DetailedResult<T> result,
+                              T absoluteErrorThreshold,
+                              T relativeErrorThreshold);
+
+template <typename T>
 static bool DetailedResultIsValid(DetailedResult<T> result);
 
 // Maximum number of interval splits for the iterative quadrature
@@ -157,15 +162,22 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
 }
 
 template <typename T>
+bool IsErrorNegligible(DetailedResult<T> result, T absoluteErrorThreshold,
+                       T relativeErrorThreshold) {
+  return (result.absoluteError < absoluteErrorThreshold ||
+          result.absoluteError <
+              relativeErrorThreshold * std::fabs(result.integral));
+}
+
+template <typename T>
 bool DetailedResultIsValid(DetailedResult<T> result) {
   // TODO: this test could be factorized with the one in adaptiveQuadrature
   constexpr T absoluteErrorThresholdForValidity = 0.1;
   constexpr T relativeErrorThresholdForValidity = 1e-4;
 
   return !std::isnan(result.integral) &&
-         (result.absoluteError < absoluteErrorThresholdForValidity ||
-          std::fabs(result.absoluteError) <
-              relativeErrorThresholdForValidity * result.integral);
+         IsErrorNegligible(result, absoluteErrorThresholdForValidity,
+                           relativeErrorThresholdForValidity);
 }
 
 template <typename T>
@@ -435,9 +447,8 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
    * early exits that can occur if the error is below the threshold, but because
    * both Kronrod and Gauss quadratures have too few interpolation points
    * compared to the interval length. */
-  if (quadKG.absoluteError <= absoluteErrorThreshold ||
-      quadKG.absoluteError <
-          relativeErrorThreshold * std::fabs(quadKG.integral) ||
+  if (IsErrorNegligible(quadKG, absoluteErrorThreshold,
+                        relativeErrorThreshold) ||
       numberOfIterations <= 0) {
     return quadKG;
   }

@@ -361,8 +361,7 @@ class JuniorExpression : public OExpression {
   // Sign of a SystemExpression
   Sign sign() const;
 
-  bool isMatrix(Context* context = nullptr) const;
-
+  // Simple bool properties
   bool isUndefined() const;
   bool isNAry() const;
   bool isApproximate() const;
@@ -386,20 +385,23 @@ class JuniorExpression : public OExpression {
   bool isComparison() const;
   bool isRational() const;
   bool isDiscontinuous() const;
+  // Return true if expression is a number, constant, inf or undef.
+  bool isConstantNumber() const;
+  bool isPureAngleUnit() const;
+  bool allChildrenAreUndefined() const;
+
+  // More complex bool properties
+  bool isMatrix(Context* context = nullptr) const;
+  bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
+               bool replaceSymbols = false, Context* ctx = nullptr) const;
+  bool isInRadians(Context* context) const;
+  bool involvesDiscontinuousFunction(Context* context) const;
 
   // This function can be used with recursivelyMatches
   static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
     return e.isMatrix(context);
   }
 
-  bool allChildrenAreUndefined() const;
-  bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
-               bool replaceSymbols = false, Context* ctx = nullptr) const;
-  bool isPureAngleUnit() const;
-  bool isInRadians(Context* context) const;
-  bool involvesDiscontinuousFunction(Context* context) const;
-  // Return true if expression is a number, constant, inf or undef.
-  bool isConstantNumber() const;
 #endif
 #if 1
   /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression

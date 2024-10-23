@@ -50,23 +50,17 @@ bool RelaxProjectionContext(void* context) {
 }
 
 bool Simplification::SimplifyWithAdaptiveStrategy(
-    Tree* e, ProjectionContext* projectionContext) {
+    Tree* e, ProjectionContext* projectionContext, bool advanced,
+    bool beautify) {
   assert(projectionContext);
   ExceptionTry {
     // Clone the tree, and use an adaptive strategy to handle pool overflow.
     SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                           RelaxProjectionContext, true, true);
+                                           RelaxProjectionContext, advanced,
+                                           beautify);
   }
   ExceptionCatch(type) { return false; }
   return true;
-}
-
-void Simplification::ProjectAndReduceWithAdaptiveStrategy(
-    Tree* e, ProjectionContext* projectionContext, bool advanced) {
-  // TODO_PCJ: Add ExceptionTry just like in SimplifyWithAdaptiveStrategy?
-  SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                         RelaxProjectionContext, advanced,
-                                         false);
 }
 
 void Simplification::ApplySimplify(const Tree* dataTree,

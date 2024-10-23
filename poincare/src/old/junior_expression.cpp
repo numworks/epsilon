@@ -428,7 +428,7 @@ SystemExpression UserExpression::cloneAndReduce(
       .m_context = reductionContext.context()};
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  Simplification::ProjectAndReduceWithAdaptiveStrategy(e, &context, true);
+  Simplification::SimplifyWithAdaptiveStrategy(e, &context, true, false);
   SystemExpression simplifiedExpression = Builder(e);
 #if 0
   if (approximateDuringReduction) {

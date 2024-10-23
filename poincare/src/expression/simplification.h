@@ -9,11 +9,10 @@ namespace Poincare::Internal {
 
 class Simplification {
  public:
-  static bool SimplifyWithAdaptiveStrategy(
-      Tree* e, ProjectionContext* projectionContext);
-
-  static void ProjectAndReduceWithAdaptiveStrategy(
-      Tree* e, ProjectionContext* projectionContext, bool advanced);
+  static bool SimplifyWithAdaptiveStrategy(Tree* e,
+                                           ProjectionContext* projectionContext,
+                                           bool advanced = true,
+                                           bool beautify = true);
 
   // Simplification steps
   static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext,

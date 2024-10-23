@@ -8,8 +8,7 @@ void project_and_reduce(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        Simplification::ProjectAndReduceWithAdaptiveStrategy(
-            tree, &projectionContext, true);
+        simplify_with_adaptive_strategy(tree, &projectionContext, false);
       },
       projectionContext);
 }

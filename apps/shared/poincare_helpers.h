@@ -155,18 +155,21 @@ inline Poincare::Expression ApproximateKeepingUnits(
 
 inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
+    const ReductionParameters& reductionParameters = {},
+    bool* reductionFailure = nullptr) {
   Poincare::Internal::ProjectionContext ctx =
       ProjectionContextForParameters(*e, context, reductionParameters);
-  *e = e->cloneAndSimplify(&ctx);
+  *e = e->cloneAndSimplify(&ctx, reductionFailure);
   assert(!e->isUninitialized());
 }
 
 inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
+    const ReductionParameters& reductionParameters = {},
+    bool* reductionFailure = nullptr) {
   return e.cloneAndReduce(
-      ReductionContextForParameters(e, context, reductionParameters));
+      ReductionContextForParameters(e, context, reductionParameters),
+      reductionFailure);
 }
 
 // ===== Misc =====

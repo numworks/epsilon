@@ -384,16 +384,15 @@ bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
 void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    Internal::ProjectionContext* context) const {
+    Internal::ProjectionContext* context, bool* reductionFailure) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
-  *simplifiedExpression = cloneAndSimplify(context);
+  *simplifiedExpression = cloneAndSimplify(context, reductionFailure);
+  assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
   if (approximatedExpression) {
-    const Tree* e = simplifiedExpression->isUninitialized()
-                        ? tree()
-                        : simplifiedExpression->tree();
+    const Tree* e = simplifiedExpression->tree();
     if (CAS::Enabled()) {
       Tree* a = e->cloneTree();
       /* We are using ApproximateAndReplaceEveryScalar to approximate
@@ -409,31 +408,32 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    Internal::ProjectionContext* context) const {
-  return cloneAndReduceAndBeautify(context, true, true);
+    Internal::ProjectionContext* context, bool* reductionFailure) const {
+  return cloneAndReduceAndBeautify(context, true, true, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    ReductionContext reductionContext) const {
+    ReductionContext reductionContext, bool* reductionFailure) const {
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  return cloneAndReduceAndBeautify(&context, true, false);
+  return cloneAndReduceAndBeautify(&context, true, false, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduceAndBeautify(
-    Internal::ProjectionContext* context, bool advanced, bool beautify) const {
+    Internal::ProjectionContext* context, bool advanced, bool beautify,
+    bool* reductionFailure) const {
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  if (Simplification::SimplifyWithAdaptiveStrategy(e, context, advanced,
-                                                   beautify)) {
-    return Builder(e);
+  bool reductionSuccess = Simplification::SimplifyWithAdaptiveStrategy(
+      e, context, advanced, beautify);
+  if (reductionFailure) {
+    *reductionFailure = !reductionSuccess;
   }
-  e->removeTree();
-  return UserExpression();
+  return Builder(e);
 }
 
 UserExpression ProjectedExpression::cloneAndBeautify(

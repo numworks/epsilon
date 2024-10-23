@@ -213,14 +213,14 @@ class JuniorExpression : public OExpression {
     return static_cast<JuniorExpressionNode*>(OExpression::node());
   }
 
-  void cloneAndSimplifyAndApproximate(
-      UserExpression* simplifiedExpression,
-      UserExpression* approximatedExpression,
-      Internal::ProjectionContext* context) const;
-
-  UserExpression cloneAndSimplify(Internal::ProjectionContext* context) const;
-  SystemExpression cloneAndReduce(ReductionContext reductionContext) const;
-
+  void cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
+                                      UserExpression* approximatedExpression,
+                                      Internal::ProjectionContext* context,
+                                      bool* reductionFailure = nullptr) const;
+  UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
+                                  bool* reductionFailure = nullptr) const;
+  SystemExpression cloneAndReduce(ReductionContext reductionContext,
+                                  bool* reductionFailure = nullptr) const;
   UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
 
@@ -454,7 +454,8 @@ class JuniorExpression : public OExpression {
 
  private:
   SystemExpression cloneAndReduceAndBeautify(
-      Internal::ProjectionContext* context, bool advanced, bool beautify) const;
+      Internal::ProjectionContext* context, bool advanced, bool beautify,
+      bool* reductionFailure = nullptr) const;
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is Matrix

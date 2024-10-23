@@ -430,33 +430,6 @@ SystemExpression UserExpression::cloneAndReduce(
   // TODO_PCJ: Decide if a projection is needed or not
   Simplification::SimplifyWithAdaptiveStrategy(e, &context, true, false);
   SystemExpression simplifiedExpression = Builder(e);
-#if 0
-  if (approximateDuringReduction) {
-    /* TODO_PCJ: We used to approximate after a full reduction (see comment).
-     *           Ensure this is no longer necessary. */
-    /* It is always needed to reduce when approximating keeping symbols to
-     * catch reduction failure and abort if necessary.
-     *
-     * The expression is reduced before and not during approximation keeping
-     * symbols even because deepApproximateKeepingSymbols can only partially
-     * reduce the expression.
-     *
-     * For example, if e="x*x+x^2":
-     * "x*x" will be reduced to "x^rational(2)", while "x^2" will be
-     * reduced/approximated to "x^float(2.)".
-     * Then "x^rational(2)+x^float(2.)" won't be able to reduce to
-     * "2*x^float(2.)" because float(2.) != rational(2.).
-     * This does not happen if e is reduced beforehand. */
-    simplifiedExpression =
-        simplifiedExpression.deepApproximateKeepingSymbols(reductionContext);
-  }
-  if (!reduceFailure) {
-    /* TODO_PCJ: Ensure Dependency::deepRemoveUselessDependencies(...) logic has
-     * been properly brought in Simplification. */
-    simplifiedExpression =
-        simplifiedExpression.deepRemoveUselessDependencies(reductionContext);
-  }
-#endif
   assert(!simplifiedExpression.isUninitialized());
   return simplifiedExpression;
 }

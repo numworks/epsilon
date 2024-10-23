@@ -706,9 +706,9 @@ KDCoordinate Render::Baseline(const Layout* l) {
     case LayoutType::Integral: {
       using namespace Integral;
       const Rack* nestedIntegral = GetNestedIntegral(l);
+      // When integrals are nested, they have the same baseline.
       return nestedIntegral
-                 ?  // When integrals are nested, they have the same baseline.
-                 Baseline(nestedIntegral)
+                 ? Baseline(nestedIntegral)
                  : k_boundVerticalMargin +
                        BoundMaxHeight(l, BoundPosition::UpperBound) +
                        k_integrandVerticalMargin +

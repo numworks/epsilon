@@ -541,13 +541,13 @@ inline KDCoordinate BoundMaxHeight(const Layout* node, BoundPosition position) {
       node->child(position == BoundPosition::LowerBound ? k_lowerBoundIndex
                                                         : k_upperBoundIndex));
   const Rack* nestedIntegral = GetNestedIntegral(node);
-  return nestedIntegral ? /* When integrals are nested, compute the maximum
-                           * bound height of the parent integral and of all of
-                           * the nested children integrals.
-                           */
-             std::max(boundHeight,
-                      BoundMaxHeight(nestedIntegral->child(0), position))
-                        : boundHeight;
+  /* When integrals are nested, compute the maximum bound height of the parent
+   * integral and of all of the nested children integrals.
+   */
+  return nestedIntegral
+             ? std::max(boundHeight,
+                        BoundMaxHeight(nestedIntegral->child(0), position))
+             : boundHeight;
 }
 
 inline KDCoordinate CentralArgumentHeight(const Layout* node) {

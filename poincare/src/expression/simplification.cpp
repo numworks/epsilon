@@ -118,14 +118,14 @@ void Simplification::ProjectAndReduce(Tree* e,
   ApplyStrategy(e, projectionContext->m_strategy, true);
 }
 
-void Simplification::BeautifyReduced(Tree* e,
+bool Simplification::BeautifyReduced(Tree* e,
                                      ProjectionContext* projectionContext) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
   assert(e->isUndefined() ||
          projectionContext->m_dimension == Dimension::Get(e));
   HandleUnits(e, projectionContext);
-  Beautification::DeepBeautify(e, *projectionContext);
+  return Beautification::DeepBeautify(e, *projectionContext);
 }
 
 bool Simplification::PrepareForProjection(

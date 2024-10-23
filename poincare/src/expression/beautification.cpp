@@ -346,6 +346,8 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   e->cloneTree();
   bool argReduced = SystematicReduction::ShallowReduce(arg);
   SharedTreeStack->pushComplexI();
+  /* mult is not flattened because i will be kept apart anyway in
+   * Division::BeautifyIntoDivision */
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&
                                Dependency::ShallowBubbleUpDependencies(exp);
@@ -354,8 +356,6 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   if (bubbledUpDependencies) {
     Dependency::DeepRemoveUselessDependencies(result);
   }
-  /* the multiplication that may be created by arg is not flattened on purpose
-   * to keep (π/2)*i as such and not as π*i/2 */
   if (!absReduced || !argReduced) {
     SharedTreeStack->dropBlocksFrom(result);
     return false;

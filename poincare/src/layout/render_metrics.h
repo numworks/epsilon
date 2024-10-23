@@ -526,32 +526,36 @@ constexpr KDCoordinate k_lineThickness = 1;
 enum class BoundPosition : uint8_t { UpperBound, LowerBound };
 enum class NestedPosition : uint8_t { Previous, Next };
 
-inline bool IsRackWithOnlyIntegral(const Rack* rack) {
-  return rack->numberOfChildren() == 1 && rack->child(0)->isIntegralLayout();
+inline const Rack* GetNestedIntegral(const Layout* node) {
+  assert(node->isIntegralLayout());
+  const Rack* integrand = node->child(k_integrandIndex);
+  return integrand->numberOfChildren() == 1 &&
+                 integrand->child(0)->isIntegralLayout()
+             ? integrand
+             : nullptr;
 }
 
 inline KDCoordinate BoundMaxHeight(const Layout* node, BoundPosition position) {
-  /* When integrals are directly nested, we compute the maximum bound
-   * height of the parent integral and all of the nested children integrals.
-   */
-  const Rack* integrand = node->child(k_integrandIndex);
+  assert(node->isIntegralLayout());
   const KDCoordinate boundHeight = Height(
       node->child(position == BoundPosition::LowerBound ? k_lowerBoundIndex
                                                         : k_upperBoundIndex));
-  if (IsRackWithOnlyIntegral(integrand)) {
-    return std::max(boundHeight, BoundMaxHeight(integrand->child(0), position));
-  } else {
-    return boundHeight;
-  }
+  const Rack* nestedIntegral = GetNestedIntegral(node);
+  return nestedIntegral ? /* When integrals are nested, compute the maximum
+                           * bound height of the parent integral and of all of
+                           * the nested children integrals.
+                           */
+             std::max(boundHeight,
+                      BoundMaxHeight(nestedIntegral->child(0), position))
+                        : boundHeight;
 }
 
 inline KDCoordinate CentralArgumentHeight(const Layout* node) {
-  /* When integrals are directly nested, the central argument height of the
-   * parent integral is the same as its child's.
-   */
-  const Rack* integrand = node->child(k_integrandIndex);
-  if (IsRackWithOnlyIntegral(integrand)) {
-    return CentralArgumentHeight(integrand->child(0));
+  assert(node->isIntegralLayout());
+  const Rack* nestedIntegral = GetNestedIntegral(node);
+  if (nestedIntegral) {
+    // When integrals are nested, they have the same central argument height
+    return CentralArgumentHeight(nestedIntegral->child(0));
   } else {
     KDCoordinate integrandHeight = Height(node->child(k_integrandIndex));
     KDCoordinate integrandBaseline = Baseline(node->child(k_integrandIndex));

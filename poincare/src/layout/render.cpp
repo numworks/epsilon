@@ -705,19 +705,15 @@ KDCoordinate Render::Baseline(const Layout* l) {
     }
     case LayoutType::Integral: {
       using namespace Integral;
-      const Rack* integrand = l->child(k_integrandIndex);
-      if (Integral::IsRackWithOnlyIntegral(integrand)) {
-        /* When integrals are directly nested, the baseline of the
-         * parent integral is the same as its child's.
-         */
-        return Baseline(integrand);
-      } else {
-        return k_boundVerticalMargin +
-               BoundMaxHeight(l, BoundPosition::UpperBound) +
-               k_integrandVerticalMargin +
-               std::max(Baseline(integrand),
-                        Baseline(l->child(k_differentialIndex)));
-      }
+      const Rack* nestedIntegral = GetNestedIntegral(l);
+      return nestedIntegral
+                 ?  // When integrals are nested, they have the same baseline.
+                 Baseline(nestedIntegral)
+                 : k_boundVerticalMargin +
+                       BoundMaxHeight(l, BoundPosition::UpperBound) +
+                       k_integrandVerticalMargin +
+                       std::max(Baseline(l->child(k_integrandIndex)),
+                                Baseline(l->child(k_differentialIndex)));
     }
     case LayoutType::Product:
     case LayoutType::Sum: {

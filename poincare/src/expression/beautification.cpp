@@ -342,17 +342,17 @@ bool Beautification::TurnIntoPolarForm(
   Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
-  bool absReduced = SystematicReduction::ShallowReduce(abs);
+  SystematicReduction::ShallowReduce(abs);
   if (projectionContext.m_advanceReduce) {
-    absReduced = AdvancedReduction::Reduce(abs) || absReduced;
+    AdvancedReduction::Reduce(abs);
   }
   Tree* exp = SharedTreeStack->pushExp();
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
-  bool argReduced = SystematicReduction::ShallowReduce(arg);
+  SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
-    argReduced = AdvancedReduction::Reduce(abs) || argReduced;
+    AdvancedReduction::Reduce(abs);
   }
   SharedTreeStack->pushComplexI();
   /* mult is not flattened because i will be kept apart anyway in
@@ -364,10 +364,6 @@ bool Beautification::TurnIntoPolarForm(
       Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
   if (bubbledUpDependencies) {
     Dependency::DeepRemoveUselessDependencies(result);
-  }
-  if (!absReduced || !argReduced) {
-    SharedTreeStack->dropBlocksFrom(result);
-    return false;
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
   if (bubbledUpDependencies) {

@@ -59,7 +59,14 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
                                            RelaxProjectionContext, advanced,
                                            beautify);
   }
-  ExceptionCatch(type) { return false; }
+  ExceptionCatch(type) {
+    switch (type) {
+      case ExceptionType::TreeStackOverflow:
+        return false;
+      default:
+        TreeStackCheckpoint::Raise(type);
+    }
+  }
   return true;
 }
 

@@ -171,7 +171,6 @@ bool IsErrorNegligible(DetailedResult<T> result, T absoluteErrorThreshold,
 
 template <typename T>
 bool DetailedResultIsValid(DetailedResult<T> result) {
-  // TODO: this test could be factorized with the one in adaptiveQuadrature
   constexpr T absoluteErrorThresholdForValidity = 0.1;
   constexpr T relativeErrorThresholdForValidity = 1e-4;
 

@@ -932,13 +932,13 @@ QUIZ_CASE(poincare_approximation_integral) {
                                             "12.573260585347", Radian);
   // #1912
   assert_expression_approximates_to<double>("int(4*√(1-x^2),x,0,1)",
-                                            "3.1415926535899");
+                                            "3.1415926535898");
   // Runge function
   assert_expression_approximates_to<double>("int(1/(1+25*x^2),x,0,1)",
                                             "0.274680153389");
   // #1378
   assert_expression_approximates_to<double>("int(2*√(9-(x-3)^2),x,0,6)",
-                                            "28.27433388231");
+                                            "28.274333882309");
 
   // far bounds
   assert_expression_approximates_to<double>("int(e^(-x^2),x,0,100000)",

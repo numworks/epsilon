@@ -1,6 +1,7 @@
 #include "layouter.h"
 
 #include <omg/utf8_helper.h>
+#include <poincare/comparison_operator.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
@@ -660,7 +661,8 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       addOperatorSeparator(layoutParent);
-      layoutText(layoutParent, Binary::ComparisonOperatorName(type));
+      layoutText(layoutParent, ComparisonJunior::OperatorString(
+                                   Binary::ComparisonOperatorForType(type)));
       addOperatorSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

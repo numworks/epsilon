@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_BINARY_H
 #define POINCARE_EXPRESSION_BINARY_H
 
+#include <poincare/comparison_operator.h>
 #include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/memory/tree_ref.h>
 
@@ -13,8 +14,7 @@ class Binary {
 
   static bool IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                          size_t* returnLength);
-
-  static const char* ComparisonOperatorName(TypeBlock type);
+  static ComparisonJunior::Operator ComparisonOperatorForType(TypeBlock type);
 
   static bool ReduceBooleanOperator(Tree* e);
   TREE_REF_WRAP(ReduceBooleanOperator);
@@ -40,22 +40,22 @@ class Binary {
   static_assert(std::size(k_operatorNames) == k_numberOfOperators,
                 "Wrong number of binary logical operators");
 
-  struct OperatorString {
+  struct OperatorForType {
     Type type;
-    const char* mainString;
-    const char* alternativeString;
+    ComparisonJunior::Operator op;
   };
 
   constexpr static int k_numberOfComparisons = 6;
-  constexpr static OperatorString k_operatorStrings[] = {
-      {Type::Equal, "=", nullptr},
-      {Type::NotEqual, "≠", "!="},  // NFKD norm on "≠"
-      {Type::Superior, ">", nullptr},
-      {Type::Inferior, "<", nullptr},
-      {Type::SuperiorEqual, "≥", ">="},
-      {Type::InferiorEqual, "≤", "<="}};
-  static_assert(std::size(k_operatorStrings) == k_numberOfComparisons,
-                "Missing string for comparison operator.");
+  constexpr static OperatorForType k_operatorForType[] = {
+      {Type::Equal, ComparisonJunior::Operator::Equal},
+      {Type::NotEqual, ComparisonJunior::Operator::NotEqual},
+      {Type::Superior, ComparisonJunior::Operator::Superior},
+      {Type::Inferior, ComparisonJunior::Operator::Inferior},
+      {Type::SuperiorEqual, ComparisonJunior::Operator::SuperiorEqual},
+      {Type::InferiorEqual, ComparisonJunior::Operator::InferiorEqual},
+  };
+  static_assert(std::size(k_operatorForType) == k_numberOfComparisons,
+                "Missing comparison  operator for type.");
 };
 
 }  // namespace Poincare::Internal

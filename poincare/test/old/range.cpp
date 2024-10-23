@@ -1,4 +1,4 @@
-#include <omg/comparison.h>
+#include <omg/numeric_comparison.h>
 #include <poincare/range.h>
 
 #include "../helper.h"

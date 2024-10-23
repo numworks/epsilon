@@ -35,10 +35,11 @@ const char* Binary::OperatorName(TypeBlock type) {
   OMG::unreachable();
 }
 
-const char* Binary::ComparisonOperatorName(TypeBlock type) {
-  for (const OperatorString& name : k_operatorStrings) {
-    if (type == name.type) {
-      return name.mainString;
+ComparisonJunior::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
+  assert(type.isComparison());
+  for (const OperatorForType& opForType : k_operatorForType) {
+    if (type == opForType.type) {
+      return opForType.op;
     }
   }
   OMG::unreachable();
@@ -50,7 +51,9 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
   int lengthOfFoundOperator = 0;
   Type typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
-    const char* currentOperatorString = k_operatorStrings[i].mainString;
+    Type currentOperatorType = k_operatorForType[i].type;
+    const char* currentOperatorString =
+        ComparisonJunior::OperatorString(k_operatorForType[i].op);
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
       int operatorLength = UTF8Helper::StringGlyphLength(currentOperatorString);
@@ -60,9 +63,10 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
               LayoutSpan(name.start, operatorLength), currentOperatorString) ==
               0) {
         lengthOfFoundOperator = operatorLength;
-        typeOfFoundOperator = k_operatorStrings[i].type;
+        typeOfFoundOperator = currentOperatorType;
       }
-      currentOperatorString = k_operatorStrings[i].alternativeString;
+      currentOperatorString =
+          ComparisonJunior::OperatorAlternativeString(k_operatorForType[i].op);
       if (!currentOperatorString) {
         break;
       }

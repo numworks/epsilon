@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare/api.h>
+#include <poincare/comparison_operator.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/dimension_type.h>
@@ -383,6 +384,7 @@ class JuniorExpression : public OExpression {
   bool isBasedInteger() const;
   bool isDep() const;
   bool isComparison() const;
+  bool isEquality() const;
   bool isRational() const;
   bool isDiscontinuous() const;
   // Return true if expression is a number, constant, inf or undef.
@@ -401,6 +403,8 @@ class JuniorExpression : public OExpression {
   static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
     return e.isMatrix(context);
   }
+
+  ComparisonJunior::Operator comparisonOperator() const;
 
 #endif
 #if 1

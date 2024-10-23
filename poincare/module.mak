@@ -282,6 +282,7 @@ $(addprefix regression/, \
   trigonometric_regression.cpp \
 ) \
   additional_results_helper.cpp \
+  comparison_operator.cpp \
   print.cpp \
   range.cpp \
 )

@@ -160,7 +160,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }
-  if (ComparisonNode::IsBinaryEquality(formula)) {
+  if (formula.isEquality()) {
     bool isValidEquality = false;
     const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
     if (leftOfEqual.isUserSymbol()) {

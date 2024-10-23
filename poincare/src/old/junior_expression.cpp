@@ -12,6 +12,7 @@
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dimension.h>
@@ -969,6 +970,8 @@ bool NewExpression::isDep() const { return tree()->isDep(); }
 
 bool NewExpression::isComparison() const { return tree()->isComparison(); }
 
+bool NewExpression::isEquality() const { return tree()->isEqual(); }
+
 bool NewExpression::isRational() const { return tree()->isRational(); }
 
 bool NewExpression::isPureAngleUnit() const {
@@ -992,6 +995,11 @@ bool NewExpression::isConstantNumber() const {
 bool NewExpression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(
       [](const Tree* e) { return !e->isUndefined(); });
+}
+
+ComparisonJunior::Operator NewExpression::comparisonOperator() const {
+  assert(isComparison());
+  return Internal::Binary::ComparisonOperatorForType(tree()->type());
 }
 
 /* Matrix */

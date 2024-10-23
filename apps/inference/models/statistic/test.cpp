@@ -67,12 +67,12 @@ bool Test::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
-double Test::thresholdAbscissa(Poincare::ComparisonNode::OperatorType op,
+double Test::thresholdAbscissa(Poincare::ComparisonJunior::Operator op,
                                double factor) const {
-  assert(op != Poincare::ComparisonNode::OperatorType::NotEqual);
+  assert(op != Poincare::ComparisonJunior::Operator::NotEqual);
   double t = factor * threshold();
   return cumulativeDistributiveInverseForProbability(
-      op == Poincare::ComparisonNode::OperatorType::Inferior ? t : 1.0 - t);
+      op == Poincare::ComparisonJunior::Operator::Inferior ? t : 1.0 - t);
 }
 
 void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
@@ -114,7 +114,7 @@ static float interpolate(float a, float b, float alpha) {
 
 bool Test::hasTwoSides() {
   return hypothesisParams()->comparisonOperator() ==
-         Poincare::ComparisonNode::OperatorType::NotEqual;
+         Poincare::ComparisonJunior::Operator::NotEqual;
 }
 
 bool Test::computeCurveViewRange(float transition, bool zoomSide) {
@@ -122,14 +122,14 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   float alpha;
   float z = testCriticalValue();
   if (hypothesisParams()->comparisonOperator() ==
-      Poincare::ComparisonNode::OperatorType::NotEqual) {
+      Poincare::ComparisonJunior::Operator::NotEqual) {
     if (zoomSide) {
-      alpha = thresholdAbscissa(
-          Poincare::ComparisonNode::OperatorType::Superior, 0.5);
+      alpha = thresholdAbscissa(Poincare::ComparisonJunior::Operator::Superior,
+                                0.5);
       z = std::abs(z);
     } else {
-      alpha = thresholdAbscissa(
-          Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+      alpha = thresholdAbscissa(Poincare::ComparisonJunior::Operator::Inferior,
+                                0.5);
       z = -std::abs(z);
     }
   } else {

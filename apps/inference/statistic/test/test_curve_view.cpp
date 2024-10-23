@@ -17,7 +17,7 @@ namespace Inference {
 void TestPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                               KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
-  ComparisonNode::OperatorType op =
+  ComparisonJunior::Operator op =
       m_test->hypothesisParams()->comparisonOperator();
   drawZLabelAndZGraduation(plotView, ctx, rect, z, op);
   drawTestCurve(plotView, ctx, rect, z, op);
@@ -25,8 +25,8 @@ void TestPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
 
 void TestPlotPolicy::drawZLabelAndZGraduation(
     const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float z,
-    ComparisonNode::OperatorType op) const {
-  if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
+    ComparisonJunior::Operator op) const {
+  if (op == ComparisonJunior::Operator::NotEqual) {
     Layout absolute =
         Layout::Create(KAbsL(KA), {.KA = m_test->criticalValueSymbolLayout()});
     drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
@@ -58,18 +58,18 @@ static Coordinate2D<float> evaluateZero(float, void*, void*) {
 
 void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect, float z,
-                                   ComparisonNode::OperatorType op,
+                                   ComparisonJunior::Operator op,
                                    double factor) const {
   CurveViewRange* range = plotView->range();
-  if (op == Poincare::ComparisonNode::OperatorType::NotEqual) {
+  if (op == ComparisonJunior::Operator::NotEqual) {
     z = std::fabs(z);
     if (range->xMax() > 0) {
       drawTestCurve(plotView, ctx, rect, z,
-                    Poincare::ComparisonNode::OperatorType::Superior, 0.5);
+                    ComparisonJunior::Operator::Superior, 0.5);
     }
     if (range->xMin() < 0) {
       drawTestCurve(plotView, ctx, rect, -z,
-                    Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+                    ComparisonJunior::Operator::Inferior, 0.5);
     }
     return;
   }
@@ -88,7 +88,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   Pattern patternBoth, patternSingle;
   float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart,
       singleCurveEnd;
-  if (op == Poincare::ComparisonNode::OperatorType::Superior) {
+  if (op == ComparisonJunior::Operator::Superior) {
     patternBoth = Pattern(true, false, false, true, Palette::PurpleBright,
                           Palette::YellowDark);
     singleCurveStart = range->xMin();
@@ -105,7 +105,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     singleCurveEnd = singleEnd = bothStart;
     bothEnd = range->xMax();
   } else {
-    assert(op == Poincare::ComparisonNode::OperatorType::Inferior);
+    assert(op == ComparisonJunior::Operator::Inferior);
     patternBoth = Pattern(true, false, true, false, Palette::PurpleBright,
                           Palette::YellowDark);
     bothStart = range->xMin();

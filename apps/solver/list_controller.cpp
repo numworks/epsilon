@@ -1,9 +1,9 @@
 #include "list_controller.h"
 
 #include <assert.h>
+#include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/comparison.h>
 #include <poincare/old/variable_context.h>
 
 #include "app.h"
@@ -159,7 +159,7 @@ bool ListController::isAcceptableExpression(const Poincare::UserExpression exp,
   /* Complete SharedApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
   return MathLayoutFieldDelegate::isAcceptableExpression(exp, context) &&
-         Poincare::ComparisonNode::IsBinaryEquality(exp);
+         exp.isEquality();
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

@@ -50,7 +50,7 @@ void InputController::InputTitle(Escher::ViewController* vc,
      * Ha:<first symbol><operator symbol><firstParams>
      * α=<threshold> */
     const char* symbol = statistic->hypothesisSymbol();
-    const char* op = Poincare::ComparisonNode::ComparisonOperatorString(
+    const char* op = Poincare::ComparisonJunior::OperatorString(
         statistic->hypothesisParams()->comparisonOperator());
     StackViewController* stackViewControllerResponder =
         static_cast<StackViewController*>(vc->parentResponder());

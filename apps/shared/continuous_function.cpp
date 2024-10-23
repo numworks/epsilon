@@ -764,7 +764,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record, Poincare::Context* context) const {
   ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
-  ComparisonNode::OperatorType computedEquationType =
+  ComparisonJunior::Operator computedEquationType =
       ContinuousFunctionProperties::k_defaultEquationType;
   bool isCartesianEquation = false;
   UserExpression equation =
@@ -820,7 +820,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
 }
 
 bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
-  if (!ComparisonNode::IsBinaryEquality(e)) {
+  if (!e.isEquality()) {
     return false;
   }
   const UserExpression leftExpression = e.cloneChildAtIndex(0);
@@ -835,7 +835,7 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
 
 UserExpression ContinuousFunction::Model::expressionEquation(
     const Ion::Storage::Record* record, Context* context,
-    ComparisonNode::OperatorType* computedEquationType,
+    ComparisonJunior::Operator* computedEquationType,
     ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
     bool* isCartesianEquation) const {
   UserExpression result = ExpressionModel::expressionClone(record);
@@ -844,8 +844,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
-  ComparisonNode::OperatorType equationType;
-  if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
+  if (!result.isComparison()) {
     if (result.dimension(context).isPointOrListOfPoints()) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
@@ -863,7 +862,9 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * - When result is uninitialized because of circular definition.  */
     return Undefined::Builder();
   }
-  if (equationType == ComparisonNode::OperatorType::NotEqual) {
+
+  ComparisonJunior::Operator equationType = result.comparisonOperator();
+  if (equationType == ComparisonJunior::Operator::NotEqual) {
     return Undefined::Builder();
   }
   if (computedEquationType) {

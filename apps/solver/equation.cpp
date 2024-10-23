@@ -44,7 +44,7 @@ SystemExpression Equation::Model::standardForm(
                  contextToUse) ||
              simplifiedInput.dimension().isMatrix()) {
     returnedExpression = Undefined::Builder();
-  } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
+  } else if (simplifiedInput.isEquality()) {
     returnedExpression =
         Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
                              simplifiedInput.cloneChildAtIndex(1));

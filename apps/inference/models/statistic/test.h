@@ -80,7 +80,7 @@ class Test : public Statistic {
   /* Returns the value above/below (depending on the operator) which the
    * probability of landing is inferior to a given significance level. */
   bool canRejectNull();
-  double thresholdAbscissa(Poincare::ComparisonNode::OperatorType op,
+  double thresholdAbscissa(Poincare::ComparisonJunior::Operator op,
                            double factor = 1.0) const;
   bool isGraphable() const override {
     return std::isfinite(m_testCriticalValue) && std::isfinite(m_pValue);

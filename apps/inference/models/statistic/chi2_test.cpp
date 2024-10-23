@@ -12,7 +12,7 @@ namespace Inference {
 
 Chi2Test::Chi2Test() {
   m_hypothesisParams.setComparisonOperator(
-      Poincare::ComparisonNode::OperatorType::Superior);  // Always higher
+      Poincare::ComparisonJunior::Operator::Superior);  // Always higher
 }
 
 bool Chi2Test::initializeCategoricalType(CategoricalType type) {

@@ -21,11 +21,11 @@ double SignificanceTest::ComputePValue(Test* t) {
   double z = t->m_testCriticalValue;
   // Compute probability of obtaining a more extreme result
   switch (t->m_hypothesisParams.comparisonOperator()) {
-    case Poincare::ComparisonNode::OperatorType::Superior:
+    case ComparisonJunior::Operator::Superior:
       return 1.0 - t->cumulativeDistributiveFunctionAtAbscissa(z);
-    case Poincare::ComparisonNode::OperatorType::Inferior:
+    case ComparisonJunior::Operator::Inferior:
       return t->cumulativeDistributiveFunctionAtAbscissa(z);
-    case Poincare::ComparisonNode::OperatorType::NotEqual:
+    case ComparisonJunior::Operator::NotEqual:
       return 2.0 * t->cumulativeDistributiveFunctionAtAbscissa(-std::fabs(z));
     default:
       assert(false);
@@ -103,7 +103,7 @@ void OneMean::InitTestParameters(Test* t) {
   t->parametersArray()[ParamsOrder::s] = 2.81;
   t->m_hypothesisParams.setFirstParam(50);
   t->m_hypothesisParams.setComparisonOperator(
-      Poincare::ComparisonNode::OperatorType::Inferior);
+      ComparisonJunior::Operator::Inferior);
 }
 
 void OneMean::InitTIntervalParameters(Interval* i) {
@@ -221,7 +221,7 @@ void OneProportion::InitTestParameters(Test* t) {
   t->parametersArray()[ParamsOrder::n] = 500;
   t->m_hypothesisParams.setFirstParam(0.08);
   t->m_hypothesisParams.setComparisonOperator(
-      Poincare::ComparisonNode::OperatorType::Superior);
+      ComparisonJunior::Operator::Superior);
 }
 
 void OneProportion::InitIntervalParameters(Interval* i) {
@@ -363,7 +363,7 @@ void TwoMeans::InitTestParameters(Test* t) {
   t->parametersArray()[ParamsOrder::s2] = 5.901;
   t->m_hypothesisParams.setFirstParam(0);
   t->m_hypothesisParams.setComparisonOperator(
-      Poincare::ComparisonNode::OperatorType::Superior);
+      ComparisonJunior::Operator::Superior);
 }
 
 void TwoMeans::InitIntervalParameters(Interval* i) {
@@ -579,7 +579,7 @@ void TwoProportions::InitTestParameters(Test* t) {
   t->parametersArray()[ParamsOrder::n2] = 150;
   t->m_hypothesisParams.setFirstParam(0);
   t->m_hypothesisParams.setComparisonOperator(
-      Poincare::ComparisonNode::OperatorType::NotEqual);
+      ComparisonJunior::Operator::NotEqual);
 }
 
 void TwoProportions::InitIntervalParameters(Interval* i) {

@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <ion.h>
-#include <omg/comparison.h>
 #include <omg/ieee754.h>
+#include <omg/numeric_comparison.h>
 #include <poincare/numeric/zoom.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/preferences.h>

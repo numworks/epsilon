@@ -4,7 +4,7 @@
 #include <apps/shared/editable_cell_table_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <omg/comparison.h>
+#include <omg/numeric_comparison.h>
 #include <poincare/layout.h>
 
 #include <algorithm>

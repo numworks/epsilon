@@ -23,6 +23,7 @@
 #include "inference/models/statistic_buffer.h"
 
 using namespace Inference;
+using namespace Poincare;
 
 /* TODO: some values have been computed from an approximative source of
  * truth... It should be double-checked. */
@@ -30,7 +31,7 @@ using namespace Inference;
 struct StatisticTestCase {
   // Inputs
   double m_firstHypothesisParam;
-  Poincare::ComparisonNode::OperatorType m_op;
+  ComparisonJunior::Operator m_op;
   int m_numberOfInputs;
   double m_inputs[100];
   double m_significanceLevel;
@@ -119,7 +120,7 @@ void testInterval(Interval* interval, StatisticTestCase& testCase) {
 QUIZ_CASE(probability_one_proportion_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.4;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Inferior;
+  tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 2;
   tests[0].m_inputs[0] = 12;
   tests[0].m_inputs[1] = 50;
@@ -138,7 +139,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
       0.118381403945045355252671217772915115472924012968494600568522469792;
 
   tests[1].m_firstHypothesisParam = 0.9;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
   tests[1].m_numberOfInputs = 2;
   tests[1].m_inputs[0] = 84;
   tests[1].m_inputs[1] = 100;
@@ -167,7 +168,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
 QUIZ_CASE(probability_one_mean_t_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Inferior;
+  tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
   tests[0].m_inputs[0] = 127.8;
   tests[0].m_inputs[1] = 3.2;
@@ -186,7 +187,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[0].m_marginOfError = 0.9094301462;
 
   tests[1].m_firstHypothesisParam = -4;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
   tests[1].m_numberOfInputs = 3;
   tests[1].m_inputs[0] = 1.4;
   tests[1].m_inputs[1] = 5;
@@ -218,7 +219,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
 QUIZ_CASE(probability_one_mean_z_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Inferior;
+  tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
   tests[0].m_inputs[0] = 127.8;
   tests[0].m_inputs[1] = 3.2;
@@ -236,7 +237,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[0].m_marginOfError = 0.8869786859;
 
   tests[1].m_firstHypothesisParam = 0.9;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
   tests[1].m_numberOfInputs = 3;
   tests[1].m_inputs[0] = 2.3;
   tests[1].m_inputs[1] = 14;
@@ -268,7 +269,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
 QUIZ_CASE(probability_two_proportions_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 4;
   tests[0].m_inputs[0] = 20;
   tests[0].m_inputs[1] = 50;
@@ -287,7 +288,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   tests[0].m_marginOfError = 0.1625613272;
 
   tests[1].m_firstHypothesisParam = 0.3;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::Inferior;
+  tests[1].m_op = ComparisonJunior::Operator::Inferior;
   tests[1].m_numberOfInputs = 4;
   tests[1].m_inputs[0] = 60;
   tests[1].m_inputs[1] = 100;
@@ -318,7 +319,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
 QUIZ_CASE(probability_two_means_t_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 20;
   tests[0].m_inputs[1] = 2;
@@ -340,7 +341,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[0].m_marginOfError = 4.6813974380;
 
   tests[1].m_firstHypothesisParam = -12.345;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 4.2;
   tests[1].m_inputs[1] = 46;
@@ -375,7 +376,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
 QUIZ_CASE(probability_pooled_t_test) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.3;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 213.4;
   tests[0].m_inputs[1] = 14;
@@ -397,7 +398,7 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[0].m_marginOfError = 13.8193244934;
 
   tests[1].m_firstHypothesisParam = 0.;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[1].m_op = ComparisonJunior::Operator::Superior;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 1.23;
   tests[1].m_inputs[1] = 1.23;
@@ -433,7 +434,7 @@ QUIZ_CASE(probability_pooled_t_test) {
 QUIZ_CASE(probability_two_means_z_statistic) {
   StatisticTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.;
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 3.14;
   tests[0].m_inputs[1] = 2;
@@ -455,7 +456,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[0].m_marginOfError = 0.5091147423;
 
   tests[1].m_firstHypothesisParam = 0.;
-  tests[1].m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 1542;
   tests[1].m_inputs[1] = 140;
@@ -489,7 +490,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
 QUIZ_CASE(probability_goodness_test) {
   GoodnessTest stat;
   StatisticTestCase tests[1];
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 8;
   tests[0].m_inputs[0] = 1;
   tests[0].m_inputs[1] = 2;
@@ -527,7 +528,7 @@ QUIZ_CASE(probability_goodness_test) {
 QUIZ_CASE(probability_homogeneity_test) {
   // clang-format off
   StatisticTestCase tests[1];
-  tests[0].m_op = Poincare::ComparisonNode::OperatorType::Superior;
+  tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = HomogeneityTest::k_maxNumberOfColumns *
                           HomogeneityTest::k_maxNumberOfRows;
   /*{1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN,
@@ -594,7 +595,7 @@ QUIZ_CASE(probability_homogeneity_test) {
 QUIZ_CASE(probability_slope_t_statistic) {
   StatisticTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
-  testCase.m_op = Poincare::ComparisonNode::OperatorType::NotEqual;
+  testCase.m_op = ComparisonJunior::Operator::NotEqual;
   testCase.m_numberOfInputs = SlopeTStatistic::k_maxNumberOfColumns * 8;
   testCase.m_inputs[0] = 7;
   testCase.m_inputs[1] = 7.10;
@@ -643,7 +644,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
 
   StatisticTestCase rawDataCase{
       .m_firstHypothesisParam = 128,
-      .m_op = Poincare::ComparisonNode::OperatorType::Inferior,
+      .m_op = ComparisonJunior::Operator::Inferior,
       .m_numberOfInputs = 100,
       .m_significanceLevel = 0.05,
       .m_confidenceLevel = 0.95,

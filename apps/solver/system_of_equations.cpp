@@ -438,7 +438,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ab.setDimensions(m, n + 1);
 
-  assert(!ab.recursivelyMatches(NewExpression::IsUninitialized, context));
+  assert(!ab.recursivelyMatches(&NewExpression::isUninitialized, context));
 
   // Compute the rank of (A|b)
   int rank = ab.rank(context);

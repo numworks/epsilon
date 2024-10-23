@@ -329,16 +329,25 @@ class JuniorExpression : public OExpression {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr,
       IgnoredSymbols* ignoredSymbols = nullptr) const;
+
   typedef bool (*ExpressionTest)(const NewExpression e, Context* context);
   bool recursivelyMatches(
       ExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+
   typedef bool (*SimpleExpressionTest)(const NewExpression e);
   bool recursivelyMatches(
       SimpleExpressionTest test, Context* context = nullptr,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+
+  typedef bool (JuniorExpression::*NonStaticSimpleExpressionTest)() const;
+  bool recursivelyMatches(
+      NonStaticSimpleExpressionTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+
   typedef bool (*ExpressionTestAuxiliary)(const NewExpression e,
                                           Context* context, void* auxiliary);
   bool recursivelyMatches(
@@ -352,7 +361,6 @@ class JuniorExpression : public OExpression {
   // Sign of a SystemExpression
   Sign sign() const;
 
-  static bool IsDiscontinuous(const NewExpression e, Context* context);
   bool isMatrix(Context* context = nullptr) const;
 
   bool isUndefined() const;
@@ -377,19 +385,12 @@ class JuniorExpression : public OExpression {
   bool isDep() const;
   bool isComparison() const;
   bool isRational() const;
+  bool isDiscontinuous() const;
 
-  // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsUninitialized(const NewExpression e) {
-    return e.isUninitialized();
-  }
+  // This function can be used with recursivelyMatches
   static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
     return e.isMatrix(context);
   }
-  static bool IsUndefined(const NewExpression e) { return e.isUndefined(); }
-  static bool IsApproximate(const NewExpression e) { return e.isApproximate(); }
-  static bool IsPercent(const NewExpression e) { return e.isPercent(); }
-  static bool IsSequence(const NewExpression e) { return e.isSequence(); }
-  static bool IsStore(const NewExpression e) { return e.isStore(); }
 
   bool allChildrenAreUndefined() const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,

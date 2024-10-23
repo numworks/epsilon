@@ -835,6 +835,18 @@ bool NewExpression::recursivelyMatches(
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
+bool NewExpression::recursivelyMatches(
+    NonStaticSimpleExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const NewExpression e, Context* context,
+                                     void* auxiliary) {
+    NonStaticSimpleExpressionTest* trueTest =
+        static_cast<NonStaticSimpleExpressionTest*>(auxiliary);
+    return (e.**trueTest)() ? OMG::Troolean::True : OMG::Troolean::Unknown;
+  };
+  return recursivelyMatches(ternary, context, replaceSymbols, &test);
+}
+
 bool NewExpression::recursivelyMatches(ExpressionTestAuxiliary test,
                                        Context* context,
                                        SymbolicComputation replaceSymbols,
@@ -905,6 +917,10 @@ bool NewExpression::isMatrix(Context* context) const {
   return tree()->isMatrix();
 }
 
+bool NewExpression::isDiscontinuous() const {
+  return Continuity::InvolvesDiscontinuousFunction(tree());
+}
+
 bool NewExpression::isNAry() const { return tree()->isNAry(); }
 
 bool NewExpression::isApproximate() const {
@@ -965,11 +981,7 @@ bool NewExpression::isInRadians(Context* context) const {
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
-  return recursivelyMatches(IsDiscontinuous, context);
-}
-
-bool NewExpression::IsDiscontinuous(const NewExpression e, Context* context) {
-  return Continuity::InvolvesDiscontinuousFunction(e.tree());
+  return recursivelyMatches(&JuniorExpression::isDiscontinuous, context);
 }
 
 bool NewExpression::isConstantNumber() const {

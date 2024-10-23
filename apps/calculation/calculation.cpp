@@ -166,11 +166,11 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
                  inputExp, outputExp, approximateOutput(), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.isIdenticalTo(outputExp) ||
-             inputExp.recursivelyMatches(NewExpression::IsApproximate,
+             inputExp.recursivelyMatches(&NewExpression::isApproximate,
                                          context) ||
-             outputExp.recursivelyMatches(NewExpression::IsApproximate,
+             outputExp.recursivelyMatches(&NewExpression::isApproximate,
                                           context) ||
-             inputExp.recursivelyMatches(NewExpression::IsPercent, context)) {
+             inputExp.recursivelyMatches(&NewExpression::isPercent, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
   } else {
     m_displayOutput = DisplayOutput::ExactAndApproximate;

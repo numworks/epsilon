@@ -95,7 +95,7 @@ void Sign::log(std::ostream& stream, bool endOfLine) const {
     if (!m_canBeNonInteger) {
       stream << "Integer and ";
     }
-    if (isUnknown()) {
+    if (isUnknownSign()) {
       stream << "Unknown";
     } else {
       if (m_canBeStrictlyPositive && m_canBeStrictlyNegative) {

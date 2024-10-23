@@ -158,13 +158,14 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
 
 template <typename T>
 bool DetailedResultIsValid(DetailedResult<T> result) {
-  constexpr T absoluteErrorThreshold = 0.1;
-  constexpr T relativeErrorThreshold = 1e-4;
+  // TODO: this test could be factorized with the one in adaptiveQuadrature
+  constexpr T absoluteErrorThresholdForValidity = 0.1;
+  constexpr T relativeErrorThresholdForValidity = 1e-4;
 
   return !std::isnan(result.integral) &&
-         (result.absoluteError < absoluteErrorThreshold ||
-          std::abs(result.absoluteError / result.integral) <
-              relativeErrorThreshold);
+         (result.absoluteError < absoluteErrorThresholdForValidity ||
+          std::fabs(result.absoluteError) <
+              relativeErrorThresholdForValidity * result.integral);
 }
 
 template <typename T>

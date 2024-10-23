@@ -184,7 +184,7 @@ void AutocompletedPair::PrivateBalanceBrackets(TypeBlock type, Tree* rootRack,
         writtenRack = newBracket->child(0);
       }
 
-      /* - Step 2.1 - Read
+      /* - Step 2.2 - Read
        * The reading enters the brackets and continues inside it.
        */
       readRack = readChild->child(0);

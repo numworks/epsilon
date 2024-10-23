@@ -60,7 +60,7 @@ template <typename T>
 DetailedResult<T> iterateAdaptiveQuadrature(
     DetailedResult<T> quadKG, T a, T b, T absoluteErrorThreshold,
     T relativeErrorThreshold, Substitution<T> substitution,
-    const Approximation::Context* ctx, int iterationDepth, int* iterationCount);
+    const Approximation::Context* ctx, int iterationDepth, int& iterationCount);
 
 const Tree* integrandExpression;
 
@@ -420,7 +420,7 @@ DetailedResult<T> adaptiveQuadrature(T a, T b, Substitution<T> substitution,
   int numberOfCalls = 1;
   return iterateAdaptiveQuadrature(quadKG, a, b, absoluteErrorThreshold,
                                    relativeErrorThreshold, substitution, ctx, 1,
-                                   &numberOfCalls);
+                                   numberOfCalls);
 }
 
 template <typename T>
@@ -430,7 +430,7 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
                                             Substitution<T> substitution,
                                             const Approximation::Context* ctx,
                                             int iterationDepth,
-                                            int* iterationCount) {
+                                            int& iterationCount) {
   // Maximum number of interval splits for the iterative quadrature
   constexpr static int k_maxIterationDepth = 20;
   /* Maximum number of calls to iterateAdaptiveQuadrature, to avoid going very
@@ -451,14 +451,14 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
   if (IsErrorNegligible(quadKG, absoluteErrorThreshold,
                         relativeErrorThreshold) ||
       iterationDepth > k_maxIterationDepth ||
-      *iterationCount > k_maxIterationCount) {
+      iterationCount > k_maxIterationCount) {
     return quadKG;
   }
 
   T m = (a + b) / 2;
   DetailedResult<T> left = kronrodGaussQuadrature(a, m, substitution, ctx);
   DetailedResult<T> right = kronrodGaussQuadrature(m, b, substitution, ctx);
-  *iterationCount += 1;
+  iterationCount += 1;
 
   /* Start by the side with the biggest error to reach maximumError faster if
    * it can be reached. */

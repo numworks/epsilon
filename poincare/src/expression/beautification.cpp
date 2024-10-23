@@ -174,7 +174,7 @@ bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
   if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
-    TurnIntoPolarForm(e, projectionContext.m_dimension);
+    TurnIntoPolarForm(e, projectionContext.m_dimension, projectionContext);
   }
   bool changed =
       DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy);
@@ -319,7 +319,8 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       changed;
 }
 
-bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
+bool Beautification::TurnIntoPolarForm(
+    Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
   if (e->isUndefined()) {
     return false;
   }
@@ -327,7 +328,9 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   if (e->isMatrix() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
-      changed |= TurnIntoPolarForm(child, Dimension::Scalar());
+      assert(Dimension::Get(child).isScalar());
+      changed |=
+          TurnIntoPolarForm(child, Dimension::Scalar(), projectionContext);
     }
     return changed;
   }
@@ -340,11 +343,17 @@ bool Beautification::TurnIntoPolarForm(Tree* e, Dimension dim) {
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
   bool absReduced = SystematicReduction::ShallowReduce(abs);
+  if (projectionContext.m_advanceReduce) {
+    absReduced = AdvancedReduction::Reduce(abs) || absReduced;
+  }
   Tree* exp = SharedTreeStack->pushExp();
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
   bool argReduced = SystematicReduction::ShallowReduce(arg);
+  if (projectionContext.m_advanceReduce) {
+    argReduced = AdvancedReduction::Reduce(abs) || argReduced;
+  }
   SharedTreeStack->pushComplexI();
   /* mult is not flattened because i will be kept apart anyway in
    * Division::BeautifyIntoDivision */

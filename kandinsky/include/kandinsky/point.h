@@ -12,8 +12,8 @@ class KDPoint {
  public:
   constexpr KDPoint(KDCoordinate x, KDCoordinate y) : m_struct{x, y} {}
   constexpr KDPoint(KDPointStruct p) : m_struct{p} {}
-  KDCoordinate x() const { return m_struct.x; }
-  KDCoordinate y() const { return m_struct.y; }
+  constexpr KDCoordinate x() const { return m_struct.x; }
+  constexpr KDCoordinate y() const { return m_struct.y; }
   KDPoint translatedBy(KDPoint other) const;
   KDPoint relativeTo(KDPoint p) const { return translatedBy(p.opposite()); }
   KDPoint opposite() const;

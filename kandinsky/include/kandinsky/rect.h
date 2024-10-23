@@ -40,21 +40,21 @@ class KDRect {
   constexpr KDRect(KDPoint p, KDCoordinate width, KDCoordinate height)
       : m_struct{p, {width, height}} {}
 
-  KDCoordinate x() const { return origin().x(); }
-  KDCoordinate y() const { return origin().y(); }
-  KDPoint origin() const { return m_struct.origin; }
-  KDCoordinate width() const { return size().width(); }
-  KDCoordinate height() const { return size().height(); }
-  KDSize size() const { return m_struct.size; }
-  KDCoordinate top() const { return y(); }
-  KDCoordinate right() const { return x() + width() - 1; }
-  KDCoordinate bottom() const { return y() + height() - 1; }
-  KDCoordinate left() const { return x(); }
+  constexpr KDCoordinate x() const { return origin().x(); }
+  constexpr KDCoordinate y() const { return origin().y(); }
+  constexpr KDPoint origin() const { return m_struct.origin; }
+  constexpr KDCoordinate width() const { return size().width(); }
+  constexpr KDCoordinate height() const { return size().height(); }
+  constexpr KDSize size() const { return m_struct.size; }
+  constexpr KDCoordinate top() const { return y(); }
+  constexpr KDCoordinate right() const { return x() + width() - 1; }
+  constexpr KDCoordinate bottom() const { return y() + height() - 1; }
+  constexpr KDCoordinate left() const { return x(); }
 
-  KDPoint topLeft() const { return KDPoint(left(), top()); }
-  KDPoint topRight() const { return KDPoint(right(), top()); }
-  KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
-  KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
+  constexpr KDPoint topLeft() const { return KDPoint(left(), top()); }
+  constexpr KDPoint topRight() const { return KDPoint(right(), top()); }
+  constexpr KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
+  constexpr KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
 
   bool operator==(const KDRect& other) const {
     return (origin() == other.origin() && size() == other.size());

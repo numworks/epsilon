@@ -54,12 +54,25 @@ double typedApproximateIntegralToScalar(
   return expr.approximateIntegralToScalar<double>(upperBound, lowerBound);
 }
 
+TypedSystemFunction typedClone(const TypedSystemFunction& expr) {
+  JuniorExpression result = expr.clone();
+  return *reinterpret_cast<TypedSystemFunction*>(&result);
+}
+
+TypedSystemFunction typedCloneChildAtIndex(const TypedSystemFunction& expr,
+                                           int i) {
+  JuniorExpression result = expr.cloneChildAtIndex(i);
+  return *reinterpret_cast<TypedSystemFunction*>(&result);
+}
+
 EMSCRIPTEN_BINDINGS(system_function) {
   register_type<SystemFunctionTree>("SystemFunctionTree");
   class_<TypedSystemFunction, base<JuniorExpression>>("PCR_SystemFunction")
       .constructor<>()
       .class_function("BuildFromTree", &BuildFromJsTree)
       .function("getTree", &ExpressionToJsTree)
+      .function("clone", &typedClone)
+      .function("cloneChildAtIndex", &typedCloneChildAtIndex)
       .function("approximateToScalarWithValue",
                 &typedApproximateToScalarWithValue)
       .function("approximateIntegralToScalar",

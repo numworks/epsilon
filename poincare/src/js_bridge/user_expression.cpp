@@ -499,6 +499,17 @@ TypedSystemExpression typedCloneAndReduce(
   return *reinterpret_cast<TypedSystemExpression*>(&result);
 }
 
+TypedUserExpression typedClone(const TypedUserExpression& expr) {
+  JuniorExpression result = expr.clone();
+  return *reinterpret_cast<TypedUserExpression*>(&result);
+}
+
+TypedUserExpression typedCloneChildAtIndex(const TypedUserExpression& expr,
+                                           int i) {
+  JuniorExpression result = expr.cloneChildAtIndex(i);
+  return *reinterpret_cast<TypedUserExpression*>(&result);
+}
+
 // === 3. Bindings ===
 
 /* Macro to create binding functions for different numbers of
@@ -542,6 +553,8 @@ EMSCRIPTEN_BINDINGS(user_expression) {
       .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("getTree", &ExpressionToJsTree)
+      .function("clone", &typedClone)
+      .function("cloneChildAtIndex", &typedCloneChildAtIndex)
       .function("toLatex", &typedToLatex)
       .function("toLatex", &typedToLatexWithThousandsSeparators)
       .function("toLatex", &typedToLatexWith7DigitsAndThousandsSeparators)

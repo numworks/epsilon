@@ -105,6 +105,17 @@ double typedApproximateToScalar(const TypedSystemExpression& expr) {
   return expr.approximateToScalarJunior<double>();
 }
 
+TypedSystemExpression typedClone(const TypedSystemExpression& expr) {
+  JuniorExpression result = expr.clone();
+  return *reinterpret_cast<TypedSystemExpression*>(&result);
+}
+
+TypedSystemExpression typedCloneChildAtIndex(const TypedSystemExpression& expr,
+                                             int i) {
+  JuniorExpression result = expr.cloneChildAtIndex(i);
+  return *reinterpret_cast<TypedSystemExpression*>(&result);
+}
+
 EMSCRIPTEN_BINDINGS(system_expression) {
   register_type<SystemExpressionTree>("SystemExpressionTree");
   class_<TypedSystemExpression, base<JuniorExpression>>("PCR_SystemExpression")
@@ -114,6 +125,8 @@ EMSCRIPTEN_BINDINGS(system_expression) {
       .class_function("BuildFloat", &BuildSystemFloat)
       .class_function("BuildRational", &BuildSystemRational)
       .function("getTree", &ExpressionToJsTree)
+      .function("clone", &typedClone)
+      .function("cloneChildAtIndex", &typedCloneChildAtIndex)
       .function("cloneAndBeautify", &typedCloneAndBeautify)
       .function("getSystemFunction", &typedGetSystemFunction)
       .function("getReducedDerivative", &typedGetReducedDerivative)

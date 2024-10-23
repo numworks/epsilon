@@ -31,11 +31,8 @@ class Simplification {
 
  private:
   static void ApplySimplify(const Tree* dataTree,
-                            ProjectionContext* projectionContext,
-                            bool advanced);
-  static void ApplyProjectAndReduce(const Tree* dataTree,
-                                    ProjectionContext* projectionContext,
-                                    bool advanced);
+                            ProjectionContext* projectionContext, bool advanced,
+                            bool beautify);
 
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
   static bool ApplyStrategy(Tree* e, Strategy strategy, bool reduceIfSuccess);

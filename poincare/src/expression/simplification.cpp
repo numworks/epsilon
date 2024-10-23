@@ -55,7 +55,7 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
   ExceptionTry {
     // Clone the tree, and use an adaptive strategy to handle pool overflow.
     SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                           RelaxProjectionContext, true);
+                                           RelaxProjectionContext, true, true);
   }
   ExceptionCatch(type) { return false; }
   return true;
@@ -64,14 +64,14 @@ bool Simplification::SimplifyWithAdaptiveStrategy(
 void Simplification::ProjectAndReduceWithAdaptiveStrategy(
     Tree* e, ProjectionContext* projectionContext, bool advanced) {
   // TODO_PCJ: Add ExceptionTry just like in SimplifyWithAdaptiveStrategy?
-  SharedTreeStack->executeAndReplaceTree(ApplyProjectAndReduce, e,
-                                         projectionContext,
-                                         RelaxProjectionContext, advanced);
+  SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
+                                         RelaxProjectionContext, advanced,
+                                         false);
 }
 
 void Simplification::ApplySimplify(const Tree* dataTree,
                                    ProjectionContext* projectionContext,
-                                   bool advanced) {
+                                   bool advanced, bool beautify) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -95,21 +95,15 @@ void Simplification::ApplySimplify(const Tree* dataTree,
   }
 
   ProjectAndReduce(e, projectionContext, advanced);
-  BeautifyReduced(e, projectionContext);
+  if (beautify) {
+    BeautifyReduced(e, projectionContext);
+  }
 
   if (isStore) {
     // Restore the store structure
     dataTree->child(1)->cloneTree();
     e->cloneNodeAtNode(dataTree);
   }
-}
-
-void Simplification::ApplyProjectAndReduce(const Tree* dataTree,
-                                           ProjectionContext* projectionContext,
-                                           bool advanced) {
-  assert(!dataTree->isStore());
-  Tree* treeClone = dataTree->cloneTree();
-  ProjectAndReduce(treeClone, projectionContext, advanced);
 }
 
 void Simplification::ProjectAndReduce(Tree* e,

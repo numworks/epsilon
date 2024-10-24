@@ -350,6 +350,7 @@ bool Beautification::TurnIntoPolarForm(
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
+  // Do not reduce exp to preserve exp(A*i) form with A within ]-π,π]
   SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
     AdvancedReduction::Reduce(abs);

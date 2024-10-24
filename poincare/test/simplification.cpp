@@ -355,6 +355,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(exp(i*π*10))", "0", ctx);
   simplifies_to("arg(exp(-i*π))", "π", ctx);
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
+  simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", ctx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {
@@ -376,6 +377,8 @@ QUIZ_CASE(pcj_simplification_polar) {
   // TODO: Improve sign detection
   simplifies_to("-1+π", "abs(-1+π)×e^(arg(-1+π)×i)", polarCtx);
   simplifies_to("1-π", "abs(1-π)×e^(arg(1-π)×i)", polarCtx);
+  // TODO: Simplify arg between ]-π,π]
+  simplifies_to("e^((534/7)×i)", "e^(arg(e^(534/7×i))×i)", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {

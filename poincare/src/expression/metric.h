@@ -3,7 +3,7 @@
 
 #include <poincare/src/memory/tree.h>
 
-#define USE_TREE_SIZE_METRIC 1
+#define USE_TREE_SIZE_METRIC 0
 
 namespace Poincare::Internal {
 

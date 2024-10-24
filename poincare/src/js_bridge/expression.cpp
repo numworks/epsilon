@@ -1,15 +1,18 @@
 #include <emscripten/bind.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/src/expression/symbol.h>
+#include <poincare/old/symbol_abstract.h>
 
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-// Only works on symbols expressions
 std::string symbolName(const JuniorExpression& expr) {
-  return std::string(Internal::Symbol::GetName(expr.tree()),
-                     Internal::Symbol::Length(expr.tree()));
+  if (!expr.isUserSymbol() && !expr.isUserFunction()) {
+    // Only works on symbols expressions
+    return std::string();
+  }
+  const char* name = static_cast<const SymbolAbstract&>(expr).name();
+  return std::string(name, strlen(name));
 }
 
 EMSCRIPTEN_BINDINGS(junior_expression) {

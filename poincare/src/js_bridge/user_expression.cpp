@@ -42,9 +42,15 @@ TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
 
 TypedUserExpression BuildFromLatex(std::string latex) {
   EmptyContext context;
-
   return TypedUserExpression::Cast(
       JuniorExpression::ParseLatex(latex.c_str(), &context));
+}
+
+TypedUserExpression BuildFromLatexWithAssignmentParam(std::string latex,
+                                                      bool parseForAssignment) {
+  EmptyContext context;
+  return TypedUserExpression::Cast(JuniorExpression::ParseLatex(
+      latex.c_str(), &context, true, parseForAssignment));
 }
 
 // === 1.3. Build from pattern ===
@@ -502,6 +508,7 @@ EMSCRIPTEN_BINDINGS(user_expression) {
       .class_function("BuildFloat", &BuildUserFloat)
       .class_function("BuildRational", &BuildUserRational)
       .class_function("BuildFromLatex", &BuildFromLatex)
+      .class_function("BuildFromLatex", &BuildFromLatexWithAssignmentParam)
       .class_function("BuildFromPattern", &BuildFromPattern<>)
       .BIND_BUILD_FROM_PATTERN(1)
       .BIND_BUILD_FROM_PATTERN(2)

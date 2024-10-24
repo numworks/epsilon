@@ -26,8 +26,6 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("isUndefined", &JuniorExpression::isUndefined)
       .function("isNAry", &JuniorExpression::isNAry)
       .function("isApproximate", &JuniorExpression::isApproximate)
-      .function("isPlusOrMinusInfinity",
-                &JuniorExpression::isPlusOrMinusInfinity)
       .function("isPercent", &JuniorExpression::isPercent)
       .function("isSequence", &JuniorExpression::isSequence)
       .function("isIntegral", &JuniorExpression::isIntegral)

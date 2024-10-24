@@ -88,7 +88,9 @@ EMSCRIPTEN_BINDINGS(system_expression) {
       .function("getSystemFunction", &typedGetSystemFunction)
       .function("getReducedDerivative", &typedGetReducedDerivative)
       .function("approximateToTree", &typedApproximateToTree)
-      .function("approximateToScalar", &typedApproximateToScalar);
+      .function("approximateToScalar", &typedApproximateToScalar)
+      .function("isPlusOrMinusInfinity",
+                &JuniorExpression::isPlusOrMinusInfinity);
 }
 
 }  // namespace Poincare::JSBridge

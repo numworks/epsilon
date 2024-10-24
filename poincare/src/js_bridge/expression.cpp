@@ -1,9 +1,16 @@
 #include <emscripten/bind.h>
 #include <poincare/old/junior_expression.h>
+#include <poincare/src/expression/symbol.h>
 
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
+
+// Only works on symbols expressions
+std::string symbolName(const JuniorExpression& expr) {
+  return std::string(Internal::Symbol::GetName(expr.tree()),
+                     Internal::Symbol::Length(expr.tree()));
+}
 
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
@@ -42,6 +49,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("isPureAngleUnit", &JuniorExpression::isPureAngleUnit)
       .function("allChildrenAreUndefined",
                 &JuniorExpression::allChildrenAreUndefined)
+      .function("symbolName", &symbolName);
 }
 
 }  // namespace Poincare::JSBridge

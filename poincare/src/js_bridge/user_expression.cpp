@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "expression_types.h"
+#include "typed_expression.h"
 
 using namespace emscripten;
 using namespace Poincare::Internal;

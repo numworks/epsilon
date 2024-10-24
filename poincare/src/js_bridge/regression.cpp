@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "expression_types.h"
+#include "typed_expression.h"
 #include "utils.h"
 
 using namespace emscripten;

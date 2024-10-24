@@ -1,4 +1,4 @@
-#include "expression_types.h"
+#include "typed_expression.h"
 
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>

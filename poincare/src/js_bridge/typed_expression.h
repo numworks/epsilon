@@ -15,7 +15,7 @@ class TypedExpression : public JuniorExpression {
  public:
   /* Bind JavaScript val type. It represents an Uint8Array which is used to
    * store typed trees from Poincare in the JS heap.
-   * This relies on the fact that  the JsTree types are globally defined in
+   * This relies on the fact that the JsTree types are globally defined in
    * poincare-partial.js
    * https://emscripten.org/docs/porting/connecting_cpp_and_javascript/embind.html#custom-val-definitions
    * */
@@ -24,8 +24,9 @@ class TypedExpression : public JuniorExpression {
   TypedExpression() : JuniorExpression() {}
 
   static inline TypedExpression Cast(JuniorExpression expr) {
-    /* WARNING: This is safe as long as TypedExpression doesn't have more
-     * attributes than JuniorExpression. */
+    /* WARNING: The down-casting of JuniorExpression itno TypedExpression
+     * is possible only because TypedExpressions don't have more member
+     * variables than JuniorExpression. */
     static_assert(sizeof(TypedExpression) == sizeof(JuniorExpression));
     return *reinterpret_cast<TypedExpression*>(&expr);
   }

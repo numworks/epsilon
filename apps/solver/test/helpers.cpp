@@ -145,13 +145,15 @@ static void compareSolutions(SystemOfEquations* system,
     if (obtainedLayout.isUninitialized()) {
       obtainedLayout = system->solution(i)->approximateLayout();
     }
-    constexpr int bufferSize = 200;
+    constexpr int bufferSize = 500;
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer, bufferSize);
+    Expression parsedExpression =
+        Expression::Parse(obtainedLayoutBuffer, solverContext, false);
+    quiz_assert(!parsedExpression.isUninitialized());
     Expression obtainedExpression =
-        Expression::Parse(obtainedLayoutBuffer, solverContext, false)
-            .cloneAndReduce(ReductionContext{});
-
+        parsedExpression.cloneAndReduce(ReductionContext{});
+    quiz_assert(!obtainedExpression.isUninitialized());
     quiz_assert(
         !expectedExpression.isUninitialized() &&
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));

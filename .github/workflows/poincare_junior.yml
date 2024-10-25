@@ -60,4 +60,4 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
-      - run: make -j8 -f poincare/Makefile PLATFORM=foxglove EMIT_TSD=0 poincare.js.run
+      - run: make -j8 -f poincare/Makefile PLATFORM=foxglove ASSERTIONS=1 EMIT_TSD=0 poincare.js.run

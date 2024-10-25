@@ -446,6 +446,7 @@ UserExpression ProjectedExpression::cloneAndBeautify(
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
   Tree* e = tree()->cloneTree();
+  context.m_dimension = Internal::Dimension::Get(e);
   Simplification::BeautifyReduced(e, &context);
   return Builder(e);
 }

@@ -24,9 +24,18 @@ QUIZ_CASE(pcj_latex_to_layout) {
       "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}",
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))));
+  // Integral
   assert_latex_layouts_to(
-      "\\int_{1}^{2}t^{3}\\ dt",
-      KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))));
+      "\\int_{0}^{1}t^{3}\\ dt",
+      KRackL(KIntegralL("t"_l, "0"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to(
+      "\\int_{0}^{1}z^{3}\\ dz\\ +3",
+      KRackL(KIntegralL("z"_l, "0"_l, "1"_l, "z"_l ^ KSuperscriptL("3"_l)),
+             "+"_cl, "3"_cl));
+  assert_latex_layouts_to("\\int_{0}^{1}abc^{3}\\ dabc",
+                          KRackL(KIntegralL("abc"_l, "0"_l, "1"_l,
+                                            "abc"_l ^ KSuperscriptL("3"_l))));
+  // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^
                               KCodePointL<UCodePointSuperiorEqual>() ^

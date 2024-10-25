@@ -35,12 +35,15 @@ constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
                                                "}"};
 constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
 /* There is no easy way to know the end of an integral in Latex.
- * We rely on the fact that the user makes it end with " dt"
+ * We rely on the fact that the user makes it end with " d${var}"
  *  Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ dt
+ *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ d\Symbol
+ * This fails:
+ * - If the integrand contains a "d"
+ * - If the integral isn't followed by a space or at the end of the string
  * */
-constexpr static const char* integralToken[] = {"\\int_{", "\1", "}^{",  "\2",
-                                                "}",       "\3", "\\ dt"};
+constexpr static const char* integralToken[] = {
+    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", "\\ "};
 
 // Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};
@@ -126,11 +129,10 @@ constexpr static LatexToken k_tokens[] = {
     // Binomial
     TWO_CHILDREN_TOKEN(binomToken, isBinomialLayout, KBinomialL),
     // Integral
-    // For now, you can only integrate in x
     {integralToken, std::size(integralToken),
      [](const Tree* l) -> bool { return l->isIntegralLayout(); },
      []() -> Tree* {
-       return KIntegralL("t"_l, KRackL(), KRackL(), KRackL())->cloneTree();
+       return KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
@@ -165,7 +167,8 @@ constexpr static LatexToken k_tokens[] = {
 Tree* NextLatexToken(const char** start);
 
 void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
-                                     const char* endIdentifier) {
+                                     const char* endIdentifier,
+                                     bool optionalEndIdentifier) {
   size_t endLen = strlen(endIdentifier);
   while (**start != 0 &&
          (endLen == 0 || strncmp(*start, endIdentifier, endLen) != 0)) {
@@ -175,9 +178,13 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
     }
   }
 
-  if (**start == 0 && endLen > 0) {
-    // endIdentifier couldn't be found
+  if (**start == 0 && endLen > 0 && !optionalEndIdentifier) {
+    /* endIdentifier couldn't be found */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+
+  if (**start != 0) {
+    *start += endLen;
   }
 }
 
@@ -193,14 +200,21 @@ Tree* NextLatexToken(const char** start) {
     Tree* layoutToken = token.constructor();
 
     // Parse children
-    for (int i = 1; i < token.descriptionLength; i += 2) {
+    for (int i = 1; i < token.descriptionLength - 1; i += 2) {
       assert(strlen(token.description[i]) <= 1);
       int childIndexInLayout = token.description[i][0];
       const char* rightDelimiter = token.description[i + 1];
+
+      /* If the last delimiter is a space, it's only to be separated from
+       * the next token, so it can be omitted if at the end of the string.
+       * This currently only applies to integral. */
+      bool optionalRightDelimiter =
+          i == token.descriptionLength - 2 &&
+          strncmp(rightDelimiter, "\\ ", strlen("\\ ")) == 0;
+
       ParseLatexOnRackUntilIdentifier(
           Rack::From(layoutToken->child(childIndexInLayout)), start,
-          rightDelimiter);
-      *start += strlen(rightDelimiter);
+          rightDelimiter, optionalRightDelimiter);
     }
 
     return layoutToken;
@@ -216,7 +230,7 @@ Tree* NextLatexToken(const char** start) {
 Tree* LatexToLayout(const char* latexString) {
   ExceptionTry {
     Tree* result = KRackL()->cloneTree();
-    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "");
+    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "", true);
     return result;
   }
   ExceptionCatch(type) {

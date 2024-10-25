@@ -172,9 +172,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   if (!result.isUninitialized()) {
     context->variables.fillWithList(userSymbols);
     for (const Tree* symbol : userSymbols->children()) {
-      Variables::LeaveScopeWithReplacement(result, symbol, false);
-      // LeaveScopeWithReplacement can return dependencies
-      Dependency::DeepRemoveUselessDependencies(result);
+      Variables::LeaveScopeWithReplacement(result, symbol, false, false);
     }
     // Replace additional unknown parameter variables (t1, t2, ...)
     context->numberOfVariables -= userSymbols->numberOfChildren();
@@ -187,7 +185,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
         // Generate a unique identifier t? that does not collide with variables.
         TreeRef symbol = getNextParameterSymbol(
             &parameterIndex, usedParameterIndices, projectionContext.m_context);
-        Variables::LeaveScopeWithReplacement(result, symbol, false);
+        Variables::LeaveScopeWithReplacement(result, symbol, false, false);
         symbol->removeTree();
       }
     }

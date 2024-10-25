@@ -77,14 +77,14 @@ bool Derivation::Reduce(Tree* e) {
     }
   }
 
-  Variables::LeaveScopeWithReplacement(derivative, symbolValue, true);
+  Variables::LeaveScopeWithReplacement(derivative, symbolValue, true, false);
 
   // Add a dependency on initial derivand if anything has been derived.
   if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
     SharedTreeStack->pushDepList(1);
     Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
-                                         symbolValue, false);
+                                         symbolValue, false, true);
     derivative->cloneNodeAtNode(KDep);
     SystematicReduction::ShallowReduce(derivative->child(1));
     SystematicReduction::ShallowReduce(derivative);

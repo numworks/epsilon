@@ -76,6 +76,27 @@ bool Variables::HasUserSymbols(const Tree* e) {
       [](const Tree* e) { return e->isUserSymbol(); });
 }
 
+bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
+                                          bool simplify,
+                                          bool canHaveDependencyInValue) {
+  bool changed = Replace(e, 0, value, true, simplify);
+  if (!changed && canHaveDependencyInValue) {
+    /* Add a dependency in the value if it is leaving the scope of the
+     * expression but it does not appear in the expression. */
+    /* TODO We need to track the replacement value only if it is in the pool and
+     * after e. Cloning is overkill but easy. */
+    TreeRef valueRef = value->cloneTree();
+    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
+                                                {.KA = e, .KB = valueRef}));
+    if (simplify) {
+      SystematicReduction::ShallowReduce(e);
+    }
+    valueRef->removeTree();
+    return true;
+  }
+  return changed;
+}
+
 bool Variables::Replace(Tree* e, const Tree* variable, const Tree* value,
                         bool simplify) {
   assert(variable->isVar());
@@ -88,16 +109,6 @@ bool Variables::Replace(Tree* e, int id, const Tree* value, bool leave,
    * after e. Cloning is overkill but easy. */
   TreeRef valueRef = value->cloneTree();
   bool result = Replace(e, id, valueRef, leave, simplify);
-  /* Add a dependency in the value if it is leaving the scope of the expression
-   * but it does not appear in the expression. */
-  if (leave && !result) {
-    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
-                                                {.KA = e, .KB = valueRef}));
-    if (simplify) {
-      SystematicReduction::ShallowReduce(e);
-    }
-    result = true;
-  }
   valueRef->removeTree();
   return result;
 }

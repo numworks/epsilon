@@ -129,6 +129,18 @@ inline Result ApplyPreservingReference(Result treeFunction(Tree*, Args...),
     return ApplyPreservingReference(F, r, u1, u2);    \
   }
 
+/* Three arguments */
+#define TREE_REF_WRAP_3(F, T1, T2, T3)                 \
+  static bool F(TreeRef& r, T1 u1, T2 u2, T3 u3) {     \
+    return ApplyPreservingReference(F, r, u1, u2, u3); \
+  }
+
+/* Three arguments with default value */
+#define TREE_REF_WRAP_3D(F, T1, D1, T2, D2, T3, D3)               \
+  static bool F(TreeRef& r, T1 u1 = D1, T2 u2 = D2, T3 u3 = D3) { \
+    return ApplyPreservingReference(F, r, u1, u2, u3);            \
+  }
+
 void CloneNodeAtNode(TreeRef& target, const Tree* nodeToClone);
 void CloneTreeAtNode(TreeRef& target, const Tree* treeToClone);
 

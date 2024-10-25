@@ -70,10 +70,9 @@ class Variables {
   // Decrement variables indexes
   static void LeaveScope(Tree* e) { return EnterOrLeaveScope(e, false, 0); }
   static bool LeaveScopeWithReplacement(Tree* e, const Tree* value,
-                                        bool simplify) {
-    return Replace(e, 0, value, true, simplify);
-  }
-  TREE_REF_WRAP_2(LeaveScopeWithReplacement, const Tree*, bool);
+                                        bool simplify,
+                                        bool canHaveDependencyInValue);
+  TREE_REF_WRAP_3(LeaveScopeWithReplacement, const Tree*, bool, bool);
 
  private:
   // Variables below preserveUnder are considered local and preserved

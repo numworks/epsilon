@@ -58,14 +58,8 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
         if (e->isDiff()) {
           // diff(dep(x, {ln(x), z}), x, y) -> dep(diff(x, x, y), {ln(y), z})
           const Tree* symbolValue = e->child(1);
-          Variables::LeaveScopeWithReplacement(childSet, symbolValue, false);
-          // LeaveScopeWithReplacement can return a dependency
-          if (childSet->isDep()) {
-            assert(Main(childSet)->isDepList());
-            // dep(depList(A), depList(B)) -> depList(A,B)
-            Set::Union(Main(childSet), Dependencies(childSet));
-            childSet->removeNode();
-          }
+          Variables::LeaveScopeWithReplacement(childSet, symbolValue, false,
+                                               false);
         } else {
           /* sum(dep(k, {f(k), z}), k, 1, n) ->
            * dep(sum(k, k, 1, n), {sum(f(k), k, 1, n), z})

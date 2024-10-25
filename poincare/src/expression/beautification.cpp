@@ -324,19 +324,26 @@ bool Beautification::TurnIntoPolarForm(
   if (e->isUndefined()) {
     return false;
   }
-  // Apply element-wise on explicit lists and matrices
-  if (e->isMatrix() || (dim.isScalar() && e->isList())) {
+  // Apply element-wise on explicit lists, matrices, sets. Skip DepList.
+  if (e->isMatrix() || e->isSet() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
       assert(Dimension::Get(child).isScalar());
       changed |=
           TurnIntoPolarForm(child, Dimension::Scalar(), projectionContext);
+      if (e->isDep()) {
+        // Skip DepList
+        break;
+      }
     }
+    // Bubble up any dependencies that have appeared
+    changed = Dependency::ShallowBubbleUpDependencies(e) || changed;
     return changed;
   }
   if (!dim.isScalar()) {
     return false;
   }
+  assert(!e->isDepList());
   /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
    * If abs or arg stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushMult(2);

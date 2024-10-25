@@ -224,6 +224,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(-3i)", "3");
   // TODO: Metric: 3×abs(x)
   simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
+  simplifies_to("abs(1+i)", "√(2)", cartesianCtx);
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
   simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{0×√(c^2)})");

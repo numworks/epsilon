@@ -433,7 +433,11 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     // TODO: Use ComplexSign or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
+    // TODO_PCJ: Prevent having to update ctx here.
+    Internal::Dimension previousDimension = ctx.m_dimension;
+    ctx.m_dimension = Internal::Dimension::Get(determinant, ctx.m_context);
     determinantL = CreateBeautifiedLayout(determinant, &ctx);
+    ctx.m_dimension = previousDimension;
     matrixClone->removeTree();
 
     /* 2. Matrix inverse if invertible matrix
@@ -458,7 +462,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
 
   // 5. Matrix trace if square matrix
   if (isSquared) {
-    traceL = CreateBeautifiedLayout(Internal::Matrix::Trace(matrix), &ctx);
+    Tree* trace = Internal::Matrix::Trace(matrix);
+    // TODO_PCJ: Prevent having to update ctx here.
+    ctx.m_dimension = Internal::Dimension::Get(trace, ctx.m_context);
+    traceL = CreateBeautifiedLayout(trace, &ctx);
   }
 
   matrix->removeTree();

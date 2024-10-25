@@ -9,7 +9,6 @@ EXECUTABLE_EXTENSION := js
 
 # Modules should add EXPORTED_FUNCTIONS and EXPORTED_RUNTIME_METHODS to LDFLAGS.
 LDFLAGS += \
-  -Oz \
   -s ASYNCIFY=$(_emscripten_asyncify) \
   -s EXPORT_NAME="$(APP_NAME)" \
   -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) \
@@ -21,9 +20,15 @@ endif
 
 ifneq ($(DEBUG),0)
 LDFLAGS += \
+  -O0 \
   --profiling-funcs \
   -s ASSERTIONS=1 \
   -s SAFE_HEAP=1 \
   -s STACK_OVERFLOW_CHECK=1
+else
+# TODO: Should this be:
+# - Oz ? (small size, slower)
+# - O3 ? (large size, faster)
+# - Os ? (in between)
+LDFLAGS += -Oz
 endif
-

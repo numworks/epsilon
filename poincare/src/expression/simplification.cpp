@@ -122,7 +122,8 @@ void Simplification::BeautifyReduced(Tree* e,
                                      ProjectionContext* projectionContext) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
-  assert(projectionContext->m_dimension == Dimension::Get(e));
+  assert(e->isUndefined() ||
+         projectionContext->m_dimension == Dimension::Get(e));
   HandleUnits(e, projectionContext);
   Beautification::DeepBeautify(e, *projectionContext);
 }

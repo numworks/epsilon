@@ -11,10 +11,33 @@
 
 namespace Poincare::Internal {
 
+int Metric::BigValueMetric(const Tree* e) {
+  assert(e->isRational());
+  int result;
+  switch (e->type()) {
+    case Type::RationalNegBig:
+      result = GetMetric(Type::RationalNegShort);
+    case Type::RationalPosBig:
+      result = GetMetric(Type::RationalPosShort);
+    case Type::IntegerNegBig:
+      result = GetMetric(Type::IntegerNegShort);
+    case Type::IntegerPosBig:
+      result = GetMetric(Type::IntegerPosShort);
+    default:
+      result = k_defaultMetric;
+  }
+  return result * e->nodeSize();
+}
+
 int Metric::GetMetric(const Tree* e) {
   int result = GetMetric(e->type());
   PatternMatching::Context ctx;
   switch (e->type()) {
+    case Type::RationalNegBig:
+    case Type::RationalPosBig:
+    case Type::IntegerNegBig:
+    case Type::IntegerPosBig:
+      return BigValueMetric(e);
     case Type::Mult: {
       // Ignore (-1) in multiplications
       if (e->child(0)->isMinusOne()) {
@@ -78,6 +101,9 @@ int Metric::GetMetric(Type type) {
     case Type::Two:
     case Type::MinusOne:
       return k_defaultMetric / 3;
+    case Type::IntegerNegShort:
+    case Type::IntegerPosShort:
+      return k_defaultMetric / 2;
     default:
       return k_defaultMetric;
     case Type::PowReal:

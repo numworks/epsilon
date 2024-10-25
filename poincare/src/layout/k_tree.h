@@ -157,8 +157,9 @@ consteval auto operator"" _cl() {
 
 // rack ^ rack
 template <Block N1, Block... B1, Block N2, Block... B2>
-consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
-                         KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
+consteval auto operator^(
+    SimpleKTrees::KTree<Type::RackSimpleLayout, N1, 0, B1...>,
+    SimpleKTrees::KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2) < 256);
   return KTree<Type::RackSimpleLayout,
                Block(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2)), 0,
@@ -168,8 +169,9 @@ consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
 // rack ^ layout
 template <Block N1, Block... B1, Block T2, Block... B2>
   requires(Type(uint8_t(T2)) != Type::RackSimpleLayout)
-consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
-                         KTree<T2, B2...>) {
+consteval auto operator^(
+    SimpleKTrees::KTree<Type::RackSimpleLayout, N1, 0, B1...>,
+    SimpleKTrees::KTree<T2, B2...>) {
   static_assert(static_cast<uint8_t>(N1) < 255);
   return KTree<Type::RackSimpleLayout, Block(static_cast<uint8_t>(N1) + 1), 0,
                B1..., T2, B2...>();
@@ -178,8 +180,9 @@ consteval auto operator^(KTree<Type::RackSimpleLayout, N1, 0, B1...>,
 // layout ^ rack
 template <Block T1, Block... B1, Block N2, Block... B2>
   requires(Type(uint8_t(T1)) != Type::RackSimpleLayout)
-consteval auto operator^(KTree<T1, B1...>,
-                         KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
+consteval auto operator^(
+    SimpleKTrees::KTree<T1, B1...>,
+    SimpleKTrees::KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N2) < 255);
   return KTree<Type::RackSimpleLayout, Block(static_cast<uint8_t>(N2) + 1), 0,
                T1, B1..., B2...>();
@@ -189,7 +192,8 @@ consteval auto operator^(KTree<T1, B1...>,
 template <Block T1, Block... B1, Block T2, Block... B2>
   requires(Type(uint8_t(T1)) != Type::RackSimpleLayout &&
            Type(uint8_t(T2)) != Type::RackSimpleLayout)
-consteval auto operator^(KTree<T1, B1...>, KTree<T2, B2...>) {
+consteval auto operator^(SimpleKTrees::KTree<T1, B1...>,
+                         SimpleKTrees::KTree<T2, B2...>) {
   return KTree<Type::RackSimpleLayout, 2, 0, T1, B1..., T2, B2...>();
 }
 

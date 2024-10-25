@@ -9,7 +9,7 @@ QUIZ_CASE(pcj_tree_stack) {
   TreeStack* stack = SharedTreeStack;
   stack->flush();
 
-  constexpr KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr SimpleKTrees::KTree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Tree* handingNode = k_expression;
   Tree* editedNode = handingNode->cloneTree();
   quiz_assert(stack->size() == handingNode->treeSize());
@@ -57,9 +57,9 @@ QUIZ_CASE(pcj_tree_stack) {
 QUIZ_CASE(pcj_tree_ref) {
   SharedTreeStack->flush();
 
-  constexpr KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
-  constexpr KTree k_subExpr1 = 6_e;
-  constexpr KTree k_expr1 = KPow(KSub(5_e, k_subExpr1), 7_e);
+  constexpr SimpleKTrees::KTree k_expr0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr SimpleKTrees::KTree k_subExpr1 = 6_e;
+  constexpr SimpleKTrees::KTree k_expr1 = KPow(KSub(5_e, k_subExpr1), 7_e);
 
   // Operator ==
   TreeRef ref0;

@@ -11,157 +11,195 @@
 #include "tree.h"
 
 namespace Poincare::Internal {
-namespace KTrees {
 
-// https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
-// https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
+using namespace KTrees;
 
-/* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
- * and set the value blocks as expected but it cannot be filled in a constexpr
- * way since it is of size zero.
- * This sub-class adds an array member m_valueBlock[] of the suitable size.
- *
- * As an alternative, we could use a real flexible member directly in Tree but
- * Clang does not accept flexible members in base classes even when inherited
- * classes (Rack...) have no members. */
-template <size_t N>
-struct ConstexprTree : public Tree {
-  template <class... Blocks>
-  consteval ConstexprTree(Block type, Blocks... blocks)
-      : Tree(static_cast<Type>(static_cast<uint8_t>(type))),
-        m_valueBlocks{
-            static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
+template <typename TSC>
+struct KTreesImplementation {
+  // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
+  // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
-  ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
+  /* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
+   * and set the value blocks as expected but it cannot be filled in a constexpr
+   * way since it is of size zero.
+   * This sub-class adds an array member m_valueBlock[] of the suitable size.
+   *
+   * As an alternative, we could use a real flexible member directly in Tree but
+   * Clang does not accept flexible members in base classes even when inherited
+   * classes (Rack...) have no members. */
+  template <size_t N>
+  struct ConstexprTree : public TSC {
+    template <class... Blocks>
+    consteval ConstexprTree(Block type, Blocks... blocks)
+        : TSC(static_cast<Type>(static_cast<uint8_t>(type))),
+          m_valueBlocks{
+              static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
+
+    ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
 #if ASSERTIONS
-  // Marker used by assertion to ensure we never access out
-  ValueBlock m_border = static_cast<uint8_t>(Type::TreeBorder);
+    // Marker used by assertion to ensure we never access out
+    ValueBlock m_border = static_cast<uint8_t>(Type::TreeBorder);
 #endif
+  };
+
+  /* The KTree template class is the compile time representation of a constexpr
+   * tree. Its complete block representation is specified as template parameters
+   * in order to be able to use the address of the static singleton (in flash)
+   * as a Tree*. It also eliminated identical trees since their are all using
+   * the same specialized function. */
+  template <Block... Blocks>
+  struct KTree : public AbstractKTree {
+    static constexpr size_t k_size = sizeof...(Blocks);
+    static_assert(k_size > 0);
+    static constexpr Block k_blocks[k_size] = {Blocks...};
+    static constexpr ConstexprTree<k_size> k_tree{Blocks...};
+    constexpr operator const TSC*() const { return &k_tree; }
+    constexpr TypeBlock type() { return k_tree.type(); }
+    const TSC* operator->() const { return operator const TSC*(); }
+  };
+
+  /* Helper to concatenate KTrees */
+
+  /* Usage:
+   * template <Block Tag, KTreeConcept CT1, KTreeConcept CT2> consteval auto
+   * Binary(CT1, CT2) { return Concat<Tree<Tag>, CT1, CT2>();
+   * }
+   */
+
+  template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
+            typename IS = decltype(std::make_index_sequence<N1 + N2>())>
+  struct __BlockConcat;
+
+  template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
+            std::size_t... I>
+  struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
+    using tree = KTree<((I < N1) ? B1[I] : B2[I - N1])...>;
+  };
+
+  template <KTreeConcept CT1, KTreeConcept CT2>
+  using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks,
+                                             CT2::k_size, CT2::k_blocks>::tree;
+
+  template <KTreeConcept CT1, KTreeConcept... CT>
+  struct Concat;
+  template <KTreeConcept CT1>
+  struct Concat<CT1> : CT1 {};
+  template <KTreeConcept CT1, KTreeConcept... CT>
+  struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
+
+  // Helpers
+
+  template <Block Tag, Block... ExtraValues>
+    requires(TypeBlock(Type(Tag.m_content)).nodeSize() ==
+             sizeof...(ExtraValues) + 1)
+  struct KUnary : public KTree<Tag, ExtraValues...> {
+    template <Block... B1>
+    consteval auto operator()(KTree<B1...>) const {
+      return KTree<Tag, ExtraValues..., B1...>();
+    }
+
+    /* The following dummy constructor is here to make the error message clearer
+     * when someone tries to use a Tree* inside a KTree constructor.  Without
+     * these you get "no matching function for call to 'Unary'" and details on
+     * why each candidate concept is unmatched.  With these constructors, they
+     * match and then you get a "call to consteval function ... is not a
+     * constant expression" since they are marked consteval. */
+    consteval const TSC* operator()(const TSC* a) const { return nullptr; }
+  };
+
+  template <Block Tag, Block... ExtraValues>
+  struct KBinary : public KTree<Tag, ExtraValues...> {
+    template <Block... B1, Block... B2>
+    consteval auto operator()(KTree<B1...>, KTree<B2...>) const {
+      return KTree<Tag, ExtraValues..., B1..., B2...>();
+    }
+
+    consteval const TSC* operator()(const TSC* a, const TSC* b) const {
+      return nullptr;
+    }
+  };
+
+  template <size_t Nb, Block Tag, Block... ExtraValues>
+  struct KFixedArity : public KTree<Tag, ExtraValues...> {
+    template <KTreeConcept... CTS>
+      requires(sizeof...(CTS) == Nb)
+    consteval auto operator()(CTS...) const {
+      return Concat<KTree<Tag, ExtraValues...>, CTS...>();
+    }
+
+    template <class... Args>
+      requires(HasATreeConcept<TSC, Args...> && sizeof...(Args) == Nb)
+    consteval const TSC* operator()(Args... args) const {
+      return nullptr;
+    }
+  };
+
+  template <Block Tag, Block... ExtraValues>
+  struct KNAry {
+    template <KTreeConcept... CTS>
+    consteval auto operator()(CTS...) const {
+      return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
+    }
+
+    template <size_t Nb>
+    static constexpr KTree<Tag, Nb, ExtraValues...> node{};
+
+    template <class... Args>
+      requires HasATreeConcept<TSC, Args...>
+    consteval const TSC* operator()(Args... args) const {
+      return nullptr;
+    }
+  };
+
+  template <Block Tag>
+  struct KNAry16 {
+    template <KTreeConcept... CTS>
+    consteval auto operator()(CTS... args) const {
+      return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
+    }
+
+    template <size_t Nb>
+    static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
+  };
+
+  // KTree for Arbitrary
+
+  template <auto data,
+            typename IS = decltype(std::make_index_sequence<sizeof(data)>())>
+  struct _KArbitraryHelper;
+
+  template <auto data, std::size_t... I>
+  struct _KArbitraryHelper<data, std::index_sequence<I...>>
+      : KNAry<Type::Arbitrary, sizeof(data) & 0xFF, (sizeof(data) >> 8),
+              std::bit_cast<std::array<uint8_t, sizeof(data)>>(data)[I]...> {};
+
+  /* WARNING: data may not have implicit padding, as it leads to uninitialized
+   * bytes, which are not permitted in bit_cast. You must declare padding
+   * explicitly: e.g. struct { int a; bool b; bool padding[3] = {0, 0, 0}; }*/
+  template <auto data>
+  constexpr static auto KArbitrary = _KArbitraryHelper<data>();
+
+  // KTree for Placeholder
+
+  template <Placeholder::Tag T, Placeholder::Filter F>
+  struct KPlaceholderFilter
+      : public KTree<Type::Placeholder, Placeholder::ParamsToValue(T, F)> {
+    static constexpr Placeholder::Tag k_tag = T;
+  };
+
+  template <Placeholder::Tag Tag>
+  using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::One>;
+
+  template <Placeholder::Tag Tag>
+  using KOneOrMorePlaceholder =
+      KPlaceholderFilter<Tag, Placeholder::Filter::OneOrMore>;
+
+  template <Placeholder::Tag Tag>
+  using KZeroOrMorePlaceholder =
+      KPlaceholderFilter<Tag, Placeholder::Filter::ZeroOrMore>;
 };
 
-/* The KTree template class is the compile time representation of a constexpr
- * tree. Its complete block representation is specified as template parameters
- * in order to be able to use the address of the static singleton (in flash) as
- * a Tree*. It also eliminated identical trees since their are all using the
- * same specialized function. */
-template <Block... Blocks>
-struct KTree : public AbstractKTree {
-  static constexpr size_t k_size = sizeof...(Blocks);
-  static_assert(k_size > 0);
-  static constexpr Block k_blocks[k_size] = {Blocks...};
-  static constexpr ConstexprTree<k_size> k_tree{Blocks...};
-  constexpr operator const Tree*() const { return &k_tree; }
-  constexpr TypeBlock type() { return k_tree.type(); }
-  const Tree* operator->() const { return operator const Tree*(); }
-};
-
-/* Helper to concatenate KTrees */
-
-/* Usage:
- * template <Block Tag, KTreeConcept CT1, KTreeConcept CT2> consteval auto
- * Binary(CT1, CT2) { return Concat<Tree<Tag>, CT1, CT2>();
- * }
- */
-
-template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
-          typename IS = decltype(std::make_index_sequence<N1 + N2>())>
-struct __BlockConcat;
-
-template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
-          std::size_t... I>
-struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
-  using tree = KTree<((I < N1) ? B1[I] : B2[I - N1])...>;
-};
-
-template <KTreeConcept CT1, KTreeConcept CT2>
-using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks,
-                                           CT2::k_size, CT2::k_blocks>::tree;
-
-template <KTreeConcept CT1, KTreeConcept... CT>
-struct Concat;
-template <KTreeConcept CT1>
-struct Concat<CT1> : CT1 {};
-template <KTreeConcept CT1, KTreeConcept... CT>
-struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
-
-// Helpers
-
-template <Block Tag, Block... ExtraValues>
-  requires(TypeBlock(Type(Tag.m_content)).nodeSize() ==
-           sizeof...(ExtraValues) + 1)
-struct KUnary : public KTree<Tag, ExtraValues...> {
-  template <Block... B1>
-  consteval auto operator()(KTree<B1...>) const {
-    return KTree<Tag, ExtraValues..., B1...>();
-  }
-
-  /* The following dummy constructor is here to make the error message clearer
-   * when someone tries to use a Tree* inside a KTree constructor.  Without
-   * these you get "no matching function for call to 'Unary'" and details on
-   * why each candidate concept is unmatched.  With these constructors, they
-   * match and then you get a "call to consteval function ... is not a
-   * constant expression" since they are marked consteval. */
-  consteval const Tree* operator()(const Tree* a) const { return nullptr; }
-};
-
-template <Block Tag, Block... ExtraValues>
-struct KBinary : public KTree<Tag, ExtraValues...> {
-  template <Block... B1, Block... B2>
-  consteval auto operator()(KTree<B1...>, KTree<B2...>) const {
-    return KTree<Tag, ExtraValues..., B1..., B2...>();
-  }
-
-  consteval const Tree* operator()(const Tree* a, const Tree* b) const {
-    return nullptr;
-  }
-};
-
-template <class... Args>
-concept HasATreeConcept = (false || ... ||
-                           std::is_same<const Tree*, Args>::value);
-
-template <size_t Nb, Block Tag, Block... ExtraValues>
-struct KFixedArity : public KTree<Tag, ExtraValues...> {
-  template <KTreeConcept... CTS>
-    requires(sizeof...(CTS) == Nb)
-  consteval auto operator()(CTS...) const {
-    return Concat<KTree<Tag, ExtraValues...>, CTS...>();
-  }
-
-  template <class... Args>
-    requires(HasATreeConcept<Args...> && sizeof...(Args) == Nb)
-  consteval const Tree* operator()(Args... args) const {
-    return nullptr;
-  }
-};
-
-template <Block Tag, Block... ExtraValues>
-struct KNAry {
-  template <KTreeConcept... CTS>
-  consteval auto operator()(CTS...) const {
-    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
-  }
-
-  template <size_t Nb>
-  static constexpr KTree<Tag, Nb, ExtraValues...> node{};
-
-  template <class... Args>
-    requires HasATreeConcept<Args...>
-  consteval const Tree* operator()(Args... args) const {
-    return nullptr;
-  }
-};
-
-template <Block Tag>
-struct KNAry16 {
-  template <KTreeConcept... CTS>
-  consteval auto operator()(CTS... args) const {
-    return Concat<decltype(node<sizeof...(CTS)>), CTS...>();
-  }
-
-  template <size_t Nb>
-  static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
-};
+namespace KTrees {
 
 // String type used for templated string literals
 
@@ -210,45 +248,41 @@ struct String {
   }
 };
 
-// KTree for Arbitrary
+using SimpleKTrees = KTreesImplementation<Tree>;
 
-template <auto data,
-          typename IS = decltype(std::make_index_sequence<sizeof(data)>())>
-struct _KArbitraryHelper;
+template <Block... Blocks>
+struct KTree : public SimpleKTrees::KTree<Blocks...> {};
 
-template <auto data, std::size_t... I>
-struct _KArbitraryHelper<data, std::index_sequence<I...>>
-    : KNAry<Type::Arbitrary, sizeof(data) & 0xFF, (sizeof(data) >> 8),
-            std::bit_cast<std::array<uint8_t, sizeof(data)>>(data)[I]...> {};
+template <KTreeConcept CT1, KTreeConcept... CT>
+using Concat = SimpleKTrees::Concat<CT1, CT...>;
 
-/* WARNING: data may not have implicit padding, as it leads to uninitialized
- * bytes, which are not permitted in bit_cast. You must declare padding
- * explicitly: e.g. struct { int a; bool b; bool padding[3] = {0, 0, 0}; }*/
-template <auto data>
-constexpr auto KArbitrary = _KArbitraryHelper<data>();
+template <Block Tag, Block... ExtraValues>
+using KUnary = SimpleKTrees::KUnary<Tag, ExtraValues...>;
 
-// KTree for Placeholder
+template <Block Tag, Block... ExtraValues>
+using KBinary = SimpleKTrees::KBinary<Tag, ExtraValues...>;
 
-template <Placeholder::Tag T, Placeholder::Filter F>
-struct KPlaceholderFilter
-    : public KTree<Type::Placeholder, Placeholder::ParamsToValue(T, F)> {
-  static constexpr Placeholder::Tag k_tag = T;
-};
+template <size_t Nb, Block Tag, Block... ExtraValues>
+using KFixedArity = SimpleKTrees::KFixedArity<Nb, Tag, ExtraValues...>;
+
+template <Block Tag, Block... ExtraValues>
+using KNAry = SimpleKTrees::KNAry<Tag, ExtraValues...>;
+template <Block Tag>
+using KNAry16 = SimpleKTrees::KNAry16<Tag>;
 
 template <Placeholder::Tag Tag>
-using KPlaceholder = KPlaceholderFilter<Tag, Placeholder::Filter::One>;
-
+using KPlaceholder = SimpleKTrees::KPlaceholder<Tag>;
 template <Placeholder::Tag Tag>
-using KOneOrMorePlaceholder =
-    KPlaceholderFilter<Tag, Placeholder::Filter::OneOrMore>;
-
+using KOneOrMorePlaceholder = SimpleKTrees::KOneOrMorePlaceholder<Tag>;
 template <Placeholder::Tag Tag>
-using KZeroOrMorePlaceholder =
-    KPlaceholderFilter<Tag, Placeholder::Filter::ZeroOrMore>;
+using KZeroOrMorePlaceholder = SimpleKTrees::KZeroOrMorePlaceholder<Tag>;
+
+template <auto data, typename TSC = Tree>
+constexpr auto KArbitrary =
+    KTreesImplementation<TSC>::template KArbitrary<data>;
 
 }  // namespace KTrees
 
-using namespace KTrees;
 }  // namespace Poincare::Internal
 
 #endif

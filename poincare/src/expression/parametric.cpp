@@ -108,7 +108,8 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
   if (!Variables::HasVariable(function, k_localVariableId)) {
     // TODO: add ceil around bounds
-    constexpr KTree numberOfTerms = KAdd(1_e, KA, KMult(-1_e, KB));
+    constexpr SimpleKTrees::KTree numberOfTerms =
+        KAdd(1_e, KA, KMult(-1_e, KB));
     Variables::LeaveScope(function);
     Tree* result = PatternMatching::CreateSimplify(
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),

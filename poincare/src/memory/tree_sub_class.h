@@ -36,6 +36,8 @@ struct TreeSubClass : Tree {
     return static_cast<NewType*>(node);
   }
 
+  consteval TreeSubClass(Block type) : Tree(type) {}
+
   const ChildType* child(int index) const {
     return static_cast<const ChildType*>(Tree::child(index));
   }

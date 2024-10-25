@@ -101,12 +101,12 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
 Tree* List::Variance(const Tree* list, const Tree* coefficients,
                      TypeBlock type) {
   // var(L) = mean(L^2) - mean(L)^2
-  KTree variance =
+  SimpleKTrees::KTree variance =
       KAdd(KMean(KPow(KA, 2_e), KB), KMult(-1_e, KPow(KMean(KA, KB), 2_e)));
   // sqrt(var)
-  KTree stdDev = KPow(variance, 1_e / 2_e);
+  SimpleKTrees::KTree stdDev = KPow(variance, 1_e / 2_e);
   // stdDev * sqrt(1 + 1 / (n - 1))
-  KTree sampleStdDev =
+  SimpleKTrees::KTree sampleStdDev =
       KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), 1_e / 2_e);
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne() ? Integer::Push(Dimension::ListLength(list))

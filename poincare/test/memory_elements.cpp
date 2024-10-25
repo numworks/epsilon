@@ -502,11 +502,12 @@ QUIZ_CASE(pcj_edition_node_constructor) {
 }
 
 QUIZ_CASE(pcj_node_iterator) {
-  constexpr KTree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr SimpleKTrees::KTree k_simpleExpression =
+      KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   TreeRef mult(k_simpleExpression);
-  KTree a = KAdd(1_e, 2_e);
-  KTree b = 3_e;
-  KTree c = 4_e;
+  SimpleKTrees::KTree a = KAdd(1_e, 2_e);
+  SimpleKTrees::KTree b = 3_e;
+  SimpleKTrees::KTree c = 4_e;
   const Tree* children[] = {a, b, c};
 
   // Scan children forward
@@ -515,9 +516,9 @@ QUIZ_CASE(pcj_node_iterator) {
   }
 
   // Edit children forward
-  KTree e = 6_e;
-  KTree f = 7_e;
-  KTree g = 8_e;
+  SimpleKTrees::KTree e = 6_e;
+  SimpleKTrees::KTree f = 7_e;
+  SimpleKTrees::KTree g = 8_e;
   const Tree* newChildren[] = {e, f, g};
   for (IndexedChild<Tree*> child : mult->indexedChildren()) {
     child->cloneTreeOverTree(newChildren[child.index]);
@@ -527,7 +528,8 @@ QUIZ_CASE(pcj_node_iterator) {
     assert_trees_are_equal(child, newChildren[child.index]);
   }
 
-  constexpr KTree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
+  constexpr SimpleKTrees::KTree k_secondSimpleExpression =
+      KMult(KAdd(1_e, 2_e), 3_e);
   TreeRef mult2(k_secondSimpleExpression);
   const Tree* children2[] = {a, b};
   // Scan two nodes children forward
@@ -541,11 +543,11 @@ QUIZ_CASE(pcj_node_iterator) {
     assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
     assert_trees_are_equal(childrenPair[1], children2[pairIndex]);
   }
-  KTree n6 = 8_e;
-  KTree n10 = 10_e;
-  KTree n11 = 11_e;
-  KTree n13 = 13_e;
-  KTree n14 = 14_e;
+  SimpleKTrees::KTree n6 = 8_e;
+  SimpleKTrees::KTree n10 = 10_e;
+  SimpleKTrees::KTree n11 = 11_e;
+  SimpleKTrees::KTree n13 = 13_e;
+  SimpleKTrees::KTree n14 = 14_e;
   const Tree* newChildren1[] = {n10, n11};
   const Tree* newChildren2[] = {n13, n14};
   // Edit two nodes children forward
@@ -579,8 +581,9 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(node2 == node1);
 
   // Tree navigation
-  constexpr KTree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
-  constexpr KTree e2 = KPow(5_e, 6_e);
+  constexpr SimpleKTrees::KTree e1 =
+      KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
+  constexpr SimpleKTrees::KTree e2 = KPow(5_e, 6_e);
   Tree* n1 = TreeRef(e1);
   Tree* n2 = TreeRef(e2);
   quiz_assert(n1->treeSize() == 16);  // TODO: Magic Number

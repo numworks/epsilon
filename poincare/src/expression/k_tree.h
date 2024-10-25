@@ -184,7 +184,7 @@ struct KMatrixHelper {
   static constexpr KTree<Type::Matrix, Rows, Cols> node{};
 
   template <class... Args>
-    requires HasATreeConcept<Args...>
+    requires HasATreeConcept<Tree, Args...>
   consteval const Tree* operator()(Args... args) const {
     return nullptr;
   }
@@ -434,6 +434,7 @@ consteval auto operator"" _e() {
   constexpr size_t size = sizeof...(C) + 1;
   constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
   constexpr auto digits = IntegerLiteral<IntegerValue(value, size)>();
+
   if constexpr (decimalPointIndex < size) {
     return Concat<KTree<Type::Decimal>,
                   /* -1 for the . and -1 for the \0 */

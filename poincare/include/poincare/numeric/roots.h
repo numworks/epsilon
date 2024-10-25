@@ -43,14 +43,15 @@ class Roots {
                                            const Tree* discriminant);
 
  private:
-  static constexpr KTree k_squareRootOfThree = KExp(KMult(1_e / 2_e, KLn(3_e)));
+  static constexpr SimpleKTrees::KTree k_squareRootOfThree =
+      KExp(KMult(1_e / 2_e, KLn(3_e)));
 
   // (-1 + i√(3)) / 2
-  static constexpr KTree k_cubeRootOfUnity1 =
+  static constexpr SimpleKTrees::KTree k_cubeRootOfUnity1 =
       KMult(1_e / 2_e, KAdd(-1_e, KMult(k_squareRootOfThree, i_e)));
 
   // (-1 - i√(3)) / 2
-  static constexpr KTree k_cubeRootOfUnity2 =
+  static constexpr SimpleKTrees::KTree k_cubeRootOfUnity2 =
       KMult(1_e / 2_e, KAdd(-1_e, KMult(-1_e, k_squareRootOfThree, i_e)));
 
   static Tree* PolynomialEvaluation(const Tree* value, const Tree* a,

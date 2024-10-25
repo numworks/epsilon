@@ -299,7 +299,7 @@ QUIZ_CASE(poincare_parsing_parse) {
 }
 
 QUIZ_CASE(poincare_parsing_matrices) {
-  KTree m1 = KMatrix<1, 1>(1_e);
+  SimpleKTrees::KTree m1 = KMatrix<1, 1>(1_e);
   assert_parsed_expression_is("[[1]]", m1);
   assert_parsed_expression_is("[[1,2,3]]", KMatrix<1, 3>(1_e, 2_e, 3_e));
   assert_parsed_expression_is("[[1,2,3][4,5,6]]",
@@ -650,8 +650,8 @@ QUIZ_CASE(poincare_parsing_identifiers) {
 }
 
 QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
-  constexpr KTree apostropheUnit = KUnits::arcMinute;
-  constexpr KTree quoteUnit = KUnits::arcSecond;
+  constexpr SimpleKTrees::KTree apostropheUnit = KUnits::arcMinute;
+  constexpr SimpleKTrees::KTree quoteUnit = KUnits::arcSecond;
 
   // Reserved function
   assert_text_not_parsable("cos'(x)");

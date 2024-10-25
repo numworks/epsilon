@@ -274,7 +274,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         case Type::Dim:
         case Type::Dep:
         case Type::Set:
-        case Type::DepList:
         case Type::List:
         case Type::ListSort:
           break;
@@ -415,14 +414,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
              (childDim[1].isSimpleAngleUnit() && childDim[0].isScalar());
     case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
-      return true;
-    case Type::DepList:
-      // DepLists can only contain scalars
-      for (int i = 0; i < e->numberOfChildren(); i++) {
-        if (!childDim[i].isScalar()) {
-          return false;
-        }
-      }
       return true;
     case Type::Set:
     case Type::List:

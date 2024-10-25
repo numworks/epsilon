@@ -28,17 +28,13 @@ bool Derivation::Reduce(Tree* e) {
      * Diff(Point(KA,KB)) = (1, 0) * Diff(KA) + (0, 1) * Diff(KB)
      * but sums and product of points are not handled. We escape the case with
      * diff((f(y), g(y)), y, x) -> (diff(f(y), y, x), diff(g(y), y, x)) */
-    Tree* pointDiff = SharedTreeStack->pushPoint();
-    PatternMatching::Create(KDiff(KA, KB, KC, KD),
-                            {.KA = symbol,
-                             .KB = symbolValue,
-                             .KC = order,
-                             .KD = constDerivand->child(0)});
-    PatternMatching::Create(KDiff(KA, KB, KC, KD),
-                            {.KA = symbol,
-                             .KB = symbolValue,
-                             .KC = order,
-                             .KD = constDerivand->child(1)});
+    Tree* pointDiff = PatternMatching::Create(
+        KPoint(KDiff(KA, KB, KC, KD), KDiff(KA, KB, KC, KE)),
+        {.KA = symbol,
+         .KB = symbolValue,
+         .KC = order,
+         .KD = constDerivand->child(0),
+         .KE = constDerivand->child(1)});
     Derivation::Reduce(pointDiff->child(0));
     Derivation::Reduce(pointDiff->child(1));
     SystematicReduction::ShallowReduce(pointDiff);

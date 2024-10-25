@@ -124,8 +124,8 @@ bool Simplification::BeautifyReduced(Tree* e,
   // TODO: Should this be recomputed here ?
   assert(e->isUndefined() ||
          projectionContext->m_dimension == Dimension::Get(e));
-  HandleUnits(e, projectionContext);
-  return Beautification::DeepBeautify(e, *projectionContext);
+  bool changed = HandleUnits(e, projectionContext);
+  return Beautification::DeepBeautify(e, *projectionContext) || changed;
 }
 
 bool Simplification::PrepareForProjection(

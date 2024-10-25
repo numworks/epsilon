@@ -61,9 +61,9 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
           Variables::LeaveScopeWithReplacement(childSet, symbolValue, false);
           // LeaveScopeWithReplacement can return a dependency
           if (childSet->isDep()) {
-            assert(childSet->child(0)->isDepList());
+            assert(Main(childSet)->isDepList());
             // dep(depList(A), depList(B)) -> depList(A,B)
-            Set::Union(childSet->child(0), childSet->child(1));
+            Set::Union(Main(childSet), Dependencies(childSet));
             childSet->removeNode();
           }
         } else {

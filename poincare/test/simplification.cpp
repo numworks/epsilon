@@ -340,8 +340,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to(
       "abs(arccos(z)+i×arccos(w))^2-(-im(arccos(w))+re(arccos(z)))^2-(im("
       "arccos(z))+re(arccos(w)))^2",
-      "abs(arccos(z)+arccos(w)×i)^2-((im(arccos(z))+re(arccos(w)))^2+(-im("
-      "arccos(w))+re(arccos(z)))^2)",
+      "abs(arccos(z)+arccos(w)×i)^2-(im(arccos(z))+re(arccos(w)))^2-(-im("
+      "arccos(w))+re(arccos(z)))^2",
       ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
@@ -365,7 +365,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("2i", "2×e^(π/2×i)", polarCtx);
   simplifies_to("cos(i)", "cosh(1)", polarCtx);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
-                "[[42,(2×e^(π×i))/3][abs(1+i)×e^(π/4×i),π×e^((-π/2)×i)]]",
+                "[[42,(2×e^(π×i))/3][√(2)×e^(π/4×i),π×e^((-π/2)×i)]]",
                 polarCtx);
   simplifies_to("-2×_m", "-2×_m", polarCtx);
   simplifies_to("(-2,i)", "(-2,i)", polarCtx);
@@ -397,7 +397,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
   simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
   simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
-  simplifies_to("2×sum(k,k,3,n)+n", "n^2+2×n-6");
+  simplifies_to("2×sum(k,k,3,n)+n", "n×(n+2)-6");
   simplifies_to("sum(k^2,k,n,j)", "(j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/6");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
@@ -433,7 +433,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
       "dep(product(k,k,a,b)^2×b,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
       "b),nonNull(b),realPos(b)})");
-  simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
+  simplifies_to("product(exp(2k),k,0,y)", "e^(y×(y+1))");
 
   // expand sum
   simplifies_to("sum(k^3+4,k,n,n+3)-16", "sum(k^3,k,n,n+3)");
@@ -529,7 +529,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-tanh(x)-tanh(2×x)×(-sinh(x)^2/(2×cosh(x)^2)-1/2)");
+                "-tanh(x)+(tanh(2×x)×(sinh(x)^2/cosh(x)^2+1))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
   simplifies_to("arcosh(5)-ln(5+sqrt(24))", "0", cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", cartesianCtx);
@@ -742,8 +742,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(x)^2", "x", cartesianCtx);
   /* TODO: Should be 0, (exp(i*(arg(A) + arg(B) - arg(A*B))) should be
    * simplified to 1 */
-  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
-                "√(-2)+e^((ln(-1-i)+ln(1-i))/2)", cartesianCtx);
+  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-2)+√(-1-i)×√(1-i)",
+                cartesianCtx);
 
   // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
@@ -897,8 +897,8 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to(
       "{(x, 2), (x/x, 2), (3, undef), (1 , piecewise(x/x + (a + b)^2 - 2*a*b, "
       "x + y/y>2, undef))}",
-      "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(-2×a×b+(a+b)^2+1,"
-      "{x^0}),x+1>2,undef),{y^0}))}");
+      "{(x,2),(dep(1,{x^0}),2),(3,undef),(1,dep(piecewise(dep(a^2+b^2+1,{x^0}),"
+      "x+1>2,undef),{y^0}))}");
   simplifies_to("{1,undef}", "{1,undef}");
   simplifies_to("[[1,undef]]", "[[1,undef]]");
   simplifies_to("(1,undef)", "(1,undef)");
@@ -1054,7 +1054,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({6π/5,-33π/5,18π/5,-π/5})",
                 "{-(1+√(5))/4,-(-1+√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
   simplifies_to("sin({π/5,2π/5,3π/5,-6π/5})",
-                "{√(5/8-√(5)/8),√((5+√(5))/8),√((5+√(5))/8),√(5/8-√(5)/8)}");
+                "{√((5-√(5))/8),√((5+√(5))/8),√((5+√(5))/8),√((5-√(5))/8)}");
   // test π/4 in all quadrants
   simplifies_to("cos({π/4,3π/4,-11π/4,7π/4})",
                 "{√(2)/2,-√(2)/2,-√(2)/2,√(2)/2}");
@@ -1224,7 +1224,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
       "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
   simplifies_to("1/(i-1)^2", "1/2×i");
-  simplifies_to("(x+y)^3-x^3-y^3", "3*y^2*x+3*y*x^2");
+  simplifies_to("(x+y)^3-x^3-y^3-3*y^2*x-3*y*x^2", "0");
   // TODO_PCJ: we used to reduce to (π+1)/(π+2)
   simplifies_to("1/(1+1/(1+π))", "1/(1+1/(1+π))");
 }
@@ -1402,9 +1402,10 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g
   // ADVANCED_MAX_DEPTH is too small
-  simplifies_to("(2/3)^(5/7)", "e^((ln(9)+ln(32))/7)/3");  // "root(288,7)/3"
+  simplifies_to("(2/3)^(5/7)", "(2^(5/7)×3^(2/7))/3");  // "root(288,7)/3"
   // ADVANCED_MAX_DEPTH is too small
-  simplifies_to("(4/11)^(8/9)", "root(720896,9)/11");  // "(2×root(1408,9))/11"
+  simplifies_to("(4/11)^(8/9)",
+                "root(720896,9)/11");  // "(2×root(1408,9))/11"
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
   // (1+i)/(1-i) => i
   simplifies_to("(1+i)/(1-i)", "i");

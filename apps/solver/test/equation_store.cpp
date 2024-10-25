@@ -151,11 +151,7 @@ QUIZ_CASE(solver_cubic) {
                     "x=-1.334716475+0.5797459409i", "delta=-2.43"});
 
   assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
-                   {
-                       "x=-2+1×i", "x=-1+2×i", "x=1-3×i",
-                       "delta=-4(6+7i)^3+4(6+7i)^2-3900+650i"
-                       // TODO_PCJ: simplify to -1288 -666×i"
-                   });
+                   {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"});
   assert_solves_to(
       "x^3+x^2+x-39999999",
       {

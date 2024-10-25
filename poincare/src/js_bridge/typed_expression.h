@@ -24,7 +24,7 @@ class TypedExpression : public JuniorExpression {
   TypedExpression() : JuniorExpression() {}
 
   static inline TypedExpression Cast(JuniorExpression expr) {
-    /* WARNING: The down-casting of JuniorExpression itno TypedExpression
+    /* WARNING: The down-casting of JuniorExpression into TypedExpression
      * is possible only because TypedExpressions don't have more member
      * variables than JuniorExpression. */
     static_assert(sizeof(TypedExpression) == sizeof(JuniorExpression));

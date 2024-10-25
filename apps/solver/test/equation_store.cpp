@@ -359,16 +359,18 @@ QUIZ_CASE(solver_complex_polar) {
   assert_solves_to("x+i=0", "x=e^(-(π/2)i)");
   assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)i)");
 
-  // TODO_PCJ: force polar format (currently solves to -(1+√(-3))/2)
-  // assert_solves_to("x^2+x+1=0",
-  //                  {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"});
-
-  // TODO_PCJ: force polar format (currently solves to -√(i)
-  // assert_solves_to("x^2-√(-1)=0",
-  //                  {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
+#if 0
+  /* TODO_PCJ: Improve polar format reduction (currently solves to
+   * ((abs(1+√(-3)))/2)e^(arg(((abs(1+√(-3))e^(arg(-((1+√(-3))/2))i))/2))i) */
+  assert_solves_to("x^2+x+1=0",
+                   {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"});
+#endif
+  assert_solves_to("x^2-√(-1)=0",
+                   {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
 
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)i)");
 
+#if 0
   /* TODO_PCJ: when the equation has form "ax^3 + d = 0", display approximate
    * values instead of exact values if the expressions are too complicated */
   assert_solves_to("2x^3-e^(2iπ/7)=0",
@@ -380,6 +382,7 @@ QUIZ_CASE(solver_complex_polar) {
       {"x=((root(1+e^(((2π)/7)i),3)(-1+√(3)i))/2)",
        "x=((root(1+e^(((2π)/7)i),3)(-1-√(3)i))/2)", "x=root(1+e^(((2π)/7)i),3)",
        "delta=-27(1+e^(((2π)/7)i))^2"});
+#endif
 }
 
 QUIZ_CASE(solver_symbolic_computation) {

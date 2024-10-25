@@ -27,7 +27,7 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
       }
       Tree* result = e->child(2)->cloneTree();
       TreeRef value = Integer::Push(k + 1);
-      Variables::Replace(result, 0, value);
+      Variables::Replace(result, 0, value, true);
       value->removeTree();
       return result;
     }

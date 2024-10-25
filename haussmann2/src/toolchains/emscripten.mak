@@ -18,13 +18,19 @@ ifeq ($(_emscripten_single_file),1)
 LDFLAGS += -s SINGLE_FILE
 endif
 
-ifneq ($(DEBUG),0)
+# See emscripten compiler settings documentation
+# https://emscripten.org/docs/tools_reference/settings_reference.html
+ifeq ($(ASSERTIONS),1)
 LDFLAGS += \
-  -O0 \
-  --profiling-funcs \
   -s ASSERTIONS=1 \
   -s SAFE_HEAP=1 \
   -s STACK_OVERFLOW_CHECK=1
+endif
+
+ifeq ($(DEBUG),1)
+LDFLAGS += \
+  -O0 \
+  --profiling-funcs \
 else
 # TODO: Should this be:
 # - Oz ? (small size, slower)

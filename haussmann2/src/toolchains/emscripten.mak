@@ -12,7 +12,6 @@ LDFLAGS += \
   -s ASYNCIFY=$(_emscripten_asyncify) \
   -s EXPORT_NAME="$(APP_NAME)" \
   -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) \
-  -s PRECISE_F32=1
 
 ifeq ($(_emscripten_single_file),1)
 LDFLAGS += -s SINGLE_FILE

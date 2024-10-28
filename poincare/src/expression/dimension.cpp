@@ -585,7 +585,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Point:
       return Point();
     case Type::Set:
-    case Type::DepList:
     case Type::ListSlice:
     case Type::List:
       return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();

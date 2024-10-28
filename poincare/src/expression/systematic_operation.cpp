@@ -526,27 +526,22 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
   return true;
 }
 
-/* Approximate all children if one of them is already float. Return true if the
- * entire tree have been approximated. */
-bool SystematicOperation::CanApproximateTree(Tree* e, bool* changed) {
-  if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
-      Approximation::ApproximateAndReplaceEveryScalar(e)) {
-    *changed = true;
-    if (e->isFloat()) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   assert(e->isAdd() || e->isMult());
   Type type = e->type();
   bool changed = NAry::Flatten(e);
-  if (changed && CanApproximateTree(e, &changed)) {
+  if (changed) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
+     * tried again to properly handle possible new float children. Approximate
+     * all children if one of them is already float. Return true if the entire
+     * tree have been approximated. */
+    if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
+        Approximation::ApproximateAndReplaceEveryScalar(e)) {
+      changed = true;
+      if (e->isFloat()) {
+        return true;
+      }
+    }
   }
   if (NAry::SquashIfPossible(e)) {
     return true;

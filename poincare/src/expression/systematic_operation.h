@@ -26,7 +26,6 @@ class SystematicOperation {
   static bool ReduceDim(Tree* e);
 
   static void ConvertPowerRealToPower(Tree* e);
-  static bool CanApproximateTree(Tree* e, bool* changed);
   static bool SimplifySortedAddition(Tree* e);
   static bool SimplifySortedMultiplication(Tree* e);
 };

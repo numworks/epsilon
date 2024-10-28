@@ -107,12 +107,6 @@ Tree* Approximation::RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
 template <typename T>
 Tree* Approximation::ToBeautifiedComplex(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplex<T>(e, ctx);
-  /* TODO: no s_context => complexFormat = cartesian for now, and it is only
-   * used with OutOfContext matrix operations, we should impose a context
-   * instead. */
-  if (IsNonReal<T>(value)) {
-    return KNonReal->cloneTree();
-  }
   return Beautification::PushBeautifiedComplex(
       value, ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
 }

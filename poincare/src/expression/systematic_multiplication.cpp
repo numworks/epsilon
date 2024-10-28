@@ -143,7 +143,7 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   return false;
 }
 
-static bool SimplifySortedMultiplication(Tree* e) {
+bool SystematicOperation::SimplifySortedMultiplication(Tree* e) {
   assert(e->isMult());
   int n = e->numberOfChildren();
   bool changed = false;
@@ -223,27 +223,6 @@ static bool SimplifySortedMultiplication(Tree* e) {
     SimplifySortedMultiplication(mult);
   }
   return true;
-}
-
-bool SystematicOperation::ReduceMultiplication(Tree* e) {
-  assert(e->isMult());
-  bool changed = NAry::Flatten(e);
-  if (changed && CanApproximateTree(e, &changed)) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
-  }
-  if (NAry::SquashIfPossible(e)) {
-    return true;
-  }
-  changed = NAry::Sort(e, Order::OrderType::PreserveMatrices) || changed;
-  changed = SimplifySortedMultiplication(e) || changed;
-  if (changed && e->isMult()) {
-    // Bubble-up may be unlocked after merging identical bases.
-    SystematicReduction::BubbleUpFromChildren(e);
-    assert(!SystematicReduction::ShallowReduce(e));
-  }
-  return changed;
 }
 
 }  // namespace Poincare::Internal

@@ -91,7 +91,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-static bool SimplifySortedAddition(Tree* e) {
+bool SystematicOperation::SimplifySortedAddition(Tree* e) {
   assert(e->isAdd());
   bool changed = false;
   bool didSquashChildren = false;
@@ -132,35 +132,6 @@ static bool SimplifySortedAddition(Tree* e) {
      * simplifications. NOTE: Further simplification could theoretically be
      * unlocked, see following assertion. */
     NAry::Sort(e);
-  }
-  return changed;
-}
-
-bool SystematicOperation::ReduceAddition(Tree* e) {
-  assert(e->isAdd());
-  bool changed = NAry::Flatten(e);
-  if (changed && CanApproximateTree(e, &changed)) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
-  }
-  if (NAry::SquashIfPossible(e)) {
-    return true;
-  }
-  changed = NAry::Sort(e) || changed;
-  changed = SimplifySortedAddition(e) || changed;
-  /* TODO: ReduceAddition may encounter the same issues as the multiplication.
-   * If this assert can't be preserved, ReduceAddition must handle one or both
-   * of this cases as handled in multiplication:
-   * With a,b and c the sorted addition children (a < b < c), M(a,b) the result
-   * of merging children a and b (with MergeAdditionChildWithNext) if it exists.
-   * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
-   * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
-   * merging again when child merged with nextChild) */
-  if (changed && e->isAdd()) {
-    // Bubble-up may be unlocked after merging equal terms.
-    SystematicReduction::BubbleUpFromChildren(e);
-    assert(!SystematicReduction::ShallowReduce(e));
   }
   return changed;
 }

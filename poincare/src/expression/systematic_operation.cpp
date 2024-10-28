@@ -539,4 +539,30 @@ bool SystematicOperation::CanApproximateTree(Tree* e, bool* changed) {
   return false;
 }
 
+bool SystematicOperation::ReduceAddOrMult(Tree* e) {
+  assert(e->isAdd() || e->isMult());
+  Type type = e->type();
+  bool changed = NAry::Flatten(e);
+  if (changed && CanApproximateTree(e, &changed)) {
+    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
+     * tried again to properly handle possible new float children. */
+    return true;
+  }
+  if (NAry::SquashIfPossible(e)) {
+    return true;
+  }
+  Order::OrderType orderType = e->isAdd() ? Order::OrderType::System
+                                          : Order::OrderType::PreserveMatrices;
+  changed = NAry::Sort(e, orderType) || changed;
+  changed = (e->isAdd() ? SimplifySortedAddition(e)
+                        : SimplifySortedMultiplication(e)) ||
+            changed;
+  if (changed && e->type() == type) {
+    // Bubble-up may be unlocked after merging identical bases
+    SystematicReduction::BubbleUpFromChildren(e);
+    assert(!SystematicReduction::ShallowReduce(e));
+  }
+  return changed;
+}
+
 }  // namespace Poincare::Internal

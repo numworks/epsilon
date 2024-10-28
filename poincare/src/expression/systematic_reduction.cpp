@@ -98,7 +98,8 @@ bool SystematicReduction::Switch(Tree* e) {
     case Type::Abs:
       return SystematicOperation::ReduceAbs(e);
     case Type::Add:
-      return SystematicOperation::ReduceAddition(e);
+    case Type::Mult:
+      return SystematicOperation::ReduceAddOrMult(e);
     case Type::ArCosH:
       return Trigonometry::ReduceArCosH(e);
     case Type::ATanRad:
@@ -135,8 +136,6 @@ bool SystematicReduction::Switch(Tree* e) {
       return List::ShallowApplyListOperators(e);
     case Type::Ln:
       return Logarithm::ReduceLn(e);
-    case Type::Mult:
-      return SystematicOperation::ReduceMultiplication(e);
     case Type::Permute:
       return Arithmetic::ReducePermute(e);
     case Type::Piecewise:

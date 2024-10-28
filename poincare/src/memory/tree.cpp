@@ -428,6 +428,7 @@ Tree* Tree::cloneNode() const { return SharedTreeStack->clone(this, false); }
 
 Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
                     bool at) {
+  assert(nodeToClone);
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
   SharedTreeStack->insertBlocks(destination->block(), nodeToClone->block(),
@@ -439,6 +440,7 @@ Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
 }
 
 Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
+  assert(nodeToMove);
   Tree* destination = before ? this : nextNode();
   size_t size = newIsTree ? nodeToMove->treeSize() : nodeToMove->nodeSize();
   assert(SharedTreeStack->contains(nodeToMove->block()));
@@ -453,6 +455,7 @@ Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
 }
 
 Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
+  assert(newNode);
   Tree* oldNode = this;
   int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
   int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();
@@ -476,6 +479,7 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
 }
 
 Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
+  assert(newNode);
   Tree* oldNode = this;
   int oldSize = oldIsTree ? oldNode->treeSize() : oldNode->nodeSize();
   int newSize = newIsTree ? newNode->treeSize() : newNode->nodeSize();

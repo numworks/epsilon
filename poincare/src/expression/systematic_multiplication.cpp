@@ -143,6 +143,7 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
 }
 
 static bool SimplifySortedMultiplication(Tree* multiplication) {
+  assert(multiplication->isMult());
   int n = multiplication->numberOfChildren();
   bool changed = false;
   assert(n > 1);

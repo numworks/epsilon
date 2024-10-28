@@ -869,7 +869,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   }
 
   if (m_parsingContext.context() && builtin->type().isParametric()) {
-    //  We must make sure that the parameter is parsed as a single variable.
+    // We must make sure that the parameter is parsed as a single variable.
     const Layout* parameterText;
     size_t parameterLength;
     int start = m_root->indexOfChild(m_currentToken.firstLayout()) +

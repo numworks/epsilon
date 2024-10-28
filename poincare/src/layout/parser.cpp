@@ -1,7 +1,9 @@
 #include "parser.h"
 
 #include <omg/unreachable.h>
+#include <poincare/old/variable_context.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/symbol.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
@@ -112,11 +114,44 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       // The layout children map one-to-one to the expression
       TreeRef ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));
       int n = l->numberOfChildren();
+
+      /* TODO: The behaviour relative to the parametric expressions
+       * is duplicated with RackParser::parseReservedFunction */
+      bool useParameterContext = context && ref->isParametric();
+      VariableContext parameterContext;  // For parametric
+
       for (int i = 0; i < n; i++) {
-        if (!Parse(l->child(i), context)) {
+        Context* chidContext = context;
+
+        if (useParameterContext) {
+          if (i == Parametric::k_variableIndex) {
+            /* Set the context to nullptr for the variable so that it's properly
+             * parsed as a symbol, and not as a unit or a product. */
+            chidContext = nullptr;
+          } else if (Parametric::IsFunctionIndex(i, ref)) {
+            // Use the parameter context for the function child
+            chidContext = &parameterContext;
+          }
+        }
+
+        TreeRef parsedChild = Parse(l->child(i), chidContext);
+        if (!parsedChild) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
+
+        if (useParameterContext && i == Parametric::k_variableIndex) {
+          /* Store the variable child in the parameter context */
+          if (!parsedChild->isUserSymbol()) {
+            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          }
+          parameterContext =
+              VariableContext(Symbol::GetName(parsedChild), context);
+          /* Preparing the context for the function child relies on the variable
+           * child being parsed first */
+          static_assert(Parametric::k_variableIndex == 0);
+        }
       }
+
       return ref;
     }
   }

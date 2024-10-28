@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <omg/code_point.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
@@ -58,8 +59,8 @@ QUIZ_CASE(pcj_parse_layout_tokenize) {
   quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
 }
 
-bool is_parsable(const Tree* layout) {
-  TreeRef expression = RackParser(layout, nullptr).parse();
+bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
+  TreeRef expression = RackParser(layout, context).parse();
   return !expression.isUninitialized();
 }
 
@@ -126,4 +127,28 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
   assertLayoutParsesTo("1 2/3"_l, KMixedFraction(1_e, KDiv(2_e, 3_e)));
   assertLayoutParsesTo("1"_l ^ KFracL("2"_l, "3"_l),
                        KMixedFraction(1_e, KDiv(2_e, 3_e)));
+}
+
+QUIZ_CASE(pcj_parse_parametric) {
+  /* Provide a context to parse parametric, or the parsing will always succeed,
+   * even with an incorrect symbol. */
+  Poincare::EmptyContext context;
+
+  // Must have a symbol as the first argument
+  quiz_assert(
+      !is_parsable(KRackL(KIntegralL("4"_l, "0"_l, "1"_l, "4"_l)), &context));
+  quiz_assert(
+      !is_parsable(KRackL(KDiffL("e"_l, "0"_l, "1"_l, "e"_l)), &context));
+  quiz_assert(
+      !is_parsable(KRackL(KProductL("_s"_l, "0"_l, "1"_l, "_s"_l)), &context));
+
+  // Works with symbol = "x"
+  assertLayoutParsesTo(KRackL(KIntegralL("x"_l, "0"_l, "1"_l, "x"_l)),
+                       KIntegral("x"_e, 0_e, 1_e, "x"_e), &context);
+  // Works with symbol = "t" (even if "t" is also "ton")
+  assertLayoutParsesTo(KRackL(KListSequenceL("t"_l, "10"_l, "t"_l)),
+                       KListSequence("t"_e, 10_e, "t"_e), &context);
+  // Works with symbol = "string"
+  assertLayoutParsesTo(KRackL(KSumL("string"_l, "0"_l, "10"_l, "string"_l)),
+                       KSum("string"_e, 0_e, 10_e, "string"_e), &context);
 }

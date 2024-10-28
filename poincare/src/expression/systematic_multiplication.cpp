@@ -164,6 +164,7 @@ static bool SimplifySortedMultiplication(Tree* e) {
   } else {
     depList->removeTree();
   }
+  assert(e->isMult());
 
   if (e->child(0)->isZero()) {
     Dimension dim = Dimension::Get(e);
@@ -198,12 +199,13 @@ static bool SimplifySortedMultiplication(Tree* e) {
   }
 
   if (ReduceMultiplicationWithInf(e)) {
-    changed = true;
+    return true;
   }
 
   if (!changed) {
     return false;
   }
+  assert(e->isMult());
 
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:

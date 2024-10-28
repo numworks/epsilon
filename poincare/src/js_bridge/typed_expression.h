@@ -1,5 +1,5 @@
-#ifndef POINCARE_JS_BRIDGE_EXPRESSION_TYPES_H
-#define POINCARE_JS_BRIDGE_EXPRESSION_TYPES_H
+#ifndef POINCARE_JS_BRIDGE_TYPED_EXPRESSION_H
+#define POINCARE_JS_BRIDGE_TYPED_EXPRESSION_H
 
 #include <emscripten/bind.h>
 #include <poincare/old/junior_expression.h>

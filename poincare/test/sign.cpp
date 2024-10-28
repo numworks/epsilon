@@ -399,8 +399,8 @@ QUIZ_CASE(pcj_sign) {
   // inf
   assert_sign("inf", Sign::StrictlyPositive());
   assert_sign("-inf", Sign::StrictlyNegative());
-  /* This expressions forces the following order in addition :
-   * integer + unknown integer + non integer */
+  /* This case has been carefully crafted to forces the following order in the
+   * addition: integer + unknown integer + non integer */
   assert_sign("1+floor(x)*(1+i)+floor(y)*(1+π+i)",
               ComplexSign(Sign::Finite(), Sign::FiniteInteger()));
   assert_sign("1+floor(x)*(1+i)",

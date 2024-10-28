@@ -324,7 +324,7 @@ bool Beautification::TurnIntoPolarForm(
   if (e->isUndefined()) {
     return false;
   }
-  // Apply element-wise on explicit lists, matrices, sets. Skip DepList.
+  // Apply element-wise on explicit lists, matrices, sets.
   if (e->isMatrix() || e->isSet() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
@@ -357,14 +357,15 @@ bool Beautification::TurnIntoPolarForm(
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
-  // Do not reduce exp to preserve exp(A*i) form with A within ]-π,π]
   SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
     AdvancedReduction::Reduce(abs);
   }
   SharedTreeStack->pushComplexI();
   /* mult is not flattened because i will be kept apart anyway in
-   * Division::BeautifyIntoDivision */
+   * Division::BeautifyIntoDivision.
+   * exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
+   * because of exp(arg(exp(A*i))*i) -> exp(A*i) reduction. */
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&
                                Dependency::ShallowBubbleUpDependencies(exp);

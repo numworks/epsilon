@@ -1,6 +1,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "dependency.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "matrix.h"
@@ -155,52 +156,60 @@ static bool SimplifySortedMultiplication(Tree* e) {
                                &numberOfDependencies);
   assert(n > 0);
   NAry::SetNumberOfChildren(e, n);
+
+  Tree* mult = e;
   if (numberOfDependencies > 0) {
     NAry::SetNumberOfChildren(depList, numberOfDependencies);
     // TODO: create moveTreeAfterNode
     e->nextTree()->moveTreeBeforeNode(depList);
     e->cloneNodeAtNode(KDep);
-    e = e->nextNode();
+    mult = Dependency::Main(e);
   } else {
     depList->removeTree();
   }
-  assert(e->isMult());
+  assert(mult->isMult());
 
-  if (e->child(0)->isZero()) {
-    Dimension dim = Dimension::Get(e);
+  if (mult->child(0)->isZero()) {
+    Dimension dim = Dimension::Get(mult);
     if (dim.isUnit()) {
       // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
       // Use hash because change is too complex to track.
-      uint32_t hash = changed ? 0 : e->hash();
+      uint32_t hash = changed ? 0 : mult->hash();
       if (dim.hasNonKelvinTemperatureUnit()) {
         /* Temperature exception : 0*_°C != 0*K : unit must be preserved.
          * Taking advantage of the fact only very simple expressions of such
          * temperatures are allowed. */
         assert(dim.unit.vector.supportSize() == 1 &&
                dim.unit.vector.temperature == 1);
-        e->moveTreeOverTree(Units::Unit::Push(dim.unit.representative));
-        e->moveTreeOverTree(PatternMatching::Create(KMult(0_e, KA), {.KA = e}));
+        mult->moveTreeOverTree(Units::Unit::Push(dim.unit.representative));
+        mult->moveTreeOverTree(
+            PatternMatching::Create(KMult(0_e, KA), {.KA = mult}));
       } else {
         // Since all units are equivalent, use base SI.
-        e->moveTreeOverTree(Units::Unit::GetBaseUnits(dim.unit.vector));
-        if (e->isMult()) {
-          NAry::Sort(e, Order::OrderType::PreserveMatrices);
+        mult->moveTreeOverTree(Units::Unit::GetBaseUnits(dim.unit.vector));
+        if (mult->isMult()) {
+          NAry::Sort(mult, Order::OrderType::PreserveMatrices);
         } else {
-          e->cloneNodeAtNode(KMult.node<1>);
+          mult->cloneNodeAtNode(KMult.node<1>);
         }
-        NAry::AddChildAtIndex(e, (0_e)->cloneTree(), 0);
+        NAry::AddChildAtIndex(mult, (0_e)->cloneTree(), 0);
       }
-      return changed || (hash != e->hash());
+      return changed || (hash != mult->hash());
     }
   }
 
-  if (changed && NAry::SquashIfPossible(e)) {
+  if (changed && NAry::SquashIfPossible(mult)) {
     return true;
   }
 
-  if (ReduceMultiplicationWithInf(e)) {
+  if (ReduceMultiplicationWithInf(mult)) {
+    if (mult->isDep()) {
+      // e can also be a dep, we need to bubble up
+      Dependency::ShallowBubbleUpDependencies(e);
+    }
     return true;
   }
+  assert(mult->isMult());
 
   if (!changed) {
     return false;
@@ -210,8 +219,8 @@ static bool SimplifySortedMultiplication(Tree* e) {
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
-  if (NAry::Sort(e, Order::OrderType::PreserveMatrices)) {
-    SimplifySortedMultiplication(e);
+  if (NAry::Sort(mult, Order::OrderType::PreserveMatrices)) {
+    SimplifySortedMultiplication(mult);
   }
   return true;
 }

@@ -829,7 +829,11 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     TreeRef base = Parser::Parse(m_currentToken.firstLayout()->child(0),
                                  m_parsingContext.context(),
                                  m_parsingContext.parsingMethod());
+    if (!base) {
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
     TreeRef parameter = parseFunctionParameters();
+    assert(parameter);
     if (parameter->numberOfChildren() != 1) {
       // Unexpected number of many parameters.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

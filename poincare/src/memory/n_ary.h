@@ -22,6 +22,7 @@ class NAry {
   static bool SquashIfUnary(Tree* nary);
   static bool SquashIfEmpty(Tree* nary);
   static bool SquashIfPossible(Tree* nary) {
+    assert(nary->isNAry());
     return (nary->isAdd() || nary->isMult()) &&
            (SquashIfEmpty(nary) || SquashIfUnary(nary));
   }

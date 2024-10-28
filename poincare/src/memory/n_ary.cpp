@@ -19,6 +19,7 @@ void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
 
 // Should these useful refs be hidden in the function ?
 void NAry::AddOrMergeChildAtIndex(Tree* naryNode, Tree* childNode, int index) {
+  assert(naryNode->isNAry());
   TreeRef nary = naryNode;
   TreeRef child = childNode;
   AddChildAtIndex(nary, child, index);
@@ -79,6 +80,7 @@ bool NAry::Flatten(Tree* nary) {
 }
 
 bool NAry::SquashIfUnary(Tree* nary) {
+  assert(nary->isNAry());
   if (nary->numberOfChildren() == 1) {
     nary->moveTreeOverTree(nary->child(0));
     return true;
@@ -87,6 +89,7 @@ bool NAry::SquashIfUnary(Tree* nary) {
 }
 
 bool NAry::SquashIfEmpty(Tree* nary) {
+  assert(nary->isNAry());
   if (nary->numberOfChildren() >= 1) {
     return false;
   }
@@ -98,11 +101,13 @@ bool NAry::SquashIfEmpty(Tree* nary) {
 }
 
 bool NAry::Sanitize(Tree* nary) {
+  assert(nary->isNAry());
   bool flattened = Flatten(nary);
   return SquashIfPossible(nary) || flattened;
 }
 
 bool NAry::Sort(Tree* nary, Order::OrderType order) {
+  assert(nary->isNAry());
   const uint8_t numberOfChildren = nary->numberOfChildren();
   if (numberOfChildren < 2) {
     return false;
@@ -169,6 +174,7 @@ push:
 }
 
 void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
+  assert(nary->isNAry());
   Tree* children[k_maxNumberOfChildren];
   for (uint8_t index = 0; const Tree* child : nary->children()) {
     children[index++] = const_cast<Tree*>(child);
@@ -187,6 +193,7 @@ void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
 }
 
 bool NAry::ContainsSame(const Tree* nary, const Tree* value) {
+  assert(nary->isNAry());
   for (const Tree* element : nary->children()) {
     if (value->treeIsIdenticalTo(element)) {
       return true;
@@ -196,6 +203,7 @@ bool NAry::ContainsSame(const Tree* nary, const Tree* value) {
 }
 
 Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
+  assert(nary->isNAry());
   Tree* result = nary->cloneNode();
   int nb = endIndex - startIndex;
   SetNumberOfChildren(result, nb);

@@ -26,10 +26,10 @@ QUIZ_CASE(solver_error) {
 QUIZ_CASE(solver_linear_system) {
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to({"x+y=0", "3x+y+z=-5", "4z-π=0", "a+b+c=0", "a=3", "c=a+2"},
-                   {"a=3", "b=-8", "c=5", "x=(-π-20)/8", "y=5/2+π/8", "z=π/4"});
+                   {"a=3", "b=-8", "c=5", "x=-5/2-π/8", "y=5/2+π/8", "z=π/4"});
   assert_solves_to("2x+3=4", "x=1/2");
   assert_solves_to({"x+y=0", "3x+y+z=-5", "4z-π=0"},
-                   {"x=(-π-20)/8", "y=5/2+π/8", "z=π/4"});
+                   {"x=-5/2-π/8", "y=5/2+π/8", "z=π/4"});
   assert_solves_to({"x+y=0", "3x+y=-5"}, {"x=-5/2", "y=5/2"});
   assert_solves_to_infinite_solutions("0=0");
   assert_solves_to_infinite_solutions({"x+y=0"}, {"x=-t", "y=t"});
@@ -100,8 +100,8 @@ QUIZ_CASE(solver_quadratic) {
       {"x=-(-4+√(-8))/6", "x=(4+√(-8))/6",  // TODO_PCJ: simplify (metric)
        "delta=-8"});
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
-                   {"x=-(-1+π+√(π^2+9-2π+8×√(5)))/4",
-                    "x=(-π+1+√(π^2-2π+9+8√(5)))/4", "delta=π^2-2π+9+8√(5)"});
+                   {"x=-(-1+π+√((1-π)^2+8+8×√(5)))/4",
+                    "x=(1-π+√((1-π)^2+8+8×√(5)))/4", "delta=(1-π)^2+8+8×√(5)"});
 }
 
 QUIZ_CASE(solver_cubic) {
@@ -129,7 +129,7 @@ QUIZ_CASE(solver_cubic) {
 
   assert_solves_to(
       "x^3-8i=0",
-      {"x=root(i,3)(-1+√(3)i)",     // TODO_PCJ: simplify to "x=-√(3)+i"
+      {"x=-√(3)+i",
        "x=root(8i,3)(-1-√(3)i)/2",  // TODO_PCJ: simplify to "x=-2×i"
        "x=2×root(i,3)",             // TODO_PCJ: simplify to "x=√(3)+i"
        "delta=1728"});
@@ -137,7 +137,7 @@ QUIZ_CASE(solver_cubic) {
   /* NOTE: we used to only display the approximate form for the below case, this
    * can be discussed. */
   assert_solves_to("x^3-13-i=0", {"x=(root(13+i,3)(-1+√(3)i))/2",
-                                  "x=(root(13+i,3)(-1-√(3)i))/2",
+                                  "x=-(root(13+i,3)(1+√(3)i))/2",
                                   "x=root(13+i,3)", "delta=-4536-702i"});
 
   assert_solves_to("x^3-(2+i)×x^2-2×i×x-2+4×i=0",
@@ -370,9 +370,9 @@ QUIZ_CASE(solver_complex_polar) {
   /* TODO_PCJ: when the equation has form "ax^3 + d = 0", display approximate
    * values instead of exact values if the expressions are too complicated */
   assert_solves_to("2x^3-e^(2iπ/7)=0",
-                   {"x=((e^(-((ln(2))/3)+((2π)/21)i)(-1+√(3)i))/2)",
-                    "x=((e^(-((ln(2))/3)+((2π)/21)i)(-1-√(3)i))/2)",
-                    "x=e^(-(ln(2)/3)+((2π)/21)i)", "delta=-108e^(((4π)/7)i)"});
+                   {"x=(root(e^((2×π)/7×i)/2,3)×(-1+√(3)×i))/2",
+                    "x=-(root(e^((2×π)/7×i)/2,3)×(1+√(3)×i))/2",
+                    "x=root(e^((2×π)/7×i)/2,3)", "delta=-108e^(((4π)/7)i)"});
   assert_solves_to(
       "x^3-e^(2iπ/7)-1=0",
       {"x=((root(1+e^(((2π)/7)i),3)(-1+√(3)i))/2)",

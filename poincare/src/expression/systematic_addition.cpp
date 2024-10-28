@@ -93,8 +93,8 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
 
 bool SystematicOperation::ReduceAddition(Tree* e) {
   assert(e->isAdd());
-  bool modified = NAry::Flatten(e);
-  if (modified && CanApproximateTree(e, &modified)) {
+  bool changed = NAry::Flatten(e);
+  if (changed && CanApproximateTree(e, &changed)) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be
      * tried again to properly handle possible new float children. */
     return true;
@@ -102,7 +102,7 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
   if (NAry::SquashIfPossible(e)) {
     return true;
   }
-  modified = NAry::Sort(e) || modified;
+  changed = NAry::Sort(e) || changed;
   bool didSquashChildren = false;
   int n = e->numberOfChildren();
   int i = 0;
@@ -110,7 +110,7 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
   while (i < n) {
     if (child->isZero()) {
       child->removeTree();
-      modified = true;
+      changed = true;
       n--;
       continue;
     }
@@ -122,7 +122,7 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
         child->removeNode();
         didSquashChildren = true;
       }
-      modified = true;
+      changed = true;
       n--;
     } else {
       child = next;
@@ -130,7 +130,7 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
     }
   }
   if (n != e->numberOfChildren()) {
-    assert(modified);
+    assert(changed);
     NAry::SetNumberOfChildren(e, n);
     if (NAry::SquashIfPossible(e)) {
       return true;
@@ -150,12 +150,12 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
    * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
    * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
    * merging again when child merged with nextChild) */
-  if (modified && e->isAdd()) {
+  if (changed && e->isAdd()) {
     // Bubble-up may be unlocked after merging equal terms.
     SystematicReduction::BubbleUpFromChildren(e);
     assert(!SystematicReduction::ShallowReduce(e));
   }
-  return modified;
+  return changed;
 }
 
 }  // namespace Poincare::Internal

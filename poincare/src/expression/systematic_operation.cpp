@@ -269,12 +269,12 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   }
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
-  if (!realSign.isSignKnown()) {
+  if (!realSign.hasKnownSign()) {
     return false;
   }
   // TODO: Maybe move this in advanced reduction
   Sign imagSign = childSign.imagSign();
-  if (realSign.isNull() && imagSign.isSignKnown()) {
+  if (realSign.isNull() && imagSign.hasKnownSign()) {
     if (imagSign.isNull()) {
       // atan2(0, 0) = undef
       e->cloneTreeOverTree(KOutOfDefinition);

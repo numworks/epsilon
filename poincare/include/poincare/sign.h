@@ -67,17 +67,17 @@ class Sign {
   constexpr bool isNegative() const { return !m_canBeStrictlyPositive; }
   constexpr bool isPositive() const { return !m_canBeStrictlyNegative; }
   constexpr bool isFinite() const { return !m_canBeInfinite; }
-  // It has no informations on its positive/negative/null status
-  constexpr bool isUnknownSign() const {
+  // Has no informations on its positive/negative/null status
+  constexpr bool hasUnknownSign() const {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative;
   }
-  // It has no informations
+  // Has no informations
   constexpr bool isUnknown() const {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative &&
            m_canBeNonInteger && m_canBeInfinite;
   }
-  // It's either strictly positive, strictly negative or null.
-  constexpr bool isSignKnown() const {
+  // Is either strictly positive, strictly negative or null.
+  constexpr bool hasKnownSign() const {
     return isNull() || isStrictlyPositive() || isStrictlyNegative();
   }
   constexpr OMG::Troolean trooleanIsNull() const {

@@ -95,7 +95,7 @@ void Sign::log(std::ostream& stream, bool endOfLine) const {
     if (!m_canBeNonInteger) {
       stream << "Integer and ";
     }
-    if (isUnknownSign()) {
+    if (hasUnknownSign()) {
       stream << "Unknown";
     } else {
       if (m_canBeStrictlyPositive && m_canBeStrictlyNegative) {
@@ -395,7 +395,7 @@ ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
 ComplexSign SignOfTreeOrApproximation(const Tree* e) {
   assert(Dimension::IsNonListScalar(e));
   ComplexSign sign = GetComplexSign(e);
-  if (!sign.realSign().isSignKnown() || !sign.imagSign().isSignKnown()) {
+  if (!sign.realSign().hasKnownSign() || !sign.imagSign().hasKnownSign()) {
     Tree* approximation = Approximation::RootTreeToTree<double>(e);
     sign = GetComplexSign(approximation);
     approximation->removeTree();

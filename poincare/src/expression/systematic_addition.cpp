@@ -91,18 +91,9 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-bool SystematicOperation::ReduceAddition(Tree* e) {
+static bool SimplifySortedAddition(Tree* e) {
   assert(e->isAdd());
-  bool changed = NAry::Flatten(e);
-  if (changed && CanApproximateTree(e, &changed)) {
-    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
-     * tried again to properly handle possible new float children. */
-    return true;
-  }
-  if (NAry::SquashIfPossible(e)) {
-    return true;
-  }
-  changed = NAry::Sort(e) || changed;
+  bool changed = false;
   bool didSquashChildren = false;
   int n = e->numberOfChildren();
   int i = 0;
@@ -142,6 +133,22 @@ bool SystematicOperation::ReduceAddition(Tree* e) {
      * unlocked, see following assertion. */
     NAry::Sort(e);
   }
+  return changed;
+}
+
+bool SystematicOperation::ReduceAddition(Tree* e) {
+  assert(e->isAdd());
+  bool changed = NAry::Flatten(e);
+  if (changed && CanApproximateTree(e, &changed)) {
+    /* In case of successful flatten, approximateAndReplaceEveryScalar must be
+     * tried again to properly handle possible new float children. */
+    return true;
+  }
+  if (NAry::SquashIfPossible(e)) {
+    return true;
+  }
+  changed = NAry::Sort(e) || changed;
+  changed = SimplifySortedAddition(e) || changed;
   /* TODO: ReduceAddition may encounter the same issues as the multiplication.
    * If this assert can't be preserved, ReduceAddition must handle one or both
    * of this cases as handled in multiplication:

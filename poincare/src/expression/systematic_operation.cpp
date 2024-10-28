@@ -556,6 +556,13 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   if (changed && e->type() == type) {
     // Bubble-up may be unlocked after merging identical bases
     SystematicReduction::BubbleUpFromChildren(e);
+    /* TODO: If this assert can't be preserved, ReduceSortedAddition must handle
+     * one or both of this cases as handled in ReduceSortedMultiplication: With
+     * a,b and c the sorted addition children (a < b < c), M(a,b) the result of
+     * merging children a and b (with MergeAdditionChildWithNext) if it exists.
+     * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
+     * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
+     * merging again when child merged with nextChild) */
     assert(!SystematicReduction::ShallowReduce(e));
   }
   return changed;

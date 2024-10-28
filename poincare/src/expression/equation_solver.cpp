@@ -284,6 +284,7 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
                                       ProjectionContext projectionContext,
                                       Error* error) {
   assert(*error == Error::NoError);
+  assert(projectionContext.m_advanceReduce);
   Simplification::ProjectAndReduce(equationsSet, &projectionContext);
   if (projectionContext.m_dimension.isUnit()) {
     *error = Error::EquationUndefined;

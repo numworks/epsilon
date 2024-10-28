@@ -39,12 +39,9 @@ int Metric::GetMetric(const Tree* e) {
     case Type::IntegerPosBig:
       return BigValueMetric(e);
     case Type::Mult: {
-      // Ignore (-1) in multiplications
-      if (e->child(0)->isMinusOne()) {
-        result -= GetMetric(Type::MinusOne);
-        if (e->numberOfChildren() == 2) {
-          result -= GetMetric(Type::Mult);
-        }
+      // Ignore cost of multiplication in (-A)
+      if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
+        result -= GetMetric(Type::Mult);
       }
       // Beautification hyperbolic triginometry (cosh, sinh, asinh and atanh)
       // TODO: cost difference between trig and hyperbolic trig

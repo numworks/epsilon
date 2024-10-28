@@ -26,8 +26,8 @@ class SystematicOperation {
   static bool ReduceDim(Tree* e);
 
   static void ConvertPowerRealToPower(Tree* e);
-  static bool SimplifySortedAddition(Tree* e);
-  static bool SimplifySortedMultiplication(Tree* e);
+  static bool ReduceSortedAddition(Tree* e);
+  static bool ReduceSortedMultiplication(Tree* e);
 };
 
 }  // namespace Poincare::Internal

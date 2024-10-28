@@ -143,7 +143,7 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   return false;
 }
 
-bool SystematicOperation::SimplifySortedMultiplication(Tree* e) {
+bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
   assert(e->isMult());
   int n = e->numberOfChildren();
   bool changed = false;
@@ -220,7 +220,7 @@ bool SystematicOperation::SimplifySortedMultiplication(Tree* e) {
    * again once sorted again. For example:
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
   if (NAry::Sort(mult, Order::OrderType::PreserveMatrices)) {
-    SimplifySortedMultiplication(mult);
+    ReduceSortedMultiplication(mult);
   }
   return true;
 }

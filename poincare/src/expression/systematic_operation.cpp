@@ -550,9 +550,9 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   Order::OrderType orderType = e->isAdd() ? Order::OrderType::System
                                           : Order::OrderType::PreserveMatrices;
   changed = NAry::Sort(e, orderType) || changed;
-  changed = (e->isAdd() ? SimplifySortedAddition(e)
-                        : SimplifySortedMultiplication(e)) ||
-            changed;
+  changed =
+      (e->isAdd() ? ReduceSortedAddition(e) : ReduceSortedMultiplication(e)) ||
+      changed;
   if (changed && e->type() == type) {
     // Bubble-up may be unlocked after merging identical bases
     SystematicReduction::BubbleUpFromChildren(e);

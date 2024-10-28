@@ -91,7 +91,7 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
   return true;
 }
 
-bool SystematicOperation::SimplifySortedAddition(Tree* e) {
+bool SystematicOperation::ReduceSortedAddition(Tree* e) {
   assert(e->isAdd());
   bool changed = false;
   bool didSquashChildren = false;

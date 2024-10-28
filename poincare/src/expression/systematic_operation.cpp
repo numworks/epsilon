@@ -543,6 +543,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
       }
     }
   }
+  assert(e->type() == type);
   if (NAry::SquashIfPossible(e)) {
     return true;
   }

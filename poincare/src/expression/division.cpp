@@ -53,6 +53,8 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   assert(!numerator.isUninitialized() && numerator->isMult());
   assert(!denominator.isUninitialized() && denominator->isMult());
   assert(!outerNumerator.isUninitialized() && outerNumerator->isMult());
+  bool noOuterNumerator = numerator == outerNumerator;
+
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(e);
   for (int i = 0; i < numberOfFactors; i++) {
@@ -125,7 +127,9 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   }
   NAry::SquashIfPossible(numerator);
   NAry::SquashIfPossible(denominator);
-  NAry::SquashIfPossible(outerNumerator);
+  if (!noOuterNumerator) {
+    NAry::SquashIfPossible(outerNumerator);
+  }
 }
 
 Tree* Division::PushDenominatorAndComputeDegreeOfNumerator(

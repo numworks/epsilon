@@ -71,7 +71,7 @@ class Variables {
   static void LeaveScope(Tree* e) { return EnterOrLeaveScope(e, false, 0); }
   static bool LeaveScopeWithReplacement(Tree* e, const Tree* value,
                                         bool simplify,
-                                        bool canHaveDependencyInValue);
+                                        bool addDependencyInValue);
   TREE_REF_WRAP_3(LeaveScopeWithReplacement, const Tree*, bool, bool);
 
  private:

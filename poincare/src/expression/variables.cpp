@@ -78,20 +78,18 @@ bool Variables::HasUserSymbols(const Tree* e) {
 
 bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
                                           bool simplify,
-                                          bool canHaveDependencyInValue) {
+                                          bool addDependencyInValue) {
   bool changed = Replace(e, 0, value, true, simplify);
-  if (!changed && canHaveDependencyInValue) {
+  if (!changed && addDependencyInValue) {
     /* Add a dependency in the value if it is leaving the scope of the
      * expression but it does not appear in the expression. */
     /* TODO We need to track the replacement value only if it is in the pool and
      * after e. Cloning is overkill but easy. */
-    TreeRef valueRef = value->cloneTree();
     e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
-                                                {.KA = e, .KB = valueRef}));
+                                                {.KA = e, .KB = value}));
     if (simplify) {
       SystematicReduction::ShallowReduce(e);
     }
-    valueRef->removeTree();
     return true;
   }
   return changed;

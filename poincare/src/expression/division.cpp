@@ -53,7 +53,6 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   assert(!numerator.isUninitialized() && numerator->isMult());
   assert(!denominator.isUninitialized() && denominator->isMult());
   assert(!outerNumerator.isUninitialized() && outerNumerator->isMult());
-  bool noOuterNumerator = numerator == outerNumerator;
 
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(e);
@@ -127,7 +126,7 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   }
   NAry::SquashIfPossible(numerator);
   NAry::SquashIfPossible(denominator);
-  if (!noOuterNumerator) {
+  if (numerator != outerNumerator) {
     NAry::SquashIfPossible(outerNumerator);
   }
 }

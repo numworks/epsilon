@@ -214,7 +214,6 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
   if (!changed) {
     return false;
   }
-  assert(e->isMult());
 
   /* Merging children can un-sort the multiplication. It must then be simplified
    * again once sorted again. For example:

@@ -115,10 +115,6 @@ class Approximation final {
 
   /* Approximations on tree, depends on current s_context */
 
-  // Approximate a tree with any dimension
-  template <typename T>
-  static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
-
   // tree must be of scalar dimension
   template <typename T>
   static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
@@ -135,22 +131,6 @@ class Approximation final {
    * real */
   template <typename T>
   static T To(const Tree* e, T x, const Context* ctx);
-
-  // tree must be of boolean dimension.
-  template <typename T>
-  static bool ToBoolean(const Tree* e, const Context* ctx);
-
-  // Input tree e must have a positive ListLength
-  template <typename T>
-  static Tree* ToList(const Tree* e, const Context* ctx);
-
-  // tree must be of point dimension.
-  template <typename T>
-  static Tree* ToPoint(const Tree* e, const Context* ctx);
-
-  // tree must be of matrix dimension.
-  template <typename T>
-  static Tree* ToMatrix(const Tree* e, const Context* ctx);
 
   // Replace a Tree with the Tree of its complex approximation
   static bool ApproximateToComplexTree(Tree* e, const Context* ctx);
@@ -204,6 +184,26 @@ class Approximation final {
   }
 
  private:
+  // Approximate a tree with any dimension
+  template <typename T>
+  static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
+
+  // tree must be of boolean dimension.
+  template <typename T>
+  static bool ToBoolean(const Tree* e, const Context* ctx);
+
+  // Input tree e must have a positive ListLength
+  template <typename T>
+  static Tree* ToList(const Tree* e, const Context* ctx);
+
+  // tree must be of point dimension.
+  template <typename T>
+  static Tree* ToPoint(const Tree* e, const Context* ctx);
+
+  // tree must be of matrix dimension.
+  template <typename T>
+  static Tree* ToMatrix(const Tree* e, const Context* ctx);
+
   template <typename T>
   static std::complex<T> NonReal() {
     return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));

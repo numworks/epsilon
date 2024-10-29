@@ -15,6 +15,8 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
+constexpr static const char* k_latexSpacing = "\\ ";
+
 // ===== Tokens =====
 
 /* These token description arrays alternate
@@ -43,7 +45,7 @@ constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
  * - If the integral isn't followed by a space or at the end of the string
  * */
 constexpr static const char* integralToken[] = {
-    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", "\\ "};
+    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", k_latexSpacing};
 
 // Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};
@@ -211,7 +213,7 @@ Tree* NextLatexToken(const char** start) {
        * This currently only applies to integral. */
       bool optionalRightDelimiter =
           i == token.descriptionLength - 2 &&
-          strncmp(rightDelimiter, "\\ ", strlen("\\ ")) == 0;
+          strncmp(rightDelimiter, k_latexSpacing, strlen(k_latexSpacing)) == 0;
 
       ParseLatexOnRackUntilIdentifier(
           Rack::From(layoutToken->child(childIndexInLayout)), start,

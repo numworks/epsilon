@@ -209,28 +209,28 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
   size_t endLen = strlen(endIdentifier);
 
   bool parseVariable = IsVariableRightDelimiter(endIdentifier, endLen);
-  if (parseVariable) {
-    // The parsing stops when the codepoint is not identifier material
-    endLen = 0;
-  }
+  bool ignoreEndIdentifier = endLen == 0 || parseVariable;
 
   while (**start != 0 &&
-         (endLen == 0 || strncmp(*start, endIdentifier, endLen) != 0)) {
+         (ignoreEndIdentifier || strncmp(*start, endIdentifier, endLen) != 0)) {
     Tree* child = NextLatexToken(start, parseVariable);
     if (child) {
       NAry::AddChild(parent, child);
     } else if (parseVariable) {
       /* The next codepoint wasn't identifier material so the variable came to
        * an end */
-      return;
+      break;
     }
   }
 
-  if (**start == 0 && endLen > 0) {
+  if (ignoreEndIdentifier) {
+    return;
+  }
+
+  if (**start == 0) {
     /* We're at the end of the string and endIdentifier couldn't be found */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-
   *start += endLen;
 }
 

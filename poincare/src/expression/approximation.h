@@ -25,6 +25,8 @@ struct Dimension;
  */
 
 class Approximation final {
+  friend struct Matrix;
+
  public:
   struct Context {
     using VariableType = double;
@@ -111,12 +113,6 @@ class Approximation final {
       const Tree* tree, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Cartesian);
 
-  /* Approximations on tree, depends on current s_context */
-
-  // tree must be of scalar dimension
-  template <typename T>
-  static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
-
   // tree must be of scalar dimension and real.
   template <typename T>
   static T To(const Tree* e, const Context* ctx);
@@ -125,9 +121,6 @@ class Approximation final {
    * real */
   template <typename T>
   static T To(const Tree* e, T x, const Context* ctx);
-
-  // Replace a Tree with the Tree of its complex approximation
-  static bool ApproximateToComplexTree(Tree* e, const Context* ctx);
 
   /* Helpers */
 
@@ -182,6 +175,10 @@ class Approximation final {
   template <typename T>
   static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
 
+  // tree must be of scalar dimension
+  template <typename T>
+  static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
+
   // tree must be of boolean dimension.
   template <typename T>
   static bool ToBoolean(const Tree* e, const Context* ctx);
@@ -197,6 +194,9 @@ class Approximation final {
   // tree must be of matrix dimension.
   template <typename T>
   static Tree* ToMatrix(const Tree* e, const Context* ctx);
+
+  // Replace a Tree with the Tree of its complex approximation
+  static bool ApproximateToComplexTree(Tree* e, const Context* ctx);
 
   template <typename T>
   static std::complex<T> NonReal() {

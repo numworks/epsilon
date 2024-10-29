@@ -28,7 +28,7 @@ class Approximation final {
   friend struct Matrix;
 
  public:
-  struct Context {
+  struct Context {  // TODO_PCJ: make private
     using VariableType = double;
     Context(Random::Context* randomContext = nullptr,
             AngleUnit angleUnit = AngleUnit::Radian,
@@ -47,7 +47,7 @@ class Approximation final {
     void setLocalValue(VariableType value) { m_localVariable = value; }
 
     /* TODO: most members of the context will not change and are needlessly
-     * copied when building parent context chains. We should have an independant
+     * copied when building parent context chains. We should have an independent
      * variable chain instead. */
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
@@ -114,11 +114,13 @@ class Approximation final {
       ComplexFormat complexFormat = ComplexFormat::Cartesian);
 
   // tree must be of scalar dimension and real.
+  // TODO_PCJ: make private
   template <typename T>
   static T To(const Tree* e, const Context* ctx);
 
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
+  // TODO_PCJ: make private
   template <typename T>
   static T To(const Tree* e, T x, const Context* ctx);
 

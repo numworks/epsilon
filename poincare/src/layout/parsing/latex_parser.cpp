@@ -17,12 +17,11 @@ namespace Poincare::Internal {
 namespace LatexParser {
 
 /* This value is a system symbol named GroupSeparator */
-constexpr static char k_variableRightDelimiter = '\u001D';
-constexpr static const char k_variableRightDelimiterString[] = {
-    k_variableRightDelimiter, '\0'};
+constexpr static const char* k_variableRightDelimiter = "\u001D";
 
 static bool IsVariableRightDelimiter(const char* string, size_t length) {
-  return length == 1 && string[0] == k_variableRightDelimiter;
+  return length == strlen(k_variableRightDelimiter) &&
+         strncmp(string, k_variableRightDelimiter, length) == 0;
 }
 
 // ===== Tokens =====
@@ -76,7 +75,7 @@ constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
 constexpr static const char* integralToken[] = {
     "\\int_{", "\1", "}^{",
     "\2",      "}",  "\3",
-    "\\ d",    "\0", k_variableRightDelimiterString};
+    "\\ d",    "\0", k_variableRightDelimiter};
 
 // Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};

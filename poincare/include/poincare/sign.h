@@ -76,6 +76,8 @@ class Sign {
     return m_canBeNull && m_canBeStrictlyPositive && m_canBeStrictlyNegative &&
            m_canBeNonInteger && m_canBeInfinite;
   }
+  // Is either positive or negative.
+  constexpr bool hasKnownSign() const { return isPositive() || isNegative(); }
   // Is either strictly positive, strictly negative or null.
   constexpr bool hasKnownStrictSign() const {
     return isNull() || isStrictlyPositive() || isStrictlyNegative();

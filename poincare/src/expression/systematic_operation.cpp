@@ -252,9 +252,8 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
 
 bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
-  const Tree* child = e->child(0);
+  Tree* child = e->child(0);
   ComplexSign childSign = GetComplexSign(child);
-  // TODO : arg(A*B) = arg(B) when A real positive
   // arg(e^(iA)) = A reduced to ]-π,π] when A real
   PatternMatching::Context ctx;
   if (PatternMatching::Match(child, KExp(KMult(KA_p, i_e)), &ctx)) {
@@ -267,6 +266,39 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
       arg->removeTree();
     }
   }
+
+  /* arg(A*B*C)=dep(arg(A*-1), {A*B*C}) with B and C real, and C <= 0 <= B.
+   * Also add NonNull dependencies for any removed term that can be null. */
+  if (child->isMult()) {
+    // {A*B*C} dependency
+    TreeRef depList = SharedTreeStack->pushDepList(1);
+    child->cloneTree();
+    bool changed = false;
+    for (Tree* multChild : child->children()) {
+      ComplexSign sign = GetComplexSign(multChild);
+      if (sign.isReal() && sign.realSign().hasKnownSign() &&
+          !multChild->isMinusOne()) {
+        if (sign.canBeNull()) {
+          // arg(|x|*z) -> arg(z), {|x|*z, NonNull(|x|)}
+          NAry::AddChild(depList, PatternMatching::Create(KNonNull(KA),
+                                                          {.KA = multChild}));
+        }
+        assert(!sign.isNull() && !multChild->isOne());
+        multChild->cloneTreeOverTree(sign.realSign().isPositive() ? 1_e : -1_e);
+        changed = true;
+      }
+    }
+    if (changed) {
+      SystematicReduction::ShallowReduce(child);
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KDep(KArg(KA), KB), {.KA = child, .KB = depList}));
+    }
+    depList->removeTree();
+    if (changed) {
+      return true;
+    }
+  }
+
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
   if (realSign.hasKnownStrictSign()) {

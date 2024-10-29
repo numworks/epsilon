@@ -357,6 +357,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(exp(-i*π))", "π", ctx);
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
   simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", ctx);
+  // TODO: Should be "arg(z)×i"
+  simplifies_to("arg(abs(x)×e^(arg(z)×i))", "arg(abs(x)×e^(arg(z)×i))", ctx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

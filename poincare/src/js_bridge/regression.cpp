@@ -65,7 +65,7 @@ std::string latexTemplateFormula(const Regression::Regression* reg) {
   char buffer[k_bufferSize];
   Layout layout = reg->templateLayout();
   Internal::LatexParser::LayoutToLatex(Internal::Rack::From(layout.tree()),
-                                       buffer, buffer + k_bufferSize - 1, true);
+                                       buffer, buffer + k_bufferSize - 1);
   return std::string(buffer, strlen(buffer));
 }
 

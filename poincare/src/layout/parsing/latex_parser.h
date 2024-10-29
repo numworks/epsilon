@@ -10,7 +10,7 @@ namespace LatexParser {
 
 Tree* LatexToLayout(const char* latexString);
 char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
-                    bool withThousandsSeparators);
+                    bool withThousandsSeparators = false);
 
 }  // namespace LatexParser
 

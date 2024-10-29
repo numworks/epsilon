@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_latex_to_layout) {
 }
 
 void assert_layout_convert_to_latex(const Tree* l, const char* latex,
-                                    bool withThousandsSeparator) {
+                                    bool withThousandsSeparator = false) {
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   LatexParser::LayoutToLatex(Rack::From(l), buffer, buffer + bufferSize - 1,
@@ -48,18 +48,16 @@ void assert_layout_convert_to_latex(const Tree* l, const char* latex,
 }
 
 QUIZ_CASE(pcj_layout_to_latex) {
-  // Use the withThousandsSeparator variable when its value doesn't matter.
-  bool withThousandsSeparator = true;
   assert_layout_convert_to_latex(
       "1+"_l ^ KAbsL("3+"_l ^ KParenthesesL("a-b"_l) ^ "+2"_l) ^ "+4"_l,
-      "1+\\left|3+\\left(a-b\\right)+2\\right|+4", withThousandsSeparator);
+      "1+\\left|3+\\left(a-b\\right)+2\\right|+4");
   assert_layout_convert_to_latex(
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
                     KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))),
-      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}", withThousandsSeparator);
+      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}");
   assert_layout_convert_to_latex(
       KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))),
-      "\\int_{1}^{2}t^{3}\\ dt", withThousandsSeparator);
+      "\\int_{1}^{2}t^{3}\\ dt");
 
   // Test the thousand separators
   const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;
@@ -68,7 +66,7 @@ QUIZ_CASE(pcj_layout_to_latex) {
 
   assert_layout_convert_to_latex(
       KRackL(KDiffL("t"_l, "2"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))),
-      "diff(t^{3},t,2)", withThousandsSeparator);
+      "diff(t^{3},t,2)");
   assert_layout_convert_to_latex(
       KCodePointL<UCodePointInferiorEqual>() ^
           KCodePointL<UCodePointSuperiorEqual>() ^
@@ -76,5 +74,5 @@ QUIZ_CASE(pcj_layout_to_latex) {
           KCodePointL<UCodePointMultiplicationSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
           KCodePointL<UCodePointInfinity>(),
-      "\\le \\ge \\cdot \\times \\to \\infty ", withThousandsSeparator);
+      "\\le \\ge \\cdot \\times \\to \\infty ");
 }

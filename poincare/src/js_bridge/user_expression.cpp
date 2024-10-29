@@ -448,25 +448,17 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
 }
 
 std::string typedToLatex(const TypedUserExpression& expression,
-                         int numberOfSignificantDigits,
-                         bool withThousandsSeparators) {
+                         int numberOfSignificantDigits) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
   expression.toLatex(buffer, k_bufferSize, Preferences::PrintFloatMode::Decimal,
-                     numberOfSignificantDigits, &context,
-                     withThousandsSeparators);
+                     numberOfSignificantDigits, &context);
   return std::string(buffer, strlen(buffer));
 }
 
-std::string typedToLatexWithThousandsSeparators(
-    const TypedUserExpression& expression, int numberOfSignificantDigits) {
-  return typedToLatex(expression, numberOfSignificantDigits, true);
-}
-
-std::string typedToLatexWith7DigitsAndThousandsSeparators(
-    const TypedUserExpression& expression) {
-  return typedToLatexWithThousandsSeparators(expression, 7);
+std::string typedToLatexWith7Digits(const TypedUserExpression& expression) {
+  return typedToLatex(expression, 7);
 }
 
 TypedSystemExpression typedCloneAndReduce(
@@ -523,8 +515,7 @@ EMSCRIPTEN_BINDINGS(user_expression) {
       .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("toLatex", &typedToLatex)
-      .function("toLatex", &typedToLatexWithThousandsSeparators)
-      .function("toLatex", &typedToLatexWith7DigitsAndThousandsSeparators)
+      .function("toLatex", &typedToLatexWith7Digits)
       .function("cloneAndReduce", &typedCloneAndReduce);
 }
 }  // namespace Poincare::JSBridge

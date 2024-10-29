@@ -306,7 +306,7 @@ class JuniorExpression : public OExpression {
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits, Context* context,
-                bool withThousandsSeparator) const;
+                bool withThousandsSeparator = false) const;
 
 #if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,

@@ -21,9 +21,10 @@ QUIZ_CASE(pcj_latex_to_layout) {
       "1+\\left|3+\\left(a-b\\right)+2\\right|+4",
       "1+"_l ^ KAbsL("3+"_l ^ KParenthesesL("a-b"_l) ^ "+2"_l) ^ "+4"_l);
   assert_latex_layouts_to(
-      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}",
+      "\\frac{\\sqrt{4}}{\\left(3^{\\overline{5}}\\right)}",
       KRackL(KFracL(KRackL(KSqrtL("4"_l)),
-                    KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))));
+                    KRackL(KParenthesesL(
+                        "3"_l ^ KSuperscriptL(KRackL(KConjL("5"_l))))))));
   // Integral
   assert_latex_layouts_to(
       "\\int_{0}^{1}t^{3}\\ dt",
@@ -61,9 +62,10 @@ QUIZ_CASE(pcj_layout_to_latex) {
       "1+"_l ^ KAbsL("3+"_l ^ KParenthesesL("a-b"_l) ^ "+2"_l) ^ "+4"_l,
       "1+\\left|3+\\left(a-b\\right)+2\\right|+4");
   assert_layout_convert_to_latex(
-      KRackL(KFracL(KRackL(KSqrtL("4"_l)),
-                    KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))),
-      "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}");
+      KRackL(KFracL(
+          KRackL(KSqrtL("4"_l)),
+          KRackL(KParenthesesL("3"_l ^ KSuperscriptL(KRackL(KConjL("5"_l))))))),
+      "\\frac{\\sqrt{4}}{\\left(3^{\\overline{5}}\\right)}");
   assert_layout_convert_to_latex(
       KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l)),
              "+"_cl, "3"_cl),

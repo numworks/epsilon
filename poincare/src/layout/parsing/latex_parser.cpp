@@ -36,6 +36,7 @@ constexpr static const char* curlyBracesToken[] = {"\\left\\{", "\0",
                                                    "\\right\\}"};
 constexpr static const char* absToken[] = {"\\left|", "\0", "\\right|"};
 constexpr static const char* sqrtToken[] = {"\\sqrt{", "\0", "}"};
+constexpr static const char* conjugateToken[] = {"\\overline{", "\0", "}"};
 constexpr static const char* superscriptToken[] = {"^{", "\0", "}"};
 constexpr static const char* subscriptToken[] = {"_{", "\0", "}"};
 constexpr static const char* fracToken[] = {"\\frac{", "\0", "}{", "\1", "}"};
@@ -147,6 +148,8 @@ constexpr static LatexToken k_tokens[] = {
     ONE_CHILD_TOKEN(absToken, isAbsLayout, KAbsL),
     // Sqrt
     ONE_CHILD_TOKEN(sqrtToken, isSqrtLayout, KSqrtL),
+    // Conjugate
+    ONE_CHILD_TOKEN(conjugateToken, isConjLayout, KConjL),
     // Superscript
     {superscriptToken, std::size(superscriptToken),
      [](const Tree* l) -> bool {

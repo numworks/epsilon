@@ -98,7 +98,7 @@ void Tree::logAttributes(std::ostream& stream) const {
            << static_cast<int>(Matrix::NumberOfColumns(this)) << "\"";
   }
   if (isNumber()) {
-    stream << " value=\"" << Approximation::To<float>(this, nullptr) << "\"";
+    stream << " value=\"" << Approximation::RootTreeToReal<float>(this) << "\"";
   }
   if (isVar()) {
     stream << " id=" << static_cast<int>(Variables::Id(this));

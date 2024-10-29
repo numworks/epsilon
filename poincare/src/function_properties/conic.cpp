@@ -71,7 +71,8 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       coefListY->removeTree();
       return;
     }
-    m_c = Approximation::To<double>(c, nullptr);
+    m_c = Approximation::RootTreeToReal<double>(c);
+    ;
   }
 
   // Extract b and e
@@ -85,9 +86,11 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   Tree* coefListX = PolynomialParser::GetReducedCoefficients(be, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
-    m_b = Approximation::To<double>(coefListX->child(1), nullptr);
+    m_b = Approximation::RootTreeToReal<double>(coefListX->child(1));
+    ;
   }
-  m_e = Approximation::To<double>(coefListX->child(0), nullptr);
+  m_e = Approximation::RootTreeToReal<double>(coefListX->child(0));
+  ;
   coefListX->removeTree();
 
   // Extract a, d and f
@@ -103,12 +106,15 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   coefListX = PolynomialParser::GetReducedCoefficients(adf, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
-    m_a = Approximation::To<double>(coefListX->child(2), nullptr);
+    m_a = Approximation::RootTreeToReal<double>(coefListX->child(2));
+    ;
   }
   if (dx >= 1) {
-    m_d = Approximation::To<double>(coefListX->child(1), nullptr);
+    m_d = Approximation::RootTreeToReal<double>(coefListX->child(1));
+    ;
   }
-  m_f = Approximation::To<double>(coefListX->child(0), nullptr);
+  m_f = Approximation::RootTreeToReal<double>(coefListX->child(0));
+  ;
   coefListX->removeTree();
   coefListY->removeTree();
 
@@ -481,7 +487,8 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
   assert(0 < nRemoved && nRemoved < nChildren);
   NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
-  double k = Approximation::To<double>(denominator, nullptr);
+  double k = Approximation::RootTreeToReal<double>(denominator);
+  ;
   denominator->removeTree();
 
   // Turn a·cos(θ+c)+k into (a/k)·cos(θ+c)+1

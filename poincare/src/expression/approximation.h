@@ -85,6 +85,12 @@ class Approximation final {
   template <typename T>
   static std::complex<T> RootTreeToComplex(const Tree* e);
 
+  // tree must have a scalar dimension
+  template <typename T>
+  static T RootTreeToReal(const Tree* e, T abscissa) {
+    return RootToPointOrScalarPrivate<T>(e, false, false, abscissa).toScalar();
+  }
+
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
    * left to default on projected trees. */
   template <typename T>

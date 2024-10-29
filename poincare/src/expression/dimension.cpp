@@ -171,7 +171,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return e->numberOfChildren();
     case Type::ListSequence:
       // TODO: Handle undef Approximation.
-      return Approximation::To<float>(e->child(1), nullptr);
+      return Approximation::RootTreeToReal<float>(e->child(1));
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));
@@ -350,7 +350,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       if (!IsIntegerExpression(e->child(1))) {
         return false;
       }
-      float index = Approximation::To<float>(e->child(1), nullptr);
+      float index = Approximation::RootTreeToReal<float>(e->child(1));
       assert(!std::isnan(index) && std::round(index) == index);
       if (index > static_cast<float>(INT8_MAX) ||
           (index < static_cast<float>(INT8_MIN))) {
@@ -546,7 +546,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Pow: {
       Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
-        float index = Approximation::To<float>(e->child(1), nullptr);
+        float index = Approximation::RootTreeToReal<float>(e->child(1));
         assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);
@@ -582,7 +582,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
-      int n = Approximation::To<float>(e->child(0), nullptr);
+      int n = Approximation::RootTreeToReal<float>(e->child(0));
       return Matrix(n, n);
     }
     case Type::UnitConversion:

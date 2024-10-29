@@ -411,7 +411,7 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* childExponent = factor->child(1);
     assert(factor->child(0)->isUnit());
     assert(factor->child(1)->isRational());
-    exponent = Approximation::To<double>(childExponent, nullptr);
+    exponent = Approximation::RootTreeToReal<double>(childExponent);
     factor = factor->child(0);
   }
   if (!factor->isUnit()) {
@@ -597,10 +597,10 @@ double Unit::KelvinValueToRepresentative(double value,
   bool isCelsius = (representative == &Temperature::representatives.celsius);
   // A -> (A / ratio) - origin
   return (value / representative->ratio()) -
-         (isCelsius
-              ? Approximation::To<double>(Temperature::celsiusOrigin, nullptr)
-              : Approximation::To<double>(Temperature::fahrenheitOrigin,
-                                          nullptr));
+         (isCelsius ? Approximation::RootTreeToReal<double>(
+                          Temperature::celsiusOrigin)
+                    : Approximation::RootTreeToReal<double>(
+                          Temperature::fahrenheitOrigin));
 }
 
 Tree* Unit::Push(const Representative* unitRepresentative,
@@ -655,7 +655,7 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
-      float exponentFloat = Approximation::To<float>(exp, nullptr);
+      float exponentFloat = Approximation::RootTreeToReal<float>(exp);
       if (exponentFloat != std::round(exponentFloat)) {
         /* If non-integer exponents are found, we round a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived

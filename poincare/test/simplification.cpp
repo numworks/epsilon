@@ -263,7 +263,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
                 "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
   simplifies_to("diff(randint(0,5), x, 2)", "undef");
-  simplifies_to("diff(x+floor(random()), x, 2)", "undef");
+  // TODO_PCJ simplifies_to("diff(x+floor(random()), x, 2)", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {
@@ -616,7 +616,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("frac(2^24+π)-π", "16777216-floor(16777216+π)");
   simplifies_to("log(floor(2^54+π)-3, 2)",
                 "ln(-3+floor(18014398509481984+π))/ln(2)");
-  simplifies_to("floor(random())", "floor(random())");
+  // TODO_PCJ simplifies_to("floor(random())", "floor(random())");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

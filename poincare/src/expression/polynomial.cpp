@@ -572,7 +572,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = Approximation::To<double>(child, nullptr);
+      double approximation = Approximation::RootTreeToReal<double>(child);
       if (!std::isnan(approximation)) {
         isPositive = OMG::BoolToTroolean(approximation > 0.0);
       }
@@ -591,7 +591,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above
-      double approximation = Approximation::To<double>(child, nullptr);
+      double approximation = Approximation::RootTreeToReal<double>(child);
       if (!std::isnan(approximation)) {
         isNull = OMG::BoolToTroolean(approximation != 0.0);
       }

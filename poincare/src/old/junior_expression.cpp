@@ -1097,6 +1097,7 @@ template <typename T>
 Coordinate2D<T> Point::approximate2D(
     const ApproximationContext& approximationContext) {
   // TODO_PCJ: Add context for angle unit and complex format.
+  // TODO: Use RootTreeToPoint?
   return Coordinate2D<T>(Approximation::RootTreeToReal<T>(tree()->child(0)),
                          Approximation::RootTreeToReal<T>(tree()->child(1)));
 }

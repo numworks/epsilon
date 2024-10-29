@@ -34,14 +34,6 @@ class OPoint : public ExpressionTwoChildren<OPoint, PointNode> {
   using ExpressionBuilder::ExpressionBuilder;
 
   OExpression shallowReduce(ReductionContext reductionContext);
-
-  template <typename T>
-  Coordinate2D<T> approximate2D(
-      const ApproximationContext& approximationContext) {
-    return Coordinate2D<T>(
-        childAtIndex(0).approximateToScalar<T>(approximationContext),
-        childAtIndex(1).approximateToScalar<T>(approximationContext));
-  }
 };
 
 }  // namespace Poincare

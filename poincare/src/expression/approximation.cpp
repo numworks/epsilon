@@ -1204,6 +1204,13 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
+T Approximation::To(const Tree* e, const Context* ctx) {
+  std::complex<T> value = ToComplex<T>(e, ctx);
+  // Remove signaling nan
+  return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
+}
+
+template <typename T>
 T Approximation::To(const Tree* e, T x, const Context* ctx) {
   T result;
   if (!ctx) {
@@ -1386,6 +1393,8 @@ template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
                                                     ComplexFormat);
 template Tree* Approximation::RootTreeToTree<double>(const Tree*, AngleUnit,
                                                      ComplexFormat);
+template float Approximation::To(const Tree* e, const Context* ctx);
+template double Approximation::To(const Tree* e, const Context* ctx);
 template float Approximation::To(const Tree* e, float x, const Context* ctx);
 template double Approximation::To(const Tree* e, double x, const Context* ctx);
 

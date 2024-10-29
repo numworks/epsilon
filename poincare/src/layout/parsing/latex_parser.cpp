@@ -60,6 +60,11 @@ constexpr static const char* divisionToken[] = {"\\div"};
 constexpr static const char* textToken[] = {"\\text{"};
 constexpr static const char* operatorToken[] = {"\\operatorname{"};
 constexpr static const char* spaceToken[] = {" "};
+/* TODO: Currently we are working with MathQuill which doesn't recognize the
+ * special characters spacings. See
+ * https://github.com/desmosinc/mathquill/blob/f71f190ee067a9a2a33683cdb02b43333b9b240e/src/commands/math/advancedSymbols.ts#L224
+ */
+// constexpr static const char* commaToken[] = {","};
 constexpr static const char* escapeToken[] = {"\\"};
 constexpr static const char* leftBraceToken[] = {"{"};
 constexpr static const char* rightBraceToken[] = {"}"};
@@ -159,6 +164,7 @@ constexpr static LatexToken k_tokens[] = {
     DO_NOTHING_TOKEN(textToken),
     DO_NOTHING_TOKEN(operatorToken),
     DO_NOTHING_TOKEN(spaceToken),
+    // DO_NOTHING_TOKEN(commaToken),
     DO_NOTHING_TOKEN(escapeToken),
     DO_NOTHING_TOKEN(leftBraceToken),
     DO_NOTHING_TOKEN(rightBraceToken),

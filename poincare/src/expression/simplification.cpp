@@ -191,16 +191,8 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced,
     checking that the ComplexSign of the tree is consistent with the tree
     approximation. */
   if (Dimension::IsNonListScalar(e)) {
-    /* FIXME: The tree approximation is computed in two steps: first calling
-     * RootTreeToTree to have a proper management of Approximation::s_context,
-     * then by applying ToComplex on the resulting tree. It would be better to
-     * have a single function that approximates a tree to a scalar value while
-     * also providing a safe approximation context. */
-    Tree* approximatedTree = Approximation::RootTreeToTree<double>(e);
-    std::complex<double> value =
-        Approximation::ToComplex<double>(approximatedTree, nullptr);
+    std::complex<double> value = Approximation::RootTreeToComplex<double>(e);
     assert(AreConsistent(GetComplexSign(e), value));
-    approximatedTree->removeTree();
   }
 #endif
 

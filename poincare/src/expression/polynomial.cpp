@@ -566,8 +566,8 @@ bool PolynomialParser::HasNonNullCoefficients(
      * so check approximation is real. */
     assert(
         Dimension::Get(child).isScalar() &&
-        (Approximation::ToComplex<double>(child, nullptr).imag() == 0 ||
-         std::isnan(Approximation::ToComplex<double>(child, nullptr).imag())));
+        (Approximation::RootTreeToComplex<double>(child).imag() == 0 ||
+         std::isnan(Approximation::RootTreeToComplex<double>(child).imag())));
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
@@ -586,8 +586,8 @@ bool PolynomialParser::HasNonNullCoefficients(
      * so check approximation is real. */
     assert(
         Dimension::Get(child).isScalar() &&
-        (Approximation::ToComplex<double>(child, nullptr).imag() == 0 ||
-         std::isnan(Approximation::ToComplex<double>(child, nullptr).imag())));
+        (Approximation::RootTreeToComplex<double>(child).imag() == 0 ||
+         std::isnan(Approximation::RootTreeToComplex<double>(child).imag())));
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above

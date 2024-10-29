@@ -62,6 +62,9 @@ bool Arithmetic::ReduceFloor(Tree* e) {
   /* TODO: Escape to undef if child is complex, instead of relying on final
    * approximation. */
   // Reduce using approximation if possible.
+  if (!Approximation::CanApproximate(e)) {
+    return false;
+  }
   // TODO_PCJ: Use double instead of float (requires Integer::Push(uint64_t)).
   float approx = Approximation::RootTreeToReal<float>(e);
   static_assert(OMG::IEEE754<float>::NonExactIntegerLimit() <= UINT32_MAX);

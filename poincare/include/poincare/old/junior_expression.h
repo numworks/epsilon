@@ -236,7 +236,7 @@ class JuniorExpression : public OExpression {
                                    bool scalarsOnly = false) const;
   // Approximate to scalar any scalar expression
   template <typename T>
-  T approximateUserExpressionToScalar(
+  T approximateToScalar(
       Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
       Preferences::ComplexFormat complexFormat =
           Preferences::ComplexFormat::Cartesian) const;

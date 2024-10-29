@@ -86,7 +86,7 @@ void check_sum_of_sequence_between_bounds(double result, double start,
                               sequenceContext);
 
   double sum = seq->sumBetweenBounds(start, end, sequenceContext)
-                   .approximateUserExpressionToScalar<double>(
+                   .approximateToScalar<double>(
                        Preferences::SharedPreferences()->angleUnit(),
                        seq->complexFormat(sequenceContext));
   assert_roughly_equal(sum, result);

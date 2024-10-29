@@ -45,7 +45,7 @@ void FunctionListController::computeAdditionalResults(
    * Sometimes when the reduction has some mistakes, the approximation of
    * simplifiedExpression(abscissa) can differ for the approximateOutput.
    */
-  float ordinate = approximateOutput.approximateUserExpressionToScalar<float>(
+  float ordinate = approximateOutput.approximateToScalar<float>(
       angleUnit(), complexFormat());
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 

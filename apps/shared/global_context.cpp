@@ -204,7 +204,7 @@ const UserExpression GlobalContext::expressionForSequence(
   bool rankIsInteger = false;
   PoincareHelpers::CloneAndSimplify(
       &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
-  double rankValue = rank.approximateUserExpressionToScalar<double>();
+  double rankValue = rank.approximateToScalar<double>();
   if (rank.isRational()) {
 #if 0  // TODO_PCJ
     Rational n = static_cast<Rational &>(rank);

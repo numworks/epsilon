@@ -145,62 +145,6 @@ int JuniorExpressionNode::simplificationOrderSameType(
       tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
 }
 
-// Only handle approximated Boolean, Point and Complex trees.
-template <typename T>
-Evaluation<T> EvaluationFromSimpleTree(const Tree* tree) {
-  if (tree->isBoolean()) {
-    return BooleanEvaluation<T>::Builder(
-        Approximation::ToBoolean<T>(tree, nullptr));
-  }
-  if (tree->isPoint()) {
-    assert(false);
-    // TODO_PCJ: To implement.
-    // return PointEvaluation<T>::Builder()
-  }
-  return Complex<T>::Builder(Approximation::ToComplex<T>(tree, nullptr));
-}
-
-// Return the Evaluation for any tree.
-template <typename T>
-Evaluation<T> EvaluationFromTree(
-    const Tree* origin, const ApproximationContext& approximationContext) {
-  Tree* tree = Approximation::RootTreeToTree<T>(
-      origin, static_cast<AngleUnit>(approximationContext.angleUnit()),
-      static_cast<ComplexFormat>(approximationContext.complexFormat()));
-  Evaluation<T> result;
-  if (tree->isMatrix()) {
-    MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
-    int i = 0;
-    for (const Tree* child : tree->children()) {
-      matrix.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
-      i++;
-    }
-    result = matrix;
-  } else if (tree->isList()) {
-    ListComplex<T> list = ListComplex<T>::Builder();
-    int i = 0;
-    for (const Tree* child : tree->children()) {
-      list.addChildAtIndexInPlace(EvaluationFromSimpleTree<T>(child), i, i);
-      i++;
-    }
-    result = list;
-  } else {
-    result = EvaluationFromSimpleTree<T>(tree);
-  }
-  tree->removeTree();
-  return result;
-}
-
-Evaluation<float> JuniorExpressionNode::approximate(
-    SinglePrecision p, const ApproximationContext& approximationContext) const {
-  return EvaluationFromTree<float>(tree(), approximationContext);
-}
-
-Evaluation<double> JuniorExpressionNode::approximate(
-    DoublePrecision p, const ApproximationContext& approximationContext) const {
-  return EvaluationFromTree<double>(tree(), approximationContext);
-}
-
 template <typename T>
 SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
@@ -1179,14 +1123,6 @@ template SystemExpression JuniorExpressionNode::approximateToTree<float>(
     const ApproximationContext&) const;
 template SystemExpression JuniorExpressionNode::approximateToTree<double>(
     const ApproximationContext&) const;
-
-template Evaluation<float> EvaluationFromTree<float>(
-    const Tree*, const ApproximationContext&);
-template Evaluation<double> EvaluationFromTree<double>(
-    const Tree*, const ApproximationContext&);
-
-template Evaluation<float> EvaluationFromSimpleTree<float>(const Tree*);
-template Evaluation<double> EvaluationFromSimpleTree<double>(const Tree*);
 
 template SystemExpression SystemExpression::Builder<float>(float);
 template SystemExpression SystemExpression::Builder<double>(double);

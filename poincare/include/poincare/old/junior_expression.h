@@ -100,15 +100,6 @@ class JuniorExpressionNode final : public ExpressionNode {
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 
-  // Approximation
-  Evaluation<float> approximate(
-      SinglePrecision p,
-      const ApproximationContext& approximationContext) const override;
-  Evaluation<double> approximate(
-      DoublePrecision p,
-      const ApproximationContext& approximationContext) const override;
-
-  /* Similar to the previous one but bypass Evaluation */
   template <typename T>
   SystemExpression approximateToTree(
       const ApproximationContext& approximationContext) const;

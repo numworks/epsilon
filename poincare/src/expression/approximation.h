@@ -209,6 +209,8 @@ class Approximation final {
     return std::complex<T>(OMG::SignalingNan<T>(), static_cast<T>(0));
   }
 
+  static std::complex<float> HelperUndefDependencies(const Tree* dep,
+                                                     const Context* ctx);
   template <typename T>
   static std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
 

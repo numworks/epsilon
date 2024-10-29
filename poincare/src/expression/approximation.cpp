@@ -257,17 +257,17 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 
 /* Return highest order of undefined dependencies if there is at least one, zero
  * otherwise */
-static std::complex<float> HelperUndefDependencies(
-    const Tree* dep, const Approximation::Context* ctx) {
+std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
+                                                           const Context* ctx) {
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
     Dimension dim = Dimension::Get(child);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<float> c = Approximation::ToComplex<float>(child, ctx);
+      std::complex<float> c = ToComplex<float>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
-      if (Approximation::IsNonReal(c) && undefValue == std::complex<float>(0)) {
+      if (IsNonReal(c) && undefValue == std::complex<float>(0)) {
         undefValue = c;
       } else if (std::isnan(c.real())) {
         undefValue = NAN;
@@ -275,7 +275,7 @@ static std::complex<float> HelperUndefDependencies(
         assert(!std::isnan(c.imag()));
       }
     } else {
-      Tree* a = Approximation::ToTree<float>(child, Dimension::Get(child), ctx);
+      Tree* a = ToTree<float>(child, Dimension::Get(child), ctx);
       if (a->isUndefined()) {
         a->removeTree();
         undefValue = NAN;

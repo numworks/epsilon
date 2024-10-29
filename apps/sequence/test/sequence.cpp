@@ -85,10 +85,10 @@ void check_sum_of_sequence_between_bounds(double result, double start,
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
                               sequenceContext);
 
-  ApproximationContext approximationContext(
-      sequenceContext, seq->complexFormat(sequenceContext));
   double sum = seq->sumBetweenBounds(start, end, sequenceContext)
-                   .approximateToScalar<double>(approximationContext);
+                   .approximateUserExpressionToScalar<double>(
+                       Preferences::SharedPreferences()->angleUnit(),
+                       seq->complexFormat(sequenceContext));
   assert_roughly_equal(sum, result);
 
   store->removeAll();

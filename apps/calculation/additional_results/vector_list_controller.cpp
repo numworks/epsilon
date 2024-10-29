@@ -92,9 +92,8 @@ void VectorListController::computeAdditionalResults(
         KSub(KA, KB),
         {.KA = NewTrigonometry::Period(ctx.m_angleUnit), .KB = angle});
   }
-  float angleApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      angle, context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+  float angleApproximation = angle.approximateUserExpressionToScalar<float>(
+      angleUnit(), complexFormat());
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -103,12 +102,12 @@ void VectorListController::computeAdditionalResults(
                  angle, &ctx);
 
   // 4. Illustration
-  float xApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.cloneChildAtIndex(0), context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  float yApproximation = PoincareHelpers::ApproximateToScalar<float>(
-      vector.cloneChildAtIndex(1), context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+  float xApproximation =
+      vector.cloneChildAtIndex(0).approximateUserExpressionToScalar<float>(
+          angleUnit(), complexFormat());
+  float yApproximation =
+      vector.cloneChildAtIndex(1).approximateUserExpressionToScalar<float>(
+          angleUnit(), complexFormat());
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {

@@ -45,9 +45,8 @@ void FunctionListController::computeAdditionalResults(
    * Sometimes when the reduction has some mistakes, the approximation of
    * simplifiedExpression(abscissa) can differ for the approximateOutput.
    */
-  float ordinate = PoincareHelpers::ApproximateToScalar<float>(
-      approximateOutput, context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+  float ordinate = approximateOutput.approximateUserExpressionToScalar<float>(
+      angleUnit(), complexFormat());
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = Layout::Create(

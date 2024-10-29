@@ -141,8 +141,8 @@ bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
       m_dataLists[series][i].removeValueAtIndex(list.numberOfChildren());
       continue;
     }
-    double evaluation = PoincareHelpers::ApproximateToScalar<double>(
-        list.cloneChildAtIndex(j), m_context);
+    double evaluation =
+        list.cloneChildAtIndex(j).approximateUserExpressionToScalar<double>();
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   return updateSeries(series, delayUpdate);

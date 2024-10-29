@@ -527,7 +527,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
       .m_context = context};
   exp = exp.cloneAndSimplify(&ctx);
   assert(!exp.isUninitialized());
-  return exp.approximateToScalar<T>(context);
+  return exp.approximateUserExpressionToScalar<T>();
 }
 
 template <typename T>

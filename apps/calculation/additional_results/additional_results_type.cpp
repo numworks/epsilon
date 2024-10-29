@@ -174,9 +174,8 @@ bool AdditionalResultsType::HasUnit(
        .angleUnit = angleUnit,
        .symbolicComputation = SymbolicComputation::ReplaceAllSymbols,
        .unitConversion = UnitConversion::None});
-  double value = PoincareHelpers::ApproximateToScalar<double>(
-      clone, globalContext,
-      {.complexFormat = complexFormat, .angleUnit = angleUnit});
+  double value =
+      clone.approximateUserExpressionToScalar<double>(angleUnit, complexFormat);
   if (!unit.isUninitialized() &&
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,

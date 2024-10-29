@@ -129,6 +129,9 @@ class Sign {
     return Sign(true, false, false, false, false);
   }
   constexpr static Sign NonNull() { return Sign(false, true, true); }
+  constexpr static Sign NonNullFinite() {
+    return Sign(false, true, true, true, false);
+  }
   constexpr static Sign StrictlyPositive() { return Sign(false, true, false); }
   constexpr static Sign Positive() { return Sign(true, true, false); }
   constexpr static Sign StrictlyNegative() { return Sign(false, false, true); }

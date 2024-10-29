@@ -397,6 +397,8 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("arg(3 - i)", Sign::FiniteStrictlyNegative());
 
   // inf
+  assert_sign("e^(arg(x+i*y)×i)",
+              ComplexSign(Sign::NonNullFinite(), Sign::NonNullFinite()));
   assert_sign("inf", Sign::StrictlyPositive());
   assert_sign("-inf", Sign::StrictlyNegative());
   /* This case has been carefully crafted to enforce the following order in the

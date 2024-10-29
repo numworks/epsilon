@@ -181,19 +181,6 @@ ComplexSign ArcTangent(ComplexSign s) {
   return ComplexSign(realSign, imagSign);
 }
 
-ComplexSign Exponential(ComplexSign s) {
-  if (!s.isReal()) {
-    return ComplexSign::Unknown();
-  }
-  if (s.realSign().canBeInfinite() && s.realSign().canBeStrictlyNegative()) {
-    // exp(-inf) = 0, necessary so that x^y = exp(y*ln(x)) can be null.
-    return ComplexSign::RealPositive();
-  }
-  return s.realSign().canBeInfinite()
-             ? ComplexSign::RealStrictlyPositive()
-             : ComplexSign::RealFiniteStrictlyPositive();
-}
-
 ComplexSign ComplexArgument(ComplexSign s) {
   /* arg(z) ∈ ]-π,π].
    * arg(z) > 0 if im(z) > 0,
@@ -244,6 +231,25 @@ ComplexSign Mult(ComplexSign s1, ComplexSign s2) {
 ComplexSign Add(ComplexSign s1, ComplexSign s2) {
   return ComplexSign(Add(s1.realSign(), s2.realSign()),
                      Add(s1.imagSign(), s2.imagSign()));
+}
+
+ComplexSign ExponentialReal(Sign s) {
+  // exp(-inf) = 0, necessary so that x^y = exp(y*ln(x)) can be null.
+  return s.isNull() ? ComplexSign::RealFiniteStrictlyPositiveInteger()  // 1
+         : !s.canBeInfinite() ? ComplexSign::RealFiniteStrictlyPositive()
+         : !s.canBeStrictlyNegative() ? ComplexSign::RealStrictlyPositive()
+                                      : ComplexSign::RealPositive();
+}
+
+ComplexSign ExponentialImag(Sign s) {
+  // exp(i*x) is on the unit circle
+  return s.isNull() ? ComplexSign::RealFiniteStrictlyPositiveInteger()  // 1
+                    : ComplexSign(Sign::NonNullFinite(), Sign::NonNullFinite());
+}
+
+ComplexSign Exponential(ComplexSign s) {
+  // exp(x + y*i) = exp(x) * exp(y*i)
+  return Mult(ExponentialReal(s.realSign()), ExponentialImag(s.imagSign()));
 }
 
 // Note: we could get more info on canBeInfinite

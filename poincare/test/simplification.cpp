@@ -358,8 +358,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
   simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", ctx);
   simplifies_to("arg(abs(x)×e^(arg(z)×i))",
-                "dep(arg(e^(arg(z)×i)),{abs(x)×e^(arg(z)×i),nonNull(abs(x))})",
-                ctx);
+                "dep(arg(e^(arg(z)×i)),{nonNull(abs(x))})", ctx);
   simplifies_to("arg(-3×(x+y×i))", "arg(-(x+y×i))", ctx);
 }
 

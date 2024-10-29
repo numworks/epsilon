@@ -77,7 +77,7 @@ class Sign {
            m_canBeNonInteger && m_canBeInfinite;
   }
   // Is either strictly positive, strictly negative or null.
-  constexpr bool hasKnownSign() const {
+  constexpr bool hasKnownStrictSign() const {
     return isNull() || isStrictlyPositive() || isStrictlyNegative();
   }
   constexpr OMG::Troolean trooleanIsNull() const {

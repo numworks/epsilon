@@ -269,10 +269,10 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   }
   // arg(x + iy) = atan2(y, x)
   Sign realSign = childSign.realSign();
-  if (realSign.hasKnownSign()) {
+  if (realSign.hasKnownStrictSign()) {
     // TODO: Maybe move this in advanced reduction
     Sign imagSign = childSign.imagSign();
-    if (realSign.isNull() && imagSign.hasKnownSign()) {
+    if (realSign.isNull() && imagSign.hasKnownStrictSign()) {
       /* atan2(y, 0) = undef if y = 0
        *               π/2 if y > 0
        *               -π/2 if y < 0 */

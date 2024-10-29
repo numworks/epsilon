@@ -112,7 +112,9 @@ void Simplification::ProjectAndReduce(Tree* e,
                                       ProjectionContext* projectionContext) {
   assert(!e->isStore());
   ToSystem(e, projectionContext);
-  ReduceSystem(e, projectionContext->m_advanceReduce);
+  ReduceSystem(e, projectionContext->m_advanceReduce,
+               projectionContext->m_expansionStrategy ==
+                   ExpansionStrategy::ExpandAlgebraic);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyStrategy(e, projectionContext->m_strategy, true);
 }
@@ -171,12 +173,16 @@ bool Simplification::IsSystem(const Tree* e) {
 }
 #endif
 
-bool Simplification::ReduceSystem(Tree* e, bool advanced) {
+bool Simplification::ReduceSystem(Tree* e, bool advanced,
+                                  bool expandAlgebraic) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
+  }
+  if (expandAlgebraic) {
+    changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
   bool result = Dependency::DeepRemoveUselessDependencies(e) || changed;
 

@@ -24,7 +24,8 @@ class Simplification {
 #if ASSERTIONS
   static bool IsSystem(const Tree* e);
 #endif
-  static bool ReduceSystem(Tree* e, bool advanced);
+  static bool ReduceSystem(Tree* e, bool advanced,
+                           bool expandAlgebraic = false);
 
  private:
   static void ApplySimplify(const Tree* dataTree,

@@ -13,6 +13,7 @@ struct ProjectionContext {
   ComplexFormat m_complexFormat = ComplexFormat::Real;
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;
+  ExpansionStrategy m_expansionStrategy = ExpansionStrategy::None;
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;

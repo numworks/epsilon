@@ -495,10 +495,9 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;
     }
-    /* exp(arg(exp(A*i))*i) with A real -> exp(A*i). This happens when
-     * arg(exp(A*i)) could not be reduced because A could not be brought back
-     * into ]-π,π].
-     * TODO: Also reduce exp(A*i) with A real to exp(B*i) with B in ]-π,π] */
+    /* With A real, although arg(exp(A*i)) -> A is only true if A is in ]-π,π],
+     * exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
+     * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&
         GetComplexSign(ctx.getTree(KA)).isPureIm()) {
       // KExp(KA) has already been simplified, no need to simplify further

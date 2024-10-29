@@ -273,15 +273,15 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
                              : 0;
   }
   /* TODO: the approximations could be precomputed and called only once */
-  std::complex<double> v1 = Approximation::ToComplex<double>(e1, nullptr);
-  if (v1.imag() != 0.0 || std::isnan(v1.real())) {
+  double v1 = Approximation::To<double>(e1, nullptr);
+  if (std::isnan(v1)) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
-  std::complex<double> v2 = Approximation::ToComplex<double>(e2, nullptr);
-  if (v2.imag() != 0.0 || std::isnan(v2.real())) {
+  double v2 = Approximation::To<double>(e2, nullptr);
+  if (std::isnan(v2)) {
     TreeStackCheckpoint::Raise(ExceptionType::SortFail);
   }
-  return v1.real() < v2.real() ? -1 : v1.real() == v2.real() ? 0 : 1;
+  return v1 < v2 ? -1 : v1 == v2 ? 0 : 1;
 }
 
 int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {

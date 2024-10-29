@@ -378,7 +378,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record* record,
       !m_delegate->storageCanChangeForRecordName(record->name())) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
-  /* If you do not verify that the name has not changed if the previous 'if'
+  /* If you do not verify that the name has not changed in the previous 'if',
    * this will return false, and see the name as taken. */
   if (!handleCompetingRecord(name, false)) {
     return Record::ErrorStatus::NameTaken;

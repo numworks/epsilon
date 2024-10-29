@@ -206,6 +206,19 @@ QUIZ_CASE(graph_function_properties) {
                                ContinuousFunctionProperties::
                                    CurveParameterType::CartesianFunction});
 
+    assert_check_function_properties(
+        "f(x)=-(4x+π)",
+        FunctionProperties{.m_caption = I18n::Message::AffineType,
+                           .m_curveParameterType =
+                               ContinuousFunctionProperties::
+                                   CurveParameterType::CartesianFunction});
+    assert_check_function_properties(
+        "f(x)=3(π-x)",
+        FunctionProperties{.m_caption = I18n::Message::AffineType,
+                           .m_curveParameterType =
+                               ContinuousFunctionProperties::
+                                   CurveParameterType::CartesianFunction});
+
     assert_check_function_properties("f(x)=-2x/(1+π)", k_linearProperties);
 
     assert_check_function_properties(

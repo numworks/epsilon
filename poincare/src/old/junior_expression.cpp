@@ -495,7 +495,7 @@ bool UserExpression::hasDefinedComplexApproximation(
     return false;
   }
   Approximation::PrepareExpressionForApproximation(e, projCtx.m_complexFormat);
-  std::complex<T> z = Approximation::RootPreparedToComplex<T>(e);
+  std::complex<T> z = Approximation::RootTreeToComplex<T>(e);
   e->removeTree();
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {

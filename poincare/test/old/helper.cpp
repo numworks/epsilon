@@ -255,7 +255,7 @@ void assert_expression_approximates_to(const char *expression,
         }
         Approximation::PrepareExpressionForApproximation(
             e, context.m_complexFormat);
-        std::complex<T> value = Approximation::RootPreparedToComplex<T>(e);
+        std::complex<T> value = Approximation::RootTreeToComplex<T>(e);
         e->moveTreeOverTree(Beautification::PushBeautifiedComplex(
             value, context.m_complexFormat));
         return e;

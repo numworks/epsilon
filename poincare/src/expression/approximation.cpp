@@ -177,13 +177,10 @@ PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
 }
 
 template <typename T>
-std::complex<T> Approximation::RootPreparedToComplex(
-    const Tree* preparedFunction, T abscissa) {
+std::complex<T> Approximation::RootTreeToComplex(const Tree* e) {
   Random::Context randomContext;
-  Context context(&randomContext, AngleUnit::Radian, ComplexFormat::Cartesian,
-                  abscissa);
-  std::complex<T> result = ToComplex<T>(preparedFunction, &context);
-  return result;
+  Context context(&randomContext, AngleUnit::Radian, ComplexFormat::Cartesian);
+  return ToComplex<T>(e, &context);
 }
 
 /* Helpers */
@@ -1373,10 +1370,10 @@ template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
 template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
     const Tree*, bool, bool, double, int, AngleUnit, ComplexFormat);
 
-template std::complex<float> Approximation::RootPreparedToComplex<float>(
-    const Tree*, float);
-template std::complex<double> Approximation::RootPreparedToComplex<double>(
-    const Tree*, double);
+template std::complex<float> Approximation::RootTreeToComplex<float>(
+    const Tree*);
+template std::complex<double> Approximation::RootTreeToComplex<double>(
+    const Tree*);
 
 template float Approximation::FloatBinomial<float>(float, float);
 template double Approximation::FloatBinomial<double>(double, double);

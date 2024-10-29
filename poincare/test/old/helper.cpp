@@ -198,6 +198,11 @@ void assert_parsed_expression_simplify_to(
         Internal::ProjectionContext context = {
             .m_complexFormat = reductionContext.complexFormat(),
             .m_angleUnit = reductionContext.angleUnit(),
+            .m_expansionStrategy =
+                (reductionContext.target() ==
+                 ReductionTarget::SystemForAnalysis)
+                    ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
+                    : Poincare::Internal::ExpansionStrategy::None,
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
@@ -222,6 +227,11 @@ void assert_expression_approximates_to(const char *expression,
         Internal::ProjectionContext context = {
             .m_complexFormat = reductionContext.complexFormat(),
             .m_angleUnit = reductionContext.angleUnit(),
+            .m_expansionStrategy =
+                (reductionContext.target() ==
+                 ReductionTarget::SystemForAnalysis)
+                    ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
+                    : Poincare::Internal::ExpansionStrategy::None,
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};

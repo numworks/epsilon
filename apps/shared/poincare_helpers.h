@@ -134,6 +134,11 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
   Poincare::Internal::ProjectionContext projectionContext = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
+      .m_expansionStrategy =
+          (reductionContext.target() ==
+           Poincare::ReductionTarget::SystemForAnalysis)
+              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
+              : Poincare::Internal::ExpansionStrategy::None,
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};

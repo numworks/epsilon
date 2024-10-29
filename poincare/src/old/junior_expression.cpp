@@ -418,6 +418,10 @@ SystemExpression UserExpression::cloneAndReduce(
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
+      .m_expansionStrategy =
+          (reductionContext.target() == ReductionTarget::SystemForAnalysis)
+              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
+              : Poincare::Internal::ExpansionStrategy::None,
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
@@ -443,6 +447,10 @@ UserExpression ProjectedExpression::cloneAndBeautify(
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),
+      .m_expansionStrategy =
+          (reductionContext.target() == ReductionTarget::SystemForAnalysis)
+              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
+              : Poincare::Internal::ExpansionStrategy::None,
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};

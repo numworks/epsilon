@@ -15,8 +15,6 @@
 namespace Poincare::Internal {
 
 class Tokenizer {
-  friend class InputBeautification;
-
  public:
   Tokenizer(const Rack* rack, ParsingContext* parsingContext,
             size_t textStart = 0, int textEnd = -1)
@@ -46,6 +44,7 @@ class Tokenizer {
     m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;
   }
 
+  static bool IsIdentifierMaterial(const CodePoint c);
   static bool CanBeCustomIdentifier(UnicodeDecoder& decoder,
                                     size_t length = -1);
 
@@ -54,7 +53,7 @@ class Tokenizer {
       10;  // Used for m_storedIdentifiersList
   typedef bool (*PopTest)(CodePoint c);
   const CodePoint nextCodePoint(PopTest popTest, bool* testResult = nullptr);
-  static bool IsIdentifierMaterial(const CodePoint c);
+
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest);
   size_t popDigits();

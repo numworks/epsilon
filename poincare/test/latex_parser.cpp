@@ -29,12 +29,12 @@ QUIZ_CASE(pcj_latex_to_layout) {
       "\\int_{0}^{1}t^{3}\\ dt",
       KRackL(KIntegralL("t"_l, "0"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))));
   assert_latex_layouts_to(
-      "\\int_{0}^{1}z^{3}\\ dz\\ +3",
+      "\\int_{0}^{1}z^{3}\\ dz+3",
       KRackL(KIntegralL("z"_l, "0"_l, "1"_l, "z"_l ^ KSuperscriptL("3"_l)),
              "+"_cl, "3"_cl));
-  assert_latex_layouts_to("\\int_{0}^{1}abc^{3}\\ dabc",
-                          KRackL(KIntegralL("abc"_l, "0"_l, "1"_l,
-                                            "abc"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to(
+      "\\int_{0}^{1}round(abcd)\\ dabcd",
+      KRackL(KIntegralL("abcd"_l, "0"_l, "1"_l, "round(abcd)"_l)));
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^
@@ -65,8 +65,9 @@ QUIZ_CASE(pcj_layout_to_latex) {
                     KRackL(KParenthesesL("3"_l ^ KSuperscriptL("5"_l))))),
       "\\frac{\\sqrt{4}}{\\left(3^{5}\\right)}");
   assert_layout_convert_to_latex(
-      KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l))),
-      "\\int_{1}^{2}t^{3}\\ dt");
+      KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l)),
+             "+"_cl, "3"_cl),
+      "\\int_{1}^{2}t^{3}\\ dt+3");
 
   // Test the thousand separators
   const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;

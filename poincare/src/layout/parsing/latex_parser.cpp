@@ -3,6 +3,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/parsing/tokenizer.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 #include <poincare/src/memory/n_ary.h>
@@ -15,7 +16,14 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
-constexpr static const char* k_latexSpacing = "\\ ";
+/* This value is a system symbol named GroupSeparator */
+constexpr static char k_variableRightDelimiter = '\u001D';
+constexpr static const char k_variableRightDelimiterString[] = {
+    k_variableRightDelimiter, '\0'};
+
+static bool IsVariableRightDelimiter(const char* string, size_t length) {
+  return length == 1 && string[0] == k_variableRightDelimiter;
+}
 
 // ===== Tokens =====
 
@@ -36,16 +44,39 @@ constexpr static const char* fracToken[] = {"\\frac{", "\0", "}{", "\1", "}"};
 constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
                                                "}"};
 constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
-/* There is no easy way to know the end of an integral in Latex.
- * We rely on the fact that the user makes it end with " d${var}"
- *  Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- *  Latex: int_{\LowerBound}^{\UpperBound}\Integrand\ d\Symbol
- * This fails:
- * - If the integrand contains a "d"
- * - If the integral isn't followed by a space or at the end of the string
+
+/* Latex: \\int_{\LowerBound}^{\UpperBound}\Integrand d\Symbol
+ * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
+ *
+ * It's no that easy to know where the integral ends in Latex, as there is no
+ * clear delimiter between the integrand and the symbol, and at the end of the
+ * symbol.
+ *
+ * Also it's not clear if "\\int_{0}^{1}ta^{3}dta" is
+ * - "int(ta, 0, 1, (ta)^3)"
+ * - "int(t, 0, 1, t * a^3) * a".
+ * Desmos chose the second option as they don't accept variables with
+ * multiple characters.
+ * But Poincaré does accept such variables, so we will choose the first option.
+ *
+ * For the delimiter between the integrand and the symbol, we use "\\ d".
+ * This means that the user MUST input a space before the "dx".
+ * - "\\int_{0}^{1}x^{3}dx" -> Not working
+ * - "\\int_{0}^{1}x^{3}\\ dx" -> Working
+ * This has some limitations, but we couldn't use just "d" for the delimiter,
+ * as it would fail for integrals containing a "d" in the integrand.
+ * For example "\\int_{0}^{1}round(x)dx". (since "round" contains a "d")
+ *
+ * For the delimiter at the end of the symbol, we use variableRightDelimiter.
+ * This means the parsing will stop as soon as a non-"IdentifierMaterial"
+ * codepoint is found (i.e. non-alphanumeric codepoint or greek letter. See
+ * Tokenizer::IsIdentifierMaterial for more info).
+ *
  * */
 constexpr static const char* integralToken[] = {
-    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", k_latexSpacing};
+    "\\int_{", "\1", "}^{",
+    "\2",      "}",  "\3",
+    "\\ d",    "\0", k_variableRightDelimiterString};
 
 // Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};
@@ -172,66 +203,71 @@ constexpr static LatexToken k_tokens[] = {
 
 // ===== Latex to Layout ======
 
-Tree* NextLatexToken(const char** start);
+Tree* NextLatexToken(const char** start, bool parseVariableOnly);
 
 void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
-                                     const char* endIdentifier,
-                                     bool isEndIdentifierOptional) {
+                                     const char* endIdentifier) {
   size_t endLen = strlen(endIdentifier);
+
+  bool parseVariable = IsVariableRightDelimiter(endIdentifier, endLen);
+  if (parseVariable) {
+    // The parsing stops when the codepoint is not identifier material
+    endLen = 0;
+  }
+
   while (**start != 0 &&
          (endLen == 0 || strncmp(*start, endIdentifier, endLen) != 0)) {
-    Tree* child = NextLatexToken(start);
+    Tree* child = NextLatexToken(start, parseVariable);
     if (child) {
       NAry::AddChild(parent, child);
+    } else if (parseVariable) {
+      /* The next codepoint wasn't identifier material so the variable came to
+       * an end */
+      return;
     }
   }
 
   if (**start == 0 && endLen > 0) {
     /* We're at the end of the string and endIdentifier couldn't be found */
-    if (isEndIdentifierOptional) {
-      return;
-    }
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   *start += endLen;
 }
 
-Tree* NextLatexToken(const char** start) {
-  for (const LatexToken& token : k_tokens) {
-    const char* leftDelimiter = token.description[0];
-    size_t leftDelimiterLength = strlen(leftDelimiter);
-    if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
-      continue;
+Tree* NextLatexToken(const char** start, bool parseVariableOnly) {
+  if (!parseVariableOnly) {
+    for (const LatexToken& token : k_tokens) {
+      const char* leftDelimiter = token.description[0];
+      size_t leftDelimiterLength = strlen(leftDelimiter);
+      if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+        continue;
+      }
+      // Special token found
+      *start += leftDelimiterLength;
+      Tree* layoutToken = token.constructor();
+
+      // Parse children
+      for (int i = 1; i < token.descriptionLength - 1; i += 2) {
+        assert(strlen(token.description[i]) <= 1);
+        int childIndexInLayout = token.description[i][0];
+        const char* rightDelimiter = token.description[i + 1];
+        ParseLatexOnRackUntilIdentifier(
+            Rack::From(layoutToken->child(childIndexInLayout)), start,
+            rightDelimiter);
+      }
+
+      return layoutToken;
     }
-    // Special token found
-    *start += leftDelimiterLength;
-    Tree* layoutToken = token.constructor();
-
-    // Parse children
-    for (int i = 1; i < token.descriptionLength - 1; i += 2) {
-      assert(strlen(token.description[i]) <= 1);
-      int childIndexInLayout = token.description[i][0];
-      const char* rightDelimiter = token.description[i + 1];
-
-      /* If the last delimiter is a space, it's only to be separated from
-       * the next token, so it can be omitted if at the end of the string.
-       * This currently only applies to integral. */
-      bool optionalRightDelimiter =
-          i == token.descriptionLength - 2 &&
-          strncmp(rightDelimiter, k_latexSpacing, strlen(k_latexSpacing)) == 0;
-
-      ParseLatexOnRackUntilIdentifier(
-          Rack::From(layoutToken->child(childIndexInLayout)), start,
-          rightDelimiter, optionalRightDelimiter);
-    }
-
-    return layoutToken;
   }
 
   // Code points
   UTF8Decoder decoder(*start);
-  Tree* codepoint = CodePointLayout::Push(decoder.nextCodePoint());
+  CodePoint c = decoder.nextCodePoint();
+  if (parseVariableOnly && !Tokenizer::IsIdentifierMaterial(c)) {
+    return nullptr;
+  }
+  Tree* codepoint = CodePointLayout::Push(c);
   *start = decoder.stringPosition();
   return codepoint;
 }
@@ -239,7 +275,7 @@ Tree* NextLatexToken(const char** start) {
 Tree* LatexToLayout(const char* latexString) {
   ExceptionTry {
     Tree* result = KRackL()->cloneTree();
-    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "", true);
+    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "");
     return result;
   }
   ExceptionCatch(type) {
@@ -328,12 +364,17 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
       while (true) {
         const char* delimiter = token.description[i];
         size_t delimiterLength = strlen(delimiter);
-        if (buffer + delimiterLength + isCodePoint >= end) {
-          // Buffer is too short
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+
+        // Do not write variable right delimiter in latex string
+        if (!IsVariableRightDelimiter(delimiter, delimiterLength)) {
+          if (buffer + delimiterLength + isCodePoint >= end) {
+            // Buffer is too short
+            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          }
+          memcpy(buffer, delimiter, delimiterLength);
+          buffer += delimiterLength;
         }
-        memcpy(buffer, delimiter, delimiterLength);
-        buffer += delimiterLength;
+
         if (i == token.descriptionLength - 1) {
           if (isCodePoint) {
             /* Add a space after latex codepoints, otherwise the string might

@@ -84,9 +84,8 @@ T Approximation::ApproximateRandomHelper(const Tree* randomTree,
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   } else if (randomTree->isRandInt()) {
-    return Random::RandomInt<T>(
-        Approximation::To<T>(randomTree->child(0), ctx),
-        Approximation::To<T>(randomTree->child(1), ctx));
+    return Random::RandomInt<T>(To<T>(randomTree->child(0), ctx),
+                                To<T>(randomTree->child(1), ctx));
   }
   assert(randomTree->isRandIntNoRep());
   uint8_t seed = Random::GetSeed(randomTree);
@@ -94,8 +93,8 @@ T Approximation::ApproximateRandomHelper(const Tree* randomTree,
     // Cannot access a single element for unseeded RandIntNoRep.
     return NAN;
   }
-  T a = Approximation::To<T>(randomTree->child(0), ctx);
-  T b = Approximation::To<T>(randomTree->child(1), ctx);
+  T a = To<T>(randomTree->child(0), ctx);
+  T b = To<T>(randomTree->child(1), ctx);
   // Shorten the RandInt window since numbers have already been generated.
   T result = Random::RandomInt<T>(a, b - ctx->m_listElement);
   // Check all previously generated numbers, ordered by increasing value.

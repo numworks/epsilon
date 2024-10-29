@@ -168,7 +168,7 @@ Tree* NextLatexToken(const char** start);
 
 void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
                                      const char* endIdentifier,
-                                     bool optionalEndIdentifier) {
+                                     bool isEndIdentifierOptional) {
   size_t endLen = strlen(endIdentifier);
   while (**start != 0 &&
          (endLen == 0 || strncmp(*start, endIdentifier, endLen) != 0)) {
@@ -178,14 +178,15 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
     }
   }
 
-  if (**start == 0 && endLen > 0 && !optionalEndIdentifier) {
-    /* endIdentifier couldn't be found */
+  if (**start == 0 && endLen > 0) {
+    /* We're at the end of the string and endIdentifier couldn't be found */
+    if (isEndIdentifierOptional) {
+      return;
+    }
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
-  if (**start != 0) {
-    *start += endLen;
-  }
+  *start += endLen;
 }
 
 Tree* NextLatexToken(const char** start) {

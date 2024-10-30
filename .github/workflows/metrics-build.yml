@@ -39,9 +39,9 @@ jobs:
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: $DOCKER_RUN "make PYTHON=\$PYTHON bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build common ancestor userland for N0120
-        run: $DOCKER_RUN "make PYTHON=\$PYTHON userland.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Save ancestor build
         run: mv output/release/n0120 base
 
@@ -50,9 +50,9 @@ jobs:
 
       - name: Build head bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: $DOCKER_RUN "make PYTHON=\$PYTHON bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build head userland for N0120
-        run: $DOCKER_RUN "make PYTHON=\$PYTHON userland.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Save head build
         run: mv output/release/n0120 head
 

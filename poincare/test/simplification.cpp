@@ -1406,7 +1406,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("(2/3)^(5/7)", "(2^(5/7)×3^(2/7))/3");  // "root(288,7)/3"
   // ADVANCED_MAX_DEPTH is too small
   simplifies_to("(4/11)^(8/9)",
-                "root(720896,9)/11");  // "(2×root(1408,9))/11"
+                "(2×2^(7/9)×root(11,9))/11");  // "(2×root(1408,9))/11"
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
   // (1+i)/(1-i) => i
   simplifies_to("(1+i)/(1-i)", "i");

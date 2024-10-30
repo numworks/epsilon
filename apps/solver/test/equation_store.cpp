@@ -128,17 +128,16 @@ QUIZ_CASE(solver_cubic) {
                    {"x=2", "x=-1-√(3)×i", "x=-1+√(3)×i", "delta=-1728"});
 
   assert_solves_to(
-      "x^3-8i=0",
-      {"x=-√(3)+i",
-       "x=root(8i,3)(-1-√(3)i)/2",  // TODO_PCJ: simplify to "x=-2×i"
-       "x=2×root(i,3)",             // TODO_PCJ: simplify to "x=√(3)+i"
-       "delta=1728"});
+      "x^3-8i=0", {"x=-√(3)+i",
+                   "x=-e^(π/6×i)×(1+√(3)×i)",  // TODO_PCJ: simplify to "x=-2×i"
+                   "x=root(8×i,3)",  // TODO_PCJ: simplify to "x=√(3)+i"
+                   "delta=1728"});
 
   /* NOTE: we used to only display the approximate form for the below case, this
    * can be discussed. */
   assert_solves_to("x^3-13-i=0", {"x=(root(13+i,3)(-1+√(3)i))/2",
                                   "x=-(root(13+i,3)(1+√(3)i))/2",
-                                  "x=root(13+i,3)", "delta=-4536-702i"});
+                                  "x=root(13+i,3)", "delta=-27×(168+26×i)"});
 
   assert_solves_to("x^3-(2+i)×x^2-2×i×x-2+4×i=0",
                    {
@@ -164,7 +163,7 @@ QUIZ_CASE(solver_cubic) {
       {
           "x=368.7200924", "x=-184.8600462-319.610685×i",
           "x=-184.8600462+319.610685×i",
-          "delta=-6912000000000000π^2-16+640000000π"  // or approximate value?
+          "delta=-27×(1-16000000×π)^2+11-224000000×π"  // or approximate value?
       });
 
   // TODO_PCJ: delta fails to simplify
@@ -340,7 +339,7 @@ QUIZ_CASE(solver_complex_cartesian) {
                     "delta=4i"});
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1");
   assert_solves_to("root(-8,3)*x+3=0",
-                   "x=3×e^(2×π×i/3)/2");  //  TODO_PCJ: force cartesian format
+                   "x=(3×(-8)^(2/3))/8");  //  TODO_PCJ: force cartesian format
 
   // TODO_PCJ: dependency management (dep(a^2,{a^0}))
   // assert_solves_to("x^2+x/x-1=0", {"delta=0"});
@@ -357,14 +356,21 @@ QUIZ_CASE(solver_complex_polar) {
 
 #if 0
   /* TODO_PCJ: Improve polar format reduction (currently solves to
-   * ((abs(1+√(-3)))/2)e^(arg(((abs(1+√(-3))e^(arg(-((1+√(-3))/2))i))/2))i) */
+   * ((abs(1+√(-3)))/2)e^(arg(((abs(1+√(-3))e^(arg(-((1+√(-3))/2))i))/2))i)
+   */
   assert_solves_to("x^2+x+1=0",
                    {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"});
+
+  /* TODO_PCJ: Improve polar format reduction (with double beautification in the
+   * solver, currently solves to
+   * (abs(3/8×abs(exp(2/3×Ln(-8)))×exp(arg(3/8×exp(2/3×Ln(-8)))×i))×
+   * exp(arg(3/8×abs(exp(2/3×Ln(-8)))×exp(arg(3/8×exp(2/3×Ln(-8)))×i))×i)
+   */
+  assert_solves_to("root(-8,3)*x+3=0",
+                   "x=(3×abs((-8)^(2/3)))/8×e^(arg((3×(-8)^(2/3))/8)×i)");
 #endif
   assert_solves_to("x^2-√(-1)=0",
                    {"x=e^(-(3π/4)i)", "x=e^((π/4)i)", "delta=4e^((π/2)i)"});
-
-  assert_solves_to("root(-8,3)*x+3=0", "x=3/2×e^((2π/3)i)");
 
 #if 0
   /* TODO_PCJ: when the equation has form "ax^3 + d = 0", display approximate

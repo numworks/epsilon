@@ -359,7 +359,7 @@ bool Beautification::TurnIntoPolarForm(
   e->cloneTree();
   SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
-    AdvancedReduction::Reduce(abs);
+    AdvancedReduction::Reduce(arg);
   }
   SharedTreeStack->pushComplexI();
   /* mult is not flattened because i will be kept apart anyway in

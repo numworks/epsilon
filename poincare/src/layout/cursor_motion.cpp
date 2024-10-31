@@ -533,9 +533,12 @@ bool CursorMotion::IsCollapsable(const Layout* l, const Rack* root,
       assert(indexOfAbsorbingSibling >= 0 &&
              indexOfAbsorbingSibling < parent->numberOfChildren());
       const Layout* absorbingSibling = parent->child(indexOfAbsorbingSibling);
-      const Rack* absorbingRack = absorbingSibling->child(
-          CollapsingAbsorbingChildIndex(absorbingSibling, direction));
-      return Rack::IsEmpty(absorbingRack);
+      if (absorbingSibling->numberOfChildren() > 0) {
+        const Rack* absorbingRack = absorbingSibling->child(
+            CollapsingAbsorbingChildIndex(absorbingSibling, direction));
+        return Rack::IsEmpty(absorbingRack);
+      }
+      return false;
     }
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {

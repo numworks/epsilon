@@ -244,7 +244,7 @@ ComplexSign ExponentialReal(Sign s) {
 ComplexSign ExponentialImag(Sign s) {
   // exp(i*x) is on the unit circle
   return s.isNull() ? ComplexSign::RealFiniteStrictlyPositiveInteger()  // 1
-                    : ComplexSign(Sign::NonNullFinite(), Sign::NonNullFinite());
+                    : ComplexSign::Finite();
 }
 
 ComplexSign Exponential(ComplexSign s) {

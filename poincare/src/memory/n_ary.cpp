@@ -4,6 +4,7 @@
 #include <omg/list.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/order.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "tree_ref.h"
 
@@ -47,7 +48,11 @@ void NAry::RemoveChildAtIndex(Tree* nary, int index) {
 
 void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   assert(nary->isNAry());
-  assert(numberOfChildren < UINT16_MAX);
+  // TODO: Maybe handle it by spliting the nary in two (if it can be flatten).
+  if (numberOfChildren >= UINT16_MAX ||
+      (!nary->isNAry16() && numberOfChildren >= UINT8_MAX)) {
+    TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
+  }
   if (nary->isNAry16()) {
     nary->setNodeValue(0, numberOfChildren % 256);
     nary->setNodeValue(1, numberOfChildren / 256);

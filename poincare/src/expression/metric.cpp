@@ -11,22 +11,19 @@
 
 namespace Poincare::Internal {
 
-int Metric::BigValueMetric(const Tree* e) {
-  assert(e->isRational());
-  int result;
-  switch (e->type()) {
+static Type ShortTypeForBigType(Type t) {
+  switch (t) {
     case Type::RationalNegBig:
-      result = GetMetric(Type::RationalNegShort);
+      return Type::RationalNegShort;
     case Type::RationalPosBig:
-      result = GetMetric(Type::RationalPosShort);
+      return Type::RationalPosShort;
     case Type::IntegerNegBig:
-      result = GetMetric(Type::IntegerNegShort);
+      return Type::IntegerNegShort;
     case Type::IntegerPosBig:
-      result = GetMetric(Type::IntegerPosShort);
+      return Type::IntegerPosShort;
     default:
-      result = k_defaultMetric;
+      OMG::unreachable();
   }
-  return result * e->nodeSize();
 }
 
 int Metric::GetMetric(const Tree* e) {
@@ -37,13 +34,14 @@ int Metric::GetMetric(const Tree* e) {
     case Type::RationalPosBig:
     case Type::IntegerNegBig:
     case Type::IntegerPosBig:
-      return BigValueMetric(e);
+      return GetMetric(ShortTypeForBigType(e->type())) * e->nodeSize();
     case Type::Mult: {
       // Ignore cost of multiplication in (-A)
       if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
         result -= GetMetric(Type::Mult);
       }
-      // Beautification hyperbolic triginometry (cosh, sinh, asinh and atanh)
+      /* Trigonometry with complexes will be beautified into hyperbolic
+       * trigonometry (cosh, sinh, asinh and atanh)*/
       // TODO: cost difference between trig and hyperbolic trig
       if (PatternMatching::Match(
               e, KMult(KA_s, KTrig(KMult(KB_s, i_e), 1_e), KC_s, i_e), &ctx) ||
@@ -67,7 +65,7 @@ int Metric::GetMetric(const Tree* e) {
     case Type::Exp: {
       // exp(A*ln(B)) -> Root(B,A) exception
       if (PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
-        Tree* exponent = PatternMatching::CreateSimplify(KMult(KA_s), ctx);
+        Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (!exponent->isHalf()) {
           result += GetMetric(exponent);
         }

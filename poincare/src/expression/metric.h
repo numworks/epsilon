@@ -25,7 +25,6 @@ class Metric {
   constexpr static int k_defaultMetric = 2 * 3 * 5;
 
   static int GetMetric(Type type);
-  static int BigValueMetric(const Tree* e);
 #endif
 };
 

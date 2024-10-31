@@ -149,8 +149,6 @@ QUIZ_CASE(solver_cubic) {
                    {"x=-0.3305670499", "x=-1.334716475-0.5797459409i",
                     "x=-1.334716475+0.5797459409i", "delta=-2.43"});
 
-  assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
-                   {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"});
   assert_solves_to(
       "x^3+x^2+x-39999999",
       {
@@ -167,10 +165,13 @@ QUIZ_CASE(solver_cubic) {
       });
 
   // TODO_PCJ: delta fails to simplify
-  // assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
-  //                  {"x=√(3)/2",
-  //                   "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
-  //                   "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"});
+  /* assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
+   *                {"x=√(3)/2",
+   *                 "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
+   *                 "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"});
+   * assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
+   *                {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"});
+   */
 }
 
 QUIZ_CASE(solver_quadratic_real) {

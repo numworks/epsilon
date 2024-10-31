@@ -523,11 +523,11 @@ bool CursorMotion::IsCollapsable(const Layout* l, const Rack* root,
       /* We do not want to absorb a fraction if something else is already being
        * absorbed. This way, the user can write a product of fractions without
        * typing the × sign. */
-      int indexOfThis;
+      int indexInParent;
       const Rack* parent =
-          Rack::From(root->parentOfDescendant(l, &indexOfThis));
-      assert(parent && parent->numberOfChildren() > 1);
-      int indexInParent = parent->indexOfChild(l);
+          Rack::From(root->parentOfDescendant(l, &indexInParent));
+      assert(parent && parent->numberOfChildren() > 1 &&
+             indexInParent == parent->indexOfChild(l));
       int indexOfAbsorbingSibling =
           indexInParent + (direction.isLeft() ? 1 : -1);
       assert(indexOfAbsorbingSibling >= 0 &&

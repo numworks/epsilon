@@ -21,9 +21,9 @@ enum class ComplexFormat : uint8_t {
 
 enum class Strategy { Default, ApproximateToFloat };
 
-enum class ExpansionStrategy : bool { None = 0, ExpandAlgebraic = 1 };
+enum class ExpansionStrategy { None, ExpandAlgebraic };
 
-enum class UnitFormat : bool { Metric = 0, Imperial = 1 };
+enum class UnitFormat { Metric, Imperial };
 
 enum class SymbolicComputation {
   ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,

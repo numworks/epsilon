@@ -84,6 +84,14 @@ class Tree : public TypeBlock {
     assert(index + 1 < static_cast<uint8_t>(nodeSize()));
     return static_cast<uint8_t>(m_valueBlocks[index]);
   }
+  void setNodeValue(uint8_t index, int value) {
+    assert(value >= 0 && value <= UINT8_MAX);
+    return setNodeValue(index, static_cast<uint8_t>(value));
+  }
+  void setNodeValue(uint8_t index, size_t value) {
+    assert(value >= 0 && value <= UINT8_MAX);
+    return setNodeValue(index, static_cast<uint8_t>(value));
+  }
   void setNodeValue(uint8_t index, uint8_t value) {
     assert(index + 1 < static_cast<uint8_t>(nodeSize()));
     m_valueBlocks[index] = value;

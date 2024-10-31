@@ -1,5 +1,6 @@
 #include "layouter.h"
 
+#include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/print_float.h>
@@ -19,6 +20,7 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/placeholder.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "grid.h"
 #include "k_tree.h"
@@ -100,17 +102,31 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  Preferences::PrintFloatMode floatMode,
                                  OMG::Base base) {
   assert(expression->isExpression() || expression->isPlaceholder());
-  /* expression lives before layoutParent in the TreeStack and will be
-   * destroyed in the process. An TreeRef is necessary to keep track of
-   * layoutParent's root. */
-  TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
-  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
-                    base);
-  layouter.m_addSeparators =
-      !linearMode && layouter.requireSeparators(expression);
-  layouter.layoutExpression(layoutParent, expression, k_maxPriority);
-  StripUselessPlus(layoutParent);
-  return layoutParent;
+  ExceptionTryAfterBlock(expression) {
+    /* expression lives before layoutParent in the TreeStack and will be
+     * destroyed in the process. An TreeRef is necessary to keep track of
+     * layoutParent's root. */
+    TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
+    assert(expression->nextTree() == layoutParent);
+    Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
+                      base);
+    layouter.m_addSeparators =
+        !linearMode && layouter.requireSeparators(expression);
+    layouter.layoutExpression(layoutParent, expression, k_maxPriority);
+    StripUselessPlus(layoutParent);
+    assert(expression == layoutParent);
+    return layoutParent;
+  }
+  ExceptionCatch(exc) {
+    switch (exc) {
+      case ExceptionType::TreeStackOverflow:
+      case ExceptionType::IntegerOverflow:
+        return KUndef->cloneTree();
+      default:
+        TreeStackCheckpoint::Raise(exc);
+    }
+  }
+  OMG::unreachable();
 }
 
 static void PushCodePoint(Tree* layout, CodePoint codePoint) {

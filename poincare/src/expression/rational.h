@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_RATIONAL_H
 #define POINCARE_EXPRESSION_RATIONAL_H
 
+#include <omg/troolean.h>
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 
@@ -29,6 +30,7 @@ class Rational final {
   static bool SetSign(Tree* e, NonStrictSign sign);
 
   static int Compare(const Tree* e1, const Tree* e2);
+  static int CompareAbs(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2);
   static Tree* Addition(const Tree* e1, const Tree* e2, const Tree* e3,
                         auto... others) {
@@ -52,6 +54,7 @@ class Rational final {
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
   static Tree* CreateMixedFraction(const Tree* e,
                                    bool mixedFractionsAreEnabled);
+  static OMG::Troolean AbsSmallerThanPi(const Tree* e);
 
  private:
   static bool IsIrreducible(const Tree* e);

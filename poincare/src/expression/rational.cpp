@@ -273,18 +273,43 @@ Tree* Rational::CreateMixedFraction(const Tree* e,
   return integerPart;
 }
 
-int Rational::Compare(const Tree* e1, const Tree* e2) {
-  assert(e1->isRational() && e2->isRational());
-  if (e1->isStrictlyNegativeRational() != e2->isStrictlyNegativeRational()) {
-    return e1->isStrictlyNegativeRational() ? -1 : 1;
-  }
-  Tree* m1 = IntegerHandler::Multiplication(Numerator(e1), Denominator(e2));
-  Tree* m2 = IntegerHandler::Multiplication(Denominator(e1), Numerator(e2));
+int CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
+                    IntegerHandler num2, IntegerHandler denom2) {
+  Tree* m1 = IntegerHandler::Multiplication(num1, denom2);
+  Tree* m2 = IntegerHandler::Multiplication(denom1, num2);
   int result =
       IntegerHandler::Compare(Integer::Handler(m1), Integer::Handler(m2));
   m2->removeTree();
   m1->removeTree();
   return result;
+}
+
+int Rational::Compare(const Tree* e1, const Tree* e2) {
+  assert(e1->isRational() && e2->isRational());
+  if (e1->isStrictlyNegativeRational() != e2->isStrictlyNegativeRational()) {
+    return e1->isStrictlyNegativeRational() ? -1 : 1;
+  }
+  return CompareHandlers(Numerator(e1), Denominator(e1), Numerator(e2),
+                         Denominator(e2));
+}
+
+int Rational::CompareAbs(const Tree* e1, const Tree* e2) {
+  assert(e1->isRational() && e2->isRational());
+  IntegerHandler num1 = Numerator(e1);
+  IntegerHandler num2 = Numerator(e2);
+  num1.setSign(NonStrictSign::Positive);
+  num2.setSign(NonStrictSign::Positive);
+  return CompareHandlers(num1, Denominator(e1), num2, Denominator(e2));
+}
+
+OMG::Troolean Rational::AbsSmallerThanPi(const Tree* e) {
+  assert(e->isRational());
+  // 157/50 < π < 79/25. Improve these numbers for less unknown results.
+  const Tree* piMinus = 157_e / 50_e;
+  const Tree* piPlus = 79_e / 25_e;
+  return CompareAbs(e, piMinus) <= 0 ? OMG::Troolean::True
+         : CompareAbs(e, piPlus) < 0 ? OMG::Troolean::Unknown
+                                     : OMG::Troolean::False;
 }
 
 }  // namespace Poincare::Internal

@@ -51,6 +51,7 @@ void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   // TODO: Maybe handle it by spliting the nary in two (if it can be flatten).
   if (numberOfChildren >= UINT16_MAX ||
       (!nary->isNAry16() && numberOfChildren >= UINT8_MAX)) {
+    // TODO: Raise a special type of expression, handled the same for now.
     TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
   }
   if (nary->isNAry16()) {

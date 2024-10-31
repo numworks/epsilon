@@ -193,7 +193,10 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
     simplifiedPiFactor->removeTree();
     return true;
   }
-  return false;
+  // arg and atan are already in ]-π,π]
+  return e->isArg() || e->isATanRad() ||
+         (e->isRational() &&
+          Rational::AbsSmallerThanPi(e) == OMG::Troolean::True);
 }
 
 bool Trigonometry::ReduceTrig(Tree* e) {

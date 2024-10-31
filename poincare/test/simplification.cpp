@@ -357,8 +357,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(exp(-i*π))", "π", ctx);
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
   simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", ctx);
-  simplifies_to("arg(abs(x)×e^(arg(z)×i))",
-                "dep(arg(e^(arg(z)×i)),{nonNull(abs(x))})", ctx);
+  simplifies_to("arg(abs(x)×e^(arg(z)×i))", "dep(arg(z),{nonNull(abs(x))})",
+                ctx);
   simplifies_to("arg(-3×(x+y×i))", "arg(-(x+y×i))", ctx);
 }
 
@@ -374,14 +374,16 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("-2×_m", "-2×_m", polarCtx);
   simplifies_to("(-2,i)", "(-2,i)", polarCtx);
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^((-π/2)×i)}", polarCtx);
-  simplifies_to("(y/y+3)×e^(i×(x-x+2))", "dep(4×e^(arg(e^(2×i))×i),{y^0})",
-                polarCtx);
+  simplifies_to("(y/y+3)×e^(i×(x-x+2))", "dep(4×e^(2×i),{y^0})", polarCtx);
   simplifies_to("3+4i", "5×e^(arctan(4/3)×i)", polarCtx);
   // TODO: Improve sign detection
   simplifies_to("-1+π", "abs(-1+π)×e^(arg(-1+π)×i)", polarCtx);
   simplifies_to("1-π", "abs(1-π)×e^(arg(1-π)×i)", polarCtx);
+  simplifies_to("e^(3.14×i)", "e^(157/50×i)", polarCtx);
+  simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
   // TODO: Simplify arg between ]-π,π]
-  simplifies_to("e^((534/7)×i)", "e^(arg(e^(534/7×i))×i)", polarCtx);
+  simplifies_to("e^(534/7×i)", "e^(arg(e^(534/7×i))×i)", polarCtx);
+  simplifies_to("e^(3.1415×i)", "e^(arg(e^(6283/2000×i))×i)", polarCtx);
 }
 
 QUIZ_CASE(pcj_simplification_parametric) {

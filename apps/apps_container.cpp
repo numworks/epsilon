@@ -5,6 +5,7 @@
 #include <poincare/init.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "apps_container_storage.h"
 #include "global_preferences.h"
@@ -322,8 +323,22 @@ void AppsContainer::run() {
     Pool::Unlock();
     activeApp()->displayWarning(I18n::Message::PoolMemoryFull, true);
   }
-
-  Container::run();
+  {
+    // TODO_PCJ: TreeStackExceptions should be handled within Poincare.
+    using namespace Poincare::Internal;
+    ExceptionTry { Container::run(); }
+    ExceptionCatch(exc) {
+      switch (exc) {
+        case ExceptionType::TreeStackOverflow:
+        case ExceptionType::IntegerOverflow:
+          // Fallback on ExceptionCheckpoint
+          ExceptionCheckpoint::Raise();
+        default:
+          TreeStackCheckpoint::Raise(exc);
+      }
+      OMG::unreachable();
+    }
+  }
   switchToBuiltinApp(nullptr);
 }
 

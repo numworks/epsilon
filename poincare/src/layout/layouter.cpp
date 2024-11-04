@@ -101,32 +101,42 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  int numberOfSignificantDigits,
                                  Preferences::PrintFloatMode floatMode,
                                  OMG::Base base) {
-  assert(expression->isExpression() || expression->isPlaceholder());
   ExceptionTryAfterBlock(expression) {
-    /* expression lives before layoutParent in the TreeStack and will be
-     * destroyed in the process. An TreeRef is necessary to keep track of
-     * layoutParent's root. */
-    TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
-    assert(expression->nextTree() == layoutParent);
-    Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
-                      base);
-    layouter.m_addSeparators =
-        !linearMode && layouter.requireSeparators(expression);
-    layouter.layoutExpression(layoutParent, expression, k_maxPriority);
-    StripUselessPlus(layoutParent);
-    assert(expression == layoutParent);
-    return layoutParent;
+    return UnsafeLayoutExpression(expression, linearMode,
+                                  numberOfSignificantDigits, floatMode, base);
   }
   ExceptionCatch(exc) {
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
-        return KUndef->cloneTree();
+        return UnsafeLayoutExpression(KUndef->cloneTree(), linearMode,
+                                      numberOfSignificantDigits, floatMode,
+                                      base);
       default:
         TreeStackCheckpoint::Raise(exc);
     }
   }
   OMG::unreachable();
+}
+
+Tree* Layouter::UnsafeLayoutExpression(Tree* expression, bool linearMode,
+                                       int numberOfSignificantDigits,
+                                       Preferences::PrintFloatMode floatMode,
+                                       OMG::Base base) {
+  assert(expression->isExpression() || expression->isPlaceholder());
+  /* expression lives before layoutParent in the TreeStack and will be
+   * destroyed in the process. An TreeRef is necessary to keep track of
+   * layoutParent's root. */
+  TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
+  assert(expression->nextTree() == layoutParent);
+  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
+                    base);
+  layouter.m_addSeparators =
+      !linearMode && layouter.requireSeparators(expression);
+  layouter.layoutExpression(layoutParent, expression, k_maxPriority);
+  StripUselessPlus(layoutParent);
+  assert(expression == layoutParent);
+  return layoutParent;
 }
 
 static void PushCodePoint(Tree* layout, CodePoint codePoint) {

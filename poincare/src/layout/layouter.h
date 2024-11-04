@@ -33,6 +33,12 @@ class Layouter {
         m_numberOfSignificantDigits(numberOfSignificantDigits),
         m_floatMode(floatMode),
         m_base(base) {}
+  // Eats expression to built its layout inplace. May raise TreeStack exceptions
+  static Tree* UnsafeLayoutExpression(Tree* expression, bool linearMode = false,
+                                      int numberOfSignificantDigits = -1,
+                                      Preferences::PrintFloatMode floatMode =
+                                          Preferences::PrintFloatMode::Decimal,
+                                      OMG::Base base = OMG::Base::Decimal);
   void addOperatorSeparator(Tree* layoutParent);
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);

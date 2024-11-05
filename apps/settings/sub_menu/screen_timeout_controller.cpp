@@ -32,7 +32,8 @@ int ScreenTimeoutController::initialSelectedRow() const {
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,
                                                              int type) {
   assert(type == 0);
-  assert(index >= 0 && index < k_totalNumberOfCell);
+  assert(reusableCellCount(type) == k_totalNumberOfCell);
+  assert(index >= 0 && index < reusableCellCount(type));
   return &m_cells[index];
 }
 

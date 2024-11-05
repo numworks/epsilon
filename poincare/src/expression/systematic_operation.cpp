@@ -476,6 +476,135 @@ bool SystematicOperation::ReduceDim(Tree* e) {
   return List::ShallowApplyListOperators(e);
 }
 
+static bool SplitRadical(const Tree* e, TreeRef& a, TreeRef& b) {
+  // Find a and b such that e = a√b, with a and b rationals
+  assert(!a.isUninitialized() && a->isMult());
+  assert(!b.isUninitialized() && b->isMult());
+  TreeRef factor;
+  TreeRef underRad;
+  bool found = false;
+
+  PatternMatching::Context ctx;
+  if (e->isRational()) {
+    // A -> A*√(1)
+    factor = e->cloneTree();
+    underRad = (1_e)->cloneTree();
+    found = true;
+  } else if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
+             ctx.getTree(KA)->isRational()) {
+    // √(A) -> 1*√(A)
+    factor = (1_e)->cloneTree();
+    underRad = ctx.getTree(KA)->cloneTree();
+    found = true;
+  } else if (PatternMatching::Match(
+                 e, KMult(KA, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
+             ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational()) {
+    // General case
+    factor = ctx.getTree(KA)->cloneTree();
+    underRad = ctx.getTree(KB)->cloneTree();
+    found = true;
+  }
+
+  if (found) {
+    NAry::AddChild(a, factor);
+    NAry::SquashIfPossible(a);
+    NAry::AddChild(b, underRad);
+    NAry::SquashIfPossible(b);
+  }
+  return found;
+}
+
+static bool ReduceNestedRadicals(Tree* e) {
+  bool changed = false;
+  PatternMatching::Context ctx;
+  TreeRef a = SharedTreeStack->pushMult(0);
+  TreeRef b = SharedTreeStack->pushMult(0);
+  TreeRef c = SharedTreeStack->pushMult(0);
+  TreeRef d = SharedTreeStack->pushMult(0);
+  /* √(a√b+c√d) = √(√(w)) * √(x) * √(y+√z) with
+   * w = b, x = c, y = a/c and z = d/b,
+   * possibly swapping a√b and c√d to ensure that y > √z */
+  if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KAdd(KA, KB)))),
+                             &ctx) &&
+      SplitRadical(ctx.getTree(KA), a, b) &&
+      SplitRadical(ctx.getTree(KB), c, d) && !(b->isOne() && d->isOne())) {
+    // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
+    TreeRef a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
+                                                  {.KA = a, .KB = b});
+    TreeRef c2d = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
+                                                  {.KA = c, .KB = d});
+    bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
+    a2b->removeTree();
+    c2d->removeTree();
+    TreeRef w;
+    TreeRef x;
+    TreeRef y;
+    TreeRef z;
+    if (a2bGreaterThanc2d) {
+      w = b->cloneTree();
+      x = c->cloneTree();
+      y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                          {.KA = a, .KB = c});
+      z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                          {.KA = d, .KB = b});
+    } else {
+      w = d->cloneTree();
+      x = a->cloneTree();
+      y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                          {.KA = c, .KB = a});
+      z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                          {.KA = b, .KB = d});
+    }
+
+    // √(y+√z) can be turned into √u+√v if ∂ = √(y^2-z) is rational.
+    TreeRef delta = PatternMatching::CreateSimplify(
+        KPow(KAdd(KPow(KA, 2_e), KMult(-1_e, KB)), 1_e / 2_e),
+        {.KA = y, .KB = z});
+    if (delta->isRational()) {
+      Tree* result;
+      /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
+       * u = (y+∂)/2 and v = (y-∂)/2 */
+      if (Rational::Sign(a) == Rational::Sign(b)) {
+        result = PatternMatching::Create(
+            KMult(KPow(KA, 1_e / 4_e), KPow(KB, 1_e / 2_e),
+                  KAdd(KPow(KMult(KAdd(KC, KD), 1_e / 2_e), 1_e / 2_e),
+                       KPow(KMult(KAdd(KC, KMult(-1_e, KD)), 1_e / 2_e),
+                            1_e / 2_e))),
+            {.KA = w, .KB = x, .KC = y, .KD = delta});
+      } else {
+        /* If a and b are not the same sign then y < 0, which invalidates the
+         * formula. We change the equation to:
+         * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
+         * - x -> -x
+         * - y -> -y
+         * - √(y-√z) = √u-√v */
+        result = PatternMatching::Create(
+            KMult(KPow(KA, 1_e / 4_e), KPow(KMult(-1_e, KB), 1_e / 2_e),
+                  KAdd(KPow(KMult(KAdd(KMult(-1_e, KC), KD), 1_e / 2_e),
+                            1_e / 2_e),
+                       KMult(-1_e,
+                             KPow(KMult(KAdd(KMult(-1_e, KC), KMult(-1_e, KD)),
+                                        1_e / 2_e),
+                                  1_e / 2_e)))),
+            {.KA = w, .KB = x, .KC = y, .KD = delta});
+      }
+      SystematicReduction::DeepReduce(result);
+      e->moveTreeOverTree(result);
+      changed = true;
+    }
+    w->removeTree();
+    x->removeTree();
+    y->removeTree();
+    z->removeTree();
+    delta->removeTree();
+  }
+  a->removeTree();
+  b->removeTree();
+  c->removeTree();
+  d->removeTree();
+  return changed;
+}
+
 bool SystematicOperation::ReduceExp(Tree* e) {
   Tree* child = e->child(0);
   if (child->isLn()) {
@@ -533,6 +662,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       e->moveTreeOverTree(PatternMatching::Create(KExp(KA), ctx));
       return true;
     }
+    return ReduceNestedRadicals(e);
   }
   return false;
 }

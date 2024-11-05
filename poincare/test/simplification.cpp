@@ -301,6 +301,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("0*inf*[[2][3]]", "[[undef][undef]]");
   simplifies_to("undef*[[2][4]]", "[[undef][undef]]");
   simplifies_to("[[1/0][4]]", "[[undef][4]]");
+  simplifies_to("[[1,2]]^2", "undef");
+  simplifies_to("[[1]]^π", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {

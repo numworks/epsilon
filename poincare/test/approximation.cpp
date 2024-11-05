@@ -126,6 +126,11 @@ QUIZ_CASE(pcj_approximation_list) {
 QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("trace([[1,2][4,3]])", "4");
   approximates_to<float>("identity(3)", "[[1,0,0][0,1,0][0,0,1]]");
+  approximates_to<float>("[[1,2][4,3]]+[[1,2][4,3]]*2*[[1,2][4,3]]",
+                         "[[19,18][36,37]]");
+  approximates_to<float>("([[0]]^(2π))^2×0×[[0]]^(2π)", "undef");
+  approximates_to<float>("[[0]]^(2π)", "undef");
+  approximates_to<float>("[[1,2]]^2", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {

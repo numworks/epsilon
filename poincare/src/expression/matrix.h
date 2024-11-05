@@ -10,18 +10,23 @@ namespace Poincare::Internal {
 
 struct Matrix {
   static uint8_t NumberOfRows(const Tree* matrix) {
+    assert(matrix->isMatrix());
     return matrix->nodeValue(0);
   }
   static uint8_t NumberOfColumns(const Tree* matrix) {
+    assert(matrix->isMatrix());
     return matrix->nodeValue(1);
   }
   static void SetNumberOfRows(Tree* matrix, uint8_t rows) {
+    assert(matrix->isMatrix());
     matrix->setNodeValue(0, rows);
   }
   static void SetNumberOfColumns(Tree* matrix, uint8_t cols) {
+    assert(matrix->isMatrix());
     matrix->setNodeValue(1, cols);
   }
   static void SetDimensions(Tree* matrix, uint8_t rows, uint8_t cols) {
+    assert(matrix->isMatrix());
     SetNumberOfRows(matrix, rows);
     SetNumberOfColumns(matrix, cols);
   }

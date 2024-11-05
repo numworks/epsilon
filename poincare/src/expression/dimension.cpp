@@ -333,7 +333,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         return false;
       }
       if (childDim[0].isMatrix()) {
-        return childDim[0].isSquareMatrix();
+        // Forbid non-integer power of matrices
+        return childDim[0].isSquareMatrix() && IsIntegerExpression(e->child(1));
       }
       if (!childDim[0].isUnit()) {
         return true;

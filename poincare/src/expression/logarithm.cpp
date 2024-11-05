@@ -298,7 +298,10 @@ bool Logarithm::ExpandLnOnRational(Tree* e) {
   Tree* numerator =
       ExpandLnOnInteger(Rational::Numerator(child), denominator == nullptr);
   if (!numerator) {
-    assert(!denominator);
+    if (denominator) {
+      // factorization of numerator failed.
+      denominator->removeTree();
+    }
     // ln(13) -> ln(13)
     return false;
   }

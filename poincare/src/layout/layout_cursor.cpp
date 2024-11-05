@@ -372,6 +372,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
     // ref is undef
     if (insertLayoutContext->m_collapseSiblings) {
       collapseSiblingsOfLayout(Layout::From(toCollapse));
+      assert(position() <= cursorRack()->numberOfChildren());
     }
     int indexOfChildToPointTo =
         (forceRight || forceLeft)
@@ -1040,6 +1041,8 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
    * the square root should absorb the 45 and this will output
    * "1 + √(45) + 3"
    *
+   * Also update cursor's position in case it is forced out of layout.
+   *
    * Here l = √(), and absorbingChildIndex = 0 (the inside of the sqrt)
    * */
   TreeRef absorbingRack = l->child(absorbingChildIndex);
@@ -1047,6 +1050,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
     return;
   }
   int indexInParent = rack->indexOfChild(l);
+  assert(m_position >= indexInParent);
   int numberOfSiblings = rack->numberOfChildren();
 
   Layout* sibling;
@@ -1069,6 +1073,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
     numberOfSiblings--;
     if (direction.isLeft()) {
       indexInParent--;
+      m_position--;
     }
   }
 }

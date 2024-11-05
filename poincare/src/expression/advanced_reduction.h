@@ -50,9 +50,9 @@ class AdvancedReduction {
     uint8_t maxDepth() const { return m_maxDepth; }
 
    private:
-    /* Discard the hashes encountered with the lowest depth, to continue advance
-     * reduction at lower max depth. BestPath won't be discarded, but remaining
-     * branches will be explored at lower depths. */
+    /* Discard the hashes encountered with the highest depth, to continue
+     * advanced reduction with a lower max depth. BestPath won't be discarded,
+     * but remaining branches will be explored at lower depth. */
     void decreaseMaxDepth();
     // Max Expand/Contract combination possibilities
     constexpr static size_t k_size = ADVANCED_MAX_BREADTH;

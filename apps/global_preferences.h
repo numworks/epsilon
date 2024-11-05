@@ -108,7 +108,8 @@ class __attribute__((packed)) GlobalPreferences {
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
 
-  constexpr static uint32_t k_defaultDimmingTime = 30000;
+  constexpr static uint32_t k_defaultDimmingTime =
+      30 * 1000;  // in milliseconds
 
  private:
   constexpr static uint8_t k_version = 0;
@@ -154,7 +155,7 @@ class __attribute__((packed)) GlobalPreferences {
              KDFont::Size m_font;)
 #endif
 
-  // TODO: move inside CODE_GUARD?
+  // TODO: move inside CODE_GUARD
   uint32_t m_dimmingTime;
 };
 

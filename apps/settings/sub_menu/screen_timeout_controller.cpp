@@ -8,8 +8,10 @@ namespace Settings {
 
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    setPreference(selectedRow());
-    // TODO: if necessary
+    int rowIndex = selectedRow();
+    assert(rowIndex >= 0 && rowIndex < DimmingTimeLabel::NElements);
+    GlobalPreferences::SharedGlobalPreferences()->setDimmingTime(
+        toDimmingTime(static_cast<DimmingTimeLabel>(rowIndex)));
     AppsContainer::sharedAppsContainer()->refreshPreferences();
     Escher::StackViewController* stack = stackController();
     stack->pop();
@@ -27,12 +29,6 @@ int ScreenTimeoutController::initialSelectedRow() const {
   return currentSelectedRow();
 }
 
-void ScreenTimeoutController::setPreference(int rowIndex) {
-  assert(rowIndex >= 0 && rowIndex < DimmingTimeLabel::NElements);
-  GlobalPreferences::SharedGlobalPreferences()->setDimmingTime(
-      toDimmingTime(static_cast<DimmingTimeLabel>(rowIndex)));
-}
-
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,
                                                              int type) {
   assert(type == 0);
@@ -40,21 +36,36 @@ Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,
   return &m_cells[index];
 }
 
-int ScreenTimeoutController::reusableCellCount(int type) const {
-  return GenericSubController::reusableCellCount(type);
+ScreenTimeoutController::DimmingTimeLabel ScreenTimeoutController::toRowLabel(
+    int time) {
+  switch (time) {
+    case k_thirtySeconds:
+      return ThirtySeconds;
+    case k_oneMinute:
+      return OneMinute;
+    case k_twoMinutes:
+      return TwoMinutes;
+    case k_fiveMinutes:
+      return FiveMinutes;
+    default:
+      OMG::unreachable();
+  }
 }
 
-void ScreenTimeoutController::fillCellForRow(Escher::HighlightCell* cell,
-                                             int row) {
-  GenericSubController::fillCellForRow(cell, row);
-}
-
-KDCoordinate ScreenTimeoutController::nonMemoizedRowHeight(int row) {
-  return GenericSubController::nonMemoizedRowHeight(row);
-}
-
-void ScreenTimeoutController::viewWillAppear() {
-  GenericSubController::viewWillAppear();
+int ScreenTimeoutController::toDimmingTime(DimmingTimeLabel label) {
+  switch (label) {
+    case ThirtySeconds:
+      return k_thirtySeconds;
+    case OneMinute:
+      return k_oneMinute;
+    case TwoMinutes:
+      return k_twoMinutes;
+    case FiveMinutes:
+      return k_fiveMinutes;
+    case NElements:
+    default:
+      OMG::unreachable();
+  }
 }
 
 }  // namespace Settings

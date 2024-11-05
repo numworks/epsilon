@@ -20,8 +20,8 @@ class Timer {
   Timer(uint32_t period);                   // Period is in ticks
   bool tick();
   void reset();
-  void setNewTimeout(uint32_t timeout  // in milliseconds
-  );
+  // timeout is in milliseconds
+  void setNewTimeout(uint32_t timeout);
 
  protected:
   virtual bool fire() = 0;

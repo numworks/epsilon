@@ -125,7 +125,7 @@ Tree* Layouter::UnsafeLayoutExpression(Tree* expression, bool linearMode,
                                        OMG::Base base) {
   assert(expression->isExpression() || expression->isPlaceholder());
   /* expression lives before layoutParent in the TreeStack and will be
-   * destroyed in the process. An TreeRef is necessary to keep track of
+   * destroyed in the process. A TreeRef is necessary to keep track of
    * layoutParent's root. */
   TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
   assert(expression->nextTree() == layoutParent);

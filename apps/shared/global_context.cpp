@@ -197,7 +197,7 @@ const UserExpression GlobalContext::expressionForSequence(
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
     return UserExpression();
   }
-  /* An function record value has metadata before the expression. To get the
+  /* A function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
   UserExpression rank = symbol.cloneChildAtIndex(0);

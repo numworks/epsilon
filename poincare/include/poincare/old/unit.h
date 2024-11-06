@@ -19,7 +19,7 @@ namespace Poincare {
  *    dimensions
  *  - informations on how the representative should be prefixed.
  *
- * Given an representative and a Prefix allowed for that representative, one may
+ * Given a representative and a Prefix allowed for that representative, one may
  * get a symbol and an OExpression.
  *
  * FIXME ?

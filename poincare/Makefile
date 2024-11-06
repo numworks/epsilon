@@ -15,8 +15,6 @@ PLATFORM ?= foxglove
 EMIT_TSD ?= 1
 include $(PATH_haussmann)/Makefile
 
-ASSERTIONS ?= $(DEBUG)
-
 SFLAGS += \
   -DASSERTIONS=$(ASSERTIONS)
 

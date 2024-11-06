@@ -6,7 +6,6 @@ APP_VERSION := 23.1.0
 OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= n0110
-ASSERTIONS ?= $(DEBUG)
 
 ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 

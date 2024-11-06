@@ -359,7 +359,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Random:
       return ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::RandInt:
-      return ComplexSign(Sign::Finite(), Sign::Zero());
+      return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

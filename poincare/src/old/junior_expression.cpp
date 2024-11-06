@@ -469,7 +469,12 @@ SystemExpression SystemExpression::getReducedDerivative(
   Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,
                            Parametric::VariableSign(result));
-  Simplification::ReduceSystem(result, false);
+  // Check dimension again as the diff may have changed it.
+  if (!Internal::Dimension::DeepCheck(result)) {
+    result->cloneTreeOverTree(KUndefUnhandledDimension);
+  } else {
+    Simplification::ReduceSystem(result, false);
+  }
   /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
    * getSystemFunction is expected to be called on it later. */
   return SystemExpression::Builder(result);

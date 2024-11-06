@@ -37,10 +37,24 @@ ifneq ($(filter $(_platforms_device) $(_platforms_simulator),$(TARGET)),)
 override PLATFORM := $(TARGET)
 endif
 
+# Build type detection
+ifdef ASSERTION
+  ASSERTIONS := $(ASSERTION)
+endif
+ASSERTIONS ?= $(DEBUG)
+
 ifeq ($(DEBUG),0)
+ifeq ($(ASSERTIONS),0)
 _build_type := release
 else
+_build_type := debug/optimized
+endif
+else
+ifeq ($(ASSERTIONS),0)
+_build_type := debug/no_assert
+else
 _build_type := debug
+endif
 endif
 
 # Platform type detection

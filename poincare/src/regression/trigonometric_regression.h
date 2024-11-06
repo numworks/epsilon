@@ -12,8 +12,9 @@ class TrigonometricRegression : public Regression {
   Type type() const override { return Type::Trigonometric; }
   double evaluate(const double* modelCoefficients, double x) const override;
 
- private:
   constexpr static int k_numberOfCoefficients = 4;
+
+ private:
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   double partialDerivate(const double* modelCoefficients,

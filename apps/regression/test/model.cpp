@@ -4,6 +4,7 @@
 #include <apps/shared/store_context.h>
 #include <assert.h>
 #include <omg/list.h>
+#include <poincare/src/regression/trigonometric_regression.h>
 #include <poincare/test/old/helper.h>
 #include <poincare/trigonometry.h>
 #include <quiz.h>
@@ -383,19 +384,23 @@ QUIZ_CASE(regression_median_2) {
                        NAN, NAN, sr);
 }
 
+constexpr static size_t nTrigonometricCoefficents =
+    Poincare::Regression::TrigonometricRegression::k_numberOfCoefficients;
+
 void assert_trigonometric_regression_is(
     const double* xi, const double* yi, int numberOfPoints,
-    const double* trueCoefficients,
+    const std::array<double, nTrigonometricCoefficents>& trueCoefficients,
     Poincare::Preferences::AngleUnit trueCoeffcientsUnit,
     double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  const Poincare::Preferences::AngleUnit units[3] = {
+  constexpr size_t k_numberOfUnits = 3;
+  constexpr Poincare::Preferences::AngleUnit units[k_numberOfUnits] = {
       Poincare::Preferences::AngleUnit::Radian,
       Poincare::Preferences::AngleUnit::Degree,
       Poincare::Preferences::AngleUnit::Gradian};
-  for (int i = 0; i < 3; ++i) {
+  for (int i = 0; i < k_numberOfUnits; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
     Poincare::Preferences::SharedPreferences()->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) /
@@ -418,7 +423,8 @@ QUIZ_CASE(regression_trigonometric_1) {
   constexpr double y[] = {9.24,  10.05, 11.33, 12.72, 14.16, 14.98, 15.14,
                           14.41, 13.24, 11.88, 10.54, 9.48,  9.19};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr double coefficients[] = {2.9723, 0.016780, -1.3067, 12.146};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      2.9723, 0.016780, -1.3067, 12.146};
   constexpr double sr = 0.061848;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -432,7 +438,8 @@ QUIZ_CASE(regression_trigonometric_2) {
   constexpr double y[] = {-2, -4, -5, -2, 3, 6, 8,  11, 9, 5, 2, 1, 0,
                           -3, -5, -2, 3,  5, 7, 10, 10, 5, 2, 2, 1};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr double coefficients[] = {6.42, 0.26, -2.16, 2.82};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      6.42, 0.26, -2.16, 2.82};
   constexpr double sr = 1.5093235;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -444,7 +451,8 @@ QUIZ_CASE(regression_trigonometric_3) {
   constexpr double x[] = {1, 2, 3, 4, 5, 6};
   constexpr double y[] = {8, 13, 21, 36, 47, 53};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr double coefficients[] = {22.55, 0.5955, -2.180, 30.86};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      22.55, 0.5955, -2.180, 30.86};
   constexpr double sr = 1.2068486;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -464,7 +472,8 @@ QUIZ_CASE(regression_trigonometric_4) {
     x[i] = static_cast<double>(i);
     y[i] = std::sin(static_cast<double>(i));
   }
-  constexpr double coefficients[] = {1.0, 1.0, 0.0, 0.0};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -501,7 +510,8 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
         return y[i] >= y[j];
       },
       static_cast<void*>(context), numberOfPoints);
-  constexpr double coefficients[] = {1.0, 1.0, 0.0, 0.0};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -514,7 +524,8 @@ QUIZ_CASE(regression_trigonometric_5) {
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
   // TODO: this is not the best possible regression, improve it
-  constexpr double coefficients[] = {2.324382, 0.9511061, -0.9544964, 4.314825};
+  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
+      2.324382, 0.9511061, -0.9544964, 4.314825};
   constexpr double sr = 4.121608;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,

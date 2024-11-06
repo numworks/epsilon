@@ -105,6 +105,18 @@ class Regression {
   const char* formula() const { return Formula(type()); }
   Poincare::Layout templateLayout() const { return TemplateLayout(type()); }
 
+  /* TODO: in the following functions, modelCoefficients is sometimes an input
+   * parameter, and sometimes an output parameter. It would be much better for
+   * clarity purposes to apply the following:
+   * - when modelCoefficients is a read-only input parameter, pass it as a
+   * "const std::array<double, k_maxNumberOfCoefficients>&". It would be more
+   * meaningful than "const double*", as it would highlight the fact that
+   * modelCoefficients is an array and not only a pointer to a double.
+   * - when modelCoefficients is an output parameter, return it instead of
+   * having it in the list of function parameters. The return type would be
+   * "std::array<double, k_maxNumberOfCoefficients>"
+   */
+
   Poincare::Layout equationLayout(
       const double* modelCoefficients, const char* ySymbol,
       int significantDigits,

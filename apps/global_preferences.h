@@ -112,7 +112,7 @@ class __attribute__((packed)) GlobalPreferences {
   constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
 
  private:
-  constexpr static uint8_t k_version = 0;
+  constexpr static uint8_t k_version = 1;
 
   GlobalPreferences()
       : m_version(k_version),
@@ -138,29 +138,26 @@ class __attribute__((packed)) GlobalPreferences {
                 "I18n::NumberOfCountries is not superior to 0");
 
 #if __EMSCRIPTEN__
-  CODE_GUARD(global_preferences, 3643843895,           //
-             uint8_t m_version;                        //
-             emscripten_align1_int m_brightnessLevel;  //
-             I18n::Language m_language;                //
-             I18n::Country m_country;                  //
-             bool m_showPopUp;                         //
-             KDFont::Size m_font;)
+  using BrightnessType = emscripten_align1_int;
+  using DimmingTimeType = emscripten_align1_int;
 #else
-  CODE_GUARD(global_preferences, 1861289878,  //
-             uint8_t m_version;               //
-             int m_brightnessLevel;           //
-             I18n::Language m_language;       //
-             I18n::Country m_country;         //
-             bool m_showPopUp;                //
-             KDFont::Size m_font;)
+  using BrightnessType = int;
+  using DimmingTimeType = uint32_t;
 #endif
 
-  // TODO: move inside CODE_GUARD
-  uint32_t m_dimmingTime;
+  CODE_GUARD(global_preferences, 2970354233,    //
+             uint8_t m_version;                 //
+             BrightnessType m_brightnessLevel;  //
+             I18n::Language m_language;         //
+             I18n::Country m_country;           //
+             bool m_showPopUp;                  //
+             KDFont::Size m_font;               //
+             DimmingTimeType m_dimmingTime;     // in milliseconds
+             static constexpr int k_objectSize = 13;)
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == 13,
+static_assert(sizeof(GlobalPreferences) == k_objectSize,
               "Class GlobalPreferences changed size");
 #endif
 

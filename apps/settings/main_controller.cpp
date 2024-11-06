@@ -256,7 +256,8 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::ScreenTimeout:
-      childIndex = m_screenTimeoutController.currentSelectedRow();
+      childIndex = ScreenTimeoutController::toRowLabel(
+          GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
       break;
     case I18n::Message::FontSizes:
       childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==

@@ -20,13 +20,9 @@ bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
-int ScreenTimeoutController::currentSelectedRow() const {
+int ScreenTimeoutController::initialSelectedRow() const {
   return toRowLabel(
       GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
-}
-
-int ScreenTimeoutController::initialSelectedRow() const {
-  return currentSelectedRow();
 }
 
 Escher::HighlightCell* ScreenTimeoutController::reusableCell(int index,

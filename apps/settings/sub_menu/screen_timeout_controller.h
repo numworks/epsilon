@@ -19,8 +19,6 @@ class ScreenTimeoutController : public GenericSubController {
 
   Escher::HighlightCell* reusableCell(int index, int type) override;
 
-  int currentSelectedRow() const;
-
   constexpr static uint8_t k_totalNumberOfCell = 4;
 
  protected:
@@ -48,9 +46,10 @@ class ScreenTimeoutController : public GenericSubController {
   constexpr static int k_twoMinutes = 2 * 60 * 1000;
   constexpr static int k_fiveMinutes = 5 * 60 * 1000;
 
-  static DimmingTimeLabel toRowLabel(int time);
-
   static int toDimmingTime(DimmingTimeLabel label);
+
+ public:
+  static DimmingTimeLabel toRowLabel(int time);
 };
 
 }  // namespace Settings

@@ -42,9 +42,13 @@ bool Derivation::Reduce(Tree* e) {
     return true;
   }
 
-  if (!Integer::Is<uint8_t>(order)) {
+  OMG::Troolean validOrder =
+      GetComplexSign(order).trooleanIsRealPositiveInteger();
+  if (validOrder == OMG::Troolean::False) {
     e->cloneTreeOverTree(KUndefUnhandled);
     return true;
+  } else if (!Integer::Is<uint8_t>(order)) {
+    return false;
   }
   int derivationOrder = Integer::Handler(order).to<uint8_t>();
 

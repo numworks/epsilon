@@ -273,8 +273,11 @@ Tree* Rational::CreateMixedFraction(const Tree* e,
   return integerPart;
 }
 
-int CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
-                    IntegerHandler num2, IntegerHandler denom2) {
+int Rational::CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
+                              IntegerHandler num2, IntegerHandler denom2) {
+  assert(denom1.strictSign() == StrictSign::Positive &&
+         denom2.strictSign() == StrictSign::Positive);
+  // num1/denom1 > num2/denom2 <=> num1*denom2 > num2*denom1
   Tree* m1 = IntegerHandler::Multiplication(num1, denom2);
   Tree* m2 = IntegerHandler::Multiplication(denom1, num2);
   int result =

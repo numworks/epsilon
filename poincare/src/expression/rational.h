@@ -64,6 +64,9 @@ class Rational final {
     return PushIrreducible(Integer::Handler(numerator),
                            Integer::Handler(denominator));
   }
+  // Compare num1/denom1 and num2/denom2, with denom1 and denom2 positive.
+  static int CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
+                             IntegerHandler num2, IntegerHandler denom2);
 };
 
 }  // namespace Poincare::Internal

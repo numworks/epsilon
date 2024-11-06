@@ -8,6 +8,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/matrix_array.h>
 
+#include <algorithm>
 #include <cmath>
 
 #include "dataset_adapter.h"
@@ -72,10 +73,33 @@ void Regression::fit(const Series* series, double* modelCoefficients,
 
 void Regression::privateFit(const Series* series, double* modelCoefficients,
                             Poincare::Context* context) const {
-  initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
-                         series);
-  fitLevenbergMarquardt(series, modelCoefficients, context);
-  uniformizeCoefficientsFromFit(modelCoefficients);
+  double lowestResidualStandardDeviation = OMG::Float::Max<double>();
+  std::array<double, k_maxNumberOfCoefficients> bestModelCoefficients;
+  /* The coefficients are initialized to zero, so that in the worst case (it
+   * could theoretically happen if all residual standard deviations are infinite
+   * or NaN), the returned model coefficients will all be zero. */
+  bestModelCoefficients.fill(0);
+
+  size_t attemptNumber = 0;
+  while (attemptNumber < k_initialParametersIterations) {
+    initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
+                           series);  // + attemptNumber
+    fitLevenbergMarquardt(series, modelCoefficients, context);
+    uniformizeCoefficientsFromFit(modelCoefficients);
+    double newResidualStandardDeviation =
+        residualStandardDeviation(series, modelCoefficients);
+    if (newResidualStandardDeviation < lowestResidualStandardDeviation) {
+      lowestResidualStandardDeviation = newResidualStandardDeviation;
+      std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
+                bestModelCoefficients.begin());
+    }
+    attemptNumber++;
+  }
+
+  // Copy the best model in the returned model coefficients
+  std::copy(bestModelCoefficients.begin(),
+            bestModelCoefficients.begin() + numberOfCoefficients(),
+            modelCoefficients);
 }
 
 bool Regression::dataSuitableForFit(const Series* series) const {

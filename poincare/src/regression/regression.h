@@ -147,6 +147,10 @@ class Regression {
       const double* modelCoefficients) const = 0;
 
   // Fit
+  /* For some regressions (e.g. trigonometric), fit can be attempted several
+   * times with different sets initial parameters, then the best model amoung
+   * the different fit attempts is selected. */
+  constexpr static size_t k_initialParametersIterations = 1;
   virtual void privateFit(const Series* series, double* modelCoefficients,
                           Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;

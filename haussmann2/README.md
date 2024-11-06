@@ -13,8 +13,20 @@ There are two types of targets:
 
 Build is controlled by variables that can be supplied on the command line:
 - `DEBUG`: 0 or 1
+- `ASSERTIONS`: optional, defaults to `DEBUG`. 0 or 1 otherwise.
 - `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORM to become the name of the host environment.
+- `ARCHS`: optional, platform-specific. A list of architectures to build for.
 - `VERBOSE`: set to 1 to print the commands as they are exectuted
+
+By default, files will be built in a customizable output directory, with sub-directories depending on build parameters.
+- First sub-directory depends on the `DEBUG` and `ASSERTIONS` variables:
+  - `release` for `DEBUG=0` and `ASSERTIONS=0`
+  - `debug` for `DEBUG=1` and `ASSERTIONS=1`
+  - `debug/no_assert` for `DEBUG=1` and `ASSERTIONS=0`
+  - `debug/optimized` for `DEBUG=0` and `ASSERTIONS=1`
+- Second sub-directory is the name of the `PLATFORM`.
+- Third sub-directory is the name of the architecture, if any.
+- Fourth sub-directory is optional and specified by the goal.
 
 ## Including Haussmann in a project
 
@@ -22,7 +34,7 @@ In your application, add this repository as a submodule.
 
 In your makefile, define the following variables:
 - `PATH_haussmann`: the path to the submodule in the project
-- `OUTPUT_ROOT`: files will be built in `$(OUTPUT_ROOT)/<'debug'|'release'>/$(PLATFORM)/`
+- `OUTPUT_ROOT`: where to place the built files
 - `APP_NAME`
 - `APP_VERSION`
 - you might give default values to `DEBUG` and `PLATFORM`

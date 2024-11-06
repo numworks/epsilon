@@ -76,6 +76,25 @@ void swap(T& a, T& b) {
   b = std::move(temp);
 }
 
+template <class InputIterator, class OutputIterator>
+OutputIterator copy(InputIterator inputFirst, InputIterator inputLast,
+                    OutputIterator outputFirst) {
+  while (inputFirst != inputLast) {
+    *outputFirst = *inputFirst;
+    outputFirst++;
+    inputFirst++;
+  }
+  return outputFirst;
+}
+
+template <class Iterator, class T>
+void fill(Iterator first, Iterator last, const T& value) {
+  while (first != last) {
+    *first = value;
+    first++;
+  }
+}
+
 }  // namespace std
 
 #endif

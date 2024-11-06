@@ -95,13 +95,15 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                                                      &projectionContext);
   context->complexFormat = projectionContext.m_complexFormat;
   // Retrieve user symbols before simplification and variable replacement
-  Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
-  for (const Tree* userSymbol : userSymbols->children()) {
-    if (projectionContext.m_context->treeForSymbolIdentifier(userSymbol)) {
-      context->userVariables.append(Symbol::GetName(userSymbol));
+  if (projectionContext.m_context) {
+    Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
+    for (const Tree* userSymbol : userSymbols->children()) {
+      if (projectionContext.m_context->treeForSymbolIdentifier(userSymbol)) {
+        context->userVariables.append(Symbol::GetName(userSymbol));
+      }
     }
+    userSymbols->removeTree();
   }
-  userSymbols->removeTree();
   /* Clone and simplify the equations */
   Tree* reducedEquationSet = equationsSet->cloneTree();
   ProjectAndReduce(reducedEquationSet, projectionContext, error);
@@ -111,7 +113,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   }
 
   /* Count and collect remaining UserSymbols */
-  userSymbols = Variables::GetUserSymbols(reducedEquationSet);
+  Tree* userSymbols = Variables::GetUserSymbols(reducedEquationSet);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
 
   if ((equationsSet->numberOfChildren() > 1 || numberOfVariables > 1) &&

@@ -772,7 +772,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(3-√(7))", "√(3-√(7))");
   simplifies_to("√(-2+√(3))", "(√(6)-√(2))/2×i", cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
-  simplifies_to("√(√(1058)-√(896))", "-root(98,4)+4×root(2,4)");
+  simplifies_to("√(√(1058)-√(896))", "-root(98,4)+4×root(2,4)", cartesianCtx);
   simplifies_to("√(57×√(17)+68×√(10))", "root(4913,4)+2×root(1700,4)");
 }
 

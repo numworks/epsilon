@@ -4,6 +4,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
+#include "advanced_reduction.h"
 #include "approximation.h"
 #include "infinity.h"
 #include "k_tree.h"
@@ -560,6 +561,7 @@ static bool ReduceNestedRadicals(Tree* e) {
     TreeRef delta = PatternMatching::CreateSimplify(
         KPow(KAdd(KPow(KA, 2_e), KMult(-1_e, KB)), 1_e / 2_e),
         {.KA = y, .KB = z});
+    AdvancedReduction::Reduce(delta);
     if (delta->isRational()) {
       Tree* result;
       /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
@@ -592,11 +594,11 @@ static bool ReduceNestedRadicals(Tree* e) {
       e->moveTreeOverTree(result);
       changed = true;
     }
+    delta->removeTree();
     w->removeTree();
     x->removeTree();
     y->removeTree();
     z->removeTree();
-    delta->removeTree();
   }
   a->removeTree();
   b->removeTree();

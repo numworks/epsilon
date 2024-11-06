@@ -13,6 +13,11 @@ OUTPUT_ROOT := output
 DEBUG ?= 0
 PLATFORM ?= foxglove
 EMIT_TSD ?= 1
+# This could be activated only in DEBUG mode but:
+# - it's simpler to always have it on
+# - it's very lightweight
+POINCARE_TREE_LOG = 1
+
 include $(PATH_haussmann)/Makefile
 
 SFLAGS += \

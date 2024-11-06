@@ -17,6 +17,9 @@ std::string symbolName(const JuniorExpression& expr) {
 
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
+#if POINCARE_TREE_LOG
+      .function("log", &PoolHandle::log)
+#endif
       .function("isUninitialized", &PoolHandle::isUninitialized);
 
   class_<OExpression, base<PoolHandle>>("PCR_OExpression")

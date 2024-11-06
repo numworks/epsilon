@@ -70,5 +70,10 @@ ifdef GIT
   PATCH_LEVEL := $(shell (git rev-parse HEAD || echo NONE) | head -c 7)
 endif
 
+# ARCH is an alias for the ARCHS variable
+ifdef ARCH
+  ARCHS := $(ARCH)
+endif
+
 # Platform specific configuration
 include $(PATH_haussmann)/src/configs/$(PLATFORM).mak

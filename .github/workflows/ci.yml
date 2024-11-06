@@ -105,7 +105,7 @@ jobs:
       - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
       - run: ./output/release/windows/test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: epsilon-windows.exe
           path: output/release/windows/epsilon.exe
@@ -123,7 +123,7 @@ jobs:
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: node output/release/web/test.js --headless --limit-stack-usage
         timeout-minutes: 5
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: epsilon.html
           path: output/release/web/epsilon.html
@@ -139,7 +139,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
       - run: output/release/linux/test.bin --headless --limit-stack-usage
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ (github.repository != 'numworks/epsilon-internal') }}
         with:
           name: epsilon-linux.bin
@@ -156,7 +156,7 @@ jobs:
       - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
       - run: output/release/macos/x86_64/test.bin --headless --limit-stack-usage
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.app
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: epsilon-macos.zip
           path: output/release/macos/epsilon.app
@@ -172,7 +172,7 @@ jobs:
       - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
       - run: make PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: epsilon-ios.ipa
           path: output/release/ios/epsilon.ipa
@@ -191,7 +191,7 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make -f poincare/Makefile
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: poincarejs.zip
           path: output/release/foxglove/poincarejs.zip

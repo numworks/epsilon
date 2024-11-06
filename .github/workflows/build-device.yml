@@ -36,7 +36,7 @@ jobs:
         run: make MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu
       - run: make MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: unsigned-device-builds
           path: output/release/*/epsilon*dfu

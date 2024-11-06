@@ -78,7 +78,7 @@ jobs:
         if: ${{ steps.epsilon-core.outcome != 'success' }}
         run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
       - name: Upload metrics output
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: metrics-output
           path: metrics-output/

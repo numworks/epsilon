@@ -25,9 +25,9 @@ class TrigonometricRegression : public Regression {
       const double* modelCoefficients) const override;
   double partialDerivate(const double* modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
-  void specializedInitCoefficientsForFit(double* modelCoefficients,
-                                         double defaultValue,
-                                         const Series* series) const override;
+  CoefficientsType specializedInitCoefficientsForFit(
+      double defaultValue, size_t attemptNumber,
+      const Series* series) const override;
   void uniformizeCoefficientsFromFit(double* modelCoefficients) const override;
 };
 

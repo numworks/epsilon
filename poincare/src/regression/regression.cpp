@@ -65,7 +65,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
 void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
-    initCoefficientsForFit(modelCoefficients, NAN, true);
+    initCoefficientsForFit(modelCoefficients, NAN, true, 0);
     return;
   }
   privateFit(series, modelCoefficients, context);
@@ -83,7 +83,7 @@ void Regression::privateFit(const Series* series, double* modelCoefficients,
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {
     initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
-                           series);  // + attemptNumber
+                           attemptNumber, series);
     fitLevenbergMarquardt(series, modelCoefficients, context);
     uniformizeCoefficientsFromFit(modelCoefficients);
     double newResidualStandardDeviation =
@@ -286,22 +286,24 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
 void Regression::initCoefficientsForFit(double* modelCoefficients,
                                         double defaultValue,
                                         bool forceDefaultValue,
+                                        size_t attemptNumber,
                                         const Series* series) const {
-  if (forceDefaultValue) {
-    Regression::specializedInitCoefficientsForFit(modelCoefficients,
-                                                  defaultValue);
-  } else {
-    specializedInitCoefficientsForFit(modelCoefficients, defaultValue, series);
-  }
+  CoefficientsType initialCoefficients =
+      forceDefaultValue
+          ? specializedInitCoefficientsForFit(defaultValue, attemptNumber)
+          : specializedInitCoefficientsForFit(defaultValue, attemptNumber,
+                                              series);
+  // TODO: std::move to avoid a useless copy
+  std::copy(initialCoefficients.begin(), initialCoefficients.end(),
+            modelCoefficients);
 }
 
-void Regression::specializedInitCoefficientsForFit(double* modelCoefficients,
-                                                   double defaultValue,
-                                                   const Series* series) const {
-  const int nbCoef = numberOfCoefficients();
-  for (int i = 0; i < nbCoef; i++) {
-    modelCoefficients[i] = defaultValue;
-  }
+Regression::CoefficientsType Regression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t /* attemptNumber */,
+    const Series* /* series */) const {
+  CoefficientsType coefficients;
+  coefficients.fill(defaultValue);
+  return coefficients;
 }
 
 double Regression::correlationCoefficient(const Series* series) const {
@@ -344,8 +346,8 @@ double Regression::determinationCoefficient(
   const Type thisType = type();
   if (HasRSquared(thisType)) {
     /* With linear regressions and transformed models (Exponential, Logarithm
-     * and Power), we use r^2, the square of the correlation coefficient between
-     * the series Y (transformed) and the evaluated values.*/
+     * and Power), we use r^2, the square of the correlation coefficient
+     * between the series Y (transformed) and the evaluated values.*/
     double r = correlationCoefficient(series);
     return r * r;
   }
@@ -357,8 +359,8 @@ double Regression::determinationCoefficient(
   }
 
   assert(!FitsLnY(thisType) && !FitsLnX(thisType));
-  /* With proportional regression or badly fitted models, R2 can technically be
-   * negative. R2<0 means that the regression is less effective than a
+  /* With proportional regression or badly fitted models, R2 can technically
+   * be negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression
    * models that can fit a constant observation. */
   // Residual sum of squares

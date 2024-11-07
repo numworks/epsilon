@@ -70,8 +70,9 @@ double LogisticRegression::partialDerivate(const double* modelCoefficients,
   return 1.0 / denominator;
 }
 
-void LogisticRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue,
+Regression::CoefficientsType
+LogisticRegression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t /* attemptNumber */,
     const Series* series) const {
   StatisticsDatasetFromSeriesColumn xColumn(series, 0);
   StatisticsDatasetFromSeriesColumn yColumn(series, 1);
@@ -124,9 +125,7 @@ void LogisticRegression::specializedInitCoefficientsForFit(
     a = defaultValue;
   }
 
-  modelCoefficients[0] = a;
-  modelCoefficients[1] = b;
-  modelCoefficients[2] = c;
+  return {a, b, c};
 }
 
 }  // namespace Poincare::Regression

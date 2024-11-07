@@ -5,6 +5,8 @@
 #include <poincare/old/context.h>
 #include <stdint.h>
 
+#include <array>
+
 #include "series.h"
 
 namespace Poincare::Regression {
@@ -30,6 +32,8 @@ class Regression {
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model
+
+  using CoefficientsType = std::array<double, k_maxNumberOfCoefficients>;
 
   explicit constexpr Regression(size_t initialParametersIterations = 1)
       : m_initialParametersIterations{initialParametersIterations} {}
@@ -189,10 +193,10 @@ class Regression {
                         double* constants, int solutionDimension,
                         Poincare::Context* context) const;
   void initCoefficientsForFit(double* modelCoefficients, double defaultValue,
-                              bool forceDefaultValue,
+                              bool forceDefaultValue, size_t attemptNumber,
                               const Series* s = nullptr) const;
-  virtual void specializedInitCoefficientsForFit(
-      double* modelCoefficients, double defaultValue,
+  virtual CoefficientsType specializedInitCoefficientsForFit(
+      double defaultValue, size_t /* attemptNumber */,
       const Series* s = nullptr) const;
   virtual void uniformizeCoefficientsFromFit(double* modelCoefficients) const {}
 };

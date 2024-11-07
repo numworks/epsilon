@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "dataset_adapter.h"
+#include "poincare/src/regression/regression.h"
 
 namespace Poincare::Regression {
 
@@ -159,12 +160,12 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   *yMaxExtremum = yMax;
 }
 
-void TrigonometricRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue,
-    const Series* series) const {
+Regression::CoefficientsType
+TrigonometricRegression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t attemptNumber, const Series* series) const {
   /* With trigonometric model, a good fit heavily depends on good starting
    * parameters. We try to find two successive extrema, and from them deduce the
-   * amplitude, period, y-delta and phase.
+   * amplitude, frequency, y-delta and phase.
    * Since we look for "good" extrema (having the 2 previous/next values
    * smaller/bigger), this should be pretty resilient to outliers as long as
    * there are enough data points.
@@ -173,28 +174,33 @@ void TrigonometricRegression::specializedInitCoefficientsForFit(
   double xMin, xMax, yMin, yMax;
   findExtrema(&xMin, &xMax, &yMin, &yMax, series);
   // Init the "amplitude" coefficient a
-  modelCoefficients[0] = (yMax - yMin) / 2.0;
-  // Init the "period" coefficient b
+  double a = (yMax - yMin) / 2.0;
+  // Init the "frequency" coefficient b
   double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
   double period = 2.0 * std::fabs(xMax - xMin);
-  if (period > 0) {
-    /* b/(2*piInAngleUnit) is the frequency of the sine.
-     * With two successive extrema, we have the period, so we initialize b
-     * so that b*period = 2*piInAngleUnit . This helps preventing an overfitting
-     * regression with an excessive frequency. */
-    modelCoefficients[1] = (2.0 * piInAngleUnit) / period;
-  } else {
-    /* Without period, fall back on default value, taking into account the
-     * angleUnit to ensure consistent result across different angle units. */
-    modelCoefficients[1] = defaultValue * piInAngleUnit;
-  }
+  double b =
+      (period > 0)
+          ?
+          /* b/(2*piInAngleUnit) is the frequency of the sine.
+           * With two successive extrema, we have the period, so we initialize b
+           * so that b*period = 2*piInAngleUnit . This helps preventing an
+           * overfitting regression with an excessive frequency. */
+          (2.0 * piInAngleUnit) / period
+          :
+          /* Without period, fall back on default value, taking into account the
+           * angleUnit to ensure consistent result across different angle units.
+           */
+          defaultValue * piInAngleUnit;
+
   // Init the "Phase" coefficient c
   /* Choose c so that sin(b * xMax + c) is maximal. It must depend on the angle
    * unit */
-  modelCoefficients[2] = piInAngleUnit / 2 - modelCoefficients[1] * xMax;
+  double c = piInAngleUnit / 2 - b * xMax;
   // Init the "y-delta" coefficient d
-  modelCoefficients[k_numberOfCoefficients - 1] = (yMax + yMin) / 2.0;
+  double d = (yMax + yMin) / 2.0;
+
+  return {a, b, c, d};
 }
 
 void TrigonometricRegression::uniformizeCoefficientsFromFit(

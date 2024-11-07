@@ -35,8 +35,10 @@ class Regression {
 
   using CoefficientsType = std::array<double, k_maxNumberOfCoefficients>;
 
-  explicit constexpr Regression(size_t initialParametersIterations = 1)
-      : m_initialParametersIterations{initialParametersIterations} {}
+  explicit constexpr Regression(size_t initialParametersIterations = 1,
+                                double lowerRegressionScoreFactor = 1.0)
+      : m_initialParametersIterations{initialParametersIterations},
+        m_lowerRegressionScoreFactor{lowerRegressionScoreFactor} {}
 
   static const Regression* Get(Type type);
 
@@ -163,10 +165,19 @@ class Regression {
                                  double x) const = 0;
 
   // Fit
+
   /* For some regressions (e.g. trigonometric), fit can be attempted several
    * times with different sets initial parameters, then the best model amoung
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
+
+  /* For some regressiosn (e.g. trigonometric), when calling the fit algorithm
+   * in a loop, we might want to select some calculated coefficients as the best
+   * fit coefficients, if their "regression score" (i.e. residual standard
+   * deviation), is strictly less than the previous best calculated score
+   * multiplied by a factor. */
+  double m_lowerRegressionScoreFactor;
+
   virtual CoefficientsType privateFit(const Series* series,
                                       Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;

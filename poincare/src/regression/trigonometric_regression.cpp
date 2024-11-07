@@ -207,7 +207,7 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
    * than the initial b value, and half of the modified b values are lower than
    * the initial b value. The multiplication coefficient increases or decreases
    * geometrically with a certain geometrical factor.  */
-  constexpr double k_frequencyMultiplicationFactor = 1.4;
+  constexpr double k_frequencyMultiplicationFactor = 1.6;
   b = b * std::pow(k_frequencyMultiplicationFactor,
                    (int)attemptNumber - (int)m_initialParametersIterations / 2);
 

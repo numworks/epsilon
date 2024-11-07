@@ -307,6 +307,9 @@ class Integer {
                                   : NonStrictSign::Negative;
   }
   static void SetSign(Tree* e, NonStrictSign sign);
+
+  static OMG::Troolean IsRationalInteger(const Tree* e);
+  static OMG::Troolean IsPositiveRationalInteger(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

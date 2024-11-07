@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <new>
 
+#include "dimension.h"
 #include "k_tree.h"
 #include "rational.h"
 
@@ -793,6 +794,25 @@ void Integer::SetSign(Tree* e, NonStrictSign sign) {
   IntegerHandler h = Handler(e);
   h.setSign(sign);
   e->moveTreeOverTree(h.pushOnTreeStack());
+}
+
+OMG::Troolean Integer::IsRationalInteger(const Tree* e) {
+  if (!Dimension::Get(e).isScalar() || e->isMathematicalConstant() ||
+      e->treeIsIdenticalTo(KExp(1_e)) || GetComplexSign(e).isNonReal()) {
+    return OMG::Troolean::False;
+  }
+  return e->isRational()
+             ? (e->isInteger() ? OMG::Troolean::True : OMG::Troolean::False)
+             : OMG::Troolean::Unknown;
+}
+
+OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {
+  OMG::Troolean integer = IsRationalInteger(e);
+  Poincare::Sign s = GetComplexSign(e).realSign();
+  return s.isStrictlyNegative() ? OMG::Troolean::False
+         : (integer != OMG::Troolean::False) && (!s.isPositive())
+             ? OMG::Troolean::Unknown
+             : integer;
 }
 
 }  // namespace Poincare::Internal

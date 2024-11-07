@@ -10,6 +10,7 @@
 
 #include "approximation.h"
 #include "dimension.h"
+#include "integer.h"
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"
@@ -19,33 +20,14 @@ namespace Poincare::Internal {
 /* TODO everything in this file is defined on rationals only, this could be
  * checked earlier. */
 
-OMG::Troolean IsInteger(const Tree* e) {
-  if (e->isMathematicalConstant() || e->treeIsIdenticalTo(KExp(1_e))) {
-    return OMG::Troolean::False;
-  }
-  if (!e->isRational()) {
-    // TODO: in old poincare we approximated and checked it was real and int
-    return OMG::Troolean::Unknown;
-  }
-  return OMG::BoolToTroolean(e->isInteger());
-}
-
-OMG::Troolean IsPositiveInteger(const Tree* e) {
-  OMG::Troolean isInteger = IsInteger(e);
-  if (isInteger == OMG::Troolean::True) {
-    return OMG::BoolToTroolean(Rational::Sign(e).isPositive());
-  }
-  return isInteger;
-}
-
 bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
   assert(e->numberOfChildren() == 2);
   bool isQuo = e->isQuo();
   const Tree* num = e->child(0);
   const Tree* denom = num->nextTree();
-  OMG::Troolean childrenAreIntegers =
-      OMG::TrooleanAnd(IsInteger(num), IsInteger(denom));
-  if (childrenAreIntegers == OMG::Troolean::False) {
+  OMG::Troolean childrenAreRationalIntegers = OMG::TrooleanAnd(
+      Integer::IsRationalInteger(num), Integer::IsRationalInteger(denom));
+  if (childrenAreRationalIntegers == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
     return true;
   }
@@ -53,7 +35,7 @@ bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
     e->cloneTreeOverTree(KUndefZeroDivision);
     return true;
   }
-  if (childrenAreIntegers == OMG::Troolean::Unknown) {
+  if (childrenAreRationalIntegers == OMG::Troolean::Unknown) {
     return false;
   }
   IntegerHandler n = Integer::Handler(num);
@@ -98,13 +80,14 @@ bool Arithmetic::ReduceFloor(Tree* e) {
 }
 
 bool Arithmetic::ReduceRound(Tree* e) {
-  const Tree* child = e->child(0);
-  OMG::Troolean parameterIsInteger = IsInteger(child->nextTree());
-  if (parameterIsInteger == OMG::Troolean::False) {
+  const Tree* parameter = e->child(0)->nextTree();
+  OMG::Troolean parameterIsRationalInteger =
+      Integer::IsRationalInteger(parameter);
+  if (parameterIsRationalInteger == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
     return true;
   }
-  if (parameterIsInteger == OMG::Troolean::Unknown || !child->isRational()) {
+  if (parameterIsRationalInteger == OMG::Troolean::Unknown) {
     return false;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
@@ -159,13 +142,13 @@ bool Arithmetic::ReduceGCDOrLCM(Tree* e, bool isGCD) {
   Tree* first = e->child(0);
   Tree* next = first;
   while (e->numberOfChildren() > 1) {
-    OMG::Troolean nextIsInteger = IsInteger(next);
-    if (nextIsInteger == OMG::Troolean::Unknown) {
-      return changed;
-    }
-    if (nextIsInteger == OMG::Troolean::False) {
+    OMG::Troolean nextIsRationalInteger = Integer::IsRationalInteger(next);
+    if (nextIsRationalInteger == OMG::Troolean::False) {
       e->cloneTreeOverTree(KBadType);
       return true;
+    }
+    if (nextIsRationalInteger == OMG::Troolean::Unknown) {
+      return changed;
     }
     if (first != next) {
       // TODO keep a handler on first out of the loop
@@ -185,13 +168,14 @@ bool Arithmetic::ReduceGCDOrLCM(Tree* e, bool isGCD) {
 
 bool Arithmetic::ReduceFactorial(Tree* e) {
   const Tree* child = e->child(0);
-  OMG::Troolean childIsPositiveInteger = IsPositiveInteger(child);
-  if (childIsPositiveInteger == OMG::Troolean::Unknown) {
-    return false;
-  }
-  if (childIsPositiveInteger == OMG::Troolean::False) {
+  OMG::Troolean childIsRationalPositiveInteger =
+      Integer::IsPositiveRationalInteger(child);
+  if (childIsRationalPositiveInteger == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
     return true;
+  }
+  if (childIsRationalPositiveInteger == OMG::Troolean::Unknown) {
+    return false;
   }
   return ExpandFactorial(e);
 }
@@ -203,7 +187,8 @@ bool Arithmetic::ExpandFactorial(Tree* e) {
   /* Explicit the product directly to compute the factorial if the argument was
    * a rational */
   if (e->isProduct() && e->child(2)->isRational()) {
-    assert(IsPositiveInteger(e->child(2)) == OMG::Troolean::True);
+    assert(Integer::IsPositiveRationalInteger(e->child(2)) ==
+           OMG::Troolean::True);
     Parametric::Explicit(e);
   }
   return true;
@@ -212,13 +197,14 @@ bool Arithmetic::ExpandFactorial(Tree* e) {
 bool Arithmetic::ReducePermute(Tree* e) {
   Tree* n = e->child(0);
   Tree* k = n->nextTree();
-  OMG::Troolean childrenArePositiveInteger =
-      OMG::TrooleanAnd(IsPositiveInteger(n), IsPositiveInteger(k));
-  if (childrenArePositiveInteger == OMG::Troolean::False) {
+  OMG::Troolean childrenAreRationalPositiveInteger =
+      OMG::TrooleanAnd(Integer::IsPositiveRationalInteger(n),
+                       Integer::IsPositiveRationalInteger(k));
+  if (childrenAreRationalPositiveInteger == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
     return true;
   }
-  if (childrenArePositiveInteger == OMG::Troolean::Unknown) {
+  if (childrenAreRationalPositiveInteger == OMG::Troolean::Unknown) {
     return false;
   }
   // TODO Rational::Compare
@@ -244,12 +230,12 @@ bool Arithmetic::ExpandPermute(Tree* e) {
 bool Arithmetic::ReduceBinomial(Tree* e) {
   Tree* n = e->child(0);
   Tree* k = n->nextTree();
-  OMG::Troolean kIsInteger = IsInteger(k);
-  if (kIsInteger == OMG::Troolean::False) {
+  OMG::Troolean kIsRationalInteger = Integer::IsRationalInteger(k);
+  if (kIsRationalInteger == OMG::Troolean::False) {
     e->cloneTreeOverTree(KBadType);
     return true;
   }
-  if (kIsInteger == OMG::Troolean::Unknown || !n->isRational()) {
+  if (kIsRationalInteger == OMG::Troolean::Unknown) {
     return false;
   }
   if (k->isZero()) {

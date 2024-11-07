@@ -9,5 +9,5 @@ else
 # Use the "if" construct instead of ?=. If ?= was used, ARCHS would be defined
 # as a recursive variable instead of a simply expanded one, and a call to
 # "shell" in a recursive variable can be very costly.
-ARCHS ?= $(if $(ARCHS),$(ARCHS),$(shell uname -m))
+ARCHS := $(if $(ARCHS),$(ARCHS),$(shell uname -m))
 endif

@@ -73,8 +73,8 @@ void Regression::fit(const Series* series, double* modelCoefficients,
   }
   CoefficientsType coefficients = privateFit(series, context);
   // TODO: std::move to avoid a useless copy
-  std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
-            coefficients.begin());
+  std::copy(coefficients.begin(), coefficients.begin() + numberOfCoefficients(),
+            modelCoefficients);
 }
 
 Regression::CoefficientsType Regression::privateFit(

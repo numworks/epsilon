@@ -21,7 +21,14 @@ UserExpression LinearRegression::privateExpression(
 
 Regression::CoefficientsType LinearRegression::privateFit(
     const Series* series, Context* context) const {
-  return {series->slope(), series->yIntercept()};
+  CoefficientsType result;
+  std::size_t slopeIndex = slopeCoefficientIndex();
+  std::size_t yInterceptIndex = yInterceptCoefficientIndex();
+  assert((slopeIndex == 0 && yInterceptIndex == 1) ||
+         (slopeIndex == 1 && yInterceptIndex == 0));
+  result[slopeIndex] = series->slope();
+  result[yInterceptIndex] = series->yIntercept();
+  return result;
 }
 
 }  // namespace Poincare::Regression

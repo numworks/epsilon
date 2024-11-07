@@ -11,14 +11,15 @@ class LogisticRegression : public Regression {
 
   Type type() const override { return Type::Logistic; }
 
-  double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;
 
  private:
+  double privateEvaluate(const CoefficientsType& modelCoefficients,
+                         double x) const override;
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
-  double partialDerivate(const double* modelCoefficients,
+  double partialDerivate(const CoefficientsType& modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
   CoefficientsType specializedInitCoefficientsForFit(
       double defaultValue, size_t /* attemptNumber */,

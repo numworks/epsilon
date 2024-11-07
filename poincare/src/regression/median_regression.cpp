@@ -41,15 +41,12 @@ static void sortIndexByColumn(uint8_t* sortedIndex, const Series* series,
       pack, endIndex - startIndex);
 }
 
-void MedianRegression::privateFit(const Series* series,
-                                  double* modelCoefficients,
-                                  Poincare::Context* context) const {
+Regression::CoefficientsType MedianRegression::privateFit(
+    const Series* series, Poincare::Context* context) const {
   uint8_t numberOfDots = series->numberOfPairs();
   assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {
-    modelCoefficients[0] = NAN;
-    modelCoefficients[1] = NAN;
-    return;
+    return {NAN, NAN};
   }
 
   uint8_t sortedIndex[Regression::k_maxNumberOfPairs];
@@ -74,9 +71,7 @@ void MedianRegression::privateFit(const Series* series,
                      sizeOfRightLeftGroup + sizeOfMiddleGroup, numberOfDots);
 
   if (rightPoint[0] == leftPoint[0]) {
-    modelCoefficients[0] = NAN;
-    modelCoefficients[1] = NAN;
-    return;
+    return {NAN, NAN};
   }
 
   sortIndexByColumn(sortedIndex, series, 1, 0, sizeOfRightLeftGroup);
@@ -94,11 +89,10 @@ void MedianRegression::privateFit(const Series* series,
                      sizeOfRightLeftGroup + sizeOfMiddleGroup, numberOfDots);
 
   double a = (rightPoint[1] - leftPoint[1]) / (rightPoint[0] - leftPoint[0]);
-  modelCoefficients[0] = a;
-  modelCoefficients[1] = ((leftPoint[1] - a * leftPoint[0]) +
-                          (middlePoint[1] - a * middlePoint[0]) +
-                          (rightPoint[1] - a * rightPoint[0])) /
-                         3;
+  return {a, ((leftPoint[1] - a * leftPoint[0]) +
+              (middlePoint[1] - a * middlePoint[0]) +
+              (rightPoint[1] - a * rightPoint[0])) /
+                 3};
 }
 
 }  // namespace Poincare::Regression

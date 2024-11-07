@@ -29,8 +29,8 @@ API::UserExpression TrigonometricRegression::privateExpression(
        .KD = API::UserExpression::FromDouble(modelCoefficients[3])});
 }
 
-double TrigonometricRegression::evaluate(const double* modelCoefficients,
-                                         double x) const {
+double TrigonometricRegression::privateEvaluate(
+    const CoefficientsType& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -40,9 +40,9 @@ double TrigonometricRegression::evaluate(const double* modelCoefficients,
   return a * std::sin(radian * (b * x + c)) + d;
 }
 
-double TrigonometricRegression::partialDerivate(const double* modelCoefficients,
-                                                int derivateCoefficientIndex,
-                                                double x) const {
+double TrigonometricRegression::partialDerivate(
+    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    double x) const {
   if (derivateCoefficientIndex == 3) {
     // Derivate with respect to d: 1
     return 1.0;
@@ -204,7 +204,7 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
 }
 
 void TrigonometricRegression::uniformizeCoefficientsFromFit(
-    double* modelCoefficients) const {
+    CoefficientsType& modelCoefficients) const {
   // Coefficients must be unique.
   double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());

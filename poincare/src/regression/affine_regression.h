@@ -11,19 +11,17 @@ class AffineRegression : public Regression {
  public:
   using Regression::Regression;
 
-  double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;
 
- protected:
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   virtual int slopeCoefficientIndex() const { return 0; }
   virtual int yInterceptCoefficientIndex() const { return 1; }
 
  private:
-  void privateFit(const Series* series, double* modelCoefficients,
-                  Poincare::Context* context) const override = 0;
+  double privateEvaluate(const CoefficientsType& modelCoefficients,
+                         double x) const override;
 };
 
 }  // namespace Poincare::Regression

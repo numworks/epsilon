@@ -21,8 +21,8 @@ UserExpression LogisticRegression::privateExpression(
        .KC = UserExpression::FromDouble(modelCoefficients[2])});
 }
 
-double LogisticRegression::evaluate(const double* modelCoefficients,
-                                    double x) const {
+double LogisticRegression::privateEvaluate(
+    const CoefficientsType& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -50,9 +50,9 @@ double LogisticRegression::levelSet(const double* modelCoefficients,
   return -std::log(lnArgument) / b;
 }
 
-double LogisticRegression::partialDerivate(const double* modelCoefficients,
-                                           int derivateCoefficientIndex,
-                                           double x) const {
+double LogisticRegression::partialDerivate(
+    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

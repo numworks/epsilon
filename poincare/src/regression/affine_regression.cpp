@@ -15,8 +15,8 @@ UserExpression AffineRegression::privateExpression(
        .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
-double AffineRegression::evaluate(const double* modelCoefficients,
-                                  double x) const {
+double AffineRegression::privateEvaluate(
+    const CoefficientsType& modelCoefficients, double x) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   return slope * x + yIntercept;

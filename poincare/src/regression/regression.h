@@ -131,9 +131,13 @@ class Regression {
   Poincare::API::UserExpression expression(
       const double* modelCoefficients) const;
 
-  /* Evaluate cannot use the expression and approximate it since it would be
-   * too time consuming. */
-  virtual double evaluate(const double* modelCoefficients, double x) const = 0;
+  double evaluate(const double* modelCoefficients, double x) const {
+    CoefficientsType coefficients;
+    std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
+              coefficients.begin());
+    return privateEvaluate(coefficients, x);
+  }
+
   virtual double levelSet(const double* modelCoefficients, double xMin,
                           double xMax, double y,
                           Poincare::Context* context) const;
@@ -153,23 +157,34 @@ class Regression {
   virtual Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const = 0;
 
+  /* Evaluate cannot use the expression and approximate it since it would be
+   * too time consuming. */
+  virtual double privateEvaluate(const CoefficientsType& modelCoefficients,
+                                 double x) const = 0;
+
   // Fit
   /* For some regressions (e.g. trigonometric), fit can be attempted several
    * times with different sets initial parameters, then the best model amoung
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
-  virtual void privateFit(const Series* series, double* modelCoefficients,
-                          Poincare::Context* context) const;
+  virtual CoefficientsType privateFit(const Series* series,
+                                      Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
 
  private:
   // Model attributes
-  virtual double partialDerivate(const double* modelCoefficients,
+  virtual double partialDerivate(const CoefficientsType& modelCoefficients,
                                  int derivateCoefficientIndex, double x) const {
     assert(false);
     return 0.0;
   };
+
+  double privateResidualAtIndex(const Series* series,
+                                const CoefficientsType& modelCoefficients,
+                                int index) const;
+  double privateResidualStandardDeviation(
+      const Series* series, const CoefficientsType& modelCoefficients) const;
 
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;
@@ -179,26 +194,32 @@ class Regression {
   constexpr static double k_chi2ChangeCondition = 0.001;
   constexpr static double k_initialCoefficientValue = 1.0;
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
-  void fitLevenbergMarquardt(const Series* series, double* modelCoefficients,
+  void fitLevenbergMarquardt(const Series* series,
+                             CoefficientsType& modelCoefficients,
                              Poincare::Context* context) const;
-  double chi2(const Series* series, const double* modelCoefficients) const;
+  double chi2(const Series* series,
+              const CoefficientsType& modelCoefficients) const;
   double alphaPrimeCoefficient(const Series* series,
-                               const double* modelCoefficients, int k, int l,
-                               double lambda) const;
-  double alphaCoefficient(const Series* series, const double* modelCoefficients,
-                          int k, int l) const;
-  double betaCoefficient(const Series* series, const double* modelCoefficients,
+                               const CoefficientsType& modelCoefficients, int k,
+                               int l, double lambda) const;
+  double alphaCoefficient(const Series* series,
+                          const CoefficientsType& modelCoefficients, int k,
+                          int l) const;
+  double betaCoefficient(const Series* series,
+                         const CoefficientsType& modelCoefficients,
                          int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,
                         Poincare::Context* context) const;
-  void initCoefficientsForFit(double* modelCoefficients, double defaultValue,
-                              bool forceDefaultValue, size_t attemptNumber,
-                              const Series* s = nullptr) const;
+  CoefficientsType initCoefficientsForFit(double defaultValue,
+                                          bool forceDefaultValue,
+                                          size_t attemptNumber,
+                                          const Series* s = nullptr) const;
   virtual CoefficientsType specializedInitCoefficientsForFit(
       double defaultValue, size_t /* attemptNumber */,
       const Series* s = nullptr) const;
-  virtual void uniformizeCoefficientsFromFit(double* modelCoefficients) const {}
+  virtual void uniformizeCoefficientsFromFit(
+      CoefficientsType& modelCoefficients) const {}
 };
 
 }  // namespace Poincare::Regression

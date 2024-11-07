@@ -16,17 +16,17 @@ UserExpression QuadraticRegression::privateExpression(
        .KC = UserExpression::FromDouble(modelCoefficients[2])});
 }
 
-double QuadraticRegression::evaluate(const double* modelCoefficients,
-                                     double x) const {
+double QuadraticRegression::privateEvaluate(
+    const CoefficientsType& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   return a * x * x + b * x + c;
 }
 
-double QuadraticRegression::partialDerivate(const double* modelCoefficients,
-                                            int derivateCoefficientIndex,
-                                            double x) const {
+double QuadraticRegression::partialDerivate(
+    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    double x) const {
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: x^2
     return x * x;

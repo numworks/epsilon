@@ -8,7 +8,6 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/numeric/matrix_array.h>
 
-#include <algorithm>
 #include <cmath>
 
 #include "dataset_adapter.h"
@@ -343,8 +342,8 @@ double Regression::determinationCoefficient(
   const Type thisType = type();
   if (HasRSquared(thisType)) {
     /* With linear regressions and transformed models (Exponential, Logarithm
-     * and Power), we use r^2, the square of the correlation coefficient
-     * between the series Y (transformed) and the evaluated values.*/
+     * and Power), we use r^2, the square of the correlation coefficient between
+     * the series Y (transformed) and the evaluated values.*/
     double r = correlationCoefficient(series);
     return r * r;
   }
@@ -356,8 +355,8 @@ double Regression::determinationCoefficient(
   }
 
   assert(!FitsLnY(thisType) && !FitsLnX(thisType));
-  /* With proportional regression or badly fitted models, R2 can technically
-   * be negative. R2<0 means that the regression is less effective than a
+  /* With proportional regression or badly fitted models, R2 can technically be
+   * negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression
    * models that can fit a constant observation. */
   // Residual sum of squares

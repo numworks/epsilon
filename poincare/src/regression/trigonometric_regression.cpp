@@ -9,7 +9,6 @@
 #include <cmath>
 
 #include "dataset_adapter.h"
-#include "poincare/src/regression/regression.h"
 
 namespace Poincare::Regression {
 

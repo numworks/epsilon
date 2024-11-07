@@ -394,12 +394,9 @@ QUIZ_CASE(regression_median_2) {
                        NAN, NAN, sr);
 }
 
-constexpr static size_t nTrigonometricCoefficents =
-    Poincare::Regression::TrigonometricRegression::k_numberOfCoefficients;
-
 void assert_trigonometric_regression_is(
     const double* xi, const double* yi, int numberOfPoints,
-    const std::array<double, nTrigonometricCoefficents>& trueCoefficients,
+    const CoefficientsType& trueCoefficients,
     Poincare::Preferences::AngleUnit trueCoeffcientsUnit,
     double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
@@ -433,8 +430,7 @@ QUIZ_CASE(regression_trigonometric_1) {
   constexpr double y[] = {9.24,  10.05, 11.33, 12.72, 14.16, 14.98, 15.14,
                           14.41, 13.24, 11.88, 10.54, 9.48,  9.19};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      2.9723, 0.016780, -1.3067, 12.146};
+  constexpr CoefficientsType coefficients = {2.9723, 0.016780, -1.3067, 12.146};
   constexpr double sr = 0.061848;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -448,8 +444,7 @@ QUIZ_CASE(regression_trigonometric_2) {
   constexpr double y[] = {-2, -4, -5, -2, 3, 6, 8,  11, 9, 5, 2, 1, 0,
                           -3, -5, -2, 3,  5, 7, 10, 10, 5, 2, 2, 1};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      6.42, 0.26, -2.16, 2.82};
+  constexpr CoefficientsType coefficients = {6.42, 0.26, -2.16, 2.82};
   constexpr double sr = 1.5093235;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -461,8 +456,7 @@ QUIZ_CASE(regression_trigonometric_3) {
   constexpr double x[] = {1, 2, 3, 4, 5, 6};
   constexpr double y[] = {8, 13, 21, 36, 47, 53};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      22.55, 0.5955, -2.180, 30.86};
+  constexpr CoefficientsType coefficients = {22.55, 0.5955, -2.180, 30.86};
   constexpr double sr = 1.2068486;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -482,8 +476,7 @@ QUIZ_CASE(regression_trigonometric_4) {
     x[i] = static_cast<double>(i);
     y[i] = std::sin(static_cast<double>(i));
   }
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      1.0, 1.0, 0.0, 0.0};
+  constexpr CoefficientsType coefficients = {1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -520,8 +513,7 @@ QUIZ_CASE(regression_trigonometric_4_bis) {
         return y[i] >= y[j];
       },
       static_cast<void*>(context), numberOfPoints);
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      1.0, 1.0, 0.0, 0.0};
+  constexpr CoefficientsType coefficients = {1.0, 1.0, 0.0, 0.0};
   constexpr double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
@@ -533,8 +525,7 @@ QUIZ_CASE(regression_trigonometric_5) {
   constexpr double y[] = {1.4, 8.1, 8.7, 5.0, 0.9, 7.6, 0.7, 6.9};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
-  constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      4.116, 2.006, -2.944, 4.747};
+  constexpr CoefficientsType coefficients = {4.116, 2.006, -2.944, 4.747};
   constexpr double sr = 0.2244;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,

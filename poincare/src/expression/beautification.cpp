@@ -388,9 +388,14 @@ bool Beautification::TurnIntoPolarForm(
   Tree* result = SharedTreeStack->pushMult(2);
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
-  SystematicReduction::ShallowReduce(abs);
+  bool hasReduced = SystematicReduction::ShallowReduce(abs);
   if (projectionContext.m_advanceReduce) {
-    AdvancedReduction::Reduce(abs);
+    hasReduced = AdvancedReduction::Reduce(abs) || hasReduced;
+  }
+  if (!hasReduced) {
+    abs->removeTree();
+    result->removeNode();
+    return false;
   }
   /* If this assert fails, an approximated node has been lost during systematic
    * simplification, ApproximateAndReplaceEveryScalar should be called on abs
@@ -402,9 +407,10 @@ bool Beautification::TurnIntoPolarForm(
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
   e->cloneTree();
-  SystematicReduction::ShallowReduce(arg);
+  // Both abs and arg must have been reduced
+  hasReduced = SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
-    AdvancedReduction::Reduce(arg);
+    hasReduced = AdvancedReduction::Reduce(arg) || hasReduced;
   }
   if (hasSingleFloats) {
     Approximation::ApproximateAndReplaceEveryScalar<float>(arg);
@@ -412,6 +418,10 @@ bool Beautification::TurnIntoPolarForm(
     Approximation::ApproximateAndReplaceEveryScalar<double>(arg);
   }
   SharedTreeStack->pushComplexI();
+  if (!hasReduced) {
+    result->removeTree();
+    return false;
+  }
   NAry::Flatten(mult);
   /* exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
    * because of exp(arg(exp(A*i))*i) -> exp(A*i) reduction. */

@@ -21,7 +21,16 @@ class TrigonometricRegression : public Regression {
   /* Because the trigonometric regression is very sensitive to the initial
    * parameters, the fit algorithm is called in a loop several times, with
    * different initial parameter guesses. */
-  static constexpr size_t k_defaultParametersIterations = 10;
+  static constexpr size_t k_defaultParametersIterations = 6;
+
+  /* Trigonometric regression is attempted several times with different initial
+   * parameters. The more sensitive initial parameter is the frequency. The
+   * different initial frequencies are computed by multiplying a "base" guess
+   * frequency with a scaling factor. The base frequency is scaled up and down
+   * by powers of the following factor. Scaling with powers of 2 is a good
+   * choice for trigonometric functions, to explore harmonics of the initially
+   * guessed frequency. */
+  static constexpr double k_frequencyMultiplicationFactor = 2;
 
   /* We want to bias the best coefficient selection to favor lower frequencies.
    * If two models give a similar score (in terms of residual standard

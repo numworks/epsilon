@@ -9,12 +9,18 @@ class TrigonometricRegression : public Regression {
  public:
   using Regression::Regression;
 
+  constexpr TrigonometricRegression(
+      size_t initialParametersIterations = k_defaultParametersIterations)
+      : Regression(initialParametersIterations) {}
+
   Type type() const override { return Type::Trigonometric; }
   double evaluate(const double* modelCoefficients, double x) const override;
 
   constexpr static int k_numberOfCoefficients = 4;
 
  private:
+  static constexpr size_t k_defaultParametersIterations = 10;
+
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   double partialDerivate(const double* modelCoefficients,

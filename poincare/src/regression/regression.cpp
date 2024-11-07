@@ -81,7 +81,7 @@ void Regression::privateFit(const Series* series, double* modelCoefficients,
   bestModelCoefficients.fill(0);
 
   size_t attemptNumber = 0;
-  while (attemptNumber < k_initialParametersIterations) {
+  while (attemptNumber < m_initialParametersIterations) {
     initCoefficientsForFit(modelCoefficients, k_initialCoefficientValue, false,
                            series);  // + attemptNumber
     fitLevenbergMarquardt(series, modelCoefficients, context);

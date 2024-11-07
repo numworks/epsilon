@@ -31,6 +31,9 @@ class Regression {
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model
 
+  explicit constexpr Regression(size_t initialParametersIterations = 1)
+      : m_initialParametersIterations{initialParametersIterations} {}
+
   static const Regression* Get(Type type);
 
 #if TARGET_POINCARE_JS
@@ -150,7 +153,7 @@ class Regression {
   /* For some regressions (e.g. trigonometric), fit can be attempted several
    * times with different sets initial parameters, then the best model amoung
    * the different fit attempts is selected. */
-  constexpr static size_t k_initialParametersIterations = 1;
+  size_t m_initialParametersIterations;
   virtual void privateFit(const Series* series, double* modelCoefficients,
                           Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;

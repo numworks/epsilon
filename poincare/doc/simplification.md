@@ -553,9 +553,11 @@ See examples in [annex](advanced-reduction-examples).
 
 ### Metric
 
-In order to decide which form of an expression is best for us, we implement our own metric on expressions. This metric is called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then. 
+To decide which form of an expression is best for us, we implement our own metric on expressions. We call a metric any function assigning a score to a given expression. In our case, we want the metric to give a sense of the "size" or "simplicity" of our expression, so that, in advanced reduction, we aim to minimize this metric. The metric is thus called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then (i.e. expression with the lowest metric). 
 
-A simple metric consists in counting the nodes in the expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display. 
+Ideally, a metric should yield a different result for different expressions. We currently fallback on hash comparison in advanced-reduction.
+
+A simple metric consists in counting the size of an expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display. 
 
 #### Examples
 
@@ -565,8 +567,9 @@ The metric of some expressions is reduced to other metrics: (non exhaustive list
 | Expression | Metric reduction |  |
 |---|---|---|
 | m(-A) | m(-1)+m(A) | - sign should not bear the cost of multiplication |
-| m(LongInteger) | m(Integer)*size() | same for LongRationals |
-| m(Trig(A,0)) | m(Trig)+m(A) | ignore second child indicating the type of trigonometric function (same for ATrig) |
+| m(LongInteger) | m(Integer)*size() | same for LongRationals, we prefer shorter integers and rationals |
+| m(Trig(A,0)) | m(Trig)+m(A) | ignore the second child indicating the type of trigonometric function (same for ATrig) |
+| m(Exp(1/2*Ln(A))) | m(Exp)+m(A) | beautifies to √A so we do not count the cost of 1/2 and Ln |
 
 
 ## Simplify dependencies

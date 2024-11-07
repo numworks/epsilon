@@ -533,10 +533,9 @@ QUIZ_CASE(regression_trigonometric_5) {
   constexpr double y[] = {1.4, 8.1, 8.7, 5.0, 0.9, 7.6, 0.7, 6.9};
   static_assert(std::size(x) == std::size(y), "Column sizes are different");
 
-  // TODO: this is not the best possible regression, improve it
   constexpr std::array<double, nTrigonometricCoefficents> coefficients = {
-      2.324382, 0.9511061, -0.9544964, 4.314825};
-  constexpr double sr = 4.121608;
+      4.116, 2.006, -2.944, 4.747};
+  constexpr double sr = 0.2244;
   assert_trigonometric_regression_is(x, y, std::size(x), coefficients,
                                      Poincare::Preferences::AngleUnit::Radian,
                                      sr);

@@ -200,6 +200,18 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
   // Init the "y-delta" coefficient d
   double d = (yMax + yMin) / 2.0;
 
+  /* Trigonometric regression is attempted several times with different initial
+   * parameters. The more sensitive parameter is the frequency. For each
+   * attempt, we modify the initial guess for the frequency parameter (b) which
+   * was computed earlier. Out of the total number of attempts
+   * (m_initialParametersIterations), half of the modified b values are higher
+   * than the initial b value, and half of the modified b values are lower than
+   * the initial b value. The multiplication coefficient increases or decreases
+   * geometrically with a certain geometrical factor.  */
+  constexpr double k_frequencyMultiplicationFactor = 1.4;
+  b = b * std::pow(k_frequencyMultiplicationFactor,
+                   (int)attemptNumber - (int)m_initialParametersIterations / 2);
+
   return {a, b, c, d};
 }
 

@@ -551,6 +551,24 @@ Some expansion operations are used specifically to expand algebraic operations (
 
 See examples in [annex](advanced-reduction-examples).
 
+### Metric
+
+In order to decide which form of an expression is best for us, we implement our own metric on expressions. This metric is called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then. 
+
+A simple metric consists in counting the nodes in the expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display. 
+
+#### Examples
+
+Let's call $m: E \longrightarrow \mathbb{N}$ our metric on $E$ the set of all expressions. The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants. 
+
+The metric of some expressions is reduced to other metrics: (non exhaustive list)
+| Expression | Metric reduction |  |
+|---|---|---|
+| m(-A) | m(-1)+m(A) | - sign should not bear the cost of multiplication |
+| m(LongInteger) | m(Integer)*size() | same for LongRationals |
+| m(Trig(A,0)) | m(Trig)+m(A) | ignore second child indicating the type of trigonometric function (same for ATrig) |
+
+
 ## Simplify dependencies
 
 In this step, we remove useless dependencies from a dependency tree:

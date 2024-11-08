@@ -232,13 +232,6 @@ class ComplexSign {
     return realSign().canBeInfinite() || imagSign().canBeInfinite();
   }
 
-  constexpr OMG::Troolean trooleanIsRealPositiveInteger() const {
-    return (!isReal() || realSign().isStrictlyNegative()) ? OMG::Troolean::False
-           : realSign().isPositive() && realSign().isInteger()
-               ? OMG::Troolean::True
-               : OMG::Troolean::Unknown;
-  }
-
   bool operator==(const ComplexSign&) const = default;
   /* OR operator on both real and imaginary signs. See Sign operators.
    * RealUnknown() || Zero() = RealUnknown() */

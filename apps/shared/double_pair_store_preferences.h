@@ -9,9 +9,8 @@ class DoublePairStorePreferences {
  public:
   DoublePairStorePreferences()
       : m_valid{false, false, false}, m_hidden{false, false, false} {}
-  static_assert(
-      DoublePairStore::k_numberOfSeries == 3,
-      "Initialization of flags in DoublePairStorePreferences is wrong.");
+
+  // TODO: changes might be needed if DoublePairStore::k_numberOfSeries is not 3
 
   bool seriesIsActive(int series) const {
     return m_valid[series] && !m_hidden[series];

@@ -21,7 +21,7 @@ class DoublePairStore {
  public:
   // 1 char for prefix, 1 char for index
   constexpr static int k_columnNamesLength = 2;
-  constexpr static int k_numberOfSeries = 3;
+  constexpr static int k_numberOfSeries = 6;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
   // Must be 1 char long or change the name-related methods.
@@ -133,13 +133,14 @@ class DoublePairStore {
 
   // Colors
   static KDColor colorOfSeriesAtIndex(size_t i) {
+    static_assert(Escher::Palette::numberOfDataColors() >= k_numberOfSeries);
     assert(i < k_numberOfSeries);
-    assert(i < Escher::Palette::numberOfDataColors());
     return Escher::Palette::DataColor[i];
   }
   static KDColor colorLightOfSeriesAtIndex(size_t i) {
+    static_assert(Escher::Palette::numberOfLightDataColors() >=
+                  k_numberOfSeries);
     assert(i < k_numberOfSeries);
-    assert(i < Escher::Palette::numberOfLightDataColors());
     return Escher::Palette::DataColorLight[i];
   }
   /* This must be called each time the lists are modified.

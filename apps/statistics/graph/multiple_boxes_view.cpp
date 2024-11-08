@@ -13,17 +13,27 @@ MultipleBoxesView::MultipleBoxesView(Store* store,
       m_boxView1(store, 0, dataViewController),
       m_boxView2(store, 1, dataViewController),
       m_boxView3(store, 2, dataViewController),
+      m_boxView4(store, 3, dataViewController),
+      m_boxView5(store, 4, dataViewController),
+      m_boxView6(store, 5, dataViewController),
       m_axisView(store) {
   static_assert(MultipleBoxesView::BoxToBoxMargin(2) >=
                         BoxPlotPolicy::BoxVerticalMargin() &&
                     MultipleBoxesView::BoxToBoxMargin(3) >=
+                        BoxPlotPolicy::BoxVerticalMargin() &&
+                    MultipleBoxesView::BoxToBoxMargin(4) >=
+                        BoxPlotPolicy::BoxVerticalMargin() &&
+                    MultipleBoxesView::BoxToBoxMargin(5) >=
+                        BoxPlotPolicy::BoxVerticalMargin() &&
+                    MultipleBoxesView::BoxToBoxMargin(6) >=
                         BoxPlotPolicy::BoxVerticalMargin(),
                 "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
 }
 
 BoxView* MultipleBoxesView::plotViewForSeries(int series) {
-  assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
-  BoxView* views[] = {&m_boxView1, &m_boxView2, &m_boxView3};
+  assert(series >= 0 && series < k_numberOfBoxViews);
+  BoxView* views[] = {&m_boxView1, &m_boxView2, &m_boxView3,
+                      &m_boxView4, &m_boxView5, &m_boxView6};
   return views[series];
 }
 

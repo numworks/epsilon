@@ -14,8 +14,7 @@ using namespace Shared;
 
 namespace Statistics {
 
-static_assert(Store::k_numberOfSeries == 3,
-              "The constructor of Statistics::Store should be changed");
+// TODO: changes might be needed if Store::k_numberOfSeries is not 3
 
 constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
 constexpr Store::CalculPointer

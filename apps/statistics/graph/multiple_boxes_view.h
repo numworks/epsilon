@@ -25,20 +25,45 @@ class MultipleBoxesView : public MultipleDataView {
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
 
+  constexpr bool checkLayoutHasEnoughSpace(size_t numberOfActiveSeries) const {
+    KDCoordinate bannerHeight = bannerFrame().height();
+    KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfActiveSeries);
+    boxYPosition +=
+        numberOfActiveSeries * BoxPlotPolicy::BoxHeight(numberOfActiveSeries) +
+        BoxToBoxMargin(numberOfActiveSeries);
+    // Remove BoxToBoxMargin on last box
+    boxYPosition -= BoxToBoxMargin(numberOfActiveSeries);
+    return bounds().height() >= boxYPosition + k_axisViewHeight + bannerHeight;
+  }
+
  private:
   constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) {
+    assert(1 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);
     return numberOfSeries == 1 ? 48 : 14;
   }
   constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) {
-    return numberOfSeries == 3 ? 12 : 24;
+    assert(2 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);
+    return numberOfSeries == 2 ? 24 : 12;
   }
   constexpr static KDCoordinate k_axisViewHeight = 21;
 
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void changeDataViewSeriesSelection(int series, bool select) override;
+
+  /* TODO: it would be nice to use an std::array<BoxView,
+   * Store::k_numberOfSeries> here. However BoxView (and the View parent
+   * object) have their default constructor and their move assignment operator
+   * deleted, so there is no easy way to achieve that. */
   BoxView m_boxView1;
   BoxView m_boxView2;
   BoxView m_boxView3;
+  BoxView m_boxView4;
+  BoxView m_boxView5;
+  BoxView m_boxView6;
+
+  static constexpr size_t k_numberOfBoxViews = 6;
+  static_assert(k_numberOfBoxViews == Store::k_numberOfSeries);
+
   BoxAxisView m_axisView;
   BoxBannerView m_bannerView;
 };

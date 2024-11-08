@@ -9,17 +9,21 @@ MultipleHistogramsView::MultipleHistogramsView(
     : MultipleDataView(store),
       m_histogramView1(store, 0, curveViewRange),
       m_histogramView2(store, 1, curveViewRange),
-      m_histogramView3(store, 2, curveViewRange) {
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    HistogramView* histView = plotViewForSeries(i);
+      m_histogramView3(store, 2, curveViewRange),
+      m_histogramView4(store, 3, curveViewRange),
+      m_histogramView5(store, 4, curveViewRange),
+      m_histogramView6(store, 5, curveViewRange) {
+  for (int i = 0; i < k_numberOfHistogramViews; i++) {
+    HistogramView* histView = MultipleHistogramsView::plotViewForSeries(i);
     histView->setDisplayLabels(false);
   }
 }
 
 HistogramView* MultipleHistogramsView::plotViewForSeries(int series) {
-  assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
+  assert(series >= 0 && series < k_numberOfHistogramViews);
   HistogramView* views[] = {&m_histogramView1, &m_histogramView2,
-                            &m_histogramView3};
+                            &m_histogramView3, &m_histogramView4,
+                            &m_histogramView5, &m_histogramView6};
   return views[series];
 }
 

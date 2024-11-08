@@ -43,8 +43,8 @@ class Palette {
   constexpr static KDColor Cyan = KDColor::RGB24(0x00ffff);
   constexpr static KDColor DataColor[] = {Red,     Blue,      Green, YellowDark,
                                           Magenta, Turquoise, Pink,  Orange};
-  constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight,
-                                               YellowLight};
+  constexpr static KDColor DataColorLight[] = {
+      RedLight, BlueLight, GreenLight, YellowLight, Magenta, Turquoise};
 
   constexpr static size_t numberOfDataColors() { return std::size(DataColor); }
   constexpr static size_t numberOfLightDataColors() {

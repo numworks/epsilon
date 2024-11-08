@@ -145,7 +145,7 @@ class __attribute__((packed)) GlobalPreferences {
   using DimmingTimeType = uint32_t;
 #endif
 
-  CODE_GUARD(global_preferences, 2970354233,    //
+  CODE_GUARD(global_preferences, 3087701149,    //
              uint8_t m_version;                 //
              BrightnessType m_brightnessLevel;  //
              I18n::Language m_language;         //
@@ -153,11 +153,12 @@ class __attribute__((packed)) GlobalPreferences {
              bool m_showPopUp;                  //
              KDFont::Size m_font;               //
              DimmingTimeType m_dimmingTime;     // in milliseconds
-             static constexpr int k_objectSize = 13;)
+             public
+             : static constexpr int k_objectSize = 13;)
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == k_objectSize,
+static_assert(sizeof(GlobalPreferences) == GlobalPreferences::k_objectSize,
               "Class GlobalPreferences changed size");
 #endif
 

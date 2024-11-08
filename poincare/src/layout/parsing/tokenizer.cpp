@@ -453,6 +453,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
     }
     return TokenizerFailure("Only constants and units can be prefixed with _");
   }
+  /* Special case for "min". min() = minimum(), min = minute. We handle this now
+   * so that min is never understood as a CustomIdentifier (3->min is not
+   * allowed, just like 3->cos) */
   if (CompareLayoutSpanWithNullTerminatedString(
           span,
           Builtin::GetReservedFunction(Type::Min)->aliases()->mainAlias()) ==

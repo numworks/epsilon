@@ -477,12 +477,10 @@ bool SystematicOperation::ReduceDim(Tree* e) {
   return List::ShallowApplyListOperators(e);
 }
 
-static bool SplitRadical(const Tree* e, TreeRef& a, TreeRef& b) {
+static bool SplitRadical(const Tree* e, Tree** a, Tree** b) {
   // Find a and b such that e = a√b, with a and b rationals
-  assert(!a.isUninitialized() && a->isMult());
-  assert(!b.isUninitialized() && b->isMult());
-  TreeRef factor;
-  TreeRef underRad;
+  Tree* factor;
+  Tree* underRad;
 
   PatternMatching::Context ctx;
   if (e->isRational()) {
@@ -506,28 +504,25 @@ static bool SplitRadical(const Tree* e, TreeRef& a, TreeRef& b) {
     return false;
   }
 
-  NAry::AddChild(a, factor);
-  NAry::SquashIfPossible(a);
-  NAry::AddChild(b, underRad);
-  NAry::SquashIfPossible(b);
+  *a = factor;
+  *b = underRad;
   return true;
 }
 
 static bool ReduceNestedRadicals(Tree* e) {
-  bool changed = false;
   TreeRef result;
   PatternMatching::Context ctx;
-  TreeRef a = SharedTreeStack->pushMult(0);
-  TreeRef b = SharedTreeStack->pushMult(0);
-  TreeRef c = SharedTreeStack->pushMult(0);
-  TreeRef d = SharedTreeStack->pushMult(0);
+  Tree* a = nullptr;
+  Tree* b = nullptr;
+  Tree* c = nullptr;
+  Tree* d = nullptr;
   /* √(a√b+c√d) = √(√(w)) * √(x) * √(y+√z) with
    * w = b, x = c, y = a/c and z = d/b,
    * possibly swapping a√b and c√d to ensure that y > √z */
   if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KAdd(KA, KB)))),
                              &ctx) &&
-      SplitRadical(ctx.getTree(KA), a, b) &&
-      SplitRadical(ctx.getTree(KB), c, d)) {
+      SplitRadical(ctx.getTree(KA), &a, &b) &&
+      SplitRadical(ctx.getTree(KB), &c, &d)) {
     assert(!(b->isOne() && d->isOne()));
     // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
     Tree* a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
@@ -537,24 +532,20 @@ static bool ReduceNestedRadicals(Tree* e) {
     bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
     c2d->removeTree();
     a2b->removeTree();
-    Tree* w;
-    Tree* x;
-    Tree* y;
-    Tree* z;
-    if (a2bGreaterThanc2d) {
-      w = b->cloneTree();
-      x = c->cloneTree();
-      y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                          {.KA = a, .KB = c});
-      z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                          {.KA = d, .KB = b});
-    } else {
-      w = d->cloneTree();
-      x = a->cloneTree();
-      y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                          {.KA = c, .KB = a});
-      z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                          {.KA = b, .KB = d});
+    if (!a2bGreaterThanc2d) {
+      std::swap(a, c);
+      std::swap(b, d);
+    }
+    Tree* w = b->cloneTree();
+    Tree* x = c->cloneTree();
+    Tree* y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                              {.KA = a, .KB = c});
+    Tree* z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
+                                              {.KA = d, .KB = b});
+    if (!a2bGreaterThanc2d) {
+      // Swap back for tree removal at the end
+      std::swap(a, c);
+      std::swap(b, d);
     }
 
     // √(y+√z) can be turned into √u+√v if ∂ = √(y^2-z) is rational.
@@ -575,8 +566,8 @@ static bool ReduceNestedRadicals(Tree* e) {
            .KB = x,
            .KC = y,
            .KD = delta,
-           /* If a and b are not the same sign then y < 0, which invalidates the
-            * formula. We change the equation to:
+           /* If a and b are not the same sign then y < 0, which
+            * invalidates the formula. We change the equation to:
             * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
             * - x -> -x
             * - y -> -y
@@ -588,16 +579,22 @@ static bool ReduceNestedRadicals(Tree* e) {
     y->removeTree();
     x->removeTree();
     w->removeTree();
-    if (result) {
-      e->moveTreeOverTree(result);
-      changed = true;
-    }
   }
-  a->removeTree();
-  b->removeTree();
-  c->removeTree();
-  d->removeTree();
-  return changed;
+  if (d) {
+    assert(c);
+    d->removeTree();
+    c->removeTree();
+  }
+  if (b) {
+    assert(a);
+    b->removeTree();
+    a->removeTree();
+  }
+  if (result) {
+    e->moveTreeOverTree(result);
+    return true;
+  }
+  return false;
 }
 
 bool SystematicOperation::ReduceExp(Tree* e) {

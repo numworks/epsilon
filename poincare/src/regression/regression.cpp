@@ -65,14 +65,12 @@ void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
     CoefficientsType initialCoefficients = initCoefficientsForFit(NAN, true, 0);
-    // TODO: std::move to avoid a useless copy
-    std::copy(initialCoefficients.begin(), initialCoefficients.end(),
+    std::move(initialCoefficients.begin(), initialCoefficients.end(),
               modelCoefficients);
     return;
   }
   CoefficientsType coefficients = privateFit(series, context);
-  // TODO: std::move to avoid a useless copy
-  std::copy(coefficients.begin(), coefficients.begin() + numberOfCoefficients(),
+  std::move(coefficients.begin(), coefficients.begin() + numberOfCoefficients(),
             modelCoefficients);
 }
 

@@ -95,6 +95,17 @@ void fill(Iterator first, Iterator last, const T& value) {
   }
 }
 
+template <class InputIterator, class OutputIterator>
+OutputIterator move(InputIterator inputFirst, InputIterator inputLast,
+                    OutputIterator outputFirst) {
+  while (inputFirst != inputLast) {
+    *outputFirst = std::move(*inputFirst);
+    outputFirst++;
+    inputFirst++;
+  }
+  return outputFirst;
+}
+
 }  // namespace std
 
 #endif

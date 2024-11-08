@@ -56,9 +56,9 @@ void assert_regression_is(const double* xi, const double* yi,
   double* coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
 
-  // Copy the double* arrays in an std::array for easier debugging
+  // Move the double* to an std::array for easier debugging
   Poincare::Regression::Regression::CoefficientsType coefficientsArray;
-  std::copy(coefficients, coefficients + numberOfCoefs,
+  std::move(coefficients, coefficients + numberOfCoefs,
             coefficientsArray.begin());
 
   /* TODO: we could use the std::equal or std::for_each algorithms here, to

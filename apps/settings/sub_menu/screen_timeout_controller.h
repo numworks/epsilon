@@ -31,7 +31,7 @@ class ScreenTimeoutController : public GenericSubController {
       m_cells[k_totalNumberOfCell];
 
   enum DimmingTimeLabel : uint8_t {
-    ThirtySeconds,
+    ThirtySeconds = 0,
     OneMinute,
     TwoMinutes,
     FiveMinutes,

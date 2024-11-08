@@ -483,40 +483,39 @@ static bool SplitRadical(const Tree* e, TreeRef& a, TreeRef& b) {
   assert(!b.isUninitialized() && b->isMult());
   TreeRef factor;
   TreeRef underRad;
-  bool found = false;
 
   PatternMatching::Context ctx;
   if (e->isRational()) {
     // A -> A*√(1)
     factor = e->cloneTree();
     underRad = (1_e)->cloneTree();
-    found = true;
-  } else if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
-             ctx.getTree(KA)->isRational()) {
-    // √(A) -> 1*√(A)
-    factor = (1_e)->cloneTree();
-    underRad = ctx.getTree(KA)->cloneTree();
-    found = true;
   } else if (PatternMatching::Match(
-                 e, KMult(KA, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
-             ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational()) {
-    // General case
-    factor = ctx.getTree(KA)->cloneTree();
+                 e, KMult(KA_s, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
+             ctx.getTree(KB)->isRational()) {
+    if (ctx.getNumberOfTrees(KA) == 0) {
+      // √(A) -> 1*√(A)
+      factor = (1_e)->cloneTree();
+    } else if (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isRational()) {
+      // General case A√(B)
+      factor = ctx.getTree(KA)->cloneTree();
+    } else {
+      return false;
+    }
     underRad = ctx.getTree(KB)->cloneTree();
-    found = true;
+  } else {
+    return false;
   }
 
-  if (found) {
-    NAry::AddChild(a, factor);
-    NAry::SquashIfPossible(a);
-    NAry::AddChild(b, underRad);
-    NAry::SquashIfPossible(b);
-  }
-  return found;
+  NAry::AddChild(a, factor);
+  NAry::SquashIfPossible(a);
+  NAry::AddChild(b, underRad);
+  NAry::SquashIfPossible(b);
+  return true;
 }
 
 static bool ReduceNestedRadicals(Tree* e) {
   bool changed = false;
+  TreeRef result;
   PatternMatching::Context ctx;
   TreeRef a = SharedTreeStack->pushMult(0);
   TreeRef b = SharedTreeStack->pushMult(0);
@@ -528,19 +527,20 @@ static bool ReduceNestedRadicals(Tree* e) {
   if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KAdd(KA, KB)))),
                              &ctx) &&
       SplitRadical(ctx.getTree(KA), a, b) &&
-      SplitRadical(ctx.getTree(KB), c, d) && !(b->isOne() && d->isOne())) {
+      SplitRadical(ctx.getTree(KB), c, d)) {
+    assert(!(b->isOne() && d->isOne()));
     // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
-    TreeRef a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
-                                                  {.KA = a, .KB = b});
-    TreeRef c2d = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
-                                                  {.KA = c, .KB = d});
+    Tree* a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
+                                                {.KA = a, .KB = b});
+    Tree* c2d = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
+                                                {.KA = c, .KB = d});
     bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
-    a2b->removeTree();
     c2d->removeTree();
-    TreeRef w;
-    TreeRef x;
-    TreeRef y;
-    TreeRef z;
+    a2b->removeTree();
+    Tree* w;
+    Tree* x;
+    Tree* y;
+    Tree* z;
     if (a2bGreaterThanc2d) {
       w = b->cloneTree();
       x = c->cloneTree();
@@ -558,47 +558,40 @@ static bool ReduceNestedRadicals(Tree* e) {
     }
 
     // √(y+√z) can be turned into √u+√v if ∂ = √(y^2-z) is rational.
-    TreeRef delta = PatternMatching::CreateSimplify(
+    Tree* delta = PatternMatching::CreateSimplify(
         KPow(KAdd(KPow(KA, 2_e), KMult(-1_e, KB)), 1_e / 2_e),
         {.KA = y, .KB = z});
     AdvancedReduction::Reduce(delta);
     if (delta->isRational()) {
-      Tree* result;
       /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
        * u = (y+∂)/2 and v = (y-∂)/2 */
-      if (Rational::Sign(a) == Rational::Sign(b)) {
-        result = PatternMatching::Create(
-            KMult(KPow(KA, 1_e / 4_e), KPow(KB, 1_e / 2_e),
-                  KAdd(KPow(KMult(KAdd(KC, KD), 1_e / 2_e), 1_e / 2_e),
-                       KPow(KMult(KAdd(KC, KMult(-1_e, KD)), 1_e / 2_e),
-                            1_e / 2_e))),
-            {.KA = w, .KB = x, .KC = y, .KD = delta});
-      } else {
-        /* If a and b are not the same sign then y < 0, which invalidates the
-         * formula. We change the equation to:
-         * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
-         * - x -> -x
-         * - y -> -y
-         * - √(y-√z) = √u-√v */
-        result = PatternMatching::Create(
-            KMult(KPow(KA, 1_e / 4_e), KPow(KMult(-1_e, KB), 1_e / 2_e),
-                  KAdd(KPow(KMult(KAdd(KMult(-1_e, KC), KD), 1_e / 2_e),
-                            1_e / 2_e),
-                       KMult(-1_e,
-                             KPow(KMult(KAdd(KMult(-1_e, KC), KMult(-1_e, KD)),
-                                        1_e / 2_e),
-                                  1_e / 2_e)))),
-            {.KA = w, .KB = x, .KC = y, .KD = delta});
-      }
-      SystematicReduction::DeepReduce(result);
+      result = PatternMatching::CreateSimplify(
+          KMult(KPow(KA, 1_e / 4_e), KPow(KMult(KE, KB), 1_e / 2_e),
+                KAdd(KPow(KMult(KAdd(KMult(KE, KC), KD), 1_e / 2_e), 1_e / 2_e),
+                     KMult(KE, KPow(KMult(KAdd(KMult(KE, KC), KMult(-1_e, KD)),
+                                          1_e / 2_e),
+                                    1_e / 2_e)))),
+          {.KA = w,
+           .KB = x,
+           .KC = y,
+           .KD = delta,
+           /* If a and b are not the same sign then y < 0, which invalidates the
+            * formula. We change the equation to:
+            * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
+            * - x -> -x
+            * - y -> -y
+            * - √(y-√z) = √u-√v */
+           .KE = (Rational::Sign(a) == Rational::Sign(b)) ? 1_e : -1_e});
+    }
+    delta->removeTree();
+    z->removeTree();
+    y->removeTree();
+    x->removeTree();
+    w->removeTree();
+    if (result) {
       e->moveTreeOverTree(result);
       changed = true;
     }
-    delta->removeTree();
-    w->removeTree();
-    x->removeTree();
-    y->removeTree();
-    z->removeTree();
   }
   a->removeTree();
   b->removeTree();
@@ -655,8 +648,8 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;
     }
-    /* With A real, although arg(exp(A*i)) -> A is only true if A is in ]-π,π],
-     * exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
+    /* With A real, although arg(exp(A*i)) -> A is only true if A is in
+     * ]-π,π], exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
      * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&
         GetComplexSign(ctx.getTree(KA)).isPureIm()) {
@@ -726,13 +719,14 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   if (changed && e->type() == type) {
     // Bubble-up may be unlocked after merging identical bases
     SystematicReduction::BubbleUpFromChildren(e);
-    /* TODO: If this assert can't be preserved, ReduceSortedAddition must handle
-     * one or both of this cases as handled in ReduceSortedMultiplication: With
-     * a,b and c the sorted addition children (a < b < c), M(a,b) the result of
-     * merging children a and b (with MergeAdditionChildWithNext) if it exists.
+    /* TODO: If this assert can't be preserved, ReduceSortedAddition must
+     * handle one or both of this cases as handled in
+     * ReduceSortedMultiplication: With a,b and c the sorted addition children
+     * (a < b < c), M(a,b) the result of merging children a and b (with
+     * MergeAdditionChildWithNext) if it exists.
      * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
-     * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
-     * merging again when child merged with nextChild) */
+     * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should
+     * try merging again when child merged with nextChild) */
     assert(!SystematicReduction::ShallowReduce(e));
   }
   return changed;

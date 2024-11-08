@@ -807,12 +807,10 @@ OMG::Troolean Integer::IsRationalInteger(const Tree* e) {
 }
 
 OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {
-  OMG::Troolean integer = IsRationalInteger(e);
-  Poincare::Sign s = GetComplexSign(e).realSign();
-  return s.isStrictlyNegative() ? OMG::Troolean::False
-         : (integer != OMG::Troolean::False) && (!s.isPositive())
-             ? OMG::Troolean::Unknown
-             : integer;
+  return OMG::TrooleanAnd(
+      IsRationalInteger(e),
+      OMG::TrooleanNot(
+          GetComplexSign(e).realSign().trooleanIsStrictlyNegative()));
 }
 
 }  // namespace Poincare::Internal

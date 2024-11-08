@@ -247,12 +247,6 @@ class LayoutBufferCursor final : public LayoutCursor {
   void applyTreeStackCursor(TreeStackCursor cursor);
   typedef void (TreeStackCursor::*Action)(Poincare::Context* context,
                                           const void* data);
-  struct ExecutionContext {
-    LayoutBufferCursor* m_cursor;
-    Action m_action;
-    int m_cursorOffset;
-    Poincare::Context* m_context;
-  };
   void execute(Action action, Poincare::Context* context = nullptr,
                const void* data = nullptr);
   void setCursorRack(Rack* rack) override {

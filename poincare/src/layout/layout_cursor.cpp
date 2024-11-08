@@ -153,7 +153,9 @@ void LayoutBufferCursor::beautifyLeft(Poincare::Context* context) {
 
 void LayoutBufferCursor::TreeStackCursor::beautifyLeftAction(
     Poincare::Context* context, const void*) {
-  InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
+  if (!isSelecting()) {
+    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
+  }
 }
 
 bool LayoutBufferCursor::beautifyRightOfRack(Rack* rack,
@@ -166,6 +168,9 @@ bool LayoutBufferCursor::beautifyRightOfRack(Rack* rack,
 
 bool LayoutBufferCursor::TreeStackCursor::beautifyRightOfRack(
     Rack* targetRack, Poincare::Context* context) {
+  if (isSelecting()) {
+    return false;
+  }
   LayoutBufferCursor::TreeStackCursor tempCursor = *this;
   tempCursor.moveCursorToLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
@@ -254,6 +259,7 @@ void LayoutBufferCursor::TreeStackCursor::insertLayout(
   InputBeautification::BeautificationMethod beautificationMethod =
       InputBeautification::BeautificationMethodWhenInsertingLayout(ref);
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
+    assert(!isSelecting());
     InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
   }
 

@@ -98,6 +98,21 @@ ProjectionContext Projection::ContextFromSettings() {
 }
 
 bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
+  // If it lives in the pool, fetching definitions may invalidate it.
+  bool mayReplaceSymbols =
+      (projectionContext.m_symbolic !=
+           SymbolicComputation::DoNotReplaceAnySymbol &&
+       projectionContext.m_symbolic !=
+           SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  if (mayReplaceSymbols && !SharedTreeStack->contains(e)) {
+    /* Clone tree in treeStack to prevent address being invalidated while
+     * fetching symbols definitions in the pool. TODO_PCJ: Fix this in
+     * ExpressionForSymbolAndRecord method. */
+    Tree* treeOnStack = e->cloneTree();
+    bool result = hasComplexNodes(treeOnStack, projectionContext);
+    treeOnStack->removeTree();
+    return result;
+  }
   for (const Tree* descendant : e->selfAndDescendants()) {
     if (descendant->isOfType(
             {Type::ComplexI, Type::Conj, Type::Im, Type::Re, Type::Arg})) {
@@ -122,16 +137,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
                   ? projectionContext.m_context->treeForSymbolIdentifier(
                         descendant)
                   : nullptr;
-          /* TODO_PCJ: this assert should be true but it breaks several tests
-           * that are working by luck.
-           * The faulty backtrace looks like this:
-           *   - ContinuousFunction::setContent
-           *   - UpdateComplexFormatWithExpressionInput
-           *   - hasComplexNodes
-           *   - ExpressionForSymbolAndRecord
-           *   - JuniorExpression::Builder
-           * -> the const Tree* analysed by hasComplexNodes is modified */
-          // assert(definition != e);
+          assert(definition != e);
           if (definition && hasComplexNodes(definition, projectionContext)) {
             return true;
           }
@@ -144,6 +150,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
 
 bool Projection::UpdateComplexFormatWithExpressionInput(
     const Tree* e, ProjectionContext* projectionContext) {
+  assert(projectionContext);
   if (e && projectionContext->m_complexFormat == ComplexFormat::Real &&
       hasComplexNodes(e, *projectionContext)) {
     projectionContext->m_complexFormat =

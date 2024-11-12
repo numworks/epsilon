@@ -402,7 +402,9 @@ void assert_trigonometric_regression_is(
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  constexpr size_t k_numberOfUnits = 3;
+  // TODO: C++23: use std::to_underlying instead of static_cast
+  constexpr size_t k_numberOfUnits =
+      static_cast<std::size_t>(Poincare::Preferences::AngleUnit::NUnits);
   constexpr Poincare::Preferences::AngleUnit units[k_numberOfUnits] = {
       Poincare::Preferences::AngleUnit::Radian,
       Poincare::Preferences::AngleUnit::Degree,

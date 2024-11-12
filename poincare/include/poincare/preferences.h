@@ -42,7 +42,7 @@ class __attribute__((packed)) Preferences final {
     Decimal = 0,
     Scientific,
     Engineering,
-    LastPrintFloatMode = Engineering,
+    NModes,
   };
   enum class EditionMode : bool {
     Edition2D,
@@ -51,15 +51,16 @@ class __attribute__((packed)) Preferences final {
   using ComplexFormat = Internal::ComplexFormat;
   constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
+  // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(AngleUnit::LastAngleUnit) + 1);
+          static_cast<uint64_t>(AngleUnit::NUnits));
   constexpr static size_t k_numberOfBitsForPrintFloatMode =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(PrintFloatMode::LastPrintFloatMode) + 1);
+          static_cast<uint64_t>(PrintFloatMode::NModes));
   constexpr static size_t k_numberOfBitsForComplexFormat =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(ComplexFormat::LastComplexFormat) + 1);
+          static_cast<uint64_t>(ComplexFormat::NFormats));
 
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;

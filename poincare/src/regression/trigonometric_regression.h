@@ -21,7 +21,7 @@ class TrigonometricRegression : public Regression {
   /* Because the trigonometric regression is very sensitive to the initial
    * parameters, the fit algorithm is called in a loop several times, with
    * different initial parameter guesses. */
-  static constexpr size_t k_defaultParametersIterations = 9;
+  static constexpr size_t k_defaultParametersIterations = 7;
 
   /* Trigonometric regression is attempted several times with different initial
    * parameters. The more sensitive initial parameter is the frequency. The

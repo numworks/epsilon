@@ -291,10 +291,10 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
 Regression::CoefficientsType Regression::initCoefficientsForFit(
     double defaultValue, bool forceDefaultValue, size_t attemptNumber,
     const Series* series) const {
-  return forceDefaultValue
-             ? specializedInitCoefficientsForFit(defaultValue, attemptNumber)
-             : specializedInitCoefficientsForFit(defaultValue, attemptNumber,
-                                                 series);
+  return forceDefaultValue ? Regression::specializedInitCoefficientsForFit(
+                                 defaultValue, attemptNumber)
+                           : specializedInitCoefficientsForFit(
+                                 defaultValue, attemptNumber, series);
 }
 
 Regression::CoefficientsType Regression::specializedInitCoefficientsForFit(

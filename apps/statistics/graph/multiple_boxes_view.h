@@ -32,8 +32,16 @@ class MultipleBoxesView : public MultipleDataView {
   }
   constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) {
     assert(2 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);
-    return numberOfSeries == 2 ? 24 : 12;
+    switch (numberOfSeries) {
+      case 2:
+        return 24;
+      case 3:
+        return 12;
+      default:
+        return 10;
+    }
   }
+
   constexpr static KDCoordinate k_axisViewHeight = 21;
 
   void drawRect(KDContext* ctx, KDRect rect) const override;

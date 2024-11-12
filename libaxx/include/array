@@ -21,6 +21,8 @@ template <typename U, unsigned int N>
 class array {
   // friend U get(array);
  public:
+  using const_iterator = const U*;
+
   array() {}
   constexpr array(initializer_list<U> init) {
     int index = 0;
@@ -30,6 +32,9 @@ class array {
   }
   constexpr U& operator[](unsigned int n) { return m_array[n]; }
   constexpr const U& operator[](unsigned int n) const { return m_array[n]; }
+
+  constexpr const_iterator cbegin() const { return m_array; }
+  constexpr const_iterator cend() const { return m_array + N; }
 
  private:
   U m_array[N];

@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="col-fullscreen">
-        <canvas class="calculator-mirror" width="320" height="240"></canvas>
+        <canvas class="calculator-mirror" width=ION_DISPLAY_WIDTH height=ION_DISPLAY_HEIGHT></canvas>
       </div>
     </div>
     <script src=EM_MODULE_JS></script>

@@ -54,6 +54,8 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.
 		-DEM_MODULE_JS='"$(ION_em_module_js)"' \
 		-DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
 		-DEPSILON_VERSION=\"$(APP_VERSION)\" \
+		-DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
+		-DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
 		-DLAYOUT_$(ION_layout_variant) \
 		-P $(filter %.inc,$^) \
 		$@

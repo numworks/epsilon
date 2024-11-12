@@ -13,7 +13,7 @@
 
 namespace Poincare::Internal {
 
-Random::Context::Context() {
+Random::Context::Context(bool isInitialized) : m_isInitialized(isInitialized) {
   for (int i = 0; i < k_maxNumberOfVariables; i++) {
     m_list[i] = NAN;
   }
@@ -62,7 +62,7 @@ T Approximation::ApproximateRandom(const Tree* randomTree,
   }
   assert(seed <= Random::Context::k_maxNumberOfVariables);
   if (seed > 0) {
-    if (!approxCtx || !approxCtx->m_randomContext) {
+    if (!approxCtx || !approxCtx->m_randomContext->m_isInitialized) {
       return NAN;
     }
     T result = approxCtx->m_randomContext->m_list[seed - 1];

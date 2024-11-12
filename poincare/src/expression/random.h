@@ -33,9 +33,10 @@ class Random {
   class Context {
    public:
     using VariableType = double;
-    Context();
+    Context(bool isInitialized = true);
     static constexpr int k_maxNumberOfVariables = 16;
     VariableType m_list[k_maxNumberOfVariables];
+    bool m_isInitialized;
   };
   /* Takes a Tree containing random nodes (seeded, or not, up to maxSeed) and
    * seed the unseeded nodes. Return the last seed. */

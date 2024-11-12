@@ -58,8 +58,8 @@ void assert_regression_is(const double* xi, const double* yi,
 
   // Move the double* to an std::array for easier debugging
   Poincare::Regression::Regression::CoefficientsType coefficientsArray;
-  std::move(coefficients, coefficients + numberOfCoefs,
-            coefficientsArray.begin());
+  memmove(coefficientsArray.begin(), coefficients,
+          numberOfCoefs * sizeof(double));
 
   /* TODO: we could use the std::equal or std::for_each algorithms here, to
    * factorize the "for" loop */

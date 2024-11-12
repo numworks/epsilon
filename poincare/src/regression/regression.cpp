@@ -91,8 +91,9 @@ Regression::CoefficientsType Regression::privateFit(
     uniformizeCoefficientsFromFit(modelCoefficients);
     double newResidualStandardDeviation =
         privateResidualStandardDeviation(series, modelCoefficients);
-    if (newResidualStandardDeviation <
-        m_lowerRegressionScoreFactor * lowestResidualStandardDeviation) {
+    if (isRegressionBetter(newResidualStandardDeviation,
+                           lowestResidualStandardDeviation, modelCoefficients,
+                           bestModelCoefficients)) {
       lowestResidualStandardDeviation = newResidualStandardDeviation;
       std::copy(modelCoefficients.begin(),
                 modelCoefficients.begin() + numberOfCoefficients(),

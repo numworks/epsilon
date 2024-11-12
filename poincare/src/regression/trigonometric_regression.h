@@ -11,7 +11,7 @@ class TrigonometricRegression : public Regression {
 
   constexpr TrigonometricRegression(
       size_t initialParametersIterations = k_defaultParametersIterations)
-      : Regression(initialParametersIterations, k_lowerRegressionScoreFactor) {}
+      : Regression(initialParametersIterations) {}
 
   Type type() const override { return Type::Trigonometric; }
 
@@ -33,16 +33,6 @@ class TrigonometricRegression : public Regression {
    * cases, so we choose √2 as the multiplication factor. */
   static constexpr double k_frequencyMultiplicationFactor = M_SQRT2;
 
-  /* We want to bias the best coefficient selection to favor lower frequencies.
-   * If two models give a similar score (in terms of residual standard
-   * deviation), we want to select the one with the lowest frequency. The
-   * initial frequency parameter (the "b" coefficient) guess goes from a lower
-   * frequency guess to a higher frequency guess. We make sure that a high
-   * frequency will only be selected as the best model if it has a better score
-   * than the previous best score (obtained with a lower frequency) multiplied
-   * by a certain factor below 1.  */
-  static constexpr double k_lowerRegressionScoreFactor = 0.9;
-
   double privateEvaluate(const CoefficientsType& modelCoefficients,
                          double x) const override;
 
@@ -55,6 +45,11 @@ class TrigonometricRegression : public Regression {
       const Series* series) const override;
   void uniformizeCoefficientsFromFit(
       CoefficientsType& modelCoefficients) const override;
+
+  bool isRegressionBetter(
+      double residualStandardDeviation1, double residualStandardDeviation2,
+      const Regression::CoefficientsType& modelCoefficients1,
+      const Regression::CoefficientsType& modelCoefficients2) const override;
 };
 
 }  // namespace Poincare::Regression

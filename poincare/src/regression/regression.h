@@ -37,8 +37,7 @@ class Regression {
 
   explicit constexpr Regression(size_t initialParametersIterations = 1,
                                 double lowerRegressionScoreFactor = 1.0)
-      : m_initialParametersIterations{initialParametersIterations},
-        m_lowerRegressionScoreFactor{lowerRegressionScoreFactor} {}
+      : m_initialParametersIterations{initialParametersIterations} {}
 
   static const Regression* Get(Type type);
 
@@ -171,13 +170,6 @@ class Regression {
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 
-  /* For some regressiosn (e.g. trigonometric), when calling the fit algorithm
-   * in a loop, we might want to select some calculated coefficients as the best
-   * fit coefficients, if their "regression score" (i.e. residual standard
-   * deviation), is strictly less than the previous best calculated score
-   * multiplied by a factor. */
-  double m_lowerRegressionScoreFactor;
-
   virtual CoefficientsType privateFit(const Series* series,
                                       Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
@@ -196,6 +188,13 @@ class Regression {
                                 int index) const;
   double privateResidualStandardDeviation(
       const Series* series, const CoefficientsType& modelCoefficients) const;
+
+  virtual bool isRegressionBetter(
+      double residualStandardDeviation1, double residualStandardDeviation2,
+      const Regression::CoefficientsType& /* modelCoefficients1 */,
+      const Regression::CoefficientsType& /* modelCoefficients2 */) const {
+    return residualStandardDeviation1 < residualStandardDeviation2;
+  }
 
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;

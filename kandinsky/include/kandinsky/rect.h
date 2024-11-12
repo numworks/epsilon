@@ -70,7 +70,7 @@ class KDRect {
   KDRect relativeTo(KDPoint p) const { return translatedBy(p.opposite()); }
   KDRect paddedWith(KDCoordinate value) const;
   KDRect trimmedBy(KDCoordinate value) const { return paddedWith(-value); }
-  KDRect movedTo(KDPoint p) const;
+  constexpr KDRect movedTo(KDPoint p) const { return KDRect(p, size()); }
   bool intersects(const KDRect& other) const;
   KDRect intersectedWith(const KDRect& other) const;
   // Returns the smallest rectangle containing r1 and r2

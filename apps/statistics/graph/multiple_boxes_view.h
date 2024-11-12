@@ -25,17 +25,6 @@ class MultipleBoxesView : public MultipleDataView {
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
 
-  constexpr bool checkLayoutHasEnoughSpace(size_t numberOfActiveSeries) const {
-    KDCoordinate bannerHeight = bannerFrame().height();
-    KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfActiveSeries);
-    boxYPosition +=
-        numberOfActiveSeries * BoxPlotPolicy::BoxHeight(numberOfActiveSeries) +
-        BoxToBoxMargin(numberOfActiveSeries);
-    // Remove BoxToBoxMargin on last box
-    boxYPosition -= BoxToBoxMargin(numberOfActiveSeries);
-    return bounds().height() >= boxYPosition + k_axisViewHeight + bannerHeight;
-  }
-
  private:
   constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) {
     assert(1 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);

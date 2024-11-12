@@ -13,7 +13,7 @@ MultipleHistogramsView::MultipleHistogramsView(
       m_histogramView4(store, 3, curveViewRange),
       m_histogramView5(store, 4, curveViewRange),
       m_histogramView6(store, 5, curveViewRange) {
-  for (int i = 0; i < k_numberOfHistogramViews; i++) {
+  for (size_t i = 0; i < k_numberOfHistogramViews; i++) {
     HistogramView* histView = MultipleHistogramsView::plotViewForSeries(i);
     histView->setDisplayLabels(false);
   }

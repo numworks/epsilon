@@ -11,8 +11,6 @@ KDRect KDRect::translatedBy(KDPoint p) const {
   return KDRect(origin().translatedBy(p), size());
 }
 
-KDRect KDRect::movedTo(KDPoint p) const { return KDRect(p, size()); }
-
 bool KDRect::intersects(const KDRect& other) const {
   return (other.right() >= left() && other.left() <= right() &&
           other.top() <= bottom() && other.bottom() >= top() &&

@@ -132,12 +132,7 @@ class Regression {
   Poincare::API::UserExpression expression(
       const double* modelCoefficients) const;
 
-  double evaluate(const double* modelCoefficients, double x) const {
-    CoefficientsType coefficients;
-    std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
-              coefficients.begin());
-    return privateEvaluate(coefficients, x);
-  }
+  double evaluate(const double* modelCoefficients, double x) const;
 
   virtual double levelSet(const double* modelCoefficients, double xMin,
                           double xMax, double y,
@@ -166,7 +161,7 @@ class Regression {
   // Fit
 
   /* For some regressions (e.g. trigonometric), fit can be attempted several
-   * times with different sets initial parameters, then the best model amoung
+   * times with different sets of initial parameters, then the best model among
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 

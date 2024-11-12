@@ -61,6 +61,13 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   return result;
 }
 
+double Regression::evaluate(const double* modelCoefficients, double x) const {
+  CoefficientsType coefficients;
+  std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
+            coefficients.begin());
+  return privateEvaluate(coefficients, x);
+}
+
 void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
@@ -81,7 +88,7 @@ Regression::CoefficientsType Regression::privateFit(
   /* The coefficients are initialized to zero, so that in the worst case (it
    * could theoretically happen if all residual standard deviations are infinite
    * or NaN), the returned model coefficients will all be zero. */
-  bestModelCoefficients.fill(0);
+  bestModelCoefficients.fill(0.0);
 
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {

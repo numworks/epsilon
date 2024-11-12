@@ -63,8 +63,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
 
 double Regression::evaluate(const double* modelCoefficients, double x) const {
   CoefficientsType coefficients;
-  std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
-            coefficients.begin());
+  memcpy(coefficients.begin(), modelCoefficients, numberOfCoefficients());
   return privateEvaluate(coefficients, x);
 }
 
@@ -72,13 +71,12 @@ void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
     CoefficientsType initialCoefficients = initCoefficientsForFit(NAN, true, 0);
-    std::move(initialCoefficients.begin(), initialCoefficients.end(),
-              modelCoefficients);
+    memmove(modelCoefficients, initialCoefficients.begin(),
+            numberOfCoefficients());
     return;
   }
   CoefficientsType coefficients = privateFit(series, context);
-  std::move(coefficients.begin(), coefficients.begin() + numberOfCoefficients(),
-            modelCoefficients);
+  memmove(modelCoefficients, coefficients.begin(), numberOfCoefficients());
 }
 
 Regression::CoefficientsType Regression::privateFit(
@@ -102,9 +100,7 @@ Regression::CoefficientsType Regression::privateFit(
                            lowestResidualStandardDeviation, modelCoefficients,
                            bestModelCoefficients)) {
       lowestResidualStandardDeviation = newResidualStandardDeviation;
-      std::copy(modelCoefficients.begin(),
-                modelCoefficients.begin() + numberOfCoefficients(),
-                bestModelCoefficients.begin());
+      bestModelCoefficients = modelCoefficients;
     }
     attemptNumber++;
   }
@@ -409,8 +405,7 @@ double Regression::residualAtIndex(const Series* series,
 double Regression::residualStandardDeviation(
     const Series* series, const double* modelCoefficients) const {
   CoefficientsType coefficients;
-  std::copy(modelCoefficients, modelCoefficients + numberOfCoefficients(),
-            coefficients.begin());
+  memcpy(coefficients.begin(), modelCoefficients, numberOfCoefficients());
   return privateResidualStandardDeviation(series, coefficients);
 }
 

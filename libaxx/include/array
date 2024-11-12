@@ -36,6 +36,7 @@ class array {
 
   constexpr unsigned int size() const { return N; }
 
+  // TODO: this can probably be optimized as the size of the array is known
   void fill(const U& value) { return std::fill(begin(), end(), value); }
 
   /* m_array must be public for "array" to be an aggregate type. Using an

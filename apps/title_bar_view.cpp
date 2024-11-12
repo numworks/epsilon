@@ -1,6 +1,7 @@
 #include "title_bar_view.h"
 
 #include <escher/palette.h>
+#include <omg/unreachable.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -155,11 +156,20 @@ void TitleBarView::refreshPreferences() {
                  : I18n::Message::Eng);
   // Display the angle unit
   const Preferences::AngleUnit angleUnit = preferences->angleUnit();
-  I18n::Message angleMessage =
-      angleUnit == Preferences::AngleUnit::Degree
-          ? I18n::Message::Deg
-          : (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad
-                                                         : I18n::Message::Gon);
+  I18n::Message angleMessage;
+  switch (angleUnit) {
+    case Preferences::AngleUnit::Degree:
+      angleMessage = I18n::Message::Deg;
+      break;
+    case Preferences::AngleUnit::Radian:
+      angleMessage = I18n::Message::Rad;
+      break;
+    case Preferences::AngleUnit::Gradian:
+      angleMessage = I18n::Message::Gon;
+      break;
+    default:
+      OMG::unreachable();
+  }
   Poincare::Print::CustomPrintf(buffer, k_preferenceTextSize, "%s%s",
                                 I18n::translate(floatModeMessage),
                                 I18n::translate(angleMessage));

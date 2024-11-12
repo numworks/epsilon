@@ -10,6 +10,7 @@ enum class AngleUnit : uint8_t {
   Degree,
   Gradian,
   LastAngleUnit = Gradian,
+  None,
 };
 
 enum class ComplexFormat : uint8_t {
@@ -17,6 +18,7 @@ enum class ComplexFormat : uint8_t {
   Cartesian,
   Polar,
   LastComplexFormat = Polar,
+  None,
 };
 
 enum class Strategy { Default, ApproximateToFloat };

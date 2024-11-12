@@ -37,17 +37,22 @@ class ComputationContext {
   ComputationContext(Context* context)
       : ComputationContext(context,
                            Preferences::SharedPreferences()->complexFormat(),
-                           Preferences::SharedPreferences()->angleUnit()) {}
+                           Preferences::SharedPreferences()->angleUnit()) {
+    assert(m_complexFormat != Preferences::ComplexFormat::None);
+    assert(m_angleUnit != Preferences::AngleUnit::None);
+  }
 
   Context* context() const { return m_context; }
   void setContext(Context* context) { m_context = context; }
   Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
   void setComplextFormat(Preferences::ComplexFormat complexFormat) {
     m_complexFormat = complexFormat;
+    assert(m_complexFormat != Preferences::ComplexFormat::None);
   }
   Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
   void setAngleUnit(Preferences::AngleUnit angleUnit) {
     m_angleUnit = angleUnit;
+    assert(m_angleUnit != Preferences::AngleUnit::None);
   }
 
   void updateComplexFormat(const JuniorExpression e);

@@ -12,22 +12,30 @@ namespace Poincare::Internal {
 
 template <typename T>
 T ConvertToRadian(T angle, AngleUnit angleUnit) {
-  if (angleUnit == AngleUnit::Radian) {
-    return angle;
+  switch (angleUnit) {
+    case AngleUnit::Radian:
+      return angle;
+    case AngleUnit::Degree:
+      return angle * static_cast<T>(M_PI / 180.0);
+    case AngleUnit::Gradian:
+      return angle * static_cast<T>(M_PI / 200.0);
+    default:
+      OMG::unreachable();
   }
-  return angle * (angleUnit == AngleUnit::Degree
-                      ? static_cast<T>(M_PI / 180.0)
-                      : static_cast<T>(M_PI / 200.0));
 }
 
 template <typename T>
 T ConvertFromRadian(T angle, AngleUnit angleUnit) {
-  if (angleUnit == AngleUnit::Radian) {
-    return angle;
+  switch (angleUnit) {
+    case AngleUnit::Radian:
+      return angle;
+    case AngleUnit::Degree:
+      return angle * static_cast<T>(180.0 / M_PI);
+    case AngleUnit::Gradian:
+      return angle * static_cast<T>(200.0 / M_PI);
+    default:
+      OMG::unreachable();
   }
-  return angle * (angleUnit == AngleUnit::Degree
-                      ? static_cast<T>(180.0 / M_PI)
-                      : static_cast<T>(200.0 / M_PI));
 }
 
 template <typename T>

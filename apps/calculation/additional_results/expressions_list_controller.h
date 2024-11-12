@@ -55,12 +55,16 @@ class ExpressionsListController
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 6;
   Poincare::Preferences::AngleUnit angleUnit() const {
+    assert(m_calculationPreferences.angleUnit !=
+           Poincare::Preferences::AngleUnit::None);
     return m_calculationPreferences.angleUnit;
   }
   Poincare::Preferences::PrintFloatMode displayMode() const {
     return m_calculationPreferences.displayMode;
   }
   Poincare::Preferences::ComplexFormat complexFormat() const {
+    assert(m_calculationPreferences.complexFormat !=
+           Poincare::Preferences::ComplexFormat::None);
     return m_calculationPreferences.complexFormat;
   }
   uint8_t numberOfSignificantDigits() const {

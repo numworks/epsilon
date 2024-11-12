@@ -404,6 +404,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
     return Approximation::IsNonReal(value) ? KNonReal->cloneTree()
                                            : KUndef->cloneTree();
   }
+  assert(complexFormat != ComplexFormat::None);
   if (im != 0 && complexFormat == ComplexFormat::Real) {
     return KNonReal->cloneTree();
   }

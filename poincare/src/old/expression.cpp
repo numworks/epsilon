@@ -936,6 +936,7 @@ OExpression OExpression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
         *this, Rational::Builder(200),
         Power::Builder(Constant::PiBuilder(), Rational::Builder(-1)));
   }
+  assert(angleUnit == Preferences::AngleUnit::Radian);
   return *this;
 }
 
@@ -949,6 +950,7 @@ OExpression OExpression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
     return Multiplication::Builder(*this, Rational::Builder(1, 200),
                                    Constant::PiBuilder());
   }
+  assert(angleUnit == Preferences::AngleUnit::Radian);
   return *this;
 }
 

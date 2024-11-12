@@ -771,6 +771,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(2+√(3))", "(√(2)+√(6))/2");
   simplifies_to("√(3-√(7))", "√(3-√(7))");
   simplifies_to("√(-2+√(3))", "√(2)×(-1/2+√(3)/2)×i", cartesianCtx);
+  simplifies_to("√(-3-√(8))", "(1+√(2))×i", cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
   simplifies_to("√(√(1058)-√(896))", "-root(2,4)×√(7)+root(2,4)×√(16)",
                 cartesianCtx);

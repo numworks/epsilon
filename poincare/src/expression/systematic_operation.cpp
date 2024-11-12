@@ -566,13 +566,13 @@ static bool ReduceNestedRadicals(Tree* e) {
            .KB = x,
            .KC = y,
            .KD = delta,
-           /* If a and b are not the same sign then y < 0, which
+           /* If a and c are not the same sign then y < 0, which
             * invalidates the formula. We change the equation to:
             * √(a√b+c√d) = √(√(w)) * √(-x) * √(-y-√z)
             * - x -> -x
             * - y -> -y
             * - √(y-√z) = √u-√v */
-           .KE = (Rational::Sign(a) == Rational::Sign(b)) ? 1_e : -1_e});
+           .KE = (Rational::Sign(a) == Rational::Sign(c)) ? 1_e : -1_e});
     }
     delta->removeTree();
     z->removeTree();

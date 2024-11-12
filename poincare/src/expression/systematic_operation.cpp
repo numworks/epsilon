@@ -477,45 +477,41 @@ bool SystematicOperation::ReduceDim(Tree* e) {
   return List::ShallowApplyListOperators(e);
 }
 
-static bool SplitRadical(const Tree* e, Tree** a, Tree** b) {
+static bool SplitRadical(const Tree* e, const Tree** a, const Tree** b) {
   // Find a and b such that e = a√b, with a and b rationals
-  Tree* factor;
-  Tree* underRad;
 
   PatternMatching::Context ctx;
   if (e->isRational()) {
     // A -> A*√(1)
-    factor = e->cloneTree();
-    underRad = (1_e)->cloneTree();
+    *a = e;
+    *b = 1_e;
   } else if (PatternMatching::Match(
                  e, KMult(KA_s, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
              ctx.getTree(KB)->isRational()) {
     if (ctx.getNumberOfTrees(KA) == 0) {
       // √(A) -> 1*√(A)
-      factor = (1_e)->cloneTree();
+      *a = 1_e;
     } else if (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isRational()) {
       // General case A√(B)
-      factor = ctx.getTree(KA)->cloneTree();
+      *a = ctx.getTree(KA);
     } else {
       return false;
     }
-    underRad = ctx.getTree(KB)->cloneTree();
+    *b = ctx.getTree(KB);
   } else {
     return false;
   }
 
-  *a = factor;
-  *b = underRad;
   return true;
 }
 
 static bool ReduceNestedRadicals(Tree* e) {
   TreeRef result;
   PatternMatching::Context ctx;
-  Tree* a = nullptr;
-  Tree* b = nullptr;
-  Tree* c = nullptr;
-  Tree* d = nullptr;
+  const Tree* a;
+  const Tree* b;
+  const Tree* c;
+  const Tree* d;
   /* √(a√b+c√d) = √(√(w)) * √(x) * √(y+√z) with
    * w = b, x = c, y = a/c and z = d/b,
    * possibly swapping a√b and c√d to ensure that y > √z */
@@ -523,6 +519,7 @@ static bool ReduceNestedRadicals(Tree* e) {
                              &ctx) &&
       SplitRadical(ctx.getTree(KA), &a, &b) &&
       SplitRadical(ctx.getTree(KB), &c, &d)) {
+    assert(a && b && c && d);
     assert(!(b->isOne() && d->isOne()));
     // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
     Tree* a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
@@ -542,11 +539,6 @@ static bool ReduceNestedRadicals(Tree* e) {
                                               {.KA = a, .KB = c});
     Tree* z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
                                               {.KA = d, .KB = b});
-    if (!a2bGreaterThanc2d) {
-      // Swap back for tree removal at the end
-      std::swap(a, c);
-      std::swap(b, d);
-    }
 
     // √(y+√z) can be turned into √u+√v if ∂ = √(y^2-z) is rational.
     Tree* delta = PatternMatching::CreateSimplify(
@@ -579,16 +571,6 @@ static bool ReduceNestedRadicals(Tree* e) {
     y->removeTree();
     x->removeTree();
     w->removeTree();
-  }
-  if (d) {
-    assert(c);
-    d->removeTree();
-    c->removeTree();
-  }
-  if (b) {
-    assert(a);
-    b->removeTree();
-    a->removeTree();
   }
   if (result) {
     e->moveTreeOverTree(result);

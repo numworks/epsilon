@@ -86,7 +86,7 @@ class FormulaTemplateMenuController
   Poincare::UserExpression templateExpressionForCell(Cell cell);
   void computeUninitializedLayouts();
   void fillSubLabelBuffer(BufferTemplateCell* cell, int index);
-  void fillSumColumnNames(char* buffers[]) const;
+  void fillSumColumnNames(char* columnName1, char* columnName2) const;
   void fillOtherAppColumnName(char* buffer) const;
 
   Escher::MenuCell<Escher::MessageTextView> m_emptyTemplateCell;

@@ -4,7 +4,7 @@ namespace Poincare::Internal {
 
 KDSize EmptyRectangle::Size(KDFont::Size font, bool withMargins) {
   return KDSize(
-      KDFont::GlyphWidth(font) - (withMargins ? 0 : 2 * k_marginWidth),
+      KDFont::GlyphMaxWidth(font) - (withMargins ? 0 : 2 * k_marginWidth),
       KDFont::GlyphHeight(font) - (withMargins ? 0 : 2 * k_marginHeight));
 }
 

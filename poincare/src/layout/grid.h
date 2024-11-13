@@ -50,7 +50,7 @@ class Grid : public Layout {
   // Virtuality
   KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const {
     return isPiecewiseLayout()
-               ? 2 * k_gridEntryMargin + KDFont::GlyphWidth(font)
+               ? 2 * k_gridEntryMargin + KDFont::GlyphMaxWidth(font)
                : k_gridEntryMargin;
   }
   KDCoordinate verticalGridEntryMargin(KDFont::Size font) const {

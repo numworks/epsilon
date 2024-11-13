@@ -60,9 +60,13 @@ class KDFont {
                                : LargeFont::k_glyphWidth;
   }
 #else
-  constexpr static KDCoordinate GlyphWidth(Size size) {
+  constexpr static KDCoordinate GlyphWidth(Size size,
+                                           CodePoint codePoint = ' ') {
     return size == Size::Small ? SmallFont::k_glyphWidth
                                : LargeFont::k_glyphWidth;
+  }
+  constexpr static KDCoordinate GlyphMaxWidth(Size size) {
+    return GlyphWidth(size);
   }
   constexpr static KDSize GlyphSize(Size size) {
     return KDSize(GlyphWidth(size), GlyphHeight(size));

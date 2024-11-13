@@ -29,6 +29,7 @@ KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
   KDCoordinate stringHeight = m_glyphSize.height();
   KDCoordinate stringWidth = 0;
   KDCoordinate lineStringWidth = 0;
+  Size fontSize = this == &privateSmallFont ? Size::Small : Size::Large;
   while (codePoint != UCodePointNull &&
          (limit == nullptr || currentStringPosition < limit)) {
     if (codePoint == UCodePointLineFeed) {
@@ -36,9 +37,9 @@ KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
       lineStringWidth = 0;
       stringHeight += m_glyphSize.height() + lineSpacing;
     } else if (codePoint == UCodePointTabulation) {
-      lineStringWidth += k_tabCharacterWidth * m_glyphSize.width();
+      lineStringWidth += k_tabCharacterWidth * GlyphWidth(fontSize, ' ');
     } else if (!codePoint.isCombining()) {
-      lineStringWidth += m_glyphSize.width();
+      lineStringWidth += GlyphWidth(fontSize, codePoint);
     }
     currentStringPosition = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();

@@ -182,7 +182,9 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
       return;
     }
     if ((!child || child->isCodePointLayout()) &&
-        p.x() + KDFont::GlyphWidth(context->style.font) <
+        p.x() + KDFont::GlyphWidth(context->style.font,
+                                   child ? CodePointLayout::GetCodePoint(child)
+                                         : ::CodePoint(' ')) <
             context->ctx->clippingRect()
                 .relativeTo(context->ctx->origin())
                 .left()) {
@@ -371,12 +373,15 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints: {
-      KDSize glyph = KDFont::GlyphSize(s_font);
+#if !KDFONT_PROPORTIONAL
       // Handle the middle dot which is thinner than the other glyphs
       width = CodePointLayout::GetCodePoint(l) == UCodePointMiddleDot
                   ? CodePoint::k_middleDotWidth
-                  : glyph.width();
-      height = glyph.height();
+                  : KDFont::GlyphWidth(s_font);
+#else
+      width = KDFont::GlyphWidth(s_font, CodePointLayout::GetCodePoint(l));
+#endif
+      height = KDFont::GlyphHeight(s_font);
       break;
     }
     case LayoutType::PtBinomial:

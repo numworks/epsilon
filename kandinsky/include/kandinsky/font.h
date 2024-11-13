@@ -53,6 +53,10 @@ class KDFont {
     return size == Size::Small ? SmallFont::k_glyphHeight
                                : LargeFont::k_glyphHeight;
   }
+  constexpr static KDCoordinate GlyphBaseline(Size size) {
+    // Return the ceil when height is odd
+    return (GlyphHeight(size) + 1) / 2;
+  }
 #if KDFONT_PROPORTIONAL
   static KDCoordinate GlyphWidth(Size size, CodePoint codePoint);
   constexpr static KDCoordinate GlyphMaxWidth(Size size) {

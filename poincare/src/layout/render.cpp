@@ -754,7 +754,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
-      return KDFont::GlyphHeight(s_font) / 2;
+      return KDFont::GlyphBaseline(s_font);
     case LayoutType::PtBinomial:
     case LayoutType::PtPermute:
       return std::max(0, PtCombinatorics::AboveSymbol(l, s_font) +

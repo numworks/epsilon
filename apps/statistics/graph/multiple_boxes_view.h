@@ -27,39 +27,38 @@ class MultipleBoxesView : public MultipleDataView {
 
  private:
   constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) {
-    assert(1 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);
-    return numberOfSeries == 1 ? 48 : 14;
+    assert(1 <= numberOfSeries && numberOfSeries <= Store::k_numberOfSeries);
+    return numberOfSeries == 1 ? k_topToFirstBoxMarginOneSeries
+                               : k_topToFirstBoxMarginMultipleSeries;
   }
   constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) {
-    assert(2 <= numberOfSeries && numberOfSeries <= k_numberOfBoxViews);
-    switch (numberOfSeries) {
-      case 2:
-        return 24;
-      case 3:
-        return 12;
-      default:
-        return 10;
+    assert(2 <= numberOfSeries &&
+           numberOfSeries <= k_boxToBoxMargins.size() + 1);
+    return k_boxToBoxMargins[numberOfSeries - 1];
+  }
+
+  constexpr static bool isBoxMarginValid() {
+    for (std::size_t numberOfSeries = 2;
+         numberOfSeries < Store::k_numberOfSeries; numberOfSeries++) {
+      if (MultipleBoxesView::BoxToBoxMargin(numberOfSeries) <
+          BoxPlotPolicy::BoxVerticalMargin()) {
+        return false;
+      }
     }
+    return true;
   }
 
   constexpr static KDCoordinate k_axisViewHeight = 21;
 
+  static constexpr KDCoordinate k_topToFirstBoxMarginOneSeries = 48;
+  static constexpr KDCoordinate k_topToFirstBoxMarginMultipleSeries = 14;
+  static constexpr std::array<KDCoordinate, Store::k_numberOfSeries - 1>
+      k_boxToBoxMargins = {24, 12, 10, 10, 10};
+
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void changeDataViewSeriesSelection(int series, bool select) override;
 
-  /* TODO: it would be nice to use an std::array<BoxView,
-   * Store::k_numberOfSeries> here. However BoxView (and the View parent
-   * object) have their default constructor and their move assignment operator
-   * deleted, so there is no easy way to achieve that. */
-  BoxView m_boxView1;
-  BoxView m_boxView2;
-  BoxView m_boxView3;
-  BoxView m_boxView4;
-  BoxView m_boxView5;
-  BoxView m_boxView6;
-
-  static constexpr size_t k_numberOfBoxViews = 6;
-  static_assert(k_numberOfBoxViews == Store::k_numberOfSeries);
+  std::array<BoxView, Store::k_numberOfSeries> m_boxViews;
 
   BoxAxisView m_axisView;
   BoxBannerView m_bannerView;

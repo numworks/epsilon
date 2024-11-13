@@ -90,6 +90,7 @@ $(call raster_font,SmallFont,12,7,14)
 $(call raster_font,LargeFont,16,10,18)
 endif
 ifeq ($(KANDINSKY_font_variant),scandium)
+SFLAGS += -DKDFONT_PROPORTIONAL=1
 $(call raster_font,SmallFont,12,8,13)
 $(call raster_font,LargeFont,16,10,18)
 endif

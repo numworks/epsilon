@@ -34,7 +34,7 @@ void checkInputs(int argc, char* argv[]);
 void initTTF(FT_Library* library, FT_Face* face, const char* font_file,
              int requestedGlyphWidth, int requestedGlyphHeight);
 void computeMetrics(FT_Face face, int* maxWidth, int* maxAboveBaseline,
-                    int* maxBelowBaseline);
+                    int* maxBelowBaseline, uint8_t* glyphWidths);
 void checkGlyphDimensions(int glyphWidth, int requestedGlyphWidth,
                           int glyphHeight, int requestedGlyphHeight);
 int writeCodePointToGlyphTableFiles(const char* cppFilename,
@@ -51,6 +51,7 @@ void writeFontSourceFile(const char* fontSourceFilename, const char* fontName,
                          int glyphWidth, int glyphHeight,
                          uint16_t* glyphDataOffset, int glyphDataOffsetLength,
                          uint8_t* glyphData, int glyphDataLength,
+                         uint8_t* glyphWidths, int glyphWidthsLength,
                          int grayscaleBitsPerPixel,
                          int CodePointToGlyphIndexLength);
 void storeRenderedGlyphsImage(const char* outputImage, FT_Face face,

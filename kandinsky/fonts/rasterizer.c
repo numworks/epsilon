@@ -241,7 +241,15 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
 
   // Font instanciation
   fprintf(fontFile,
-          "const KDFont KDFont::private%s(%s::k_glyphWidth, %s::k_glyphHeight, glyphDataOffset, glyphData);\n",
+	  "const KDFont KDFont::private%s(\n"
+	  "  %s::k_glyphWidth,\n"
+	  "  %s::k_glyphHeight,\n"
+	  "  glyphDataOffset,\n"
+	  "#if KDFONT_PROPORTIONAL\n"
+	  "  glyphWidths,\n"
+	  "#endif\n"
+	  "  glyphData\n"
+	  ");\n",
           fontName, fontName, fontName);
 
   fclose(fontFile);

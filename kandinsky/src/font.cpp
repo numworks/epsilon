@@ -10,6 +10,14 @@ extern "C" {
 
 constexpr static int k_tabCharacterWidth = 4;
 
+#if KDFONT_PROPORTIONAL
+KDCoordinate KDFont::GlyphWidth(Size size, CodePoint codePoint) {
+  int index = Font(size)->indexForCodePoint(codePoint);
+  return size == Size::Small ? privateSmallFont.m_glyphWidths[index]
+                             : privateLargeFont.m_glyphWidths[index];
+}
+#endif
+
 KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
                                KDCoordinate lineSpacing) const {
   if (text == nullptr || (limit != nullptr && text >= limit)) {

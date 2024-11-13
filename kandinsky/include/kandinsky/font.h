@@ -49,17 +49,25 @@ class KDFont {
     Small,  // width = 7 , height = 14
     Large   // width = 10 , height = 18
   };
-  constexpr static KDCoordinate GlyphWidth(Size size) {
-    return size == Size::Small ? SmallFont::k_glyphWidth
-                               : LargeFont::k_glyphWidth;
-  }
   constexpr static KDCoordinate GlyphHeight(Size size) {
     return size == Size::Small ? SmallFont::k_glyphHeight
                                : LargeFont::k_glyphHeight;
   }
+#if KDFONT_PROPORTIONAL
+  static KDCoordinate GlyphWidth(Size size, CodePoint codePoint);
+  constexpr static KDCoordinate GlyphMaxWidth(Size size) {
+    return size == Size::Small ? SmallFont::k_glyphWidth
+                               : LargeFont::k_glyphWidth;
+  }
+#else
+  constexpr static KDCoordinate GlyphWidth(Size size) {
+    return size == Size::Small ? SmallFont::k_glyphWidth
+                               : LargeFont::k_glyphWidth;
+  }
   constexpr static KDSize GlyphSize(Size size) {
     return KDSize(GlyphWidth(size), GlyphHeight(size));
   }
+#endif
   constexpr static int k_maxGlyphPixelCount =
       std::max({SmallFont::k_glyphWidth * SmallFont::k_glyphHeight,
                 LargeFont::k_glyphWidth* LargeFont::k_glyphHeight});
@@ -127,10 +135,18 @@ class KDFont {
   }
 
   constexpr KDFont(KDCoordinate glyphWidth, KDCoordinate glyphHeight,
-                   const uint16_t* glyphDataOffset, const uint8_t* data)
+                   const uint16_t* glyphDataOffset,
+#if KDFONT_PROPORTIONAL
+                   const uint8_t* widths,
+#endif
+                   const uint8_t* data)
       : m_glyphSize(glyphWidth, glyphHeight),
         m_glyphDataOffset(glyphDataOffset),
-        m_data(data) {}
+#if KDFONT_PROPORTIONAL
+        m_glyphWidths(widths),
+#endif
+        m_data(data) {
+  }
 
  private:
   void fetchGrayscaleGlyphAtIndex(GlyphIndex index,
@@ -160,6 +176,9 @@ class KDFont {
 
   KDSize m_glyphSize;
   const uint16_t* m_glyphDataOffset;
+#if KDFONT_PROPORTIONAL
+  const uint8_t* m_glyphWidths;
+#endif
   const uint8_t* m_data;
 
   static const CodePointIndexPair* s_CodePointToGlyphIndex;

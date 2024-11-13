@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#include <initializer_list>
-
 namespace std {
 
 template <class T, size_t N>
@@ -21,22 +19,30 @@ template <typename U, unsigned int N>
 class array {
   // friend U get(array);
  public:
+  using iterator = U*;
   using const_iterator = const U*;
 
-  array() {}
-  constexpr array(initializer_list<U> init) {
-    int index = 0;
-    for (const U& u : init) {
-      m_array[index++] = u;
-    }
-  }
+  /* implicitly declared list-initialization constructor:
+   * "array(initializer_list<U>)" */
+
+  /* implicitly declared assignment operator to another array, that overwrites
+   * all the array elements with the element in the other array:
+   * "operator=(const array<U,N>&)" */
+
   constexpr U& operator[](unsigned int n) { return m_array[n]; }
   constexpr const U& operator[](unsigned int n) const { return m_array[n]; }
 
   constexpr const_iterator cbegin() const { return m_array; }
   constexpr const_iterator cend() const { return m_array + N; }
+  constexpr iterator begin() { return m_array; }
+  constexpr iterator end() { return m_array + N; }
 
- private:
+  constexpr unsigned int size() const { return N; }
+
+  /* m_array must be public for "array" to be an aggregate type, and thus
+   * benefit from the advantages of aggregates, in particular the implicit
+   * list-initialization constructor.
+   */
   U m_array[N];
 };
 /*

@@ -135,31 +135,31 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
    * even if there is another operator defined for this multiplication. */
   // 2_m·3_m
   assert_expression_layouts_and_serializes_to(
-      KMult(2_e, KUnits::meter, 3_e, KUnits::meter), "2×_m×3×_m", "2·m·3·m");
+      KMult(2_e, KUnits::meter, 3_e, KUnits::meter), "2×_m×3×_m", "2m·3m");
   // 2_m×3.5_m
   assert_expression_layouts_and_serializes_to(
       KMult(2_e, KUnits::meter, 3.5_fe, KUnits::meter), "2×_m×3.5×_m",
-      "2·m×3.5·m");
+      "2m×3.5m");
   // Always put a dot between units
   // 2_s^-1·_m
   assert_expression_layouts_and_serializes_to(
       KMult(2_e, KPow(KUnits::second, -1_e), KUnits::meter), "2×_s^-1×_m",
-      "2·s^(-1)·m");
+      "2s^(-1)·m");
   // 2×3_m·_s^-1
   assert_expression_layouts_and_serializes_to(
       KMult(2_e, 3_e, KUnits::meter, KPow(KUnits::second, -1_e)),
-      "2×3×_m×_s^-1", "2×3·m·s^(-1)");
+      "2×3×_m×_s^-1", "2×3m·s^(-1)");
 }
 
 QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {
   assert_expression_layouts_and_serializes_to(
       KAdd(KMult(2_e, KUnits::hour), KMult(3_e, KUnits::minute),
            KMult(4.5_e, KUnits::second)),
-      "2×_h+3×_min+4.5×_s", "2·h3·min4.5·s");
+      "2×_h+3×_min+4.5×_s", "2h3min4.5s");
   assert_expression_layouts_and_serializes_to(
       KAdd(KMult(2_e, KUnits::hour), KMult(3_e, KUnits::minute),
            KMult(KDecimal(4_e, -30_e), KUnits::second)),
-      "2×_h+3×_min+4ᴇ30×_s", "2·h+3·min+4ᴇ30·s");
+      "2×_h+3×_min+4ᴇ30×_s", "2h+3min+4ᴇ30s");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(

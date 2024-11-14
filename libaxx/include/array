@@ -39,9 +39,9 @@ class array {
 
   constexpr unsigned int size() const { return N; }
 
-  /* m_array must be public for "array" to be an aggregate type, and thus
-   * benefit from the advantages of aggregates, in particular the implicit
-   * list-initialization constructor.
+  /* m_array must be public for "array" to be an aggregate type. Using an
+   * aggregate type offers many advantages: for instance the list-initialization
+   * constructor is implicitly declared.
    */
   U m_array[N];
 };

@@ -14,8 +14,6 @@ using namespace Shared;
 
 namespace Statistics {
 
-// TODO: changes might be needed if Store::k_numberOfSeries is not 3
-
 constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
 constexpr Store::CalculPointer
     Store::k_quantileCalculation[Store::k_numberOfQuantiles];

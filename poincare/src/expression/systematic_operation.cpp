@@ -4,8 +4,8 @@
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/probability/distribution_method.h>
 
-#include "advanced_reduction.h"
 #include "approximation.h"
+#include "arithmetic.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "list.h"
@@ -544,7 +544,6 @@ static bool ReduceNestedRadicals(Tree* e) {
     Tree* delta = PatternMatching::CreateSimplify(
         KPow(KAdd(KPow(KA, 2_e), KMult(-1_e, KB)), 1_e / 2_e),
         {.KA = y, .KB = z});
-    AdvancedReduction::Reduce(delta);
     if (delta->isRational()) {
       /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
        * u = (y+∂)/2 and v = (y-∂)/2 */
@@ -579,6 +578,44 @@ static bool ReduceNestedRadicals(Tree* e) {
   return false;
 }
 
+IntegerHandler SquareRoot(IntegerHandler m) {
+  IntegerHandler res(-1);
+  bool isSquareRoot = true;
+  Arithmetic::FactorizedInteger factorization =
+      Arithmetic::PrimeFactorization(m);
+  if (factorization.numberOfFactors ==
+      Arithmetic::FactorizedInteger::k_factorizationFailed) {
+    return res;
+  }
+  Tree* root = SharedTreeStack->pushOne();
+  for (int i = 0; i < factorization.numberOfFactors; i++) {
+    DivisionResult<Tree*> div = IntegerHandler::Division(
+        factorization.coefficients[i], IntegerHandler(2));
+    if (Rational::Numerator(div.remainder).isZero()) {
+      TreeRef updatedRoot;
+      Tree* factor = Integer::Push(factorization.factors[i]);
+      Tree* power = Rational::IntegerPower(factor, div.quotient);
+      updatedRoot = Rational::Multiplication(root, power);
+      power->removeTree();
+      factor->removeTree();
+      div.remainder->removeTree();
+      div.quotient->removeTree();
+      root->moveTreeOverTree(updatedRoot);
+    } else {
+      div.remainder->removeTree();
+      div.quotient->removeTree();
+      isSquareRoot = false;
+      break;
+    }
+  }
+  if (isSquareRoot) {
+    assert(root->isInteger());
+    res = Rational::Numerator(root);
+  }
+  root->removeTree();
+  return res;
+}
+
 bool SystematicOperation::ReduceExp(Tree* e) {
   Tree* child = e->child(0);
   if (child->isLn()) {
@@ -604,6 +641,15 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
   if (child->isMult()) {
     PatternMatching::Context ctx;
+    if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
+        ctx.getTree(KA)->isPositiveInteger()) {
+      IntegerHandler m = Rational::Numerator(ctx.getTree(KA));
+      IntegerHandler res = SquareRoot(m);
+      if (!res.isMinusOne()) {
+        e->moveTreeOverTree(res.pushOnTreeStack());
+        return true;
+      }
+    }
     if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
         (ctx.getTree(KB)->isZero() ||
          (ctx.getTree(KA)->isRational() &&

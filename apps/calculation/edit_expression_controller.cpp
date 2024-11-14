@@ -77,7 +77,7 @@ void EditExpressionController::restoreInput() {
   if (Poincare::Preferences::SharedPreferences()->editionMode() ==
           Poincare::Preferences::EditionMode::Edition1D &&
       !m_contentView.layoutField()->layout().isCodePointsString()) {
-    // Restored input in incompatible with edition mode.
+    // Restored input is incompatible with edition mode.
     m_contentView.layoutField()->clearLayout();
     memoizeInput();
   }

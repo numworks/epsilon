@@ -860,11 +860,7 @@ void Layouter::StripSeparators(Tree* rack) {
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {
-    if (child->isUnitSeparatorLayout()) {
-      // Replace UnitSeparators with a middle dot
-      child->cloneTreeOverTree("·"_cl);
-    }
-    if (child->isSeparatorLayout()) {
+    if (child->isUnitSeparatorLayout() || child->isSeparatorLayout()) {
       child->removeTree();
       n--;
       continue;

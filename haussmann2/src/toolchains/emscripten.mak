@@ -29,7 +29,7 @@ endif
 ifeq ($(DEBUG),1)
 LDFLAGS += \
   -O0 \
-  --profiling-funcs \
+  --profiling-funcs
 else
 # TODO: Should this be:
 # - Oz ? (small size, slower)

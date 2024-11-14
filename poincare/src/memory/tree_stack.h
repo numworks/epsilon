@@ -276,7 +276,7 @@ void AbstractTreeStack::execute(ActionT action, Tree* tree, ContextT* context,
     ExceptionTry {
       assert(numberOfTrees() == treesNumber);
       action(tree, context, extraParameters...);
-      /* Prevent edition action from leaking: an action create at most one
+      /* Prevent edition action from leaking: an action creates at most one
        * tree. */
       assert(numberOfTrees() <= treesNumber + 1);
       // Ensure the result tree doesn't exceeds the expected size.

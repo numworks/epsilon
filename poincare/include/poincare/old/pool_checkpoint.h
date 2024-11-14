@@ -5,7 +5,7 @@
  *
  * CAUTION : A scope MUST be created directly around the PoolCheckpoint, to
  * ensure to forget the PoolCheckpoint once the interruptable code is executed.
- * Indeed, the scope calls the checkpoint destructor, which invalidate the
+ * Indeed, the scope calls the checkpoint destructor, which invalidates the
  * current checkpoint. Also, any node stored under TopmostEndOfPool should not
  * be altered.
  *

@@ -72,9 +72,6 @@ Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
   if (param.m_optimize) {
     return result;
   }
-  /* TODO Hugo : Can this assert hold ? Otherwise allow randomized and
-   * UserSymbols if context. */
-  // assert(CanApproximate(e));
 
   if (!Dimension::DeepCheck(e)) {
     result->removeTree();

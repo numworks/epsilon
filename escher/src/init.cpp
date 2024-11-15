@@ -4,9 +4,6 @@
 
 namespace Escher {
 
-void Init() {
-  Ion::Display::Context::SharedContext.init();
-  TextCursorView::InitSharedCursor();
-}
+void Init() { TextCursorView::InitSharedCursor(); }
 
 }  // namespace Escher

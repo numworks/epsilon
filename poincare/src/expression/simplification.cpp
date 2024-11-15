@@ -38,29 +38,19 @@ inline static bool AreConsistent(const ComplexSign& sign,
 }
 #endif
 
-bool RelaxProjectionContext(void* context) {
-  ProjectionContext* projectionContext =
-      static_cast<ProjectionContext*>(context);
-  if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
-    // Nothing more can be done.
-    return false;
-  }
-  projectionContext->m_strategy = Strategy::ApproximateToFloat;
-  return true;
-}
-
 bool Simplification::SimplifyWithAdaptiveStrategy(
     Tree* e, ProjectionContext* projectionContext, bool beautify) {
   assert(projectionContext);
   ExceptionTry {
-    // Clone the tree, and use an adaptive strategy to handle pool overflow.
+    // Clone the tree and raise an exception for pool overflow.
     SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                           RelaxProjectionContext, beautify);
+                                           beautify);
   }
   ExceptionCatch(type) {
     switch (type) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
+      case ExceptionType::TreeSizeExcess:
         return false;
       default:
         TreeStackCheckpoint::Raise(type);

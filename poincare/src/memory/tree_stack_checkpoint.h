@@ -49,7 +49,7 @@ enum class ExceptionType : int {
   // Memory exceptions
   TreeStackOverflow,
   IntegerOverflow,
-  RelaxContext,
+  TreeSizeExcess,
   // Misc
   ParseFail,  // Used by parser, TODO: Use more distinct errors.
   SortFail,   // NAry::Sort encountered unsortable types with respect to Order

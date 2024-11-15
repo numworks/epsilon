@@ -871,8 +871,9 @@ void assert_no_duplicates_in_list(const char *expression) {
   Shared::GlobalContext globalContext;
   Internal::Tree *e = parse_expression(expression, &globalContext);
   e->cloneNodeAtNode(Poincare::Internal::KListSort);
-  e->moveTreeOverTree(
-      Internal::Approximation::RootTreeToTree<T>(e, Radian, Cartesian));
+  e->moveTreeOverTree(Internal::Approximation::ToTree<T>(
+      e, Internal::Approximation::Parameter(true, true, false, false),
+      Internal::Approximation::Context(Radian, Cartesian)));
   assert(e->isList());
   int n = e->numberOfChildren();
   bool bad = false;

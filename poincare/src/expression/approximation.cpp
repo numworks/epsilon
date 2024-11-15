@@ -31,78 +31,124 @@
 
 namespace Poincare::Internal {
 
-/* Approximation::Context */
-
-Approximation::Context::Context(Random::Context* randomContext,
-                                AngleUnit angleUnit,
-                                ComplexFormat complexFormat,
-                                VariableType abscissa, int listElement)
-    : m_angleUnit(angleUnit),
-      m_complexFormat(complexFormat),
-      m_localVariable(abscissa),
-      m_listElement(listElement),
-      m_pointElement(-1),
-      m_randomContext(randomContext),
-      m_parentContext(nullptr) {}
-
-Approximation::Context::Context(const Context* parentContext,
-                                VariableType abscissa)
-    : Context(*parentContext) {
-  m_parentContext = parentContext;
-  m_localVariable = abscissa;
+bool Approximation::SetUnknownSymbol(Tree* e, const char* variable,
+                                     ComplexFormat complexFormat) {
+  return Variables::ReplaceSymbol(e, variable, 0,
+                                  complexFormat == ComplexFormat::Real
+                                      ? ComplexSign::RealUnknown()
+                                      : ComplexSign::Unknown());
 }
 
-template <typename T>
-PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
-    const Tree* preparedFunction, T abscissa) {
-  Dimension dimension = Dimension::Get(preparedFunction);
-  assert(dimension.isScalar() || dimension.isPoint());
-  if (std::isnan(abscissa)) {
-    return dimension.isScalar() ? PointOrScalar<T>(NAN)
-                                : PointOrScalar<T>(NAN, NAN);
+Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
+                                    Context* context) {
+  // TODO: Return nullptr if clone wasn't used.
+  Tree* clone = e->cloneTree();
+  if (!context) {
+    *context = Context();
   }
-  return RootToPointOrScalarPrivate<T>(preparedFunction, dimension.isPoint(),
-                                       true, abscissa);
+  if (param.m_isNotProjected) {
+    Variables::ProjectLocalVariablesToId(clone);
+  }
+  if (param.m_prepare || param.m_optimize) {
+    assert(param.m_isRoot);
+    PrepareExpressionForApproximation(clone, context->m_complexFormat);
+    if (param.m_optimize) {
+      ApproximateAndReplaceEveryScalar(clone, *context);
+      // TODO: factor common sub-expressions
+      // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
+      return clone;
+    }
+  }
+  if (param.m_isRoot && !context->m_randomContext.m_isInitialized) {
+    context->m_randomContext.m_isInitialized = true;
+  }
+  return clone;
 }
 
 template <typename T>
-Tree* Approximation::RootTreeToTree(const Tree* e, AngleUnit angleUnit,
-                                    ComplexFormat complexFormat) {
+Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
+  Tree* result = PrepareContext(e, param, &context);
+  if (param.m_optimize) {
+    return result;
+  }
+  /* TODO Hugo : Can this assert hold ? Otherwise allow randomized and
+   * UserSymbols if context. */
+  // assert(CanApproximate(e));
+
   if (!Dimension::DeepCheck(e)) {
+    result->removeTree();
     return KUndefUnhandledDimension->cloneTree();
   }
-  return RootTreeToTreePrivate<T>(e, angleUnit, complexFormat,
-                                  Dimension::Get(e), Dimension::ListLength(e));
-}
-
-template <typename T>
-Tree* Approximation::RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
-                                           ComplexFormat complexFormat,
-                                           Dimension dim, int listLength) {
-  assert(Dimension::DeepCheck(e));
-  assert(listLength == Dimension::ListLength(e));
-  assert(dim == Dimension::Get(e));
-
-  Random::Context randomContext;
-  Context context(&randomContext, angleUnit, complexFormat);
-  Tree* clone = e->cloneTree();
-  // TODO we should rather assume variable projection has already been done
-  Variables::ProjectLocalVariablesToId(clone);
-
+  Dimension dim = Dimension::Get(result);
+  int listLength = Dimension::ListLength(result);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     SharedTreeStack->pushList(listLength);
     for (int i = 0; i < listLength; i++) {
       context.m_listElement = i;
-      ToTree<T>(clone, dim, &context);
+      ToTree<T>(result, dim, &context);
     }
   } else {
-    ToTree<T>(clone, dim, &context);
+    ToTree<T>(result, dim, &context);
   }
-
-  clone->removeTree();
-  return clone;
+  result->removeTree();
+  return result;
 }
+
+template <typename T>
+std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
+                                         Context context) {
+  Tree* result = PrepareContext(e, param, &context);
+  assert(Dimension::DeepCheck(e) && Dimension::Get(result).isScalar());
+  std::complex<T> c = ToComplex<T>(result, &context);
+  result->removeTree();
+  return c;
+};
+
+template <typename T>
+PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
+                                                Context context) {
+  Tree* result = PrepareContext(e, param, &context);
+  assert(Dimension::DeepCheck(e));
+  Dimension dim = Dimension::Get(result);
+  assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
+  if (context.m_localContext && std::isnan(context.variable(0))) {
+    return dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
+  }
+  T xScalar;
+  if (dim.isPoint()) {
+    context.m_pointElement = 0;
+    xScalar = To<T>(result, &context);
+    context.m_pointElement = 1;
+  }
+  T yScalar = To<T>(result, &context);
+  result->removeTree();
+  return dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
+                       : PointOrScalar<T>(yScalar);
+};
+
+template <typename T>
+bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
+  Tree* result = PrepareContext(e, param, &context);
+  bool b = ToBoolean<T>(result, &context);
+  result->removeTree();
+  return b;
+};
+
+template <typename T>
+T Approximation::To(const Tree* e, Parameter param, Context context) {
+  // Units are tolerated in scalar approximation (replaced with SI ratios).
+  assert(Dimension::DeepCheck(e) &&
+         (Dimension::Get(e).isScalar() || Dimension::Get(e).isUnit()));
+  return ToPointOrScalar<T>(e, param, context).toScalar();
+};
+
+template <typename T>
+Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameter param,
+                                       Context context) {
+  assert(Dimension::DeepCheck(e) && Dimension::Get(e).isPoint());
+  return ToPointOrScalar<T>(e, param, context).toPoint();
+};
 
 template <typename T>
 Tree* Approximation::ToBeautifiedComplex(const Tree* e, const Context* ctx) {
@@ -138,49 +184,6 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
     child->moveTreeOverTree(ToBeautifiedComplex<T>(child, ctx));
   }
   return result;
-}
-
-/* Entry points */
-
-/* TODO rework and factorize entry points :
- *   - move beautification out of the approximation
- *   - move variable projection and other reductions (integral substitution)
- *     inside a PrepareForApproximation method
- */
-
-template <typename T>
-PointOrScalar<T> Approximation::RootToPointOrScalarPrivate(
-    const Tree* e, bool isPoint, bool isPrepared, T abscissa, int listElement,
-    AngleUnit angleUnit, ComplexFormat complexFormat) {
-  Random::Context randomContext;
-  Context context(&randomContext, angleUnit, complexFormat, abscissa,
-                  listElement);
-  Tree* clone;
-  if (!isPrepared) {
-    clone = e->cloneTree();
-    // TODO we should rather assume variable projection has already been done
-    Variables::ProjectLocalVariablesToId(clone);
-    e = clone;
-  }
-  T xScalar;
-  if (isPoint) {
-    context.m_pointElement = 0;
-    xScalar = To<T>(e, &context);
-    context.m_pointElement = 1;
-  }
-  T yScalar = To<T>(e, &context);
-  if (!isPrepared) {
-    clone->removeTree();
-  }
-  return isPoint ? PointOrScalar<T>(xScalar, yScalar)
-                 : PointOrScalar<T>(yScalar);
-}
-
-template <typename T>
-std::complex<T> Approximation::RootTreeToComplex(const Tree* e) {
-  Random::Context randomContext;
-  Context context(&randomContext, AngleUnit::Radian, ComplexFormat::Cartesian);
-  return ToComplex<T>(e, &context);
 }
 
 /* Helpers */
@@ -493,7 +496,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return TrigonometricToComplex(Type::ATan, ToComplex<T>(e->child(0), ctx),
                                     AngleUnit::Radian);
     case Type::Var: {
-      if (!ctx) {
+      if (!ctx || !ctx->m_localContext) {
         return NAN;
       }
       // Local variable
@@ -530,12 +533,15 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
       assert(ctx);
-      Context childCtx(ctx, NAN);
+      // TODO Hugo : Rename contexts
+      Context childCtx = *ctx;
+      LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
+      childCtx.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
         childCtx.setLocalValue(k);
         Random::Context cleanContext;
-        childCtx.m_randomContext = &cleanContext;
+        childCtx.m_randomContext = cleanContext;
         std::complex<T> value = ToComplex<T>(child, &childCtx);
         if (e->isSum()) {
           result += value;
@@ -580,7 +586,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         return NAN;
       }
       assert(ctx);
-      Context childCtx(ctx, NAN);
+      // TODO Hugo : Rename contexts
+      Context childCtx = *ctx;
+      LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
+      childCtx.m_localContext = &localCtx;
       T result = ApproximateDerivative(derivand, at.real(), order, &childCtx);
       return result;
     }
@@ -628,9 +637,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
-      Context childCtx(ctx, ctx->m_listElement + 1);
+      // TODO Hugo : Rename contexts
+      Context childCtx = *ctx;
+      LocalContext localCtx =
+          LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
+      childCtx.m_localContext = &localCtx;
       Random::Context cleanContext;
-      childCtx.m_randomContext = &cleanContext;
+      childCtx.m_randomContext = cleanContext;
       return ToComplex<T>(e->child(2), &childCtx);
     }
     case Type::Dim: {
@@ -1211,12 +1224,22 @@ template <typename T>
 T Approximation::To(const Tree* e, T x, const Context* ctx) {
   T result;
   if (!ctx) {
-    Context context(nullptr, AngleUnit::Radian, ComplexFormat::Cartesian, x);
+    // TODO Hugo : Remove this method
+    LocalContext localCtx(x);
+    Context context(AngleUnit::Radian, ComplexFormat::Cartesian, -1, -1,
+                    Random::Context(false), &localCtx);
     ctx = &context;
     result = To<T>(e, &context);
   } else {
     Context tempCtx(*ctx);
-    tempCtx.setLocalValue(x);
+    // TODO Hugo : Clean-up this logic
+    if (tempCtx.m_localContext) {
+      LocalContext tempLocalCtx(x, tempCtx.m_localContext);
+      tempCtx.m_localContext = &tempLocalCtx;
+    } else {
+      LocalContext tempLocalCtx(x, nullptr);
+      tempCtx.m_localContext = &tempLocalCtx;
+    }
     result = To<T>(e, &tempCtx);
   }
   return result;
@@ -1250,7 +1273,10 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
   assert(!ctx);
   assert(piecewise->isPiecewise());
   // TODO piecewises depending on a random will not work
-  Context context(nullptr, AngleUnit::Radian, ComplexFormat::Cartesian, x);
+  // TODO Hugo : Rework this method
+  LocalContext localCtx(x);
+  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, -1, -1,
+                  Random::Context(false), &localCtx);
   ctx = &context;
   const Tree* branch = SelectPiecewiseBranch<T>(piecewise, ctx);
   ctx = nullptr;
@@ -1313,10 +1339,13 @@ static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
   }
 }
 
-bool Approximation::ApproximateAndReplaceEveryScalar(
-    Tree* e, const ProjectionContext* ctx) {
-  Context context(nullptr, ctx ? ctx->m_angleUnit : AngleUnit::Radian,
-                  ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
+  if (context.m_angleUnit == AngleUnit::None) {
+    context.m_angleUnit = AngleUnit::Radian;
+  }
+  if (context.m_complexFormat == ComplexFormat::None) {
+    context.m_complexFormat = ComplexFormat::Cartesian;
+  }
   if (SkipApproximation(e->type())) {
     return false;
   }
@@ -1361,14 +1390,34 @@ Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
  * correct ToComplex<T> as needed since the code is mostly independent of the
  * float type used in the tree. */
 
+template Tree* Approximation::ToTree<float>(const Tree*, Parameter, Context);
+template std::complex<float> Approximation::ToComplex<float>(const Tree*,
+                                                             Parameter,
+                                                             Context);
+template PointOrScalar<float> Approximation::ToPointOrScalar<float>(const Tree*,
+                                                                    Parameter,
+                                                                    Context);
+template bool Approximation::ToBoolean<float>(const Tree*, Parameter, Context);
+template float Approximation::To<float>(const Tree*, Parameter, Context);
+template Coordinate2D<float> Approximation::ToPoint<float>(const Tree*,
+                                                           Parameter, Context);
+
+template Tree* Approximation::ToTree<double>(const Tree*, Parameter, Context);
+template std::complex<double> Approximation::ToComplex<double>(const Tree*,
+                                                               Parameter,
+                                                               Context);
+template PointOrScalar<double> Approximation::ToPointOrScalar<double>(
+    const Tree*, Parameter, Context);
+template bool Approximation::ToBoolean<double>(const Tree*, Parameter, Context);
+template double Approximation::To<double>(const Tree*, Parameter, Context);
+template Coordinate2D<double> Approximation::ToPoint<double>(const Tree*,
+                                                             Parameter,
+                                                             Context);
+
 template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
     const Tree*, float);
 template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
     const Tree*, double);
-template PointOrScalar<float> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, bool, float, int, AngleUnit, ComplexFormat);
-template PointOrScalar<double> Approximation::RootToPointOrScalarPrivate(
-    const Tree*, bool, bool, double, int, AngleUnit, ComplexFormat);
 
 template std::complex<float> Approximation::RootTreeToComplex<float>(
     const Tree*);
@@ -1386,10 +1435,6 @@ template std::complex<double> Approximation::ToComplex<double>(
 template Tree* Approximation::ToPoint<float>(const Tree*, const Context* ctx);
 template Tree* Approximation::ToPoint<double>(const Tree*, const Context* ctx);
 
-template Tree* Approximation::RootTreeToTree<float>(const Tree*, AngleUnit,
-                                                    ComplexFormat);
-template Tree* Approximation::RootTreeToTree<double>(const Tree*, AngleUnit,
-                                                     ComplexFormat);
 template float Approximation::To(const Tree* e, const Context* ctx);
 template double Approximation::To(const Tree* e, const Context* ctx);
 template float Approximation::To(const Tree* e, float x, const Context* ctx);

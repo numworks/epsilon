@@ -107,6 +107,8 @@ QUIZ_CASE(pcj_equation_solver) {
 
 void check_range(const char* input, double min, double max) {
   Tree* equation = parse(input);
+  ProjectionContext ctx;
+  Simplification::ToSystem(equation, &ctx);
   Approximation::PrepareFunctionForApproximation(equation, "x",
                                                  ComplexFormat::Real);
   EquationSolver::Context context = EquationSolver::Context();

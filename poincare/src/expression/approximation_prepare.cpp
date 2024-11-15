@@ -58,15 +58,13 @@ bool ShallowExpandIntegrals(Tree* e, void* ctx) {
 
 bool Approximation::PrepareFunctionForApproximation(
     Tree* e, const char* variable, ComplexFormat complexFormat) {
-  bool changed = Variables::ReplaceSymbol(e, variable, 0,
-                                          complexFormat == ComplexFormat::Real
-                                              ? ComplexSign::RealUnknown()
-                                              : ComplexSign::Unknown());
-  changed = PrepareExpressionForApproximation(e, complexFormat);
-  changed = ApproximateAndReplaceEveryScalar(e) || changed;
-  // TODO: factor common sub-expressions
-  // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
-  return changed;
+  Variables::ReplaceSymbol(e, variable, 0,
+                           complexFormat == ComplexFormat::Real
+                               ? ComplexSign::RealUnknown()
+                               : ComplexSign::Unknown());
+  e->moveTreeOverTree(ToTree<double>(e, Parameter(true, false, true, true),
+                                     Context(AngleUnit::None, complexFormat)));
+  return true;
 }
 
 bool Approximation::PrepareExpressionForApproximation(

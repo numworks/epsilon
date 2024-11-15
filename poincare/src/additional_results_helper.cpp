@@ -88,9 +88,10 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
       }
     }
     assert(approximateAngleTree);
-    approximateAngleTree->moveTreeOverTree(
-        Approximation::RootTreeToTree<double>(
-            approximateAngleTree, ctx->m_angleUnit, ctx->m_complexFormat));
+    approximateAngleTree->moveTreeOverTree(Approximation::ToTree<double>(
+        approximateAngleTree,
+        Approximation::Parameter(false, true, false, true)));
+    // TODO Hugo : Explicit beautification step, decide on prepare parameter
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
     *angleIsExact = false;

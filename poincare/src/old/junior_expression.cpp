@@ -148,9 +148,10 @@ int JuniorExpressionNode::simplificationOrderSameType(
 template <typename T>
 SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
-  return SystemExpression::Builder(Approximation::RootTreeToTree<T>(
-      tree(), static_cast<AngleUnit>(approximationContext.angleUnit()),
-      static_cast<ComplexFormat>(approximationContext.complexFormat())));
+  return SystemExpression::Builder(Approximation::ToTree<T>(
+      tree(), Approximation::Parameter(true, false, false, false),
+      Approximation::Context(approximationContext.angleUnit(),
+                             approximationContext.complexFormat())));
 }
 
 Poincare::Layout JuniorExpressionNode::createLayout(
@@ -341,15 +342,18 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
   if (approximatedExpression) {
     const Tree* e = simplifiedExpression->tree();
+    Approximation::Context approxCtx(context->m_angleUnit,
+                                     context->m_complexFormat);
     if (CAS::Enabled()) {
       Tree* a = e->cloneTree();
       /* We are using ApproximateAndReplaceEveryScalar to approximate
        * expressions with symbols such as π*x → 3.14*x. */
-      Approximation::ApproximateAndReplaceEveryScalar(a, context);
+      Approximation::ApproximateAndReplaceEveryScalar(a, approxCtx);
       *approximatedExpression = Builder(a);
     } else {
-      *approximatedExpression = Builder(Approximation::RootTreeToTree<double>(
-          e, context->m_angleUnit, context->m_complexFormat));
+      *approximatedExpression = Builder(Approximation::ToTree<double>(
+          e, Approximation::Parameter(true, true, false, true), approxCtx));
+      // TODO Hugo : Explicit beautification step
     }
   }
   return;
@@ -569,7 +573,9 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
-  clone->moveTreeOverTree(Approximation::RootTreeToTree<T>(clone));
+  // TODO Hugo : Decide on prepare parameter, and beautification
+  clone->moveTreeOverTree(Approximation::ToTree<T>(
+      clone, Approximation::Parameter(true, false, false, true)));
   return SystemExpression::Builder(clone);
 }
 

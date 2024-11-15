@@ -62,10 +62,10 @@ T Approximation::ApproximateRandom(const Tree* randomTree,
   }
   assert(seed <= Random::Context::k_maxNumberOfVariables);
   if (seed > 0) {
-    if (!approxCtx || !approxCtx->m_randomContext->m_isInitialized) {
+    if (!approxCtx || !approxCtx->m_randomContext.m_isInitialized) {
       return NAN;
     }
-    T result = approxCtx->m_randomContext->m_list[seed - 1];
+    T result = approxCtx->m_randomContext.m_list[seed - 1];
     if (!std::isnan(result)) {
       return result;
     }
@@ -73,7 +73,7 @@ T Approximation::ApproximateRandom(const Tree* randomTree,
   // Context is needed with RandIntNoRep
   T result = ApproximateRandomHelper<T>(randomTree, approxCtx);
   if (seed > 0) {
-    approxCtx->m_randomContext->m_list[seed - 1] = result;
+    approxCtx->m_randomContext.m_list[seed - 1] = result;
   }
   return result;
 }

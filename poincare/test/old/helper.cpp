@@ -247,10 +247,14 @@ void assert_expression_approximates_to(const char *expression,
         }
         if (!Internal::Dimension::Get(e).isScalar() ||
             Internal::Dimension::IsList(e)) {
-          TreeRef result = Internal::Approximation::RootTreeToTree<T>(
-              e, Internal::AngleUnit(reductionContext.angleUnit()),
-              Internal::ComplexFormat(reductionContext.complexFormat()));
+          // TODO Hugo : Explicit beautification step
+          TreeRef result = Internal::Approximation::ToTree<T>(
+              e, Internal::Approximation::Parameter(true, false, false, false),
+              Internal::Approximation::Context(
+                  reductionContext.angleUnit(),
+                  reductionContext.complexFormat()));
           e->removeTree();
+          // TODO Hugo : Factorize with next step
           return result;
         }
         Approximation::PrepareExpressionForApproximation(

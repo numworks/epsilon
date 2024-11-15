@@ -403,7 +403,10 @@ ComplexSign SignOfTreeOrApproximation(const Tree* e) {
   ComplexSign sign = GetComplexSign(e);
   if (!sign.realSign().hasKnownStrictSign() ||
       !sign.imagSign().hasKnownStrictSign()) {
-    Tree* approximation = Approximation::RootTreeToTree<double>(e);
+    // TODO Hugo : Remove beautification step and associated dummy Context
+    Tree* approximation = Approximation::ToTree<double>(
+        e, Approximation::Parameter(false, false, false, false),
+        Approximation::Context(AngleUnit::None, ComplexFormat::Cartesian));
     sign = GetComplexSign(approximation);
     approximation->removeTree();
   }

@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <omg/signaling_nan.h>
+#include <poincare/old/context.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -14,7 +15,6 @@
 
 namespace Poincare::Internal {
 
-struct ProjectionContext;
 struct Dimension;
 
 /* Approximation is implemented on all block types.
@@ -28,40 +28,110 @@ class Approximation final {
   friend struct Matrix;
 
  public:
-  struct Context {  // TODO_PCJ: make private
+  class LocalContext {
+   public:
     using VariableType = double;
-    Context(Random::Context* randomContext = nullptr,
-            AngleUnit angleUnit = AngleUnit::Radian,
-            ComplexFormat complexFormat = ComplexFormat::Cartesian,
-            VariableType abscissa = NAN, int listElement = -1);
-
-    Context(const Context* parentContext, VariableType abscissa);
-
+    LocalContext(VariableType abscissa,
+                 const LocalContext* parentContext = nullptr)
+        : m_localVariable(abscissa), m_parentContext(parentContext) {}
     VariableType variable(uint8_t index) const {
       return index == 0
                  ? m_localVariable
                  : (m_parentContext ? m_parentContext->variable(index - 1)
                                     : NAN);
     }
-
     void setLocalValue(VariableType value) { m_localVariable = value; }
+    VariableType m_localVariable;
+    const LocalContext* m_parentContext;
+  };
 
-    /* TODO: most members of the context will not change and are needlessly
-     * copied when building parent context chains. We should have an independent
-     * variable chain instead. */
+  class Context {
+   public:
+    using VariableType = double;
+    Context(AngleUnit angleUnit = AngleUnit::None,
+            ComplexFormat complexFormat = ComplexFormat::None,
+            int16_t listElement = -1, int16_t pointElement = -1,
+            Random::Context randomContext = Random::Context(false),
+            LocalContext* localContext = nullptr,
+            Poincare::Context* symbolContext = nullptr)
+        : m_angleUnit(angleUnit),
+          m_complexFormat(complexFormat),
+          m_listElement(listElement),
+          m_pointElement(pointElement),
+          m_randomContext(randomContext),
+          m_localContext(localContext) {}
+    VariableType variable(uint8_t index) const {
+      assert(m_localContext);
+      return m_localContext->variable(index);
+    }
+
+    void setLocalValue(VariableType value) {
+      assert(m_localContext);
+      m_localContext->setLocalValue(value);
+    }
+
     AngleUnit m_angleUnit;
     ComplexFormat m_complexFormat;
-
-    VariableType m_localVariable;
-
     // Tells if we are approximating to get the nth-element of a list
     int16_t m_listElement;
     // Tells if we are approximating to get the nth-element of a point
     int16_t m_pointElement;
-
-    Random::Context* m_randomContext;
-    const Context* m_parentContext;
+    // TODO Hugo : Maybe better separate const and non const ctx ?
+    mutable Random::Context m_randomContext;
+    LocalContext* m_localContext;
   };
+
+  class Parameter {
+   public:
+    Parameter(bool isRoot = false, bool isNotProjected = true,
+              bool optimize = false, bool prepare = true)
+        : m_isRoot(isRoot),
+          m_isNotProjected(isNotProjected),
+          m_optimize(optimize),
+          m_prepare(prepare) {}
+
+    // A new m_randomContext will be created
+    bool m_isRoot;
+    // Local variables will be projected
+    bool m_isNotProjected;
+    // Tree will be optimized for multiple approximations, only with toTree
+    bool m_optimize;
+    // Tree will be prepared for a more accurate approximation
+    bool m_prepare;
+  };
+
+  static bool SetUnknownSymbol(Tree* e, const char* variable,
+                               ComplexFormat complexFormat);
+
+  static Tree* PrepareContext(const Tree* e, Parameter param, Context* context);
+
+  template <typename T>
+  static Tree* ToTree(const Tree* e, Parameter param,
+                      Context context = Context());
+
+  template <typename T>
+  static T To(const Tree* e, Parameter param, Context context = Context());
+
+  template <typename T>
+  static std::complex<T> ToComplex(const Tree* e, Parameter param,
+                                   Context context = Context());
+
+  template <typename T>
+  static PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameter param,
+                                          Context context = Context());
+
+#if 1
+  // These are not used
+  template <typename T>
+  static Coordinate2D<T> ToPoint(const Tree* e, Parameter param,
+                                 Context context = Context());
+
+  template <typename T>
+  static bool ToBoolean(const Tree* e, Parameter param,
+                        Context context = Context());
+#endif
+
+  // TODO Hugo : Only use Context, create shortcuts to keep context private
 
   /* Approximations on root tree, independent from current s_context. */
 
@@ -70,25 +140,40 @@ class Approximation final {
   template <typename T>
   static T RootPreparedToReal(const Tree* preparedFunction, T abscissa,
                               int listElement = -1) {
-    return RootToPointOrScalarPrivate<T>(preparedFunction, false, true,
-                                         abscissa, listElement)
-        .toScalar();
+    // TODO Hugo : Replace directly every RootPreparedToReal
+    return To<T>(preparedFunction, Parameter(true, false, false, false),
+                 Context(AngleUnit::None, ComplexFormat::None, listElement));
   }
 
   /* preparedFunction is scalar or point, and must have been prepared with
    * PrepareFunctionForApproximation. */
   template <typename T>
   static PointOrScalar<T> RootPreparedToPointOrScalar(
-      const Tree* preparedFunction, T abscissa);
+      const Tree* preparedFunction, T abscissa) {
+    // TODO Hugo : Replace directly every RootPreparedToPointOrScalar
+    LocalContext localContext(abscissa);
+    return ToPointOrScalar<T>(
+        preparedFunction, Parameter(true, false, false, false),
+        Context(AngleUnit::None, ComplexFormat::None, -1, -1,
+                Random::Context(false), &localContext, nullptr));
+  }
 
   // tree must be of scalar dimension
   template <typename T>
-  static std::complex<T> RootTreeToComplex(const Tree* e);
+  static std::complex<T> RootTreeToComplex(const Tree* e) {
+    // TODO Hugo : Replace directly every RootTreeToComplex, check isProjected
+    return ToComplex<T>(e, Parameter(true, true, false, true),
+                        Context(AngleUnit::Radian, ComplexFormat::Cartesian));
+  }
 
   // tree must have a scalar dimension
   template <typename T>
   static T RootTreeToReal(const Tree* e, T abscissa) {
-    return RootToPointOrScalarPrivate<T>(e, false, false, abscissa).toScalar();
+    // TODO Hugo : Replace directly every RootTreeToReal, check isProjected
+    LocalContext localContext(abscissa);
+    return To<T>(e, Parameter(true, true, false, true),
+                 Context(AngleUnit::None, ComplexFormat::None, -1, -1,
+                         Random::Context(false), &localContext, nullptr));
   }
 
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
@@ -97,9 +182,9 @@ class Approximation final {
   static T RootTreeToReal(const Tree* scalarTree,
                           AngleUnit angleUnit = AngleUnit::Radian,
                           ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate<T>(scalarTree, false, false, NAN, -1,
-                                         angleUnit, complexFormat)
-        .toScalar();
+    // TODO Hugo : Replace directly every RootTreeToReal, check isProjected
+    return To<T>(scalarTree, Parameter(true, true, false, true),
+                 Context(angleUnit, complexFormat));
   }
 
   /* pointTree must have a point dimension. angleUnit and complexFormat can be
@@ -108,16 +193,10 @@ class Approximation final {
   static Coordinate2D<T> RootTreeToPoint(
       const Tree* pointTree, AngleUnit angleUnit = AngleUnit::Radian,
       ComplexFormat complexFormat = ComplexFormat::Real) {
-    return RootToPointOrScalarPrivate<T>(pointTree, true, false, NAN, -1,
-                                         angleUnit, complexFormat)
-        .toPoint();
+    // TODO Hugo : Replace directly every RootTreeToPoint, check isProjected
+    return ToPoint<T>(pointTree, Parameter(true, true, false, true),
+                      Context(angleUnit, complexFormat));
   }
-
-  // angleUnit and complexFormat can be left to default on projected trees.
-  template <typename T>
-  static Tree* RootTreeToTree(
-      const Tree* tree, AngleUnit angleUnit = AngleUnit::Radian,
-      ComplexFormat complexFormat = ComplexFormat::Cartesian);
 
   // tree must be of scalar dimension and real.
   // TODO_PCJ: make private
@@ -145,8 +224,8 @@ class Approximation final {
   }
 
   // Approximate every scalar subtree that can be approximated.
-  static bool ApproximateAndReplaceEveryScalar(
-      Tree* e, const ProjectionContext* ctx = nullptr);
+  static bool ApproximateAndReplaceEveryScalar(Tree* e,
+                                               Context context = Context());
 
   /* Returns -1 if every condition is false, it assumes there is no other free
    * variable than VarX */
@@ -215,18 +294,6 @@ class Approximation final {
                                                      const Context* ctx);
   template <typename T>
   static std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
-
-  template <typename T>
-  static PointOrScalar<T> RootToPointOrScalarPrivate(
-      const Tree* e, bool isPoint, bool isPrepared = true, T abscissa = NAN,
-      int listElement = -1, AngleUnit angleUnit = AngleUnit::Radian,
-      ComplexFormat complexFormat = ComplexFormat::Real);
-
-  // tree must be of given dimension and list length.
-  template <typename T>
-  static Tree* RootTreeToTreePrivate(const Tree* e, AngleUnit angleUnit,
-                                     ComplexFormat complexFormat, Dimension dim,
-                                     int listLength);
 
   static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 

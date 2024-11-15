@@ -43,9 +43,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   ProjectionContext contextCopy = *ctx;
-  Simplification::SimplifyWithAdaptiveStrategy(simplifiedAngle, &contextCopy);
-  // Reduction is not expected to have failed
-  assert(simplifiedAngle);
+  bool reductionSuccess = Simplification::SimplifyWithAdaptiveStrategy(
+      simplifiedAngle, &contextCopy);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -59,10 +58,12 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   }
 
   /* Approximate the angle if:
+   * - Reduction was unsuccessful
    * - The fractional part could not be reduced (because the angle is not a
    * multiple of pi)
    * - Displaying the exact expression is forbidden. */
-  if (simplifiedAngle->hasDescendantSatisfying(
+  if (!reductionSuccess ||
+      simplifiedAngle->hasDescendantSatisfying(
           [](const Tree* e) { return e->isFrac(); }) ||
       shouldOnlyDisplayApproximation(
           exactAngle,
@@ -176,6 +177,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   }
   assert(directTrigoFunction && !directTrigoFunction->isUndefined());
 
+  bool reductionFailure = false;
   Tree* exactAngle = directTrigoFunction->child(0)->cloneTree();
   assert(exactAngle && !exactAngle->isUndefined());
   Internal::Dimension exactAngleDimension =
@@ -195,24 +197,29 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
   /* TODO: Second SimplifyWithAdaptiveStrategy could be avoided by calling
    * intermediate steps, and handle units right after projection. */
-  Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
-  if (exactAngleDimension.isUnit()) {
-    assert(exactAngleDimension.isSimpleAngleUnit());
-    assert(directTrigoFunction->isDirectTrigonometryFunction());
-    /* When removing units, angle units are converted to radians, so we
-     * manually add the conversion ratio back to preserve the input angleUnit.
-     */
-    // exactAngle * angleUnitRatio / RadianUnitRatio
-    Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
-    exactAngle->cloneNodeAtNode(KMult.node<2>);
-    PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
-    // Simplify again
-    Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx);
+  if (Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx)) {
+    if (exactAngleDimension.isUnit()) {
+      assert(exactAngleDimension.isSimpleAngleUnit());
+      assert(directTrigoFunction->isDirectTrigonometryFunction());
+      /* When removing units, angle units are converted to radians, so we
+       * manually add the conversion ratio back to preserve the input angleUnit.
+       */
+      // exactAngle * angleUnitRatio / RadianUnitRatio
+      Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
+      exactAngle->cloneNodeAtNode(KMult.node<2>);
+      PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
+      // Simplify again
+      reductionFailure =
+          !Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx) ||
+          reductionFailure;
+    }
+  } else {
+    reductionFailure = true;
   }
 
   // The angle must be real and finite.
-  if (!std::isfinite(Approximation::RootTreeToReal<float>(exactAngle, angleUnit,
-                                                          complexFormat))) {
+  if (reductionFailure || !std::isfinite(Approximation::RootTreeToReal<float>(
+                              exactAngle, angleUnit, complexFormat))) {
     exactAngle->removeTree();
     return UserExpression();
   }

@@ -643,6 +643,8 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     PatternMatching::Context ctx;
     if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
         ctx.getTree(KA)->isPositiveInteger()) {
+      /* √A = B with B a positive integer, if A is a positive integer and a
+       * perfect square */
       IntegerHandler m = Rational::Numerator(ctx.getTree(KA));
       IntegerHandler res = SquareRoot(m);
       if (!res.isMinusOne()) {
@@ -673,8 +675,8 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;
     }
-    /* With A real, although arg(exp(A*i)) -> A is only true if A is in
-     * ]-π,π], exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
+    /* With A real, although arg(exp(A*i)) -> A is only true if A is in ]-π,π],
+     * exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
      * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&
         GetComplexSign(ctx.getTree(KA)).isPureIm()) {
@@ -750,8 +752,8 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
      * (a < b < c), M(a,b) the result of merging children a and b (with
      * MergeAdditionChildWithNext) if it exists.
      * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)
-     * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should
-     * try merging again when child merged with nextChild) */
+     * - M(a,b) doesn't exists, but M(a,M(b,c)) does (previous child should try
+     * merging again when child merged with nextChild) */
     assert(!SystematicReduction::ShallowReduce(e));
   }
   return changed;

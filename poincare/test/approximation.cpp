@@ -1,6 +1,7 @@
 #include <float.h>
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 
@@ -39,11 +40,11 @@ void approximates_to(const char* input, const char* output,
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        // TODO Hugo : Explicit beautification step
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree, Approximation::Parameter(true, true, false, false),
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat)));
+        Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext);
 }

@@ -37,11 +37,8 @@ template <typename T>
 void simplify_and_compare_approximates_list(const char* input, bool equal) {
   Tree* e = parse_and_simplify(input);
   assert(Dimension::ListLength(e) == 2);
-  /* TODO Hugo : Skip unnecessary steps like beautification and a need for a
-   * Context. */
   Tree* eApproximated = Approximation::ToTree<T>(
-      e, Approximation::Parameter(true, true, false, false),
-      Approximation::Context(AngleUnit::None, ComplexFormat::Real));
+      e, Approximation::Parameter(true, true, false, false));
   T approx1 = Approximation::RootTreeToReal<T>(eApproximated->child(0));
   T approx2 = Approximation::RootTreeToReal<T>(eApproximated->child(1));
   bool equalResult = OMG::Float::RoughlyEqual<T>(

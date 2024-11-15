@@ -23,6 +23,7 @@
 #include "random.h"
 #include "rational.h"
 #include "symbol.h"
+#include "systematic_reduction.h"
 #include "undefined.h"
 #include "units/representatives.h"
 #include "units/unit.h"
@@ -98,8 +99,11 @@ Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
                                          Context context) {
+  if (!Dimension::DeepCheck(e)) {
+    return NAN;
+  }
   Tree* result = PrepareContext(e, param, &context);
-  assert(Dimension::DeepCheck(e) && Dimension::Get(result).isScalar());
+  assert(Dimension::IsNonListScalar(result));
   std::complex<T> c = ToComplex<T>(result, &context);
   result->removeTree();
   return c;
@@ -151,10 +155,29 @@ Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameter param,
 };
 
 template <typename T>
-Tree* Approximation::ToBeautifiedComplex(const Tree* e, const Context* ctx) {
+Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplex<T>(e, ctx);
-  return Beautification::PushBeautifiedComplex(
-      value, ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+  T re = value.real(), im = value.imag();
+  if (std::isnan(re) || std::isnan(im)) {
+    return Approximation::IsNonReal(value) ? KNonReal->cloneTree()
+                                           : KUndef->cloneTree();
+  }
+  if (im == 0.0) {
+    return SharedTreeStack->pushFloat(re);
+  }
+  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+  // Real part
+  if (re != 0.0) {
+    SharedTreeStack->pushAdd(2);
+    SharedTreeStack->pushFloat(re);
+  }
+  // Complex part
+  if (im != 1.0) {
+    SharedTreeStack->pushMult(2);
+    SharedTreeStack->pushFloat(im);
+  }
+  SharedTreeStack->pushComplexI();
+  return result;
 }
 
 template <typename T>
@@ -172,8 +195,7 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
     return result;
   }
   if (dim.isScalar()) {
-    Tree* result = ToBeautifiedComplex<T>(e, ctx);
-    return result;
+    return ToComplexTree<T>(e, ctx);
   }
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
@@ -181,7 +203,7 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
     return result;
   }
   for (Tree* child : result->children()) {
-    child->moveTreeOverTree(ToBeautifiedComplex<T>(child, ctx));
+    ApproximateToComplexTree(child, ctx);
   }
   return result;
 }
@@ -318,7 +340,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
    * cases where we know for sure there are no complexes. */
   assert(e->isExpression());
   if (e->isUndefined()) {
-    // TODO: Find a way to pass exact undef type up to PushBeautifiedComplex.
+    // TODO: Find a way to pass exact undef type up to ToComplexTree.
     return e->isNonReal() ? NonReal<T>() : NAN;
   }
   if (e->isRational()) {
@@ -975,7 +997,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
 }
 
 bool Approximation::ApproximateToComplexTree(Tree* e, const Context* ctx) {
-  e->moveTreeOverTree(ToBeautifiedComplex<double>(e, ctx));
+  e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
   return true;
 }
 
@@ -1074,9 +1096,9 @@ Tree* Approximation::ToPoint(const Tree* e, const Context* ctx) {
   Context tempCtx(*ctx);
   Tree* point = SharedTreeStack->pushPoint();
   tempCtx.m_pointElement = 0;
-  ToBeautifiedComplex<T>(e, &tempCtx);
+  ToComplexTree<T>(e, &tempCtx);
   tempCtx.m_pointElement = 1;
-  ToBeautifiedComplex<T>(e, &tempCtx);
+  ToComplexTree<T>(e, &tempCtx);
   return point;
 }
 
@@ -1093,7 +1115,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
   if (e->isMatrix()) {
     Tree* m = e->cloneNode();
     for (const Tree* child : e->children()) {
-      ToBeautifiedComplex<T>(child, ctx);
+      ToComplexTree<T>(child, ctx);
     }
     return m;
   }
@@ -1126,7 +1148,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       for (const Tree* child : e->children()) {
         bool childIsMatrix = Dimension::Get(child).isMatrix();
         Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
-                                     : ToBeautifiedComplex<T>(child, ctx);
+                                     : ToComplexTree<T>(child, ctx);
         if (result == nullptr) {
           resultIsMatrix = childIsMatrix;
           result = approx;
@@ -1150,7 +1172,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       Tree* s = KDiv->cloneNode();
       one->cloneTree();
       e->child(1)->cloneTree();
-      ToBeautifiedComplex<T>(s, ctx);
+      ToComplexTree<T>(s, ctx);
       s->removeTree();
       s->moveTreeOverTree(Matrix::ScalarMultiplication(s, a, true, ctx));
       a->removeTree();

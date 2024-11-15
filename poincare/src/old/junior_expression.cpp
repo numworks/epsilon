@@ -349,11 +349,14 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       /* We are using ApproximateAndReplaceEveryScalar to approximate
        * expressions with symbols such as π*x → 3.14*x. */
       Approximation::ApproximateAndReplaceEveryScalar(a, approxCtx);
+      // TODO Hugo: Rework ApproximateAndReplaceEveryScalar to handle complexes.
       *approximatedExpression = Builder(a);
     } else {
-      *approximatedExpression = Builder(Approximation::ToTree<double>(
-          e, Approximation::Parameter(true, true, false, true), approxCtx));
-      // TODO Hugo : Explicit beautification step
+      std::complex<double> value = Approximation::ToComplex<double>(
+          e, Approximation::Parameter(true, true, false, true), approxCtx);
+      *approximatedExpression =
+          Builder(Beautification::PushBeautifiedComplex<double>(
+              value, context->m_complexFormat));
     }
   }
   return;
@@ -573,9 +576,9 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
-  // TODO Hugo : Decide on prepare parameter, and beautification
+  // TODO Hugo : Decide on prepare parameter
   clone->moveTreeOverTree(Approximation::ToTree<T>(
-      clone, Approximation::Parameter(true, false, false, true)));
+      clone, Approximation::Parameter(true, false, false, false)));
   return SystemExpression::Builder(clone);
 }
 

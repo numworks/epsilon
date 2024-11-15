@@ -207,7 +207,7 @@ class Approximation final {
    * real */
   // TODO_PCJ: make private
   template <typename T>
-  static T To(const Tree* e, T x, const Context* ctx);
+  static T ToLocalContext(const Tree* e, const Context* ctx, T x);
 
   /* Helpers */
 

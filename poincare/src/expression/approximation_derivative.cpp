@@ -37,7 +37,7 @@ T scalarApproximateWithValueForArgumentAndOrder(
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return Approximation::To<T>(child, evaluationArgument, ctx);
+    return Approximation::ToLocalContext<T>(child, ctx, evaluationArgument);
   }
   T functionValue = scalarApproximateWithValueForArgumentAndOrder(
       evaluationArgument, order - 1, child, ctx);

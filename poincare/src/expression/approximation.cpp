@@ -552,16 +552,15 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
       assert(ctx);
-      // TODO Hugo : Rename contexts
-      Context childCtx = *ctx;
+      Context copyCtx = *ctx;
       LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
-      childCtx.m_localContext = &localCtx;
+      copyCtx.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
-        childCtx.setLocalValue(k);
-        Random::Context cleanContext;
-        childCtx.m_randomContext = cleanContext;
-        std::complex<T> value = ToComplex<T>(child, &childCtx);
+        copyCtx.setLocalValue(k);
+        // Reset random context
+        copyCtx.m_randomContext = Random::Context(true);
+        std::complex<T> value = ToComplex<T>(child, &copyCtx);
         if (e->isSum()) {
           result += value;
         } else {
@@ -605,11 +604,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         return NAN;
       }
       assert(ctx);
-      // TODO Hugo : Rename contexts
-      Context childCtx = *ctx;
-      LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
-      childCtx.m_localContext = &localCtx;
-      T result = ApproximateDerivative(derivand, at.real(), order, &childCtx);
+      T result = ApproximateDerivative(derivand, at.real(), order, ctx);
       return result;
     }
     case Type::Integral:
@@ -656,14 +651,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
-      // TODO Hugo : Rename contexts
-      Context childCtx = *ctx;
+      Context copyCtx = *ctx;
       LocalContext localCtx =
           LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
-      childCtx.m_localContext = &localCtx;
-      Random::Context cleanContext;
-      childCtx.m_randomContext = cleanContext;
-      return ToComplex<T>(e->child(2), &childCtx);
+      copyCtx.m_localContext = &localCtx;
+      // Reset random context
+      copyCtx.m_randomContext = Random::Context();
+      return ToComplex<T>(e->child(2), &copyCtx);
     }
     case Type::Dim: {
       int n = Dimension::ListLength(e->child(0));
@@ -1240,28 +1234,12 @@ T Approximation::To(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-T Approximation::To(const Tree* e, T x, const Context* ctx) {
-  T result;
-  if (!ctx) {
-    // TODO Hugo : Remove this method
-    LocalContext localCtx(x);
-    Context context(AngleUnit::Radian, ComplexFormat::Cartesian, -1, -1,
-                    Random::Context(false), &localCtx);
-    ctx = &context;
-    result = To<T>(e, &context);
-  } else {
-    Context tempCtx(*ctx);
-    // TODO Hugo : Clean-up this logic
-    if (tempCtx.m_localContext) {
-      LocalContext tempLocalCtx(x, tempCtx.m_localContext);
-      tempCtx.m_localContext = &tempLocalCtx;
-    } else {
-      LocalContext tempLocalCtx(x, nullptr);
-      tempCtx.m_localContext = &tempLocalCtx;
-    }
-    result = To<T>(e, &tempCtx);
-  }
-  return result;
+T Approximation::ToLocalContext(const Tree* e, const Context* ctx, T x) {
+  assert(ctx);
+  Context copyCtx(*ctx);
+  LocalContext localCtx(x, copyCtx.m_localContext);
+  copyCtx.m_localContext = &localCtx;
+  return To<T>(e, &copyCtx);
 }
 
 template <typename T>
@@ -1456,8 +1434,10 @@ template Tree* Approximation::ToPoint<double>(const Tree*, const Context* ctx);
 
 template float Approximation::To(const Tree* e, const Context* ctx);
 template double Approximation::To(const Tree* e, const Context* ctx);
-template float Approximation::To(const Tree* e, float x, const Context* ctx);
-template double Approximation::To(const Tree* e, double x, const Context* ctx);
+template float Approximation::ToLocalContext(const Tree* e, const Context* ctx,
+                                             float x);
+template double Approximation::ToLocalContext(const Tree* e, const Context* ctx,
+                                              double x);
 
 template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
     const Tree* piecewise, float x, const Context* ctx);

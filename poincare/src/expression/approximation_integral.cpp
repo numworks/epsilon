@@ -77,8 +77,8 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }
-  bool fIsNanInA = std::isnan(To(integrand, a, ctx));
-  bool fIsNanInB = std::isnan(To(integrand, b, ctx));
+  bool fIsNanInA = std::isnan(ToLocalContext(integrand, ctx, a));
+  bool fIsNanInB = std::isnan(ToLocalContext(integrand, ctx, b));
   /* The integrand has a singularity on a bound of the interval, use tanh-sinh
    * quadrature */
   if (fIsNanInA || fIsNanInB) {
@@ -178,16 +178,18 @@ T integrand(T x, Substitution<T> substitution,
             const Approximation::Context* ctx) {
   switch (substitution.type) {
     case Substitution<T>::Type::None:
-      return Approximation::To(integrandExpression, x, ctx);
+      return Approximation::ToLocalContext(integrandExpression, ctx, x);
     case Substitution<T>::Type::LeftOpen: {
       T z = 1.0 / (x + 1.0);
       T arg = substitution.originB - (2.0 * z - 1.0);
-      return Approximation::To(integrandExpression, arg, ctx) * z * z;
+      return Approximation::ToLocalContext(integrandExpression, ctx, arg) * z *
+             z;
     }
     case Substitution<T>::Type::RightOpen: {
       T z = 1.0 / (x + 1);
       T arg = 2.0 * z + substitution.originA - 1.0;
-      return Approximation::To(integrandExpression, arg, ctx) * z * z;
+      return Approximation::ToLocalContext(integrandExpression, ctx, arg) * z *
+             z;
     }
     default: {
       assert(substitution.type == Substitution<T>::Type::RealLine);
@@ -195,7 +197,7 @@ T integrand(T x, Substitution<T> substitution,
       T inv = 1.0 / (1.0 - x2);
       T w = (1.0 + x2) * inv * inv;
       T arg = x * inv;
-      return Approximation::To(integrandExpression, arg, ctx) * w;
+      return Approximation::ToLocalContext(integrandExpression, ctx, arg) * w;
     }
   }
 }
@@ -207,18 +209,20 @@ T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand,
   T arg = xc * scale;
   if (x < 0) {
     if (alternativeIntegrand.integrandNearA) {
-      return Approximation::To(alternativeIntegrand.integrandNearA, arg, ctx) *
+      return Approximation::ToLocalContext(alternativeIntegrand.integrandNearA,
+                                           ctx, arg) *
              scale;
     }
     arg = arg + alternativeIntegrand.a;
   } else {
     if (alternativeIntegrand.integrandNearB) {
-      return Approximation::To(alternativeIntegrand.integrandNearB, -arg, ctx) *
+      return Approximation::ToLocalContext(alternativeIntegrand.integrandNearB,
+                                           ctx, -arg) *
              scale;
     }
     arg = alternativeIntegrand.b - arg;
   }
-  return Approximation::To(integrandExpression, arg, ctx) * scale;
+  return Approximation::ToLocalContext(integrandExpression, ctx, arg) * scale;
 }
 
 /* Tanh-Sinh quadrature

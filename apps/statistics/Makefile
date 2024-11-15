@@ -13,13 +13,13 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   graph/graph_type_controller.cpp \
   graph/graph_view_model.cpp \
   graph/histogram_banner_view.cpp \
-  graph/histogram_controller.cpp \
+  graph/histogram_list_controller.cpp \
+  graph/histogram_main_view.cpp \
   graph/histogram_parameter_controller.cpp \
   graph/histogram_range.cpp \
   graph/histogram_view.cpp \
   graph/multiple_boxes_view.cpp \
   graph/multiple_data_view.cpp \
-  graph/multiple_histograms_view.cpp \
   graph/normal_probability_controller.cpp \
   graph/plot_banner_view.cpp \
   graph/plot_controller.cpp \

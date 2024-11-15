@@ -11,7 +11,7 @@
 #include "graph/frequency_controller.h"
 #include "graph/graph_type_controller.h"
 #include "graph/graph_view_model.h"
-#include "graph/histogram_controller.h"
+#include "graph/histogram_list_controller.h"
 #include "graph/normal_probability_controller.h"
 #include "stats/calculation_controller.h"
 #include "store.h"
@@ -101,7 +101,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     Escher::ButtonRowController m_frequencyHeader;
     BoxController m_boxController;
     Escher::ButtonRowController m_boxHeader;
-    HistogramController m_histogramController;
+    HistogramListController m_histogramController;
     Escher::ButtonRowController m_histogramHeader;
     GraphTypeController m_graphTypeController;
     Escher::AlternateViewController m_graphController;

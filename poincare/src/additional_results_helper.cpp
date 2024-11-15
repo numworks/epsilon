@@ -43,8 +43,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   ProjectionContext contextCopy = *ctx;
-  bool reductionSuccess = Simplification::SimplifyWithAdaptiveStrategy(
-      simplifiedAngle, &contextCopy);
+  bool reductionSuccess =
+      Simplification::Simplify(simplifiedAngle, &contextCopy);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -195,9 +195,9 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       .m_context = context,
   };
 
-  /* TODO: Second SimplifyWithAdaptiveStrategy could be avoided by calling
+  /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */
-  if (Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx)) {
+  if (Simplification::Simplify(exactAngle, &projCtx)) {
     if (exactAngleDimension.isUnit()) {
       assert(exactAngleDimension.isSimpleAngleUnit());
       assert(directTrigoFunction->isDirectTrigonometryFunction());
@@ -210,8 +210,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
       // Simplify again
       reductionFailure =
-          !Simplification::SimplifyWithAdaptiveStrategy(exactAngle, &projCtx) ||
-          reductionFailure;
+          !Simplification::Simplify(exactAngle, &projCtx) || reductionFailure;
     }
   } else {
     reductionFailure = true;

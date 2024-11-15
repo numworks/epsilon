@@ -156,7 +156,6 @@ void serialize_expression(const Tree* expression, char* buffer,
                           size_t bufferSize);
 
 // Simplification
-void simplify_with_adaptive_strategy(Tree* e, ProjectionContext* ctx,
-                                     bool beautify = true);
+void simplify(Tree* e, ProjectionContext* ctx, bool beautify = true);
 
 #endif

@@ -71,8 +71,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
   ctxCopy.m_advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
   Internal::Tree* exactProjected = exact.tree()->cloneTree();
-  Internal::Simplification::SimplifyWithAdaptiveStrategy(exactProjected,
-                                                         &ctxCopy, false);
+  Internal::Simplification::Simplify(exactProjected, &ctxCopy, false);
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
   Internal::Simplification::ToSystem(approximateProjected, &ctxCopy);

@@ -54,16 +54,12 @@ class Poincare::Internal::ExactFormulaTest {
     }
     /* If pi/2 - asin(x) => acos(x) and pi/2 - acos(x) => asin(x), exact
      * formulas for angles in ]π/4, π/2] must be removed. */
-    process_tree_and_compare("π/2-arcsin(1/10)", "π/2-arcsin(1/10)",
-                             [](Tree* tree, ProjectionContext ctx) {
-                               simplify_with_adaptive_strategy(tree, &ctx);
-                             },
-                             {});
-    process_tree_and_compare("π/2-arccos(1/10)", "π/2-arccos(1/10)",
-                             [](Tree* tree, ProjectionContext ctx) {
-                               simplify_with_adaptive_strategy(tree, &ctx);
-                             },
-                             {});
+    process_tree_and_compare(
+        "π/2-arcsin(1/10)", "π/2-arcsin(1/10)",
+        [](Tree* tree, ProjectionContext ctx) { simplify(tree, &ctx); }, {});
+    process_tree_and_compare(
+        "π/2-arccos(1/10)", "π/2-arccos(1/10)",
+        [](Tree* tree, ProjectionContext ctx) { simplify(tree, &ctx); }, {});
   }
 };
 

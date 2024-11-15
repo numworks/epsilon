@@ -38,8 +38,8 @@ inline static bool AreConsistent(const ComplexSign& sign,
 }
 #endif
 
-bool Simplification::SimplifyWithAdaptiveStrategy(
-    Tree* e, ProjectionContext* projectionContext, bool beautify) {
+bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext,
+                              bool beautify) {
   assert(projectionContext);
   ExceptionTry {
     // Clone the tree and raise an exception for pool overflow.

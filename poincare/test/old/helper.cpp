@@ -206,7 +206,7 @@ void assert_parsed_expression_simplify_to(
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
-        simplify_with_adaptive_strategy(e, &context);
+        simplify(e, &context);
         // TODO_PCJ also approximate to see if it crashes
         return e;
       });

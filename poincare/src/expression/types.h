@@ -353,16 +353,17 @@ NODE(Empty)
  * These could be a single Type with a nodeValue, but it would require a
  * builtin/parser rework since undef/nonreal text would require node value
  * information, or a builtin subclass. */
-NODE(NonReal)                  // sqrt(-1) in Real ComplexMode
-NODE(UndefZeroPowerZero)       // 0^0
-NODE(UndefZeroDivision)        // 1/0, tan(nπ/2)
-NODE(UndefUnhandled)           // inf - inf, 0 * inf, unimplemented
-NODE(UndefUnhandledDimension)  // [[1,2]] + [[1],[2]]
-NODE(UndefBadType)             // non-integers in gcd,lcm,...
-NODE(UndefOutOfDefinition)     // arg(0)
-NODE(UndefNotDefined)          // Global variable that has not been defined
-NODE(UndefForbidden)           // Forbidden by preferences, exam-modes, ...
-NODE(Undef)                    // Default
+NODE(UndefFailedSimplification)  // use exclusively in tests
+NODE(NonReal)                    // sqrt(-1) in Real ComplexMode
+NODE(UndefZeroPowerZero)         // 0^0
+NODE(UndefZeroDivision)          // 1/0, tan(nπ/2)
+NODE(UndefUnhandled)             // inf - inf, 0 * inf, unimplemented
+NODE(UndefUnhandledDimension)    // [[1,2]] + [[1],[2]]
+NODE(UndefBadType)               // non-integers in gcd,lcm,...
+NODE(UndefOutOfDefinition)       // arg(0)
+NODE(UndefNotDefined)            // Global variable that has not been defined
+NODE(UndefForbidden)             // Forbidden by preferences, exam-modes, ...
+NODE(Undef)                      // Default
 
 RANGE(Undefined, NonReal, Undef)
 

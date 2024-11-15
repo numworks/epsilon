@@ -245,6 +245,7 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     /* BUILDER(UndefOutOfDefinition) -> System node ⛔️ */
     /* BUILDER(UndefNotDefined) -> System node ⛔️ */
     /* BUILDER(UndefForbidden) -> System node ⛔️ */
+    /* BUILDER(UndefFailedSimplification) -> System node ⛔️ */
     BUILDER(Undef),
 
     // 11 - Operations on expressions

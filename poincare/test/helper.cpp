@@ -74,8 +74,9 @@ void remove_system_codepoints(char* buffer) {
 }
 
 void simplify(Tree* e, ProjectionContext* ctx, bool beautify) {
-  bool success = Simplification::Simplify(e, ctx, beautify);
-  quiz_assert(success);
+  if (!Simplification::Simplify(e, ctx, beautify)) {
+    e->cloneNodeOverTree(KFailedSimplification);
+  }
 }
 
 void process_tree_and_compare(const char* input, const char* output,

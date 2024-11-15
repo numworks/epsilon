@@ -27,6 +27,7 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::UndefOutOfDefinition, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefNotDefined, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefForbidden, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefFailedSimplification, BuiltinsAliases::k_undefinedAlias},
     {Type::NonReal, "nonreal"},
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},

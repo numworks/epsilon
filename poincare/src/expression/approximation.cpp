@@ -1424,24 +1424,24 @@ template std::complex<double> Approximation::RootTreeToComplex<double>(
 template float Approximation::FloatBinomial<float>(float, float);
 template double Approximation::FloatBinomial<double>(double, double);
 
-template std::complex<float> Approximation::ToComplex<float>(
-    const Tree*, const Context* ctx);
-template std::complex<double> Approximation::ToComplex<double>(
-    const Tree*, const Context* ctx);
+template std::complex<float> Approximation::ToComplex<float>(const Tree*,
+                                                             const Context*);
+template std::complex<double> Approximation::ToComplex<double>(const Tree*,
+                                                               const Context*);
 
-template Tree* Approximation::ToPoint<float>(const Tree*, const Context* ctx);
-template Tree* Approximation::ToPoint<double>(const Tree*, const Context* ctx);
+template Tree* Approximation::ToPoint<float>(const Tree*, const Context*);
+template Tree* Approximation::ToPoint<double>(const Tree*, const Context*);
 
-template float Approximation::To(const Tree* e, const Context* ctx);
-template double Approximation::To(const Tree* e, const Context* ctx);
-template float Approximation::ToLocalContext(const Tree* e, const Context* ctx,
-                                             float x);
-template double Approximation::ToLocalContext(const Tree* e, const Context* ctx,
-                                              double x);
+template float Approximation::To(const Tree*, const Context*);
+template double Approximation::To(const Tree*, const Context*);
+template float Approximation::ToLocalContext(const Tree*, const Context*,
+                                             float);
+template double Approximation::ToLocalContext(const Tree*, const Context*,
+                                              double);
 
 template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
-    const Tree* piecewise, float x, const Context* ctx);
+    const Tree*, float, const Context*);
 template int Approximation::IndexOfActivePiecewiseBranchAt<double>(
-    const Tree* piecewise, double x, const Context* ctx);
+    const Tree*, double, const Context*);
 
 }  // namespace Poincare::Internal

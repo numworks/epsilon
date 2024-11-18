@@ -107,7 +107,7 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   SimpleKTrees::KTree stdDev = KPow(variance, 1_e / 2_e);
   // stdDev * sqrt(1 + 1 / (n - 1))
   SimpleKTrees::KTree sampleStdDev =
-      KPow(KMult(stdDev, KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e))), 1_e / 2_e);
+      KMult(stdDev, KPow(KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e)), 1_e / 2_e));
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne() ? Integer::Push(Dimension::ListLength(list))
                                     : Fold(coefficients, Type::ListSum);

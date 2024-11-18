@@ -215,13 +215,9 @@ class AbstractTreeStack : public BlockStack {
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
 
+ public:
   // Execute an action with input parameters types (Tree*, ContextT*,
   // ParametersTs...)
-  template <typename ActionT, typename ContextT, typename... ParametersTs>
-  void execute(ActionT action, Tree* tree, ContextT* context,
-               std::size_t maxSize, ParametersTs... extraParameters);
-
- public:
   template <typename ActionT, typename ContextT, typename... ParametersTs>
   void executeAndReplaceTree(ActionT action, Tree* tree,
                              const ContextT* context,
@@ -230,8 +226,14 @@ class AbstractTreeStack : public BlockStack {
     // Copy context to avoid altering the original
     ContextT contextCopy = *context;
     Block* previousLastBlock = lastBlock();
-    execute(action, tree, &contextCopy, m_maxSize, extraParameters...);
-    assert(previousLastBlock != lastBlock());
+#if ASSERTIONS
+    size_t treesNumber = numberOfTrees();
+#endif
+    assert(numberOfTrees() == treesNumber);
+    action(tree, &contextCopy, extraParameters...);
+    /* Prevent edition action from leaking: an action creates exactly one
+     * tree. */
+    assert(numberOfTrees() == treesNumber + 1);
     tree->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
   }
 };
@@ -259,32 +261,6 @@ class TreeStack : public TemplatedTreeStack<1024 * 16> {
 };
 
 #define SharedTreeStack TreeStack::SharedTreeStack
-
-template <typename ActionT, typename ContextT, typename... ParametersTs>
-void AbstractTreeStack::execute(ActionT action, Tree* tree, ContextT* context,
-                                std::size_t maxSize,
-                                ParametersTs... extraParameters) {
-#if ASSERTIONS
-  size_t treesNumber = numberOfTrees();
-#endif
-  size_t previousSize = size();
-  ExceptionTry {
-    assert(numberOfTrees() == treesNumber);
-    action(tree, context, extraParameters...);
-    /* Prevent edition action from leaking: an action creates at most one
-     * tree. */
-    assert(numberOfTrees() <= treesNumber + 1);
-    // Ensure the result tree doesn't exceeds the expected size.
-    if (size() - previousSize > maxSize) {
-      TreeStackCheckpoint::Raise(ExceptionType::TreeSizeExcess);
-    }
-    return;
-  }
-  ExceptionCatch(type) {
-    assert(numberOfTrees() == treesNumber);
-    TreeStackCheckpoint::Raise(type);
-  }
-}
 
 }  // namespace Poincare::Internal
 

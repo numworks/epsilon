@@ -50,7 +50,6 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext,
     switch (type) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
-      case ExceptionType::TreeSizeExcess:
         return false;
       default:
         TreeStackCheckpoint::Raise(type);

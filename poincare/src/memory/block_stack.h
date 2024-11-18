@@ -134,7 +134,7 @@ class BlockStack {
    * m_referenceTable and implement a destructor on TreeRef. */
   ReferenceTable& m_referenceTable;
   Block* m_blocks;
-  size_t m_maxSize;
+  const size_t m_maxSize;
   size_t m_size = 0;
 };
 

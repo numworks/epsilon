@@ -486,24 +486,17 @@ bool UserExpression::hasDefinedComplexApproximation(
     const ApproximationContext& approximationContext, T* returnRealPart,
     T* returnImagPart) const {
   if (approximationContext.complexFormat() ==
-      Preferences::ComplexFormat::Real) {
+          Preferences::ComplexFormat::Real ||
+      !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
-  ProjectionContext projCtx = {
-      .m_complexFormat = approximationContext.complexFormat(),
-      .m_angleUnit = approximationContext.angleUnit(),
-      .m_context = approximationContext.context()};
-  Tree* e = tree()->cloneTree();
-  Simplification::ToSystem(e, &projCtx);
-  if (!projCtx.m_dimension.isScalar() ||
-      Internal::Dimension::ListLength(e) !=
-          Internal::Dimension::k_nonListListLength) {
-    e->removeTree();
-    return false;
-  }
-  Approximation::PrepareExpressionForApproximation(e, projCtx.m_complexFormat);
-  std::complex<T> z = Approximation::RootTreeToComplex<T>(e);
-  e->removeTree();
+  // TODO Hugo: Handle Poincare Context, stop using ApproximationContext
+  std::complex<T> z = Approximation::ToComplex<T>(
+      tree(), Approximation::Parameter(true, true, false, false),
+      Approximation::Context(approximationContext.angleUnit(),
+                             approximationContext.complexFormat(), -1, -1,
+                             Random::Context(false), nullptr,
+                             approximationContext.context()));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;

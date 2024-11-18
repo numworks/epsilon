@@ -562,13 +562,15 @@ bool PolynomialParser::HasNonNullCoefficients(
   if (highestDegreeCoefficientIsPositive) {
     const Tree* child = coefList->child(degree);
     ComplexSign sign = GetComplexSign(child);
+#if ASSERTIONS
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
-    assert(
-        Dimension::Get(child).isScalar() &&
-        (Approximation::RootTreeToComplex<double>(child).imag() == 0 ||
-         std::isnan(Approximation::RootTreeToComplex<double>(child).imag())));
+    std::complex<double> value = Approximation::ToComplex<double>(
+        e, Approximation::Parameter(false, false, false, false));
+    assert(Dimension::IsNonListScalar(child) &&
+           (value.imag() == 0 || std::isnan(value.imag())));
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
+#endif
     OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
@@ -582,12 +584,14 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   for (const Tree* child : coefList->children()) {
     ComplexSign sign = GetComplexSign(child);
+#if ASSERTIONS
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
-    assert(
-        Dimension::Get(child).isScalar() &&
-        (Approximation::RootTreeToComplex<double>(child).imag() == 0 ||
-         std::isnan(Approximation::RootTreeToComplex<double>(child).imag())));
+    std::complex<double> value = Approximation::ToComplex<double>(
+        e, Approximation::Parameter(false, false, false, false));
+    assert(Dimension::IsNonListScalar(child) &&
+           (value.imag() == 0 || std::isnan(value.imag())));
+#endif
     OMG::Troolean isNull = sign.realSign().trooleanIsNull();
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above

@@ -191,7 +191,8 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced,
     checking that the ComplexSign of the tree is consistent with the tree
     approximation. */
   if (Dimension::IsNonListScalar(e)) {
-    std::complex<double> value = Approximation::RootTreeToComplex<double>(e);
+    std::complex<double> value = Approximation::ToComplex<double>(
+        e, Approximation::Parameter(true, false, false, false));
     assert(AreConsistent(GetComplexSign(e), value));
   }
 #endif

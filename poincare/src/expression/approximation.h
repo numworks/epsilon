@@ -161,14 +161,6 @@ class Approximation final {
                 Random::Context(false), &localContext));
   }
 
-  // tree must be of scalar dimension
-  template <typename T>
-  static std::complex<T> RootTreeToComplex(const Tree* e) {
-    // TODO Hugo : Replace directly every RootTreeToComplex, check isProjected
-    return ToComplex<T>(e, Parameter(true, true, false, true),
-                        Context(AngleUnit::Radian, ComplexFormat::Cartesian));
-  }
-
   // tree must have a scalar dimension
   template <typename T>
   static T RootTreeToReal(const Tree* e, T abscissa) {

@@ -287,8 +287,10 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
 int Order::ComplexLineCompare(const Tree* e1, const Tree* e2) {
   assert(Dimension::Get(e1).isScalar() && Dimension::Get(e2).isScalar());
   /* TODO: the approximations could be precomputed and called only once */
-  std::complex<double> v1 = Approximation::RootTreeToComplex<double>(e1);
-  std::complex<double> v2 = Approximation::RootTreeToComplex<double>(e2);
+  std::complex<double> v1 = Approximation::ToComplex<double>(
+      e1, Approximation::Parameter(false, false, false, false));
+  std::complex<double> v2 = Approximation::ToComplex<double>(
+      e2, Approximation::Parameter(false, false, false, false));
   /* Real numbers are ordered before complex numbers */
   if ((v1.imag() == 0) && (v2.imag() != 0)) {
     return -1;

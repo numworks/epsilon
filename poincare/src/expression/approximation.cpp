@@ -1409,11 +1409,6 @@ template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
 template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
     const Tree*, double);
 
-template std::complex<float> Approximation::RootTreeToComplex<float>(
-    const Tree*);
-template std::complex<double> Approximation::RootTreeToComplex<double>(
-    const Tree*);
-
 template float Approximation::FloatBinomial<float>(float, float);
 template double Approximation::FloatBinomial<double>(double, double);
 

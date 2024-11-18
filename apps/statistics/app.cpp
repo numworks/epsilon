@@ -93,12 +93,12 @@ App::GraphTab::GraphTab()
                       &m_graphMenuStackViewController, &m_graphTypeController,
                       &app()->m_store),
       m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
-      m_histogramController(
+      m_histogramMainController(
           &m_histogramHeader, &m_histogramHeader, &app()->m_tabViewController,
           &m_graphMenuStackViewController, &m_graphTypeController,
           &app()->m_store, app()->snapshot()->storeVersion()),
-      m_histogramHeader(&m_graphController, &m_histogramController,
-                        &m_histogramController),
+      m_histogramHeader(&m_graphController, &m_histogramMainController,
+                        &m_histogramMainController),
       m_graphTypeController(&m_graphMenuStackViewController,
                             &app()->m_tabViewController,
                             &m_graphMenuStackViewController, &app()->m_store,

@@ -3,22 +3,31 @@
 namespace Statistics {
 
 HistogramMainView::HistogramMainView(
-    Store* store, Shared::CurveViewRange* histogramRange,
-    Responder* parentResponder, Escher::ListViewDataSource* dataSource,
-    Escher::SelectableListViewDataSource* selectionDataSource,
-    Escher::SelectableListViewDelegate* delegate)
-    : Escher::SelectableListView(parentResponder, dataSource,
-                                 selectionDataSource, delegate),
-      m_histogramViews{HistogramView(store, 0, histogramRange),
-                       HistogramView(store, 1, histogramRange),
-                       HistogramView(store, 2, histogramRange),
-                       HistogramView(store, 3, histogramRange),
-                       HistogramView(store, 4, histogramRange),
-                       HistogramView(store, 5, histogramRange)},
-      m_store(store) {
-  for (HistogramView& histogramView : m_histogramViews) {
-    histogramView.setDisplayLabels(false);
+    Escher::Responder* parentResponder,
+    Escher::ListViewDataSource* listDataSource,
+    Escher::SelectableListViewDataSource* listSelectionDataSource,
+    Escher::SelectableListViewDelegate* listDelegate)
+    : m_listView(parentResponder, listDataSource, listSelectionDataSource,
+                 listDelegate) {}
+
+Escher::View* HistogramMainView::subviewAtIndex(int index) {
+  if (index == 0) {
+    return &m_listView;
   }
+  assert(index == 1);
+  return &m_bannerView;
+}
+
+void HistogramMainView::layoutSubviews(bool force) {
+  KDSize bannerSize = m_bannerView.minimalSizeForOptimalDisplay();
+  setChildFrame(&m_bannerView,
+                KDRect(0, bounds().height() - bannerSize.height(),
+                       bounds().width(), bannerSize.height()),
+                force);
+  setChildFrame(
+      &m_listView,
+      KDRect(0, 0, bounds().width(), bounds().height() - bannerSize.height()),
+      force);
 }
 
 }  // namespace Statistics

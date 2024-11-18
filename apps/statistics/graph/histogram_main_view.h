@@ -1,31 +1,35 @@
 #ifndef STATISTICS_HISTOGRAM_MAIN_VIEW_H
 #define STATISTICS_HISTOGRAM_MAIN_VIEW_H
 
-#include <escher/selectable_list_view.h>
-
 #include <array>
 
 #include "../store.h"
+#include "escher/selectable_list_view.h"
 #include "histogram_banner_view.h"
-#include "histogram_view.h"
 
 namespace Statistics {
 
-class HistogramMainView : public Escher::SelectableListView {
+class HistogramMainView : public Escher::View {
  public:
   HistogramMainView(
-      Store* store, Shared::CurveViewRange* histogramRange,
-      Responder* parentResponder, Escher::ListViewDataSource* dataSource,
-      Escher::SelectableListViewDataSource* selectionDataSource = nullptr,
-      Escher::SelectableListViewDelegate* delegate = nullptr);
+      Escher::Responder* parentResponder,
+      Escher::ListViewDataSource* listDataSource,
+      Escher::SelectableListViewDataSource* listSelectionDataSource,
+      Escher::SelectableListViewDelegate* listDelegate);
 
-  // HistogramBannerView* bannerView() { return &m_bannerView; }
+  HistogramBannerView* bannerView() { return &m_bannerView; }
+
+  Escher::SelectableListView* listView() { return &m_listView; }
 
  private:
-  std::array<HistogramView, Store::k_numberOfSeries> m_histogramViews;
-  // HistogramBannerView m_bannerView;
+  HistogramBannerView m_bannerView;
+  Escher::SelectableListView m_listView;
 
   Store* m_store;
+
+  int numberOfSubviews() const override { return 2; }
+  Escher::View* subviewAtIndex(int index) override;
+  void layoutSubviews(bool force = false) override;
 };
 
 }  // namespace Statistics

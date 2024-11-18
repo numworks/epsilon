@@ -7,40 +7,45 @@
 #include <escher/tab_view_controller.h>
 
 #include "../store.h"
-#include "histogram_main_view.h"
+#include "escher/selectable_list_view.h"
 #include "histogram_range.h"
-#include "statistics/graph/graph_button_row_delegate.h"
+#include "statistics/graph/histogram_list_view.h"
 
 namespace Statistics {
 
 class HistogramListController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
-      public Escher::SelectableListViewDelegate,
-      public GraphButtonRowDelegate {
+      public Escher::SelectableListViewDelegate {
  public:
-  HistogramListController(Responder* parentResponder,
-                          Escher::ButtonRowController* header,
-                          Escher::TabViewController* tabController,
-                          Escher::StackViewController* stackViewController,
-                          Escher::ViewController* typeViewController,
-                          Store* store, uint32_t* storeVersion);
+  HistogramListController(Responder* parentResponder, Store* store,
+                          uint32_t* storeVersion,
+                          Escher::SelectableListView* listView);
 
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
-
+  int reusableCellCount(int type) const override {
+    return std::size(m_displayCells);
+    ;
+  }
+  void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+  int typeAtRow(int row) const override { return 0; }
   Escher::SolidColorCell* reusableCell(int index, int type) override;
 
+  bool handleEvent(Ion::Events::Event event) override;
+
  private:
-  KDCoordinate nonMemoizedRowHeight(int row) override { return 10; };
-  ;
+  KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
 
-  HistogramMainView m_view;
+  // number of histograms displayed on the same screen
+  constexpr static std::size_t k_displayedHistograms = 3;
 
-  std::array<Escher::SolidColorCell, Store::k_numberOfSeries> m_cells;
+  std::array<Escher::SolidColorCell, k_displayedHistograms> m_displayCells;
 
   HistogramRange m_histogramRange;
 
   uint32_t* m_storeVersion;
   Store* m_store;
+
+  Escher::SelectableListView* m_listView;
 };
 
 }  // namespace Statistics

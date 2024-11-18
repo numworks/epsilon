@@ -53,6 +53,7 @@ class Approximation final {
             int16_t listElement = -1, int16_t pointElement = -1,
             Random::Context randomContext = Random::Context(false),
             LocalContext* localContext = nullptr,
+            // TODO Hugo: Unused for now
             Poincare::Context* symbolContext = nullptr)
         : m_angleUnit(angleUnit),
           m_complexFormat(complexFormat),
@@ -141,8 +142,10 @@ class Approximation final {
   static T RootPreparedToReal(const Tree* preparedFunction, T abscissa,
                               int listElement = -1) {
     // TODO Hugo : Replace directly every RootPreparedToReal
+    LocalContext localContext(abscissa);
     return To<T>(preparedFunction, Parameter(true, false, false, false),
-                 Context(AngleUnit::None, ComplexFormat::None, listElement));
+                 Context(AngleUnit::None, ComplexFormat::None, listElement, -1,
+                         Random::Context(false), &localContext));
   }
 
   /* preparedFunction is scalar or point, and must have been prepared with
@@ -155,7 +158,7 @@ class Approximation final {
     return ToPointOrScalar<T>(
         preparedFunction, Parameter(true, false, false, false),
         Context(AngleUnit::None, ComplexFormat::None, -1, -1,
-                Random::Context(false), &localContext, nullptr));
+                Random::Context(false), &localContext));
   }
 
   // tree must be of scalar dimension
@@ -173,7 +176,7 @@ class Approximation final {
     LocalContext localContext(abscissa);
     return To<T>(e, Parameter(true, true, false, true),
                  Context(AngleUnit::None, ComplexFormat::None, -1, -1,
-                         Random::Context(false), &localContext, nullptr));
+                         Random::Context(false), &localContext));
   }
 
   /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be

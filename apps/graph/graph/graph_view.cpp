@@ -266,7 +266,8 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
           ContinuousFunction* otherModel =
               functionStore()
                   ->modelForRecord(m_secondSelectedRecord)
-                  .operator->();
+                  .
+                  operator->();
           assert(f->canComputeArea());
           assert(otherModel->canComputeArea());
           patternLower = Curve2D(evaluateXY, otherModel);

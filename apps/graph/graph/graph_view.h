@@ -28,7 +28,7 @@ class GraphView : public Shared::FunctionGraphView,
    * highlightColor and the non-highlightColor are identical in the graph view
    * of the application graph. We thereby avoid to uselessly reload some part
    * of the graph where the area under the curve is colored. */
-  void setAreaHighlightColor(bool highlightColor) override {};
+  void setAreaHighlightColor(bool highlightColor) override{};
   int numberOfDrawnRecords() const override;
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;

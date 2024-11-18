@@ -268,23 +268,21 @@ void AbstractTreeStack::execute(ActionT action, Tree* tree, ContextT* context,
   size_t treesNumber = numberOfTrees();
 #endif
   size_t previousSize = size();
-  while (true) {
-    ExceptionTry {
-      assert(numberOfTrees() == treesNumber);
-      action(tree, context, extraParameters...);
-      /* Prevent edition action from leaking: an action creates at most one
-       * tree. */
-      assert(numberOfTrees() <= treesNumber + 1);
-      // Ensure the result tree doesn't exceeds the expected size.
-      if (size() - previousSize > maxSize) {
-        TreeStackCheckpoint::Raise(ExceptionType::TreeSizeExcess);
-      }
-      return;
+  ExceptionTry {
+    assert(numberOfTrees() == treesNumber);
+    action(tree, context, extraParameters...);
+    /* Prevent edition action from leaking: an action creates at most one
+     * tree. */
+    assert(numberOfTrees() <= treesNumber + 1);
+    // Ensure the result tree doesn't exceeds the expected size.
+    if (size() - previousSize > maxSize) {
+      TreeStackCheckpoint::Raise(ExceptionType::TreeSizeExcess);
     }
-    ExceptionCatch(type) {
-      assert(numberOfTrees() == treesNumber);
-      TreeStackCheckpoint::Raise(type);
-    }
+    return;
+  }
+  ExceptionCatch(type) {
+    assert(numberOfTrees() == treesNumber);
+    TreeStackCheckpoint::Raise(type);
   }
 }
 

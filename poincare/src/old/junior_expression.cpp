@@ -432,6 +432,9 @@ SystemExpression UserExpression::cloneAndReduce(
   return cloneAndReduceAndBeautify(&context, false, reductionFailure);
 }
 
+/* TODO_PCJ: refactor into cloneAndReduce and cloneAndReduceAndBeautify to
+ * return correct expression type (UserExpression if beautified,
+ * SystemExpression otherwise) */
 SystemExpression UserExpression::cloneAndReduceAndBeautify(
     Internal::ProjectionContext* context, bool beautify,
     bool* reductionFailure) const {

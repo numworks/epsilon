@@ -234,36 +234,14 @@ void assert_expression_approximates_to(const char *expression,
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
-        /* TODO_PCJ: replacing symbols should be done in RootTreeToTree or
-         * RootTreeToTree should be called on simplified trees. */
-        /* TODO_PCJ: use ToSystem instead of PrepareForProjection and see the
-         * tests that fail */
-        // Replace user symbols, seed randoms and check dimensions
-        Simplification::ToSystem(e, &context);
-        if (Internal::Dimension::Get(e).isUnit()) {
-          // no unit approximation yet
-          e->removeTree();
-          return KUndef->cloneTree();
-        }
-        if (!Internal::Dimension::Get(e).isScalar() ||
-            Internal::Dimension::IsList(e)) {
-          TreeRef result = Internal::Approximation::ToTree<T>(
-              e, Internal::Approximation::Parameter(true, false, false, false),
-              Internal::Approximation::Context(
-                  reductionContext.angleUnit(),
-                  reductionContext.complexFormat()));
-          Beautification::DeepBeautify(result, context);
-          e->removeTree();
-          // TODO Hugo : Factorize with next step
-          return result;
-        }
-        // TODO Hugo : Rework next steps
-        Approximation::PrepareExpressionForApproximation(
-            e, context.m_complexFormat);
-        std::complex<T> value = Approximation::RootTreeToComplex<T>(e);
-        e->moveTreeOverTree(Beautification::PushBeautifiedComplex(
-            value, context.m_complexFormat));
-        return e;
+        /* TODO_PCJ: Try skipping preparation and see the tests that fail */
+        TreeRef result = Internal::Approximation::ToTree<T>(
+            e, Internal::Approximation::Parameter(true, true, false, true),
+            Internal::Approximation::Context(reductionContext.angleUnit(),
+                                             reductionContext.complexFormat()));
+        Beautification::DeepBeautify(result, context);
+        e->removeTree();
+        return result;
       },
       numberOfSignificantDigits);
 }

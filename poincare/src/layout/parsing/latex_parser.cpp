@@ -20,7 +20,7 @@ namespace LatexParser {
 
 // ===== Tokens =====
 
-/* These token description arrays alternate
+/* These latexToken arrays alternate
  *  - A delimiter string (ex: "\\left(" or "\\right)")
  *  - A string containing 1 char that matches the index of the child in the
  * layout (ex: "\0" or "\1")
@@ -74,29 +74,36 @@ using LayoutDetector = bool (*)(const Tree*);
 using EmptyLayoutBuilder = Tree* (*)();
 using LayoutCustomParserBuilder = Tree* (*)(const char**);
 
-struct LatexToken {
-  const char* const* description;
-  const int descriptionLength;
-  const LayoutDetector detector;
+struct LatexLayoutRule {
+  /* The latex token. Is used to:
+   * - detect a latex token when turning Latex to Layout
+   * - build a latex string when turning Layout to Latex
+   * */
+  const char* const* latexToken;
+  const int latexTokenLength;
+  // Detect if a layout should be turned into this latex token
+  const LayoutDetector detectLayout;
+  // Builds a layout from this latex token (default method)
   const EmptyLayoutBuilder buildEmptyLayout;
+  // Builds a layout from this latex token (custom method)
   const LayoutCustomParserBuilder customParseAndBuildLayout = nullptr;
 };
 
-#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
+#define ONE_CHILD_RULE(LATEX, IS_LAYOUT, KTREE)                \
   {                                                            \
     LATEX, std::size(LATEX),                                   \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
         []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
   }
 
-#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)                      \
+#define TWO_CHILDREN_RULE(LATEX, IS_LAYOUT, KTREE)                       \
   {                                                                      \
     LATEX, std::size(LATEX),                                             \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
         []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
   }
 
-#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                               \
+#define CODEPOINT_RULE(LATEX, CODEPOINT)                                \
   {                                                                     \
     LATEX, std::size(LATEX),                                            \
         [](const Tree* t) -> bool {                                     \
@@ -105,23 +112,23 @@ struct LatexToken {
         []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
   }
 
-#define DO_NOTHING_TOKEN(LATEX)                                           \
+#define DO_NOTHING_RULE(LATEX)                                            \
   {                                                                       \
     LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
         []() -> Tree* { return nullptr; }                                 \
   }
 
-constexpr static LatexToken k_tokens[] = {
+constexpr static LatexLayoutRule k_rules[] = {
     // Parenthesis
-    ONE_CHILD_TOKEN(parenthesisToken, isParenthesesLayout, KParenthesesL),
+    ONE_CHILD_RULE(parenthesisToken, isParenthesesLayout, KParenthesesL),
     // Curly braces
-    ONE_CHILD_TOKEN(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
+    ONE_CHILD_RULE(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
     // Absolute value
-    ONE_CHILD_TOKEN(absToken, isAbsLayout, KAbsL),
+    ONE_CHILD_RULE(absToken, isAbsLayout, KAbsL),
     // Sqrt
-    ONE_CHILD_TOKEN(sqrtToken, isSqrtLayout, KSqrtL),
+    ONE_CHILD_RULE(sqrtToken, isSqrtLayout, KSqrtL),
     // Conjugate
-    ONE_CHILD_TOKEN(conjugateToken, isConjLayout, KConjL),
+    ONE_CHILD_RULE(conjugateToken, isConjLayout, KConjL),
     // Superscript
     {superscriptToken, std::size(superscriptToken),
      [](const Tree* l) -> bool {
@@ -135,11 +142,11 @@ constexpr static LatexToken k_tokens[] = {
      },
      []() -> Tree* { return KSubscriptL(KRackL())->cloneTree(); }},
     // Fraction
-    TWO_CHILDREN_TOKEN(fracToken, isFractionLayout, KFracL),
+    TWO_CHILDREN_RULE(fracToken, isFractionLayout, KFracL),
     // Root
-    TWO_CHILDREN_TOKEN(nthRootToken, isRootLayout, KRootL),
+    TWO_CHILDREN_RULE(nthRootToken, isRootLayout, KRootL),
     // Binomial
-    TWO_CHILDREN_TOKEN(binomToken, isBinomialLayout, KBinomialL),
+    TWO_CHILDREN_RULE(binomToken, isBinomialLayout, KBinomialL),
     // Integral
     {integralToken, std::size(integralToken),
      [](const Tree* l) -> bool { return l->isIntegralLayout(); }, nullptr,
@@ -147,32 +154,32 @@ constexpr static LatexToken k_tokens[] = {
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
     // Middle Dot
-    CODEPOINT_TOKEN(middleDotToken, UCodePointMiddleDot),
+    CODEPOINT_RULE(middleDotToken, UCodePointMiddleDot),
     // Multiplication sign
-    CODEPOINT_TOKEN(multiplicationSignToken, UCodePointMultiplicationSign),
+    CODEPOINT_RULE(multiplicationSignToken, UCodePointMultiplicationSign),
     // <=
-    CODEPOINT_TOKEN(lesserOrEqualToken, UCodePointInferiorEqual),
+    CODEPOINT_RULE(lesserOrEqualToken, UCodePointInferiorEqual),
     // >=
-    CODEPOINT_TOKEN(greaterOrEqualToken, UCodePointSuperiorEqual),
+    CODEPOINT_RULE(greaterOrEqualToken, UCodePointSuperiorEqual),
     // °
-    CODEPOINT_TOKEN(degreeToken, UCodePointDegreeSign),
+    CODEPOINT_RULE(degreeToken, UCodePointDegreeSign),
     // ->
-    CODEPOINT_TOKEN(rightwardsArrowToken, UCodePointRightwardsArrow),
+    CODEPOINT_RULE(rightwardsArrowToken, UCodePointRightwardsArrow),
     // Infinity
-    CODEPOINT_TOKEN(infinityToken, UCodePointInfinity),
+    CODEPOINT_RULE(infinityToken, UCodePointInfinity),
     // ÷
     {divisionToken, std::size(divisionToken),
      // This codepoint doesn't exist in Poincare
      [](const Tree* t) -> bool { return false; },
      []() -> Tree* { return KCodePointL<'/'>()->cloneTree(); }},
     // Tokens that do nothing
-    DO_NOTHING_TOKEN(textToken),
-    DO_NOTHING_TOKEN(operatorToken),
-    DO_NOTHING_TOKEN(spaceToken),
-    // DO_NOTHING_TOKEN(commaToken),
-    DO_NOTHING_TOKEN(escapeToken),
-    DO_NOTHING_TOKEN(leftBraceToken),
-    DO_NOTHING_TOKEN(rightBraceToken),
+    DO_NOTHING_RULE(textToken),
+    DO_NOTHING_RULE(operatorToken),
+    DO_NOTHING_RULE(spaceToken),
+    // DO_NOTHING_RULE(commaToken),
+    DO_NOTHING_RULE(escapeToken),
+    DO_NOTHING_RULE(leftBraceToken),
+    DO_NOTHING_RULE(rightBraceToken),
 };
 
 // ===== Latex to Layout ======
@@ -205,25 +212,25 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
 }
 
 Tree* NextLatexToken(const char** start) {
-  for (const LatexToken& token : k_tokens) {
-    const char* leftDelimiter = token.description[0];
+  for (const LatexLayoutRule& rule : k_rules) {
+    const char* leftDelimiter = rule.latexToken[0];
     size_t leftDelimiterLength = strlen(leftDelimiter);
     if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
       continue;
     }
     // Token found
     *start += leftDelimiterLength;
-    if (token.customParseAndBuildLayout) {
-      return token.customParseAndBuildLayout(start);
+    if (rule.customParseAndBuildLayout) {
+      return rule.customParseAndBuildLayout(start);
     }
 
-    Tree* layoutToken = token.buildEmptyLayout();
+    Tree* layoutToken = rule.buildEmptyLayout();
 
     // Parse children
-    for (int i = 1; i < token.descriptionLength - 1; i += 2) {
-      assert(strlen(token.description[i]) <= 1);
-      int childIndexInLayout = token.description[i][0];
-      const char* rightDelimiter = token.description[i + 1];
+    for (int i = 1; i < rule.latexTokenLength - 1; i += 2) {
+      assert(strlen(rule.latexToken[i]) <= 1);
+      int childIndexInLayout = rule.latexToken[i][0];
+      const char* rightDelimiter = rule.latexToken[i + 1];
       ParseLatexOnRackUntilIdentifier(
           Rack::From(layoutToken->child(childIndexInLayout)), start,
           rightDelimiter);
@@ -318,18 +325,18 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
       continue;
     }
 
-    bool tokenFound = false;
-    for (const LatexToken& token : k_tokens) {
-      if (!token.detector(child)) {
+    bool ruleFound = false;
+    for (const LatexLayoutRule& rule : k_rules) {
+      if (!rule.detectLayout(child)) {
         continue;
       }
 
       int i = 0;
-      tokenFound = true;
-      bool isCodePoint = token.descriptionLength == 1;
+      ruleFound = true;
+      bool isCodePoint = rule.latexTokenLength == 1;
 
       while (true) {
-        const char* delimiter = token.description[i];
+        const char* delimiter = rule.latexToken[i];
         size_t delimiterLength = strlen(delimiter);
 
         if (buffer + delimiterLength + isCodePoint >= end) {
@@ -339,7 +346,7 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
         memcpy(buffer, delimiter, delimiterLength);
         buffer += delimiterLength;
 
-        if (i == token.descriptionLength - 1) {
+        if (i == rule.latexTokenLength - 1) {
           if (isCodePoint) {
             /* Add a space after latex codepoints, otherwise the string might
              * not be valid in latex.
@@ -352,15 +359,15 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
           *buffer = 0;
           break;
         }
-        assert(strlen(token.description[i + 1]) <= 1);
-        int indexOfChildInLayout = token.description[i + 1][0];
+        assert(strlen(rule.latexToken[i + 1]) <= 1);
+        int indexOfChildInLayout = rule.latexToken[i + 1][0];
         buffer = serializer(Rack::From(child->child(indexOfChildInLayout)),
                             buffer, end);
         i += 2;
       }
     }
 
-    if (tokenFound) {
+    if (ruleFound) {
       continue;
     }
 

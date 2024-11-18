@@ -1,6 +1,7 @@
 #ifndef SHARED_SCATTER_PLOT_HELPER_H
 #define SHARED_SCATTER_PLOT_HELPER_H
 
+#include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 
 namespace Poincare::Internal {
@@ -9,6 +10,7 @@ class Tree;
 
 namespace Shared {
 
+// TODO_PCJ: Move this class in Poincare
 class ScatterPlotIterable {
   friend class ContinuousFunction;
 
@@ -16,7 +18,7 @@ class ScatterPlotIterable {
   class Iterator {
    public:
     Iterator(const Poincare::Internal::Tree* node) : m_node(node) {}
-    Poincare::Point operator*() const;
+    Poincare::Coordinate2D<float> operator*() const;
     bool operator!=(const Iterator& rhs) const;
     Iterator& operator++();
 

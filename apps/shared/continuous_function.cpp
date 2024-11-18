@@ -11,6 +11,7 @@
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/derivation.h>
 
 #include <algorithm>
@@ -512,7 +513,6 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   }
   int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
   SystemFunction e = expressionApproximated(context, derivationOrder);
-  ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
@@ -536,7 +536,10 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    return static_cast<Point&>(point).approximate2D<T>(approximationContext);
+    // TODO Hugo: Hide internal API
+    return Internal::Approximation::ToPoint<T>(
+        point.tree(),
+        Internal::Approximation::Parameter(false, false, false, false));
   }
 
   if (!properties().isParametric()) {

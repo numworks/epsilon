@@ -182,17 +182,6 @@ class Approximation final {
                  Context(angleUnit, complexFormat));
   }
 
-  /* pointTree must have a point dimension. angleUnit and complexFormat can be
-   * left to default on projected trees. */
-  template <typename T>
-  static Coordinate2D<T> RootTreeToPoint(
-      const Tree* pointTree, AngleUnit angleUnit = AngleUnit::Radian,
-      ComplexFormat complexFormat = ComplexFormat::Real) {
-    // TODO Hugo : Replace directly every RootTreeToPoint, check isProjected
-    return ToPoint<T>(pointTree, Parameter(true, true, false, true),
-                      Context(angleUnit, complexFormat));
-  }
-
   // tree must be of scalar dimension and real.
   // TODO_PCJ: make private
   template <typename T>

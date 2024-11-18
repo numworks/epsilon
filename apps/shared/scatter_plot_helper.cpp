@@ -1,14 +1,16 @@
 #include "scatter_plot_helper.h"
 
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/memory/tree.h>
 
 using namespace Poincare;
 
 namespace Shared {
 
-Point ScatterPlotIterable::Iterator::operator*() const {
+Coordinate2D<float> ScatterPlotIterable::Iterator::operator*() const {
   assert(m_node->isPoint());
-  return Point::Builder(m_node->child(0), m_node->child(1));
+  return Internal::Approximation::ToPoint<float>(
+      m_node, Internal::Approximation::Parameter(false, false, false, false));
 }
 
 bool ScatterPlotIterable::Iterator::operator!=(const Iterator& rhs) const {

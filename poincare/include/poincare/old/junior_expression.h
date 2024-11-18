@@ -480,9 +480,6 @@ class Point final : public JuniorExpression {
   static Point Builder(const NewExpression x, const NewExpression y) {
     return Builder(x.tree(), y.tree());
   }
-  template <typename T>
-  Coordinate2D<T> approximate2D(
-      const ApproximationContext& approximationContext);
   Layout create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
                         int significantDigits, Context* context) const;
 };

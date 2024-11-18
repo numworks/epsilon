@@ -535,10 +535,8 @@ void GraphView::drawScatterPlot(KDContext* ctx, KDRect rect,
                                 ContinuousFunction* f) const {
   assert(f->properties().isScatterPlot());
   // TODO Handle limiting tMax and tMin ?
-  ApproximationContext approximationContext(context());
-  for (Point p : f->iterateScatterPlot(context())) {
-    drawDot(ctx, rect, k_dotSize, p.approximate2D<float>(approximationContext),
-            f->color());
+  for (Coordinate2D<float> p : f->iterateScatterPlot(context())) {
+    drawDot(ctx, rect, k_dotSize, p, f->color());
   }
 }
 

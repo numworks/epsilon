@@ -1039,15 +1039,6 @@ Point Point::Builder(const Tree* x, const Tree* y) {
   return static_cast<Point&>(temp);
 }
 
-template <typename T>
-Coordinate2D<T> Point::approximate2D(
-    const ApproximationContext& approximationContext) {
-  // TODO_PCJ: Add context for angle unit and complex format.
-  // TODO: Use RootTreeToPoint?
-  return Coordinate2D<T>(Approximation::RootTreeToReal<T>(tree()->child(0)),
-                         Approximation::RootTreeToReal<T>(tree()->child(1)));
-}
-
 Poincare::Layout Point::create2DLayout(
     Preferences::PrintFloatMode floatDisplayMode, int significantDigits,
     Context* context) const {
@@ -1058,11 +1049,6 @@ Poincare::Layout Point::create2DLayout(
   return Poincare::Layout::Create(KPoint2DL(KA, KB),
                                   {.KA = child0, .KB = child1});
 }
-
-template Coordinate2D<float> Point::approximate2D<float>(
-    const ApproximationContext& approximationContext);
-template Coordinate2D<double> Point::approximate2D<double>(
-    const ApproximationContext& approximationContext);
 
 /* List */
 

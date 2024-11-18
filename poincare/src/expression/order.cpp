@@ -264,8 +264,10 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   if (dim.isPoint()) {
     assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
-    Coordinate2D<double> p1 = Approximation::RootTreeToPoint<double>(e1);
-    Coordinate2D<double> p2 = Approximation::RootTreeToPoint<double>(e2);
+    Coordinate2D<double> p1 = Approximation::ToPoint<double>(
+        e1, Approximation::Parameter(false, false, false, false));
+    Coordinate2D<double> p2 = Approximation::ToPoint<double>(
+        e2, Approximation::Parameter(false, false, false, false));
     return p1.x() < p2.x()   ? -1
            : p1.x() > p2.x() ? 1
            : p1.y() < p2.y() ? -1

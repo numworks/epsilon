@@ -150,9 +150,8 @@ Range2D<float> GraphController::optimalRange(
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
     } else if (f->properties().isScatterPlot()) {
-      ApproximationContext approximationContext(context);
-      for (Point p : f->iterateScatterPlot(context)) {
-        zoom.fitPoint(p.approximate2D<float>(approximationContext));
+      for (Coordinate2D<float> p : f->iterateScatterPlot(context)) {
+        zoom.fitPoint(p);
       }
     } else {
       assert(f->properties().isCartesian());
@@ -370,11 +369,9 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 
   Poincare::Context* context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
-    ApproximationContext approximationContext(context);
     float t = 0;
-    for (Point p : function->iterateScatterPlot(context)) {
-      if (isCursorVisibleAtPosition(
-              p.approximate2D<float>(approximationContext), ignoreMargins)) {
+    for (Coordinate2D<float> p : function->iterateScatterPlot(context)) {
+      if (isCursorVisibleAtPosition(p, ignoreMargins)) {
         return t;
       }
       ++t;
@@ -447,9 +444,8 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double nextX = nextT;
     nextT = -1;
     double previousX = -INFINITY;
-    ApproximationContext approximationContext(context);
-    for (Point p : nextF->iterateScatterPlot(context)) {
-      Coordinate2D<double> xy = p.approximate2D<float>(approximationContext);
+    for (Coordinate2D<float> p : nextF->iterateScatterPlot(context)) {
+      Coordinate2D<double> xy = p;
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
           ++nextT;

@@ -640,8 +640,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       Context childCtx(ctx, ctx->m_listElement + 1);
       Random::Context cleanContext;
       childCtx.m_randomContext = &cleanContext;
-      std::complex<T> result = ToComplex<T>(e->child(2), &childCtx);
-      return result;
+      return ToComplex<T>(e->child(2), &childCtx);
     }
     case Type::Dim: {
       int n = Dimension::ListLength(e->child(0));
@@ -658,8 +657,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx);
       Context tempCtx(*ctx);
       tempCtx.m_listElement = i;
-      std::complex<T> result = ToComplex<T>(values, &tempCtx);
-      return result;
+      return ToComplex<T>(values, &tempCtx);
     }
     case Type::ListSlice: {
       assert(ctx && ctx->m_listElement != -1);
@@ -671,8 +669,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(start >= 0);
       Context tempCtx(*ctx);
       tempCtx.m_listElement += start;
-      std::complex<T> result = ToComplex<T>(values, &tempCtx);
-      return result;
+      return ToComplex<T>(values, &tempCtx);
     }
     case Type::ListSum:
     case Type::ListProduct: {

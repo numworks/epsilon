@@ -24,8 +24,8 @@ class Axes : public CGrid {
 
   void drawAxes(const AbstractPlotView* plotView, KDContext* ctx,
                 KDRect rect) const {
-    m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
-    m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
+    m_xAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Horizontal);
+    m_yAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Vertical);
   }
 
   void drawAxesAndGrid(const AbstractPlotView* plotView, KDContext* ctx,
@@ -34,8 +34,8 @@ class Axes : public CGrid {
     drawAxes(plotView, ctx, rect);
   }
   void reloadAxes(AbstractPlotView* plotView) {
-    m_xAxis.reloadAxis(plotView, AbstractPlotView::Axis::Horizontal);
-    m_yAxis.reloadAxis(plotView, AbstractPlotView::Axis::Vertical);
+    m_xAxis.reloadAxis(plotView, OMG::Axis::Horizontal);
+    m_yAxis.reloadAxis(plotView, OMG::Axis::Vertical);
   }
 
  protected:
@@ -59,8 +59,7 @@ class WithCartesianGrid {
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayWhite;
   static void DrawGridLines(const AbstractPlotView* plotView, KDContext* ctx,
-                            KDRect rect, AbstractPlotView::Axis parallel,
-                            bool boldGrid);
+                            KDRect rect, OMG::Axis parallel, bool boldGrid);
 };
 
 class WithPolarGrid {
@@ -89,8 +88,8 @@ class WithPolarGrid {
 class NoAxis {
  public:
   void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
-                AbstractPlotView::Axis) const {}
-  void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis) {}
+                OMG::Axis) const {}
+  void reloadAxis(AbstractPlotView*, OMG::Axis) {}
   bool isAxis() const { return false; }
   void setOtherAxis(bool other) {}
 };
@@ -98,8 +97,8 @@ class NoAxis {
 class PlainAxis {
  public:
   void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
-                AbstractPlotView::Axis) const;
-  void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis) {}
+                OMG::Axis) const;
+  void reloadAxis(AbstractPlotView*, OMG::Axis) {}
   bool isAxis() const { return true; }
   void setOtherAxis(bool other) {}
 
@@ -110,18 +109,17 @@ class PlainAxis {
 class SimpleAxis : public PlainAxis {
  public:
   void drawAxis(const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
-                AbstractPlotView::Axis axis) const;
-  virtual void reloadAxis(AbstractPlotView*, AbstractPlotView::Axis axis) {}
+                OMG::Axis axis) const;
+  virtual void reloadAxis(AbstractPlotView*, OMG::Axis axis) {}
   virtual void setOtherAxis(bool other) {}
 
  protected:
   virtual float tickPosition(int i, const AbstractPlotView* plotView,
-                             AbstractPlotView::Axis axis) const;
+                             OMG::Axis axis) const;
   virtual float tickStep(const AbstractPlotView* plotView,
-                         AbstractPlotView::Axis axis) const;
+                         OMG::Axis axis) const;
   virtual void drawLabel(int i, float t, const AbstractPlotView* plotView,
-                         KDContext* ctx, KDRect rect,
-                         AbstractPlotView::Axis axis,
+                         KDContext* ctx, KDRect rect, OMG::Axis axis,
                          KDColor color = k_color) const {}
 };
 
@@ -143,8 +141,7 @@ class AbstractLabeledAxis : public SimpleAxis {
 
   AbstractLabeledAxis() : m_lastDrawnRect(KDRectZero), m_hidden(false) {}
 
-  void reloadAxis(AbstractPlotView* plotView,
-                  AbstractPlotView::Axis axis) override;
+  void reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) override;
   void setOtherAxis(bool other) override { m_otherAxis = other; }
   void setHidden(bool hide) { m_hidden = hide; }
 
@@ -155,15 +152,15 @@ class AbstractLabeledAxis : public SimpleAxis {
     return const_cast<AbstractLabeledAxis*>(this)->mutableLabel(i);
   }
   virtual int computeLabel(int i, const AbstractPlotView* plotView,
-                           AbstractPlotView::Axis axis);
+                           OMG::Axis axis);
   virtual bool labelWillBeDisplayed(int i, KDRect rect) const;
   KDRect labelRect(int i, float t, const AbstractPlotView* plotView,
-                   AbstractPlotView::Axis axis) const;
+                   OMG::Axis axis) const;
   void drawLabel(int i, float t, const AbstractPlotView* plotView,
-                 KDContext* ctx, KDRect rect, AbstractPlotView::Axis axis,
+                 KDContext* ctx, KDRect rect, OMG::Axis axis,
                  KDColor color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView* plotView,
-                                     AbstractPlotView::Axis axis) const;
+                                     OMG::Axis axis) const;
 
   mutable float m_labelsPosition;
   mutable KDRect m_lastDrawnRect;

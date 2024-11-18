@@ -194,9 +194,9 @@ void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X,
+    interactiveCurveViewRange()->centerAxisAround(OMG::Axis::Horizontal,
                                                   m_cursor->x());
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y,
+    interactiveCurveViewRange()->centerAxisAround(OMG::Axis::Vertical,
                                                   m_cursor->y());
   }
   curveView()->reload();

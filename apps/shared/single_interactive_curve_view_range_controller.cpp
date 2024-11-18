@@ -9,8 +9,8 @@ namespace Shared {
 
 SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
-        Responder *parentResponder, InteractiveCurveViewRange *interactiveRange,
-        Shared::MessagePopUpController *confirmPopUpController)
+        Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
+        Shared::MessagePopUpController* confirmPopUpController)
     : SingleRangeController<float>(parentResponder, confirmPopUpController),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
@@ -18,7 +18,7 @@ SingleInteractiveCurveViewRangeController::
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
 }
 
-void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {
+void SingleInteractiveCurveViewRangeController::setAxis(OMG::Axis axis) {
   m_axis = axis;
   extractParameters();
 }
@@ -26,8 +26,10 @@ void SingleInteractiveCurveViewRangeController::setAxis(Axis axis) {
 bool SingleInteractiveCurveViewRangeController::boundsParametersAreDifferent() {
   /* m_secondaryRangeParam is ignored here because it is only relevant when main
    * parameters (xAuto) are different. */
-  float min = m_axis == Axis::X ? m_range->xMin() : m_range->yMin();
-  float max = m_axis == Axis::X ? m_range->xMax() : m_range->yMax();
+  float min =
+      m_axis == OMG::Axis::Horizontal ? m_range->xMin() : m_range->yMin();
+  float max =
+      m_axis == OMG::Axis::Horizontal ? m_range->xMax() : m_range->yMax();
 
   return m_autoParam != m_range->zoomAuto(m_axis) ||
          m_rangeParam.min() != min || m_rangeParam.max() != max;
@@ -46,11 +48,11 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
 void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_autoParam = m_range->zoomAuto(m_axis);
   m_gridUnitParam = m_range->userGridUnit(m_axis);
-  if (m_axis == Axis::X) {
+  if (m_axis == OMG::Axis::Horizontal) {
     m_rangeParam =
         Range1D<float>::ValidRangeBetween(m_range->xMin(), m_range->xMax());
   } else {
-    assert(m_axis == Axis::Y);
+    assert(m_axis == OMG::Axis::Vertical);
     m_rangeParam =
         Range1D<float>::ValidRangeBetween(m_range->yMin(), m_range->yMax());
   }
@@ -70,10 +72,12 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
     tempRange.setZoomAuto(m_axis, m_autoParam);
     tempRange.computeRanges();
 
-    float min = m_axis == Axis::X ? tempRange.xMin() : tempRange.yMin();
-    float max = m_axis == Axis::X ? tempRange.xMax() : tempRange.yMax();
+    float min =
+        m_axis == OMG::Axis::Horizontal ? tempRange.xMin() : tempRange.yMin();
+    float max =
+        m_axis == OMG::Axis::Horizontal ? tempRange.xMax() : tempRange.yMax();
     m_rangeParam = Range1D<float>::ValidRangeBetween(min, max);
-    if (m_axis == Axis::X) {
+    if (m_axis == OMG::Axis::Horizontal) {
       /* The y range has been updated too and must be stored for
        * confirmParameters. */
       m_secondaryRangeParam =
@@ -87,23 +91,23 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
   if (boundsParametersAreDifferent()) {
     // Deactivate auto status before updating values.
     m_range->setZoomAuto(m_axis, false);
-    if (m_axis == Axis::X) {
+    if (m_axis == OMG::Axis::Horizontal) {
       m_range->setXRange(m_rangeParam.min(), m_rangeParam.max());
       m_range->setZoomAuto(m_axis, m_autoParam);
-      if (m_autoParam && m_range->zoomAuto(Axis::Y)) {
+      if (m_autoParam && m_range->zoomAuto(OMG::Axis::Vertical)) {
         /* yMin and yMax must also be updated. We could avoid having to store
          * these values if we called m_range->computeRanges() instead, but it
          * would cost a significant computation time. */
         assert(!std::isnan(m_secondaryRangeParam.min()) &&
                !std::isnan(m_secondaryRangeParam.max()));
 
-        m_range->setZoomAuto(Axis::Y, false);
+        m_range->setZoomAuto(OMG::Axis::Vertical, false);
         m_range->setYRange(m_secondaryRangeParam.min(),
                            m_secondaryRangeParam.max());
-        m_range->setZoomAuto(Axis::Y, true);
+        m_range->setZoomAuto(OMG::Axis::Vertical, true);
       }
     } else {
-      assert(m_axis == Axis::Y);
+      assert(m_axis == OMG::Axis::Vertical);
       m_range->setYRange(m_rangeParam.min(), m_rangeParam.max());
       m_range->setZoomAuto(m_axis, m_autoParam);
     }
@@ -151,15 +155,15 @@ int SingleInteractiveCurveViewRangeController::reusableParameterCellCount(
              : SingleRangeController<float>::reusableParameterCellCount(type);
 }
 
-HighlightCell *SingleInteractiveCurveViewRangeController::reusableParameterCell(
+HighlightCell* SingleInteractiveCurveViewRangeController::reusableParameterCell(
     int index, int type) {
   return type == k_gridUnitCellType
              ? &m_gridUnitCell
              : SingleRangeController<float>::reusableParameterCell(index, type);
 }
 
-TextField *SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
-    HighlightCell *cell, int index) {
+TextField* SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
+    HighlightCell* cell, int index) {
   if (typeAtRow(index) == k_gridUnitCellType) {
     assert(cell == &m_gridUnitCell);
     return m_gridUnitCell.textField();
@@ -174,7 +178,7 @@ float SingleInteractiveCurveViewRangeController::parameterAtIndex(int index) {
 }
 
 bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
-    const char *text, float floatValue, int row) const {
+    const char* text, float floatValue, int row) const {
   if (text[0] == 0 && typeAtRow(row) == k_gridUnitCellType) {
     // Accept empty inputs for grid unit cell
     return false;
@@ -183,7 +187,7 @@ bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
 }
 
 void SingleInteractiveCurveViewRangeController::fillCellForRow(
-    HighlightCell *cell, int row) {
+    HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_gridUnitCellType && gridUnitIsAuto()) {
     textFieldOfCellAtIndex(cell, row)->setText(
         I18n::translate(I18n::Message::DefaultSetting));
@@ -193,7 +197,7 @@ void SingleInteractiveCurveViewRangeController::fillCellForRow(
 }
 
 bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
-    Escher::AbstractTextField *textField, Ion::Events::Event event) {
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
       !textField->isEditing() &&
       typeAtRow(selectedRow()) == k_gridUnitCellType && gridUnitIsAuto()) {
@@ -205,7 +209,7 @@ bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
 }
 
 void SingleInteractiveCurveViewRangeController::textFieldDidAbortEditing(
-    Escher::AbstractTextField *textField) {
+    Escher::AbstractTextField* textField) {
   // Reload selected cell to display "Auto" when text is empty
   m_selectableListView.reloadSelectedCell();
   SingleRangeController<float>::textFieldDidAbortEditing(textField);

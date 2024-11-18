@@ -60,11 +60,10 @@ bool FrequencyController::textFieldDidFinishEditing(
   return true;
 }
 
-void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
-                                            char* labelBuffer, int maxSize,
-                                            int glyphLength,
+void FrequencyController::appendLabelSuffix(OMG::Axis axis, char* labelBuffer,
+                                            int maxSize, int glyphLength,
                                             int maxGlyphLength) const {
-  if (axis == Shared::AbstractPlotView::Axis::Horizontal) {
+  if (axis == OMG::Axis::Horizontal) {
     return;
   }
   int length = strlen(labelBuffer);

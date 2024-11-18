@@ -20,14 +20,14 @@ uint32_t CurveViewRange::rangeChecksum() {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(Axis axis) {
+float CurveViewRange::computeGridUnit(OMG::Axis axis) {
   float minNumberOfUnits, maxNumberOfUnits, range;
-  if (axis == Axis::X) {
+  if (axis == OMG::Axis::Horizontal) {
     minNumberOfUnits = k_minNumberOfXGridUnits;
     maxNumberOfUnits = k_maxNumberOfXGridUnits;
     range = xMax() - xMin();
   } else {
-    assert(axis == Axis::Y);
+    assert(axis == OMG::Axis::Vertical);
     minNumberOfUnits = k_minNumberOfYGridUnits;
     maxNumberOfUnits = k_maxNumberOfYGridUnits;
     range = yMax() - yMin() + offscreenYAxis();

@@ -44,25 +44,26 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   bool zoomAndGridUnitAuto() const { return zoomAuto() && gridUnitAuto(); }
   bool zoomAuto() const { return m_zoomAuto.x && m_zoomAuto.y; }
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
-  bool zoomAuto(Axis axis) const { return m_zoomAuto(axis); }
-  void setZoomAuto(Axis axis, bool v) {
+  bool zoomAuto(OMG::Axis axis) const { return m_zoomAuto(axis); }
+  void setZoomAuto(OMG::Axis axis, bool v) {
     AxisInformation<bool> newAuto = m_zoomAuto;
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
   }
   bool gridUnitAuto() const {
-    return gridUnitAuto(Axis::X) && gridUnitAuto(Axis::Y);
+    return gridUnitAuto(OMG::Axis::Horizontal) &&
+           gridUnitAuto(OMG::Axis::Vertical);
   }
   void setGridUnitAuto() { privateSetUserGridUnit(NAN, NAN); }
-  bool gridUnitAuto(Axis axis) const {
+  bool gridUnitAuto(OMG::Axis axis) const {
     return std::isnan(m_userGridUnit(axis));
   }
   AxisInformation<float> userGridUnit() const { return m_userGridUnit; }
   void setUserGridUnit(AxisInformation<float> userGridUnit) {
     privateSetUserGridUnit(userGridUnit.x, userGridUnit.y);
   }
-  float userGridUnit(Axis axis) const { return m_userGridUnit(axis); }
-  void setUserGridUnit(Axis axis, float v) {
+  float userGridUnit(OMG::Axis axis) const { return m_userGridUnit(axis); }
+  void setUserGridUnit(OMG::Axis axis, float v) {
     AxisInformation<float> newGridUnit = m_userGridUnit;
     newGridUnit.set(axis, v);
     privateSetUserGridUnit(newGridUnit.x, newGridUnit.y);
@@ -83,7 +84,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void panWithVector(float x, float y);
   void computeRanges() { privateComputeRanges(m_zoomAuto.x, m_zoomAuto.y); }
   void normalize();
-  void centerAxisAround(Axis axis, float position);
+  void centerAxisAround(OMG::Axis axis, float position);
   bool panToMakePointVisible(float x, float y, float topMarginRatio,
                              float rightMarginRatio, float bottomMarginRatio,
                              float leftMarginRatio, float pixelWidth);
@@ -130,10 +131,10 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void privateSetGridUnitAuto(bool xAuto, bool yAuto);
   void privateSetUserGridUnit(float xValue, float yValue);
   void privateComputeRanges(bool computeX, bool computeY);
-  float computeGridUnitFromUserParameter(Axis axis) const;
+  float computeGridUnitFromUserParameter(OMG::Axis axis) const;
 
   // MemoizedCurveViewRange
-  float computeGridUnit(Axis axis) override;
+  float computeGridUnit(OMG::Axis axis) override;
 
   Poincare::Range2D<float> m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;

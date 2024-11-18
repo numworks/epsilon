@@ -12,8 +12,12 @@ class MemoizedCurveViewRange : public CurveViewRange {
   template <typename T>
   struct AxisInformation {
     T x, y;
-    T operator()(Axis axis) const { return axis == Axis::X ? x : y; }
-    void set(Axis axis, T value) { (axis == Axis::X ? x : y) = value; }
+    T operator()(OMG::Axis axis) const {
+      return axis == OMG::Axis::Horizontal ? x : y;
+    }
+    void set(OMG::Axis axis, T value) {
+      (axis == OMG::Axis::Horizontal ? x : y) = value;
+    }
   };
 
   MemoizedCurveViewRange();
@@ -32,9 +36,9 @@ class MemoizedCurveViewRange : public CurveViewRange {
 
  protected:
   Poincare::Range2D<float> memoizedRange() const { return m_range; }
-  virtual float computeGridUnit(Axis axis) {
-    return axis == Axis::X ? CurveViewRange::xGridUnit()
-                           : CurveViewRange::yGridUnit();
+  virtual float computeGridUnit(OMG::Axis axis) {
+    return axis == OMG::Axis::Horizontal ? CurveViewRange::xGridUnit()
+                                         : CurveViewRange::yGridUnit();
   }
 
   void protectedSetXRange(float min, float max,

@@ -83,8 +83,8 @@ bool GoToParameterController::confirmParameterAtIndex(int parameterIndex,
     }
     m_cursor->moveTo(unknown, unknown, yFromX);
   }
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
-  m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
+  m_graphRange->centerAxisAround(OMG::Axis::Horizontal, m_cursor->x());
+  m_graphRange->centerAxisAround(OMG::Axis::Vertical, m_cursor->y());
   return true;
 }
 

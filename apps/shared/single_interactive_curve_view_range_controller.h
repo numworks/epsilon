@@ -10,16 +10,15 @@ namespace Shared {
 class SingleInteractiveCurveViewRangeController
     : public SingleRangeController<float> {
  public:
-  using Axis = InteractiveCurveViewRange::Axis;
-
   SingleInteractiveCurveViewRangeController(
       Escher::Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange,
       MessagePopUpController* confirmPopUpController);
 
   const char* title() override {
-    return I18n::translate(m_axis == Axis::X ? I18n::Message::ValuesOfX
-                                             : I18n::Message::ValuesOfY);
+    return I18n::translate(m_axis == OMG::Axis::Horizontal
+                               ? I18n::Message::ValuesOfX
+                               : I18n::Message::ValuesOfY);
   }
   int numberOfRows() const override {
     return SingleRangeController<float>::numberOfRows() + 1;
@@ -32,8 +31,8 @@ class SingleInteractiveCurveViewRangeController
                                 Ion::Events::Event event) override;
   void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
-  Axis axis() const { return m_axis; }
-  void setAxis(Axis axis);
+  OMG::Axis axis() const { return m_axis; }
+  void setAxis(OMG::Axis axis);
 
  private:
   constexpr static int k_gridUnitCellType = 3;
@@ -65,7 +64,7 @@ class SingleInteractiveCurveViewRangeController
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_gridUnitCell;
   float m_gridUnitParam;
 
-  Axis m_axis;
+  OMG::Axis m_axis;
 };
 
 }  // namespace Shared

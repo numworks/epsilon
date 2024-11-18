@@ -18,8 +18,7 @@ static void convertFloatToText(float f, char* buffer, int bufferSize) {
       Poincare::Preferences::PrintFloatMode::Decimal);
 }
 
-void IntervalAxis::reloadAxis(AbstractPlotView* plotView,
-                              AbstractPlotView::Axis axis) {
+void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
   Interval* plotInterval = interval(plotView);
   float low = plotInterval->estimate() - plotInterval->marginOfError();
   float high = plotInterval->estimate() + plotInterval->marginOfError();
@@ -31,10 +30,10 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView,
   m_ticks[0] = low;
   m_ticks[1] = high;
 
-  KDCoordinate leftLabelPosition = plotView->floatToKDCoordinatePixel(
-      AbstractPlotView::Axis::Horizontal, low);
-  KDCoordinate rightLabelPosition = plotView->floatToKDCoordinatePixel(
-      AbstractPlotView::Axis::Horizontal, high);
+  KDCoordinate leftLabelPosition =
+      plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal, low);
+  KDCoordinate rightLabelPosition =
+      plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal, high);
   KDCoordinate spaceBetweenBounds = rightLabelPosition - leftLabelPosition;
   KDCoordinate labelMaxWidth = static_cast<KDCoordinate>(
       k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font));
@@ -58,7 +57,7 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView,
 }
 
 float IntervalAxis::tickPosition(int i, const AbstractPlotView* plotView,
-                                 AbstractPlotView::Axis) const {
+                                 OMG::Axis) const {
   if (i >= k_numberOfLabels) {
     return NAN;
   }
@@ -66,8 +65,8 @@ float IntervalAxis::tickPosition(int i, const AbstractPlotView* plotView,
 }
 
 void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
-                             KDContext* ctx, KDRect rect,
-                             AbstractPlotView::Axis axis, KDColor color) const {
+                             KDContext* ctx, KDRect rect, OMG::Axis axis,
+                             KDColor color) const {
   // Take the opposite of m_positionLeftLabel for the right label.
   AbstractPlotView::RelativePosition xRelative =
       i == 1 &&
@@ -98,8 +97,8 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
 
   float graduationTopLength =
       plotView->pixelHeight() * k_intervalBoundHalfHeight;
-  float top = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
-                                     plotView->bounds().top());
+  float top =
+      plotView->pixelToFloat(OMG::Axis::Vertical, plotView->bounds().top());
   float bot = 0.0f;
   // The main interval is the confidence level the user input
   float estimate = m_interval->estimate();
@@ -140,20 +139,19 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
                                            : Escher::Palette::GrayDarkMiddle;
     KDCoordinate intervalThickness =
         isMainInterval ? k_mainIntervalThickness : k_intervalThickness;
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal,
-                                  verticalPosition, intervalRightBound,
-                                  intervalLeftBound, intervalColor,
-                                  intervalThickness);
+    plotView->drawStraightSegment(
+        ctx, rect, OMG::Axis::Horizontal, verticalPosition, intervalRightBound,
+        intervalLeftBound, intervalColor, intervalThickness);
     // Draw each bounds of the interval : |--------|
     float graduationBottomLength =
         plotView->pixelHeight() *
         (k_intervalBoundHalfHeight + intervalThickness);
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical,
+    plotView->drawStraightSegment(ctx, rect, OMG::Axis::Vertical,
                                   intervalRightBound,
                                   verticalPosition + graduationTopLength,
                                   verticalPosition - graduationBottomLength,
                                   intervalColor, intervalThickness);
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical,
+    plotView->drawStraightSegment(ctx, rect, OMG::Axis::Vertical,
                                   intervalLeftBound,
                                   verticalPosition + graduationTopLength,
                                   verticalPosition - graduationBottomLength,

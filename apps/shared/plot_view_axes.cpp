@@ -14,22 +14,21 @@ namespace PlotPolicy {
 
 void WithCartesianGrid::DrawGrid(const AbstractPlotView* plotView,
                                  KDContext* ctx, KDRect rect) {
-  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
-  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
-  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
-  DrawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, true);
+  DrawGridLines(plotView, ctx, rect, OMG::Axis::Vertical, false);
+  DrawGridLines(plotView, ctx, rect, OMG::Axis::Horizontal, false);
+  DrawGridLines(plotView, ctx, rect, OMG::Axis::Vertical, true);
+  DrawGridLines(plotView, ctx, rect, OMG::Axis::Horizontal, true);
 }
 
 void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
                                       KDContext* ctx, KDRect rect,
-                                      AbstractPlotView::Axis parallel,
-                                      bool boldGrid) {
+                                      OMG::Axis parallel, bool boldGrid) {
   KDColor color = boldGrid ? k_boldColor : k_lightColor;
   bool oddIndexes = !boldGrid;
   assert(plotView);
   float min, max, step;
   CurveViewRange* range = plotView->range();
-  if (parallel == AbstractPlotView::Axis::Horizontal) {
+  if (parallel == OMG::Axis::Horizontal) {
     min = range->yMin();
     max = range->yMax();
     step = range->yGridUnit();
@@ -54,14 +53,10 @@ void WithPolarGrid::ComputeRadiusBounds(const AbstractPlotView* plotView,
                                         float* radiusMax) {
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
-  float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
-                                      rect.left() - 1);
-  float xMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
-                                      rect.right() + 1);
-  float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
-                                      rect.bottom() + 1);
-  float yMax =
-      plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() - 1);
+  float xMin = plotView->pixelToFloat(OMG::Axis::Horizontal, rect.left() - 1);
+  float xMax = plotView->pixelToFloat(OMG::Axis::Horizontal, rect.right() + 1);
+  float yMin = plotView->pixelToFloat(OMG::Axis::Vertical, rect.bottom() + 1);
+  float yMax = plotView->pixelToFloat(OMG::Axis::Vertical, rect.top() - 1);
 
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
@@ -135,16 +130,13 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
   constexpr int bufferSize = sizeof("360°");
   char buffer[bufferSize];
   KDRect bounds = plotView->bounds();
-  float xMin =
-      plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
-                             bounds.left() + graduationHorizontalMargin);
-  float xMax =
-      plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal,
-                             bounds.right() - graduationHorizontalMargin);
-  float yMin =
-      plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
-                             bounds.bottom() - graduationVerticalMargin);
-  float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical,
+  float xMin = plotView->pixelToFloat(
+      OMG::Axis::Horizontal, bounds.left() + graduationHorizontalMargin);
+  float xMax = plotView->pixelToFloat(
+      OMG::Axis::Horizontal, bounds.right() - graduationHorizontalMargin);
+  float yMin = plotView->pixelToFloat(
+      OMG::Axis::Vertical, bounds.bottom() - graduationVerticalMargin);
+  float yMax = plotView->pixelToFloat(OMG::Axis::Vertical,
                                       bounds.top() + graduationVerticalMargin);
 
   float bannerHeight =
@@ -179,16 +171,14 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
     bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
     // Don't draw under the axes.
     if (angle % 90) {
-      KDPoint pixelFrom = {
-          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal,
-                                             cos * radiusMin),
-          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical,
-                                             sin * radiusMin)};
-      KDPoint pixelTo = {
-          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal,
-                                             cos * radiusMax),
-          plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical,
-                                             sin * radiusMax)};
+      KDPoint pixelFrom = {plotView->floatToKDCoordinatePixel(
+                               OMG::Axis::Horizontal, cos * radiusMin),
+                           plotView->floatToKDCoordinatePixel(
+                               OMG::Axis::Vertical, sin * radiusMin)};
+      KDPoint pixelTo = {plotView->floatToKDCoordinatePixel(
+                             OMG::Axis::Horizontal, cos * radiusMax),
+                         plotView->floatToKDCoordinatePixel(OMG::Axis::Vertical,
+                                                            sin * radiusMax)};
       ctx->drawAntialiasedLine(
           pixelFrom, pixelTo, shouldHaveGraduation ? k_boldColor : k_lightColor,
           plotView->k_backgroundColor);
@@ -246,7 +236,7 @@ void WithPolarGrid::DrawGrid(const AbstractPlotView* plotView, KDContext* ctx,
 // PlainAxis
 
 void PlainAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
-                         KDRect rect, AbstractPlotView::Axis axis) const {
+                         KDRect rect, OMG::Axis axis) const {
   assert(plotView);
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY,
                                 k_color);
@@ -255,7 +245,7 @@ void PlainAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
 // SimpleAxis
 
 void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
-                          KDRect rect, AbstractPlotView::Axis axis) const {
+                          KDRect rect, OMG::Axis axis) const {
   assert(plotView);
 
   // - Draw plain axis
@@ -264,8 +254,8 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   // - Draw ticks and eventual labels
   /* Do not draw ticks on the vertical axis if the axis itself is not visible,
    * as they could be mistaken for minus signs. */
-  bool drawTicks = !(axis == AbstractPlotView::Axis::Vertical &&
-                     plotView->range()->xMin() >= 0.f);
+  bool drawTicks =
+      !(axis == OMG::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   int i = 0;
   float t = tickPosition(i, plotView, axis);
@@ -290,7 +280,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
 }
 
 float SimpleAxis::tickPosition(int i, const AbstractPlotView* plotView,
-                               AbstractPlotView::Axis axis) const {
+                               OMG::Axis axis) const {
   float step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
   assert(std::fabs(std::round(tMin / step)) < static_cast<float>(INT_MAX));
@@ -299,17 +289,16 @@ float SimpleAxis::tickPosition(int i, const AbstractPlotView* plotView,
 }
 
 float SimpleAxis::tickStep(const AbstractPlotView* plotView,
-                           AbstractPlotView::Axis axis) const {
-  float step = axis == AbstractPlotView::Axis::Horizontal
-                   ? plotView->range()->xGridUnit()
-                   : plotView->range()->yGridUnit();
+                           OMG::Axis axis) const {
+  float step = axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
+                                             : plotView->range()->yGridUnit();
   return 2.f * step;
 }
 
 // AbstractLabeledAxis
 
 void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
-                                     AbstractPlotView::Axis axis) {
+                                     OMG::Axis axis) {
   size_t n = numberOfLabels();
   m_lastDrawnRect = KDRectZero;
   for (size_t i = 0; i < n; i++) {
@@ -319,7 +308,7 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
 }
 
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
-                                      AbstractPlotView::Axis axis) {
+                                      OMG::Axis axis) {
   float t = tickPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(
              t, mutableLabel(i), k_labelBufferMaxSize,
@@ -334,7 +323,7 @@ bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {
 
 KDRect AbstractLabeledAxis::labelRect(int i, float t,
                                       const AbstractPlotView* plotView,
-                                      AbstractPlotView::Axis axis) const {
+                                      OMG::Axis axis) const {
   assert(static_cast<size_t>(i) < numberOfLabels());
 
   const char* text = label(i);
@@ -343,7 +332,7 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t,
   }
 
   AbstractPlotView::RelativePosition xRelative, yRelative;
-  if (axis == AbstractPlotView::Axis::Horizontal) {
+  if (axis == OMG::Axis::Horizontal) {
     if (t == 0.f && m_otherAxis) {
       if (m_labelsPosition != 0.f) {
         /* Do not draw a floating 0 label. */
@@ -363,7 +352,7 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t,
     yRelative = AbstractPlotView::RelativePosition::There;
   }
 
-  Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal
+  Coordinate2D<float> xy = axis == OMG::Axis::Horizontal
                                ? Coordinate2D<float>(t, m_labelsPosition)
                                : Coordinate2D<float>(m_labelsPosition, t);
   return plotView->labelRect(text, xy, xRelative, yRelative);
@@ -371,8 +360,7 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t,
 
 void AbstractLabeledAxis::drawLabel(int i, float t,
                                     const AbstractPlotView* plotView,
-                                    KDContext* ctx, KDRect rect,
-                                    AbstractPlotView::Axis axis,
+                                    KDContext* ctx, KDRect rect, OMG::Axis axis,
                                     KDColor color) const {
   const char* text = label(i);
   KDRect thisLabelRect = labelRect(i, t, plotView, axis);
@@ -384,10 +372,10 @@ void AbstractLabeledAxis::drawLabel(int i, float t,
 }
 
 void AbstractLabeledAxis::computeLabelsRelativePosition(
-    const AbstractPlotView* plotView, AbstractPlotView::Axis axis) const {
+    const AbstractPlotView* plotView, OMG::Axis axis) const {
   m_labelsPosition = 0.f;
 
-  if (axis == AbstractPlotView::Axis::Horizontal) {
+  if (axis == OMG::Axis::Horizontal) {
     float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() +
                          AbstractPlotView::k_labelMargin) *
                         plotView->pixelHeight();

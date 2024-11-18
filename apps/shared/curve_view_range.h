@@ -1,13 +1,14 @@
 #ifndef SHARED_CURVE_VIEW_RANGE_H
 #define SHARED_CURVE_VIEW_RANGE_H
 
+#include <omg/enums.h>
+#include <poincare/numeric/zoom.h>
 #include <stdint.h>
 
 namespace Shared {
 
 class CurveViewRange {
  public:
-  enum class Axis { X, Y };
   uint32_t rangeChecksum();
 
   virtual float xMin() const = 0;
@@ -16,8 +17,8 @@ class CurveViewRange {
   virtual float yMax() const = 0;
   float xCenter() const { return (xMin() + xMax()) / 2; }
   float yCenter() const { return (yMin() + yMax()) / 2; }
-  virtual float xGridUnit() { return computeGridUnit(Axis::X); }
-  virtual float yGridUnit() { return computeGridUnit(Axis::Y); }
+  virtual float xGridUnit() { return computeGridUnit(OMG::Axis::Horizontal); }
+  virtual float yGridUnit() { return computeGridUnit(OMG::Axis::Vertical); }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
   constexpr static float k_maxNumberOfYGridUnits = 13.0f;
 
@@ -33,7 +34,7 @@ class CurveViewRange {
   constexpr static float k_smallGridUnitMantissa = 1.f;
   constexpr static float k_mediumGridUnitMantissa = 2.f;
   constexpr static float k_largeGridUnitMantissa = 5.f;
-  float computeGridUnit(Axis axis);
+  float computeGridUnit(OMG::Axis axis);
 };
 
 }  // namespace Shared

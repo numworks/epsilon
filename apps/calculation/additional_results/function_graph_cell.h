@@ -16,10 +16,9 @@ class FunctionAxis : public Shared::PlotPolicy::LabeledAxis<N> {
   FunctionAxis()
       : Shared::PlotPolicy::LabeledAxis<N>::LabeledAxis(),
         m_specialLabelRect(KDRectZero) {}
-  void reloadAxis(Shared::AbstractPlotView* plotView,
-                  Shared::AbstractPlotView::Axis axis) override;
+  void reloadAxis(Shared::AbstractPlotView* plotView, OMG::Axis axis) override;
   void drawAxis(const Shared::AbstractPlotView* plotView, KDContext* ctx,
-                KDRect rect, Shared::AbstractPlotView::Axis axis) const;
+                KDRect rect, OMG::Axis axis) const;
 
  private:
   constexpr static int k_labelAvoidanceMargin = 2;

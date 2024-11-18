@@ -74,19 +74,19 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-float InteractiveCurveViewRange::computeGridUnit(Axis axis) {
+float InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
   if (!gridUnitAuto(axis)) {
     return computeGridUnitFromUserParameter(axis);
   }
   float res = MemoizedCurveViewRange::computeGridUnit(axis);
   if (m_zoomNormalize) {
-    if (axis == Axis::X) {
+    if (axis == OMG::Axis::Horizontal) {
       float yUnit = yGridUnit();
       if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
         return yUnit;
       }
     } else {
-      assert(axis == Axis::Y);
+      assert(axis == OMG::Axis::Vertical);
       /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be
        * the same. To declutter the X axis, we try a unit twice as large. We
        * check that it allows enough graduations on the Y axis, but if the
@@ -169,11 +169,12 @@ void InteractiveCurveViewRange::normalize() {
   protectedNormalize(canChangeX, canChangeY, !canChangeX || !canChangeY);
 }
 
-void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
+void InteractiveCurveViewRange::centerAxisAround(OMG::Axis axis,
+                                                 float position) {
   if (std::isnan(position)) {
     return;
   }
-  if (axis == Axis::X) {
+  if (axis == OMG::Axis::Horizontal) {
     float range = xMax() - xMin();
     if (std::fabs(position / range) > k_maxRatioPositionRange) {
       range = Range1D<float>::DefaultLengthAt(position);
@@ -408,15 +409,15 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
 }
 
 float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
-    Axis axis) const {
+    OMG::Axis axis) const {
   assert(!gridUnitAuto(axis));
   float minNumberOfUnits, maxNumberOfUnits, range;
-  if (axis == Axis::X) {
+  if (axis == OMG::Axis::Horizontal) {
     minNumberOfUnits = k_minNumberOfXGridUnits;
     maxNumberOfUnits = k_maxNumberOfXGridUnits;
     range = xMax() - xMin();
   } else {
-    assert(axis == Axis::Y);
+    assert(axis == OMG::Axis::Vertical);
     minNumberOfUnits = k_minNumberOfYGridUnits;
     maxNumberOfUnits = k_maxNumberOfYGridUnits;
     range = yMax() - yMin() + offscreenYAxis();

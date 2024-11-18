@@ -28,7 +28,7 @@ class GraphView : public Shared::FunctionGraphView,
    * highlightColor and the non-highlightColor are identical in the graph view
    * of the application graph. We thereby avoid to uselessly reload some part
    * of the graph where the area under the curve is colored. */
-  void setAreaHighlightColor(bool highlightColor) override{};
+  void setAreaHighlightColor(bool highlightColor) override {};
   int numberOfDrawnRecords() const override;
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;
@@ -56,7 +56,7 @@ class GraphView : public Shared::FunctionGraphView,
   void drawCartesian(KDContext* ctx, KDRect rect, Shared::ContinuousFunction* f,
                      Ion::Storage::Record record, float tMin, float tMax,
                      float tStep, DiscontinuityTest discontinuity,
-                     Axis axis) const;
+                     OMG::Axis axis) const;
   void drawPolar(KDContext* ctx, KDRect rect, Shared::ContinuousFunction* f,
                  float tMin, float tMax, float tStep,
                  DiscontinuityTest discontinuity) const;

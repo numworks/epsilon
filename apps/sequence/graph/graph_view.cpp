@@ -31,7 +31,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     if (x >= m_highlightedStart && x <= m_highlightedEnd &&
         record == m_selectedRecord) {
       KDColor color = m_shouldColorHighlighted ? s->color() : KDColorBlack;
-      drawStraightSegment(ctx, rect, Axis::Vertical, x, y, 0.f, color);
+      drawStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y, 0.f, color);
     }
   }
 }

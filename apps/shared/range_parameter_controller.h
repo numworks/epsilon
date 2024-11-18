@@ -19,8 +19,6 @@ namespace Shared {
 class RangeParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
-  using Axis = SingleInteractiveCurveViewRangeController::Axis;
-
   using MenuCell =
       Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                        Escher::ChevronView>;

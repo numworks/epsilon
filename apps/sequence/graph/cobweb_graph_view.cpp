@@ -103,11 +103,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
     rank++;
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
-                                        uOfX, sequence->color());
+                                        OMG::Axis::Vertical, x, y, uOfX,
+                                        sequence->color());
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
                                         uOfX, sequence->color());
     y = uOfX;
     float uOfuOfX =
@@ -115,12 +114,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
             .y();
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Horizontal, y,
-                                        x, uOfX, sequence->color());
+                                        OMG::Axis::Horizontal, y, x, uOfX,
+                                        sequence->color());
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Horizontal, y,
-                                        x, uOfX, sequence->color());
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, y, x,
+                                        uOfX, sequence->color());
     x = uOfX;
     uOfX = uOfuOfX;
   }
@@ -133,8 +131,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   measuringContext.reset();
   if (m_step) {
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
-                                        0.f, Escher::Palette::GrayDark);
+                                        OMG::Axis::Vertical, x, y, 0.f,
+                                        Escher::Palette::GrayDark);
     m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
@@ -151,8 +149,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   m_textCache.save(ctx, measuringContext.writtenRect());
   // Actual drawings
   if (m_step) {
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
                                         0.f, Escher::Palette::GrayDark);
   }
   plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y},

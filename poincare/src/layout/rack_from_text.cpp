@@ -43,9 +43,9 @@ void RackFromTextRec(UTF8Decoder* decoder, Tree* parent,
   }
 }
 
-Rack* RackFromText(const char* text) {
+Rack* RackFromText(const char* start, const char* end) {
   Rack* root = Rack::From(KRackL()->cloneTree());
-  UTF8Decoder decoder(text);
+  UTF8Decoder decoder(start, start, end);
   RackFromTextRec(&decoder, root, nullptr);
   return root;
 }

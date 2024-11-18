@@ -30,12 +30,20 @@ QUIZ_CASE(pcj_latex_to_layout) {
       "\\int_{0}^{1}t^{3}\\ dt",
       KRackL(KIntegralL("t"_l, "0"_l, "1"_l, "t"_l ^ KSuperscriptL("3"_l))));
   assert_latex_layouts_to(
-      "\\int_{0}^{1}z^{3}\\ dz+3",
+      "\\int_{0}^{1}z^{3}dz+3",
       KRackL(KIntegralL("z"_l, "0"_l, "1"_l, "z"_l ^ KSuperscriptL("3"_l)),
              "+"_cl, "3"_cl));
+  /* The first d is inside "round" so it's not used as separator */
   assert_latex_layouts_to(
-      "\\int_{0}^{1}round(abcd)\\ dabcd",
-      KRackL(KIntegralL("abcd"_l, "0"_l, "1"_l, "round(abcd)"_l)));
+      "\\int_{0}^{1}round(abcdx)dabcdx",
+      KRackL(KIntegralL("abcdx"_l, "0"_l, "1"_l, "round(abcdx)"_l)));
+  /* The first d is inside "undef" so it's not used as separator */
+  assert_latex_layouts_to(
+      "\\int_{0}^{1}uundefndef",
+      KRackL(KIntegralL("ef"_l, "0"_l, "1"_l, "uundefn"_l)));
+  /* The first d is not before a variable so it's not used as separator */
+  assert_latex_layouts_to("\\int_{0}^{1}d(x)dx",
+                          KRackL(KIntegralL("x"_l, "0"_l, "1"_l, "d(x)"_l)));
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^

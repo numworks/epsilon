@@ -1,9 +1,11 @@
 #include "latex_parser.h"
 
 #include <omg/utf8_decoder.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
+#include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 #include <poincare/src/memory/n_ary.h>
@@ -15,14 +17,6 @@
 namespace Poincare::Internal {
 
 namespace LatexParser {
-
-/* This value is a system symbol named GroupSeparator */
-constexpr static const char* k_variableRightDelimiter = "\u001D";
-
-static bool IsVariableRightDelimiter(const char* string, size_t length) {
-  return length == strlen(k_variableRightDelimiter) &&
-         strncmp(string, k_variableRightDelimiter, length) == 0;
-}
 
 // ===== Tokens =====
 
@@ -47,36 +41,11 @@ constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
 
 /* Latex: \\int_{\LowerBound}^{\UpperBound}\Integrand d\Symbol
  * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- *
- * It's no that easy to know where the integral ends in Latex, as there is no
- * clear delimiter between the integrand and the symbol, and at the end of the
- * symbol.
- *
- * Also it's not clear if "\\int_{0}^{1}ta^{3}dta" is
- * - "int(ta, 0, 1, (ta)^3)"
- * - "int(t, 0, 1, t * a^3) * a".
- * Desmos chose the second option as they don't accept variables with
- * multiple characters.
- * But Poincaré does accept such variables, so we will choose the first option.
- *
- * For the delimiter between the integrand and the symbol, we use "\\ d".
- * This means that the user MUST input a space before the "dx".
- * - "\\int_{0}^{1}x^{3}dx" -> Not working
- * - "\\int_{0}^{1}x^{3}\\ dx" -> Working
- * This has some limitations, but we couldn't use just "d" for the delimiter,
- * as it would fail for integrals containing a "d" in the integrand.
- * For example "\\int_{0}^{1}round(x)dx". (since "round" contains a "d")
- *
- * For the delimiter at the end of the symbol, we use variableRightDelimiter.
- * This means the parsing will stop as soon as a non-"IdentifierMaterial"
- * codepoint is found (i.e. non-alphanumeric codepoint or greek letter. See
- * Tokenizer::IsIdentifierMaterial for more info).
- *
+ * Custom parser. See CustomParseAndBuildIntegralLayout implementation below
  * */
 constexpr static const char* integralToken[] = {
-    "\\int_{", "\1", "}^{",
-    "\2",      "}",  "\3",
-    "\\ d",    "\0", k_variableRightDelimiter};
+    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", " "};
+Tree* CustomParseAndBuildIntegralLayout(const char** start);
 
 // Code points
 constexpr static const char* middleDotToken[] = {"\\cdot"};
@@ -102,13 +71,15 @@ constexpr static const char* leftBraceToken[] = {"{"};
 constexpr static const char* rightBraceToken[] = {"}"};
 
 using LayoutDetector = bool (*)(const Tree*);
-using LayoutConstructor = Tree* (*)();
+using EmptyLayoutBuilder = Tree* (*)();
+using LayoutCustomParserBuilder = Tree* (*)(const char**);
 
 struct LatexToken {
   const char* const* description;
   const int descriptionLength;
   const LayoutDetector detector;
-  const LayoutConstructor constructor;
+  const EmptyLayoutBuilder buildEmptyLayout;
+  const LayoutCustomParserBuilder customParseAndBuildLayout = nullptr;
 };
 
 #define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
@@ -171,10 +142,8 @@ constexpr static LatexToken k_tokens[] = {
     TWO_CHILDREN_TOKEN(binomToken, isBinomialLayout, KBinomialL),
     // Integral
     {integralToken, std::size(integralToken),
-     [](const Tree* l) -> bool { return l->isIntegralLayout(); },
-     []() -> Tree* {
-       return KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
-     }},
+     [](const Tree* l) -> bool { return l->isIntegralLayout(); }, nullptr,
+     CustomParseAndBuildIntegralLayout},
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
     // Middle Dot
@@ -208,24 +177,19 @@ constexpr static LatexToken k_tokens[] = {
 
 // ===== Latex to Layout ======
 
-Tree* NextLatexToken(const char** start, bool parseVariableOnly);
+Tree* NextLatexToken(const char** start);
 
 void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
                                      const char* endIdentifier) {
   size_t endLen = strlen(endIdentifier);
 
-  bool parseVariable = IsVariableRightDelimiter(endIdentifier, endLen);
-  bool ignoreEndIdentifier = endLen == 0 || parseVariable;
+  bool ignoreEndIdentifier = endLen == 0;
 
   while (**start != 0 &&
          (ignoreEndIdentifier || strncmp(*start, endIdentifier, endLen) != 0)) {
-    Tree* child = NextLatexToken(start, parseVariable);
+    Tree* child = NextLatexToken(start);
     if (child) {
       NAry::AddChild(parent, child);
-    } else if (parseVariable) {
-      /* The next codepoint wasn't identifier material so the variable came to
-       * an end */
-      break;
     }
   }
 
@@ -240,39 +204,37 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
   *start += endLen;
 }
 
-Tree* NextLatexToken(const char** start, bool parseVariableOnly) {
-  if (!parseVariableOnly) {
-    for (const LatexToken& token : k_tokens) {
-      const char* leftDelimiter = token.description[0];
-      size_t leftDelimiterLength = strlen(leftDelimiter);
-      if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
-        continue;
-      }
-      // Special token found
-      *start += leftDelimiterLength;
-      Tree* layoutToken = token.constructor();
-
-      // Parse children
-      for (int i = 1; i < token.descriptionLength - 1; i += 2) {
-        assert(strlen(token.description[i]) <= 1);
-        int childIndexInLayout = token.description[i][0];
-        const char* rightDelimiter = token.description[i + 1];
-        ParseLatexOnRackUntilIdentifier(
-            Rack::From(layoutToken->child(childIndexInLayout)), start,
-            rightDelimiter);
-      }
-
-      return layoutToken;
+Tree* NextLatexToken(const char** start) {
+  for (const LatexToken& token : k_tokens) {
+    const char* leftDelimiter = token.description[0];
+    size_t leftDelimiterLength = strlen(leftDelimiter);
+    if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+      continue;
     }
+    // Token found
+    *start += leftDelimiterLength;
+    if (token.customParseAndBuildLayout) {
+      return token.customParseAndBuildLayout(start);
+    }
+
+    Tree* layoutToken = token.buildEmptyLayout();
+
+    // Parse children
+    for (int i = 1; i < token.descriptionLength - 1; i += 2) {
+      assert(strlen(token.description[i]) <= 1);
+      int childIndexInLayout = token.description[i][0];
+      const char* rightDelimiter = token.description[i + 1];
+      ParseLatexOnRackUntilIdentifier(
+          Rack::From(layoutToken->child(childIndexInLayout)), start,
+          rightDelimiter);
+    }
+
+    return layoutToken;
   }
 
   // Code points
   UTF8Decoder decoder(*start);
-  CodePoint c = decoder.nextCodePoint();
-  if (parseVariableOnly && !Tokenizer::IsIdentifierMaterial(c)) {
-    return nullptr;
-  }
-  Tree* codepoint = CodePointLayout::Push(c);
+  Tree* codepoint = CodePointLayout::Push(decoder.nextCodePoint());
   *start = decoder.stringPosition();
   return codepoint;
 }
@@ -370,15 +332,12 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
         const char* delimiter = token.description[i];
         size_t delimiterLength = strlen(delimiter);
 
-        // Do not write variable right delimiter in latex string
-        if (!IsVariableRightDelimiter(delimiter, delimiterLength)) {
-          if (buffer + delimiterLength + isCodePoint >= end) {
-            // Buffer is too short
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-          }
-          memcpy(buffer, delimiter, delimiterLength);
-          buffer += delimiterLength;
+        if (buffer + delimiterLength + isCodePoint >= end) {
+          // Buffer is too short
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
+        memcpy(buffer, delimiter, delimiterLength);
+        buffer += delimiterLength;
 
         if (i == token.descriptionLength - 1) {
           if (isCodePoint) {
@@ -437,6 +396,165 @@ char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
     *buffer = 0;
   }
   return buffer;
+}
+
+// ===== Custom constructors =====
+
+// Helper. Measures the char length of a token that contains multiple codepoints
+size_t TokenCharLength(Token token) {
+  LayoutSpan span = token.toSpan();
+  size_t result = 0;
+  LayoutSpanDecoder decoder(span);
+  while (!decoder.isEmpty()) {
+    CodePoint c = decoder.nextCodePoint();
+    if (c == UCodePointNull) {
+      break;
+    }
+    result += UTF8Decoder::CharSizeOfCodePoint(c);
+  }
+  return result;
+}
+
+/* It's no that easy to know where the integral ends in Latex, as there is no
+ * clear delimiter between the integrand and the symbol, and at the end of the
+ * symbol.
+ *
+ * Also it's not clear if "\\int_{0}^{1}ta^{3}dta" is
+ * - "int(ta, 0, 1, (ta)^3)"
+ * - "int(t, 0, 1, t * a^3) * a".
+ * Desmos chose the second option as they don't accept variables with
+ * multiple characters. But Poincaré does accept such variables, so we must
+ * implement the first option. This is mandatory because the parsing must
+ * work both ways, i.e. a layout converted to latex must be convertable back
+ * to the same layout.
+ *
+ * For the delimiter between the integrand and the symbol, we need the find
+ * a 'd' inside the integral.
+ * But we can't just look for the first 'd' in the integrand, as it could be
+ * part of another identifier like "undef" or "round". We thus use the tokenizer
+ * to find the first 'd' that is not part of another identifier.
+ *
+ * For the delimiter at the end of the symbol, the parsing will stop as soon as
+ * a non-"IdentifierMaterial" codepoint is found (i.e. non-alphanumeric
+ *codepoint or greek letter. See Tokenizer::IsIdentifierMaterial for more info).
+ **/
+Tree* CustomParseAndBuildIntegralLayout(const char** start) {
+  Tree* result =
+      KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+
+  constexpr int k_boundsIndex[] = {1, 3};
+  constexpr int k_integrandIndex = 5;
+  constexpr int k_variableIndex = 7;
+
+  // --- Step 1 --- Parse upper and lower bounds in a classic way
+  for (int i = 0; i < 2; i++) {
+    int index = k_boundsIndex[i];
+    int childIndexInLayout = integralToken[index][0];
+    const char* rightDelimiter = integralToken[index + 1];
+    ParseLatexOnRackUntilIdentifier(
+        Rack::From(result->child(childIndexInLayout)), start, rightDelimiter);
+  }
+
+  // --- Step 2 --- Parse integrand
+  /* The difficulty here is to know where the integrand ends.
+   * The integral should end with `d`+variable, but  we can't just look for
+   * the first `d` in the integrand as it could be part of another identifier
+   * like "undef" ou "round". */
+  Rack* integrandRack =
+      Rack::From(result->child(integralToken[k_integrandIndex][0]));
+  const char* integrandStart = *start;
+
+  EmptyContext emptyContext;
+  ParsingContext parsingContext(&emptyContext,
+                                ParsingContext::ParsingMethod::Classic);
+  while (**start != 0) {
+    if (**start == 'd') {
+      // We might have found the end of the integrand
+      const char* dPosition = *start;
+
+      // --- Step 2.1 --- Find the identifier string surrounding the `d`
+      /* Example: ∫3+abcdxyz1
+       *                ↑ Start is at 'd'
+       *             ↑------↑ Surrounding identifier string is 'abcdxyz1'
+       * */
+      UTF8Decoder decoderStart(integrandStart - 1, dPosition);
+      CodePoint previousCodePoint = decoderStart.previousCodePoint();
+      while (decoderStart.stringPosition() >= integrandStart &&
+             Tokenizer::IsIdentifierMaterial(previousCodePoint) &&
+             !previousCodePoint.isDecimalDigit()) {
+        previousCodePoint = decoderStart.previousCodePoint();
+      }
+      decoderStart.nextCodePoint();
+      const char* identifierStart = decoderStart.stringPosition();
+
+      UTF8Decoder decoderEnd(dPosition);
+      CodePoint nextCodePoint = decoderEnd.nextCodePoint();
+      while (Tokenizer::IsIdentifierMaterial(nextCodePoint)) {
+        nextCodePoint = decoderEnd.nextCodePoint();
+      }
+      decoderEnd.previousCodePoint();
+      const char* identifierEnd = decoderEnd.stringPosition();
+
+      // --- Step 2.2 --- Tokenize the identifier string until the 'd'
+      /* Examples:
+       * "abcdxyz1" -> "a" "b" "c" "d" ...
+       *            -> The 'd' is not part of another identifier
+       *            -> It's the delimiter
+       * "abundefz" -> "a" "b" "undef" ...
+       *            -> The 'd' is part of "undef"
+       *            -> It's not the delimiter
+       */
+      Rack* rack = RackFromText(identifierStart, identifierEnd);
+
+      Tokenizer tokenizer(rack, &parsingContext);
+      Token currentToken;
+      size_t totalTokensLength = 0;
+      while (dPosition >= identifierStart + totalTokensLength) {
+        currentToken = tokenizer.popToken();
+        size_t tokenLength = TokenCharLength(currentToken);
+        totalTokensLength -= tokenLength;
+      }
+      Token nextToken = tokenizer.popToken();
+      rack->removeTree();
+
+      /* currentToken contains the 'd'
+       * If it's a custom identifier and has length 1, it's the delimiter.
+       * We also check that there is a following token that can be used as
+       * variable.
+       * */
+      if (currentToken.type() == Token::Type::CustomIdentifier &&
+          currentToken.length() == 1 &&
+          nextToken.type() != Token::Type::EndOfStream) {
+        break;
+      }
+    }
+
+    // Parse the content of the integrand
+    Tree* child = NextLatexToken(start);
+    if (child) {
+      NAry::AddChild(integrandRack, child);
+    }
+  }
+
+  if (**start == 0) {
+    /* We're at the end of the string and the 'd' couldn't be found */
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  // Skip 'd'
+  *start += 1;
+
+  // --- Step 3 --- Parse variable
+  UTF8Decoder decoder(*start);
+  CodePoint c = decoder.nextCodePoint();
+  while (Tokenizer::IsIdentifierMaterial(c)) {
+    Tree* codepoint = CodePointLayout::Push(c);
+    NAry::AddChild(Rack::From(result->child(integralToken[k_variableIndex][0])),
+                   codepoint);
+    c = decoder.nextCodePoint();
+  }
+  decoder.previousCodePoint();
+  *start = decoder.stringPosition();
+  return result;
 }
 
 }  // namespace LatexParser

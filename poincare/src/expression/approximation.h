@@ -230,8 +230,7 @@ class Approximation final {
   /* Returns -1 if every condition is false, it assumes there is no other free
    * variable than VarX */
   template <typename T>
-  static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
-                                            const Context* ctx);
+  static int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x);
 
   template <typename T>
   static T FloatBinomial(T n, T k);

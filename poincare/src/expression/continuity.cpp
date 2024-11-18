@@ -33,9 +33,8 @@ bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2) {
         (Approximation::RootTreeToReal<T>(e->child(0), x1) > 0.0) !=
         (Approximation::RootTreeToReal<T>(e->child(0), x2) > 0.0);
   } else if (e->isPiecewise()) {
-    isDiscontinuous =
-        Approximation::IndexOfActivePiecewiseBranchAt(e, x1, nullptr) !=
-        Approximation::IndexOfActivePiecewiseBranchAt(e, x2, nullptr);
+    isDiscontinuous = Approximation::IndexOfActivePiecewiseBranchAt(e, x1) !=
+                      Approximation::IndexOfActivePiecewiseBranchAt(e, x2);
   }
   if (isDiscontinuous) {
     return true;

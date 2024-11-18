@@ -1117,6 +1117,10 @@ QUIZ_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+round(x^2, 0)", 2.36f, 2.38f, true);
   assert_is_continuous_between_values("x+random()", 2.43f, 2.45f, false);
   assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
+  assert_is_continuous_between_values("piecewise(-1,x<0,1)", -1.0f, 1.0f,
+                                      false);
+  assert_is_continuous_between_values("piecewise(-1,random()-0.5<0,1)", -1.0f,
+                                      1.0f, false);
 }
 
 #if 0

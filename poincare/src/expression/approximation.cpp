@@ -1265,22 +1265,15 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise,
 /* TODO: users of this function just want to test equality of branch and do not
  * need the index */
 template <typename T>
-int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x,
-                                                  const Context* ctx) {
-  assert(!ctx);
+int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(piecewise->isPiecewise());
-  // TODO piecewises depending on a random will not work
-  // TODO Hugo : Rework this method
+  /* TODO: Without randomContext, randomized nodes in piecewise's condition will
+   *       approximate to NAN. */
   LocalContext localCtx(x);
-  Context context(AngleUnit::Radian, ComplexFormat::Cartesian, -1, -1,
-                  Random::Context(false), &localCtx);
-  ctx = &context;
-  const Tree* branch = SelectPiecewiseBranch<T>(piecewise, ctx);
-  ctx = nullptr;
-  if (branch == KUndef) {
-    return -1;
-  }
-  return piecewise->indexOfChild(branch);
+  Context ctx;
+  ctx.m_localContext = &localCtx;
+  const Tree* branch = SelectPiecewiseBranch<T>(piecewise, &ctx);
+  return branch == KUndef ? -1 : piecewise->indexOfChild(branch);
 }
 
 bool Approximation::CanApproximate(const Tree* e,
@@ -1439,9 +1432,9 @@ template float Approximation::ToLocalContext(const Tree*, const Context*,
 template double Approximation::ToLocalContext(const Tree*, const Context*,
                                               double);
 
-template int Approximation::IndexOfActivePiecewiseBranchAt<float>(
-    const Tree*, float, const Context*);
-template int Approximation::IndexOfActivePiecewiseBranchAt<double>(
-    const Tree*, double, const Context*);
+template int Approximation::IndexOfActivePiecewiseBranchAt<float>(const Tree*,
+                                                                  float);
+template int Approximation::IndexOfActivePiecewiseBranchAt<double>(const Tree*,
+                                                                   double);
 
 }  // namespace Poincare::Internal

@@ -57,6 +57,14 @@ QUIZ_CASE(pcj_parse_layout_tokenize) {
 
   token = Tokenizer(Rack::From("12ᴇ-34"_l), &context).popToken();
   quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
+
+  // Parse as "Ans*5" and not "A*n*s5"
+  tokenizer = Tokenizer(Rack::From("Ans5"_l), &context);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::SpecialIdentifier &&
+              token.length() == 3);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::Number && token.length() == 1);
 }
 
 bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {

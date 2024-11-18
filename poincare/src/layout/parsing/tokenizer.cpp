@@ -409,9 +409,14 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
   if (identifierLength == *length) {
     return false;
   }
-  if (Builtin::ReservedFunctionName(KLogBase).contains(
-          LayoutSpan(start, identifierLength))) {
+  LayoutSpan span(start, identifierLength);
+  if (Builtin::ReservedFunctionName(KLogBase).contains(span)) {
     *returnType = Token::Type::ReservedFunction;
+    *length = identifierLength;
+    return true;
+  }
+  if (Builtin::HasSpecialIdentifier(span)) {
+    *returnType = Token::Type::SpecialIdentifier;
     *length = identifierLength;
     return true;
   }

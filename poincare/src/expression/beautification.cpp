@@ -398,16 +398,14 @@ bool Beautification::TurnIntoPolarForm(
 template <typename T>
 Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
                                             ComplexFormat complexFormat) {
-  // TODO: factorize with the code above somehow ?
+  // TODO: factorize with beautification somehow ?
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
     return Approximation::IsNonReal(value) ? KNonReal->cloneTree()
                                            : KUndef->cloneTree();
   }
   assert(complexFormat != ComplexFormat::None);
-  if (im != 0 && complexFormat == ComplexFormat::Real) {
-    return KNonReal->cloneTree();
-  }
+  assert(im == 0 || complexFormat != ComplexFormat::Real);
   if (im == 0 && (complexFormat != ComplexFormat::Polar || re >= 0)) {
     return SharedTreeStack->pushFloat(re);
   }

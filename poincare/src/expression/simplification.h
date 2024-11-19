@@ -9,7 +9,7 @@ namespace Poincare::Internal {
 
 class Simplification {
  public:
-  static bool Simplify(Tree* e, ProjectionContext* projectionContext,
+  static bool Simplify(Tree* e, const ProjectionContext* projectionContext,
                        bool beautify = true);
 
   // Simplification steps
@@ -27,9 +27,9 @@ class Simplification {
                            bool expandAlgebraic = false);
 
  private:
-  static void ApplySimplify(const Tree* dataTree,
-                            ProjectionContext* projectionContext,
-                            bool beautify);
+  static Tree* ApplySimplify(const Tree* dataTree,
+                             ProjectionContext* projectionContext,
+                             bool beautify);
 
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
   static bool ApplyStrategy(Tree* e, Strategy strategy, bool reduceIfSuccess);

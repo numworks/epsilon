@@ -38,19 +38,20 @@ inline static bool AreConsistent(const ComplexSign& sign,
 }
 #endif
 
-bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext,
+bool Simplification::Simplify(Tree* e,
+                              const ProjectionContext* projectionContext,
                               bool beautify) {
   assert(projectionContext);
   ExceptionTry {
-    Block* previousLastBlock = SharedTreeStack->lastBlock();
 #if ASSERTIONS
     size_t treesNumber = SharedTreeStack->numberOfTrees();
 #endif
+    ProjectionContext contextCopy = *projectionContext;
     // Clone the tree, simplify and raise an exception for pool overflow.
-    ApplySimplify(e, projectionContext, beautify);
+    Tree* simplified = ApplySimplify(e, &contextCopy, beautify);
     // Prevent from leaking: simplification creates exactly one tree.
     assert(SharedTreeStack->numberOfTrees() == treesNumber + 1);
-    e->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
+    e->moveTreeOverTree(simplified);
   }
   ExceptionCatch(type) {
     switch (type) {
@@ -64,9 +65,9 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext,
   return true;
 }
 
-void Simplification::ApplySimplify(const Tree* dataTree,
-                                   ProjectionContext* projectionContext,
-                                   bool beautify) {
+Tree* Simplification::ApplySimplify(const Tree* dataTree,
+                                    ProjectionContext* projectionContext,
+                                    bool beautify) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -80,8 +81,7 @@ void Simplification::ApplySimplify(const Tree* dataTree,
         projectionContext->m_symbolic =
             SymbolicComputation::DoNotReplaceAnySymbol;
       } else {
-        dataTree->cloneTree();
-        return;
+        return dataTree->cloneTree();
       }
     }
     /* Store is an expression only for convenience. Only first child is to
@@ -101,6 +101,7 @@ void Simplification::ApplySimplify(const Tree* dataTree,
     dataTree->child(1)->cloneTree();
     e->cloneNodeAtNode(dataTree);
   }
+  return e;
 }
 
 void Simplification::ProjectAndReduce(Tree* e,

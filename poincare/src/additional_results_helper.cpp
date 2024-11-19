@@ -42,9 +42,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  ProjectionContext contextCopy = *ctx;
-  bool reductionSuccess =
-      Simplification::Simplify(simplifiedAngle, &contextCopy);
+  bool reductionSuccess = Simplification::Simplify(simplifiedAngle, ctx);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {

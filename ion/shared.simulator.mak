@@ -100,13 +100,16 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/shared/, \
   screenshot.cpp \
   platform_files.cpp \
 )
-SFLAGS_ion += -DION_SIMULATOR_FILES=1
+PRIVATE_SFLAGS_ion += -DION_SIMULATOR_FILES=1
 # Export symbols so that dlopen-ing NWB files can use eadk_external_data and eadk_external_data_size
 LDFLAGS_ion += $(LD_EXPORT_SYMBOLS_FLAG)
 endif
 SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator files - end
+
+# External app simulator with dlopen
+PRIVATE_SFLAGS_ion += -DION_SIMULATOR_EXTERNAL_APP=1
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp

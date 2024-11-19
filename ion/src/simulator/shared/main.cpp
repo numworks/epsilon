@@ -27,6 +27,9 @@
 
 #include "actions.h"
 #include "screenshot.h"
+#endif
+
+#if ION_SIMULATOR_EXTERNAL_APP
 extern "C" {
 extern char* eadk_external_data;
 extern size_t eadk_external_data_size;
@@ -121,7 +124,7 @@ std::vector<const char*>::const_iterator Args::find(const char* name) const {
                       [name](const char* s) { return strcmp(s, name) == 0; });
 }
 
-#if ION_SIMULATOR_FILES
+#if ION_SIMULATOR_EXTERNAL_APP
 static inline int load_eadk_external_data(const char* path) {
   if (path == nullptr) {
     return 0;
@@ -281,7 +284,7 @@ int main(int argc, char* argv[]) {
     Haptics::init();
   }
 
-#if ION_SIMULATOR_FILES
+#if ION_SIMULATOR_EXTERNAL_APP
   const char* nwb = args.pop("--nwb");
   if (nwb) {
     if (load_eadk_external_data(args.pop("--nwb-external-data"))) {
@@ -304,7 +307,7 @@ int main(int argc, char* argv[]) {
 #endif
     Ion::Init();
     ion_main(args.argc(), args.argv());
-#if ION_SIMULATOR_FILES
+#if ION_SIMULATOR_EXTERNAL_APP
   }
 #endif
   if (!headless) {

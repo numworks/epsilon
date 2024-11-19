@@ -63,8 +63,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
             Interest::Discontinuity) {
       /* If no interest was found and there is an undefined subinterval in the
        * interval, search for the largest interval without undef and then
-       * recompute the interest in this interval.
-       * */
+       * recompute the interest in this interval. */
       ExcludeUndefinedFromBracket(&start, &middle, &end, f, aux,
                                   MinimalStep(middle.x(), slope));
       interest = test(start, middle, end, aux);
@@ -293,8 +292,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
      * of the abscissa axis, a fake root could have been found. Filter it out
      * using null tolerance. This can happens for example with the functions:
      *   > f(x) = floor(x) - 0.5 for x == 1
-     *   > f(x) = x / abs(x) for x == 0
-     * */
+     *   > f(x) = x / abs(x) for x == 0 */
     if (discontinuous == OMG::Troolean::True &&
         std::fabs(solution.y()) > NullTolerance(solution.x())) {
       return Coordinate2D<T>();
@@ -384,9 +382,8 @@ bool Solver<T>::FunctionSeemsConstantOnTheInterval(
    * repartition of these values. If the function takes a few number of
    * different values, it might mean that f is a constant function but
    * approximation errors led to thinking there was a minimum in the interval.
-   * To mesure this "repartition" of values, the entropy of the data is
-   * then calculated.
-   * */
+   * To measure this "repartition" of values, the entropy of the data is
+   * then calculated. */
   for (int i = 0; i < k_numberOfSteps; i++) {
     T currentValue =
         f(xMin + (static_cast<T>(i) / k_numberOfSteps) * (xMax - xMin), aux);
@@ -424,8 +421,7 @@ bool Solver<T>::FunctionSeemsConstantOnTheInterval(
   /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
    * that the function is constant on [xMin, xMax].
    * The value of 0.5 has been chosen because of good experimental results but
-   * could be tweaked.
-   * */
+   * could be tweaked. */
   constexpr T k_entropyThreshold = static_cast<T>(0.5);
   return entropy < k_maxEntropy * k_entropyThreshold;
 }
@@ -448,8 +444,7 @@ T Solver<T>::MinimalStep(T x, T slope) {
      * would filter out mins and maxs.
      * We use e^7 because e^7 ~ 1000, so that if slope = 0,
      * minStep = 10e-6 * 10e3 = 0.001.
-     * This is not applied to floats since the minStep is already big enough.
-     * */
+     * This is not applied to floats since the minStep is already big enough. */
     slope = std::fabs(slope);
     minimalStep =
         minimalStep * std::exp(static_cast<T>(7.) *
@@ -490,11 +485,10 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
    * - always sample a minimal number of points in the whole interval.
    *
    * NOTE: The growth speed as function of the magnitude of x has
-   * an inflexion point at:
+   * an inflection point at:
    * (2/(3 * growthSpeedAcceleration)) ^ (1/3) + upperTypicalMagnitude
    * This is currently equal to 7.05, which matches the max magnitude
-   * of x (10^8)
-   * */
+   * of x (10^8) */
   T baseGrowthSpeed = m_growthSpeed == GrowthSpeed::Precise
                           ? static_cast<T>(1.01)
                           : static_cast<T>(1.05);
@@ -563,8 +557,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
      * Sometimes, xRoot is not precise enough and e can approximate to undef
      * even if it's not. e.g. f(x)=sqrt(cos(x)), when searching roots of cos(x),
      * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
-     * To avoid this problem, clone e and replace cos(xRoot) by 0.
-     * */
+     * To avoid this problem, clone e and replace cos(xRoot) by 0. */
     Tree* ebis = e->cloneTree();
     ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
@@ -690,7 +683,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   }
 
   T x = solution.x();
-  /* When searching for an extremum, the function can take the extremal value
+  /* When searching for an extremum, the function can take the extremum value
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
   constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;  // Magic number
@@ -705,8 +698,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
      * It is assumed that the piecewise condition are more often than not
      * integers or of a magnitude closer to roundX than x. So if the
      * condition of roundX is different from x, this means that the solution
-     * found is probably on an open interval.
-     * */
+     * found is probably on an open interval. */
     if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
       solution = Coordinate2D<T>(k_NAN, k_NAN);
     } else if (fIntX == fx ||

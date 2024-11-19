@@ -463,7 +463,10 @@ T UserExpression::approximateToScalar(AngleUnit angleUnit,
  * ScalarSystemFunction */
 template <typename T>
 T SystemExpression::approximateToScalarWithValue(T x, int listElement) const {
-  return Approximation::RootPreparedToReal<T>(tree(), x, listElement);
+  return Approximation::To<T>(
+      tree(), x, Approximation::Parameter(true, false, false, false),
+      Approximation::Context(AngleUnit::None, ComplexFormat::None,
+                             listElement));
 }
 
 template <typename T>
@@ -544,12 +547,8 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 
 template <typename T>
 T SystemExpression::approximateToScalarJunior() const {
-  Tree* clonedTree = tree()->cloneTree();
-  Approximation::PrepareExpressionForApproximation(clonedTree,
-                                                   ComplexFormat::Real);
-  T result = Approximation::RootPreparedToReal<T>(clonedTree, NAN);
-  clonedTree->removeTree();
-  return result;
+  return Approximation::To<T>(
+      tree(), Approximation::Parameter(true, false, false, true));
 }
 
 template <typename T>
@@ -559,9 +558,8 @@ T SystemFunction::approximateIntegralToScalar(
   Tree* integralTree = PatternMatching::Create(
       KIntegral("x"_e, KA, KB, KC),
       {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()});
-  Approximation::PrepareExpressionForApproximation(integralTree,
-                                                   ComplexFormat::Real);
-  T result = Approximation::RootPreparedToReal<T>(integralTree, NAN);
+  T result = Approximation::To<T>(
+      integralTree, Approximation::Parameter(true, false, false, true));
   integralTree->removeTree();
   return result;
 }

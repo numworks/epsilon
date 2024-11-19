@@ -145,6 +145,14 @@ T Approximation::To(const Tree* e, Parameter param, Context context) {
 };
 
 template <typename T>
+T Approximation::To(const Tree* e, T abscissa, Parameter param,
+                    Context context) {
+  LocalContext localContext(abscissa, context.m_localContext);
+  context.m_localContext = &localContext;
+  return To<T>(e, param, context);
+}
+
+template <typename T>
 Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameter param,
                                        Context context) {
   assert(Dimension::DeepCheck(e) && Dimension::Get(e).isPoint());
@@ -1389,6 +1397,7 @@ template PointOrScalar<float> Approximation::ToPointOrScalar<float>(const Tree*,
                                                                     Context);
 template bool Approximation::ToBoolean<float>(const Tree*, Parameter, Context);
 template float Approximation::To<float>(const Tree*, Parameter, Context);
+template float Approximation::To<float>(const Tree*, float, Parameter, Context);
 template Coordinate2D<float> Approximation::ToPoint<float>(const Tree*,
                                                            Parameter, Context);
 
@@ -1400,6 +1409,8 @@ template PointOrScalar<double> Approximation::ToPointOrScalar<double>(
     const Tree*, Parameter, Context);
 template bool Approximation::ToBoolean<double>(const Tree*, Parameter, Context);
 template double Approximation::To<double>(const Tree*, Parameter, Context);
+template double Approximation::To<double>(const Tree*, double, Parameter,
+                                          Context);
 template Coordinate2D<double> Approximation::ToPoint<double>(const Tree*,
                                                              Parameter,
                                                              Context);

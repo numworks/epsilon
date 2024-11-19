@@ -203,7 +203,9 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
   const Tree* e = reinterpret_cast<const Tree*>(model);
-  return Coordinate2D<T>(t, Approximation::RootPreparedToReal(e, t));
+  return Coordinate2D<T>(
+      t, Approximation::To<T>(
+             e, t, Approximation::Parameter(true, false, false, false)));
 }
 
 Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,

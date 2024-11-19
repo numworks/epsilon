@@ -113,6 +113,11 @@ class Approximation final {
   template <typename T>
   static T To(const Tree* e, Parameter param, Context context = Context());
 
+  // Approximate to real with given value for VarX
+  template <typename T>
+  static T To(const Tree* e, T abscissa, Parameter param,
+              Context context = Context());
+
   template <typename T>
   static std::complex<T> ToComplex(const Tree* e, Parameter param,
                                    Context context = Context());
@@ -131,20 +136,6 @@ class Approximation final {
                         Context context = Context());
 
   // TODO Hugo : Only use Context, create shortcuts to keep context private
-
-  /* Approximations on root tree, independent from current s_context. */
-
-  /* preparedFunction is scalar and must have been prepared with
-   * PrepareFunctionForApproximation. */
-  template <typename T>
-  static T RootPreparedToReal(const Tree* preparedFunction, T abscissa,
-                              int listElement = -1) {
-    // TODO Hugo : Replace directly every RootPreparedToReal
-    LocalContext localContext(abscissa);
-    return To<T>(preparedFunction, Parameter(true, false, false, false),
-                 Context(AngleUnit::None, ComplexFormat::None, listElement, -1,
-                         Random::Context(false), &localContext));
-  }
 
   /* preparedFunction is scalar or point, and must have been prepared with
    * PrepareFunctionForApproximation. */

@@ -152,6 +152,22 @@ class Solver {
                                                OMG::Troolean discontinuous);
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
+  static Coordinate2D<T> FindUndefinedIntervalExtremum(
+      Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
+      FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
+      bool findStart);
+  static Coordinate2D<T> FindUndefinedIntervalStart(
+      Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
+      FunctionEvaluation f, const void* aux, T minimalSizeOfInterval) {
+    return FindUndefinedIntervalExtremum(p1, p2, p3, f, aux,
+                                         minimalSizeOfInterval, true);
+  }
+  static Coordinate2D<T> FindUndefinedIntervalEnd(
+      Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
+      FunctionEvaluation f, const void* aux, T minimalSizeOfInterval) {
+    return FindUndefinedIntervalExtremum(p1, p2, p3, f, aux,
+                                         minimalSizeOfInterval, false);
+  }
   static void ExcludeUndefinedFromBracket(Coordinate2D<T>* p1,
                                           Coordinate2D<T>* p2,
                                           Coordinate2D<T>* p3,

@@ -319,50 +319,58 @@ bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
 };
 
 template <typename T>
+Coordinate2D<T> Solver<T>::FindUndefinedIntervalExtremum(
+    Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
+    FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
+    bool findStart) {
+  /* Search for the smallest interval that contains the undefined and
+   * return the largest interval that does not intersect with it. */
+  Coordinate2D<T> lowerBoundOfDiscontinuity = p1;
+  Coordinate2D<T> middleOfDiscontinuity = p2;
+  Coordinate2D<T> upperBoundOfDiscontinuity = p3;
+  Coordinate2D<T>* undefinedBound =
+      findStart ? &upperBoundOfDiscontinuity : &lowerBoundOfDiscontinuity;
+  Coordinate2D<T>* definedBound =
+      findStart ? &lowerBoundOfDiscontinuity : &upperBoundOfDiscontinuity;
+  assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
+  while (upperBoundOfDiscontinuity.x() - lowerBoundOfDiscontinuity.x() >=
+         minimalSizeOfInterval) {
+    if (std::isnan(middleOfDiscontinuity.y())) {
+      *undefinedBound = middleOfDiscontinuity;
+    } else if (std::isfinite(middleOfDiscontinuity.y())) {
+      *definedBound = middleOfDiscontinuity;
+    } else {
+      assert(std::isinf(middleOfDiscontinuity.y()));
+      return Coordinate2D<T>();
+    }
+    middleOfDiscontinuity.setX(
+        (lowerBoundOfDiscontinuity.x() + upperBoundOfDiscontinuity.x()) / 2.0);
+    middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
+  }
+  assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
+  return *definedBound;
+}
+
+template <typename T>
 void Solver<T>::ExcludeUndefinedFromBracket(
     Coordinate2D<T>* p1, Coordinate2D<T>* p2, Coordinate2D<T>* p3,
     FunctionEvaluation f, const void* aux, T minimalSizeOfInterval) {
   assert(UndefinedInBracket(*p1, *p2, *p3, aux) == Interest::Discontinuity);
-  /* Search for the smallest interval that contains the undefined and
-   * return the largest interval that does not intersect with it. */
-  Coordinate2D<T> dummy(k_NAN, k_NAN);
-  Coordinate2D<T> lowerBoundOfDiscontinuity = *p1;
-  Coordinate2D<T> middleOfDiscontinuity = *p2;
-  Coordinate2D<T> upperBoundOfDiscontinuity = *p3;
-  while (upperBoundOfDiscontinuity.x() - lowerBoundOfDiscontinuity.x() >=
-         minimalSizeOfInterval) {
-    if (UndefinedInBracket(lowerBoundOfDiscontinuity, dummy,
-                           middleOfDiscontinuity,
-                           aux) == Interest::Discontinuity) {
-      upperBoundOfDiscontinuity = middleOfDiscontinuity;
-      middleOfDiscontinuity.setX(
-          (lowerBoundOfDiscontinuity.x() + middleOfDiscontinuity.x()) / 2.0);
-      middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
-    } else if (UndefinedInBracket(middleOfDiscontinuity, dummy,
-                                  upperBoundOfDiscontinuity,
-                                  aux) == Interest::Discontinuity) {
-      lowerBoundOfDiscontinuity = middleOfDiscontinuity;
-      middleOfDiscontinuity.setX(
-          (middleOfDiscontinuity.x() + upperBoundOfDiscontinuity.x()) / 2.0);
-      middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
-    } else {
-      /* This can happen if std::isinf(middleOfDiscontinuity), in which case no
-       * smaller interval with the undefined can be found. */
-      assert(std::isinf(middleOfDiscontinuity.y()));
-      break;
-    }
-    // assert that dummy has no impact
-    assert(UndefinedInBracket(lowerBoundOfDiscontinuity, middleOfDiscontinuity,
-                              upperBoundOfDiscontinuity,
-                              aux) == Interest::Discontinuity);
-  }
   /* The smallest interval containing the undefined is found. Now
    * set p1, p2 and p3 outside of it. */
-  if (std::isnan(lowerBoundOfDiscontinuity.y())) {
-    *p1 = upperBoundOfDiscontinuity;
+  if (std::isnan(p1->y())) {
+    Coordinate2D<T> end =
+        FindUndefinedIntervalEnd(*p1, *p2, *p3, f, aux, minimalSizeOfInterval);
+    if (std::isfinite(end.x())) {
+      *p1 = end;
+    }
   } else {
-    assert(std::isnan(upperBoundOfDiscontinuity.y()));
-    *p3 = lowerBoundOfDiscontinuity;
+    assert(std::isnan(p3->y()));
+    Coordinate2D<T> start = FindUndefinedIntervalStart(*p1, *p2, *p3, f, aux,
+                                                       minimalSizeOfInterval);
+    if (std::isfinite(start.x())) {
+      *p3 = start;
+    }
   }
   p2->setX((p1->x() + p3->x()) / 2.0);
   p2->setY(f(p2->x(), aux));

@@ -42,7 +42,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
-  bool reductionSuccess = Simplification::Simplify(simplifiedAngle, ctx);
+  bool reductionSuccess = Simplification::Simplify(simplifiedAngle, *ctx);
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -195,7 +195,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
   /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */
-  if (Simplification::Simplify(exactAngle, &projCtx)) {
+  if (Simplification::Simplify(exactAngle, projCtx)) {
     if (exactAngleDimension.isUnit()) {
       assert(exactAngleDimension.isSimpleAngleUnit());
       assert(directTrigoFunction->isDirectTrigonometryFunction());
@@ -208,7 +208,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
       // Simplify again
       reductionFailure =
-          !Simplification::Simplify(exactAngle, &projCtx) || reductionFailure;
+          !Simplification::Simplify(exactAngle, projCtx) || reductionFailure;
     }
   } else {
     reductionFailure = true;

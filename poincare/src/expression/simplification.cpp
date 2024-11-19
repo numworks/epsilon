@@ -39,14 +39,13 @@ inline static bool AreConsistent(const ComplexSign& sign,
 #endif
 
 bool Simplification::Simplify(Tree* e,
-                              const ProjectionContext* projectionContext,
+                              const ProjectionContext& projectionContext,
                               bool beautify) {
-  assert(projectionContext);
   ExceptionTry {
 #if ASSERTIONS
     size_t treesNumber = SharedTreeStack->numberOfTrees();
 #endif
-    ProjectionContext contextCopy = *projectionContext;
+    ProjectionContext contextCopy = projectionContext;
     // Clone the tree, simplify and raise an exception for pool overflow.
     Tree* simplified = ApplySimplify(e, &contextCopy, beautify);
     // Prevent from leaking: simplification creates exactly one tree.

@@ -627,6 +627,12 @@ T Solver<T>::nextRootInDependency(const Tree* e) const {
 }
 
 template <typename T>
+T Solver<T>::MagicRound(T x) {
+  constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;  // Magic number
+  return k_roundingOrder * std::round(x / k_roundingOrder);
+}
+
+template <typename T>
 Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
@@ -656,8 +662,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   /* When searching for an extremum, the function can take the extremum value
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
-  constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;  // Magic number
-  T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
+  T roundX = MagicRound(x);
   if (std::isfinite(roundX) && validSolution(roundX)) {
     /* Filter out solutions that are close to a discontinuity. This can
      * happen with functions such as  y = (-x when x < 0, x-1 otherwise)

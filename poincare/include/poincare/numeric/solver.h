@@ -133,6 +133,8 @@ class Solver {
   constexpr static T k_minimalPracticalStep =
       std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
 
+  static T MagicRound(T x);
+
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void* aux,
                                           T xMin, T xMax, Interest interest,
                                           T xPrecision,

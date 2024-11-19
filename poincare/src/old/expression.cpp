@@ -26,7 +26,6 @@
 #include <poincare/old/power.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/real_part.h>
-#include <poincare/old/solver.h>
 #include <poincare/old/store.h>
 #include <poincare/old/subtraction.h>
 #include <poincare/old/symbol.h>

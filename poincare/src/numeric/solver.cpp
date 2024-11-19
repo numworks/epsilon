@@ -198,8 +198,10 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
                                                   {.KA = e1, .KB = e2});
   }
   nextRoot(*memoizedDifference);
-  // ApproximationContext approxContext(m_context, m_complexFormat,
-  // m_angleUnit);
+#if 0
+   ApproximationContext approxContext(m_context, m_complexFormat,
+   m_angleUnit);
+#endif
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
     T y1 = Approximation::RootPreparedToReal<T>(e1, m_xStart);
@@ -547,8 +549,6 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
   return x2;
 }
 
-constexpr KTree zero = 0_e;
-
 template <typename T>
 Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
                                                    int childIndex) const {
@@ -566,7 +566,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
      * To avoid this problem, clone e and replace cos(xRoot) by 0.
      * */
     Tree* ebis = e->cloneTree();
-    ebis->child(childIndex)->cloneTreeOverTree(zero);
+    ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
 #if 0

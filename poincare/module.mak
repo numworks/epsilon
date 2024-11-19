@@ -107,8 +107,6 @@ $(addprefix old/, \
   sign_function.cpp \
   simplification_helper.cpp \
   sine.cpp \
-  solver.cpp \
-  solver_algorithms.cpp \
   square_root.cpp \
   store.cpp \
   subtraction.cpp \

@@ -171,7 +171,11 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return e->numberOfChildren();
     case Type::ListSequence:
       // TODO: Handle undef Approximation.
-      return Approximation::RootTreeToReal<float>(e->child(1));
+      /* TODO Hugo: Ensure in DeepCheck that child(1) is an integer expression.
+       * Parameter can therefore have a false isNotProjected value (since no
+       * risk of having local variables). */
+      return Approximation::To<float>(
+          e->child(1), Approximation::Parameter(false, false, false, false));
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));
@@ -350,7 +354,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       if (!IsIntegerExpression(e->child(1))) {
         return false;
       }
-      float index = Approximation::RootTreeToReal<float>(e->child(1));
+      /* TODO Hugo: Clarify Parameter.m_isNotProjected is only needed for local
+       * variables and not actual projection. */
+      float index = Approximation::To<float>(
+          e->child(1), Approximation::Parameter(false, false, false, false));
       assert(!std::isnan(index) && std::round(index) == index);
       if (index > static_cast<float>(INT8_MAX) ||
           (index < static_cast<float>(INT8_MIN))) {
@@ -535,7 +542,8 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::Pow: {
       Dimension dim = Get(e->child(0), ctx);
       if (dim.isUnit()) {
-        float index = Approximation::RootTreeToReal<float>(e->child(1));
+        float index = Approximation::To<float>(
+            e->child(1), Approximation::Parameter(false, false, false, false));
         assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);
@@ -571,7 +579,8 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
-      int n = Approximation::RootTreeToReal<float>(e->child(0));
+      int n = Approximation::To<float>(
+          e->child(0), Approximation::Parameter(false, false, false, false));
       return Matrix(n, n);
     }
     case Type::UnitConversion:

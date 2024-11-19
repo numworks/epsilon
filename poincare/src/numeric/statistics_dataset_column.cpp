@@ -16,7 +16,11 @@ T TreeDatasetColumn<T>::valueAtIndex(int index) const {
   /* TODO: this is inefficient since we approximate the Tree each time we need
    * to access an element. We should have two classes, one for general trees and
    * one already approximated with fast array access. */
-  return Approximation::RootTreeToReal<T>(m_list->child(index));
+  /* TreeDatasetColumn have been constructed with an approximated list tree. No
+   * need for further projection, preparation or context. */
+  return Approximation::To<T>(
+      m_list->child(index),
+      Approximation::Parameter(false, false, false, false));
 }
 
 template <typename T>

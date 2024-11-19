@@ -28,6 +28,7 @@ class ConstantDatasetColumn : public DatasetColumn<T> {
 template <typename T>
 class TreeDatasetColumn : public DatasetColumn<T> {
  public:
+  // e must be an an approximated list tree.
   TreeDatasetColumn(const Tree* e);
   T valueAtIndex(int index) const override;
   int length() const override;

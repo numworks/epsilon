@@ -71,7 +71,8 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       coefListY->removeTree();
       return;
     }
-    m_c = Approximation::RootTreeToReal<double>(c);
+    m_c = Approximation::To<double>(
+        c, Approximation::Parameter(false, false, false, false));
     ;
   }
 
@@ -86,10 +87,14 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   Tree* coefListX = PolynomialParser::GetReducedCoefficients(be, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
-    m_b = Approximation::RootTreeToReal<double>(coefListX->child(1));
+    m_b = Approximation::To<double>(
+        coefListX->child(1),
+        Approximation::Parameter(false, false, false, false));
     ;
   }
-  m_e = Approximation::RootTreeToReal<double>(coefListX->child(0));
+  m_e = Approximation::To<double>(
+      coefListX->child(0),
+      Approximation::Parameter(false, false, false, false));
   ;
   coefListX->removeTree();
 
@@ -106,14 +111,20 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   coefListX = PolynomialParser::GetReducedCoefficients(adf, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
-    m_a = Approximation::RootTreeToReal<double>(coefListX->child(2));
+    m_a = Approximation::To<double>(
+        coefListX->child(2),
+        Approximation::Parameter(false, false, false, false));
     ;
   }
   if (dx >= 1) {
-    m_d = Approximation::RootTreeToReal<double>(coefListX->child(1));
+    m_d = Approximation::To<double>(
+        coefListX->child(1),
+        Approximation::Parameter(false, false, false, false));
     ;
   }
-  m_f = Approximation::RootTreeToReal<double>(coefListX->child(0));
+  m_f = Approximation::To<double>(
+      coefListX->child(0),
+      Approximation::Parameter(false, false, false, false));
   ;
   coefListX->removeTree();
   coefListY->removeTree();
@@ -487,7 +498,8 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
   assert(0 < nRemoved && nRemoved < nChildren);
   NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
-  double k = Approximation::RootTreeToReal<double>(denominator);
+  double k = Approximation::To<double>(
+      denominator, Approximation::Parameter(false, false, false, false));
   ;
   denominator->removeTree();
 

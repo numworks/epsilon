@@ -79,8 +79,11 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
-      bool removePeriod = Approximation::RootTreeToReal<double>(
-                              sine, ctx->m_angleUnit, ctx->m_complexFormat) < 0;
+      bool removePeriod =
+          Approximation::To<double>(
+              sine, Approximation::Parameter(false, true, false, false),
+              Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat)) <
+          0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -109,9 +112,10 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * double is castable in float. */
   assert(approximateAngleTree ||
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
-  *approximatedAngle = static_cast<float>(Approximation::RootTreeToReal<double>(
+  *approximatedAngle = static_cast<float>(Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
-      ctx->m_angleUnit, ctx->m_complexFormat));
+      Approximation::Parameter(false, true, false, false),
+      Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat)));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -216,8 +220,10 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   }
 
   // The angle must be real and finite.
-  if (reductionFailure || !std::isfinite(Approximation::RootTreeToReal<float>(
-                              exactAngle, angleUnit, complexFormat))) {
+  if (reductionFailure ||
+      !std::isfinite(Approximation::To<float>(
+          exactAngle, Approximation::Parameter(false, true, false, false),
+          Approximation::Context(angleUnit, complexFormat)))) {
     exactAngle->removeTree();
     return UserExpression();
   }
@@ -255,7 +261,8 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   }
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
-    if (!std::isfinite(Approximation::RootTreeToReal<float>(e))) {
+    if (!std::isfinite(Approximation::To<float>(
+            e, Approximation::Parameter(false, false, false, false)))) {
       *error = true;
       return nullptr;
     }
@@ -300,7 +307,8 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   Tree* numericalValue =
       const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
-  *value = Approximation::RootTreeToReal<float>(numericalValue);
+  *value = Approximation::To<float>(
+      numericalValue, Approximation::Parameter(false, false, false, false));
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
   return UserExpression::Builder(clone);
 }

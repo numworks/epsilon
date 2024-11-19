@@ -66,7 +66,8 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return false;
   }
   // TODO_PCJ: Use double instead of float (requires Integer::Push(uint64_t)).
-  float approx = Approximation::RootTreeToReal<float>(e);
+  float approx = Approximation::To<float>(
+      e, Approximation::Parameter(false, false, false, false));
   static_assert(OMG::IEEE754<float>::NonExactIntegerLimit() <= UINT32_MAX);
   if (std::isnan(approx) ||
       std::fabs(approx) > OMG::IEEE754<float>::NonExactIntegerLimit()) {

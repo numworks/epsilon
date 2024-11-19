@@ -411,7 +411,8 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     Tree* childExponent = factor->child(1);
     assert(factor->child(0)->isUnit());
     assert(factor->child(1)->isRational());
-    exponent = Approximation::RootTreeToReal<double>(childExponent);
+    exponent = Approximation::To<double>(
+        childExponent, Approximation::Parameter(false, false, false, false));
     factor = factor->child(0);
   }
   if (!factor->isUnit()) {
@@ -597,10 +598,10 @@ double Unit::KelvinValueToRepresentative(double value,
   bool isCelsius = (representative == &Temperature::representatives.celsius);
   // A -> (A / ratio) - origin
   return (value / representative->ratio()) -
-         (isCelsius ? Approximation::RootTreeToReal<double>(
-                          Temperature::celsiusOrigin)
-                    : Approximation::RootTreeToReal<double>(
-                          Temperature::fahrenheitOrigin));
+         Approximation::To<double>(
+             isCelsius ? Temperature::celsiusOrigin
+                       : Temperature::fahrenheitOrigin,
+             Approximation::Parameter(false, false, false, false));
 }
 
 Tree* Unit::Push(const Representative* unitRepresentative,
@@ -655,7 +656,8 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
       const Tree* exp = factor->child(1);
       assert(exp->isRational());
       // Using the closest integer to the exponent.
-      float exponentFloat = Approximation::RootTreeToReal<float>(exp);
+      float exponentFloat = Approximation::To<float>(
+          exp, Approximation::Parameter(false, false, false, false));
       if (exponentFloat != std::round(exponentFloat)) {
         /* If non-integer exponents are found, we round a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived
@@ -858,12 +860,15 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
     if (keepRepresentative) {
       assert(!dimension.isAngleUnit());
       // Keep the same representative, find the best prefix.
-      double value = Approximation::RootTreeToReal<double>(e);
+      double value = Approximation::To<double>(
+          e, Approximation::Parameter(false, false, false, false));
       if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
         value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
       } else {
         // Correct the value since e is in basic SI
-        value /= Approximation::RootTreeToReal<double>(extractedUnits);
+        value /= Approximation::To<double>(
+            extractedUnits,
+            Approximation::Parameter(false, false, false, false));
         /* With speed, find best prefix for distance. Otherwise, target
          * extractedUnits (that could be a Power). */
         ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
@@ -989,7 +994,8 @@ bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
   if (dimension.isAngleUnit()) {
     units = GetBaseUnits(vector);
   } else {
-    double value = Approximation::RootTreeToReal<double>(e);
+    double value = Approximation::To<double>(
+        e, Approximation::Parameter(false, false, false, false));
     units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
     GetBaseUnits(vector);
@@ -1042,9 +1048,11 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& extractedUnits) {
   if (extractedUnits->isUnit() &&
       IsNonKelvinTemperature(GetRepresentative(extractedUnits))) {
     // Handle non kelvin temperature conversion separately.
-    e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(
-        KelvinValueToRepresentative(Approximation::RootTreeToReal<double>(e),
-                                    GetRepresentative(extractedUnits))));
+    e->moveTreeOverTree(
+        SharedTreeStack->pushDoubleFloat(KelvinValueToRepresentative(
+            Approximation::To<double>(
+                e, Approximation::Parameter(false, false, false, false)),
+            GetRepresentative(extractedUnits))));
     e->cloneNodeAtNode(KMult.node<2>);
     return true;
   }
@@ -1096,8 +1104,11 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
   }
   assert(e->nextTree() == units);
   // Select best prefix
-  double value = Approximation::RootTreeToReal<double>(e) /
-                 Approximation::RootTreeToReal<double>(units);
+  double value =
+      Approximation::To<double>(
+          e, Approximation::Parameter(false, false, false, false)) /
+      Approximation::To<double>(
+          units, Approximation::Parameter(false, false, false, false));
   // TODO: Allow representative switch between in, ft, yd and mi
   // UnitFormat doesn't matter with optimizeRepresentative false.
   ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
@@ -1210,7 +1221,8 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
   if (!list) {
     return false;
   }
-  double value = Approximation::RootTreeToReal<double>(e);
+  double value = Approximation::To<double>(
+      e, Approximation::Parameter(false, false, false, false));
   // Skip decomposition if value is smaller than second smallest representative.
   assert(length > 1);
   if (std::isnan(value) || std::isinf(value) ||

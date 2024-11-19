@@ -454,7 +454,9 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
 template <typename T>
 T UserExpression::approximateToScalar(AngleUnit angleUnit,
                                       ComplexFormat complexFormat) const {
-  return Approximation::RootTreeToReal<T>(tree(), angleUnit, complexFormat);
+  return Approximation::To<T>(
+      tree(), Approximation::Parameter(true, true, false, false),
+      Approximation::Context(angleUnit, complexFormat));
 }
 
 /* TODO_PCJ: This cannot be called on system expressions, but rather on

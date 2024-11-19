@@ -13,13 +13,17 @@ namespace Poincare::Internal {
 Tree* Number::Addition(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
     return SharedTreeStack->pushDoubleFloat(
-        Approximation::RootTreeToReal<double>(e1) +
-        Approximation::RootTreeToReal<double>(e2));
+        Approximation::To<double>(
+            e1, Approximation::Parameter(false, false, false, false)) +
+        Approximation::To<double>(
+            e2, Approximation::Parameter(false, false, false, false)));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
     return SharedTreeStack->pushSingleFloat(
-        Approximation::RootTreeToReal<float>(e1) +
-        Approximation::RootTreeToReal<float>(e2));
+        Approximation::To<float>(
+            e1, Approximation::Parameter(false, false, false, false)) +
+        Approximation::To<float>(
+            e2, Approximation::Parameter(false, false, false, false)));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Addition(e1, e2);
@@ -29,13 +33,17 @@ Tree* Number::Multiplication(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
     // TODO: approximate the Tree to be consistent with enhanced float *
     return SharedTreeStack->pushDoubleFloat(
-        Approximation::RootTreeToReal<double>(e1) *
-        Approximation::RootTreeToReal<double>(e2));
+        Approximation::To<double>(
+            e1, Approximation::Parameter(false, false, false, false)) *
+        Approximation::To<double>(
+            e2, Approximation::Parameter(false, false, false, false)));
   }
   if (e1->isSingleFloat() || e2->isSingleFloat()) {
     return SharedTreeStack->pushSingleFloat(
-        Approximation::RootTreeToReal<float>(e1) *
-        Approximation::RootTreeToReal<float>(e2));
+        Approximation::To<float>(
+            e1, Approximation::Parameter(false, false, false, false)) *
+        Approximation::To<float>(
+            e2, Approximation::Parameter(false, false, false, false)));
   }
   assert(!e1->isMathematicalConstant() && !e2->isMathematicalConstant());
   Tree* result = Rational::Multiplication(e1, e2);

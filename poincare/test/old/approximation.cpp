@@ -22,9 +22,11 @@ void assert_expression_approximates_to_scalar(
   Preferences::SharedPreferences()->enableMixedFractions(
       mixedFractionsParameter);
   Internal::Tree *e = parse_expression(expression, &globalContext);
-  ApproximationContext approximationContext(&globalContext, complexFormat,
-                                            angleUnit);
-  T result = Internal::Approximation::RootTreeToReal<T>(e);
+  T result = Internal::Approximation::To<T>(
+      e, Internal::Approximation::Parameter(true, true, false, false),
+      Internal::Approximation::Context(angleUnit, complexFormat, -1, -1,
+                                       Internal::Random::Context(false),
+                                       nullptr, &globalContext));
   e->removeTree();
   bool test =
       roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
@@ -477,8 +479,11 @@ void assert_expression_approximation_is_bounded(const char *expression,
 #if 0
   Shared::GlobalContext globalContext;
   Internal::Tree *e = parse_expression(expression, &globalContext, true);
-  ApproximationContext approximationContext(&globalContext, Cartesian, Radian);
-  T result = Internal::Approximation::RootTreeToReal<T>(e);
+  T result = Internal::Approximation::To<T>(
+      e, Internal::Approximation::Parameter(true, true, false, false),
+      Internal::Approximation::Context(Radian, Cartesian, -1, -1,
+                                       Internal::Random::Context(false),
+                                       nullptr, &globalContext));
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);

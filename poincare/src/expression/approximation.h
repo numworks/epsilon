@@ -171,17 +171,6 @@ class Approximation final {
                          Random::Context(false), &localContext));
   }
 
-  /* scalarTree must have a scalar dimension. angleUnit and complexFormat can be
-   * left to default on projected trees. */
-  template <typename T>
-  static T RootTreeToReal(const Tree* scalarTree,
-                          AngleUnit angleUnit = AngleUnit::Radian,
-                          ComplexFormat complexFormat = ComplexFormat::Real) {
-    // TODO Hugo : Replace directly every RootTreeToReal, check isProjected
-    return To<T>(scalarTree, Parameter(true, true, false, true),
-                 Context(angleUnit, complexFormat));
-  }
-
   // tree must be of scalar dimension and real.
   // TODO_PCJ: make private
   template <typename T>

@@ -35,5 +35,6 @@ else
 # - Oz ? (small size, slower)
 # - O3 ? (large size, faster)
 # - Os ? (in between)
-LDFLAGS += -Oz
+# For some reason builds with Oz crash when dlopening external apps
+LDFLAGS += -Os
 endif

@@ -130,8 +130,7 @@ QUIZ_CASE(solver_cubic) {
   assert_solves_to(
       "x^3-8i=0", {"x=-√(3)+i",
                    "x=-e^(π/6×i)×(1+√(3)×i)",  // TODO_PCJ: simplify to "x=-2×i"
-                   "x=root(8×i,3)",  // TODO_PCJ: simplify to "x=√(3)+i"
-                   "delta=1728"});
+                   "x=√(3)+i", "delta=1728"});
 
   /* NOTE: we used to only display the approximate form for the below case, this
    * can be discussed. */

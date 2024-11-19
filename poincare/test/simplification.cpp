@@ -222,8 +222,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(-3)", "3");
   simplifies_to("abs(3i)", "3");
   simplifies_to("abs(-3i)", "3");
-  // TODO: Metric: 3×abs(x)
-  simplifies_to("abs(abs(abs((-3)×x)))", "abs(-3×x)");
+  simplifies_to("abs(abs(abs((-3)×x)))", "3×abs(x)");
   simplifies_to("abs(1+i)", "√(2)", cartesianCtx);
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
@@ -537,7 +536,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
                 "-tanh(x)+(tanh(2×x)×(sinh(x)^2/cosh(x)^2+1))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
-  simplifies_to("arcosh(5)-ln(5+sqrt(24))", "0", cartesianCtx);
+  simplifies_to("arcosh(5)-ln(5+√(24))", "0", cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", cartesianCtx);
   simplifies_to("arsinh(sinh(x))", "x", cartesianCtx);
   simplifies_to("artanh(tanh(x))", "x", cartesianCtx);
@@ -599,7 +598,7 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("floor(8/3)", "2");
   simplifies_to("round(1/3,2)", "33/100");
   simplifies_to("round(3.3_m)", "undef");
-  // simplifies_to("ceil(x)", "ceil(x)"); // pb metric
+  simplifies_to("ceil(x)", "ceil(x)");
   simplifies_to("ceil(-x)", "-floor(x)");
   simplifies_to("floor(x)+frac(x)", "dep(x,{floor(x)})");
   simplifies_to("permute(4,2)", "12");
@@ -722,7 +721,10 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("0^3.1", "0");
   simplifies_to("0^(-4.2)", "undef");
   simplifies_to("0^(1+x^2)", "0");
-  simplifies_to("sqrt(9)", "3");
+  simplifies_to("√(9)", "3");
+  simplifies_to("√(-9)", "3×i", cartesianCtx);
+  simplifies_to("√(i)", "e^(π/4×i)", cartesianCtx);
+  simplifies_to("√(-i)", "e^(-π/4×i)", cartesianCtx);
   simplifies_to("root(-8,3)", "-2");
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
@@ -764,8 +766,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1/√(2)", "√(2)/2");
   simplifies_to("√(2)/2", "√(2)/2");
   simplifies_to("√(-12)/2", "√(3)×i", cartesianCtx);
-  // TODO: Should simplify to -2+√(3)×i (same metric)
-  simplifies_to("-2+√(-12)/2", "-2+√(-12)/2", cartesianCtx);
+  simplifies_to("-2+√(-12)/2", "-2+√(3)×i", cartesianCtx);
 
   // Denesting of square roots
   simplifies_to("√(2+√(3))", "(√(2)+√(6))/2");
@@ -1058,8 +1059,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({π/12,-19π/12})", "{(√(2)+√(6))/4,(√(2)×(-1+√(3)))/4}");
   simplifies_to("sin({π/12,-19π/12})", "{(√(2)×(-1+√(3)))/4,(√(2)+√(6))/4}");
   // test π/10 in top-left quadrant
-  simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-√((5+√(5))/8)}");
-  simplifies_to("sin({66π/10,-31π/10})", "{√((5+√(5))/8),(-1+√(5))/4}");
+  simplifies_to("cos({66π/10,-31π/10})", "{-(-1+√(5))/4,-(√(2)×√(5+√(5)))/4}");
+  simplifies_to("sin({66π/10,-31π/10})", "{(√(2)×√(5+√(5)))/4,(-1+√(5))/4}");
   // test π/8 in bottom-left quadrant
   simplifies_to("cos({9π/8,59π/8})", "{-√(2+√(2))/2,-√(2-√(2))/2}");
   simplifies_to("sin({9π/8,59π/8})", "{-√(2-√(2))/2,-√(2+√(2))/2}");
@@ -1070,7 +1071,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("cos({6π/5,-33π/5,18π/5,-π/5})",
                 "{-(1+√(5))/4,-(-1+√(5))/4,(-1+√(5))/4,(1+√(5))/4}");
   simplifies_to("sin({π/5,2π/5,3π/5,-6π/5})",
-                "{√((5-√(5))/8),√((5+√(5))/8),√((5+√(5))/8),√((5-√(5))/8)}");
+                "{(√(2)×√(5-√(5)))/4,(√(2)×√(5+√(5)))/4,(√(2)×√(5+√(5)))/"
+                "4,(√(2)×√(5-√(5)))/4}");
   // test π/4 in all quadrants
   simplifies_to("cos({π/4,3π/4,-11π/4,7π/4})",
                 "{√(2)/2,-√(2)/2,-√(2)/2,√(2)/2}");
@@ -1254,8 +1256,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("1+ln(x)+ln(y)",
                 "dep(1+ln(x)+ln(y),{nonNull(x),nonNull(y),realPos(x),"
                 "realPos(y)})");
-  // TODO: Metric: 2×ln(π)
-  simplifies_to("ln(π)-ln(1/π)", "ln(π^2)");
+  simplifies_to("ln(π)-ln(1/π)", "2×ln(π)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
                 "dep(1-ln(x),{arg(1/x),arg(x),realPos(x)})");
   simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", cartesianCtx);
@@ -1423,7 +1424,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("(2/3)^(5/7)", "(2^(5/7)×3^(2/7))/3");  // "root(288,7)/3"
   // ADVANCED_MAX_DEPTH is too small
   simplifies_to("(4/11)^(8/9)",
-                "root(720896,9)/11");  // "(2×root(1408,9))/11"
+                "(2×2^(7/9)×root(11,9))/11");  // "(2×root(1408,9))/11"
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
   // (1+i)/(1-i) => i
   simplifies_to("(1+i)/(1-i)", "i");

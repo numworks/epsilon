@@ -194,15 +194,15 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
     *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(minusOne, KB)),
                                                   {.KA = e1, .KB = e2});
   }
-  nextRoot(*memoizedDifference);
+  Coordinate2D<T> root = nextRoot(*memoizedDifference);
 #if 0
    ApproximationContext approxContext(m_context, m_complexFormat,
    m_angleUnit);
 #endif
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    T y1 = Approximation::RootPreparedToReal<T>(e1, m_result.x());
-    T y2 = Approximation::RootPreparedToReal<T>(e2, m_result.x());
+    T y1 = Approximation::RootPreparedToReal<T>(e1, root.x());
+    T y2 = Approximation::RootPreparedToReal<T>(e2, root.x());
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
       /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
        * or undef expressions in specific points like x^2/x, the root of the
@@ -214,9 +214,9 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
     }
     /* Result is not always exactly the same due to approximation errors. Take
      * the middle of the two values. */
-    m_result.setY((y1 + y2) / 2.);
+    root.setY((y1 + y2) / 2.);
   }
-  return m_result;
+  return root;
 }
 
 template <typename T>

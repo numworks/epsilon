@@ -12,14 +12,18 @@ static inline void preemptive_termination(Ion::Events::Event e) {
   }
 }
 
-eadk_keyboard_state_t eadk_keyboard_scan() {
+Ion::Keyboard::State s_state;
+void _eadk_keyboard_scan_do_scan() {
   /* Calling Ion::Events::getPlatformEvent gives us a change to handle simulator
-   * events, like "take a screenshot", or "us the mouse to press a button on the
-   * virtual calculator". */
+   * events, like "take a screenshot", or "use the mouse to press a button on
+   * the virtual calculator". */
   Ion::Events::Event e = Ion::Events::getPlatformEvent();
   preemptive_termination(e);
-  return Ion::Keyboard::scan();
+  s_state = Ion::Keyboard::scan();
 }
+
+uint32_t _eadk_keyboard_scan_low() { return s_state % UINT32_MAX; }
+uint32_t _eadk_keyboard_scan_high() { return s_state / UINT32_MAX; }
 
 eadk_event_t eadk_event_get(int32_t* timeout) {
   Ion::Events::Event e = Ion::Events::getEvent(timeout);
@@ -88,7 +92,14 @@ void eadk_timing_usleep(uint32_t us) {
 
 void eadk_timing_msleep(uint32_t ms) { Ion::Timing::msleep(ms); }
 
-uint64_t eadk_timing_millis() { return Ion::Timing::millis(); }
+uint32_t _eadk_timing_millis_low() {
+  return Ion::Timing::millis() % UINT32_MAX;
+}
+/* Technically the high value could change between the two calls leading to a
+ * bad return value but it is extremely unlikely. */
+uint32_t _eadk_timing_millis_high() {
+  return Ion::Timing::millis() / UINT32_MAX;
+}
 
 const char* eadk_external_data = nullptr;
 extern size_t eadk_external_data_size = 0;

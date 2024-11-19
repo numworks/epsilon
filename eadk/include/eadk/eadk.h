@@ -84,7 +84,24 @@ typedef enum {
   eadk_key_exe = 52
 } eadk_key_t;
 
+#if PLATFORM_DEVICE
 eadk_keyboard_state_t eadk_keyboard_scan();
+#else
+/* Returning a 64 bit value with emscripten would require WASM_BIGINT that
+ * causes some issue when the external app use a libc. */
+void _eadk_keyboard_scan_do_scan();
+uint32_t _eadk_keyboard_scan_low();
+uint32_t _eadk_keyboard_scan_high();
+
+static inline eadk_keyboard_state_t eadk_keyboard_scan() {
+  _eadk_keyboard_scan_do_scan();
+  uint64_t state = _eadk_keyboard_scan_high();
+  state <<= 32;
+  state |= _eadk_keyboard_scan_low();
+  return state;
+}
+#endif
+
 static inline bool eadk_keyboard_key_down(eadk_keyboard_state_t state,
                                           eadk_key_t key) {
   return (state >> (uint8_t)key) & 1;
@@ -245,7 +262,20 @@ void eadk_display_draw_string(const char* text, eadk_point_t point,
 
 void eadk_timing_usleep(uint32_t us);
 void eadk_timing_msleep(uint32_t ms);
+
+#if PLATFORM_DEVICE
 uint64_t eadk_timing_millis();
+#else
+uint32_t _eadk_timing_millis_low();
+uint32_t _eadk_timing_millis_high();
+
+static inline uint64_t eadk_timing_millis() {
+  uint64_t millis = _eadk_timing_millis_high();
+  millis <<= 32;
+  millis |= _eadk_timing_millis_low();
+  return millis;
+}
+#endif
 
 // External data
 

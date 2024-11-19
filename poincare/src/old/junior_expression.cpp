@@ -441,7 +441,8 @@ SystemExpression UserExpression::cloneAndReduceAndBeautify(
   assert(!isUninitialized());
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  bool reductionSuccess = Simplification::Simplify(e, context, beautify);
+  Internal::ProjectionContext contextCopy = *context;
+  bool reductionSuccess = Simplification::Simplify(e, &contextCopy, beautify);
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }

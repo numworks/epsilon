@@ -42,9 +42,15 @@ bool Simplification::Simplify(Tree* e, ProjectionContext* projectionContext,
                               bool beautify) {
   assert(projectionContext);
   ExceptionTry {
-    // Clone the tree and raise an exception for pool overflow.
-    SharedTreeStack->executeAndReplaceTree(ApplySimplify, e, projectionContext,
-                                           beautify);
+    Block* previousLastBlock = SharedTreeStack->lastBlock();
+#if ASSERTIONS
+    size_t treesNumber = SharedTreeStack->numberOfTrees();
+#endif
+    // Clone the tree, simplify and raise an exception for pool overflow.
+    ApplySimplify(e, projectionContext, beautify);
+    // Prevent from leaking: simplification creates exactly one tree.
+    assert(SharedTreeStack->numberOfTrees() == treesNumber + 1);
+    e->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
   }
   ExceptionCatch(type) {
     switch (type) {

@@ -214,28 +214,6 @@ class AbstractTreeStack : public BlockStack {
 
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
-
- public:
-  // Execute an action with input parameters types (Tree*, ContextT*,
-  // ParametersTs...)
-  template <typename ActionT, typename ContextT, typename... ParametersTs>
-  void executeAndReplaceTree(ActionT action, Tree* tree,
-                             const ContextT* context,
-                             ParametersTs... extraParameters) {
-    assert(context);
-    // Copy context to avoid altering the original
-    ContextT contextCopy = *context;
-    Block* previousLastBlock = lastBlock();
-#if ASSERTIONS
-    size_t treesNumber = numberOfTrees();
-#endif
-    assert(numberOfTrees() == treesNumber);
-    action(tree, &contextCopy, extraParameters...);
-    /* Prevent edition action from leaking: an action creates exactly one
-     * tree. */
-    assert(numberOfTrees() == treesNumber + 1);
-    tree->moveTreeOverTree(Tree::FromBlocks(previousLastBlock));
-  }
 };
 
 template <size_t MaxNumberOfBlocks,

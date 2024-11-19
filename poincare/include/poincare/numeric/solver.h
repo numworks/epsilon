@@ -120,11 +120,6 @@ class Solver {
   void setGrowthSpeed(GrowthSpeed speed) { m_growthSpeed = speed; }
 
  private:
-  struct FunctionEvaluationParameters {
-    // const ApproximationContext &approximationContext;
-    const Internal::Tree* expression;
-  };
-
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0);
   /* We use k_minimalPracticalStep (10^-6) when stepping around zero instead of

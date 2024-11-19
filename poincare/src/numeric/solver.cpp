@@ -92,23 +92,14 @@ Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
           [](const Tree* e) { return e->isRandomized(); })) {
     return Coordinate2D<T>(NAN, NAN);
   }
-#if 0
-  ApproximationContext approximationContext(m_context, m_complexFormat,
-                                            m_angleUnit);
-#endif
-  FunctionEvaluationParameters parameters = {
-#if 0
-    .approximationContext = approximationContext,
-#endif
-    .expression = e
-  };
+  /* TODO_PCJ: Either Pass ApproximationContext(m_context, m_complexFormat,
+   * m_angleUnit) or ensure expression is projected. */
   FunctionEvaluation f = [](T x, const void* aux) {
-    const FunctionEvaluationParameters* p =
-        reinterpret_cast<const FunctionEvaluationParameters*>(aux);
-    return Approximation::RootPreparedToReal<T>(p->expression, x);
+    const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
+    return Approximation::RootPreparedToReal<T>(e, x);
   };
 
-  return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
+  return next(f, e, test, hone, &DiscontinuityTestForExpression);
 }
 
 template <typename T>
@@ -185,22 +176,20 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
   }
   assert(memoizedDifference);
   if (*memoizedDifference == nullptr) {
-#if 0
-    ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit,
-                                      UnitFormat::Metric,
-                                      ReductionTarget::SystemForAnalysis);
-#endif
-    // TODO simplify if we decide that functions should be simplified
+    /* TODO simplify with if
+     * we decide that functions should be simplified
+     * Either Pass ReductionContext(m_context, m_complexFormat,
+     * m_angleUnit, UnitFormat::Metric, ReductionTarget::SystemForAnalysis) or
+     * ensure expression is projected. */
     *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(minusOne, KB)),
                                                   {.KA = e1, .KB = e2});
   }
   Coordinate2D<T> root = nextRoot(*memoizedDifference);
-#if 0
-   ApproximationContext approxContext(m_context, m_complexFormat,
-   m_angleUnit);
-#endif
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
+    /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+     * expression is projected. */
     T y1 = Approximation::RootPreparedToReal<T>(e1, root.x());
     T y2 = Approximation::RootPreparedToReal<T>(e2, root.x());
     if (!std::isfinite(y1) || !std::isfinite(y2)) {
@@ -313,9 +302,8 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 
 template <typename T>
 bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
-  const Solver<T>::FunctionEvaluationParameters* p =
-      reinterpret_cast<const Solver<T>::FunctionEvaluationParameters*>(aux);
-  return Continuity::IsDiscontinuousBetweenFloatValues(p->expression, x1, x2);
+  const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
+  return Continuity::IsDiscontinuousBetweenFloatValues(e, x1, x2);
 };
 
 template <typename T>
@@ -561,9 +549,9 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
     ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
-#if 0
-    ApproximationContext approxContext(m_context, m_complexFormat, m_angleUnit);
-#endif
+    /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+     * expression is projected. */
     T value = Approximation::RootPreparedToReal<T>(ebis, xRoot);  // m_unknown
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(xRoot)) {

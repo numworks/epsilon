@@ -162,20 +162,21 @@ class Solver {
   static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
-  Coordinate2D<T> nextPossibleRootInChild(const Internal::Tree* e,
-                                          int childIndex) const;
+  T nextPossibleRootInChild(const Internal::Tree* e, int childIndex) const;
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
                                           Context* context, void* auxiliary);
-  Coordinate2D<T> nextRootInChildren(const Internal::Tree* e,
-                                     ExpressionTestAuxiliary test,
-                                     void* aux) const;
-  Coordinate2D<T> nextRootInMultiplication(const Internal::Tree* m) const;
-  Coordinate2D<T> nextRootInAddition(const Internal::Tree* m) const;
-  Coordinate2D<T> nextRootInDependency(const Internal::Tree* m) const;
+  T nextRootInChildren(const Internal::Tree* e, ExpressionTestAuxiliary test,
+                       void* aux) const;
+  T nextRootInMultiplication(const Internal::Tree* m) const;
+  T nextRootInAddition(const Internal::Tree* m) const;
+  T nextRootInDependency(const Internal::Tree* m) const;
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);
   Solution registerSolution(Coordinate2D<T> xy, Interest interest);
+  Solution registerRoot(T x) {
+    return registerSolution(Coordinate2D<T>(x, k_zero), Interest::Root);
+  }
 
   T m_xStart;
   T m_xEnd;

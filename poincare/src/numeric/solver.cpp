@@ -109,17 +109,17 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
   switch (e->type()) {
     case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
-      return registerSolution(nextRootInMultiplication(e), Interest::Root);
+      return registerRoot(nextRootInMultiplication(e));
 
     case Type::Add:
     case Type::Sub:
-      return registerSolution(nextRootInAddition(e), Interest::Root);
+      return registerRoot(nextRootInAddition(e));
 
     case Type::Pow:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
-      return registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
+      return registerRoot(nextPossibleRootInChild(e, 0));
 
     case Type::Abs:
     case Type::ATan:
@@ -130,7 +130,7 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
       return nextRoot(e->child(0));
 
     case Type::Dep:
-      return registerSolution(nextRootInDependency(e), Interest::Root);
+      return registerRoot(nextRootInDependency(e));
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
@@ -520,8 +520,7 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
-                                                   int childIndex) const {
+T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
   Solver<T> solver = *this;
   const Tree* child = e->child(childIndex);
   T xRoot;
@@ -544,21 +543,20 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Tree* e,
     T value = Approximation::RootPreparedToReal<T>(ebis, xRoot);  // m_unknown
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(xRoot)) {
-      return Coordinate2D<T>(xRoot, k_zero);
+      return xRoot;
     }
   }
-  return Coordinate2D<T>(k_NAN, k_NAN);
+  return k_NAN;
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInChildren(const Tree* e,
-                                              ExpressionTestAuxiliary test,
-                                              void* aux) const {
+T Solver<T>::nextRootInChildren(const Tree* e, ExpressionTestAuxiliary test,
+                                void* aux) const {
   T xRoot = k_NAN;
   int n = e->numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (test(e->child(i), m_context, aux)) {
-      T xRootChild = nextPossibleRootInChild(e, i).x();
+      T xRootChild = nextPossibleRootInChild(e, i);
       if (std::isfinite(xRootChild) &&
           (!std::isfinite(xRoot) ||
            std::fabs(m_xStart - xRootChild) < std::fabs(m_xStart - xRoot))) {
@@ -566,18 +564,18 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(const Tree* e,
       }
     }
   }
-  return Coordinate2D<T>(xRoot, k_zero);
+  return xRoot;
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Tree* e) const {
+T Solver<T>::nextRootInMultiplication(const Tree* e) const {
   assert(e->isMult());
   return nextRootInChildren(
       e, [](const Tree*, Context*, void*) { return true; }, nullptr);
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
+T Solver<T>::nextRootInAddition(const Tree* e) const {
   /* Special case for expressions of the form "f(x)^a+g(x)", with:
    * - f(x) and g(x) sharing a root x0
    * - f(x) being defined only on one side of x0
@@ -606,19 +604,18 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Tree* e) const {
       return k_zero < exponent && exponent < static_cast<T>(1.);
     });
   };
-  T xChildrenRoot =
-      nextRootInChildren(e, test, const_cast<Solver<T>*>(this)).x();
+  T xChildrenRoot = nextRootInChildren(e, test, const_cast<Solver<T>*>(this));
   Solver<T> solver = *this;
   T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x();
   if (!std::isfinite(xRoot) ||
       std::fabs(xChildrenRoot - m_xStart) < std::fabs(xRoot - m_xStart)) {
     xRoot = xChildrenRoot;
   }
-  return Coordinate2D<T>(xRoot, k_zero);
+  return xRoot;
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
+T Solver<T>::nextRootInDependency(const Tree* e) const {
   assert(e->isDep());
   Solver<T> solver = *this;
   const Tree* main = Dependency::Main(e);
@@ -629,7 +626,7 @@ Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
          std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
     root = solver.nextRoot(main);
   }
-  return root.xy;
+  return root.x();
 }
 
 template <typename T>

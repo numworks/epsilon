@@ -1412,64 +1412,60 @@ Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
 template Tree* Approximation::ToTree<float>(const Tree*, Parameter, Context);
 template Tree* Approximation::ToTree<double>(const Tree*, Parameter, Context);
 
-template std::complex<float> Approximation::ToComplex<float>(const Tree*,
+template std::complex<float> Approximation::ToComplex(const Tree*, Parameter,
+                                                      Context);
+template std::complex<double> Approximation::ToComplex(const Tree*, Parameter,
+                                                       Context);
+
+template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*,
                                                              Parameter,
                                                              Context);
-template std::complex<double> Approximation::ToComplex<double>(const Tree*,
-                                                               Parameter,
-                                                               Context);
-
-template PointOrScalar<float> Approximation::ToPointOrScalar<float>(const Tree*,
-                                                                    Parameter,
-                                                                    Context);
-template PointOrScalar<double> Approximation::ToPointOrScalar<double>(
-    const Tree*, Parameter, Context);
+template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
+                                                              Parameter,
+                                                              Context);
 
 template bool Approximation::ToBoolean<float>(const Tree*, Parameter, Context);
 template bool Approximation::ToBoolean<double>(const Tree*, Parameter, Context);
 
-template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar<float>(
+template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
     const Tree*, float);
-template PointOrScalar<double>
-Approximation::RootPreparedToPointOrScalar<double>(const Tree*, double);
+template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
+    const Tree*, double);
 
-template float Approximation::RootTreeToReal<float>(const Tree*, float);
-template double Approximation::RootTreeToReal<double>(const Tree*, double);
+template float Approximation::RootTreeToReal(const Tree*, float);
+template double Approximation::RootTreeToReal(const Tree*, double);
 
-template float Approximation::To<float>(const Tree*, Parameter, Context);
-template double Approximation::To<double>(const Tree*, Parameter, Context);
+template float Approximation::To(const Tree*, Parameter, Context);
+template double Approximation::To(const Tree*, Parameter, Context);
 
-template float Approximation::To<float>(const Tree*, float, Parameter, Context);
-template double Approximation::To<double>(const Tree*, double, Parameter,
-                                          Context);
+template float Approximation::To(const Tree*, float, Parameter, Context);
+template double Approximation::To(const Tree*, double, Parameter, Context);
 
-template Coordinate2D<float> Approximation::ToPoint<float>(const Tree*,
-                                                           Parameter, Context);
-template Coordinate2D<double> Approximation::ToPoint<double>(const Tree*,
-                                                             Parameter,
-                                                             Context);
+template Coordinate2D<float> Approximation::ToPoint(const Tree*, Parameter,
+                                                    Context);
+template Coordinate2D<double> Approximation::ToPoint(const Tree*, Parameter,
+                                                     Context);
 
-template float Approximation::FloatBinomial<float>(float, float);
-template double Approximation::FloatBinomial<double>(double, double);
+template float Approximation::FloatBinomial(float, float);
+template double Approximation::FloatBinomial(double, double);
 
-template std::complex<float> Approximation::ToComplex<float>(const Tree*,
-                                                             const Context*);
-template std::complex<double> Approximation::ToComplex<double>(const Tree*,
-                                                               const Context*);
+template std::complex<float> Approximation::ToComplex(const Tree*,
+                                                      const Context*);
+template std::complex<double> Approximation::ToComplex(const Tree*,
+                                                       const Context*);
 
 template Tree* Approximation::ToPoint<float>(const Tree*, const Context*);
 template Tree* Approximation::ToPoint<double>(const Tree*, const Context*);
 
 template float Approximation::To(const Tree*, const Context*);
 template double Approximation::To(const Tree*, const Context*);
+
 template float Approximation::ToLocalContext(const Tree*, const Context*,
                                              float);
 template double Approximation::ToLocalContext(const Tree*, const Context*,
                                               double);
 
-template int Approximation::IndexOfActivePiecewiseBranchAt<float>(const Tree*,
-                                                                  float);
-template int Approximation::IndexOfActivePiecewiseBranchAt<double>(const Tree*,
-                                                                   double);
+template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, float);
+template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, double);
 
 }  // namespace Poincare::Internal

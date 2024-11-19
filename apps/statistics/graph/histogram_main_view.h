@@ -11,19 +11,19 @@ namespace Statistics {
 
 class HistogramMainView : public Escher::View {
  public:
-  HistogramMainView(
-      Escher::Responder* parentResponder,
-      Escher::ListViewDataSource* listDataSource,
-      Escher::SelectableListViewDataSource* listSelectionDataSource,
-      Escher::SelectableListViewDelegate* listDelegate);
+  explicit HistogramMainView(Escher::SelectableListView* listView);
 
   HistogramBannerView* bannerView() { return &m_bannerView; }
 
-  Escher::SelectableListView* listView() { return &m_listView; }
+  Escher::SelectableListView* listView() { return m_listView; }
 
  private:
   HistogramBannerView m_bannerView;
-  Escher::SelectableListView m_listView;
+
+  /* The SelectableListView is owned by the HistogramListController.
+   * SelectableListView is a member of SelectableListViewController, which is a
+   * base class of HistogramListController.  */
+  Escher::SelectableListView* m_listView;
 
   Store* m_store;
 

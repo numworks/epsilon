@@ -1,26 +1,29 @@
 #include "histogram_list_controller.h"
 
-#include "escher/highlight_cell.h"
+#include "escher/solid_color_view.h"
 #include "statistics/graph/graph_button_row_delegate.h"
 #include "statistics/store.h"
 
 namespace Statistics {
 
 Escher::SolidColorCell makeColorCell(size_t index) {
-  // return Escher::SolidColorCell(Store::colorOfSeriesAtIndex(index));
-  return Escher::SolidColorCell();
+  Escher::SolidColorCell cell;
+  cell.setColor(Store::colorLightOfSeriesAtIndex(index));
+  cell.setHighlightColor(Store::colorOfSeriesAtIndex(index));
+  return cell;
 }
 
-HistogramListController::HistogramListController(
-    Responder* parentResponder, Store* store, uint32_t* storeVersion,
-    Escher::SelectableListView* listView)
+HistogramListController::HistogramListController(Responder* parentResponder,
+                                                 Store* store,
+                                                 uint32_t* storeVersion)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
-          parentResponder),
+          parentResponder, this),
       m_displayCells({makeColorCell(0), makeColorCell(1), makeColorCell(2)}),
       m_histogramRange(store),
       m_storeVersion(storeVersion),
-      m_store(store),
-      m_listView(listView) {}
+      m_store(store) {
+  auto listBounds = m_selectableListView.bounds();
+}
 
 Escher::SolidColorCell* HistogramListController::reusableCell(int index,
                                                               int type) {
@@ -35,10 +38,7 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
   Escher::SolidColorCell* colorCell =
       static_cast<Escher::SolidColorCell*>(cell);
   colorCell->setColor(Store::colorOfSeriesAtIndex(row));
-}
-
-bool HistogramListController::handleEvent(Ion::Events::Event event) {
-  return m_listView->handleEvent(event);
+  colorCell->setHighlightColor(Store::colorLightOfSeriesAtIndex(row));
 }
 
 }  // namespace Statistics

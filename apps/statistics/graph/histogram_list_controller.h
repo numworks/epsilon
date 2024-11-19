@@ -18,8 +18,7 @@ class HistogramListController
       public Escher::SelectableListViewDelegate {
  public:
   HistogramListController(Responder* parentResponder, Store* store,
-                          uint32_t* storeVersion,
-                          Escher::SelectableListView* listView);
+                          uint32_t* storeVersion);
 
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
   int reusableCellCount(int type) const override {
@@ -29,8 +28,6 @@ class HistogramListController
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override { return 0; }
   Escher::SolidColorCell* reusableCell(int index, int type) override;
-
-  bool handleEvent(Ion::Events::Event event) override;
 
  private:
   KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
@@ -44,8 +41,6 @@ class HistogramListController
 
   uint32_t* m_storeVersion;
   Store* m_store;
-
-  Escher::SelectableListView* m_listView;
 };
 
 }  // namespace Statistics

@@ -88,7 +88,7 @@ class Solver {
 
   Interest lastInterest() const { return m_lastInterest; }
   Coordinate2D<T> result() const {
-    return lastInterest() == Interest::None
+    return m_lastInterest == Interest::None
                ? Coordinate2D<T>(k_NAN, k_NAN)
                : Coordinate2D<T>(m_xStart, m_yResult);
   }

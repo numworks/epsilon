@@ -4,6 +4,7 @@
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_graph_view.h>
+#include <poincare/numeric/solver.h>
 
 #include "interest_view.h"
 

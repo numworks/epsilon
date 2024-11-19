@@ -29,14 +29,14 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value,
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model, Context*) {
+static Coordinate2D<T> evaluator(T t, const void* model) {
   const SystemFunction* f = static_cast<const SystemFunction*>(model);
   return Coordinate2D<T>(t, f->approximateToScalarWithValue(t));
 }
 
 void FunctionModel::recomputeViewRange() {
   constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
-  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, nullptr, k_maxFloat);
+  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, k_maxFloat);
 
   // fitPointsOfInterest is not suited for sequences
   assert(!m_function.recursivelyMatches(&NewExpression::isSequence));

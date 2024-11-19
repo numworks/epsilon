@@ -1,6 +1,7 @@
 #include "cobweb_controller.h"
 
 #include <poincare/layout.h>
+#include <poincare/numeric/zoom.h>
 #include <poincare/old/sequence.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -60,7 +61,7 @@ void CobwebController::setupRange() {
    * draw such that we never need to move the view. */
   SequenceContext* sequenceContext = App::app()->localContext();
   Zoom zoom(0.f, INFINITY, InteractiveCurveViewRange::NormalYXRatio(),
-            sequenceContext, InteractiveCurveViewRange::k_maxFloat);
+            InteractiveCurveViewRange::k_maxFloat);
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
     float value = sequence()
                       ->evaluateXYAtParameter(

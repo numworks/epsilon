@@ -4,7 +4,6 @@
 #include <float.h>
 #include <ion/display.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/old/serialization_helper.h>
 #include <string.h>
 

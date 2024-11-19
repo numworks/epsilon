@@ -6,7 +6,6 @@
 #include <omg/print.h>
 #include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/variable_context.h>

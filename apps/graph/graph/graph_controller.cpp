@@ -2,6 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
+#include <poincare/numeric/zoom.h>
 #include <poincare/old/symbol.h>
 
 #include <algorithm>
@@ -62,19 +63,19 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+static Coordinate2D<T> evaluator(T t, const void* model) {
   const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
-  return f->evaluateXYAtParameter(t, context);
+  // TODO Hugo : Restore or remove need for context
+  return f->evaluateXYAtParameter(t, nullptr);
 }
 template <typename T>
-static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model,
-                                            Context* context) {
+static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model) {
   const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
-  return f->evaluateXYAtParameter(t, context, 1);
+  // TODO Hugo : Restore or remove need for context
+  return f->evaluateXYAtParameter(t, nullptr, 1);
 }
 template <typename T, int coordinate>
-static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model,
-                                                     Context* context) {
+static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
   const SystemFunctionPoint* e = static_cast<const SystemFunctionPoint*>(model);
   assert(e->isPoint());
   assert(coordinate == 0 || coordinate == 1);
@@ -87,8 +88,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model,
 Range2D<float> GraphController::optimalRange(
     bool computeX, bool computeY, Range2D<float> originalRange) const {
   Context* context = App::app()->localContext();
-  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
-            k_maxFloat);
+  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
   ContinuousFunctionStore* store = functionStore();
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
@@ -128,16 +128,15 @@ Range2D<float> GraphController::optimalRange(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
-      Zoom::Function2DWithContext<float> floatEvaluators[2] = {
+      Zoom::Function2D<float> floatEvaluators[2] = {
           parametricExpressionEvaluator<float, 0>,
           parametricExpressionEvaluator<float, 1>};
-      Zoom::Function2DWithContext<double> doubleEvaluators[2] = {
+      Zoom::Function2D<double> doubleEvaluators[2] = {
           parametricExpressionEvaluator<double, 0>,
           parametricExpressionEvaluator<double, 1>};
       for (int coordinate = 0; coordinate < 2; coordinate++) {
-        Zoom zoomAlongCoordinate(NAN, NAN,
-                                 InteractiveCurveViewRange::NormalYXRatio(),
-                                 context, k_maxFloat);
+        Zoom zoomAlongCoordinate(
+            NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
         zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
         zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e,
                                                 false,

@@ -6,7 +6,6 @@
 #include <omg/print.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/src/expression/sequence.h>

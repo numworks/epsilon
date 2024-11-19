@@ -257,7 +257,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(
 bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
     float x, float y, float topMarginRatio, float rightMarginRatio,
     float bottomMarginRatio, float leftMarginRatio) {
-  Zoom zoom(-k_maxFloat, k_maxFloat, NormalYXRatio(), nullptr, k_maxFloat);
+  Zoom zoom(-k_maxFloat, k_maxFloat, NormalYXRatio(), k_maxFloat);
   zoom.fitPoint(Coordinate2D<float>(xMin(), yMin()));
   zoom.fitPoint(Coordinate2D<float>(xMax(), yMax()));
   zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio,

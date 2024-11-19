@@ -2,6 +2,7 @@
 #define STATISTICS_PLOT_RANGE_H
 
 #include <apps/shared/memoized_curve_view_range.h>
+#include <kandinsky/coordinate.h>
 
 namespace Statistics {
 

@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include <float.h>
 #include <limits.h>
+#include <poincare/numeric/zoom.h>
 
 #include <algorithm>
 #include <cmath>
@@ -98,7 +99,7 @@ Range2D<float> GraphController::optimalRange(
   if (computeY) {
     Poincare::Context* context = App::app()->localContext();
     Zoom zoom(result.xMin(), result.xMax(),
-              InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
+              InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     Shared::Sequence* sequences[nbOfActiveModels];
     for (int i = 0; i < nbOfActiveModels; i++) {

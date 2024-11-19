@@ -31,7 +31,7 @@ Range2D<float> Zoom::Sanitize(Range2D<float> range, float normalYXRatio,
                               float maxFloat) {
   /* Values for tMin and tMax actually do not matter here, as no function will
    * be evaluated to generate this zoom. */
-  Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr, maxFloat);
+  Zoom zoom(-maxFloat, maxFloat, normalYXRatio, maxFloat);
   zoom.m_interestingRange = range;
   return zoom.range(false, false);
 }
@@ -127,7 +127,7 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
 }
 
 #if 0
-void Zoom::fitFullFunction(Function2DWithContext<float> f, const void *model) {
+void Zoom::fitFullFunction(Function2D<float> f, const void *model) {
   float step = m_bounds.length() / (k_sampleSize - 1);
   for (size_t i = 0; i < k_sampleSize; i++) {
     float t = m_bounds.min() + step * i;
@@ -152,9 +152,8 @@ static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a,
   return interest;
 }
 
-void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
-                               const void* model, bool vertical,
-                               Function2DWithContext<double> fDouble,
+void Zoom::fitPointsOfInterest(Function2D<float> f, const void* model,
+                               bool vertical, Function2D<double> fDouble,
                                bool* finiteNumberOfPoints) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const =
@@ -164,18 +163,17 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   InterestParameters params = {.f = f,
                                .fDouble = fDouble,
                                .model = model,
-                               .context = m_context,
                                .asymptotes = &asymptotes,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
-    return (p->f(t, p->model, p->context).*p->ordinate)();
+    return (p->f(t, p->model).*p->ordinate)();
   };
   Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
                                                           const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
-    return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
+    return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
   fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params,
@@ -196,9 +194,8 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
   }
 }
 
-bool Zoom::fitRoots(Function2DWithContext<float> f, const void* model,
-                    bool vertical, Function2DWithContext<double> fDouble,
-                    bool* finiteNumberOfPoints) {
+bool Zoom::fitRoots(Function2D<float> f, const void* model, bool vertical,
+                    Function2D<double> fDouble, bool* finiteNumberOfPoints) {
   float (Coordinate2D<float>::*ordinate)() const =
       vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
@@ -206,18 +203,17 @@ bool Zoom::fitRoots(Function2DWithContext<float> f, const void* model,
   InterestParameters params = {.f = f,
                                .fDouble = fDouble,
                                .model = model,
-                               .context = m_context,
                                .asymptotes = nullptr,
                                .ordinate = ordinate,
                                .ordinateDouble = ordinateDouble};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
-    return (p->f(t, p->model, p->context).*p->ordinate)();
+    return (p->f(t, p->model).*p->ordinate)();
   };
   Solver<double>::FunctionEvaluation evaluatorDouble = [](double t,
                                                           const void* aux) {
     const InterestParameters* p = static_cast<const InterestParameters*>(aux);
-    return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
+    return (p->fDouble(t, p->model).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
   bool didFit = fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator,
@@ -230,22 +226,18 @@ bool Zoom::fitRoots(Function2DWithContext<float> f, const void* model,
   return didFit;
 }
 
-void Zoom::fitIntersections(Function2DWithContext<float> f1, const void* model1,
-                            Function2DWithContext<float> f2, const void* model2,
+void Zoom::fitIntersections(Function2D<float> f1, const void* model1,
+                            Function2D<float> f2, const void* model2,
                             bool vertical) {
   /* TODO Function x=f(y) are not intersectable right now, there is no need to
    * handle this case yet. */
   assert(!vertical);
-  IntersectionParameters params = {.f1 = f1,
-                                   .f2 = f2,
-                                   .model1 = model1,
-                                   .model2 = model2,
-                                   .context = m_context};
+  IntersectionParameters params = {
+      .f1 = f1, .f2 = f2, .model1 = model1, .model2 = model2};
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void* aux) {
     const IntersectionParameters* p =
         static_cast<const IntersectionParameters*>(aux);
-    return p->f1(t, p->model1, p->context).y() -
-           p->f2(t, p->model2, p->context).y();
+    return p->f1(t, p->model1).y() - p->f2(t, p->model2).y();
   };
   bool dummy;
   fitWithSolver(&dummy, &dummy, evaluator, &params,
@@ -253,12 +245,12 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void* model1,
 }
 
 void Zoom::fitConditions(SystemFunction piecewise,
-                         Function2DWithContext<float> fullFunction,
-                         const void* model, bool vertical) {
+                         Function2D<float> fullFunction, const void* model,
+                         bool vertical) {
   struct ConditionsParameters {
     Zoom* zoom;
     const Internal::Tree* piecewise;
-    Function2DWithContext<float> fullFunction;
+    Function2D<float> fullFunction;
     const void* model;
     bool vertical;
   };
@@ -285,16 +277,15 @@ void Zoom::fitConditions(SystemFunction piecewise,
          Solver<float>::Interest, float, OMG::Troolean) {
         const ConditionsParameters* params =
             static_cast<const ConditionsParameters*>(aux);
-        params->zoom->fitPoint(
-            params->fullFunction(a, params->model, params->zoom->m_context),
-            params->vertical);
-        return params->fullFunction(b, params->model, params->zoom->m_context);
+        params->zoom->fitPoint(params->fullFunction(a, params->model),
+                               params->vertical);
+        return params->fullFunction(b, params->model);
       };
   bool dummy;
   fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
 }
 
-void Zoom::fitMagnitude(Function2DWithContext<float> f, const void* model,
+void Zoom::fitMagnitude(Function2D<float> f, const void* model,
                         bool cropOutliers, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
@@ -311,7 +302,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void* model,
 
   for (size_t i = 0; i < k_sampleSize; i++) {
     float x = xRange.min() + i * step;
-    float y = (f(x, model, m_context).*ordinate)();
+    float y = (f(x, model).*ordinate)();
     sample.extend(y, m_maxFloat);
     if (!cropOutliers) {
       continue;
@@ -346,15 +337,14 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void* model,
   magnitudeRange->extend(yMin, m_maxFloat);
 }
 
-void Zoom::fitBounds(Function2DWithContext<float> f, const void* model,
-                     bool vertical) {
+void Zoom::fitBounds(Function2D<float> f, const void* model, bool vertical) {
   float tMin = m_bounds.min(), tMax = m_bounds.max();
   if (std::fabs(tMin) >= m_maxFloat || std::fabs(tMax) >= m_maxFloat) {
     return;
   }
   // Fit the middle of the interval if it's finite
   float tMiddle = (tMin + tMax) / 2;
-  Coordinate2D<float> middle(f(tMiddle, model, m_context));
+  Coordinate2D<float> middle(f(tMiddle, model));
   Coordinate2D<float> pointToFit =
       vertical ? Coordinate2D<float>(tMiddle, middle.x())
                : Coordinate2D<float>(tMiddle, middle.y());
@@ -510,7 +500,7 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   }
   const IntersectionParameters* p =
       static_cast<const IntersectionParameters*>(aux);
-  return p->f1(result.x(), p->model1, p->context);
+  return p->f1(result.x(), p->model1);
 }
 
 static Range1D<float> sanitation1DHelper(Range1D<float> range,

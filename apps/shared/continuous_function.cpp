@@ -6,7 +6,6 @@
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/old/function.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>

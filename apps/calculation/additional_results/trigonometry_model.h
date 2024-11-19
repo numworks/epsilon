@@ -3,6 +3,7 @@
 
 #include <apps/shared/curve_view_range.h>
 #include <escher/metric.h>
+#include <omg/float.h>
 
 namespace Calculation {
 

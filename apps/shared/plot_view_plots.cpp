@@ -1,5 +1,7 @@
 #include "plot_view_plots.h"
 
+#include <float.h>
+
 #include <algorithm>
 
 using namespace Poincare;

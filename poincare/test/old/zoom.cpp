@@ -17,8 +17,8 @@ constexpr float k_maxFloat = 1e8f;
 /* Class befriended by Poincare::Zoom to be able to read its members. */
 class ZoomTest {
  public:
-  ZoomTest(Range1D<float> bounds, Context* context)
-      : m_zoom(bounds.min(), bounds.max(), k_normalRatio, context,
+  ZoomTest(Range1D<float> bounds)
+      : m_zoom(bounds.min(), bounds.max(), k_normalRatio,
                Range1D<float>::k_maxFloat) {}
 
   Zoom* zoom() { return &m_zoom; }
@@ -57,9 +57,9 @@ void assert_ranges_equal(Range2D<float> observed, Range2D<float> expected,
 }
 
 template <typename T>
-Coordinate2D<T> expressionEvaluator(T t, const void* model, Context* context) {
+Coordinate2D<T> expressionEvaluator(T t, const void* model) {
   const Tree* e = static_cast<const Tree*>(model);
-// TODO_PCJ
+  // TODO_PCJ : Handle matrixes
 #if 0
   ApproximationContext approximationContext(context, Real, Radian);
   if (e->otype() == ExpressionNode::Type::OMatrix) {
@@ -82,7 +82,7 @@ void assert_points_of_interest_range_is(const char* expression,
   Shared::GlobalContext context;
   Tree* e =
       parseAndPrepareForApproximation(expression, {.m_context = &context});
-  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
+  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat));
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, e, false,
                                    expressionEvaluator<double>);
   e->removeTree();
@@ -150,7 +150,7 @@ void assert_intersections_range_is(const char* expression1,
       parseAndPrepareForApproximation(expression1, {.m_context = &context});
   TreeRef e2 =
       parseAndPrepareForApproximation(expression2, {.m_context = &context});
-  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat), &context);
+  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat));
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
                                 e2);
   e1->removeTree();

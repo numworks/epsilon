@@ -176,7 +176,6 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     return Solution();
   }
   T x = root.x();
-  // TODO_PCJ: Ensure expression is projected.
   T y1 = Approximation::To<T>(
       e1, x, Approximation::Parameter(true, false, false, false));
   T y2 = Approximation::To<T>(
@@ -534,7 +533,6 @@ T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
     ebis->child(childIndex)->cloneTreeOverTree(0_e);
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
-    // TODO_PCJ: Ensure expression is projected.
     T value = Approximation::To<T>(
         ebis, xRoot,
         Approximation::Parameter(true, false, false, false));  // m_unknown

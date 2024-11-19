@@ -20,7 +20,7 @@ class Zoom {
 
  public:
   template <typename T>
-  using Function2DWithContext = Coordinate2D<T> (*)(T, const void*, Context*);
+  using Function2D = Coordinate2D<T> (*)(T, const void*);
 
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
@@ -30,10 +30,8 @@ class Zoom {
     return Sanitize(Range2D<float>(), normalRatio, maxFloat);
   }
 
-  Zoom(float tMin, float tMax, float normalRatio, Context* context,
-       float maxFloat)
+  Zoom(float tMin, float tMax, float normalRatio, float maxFloat)
       : m_bounds(tMin, tMax),
-        m_context(context),
         m_defaultHalfLength(Range1D<float>::k_defaultHalfLength),
         m_normalRatio(normalRatio),
         m_maxFloat(maxFloat),
@@ -65,25 +63,22 @@ class Zoom {
   void fitPoint(Coordinate2D<float> xy, bool flipped = false,
                 float leftMargin = 0.f, float rightMargin = 0.f,
                 float bottomMargin = 0.f, float topMargin = 0.f);
-  void fitPointsOfInterest(Function2DWithContext<float> f, const void* model,
+  void fitPointsOfInterest(Function2D<float> f, const void* model,
                            bool vertical = false,
-                           Function2DWithContext<double> fDouble = nullptr,
+                           Function2D<double> fDouble = nullptr,
                            bool* finiteNumberOfPoints = nullptr);
-  bool fitRoots(Function2DWithContext<float> f, const void* model,
-                bool vertical = false,
-                Function2DWithContext<double> fDouble = nullptr,
+  bool fitRoots(Function2D<float> f, const void* model, bool vertical = false,
+                Function2D<double> fDouble = nullptr,
                 bool* finiteNumberOfPoints = nullptr);
-  void fitIntersections(Function2DWithContext<float> f1, const void* model1,
-                        Function2DWithContext<float> f2, const void* model2,
+  void fitIntersections(Function2D<float> f1, const void* model1,
+                        Function2D<float> f2, const void* model2,
                         bool vertical = false);
-  void fitConditions(SystemFunction piecewise,
-                     Function2DWithContext<float> fullFunction,
+  void fitConditions(SystemFunction piecewise, Function2D<float> fullFunction,
                      const void* model, bool vertical = false);
   /* This function will only touch the Y axis. */
-  void fitMagnitude(Function2DWithContext<float> f, const void* model,
-                    bool cropOutliers, bool vertical = false);
-  void fitBounds(Function2DWithContext<float> f, const void* model,
-                 bool vertical = false);
+  void fitMagnitude(Function2D<float> f, const void* model, bool cropOutliers,
+                    bool vertical = false);
+  void fitBounds(Function2D<float> f, const void* model, bool vertical = false);
 
  private:
   class HorizontalAsymptoteHelper {
@@ -121,21 +116,19 @@ class Zoom {
   };
 
   struct InterestParameters {
-    Function2DWithContext<float> f;
-    Function2DWithContext<double> fDouble;
+    Function2D<float> f;
+    Function2D<double> fDouble;
     const void* model;
-    Context* context;
     HorizontalAsymptoteHelper* asymptotes;
     float (Coordinate2D<float>::*ordinate)() const;
     double (Coordinate2D<double>::*ordinateDouble)() const;
   };
 
   struct IntersectionParameters {
-    Function2DWithContext<float> f1;
-    Function2DWithContext<float> f2;
+    Function2D<float> f1;
+    Function2D<float> f2;
     const void* model1;
     const void* model2;
-    Context* context;
   };
 
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;

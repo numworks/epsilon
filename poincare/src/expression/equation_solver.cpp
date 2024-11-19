@@ -201,7 +201,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 }
 
 template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
+static Coordinate2D<T> evaluator(T t, const void* model) {
   const Tree* e = reinterpret_cast<const Tree*>(model);
   return Coordinate2D<T>(
       t, Approximation::To<T>(
@@ -213,8 +213,7 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
   constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
   constexpr float k_yxRatio = 3.06f / 5.76f;
-  Zoom zoom(NAN, NAN, k_yxRatio, nullptr,
-            k_maxFloatForAutoApproximateSolvingRange);
+  Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
   // Use the intersection between the definition domain of f and the bounds
   zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
                  k_maxFloatForAutoApproximateSolvingRange);

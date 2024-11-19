@@ -284,6 +284,7 @@ int main(int argc, char* argv[]) {
     Haptics::init();
   }
 
+  Ion::Init();
 #if ION_SIMULATOR_EXTERNAL_APP
   const char* nwb = args.pop("--nwb");
   if (nwb) {
@@ -305,7 +306,6 @@ int main(int argc, char* argv[]) {
     dlclose(handle);
   } else {
 #endif
-    Ion::Init();
     ion_main(args.argc(), args.argv());
 #if ION_SIMULATOR_EXTERNAL_APP
   }

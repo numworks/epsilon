@@ -75,7 +75,7 @@ typename Solver<T>::Solution Solver<T>::next(
     }
   }
 
-  return registerSolution(Coordinate2D<T>(NAN, NAN), Interest::None);
+  return Solution();
 }
 
 template <typename T>
@@ -130,7 +130,7 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
-        return registerSolution(Coordinate2D<T>(), Interest::None);
+        return Solution();
       }
 
       Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);

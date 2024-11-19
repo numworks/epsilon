@@ -83,15 +83,24 @@ bool AdvancedOperation::ContractAbs(Tree* e) {
 }
 
 bool AdvancedOperation::ExpandAbs(Tree* e) {
-  return
-      // |A*B?| = |A|*|B|
-      PatternMatching::MatchReplaceSimplify(
-          e, KAbs(KMult(KA, KB_p)), KMult(KAbs(KA), KAbs(KMult(KB_p)))) ||
-      // |x| = √(re(x)^2+im(x)^2)
-      PatternMatching::MatchReplaceSimplify(
-          e, KAbs(KA),
-          KExp(KMult(1_e / 2_e,
-                     KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
+  if (PatternMatching::MatchReplaceSimplify(
+          e, KAbs(KMult(KA, KB_p)), KMult(KAbs(KA), KAbs(KMult(KB_p))))) {
+    // |A*B?| = |A|*|B|
+    return true;
+  }
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // abs(A) = A*sign(A) for A real
+    e->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(KA, KSign(KA)), ctx));
+    return true;
+  }
+  // |x| = √(re(x)^2+im(x)^2)
+  return PatternMatching::MatchReplaceSimplify(
+      e, KAbs(KA),
+      KExp(
+          KMult(1_e / 2_e, KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
 }
 
 bool AdvancedOperation::ExpandExp(Tree* e) {

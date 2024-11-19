@@ -232,6 +232,8 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{0×√(c^2)})");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
+  simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");
+  simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -1428,7 +1430,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
                 cartesianCtx);
   simplifies_to(
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-      "dep(0,{0×ln(abs(x)),0×ln(abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
+      "dep(0,{0×ln(y×abs(x)×sign(y)),nonNull(abs(x)),nonNull(abs(y))})",
       cartesianCtx);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");

@@ -689,9 +689,6 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;  // Magic number
   T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
   if (std::isfinite(roundX) && validSolution(roundX)) {
-    T fIntX = f(roundX, aux);
-    // f(x) is different from the honed solution when searching intersections
-    T fx = f(x, aux);
     /* Filter out solutions that are close to a discontinuity. This can
      * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
      * with which a root is found in (0,0) when it should not.
@@ -700,12 +697,15 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
      * condition of roundX is different from x, this means that the solution
      * found is probably on an open interval. */
     if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
-      solution = Coordinate2D<T>(k_NAN, k_NAN);
-    } else if (fIntX == fx ||
-               (interest == Interest::Root &&
-                std::fabs(fIntX) < std::fabs(fx)) ||
-               (interest == Interest::LocalMinimum && fIntX < fx) ||
-               (interest == Interest::LocalMaximum && fIntX > fx)) {
+      return Coordinate2D<T>(k_NAN, k_NAN);
+    }
+    T fIntX = f(roundX, aux);
+    // f(x) is different from the honed solution when searching intersections
+    T fx = f(x, aux);
+    if (fIntX == fx ||
+        (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
+        (interest == Interest::LocalMinimum && fIntX < fx) ||
+        (interest == Interest::LocalMaximum && fIntX > fx)) {
       // Round is better
       solution.setX(roundX);
     }

@@ -172,9 +172,6 @@ class Approximation final {
   static bool PrepareFunctionForApproximation(Tree* e, const char* variable,
                                               ComplexFormat complexFormat);
 
-  static bool PrepareExpressionForApproximation(Tree* e,
-                                                ComplexFormat complexFormat);
-
   // Return false if e cannot be approximated to a defined value.
   static bool CanApproximate(const Tree* e, bool approxLocalVar = false) {
     return CanApproximate(e, 0);
@@ -255,6 +252,7 @@ class Approximation final {
   template <typename T>
   static std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
 
+  static bool PrepareExpressionForApproximation(Tree* e);
   static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* e,

@@ -52,7 +52,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
   }
   if (param.m_prepare || param.m_optimize) {
     assert(param.m_isRoot);
-    PrepareExpressionForApproximation(clone, context->m_complexFormat);
+    PrepareExpressionForApproximation(clone);
     if (param.m_optimize) {
       ApproximateAndReplaceEveryScalar(clone, *context);
       // TODO: factor common sub-expressions

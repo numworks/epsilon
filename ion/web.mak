@@ -34,6 +34,12 @@ LDFLAGS_ion += \
   -s EXPORTED_FUNCTIONS='[$(_ion_web_exported_functions)]' \
   -s EXPORTED_RUNTIME_METHODS='[$(_ion_web_exported_runtime_methods)]'
 
+ifeq ($(DEBUG),1)
+# Mandelbrot crashes with 8192, is 16384 enough for all scripts ?
+LDFLAGS += -sASYNCIFY_STACK_SIZE=16384
+else
+endif
+
 _ion_simulator_files := 0
 
 # HTML layout

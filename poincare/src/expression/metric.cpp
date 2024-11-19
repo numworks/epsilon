@@ -8,6 +8,7 @@
 
 #include "dependency.h"
 #include "k_tree.h"
+#include "sign.h"
 
 namespace Poincare::Internal {
 
@@ -28,6 +29,7 @@ static Type ShortTypeForBigType(Type t) {
 
 int Metric::GetMetric(const Tree* e) {
   int result = GetMetric(e->type());
+  int childrenCoeff = 1;
   PatternMatching::Context ctx;
   switch (e->type()) {
     case Type::RationalNegBig:
@@ -70,7 +72,14 @@ int Metric::GetMetric(const Tree* e) {
           result += GetMetric(exponent);
         }
         exponent->removeTree();
-        return result + GetMetric(ctx.getTree(KB));
+        childrenCoeff = 2;
+        const Tree* base = ctx.getTree(KB);
+        ComplexSign baseSign = GetComplexSign(base);
+        if ((baseSign.isReal() && baseSign.realSign().isStrictlyNegative()) ||
+            (baseSign.isPureIm() && baseSign.imagSign().isStrictlyNegative())) {
+          childrenCoeff = 4;
+        }
+        return result + GetMetric(base) * childrenCoeff;
       }
       break;
     }
@@ -78,13 +87,29 @@ int Metric::GetMetric(const Tree* e) {
       return result + GetMetric(Dependency::Main(e));
     case Type::Trig:
     case Type::ATrig:
+      childrenCoeff = 2;
       // Ignore second child
-      return result + GetMetric(e->child(0));
+      return result + GetMetric(e->child(0)) * childrenCoeff;
+    case Type::Abs:
+    case Type::Arg:
+    case Type::Im:
+    case Type::Re:
+    case Type::Conj:
+    case Type::Frac:
+    case Type::Ceil:
+    case Type::Floor:
+    case Type::Round:
+    case Type::PowReal:
+    case Type::Root:
+    case Type::Log:
+    case Type::Ln:
+      childrenCoeff = 2;
+      break;
     default:
       break;
   }
   for (const Tree* child : e->children()) {
-    result += GetMetric(child);
+    result += GetMetric(child) * childrenCoeff;
   }
   return result;
 }

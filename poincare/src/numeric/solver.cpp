@@ -227,7 +227,7 @@ Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
   if (FunctionSeemsConstantOnTheInterval(f, aux, xMin, xMax)) {
     /* Some fake minimums can be detected due to approximations errors like in
      * f(x) = x/abs(x) in complex mode. */
-    return Coordinate2D<T>(NAN, NAN);
+    return Coordinate2D<T>();
   }
 
   return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest,

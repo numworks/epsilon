@@ -551,7 +551,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(t, value);
   }
   if (e.isUndefined()) {
-    return Coordinate2D<T>(NAN, NAN);
+    return Coordinate2D<T>();
   }
   assert(e.isPoint());
   return e.approximateToPointOrScalarWithValue<T>(t).toPoint();

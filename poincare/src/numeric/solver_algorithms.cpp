@@ -194,7 +194,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(
     fb = f(b, aux);
   }
 
-  return Coordinate2D<double>(NAN, NAN);
+  return Coordinate2D<double>();
 }
 
 Coordinate2D<double> SolverAlgorithms::BrentMinimum(
@@ -299,7 +299,7 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(
     }
   }
 
-  return Coordinate2D<double>(NAN, NAN);
+  return Coordinate2D<double>();
 }
 
 // Explicit template instantiations

@@ -699,13 +699,13 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
       return Coordinate2D<T>(k_NAN, k_NAN);
     }
-    T fIntX = f(roundX, aux);
+    T fRoundX = f(roundX, aux);
     // f(x) is different from the honed solution when searching intersections
     T fx = f(x, aux);
-    if (fIntX == fx ||
-        (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
-        (interest == Interest::LocalMinimum && fIntX < fx) ||
-        (interest == Interest::LocalMaximum && fIntX > fx)) {
+    if (fRoundX == fx ||
+        (interest == Interest::Root && std::fabs(fRoundX) < std::fabs(fx)) ||
+        (interest == Interest::LocalMinimum && fRoundX < fx) ||
+        (interest == Interest::LocalMaximum && fRoundX > fx)) {
       // Round is better
       solution.setX(roundX);
     }

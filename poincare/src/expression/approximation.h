@@ -121,16 +121,14 @@ class Approximation final {
   static PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameter param,
                                           Context context = Context());
 
-#if 1
-  // These are not used
   template <typename T>
   static Coordinate2D<T> ToPoint(const Tree* e, Parameter param,
                                  Context context = Context());
 
+  // TODO Hugo: Unused for now
   template <typename T>
   static bool ToBoolean(const Tree* e, Parameter param,
                         Context context = Context());
-#endif
 
   // TODO Hugo : Only use Context, create shortcuts to keep context private
 

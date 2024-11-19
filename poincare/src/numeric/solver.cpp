@@ -134,8 +134,8 @@ typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
       }
 
       Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
-      if (res.interest != Interest::None) {
-        res.interest = Interest::Root;
+      if (res.interest() != Interest::None) {
+        res.setInterest(Interest::Root);
       }
       return res;
   }
@@ -171,7 +171,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
                                                   {.KA = e1, .KB = e2});
   }
   Solution root = nextRoot(*memoizedDifference);
-  if (root.interest != Interest::Root) {
+  if (root.interest() != Interest::Root) {
     return Solution();
   }
   T x = root.x();
@@ -190,8 +190,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   /* Result is not always exactly the same due to approximation errors. Take
    * the middle of the two values. */
-  return Solution{.xy = Coordinate2D<T>(x, (y1 + y2) / 2.),
-                  .interest = Interest::Intersection};
+  return Solution(Coordinate2D<T>(x, (y1 + y2) / 2.), Interest::Intersection);
 }
 
 template <typename T>
@@ -619,7 +618,7 @@ T Solver<T>::nextRootInDependency(const Tree* e) const {
   // Find root in main
   Solution root = solver.nextRoot(main);
   // Check that the dependencies of the solution are not undefined
-  while (root.interest == Interest::Root &&
+  while (root.interest() == Interest::Root &&
          std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
     root = solver.nextRoot(main);
   }
@@ -694,14 +693,13 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Coordinate2D<T> xy,
   Solution solution;
   if (!std::isnan(xy.x())) {
     assert(validSolution(xy.x()));
-    solution.xy = xy;
+    solution = Solution(xy, interest);
     if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
       solution.setY(k_zero);
     }
-    solution.interest = interest;
     m_xStart = solution.x();
   }
-  assert((solution.interest == Interest::None) == std::isnan(solution.x()));
+  assert((solution.interest() == Interest::None) == std::isnan(solution.x()));
   return solution;
 }
 

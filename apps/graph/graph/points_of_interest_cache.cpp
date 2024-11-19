@@ -243,9 +243,10 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
                           .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xy.xIsIn(ctx->start, ctx->end, true, false)) {
+      if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
         return {
-            solution.x(), solution.y(), 0, solution.interest, f->isAlongY(), 0,
+            solution.x(),        solution.y(),  0,
+            solution.interest(), f->isAlongY(), 0,
         };
       }
     }
@@ -291,12 +292,12 @@ PointOfInterest findIntersections(void* searchContext) {
             .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xy.xIsIn(ctx->start, ctx->end, true, false)) {
+      if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
         return {
             solution.x(),
             solution.y(),
             static_cast<uint32_t>(ctx->otherRecord),
-            solution.interest,
+            solution.interest(),
             alongY,
             0,
         };

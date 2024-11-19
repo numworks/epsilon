@@ -26,7 +26,7 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   return solver
       .nextIntersection(NewExpression::Builder<double>(m_image).tree(),
                         f.tree())
-      .xy;
+      .xy();
 }
 
 }  // namespace Graph

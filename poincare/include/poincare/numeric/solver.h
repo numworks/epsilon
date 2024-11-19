@@ -32,12 +32,23 @@ class Solver {
     Other,
   };
 
-  struct Solution {
-    Coordinate2D<T> xy = Coordinate2D<T>(k_NAN, k_NAN);
-    Interest interest = Interest::None;
-    T x() const { return xy.x(); }
-    T y() const { return xy.y(); }
-    void setY(T y) { return xy.setY(y); }
+  class Solution {
+   public:
+    Solution(Coordinate2D<T> xy = Coordinate2D<T>(k_NAN, k_NAN),
+             Interest interest = Interest::None)
+        : m_xy(xy), m_interest(interest) {}
+
+    Coordinate2D<T> xy() const { return m_xy; }
+    Interest interest() const { return m_interest; }
+    T x() const { return m_xy.x(); }
+    T y() const { return m_xy.y(); }
+
+    void setInterest(Interest interest) { m_interest = interest; }
+    void setY(T y) { return m_xy.setY(y); }
+
+   private:
+    Coordinate2D<T> m_xy;
+    Interest m_interest;
   };
 
   enum class GrowthSpeed : bool { Fast, Precise };

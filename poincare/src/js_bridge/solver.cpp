@@ -10,23 +10,23 @@ namespace Poincare::JSBridge {
 
 Coordinate2D<double> nextRoot(Solver<double>& solver,
                               const TypedSystemFunction& e) {
-  return solver.nextRoot(e.tree()).xy;
+  return solver.nextRoot(e.tree()).xy();
 }
 
 Coordinate2D<double> nextMinimum(Solver<double>& solver,
                                  const TypedSystemFunction& e) {
-  return solver.nextMinimum(e.tree()).xy;
+  return solver.nextMinimum(e.tree()).xy();
 }
 
 Coordinate2D<double> nextMaximum(Solver<double>& solver,
                                  const TypedSystemFunction& e) {
-  return solver.nextMaximum(e.tree()).xy;
+  return solver.nextMaximum(e.tree()).xy();
 }
 
 Coordinate2D<double> nextIntersection(Solver<double>& solver,
                                       const TypedSystemFunction& e1,
                                       const TypedSystemFunction& e2) {
-  return solver.nextIntersection(e1.tree(), e2.tree()).xy;
+  return solver.nextIntersection(e1.tree(), e2.tree()).xy();
 }
 
 EMSCRIPTEN_BINDINGS(solver) {

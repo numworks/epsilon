@@ -16,23 +16,23 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/shared/, \
 
 PRIVATE_SFLAGS_ion += -DEPSILON_SDL_SCREEN_ONLY=1
 
-_ion_web_exported_functions := $(subst $( ),$(,) ,$(strip $(patsubst %,"%", \
-  _main \
-  _IonSimulatorKeyboardKeyDown \
-  _IonSimulatorKeyboardKeyUp \
-  _IonSimulatorEventsPushEvent \
-  _IonSoftwareVersion \
-  _IonPatchLevel \
+_ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
+  main \
+  IonSimulatorKeyboardKeyDown \
+  IonSimulatorKeyboardKeyUp \
+  IonSimulatorEventsPushEvent \
+  IonSoftwareVersion \
+  IonPatchLevel \
 )))
 
-_ion_web_exported_runtime_methods := $(subst $( ),$(,) ,$(strip $(patsubst %,"%", \
+_ion_web_exported_runtime_methods := $(subst $( ),$(,),$(strip \
   UTF8ToString \
-)))
+))
 
 LDFLAGS_ion += \
   --pre-js $(PATH_ion)/src/simulator/web/preamble_env.js \
-  -s EXPORTED_FUNCTIONS='[$(_ion_web_exported_functions)]' \
-  -s EXPORTED_RUNTIME_METHODS='[$(_ion_web_exported_runtime_methods)]'
+  -sEXPORTED_FUNCTIONS=$(_ion_web_exported_functions) \
+  -sEXPORTED_RUNTIME_METHODS=$(_ion_web_exported_runtime_methods)
 
 ifeq ($(DEBUG),1)
 # Mandelbrot crashes with 8192, is 16384 enough for all scripts ?

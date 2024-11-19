@@ -171,26 +171,27 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
                                                   {.KA = e1, .KB = e2});
   }
   Solution root = nextRoot(*memoizedDifference);
-  if (root.interest == Interest::Root) {
-    root.interest = Interest::Intersection;
-    /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
-     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
-     * expression is projected. */
-    T y1 = Approximation::RootPreparedToReal<T>(e1, root.x());
-    T y2 = Approximation::RootPreparedToReal<T>(e2, root.x());
-    if (!std::isfinite(y1) || !std::isfinite(y2)) {
-      /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
-       * or undef expressions in specific points like x^2/x, the root of the
-       * difference yields an infinite or a nan value when e1 or e2 is
-       * evaluated. It means the intersection was incorrectly computed, and the
-       * search continues. */
-      return nextIntersection(e1, e2, memoizedDifference);
-    }
-    /* Result is not always exactly the same due to approximation errors. Take
-     * the middle of the two values. */
-    root.setY((y1 + y2) / 2.);
+  if (root.interest != Interest::Root) {
+    return Solution();
   }
-  return root;
+  T x = root.x();
+  /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+   * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+   * expression is projected. */
+  T y1 = Approximation::RootPreparedToReal<T>(e1, x);
+  T y2 = Approximation::RootPreparedToReal<T>(e2, x);
+  if (!std::isfinite(y1) || !std::isfinite(y2)) {
+    /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
+     * or undef expressions in specific points like x^2/x, the root of the
+     * difference yields an infinite or a nan value when e1 or e2 is
+     * evaluated. It means the intersection was incorrectly computed, and the
+     * search continues. */
+    return nextIntersection(e1, e2, memoizedDifference);
+  }
+  /* Result is not always exactly the same due to approximation errors. Take
+   * the middle of the two values. */
+  return Solution{.xy = Coordinate2D<T>(x, (y1 + y2) / 2.),
+                  .interest = Interest::Intersection};
 }
 
 template <typename T>

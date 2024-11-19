@@ -32,22 +32,22 @@ template <typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
                                 BracketTest test, HoneResult hone,
                                 DiscontinuityEvaluation discontinuityTest) {
-  Coordinate2D<T> p1, p2(start(), f(start(), aux)),
-      p3(nextX(p2.x(), end(), static_cast<T>(1.)), k_NAN);
+  Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
+      p3(nextX(p2.x(), m_xEnd, static_cast<T>(1.)), k_NAN);
   p3.setY(f(p3.x(), aux));
   Coordinate2D<T> definitiveSolution;
   Interest definitiveInterest = Interest::None;
 
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
-  while ((start() < p3.x()) == (p3.x() < end())) {
+  while ((m_xStart < p3.x()) == (p3.x() < m_xEnd)) {
     p1 = p2;
     p2 = p3;
     /* If the solver is in float, the slope is not used by minimalStep
      * so its computation is skipped here. */
     T slope =
         isDouble ? (p2.y() - p1.y()) / (p2.x() - p1.x()) : static_cast<T>(1.);
-    p3.setX(nextX(p2.x(), end(), slope));
+    p3.setX(nextX(p2.x(), m_xEnd, slope));
     p3.setY(f(p3.x(), aux));
 
     Coordinate2D<T> start = p1;
@@ -158,7 +158,7 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
 
       Coordinate2D<T> res =
           next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
-      if (lastInterest() != Interest::None) {
+      if (m_lastInterest != Interest::None) {
         m_lastInterest = Interest::Root;
       }
       return res;
@@ -649,7 +649,7 @@ Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
   // Find root in main
   Coordinate2D<T> root = solver.nextRoot(main);
   // Check that the dependencies of the solution are not undefined
-  while (solver.lastInterest() == Interest::Root &&
+  while (solver.m_lastInterest == Interest::Root &&
          std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
     root = solver.nextRoot(main);
   }

@@ -86,13 +86,11 @@ class Solver {
    * Expression. */
   Solver(T xStart, T xEnd, Context* context = nullptr);
 
-  T start() const { return m_xStart; }
-  T end() const { return m_xEnd; }
   Interest lastInterest() const { return m_lastInterest; }
   Coordinate2D<T> result() const {
     return lastInterest() == Interest::None
                ? Coordinate2D<T>(k_NAN, k_NAN)
-               : Coordinate2D<T>(start(), m_yResult);
+               : Coordinate2D<T>(m_xStart, m_yResult);
   }
 
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)

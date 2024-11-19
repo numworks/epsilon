@@ -169,11 +169,6 @@ class Approximation final {
                          Random::Context(false), &localContext));
   }
 
-  // tree must be of scalar dimension and real.
-  // TODO_PCJ: make private
-  template <typename T>
-  static T To(const Tree* e, const Context* ctx);
-
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
   // TODO_PCJ: make private
@@ -235,6 +230,10 @@ class Approximation final {
   // tree must be of scalar dimension
   template <typename T>
   static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
+
+  // tree must be of scalar dimension and real.
+  template <typename T>
+  static T To(const Tree* e, const Context* ctx);
 
   // tree must be of boolean dimension.
   template <typename T>

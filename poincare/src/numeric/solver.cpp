@@ -20,18 +20,17 @@ template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, Context* context)
     : m_xStart(xStart),
       m_xEnd(xEnd),
-      m_result(k_NAN, k_NAN),
+      m_solution(),
       m_context(context),
-      m_lastInterest(Interest::None),
       m_growthSpeed(sizeof(T) == sizeof(double) ? GrowthSpeed::Precise
                                                 : GrowthSpeed::Fast) {
   setSearchStep(DefaultSearchStepForAmplitude(xEnd - xStart));
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
-                                BracketTest test, HoneResult hone,
-                                DiscontinuityEvaluation discontinuityTest) {
+typename Solver<T>::Solution Solver<T>::next(
+    FunctionEvaluation f, const void* aux, BracketTest test, HoneResult hone,
+    DiscontinuityEvaluation discontinuityTest) {
   Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
       p3(nextX(p2.x(), m_xEnd, static_cast<T>(1.)), k_NAN);
   p3.setY(f(p3.x(), aux));
@@ -82,15 +81,15 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void* aux,
   }
 
   registerSolution(definitiveSolution, definitiveInterest);
-  return m_result;
+  return m_solution;
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
-                                HoneResult hone) {
+typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
+                                             HoneResult hone) {
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomized(); })) {
-    return Coordinate2D<T>(NAN, NAN);
+    return Solution();
   }
   /* TODO_PCJ: Either Pass ApproximationContext(m_context, m_complexFormat,
    * m_angleUnit) or ensure expression is projected. */
@@ -103,29 +102,29 @@ Coordinate2D<T> Solver<T>::next(const Tree* e, BracketTest test,
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
+typename Solver<T>::Solution Solver<T>::nextRoot(const Tree* e) {
   if (e->hasDescendantSatisfying(
           [](const Tree* e) { return e->isRandomized(); })) {
-    return Coordinate2D<T>(NAN, NAN);
+    return Solution();
   }
 
   switch (e->type()) {
     case Type::Mult:
       /* x*y = 0 => x = 0 or y = 0 */
       registerSolution(nextRootInMultiplication(e), Interest::Root);
-      return m_result;
+      return m_solution;
 
     case Type::Add:
     case Type::Sub:
       registerSolution(nextRootInAddition(e), Interest::Root);
-      return m_result;
+      return m_solution;
 
     case Type::Pow:
     case Type::Root:
     case Type::Div:
       /* f(x,y) = 0 => x = 0 */
       registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
-      return m_result;
+      return m_solution;
 
     case Type::Abs:
     case Type::ATan:
@@ -137,25 +136,24 @@ Coordinate2D<T> Solver<T>::nextRoot(const Tree* e) {
 
     case Type::Dep:
       registerSolution(nextRootInDependency(e), Interest::Root);
-      return m_result;
+      return m_solution;
 
     default:
       if (!GetComplexSign(e).canBeNull()) {
         registerSolution(Coordinate2D<T>(), Interest::None);
-        return Coordinate2D<T>();
+        return m_solution;
       }
 
-      Coordinate2D<T> res =
-          next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
-      if (m_lastInterest != Interest::None) {
-        m_lastInterest = Interest::Root;
+      Solution res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
+      if (res.interest != Interest::None) {
+        res.interest = Interest::Root;
       }
       return res;
   }
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextMinimum(const Tree* e) {
+typename Solver<T>::Solution Solver<T>::nextMinimum(const Tree* e) {
   /* TODO We could add a layer of formal resolution:
    * - use the derivative (could be an optional argument to avoid recomputing
    *   it every time)
@@ -165,12 +163,11 @@ Coordinate2D<T> Solver<T>::nextMinimum(const Tree* e) {
 }
 
 template <typename T>
-Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
-                                            const Tree** memoizedDifference) {
+typename Solver<T>::Solution Solver<T>::nextIntersection(
+    const Tree* e1, const Tree* e2, const Tree** memoizedDifference) {
   if (!memoizedDifference) {
     Tree* diff = nullptr;
-    Coordinate2D<T> result =
-        nextIntersection(e1, e2, const_cast<const Tree**>(&diff));
+    Solution result = nextIntersection(e1, e2, const_cast<const Tree**>(&diff));
     diff->removeTree();
     return result;
   }
@@ -184,9 +181,9 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
     *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(minusOne, KB)),
                                                   {.KA = e1, .KB = e2});
   }
-  Coordinate2D<T> root = nextRoot(*memoizedDifference);
-  if (m_lastInterest == Interest::Root) {
-    m_lastInterest = Interest::Intersection;
+  Solution root = nextRoot(*memoizedDifference);
+  if (root.interest == Interest::Root) {
+    root.interest = Interest::Intersection;
     /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
      * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
      * expression is projected. */
@@ -198,7 +195,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Tree* e1, const Tree* e2,
        * difference yields an infinite or a nan value when e1 or e2 is
        * evaluated. It means the intersection was incorrectly computed, and the
        * search continues. */
-      m_lastInterest = Interest::None;
+      m_solution = Solution();
       return nextIntersection(e1, e2, memoizedDifference);
     }
     /* Result is not always exactly the same due to approximation errors. Take
@@ -634,13 +631,13 @@ Coordinate2D<T> Solver<T>::nextRootInDependency(const Tree* e) const {
   Solver<T> solver = *this;
   const Tree* main = Dependency::Main(e);
   // Find root in main
-  Coordinate2D<T> root = solver.nextRoot(main);
+  Solution root = solver.nextRoot(main);
   // Check that the dependencies of the solution are not undefined
-  while (solver.m_lastInterest == Interest::Root &&
+  while (root.interest == Interest::Root &&
          std::isnan(Approximation::RootPreparedToReal<T>(e, root.x()))) {
     root = solver.nextRoot(main);
   }
-  return root;
+  return root.xy;
 }
 
 template <typename T>
@@ -701,34 +698,32 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
-  if (std::isnan(solution.x())) {
-    m_lastInterest = Interest::None;
-    m_result = Coordinate2D<T>(k_NAN, k_NAN);
+void Solver<T>::registerSolution(Coordinate2D<T> xy, Interest interest) {
+  if (std::isnan(xy.x())) {
+    m_solution = Solution();
   } else {
-    assert(validSolution(solution.x()));
-    m_result = solution;
-    if (std::fabs(m_result.y()) < NullTolerance(solution.x())) {
-      m_result.setY(k_zero);
+    assert(validSolution(xy.x()));
+    m_solution.xy = xy;
+    if (std::fabs(m_solution.y()) < NullTolerance(m_solution.x())) {
+      m_solution.setY(k_zero);
     }
-    m_lastInterest = interest;
+    m_solution.interest = interest;
   }
-  m_xStart = m_result.x();
-  assert(m_lastInterest != Interest::None ||
-         (std::isnan(m_result.x()) && std::isnan(m_result.y())));
+  m_xStart = m_solution.x();
+  assert(m_solution.interest != Interest::None ||
+         (std::isnan(m_solution.x()) && std::isnan(m_solution.y())));
 }
 
 // Explicit template instantiations
 
 template Solver<double>::Solver(double, double, Context*);
-template Coordinate2D<double> Solver<double>::next(
+template Solver<double>::Solution Solver<double>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
-template Coordinate2D<double> Solver<double>::nextRoot(const Tree*);
-template Coordinate2D<double> Solver<double>::nextMinimum(const Tree*);
-template Coordinate2D<double> Solver<double>::nextIntersection(const Tree*,
-                                                               const Tree*,
-                                                               const Tree**);
+template Solver<double>::Solution Solver<double>::nextRoot(const Tree*);
+template Solver<double>::Solution Solver<double>::nextMinimum(const Tree*);
+template Solver<double>::Solution Solver<double>::nextIntersection(
+    const Tree*, const Tree*, const Tree**);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void*, double, double, Interest, double,
@@ -745,7 +740,7 @@ template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);
 template Solver<float>::Solver(float, float, Context*);
-template Coordinate2D<float> Solver<float>::next(
+template Solver<float>::Solution Solver<float>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
 template float Solver<float>::DefaultSearchStepForAmplitude(float);

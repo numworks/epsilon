@@ -32,6 +32,14 @@ class Solver {
     Other,
   };
 
+  struct Solution {
+    Coordinate2D<T> xy = Coordinate2D<T>(k_NAN, k_NAN);
+    Interest interest = Interest::None;
+    T x() const { return xy.x(); }
+    T y() const { return xy.y(); }
+    void setY(T y) { return xy.setY(y); }
+  };
+
   enum class GrowthSpeed : bool { Fast, Precise };
 
   typedef T (*FunctionEvaluation)(T, const void*);
@@ -86,28 +94,25 @@ class Solver {
    * Expression. */
   Solver(T xStart, T xEnd, Context* context = nullptr);
 
-  Interest lastInterest() const { return m_lastInterest; }
-
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist.
    * TODO_PCJ: The unknown variable must have been projected to id 0. */
-  Coordinate2D<T> next(const Internal::Tree* e, BracketTest test,
-                       HoneResult hone);
-  Coordinate2D<T> next(FunctionEvaluation f, const void* aux, BracketTest test,
-                       HoneResult hone,
-                       DiscontinuityEvaluation discontinuityTest = nullptr);
-  Coordinate2D<T> nextRoot(const Internal::Tree* e);
-  Coordinate2D<T> nextRoot(FunctionEvaluation f, const void* aux) {
+  Solution next(const Internal::Tree* e, BracketTest test, HoneResult hone);
+  Solution next(FunctionEvaluation f, const void* aux, BracketTest test,
+                HoneResult hone,
+                DiscontinuityEvaluation discontinuityTest = nullptr);
+  Solution nextRoot(const Internal::Tree* e);
+  Solution nextRoot(FunctionEvaluation f, const void* aux) {
     return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot);
   }
-  Coordinate2D<T> nextMinimum(const Internal::Tree* e);
-  Coordinate2D<T> nextMaximum(const Internal::Tree* e) {
+  Solution nextMinimum(const Internal::Tree* e);
+  Solution nextMaximum(const Internal::Tree* e) {
     return next(e, MaximumInBracket, SafeBrentMaximum);
   }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
    * times in a row. */
-  Coordinate2D<T> nextIntersection(
+  Solution nextIntersection(
       const Internal::Tree* e1, const Internal::Tree* e2,
       const Internal::Tree** memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
@@ -170,14 +175,13 @@ class Solver {
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);
-  void registerSolution(Coordinate2D<T> solution, Interest interest);
+  void registerSolution(Coordinate2D<T> xy, Interest interest);
 
   T m_xStart;
   T m_xEnd;
   T m_searchStep;
-  Coordinate2D<T> m_result;
+  Solution m_solution;
   Context* m_context;
-  Interest m_lastInterest;
   GrowthSpeed m_growthSpeed;
 };
 

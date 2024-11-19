@@ -223,7 +223,7 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
   }
 
   using NextSolution =
-      Coordinate2D<double> (Solver<double>::*)(const Internal::Tree*);
+      Solver<double>::Solution (Solver<double>::*)(const Internal::Tree*);
   NextSolution methodsNext[] = {&Solver<double>::nextRoot,
                                 &Solver<double>::nextMinimum,
                                 &Solver<double>::nextMaximum};
@@ -236,21 +236,16 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
       continue;
     }
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
-    Coordinate2D<double> solution;
+    Solver<double>::Solution solution;
     while (
         std::isfinite((solution = (ctx->solver.*next)(f->expressionApproximated(
                            ctx->context)) /* assignment in expression */)
                           .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+      if (solution.xy.xIsIn(ctx->start, ctx->end, true, false)) {
         return {
-            solution.x(),
-            solution.y(),
-            0,
-            ctx->solver.lastInterest(),
-            f->isAlongY(),
-            0,
+            solution.x(), solution.y(), 0, solution.interest, f->isAlongY(), 0,
         };
       }
     }
@@ -290,18 +285,18 @@ PointOfInterest findIntersections(void* searchContext) {
       ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
     }
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
-    Coordinate2D<double> solution;
+    Solver<double>::Solution solution;
     while (std::isfinite(
         (solution = ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction))
             .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
-      if (solution.xIsIn(ctx->start, ctx->end, true, false)) {
+      if (solution.xy.xIsIn(ctx->start, ctx->end, true, false)) {
         return {
             solution.x(),
             solution.y(),
             static_cast<uint32_t>(ctx->otherRecord),
-            ctx->solver.lastInterest(),
+            solution.interest,
             alongY,
             0,
         };

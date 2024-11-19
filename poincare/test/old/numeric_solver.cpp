@@ -16,6 +16,7 @@ using Poincare::Preferences;
 using namespace Poincare::Internal;
 
 typedef Poincare::Solver<double>::Interest Interest;
+typedef Poincare::Solver<double>::Solution Solution;
 
 void assert_next_solution_is(const char* expression, Context* context,
                              Poincare::Solver<double>* solver,
@@ -31,7 +32,7 @@ void assert_next_solution_is(const char* expression, Context* context,
 
   Tree* e = parseAndPrepareForApproximation(expression, projCtx);
 
-  Poincare::Coordinate2D<double> observed;
+  Solution observed;
   switch (interest) {
     case Interest::Root:
       observed = solver->nextRoot(e);

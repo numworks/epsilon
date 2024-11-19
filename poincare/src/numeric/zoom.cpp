@@ -708,21 +708,21 @@ bool Zoom::fitWithSolverHelper(float start, float end, bool* interrupted,
   bool savedRangeIsInit = false;
   int nRoots = 0;
   int nOthers = 0;
-  Coordinate2D<float> p;
+  Solver<float>::Solution p;
   bool didFit = false;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
                            .x())) {  // assignment in condition
     if (fDouble != nullptr &&
-        solver.lastInterest() == Solver<float>::Interest::Discontinuity &&
+        p.interest == Solver<float>::Interest::Discontinuity &&
         std::isnan(p.y()) && std::isfinite(fDouble(p.x(), aux))) {
       /* The function evaluates to NAN in single-precision only. It is likely
        * we have reached the limits of the float type, such as when
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
       return didFit;
     }
-    privateFitPoint(p, vertical);
+    privateFitPoint(p.xy, vertical);
     didFit = true;
-    if (solver.lastInterest() == Solver<float>::Interest::Root) {
+    if (p.interest == Solver<float>::Interest::Root) {
       nRoots++;
     } else {
       nOthers++;

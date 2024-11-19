@@ -23,8 +23,10 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   SystemFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
-  return solver.nextIntersection(NewExpression::Builder<double>(m_image).tree(),
-                                 f.tree());
+  return solver
+      .nextIntersection(NewExpression::Builder<double>(m_image).tree(),
+                        f.tree())
+      .xy;
 }
 
 }  // namespace Graph

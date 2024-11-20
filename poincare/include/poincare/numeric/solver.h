@@ -53,6 +53,32 @@ class Solver {
     Interest m_interest;
   };
 
+  // We need a queue because we can have several solutions at the same abscissa
+  class SolutionQueue {
+   public:
+    SolutionQueue() : m_size(0) {}
+    void push(Solution solution) {
+      assert(m_size < k_maxSize);
+      m_solutions[m_size++] = solution;
+    }
+    Solution pop() {
+      assert(m_size > 0);
+      Solution solution = m_solutions[0];
+      for (int i = 1; i < m_size; i++) {
+        m_solutions[i - 1] = m_solutions[i];
+      }
+      m_size--;
+      return solution;
+    }
+    bool isEmpty() const { return m_size == 0; }
+
+   private:
+    // We can have at most 3 solutions at the same abscissa
+    constexpr static int k_maxSize = 3;
+    Solution m_solutions[k_maxSize];
+    int m_size;
+  };
+
   enum class GrowthSpeed : bool { Fast, Precise };
 
   typedef T (*FunctionEvaluation)(T, const void*);
@@ -198,6 +224,7 @@ class Solver {
   T m_searchStep;
   Context* m_context;
   GrowthSpeed m_growthSpeed;
+  SolutionQueue m_solutionQueue;
 };
 
 }  // namespace Poincare

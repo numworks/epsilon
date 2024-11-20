@@ -136,6 +136,9 @@ constexpr uint32_t BenchLength = 0x20000; // 128KiB
 constexpr uint32_t BackupSRAMOrigin = 0x38800000;
 constexpr uint32_t BackupSRAMLength = 0x1000; // 4kiB
 
+constexpr uint32_t SRAM4Origin = 0x38000000;
+constexpr uint32_t SRAM4Length = 0x4000; // 16KiB
+
 /* Signature */
 constexpr uint32_t SignedPayloadLength = 8;
 constexpr uint32_t CanaryLength = 4;

@@ -563,13 +563,18 @@ A simple metric consists in counting the size of an expression, but it would not
 
 Let's call $m: E \longrightarrow \mathbb{N}$ our metric on $E$ the set of all expressions. The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants. 
 
-The metric of some expressions is reduced to other metrics: (non exhaustive list)
+For some functions, we aim to reduce the size of the expression inside them, so we increase the cost of all of their children with a multiplicative coefficient. Also, the metric of some expressions is reduced to other metrics.
+
+Examples (non exhaustive list):
 | Expression | Metric reduction |  |
 |---|---|---|
 | m(-A) | m(-1)+m(A) | - sign should not bear the cost of multiplication |
 | m(LongInteger) | m(Integer)*size() | same for LongRationals, we prefer shorter integers and rationals |
+| m(Abs(A)) | m(Abs)+m(A)*coeff | increased coefficient for children of abs (same for arg, im, root, ln, etc) |
 | m(Trig(A,0)) | m(Trig)+m(A) | ignore the second child indicating the type of trigonometric function (same for ATrig) |
 | m(Exp(1/2*Ln(A))) | m(Exp)+m(A) | beautifies to √A so we do not count the cost of 1/2 and Ln |
+| m(Exp(1/2*Ln(A))) with A negative | m(Exp)+m(A)*coeff | same as √A with an increased coefficient for A negative |
+
 
 
 ## Simplify dependencies

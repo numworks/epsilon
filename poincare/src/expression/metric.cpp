@@ -29,6 +29,8 @@ static Type ShortTypeForBigType(Type t) {
 
 int Metric::GetMetric(const Tree* e) {
   int result = GetMetric(e->type());
+  /* Some functions must have the smallest children possible, so we increase the
+   * cost of all children inside the parent expression with a coefficient. */
   int childrenCoeff = 1;
   PatternMatching::Context ctx;
   switch (e->type()) {
@@ -69,6 +71,7 @@ int Metric::GetMetric(const Tree* e) {
       if (PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
         Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (!exponent->isHalf()) {
+          // Ignore cost of exponent for squareroot
           result += GetMetric(exponent);
         }
         exponent->removeTree();
@@ -77,6 +80,7 @@ int Metric::GetMetric(const Tree* e) {
         ComplexSign baseSign = GetComplexSign(base);
         if ((baseSign.isReal() && baseSign.realSign().isStrictlyNegative()) ||
             (baseSign.isPureIm() && baseSign.imagSign().isStrictlyNegative())) {
+          // Increase cost of negative children in roots
           childrenCoeff = 4;
         }
         return result + GetMetric(base) * childrenCoeff;
@@ -95,6 +99,7 @@ int Metric::GetMetric(const Tree* e) {
     case Type::Im:
     case Type::Re:
     case Type::Conj:
+    case Type::ATanRad:
     case Type::Frac:
     case Type::Ceil:
     case Type::Floor:

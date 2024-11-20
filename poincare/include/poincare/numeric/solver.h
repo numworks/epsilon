@@ -26,6 +26,8 @@ class Solver {
     GlobalMinimum,
     GlobalMaximum,
     Discontinuity,
+    ReachedDiscontinuity,
+    UnreachedDiscontinuity,
     Intersection,
     HorizontalAsymptote,
     YIntercept,
@@ -128,6 +130,11 @@ class Solver {
                               (std::isfinite(c.y()) && std::isnan(a.y())),
                           Interest::Discontinuity);
   }
+  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
+                                         Coordinate2D<T> c, const void* aux) {
+    return BoolToInterest(DiscontinuityTestForExpression(a.x(), c.x(), aux),
+                          Interest::ReachedDiscontinuity);
+  }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
@@ -147,6 +154,9 @@ class Solver {
   Solution nextMinimum(const Internal::Tree* e);
   Solution nextMaximum(const Internal::Tree* e) {
     return next(e, MaximumInBracket, SafeBrentMaximum);
+  }
+  Solution nextDiscontinuity(const Internal::Tree* e) {
+    return next(e, DiscontinuityInBracket, DummyHone);
   }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
@@ -186,8 +196,14 @@ class Solver {
                                                const void* aux, T xMin, T xMax,
                                                Interest interest, T xPrecision,
                                                OMG::Troolean discontinuous);
+  static Coordinate2D<T> DummyHone(FunctionEvaluation, const void*, T, T,
+                                   Interest, T, OMG::Troolean) {
+    assert(false);
+    return Coordinate2D<T>();
+  }
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
+  static bool HoneTestForDiscontinuity(T a, T b, T fa, T fb, const void* aux);
   static Coordinate2D<T> FindUndefinedIntervalBound(
       Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
       FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
@@ -214,6 +230,8 @@ class Solver {
   void honeAndRoundSolution(FunctionEvaluation f, const void* aux, T start,
                             T end, Interest interest, HoneResult hone,
                             DiscontinuityEvaluation discontinuityTest);
+  void honeAndRoundDiscontinuitySolution(FunctionEvaluation f, const void* aux,
+                                         T start, T end);
   Solution registerSolution(Solution solution);
   Solution registerRoot(T x) {
     return registerSolution(Solution(x, k_zero, Interest::Root));

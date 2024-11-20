@@ -226,9 +226,9 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
 
   using NextSolution =
       Solver<double>::Solution (Solver<double>::*)(const Internal::Tree*);
-  NextSolution methodsNext[] = {&Solver<double>::nextRoot,
-                                &Solver<double>::nextMinimum,
-                                &Solver<double>::nextMaximum};
+  NextSolution methodsNext[] = {
+      &Solver<double>::nextRoot, &Solver<double>::nextMinimum,
+      &Solver<double>::nextMaximum, &Solver<double>::nextDiscontinuity};
   while (ctx->counter < std::size(methodsNext)) {
     NextSolution next = methodsNext[ctx->counter];
     if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) &&

@@ -643,6 +643,9 @@ void Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
   assert(m_solutionQueue.isEmpty());
+  if (interest == Interest::ReachedDiscontinuity) {
+    return honeAndRoundDiscontinuitySolution(f, aux, start, end);
+  }
   OMG::Troolean discontinuous = OMG::Troolean::Unknown;
   if (discontinuityTest) {
     discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
@@ -706,11 +709,109 @@ void Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
+bool Solver<T>::HoneTestForDiscontinuity(T a, T b, T fa, T fb,
+                                         const void* aux) {
+  if (std::isnan(fa) && std::isnan(fb)) {
+    return false;
+  }
+  if (std::isnan(fa) || std::isnan(fb)) {
+    return true;
+  }
+  return DiscontinuityTestForExpression(a, b, aux) &&
+         std::abs(fb - fa) >= NullTolerance(fa);
+}
+
+template <typename T>
+void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
+                                                  const void* aux, T start,
+                                                  T end) {
+  assert(m_solutionQueue.isEmpty());
+  T precision = NullTolerance(start);
+
+  // Hone
+  T left = start;
+  T right = end;
+  assert(DiscontinuityTestForExpression(left, right, aux));
+  while (right - left >= precision) {
+    T middle = (left + right) / 2.0;
+    bool leftIsDiscontinuous =
+        DiscontinuityTestForExpression(left, middle, aux);
+    bool rightIsDiscontinuous =
+        DiscontinuityTestForExpression(middle, right, aux);
+    if (leftIsDiscontinuous && rightIsDiscontinuous) {
+      // Too many discontinuities and/or step is too big
+      return;
+    }
+    if (leftIsDiscontinuous) {
+      right = middle;
+    } else {
+      assert(rightIsDiscontinuous);
+      left = middle;
+    }
+  }
+  assert(0 <= right - left && right - left <= precision &&
+         DiscontinuityTestForExpression(left, right, aux));
+
+  T x = MagicRound((left + right) / 2.);
+  assert(std::isfinite(x));
+  if (!validSolution(x)) {
+    return;
+  }
+  left = x - precision / 2.;
+  right = x + precision / 2.;
+  assert(x != left && x != right);
+
+  T fX = f(x, aux);
+  // We round because we want the "limit"
+  T fLeft = MagicRound(f(left, aux));
+  T fRight = MagicRound(f(right, aux));
+
+  bool leftIsDiscontinuous = HoneTestForDiscontinuity(left, x, fLeft, fX, aux);
+  bool rightIsDiscontinuous =
+      HoneTestForDiscontinuity(x, right, fX, fRight, aux);
+  if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
+    // No discontinuity
+    return;
+  }
+  if (!leftIsDiscontinuous) {
+    // No left discontinuity
+    fLeft = k_NAN;
+  }
+  if (!rightIsDiscontinuous) {
+    // No right discontinuity
+    fRight = k_NAN;
+  }
+  if (std::abs(fRight - fLeft) < NullTolerance(x)) {
+    // Left and right are the same
+    assert(leftIsDiscontinuous && rightIsDiscontinuous);
+    // Keep only 1 point of interest
+    fLeft = MagicRound((fLeft + fRight) / 2.);
+    fRight = k_NAN;
+  }
+
+  // There should be at least one finite value
+  assert(std::isfinite(fLeft) || std::isfinite(fX) || std::isfinite(fRight));
+
+  if (std::isfinite(fLeft)) {
+    m_solutionQueue.push(
+        Solution(Coordinate2D<T>(x, fLeft), Interest::UnreachedDiscontinuity));
+  }
+  if (std::isfinite(fX)) {
+    m_solutionQueue.push(
+        Solution(Coordinate2D<T>(x, fX), Interest::ReachedDiscontinuity));
+  }
+  if (std::isfinite(fRight)) {
+    m_solutionQueue.push(
+        Solution(Coordinate2D<T>(x, fRight), Interest::UnreachedDiscontinuity));
+  }
+}
+
+template <typename T>
 typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution) {
   if (std::isnan(solution.x())) {
     return Solution();
   }
-  assert(validSolution(solution.x()));
+  // TODO: restore assert(validSolution(solution.x()));
   if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
     solution.setY(k_zero);
   }

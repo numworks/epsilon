@@ -568,6 +568,18 @@ void GraphController::reloadBannerViewForCursorOnFunction(
                              : I18n::Message::LineYInterceptDescription,
         &m_cursorView);
   }
+  if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
+          cursorX, cursorY, Solver<double>::Interest::ReachedDiscontinuity)) {
+    bannerView()->addInterestMessage(I18n::Message::Discontinuity,
+                                     &m_cursorView);
+  }
+  if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
+          cursorX, cursorY, Solver<double>::Interest::UnreachedDiscontinuity)) {
+    // Display undef in banner view
+    cursorY = NAN;
+    bannerView()->addInterestMessage(I18n::Message::Discontinuity,
+                                     &m_cursorView);
+  }
 
   /* Cap number of significant digits for point of interest to be consistent
    * with CalculationGraphController */

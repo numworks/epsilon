@@ -186,9 +186,10 @@ class Solver {
   Coordinate2D<T> honeAndRoundSolution(
       FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);
-  Solution registerSolution(Coordinate2D<T> xy, Interest interest);
+  Solution registerSolution(Solution solution);
   Solution registerRoot(T x) {
-    return registerSolution(Coordinate2D<T>(x, k_zero), Interest::Root);
+    return registerSolution(
+        Solution(Coordinate2D<T>(x, k_zero), Interest::Root));
   }
 
   T m_xStart;

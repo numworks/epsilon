@@ -70,7 +70,7 @@ typename Solver<T>::Solution Solver<T>::next(
           (std::isfinite(solution.y()) ||
            interest == Interest::Discontinuity)) {
         assert(validSolution(solution.x()));
-        return registerSolution(solution, interest);
+        return registerSolution(Solution(solution, interest));
       }
     }
   }
@@ -688,17 +688,15 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::registerSolution(Coordinate2D<T> xy,
-                                                         Interest interest) {
-  Solution solution;
-  if (!std::isnan(xy.x())) {
-    assert(validSolution(xy.x()));
-    solution = Solution(xy, interest);
-    if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
-      solution.setY(k_zero);
-    }
-    m_xStart = solution.x();
+typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution) {
+  if (std::isnan(solution.x())) {
+    return Solution();
   }
+  assert(validSolution(solution.x()));
+  if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
+    solution.setY(k_zero);
+  }
+  m_xStart = solution.x();
   assert((solution.interest() == Interest::None) == std::isnan(solution.x()));
   return solution;
 }

@@ -28,6 +28,7 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
 
 _ion_web_exported_runtime_methods := $(subst $( ),$(,),$(strip \
   UTF8ToString \
+  FS \
 ))
 
 LDFLAGS_ion += \

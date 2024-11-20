@@ -133,11 +133,21 @@ static inline int load_eadk_external_data(const char* path) {
     fprintf(stderr, "Warning: eadk_external_data already loaded\n");
     return -1;
   }
+#if __EMSCRIPTEN__
+  /* The external data file is downloaded and stored in the file system
+   * asynchronously by JS. JS should handle non existing files, we only have to
+   * wait for it here. */
+  FILE* f;
+  while (!(f = fopen(path, "rb"))) {
+    Ion::Timing::msleep(100);
+  }
+#else
   FILE* f = fopen(path, "rb");
   if (f == NULL) {
     fprintf(stderr, "Error loading external data file %s\n", path);
     return -1;
   }
+#endif
   fseek(f, 0, SEEK_END);
   eadk_external_data_size = ftell(f);
   fseek(f, 0, SEEK_SET);

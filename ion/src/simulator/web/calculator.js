@@ -16,12 +16,35 @@ function Calculator(emModule) {
     emModule.mirrorCanvas = document.querySelector('canvas.calculator-mirror');
   }
   var mirrorCanvasContext = emModule.mirrorCanvas ? emModule.mirrorCanvas.getContext('2d') : null;
+  var arguments = [
+    '--language',
+    document.documentElement.lang || window.navigator.language.split('-')[0],
+  ];
+
+  // An external app can be loaded with epsilon.html?nwb=example.wasm&nwbdata=data.bin
+  const params = new URLSearchParams(window.location.search);
+  nwbPath = params.get('nwb');
+  if (nwbPath) {
+    arguments.push('--nwb', nwbPath);
+    nwbDataPath = params.get('nwbdata');
+    if (nwbDataPath) {
+      fetch(nwbDataPath)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Cannot download external data file ${nwbDataPath}`);
+          }
+          return response.arrayBuffer();
+        })
+        .then((buffer) => {
+          emModule.FS.writeFile('/data', new Uint8Array(buffer));
+        });
+      arguments.push('--nwb-external-data', '/data');
+    }
+  }
+
   var defaultModule = {
     canvas: mainCanvas,
-    arguments: [
-      '--language',
-      document.documentElement.lang || window.navigator.language.split('-')[0],
-    ],
+    arguments,
     onEpsilonIdle: function () {
       calculatorElement.classList.remove('loading');
     },

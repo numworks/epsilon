@@ -128,13 +128,6 @@ bool StoreMenuController::parseAndStore(const char* text) {
   }
   UserExpression value = StoreHelper::Value(input);
   SymbolAbstract symbol = StoreHelper::Symbol(input);
-  PoincareHelpers::CloneAndSimplify(&value, context);
-  UserExpression valueApprox =
-      PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
-  if (symbol.isUserSymbol() &&
-      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
-    value = valueApprox;
-  }
   close();
   app->prepareForIntrusiveStorageChange();
   bool stored = StoreHelper::StoreValueForSymbol(context, value, symbol);

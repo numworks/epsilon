@@ -3,6 +3,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/indices.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <poincare/src/layout/rack_from_text.h>
@@ -18,57 +19,117 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
-// ===== Tokens =====
+// ===== Latex Tokens =====
 
-/* These latexToken arrays alternate
- *  - A delimiter string (ex: "\\left(" or "\\right)")
- *  - A string containing 1 char that matches the index of the child in the
- * layout (ex: "\0" or "\1")
+/* A LatexToken is an array of LatexTokenChildren
+ * A LatexTokenChild is a pair of a left delimiter and the index of the child
+ * in the layout.
+ * Example:
+ * For n-th Root, the latex "\\sqrt[2]{3}"" matches the layout Root(3,2)
+ * Thus, the LatexToken is:
+ * {{.leftDelimiter = "\\sqrt[", .indexInLayout = 1},
+ *  {.leftDelimiter = "]{", .indexInLayout = 0},
+ *  {.leftDelimiter = "}", .indexInLayout = k_noChild}};
  * */
-constexpr static const char* parenthesisToken[] = {"\\left(", "\0", "\\right)"};
-constexpr static const char* curlyBracesToken[] = {"\\left\\{", "\0",
-                                                   "\\right\\}"};
-constexpr static const char* absToken[] = {"\\left|", "\0", "\\right|"};
-constexpr static const char* sqrtToken[] = {"\\sqrt{", "\0", "}"};
-constexpr static const char* conjugateToken[] = {"\\overline{", "\0", "}"};
-constexpr static const char* superscriptToken[] = {"^{", "\0", "}"};
-constexpr static const char* subscriptToken[] = {"_{", "\0", "}"};
-constexpr static const char* fracToken[] = {"\\frac{", "\0", "}{", "\1", "}"};
-// The root's power is at index 0 in latex and 1 in layouts
-constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
-                                               "}"};
-constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
+
+struct LatexTokenChild {
+  const char* leftDelimiter;
+  int indexInLayout;
+};
+
+const static int k_noChild = -1;
+
+using LatexToken = const LatexTokenChild*;
+
+constexpr static LatexTokenChild parenthesisToken[] = {
+    {.leftDelimiter = "\\left(", .indexInLayout = 0},
+    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild curlyBracesToken[] = {
+    {.leftDelimiter = "\\left\\{", .indexInLayout = 0},
+    {.leftDelimiter = "\\right\\}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild absToken[] = {
+    {.leftDelimiter = "\\left|", .indexInLayout = 0},
+    {.leftDelimiter = "\\right|", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild sqrtToken[] = {
+    {.leftDelimiter = "\\sqrt{", .indexInLayout = 0},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild conjugateToken[] = {
+    {.leftDelimiter = "\\overline{", .indexInLayout = 0},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild superscriptToken[] = {
+    {.leftDelimiter = "^{", .indexInLayout = 0},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild subscriptToken[] = {
+    {.leftDelimiter = "_{", .indexInLayout = 0},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild fracToken[] = {
+    {.leftDelimiter = "\\frac{", .indexInLayout = Fraction::k_numeratorIndex},
+    {.leftDelimiter = "}{", .indexInLayout = Fraction::k_denominatorIndex},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild nthRootToken[] = {
+    {.leftDelimiter = "\\sqrt[", .indexInLayout = NthRoot::k_indexIndex},
+    {.leftDelimiter = "]{", .indexInLayout = NthRoot::k_radicandIndex},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+constexpr static LatexTokenChild binomToken[] = {
+    {.leftDelimiter = "\\binom{", .indexInLayout = Binomial::k_nIndex},
+    {.leftDelimiter = "}{", .indexInLayout = Binomial::k_kIndex},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
 
 /* Latex: \\int_{\LowerBound}^{\UpperBound}\Integrand d\Symbol
- * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- * Custom parser. See CustomParseAndBuildIntegralLayout implementation below
- * */
-constexpr static const char* integralToken[] = {
-    "\\int_{", "\1", "}^{", "\2", "}", "\3", "\\ d", "\0", " "};
-Tree* CustomParseAndBuildIntegralLayout(const char** start);
+ * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand) */
+constexpr static LatexTokenChild integralToken[] = {
+    {.leftDelimiter = "\\int_{", .indexInLayout = Integral::k_lowerBoundIndex},
+    {.leftDelimiter = "}^{", .indexInLayout = Integral::k_upperBoundIndex},
+    {.leftDelimiter = "}", .indexInLayout = Integral::k_integrandIndex},
+    {.leftDelimiter = "\\ d", .indexInLayout = Integral::k_differentialIndex},
+    {.leftDelimiter = " ", .indexInLayout = k_noChild}};
 
 // Code points
-constexpr static const char* middleDotToken[] = {"\\cdot"};
-constexpr static const char* multiplicationSignToken[] = {"\\times"};
-constexpr static const char* lesserOrEqualToken[] = {"\\le"};
-constexpr static const char* greaterOrEqualToken[] = {"\\ge"};
-constexpr static const char* degreeToken[] = {"\\degree"};
-constexpr static const char* rightwardsArrowToken[] = {"\\to"};
-constexpr static const char* infinityToken[] = {"\\infty"};
-constexpr static const char* divisionToken[] = {"\\div"};
+constexpr static LatexTokenChild middleDotToken[] = {
+    {.leftDelimiter = "\\cdot", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild multiplicationSignToken[] = {
+    {.leftDelimiter = "\\times", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild lesserOrEqualToken[] = {
+    {.leftDelimiter = "\\le", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild greaterOrEqualToken[] = {
+    {.leftDelimiter = "\\ge", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild degreeToken[] = {
+    {.leftDelimiter = "\\degree", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild rightwardsArrowToken[] = {
+    {.leftDelimiter = "\\to", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild infinityToken[] = {
+    {.leftDelimiter = "\\infty", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild divisionToken[] = {
+    {.leftDelimiter = "\\div", .indexInLayout = k_noChild}};
 
 // Tokens that do nothing
-constexpr static const char* textToken[] = {"\\text{"};
-constexpr static const char* operatorToken[] = {"\\operatorname{"};
-constexpr static const char* spaceToken[] = {" "};
+constexpr static LatexTokenChild textToken[] = {
+    {.leftDelimiter = "\\text{", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild operatorToken[] = {
+    {.leftDelimiter = "\\operatorname{", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild spaceToken[] = {
+    {.leftDelimiter = " ", .indexInLayout = k_noChild}};
 /* TODO: Currently we are working with MathQuill which doesn't recognize the
  * special characters spacings. See
  * https://github.com/desmosinc/mathquill/blob/f71f190ee067a9a2a33683cdb02b43333b9b240e/src/commands/math/advancedSymbols.ts#L224
  */
-// constexpr static const char* commaToken[] = {","};
-constexpr static const char* escapeToken[] = {"\\"};
-constexpr static const char* leftBraceToken[] = {"{"};
-constexpr static const char* rightBraceToken[] = {"}"};
+/* constexpr static LatexToken commaToken = {
+    {.leftDelimiter = ",", .indexInLayout = k_noChild}}; */
+constexpr static LatexTokenChild escapeToken[] = {
+    {.leftDelimiter = "\\", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild leftBraceToken[] = {
+    {.leftDelimiter = "{", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild rightBraceToken[] = {
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
 
 using LayoutDetector = bool (*)(const Tree*);
 using EmptyLayoutBuilder = Tree* (*)();
@@ -79,8 +140,8 @@ struct LatexLayoutRule {
    * - detect a latex token when turning Latex to Layout
    * - build a latex string when turning Layout to Latex
    * */
-  const char* const* latexToken;
-  const int latexTokenLength;
+  const LatexToken latexToken;
+  const int latexTokenSize;
   // Detect if a layout should be turned into this latex token
   const LayoutDetector detectLayout;
   // Builds a layout from this latex token (default method)
@@ -89,34 +150,37 @@ struct LatexLayoutRule {
   const LayoutCustomParserBuilder customParseAndBuildLayout = nullptr;
 };
 
-#define ONE_CHILD_RULE(LATEX, IS_LAYOUT, KTREE)                \
+#define ONE_CHILD_RULE(LATEX_TOKEN, IS_LAYOUT, KTREE)          \
   {                                                            \
-    LATEX, std::size(LATEX),                                   \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                       \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
         []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
   }
 
-#define TWO_CHILDREN_RULE(LATEX, IS_LAYOUT, KTREE)                       \
+#define TWO_CHILDREN_RULE(LATEX_TOKEN, IS_LAYOUT, KTREE)                 \
   {                                                                      \
-    LATEX, std::size(LATEX),                                             \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                                 \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
         []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
   }
 
-#define CODEPOINT_RULE(LATEX, CODEPOINT)                                \
+#define CODEPOINT_RULE(LATEX_TOKEN, CODEPOINT)                          \
   {                                                                     \
-    LATEX, std::size(LATEX),                                            \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                                \
         [](const Tree* t) -> bool {                                     \
           return CodePointLayout::IsCodePoint(t, CODEPOINT);            \
         },                                                              \
         []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
   }
 
-#define DO_NOTHING_RULE(LATEX)                                            \
-  {                                                                       \
-    LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
-        []() -> Tree* { return nullptr; }                                 \
+#define DO_NOTHING_RULE(LATEX_TOKEN)                 \
+  {                                                  \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),             \
+        [](const Tree* t) -> bool { return false; }, \
+        []() -> Tree* { return nullptr; }            \
   }
+
+Tree* CustomParseAndBuildIntegralLayout(const char** start);
 
 constexpr static LatexLayoutRule k_rules[] = {
     // Parenthesis
@@ -213,7 +277,8 @@ void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
 
 Tree* NextLatexToken(const char** start) {
   for (const LatexLayoutRule& rule : k_rules) {
-    const char* leftDelimiter = rule.latexToken[0];
+    const LatexToken latexToken = rule.latexToken;
+    const char* leftDelimiter = latexToken[0].leftDelimiter;
     size_t leftDelimiterLength = strlen(leftDelimiter);
     if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
       continue;
@@ -227,13 +292,21 @@ Tree* NextLatexToken(const char** start) {
     Tree* layoutToken = rule.buildEmptyLayout();
 
     // Parse children
-    for (int i = 1; i < rule.latexTokenLength - 1; i += 2) {
-      assert(strlen(rule.latexToken[i]) <= 1);
-      int childIndexInLayout = rule.latexToken[i][0];
-      const char* rightDelimiter = rule.latexToken[i + 1];
+    for (int i = 0; i < rule.latexTokenSize - 1; i++) {
+      const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
+      int indexInLayout = latexToken[i].indexInLayout;
+      if (indexInLayout == k_noChild) {
+        int rightDelimiterLength = strlen(rightDelimiter);
+        if (strncmp(*start, rightDelimiter, rightDelimiterLength) != 0) {
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        }
+        *start += rightDelimiterLength;
+        continue;
+      }
+      assert(indexInLayout >= 0 &&
+             indexInLayout < layoutToken->numberOfChildren());
       ParseLatexOnRackUntilIdentifier(
-          Rack::From(layoutToken->child(childIndexInLayout)), start,
-          rightDelimiter);
+          Rack::From(layoutToken->child(indexInLayout)), start, rightDelimiter);
     }
 
     return layoutToken;
@@ -331,40 +404,40 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
         continue;
       }
 
-      int i = 0;
+      const LatexToken latexToken = rule.latexToken;
       ruleFound = true;
-      bool isCodePoint = rule.latexTokenLength == 1;
+      bool isLatexCodePoint = latexToken[0].indexInLayout == k_noChild;
 
-      while (true) {
-        const char* delimiter = rule.latexToken[i];
-        size_t delimiterLength = strlen(delimiter);
+      for (int i = 0; i < rule.latexTokenSize; i++) {
+        // Write delimiter
+        const char* leftDelimiter = latexToken[i].leftDelimiter;
+        size_t leftDelimiterLength = strlen(leftDelimiter);
 
-        if (buffer + delimiterLength + isCodePoint >= end) {
+        if (buffer + leftDelimiterLength + isLatexCodePoint >= end) {
           // Buffer is too short
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
-        memcpy(buffer, delimiter, delimiterLength);
-        buffer += delimiterLength;
+        memcpy(buffer, leftDelimiter, leftDelimiterLength);
+        buffer += leftDelimiterLength;
 
-        if (i == rule.latexTokenLength - 1) {
-          if (isCodePoint) {
-            /* Add a space after latex codepoints, otherwise the string might
-             * not be valid in latex.
-             * 3\cdotcos -> NO
-             * 3\cdot cos -> YES
-             **/
-            *buffer = ' ';
-            buffer += 1;
-          }
-          *buffer = 0;
-          break;
+        // Write child
+        int indexInLayout = latexToken[i].indexInLayout;
+        if (indexInLayout != k_noChild) {
+          buffer =
+              serializer(Rack::From(child->child(indexInLayout)), buffer, end);
         }
-        assert(strlen(rule.latexToken[i + 1]) <= 1);
-        int indexOfChildInLayout = rule.latexToken[i + 1][0];
-        buffer = serializer(Rack::From(child->child(indexOfChildInLayout)),
-                            buffer, end);
-        i += 2;
       }
+
+      if (isLatexCodePoint) {
+        /* Add a space after latex codepoints, otherwise the string might
+         * not be valid in latex.
+         * 3\cdotcos -> not valid
+         * 3\cdot cos -> valid
+         **/
+        *buffer = ' ';
+        buffer += 1;
+      }
+      *buffer = 0;
     }
 
     if (ruleFound) {
@@ -449,17 +522,15 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
   Tree* result =
       KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
 
-  constexpr int k_boundsIndex[] = {1, 3};
-  constexpr int k_integrandIndex = 5;
-  constexpr int k_variableIndex = 7;
+  constexpr static int k_integrandIndexInToken = 2;
+  constexpr static int k_variableIndexInToken = 3;
 
   // --- Step 1 --- Parse upper and lower bounds in a classic way
-  for (int i = 0; i < 2; i++) {
-    int index = k_boundsIndex[i];
-    int childIndexInLayout = integralToken[index][0];
-    const char* rightDelimiter = integralToken[index + 1];
-    ParseLatexOnRackUntilIdentifier(
-        Rack::From(result->child(childIndexInLayout)), start, rightDelimiter);
+  for (int i = 0; i < k_integrandIndexInToken; i++) {
+    int indexInLayout = integralToken[i].indexInLayout;
+    const char* rightDelimiter = integralToken[i + 1].leftDelimiter;
+    ParseLatexOnRackUntilIdentifier(Rack::From(result->child(indexInLayout)),
+                                    start, rightDelimiter);
   }
 
   // --- Step 2 --- Parse integrand
@@ -467,8 +538,8 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
    * The integral should end with `d`+variable, but  we can't just look for
    * the first `d` in the integrand as it could be part of another identifier
    * like "undef" ou "round". */
-  Rack* integrandRack =
-      Rack::From(result->child(integralToken[k_integrandIndex][0]));
+  Rack* integrandRack = Rack::From(
+      result->child(integralToken[k_integrandIndexInToken].indexInLayout));
   const char* integrandStart = *start;
 
   EmptyContext emptyContext;
@@ -519,7 +590,7 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
       while (dPosition >= identifierStart + totalTokensLength) {
         currentToken = tokenizer.popToken();
         size_t tokenLength = TokenCharLength(currentToken);
-        totalTokensLength -= tokenLength;
+        totalTokensLength += tokenLength;
       }
       Token nextToken = tokenizer.popToken();
       rack->removeTree();
@@ -555,7 +626,8 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
   CodePoint c = decoder.nextCodePoint();
   while (Tokenizer::IsIdentifierMaterial(c)) {
     Tree* codepoint = CodePointLayout::Push(c);
-    NAry::AddChild(Rack::From(result->child(integralToken[k_variableIndex][0])),
+    NAry::AddChild(Rack::From(result->child(
+                       integralToken[k_variableIndexInToken].indexInLayout)),
                    codepoint);
     c = decoder.nextCodePoint();
   }

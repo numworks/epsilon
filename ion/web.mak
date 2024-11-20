@@ -61,6 +61,7 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.css: $(OUTPUT_DIRECTORY)/$(_ion_
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.html.inc $(addprefix $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.,html css)
 	$(call rule_label,HOSTCPP)
 	$(HOSTCPP) \
+                -MMD -MP \
 		-I$(dir $@) \
 		-MD -MP \
 		-DEM_MODULE_NAME=$(APP_NAME) \

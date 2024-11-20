@@ -262,14 +262,12 @@ constexpr static LatexLayoutRule k_rules[] = {
        return KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
     // Sum
-    // TODO: make parentheses optional
     {sumToken, std::size(sumToken),
      [](const Tree* l) -> bool { return l->isSumLayout(); },
      []() -> Tree* {
        return KSumL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
     // Product
-    // TODO: make parentheses optional
     {prodToken, std::size(prodToken),
      [](const Tree* l) -> bool { return l->isProductLayout(); },
      []() -> Tree* {
@@ -280,7 +278,6 @@ constexpr static LatexLayoutRule k_rules[] = {
      * Diff layouts need to stay is this order and be before "frac" to be
      * detected correctly */
     // Diff
-    // TODO: make parentheses optional
     // TODO: fill abscissa with variable
     {diffToken, std::size(diffToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
@@ -295,7 +292,6 @@ constexpr static LatexLayoutRule k_rules[] = {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Nth diff
-    // TODO: make parentheses optional
     // TODO: fill abscissa with variable
     // TODO: do not fill order twice + raise if orders are different
     // TODO: properly detect. do not mix with "d^2/3" for example
@@ -348,14 +344,14 @@ constexpr static LatexLayoutRule k_rules[] = {
 
 // ===== Latex to Layout ======
 
-Tree* NextLatexToken(const char** start);
+Tree* NextLatexToken(const char** start, const char* parentRightDelimiter);
 
 void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
                                     const char* rightDelimiter) {
   size_t delimiterLen = strlen(rightDelimiter);
   while (**start != 0 && (delimiterLen == 0 ||
                           strncmp(*start, rightDelimiter, delimiterLen) != 0)) {
-    Tree* child = NextLatexToken(start);
+    Tree* child = NextLatexToken(start, rightDelimiter);
     if (child) {
       NAry::AddChild(parent, child);
     }
@@ -364,9 +360,10 @@ void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
 
 bool CustomBuildLayoutChildFromLatex(const char** latexString,
                                      const LatexLayoutRule& rule,
-                                     int indexInLatexToken, Tree* parentLayout);
+                                     int indexInLatexToken, Tree* parentLayout,
+                                     const char* parentRightDelimiter);
 
-Tree* NextLatexToken(const char** start) {
+Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
   for (const LatexLayoutRule& rule : k_rules) {
     const LatexToken latexToken = rule.latexToken;
     const char* leftDelimiter = latexToken[0].leftDelimiter;
@@ -379,7 +376,8 @@ Tree* NextLatexToken(const char** start) {
     // Parse children
     for (int i = 0; i < rule.latexTokenSize; i++) {
       // Check for custom parsing of child
-      if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout)) {
+      if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout,
+                                          parentRightDelimiter)) {
         continue;
       }
 
@@ -580,11 +578,19 @@ void BuildIntegrandChildFromLatex(const char** latexString, Tree* parentLayout);
 void BuildIntegralVariableChildFromLatex(const char** latexString,
                                          Tree* parentLayout);
 
+bool BuildChildWithOptionalParenthesesFromLatex(
+    const char** latexString, const LatexLayoutRule& rule,
+    int indexInLatexToken, Tree* parentLayout,
+    const char* parentRightDelimiter);
+
 bool CustomBuildLayoutChildFromLatex(const char** latexString,
                                      const LatexLayoutRule& rule,
-                                     int indexInLatexToken,
-                                     Tree* parentLayout) {
-  if (rule.latexToken == integralToken) {
+                                     int indexInLatexToken, Tree* parentLayout,
+                                     const char* parentRightDelimiter) {
+  const LatexToken latexToken = rule.latexToken;
+
+  // Integral integrand and variable
+  if (latexToken == integralToken) {
     if (indexInLatexToken == k_integrandIndexInIntegralToken) {
       BuildIntegrandChildFromLatex(latexString, parentLayout);
       return true;
@@ -595,6 +601,14 @@ bool CustomBuildLayoutChildFromLatex(const char** latexString,
       // Do nothing
       return true;
     }
+  }
+
+  // Analysis optional parentheses
+  if ((latexToken == sumToken || latexToken == prodToken ||
+       latexToken == diffToken || latexToken == nthDiffToken)) {
+    return BuildChildWithOptionalParenthesesFromLatex(
+        latexString, rule, indexInLatexToken, parentLayout,
+        parentRightDelimiter);
   }
   return false;
 }
@@ -712,7 +726,7 @@ void BuildIntegrandChildFromLatex(const char** latexString,
     }
 
     // Parse the content of the integrand
-    Tree* child = NextLatexToken(latexString);
+    Tree* child = NextLatexToken(latexString, "");
     if (child) {
       NAry::AddChild(integrandRack, child);
     }
@@ -748,6 +762,64 @@ bool IsDerivativeLayout(const Tree* l, bool isNthDerivative, bool hasAbscissa) {
          (hasAbscissa ||
           l->child(Derivative::k_variableIndex)
               ->treeIsIdenticalTo(l->child(Derivative::k_abscissaIndex)));
+}
+
+// ---- Analysis optional parenthesis ----
+
+/* For Sum, Prod, diff and nthdiff, if the user doesn't use parentheses
+ * around the function, we still want to be able to parse their input.
+ * In this case, the algorithm considers that the function continues until
+ * the end of the input (or when encountering the parent delimiter). */
+bool BuildChildWithOptionalParenthesesFromLatex(
+    const char** latexString, const LatexLayoutRule& rule,
+    int indexInLatexToken, Tree* parentLayout,
+    const char* parentRightDelimiter) {
+  const LatexToken& latexToken = rule.latexToken;
+  assert((latexToken == sumToken || latexToken == prodToken ||
+          latexToken == diffToken || latexToken == nthDiffToken));
+
+  if (indexInLatexToken == rule.latexTokenSize - 2) {
+    const char* leftDelimiter = latexToken[indexInLatexToken].leftDelimiter;
+    const char* rightDelimiter =
+        latexToken[indexInLatexToken + 1].leftDelimiter;
+    assert(strncmp(leftDelimiter, "\\left(", strlen("\\left(")) == 0);
+    assert(strncmp(rightDelimiter, "\\right)", strlen("\\right)")) == 0);
+
+    int leftDelimiterLength = strlen(leftDelimiter);
+    bool hasLeftParenthesis =
+        strncmp(*latexString, leftDelimiter, leftDelimiterLength) == 0;
+    if (hasLeftParenthesis) {
+      *latexString += leftDelimiterLength;
+    }
+
+    int indexInLayout = latexToken[indexInLatexToken].indexInLayout;
+    assert(indexInLayout >= 0 &&
+           indexInLayout < parentLayout->numberOfChildren());
+    /* If no left parenthesis, parse till the end of the string
+     * else, stop when reaching delimiter of parent token. */
+    ParseLatexOnRackUntilDelimiter(
+        Rack::From(parentLayout->child(indexInLayout)), latexString,
+        hasLeftParenthesis ? rightDelimiter : parentRightDelimiter);
+
+    // Skip right parenthesis if has left parenthesis
+    if (hasLeftParenthesis) {
+      int rightDelimiterLength = strlen(rightDelimiter);
+      bool hasRightParenthesis =
+          strncmp(*latexString, rightDelimiter, rightDelimiterLength) == 0;
+      if (!hasRightParenthesis) {
+        // Right parenthesis not found
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      *latexString += rightDelimiterLength;
+    }
+    return true;
+  }
+
+  if (indexInLatexToken == rule.latexTokenSize - 1) {
+    // Already handled in previous child
+    return true;
+  }
+  return false;
 }
 
 }  // namespace LatexParser

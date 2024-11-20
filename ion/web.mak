@@ -23,6 +23,7 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
   IonSimulatorEventsPushEvent \
   IonSoftwareVersion \
   IonPatchLevel \
+  $(_eadk_exported_functions) \
 )))
 
 _ion_web_exported_runtime_methods := $(subst $( ),$(,),$(strip \
@@ -39,6 +40,10 @@ ifeq ($(DEBUG),1)
 LDFLAGS += -sASYNCIFY_STACK_SIZE=16384
 else
 endif
+
+# This flags allows side modules (compiled with SIDE_MODULE=2) to be dynamically
+# loaded.
+SFLAGS_ion += -sMAIN_MODULE=2
 
 _ion_simulator_files := 0
 

@@ -299,6 +299,12 @@ int main(int argc, char* argv[]) {
     int (*nwb_main)(int argc, const char* const argv[]);
     *(void**)(&nwb_main) = dlsym(handle, "main");
     if (nwb_main == nullptr) {
+      /* If the entrypoint is defined in the app as main(int argc, char ** argv)
+       * instead of main(), the .wasm will export it with this name (even if the
+       * arguments names differ). We handle both symbols for convenience. */
+      *(void**)(&nwb_main) = dlsym(handle, "__main_argc_argv");
+    }
+    if (nwb_main == nullptr) {
       fprintf(stderr, "Could not locate nwb_main symbol: %s\n", dlerror());
       return -1;
     }

@@ -43,6 +43,13 @@ class HistogramMainController : public Escher::ViewController,
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
  private:
+  void updateBannerView();
+
+  void enterHeaderView();
+  void exitHeaderView();
+  void enterListView();
+  void exitListView();
+
   // Model
   uint32_t* m_storeVersion;
   Store* m_store;

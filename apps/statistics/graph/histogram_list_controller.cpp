@@ -1,6 +1,6 @@
 #include "histogram_list_controller.h"
 
-#include "escher/responder.h"
+#include "../app.h"
 
 namespace Statistics {
 
@@ -31,6 +31,30 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
       static_cast<Escher::SolidColorCell*>(cell);
   colorCell->setColor(Store::colorOfSeriesAtIndex(row));
   colorCell->setHighlightColor(Store::colorLightOfSeriesAtIndex(row));
+}
+
+std::size_t HistogramListController::selectedSeries() const {
+  int series = *App::app()->snapshot()->selectedSeries();
+  assert(0 <= series && series <= m_store->numberOfActiveSeries());
+  return static_cast<std::size_t>(series);
+}
+
+void HistogramListController::setSelectedSeries(std::size_t selectedSeries) {
+  assert(selectedSeries <= m_store->numberOfActiveSeries());
+  *App::app()->snapshot()->selectedSeries() = selectedSeries;
+}
+
+std::size_t HistogramListController::selectedSeriesIndex() const {
+  int index = *App::app()->snapshot()->selectedIndex();
+  assert(0 <= index);
+  // TODO: check the index upper bound
+  return static_cast<std::size_t>(index);
+}
+
+void HistogramListController::setSelectedSeriesIndex(
+    std::size_t selectedIndex) {
+  // TODO: check the index upper bound
+  *App::app()->snapshot()->selectedIndex() = selectedIndex;
 }
 
 }  // namespace Statistics

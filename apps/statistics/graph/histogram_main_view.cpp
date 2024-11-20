@@ -13,16 +13,24 @@ Escher::View* HistogramMainView::subviewAtIndex(int index) {
   return &m_bannerView;
 }
 
-void HistogramMainView::layoutSubviews(bool force) {
+KDRect HistogramMainView::bannerFrame() const {
   KDSize bannerSize = m_bannerView.minimalSizeForOptimalDisplay();
+  return KDRect(0, bounds().height() - bannerSize.height(), bounds().width(),
+                bannerSize.height());
+}
+
+void HistogramMainView::layoutSubviews(bool force) {
+  KDSize bannerSize = m_isBannerVisible
+                          ? m_bannerView.minimalSizeForOptimalDisplay()
+                          : KDSizeZero;
+  KDSize listSize(bounds().width(), bounds().height() - bannerSize.height());
   setChildFrame(&m_bannerView,
                 KDRect(0, bounds().height() - bannerSize.height(),
-                       bounds().width(), bannerSize.height()),
+                       bannerSize.width(), bannerSize.height()),
                 force);
-  setChildFrame(
-      m_listView,
-      KDRect(0, 0, bounds().width(), bounds().height() - bannerSize.height()),
-      force);
+  m_bannerView.reload();
+  setChildFrame(m_listView, KDRect(0, 0, listSize.width(), listSize.height()),
+                force);
 }
 
 }  // namespace Statistics

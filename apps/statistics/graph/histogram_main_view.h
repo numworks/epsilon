@@ -22,7 +22,7 @@ class HistogramMainView : public Escher::View {
 
   /* The SelectableListView is owned by the HistogramListController.
    * SelectableListView is a member of SelectableListViewController, which is a
-   * base class of HistogramListController.  */
+   * base class of HistogramListController. */
   Escher::SelectableListView* m_listView;
 
   Store* m_store;

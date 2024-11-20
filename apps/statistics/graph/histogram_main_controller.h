@@ -4,7 +4,6 @@
 #include <escher/tab_view_controller.h>
 
 #include "../store.h"
-#include "escher/view_controller.h"
 #include "graph_button_row_delegate.h"
 #include "histogram_list_controller.h"
 #include "histogram_main_view.h"
@@ -44,20 +43,25 @@ class HistogramMainController : public Escher::ViewController,
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
  private:
+  // Model
   uint32_t* m_storeVersion;
   Store* m_store;
-
   HistogramRange m_histogramRange;
 
+  // The TabViewController is the parent responder
   Escher::TabViewController* m_tabController;
 
+  // Children controllers
   HistogramListController m_listController;
-
   HistogramParameterController m_histogramParameterController;
+
+  // Histogram parameter button, added to the ButtonRow
   Escher::SimpleButtonCell m_parameterButton;
 
+  // Main view
   HistogramMainView m_view;
-
+  /* Keeps the controller state: either the Header or the List subview is
+   * selected */
   enum class SelectedSubview : uint8_t { Header, List };
   SelectedSubview m_selectedSubview = SelectedSubview::List;
 };

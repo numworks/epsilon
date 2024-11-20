@@ -44,6 +44,15 @@ QUIZ_CASE(pcj_latex_to_layout) {
   /* The first d is not before a variable so it's not used as separator */
   assert_latex_layouts_to("\\int_{0}^{1}d(x)dx",
                           KRackL(KIntegralL("x"_l, "0"_l, "1"_l, "d(x)"_l)));
+  // Sum
+  assert_latex_layouts_to(
+      "\\sum_{k=0}^{9}\\left(t^{3}\\right)",
+      KRackL(KSumL("k"_l, "0"_l, "9"_l, "t"_l ^ KSuperscriptL("3"_l))));
+  // Product
+  assert_latex_layouts_to(
+      "\\prod_{k=0}^{9}\\left(t^{3}\\right)",
+      KRackL(KProductL("k"_l, "0"_l, "9"_l, "t"_l ^ KSuperscriptL("3"_l))));
+
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^

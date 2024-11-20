@@ -93,6 +93,74 @@ constexpr static LatexTokenChild integralToken[] = {
     {.leftDelimiter = "\\ d", .indexInLayout = Integral::k_differentialIndex},
     {.leftDelimiter = " ", .indexInLayout = k_noChild}};
 
+/* Latex: \\sum_{\Variable=\LowerBound}^{\UpperBound}(\Function)
+ * Layout: Sum(\Variable, \LowerBound, \UpperBound, \Function) */
+constexpr static LatexTokenChild sumToken[] = {
+    {.leftDelimiter = "\\sum_{", .indexInLayout = Parametric::k_variableIndex},
+    {.leftDelimiter = "=", .indexInLayout = Parametric::k_lowerBoundIndex},
+    {.leftDelimiter = "}^{", .indexInLayout = Parametric::k_upperBoundIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {.leftDelimiter = "}", .indexInLayout = k_noChild},
+    {.leftDelimiter = "\\left(", .indexInLayout = Parametric::k_argumentIndex},
+    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+
+/* Latex: \\prod{\Variable=\LowerBound}^{\UpperBound}(\Function)
+ * Layout: Product(\Variable, \LowerBound, \UpperBound, \Function) */
+constexpr static LatexTokenChild prodToken[] = {
+    {.leftDelimiter = "\\prod_{", .indexInLayout = Parametric::k_variableIndex},
+    {.leftDelimiter = "=", .indexInLayout = Parametric::k_lowerBoundIndex},
+    {.leftDelimiter = "}^{", .indexInLayout = Parametric::k_upperBoundIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {.leftDelimiter = "}", .indexInLayout = k_noChild},
+    {.leftDelimiter = "\\left(", .indexInLayout = Parametric::k_argumentIndex},
+    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+
+/* Latex: \\frac{d}{d\Variable}(\Function)
+ * Layout: Diff(\Variable, \Variable, "1"_l, \Function) */
+constexpr static LatexTokenChild diffToken[] = {
+    {.leftDelimiter = "\\frac{d}{d",
+     .indexInLayout = Derivative::k_variableIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {.leftDelimiter = "}", .indexInLayout = k_noChild},
+    {.leftDelimiter = "\\left(", .indexInLayout = Derivative::k_derivandIndex},
+    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+
+/* Latex: \\frac{d}{d\Variable}(\Function)_{\Variable=\Abscissa}
+ * Layout: Diff(\Variable, \Abscissa, "1"_l, \Function) */
+constexpr static LatexTokenChild diffAtAToken[] = {
+    {.leftDelimiter = "\\frac{d}{d",
+     .indexInLayout = Derivative::k_variableIndex},
+    {.leftDelimiter = "}\\left(", .indexInLayout = Derivative::k_derivandIndex},
+    {.leftDelimiter = "\\right)_{",
+     .indexInLayout = Derivative::k_variableIndex},
+    {.leftDelimiter = "=", .indexInLayout = Derivative::k_abscissaIndex},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
+/* Latex: \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)
+ * Layout: Diff(\Variable, \Variable, \Order, \Function) */
+constexpr static LatexTokenChild nthDiffToken[] = {
+    {.leftDelimiter = "\\frac{d^{", .indexInLayout = Derivative::k_orderIndex},
+    {.leftDelimiter = "}}{d", .indexInLayout = Derivative::k_variableIndex},
+    {.leftDelimiter = "^{", .indexInLayout = Derivative::k_orderIndex},
+    // Split '}}' and the parentheses because the latter are optional
+    {.leftDelimiter = "}}", .indexInLayout = k_noChild},
+    {.leftDelimiter = "\\left(", .indexInLayout = Derivative::k_derivandIndex},
+    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+
+/* Latex:
+ * \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)_{\Variable=\Abscissa}
+ * Layout: Diff(\Variable, \Abscissa, \Order, \Function) */
+constexpr static LatexTokenChild nthDiffAtAToken[] = {
+    {.leftDelimiter = "\\frac{d^{", .indexInLayout = Derivative::k_orderIndex},
+    {.leftDelimiter = "}}{d", .indexInLayout = Derivative::k_variableIndex},
+    {.leftDelimiter = "^{", .indexInLayout = Derivative::k_orderIndex},
+    {.leftDelimiter = "}}\\left(",
+     .indexInLayout = Derivative::k_derivandIndex},
+    {.leftDelimiter = "\\right)_{",
+     .indexInLayout = Derivative::k_variableIndex},
+    {.leftDelimiter = "=", .indexInLayout = Derivative::k_abscissaIndex},
+    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+
 // Code points
 constexpr static LatexTokenChild middleDotToken[] = {
     {.leftDelimiter = "\\cdot", .indexInLayout = k_noChild}};
@@ -181,6 +249,7 @@ struct LatexLayoutRule {
   }
 
 Tree* CustomParseAndBuildIntegralLayout(const char** start);
+bool IsDerivativeLayout(const Tree* l, bool withoutOrder, bool withoutVariable);
 
 constexpr static LatexLayoutRule k_rules[] = {
     // Parenthesis
@@ -205,16 +274,69 @@ constexpr static LatexLayoutRule k_rules[] = {
        return l->isVerticalOffsetLayout() && VerticalOffset::IsSubscript(l);
      },
      []() -> Tree* { return KSubscriptL(KRackL())->cloneTree(); }},
-    // Fraction
-    TWO_CHILDREN_RULE(fracToken, isFractionLayout, KFracL),
     // Root
     TWO_CHILDREN_RULE(nthRootToken, isRootLayout, KRootL),
     // Binomial
     TWO_CHILDREN_RULE(binomToken, isBinomialLayout, KBinomialL),
+
     // Integral
     {integralToken, std::size(integralToken),
      [](const Tree* l) -> bool { return l->isIntegralLayout(); }, nullptr,
      CustomParseAndBuildIntegralLayout},
+    // Sum
+    // TODO: make parentheses optional
+    {sumToken, std::size(sumToken),
+     [](const Tree* l) -> bool { return l->isSumLayout(); },
+     []() -> Tree* {
+       return KSumL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Product
+    // TODO: make parentheses optional
+    {prodToken, std::size(prodToken),
+     [](const Tree* l) -> bool { return l->isProductLayout(); },
+     []() -> Tree* {
+       return KProductL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+
+    /* WARNING: The order matters here
+     * Diff layouts need to stay is this order and be before "frac" to be
+     * detected correctly */
+    // Diff
+    // TODO: make parentheses optional
+    // TODO: fill abscissa with variable
+    {diffToken, std::size(diffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
+     []() -> Tree* {
+       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
+     }},
+    // Diff at A
+    // TODO: do not fill variable twice + raise if variables are different
+    {diffAtAToken, std::size(diffAtAToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
+     []() -> Tree* {
+       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
+     }},
+    // Nth diff
+    // TODO: make parentheses optional
+    // TODO: fill abscissa with variable
+    // TODO: do not fill order twice + raise if orders are different
+    // TODO: properly detect. do not mix with "d^2/3" for example
+    {nthDiffToken, std::size(nthDiffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
+     []() -> Tree* {
+       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Nth diff at A
+    // TODO: do not fill order twice + raise if orders are different
+    // TODO: do not fill variable twice + raise if variables are different
+    {nthDiffAtAToken, std::size(nthDiffAtAToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
+     []() -> Tree* {
+       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Fraction
+    TWO_CHILDREN_RULE(fracToken, isFractionLayout, KFracL),
+
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
     // Middle Dot
@@ -348,9 +470,6 @@ Tree* LatexToLayout(const char* latexString) {
  *   Conj
  *   CombinedCodePoints
  *   CondensedSum
- *   Diff
- *   Product
- *   Sum
  *   ListSequence
  *   Point2D
  *   Matrix
@@ -634,6 +753,14 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
   decoder.previousCodePoint();
   *start = decoder.stringPosition();
   return result;
+}
+
+bool IsDerivativeLayout(const Tree* l, bool isNthDerivative, bool hasAbscissa) {
+  return l->isDiffLayout() &&
+         (isNthDerivative == l->toDiffLayoutNode()->isNthDerivative) &&
+         (hasAbscissa ||
+          l->child(Derivative::k_variableIndex)
+              ->treeIsIdenticalTo(l->child(Derivative::k_abscissaIndex)));
 }
 
 }  // namespace LatexParser

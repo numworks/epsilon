@@ -48,9 +48,7 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Down) {
         m_selectedSubview = SelectedSubview::List;
         header()->setSelectedButton(-1);
-        m_listController.selectableListView()->selectFirstRow();
-        m_listController.selectableListView()->selectedCell()->setHighlighted(
-            true);
+        m_listController.selectFirstCell();
         return true;
       }
       int selectedButton = header()->selectedButton();
@@ -60,6 +58,7 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
               ->handleEvent(event)) {
         return true;
       }
+      // Handle navigation between the header buttons
       return header()->handleEvent(event);
     }
     case SelectedSubview::List: {
@@ -69,23 +68,14 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
         return true;
       }
 
-      // TODO: move to m_listController->handleEvent()
-      if (m_listController.selectableListView()->handleEvent(event)) {
-        // Take back the firstResponder ownership from the SelectableListView
-        Escher::App::app()->setFirstResponder(this);
-        /* Re-Highlight the selected cell. Note that this is necessary when the
-         * SelectableListView became the first responder at some point, then
-         * lost the responder ownership to the HistogramMainController, because
-         * SelectableTableView::willExitResponderChain unhighlights the selected
-         * cell. */
-        m_listController.selectableListView()->selectedCell()->setHighlighted(
-            true);
+      if (m_listController.handleEvent(event)) {
+        // TODO: update the banner view
         return true;
       }
 
       if (event == Ion::Events::Up) {
         m_selectedSubview = SelectedSubview::Header;
-        m_listController.selectableListView()->deselectTable();
+        m_listController.unselectList();
         header()->setSelectedButton(0);
         // Take back the firstResponder ownership from the ButtonCell
         Escher::App::app()->setFirstResponder(this);
@@ -103,18 +93,18 @@ void HistogramMainController::didEnterResponderChain(
     Responder* firstResponder) {
   switch (m_selectedSubview) {
     case SelectedSubview::Header: {
-      header()->setSelectedButton(0);
-      // Take back the firstResponder ownership from the ButtonCell
-      Escher::App::app()->setFirstResponder(this);
+      if (header()->selectedButton() < 0) {
+        header()->setSelectedButton(0);
+        // Take back the firstResponder ownership from the ButtonCell
+        Escher::App::app()->setFirstResponder(this);
+      }
       return;
     }
     case SelectedSubview::List: {
-      // Select first row is the list was not selected already
-      if (!m_listController.selectableListView()->selectedCell()) {
-        m_listController.selectableListView()->selectFirstRow();
+      if (!m_listController.hasSelectedCell()) {
+        m_listController.selectFirstCell();
       }
-      m_listController.selectableListView()->selectedCell()->setHighlighted(
-          true);
+      m_listController.highLightSelectedCell();
       return;
     }
     default:
@@ -132,7 +122,7 @@ void HistogramMainController::willExitResponderChain(
         return;
       }
       case SelectedSubview::List: {
-        m_listController.selectableListView()->deselectTable();
+        m_listController.unselectList();
         return;
       }
       default:

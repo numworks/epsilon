@@ -1,14 +1,15 @@
 #include "histogram_list_controller.h"
 
+#include "escher/responder.h"
+
 namespace Statistics {
 
 Escher::SolidColorCell makeColorCell(size_t index) {
   return Escher::SolidColorCell();
 }
 
-HistogramListController::HistogramListController(Responder* parentResponder,
-                                                 Store* store,
-                                                 uint32_t* storeVersion)
+HistogramListController::HistogramListController(
+    Escher::Responder* parentResponder, Store* store, uint32_t* storeVersion)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
       m_displayCells({makeColorCell(0), makeColorCell(1), makeColorCell(2)}),

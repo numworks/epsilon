@@ -14,7 +14,7 @@ class HistogramListController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
       public Escher::SelectableListViewDelegate {
  public:
-  HistogramListController(Responder* parentResponder, Store* store,
+  HistogramListController(Escher::Responder* parentResponder, Store* store,
                           uint32_t* storeVersion);
 
   // Escher::TableViewDataSource
@@ -33,6 +33,45 @@ class HistogramListController
    * selectableListView()->handleEvent, but returns the firstResponder
    * ownership to the HistogramMainController (i.e. parentResponder), and
    * restores the selected cell highlight. */
+
+  bool handleEvent(Ion::Events::Event event) override {
+    if (!m_selectableListView.handleEvent(event)) {
+      return false;
+    }
+    /* If the SelectableListView handled the event, in most cases it selected a
+     * new cell, and took the firstResponder ownership. However we want
+     * HistogramMainController to be the first responder, because the banner
+     * view need to be updated as well. So the firstResponder ownership is given
+     * back to HistogramMainController, which is the parent responder of
+     * HistogramListController. */
+    Escher::App::app()->setFirstResponder(parentResponder());
+    /* Because SelectableListView lost the firstResponder ownership, the
+     * SelectableTableView::willExitResponderChain function was called. This
+     * function unhighlights the selected cell, so we need to set it
+     * highlighted again. */
+    highLightSelectedCell();
+    return true;
+  }
+
+  void unselectList() { m_selectableListView.deselectTable(); }
+
+  void selectFirstCell() {
+    /* Two actions are needed: selecting the first row in SelectableListView and
+     * highlighting the selected cell. */
+    m_selectableListView.selectFirstRow();
+    highLightSelectedCell();
+  }
+
+  bool hasSelectedCell() {
+    return m_selectableListView.selectedCell() != nullptr;
+  }
+
+  /* The SelectableListView can be in a state where a cell is selected but not
+   * highlighted. This function ensures that the selected cell is also
+   * highlighted. */
+  void highLightSelectedCell() {
+    m_selectableListView.selectedCell()->setHighlighted(true);
+  }
 
  private:
   // Escher::TableViewDataSource

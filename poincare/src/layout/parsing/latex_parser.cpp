@@ -81,9 +81,14 @@ constexpr static LatexTokenChild binomToken[] = {
 constexpr static LatexTokenChild integralToken[] = {
     {"\\int_{", Integral::k_lowerBoundIndex},
     {"}^{", Integral::k_upperBoundIndex},
-    {"}", Integral::k_integrandIndex},
+    // Split '}' and the integrand because the latter has custom parsing
+    {"}", k_noChild},
+    {"", Integral::k_integrandIndex},
     {"\\ d", Integral::k_differentialIndex},
     {" ", k_noChild}};
+constexpr static int k_integrandIndexInIntegralToken = 3;
+constexpr static int k_variableIndexInIntegralToken = 4;
+constexpr static int k_endIndexInIntegralToken = 5;
 
 /* Latex: \\sum_{\Variable=\LowerBound}^{\UpperBound}(\Function)
  * Layout: Sum(\Variable, \LowerBound, \UpperBound, \Function) */
@@ -176,7 +181,6 @@ constexpr static LatexTokenChild rightBraceToken[] = {{"}", k_noChild}};
 
 using LayoutDetector = bool (*)(const Tree*);
 using EmptyLayoutBuilder = Tree* (*)();
-using LayoutCustomParserBuilder = Tree* (*)(const char**);
 
 struct LatexLayoutRule {
   /* The latex token. Is used to:
@@ -187,10 +191,8 @@ struct LatexLayoutRule {
   const int latexTokenSize;
   // Detect if a layout should be turned into this latex token
   const LayoutDetector detectLayout;
-  // Builds a layout from this latex token (default method)
+  // Builds the layout for this latex token
   const EmptyLayoutBuilder buildEmptyLayout;
-  // Builds a layout from this latex token (custom method)
-  const LayoutCustomParserBuilder customParseAndBuildLayout = nullptr;
 };
 
 #define ONE_CHILD_RULE(LATEX_TOKEN, IS_LAYOUT, KTREE)          \
@@ -223,7 +225,6 @@ struct LatexLayoutRule {
         []() -> Tree* { return nullptr; }            \
   }
 
-Tree* CustomParseAndBuildIntegralLayout(const char** start);
 bool IsDerivativeLayout(const Tree* l, bool withoutOrder, bool withoutVariable);
 
 constexpr static LatexLayoutRule k_rules[] = {
@@ -256,8 +257,10 @@ constexpr static LatexLayoutRule k_rules[] = {
 
     // Integral
     {integralToken, std::size(integralToken),
-     [](const Tree* l) -> bool { return l->isIntegralLayout(); }, nullptr,
-     CustomParseAndBuildIntegralLayout},
+     [](const Tree* l) -> bool { return l->isIntegralLayout(); },
+     []() -> Tree* {
+       return KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
     // Sum
     // TODO: make parentheses optional
     {sumToken, std::size(sumToken),
@@ -347,66 +350,64 @@ constexpr static LatexLayoutRule k_rules[] = {
 
 Tree* NextLatexToken(const char** start);
 
-void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
-                                     const char* endIdentifier) {
-  size_t endLen = strlen(endIdentifier);
-
-  bool ignoreEndIdentifier = endLen == 0;
-
-  while (**start != 0 &&
-         (ignoreEndIdentifier || strncmp(*start, endIdentifier, endLen) != 0)) {
+void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
+                                    const char* rightDelimiter) {
+  size_t delimiterLen = strlen(rightDelimiter);
+  while (**start != 0 && (delimiterLen == 0 ||
+                          strncmp(*start, rightDelimiter, delimiterLen) != 0)) {
     Tree* child = NextLatexToken(start);
     if (child) {
       NAry::AddChild(parent, child);
     }
   }
-
-  if (ignoreEndIdentifier) {
-    return;
-  }
-
-  if (**start == 0) {
-    /* We're at the end of the string and endIdentifier couldn't be found */
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-  *start += endLen;
 }
+
+bool CustomBuildLayoutChildFromLatex(const char** latexString,
+                                     const LatexLayoutRule& rule,
+                                     int indexInLatexToken, Tree* parentLayout);
 
 Tree* NextLatexToken(const char** start) {
   for (const LatexLayoutRule& rule : k_rules) {
     const LatexToken latexToken = rule.latexToken;
     const char* leftDelimiter = latexToken[0].leftDelimiter;
-    size_t leftDelimiterLength = strlen(leftDelimiter);
-    if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+    if (strncmp(*start, leftDelimiter, strlen(leftDelimiter)) != 0) {
       continue;
     }
     // Token found
-    *start += leftDelimiterLength;
-    if (rule.customParseAndBuildLayout) {
-      return rule.customParseAndBuildLayout(start);
-    }
-
-    Tree* layoutToken = rule.buildEmptyLayout();
+    Tree* parentLayout = rule.buildEmptyLayout();
 
     // Parse children
-    for (int i = 0; i < rule.latexTokenSize - 1; i++) {
-      const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
+    for (int i = 0; i < rule.latexTokenSize; i++) {
+      // Check for custom parsing of child
+      if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout)) {
+        continue;
+      }
+
+      // Classic parsing
+      // --- Step 1. Skip left delimiter ---
+      const char* leftDelimiter = latexToken[i].leftDelimiter;
+      int leftDelimiterLength = strlen(leftDelimiter);
+      if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+        // Left delimiter not found
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      *start += leftDelimiterLength;
+
+      // --- Step 2. Parse child ---
       int indexInLayout = latexToken[i].indexInLayout;
       if (indexInLayout == k_noChild) {
-        int rightDelimiterLength = strlen(rightDelimiter);
-        if (strncmp(*start, rightDelimiter, rightDelimiterLength) != 0) {
-          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-        }
-        *start += rightDelimiterLength;
         continue;
       }
       assert(indexInLayout >= 0 &&
-             indexInLayout < layoutToken->numberOfChildren());
-      ParseLatexOnRackUntilIdentifier(
-          Rack::From(layoutToken->child(indexInLayout)), start, rightDelimiter);
+             indexInLayout < parentLayout->numberOfChildren());
+      assert(i < rule.latexTokenSize - 1);
+      const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
+      ParseLatexOnRackUntilDelimiter(
+          Rack::From(parentLayout->child(indexInLayout)), start,
+          rightDelimiter);
     }
 
-    return layoutToken;
+    return parentLayout;
   }
 
   // Code points
@@ -419,7 +420,7 @@ Tree* NextLatexToken(const char** start) {
 Tree* LatexToLayout(const char* latexString) {
   ExceptionTry {
     Tree* result = KRackL()->cloneTree();
-    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "");
+    ParseLatexOnRackUntilDelimiter(Rack::From(result), &latexString, "");
     return result;
   }
   ExceptionCatch(type) {
@@ -574,6 +575,32 @@ char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
 
 // ===== Custom constructors =====
 
+void BuildIntegrandChildFromLatex(const char** latexString, Tree* parentLayout);
+
+void BuildIntegralVariableChildFromLatex(const char** latexString,
+                                         Tree* parentLayout);
+
+bool CustomBuildLayoutChildFromLatex(const char** latexString,
+                                     const LatexLayoutRule& rule,
+                                     int indexInLatexToken,
+                                     Tree* parentLayout) {
+  if (rule.latexToken == integralToken) {
+    if (indexInLatexToken == k_integrandIndexInIntegralToken) {
+      BuildIntegrandChildFromLatex(latexString, parentLayout);
+      return true;
+    } else if (indexInLatexToken == k_variableIndexInIntegralToken) {
+      BuildIntegralVariableChildFromLatex(latexString, parentLayout);
+      return true;
+    } else if (indexInLatexToken == k_endIndexInIntegralToken) {
+      // Do nothing
+      return true;
+    }
+  }
+  return false;
+}
+
+// ----- Integral -----
+
 // Helper. Measures the char length of a token that contains multiple codepoints
 size_t TokenCharLength(Token token) {
   LayoutSpan span = token.toSpan();
@@ -610,39 +637,22 @@ size_t TokenCharLength(Token token) {
  *
  * For the delimiter at the end of the symbol, the parsing will stop as soon as
  * a non-"IdentifierMaterial" codepoint is found (i.e. non-alphanumeric
- *codepoint or greek letter. See Tokenizer::IsIdentifierMaterial for more info).
+ * codepoint or greek letter. See Tokenizer::IsIdentifierMaterial for more
+ * info).
  **/
-Tree* CustomParseAndBuildIntegralLayout(const char** start) {
-  Tree* result =
-      KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
-
-  constexpr static int k_integrandIndexInToken = 2;
-  constexpr static int k_variableIndexInToken = 3;
-
-  // --- Step 1 --- Parse upper and lower bounds in a classic way
-  for (int i = 0; i < k_integrandIndexInToken; i++) {
-    int indexInLayout = integralToken[i].indexInLayout;
-    const char* rightDelimiter = integralToken[i + 1].leftDelimiter;
-    ParseLatexOnRackUntilIdentifier(Rack::From(result->child(indexInLayout)),
-                                    start, rightDelimiter);
-  }
-
-  // --- Step 2 --- Parse integrand
-  /* The difficulty here is to know where the integrand ends.
-   * The integral should end with `d`+variable, but  we can't just look for
-   * the first `d` in the integrand as it could be part of another identifier
-   * like "undef" ou "round". */
-  Rack* integrandRack = Rack::From(
-      result->child(integralToken[k_integrandIndexInToken].indexInLayout));
-  const char* integrandStart = *start;
+void BuildIntegrandChildFromLatex(const char** latexString,
+                                  Tree* parentLayout) {
+  Rack* integrandRack = Rack::From(parentLayout->child(
+      integralToken[k_integrandIndexInIntegralToken].indexInLayout));
+  const char* integrandStart = *latexString;
 
   EmptyContext emptyContext;
   ParsingContext parsingContext(&emptyContext,
                                 ParsingContext::ParsingMethod::Classic);
-  while (**start != 0) {
-    if (**start == 'd') {
+  while (**latexString != 0) {
+    if (**latexString == 'd') {
       // We might have found the end of the integrand
-      const char* dPosition = *start;
+      const char* dPosition = *latexString;
 
       // --- Step 2.1 --- Find the identifier string surrounding the `d`
       /* Example: ∫3+abcdxyz1
@@ -702,32 +712,34 @@ Tree* CustomParseAndBuildIntegralLayout(const char** start) {
     }
 
     // Parse the content of the integrand
-    Tree* child = NextLatexToken(start);
+    Tree* child = NextLatexToken(latexString);
     if (child) {
       NAry::AddChild(integrandRack, child);
     }
   }
 
-  if (**start == 0) {
+  if (**latexString == 0) {
     /* We're at the end of the string and the 'd' couldn't be found */
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   // Skip 'd'
-  *start += 1;
+  *latexString += 1;
+}
 
-  // --- Step 3 --- Parse variable
-  UTF8Decoder decoder(*start);
+void BuildIntegralVariableChildFromLatex(const char** latexString,
+                                         Tree* parentLayout) {
+  UTF8Decoder decoder(*latexString);
   CodePoint c = decoder.nextCodePoint();
   while (Tokenizer::IsIdentifierMaterial(c)) {
     Tree* codepoint = CodePointLayout::Push(c);
-    NAry::AddChild(Rack::From(result->child(
-                       integralToken[k_variableIndexInToken].indexInLayout)),
-                   codepoint);
+    NAry::AddChild(
+        Rack::From(parentLayout->child(
+            integralToken[k_variableIndexInIntegralToken].indexInLayout)),
+        codepoint);
     c = decoder.nextCodePoint();
   }
   decoder.previousCodePoint();
-  *start = decoder.stringPosition();
-  return result;
+  *latexString = decoder.stringPosition();
 }
 
 bool IsDerivativeLayout(const Tree* l, bool isNthDerivative, bool hasAbscissa) {

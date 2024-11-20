@@ -1,10 +1,6 @@
 #include "histogram_main_controller.h"
 
-#include "escher/selectable_list_view.h"
-#include "escher/view_controller.h"
-#include "ion/events.h"
 #include "omg/unreachable.h"
-#include "statistics/app.h"
 
 namespace Statistics {
 
@@ -26,9 +22,9 @@ HistogramMainController::HistogramMainController(
       m_parameterButton(
           this, I18n::Message::StatisticsGraphSettings,
           Escher::Invocation::Builder<HistogramMainController>(
-              [](HistogramMainController* histogramController, void* sender) {
-                histogramController->stackController()->push(
-                    histogramController->histogramParameterController());
+              [](HistogramMainController* mainController, void* sender) {
+                mainController->stackController()->push(
+                    mainController->histogramParameterController());
                 return true;
               },
               this),
@@ -44,18 +40,24 @@ Escher::ButtonCell* HistogramMainController::buttonAtIndex(
 bool HistogramMainController::handleEvent(Ion::Events::Event event) {
   switch (m_selectedSubview) {
     case SelectedSubview::Header: {
-      if (event == Ion::Events::Up) {
+      if (event == Ion::Events::Up || event == Ion::Events::Back) {
         header()->setSelectedButton(-1);
         m_tabController->selectTab();
         return true;
       }
-
       if (event == Ion::Events::Down) {
         m_selectedSubview = SelectedSubview::List;
         header()->setSelectedButton(-1);
         m_listController.selectableListView()->selectFirstRow();
-        m_listController.selectableListView()->cell(0)->setHighlighted(true);
-        App::app()->setFirstResponder(this);
+        m_listController.selectableListView()->selectedCell()->setHighlighted(
+            true);
+        return true;
+      }
+      int selectedButton = header()->selectedButton();
+      assert(selectedButton == 0 || selectedButton == 1);
+      if (buttonAtIndex(selectedButton,
+                        Escher::ButtonRowController::Position::Top)
+              ->handleEvent(event)) {
         return true;
       }
       return header()->handleEvent(event);
@@ -67,8 +69,15 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
         return true;
       }
 
+      // TODO: move to m_listController->handleEvent()
       if (m_listController.selectableListView()->handleEvent(event)) {
-        App::app()->setFirstResponder(this);
+        // Take back the firstResponder ownership from the SelectableListView
+        Escher::App::app()->setFirstResponder(this);
+        /* Re-Highlight the selected cell. Note that this is necessary when the
+         * SelectableListView became the first responder at some point, then
+         * lost the responder ownership to the HistogramMainController, because
+         * SelectableTableView::willExitResponderChain unhighlights the selected
+         * cell. */
         m_listController.selectableListView()->selectedCell()->setHighlighted(
             true);
         return true;
@@ -76,9 +85,10 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
 
       if (event == Ion::Events::Up) {
         m_selectedSubview = SelectedSubview::Header;
-        header()->setSelectedButton(0);
         m_listController.selectableListView()->deselectTable();
-        App::app()->setFirstResponder(this);
+        header()->setSelectedButton(0);
+        // Take back the firstResponder ownership from the ButtonCell
+        Escher::App::app()->setFirstResponder(this);
         return true;
       }
 
@@ -94,13 +104,17 @@ void HistogramMainController::didEnterResponderChain(
   switch (m_selectedSubview) {
     case SelectedSubview::Header: {
       header()->setSelectedButton(0);
+      // Take back the firstResponder ownership from the ButtonCell
+      Escher::App::app()->setFirstResponder(this);
       return;
     }
     case SelectedSubview::List: {
-      if (m_listController.selectableListView()->selectedRow() == -1) {
+      // Select first row is the list was not selected already
+      if (!m_listController.selectableListView()->selectedCell()) {
         m_listController.selectableListView()->selectFirstRow();
-        m_listController.selectableListView()->cell(0)->setHighlighted(true);
       }
+      m_listController.selectableListView()->selectedCell()->setHighlighted(
+          true);
       return;
     }
     default:
@@ -119,7 +133,6 @@ void HistogramMainController::willExitResponderChain(
       }
       case SelectedSubview::List: {
         m_listController.selectableListView()->deselectTable();
-        m_listController.selectableListView()->cell(0)->setHighlighted(false);
         return;
       }
       default:

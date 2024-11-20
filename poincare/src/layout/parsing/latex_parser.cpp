@@ -27,9 +27,9 @@ namespace LatexParser {
  * Example:
  * For n-th Root, the latex "\\sqrt[2]{3}"" matches the layout Root(3,2)
  * Thus, the LatexToken is:
- * {{.leftDelimiter = "\\sqrt[", .indexInLayout = 1},
- *  {.leftDelimiter = "]{", .indexInLayout = 0},
- *  {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+ * {{ "\\sqrt[",  1},
+ *  { "]{",  0},
+ *  { "}",  k_noChild}};
  * */
 
 struct LatexTokenChild {
@@ -41,163 +41,138 @@ const static int k_noChild = -1;
 
 using LatexToken = const LatexTokenChild*;
 
-constexpr static LatexTokenChild parenthesisToken[] = {
-    {.leftDelimiter = "\\left(", .indexInLayout = 0},
-    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
-
+constexpr static LatexTokenChild parenthesisToken[] = {{"\\left(", 0},
+                                                       {"\\right)", k_noChild}};
 constexpr static LatexTokenChild curlyBracesToken[] = {
-    {.leftDelimiter = "\\left\\{", .indexInLayout = 0},
-    {.leftDelimiter = "\\right\\}", .indexInLayout = k_noChild}};
+    {"\\left\\{", 0}, {"\\right\\}", k_noChild}};
 
-constexpr static LatexTokenChild absToken[] = {
-    {.leftDelimiter = "\\left|", .indexInLayout = 0},
-    {.leftDelimiter = "\\right|", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild absToken[] = {{"\\left|", 0},
+                                               {"\\right|", k_noChild}};
 
-constexpr static LatexTokenChild sqrtToken[] = {
-    {.leftDelimiter = "\\sqrt{", .indexInLayout = 0},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild sqrtToken[] = {{"\\sqrt{", 0},
+                                                {"}", k_noChild}};
 
-constexpr static LatexTokenChild conjugateToken[] = {
-    {.leftDelimiter = "\\overline{", .indexInLayout = 0},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild conjugateToken[] = {{"\\overline{", 0},
+                                                     {"}", k_noChild}};
 
-constexpr static LatexTokenChild superscriptToken[] = {
-    {.leftDelimiter = "^{", .indexInLayout = 0},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild superscriptToken[] = {{"^{", 0},
+                                                       {"}", k_noChild}};
 
-constexpr static LatexTokenChild subscriptToken[] = {
-    {.leftDelimiter = "_{", .indexInLayout = 0},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild subscriptToken[] = {{"_{", 0},
+                                                     {"}", k_noChild}};
 
 constexpr static LatexTokenChild fracToken[] = {
-    {.leftDelimiter = "\\frac{", .indexInLayout = Fraction::k_numeratorIndex},
-    {.leftDelimiter = "}{", .indexInLayout = Fraction::k_denominatorIndex},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    {"\\frac{", Fraction::k_numeratorIndex},
+    {"}{", Fraction::k_denominatorIndex},
+    {"}", k_noChild}};
 
 constexpr static LatexTokenChild nthRootToken[] = {
-    {.leftDelimiter = "\\sqrt[", .indexInLayout = NthRoot::k_indexIndex},
-    {.leftDelimiter = "]{", .indexInLayout = NthRoot::k_radicandIndex},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    {"\\sqrt[", NthRoot::k_indexIndex},
+    {"]{", NthRoot::k_radicandIndex},
+    {"}", k_noChild}};
 
 constexpr static LatexTokenChild binomToken[] = {
-    {.leftDelimiter = "\\binom{", .indexInLayout = Binomial::k_nIndex},
-    {.leftDelimiter = "}{", .indexInLayout = Binomial::k_kIndex},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    {"\\binom{", Binomial::k_nIndex},
+    {"}{", Binomial::k_kIndex},
+    {"}", k_noChild}};
 
 /* Latex: \\int_{\LowerBound}^{\UpperBound}\Integrand d\Symbol
  * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand) */
 constexpr static LatexTokenChild integralToken[] = {
-    {.leftDelimiter = "\\int_{", .indexInLayout = Integral::k_lowerBoundIndex},
-    {.leftDelimiter = "}^{", .indexInLayout = Integral::k_upperBoundIndex},
-    {.leftDelimiter = "}", .indexInLayout = Integral::k_integrandIndex},
-    {.leftDelimiter = "\\ d", .indexInLayout = Integral::k_differentialIndex},
-    {.leftDelimiter = " ", .indexInLayout = k_noChild}};
+    {"\\int_{", Integral::k_lowerBoundIndex},
+    {"}^{", Integral::k_upperBoundIndex},
+    {"}", Integral::k_integrandIndex},
+    {"\\ d", Integral::k_differentialIndex},
+    {" ", k_noChild}};
 
 /* Latex: \\sum_{\Variable=\LowerBound}^{\UpperBound}(\Function)
  * Layout: Sum(\Variable, \LowerBound, \UpperBound, \Function) */
 constexpr static LatexTokenChild sumToken[] = {
-    {.leftDelimiter = "\\sum_{", .indexInLayout = Parametric::k_variableIndex},
-    {.leftDelimiter = "=", .indexInLayout = Parametric::k_lowerBoundIndex},
-    {.leftDelimiter = "}^{", .indexInLayout = Parametric::k_upperBoundIndex},
+    {"\\sum_{", Parametric::k_variableIndex},
+    {"=", Parametric::k_lowerBoundIndex},
+    {"}^{", Parametric::k_upperBoundIndex},
     // Split '}' and the parentheses because the latter are optional
-    {.leftDelimiter = "}", .indexInLayout = k_noChild},
-    {.leftDelimiter = "\\left(", .indexInLayout = Parametric::k_argumentIndex},
-    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+    {"}", k_noChild},
+    {"\\left(", Parametric::k_argumentIndex},
+    {"\\right)", k_noChild}};
 
 /* Latex: \\prod{\Variable=\LowerBound}^{\UpperBound}(\Function)
  * Layout: Product(\Variable, \LowerBound, \UpperBound, \Function) */
 constexpr static LatexTokenChild prodToken[] = {
-    {.leftDelimiter = "\\prod_{", .indexInLayout = Parametric::k_variableIndex},
-    {.leftDelimiter = "=", .indexInLayout = Parametric::k_lowerBoundIndex},
-    {.leftDelimiter = "}^{", .indexInLayout = Parametric::k_upperBoundIndex},
+    {"\\prod_{", Parametric::k_variableIndex},
+    {"=", Parametric::k_lowerBoundIndex},
+    {"}^{", Parametric::k_upperBoundIndex},
     // Split '}' and the parentheses because the latter are optional
-    {.leftDelimiter = "}", .indexInLayout = k_noChild},
-    {.leftDelimiter = "\\left(", .indexInLayout = Parametric::k_argumentIndex},
-    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+    {"}", k_noChild},
+    {"\\left(", Parametric::k_argumentIndex},
+    {"\\right)", k_noChild}};
 
 /* Latex: \\frac{d}{d\Variable}(\Function)
  * Layout: Diff(\Variable, \Variable, "1"_l, \Function) */
 constexpr static LatexTokenChild diffToken[] = {
-    {.leftDelimiter = "\\frac{d}{d",
-     .indexInLayout = Derivative::k_variableIndex},
+    {"\\frac{d}{d", Derivative::k_variableIndex},
     // Split '}' and the parentheses because the latter are optional
-    {.leftDelimiter = "}", .indexInLayout = k_noChild},
-    {.leftDelimiter = "\\left(", .indexInLayout = Derivative::k_derivandIndex},
-    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+    {"}", k_noChild},
+    {"\\left(", Derivative::k_derivandIndex},
+    {"\\right)", k_noChild}};
 
 /* Latex: \\frac{d}{d\Variable}(\Function)_{\Variable=\Abscissa}
  * Layout: Diff(\Variable, \Abscissa, "1"_l, \Function) */
 constexpr static LatexTokenChild diffAtAToken[] = {
-    {.leftDelimiter = "\\frac{d}{d",
-     .indexInLayout = Derivative::k_variableIndex},
-    {.leftDelimiter = "}\\left(", .indexInLayout = Derivative::k_derivandIndex},
-    {.leftDelimiter = "\\right)_{",
-     .indexInLayout = Derivative::k_variableIndex},
-    {.leftDelimiter = "=", .indexInLayout = Derivative::k_abscissaIndex},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    {"\\frac{d}{d", Derivative::k_variableIndex},
+    {"}\\left(", Derivative::k_derivandIndex},
+    {"\\right)_{", Derivative::k_variableIndex},
+    {"=", Derivative::k_abscissaIndex},
+    {"}", k_noChild}};
 
 /* Latex: \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)
  * Layout: Diff(\Variable, \Variable, \Order, \Function) */
 constexpr static LatexTokenChild nthDiffToken[] = {
-    {.leftDelimiter = "\\frac{d^{", .indexInLayout = Derivative::k_orderIndex},
-    {.leftDelimiter = "}}{d", .indexInLayout = Derivative::k_variableIndex},
-    {.leftDelimiter = "^{", .indexInLayout = Derivative::k_orderIndex},
+    {"\\frac{d^{", Derivative::k_orderIndex},
+    {"}}{d", Derivative::k_variableIndex},
+    {"^{", Derivative::k_orderIndex},
     // Split '}}' and the parentheses because the latter are optional
-    {.leftDelimiter = "}}", .indexInLayout = k_noChild},
-    {.leftDelimiter = "\\left(", .indexInLayout = Derivative::k_derivandIndex},
-    {.leftDelimiter = "\\right)", .indexInLayout = k_noChild}};
+    {"}}", k_noChild},
+    {"\\left(", Derivative::k_derivandIndex},
+    {"\\right)", k_noChild}};
 
 /* Latex:
  * \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)_{\Variable=\Abscissa}
  * Layout: Diff(\Variable, \Abscissa, \Order, \Function) */
 constexpr static LatexTokenChild nthDiffAtAToken[] = {
-    {.leftDelimiter = "\\frac{d^{", .indexInLayout = Derivative::k_orderIndex},
-    {.leftDelimiter = "}}{d", .indexInLayout = Derivative::k_variableIndex},
-    {.leftDelimiter = "^{", .indexInLayout = Derivative::k_orderIndex},
-    {.leftDelimiter = "}}\\left(",
-     .indexInLayout = Derivative::k_derivandIndex},
-    {.leftDelimiter = "\\right)_{",
-     .indexInLayout = Derivative::k_variableIndex},
-    {.leftDelimiter = "=", .indexInLayout = Derivative::k_abscissaIndex},
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    {"\\frac{d^{", Derivative::k_orderIndex},
+    {"}}{d", Derivative::k_variableIndex},
+    {"^{", Derivative::k_orderIndex},
+    {"}}\\left(", Derivative::k_derivandIndex},
+    {"\\right)_{", Derivative::k_variableIndex},
+    {"=", Derivative::k_abscissaIndex},
+    {"}", k_noChild}};
 
 // Code points
-constexpr static LatexTokenChild middleDotToken[] = {
-    {.leftDelimiter = "\\cdot", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild middleDotToken[] = {{"\\cdot", k_noChild}};
 constexpr static LatexTokenChild multiplicationSignToken[] = {
-    {.leftDelimiter = "\\times", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild lesserOrEqualToken[] = {
-    {.leftDelimiter = "\\le", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild greaterOrEqualToken[] = {
-    {.leftDelimiter = "\\ge", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild degreeToken[] = {
-    {.leftDelimiter = "\\degree", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild rightwardsArrowToken[] = {
-    {.leftDelimiter = "\\to", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild infinityToken[] = {
-    {.leftDelimiter = "\\infty", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild divisionToken[] = {
-    {.leftDelimiter = "\\div", .indexInLayout = k_noChild}};
+    {"\\times", k_noChild}};
+constexpr static LatexTokenChild lesserOrEqualToken[] = {{"\\le", k_noChild}};
+constexpr static LatexTokenChild greaterOrEqualToken[] = {{"\\ge", k_noChild}};
+constexpr static LatexTokenChild degreeToken[] = {{"\\degree", k_noChild}};
+constexpr static LatexTokenChild rightwardsArrowToken[] = {{"\\to", k_noChild}};
+constexpr static LatexTokenChild infinityToken[] = {{"\\infty", k_noChild}};
+constexpr static LatexTokenChild divisionToken[] = {{"\\div", k_noChild}};
 
 // Tokens that do nothing
-constexpr static LatexTokenChild textToken[] = {
-    {.leftDelimiter = "\\text{", .indexInLayout = k_noChild}};
+constexpr static LatexTokenChild textToken[] = {{"\\text{", k_noChild}};
 constexpr static LatexTokenChild operatorToken[] = {
-    {.leftDelimiter = "\\operatorname{", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild spaceToken[] = {
-    {.leftDelimiter = " ", .indexInLayout = k_noChild}};
+    {"\\operatorname{", k_noChild}};
+constexpr static LatexTokenChild spaceToken[] = {{" ", k_noChild}};
 /* TODO: Currently we are working with MathQuill which doesn't recognize the
  * special characters spacings. See
  * https://github.com/desmosinc/mathquill/blob/f71f190ee067a9a2a33683cdb02b43333b9b240e/src/commands/math/advancedSymbols.ts#L224
  */
 /* constexpr static LatexToken commaToken = {
-    {.leftDelimiter = ",", .indexInLayout = k_noChild}}; */
-constexpr static LatexTokenChild escapeToken[] = {
-    {.leftDelimiter = "\\", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild leftBraceToken[] = {
-    {.leftDelimiter = "{", .indexInLayout = k_noChild}};
-constexpr static LatexTokenChild rightBraceToken[] = {
-    {.leftDelimiter = "}", .indexInLayout = k_noChild}};
+    { ",",  k_noChild}}; */
+constexpr static LatexTokenChild escapeToken[] = {{"\\", k_noChild}};
+constexpr static LatexTokenChild leftBraceToken[] = {{"{", k_noChild}};
+constexpr static LatexTokenChild rightBraceToken[] = {{"}", k_noChild}};
 
 using LayoutDetector = bool (*)(const Tree*);
 using EmptyLayoutBuilder = Tree* (*)();

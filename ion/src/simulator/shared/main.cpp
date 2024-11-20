@@ -318,6 +318,11 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "Could not locate nwb_main symbol: %s\n", dlerror());
       return -1;
     }
+    /* This is a workaround for the web platform where we expect the journal to
+     * call onEpsilonIdle to remove the loading spinner. We could remove the
+     * spinner in onRuntimeInitialized instead but it would cause a small
+     * visible delay where the screen is solid gray. */
+    Journal::logJournal()->pushEvent(Ion::Events::None);
     nwb_main(args.argc(), args.argv());
     dlclose(handle);
   } else {

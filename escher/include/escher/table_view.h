@@ -60,11 +60,7 @@ class TableView : public ScrollView {
   }
 
   KDCoordinate invisibleHeight() {
-    if (contentOffset().y() == 0) {
-      return std::max(contentOffset().y() - margins()->top(), 0);
-    } else {
-      return std::max(contentOffset().y() - margins()->top(), 0);
-    }
+    return std::max(contentOffset().y() - margins()->top(), 0);
   }
   KDCoordinate invisibleWidth() {
     return std::max(contentOffset().x() - margins()->left(), 0);

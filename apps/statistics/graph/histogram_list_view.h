@@ -6,11 +6,11 @@
 #include <array>
 
 #include "../store.h"
-#include "histogram_banner_view.h"
 #include "histogram_view.h"
 
 namespace Statistics {
 
+// TODO: remove when the list cells are replaced by HistogramCells
 class HistogramListView : public Escher::SelectableListView {
  public:
   HistogramListView(Store* store, Shared::CurveViewRange* histogramRange,

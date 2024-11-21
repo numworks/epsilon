@@ -8,6 +8,7 @@ namespace Escher {
 
 /* Simple empty HighlightCell with a solid color. */
 
+// TODO: restore the original file when histogram cells are done
 class SolidColorCell : public HighlightCell {
  public:
   SolidColorCell(KDColor color = KDColorWhite)

@@ -29,65 +29,28 @@ class HistogramListController
     ;
   }
 
-  bool handleEvent(Ion::Events::Event event) override {
-    // TODO: handle left/right events that update the series index.
-    std::size_t seriesIndex = 0;
-
-    if (!m_selectableListView.handleEvent(event)) {
-      return false;
-    }
-
-    if (hasSelectedCell()) {
-      /* If the SelectableListView handled the event by selecting a new cell,
-       * then it took the firstResponder ownership. However we want
-       * HistogramMainController to be the first responder, because the banner
-       * view need to be updated as well. So the firstResponder ownership is
-       * given back to HistogramMainController, which is the parent responder of
-       * HistogramListController. */
-      Escher::App::app()->setFirstResponder(parentResponder());
-
-      /* Because SelectableListView lost the firstResponder ownership, the
-       * SelectableTableView::willExitResponderChain function was called. This
-       * function unhighlights the selected cell, so we need to set it
-       * highlighted again. */
-      setSelectedCellHighlight(true);
-
-      // Set the current series and index in the snaphot
-      setSelectedSeries(m_selectableListView.selectedRow());
-      setSelectedSeriesIndex(seriesIndex);
-    }
-
-    return true;
-  }
+  bool handleEvent(Ion::Events::Event event) override;
 
   // Helpers that can be used from the main controller
-  void selectFirstCell() {
-    /* Three actions are needed: selecting the first row in SelectableListView,
-     * highlighting the selected cell, and updating the selected series in the
-     * snapshot */
-    m_selectableListView.selectFirstRow();
-    setSelectedCellHighlight(true);
-    // Set the current series and index in the snaphot
-    setSelectedSeries(m_selectableListView.selectedRow());
-    setSelectedSeriesIndex(0);
-  }
+  void selectFirstCell();
   bool hasSelectedCell() {
     return m_selectableListView.selectedCell() != nullptr;
   }
-
   /* The selected cell in the SelectableListView can be highlighted or not. */
   void setSelectedCellHighlight(bool isHighlighted) {
     assert(hasSelectedCell());
     m_selectableListView.selectedCell()->setHighlighted(isHighlighted);
   }
 
-  // Set and get the selected series or index from the Snapshot
+  // Get the selected series or index from the Snapshot
   std::size_t selectedSeries() const;
-  void setSelectedSeries(std::size_t selectedSeries);
   std::size_t selectedSeriesIndex() const;
-  void setSelectedSeriesIndex(std::size_t selectedIndex);
 
  private:
+  // Set the selected series or index in the Snapshot
+  void setSelectedSeries(std::size_t selectedSeries);
+  void setSelectedSeriesIndex(std::size_t selectedIndex);
+
   // Escher::TableViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
 

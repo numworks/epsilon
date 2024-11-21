@@ -152,7 +152,7 @@ class Solver {
                                                OMG::Troolean discontinuous);
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
-  static Coordinate2D<T> FindUndefinedIntervalExtremum(
+  static Coordinate2D<T> FindUndefinedIntervalBound(
       Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
       FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
       bool findStart);

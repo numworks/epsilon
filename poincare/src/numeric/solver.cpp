@@ -319,7 +319,7 @@ bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
 };
 
 template <typename T>
-Coordinate2D<T> Solver<T>::FindUndefinedIntervalExtremum(
+Coordinate2D<T> Solver<T>::FindUndefinedIntervalBound(
     Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
     FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
     bool findStart) {
@@ -359,7 +359,7 @@ void Solver<T>::ExcludeUndefinedFromBracket(
   assert(std::isnan(p1->y()) || std::isnan(p3->y()));
   // Find the smallest interval containing the undefined
   bool cropEnd = std::isnan(p3->y());
-  Coordinate2D<T> newBound = FindUndefinedIntervalExtremum(
+  Coordinate2D<T> newBound = FindUndefinedIntervalBound(
       *p1, *p2, *p3, f, aux, minimalSizeOfInterval, cropEnd);
   // Set p1, p2 and p3 outside of the interval containing the undefined
   if (std::isfinite(newBound.x())) {

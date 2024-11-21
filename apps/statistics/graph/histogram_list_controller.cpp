@@ -34,8 +34,12 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
 }
 
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
-  // TODO: handle left/right events that update the series index.
-  std::size_t seriesIndex = 0;
+  // Handle left/right navigation inside a histogram cell
+  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+    // The following function will set a new seriesIndex.
+    moveSelectionHorizontally(event.direction());
+    return true;
+  }
 
   if (!m_selectableListView.handleEvent(event)) {
     return false;
@@ -58,7 +62,13 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 
     // Set the current series and index in the snaphot
     setSelectedSeries(m_selectableListView.selectedRow());
-    setSelectedSeriesIndex(seriesIndex);
+    /* The series index of the new selected cell is computed to be close to its
+     * previous location in the neighbouring cell */
+    setSelectedSeriesIndex(
+        sanitizeSelectedIndex(selectedSeries(), selectedSeriesIndex()));
+
+    m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
+                                              selectedSeriesIndex());
   }
 
   return true;
@@ -97,6 +107,53 @@ void HistogramListController::setSelectedSeriesIndex(
     std::size_t selectedIndex) {
   // TODO: check the index upper bound
   *App::app()->snapshot()->selectedIndex() = selectedIndex;
+}
+
+bool HistogramListController::moveSelectionHorizontally(
+    OMG::HorizontalDirection direction) {
+  int numberOfBars = m_store->numberOfBars(selectedSeries());
+  int newSelectedBarIndex = selectedSeriesIndex();
+  do {
+    newSelectedBarIndex += direction.isRight() ? 1 : -1;
+  } while (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
+           m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) ==
+               0);
+
+  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
+      selectedSeriesIndex() != newSelectedBarIndex) {
+    setSelectedSeriesIndex(newSelectedBarIndex);
+
+    // TODO: handle histogram bar highlight
+    return true;
+  }
+  return false;
+}
+
+std::size_t HistogramListController::sanitizeSelectedIndex(
+    std::size_t selectedSeries, std::size_t previousIndex) const {
+  assert(m_store->seriesIsActive(selectedSeries));
+
+  std::size_t selectedIndex = previousIndex;
+
+  if (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) != 0) {
+    return selectedIndex;
+  }
+  int numberOfBars = m_store->numberOfBars(selectedSeries);
+  // search a bar with non null height left of the selected one
+  while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0 &&
+         selectedIndex >= 0) {
+    selectedIndex -= 1;
+  }
+  if (selectedIndex < 0) {
+    // search a bar with non null height right of the selected one
+    selectedIndex = previousIndex + 1;
+    while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0 &&
+           selectedIndex < numberOfBars) {
+      selectedIndex += 1;
+    }
+  }
+  assert(selectedIndex < numberOfBars);
+  return selectedIndex;
 }
 
 }  // namespace Statistics

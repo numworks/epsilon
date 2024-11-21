@@ -33,6 +33,9 @@ class HistogramListController
 
   // Helpers that can be used from the main controller
   void selectFirstCell();
+
+  /* TODO: hasSelectedCell() should be const when
+   * SelectableListView::selectedCell() provides a const version */
   bool hasSelectedCell() {
     return m_selectableListView.selectedCell() != nullptr;
   }
@@ -47,12 +50,18 @@ class HistogramListController
   std::size_t selectedSeriesIndex() const;
 
  private:
+  // Escher::TableViewDataSource
+  // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
+  KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
+
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);
   void setSelectedSeriesIndex(std::size_t selectedIndex);
 
-  // Escher::TableViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
+  // Navigation inside and between the histogram cells
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
+  std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,
+                                    std::size_t initialSelectedIndex) const;
 
   // Maximum number of histograms displayed on the same screen
   constexpr static std::size_t k_displayedHistograms = 4;

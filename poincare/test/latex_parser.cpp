@@ -51,9 +51,9 @@ QUIZ_CASE(pcj_latex_to_layout) {
   // Product
   assert_latex_layouts_to(
       "\\left(\\prod_{k=0}^{9}t^{3}+1\\right)+1",
-      KRackL(KParenthesesL(KRackL(KProductL(
-                 "k"_l, "0"_l, "9"_l, "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
-             "+1"_l));
+      KParenthesesL(KRackL(KProductL("k"_l, "0"_l, "9"_l,
+                                     "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
+          "+1"_l);
 
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
@@ -86,10 +86,12 @@ QUIZ_CASE(pcj_layout_to_latex) {
           KRackL(KSqrtL("4"_l)),
           KRackL(KParenthesesL("3"_l ^ KSuperscriptL(KRackL(KConjL("5"_l))))))),
       "\\frac{\\sqrt{4}}{\\left(3^{\\overline{5}}\\right)}");
+
+  // Integral
   assert_layout_convert_to_latex(
       KRackL(KIntegralL("t"_l, "1"_l, "2"_l, "t"_l ^ KSuperscriptL("3"_l)),
              "+"_cl, "3"_cl),
-      "\\int_{1}^{2}t^{3}\\ dt+3");
+      "\\int_{1}^{2}t^{3}\\ dt +3");
 
   // Sum
   assert_layout_convert_to_latex(
@@ -97,10 +99,11 @@ QUIZ_CASE(pcj_layout_to_latex) {
       "\\sum_{k=0}^{9}\\left(t^{3}\\right)");
   // Product
   assert_layout_convert_to_latex(
-      KRackL(KParenthesesL(KRackL(KProductL(
-                 "k"_l, "0"_l, "9"_l, "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
-             "+1"_l),
+      KParenthesesL(KRackL(KProductL("k"_l, "0"_l, "9"_l,
+                                     "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
+          "+1"_l,
       "\\left(\\prod_{k=0}^{9}\\left(t^{3}+1\\right)\\right)+1");
+
   // Test the thousand separators
   const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;
   assert_layout_convert_to_latex(layoutWithThousands, "12\\ 345", true);

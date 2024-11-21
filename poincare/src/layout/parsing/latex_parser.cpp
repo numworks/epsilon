@@ -120,6 +120,7 @@ constexpr static LatexTokenChild diffToken[] = {
     {"}", k_noChild},
     {"\\left(", Derivative::k_derivandIndex},
     {"\\right)", k_noChild}};
+constexpr static int k_variableIndexInDiffToken = 0;
 
 /* Latex: \\frac{d}{d\Variable}(\Function)_{\Variable=\Abscissa}
  * Layout: Diff(\Variable, \Abscissa, "1"_l, \Function) */
@@ -140,6 +141,7 @@ constexpr static LatexTokenChild nthDiffToken[] = {
     {"}}", k_noChild},
     {"\\left(", Derivative::k_derivandIndex},
     {"\\right)", k_noChild}};
+constexpr static int k_variableIndexInNthDiffToken = 1;
 
 /* Latex:
  * \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)_{\Variable=\Abscissa}
@@ -278,7 +280,6 @@ constexpr static LatexLayoutRule k_rules[] = {
      * Diff layouts need to stay is this order and be before "frac" to be
      * detected correctly */
     // Diff
-    // TODO: fill abscissa with variable
     {diffToken, std::size(diffToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
      []() -> Tree* {
@@ -292,7 +293,6 @@ constexpr static LatexLayoutRule k_rules[] = {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Nth diff
-    // TODO: fill abscissa with variable
     // TODO: do not fill order twice + raise if orders are different
     // TODO: properly detect. do not mix with "d^2/3" for example
     {nthDiffToken, std::size(nthDiffToken),
@@ -579,6 +579,10 @@ void BuildIntegrandChildFromLatex(const char** latexString, Tree* parentLayout);
 void BuildIntegralVariableChildFromLatex(const char** latexString,
                                          Tree* parentLayout);
 
+void CloneVariableLayoutIntoAbscissaChild(const LatexLayoutRule& rule,
+                                          int indexInLatexToken,
+                                          Tree* parentLayout);
+
 bool BuildChildWithOptionalParenthesesFromLatex(
     const char** latexString, const LatexLayoutRule& rule,
     int indexInLatexToken, Tree* parentLayout,
@@ -602,6 +606,16 @@ bool CustomBuildLayoutChildFromLatex(const char** latexString,
       // Do nothing
       return true;
     }
+  }
+
+  // Abscissa in diff and nth diff without value
+  if ((latexToken == diffToken &&
+       indexInLatexToken == k_variableIndexInDiffToken + 1) ||
+      (latexToken == nthDiffToken &&
+       indexInLatexToken == k_variableIndexInNthDiffToken + 1)) {
+    // Do this just after the variable has been parsed
+    CloneVariableLayoutIntoAbscissaChild(rule, indexInLatexToken, parentLayout);
+    return false;
   }
 
   // Analysis optional parentheses
@@ -758,11 +772,32 @@ void BuildIntegralVariableChildFromLatex(const char** latexString,
 }
 
 bool IsDerivativeLayout(const Tree* l, bool isNthDerivative, bool hasAbscissa) {
+  /* If the abscissa layout is identical to the variable (`d/dx(...)_{x=x}`)
+   * we assume the user wants to use the latex `d/dx(...)` rather than
+   * `d/dx(...)_{x=a}`. This trick is necessary because no layout for `d/dx()``
+   * without abscissa exists. */
   return l->isDiffLayout() &&
          (isNthDerivative == l->toDiffLayoutNode()->isNthDerivative) &&
          (hasAbscissa ||
           l->child(Derivative::k_variableIndex)
               ->treeIsIdenticalTo(l->child(Derivative::k_abscissaIndex)));
+}
+
+// --- Diff and NthDiff ---
+
+/* Diff and NthDiff do not have an abscissa value provided by Latex.
+ * We thus replace the abscissa with the variable. */
+void CloneVariableLayoutIntoAbscissaChild(const LatexLayoutRule& rule,
+                                          int indexInLatexToken,
+                                          Tree* parentLayout) {
+  const LatexToken latexToken = rule.latexToken;
+  assert(latexToken == diffToken || latexToken == nthDiffToken);
+
+  int variableIndex = latexToken[indexInLatexToken - 1].indexInLayout;
+
+  Tree* variable = parentLayout->child(variableIndex);
+  Tree* abscissa = parentLayout->child(Derivative::k_abscissaIndex);
+  abscissa->cloneTreeOverTree(variable);
 }
 
 // ---- Analysis optional parenthesis ----
@@ -776,8 +811,8 @@ bool BuildChildWithOptionalParenthesesFromLatex(
     int indexInLatexToken, Tree* parentLayout,
     const char* parentRightDelimiter) {
   const LatexToken& latexToken = rule.latexToken;
-  assert((latexToken == sumToken || latexToken == prodToken ||
-          latexToken == diffToken || latexToken == nthDiffToken));
+  assert(latexToken == sumToken || latexToken == prodToken ||
+         latexToken == diffToken || latexToken == nthDiffToken);
 
   if (indexInLatexToken == rule.latexTokenSize - 2) {
     const char* leftDelimiter = latexToken[indexInLatexToken].leftDelimiter;

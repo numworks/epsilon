@@ -55,6 +55,11 @@ QUIZ_CASE(pcj_latex_to_layout) {
                                      "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
           "+1"_l);
 
+  // Diff
+  assert_latex_layouts_to(
+      "\\frac{d}{dx}x^{3}",
+      KRackL(KDiffL("x"_l, "x"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))));
+
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^
@@ -103,6 +108,11 @@ QUIZ_CASE(pcj_layout_to_latex) {
                                      "t"_l ^ KSuperscriptL("3"_l) ^ "+1"_l))) ^
           "+1"_l,
       "\\left(\\prod_{k=0}^{9}\\left(t^{3}+1\\right)\\right)+1");
+
+  // Diff
+  assert_layout_convert_to_latex(
+      KRackL(KDiffL("x"_l, "x"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))),
+      "\\frac{d}{dx}\\left(x^{3}\\right)");
 
   // Test the thousand separators
   const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;

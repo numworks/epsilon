@@ -18,20 +18,20 @@ bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2) {
     return true;
   }
   bool isDiscontinuous = false;
+  Approximation::Parameter param(false, false, false, false);
   if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
-    isDiscontinuous = Approximation::RootTreeToReal<T>(e, x1) !=
-                      Approximation::RootTreeToReal<T>(e, x2);
+    isDiscontinuous = Approximation::To<T>(e, x1, param) !=
+                      Approximation::To<T>(e, x2, param);
   } else if (e->isFrac()) {
     // is discontinuous if the child changes int value
     isDiscontinuous =
-        std::floor(Approximation::RootTreeToReal<T>(e->child(0), x1)) !=
-        std::floor(Approximation::RootTreeToReal<T>(e->child(0), x2));
+        std::floor(Approximation::To<T>(e->child(0), x1, param)) !=
+        std::floor(Approximation::To<T>(e->child(0), x2, param));
   } else if (e->isOfType({Type::Abs, Type::Sign})) {
     // is discontinuous if the child changes sign
-    isDiscontinuous =
-        (Approximation::RootTreeToReal<T>(e->child(0), x1) > 0.0) !=
-        (Approximation::RootTreeToReal<T>(e->child(0), x2) > 0.0);
+    isDiscontinuous = (Approximation::To<T>(e->child(0), x1, param) > 0.0) !=
+                      (Approximation::To<T>(e->child(0), x2, param) > 0.0);
   } else if (e->isPiecewise()) {
     isDiscontinuous = Approximation::IndexOfActivePiecewiseBranchAt(e, x1) !=
                       Approximation::IndexOfActivePiecewiseBranchAt(e, x2);

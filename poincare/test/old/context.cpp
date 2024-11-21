@@ -23,8 +23,8 @@ void assert_parsed_expression_approximates_with_value_for_symbol(
       .m_context = &globalContext};
   Tree* e = expression->cloneTree();
   Simplification::ToSystem(e, &projContext);
-  Approximation::PrepareFunctionForApproximation(e, symbol, complexFormat);
-  T result = Approximation::RootTreeToReal<T>(e, value);
+  T result = Approximation::To<T>(
+      e, value, Approximation::Parameter(true, false, false, true));
   assert_roughly_equal(result, approximation, OMG::Float::Epsilon<T>(), true);
 }
 

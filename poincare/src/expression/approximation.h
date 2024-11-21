@@ -143,10 +143,6 @@ class Approximation final {
   static PointOrScalar<T> RootPreparedToPointOrScalar(
       const Tree* preparedFunction, T abscissa);
 
-  // tree must have a scalar dimension
-  template <typename T>
-  static T RootTreeToReal(const Tree* e, T abscissa);
-
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */
   // TODO_PCJ: make private

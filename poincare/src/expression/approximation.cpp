@@ -147,16 +147,6 @@ PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
                                     -1, Random::Context(false), &localContext));
 }
 
-// tree must have a scalar dimension
-template <typename T>
-T Approximation::RootTreeToReal(const Tree* e, T abscissa) {
-  // TODO Hugo : Replace directly every RootTreeToReal, check isProjected
-  LocalContext localContext(abscissa);
-  return To<T>(e, Parameter(true, true, false, true),
-               Context(AngleUnit::None, ComplexFormat::None, -1, -1,
-                       Random::Context(false), &localContext));
-}
-
 template <typename T>
 T Approximation::To(const Tree* e, Parameter param, Context context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
@@ -1431,9 +1421,6 @@ template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
     const Tree*, float);
 template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
     const Tree*, double);
-
-template float Approximation::RootTreeToReal(const Tree*, float);
-template double Approximation::RootTreeToReal(const Tree*, double);
 
 template float Approximation::To(const Tree*, Parameter, Context);
 template double Approximation::To(const Tree*, Parameter, Context);

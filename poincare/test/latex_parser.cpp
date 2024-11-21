@@ -122,6 +122,15 @@ QUIZ_CASE(pcj_layout_to_latex) {
   assert_layout_convert_to_latex(
       KRackL(KDiffL("x"_l, "x"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))),
       "\\frac{d}{dx}\\left(x^{3}\\right)");
+  assert_layout_convert_to_latex(
+      KRackL(KDiffL("x"_l, "2"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))),
+      "\\frac{d}{dx}\\left(x^{3}\\right)_{x=2}");
+  assert_layout_convert_to_latex(
+      KRackL(KNthDiffL("x"_l, "x"_l, "3"_l, "x"_l ^ KSuperscriptL("3"_l))),
+      "\\frac{d^{3}}{dx^{3}}\\left(x^{3}\\right)");
+  assert_layout_convert_to_latex(
+      KRackL(KNthDiffL("x"_l, "2"_l, "3"_l, "x"_l ^ KSuperscriptL("3"_l))),
+      "\\frac{d^{3}}{dx^{3}}\\left(x^{3}\\right)_{x=2}");
 
   // Test the thousand separators
   const Tree* layoutWithThousands = "12"_l ^ KThousandsSeparatorL ^ "345"_l;

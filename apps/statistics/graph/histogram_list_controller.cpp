@@ -9,12 +9,11 @@ Escher::SolidColorCell makeColorCell(size_t index) {
 }
 
 HistogramListController::HistogramListController(
-    Escher::Responder* parentResponder, Store* store, uint32_t* storeVersion)
+    Escher::Responder* parentResponder, Store* store)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
       m_displayCells({makeColorCell(0), makeColorCell(1), makeColorCell(2)}),
       m_store(store),
-      m_storeVersion(storeVersion),
       m_histogramRange(store) {}
 
 Escher::SolidColorCell* HistogramListController::reusableCell(int index,

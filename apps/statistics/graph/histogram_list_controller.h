@@ -14,8 +14,7 @@ class HistogramListController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
       public Escher::SelectableListViewDelegate {
  public:
-  HistogramListController(Escher::Responder* parentResponder, Store* store,
-                          uint32_t* storeVersion);
+  HistogramListController(Escher::Responder* parentResponder, Store* store);
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
@@ -71,7 +70,6 @@ class HistogramListController
 
   // Model
   Store* m_store;
-  uint32_t* m_storeVersion;
   HistogramRange m_histogramRange;
 };
 

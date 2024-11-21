@@ -171,6 +171,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   Solution root = nextRoot(*memoizedDifference);
   if (root.interest() != Interest::Root) {
+    assert(root.interest() == Interest::None);
     return Solution();
   }
   T x = root.x();

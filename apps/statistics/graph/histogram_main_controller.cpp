@@ -56,14 +56,17 @@ void HistogramMainController::enterListView() {
   if (!m_listController.hasSelectedCell()) {
     m_listController.selectFirstCell();
   }
-  m_listController.highLightSelectedCell();
+  m_listController.setSelectedCellHighlight(true);
   m_view.setBannerVisibility(true);
   updateBannerView();
 }
 
 void HistogramMainController::exitListView() {
-  m_listController.unselectList();
   m_view.setBannerVisibility(false);
+  /* When we exit the list view, the selected cell is kept in memory for when
+   * the list view is entered again. However the selected cell should be
+   * unhighlighted. */
+  m_listController.setSelectedCellHighlight(false);
 }
 
 bool HistogramMainController::handleEvent(Ion::Events::Event event) {

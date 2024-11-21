@@ -29,8 +29,18 @@ void HistogramMainView::layoutSubviews(bool force) {
                        bannerSize.width(), bannerSize.height()),
                 force);
   m_bannerView.reload();
+
+  /* setChildFrame will automatically highlight the selected list cell. However
+   * we want to preserve the highlight state of this cell. */
+  if (!m_listView->selectedCell()) {
+    setChildFrame(m_listView, KDRect(0, 0, listSize.width(), listSize.height()),
+                  force);
+    return;
+  }
+  bool isSelectedCellHighlighted = m_listView->selectedCell()->isHighlighted();
   setChildFrame(m_listView, KDRect(0, 0, listSize.width(), listSize.height()),
                 force);
+  m_listView->selectedCell()->setHighlighted(isSelectedCellHighlighted);
 }
 
 }  // namespace Statistics

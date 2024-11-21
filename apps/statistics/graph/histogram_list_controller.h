@@ -50,7 +50,7 @@ class HistogramListController
        * SelectableTableView::willExitResponderChain function was called. This
        * function unhighlights the selected cell, so we need to set it
        * highlighted again. */
-      highLightSelectedCell();
+      setSelectedCellHighlight(true);
 
       // Set the current series and index in the snaphot
       setSelectedSeries(m_selectableListView.selectedRow());
@@ -61,13 +61,12 @@ class HistogramListController
   }
 
   // Helpers that can be used from the main controller
-  void unselectList() { m_selectableListView.deselectTable(); }
   void selectFirstCell() {
     /* Three actions are needed: selecting the first row in SelectableListView,
      * highlighting the selected cell, and updating the selected series in the
      * snapshot */
     m_selectableListView.selectFirstRow();
-    highLightSelectedCell();
+    setSelectedCellHighlight(true);
     // Set the current series and index in the snaphot
     setSelectedSeries(m_selectableListView.selectedRow());
     setSelectedSeriesIndex(0);
@@ -76,12 +75,10 @@ class HistogramListController
     return m_selectableListView.selectedCell() != nullptr;
   }
 
-  /* The SelectableListView can be in a state where a cell is selected but not
-   * highlighted. This function ensures that the selected cell is also
-   * highlighted. */
-  void highLightSelectedCell() {
+  /* The selected cell in the SelectableListView can be highlighted or not. */
+  void setSelectedCellHighlight(bool isHighlighted) {
     assert(hasSelectedCell());
-    m_selectableListView.selectedCell()->setHighlighted(true);
+    m_selectableListView.selectedCell()->setHighlighted(isHighlighted);
   }
 
   // Set and get the selected series or index from the Snapshot
@@ -94,8 +91,8 @@ class HistogramListController
   // Escher::TableViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
 
-  // Number of histograms displayed on the same screen
-  constexpr static std::size_t k_displayedHistograms = 3;
+  // Maximum number of histograms displayed on the same screen
+  constexpr static std::size_t k_displayedHistograms = 4;
   // SelectableList cells
   // TODO: replace with HistogramCells
   std::array<Escher::SolidColorCell, k_displayedHistograms> m_displayCells;

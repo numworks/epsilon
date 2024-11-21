@@ -129,23 +129,21 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
 };
 
 template <typename T>
+PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
+                                                Parameter param,
+                                                Context context) {
+  LocalContext localContext(abscissa, context.m_localContext);
+  context.m_localContext = &localContext;
+  return ToPointOrScalar<T>(e, param, context);
+}
+
+template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
   Tree* result = PrepareContext(e, param, &context);
   bool b = ToBoolean<T>(result, &context);
   result->removeTree();
   return b;
 };
-
-template <typename T>
-PointOrScalar<T> Approximation::RootPreparedToPointOrScalar(
-    const Tree* preparedFunction, T abscissa) {
-  // TODO Hugo : Replace directly every RootPreparedToPointOrScalar
-  LocalContext localContext(abscissa);
-  return ToPointOrScalar<T>(preparedFunction,
-                            Parameter(true, false, false, false),
-                            Context(AngleUnit::None, ComplexFormat::None, -1,
-                                    -1, Random::Context(false), &localContext));
-}
 
 template <typename T>
 T Approximation::To(const Tree* e, Parameter param, Context context) {
@@ -1414,13 +1412,15 @@ template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
                                                               Parameter,
                                                               Context);
 
+template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*, float,
+                                                             Parameter,
+                                                             Context);
+template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
+                                                              double, Parameter,
+                                                              Context);
+
 template bool Approximation::ToBoolean<float>(const Tree*, Parameter, Context);
 template bool Approximation::ToBoolean<double>(const Tree*, Parameter, Context);
-
-template PointOrScalar<float> Approximation::RootPreparedToPointOrScalar(
-    const Tree*, float);
-template PointOrScalar<double> Approximation::RootPreparedToPointOrScalar(
-    const Tree*, double);
 
 template float Approximation::To(const Tree*, Parameter, Context);
 template double Approximation::To(const Tree*, Parameter, Context);

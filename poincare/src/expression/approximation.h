@@ -125,6 +125,11 @@ class Approximation final {
   template <typename T>
   static PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameter param,
                                           Context context = Context());
+  // Approximate with given value for VarX
+  template <typename T>
+  static PointOrScalar<T> ToPointOrScalar(const Tree* e, T abscissa,
+                                          Parameter param,
+                                          Context context = Context());
 
   template <typename T>
   static Coordinate2D<T> ToPoint(const Tree* e, Parameter param,
@@ -136,12 +141,6 @@ class Approximation final {
                         Context context = Context());
 
   // TODO Hugo : Only use Context, create shortcuts to keep context private
-
-  /* preparedFunction is scalar or point, and must have been prepared with
-   * PrepareFunctionForApproximation. */
-  template <typename T>
-  static PointOrScalar<T> RootPreparedToPointOrScalar(
-      const Tree* preparedFunction, T abscissa);
 
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
    * real */

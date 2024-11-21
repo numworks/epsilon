@@ -541,7 +541,8 @@ bool SystemFunction::isDiscontinuousBetweenFloatValues(float x1,
 template <typename T>
 PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {
-  return Internal::Approximation::RootPreparedToPointOrScalar<T>(tree(), x);
+  return Internal::Approximation::ToPointOrScalar<T>(
+      tree(), x, Approximation::Parameter(true, false, false, false));
 }
 
 template <typename T>

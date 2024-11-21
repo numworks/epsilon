@@ -190,7 +190,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   /* Result is not always exactly the same due to approximation errors. Take
    * the middle of the two values. */
-  return Solution(Coordinate2D<T>(x, (y1 + y2) / 2.), Interest::Intersection);
+  return Solution(x, (y1 + y2) / 2., Interest::Intersection);
 }
 
 template <typename T>

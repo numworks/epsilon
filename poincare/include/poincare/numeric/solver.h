@@ -37,6 +37,8 @@ class Solver {
     Solution(Coordinate2D<T> xy = Coordinate2D<T>(k_NAN, k_NAN),
              Interest interest = Interest::None)
         : m_xy(xy), m_interest(interest) {}
+    Solution(T x, T y, Interest interest)
+        : Solution(Coordinate2D<T>(x, y), interest) {}
 
     Coordinate2D<T> xy() const { return m_xy; }
     Interest interest() const { return m_interest; }
@@ -188,8 +190,7 @@ class Solver {
       HoneResult hone, DiscontinuityEvaluation discontinuityTest);
   Solution registerSolution(Solution solution);
   Solution registerRoot(T x) {
-    return registerSolution(
-        Solution(Coordinate2D<T>(x, k_zero), Interest::Root));
+    return registerSolution(Solution(x, k_zero, Interest::Root));
   }
 
   T m_xStart;

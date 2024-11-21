@@ -1,6 +1,7 @@
 #include "histogram_list_controller.h"
 
 #include "../app.h"
+#include "statistics/graph/histogram_view.h"
 
 namespace Statistics {
 
@@ -9,15 +10,19 @@ Escher::SolidColorCell makeColorCell(size_t index) {
 }
 
 HistogramListController::HistogramListController(
-    Escher::Responder* parentResponder, Store* store)
+    Escher::Responder* parentResponder, Store* store,
+    Shared::CurveViewRange* histogramRange)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
-      m_displayCells({makeColorCell(0), makeColorCell(1), makeColorCell(2)}),
+      m_displayCells({HistogramCell(HistogramView(store, 0, histogramRange)),
+                      HistogramCell(HistogramView(store, 1, histogramRange)),
+                      HistogramCell(HistogramView(store, 2, histogramRange)),
+                      HistogramCell(HistogramView(store, 3, histogramRange))}),
       m_store(store),
       m_histogramRange(store) {}
 
-Escher::SolidColorCell* HistogramListController::reusableCell(int index,
-                                                              int type) {
+Escher::HighlightCell* HistogramListController::reusableCell(int index,
+                                                             int type) {
   assert(type == 0);
   assert(index >= 0 && index < std::size(m_displayCells));
   return &m_displayCells[index];
@@ -26,10 +31,9 @@ Escher::SolidColorCell* HistogramListController::reusableCell(int index,
 void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
                                              int row) {
   assert(row >= 0 && row < numberOfRows());
-  Escher::SolidColorCell* colorCell =
-      static_cast<Escher::SolidColorCell*>(cell);
-  colorCell->setColor(Store::colorOfSeriesAtIndex(row));
-  colorCell->setHighlightColor(Store::colorLightOfSeriesAtIndex(row));
+  HistogramCell* histogramCell = static_cast<HistogramCell*>(cell);
+  histogramCell->setSeries(row);
+  histogramCell->reload();
 }
 
 bool HistogramListController::handleEvent(Ion::Events::Event event) {

@@ -3,6 +3,7 @@
 
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
+#include <escher/highlight_cell.h>
 #include <poincare/print_float.h>
 
 #include "../store.h"
@@ -10,6 +11,12 @@
 namespace Statistics {
 
 class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
+ public:
+  void setSeries(int series) {
+    assert(0 <= series && series < m_store->numberOfActiveSeries());
+    m_series = series;
+  }
+
  protected:
   constexpr static KDColor k_notSelectedHistogramColor =
       Escher::Palette::GrayWhite;
@@ -36,11 +43,51 @@ class HistogramView
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false);
 
-  void setHighlight(double start, double end);
+  void setBarHighlight(double start, double end);
   void setDisplayLabels(bool display) { m_xAxis.setHidden(!display); }
 
  private:
   void reloadSelectedBar();
+};
+
+class HistogramCell : public Escher::HighlightCell {
+ public:
+  explicit HistogramCell(HistogramView&& histogram_view)
+      : Escher::HighlightCell(), m_view(std::move(histogram_view)) {}
+
+  // Escher::View
+  void drawRect(KDContext* ctx, KDRect rect) const override {
+    m_view.drawRect(ctx, rect);
+  }
+
+  // Transfer HistogramView public API
+  void setDisplayLabels(bool display) { m_view.setDisplayLabels(display); }
+  void setBarHighlight(double start, double end) {
+    m_view.setBarHighlight(start, end);
+  }
+  void setSeries(int series) { m_view.setSeries(series); }
+
+  void setHighlighted(bool highlight) override {
+    Escher::HighlightCell::setHighlighted(highlight);
+    m_view.setFocus(highlight);
+  }
+
+  void reload() { layoutSubviews(); }
+
+ private:
+  // Escher::View
+  int numberOfSubviews() const override { return 1; }
+  Escher::View* subviewAtIndex(int index) override {
+    assert(index == 0);
+    return &m_view;
+  }
+  void layoutSubviews(bool force = false) override {
+    setChildFrame(&m_view, KDRect(0, 0, bounds().width(), bounds().height()),
+                  force);
+    m_view.reload();
+  }
+
+  HistogramView m_view;
 };
 
 }  // namespace Statistics

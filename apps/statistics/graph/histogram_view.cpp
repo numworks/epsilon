@@ -67,7 +67,7 @@ void HistogramView::reload(bool resetInterruption, bool force) {
   markWholeFrameAsDirty();
 }
 
-void HistogramView::setHighlight(double start, double end) {
+void HistogramView::setBarHighlight(double start, double end) {
   if (m_highlightedBarStart != start || m_highlightedBarEnd != end) {
     reloadSelectedBar();
     m_highlightedBarStart = start;

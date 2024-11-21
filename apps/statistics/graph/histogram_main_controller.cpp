@@ -19,7 +19,7 @@ HistogramMainController::HistogramMainController(
       m_store(store),
       m_histogramRange(store),
       m_tabController(tabController),
-      m_listController(this, m_store),
+      m_listController(this, m_store, &m_histogramRange),
       m_histogramParameterController(nullptr, store),
       m_parameterButton(
           this, I18n::Message::StatisticsGraphSettings,
@@ -47,6 +47,7 @@ void HistogramMainController::viewWillAppear() {
     initBarParameters();
   }
   initRangeParameters();
+  m_view.reload();
 }
 
 void HistogramMainController::enterHeaderView() {

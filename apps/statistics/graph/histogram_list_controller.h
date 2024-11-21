@@ -3,10 +3,10 @@
 
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/solid_color_cell.h>
 
 #include "../store.h"
 #include "histogram_range.h"
+#include "histogram_view.h"
 
 namespace Statistics {
 
@@ -14,7 +14,8 @@ class HistogramListController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
       public Escher::SelectableListViewDelegate {
  public:
-  HistogramListController(Escher::Responder* parentResponder, Store* store);
+  HistogramListController(Escher::Responder* parentResponder, Store* store,
+                          Shared::CurveViewRange* histogramRange);
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
@@ -22,7 +23,7 @@ class HistogramListController
   // Escher::ListViewDataSource
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   int typeAtRow(int row) const override { return 0; }
-  Escher::SolidColorCell* reusableCell(int index, int type) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override {
     return std::size(m_displayCells);
     ;
@@ -66,7 +67,7 @@ class HistogramListController
   constexpr static std::size_t k_displayedHistograms = 4;
   // SelectableList cells
   // TODO: replace with HistogramCells
-  std::array<Escher::SolidColorCell, k_displayedHistograms> m_displayCells;
+  std::array<HistogramCell, k_displayedHistograms> m_displayCells;
 
   // Model
   Store* m_store;

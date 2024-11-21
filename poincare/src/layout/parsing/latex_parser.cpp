@@ -499,7 +499,7 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
 
       const LatexToken latexToken = rule.latexToken;
       ruleFound = true;
-      bool isLatexCodePoint = latexToken[0].indexInLayout == k_noChild;
+      bool isLatexCodePoint = rule.latexTokenSize == 1;
 
       for (int i = 0; i < rule.latexTokenSize; i++) {
         // Write delimiter
@@ -531,6 +531,7 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
         buffer += 1;
       }
       *buffer = 0;
+      break;
     }
 
     if (ruleFound) {

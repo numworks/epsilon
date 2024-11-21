@@ -94,6 +94,17 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
     if ((interest == Solver<double>::Interest::None ||
          interest == p.interest) &&
         p.subCurveIndex == subCurveIndex) {
+      /* Select in priority the reached discontinuity point: if the point is an
+       * unreached discontinuity, check if there is a reached discontinuity at
+       * the same abscissa. */
+      if (p.interest == Solver<double>::Interest::UnreachedDiscontinuity &&
+          direction * (i + direction) <= direction * lastIndex) {
+        PointOfInterest nextP = pointAtIndex(i + direction);
+        if (nextP.interest == Solver<double>::Interest::ReachedDiscontinuity &&
+            nextP.x() == p.x()) {
+          return nextP;
+        }
+      }
       return p;
     }
   }

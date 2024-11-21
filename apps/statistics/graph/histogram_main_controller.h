@@ -8,6 +8,7 @@
 #include "histogram_list_controller.h"
 #include "histogram_main_view.h"
 #include "histogram_parameter_controller.h"
+#include "poincare/range.h"
 
 namespace Statistics {
 
@@ -35,6 +36,7 @@ class HistogramMainController : public Escher::ViewController,
 
   // ViewController
   Escher::View* view() override { return &m_view; };
+  void viewWillAppear() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -49,6 +51,13 @@ class HistogramMainController : public Escher::ViewController,
   void exitHeaderView();
   void enterListView();
   void exitListView();
+
+  // Update histogram range and bars
+  Poincare::Range1D<double> activeSeriesRange() const;
+  void initBarParameters();
+  void initRangeParameters();
+  void initYRangeParameters(int series);
+  constexpr static int k_maxNumberOfBarsPerWindow = 100;
 
   // Model
   uint32_t* m_storeVersion;

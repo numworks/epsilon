@@ -40,6 +40,15 @@ Escher::ButtonCell* HistogramMainController::buttonAtIndex(
                     : const_cast<Escher::SimpleButtonCell*>(&m_parameterButton);
 }
 
+void HistogramMainController::viewWillAppear() {
+  uint32_t storeChecksum = m_store->storeChecksum();
+  if (*m_storeVersion != storeChecksum) {
+    *m_storeVersion = storeChecksum;
+    initBarParameters();
+  }
+  initRangeParameters();
+}
+
 void HistogramMainController::enterHeaderView() {
   m_selectedSubview = SelectedSubview::Header;
   header()->selectFirstButton();
@@ -196,6 +205,134 @@ void HistogramMainController::updateBannerView() {
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
   m_view.reload();
+}
+
+Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {
+  double minValue = DBL_MAX;
+  double maxValue = -DBL_MAX;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (m_store->seriesIsActive(i)) {
+      minValue = std::min<double>(minValue, m_store->minValue(i));
+      maxValue = std::max<double>(maxValue, m_store->maxValue(i));
+    }
+  }
+  return {minValue, maxValue};
+}
+
+void HistogramMainController::initBarParameters() {
+  Poincare::Range1D<double> xRange = activeSeriesRange();
+  m_histogramRange.setHistogramRange(xRange.min(), xRange.max());
+
+  m_store->setFirstDrawnBarAbscissa(xRange.min());
+  double barWidth = m_histogramRange.xGridUnit();
+  if (barWidth <= 0.0) {
+    barWidth = 1.0;
+  } else {
+    // Round the bar width, as we convert from float to double
+    const double precision = 7.0;  // FLT_EPS ~= 1e-7
+    const double logBarWidth = OMG::IEEE754<double>::exponentBase10(barWidth);
+    const double truncateFactor = std::pow(10.0, precision - logBarWidth);
+    barWidth = std::round(barWidth * truncateFactor) / truncateFactor;
+  }
+  /* Start numberOfBars at k_maxNumberOfBars - 1 for extra margin in case of a
+   * loss of precision. */
+  int numberOfBars = HistogramRange::k_maxNumberOfBars;
+  while (!HistogramParameterController::AuthorizedBarWidth(
+             barWidth, xRange.min(), m_store) &&
+         numberOfBars > 0) {
+    numberOfBars--;
+    barWidth = (xRange.max() - xRange.min()) / numberOfBars;
+  }
+  assert(HistogramParameterController::AuthorizedBarWidth(
+      barWidth, xRange.min(), m_store));
+  bool allValuesAreIntegers = true;
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (allValuesAreIntegers && m_store->seriesIsActive(i)) {
+      allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
+    }
+  }
+  if (allValuesAreIntegers) {
+    // With integer values, the histogram is better with an integer bar width
+    barWidth = std::ceil(barWidth);
+    if (GlobalPreferences::SharedGlobalPreferences()->histogramOffset() ==
+        CountryPreferences::HistogramsOffset::OnIntegerValues) {
+      // Bars are offsetted right to center the bars around the labels.
+      xRange.setMinKeepingValid(xRange.min() - barWidth / 2.0);
+      m_store->setFirstDrawnBarAbscissa(xRange.min());
+      m_histogramRange.setHistogramRange(
+          m_histogramRange.xMin() - barWidth / 2.0, m_histogramRange.xMax());
+    }
+  }
+  assert(barWidth > 0.0 &&
+         std::ceil((xRange.max() - xRange.min()) / barWidth) <=
+             HistogramRange::k_maxNumberOfBars);
+  m_store->setBarWidth(barWidth);
+}
+
+void HistogramMainController::initYRangeParameters(int series) {
+  assert(m_store->seriesIsActive(series));
+  /* Height of drawn bar are relative to the maximal bar of the series, so all
+   * displayed series need the same range of [0,1]. */
+  float yMax = 1.0f + HistogramRange::k_displayTopMarginRatio;
+
+  /* Compute YMin:
+   *    ratioFloatPixel*(0-yMin) = bottomMargin
+   *    ratioFloatPixel*(yMax-yMin) = viewHeight
+   *
+   *    -ratioFloatPixel*yMin = bottomMargin
+   *    ratioFloatPixel*yMax-ratioFloatPixel*yMin = viewHeight
+   *
+   *    ratioFloatPixel = (viewHeight - bottomMargin)/yMax
+   *    yMin = -bottomMargin/ratioFloatPixel = yMax*bottomMargin/(bottomMargin -
+   * viewHeight)
+   * */
+  float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
+  float viewHeight = static_cast<float>(m_listController.rowHeight(
+      m_listController.selectedRow()));  // TODO: dedicated function
+  float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
+
+  m_histogramRange.setYRange(yMin, yMax);
+}
+
+void HistogramMainController::initRangeParameters() {
+  double barWidth = m_store->barWidth();
+  double xStart = m_store->firstDrawnBarAbscissa();
+
+  Poincare::Range1D<double> xRange = activeSeriesRange();
+  m_histogramRange.setHistogramRange(xRange.min(), xRange.max());
+
+  /* The range of bar at index barIndex is :
+   * [xStart + barWidth * barIndex ; xStart + barWidth * (barIndex + 1)] */
+  double barIndexMin =
+      std::floor((xRange.min() - xStart) / barWidth + FLT_EPSILON);
+  double barIndexMax =
+      std::floor((xRange.max() - xStart) / barWidth + FLT_EPSILON);
+
+  // barIndexMax is the right end of the last bar
+  barIndexMax += 1.;
+
+  /* If a bar is represented by less than one pixel, we cap xMax */
+  barIndexMax = std::min(barIndexMax, barIndexMin + k_maxNumberOfBarsPerWindow);
+
+  double xMin = xStart + barWidth * barIndexMin;
+  double xMax = xStart + barWidth * barIndexMax;
+
+  // TODO: Set the histogram range to double.
+  float min = std::clamp(static_cast<float>(xMin),
+                         -Poincare::Range1D<float>::k_maxFloat,
+                         Poincare::Range1D<float>::k_maxFloat);
+  float max = std::clamp(static_cast<float>(xMax),
+                         -Poincare::Range1D<float>::k_maxFloat,
+                         Poincare::Range1D<float>::k_maxFloat);
+
+  m_histogramRange.setHistogramRange(
+      min - HistogramRange::k_displayLeftMarginRatio * (max - min),
+      max + HistogramRange::k_displayRightMarginRatio * (max - min));
+
+  // TODO: how to handle this?
+  if (m_listController.hasSelectedCell()) {
+    initYRangeParameters(m_listController.selectedSeries());
+  }
 }
 
 }  // namespace Statistics

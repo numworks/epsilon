@@ -36,5 +36,6 @@ else
 # - O3 ? (large size, faster)
 # - Os ? (in between)
 # For some reason builds with Oz crash when dlopening external apps
+# The build with Os is barely larger than with Oz : +0.5% on epsilon.js
 LDFLAGS += -Os
 endif

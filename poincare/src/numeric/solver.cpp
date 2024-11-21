@@ -356,24 +356,17 @@ void Solver<T>::ExcludeUndefinedFromBracket(
     Coordinate2D<T>* p1, Coordinate2D<T>* p2, Coordinate2D<T>* p3,
     FunctionEvaluation f, const void* aux, T minimalSizeOfInterval) {
   assert(UndefinedInBracket(*p1, *p2, *p3, aux) == Interest::Discontinuity);
-  /* The smallest interval containing the undefined is found. Now
-   * set p1, p2 and p3 outside of it. */
-  if (std::isnan(p1->y())) {
-    Coordinate2D<T> end =
-        FindUndefinedIntervalEnd(*p1, *p2, *p3, f, aux, minimalSizeOfInterval);
-    if (std::isfinite(end.x())) {
-      *p1 = end;
-    }
-  } else {
-    assert(std::isnan(p3->y()));
-    Coordinate2D<T> start = FindUndefinedIntervalStart(*p1, *p2, *p3, f, aux,
-                                                       minimalSizeOfInterval);
-    if (std::isfinite(start.x())) {
-      *p3 = start;
-    }
+  assert(std::isnan(p1->y()) || std::isnan(p3->y()));
+  // Find the smallest interval containing the undefined
+  bool cropEnd = std::isnan(p3->y());
+  Coordinate2D<T> newBound = FindUndefinedIntervalExtremum(
+      *p1, *p2, *p3, f, aux, minimalSizeOfInterval, cropEnd);
+  // Set p1, p2 and p3 outside of the interval containing the undefined
+  if (std::isfinite(newBound.x())) {
+    (cropEnd ? *p3 : *p1) = newBound;
+    p2->setX((p1->x() + p3->x()) / 2.0);
+    p2->setY(f(p2->x(), aux));
   }
-  p2->setX((p1->x() + p3->x()) / 2.0);
-  p2->setY(f(p2->x(), aux));
 }
 
 template <typename T>

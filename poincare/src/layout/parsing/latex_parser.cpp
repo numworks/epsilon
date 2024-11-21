@@ -286,14 +286,12 @@ constexpr static LatexLayoutRule k_rules[] = {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Diff at A
-    // TODO: do not fill variable twice + raise if variables are different
     {diffAtAToken, std::size(diffAtAToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
      []() -> Tree* {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Nth diff
-    // TODO: do not fill order twice + raise if orders are different
     // TODO: properly detect. do not mix with "d^2/3" for example
     {nthDiffToken, std::size(nthDiffToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
@@ -301,8 +299,6 @@ constexpr static LatexLayoutRule k_rules[] = {
        return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
     // Nth diff at A
-    // TODO: do not fill order twice + raise if orders are different
-    // TODO: do not fill variable twice + raise if variables are different
     {nthDiffAtAToken, std::size(nthDiffAtAToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
      []() -> Tree* {
@@ -399,10 +395,23 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
       assert(indexInLayout >= 0 &&
              indexInLayout < parentLayout->numberOfChildren());
       assert(i < rule.latexTokenSize - 1);
+      Tree* result = KRackL()->cloneTree();
       const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
-      ParseLatexOnRackUntilDelimiter(
-          Rack::From(parentLayout->child(indexInLayout)), start,
-          rightDelimiter);
+      ParseLatexOnRackUntilDelimiter(Rack::From(result), start, rightDelimiter);
+      bool wasAlreadyParsedElsewhere = false;
+      for (int j = 0; j < i; j++) {
+        if (latexToken[j].indexInLayout == indexInLayout) {
+          wasAlreadyParsedElsewhere = true;
+          if (!result->treeIsIdenticalTo(parentLayout->child(indexInLayout))) {
+            /* The child was already parsed elsewhere, but the result is
+             * different. Thus the latex is invalid. */
+            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          }
+        }
+      }
+      if (!wasAlreadyParsedElsewhere) {
+        parentLayout->child(indexInLayout)->cloneTreeOverTree(result);
+      }
     }
 
     return parentLayout;

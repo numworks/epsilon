@@ -59,6 +59,15 @@ QUIZ_CASE(pcj_latex_to_layout) {
   assert_latex_layouts_to(
       "\\frac{d}{dx}x^{3}",
       KRackL(KDiffL("x"_l, "x"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to(
+      "\\frac{d}{dx}\\left(x^{3}\\right)_{x=2}",
+      KRackL(KDiffL("x"_l, "2"_l, "1"_l, "x"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to(
+      "\\frac{d^{3}}{dx^{3}}x^{3}",
+      KRackL(KDiffL("x"_l, "x"_l, "3"_l, "x"_l ^ KSuperscriptL("3"_l))));
+  assert_latex_layouts_to(
+      "\\frac{d^{3}}{dx^{3}}\\left(x^{3}\\right)_{x=2}",
+      KRackL(KDiffL("x"_l, "2"_l, "3"_l, "x"_l ^ KSuperscriptL("3"_l))));
 
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",

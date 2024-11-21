@@ -257,7 +257,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  T xPrecision,
                                                  OMG::Troolean discontinuous) {
   if (interest == Interest::Root) {
-    Coordinate2D<T> solution =
+    Coordinate2D<T> xy =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, xPrecision);
     /* If the function is discontinuous and the discontinuity is on both sides
      * of the abscissa axis, a fake root could have been found. Filter it out
@@ -265,10 +265,10 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
      *   > f(x) = floor(x) - 0.5 for x == 1
      *   > f(x) = x / abs(x) for x == 0 */
     if (discontinuous == OMG::Troolean::True &&
-        std::fabs(solution.y()) > NullTolerance(solution.x())) {
+        std::fabs(xy.y()) > NullTolerance(xy.x())) {
       return Coordinate2D<T>();
     }
-    return solution;
+    return xy;
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
@@ -650,13 +650,13 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
   T xPrecision = discontinuous == OMG::Troolean::True
                      ? precisionForDiscontinuousFunctions
                      : NullTolerance(start);
-  Coordinate2D<T> solution =
+  Coordinate2D<T> xy =
       hone(f, aux, start, end, interest, xPrecision, discontinuous);
-  if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
+  if (!std::isfinite(xy.x()) || !validSolution(xy.x())) {
     return Solution();
   }
 
-  T x = solution.x();
+  T x = xy.x();
   /* When searching for an extremum, the function can take the extremum value
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
@@ -680,10 +680,10 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
         (interest == Interest::LocalMinimum && fRoundX < fx) ||
         (interest == Interest::LocalMaximum && fRoundX > fx)) {
       // Round is better
-      solution.setX(roundX);
+      xy.setX(roundX);
     }
   }
-  return Solution(solution, interest);
+  return Solution(xy, interest);
 }
 
 template <typename T>

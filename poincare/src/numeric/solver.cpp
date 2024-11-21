@@ -287,7 +287,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 template <typename T>
 bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
   const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-  return Continuity::IsDiscontinuousBetweenFloatValues(e, x1, x2);
+  return Continuity::IsDiscontinuousBetweenValues<T>(e, x1, x2);
 };
 
 template <typename T>

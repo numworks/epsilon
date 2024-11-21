@@ -582,7 +582,7 @@ bool UserExpression::isScalarComplex(
 
 bool SystemFunction::isDiscontinuousBetweenFloatValues(float x1,
                                                        float x2) const {
-  return Continuity::IsDiscontinuousBetweenFloatValues(tree(), x1, x2);
+  return Continuity::IsDiscontinuousBetweenValues<float>(tree(), x1, x2);
 }
 
 template <typename T>

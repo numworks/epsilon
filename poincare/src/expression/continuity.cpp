@@ -11,8 +11,8 @@ bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
           Variables::HasVariables(e));
 };
 
-bool Continuity::IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
-                                                   float x2) {
+template <typename T>
+bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2) {
   // TODO_PCJ: symbol is ignored for now
   if (e->isRandomized()) {
     return true;
@@ -20,18 +20,17 @@ bool Continuity::IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
   bool isDiscontinuous = false;
   if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
-    isDiscontinuous = Approximation::To<float>(e, x1, nullptr) !=
-                      Approximation::To<float>(e, x2, nullptr);
+    isDiscontinuous = Approximation::To<T>(e, x1, nullptr) !=
+                      Approximation::To<T>(e, x2, nullptr);
   } else if (e->isFrac()) {
     // is discontinuous if the child changes int value
     isDiscontinuous =
-        std::floor(Approximation::To<float>(e->child(0), x1, nullptr)) !=
-        std::floor(Approximation::To<float>(e->child(0), x2, nullptr));
+        std::floor(Approximation::To<T>(e->child(0), x1, nullptr)) !=
+        std::floor(Approximation::To<T>(e->child(0), x2, nullptr));
   } else if (e->isOfType({Type::Abs, Type::Sign})) {
     // is discontinuous if the child changes sign
-    isDiscontinuous =
-        (Approximation::To<float>(e->child(0), x1, nullptr) > 0.0) !=
-        (Approximation::To<float>(e->child(0), x2, nullptr) > 0.0);
+    isDiscontinuous = (Approximation::To<T>(e->child(0), x1, nullptr) > 0.0) !=
+                      (Approximation::To<T>(e->child(0), x2, nullptr) > 0.0);
   } else if (e->isPiecewise()) {
     isDiscontinuous =
         Approximation::IndexOfActivePiecewiseBranchAt(e, x1, nullptr) !=
@@ -41,11 +40,16 @@ bool Continuity::IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
     return true;
   }
   for (const Tree* child : e->children()) {
-    if (IsDiscontinuousBetweenFloatValues(child, x1, x2)) {
+    if (IsDiscontinuousBetweenValues(child, x1, x2)) {
       return true;
     }
   }
   return false;
 }
+
+template bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, float x1,
+                                                       float x2);
+template bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, double x1,
+                                                       double x2);
 
 }  // namespace Poincare::Internal

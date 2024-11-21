@@ -22,8 +22,8 @@ class Continuity {
   }
 
   // e must be a system function
-  static bool IsDiscontinuousBetweenFloatValues(const Tree* e, float x1,
-                                                float x2);
+  template <typename T>
+  static bool IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2);
 
  private:
   static bool ShallowIsDiscontinuous(const Tree* e);

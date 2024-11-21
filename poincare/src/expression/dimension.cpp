@@ -170,10 +170,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::List:
       return e->numberOfChildren();
     case Type::ListSequence:
-      // TODO: Handle undef Approximation.
-      /* TODO Hugo: Ensure in DeepCheck that child(1) is an integer expression.
-       * Parameter can therefore have a false isNotProjected value (since no
-       * risk of having local variables). */
+      assert(Integer::Is<uint8_t>(e->child(1)));
       return Approximation::To<float>(
           e->child(1), Approximation::Parameter(false, false, false, false));
     case Type::ListSlice: {
@@ -436,6 +433,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       }
       return true;
     case Type::ListElement:
+    case Type::ListSequence:
       return Integer::Is<uint8_t>(e->child(1));
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&

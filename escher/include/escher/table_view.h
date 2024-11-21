@@ -97,7 +97,10 @@ class TableView : public ScrollView {
     void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
     void reloadCellAtLocation(int col, int row, bool forceSetFrame);
+
+    // TODO: cellAtLocation should have a const and a non-const version
     HighlightCell* cellAtLocation(int row, int col);
+
     TableViewDataSource* dataSource() { return m_dataSource; }
     const TableViewDataSource* dataSource() const { return m_dataSource; }
     KDCoordinate invisibleHeight() const {

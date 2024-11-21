@@ -23,7 +23,8 @@ ScatterPlotIterable::Iterator& ScatterPlotIterable::Iterator::operator++() {
 ScatterPlotIterable::Iterator ScatterPlotIterable::begin() const {
   return m_expression.isUndefined()
              ? end()
-             : Iterator(m_expression.dimension().isListOfPoints()
+             : Iterator(m_expression.dimension().isListOfPoints() ||
+                                m_expression.dimension().isEmptyList()
                             ? m_expression.tree()->nextNode()
                             : m_expression.tree());
 }
@@ -34,14 +35,15 @@ ScatterPlotIterable::Iterator ScatterPlotIterable::end() const {
 
 int ScatterPlotIterable::length() const {
   return m_expression.isUndefined() ? 0
-         : m_expression.dimension().isListOfPoints()
+         : m_expression.dimension().isListOfPoints() ||
+                 m_expression.dimension().isEmptyList()
              ? m_expression.tree()->numberOfChildren()
              : 1;
 }
 
 ScatterPlotIterable::ScatterPlotIterable(const Poincare::SystemExpression e)
     : m_expression(e) {
-  assert(e.dimension().isPointOrListOfPoints());
+  assert(e.dimension().isPointOrListOfPoints() || e.dimension().isEmptyList());
 }
 
 }  // namespace Shared

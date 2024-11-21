@@ -513,7 +513,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   ApproximationContext approximationContext(context, complexFormat(context));
 
   if (properties().isScatterPlot()) {
-    assert(e.dimension().isPointOrListOfPoints());
+    assert(e.dimension().isPointOrListOfPoints() ||
+           e.dimension().isEmptyList());
     SystemExpression point;
     if (e.dimension().isPoint()) {
       if (t != static_cast<T>(0.)) {
@@ -521,7 +522,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = e;
     } else {
-      assert(e.dimension().isListOfPoints());
+      assert(e.dimension().isListOfPoints() || e.dimension().isEmptyList());
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
           tInt >= static_cast<List&>(e).numberOfChildren()) {
@@ -619,6 +620,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       if (m_expression.dimension().isListOfPoints()) {
         m_expression = m_expression.removeUndefListElements()
                            .approximateListAndSort<double>();
+        // m_expression may be an empty, dimension-less list after this.
       } else {
         assert(m_expression.dimension().isPoint());
         m_expression = PoincareHelpers::Approximate<double>(

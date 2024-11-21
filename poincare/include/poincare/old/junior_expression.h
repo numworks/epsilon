@@ -58,6 +58,7 @@ class Dimension {
   bool isListOfUnits();
   bool isListOfBooleans();
   bool isListOfPoints();
+  bool isEmptyList();
 
   bool isPointOrListOfPoints();
 
@@ -66,6 +67,7 @@ class Dimension {
   Internal::DimensionType m_type;
   bool m_isList;
   bool m_isValid;
+  bool m_isEmptyList;
 };
 
 class JuniorExpressionNode final : public ExpressionNode {

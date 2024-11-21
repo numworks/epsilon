@@ -51,7 +51,8 @@ Poincare::Dimension::Dimension(const NewExpression e, Context* context)
     : m_matrixDimension({.rows = 0, .cols = 0}),
       m_type(DimensionType::Scalar),
       m_isList(false),
-      m_isValid(false) {
+      m_isValid(false),
+      m_isEmptyList(false) {
   // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;
@@ -59,6 +60,7 @@ Poincare::Dimension::Dimension(const NewExpression e, Context* context)
   Internal::Dimension dimension = Internal::Dimension::Get(e.tree(), context);
   m_type = dimension.type;
   m_isList = Internal::Dimension::IsList(e.tree(), context);
+  m_isEmptyList = (m_isList && Internal::Dimension::ListLength(e.tree()) == 0);
   if (m_type == DimensionType::Matrix) {
     m_matrixDimension = dimension.matrix;
   }
@@ -113,6 +115,8 @@ bool Poincare::Dimension::isListOfPoints() {
 bool Poincare::Dimension::isPointOrListOfPoints() {
   return m_isValid && m_type == DimensionType::Point;
 }
+
+bool Poincare::Dimension::isEmptyList() { return m_isEmptyList; }
 
 /* JuniorExpressionNode */
 

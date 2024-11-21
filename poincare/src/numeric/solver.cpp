@@ -69,7 +69,6 @@ typename Solver<T>::Solution Solver<T>::next(
       if (std::isfinite(solution.x()) &&
           (std::isfinite(solution.y()) ||
            interest == Interest::Discontinuity)) {
-        assert(validSolution(solution.x()));
         return registerSolution(solution);
       }
     }

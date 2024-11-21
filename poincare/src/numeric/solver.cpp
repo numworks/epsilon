@@ -346,8 +346,8 @@ Coordinate2D<T> Solver<T>::FindUndefinedIntervalExtremum(
     middleOfDiscontinuity.setX(
         (lowerBoundOfDiscontinuity.x() + upperBoundOfDiscontinuity.x()) / 2.0);
     middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
+    assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
   }
-  assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
   return *definedBound;
 }
 

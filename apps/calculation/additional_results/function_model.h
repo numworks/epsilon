@@ -12,12 +12,12 @@ class FunctionModel : public Shared::MemoizedCurveViewRange {
  public:
   void setParameters(Poincare::SystemFunction function, float abscissa,
                      float ordinate);
-  Poincare::SystemFunction function() const { return m_function; }
+  Poincare::SystemFunctionScalar function() const { return m_function; }
   float abscissa() const { return m_abscissa; }
   float ordinate() const { return m_ordinate; }
   /* Since additional results are opened in a UserCircuitBreakerCheckpoint, we
    * need to clean all calculated expressions when closing it. */
-  void tidy() { m_function = Poincare::SystemFunction(); }
+  void tidy() { m_function = Poincare::SystemFunctionScalar(); }
 
  private:
   // Margin used to separate the drawings from the curve view's border
@@ -35,7 +35,7 @@ class FunctionModel : public Shared::MemoizedCurveViewRange {
   static float RangeMargin(bool maxMargin, float rangeBound, float value,
                            float pixelRatio);
 
-  Poincare::SystemFunction m_function;
+  Poincare::SystemFunctionScalar m_function;
   float m_abscissa;
   float m_ordinate;
 };

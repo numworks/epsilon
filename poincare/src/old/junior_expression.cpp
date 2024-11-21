@@ -459,10 +459,9 @@ T UserExpression::approximateToScalar(AngleUnit angleUnit,
       Approximation::Context(angleUnit, complexFormat));
 }
 
-/* TODO_PCJ: This cannot be called on system expressions, but rather on
- * ScalarSystemFunction */
 template <typename T>
-T SystemExpression::approximateToScalarWithValue(T x, int listElement) const {
+T SystemFunctionScalar::approximateToScalarWithValue(T x,
+                                                     int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameter(true, false, false, false),
       Approximation::Context(AngleUnit::None, ComplexFormat::None,
@@ -1132,10 +1131,10 @@ template SystemExpression SystemExpression::approximateListAndSort<float>()
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
-template float SystemFunction::approximateToScalarWithValue<float>(float,
-                                                                   int) const;
-template double SystemFunction::approximateToScalarWithValue<double>(double,
-                                                                     int) const;
+template float SystemFunctionScalar::approximateToScalarWithValue<float>(
+    float, int) const;
+template double SystemFunctionScalar::approximateToScalarWithValue<double>(
+    double, int) const;
 
 template float SystemExpression::approximateToScalarJunior<float>() const;
 template double SystemExpression::approximateToScalarJunior<double>() const;

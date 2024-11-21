@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void FunctionModel::setParameters(SystemFunction function, float abscissa,
+void FunctionModel::setParameters(SystemFunctionScalar function, float abscissa,
                                   float ordinate) {
   // We do not want to display additional results for sequences.
   assert(!function.recursivelyMatches(&NewExpression::isSequence));
@@ -30,7 +30,8 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value,
 
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
-  const SystemFunction* f = static_cast<const SystemFunction*>(model);
+  const SystemFunctionScalar* f =
+      static_cast<const SystemFunctionScalar*>(model);
   return Coordinate2D<T>(t, f->approximateToScalarWithValue(t));
 }
 

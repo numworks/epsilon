@@ -211,9 +211,9 @@ class Solver {
   T nextRootInMultiplication(const Internal::Tree* m) const;
   T nextRootInAddition(const Internal::Tree* m) const;
   T nextRootInDependency(const Internal::Tree* m) const;
-  Solution honeAndRoundSolution(FunctionEvaluation f, const void* aux, T start,
-                                T end, Interest interest, HoneResult hone,
-                                DiscontinuityEvaluation discontinuityTest);
+  void honeAndRoundSolution(FunctionEvaluation f, const void* aux, T start,
+                            T end, Interest interest, HoneResult hone,
+                            DiscontinuityEvaluation discontinuityTest);
   Solution registerSolution(Solution solution);
   Solution registerRoot(T x) {
     return registerSolution(Solution(x, k_zero, Interest::Root));

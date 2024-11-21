@@ -37,6 +37,11 @@ typename Solver<T>::Solution Solver<T>::next(
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
   while ((m_xStart < p3.x()) == (p3.x() < m_xEnd)) {
+    // Check if there is a solution in the queue
+    if (!m_solutionQueue.isEmpty()) {
+      return registerSolution(m_solutionQueue.pop());
+    }
+
     p1 = p2;
     p2 = p3;
     /* If the solver is in float, the slope is not used by minimalStep
@@ -64,12 +69,10 @@ typename Solver<T>::Solution Solver<T>::next(
     }
 
     if (interest != Interest::None) {
-      Solution solution = honeAndRoundSolution(
-          f, aux, start.x(), end.x(), interest, hone, discontinuityTest);
-      if (std::isfinite(solution.x()) &&
-          (std::isfinite(solution.y()) ||
-           interest == Interest::Discontinuity)) {
-        return registerSolution(solution);
+      honeAndRoundSolution(f, aux, start.x(), end.x(), interest, hone,
+                           discontinuityTest);
+      if (!m_solutionQueue.isEmpty()) {
+        return registerSolution(m_solutionQueue.pop());
       }
     }
   }
@@ -636,9 +639,10 @@ T Solver<T>::MagicRound(T x) {
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
+void Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
+  assert(m_solutionQueue.isEmpty());
   OMG::Troolean discontinuous = OMG::Troolean::Unknown;
   if (discontinuityTest) {
     discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
@@ -658,7 +662,7 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
   Coordinate2D<T> xy =
       hone(f, aux, start, end, interest, xPrecision, discontinuous);
   if (!std::isfinite(xy.x()) || !validSolution(xy.x())) {
-    return Solution();
+    return;
   }
 
   T x = xy.x();
@@ -675,12 +679,12 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
      * condition of roundX is different from x, this means that the solution
      * found is probably on an open interval. */
     if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
-      return Solution();
+      return;
     }
     T fRoundX = f(roundX, aux);
     if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
       // We might have a discontinuity, the solution might not be valid
-      return Solution();
+      return;
     }
     // f(x) is different from the honed solution when searching intersections
     T fx = f(x, aux);
@@ -695,7 +699,10 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
       }
     }
   }
-  return Solution(xy, interest);
+  assert(std::isfinite(xy.x()));
+  if (std::isfinite(xy.y()) || interest == Interest::Discontinuity) {
+    m_solutionQueue.push(Solution(xy, interest));
+  }
 }
 
 template <typename T>

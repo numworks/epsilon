@@ -279,28 +279,27 @@ constexpr static LatexLayoutRule k_rules[] = {
     /* WARNING: The order matters here
      * Diff layouts need to stay is this order and be before "frac" to be
      * detected correctly */
-    // Diff
-    {diffToken, std::size(diffToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
-     []() -> Tree* {
-       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
-     }},
     // Diff at A
     {diffAtAToken, std::size(diffAtAToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
      []() -> Tree* {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
-    // Nth diff
-    // TODO: properly detect. do not mix with "d^2/3" for example
-    {nthDiffToken, std::size(nthDiffToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
+    // Diff
+    {diffToken, std::size(diffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
      []() -> Tree* {
-       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Nth diff at A
     {nthDiffAtAToken, std::size(nthDiffAtAToken),
      [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
+     []() -> Tree* {
+       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Nth diff
+    {nthDiffToken, std::size(nthDiffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
      []() -> Tree* {
        return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
@@ -360,6 +359,8 @@ bool CustomBuildLayoutChildFromLatex(const char** latexString,
                                      const char* parentRightDelimiter);
 
 Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
+  bool atLeastOneRuleMatched = false;
+
   for (const LatexLayoutRule& rule : k_rules) {
     const LatexToken latexToken = rule.latexToken;
     const char* leftDelimiter = latexToken[0].leftDelimiter;
@@ -367,57 +368,80 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
       continue;
     }
     // Token found
-    Tree* parentLayout = rule.buildEmptyLayout();
+    atLeastOneRuleMatched = true;
+    const char* currentStart = *start;
 
-    // Parse children
-    for (int i = 0; i < rule.latexTokenSize; i++) {
-      // Check for custom parsing of child
-      if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout,
-                                          parentRightDelimiter)) {
-        continue;
-      }
+    ExceptionTry {
+      Tree* parentLayout = rule.buildEmptyLayout();
 
-      // Classic parsing
-      // --- Step 1. Skip left delimiter ---
-      const char* leftDelimiter = latexToken[i].leftDelimiter;
-      int leftDelimiterLength = strlen(leftDelimiter);
-      if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
-        // Left delimiter not found
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-      *start += leftDelimiterLength;
+      // Parse children
+      for (int i = 0; i < rule.latexTokenSize; i++) {
+        // Check for custom parsing of child
+        if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout,
+                                            parentRightDelimiter)) {
+          continue;
+        }
 
-      // --- Step 2. Parse child ---
-      int indexInLayout = latexToken[i].indexInLayout;
-      if (indexInLayout == k_noChild) {
-        continue;
-      }
-      assert(indexInLayout >= 0 &&
-             indexInLayout < parentLayout->numberOfChildren());
-      assert(i < rule.latexTokenSize - 1);
-      Tree* result = KRackL()->cloneTree();
-      const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
-      ParseLatexOnRackUntilDelimiter(Rack::From(result), start, rightDelimiter);
-      bool wasAlreadyParsedElsewhere = false;
-      for (int j = 0; j < i; j++) {
-        if (latexToken[j].indexInLayout == indexInLayout) {
-          wasAlreadyParsedElsewhere = true;
-          if (!result->treeIsIdenticalTo(parentLayout->child(indexInLayout))) {
-            /* The child was already parsed elsewhere, but the result is
-             * different. Thus the latex is invalid. */
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        // Classic parsing
+        // --- Step 1. Skip left delimiter ---
+        const char* leftDelimiter = latexToken[i].leftDelimiter;
+        int leftDelimiterLength = strlen(leftDelimiter);
+        if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+          // Left delimiter not found
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        }
+        *start += leftDelimiterLength;
+
+        // --- Step 2. Parse child ---
+        int indexInLayout = latexToken[i].indexInLayout;
+        if (indexInLayout == k_noChild) {
+          continue;
+        }
+        assert(indexInLayout >= 0 &&
+               indexInLayout < parentLayout->numberOfChildren());
+        assert(i < rule.latexTokenSize - 1);
+        Tree* result = KRackL()->cloneTree();
+        const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
+        ParseLatexOnRackUntilDelimiter(Rack::From(result), start,
+                                       rightDelimiter);
+
+        bool wasAlreadyParsedElsewhere = false;
+        for (int j = 0; j < i; j++) {
+          if (latexToken[j].indexInLayout == indexInLayout) {
+            wasAlreadyParsedElsewhere = true;
+            if (!result->treeIsIdenticalTo(
+                    parentLayout->child(indexInLayout))) {
+              /* The child was already parsed elsewhere, but the result is
+               * different. Thus the latex is invalid. */
+              TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+            }
           }
         }
+        if (!wasAlreadyParsedElsewhere) {
+          parentLayout->child(indexInLayout)->cloneTreeOverTree(result);
+        }
       }
-      if (!wasAlreadyParsedElsewhere) {
-        parentLayout->child(indexInLayout)->cloneTreeOverTree(result);
-      }
-    }
 
-    return parentLayout;
+      return parentLayout;
+    }
+    /* When parsing fails, we try the next rule.
+     * This is especially useful for rules like diff and frac, for which only
+     * comparing the few chars is not enough to know if the rule is the right
+     * one. */
+    ExceptionCatch(type) {
+      if (type != ExceptionType::ParseFail) {
+        TreeStackCheckpoint::Raise(type);
+      }
+      *start = currentStart;
+    }
   }
 
-  // Code points
+  // If some rule matched but the parsing still failed, there is a syntax error
+  if (atLeastOneRuleMatched) {
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+
+  // Parse as code point
   UTF8Decoder decoder(*start);
   Tree* codepoint = CodePointLayout::Push(decoder.nextCodePoint());
   *start = decoder.stringPosition();

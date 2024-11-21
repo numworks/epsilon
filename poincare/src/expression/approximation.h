@@ -28,9 +28,9 @@ class Approximation final {
   friend struct Matrix;
 
  public:
+  using VariableType = std::complex<double>;
   class LocalContext {
    public:
-    using VariableType = double;
     LocalContext(VariableType abscissa,
                  const LocalContext* parentContext = nullptr)
         : m_localVariable(abscissa), m_parentContext(parentContext) {}
@@ -47,7 +47,6 @@ class Approximation final {
 
   class Context {
    public:
-    using VariableType = double;
     Context(AngleUnit angleUnit = AngleUnit::None,
             ComplexFormat complexFormat = ComplexFormat::None,
             int16_t listElement = -1, int16_t pointElement = -1,

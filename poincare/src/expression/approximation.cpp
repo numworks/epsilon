@@ -113,7 +113,8 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
   assert(Dimension::DeepCheck(e));
   Dimension dim = Dimension::Get(result);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  if (context.m_localContext && std::isnan(context.variable(0))) {
+  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
+                                 std::isnan(context.variable(0).imag()))) {
     return dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
   }
   T xScalar;
@@ -532,11 +533,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return TrigonometricToComplex(Type::ATan, ToComplex<T>(e->child(0), ctx),
                                     AngleUnit::Radian);
     case Type::Var: {
+      // Local variable
       if (!ctx || !ctx->m_localContext) {
         return NAN;
       }
-      // Local variable
-      return ctx->variable(Variables::Id(e));
+      // TODO_PCJ: Use template with LocalContext
+      std::complex<double> z = ctx->variable(Variables::Id(e));
+      return std::complex<T>(z.real(), z.imag());
     }
     case Type::UserSymbol:
     case Type::UserFunction:

@@ -174,7 +174,13 @@ void UnitListController::computeAdditionalResults(
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, approximatedSIExpression, context, m_referenceValues,
       &m_tableIndexForComparison);
-
+  if (m_numberOfExpressionCells + m_numberOfBufferCells == 0) {
+    /* No reference values nor relevant unit display modes have been found, fall
+     * back to the exact output to have something to display.
+     * TODO_PCJ: Detect these cases earlier and return false in
+     * AdditionalResultsType::HasUnit */
+    m_layouts[m_numberOfExpressionCells++] = exactOutputLayout;
+  }
   assert(m_numberOfExpressionCells + m_numberOfBufferCells > 0);
 }
 

@@ -79,16 +79,6 @@ inline Poincare::Expression Approximate(
       ApproximationContextForParameters(e, context, approximationParameters));
 }
 
-template <class T>
-inline T ApproximateWithValueForSymbol(
-    const Poincare::SystemFunction e, const char* symbol, T x,
-    Poincare::Context* context,
-    const ApproximationParameters& approximationParameters = {}) {
-  return e.approximateToScalarWithValueForSymbol<T>(
-      symbol, x,
-      ApproximationContextForParameters(e, context, approximationParameters));
-}
-
 // ===== Reduction =====
 
 struct ReductionParameters {

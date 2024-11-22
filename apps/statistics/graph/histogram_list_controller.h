@@ -44,7 +44,7 @@ class HistogramListController
 
   // Get the selected series or index from the Snapshot
   std::size_t selectedSeries() const;
-  std::size_t selectedSeriesIndex() const;
+  std::size_t selectedBarIndex() const;
 
   static constexpr KDCoordinate k_rowHeight = 75;
 
@@ -56,18 +56,19 @@ class HistogramListController
   /* Set the global highlight of a series on and highlight a certain histogram
    * bar  */
   void highlightSeriesAndBar(std::size_t selectedSeries,
-                             std::size_t selectedSeriesIndex);
+                             std::size_t selectedBarIndex);
 
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);
-  void setSelectedSeriesIndex(std::size_t selectedIndex);
+  void setSelectedBarIndex(std::size_t selectedIndex);
 
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
   std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,
                                     std::size_t initialSelectedIndex) const;
   std::size_t barIndexAfterSelectingNewSeries(
-      std::size_t previousSelectedSeries) const;
+      std::size_t previousSelectedSeries, std::size_t currentSelectedSeries,
+      std::size_t previousSelectedBarIndex) const;
 
   // Maximum number of histograms displayed on the same screen
   constexpr static std::size_t k_displayedHistograms = 4;

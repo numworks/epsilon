@@ -68,7 +68,8 @@ class HistogramCell : public Escher::HighlightCell {
     m_view.setBarHighlight(barHighlightStart, barHighlightEnd);
   }
 
-  // Set global cell highlight, that will automatically be managed by the list
+  // Set global cell highlight, that will automatically be managed by the
+  // SelectableList
   void setHighlighted(bool highlight) override {
     Escher::HighlightCell::setHighlighted(highlight);
     m_view.setFocus(highlight);

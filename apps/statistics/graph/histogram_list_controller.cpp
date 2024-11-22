@@ -61,13 +61,13 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     setSelectedSeries(m_selectableListView.selectedRow());
     /* The series index of the new selected cell is computed to be close to its
      * previous location in the neighbouring cell */
-    setSelectedSeriesIndex(
-        barIndexAfterSelectingNewSeries(previousSelectedSeries));
+    setSelectedBarIndex(barIndexAfterSelectingNewSeries(
+        previousSelectedSeries, selectedSeries(), selectedBarIndex()));
 
     setSelectedCellHighlight(true);
 
     m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
-                                              selectedSeriesIndex());
+                                              selectedBarIndex());
   }
 
   return true;
@@ -78,7 +78,7 @@ void HistogramListController::setSelectedCellHighlight(bool isHighlighted) {
   assert(selectedSeries() == m_selectableListView.selectedRow());
 
   if (isHighlighted) {
-    highlightSeriesAndBar(selectedSeries(), selectedSeriesIndex());
+    highlightSeriesAndBar(selectedSeries(), selectedBarIndex());
   } else {
     HistogramCell* selectedCell =
         static_cast<HistogramCell*>(m_selectableListView.selectedCell());
@@ -91,23 +91,23 @@ void HistogramListController::selectAndHighlightFirstCell() {
   m_selectableListView.selectFirstRow();
   // Set the current series and index in the snaphot
   setSelectedSeries(m_selectableListView.selectedRow());
-  setSelectedSeriesIndex(0);
+  setSelectedBarIndex(0);
   setSelectedCellHighlight(true);
 }
 
 void HistogramListController::highlightSeriesAndBar(
-    std::size_t selectedSeries, std::size_t selectedSeriesIndex) {
+    std::size_t selectedSeries, std::size_t selectedBarIndex) {
   assert(0 <= selectedSeries &&
          selectedSeries <= m_store->numberOfActiveSeries());
   HistogramCell* selectedCell =
       static_cast<HistogramCell*>(m_selectableListView.cell(selectedSeries));
   selectedCell->setHighlighted(true);
 
-  assert(0 <= selectedSeriesIndex &&
-         selectedSeriesIndex < m_store->numberOfPairsOfSeries(selectedSeries));
+  assert(0 <= selectedBarIndex &&
+         selectedBarIndex < m_store->numberOfBars(selectedSeries));
   selectedCell->setBarHighlight(
-      m_store->startOfBarAtIndex(selectedSeries, selectedSeriesIndex),
-      m_store->endOfBarAtIndex(selectedSeries, selectedSeriesIndex));
+      m_store->startOfBarAtIndex(selectedSeries, selectedBarIndex),
+      m_store->endOfBarAtIndex(selectedSeries, selectedBarIndex));
 }
 
 std::size_t HistogramListController::selectedSeries() const {
@@ -121,15 +121,14 @@ void HistogramListController::setSelectedSeries(std::size_t selectedSeries) {
   *App::app()->snapshot()->selectedSeries() = selectedSeries;
 }
 
-std::size_t HistogramListController::selectedSeriesIndex() const {
+std::size_t HistogramListController::selectedBarIndex() const {
   int index = *App::app()->snapshot()->selectedIndex();
   assert(0 <= index);
   // TODO: check the index upper bound
   return static_cast<std::size_t>(index);
 }
 
-void HistogramListController::setSelectedSeriesIndex(
-    std::size_t selectedIndex) {
+void HistogramListController::setSelectedBarIndex(std::size_t selectedIndex) {
   // TODO: check the index upper bound
   *App::app()->snapshot()->selectedIndex() = selectedIndex;
 }
@@ -137,7 +136,7 @@ void HistogramListController::setSelectedSeriesIndex(
 bool HistogramListController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
   int numberOfBars = m_store->numberOfBars(selectedSeries());
-  int newSelectedBarIndex = selectedSeriesIndex();
+  int newSelectedBarIndex = selectedBarIndex();
   do {
     newSelectedBarIndex += direction.isRight() ? 1 : -1;
   } while (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
@@ -145,14 +144,14 @@ bool HistogramListController::moveSelectionHorizontally(
                0);
 
   if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
-      selectedSeriesIndex() != newSelectedBarIndex) {
-    setSelectedSeriesIndex(newSelectedBarIndex);
+      selectedBarIndex() != newSelectedBarIndex) {
+    setSelectedBarIndex(newSelectedBarIndex);
 
     HistogramCell* selectedCell =
         static_cast<HistogramCell*>(m_selectableListView.selectedCell());
     selectedCell->setBarHighlight(
-        m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
-        m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
+        m_store->startOfBarAtIndex(selectedSeries(), selectedBarIndex()),
+        m_store->endOfBarAtIndex(selectedSeries(), selectedBarIndex()));
     return true;
   }
   return false;
@@ -186,7 +185,8 @@ std::size_t HistogramListController::sanitizeSelectedIndex(
 }
 
 std::size_t HistogramListController::barIndexAfterSelectingNewSeries(
-    std::size_t previousSelectedSeries) const {
+    std::size_t previousSelectedSeries, std::size_t currentSelectedSeries,
+    std::size_t previousSelectedBarIndex) const {
   /* In the simple following case, when all bars are aligned, the selected
    * index should not change:
    *           _ _ _ _
@@ -217,15 +217,15 @@ std::size_t HistogramListController::barIndexAfterSelectingNewSeries(
    * */
   double startDifference =
       m_store->startOfBarAtIndex(previousSelectedSeries, 0) -
-      m_store->startOfBarAtIndex(selectedSeries(), 0);
-  std::size_t newSelectedIndex =
-      (selectedSeriesIndex() +
+      m_store->startOfBarAtIndex(currentSelectedSeries, 0);
+  std::size_t newSelectedBarIndex =
+      (previousSelectedBarIndex +
        static_cast<int>(startDifference / m_store->barWidth()));
-  newSelectedIndex =
-      std::max(std::min(static_cast<int>(newSelectedIndex),
-                        m_store->numberOfBars(selectedSeries()) - 1),
+  newSelectedBarIndex =
+      std::max(std::min(static_cast<int>(newSelectedBarIndex),
+                        m_store->numberOfBars(currentSelectedSeries) - 1),
                0);
-  return sanitizeSelectedIndex(selectedSeries(), newSelectedIndex);
+  return sanitizeSelectedIndex(currentSelectedSeries, newSelectedBarIndex);
 }
 
 }  // namespace Statistics

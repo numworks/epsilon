@@ -173,7 +173,7 @@ void HistogramMainController::updateBannerView() {
   char buffer[k_bufferSize] = "";
 
   const int selectedSeries = m_listController.selectedSeries();
-  const int selectedIndex = m_listController.selectedSeriesIndex();
+  const int selectedIndex = m_listController.selectedBarIndex();
 
   // Display series name
   m_store->tableName(selectedSeries, buffer, k_bufferSize);

@@ -281,25 +281,25 @@ constexpr static LatexLayoutRule k_rules[] = {
      * detected correctly */
     // Diff at A
     {diffAtAToken, std::size(diffAtAToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
      []() -> Tree* {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Diff
     {diffToken, std::size(diffToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
      []() -> Tree* {
        return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
      }},
     // Nth diff at A
     {nthDiffAtAToken, std::size(nthDiffAtAToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
      []() -> Tree* {
        return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
     // Nth diff
     {nthDiffToken, std::size(nthDiffToken),
-     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
      []() -> Tree* {
        return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
@@ -804,14 +804,15 @@ void BuildIntegralVariableChildFromLatex(const char** latexString,
   *latexString = decoder.stringPosition();
 }
 
-bool IsDerivativeLayout(const Tree* l, bool isNthDerivative, bool hasAbscissa) {
+bool IsDerivativeLayout(const Tree* l, bool isNthDerivative,
+                        bool isAbscissaEqualToVariable) {
   /* If the abscissa layout is identical to the variable (`d/dx(...)_{x=x}`)
    * we assume the user wants to use the latex `d/dx(...)` rather than
    * `d/dx(...)_{x=a}`. This trick is necessary because no layout for `d/dx()``
    * without abscissa exists. */
   return l->isDiffLayout() &&
          (isNthDerivative == l->toDiffLayoutNode()->isNthDerivative) &&
-         (hasAbscissa ||
+         (isAbscissaEqualToVariable ==
           l->child(Derivative::k_variableIndex)
               ->treeIsIdenticalTo(l->child(Derivative::k_abscissaIndex)));
 }

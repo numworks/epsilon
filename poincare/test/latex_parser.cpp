@@ -11,7 +11,7 @@ void assert_latex_layouts_to(const char* latex, const Tree* expectedLayout) {
   l->removeTree();
 }
 
-QUIZ_CASE(pcj_latex_to_layout) {
+QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
   assert_latex_layouts_to("a-b", "a-b"_l);
   assert_latex_layouts_to("a\\ -{\\ b}+\\operatorname{re}(\\text{i})",
                           "a-b+re(i)"_l);
@@ -91,7 +91,7 @@ void assert_layout_convert_to_latex(const Tree* l, const char* latex,
                                latex);
 }
 
-QUIZ_CASE(pcj_layout_to_latex) {
+QUIZ_CASE(pcj_latex_parser_layout_to_latex) {
   assert_layout_convert_to_latex(
       "1+"_l ^ KAbsL("3+"_l ^ KParenthesesL("a-b"_l) ^ "+2"_l) ^ "+4"_l,
       "1+\\left|3+\\left(a-b\\right)+2\\right|+4");

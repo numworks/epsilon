@@ -17,7 +17,7 @@ MultipleBoxesView::MultipleBoxesView(Store* store,
                  BoxView(store, 4, dataViewController),
                  BoxView(store, 5, dataViewController)},
       m_axisView(store) {
-  static_assert(isBoxMarginValid(),
+  static_assert(IsBoxMarginValid(),
                 "BoxToBoxMargin() should be bigger than BoxVerticalMargin() "
                 "for all numbers of valid series.");
 }

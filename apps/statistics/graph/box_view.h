@@ -40,7 +40,7 @@ class BoxPlotPolicy {
       Shared::Dots::Size::Small;
   constexpr static KDCoordinate k_outlierSize = Shared::Dots::SmallDotDiameter;
 
-  static_assert(k_outlierSize <= *std::max_element(k_boxesHeights.cbegin(),
+  static_assert(k_outlierSize <= *std::min_element(k_boxesHeights.cbegin(),
                                                    k_boxesHeights.cend()),
                 "Outliers are not expected to be taller than the box.");
 

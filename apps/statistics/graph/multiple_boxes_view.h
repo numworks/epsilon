@@ -36,7 +36,7 @@ class MultipleBoxesView : public MultipleDataView {
     return k_boxToBoxMargins[numberOfSeries - 1];
   }
 
-  constexpr static bool isBoxMarginValid() {
+  constexpr static bool IsBoxMarginValid() {
     for (std::size_t numberOfSeries = 1;
          numberOfSeries < Store::k_numberOfSeries; numberOfSeries++) {
       if (MultipleBoxesView::BoxToBoxMargin(numberOfSeries) <

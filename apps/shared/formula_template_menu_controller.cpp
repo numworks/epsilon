@@ -216,6 +216,9 @@ void FormulaTemplateMenuController::fillSumColumnNames(
   strlcpy(columnName2, currentColumnName,
           DoublePairStore::k_columnNamesLength + 1);
 
+  /* The displayed sum will be "V_(n-2) + V_(n-1)" (for columnName in the form
+   * "V1", "V2", "V3" etc.). For the first and the second column, we display
+   * "V2+V3" or "V1+V3" respectively.  */
   static_assert(DoublePairStore::k_numberOfSeries >= 3);
   replaceSeriesIndex(columnName1, currentSeriesIndex == 0 ? 1
                                   : currentSeriesIndex == 1

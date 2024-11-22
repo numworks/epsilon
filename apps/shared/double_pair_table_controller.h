@@ -61,8 +61,7 @@ class DoublePairTableController
   // Number of cells
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_numberOfHeaderColumns = 2;
-  constexpr static int k_numberOfSeriesTitleCells =
-      DoublePairStore::k_numberOfSeries;
+  constexpr static int k_numberOfSeriesTitleCells = 6;
   constexpr static int k_numberOfCalculationCells =
       k_numberOfSeriesTitleCells * k_maxNumberOfDisplayableRows;
   // Cell sizes

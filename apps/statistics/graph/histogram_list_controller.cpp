@@ -5,10 +5,6 @@
 
 namespace Statistics {
 
-Escher::SolidColorCell makeColorCell(size_t index) {
-  return Escher::SolidColorCell();
-}
-
 HistogramListController::HistogramListController(
     Escher::Responder* parentResponder, Store* store,
     Shared::CurveViewRange* histogramRange)

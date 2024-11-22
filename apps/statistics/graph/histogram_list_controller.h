@@ -17,6 +17,8 @@ class HistogramListController
   HistogramListController(Escher::Responder* parentResponder, Store* store,
                           Shared::CurveViewRange* histogramRange);
 
+  static constexpr KDCoordinate k_rowHeight = 75;
+
   // Escher::TableViewDataSource
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
 
@@ -46,8 +48,6 @@ class HistogramListController
   std::size_t selectedSeries() const;
   std::size_t selectedBarIndex() const;
 
-  static constexpr KDCoordinate k_rowHeight = 75;
-
  private:
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
@@ -73,7 +73,6 @@ class HistogramListController
   // Maximum number of histograms displayed on the same screen
   constexpr static std::size_t k_displayedHistograms = 4;
   // SelectableList cells
-  // TODO: replace with HistogramCells
   std::array<HistogramCell, k_displayedHistograms> m_displayCells;
 
   // Model

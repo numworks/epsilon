@@ -85,6 +85,8 @@ constexpr static LatexTokenChild integralToken[] = {
     {"}", k_noChild},
     {"", Integral::k_integrandIndex},
     {"\\ d", Integral::k_differentialIndex},
+    /* Add a space to separate the variable from the next latex token.
+     * This space is not visible to the user in latex (" " != "\\ " ) */
     {" ", k_noChild}};
 constexpr static int k_integrandIndexInIntegralToken = 3;
 constexpr static int k_variableIndexInIntegralToken = 4;

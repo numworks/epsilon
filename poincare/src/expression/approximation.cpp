@@ -537,19 +537,45 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       if (!ctx || !ctx->m_localContext) {
         return NAN;
       }
-      // TODO_PCJ: Use template with LocalContext
+      // TODO_Hugo: Use template with LocalContext
       std::complex<double> z = ctx->variable(Variables::Id(e));
       return std::complex<T>(z.real(), z.imag());
     }
-    case Type::UserSymbol:
     case Type::UserFunction:
+    case Type::UserSymbol: {
       // Global variable
-      return NAN;
+      if (!ctx || !ctx->m_symbolContext) {
+        return NAN;
+      }
+      const Tree* definition = ctx->m_symbolContext->treeForSymbolIdentifier(e);
+      if (!definition) {
+        return NAN;
+      }
+      if (e->isUserSymbol()) {
+        return ToComplex<T>(definition, ctx);
+      }
+      std::complex<T> x = ToComplex<T>(e->child(0), ctx);
+      if (std::isnan(x.real()) || std::isnan(x.imag())) {
+        return NAN;
+      }
+      Tree* definitionClone = definition->cloneTree();
+      // Only approximate child once and use local context.
+      Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
+                               ComplexSign::Unknown());
+      Context copyCtx = *ctx;
+      LocalContext localCtx = LocalContext(x, ctx->m_localContext);
+      copyCtx.m_localContext = &localCtx;
+      std::complex<T> result = ToComplex<T>(definitionClone, &copyCtx);
+      definitionClone->removeTree();
+      return result;
+    }
     case Type::UserSequence: {
       T rank = To<T>(e->child(0), ctx);
       if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
+      /* TODO_PCJ: Sequence are not replaced by their definition on projection,
+       * GlobalContext is therefore used. */
       return Poincare::Context::GlobalContext->approximateSequenceAtRank(
           Internal::Symbol::GetName(e), rank);
     }

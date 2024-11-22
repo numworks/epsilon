@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
@@ -45,7 +46,9 @@ void approximates_to(const char* input, const char* output,
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree, Approximation::Parameter(true, true, false, false),
             Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat)));
+                                   projectionContext.m_complexFormat, -1, -1,
+                                   Random::Context(false), nullptr,
+                                   projectionContext.m_context)));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext);
@@ -334,4 +337,19 @@ QUIZ_CASE(pcj_approximation_decimal) {
   approximates_to(283495231.00_e, 283495231.f);
   approximates_to(2834952310.0_e, 2834952310.f);
   approximates_to(28349523100_e, 28349523100.f);
+}
+
+QUIZ_CASE(pcj_approximation_with_context) {
+  Shared::GlobalContext globalContext;
+  store("2x+5→f(x)", &globalContext);
+  store("π+1→a", &globalContext);
+  ProjectionContext ctx = {
+      .m_context = &globalContext,
+      .m_complexFormat = ComplexFormat::Cartesian,
+  };
+
+  approximates_to<float>("a", "4.141593", ctx);
+  approximates_to<float>("f(a)", "13.28319", ctx);
+  approximates_to<float>("f(a+i)", "13.28319+2×i", ctx);
+  approximates_to<float>("z", "undef", ctx);
 }

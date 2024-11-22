@@ -52,14 +52,14 @@ class Approximation final {
             int16_t listElement = -1, int16_t pointElement = -1,
             Random::Context randomContext = Random::Context(false),
             LocalContext* localContext = nullptr,
-            // TODO Hugo: Unused for now
             Poincare::Context* symbolContext = nullptr)
         : m_angleUnit(angleUnit),
           m_complexFormat(complexFormat),
           m_listElement(listElement),
           m_pointElement(pointElement),
           m_randomContext(randomContext),
-          m_localContext(localContext) {}
+          m_localContext(localContext),
+          m_symbolContext(symbolContext) {}
     VariableType variable(uint8_t index) const {
       assert(m_localContext);
       return m_localContext->variable(index);
@@ -79,6 +79,7 @@ class Approximation final {
     // TODO Hugo : Maybe better separate const and non const ctx ?
     mutable Random::Context m_randomContext;
     LocalContext* m_localContext;
+    Poincare::Context* m_symbolContext;
   };
 
   class Parameter {

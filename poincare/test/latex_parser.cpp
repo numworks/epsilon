@@ -68,6 +68,15 @@ QUIZ_CASE(pcj_latex_parser_latex_to_layout) {
   assert_latex_layouts_to(
       "\\frac{d^{3}}{dx^{3}}\\left(x^{3}\\right)_{x=2}",
       KRackL(KNthDiffL("x"_l, "2"_l, "3"_l, "x"_l ^ KSuperscriptL("3"_l))));
+  // Wrong diff order -> Parsed as frac
+  assert_latex_layouts_to(
+      "\\frac{d^{2}}{dx^{3}}x",
+      KFracL("d"_l ^ KSuperscriptL("2"_l), "dx"_l ^ KSuperscriptL("3"_l)) ^
+          "x"_l);
+  // Wrong var name -> Parsed as diff(x) + subscript("t=2")
+  assert_latex_layouts_to(
+      "\\frac{d}{dx}\\left(x\\right)_{t=2}",
+      KDiffL("x"_l, "x"_l, "1"_l, "x"_l) ^ KSubscriptL("t=2"_l));
 
   // Symbols
   assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",

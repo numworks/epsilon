@@ -64,9 +64,11 @@ void HistogramMainController::exitHeaderView() {
 void HistogramMainController::enterListView() {
   m_selectedSubview = SelectedSubview::List;
   if (!m_listController.hasSelectedCell()) {
-    m_listController.selectFirstCell();
+    m_listController.selectAndHighlightFirstCell();
+  } else {
+    m_listController.setSelectedCellHighlight(true);
   }
-  m_listController.setSelectedCellHighlight(true);
+
   m_view.setBannerVisibility(true);
   updateBannerView();
 }

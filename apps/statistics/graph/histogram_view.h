@@ -61,7 +61,6 @@ class HistogramCell : public Escher::HighlightCell {
   }
 
   // Transfer HistogramView public API
-  void setDisplayLabels(bool display) { m_view.setDisplayLabels(display); }
   void setSeries(int series) { m_view.setSeries(series); }
 
   // Set bar highlight (which histogram bar is selected)
@@ -73,6 +72,7 @@ class HistogramCell : public Escher::HighlightCell {
   void setHighlighted(bool highlight) override {
     Escher::HighlightCell::setHighlighted(highlight);
     m_view.setFocus(highlight);
+    m_view.setDisplayLabels(highlight);
   }
 
   void reload() { layoutSubviews(); }

@@ -32,7 +32,7 @@ class HistogramListController
   bool handleEvent(Ion::Events::Event event) override;
 
   // Helpers that can be used from the main controller
-  void selectFirstCell();
+  void selectAndHighlightFirstCell();
 
   /* TODO: hasSelectedCell() should be const when
    * SelectableListView::selectedCell() provides a const version */
@@ -40,12 +40,7 @@ class HistogramListController
     return m_selectableListView.selectedCell() != nullptr;
   }
   /* The selected cell in the SelectableListView can be highlighted or not. */
-  void setSelectedCellHighlight(bool isHighlighted) {
-    assert(hasSelectedCell());
-    HistogramCell* selectedCell =
-        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
-    selectedCell->setHighlighted(isHighlighted);
-  }
+  void setSelectedCellHighlight(bool isHighlighted);
 
   // Get the selected series or index from the Snapshot
   std::size_t selectedSeries() const;
@@ -57,6 +52,11 @@ class HistogramListController
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
   KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; };
+
+  /* Set the global highlight of a series on and highlight a certain histogram
+   * bar  */
+  void highlightSeriesAndBar(std::size_t selectedSeries,
+                             std::size_t selectedSeriesIndex);
 
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);

@@ -57,12 +57,6 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
      * HistogramListController. */
     Escher::App::app()->setFirstResponder(parentResponder());
 
-    /* Because SelectableListView lost the firstResponder ownership, the
-     * SelectableTableView::willExitResponderChain function was called. This
-     * function unhighlights the selected cell, so we need to set it
-     * highlighted again. */
-    setSelectedCellHighlight(true);
-
     // Set the current series and index in the snaphot
     setSelectedSeries(m_selectableListView.selectedRow());
     /* The series index of the new selected cell is computed to be close to its
@@ -70,32 +64,50 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     setSelectedSeriesIndex(
         barIndexAfterSelectingNewSeries(previousSelectedSeries));
 
+    setSelectedCellHighlight(true);
+
     m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
                                               selectedSeriesIndex());
-
-    HistogramCell* selectedCell =
-        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
-    selectedCell->setBarHighlight(
-        m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
-        m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
   }
 
   return true;
 }
 
-void HistogramListController::selectFirstCell() {
-  // Select and highlight the first row in the SelectableList View
+void HistogramListController::setSelectedCellHighlight(bool isHighlighted) {
+  assert(hasSelectedCell());
+  assert(selectedSeries() == m_selectableListView.selectedRow());
+
+  if (isHighlighted) {
+    highlightSeriesAndBar(selectedSeries(), selectedSeriesIndex());
+  } else {
+    HistogramCell* selectedCell =
+        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+    selectedCell->setHighlighted(false);
+  }
+}
+
+void HistogramListController::selectAndHighlightFirstCell() {
+  // Select the first row in the SelectableList View
   m_selectableListView.selectFirstRow();
-  setSelectedCellHighlight(true);
   // Set the current series and index in the snaphot
   setSelectedSeries(m_selectableListView.selectedRow());
   setSelectedSeriesIndex(0);
-  // Set the histogram bar highlight
+  setSelectedCellHighlight(true);
+}
+
+void HistogramListController::highlightSeriesAndBar(
+    std::size_t selectedSeries, std::size_t selectedSeriesIndex) {
+  assert(0 <= selectedSeries &&
+         selectedSeries <= m_store->numberOfActiveSeries());
   HistogramCell* selectedCell =
-      static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+      static_cast<HistogramCell*>(m_selectableListView.cell(selectedSeries));
+  selectedCell->setHighlighted(true);
+
+  assert(0 <= selectedSeriesIndex &&
+         selectedSeriesIndex < m_store->numberOfPairsOfSeries(selectedSeries));
   selectedCell->setBarHighlight(
-      m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
-      m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
+      m_store->startOfBarAtIndex(selectedSeries, selectedSeriesIndex),
+      m_store->endOfBarAtIndex(selectedSeries, selectedSeriesIndex));
 }
 
 std::size_t HistogramListController::selectedSeries() const {

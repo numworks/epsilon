@@ -56,7 +56,7 @@ class HistogramMainController : public Escher::ViewController,
   Poincare::Range1D<double> activeSeriesRange() const;
   void initBarParameters();
   void initRangeParameters();
-  void initYRangeParameters(int series);
+  void initYRangeParameters();
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
 
   // Model

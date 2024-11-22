@@ -270,8 +270,7 @@ void HistogramMainController::initBarParameters() {
   m_store->setBarWidth(barWidth);
 }
 
-void HistogramMainController::initYRangeParameters(int series) {
-  assert(m_store->seriesIsActive(series));
+void HistogramMainController::initYRangeParameters() {
   /* Height of drawn bar are relative to the maximal bar of the series, so all
    * displayed series need the same range of [0,1]. */
   float yMax = 1.0f + HistogramRange::k_displayTopMarginRatio;
@@ -288,8 +287,7 @@ void HistogramMainController::initYRangeParameters(int series) {
    * viewHeight)
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
-  float viewHeight = static_cast<float>(m_listController.rowHeight(
-      m_listController.selectedRow()));  // TODO: dedicated function
+  float viewHeight = static_cast<float>(HistogramListController::k_rowHeight);
   float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
 
   m_histogramRange.setYRange(yMin, yMax);
@@ -330,10 +328,7 @@ void HistogramMainController::initRangeParameters() {
       min - HistogramRange::k_displayLeftMarginRatio * (max - min),
       max + HistogramRange::k_displayRightMarginRatio * (max - min));
 
-  // TODO: how to handle this?
-  if (m_listController.hasSelectedCell()) {
-    initYRangeParameters(m_listController.selectedSeries());
-  }
+  initYRangeParameters();
 }
 
 }  // namespace Statistics

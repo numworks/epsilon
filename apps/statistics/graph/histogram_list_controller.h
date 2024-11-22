@@ -49,10 +49,12 @@ class HistogramListController
   std::size_t selectedSeries() const;
   std::size_t selectedSeriesIndex() const;
 
+  static constexpr KDCoordinate k_rowHeight = 75;
+
  private:
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
-  KDCoordinate nonMemoizedRowHeight(int row) override { return 75; };
+  KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; };
 
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);

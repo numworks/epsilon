@@ -84,14 +84,18 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramListController::selectFirstCell() {
-  /* Three actions are needed: selecting the first row in SelectableListView,
-   * highlighting the selected cell, and updating the selected series in the
-   * snapshot */
+  // Select and highlight the first row in the SelectableList View
   m_selectableListView.selectFirstRow();
   setSelectedCellHighlight(true);
   // Set the current series and index in the snaphot
   setSelectedSeries(m_selectableListView.selectedRow());
   setSelectedSeriesIndex(0);
+  // Set the histogram bar highlight
+  HistogramCell* selectedCell =
+      static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+  selectedCell->setBarHighlight(
+      m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
+      m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
 }
 
 std::size_t HistogramListController::selectedSeries() const {

@@ -44,10 +44,10 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     return true;
   }
 
+  std::size_t previousSelectedSeries = selectedRow();
   if (!m_selectableListView.handleEvent(event)) {
     return false;
   }
-
   if (hasSelectedCell()) {
     /* If the SelectableListView handled the event by selecting a new cell,
      * then it took the firstResponder ownership. However we want
@@ -68,7 +68,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     /* The series index of the new selected cell is computed to be close to its
      * previous location in the neighbouring cell */
     setSelectedSeriesIndex(
-        sanitizeSelectedIndex(selectedSeries(), selectedSeriesIndex()));
+        barIndexAfterSelectingNewSeries(previousSelectedSeries));
 
     m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
                                               selectedSeriesIndex());
@@ -167,6 +167,49 @@ std::size_t HistogramListController::sanitizeSelectedIndex(
   }
   assert(selectedIndex < numberOfBars);
   return selectedIndex;
+}
+
+std::size_t HistogramListController::barIndexAfterSelectingNewSeries(
+    std::size_t previousSelectedSeries) const {
+  /* In the simple following case, when all bars are aligned, the selected
+   * index should not change:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *           _ _ _ _
+   * series2: | | | | |
+   *             ^ select index 1 when moving down
+   *
+   * But in the case where bars do not start on the same spot, selected index
+   * should be offsetted so that you always select the bar just above or under
+   * the previously selected one:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *             _ _ _
+   * series2:   | | | |
+   *             ^ select index 0 when moving down
+   *
+   * At the end of this method, the selected index should be sanitized so that
+   * an empty bar is never selected:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *           _     _
+   * series2: | |_ _| |
+   *           ^ select index 0 when moving down
+   * */
+  double startDifference =
+      m_store->startOfBarAtIndex(previousSelectedSeries, 0) -
+      m_store->startOfBarAtIndex(selectedSeries(), 0);
+  std::size_t newSelectedIndex =
+      (selectedSeriesIndex() +
+       static_cast<int>(startDifference / m_store->barWidth()));
+  newSelectedIndex =
+      std::max(std::min(static_cast<int>(newSelectedIndex),
+                        m_store->numberOfBars(selectedSeries()) - 1),
+               0);
+  return sanitizeSelectedIndex(selectedSeries(), newSelectedIndex);
 }
 
 }  // namespace Statistics

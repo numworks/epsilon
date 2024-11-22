@@ -66,6 +66,8 @@ class HistogramListController
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
   std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,
                                     std::size_t initialSelectedIndex) const;
+  std::size_t barIndexAfterSelectingNewSeries(
+      std::size_t previousSelectedSeries) const;
 
   // Maximum number of histograms displayed on the same screen
   constexpr static std::size_t k_displayedHistograms = 4;

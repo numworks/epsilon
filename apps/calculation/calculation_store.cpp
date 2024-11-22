@@ -126,7 +126,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       /* Push a new, empty Calculation */
       current = reinterpret_cast<Calculation*>(cursor);
       cursor = pushEmptyCalculation(
-          cursor,
+          &cursor,
           Poincare::Preferences::SharedPreferences()->calculationPreferences(),
           &current);
 
@@ -137,7 +137,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
       char* nextCursor = pushExpressionTree(
-          cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits,
+          &cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits,
           &current);
       if (nextCursor == k_pushError) {
         // leave the calculation undefined
@@ -232,7 +232,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         i == 0 ? exactOutputExpression : approximateOutputExpression;
     int digits = PrintFloat::k_maxNumberOfSignificantDigits;
 
-    char* nextCursor = pushExpressionTree(cursor, e, digits, &current);
+    char* nextCursor = pushExpressionTree(&cursor, e, digits, &current);
     if (nextCursor == k_pushError) {
       // not enough space, leave undef
       continue;
@@ -240,6 +240,10 @@ ExpiringPointer<Calculation> CalculationStore::push(
     assert(i == 0 || i == 1);
     (i == 0 ? current->m_exactOutputTreeSize
             : current->m_approximatedOutputTreeSize) = nextCursor - cursor;
+    assert(i == 0 ? current->m_exactOutputTreeSize ==
+                        exactOutputExpression.tree()->treeSize()
+                  : current->m_approximatedOutputTreeSize ==
+                        approximateOutputExpression.tree()->treeSize());
     cursor = nextCursor;
   }
 
@@ -326,42 +330,42 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
  * single pushCalculation that would safely set the trees and their sizes.
  */
 
-char* CalculationStore::getEmptySpace(char* location, size_t neededSize,
+char* CalculationStore::getEmptySpace(char** location, size_t neededSize,
                                       Calculation** current) {
-  while (spaceForNewCalculations(location) < neededSize) {
+  while (spaceForNewCalculations(*location) < neededSize) {
     if (numberOfCalculations() == 0) {
       return k_pushError;
     }
-    int deleted = deleteOldestCalculation(location);
-    location -= deleted;
+    int deleted = deleteOldestCalculation(*location);
+    *location -= deleted;
     *current = reinterpret_cast<Calculation*>(
         reinterpret_cast<char*>(*current) - deleted);
   }
-  return location;
+  return *location;
 }
 
 char* CalculationStore::pushEmptyCalculation(
-    char* location,
+    char** location,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     Calculation** current) {
-  location = getEmptySpace(location, k_calculationMinimalSize, current);
-  if (location == k_pushError) {
+  *location = getEmptySpace(location, k_calculationMinimalSize, current);
+  if (*location == k_pushError) {
     return k_pushError;
   }
-  new (location) Calculation(calculationPreferences);
-  return location + sizeof(Calculation);
+  new (*location) Calculation(calculationPreferences);
+  return *location + sizeof(Calculation);
 }
 
-char* CalculationStore::pushExpressionTree(char* location, UserExpression e,
+char* CalculationStore::pushExpressionTree(char** location, UserExpression e,
                                            int numberOfSignificantDigits,
                                            Calculation** current) {
   size_t length = e.tree()->treeSize();
-  location = getEmptySpace(location, length, current);
-  if (location == k_pushError) {
+  *location = getEmptySpace(location, length, current);
+  if (*location == k_pushError) {
     return k_pushError;
   }
-  memcpy(location, e.tree(), length);
-  return location + length;
+  memcpy(*location, e.tree(), length);
+  return *location + length;
 }
 
 }  // namespace Calculation

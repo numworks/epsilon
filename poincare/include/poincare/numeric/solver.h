@@ -232,7 +232,7 @@ class Solver {
                             DiscontinuityEvaluation discontinuityTest);
   void honeAndRoundDiscontinuitySolution(FunctionEvaluation f, const void* aux,
                                          T start, T end);
-  Solution registerSolution(Solution solution);
+  Solution registerSolution(Solution solution, bool wasQueued = false);
   Solution registerRoot(T x) {
     return registerSolution(Solution(x, k_zero, Interest::Root));
   }

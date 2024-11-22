@@ -39,7 +39,7 @@ typename Solver<T>::Solution Solver<T>::next(
   while ((m_xStart < p3.x()) == (p3.x() < m_xEnd)) {
     // Check if there is a solution in the queue
     if (!m_solutionQueue.isEmpty()) {
-      return registerSolution(m_solutionQueue.pop());
+      return registerSolution(m_solutionQueue.pop(), true);
     }
 
     p1 = p2;
@@ -807,11 +807,13 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
 }
 
 template <typename T>
-typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution) {
+typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
+                                                         bool wasQueued) {
   if (std::isnan(solution.x())) {
     return Solution();
   }
-  // TODO: restore assert(validSolution(solution.x()));
+  assert((wasQueued && solution.x() == m_xStart) ||
+         (!wasQueued && validSolution(solution.x())));
   if (std::fabs(solution.y()) < NullTolerance(solution.x())) {
     solution.setY(k_zero);
   }

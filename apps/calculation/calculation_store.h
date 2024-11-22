@@ -70,7 +70,8 @@ class CalculationStore {
                                 ::Constant::MaxSerializedExpressionSize;
 
  private:
-  static constexpr char* k_pushError = nullptr;
+  static constexpr char* k_pushErrorLocation = nullptr;
+  static constexpr size_t k_pushErrorSize = 0;
 
   char* pointerArea() const {
     return m_buffer + m_bufferSize -
@@ -92,19 +93,17 @@ class CalculationStore {
                                            endOfTemporaryData);
   }
 
-  /* Push helper methods return a pointer to the end of the pushed content, or
-   * k_pushError if the content was not pushed. They also take the current
-   * location and the current calculation to update them if some older
-   * calculations are cleared. */
-  char* getEmptySpace(char** location, size_t neededSize,
-                      Calculation** current);
-  char* pushEmptyCalculation(
-      char** location,
-      Poincare::Preferences::CalculationPreferences calculationPreferences,
-      Calculation** current);
-  char* pushExpressionTree(char** location, Poincare::UserExpression e,
-                           int numberOfSignificantDigits,
-                           Calculation** current);
+  /* Make space for calculation. Update the location and current calculation if
+   * some older calculations are cleared. */
+  void getEmptySpace(char** location, size_t neededSize, Calculation** current);
+
+  /* Push helper methods take the current location and update it to the end of
+   * the pushed content, or k_pushError if the content was not pushed. They also
+   * update the current calculation if some older calculations are cleared.
+   * Return the size of the pushed content. */
+  size_t pushEmptyCalculation(char** location, Calculation** current);
+  size_t pushExpressionTree(char** location, Poincare::UserExpression e,
+                            Calculation** current);
 
   char* const m_buffer;
   const size_t m_bufferSize;

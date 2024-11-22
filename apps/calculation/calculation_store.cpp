@@ -125,26 +125,23 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       /* Push a new, empty Calculation */
       current = reinterpret_cast<Calculation*>(cursor);
-      cursor = pushEmptyCalculation(
-          &cursor,
-          Poincare::Preferences::SharedPreferences()->calculationPreferences(),
-          &current);
+      pushEmptyCalculation(&cursor, &current);
 
-      assert(cursor != k_pushError);
+      assert(cursor != k_pushErrorLocation);
 
       /* Push the input */
       inputExpression = UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      char* nextCursor = pushExpressionTree(
-          &cursor, inputExpression, PrintFloat::k_maxNumberOfSignificantDigits,
-          &current);
-      if (nextCursor == k_pushError) {
+      const size_t sizeOfExpression =
+          pushExpressionTree(&cursor, inputExpression, &current);
+      if (sizeOfExpression == k_pushErrorSize) {
+        assert(cursor == k_pushErrorLocation);
         // leave the calculation undefined
         return current;
       }
-      current->m_inputTreeSize = nextCursor - cursor;
-      cursor = nextCursor;
+      assert(sizeOfExpression == inputExpression.tree()->treeSize());
+      current->m_inputTreeSize = sizeOfExpression;
 
       /* Parse and compute the expression */
       assert(!inputExpression.isUninitialized());
@@ -224,27 +221,24 @@ ExpiringPointer<Calculation> CalculationStore::push(
     exactOutputExpression = Undefined::Builder();
   }
 
-  /* Push the outputs: exact output, and approximate output with maximum
-   * number of significant digits and displayed number of digits.
+  /* Push exact output and approximate output.
    * If one is too big for the store, push undef instead. */
   for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
     UserExpression e =
         i == 0 ? exactOutputExpression : approximateOutputExpression;
-    int digits = PrintFloat::k_maxNumberOfSignificantDigits;
-
-    char* nextCursor = pushExpressionTree(&cursor, e, digits, &current);
-    if (nextCursor == k_pushError) {
+    const size_t sizeOfExpression = pushExpressionTree(&cursor, e, &current);
+    if (sizeOfExpression == k_pushErrorSize) {
+      assert(cursor == k_pushErrorLocation);
       // not enough space, leave undef
       continue;
     }
-    assert(i == 0 || i == 1);
+    assert((i == 0 &&
+            sizeOfExpression == exactOutputExpression.tree()->treeSize()) ||
+           (i == 1 && sizeOfExpression ==
+                          approximateOutputExpression.tree()->treeSize()));
+
     (i == 0 ? current->m_exactOutputTreeSize
-            : current->m_approximatedOutputTreeSize) = nextCursor - cursor;
-    assert(i == 0 ? current->m_exactOutputTreeSize ==
-                        exactOutputExpression.tree()->treeSize()
-                  : current->m_approximatedOutputTreeSize ==
-                        approximateOutputExpression.tree()->treeSize());
-    cursor = nextCursor;
+            : current->m_approximatedOutputTreeSize) = sizeOfExpression;
   }
 
   /* All data has been appended, store the pointer to the end of the
@@ -330,42 +324,42 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
  * single pushCalculation that would safely set the trees and their sizes.
  */
 
-char* CalculationStore::getEmptySpace(char** location, size_t neededSize,
-                                      Calculation** current) {
+void CalculationStore::getEmptySpace(char** location, size_t neededSize,
+                                     Calculation** current) {
   while (spaceForNewCalculations(*location) < neededSize) {
     if (numberOfCalculations() == 0) {
-      return k_pushError;
+      *location = k_pushErrorLocation;
+      return;
     }
     int deleted = deleteOldestCalculation(*location);
     *location -= deleted;
     *current = reinterpret_cast<Calculation*>(
         reinterpret_cast<char*>(*current) - deleted);
   }
-  return *location;
 }
 
-char* CalculationStore::pushEmptyCalculation(
-    char** location,
-    Poincare::Preferences::CalculationPreferences calculationPreferences,
-    Calculation** current) {
-  *location = getEmptySpace(location, k_calculationMinimalSize, current);
-  if (*location == k_pushError) {
-    return k_pushError;
+size_t CalculationStore::pushEmptyCalculation(char** location,
+                                              Calculation** current) {
+  getEmptySpace(location, k_calculationMinimalSize, current);
+  if (*location == k_pushErrorLocation) {
+    return k_pushErrorSize;
   }
-  new (*location) Calculation(calculationPreferences);
-  return *location + sizeof(Calculation);
+  new (*location) Calculation(
+      Poincare::Preferences::SharedPreferences()->calculationPreferences());
+  *location += sizeof(Calculation);
+  return sizeof(Calculation);
 }
 
-char* CalculationStore::pushExpressionTree(char** location, UserExpression e,
-                                           int numberOfSignificantDigits,
-                                           Calculation** current) {
+size_t CalculationStore::pushExpressionTree(char** location, UserExpression e,
+                                            Calculation** current) {
   size_t length = e.tree()->treeSize();
-  *location = getEmptySpace(location, length, current);
-  if (*location == k_pushError) {
-    return k_pushError;
+  getEmptySpace(location, length, current);
+  if (*location == k_pushErrorLocation) {
+    return k_pushErrorSize;
   }
   memcpy(*location, e.tree(), length);
-  return *location + length;
+  *location += length;
+  return length;
 }
 
 }  // namespace Calculation

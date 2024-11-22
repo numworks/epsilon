@@ -42,7 +42,9 @@ class HistogramListController
   /* The selected cell in the SelectableListView can be highlighted or not. */
   void setSelectedCellHighlight(bool isHighlighted) {
     assert(hasSelectedCell());
-    m_selectableListView.selectedCell()->setHighlighted(isHighlighted);
+    HistogramCell* selectedCell =
+        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+    selectedCell->setHighlighted(isHighlighted);
   }
 
   // Get the selected series or index from the Snapshot

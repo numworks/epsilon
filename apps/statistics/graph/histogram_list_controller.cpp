@@ -72,6 +72,12 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 
     m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
                                               selectedSeriesIndex());
+
+    HistogramCell* selectedCell =
+        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+    selectedCell->setBarHighlight(
+        m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
+        m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
   }
 
   return true;
@@ -126,7 +132,11 @@ bool HistogramListController::moveSelectionHorizontally(
       selectedSeriesIndex() != newSelectedBarIndex) {
     setSelectedSeriesIndex(newSelectedBarIndex);
 
-    // TODO: handle histogram bar highlight
+    HistogramCell* selectedCell =
+        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
+    selectedCell->setBarHighlight(
+        m_store->startOfBarAtIndex(selectedSeries(), selectedSeriesIndex()),
+        m_store->endOfBarAtIndex(selectedSeries(), selectedSeriesIndex()));
     return true;
   }
   return false;

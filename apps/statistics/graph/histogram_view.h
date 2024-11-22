@@ -62,11 +62,14 @@ class HistogramCell : public Escher::HighlightCell {
 
   // Transfer HistogramView public API
   void setDisplayLabels(bool display) { m_view.setDisplayLabels(display); }
-  void setBarHighlight(double start, double end) {
-    m_view.setBarHighlight(start, end);
-  }
   void setSeries(int series) { m_view.setSeries(series); }
 
+  // Set bar highlight (which histogram bar is selected)
+  void setBarHighlight(double barHighlightStart, double barHighlightEnd) {
+    m_view.setBarHighlight(barHighlightStart, barHighlightEnd);
+  }
+
+  // Set global cell highlight, that will automatically be managed by the list
   void setHighlighted(bool highlight) override {
     Escher::HighlightCell::setHighlighted(highlight);
     m_view.setFocus(highlight);

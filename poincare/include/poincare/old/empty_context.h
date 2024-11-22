@@ -17,15 +17,15 @@ class EmptyContext : public Context {
                                                  int length) override {
     return SymbolAbstractType::None;
   }
-  bool setExpressionForSymbolAbstract(const JuniorExpression& expression,
-                                      const SymbolAbstract& symbol) override {
+  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
+                                      const Internal::Tree* symbol) override {
     assert(false);
     return false;
   }
 
  protected:
-  const JuniorExpression protectedExpressionForSymbolAbstract(
-      const SymbolAbstract& symbol, bool clone,
+  const Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Internal::Tree* symbol,
       ContextWithParent* lastDescendantContext) override;
 };
 

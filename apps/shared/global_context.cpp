@@ -10,6 +10,7 @@
 #include <poincare/old/function.h>
 #include <poincare/old/junior_expression.h>
 #include <poincare/old/symbol.h>
+#include <poincare/src/expression/symbol.h>
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"
@@ -104,10 +105,14 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
   }
 }
 
-const UserExpression GlobalContext::protectedExpressionForSymbolAbstract(
-    const Poincare::SymbolAbstract& symbol, bool clone,
+const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
+    const Internal::Tree* symbolTree,
     Poincare::ContextWithParent* lastDescendantContext) {
-  Ion::Storage::Record r = SymbolAbstractRecordWithBaseName(symbol.name());
+  Ion::Storage::Record r =
+      SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbolTree));
+  // TODO: pass Tree* to all the methods to avoid temporary pool objects
+  UserExpression symbolExpression = UserExpression::Builder(symbolTree);
+  SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
   return expressionForSymbolAndRecord(
       symbol, r,
       lastDescendantContext ? static_cast<Context*>(lastDescendantContext)
@@ -115,7 +120,10 @@ const UserExpression GlobalContext::protectedExpressionForSymbolAbstract(
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(
-    const UserExpression& expression, const SymbolAbstract& symbol) {
+    const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
+  UserExpression expression = UserExpression::Builder(expressionTree);
+  UserExpression symbolExpression = UserExpression::Builder(symbolTree);
+  SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());

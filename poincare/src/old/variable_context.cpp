@@ -2,15 +2,11 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/symbol.h>
 
 #include <cmath>
 
 namespace Poincare {
-
-template <typename T>
-void VariableContext::setApproximationForVariable(T value) {
-  m_value = Expression::Builder<T>(value);
-}
 
 Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
@@ -22,32 +18,30 @@ Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
 }
 
 bool VariableContext::setExpressionForSymbolAbstract(
-    const Expression& expression, const SymbolAbstract& symbol) {
-  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
-    assert(symbol.isUserSymbol());
-    if (expression.isUninitialized()) {
+    const Internal::Tree* expression, const Internal::Tree* symbol) {
+  if (m_name != nullptr &&
+      strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
+    assert(symbol->isUserSymbol());
+    if (!expression) {
       return false;
     }
-    m_value = expression.clone();
+    m_value = expression;
     return true;
   }
   return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
-const Expression VariableContext::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract& symbol, bool clone,
-    ContextWithParent* lastDescendantContext) {
-  if (m_name != nullptr && strcmp(symbol.name(), m_name) == 0) {
-    if (symbol.isUserSymbol()) {
-      return clone ? m_value.clone() : m_value;
+const Internal::Tree* VariableContext::protectedExpressionForSymbolAbstract(
+    const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+  if (m_name != nullptr &&
+      strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
+    if (symbol->isUserSymbol()) {
+      return m_value;
     }
-    return Undefined::Builder();
+    return Internal::KTrees::KUndef;
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
-      symbol, clone, lastDescendantContext);
+      symbol, lastDescendantContext);
 }
-
-template void VariableContext::setApproximationForVariable(float);
-template void VariableContext::setApproximationForVariable(double);
 
 }  // namespace Poincare

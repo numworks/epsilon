@@ -18,19 +18,19 @@ class ContextWithParent : public Context {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }
-  bool setExpressionForSymbolAbstract(const Expression& expression,
-                                      const SymbolAbstract& symbol) override {
+  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
+                                      const Internal::Tree* symbol) override {
     assert(m_parentContext);
     return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
   }
 
  protected:
-  const Expression protectedExpressionForSymbolAbstract(
-      const SymbolAbstract& symbol, bool clone,
+  const Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Internal::Tree* symbol,
       ContextWithParent* lastDescendantContext) override {
     assert(m_parentContext);
     return m_parentContext->protectedExpressionForSymbolAbstract(
-        symbol, clone,
+        symbol,
         lastDescendantContext == nullptr ? this : lastDescendantContext);
   }
 

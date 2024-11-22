@@ -114,19 +114,19 @@ JuniorExpression SymbolAbstract::Expand(
     const SymbolAbstract &symbol, Context *context, bool clone,
     SymbolicComputation symbolicComputation) {
   assert(context);
+#if 0
   JuniorExpression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. Symbols defined in a parametered function
    * will be preserved as long as the function is defined within this symbol. */
-#if 0
   e = JuniorExpression::ExpressionWithoutSymbols(e, context,
                                                  symbolicComputation);
-#endif
   if (!e.isUninitialized() && symbol.isUserFunction()) {
     e = JuniorExpression::Create(KDep(KA, KDepList(KB)),
                                  {.KA = e, .KB = symbol.tree()->child(0)});
   }
   return e;
+#endif
 }
 
 }  // namespace Poincare

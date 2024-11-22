@@ -4,10 +4,9 @@
 
 namespace Poincare {
 
-const JuniorExpression EmptyContext::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract& symbol, bool clone,
-    ContextWithParent* lastDescendantContext) {
-  return JuniorExpression();
+const Internal::Tree* EmptyContext::protectedExpressionForSymbolAbstract(
+    const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+  return nullptr;  // TODO KUndef ?
 }
 
 }  // namespace Poincare

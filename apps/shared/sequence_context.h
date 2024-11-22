@@ -39,8 +39,8 @@ class SequenceContext : public Poincare::ContextWithParent {
   constexpr static int k_numberOfSequences =
       SequenceStore::k_maxNumberOfSequences;
 
-  const Poincare::UserExpression protectedExpressionForSymbolAbstract(
-      const Poincare::SymbolAbstract& symbol, bool clone,
+  const Poincare::Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Poincare::Internal::Tree* symbol,
       ContextWithParent* lastDescendantContext) override;
   Poincare::Internal::SequenceCache* cache();
   SequenceStore* m_sequenceStore;

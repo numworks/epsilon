@@ -17,22 +17,21 @@ class VariableContext : public ContextWithParent {
         m_name(symbol.name()),
         m_value(symbol) {}
 
-  template <typename T>
-  void setApproximationForVariable(T value);
   // Context
   SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override;
-  bool setExpressionForSymbolAbstract(const Expression& expression,
-                                      const SymbolAbstract& symbol) override;
+  // The provided expression needs to outlive the VariableContext
+  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
+                                      const Internal::Tree* symbol) override;
 
  protected:
-  const Expression protectedExpressionForSymbolAbstract(
-      const SymbolAbstract& symbol, bool clone,
+  const Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Internal::Tree* symbol,
       ContextWithParent* lastDescendantContext) override;
 
  private:
   const char* m_name;
-  Expression m_value;
+  const Internal::Tree* m_value;
 };
 
 }  // namespace Poincare

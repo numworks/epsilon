@@ -24,6 +24,7 @@
 #include <poincare/old/parenthesis.h>
 #include <poincare/old/piecewise_operator.h>
 #include <poincare/old/point_evaluation.h>
+#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/power.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/real_part.h>
@@ -32,7 +33,6 @@
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
-#include <poincare/old/variable_context.h>
 #include <poincare/src/layout/layouter.h>
 
 #include <cmath>

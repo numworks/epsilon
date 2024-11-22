@@ -399,12 +399,14 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
           solution->exactAndApproximateAreEqual());
     } else {
       // It's a user variable row, get values of the solutions or discriminant
-      const char* symbol =
+      const char* symbolName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      Layout layout = PoincareHelpers::CreateLayout(
+      Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
+      UserExpression value = UserExpression::Builder(
           App::app()->localContext()->expressionForSymbolAbstract(
-              Symbol::Builder(symbol, strlen(symbol)), false),
-          App::app()->localContext());
+              symbol.tree()));
+      Layout layout =
+          PoincareHelpers::CreateLayout(value, App::app()->localContext());
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
                                                                layout);
     }
@@ -449,12 +451,13 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
     return k_defaultCellHeight;
   }
   // TODO: memoize user symbols if too slow
-  const char* symbol =
+  const char* symbolName =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
-  Layout layout = PoincareHelpers::CreateLayout(
-      App::app()->localContext()->expressionForSymbolAbstract(
-          Symbol::Builder(symbol, strlen(symbol)), false),
-      App::app()->localContext());
+  Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
+  UserExpression value = UserExpression::Builder(
+      App::app()->localContext()->expressionForSymbolAbstract(symbol.tree()));
+  Layout layout =
+      PoincareHelpers::CreateLayout(value, App::app()->localContext());
   return layout->layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;
 }

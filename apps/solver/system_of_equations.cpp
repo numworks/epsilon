@@ -75,16 +75,15 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   return error;
 }
 
-const UserExpression
+const Internal::Tree*
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract& symbol, bool clone,
-    ContextWithParent* lastDescendantContext) {
-  if (symbol.isUserSymbol() &&
-      static_cast<const Symbol&>(symbol).name()[0] == 't') {
+    const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+  if (symbol->isUserSymbol() &&
+      strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {
     return UserExpression();
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
-      symbol, clone, lastDescendantContext);
+      symbol, lastDescendantContext);
 }
 
 #if 0

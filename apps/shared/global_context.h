@@ -56,8 +56,8 @@ class GlobalContext final : public Poincare::Context {
   SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override;
   bool setExpressionForSymbolAbstract(
-      const Poincare::UserExpression& expression,
-      const Poincare::SymbolAbstract& symbol) override;
+      const Poincare::Internal::Tree* expression,
+      const Poincare::Internal::Tree* symbol) override;
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
   static OMG::GlobalBox<Poincare::Internal::SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
@@ -70,8 +70,8 @@ class GlobalContext final : public Poincare::Context {
 
  private:
   // Expression getters
-  const Poincare::UserExpression protectedExpressionForSymbolAbstract(
-      const Poincare::SymbolAbstract& symbol, bool clone,
+  const Poincare::Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Poincare::Internal::Tree* symbol,
       Poincare::ContextWithParent* lastDescendantContext) override;
   const Poincare::UserExpression expressionForSymbolAndRecord(
       const Poincare::SymbolAbstract& symbol, Ion::Storage::Record r,

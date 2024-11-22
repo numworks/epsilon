@@ -8,23 +8,18 @@ namespace Poincare {
 
 Context* Context::GlobalContext = nullptr;
 
-const Expression Context::expressionForSymbolAbstract(
-    const SymbolAbstract& symbol, bool clone) {
-  return protectedExpressionForSymbolAbstract(symbol, clone, nullptr);
+const Internal::Tree* Context::expressionForSymbolAbstract(
+    const Internal::Tree* symbol) {
+  return protectedExpressionForSymbolAbstract(symbol, nullptr);
 }
 
 const Internal::Tree* Context::treeForSymbolIdentifier(
     const char* identifier, int length, SymbolAbstractType type) {
   if (type == SymbolAbstractType::Symbol) {
-    return expressionForSymbolAbstract(Symbol::Builder(identifier, length),
-                                       false)
-        .tree();
+    return expressionForSymbolAbstract(Symbol::Builder(identifier, length));
   } else if (type == SymbolAbstractType::Function) {
-    return expressionForSymbolAbstract(
-               Function::Builder(identifier, length,
-                                 Symbol::Builder(UCodePointUnknown)),
-               false)
-        .tree();
+    return expressionForSymbolAbstract(Function::Builder(
+        identifier, length, Symbol::Builder(UCodePointUnknown)));
   }
   // TODO_PCJ: Not implemented.
   assert(false);

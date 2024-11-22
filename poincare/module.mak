@@ -95,6 +95,7 @@ $(addprefix old/, \
   piecewise_operator.cpp \
   point.cpp \
   point_evaluation.cpp \
+  pool_variable_context.cpp \
   power.cpp \
   randint.cpp \
   randint_no_repeat.cpp \

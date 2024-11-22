@@ -70,12 +70,14 @@ Evaluation<T> SequenceNode::templatedApproximate(
      * reduced for instance). */
     return Complex<T>::Undefined();
   }
+#if 0
   OExpression e =
       approximationContext.context()->expressionForSymbolAbstract(this, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
   return e.node()->approximate(T(), approximationContext);
+#endif
 }
 
 Sequence Sequence::Builder(const char* name, size_t length,

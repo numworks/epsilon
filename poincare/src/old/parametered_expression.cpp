@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/old/parametered_expression.h>
+#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/variable_context.h>
 #include <string.h>
 
 #include "parsing/tokenizer.h"
@@ -68,8 +68,8 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(
     const ApproximationContext& approximationContext) const {
   assert(childAtIndex(1)->otype() == Type::Symbol);
   Symbol symbol = Symbol(static_cast<SymbolNode*>(childAtIndex(1)));
-  VariableContext variableContext =
-      VariableContext(symbol.name(), approximationContext.context());
+  PoolVariableContext variableContext =
+      PoolVariableContext(symbol.name(), approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
   /* Here we cannot use OExpression::approximateToScalarWithValueForSymbol which
    * would reset the sApproximationEncounteredComplex flag. */

@@ -5,11 +5,11 @@
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/piecewise_operator.h>
+#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
-#include <poincare/old/variable_context.h>
 
 namespace Poincare {
 
@@ -212,8 +212,8 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(
     const char* symbol, T x,
     const ApproximationContext& approximationContext) const {
   assert(numberOfChildren() > 0);
-  VariableContext variableContext =
-      VariableContext(symbol, approximationContext.context());
+  PoolVariableContext variableContext =
+      PoolVariableContext(symbol, approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
   ApproximationContext newContext = ApproximationContext(
       &variableContext, approximationContext.complexFormat(),

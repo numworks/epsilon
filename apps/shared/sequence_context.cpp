@@ -4,6 +4,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/signaling_nan.h>
 #include <poincare/expression.h>
+#include <poincare/src/expression/symbol.h>
 
 #include <array>
 #include <cmath>
@@ -18,28 +19,29 @@ SequenceContext::SequenceContext(Context* parentContext,
                                  SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
-const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
-    const SymbolAbstract& symbol, bool clone,
+const Poincare::Internal::Tree*
+SequenceContext::protectedExpressionForSymbolAbstract(
+    const Poincare::Internal::Tree* symbol,
     ContextWithParent* lastDescendantContext) {
-  if (!symbol.isSequence()) {
+  if (!symbol->isSequence()) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
-        symbol, clone, lastDescendantContext);
+        symbol, lastDescendantContext);
   }
   double result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
-  char name = static_cast<const Symbol&>(symbol).name()[0];
+  char name = Internal::Symbol::GetName(symbol)[0];
   int index = SequenceStore::SequenceIndexForName(name);
   Ion::Storage::Record record = sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
     return NewExpression::Builder<double>(result);
   }
-  assert(record.fullName()[0] == symbol.name()[0]);
+  assert(record.fullName()[0] == Internal::Symbol::GetName(symbol)[0]);
   Sequence* seq = sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
     return NewExpression::Builder<double>(result);
   }
-  const UserExpression rankExpression = symbol.cloneChildAtIndex(0).clone();
+  UserExpression rankExpression = UserExpression::Builder(symbol->child(0));
   /* The lastDesendantContext might contain informations on variables
    * that are contained in the rank expression. */
   double rankValue = rankExpression.approximateToScalar<double>(

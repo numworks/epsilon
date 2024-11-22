@@ -12,8 +12,6 @@ class Tree;
 
 namespace Poincare {
 
-class JuniorExpression;
-class SymbolAbstract;
 class ContextWithParent;
 class PoolObject;
 
@@ -30,15 +28,15 @@ class Context {
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                          int length) = 0;
-  const JuniorExpression expressionForSymbolAbstract(
-      const SymbolAbstract& symbol, bool clone);
+  const Internal::Tree* expressionForSymbolAbstract(
+      const Internal::Tree* symbol);
   const Internal::Tree* treeForSymbolIdentifier(const char* identifier,
                                                 int length,
                                                 SymbolAbstractType type);
   const Internal::Tree* treeForSymbolIdentifier(
       const Internal::Tree* identifier);
-  virtual bool setExpressionForSymbolAbstract(
-      const JuniorExpression& expression, const SymbolAbstract& symbol) = 0;
+  virtual bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
+                                              const Internal::Tree* symbol) = 0;
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
@@ -54,8 +52,8 @@ class Context {
    * When getting the expression for a sequence in GlobalContext, you need
    * information on the variable that is stored in the ContextWithParent that
    * called you. */
-  virtual const JuniorExpression protectedExpressionForSymbolAbstract(
-      const SymbolAbstract& symbol, bool clone,
+  virtual const Internal::Tree* protectedExpressionForSymbolAbstract(
+      const Internal::Tree* symbol,
       ContextWithParent* lastDescendantContext) = 0;
 };
 

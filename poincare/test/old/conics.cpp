@@ -1,7 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/function_properties/conic.h>
-#include <poincare/old/variable_context.h>
+#include <poincare/old/pool_variable_context.h>
 #include <poincare/src/expression/simplification.h>
 
 #include "helper.h"
@@ -37,7 +37,7 @@ ParametricConic buildParametricConic(const char* expression) {
                                    .m_context = &globalContext,
                                    .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
-  Poincare::VariableContext tContext("t", &globalContext);
+  Poincare::PoolVariableContext tContext("t", &globalContext);
   tContext.setApproximationForVariable<float>(0.f);
   Tree* e = parse_expression(expression, &tContext);
   Simplification::ProjectAndReduce(e, &projContext);

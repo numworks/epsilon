@@ -674,6 +674,10 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
       return Solution();
     }
     T fRoundX = f(roundX, aux);
+    if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
+      // We might have a discontinuity, the solution might not be valid
+      return Solution();
+    }
     // f(x) is different from the honed solution when searching intersections
     T fx = f(x, aux);
     if (fRoundX == fx ||

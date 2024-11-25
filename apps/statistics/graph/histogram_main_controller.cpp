@@ -46,8 +46,8 @@ void HistogramMainController::viewWillAppear() {
     *m_storeVersion = storeChecksum;
     initBarParameters();
   }
+  enterListView();
   initRangeParameters();
-  m_selectedSubview = SelectedSubview::List;
   m_view.reload();
 }
 
@@ -292,8 +292,7 @@ void HistogramMainController::initYRangeParameters() {
    * viewHeight)
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
-  float viewHeight =
-      static_cast<float>(HistogramListController::k_listRowHeight);
+  float viewHeight = static_cast<float>(m_listController.histogramHeight());
   float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
 
   m_histogramRange.setYRange(yMin, yMax);

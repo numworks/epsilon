@@ -27,7 +27,7 @@ class HistogramListController
   int typeAtRow(int row) const override { return 0; }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override {
-    return std::size(m_displayCells);
+    return m_displayCells.size();
     ;
   }
 

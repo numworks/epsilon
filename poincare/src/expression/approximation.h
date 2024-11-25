@@ -260,8 +260,15 @@ class Approximation final {
   template <typename T>
   static T ApproximateIntegral(const Tree* integral, const Context* ctx);
   template <typename T>
+
   static T ApproximateDerivative(const Tree* function, T at, int order,
                                  const Context* ctx);
+  template <typename T>
+  static T GrowthRateAroundAbscissa(T x, T h, int order, const Tree* child,
+                                    const Context* ctx);
+  template <typename T>
+  static T RiddersApproximation(int order, const Tree* child, T x, T h,
+                                T* error, const Context* ctx);
 
   template <typename T>
   static T ApproximateRandom(const Tree* random, const Context* ctx);

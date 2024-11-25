@@ -5,24 +5,6 @@
 
 namespace Poincare::Internal {
 
-class ApproximationContext;
-
-template <typename T>
-T Approximation::ApproximateDerivative(const Tree* child, T at, int order,
-                                       const Context* ctx) {
-  return scalarApproximateWithValueForArgumentAndOrder(at, order, child, ctx);
-}
-
-template <typename T>
-T scalarApproximateWithValueForArgumentAndOrder(
-    T evaluationArgument, int order, const Tree* child,
-    const Approximation::Context* ctx);
-
-template <typename T>
-T growthRateAroundAbscissa(T x, T h, int order);
-template <typename T>
-T riddersApproximation(int order, const Tree* child, T x, T h, T* error,
-                       const Approximation::Context* ctx);
 // TODO: Change coefficients?
 constexpr static double k_maxErrorRateOnApproximation = 0.001;
 constexpr static double k_minInitialRate = 0.01;
@@ -30,17 +12,16 @@ constexpr static double k_rateStepSize = 1.4;
 constexpr static double k_minSignificantError = 3e-11;
 
 template <typename T>
-T scalarApproximateWithValueForArgumentAndOrder(
-    T evaluationArgument, int order, const Tree* child,
-    const Approximation::Context* ctx) {
+T Approximation::ApproximateDerivative(const Tree* child, T evaluationArgument,
+                                       int order, const Context* ctx) {
   /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return Approximation::ToLocalContext<T>(child, ctx, evaluationArgument);
+    return ToLocalContext<T>(child, ctx, evaluationArgument);
   }
-  T functionValue = scalarApproximateWithValueForArgumentAndOrder(
-      evaluationArgument, order - 1, child, ctx);
+  T functionValue =
+      ApproximateDerivative(child, evaluationArgument, order - 1, ctx);
   if (std::isnan(functionValue)) {
     return NAN;
   }
@@ -51,7 +32,7 @@ T scalarApproximateWithValueForArgumentAndOrder(
   constexpr T tenEpsilon = static_cast<T>(10.0) * OMG::Float::Epsilon<T>();
   do {
     T currentError;
-    T currentResult = riddersApproximation(order, child, evaluationArgument, h,
+    T currentResult = RiddersApproximation(order, child, evaluationArgument, h,
                                            &currentError, ctx);
     h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
@@ -91,18 +72,17 @@ T scalarApproximateWithValueForArgumentAndOrder(
 }
 
 template <typename T>
-T growthRateAroundAbscissa(T x, T h, int order, const Tree* child,
-                           const Approximation::Context* ctx) {
-  T expressionPlus = scalarApproximateWithValueForArgumentAndOrder(
-      x + h, order - 1, child, ctx);
-  T expressionMinus = scalarApproximateWithValueForArgumentAndOrder(
-      x - h, order - 1, child, ctx);
+T Approximation::GrowthRateAroundAbscissa(T x, T h, int order,
+                                          const Tree* child,
+                                          const Context* ctx) {
+  T expressionPlus = ApproximateDerivative(child, x + h, order - 1, ctx);
+  T expressionMinus = ApproximateDerivative(child, x - h, order - 1, ctx);
   return (expressionPlus - expressionMinus) / (h + h);
 }
 
 template <typename T>
-T riddersApproximation(int order, const Tree* child, T x, T h, T* error,
-                       const Approximation::Context* ctx) {
+T Approximation::RiddersApproximation(int order, const Tree* child, T x, T h,
+                                      T* error, const Context* ctx) {
   /* Ridders' Algorithm
    * Blibliography:
    * - Ridders, C.J.F. 1982, Advances in Helperering Software, vol. 4, no. 2,
@@ -121,7 +101,7 @@ T riddersApproximation(int order, const Tree* child, T x, T h, T* error,
       a[i][j] = 1;
     }
   }
-  a[0][0] = growthRateAroundAbscissa(x, hh, order, child, ctx);
+  a[0][0] = GrowthRateAroundAbscissa(x, hh, order, child, ctx);
   T ans = 0;
   T errt = 0;
   // Loop on i: change the step size
@@ -130,7 +110,7 @@ T riddersApproximation(int order, const Tree* child, T x, T h, T* error,
     // Make hh an exactly representable number
     volatile T temp = x + hh;
     hh = temp - x;
-    a[0][i] = growthRateAroundAbscissa(x, hh, order, child, ctx);
+    a[0][i] = GrowthRateAroundAbscissa(x, hh, order, child, ctx);
     T fac = k_rateStepSize * k_rateStepSize;
     // Loop on j: compute extrapolation for several orders
     for (int j = 1; j < 10; j++) {
@@ -160,5 +140,21 @@ template float Approximation::ApproximateDerivative(const Tree* child, float at,
 template double Approximation::ApproximateDerivative(const Tree* child,
                                                      double at, int order,
                                                      const Context* ctx);
+template float Approximation::GrowthRateAroundAbscissa(float x, float h,
+                                                       int order,
+                                                       const Tree* child,
+                                                       const Context* ctx);
+template double Approximation::GrowthRateAroundAbscissa(double x, double h,
+                                                        int order,
+                                                        const Tree* child,
+                                                        const Context* ctx);
+template float Approximation::RiddersApproximation(int order, const Tree* child,
+                                                   float x, float h,
+                                                   float* error,
+                                                   const Context* ctx);
+template double Approximation::RiddersApproximation(int order,
+                                                    const Tree* child, double x,
+                                                    double h, double* error,
+                                                    const Context* ctx);
 
 }  // namespace Poincare::Internal

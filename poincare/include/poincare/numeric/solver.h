@@ -26,8 +26,8 @@ class Solver {
     GlobalMinimum,
     GlobalMaximum,
     Discontinuity,
-    ReachedDiscontinuity,
-    UnreachedDiscontinuity,
+    ReachedDiscontinuity,    // Discontinuity where f(x) is defined
+    UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
     Intersection,
     HorizontalAsymptote,
     YIntercept,

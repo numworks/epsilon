@@ -12,16 +12,15 @@ constexpr static double k_rateStepSize = 1.4;
 constexpr static double k_minSignificantError = 3e-11;
 
 template <typename T>
-T Approximation::ApproximateDerivative(const Tree* child, T evaluationArgument,
-                                       int order, const Context* ctx) {
+T Approximation::ApproximateDerivative(const Tree* child, T at, int order,
+                                       const Context* ctx) {
   /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return ToLocalContext<T>(child, ctx, evaluationArgument);
+    return ToLocalContext<T>(child, ctx, at);
   }
-  T functionValue =
-      ApproximateDerivative(child, evaluationArgument, order - 1, ctx);
+  T functionValue = ApproximateDerivative(child, at, order - 1, ctx);
   if (std::isnan(functionValue)) {
     return NAN;
   }
@@ -32,8 +31,8 @@ T Approximation::ApproximateDerivative(const Tree* child, T evaluationArgument,
   constexpr T tenEpsilon = static_cast<T>(10.0) * OMG::Float::Epsilon<T>();
   do {
     T currentError;
-    T currentResult = RiddersApproximation(order, child, evaluationArgument, h,
-                                           &currentError, ctx);
+    T currentResult =
+        RiddersApproximation(order, child, at, h, &currentError, ctx);
     h /= static_cast<T>(10.0);
     if (std::isnan(currentError) || currentError > error) {
       continue;
@@ -134,27 +133,23 @@ T Approximation::RiddersApproximation(int order, const Tree* child, T x, T h,
   return ans;
 }
 
-template float Approximation::ApproximateDerivative(const Tree* child, float at,
-                                                    int order,
-                                                    const Context* ctx);
-template double Approximation::ApproximateDerivative(const Tree* child,
-                                                     double at, int order,
-                                                     const Context* ctx);
-template float Approximation::GrowthRateAroundAbscissa(float x, float h,
-                                                       int order,
-                                                       const Tree* child,
-                                                       const Context* ctx);
-template double Approximation::GrowthRateAroundAbscissa(double x, double h,
-                                                        int order,
-                                                        const Tree* child,
-                                                        const Context* ctx);
-template float Approximation::RiddersApproximation(int order, const Tree* child,
-                                                   float x, float h,
-                                                   float* error,
-                                                   const Context* ctx);
-template double Approximation::RiddersApproximation(int order,
-                                                    const Tree* child, double x,
-                                                    double h, double* error,
-                                                    const Context* ctx);
+template float Approximation::ApproximateDerivative(const Tree*, float, int,
+                                                    const Context*);
+template double Approximation::ApproximateDerivative(const Tree*, double, int,
+                                                     const Context*);
+
+template float Approximation::GrowthRateAroundAbscissa(float, float, int,
+                                                       const Tree*,
+                                                       const Context*);
+template double Approximation::GrowthRateAroundAbscissa(double, double, int,
+                                                        const Tree*,
+                                                        const Context*);
+
+template float Approximation::RiddersApproximation(int, const Tree*, float,
+                                                   float, float*,
+                                                   const Context*);
+template double Approximation::RiddersApproximation(int, const Tree*, double,
+                                                    double, double*,
+                                                    const Context*);
 
 }  // namespace Poincare::Internal

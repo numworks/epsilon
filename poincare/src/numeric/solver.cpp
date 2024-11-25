@@ -748,8 +748,9 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
       assert(rightIsDiscontinuous);
       left = middle;
     }
+    assert(DiscontinuityTestForExpression(left, right, aux));
   }
-  assert(0 <= right - left && right - left <= precision &&
+  assert(left <= right && right - left <= precision &&
          DiscontinuityTestForExpression(left, right, aux));
 
   T x = MagicRound((left + right) / 2.);

@@ -110,7 +110,7 @@ void Simplification::ProjectAndReduce(Tree* e,
                projectionContext->m_expansionStrategy ==
                    ExpansionStrategy::ExpandAlgebraic);
   // Non-approximated numbers or node may have appeared during reduction.
-  ApplyStrategy(e, projectionContext->m_strategy, true);
+  ApplyStrategy(e, *projectionContext, true);
 }
 
 bool Simplification::BeautifyReduced(Tree* e,
@@ -150,7 +150,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 2 - Update projection context */
   projectionContext->m_dimension = Dimension::Get(e);
   /* 3 - Apply projection strategy */
-  changed = ApplyStrategy(e, projectionContext->m_strategy, false) || changed;
+  changed = ApplyStrategy(e, *projectionContext, false) || changed;
   /* 4 - Project */
   changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
   return changed;
@@ -209,7 +209,7 @@ bool Simplification::HandleUnits(Tree* e,
                                       projectionContext->m_angleUnit)) {
     // Re-apply strategy to make sure introduced integers are floats.
     if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
-      ApplyStrategy(e, projectionContext->m_strategy, true);
+      ApplyStrategy(e, *projectionContext, true);
     }
     ReduceSystem(e, false);
     changed = true;
@@ -218,15 +218,20 @@ bool Simplification::HandleUnits(Tree* e,
       !projectionContext->m_dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
-    ApplyStrategy(e, projectionContext->m_strategy, true);
+    ApplyStrategy(e, *projectionContext, true);
   }
   return changed;
 }
 
-bool Simplification::ApplyStrategy(Tree* e, Strategy strategy,
+bool Simplification::ApplyStrategy(Tree* e,
+                                   const ProjectionContext& projectionContext,
                                    bool reduceIfSuccess) {
-  if (strategy != Strategy::ApproximateToFloat ||
-      !Approximation::ApproximateAndReplaceEveryScalar(e)) {
+  if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
+      !Approximation::ApproximateAndReplaceEveryScalar(
+          e, Approximation::Context(projectionContext.m_angleUnit,
+                                    projectionContext.m_complexFormat, -1, -1,
+                                    Random::Context(false), nullptr,
+                                    projectionContext.m_context))) {
     return false;
   }
   if (reduceIfSuccess) {

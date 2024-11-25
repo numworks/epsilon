@@ -1376,12 +1376,6 @@ static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
 }
 
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
-  if (context.m_angleUnit == AngleUnit::None) {
-    context.m_angleUnit = AngleUnit::Radian;
-  }
-  if (context.m_complexFormat == ComplexFormat::None) {
-    context.m_complexFormat = ComplexFormat::Cartesian;
-  }
   if (SkipApproximation(e->type())) {
     return false;
   }

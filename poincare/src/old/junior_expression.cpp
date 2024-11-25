@@ -349,7 +349,6 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       /* We are using ApproximateAndReplaceEveryScalar to approximate
        * expressions with symbols such as π*x → 3.14*x. */
       Approximation::ApproximateAndReplaceEveryScalar(a, approxCtx);
-      // TODO Hugo: Rework ApproximateAndReplaceEveryScalar to handle complexes.
       *approximatedExpression = Builder(a);
     } else {
       std::complex<double> value = Approximation::ToComplex<double>(

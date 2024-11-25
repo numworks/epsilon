@@ -30,7 +30,8 @@ class Simplification {
                              bool beautify);
 
   static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
-  static bool ApplyStrategy(Tree* e, Strategy strategy, bool reduceIfSuccess);
+  static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
+                            bool reduceIfSuccess);
 };
 
 }  // namespace Poincare::Internal

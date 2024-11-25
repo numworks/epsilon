@@ -49,10 +49,10 @@ class Approximation final {
    public:
     Context(AngleUnit angleUnit = AngleUnit::None,
             ComplexFormat complexFormat = ComplexFormat::None,
+            Poincare::Context* symbolContext = nullptr,
             int16_t listElement = -1, int16_t pointElement = -1,
             Random::Context randomContext = Random::Context(false),
-            LocalContext* localContext = nullptr,
-            Poincare::Context* symbolContext = nullptr)
+            LocalContext* localContext = nullptr)
         : m_angleUnit(angleUnit),
           m_complexFormat(complexFormat),
           m_listElement(listElement),

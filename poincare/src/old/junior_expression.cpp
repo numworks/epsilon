@@ -151,7 +151,8 @@ SystemExpression JuniorExpressionNode::approximateToTree(
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(), Approximation::Parameter(true, false, false, false),
       Approximation::Context(approximationContext.angleUnit(),
-                             approximationContext.complexFormat())));
+                             approximationContext.complexFormat(),
+                             approximationContext.context())));
 }
 
 Poincare::Layout JuniorExpressionNode::createLayout(
@@ -463,7 +464,7 @@ T SystemFunctionScalar::approximateToScalarWithValue(T x,
                                                      int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameter(true, false, false, false),
-      Approximation::Context(AngleUnit::None, ComplexFormat::None,
+      Approximation::Context(AngleUnit::None, ComplexFormat::None, nullptr,
                              listElement));
 }
 
@@ -497,8 +498,7 @@ bool UserExpression::hasDefinedComplexApproximation(
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(), Approximation::Parameter(true, true, false, false),
       Approximation::Context(approximationContext.angleUnit(),
-                             approximationContext.complexFormat(), -1, -1,
-                             Random::Context(false), nullptr,
+                             approximationContext.complexFormat(),
                              approximationContext.context()));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {

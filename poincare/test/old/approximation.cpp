@@ -24,9 +24,8 @@ void assert_expression_approximates_to_scalar(
   Internal::Tree *e = parse_expression(expression, &globalContext);
   T result = Internal::Approximation::To<T>(
       e, Internal::Approximation::Parameter(true, true, false, false),
-      Internal::Approximation::Context(angleUnit, complexFormat, -1, -1,
-                                       Internal::Random::Context(false),
-                                       nullptr, &globalContext));
+      Internal::Approximation::Context(angleUnit, complexFormat,
+                                       &globalContext));
   e->removeTree();
   bool test =
       roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
@@ -481,9 +480,7 @@ void assert_expression_approximation_is_bounded(const char *expression,
   Internal::Tree *e = parse_expression(expression, &globalContext, true);
   T result = Internal::Approximation::To<T>(
       e, Internal::Approximation::Parameter(true, true, false, false),
-      Internal::Approximation::Context(Radian, Cartesian, -1, -1,
-                                       Internal::Random::Context(false),
-                                       nullptr, &globalContext));
+      Internal::Approximation::Context(Radian, Cartesian, &globalContext));
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
       result < upBound || (result == upBound && upBoundIncluded), expression);

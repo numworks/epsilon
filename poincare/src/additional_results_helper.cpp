@@ -82,8 +82,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
       bool removePeriod =
           Approximation::To<double>(
               sine, Approximation::Parameter(false, true, false, false),
-              Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat)) <
-          0;
+              Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
+                                     ctx->m_context)) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -115,7 +115,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   *approximatedAngle = static_cast<float>(Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameter(false, true, false, false),
-      Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat)));
+      Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
+                             ctx->m_context)));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -223,7 +224,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
           exactAngle, Approximation::Parameter(false, true, false, false),
-          Approximation::Context(angleUnit, complexFormat)))) {
+          Approximation::Context(angleUnit, complexFormat, context)))) {
     exactAngle->removeTree();
     return UserExpression();
   }

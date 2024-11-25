@@ -238,7 +238,8 @@ void assert_expression_approximates_to(const char *expression,
         TreeRef result = Internal::Approximation::ToTree<T>(
             e, Internal::Approximation::Parameter(true, true, false, true),
             Internal::Approximation::Context(reductionContext.angleUnit(),
-                                             reductionContext.complexFormat()));
+                                             reductionContext.complexFormat(),
+                                             reductionContext.context()));
         Beautification::DeepBeautify(result, context);
         e->removeTree();
         return result;

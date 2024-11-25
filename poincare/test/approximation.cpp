@@ -46,8 +46,7 @@ void approximates_to(const char* input, const char* output,
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree, Approximation::Parameter(true, true, false, false),
             Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat, -1, -1,
-                                   Random::Context(false), nullptr,
+                                   projectionContext.m_complexFormat,
                                    projectionContext.m_context)));
         Beautification::DeepBeautify(tree, projectionContext);
       },

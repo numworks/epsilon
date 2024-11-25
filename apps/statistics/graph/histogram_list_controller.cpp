@@ -15,7 +15,9 @@ HistogramListController::HistogramListController(
                       HistogramCell(HistogramView(store, 2, histogramRange)),
                       HistogramCell(HistogramView(store, 3, histogramRange))}),
       m_store(store),
-      m_histogramRange(store) {}
+      m_histogramRange(store) {
+  m_selectableListView.resetMargins();
+}
 
 Escher::HighlightCell* HistogramListController::reusableCell(int index,
                                                              int type) {

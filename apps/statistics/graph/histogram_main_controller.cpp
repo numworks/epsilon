@@ -292,7 +292,8 @@ void HistogramMainController::initYRangeParameters() {
    * viewHeight)
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
-  float viewHeight = static_cast<float>(HistogramListController::k_rowHeight);
+  float viewHeight =
+      static_cast<float>(HistogramListController::k_listRowHeight);
   float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
 
   m_histogramRange.setYRange(yMin, yMax);

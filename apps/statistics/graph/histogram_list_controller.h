@@ -17,7 +17,12 @@ class HistogramListController
   HistogramListController(Escher::Responder* parentResponder, Store* store,
                           Shared::CurveViewRange* histogramRange);
 
-  static constexpr KDCoordinate k_rowHeight = 75;
+  static constexpr KDCoordinate k_listRowHeight = 75;
+
+  KDCoordinate histogramHeight() const {
+    return numberOfRows() == 1 ? m_selectableListView.bounds().height() - 1
+                               : k_listRowHeight;
+  }
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
@@ -65,7 +70,9 @@ class HistogramListController
  private:
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
-  KDCoordinate nonMemoizedRowHeight(int row) override { return k_rowHeight; };
+  KDCoordinate nonMemoizedRowHeight(int row) override {
+    return histogramHeight();
+  }
 
   /* Set the global highlight of a series on and highlight a certain histogram
    * bar  */

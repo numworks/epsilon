@@ -1202,6 +1202,11 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Only works in cartesian, because Power VS PowerReal. See Projection::Expand
   simplifies_to("cos(atan(x))-√(-(x/√(x^(2)+1))^(2)+1)",
                 "dep(0,{0×√(-x^2/(x^2+1)+1)})", cartesianCtx);
+  // Strategy
+  // TODO_PCJ: Should be 1
+  simplifies_to("sin(90)", "0.89399666360056",
+                {.m_angleUnit = AngleUnit::Degree,
+                 .m_strategy = Strategy::ApproximateToFloat});
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {

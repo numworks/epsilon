@@ -10,8 +10,11 @@ namespace Shared {
 class DoublePairStorePreferences {
  public:
   DoublePairStorePreferences() {
-    m_valid.fill(false);
-    m_hidden.fill(false);
+    // TODO: use std::array::fill(false)
+    for (std::size_t i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+      m_valid[i] = false;
+      m_hidden[i] = false;
+    }
   }
 
   bool seriesIsActive(int series) const {

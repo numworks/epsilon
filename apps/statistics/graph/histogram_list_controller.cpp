@@ -82,12 +82,19 @@ void HistogramListController::setSelectedCellHighlight(bool isHighlighted) {
   }
 }
 
-void HistogramListController::selectAndHighlightFirstCell() {
-  // Select the first row in the SelectableList View
-  m_selectableListView.selectFirstRow();
-  // Set the current series and index in the snaphot
-  setSelectedSeries(m_selectableListView.selectedRow());
-  setSelectedBarIndex(0);
+void HistogramListController::selectAndHighlightCurrentSeries() {
+  if (hasSelectedSeries()) {
+    /* If a series is already selected in the snapshot, select the corresponding
+     * series in the histogram list. */
+    m_selectableListView.selectRow(selectedSeries());
+    sanitizeSelectedBarIndex();
+  } else {
+    // Select the first row in the SelectableList View
+    m_selectableListView.selectFirstRow();
+    // Set the current series and index in the snaphot
+    setSelectedSeries(0);
+    setSelectedBarIndex(0);
+  }
   setSelectedCellHighlight(true);
 }
 
@@ -127,6 +134,10 @@ std::size_t HistogramListController::selectedBarIndex() const {
 void HistogramListController::setSelectedBarIndex(std::size_t selectedIndex) {
   // TODO: check the index upper bound
   *App::app()->snapshot()->selectedIndex() = selectedIndex;
+}
+
+bool HistogramListController::hasSelectedSeries() const {
+  return *App::app()->snapshot()->selectedSeries() > -1;
 }
 
 bool HistogramListController::moveSelectionHorizontally(

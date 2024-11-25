@@ -47,6 +47,7 @@ void HistogramMainController::viewWillAppear() {
     initBarParameters();
   }
   initRangeParameters();
+  m_selectedSubview = SelectedSubview::List;
   m_view.reload();
 }
 
@@ -63,12 +64,14 @@ void HistogramMainController::exitHeaderView() {
 
 void HistogramMainController::enterListView() {
   m_selectedSubview = SelectedSubview::List;
+  /* TODO: this logic of selecting and highlighting the current or the first
+   * series should be in a method of HistogramListController */
   if (!m_listController.hasSelectedCell()) {
-    m_listController.selectAndHighlightFirstCell();
+    m_listController.selectAndHighlightCurrentSeries();
   } else {
+    m_listController.sanitizeSelectedBarIndex();
     m_listController.setSelectedCellHighlight(true);
   }
-
   m_view.setBannerVisibility(true);
   updateBannerView();
 }

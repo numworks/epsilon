@@ -34,7 +34,7 @@ class HistogramListController
   bool handleEvent(Ion::Events::Event event) override;
 
   // Helpers that can be used from the main controller
-  void selectAndHighlightFirstCell();
+  void selectAndHighlightCurrentSeries();
 
   /* TODO: hasSelectedCell() should be const when
    * SelectableListView::selectedCell() provides a const version */
@@ -47,6 +47,20 @@ class HistogramListController
   // Get the selected series or index from the Snapshot
   std::size_t selectedSeries() const;
   std::size_t selectedBarIndex() const;
+
+  /* If the number of histogram bars has been changed by the user and there are
+   * less bars, the selected bar index can become out of range. We need to
+   * sanitize it by setting this index to the last bar. */
+  void sanitizeSelectedBarIndex() {
+    if (!hasSelectedSeries()) {
+      // Do nothing if no series is selected.
+      return;
+    }
+    std::size_t numberOfBars = m_store->numberOfBars(selectedSeries());
+    if (selectedBarIndex() >= numberOfBars) {
+      setSelectedBarIndex(numberOfBars - 1);
+    }
+  }
 
  private:
   // Escher::TableViewDataSource
@@ -61,6 +75,9 @@ class HistogramListController
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);
   void setSelectedBarIndex(std::size_t selectedIndex);
+
+  // Check if one of the statistics series is selected in the Snapshot
+  bool hasSelectedSeries() const;
 
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);

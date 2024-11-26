@@ -7,7 +7,7 @@ namespace Statistics {
 
 HistogramListController::HistogramListController(
     Escher::Responder* parentResponder, Store* store,
-    Shared::CurveViewRange* histogramRange)
+    HistogramRange* histogramRange)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
       m_displayCells({HistogramCell(HistogramView(store, 0, histogramRange)),
@@ -15,7 +15,7 @@ HistogramListController::HistogramListController(
                       HistogramCell(HistogramView(store, 2, histogramRange)),
                       HistogramCell(HistogramView(store, 3, histogramRange))}),
       m_store(store),
-      m_histogramRange(store) {
+      m_histogramRange(histogramRange) {
   m_selectableListView.resetMargins();
 }
 
@@ -39,6 +39,8 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     // The following function will set a new seriesIndex.
     moveSelectionHorizontally(event.direction());
+    m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
+                                               selectedBarIndex());
     return true;
   }
 
@@ -63,9 +65,8 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
         previousSelectedSeries, selectedSeries(), selectedBarIndex()));
 
     setSelectedCellHighlight(true);
-
-    m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
-                                              selectedBarIndex());
+    m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
+                                               selectedBarIndex());
   }
 
   return true;

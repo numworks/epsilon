@@ -15,7 +15,7 @@ class HistogramListController
       public Escher::SelectableListViewDelegate {
  public:
   HistogramListController(Escher::Responder* parentResponder, Store* store,
-                          Shared::CurveViewRange* histogramRange);
+                          HistogramRange* histogramRange);
 
   static constexpr KDCoordinate k_listRowHeight = 75;
 
@@ -101,7 +101,7 @@ class HistogramListController
 
   // Model
   Store* m_store;
-  HistogramRange m_histogramRange;
+  HistogramRange* m_histogramRange;
 };
 
 }  // namespace Statistics

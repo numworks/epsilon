@@ -10,7 +10,6 @@
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/print.h>
-#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/derivation.h>
 
 #include <algorithm>
@@ -535,10 +534,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    // TODO Hugo: Hide internal API
-    return Internal::Approximation::ToPoint<T>(
-        point.tree(),
-        Internal::Approximation::Parameter(false, false, false, false));
+    return point.approximateToPointJunior<T>();
   }
 
   if (!properties().isParametric()) {

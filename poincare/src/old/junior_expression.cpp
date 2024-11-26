@@ -551,6 +551,12 @@ T SystemExpression::approximateToScalarJunior() const {
 }
 
 template <typename T>
+Coordinate2D<T> SystemExpression::approximateToPointJunior() const {
+  return Approximation::ToPoint<T>(
+      tree(), Approximation::Parameter(true, false, false, true));
+}
+
+template <typename T>
 T SystemFunction::approximateIntegralToScalar(
     const SystemExpression& lowerBound,
     const SystemExpression& upperBound) const {
@@ -1137,6 +1143,11 @@ template double SystemFunctionScalar::approximateToScalarWithValue<double>(
 
 template float SystemExpression::approximateToScalarJunior<float>() const;
 template double SystemExpression::approximateToScalarJunior<double>() const;
+
+template Coordinate2D<float> SystemExpression::approximateToPointJunior<float>()
+    const;
+template Coordinate2D<double>
+SystemExpression::approximateToPointJunior<double>() const;
 
 template float SystemFunction::approximateIntegralToScalar<float>(
     const SystemExpression& upperBound,

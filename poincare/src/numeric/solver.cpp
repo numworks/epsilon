@@ -30,6 +30,11 @@ template <typename T>
 typename Solver<T>::Solution Solver<T>::next(
     FunctionEvaluation f, const void* aux, BracketTest test, HoneResult hone,
     DiscontinuityEvaluation discontinuityTest) {
+  // Check if there is a solution in the queue
+  if (!m_solutionQueue.isEmpty()) {
+    return registerSolution(m_solutionQueue.pop(), true);
+  }
+
   Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
       p3(nextX(p2.x(), m_xEnd, static_cast<T>(1.)), k_NAN);
   p3.setY(f(p3.x(), aux));
@@ -37,11 +42,6 @@ typename Solver<T>::Solution Solver<T>::next(
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
   while ((m_xStart < p3.x()) == (p3.x() < m_xEnd)) {
-    // Check if there is a solution in the queue
-    if (!m_solutionQueue.isEmpty()) {
-      return registerSolution(m_solutionQueue.pop(), true);
-    }
-
     p1 = p2;
     p2 = p3;
     /* If the solver is in float, the slope is not used by minimalStep

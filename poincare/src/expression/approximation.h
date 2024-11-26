@@ -53,33 +53,31 @@ class Approximation final {
             int16_t listElement = -1, int16_t pointElement = -1,
             Random::Context randomContext = Random::Context(false),
             LocalContext* localContext = nullptr)
-        : m_angleUnit(angleUnit),
-          m_complexFormat(complexFormat),
+        : m_randomContext(randomContext),
+          m_localContext(localContext),
+          m_symbolContext(symbolContext),
           m_listElement(listElement),
           m_pointElement(pointElement),
-          m_randomContext(randomContext),
-          m_localContext(localContext),
-          m_symbolContext(symbolContext) {}
+          m_angleUnit(angleUnit),
+          m_complexFormat(complexFormat) {}
     VariableType variable(uint8_t index) const {
       assert(m_localContext);
       return m_localContext->variable(index);
     }
-
     void setLocalValue(VariableType value) {
       assert(m_localContext);
       m_localContext->setLocalValue(value);
     }
-
-    AngleUnit m_angleUnit;
-    ComplexFormat m_complexFormat;
-    // Tells if we are approximating to get the nth-element of a list
-    int16_t m_listElement;
-    // Tells if we are approximating to get the nth-element of a point
-    int16_t m_pointElement;
     // TODO_PCJ : Maybe better separate const and non const ctx ?
     mutable Random::Context m_randomContext;
     LocalContext* m_localContext;
     Poincare::Context* m_symbolContext;
+    // Tells if we are approximating to get the nth-element of a list
+    int16_t m_listElement;
+    // Tells if we are approximating to get the nth-element of a point
+    int16_t m_pointElement;
+    AngleUnit m_angleUnit;
+    ComplexFormat m_complexFormat;
   };
 
   struct Parameter {

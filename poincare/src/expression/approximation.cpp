@@ -47,7 +47,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
   if (!context) {
     *context = Context();
   }
-  if (param.m_isNotProjected) {
+  if (param.m_projectLocalVariables) {
     Variables::ProjectLocalVariablesToId(clone);
   }
   if (param.m_prepare || param.m_optimize) {

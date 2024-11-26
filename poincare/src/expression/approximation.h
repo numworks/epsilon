@@ -87,14 +87,15 @@ class Approximation final {
     Parameter(bool isRoot = false, bool isNotProjected = true,
               bool optimize = false, bool prepare = true)
         : m_isRoot(isRoot),
-          m_isNotProjected(isNotProjected),
+          m_projectLocalVariables(isNotProjected),
           m_optimize(optimize),
           m_prepare(prepare) {}
 
     // A new m_randomContext will be created
     bool m_isRoot;
-    // Local variables will be projected
-    bool m_isNotProjected;
+    /* Must be true if expression has not been projected and may have parametric
+     * functions. */
+    bool m_projectLocalVariables;
     // Tree will be optimized for multiple approximations, only with toTree
     bool m_optimize;
     // Tree will be prepared for a more accurate approximation

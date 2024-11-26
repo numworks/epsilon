@@ -351,8 +351,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       if (!IsIntegerExpression(e->child(1))) {
         return false;
       }
-      /* TODO Hugo: Clarify Parameter.m_isNotProjected is only needed for local
-       * variables and not actual projection. */
       float index = Approximation::To<float>(
           e->child(1), Approximation::Parameter(false, false, false, false));
       assert(!std::isnan(index) && std::round(index) == index);

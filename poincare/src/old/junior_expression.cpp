@@ -354,8 +354,8 @@ void UserExpression::cloneAndSimplifyAndApproximate(
     } else {
       std::complex<double> value = Approximation::ToComplex<double>(
           e,
-          Approximation::Parameter{
-              .isRoot = true, .projectLocalVariables = true, .prepare = true},
+          Approximation::Parameter{.isRoot = true,
+                                   .projectLocalVariables = true},
           approxCtx);
       *approximatedExpression =
           Builder(Beautification::PushBeautifiedComplex<double>(

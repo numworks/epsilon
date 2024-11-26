@@ -52,10 +52,11 @@ class Approximation final {
     /* Must be true if expression has not been projected and may have parametric
      * functions. */
     bool projectLocalVariables = false;
-    // Tree will be optimized for multiple approximations, only with toTree
-    bool optimize = false;
+    /* Last two parameters may only be used on projected expressions. */
     // Tree will be prepared for a more accurate approximation
     bool prepare = false;
+    // Tree will be optimized for multiple approximations, implies prepare too
+    bool optimize = false;
   };
 
   class Context {
@@ -221,6 +222,7 @@ class Approximation final {
   template <typename T>
   static std::complex<T> UndefDependencies(const Tree* dep, const Context* ctx);
 
+  // Expression must have been projected beforehand
   static bool PrepareExpressionForApproximation(Tree* e);
   static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 

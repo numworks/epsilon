@@ -234,11 +234,10 @@ void assert_expression_approximates_to(const char *expression,
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
-        /* TODO_PCJ: Try skipping preparation and see the tests that fail */
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
-            Internal::Approximation::Parameter{
-                .isRoot = true, .projectLocalVariables = true, .prepare = true},
+            Internal::Approximation::Parameter{.isRoot = true,
+                                               .projectLocalVariables = true},
             Internal::Approximation::Context(reductionContext.angleUnit(),
                                              reductionContext.complexFormat(),
                                              reductionContext.context()));

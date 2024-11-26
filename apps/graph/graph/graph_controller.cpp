@@ -116,8 +116,8 @@ Range2D<float> GraphController::optimalRange(
 
   for (int i = 0; i < nbFunctions; i++) {
     canComputeIntersections[i] = false;
-    ExpiringPointer<ContinuousFunction> f =
-        store->modelForRecord(store->activeRecordAtIndex(i));
+    ExpiringPointer<const ContinuousFunction> f =
+        store->constModelForRecord(store->activeRecordAtIndex(i));
     if (f->approximationBasedOnCostlyAlgorithms(context)) {
       continue;
     }
@@ -189,8 +189,8 @@ Range2D<float> GraphController::optimalRange(
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction* mainF = f.operator->();
         for (int j = 0; j < i; j++) {
-          ExpiringPointer<ContinuousFunction> g =
-              store->modelForRecord(store->activeRecordAtIndex(j));
+          ExpiringPointer<const ContinuousFunction> g =
+              store->constModelForRecord(store->activeRecordAtIndex(j));
           if (canComputeIntersections[j] &&
               g->properties()
                   .canComputeIntersectionsWithFunctionsAlongSameVariable() &&

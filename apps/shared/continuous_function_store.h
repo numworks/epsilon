@@ -57,6 +57,11 @@ class ContinuousFunctionStore : public FunctionStore {
     return ExpiringPointer<ContinuousFunction>(
         static_cast<ContinuousFunction*>(privateModelForRecord(record)));
   }
+  ExpiringPointer<const ContinuousFunction> constModelForRecord(
+      Ion::Storage::Record record) const {
+    return ExpiringPointer<const ContinuousFunction>(
+        static_cast<const ContinuousFunction*>(privateModelForRecord(record)));
+  }
   void setCachesContainer(CachesContainer* container) {
     m_cachesContainer = container;
   }

@@ -8,21 +8,16 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-ReductionContext DefaultReductionContext(Context* ctx, bool keepSymbols) {
-  return ReductionContext(
-      ctx, Preferences::ComplexFormat::Cartesian,
-      Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric,
-      ReductionTarget::User,
-      keepSymbols ? SymbolicComputation::ReplaceDefinedSymbols
-                  : SymbolicComputation::ReplaceAllSymbols,
-      UnitConversion::Default);
+ReductionContext BuildReductionContext(
+    Context* ctx, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    SymbolicComputation symbolicComputation) {
+  return ReductionContext(ctx, complexFormat, angleUnit, unitFormat,
+                          ReductionTarget::User, symbolicComputation,
+                          UnitConversion::Default);
 }
 
 EMSCRIPTEN_BINDINGS(computation_context) {
-  enum_<ReductionTarget>("ReductionTarget")
-      .value("SystemForApproximation", ReductionTarget::SystemForApproximation)
-      .value("SystemForAnalysis", ReductionTarget::SystemForAnalysis)
-      .value("User", ReductionTarget::User);
   enum_<SymbolicComputation>("SymbolicComputation")
       .value("ReplaceAllSymbols", SymbolicComputation::ReplaceAllSymbols)
       .value("ReplaceDefinedSymbols",
@@ -32,10 +27,6 @@ EMSCRIPTEN_BINDINGS(computation_context) {
       .value("ReplaceAllSymbolsWithUndefined",
              SymbolicComputation::ReplaceAllSymbolsWithUndefined)
       .value("KeepAllSymbols", SymbolicComputation::KeepAllSymbols);
-  enum_<UnitConversion>("UnitConversion")
-      .value("None", UnitConversion::None)
-      .value("Default", UnitConversion::Default)
-      .value("InternationalSystem", UnitConversion::InternationalSystem);
 
   class_<Context>("PCR_Context");
   class_<EmptyContext, base<Context>>("PCR_EmptyContext").constructor<>();
@@ -44,11 +35,7 @@ EMSCRIPTEN_BINDINGS(computation_context) {
       .function("updateComplexFormat",
                 &ComputationContext::updateComplexFormat);
   class_<ReductionContext, base<ComputationContext>>("PCR_ReductionContext")
-      .constructor<Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
-                   Preferences::UnitFormat, ReductionTarget,
-                   SymbolicComputation, UnitConversion>()
-      .class_function("Default", &DefaultReductionContext,
-                      allow_raw_pointers());
+      .class_function("Build", &BuildReductionContext, allow_raw_pointers());
 }
 
 }  // namespace Poincare::JSBridge

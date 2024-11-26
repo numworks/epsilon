@@ -136,7 +136,6 @@ class Approximation final {
   static Coordinate2D<T> ToPoint(const Tree* e, Parameter param,
                                  Context context = Context());
 
-  // TODO Hugo: Unused for now
   template <typename T>
   static bool ToBoolean(const Tree* e, Parameter param,
                         Context context = Context());

@@ -134,8 +134,11 @@ bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
 template <typename T>
 T Approximation::To(const Tree* e, Parameter param, Context context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
-  assert(Dimension::DeepCheck(e) &&
-         (Dimension::Get(e).isScalar() || Dimension::Get(e).isUnit()));
+  assert(Dimension::DeepCheck(e));
+  Dimension dim = Dimension::Get(e);
+  if (!(dim.isScalar() || dim.isUnit())) {
+    return NAN;
+  }
   return ToPointOrScalar<T>(e, param, context).toScalar();
 };
 

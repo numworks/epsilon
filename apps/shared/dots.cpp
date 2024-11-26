@@ -31,6 +31,11 @@ constexpr static const KDMask<TinyRingDiameter> tinyRing =
                                  TinyRingExternalRadius);
 constexpr const uint8_t* TinyRingMask = &tinyRing.m_mask[0][0];
 
+constexpr static const KDMask<MediumRingDiameter> mediumRing =
+    KDMakeRing<MediumRingDiameter>(MediumRingInternalRadius,
+                                   MediumRingExternalRadius);
+constexpr const uint8_t* MediumRingMask = &mediumRing.m_mask[0][0];
+
 constexpr static const KDMask<LargeRingDiameter> largeRing =
     KDMakeRing<LargeRingDiameter>(LargeRingInternalRadius,
                                   LargeRingExternalRadius);

@@ -76,7 +76,7 @@ class Approximation final {
     int16_t m_listElement;
     // Tells if we are approximating to get the nth-element of a point
     int16_t m_pointElement;
-    // TODO Hugo : Maybe better separate const and non const ctx ?
+    // TODO_PCJ : Maybe better separate const and non const ctx ?
     mutable Random::Context m_randomContext;
     LocalContext* m_localContext;
     Poincare::Context* m_symbolContext;

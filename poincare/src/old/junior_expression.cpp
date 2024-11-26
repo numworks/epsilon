@@ -494,7 +494,7 @@ bool UserExpression::hasDefinedComplexApproximation(
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
-  // TODO Hugo: Stop using ApproximationContext
+  // TODO_PCJ: Remove ApproximationContext
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(), Approximation::Parameter(true, true, false, false),
       Approximation::Context(approximationContext.angleUnit(),

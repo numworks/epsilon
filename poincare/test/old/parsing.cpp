@@ -158,7 +158,7 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is("1234567890123.4",
                               KDecimal(12345678901234_e, 1_e));
   assert_parsed_expression_is("123456789012345.2",
-                              KDecimal(12345678901235_e, 1_e));
+                              KDecimal(12345678901235_e, -1_e));
   assert_parsed_expression_is("123456789012341.2",
                               KDecimal(12345678901234_e, -1_e));
   assert_parsed_expression_is("12.34567", KDecimal(1234567_e, 5_e));

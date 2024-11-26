@@ -449,17 +449,14 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
 }
 
 std::string typedToLatex(const TypedUserExpression& expression,
+                         Preferences::PrintFloatMode displayMode,
                          int numberOfSignificantDigits) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
-  expression.toLatex(buffer, k_bufferSize, Preferences::PrintFloatMode::Decimal,
+  expression.toLatex(buffer, k_bufferSize, displayMode,
                      numberOfSignificantDigits, &context);
   return std::string(buffer, strlen(buffer));
-}
-
-std::string typedToLatexWith7Digits(const TypedUserExpression& expression) {
-  return typedToLatex(expression, 7);
 }
 
 TypedSystemExpression typedCloneAndReduce(
@@ -516,7 +513,6 @@ EMSCRIPTEN_BINDINGS(user_expression) {
       .class_function("ExactAndApproximateExpressionsAreStrictlyEqual",
                       &ExactAndApproximateExpressionsAreStrictlyEqualWrapper)
       .function("toLatex", &typedToLatex)
-      .function("toLatex", &typedToLatexWith7Digits)
       .function("cloneAndReduce", &typedCloneAndReduce);
 }
 }  // namespace Poincare::JSBridge

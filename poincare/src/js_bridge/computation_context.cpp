@@ -19,17 +19,6 @@ ReductionContext DefaultReductionContext(Context* ctx, bool keepSymbols) {
 }
 
 EMSCRIPTEN_BINDINGS(computation_context) {
-  enum_<Preferences::ComplexFormat>("ComplexFormat")
-      .value("Real", Preferences::ComplexFormat::Real)
-      .value("Cartesian", Preferences::ComplexFormat::Cartesian)
-      .value("Polar", Preferences::ComplexFormat::Polar);
-  enum_<Preferences::AngleUnit>("AngleUnit")
-      .value("Radian", Preferences::AngleUnit::Radian)
-      .value("Degree", Preferences::AngleUnit::Degree)
-      .value("Gradian", Preferences::AngleUnit::Gradian);
-  enum_<Preferences::UnitFormat>("UnitFormat")
-      .value("Metric", Preferences::UnitFormat::Metric)
-      .value("Imperial", Preferences::UnitFormat::Imperial);
   enum_<ReductionTarget>("ReductionTarget")
       .value("SystemForApproximation", ReductionTarget::SystemForApproximation)
       .value("SystemForAnalysis", ReductionTarget::SystemForAnalysis)

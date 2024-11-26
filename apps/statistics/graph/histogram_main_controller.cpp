@@ -64,24 +64,24 @@ void HistogramMainController::exitHeaderView() {
 
 void HistogramMainController::enterListView() {
   m_selectedSubview = SelectedSubview::List;
-  /* TODO: this logic of selecting and highlighting the current or the first
-   * series should be in a method of HistogramListController */
-  if (!m_listController.hasSelectedCell()) {
-    m_listController.selectAndHighlightCurrentSeries();
-  } else {
-    m_listController.sanitizeSelectedBarIndex();
-    m_listController.setSelectedCellHighlight(true);
+
+  if (!m_listController.hasSelectedSeries()) {
+    m_listController.selectFirstSeriesAndBar();
   }
+  m_listController.highlightRow(m_listController.selectedSeries());
+
+  // TODO: should be integrated in highlightHistogramBar
+  m_listController.sanitizeSelectedBarIndex();
+  m_listController.highlightHistogramBar(m_listController.selectedSeries(),
+                                         m_listController.selectedBarIndex());
+
   m_view.setBannerVisibility(true);
   updateBannerView();
 }
 
 void HistogramMainController::exitListView() {
   m_view.setBannerVisibility(false);
-  /* When we exit the list view, the selected cell is kept in memory for when
-   * the list view is entered again. However the selected cell should be
-   * unhighlighted. */
-  m_listController.setSelectedCellHighlight(false);
+  m_listController.unhighlightList();
 }
 
 bool HistogramMainController::handleEvent(Ion::Events::Event event) {

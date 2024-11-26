@@ -48,12 +48,12 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
   if (!m_selectableListView.handleEvent(event)) {
     return false;
   }
-  if (hasSelectedCell()) {
+  if (m_selectableListView.selectedCell()) {
     /* If the SelectableListView handled the event by selecting a new cell,
-     * then it took the firstResponder ownership. However we want
-     * HistogramMainController to be the first responder, because the banner
-     * view need to be updated as well. So the firstResponder ownership is
-     * given back to HistogramMainController, which is the parent responder of
+     * then it took the firstResponder ownership. However we want the main
+     * controller to be the first responder, because the banner view need to be
+     * updated as well. So the firstResponder ownership is given back to the
+     * main controller, which is the parent responder of
      * HistogramListController. */
     Escher::App::app()->setFirstResponder(parentResponder());
 
@@ -64,56 +64,15 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
         previousSelectedSeries, selectedSeries(), selectedBarIndex()));
 
-    setSelectedCellHighlight(true);
+    // TODO: call inside setSelectedBarIndex
     m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
                                                selectedBarIndex());
+
+    m_selectableListView.selectedCell()->setHighlighted(true);
+    highlightHistogramBar(selectedSeries(), selectedBarIndex());
   }
 
   return true;
-}
-
-void HistogramListController::setSelectedCellHighlight(bool isHighlighted) {
-  assert(hasSelectedCell());
-  assert(selectedSeries() == m_selectableListView.selectedRow());
-
-  if (isHighlighted) {
-    highlightSeriesAndBar(selectedSeries(), selectedBarIndex());
-  } else {
-    HistogramCell* selectedCell =
-        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
-    selectedCell->setHighlighted(false);
-  }
-}
-
-void HistogramListController::selectAndHighlightCurrentSeries() {
-  if (hasSelectedSeries()) {
-    /* If a series is already selected in the snapshot, select the corresponding
-     * series in the histogram list. */
-    m_selectableListView.selectRow(selectedSeries());
-    sanitizeSelectedBarIndex();
-  } else {
-    // Select the first row in the SelectableList View
-    m_selectableListView.selectFirstRow();
-    // Set the current series and index in the snaphot
-    setSelectedSeries(0);
-    setSelectedBarIndex(0);
-  }
-  setSelectedCellHighlight(true);
-}
-
-void HistogramListController::highlightSeriesAndBar(
-    std::size_t selectedSeries, std::size_t selectedBarIndex) {
-  assert(0 <= selectedSeries &&
-         selectedSeries <= m_store->numberOfActiveSeries());
-  HistogramCell* selectedCell =
-      static_cast<HistogramCell*>(m_selectableListView.cell(selectedSeries));
-  selectedCell->setHighlighted(true);
-
-  assert(0 <= selectedBarIndex &&
-         selectedBarIndex < m_store->numberOfBars(selectedSeries));
-  selectedCell->setBarHighlight(
-      m_store->startOfBarAtIndex(selectedSeries, selectedBarIndex),
-      m_store->endOfBarAtIndex(selectedSeries, selectedBarIndex));
 }
 
 std::size_t HistogramListController::selectedSeries() const {
@@ -143,6 +102,7 @@ bool HistogramListController::hasSelectedSeries() const {
   return *App::app()->snapshot()->selectedSeries() > -1;
 }
 
+// TODO: refactor to return the new bar index
 bool HistogramListController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
   int numberOfBars = m_store->numberOfBars(selectedSeries());

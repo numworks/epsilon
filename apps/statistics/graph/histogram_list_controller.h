@@ -41,56 +41,21 @@ class HistogramListController
 
   // Public API that can be used from the main controller
 
-  // Check if one of the statistics series is selected in the Snapshot
-  bool hasSelectedSeries() const;
-  // Select the first series in the Snapshot
-  void selectFirstSeriesAndBar() {
-    setSelectedSeries(0);
-    setSelectedBarIndex(0);
-  }
+  /* If no statistics series was selected in the snapshot, this function selects
+   * the first series and its first bar index. Otherwise, the currently selected
+   * bar index is "sanitized" to ensure it is still in the authorized range.
+   * In all cases, when exiting this function, you are guaranteed that
+   * selectedSeries() and selectedBarIndex() return valid values. */
+  void processSeriesAndBarSelection();
 
   /* Highlight the row corresponding to a certain series */
-  void highlightRow(std::size_t row) {
-    assert(0 <= row && row <= m_selectableListView.totalNumberOfRows());
+  void highlightRow(std::size_t row);
 
-    // Set the cell to "selected" state in the SelectedListView
-    m_selectableListView.selectCell(row);
-    /* The SelectableListView took the firstResponder ownership when selecting
-     * the cell. However we want the main controller to be the first
-     * responder, because the banner view need to be updated as well. So the
-     * firstResponder ownership is given back to the main controller, which
-     * is the parent responder of HistogramListController. */
-    Escher::App::app()->setFirstResponder(parentResponder());
-
-    // Highlight the selected cell
-    m_selectableListView.selectedCell()->setHighlighted(true);
-  }
-
-  void highlightHistogramBar(std::size_t row, std::size_t barIndex) {
-    assert(0 <= row && row <= m_store->numberOfActiveSeries());
-    assert(0 <= barIndex && barIndex < m_store->numberOfBars(row));
-    static_cast<HistogramCell*>(m_selectableListView.cell(row))
-        ->setBarHighlight(m_store->startOfBarAtIndex(row, barIndex),
-                          m_store->endOfBarAtIndex(row, barIndex));
-  }
+  /* Highlight a certain histogram bar in a certain row */
+  void highlightHistogramBar(std::size_t row, std::size_t barIndex);
 
   // Unhighlight the entire list
   void unhighlightList() { m_selectableListView.deselectTable(); }
-
-  // TODO: private; rename to clampSelectedBarIndex
-  /* If the number of histogram bars has been changed by the user and there are
-   * less bars, the selected bar index can become out of range. We need to
-   * sanitize it by setting this index to the last bar. */
-  void sanitizeSelectedBarIndex() {
-    if (!hasSelectedSeries()) {
-      // Do nothing if no series is selected.
-      return;
-    }
-    std::size_t numberOfBars = m_store->numberOfBars(selectedSeries());
-    if (selectedBarIndex() >= numberOfBars) {
-      setSelectedBarIndex(numberOfBars - 1);
-    }
-  }
 
   // Get the selected series or index from the Snapshot
   std::size_t selectedSeries() const;
@@ -103,9 +68,15 @@ class HistogramListController
     return histogramHeight();
   }
 
+  // Check if one of the statistics series is selected in the Snapshot
+  bool hasSelectedSeries() const;
+
   // Set the selected series or index in the Snapshot
   void setSelectedSeries(std::size_t selectedSeries);
-  void setSelectedBarIndex(std::size_t selectedIndex);
+  void setSelectedBarIndex(std::size_t barIndex);
+
+  // Return the current bar index in the snapshot without checking bounds
+  std::size_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);

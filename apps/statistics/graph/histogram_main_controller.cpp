@@ -64,14 +64,8 @@ void HistogramMainController::exitHeaderView() {
 
 void HistogramMainController::enterListView() {
   m_selectedSubview = SelectedSubview::List;
-
-  if (!m_listController.hasSelectedSeries()) {
-    m_listController.selectFirstSeriesAndBar();
-  }
+  m_listController.processSeriesAndBarSelection();
   m_listController.highlightRow(m_listController.selectedSeries());
-
-  // TODO: should be integrated in highlightHistogramBar
-  m_listController.sanitizeSelectedBarIndex();
   m_listController.highlightHistogramBar(m_listController.selectedSeries(),
                                          m_listController.selectedBarIndex());
 

@@ -169,7 +169,6 @@ std::ostream& operator<<(std::ostream& os, View& view) {
   // TODO find something better than this static variable, like a custom stream
   static int indentColumn = 0;
   constexpr static int bufferSize = 200;
-  ;
   char indent[bufferSize];
   for (int i = 0; i < indentColumn; i++) {
     indent[i] = ' ';

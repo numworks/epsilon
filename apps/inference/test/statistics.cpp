@@ -74,7 +74,6 @@ void inputTableValues(Table* table, Statistic* stat,
   stat->initParameters();
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
     Table::Index2D rowCol = table->indexToIndex2D(i);
-    ;
     table->setParameterAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
     quiz_assert((table->parameterAtPosition(rowCol.row, rowCol.col) &&
                  testCase.m_inputs[i]) ||

@@ -49,22 +49,22 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
     // Create a default context
     *context = Context();
   }
-  if (param.m_projectLocalVariables) {
+  if (param.projectLocalVariables) {
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (param.m_isRoot && !context->m_randomContext.m_isInitialized) {
+  if (param.isRoot && !context->m_randomContext.m_isInitialized) {
     /* Initialize randomContext only on root expressions to catch unsafe
      * approximations of projected sub-expressions. */
     context->m_randomContext.m_isInitialized = true;
   }
-  if (param.m_prepare || param.m_optimize) {
+  if (param.prepare || param.optimize) {
     if (!clone) {
       clone = e->cloneTree();
     }
-    assert(param.m_isRoot);
+    assert(param.isRoot);
     PrepareExpressionForApproximation(clone);
-    if (param.m_optimize) {
+    if (param.optimize) {
       ApproximateAndReplaceEveryScalar(clone, *context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
@@ -76,7 +76,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
   Tree* cloneMaybe = PrepareContext(e, param, &context);
-  if (param.m_optimize) {
+  if (param.optimize) {
     assert(cloneMaybe);
     return cloneMaybe;
   }

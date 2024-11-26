@@ -63,8 +63,9 @@ bool Approximation::PrepareFunctionForApproximation(
                            complexFormat == ComplexFormat::Real
                                ? ComplexSign::RealUnknown()
                                : ComplexSign::Unknown());
-  e->moveTreeOverTree(ToTree<double>(e, Parameter(true, false, true, true),
-                                     Context(AngleUnit::None, complexFormat)));
+  e->moveTreeOverTree(ToTree<double>(
+      e, Parameter{.isRoot = true, .prepare = true, .optimize = true},
+      Context(AngleUnit::None, complexFormat)));
   return true;
 }
 

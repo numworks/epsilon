@@ -23,7 +23,9 @@ void assert_expression_approximates_to_scalar(
       mixedFractionsParameter);
   Internal::Tree *e = parse_expression(expression, &globalContext);
   T result = Internal::Approximation::To<T>(
-      e, Internal::Approximation::Parameter(true, true, false, false),
+      e,
+      Internal::Approximation::Parameter{.isRoot = true,
+                                         .projectLocalVariables = true},
       Internal::Approximation::Context(angleUnit, complexFormat,
                                        &globalContext));
   e->removeTree();
@@ -479,7 +481,7 @@ void assert_expression_approximation_is_bounded(const char *expression,
   Shared::GlobalContext globalContext;
   Internal::Tree *e = parse_expression(expression, &globalContext, true);
   T result = Internal::Approximation::To<T>(
-      e, Internal::Approximation::Parameter(true, true, false, false),
+      e, Internal::Approximation::Parameter{.isRoot = true, .projectLocalVariables=true},
       Internal::Approximation::Context(Radian, Cartesian, &globalContext));
   quiz_assert_print_if_failure(result >= lowBound, expression);
   quiz_assert_print_if_failure(
@@ -874,7 +876,9 @@ void assert_no_duplicates_in_list(const char *expression) {
   Internal::Tree *e = parse_expression(expression, &globalContext);
   e->cloneNodeAtNode(Poincare::Internal::KListSort);
   e->moveTreeOverTree(Internal::Approximation::ToTree<T>(
-      e, Internal::Approximation::Parameter(true, true, false, false),
+      e,
+      Internal::Approximation::Parameter{.isRoot = true,
+                                         .projectLocalVariables = true},
       Internal::Approximation::Context(Radian, Cartesian)));
   assert(e->isList());
   int n = e->numberOfChildren();

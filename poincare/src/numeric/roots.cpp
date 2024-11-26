@@ -156,8 +156,8 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
                                          const Tree* discriminant) {
   ComplexSign discriminantSign = SignOfTreeOrApproximation(discriminant);
   assert(discriminantSign.isReal());
-  TreeRef approximatedRoots = Approximation::ToTree<double>(
-      roots, Approximation::Parameter(false, false, false, false));
+  TreeRef approximatedRoots =
+      Approximation::ToTree<double>(roots, Approximation::Parameter{});
   assert(approximatedRoots->isList());
   if (discriminantSign.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
@@ -405,8 +405,8 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   Tree* delta1 = Delta1(a, b, c, d);
   Tree* cardano = CardanoNumber(delta0, delta1);
   if (approximateCardanoNumber) {
-    cardano->moveTreeOverTree(Approximation::ToTree<double>(
-        cardano, Approximation::Parameter(false, false, false, false)));
+    cardano->moveTreeOverTree(
+        Approximation::ToTree<double>(cardano, Approximation::Parameter{}));
   }
 
   /* If the discriminant is not zero, then the Cardano number cannot be zero. */
@@ -427,15 +427,14 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
     // imaginary parts. If we know that some roots are pure real numbers because
     // the polynomial coefficients are all real, remove these small imaginary
     // parts.
-    MoveTreeOverTree(
-        rootList, (SignOfTreeOrApproximation(a).isReal() &&
-                   SignOfTreeOrApproximation(b).isReal() &&
-                   SignOfTreeOrApproximation(c).isReal() &&
-                   SignOfTreeOrApproximation(d).isReal())
-                      ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
-                      : Approximation::ToTree<double>(
-                            rootList, Approximation::Parameter(false, false,
-                                                               false, false)));
+    MoveTreeOverTree(rootList,
+                     (SignOfTreeOrApproximation(a).isReal() &&
+                      SignOfTreeOrApproximation(b).isReal() &&
+                      SignOfTreeOrApproximation(c).isReal() &&
+                      SignOfTreeOrApproximation(d).isReal())
+                         ? Roots::ApproximateRootsOfRealCubic(rootList, delta)
+                         : Approximation::ToTree<double>(
+                               rootList, Approximation::Parameter{}));
   }
   NAry::Sort(rootList, Order::OrderType::ComplexLine);
   return rootList;

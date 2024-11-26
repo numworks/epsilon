@@ -99,8 +99,7 @@ void Tree::logAttributes(std::ostream& stream) const {
   }
   if (isNumber()) {
     stream << " value=\""
-           << Approximation::To<float>(
-                  this, Approximation::Parameter(false, false, false, false))
+           << Approximation::To<float>(this, Approximation::Parameter{})
            << "\"";
   }
   if (isVar()) {

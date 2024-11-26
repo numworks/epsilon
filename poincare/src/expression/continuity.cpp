@@ -18,7 +18,7 @@ bool Continuity::IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2) {
     return true;
   }
   bool isDiscontinuous = false;
-  Approximation::Parameter param(false, false, false, false);
+  Approximation::Parameter param{};
   if (e->isOfType({Type::Ceil, Type::Floor, Type::Round})) {
     // is discontinuous if it changes value
     isDiscontinuous = Approximation::To<T>(e, x1, param) !=

@@ -71,8 +71,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       coefListY->removeTree();
       return;
     }
-    m_c = Approximation::To<double>(
-        c, Approximation::Parameter(false, false, false, false));
+    m_c = Approximation::To<double>(c, Approximation::Parameter{});
     ;
   }
 
@@ -87,14 +86,12 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   Tree* coefListX = PolynomialParser::GetReducedCoefficients(be, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
-    m_b = Approximation::To<double>(
-        coefListX->child(1),
-        Approximation::Parameter(false, false, false, false));
+    m_b = Approximation::To<double>(coefListX->child(1),
+                                    Approximation::Parameter{});
     ;
   }
-  m_e = Approximation::To<double>(
-      coefListX->child(0),
-      Approximation::Parameter(false, false, false, false));
+  m_e = Approximation::To<double>(coefListX->child(0),
+                                  Approximation::Parameter{});
   ;
   coefListX->removeTree();
 
@@ -111,20 +108,17 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   coefListX = PolynomialParser::GetReducedCoefficients(adf, x);
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
-    m_a = Approximation::To<double>(
-        coefListX->child(2),
-        Approximation::Parameter(false, false, false, false));
+    m_a = Approximation::To<double>(coefListX->child(2),
+                                    Approximation::Parameter{});
     ;
   }
   if (dx >= 1) {
-    m_d = Approximation::To<double>(
-        coefListX->child(1),
-        Approximation::Parameter(false, false, false, false));
+    m_d = Approximation::To<double>(coefListX->child(1),
+                                    Approximation::Parameter{});
     ;
   }
-  m_f = Approximation::To<double>(
-      coefListX->child(0),
-      Approximation::Parameter(false, false, false, false));
+  m_f = Approximation::To<double>(coefListX->child(0),
+                                  Approximation::Parameter{});
   ;
   coefListX->removeTree();
   coefListY->removeTree();
@@ -498,8 +492,7 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
   assert(0 < nRemoved && nRemoved < nChildren);
   NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
-  double k = Approximation::To<double>(
-      denominator, Approximation::Parameter(false, false, false, false));
+  double k = Approximation::To<double>(denominator, Approximation::Parameter{});
   ;
   denominator->removeTree();
 

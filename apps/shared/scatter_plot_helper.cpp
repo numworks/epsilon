@@ -10,7 +10,7 @@ namespace Shared {
 Coordinate2D<float> ScatterPlotIterable::Iterator::operator*() const {
   assert(m_node->isPoint());
   return Internal::Approximation::ToPoint<float>(
-      m_node, Internal::Approximation::Parameter(false, false, false, false));
+      m_node, Internal::Approximation::Parameter{});
 }
 
 bool ScatterPlotIterable::Iterator::operator!=(const Iterator& rhs) const {

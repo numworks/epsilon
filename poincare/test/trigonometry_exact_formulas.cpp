@@ -35,20 +35,20 @@ class Poincare::Internal::ExactFormulaTest {
         assert(!ef.m_cos->isUndef() && !ef.m_sin->isUndef());
       }
       // Check with approximation that exact formulas are correct.
-      float angle = Approximation::To<float>(
-          ef.m_angle, Approximation::Parameter(false, false, false, false));
+      float angle =
+          Approximation::To<float>(ef.m_angle, Approximation::Parameter{});
       float epsilon = OMG::Float::EpsilonLax<float>();
       if (!ef.m_cos->isUndef()) {
-        float cos = Approximation::To<float>(
-            ef.m_cos, Approximation::Parameter(false, false, false, false));
+        float cos =
+            Approximation::To<float>(ef.m_cos, Approximation::Parameter{});
         quiz_assert(
             OMG::Float::RoughlyEqual<float>(std::cos(angle), cos, epsilon));
         quiz_assert(
             OMG::Float::RoughlyEqual<float>(std::acos(cos), angle, epsilon));
       }
       if (!ef.m_sin->isUndef()) {
-        float sin = Approximation::To<float>(
-            ef.m_sin, Approximation::Parameter(false, false, false, false));
+        float sin =
+            Approximation::To<float>(ef.m_sin, Approximation::Parameter{});
         quiz_assert(
             OMG::Float::RoughlyEqual<float>(std::sin(angle), sin, epsilon));
         quiz_assert(

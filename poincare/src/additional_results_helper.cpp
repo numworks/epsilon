@@ -81,7 +81,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
       Tree* sine = PatternMatching::Create(KSin(KA), {.KA = exactAngle});
       bool removePeriod =
           Approximation::To<double>(
-              sine, Approximation::Parameter(false, true, false, false),
+              sine, Approximation::Parameter{.projectLocalVariables = true},
               Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
                                      ctx->m_context)) < 0;
       sine->removeTree();
@@ -93,7 +93,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     assert(approximateAngleTree);
     approximateAngleTree->moveTreeOverTree(Approximation::ToTree<double>(
         approximateAngleTree,
-        Approximation::Parameter(false, true, false, true)));
+        Approximation::Parameter{.projectLocalVariables = true,
+                                 .prepare = true}));
     Beautification::DeepBeautify(approximateAngleTree, *ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
@@ -113,7 +114,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
   *approximatedAngle = static_cast<float>(Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
-      Approximation::Parameter(false, true, false, false),
+      Approximation::Parameter{.projectLocalVariables = true},
       Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
                              ctx->m_context)));
   if (approximateAngleTree) {
@@ -222,7 +223,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   // The angle must be real and finite.
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
-          exactAngle, Approximation::Parameter(false, true, false, false),
+          exactAngle, Approximation::Parameter{.projectLocalVariables = true},
           Approximation::Context(angleUnit, complexFormat, context)))) {
     exactAngle->removeTree();
     return UserExpression();
@@ -261,8 +262,8 @@ const Tree* getNumericalValueTree(const Tree* e, bool* error) {
   }
   // e is not considered as a numerical value so that e^2 -> e^x
   if ((e->isNumber() && !e->isEulerE()) || e->isDecimal()) {
-    if (!std::isfinite(Approximation::To<float>(
-            e, Approximation::Parameter(false, false, false, false)))) {
+    if (!std::isfinite(
+            Approximation::To<float>(e, Approximation::Parameter{}))) {
       *error = true;
       return nullptr;
     }
@@ -307,8 +308,7 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   Tree* numericalValue =
       const_cast<Tree*>(getNumericalValueTree(clone, &dummy));
   assert(numericalValue);
-  *value = Approximation::To<float>(
-      numericalValue, Approximation::Parameter(false, false, false, false));
+  *value = Approximation::To<float>(numericalValue, Approximation::Parameter{});
   numericalValue->moveTreeOverTree(SharedTreeStack->pushUserSymbol(symbol));
   return UserExpression::Builder(clone);
 }

@@ -149,7 +149,7 @@ template <typename T>
 SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(), Approximation::Parameter(true, false, false, false),
+      tree(), Approximation::Parameter{.isRoot = true},
       Approximation::Context(approximationContext.angleUnit(),
                              approximationContext.complexFormat(),
                              approximationContext.context())));
@@ -353,7 +353,10 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       *approximatedExpression = Builder(a);
     } else {
       std::complex<double> value = Approximation::ToComplex<double>(
-          e, Approximation::Parameter(true, true, false, true), approxCtx);
+          e,
+          Approximation::Parameter{
+              .isRoot = true, .projectLocalVariables = true, .prepare = true},
+          approxCtx);
       *approximatedExpression =
           Builder(Beautification::PushBeautifiedComplex<double>(
               value, context->m_complexFormat));
@@ -455,7 +458,8 @@ template <typename T>
 T UserExpression::approximateToScalar(AngleUnit angleUnit,
                                       ComplexFormat complexFormat) const {
   return Approximation::To<T>(
-      tree(), Approximation::Parameter(true, true, false, false),
+      tree(),
+      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat));
 }
 
@@ -463,7 +467,7 @@ template <typename T>
 T SystemFunctionScalar::approximateToScalarWithValue(T x,
                                                      int listElement) const {
   return Approximation::To<T>(
-      tree(), x, Approximation::Parameter(true, false, false, false),
+      tree(), x, Approximation::Parameter{.isRoot = true},
       Approximation::Context(AngleUnit::None, ComplexFormat::None, nullptr,
                              listElement));
 }
@@ -496,7 +500,8 @@ bool UserExpression::hasDefinedComplexApproximation(
   }
   // TODO_PCJ: Remove ApproximationContext
   std::complex<T> z = Approximation::ToComplex<T>(
-      tree(), Approximation::Parameter(true, true, false, false),
+      tree(),
+      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true},
       Approximation::Context(approximationContext.angleUnit(),
                              approximationContext.complexFormat(),
                              approximationContext.context()));
@@ -541,19 +546,19 @@ template <typename T>
 PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {
   return Internal::Approximation::ToPointOrScalar<T>(
-      tree(), x, Approximation::Parameter(true, false, false, false));
+      tree(), x, Approximation::Parameter{.isRoot = true});
 }
 
 template <typename T>
 T SystemExpression::approximateToScalarJunior() const {
   return Approximation::To<T>(
-      tree(), Approximation::Parameter(true, false, false, true));
+      tree(), Approximation::Parameter{.isRoot = true, .prepare = true});
 }
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPointJunior() const {
   return Approximation::ToPoint<T>(
-      tree(), Approximation::Parameter(true, false, false, true));
+      tree(), Approximation::Parameter{.isRoot = true, .prepare = true});
 }
 
 template <typename T>
@@ -564,7 +569,7 @@ T SystemFunction::approximateIntegralToScalar(
       KIntegral("x"_e, KA, KB, KC),
       {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()});
   T result = Approximation::To<T>(
-      integralTree, Approximation::Parameter(true, false, false, true));
+      integralTree, Approximation::Parameter{.isRoot = true, .prepare = true});
   integralTree->removeTree();
   return result;
 }
@@ -575,7 +580,7 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::ToTree<T>(
-      clone, Approximation::Parameter(true, false, false, true)));
+      clone, Approximation::Parameter{.isRoot = true, .prepare = true}));
   return SystemExpression::Builder(clone);
 }
 

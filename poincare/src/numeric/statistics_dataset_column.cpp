@@ -18,9 +18,7 @@ T TreeDatasetColumn<T>::valueAtIndex(int index) const {
    * one already approximated with fast array access. */
   /* TreeDatasetColumn have been constructed with an approximated list tree. No
    * need for further projection, preparation or context. */
-  return Approximation::To<T>(
-      m_list->child(index),
-      Approximation::Parameter(false, false, false, false));
+  return Approximation::To<T>(m_list->child(index), Approximation::Parameter{});
 }
 
 template <typename T>

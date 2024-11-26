@@ -88,8 +88,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
    * m_angleUnit) or ensure expression is projected. */
   FunctionEvaluation f = [](T x, const void* aux) {
     const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-    return Approximation::To<T>(
-        e, x, Approximation::Parameter(true, false, false, false));
+    return Approximation::To<T>(e, x, Approximation::Parameter{.isRoot = true});
   };
 
   return next(f, e, test, hone, &DiscontinuityTestForExpression);
@@ -176,10 +175,8 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
     return Solution();
   }
   T x = root.x();
-  T y1 = Approximation::To<T>(
-      e1, x, Approximation::Parameter(true, false, false, false));
-  T y2 = Approximation::To<T>(
-      e2, x, Approximation::Parameter(true, false, false, false));
+  T y1 = Approximation::To<T>(e1, x, Approximation::Parameter{.isRoot = true});
+  T y2 = Approximation::To<T>(e2, x, Approximation::Parameter{.isRoot = true});
   if (!std::isfinite(y1) || !std::isfinite(y2)) {
     /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
      * or undef expressions in specific points like x^2/x, the root of the
@@ -534,8 +531,7 @@ T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     T value = Approximation::To<T>(
-        ebis, xRoot,
-        Approximation::Parameter(true, false, false, false));  // m_unknown
+        ebis, xRoot, Approximation::Parameter{.isRoot = true});  // m_unknown
     ebis->removeTree();
     if (std::fabs(value) < NullTolerance(xRoot)) {
       return xRoot;
@@ -588,13 +584,12 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
       if (e->type() == Type::Sqrt) {
         exponent = static_cast<T>(0.5);
       } else if (e->type() == Type::Pow) {
-        exponent = Approximation::To<T>(
-            e->child(1), Approximation::Parameter(false, false, false, false));
+        exponent =
+            Approximation::To<T>(e->child(1), Approximation::Parameter{});
       } else if (e->type() == Type::Root) {
-        exponent = static_cast<T>(1.) /
-                   Approximation::To<T>(
-                       e->child(1),
-                       Approximation::Parameter(false, false, false, false));
+        exponent =
+            static_cast<T>(1.) /
+            Approximation::To<T>(e->child(1), Approximation::Parameter{});
       }
       if (std::isnan(exponent)) {
         return false;
@@ -620,10 +615,9 @@ T Solver<T>::nextRootInDependency(const Tree* e) const {
   // Find root in main
   Solution root = solver.nextRoot(main);
   // Check that the dependencies of the solution are not undefined
-  while (
-      root.interest() == Interest::Root &&
-      std::isnan(Approximation::To<T>(
-          e, root.x(), Approximation::Parameter(true, false, false, false)))) {
+  while (root.interest() == Interest::Root &&
+         std::isnan(Approximation::To<T>(
+             e, root.x(), Approximation::Parameter{.isRoot = true}))) {
     root = solver.nextRoot(main);
   }
   return root.x();

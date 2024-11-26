@@ -403,8 +403,8 @@ ComplexSign SignOfTreeOrApproximation(const Tree* e) {
   ComplexSign sign = GetComplexSign(e);
   if (!sign.realSign().hasKnownStrictSign() ||
       !sign.imagSign().hasKnownStrictSign()) {
-    Tree* approximation = Approximation::ToTree<double>(
-        e, Approximation::Parameter(false, false, false, false));
+    Tree* approximation =
+        Approximation::ToTree<double>(e, Approximation::Parameter{});
     sign = GetComplexSign(approximation);
     approximation->removeTree();
   }

@@ -72,8 +72,7 @@ bool DetectLinearPatternOfTrig(const Tree* e, const char* symbol, double* a,
       eWithoutCos->removeTree();
       return false;
     }
-    *a *= Approximation::To<double>(
-        eWithoutCos, Approximation::Parameter(false, false, false, false));
+    *a *= Approximation::To<double>(eWithoutCos, Approximation::Parameter{});
     eWithoutCos->removeTree();
     return true;
   }
@@ -95,10 +94,8 @@ bool DetectLinearPatternOfTrig(const Tree* e, const char* symbol, double* a,
     assert(bTree && cTree);
 
     *a = 1.0;
-    *b = Approximation::To<double>(
-        bTree, Approximation::Parameter(false, false, false, false));
-    *c = Approximation::To<double>(
-             cTree, Approximation::Parameter(false, false, false, false)) -
+    *b = Approximation::To<double>(bTree, Approximation::Parameter{});
+    *c = Approximation::To<double>(cTree, Approximation::Parameter{}) -
          isSin * M_PI_2;
     *c = PositiveModulo(*c, 2 * M_PI);
     coefList->removeTree();

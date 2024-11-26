@@ -82,24 +82,16 @@ class Approximation final {
     Poincare::Context* m_symbolContext;
   };
 
-  class Parameter {
-   public:
-    Parameter(bool isRoot = false, bool isNotProjected = true,
-              bool optimize = false, bool prepare = true)
-        : m_isRoot(isRoot),
-          m_projectLocalVariables(isNotProjected),
-          m_optimize(optimize),
-          m_prepare(prepare) {}
-
+  struct Parameter {
     // A new m_randomContext will be created
-    bool m_isRoot;
+    bool isRoot = false;
     /* Must be true if expression has not been projected and may have parametric
      * functions. */
-    bool m_projectLocalVariables;
+    bool projectLocalVariables = false;
     // Tree will be optimized for multiple approximations, only with toTree
-    bool m_optimize;
+    bool optimize = false;
     // Tree will be prepared for a more accurate approximation
-    bool m_prepare;
+    bool prepare = false;
   };
 
   static bool SetUnknownSymbol(Tree* e, const char* variable,

@@ -216,15 +216,25 @@ KDRect AbstractPlotView::dotRect(Dots::Size size,
   return KDRect(p.x(), p.y(), diameter, diameter);
 }
 
-void AbstractPlotView::drawDot(KDContext* ctx, KDRect rect, Dots::Size size,
-                               Poincare::Coordinate2D<float> xy, KDColor color,
-                               bool ring) const {
+void AbstractPlotView::drawDotOrRing(KDContext* ctx, KDRect rect,
+                                     Dots::Size size,
+                                     Poincare::Coordinate2D<float> xy,
+                                     KDColor color, bool ring) const {
   const uint8_t* mask = Dots::Mask(size, ring);
   KDRect rectForDot = dotRect(size, xy, ring);
   if (rect.intersects(rectForDot)) {
     KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
     ctx->blendRectWithMask(rectForDot, color, mask, workingBuffer);
   }
+}
+
+void AbstractPlotView::drawRing(KDContext* ctx, KDRect rect, Dots::Size size,
+                                Poincare::Coordinate2D<float> xy, KDColor color,
+                                bool transparent) const {
+  if (!transparent) {
+    drawDotOrRing(ctx, rect, size, xy, KDColorWhite, false);
+  }
+  drawDotOrRing(ctx, rect, size, xy, color, true);
 }
 
 double AbstractPlotView::angleFromPoint(KDPoint point) const {

@@ -124,8 +124,12 @@ class AbstractPlotView : public Escher::View {
   KDRect dotRect(Dots::Size size, Poincare::Coordinate2D<float> xy,
                  bool ring = false) const;
   void drawDot(KDContext* ctx, KDRect rect, Dots::Size size,
-               Poincare::Coordinate2D<float> xy, KDColor color,
-               bool ring = false) const;
+               Poincare::Coordinate2D<float> xy, KDColor color) const {
+    return drawDotOrRing(ctx, rect, size, xy, color, false);
+  }
+  void drawRing(KDContext* ctx, KDRect rect, Dots::Size size,
+                Poincare::Coordinate2D<float> xy, KDColor color,
+                bool transparent = true) const;
   void drawArc(KDContext* ctx, KDRect rect,
                Poincare::Coordinate2D<float> center, float radius,
                float angleStart, float angleEnd, KDColor color) const;
@@ -185,6 +189,10 @@ class AbstractPlotView : public Escher::View {
   virtual void drawPlot(KDContext* ctx, KDRect rect) const = 0;
   virtual KDRect bannerFrame() = 0;
   virtual void privateSetCursorView(CursorView*) = 0;
+
+  void drawDotOrRing(KDContext* ctx, KDRect rect, Dots::Size size,
+                     Poincare::Coordinate2D<float> xy, KDColor color,
+                     bool ring) const;
 
   CurveViewRange* m_range;
   mutable int8_t m_stampDashIndex;

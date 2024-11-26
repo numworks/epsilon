@@ -65,7 +65,7 @@ class ReductionContext : public ComputationContext {
     return ReductionContext(
         reductionContext.context(), reductionContext.complexFormat(),
         reductionContext.angleUnit(), reductionContext.unitFormat(),
-        reductionContext.target(), SymbolicComputation::DoNotReplaceAnySymbol,
+        reductionContext.target(), SymbolicComputation::KeepAllSymbols,
         UnitConversion::None);
   }
   static ReductionContext DefaultReductionContextForAnalysis(Context* context) {
@@ -73,8 +73,7 @@ class ReductionContext : public ComputationContext {
         context, Preferences::ComplexFormat::Cartesian,
         Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric,
         ReductionTarget::SystemForAnalysis,
-        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-        UnitConversion::None);
+        SymbolicComputation::ReplaceDefinedSymbols, UnitConversion::None);
   }
 
   ReductionContext(
@@ -85,7 +84,7 @@ class ReductionContext : public ComputationContext {
       Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
       ReductionTarget target = ReductionTarget::User,
       SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+          SymbolicComputation::ReplaceDefinedSymbols,
       UnitConversion unitConversion = UnitConversion::Default,
       bool shouldExpandMultiplication = true, bool shouldCheckMatrices = true,
       bool shouldExpandLogarithm = true)

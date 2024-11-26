@@ -218,29 +218,27 @@ class OExpression : public PoolHandle {
     Symbol* head;
     void* tail;
   };
-  bool recursivelyMatches(
-      ExpressionTrinaryTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr,
-      IgnoredSymbols* ignoredSymbols = nullptr) const;
+  bool recursivelyMatches(ExpressionTrinaryTest test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr,
+                          IgnoredSymbols* ignoredSymbols = nullptr) const;
   typedef bool (*ExpressionTest)(const OExpression e, Context* context);
-  bool recursivelyMatches(
-      ExpressionTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
   typedef bool (*SimpleExpressionTest)(const OExpression e);
-  bool recursivelyMatches(
-      SimpleExpressionTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
   typedef bool (*ExpressionTestAuxiliary)(const OExpression e, Context* context,
                                           void* auxiliary);
-  bool recursivelyMatches(
-      ExpressionTestAuxiliary test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr) const;
+  bool recursivelyMatches(ExpressionTestAuxiliary test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr) const;
 
   bool deepIsOfType(std::initializer_list<ExpressionNode::Type> types,
                     Context* context = nullptr) const;
@@ -343,10 +341,9 @@ class OExpression : public PoolHandle {
   /* Complex */
   static bool EncounteredComplex();
   static void SetEncounteredComplex(bool encounterComplex);
-  bool hasComplexI(
-      Context* context,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool hasComplexI(Context* context,
+                   SymbolicComputation replaceSymbols =
+                       SymbolicComputation::ReplaceDefinedSymbols) const;
   // WARNING: this methods must be called on reduced expressions
   bool isReal(Context* context, bool canContainMatrices = true) const;
 

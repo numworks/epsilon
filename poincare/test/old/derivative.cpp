@@ -13,7 +13,7 @@ void assert_reduces_to_formal_expression(
     Preferences::ComplexFormat complexFormat = Cartesian) {
   assert_parsed_expression_simplify_to(expression, result, User, angleUnit,
                                        MetricUnitFormat, complexFormat,
-                                       ReplaceAllDefinedSymbolsWithDefinition);
+                                       ReplaceDefinedSymbols);
 }
 
 QUIZ_CASE(poincare_derivative_formal) {
@@ -157,7 +157,7 @@ void assert_reduces_for_approximation(
     Poincare::Preferences::ComplexFormat complexFormat = Real) {
   assert_parsed_expression_simplify_to(
       expression, result, SystemForApproximation, angleUnit, MetricUnitFormat,
-      complexFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      complexFormat, ReplaceAllSymbols);
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {

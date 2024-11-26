@@ -27,8 +27,7 @@ void ComplexListController::computeAdditionalResults(
   Internal::ProjectionContext ctx = {
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = context};
 
   // Fill Calculation Store

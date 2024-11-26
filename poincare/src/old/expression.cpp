@@ -128,8 +128,7 @@ bool OExpression::deepIsOfType(
                    ? OMG::Troolean::True
                    : OMG::Troolean::Unknown;
       },
-      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &types);
+      context, SymbolicComputation::ReplaceDefinedSymbols, &types);
 }
 
 bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
@@ -170,8 +169,7 @@ bool OExpression::deepIsMatrix(Context *context, bool canContainMatrices,
         // Any other type is not a matrix
         return OMG::Troolean::False;
       },
-      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &isReduced);
+      context, SymbolicComputation::ReplaceDefinedSymbols, &isReduced);
 }
 
 bool OExpression::deepIsList(Context *context) const {
@@ -302,7 +300,7 @@ bool OExpression::getLinearCoefficients(
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
         assert(!recursivelyMatches(OExpression::IsUndefined, context,
-                                   SymbolicComputation::DoNotReplaceAnySymbol));
+                                   SymbolicComputation::KeepAllSymbols));
         /* Maybe here we would like to return another error than
          * Error::NonLinearSystem, maybe it would be better to return
          * Error::EquationUndefined */
@@ -570,9 +568,8 @@ bool OExpression::hasUnit(bool ignoreAngleUnits, bool *hasAngleUnits,
                e.otype() == ExpressionNode::Type::ConstantPhysics;
       },
       ctx,
-      replaceSymbols
-          ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-          : SymbolicComputation::DoNotReplaceAnySymbol,
+      replaceSymbols ? SymbolicComputation::ReplaceDefinedSymbols
+                     : SymbolicComputation::KeepAllSymbols,
       &pack);
 }
 
@@ -1020,7 +1017,7 @@ OExpression OExpression::cloneAndDeepReduceWithSystemCheckpoint(
     // Check undef
     if (e.recursivelyMatches(OExpression::IsUndefined,
                              reductionContext->context(),
-                             SymbolicComputation::DoNotReplaceAnySymbol)) {
+                             SymbolicComputation::KeepAllSymbols)) {
       return Undefined::Builder();
     }
   } else {

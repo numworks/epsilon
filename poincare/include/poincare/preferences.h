@@ -98,7 +98,7 @@ class __attribute__((packed)) Preferences final {
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const JuniorExpression& e, Context* context,
       SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+          SymbolicComputation::ReplaceDefinedSymbols);
 
   CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;

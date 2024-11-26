@@ -26,11 +26,11 @@ enum class ExpansionStrategy { None, ExpandAlgebraic };
 enum class UnitFormat { Metric, Imperial };
 
 enum class SymbolicComputation {
-  ReplaceAllSymbolsWithDefinitionsOrUndefined = 0,
-  ReplaceAllDefinedSymbolsWithDefinition = 1,
-  ReplaceDefinedFunctionsWithDefinitions = 2,
+  ReplaceAllSymbols = 0,  // If a symbol is not defined, it is replaced by undef
+  ReplaceDefinedSymbols = 1,
+  ReplaceDefinedFunctions = 2,
   ReplaceAllSymbolsWithUndefined = 3,  // Used in UnitConvert::shallowReduce
-  DoNotReplaceAnySymbol = 4
+  KeepAllSymbols = 4
 };
 
 enum class UnitDisplay : uint8_t {

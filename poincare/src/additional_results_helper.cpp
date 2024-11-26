@@ -188,8 +188,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = context,
   };
 
@@ -398,12 +397,10 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  ProjectionContext ctx = {
-      .m_strategy = Strategy::ApproximateToFloat,
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      .m_context = context,
-      .m_advanceReduce = false};
+  ProjectionContext ctx = {.m_strategy = Strategy::ApproximateToFloat,
+                           .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+                           .m_context = context,
+                           .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Simplification::ProjectAndReduce(e, &ctx);
   assert(!ctx.m_dimension.isUnit());

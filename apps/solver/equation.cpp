@@ -18,8 +18,8 @@ SystemExpression Equation::Model::standardForm(
   // In any case, undefined symbols must be preserved.
   SymbolicComputation symbolicComputation =
       replaceFunctionsButNotSymbols
-          ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-          : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+          ? SymbolicComputation::ReplaceDefinedFunctions
+          : SymbolicComputation::ReplaceDefinedSymbols;
   UserExpression expressionInputWithoutFunctions = expressionClone(record);
   expressionInputWithoutFunctions.replaceSymbols(context, symbolicComputation);
   if (expressionInputWithoutFunctions.isUninitialized()) {

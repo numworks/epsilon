@@ -62,8 +62,7 @@ OMG::Troolean SymbolAbstractNode::isPositive(Context *context) const {
   SymbolAbstract s(this);
   // No need to preserve undefined symbols here.
   OExpression e = SymbolAbstract::Expand(
-      s, context, true,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      s, context, true, SymbolicComputation::ReplaceAllSymbols);
   if (e.isUninitialized()) {
     return OMG::Troolean::Unknown;
   }

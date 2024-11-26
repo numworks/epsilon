@@ -77,8 +77,7 @@ Tree* Simplification::ApplySimplify(const Tree* dataTree,
     const Tree* firstChild = dataTree->child(0);
     if (firstChild->nextTree()->isUserFunction()) {
       if (CAS::Enabled()) {
-        projectionContext->m_symbolic =
-            SymbolicComputation::DoNotReplaceAnySymbol;
+        projectionContext->m_symbolic = SymbolicComputation::KeepAllSymbols;
       } else {
         return dataTree->cloneTree();
       }

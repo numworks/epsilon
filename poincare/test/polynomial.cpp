@@ -161,7 +161,7 @@ QUIZ_CASE(pcj_polynomial_degree) {
 
   ProjectionContext projCtx = {
       .m_complexFormat = ComplexFormat::Cartesian,
-      .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = &globalContext,
       .m_advanceReduce = false};
 

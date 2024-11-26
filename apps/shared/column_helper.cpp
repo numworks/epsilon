@@ -180,8 +180,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext,
       {.target = ReductionTarget::SystemForApproximation,
-       .symbolicComputation =
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined});
+       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols});
 
   if (formula.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;

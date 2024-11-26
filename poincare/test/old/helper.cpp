@@ -221,8 +221,7 @@ void assert_expression_approximates_to(const char *expression,
                                        int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
-      DefaultUnitConversion,
+      angleUnit, unitFormat, ReplaceAllSymbols, DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) -> Tree * {
         Internal::ProjectionContext context = {
             .m_complexFormat = reductionContext.complexFormat(),
@@ -270,8 +269,7 @@ void assert_expression_approximates_keeping_symbols_to(
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllDefinedSymbolsWithDefinition,
-      DefaultUnitConversion,
+      angleUnit, unitFormat, ReplaceDefinedSymbols, DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
 #if 0
         Tree *simplifiedExpression;
@@ -296,7 +294,7 @@ void assert_expression_simplifies_approximates_to(
 #if 0
   assert_parsed_expression_process_to(
       expression, approximation, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      angleUnit, unitFormat, ReplaceAllSymbols,
       DefaultUnitConversion,
       [](Tree *e, ReductionContext reductionContext) {
         e = e.cloneAndSimplify(reductionContext);

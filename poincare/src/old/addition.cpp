@@ -603,8 +603,7 @@ OExpression Addition::factorizeOnCommonDenominator(
    * denominator for the integrand. */
   SymbolicComputation previousSymbolicComputation =
       reductionContext.symbolicComputation();
-  reductionContext.setSymbolicComputation(
-      SymbolicComputation::DoNotReplaceAnySymbol);
+  reductionContext.setSymbolicComputation(SymbolicComputation::KeepAllSymbols);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(reductionContext);

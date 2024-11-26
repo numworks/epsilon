@@ -1236,8 +1236,7 @@ OExpression OUnit::BuildSplit(double value, const OUnit* units, int length,
   ReductionContext keepUnitsContext(
       reductionContext.context(), reductionContext.complexFormat(),
       reductionContext.angleUnit(), reductionContext.unitFormat(),
-      ReductionTarget::User,
-      SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      ReductionTarget::User, SymbolicComputation::ReplaceDefinedSymbols,
       UnitConversion::None);
   return res.squashUnaryHierarchyInPlace().shallowBeautify(keepUnitsContext);
 }

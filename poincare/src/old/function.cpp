@@ -22,8 +22,7 @@ int FunctionNode::getPolynomialCoefficients(Context* context,
                                             OExpression coefficients[]) const {
   Function f(this);
   OExpression e = SymbolAbstract::Expand(
-      f, context, true,
-      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+      f, context, true, SymbolicComputation::ReplaceDefinedFunctions);
   if (e.isUninitialized()) {
     return -1;
   }
@@ -35,8 +34,7 @@ int FunctionNode::getVariables(Context* context, isVariableTest isVariable,
                                int nextVariableIndex) const {
   Function f(this);
   OExpression e = SymbolAbstract::Expand(
-      f, context, true,
-      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+      f, context, true, SymbolicComputation::ReplaceDefinedFunctions);
   if (e.isUninitialized()) {
     return nextVariableIndex;
   }
@@ -71,9 +69,9 @@ template <typename T>
 Evaluation<T> FunctionNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Function f(this);
-  OExpression e = SymbolAbstract::Expand(
-      f, approximationContext.context(), true,
-      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+  OExpression e =
+      SymbolAbstract::Expand(f, approximationContext.context(), true,
+                             SymbolicComputation::ReplaceDefinedFunctions);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -110,37 +108,31 @@ OExpression Function::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
 
-  if (symbolicComputation == SymbolicComputation::DoNotReplaceAnySymbol) {
+  if (symbolicComputation == SymbolicComputation::KeepAllSymbols) {
     return *this;
   }
 
-  assert(symbolicComputation ==
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
-         symbolicComputation ==
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-         symbolicComputation ==
-             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+  assert(symbolicComputation == SymbolicComputation::ReplaceAllSymbols ||
+         symbolicComputation == SymbolicComputation::ReplaceDefinedSymbols ||
+         symbolicComputation == SymbolicComputation::ReplaceDefinedFunctions);
 
   /* Symbols that have a definition while also being the parameter of a
    * parametered expression should not be replaced in SymbolAbstract::Expand,
    * which won't handle this expression's parents.
-   * With ReplaceDefinedFunctionsWithDefinitions symbolic computation, only
+   * With ReplaceDefinedFunctions symbolic computation, only
    * nested functions will be replaced by their definitions.
    * Symbols will be handled in deepReduce, which is aware of parametered
    * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
    * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
-  OExpression result = SymbolAbstract::Expand(
-      *this, reductionContext.context(), true,
-      SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+  OExpression result =
+      SymbolAbstract::Expand(*this, reductionContext.context(), true,
+                             SymbolicComputation::ReplaceDefinedFunctions);
   if (result.isUninitialized()) {
-    if (symbolicComputation ==
-            SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-        symbolicComputation ==
-            SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions) {
+    if (symbolicComputation == SymbolicComputation::ReplaceDefinedSymbols ||
+        symbolicComputation == SymbolicComputation::ReplaceDefinedFunctions) {
       return *this;
     }
-    assert(symbolicComputation ==
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    assert(symbolicComputation == SymbolicComputation::ReplaceAllSymbols);
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);

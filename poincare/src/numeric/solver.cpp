@@ -176,7 +176,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   T x = root.x();
   /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
-   * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+   * SymbolicComputation::ReplaceDefinedSymbols or ensure
    * expression is projected. */
   T y1 = Approximation::RootPreparedToReal<T>(e1, x);
   T y2 = Approximation::RootPreparedToReal<T>(e2, x);
@@ -534,7 +534,7 @@ T Solver<T>::nextPossibleRootInChild(const Tree* e, int childIndex) const {
     /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
     /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
-     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+     * SymbolicComputation::ReplaceDefinedSymbols or ensure
      * expression is projected. */
     T value = Approximation::RootPreparedToReal<T>(ebis, xRoot);  // m_unknown
     ebis->removeTree();
@@ -582,7 +582,7 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
   ExpressionTestAuxiliary test = [](const Tree* e, Context* context,
                                     void* aux) {
     /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
-     * SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition or ensure
+     * SymbolicComputation::ReplaceDefinedSymbols or ensure
      * expression is projected. */
     return e->hasDescendantSatisfying([](const Tree* e) {
       T exponent = k_NAN;

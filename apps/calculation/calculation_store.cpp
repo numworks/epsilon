@@ -156,11 +156,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
               Poincare::Preferences::SharedPreferences()->angleUnit(),
           .m_unitFormat =
               GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-          .m_symbolic =
-              CAS::Enabled()
-                  ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-                  : SymbolicComputation::
-                        ReplaceAllSymbolsWithDefinitionsOrUndefined,
+          .m_symbolic = CAS::Enabled()
+                            ? SymbolicComputation::ReplaceDefinedSymbols
+                            : SymbolicComputation::ReplaceAllSymbols,
           .m_context = context};
 
       inputExpression.cloneAndSimplifyAndApproximate(
@@ -202,8 +200,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
                                             context)) {
       value = valueApprox;
     }
-    assert(!value.deepIsSymbolic(nullptr,
-                                 SymbolicComputation::DoNotReplaceAnySymbol));
+    assert(!value.deepIsSymbolic(nullptr, SymbolicComputation::KeepAllSymbols));
     if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
       exactOutputExpression = value;
       approximateOutputExpression = valueApprox;

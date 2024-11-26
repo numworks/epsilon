@@ -387,8 +387,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     // TODO_PCJ: result is a SystemExpression, we don't want to project again
     PoincareHelpers::CloneAndSimplify(
         &result, &abscissaContext,
-        {.symbolicComputation =
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        {.symbolicComputation = SymbolicComputation::ReplaceAllSymbols,
          .unitConversion = UnitConversion::Default},
         &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a

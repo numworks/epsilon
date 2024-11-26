@@ -191,7 +191,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
       k_unknownName, coefficients, context, complexFormat(context),
       Poincare::Preferences::SharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      SymbolicComputation::ReplaceAllSymbols);
   assert(d <= 1);
   /* Degree might vary depending on symbols definition and complex format.
    * Approximate and return the two line coefficients */
@@ -656,7 +656,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
                        : k_unknownName,
           coefficients, context, complexFormat, angleUnit,
           ContinuousFunctionProperties::k_defaultUnitFormat,
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, true);
+          SymbolicComputation::ReplaceDefinedSymbols, true);
 
       if (degree == -1) {
         /* The reduction failed, so the expression is not reduced and
@@ -717,8 +717,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
                 {.complexFormat = complexFormat,
                  .updateComplexFormatWithExpression = false,
                  .target = ReductionTarget::SystemForApproximation,
-                 .symbolicComputation =
-                     SymbolicComputation::DoNotReplaceAnySymbol});
+                 .symbolicComputation = SymbolicComputation::KeepAllSymbols});
         assert(!resultForApproximation.isUninitialized());
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
@@ -782,7 +781,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForAnalysis,
          // Symbols have already been replaced.
-         .symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol});
+         .symbolicComputation = SymbolicComputation::KeepAllSymbols});
     assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Create(KUndef, {});

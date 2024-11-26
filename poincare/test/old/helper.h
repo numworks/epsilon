@@ -34,17 +34,16 @@ constexpr Poincare::ReductionTarget SystemForApproximation =
 constexpr Poincare::ReductionTarget SystemForAnalysis =
     Poincare::ReductionTarget::SystemForAnalysis;
 constexpr Poincare::ReductionTarget User = Poincare::ReductionTarget::User;
-constexpr Poincare::SymbolicComputation ReplaceAllDefinedSymbolsWithDefinition =
-    Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-constexpr Poincare::SymbolicComputation
-    ReplaceAllSymbolsWithDefinitionsOrUndefined = Poincare::
-        SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
-constexpr Poincare::SymbolicComputation ReplaceDefinedFunctionsWithDefinitions =
-    Poincare::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
+constexpr Poincare::SymbolicComputation ReplaceDefinedSymbols =
+    Poincare::SymbolicComputation::ReplaceDefinedSymbols;
+constexpr Poincare::SymbolicComputation ReplaceAllSymbols =
+    Poincare::SymbolicComputation::ReplaceAllSymbols;
+constexpr Poincare::SymbolicComputation ReplaceDefinedFunctions =
+    Poincare::SymbolicComputation::ReplaceDefinedFunctions;
 constexpr Poincare::SymbolicComputation ReplaceAllSymbolsWithUndefined =
     Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
-constexpr Poincare::SymbolicComputation DoNotReplaceAnySymbol =
-    Poincare::SymbolicComputation::DoNotReplaceAnySymbol;
+constexpr Poincare::SymbolicComputation KeepAllSymbols =
+    Poincare::SymbolicComputation::KeepAllSymbols;
 constexpr Poincare::UnitConversion NoUnitConversion =
     Poincare::UnitConversion::None;
 constexpr Poincare::UnitConversion DefaultUnitConversion =
@@ -119,8 +118,7 @@ void assert_parsed_expression_simplify_to(
     Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
-    Poincare::SymbolicComputation symbolicComputation =
-        ReplaceAllDefinedSymbolsWithDefinition,
+    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
     Poincare::UnitConversion unitConversion = DefaultUnitConversion);
 
 // Approximation

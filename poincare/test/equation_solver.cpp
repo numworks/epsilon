@@ -27,8 +27,8 @@ bool check_solutions(
                 static_cast<int>(outputs.size()));
     projectionContext.m_symbolic =
         context.overrideUserVariables
-            ? SymbolicComputation::DoNotReplaceAnySymbol
-            : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+            ? SymbolicComputation::KeepAllSymbols
+            : SymbolicComputation::ReplaceDefinedSymbols;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = parse(output);

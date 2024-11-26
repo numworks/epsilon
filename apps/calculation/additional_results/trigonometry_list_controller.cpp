@@ -28,8 +28,7 @@ void TrigonometryListController::computeAdditionalResults(
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = context};
 
   UserExpression exactAngle;

@@ -515,7 +515,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
                           ? OMG::Troolean::True
                           : OMG::Troolean::Unknown;
              },
-             nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
+             nullptr, SymbolicComputation::KeepAllSymbols,
              static_cast<void*>(&symbol));
 }
 

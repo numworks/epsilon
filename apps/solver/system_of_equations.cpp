@@ -364,9 +364,9 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
         simplifiedEquations[i].recursivelyMatches(
             NewExpression::IsMatrix, context,
             m_overrideUserVariables
-                ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+                ? SymbolicComputation::ReplaceDefinedFunctions
                 : SymbolicComputation::
-                      ReplaceAllDefinedSymbolsWithDefinition)) {
+                      ReplaceDefinedSymbols)) {
       return Error::EquationUndefined;
     } else if (simplifiedEquations[i].isNonReal()) {
       return Error::EquationNonReal;
@@ -403,8 +403,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   SymbolicComputation symbolicComputation =
       m_overrideUserVariables
-          ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-          : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+          ? SymbolicComputation::ReplaceDefinedFunctions
+          : SymbolicComputation::ReplaceDefinedSymbols;
   SystemExpression coefficients[EquationStore::k_maxNumberOfEquations]
                                [Expression::k_maxNumberOfVariables];
   SystemExpression constants[EquationStore::k_maxNumberOfEquations];
@@ -604,8 +604,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();
   SymbolicComputation symbolicComputation =
       m_overrideUserVariables
-          ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-          : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+          ? SymbolicComputation::ReplaceDefinedFunctions
+          : SymbolicComputation::ReplaceDefinedSymbols;
   SystemExpression
       coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   m_degree = simplifiedEquations[0].getPolynomialReducedCoefficients(
@@ -725,7 +725,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         GlobalPreferences::SharedGlobalPreferences()->unitFormat();
     // Any remaining symbol at this point should be an unknown parameter.
     SymbolicComputation symbolicComputation =
-        SymbolicComputation::DoNotReplaceAnySymbol;
+        SymbolicComputation::KeepAllSymbols;
     assert(type == SolutionType::Formal || !e.clone().replaceSymbols(context));
     simplifyAndApproximateSolution(e, &exact, approximatePointer,
                                    approximateDuringReduction, context,

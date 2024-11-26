@@ -246,7 +246,7 @@ static CodePoint symbolForEquation(UserExpression expression) {
         }
         return false;
       },
-      nullptr, SymbolicComputation::DoNotReplaceAnySymbol, &symbol);
+      nullptr, SymbolicComputation::KeepAllSymbols, &symbol);
   return symbol;
 }
 

@@ -127,7 +127,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
-  // TODO_PCJ: used SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
+  // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
   return Poincare::Internal::Sequence::MainExpressionContainsForbiddenTerms(
       expressionClone().tree(), buffer, type(), initialRank(),
       recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);

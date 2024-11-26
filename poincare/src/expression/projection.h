@@ -16,7 +16,7 @@ struct ProjectionContext {
   ExpansionStrategy m_expansionStrategy = ExpansionStrategy::None;
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
-  SymbolicComputation m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol;
+  SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
   Poincare::Context* m_context = nullptr;
   UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step

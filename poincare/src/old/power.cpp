@@ -1119,8 +1119,7 @@ bool Power::derivate(const ReductionContext &reductionContext, Symbol symbol,
    * using naperian logarithm of f, which rely on the sign of f. Prevent the
    * replacement of any symbols to preserve the local symbols. */
   ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(
-      SymbolicComputation::DoNotReplaceAnySymbol);
+  childContext.setSymbolicComputation(SymbolicComputation::KeepAllSymbols);
   derivedFromExponent.deepReduceChildren(childContext);
   if (derivedFromExponent.childAtIndex(0).isNull(reductionContext.context()) !=
       OMG::Troolean::True) {

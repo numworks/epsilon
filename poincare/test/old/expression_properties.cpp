@@ -807,7 +807,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat,
     SymbolicComputation symbolicComputation =
-        ReplaceAllDefinedSymbolsWithDefinition) {
+        ReplaceDefinedSymbols) {
   Shared::GlobalContext globalContext;
   OExpression e = parse_expression(expression, &globalContext);
   e = e.cloneAndReduce(
@@ -866,13 +866,13 @@ QUIZ_DISABLED_CASE(poincare_properties_get_polynomial_coefficients) {
   const char* coefficient8[] = {"2", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat,
-      DoNotReplaceAnySymbol);
+      KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat,
-      ReplaceDefinedFunctionsWithDefinitions);
+      ReplaceDefinedFunctions);
   assert_reduced_expression_has_polynomial_coefficient(
       "f(x)", "x", coefficient4, Cartesian, Radian, MetricUnitFormat,
-      ReplaceDefinedFunctionsWithDefinitions);
+      ReplaceDefinedFunctions);
 
   // Clear the storage
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
@@ -1127,7 +1127,7 @@ void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      e.deepIsSymbolic(&context, DoNotReplaceAnySymbol) == isSymbolic,
+      e.deepIsSymbolic(&context, KeepAllSymbols) == isSymbolic,
       expression);
 }
 

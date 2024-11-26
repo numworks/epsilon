@@ -20,8 +20,7 @@ class VectorListController : public IllustratedExpressionsListController {
   constexpr static Poincare::ReductionTarget k_target =
       Poincare::ReductionTarget::SystemForApproximation;
   constexpr static Poincare::SymbolicComputation k_symbolicComputation =
-      Poincare::SymbolicComputation::
-          ReplaceAllSymbolsWithDefinitionsOrUndefined;
+      Poincare::SymbolicComputation::ReplaceAllSymbols;
 
  private:
   constexpr static int k_maxNumberOfOutputRows = 3;

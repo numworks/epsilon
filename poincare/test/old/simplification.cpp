@@ -1218,12 +1218,12 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("sign(2+i)", "sign(2+i)");
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
-  assert_parsed_expression_simplify_to(
-      "sum(n,n,1,5)", "15", User, Radian, MetricUnitFormat, Cartesian,
-      ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert_parsed_expression_simplify_to(
-      "sum(1/n,n,1,2)", "3/2", User, Radian, MetricUnitFormat, Cartesian,
-      ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to("sum(n,n,1,5)", "15", User, Radian,
+                                       MetricUnitFormat, Cartesian,
+                                       ReplaceAllSymbols);
+  assert_parsed_expression_simplify_to("sum(1/n,n,1,2)", "3/2", User, Radian,
+                                       MetricUnitFormat, Cartesian,
+                                       ReplaceAllSymbols);
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
   assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
@@ -1803,9 +1803,9 @@ QUIZ_CASE(poincare_simplification_store) {
 #endif
   assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10→x");
   assert_parsed_expression_simplify_to("a→x", "a→x");
-  assert_parsed_expression_simplify_to(
-      "a→x", "undef→x", User, Radian, MetricUnitFormat, Cartesian,
-      ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to("a→x", "undef→x", User, Radian,
+                                       MetricUnitFormat, Cartesian,
+                                       ReplaceAllSymbols);
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
@@ -2243,18 +2243,16 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
 QUIZ_CASE(poincare_simplification_unit_conversion) {
   assert_parsed_expression_simplify_to(
       "1000000_cm", "10×_km", User, Degree, MetricUnitFormat, Cartesian,
-      ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
+      ReplaceDefinedSymbols, DefaultUnitConversion);
+  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User,
+                                       Degree, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, NoUnitConversion);
   assert_parsed_expression_simplify_to(
-      "1000000_cm", "1000000×_cm", User, Degree, MetricUnitFormat, Cartesian,
-      ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
-  assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree,
-                                       MetricUnitFormat, Cartesian,
-                                       ReplaceAllDefinedSymbolsWithDefinition,
-                                       InternationalSystemUnitConversion);
-  assert_parsed_expression_simplify_to("(-1/2)'", "-π/21600×_rad", User, Degree,
-                                       MetricUnitFormat, Cartesian,
-                                       ReplaceAllDefinedSymbolsWithDefinition,
-                                       InternationalSystemUnitConversion);
+      "1000000_cm", "10000×_m", User, Degree, MetricUnitFormat, Cartesian,
+      ReplaceDefinedSymbols, InternationalSystemUnitConversion);
+  assert_parsed_expression_simplify_to(
+      "(-1/2)'", "-π/21600×_rad", User, Degree, MetricUnitFormat, Cartesian,
+      ReplaceDefinedSymbols, InternationalSystemUnitConversion);
 }
 
 QUIZ_CASE(poincare_simplification_user_function) {
@@ -2954,9 +2952,9 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(-x/x,x>0,0)",
                                        "piecewise(dep(-1,{x^0}),x>0,0)");
 
-  assert_parsed_expression_simplify_to(
-      "piecewise(3,4>0,2,2<a)", "undef", User, Radian, MetricUnitFormat,
-      Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  assert_parsed_expression_simplify_to("piecewise(3,4>0,2,2<a)", "undef", User,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceAllSymbols);
 }
 
 QUIZ_CASE(poincare_simplification_integral) {

@@ -72,9 +72,9 @@ Evaluation<T> SymbolNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   Symbol s(this);
   // No need to preserve undefined symbols because they will be approximated.
-  OExpression e = SymbolAbstract::Expand(
-      s, approximationContext.context(), true,
-      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  OExpression e =
+      SymbolAbstract::Expand(s, approximationContext.context(), true,
+                             SymbolicComputation::ReplaceAllSymbols);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
@@ -117,8 +117,8 @@ OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
   SymbolicComputation symbolicComputation =
       reductionContext.symbolicComputation();
   if (symbolicComputation ==
-          SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions ||
-      symbolicComputation == SymbolicComputation::DoNotReplaceAnySymbol) {
+          SymbolicComputation::ReplaceDefinedFunctions ||
+      symbolicComputation == SymbolicComputation::KeepAllSymbols) {
     return *this;
   }
   if (symbolicComputation ==
@@ -126,9 +126,9 @@ OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
     return replaceWithUndefinedInPlace();
   }
   assert(symbolicComputation ==
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined ||
+             SymbolicComputation::ReplaceAllSymbols ||
          symbolicComputation ==
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+             SymbolicComputation::ReplaceDefinedSymbols);
   {
     OExpression current = *this;
     OExpression p = parent();
@@ -155,11 +155,11 @@ OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
                                               true, symbolicComputation);
   if (result.isUninitialized()) {
     if (symbolicComputation ==
-        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) {
+        SymbolicComputation::ReplaceDefinedSymbols) {
       return *this;
     }
     assert(symbolicComputation ==
-           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+           SymbolicComputation::ReplaceAllSymbols);
     return replaceWithUndefinedInPlace();
   }
   replaceWithInPlace(result);
@@ -171,7 +171,7 @@ OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
    * of remaining variables only to save computation that has already been
    * done in SymbolAbstract::Expand, when looking for parametered functions. */
   reductionContext.setSymbolicComputation(
-      SymbolicComputation::DoNotReplaceAnySymbol);
+      SymbolicComputation::KeepAllSymbols);
   // The stored expression is as entered by the user, so we need to call reduce
   result = result.deepReduce(reductionContext);
   return result;

@@ -382,8 +382,7 @@ bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
                    ? OMG::Troolean::True
                    : OMG::Troolean::Unknown;
       },
-      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      &types);
+      context, SymbolicComputation::ReplaceDefinedSymbols, &types);
 }
 
 void UserExpression::cloneAndSimplifyAndApproximate(
@@ -759,7 +758,7 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
                                        void* auxiliary,
                                        IgnoredSymbols* ignoredSymbols) const {
   if (!context) {
-    replaceSymbols = SymbolicComputation::DoNotReplaceAnySymbol;
+    replaceSymbols = SymbolicComputation::KeepAllSymbols;
   }
   if (IsIgnoredSymbol(this, ignoredSymbols)) {
     return false;
@@ -778,29 +777,24 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
         test, context, replaceSymbols, auxiliary, ignoredSymbols);
   }
   if (tree()->isUserSymbol() || tree()->isUserFunction()) {
-    assert(replaceSymbols ==
-               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
-           replaceSymbols ==
-               SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
+    assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
+           replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions
            // We need only those cases for now
-           || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
-    if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol ||
-        (replaceSymbols ==
-             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions &&
+           || replaceSymbols == SymbolicComputation::KeepAllSymbols);
+    if (replaceSymbols == SymbolicComputation::KeepAllSymbols ||
+        (replaceSymbols == SymbolicComputation::ReplaceDefinedFunctions &&
          tree()->isUserSymbol())) {
       return false;
     }
-    assert(replaceSymbols ==
-               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition ||
+    assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            tree()->isUserFunction());
     JuniorExpression e = clone();
     // Undefined symbols must be preserved.
-    e.replaceSymbols(
-        context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+    e.replaceSymbols(context, SymbolicComputation::ReplaceDefinedSymbols);
     return !e.isUninitialized() &&
            e.recursivelyMatches(test, context,
-                                SymbolicComputation::DoNotReplaceAnySymbol,
-                                auxiliary, ignoredSymbols);
+                                SymbolicComputation::KeepAllSymbols, auxiliary,
+                                ignoredSymbols);
   }
 
   /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
@@ -918,9 +912,8 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
                e.tree()->isPhysicalConstant();
       },
       ctx,
-      replaceSymbols
-          ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-          : SymbolicComputation::DoNotReplaceAnySymbol,
+      replaceSymbols ? SymbolicComputation::ReplaceDefinedSymbols
+                     : SymbolicComputation::KeepAllSymbols,
       &pack);
 }
 bool NewExpression::isUndefined() const {

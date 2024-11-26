@@ -19,7 +19,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
   /* TODO_PCJ: in old poincare, we did not do anything for sequence trees (not
    * only nodes), and for store trees we only replaced in the first child and if
    * the second child was a user symbol. */
-  if (symbolic == SymbolicComputation::DoNotReplaceAnySymbol) {
+  if (symbolic == SymbolicComputation::KeepAllSymbols) {
     return false;
   }
   // Check for circularity
@@ -48,12 +48,11 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
 
 bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
                                          SymbolicComputation symbolic) {
-  assert(symbolic != SymbolicComputation::DoNotReplaceAnySymbol);
+  assert(symbolic != SymbolicComputation::KeepAllSymbols);
   bool eIsUserFunction = e->isUserFunction();
   if (!eIsUserFunction &&
       (!e->isUserSymbol() ||
-       symbolic ==
-           SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
+       symbolic == SymbolicComputation::ReplaceDefinedFunctions)) {
     // TODO: skip also system symbol?
     return false;
   }
@@ -64,9 +63,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
   // Get Definition
   const Tree* definition =
       context ? context->treeForSymbolIdentifier(e) : nullptr;
-  if (symbolic ==
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined &&
-      !definition) {
+  if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
   } else if (!definition) {
@@ -100,8 +97,7 @@ ProjectionContext Projection::ContextFromSettings() {
 bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
   // If it lives in the pool, fetching definitions may invalidate it.
   bool mayReplaceSymbols =
-      (projectionContext.m_symbolic !=
-           SymbolicComputation::DoNotReplaceAnySymbol &&
+      (projectionContext.m_symbolic != SymbolicComputation::KeepAllSymbols &&
        projectionContext.m_symbolic !=
            SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   if (mayReplaceSymbols && !SharedTreeStack->contains(e)) {
@@ -123,10 +119,10 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
       /* We could factorize with DeepReplaceUserNamed but this avoid having to
        * clone the tree. */
       switch (projectionContext.m_symbolic) {
-        case SymbolicComputation::DoNotReplaceAnySymbol:
+        case SymbolicComputation::KeepAllSymbols:
         case SymbolicComputation::ReplaceAllSymbolsWithUndefined:
           break;
-        case SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions:
+        case SymbolicComputation::ReplaceDefinedFunctions:
           if (!e->isUserFunction()) {
             break;
           }

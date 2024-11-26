@@ -308,7 +308,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   Shared::GlobalContext globalContext;
   ProjectionContext ctx = {
       .m_complexFormat = ComplexFormat::Cartesian,
-      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = &globalContext,
   };
   simplifies_to("2×i×i", "-2", ctx);
@@ -454,7 +454,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);
   ProjectionContext ctx = {
-      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = &globalContext,
   };
 
@@ -977,7 +977,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);
   ProjectionContext ctx = {
-      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = &globalContext,
   };
   simplifies_to("f(x)-inf", "f(x)-∞", ctx);
@@ -1344,7 +1344,7 @@ QUIZ_CASE(pcj_simplification_function) {
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::DoNotReplaceAnySymbol,
+      .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = &globalContext,
   };
   simplifies_to("f(x)", "f(x)", projCtx);
@@ -1360,7 +1360,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
           "sys"));
 
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = &globalContext};
 
   store("4→y", &globalContext);
@@ -1377,8 +1377,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   // TODO_PCJ: implement list access and list slice on lists of points
 
   ProjectionContext projCtx2 = {
-      .m_symbolic =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = &globalContext};
   simplifies_to("y+2", "6", projCtx2);
   simplifies_to("y+x", "undef", projCtx2);

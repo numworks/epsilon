@@ -269,7 +269,7 @@ class JuniorExpression : public OExpression {
   static T ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,
       SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+          SymbolicComputation::ReplaceAllSymbols);
   template <typename T>
   /* Return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
@@ -314,10 +314,9 @@ class JuniorExpression : public OExpression {
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
                                             const NewExpression& expression,
                                             bool onlySecondTerm = false);
-  bool replaceSymbols(
-      Poincare::Context* context,
-      SymbolicComputation symbolic =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  bool replaceSymbols(Poincare::Context* context,
+                      SymbolicComputation symbolic =
+                          SymbolicComputation::ReplaceDefinedSymbols);
 
   typedef OMG::Troolean (*ExpressionTrinaryTest)(const NewExpression e,
                                                  Context* context,
@@ -326,38 +325,36 @@ class JuniorExpression : public OExpression {
     NewExpression* head;
     void* tail;
   };
-  bool recursivelyMatches(
-      ExpressionTrinaryTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr,
-      IgnoredSymbols* ignoredSymbols = nullptr) const;
+  bool recursivelyMatches(ExpressionTrinaryTest test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr,
+                          IgnoredSymbols* ignoredSymbols = nullptr) const;
 
   typedef bool (*ExpressionTest)(const NewExpression e, Context* context);
-  bool recursivelyMatches(
-      ExpressionTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*SimpleExpressionTest)(const NewExpression e);
-  bool recursivelyMatches(
-      SimpleExpressionTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (JuniorExpression::*NonStaticSimpleExpressionTest)() const;
-  bool recursivelyMatches(
-      NonStaticSimpleExpressionTest test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(NonStaticSimpleExpressionTest test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*ExpressionTestAuxiliary)(const NewExpression e,
                                           Context* context, void* auxiliary);
-  bool recursivelyMatches(
-      ExpressionTestAuxiliary test, Context* context = nullptr,
-      SymbolicComputation replaceSymbols =
-          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      void* auxiliary = nullptr) const;
+  bool recursivelyMatches(ExpressionTestAuxiliary test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr) const;
 
   Dimension dimension(Context* context = nullptr) const;
 

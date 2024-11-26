@@ -13,9 +13,8 @@ ReductionContext DefaultReductionContext(Context* ctx, bool keepSymbols) {
       ctx, Preferences::ComplexFormat::Cartesian,
       Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric,
       ReductionTarget::User,
-      keepSymbols
-          ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-          : SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      keepSymbols ? SymbolicComputation::ReplaceDefinedSymbols
+                  : SymbolicComputation::ReplaceAllSymbols,
       UnitConversion::Default);
 }
 
@@ -36,16 +35,14 @@ EMSCRIPTEN_BINDINGS(computation_context) {
       .value("SystemForAnalysis", ReductionTarget::SystemForAnalysis)
       .value("User", ReductionTarget::User);
   enum_<SymbolicComputation>("SymbolicComputation")
-      .value("ReplaceAllSymbolsWithDefinitionsOrUndefined",
-             SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined)
-      .value("ReplaceAllDefinedSymbolsWithDefinition",
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition)
-      .value("ReplaceDefinedFunctionsWithDefinitions",
-             SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)
+      .value("ReplaceAllSymbols", SymbolicComputation::ReplaceAllSymbols)
+      .value("ReplaceDefinedSymbols",
+             SymbolicComputation::ReplaceDefinedSymbols)
+      .value("ReplaceDefinedFunctions",
+             SymbolicComputation::ReplaceDefinedFunctions)
       .value("ReplaceAllSymbolsWithUndefined",
              SymbolicComputation::ReplaceAllSymbolsWithUndefined)
-      .value("DoNotReplaceAnySymbol",
-             SymbolicComputation::DoNotReplaceAnySymbol);
+      .value("KeepAllSymbols", SymbolicComputation::KeepAllSymbols);
   enum_<UnitConversion>("UnitConversion")
       .value("None", UnitConversion::None)
       .value("Default", UnitConversion::Default)

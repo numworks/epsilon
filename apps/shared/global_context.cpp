@@ -231,8 +231,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
     Ion::Storage::Record previousRecord) {
   bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
   PoincareHelpers::ReductionParameters params = {
-      .symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined};
+      .symbolicComputation = SymbolicComputation::ReplaceAllSymbols};
   PoincareHelpers::CloneAndSimplify(&expression, this, params);
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and just calling "approximate" would return undef */

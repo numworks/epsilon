@@ -19,7 +19,7 @@ void assert_parsed_expression_approximates_with_value_for_symbol(
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
-      .m_symbolic = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = &globalContext};
   Tree* e = expression->cloneTree();
   Simplification::ToSystem(e, &projContext);

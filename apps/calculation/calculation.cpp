@@ -273,8 +273,7 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
           &exactOutputExpression, context,
           {.complexFormat = complexFormat(),
            .angleUnit = angleUnit(),
-           .symbolicComputation = SymbolicComputation::
-               ReplaceAllSymbolsWithDefinitionsOrUndefined});
+           .symbolicComputation = SymbolicComputation::ReplaceAllSymbols});
     }
     // TODO: should we save the system expression in exact output instead ?
     // TODO: need to pass projection context

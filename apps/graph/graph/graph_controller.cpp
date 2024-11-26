@@ -62,17 +62,22 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
   return Shared::FunctionGraphController::handleEvent(event);
 }
 
+struct ContinuousFunctionAndContext {
+  const ContinuousFunction* func;
+  Context* ctx;
+};
+
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
-  const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
-  // TODO Hugo : Restore or remove need for context
-  return f->evaluateXYAtParameter(t, nullptr);
+  const ContinuousFunctionAndContext curve =
+      *static_cast<const ContinuousFunctionAndContext*>(model);
+  return curve.func->evaluateXYAtParameter(t, curve.ctx);
 }
 template <typename T>
 static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model) {
-  const ContinuousFunction* f = static_cast<const ContinuousFunction*>(model);
-  // TODO Hugo : Restore or remove need for context
-  return f->evaluateXYAtParameter(t, nullptr, 1);
+  const ContinuousFunctionAndContext curve =
+      *static_cast<const ContinuousFunctionAndContext*>(model);
+  return curve.func->evaluateXYAtParameter(t, curve.ctx, 1);
 }
 template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
@@ -118,6 +123,7 @@ Range2D<float> GraphController::optimalRange(
     canComputeIntersections[i] = false;
     ExpiringPointer<const ContinuousFunction> f =
         store->constModelForRecord(store->activeRecordAtIndex(i));
+    ContinuousFunctionAndContext fModel{.func = f.operator->(), .ctx = context};
     if (f->approximationBasedOnCostlyAlgorithms(context)) {
       continue;
     }
@@ -160,15 +166,15 @@ Range2D<float> GraphController::optimalRange(
       // Use the intersection between the definition domain of f and the bounds
       zoom.setBounds(std::clamp(f->tMin(), bounds->min(), bounds->max()),
                      std::clamp(f->tMax(), bounds->min(), bounds->max()));
-      zoom.fitPointsOfInterest(evaluator<float>, f.operator->(), alongY,
+      zoom.fitPointsOfInterest(evaluator<float>, &fModel, alongY,
                                evaluator<double>, canComputeIntersections + i);
-      zoom.fitBounds(evaluator<float>, f.operator->(), alongY);
+      zoom.fitBounds(evaluator<float>, &fModel, alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
-        zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(),
-                                 alongY, evaluatorSecondCurve<double>,
+        zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, &fModel, alongY,
+                                 evaluatorSecondCurve<double>,
                                  canComputeIntersections + i);
-        zoom.fitBounds(evaluatorSecondCurve<float>, f.operator->(), alongY);
+        zoom.fitBounds(evaluatorSecondCurve<float>, &fModel, alongY);
       }
 
       /* Special case for piecewise functions: we want to display the branch
@@ -181,13 +187,12 @@ Range2D<float> GraphController::optimalRange(
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
         zoom.fitConditions(SystemFunction::Builder(piecewise), evaluator<float>,
-                           f.operator->(), alongY);
+                           &fModel, alongY);
       }
 
       if (canComputeIntersections[i] &&
           f->properties()
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
-        ContinuousFunction* mainF = f.operator->();
         for (int j = 0; j < i; j++) {
           ExpiringPointer<const ContinuousFunction> g =
               store->constModelForRecord(store->activeRecordAtIndex(j));
@@ -196,8 +201,10 @@ Range2D<float> GraphController::optimalRange(
                   .canComputeIntersectionsWithFunctionsAlongSameVariable() &&
               g->isAlongY() == alongY &&
               !g->approximationBasedOnCostlyAlgorithms(context)) {
-            zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>,
-                                  g.operator->());
+            ContinuousFunctionAndContext gModel{.func = g.operator->(),
+                                                .ctx = context};
+            zoom.fitIntersections(evaluator<float>, &fModel, evaluator<float>,
+                                  &gModel);
           }
         }
       }
@@ -217,10 +224,11 @@ Range2D<float> GraphController::optimalRange(
       /* If X range is forced (computeX is false), we don't want to crop the Y
        * axis: we want to see the value of f at each point of X range. */
       bool cropOutliers = computeX;
-      zoom.fitMagnitude(evaluator, f.operator->(), cropOutliers, alongY);
+      ContinuousFunctionAndContext model{.func = f.operator->(),
+                                         .ctx = context};
+      zoom.fitMagnitude(evaluator, &model, cropOutliers, alongY);
       if (f->numberOfSubCurves() > 1) {
-        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), cropOutliers,
-                          alongY);
+        zoom.fitMagnitude(evaluatorSecondCurve, &model, cropOutliers, alongY);
       }
     }
   }

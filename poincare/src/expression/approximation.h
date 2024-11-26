@@ -18,16 +18,16 @@ namespace Poincare::Internal {
 struct Dimension;
 
 /* Approximation is implemented on all block types.
- * We could have asserted that we reduce before approximating (and thus
+ * We could have asserted that we project before approximating (and thus
  * implemented the approximation only on internal types) but this increases the
  * number of operations (for instance, 2 / 3 VS 2 * 3 ^ -1) and decreases the
- * precision. We rather beautify before approximating.
- */
+ * precision.
+ * If not projected, additional context is expected (AngleUnit, ...) */
 
 class Approximation final {
   friend struct Matrix;
 
- public:
+ private:
   using VariableType = std::complex<double>;
   class LocalContext {
    public:
@@ -43,6 +43,19 @@ class Approximation final {
     void setLocalValue(VariableType value) { m_localVariable = value; }
     VariableType m_localVariable;
     const LocalContext* m_parentContext;
+  };
+
+ public:
+  struct Parameter {
+    // A new m_randomContext will be created
+    bool isRoot = false;
+    /* Must be true if expression has not been projected and may have parametric
+     * functions. */
+    bool projectLocalVariables = false;
+    // Tree will be optimized for multiple approximations, only with toTree
+    bool optimize = false;
+    // Tree will be prepared for a more accurate approximation
+    bool prepare = false;
   };
 
   class Context {
@@ -80,22 +93,7 @@ class Approximation final {
     ComplexFormat m_complexFormat;
   };
 
-  struct Parameter {
-    // A new m_randomContext will be created
-    bool isRoot = false;
-    /* Must be true if expression has not been projected and may have parametric
-     * functions. */
-    bool projectLocalVariables = false;
-    // Tree will be optimized for multiple approximations, only with toTree
-    bool optimize = false;
-    // Tree will be prepared for a more accurate approximation
-    bool prepare = false;
-  };
-
-  static bool SetUnknownSymbol(Tree* e, const char* variable,
-                               ComplexFormat complexFormat);
-
-  static Tree* PrepareContext(const Tree* e, Parameter param, Context* context);
+  /* Approximation methods (with Parameter) */
 
   template <typename T>
   static Tree* ToTree(const Tree* e, Parameter param,
@@ -130,15 +128,12 @@ class Approximation final {
   static bool ToBoolean(const Tree* e, Parameter param,
                         Context context = Context());
 
-  // TODO Hugo : Only use Context, create shortcuts to keep context private
+  /* Helpers */
 
   /* Approximate expression at KVarX/K = x. tree must be of scalar dimension and
-   * real */
-  // TODO_PCJ: make private
+   * real. TODO_PCJ: make private */
   template <typename T>
   static T ToLocalContext(const Tree* e, const Context* ctx, T x);
-
-  /* Helpers */
 
   // Optimize a projected function for efficient approximations
   static bool PrepareFunctionForApproximation(Tree* e, const char* variable,
@@ -175,39 +170,41 @@ class Approximation final {
 
   template <typename T>
   static bool IsNonReal(std::complex<T> x) {
-    if (OMG::IsSignalingNan(x.real())) {
-      assert(x.imag() == static_cast<T>(0));
-      return true;
-    }
-    return false;
+    assert(!OMG::IsSignalingNan(x.real()) || x.imag() == static_cast<T>(0));
+    return OMG::IsSignalingNan(x.real());
   }
 
  private:
-  // Approximate a tree with any dimension
+  // Update the approximation's context. Return a clone of e if necessary.
+  static Tree* PrepareContext(const Tree* e, Parameter param, Context* context);
+
+  /* Approximation methods (without Parameter) */
+
+  // Tree can be of any dimension
   template <typename T>
   static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
 
-  // tree must be of scalar dimension
+  // Tree must be of scalar dimension
   template <typename T>
   static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
 
-  // tree must be of scalar dimension and real.
+  // Tree must be of scalar dimension and real.
   template <typename T>
   static T To(const Tree* e, const Context* ctx);
 
-  // tree must be of boolean dimension.
+  // Tree must be of boolean dimension.
   template <typename T>
   static bool ToBoolean(const Tree* e, const Context* ctx);
 
-  // Input tree e must have a positive ListLength
+  // Tree must have a positive ListLength
   template <typename T>
   static Tree* ToList(const Tree* e, const Context* ctx);
 
-  // tree must be of point dimension.
+  // Tree must be of point dimension.
   template <typename T>
   static Tree* ToPoint(const Tree* e, const Context* ctx);
 
-  // tree must be of matrix dimension.
+  // Tree must be of matrix dimension.
   template <typename T>
   static Tree* ToMatrix(const Tree* e, const Context* ctx);
 
@@ -288,12 +285,15 @@ class Approximation final {
 
   template <typename T>
   static bool IsIntegerRepresentationAccurate(T x);
+
   template <typename T>
   static T PositiveIntegerApproximation(T c);
+
   template <typename T>
   static std::complex<T> NeglectRealOrImaginaryPartIfNegligible(
       std::complex<T> result, std::complex<T> input1,
       std::complex<T> input2 = 1.0, bool enableNullResult = true);
+
   template <typename T>
   static std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
                                                      std::complex<T> input);

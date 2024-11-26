@@ -448,14 +448,18 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
                                                         &ctx);
 }
 
+struct PrintFloatPreferences {
+  Preferences::PrintFloatMode printFloatMode;
+  int numberOfSignificantDigits;
+};
+
 std::string typedToLatex(const TypedUserExpression& expression,
-                         Preferences::PrintFloatMode displayMode,
-                         int numberOfSignificantDigits) {
+                         PrintFloatPreferences preferences) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
   char buffer[k_bufferSize];
   EmptyContext context;
-  expression.toLatex(buffer, k_bufferSize, displayMode,
-                     numberOfSignificantDigits, &context);
+  expression.toLatex(buffer, k_bufferSize, preferences.printFloatMode,
+                     preferences.numberOfSignificantDigits, &context);
   return std::string(buffer, strlen(buffer));
 }
 
@@ -487,6 +491,10 @@ TypedSystemExpression typedCloneAndReduce(
 
 EMSCRIPTEN_BINDINGS(user_expression) {
   register_type<TypedUserExpression::JsTree>("UserExpressionTree");
+  value_object<PrintFloatPreferences>("PrintFloatPreferences")
+      .field("printFloatMode", &PrintFloatPreferences::printFloatMode)
+      .field("numberOfSignificantDigits",
+             &PrintFloatPreferences::numberOfSignificantDigits);
   class_<TypedUserExpression, base<JuniorExpression>>("PCR_UserExpression")
       .constructor<>()
       .class_function("BuildFromTree", &TypedUserExpression::BuildFromJsTree)

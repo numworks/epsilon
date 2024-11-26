@@ -40,57 +40,72 @@ bool Approximation::SetUnknownSymbol(Tree* e, const char* variable,
                                       : ComplexSign::Unknown());
 }
 
+// Return a prepared clone of e if necessary
 Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
                                     Context* context) {
-  // TODO: Return nullptr if clone wasn't used.
-  Tree* clone = e->cloneTree();
+  // Only clone if necessary
+  Tree* clone = nullptr;
   if (!context) {
+    // Create a default context
     *context = Context();
   }
   if (param.m_projectLocalVariables) {
+    clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
+  if (param.m_isRoot && !context->m_randomContext.m_isInitialized) {
+    /* Initialize randomContext only on root expressions to catch unsafe
+     * approximations of projected sub-expressions. */
+    context->m_randomContext.m_isInitialized = true;
+  }
   if (param.m_prepare || param.m_optimize) {
+    if (!clone) {
+      clone = e->cloneTree();
+    }
     assert(param.m_isRoot);
     PrepareExpressionForApproximation(clone);
     if (param.m_optimize) {
       ApproximateAndReplaceEveryScalar(clone, *context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
-      return clone;
     }
-  }
-  if (param.m_isRoot && !context->m_randomContext.m_isInitialized) {
-    context->m_randomContext.m_isInitialized = true;
   }
   return clone;
 }
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
-  Tree* result = PrepareContext(e, param, &context);
+  Tree* cloneMaybe = PrepareContext(e, param, &context);
   if (param.m_optimize) {
-    return result;
+    assert(cloneMaybe);
+    return cloneMaybe;
   }
-
   if (!Dimension::DeepCheck(e)) {
-    result->removeTree();
+    if (cloneMaybe) {
+      cloneMaybe->removeTree();
+    }
     return KUndefUnhandledDimension->cloneTree();
   }
-  Dimension dim = Dimension::Get(result);
-  int listLength = Dimension::ListLength(result);
+  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  Tree* result;
+  Dimension dim = Dimension::Get(target);
+  int listLength = Dimension::ListLength(target);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
-    SharedTreeStack->pushList(listLength);
+    result = SharedTreeStack->pushList(listLength);
     for (int i = 0; i < listLength; i++) {
       context.m_listElement = i;
-      ToTree<T>(result, dim, &context);
+      ToTree<T>(target, dim, &context);
     }
   } else {
-    ToTree<T>(result, dim, &context);
+    result = ToTree<T>(target, dim, &context);
   }
-  result->removeTree();
-  return result;
+  if (!cloneMaybe) {
+    return result;
+  }
+  assert(cloneMaybe->nextTree() == result);
+  cloneMaybe->removeTree();
+  return cloneMaybe;
 }
 
 template <typename T>
@@ -99,34 +114,42 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
-  Tree* result = PrepareContext(e, param, &context);
-  assert(Dimension::IsNonListScalar(result));
-  std::complex<T> c = ToComplex<T>(result, &context);
-  result->removeTree();
+  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  assert(Dimension::IsNonListScalar(target));
+  std::complex<T> c = ToComplex<T>(target, &context);
+  if (cloneMaybe) {
+    cloneMaybe->removeTree();
+  }
   return c;
 };
 
 template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
                                                 Context context) {
-  Tree* result = PrepareContext(e, param, &context);
-  assert(Dimension::DeepCheck(e));
-  Dimension dim = Dimension::Get(result);
+  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  assert(Dimension::DeepCheck(target));
+  Dimension dim = Dimension::Get(target);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  if (context.m_localContext && (std::isnan(context.variable(0).real()) ||
-                                 std::isnan(context.variable(0).imag()))) {
-    return dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
+  PointOrScalar<T> result =
+      dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
+  if (!context.m_localContext || !(std::isnan(context.variable(0).real()) ||
+                                   std::isnan(context.variable(0).imag()))) {
+    T xScalar;
+    if (dim.isPoint()) {
+      context.m_pointElement = 0;
+      xScalar = To<T>(target, &context);
+      context.m_pointElement = 1;
+    }
+    T yScalar = To<T>(target, &context);
+    result = dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
+                           : PointOrScalar<T>(yScalar);
   }
-  T xScalar;
-  if (dim.isPoint()) {
-    context.m_pointElement = 0;
-    xScalar = To<T>(result, &context);
-    context.m_pointElement = 1;
+  if (cloneMaybe) {
+    cloneMaybe->removeTree();
   }
-  T yScalar = To<T>(result, &context);
-  result->removeTree();
-  return dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
-                       : PointOrScalar<T>(yScalar);
+  return result;
 };
 
 template <typename T>
@@ -140,9 +163,12 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
-  Tree* result = PrepareContext(e, param, &context);
-  bool b = ToBoolean<T>(result, &context);
-  result->removeTree();
+  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  bool b = ToBoolean<T>(target, &context);
+  if (cloneMaybe) {
+    cloneMaybe->removeTree();
+  }
   return b;
 };
 

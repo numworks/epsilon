@@ -31,6 +31,11 @@ extern const uint8_t* const LargeDotMask;
 
 // Rings
 
+constexpr static KDCoordinate TinyRingDiameter = TinyDotDiameter;
+constexpr static float TinyRingInternalRadius = 1.5f;
+constexpr static float TinyRingExternalRadius = TinyDotRadius;
+extern const uint8_t* const TinyRingMask;
+
 constexpr static KDCoordinate LargeRingDiameter = 11;
 constexpr static float LargeRingInternalRadius = 4.25f;
 constexpr static float LargeRingExternalRadius = 5.5f;
@@ -38,8 +43,13 @@ extern const uint8_t* const LargeRingMask;
 
 constexpr const uint8_t* Mask(Size size, bool ring) {
   if (ring) {
-    assert(size == Size::Large);
-    return LargeRingMask;
+    switch (size) {
+      case Size::Tiny:
+        return TinyRingMask;
+      default:
+        assert(size == Size::Large);
+        return LargeRingMask;
+    }
   }
   switch (size) {
     case Size::Tiny:
@@ -56,8 +66,13 @@ constexpr const uint8_t* Mask(Size size, bool ring) {
 
 constexpr KDCoordinate Diameter(Size size, bool ring) {
   if (ring) {
-    assert(size == Size::Large);
-    return LargeRingDiameter;
+    switch (size) {
+      case Size::Tiny:
+        return TinyRingDiameter;
+      default:
+        assert(size == Size::Large);
+        return LargeRingDiameter;
+    }
   }
   switch (size) {
     case Size::Tiny:

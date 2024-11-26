@@ -568,9 +568,8 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
-  // TODO Hugo : Decide on prepare parameter
   clone->moveTreeOverTree(Approximation::ToTree<T>(
-      clone, Approximation::Parameter(true, false, false, false)));
+      clone, Approximation::Parameter(true, false, false, true)));
   return SystemExpression::Builder(clone);
 }
 

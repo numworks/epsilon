@@ -638,7 +638,9 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       assert(cursorView());
       cursorView()->setCursorFrame(this, frameOfCursor, true);
     }
-
+    // Refresh expiring pointer
+    ExpiringPointer<ContinuousFunction> f =
+        functionStore()->modelForRecord(selectedRec);
     KDColor color =
         p.interest == Solver<double>::Interest::ReachedDiscontinuity ||
                 p.interest == Solver<double>::Interest::UnreachedDiscontinuity

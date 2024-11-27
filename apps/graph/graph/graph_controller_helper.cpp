@@ -101,6 +101,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       assert(tCursor != cursor->t());
       return true;
     }
+    setCursorIsRing(false);
     t += tStep;
     /* assert that it moved at least of 1 pixel.
      * round(t/pxWidth) is used by CurveView to compute the cursor's position.
@@ -273,6 +274,8 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
   }
   cursor->moveTo(nextPointOfInterest.abscissa, nextPointOfInterestXY.x(),
                  nextPointOfInterestXY.y());
+  setCursorIsRing(nextPointOfInterest.interest ==
+                  Solver<double>::Interest::UnreachedDiscontinuity);
   return true;
 }
 

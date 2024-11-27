@@ -46,9 +46,9 @@ void HistogramMainController::viewWillAppear() {
     *m_storeVersion = storeChecksum;
     initBarParameters();
   }
-  enterListView();
   initRangeParameters();
-  m_view.reload();
+
+  enterListView();
 }
 
 void HistogramMainController::enterHeaderView() {
@@ -64,6 +64,7 @@ void HistogramMainController::exitHeaderView() {
 
 void HistogramMainController::enterListView() {
   m_selectedSubview = SelectedSubview::List;
+
   m_listController.processSeriesAndBarSelection();
   m_listController.highlightRow(m_listController.selectedSeries());
   m_listController.highlightHistogramBar(m_listController.selectedSeries(),
@@ -204,7 +205,12 @@ void HistogramMainController::updateBannerView() {
       displayMode, precision);
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
+  /* The banner size has changed, and this will change the heights of both the
+   * list and the banner subviews */
   m_view.reload();
+
+  // The histogram y range must be updated after the heights have changed
+  initYRangeParameters();
 }
 
 Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {

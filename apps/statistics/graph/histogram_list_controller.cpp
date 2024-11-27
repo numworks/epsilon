@@ -37,19 +37,18 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    // The following function will set a new bar index.
-    moveSelectionHorizontally(event.direction());
-    m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
-                                               selectedBarIndex());
+    setSelectedBarIndex(moveSelectionHorizontally(
+        selectedBarIndex(), selectedSeries(), event.direction()));
+    highlightHistogramBar(selectedSeries(), selectedBarIndex());
     return true;
   }
 
-  std::size_t previousSelectedSeries = selectedRow();
   if (!m_selectableListView.handleEvent(event)) {
     return false;
   }
-  if (m_selectableListView.selectedCell()) {
-    /* If the SelectableListView handled the event by selecting a new cell,
+
+  if (selectedRow() != selectedSeries()) {
+    /* If the SelectableListView handled the event by selecting a new row,
      * then it took the firstResponder ownership. However we want the main
      * controller to be the first responder, because the banner view needs to be
      * updated as well. So the firstResponder ownership is given back to the
@@ -58,17 +57,14 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     Escher::App::app()->setFirstResponder(parentResponder());
 
     // Set the current series and index in the snaphot
+    std::size_t previousSelectedSeries = selectedSeries();
     setSelectedSeries(m_selectableListView.selectedRow());
     /* The series index of the new selected cell is computed to be close to its
      * previous location in the neighbouring cell */
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
         previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
-    // TODO: call inside setSelectedBarIndex
-    m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
-                                               selectedBarIndex());
-
-    m_selectableListView.selectedCell()->setHighlighted(true);
+    highlightRow(selectedSeries());
     highlightHistogramBar(selectedSeries(), selectedBarIndex());
   }
 
@@ -89,6 +85,10 @@ void HistogramListController::processSeriesAndBarSelection() {
     setSelectedBarIndex(numberOfBars - 1);
   }
 
+  /* Sanitize selected index so that the selected bar is never empty */
+  setSelectedBarIndex(
+      sanitizeSelectedIndex(selectedSeries(), selectedBarIndex()));
+
 #if defined(ASSERTIONS)
   // Check that selectedSeries() and selectedBarIndex() do not throw an assert
   selectedSeries();
@@ -99,16 +99,19 @@ void HistogramListController::processSeriesAndBarSelection() {
 void HistogramListController::highlightRow(std::size_t row) {
   assert(0 <= row && row <= m_selectableListView.totalNumberOfRows());
 
-  // Set the cell to "selected" state in the SelectedListView
-  m_selectableListView.selectCell(row);
-  /* The SelectableListView took the firstResponder ownership when selecting
-   * the cell. However we want the main controller to be the first
-   * responder, because the banner view needs to be updated as well. So the
-   * firstResponder ownership is given back to the main controller, which
-   * is the parent responder of HistogramListController. */
-  Escher::App::app()->setFirstResponder(parentResponder());
+  if (!m_selectableListView.selectedCell()) {
+    // Set the cell to "selected" state in the SelectedListView
+    m_selectableListView.selectCell(row);
+    /* The SelectableListView took the firstResponder ownership when selecting
+     * the cell. However we want the main controller to be the first
+     * responder, because the banner view needs to be updated as well. So the
+     * firstResponder ownership is given back to the main controller, which
+     * is the parent responder of HistogramListController. */
+    Escher::App::app()->setFirstResponder(parentResponder());
+  }
 
-  // Highlight the selected cell
+  /* Highlight the selected cell. Not that the cell could be selected in the
+   * list but not highlighted */
   m_selectableListView.selectedCell()->setHighlighted(true);
 }
 
@@ -146,36 +149,34 @@ std::size_t HistogramListController::selectedBarIndex() const {
 
 void HistogramListController::setSelectedBarIndex(std::size_t barIndex) {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
+  // update value in snapshot
   *App::app()->snapshot()->selectedIndex() = barIndex;
+  // update histogram range
+  if (m_histogramRange->scrollToSelectedBarIndex(selectedSeries(), barIndex)) {
+    m_selectableListView.cell(selectedSeries())->reloadCell();
+  }
 }
 
 bool HistogramListController::hasSelectedSeries() const {
   return *App::app()->snapshot()->selectedSeries() > -1;
 }
 
-// TODO: refactor to return the new bar index
-bool HistogramListController::moveSelectionHorizontally(
-    OMG::HorizontalDirection direction) {
-  int numberOfBars = m_store->numberOfBars(selectedSeries());
-  int newSelectedBarIndex = selectedBarIndex();
+std::size_t HistogramListController::moveSelectionHorizontally(
+    std::size_t previousBarIndex, std::size_t selectedSeries,
+    OMG::HorizontalDirection direction) const {
+  int newBarIndex = previousBarIndex;
+
   do {
-    newSelectedBarIndex += direction.isRight() ? 1 : -1;
-  } while (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
-           m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) ==
-               0);
-
-  if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
-      selectedBarIndex() != newSelectedBarIndex) {
-    setSelectedBarIndex(newSelectedBarIndex);
-
-    HistogramCell* selectedCell =
-        static_cast<HistogramCell*>(m_selectableListView.selectedCell());
-    selectedCell->setBarHighlight(
-        m_store->startOfBarAtIndex(selectedSeries(), selectedBarIndex()),
-        m_store->endOfBarAtIndex(selectedSeries(), selectedBarIndex()));
-    return true;
-  }
-  return false;
+    newBarIndex += direction.isRight() ? 1 : -1;
+    if (newBarIndex < 0) {
+      return std::size_t{0};
+    }
+    if (newBarIndex >= m_store->numberOfBars(selectedSeries)) {
+      return static_cast<std::size_t>(m_store->numberOfBars(selectedSeries) -
+                                      1);
+    }
+  } while (m_store->heightOfBarAtIndex(selectedSeries, newBarIndex) == 0);
+  return static_cast<std::size_t>(newBarIndex);
 }
 
 std::size_t HistogramListController::sanitizeSelectedIndex(

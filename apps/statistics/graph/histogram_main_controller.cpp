@@ -1,5 +1,6 @@
 #include "histogram_main_controller.h"
 
+#include <omg/float.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -210,7 +211,7 @@ void HistogramMainController::updateBannerView() {
   m_view.reload();
 
   // The histogram y range must be updated after the heights have changed
-  initYRangeParameters();
+  m_histogramRange.setYRange(computeYRange());
 }
 
 Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {
@@ -275,7 +276,7 @@ void HistogramMainController::initBarParameters() {
   m_store->setBarWidth(barWidth);
 }
 
-void HistogramMainController::initYRangeParameters() {
+Poincare::Range1D<float> HistogramMainController::computeYRange() const {
   /* Height of drawn bar are relative to the maximal bar of the series, so all
    * displayed series need the same range of [0,1]. */
   float yMax = 1.0f + HistogramRange::k_displayTopMarginRatio;
@@ -294,16 +295,14 @@ void HistogramMainController::initYRangeParameters() {
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
   float viewHeight = static_cast<float>(m_listController.histogramHeight());
   float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
-
-  m_histogramRange.setYRange(yMin, yMax);
+  return {yMin, yMax};
 }
 
-void HistogramMainController::initRangeParameters() {
+Poincare::Range1D<float> HistogramMainController::computeXRange() const {
   double barWidth = m_store->barWidth();
   double xStart = m_store->firstDrawnBarAbscissa();
 
   Poincare::Range1D<double> xRange = activeSeriesRange();
-  m_histogramRange.setHistogramRange(xRange.min(), xRange.max());
 
   /* The range of bar at index barIndex is :
    * [xStart + barWidth * barIndex ; xStart + barWidth * (barIndex + 1)] */
@@ -329,11 +328,8 @@ void HistogramMainController::initRangeParameters() {
                          -Poincare::Range1D<float>::k_maxFloat,
                          Poincare::Range1D<float>::k_maxFloat);
 
-  m_histogramRange.setHistogramRange(
-      min - HistogramRange::k_displayLeftMarginRatio * (max - min),
-      max + HistogramRange::k_displayRightMarginRatio * (max - min));
-
-  initYRangeParameters();
+  return {min - HistogramRange::k_displayLeftMarginRatio * (max - min),
+          max + HistogramRange::k_displayRightMarginRatio * (max - min)};
 }
 
 }  // namespace Statistics

@@ -53,11 +53,20 @@ class HistogramMainController : public Escher::ViewController,
   void exitListView();
 
   // Update histogram range and bars
-  Poincare::Range1D<double> activeSeriesRange() const;
+
+  /* Sets the bar width, the x start absissa and a first value of the histogram
+   * x range */
   void initBarParameters();
-  void initRangeParameters();
-  void initYRangeParameters();
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
+
+  // Initializes the x and y ranges of the histogram graphs
+  void initRangeParameters() {
+    m_histogramRange.setXRange(computeXRange());
+    m_histogramRange.setYRange(computeYRange());
+  }
+  Poincare::Range1D<float> computeXRange() const;
+  Poincare::Range1D<float> computeYRange() const;
+  Poincare::Range1D<double> activeSeriesRange() const;
 
   // Model
   uint32_t* m_storeVersion;

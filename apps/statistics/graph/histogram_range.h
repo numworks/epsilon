@@ -10,7 +10,11 @@ namespace Statistics {
 class HistogramRange : public Shared::MemoizedCurveViewRange {
  public:
   HistogramRange(Store* store) : m_store(store) {}
+  // TODO: create setters for double float numbers
   void setHistogramRange(float min, float max) { protectedSetXRange(min, max); }
+  void setHistogramRange(Poincare::Range1D<float> range) {
+    setHistogramRange(range.min(), range.max());
+  }
 
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);

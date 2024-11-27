@@ -717,8 +717,8 @@ bool Solver<T>::HoneTestForDiscontinuity(T a, T b, T fa, T fb,
   if (std::isnan(fa) || std::isnan(fb)) {
     return true;
   }
-  return DiscontinuityTestForExpression(a, b, aux) &&
-         std::abs(fb - fa) >= NullTolerance(fa);
+  return std::abs(fb - fa) >= NullTolerance(fa) &&
+         DiscontinuityTestForExpression(a, b, aux);
 }
 
 template <typename T>

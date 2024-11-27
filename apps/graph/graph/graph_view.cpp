@@ -617,8 +617,10 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     // Draw the dot
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
+    bool isRing =
+        p.interest == Solver<double>::Interest::UnreachedDiscontinuity;
 
-    KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates);
+    KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.
      * Either dotRelativeRect or dirtyRect needs to be translated, as one is
      * relative and the other absolute. Since dotRect might have been clamped to
@@ -636,12 +638,18 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       assert(cursorView());
       cursorView()->setCursorFrame(this, frameOfCursor, true);
     }
+
     KDColor color =
         p.interest == Solver<double>::Interest::ReachedDiscontinuity ||
                 p.interest == Solver<double>::Interest::UnreachedDiscontinuity
             ? f->color()
             : Escher::Palette::GrayDarkest;
-    drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
+    if (isRing) {
+      drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
+    } else {
+      drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
+    }
+
     if (redrawCursor) {
       /* WARNING: We cannot assert that cursorView is a MemoizedCursorView
        * but it is thanks to the constructor. */

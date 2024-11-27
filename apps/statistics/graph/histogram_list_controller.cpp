@@ -22,7 +22,7 @@ HistogramListController::HistogramListController(
 Escher::HighlightCell* HistogramListController::reusableCell(int index,
                                                              int type) {
   assert(type == 0);
-  assert(index >= 0 && index < std::size(m_displayCells));
+  assert(index >= 0 && index < m_displayCells.size());
   return &m_displayCells[index];
 }
 
@@ -37,6 +37,7 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
+    // Set a new bar index in the snapshot and update the bar highlight
     setSelectedBarIndex(moveSelectionHorizontally(
         selectedBarIndex(), selectedSeries(), event.direction()));
     highlightHistogramBar(selectedSeries(), selectedBarIndex());
@@ -64,6 +65,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
         previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
+    // Update row and bar highlights
     highlightRow(selectedSeries());
     highlightHistogramBar(selectedSeries(), selectedBarIndex());
   }
@@ -119,6 +121,8 @@ void HistogramListController::highlightHistogramBar(std::size_t row,
                                                     std::size_t barIndex) {
   assert(0 <= row && row <= m_store->numberOfActiveSeries());
   assert(0 <= barIndex && barIndex < m_store->numberOfBars(row));
+  /* The following function will set the bar highlight in the HistogramView
+   * owned by the cell */
   static_cast<HistogramCell*>(m_selectableListView.cell(row))
       ->setBarHighlight(m_store->startOfBarAtIndex(row, barIndex),
                         m_store->endOfBarAtIndex(row, barIndex));

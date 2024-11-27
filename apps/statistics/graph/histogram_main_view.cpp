@@ -37,6 +37,7 @@ void HistogramMainView::layoutSubviews(bool force) {
                   force);
     return;
   }
+  // Preserve the cell highlight status
   bool isSelectedCellHighlighted = m_listView->selectedCell()->isHighlighted();
   setChildFrame(m_listView, KDRect(0, 0, listSize.width(), listSize.height()),
                 force);

@@ -17,8 +17,30 @@ class HistogramListController
   HistogramListController(Escher::Responder* parentResponder, Store* store,
                           HistogramRange* histogramRange);
 
-  static constexpr KDCoordinate k_listRowHeight = 75;
+  // Public API that can be used from the main controller
 
+  /* If no statistics series was selected in the snapshot, this function selects
+   * the first series and its first bar index. Otherwise, the currently selected
+   * bar index is "sanitized" to ensure it is still in the authorized range and
+   * that the selected bar is not empty. In all cases, when exiting this
+   * function, you are guaranteed that selectedSeries() and selectedBarIndex()
+   * return valid values. */
+  void processSeriesAndBarSelection();
+
+  /* Highlight the row corresponding to a certain series */
+  void highlightRow(std::size_t row);
+
+  /* Highlight a certain histogram bar in a certain row */
+  void highlightHistogramBar(std::size_t row, std::size_t barIndex);
+
+  // Unhighlight the entire list
+  void unhighlightList() { m_selectableListView.deselectTable(); }
+
+  // Get the selected series or index from the Snapshot
+  std::size_t selectedSeries() const;
+  std::size_t selectedBarIndex() const;
+
+  // Height of one histogram graph (they all have the same size)
   KDCoordinate histogramHeight() const {
     return numberOfRows() == 1 ? m_selectableListView.bounds().height() - 1
                                : k_listRowHeight;
@@ -39,29 +61,9 @@ class HistogramListController
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
-  // Public API that can be used from the main controller
-
-  /* If no statistics series was selected in the snapshot, this function selects
-   * the first series and its first bar index. Otherwise, the currently selected
-   * bar index is "sanitized" to ensure it is still in the authorized range.
-   * In all cases, when exiting this function, you are guaranteed that
-   * selectedSeries() and selectedBarIndex() return valid values. */
-  void processSeriesAndBarSelection();
-
-  /* Highlight the row corresponding to a certain series */
-  void highlightRow(std::size_t row);
-
-  /* Highlight a certain histogram bar in a certain row */
-  void highlightHistogramBar(std::size_t row, std::size_t barIndex);
-
-  // Unhighlight the entire list
-  void unhighlightList() { m_selectableListView.deselectTable(); }
-
-  // Get the selected series or index from the Snapshot
-  std::size_t selectedSeries() const;
-  std::size_t selectedBarIndex() const;
-
  private:
+  static constexpr KDCoordinate k_listRowHeight = 75;
+
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
   KDCoordinate nonMemoizedRowHeight(int row) override {
@@ -75,7 +77,8 @@ class HistogramListController
   void setSelectedSeries(std::size_t selectedSeries);
   void setSelectedBarIndex(std::size_t barIndex);
 
-  // Return the current bar index in the snapshot without checking bounds
+  /* Return the current bar index in the snapshot without checking the upper
+   * bound */
   std::size_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells

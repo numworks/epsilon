@@ -731,27 +731,10 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   // Hone
   T left = start;
   T right = end;
-  assert(DiscontinuityTestForExpression(left, right, aux));
-  while (right - left >= precision) {
-    T middle = (left + right) / 2.0;
-    bool leftIsDiscontinuous =
-        DiscontinuityTestForExpression(left, middle, aux);
-    bool rightIsDiscontinuous =
-        DiscontinuityTestForExpression(middle, right, aux);
-    if (leftIsDiscontinuous && rightIsDiscontinuous) {
-      // Too many discontinuities and/or step is too big
-      return;
-    }
-    if (leftIsDiscontinuous) {
-      right = middle;
-    } else {
-      assert(rightIsDiscontinuous);
-      left = middle;
-    }
-    assert(DiscontinuityTestForExpression(left, right, aux));
+  if (!FindMinimalIntervalContainingDiscontinuity(f, aux, &left, &right,
+                                                  precision)) {
+    return;
   }
-  assert(left <= right && right - left <= precision &&
-         DiscontinuityTestForExpression(left, right, aux));
 
   T x = MagicRound((left + right) / 2.);
   assert(std::isfinite(x));
@@ -821,6 +804,34 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
   m_xStart = solution.x();
   assert((solution.interest() == Interest::None) == std::isnan(solution.x()));
   return solution;
+}
+
+template <typename T>
+bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
+    FunctionEvaluation f, const void* aux, T* start, T* end,
+    T minimalSizeOfInterval) {
+  assert(DiscontinuityTestForExpression(*start, *end, aux));
+  while (*end - *start >= minimalSizeOfInterval) {
+    T middle = (*start + *end) / 2.0;
+    bool leftIsDiscontinuous =
+        DiscontinuityTestForExpression(*start, middle, aux);
+    bool rightIsDiscontinuous =
+        DiscontinuityTestForExpression(middle, *end, aux);
+    if (leftIsDiscontinuous && rightIsDiscontinuous) {
+      // Too many discontinuities and/or step is too big
+      return false;
+    }
+    if (leftIsDiscontinuous) {
+      *end = middle;
+    } else {
+      assert(rightIsDiscontinuous);
+      *start = middle;
+    }
+    assert(DiscontinuityTestForExpression(*start, *end, aux));
+  }
+  assert(*start <= *end && *end - *start <= minimalSizeOfInterval &&
+         DiscontinuityTestForExpression(*start, *end, aux));
+  return true;
 }
 
 // Explicit template instantiations

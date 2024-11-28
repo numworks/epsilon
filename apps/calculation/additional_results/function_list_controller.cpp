@@ -46,7 +46,7 @@ void FunctionListController::computeAdditionalResults(
    * simplifiedExpression(abscissa) can differ for the approximateOutput.
    */
   float ordinate = approximateOutput.approximateToScalar<float>(
-      angleUnit(), complexFormat());
+      angleUnit(), complexFormat(), context);
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = Layout::Create(

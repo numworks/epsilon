@@ -42,7 +42,10 @@ const UserExpression SequenceContext::protectedExpressionForSymbolAbstract(
   const UserExpression rankExpression = symbol.cloneChildAtIndex(0).clone();
   /* The lastDesendantContext might contain informations on variables
    * that are contained in the rank expression. */
-  double rankValue = rankExpression.approximateToScalar<double>();
+  double rankValue = rankExpression.approximateToScalar<double>(
+      Preferences::SharedPreferences()->angleUnit(),
+      Preferences::SharedPreferences()->complexFormat(),
+      lastDescendantContext ? lastDescendantContext : this);
   result = cache()->storedValueOfSequenceAtRank(index, rankValue);
   /* We try to approximate the sequence independently from the others at the
    * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for instance).

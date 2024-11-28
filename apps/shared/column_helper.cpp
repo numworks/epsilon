@@ -214,8 +214,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                      true, true);
     return FillColumnStatus::Success;
   }
-
-  // Formula is not a list: set each cell to the same value
+  /* Formula isn't a list and has already been approximated with context, which
+   * is no longer needed. Set each cell to the same value */
   double evaluation = formula.approximateToScalar<double>();
   if (std::isnan(evaluation)) {
     return FillColumnStatus::DataNotSuitable;

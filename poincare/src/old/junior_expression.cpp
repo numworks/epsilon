@@ -455,11 +455,12 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
 
 template <typename T>
 T UserExpression::approximateToScalar(AngleUnit angleUnit,
-                                      ComplexFormat complexFormat) const {
+                                      ComplexFormat complexFormat,
+                                      Context* context) const {
   return Approximation::To<T>(
       tree(),
       Approximation::Parameter{.isRoot = true, .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat));
+      Approximation::Context(angleUnit, complexFormat, context));
 }
 
 template <typename T>
@@ -1171,8 +1172,8 @@ template bool UserExpression::hasDefinedComplexApproximation<double>(
     const ApproximationContext&, double*, double*) const;
 
 template float UserExpression::approximateToScalar<float>(
-    Preferences::AngleUnit, Preferences::ComplexFormat) const;
+    Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
 template double UserExpression::approximateToScalar<double>(
-    Preferences::AngleUnit, Preferences::ComplexFormat) const;
+    Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
 
 }  // namespace Poincare

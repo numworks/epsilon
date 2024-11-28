@@ -141,7 +141,9 @@ bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
       m_dataLists[series][i].removeValueAtIndex(list.numberOfChildren());
       continue;
     }
-    double evaluation = list.cloneChildAtIndex(j).approximateToScalar<double>();
+    double evaluation = list.cloneChildAtIndex(j).approximateToScalar<double>(
+        Preferences::SharedPreferences()->angleUnit(),
+        Preferences::SharedPreferences()->complexFormat(), m_context);
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   return updateSeries(series, delayUpdate);

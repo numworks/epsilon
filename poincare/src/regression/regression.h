@@ -33,7 +33,7 @@ class Regression {
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model
 
-  using CoefficientsType = std::array<double, k_maxNumberOfCoefficients>;
+  using Coefficients = std::array<double, k_maxNumberOfCoefficients>;
 
   explicit constexpr Regression(size_t initialParametersIterations = 1,
                                 double lowerRegressionScoreFactor = 1.0)
@@ -154,7 +154,7 @@ class Regression {
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
-  virtual double privateEvaluate(const CoefficientsType& modelCoefficients,
+  virtual double privateEvaluate(const Coefficients& modelCoefficients,
                                  double x) const = 0;
 
   // Fit
@@ -164,29 +164,29 @@ class Regression {
    * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 
-  virtual CoefficientsType privateFit(const Series* series,
-                                      Poincare::Context* context) const;
+  virtual Coefficients privateFit(const Series* series,
+                                  Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
 
  private:
   // Model attributes
-  virtual double partialDerivate(const CoefficientsType& modelCoefficients,
+  virtual double partialDerivate(const Coefficients& modelCoefficients,
                                  int derivateCoefficientIndex, double x) const {
     assert(false);
     return 0.0;
   };
 
   double privateResidualAtIndex(const Series* series,
-                                const CoefficientsType& modelCoefficients,
+                                const Coefficients& modelCoefficients,
                                 int index) const;
   double privateResidualStandardDeviation(
-      const Series* series, const CoefficientsType& modelCoefficients) const;
+      const Series* series, const Coefficients& modelCoefficients) const;
 
   virtual bool isRegressionBetter(
       double residualStandardDeviation1, double residualStandardDeviation2,
-      const Regression::CoefficientsType& /* modelCoefficients1 */,
-      const Regression::CoefficientsType& /* modelCoefficients2 */) const {
+      const Regression::Coefficients& /* modelCoefficients1 */,
+      const Regression::Coefficients& /* modelCoefficients2 */) const {
     return residualStandardDeviation1 < residualStandardDeviation2;
   }
 
@@ -199,31 +199,30 @@ class Regression {
   constexpr static double k_initialCoefficientValue = 1.0;
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(const Series* series,
-                             CoefficientsType& modelCoefficients,
+                             Coefficients& modelCoefficients,
                              Poincare::Context* context) const;
   double chi2(const Series* series,
-              const CoefficientsType& modelCoefficients) const;
+              const Coefficients& modelCoefficients) const;
   double alphaPrimeCoefficient(const Series* series,
-                               const CoefficientsType& modelCoefficients, int k,
+                               const Coefficients& modelCoefficients, int k,
                                int l, double lambda) const;
   double alphaCoefficient(const Series* series,
-                          const CoefficientsType& modelCoefficients, int k,
+                          const Coefficients& modelCoefficients, int k,
                           int l) const;
   double betaCoefficient(const Series* series,
-                         const CoefficientsType& modelCoefficients,
-                         int k) const;
+                         const Coefficients& modelCoefficients, int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,
                         Poincare::Context* context) const;
-  CoefficientsType initCoefficientsForFit(double defaultValue,
-                                          bool forceDefaultValue,
-                                          size_t attemptNumber,
-                                          const Series* s = nullptr) const;
-  virtual CoefficientsType specializedInitCoefficientsForFit(
+  Coefficients initCoefficientsForFit(double defaultValue,
+                                      bool forceDefaultValue,
+                                      size_t attemptNumber,
+                                      const Series* s = nullptr) const;
+  virtual Coefficients specializedInitCoefficientsForFit(
       double defaultValue, size_t /* attemptNumber */,
       const Series* s = nullptr) const;
   virtual void uniformizeCoefficientsFromFit(
-      CoefficientsType& modelCoefficients) const {}
+      Coefficients& modelCoefficients) const {}
 };
 
 }  // namespace Poincare::Regression

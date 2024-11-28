@@ -15,7 +15,7 @@ UserExpression ProportionalRegression::privateExpression(
 }
 
 double ProportionalRegression::privateEvaluate(
-    const CoefficientsType& modelCoefficients, double x) const {
+    const Coefficients& modelCoefficients, double x) const {
   return modelCoefficients[0] * x;
 }
 
@@ -30,7 +30,7 @@ double ProportionalRegression::levelSet(const double* modelCoefficients,
 }
 
 double ProportionalRegression::partialDerivate(
-    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    const Coefficients& modelCoefficients, int derivateCoefficientIndex,
     double x) const {
   assert(derivateCoefficientIndex == 0);
   // Derivate: x

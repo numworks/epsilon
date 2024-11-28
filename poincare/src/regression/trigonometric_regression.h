@@ -33,23 +33,23 @@ class TrigonometricRegression : public Regression {
    * cases, so we choose √2 as the multiplication factor. */
   static constexpr double k_frequencyMultiplicationFactor = M_SQRT2;
 
-  double privateEvaluate(const CoefficientsType& modelCoefficients,
+  double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
 
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
-  double partialDerivate(const CoefficientsType& modelCoefficients,
+  double partialDerivate(const Coefficients& modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
-  CoefficientsType specializedInitCoefficientsForFit(
+  Coefficients specializedInitCoefficientsForFit(
       double defaultValue, size_t attemptNumber,
       const Series* series) const override;
   void uniformizeCoefficientsFromFit(
-      CoefficientsType& modelCoefficients) const override;
+      Coefficients& modelCoefficients) const override;
 
   bool isRegressionBetter(
       double residualStandardDeviation1, double residualStandardDeviation2,
-      const Regression::CoefficientsType& modelCoefficients1,
-      const Regression::CoefficientsType& modelCoefficients2) const override;
+      const Regression::Coefficients& modelCoefficients1,
+      const Regression::Coefficients& modelCoefficients2) const override;
 };
 
 }  // namespace Poincare::Regression

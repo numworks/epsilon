@@ -22,7 +22,7 @@ UserExpression LogisticRegression::privateExpression(
 }
 
 double LogisticRegression::privateEvaluate(
-    const CoefficientsType& modelCoefficients, double x) const {
+    const Coefficients& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -51,7 +51,7 @@ double LogisticRegression::levelSet(const double* modelCoefficients,
 }
 
 double LogisticRegression::partialDerivate(
-    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    const Coefficients& modelCoefficients, int derivateCoefficientIndex,
     double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
@@ -70,8 +70,7 @@ double LogisticRegression::partialDerivate(
   return 1.0 / denominator;
 }
 
-Regression::CoefficientsType
-LogisticRegression::specializedInitCoefficientsForFit(
+Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
     double defaultValue, size_t /* attemptNumber */,
     const Series* series) const {
   StatisticsDatasetFromSeriesColumn xColumn(series, 0);

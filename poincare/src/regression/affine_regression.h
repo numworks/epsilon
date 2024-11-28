@@ -22,11 +22,11 @@ class AffineRegression : public Regression {
       const double* modelCoefficients) const override;
 
  private:
-  double privateEvaluate(const CoefficientsType& modelCoefficients,
+  double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
 
-  CoefficientsType privateFit(const Series* series,
-                              Poincare::Context* context) const override = 0;
+  Coefficients privateFit(const Series* series,
+                          Poincare::Context* context) const override = 0;
 };
 
 }  // namespace Poincare::Regression

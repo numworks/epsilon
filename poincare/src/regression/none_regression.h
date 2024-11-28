@@ -19,7 +19,7 @@ class NoneRegression : public Regression {
   }
 
  private:
-  double privateEvaluate(const CoefficientsType& modelCoefficients,
+  double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override {
     return NAN;
   }
@@ -27,8 +27,8 @@ class NoneRegression : public Regression {
       const double* modelCoefficients) const override {
     return API::UserExpression();
   }
-  CoefficientsType privateFit(const Series* series,
-                              Poincare::Context* context) const override {
+  Coefficients privateFit(const Series* series,
+                          Poincare::Context* context) const override {
     return {};
   }
 };

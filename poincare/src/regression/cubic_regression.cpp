@@ -19,8 +19,8 @@ UserExpression CubicRegression::privateExpression(
        .KD = UserExpression::FromDouble(modelCoefficients[3])});
 }
 
-double CubicRegression::privateEvaluate(
-    const CoefficientsType& modelCoefficients, double x) const {
+double CubicRegression::privateEvaluate(const Coefficients& modelCoefficients,
+                                        double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -28,9 +28,9 @@ double CubicRegression::privateEvaluate(
   return a * x * x * x + b * x * x + c * x + d;
 }
 
-double CubicRegression::partialDerivate(
-    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
-    double x) const {
+double CubicRegression::partialDerivate(const Coefficients& modelCoefficients,
+                                        int derivateCoefficientIndex,
+                                        double x) const {
   switch (derivateCoefficientIndex) {
     case 0:
       // Derivate with respect to a: x^3

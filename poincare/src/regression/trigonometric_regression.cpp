@@ -29,7 +29,7 @@ API::UserExpression TrigonometricRegression::privateExpression(
 }
 
 double TrigonometricRegression::privateEvaluate(
-    const CoefficientsType& modelCoefficients, double x) const {
+    const Coefficients& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -40,7 +40,7 @@ double TrigonometricRegression::privateEvaluate(
 }
 
 double TrigonometricRegression::partialDerivate(
-    const CoefficientsType& modelCoefficients, int derivateCoefficientIndex,
+    const Coefficients& modelCoefficients, int derivateCoefficientIndex,
     double x) const {
   if (derivateCoefficientIndex == 3) {
     // Derivate with respect to d: 1
@@ -159,7 +159,7 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   *yMaxExtremum = yMax;
 }
 
-Regression::CoefficientsType
+Regression::Coefficients
 TrigonometricRegression::specializedInitCoefficientsForFit(
     double defaultValue, size_t attemptNumber, const Series* series) const {
   /* With trigonometric model, a good fit heavily depends on good starting
@@ -214,7 +214,7 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
 }
 
 void TrigonometricRegression::uniformizeCoefficientsFromFit(
-    CoefficientsType& modelCoefficients) const {
+    Coefficients& modelCoefficients) const {
   // Coefficients must be unique.
   double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
@@ -249,8 +249,8 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
 
 bool TrigonometricRegression::isRegressionBetter(
     double residualStandardDeviation1, double residualStandardDeviation2,
-    const Regression::CoefficientsType& modelCoefficients1,
-    const Regression::CoefficientsType& modelCoefficients2) const {
+    const Regression::Coefficients& modelCoefficients1,
+    const Regression::Coefficients& modelCoefficients2) const {
   /* If model 1 has a significantly lower residual standard deviation than
    * model 2, it is the best of the two models. */
   constexpr double significantlyLowerFactor = 0.9;

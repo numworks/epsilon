@@ -14,8 +14,8 @@ class TransformedRegression : public Regression {
                   double y, Poincare::Context* context) const override;
 
  protected:
-  CoefficientsType privateFit(const Series* series,
-                              Poincare::Context* context) const override;
+  Coefficients privateFit(const Series* series,
+                          Poincare::Context* context) const override;
   bool dataSuitableForFit(const Series* series) const override;
 
   bool applyLnOnX() const { return FitsLnX(type()); };
@@ -24,7 +24,7 @@ class TransformedRegression : public Regression {
   bool applyLnOnB() const { return FitsLnB(type()); }
 
  private:
-  double privateEvaluate(const CoefficientsType& modelCoefficients,
+  double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
 };
 

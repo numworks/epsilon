@@ -62,7 +62,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
 }
 
 double Regression::evaluate(const double* modelCoefficients, double x) const {
-  CoefficientsType coefficients;
+  Coefficients coefficients;
   memcpy(coefficients.begin(), modelCoefficients,
          numberOfCoefficients() * sizeof(double));
   return privateEvaluate(coefficients, x);
@@ -71,17 +71,17 @@ double Regression::evaluate(const double* modelCoefficients, double x) const {
 void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
-    CoefficientsType initialCoefficients = initCoefficientsForFit(NAN, true, 0);
+    Coefficients initialCoefficients = initCoefficientsForFit(NAN, true, 0);
     memmove(modelCoefficients, initialCoefficients.begin(),
             numberOfCoefficients() * sizeof(double));
     return;
   }
-  CoefficientsType coefficients = privateFit(series, context);
+  Coefficients coefficients = privateFit(series, context);
   memmove(modelCoefficients, coefficients.begin(),
           numberOfCoefficients() * sizeof(double));
 }
 
-Regression::CoefficientsType Regression::privateFit(
+Regression::Coefficients Regression::privateFit(
     const Series* series, Poincare::Context* context) const {
   double lowestResidualStandardDeviation = OMG::Float::Max<double>();
   std::array<double, k_maxNumberOfCoefficients> bestModelCoefficients;
@@ -92,7 +92,7 @@ Regression::CoefficientsType Regression::privateFit(
 
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {
-    CoefficientsType modelCoefficients = initCoefficientsForFit(
+    Coefficients modelCoefficients = initCoefficientsForFit(
         k_initialCoefficientValue, false, attemptNumber, series);
     fitLevenbergMarquardt(series, modelCoefficients, context);
     uniformizeCoefficientsFromFit(modelCoefficients);
@@ -115,7 +115,7 @@ bool Regression::dataSuitableForFit(const Series* series) const {
 }
 
 void Regression::fitLevenbergMarquardt(const Series* series,
-                                       CoefficientsType& modelCoefficients,
+                                       Coefficients& modelCoefficients,
                                        Context* context) const {
   /* We want to find the best coefficients of the regression to minimize the sum
    * of the squares of the difference between a data point and the corresponding
@@ -160,7 +160,7 @@ void Regression::fitLevenbergMarquardt(const Series* series,
     }
 
     // Compute the new coefficients
-    CoefficientsType newModelCoefficients;
+    Coefficients newModelCoefficients;
     for (int i = 0; i < n; i++) {
       newModelCoefficients[i] = modelCoefficients[i] + modelCoefficientSteps[i];
     }
@@ -185,7 +185,7 @@ void Regression::fitLevenbergMarquardt(const Series* series,
 }
 
 double Regression::chi2(const Series* series,
-                        const CoefficientsType& modelCoefficients) const {
+                        const Coefficients& modelCoefficients) const {
   double result = 0.0;
   for (int n = series->numberOfPairs(), i = 0; i < n; i++) {
     double xi = series->getX(i);
@@ -198,9 +198,9 @@ double Regression::chi2(const Series* series,
 
 /* a'(k,k) = a(k,k) * (1 + lambda)
  * a'(k,l) = a(l,k) when (k != l) */
-double Regression::alphaPrimeCoefficient(
-    const Series* series, const CoefficientsType& modelCoefficients, int k,
-    int l, double lambda) const {
+double Regression::alphaPrimeCoefficient(const Series* series,
+                                         const Coefficients& modelCoefficients,
+                                         int k, int l, double lambda) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
   double result = 0.0;
@@ -223,7 +223,7 @@ double Regression::alphaPrimeCoefficient(
 
 // a(k,l) = sum(0, N-1, derivate(y(xi|a), ak) * derivate(y(xi|a), a))
 double Regression::alphaCoefficient(const Series* series,
-                                    const CoefficientsType& modelCoefficients,
+                                    const Coefficients& modelCoefficients,
                                     int k, int l) const {
   assert(k >= 0 && k < numberOfCoefficients());
   assert(l >= 0 && l < numberOfCoefficients());
@@ -238,7 +238,7 @@ double Regression::alphaCoefficient(const Series* series,
 
 // b(k) = sum(0, N-1, (yi - y(xi|a)) * derivate(y(xi|a), ak))
 double Regression::betaCoefficient(const Series* series,
-                                   const CoefficientsType& modelCoefficients,
+                                   const Coefficients& modelCoefficients,
                                    int k) const {
   assert(k >= 0 && k < numberOfCoefficients());
   double result = 0.0;
@@ -290,7 +290,7 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
   return 0;
 }
 
-Regression::CoefficientsType Regression::initCoefficientsForFit(
+Regression::Coefficients Regression::initCoefficientsForFit(
     double defaultValue, bool forceDefaultValue, size_t attemptNumber,
     const Series* series) const {
   return forceDefaultValue ? Regression::specializedInitCoefficientsForFit(
@@ -299,10 +299,10 @@ Regression::CoefficientsType Regression::initCoefficientsForFit(
                                  defaultValue, attemptNumber, series);
 }
 
-Regression::CoefficientsType Regression::specializedInitCoefficientsForFit(
+Regression::Coefficients Regression::specializedInitCoefficientsForFit(
     double defaultValue, size_t /* attemptNumber */,
     const Series* /* series */) const {
-  CoefficientsType coefficients;
+  Coefficients coefficients;
   coefficients.fill(defaultValue);
   return coefficients;
 }
@@ -406,21 +406,21 @@ double Regression::residualAtIndex(const Series* series,
 
 double Regression::residualStandardDeviation(
     const Series* series, const double* modelCoefficients) const {
-  CoefficientsType coefficients;
+  Coefficients coefficients;
   memcpy(coefficients.begin(), modelCoefficients,
          numberOfCoefficients() * sizeof(double));
   return privateResidualStandardDeviation(series, coefficients);
 }
 
-double Regression::privateResidualAtIndex(
-    const Series* series, const CoefficientsType& modelCoefficients,
-    int index) const {
+double Regression::privateResidualAtIndex(const Series* series,
+                                          const Coefficients& modelCoefficients,
+                                          int index) const {
   return series->getY(index) -
          privateEvaluate(modelCoefficients, series->getX(index));
 }
 
 double Regression::privateResidualStandardDeviation(
-    const Series* series, const CoefficientsType& modelCoefficients) const {
+    const Series* series, const Coefficients& modelCoefficients) const {
   int nCoeff = numberOfCoefficients();
   int n = series->numberOfPairs();
   if (n <= nCoeff) {

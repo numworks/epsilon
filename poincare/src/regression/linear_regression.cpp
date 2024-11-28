@@ -19,9 +19,9 @@ UserExpression LinearRegression::privateExpression(
        .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
-Regression::CoefficientsType LinearRegression::privateFit(
-    const Series* series, Context* context) const {
-  CoefficientsType result;
+Regression::Coefficients LinearRegression::privateFit(const Series* series,
+                                                      Context* context) const {
+  Coefficients result;
   std::size_t slopeIndex = slopeCoefficientIndex();
   std::size_t yInterceptIndex = yInterceptCoefficientIndex();
   assert((slopeIndex == 0 && yInterceptIndex == 1) ||

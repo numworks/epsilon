@@ -167,11 +167,11 @@ bool SystematicOperation::ReducePower(Tree* e) {
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (base->isMult()) {
     for (Tree* w : base->children()) {
-      TreeRef m = SharedTreeStack->pushPow();
+      Tree* m = SharedTreeStack->pushPow();
       w->cloneTree();
       n->cloneTree();
       w->moveTreeOverTree(m);
-      SystematicReduction::ShallowReduce(m);
+      SystematicReduction::ShallowReduce(w);
     }
     n->removeTree();
     e->removeNode();

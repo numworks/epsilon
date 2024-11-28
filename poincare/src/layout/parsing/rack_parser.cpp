@@ -1112,8 +1112,8 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
       SharedTreeStack->pushUserFunction(name);
       KUnknownSymbol->cloneTree();
     } else {
-      result = SharedTreeStack->pushUserFunction(name);
-      parameter->moveNodeBeforeNode(result);
+      result = parameter->moveNodeBeforeNode(
+          SharedTreeStack->pushUserFunction(name));
       assert(result->child(0) == parameter);
     }
   }

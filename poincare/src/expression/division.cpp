@@ -162,7 +162,7 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     return false;
   }
   if (needOpposite) {
-    e->cloneNodeBeforeNode(KOpposite);
+    e->cloneNodeAtNode(KOpposite);
     e = e->child(0);
   }
   if (!den->isOne()) {

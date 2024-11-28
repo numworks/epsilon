@@ -83,6 +83,7 @@ constexpr static const char* middleDotToken[] = {"\\cdot"};
 constexpr static const char* multiplicationSignToken[] = {"\\times"};
 constexpr static const char* lesserOrEqualToken[] = {"\\le"};
 constexpr static const char* greaterOrEqualToken[] = {"\\ge"};
+constexpr static const char* degreeToken[] = {"\\degree"};
 constexpr static const char* rightwardsArrowToken[] = {"\\to"};
 constexpr static const char* infinityToken[] = {"\\infty"};
 constexpr static const char* divisionToken[] = {"\\div"};
@@ -184,6 +185,8 @@ constexpr static LatexToken k_tokens[] = {
     CODEPOINT_TOKEN(lesserOrEqualToken, UCodePointInferiorEqual),
     // >=
     CODEPOINT_TOKEN(greaterOrEqualToken, UCodePointSuperiorEqual),
+    // °
+    CODEPOINT_TOKEN(degreeToken, UCodePointDegreeSign),
     // ->
     CODEPOINT_TOKEN(rightwardsArrowToken, UCodePointRightwardsArrow),
     // Infinity

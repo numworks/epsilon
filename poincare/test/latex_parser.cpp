@@ -37,11 +37,12 @@ QUIZ_CASE(pcj_latex_to_layout) {
       "\\int_{0}^{1}round(abcd)\\ dabcd",
       KRackL(KIntegralL("abcd"_l, "0"_l, "1"_l, "round(abcd)"_l)));
   // Symbols
-  assert_latex_layouts_to("\\le\\ge\\cdot\\times\\to\\div\\infty",
+  assert_latex_layouts_to("\\le\\ge\\cdot\\times\\degree\\to\\div\\infty",
                           KCodePointL<UCodePointInferiorEqual>() ^
                               KCodePointL<UCodePointSuperiorEqual>() ^
                               KCodePointL<UCodePointMiddleDot>() ^
                               KCodePointL<UCodePointMultiplicationSign>() ^
+                              KCodePointL<UCodePointDegreeSign>() ^
                               KCodePointL<UCodePointRightwardsArrow>() ^
                               KCodePointL<'/'>() ^
                               KCodePointL<UCodePointInfinity>());
@@ -84,7 +85,8 @@ QUIZ_CASE(pcj_layout_to_latex) {
           KCodePointL<UCodePointSuperiorEqual>() ^
           KCodePointL<UCodePointMiddleDot>() ^
           KCodePointL<UCodePointMultiplicationSign>() ^
+          KCodePointL<UCodePointDegreeSign>() ^
           KCodePointL<UCodePointRightwardsArrow>() ^
           KCodePointL<UCodePointInfinity>(),
-      "\\le \\ge \\cdot \\times \\to \\infty ");
+      "\\le \\ge \\cdot \\times \\degree \\to \\infty ");
 }

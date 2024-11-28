@@ -1,5 +1,4 @@
-/* SPDX-License-Identifier: CC-BY-NC-ND-4.0
- * Caution: Dutch exam mode is subject to a compliance certification by a
+/* Caution: Dutch exam mode is subject to a compliance certification by a
  * government agency. Distribution of a non-certified Dutch exam mode is
  * illegal. */
 

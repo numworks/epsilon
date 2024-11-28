@@ -54,13 +54,13 @@ class __attribute__((packed)) Preferences final {
   // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint64_t>(AngleUnit::NUnits));
+          static_cast<uint8_t>(AngleUnit::NUnits));
   constexpr static size_t k_numberOfBitsForPrintFloatMode =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint64_t>(PrintFloatMode::NModes));
+          static_cast<uint8_t>(PrintFloatMode::NModes));
   constexpr static size_t k_numberOfBitsForComplexFormat =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint64_t>(ComplexFormat::NFormats));
+          static_cast<uint8_t>(ComplexFormat::NFormats));
 
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;

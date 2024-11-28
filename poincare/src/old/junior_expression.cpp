@@ -350,16 +350,15 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       /* We are using ApproximateAndReplaceEveryScalar to approximate
        * expressions with symbols such as π*x → 3.14*x. */
       Approximation::ApproximateAndReplaceEveryScalar(a, approxCtx);
-      *approximatedExpression = Builder(a);
+      *approximatedExpression = UserExpression::Builder(a);
     } else {
-      std::complex<double> value = Approximation::ToComplex<double>(
+      Tree* a = Approximation::ToTree<double>(
           e,
           Approximation::Parameter{.isRoot = true,
                                    .projectLocalVariables = true},
           approxCtx);
-      *approximatedExpression =
-          Builder(Beautification::PushBeautifiedComplex<double>(
-              value, context->m_complexFormat));
+      Beautification::DeepBeautify(a, *context);
+      *approximatedExpression = UserExpression::Builder(a);
     }
   }
   return;

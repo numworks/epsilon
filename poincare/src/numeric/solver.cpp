@@ -686,6 +686,9 @@ typename Solver<T>::Solution Solver<T>::honeAndRoundSolution(
         (interest == Interest::LocalMaximum && fRoundX > fx)) {
       // Round is better
       xy.setX(roundX);
+      if (xy.y() == fx) {
+        xy.setY(fRoundX);
+      }
     }
   }
   return Solution(xy, interest);

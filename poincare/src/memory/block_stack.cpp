@@ -41,12 +41,12 @@ Block* BlockStack::initFromAddress(const void* address, bool isTree) {
   return copiedTree;
 }
 
-void BlockStack::replaceBlock(Block* previousBlock, Block newBlock) {
-  replaceBlocks(previousBlock, &newBlock, 1);
+void BlockStack::replaceBlock(Block* previousBlock, Block newBlock, bool at) {
+  replaceBlocks(previousBlock, &newBlock, 1, at);
 }
 
 void BlockStack::replaceBlocks(Block* destination, const Block* source,
-                               size_t numberOfBlocks) {
+                               size_t numberOfBlocks, bool at) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
       [](uint16_t* offset, Block* block, const Block* destination,
@@ -55,7 +55,8 @@ void BlockStack::replaceBlocks(Block* destination, const Block* source,
           *offset = ReferenceTable::InvalidatedOffset;
         }
       },
-      destination, nullptr, numberOfBlocks);
+      // Warning: provided size is not the actual size if "at" is true.
+      destination + at, nullptr, numberOfBlocks - at);
 }
 
 bool BlockStack::insertBlocks(Block* destination, const Block* source,
@@ -92,7 +93,7 @@ bool BlockStack::insertBlocks(Block* destination, const Block* source,
   return true;
 }
 
-void BlockStack::removeBlocks(Block* address, size_t numberOfBlocks) {
+void BlockStack::removeBlocks(Block* address, size_t numberOfBlocks, bool at) {
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
@@ -101,16 +102,29 @@ void BlockStack::removeBlocks(Block* address, size_t numberOfBlocks) {
   assert(static_cast<Block*>(lastBlock()) >= address);
   memmove(address, address + deletionSize,
           static_cast<Block*>(lastBlock()) - address);
-  m_referenceTable.updateNodes(
-      [](uint16_t* offset, Block* block, const Block* address,
-         const Block* source, int size) {
-        if (block >= address + size) {
-          *offset -= size;
-        } else if (block >= address) {
-          *offset = ReferenceTable::InvalidatedOffset;
-        }
-      },
-      address, nullptr, numberOfBlocks);
+  if (at) {
+    m_referenceTable.updateNodes(
+        [](uint16_t* offset, Block* block, const Block* address,
+           const Block* source, int size) {
+          if (block >= address + size) {
+            *offset -= size;
+          } else if (block > address) {
+            *offset = ReferenceTable::InvalidatedOffset;
+          }
+        },
+        address, nullptr, numberOfBlocks);
+  } else {
+    m_referenceTable.updateNodes(
+        [](uint16_t* offset, Block* block, const Block* address,
+           const Block* source, int size) {
+          if (block >= address + size) {
+            *offset -= size;
+          } else if (block >= address) {
+            *offset = ReferenceTable::InvalidatedOffset;
+          }
+        },
+        address, nullptr, numberOfBlocks);
+  }
 }
 
 void BlockStack::moveBlocks(Block* destination, Block* source,

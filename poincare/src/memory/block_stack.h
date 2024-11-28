@@ -35,9 +35,9 @@ class BlockStack {
   // Initialize trees
   Block* initFromAddress(const void* address, bool isTree = true);
 
-  void replaceBlock(Block* previousBlock, Block newBlock);
+  void replaceBlock(Block* previousBlock, Block newBlock, bool at = false);
   void replaceBlocks(Block* destination, const Block* newBlocks,
-                     size_t numberOfBlocks);
+                     size_t numberOfBlocks, bool at = false);
   Block* pushBlock(Block block) {
     insertBlock(lastBlock(), block, true);
     return lastBlock() - 1;
@@ -49,7 +49,7 @@ class BlockStack {
   bool insertBlocks(Block* destination, const Block* source,
                     size_t numberOfBlocks, bool at = false);
   void popBlock() { removeBlocks(lastBlock() - 1, 1); }
-  void removeBlocks(Block* address, size_t numberOfBlocks);
+  void removeBlocks(Block* address, size_t numberOfBlocks, bool at = false);
   void moveBlocks(Block* destination, Block* source, size_t numberOfBlocks,
                   bool at = false);
 

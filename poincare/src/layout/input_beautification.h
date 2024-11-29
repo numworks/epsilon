@@ -85,8 +85,8 @@ class InputBeautification {
       {"!=", 0,
        [](TreeRef* parameters) {
          // ≠
-         return KRackL("="_cl,
-                       KCodePointL<UCodePointCombiningLongSolidusOverlay>())
+         return KCombinedCodePointL<'=',
+                                    UCodePointCombiningLongSolidusOverlay>()
              ->cloneTree();
        }},
       // Special char

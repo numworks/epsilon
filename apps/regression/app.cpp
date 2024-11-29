@@ -30,7 +30,8 @@ App::Snapshot::Snapshot()
       m_selectedCurveIndex(-1),
       m_regressionTypes{Model::Type::None, Model::Type::None,
                         Model::Type::None} {
-  // Register X1, X2, X3, Y1, Y2, Y3 as reserved lists to the sharedStorage.
+  /* Register X1, X2, X3, ..., Y1, Y2, Y3, ... as reserved lists to the
+   * sharedStorage. */
   static_assert(std::size(DoublePairStore::k_regressionColumNames) == 2,
                 "Number of reserved lists in regression changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
@@ -39,7 +40,7 @@ App::Snapshot::Snapshot()
           Shared::DoublePairStore::k_numberOfSeries,
           std::size(DoublePairStore::k_regressionColumNames));
 
-  // Register R1, R2, and R3 as reserved functions to the sharedStorage.
+  // Register R1, R2, R3 ... as reserved functions to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
           &Store::k_functionName, Ion::Storage::regressionExtension,

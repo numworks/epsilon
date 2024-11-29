@@ -25,8 +25,8 @@ App::Snapshot::Snapshot()
     : m_storeVersion(0),
       m_selectedSeries(-1),
       m_selectedIndex(DataView::k_defaultSelectedIndex) {
-  // TODO: add V4, V5, V6, N4, N5, N6
-  // Register V1, V2, V3, N1, N2, N3 as reserved names to the sharedStorage.
+  /* Register V1, V2, V3, ..., N1, N2, N3, ... as reserved names to the
+   * sharedStorage. */
   static_assert(std::size(DoublePairStore::k_statisticsColumNames) == 2,
                 "Number of reserved lists in statistics changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()

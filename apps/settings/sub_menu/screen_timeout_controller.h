@@ -25,7 +25,7 @@ class ScreenTimeoutController : public GenericSubController {
   int initialSelectedRow() const override;
 
  private:
-  void setPreference(int rowIndex);
+  void setDimmingTimePreference(int rowIndex) const;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_cells[k_totalNumberOfCell];

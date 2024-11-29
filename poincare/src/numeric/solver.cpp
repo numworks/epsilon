@@ -709,16 +709,16 @@ void Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-bool Solver<T>::HoneTestForDiscontinuity(T a, T b, T fa, T fb,
+bool Solver<T>::HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
                                          const void* aux) {
-  if (std::isnan(fa) && std::isnan(fb)) {
+  if (std::isnan(a.y()) && std::isnan(b.y())) {
     return false;
   }
-  if (std::isnan(fa) || std::isnan(fb)) {
+  if (std::isnan(a.y()) || std::isnan(b.y())) {
     return true;
   }
-  return std::abs(fb - fa) >= NullTolerance(fa) &&
-         DiscontinuityTestForExpression(a, b, aux);
+  return std::abs(b.y() - a.y()) >= NullTolerance(a.y()) &&
+         DiscontinuityTestForExpression(a.x(), b.x(), aux);
 }
 
 template <typename T>
@@ -750,9 +750,10 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   T fLeft = MagicRound(f(left, aux));
   T fRight = MagicRound(f(right, aux));
 
-  bool leftIsDiscontinuous = HoneTestForDiscontinuity(left, x, fLeft, fX, aux);
-  bool rightIsDiscontinuous =
-      HoneTestForDiscontinuity(x, right, fX, fRight, aux);
+  bool leftIsDiscontinuous = HoneTestForDiscontinuity(
+      Coordinate2D<T>(left, fLeft), Coordinate2D<T>(x, fX), aux);
+  bool rightIsDiscontinuous = HoneTestForDiscontinuity(
+      Coordinate2D<T>(x, fX), Coordinate2D<T>(right, fRight), aux);
   if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
     // No discontinuity
     return;

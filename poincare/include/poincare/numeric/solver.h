@@ -203,7 +203,8 @@ class Solver {
   }
 
   static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
-  static bool HoneTestForDiscontinuity(T a, T b, T fa, T fb, const void* aux);
+  static bool HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
+                                       const void* aux);
   static Coordinate2D<T> FindUndefinedIntervalBound(
       Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
       FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,

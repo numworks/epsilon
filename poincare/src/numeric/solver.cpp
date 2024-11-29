@@ -68,15 +68,15 @@ typename Solver<T>::Solution Solver<T>::next(
     Interest interest = test(start, middle, end, aux);
     /* If the solver is in float, we want it to be fast so the fine search
      * of interest around undefined intervals is skipped. */
-    if (interest == Interest::None && isDouble &&
-        UndefinedTestBetweenPoints(start, end, aux)) {
+    if (interest == Interest::None && isDouble && discontinuityTest &&
+        discontinuityTest(start, end, aux)) {
       /* If no interest was found and there is an undefined subinterval in the
        * interval, search for the largest interval without undef and then
        * recompute the interest in this interval. */
       Coordinate2D<T> a = start, b = middle, c = end;
       if (FindMinimalIntervalContainingDiscontinuity(
               f, aux, &a, &b, &c, MinimalStep(middle.x(), slope),
-              UndefinedTestBetweenPoints)) {
+              discontinuityTest)) {
         // Try left of discontinuity
         interest = TestBetween(start, a, test, f, aux);
         if (interest != Interest::None) {

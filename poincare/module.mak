@@ -243,6 +243,7 @@ $(addprefix numeric/, \
 ) \
 $(addprefix pool/, \
   layout.cpp \
+  layout_cursor.cpp \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \

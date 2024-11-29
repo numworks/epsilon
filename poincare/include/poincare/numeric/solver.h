@@ -126,9 +126,8 @@ class Solver {
                           Interest::LocalMaximum);
   }
   static Interest UndefinedInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                     Coordinate2D<T> c, const void*) {
-    return BoolToInterest((std::isfinite(a.y()) && std::isnan(c.y())) ||
-                              (std::isfinite(c.y()) && std::isnan(a.y())),
+                                     Coordinate2D<T> c, const void* aux) {
+    return BoolToInterest(UndefinedTestBetweenPoints(a, c, aux),
                           Interest::Discontinuity);
   }
   static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
@@ -203,20 +202,16 @@ class Solver {
     return Coordinate2D<T>();
   }
 
+  static bool UndefinedTestBetweenPoints(Coordinate2D<T> a, Coordinate2D<T> b,
+                                         const void*) {
+    return (std::isfinite(a.y()) && std::isnan(b.y())) ||
+           (std::isfinite(b.y()) && std::isnan(a.y()));
+  }
   static bool DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
                                              Coordinate2D<T> b,
                                              const void* aux);
   static bool DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
                                         const void* aux);
-  static Coordinate2D<T> FindUndefinedIntervalBound(
-      Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
-      FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
-      bool findStart);
-  static void ExcludeUndefinedFromBracket(Coordinate2D<T>* p1,
-                                          Coordinate2D<T>* p2,
-                                          Coordinate2D<T>* p3,
-                                          FunctionEvaluation f, const void* aux,
-                                          T minimalSizeOfInterval);
   static bool FunctionSeemsConstantOnTheInterval(
       Solver<T>::FunctionEvaluation f, const void* aux, T xMin, T xMax);
 
@@ -247,6 +242,9 @@ class Solver {
   Solution registerRoot(T x) {
     return registerSolution(Solution(x, k_zero, Interest::Root));
   }
+
+  Interest TestBetween(Coordinate2D<T> a, Coordinate2D<T> b, BracketTest test,
+                       FunctionEvaluation f, const void* aux);
 
   T m_xStart;
   T m_xEnd;

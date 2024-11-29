@@ -27,6 +27,17 @@ Solver<T>::Solver(T xStart, T xEnd, Context* context)
 }
 
 template <typename T>
+typename Solver<T>::Interest Solver<T>::TestBetween(Coordinate2D<T> a,
+                                                    Coordinate2D<T> b,
+                                                    BracketTest test,
+                                                    FunctionEvaluation f,
+                                                    const void* aux) {
+  T x = (a.x() + b.x()) / 2.;
+  Coordinate2D<T> middle(x, f(x, aux));
+  return test(a, middle, b, aux);
+}
+
+template <typename T>
 typename Solver<T>::Solution Solver<T>::next(
     FunctionEvaluation f, const void* aux, BracketTest test, HoneResult hone,
     DiscontinuityEvaluation discontinuityTest) {
@@ -58,14 +69,26 @@ typename Solver<T>::Solution Solver<T>::next(
     /* If the solver is in float, we want it to be fast so the fine search
      * of interest around undefined intervals is skipped. */
     if (interest == Interest::None && isDouble &&
-        UndefinedInBracket(start, middle, end, aux) ==
-            Interest::Discontinuity) {
+        UndefinedTestBetweenPoints(start, end, aux)) {
       /* If no interest was found and there is an undefined subinterval in the
        * interval, search for the largest interval without undef and then
        * recompute the interest in this interval. */
-      ExcludeUndefinedFromBracket(&start, &middle, &end, f, aux,
-                                  MinimalStep(middle.x(), slope));
-      interest = test(start, middle, end, aux);
+      Coordinate2D<T> a = start, b = middle, c = end;
+      if (FindMinimalIntervalContainingDiscontinuity(
+              f, aux, &a, &b, &c, MinimalStep(middle.x(), slope),
+              UndefinedTestBetweenPoints)) {
+        // Try left of discontinuity
+        interest = TestBetween(start, a, test, f, aux);
+        if (interest != Interest::None) {
+          end = a;
+        } else {
+          // Try right of discontinuity
+          interest = TestBetween(c, end, test, f, aux);
+          if (interest != Interest::None) {
+            start = c;
+          }
+        }
+      }
     }
 
     if (interest != Interest::None) {
@@ -294,57 +317,6 @@ bool Solver<T>::DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
                                                const void* aux) {
   const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
   return Continuity::IsDiscontinuousBetweenValues<T>(e, a.x(), b.x());
-};
-
-template <typename T>
-Coordinate2D<T> Solver<T>::FindUndefinedIntervalBound(
-    Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
-    FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
-    bool findStart) {
-  /* Search for the smallest interval that contains the undefined and
-   * return the largest interval that does not intersect with it. */
-  Coordinate2D<T> lowerBoundOfDiscontinuity = p1;
-  Coordinate2D<T> middleOfDiscontinuity = p2;
-  Coordinate2D<T> upperBoundOfDiscontinuity = p3;
-  Coordinate2D<T>* undefinedBound =
-      findStart ? &upperBoundOfDiscontinuity : &lowerBoundOfDiscontinuity;
-  Coordinate2D<T>* definedBound =
-      findStart ? &lowerBoundOfDiscontinuity : &upperBoundOfDiscontinuity;
-  assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
-  while (upperBoundOfDiscontinuity.x() - lowerBoundOfDiscontinuity.x() >=
-         minimalSizeOfInterval) {
-    if (std::isnan(middleOfDiscontinuity.y())) {
-      *undefinedBound = middleOfDiscontinuity;
-    } else if (std::isfinite(middleOfDiscontinuity.y())) {
-      *definedBound = middleOfDiscontinuity;
-    } else {
-      assert(std::isinf(middleOfDiscontinuity.y()));
-      return Coordinate2D<T>();
-    }
-    middleOfDiscontinuity.setX(
-        (lowerBoundOfDiscontinuity.x() + upperBoundOfDiscontinuity.x()) / 2.0);
-    middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
-    assert(std::isfinite(definedBound->y()) && std::isnan(undefinedBound->y()));
-  }
-  return *definedBound;
-}
-
-template <typename T>
-void Solver<T>::ExcludeUndefinedFromBracket(
-    Coordinate2D<T>* p1, Coordinate2D<T>* p2, Coordinate2D<T>* p3,
-    FunctionEvaluation f, const void* aux, T minimalSizeOfInterval) {
-  assert(UndefinedInBracket(*p1, *p2, *p3, aux) == Interest::Discontinuity);
-  assert(std::isnan(p1->y()) || std::isnan(p3->y()));
-  // Find the smallest interval containing the undefined
-  bool cropEnd = std::isnan(p3->y());
-  Coordinate2D<T> newBound = FindUndefinedIntervalBound(
-      *p1, *p2, *p3, f, aux, minimalSizeOfInterval, cropEnd);
-  // Set p1, p2 and p3 outside of the interval containing the undefined
-  if (std::isfinite(newBound.x())) {
-    (cropEnd ? *p3 : *p1) = newBound;
-    p2->setX((p1->x() + p3->x()) / 2.0);
-    p2->setY(f(p2->x(), aux));
-  }
 }
 
 template <typename T>
@@ -870,10 +842,6 @@ template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
     FunctionEvaluation, const void*, double, double, Interest, double,
     OMG::Troolean);
 template double Solver<double>::DefaultSearchStepForAmplitude(double);
-template void Solver<double>::ExcludeUndefinedFromBracket(
-    Coordinate2D<double>* p1, Coordinate2D<double>* p2,
-    Coordinate2D<double>* p3, FunctionEvaluation f, const void* aux,
-    double minimalSizeOfInterval);
 template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
     double xMax);

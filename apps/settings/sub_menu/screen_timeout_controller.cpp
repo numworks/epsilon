@@ -23,7 +23,8 @@ ScreenTimeoutController::ScreenTimeoutController(
                 stack->pop();
                 return true;
               },
-              this)) {}
+              this),
+          I18n::Message::BatteryLifeWarning) {}
 
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

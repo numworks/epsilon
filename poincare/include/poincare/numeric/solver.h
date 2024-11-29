@@ -133,7 +133,7 @@ class Solver {
   }
   static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void* aux) {
-    return BoolToInterest(DiscontinuityTestForExpression(a, c, aux),
+    return BoolToInterest(DiscontinuityTestBetweenPoints(a, c, aux),
                           Interest::ReachedDiscontinuity);
   }
 
@@ -203,11 +203,11 @@ class Solver {
     return Coordinate2D<T>();
   }
 
-  static bool DiscontinuityTestForExpression(Coordinate2D<T> a,
+  static bool DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
                                              Coordinate2D<T> b,
                                              const void* aux);
-  static bool HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
-                                       const void* aux);
+  static bool DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
+                                        const void* aux);
   static Coordinate2D<T> FindUndefinedIntervalBound(
       Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
       FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,

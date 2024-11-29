@@ -95,7 +95,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
         e, x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
   };
 
-  return next(f, e, test, hone, &DiscontinuityTestForExpression);
+  return next(f, e, test, hone, &DiscontinuityTestBetweenPoints);
 }
 
 template <typename T>
@@ -289,7 +289,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 }
 
 template <typename T>
-bool Solver<T>::DiscontinuityTestForExpression(Coordinate2D<T> a,
+bool Solver<T>::DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
                                                Coordinate2D<T> b,
                                                const void* aux) {
   const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
@@ -714,8 +714,8 @@ void Solver<T>::honeAndRoundSolution(
 }
 
 template <typename T>
-bool Solver<T>::HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
-                                         const void* aux) {
+bool Solver<T>::DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
+                                          const void* aux) {
   if (std::isnan(a.y()) && std::isnan(b.y())) {
     return false;
   }
@@ -723,7 +723,7 @@ bool Solver<T>::HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
     return true;
   }
   return std::abs(b.y() - a.y()) >= NullTolerance(a.y()) &&
-         DiscontinuityTestForExpression(a, b, aux);
+         DiscontinuityTestBetweenPoints(a, b, aux);
 }
 
 template <typename T>
@@ -761,8 +761,8 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   left.setY(MagicRound(f(left.x(), aux)));
   right.setY(MagicRound(f(right.x(), aux)));
 
-  bool leftIsDiscontinuous = HoneTestForDiscontinuity(left, middle, aux);
-  bool rightIsDiscontinuous = HoneTestForDiscontinuity(middle, right, aux);
+  bool leftIsDiscontinuous = DiscontinuityTestAtPoints(left, middle, aux);
+  bool rightIsDiscontinuous = DiscontinuityTestAtPoints(middle, right, aux);
   if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
     // No discontinuity
     return;
@@ -821,7 +821,7 @@ template <typename T>
 bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
     Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval) {
-  assert(DiscontinuityTestForExpression(*start, *end, aux));
+  assert(DiscontinuityTestBetweenPoints(*start, *end, aux));
 
   // Initialize middle if needed
   if (std::isnan(middle->x())) {
@@ -831,9 +831,9 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
 
   while (end->x() - start->x() >= minimalSizeOfInterval) {
     bool leftIsDiscontinuous =
-        DiscontinuityTestForExpression(*start, *middle, aux);
+        DiscontinuityTestBetweenPoints(*start, *middle, aux);
     bool rightIsDiscontinuous =
-        DiscontinuityTestForExpression(*middle, *end, aux);
+        DiscontinuityTestBetweenPoints(*middle, *end, aux);
     if (leftIsDiscontinuous == rightIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
@@ -847,11 +847,11 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     }
     middle->setX((start->x() + end->x()) / 2.0);
     middle->setY(f(middle->x(), aux));
-    assert(DiscontinuityTestForExpression(*start, *end, aux));
+    assert(DiscontinuityTestBetweenPoints(*start, *end, aux));
   }
   assert(start->x() <= end->x() &&
          end->x() - start->x() <= minimalSizeOfInterval &&
-         DiscontinuityTestForExpression(*start, *end, aux));
+         DiscontinuityTestBetweenPoints(*start, *end, aux));
   return true;
 }
 

@@ -228,11 +228,13 @@ class Solver {
   T nextRootInMultiplication(const Internal::Tree* m) const;
   T nextRootInAddition(const Internal::Tree* m) const;
   T nextRootInDependency(const Internal::Tree* m) const;
-  void honeAndRoundSolution(FunctionEvaluation f, const void* aux, T start,
-                            T end, Interest interest, HoneResult hone,
+  void honeAndRoundSolution(FunctionEvaluation f, const void* aux,
+                            Coordinate2D<T> start, Coordinate2D<T> end,
+                            Interest interest, HoneResult hone,
                             DiscontinuityEvaluation discontinuityTest);
   void honeAndRoundDiscontinuitySolution(FunctionEvaluation f, const void* aux,
-                                         T start, T end);
+                                         Coordinate2D<T> start,
+                                         Coordinate2D<T> end);
   bool FindMinimalIntervalContainingDiscontinuity(
       FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
       Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval);

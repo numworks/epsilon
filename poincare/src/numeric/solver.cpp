@@ -69,7 +69,7 @@ typename Solver<T>::Solution Solver<T>::next(
     }
 
     if (interest != Interest::None) {
-      honeAndRoundSolution(f, aux, start.x(), end.x(), interest, hone,
+      honeAndRoundSolution(f, aux, start, end, interest, hone,
                            discontinuityTest);
       if (!m_solutionQueue.isEmpty()) {
         return registerSolution(m_solutionQueue.pop());
@@ -640,16 +640,18 @@ T Solver<T>::MagicRound(T x) {
 
 template <typename T>
 void Solver<T>::honeAndRoundSolution(
-    FunctionEvaluation f, const void* aux, T start, T end, Interest interest,
-    HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
+    FunctionEvaluation f, const void* aux, Coordinate2D<T> start,
+    Coordinate2D<T> end, Interest interest, HoneResult hone,
+    DiscontinuityEvaluation discontinuityTest) {
   assert(m_solutionQueue.isEmpty());
   if (interest == Interest::ReachedDiscontinuity) {
     return honeAndRoundDiscontinuitySolution(f, aux, start, end);
   }
   OMG::Troolean discontinuous = OMG::Troolean::Unknown;
   if (discontinuityTest) {
-    discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
-                                                       : OMG::Troolean::False;
+    discontinuous = discontinuityTest(start.x(), end.x(), aux)
+                        ? OMG::Troolean::True
+                        : OMG::Troolean::False;
   }
   /* WARNING: This is a hack for discontinuous functions. BrentForRoot
    * needs to be very precise to find a root that is on the discontinuity bound.
@@ -661,9 +663,9 @@ void Solver<T>::honeAndRoundSolution(
       k_relativePrecision * k_minimalAbsoluteStep;
   T xPrecision = discontinuous == OMG::Troolean::True
                      ? precisionForDiscontinuousFunctions
-                     : NullTolerance(start);
+                     : NullTolerance(start.x());
   Coordinate2D<T> xy =
-      hone(f, aux, start, end, interest, xPrecision, discontinuous);
+      hone(f, aux, start.x(), end.x(), interest, xPrecision, discontinuous);
   if (!std::isfinite(xy.x()) || !validSolution(xy.x())) {
     return;
   }
@@ -723,15 +725,16 @@ bool Solver<T>::HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
 
 template <typename T>
 void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
-                                                  const void* aux, T start,
-                                                  T end) {
+                                                  const void* aux,
+                                                  Coordinate2D<T> start,
+                                                  Coordinate2D<T> end) {
   assert(m_solutionQueue.isEmpty());
-  T precision = NullTolerance(start);
+  T precision = NullTolerance(start.x());
 
   // Find the smallest interval containing the discontinuity
-  Coordinate2D<T> left(start, f(start, aux));
+  Coordinate2D<T> left = start;
   Coordinate2D<T> middle;
-  Coordinate2D<T> right(end, f(end, aux));
+  Coordinate2D<T> right = end;
   if (!FindMinimalIntervalContainingDiscontinuity(f, aux, &left, &middle,
                                                   &right, precision)) {
     return;

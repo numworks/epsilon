@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "preferences.h"
 #include "typed_expression.h"
 
 using namespace emscripten;
@@ -448,11 +449,6 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
                                                         &ctx);
 }
 
-struct PrintFloatPreferences {
-  Preferences::PrintFloatMode printFloatMode;
-  int numberOfSignificantDigits;
-};
-
 std::string typedToLatex(const TypedUserExpression& expression,
                          PrintFloatPreferences preferences) {
   constexpr int k_bufferSize = 1024;  // TODO: make this bigger ? or malloc ?
@@ -491,10 +487,6 @@ TypedSystemExpression typedCloneAndReduce(
 
 EMSCRIPTEN_BINDINGS(user_expression) {
   register_type<TypedUserExpression::JsTree>("UserExpressionTree");
-  value_object<PrintFloatPreferences>("PrintFloatPreferences")
-      .field("printFloatMode", &PrintFloatPreferences::printFloatMode)
-      .field("numberOfSignificantDigits",
-             &PrintFloatPreferences::numberOfSignificantDigits);
   class_<TypedUserExpression, base<JuniorExpression>>("PCR_UserExpression")
       .constructor<>()
       .class_function("BuildFromTree", &TypedUserExpression::BuildFromJsTree)

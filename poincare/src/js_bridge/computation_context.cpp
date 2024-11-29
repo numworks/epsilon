@@ -4,15 +4,12 @@
 #include <poincare/old/junior_expression.h>
 
 #include <string>
+
+#include "preferences.h"
+
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
-
-struct ReductionPreferences {
-  Preferences::ComplexFormat complexFormat;
-  Preferences::AngleUnit angleUnit;
-  Preferences::UnitFormat unitFormat;
-};
 
 ReductionContext BuildReductionContext(
     Context* ctx, ReductionPreferences preferences,
@@ -32,11 +29,6 @@ EMSCRIPTEN_BINDINGS(computation_context) {
       .value("ReplaceAllSymbolsWithUndefined",
              SymbolicComputation::ReplaceAllSymbolsWithUndefined)
       .value("KeepAllSymbols", SymbolicComputation::KeepAllSymbols);
-
-  value_object<ReductionPreferences>("ReductionPreferences")
-      .field("complexFormat", &ReductionPreferences::complexFormat)
-      .field("angleUnit", &ReductionPreferences::angleUnit)
-      .field("unitFormat", &ReductionPreferences::unitFormat);
 
   class_<Context>("PCR_Context");
   class_<EmptyContext, base<Context>>("PCR_EmptyContext").constructor<>();

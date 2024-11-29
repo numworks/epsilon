@@ -1,3 +1,5 @@
+#include "preferences.h"
+
 #include <emscripten/bind.h>
 #include <poincare/preferences.h>
 
@@ -22,6 +24,15 @@ EMSCRIPTEN_BINDINGS(preferences) {
       .value("Decimal", Preferences::PrintFloatMode::Decimal)
       .value("Scientific", Preferences::PrintFloatMode::Scientific)
       .value("Engineering", Preferences::PrintFloatMode::Engineering);
+
+  value_object<ReductionPreferences>("ReductionPreferences")
+      .field("complexFormat", &ReductionPreferences::complexFormat)
+      .field("angleUnit", &ReductionPreferences::angleUnit)
+      .field("unitFormat", &ReductionPreferences::unitFormat);
+  value_object<PrintFloatPreferences>("PrintFloatPreferences")
+      .field("printFloatMode", &PrintFloatPreferences::printFloatMode)
+      .field("numberOfSignificantDigits",
+             &PrintFloatPreferences::numberOfSignificantDigits);
 }
 
 }  // namespace Poincare::JSBridge

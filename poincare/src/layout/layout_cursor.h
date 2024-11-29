@@ -90,6 +90,7 @@ class LayoutCursor {
   SimpleLayoutCursor simpleCursor() const {
     return {.rack = cursorRack(), .position = position()};
   }
+  int startOfSelection() const { return m_startOfSelection; }
 
  protected:
   virtual void setCursorRack(Rack* rack) = 0;
@@ -126,6 +127,30 @@ class LayoutCursor {
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
    * between m_startOfSelection and m_position */
   int m_startOfSelection;
+};
+
+/* Simple TreeCursor when a simple const copy of a cursor is needed. The layout
+ * should not be modified. */
+class TreeCursor final : public LayoutCursor {
+ public:
+  TreeCursor(Rack* root, Rack* cursor, int position)
+      : LayoutCursor(position, -1), m_root(root), m_cursor(cursor) {}
+
+  TreeCursor(const LayoutCursor& other)
+      : LayoutCursor(other.position(), other.startOfSelection()),
+        m_root(other.rootRack()),
+        m_cursor(other.cursorRack()) {}
+
+  Rack* rootRack() const override { return m_root; }
+  Rack* cursorRack() const override { return m_cursor; }
+  void setCursorRack(Rack* rack) override { assert(false); };
+  bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override {
+    assert(false);
+  }
+
+ private:
+  Rack* m_root;
+  Rack* m_cursor;
 };
 
 class TreeStackCursor final : public LayoutCursor {

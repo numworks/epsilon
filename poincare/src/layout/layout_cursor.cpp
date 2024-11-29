@@ -737,11 +737,11 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
   return moved;
 }
 
-static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
-                                     PoolLayoutCursor* result) {
+static void ScoreCursorInDescendants(KDPoint p, Rack* rack, KDFont::Size font,
+                                     TreeCursor* result) {
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
-  PoolLayoutCursor tempCursor(result->rootLayout(), rack);
+  TreeCursor tempCursor(result->rootRack(), rack, 0);
   int n = rack->numberOfChildren();
   for (int i = 0; i <= n; i++) {
     /* In order to favor the ends in case of equality, we test the first, the
@@ -756,16 +756,16 @@ static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
   }
   for (Tree* l : rack->children()) {
     for (Tree* r : l->children()) {
-      ScoreCursorInDescendants(p, r, font, result);
+      ScoreCursorInDescendants(p, Rack::From(r), font, result);
     }
   }
 }
 
-static PoolLayoutCursor ClosestCursorInDescendantsOfRack(
-    PoolLayoutCursor currentCursor, Tree* rack, KDFont::Size font) {
-  PoolLayoutCursor result = PoolLayoutCursor(currentCursor.rootLayout(), rack,
-                                             OMG::Direction::Left());
-  ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), rack, font,
+static TreeCursor ClosestCursorInDescendantsOfRack(LayoutCursor* currentCursor,
+                                                   Rack* rack,
+                                                   KDFont::Size font) {
+  TreeCursor result = TreeCursor(currentCursor->rootRack(), rack, 0);
+  ScoreCursorInDescendants(currentCursor->middleLeftPoint(font), rack, font,
                            &result);
   return result;
 }
@@ -821,9 +821,9 @@ bool LayoutCursor::verticalMoveWithoutSelection(
       } else {
         assert(!parentLayout->isRackLayout());
         // We assume the new cursor is the same whatever the font
-        PoolLayoutCursor newCursor = ClosestCursorInDescendantsOfRack(
-            *static_cast<PoolLayoutCursor*>(this),
-            parentLayout->child(nextIndex), KDFont::Size::Large);
+        TreeCursor newCursor = ClosestCursorInDescendantsOfRack(
+            this, Rack::From(parentLayout->child(nextIndex)),
+            KDFont::Size::Large);
         setCursorRack(newCursor.cursorRack());
         m_position = newCursor.position();
       }

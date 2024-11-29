@@ -289,9 +289,11 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 }
 
 template <typename T>
-bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void* aux) {
+bool Solver<T>::DiscontinuityTestForExpression(Coordinate2D<T> a,
+                                               Coordinate2D<T> b,
+                                               const void* aux) {
   const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-  return Continuity::IsDiscontinuousBetweenValues<T>(e, x1, x2);
+  return Continuity::IsDiscontinuousBetweenValues<T>(e, a.x(), b.x());
 };
 
 template <typename T>
@@ -649,9 +651,8 @@ void Solver<T>::honeAndRoundSolution(
   }
   OMG::Troolean discontinuous = OMG::Troolean::Unknown;
   if (discontinuityTest) {
-    discontinuous = discontinuityTest(start.x(), end.x(), aux)
-                        ? OMG::Troolean::True
-                        : OMG::Troolean::False;
+    discontinuous = discontinuityTest(start, end, aux) ? OMG::Troolean::True
+                                                       : OMG::Troolean::False;
   }
   /* WARNING: This is a hack for discontinuous functions. BrentForRoot
    * needs to be very precise to find a root that is on the discontinuity bound.
@@ -675,6 +676,13 @@ void Solver<T>::honeAndRoundSolution(
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
   T roundX = MagicRound(x);
+  T fRoundX = f(roundX, aux);
+  if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
+    // We might have a discontinuity, the solution might not be valid
+    return;
+  }
+  // f(x) is different from the honed solution when searching intersections
+  T fx = f(x, aux);
   if (std::isfinite(roundX) && validSolution(roundX)) {
     /* Filter out solutions that are close to a discontinuity. This can
      * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
@@ -683,16 +691,11 @@ void Solver<T>::honeAndRoundSolution(
      * integers or of a magnitude closer to roundX than x. So if the
      * condition of roundX is different from x, this means that the solution
      * found is probably on an open interval. */
-    if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
+    if (discontinuityTest &&
+        discontinuityTest(Coordinate2D<T>(x, fx),
+                          Coordinate2D<T>(roundX, fRoundX), aux)) {
       return;
     }
-    T fRoundX = f(roundX, aux);
-    if (std::isnan(fRoundX) && interest != Interest::Discontinuity) {
-      // We might have a discontinuity, the solution might not be valid
-      return;
-    }
-    // f(x) is different from the honed solution when searching intersections
-    T fx = f(x, aux);
     if (fRoundX == fx ||
         (interest == Interest::Root && std::fabs(fRoundX) < std::fabs(fx)) ||
         (interest == Interest::LocalMinimum && fRoundX < fx) ||
@@ -720,7 +723,7 @@ bool Solver<T>::HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
     return true;
   }
   return std::abs(b.y() - a.y()) >= NullTolerance(a.y()) &&
-         DiscontinuityTestForExpression(a.x(), b.x(), aux);
+         DiscontinuityTestForExpression(a, b, aux);
 }
 
 template <typename T>
@@ -818,7 +821,7 @@ template <typename T>
 bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
     Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval) {
-  assert(DiscontinuityTestForExpression(start->x(), end->x(), aux));
+  assert(DiscontinuityTestForExpression(*start, *end, aux));
 
   // Initialize middle if needed
   if (std::isnan(middle->x())) {
@@ -828,9 +831,9 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
 
   while (end->x() - start->x() >= minimalSizeOfInterval) {
     bool leftIsDiscontinuous =
-        DiscontinuityTestForExpression(start->x(), middle->x(), aux);
+        DiscontinuityTestForExpression(*start, *middle, aux);
     bool rightIsDiscontinuous =
-        DiscontinuityTestForExpression(middle->x(), end->x(), aux);
+        DiscontinuityTestForExpression(*middle, *end, aux);
     if (leftIsDiscontinuous == rightIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
@@ -844,11 +847,11 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     }
     middle->setX((start->x() + end->x()) / 2.0);
     middle->setY(f(middle->x(), aux));
-    assert(DiscontinuityTestForExpression(start->x(), end->x(), aux));
+    assert(DiscontinuityTestForExpression(*start, *end, aux));
   }
   assert(start->x() <= end->x() &&
          end->x() - start->x() <= minimalSizeOfInterval &&
-         DiscontinuityTestForExpression(start->x(), end->x(), aux));
+         DiscontinuityTestForExpression(*start, *end, aux));
   return true;
 }
 

@@ -88,7 +88,8 @@ class Solver {
                                   Coordinate2D<T>, const void*);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void*, T, T,
                                         Interest, T, OMG::Troolean);
-  typedef bool (*DiscontinuityEvaluation)(T, T, const void*);
+  typedef bool (*DiscontinuityEvaluation)(Coordinate2D<T>, Coordinate2D<T>,
+                                          const void*);
 
   constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
   constexpr static T k_minimalAbsoluteStep =
@@ -132,7 +133,7 @@ class Solver {
   }
   static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void* aux) {
-    return BoolToInterest(DiscontinuityTestForExpression(a.x(), c.x(), aux),
+    return BoolToInterest(DiscontinuityTestForExpression(a, c, aux),
                           Interest::ReachedDiscontinuity);
   }
 
@@ -202,7 +203,9 @@ class Solver {
     return Coordinate2D<T>();
   }
 
-  static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
+  static bool DiscontinuityTestForExpression(Coordinate2D<T> a,
+                                             Coordinate2D<T> b,
+                                             const void* aux);
   static bool HoneTestForDiscontinuity(Coordinate2D<T> a, Coordinate2D<T> b,
                                        const void* aux);
   static Coordinate2D<T> FindUndefinedIntervalBound(

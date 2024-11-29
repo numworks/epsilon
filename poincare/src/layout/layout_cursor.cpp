@@ -151,8 +151,8 @@ void LayoutBufferCursor::beautifyLeft(Poincare::Context* context) {
   // TODO factorize with beautifyRightOfRack
 }
 
-void LayoutBufferCursor::TreeStackCursor::beautifyLeftAction(
-    Poincare::Context* context, const void*) {
+void TreeStackCursor::beautifyLeftAction(Poincare::Context* context,
+                                         const void*) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (!isSelecting()) {
     InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
@@ -167,20 +167,20 @@ bool LayoutBufferCursor::beautifyRightOfRack(Rack* rack,
   return ctx.m_shouldRedraw;
 }
 
-bool LayoutBufferCursor::TreeStackCursor::beautifyRightOfRack(
-    Rack* targetRack, Poincare::Context* context) {
+bool TreeStackCursor::beautifyRightOfRack(Rack* targetRack,
+                                          Poincare::Context* context) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (isSelecting()) {
     return false;
   }
-  LayoutBufferCursor::TreeStackCursor tempCursor = *this;
+  TreeStackCursor tempCursor = *this;
   tempCursor.moveCursorToLayout(targetRack, OMG::Direction::Right());
   return InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(&tempCursor,
                                                                    context);
 }
 
-void LayoutBufferCursor::TreeStackCursor::beautifyRightOfRackAction(
-    Poincare::Context* context, const void* rackOffset) {
+void TreeStackCursor::beautifyRightOfRackAction(Poincare::Context* context,
+                                                const void* rackOffset) {
   const BeautifyContext* ctx = static_cast<const BeautifyContext*>(rackOffset);
   Rack* targetRack = cursorRack() + ctx->m_rackOffset;
   ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, context);
@@ -230,8 +230,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(Rack* rack,
 }
 
 /* const Tree* insertion */
-void LayoutBufferCursor::TreeStackCursor::insertLayout(
-    Poincare::Context* context, const void* data) {
+void TreeStackCursor::insertLayout(Poincare::Context* context,
+                                   const void* data) {
   const InsertLayoutContext* insertLayoutContext =
       static_cast<const InsertLayoutContext*>(data);
   bool forceRight = insertLayoutContext->m_forceRight;
@@ -452,8 +452,7 @@ void LayoutBufferCursor::addMixedFractionLayout(Poincare::Context* context) {
   insertLayout(KFracL(""_l, ""_l), context, false, true, false);
 }
 
-void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
-                                                     const void* data) {
+void TreeStackCursor::insertText(Poincare::Context* context, const void* data) {
   const InsertTextContext* insertTextContext =
       static_cast<const InsertTextContext*>(data);
   const char* text = insertTextContext->m_text;
@@ -490,9 +489,8 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
         (void)currentSubscriptDepth;
-        LayoutBufferCursor::TreeStackCursor::InsertLayoutContext
-            insertLayoutContext{layoutToInsert, forceCursorRightOfText,
-                                forceCursorLeftOfText};
+        TreeStackCursor::InsertLayoutContext insertLayoutContext{
+            layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
         insertLayout(context, &insertLayoutContext);
         layoutToInsert = KRackL()->cloneTree();
         currentLayout = layoutToInsert;
@@ -538,15 +536,15 @@ void LayoutBufferCursor::TreeStackCursor::insertText(Poincare::Context* context,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  LayoutBufferCursor::TreeStackCursor::InsertLayoutContext insertLayoutContext{
+  TreeStackCursor::InsertLayoutContext insertLayoutContext{
       layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
   insertLayout(context, &insertLayoutContext);
 
   // TODO: Restore beautification
 }
 
-void LayoutBufferCursor::TreeStackCursor::performBackspace(
-    Poincare::Context* context, const void* data) {
+void TreeStackCursor::performBackspace(Poincare::Context* context,
+                                       const void* data) {
   assert(data == nullptr);
   if (isSelecting()) {
     return deleteAndResetSelection(context, nullptr);
@@ -571,8 +569,8 @@ void LayoutBufferCursor::TreeStackCursor::performBackspace(
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 
-void LayoutBufferCursor::TreeStackCursor::deleteAndResetSelection(
-    Poincare::Context* context, const void* data) {
+void TreeStackCursor::deleteAndResetSelection(Poincare::Context* context,
+                                              const void* data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {
@@ -905,8 +903,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   return false;
 }
 
-void LayoutBufferCursor::TreeStackCursor::privateDelete(
-    DeletionMethod deletionMethod, bool deletionAppliedToParent) {
+void TreeStackCursor::privateDelete(DeletionMethod deletionMethod,
+                                    bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent ||
          m_cursorRackRef->block() != rootRack()->block());
 
@@ -1089,8 +1087,7 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(
   }
 }
 
-void LayoutBufferCursor::TreeStackCursor::
-    balanceAutocompletedBracketsAndKeepAValidCursor() {
+void TreeStackCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   TreeRef ref = cursorRack();
   AutocompletedPair::BalanceBrackets(rootRack(), ref, &m_position);
   m_cursorRackRef = static_cast<Tree*>(ref);

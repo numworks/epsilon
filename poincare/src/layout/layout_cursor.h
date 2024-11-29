@@ -128,6 +128,56 @@ class LayoutCursor {
   int m_startOfSelection;
 };
 
+class TreeStackCursor final : public LayoutCursor {
+  friend class LayoutBufferCursor;
+  friend class InputBeautification;
+
+  TreeStackCursor(int position, int startOfSelection, int cursorOffset)
+      : LayoutCursor(position, startOfSelection) {
+    setCursorRack(
+        Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
+  }
+
+  Rack* rootRack() const override {
+    return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
+  }
+  Rack* cursorRack() const override {
+    return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
+  }
+
+  // TreeStackCursor Actions
+  void performBackspace(Poincare::Context* context, const void* nullptrData);
+  void deleteAndResetSelection(Poincare::Context* context,
+                               const void* nullptrData);
+  struct InsertLayoutContext {
+    const Tree* m_tree;
+    bool m_forceRight = false;
+    bool m_forceLeft = false;
+    bool m_collapseSiblings = true;
+  };
+  void insertLayout(Poincare::Context* context,
+                    const void* insertLayoutContext);
+  struct InsertTextContext {
+    const char* m_text;
+    bool m_forceRight, m_forceLeft, m_linearMode;
+  };
+  void insertText(Poincare::Context* context, const void* insertTextContext);
+  void balanceAutocompletedBracketsAndKeepAValidCursor();
+
+  void privateDelete(DeletionMethod deletionMethod,
+                     bool deletionAppliedToParent);
+  void setCursorRack(Rack* rack) override { m_cursorRackRef = TreeRef(rack); }
+  struct BeautifyContext {
+    int m_rackOffset;
+    mutable bool m_shouldRedraw;
+  };
+  bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
+  void beautifyRightOfRackAction(Poincare::Context* context, const void* rack);
+  void beautifyLeftAction(Poincare::Context* context, const void* /* no arg */);
+
+  TreeRef m_cursorRackRef;
+};
+
 class LayoutBufferCursor final : public LayoutCursor {
   friend class InputBeautification;
 
@@ -189,58 +239,6 @@ class LayoutBufferCursor final : public LayoutCursor {
   void beautifyLeft(Poincare::Context* context);
 
  private:
-  class TreeStackCursor final : public LayoutCursor {
-    friend class LayoutBufferCursor;
-    friend class InputBeautification;
-
-    TreeStackCursor(int position, int startOfSelection, int cursorOffset)
-        : LayoutCursor(position, startOfSelection) {
-      setCursorRack(
-          Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
-    }
-
-    Rack* rootRack() const override {
-      return static_cast<Rack*>(
-          Tree::FromBlocks(SharedTreeStack->firstBlock()));
-    }
-    Rack* cursorRack() const override {
-      return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
-    }
-
-    // TreeStackCursor Actions
-    void performBackspace(Poincare::Context* context, const void* nullptrData);
-    void deleteAndResetSelection(Poincare::Context* context,
-                                 const void* nullptrData);
-    struct InsertLayoutContext {
-      const Tree* m_tree;
-      bool m_forceRight = false;
-      bool m_forceLeft = false;
-      bool m_collapseSiblings = true;
-    };
-    void insertLayout(Poincare::Context* context,
-                      const void* insertLayoutContext);
-    struct InsertTextContext {
-      const char* m_text;
-      bool m_forceRight, m_forceLeft, m_linearMode;
-    };
-    void insertText(Poincare::Context* context, const void* insertTextContext);
-    void balanceAutocompletedBracketsAndKeepAValidCursor();
-
-    void privateDelete(DeletionMethod deletionMethod,
-                       bool deletionAppliedToParent);
-    void setCursorRack(Rack* rack) override { m_cursorRackRef = TreeRef(rack); }
-    struct BeautifyContext {
-      int m_rackOffset;
-      mutable bool m_shouldRedraw;
-    };
-    bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
-    void beautifyRightOfRackAction(Poincare::Context* context,
-                                   const void* rack);
-    void beautifyLeftAction(Poincare::Context* context,
-                            const void* /* no arg */);
-
-    TreeRef m_cursorRackRef;
-  };
   TreeStackCursor createTreeStackCursor() const {
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }

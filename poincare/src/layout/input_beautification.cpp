@@ -334,11 +334,10 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
   NAry::RemoveChildAtIndex(rack, indexOfPipeKey);
   TreeRef parameter = KRackL()->cloneTree();
   TreeRef toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
-  LayoutBufferCursor::TreeStackCursor cursorForInsertion =
-      *static_cast<LayoutBufferCursor::TreeStackCursor*>(cursor);
+  TreeStackCursor cursorForInsertion = *static_cast<TreeStackCursor*>(cursor);
   cursorForInsertion.moveCursorToLayout(rack, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
-  LayoutBufferCursor::TreeStackCursor::InsertLayoutContext data{toInsert};
+  TreeStackCursor::InsertLayoutContext data{toInsert};
   cursorForInsertion.insertLayout(nullptr, &data);
   if (cursor->cursorRack() == rack &&
       cursor->position() == indexOfPipeKey + 1) {
@@ -561,8 +560,7 @@ bool InputBeautification::CreateParametersList(
   int cursorPosition = layoutCursor->cursorRack() == paramsString
                            ? layoutCursor->position()
                            : -1;
-  LayoutBufferCursor::TreeStackCursor newCursor =
-      *static_cast<LayoutBufferCursor::TreeStackCursor*>(layoutCursor);
+  TreeStackCursor newCursor = *static_cast<TreeStackCursor*>(layoutCursor);
 
   while (i <= n) {
     if (parameterIndex >= beautificationRule.numberOfParameters) {

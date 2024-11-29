@@ -3,6 +3,8 @@
 
 #include <setjmp.h>
 
+#include <new>
+
 #include "pool_checkpoint.h"
 
 #define ExceptionRun(checkpoint) \

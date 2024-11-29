@@ -1,6 +1,7 @@
 #ifndef SETTINGS_SCREEN_TIMEOUT_CONTROLLER_H
 #define SETTINGS_SCREEN_TIMEOUT_CONTROLLER_H
 
+#include <apps/shared/pop_up_controller.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -12,8 +13,7 @@ namespace Settings {
 
 class ScreenTimeoutController : public GenericSubController {
  public:
-  ScreenTimeoutController(Escher::Responder* parentResponder)
-      : GenericSubController(parentResponder) {}
+  ScreenTimeoutController(Escher::Responder* parentResponder);
 
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -47,6 +47,8 @@ class ScreenTimeoutController : public GenericSubController {
   constexpr static int k_fiveMinutes = 5 * 60 * 1000;
 
   static int toDimmingTime(DimmingTimeLabel label);
+
+  Shared::MessagePopUpController m_warningPopUpController;
 
  public:
   static DimmingTimeLabel toRowLabel(int time);

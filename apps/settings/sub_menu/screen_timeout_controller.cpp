@@ -6,15 +6,28 @@
 
 namespace Settings {
 
+ScreenTimeoutController::ScreenTimeoutController(
+    Escher::Responder* parentResponder)
+    : GenericSubController(parentResponder),
+      m_warningPopUpController(
+          Escher::Invocation::Builder<ScreenTimeoutController>(
+              [](ScreenTimeoutController* controller, void* sender) {
+                // TODO: put above code in a function
+                int rowIndex = controller->selectedRow();
+                assert(rowIndex >= 0 && rowIndex < DimmingTimeLabel::NElements);
+                GlobalPreferences::SharedGlobalPreferences()->setDimmingTime(
+                    toDimmingTime(static_cast<DimmingTimeLabel>(rowIndex)));
+                AppsContainer::sharedAppsContainer()->refreshPreferences();
+                Escher::StackViewController* stack =
+                    controller->stackController();
+                stack->pop();
+                return true;
+              },
+              this)) {}
+
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    int rowIndex = selectedRow();
-    assert(rowIndex >= 0 && rowIndex < DimmingTimeLabel::NElements);
-    GlobalPreferences::SharedGlobalPreferences()->setDimmingTime(
-        toDimmingTime(static_cast<DimmingTimeLabel>(rowIndex)));
-    AppsContainer::sharedAppsContainer()->refreshPreferences();
-    Escher::StackViewController* stack = stackController();
-    stack->pop();
+    m_warningPopUpController.presentModally();
     return true;
   }
   return GenericSubController::handleEvent(event);

@@ -316,7 +316,8 @@ bool Solver<T>::DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
                                                Coordinate2D<T> b,
                                                const void* aux) {
   const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
-  return Continuity::IsDiscontinuousBetweenValues<T>(e, a.x(), b.x());
+  return UndefinedTestBetweenPoints(a, b, aux) ||
+         Continuity::IsDiscontinuousBetweenValues<T>(e, a.x(), b.x());
 }
 
 template <typename T>

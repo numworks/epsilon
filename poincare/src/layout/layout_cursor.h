@@ -129,7 +129,7 @@ class LayoutCursor {
 };
 
 class TreeStackCursor final : public LayoutCursor {
-  friend class LayoutBufferCursor;
+  friend class PoolLayoutCursor;
   friend class InputBeautification;
 
   TreeStackCursor(int position, int startOfSelection, int cursorOffset)
@@ -178,13 +178,11 @@ class TreeStackCursor final : public LayoutCursor {
   TreeRef m_cursorRackRef;
 };
 
-class LayoutBufferCursor final : public LayoutCursor {
-  friend class InputBeautification;
-
+class PoolLayoutCursor final : public LayoutCursor {
  public:
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the cursorNode. */
-  LayoutBufferCursor(
+  PoolLayoutCursor(
       Poincare::Layout rootLayout = Poincare::Layout(),
       Tree* cursorNode = nullptr,
       OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())

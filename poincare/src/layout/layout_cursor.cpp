@@ -137,7 +137,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   return moved;
 }
 
-void LayoutBufferCursor::beautifyLeft(Poincare::Context* context) {
+void PoolLayoutCursor::beautifyLeft(Poincare::Context* context) {
   execute(&TreeStackCursor::beautifyLeftAction, context, nullptr);
   if (position() > cursorRack()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
@@ -159,8 +159,8 @@ void TreeStackCursor::beautifyLeftAction(Poincare::Context* context,
   }
 }
 
-bool LayoutBufferCursor::beautifyRightOfRack(Rack* rack,
-                                             Poincare::Context* context) {
+bool PoolLayoutCursor::beautifyRightOfRack(Rack* rack,
+                                           Poincare::Context* context) {
   TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorRack()),
                                        false};
   execute(&TreeStackCursor::beautifyRightOfRackAction, context, &ctx);
@@ -408,11 +408,11 @@ void TreeStackCursor::insertLayout(Poincare::Context* context,
   }
 }
 
-void LayoutBufferCursor::addEmptyExponentialLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptyExponentialLayout(Poincare::Context* context) {
   insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyLogarithmWithBase10Layout(
+void PoolLayoutCursor::addEmptyLogarithmWithBase10Layout(
     Poincare::Context* context) {
   const Tree* l =
       Preferences::SharedPreferences()->logarithmBasePosition() ==
@@ -422,33 +422,33 @@ void LayoutBufferCursor::addEmptyLogarithmWithBase10Layout(
   insertLayout(l, context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyTenPowerLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptyTenPowerLayout(Poincare::Context* context) {
   insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyMatrixLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptyMatrixLayout(Poincare::Context* context) {
   insertLayout(KEmptyMatrixL, context, false, false);
 }
 
-void LayoutBufferCursor::addEmptySquareRootLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptySquareRootLayout(Poincare::Context* context) {
   insertLayout(KSqrtL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptyPowerLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptyPowerLayout(Poincare::Context* context) {
   insertLayout(KSuperscriptL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptySquarePowerLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addEmptySquarePowerLayout(Poincare::Context* context) {
   /* Force the cursor right of the layout. */
   insertLayout(KSuperscriptL("2"_l), context, true, false);
 }
 
-void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(
+void PoolLayoutCursor::addFractionLayoutAndCollapseSiblings(
     Poincare::Context* context) {
   insertLayout(KFracL(""_l, ""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addMixedFractionLayout(Poincare::Context* context) {
+void PoolLayoutCursor::addMixedFractionLayout(Poincare::Context* context) {
   insertLayout(KFracL(""_l, ""_l), context, false, true, false);
 }
 
@@ -805,10 +805,10 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction) {
 }
 
 static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
-                                     LayoutBufferCursor* result) {
+                                     PoolLayoutCursor* result) {
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
-  LayoutBufferCursor tempCursor(result->rootLayout(), rack);
+  PoolLayoutCursor tempCursor(result->rootLayout(), rack);
   int n = rack->numberOfChildren();
   for (int i = 0; i <= n; i++) {
     /* In order to favor the ends in case of equality, we test the first, the
@@ -828,10 +828,10 @@ static void ScoreCursorInDescendants(KDPoint p, Tree* rack, KDFont::Size font,
   }
 }
 
-static LayoutBufferCursor ClosestCursorInDescendantsOfRack(
-    LayoutBufferCursor currentCursor, Tree* rack, KDFont::Size font) {
-  LayoutBufferCursor result = LayoutBufferCursor(currentCursor.rootLayout(),
-                                                 rack, OMG::Direction::Left());
+static PoolLayoutCursor ClosestCursorInDescendantsOfRack(
+    PoolLayoutCursor currentCursor, Tree* rack, KDFont::Size font) {
+  PoolLayoutCursor result = PoolLayoutCursor(currentCursor.rootLayout(), rack,
+                                             OMG::Direction::Left());
   ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), rack, font,
                            &result);
   return result;
@@ -888,8 +888,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
       } else {
         assert(!parentLayout->isRackLayout());
         // We assume the new cursor is the same whatever the font
-        LayoutBufferCursor newCursor = ClosestCursorInDescendantsOfRack(
-            *static_cast<LayoutBufferCursor*>(this),
+        PoolLayoutCursor newCursor = ClosestCursorInDescendantsOfRack(
+            *static_cast<PoolLayoutCursor*>(this),
             parentLayout->child(nextIndex), KDFont::Size::Large);
         setCursorRack(newCursor.cursorRack());
         m_position = newCursor.position();
@@ -1093,7 +1093,7 @@ void TreeStackCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   m_cursorRackRef = static_cast<Tree*>(ref);
 }
 
-void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {
+void PoolLayoutCursor::applyTreeStackCursor(TreeStackCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
   /* We need a rack cast there since the pointed rack is set before the
@@ -1102,8 +1102,8 @@ void LayoutBufferCursor::applyTreeStackCursor(TreeStackCursor cursor) {
       Tree::FromBlocks(rootRack()->block() + cursor.cursorRackOffset())));
 }
 
-void LayoutBufferCursor::execute(Action action, Poincare::Context* context,
-                                 const void* data) {
+void PoolLayoutCursor::execute(Action action, Poincare::Context* context,
+                               const void* data) {
   assert(SharedTreeStack->numberOfTrees() == 0);
   // Clone layoutBuffer into the TreeStack
   rootRack()->cloneTree();

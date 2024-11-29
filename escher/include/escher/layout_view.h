@@ -56,7 +56,7 @@ class LayoutView : public GlyphsView {
 
 class LayoutViewWithCursor : public LayoutView {
  public:
-  LayoutViewWithCursor(Poincare::Internal::LayoutBufferCursor* cursor,
+  LayoutViewWithCursor(Poincare::Internal::PoolLayoutCursor* cursor,
                        KDGlyph::Format format = {})
       : LayoutView(format), m_cursor(cursor), m_editing(true) {
     assert(cursor);
@@ -71,7 +71,7 @@ class LayoutViewWithCursor : public LayoutView {
   Poincare::Internal::LayoutCursor* cursor() const override {
     return m_editing ? m_cursor : nullptr;
   }
-  Poincare::Internal::LayoutBufferCursor* m_cursor;
+  Poincare::Internal::PoolLayoutCursor* m_cursor;
   bool m_editing;
 };
 

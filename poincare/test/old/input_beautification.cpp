@@ -11,7 +11,7 @@ void assert_inserted_text_turns_into(const char* textToInsert,
                                      Layout expectedLayout,
                                      const char* textRightOfInsertedText = "") {
   Layout r = KRackL();
-  Poincare::Internal::LayoutBufferCursor cursor(r, r.tree());
+  Poincare::Internal::PoolLayoutCursor cursor(r, r.tree());
   Shared::GlobalContext context;
   cursor.insertText(textRightOfInsertedText, &context, false, true);
   size_t textLen = strlen(textToInsert);
@@ -118,9 +118,9 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
       "sum(3,", KRackL(KSumL("k"_l, KRackL(), KRackL(), "3"_l)));
 }
 
-typedef void (Poincare::Internal::LayoutBufferCursor::*AddLayoutPointer)(
+typedef void (Poincare::Internal::PoolLayoutCursor::*AddLayoutPointer)(
     Context* context);
-typedef void (*CursorAddLayout)(Poincare::Internal::LayoutBufferCursor* cursor,
+typedef void (*CursorAddLayout)(Poincare::Internal::PoolLayoutCursor* cursor,
                                 Context* context,
                                 AddLayoutPointer optionalAddLayoutFunction);
 
@@ -128,11 +128,11 @@ void assert_apply_beautification_after_layout_insertion(
     CursorAddLayout layoutInsertionFunction,
     AddLayoutPointer optionalAddLayoutFunction = nullptr) {
   Layout r = KRackL();
-  Poincare::Internal::LayoutBufferCursor c(r, r.tree());
+  Poincare::Internal::PoolLayoutCursor c(r, r.tree());
   Shared::GlobalContext context;
   c.insertText("pi", &context);
   (*layoutInsertionFunction)(&c, &context, optionalAddLayoutFunction);
-  if (optionalAddLayoutFunction == &Poincare::Internal::LayoutBufferCursor::
+  if (optionalAddLayoutFunction == &Poincare::Internal::PoolLayoutCursor::
                                        addFractionLayoutAndCollapseSiblings) {
     // Check numerator of created fraction
     quiz_assert(
@@ -144,21 +144,21 @@ void assert_apply_beautification_after_layout_insertion(
 
 QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
   AddLayoutPointer layoutInsertionFunction[] = {
-      &Poincare::Internal::LayoutBufferCursor::
+      &Poincare::Internal::PoolLayoutCursor::
           addFractionLayoutAndCollapseSiblings,
       /* addEmptyExponentialLayout inserts 2 layouts so it's not beautified.
        * Not a problem until it is reported by users as being a problem .. */
       // &Poincare::Internal::LayoutBufferCursor::addEmptyExponentialLayout,
-      &Poincare::Internal::LayoutBufferCursor::addEmptyPowerLayout,
-      &Poincare::Internal::LayoutBufferCursor::addEmptySquareRootLayout,
-      &Poincare::Internal::LayoutBufferCursor::addEmptySquarePowerLayout,
-      &Poincare::Internal::LayoutBufferCursor::addEmptyTenPowerLayout,
-      &Poincare::Internal::LayoutBufferCursor::addEmptyMatrixLayout};
+      &Poincare::Internal::PoolLayoutCursor::addEmptyPowerLayout,
+      &Poincare::Internal::PoolLayoutCursor::addEmptySquareRootLayout,
+      &Poincare::Internal::PoolLayoutCursor::addEmptySquarePowerLayout,
+      &Poincare::Internal::PoolLayoutCursor::addEmptyTenPowerLayout,
+      &Poincare::Internal::PoolLayoutCursor::addEmptyMatrixLayout};
   int numberOfFunctions = std::size(layoutInsertionFunction);
 
   for (int i = 0; i < numberOfFunctions; i++) {
     assert_apply_beautification_after_layout_insertion(
-        [](Poincare::Internal::LayoutBufferCursor* cursor, Context* context,
+        [](Poincare::Internal::PoolLayoutCursor* cursor, Context* context,
            AddLayoutPointer optionalAddLayoutFunction) {
           (cursor->*optionalAddLayoutFunction)(context);
         },
@@ -175,7 +175,7 @@ QUIZ_CASE(poincare_input_beautification_derivative) {
   // Test d/dx()->diff()
   {
     Layout l = KRackL(KFracL("d"_l, "dx"_l));
-    Poincare::Internal::LayoutBufferCursor c(l, l.tree());
+    Poincare::Internal::PoolLayoutCursor c(l, l.tree());
     c.insertText("(");
     quiz_assert(c.rootRack()->treeIsIdenticalTo(firstOrderDerivative.tree()));
   }
@@ -183,7 +183,7 @@ QUIZ_CASE(poincare_input_beautification_derivative) {
   // Test d/dx^▯->d^▯/dx^▯
   {
     Layout l = firstOrderDerivative;
-    Poincare::Internal::LayoutBufferCursor c(l, l.tree()->child(0)->child(0));
+    Poincare::Internal::PoolLayoutCursor c(l, l.tree()->child(0)->child(0));
     c.addEmptyPowerLayout(nullptr);
     quiz_assert(c.rootRack()->treeIsIdenticalTo(nthOrderDerivative.tree()));
   }

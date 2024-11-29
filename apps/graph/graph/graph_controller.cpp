@@ -569,11 +569,6 @@ void GraphController::reloadBannerViewForCursorOnFunction(
         &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
-          cursorX, cursorY, Solver<double>::Interest::ReachedDiscontinuity)) {
-    bannerView()->addInterestMessage(I18n::Message::Discontinuity,
-                                     &m_cursorView);
-  }
-  if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::UnreachedDiscontinuity)) {
     // Display undef in banner view
     cursorY = NAN;

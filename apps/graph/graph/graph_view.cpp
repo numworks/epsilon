@@ -568,6 +568,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
 
   bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints(m_interest);
   PointOfInterest p;
+  Coordinate2D<float> lastBlackDot;
   int i = 0;
   do {
     // Compute more points of interest if necessary
@@ -617,6 +618,13 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     // Draw the dot
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
+    if (lastBlackDot == dotCoordinates &&
+        p.interest == Solver<double>::Interest::ReachedDiscontinuity) {
+      /* Reached discontinuity dots are drawn in the color of the function, but
+       * a dot is already drawn in black at the same coordinates. */
+      continue;
+    }
+
     bool isRing =
         p.interest == Solver<double>::Interest::UnreachedDiscontinuity;
 
@@ -650,6 +658,9 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
     } else {
       drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
+    }
+    if (color == Escher::Palette::GrayDarkest) {
+      lastBlackDot = dotCoordinates;
     }
 
     if (redrawCursor) {

@@ -233,10 +233,9 @@ class Solver {
                             DiscontinuityEvaluation discontinuityTest);
   void honeAndRoundDiscontinuitySolution(FunctionEvaluation f, const void* aux,
                                          T start, T end);
-  bool FindMinimalIntervalContainingDiscontinuity(FunctionEvaluation f,
-                                                  const void* aux, T* start,
-                                                  T* end,
-                                                  T minimalSizeOfInterval);
+  bool FindMinimalIntervalContainingDiscontinuity(
+      FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
+      Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval);
 
   Solution registerSolution(Solution solution, bool wasQueued = false);
   Solution registerRoot(T x) {

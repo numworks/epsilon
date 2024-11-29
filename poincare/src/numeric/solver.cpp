@@ -728,66 +728,70 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   assert(m_solutionQueue.isEmpty());
   T precision = NullTolerance(start);
 
-  // Hone
-  T left = start;
-  T right = end;
-  if (!FindMinimalIntervalContainingDiscontinuity(f, aux, &left, &right,
-                                                  precision)) {
+  // Find the smallest interval containing the discontinuity
+  Coordinate2D<T> left(start, f(start, aux));
+  Coordinate2D<T> middle;
+  Coordinate2D<T> right(end, f(end, aux));
+  if (!FindMinimalIntervalContainingDiscontinuity(f, aux, &left, &middle,
+                                                  &right, precision)) {
     return;
   }
 
-  T x = MagicRound((left + right) / 2.);
-  assert(std::isfinite(x));
-  if (!validSolution(x)) {
+  // Round middle to find the discontinuity abscissa
+  middle.setX(MagicRound(middle.x()));
+  assert(std::isfinite(middle.x()));
+  if (!validSolution(middle.x())) {
     return;
   }
-  left = x - precision / 2.;
-  right = x + precision / 2.;
-  assert(x != left && x != right);
 
-  T fX = f(x, aux);
+  // Update left and right to make sure there are different from middle
+  left.setX(middle.x() - precision / 2.);
+  right.setX(middle.x() + precision / 2.);
+  assert(middle.x() != left.x() && middle.x() != right.x());
+
+  // Update ordinates
+  middle.setY(f(middle.x(), aux));
   // We round because we want the "limit"
-  T fLeft = MagicRound(f(left, aux));
-  T fRight = MagicRound(f(right, aux));
+  left.setY(MagicRound(f(left.x(), aux)));
+  right.setY(MagicRound(f(right.x(), aux)));
 
-  bool leftIsDiscontinuous = HoneTestForDiscontinuity(
-      Coordinate2D<T>(left, fLeft), Coordinate2D<T>(x, fX), aux);
-  bool rightIsDiscontinuous = HoneTestForDiscontinuity(
-      Coordinate2D<T>(x, fX), Coordinate2D<T>(right, fRight), aux);
+  bool leftIsDiscontinuous = HoneTestForDiscontinuity(left, middle, aux);
+  bool rightIsDiscontinuous = HoneTestForDiscontinuity(middle, right, aux);
   if (!leftIsDiscontinuous && !rightIsDiscontinuous) {
     // No discontinuity
     return;
   }
   if (!leftIsDiscontinuous) {
     // No left discontinuity
-    fLeft = k_NAN;
+    left = Coordinate2D<T>();
   }
   if (!rightIsDiscontinuous) {
     // No right discontinuity
-    fRight = k_NAN;
+    right = Coordinate2D<T>();
   }
-  if (std::abs(fRight - fLeft) < NullTolerance(x)) {
+  if (std::abs(right.y() - left.y()) < NullTolerance(middle.x())) {
     // Left and right are the same
     assert(leftIsDiscontinuous && rightIsDiscontinuous);
     // Keep only 1 point of interest
-    fLeft = MagicRound((fLeft + fRight) / 2.);
-    fRight = k_NAN;
+    left.setY(MagicRound((left.y() + right.y()) / 2.));
+    right = Coordinate2D<T>();
   }
 
   // There should be at least one finite value
-  assert(std::isfinite(fLeft) || std::isfinite(fX) || std::isfinite(fRight));
+  assert(std::isfinite(left.y()) || std::isfinite(middle.y()) ||
+         std::isfinite(right.y()));
 
-  if (std::isfinite(fLeft)) {
-    m_solutionQueue.push(
-        Solution(Coordinate2D<T>(x, fLeft), Interest::UnreachedDiscontinuity));
+  // Push solutions
+  if (std::isfinite(left.y())) {
+    left.setX(middle.x());
+    m_solutionQueue.push(Solution(left, Interest::UnreachedDiscontinuity));
   }
-  if (std::isfinite(fX)) {
-    m_solutionQueue.push(
-        Solution(Coordinate2D<T>(x, fX), Interest::ReachedDiscontinuity));
+  if (std::isfinite(middle.y())) {
+    m_solutionQueue.push(Solution(middle, Interest::ReachedDiscontinuity));
   }
-  if (std::isfinite(fRight)) {
-    m_solutionQueue.push(
-        Solution(Coordinate2D<T>(x, fRight), Interest::UnreachedDiscontinuity));
+  if (std::isfinite(right.y())) {
+    right.setX(middle.x());
+    m_solutionQueue.push(Solution(right, Interest::UnreachedDiscontinuity));
   }
 }
 
@@ -809,30 +813,39 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
 
 template <typename T>
 bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
-    FunctionEvaluation f, const void* aux, T* start, T* end,
-    T minimalSizeOfInterval) {
-  assert(DiscontinuityTestForExpression(*start, *end, aux));
-  while (*end - *start >= minimalSizeOfInterval) {
-    T middle = (*start + *end) / 2.0;
+    FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
+    Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval) {
+  assert(DiscontinuityTestForExpression(start->x(), end->x(), aux));
+
+  // Initialize middle if needed
+  if (std::isnan(middle->x())) {
+    middle->setX((start->x() + end->x()) / 2.0);
+    middle->setY(f(middle->x(), aux));
+  }
+
+  while (end->x() - start->x() >= minimalSizeOfInterval) {
     bool leftIsDiscontinuous =
-        DiscontinuityTestForExpression(*start, middle, aux);
+        DiscontinuityTestForExpression(start->x(), middle->x(), aux);
     bool rightIsDiscontinuous =
-        DiscontinuityTestForExpression(middle, *end, aux);
+        DiscontinuityTestForExpression(middle->x(), end->x(), aux);
     if (leftIsDiscontinuous == rightIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
       return false;
     }
     if (leftIsDiscontinuous) {
-      *end = middle;
+      *end = *middle;
     } else {
       assert(rightIsDiscontinuous);
-      *start = middle;
+      *start = *middle;
     }
-    assert(DiscontinuityTestForExpression(*start, *end, aux));
+    middle->setX((start->x() + end->x()) / 2.0);
+    middle->setY(f(middle->x(), aux));
+    assert(DiscontinuityTestForExpression(start->x(), end->x(), aux));
   }
-  assert(*start <= *end && *end - *start <= minimalSizeOfInterval &&
-         DiscontinuityTestForExpression(*start, *end, aux));
+  assert(start->x() <= end->x() &&
+         end->x() - start->x() <= minimalSizeOfInterval &&
+         DiscontinuityTestForExpression(start->x(), end->x(), aux));
   return true;
 }
 

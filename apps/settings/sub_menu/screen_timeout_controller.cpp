@@ -21,15 +21,15 @@ ScreenTimeoutController::ScreenTimeoutController(
 
 bool ScreenTimeoutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (static_cast<DimmingTimeLabel>(selectedRow()) ==
-        DimmingTimeLabel::ThirtySeconds) {
-      /* No warning pop-up about the battery lifetime if the selected dimming
-       * time is 30 seconds only */
-      setDimmingTimePreference(selectedRow());
-      stackController()->pop();
+    if (toDimmingTime(static_cast<DimmingTimeLabel>(selectedRow())) >
+        GlobalPreferences::SharedGlobalPreferences()->dimmingTime()) {
+      /* If the newly selected dimming time is more than the current setting,
+       * display a warning pop-up about the reduced battery lifetime. */
+      m_warningPopUpController.presentModally();
       return true;
     }
-    m_warningPopUpController.presentModally();
+    setDimmingTimePreference(selectedRow());
+    stackController()->pop();
     return true;
   }
   return GenericSubController::handleEvent(event);

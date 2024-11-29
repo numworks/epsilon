@@ -738,8 +738,9 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
   Coordinate2D<T> left = start;
   Coordinate2D<T> middle;
   Coordinate2D<T> right = end;
-  if (!FindMinimalIntervalContainingDiscontinuity(f, aux, &left, &middle,
-                                                  &right, precision)) {
+  if (!FindMinimalIntervalContainingDiscontinuity(
+          f, aux, &left, &middle, &right, precision,
+          DiscontinuityTestBetweenPoints)) {
     return;
   }
 
@@ -820,8 +821,9 @@ typename Solver<T>::Solution Solver<T>::registerSolution(Solution solution,
 template <typename T>
 bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
-    Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval) {
-  assert(DiscontinuityTestBetweenPoints(*start, *end, aux));
+    Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval,
+    DiscontinuityEvaluation discontinuityTest) {
+  assert(discontinuityTest(*start, *end, aux));
 
   // Initialize middle if needed
   if (std::isnan(middle->x())) {
@@ -830,10 +832,8 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
   }
 
   while (end->x() - start->x() >= minimalSizeOfInterval) {
-    bool leftIsDiscontinuous =
-        DiscontinuityTestBetweenPoints(*start, *middle, aux);
-    bool rightIsDiscontinuous =
-        DiscontinuityTestBetweenPoints(*middle, *end, aux);
+    bool leftIsDiscontinuous = discontinuityTest(*start, *middle, aux);
+    bool rightIsDiscontinuous = discontinuityTest(*middle, *end, aux);
     if (leftIsDiscontinuous == rightIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
@@ -847,11 +847,11 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     }
     middle->setX((start->x() + end->x()) / 2.0);
     middle->setY(f(middle->x(), aux));
-    assert(DiscontinuityTestBetweenPoints(*start, *end, aux));
+    assert(discontinuityTest(*start, *end, aux));
   }
   assert(start->x() <= end->x() &&
          end->x() - start->x() <= minimalSizeOfInterval &&
-         DiscontinuityTestBetweenPoints(*start, *end, aux));
+         discontinuityTest(*start, *end, aux));
   return true;
 }
 

@@ -240,7 +240,8 @@ class Solver {
                                          Coordinate2D<T> end);
   bool FindMinimalIntervalContainingDiscontinuity(
       FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
-      Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval);
+      Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval,
+      DiscontinuityEvaluation discontinuityTest);
 
   Solution registerSolution(Solution solution, bool wasQueued = false);
   Solution registerRoot(T x) {

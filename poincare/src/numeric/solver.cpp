@@ -818,8 +818,9 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
         DiscontinuityTestForExpression(*start, middle, aux);
     bool rightIsDiscontinuous =
         DiscontinuityTestForExpression(middle, *end, aux);
-    if (leftIsDiscontinuous && rightIsDiscontinuous) {
-      // Too many discontinuities and/or step is too big
+    if (leftIsDiscontinuous == rightIsDiscontinuous) {
+      /* Either too many discontinuities and/or step is too big
+       * Or couldn't find any discontinuities */
       return false;
     }
     if (leftIsDiscontinuous) {

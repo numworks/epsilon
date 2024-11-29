@@ -97,7 +97,7 @@ void BatteryView::drawInsideBatteryLevel(KDContext* ctx, KDCoordinate width,
   ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight), color);
   ctx->fillRect(KDRect(k_batteryInsideX + width, 0,
                        k_batteryInsideWidth - width, k_batteryHeight),
-                Palette::YellowLight);
+                Palette::YellowLightBattery);
 }
 
 void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -116,7 +116,7 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
     // Charging: Yellow background with flash
     ctx->fillRect(
         KDRect(k_batteryInsideX, 0, k_batteryInsideWidth, k_batteryHeight),
-        Palette::YellowLight);
+        Palette::YellowLightBattery);
     KDRect frame((k_batteryWidth - k_flashWidth) / 2, 0, k_flashWidth,
                  k_flashHeight);
     KDColor flashWorkingBuffer[k_flashHeight * k_flashWidth];

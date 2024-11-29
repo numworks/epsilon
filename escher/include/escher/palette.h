@@ -11,7 +11,8 @@ namespace Escher {
 class Palette {
  public:
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
-  constexpr static KDColor YellowLight = KDColor::RGB24(0xffcc7b);
+  constexpr static KDColor YellowLightBattery = KDColor::RGB24(0xffcc7b);
+  constexpr static KDColor YellowLight = KDColor::RGB24(0xffebc7);
   constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);
   constexpr static KDColor PurpleDark = KDColor::RGB24(0x414147);
   constexpr static KDColor GrayWhite = KDColor::RGB24(0xf5f5f5);
@@ -30,9 +31,9 @@ class Palette {
   constexpr static KDColor Red = KDColor::RGB24(0xff000c);
   constexpr static KDColor RedLight = KDColor::RGB24(0xffcccc);
   constexpr static KDColor Magenta = KDColor::RGB24(0xff0588);
-  constexpr static KDColor MagentaLight = KDColor::RGB24(0xffb3da);
+  constexpr static KDColor MagentaLight = KDColor::RGB24(0xffd9eb);
   constexpr static KDColor Turquoise = KDColor::RGB24(0x60c1ec);
-  constexpr static KDColor TurquoiseLight = KDColor::RGB24(0xbbe5f7);
+  constexpr static KDColor TurquoiseLight = KDColor::RGB24(0xd0edff);
   constexpr static KDColor Pink = KDColor::RGB24(0xffabb6);
   constexpr static KDColor Blue = KDColor::RGB24(0x5075f2);
   constexpr static KDColor BlueLight = KDColor::RGB24(0xdce3fd);

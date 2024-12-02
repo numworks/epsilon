@@ -29,6 +29,8 @@ class Approximation final {
 
  private:
   using VariableType = std::complex<double>;
+  /* LocalContext is used to store the values of local variable of index 0.
+   * Parent contexts hold the values of the ones with higher indexes. */
   class LocalContext {
    public:
     LocalContext(VariableType abscissa,

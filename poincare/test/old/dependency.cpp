@@ -50,8 +50,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   assert_reduce_and_store("1→f(x)");
-  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)",
-                                       "int(dep(2,{x}),x,0,1)");
+  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "int(2,x,0,1)");
   assert_reduce_and_store("1/0→a");
   assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)",
                                        Undefined::Name());
@@ -62,7 +61,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
    * to undef. */
   assert_reduce_and_store("x→f(x)");
   assert_parsed_expression_simplify_to("int(diff(f(x),x,x),x,0,1)",
-                                       "int(dep(1,{x}),x,0,1)");
+                                       "int(1,x,0,1)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced
@@ -96,12 +95,12 @@ QUIZ_CASE(poincare_dependency_power) {
 QUIZ_CASE(poincare_dependency_multiplication) {
   assert_parsed_expression_simplify_to("ln(x)-ln(x)",
                                        "dep(0,{0×ln(x),nonNull(x)})");
-  assert_parsed_expression_simplify_to("0*random()", "dep(0,{random()})");
+  assert_parsed_expression_simplify_to("0*random()", "0");
   assert_parsed_expression_simplify_to("0*randint(1,0)",
                                        "dep(0,{randint(1,0)})");
   // Dependency is properly reduced even when containing symbols
   assert_parsed_expression_simplify_to("0x^arcsin(π)",
-                                       "dep(0,{dep(0,{0×x^arcsin(π)})})");
+                                       "dep(0,{0×x^arcsin(π)})");
   assert_parsed_expression_simplify_to(
       "0x^arcsin(π)", "dep(nonreal,{0×x^arcsin(π)})", SystemForAnalysis, Radian,
       MetricUnitFormat, Real);

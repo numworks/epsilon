@@ -57,7 +57,7 @@ bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   return true;
 }
 
-bool Approximation::PrepareFunctionForApproximation(
+void Approximation::PrepareFunctionForApproximation(
     Tree* e, const char* variable, ComplexFormat complexFormat) {
   Variables::ReplaceSymbol(e, variable, 0,
                            complexFormat == ComplexFormat::Real
@@ -68,7 +68,6 @@ bool Approximation::PrepareFunctionForApproximation(
       Parameters{
           .isRootAndCanHaveRandom = true, .prepare = true, .optimize = true},
       Context(AngleUnit::None, complexFormat)));
-  return true;
 }
 
 bool Approximation::PrepareExpressionForApproximation(Tree* e) {

@@ -139,7 +139,7 @@ class Approximation final {
   static T ToLocalContext(const Tree* e, const Context* ctx, T x);
 
   // Optimize a projected function for efficient approximations
-  static bool PrepareFunctionForApproximation(Tree* e, const char* variable,
+  static void PrepareFunctionForApproximation(Tree* e, const char* variable,
                                               ComplexFormat complexFormat);
 
   // Return false if e cannot be approximated to a defined value.

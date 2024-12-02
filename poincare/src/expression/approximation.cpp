@@ -34,7 +34,7 @@ namespace Poincare::Internal {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
   if (params.optimize) {
     assert(cloneMaybe);
     return cloneMaybe;
@@ -73,7 +73,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
-  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::IsNonListScalar(target));
   std::complex<T> c = ToComplex<T>(target, &context);
@@ -87,7 +87,7 @@ template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Parameters params,
                                                 Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::DeepCheck(target));
   Dimension dim = Dimension::Get(target);
@@ -124,7 +124,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameters params,
                               Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   bool b = ToBoolean<T>(target, &context);
   if (cloneMaybe) {
@@ -187,22 +187,18 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
 
 template <typename T>
 Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
-                                    Context* context) {
+                                    Context& context) {
   // Only clone if necessary
   Tree* clone = nullptr;
-  if (!context) {
-    // Create a default context
-    *context = Context();
-  }
   if (params.projectLocalVariables) {
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
   if (params.isRootAndCanHaveRandom &&
-      !context->m_randomContext.m_isInitialized) {
+      !context.m_randomContext.m_isInitialized) {
     /* Initialize randomContext only on root expressions to catch unsafe
      * approximations of projected sub-expressions. */
-    context->m_randomContext.m_isInitialized = true;
+    context.m_randomContext.m_isInitialized = true;
   }
   if (params.prepare || params.optimize) {
     if (!clone) {
@@ -211,7 +207,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
     assert(params.isRootAndCanHaveRandom);
     PrepareExpressionForApproximation(clone);
     if (params.optimize) {
-      ApproximateAndReplaceEveryScalar<T>(clone, *context);
+      ApproximateAndReplaceEveryScalar<T>(clone, context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
     }
@@ -1537,8 +1533,8 @@ template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
                                                        int);
 
 template Tree* Approximation::PrepareContext<float>(const Tree*, Parameters,
-                                                    Context*);
+                                                    Context&);
 template Tree* Approximation::PrepareContext<double>(const Tree*, Parameters,
-                                                     Context*);
+                                                     Context&);
 
 }  // namespace Poincare::Internal

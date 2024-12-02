@@ -223,7 +223,7 @@ class Tree : public TypeBlock {
   void cloneNodeAfterNode(const Tree* n) { cloneAt(n, false, false); }
   void cloneTreeAfterNode(const Tree* n) { cloneAt(n, false, true); }
 
-  /*  u     v                       v
+  /*  u     v                      u+v
    *  |     |       u.moveOver(v)   |
    *  aaaabbcccdd        =>         cccbbdd
    */
@@ -236,7 +236,7 @@ class Tree : public TypeBlock {
   Tree* cloneNodeOverTree(const Tree* n) { return cloneOver(n, true, false); }
   Tree* cloneTreeOverTree(const Tree* n) { return cloneOver(n, true, true); }
 
-  /*    u   v                      v
+  /*    u   v                     u+v
    *    |   |       u.remove()     |
    *  aabbbbcccdd       =>       aacccdd
    */

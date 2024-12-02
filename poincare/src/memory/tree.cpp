@@ -495,7 +495,8 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
   if (oldIsTree && newNode->hasAncestor(oldNode, true)) {
     oldSize -= newSize;
   }
-  SharedTreeStack->moveBlocks(oldBlock, newBlock, newSize);
+  // Move newNode at oldNode to preserve TreeRefs on oldNode's root.
+  SharedTreeStack->moveBlocks(oldBlock, newBlock, newSize, true);
   if (oldBlock > newBlock) {
     finalBlock -= newSize;
   }

@@ -180,6 +180,9 @@ QUIZ_CASE(pcj_tree_motions) {
   // These tests should match the comments in tree.h
   TreeRef u, v;
   auto setup = [&]() {
+    /*  u     v
+     *  |     |
+     *  aaaabbcccdd */
     u = "aaaa"_e->cloneTree();
     "bb"_e->cloneTree();
     v = "ccc"_e->cloneTree();
@@ -187,21 +190,36 @@ QUIZ_CASE(pcj_tree_motions) {
   };
   setup();
   u->moveNodeBeforeNode(v);
+  /*  v  u
+   *  |  |
+   *  cccaaaabbdd */
   QUIZ_ASSERT(v->nextNode() == u && u->treeIsIdenticalTo("aaaa"_e) &&
               v->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveNodeAtNode(v);
+  /* u+v
+   *  |
+   *  cccaaaabbdd */
   QUIZ_ASSERT(u == v && u->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveNodeAfterNode(v);
+  /*  u   v
+   *  |   |
+   *  aaaacccbbdd */
   QUIZ_ASSERT(u->nextNode() == v && u->treeIsIdenticalTo("aaaa"_e) &&
               v->treeIsIdenticalTo("ccc"_e));
   setup();
   u->moveTreeOverNode(v);
-  QUIZ_ASSERT(v->nextNode()->treeIsIdenticalTo("bb"_e) && u.isUninitialized() &&
+  /* u+v
+   *  |
+   *  cccbbdd */
+  QUIZ_ASSERT(v->nextNode()->treeIsIdenticalTo("bb"_e) && u == v &&
               v->treeIsIdenticalTo("ccc"_e));
   setup();
   u->swapWithTree(v);
+  /*  v    u
+   *  |    |
+   *  cccbbaaaadd */
   QUIZ_ASSERT(u->treeIsIdenticalTo("aaaa"_e) && v->treeIsIdenticalTo("ccc"_e) &&
               v->nextNode()->treeIsIdenticalTo("bb"_e) &&
               v->nextNode()->nextNode() == u);

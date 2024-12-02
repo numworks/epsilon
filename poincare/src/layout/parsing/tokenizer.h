@@ -74,7 +74,7 @@ class Tokenizer {
    * This is a right-to-eager tokenizer.
    * When parsing abc, we'll first consider abc, then bc, then c.
    * This behavior is a convenient way to give precedence to function over
-   *symbols
+   * symbols
    *
    * -- EXAMPLES --
    * Original state :
@@ -104,7 +104,7 @@ class Tokenizer {
    * This is used for instance in the calculation history, where the context
    * might have changed between the time when an expression was entered and the
    * time it is displayed in the history. We do not save each calculation
-   *context in the history.
+   * context in the history.
    *
    * Example : xy(5) will be tokenized as x*y*(5) if the context exists
    * but doesn't contain any variable.

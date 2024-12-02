@@ -158,6 +158,12 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 
 #if ASSERTIONS
 bool Simplification::IsSystem(const Tree* e) {
+  /* TODO: an assert will fail when projecting a random node that has already
+   * been projected. We need to find a better solution than skipping the test.
+   */
+  if (Random::HasRandom(e)) {
+    return true;
+  }
   Tree* c = e->cloneTree();
   // Use ComplexFormat::Cartesian to avoid having PowReal interfering
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian};

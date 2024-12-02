@@ -97,7 +97,7 @@ There are three situations to distinguish:
 - If you want to test if a node belongs to a group of related types (called a range), say `Integer`, use the automatically defined `tree->isInteger()` method. You can also use `TypeBlock::IsInteger(type)`.
   <details>
   <summary>Ranges declarations</summary>
-   
+
   A range is defined on consecutive nodes with `RANGE(rangeName, FirstNode, LastNode)` and may be nested.
 
   ```cpp
@@ -230,7 +230,7 @@ if (expr->nodeIsIdenticalTo(KMult.node<2>)) {}
 type. The type includes as template parameters the complete list of blocks needed to represent the `Tree`.
 `KCos(2_e)` is under-the-hood an alias to `KTree<Type::Cos, Type::Two>()`, ie an object of a special type used to represent only trees with a 2 in a cos.
 
-These objects are empty and when they need to be casted to a `const Tree *` they instead 
+These objects are empty and when they need to be casted to a `const Tree *` they instead
 return the pointer to a static member in their type that contains an array of blocks with the same content as the type.
 This means all `KCos(2_e)` will point to the same object and that the pointer can out-live the object.
 
@@ -508,52 +508,12 @@ to `TreeStack::ReferenceTable::DeletedOffset`.
 
 </details>
 
-### Wrappers
-
-Some methods manipulating `Tree *` may overwrite it with something else.
-
-This isn't an issue with `Tree *` since the tree still lives at the same place. Indeed, the method can only edit this specific tree and not other trees in the `TreeStack`.
-
-However, `TreeRef` will be invalidated.
-
-```cpp
-static void ReplaceTreeWithZero(Tree * tree) {
-  tree->cloneTreeOverTree(0_e);
-}
-
-Tree * a = someTree->clone();
-TreeRef b = a
-ReplaceTreeWithZero(b); // Exact Equivalent of ReplaceTreeWithZero(a);
-
-assert(a->isZero()); // Ok
-assert(b->isZero()); // Raise because b no longer exists, the tracked tree has
-// been overwritten.
-```
-
-To minimize the risk of mistakes, we created a wrapper allowing the use of such
-methods on `TreeRef` while preserving them.
-
-For the example above, just add:
-```cpp
-static void ReplaceTreeWithZero(Tree * tree) {
-  tree->cloneTreeOverTree(0_e);
-}
-/* Create a static void ReplaceTreeWithZero(TreeRef& tree) calling the
- * original ReplaceTreeWithZero, and restoring the TreeRef to the
- * original Tree */
-EDITION_REF_WRAP(ReplaceTreeWithZero);
-// ...
-assert(b->isZero()); // Ok
-```
-
 ### When to use TreeRef
 
 TreeRefs allow a safer and more readable tree manipulation.
 
 The only requirement is to ensure that they are only used in methods:
 - Where efficiency isn't critical
-- Expecting `TreeRef&` or `const Tree *`
-- Expecting `Tree *`, but having a `EDITION_REF_WRAP` wrapper
-- Expecting `Tree *`, but the tracked tree being overridden is either impossible or handled
+- Expecting `TreeRef&`, `const Tree *`, or `Tree *`
 
 Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).

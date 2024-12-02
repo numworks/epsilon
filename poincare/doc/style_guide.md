@@ -293,31 +293,6 @@ KPow->cloneTree(); // random bytes are copied as children
 ```cpp
 KPow->cloneNode();
 ```
-## Add TREE_REF_WRAP to public methods overriding their input Tree
-> [!CAUTION]
-> This is dangerous :
-
-```cpp
-bool HighlyAdvancedReduction(Tree *t) {
-  t->cloneTreeOverTree(0_e);
-  return true;
-}
-
-void user() {
-  TreeRef r = ...;
-  HighlyAdvancedReduction(r);
-  r->removeTree(); // r is broken !
-}
-```
-
-> [!TIP]
-> But fine if you add :
-
-```cpp
-bool HighlyAdvancedReduction(Tree *t) { ... }
-TREE_REF_WRAP(HighlyAdvancedReduction);
-```
-
 
 ## Create Ranges to test membership to related node types
 > [!CAUTION]

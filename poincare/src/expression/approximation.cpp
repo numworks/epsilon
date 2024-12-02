@@ -36,6 +36,7 @@ template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   if (params.optimize) {
+    // Tree has already been approximated in PrepareTreeAndContext
     assert(cloneMaybe);
     return cloneMaybe;
   }
@@ -73,6 +74,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
+  assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::IsNonListScalar(target));
@@ -87,6 +89,7 @@ template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Parameters params,
                                                 Context context) {
+  assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::DeepCheck(target));
@@ -124,6 +127,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameters params,
                               Context context) {
+  assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   bool b = ToBoolean<T>(target, &context);

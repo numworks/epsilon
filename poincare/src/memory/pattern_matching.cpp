@@ -455,8 +455,13 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
     return false;
   }
 
+/* TODO_PCJ : Restore and fix this optimization if needed : TreeRef to source's
+ * root may be invalidated if it is detached, and added into a list which is
+ * later removed. */
+#if 0
   // Step 2 - Trim source to minimize the number of trees on TreeStack
   TrimSourceTree(source, &ctx);
+#endif
 
   // Step 3 - Build the PatternMatching replacement
   Tree* created = Create(structure, ctx, simplify);

@@ -143,6 +143,12 @@ static void PushCodePoint(Tree* layout, CodePoint codePoint) {
   NAry::AddChild(layout, CodePointLayout::Push(codePoint));
 }
 
+static void PushCombinedCodePoint(Tree* layout, CodePoint codePoint,
+                                  CodePoint combinedCodePoint) {
+  NAry::AddChild(layout,
+                 CodePointLayout::PushCombined(codePoint, combinedCodePoint));
+}
+
 static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {
   NAry::AddChildAtIndex(layout, CodePointLayout::Push(codePoint), index);
 }
@@ -687,8 +693,15 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
       addOperatorSeparator(layoutParent);
-      layoutText(layoutParent, ComparisonJunior::OperatorString(
-                                   Binary::ComparisonOperatorForType(type)));
+      if (type == Type::NotEqual) {
+        // Special case for ≠ combined
+        PushCombinedCodePoint(layoutParent, CodePoint('='),
+                              UCodePointCombiningLongSolidusOverlay);
+      } else {
+        layoutText(layoutParent, ComparisonJunior::OperatorString(
+                                     Binary::ComparisonOperatorForType(type)));
+      }
+
       addOperatorSeparator(layoutParent);
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));

@@ -57,7 +57,9 @@ class Approximation final {
     /* Last two parameters may only be used on projected expressions. */
     // Tree will be prepared for a more accurate approximation
     bool prepare = false;
-    // Tree will be optimized for multiple approximations, implies prepare too
+    /* Tree will be optimized for successive approximations (useful in function
+     * graph or solver for example) by approximating every subTree that can be
+     * approximated. It also implies prepare parameter is true. */
     bool optimize = false;
   };
 

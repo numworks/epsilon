@@ -1370,13 +1370,20 @@ bool Approximation::CanApproximate(const Tree* e,
   return true;
 }
 
-static bool SkipApproximation(TypeBlock type) {
-  return type.isFloat() || type.isComplexI();
+template <>
+bool Approximation::SkipApproximation<float>(TypeBlock type) {
+  return type.isSingleFloat() || type.isComplexI();
 }
 
-static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
-                              int indexInParent) {
-  if (SkipApproximation(type)) {
+template <>
+bool Approximation::SkipApproximation<double>(TypeBlock type) {
+  return type.isSingleFloat() || type.isDoubleFloat() || type.isComplexI();
+}
+
+template <typename T>
+bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
+                                      int indexInParent) {
+  if (SkipApproximation<T>(type)) {
     return true;
   }
   switch (parentType) {
@@ -1397,7 +1404,7 @@ static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
 
 template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
-  if (SkipApproximation(e->type())) {
+  if (SkipApproximation<T>(e->type())) {
     return false;
   }
   uint32_t hash = e->hash();
@@ -1416,7 +1423,7 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
   }
   bool changed = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (!SkipApproximation(child->type(), e->type(), child.index)) {
+    if (!SkipApproximation<double>(child->type(), e->type(), child.index)) {
       changed = PrivateApproximateAndReplaceEveryScalar(child, ctx) || changed;
     }
   }
@@ -1503,5 +1510,9 @@ template bool Approximation::ApproximateAndReplaceEveryScalar<float>(Tree*,
                                                                      Context);
 template bool Approximation::ApproximateAndReplaceEveryScalar<double>(Tree*,
                                                                       Context);
+template bool Approximation::SkipApproximation<float>(TypeBlock, TypeBlock,
+                                                      int);
+template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
+                                                       int);
 
 }  // namespace Poincare::Internal

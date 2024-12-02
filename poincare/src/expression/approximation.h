@@ -229,6 +229,11 @@ class Approximation final {
 
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* e,
                                                       const Context* ctx);
+  template <typename T>
+  static bool SkipApproximation(TypeBlock type);
+  template <typename T>
+  static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
+                                int indexInParent);
 
   /* Variables with id >= firstNonApproximableVarId are considered not
    * approximable. */

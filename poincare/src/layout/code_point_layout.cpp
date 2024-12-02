@@ -17,11 +17,16 @@ CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* l) {
   return CodePoint(l->nodeValueBlock(4)->get<uint32_t>());
 }
 
-Tree* CodePointLayout::Push(CodePoint cp) {
-  if (cp < 128) {
-    return SharedTreeStack->pushAsciiCodePointLayout(cp);
+Tree* CodePointLayout::Push(CodePoint codePoint) {
+  if (codePoint < 128) {
+    return SharedTreeStack->pushAsciiCodePointLayout(codePoint);
   }
-  return SharedTreeStack->pushUnicodeCodePointLayout(cp);
+  return SharedTreeStack->pushUnicodeCodePointLayout(codePoint);
+}
+Tree* CodePointLayout::PushCombined(CodePoint codePoint,
+                                    CodePoint combinedCodepoint) {
+  return SharedTreeStack->pushCombinedCodePointsLayout(codePoint,
+                                                       combinedCodepoint);
 }
 
 char* CodePointLayout::CopyName(const Tree* l, char* buffer,
@@ -36,8 +41,13 @@ char* CodePointLayout::CopyName(const Tree* l, char* buffer,
   return &buffer[size];
 }
 
-bool CodePointLayout::IsCodePoint(const Tree* l, CodePoint cp) {
-  return l->isCodePointLayout() && GetCodePoint(l) == cp;
+bool CodePointLayout::IsCodePoint(const Tree* l, CodePoint codePoint) {
+  return l->isCodePointLayout() && GetCodePoint(l) == codePoint;
+}
+bool CodePointLayout::IsCombinedCodePoint(const Tree* l, CodePoint codePoint,
+                                          CodePoint combinedCodePoint) {
+  return l->isCombinedCodePointsLayout() && GetCodePoint(l) == codePoint &&
+         GetCombinedCodePoint(l) == combinedCodePoint;
 }
 
 }  // namespace Poincare::Internal

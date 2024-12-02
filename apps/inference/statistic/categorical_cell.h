@@ -27,6 +27,11 @@ class AbstractCategoricalCell : public Escher::HighlightCell {
     return innerCell()->initSize(width - Escher::Metric::CommonMargins.width());
   }
 
+  void setVisible(bool visible) override {
+    innerCell()->setVisible(visible);
+    Escher::HighlightCell::setVisible(visible);
+  }
+
  private:
   // View
   int numberOfSubviews() const override { return 1; }

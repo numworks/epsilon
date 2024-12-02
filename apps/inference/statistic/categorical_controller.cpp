@@ -200,7 +200,8 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
                     static_cast<int>(m_selectableListView.bounds().height()));
   }
   // The rest of the cells are explicit
-  return explicitCellAtRow(row)->minimalSizeForOptimalDisplay().height();
+  HighlightCell* cell = explicitCellAtRow(row);
+  return cell->isVisible() ? cell->minimalSizeForOptimalDisplay().height() : 0;
 }
 
 void CategoricalController::initView() {
@@ -226,7 +227,9 @@ InputCategoricalController::InputCategoricalController(
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_significanceCell(&m_selectableListView, this) {}
+      m_significanceCell(&m_selectableListView, this) {
+  m_significanceCell.setVisible(false);
+}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {

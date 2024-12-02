@@ -236,8 +236,8 @@ void assert_expression_approximates_to(const char *expression,
             .m_context = reductionContext.context()};
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
-            Internal::Approximation::Parameter{.isRoot = true,
-                                               .projectLocalVariables = true},
+            Internal::Approximation::Parameters{.isRoot = true,
+                                                .projectLocalVariables = true},
             Internal::Approximation::Context(reductionContext.angleUnit(),
                                              reductionContext.complexFormat(),
                                              reductionContext.context()));

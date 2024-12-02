@@ -48,7 +48,7 @@ class Approximation final {
   };
 
  public:
-  struct Parameter {
+  struct Parameters {
     // A new m_randomContext will be created
     bool isRoot = false;
     /* Must be true if expression has not been projected and may have parametric
@@ -94,39 +94,39 @@ class Approximation final {
     ComplexFormat m_complexFormat;
   };
 
-  /* Approximation methods (with Parameter) */
+  /* Approximation methods (with Parameters) */
 
   template <typename T>
-  static Tree* ToTree(const Tree* e, Parameter param,
+  static Tree* ToTree(const Tree* e, Parameters params,
                       Context context = Context());
 
   template <typename T>
-  static T To(const Tree* e, Parameter param, Context context = Context());
+  static T To(const Tree* e, Parameters params, Context context = Context());
 
   // Approximate to real with given value for VarX
   template <typename T>
-  static T To(const Tree* e, T abscissa, Parameter param,
+  static T To(const Tree* e, T abscissa, Parameters params,
               Context context = Context());
 
   template <typename T>
-  static std::complex<T> ToComplex(const Tree* e, Parameter param,
+  static std::complex<T> ToComplex(const Tree* e, Parameters params,
                                    Context context = Context());
 
   template <typename T>
-  static PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameter param,
+  static PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
                                           Context context = Context());
   // Approximate with given value for VarX
   template <typename T>
   static PointOrScalar<T> ToPointOrScalar(const Tree* e, T abscissa,
-                                          Parameter param,
+                                          Parameters params,
                                           Context context = Context());
 
   template <typename T>
-  static Coordinate2D<T> ToPoint(const Tree* e, Parameter param,
+  static Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                                  Context context = Context());
 
   template <typename T>
-  static bool ToBoolean(const Tree* e, Parameter param,
+  static bool ToBoolean(const Tree* e, Parameters params,
                         Context context = Context());
 
   /* Helpers */
@@ -179,9 +179,10 @@ class Approximation final {
  private:
   // Update the approximation's context. Return a clone of e if necessary.
   template <typename T>
-  static Tree* PrepareContext(const Tree* e, Parameter param, Context* context);
+  static Tree* PrepareContext(const Tree* e, Parameters params,
+                              Context* context);
 
-  /* Approximation methods (without Parameter) */
+  /* Approximation methods (without Parameters) */
 
   // Tree can be of any dimension
   template <typename T>

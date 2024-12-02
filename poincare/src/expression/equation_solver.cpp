@@ -204,7 +204,7 @@ template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
   const Tree* e = reinterpret_cast<const Tree*>(model);
   return Coordinate2D<T>(
-      t, Approximation::To<T>(e, t, Approximation::Parameter{.isRoot = true}));
+      t, Approximation::To<T>(e, t, Approximation::Parameters{.isRoot = true}));
 }
 
 Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,

@@ -33,9 +33,9 @@
 namespace Poincare::Internal {
 
 template <typename T>
-Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
-  if (param.optimize) {
+Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
+  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
+  if (params.optimize) {
     assert(cloneMaybe);
     return cloneMaybe;
   }
@@ -68,12 +68,12 @@ Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
 }
 
 template <typename T>
-std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
+std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
                                          Context context) {
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
-  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::IsNonListScalar(target));
   std::complex<T> c = ToComplex<T>(target, &context);
@@ -84,9 +84,10 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
 };
 
 template <typename T>
-PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
+PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
+                                                Parameters params,
                                                 Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::DeepCheck(target));
   Dimension dim = Dimension::Get(target);
@@ -113,16 +114,17 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
 
 template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
-                                                Parameter param,
+                                                Parameters params,
                                                 Context context) {
   LocalContext localContext(abscissa, context.m_localContext);
   context.m_localContext = &localContext;
-  return ToPointOrScalar<T>(e, param, context);
+  return ToPointOrScalar<T>(e, params, context);
 }
 
 template <typename T>
-bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
+bool Approximation::ToBoolean(const Tree* e, Parameters params,
+                              Context context) {
+  Tree* cloneMaybe = PrepareContext<T>(e, params, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   bool b = ToBoolean<T>(target, &context);
   if (cloneMaybe) {
@@ -132,29 +134,29 @@ bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
 };
 
 template <typename T>
-T Approximation::To(const Tree* e, Parameter param, Context context) {
+T Approximation::To(const Tree* e, Parameters params, Context context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
   assert(Dimension::DeepCheck(e));
   Dimension dim = Dimension::Get(e);
   if (!(dim.isScalar() || dim.isUnit())) {
     return NAN;
   }
-  return ToPointOrScalar<T>(e, param, context).toScalar();
+  return ToPointOrScalar<T>(e, params, context).toScalar();
 };
 
 template <typename T>
-T Approximation::To(const Tree* e, T abscissa, Parameter param,
+T Approximation::To(const Tree* e, T abscissa, Parameters params,
                     Context context) {
   LocalContext localContext(abscissa, context.m_localContext);
   context.m_localContext = &localContext;
-  return To<T>(e, param, context);
+  return To<T>(e, params, context);
 }
 
 template <typename T>
-Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameter param,
+Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameters params,
                                        Context context) {
   assert(Dimension::DeepCheck(e) && Dimension::Get(e).isPoint());
-  return ToPointOrScalar<T>(e, param, context).toPoint();
+  return ToPointOrScalar<T>(e, params, context).toPoint();
 };
 
 template <typename T>
@@ -184,7 +186,7 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
+Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
                                     Context* context) {
   // Only clone if necessary
   Tree* clone = nullptr;
@@ -192,22 +194,22 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
     // Create a default context
     *context = Context();
   }
-  if (param.projectLocalVariables) {
+  if (params.projectLocalVariables) {
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (param.isRoot && !context->m_randomContext.m_isInitialized) {
+  if (params.isRoot && !context->m_randomContext.m_isInitialized) {
     /* Initialize randomContext only on root expressions to catch unsafe
      * approximations of projected sub-expressions. */
     context->m_randomContext.m_isInitialized = true;
   }
-  if (param.prepare || param.optimize) {
+  if (params.prepare || params.optimize) {
     if (!clone) {
       clone = e->cloneTree();
     }
-    assert(param.isRoot);
+    assert(params.isRoot);
     PrepareExpressionForApproximation(clone);
-    if (param.optimize) {
+    if (params.optimize) {
       ApproximateAndReplaceEveryScalar<T>(clone, *context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
@@ -1458,40 +1460,42 @@ Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
  * correct ToComplex<T> as needed since the code is mostly independent of the
  * float type used in the tree. */
 
-template Tree* Approximation::ToTree<float>(const Tree*, Parameter, Context);
-template Tree* Approximation::ToTree<double>(const Tree*, Parameter, Context);
+template Tree* Approximation::ToTree<float>(const Tree*, Parameters, Context);
+template Tree* Approximation::ToTree<double>(const Tree*, Parameters, Context);
 
-template std::complex<float> Approximation::ToComplex(const Tree*, Parameter,
+template std::complex<float> Approximation::ToComplex(const Tree*, Parameters,
                                                       Context);
-template std::complex<double> Approximation::ToComplex(const Tree*, Parameter,
+template std::complex<double> Approximation::ToComplex(const Tree*, Parameters,
                                                        Context);
 
 template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*,
-                                                             Parameter,
+                                                             Parameters,
                                                              Context);
 template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
-                                                              Parameter,
+                                                              Parameters,
                                                               Context);
 
 template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*, float,
-                                                             Parameter,
+                                                             Parameters,
                                                              Context);
 template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
-                                                              double, Parameter,
+                                                              double,
+                                                              Parameters,
                                                               Context);
 
-template bool Approximation::ToBoolean<float>(const Tree*, Parameter, Context);
-template bool Approximation::ToBoolean<double>(const Tree*, Parameter, Context);
+template bool Approximation::ToBoolean<float>(const Tree*, Parameters, Context);
+template bool Approximation::ToBoolean<double>(const Tree*, Parameters,
+                                               Context);
 
-template float Approximation::To(const Tree*, Parameter, Context);
-template double Approximation::To(const Tree*, Parameter, Context);
+template float Approximation::To(const Tree*, Parameters, Context);
+template double Approximation::To(const Tree*, Parameters, Context);
 
-template float Approximation::To(const Tree*, float, Parameter, Context);
-template double Approximation::To(const Tree*, double, Parameter, Context);
+template float Approximation::To(const Tree*, float, Parameters, Context);
+template double Approximation::To(const Tree*, double, Parameters, Context);
 
-template Coordinate2D<float> Approximation::ToPoint(const Tree*, Parameter,
+template Coordinate2D<float> Approximation::ToPoint(const Tree*, Parameters,
                                                     Context);
-template Coordinate2D<double> Approximation::ToPoint(const Tree*, Parameter,
+template Coordinate2D<double> Approximation::ToPoint(const Tree*, Parameters,
                                                      Context);
 
 template float Approximation::FloatBinomial(float, float);
@@ -1531,9 +1535,9 @@ template bool Approximation::SkipApproximation<float>(TypeBlock, TypeBlock,
 template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
                                                        int);
 
-template Tree* Approximation::PrepareContext<float>(const Tree*, Parameter,
+template Tree* Approximation::PrepareContext<float>(const Tree*, Parameters,
                                                     Context*);
-template Tree* Approximation::PrepareContext<double>(const Tree*, Parameter,
+template Tree* Approximation::PrepareContext<double>(const Tree*, Parameters,
                                                      Context*);
 
 }  // namespace Poincare::Internal

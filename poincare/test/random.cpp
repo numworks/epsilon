@@ -13,10 +13,10 @@ void simplify_and_compare_approximates(const char* input1, const char* input2,
   Tree* e2 = parse_and_simplify(input2);
   T approx1 = Approximation::To<T>(
       e1,
-      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true});
+      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true});
   T approx2 = Approximation::To<T>(
       e2,
-      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true});
+      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true});
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -43,11 +43,11 @@ void simplify_and_compare_approximates_list(const char* input, bool equal) {
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::ToTree<T>(
       e,
-      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true});
-  T approx1 =
-      Approximation::To<T>(eApproximated->child(0), Approximation::Parameter{});
-  T approx2 =
-      Approximation::To<T>(eApproximated->child(1), Approximation::Parameter{});
+      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true});
+  T approx1 = Approximation::To<T>(eApproximated->child(0),
+                                   Approximation::Parameters{});
+  T approx2 = Approximation::To<T>(eApproximated->child(1),
+                                   Approximation::Parameters{});
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG

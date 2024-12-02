@@ -404,7 +404,7 @@ ComplexSign SignOfTreeOrApproximation(const Tree* e) {
   if (!sign.realSign().hasKnownStrictSign() ||
       !sign.imagSign().hasKnownStrictSign()) {
     Tree* approximation =
-        Approximation::ToTree<double>(e, Approximation::Parameter{});
+        Approximation::ToTree<double>(e, Approximation::Parameters{});
     sign = GetComplexSign(approximation);
     approximation->removeTree();
   }

@@ -22,7 +22,7 @@ static bool approximationIsFinite(const Tree* e) {
     return false;
   }
   std::complex<double> approx =
-      Approximation::ToComplex<double>(e, Approximation::Parameter{});
+      Approximation::ToComplex<double>(e, Approximation::Parameters{});
   return std::isfinite(approx.real()) && std::isfinite(approx.imag());
 }
 

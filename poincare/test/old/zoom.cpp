@@ -73,7 +73,7 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model) {
                                 k_symbol, t, approximationContext));
 #endif
   return Coordinate2D<T>(
-      t, Approximation::To<T>(e, t, Approximation::Parameter{.isRoot = true}));
+      t, Approximation::To<T>(e, t, Approximation::Parameters{.isRoot = true}));
 }
 
 void assert_points_of_interest_range_is(const char* expression,

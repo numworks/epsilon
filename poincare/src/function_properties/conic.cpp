@@ -71,7 +71,7 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
       coefListY->removeTree();
       return;
     }
-    m_c = Approximation::To<double>(c, Approximation::Parameter{});
+    m_c = Approximation::To<double>(c, Approximation::Parameters{});
   }
 
   // Extract b and e
@@ -86,10 +86,10 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 1) {
     m_b = Approximation::To<double>(coefListX->child(1),
-                                    Approximation::Parameter{});
+                                    Approximation::Parameters{});
   }
   m_e = Approximation::To<double>(coefListX->child(0),
-                                  Approximation::Parameter{});
+                                  Approximation::Parameters{});
   coefListX->removeTree();
 
   // Extract a, d and f
@@ -106,14 +106,14 @@ CartesianConic::CartesianConic(const SystemExpression& analyzedExpression,
   assert(coefListX && dx == coefListX->numberOfChildren() - 1);
   if (dx == 2) {
     m_a = Approximation::To<double>(coefListX->child(2),
-                                    Approximation::Parameter{});
+                                    Approximation::Parameters{});
   }
   if (dx >= 1) {
     m_d = Approximation::To<double>(coefListX->child(1),
-                                    Approximation::Parameter{});
+                                    Approximation::Parameters{});
   }
   m_f = Approximation::To<double>(coefListX->child(0),
-                                  Approximation::Parameter{});
+                                  Approximation::Parameters{});
   coefListX->removeTree();
   coefListY->removeTree();
 
@@ -486,7 +486,8 @@ PolarConic::PolarConic(const SystemExpression& analyzedExpression,
   }
   assert(0 < nRemoved && nRemoved < nChildren);
   NAry::SetNumberOfChildren(denominator, nChildren - nRemoved);
-  double k = Approximation::To<double>(denominator, Approximation::Parameter{});
+  double k =
+      Approximation::To<double>(denominator, Approximation::Parameters{});
   denominator->removeTree();
 
   // Turn a·cos(θ+c)+k into (a/k)·cos(θ+c)+1

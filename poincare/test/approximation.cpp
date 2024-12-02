@@ -20,7 +20,7 @@ template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::To<T>(
       n,
-      Approximation::Parameter{.isRoot = true, .projectLocalVariables = true},
+      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true},
       Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
@@ -46,8 +46,8 @@ void approximates_to(const char* input, const char* output,
       [](Tree* tree, ProjectionContext projectionContext) {
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree,
-            Approximation::Parameter{.isRoot = true,
-                                     .projectLocalVariables = true},
+            Approximation::Parameters{.isRoot = true,
+                                      .projectLocalVariables = true},
             Approximation::Context(projectionContext.m_angleUnit,
                                    projectionContext.m_complexFormat,
                                    projectionContext.m_context)));

@@ -566,7 +566,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
     std::complex<double> value =
-        Approximation::ToComplex<double>(e, Approximation::Parameter{});
+        Approximation::ToComplex<double>(e, Approximation::Parameters{});
     assert(Dimension::IsNonListScalar(child) &&
            (value.imag() == 0 || std::isnan(value.imag())));
     assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
@@ -575,7 +575,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     if (isPositive == OMG::Troolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation =
-          Approximation::To<double>(child, Approximation::Parameter{});
+          Approximation::To<double>(child, Approximation::Parameters{});
       if (!std::isnan(approximation)) {
         isPositive = OMG::BoolToTroolean(approximation > 0.0);
       }
@@ -589,7 +589,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     /* We should assert sign.isReal() but the sign is not always precise enough,
      * so check approximation is real. */
     std::complex<double> value =
-        Approximation::ToComplex<double>(e, Approximation::Parameter{});
+        Approximation::ToComplex<double>(e, Approximation::Parameters{});
     assert(Dimension::IsNonListScalar(child) &&
            (value.imag() == 0 || std::isnan(value.imag())));
 #endif
@@ -597,7 +597,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     if (isNull == OMG::Troolean::Unknown) {
       // Same comment as above
       double approximation =
-          Approximation::To<double>(child, Approximation::Parameter{});
+          Approximation::To<double>(child, Approximation::Parameters{});
       if (!std::isnan(approximation)) {
         isNull = OMG::BoolToTroolean(approximation != 0.0);
       }

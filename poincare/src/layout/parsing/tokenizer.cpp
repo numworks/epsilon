@@ -174,6 +174,19 @@ Token Tokenizer::popToken() {
   while (canPopCodePoint(' ')) {
   }
 
+  if (m_decoder.nextLayoutIsCombinedCodePoint()) {
+    // Special case for ≠
+    if (m_decoder.codePoint() == '=' &&
+        m_decoder.combinedCodePoint() ==
+            UCodePointCombiningLongSolidusOverlay) {
+      size_t length = 1;
+      Token result(Token::Type::ComparisonOperator);
+      result.setRange(m_decoder.layout(), length);
+      m_decoder.skip(length);
+      return result;
+    }
+  }
+
   if (!m_decoder.nextLayoutIsCodePoint()) {
     const Layout* layout = m_decoder.nextLayout();
     Token::Type type = Token::Type::Layout;

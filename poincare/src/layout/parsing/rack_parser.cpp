@@ -579,6 +579,14 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
       LayoutSpan(Layout::From(m_currentToken.firstLayout()),
                  m_currentToken.length()),
       &operatorType, &operatorLength);
+  if (CodePointLayout::IsCombinedCodePoint(
+          m_currentToken.firstLayout(), CodePoint('='),
+          UCodePointCombiningLongSolidusOverlay)) {
+    // Special case for ≠
+    operatorType = Type::NotEqual;
+    operatorLength = 1;
+    check = true;
+  }
   assert(check);
   assert(m_currentToken.length() == operatorLength);
   (void)check;

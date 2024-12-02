@@ -207,7 +207,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
     assert(param.isRoot);
     PrepareExpressionForApproximation(clone);
     if (param.optimize) {
-      ApproximateAndReplaceEveryScalar(clone, *context);
+      ApproximateAndReplaceEveryScalar<double>(clone, *context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
     }
@@ -1395,6 +1395,7 @@ static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
   }
 }
 
+template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
   if (SkipApproximation(e->type())) {
     return false;
@@ -1497,5 +1498,10 @@ template double Approximation::ToLocalContext(const Tree*, const Context*,
 
 template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, float);
 template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, double);
+
+template bool Approximation::ApproximateAndReplaceEveryScalar<float>(Tree*,
+                                                                     Context);
+template bool Approximation::ApproximateAndReplaceEveryScalar<double>(Tree*,
+                                                                      Context);
 
 }  // namespace Poincare::Internal

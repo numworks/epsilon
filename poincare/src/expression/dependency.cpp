@@ -129,7 +129,7 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     }
     Tree* approximation = depI->cloneTree();
     // TODO_PCJ: Ensure the default Radian/Cartesian context is good enough.
-    Approximation::ApproximateAndReplaceEveryScalar(approximation);
+    Approximation::ApproximateAndReplaceEveryScalar<double>(approximation);
     if (approximation->isUndefined()) {
       if (approximation->isNonReal()) {
         isNonReal = true;

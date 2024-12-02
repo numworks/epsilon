@@ -726,7 +726,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
      * all children if one of them is already float. Return true if the entire
      * tree have been approximated. */
     if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
-        Approximation::ApproximateAndReplaceEveryScalar(e)) {
+        Approximation::ApproximateAndReplaceEveryScalar<double>(e)) {
       changed = true;
       if (e->isFloat()) {
         return true;

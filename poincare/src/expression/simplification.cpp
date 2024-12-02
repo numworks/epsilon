@@ -227,7 +227,7 @@ bool Simplification::ApplyStrategy(Tree* e,
                                    const ProjectionContext& projectionContext,
                                    bool reduceIfSuccess) {
   if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
-      !Approximation::ApproximateAndReplaceEveryScalar(
+      !Approximation::ApproximateAndReplaceEveryScalar<double>(
           e, Approximation::Context(projectionContext.m_angleUnit,
                                     projectionContext.m_complexFormat,
                                     projectionContext.m_context))) {

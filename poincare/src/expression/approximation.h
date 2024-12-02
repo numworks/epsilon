@@ -146,6 +146,7 @@ class Approximation final {
   }
 
   // Approximate every scalar subtree that can be approximated.
+  template <typename T>
   static bool ApproximateAndReplaceEveryScalar(Tree* e,
                                                Context context = Context());
 

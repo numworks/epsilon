@@ -35,13 +35,6 @@ class NAry {
   static bool ContainsSame(const Tree* nary, const Tree* value);
   static Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
 
-  TREE_REF_WRAP(Flatten);
-  TREE_REF_WRAP(SquashIfPossible);
-  TREE_REF_WRAP(SquashIfEmpty);
-  TREE_REF_WRAP(SquashIfUnary);
-  TREE_REF_WRAP(Sanitize);
-  TREE_REF_WRAP_1D(Sort, Order::OrderType, Order::OrderType::System);
-
  private:
   static constexpr size_t k_maxNumberOfChildren = 255;
 };

@@ -33,7 +33,6 @@ class Projection {
   static bool DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
                                    SymbolicComputation symbolic);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
-  TREE_REF_WRAP_1D(DeepSystemProject, ProjectionContext, {});
 
   /* Some projections are performed during advanced reduction instead so the
    * metric can cancel it if unecessary. */

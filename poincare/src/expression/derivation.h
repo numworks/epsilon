@@ -9,7 +9,6 @@ class Derivation {
  public:
   // Shallow simplify a derivation Tree* inplace.
   static bool Reduce(Tree* e);
-  TREE_REF_WRAP(Reduce)
 
   constexpr static CodePoint k_firstOrderSymbol = '\'';
   constexpr static CodePoint k_secondOrderSymbol = '"';

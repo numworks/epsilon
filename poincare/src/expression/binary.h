@@ -17,13 +17,10 @@ class Binary {
   static ComparisonJunior::Operator ComparisonOperatorForType(TypeBlock type);
 
   static bool ReduceBooleanOperator(Tree* e);
-  TREE_REF_WRAP(ReduceBooleanOperator);
 
   static bool ReduceComparison(Tree* e);
-  TREE_REF_WRAP(ReduceComparison);
 
   static bool ReducePiecewise(Tree* e);
-  TREE_REF_WRAP(ReducePiecewise);
 
  private:
   constexpr static const char* k_logicalNotName = "not";

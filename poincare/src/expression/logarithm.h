@@ -10,11 +10,8 @@ namespace Poincare::Internal {
 class Logarithm final {
  public:
   static bool ReduceLn(Tree* e);
-  TREE_REF_WRAP(ReduceLn);
   static bool ContractLn(Tree* e);
-  TREE_REF_WRAP(ContractLn);
   static bool ExpandLn(Tree* e);
-  TREE_REF_WRAP(ExpandLn);
   // ln(12/5)->2*ln(2)+ln(3)-ln(5)
   static bool ExpandLnOnRational(Tree* e);
 

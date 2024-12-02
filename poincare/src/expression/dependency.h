@@ -28,7 +28,6 @@ struct Dependency {
   static bool DeepBubbleUpDependencies(Tree* e);
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);
-  TREE_REF_WRAP(DeepRemoveUselessDependencies);
 
   static bool RemoveDependencies(Tree* e);
 

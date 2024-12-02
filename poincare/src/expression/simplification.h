@@ -15,11 +15,9 @@ class Simplification {
   // Simplification steps
   static void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext);
   static bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext);
-  TREE_REF_WRAP_1(BeautifyReduced, ProjectionContext*);
   static bool PrepareForProjection(Tree* e,
                                    ProjectionContext* projectionContext);
   static bool ToSystem(Tree* e, ProjectionContext* projectionContext);
-  TREE_REF_WRAP_1(ToSystem, ProjectionContext*);
 #if ASSERTIONS
   static bool IsSystem(const Tree* e);
 #endif

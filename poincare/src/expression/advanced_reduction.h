@@ -21,19 +21,14 @@ namespace Poincare::Internal {
 class AdvancedReduction {
  public:
   static bool Reduce(Tree* e);
-  TREE_REF_WRAP(Reduce);
-
   // Bottom-up deep contract
   static bool DeepContract(Tree* e);
-  TREE_REF_WRAP(DeepContract);
   // Top-Bottom deep expand
   static bool DeepExpand(Tree* e) { return PrivateDeepExpand(e); };
-  TREE_REF_WRAP(DeepExpand);
   // Top-Bottom deep expand using only algebraic operations
   static bool DeepExpandAlgebraic(Tree* e) {
     return PrivateDeepExpand(e, true);
   };
-  TREE_REF_WRAP(DeepExpandAlgebraic);
 
  private:
   // Ordered list of hashes encountered during advanced reduction.

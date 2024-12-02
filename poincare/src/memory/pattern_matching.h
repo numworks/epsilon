@@ -131,20 +131,17 @@ class PatternMatching {
                            const Tree* structure) {
     return PrivateMatchReplace(source, pattern, structure, false);
   }
-  TREE_REF_WRAP_2(MatchReplace, const Tree*, const Tree*);
   // Return true if reference has been replaced
   static bool MatchReplaceSimplify(Tree* source, const Tree* pattern,
                                    const Tree* structure) {
     return PrivateMatchReplace(source, pattern, structure, true);
   }
-  TREE_REF_WRAP_2(MatchReplaceSimplify, const Tree*, const Tree*);
 
  private:
   static bool PrivateMatchReplace(Tree* source, const Tree* pattern,
                                   const Tree* structure, bool simplify);
 
   static bool TrimSourceTree(Tree* source, Context* ctx);
-  TREE_REF_WRAP_1(TrimSourceTree, Context*);
 
   /* During Match, MatchContext allows keeping track of matched Nary sizes.
    * It keeps track of both source and pattern.

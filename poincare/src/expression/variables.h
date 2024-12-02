@@ -72,7 +72,6 @@ class Variables {
   static bool LeaveScopeWithReplacement(Tree* e, const Tree* value,
                                         bool simplify,
                                         bool addDependencyInValue);
-  TREE_REF_WRAP_3(LeaveScopeWithReplacement, const Tree*, bool, bool);
 
  private:
   // Variables below preserveUnder are considered local and preserved

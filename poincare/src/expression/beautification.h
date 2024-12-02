@@ -15,7 +15,6 @@ class Beautification {
   static float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
   static bool AddUnits(Tree* e, ProjectionContext projectionContext);
   static bool DeepBeautify(Tree* e, ProjectionContext projectionContext = {});
-  TREE_REF_WRAP_1D(DeepBeautify, ProjectionContext, {});
 
   /* Create a Tree to represent a complex value according to the format, for
    * instance 0+1*i => <Constant i> in Cartesian mode. */

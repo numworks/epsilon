@@ -10,7 +10,6 @@ class SystematicOperation {
 
  public:
   static bool ReducePower(Tree* e);
-  TREE_REF_WRAP(ReducePower);
 
  private:
   /* These private methods should never be called on TreeRefs.

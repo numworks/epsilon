@@ -234,7 +234,6 @@ class Unit {
    * has been removed. Only Mult, Pow, and Add (if preserveAdd) are preserved.
    */
   static bool RemoveNonUnits(Tree* e, bool preserveAdd);
-  TREE_REF_WRAP_1(RemoveNonUnits, bool);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnits(const Tree* extractedUnits);
   static void ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,

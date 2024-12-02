@@ -442,10 +442,38 @@ Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
 bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
                                           const Tree* structure,
                                           bool simplify) {
+  Context ctx;
+  // Escape case for full matches like A -> cos(A)
+  if (pattern->isPlaceholder()) {
+    ctx.setNode(Placeholder::NodeToTag(pattern), source, 1, false);
+    source->moveTreeOverTree(Create(structure, ctx, simplify));
+    return true;
+  }
+
+  // Step 1 - Match the pattern
+  if (!Match(source, pattern, &ctx)) {
+    return false;
+  }
+
+  // Step 2 - Trim source to minimize the number of trees on TreeStack
+  TrimSourceTree(source, &ctx);
+
+  // Step 3 - Build the PatternMatching replacement
+  Tree* created = Create(structure, ctx, simplify);
+
+  // Step 4 - Replace with created structure
+  source->moveTreeOverTree(created);
+
+  return true;
+}
+
+// Replace a matched tree with the list of matched placeholders. Update context.
+bool PatternMatching::TrimSourceTree(Tree* source,
+                                     PatternMatching::Context* ctx) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
-   * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
-   *                                                TreeStack : +{4} x 1 y z x
+   * For example : Pattern : +{5} A 1 B C A     Structure : *{4} 2 B A A
+   *                                                TreeStack : +{5} x 1 y z x
    * 1 - Only keep structure's matched placeholders
    *                                                TreeStack : y x
    * 2 - Insert structure Nodes
@@ -459,21 +487,8 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
    *  - Implement a method allowing the insertion of uncompleted nodes :
    *      void insert(Block * startSrc, Block * endSrc, Block * dst)
    */
-
-  Context ctx;
-  // Escape case for full matches like A -> cos(A)
-  if (pattern->isPlaceholder()) {
-    ctx.setNode(Placeholder::NodeToTag(pattern), source, 1, false);
-    source->moveTreeOverTree(Create(structure, ctx, simplify));
-    return true;
-  }
-
-  // Step 1 - Match the pattern
-  if (!Match(source, pattern, &ctx)) {
-    return false;
-  }
   /* Following this example :
-   * this (TreeRef): (x + y) * z
+   * source: (x + y) * z
    * pattern: (A + B) * C
    * structure: A * C + B * C
    *
@@ -484,33 +499,31 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
    * - +{2} a two children addition
    * - _{2} a two children systemList */
 
-  // Step 2 - Detach placeholder matches
+  // Step 1 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
    * preserved. */
   TreeRef treeNext = source->nextTree();
   int initializedPlaceHolders = 0;
   TreeRef placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    if (!ctx.getTree(i)) {
+    if (!ctx->getTree(i)) {
       continue;
     }
-    for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
+    int numberOfTrees = ctx->getNumberOfTrees(i);
+    for (int j = 0; j < numberOfTrees; j++) {
       initializedPlaceHolders++;
       treeNext->cloneTreeBeforeNode(0_e);
     }
     // Keep track of placeholder matches before detaching them
-    int numberOfTrees = ctx.getNumberOfTrees(i);
-    if (!ctx.getTree(i)) {
-      placeholders[i] = TreeRef();
-    } else if (numberOfTrees == 0) {
+    if (numberOfTrees == 0) {
       // Use the last block so that placeholders[i] stays initialized
       placeholders[i] = TreeRef(SharedTreeStack->lastBlock());
     } else {
-      // the context is known to point on non const parts of the source
-      placeholders[i] = TreeRef(const_cast<Tree*>(ctx.getTree(i)));
+      // The context is known to point on non const parts of the source
+      placeholders[i] = TreeRef(const_cast<Tree*>(ctx->getTree(i)));
     }
     // Invalidate context before anything is detached.
-    ctx.setNode(i, nullptr, numberOfTrees, ctx.isAnyTree(i));
+    ctx->setNode(i, nullptr, numberOfTrees, ctx->isAnyTree(i));
   }
 
   // TreeStack: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -527,7 +540,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
     }
     // Get a Tree to the first placeholder tree, and detach as many as necessary
     Tree* trees = Tree::FromBlocks(placeholders[i]->block());
-    for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
+    for (int j = 0; j < ctx->getNumberOfTrees(i); j++) {
       if (j == 0) {
         placeholders[i] = trees->detachTree();
       } else {
@@ -538,27 +551,17 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
 
   // TreeStack: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
-  // Step 3 - Replace with placeholder matches only
+  // Step 2 - Replace with placeholder matches only
   source->moveTreeOverTree(placeholderMatches);
 
   // TreeStack: ..... | _{3} x y z | ....
 
-  // Step 4 - Update context with new placeholder matches position
+  // Step 3 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (!placeholders[i].isUninitialized()) {
-      ctx.setNode(i, placeholders[i], ctx.getNumberOfTrees(i),
-                  ctx.isAnyTree(i));
+      ctx->setNode(i, placeholders[i], ctx->getNumberOfTrees(i),
+                   ctx->isAnyTree(i));
     }
   }
-
-  // Step 5 - Build the PatternMatching replacement
-  Tree* created = Create(structure, ctx, simplify);
-
-  // TreeStack: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
-
-  // Step 6 - Replace with created structure
-  source->moveTreeOverTree(created);
-
-  // TreeStack: ..... | +{2} *{2} x z *{2} y z | ....
   return true;
 }

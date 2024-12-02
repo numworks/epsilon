@@ -40,8 +40,14 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   const Layout* layout() const { return m_layout; }
   CodePoint codePoint() override {
-    return m_length > 0 && m_layout->isCodePointLayout()
+    return m_length > 0 && (m_layout->isCodePointLayout() ||
+                            m_layout->isCombinedCodePointsLayout())
                ? CodePointLayout::GetCodePoint(m_layout)
+               : UCodePointNull;
+  }
+  CodePoint combinedCodePoint() {
+    return m_length > 0 && m_layout->isCombinedCodePointsLayout()
+               ? CodePointLayout::GetCombinedCodePoint(m_layout)
                : UCodePointNull;
   }
 
@@ -55,6 +61,10 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     /* Return true if the decoder is empty for functions that are looping on
      * codepoints until they hit a null codepoints. */
     return m_length == 0 || m_layout->isCodePointLayout();
+  }
+
+  bool nextLayoutIsCombinedCodePoint() {
+    return m_layout->isCombinedCodePointsLayout();
   }
 
   const Layout* nextLayout() {

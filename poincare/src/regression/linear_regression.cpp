@@ -22,8 +22,8 @@ UserExpression LinearRegression::privateExpression(
 Regression::Coefficients LinearRegression::privateFit(const Series* series,
                                                       Context* context) const {
   Coefficients result;
-  std::size_t slopeIndex = slopeCoefficientIndex();
-  std::size_t yInterceptIndex = yInterceptCoefficientIndex();
+  size_t slopeIndex = slopeCoefficientIndex();
+  size_t yInterceptIndex = yInterceptCoefficientIndex();
   assert((slopeIndex == 0 && yInterceptIndex == 1) ||
          (slopeIndex == 1 && yInterceptIndex == 0));
   result[slopeIndex] = series->slope();

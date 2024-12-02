@@ -11,7 +11,7 @@ class DoublePairStorePreferences {
  public:
   DoublePairStorePreferences() {
     // TODO: use std::array::fill(false)
-    for (std::size_t i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    for (size_t i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
       m_valid[i] = false;
       m_hidden[i] = false;
     }

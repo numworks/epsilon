@@ -37,8 +37,8 @@ class MultipleBoxesView : public MultipleDataView {
   }
 
   constexpr static bool IsBoxMarginValid() {
-    for (std::size_t numberOfSeries = 1;
-         numberOfSeries < Store::k_numberOfSeries; numberOfSeries++) {
+    for (size_t numberOfSeries = 1; numberOfSeries < Store::k_numberOfSeries;
+         numberOfSeries++) {
       if (MultipleBoxesView::BoxToBoxMargin(numberOfSeries) <
           BoxPlotPolicy::BoxVerticalMargin()) {
         return false;

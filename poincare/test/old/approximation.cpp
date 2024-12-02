@@ -1955,9 +1955,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
                                             Polar);
   assert_expression_approximates_to<float>("10", "10", Radian, MetricUnitFormat,
                                            Polar);
-  assert_expression_approximates_to<double>(
-      "-10", "10×e^\u00123.1415926535898×i\u0013", Radian, MetricUnitFormat,
-      Polar);
+  assert_expression_approximates_to<double>("-10", "10×e^(3.1415926535898×i)",
+                                            Radian, MetricUnitFormat, Polar);
 
   assert_expression_approximates_to<float>("100", "100", Radian,
                                            MetricUnitFormat, Polar);
@@ -1968,54 +1967,44 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("0.12345678", "0.12345678", Radian,
                                             MetricUnitFormat, Polar);
 
-  assert_expression_approximates_to<float>("1+2×i",
-                                           "2.236068×e^\u00121.107149×i\u0013",
+  assert_expression_approximates_to<float>("1+2×i", "2.236068×e^(1.107149×i)",
                                            Radian, MetricUnitFormat, Polar);
   assert_expression_approximates_to<float>("1+i-i", "1", Radian,
                                            MetricUnitFormat, Polar);
   assert_expression_approximates_to<double>(
-      "1+i-1", "e^\u00121.57079632679×i\u0013", Radian, MetricUnitFormat, Polar,
-      12);
-  assert_expression_approximates_to<float>("1+i",
-                                           "1.414214×e^\u00120.7853982×i\u0013",
+      "1+i-1", "e^(1.57079632679×i)", Radian, MetricUnitFormat, Polar, 12);
+  assert_expression_approximates_to<float>("1+i", "1.414214×e^(0.7853982×i)",
                                            Radian, MetricUnitFormat, Polar);
   assert_expression_approximates_to<double>(
-      "3+i", "3.16227766017×e^\u00120.321750554397×i\u0013", Radian,
-      MetricUnitFormat, Polar, 12);
-  assert_expression_approximates_to<float>(
-      "3-i", "3.162278×e^\u0012-0.3217506×i\u0013", Radian, MetricUnitFormat,
-      Polar);
-  assert_expression_approximates_to<double>(
-      "3-i-3", "e^\u0012-1.57079632679×i\u0013", Radian, MetricUnitFormat,
+      "3+i", "3.16227766017×e^(0.321750554397×i)", Radian, MetricUnitFormat,
       Polar, 12);
-  // 2e^(i) has a too low precision in float on the web platform
-  assert_expression_approximates_to<float>("3e^(2*i)", "3×e^\u00122×i\u0013",
-                                           Radian, MetricUnitFormat, Polar, 4);
-  assert_expression_approximates_to<double>("2e^(-i)", "2×e^\u0012-i\u0013",
-                                            Radian, MetricUnitFormat, Polar, 9);
-
-  assert_expression_approximates_to<float>("i", "e^\u00121.570796×i\u0013",
+  assert_expression_approximates_to<float>("3-i", "3.162278×e^(-0.3217506×i)",
                                            Radian, MetricUnitFormat, Polar);
-  assert_expression_approximates_to<double>("√(-1)",
-                                            "e^\u00121.5707963267949×i\u0013",
-                                            Radian, MetricUnitFormat, Polar);
-  assert_expression_approximates_to<double>("√(-1)×√(-1)",
-                                            "e^\u00123.1415926535898×i\u0013",
-                                            Radian, MetricUnitFormat, Polar);
-  assert_expression_approximates_to<double>("(-8)^(1/3)",
-                                            "2×e^\u00121.0471975511966×i\u0013",
-                                            Radian, MetricUnitFormat, Polar);
-  assert_expression_approximates_to<float>("(-8)^(2/3)",
-                                           "4×e^\u00122.094395×i\u0013", Radian,
+  assert_expression_approximates_to<double>(
+      "3-i-3", "e^(-1.57079632679×i)", Radian, MetricUnitFormat, Polar, 12);
+  // 2e^(i) has a too low precision in float on the web platform
+  assert_expression_approximates_to<float>("3e^(2*i)", "3×e^(2×i)", Radian,
+                                           MetricUnitFormat, Polar, 4);
+  assert_expression_approximates_to<double>("2e^(-i)", "2×e^(-i)", Radian,
+                                            MetricUnitFormat, Polar, 9);
+
+  assert_expression_approximates_to<float>("i", "e^(1.570796×i)", Radian,
                                            MetricUnitFormat, Polar);
-  assert_expression_approximates_to<double>("root(-8,3)",
-                                            "2×e^\u00121.0471975511966×i\u0013",
+  assert_expression_approximates_to<double>("√(-1)", "e^(1.5707963267949×i)",
                                             Radian, MetricUnitFormat, Polar);
+  assert_expression_approximates_to<double>(
+      "√(-1)×√(-1)", "e^(3.1415926535898×i)", Radian, MetricUnitFormat, Polar);
+  assert_expression_approximates_to<double>(
+      "(-8)^(1/3)", "2×e^(1.0471975511966×i)", Radian, MetricUnitFormat, Polar);
+  assert_expression_approximates_to<float>("(-8)^(2/3)", "4×e^(2.094395×i)",
+                                           Radian, MetricUnitFormat, Polar);
+  assert_expression_approximates_to<double>(
+      "root(-8,3)", "2×e^(1.0471975511966×i)", Radian, MetricUnitFormat, Polar);
 
   // Cartesian to Polar and vice versa
   assert_expression_approximates_to<double>(
-      "2+3×i", "3.60555127546×e^\u00120.982793723247×i\u0013", Radian,
-      MetricUnitFormat, Polar, 12);
+      "2+3×i", "3.60555127546×e^(0.982793723247×i)", Radian, MetricUnitFormat,
+      Polar, 12);
   assert_expression_approximates_to<double>(
       "3.60555127546×e^(0.982793723247×i)", "2+3×i", Radian, MetricUnitFormat,
       Cartesian, 12);
@@ -2030,15 +2019,15 @@ QUIZ_CASE(poincare_approximation_complex_format) {
    * eventually by std::abs) is not accurate enough. We might change the
    * embedded libm? */
   // assert_expression_approximates_to<float>("-2ᴇ20+2ᴇ20×i",
-  // "2.828427ᴇ20×e^\u00122.356194×i\u0013", Radian, MetricUnitFormat, Polar);
-  assert_expression_approximates_to<float>(
-      "-2ᴇ10+2ᴇ10×i", "2.828427ᴇ10×e^\u00122.356194×i\u0013", Radian,
-      MetricUnitFormat, Polar);
+  // "2.828427ᴇ20×e^(2.356194×i)", Radian, MetricUnitFormat, Polar);
+  assert_expression_approximates_to<float>("-2ᴇ10+2ᴇ10×i",
+                                           "2.828427ᴇ10×e^(2.356194×i)", Radian,
+                                           MetricUnitFormat, Polar);
   assert_expression_approximates_to<double>(
       "1ᴇ155-1ᴇ155×i", "1ᴇ155-1ᴇ155×i", Radian, MetricUnitFormat, Cartesian);
   assert_expression_approximates_to<double>(
-      "1ᴇ155-1ᴇ155×i", "1.41421356237ᴇ155×e^\u0012-0.785398163397×i\u0013",
-      Radian, MetricUnitFormat, Polar, 12);
+      "1ᴇ155-1ᴇ155×i", "1.41421356237ᴇ155×e^(-0.785398163397×i)", Radian,
+      MetricUnitFormat, Polar, 12);
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ100×i", "-∞+∞×i");
   assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×i", "-∞+2ᴇ10×i");
@@ -2206,9 +2195,9 @@ QUIZ_CASE(poincare_approximation_mixed_fraction) {
 #if 0
   assert_expression_approximates_to_scalar<double>("1 1/2", 1.5);
   assert_expression_approximates_to_scalar<double>("-1 1/2", -1.5);
-  assert_expression_approximates_to_scalar<double>("1\u00121/2\u0013", 1.5);
+  assert_expression_approximates_to_scalar<double>("1(1/2)", 1.5);
   assert_expression_approximates_to_scalar<double>(
-  "1\u00121/2\u0013", 0.5, Degree, Cartesian,
+  "1(1/2)", 0.5, Degree, Cartesian,
   Preferences::MixedFractions::Disabled);
 #endif
 }
@@ -2301,7 +2290,7 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
                                                     "int(x,x,0,x)+2");
   assert_expression_approximates_keeping_symbols_to(
       "[[x,cos(10)][1/2+x,cos(4/3+x)]]",
-      "[[x,0.984807753][\u00122×x+1\u0013/2,cos(\u00123×x+4\u0013/3)]]");
+      "[[x,0.984807753][(2×x+1)/2,cos((3×x+4)/3)]]");
   assert_expression_approximates_keeping_symbols_to(
       "{x,undef,cos(10)+x,cos(10)}", "{x,undef,x+0.984807753,0.984807753}");
   assert_expression_approximates_keeping_symbols_to("cos(10)→x",

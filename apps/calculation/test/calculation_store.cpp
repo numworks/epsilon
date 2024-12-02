@@ -349,7 +349,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Equal, "1×(1+2/100)", "1.02", "1.02",
                       &globalContext, &store);
   assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "1×(1-\u00121/3\u0013/100)",
+                      EqualSign::Approximation, "1×(1-(1/3)/100)",
                       "0.9966666667", "0.99666666666667", &globalContext,
                       &store);
 
@@ -385,10 +385,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("πrad/2→°", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "90×_°", "90×_°",
                       &globalContext, &store);
-  assertCalculationIs(
-      "(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
-      nullptr, "0.1666666667×_rad^\u0012-1\u0013",
-      "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
+  assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Unknown, nullptr, "0.1666666667×_rad^(-1)",
+                      "0.16666666666667×_rad^(-1)", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "6×_rad", "6×_rad",
                       &globalContext, &store);
@@ -750,28 +749,26 @@ QUIZ_CASE(calculation_complex_format) {
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "√(2)×e^\u0012π/4×i\u0013",
-                      nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "e^\u0012π/2×i\u0013", nullptr,
+                      EqualSign::Approximation, "√(2)×e^(π/4×i)", nullptr,
                       nullptr, &globalContext, &store);
+  assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "e^(π/2×i)", nullptr, nullptr,
+                      &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "ln(-2)", nullptr, nullptr,
                       &globalContext, &store);
-  assertCalculationIs(
-      "√(-1)×√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown,
-      nullptr, "e^\u00123.141592654×i\u0013", "e^\u00123.1415926535898×i\u0013",
-      &globalContext, &store);
+  assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Unknown, nullptr, "e^(3.141592654×i)",
+                      "e^(3.1415926535898×i)", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "2×e^\u0012π/3×i\u0013",
-                      nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation,
-                      "4×e^\u0012\u00122×π\u0013/3×i\u0013", nullptr, nullptr,
+                      EqualSign::Approximation, "2×e^(π/3×i)", nullptr, nullptr,
                       &globalContext, &store);
+  assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "4×e^((2×π)/3×i)", nullptr,
+                      nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "root(2,4)×e^\u0012π/4×i\u0013",
-                      nullptr, nullptr, &globalContext, &store);
+                      EqualSign::Approximation, "root(2,4)×e^(π/4×i)", nullptr,
+                      nullptr, &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);

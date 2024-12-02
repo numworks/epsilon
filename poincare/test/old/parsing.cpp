@@ -560,11 +560,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("ln(1)", KLnUser(1_e));
   assert_parsed_expression_is("log(1)", KLog(1_e));
   assert_parsed_expression_is("log(1,2)", KLogBase(1_e, 2_e));
-  {
-    Shared::GlobalContext context;
-    // A context is passed so that the expression is not parsed as a sequence
-    assert_text_not_parsable("og\u0014{2\u0014}(1)", &context);
-  }
   assert_parsed_expression_is("norm(1)", KNorm(1_e));
   assert_parsed_expression_is("permute(2,1)", KPermute(2_e, 1_e));
   assert_parsed_expression_is("product(1,n,2,3)",
@@ -599,8 +594,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("quo()");
   assert_text_not_parsable("log(1,2,3)");
   assert_text_not_parsable("sinh^(-1)(2)");
-  assert_text_not_parsable("\u0014cos(x)");
-  assert_text_not_parsable("\u0014cod(x)");
 
   // Powered reserved functions (integer powers other than -1)
   assert_parsed_expression_is("cos^(0)(1)", KPow(KCos(1_e), 0_e));

@@ -72,7 +72,7 @@ class Dependency : public OExpression {
   static_assert(UCodePointSystem == 0x14,
                 "UCodePointSystem value was modified");
   constexpr static OExpression::FunctionHelper s_functionHelper =
-      OExpression::FunctionHelper("\u0014dep", 2, &UntypedBuilder);
+      OExpression::FunctionHelper("dep", 2, &UntypedBuilder);
 
  private:
   OExpression mainExpression() const {

@@ -1405,6 +1405,13 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
 
 template <typename T>
 bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
+  // Prevent float to double conversion
+  if (sizeof(T) == sizeof(double) &&
+      e->hasDescendantSatisfying(
+          [](const Tree* e) { return e->isSingleFloat(); })) {
+    return ApproximateAndReplaceEveryScalar<float>(e, context);
+  }
+
   if (SkipApproximation<T>(e->type())) {
     return false;
   }

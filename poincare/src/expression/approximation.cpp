@@ -34,7 +34,7 @@ namespace Poincare::Internal {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameter param, Context context) {
-  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
   if (param.optimize) {
     assert(cloneMaybe);
     return cloneMaybe;
@@ -73,7 +73,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
-  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::IsNonListScalar(target));
   std::complex<T> c = ToComplex<T>(target, &context);
@@ -86,7 +86,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameter param,
 template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, Parameter param,
                                                 Context context) {
-  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::DeepCheck(target));
   Dimension dim = Dimension::Get(target);
@@ -122,7 +122,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameter param, Context context) {
-  Tree* cloneMaybe = PrepareContext(e, param, &context);
+  Tree* cloneMaybe = PrepareContext<T>(e, param, &context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   bool b = ToBoolean<T>(target, &context);
   if (cloneMaybe) {
@@ -183,6 +183,7 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
   return result;
 }
 
+template <typename T>
 Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
                                     Context* context) {
   // Only clone if necessary
@@ -207,7 +208,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameter param,
     assert(param.isRoot);
     PrepareExpressionForApproximation(clone);
     if (param.optimize) {
-      ApproximateAndReplaceEveryScalar<double>(clone, *context);
+      ApproximateAndReplaceEveryScalar<T>(clone, *context);
       // TODO: factor common sub-expressions
       // TODO: apply Horner's method: a*x^2 + b*x + c => (a*x + b)*x + c ?
     }
@@ -226,7 +227,7 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
-    PrivateApproximateAndReplaceEveryScalar(result, ctx);
+    PrivateApproximateAndReplaceEveryScalar<T>(result, ctx);
     return result;
   }
   if (dim.isScalar()) {
@@ -1377,7 +1378,7 @@ bool Approximation::SkipApproximation<float>(TypeBlock type) {
 
 template <>
 bool Approximation::SkipApproximation<double>(TypeBlock type) {
-  return type.isSingleFloat() || type.isDoubleFloat() || type.isComplexI();
+  return type.isDoubleFloat() || type.isComplexI();
 }
 
 template <typename T>
@@ -1408,23 +1409,25 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
     return false;
   }
   uint32_t hash = e->hash();
-  bool result = PrivateApproximateAndReplaceEveryScalar(e, &context);
+  bool result = PrivateApproximateAndReplaceEveryScalar<T>(e, &context);
   /* TODO: We compare the CRC32 to prevent expressions such as 1.0+i*1.0 from
    * returning true at every call. We should detect and skip them in
    * SkipApproximation instead. */
   return result && hash != e->hash();
 }
 
+template <typename T>
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     Tree* e, const Context* ctx) {
   if (CanApproximate(e) && Dimension::IsNonListScalar(e)) {
-    e->moveTreeOverTree(ToTree<double>(e, Dimension(), ctx));
+    e->moveTreeOverTree(ToTree<T>(e, Dimension(), ctx));
     return true;
   }
   bool changed = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (!SkipApproximation<double>(child->type(), e->type(), child.index)) {
-      changed = PrivateApproximateAndReplaceEveryScalar(child, ctx) || changed;
+    if (!SkipApproximation<T>(child->type(), e->type(), child.index)) {
+      changed =
+          PrivateApproximateAndReplaceEveryScalar<T>(child, ctx) || changed;
     }
   }
   // TODO: Merge additions and multiplication's children if possible.
@@ -1510,9 +1513,20 @@ template bool Approximation::ApproximateAndReplaceEveryScalar<float>(Tree*,
                                                                      Context);
 template bool Approximation::ApproximateAndReplaceEveryScalar<double>(Tree*,
                                                                       Context);
+
+template bool Approximation::PrivateApproximateAndReplaceEveryScalar<float>(
+    Tree*, const Context*);
+template bool Approximation::PrivateApproximateAndReplaceEveryScalar<double>(
+    Tree*, const Context*);
+
 template bool Approximation::SkipApproximation<float>(TypeBlock, TypeBlock,
                                                       int);
 template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
                                                        int);
+
+template Tree* Approximation::PrepareContext<float>(const Tree*, Parameter,
+                                                    Context*);
+template Tree* Approximation::PrepareContext<double>(const Tree*, Parameter,
+                                                     Context*);
 
 }  // namespace Poincare::Internal

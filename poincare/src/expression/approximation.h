@@ -178,6 +178,7 @@ class Approximation final {
 
  private:
   // Update the approximation's context. Return a clone of e if necessary.
+  template <typename T>
   static Tree* PrepareContext(const Tree* e, Parameter param, Context* context);
 
   /* Approximation methods (without Parameter) */
@@ -227,6 +228,7 @@ class Approximation final {
   static bool PrepareExpressionForApproximation(Tree* e);
   static bool ShallowPrepareForApproximation(Tree* e, void* ctx);
 
+  template <typename T>
   static bool PrivateApproximateAndReplaceEveryScalar(Tree* e,
                                                       const Context* ctx);
   template <typename T>

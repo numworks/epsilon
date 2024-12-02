@@ -34,7 +34,7 @@ namespace Poincare::Internal {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
+  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   if (params.optimize) {
     assert(cloneMaybe);
     return cloneMaybe;
@@ -73,7 +73,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
-  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
+  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::IsNonListScalar(target));
   std::complex<T> c = ToComplex<T>(target, &context);
@@ -87,7 +87,7 @@ template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Parameters params,
                                                 Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
+  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   assert(Dimension::DeepCheck(target));
   Dimension dim = Dimension::Get(target);
@@ -124,7 +124,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameters params,
                               Context context) {
-  Tree* cloneMaybe = PrepareContext<T>(e, params, context);
+  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   bool b = ToBoolean<T>(target, &context);
   if (cloneMaybe) {
@@ -186,8 +186,8 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
-                                    Context& context) {
+Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
+                                           Context& context) {
   // Only clone if necessary
   Tree* clone = nullptr;
   if (params.projectLocalVariables) {
@@ -1532,9 +1532,11 @@ template bool Approximation::SkipApproximation<float>(TypeBlock, TypeBlock,
 template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
                                                        int);
 
-template Tree* Approximation::PrepareContext<float>(const Tree*, Parameters,
-                                                    Context&);
-template Tree* Approximation::PrepareContext<double>(const Tree*, Parameters,
-                                                     Context&);
+template Tree* Approximation::PrepareTreeAndContext<float>(const Tree*,
+                                                           Parameters,
+                                                           Context&);
+template Tree* Approximation::PrepareTreeAndContext<double>(const Tree*,
+                                                            Parameters,
+                                                            Context&);
 
 }  // namespace Poincare::Internal

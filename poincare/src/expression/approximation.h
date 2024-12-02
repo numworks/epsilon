@@ -181,8 +181,8 @@ class Approximation final {
  private:
   // Update the approximation's context. Return a clone of e if necessary.
   template <typename T>
-  static Tree* PrepareContext(const Tree* e, Parameters params,
-                              Context& context);
+  static Tree* PrepareTreeAndContext(const Tree* e, Parameters params,
+                                     Context& context);
 
   /* Approximation methods (without Parameters) */
 

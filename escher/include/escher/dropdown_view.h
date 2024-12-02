@@ -93,7 +93,7 @@ class Dropdown : public PopupItemView, public Responder {
 
    private:
     void resetSizeMemoization() override;
-    constexpr static int k_maxNumberOfPopupItems = 4;
+    constexpr static int k_maxNumberOfPopupItems = 6;
     ExplicitListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;

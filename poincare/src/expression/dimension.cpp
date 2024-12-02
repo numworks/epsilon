@@ -456,8 +456,21 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::ListSort:
     case Type::Parentheses:
       return true;
-    case Type::RandIntNoRep:
-      return Integer::Is<uint8_t>(e->child(2));
+    case Type::RandIntNoRep: {
+      if (!IsIntegerExpression(e->child(0)) ||
+          !IsIntegerExpression(e->child(1)) ||
+          !Integer::Is<uint8_t>(e->child(2))) {
+        return false;
+      }
+      float a =
+          Approximation::To<float>(e->child(0), Approximation::Parameters{});
+      assert(std::floor(a) == a);
+      float b =
+          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      assert(std::floor(b) == b);
+      uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();
+      return a <= b && n <= b - a + 1;
+    }
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS

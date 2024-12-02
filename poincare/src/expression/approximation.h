@@ -64,14 +64,12 @@ class Approximation final {
     Context(AngleUnit angleUnit = AngleUnit::None,
             ComplexFormat complexFormat = ComplexFormat::None,
             Poincare::Context* symbolContext = nullptr,
-            int16_t listElement = -1, int16_t pointElement = -1,
-            Random::Context randomContext = Random::Context(false),
-            LocalContext* localContext = nullptr)
-        : m_randomContext(randomContext),
-          m_localContext(localContext),
+            int16_t listElement = -1)
+        : m_randomContext(Random::Context(false)),
+          m_localContext(nullptr),
           m_symbolContext(symbolContext),
           m_listElement(listElement),
-          m_pointElement(pointElement),
+          m_pointElement(-1),
           m_angleUnit(angleUnit),
           m_complexFormat(complexFormat) {}
     VariableType variable(uint8_t index) const {

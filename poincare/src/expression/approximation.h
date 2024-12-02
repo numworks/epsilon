@@ -50,7 +50,7 @@ class Approximation final {
  public:
   struct Parameters {
     // A new m_randomContext will be created
-    bool isRoot = false;
+    bool isRootAndCanHaveRandom = false;
     /* Must be true if expression has not been projected and may have parametric
      * functions. */
     bool projectLocalVariables = false;

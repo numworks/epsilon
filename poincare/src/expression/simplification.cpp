@@ -192,7 +192,7 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced,
     approximation. */
   if (Dimension::IsNonListScalar(e)) {
     std::complex<double> value = Approximation::ToComplex<double>(
-        e, Approximation::Parameters{.isRoot = true});
+        e, Approximation::Parameters{.isRootAndCanHaveRandom = true});
     assert(AreConsistent(GetComplexSign(e), value));
   }
 #endif

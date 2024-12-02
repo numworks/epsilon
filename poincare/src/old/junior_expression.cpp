@@ -149,7 +149,7 @@ template <typename T>
 SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(), Approximation::Parameters{.isRoot = true},
+      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true},
       Approximation::Context(approximationContext.angleUnit(),
                              approximationContext.complexFormat(),
                              approximationContext.context())));
@@ -354,7 +354,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
     } else {
       Tree* a = Approximation::ToTree<double>(
           e,
-          Approximation::Parameters{.isRoot = true,
+          Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                     .projectLocalVariables = true},
           approxCtx);
       Beautification::DeepBeautify(a, *context);
@@ -459,7 +459,8 @@ T UserExpression::approximateToScalar(AngleUnit angleUnit,
                                       Context* context) const {
   return Approximation::To<T>(
       tree(),
-      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true},
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
       Approximation::Context(angleUnit, complexFormat, context));
 }
 
@@ -467,7 +468,7 @@ template <typename T>
 T SystemFunctionScalar::approximateToScalarWithValue(T x,
                                                      int listElement) const {
   return Approximation::To<T>(
-      tree(), x, Approximation::Parameters{.isRoot = true},
+      tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true},
       Approximation::Context(AngleUnit::None, ComplexFormat::None, nullptr,
                              listElement));
 }
@@ -501,7 +502,8 @@ bool UserExpression::hasDefinedComplexApproximation(
   // TODO_PCJ: Remove ApproximationContext
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(),
-      Approximation::Parameters{.isRoot = true, .projectLocalVariables = true},
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
       Approximation::Context(approximationContext.angleUnit(),
                              approximationContext.complexFormat(),
                              approximationContext.context()));
@@ -546,19 +548,21 @@ template <typename T>
 PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
     T x) const {
   return Internal::Approximation::ToPointOrScalar<T>(
-      tree(), x, Approximation::Parameters{.isRoot = true});
+      tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
 }
 
 template <typename T>
 T SystemExpression::approximateToScalarJunior() const {
   return Approximation::To<T>(
-      tree(), Approximation::Parameters{.isRoot = true, .prepare = true});
+      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                        .prepare = true});
 }
 
 template <typename T>
 Coordinate2D<T> SystemExpression::approximateToPointJunior() const {
   return Approximation::ToPoint<T>(
-      tree(), Approximation::Parameters{.isRoot = true, .prepare = true});
+      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                        .prepare = true});
 }
 
 template <typename T>
@@ -569,7 +573,8 @@ T SystemFunction::approximateIntegralToScalar(
       KIntegral("x"_e, KA, KB, KC),
       {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()});
   T result = Approximation::To<T>(
-      integralTree, Approximation::Parameters{.isRoot = true, .prepare = true});
+      integralTree, Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                              .prepare = true});
   integralTree->removeTree();
   return result;
 }
@@ -580,7 +585,8 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   Tree* clone = SharedTreeStack->pushListSort();
   tree()->cloneTree();
   clone->moveTreeOverTree(Approximation::ToTree<T>(
-      clone, Approximation::Parameters{.isRoot = true, .prepare = true}));
+      clone, Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                       .prepare = true}));
   return SystemExpression::Builder(clone);
 }
 

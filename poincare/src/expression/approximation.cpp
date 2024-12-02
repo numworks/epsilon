@@ -198,7 +198,8 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
     clone = e->cloneTree();
     Variables::ProjectLocalVariablesToId(clone);
   }
-  if (params.isRoot && !context->m_randomContext.m_isInitialized) {
+  if (params.isRootAndCanHaveRandom &&
+      !context->m_randomContext.m_isInitialized) {
     /* Initialize randomContext only on root expressions to catch unsafe
      * approximations of projected sub-expressions. */
     context->m_randomContext.m_isInitialized = true;
@@ -207,7 +208,7 @@ Tree* Approximation::PrepareContext(const Tree* e, Parameters params,
     if (!clone) {
       clone = e->cloneTree();
     }
-    assert(params.isRoot);
+    assert(params.isRootAndCanHaveRandom);
     PrepareExpressionForApproximation(clone);
     if (params.optimize) {
       ApproximateAndReplaceEveryScalar<T>(clone, *context);

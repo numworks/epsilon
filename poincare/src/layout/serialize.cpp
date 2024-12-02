@@ -97,8 +97,15 @@ char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
 char* SerializeLayout(const Layout* layout, char* buffer, char* end,
                       RackSerializer serializer) {
   switch (layout->layoutType()) {
+    case LayoutType::CombinedCodePoints:
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint: {
+      // Special case for ≠
+      if (CodePointLayout::IsCombinedCodePoint(
+              layout, CodePoint('='), UCodePointCombiningLongSolidusOverlay)) {
+        buffer = append("≠", buffer, end);
+        break;
+      }
       constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
       char codepointBuffer[bufferSize];
       CodePointLayout::CopyName(layout, codepointBuffer, bufferSize);

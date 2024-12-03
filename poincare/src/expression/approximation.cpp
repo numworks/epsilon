@@ -577,10 +577,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
                                ComplexSign::Unknown());
-      Context copyCtx = *ctx;
+      Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
-      copyCtx.m_localContext = &localCtx;
-      std::complex<T> result = ToComplex<T>(definitionClone, &copyCtx);
+      ctxCopy.m_localContext = &localCtx;
+      std::complex<T> result = ToComplex<T>(definitionClone, &ctxCopy);
       definitionClone->removeTree();
       return result;
     }
@@ -613,15 +613,15 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       int upperBound = up.real();
       const Tree* child = upperBoundChild->nextTree();
       assert(ctx);
-      Context copyCtx = *ctx;
+      Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
-      copyCtx.m_localContext = &localCtx;
+      ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {
-        copyCtx.setLocalValue(k);
+        ctxCopy.setLocalValue(k);
         // Reset random context
-        copyCtx.m_randomContext = Random::Context(true);
-        std::complex<T> value = ToComplex<T>(child, &copyCtx);
+        ctxCopy.m_randomContext = Random::Context(true);
+        std::complex<T> value = ToComplex<T>(child, &ctxCopy);
         if (e->isSum()) {
           result += value;
         } else {
@@ -712,13 +712,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
-      Context copyCtx = *ctx;
+      Context ctxCopy = *ctx;
       LocalContext localCtx =
           LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
-      copyCtx.m_localContext = &localCtx;
+      ctxCopy.m_localContext = &localCtx;
       // Reset random context
-      copyCtx.m_randomContext = Random::Context();
-      return ToComplex<T>(e->child(2), &copyCtx);
+      ctxCopy.m_randomContext = Random::Context();
+      return ToComplex<T>(e->child(2), &ctxCopy);
     }
     case Type::Dim: {
       int n = Dimension::ListLength(e->child(0));
@@ -1292,10 +1292,10 @@ T Approximation::To(const Tree* e, const Context* ctx) {
 template <typename T>
 T Approximation::ToLocalContext(const Tree* e, const Context* ctx, T x) {
   assert(ctx);
-  Context copyCtx(*ctx);
-  LocalContext localCtx(x, copyCtx.m_localContext);
-  copyCtx.m_localContext = &localCtx;
-  return To<T>(e, &copyCtx);
+  Context ctxCopy(*ctx);
+  LocalContext localCtx(x, ctxCopy.m_localContext);
+  ctxCopy.m_localContext = &localCtx;
+  return To<T>(e, &ctxCopy);
 }
 
 template <typename T>

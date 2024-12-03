@@ -23,7 +23,6 @@
 #include "random.h"
 #include "rational.h"
 #include "symbol.h"
-#include "systematic_reduction.h"
 #include "undefined.h"
 #include "units/representatives.h"
 #include "units/unit.h"
@@ -166,8 +165,7 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplex<T>(e, ctx);
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
-    return Approximation::IsNonReal(value) ? KNonReal->cloneTree()
-                                           : KUndef->cloneTree();
+    return IsNonReal(value) ? KNonReal->cloneTree() : KUndef->cloneTree();
   }
   if (im == 0.0) {
     return SharedTreeStack->pushFloat(re);
@@ -1055,9 +1053,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
 }
 
-bool Approximation::ApproximateToComplexTree(Tree* e, const Context* ctx) {
+void Approximation::ApproximateToComplexTree(Tree* e, const Context* ctx) {
   e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
-  return true;
 }
 
 template <typename T>

@@ -215,7 +215,7 @@ class Approximation final {
   static Tree* ToMatrix(const Tree* e, const Context* ctx);
 
   // Replace a Tree with the Tree of its complex approximation
-  static bool ApproximateToComplexTree(Tree* e, const Context* ctx);
+  static void ApproximateToComplexTree(Tree* e, const Context* ctx);
 
   template <typename T>
   static std::complex<T> NonReal() {

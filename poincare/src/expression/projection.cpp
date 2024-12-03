@@ -67,10 +67,10 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
       // Context expects a KUnknownSymbol and not a VarX argument
       Tree* eWithUnknown = e->cloneNode();
       KUnknownSymbol->cloneTree();
-      definition = context->treeForSymbolIdentifier(eWithUnknown);
+      definition = context->expressionForSymbolAbstract(eWithUnknown);
       eWithUnknown->removeTree();
     } else {
-      definition = context->treeForSymbolIdentifier(e);
+      definition = context->expressionForSymbolAbstract(e);
     }
   }
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
@@ -140,7 +140,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
         default: {
           const Tree* definition =
               projectionContext.m_context
-                  ? projectionContext.m_context->treeForSymbolIdentifier(
+                  ? projectionContext.m_context->expressionForSymbolAbstract(
                         descendant)
                   : nullptr;
           assert(definition != e);

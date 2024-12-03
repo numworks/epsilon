@@ -13,9 +13,4 @@ const Internal::Tree* Context::expressionForSymbolAbstract(
   return protectedExpressionForSymbolAbstract(symbol, nullptr);
 }
 
-const Internal::Tree* Context::treeForSymbolIdentifier(
-    const Internal::Tree* t) {
-  return expressionForSymbolAbstract(t);
-}
-
 }  // namespace Poincare

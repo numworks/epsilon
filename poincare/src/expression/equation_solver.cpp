@@ -96,7 +96,8 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   if (projectionContext.m_context) {
     Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
     for (const Tree* userSymbol : userSymbols->children()) {
-      if (projectionContext.m_context->treeForSymbolIdentifier(userSymbol)) {
+      if (projectionContext.m_context->expressionForSymbolAbstract(
+              userSymbol)) {
         context->userVariables.append(Symbol::GetName(userSymbol));
       }
     }
@@ -652,7 +653,7 @@ Tree* EquationSolver::getNextParameterSymbol(size_t* parameterIndex,
     parameterName[parameterNameLength] = 0;
     Tree* symbol =
         SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!context->treeForSymbolIdentifier(symbol)) {
+    if (!context->expressionForSymbolAbstract(symbol)) {
       return symbol;
     }
     // Skip already used parameter indices in global variables

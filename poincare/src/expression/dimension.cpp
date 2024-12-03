@@ -97,13 +97,15 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       assert(!definition || DeepCheckListLength(definition, ctx));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return DeepCheckListLength(definition, ctx);
       }
@@ -182,14 +184,16 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       assert(Integer::Is<uint8_t>(e->child(2)));
       return Integer::Handler(e->child(2)).to<uint8_t>();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return ListLength(definition, ctx);
       }
       return k_nonListListLength;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return ListLength(definition, ctx);
       }
@@ -426,7 +430,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return DeepCheckDimensions(definition, ctx);
       }
@@ -459,7 +464,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       assert(!definition || DeepCheckDimensions(definition, ctx));
 #endif
       return true;
@@ -592,14 +598,16 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::List:
       return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return Get(definition, ctx);
       }
       return Scalar();
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
+      const Tree* definition =
+          ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
         return Get(definition, ctx);
       }

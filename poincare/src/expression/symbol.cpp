@@ -78,7 +78,7 @@ bool involvesCircularity(const Tree* e, Poincare::Context* context,
   }
 
   const Tree* definition =
-      context ? context->treeForSymbolIdentifier(symbol) : nullptr;
+      context ? context->expressionForSymbolAbstract(symbol) : nullptr;
   bool isCircular =
       definition && involvesCircularity(definition, context, maxDepth,
                                         visitedSymbols, numberOfVisitedSymbols);

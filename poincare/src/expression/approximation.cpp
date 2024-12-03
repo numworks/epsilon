@@ -567,7 +567,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       if (!ctx || !ctx->m_symbolContext) {
         return NAN;
       }
-      const Tree* definition = ctx->m_symbolContext->treeForSymbolIdentifier(e);
+      const Tree* definition =
+          ctx->m_symbolContext->expressionForSymbolAbstract(e);
       if (!definition) {
         return NAN;
       }

@@ -78,6 +78,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 const Internal::Tree*
 SystemOfEquations::ContextWithoutT::protectedExpressionForSymbolAbstract(
     const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+  assert(symbol->isUserNamed());
   if (symbol->isUserSymbol() &&
       strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {
     return UserExpression();

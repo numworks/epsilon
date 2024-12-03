@@ -108,6 +108,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
 const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
     const Internal::Tree* symbol,
     Poincare::ContextWithParent* lastDescendantContext) {
+  assert(symbol->isUserNamed());
   Ion::Storage::Record r =
       SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
   UserExpression symbolExpression = UserExpression::Builder(symbol);
@@ -119,6 +120,7 @@ const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
 
 bool GlobalContext::setExpressionForSymbolAbstract(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
+  assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);
   UserExpression symbolExpression = UserExpression::Builder(symbolTree);
   SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
@@ -157,6 +159,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
+  assert(symbol->isUserNamed());
   if (symbol->isUserSymbol()) {
     return ExpressionForUserNamed(r);
   } else if (symbol->isUserFunction()) {

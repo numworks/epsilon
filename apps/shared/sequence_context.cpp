@@ -23,6 +23,7 @@ const Poincare::Internal::Tree*
 SequenceContext::protectedExpressionForSymbolAbstract(
     const Poincare::Internal::Tree* symbol,
     ContextWithParent* lastDescendantContext) {
+  assert(symbol->isUserNamed());
   if (!symbol->isSequence()) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, lastDescendantContext);

@@ -512,8 +512,6 @@ to `TreeStack::ReferenceTable::DeletedOffset`.
 
 TreeRefs allow a safer and more readable tree manipulation.
 
-The only requirement is to ensure that they are only used in methods:
-- Where efficiency isn't critical
-- Expecting `TreeRef&`, `const Tree *`, or `Tree *`
+Since they are being tracked at each TreeStack movements, we try to not to use them when efficiency is critical.
 
 Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).

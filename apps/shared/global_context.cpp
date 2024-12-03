@@ -106,13 +106,11 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
 }
 
 const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
-    const Internal::Tree* symbolTree,
+    const Internal::Tree* symbol,
     Poincare::ContextWithParent* lastDescendantContext) {
   Ion::Storage::Record r =
-      SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbolTree));
-  // TODO: pass Tree* to all the methods to avoid temporary pool objects
-  UserExpression symbolExpression = UserExpression::Builder(symbolTree);
-  SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
+      SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
+  UserExpression symbolExpression = UserExpression::Builder(symbol);
   return expressionForSymbolAndRecord(
       symbol, r,
       lastDescendantContext ? static_cast<Context*>(lastDescendantContext)
@@ -158,13 +156,13 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 }
 
 const UserExpression GlobalContext::expressionForSymbolAndRecord(
-    const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
-  if (symbol.isUserSymbol()) {
+    const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
+  if (symbol->isUserSymbol()) {
     return ExpressionForUserNamed(r);
-  } else if (symbol.isUserFunction()) {
-    return ExpressionForFunction(symbol.cloneChildAtIndex(0), r);
+  } else if (symbol->isUserFunction()) {
+    return ExpressionForFunction(UserExpression::Builder(symbol->child(0)), r);
   }
-  assert(symbol.isSequence());
+  assert(symbol->isSequence());
   return expressionForSequence(symbol, r, ctx);
 }
 
@@ -200,14 +198,14 @@ const UserExpression GlobalContext::ExpressionForFunction(
 }
 
 const UserExpression GlobalContext::expressionForSequence(
-    const SymbolAbstract& symbol, Ion::Storage::Record r, Context* ctx) {
+    const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
     return UserExpression();
   }
   /* A function record value has metadata before the expression. To get the
    * expression, use the function record handle. */
   Sequence seq(r);
-  UserExpression rank = symbol.cloneChildAtIndex(0);
+  UserExpression rank = UserExpression::Builder(symbol->child(0));
   bool rankIsInteger = false;
   SystemExpression rankSimplified = PoincareHelpers::CloneAndReduce(
       rank, ctx, {.target = ReductionTarget::SystemForApproximation});

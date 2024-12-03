@@ -234,12 +234,7 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
   }
   assert(dim.isPoint() || dim.isMatrix());
   Tree* result = dim.isPoint() ? ToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
-  if (Undefined::ShallowBubbleUpUndef(result)) {
-    return result;
-  }
-  for (Tree* child : result->children()) {
-    ApproximateToComplexTree(child, ctx);
-  }
+  Undefined::ShallowBubbleUpUndef(result);
   return result;
 }
 

@@ -107,8 +107,8 @@ SystemExpression ExpressionModel::expressionReduced(
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      PoincareHelpers::CloneAndSimplify(
-          &m_expression, context,
+      m_expression = PoincareHelpers::CloneAndReduce(
+          m_expression, context,
           {.complexFormat = complexFormat(record, context),
            .updateComplexFormatWithExpression = false,
            .target = ReductionTarget::SystemForApproximation});

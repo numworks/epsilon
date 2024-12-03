@@ -14,25 +14,8 @@ const Internal::Tree* Context::expressionForSymbolAbstract(
 }
 
 const Internal::Tree* Context::treeForSymbolIdentifier(
-    const char* identifier, int length, SymbolAbstractType type) {
-  if (type == SymbolAbstractType::Symbol) {
-    return expressionForSymbolAbstract(Symbol::Builder(identifier, length));
-  } else if (type == SymbolAbstractType::Function) {
-    return expressionForSymbolAbstract(Function::Builder(
-        identifier, length, Symbol::Builder(UCodePointUnknown)));
-  }
-  // TODO_PCJ: Not implemented.
-  assert(false);
-  return nullptr;
-}
-
-const Internal::Tree* Context::treeForSymbolIdentifier(
     const Internal::Tree* t) {
-  return Context::treeForSymbolIdentifier(
-      Internal::Symbol::GetName(t), Internal::Symbol::Length(t),
-      t->isUserFunction() ? Poincare::Context::SymbolAbstractType::Function
-      : t->isUserSymbol() ? Poincare::Context::SymbolAbstractType::Symbol
-                          : Poincare::Context::SymbolAbstractType::Sequence);
+  return expressionForSymbolAbstract(t);
 }
 
 }  // namespace Poincare

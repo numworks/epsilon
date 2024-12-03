@@ -30,9 +30,6 @@ class Context {
                                                          int length) = 0;
   const Internal::Tree* expressionForSymbolAbstract(
       const Internal::Tree* symbol);
-  const Internal::Tree* treeForSymbolIdentifier(const char* identifier,
-                                                int length,
-                                                SymbolAbstractType type);
   const Internal::Tree* treeForSymbolIdentifier(
       const Internal::Tree* identifier);
   virtual bool setExpressionForSymbolAbstract(const Internal::Tree* expression,

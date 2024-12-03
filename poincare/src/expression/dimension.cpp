@@ -105,12 +105,7 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        bool result = DeepCheckListLength(clone, ctx);
-        clone->removeTree();
-        return result;
+        return DeepCheckListLength(definition, ctx);
       }
       return true;
     }
@@ -196,12 +191,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        int result = ListLength(clone, ctx);
-        clone->removeTree();
-        return result;
+        return ListLength(definition, ctx);
       }
       // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
       [[fallthrough]];
@@ -438,12 +428,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        bool result = DeepCheckDimensions(clone, ctx);
-        clone->removeTree();
-        return result;
+        return DeepCheckDimensions(definition, ctx);
       }
       [[fallthrough]];
     }
@@ -616,12 +601,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::UserFunction: {
       const Tree* definition = ctx ? ctx->treeForSymbolIdentifier(e) : nullptr;
       if (definition) {
-        Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        Dimension result = Get(clone, ctx);
-        clone->removeTree();
-        return result;
+        return Get(definition, ctx);
       }
       // TODO: Maybe scalar ?
       return Get(e->child(0), ctx);

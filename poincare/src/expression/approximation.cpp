@@ -1048,10 +1048,6 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
 }
 
-void Approximation::ToComplexTreeInplace(Tree* e, const Context* ctx) {
-  e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
-}
-
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
   if (e->isTrue()) {

@@ -215,7 +215,9 @@ class Approximation final {
   static Tree* ToMatrix(const Tree* e, const Context* ctx);
 
   // Replace a Tree with the Tree of its complex approximation
-  static void ToComplexTreeInplace(Tree* e, const Context* ctx);
+  static void ToComplexTreeInplace(Tree* e, const Context* ctx) {
+    e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
+  }
 
   template <typename T>
   static std::complex<T> NonReal() {

@@ -6,7 +6,7 @@ $(call assert_defined,OUTPUT_ROOT)
 $(call assert_defined,DEBUG)
 $(call assert_defined,PLATFORM)
 
-_platforms_device := n0110 n0115 n0120
+_platforms_device := n0110 n0115 n0120 u0-discovery
 _platforms_simulator := android foxglove ios linux macos web windows
 
 # Host detection

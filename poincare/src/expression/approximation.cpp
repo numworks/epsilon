@@ -34,17 +34,14 @@ namespace Poincare::Internal {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
+  if (!Dimension::DeepCheck(e)) {
+    return KUndefUnhandledDimension->cloneTree();
+  }
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   if (params.optimize) {
     // Tree has already been approximated in PrepareTreeAndContext
     assert(cloneMaybe);
     return cloneMaybe;
-  }
-  if (!Dimension::DeepCheck(e)) {
-    if (cloneMaybe) {
-      cloneMaybe->removeTree();
-    }
-    return KUndefUnhandledDimension->cloneTree();
   }
   const Tree* target = cloneMaybe ? cloneMaybe : e;
   Tree* result;
@@ -74,10 +71,10 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   if (!Dimension::DeepCheck(e)) {
     return NAN;
   }
+  assert(Dimension::IsNonListScalar(e));
   assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
-  assert(Dimension::IsNonListScalar(target));
   std::complex<T> c = ToComplex<T>(target, &context);
   if (cloneMaybe) {
     cloneMaybe->removeTree();
@@ -89,10 +86,10 @@ template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Parameters params,
                                                 Context context) {
+  assert(Dimension::DeepCheck(e));
   assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;
-  assert(Dimension::DeepCheck(target));
   Dimension dim = Dimension::Get(target);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   PointOrScalar<T> result =
@@ -127,6 +124,7 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
 template <typename T>
 bool Approximation::ToBoolean(const Tree* e, Parameters params,
                               Context context) {
+  assert(Dimension::DeepCheck(e) && Dimension::Get(e).isBoolean());
   assert(!params.optimize);
   Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = cloneMaybe ? cloneMaybe : e;

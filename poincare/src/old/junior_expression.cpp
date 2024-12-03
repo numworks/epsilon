@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -483,11 +484,14 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
   }
   ProjectionContext ctx = {
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+      .m_unitFormat =
+          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = symbolicComputation,
       .m_context = context};
   exp = exp.cloneAndSimplify(&ctx);
   assert(!exp.isUninitialized());
-  return exp.approximateToScalar<T>();
+  return exp.approximateToScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
 }
 
 template <typename T>

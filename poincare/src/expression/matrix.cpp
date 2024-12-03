@@ -107,7 +107,7 @@ Tree* Matrix::Addition(const Tree* matrix1, const Tree* matrix2,
     childM1->cloneTree();
     childM2->cloneTree();
     if (approximate) {
-      Approximation::ApproximateToComplexTree(child, ctx);
+      Approximation::ToComplexTreeInplace(child, ctx);
     } else {
       SystematicReduction::ShallowReduce(child);
     }
@@ -126,7 +126,7 @@ Tree* Matrix::ScalarMultiplication(const Tree* scalar, const Tree* matrix,
     scalar->cloneTree();
     child->cloneTree();
     if (approximate) {
-      Approximation::ApproximateToComplexTree(mult, ctx);
+      Approximation::ToComplexTreeInplace(mult, ctx);
     } else {
       SystematicReduction::ShallowReduce(mult);
     }
@@ -171,13 +171,13 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
         rowsM2[k]->cloneTree();
         rowsM2[k] = rowsM2[k]->nextTree();
         if (approximate) {
-          Approximation::ApproximateToComplexTree(mult, ctx);
+          Approximation::ToComplexTreeInplace(mult, ctx);
         } else {
           SystematicReduction::ShallowReduce(mult);
         }
       }
       if (approximate) {
-        Approximation::ApproximateToComplexTree(add, ctx);
+        Approximation::ToComplexTreeInplace(add, ctx);
       } else {
         SystematicReduction::ShallowReduce(add);
       }
@@ -295,7 +295,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
         if (approximate) {
           Tree* newOpHJ = PatternMatching::Create(KMult(KA, KPow(KB, -1_e)),
                                                   {.KA = opHJ, .KB = divisor});
-          Approximation::ApproximateToComplexTree(newOpHJ, ctx);
+          Approximation::ToComplexTreeInplace(newOpHJ, ctx);
           opHJ->moveTreeOverTree(newOpHJ);
         } else {
           opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -324,7 +324,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
             Tree* newOpIJ =
                 PatternMatching::Create(KAdd(KA, KMult(-1_e, KB, KC)),
                                         {.KA = opIJ, .KB = opHJ, .KC = factor});
-            Approximation::ApproximateToComplexTree(newOpIJ, ctx);
+            Approximation::ToComplexTreeInplace(newOpIJ, ctx);
             opIJ->moveTreeOverTree(newOpIJ);
           } else {
             opIJ->moveTreeOverTree(PatternMatching::CreateSimplify(
@@ -342,7 +342,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   }
   if (determinant) {
     if (approximate) {
-      Approximation::ApproximateToComplexTree(det, ctx);
+      Approximation::ToComplexTreeInplace(det, ctx);
     } else {
       SystematicReduction::ShallowReduce(det);
     }

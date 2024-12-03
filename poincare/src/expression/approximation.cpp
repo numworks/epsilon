@@ -1048,7 +1048,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
 }
 
-void Approximation::ApproximateToComplexTree(Tree* e, const Context* ctx) {
+void Approximation::ToComplexTreeInplace(Tree* e, const Context* ctx) {
   e->moveTreeOverTree(ToComplexTree<double>(e, ctx));
 }
 

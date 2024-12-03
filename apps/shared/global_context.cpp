@@ -202,14 +202,14 @@ const UserExpression GlobalContext::expressionForSequence(
   Sequence seq(r);
   UserExpression rank = symbol.cloneChildAtIndex(0);
   bool rankIsInteger = false;
-  PoincareHelpers::CloneAndSimplify(
-      &rank, ctx, {.target = ReductionTarget::SystemForApproximation});
-  double rankValue = rank.approximateToScalar<double>(
+  SystemExpression rankSimplified = PoincareHelpers::CloneAndReduce(
+      rank, ctx, {.target = ReductionTarget::SystemForApproximation});
+  double rankValue = rankSimplified.approximateToScalar<double>(
       Preferences::SharedPreferences()->angleUnit(),
       Preferences::SharedPreferences()->complexFormat(), ctx);
-  if (rank.isRational()) {
+  if (rankSimplified.isRational()) {
 #if 0  // TODO_PCJ
-    Rational n = static_cast<Rational &>(rank);
+    Rational n = static_cast<Rational &>(rankSimplified);
     rankIsInteger = n.isInteger();
 #else
     assert(false);

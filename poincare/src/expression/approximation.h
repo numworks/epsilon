@@ -86,7 +86,9 @@ class Approximation final {
     }
     // TODO_PCJ : Maybe better separate const and non const ctx ?
     mutable Random::Context m_randomContext;
+    // LocalContext is used to store the values of local variables
     LocalContext* m_localContext;
+    // SymbolContext is used to store the values of user symbols and functions
     Poincare::Context* m_symbolContext;
     // Tells if we are approximating to get the nth-element of a list
     int16_t m_listElement;

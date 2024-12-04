@@ -36,13 +36,13 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
   if (!Dimension::DeepCheck(e)) {
     return KUndefUnhandledDimension->cloneTree();
   }
-  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   if (params.optimize) {
     // Tree has already been approximated in PrepareTreeAndContext
-    assert(cloneMaybe);
-    return cloneMaybe;
+    assert(clone);
+    return clone;
   }
-  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  const Tree* target = clone ? clone : e;
   Tree* result;
   Dimension dim = Dimension::Get(target);
   int listLength = Dimension::ListLength(target);
@@ -56,12 +56,12 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
   } else {
     result = ToTree<T>(target, dim, &context);
   }
-  if (!cloneMaybe) {
+  if (!clone) {
     return result;
   }
-  assert(cloneMaybe->nextTree() == result);
-  cloneMaybe->removeTree();
-  return cloneMaybe;
+  assert(clone->nextTree() == result);
+  clone->removeTree();
+  return clone;
 }
 
 template <typename T>
@@ -72,11 +72,11 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   }
   assert(Dimension::IsNonListScalar(e));
   assert(!params.optimize);
-  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
-  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  const Tree* target = clone ? clone : e;
   std::complex<T> c = ToComplex<T>(target, &context);
-  if (cloneMaybe) {
-    cloneMaybe->removeTree();
+  if (clone) {
+    clone->removeTree();
   }
   return c;
 };
@@ -87,8 +87,8 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Context context) {
   assert(Dimension::DeepCheck(e));
   assert(!params.optimize);
-  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
-  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  const Tree* target = clone ? clone : e;
   Dimension dim = Dimension::Get(target);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   PointOrScalar<T> result =
@@ -105,8 +105,8 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
     result = dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
                            : PointOrScalar<T>(yScalar);
   }
-  if (cloneMaybe) {
-    cloneMaybe->removeTree();
+  if (clone) {
+    clone->removeTree();
   }
   return result;
 };
@@ -125,11 +125,11 @@ bool Approximation::ToBoolean(const Tree* e, Parameters params,
                               Context context) {
   assert(Dimension::DeepCheck(e) && Dimension::Get(e).isBoolean());
   assert(!params.optimize);
-  Tree* cloneMaybe = PrepareTreeAndContext<T>(e, params, context);
-  const Tree* target = cloneMaybe ? cloneMaybe : e;
+  Tree* clone = PrepareTreeAndContext<T>(e, params, context);
+  const Tree* target = clone ? clone : e;
   bool b = ToBoolean<T>(target, &context);
-  if (cloneMaybe) {
-    cloneMaybe->removeTree();
+  if (clone) {
+    clone->removeTree();
   }
   return b;
 };

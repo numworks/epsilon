@@ -451,8 +451,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double nextX = nextT;
     nextT = -1;
     double previousX = -INFINITY;
-    for (Coordinate2D<float> p : nextF->iterateScatterPlot(context)) {
-      Coordinate2D<double> xy = p;
+    for (Coordinate2D<float> xy : nextF->iterateScatterPlot(context)) {
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
           ++nextT;

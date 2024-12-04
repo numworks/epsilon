@@ -120,14 +120,14 @@ Range2D<float> GraphController::optimalRange(
                         k_maxFloat);
 }
 
-Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(
+const Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(
     int j) const {
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
   SequenceStore* store = graphController->functionStore();
   ExpiringPointer<Shared::Sequence> sequence =
       store->modelForRecord(store->activeRecordAtIndex(j));
-  return sequence->definitionName().clone();
+  return sequence->definitionName();
 }
 
 void GraphController::openMenuForCurveAtIndex(int curveIndex) {

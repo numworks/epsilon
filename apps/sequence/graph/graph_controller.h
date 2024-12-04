@@ -59,7 +59,7 @@ class GraphController final : public Shared::FunctionGraphController {
     }
 
    private:
-    Poincare::Layout nameLayoutAtIndex(int j) const override;
+    const Poincare::Layout nameLayoutAtIndex(int j) const override;
     Shared::CurveSelectionCellWithChevron
         m_cells[Shared::SequenceStore::k_maxNumberOfSequences];
   };

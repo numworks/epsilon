@@ -72,7 +72,7 @@ class GraphController : public Shared::FunctionGraphController,
 
    private:
     constexpr static int k_maxNumberOfDisplayableFunctions = 7;
-    Poincare::Layout nameLayoutAtIndex(int j) const override;
+    const Poincare::Layout nameLayoutAtIndex(int j) const override;
     Shared::CurveSelectionCellWithChevron
         m_cells[k_maxNumberOfDisplayableFunctions];
   };

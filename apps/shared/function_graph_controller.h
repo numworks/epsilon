@@ -49,7 +49,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
       return static_cast<FunctionGraphController*>(
           const_cast<InteractiveCurveViewController*>(m_graphController));
     }
-    virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
+    virtual const Poincare::Layout nameLayoutAtIndex(int j) const = 0;
 
    private:
     constexpr static KDFont::Size k_font = KDFont::Size::Large;

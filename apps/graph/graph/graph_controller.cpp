@@ -268,17 +268,14 @@ PointsOfInterestCache* GraphController::pointsOfInterestForRecord(
   return cache;
 }
 
-Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
+const Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
     int j) const {
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
   ContinuousFunctionStore* store = graphController->functionStore();
   ExpiringPointer<ContinuousFunction> function =
       store->modelForRecord(store->activeRecordAtIndex(j));
-  constexpr size_t bufferSize = ContinuousFunction::k_maxNameWithArgumentSize;
-  char buffer[bufferSize];
-  size_t size = function->nameWithArgument(buffer, bufferSize);
-  return Layout::String(buffer, size);
+  return function->layout();
 }
 
 void GraphController::reloadBannerView() {

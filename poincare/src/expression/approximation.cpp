@@ -201,6 +201,7 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
     context.m_randomContext.m_isInitialized = true;
   }
   if (params.prepare || params.optimize) {
+    // TODO_PCJ: assert e is already projected.
     if (!clone) {
       clone = e->cloneTree();
     }

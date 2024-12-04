@@ -157,6 +157,9 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 }
 
 #if ASSERTIONS
+/* TODO_PCJ : Calling IsSystem on expressions containing seeded random variables
+ * will raise because PrepareForProjection expects unseeded random nodes only.
+ */
 bool Simplification::IsSystem(const Tree* e) {
   /* TODO: an assert will fail when projecting a random node that has already
    * been projected. We need to find a better solution than skipping the test.

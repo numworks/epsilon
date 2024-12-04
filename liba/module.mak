@@ -3,7 +3,6 @@ _sources_liba_minimal := $(addprefix src/, \
   memcpy.c \
   memmove.c \
   memset.c \
-  ssp.c \
   strchr.c \
   strcmp.c \
   strlcat.c \
@@ -23,7 +22,6 @@ _sources_liba_extended := $(addprefix src/, \
   malloc.c \
   nearbyint.c \
   nearbyintf.c \
-  ssp.c \
 )
 
 _sources_liba_armv7m := $(addprefix src/armv7m/, \

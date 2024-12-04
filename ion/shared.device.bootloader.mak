@@ -2,6 +2,7 @@ _sources_ion_bootloader := \
 shared/dummy/assert.cpp \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
+  boot/ssp.c \
   drivers/base64.cpp \
   drivers/flash_information.cpp \
   drivers/serial_number.cpp \
